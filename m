@@ -1,676 +1,339 @@
-Return-Path: <linux-kernel+bounces-773335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387FDB29E7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:54:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A42B29E71
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EA507B428F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:51:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D9414E247F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0A030FF03;
-	Mon, 18 Aug 2025 09:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aOAXSSDJ"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B5E30C37E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4230FF09;
+	Mon, 18 Aug 2025 09:52:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47E930F7EF;
+	Mon, 18 Aug 2025 09:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510756; cv=none; b=qh0RsPVtFTsA8TdwQike6Fg93JlZ8Pbo/gA/1knecb9DG8NeITmVnCqdAgYMdd14syzkRsofD+a84aYHTJk8rGVqKZiNZiK9Oz6fE+tIvxQw88FqbxhDMmu//fCcfo2mv3FnCecTWx+QIgh8oi8LvotGTyNlUwTwZCN2EoN9aJU=
+	t=1755510773; cv=none; b=B7XIBtpqJI0lPRBSuND5bR14p7UCNWhBCI5Z0Yk4N4CNEDJI9O3A+1sXbrjMxW2AY0pLsoUt8hJcVjLtqrihp1hKLR9htDOPmWskiudqGygUM+W9xY1zDlsw8DPXDkIBPJQsHbh5YBYh9B2ck7azCUqvl7ywzknff6TW+3+vdU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510756; c=relaxed/simple;
-	bh=p76lMl6yOj16kgue7jyUn+JTvKdUizQMWP/fPhlwffM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=evNxuPagODqbahL3bYguNNDTekhZW2msQcaFw9ZDGqv8Yr0XWGiRXsomhv0+7UTux9FjISqihQP1TWgPW4WNW4NAS2hbgnITZymGtmhFuhpzPDJ5vK5+0FJ5Kjfc7z9jjQ0TXR+OQvPoS8cJxh2dbU930MUBQnFr5G+X8Jw/pC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aOAXSSDJ; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b9e4157303so3127586f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755510752; x=1756115552; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NNfKPFdQoM+6zHnsZBkb2mDGQIPWPpECMJQb04mdL4A=;
-        b=aOAXSSDJjzzRk4XPphxxf5D7UYNg0kX5ZOllxOleYh1wXPr76tq8eGEA/YrcLYx2y+
-         DqHfuajGhfh3fwmkdKvQyYGkj/EYKRAU/Us1SJOWPnTshPmleq+FmNGJK0GHWiCTGJEj
-         Ktfqp6D2/YwInzRO+6i1K9N2LLyVSOnFWwy3teez/b5digLEznNGWe2PkYxIG9w8GPiO
-         W56uOIZt1JmsuSXQFKdLwwdRuJaNmM1JMwuyDYDyH4hvouykuY2jqTQHiXV6Yqn7vhaf
-         J6OPC1C2HtfYFQTK1lkMdf+klnYfr4y4W9ftdgiDBz5vYcxfbVrmZZXLR7wNja5xIBrp
-         uUZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755510752; x=1756115552;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NNfKPFdQoM+6zHnsZBkb2mDGQIPWPpECMJQb04mdL4A=;
-        b=JCa/07iKhjX76VSmTfcc+cl6qZbeEgk97o0FtkhkfPeXBqJVWXmbVXPEKaDxcLixh/
-         0t1k5A42dDLodi9GZZSDm3ckTgwCB4BgrDMQNWkaz9mF69D2lfpD2cxQDvrW1IB7jv6P
-         PWoF+Sk7/6AqlJHZx9ZxudYsP51or1P0omc4X96z6JqIq1a2TxsJYP6LmF6zFDdDq6BR
-         t6YOk8PXdyQXZPZlhJM6WwgCa/fclKOwZc7wPrLkOb2AY4sZmrE2bkgxnbTokRbpvDuT
-         TLoLQIYmD2wn/aGwZAuxYyognwIE26XtHI+8kgjlGx/mp7ZdgSAJFLI6KrV4S28HEI7o
-         0ImQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRysVOPi2fzXRAC2CR/ccEKJMluPl6VnX2gz+8Q8zZTUOZ3a41AjBWQsjPCViZMYFGWV8VSf8v9B3pqo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIhhndQDXUxwH0WhEgS3lnvIsa6OTQZJ/pLivNtESwQn+j7LnH
-	tUADSF3QIUBDgp622PAe1rWhPkcW6q+cQLKaZvgK7wwlKKjrR112bQEdVNQ8dESAAqPgV5DnCZo
-	sH17h3Ge2GR2AoXEDxQ==
-X-Google-Smtp-Source: AGHT+IEyfo20e1fVadWO+eYQ4qlAgwLLTd8l26CaHUyanTisncv3yzZU/1v+vbVFOdDq2bUM5iWWlTjOsp2Bv9s=
-X-Received: from wrs27.prod.google.com ([2002:a05:6000:65b:b0:3b7:d75e:c48e])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:4028:b0:3b8:d32e:9222 with SMTP id ffacd0b85a97d-3bb690d1c8cmr8591384f8f.38.1755510752381;
- Mon, 18 Aug 2025 02:52:32 -0700 (PDT)
-Date: Mon, 18 Aug 2025 09:52:31 +0000
-In-Reply-To: <20250815171058.299270-3-dakr@kernel.org>
+	s=arc-20240116; t=1755510773; c=relaxed/simple;
+	bh=KU6O2Nw3omo+DHJINNo9JbkcNiVo7YkaJ0n2SG1v3dM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4iMWD9x9EVx70jwsCIudawDCOvtjSHpqTWiKcOgtwkdN3N6lli7BVXBPnNw89vikHzz0eISFH8qs87spKFSNGD0u6YGnnz6WJjY8S33Mu6UdNOMGf2xT6UPqmsNhBBbELDhzNFuZkZcjsOb9kPJgV7dCf+bYyj+cuXLeftJ8Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8C0A1596;
+	Mon, 18 Aug 2025 02:52:41 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09BE63F63F;
+	Mon, 18 Aug 2025 02:52:45 -0700 (PDT)
+Message-ID: <2736fe09-ef37-408c-ba53-a8e492dcc3e8@arm.com>
+Date: Mon, 18 Aug 2025 10:52:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250815171058.299270-1-dakr@kernel.org> <20250815171058.299270-3-dakr@kernel.org>
-Message-ID: <aKL338gQ7qPNKoBu@google.com>
-Subject: Re: [PATCH 2/4] rust: scatterlist: Add type-state abstraction for sg_table
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: akpm@linux-foundation.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
-	abdiel.janulgue@gmail.com, acourbot@nvidia.com, jgg@ziepe.ca, 
-	lyude@redhat.com, robin.murphy@arm.com, daniel.almeida@collabora.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] kasan/hw-tags: introduce kasan.write_only option
+To: Yeoreum Yun <yeoreum.yun@arm.com>, ryabinin.a.a@gmail.com,
+ glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+ vincenzo.frascino@arm.com, corbet@lwn.net, catalin.marinas@arm.com,
+ will@kernel.org, akpm@linux-foundation.org, scott@os.amperecomputing.com,
+ jhubbard@nvidia.com, pankaj.gupta@amd.com, leitao@debian.org,
+ kaleshsingh@google.com, maz@kernel.org, broonie@kernel.org,
+ oliver.upton@linux.dev, james.morse@arm.com, ardb@kernel.org,
+ hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
+ yang@os.amperecomputing.com
+Cc: kasan-dev@googlegroups.com, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
+References: <20250818075051.996764-1-yeoreum.yun@arm.com>
+ <20250818075051.996764-2-yeoreum.yun@arm.com>
+Content-Language: en-US
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250818075051.996764-2-yeoreum.yun@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 07:10:03PM +0200, Danilo Krummrich wrote:
-> Add a safe Rust abstraction for the kernel's scatter-gather list
-> facilities (`struct scatterlist` and `struct sg_table`).
+Hi Yeoreum,
+
+On 8/18/25 08:50, Yeoreum Yun wrote:
+> Since Armv8.9, FEATURE_MTE_STORE_ONLY feature is introduced to restrict
+> raise of tag check fault on store operation only.
+> Introcude KASAN write only mode based on this feature.
 > 
-> This commit introduces `SGTable<T>`, a wrapper that uses a type-state
-> pattern to provide compile-time guarantees about ownership and lifetime.
+> KASAN write only mode restricts KASAN checks operation for write only and
+> omits the checks for fetch/read operations when accessing memory.
+> So it might be used not only debugging enviroment but also normal
+> enviroment to check memory safty.
 > 
-> The abstraction provides two primary states:
-> - `SGTable<Owned<P>>`: Represents a table whose resources are fully
->   managed by Rust. It takes ownership of a page provider `P`, allocates
->   the underlying `struct sg_table`, maps it for DMA, and handles all
->   cleanup automatically upon drop. The DMA mapping's lifetime is tied to
->   the associated device using `Devres`, ensuring it is correctly unmapped
->   before the device is unbound.
-> - `SGTable<Borrowed>` (or just `SGTable`): A zero-cost representation of
->   an externally managed `struct sg_table`. It is created from a raw
->   pointer using `SGTable::as_ref()` and provides a lifetime-bound
->   reference (`&'a SGTable`) for operations like iteration.
+> This features can be controlled with "kasan.write_only" arguments.
+> When "kasan.write_only=on", KASAN checks write operation only otherwise
+> KASAN checks all operations.
 > 
-> The API exposes a safe iterator that yields `&SGEntry` references,
-> allowing drivers to easily access the DMA address and length of each
-> segment in the list.
+> This changes the MTE_STORE_ONLY feature as BOOT_CPU_FEATURE like
+> ARM64_MTE_ASYMM so that makes it initialise in kasan_init_hw_tags()
+> with other function together.
 > 
-> Co-developed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 > ---
->  rust/helpers/helpers.c     |   1 +
->  rust/helpers/scatterlist.c |  24 ++
->  rust/kernel/lib.rs         |   1 +
->  rust/kernel/scatterlist.rs | 433 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 459 insertions(+)
->  create mode 100644 rust/helpers/scatterlist.c
->  create mode 100644 rust/kernel/scatterlist.rs
+>   Documentation/dev-tools/kasan.rst  |  3 ++
+>   arch/arm64/include/asm/memory.h    |  1 +
+>   arch/arm64/include/asm/mte-kasan.h |  6 ++++
+>   arch/arm64/kernel/cpufeature.c     |  2 +-
+>   arch/arm64/kernel/mte.c            | 18 ++++++++++
+>   mm/kasan/hw_tags.c                 | 54 ++++++++++++++++++++++++++++--
+>   mm/kasan/kasan.h                   |  7 ++++
+>   7 files changed, 88 insertions(+), 3 deletions(-)
 > 
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 7cf7fe95e41d..e94542bf6ea7 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -39,6 +39,7 @@
->  #include "rcu.c"
->  #include "refcount.c"
->  #include "regulator.c"
-> +#include "scatterlist.c"
->  #include "security.c"
->  #include "signal.c"
->  #include "slab.c"
-> diff --git a/rust/helpers/scatterlist.c b/rust/helpers/scatterlist.c
-> new file mode 100644
-> index 000000000000..80c956ee09ab
-> --- /dev/null
-> +++ b/rust/helpers/scatterlist.c
-> @@ -0,0 +1,24 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
+> index 0a1418ab72fd..fe1a1e152275 100644
+> --- a/Documentation/dev-tools/kasan.rst
+> +++ b/Documentation/dev-tools/kasan.rst
+> @@ -143,6 +143,9 @@ disabling KASAN altogether or controlling its features:
+>     Asymmetric mode: a bad access is detected synchronously on reads and
+>     asynchronously on writes.
+>   
+> +- ``kasan.write_only=off`` or ``kasan.write_only=on`` controls whether KASAN
+> +  checks the write (store) accesses only or all accesses (default: ``off``)
 > +
-> +#include <linux/dma-direction.h>
-> +
-> +dma_addr_t rust_helper_sg_dma_address(struct scatterlist *sg)
+>   - ``kasan.vmalloc=off`` or ``=on`` disables or enables tagging of vmalloc
+>     allocations (default: ``on``).
+>   
+> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> index 5213248e081b..f1505c4acb38 100644
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -308,6 +308,7 @@ static inline const void *__tag_set(const void *addr, u8 tag)
+>   #define arch_enable_tag_checks_sync()		mte_enable_kernel_sync()
+>   #define arch_enable_tag_checks_async()		mte_enable_kernel_async()
+>   #define arch_enable_tag_checks_asymm()		mte_enable_kernel_asymm()
+> +#define arch_enable_tag_checks_write_only()	mte_enable_kernel_store_only()
+>   #define arch_suppress_tag_checks_start()	mte_enable_tco()
+>   #define arch_suppress_tag_checks_stop()		mte_disable_tco()
+>   #define arch_force_async_tag_fault()		mte_check_tfsr_exit()
+> diff --git a/arch/arm64/include/asm/mte-kasan.h b/arch/arm64/include/asm/mte-kasan.h
+> index 2e98028c1965..0f9b08e8fb8d 100644
+> --- a/arch/arm64/include/asm/mte-kasan.h
+> +++ b/arch/arm64/include/asm/mte-kasan.h
+> @@ -200,6 +200,7 @@ static inline void mte_set_mem_tag_range(void *addr, size_t size, u8 tag,
+>   void mte_enable_kernel_sync(void);
+>   void mte_enable_kernel_async(void);
+>   void mte_enable_kernel_asymm(void);
+> +int mte_enable_kernel_store_only(void);
+>   
+>   #else /* CONFIG_ARM64_MTE */
+>   
+> @@ -251,6 +252,11 @@ static inline void mte_enable_kernel_asymm(void)
+>   {
+>   }
+>   
+> +static inline int mte_enable_kernel_store_only(void)
 > +{
-> +	return sg_dma_address(sg);
+> +	return -EINVAL;
 > +}
 > +
-> +unsigned int rust_helper_sg_dma_len(struct scatterlist *sg)
+>   #endif /* CONFIG_ARM64_MTE */
+>   
+>   #endif /* __ASSEMBLY__ */
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 9ad065f15f1d..505bd56e21a2 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -2920,7 +2920,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>   	{
+>   		.desc = "Store Only MTE Tag Check",
+>   		.capability = ARM64_MTE_STORE_ONLY,
+> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.type = ARM64_CPUCAP_BOOT_CPU_FEATURE,
+>   		.matches = has_cpuid_feature,
+>   		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, MTESTOREONLY, IMP)
+>   	},
+> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+> index e5e773844889..cd5452eb7486 100644
+> --- a/arch/arm64/kernel/mte.c
+> +++ b/arch/arm64/kernel/mte.c
+> @@ -157,6 +157,24 @@ void mte_enable_kernel_asymm(void)
+>   		mte_enable_kernel_sync();
+>   	}
+>   }
+> +
+> +int mte_enable_kernel_store_only(void)
 > +{
-> +	return sg_dma_len(sg);
+> +	/*
+> +	 * If the CPU does not support MTE store only,
+> +	 * the kernel checks all operations.
+> +	 */
+> +	if (!cpus_have_cap(ARM64_MTE_STORE_ONLY))
+> +		return -EINVAL;
+Would it be better to make this function return void and add a static 
+key in the manner of mte_async_or_asymm_mode, perhaps 
+mte_store_only_mode? This information could then be used to help 
+determine whether it is required to enable and disable tco in 
+__get_kernel_nofault() and load_unaligned_zeropad(). The function 
+signature would also match that of the other hw_enable_tag_...().
+
+> +
+> +	sysreg_clear_set(sctlr_el1, SCTLR_EL1_TCSO_MASK,
+> +			 SYS_FIELD_PREP(SCTLR_EL1, TCSO, 1));
+> +	isb();
+> +
+> +	pr_info_once("MTE: enabled stonly mode at EL1\n");
+nit: stonly can be expanded to store only
+> +
+> +	return 0;
 > +}
-> +
-> +struct scatterlist *rust_helper_sg_next(struct scatterlist *sg)
-> +{
-> +	return sg_next(sg);
-> +}
-> +
-> +void rust_helper_dma_unmap_sgtable(struct device *dev, struct sg_table *sgt,
-> +				   enum dma_data_direction dir, unsigned long attrs)
-> +{
-> +	return dma_unmap_sgtable(dev, sgt, dir, attrs);
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index ed53169e795c..55acbc893736 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -113,6 +113,7 @@
->  pub mod rbtree;
->  pub mod regulator;
->  pub mod revocable;
-> +pub mod scatterlist;
->  pub mod security;
->  pub mod seq_file;
->  pub mod sizes;
-> diff --git a/rust/kernel/scatterlist.rs b/rust/kernel/scatterlist.rs
-> new file mode 100644
-> index 000000000000..4caaf8cfbf83
-> --- /dev/null
-> +++ b/rust/kernel/scatterlist.rs
-> @@ -0,0 +1,433 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Abstractions for scatter-gather lists.
-> +//!
-> +//! C header: [`include/linux/scatterlist.h`](srctree/include/linux/scatterlist.h)
-> +//!
-> +//! Scatter-gather (SG) I/O is a memory access technique that allows devices to perform DMA
-> +//! operations on data buffers that are not physically contiguous in memory. It works by creating a
-> +//! "scatter-gather list", an array where each entry specifies the address and length of a
-> +//! physically contiguous memory segment.
-> +//!
-> +//! The device's DMA controller can then read this list and process the segments sequentially as
-> +//! part of one logical I/O request. This avoids the need for a single, large, physically contiguous
-> +//! memory buffer, which can be difficult or impossible to allocate.
-> +//!
-> +//! This module provides safe Rust abstractions over the kernel's `struct scatterlist` and
-> +//! `struct sg_table` types.
-> +//!
-> +//! The main entry point is the [`SGTable`] type, which represents a complete scatter-gather table.
-> +//! It can be either:
-> +//!
-> +//! - An owned table ([`SGTable<Owned<P>>`]), created from a Rust memory buffer (e.g., [`VVec`]).
-> +//!   This type manages the allocation of the `struct sg_table`, the DMA mapping of the buffer, and
-> +//!   the automatic cleanup of all resources.
-> +//! - A borrowed reference (&[`SGTable`]), which provides safe, read-only access to a table that was
-> +//!   allocated by other (e.g., C) code.
-> +//!
-> +//! Individual entries in the table are represented by [`SGEntry`], which can be accessed by
-> +//! iterating over an [`SGTable`].
-> +
-> +use crate::{
-> +    alloc,
-> +    alloc::allocator::VmallocPageIter,
-> +    bindings,
-> +    device::{Bound, Device},
-> +    devres::Devres,
-> +    dma, error, page,
-> +    prelude::*,
-> +    types::{ARef, Opaque},
+>   #endif
+>   
+>   #ifdef CONFIG_KASAN_HW_TAGS
+> diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
+> index 9a6927394b54..df67b48739b4 100644
+> --- a/mm/kasan/hw_tags.c
+> +++ b/mm/kasan/hw_tags.c
+> @@ -41,9 +41,16 @@ enum kasan_arg_vmalloc {
+>   	KASAN_ARG_VMALLOC_ON,
+>   };
+>   
+> +enum kasan_arg_write_only {
+> +	KASAN_ARG_WRITE_ONLY_DEFAULT,
+> +	KASAN_ARG_WRITE_ONLY_OFF,
+> +	KASAN_ARG_WRITE_ONLY_ON,
 > +};
-> +use core::{ops::Deref, ptr::NonNull};
 > +
-> +/// A single entry in a scatter-gather list.
-> +///
-> +/// An `SGEntry` represents a single, physically contiguous segment of memory that has been mapped
-> +/// for DMA.
-> +///
-> +/// Instances of this struct are obtained by iterating over an [`SGTable`]. Drivers do not create
-> +/// or own [`SGEntry`] objects directly.
-> +#[repr(transparent)]
-> +pub struct SGEntry(Opaque<bindings::scatterlist>);
-
-Send/Sync?
-
-> +impl SGEntry {
-> +    /// Convert a raw `struct scatterlist *` to a `&'a SGEntry`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the `struct scatterlist` pointed to by `ptr` is valid for the
-> +    /// lifetime `'a`.
-> +    unsafe fn as_ref<'a>(ptr: *mut bindings::scatterlist) -> &'a Self {
-
-Please call this from_raw.
-
-> +        // SAFETY: The safety requirements of this function guarantee that `ptr` is a valid pointer
-> +        // to a `struct scatterlist` for the duration of `'a`.
-> +        unsafe { &*ptr.cast() }
-> +    }
+>   static enum kasan_arg kasan_arg __ro_after_init;
+>   static enum kasan_arg_mode kasan_arg_mode __ro_after_init;
+>   static enum kasan_arg_vmalloc kasan_arg_vmalloc __initdata;
+> +static enum kasan_arg_write_only kasan_arg_write_only __ro_after_init;
+>   
+>   /*
+>    * Whether KASAN is enabled at all.
+> @@ -67,6 +74,8 @@ DEFINE_STATIC_KEY_FALSE(kasan_flag_vmalloc);
+>   #endif
+>   EXPORT_SYMBOL_GPL(kasan_flag_vmalloc);
+>   
+> +static bool kasan_flag_write_only;
 > +
-> +    /// Obtain the raw `struct scatterlist *`.
-> +    fn as_raw(&self) -> *mut bindings::scatterlist {
-
-Consider adding #[inline] to all these methods.
-
-> +        self.0.get()
-> +    }
-> +
-> +    /// Returns the DMA address of this SG entry.
-> +    ///
-> +    /// This is the address that the device should use to access the memory segment.
-> +    pub fn dma_address(&self) -> bindings::dma_addr_t {
-
-We might want a typedef on the Rust side for dma_addr_t, like we already
-have for the phys_addr_t/resource_size_t.
-
-> +        // SAFETY: `self.as_raw()` is a valid pointer to a `struct scatterlist`.
-> +        unsafe { bindings::sg_dma_address(self.as_raw()) }
-> +    }
-> +
-> +    /// Returns the length of this SG entry in bytes.
-> +    pub fn dma_len(&self) -> u32 {
-
-Is u32 really the right length type?
-
-> +        // SAFETY: `self.as_raw()` is a valid pointer to a `struct scatterlist`.
-> +        unsafe { bindings::sg_dma_len(self.as_raw()) }
-> +    }
-> +}
-> +
-> +/// The borrowed type state of an [`SGTable`], representing a borrowed or externally managed table.
-> +#[repr(transparent)]
-> +pub struct Borrowed(Opaque<bindings::sg_table>);
-> +
-> +// SAFETY: An instance of `Borrowed` can be send to any task.
-> +unsafe impl Send for Borrowed {}
-
-No Sync?
-
-> +/// A scatter-gather table.
-> +///
-> +/// This struct is a wrapper around the kernel's `struct sg_table`. It manages a list of DMA-mapped
-> +/// memory segments that can be passed to a device for I/O operations.
-> +///
-> +/// The generic parameter `T` is used as a type state to distinguish between owned and borrowed
-> +/// tables.
-> +///
-> +///  - [`SGTable<Owned>`]: An owned table created and managed entirely by Rust code. It handles
-> +///    allocation, DMA mapping, and cleanup of all associated resources. See [`SGTable::new`].
-> +///  - [`SGTable<Borrowed>`} (or simply [`SGTable`]): Represents a table whose lifetime is managed
-> +///    externally. It can be used safely via a borrowed reference `&'a SGTable`, where `'a` is the
-> +///    external lifetime.
-> +///
-> +/// All [`SGTable`] variants can be iterated over the individual [`SGEntry`]s.
-> +#[repr(transparent)]
-> +#[pin_data]
-> +pub struct SGTable<T: private::Sealed = Borrowed> {
-> +    #[pin]
-> +    inner: T,
-> +}
->
-> +impl SGTable {
-> +    /// Creates a borrowed `&'a SGTable` from a raw `struct sg_table` pointer.
-> +    ///
-> +    /// This allows safe access to an `sg_table` that is managed elsewhere (for example, in C code).
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the `struct sg_table` pointed to by `ptr` is valid for the entire
-> +    /// lifetime of `'a`.
-> +    pub unsafe fn as_ref<'a>(ptr: *mut bindings::sg_table) -> &'a Self {
-
-Please rename to from_raw().
-
-> +        // SAFETY: The safety requirements of this function guarantee that `ptr` is a valid pointer
-> +        // to a `struct sg_table` for the duration of `'a`.
-> +        unsafe { &*ptr.cast() }
-> +    }
-> +
-> +    fn as_raw(&self) -> *mut bindings::sg_table {
-
-Ditto about #[inline] for these.
-
-> +        self.inner.0.get()
-> +    }
-> +
-> +    fn as_iter(&self) -> SGTableIter<'_> {
-> +        // SAFETY: `self.as_raw()` is a valid pointer to a `struct sg_table`.
-> +        let ptr = unsafe { (*self.as_raw()).sgl };
-> +
-> +        // SAFETY: `ptr` is guaranteed to be a valid pointer to a `struct scatterlist`.
-> +        let pos = Some(unsafe { SGEntry::as_ref(ptr) });
-> +
-> +        SGTableIter { pos }
-> +    }
-> +}
-> +
-> +/// # Invariants
-> +///
-> +/// `sgt` is a valid pointer to a `struct sg_table` for the entire lifetime of an [`DmaMapSgt`].
-
-I think we probably want an invariant for why it's safe to call
-dma_unmap_sgtable in Drop.
-
-> +struct DmaMapSgt {
-> +    sgt: NonNull<bindings::sg_table>,
-> +    dev: ARef<Device>,
-> +    dir: dma::DataDirection,
-> +}
-> +
-> +// SAFETY: An instance of `DmaMapSgt` can be send to any task.
-> +unsafe impl Send for DmaMapSgt {}
-
-No Sync?
-
-> +impl DmaMapSgt {
-> +    /// # Safety
-> +    ///
-> +    /// `sgt` must be a valid pointer to a `struct sg_table` for the entire lifetime of the
-> +    /// returned [`DmaMapSgt`].
-> +    unsafe fn new(
-> +        sgt: NonNull<bindings::sg_table>,
-> +        dev: &Device<Bound>,
-> +        dir: dma::DataDirection,
-> +    ) -> Result<Self> {
-> +        // SAFETY:
-> +        // - `dev.as_raw()` is a valid pointer to a `struct device`, which is guaranteed to be
-> +        //   bound to a driver for the duration of this call.
-> +        // - `sgt` is a valid pointer to a `struct sg_table`.
-> +        error::to_result(unsafe {
-> +            bindings::dma_map_sgtable(dev.as_raw(), sgt.as_ptr(), dir.as_raw(), 0)
-> +        })?;
-> +
-> +        // INVARIANT: By the safety requirements of this function it is guaranteed that `sgt` is
-> +        // valid for the entire lifetime of this object instance.
-> +        Ok(Self {
-> +            sgt,
-> +            dev: dev.into(),
-> +            dir,
-> +        })
-> +    }
-> +}
-> +
-> +impl Drop for DmaMapSgt {
-> +    fn drop(&mut self) {
-> +        // SAFETY:
-> +        // - `self.dev.as_raw()` is a pointer to a valid `struct device`.
-> +        // - `self.dev` is the same device the mapping has been created for in `Self::new()`.
-> +        // - `self.sgt.as_ptr()` is a valid pointer to a `struct sg_table` by the type invariants
-> +        //   of `Self`.
-> +        // - `self.dir` is the same `dma::DataDirection` the mapping has been created with in
-> +        //   `Self::new()`.
-> +        unsafe {
-> +            bindings::dma_unmap_sgtable(self.dev.as_raw(), self.sgt.as_ptr(), self.dir.as_raw(), 0)
-> +        };
-> +    }
-> +}
-> +
-> +#[repr(transparent)]
-> +#[pin_data(PinnedDrop)]
-> +struct RawSGTable {
-> +    #[pin]
-> +    sgt: Opaque<bindings::sg_table>,
-> +}
-
-Send/Sync?
-
-> +impl RawSGTable {
-> +    fn new(
-> +        mut pages: KVec<*mut bindings::page>,
-> +        size: usize,
-> +        max_segment: u32,
-> +        flags: alloc::Flags,
-> +    ) -> impl PinInit<Self, Error> {
-> +        try_pin_init!(Self {
-> +            sgt <- Opaque::try_ffi_init(|slot: *mut bindings::sg_table| {
-> +                // `sg_alloc_table_from_pages_segment()` expects at least one page, otherwise it
-> +                // produces a NPE.
-> +                if pages.is_empty() {
-> +                    return Err(EINVAL);
-> +                }
-> +
-> +                // SAFETY:
-> +                // - `slot` is a valid pointer to uninitialized memory.
-> +                // - As by the check above, `pages` is not empty.
-> +                error::to_result(unsafe {
-> +                    bindings::sg_alloc_table_from_pages_segment(
-> +                        slot,
-> +                        pages.as_mut_ptr(),
-> +                        pages.len().try_into()?,
-
-The `pages` vector is dropped immediately after this call to
-sg_alloc_table_from_pages_segment. Is that ok?
-
-If it's ok, then I would change `pages` to `&[*mut page]` so that the
-caller can manage the allocation of the array.
-
-(Or maybe a mutable array ...?)
-
-> +                        0,
-> +                        size,
-> +                        max_segment,
-> +                        flags.as_raw(),
-> +                    )
-> +                })
-> +            }),
-> +        })
-> +    }
-> +
-> +    fn as_raw(&self) -> *mut bindings::sg_table {
-> +        self.sgt.get()
-> +    }
-> +}
-> +
-> +#[pinned_drop]
-> +impl PinnedDrop for RawSGTable {
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // SAFETY: `sgt` is a valid and initialized `struct sg_table`.
-> +        unsafe { bindings::sg_free_table(self.sgt.get()) };
-> +    }
-> +}
-> +
-> +/// The [`Owned`] type state of an [`SGTable`].
-> +///
-> +/// A [`SGTable<Owned>`] signifies that the [`SGTable`] owns all associated resources:
-> +///
-> +/// - The backing memory pages.
-> +/// - The `struct sg_table` allocation (`sgt`).
-> +/// - The DMA mapping, managed through a [`Devres`]-managed `DmaMapSgt`.
-> +///
-> +/// Users interact with this type through the [`SGTable`] handle and do not need to manage
-> +/// [`Owned`] directly.
-> +#[pin_data]
-> +pub struct Owned<P> {
-> +    // Note: The drop order is relevant; we first have to unmap the `struct sg_table`, then free the
-> +    // `struct sg_table` and finally free the backing pages.
-> +    #[pin]
-> +    dma: Devres<DmaMapSgt>,
-> +    #[pin]
-> +    sgt: RawSGTable,
-> +    _pages: P,
-> +}
-> +
-> +// SAFETY: An instance of `Owned` can be send to any task if `P` can be send to any task.
-> +unsafe impl<P: Send> Send for Owned<P> {}
-
-Sync?
-
-> +impl<P> Owned<P>
-> +where
-> +    for<'a> P: page::AsPageIter<Iter<'a> = VmallocPageIter<'a>> + 'static,
-
-If you specifically require the iterator type to be VmallocPageIter,
-then I would hard-code that in the trait instead of specifying it here.
-
-But I think you just want `P: AsPageIter`.
-
+>   #define PAGE_ALLOC_SAMPLE_DEFAULT	1
+>   #define PAGE_ALLOC_SAMPLE_ORDER_DEFAULT	3
+>   
+> @@ -141,6 +150,23 @@ static int __init early_kasan_flag_vmalloc(char *arg)
+>   }
+>   early_param("kasan.vmalloc", early_kasan_flag_vmalloc);
+>   
+> +/* kasan.write_only=off/on */
+> +static int __init early_kasan_flag_write_only(char *arg)
 > +{
-> +    fn new(
-> +        dev: &Device<Bound>,
-> +        mut pages: P,
-> +        dir: dma::DataDirection,
-> +        flags: alloc::Flags,
-> +    ) -> Result<impl PinInit<Self, Error> + use<'_, P>> {
-
-We would probably want to move the logic into the initializer so that we
-don't have the double Result here.
-
-> +        let page_iter = pages.page_iter();
-> +        let size = page_iter.size();
+> +	if (!arg)
+> +		return -EINVAL;
 > +
-> +        let mut page_vec: KVec<*mut bindings::page> =
-> +            KVec::with_capacity(page_iter.page_count(), flags)?;
+> +	if (!strcmp(arg, "off"))
+> +		kasan_arg_write_only = KASAN_ARG_WRITE_ONLY_OFF;
+> +	else if (!strcmp(arg, "on"))
+> +		kasan_arg_write_only = KASAN_ARG_WRITE_ONLY_ON;
+> +	else
+> +		return -EINVAL;
 > +
-> +        for page in page_iter {
-> +            page_vec.push(page.as_ptr(), flags)?;
-> +        }
-> +
-> +        // `dma_max_mapping_size` returns `size_t`, but `sg_alloc_table_from_pages_segment()` takes
-> +        // an `unsigned int`.
-> +        let max_segment = {
-> +            // SAFETY: `dev.as_raw()` is a valid pointer to a `struct device`.
-> +            let size = unsafe { bindings::dma_max_mapping_size(dev.as_raw()) };
-> +            if size == 0 {
-> +                u32::MAX
-> +            } else {
-> +                size.min(u32::MAX as usize) as u32
-
-u32::try_from(size).unwrap_or(u32::MAX)
-
-> +            }
-> +        };
-> +
-> +        Ok(try_pin_init!(&this in Self {
-> +            sgt <- RawSGTable::new(page_vec, size, max_segment, flags),
-> +            dma <- {
-> +                // SAFETY: `this` is a valid pointer to uninitialized memory.
-> +                let sgt = unsafe { &raw mut (*this.as_ptr()).sgt }.cast();
-> +
-> +                // SAFETY: `sgt` is guaranteed to be non-null.
-> +                let sgt = unsafe { NonNull::new_unchecked(sgt) };
-> +
-> +                // SAFETY: It is guaranteed that the object returned by `DmaMapSgt::new` won't
-> +                // out-live `sgt`.
-> +                Devres::new(dev, unsafe { DmaMapSgt::new(sgt, dev, dir) })
-> +            },
-> +            _pages: pages,
-> +        }))
-> +    }
+> +	return 0;
 > +}
+> +early_param("kasan.write_only", early_kasan_flag_write_only);
 > +
-> +impl<P> SGTable<Owned<P>>
-> +where
-> +    for<'a> P: page::AsPageIter<Iter<'a> = VmallocPageIter<'a>> + 'static,
+>   static inline const char *kasan_mode_info(void)
+>   {
+>   	if (kasan_mode == KASAN_MODE_ASYNC)
+> @@ -257,15 +283,26 @@ void __init kasan_init_hw_tags(void)
+>   		break;
+>   	}
+>   
+> +	switch (kasan_arg_write_only) {
+> +	case KASAN_ARG_WRITE_ONLY_DEFAULT:
+> +	case KASAN_ARG_WRITE_ONLY_OFF:
+> +		kasan_flag_write_only = false;
+> +		break;
+> +	case KASAN_ARG_WRITE_ONLY_ON:
+> +		kasan_flag_write_only = true;
+> +		break;
+> +	}
+> +
+>   	kasan_init_tags();
+>   
+>   	/* KASAN is now initialized, enable it. */
+>   	static_branch_enable(&kasan_flag_enabled);
+>   
+> -	pr_info("KernelAddressSanitizer initialized (hw-tags, mode=%s, vmalloc=%s, stacktrace=%s)\n",
+> +	pr_info("KernelAddressSanitizer initialized (hw-tags, mode=%s, vmalloc=%s, stacktrace=%s, write_only=%s\n",
+>   		kasan_mode_info(),
+>   		str_on_off(kasan_vmalloc_enabled()),
+> -		str_on_off(kasan_stack_collection_enabled()));
+> +		str_on_off(kasan_stack_collection_enabled()),
+> +		str_on_off(kasan_arg_write_only));
+>   }
+>   
+>   #ifdef CONFIG_KASAN_VMALLOC
+> @@ -392,6 +429,13 @@ void kasan_enable_hw_tags(void)
+>   		hw_enable_tag_checks_asymm();
+>   	else
+>   		hw_enable_tag_checks_sync();
+> +
+> +	if (kasan_arg_write_only == KASAN_ARG_WRITE_ONLY_ON &&
+> +	    hw_enable_tag_checks_write_only()) {
+> +		kasan_arg_write_only == KASAN_ARG_WRITE_ONLY_OFF;
+> +		kasan_flag_write_only = false;
+> +		pr_warn_once("System doesn't support write-only option. Disable it\n");
+> +	}
+>   }
+>   
+>   #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
+> @@ -404,4 +448,10 @@ VISIBLE_IF_KUNIT void kasan_force_async_fault(void)
+>   }
+>   EXPORT_SYMBOL_IF_KUNIT(kasan_force_async_fault);
+>   
+> +VISIBLE_IF_KUNIT bool kasan_write_only_enabled(void)
 > +{
-> +    /// Allocates a new scatter-gather table from the given pages and maps it for DMA.
-> +    ///
-> +    /// This constructor creates a new [`SGTable<Owned>`] that takes ownership of `P`.
-> +    /// It allocates a `struct sg_table`, populates it with entries corresponding to the physical
-> +    /// pages of `P`, and maps the table for DMA with the specified [`Device`] and
-> +    /// [`dma::DataDirection`].
-> +    ///
-> +    /// The DMA mapping is managed through [`Devres`], ensuring that the DMA mapping is unmapped
-> +    /// once the associated [`Device`] is unbound, or when the [`SGTable<Owned>`] is dropped.
-> +    ///
-> +    /// # Parameters
-> +    ///
-> +    /// * `dev`: The [`Device`] that will be performing the DMA.
-> +    /// * `pages`: The entity providing the backing pages. It must implement [`page::AsPageIter`].
-> +    ///   The ownership of this entity is moved into the new [`SGTable<Owned>`].
-> +    /// * `dir`: The [`dma::DataDirection`] of the DMA transfer.
-> +    /// * `flags`: Allocation flags for internal allocations (e.g., [`GFP_KERNEL`]).
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::{
-> +    ///     device::{Bound, Device},
-> +    ///     dma, page,
-> +    ///     prelude::*,
-> +    ///     scatterlist::*,
-> +    /// };
-> +    ///
-> +    /// fn test(dev: &Device<Bound>) -> Result {
-> +    ///     let size = 4 * page::PAGE_SIZE;
-> +    ///     let pages = VVec::<u8>::with_capacity(size, GFP_KERNEL)?;
-> +    ///
-> +    ///     let sgt = KBox::pin_init(SGTable::new(
-> +    ///         dev,
-> +    ///         pages,
-> +    ///         dma::DataDirection::TO_DEVICE,
-> +    ///         GFP_KERNEL,
-> +    ///     ), GFP_KERNEL)?;
-> +    ///
-> +    ///     Ok(())
-> +    /// }
-> +    /// ```
-> +    pub fn new(
-> +        dev: &Device<Bound>,
-> +        pages: P,
-> +        dir: dma::DataDirection,
-> +        flags: alloc::Flags,
-> +    ) -> impl PinInit<Self, Error> + use<'_, P> {
-> +        try_pin_init!(Self {
-> +            inner <- Owned::new(dev, pages, dir, flags)?
-> +        })
-> +    }
+> +	return kasan_flag_write_only;
+> +}
+> +EXPORT_SYMBOL_IF_KUNIT(kasan_write_only_enabled);
+> +
+>   #endif
+> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+> index 129178be5e64..c1490136c96b 100644
+> --- a/mm/kasan/kasan.h
+> +++ b/mm/kasan/kasan.h
+> @@ -428,6 +428,7 @@ static inline const void *arch_kasan_set_tag(const void *addr, u8 tag)
+>   #define hw_enable_tag_checks_sync()		arch_enable_tag_checks_sync()
+>   #define hw_enable_tag_checks_async()		arch_enable_tag_checks_async()
+>   #define hw_enable_tag_checks_asymm()		arch_enable_tag_checks_asymm()
+> +#define hw_enable_tag_checks_write_only()	arch_enable_tag_checks_write_only()
+>   #define hw_suppress_tag_checks_start()		arch_suppress_tag_checks_start()
+>   #define hw_suppress_tag_checks_stop()		arch_suppress_tag_checks_stop()
+>   #define hw_force_async_tag_fault()		arch_force_async_tag_fault()
+> @@ -437,11 +438,17 @@ static inline const void *arch_kasan_set_tag(const void *addr, u8 tag)
+>   			arch_set_mem_tag_range((addr), (size), (tag), (init))
+>   
+>   void kasan_enable_hw_tags(void);
+> +bool kasan_write_only_enabled(void);
+>   
+>   #else /* CONFIG_KASAN_HW_TAGS */
+>   
+>   static inline void kasan_enable_hw_tags(void) { }
+>   
+> +static inline bool kasan_write_only_enabled(void)
+> +{
+> +	return false;
 > +}
 > +
-> +impl<P> Deref for SGTable<Owned<P>> {
-> +    type Target = SGTable;
-> +
-> +    fn deref(&self) -> &Self::Target {
+>   #endif /* CONFIG_KASAN_HW_TAGS */
+>   
+>   #if defined(CONFIG_KASAN_SW_TAGS) || defined(CONFIG_KASAN_HW_TAGS)
 
-Also #[inline].
+Thanks,
 
-> +        // SAFETY: `self.inner.sgt.as_raw()` is a valid pointer to a `struct sg_table` for the
-> +        // entire lifetime of `self`.
-> +        unsafe { SGTable::as_ref(self.inner.sgt.as_raw()) }
-> +    }
-> +}
-> +
-> +mod private {
-> +    pub trait Sealed {}
-> +
-> +    impl Sealed for super::Borrowed {}
-> +    impl<P> Sealed for super::Owned<P> {}
-> +}
-> +
-> +impl<'a> IntoIterator for &'a SGTable {
-> +    type Item = &'a SGEntry;
-> +    type IntoIter = SGTableIter<'a>;
-> +
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        self.as_iter()
-> +    }
-> +}
-> +
-> +/// An [`Iterator`] over the [`SGEntry`] items of an [`SGTable`].
-> +pub struct SGTableIter<'a> {
-> +    pos: Option<&'a SGEntry>,
-> +}
-> +
-> +impl<'a> Iterator for SGTableIter<'a> {
-> +    type Item = &'a SGEntry;
-> +
-> +    fn next(&mut self) -> Option<Self::Item> {
-> +        let entry = self.pos?;
-> +
-> +        // SAFETY: `entry.as_raw()` is a valid pointer to a `struct scatterlist`.
-> +        let next = unsafe { bindings::sg_next(entry.as_raw()) };
-> +
-> +        self.pos = (!next.is_null()).then(|| {
-> +            // SAFETY: If `next` is not NULL, `sg_next()` guarantees to return a valid pointer to
-> +            // the next `struct scatterlist`.
-> +            unsafe { SGEntry::as_ref(next) }
-> +        });
-> +
-> +        Some(entry)
-> +    }
-> +}
-> -- 
-> 2.50.1
-> 
+Ben
+
 
