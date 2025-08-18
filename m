@@ -1,140 +1,196 @@
-Return-Path: <linux-kernel+bounces-773144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EDDB29BE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F54CB29BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051CB18A7A3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E2A19606EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60F62FFDEC;
-	Mon, 18 Aug 2025 08:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=coresemi-io.20230601.gappssmtp.com header.i=@coresemi-io.20230601.gappssmtp.com header.b="JjCWV097"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6F82FFDD4;
+	Mon, 18 Aug 2025 08:22:08 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC782FF174
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9682D1D9346;
+	Mon, 18 Aug 2025 08:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505310; cv=none; b=qd4U3CIAgE2HNmSeHOVwgJREH1qeHW5VP52cJLuhMl7ej9rnev6r5SCyatW6Q92rrf0iKgN+rkaPRfbKoNci65E+Em31sXLBmR0wHkqB2RopM83WayJElxJcnIOKtoKfd7f+MVxDAcHVX9gCqSM9MUQ6xM4Xa70fuJggh6a/9Hk=
+	t=1755505328; cv=none; b=S/Lp17uYuZ1IHjg4U+GAs3Oj/2Uunc9LalCKWbWKv15mSVjRBFuCC3ecloi1T9R7c1qkRClWYS3opaNBnXMgTLmO9vHQzK41N1jKTwIrqt1HbXI1umvZpeCeJfmhABAKNLrBhvZNhyqWrsKzmihIY48ELmj0mi59AFOIZxSQavc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505310; c=relaxed/simple;
-	bh=IC5yTS1+GELm3By1CHbJyAIU3wdNxNxaQGQ7ykHg1J0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=XTTVGGinXDKtWTPa2NxdHlyhSKPRUw2O9S2yn4MSHZ1VMKwRn0ay+SqRJlkcHj/xi4IMh1W31PRnswlSS/5Kxn7v0Wor7famBZohx13n3y67tXC3WPZNFKE31DOSbWIIrBv5aLFDAUmGF6hqYWwFzlFfTIg2/XNe5X2aVkeZbEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coresemi.io; spf=none smtp.mailfrom=coresemi.io; dkim=pass (2048-bit key) header.d=coresemi-io.20230601.gappssmtp.com header.i=@coresemi-io.20230601.gappssmtp.com header.b=JjCWV097; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coresemi.io
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=coresemi.io
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4717543ed9so2586877a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=coresemi-io.20230601.gappssmtp.com; s=20230601; t=1755505308; x=1756110108; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rZKOijlZJzzyFkYu3fe0Wcg1XOYl5AWE1Ek2P30jLzw=;
-        b=JjCWV097prrKKxla50Spd7+zwWv2eqXSUgwdpjTzs3Y1jNvFsRCbh3eCdK9Mjs3H/T
-         lMUlMcFVFxWK78lbxDfLu/7xZSi7fi8OR9te7eAgB5TvZx0xkIBwD5IPXOzyNwCROZNM
-         Z2V3vtk6YSYmhHONEwtsj6ApzntDVv2tn/M2H6byASVS0up7z8CjrZTYi+usbW/qXstl
-         9dKCak0cg3Oh5e1xhJYj20cr57nLz66heYlUmBFd7BquhMD1jxDMvCIPgCVcQKXBwFsX
-         0k+qpPLMqMSwaWHjSCqnVD2RJVvm8/38A7XoXMZk2q7mLDU/VrqxLi1aqufBYEwf2RPn
-         d48Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755505308; x=1756110108;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rZKOijlZJzzyFkYu3fe0Wcg1XOYl5AWE1Ek2P30jLzw=;
-        b=Gq/43NiMrUQ23pNWgjZlERUI/411V8sm+E9xKM+ji3XC5W5buOUd8SMxU7xcq/SKbR
-         JjDDJ4sqmiPgsoVhUe5itLeyTi6LmXIZOAgn46N3kzDF37VDJyD/9dtCDhB6ApPUO2Ps
-         OXnb/Nkt3nD5iWg6kzrgB6iT4Zn6Z9LV0H+/lTR7pPK+yUlSd2v+3nr2B+Zpftn9AtNH
-         oxXhpzDdR6ne36Tok9scqzRxPiU7CMp8TF+gjtXZxEzndsXPp1F6rkgvD6Q0pJD0iGZv
-         jUEHr+3g/sFDWd/gkEOBK5VC4WPnyVRG32+wnV9bmFtDEi0LO9Ut5LOC6rAWlG3DNIyv
-         enXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXH3v9lKCz3EcHuorQ/n1VTsOaASEJaNOeFPP+GwOHe47GOU7aGvgQY0lzLS+FPStcjl2hm1L+Sj7Ad2tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwvnekj21YDtqvQNSQ+C18dUPwyZiVr1aKdBdYhrkvy2fOp2Rj
-	rGgdCxZxaQykpSxcqjCWWNsVcgWulhvLjafms30fw5wTUB/Y0oYExVpvprAV8qEqtYI=
-X-Gm-Gg: ASbGnctvHp9JUzuOSaUAh48XtM1fiBQ5q5KvWVqcYOJ/i2BSc/MRmnBoox/SUsRms5O
-	Q8Y4MqTxBeKuUSEVJiVBeXH9KSjVVJupQLGUW3KU5N1iJmeI88GHZCCndWA77NGWCtz9ydc2Den
-	eHE4o8dPqWxqN/uxDhVvOZBahc5RZyzHBEK/jp7h/HVOzVbfMeN/IHTLhn3JBwKdF04AKrM2Cn4
-	mZ4mbbbksF4Ctal9KVM1MwytPqfBWHzzht4uRC7Pi1KUGpnfKT1Wf0mquYR2cJ5h5kbQdSFmOLr
-	b3GiFb8NOC235Nmxd4fCoQY/q3mmaBejy6qNBdPTUIJ1AFyOxdUocsEJ3R4kItBZ8ZnxjAAf60t
-	g/uPg4BI97B0A4xOrhsNLYddS0Dnc8G9YO101zKqA4jB74lQ/JTj0t8vE5RJNEleCkg==
-X-Google-Smtp-Source: AGHT+IGpHGiItAdWLhYKN0tytxZOCv9SOXo+fu+nWJwB3baZRk3wfV7mivIDYOKu1TTapldDZH5Nwg==
-X-Received: by 2002:a17:903:11c4:b0:240:3f3d:fd37 with SMTP id d9443c01a7336-2446d87ff62mr136968385ad.27.1755505307843;
-        Mon, 18 Aug 2025 01:21:47 -0700 (PDT)
-Received: from smtpclient.apple (p121132.f.east.v6connect.net. [221.113.121.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446caaa804sm73467625ad.29.2025.08.18.01.21.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Aug 2025 01:21:47 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1755505328; c=relaxed/simple;
+	bh=NWE7JKTTm/gkFy/hNNDMyNlnmXsG/mHuvfZUm1OvLoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QWA8DXoWpu5bNYgRCDSyqLq0RBq1G1ZpLOxmbKPcwn/0C5jTD0AqmY/g5QMAnpdikEmLFUp8D7phvJ03p1HdzQX97BZeqKDG3ohEWbyq8lq5iS8btvJDV5Cfeg1C8tn/eYCD5O+cyByztLdgkdPU34O0ud4GKCjacpimld8oOCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c55Kl5VKQzKHNBq;
+	Mon, 18 Aug 2025 16:22:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 286BF1A07BB;
+	Mon, 18 Aug 2025 16:22:03 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgD3AbSp4qJoFbEZEA--.45966S2;
+	Mon, 18 Aug 2025 16:22:02 +0800 (CST)
+Message-ID: <bfd78e3b-936e-49e6-b17e-389ba016e8e7@huaweicloud.com>
+Date: Mon, 18 Aug 2025 16:22:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
-From: "D. Jeff Dionne" <jeff@coresemi.io>
-In-Reply-To: <26699eb1-26e8-4676-a7bc-623a1f770149@kernel.org>
-Date: Mon, 18 Aug 2025 17:21:32 +0900
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- Artur Rojek <contact@artur-rojek.eu>,
- Rob Landley <rob@landley.net>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- netdev@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <295AB115-C189-430E-B361-4A892D7528C9@coresemi.io>
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-3-contact@artur-rojek.eu>
- <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
- <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
- <CAMuHMdVGv4UHoD0vbe3xrx8Q9thwrtEaKd6X+WaJgJHF_HXSaQ@mail.gmail.com>
- <26699eb1-26e8-4676-a7bc-623a1f770149@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kernfs: Fix UAF in PSI polling when open file is released
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: cgroups@vger.kernel.org, chenridong@huawei.com,
+ gregkh@linuxfoundation.org, hannes@cmpxchg.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, mkoutny@suse.com,
+ peterz@infradead.org, tj@kernel.org, zhouchengming@bytedance.com,
+ Yang Erkun <yangerkun@huawei.com>
+References: <20250815013429.1255241-1-chenridong@huaweicloud.com>
+ <0319ee9b-ce2c-4c02-a731-c538afcf008f@huawei.com>
+ <e485b38a-183b-42c8-9aed-9c2d939add0b@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <e485b38a-183b-42c8-9aed-9c2d939add0b@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgD3AbSp4qJoFbEZEA--.45966S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF4DZF4DCrWrKF1kZr47Jwb_yoW5uw4Upa
+	90yF1UK3yUXr1qyrs2qF1vg3W8tayxJFyIgrn7Kr9aq3Z3trn5Ar1xCr15WFyDJrsxJr42
+	q3ZFk342yw4YyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	UAwIDUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Aug 18, 2025, at 17:07, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> git grep jcore,emac
->=20
-> Gives me zero?
 
-Um, right.  It=E2=80=99s not upstream yet.  Thanks for your work to get =
-that done, Artur.
+On 2025/8/18 16:00, Chen Ridong wrote:
+> 
+> 
+> On 2025/8/16 17:53, Baokun Li wrote:
+>>> From: Chen Ridong <chenridong@huawei.com>
+>>>
+>>> A use-after-free (UAF) vulnerability was identified in the PSI (Pressure
+>>> Stall Information) monitoring mechanism:
+>>>
+>>> BUG: KASAN: slab-use-after-free in psi_trigger_poll+0x3c/0x140
+>>> Read of size 8 at addr ffff3de3d50bd308 by task systemd/1
+>>>
+>>> psi_trigger_poll+0x3c/0x140
+>>> cgroup_pressure_poll+0x70/0xa0
+>>> cgroup_file_poll+0x8c/0x100
+>>> kernfs_fop_poll+0x11c/0x1c0
+>>> ep_item_poll.isra.0+0x188/0x2c0
+>>>
+>>> Allocated by task 1:
+>>> cgroup_file_open+0x88/0x388
+>>> kernfs_fop_open+0x73c/0xaf0
+>>> do_dentry_open+0x5fc/0x1200
+>>> vfs_open+0xa0/0x3f0
+>>> do_open+0x7e8/0xd08
+>>> path_openat+0x2fc/0x6b0
+>>> do_filp_open+0x174/0x368
+>>>
+>>> Freed by task 8462:
+>>> cgroup_file_release+0x130/0x1f8
+>>> kernfs_drain_open_files+0x17c/0x440
+>>> kernfs_drain+0x2dc/0x360
+>>> kernfs_show+0x1b8/0x288
+>>> cgroup_file_show+0x150/0x268
+>>> cgroup_pressure_write+0x1dc/0x340
+>>> cgroup_file_write+0x274/0x548
+>>>
+>>> Reproduction Steps:
+>>> 1. Open test/cpu.pressure and establish epoll monitoring
+>>> 2. Disable monitoring: echo 0 > test/cgroup.pressure
+>>> 3. Re-enable monitoring: echo 1 > test/cgroup.pressure
+>>>
+>>> The race condition occurs because:
+>>> 1. When cgroup.pressure is disabled (echo 0 > cgroup.pressure), it:
+>>>    - Releases PSI triggers via cgroup_file_release()
+>>>    - Frees of->priv through kernfs_drain_open_files()
+>>> 2. While epoll still holds reference to the file and continues polling
+>>> 3. Re-enabling (echo 1 > cgroup.pressure) accesses freed of->priv
+>>>
+>>> epolling			disable/enable cgroup.pressure
+>>> fd=open(cpu.pressure)
+>>> while(1)
+>>> ...
+>>> epoll_wait
+>>> kernfs_fop_poll
+>>> kernfs_get_active = true	echo 0 > cgroup.pressure
+>>> ...				cgroup_file_show
+>>> 				kernfs_show
+>>> 				// inactive kn
+>>> 				kernfs_drain_open_files
+>>> 				cft->release(of);
+>>> 				kfree(ctx);
+>>> 				...
+>>> kernfs_get_active = false
+>>> 				echo 1 > cgroup.pressure
+>>> 				kernfs_show
+>>> 				kernfs_activate_one(kn);
+>>> kernfs_fop_poll
+>>> kernfs_get_active = true
+>>> cgroup_file_poll
+>>> psi_trigger_poll
+>>> // UAF
+>>> ...
+>>> end: close(fd)
+> 
+> Thank you, Baokun.
+> 
+>> I think the problem is that kernfs_show() handles enable and disable
+>> inconsistently. When disable is called, it sets kn->active and then frees
+>> cgroup_file_ctx and psi_trigger. But when enable is called, it only sets
+>> kn->active. This mismatch means we can end up accessing the freed
+>> cgroup_file_ctx and psi_trigger later on.
+>>
+> 
+> I agree with that.
+> 
+>> A potential solution is to make the lifecycles of cgroup_file_ctx and
+>> psi_trigger match the struct kernfs_open_file they're associated with.
+>> Maybe we could just get rid of the kernfs_release_file call in
+>> kernfs_drain_open_files?
+>>
+> 
+> Hi, Tj, what do you think about this solution?
+> 
 
->> If an incompatible version comes up, it should use a different
->> (versioned?) compatible value.
->=20
-> Versions are allowed if they follow some documented and known vendor =
-SoC versioning scheme. Is this the case here?
->=20
-> This is some sort of SoC, right? So it should have actual SoC name?
+Or we should add KERNFS_HIDDEN check?
 
-No.  It=E2=80=99s a generic IP core for multiple SoCs, which do have =
-names.
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -812,7 +812,7 @@ void kernfs_drain_open_files(struct kernfs_node *kn)
+                        on->nr_mmapped--;
+                }
 
-This is the correct naming scheme.  All compatible devices and SoCs =
-match properly.
-J.
+-               if (kn->flags & KERNFS_HAS_RELEASE)
++               if (!kn->flags & KERNFS_HIDDEN && kn->flags & KERNFS_HAS_RELEASE)
+                        kernfs_release_file(kn, of);
+        }
 
-> Best regards,
-> Krzysztof
+-- 
+Best regards,
+Ridong
 
 
