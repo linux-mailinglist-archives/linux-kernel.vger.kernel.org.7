@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-773224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EE1B29CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F944B29CE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77C74E148A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:56:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 297D23B8296
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B843074B4;
-	Mon, 18 Aug 2025 08:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C69308F06;
+	Mon, 18 Aug 2025 08:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkZUQE5R"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KlzMiOE5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6E2275AE2;
-	Mon, 18 Aug 2025 08:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B304D307AD4
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755507382; cv=none; b=uJwCB0btLFvm/BkgLRn4cT8z4a2ptuNrALopKtlvdV7WILkqMt2oHH6X5wz87aPGfyktPWnZqR2N0Vw1stBwAxqnrtsSsEHLkvjFyO/UhOzxAvjvksuBqPmCWjmEhZ/MXAjSS2Ksi/Imbo6YDPCKjNKspqDanFsbz0MgpHdCWAE=
+	t=1755507445; cv=none; b=N7Zu1tp1pm8FwNXBSNOxVqMU69vQTKl2m4onBL9qz7vFTdqt3VwGnaj07Xpkt8HETOqiKhb0GTPouW9Cm2TQdHuy/Qcj7VIr1zJZkX4utxP+YSu1WWR/nz8yzFV5E4qs6/FD10OahMxoCORHcOmOg1iZMy3OUVqOCFjzeKmpRTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755507382; c=relaxed/simple;
-	bh=OL73hT3OhK99FPrkZtZUFj5a6fsQ+R9cHTctweIqbzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YZ/DbBaXlpmo5YNQzSQM84X7+0qPF4ugBq/ywQOuMwK07/45qy2vn4stPBEpH4LEVTiPCVSHDeDEuv2TW9n2rjYkgrTPG//DWq3d4CAcItcFrd1fg5InbypBuOBOIj4l9GP+JLZ++aBEBkUGS4QdlFEMeQOcML9Lx0RIb1D9R8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkZUQE5R; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-244581cd020so4485745ad.2;
-        Mon, 18 Aug 2025 01:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755507380; x=1756112180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DLE/+OJq5D1tm8Ct611f+t2W20HfUpodMhEG1suL1rY=;
-        b=QkZUQE5R6axn0qMdngaC6mKR4/jnJEEq196LaQg0cyd/VBvtZ1zDGhRUcAks2kWaMI
-         CQ16xPB2CMlqAQo5m7uI86KP/jlHQPVUpHRCydNyvii15kFT5UC9hJsti/iZVEF3XOQ6
-         7Z4aVfsRqnGGSsMyGSxowgjVY2WGkHP90XHR1lrAB3hFjD1oGQfaVUzFfNZa15ZDAKgH
-         LG+NGYzQaGlE1Zr1piKIOxIjqUITt1Lq2jxtfXdTzql82WD7Ac4qfzM5Z0o4OeMT3Djk
-         9fRlxg5EaT54vR7Z+hYwp8x7WqI/5hGntq3ss87y8BpqW49NloomKTzkQtYpC/5uVVQF
-         sSbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755507380; x=1756112180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DLE/+OJq5D1tm8Ct611f+t2W20HfUpodMhEG1suL1rY=;
-        b=kcp+yZccQQvhhamqseONie2xSnUYRAeNxDpS+tPxHPitNE5fpH4oa+k+1U56vyv2kJ
-         UXhel85MHXxXzDSHs9dvS5/oTrWYXrQswVyEfh9gvQ3xSnngksDlLFhR/CP7zvagf0mR
-         R+DOF02/NO/ZTmr1EmJs1FrvDnUU6LIJuUITJgn5d0FCKgmeKILUEapMd++urWeSnGBz
-         DahIXRLwFTGE6h1cTIcdAVAA7xm8RS2h9zh1TvxKaM0poqb9ld8pEOCSfIs8iZGyMsRV
-         HE4Vircl7ywDFlYztn3hPR7qiFCgfJ8NxdH062a8BVaJz94PTDCfIh4prsuxhjgdAzIJ
-         PGrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUA3cMlNACflyRhqFiA9KxlPGU3r94A4/EtBGyjNdlVKTfI/cJY6RNEmF3XJ+OYHEakHpW2xiKGaOG5DEI=@vger.kernel.org, AJvYcCVk28aW4Y0XWHgpocfhUKg+UlicV/mmWBt6iGMafq8tczpmOQYqDDnqNhiX5IiwhLAk+Y54xQO5kzWLF3Y=@vger.kernel.org, AJvYcCXX6t24ol5wi0Fca3Ztamgp0bLjAzPe5OPOvROwOxK71mdN42nWX+SdFurwX2CJWSqq3Hdkw/FmggFhC9VU1zY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN6QWziUkBsu0eayZ+RBhY8dPljaDEV52iz1s5whhLbBl9vvpa
-	JTrcePQRdAib++3G8DIdHy7+OvxOP6467CK1oF/WJJGVD14tHiVqemTy2OxFEMb9PygeoWbdKdr
-	ROx7t7+N84E3wPZKONUNDErJGDSCsIvU=
-X-Gm-Gg: ASbGncurMSdLBWwnkO+sp12ZzqJ8432uSeMfYthM8ZqCCSBCzMq3Iu93rIynir2fKyv
-	vg68MZLwhCp1NXy4rBrUZBgkgKYmeVzMfdbvU3+OADFnYxwWkPTENAkMz+y0F8H9h9macQ1+sAS
-	dYFKRZdqo12VepmeHkN0KngLBAvRqo8d6L8l/dd16hZ4Kfkfwy0hsaQU8osWbJMspN2PVKmYilC
-	K4Mga5Dy/+CquVMYcc=
-X-Google-Smtp-Source: AGHT+IFnYq4DPCSrNjSV1bQaU/mo30fY9TxDpsI8Q97EthVdpqNPEah3SP/l+NrUPauakRSfT5X6gSl7cufAyXa+VXM=
-X-Received: by 2002:a17:902:c94c:b0:240:4cf6:b07b with SMTP id
- d9443c01a7336-2446d948225mr80233615ad.9.1755507380351; Mon, 18 Aug 2025
- 01:56:20 -0700 (PDT)
+	s=arc-20240116; t=1755507445; c=relaxed/simple;
+	bh=1vD0b+NbL7zn+wNw+0SqpL3I9v+5+ESXqgiX0nxgEGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sfGgr4DqIUDMLxppiVp/Jk4gPK6MxxwKJOwmmNlMfTk+A1PDisraUpMKFrGctKfVAeDn9eXJ8DbGCNiQ9cbv4lZ6CDZ+65O/O5yoqvpbV5hvfip/rqbWlyTe351FH7U8XvbEkqfIrER9cjmziNnx1CLaiqS7JiVErDRS/14H+eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KlzMiOE5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755507442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BoHX2gnB2hICa4aYGq3mQ5MkH4urA39vEsLwOdQhShI=;
+	b=KlzMiOE5zVFBS0E9G9+IJRH6SnZqmySPFaiImXX70rrKg0cjzjg6HZMPQcA+Oh99qRfjvA
+	EXT9pmdTKg3ER977DonaehmBw8gQbtubqOzq3RPdekGbHlhS1iIPsKNI/1xtN7jC/iLtck
+	3zj4gVMedQzfppop4V/gY7AQhn7KNDg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-O8rd3TVONVyHOKVfVxtNXA-1; Mon,
+ 18 Aug 2025 04:57:19 -0400
+X-MC-Unique: O8rd3TVONVyHOKVfVxtNXA-1
+X-Mimecast-MFC-AGG-ID: O8rd3TVONVyHOKVfVxtNXA_1755507438
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C700F1800289;
+	Mon, 18 Aug 2025 08:57:17 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.213])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9AC9E180028B;
+	Mon, 18 Aug 2025 08:57:13 +0000 (UTC)
+From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To: "Michael S . Tsirkin " <mst@redhat.com>
+Cc: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Laurent Vivier <lvivier@redhat.com>,
+	virtualization@lists.linux.dev,
+	jasowang@redhat.com,
+	Cindy Lu <lulu@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Maxime Coquelin <mcoqueli@redhat.com>,
+	Yongji Xie <xieyongji@bytedance.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Subject: [RFC v3 0/7] Add multiple address spaces support to VDUSE
+Date: Mon, 18 Aug 2025 10:57:04 +0200
+Message-ID: <20250818085711.3461758-1-eperezma@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818-v4l2-v1-0-6887e772aac2@collabora.com> <20250818-v4l2-v1-1-6887e772aac2@collabora.com>
-In-Reply-To: <20250818-v4l2-v1-1-6887e772aac2@collabora.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 18 Aug 2025 10:56:08 +0200
-X-Gm-Features: Ac12FXwBBuluDOD_aLqqyhFrvJHlZY771s_SbG3fLmo_MmPXDyf6MPM071NFoCQ
-Message-ID: <CANiq72nE4gfek82PyOJKWD7Pq4mUWU-E=MFX8hw4LAQtQpr8yg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] rust: media: add the media module
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, kernel@collabora.com, 
-	linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Aug 18, 2025 at 7:51=E2=80=AFAM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
->  MAINTAINERS              | 7 +++++++
+When used by vhost-vDPA bus driver for VM, the control virtqueue
+should be shadowed via userspace VMM (QEMU) instead of being assigned
+directly to Guest. This is because QEMU needs to know the device state
+in order to start and stop device correctly (e.g for Live Migration).
 
-I would suggest splitting this into its own patch, "MAINTAINERS: "
-prefix, so that it is more visible. The other bits can be moved to the
-first patch that adds the file -- it is what we usually do.
+This requies to isolate the memory mapping for control virtqueue
+presented by vhost-vDPA to prevent guest from accessing it directly.
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477caa45799dfe07de2f54de6d6a1ce0615..6fc5d57950e474d73d5d65271=
-a0394efc5a8960b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15434,6 +15434,13 @@ F:     include/uapi/linux/uvcvideo.h
->  F:     include/uapi/linux/v4l2-*
->  F:     include/uapi/linux/videodev2.h
->
-> +MEDIA RUST INFRASTRUCTURE
+This series add support to multiple address spaces in VDUSE device
+allowing selective virtqueue isolation through address space IDs (ASID).
 
-It may be good to match the parent entry/subsystem, e.g. with "
-[RUST]" at the end or whatever is the convention for the subsystem (if
-there is no convention, then " [RUST]" is what we have been normally
-doing).
+The VDUSE device needs to report:
+* Number of virtqueue groups
+* Association of each vq group with each virtqueue
+* Number of address spaces supported.
 
-See e.g. "PCI SUBSYSTEM [RUST]".
+Then, the vDPA driver can modify the ASID assigned to each VQ group to
+isolate the memory AS.  This aligns VDUSE with gq}vdpa_sim and nvidia
+mlx5 devices which already support ASID.
 
-> +S:     Supported
+This helps to isolate the environments for the virtqueues that will not
+be assigned directly. E.g in the case of virtio-net, the control
+virtqueue will not be assigned directly to guest.
 
-Very nice to see Collabora wants to support this!
+This is still a RFC as it depends on the series that reworks the virtio mapping
+API:
+https://lore.kernel.org/all/20250813054831.25865-1-jasowang@redhat.com/
 
-> +F:     rust/media
+As some changes has been requested to it, these will need to be applied here
+too.
 
-rust/media/
+Also, to be able to test this patch, the user needs to manually revert
+56e71885b034 ("vduse: Temporarily fail if control queue feature requested").
 
-i.e. a trailing slash here is mandatory to include all files and subdirecto=
-ries.
+RFC: Not tested, just sent to justify the use of generic tokens in Jason's DMA
+rework.
 
-> +// SPDX-copyrightText: Copyright (C) 2025 Collabora Ltd.
+v3:
+* Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
+  value to reduce memory consumption, but vqs are already limited to
+  that value and userspace VDUSE is able to allocate that many vqs.  Also, it's
+  a dynamic array now.  Same with ASID.
+* Move the valid vq groups range check to vduse_validate_config.
+* Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
+* Use of array_index_nospec in VDUSE device ioctls.
+* Move the umem mutex to asid struct so there is no contention between
+  ASIDs.
+* Remove the descs vq group capability as it will not be used and we can
+  add it on top.
+* Do not ask for vq groups in number of vq groups < 2.
+* Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
+  VDUSE_IOTLB_GET_INFO.
 
-SPDX-FileCopyrightText?
+v2:
+* Cache group information in kernel, as we need to provide the vq map
+  tokens properly.
+* Add descs vq group to optimize SVQ forwarding and support indirect
+  descriptors out of the box.
+* Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
+  part of the struct is the same.
+* Fixes detected testing with OVS+VDUSE.
 
-> +//! Reference: <https://www.kernel.org/doc/html/latest/driver-api/media/=
-index.html>
+Eugenio Pérez (7):
+  vduse: add v1 API definition
+  vduse: add vq group support
+  vdpa: change map_token from void * to an empty struct
+  vduse: return internal vq group struct as map token
+  vduse: create vduse_as to make it an array
+  vduse: add vq group asid support
+  vduse: bump version number
 
-docs.kernel.org are nicer links :)
+ drivers/vdpa/vdpa_user/vduse_dev.c | 439 ++++++++++++++++++++++-------
+ drivers/virtio/virtio_ring.c       |   6 +-
+ include/linux/virtio.h             |   8 +-
+ include/linux/virtio_config.h      |  34 ++-
+ include/uapi/linux/vduse.h         |  73 ++++-
+ 5 files changed, 438 insertions(+), 122 deletions(-)
 
-    https://docs.kernel.org/driver-api/media/index.html
+-- 
+2.50.1
 
-> \ No newline at end of file
-
-Normally there would be one.
-
-Thanks!
-
-Cheers,
-Miguel
 
