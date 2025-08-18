@@ -1,291 +1,113 @@
-Return-Path: <linux-kernel+bounces-772944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF83B299A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:28:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E585B299A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E896A3BE71F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5686C3BFB46
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E09274B45;
-	Mon, 18 Aug 2025 06:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EE3274B3E;
+	Mon, 18 Aug 2025 06:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXX7rlwG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3J54Pw7"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4338C274B2A;
-	Mon, 18 Aug 2025 06:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF40274B30
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755498518; cv=none; b=oq61LStyKgbgtsYqGXIN9BTnoeFHAIvXlp6Yfv8TH4XdMzzg0rOctKxLq4OqGwC/PIH5NY/yGb+AKr+brPVJs+KBrtoQjxt1sL51gtv1/NeTNpXJVuGi8W7ol4CiaT1P31Db9CoIFAHCWEkMChJgkH8RDnJqko5w6N0nDhqEX3k=
+	t=1755498580; cv=none; b=L1yljTrIRuzM2Bu/fMVEZGUNSftzu2n2wvgffgE+yZeJjctoRh2MiyjD1VnDjtTuDgoWyIv8Vgyn6YJHvNV5E1SRS+OmkrjwTkuTw1qzKCw106a516gYAOcDNJNzQiAZ6dPqUBUjng4SN2gpWGQg+T9BPY1qa9apyVq9vtGaexg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755498518; c=relaxed/simple;
-	bh=FbnbRZKMKBATM5dvzv+W2sjK0yQmb8OPQUc1DWS/VfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ha1axgJZgpi04EL59rmez6HyTu/kxBsPVfGsXZ/IqeSDd5kgyu1I29x9ylrPrkGHa4iApbkEdxi7wRe+QGf3zgBgzvxg9rBa9bgD3x613YzoJpe9+DInnw/QsCrg4JXDFLbmsZZh4KdFnHpbHI1tNuq2Zc9LEaC87Vhp/+JlnAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXX7rlwG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFB3AC4CEEB;
-	Mon, 18 Aug 2025 06:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755498515;
-	bh=FbnbRZKMKBATM5dvzv+W2sjK0yQmb8OPQUc1DWS/VfU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kXX7rlwGNPiBoG60NaZqwQwFlkxv2WTgjnhU0z3rnUKWeWKd+WH99dCuO8TNHoONj
-	 GpQYTdFJ6OocGe2SySu2aTee/TTQC7hffh0FxWumPoE5nQmVmlGV09rlhzSHUA2jWb
-	 FzzGMZ6zKs4roT5mlJVcbMYBT+JUXDEJKi3tPPgH22AIBpLiZM8x7P1Tq+P540PkZ/
-	 cUz1KLDb5OIbBkfkujvM+5hSjS8rQmO4W6WIDBA+rpJeEu+HU2bh5b2uY0rBB8X0LI
-	 2eWr5OLbm2PuusaLsLVJWtY8YMmCQtVgh8NOHpYowl/XKVDyA/yxXh7HVWJ92hSa5i
-	 yYgHXQtKaWqnw==
-Message-ID: <cb826943-69d8-4fc9-8597-fbb2439f04f2@kernel.org>
-Date: Mon, 18 Aug 2025 08:28:30 +0200
+	s=arc-20240116; t=1755498580; c=relaxed/simple;
+	bh=5g0wbn6Ph17xvgAq5KvhX1KEiqUBS3GvRDxnv2BGP5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H9yGcU6uDgFhJg1JhqGFxY7Z8sOo2hyh+illwXdq9kv6+aJNwk+TYFwulUSofAvrRTT/YMVRbR9JZywn64+DcgD6yHdS6cZVW9Fp7k54ontmxoihFxD0/NOkPPPEbV9wOn14no43xf5II/7mk0jeXuUSWMMmytUV4D8NqslvERs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R3J54Pw7; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3bb30c72433so1024248f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 23:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755498577; x=1756103377; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3tkiOT20kGsUTSkgr+xHio85hrWrVQxIwikWx+eXEg=;
+        b=R3J54Pw7HrnCY/NY9e6PD7naRXa0JR+V4Uel8So/kGUyRoSq/Jx+YFBNBzhusO555d
+         e3bSJYtB71XIIwHCX0bVHpmD2gsnEFRwB2UYoIHOj0vDkiAnrt5NIPXQycxp/4RY2XgI
+         FwvPpmPupamcLpzNL1p6Che5pJVhWbNlVzUCCP9EaTuzNtB9zrgxEigAwVp3OVVTCJEw
+         GeBpmjEyVLsXNJvsA4HUQfNTUW9fNMcsAkBPU80h5aZDka5qg23E9xXLf1ZcWdgiSdlb
+         /OOIE2LlGc2ETR1HcVrfejReMAuYw0fg0jBc2h57/t9qAM3Fdfxw/fUNtU4pDwtGd7A8
+         OYPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755498577; x=1756103377;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+3tkiOT20kGsUTSkgr+xHio85hrWrVQxIwikWx+eXEg=;
+        b=fwwNQHozzPyBMNbVFUdwC4HcncRhKdk/inme+v0F6krDUD9/oagFW5IWBIBTZCjXRv
+         y89iBPUOgqMM0aBWKhsgIPKIe3WFhZ5DKF9Xv3LWZNBsEL4X/er6ob5EUzB71pKhErsl
+         fM4bt/DFn+ZqSTJqxHrvsZi4M1bT1gsx9VhioVSTLYikzNxqxHOKvooBxoGSGy1Ppj+S
+         OIq28BuK7IqAQiCP6Uoca7Doa8ii2ekGZ4XSOlfzJY8J9gdMNSXmyg/rYqHaVW5Zl8Sf
+         S7Gx5sFSWw9OfrofkPAUTzQPc4vIrSJvZVQL3vYTebWDnszK+O8g7Tp0caVLW8hseM/U
+         IzaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXqL/yt1x5UlfsZwiSoPRUrfs+0wo4wX5FsxV3SQ+FbwP5RJRXalGW+R+lGyUr4L4AAXJiGjCSf9X53jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOVe/ECZLhsuqcly2S6nXWOy7ZtE/BovWLbjeYTYgNq9SgSeQy
+	8SMFdPzW08H8wFOQYOa/0t/gcPE6z9OyHTWOz0m3daIbAQCY5Jc1ITGxhOg5BmiY9+c=
+X-Gm-Gg: ASbGncvGlKIQJBqyvq1vxMFZXPU/iNeU7WmCwx/4s4oL9qP1Qm8GMAmu7E4d+GYjLeM
+	ZtTJOGFltwTNc353jULw0h+Nysdz/QugcHxHMLKKBpiZUJZxyuzdtRASbIrwhvTTxcRGAdDJ/hk
+	2Ule6KbPOf3hkTDgNzsLJqxhmmRgH0ezih+CjwYLaqfsjVb9KmWVHGjH9BLKUR0yGSIj7RsZ/uS
+	qTnmD9Le+X02pQ3RYrIcFYj+iJIo89D6jfJ9GXn139BLtgbMjzYiIqNmuK1DnbPIIDU3lE9dL7G
+	5gZud90D/2grzFiXtmvUc6Va8ZaZDBQyJrhxS9k7gHkQ9ZqTFk/dX0IFdFcILG4oyJxye0hkevp
+	qQ8txwSdW5vi4FYHK4owRUReSCRLuNrSwFIZqVQ==
+X-Google-Smtp-Source: AGHT+IHndy6oVv4OJ+/MsKM5qa8MXzOeKQJV79th477YwHEuET0jW0JUWVhK0OGjN+EbNCIL5zw9Vg==
+X-Received: by 2002:a5d:5f8f:0:b0:3b9:6e:5242 with SMTP id ffacd0b85a97d-3bb66567d13mr7922421f8f.4.1755498576770;
+        Sun, 17 Aug 2025 23:29:36 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a223292d2sm123065385e9.21.2025.08.17.23.29.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 23:29:36 -0700 (PDT)
+Date: Mon, 18 Aug 2025 09:29:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+Cc: marvin24@gmx.de, gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: nvec: Silence unused argument warning in
+ NVEC_PHD macro
+Message-ID: <aKLITYYTOkMpNkQy@stanley.mountain>
+References: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] dt-bindings: iio: mcp9600: Add microchip,mcp9601
- and add constraints
-To: Ben Collins <bcollins@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>
-Cc: Ben Collins <bcollins@watter.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250818035953.35216-1-bcollins@kernel.org>
- <20250818035953.35216-2-bcollins@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250818035953.35216-2-bcollins@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
 
-On 18/08/2025 05:59, Ben Collins wrote:
-> From: Ben Collins <bcollins@watter.com>
+On Sun, Aug 17, 2025 at 08:24:25PM +0100, Mohammed Guermoud wrote:
+> The NVEC_PHD macro was defined with three arguments (str, buf, len)
+> that were not used in its empty body, causing a compiler warning.
 > 
-> The mcp9600 driver supports the mcp9601 chip, but complains about not
-> recognizing the device id on probe. A separate patch...
+> This patch silences the warning by explicitly casting the unused
+> arguments to (void), making the intent clear without changing
+> functionality.
 > 
-> 	iio: mcp9600: Recognize chip id for mcp9601
-> 
-> ...addresses this. This patch updates the dt-bindings for this chip to
-> reflect the change to allow explicitly setting microchip,mcp9601 as
-> the expected chip type.
-> 
-> The mcp9601 also supports features not found on the mcp9600, so this
-> will also allow the driver to differentiate the support of these
-> features.
-> 
-> In addition, the thermocouple-type needs a default of 3 (k-type). The
-> driver doesn't support this, yet. A later patch in this series adds it:
-> 
+> Signed-off-by: Mohammed Guermoud <mohammed.guermoud@gmail.com>
 
-None of this driver argument here and earlier is relevant. Please
-describe the hardware and reasons behind this patch.
+What's the warning.  Does it break the build since we're using -Werror?
 
-> 	iio: mcp9600: Add support for thermocouple-type
-> 
-> Lastly, the open/short circuit functionality is dependent on mcp9601
-> chipsset. Add constraints for this and a new property, microchip,vsense,
-> enables this feature since it depends on the chip being wired
-> properly.
-> 
-> Passed dt_binding_check.
+I feel like in the end, I'm going to say just ignore the compiler warning
+since this is not a bug in the code but obviously if it breaks the build
+then that's a different story.
 
-Drop, not relevant. You do not have to say that you built your code. You
-must build your code.
+regards,
+dan carpenter
 
-> 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-> ---
->  .../iio/temperature/microchip,mcp9600.yaml    | 69 +++++++++++++++----
->  1 file changed, 56 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> index d2cafa38a5442..1caeb6526fd20 100644
-> --- a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9600.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Microchip MCP9600 thermocouple EMF converter
-> +title: Microchip MCP9600 and similar thermocouple EMF converters
->  
->  maintainers:
->    - Andrew Hepp <andrew.hepp@ahepp.dev>
-> @@ -14,29 +14,30 @@ description:
->  
->  properties:
->    compatible:
-> -    const: microchip,mcp9600
-> +    oneOf:
-> +      - const: microchip,mcp9600
-> +      - items:
-> +          - const: microchip,mcp9600
-> +          - const: microchip,mcp9601
->  
->    reg:
->      maxItems: 1
->  
->    interrupts:
->      minItems: 1
-> -    maxItems: 6
-> +    maxItems: 4
-
-Why?
-I did not find explanation of this in commit msg.
-
->  
->    interrupt-names:
->      minItems: 1
-> -    maxItems: 6
->      items:
-> -      enum:
-> -        - open-circuit
-> -        - short-circuit
-> -        - alert1
-> -        - alert2
-> -        - alert3
-> -        - alert4
-> +      - const: alert1
-> +      - const: alert2
-> +      - const: alert3
-> +      - const: alert4
-
-Neither this and it is ABI break. ABI breaking needs clear reasoning why
-and some evaluation of impact on users.
-
-
->  
->    thermocouple-type:
->      $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 3
->      description:
->        Type of thermocouple (THERMOCOUPLE_TYPE_K if omitted).
->        Use defines in dt-bindings/iio/temperature/thermocouple.h.
-> @@ -44,6 +45,33 @@ properties:
->  
->    vdd-supply: true
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: microchip,mcp9601
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 1
-> +          maxItems: 6
-> +        interrupt-names:
-> +          items:
-> +            - const: alert1
-> +            - const: alert2
-> +            - const: alert3
-> +            - const: alert4
-> +            - const: open-circuit
-> +            - const: short-circuit
-> +        microchip,vsense:
-> +          default: false
-
-There is no default for bool.
-
-> +          description:
-> +            This flag indicates that the chip has been wired with VSENSE to
-> +            enable open and short circuit detect. By default, this is false,
-> +            since there's no way to detect that the chip is wired correctly.
-
-Properties should be defined in top level. Here you only disallow them
-(see example schema).
-
-> +          type: boolean
-> +
->  required:
->    - compatible
->    - reg
-> @@ -62,9 +90,24 @@ examples:
->              compatible = "microchip,mcp9600";
->              reg = <0x60>;
->              interrupt-parent = <&gpio>;
-> -            interrupts = <25 IRQ_TYPE_EDGE_RISING>;
-> -            interrupt-names = "open-circuit";
-> +            interrupts = <25 IRQ_TYPE_EDGE_RISIN>;
-> +            interrupt-names = "alert1";
->              thermocouple-type = <THERMOCOUPLE_TYPE_K>;
->              vdd-supply = <&vdd>;
->          };
->      };
-> +  - |
-> +    #include <dt-bindings/iio/temperature/thermocouple.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        temperature-sensor@60 {
-> +            compatible = "microchip,mcp9601", "microchip,mcp9600";
-> +            microchip,vsense;
-> +            reg = <0x62>;
-> +            interrupt-parent = <&gpio>;
-
-Incomplete interrupts.
-
-> +            vdd-supply = <&vdd>;
-> +        };
-> +    };
-
-
-Best regards,
-Krzysztof
 
