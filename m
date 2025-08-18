@@ -1,328 +1,141 @@
-Return-Path: <linux-kernel+bounces-773983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86691B2AD37
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:48:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC11B2AD23
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596245E60F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CC7958383F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0214D2E2287;
-	Mon, 18 Aug 2025 15:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D84D307AF9;
+	Mon, 18 Aug 2025 15:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4OLnLZ1G"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2041.outbound.protection.outlook.com [40.107.102.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfT3AiPf"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D21C24A067;
-	Mon, 18 Aug 2025 15:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531790; cv=fail; b=ON+fDWAijbWXx6VtvXvQkSrb4hrnSqqpvGvJYZ9swXSMAnBXKzw65M8k4AAUeAEg2artTzpEyX2Bu8yhb5sHmAFDYzt68MgOn25M9yX7gZ2ySou6dX3eQzeXtDRzqv09rhwsg4HWXiVKU5EVOKJRBXqfWfW2IOybRY5Ay5+UyHg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531790; c=relaxed/simple;
-	bh=auJZQ6dtrGAW4sdB8OktjQZaEs/6SD8tqOxPFSo5ulI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sTr+CNBc+tRI0i7Jt4npDKYOCLkRrauBJIuH/iXP+8qWatUXc9rgZCeD+OXhQ9gmV/aWNL8GWIQqQI8c8jMWNM6SZNUJlY0YH3i4KE38y8O+Rqub76ZlEdJj3b33CqMeqJzTatSJoek3c8ukDu/5p5AvA5IGpeRglgaT3LnjTfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4OLnLZ1G; arc=fail smtp.client-ip=40.107.102.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ogR7VVF3PWLN0iK0SxYxBB4pYk2BonYpGiIstyEu78oTVmIedRG9LasPJZQEIh44/AXUe8sagamOwiO9ucg+xtceU33X+0SukvovSW/nNCvT0D13lEXzu8CbDlO4oCkONCJbkJIFq19kWhVF14xOY9+4FWR/puzwn+mcI5Doj+2Zfo22wRedx8P1EZ6pIxX4b3WMIl/h0CMz/66MFZK4HasMzt5Y2M3s5RdVAin/e8RBzlNFBFq3PJFzNCQ372reqKlDge1TJ1P3fRQjYgRWiUh9lPeLxs/Ng8TehWfwkYyBSIAnm0/V5xE6JtVT+HOp0jWv26AqSF//4pGcCFCYYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qG/dCZ54MUYhEKd4/WOpD4onsaBHG329usUpaRg66jM=;
- b=ClFb2oa717DZ05hHdWi0LHhmLjw0aarpVXaq/tDFlc/QVB5Ax9PLrEKuvddNJwx5wKV6pA14JZvSZGb83aWJ/oqXcfGkgiMPbrVOZnmU/p4xDMp6+K5i/hA5aQ5YLitnnibkPkzkDcN+7BvoniWN8nUbCpL+VKXyExQGCMGcV7Jzmi5hkfhRYVJXVMJVTOx5BZzAykaNtLtbZvcmMAJkoXfiHWLRdOsx1a1ZTMExOlfSGNlpjykBZQ5JGuMYTSR3rwFeCx1FFjCug+Q23rKX+WVcf39Hik2ghBJys2ODN8rR87WC5va88FzEEfdF9mNZDgOwzjcsORKk9xL/cX+Jkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qG/dCZ54MUYhEKd4/WOpD4onsaBHG329usUpaRg66jM=;
- b=4OLnLZ1GaLP9MV5E4zu9wtwCsKL8gP4bR11a+14geLtvP6sWexeR7YG8I0LkN0WIGmAXGkC+MQ2k3UA51fNwRFvc0iFu8I+e6TaPK3z/TP08mwXi6v3QeJi5iMksYhQb6ggGBqI4cjakOluTFPfaRdOBtRhgH5o//HS29E3pxQk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DM4PR12MB6328.namprd12.prod.outlook.com (2603:10b6:8:a0::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Mon, 18 Aug
- 2025 15:43:05 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 15:43:05 +0000
-Message-ID: <f31550b1-b89c-47d6-b012-99479ba12aeb@amd.com>
-Date: Mon, 18 Aug 2025 17:43:00 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/amdgpu: Pin buffers while vmap'ing exported
- dma-buf objects
-To: Thomas Zimmermann <tzimmermann@suse.de>, sumit.semwal@linaro.org,
- oushixiong@kylinos.cn, alexander.deucher@amd.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org
-References: <20250818151710.284982-1-tzimmermann@suse.de>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250818151710.284982-1-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0247.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f5::10) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC69257846;
+	Mon, 18 Aug 2025 15:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755531805; cv=none; b=OyKR1wm3K6GRv90PqG2O5QfFKRQCSZldB93Lj+XJXJPZYfY4+C6B5J3BI8JPw/rN8EoMmvdeo105jdbOFcn/tJIfGyM4217jymfF++kUT8J1UAnjX7QRMwa6ZSGMxQuZFw7fNL8r5+mnNi9FMpoPAKy+latZe8oOsZA6zCeKL5E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755531805; c=relaxed/simple;
+	bh=KYMP6FkfCg7JKeo88RFMhWk1DN454moSu5L8teqBS7Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dsfSWAj+4d7XYzpTgBparFS5Rf1tQ5VJRQwE3L7M3BwI6oiaFfXtoedyT6BuuVMMidbzU0ay+qpCZFIhsyvgQBxV0FfU7kTCphB5aUCQ4IvWv8yPOIDkRfPuNKrz4oFP4tk2d+Grw7pl59MJ+jXtMR5T7SMEkjD20yt1enDx2Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfT3AiPf; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2445806e03cso42371765ad.1;
+        Mon, 18 Aug 2025 08:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755531803; x=1756136603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gJ/PV0RGi6n7Ose80iY3fbX/G2TGqZFVsosOFly79w=;
+        b=HfT3AiPfMGXYnoW1WOMK3+DmNsfPETw7+XaMNyOO9MsKqS26EIMWnVpkBEmgVS9NSt
+         ZZCVRuVuj92vrpdIa02DOjYHfK8uEaQS8s5UDHMGs1j7IgwYTDfMUwS8OPZYrgOXffFc
+         ezmszkKRQU4pEl97BOf/PXwATLLFelHHSMnZu+WhSIZtT1oY4PBOUHzudtMyj6rK7fcZ
+         qu0Ev1CblEy2+E0tz927sU4ZdgfhtiFkN3w32AuOuS76NAh8sXK9kklh/foq1RUdElKt
+         FC+Nz6+Is7Imu8Gewgyu5vVOOkRPkwdLAeBh/ZN9RftB3M48QJ1OjMmjw9bZmPMg44RL
+         ktIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755531803; x=1756136603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9gJ/PV0RGi6n7Ose80iY3fbX/G2TGqZFVsosOFly79w=;
+        b=JvLBR9yGz/dEkd8L/wovk6YMG6mlAkf9KHKz90KA1LtTn6VYzhA6wlNJxF/QhxhSHD
+         TZTwmOjlH4bYsfEshhst7spDMpo9UHarHwd5H1r40leJ9mMNr+Ksftl+bfk5FTSOhXHg
+         6prCBr82XkgSaiUrVyKjW05Yeuvja9FGUN49j/QExZ2iXThOhYskN4LIIc+uKIj11XG1
+         5nZLuVeDjeWPS3GMEsAWanfYobXXtH1DK8Su/pYgvCpXA4pq1XXGTHRL5Q4Tx6ePcPrW
+         4LAAZ6JXSG8Knx2h4miLB7uq8DAkAlXf07JOiXanIBoW6kyTnVlh3Kc4GaKdTkI4nMIZ
+         qcow==
+X-Forwarded-Encrypted: i=1; AJvYcCU6nCn/HRwhgQXXpRCFFx2ndpC/ZSOD9sqaz7BUcmX6j5eFbpSdnrnPZjRoGvPSOZgmdJHCqivc7KwRFg==@vger.kernel.org, AJvYcCUbKQD8LLCKjkoB9tNt/52sEOaDkQkldp/JoVEHav96phdX13CZ6XQtFKm7ZN1a6L0sigGAoefcZmVyiCE0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9czdMifxcRZ252SRriRm63qI/YGaoM5qS2ix07w1gN6bBYlMe
+	F37UMc9nY9N/OCDXNCpoUdNZ8IS4X6XcS3S8IaLXm8HC8TFxNhKjn0c/
+X-Gm-Gg: ASbGncveILD5KhrL8ja2Rko79DIvJoMRvqIfVgemBxyhM6lRorwfyxW11+0ixOnlZJF
+	lXqjyKVkHMFmDG/7XJqdkwaZkiurGZcy6G6bXAnP9dzUi4BBZX8FUwd4Suf14h6JlRff3fM8hAD
+	9aXF53A7F3AiLOasqCJrWa6ppS43BdRzJp49ZmfZvKx1z3I3nVrXadpi0a1QJD38F5Av9ICDKZr
+	yiE8yJHUo9oGIEF4iYTHx68LOcVv/0QCIQqLZCHtQMofps2oZdsGggrmJQ6vaBosNv6hIsCab/T
+	I8olM0wSfuJ4fD2E108d/AEYG7eFxa/qz5qthl/oi1EwuNB9pvSl9dNKYD3+/UB7jqfhdn/C3ME
+	ln5X1MlqF2L70COevZcu0tuHgJA+dXS0IQp7U+8oBO/lY2vl8KQ==
+X-Google-Smtp-Source: AGHT+IFjllZ9Rn0cBvaK2dkXox+Fg9pWWu/yOe7wl02I+mJYa9anzCVAf0uxoBm0B7fCwAN+ICJKGQ==
+X-Received: by 2002:a17:902:c40f:b0:242:9bbc:6019 with SMTP id d9443c01a7336-2446da2271fmr167677415ad.57.1755531803392;
+        Mon, 18 Aug 2025 08:43:23 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3237e3c31cdsm316885a91.3.2025.08.18.08.43.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 08:43:23 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: dtor@mail.ru,
+	x0r@dv-life.ru,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] HID: axff: add cleanup allocated struct axff_device heap
+Date: Tue, 19 Aug 2025 00:43:02 +0900
+Message-Id: <20250818154302.811718-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM4PR12MB6328:EE_
-X-MS-Office365-Filtering-Correlation-Id: a3ab80a1-c43f-46dd-da36-08ddde6dec36
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RGhEdFlCQi90QUp4a0doTFFpck8wU1RHU0hKeUlvWkhmK2o0aXl6bmZPQzVz?=
- =?utf-8?B?SHJ0OW1GdEgxVXRnYytIb21xRml3MVlNS0tINkdGM2tFdnlBbGVKUFU4eUxJ?=
- =?utf-8?B?Mk1NKzc0dGxuVUI5dlVJL1NXQUZ5SVFTa3RjdmpZcFpXZnlxcVNEZnVZVVBJ?=
- =?utf-8?B?dExBMDBuQlJiN0R3UEN3aTNISndOS0lYMjdGOXo0OW1yTThlZ1hzVzhVUVFK?=
- =?utf-8?B?NnZNLzBtbS9VUWlWR1ZLejAvY2NtWURDOWlVVWN1T040cnpERnJxNTFKMkJC?=
- =?utf-8?B?a0hxakozeGMrOUdZSjZpRnVFSDN3VEkrRVRuT0piYXdXcmVJcVJDU21RVmc0?=
- =?utf-8?B?Q1krVE1pbzNnYUo4ZUF5TlhPcmtNY0pjYmVQbUpsS3FvNmxleWJSY21YTngx?=
- =?utf-8?B?MDF3Wlp3V01BOWovQmZlc3c1NExOMzdNK1JHTFhUVkoyMDBteFF0anR3R2Jh?=
- =?utf-8?B?OGo3Y2FiZC9QUHZnVkJNQ1hVQ3RrWmZmeWZ5Q09ycUtHZXI3VDdmRVVSQXlR?=
- =?utf-8?B?Vk1NRnczd1ljYThSZjJmVFFrQmNUTjBWK2NOTzdTSnBIWm5DODdWTUhnWVkz?=
- =?utf-8?B?RGRUNllmQUZiRFA1WHpXMTNaMGVTc1VIc01Ha0xnSmpaYzJFekg3UG9YNlRQ?=
- =?utf-8?B?WklLZkNrZGtnZDdncFpTODBkS3RvdCtHTG5MSWhxWUlQZzBIT1oyRmpEQlRj?=
- =?utf-8?B?alpWbnNNL0lXU1VmcDZJa2tDM0ZOdk00TnZSRlh3bW51Vk1IWllTcjNJdE9w?=
- =?utf-8?B?KytXQXlETFBTTkxCY0N3UmZYV3pRY0hhQWdNSjRVeTdxL005S3JGYTB6aXZM?=
- =?utf-8?B?SjdURTRMdFp0TjMvQU5lQUF5dGkvdGxKNTNMUzdUZm0zYzI4WE1hVWN3T0Rn?=
- =?utf-8?B?T2ZqUkYyK0VsQ0czVzBlcHdIckxrcmxGL3ZLcDlvV0drcWYwb0pCQWhpYkpq?=
- =?utf-8?B?Q3dhR3ZaSk44d0hVOG1HT3YzRFg4KzJSZTUzWUxoeWJrelNIQVRTTzYwYjJF?=
- =?utf-8?B?RUlNMU5QWTlpaDVVOFdBVjdibjRjbHI0M1dvQVRjTHhqNzM4TUppS0hZeGt2?=
- =?utf-8?B?WFc4S0RrcXdlTUZsbXpLYlBBSllNZFlYSmJUTFdzNFM1bi90dEV6aWl3clFj?=
- =?utf-8?B?clVFdzZIaHRMM3gzUC9xQ1hKNGJCa0VjT3k2Slh5UmVqMDhnYlJNNHFhT1Ny?=
- =?utf-8?B?Y2FQbHk3azhDQXV0Q3lWcmJTYmFKaStzMGFhVDBXRzlFaTR4MmFsOHFXSWxH?=
- =?utf-8?B?dEZjT1E2OXliK2RWdkNXbzR5QXRpZGJFV2JkNWhPaTE0ZDVCck9McGZ4MmdR?=
- =?utf-8?B?OUhKWnMrQU9lbnNuakFGc0o0SmI2V1JXMVN5aUROcjhFNGVxTzhkTkloNjlj?=
- =?utf-8?B?dm5rbytNa3ZMbkRDdGZOUWtLM1NNVjdmeXZDci8rVHpjSHVocDJITDJDc1BO?=
- =?utf-8?B?K0NsY1ZsekFqbGpUMGdSaDYyVUpYM3E3d294M2hRYXpKdHJ0MUkwNUhnRkg1?=
- =?utf-8?B?ZmliMWUyU1ZxUVo2bmZHWVd2UEVveHNFa0FLOWJGUE5GQzNQcmdIb2JaN2ZO?=
- =?utf-8?B?QzR6ekFIWUd6eXpsdmZUTmVYWVhNaFdpM0ZkV3dRZlQxdHlFbXIwT0VsWWFI?=
- =?utf-8?B?cGQ2QVU1eW1Icys5SUpkL1E0Y3NUWkppOTNhWk1XWFFaMnZHcTBOdnExOWZ5?=
- =?utf-8?B?YldtZi91ZUQxN1RFQ0g5bkxFR3Q3OFlWNFJWNU9zMU1pK0p0QysvYWRrd3VU?=
- =?utf-8?B?cU5FN1BmbEZMQ1U3c2pVYmZQbHhXdE5USE9wRndsM1hMbzVTbGRNQVZXd1Rk?=
- =?utf-8?B?d2hIRnY0WU9ldTFPeXBEOWZQL3JDQktMdDlWbnp6L3FUalg5eHJqRVd0aGZv?=
- =?utf-8?Q?6ANwi9j+EpRRy?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RlBXVU9jKzNPdjZkMndMT2w5bzhkT2xNZldIbFBnbGQrdkllbW9kMkhDYStx?=
- =?utf-8?B?ZTR1bVBzUTh0SEUvUUhRMStrMlV1K2E4a0J5NUJrd3FxRVBwdWRVWWozRmFB?=
- =?utf-8?B?MEdmZ2FxNWpLNGFmN3dxU05ETGlpcEI1UkEvQzV5UG5NOW8wcDFDcG5NcVVj?=
- =?utf-8?B?clNJdDRCNVUrQlZiZEdUSFlGS0tSRk5oYUg1clMzdXFnQkRoVEpiTWhPSDRJ?=
- =?utf-8?B?OVlocjQ2QjFBSzMwZ1h1a0FPRW52OXlEdUVPVHRRYy9MMWFxdVlOTUlLdU9t?=
- =?utf-8?B?WUt1bjJ5c2tOZ1QvaFJVZEgzWVEzenFJMGMrOHYyRklxUGNKeEI3YXZpYXRB?=
- =?utf-8?B?d2FGRHlOcGtpVmU4N1FFaDN6K3B1Y1ZiaUxONGlORXNRRGs1OHZoYkhLeDRX?=
- =?utf-8?B?YWdlbkxVKysraHV6QnoyS3hrdCs3YlBVcjlPZGNBRHdNNm1NZlM5VEdRN2gz?=
- =?utf-8?B?dlNnbCtHMTlCM1l5RUZDTnVUaXVFLzI0aTBFN1EwZ1VHdnpaMDVzRS9kVXVK?=
- =?utf-8?B?L1QySHJHQ1JUbEVGckh3aWxLZHErVVBjVHdBOTM2OFpYdFF6UlhkUHQyMjRo?=
- =?utf-8?B?VTYzalh3RWtFS3E3UWdJekk5S0RhSk9IMFVjTmJMV1N1QVBHTm81THp6RDlX?=
- =?utf-8?B?T09BSU55Zi9zZTBxcWFmM1d3VFhyWUlzTlk5K3p6RGVwMjhmNXdNNjQvWEtN?=
- =?utf-8?B?WkJqOWlUY1Z4QndTdUtWMWlabzIzbysyNGxaOFZ6b2plMDE3NDV6WStoenIz?=
- =?utf-8?B?MklqK3Uyd3Z6WlBjM2hNYVY4dlJ0OWNqWVRmano5L0UvSUY2ZFNKSmFQdEVX?=
- =?utf-8?B?TktMYXRnSzY4aklOM0l0VWlGQ0dhMjVuY21wTW5RQStCajlOaEFkeHZDSWdi?=
- =?utf-8?B?a3czNElubDdSTGpFNnU5OTErMG8vYWZwbjloMEx3blIzN25zTE54aHlRbUxl?=
- =?utf-8?B?VFp1eis2SFRrZDJkQVNXQUs1dXVKeXJOTytMM2FlOUVmcjNRdEcweVNrTU50?=
- =?utf-8?B?ZEdpUzczMGFTYmZxell6S1pEbTBCS1BOZkVXUG5HNG9sS01pekJYUnczSCtl?=
- =?utf-8?B?aE1pNDFqMytZbjRieWtWK2dQcW00VjlxUlJ6YURhcXRWZXpRQzlibVh3aVBQ?=
- =?utf-8?B?THMzR21NS3NkeWtYazU1cDZqOTdpOTdoSHI3V3JSWkJlc2VpbC9leCtFdFFU?=
- =?utf-8?B?c0RJMDJ2YUhFdklUV2Npd2V4YTRITTZsNDZ6RTVrcTQweUMxWGd1bndlS21F?=
- =?utf-8?B?RlJndDFFcVNlTit4aVhPRnRrRWdud2FMNkx4MThjbFZFVXFmNTdXTXRkb3NF?=
- =?utf-8?B?aWRMYjUvV242RzNOTGthT2VJd3lvQkFpVjhFQitKOHZQNVZ3MHk5YjZEQzNO?=
- =?utf-8?B?M25LWlZQcmx2aVBxQWt0WDFRejJ5dUhNbHBibE1TTnlVdkZHWUxKdlBNVDVn?=
- =?utf-8?B?dGozSXREM2tuakJMZGprbk1UUHJ5a1lBSWkreklkRTlFd3FjdzdDc3hrZ3NK?=
- =?utf-8?B?VnRHejZsVVBDTm80TS9mUGp3VnVEWmFybktVSGdEaEtUc3N0Vld1SGh0VjRP?=
- =?utf-8?B?SmtPa0Naalpma3kwVHBIT3hoclErWmhPN1V3VmhkSWhCZ1l2WTVWMGNKdmJn?=
- =?utf-8?B?TFlEeFpyMmlSYnBpYUNXK3RGSjdLYjZDUXo4a1FQVTZtR21HVVRhR1QwTy9W?=
- =?utf-8?B?WHhoSXFEM2s1OUJIM3VPMFdPNE40TkpNWERucFN0OVpkU004YXd1S0hCK1gv?=
- =?utf-8?B?dXh0WnVWUUF3b1RLbktpVDZKRzRaa2Q4TklETnlMeWZkMSt1bzBNbkZibWFv?=
- =?utf-8?B?Y01yRDJlZVZ1Rk9pTG8vMElROXlVeVhDQ3NtY2dHbUxyWlVVTTAwQ2NXKzlL?=
- =?utf-8?B?cnVzUk9ZejhvbW5sbmJMdFRkNVp4NmVaTEZSYnVwSjNWYjZVcno2b1BuN1FM?=
- =?utf-8?B?T1pXcVBUUFRwZXFMMHVvR25URi9KMHg2RWZYVG9tUGNNMnN5bEdVR2RTNmxu?=
- =?utf-8?B?ZEQyRTdaNGFkaG5XRG5HY3k0TGV3WllsYXJjYzliV0laZGhTV0NPTkgvQ0N4?=
- =?utf-8?B?RVpQaHkvQ2JVN09oRkp4TUNyNnpOdUdOLytYWXprQ0Z5OWxkR3kvOXFDOXB2?=
- =?utf-8?Q?/5KG1vWvXP4ZdNEkg1HPzsRxZ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3ab80a1-c43f-46dd-da36-08ddde6dec36
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 15:43:05.4474
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Znyht2nrhWYP2fChyhX0iXyptAxXznqP4nB26aQ+onVnYmfG6ZL2KuPAMv2tZBpc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6328
+Content-Transfer-Encoding: 8bit
 
-On 18.08.25 17:17, Thomas Zimmermann wrote:
-> Current dma-buf vmap semantics require that the mapped buffer remains
-> in place until the corresponding vunmap has completed.
-> 
-> For GEM-SHMEM, this used to be guaranteed by a pin operation while creating
-> an S/G table in import. GEM-SHMEN can now import dma-buf objects without
-> creating the S/G table, so the pin is missing. Leads to page-fault errors,
-> such as the one shown below.
-> 
-> [  102.101726] BUG: unable to handle page fault for address: ffffc90127000000
-> [...]
-> [  102.157102] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
-> [...]
-> [  102.243250] Call Trace:
-> [  102.245695]  <TASK>
-> [  102.2477V95]  ? validate_chain+0x24e/0x5e0
-> [  102.251805]  ? __lock_acquire+0x568/0xae0
-> [  102.255807]  udl_render_hline+0x165/0x341 [udl]
-> [  102.260338]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
-> [  102.265379]  ? local_clock_noinstr+0xb/0x100
-> [  102.269642]  ? __lock_release.isra.0+0x16c/0x2e0
-> [  102.274246]  ? mark_held_locks+0x40/0x70
-> [  102.278177]  udl_primary_plane_helper_atomic_update+0x43e/0x680 [udl]
-> [  102.284606]  ? __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
-> [  102.291551]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
-> [  102.297208]  ? lockdep_hardirqs_on+0x88/0x130
-> [  102.301554]  ? _raw_spin_unlock_irq+0x24/0x50
-> [  102.305901]  ? wait_for_completion_timeout+0x2bb/0x3a0
-> [  102.311028]  ? drm_atomic_helper_calc_timestamping_constants+0x141/0x200
-> [  102.317714]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
-> [  102.323279]  drm_atomic_helper_commit_planes+0x3b6/0x1030
-> [  102.328664]  drm_atomic_helper_commit_tail+0x41/0xb0
-> [  102.333622]  commit_tail+0x204/0x330
-> [...]
-> [  102.529946] ---[ end trace 0000000000000000 ]---
-> [  102.651980] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
-> 
-> In this stack strace, udl (based on GEM-SHMEM) imported and vmap'ed a
-> dma-buf from amdgpu. Amdgpu relocated the buffer, thereby invalidating the
-> mapping.
-> 
-> Provide a custom dma-buf vmap method in amdgpu that pins the object before
-> mapping it's buffer's pages into kernel address space. Do the opposite in
-> vunmap.
-> 
-> Note that dma-buf vmap differs from GEM vmap in how it handles relocation.
-> While dma-buf vmap keeps the buffer in place, GEM vmap requires the caller
-> to keep the buffer in place. Hence, this fix is in amdgpu's dma-buf code
-> instead of its GEM code.
-> 
-> A discussion of various approaches to solving the problem is available
-> at [1].
-> 
-> v2:
-> - only use mapable domains (Christian)
-> - try pinning to domains in prefered order
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Fixes: 660cd44659a0 ("drm/shmem-helper: Import dmabuf without mapping its sg_table")
-> Reported-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Closes: https://lore.kernel.org/dri-devel/ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de/
-> Cc: Shixiong Ou <oushixiong@kylinos.cn>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> Cc: "Christian König" <christian.koenig@amd.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-media@vger.kernel.org
-> Cc: linaro-mm-sig@lists.linaro.org
-> Link: https://lore.kernel.org/dri-devel/9792c6c3-a2b8-4b2b-b5ba-fba19b153e21@suse.de/ # [1]
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 41 ++++++++++++++++++++-
->  1 file changed, 39 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-> index 5743ebb2f1b7..471b41bd3e29 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-> @@ -285,6 +285,43 @@ static int amdgpu_dma_buf_begin_cpu_access(struct dma_buf *dma_buf,
->  	return ret;
->  }
->  
-> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
-> +{
-> +	struct drm_gem_object *obj = dma_buf->priv;
-> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-> +	int ret;
-> +
-> +	/*
-> +	 * Pin to keep buffer in place while it's vmap'ed. The actual
-> +	 * domain is not that important as long as it's mapable. Using
-> +	 * GTT should be compatible with most use cases. VRAM and CPU
-> +	 * are the fallbacks if the buffer has already been pinned there.
-> +	 */
-> +	ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT);
-> +	if (ret) {
-> +		ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_VRAM);
+Currently, acrux hid driver allocates heap memory equal to
+sizeof(struct axff_device) to support force feedback, but there's no code
+to free this memory except when initialization fails. This causes the
+allocated memory to not be freed even if the driver is detached.
 
-That makes even less sense :)
+Therefore, to properly clean up and safely manage the allocated heap,
+must be modified to use devm_kzalloc().
 
-The values are a mask, try this:
+Fixes: c0dbcc33c652 ("HID: add ACRUX game controller force feedback support")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ drivers/hid/hid-axff.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT | AMDGPU_GEM_DOMAIN_VRAM);
-
-Otherwise the pin code will try to move the buffer around to satisfy the contrain you given.
-
-And don't use the CPU domain here, this will otherwise potentially block submission later on.
-
-Regards,
-Christian.
-
-> +		if (ret) {
-> +			ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_CPU);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +	ret = drm_gem_dmabuf_vmap(dma_buf, map);
-> +	if (ret)
-> +		amdgpu_bo_unpin(bo);
-> +
-> +	return ret;
-> +}
-> +
-> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
-> +{
-> +	struct drm_gem_object *obj = dma_buf->priv;
-> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-> +
-> +	drm_gem_dmabuf_vunmap(dma_buf, map);
-> +	amdgpu_bo_unpin(bo);
-> +}
-> +
->  const struct dma_buf_ops amdgpu_dmabuf_ops = {
->  	.attach = amdgpu_dma_buf_attach,
->  	.pin = amdgpu_dma_buf_pin,
-> @@ -294,8 +331,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
->  	.release = drm_gem_dmabuf_release,
->  	.begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
->  	.mmap = drm_gem_dmabuf_mmap,
-> -	.vmap = drm_gem_dmabuf_vmap,
-> -	.vunmap = drm_gem_dmabuf_vunmap,
-> +	.vmap = amdgpu_dma_buf_vmap,
-> +	.vunmap = amdgpu_dma_buf_vunmap,
->  };
->  
->  /**
-
+diff --git a/drivers/hid/hid-axff.c b/drivers/hid/hid-axff.c
+index fbe4e16ab029..b8202737f4c8 100644
+--- a/drivers/hid/hid-axff.c
++++ b/drivers/hid/hid-axff.c
+@@ -96,7 +96,7 @@ static int axff_init(struct hid_device *hid)
+ 		return -ENODEV;
+ 	}
+ 
+-	axff = kzalloc(sizeof(struct axff_device), GFP_KERNEL);
++	axff = devm_kzalloc(&hid->dev, sizeof(struct axff_device), GFP_KERNEL);
+ 	if (!axff)
+ 		return -ENOMEM;
+ 
+@@ -104,7 +104,7 @@ static int axff_init(struct hid_device *hid)
+ 
+ 	error = input_ff_create_memless(dev, axff, axff_play);
+ 	if (error)
+-		goto err_free_mem;
++		return error;
+ 
+ 	axff->report = report;
+ 	hid_hw_request(hid, axff->report, HID_REQ_SET_REPORT);
+@@ -112,10 +112,6 @@ static int axff_init(struct hid_device *hid)
+ 	hid_info(hid, "Force Feedback for ACRUX game controllers by Sergei Kolzun <x0r@dv-life.ru>\n");
+ 
+ 	return 0;
+-
+-err_free_mem:
+-	kfree(axff);
+-	return error;
+ }
+ #else
+ static inline int axff_init(struct hid_device *hid)
+--
 
