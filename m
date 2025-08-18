@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-773904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A2EB2AC06
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:03:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C25EB2AC19
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5028D1B2362F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B496812D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC90242D70;
-	Mon, 18 Aug 2025 14:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E9B23D7EA;
+	Mon, 18 Aug 2025 14:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o961xHW1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ZohjIzNQ"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A985535A2B9;
-	Mon, 18 Aug 2025 14:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543EE35A2AC;
+	Mon, 18 Aug 2025 14:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755529065; cv=none; b=Hv9Gf6jhP7OU6ZgV64tS5Iezc7SuO5Y3AV+qVl/XH9N1O+PpJMkHPamKVK3ckFCuRo6TWoSsSg+afBgbvBx4ln0goYTd/60yhQeI0V/4IgGxcldHMcFviLwukSGaYaev2d+jCa2eSmT6HkYuQlJhvbmkyym5fkAB8Gb3o1Z35DM=
+	t=1755529137; cv=none; b=YnysyVkKD/XDKK4IG04wKGFZ1GoPLT3kxIvc+F7SmfokQmnwrIO+oNYjmiDw2XGnfZ3jiAPXgbAmlHYotUopms+w0zTa/p6W5FAZG5VHSpHQCx7QZWVHtIdkepEs+u3bDgK8ywiRbRMaX5oIPzGfTG4ymPmU5nyoXZFxBdsQmms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755529065; c=relaxed/simple;
-	bh=fxjpl7asl8KgiwlfZoIW1bbJhs+WMizR72o5Nm2FTt4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=m7eUY1Wb0xYrp+ITXgRs7bi1B/NL7J8KNVH4VF4GYbYN49xUz4FnpjDgoXkp+t3erLYIpFySj5V6kBT360YW7hlq9q8zmMQPu/KdLE56GKh4AuidaKfORUTbg8tUwcpxDLHHMGvvEve5OI+PtuW8OM3os0AsS7DfqJIuyh1PGi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o961xHW1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DA8FC4CEEB;
-	Mon, 18 Aug 2025 14:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755529063;
-	bh=fxjpl7asl8KgiwlfZoIW1bbJhs+WMizR72o5Nm2FTt4=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=o961xHW1StP2YxwSH+foXj9a462Mbib7uaamtopiOykiFOo8Lqp488gNnQZiKVOra
-	 MM0uwwNLsx0nxoqW+9XrItJcOQShnLNMM5CnNYTmZ6qPu8lWkaMCIcYzh/E/r+CYzN
-	 mdOqIvq7SF83SDYQiHe33rkzRhC3h/y0kGHaCVMzVXawtgokZlj4DrARzFfVcMu85Y
-	 +/NWuIiWY7r52y57iLA8HnB7JsoGMmwdJ+EcUkLzV6LS+WN1qzAK9k7nzwy1dVoSrz
-	 U6N54yRdCXkvq0k5nchDsBqn3z00X7VeHgKxyBB7zrwuT3D6Z6rMKN4fXJOtQxO63F
-	 HRVE5SWhU0zTA==
+	s=arc-20240116; t=1755529137; c=relaxed/simple;
+	bh=sj/oXfDVVXELOAADYk1HnGfq6Lc0xGCmRN8XpZzZMCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=P0JQ4E7qMRPO4ujumqn9Ahy7jmvb2Lwxx5Trle+VcLfWTcl90OI1Fmd2yY/8c2alkfboeAH0DjrwOO5/vsJgByFOVlhZmz8sLhRNUf8QFc2m16o4DDcDDGb16bYzaZ655437cEHlTk2LAZSXMNJCJylfUdcX2gBxWCaUJx9KLIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ZohjIzNQ; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c5G7b537qz9t7s;
+	Mon, 18 Aug 2025 16:58:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1755529131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=It6WsGpfjWI4leoXs05vkzx9/2tYzuPt+sPubFhfa+0=;
+	b=ZohjIzNQt2wCVmQYGFKOP73CFbd6Ia0/eaGon8+3QyJWF1qEjO3Ww3UY5k/frrG/RiYlHC
+	Gr/S+lyczLT2Knd0qczhXn2tzrfObKvXItL8eQzz7O9RPyaQPSIUX7KqRjmRAiS8+ojZVD
+	ZoWeeH3G1LHZgkLl4EMyUwrAnIXGI7B7xOJovQFn/i87Jqfbt2iUsSGfvI3M/CKVSe7Xbn
+	TntQ2bHdqBtkddu2hZyQh9+9v0E5mC2zqzqyc1zXrro52VjACsNYWZdaQ6tlahOzvvTLJQ
+	dJsvfcKTHPaAo5ex3L0T6ZMJjiunz6u30bzxbdbIfeZeyGk72zL0/3jinC4YeA==
+Message-ID: <d1510b98-5094-4eec-b81b-55d0ba3e1b4a@mailbox.org>
+Date: Mon, 18 Aug 2025 16:58:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 18 Aug 2025 16:57:37 +0200
-Message-Id: <DC5N439ZNA6E.34LSQ3K5366P7@kernel.org>
-Subject: Re: [PATCH v2 1/3] rust: pci: provide access to PCI Class,
- subclass, implementation values
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
-To: "John Hubbard" <jhubbard@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250818013305.1089446-1-jhubbard@nvidia.com>
- <20250818013305.1089446-2-jhubbard@nvidia.com>
-In-Reply-To: <20250818013305.1089446-2-jhubbard@nvidia.com>
+MIME-Version: 1.0
+Subject: Re: [PATCH] arm: dts: stm32: Drop redundant status=okay
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Christoph Niedermaier <cniedermaier@dh-electronics.com>,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel@dh-electronics.com
+References: <20250818143730.244379-2-krzysztof.kozlowski@linaro.org>
+ <388e6f81-383b-4b39-9b75-8d2cdbf95d37@mailbox.org>
+ <259e72c0-b69a-42d4-aec5-ad8a6e03d416@kernel.org>
+ <651df530-797a-45e1-b199-917deda33222@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <651df530-797a-45e1-b199-917deda33222@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 6nsdwhcsnfm3nimas3f6jx49wjpdyxzm
+X-MBO-RS-ID: e1973190b65b1be2432
 
-On Mon Aug 18, 2025 at 3:33 AM CEST, John Hubbard wrote:
-> +            /// Create a `Class` from the raw class code value, or `None=
-` if the value doesn't
-> +            /// match any known class.
-> +            pub fn from_u32(value: u32) -> Option<Self> {
-> +                match value {
-> +                    $(x if x =3D=3D Self::$variant.0 =3D> Some(Self::$va=
-riant),)+
-> +                    _ =3D> None,
-> +                }
-> +            }
-
-Additional to the comments from Alex, I think one should be
-`impl TryFrom<u32> for Class`.
-
-> +
-> +    /// Create a new `pci::DeviceId` from a class number, mask, and spec=
-ific vendor.
-> +    ///
-> +    /// This is more targeted than [`DeviceId::from_class`]: in addition=
- to matching by Vendor, it
-> +    /// also matches the PCI Class (up to the entire 24 bits, depending =
-on the mask).
-> +    pub const fn from_class_and_vendor(class: Class, class_mask: u32, ve=
-ndor: u32) -> Self {
-> +        Self(bindings::pci_device_id {
-> +            vendor,
-> +            device: DeviceId::PCI_ANY_ID,
-> +            subvendor: DeviceId::PCI_ANY_ID,
-> +            subdevice: DeviceId::PCI_ANY_ID,
-> +            class: class.as_u32(),
-> +            class_mask,
-> +            driver_data: 0,
-> +            override_only: 0,
-> +        })
-> +    }
->  }
-> =20
->  // SAFETY: `DeviceId` is a `#[repr(transparent)]` wrapper of `pci_device=
-_id` and does not add
-> @@ -410,6 +600,18 @@ pub fn resource_len(&self, bar: u32) -> Result<bindi=
-ngs::resource_size_t> {
->          // - by its type invariant `self.as_raw` is always a valid point=
-er to a `struct pci_dev`.
->          Ok(unsafe { bindings::pci_resource_len(self.as_raw(), bar.try_in=
-to()?) })
->      }
-> +
-> +    /// Returns the full 24-bit PCI class code as stored in hardware.
-> +    /// This includes base class, subclass, and programming interface.
-> +    pub fn class_code_raw(&self) -> u32 {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev=
-`.
-> +        unsafe { (*self.as_raw()).class }
-> +    }
-> +
-> +    /// Returns the PCI class as a `Class` struct, or `None` if the clas=
-s code is invalid.
-> +    pub fn class_enum(&self) -> Option<Class> {
-> +        Class::from_u32(self.class_code_raw())
-> +    }
-
-I don't think we have struct pci_dev instances without a valid class code,
-can we? Maybe we should convert infallibly here.
+On 8/18/25 4:56 PM, Krzysztof Kozlowski wrote:
+> On 18/08/2025 16:51, Krzysztof Kozlowski wrote:
+>> On 18/08/2025 16:45, Marek Vasut wrote:
+>>> On 8/18/25 4:37 PM, Krzysztof Kozlowski wrote:
+>>>> Device nodes are enabled by default, so remove confusing or duplicated
+>>>> enabling of few nodes.  No practical impact, verified with dtx_diff.
+>>> I assume the "no practical impact" means DTs are identical before/after
+>>> this patch ? If yes,
+>>
+>>
+>> No, DTS cannot be identical in this case because one had status, new one
+>> does not have. Practical impact means... visible impact in practice. How
+>> to say it more clearly?
+> To illustrate: this is "no practical impact":
+> 
+> 
+> --- dts-old/st/stm32mp157c-dhcom-picoitx.dtb
+> +++ dts-new/st/stm32mp157c-dhcom-picoitx.dtb
+> @@ -691,14 +691,12 @@
+>   					interrupt-controller;
+>   					interrupts-extended = <0x49 0x00
+>   					reg = <0x33>;
+> -					status = "okay";
+Sorry, yes, this ^ is what I meant and obviously wrote too fast and too 
+inaccurately. My RB still stands. Thanks
 
