@@ -1,123 +1,122 @@
-Return-Path: <linux-kernel+bounces-772740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70262B29704
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:27:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092F3B296E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B1719679E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFCFF17F73F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F43257821;
-	Mon, 18 Aug 2025 02:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA8F246761;
+	Mon, 18 Aug 2025 02:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RBpmN7hq"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="lpr76ho+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836F02561AA
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D082236E3
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755483883; cv=none; b=UXzRcmSwGaNCEYG7GcngfqxKGHDF4T8UZMifSnWtXkvUQgF6Ah1Mfz/C0chykwfmRIGZI4BOTEFW50wmmBldDTzZoFZ64eX5P+KFVjeqY1FxNI/PeaR6j3n4EniFahLX/hQqJoHN7aaib2GOsAfM1jhJKk3yT50UvYoV0KUKyKo=
+	t=1755483506; cv=none; b=pGbiUGB/723na1RSFMLJIqjtdpZQaDDidDf1VmWyofUTVHziWjMqoOHigE2ANa5pwSpyvpLu6dgjcDDcI75U8yLpg7jmdAeTD6YRfYnoia8mevlq3vwnO14rh/a9/JWO30ExfAvDso2ow0F4h2dZyiYyPg1y74vtO+JkAArnt8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755483883; c=relaxed/simple;
-	bh=Op33w8YuHOk5KNvv44z7ZR6AF5ZiD7W37/xDv7sY3H4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=BTt56A7fE76y87ETJcqZPLxKUDB7GPiOVnujCZ+EhQipU14JTsnE5SCyaRH1xxzsGZQXey9eqwQ/1RjIKaNJk+y3z7I9EKZHulzCB9bTNQ7xpQZgSpqcy0H58cTsYAev/Hq3be1ozo/kx5yDiUEMZ7ztofoqPNGVRoth5xhXJvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RBpmN7hq; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250818022435epoutp04ddeda69f441b66c6cc607dd2a06e9bed~cu0iiYo9c2740027400epoutp04Y
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:24:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250818022435epoutp04ddeda69f441b66c6cc607dd2a06e9bed~cu0iiYo9c2740027400epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755483875;
-	bh=PEDfE/cZXX2izbtPhVO3xIr/ycqFTEjTVg1EKyWi0Nw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RBpmN7hqf3udV1mdb+I6iTo/k45zKhBKMeyAe3oschja9I0NcTvacI//+K77tqglA
-	 qourToFXGqTHY11hhLH2OmFlOXg8f8atq16KUDwxTxUIRwVVBMtV7l01WGTAS0RzuE
-	 3zXfc5TBa1YEKk0G803sBat5CNdgEC+c4zyefBEo=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250818022434epcas2p440e93fce21adb4db3786fad8d74e4a5f~cu0iELH4Y1747217472epcas2p45;
-	Mon, 18 Aug 2025 02:24:34 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4c4xPG250vz6B9mG; Mon, 18 Aug
-	2025 02:24:34 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250818022433epcas2p4fec1cccd280fc73dccc5b00e2236f836~cu0g9KQ3e2945329453epcas2p4O;
-	Mon, 18 Aug 2025 02:24:33 +0000 (GMT)
-Received: from localhost.localdomain (unknown [10.229.9.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250818022433epsmtip1332c50c1db103d4bbdcee250138ca793~cu0g22E_C2171021710epsmtip1K;
-	Mon, 18 Aug 2025 02:24:33 +0000 (GMT)
-From: Sangwook Shin <sw617.shin@samsung.com>
-To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	linux@roeck-us.net, semen.protsenko@linaro.org, dongil01.park@samsung.com,
-	khwan.seo@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Sangwook Shin
-	<sw617.shin@samsung.com>
-Subject: [PATCH v6 4/5] watchdog: s3c2410_wdt: exynosautov920: Enable
- QUIRK_HAS_32BIT_CNT
-Date: Mon, 18 Aug 2025 11:18:25 +0900
-Message-Id: <20250818021826.623830-5-sw617.shin@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250818021826.623830-1-sw617.shin@samsung.com>
+	s=arc-20240116; t=1755483506; c=relaxed/simple;
+	bh=9C/OgKK6Jq11I3HNli6+hEImiLYRcGL+i1Wirubu1pg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=T8qnaV98LTo3Vs9xhhtBrQqwIGeNT0pvmmxbbzKIcJMluEx+2NAYjcxGZKBQhA2r/NUNyZklcIUSqCPcrKd3nSqt22oZYqXvzLK9eIAdPeltXJfy5DAbu0//PWX5HwQLroRQwdno+Dsy+zSmjGMjuRK049M8XLKV4EaHsvdpCuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=lpr76ho+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B524C4CEEB;
+	Mon, 18 Aug 2025 02:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755483506;
+	bh=9C/OgKK6Jq11I3HNli6+hEImiLYRcGL+i1Wirubu1pg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lpr76ho+zHkCH8DUobo58mMCHRbtad+s7SQTnCQyeirtDgY37aWah5P6lU8L2w0K7
+	 xl/l1EsrF1GE8DvmboWvCUAMZmBC9KkbO/071ToGKEEs3/O6iqd9OJL8LO9wURKbBZ
+	 ygcd4/hL5eORSHfwjx9vrcTDpcFO6qz1Nv/n5oms=
+Date: Sun, 17 Aug 2025 19:18:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: yaozhenguo <yaozhenguo1@gmail.com>
+Cc: tglx@linutronix.de, yaoma@linux.alibaba.com, max.kellermann@ionos.com,
+ lihuafei1@huawei.com, yaozhenguo@jd.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] watchdog/softlockup:Fix incorrect CPU utilization
+ output during softlockup
+Message-Id: <20250817191825.ef254428d688d987333d4f4e@linux-foundation.org>
+In-Reply-To: <20250812082510.32291-1-yaozhenguo@jd.com>
+References: <20250812082510.32291-1-yaozhenguo@jd.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250818022433epcas2p4fec1cccd280fc73dccc5b00e2236f836
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250818022433epcas2p4fec1cccd280fc73dccc5b00e2236f836
-References: <20250818021826.623830-1-sw617.shin@samsung.com>
-	<CGME20250818022433epcas2p4fec1cccd280fc73dccc5b00e2236f836@epcas2p4.samsung.com>
 
-Enable QUIRK_HAS_32BIT_CNT to ExynosAutov920 SoC which has 32-bit WTCNT.
+On Tue, 12 Aug 2025 16:25:10 +0800 yaozhenguo <yaozhenguo1@gmail.com> wrote:
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
----
- drivers/watchdog/s3c2410_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> From: ZhenguoYao <yaozhenguo1@gmail.com>
+> 
+> Since we use 16-bit precision, the raw data will undergo
+> integer division, which may sometimes result in data loss.
+> This can lead to slightly inaccurate CPU utilization calculations.
+> Under normal circumstances, this isn’t an issue.  However,
+> when CPU utilization reaches 100%, the calculated result might
+> exceed 100%.  For example, with raw data like the following:
+> 
+> sample_period 400000134 new_stat 83648414036 old_stat 83247417494
+> 
+> sample_period=400000134/2^24=23
+> new_stat=83648414036/2^24=4985
+> old_stat=83247417494/2^24=4961
+> util=105%
+> 
+> Below log will output：
+> 
+> CPU#3 Utilization every 0s during lockup:
+>     #1:   0% system,          0% softirq,   105% hardirq,     0% idle
+>     #2:   0% system,          0% softirq,   105% hardirq,     0% idle
+>     #3:   0% system,          0% softirq,   100% hardirq,     0% idle
+>     #4:   0% system,          0% softirq,   105% hardirq,     0% idle
+>     #5:   0% system,          0% softirq,   105% hardirq,     0% idle
+> 
+> To avoid confusion, we enforce a 100% display cap when
+> calculations exceed this threshold.
+> 
+> ...
+>
+> --- a/kernel/watchdog.c
+> +++ b/kernel/watchdog.c
+> @@ -444,6 +444,13 @@ static void update_cpustat(void)
+>  		old_stat = __this_cpu_read(cpustat_old[i]);
+>  		new_stat = get_16bit_precision(cpustat[tracked_stats[i]]);
+>  		util = DIV_ROUND_UP(100 * (new_stat - old_stat), sample_period_16);
+> +		/* Since we use 16-bit precision, the raw data will undergo
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index d983cbcb975c..915d3c88565a 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -357,7 +357,7 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
- 	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
--		  QUIRK_HAS_DBGACK_BIT,
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
-@@ -370,7 +370,7 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
- 	.cnt_en_bit = 8,
- 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
--		  QUIRK_HAS_DBGACK_BIT,
-+		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
- };
- 
- static const struct of_device_id s3c2410_wdt_match[] = {
--- 
-2.25.1
+		/*
+		 * Since ...
+
+please.
+
+> +		 * integer division, which may sometimes result in data loss,
+> +		 * and then result might exceed 100%. To avoid confusion,
+> +		 * we enforce a 100% display cap when calculations exceed this threshold.
+> +		 */
+> +		if (util > 100)
+> +			util = 100;
+>  		__this_cpu_write(cpustat_util[tail][i], util);
+>  		__this_cpu_write(cpustat_old[i], new_stat);
+>  	}
+
+Can we do something to make this output more accurate?  For example,
+
+	return (data_ns + (1 << 23)) >> 24LL;
+
+would round to the nearest multiple of 16.8ms?
+
 
 
