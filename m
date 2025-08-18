@@ -1,132 +1,192 @@
-Return-Path: <linux-kernel+bounces-773677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12431B2A514
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:29:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC42B2A4C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAB45676E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:23:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4D284E31ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F11258EE6;
-	Mon, 18 Aug 2025 13:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777A8334701;
+	Mon, 18 Aug 2025 13:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R1aBZ/u6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vdbA64m9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="W7Ol4CtE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bVPucAM2"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58C522A7E0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F273932A3F3;
+	Mon, 18 Aug 2025 13:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755523020; cv=none; b=dyAdIjELduheTJ/FVWTx0ya7gDvhHETLETBmyjiaPjtMi+6Z3Ds3NnOen83B4N41s5LIAKPCVljLcmGpzBhkKPDp3vA9bq/lPDuy1vgrI46LeIfGmMVL1l8ZhRX42oUZ3vhd6wi84n28+uSCRoKrScOdDxhE/KSqwJO1x1e4VMM=
+	t=1755523116; cv=none; b=hU3PV9sRBOYPvM5evL8H2venOAmTaXnYthvFmIQmPxHUb4mGju1t19LtJGKbvIwmti+flH9hO3jNJiP4sh49vlg4x609zBmL26ge6lBcMVp6z25A3hDmYYgF5hXDpwxaY4DorN7WsV+uRYDOUeG72t17TT+dP1ROU21gIxM8hv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755523020; c=relaxed/simple;
-	bh=4VsFzLn7yeppnxl0zFHdA8oC6di4rKpKDVwU1k1yYXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/HJvcDztE+nnZjHs/Mh8NNCg15nk2EBNWlme8DopjO/6cSabyQX5BW2Ddlszgp6xHhMItKFdyyFncifYieirgOGZzk+lQcvbub/H34dIlIsa9YO9abfkp6TmQkwUD8p4FQCVakUwL+UNpvQyBmerjj6uKQYqPssd815FTYjETc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R1aBZ/u6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vdbA64m9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 18 Aug 2025 15:16:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755523016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5oGxlUxlwRzA7Te+PJK2UytkyniCrG3aVV5ezy6MYdM=;
-	b=R1aBZ/u6xA0E35B6RWc2ozIJ6OKPf5RUyQLfzC61Rh1HoyKrgjVfniuIwT8ZW73d32i5n0
-	MRxAsKsQrDWeEKXMHXrmFC+3g2au36m8l947CXOb3IjQ+HQUzaOJWGriCq4OTHc9MSuvMB
-	RM+nEBI3Zocskcmf2+k01VYMuZg4xquMinLCReOIaBNJ5mqm0qiygLTuLApBIpE28qA6gW
-	WbjIXstqNKZzKgZoMTJygH0HMO1bgSMWGrFt9V0RiKDaJvAnVGCDCL10qJvkHfxb/mGVTH
-	ycfEpPMxXjWPtUyPq8j5wEYR5LHb4s1Zt0BoBtMFfwrgcSG7aMRPQ/PudAAl6A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755523016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5oGxlUxlwRzA7Te+PJK2UytkyniCrG3aVV5ezy6MYdM=;
-	b=vdbA64m9Wig62jxQDvgZScddHzGZZdDQIpuqh3lQ2k9s+LrT/hKQSxCevpBPHuItnhzCef
-	IGnvOFwkXHd0jfBQ==
-From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-	"kprateek.nayak@amd.com" <kprateek.nayak@amd.com>,
-	"vineethr@linux.ibm.com" <vineethr@linux.ibm.com>
-Subject: Re: [PATCH V7 02/11] sched: Indicate if thread got rescheduled
-Message-ID: <20250818131655.1FybFuR4@linutronix.de>
-References: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
- <20250724161625.2360309-3-prakash.sangappa@oracle.com>
- <87a54bcmd7.ffs@tglx>
- <BF199244-10DF-4B84-99AF-DDA125F775E4@oracle.com>
- <87o6smb3a0.ffs@tglx>
- <20250813161927.CFYHxNIv@linutronix.de>
- <87jz376tzj.ffs@tglx>
+	s=arc-20240116; t=1755523116; c=relaxed/simple;
+	bh=rWW8YpUYd6/EsoJliw96tZiJtLu2qbIRcz8OzqQVO3c=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=pn00bW+LyDbfbexbjgUfoltEiJ3JN9dVKDalQLHIqJvdHz5HYyai569AkVADrO8sceFMfBSP6p12JO7+aqp1FuHR6p6hUuXSOnnRvf8xkkQLk4j5W338rvBlJ/Wf1oms243AxScfCtocY93Owfqo45RGl59T3D1prP+11uQu/hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=W7Ol4CtE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bVPucAM2; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1344FEC050C;
+	Mon, 18 Aug 2025 09:18:33 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 18 Aug 2025 09:18:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755523113;
+	 x=1755609513; bh=IBpqOSU1fv83II2ZAGZXrKuD/jPDJB0Q+bIqD3eNxmI=; b=
+	W7Ol4CtE1dVyoNs5wFdzrNutFk+Ru0f+/MKOAFk4PsVt2jzYiQKuBhgSLjm0Uu9D
+	bOsJjGUKJKnBjoAH8TTtoLRZbbtzG70Kq4xx2BRFkdrYIyxQhALPKvfcDE6chY7C
+	WwbveC9uLrImFWsrVa/yOLbxJ/UY3rTt8pZtuL2O/uSQzIefcH+XW3pKqSYmIxLF
+	vaLRsF6q/6lsBAZiB5HGaQrScbMed009rUkTA4E3ShUOl/9yB0D1OlMUsJ0qIMts
+	ig5AhcX7p/T4TPFgsWN10ZhegZczygcxtU8S281Gp1gjGTjEQehCsRHmzRbMN78a
+	1Id2AxNMXRIk3We7mFIBiA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755523113; x=
+	1755609513; bh=IBpqOSU1fv83II2ZAGZXrKuD/jPDJB0Q+bIqD3eNxmI=; b=b
+	VPucAM2jm8x+hPtU1YsFPCNyjF3gXx/ogfdd3rKuYJcNCBoVChBENmjtF4WBGe1c
+	XJfB9G6B7uhWZBf5/Nt8k3oVCESFXDMUWnBgeLLCxMCen07+zdCNNP0N2O/YNE7R
+	AAEeoy7BLsTzlAw5zTnsI5HWnS3XRzbIpCF+VcblAjTVQDymkdDHOkzWscniUrTn
+	bNEGnNOQUABl7xR2y0qkA+2U9rHGwfVHR0OFGlh/mehOlcFZtiLRkxDJDyna3xlS
+	jLF0DkDJ1dXCIYhOT8deWLCBZEHp/AryIRV00vJaBLtsyGvaMUSpgpTWfO+dkGva
+	gSQowJQYXryxbuqmursPg==
+X-ME-Sender: <xms:KCijaPzBwoTIhr5qa0McAI07QBO7rOsl39P9Z3td7w6I_HM1PLRy-Q>
+    <xme:KCijaHQceyW1E0ErZ2_pwTk8aOeuWzOaBi86twwFHrZUWCPunJeqVQMa2mppokacI
+    WkFXKLOnaqnjmtmtvY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvjeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpd
+    hrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegr
+    nhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepjhhsthhulhhtiiesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslh
+    hinhhuthhrohhnihigrdguvgdprhgtphhtthhopehthhhomhgrshdrfigvihhsshhstghh
+    uhhhsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepnhgrghgrrhgrthhhnhgrmh
+    drmhhuthhhuhhsrghmhiesohhrrggtlhgvrdgtohhm
+X-ME-Proxy: <xmx:KCijaO7zMpRRFFnJNtF88v4kD37-_7P4t-MkG4DxODNKtIixeuKwEw>
+    <xmx:KCijaPL9uOtNWCVMHYQNiL84hfaV11TR0DsrSPNCX-To4y4NTTbRZQ>
+    <xmx:KCijaIXTg7lXtl2KcSMBMxxKN2Po0APXn1Ez83c5kNFn5H5psVRYlA>
+    <xmx:KCijaLEVMeHD9LFkElGOa0cJ26vILfHkf10emY6TcTlx2edDYfNZ2w>
+    <xmx:KSijaGwTk9hVRSaxxnWLVbMulCyZuSKkyV8AWrDgfmaH5OEZOOLW58X0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 19CEB700065; Mon, 18 Aug 2025 09:18:32 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: ABINBsmLUku7
+Date: Mon, 18 Aug 2025 15:17:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: "Andy Lutomirski" <luto@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Nagarathnam Muthusamy" <nagarathnam.muthusamy@oracle.com>,
+ "Nick Alcock" <nick.alcock@oracle.com>, "John Stultz" <jstultz@google.com>,
+ "Stephen Boyd" <sboyd@kernel.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Message-Id: <b0acf633-ea94-4222-b5d8-12996b250e69@app.fastmail.com>
+In-Reply-To: 
+ <20250818141851-c185a57d-3081-479c-a32a-add4e5600f3e@linutronix.de>
+References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
+ <20250815-vdso-sparc64-generic-2-v2-12-b5ff80672347@linutronix.de>
+ <bf9ec82b-af1b-4684-ada5-8529b7ceb06a@app.fastmail.com>
+ <20250815142418-d28c6551-bec1-4a65-9c52-f1afd7b630ed@linutronix.de>
+ <5309ef99-9ae7-4525-8d58-f954c13797bc@app.fastmail.com>
+ <20250818073135-130dfc53-225c-48a3-b960-e982faa866bf@linutronix.de>
+ <dd77ac1f-9251-4ad2-ad5b-9d2b8969a476@app.fastmail.com>
+ <20250818141851-c185a57d-3081-479c-a32a-add4e5600f3e@linutronix.de>
+Subject: Re: [PATCH v2 12/13] sparc64: vdso: Implement clock_getres()
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87jz376tzj.ffs@tglx>
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-08-13 18:56:16 [+0200], Thomas Gleixner wrote:
-> On Wed, Aug 13 2025 at 18:19, bigeasy@linutronix.de wrote:
-> > I spent some time on the review. I tried to test it but for some reason
-> > userland always segfaults. This is not subject to your changes because
-> > param_test (from tools/testing/selftests/rseq) also segfaults. Also on a
-> > Debian v6.12. So this must be something else and maybe glibc related.
-> 
-> Hrm. I did not run the rseq tests. I only used the test I wrote, but
-> that works and the underlying glibc uses rseq too, but I might have
-> screwed up there. As I said it's POC. I'm about to send out the polished
-> version, which survive the selftests nicely :)
+On Mon, Aug 18, 2025, at 15:00, Thomas Wei=C3=9Fschuh wrote:
+> On Mon, Aug 18, 2025 at 08:54:53AM +0200, Arnd Bergmann wrote:
+>> On Mon, Aug 18, 2025, at 07:50, Thomas Wei=C3=9Fschuh wrote:
+>> > On Fri, Aug 15, 2025 at 10:09:23PM +0200, Arnd Bergmann wrote:
+>>=20
+>> The glibc code has a weird mixup of the time32 and time64
+>> function names, but from what I can tell, it only ever sets
+>> dl_vdso_clock_getres_time64 on 64-bit architectures, where it
+>> gets set to the normal clock_getres vdso symbol. On 32-bit,
+>> glibc always skips vdso_clock_getres_time64() since it
+>> does not exist, and then it always calls clock_getres_time64()
+>> through the syscall interface, unless it runs on pre-5.6
+>> kernels that fall back to the time32 vdso or syscall.
+>
+> Ack.
+>
+> So with 'time64 userspace', you mean '32-bit, time64 userspace', corre=
+ct?
 
-It was not your code. Everything exploded here. Am right to assume that
-you had a recent/ current Debian Trixie environment testing? My guess is
-that glibc or gcc got out of sync. 
+Yes
 
-> > gcc has __atomic_fetch_and() and __atomic_fetch_or() provided as
-> > built-ins.
-> > There is atomic_fetch_and_explicit() and atomic_fetch_or_explicit()
-> > provided by <stdatomic.h>. Mostly the same magic.
-> >
-> > If you use this like
-> > |  static inline int test_and_clear_bit(unsigned long *ptr, unsigned int bit)
-> > |  {
-> > |          return __atomic_fetch_and(ptr, ~(1 << bit), __ATOMIC_RELAXED) & (1 << bit);
-> > |  }
-> >
-> > the gcc will emit btr. Sadly the lock prefix will be there, too. On the
-> > plus side you would have logic for every architecture.
-> 
-> I know, but the whole point is to avoid the LOCK prefix because it's not
-> necessary in this context and slows things down. The only requirement is
-> CPU local atomicity vs. an interrupt/exception/NMI or whatever the CPU
-> uses to mess things up. You need LOCK if you have cross CPU concurrency,
-> which is not the case here. The LOCK is very measurable when you use
-> this pattern with a high frequency and that's what the people who long
-> for this do :)
+>> Two related points:
+>>=20
+>> - something we could add on all 32-bit architectures after
+>>   everything uses the generic vdso implementation is
+>>   vdso_gettimeofday_time64(), this can shave off a few cycles
+>>   because it avoids a division that may be expensive on some
+>>   architectures, making it marginally more useful than
+>>   vdso_clock_getres_time64().
+>
+> You mean this division in __cvdso_gettimeofday_data()?
+>
+> 	tv->tv_usec =3D (u32)ts.tv_nsec / NSEC_PER_USEC;
+>
+> Switching the subseconds field to nanoseconds to avoid the division an=
+d the
+> seconds field to 64bit to avoid overflows brings us back to
+> 'struct __kernel_timespec' again, no? What would be the advantage of t=
+his over
+> vdso_clock_gettime(CLOCK_REALTIME, &ts)?
 
-Sure. You can keep it on x86 and use the generic one in the else case
-rather than abort with an error.
-Looking at arch___test_and_clear_bit() in the kernel, there is x86 with
-its custom implementation. s390 points to generic___test_and_clear_bit()
-which is a surprise. alpha's and sh's isn't atomic so this does not look
-right. hexagon and m68k might okay and a candidate.
+I misremembered what the current code does. As you point out,
+there is a division by NSEC_PER_USEC in the vdso as well, so
+there is no difference between libc calling vdso_clock_gettime()
+and vdso_gettimeofday() in the number of divisions.
 
-> Thanks,
-> 
->         tglx
+If we wanted to optimize this bit, the division would need
+to be folded into vdso_calc_ns()/mul_u64_u32_add_u64_shr(),
+which is nontrivial.
 
-Sebastian
+>> - there is one catch on sparc64 in the way it defines
+>>   __kernel_old_timeval with a 32-bit __kernel_suseconds_t,
+>>   unlike all other 64-bit architectures. This is incompatible
+>>   with glibc's __timeval64 definition on sparc32, so there
+>>   would need to be a special case for sparc32 somewhere,
+>>   either in the kernel or in glibc.
+>
+> This is only a problem together with vdso_gettimeofday() from above, r=
+ight?
+
+Correct. I took a look at your sparc64 gettimeofday() to make
+sure it uses the correct types and that seems fine since it
+gets the __kernel_old_timeval structure definition from the
+the sparc64 uapi headers.
+
+     Arnd
 
