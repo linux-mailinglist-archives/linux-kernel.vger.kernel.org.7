@@ -1,156 +1,183 @@
-Return-Path: <linux-kernel+bounces-774291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B008B2B0E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:55:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E898B2B0FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071BA684334
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8788175B73
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6256D272E41;
-	Mon, 18 Aug 2025 18:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33353272E6D;
+	Mon, 18 Aug 2025 18:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="j95NDIOa"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdJwzWuo"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A321D9663
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C070D257854;
+	Mon, 18 Aug 2025 18:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755543224; cv=none; b=aNlKX60bqTY1mABzn2YzGed0P842f0TV8nRpi09Fj92aU9onyxgA+H5xWFQ35+vSsobVnrp/FAMOtEJckfe6Ffk03eZ6wSscQdgHX+BXymBFZ7L99IEMe7ScBH/Yv0oq11Y6VvcNqiFrjtlD2ESpqFGTEJTCjZtkFzjqlB7Birk=
+	t=1755543418; cv=none; b=ulzlwc0Y5L9gDHAcGmlwfZiI/9zCzojco1QLdSVX1XjuKGEZBxBfvdhjQq7HKI6HeVf7ioW104+pKgmxcYsjdJuUfgOJSx1K0ESkuwjP0p9S8Cc30gv5QNUwFcriNeWh2hr54rhjXumE4+tlOLCwq7Wpw4nE/AL76AjjI0fV1mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755543224; c=relaxed/simple;
-	bh=mL2MyruYHzSNLfEDksFH+ASX0WWW3O6Vdh9J4O9okL0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mB9Upm/gXbrkpPEt5NsaZhXX43I/y4pLpNJUKbJEK3F05vM9ocjRuwbylWRjo//Uvln40t8zHhZ9Ok+XK5SFZ7Ymd/hW7LJlTcVHnzHIVu1wSv8aCqbM4RQMWN3Ln9c0CQNoUamZrEeDw2ScHbhs69jfxCfdvUZimh6LY7qpzkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=j95NDIOa; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=ZxfW0g9X+oPT/UxlWtvFfsT3/2mtKXs3JrOxnk3I7Ek=; b=j95NDIOa/mCgLPoh+oZgvtNCpO
-	FNHgTTgvGFcOxID5a45wUS9lzXuGAh4+NlPHyOdHhegSCSPnppJC9+lMtREVWrQfR6m4whLO0sINc
-	54ruiewHgQ8lSbE5EUPKvmD4qM/JlZKoR7N1kL/EExcjD4FtrZ7QniO1xc1rTb12s2Lla27EJETYt
-	7B60p7L/GTLtB4R7tImLvdhHNSAsbq6B9/xBXo87o/Bq5cHVvZopaFUiExBTEba7GFfMrSRHE5f6z
-	0+fDLseIsALw/nOslqEIut3gT7n3XeIQcaQitMwbKcr+wPujJdMHsgCvM3ZBlj/+cOw6kXKEIVbIb
-	C+oH0gKQ==;
-Received: from i53875ad4.versanet.de ([83.135.90.212] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uo4zF-0000jH-30; Mon, 18 Aug 2025 20:53:41 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: rockchip: describe mcu eeprom cells on rk3568-ts433
-Date: Mon, 18 Aug 2025 20:53:37 +0200
-Message-ID: <20250818185337.2584590-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250818185337.2584590-1-heiko@sntech.de>
-References: <20250818185337.2584590-1-heiko@sntech.de>
+	s=arc-20240116; t=1755543418; c=relaxed/simple;
+	bh=cW6Zw4X6l/8LtzSm0XuIo7DagtVAErRt/WZ2KMJ9BoA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C853F+zRZKR8O3tSXA9zo4BqVlnoYIDqm/emND90Oq/TgVWvAN9sfZLZU/Re2cuNeuOxf3nSN9Gcr63hj5MWtNe70BDyuLjP/RhfMAtiqelQHolmFcGBm+IDyVHSMcW5VCrKDsMY608cVwuVbTMYh69YYRCn7FvxF2uNU6Ykp6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdJwzWuo; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333e7517adcso49462301fa.1;
+        Mon, 18 Aug 2025 11:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755543415; x=1756148215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HDBB8ZTTu16kBJ12UfAqyQDqCQPi74zEgHxFOpa7z7s=;
+        b=IdJwzWuobAhli6LIjE8P7WwKYJ3KCLOiwbFRAM71xkzRMGDkLfB+L2VfjgHEaeN9yZ
+         eSg1xM2cEHDUZtF/jI+PWA+JC92ch+bT8NDi4iQNs7GGojZS/2sJA6J28eJrfk1T46kh
+         t3yxocXavLAnJgGMnB1TpKXPyLoqkVsqqbWYnsVmotHzBP8Z2ARKqag0tA/hVPtGJPXA
+         C6pbr+ePo09XzsPeIw7h+QpZQZe4Gvcb9Qz9wcWxkhlfsHnFxlctD0rzg9V3inJ8IWzJ
+         DOYsKIJM1lGhac1wvAlA418v4d6J603oSwjTV8+4og14RMAPdZWRbU6VAZrsZ7lz8qE2
+         VD7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755543415; x=1756148215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HDBB8ZTTu16kBJ12UfAqyQDqCQPi74zEgHxFOpa7z7s=;
+        b=whj0U9bD0KaxeQYTVkHFeOd/T08nEOtYNfaUCmv3w16r35LdCV0XBN9EHiGr3Rfk4x
+         7TPBD6fDpjfMZnP3ajxR9uAPKdd1zjI+19qMyhdsaJZYnIGyxpZ9BDFG/RMbamdJzNWn
+         7QwKXmAYKlyBw86hvkWFwjkLsEhQ0GrPaPHrrSYXgjQpVyCG+1mKj6Ew+m+r+9xgB4RS
+         U7zMFDPbQ2nGJICzx6sNVgC2vIoGXuq55I97bv0+s8klVwMKkrZsMAHSSSpfYHwFkwm4
+         L9GVwaXi8U2xrs3beOTDKsf+uNXVGt+mOJkti7gHvPOpK64ra1ey8PUAaaWNgNJtwK0X
+         ywDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5zHDZPFC7/1g23KEZW7qcK3GonAjqiDjBv8ASZAnzXP4FDMlhmeYjcf6Sbv4ee6Nizz0Q7ODEymzdddBb@vger.kernel.org, AJvYcCUZbYG4HNTE5GWOoUGdPx8ORzVrrfEtKQJQYzCFt3kqQq/EJMzHtCgTLtpEkHdzwwE6oFp4yq92FbWANr8=@vger.kernel.org, AJvYcCWMRvSyQapwK2rLXwbixTFvV3sYpnOVIcN75iQV2vXpYufI2D4KjNxXE05ty4tK3s3u8cHBDdL1j2Ti@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoRjfdE+F12OtRj1MWqKA4tlqWa/XfJ9qSFC/wMNi76WRTu3k4
+	sKvHSV70U4jHXsjahTrMgnQM83SuRbCx26o5jCc0lawpNot1cKEpq+5jwJVsyXcLys9oR0ls9CY
+	/w4tTP0FL0L23Ko3K67RRAqQk8U1pqjEfgZnu
+X-Gm-Gg: ASbGncv1al/rBJuTb+UFwYLR+m0/c75PWEh26kD+U7TiTDG0cC9VRJ2VUpR51LAyW1q
+	ryK8CA48WFyJOrHN6QaT5lWJMyLIFKGkBeRFKRITWoRNnoRvJOO78H1D9jX426KofoZ2xswe+Br
+	ZqgMupTV5y4QGrM/dWTyzyNcBO1ks46lzLXo8QKoVOLm0IlgUtepmSDPOfuUoQlQPPnGQ0DNYxZ
+	SQg5rdPRDbtdGJMCw==
+X-Google-Smtp-Source: AGHT+IGLpwruHH1jFqPtCTgTST4GSi1QWs0KmUfeU010gjKHdHCYYcHRxDOhtE/4BKTUsTrlBPwKO5g7s6nZcyt64Xg=
+X-Received: by 2002:a2e:be21:0:b0:32b:a9a4:cd58 with SMTP id
+ 38308e7fff4ca-3352ddd4b5dmr1697761fa.15.1755543414532; Mon, 18 Aug 2025
+ 11:56:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
+ <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
+ <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com>
+ <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
+ <CALHNRZ-HTFz38xZFsbpG6C3r_xDQTLNOZWPX21TzNPaLyxf6Xw@mail.gmail.com> <xmirimw2guubgrf6umt4qiknpyjaepkrx4oggcmaffoyd5sli2@kzewnjv3bkjf>
+In-Reply-To: <xmirimw2guubgrf6umt4qiknpyjaepkrx4oggcmaffoyd5sli2@kzewnjv3bkjf>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 18 Aug 2025 13:56:42 -0500
+X-Gm-Features: Ac12FXzctcgTCF1B-HAlLK99s32lr_bBmhmmmU7bUtTEBs9HP1D4InDwm7lzs-I
+Message-ID: <CALHNRZ9uJ9g6BGhUmBaaMM3DhQDh7mTtqKKr0A98X-5V4ompEg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The MCU's eeprom contains the unit's serial and a number of slots for
-mac-addresses. As the MCU seems to be used in different devices, up to
-8 mac addresses can live there and the unused slots are actually
-initialized with empty mac-address strings like 00:00:00:00:05:09 .
+On Fri, Aug 1, 2025 at 4:43=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
+>
+> On Thu, Jul 31, 2025 at 04:36:17PM -0500, Aaron Kling wrote:
+> > On Mon, Jul 14, 2025 at 12:35=E2=80=AFAM Aaron Kling <webgeek1234@gmail=
+.com> wrote:
+> > >
+> > > On Mon, Jun 30, 2025 at 2:27=E2=80=AFPM Aaron Kling <webgeek1234@gmai=
+l.com> wrote:
+> > > >
+> > > > On Wed, May 28, 2025 at 12:42=E2=80=AFPM Aaron Kling <webgeek1234@g=
+mail.com> wrote:
+> > > > >
+> > > > > On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Relay
+> > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > > > >
+> > > > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > > > >
+> > > > > > The p3509 carrier board does not connect the id gpio. Prior to =
+this, the
+> > > > > > gpio role switch driver could not detect the mode of the otg po=
+rt.
+> > > > > >
+> > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > > > > ---
+> > > > > >  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts =
+| 1 -
+> > > > > >  1 file changed, 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p36=
+36-0001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> > > > > > index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df=
+355bbcb691ef99b0d0c9d504e 100644
+> > > > > > --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001=
+.dts
+> > > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001=
+.dts
+> > > > > > @@ -669,7 +669,6 @@ connector {
+> > > > > >                                         vbus-gpios =3D <&gpio
+> > > > > >                                                       TEGRA186_=
+MAIN_GPIO(L, 4)
+> > > > > >                                                       GPIO_ACTI=
+VE_LOW>;
+> > > > > > -                                       id-gpios =3D <&pmic 0 G=
+PIO_ACTIVE_HIGH>;
+> > > > > >                                 };
+> > > > > >                         };
+> > > > > >
+> > > > > >
+> > > > > > ---
+> > > > > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
+> > > > > > change-id: 20250513-tx2nx-role-switch-37ec55d25189
+> > > > > >
+> > > > > > Best regards,
+> > > > > > --
+> > > > > > Aaron Kling <webgeek1234@gmail.com>
+> > > > > >
+> > > > > >
+> > > > >
+> > > > > Friendly reminder about this patch.
+> > > >
+> > > > Re-reminder about this patch.
+> > >
+> > > Yet another reminder about this patch. It's been over two months
+> > > without a response and many other patches have been pulled in the
+> > > meantime.
+> >
+> > Reminder yet again about this patch. It's now been two and a half
+> > months without even an acknowledgement from the maintainers.
+> >
+> > This one is getting annoying. What does it take to get a response from
+> > the tegra subsystem maintainers? Does time have to be pre-allocated by
+> > the company to look at patches that aren't from @nvidia.com's? Are
+> > there certain times during a development cycle? When responses happen,
+> > it seems like there's a lot of activity. But then everything goes
+> > silent again for months. I've not seen any pattern to it so far and
+> > it's becoming extremely frustrating.
+>
+> Just people being busy. Nothing more, nothing less. I'll pick this up
+> once the merge window closes.
 
-Interestingly on the TS-433, the PCIe ethernet adapter brings its own
-memory to hold its mac, and the gmac0 is supposed to get its mac from
-the second mac-slot, while the first one stays empty.
+If I understand correctly, the merge window closed on August 10th. And
+I still haven't seen any movement on open patches. If everything
+unrelated is on hold until after Tegra264 launch or something like
+that, it would be nice to at least set that expectation instead of
+everything being held arbitrarily in suspense.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- .../boot/dts/rockchip/rk3568-qnap-ts433.dts   | 62 +++++++++++++++++++
- 1 file changed, 62 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-index 5656554ca284..224db87973b2 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-@@ -655,6 +655,68 @@ fan: fan-0 {
- 			#cooling-cells = <2>;
- 			cooling-levels = <0 64 89 128 166 204 221 238>;
- 		};
-+
-+		nvmem-layout {
-+			compatible = "fixed-layout";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			serial-number@0 {
-+				reg = <0x0 0x13>;
-+			};
-+
-+			ext-port@22 {
-+				reg = <0x22 0x2>;
-+			};
-+
-+			mac0: mac@24 {
-+				compatible = "mac-base";
-+				reg = <0x24 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+
-+			mac1: mac@35 {
-+				compatible = "mac-base";
-+				reg = <0x35 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+
-+			mac2: mac@46 {
-+				compatible = "mac-base";
-+				reg = <0x46 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+
-+			mac3: mac@57 {
-+				compatible = "mac-base";
-+				reg = <0x57 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+
-+			mac4: mac@68 {
-+				compatible = "mac-base";
-+				reg = <0x68 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+
-+			mac5: mac@79 {
-+				compatible = "mac-base";
-+				reg = <0x79 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+
-+			mac6: mac@8a {
-+				compatible = "mac-base";
-+				reg = <0x8a 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+
-+			mac7: mac@9b {
-+				compatible = "mac-base";
-+				reg = <0x9b 0x11>;
-+				#nvmem-cell-cells = <1>;
-+			};
-+		};
- 	};
- };
- 
--- 
-2.47.2
-
+Aaron
 
