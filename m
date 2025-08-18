@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-774146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37897B2AF1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:14:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE94B2AF4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 272B9565C89
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2511BA3EBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838832C32D;
-	Mon, 18 Aug 2025 17:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10437267F4C;
+	Mon, 18 Aug 2025 17:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kvOsrAjx"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="41jycK8R";
+	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="O9DsE5HB"
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CA132C302;
-	Mon, 18 Aug 2025 17:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82CD21D3DC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755537161; cv=none; b=K5rBRUIACbunhCuUXLeiqNCdnhjJmZU1aM7YA7QOMLTHkykMYnYIgCOkgARlozoiMCi2G4CdoW1ihmMrXiAoxKnsDFHV2CK865ggRByaOvxj15ObA47a87aOVsfZIQDuXZBV5wGyIVgY3bK9FEPfVm7AKG1dmYoDiJCFNfQXju8=
+	t=1755537633; cv=none; b=htFKBpYa+vrL/Mz3LVWJxIenkmo4DHlME6+aTVUn8EJR5LEtB7pyluAGanB+ZQ050Ykz/D3xVOWC7fJ3VtEDzx3ef5FgFwjPsposI/bACoMSSCxv1dRuxXOYAwBK1y653l0XFKe1Exzj5zZHu5WgO6cA8W3foscgY9MNzIx/BdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755537161; c=relaxed/simple;
-	bh=SAYLvt+TdvOMWkry0P3jnEHv9OeBgLFTEiK5Js0VPL0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ldO+NKKOhF7ud61i6BOnoFwWNHc8+lsNBAjVrOAfPe59WbewvjeNhSME8bTtKxgt504+QTOjjirG1rZnTbvwTMD7o8hWIMiK6I7YY08nIIRsL4kJmGXu0qK1VdfNNi+084bYLLv3VApIu022wROa/8mQnjwgLSAcZ7+RkpMowWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kvOsrAjx; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755537154;
-	bh=SAYLvt+TdvOMWkry0P3jnEHv9OeBgLFTEiK5Js0VPL0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=kvOsrAjxoBCrN6ZAjhHp+z6Fuy0Lo20VFIjJfaDaDPOCCe7o0JbPjwjYS76J3ubGS
-	 qWyd/zPiFeiVp7gohcE4Apj156HY4FeK0naTjIE4aMNyogQNoHW5f1ulEKp8N3x7o3
-	 clRVSYPBLI8GmMjwN1qULWlx2p8gWwti1duFk7LY1BqOh0eeskM7g33w8sn8+vPopz
-	 Ho2RU+lzNU2m+iwEitCoL5/vmWbtKsKVegkaJo3WlCjCZXUbT5gRYhwtZgs094fqld
-	 2986+acmaY0ilq+Mdwvvgp+X3L6+2PNnk9TYqKhwgSJP8S/Qd37H7z1fmDXfNn/YYk
-	 KbRBagbd5lMGQ==
-Received: from jupiter.universe (dyndsl-091-248-210-167.ewe-ip-backbone.de [91.248.210.167])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3B4B817E0DE3;
-	Mon, 18 Aug 2025 19:12:34 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id EF42B480044; Mon, 18 Aug 2025 19:12:33 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Mon, 18 Aug 2025 19:12:23 +0200
-Subject: [PATCH] arm64: dts: rockchip: correct network description on Sige5
+	s=arc-20240116; t=1755537633; c=relaxed/simple;
+	bh=3X2Xs5jjuMTF3d33OZER2fzwprEQ7Q8pIjskalbyCbs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=r1+AMm2Z3lGWMEkfuIZNBBjpoZ9zx7F01ISscgt3G6DIbSBXaudYnSRWT8qFIfBnVWWQqumshWyKOkgU15obXx0qFF9BvTqP4K35CQSkl4Z9ToVUPg17dkx6eYx7sT2ZfM6Upv90FCbS56DfWw+HAxvnZGCE2smEXLP9iBdZPT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=41jycK8R; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=O9DsE5HB; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 1077A26F75D8;
+	Tue, 19 Aug 2025 02:12:46 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114; t=1755537166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zne+dvh8Cl7zH3AsedTf8l/Of8uQ1RUm3evPNzWIMPg=;
+	b=41jycK8RawQnGz+NLfVIo25IFK6pN6Dwh1oYi//Xfvb7fqaFKVGFhJBqC3sUPQ3+BX9i46
+	lpvIM4nqqZguMVVBo5KNklmMK7ZEi5eDIsgOLeRIFjyBhc76Yyzc9C16ucri0Ct3coU+E8
+	QGaWdulSS25g9p3hPC5XfUqEo2qSx/Hz1FpvbjBsdV+sPDP5TPJhp+Zd1finX8JO4fRi1l
+	XqfpBfGv4lbkwxTXOW316JXvdtgeqxKBRsh1vRJspsYPiGyLMTh7s9D5GgPBBm9y6V37aM
+	C3fTIw1lxmsc58SEaSrJ7xtjMmimksYJz9fG6qFNavI+tx7aEf+CmmGB0HDUMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114-ed25519; t=1755537166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zne+dvh8Cl7zH3AsedTf8l/Of8uQ1RUm3evPNzWIMPg=;
+	b=O9DsE5HBIyvM6Dlf2qYv3OjloF8zyBuT8UvYyHS1LUhtHeOf86CChDcHN2sp9MSzndJDwM
+	pJQVvgz1KuCt6NAg==
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 57IHCiiT095583
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 02:12:45 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 57IHCif9255916
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 02:12:44 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 57IHCiiK255915;
+	Tue, 19 Aug 2025 02:12:44 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: zhoumin <teczm@foxmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfat:remove unused variable
+In-Reply-To: <tencent_9DE7CC9367096503F6ADD2BD960079267406@qq.com>
+References: <tencent_9DE7CC9367096503F6ADD2BD960079267406@qq.com>
+Date: Tue, 19 Aug 2025 02:12:44 +0900
+Message-ID: <878qjg7dv7.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-sige5-network-phy-clock-v1-1-87a9122d41c2@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPZeo2gC/x3MTQqAIBBA4avErBtQSZCuEi3KRhsKDY1+iO6et
- PwW7z2QKTFlaKsHEh2cOYYCWVdg5yF4Qp6KQQmlhZEGM3vSGGg/Y1pwm2+0a7QLSiuF040ZtVJ
- Q6i2R4+s/d/37fiaJqhRpAAAA
-X-Change-ID: 20250818-sige5-network-phy-clock-1c10f548b522
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1535; i=sre@kernel.org;
- h=from:subject:message-id; bh=SAYLvt+TdvOMWkry0P3jnEHv9OeBgLFTEiK5Js0VPL0=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGijXwGfiXygZXsYaSAVonahjYg5JoVKFCg4Q
- 9VsgfeiOl0lzIkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJoo18BAAoJENju1/PI
- O/qaZIAQAIivfyWW5RnxUMO+tth3rMGHps2imw6cUeNR4+0t9cuxpBEADAt80yezHZSyh+zsWxa
- InHZXkOFhskpyVidwH20dSEH0nOLqfCppPrkMSBZWUtw9C7b7BEnsldbEhAzCL0FieWbcazhjmq
- JtBVRaLQAvfyQvX4NuWJlkTgOlfSztBRMVEnsbDJVqmAEuUk/GRCyH+WMNV7L9YpoE8JZkLkcy3
- KV6JGwY4R50uakSP0mGjCErSo03xyKFM9CKMD6P3NVfN6H6Gy5gWb1HFb4ZozKJQblkr9n5nxH3
- seEihsfl+BPFnJXEr+pNWEgRZ66GGEllIte9hGnndUWLwKRlC8yw6Q1d8gYFHaQHqQ+If+IEUDo
- vFmy9Fh7M8/afwO7GF5KLF4icJWbGo0iNNJK6jnHofAe54ZHsA+/zMSxyf/HrbCID+ClStZHDdL
- iSgrMNzj299F/KmnOR2JJKdFUIHYdWLBq75vljDWrBwhLS0M0X/cJ0vi9vE0SSmFoYC/z0LDijE
- a+5oAgxw4wkRqJ9Dvpsl7Yl9w8egD+C6+GSxTM9G1iOqsmGda9V5fKh3WG+CStHKHe8jekieNSu
- +0bD8nubWi9aBe13EoFJV1bJc5JpyUHjJftLMwii8LZVNYtd4ZD5MgJaML4bou4fopZC80ayXc4
- SsZ+jPlbGL6q2WEuwKbIgFQ==
-X-Developer-Key: i=sre@kernel.org; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+Content-Type: text/plain
 
-Both network PHYs have dedicated crystals for the 25 MHz clock
-and do not source it from the RK3576.
+zhoumin <teczm@foxmail.com> writes:
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> Remove unused variable definition and related function definition
+> and redundant variable assignments within functions.
+>
+> Signed-off-by: zhoumin <teczm@foxmail.com>
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-index 101e2ee9766d7bf5dc09eb29b66f5afd89985b76..3386084f63183efe62beea86bc6fe310cc4ed565 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-@@ -302,8 +302,7 @@ &gmac1 {
- 		     &eth1m0_tx_bus2
- 		     &eth1m0_rx_bus2
- 		     &eth1m0_rgmii_clk
--		     &eth1m0_rgmii_bus
--		     &ethm0_clk1_25m_out>;
-+		     &eth1m0_rgmii_bus>;
- 	status = "okay";
- };
- 
-@@ -784,7 +783,6 @@ &mdio0 {
- 	rgmii_phy0: phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
- 		reg = <0x1>;
--		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&gmac0_rst>;
- 		reset-assert-us = <20000>;
-@@ -797,7 +795,6 @@ &mdio1 {
- 	rgmii_phy1: phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
- 		reg = <0x1>;
--		clocks = <&cru REFCLKO25M_GMAC1_OUT>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&gmac1_rst>;
- 		reset-assert-us = <20000>;
+Looks good. Thanks.
 
----
-base-commit: e05818ef75bee755fc56811cb54febf4174d7cf2
-change-id: 20250818-sige5-network-phy-clock-1c10f548b522
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-Best regards,
+> ---
+>  fs/fat/dir.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+> index acbec5bdd521..92b091783966 100644
+> --- a/fs/fat/dir.c
+> +++ b/fs/fat/dir.c
+> @@ -1209,7 +1209,7 @@ EXPORT_SYMBOL_GPL(fat_alloc_new_dir);
+>  
+>  static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
+>  			       int *nr_cluster, struct msdos_dir_entry **de,
+> -			       struct buffer_head **bh, loff_t *i_pos)
+> +			       struct buffer_head **bh)
+>  {
+>  	struct super_block *sb = dir->i_sb;
+>  	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+> @@ -1269,7 +1269,6 @@ static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
+>  	get_bh(bhs[n]);
+>  	*bh = bhs[n];
+>  	*de = (struct msdos_dir_entry *)((*bh)->b_data + offset);
+> -	*i_pos = fat_make_i_pos(sb, *bh, *de);
+>  
+>  	/* Second stage: clear the rest of cluster, and write outs */
+>  	err = fat_zeroed_cluster(dir, start_blknr, ++n, bhs, MAX_BUF_PER_PAGE);
+> @@ -1298,7 +1297,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+>  	struct buffer_head *bh, *prev, *bhs[3]; /* 32*slots (672bytes) */
+>  	struct msdos_dir_entry *de;
+>  	int err, free_slots, i, nr_bhs;
+> -	loff_t pos, i_pos;
+> +	loff_t pos;
+>  
+>  	sinfo->nr_slots = nr_slots;
+>  
+> @@ -1386,7 +1385,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+>  		 * add the cluster to dir.
+>  		 */
+>  		cluster = fat_add_new_entries(dir, slots, nr_slots, &nr_cluster,
+> -					      &de, &bh, &i_pos);
+> +					      &de, &bh);
+>  		if (cluster < 0) {
+>  			err = cluster;
+>  			goto error_remove;
+
 -- 
-Sebastian Reichel <sre@kernel.org>
-
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
