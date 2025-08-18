@@ -1,87 +1,75 @@
-Return-Path: <linux-kernel+bounces-773925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F56B2AC70
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:19:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB550B2AC43
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85F4C20070E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:14:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50E5C7AD202
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C294F24C669;
-	Mon, 18 Aug 2025 15:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6C32512E6;
+	Mon, 18 Aug 2025 15:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="PX8jA6DW"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OTjjYTFJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AebxJxuG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BAA1D5150
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD5F24E4C6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530073; cv=none; b=rI37juhxPmYq92HkS+qjqIhRCIkr4k0UnH3oigAidUzBUyPyX4xHGIHlLlmk2nyXPkAQBa9q0e69fM/mKqqxaaVEW7DclEXlXPAkahP3PCGAD2BkKfy5u0iKQ2FoMZTtURLFzkI+b31rqVqmCDmPYXqqJh3DuLrvD+RxtcUJKBM=
+	t=1755530094; cv=none; b=LbwrDm+EEZAK09AT+rg2sTy1caDDtmLhcWxtR1/ZcciMpOXbpezNge559nskjDSmy4hlR4tFbc/JhNFld3cimIBrzDkBWDdHScsoaFzJdi7vrfE+xbRX6w4m8xuxg8dPXcqPCPDJaKOLPZ6SepwqxieBIpNoY/R0LiGSguw/wTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530073; c=relaxed/simple;
-	bh=253Fk/k1w60T8GE/q67UW3vfoP4IJWTniJrrU83QFwc=;
+	s=arc-20240116; t=1755530094; c=relaxed/simple;
+	bh=O6aTlMjnDiIFzMitmclGJsYDjPXGvGHf475d82Bm3LA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rdr/66y6+GNgu42vOvRerijowK7/owqlq5oedRrWchFB7M/Nv06b/OgkfLrfYPfsdUHqKM/+dqwGeWs0bu61d6Ni2AFDqL0yE6jYfvapN1zK2oc39AjctOyr0X3r+Kbq02Yq/m4eN1Q1IPEGvxnbbWGxnC4IyPd4olVHsqucINU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=PX8jA6DW; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3e6666a4f55so21118225ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1755530071; x=1756134871; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJVnXpOKhtlkl1TVi/ph9w2E/L47rIuiNz17/FrH2rE=;
-        b=PX8jA6DWh3+2msRkOFVsc6xrvtTWZ354UabPGxNrVgjeT1PbtT0rkR9St9dFCU/zH2
-         KDzW8HsmJyY9t9L9FbhLW9z52JhEgXH800cE8dFjIz0uHtAsky684AZW2LSqHtNsR5z3
-         7s/1m1aBOVAwJZusxugHz11R70HUeQMgrpxIoW43ZkFZWx0Yc5yNq9sOLlujo3aRF5yC
-         MhfuYChIPUEHuG9kBfqER97BrSZX4jvZfy4l84BEsCwne5/59hSANPht3hvacVnp20nQ
-         LV/QoUcBJal6H+DqTkLav4ZzodmY1Obb7lA/BR/7fWF3bcR77fpr4R3m//901YZgsUb2
-         +Nfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755530071; x=1756134871;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pJVnXpOKhtlkl1TVi/ph9w2E/L47rIuiNz17/FrH2rE=;
-        b=d5QcWjtgjNBi7uQCCQlcGsqu9/gBdzJ9O6A9F4l5kaAy9BFid4sR3SB/WkyqUrC5Nw
-         5jJtN/ofyLNA/qSHmc6D/ZAm8Eij8bojX1gBJzaiWuHZC+r0RYPus/QKZCuKo+nbrXG6
-         HzIoCkkbNAoBmq2PvuEdn0SNFCSZxlP7lg5YLPMBAq4Tf0kyDyHUbC1gk3H2y2gtEaEO
-         dzgkj0QjGhF3HOQKboFVJFOunRaMyEkfX2eS/8wNY2wB6IHl0wUBuFWMDnykWRQ23nUh
-         Fl69kMMD3O77d4RbGHCSDBg5qRocRY+KprEw3ybrJh/HhSHK62feSeig3MnsLb6U302I
-         V6Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUbHxu8uRGjSXCij7c/MdSAETU6Fv33jeRBWzwWj9gNZGQt85XIYdXk9gOe+/QGUR0iU0BRrfcVO7tRtk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLS6apJ1ntLGOVI8JgnNNGiximfgCZKtfmZV07bbbSKWh+5V48
-	Q+pQKpPi57ZvJ0OsYINuBW6XtSJpR8f4FelPY3NMWBzngQEO11rNhBDBHOLPy0Ap16eN8fmEoNs
-	M7QNSQAM=
-X-Gm-Gg: ASbGncvtqkx1qErkCmbS0+zdPJE5sBteRcQF1F69uLjln0SzANB7brrWMZdo7V0TgdB
-	3JU+TzUkHFk/nwgo8ZpGNoJNy9WxaBAseFs2ajw3+HACiXo4fdfsfUoGsnNVdJSDDMUczjqcOrv
-	/NwEIgKRiB2lvzuR5dXDIVhmI0p4e0khe8ojjYvOtt/Qa1frnG7LmFFuNG1YSBsCQNmjwQ4GS5Q
-	DUqlAGuVeahohVxMZP9ecprklg4oqQsI2pY7/5SZSCV/PJ+NjMPyUdTOR0SzfAt3gBp+79K295I
-	VXUgjwX+Ox3fcj3Ze9CNc4P+Luq+reNKgkA4syb5t8zoVfQ9pibdG15sp9gtnLn5R85Mq/Xf2y6
-	9jw==
-X-Google-Smtp-Source: AGHT+IGD3WCH4r5/BDvKZhnt0hvOa7OtCml84sjjaSqIo8vg5MPK1lE8HmDoADIn5/UJ0sNbJ0LWYg==
-X-Received: by 2002:a05:6e02:168e:b0:3e3:fd25:f6a with SMTP id e9e14a558f8ab-3e57e8ad57dmr221351925ab.11.1755530070566;
-        Mon, 18 Aug 2025 08:14:30 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8255:4e6::7d:7d])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e58c3c3sm35249495ab.2.2025.08.18.08.14.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 08:14:30 -0700 (PDT)
-Date: Mon, 18 Aug 2025 10:14:28 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Corey Minyard <corey@minyard.net>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com
-Subject: Re: [RFC] Patches to disable messages during BMC reset
-Message-ID: <aKNDVFTI-UZeNq0Y@CMGLRV3>
-References: <20250807230648.1112569-1-corey@minyard.net>
- <aJ-lPAc2bLlvHNa3@CMGLRV3>
- <aJ_lUYTlrzYnRD-5@mail.minyard.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLRkdj8BLCJseoCAUlbAOilfx0cI/oqzAH9L2E2ml9CBTfRhOWk2briCYU9WLo04YjQdu22jjWtQbQgqeaHZUoNGPcDdz42plhqIQM1r8CSeaVfRIU5f9P7NyIHFmbEgsGjQyVK/uZfWttGb8VBLLQM4lgGiiQ2UXCJdHpD4lGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OTjjYTFJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AebxJxuG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Aug 2025 17:14:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755530091;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NOjgkoXz2OJkl1SQS5nGgXmhcpxnRfnVH+2MCIzyCr0=;
+	b=OTjjYTFJcrkRSCwwpZFD27b3FoL3qXDDbwg6aU/4I6sD2ZGrg4cB/+NylemMmmHeXVyuC1
+	+SryT3Xl8IBtoZ2/2FtPHreMr9p/ZKNzRjR6QGIe75o7q/xmIttpV01udHktc4FoswD+3c
+	yfElSmrptL2GIr++k71IfXNfLdkN1yMbncHUDtwzpBjoEI0/qf3WXfhF4gbHqWFEfYS9Kr
+	WlRmVQp0VwcOX8p+YELgwaQ8PFl7kLLl6902BV+AwMCpX0MZnrk7sdPvNT4t/Vy2oV3Esr
+	jfOKy6NGAWEzu/x60Kr5lewWKjSItDovshmlwVkAbyKaGQmBeuzMn+mULv/6JQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755530091;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NOjgkoXz2OJkl1SQS5nGgXmhcpxnRfnVH+2MCIzyCr0=;
+	b=AebxJxuGDUPUEaVAMnHvWQbgEv+KZH95RErUBe2ZcSoW4ATWcQgO+gcp48fnH6DzrFKBRz
+	N74UOXMupUunJuDg==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 02/34] ASoC: Intel: avs: Include CPUID header at file
+ scope
+Message-ID: <aKNDZ3mWYUABwOzJ@lx-t490>
+References: <20250815070227.19981-1-darwi@linutronix.de>
+ <20250815070227.19981-3-darwi@linutronix.de>
+ <20250818145646.GGaKM_Ltrggbwkj2TB@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,70 +78,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJ_lUYTlrzYnRD-5@mail.minyard.net>
+In-Reply-To: <20250818145646.GGaKM_Ltrggbwkj2TB@fat_crate.local>
 
-On Fri, Aug 15, 2025 at 08:56:33PM -0500, Corey Minyard wrote:
-> On Fri, Aug 15, 2025 at 04:23:08PM -0500, Frederick Lawler wrote:
-> > Hi Corey,
-> > 
-> > On Thu, Aug 07, 2025 at 06:02:31PM -0500, Corey Minyard wrote:
-> > > I went ahead and did some patches for this, since it was on my mind.
-> > > 
-> > > With these, if a reset is sent to the BMC, the driver will disable
-> > > messages to the BMC for a time, defaulting to 30 seconds.  Don't
-> > > modify message timing, since no messages are allowed, anyway.
-> > > 
-> > > If a firmware update command is sent to the BMC, then just reject
-> > > sysfs commands that query the BMC.  Modify message timing and
-> > > allow direct messages through the driver interface.
-> > > 
-> > > Hopefully this will work around the problem, and it's a good idea,
-> > > anyway.
-> > > 
-> > > -corey
-> > > 
-> > 
-> > Thanks for the patches, and sorry for the delay in response.
-> > It's one of _those weeks_. Anyway, I backported the patch series
-> > to 6.12, and the changes seem reasonable to me overall. Ran it
-> > through our infra on a single node, and nothing seemed to break.
-> > 
-> > I did observe with testing that resetting BMC via ipmitool on the host
-> > did kick out sysfs reads as expected.
-> 
-> Ok, I took the liberty of adding a "Tested-by" line with your name.  If
-> that's not ok, I can pull it out.
+Hi Boris,
+
+On Mon, 18 Aug 2025, Borislav Petkov wrote:
+>
+> I'm guessing that:
+>
+> https://lore.kernel.org/r/aGv8AWwHbi5seDxi@lx-t490
+>
+> still needs to happen yet?
+>
+> Because I don't see it in this set...
 >
 
-Not a problem.
+Yeah, I discovered that I need to do the X86_FEATURE integration within
+the CPUID model before touching the CPUID(0x15) call sites.
 
-> > 
-> > Resetting the BMC remotely, was not handled (this seems obvious given the state
-> > changes are handled via ipmi_msg handler). Would the BMC send an event
-> > to the kernel letting it know its resetting so that case could be
-> > handled?
-> 
-> Unfortunately not.  It's one of the many things that would be nice to
-> have...
-> 
-> In general, dealing with a BMC being reset is a real pain.  They tend to
-> do all kinds of different things.  The worst is when they sort of act
-> like they are operational, but then do strange things.
-> 
-> I haven't thought of a good general purpose way to handle this.  I'm
-> toying with the idea of making it so if the BMC gets an error, just shut
-> things down for a second or so and then test it to see if it's working.
-> During this time just return errors, like the new patches do during
-> reset.
-> 
-> Thanks for testing these.
-> 
-> -corey
->
+Quoting the cover:
 
-Thanks for working with me on this.
+  State of Affairs: By now, all CPUID leaves which do not interact with
+  the X86_FEATURE mechanism(s) has been transformed to the CPUID model.
+  Remaining leaves have dependencies on X86_FEATURE.
 
-> > 
-> > Best,
-> > Fred
+  For example, some callsites _directly_ enumerate CPUID(0x15)
+  [ART_CPUID_LEAF / CPUID_LEAF_TSC] even though that leaf has important
+  dependencies on X86_FEATURE_ART and its tsc_async_resets flag.
+
+  The CPUID parser work will not propagate such call sites brokedness and
+  will integrate the X86_FEATURE infrastructure within it first.
+
+As I mentioned in the Bhyve thread, this shall also include a directed
+acyclic graph of dependencies for the X86_FEATURE flags themselves:
+
+  https://lore.kernel.org/lkml/aKL0WlA4wIU8l9RT@lx-t490
+
+v5 should cover this.
+
+Thanks!
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
