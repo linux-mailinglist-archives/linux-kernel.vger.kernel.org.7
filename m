@@ -1,113 +1,219 @@
-Return-Path: <linux-kernel+bounces-773288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAA0B29DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DC1B29DCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45AB77B0514
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1F447A884D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7D830E0C7;
-	Mon, 18 Aug 2025 09:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601730C366;
+	Mon, 18 Aug 2025 09:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UexCYvxD"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZHvCZFN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362EC30DEBB
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2BB25D527;
+	Mon, 18 Aug 2025 09:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509149; cv=none; b=q9ZsD8qojq1FLSwf3hbz7EdepU5KLcfBzgjPj0J50yldeikXxrnjq8oeZETjFrv9qkc4lEp2GWaCbf22ZgzbuBa/CsUFIqie4QAFBktC/v+xDW2NRCpio+7+vYTVkbKhAPGE0WCWoLY4juI5CY8KK36esB+DVDAIu/Wya73ol7c=
+	t=1755509199; cv=none; b=IYohavx9dZY9yCUmyY6MzRkHNCkiFyrszw3KZmQ24BK3gLpeFAwmPoKk8sYRxW2jPbXpWW0nktvkFTiJ5QiOIJa1/96tDoYCdIqkt40+9pQ4gTFKnVfm3IO9NaD+0H0oyH543u3UFM9BWCvIOKr3qrr0cAe/UY2K/T1j+6QBNx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509149; c=relaxed/simple;
-	bh=wo4TENj/CKIqy8SYXhJJLguOY5BaEq786MRtklI+vUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dk3ti7mEv4aZNi/Uc+bFqQKmLNUchM2YEW4yO+Zow+amUtB+MtX1bsS6dZEbS+94U5WHdZvc3z6VtbnrTAF50Jm2e4I/GkQntz914GteuSJMiCiYlZLUb2jm0HRQF9G4vaOYOZyOZzRkxyOK2ZoFrxT0bGsDbFy3T1FBGJETZP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UexCYvxD; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-333f8f5ca72so27519461fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755509144; x=1756113944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wo4TENj/CKIqy8SYXhJJLguOY5BaEq786MRtklI+vUA=;
-        b=UexCYvxDLpHtwdYCfYv3diYuynvBUUHlYzsQcmlhNYv1f63AePv7SkqEvss4l2XBly
-         cai1fIvltqILA2JhlRc+uL9s9IaNRjLM6FsNIGRMEFxM9WiMsr24ee0vt44NlJpC+bH/
-         i8sTZTo6TwmHNO4QBJBIAwCYIkm6suv/GS9MAUWh/djRrRp+U/ejzIfsPx5C2Nb27Wop
-         e46OUMMwih/PhHK6hwl0jbpF0VJowX4qbyzHPjFoXWpLKPTkXpYCa23w1PMcipxtHnNU
-         rArVqAJb2J8LWNDWImWwA/a4bXwBKxyVh1CM8mtN4MoCL+EXNYzpGD5M/dfyth3RjGg2
-         rXgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755509144; x=1756113944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wo4TENj/CKIqy8SYXhJJLguOY5BaEq786MRtklI+vUA=;
-        b=ToHMncfWojT4RqmsXzD6ZCoMVWD4iu9HsGM5yaJQX46NuH4jVU/efi4CsRqaPf8Glx
-         zPbpQedw0A1vKNcLa2hHRAGsU8s3h58fxmb2IUD4thq22s4nRuY/bRZC/vHo/EIB5V+m
-         hpJ0SmKZAkzNdp/69M4I289cno7SN1PZO6gMIYwzxZ9pSljUX5fLxCF799/SPBE+GvjR
-         03MyhX4r2+PyBqjhpaQ9fQWwarvPU89pk3gWGgtuMaYOnaiU3alhDnblM4uKlfBOKfuR
-         nft1Gz9nhVObqhXlSPHpGovRdoIEQDeHudW9kIdszrMqpkL+hjzin7J6k01IyhZMY6eC
-         7h8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXdoS4veaGcaQB0VdftjBM4E7tONsfpzEL/JhTH5ReUOs0rnpR35X/DVDvuuTv9Saba2J8Q+6yKsFqUw60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJDM509rFEcc0ob9LlP1iKSjDC6Iz8nWaet7lp4ZJBwoTWgRD/
-	VaHdxoeMF9B60mWWQJlj+mDfTCpYRvhPHV30VZFwSYYuGsd0caJM+jrKoAtOS1HItGW/MRmG+jr
-	TAStP7ts+0R9G06Xu68HYl9CoLVk62JQQp69C56ioqw==
-X-Gm-Gg: ASbGncss7umM+bo4lz5UgVL8V6oDMadRlRKAcvoxM/lh2fgiyg81oNlBe7D2SiRdpA4
-	FetNhirWm4trT7CE7FDXIM9hGIPvHsQav0f/kjdS/+3yxevj/eDtk8Lke5lbtebspaOGiR67pxA
-	OVJvBUPCI1cJ2u7vix7mnTw5elg/ad6hkD4n5WG2mQRKV3Qnijc757TC9ve5kW11etAGT9GcDHZ
-	773bc4=
-X-Google-Smtp-Source: AGHT+IHNbZouPA+9w/Eg1wGgKXMzUtJ39CaSfzmACFke7a6lYkpcnvTkjJpS7aaVbzjtwG3r/4970mFH4ZdlzWsxTU4=
-X-Received: by 2002:a05:651c:555:b0:332:3691:a50b with SMTP id
- 38308e7fff4ca-33409963f8fmr35371671fa.33.1755509144347; Mon, 18 Aug 2025
- 02:25:44 -0700 (PDT)
+	s=arc-20240116; t=1755509199; c=relaxed/simple;
+	bh=xwaCdGIqBv3ZIaCKo+UTW/RslRxiy5n/C8Mi33WHmJo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=RnG474KFqXmTMjkZotbKi5E7FXAJZhZrYZtaqQzmoIcLyXXzIbO//i4n0IoK7Dk3fBdKQk5tKipSSFoqMDGoQcU84Uv+CaysGDqeth88R3ycK2V6n9u0msA22SMJrBY/Mxj65pBCxAEXtGebcFPUg+fh8l8lWjMlGUtIYC8Rjmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZHvCZFN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6658C4CEF1;
+	Mon, 18 Aug 2025 09:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755509196;
+	bh=xwaCdGIqBv3ZIaCKo+UTW/RslRxiy5n/C8Mi33WHmJo=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=mZHvCZFNs0FFE8bEjXjdTQN35k9IBTUhXjpU3XkKtLRtma4AbYpnbKRuDXWRbo6eY
+	 sxY9/VZKhOTXuRXZx3iWOfaQh95CKa1B3wSJSDl/0CuVk3jM5/OpQLLT1HpoftRKHl
+	 boyqNaTQjFSNVCgI+jphezovgBMpf/pwptgWIri/4MGea9giY57RGHbwn3PxXNRrfW
+	 5ofxbdLFvLsMGHP+CeIFxAVyz16k5IWPNT3lAKi1F0XOwS3gTd0FS8gNzTdUYPWJe/
+	 vW3qXYyhdMKhZtOHmcM1HlQyviK3n2C56YyMh6/2nz7UHXMzofJoQuEjROgb70pX9a
+	 SYHkef0boQPbg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250730061748.1227643-1-me@brighamcampbell.com> <20250730061748.1227643-4-me@brighamcampbell.com>
-In-Reply-To: <20250730061748.1227643-4-me@brighamcampbell.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 18 Aug 2025 11:25:33 +0200
-X-Gm-Features: Ac12FXysXacOEMS_v8Dyu_3gMUa5CFOxftr3HHbH5tzkVfiT0eAfebU-wggGo3w
-Message-ID: <CACRpkdYZrBze=MrixPpp8psUus+i2h_iz7CPfYtRCjspVGC9_A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] drm/panel: novatek-nt35560: Clean up driver
-To: Brigham Campbell <me@brighamcampbell.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, neil.armstrong@linaro.org, 
-	jessica.zhang@oss.qualcomm.com, sam@ravnborg.org, dianders@chromium.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 18 Aug 2025 11:26:32 +0200
+Message-Id: <DC5G2LJGBN3D.8JSJY9U25IAW@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 3/7] rust: v4l2: add support for video device nodes
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <kernel@collabora.com>,
+ <linux-media@vger.kernel.org>
+References: <20250818-v4l2-v1-0-6887e772aac2@collabora.com>
+ <20250818-v4l2-v1-3-6887e772aac2@collabora.com>
+In-Reply-To: <20250818-v4l2-v1-3-6887e772aac2@collabora.com>
 
-On Wed, Jul 30, 2025 at 8:18=E2=80=AFAM Brigham Campbell <me@brighamcampbel=
-l.com> wrote:
-
-> Update driver to use the "multi" variants of MIPI functions which
-> facilitate improved error handling and cleaner driver code.
+On Mon Aug 18, 2025 at 7:49 AM CEST, Daniel Almeida wrote:
+> Video device nodes back the actual /dev/videoX files. They expose a rich
+> ioctl interface for which we will soon add support for and allow for
+> modelling complex hardware through a topology of nodes, each modelling a
+> particular hardware function or component.
 >
-> Remove information from a comment which was made obsolete by commit
-> 994ea402c767 ("drm/panel: Rename Sony ACX424 to Novatek NT35560"), which
-> determined that this driver supports the Novatek NT35560 panel
-> controller.
+> V4l2 drivers rely on video device nodes pretty extensively, so add a
+> minimal Rust abstraction for them. The abstraction currently does the
+> bare-minimum to let users register a V4L2 device node. It also
+> introduces the video::Driver trait that will be implemented by Rust v4l2
+> drivers. This trait will then be refined in future patches.
 >
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  rust/helpers/v4l2-device.c       |  16 +++
+>  rust/kernel/media/v4l2/device.rs |   1 -
+>  rust/kernel/media/v4l2/mod.rs    |   3 +
+>  rust/kernel/media/v4l2/video.rs  | 251 +++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 270 insertions(+), 1 deletion(-)
+>
+> diff --git a/rust/helpers/v4l2-device.c b/rust/helpers/v4l2-device.c
+> index d19b46e8283ce762b4259e3df5ecf8bb18e863e9..0ead52b9a1ccc0fbc4d7df635=
+78b334b17c05b70 100644
+> --- a/rust/helpers/v4l2-device.c
+> +++ b/rust/helpers/v4l2-device.c
+> @@ -6,3 +6,19 @@ void rust_helper_v4l2_device_get(struct v4l2_device *v4l=
+2_dev)
+>  {
+>      v4l2_device_get(v4l2_dev);
+>  }
+> +
+> +void rust_helper_video_get(struct video_device *vdev)
+> +{
+> +    get_device(&vdev->dev);
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Rust helpers shouldn't encode semantics. I think you want to use video_get(=
+)
+instead.
 
-(Maybe this is applied already...)
+> +}
+> +
+> +void rust_helper_video_put(struct video_device *vdev)
+> +{
+> +    put_device(&vdev->dev);
 
-Yours,
-Linus Walleij
+video_put()
+
+> +/// Represents the registration of a V4L2 device node.
+> +pub struct Registration<T: Driver>(ARef<Device<T>>);
+> +
+> +impl<T: Driver> Registration<T> {
+> +    /// Returns a new `Registration` for the given device, which guarant=
+ees that
+> +    /// the underlying device node is properly initialized and registere=
+d, which
+> +    /// means that it can be safely used.
+> +    pub fn new(
+> +        dev: &v4l2::device::Device<T>,
+> +        data: impl PinInit<<T as Driver>::Data, Error>,
+> +        flags: alloc::Flags,
+> +    ) -> Result<Self> {
+
+Same comment regarding Device having its own constructor as for
+v4l::device::Registration. I don't see a reason why Registration::new() sho=
+uld
+serve as constructor for Device.
+
+Additionally, I think we should use devres::register() for the Registration=
+, such
+that you can provide &Device<Bound> cookies in the video callbacks / ioctls=
+.
+
+As far as I can see, video devices are synchronized when unregistered [1]
+-- let's take advantage of that.
+
+We do the same thing in the PWM abstractions [2], which is a great optimiza=
+tion.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/media/v4l2-core/v4l2-dev.c?h=3Dv6.16#n1105
+[2] https://lore.kernel.org/linux-pwm/20250806-rust-next-pwm-working-fan-fo=
+r-sending-v13-3-690b669295b6@samsung.com/
+
+> +        let video_dev =3D try_pin_init!(Device {
+> +            inner <- Opaque::try_ffi_init(move |slot: *mut bindings::vid=
+eo_device| {
+> +                let opts: DeviceOptions<'_, T> =3D DeviceOptions {
+> +                    dev,
+> +                    _phantom: PhantomData
+> +                };
+> +
+> +                // SAFETY: `DeviceOptions::into_raw` produces a valid
+> +                // `bindings::video_device` that is ready for registrati=
+on.
+> +                unsafe { slot.write(opts.into_raw()) };
+> +
+> +
+> +                // SAFETY: It is OK to call this function on a zeroed
+> +                // `video_device` and a valid `v4l2::Device` reference.
+> +                to_result(unsafe { bindings::video_register_device(slot,=
+ T::NODE_TYPE as c_uint, -1) })
+> +            }),
+> +            data <- data,
+> +        });
+> +
+> +        let video_dev =3D KBox::pin_init(video_dev, flags)?;
+> +
+> +        // SAFETY: We will be passing the ownership to ARef<T>, which tr=
+eats the
+> +        // underlying memory as pinned throughout its lifetime.
+> +        //
+> +        // This is true because:
+> +        //
+> +        // - ARef<T> does not expose a &mut T, so there is no way to mov=
+e the T
+> +        // (e.g.: via a `core::mem::swap` or similar).
+> +        // - ARef<T>'s member functions do not move the T either.
+> +        let ptr =3D KBox::into_raw(unsafe { Pin::into_inner_unchecked(vi=
+deo_dev) });
+> +
+> +        // SAFETY:
+> +        //
+> +        // - the refcount is one, and we are transfering the ownership o=
+f that
+> +        // increment to the ARef.
+> +        // - `ptr` is non-null as it came from `KBox::into_raw`, so it i=
+s safe
+> +        // to call `NonNulll::new_unchecked`.
+> +        Ok(Self(unsafe { ARef::from_raw(NonNull::new_unchecked(ptr)) }))
+> +    }
+> +
+> +    /// Returns a reference to the underlying video device.
+> +    pub fn device(&self) -> &video::Device<T> {
+> +        &self.0
+> +    }
+> +}
+> +
+> +impl<T: Driver> Drop for Registration<T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: `self.0` is a valid `video_device` that was registere=
+d in
+> +        // [`Registration::new`].
+> +        unsafe { bindings::video_unregister_device(self.0.as_raw()) };
+> +    }
+> +}
+>
+> --=20
+> 2.50.1
+
 
