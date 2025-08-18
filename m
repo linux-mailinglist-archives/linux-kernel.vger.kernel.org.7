@@ -1,131 +1,94 @@
-Return-Path: <linux-kernel+bounces-773575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B387DB2A1F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:45:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0292B2A1AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69307188FEA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5405E7C1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D6A31E0F4;
-	Mon, 18 Aug 2025 12:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A3121D3E4;
+	Mon, 18 Aug 2025 12:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sic9ij+C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175CB31B13D;
-	Mon, 18 Aug 2025 12:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WG5C6/pT"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E362029B0;
+	Mon, 18 Aug 2025 12:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520305; cv=none; b=SmgBeJw1tuhPNDO3TY35CwPscuYbN1qwtwLcUrlyEp8zGioDHf4qYmsQISh4XvxID4F5IMldZ3VP4lHX1rQzWrYKLPin+p4VXD1/HQgpxYObxB9Ef3/XxID8RihzbeqwVLXp3rutZZnpCQsivH7r1aIGrPymnS010Yers2EuHzc=
+	t=1755520414; cv=none; b=oeoPHkK1eMQ+wJaYm4IKrsKAwzkFLaQ0era4LESzSb/egr0NSVON6VcAOG/dKD1msHXka/nvIqFEU8O6LY0Ss9j7964hImzWUGb4hMR3xga3zn637lPQydASQ/9SQuRC+ktSpYdkyPqjTCULtaGfUe80T0yk2ZgjOvG6FheOpmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520305; c=relaxed/simple;
-	bh=9xto1WGjpE7C25ii2gC6fdKuCEsKYv14TdNP1gsfLeA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aZ/pyBT0ZZiVHdMJJHIADKc+jQ92q2RoTz9JN9LuljHfwTEl7QXsCa6Cvb6+9GodJeZUYIvAccJgI8YWQhxSAx76DLy8FYVn95y5IkXg/Qfz6vqK64zYNLCpe+4IPOiGg8tPzXY8CqELqDj3YW5Wp9sWe7VZJt/9EV3vGK+uKrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sic9ij+C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 83DB5C4CEEB;
-	Mon, 18 Aug 2025 12:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755520304;
-	bh=9xto1WGjpE7C25ii2gC6fdKuCEsKYv14TdNP1gsfLeA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=sic9ij+ChZgwPgrM4kF7yOqIFX1ILzVm8emfabxekhi61BRonHlxhP7bVRju6if/C
-	 mOxFmD+Et6kUwCxDaU2M4odiXi59m6NPTtwo0oIWEqPsm+DSp8ZCot2GlqKhiGG4/Y
-	 rHJSOCidV9FoHsBlZ1E5Ehilw0dYPg+mWf2n0I7rt6eXSWpw5+D2hTfVcxM+JUq536
-	 9/O5MHtE9IJBhQ7MT5e8onMR0MH5++RJty+ZqXYi4Nwh8rvTLJN0os57RwbK070Cge
-	 4L4BjP+cg12SjPIypzqrEdOCkSMf1mVUqcYDBcDUtCmIo1jzjtrRK8j7Y+qxovhWD3
-	 Oj1tk0YQe0zQA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2FFCA0EE4;
-	Mon, 18 Aug 2025 12:31:44 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Mon, 18 Aug 2025 14:31:43 +0200
-Subject: [PATCH] media: nxp: imx8-isi: Check whether pad is non-NULL before
- access
+	s=arc-20240116; t=1755520414; c=relaxed/simple;
+	bh=fBwGY1pf9/pZrhjxfF2lExvVGXSFMC7sT+sKvSTHCZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MHsb5aKEhW7n+dkMzNdrHcZPV9GuCQSQSggqmaptCSgDqKKN1yNmZfFc/G+cqqVaZ1ce3mAWQp/1hHWUkC/J8W1KsY6z5ME8eThQ/We49jHEHe11WeHvZiD/cc2znwMQJ+4e81OpO8UJKsNpm+xUr0mV6sZ43L7GX801h4hfcMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WG5C6/pT; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=OB
+	mxvHZPIjB170wB6IcELcbHWu2NuzRe737D2dZcW1k=; b=WG5C6/pThVAjM+F3JX
+	1MU09l2bcTqxQOANpxc5ciqxWp+Ywtwf/lJfOiFM7/jsYUr4GIwYGgRHbQnzgYrk
+	3WQKxhiIiCyoW2L0FjeAzUkiu0NWcAFaW8Wu1ACm0Op7VS6SzjPyk+zOQrtKfued
+	hmp6M3wEY+fveFQPiEe7ZQnbA=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wAnA8OBHaNoedlICw--.25568S2;
+	Mon, 18 Aug 2025 20:33:08 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: sre@kernel.org
+Cc: t.schramm@manjaro.org,
+	zheyuma97@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH] power: supply: cw2015: Fix a alignment coding style issue
+Date: Mon, 18 Aug 2025 20:32:59 +0800
+Message-ID: <20250818123303.334853-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-imx8_isi-v1-1-e9cfe994c435@gocontroll.com>
-X-B4-Tracking: v=1; b=H4sIAC4do2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDC0ML3czcCot4oDJdS1MTC0sLMyOLpCQzJaDygqLUtMwKsFHRsbW1ADT
- i1PdaAAAA
-X-Change-ID: 20250818-imx8_isi-954898628bb6
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Stefan Riedmueller <s.riedmueller@phytec.de>, 
- Jacopo Mondi <jacopo@jmondi.org>, Christian Hemp <c.hemp@phytec.de>, 
- Guoniu Zhou <guoniu.zhou@nxp.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-media@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Maud Spierings <maudspierings@gocontroll.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755520303; l=1552;
- i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=AcOnQUcEtLtKRIGyS551I2XQVk8kQXwsf7E/+Yff8TA=;
- b=LxPyeY5OtSuWC0dqmLOomQR+CNhDogbAv7Ktm7eAvNyw3RLKGvRZnoWkjAVyF9zkpodT26fDt
- BSNSf84OWnoCe6aD49C3B4Ijd31VQ5j0Tg6aujoKeWnTgkb3HIY05zI
-X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
- pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
-X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
- with auth_id=341
-X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
-Reply-To: maudspierings@gocontroll.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAnA8OBHaNoedlICw--.25568S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyDKFW8Cw15tw4UGrWfZrb_yoWkXFgE9r
+	Wxu3s7Kr15uF1Utw1qyF13Zr9aga4qqF97Xa1ktwsrZry7Gw4qyr4DCryDGw1DX3y7CrZ8
+	uFyq9a13AF9xtjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRAPESPUUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEgGtXmijGIioAQAAsS
 
-From: Maud Spierings <maudspierings@gocontroll.com>
+Fix the checkpatch warning:
+CHECK: Alignment should match open parenthesis
 
-media_pad_remote_pad_first() can return NULL if no valid link is found.
-Check for this possibility before dereferencing it in the next line.
-
-Reported/investigated in [1]:
-
-Link: https://lore.kernel.org/all/1536a61b-b405-4762-9fb4-7e257f95e49e@gocontroll.com/ [1]
-Fixes: cf21f328fcaf ("media: nxp: Add i.MX8 ISI driver")
-Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+Fixes: 0cb172a4918e ("power: supply: cw2015: Use device managed API to simplify the code")
+Signed-off-by: Andy Yan <andyshrk@163.com>
 ---
-I'm not sure if this should be a dev_dbg(), just following the pattern
-around it for now, also not sure if EPIPE is the correct error.
----
- drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
-index ede6cc74c0234049fa225ad82aaddaad64aa53d7..1ed8b031178b7d934b04a8752747f556bd1fc5a9 100644
---- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
-+++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
-@@ -160,6 +160,13 @@ mxc_isi_crossbar_xlate_streams(struct mxc_isi_crossbar *xbar,
- 	}
+ drivers/power/supply/cw2015_battery.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/power/supply/cw2015_battery.c b/drivers/power/supply/cw2015_battery.c
+index f63c3c410451..382dff8805c6 100644
+--- a/drivers/power/supply/cw2015_battery.c
++++ b/drivers/power/supply/cw2015_battery.c
+@@ -702,8 +702,7 @@ static int cw_bat_probe(struct i2c_client *client)
+ 	if (!cw_bat->battery_workqueue)
+ 		return -ENOMEM;
  
- 	pad = media_pad_remote_pad_first(&xbar->pads[sink_pad]);
-+
-+	if (pad == NULL) {
-+		dev_dbg(xbar->isi->dev, "no valid link found to pad %u\n",
-+			sink_pad);
-+		return ERR_PTR(-EPIPE);
-+	}
-+
- 	sd = media_entity_to_v4l2_subdev(pad->entity);
- 	if (!sd) {
- 		dev_dbg(xbar->isi->dev,
-
----
-base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
-change-id: 20250818-imx8_isi-954898628bb6
-
-Best regards,
+-	devm_delayed_work_autocancel(&client->dev,
+-							  &cw_bat->battery_delay_work, cw_bat_work);
++	devm_delayed_work_autocancel(&client->dev, &cw_bat->battery_delay_work, cw_bat_work);
+ 	queue_delayed_work(cw_bat->battery_workqueue,
+ 			   &cw_bat->battery_delay_work, msecs_to_jiffies(10));
+ 	return 0;
 -- 
-Maud Spierings <maudspierings@gocontroll.com>
+2.43.0
 
+base-commit: 079dc9ff6c3e30152ce69c162b02893bf741d2db
+branch: master
 
 
