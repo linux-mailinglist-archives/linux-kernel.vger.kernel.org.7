@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-773478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC16B2A0BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC780B2A0BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A3E3AAD88
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D53B3AE199
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FDA26F29A;
-	Mon, 18 Aug 2025 11:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFE5273D84;
+	Mon, 18 Aug 2025 11:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVcdeK96"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bXl/kv0A"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2B8261B8E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50B41D8A0A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755517427; cv=none; b=Vshbuyl7FLRnZePpBGa9FoJ8jFL+1lkJtbaIKNCKgP6b5+4eHVGygbo9zKmM628jtJgDSaF2cvdNMDeI3Te1xJe/25OxGETnMdXtYsA+TkKirLzA1KHIUMZFE9hIE+xOD9dcW/Dz5M3nIeyEZLlgdWwMsgxwxlKzL2g7iqq9vtw=
+	t=1755517540; cv=none; b=Wtqa6OaP0dtPjaeNnbxreiqrdYSdolvzwDxJJKco6VUfYSjCbechxr2d+1C6gXLXKBMj5qs3GU5UfCtJfV+aA4wzWTMQJoMMxSV9miRsdpgY1sqf7EEFcntHKxp5jRdp3gF6/N4OqpfoIir365rPAjLQ+WlB2qDwoEMyCeWQI7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755517427; c=relaxed/simple;
-	bh=1ACqnTbp6lr2CX/L2N5qWPGAKLrbqzeknhUGFg+AHt4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=MEGtH4TUrNwmdIp7H0ODB0jBOPAzlZlMtpi19fPTkrnFUW08GNasEcs8N544LviRahXN5Pj7wFL5G/52e20jrLD7sqyH2e3yNzz6bx3e8/gY0rfwoLng9LITVJbHDsJMUoMkrfFmgNrsgVXUYJqNTMxaWC7jadstDwQ7A6Zy1EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVcdeK96; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-333f9044198so5728681fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755517423; x=1756122223; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1ACqnTbp6lr2CX/L2N5qWPGAKLrbqzeknhUGFg+AHt4=;
-        b=QVcdeK960VRYkxkvNLmeRRDi1/YBFN4MM+Jisk9JspLYA09+YB0ns9v2xVrZDJMU7B
-         hGN3A0JfForVj+vvPVKxBqpsc4hmsGI4QghWgvV3ZL7+ZGZ1T5Ee7alAD3D21p6k/mj2
-         6W5joV1qBlsvSp/AbaN1GWPoEHgKJdKytzDR/56gsRbQbF/OpH9pS7qvNt9a4Q3VSiLF
-         HOH/8FG+ZF5dRm0rztbqfp9W6kgaL6qbq7az3bLO8Vk3ccZMTZ3cKdv5pFJfy2tz9/PR
-         RrK63Q9arNY+BZ5A1SOSxknGFG8ggjTucHFG+Eqe5M98l4k0MTa05RO4dSp5+LXUjz55
-         eneQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755517423; x=1756122223;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1ACqnTbp6lr2CX/L2N5qWPGAKLrbqzeknhUGFg+AHt4=;
-        b=YgfBK/dBcrUTOdn4AgmPrBZxjOxYJrpmZBfQZtuPdWVDoP4lMUp17rfyYnVuT2eM8r
-         MeYSqVLHjtpwLaUKx8fttCU8daUgrhRyk63HXDcvYbrutDEiiBrvhqvtoEIlr95FHvXc
-         wNaRpQ12Ew9pbunzMC6jO0vHTZ/jOGM5ViDa1XgGFkF/2YKSa8croKWp16Vjk85UD8Oe
-         8Zth2b8EFHp+IeWDwFbMkeeWyYjRGhrve5RgeIR0oEK1fyJAP7k15lrkseXkoTg0C/Bz
-         fsBOMPUW+0oAUDAiMoBjxf1hbWlL9vtdmtZtuxnbl7PuFngfbCMC97AVSDDxIVeyIqQL
-         Xv6w==
-X-Gm-Message-State: AOJu0YzQSmx3am1W0itikwIFbgCUzgV2wC7wNMaqiwaAejqwyp5qIXRG
-	zJEUqBw8qX/Z84rny7MlRxyBvJYq6S/0WIom/shKc/hYTVkJZ/HENyqg4XZaB4FCZ+VbUxfGPwz
-	23p4+rl1dkloYoDQrEWB9iK6hZiRV/eEUoUFGZ9w=
-X-Gm-Gg: ASbGncv7UDPJ7s7unBXyeBSp9CjKKd9guGgG5SbnjDFJOZcffCNAfTZQmkvmvb39k57
-	lt8F9YHl8KpNYm16puNFISG4kUOZqXiywn8Az61qlkxqzCLsoc2bxh7YbSmH0Z25mPZ9uFoHB0h
-	6BdNVAaNEU5oJSJ5EZFx0MaFZi/eKzz1wrOOJ4dgO74UMWr1IWnhvMllXYiHgAEdiQpwvFuLSim
-	pgMdbmRgitlkIvXvUI=
-X-Google-Smtp-Source: AGHT+IF/DQFHBcWNCA2EcUjK2nVz03fpUK/upf1op2W6bD9UTyVdleeL8/zjJ9fMQhc4fNEMxcromefCizgdcTG+UPc=
-X-Received: by 2002:a05:6512:68c:b0:553:252f:adf4 with SMTP id
- 2adb3069b0e04-55ceeb864d8mr1449539e87.10.1755517423340; Mon, 18 Aug 2025
- 04:43:43 -0700 (PDT)
+	s=arc-20240116; t=1755517540; c=relaxed/simple;
+	bh=N6vVdefW3pSbSLSiqJ1cgn6YSq+wOvI4zR40amLdBCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PC4diIN7sVab0K2GDDhYeqHxigNMh2BKacUe1xvHFxkYeTJsjMRWUnv1GXZ4/UZK+PdOpuonobAorvX5sWLsmG0LQ1/F6qHUbLeHdnYVi/Ct/tGC0/ZNp9pzQzV/b/CVnUTIemNDwJB7+6wXOExohUIL69zrN+2J7oIxsLWgIFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bXl/kv0A; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755517536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fu4mWedunRpepQK4vPdF43r3Z2WEFaYWndiALSzs5Lw=;
+	b=bXl/kv0AbExNPL0+QeD9tfh4WiDi0JAI1SZjbgQdamurh5/cWAoI7gr40y5kA9PDwio+CQ
+	oQa/ubEvJmROVsNLSnSdkYNkzHKsdeZTJujfqKaQtv0vTFwofTH9iZ1dvgUkZL9+T5hqMe
+	grsJpTaEBA7/z8+kjJwPCGpNRq7C4nA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-GUL-TeqQNc2gGJcAky-ovg-1; Mon,
+ 18 Aug 2025 07:45:31 -0400
+X-MC-Unique: GUL-TeqQNc2gGJcAky-ovg-1
+X-Mimecast-MFC-AGG-ID: GUL-TeqQNc2gGJcAky-ovg_1755517529
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9ADC3180044F;
+	Mon, 18 Aug 2025 11:45:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.24])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 48FE7180028E;
+	Mon, 18 Aug 2025 11:45:22 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 18 Aug 2025 13:44:11 +0200 (CEST)
+Date: Mon, 18 Aug 2025 13:44:05 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: syzbot <syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, dvyukov@google.com,
+	elver@google.com, glider@google.com, jack@suse.cz,
+	kasan-dev@googlegroups.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	willy@infradead.org
+Subject: Re: [syzbot] [fs?] [mm?] INFO: task hung in v9fs_file_fsync
+Message-ID: <20250818114404.GA18626@redhat.com>
+References: <68a2de8f.050a0220.e29e5.0097.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: cyber security <cs7778503@gmail.com>
-Date: Mon, 18 Aug 2025 07:43:30 -0400
-X-Gm-Features: Ac12FXy4ZtSVkJlX7veTPf0pSKw3PSHFi3Cm2y_VhR0Y_V7WqdZO05r7Vm--3zM
-Message-ID: <CAPmip_xKv6bA07apqYhyHxTNsnBitVbmcwcYE24xw2RYkDX5oQ@mail.gmail.com>
-Subject: [RFC] Proposal: Introducing Rust for memory-safe Linux kernel components
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68a2de8f.050a0220.e29e5.0097.GAE@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-I am Security Researcher [RelunSec] so let's talk about rust in linux.
+On 08/18, syzbot wrote:
+>
+> HEAD commit:    038d61fd6422 Linux 6.16
 
+#syz test: upstream 038d61fd6422
 
-Proposal: Incrementally introduce Rust for select kernel components,
-focusing on modules or libraries that benefit from Rust's memory
-safety guarantees while maintaining the majority of the kernel in C
-for compability reason.
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 339ec4e54778..474fe67f72ac 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -666,7 +666,6 @@ static void p9_poll_mux(struct p9_conn *m)
+ 
+ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ {
+-	__poll_t n;
+ 	int err;
+ 	struct p9_trans_fd *ts = client->trans;
+ 	struct p9_conn *m = &ts->conn;
+@@ -686,13 +685,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ 	list_add_tail(&req->req_list, &m->unsent_req_list);
+ 	spin_unlock(&m->req_lock);
+ 
+-	if (test_and_clear_bit(Wpending, &m->wsched))
+-		n = EPOLLOUT;
+-	else
+-		n = p9_fd_poll(m->client, NULL, NULL);
+-
+-	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
+-		schedule_work(&m->wq);
++	p9_poll_mux(m);
+ 
+ 	return 0;
+ }
 
-Example: You Can expose Rust driver apis for write kernel driver in
-rust and write other component in rust if possible keep using Rust
-with C binding example write 60% of C and 43%+ of Rust for compability
-reason write some critical part in Rust of kernel so in 2025 for
-safety reason you need switch to rust unlike 1997 C is a language
-actually 2025/2026 Low Level Language will be Rust.
-
-Experience: I"am Security Researcher. I also started write in rust
-some software or even hardware and firmware developement and fix issue
-with C bugs via reimplement them in Rust.
-
-Requesting comments and discussion on feasibility, potential pitfalls,
-and integration strategy.
-
-Kinds regards
-
-RelunSec
 
