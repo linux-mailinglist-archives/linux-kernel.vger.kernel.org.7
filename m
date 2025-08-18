@@ -1,141 +1,208 @@
-Return-Path: <linux-kernel+bounces-773984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC11B2AD23
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:47:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF367B2AD39
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CC7958383F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E9206863FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D84D307AF9;
-	Mon, 18 Aug 2025 15:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AA425DD1E;
+	Mon, 18 Aug 2025 15:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfT3AiPf"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdNd+gU2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC69257846;
-	Mon, 18 Aug 2025 15:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF167308F13;
+	Mon, 18 Aug 2025 15:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531805; cv=none; b=OyKR1wm3K6GRv90PqG2O5QfFKRQCSZldB93Lj+XJXJPZYfY4+C6B5J3BI8JPw/rN8EoMmvdeo105jdbOFcn/tJIfGyM4217jymfF++kUT8J1UAnjX7QRMwa6ZSGMxQuZFw7fNL8r5+mnNi9FMpoPAKy+latZe8oOsZA6zCeKL5E=
+	t=1755531812; cv=none; b=QVN9KmTdNPvukCjFqm/KwSZlkA4UD5vV3WXFaob6z/eIhQZtbTfM89JwWDpbblN584FOM7znNO1a5der6ofm0z3al4dSITIF2qB29rLhUT32OnoPNcrmIJhQKJ2fwo8XpblG/2DLf6MwrB6/STDjzaf+DYAv4vdcdzIpCPbTLN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531805; c=relaxed/simple;
-	bh=KYMP6FkfCg7JKeo88RFMhWk1DN454moSu5L8teqBS7Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dsfSWAj+4d7XYzpTgBparFS5Rf1tQ5VJRQwE3L7M3BwI6oiaFfXtoedyT6BuuVMMidbzU0ay+qpCZFIhsyvgQBxV0FfU7kTCphB5aUCQ4IvWv8yPOIDkRfPuNKrz4oFP4tk2d+Grw7pl59MJ+jXtMR5T7SMEkjD20yt1enDx2Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfT3AiPf; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2445806e03cso42371765ad.1;
-        Mon, 18 Aug 2025 08:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755531803; x=1756136603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gJ/PV0RGi6n7Ose80iY3fbX/G2TGqZFVsosOFly79w=;
-        b=HfT3AiPfMGXYnoW1WOMK3+DmNsfPETw7+XaMNyOO9MsKqS26EIMWnVpkBEmgVS9NSt
-         ZZCVRuVuj92vrpdIa02DOjYHfK8uEaQS8s5UDHMGs1j7IgwYTDfMUwS8OPZYrgOXffFc
-         ezmszkKRQU4pEl97BOf/PXwATLLFelHHSMnZu+WhSIZtT1oY4PBOUHzudtMyj6rK7fcZ
-         qu0Ev1CblEy2+E0tz927sU4ZdgfhtiFkN3w32AuOuS76NAh8sXK9kklh/foq1RUdElKt
-         FC+Nz6+Is7Imu8Gewgyu5vVOOkRPkwdLAeBh/ZN9RftB3M48QJ1OjMmjw9bZmPMg44RL
-         ktIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755531803; x=1756136603;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9gJ/PV0RGi6n7Ose80iY3fbX/G2TGqZFVsosOFly79w=;
-        b=JvLBR9yGz/dEkd8L/wovk6YMG6mlAkf9KHKz90KA1LtTn6VYzhA6wlNJxF/QhxhSHD
-         TZTwmOjlH4bYsfEshhst7spDMpo9UHarHwd5H1r40leJ9mMNr+Ksftl+bfk5FTSOhXHg
-         6prCBr82XkgSaiUrVyKjW05Yeuvja9FGUN49j/QExZ2iXThOhYskN4LIIc+uKIj11XG1
-         5nZLuVeDjeWPS3GMEsAWanfYobXXtH1DK8Su/pYgvCpXA4pq1XXGTHRL5Q4Tx6ePcPrW
-         4LAAZ6JXSG8Knx2h4miLB7uq8DAkAlXf07JOiXanIBoW6kyTnVlh3Kc4GaKdTkI4nMIZ
-         qcow==
-X-Forwarded-Encrypted: i=1; AJvYcCU6nCn/HRwhgQXXpRCFFx2ndpC/ZSOD9sqaz7BUcmX6j5eFbpSdnrnPZjRoGvPSOZgmdJHCqivc7KwRFg==@vger.kernel.org, AJvYcCUbKQD8LLCKjkoB9tNt/52sEOaDkQkldp/JoVEHav96phdX13CZ6XQtFKm7ZN1a6L0sigGAoefcZmVyiCE0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9czdMifxcRZ252SRriRm63qI/YGaoM5qS2ix07w1gN6bBYlMe
-	F37UMc9nY9N/OCDXNCpoUdNZ8IS4X6XcS3S8IaLXm8HC8TFxNhKjn0c/
-X-Gm-Gg: ASbGncveILD5KhrL8ja2Rko79DIvJoMRvqIfVgemBxyhM6lRorwfyxW11+0ixOnlZJF
-	lXqjyKVkHMFmDG/7XJqdkwaZkiurGZcy6G6bXAnP9dzUi4BBZX8FUwd4Suf14h6JlRff3fM8hAD
-	9aXF53A7F3AiLOasqCJrWa6ppS43BdRzJp49ZmfZvKx1z3I3nVrXadpi0a1QJD38F5Av9ICDKZr
-	yiE8yJHUo9oGIEF4iYTHx68LOcVv/0QCIQqLZCHtQMofps2oZdsGggrmJQ6vaBosNv6hIsCab/T
-	I8olM0wSfuJ4fD2E108d/AEYG7eFxa/qz5qthl/oi1EwuNB9pvSl9dNKYD3+/UB7jqfhdn/C3ME
-	ln5X1MlqF2L70COevZcu0tuHgJA+dXS0IQp7U+8oBO/lY2vl8KQ==
-X-Google-Smtp-Source: AGHT+IFjllZ9Rn0cBvaK2dkXox+Fg9pWWu/yOe7wl02I+mJYa9anzCVAf0uxoBm0B7fCwAN+ICJKGQ==
-X-Received: by 2002:a17:902:c40f:b0:242:9bbc:6019 with SMTP id d9443c01a7336-2446da2271fmr167677415ad.57.1755531803392;
-        Mon, 18 Aug 2025 08:43:23 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3237e3c31cdsm316885a91.3.2025.08.18.08.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 08:43:23 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: dtor@mail.ru,
-	x0r@dv-life.ru,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] HID: axff: add cleanup allocated struct axff_device heap
-Date: Tue, 19 Aug 2025 00:43:02 +0900
-Message-Id: <20250818154302.811718-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755531812; c=relaxed/simple;
+	bh=2gw9bufPdvuGnWtKJzkTzSHcYSXunQ7KQaWLcstisag=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EJ2n+4gZFyw8MnVR7J+ayysyynWBB/czrNwD3PPOFwjukhPSCBI9yn8pejDy709hG+jv+7+WCdtrpcfGBu/Zo2p/BeZ5qlzacbGVFWEaw0vQH35rjvJ6ZUoxkDfFcDxN5rzOy1EI5BzYjHOjpnBgki0qlSSHvNsKVUSJLhpsx58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdNd+gU2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E6FC4CEEB;
+	Mon, 18 Aug 2025 15:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755531812;
+	bh=2gw9bufPdvuGnWtKJzkTzSHcYSXunQ7KQaWLcstisag=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OdNd+gU2RzCHnheu7QHypV85qYdEmzkXGbMRwN4Ud74Gu7537V/ABBSmlTU32xpAW
+	 R+Y49WjaELw1uuf9aIRhtJ1LpMFcuNqTVDVIGWs/eU4iaX8tP7vlcSv8mTJIFjnVs5
+	 M/+zJhzPrK05V/89tT/liw3X3Rr/PMVRpmU0lKchrSlqoQ01p+Ij0eF7WNMq0CNVrk
+	 iQ0t+WqUw42wFZ0JTwzDDPBPGWbcqH5vYCB/Dx7vKVFUjY9QkFRWtI60nzOpHf/f21
+	 KIpf2zswgKLuI8VJqxBOqByd9GCOi33UgxPXKWj8tXZUlLvxxl3kbsar25O0XVgGFk
+	 343glz0N3v44A==
+Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uo218-008fTF-Hr;
+	Mon, 18 Aug 2025 16:43:26 +0100
+Date: Mon, 18 Aug 2025 16:43:06 +0100
+Message-ID: <87ldngmy9h.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64/sysreg: Add TCR_EL2 register
+In-Reply-To: <20250818045759.672408-4-anshuman.khandual@arm.com>
+References: <20250818045759.672408-1-anshuman.khandual@arm.com>
+	<20250818045759.672408-4-anshuman.khandual@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 86.149.246.145
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, broonie@kernel.org, ryan.roberts@arm.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Currently, acrux hid driver allocates heap memory equal to
-sizeof(struct axff_device) to support force feedback, but there's no code
-to free this memory except when initialization fails. This causes the
-allocated memory to not be freed even if the driver is detached.
+On Mon, 18 Aug 2025 05:57:58 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> Add TCR_EL2 register fields as per the latest ARM ARM DDI 0487 7.B in tools
 
-Therefore, to properly clean up and safely manage the allocated heap,
-must be modified to use devm_kzalloc().
+7.B??? My copy of the published ARM ARM has L.B as the version suffix.
 
-Fixes: c0dbcc33c652 ("HID: add ACRUX game controller force feedback support")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/hid/hid-axff.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Also, if you got the registers from the ARM ARM, please stop doing
+so. This is terribly error prone, and likely to be incomplete, given
+that the ARM ARM lags about a year behind the published architecture.
 
-diff --git a/drivers/hid/hid-axff.c b/drivers/hid/hid-axff.c
-index fbe4e16ab029..b8202737f4c8 100644
---- a/drivers/hid/hid-axff.c
-+++ b/drivers/hid/hid-axff.c
-@@ -96,7 +96,7 @@ static int axff_init(struct hid_device *hid)
- 		return -ENODEV;
- 	}
- 
--	axff = kzalloc(sizeof(struct axff_device), GFP_KERNEL);
-+	axff = devm_kzalloc(&hid->dev, sizeof(struct axff_device), GFP_KERNEL);
- 	if (!axff)
- 		return -ENOMEM;
- 
-@@ -104,7 +104,7 @@ static int axff_init(struct hid_device *hid)
- 
- 	error = input_ff_create_memless(dev, axff, axff_play);
- 	if (error)
--		goto err_free_mem;
-+		return error;
- 
- 	axff->report = report;
- 	hid_hw_request(hid, axff->report, HID_REQ_SET_REPORT);
-@@ -112,10 +112,6 @@ static int axff_init(struct hid_device *hid)
- 	hid_info(hid, "Force Feedback for ACRUX game controllers by Sergei Kolzun <x0r@dv-life.ru>\n");
- 
- 	return 0;
--
--err_free_mem:
--	kfree(axff);
--	return error;
- }
- #else
- static inline int axff_init(struct hid_device *hid)
---
+You have the BSD-licensed MRS at your disposal, please make use of it.
+
+> sysreg format and drop all the existing redundant macros from the header
+> (arch/arm64/include/asm/kvm_arm.h). While here also drop an explicit sysreg
+> definction SYS_TCR_EL2 from sysreg.h header.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: kvmarm@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/include/asm/kvm_arm.h | 13 ----------
+>  arch/arm64/include/asm/sysreg.h  |  1 -
+>  arch/arm64/tools/sysreg          | 44 ++++++++++++++++++++++++++++++++
+>  3 files changed, 44 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index 560d9cb63413..8994cddef182 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -107,19 +107,6 @@
+>  
+>  #define MPAMHCR_HOST_FLAGS	0
+>  
+> -/* TCR_EL2 Registers bits */
+> -#define TCR_EL2_DS		(1UL << 32)
+> -#define TCR_EL2_RES1		((1U << 31) | (1 << 23))
+> -#define TCR_EL2_HPD		(1 << 24)
+> -#define TCR_EL2_TBI		(1 << 20)
+> -#define TCR_EL2_PS_SHIFT	16
+> -#define TCR_EL2_PS_MASK		(7 << TCR_EL2_PS_SHIFT)
+> -#define TCR_EL2_PS_40B		(2 << TCR_EL2_PS_SHIFT)
+> -#define TCR_EL2_TG0_MASK	TCR_EL1_TG0_MASK
+> -#define TCR_EL2_SH0_MASK	TCR_EL1_SH0_MASK
+> -#define TCR_EL2_ORGN0_MASK	TCR_EL1_ORGN0_MASK
+> -#define TCR_EL2_IRGN0_MASK	TCR_EL1_IRGN0_MASK
+> -#define TCR_EL2_T0SZ_MASK	0x3f
+>  #define TCR_EL2_MASK	(TCR_EL2_TG0_MASK | TCR_EL2_SH0_MASK | \
+>  			 TCR_EL2_ORGN0_MASK | TCR_EL2_IRGN0_MASK)
+>  
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index ad5c901af229..112d5d0acb50 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -523,7 +523,6 @@
+>  
+>  #define SYS_TTBR0_EL2			sys_reg(3, 4, 2, 0, 0)
+>  #define SYS_TTBR1_EL2			sys_reg(3, 4, 2, 0, 1)
+> -#define SYS_TCR_EL2			sys_reg(3, 4, 2, 0, 2)
+>  #define SYS_VTTBR_EL2			sys_reg(3, 4, 2, 1, 0)
+>  #define SYS_VTCR_EL2			sys_reg(3, 4, 2, 1, 2)
+>  
+> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+> index 4bdae8bb11dc..d2b40105eb41 100644
+> --- a/arch/arm64/tools/sysreg
+> +++ b/arch/arm64/tools/sysreg
+> @@ -4812,6 +4812,50 @@ Sysreg	TCR_EL12        3	5	2	0	2
+>  Mapping	TCR_EL1
+>  EndSysreg
+>  
+> +Sysreg	TCR_EL2        3	4	2	0	2
+> +Res0	63:34
+> +Field	33	MTX
+> +Field	32	DS
+> +Res1	31
+> +Field	30	TCMA
+> +Field	29	TBID
+> +Field	28	HWU62
+> +Field	27	HWU61
+> +Field	26	HWU60
+> +Field	25	HWU59
+> +Field	24	HPD
+> +Res1	23
+> +Field	22	HD
+> +Field	21	HA
+> +Field	20	TBI
+> +Res0	19
+> +Field   18:16	PS
+> +UnsignedEnum	15:14	TG0
+> +	0b00	4K
+> +	0b01	64K
+> +	0b10	16K
+> +EndEnum
+> +UnsignedEnum	13:12	SH0
+> +	0b00	NONE
+> +	0b10	OUTER
+> +	0b11	INNER
+> +EndEnum
+> +UnsignedEnum	11:10	ORGN0
+> +	0b00	NC
+> +	0b01	WBWA
+> +	0b10	WT
+> +	0b11	WBnWA
+> +EndEnum
+> +UnsignedEnum	9:8	IRGN0
+> +	0b00	NC
+> +	0b01	WBWA
+> +	0b10	WT
+> +	0b11	WBnWA
+> +EndEnum
+> +Res0    7:6
+> +Field   5:0	T0SZ
+> +EndSysreg
+
+This is only the E2H==0 version of TCR_EL2. IF you are going to
+describe this register in a useful manner, then add both formats so
+that we know what we are dealing with.
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
