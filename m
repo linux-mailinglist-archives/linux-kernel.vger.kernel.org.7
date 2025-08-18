@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-773889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9A5B2AC0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:04:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA09B2AB77
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3467256DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:47:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D769B60DDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D28233721;
-	Mon, 18 Aug 2025 14:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F69735A28E;
+	Mon, 18 Aug 2025 14:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDAA5znm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BAN45Hiz"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D05035A28E;
-	Mon, 18 Aug 2025 14:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A709A1F30A9
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528462; cv=none; b=cV0Gcfg+N4QvG/73CqRgpVvnnD8lzvycx9OfjlXBvW0HUfgdmpvQz3v0AgcR2nai1Y/rIYTGkl7vrnfuuSF9Abvgpby9+tmqsjIrLcSUJk/r2yPM29eDo26k6Mr5s+qcYxslAmVceaRe8coOcZkG0Ng4nycgJvJ7YsJfJGEsSFY=
+	t=1755528470; cv=none; b=newC/q+RAzx+cb5VIi5cJb4yqdCEZ0hILu3OdMCTNT6TMU1mVHpVexIKJoN5wffzwgY659fi51vPoN1ZsH+5CR7z73R1SRLEdbiy5MyjctKHAdxHMwWHmUnn2T8AuP2BPtNIlgEH8ya3j/VgjTVIfenqYvaUkVOmwkd+OscKt3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528462; c=relaxed/simple;
-	bh=vtad+Vt/g0Mn/1dIoAI+yot5Owrf8DkcHM51X8vJpVs=;
+	s=arc-20240116; t=1755528470; c=relaxed/simple;
+	bh=ifoUL3jsCD9QEp5E4RW0WnOPPi8gp4Hdi1nn9ecnFcc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WOQNA6tlSxor+BKwif9lDtmwpA+AXfr/Ds2Z5kwMBS4kHog/8jParQTIdcPdZV3ml6MpM7AvW5M/3fBx7AGitFLS1IPDg+9DuqiYUo0n3RS+dwp79Nj+5ULKMU/uFssy795HNe8sPtLR51Yxw1Rge6H2bjE60l7yw6MeKvwPQYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDAA5znm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA08C4CEEB;
-	Mon, 18 Aug 2025 14:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755528461;
-	bh=vtad+Vt/g0Mn/1dIoAI+yot5Owrf8DkcHM51X8vJpVs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mDAA5znmWKzyN9V4eVtxeTntvL5GsU6SKhdDm+v/gX6IkAKhgp0wZrXQcFVqh5tBS
-	 QfEWif3qL1rz+prRXPLq9gInFvch7Lzhx9rDUXfyt5pXsX4o02ZCG3Eyvnn/gHPa8q
-	 OP7aZ+dJFKceyG/3WDkY4rtf4Dk4QNuedPAucFenwb6XDE2Dwiv8wkwrFlsRWcHVvY
-	 I8dplR+LyEe43Ev9FowAbwdSk5ImNhc8s9K21ckL06NLY21eVAabASM0tcNQgaWuyK
-	 rAwpyxCzWYw6dAemG12kfwtiF8Diq8IGhGJBOmGPupEPeiQSCygk8Dbj3BW4JyLhec
-	 uKKGymbqha1fA==
-Message-ID: <3756f584-11c5-4591-b9fb-091b416daba7@kernel.org>
-Date: Mon, 18 Aug 2025 16:47:35 +0200
+	 In-Reply-To:Content-Type; b=BDpFQKSpuj7DmOX+GYuLcnnzGOd82+PP4Axur6LNGaQCy9C5IFtymaVo5WNBZ+zmaUNu9JgjR+ZIRiuaSY+t1fMAI+sO6Ilp4DrcO68ccPm9bTKNlAZqH1n1pLhS+XXEjKccCTe58w05lcc9fzl9tT3br6h0jp7YNVvOAaRN++M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BAN45Hiz; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b004954so30230745e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755528467; x=1756133267; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H2afKEgQbtq+HgvwtCFhX+9Qh9FWO4YX7knoa3B5YJg=;
+        b=BAN45Hiz2Qj4hCIRXveL9HB0BSO2CMtvCrh3krvifgd+Azvm4k4NjaK/fG7PpqfbaW
+         Sy7ccYoDN3EtweDRrZeFJneNK6egI/EXfugzG46CsKdM6WlH0B2Fqdm1chHooKM4NCBg
+         0pGB9eFEAoPSapdLu0F9z8T4U3cDMmyoY0U07tlx6XRKlJ/StLT0vZMwL54R0KlLGtwK
+         jfryBzz6Nsq9yatFCeW8L9bvrHzxU7Vm4yzN2UDjjbw2Rvz3suaMwEz4s3kgqb/Z5yK3
+         iy2GFRszC4xFd43LzqXxTqxaXuL5B596z2lm9trgIVDyB56qRcsGujwkTbU2ymRJdxGG
+         P2og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755528467; x=1756133267;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H2afKEgQbtq+HgvwtCFhX+9Qh9FWO4YX7knoa3B5YJg=;
+        b=DsdnAJCd2iJ2dWkAuhBUGBgPXUk88GpXxMS1qM7mw1n+AVY0geGERM2LhfQMzzLaJU
+         /fvCrn4wlcKhwLXG99tbaEZU8UlX7iUkizwBVOME6ObNNnJ9bSJJvznDnwdYnDhwZIzo
+         P682BWdwuw3tZ9/XCeTQtt9iHygo78y+SrXmR+phUfe2yhmhpTz94w0GRiYuJNZwOVTB
+         fttyYOcBOpUOgmqs6Va0Q+hThFK08NPQv9ZacBIespgjCoVnaUY7FmIt3zUVECxw/RLV
+         QheGD9Cmqu7Cb0DCUVTjkszejUovQDb80e4A05psY+Pt+qZEhAx4VTCpfLlE36Udyddh
+         TBpw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8sssLkMLwJREbpQkPtopgVkE3zKe08CUxGSeOlCIkH08sDzIJU1b4XG3tnEMLf/fBJsuGkmvAqLTqeow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzU20vqPr0L9fZyieO5gYNlAsQ7lJ/M5fP4qgr5L4s6i0lO/wB
+	f/I32ykMaOJedw1ynx4xCooqDapk2vY6xEVipVBkrh6a+OASogOoXIU8l2rHU9i+l6c=
+X-Gm-Gg: ASbGncvzL8bPn93jtbf/6RzL3wrPlFVEMooQFhqbq0fpQCkdAexohdHAKK2DsX6h9uJ
+	V6d/N1ZInETKmTB+PsYZokMnEIBGFyGpJeijqp16EAmTT5CnOpd33LSb1IlBOm03l5ORabjSna1
+	8aSes0r/oULIgS0T+h3Eu3UOMZNORTYo/2eqYrnOYAw9kFiQVDHLgPujf8UHTISNIi01ACyC9Md
+	I4yjwiC6fncXdcF+CRGWoBVSBBL/0YZD2f8FSKYOkyO5kLCFsqptKuM0PgO73AQct9T38Ev55BQ
+	GYxEqrgJVRDe3xtRoo+LbUNpeIz7mzOs3Asl3ilflLhDxu6pxt6XePYAXstjbm3hr0leWbYn1gD
+	IctbDivfx1wwknefck/8iYAHN4iY=
+X-Google-Smtp-Source: AGHT+IFQZt9NUrq552ZnmOgo1r2cW0JA2ngaMERpzFx/grzhOblNLS8XApQAK6JESCty8GRa8dkPGg==
+X-Received: by 2002:a05:6000:4027:b0:3a5:2599:4178 with SMTP id ffacd0b85a97d-3bc684d7b99mr7876232f8f.19.1755528466878;
+        Mon, 18 Aug 2025 07:47:46 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb676c9a8asm13066641f8f.39.2025.08.18.07.47.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 07:47:46 -0700 (PDT)
+Message-ID: <bd59344b-9dc0-42bd-98c8-80ab9ca97123@linaro.org>
+Date: Mon, 18 Aug 2025 15:47:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,78 +81,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] dt-bindings: clock: mediatek: Add MT8189 clock
- definitions
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 12/13] dt-bindings: lpspi: Document nxp,lpspi-pincfg
+ property
+To: Frank Li <Frank.li@nxp.com>, Larisa Grigore <larisa.grigore@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, Clark Wang <xiaoning.wang@nxp.com>,
+ Fugang Duan <B38611@freescale.com>, Gao Pan <pandy.gao@nxp.com>,
+ Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, netdev@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-References: <20250818115754.1067154-1-irving-ch.lin@mediatek.com>
- <20250818115754.1067154-4-irving-ch.lin@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Larisa Grigore <larisa.grigore@oss.nxp.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+ Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
+ <20250814-james-nxp-lpspi-v1-12-9586d7815d14@linaro.org>
+ <aJ4ox8+OLhIir2bU@lizhi-Precision-Tower-5810>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250818115754.1067154-4-irving-ch.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <aJ4ox8+OLhIir2bU@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 18/08/2025 13:57, irving.ch.lin wrote:
-> +#define CLK_MDP_NR_CLK					27
-That's not a binding. Drop everywhere. Mediatek already received such
-feedback.
 
-Best regards,
-Krzysztof
+
+On 14/08/2025 7:19 pm, Frank Li wrote:
+> On Thu, Aug 14, 2025 at 05:06:52PM +0100, James Clark wrote:
+>> Document the two valid pincfg values and the defaults.
+>>
+>> Although the hardware supports two more values for half-duplex modes,
+>> the driver doesn't support them so don't document them.
+> 
+> binding doc should be first patch before drivers.
+> 
+> binding descript hardware not driver, you should add all regardless if
+> driver support it.
+> 
+
+Replied to same on "[PATCH 10/13] spi: spi-fsl-lpspi: Add compatible for 
+S32G"
+
+>>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
+>> index ce7bd44ee17e..3f8833911807 100644
+>> --- a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
+>> +++ b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
+>> @@ -70,6 +70,19 @@ properties:
+>>     power-domains:
+>>       maxItems: 1
+>>
+>> +  nxp,pincfg:
+>> +    description:
+>> +      'Pin configuration value for CFGR1.PINCFG.
+>> +        - "sin-in-sout-out": SIN is used for input data and SOUT is used for
+>> +                             output data
+>> +        - "sout-in-sin-out": SOUT is used for input data and SIN is used for
+>> +                             output data
+>> +      If no value is specified then the default is "sin-in-sout-out" for host
+>> +      mode and "sout-in-sin-out" for target mode.'
+> 
+> why need this? are there varible at difference boards? look like default
+> is more make sense.
+> 
+
++ Larissa. I think this might also be a question for the hardware 
+designers about why the feature to swap the pins was deemed worth including.
+
+I'm assuming the flexibility is given for routing reasons. If you have 
+another device with the pins in one order then you can route it without 
+a via if they happen to be in the same order.
+
+> SPI signal name is MOSI and MISO
+> 
+> Frank
+> 
+
+As mentioned in the commit message of "[PATCH 05/13] spi: spi-fsl-lpspi: 
+Enumerate all pin configuration definitions" the names were taken 
+directly from the reference manual and this doc text was too. I think 
+diverging from CFGR1_PINCFG could be potentially quite confusing. And 
+MOSI isn't mentioned once in S32G3RM rev 4:
+
+   Configures which pins are used for input and output data during serial
+   transfers. When performing parallel transfers, the Pin Configuration
+   field is ignored.
+
+     00b - SIN is used for input data and SOUT is used for output data
+     01b - SIN is used for both input and output data, only half-duplex
+           serial transfers are supported
+     10b - SOUT is used for both input and output data, only half-duplex
+           serial transfers are supported
+     11b - SOUT is used for input data and SIN is used for output data
+
+James
+
+>> +    enum:
+>> +      - sin-in-sout-out
+>> +      - sout-in-sin-out
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+>> @@ -95,4 +108,5 @@ examples:
+>>           spi-slave;
+>>           fsl,spi-only-use-cs1-sel;
+>>           num-cs = <2>;
+>> +        nxp,pincfg = "sout-in-sin-out";
+>>       };
+>>
+>> --
+>> 2.34.1
+>>
+
 
