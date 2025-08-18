@@ -1,274 +1,177 @@
-Return-Path: <linux-kernel+bounces-772890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB7CB298EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:36:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B674B298F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976E81896746
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:36:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE71D7AB8BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F2E26E6FF;
-	Mon, 18 Aug 2025 05:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A67E26F47D;
+	Mon, 18 Aug 2025 05:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IJ39ERdw"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdvPCVkh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55071DF987;
-	Mon, 18 Aug 2025 05:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A86F204F99;
+	Mon, 18 Aug 2025 05:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755495368; cv=none; b=K20XW88dUroj8BNr4aP7XcIZDk9ZUHdE+pCPDyS7SIYmo6FiXVK9phvHDuAMx+EHE+4Dau26MGxKs9/5yr/SjF/KWgggUAQkc1y31UFNfMTSxpGJK6b9eHFApeBtF0AFNWBpABfgEta7LiI6rysud/jMeF9NefB8EfuAOsS/+zU=
+	t=1755495404; cv=none; b=asPdBkVOnCBw6J8mdbi4DDaeRc6Pz9MnVWCpo8jrUCu1fSM2+/bRXQRaT36wI8mQ7lmc30hewG2IshB+91e10SrgCKAnEn/Xtl/38O8JTdW8t4hwUGfoGrc1n/CwQzldJBvsS9pTlAQmC9kiHHS6XoKUYEfQn6dl32uAceis9sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755495368; c=relaxed/simple;
-	bh=31lpmXSQBLbLvXIsubVmRCNxts4TizAbzGQOWrRINLo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o84sJEkkLwV3lpUhWKDvi33bdX0WBiG7XqlVZ9UKoMG6paPuV8ZM8vSpYQC04rL6jNIX+ONZIrbLEYhodZMqjFnS+E3naGHFme5EMttqzYCcfInOOnD+2cBDzN1b1ElNuKry2dW5DwPEWes2+vT8+YtbV4HaCmcKvK/PU6ev3V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IJ39ERdw; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57I5ZbsT2585902;
-	Mon, 18 Aug 2025 00:35:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755495337;
-	bh=ZQqJLxn/uck2ZUWoChhjcCs9bxIpI9w0PlNK/2siEoQ=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=IJ39ERdw/bmMCyb6LoyfEhp83XHLt5GQ1RmUr4GyGOYmkf4+NvTL8FMpFMAb0oqEd
-	 Tdu51zKveZLvXWZB2EMLqBlnXPUy6TNTzdlPxkIG1SAZqNMrBz7WkmqdhHxTgtK0s5
-	 7+Sww05vkrrhX6fmV170nVv2rsJRx5Foh+Go9KfM=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57I5ZbUW069851
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 18 Aug 2025 00:35:37 -0500
-Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
- Aug 2025 00:35:37 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE205.ent.ti.com
- (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.1748.24; Mon, 18 Aug
- 2025 00:35:36 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 18 Aug 2025 00:35:36 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57I5ZZQc478080;
-	Mon, 18 Aug 2025 00:35:36 -0500
-Date: Mon, 18 Aug 2025 11:05:35 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <arm-scmi@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <sudeep.holla@arm.com>, <james.quinlan@broadcom.com>,
-        <f.fainelli@gmail.com>, <vincent.guittot@linaro.org>,
-        <quic_sibis@quicinc.com>, <dan.carpenter@linaro.org>,
-        <johan+linaro@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <quic_mdtipton@quicinc.com>
-Subject: Re: [PATCH 1/2] firmware: arm_scmi: Rework quirks framework header
-Message-ID: <20250818053535.owst4ilq2oxfgqnq@lcpd911>
-References: <20250815102736.81450-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1755495404; c=relaxed/simple;
+	bh=zJX+MKpmqSRVyQ/hTAHrNBZdXqmZkb5k7P9uju/pf3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjU61TQQA1Grbb/LC+F+/PuSRYrTCM2eHKuitnHv7dI2ORHxPCTIrfquFXpf/vpiuwGZyZTAO4aiQ2yd/ca+xZkNaBE+Olit2fYC5a9Ks4M9WkVR6tqKGCErv9dz6iC6qMANO5SfYabEXdiepQSdXbCXWN29qL5RJ3XZI6Qv5yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdvPCVkh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA439C4CEEB;
+	Mon, 18 Aug 2025 05:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755495404;
+	bh=zJX+MKpmqSRVyQ/hTAHrNBZdXqmZkb5k7P9uju/pf3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WdvPCVkhug6shHPIWtGoKqFiv40DzNoKITsa36zVw5pqLUKFAlrnOHh7nGZGsuwd6
+	 8rB0cdkuBSQVh7atduGYKC0024ogZ2yzVz4LTsdPpv+sX9cXVuFjKj0ivMASbwLyOi
+	 jMXTsRCScTEO7Mh4zjdjRur3wwfQ6aNoph110E/RytAM5IZh99ZxyZ1WDtybzdjU19
+	 XjxGE4uB99QsFEfRWQxETZOR/6JmcITfheRGh3SvFM6TJ0fmKBSmNMwAjkvL+85bRr
+	 MjSevYMNzQaYbQ/SLd5qLQHSwz8FClKzJuo9+EJrJZ6PYcngGDhmrjN0bcSD0UFkPs
+	 lV0s8xeZ3u4zw==
+Date: Mon, 18 Aug 2025 11:06:36 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Palash Kambar <quic_pkambar@quicinc.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com
+Subject: Re: [PATCH v5] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for  UFS controller v5
+Message-ID: <xnwjpiczu3xzzntu45gxkmigwilt7i75iydk6vdp5xpeujh6i5@3ak7arychdxy>
+References: <20250818040905.1753905-1-quic_pkambar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250815102736.81450-1-cristian.marussi@arm.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250818040905.1753905-1-quic_pkambar@quicinc.com>
 
-Hi,
-
-On Aug 15, 2025 at 11:27:35 +0100, Cristian Marussi wrote:
-> Split and relocate the quirks framework header so as to be usable also by
-> SCMI Drivers and not only by the core.
-
-Could you elaborate a bit more on this reasoning? I am not fully
-convinced as to why I shouldn't just include quirks.h in the other scmi
-drivers as well?
-
-Oh or perhaps you mean to say scmi driver like scmi cpufreq / clk-scmi
-etc.. which lie outside the firmware/arm_scmi folder? If so then that's
-not coming out clearly in this patch commit message.
-
+On Mon, Aug 18, 2025 at 09:39:05AM GMT, Palash Kambar wrote:
+> Disabling the AES core in Shared ICE is not supported during power
+> collapse for UFS Host Controller v5.0, which may lead to data errors
+> after Hibern8 exit. To comply with hardware programming guidelines
+> and avoid this issue, issue a sync reset to ICE upon power collapse
+> exit.
 > 
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> Hence follow below steps to reset the ICE upon exiting power collapse
+> and align with Hw programming guide.
+> 
+> a. Assert the ICE sync reset by setting both SYNC_RST_SEL and
+>    SYNC_RST_SW bits in UFS_MEM_ICE_CFG
+> b. Deassert the reset by clearing SYNC_RST_SW in  UFS_MEM_ICE_CFG
+> 
+> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+> 
 > ---
->  drivers/firmware/arm_scmi/clock.c  |  2 +-
->  drivers/firmware/arm_scmi/driver.c |  1 +
->  drivers/firmware/arm_scmi/quirks.h | 33 +++-------------------
->  include/linux/scmi_quirks.h        | 44 ++++++++++++++++++++++++++++++
->  4 files changed, 50 insertions(+), 30 deletions(-)
->  create mode 100644 include/linux/scmi_quirks.h
+> changes from V1:
+> 1) Incorporated feedback from Konrad and Manivannan by adding a delay
+>    between ICE reset assertion and deassertion.
+> 2) Removed magic numbers and replaced them with meaningful constants.
 > 
-> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> index afa7981efe82..5599697de37a 100644
-> --- a/drivers/firmware/arm_scmi/clock.c
-> +++ b/drivers/firmware/arm_scmi/clock.c
-> @@ -7,11 +7,11 @@
+> changes from V2:
+> 1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
+> 
+> changes from V3:
+> 1) Addressed Manivannan's comments and added bit field values and
+>    updated patch description.
+> 
+> change from V4:
+> 1) Addressed Konrad's comment and fixed reset bit to zero.
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 21 +++++++++++++++++++++
+>  drivers/ufs/host/ufs-qcom.h |  2 +-
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 444a09265ded..242f8d479d4a 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -38,6 +38,9 @@
+>  #define DEEMPHASIS_3_5_dB	0x04
+>  #define NO_DEEMPHASIS		0x0
 >  
->  #include <linux/module.h>
->  #include <linux/limits.h>
-> +#include <linux/scmi_quirks.h>
->  #include <linux/sort.h>
+> +#define UFS_ICE_SYNC_RST_SEL	BIT(3)
+> +#define UFS_ICE_SYNC_RST_SW	BIT(4)
+> +
+>  enum {
+>  	TSTBUS_UAWM,
+>  	TSTBUS_UARM,
+> @@ -751,11 +754,29 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  {
+>  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>  	int err;
+> +	u32 reg_val;
 >  
->  #include "protocols.h"
->  #include "notify.h"
-> -#include "quirks.h"
+>  	err = ufs_qcom_enable_lane_clks(host);
+>  	if (err)
+>  		return err;
 >  
->  /* Updated only after ALL the mandatory features for that version are merged */
->  #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30000
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index bd56a877fdfc..6f5934cd3a65 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -34,6 +34,7 @@
->  #include <linux/processor.h>
->  #include <linux/refcount.h>
->  #include <linux/slab.h>
-> +#include <linux/scmi_quirks.h>
->  #include <linux/xarray.h>
->  
->  #include "common.h"
-> diff --git a/drivers/firmware/arm_scmi/quirks.h b/drivers/firmware/arm_scmi/quirks.h
-> index a71fde85a527..260ae38d617b 100644
-> --- a/drivers/firmware/arm_scmi/quirks.h
-> +++ b/drivers/firmware/arm_scmi/quirks.h
-> @@ -4,49 +4,24 @@
->   *
->   * Copyright (C) 2025 ARM Ltd.
->   */
-> -#ifndef _SCMI_QUIRKS_H
-> -#define _SCMI_QUIRKS_H
-> +#ifndef _SCMI_QUIRKS_INTERNAL_H
-> +#define _SCMI_QUIRKS_INTERNAL_H
+> +	if ((!ufs_qcom_is_link_active(hba)) &&
+> +	    host->hw_ver.major == 5 &&
+> +	    host->hw_ver.minor == 0 &&
+> +	    host->hw_ver.step == 0) {
+> +		ufshcd_writel(hba, UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW, UFS_MEM_ICE_CFG);
+> +		reg_val = ufshcd_readl(hba, UFS_MEM_ICE_CFG);
+> +		reg_val &= ~(UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW);
 
-Or as per your commit message wording, better to call it
-_SCMI_QUIRKS_CORE_H ?
+I guess you could use:
 
+		FIELD_MODIFY(UFS_ICE_SYNC_RST_SEL, &reg_val, 0);
+		FIELD_MODIFY(UFS_ICE_SYNC_RST_SW, &reg_val, 0);
+
+This looks more cleaner.
+
+With that,
+
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+
+- Mani
+
+> +		/*
+> +		 * HW documentation doesn't recommend any delay between the
+> +		 * reset set and clear. But we are enforcing an arbitrary delay
+> +		 * to give flops enough time to settle in.
+> +		 */
+> +		usleep_range(50, 100);
+> +		ufshcd_writel(hba, reg_val, UFS_MEM_ICE_CFG);
+> +		ufshcd_readl(hba, UFS_MEM_ICE_CFG);
+> +	}
+> +
+>  	return ufs_qcom_ice_resume(host);
+>  }
 >  
-> -#include <linux/static_key.h>
-> +#include <linux/device.h>
->  #include <linux/types.h>
+> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
+> index 6840b7526cf5..81e2c2049849 100644
+> --- a/drivers/ufs/host/ufs-qcom.h
+> +++ b/drivers/ufs/host/ufs-qcom.h
+> @@ -60,7 +60,7 @@ enum {
+>  	UFS_AH8_CFG				= 0xFC,
 >  
->  #ifdef CONFIG_ARM_SCMI_QUIRKS
->  
-> -#define DECLARE_SCMI_QUIRK(_qn)						\
-> -	DECLARE_STATIC_KEY_FALSE(scmi_quirk_ ## _qn)
+>  	UFS_RD_REG_MCQ				= 0xD00,
 > -
-> -/*
-> - * A helper to associate the actual code snippet to use as a quirk
-> - * named as _qn.
-> - */
-> -#define SCMI_QUIRK(_qn, _blk)						\
-> -	do {								\
-> -		if (static_branch_unlikely(&(scmi_quirk_ ## _qn)))	\
-> -			(_blk);						\
-> -	} while (0)
-> -
->  void scmi_quirks_initialize(void);
->  void scmi_quirks_enable(struct device *dev, const char *vend,
->  			const char *subv, const u32 impl);
+> +	UFS_MEM_ICE_CFG				= 0x2600,
+>  	REG_UFS_MEM_ICE_CONFIG			= 0x260C,
+>  	REG_UFS_MEM_ICE_NUM_CORE		= 0x2664,
 >  
->  #else
->  
-> -#define DECLARE_SCMI_QUIRK(_qn)
-> -/* Force quirks compilation even when SCMI Quirks are disabled */
-> -#define SCMI_QUIRK(_qn, _blk)						\
-> -	do {								\
-> -		if (0)							\
-> -			(_blk);						\
-> -	} while (0)
-> -
->  static inline void scmi_quirks_initialize(void) { }
->  static inline void scmi_quirks_enable(struct device *dev, const char *vend,
->  				      const char *sub_vend, const u32 impl) { }
->  
->  #endif /* CONFIG_ARM_SCMI_QUIRKS */
->  
-> -/* Quirk delarations */
-> -DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
-> -DECLARE_SCMI_QUIRK(perf_level_get_fc_force);
-> -
-> -#endif /* _SCMI_QUIRKS_H */
-> +#endif /* _SCMI_QUIRKS_INTERNAL_H */
-> diff --git a/include/linux/scmi_quirks.h b/include/linux/scmi_quirks.h
-> new file mode 100644
-> index 000000000000..11657bd91ffc
-> --- /dev/null
-> +++ b/include/linux/scmi_quirks.h
-> @@ -0,0 +1,44 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * System Control and Management Interface (SCMI) Message Protocol Quirks
-> + *
-> + * Copyright (C) 2025 ARM Ltd.
-> + */
-> +#ifndef _SCMI_QUIRKS_H
-> +#define _SCMI_QUIRKS_H
-> +
-> +#include <linux/static_key.h>
-> +#include <linux/types.h>
-> +
-> +#ifdef CONFIG_ARM_SCMI_QUIRKS
-> +
-> +#define DECLARE_SCMI_QUIRK(_qn)						\
-> +	DECLARE_STATIC_KEY_FALSE(scmi_quirk_ ## _qn)
-> +
-> +/*
-> + * A helper to associate the actual code snippet to use as a quirk
-> + * named as _qn.
-> + */
-> +#define SCMI_QUIRK(_qn, _blk)						\
-> +	do {								\
-> +		if (static_branch_unlikely(&(scmi_quirk_ ## _qn)))	\
-> +			(_blk);						\
-> +	} while (0)
-> +
-> +#else
-> +
-> +#define DECLARE_SCMI_QUIRK(_qn)
-> +/* Force quirks compilation even when SCMI Quirks are disabled */
-> +#define SCMI_QUIRK(_qn, _blk)						\
-> +	do {								\
-> +		if (0)							\
-> +			(_blk);						\
-> +	} while (0)
-
-Did you happen to run checkpatch on this?
-8<---------------------------------------------------------------------------
-WARNING: Argument '_qn' is not used in function-like macro
-#142: FILE: include/linux/scmi_quirks.h:32:
-+#define SCMI_QUIRK(_qn, _blk)                                          \
-+       do {                                                            \
-+               if (0)                                                  \
-+                       (_blk);                                         \
-+       } while (0)
-
-total: 0 errors, 2 warnings, 0 checks, 116 lines checked
---------------------------------------------------------------------------->8
-
-
-> +
-> +#endif /* CONFIG_ARM_SCMI_QUIRKS */
-> +
-> +/* Quirk delarations */
-> +DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
-> +DECLARE_SCMI_QUIRK(perf_level_get_fc_force);
-> +
-> +#endif /* _SCMI_QUIRKS_H */
 > -- 
-> 2.50.1
+> 2.34.1
 > 
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+மணிவண்ணன் சதாசிவம்
 
