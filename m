@@ -1,92 +1,79 @@
-Return-Path: <linux-kernel+bounces-774248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA2DB2B06B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:30:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F99B2B06C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 798624E2B56
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF4C683B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184BB194A60;
-	Mon, 18 Aug 2025 18:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEDA7404E;
+	Mon, 18 Aug 2025 18:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMg5PChp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KE9JaQre"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7096C3314BD;
-	Mon, 18 Aug 2025 18:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FDA125B2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541831; cv=none; b=lg0KIp/2mFRsBXnO9TSydA/AypcjnaMI4CtnBfrGTkxTPs8Y6pty5RjLIM9JVEqeuH73A58x764lkVdz1kG1uxc4rDCk7HQFWztfUByQ0ySrYAgS6BAtPOPqaYxrKad5K1gxXghI/XSJuLETQ8yElS4e9ys92YZ396mOdB1hk6g=
+	t=1755541888; cv=none; b=erz9++0S1n1Hp8fIAdtW9rVhzZhC2CU+YxyQXq7UsW+v+IvCzDm8S5+1Cgo7pqkMnnP9AKDqdqy3zR6/Z+VtpNI0m/1ODX+lXcryUpuWnikVxSoIEWZVkqxAJ3f9+scYzZHZmmisYPEzp74SPteDCPa4NOQUu2fgNq3Je5nnIq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541831; c=relaxed/simple;
-	bh=iwIYfibTIm+aLCgB7Yn8j8yUSxjYfjfJDjwpD7s31ck=;
+	s=arc-20240116; t=1755541888; c=relaxed/simple;
+	bh=5qH1WXqXNDKUBIxH3jOpJAOIJkCz/0HUTVg0VdGaCgs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSVelbw6UNrz53p3fzin1ZnSWylVt1615/shH5COrFnz6aDQ4ddDXOdFRlxw3ClEaLm9KEN3gRl/InA3nLZHvvDDDmikhRx3QwAKsrVR1FcQoP2WfRczioCmcs/nuhKHSBzuwF6y+LQFSlc0JcqAUrlkU06ziWDnBhaBVEuu5KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMg5PChp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8CFC4CEEB;
-	Mon, 18 Aug 2025 18:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755541831;
-	bh=iwIYfibTIm+aLCgB7Yn8j8yUSxjYfjfJDjwpD7s31ck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HMg5PChpuvzfoTwd5T7hYwcWxPux/eVRJ4Uk81FP8LBlqkcXQu+dwu+NXumeSDAfc
-	 qF4YcmQcywlVv4h1lCZSDPW6YJRQ2YplrOiHY0gb7XAXXDGikhAyDfTv7V6tS0Hoxm
-	 La4Osm82QSl51cpIYEOopSSCx2C9a/M5afasXYJ45Zlw8gpztpE1E7R90LU0LeFkzh
-	 IWFiHP6MBgLep5xnym/IA/89yFlzdwU65zs/34GyvIr8cFSFrU417uAfYRB3AxrxuI
-	 RSnjQXEU15PesOZCVLtlDbWXcc9OwkI1JKJCjq5ucKCuwnwsuvQPE9wXUZs+A7IrJd
-	 FZdhUMVs+fi6g==
-Date: Mon, 18 Aug 2025 11:30:29 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Aubin Constans <aubin.constans@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Manuel Lauss <manuel.lauss@gmail.com>,
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Chaotian Jing <chaotian.jing@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Haibo Chen <haibo.chen@nxp.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Ben Dooks <ben-linux@fluff.org>, Viresh Kumar <vireshk@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Alexey Charkov <alchark@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/38] mmc: sdhci-of-dwcmshc: use modern PM macros
-Message-ID: <aKNxRcm0JtKqCBUd@x1>
-References: <20250815013413.28641-1-jszhang@kernel.org>
- <20250815013413.28641-3-jszhang@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFaqO3A1Tk27QsRV1b41yBTaN7gikjMm4i3CVqGu/V2fwseW+ft4EktK+rn9OwlNjsZGFfASFBhe1nOVImnHGLGe9ejt4DZqd83bldV3Gs/XOPR4a/amK9IBLTmpal6+wCX4NuPAg2cldupOuR2IceWwaOxyL1ocv5njP4ujtQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KE9JaQre; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755541887; x=1787077887;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5qH1WXqXNDKUBIxH3jOpJAOIJkCz/0HUTVg0VdGaCgs=;
+  b=KE9JaQreUtzFlwdsC9GfJX9skfWyxW5FjUKbB70desaCpx46ztbafBX0
+   FyVsGU3Gc7E9bb1yengAErBKMfU25zE9g/a6nfLhLIbOwa1IfciP+o21A
+   +raClyouEMtaUV8i/g/xMkoz6svrT4YOYToSKbnp7Y65ny1BTCbb7zrLB
+   TzHRL/6RVkAANoOd+E8zwobt77GawRkqng494JUuiKC8F6dIBEwv6nG9I
+   tVv4d6sdzBP/UaSDIeQvaIYBHeBF6DMNDJcwAvuuymSQ9pAqLuYN6iaOM
+   yM7yk5k43ZYdjvPcEflryejC9ZJTKaZZWTxKe9KqFc6rB47dw4xSxrnHd
+   g==;
+X-CSE-ConnectionGUID: ezeY9GznTWG1rQbzqnhvLw==
+X-CSE-MsgGUID: 5hq6L5NsQyWeeR0PskZZFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57486357"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="57486357"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 11:31:27 -0700
+X-CSE-ConnectionGUID: BUsUQZdhT5ue299kFgWATQ==
+X-CSE-MsgGUID: iZYTd31tSUmyHS/GubUxMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="168001309"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO desk) ([10.124.220.33])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 11:31:26 -0700
+Date: Mon, 18 Aug 2025 11:31:20 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] x86/bugs: Simplify SSB cmdline parsing
+Message-ID: <20250818183120.gxeptjocg6ur6jvo@desk>
+References: <20250811142659.152248-1-david.kaplan@amd.com>
+ <20250811142659.152248-4-david.kaplan@amd.com>
+ <20250818174157.c6bzy5bgw54fopgi@desk>
+ <LV3PR12MB92653604B5839C580C4BA1949431A@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,21 +82,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815013413.28641-3-jszhang@kernel.org>
+In-Reply-To: <LV3PR12MB92653604B5839C580C4BA1949431A@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On Fri, Aug 15, 2025 at 09:33:37AM +0800, Jisheng Zhang wrote:
-> Use the modern PM macros for the suspend and resume functions to be
-> automatically dropped by the compiler when CONFIG_PM or
-> CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
+On Mon, Aug 18, 2025 at 05:55:35PM +0000, Kaplan, David wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> This has the advantage of always compiling these functions in,
-> independently of any Kconfig option. Thanks to that, bugs and other
-> regressions are subsequently easier to catch.
+> > -----Original Message-----
+> > From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > Sent: Monday, August 18, 2025 12:42 PM
+> > To: Kaplan, David <David.Kaplan@amd.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>; Borislav Petkov <bp@alien8.de>; Peter
+> > Zijlstra <peterz@infradead.org>; Josh Poimboeuf <jpoimboe@kernel.org>; Ingo
+> > Molnar <mingo@redhat.com>; Dave Hansen <dave.hansen@linux.intel.com>;
+> > x86@kernel.org; H . Peter Anvin <hpa@zytor.com>; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH 3/3] x86/bugs: Simplify SSB cmdline parsing
+> >
+> > Caution: This message originated from an External Source. Use proper caution
+> > when opening attachments, clicking links, or responding.
+> >
+> >
+> > On Mon, Aug 11, 2025 at 09:26:59AM -0500, David Kaplan wrote:
+> > > Simplify the SSB command line parsing by selecting a mitigation directly,
+> > > as is done in most of the simpler vulnerabilities.  Use early_param instead
+> > > of cmdline_find_option for consistency with the other mitigation
+> > > selections.
+> > >
+> > > Signed-off-by: David Kaplan <david.kaplan@amd.com>
+> > > ---
+> > >  arch/x86/kernel/cpu/bugs.c | 118 ++++++++++++-------------------------
+> > >  1 file changed, 39 insertions(+), 79 deletions(-)
+> > >
+> > > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> > > index 19a3891953c3..3766dff9a699 100644
+> > > --- a/arch/x86/kernel/cpu/bugs.c
+> > > +++ b/arch/x86/kernel/cpu/bugs.c
+> > > @@ -2625,16 +2625,8 @@ void cpu_bugs_smt_update(void)
+> > >  #undef pr_fmt
+> > >  #define pr_fmt(fmt)  "Speculative Store Bypass: " fmt
+> > >
+> > > -static enum ssb_mitigation ssb_mode __ro_after_init =
+> > SPEC_STORE_BYPASS_NONE;
+> > > -
+> > > -/* The kernel command line selection */
+> > > -enum ssb_mitigation_cmd {
+> > > -     SPEC_STORE_BYPASS_CMD_NONE,
+> > > -     SPEC_STORE_BYPASS_CMD_AUTO,
+> > > -     SPEC_STORE_BYPASS_CMD_ON,
+> > > -     SPEC_STORE_BYPASS_CMD_PRCTL,
+> > > -     SPEC_STORE_BYPASS_CMD_SECCOMP,
+> > > -};
+> > > +static enum ssb_mitigation ssb_mode __ro_after_init =
+> > > +     IS_ENABLED(CONFIG_MITIGATION_SSB) ?
+> > SPEC_STORE_BYPASS_PRCTL : SPEC_STORE_BYPASS_NONE;
+> >
+> > Other mitigations default to "AUTO", but not this one. Isn't that something
+> > that attack-vector controls rely on?
 > 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
+> I hadn't modified SSB in the initial attack vector series because SSB
+> mitigation was never actually turned on (set to
+> SPEC_STORE_BYPASS_DISABLE) by default.  The default option requires
+> applications to opt-in to mitigation.
 
-Tested-by: Drew Fustini <fustini@kernel.org> # for TH1520 on LPi4a
+I think of it as mitigation being conditionally enabled (for applications
+opting in).
+
+> However this probably could be done better by saying that ssb defaults to
+> SPEC_STORE_BYPASS_PRCTL if the user->user vector is enabled...and
+> otherwise it is SPEC_STORE_BYPASS_NONE, since the default ssb mitigation
+> is only for applications that want to protect themselves.
+>
+> I can do that in a separate patch in this series after this clean-up
+> patch if that sounds reasonable.
+
+Sounds good to me. Thanks.
 
