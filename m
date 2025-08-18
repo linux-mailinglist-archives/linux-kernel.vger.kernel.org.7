@@ -1,266 +1,177 @@
-Return-Path: <linux-kernel+bounces-774019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8294FB2ADA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:03:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019E7B2ADA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DAE01B24BAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BDEE18A09DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758BF340D98;
-	Mon, 18 Aug 2025 16:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AVVl5XMf"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AADF33EB1F;
+	Mon, 18 Aug 2025 16:02:13 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0D733EAFE;
-	Mon, 18 Aug 2025 16:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326AA21ADCB;
+	Mon, 18 Aug 2025 16:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755532942; cv=none; b=aniZRM+xSJTb/l/cxw/EVTBmg/qeToDCalFo1F6/YMd4R23UcEc5EXIHkWxygvvKfvJ/xnQ4KbQyvhsi99WWsLTFiDZHw8uRD+1WBARws0jh9IBAMGS8sQsZHCIRDp+32bilNawd/J3tJIEPF+8Jme0xjTs+L438XSpBKWHtRKI=
+	t=1755532932; cv=none; b=WnXKy593oSVh+wN9ugeQeG30A868zpoq+m7jQmx0GWCuIzpN1HxrunNexlOF2eocoxCn4+gGQCwmh021JD+URLFQSpyhS2qswlc26l7OpV1N9IuEuEOnqWK9T+JA+trcO+AsHS73GM9XEfZxdhAe6k37bx1HxW0A2J8pMeVbIpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755532942; c=relaxed/simple;
-	bh=txUHouZLKUWwHajaGL1FV2nk8iPMV70N590D30ieBTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hhlla6SmLalReKJYZ1UdeECnsGIu1Ya9/Lnhir/9z7rhjdpUs6Wn1kzxfSEO/T1a/vAX4S4Xlb/0oi+6/iEAbtRxRgKKjIG1bLE8pev0qaDrNmf4jqxTbK0LfmMQIl4Tj3VNZWfNejzETN8usbwuFde+H+4T7FejnfnqmvTsvzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AVVl5XMf; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57IFxW592750304;
-	Mon, 18 Aug 2025 10:59:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755532772;
-	bh=nL/RHFpr+seUeTtCfnfSwBjUy081h6/HTNiT4CEr7Ek=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=AVVl5XMfoZzhwTCK0DHjcq7KFtLg/pkBIswc+g/F2n7ii8mky8Gs3UkZjbUjtF6mH
-	 A29TsFpEqRQAJLPFL82mVFF311UhhAlNnU/AaIgQCjDO55vVU1xCeKLcuRi3NCDLt3
-	 m9ID2Xobqlf/lN6/8C7/lKabAb7XmbKkl5OtmKSs=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57IFxWfj3919372
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 18 Aug 2025 10:59:32 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
- Aug 2025 10:59:31 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 18 Aug 2025 10:59:31 -0500
-Received: from [10.249.130.61] ([10.249.130.61])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57IFxHMO1277663;
-	Mon, 18 Aug 2025 10:59:17 -0500
-Message-ID: <8ad6bb71-9ce5-414a-bbf6-b9893b88cb4f@ti.com>
-Date: Mon, 18 Aug 2025 21:29:16 +0530
+	s=arc-20240116; t=1755532932; c=relaxed/simple;
+	bh=u+o7uywzBhtQ4B1+3GYT78+dirZDqdbPPu+GfAS+eKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T27IAg0QmeNG4RGyuEiw4M1eg3rNvpqtx7GibCHxWAJ2uUfIJLU7bBdihBMDsAlIdp4kdJK/buBqLHYEP+rMGqPOvUpVhgP3RHl7b+d+zWNjz8zLI5LckjlgvuTJC6Pqisi26F9LYdR4P6l1w2mF+pyPYC9wWxqPrUq9HGAPqRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-53b174c9c79so2000755e0c.2;
+        Mon, 18 Aug 2025 09:02:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755532930; x=1756137730;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CIJzAXZqBHKyNXtLQvChbRZgdimP8X1A4O/KyuzgpZk=;
+        b=FFmvaSmkz4mgneWWvtUEW4HRta+41Tj4smIBfysICnpLAs39EVudTE4ZEryUy1c4zR
+         488kfwJV5sMPX7piS+vC37HDT7xlBqSx4IGh1NHYyRhFFvWSzJ42mPsEzAxy4MqO7eIm
+         LwtSctvwjlfWiGZWW808oNp1iEcKOgdZGHwPlXEsw9MeigSpWfqxUNlLHl7y99xUiymW
+         oNJBtcfShG0ulwxtdPjb4kJF5XJemE9ZK339S+2dIb97HBNdczlnupkNSO8TrTeheo6A
+         StwCqP73ez0Mi9lV91dXCkX6GnTAu0sisBQo925vjJR3MlqtiOdx+TUIutsbjcvpD83w
+         arew==
+X-Forwarded-Encrypted: i=1; AJvYcCU6lr7UHKQdpRlijXdIg8aHQUju6JgJWRa2p/IJeC1lgFEqjTvrazGjbZXyYFRGvWKziSL/sknxnKpi+mZ5@vger.kernel.org, AJvYcCWRjSBPdiwv9XepnT3mdP1NrM6GT5jGODjHIYgGvE9n3xwomSjK/63o8WSk/phRM66XhifiyEo5eYM80EGwTaRcxXU=@vger.kernel.org, AJvYcCX0cqtP0HxT/G82FHjSzDP/YawpDnARBh9Lu3fDnSS9tveQf/Vto10pFBUUnGoDieAAslcH0A5JawyT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1AMaA2lXMNPlDa6IdmI+66Y9uboS6A7v9Dbhs2OxqmP6Wfqi5
+	hB5O4lX8S+sCXdo1FiIU7hTQ3u3k0tUsZ9+J5agxfH7TC0oxftdL3S0v19DCr7vQ
+X-Gm-Gg: ASbGncsIjv987fK9P4sve7TmAEMS4meljKOUv+U7s0i/y5FUWzlpqGY7RaX1hL/MYrA
+	4cmP04EtKd+2JZXujBRdWlKJVvr+4sPtTJF+Ni1o+KZJKdvKtHGUAlnIEGF12nV2xM0b7va9H3N
+	+TfNy65WzkIRNLvjwyY+Abf9Vw+/IrOY2KU8i+IcTh2mZWqRF8z29lRyPYmCcZdTBNHmdBMfeF+
+	SvhGC1UGTEGUlVlAqQ0cauLP0jp2iI/Y8wyR6yk0Ln6UWbWyvw1XjM9kUhdusy+V0TQptBZMWxp
+	Nu1Q7a2DNCmZ4KFGqIB2D2Kk3idfM2c16uT13ijhS4VfisXpb0leS7HGNGDJOP8gjgKLZJH7pm9
+	O3VDMWitTl/W3Ac7wnio+YGSnuenRuFvmQTdOt6ACTpWSzbJr3DTF9IbaaF4U
+X-Google-Smtp-Source: AGHT+IGimF6TUu1cMoDQrONU1Ab7Rs5QAQJLrtl/KtQ89lsurPMKXNHVtQXgZ2kB2X4ZnuV+d+uJGg==
+X-Received: by 2002:a05:6122:1d0c:b0:538:d227:a364 with SMTP id 71dfb90a1353d-53b2b749e13mr4182568e0c.3.1755532917529;
+        Mon, 18 Aug 2025 09:01:57 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bdeb9d3sm1968293e0c.15.2025.08.18.09.01.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 09:01:57 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-50f8b94c6adso1017581137.3;
+        Mon, 18 Aug 2025 09:01:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVmzIU5yfxz3UaysPYjFl4v5kYNR6nqJwzqZ8rTfXuJ+pOrHT2HbcKlcU+RLeknKB9pUgfZYV59sim/yqEDni7hFD4=@vger.kernel.org, AJvYcCVxMF5+3xP1uZl8+QE/naUno6DHE2AxXKZwzl5QJ+rqXwLHqTF6pPs55PIEiM0nlQW1pM0Ds5FqJOO5@vger.kernel.org, AJvYcCXzDd/64AfvzzOo9SRb1vuS6uoqTw8D+0GELvvcr1IP5p0YX4mvaI2QTW9QPvUFBD7br0RsRiMbjgkuesCa@vger.kernel.org
+X-Received: by 2002:a05:6102:292b:b0:4fd:53e0:b519 with SMTP id
+ ada2fe7eead31-5126d30e725mr4194493137.19.1755532914495; Mon, 18 Aug 2025
+ 09:01:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v13 0/5] PRU-ICSSM Ethernet Driver
-To: Parvathi Pudi <parvathi@couthit.com>, <danishanwar@ti.com>,
-        <rogerq@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <ssantosh@kernel.org>, <richardcochran@gmail.com>, <m-malladi@ti.com>,
-        <s.hauer@pengutronix.de>, <afd@ti.com>, <jacob.e.keller@intel.com>,
-        <horms@kernel.org>, <johan@kernel.org>, <m-karicheri2@ti.com>,
-        <s-anna@ti.com>, <glaroque@baylibre.com>, <saikrishnag@marvell.com>,
-        <kory.maincent@bootlin.com>, <diogo.ivo@siemens.com>,
-        <javier.carrasco.cruz@gmail.com>, <basharath@couthit.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <vadim.fedorenko@linux.dev>, <alok.a.tiwari@oracle.com>,
-        <bastien.curutchet@bootlin.com>, <pratheesh@ti.com>, <prajith@ti.com>,
-        <vigneshr@ti.com>, <praneeth@ti.com>, <srk@ti.com>, <rogerq@ti.com>,
-        <krishna@couthit.com>, <pmohan@couthit.com>, <mohan@couthit.com>
-References: <20250812110723.4116929-1-parvathi@couthit.com>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <20250812110723.4116929-1-parvathi@couthit.com>
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812200344.3253781-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 18:01:37 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUeLewbDu-pge0ee0+AKzicKuS7fzce7d0pNc20h6CoGQ@mail.gmail.com>
+X-Gm-Features: Ac12FXx3qMFgaF2nF2T4iYSOKFZFo5L9Q1hwQ-O9k-imvY-zp3thjThQzN5WK1w
+Message-ID: <CAMuHMdUeLewbDu-pge0ee0+AKzicKuS7fzce7d0pNc20h6CoGQ@mail.gmail.com>
+Subject: Re: [PATCH 11/13] arm64: dts: renesas: rzt2h/rzn2h: Enable eMMC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Parvathi
+Hi Prabhakar,
 
-On 8/12/2025 4:35 PM, Parvathi Pudi wrote:
-> Hi,
-> 
-> The Programmable Real-Time Unit Industrial Communication Sub-system (PRU-ICSS)
-> is available on the TI SOCs in two flavors: Gigabit ICSS (ICSSG) and the older
-> Megabit ICSS (ICSSM).
-> 
-> Support for ICSSG Dual-EMAC mode has already been mainlined [1] and the
-> fundamental components/drivers such as PRUSS driver, Remoteproc driver,
-> PRU-ICSS INTC, and PRU-ICSS IEP drivers are already available in the mainline
-> Linux kernel. The current set of patch series builds on top of these components
-> and introduces changes to support the Dual-EMAC using ICSSM on the TI AM57xx,
-> AM437x and AM335x devices.
-> 
-> AM335x, AM437x and AM57xx devices may have either one or two PRU-ICSS instances
-> with two 32-bit RISC PRU cores. Each PRU core has (a) dedicated Ethernet interface
-> (MII, MDIO), timers, capture modules, and serial communication interfaces, and
-> (b) dedicated data and instruction RAM as well as shared RAM for inter PRU
-> communication within the PRU-ICSS.
-> 
-> These patches add support for basic RX and TX  functionality over PRU Ethernet
-> ports in Dual-EMAC mode.
-> 
-> Further, note that these are the initial set of patches for a single instance of
-> PRU-ICSS Ethernet.  Additional features such as Ethtool support, VLAN Filtering,
-> Multicast Filtering, Promiscuous mode, Storm prevention, Interrupt coalescing,
-> Linux PTP (ptp4l) Ordinary clock and Switch mode support for AM335x, AM437x
-> and AM57x along with support for a second instance of  PRU-ICSS on AM57x
-> will be posted subsequently.
-> 
-> The patches presented in this series have gone through the patch verification
-> tools and no warnings or errors are reported. Sample test logs obtained from AM33x,
-> AM43x and AM57x verifying the functionality on Linux next kernel are available here:
-> 
-> [Interface up Testing](https://gist.github.com/ParvathiPudi/e24ae1971258b689c411bf6d8b504576)
-> 
-> [Ping Testing](https://gist.github.com/ParvathiPudi/6077cc7ab71eb0bc62ef0435ce9a5572)
-> 
-> [Iperf Testing](https://gist.github.com/ParvathiPudi/54aec8d6aaa1149b68589af9c8511b23)
-> 
-> [1] https://lore.kernel.org/all/20230106121046.886863-1-danishanwar@ti.com/
-> [2] https://lore.kernel.org/all/20250108125937.10604-1-basharath@couthit.com/
-> 
-> This is the v13 of the patch series [v1]. This version of the patchset
-> addresses the comments made on [v12] of the series.
-> 
-> Changes from v12 to v13 :
-> 
-> *) Addressed Alok Tiwari comments on patch 2, 3 and 5 of the series.
-> *) Addressed Bastien Curutchet comment on patch 2 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v11 to v12 :
-> 
-> *) Addressed Jakub Kicinski's comments on patch 2 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v10 to v11 :
-> 
-> *) Reduced patch series size by removing features such as Ethtool support,
-> VLAN filtering, Multicast filtering, Promiscuous mode handling, Storm Prevention,
-> Interrupt coalescing, and Linux PTP (ptp4l) ordinary clock support. This was done
-> based on Jakub Kicinski's feedback regarding the large patch size (~5kLoC).
-> Excluded features will be resubmitted.
-> *) Addressed Jakub Kicinski comments on patch 2, and 3 of the series.
-> *) Addressed Jakub Kicinski's comment on patch 4 of the series by implementing
-> hrtimer based TX resume logic to notify upper layers in case of TX busy.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v9 to v10 :
-> 
-> *) Addressed Vadim Fedorenko comments on patch 6 and 11 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v8 to v9 :
-> 
-> *) Addressed Vadim Fedorenko comments on patch 6 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v7 to v8 :
-> 
-> *) Addressed Paolo Abeni comments on patch 3 and 4 of the series.
-> *) Replaced threaded IRQ logic with NAPI logic based on feedback from Paolo Abeni.
-> *) Added Reviewed-by: tag from Rob Herring for patch 1.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v6 to v7 :
-> 
-> *) Addressed Rob Herring comments on patch 1 of the series.
-> *) Addressed Jakub Kicinski comments on patch 4, 5 and 6 of the series.
-> *) Addressed Alok Tiwari comments on Patch 1, 4 and 5 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v5 to v6 :
-> 
-> *) Addressed Simon Horman comments on patch 2, 7 and 11 of the series.
-> *) Addressed Andrew Lunn comments on patch 5 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v4 to v5 :
-> 
-> *) Addressed Andrew Lunn and Keller, Jacob E comments on patch 5 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v3 to v4 :
-> 
-> *) Added support for AM33x and AM43x platforms.
-> *) Removed SOC patch [2] and its dependencies.
-> *) Addressed Jakub Kicinski, MD Danish Anwar and Nishanth Menon comments on cover
->    letter of the series.
-> *) Addressed Rob Herring comments on patch 1 of the series.
-> *) Addressed Ratheesh Kannoth comments on patch 2 of the series.
-> *) Addressed Maxime Chevallier comments on patch 4 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v2 to v3 :
-> 
-> *) Addressed Conor Dooley comments on patch 1 of the series.
-> *) Addressed Simon Horman comments on patch 2, 3, 4, 5 and 6 of the series.
-> *) Addressed Joe Damato comments on patch 4 of the series.
-> *) Rebased the series on latest net-next.
-> 
-> Changes from v1 to v2 :
-> 
-> *) Addressed Andrew Lunn, Rob Herring comments on patch 1 of the series.
-> *) Addressed Andrew Lunn comments on patch 2, 3, and 4 of the series.
-> *) Addressed Richard Cochran, Jason Xing comments on patch 6 of the series.
-> *) Rebased patchset on next-202401xx linux-next.
-> 
-> [v1] https://lore.kernel.org/all/20250109105600.41297-1-basharath@couthit.com/
-> [v2] https://lore.kernel.org/all/20250124122353.1457174-1-basharath@couthit.com/
-> [v3] https://lore.kernel.org/all/20250214054702.1073139-1-parvathi@couthit.com/
-> [v4] https://lore.kernel.org/all/20250407102528.1048589-1-parvathi@couthit.com/
-> [v5] https://lore.kernel.org/all/20250414113458.1913823-1-parvathi@couthit.com/
-> [v6] https://lore.kernel.org/all/20250423060707.145166-1-parvathi@couthit.com/
-> [v7] https://lore.kernel.org/all/20250503121107.1973888-1-parvathi@couthit.com/
-> [v8] https://lore.kernel.org/all/20250610105721.3063503-1-parvathi@couthit.com/
-> [v9] https://lore.kernel.org/all/20250623135949.254674-1-parvathi@couthit.com/
-> [v10] https://lore.kernel.org/all/20250702140633.1612269-1-parvathi@couthit.com/
-> [v11] https://lore.kernel.org/all/20250722132700.2655208-1-parvathi@couthit.com/
-> [v12] https://lore.kernel.org/all/20250724072535.3062604-1-parvathi@couthit.com/
-> 
-> Thanks and Regards,
-> Parvathi.
-> 
-> Parvathi Pudi (2):
->   dt-bindings: net: ti: Adds DUAL-EMAC mode support on PRU-ICSS2 for
->     AM57xx, AM43xx and AM33xx SOCs
->   net: ti: prueth: Adds IEP support for PRUETH on AM33x, AM43x and AM57x
->     SOCs
-> 
-> Roger Quadros (3):
->   net: ti: prueth: Adds ICSSM Ethernet driver
->   net: ti: prueth: Adds PRUETH HW and SW configuration
->   net: ti: prueth: Adds link detection, RX and TX support.
-> 
+On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Enable eMMC on RZ/T2H and RZ/N2H EVKs. As SDHI0 can be connected to
+> either eMMC0/SD0 `SD0_EMMC` macro is added.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Can you please use prefix "net: ti: icssm-prueth" instead of net: ti:
-prueth" throughout the series?
+Thanks for your patch!
 
-icssg driver uses prefix "net: ti: icssg-prueth" so this will be similar
-to that.
+> --- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+> @@ -10,6 +10,15 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>
+>  #include "r9a09g087m44.dtsi"
+> +
+> +/*
+> + * SD0 can be connected to either eMMC (U33) or SD card slot CN21
+> + * Lets by default enable the eMMC, note we need the below SW settings
+> + * for eMMC.
+> + * DSW5[1] = ON; DSW5[2] = ON
+> + */
 
-This way grepping in git log for,
-- icssm will give you only icssm patches
-- icssg will give you only icssg patches
-- prueth will give you both icssm and icssg patches
+Both SD0 and eMMC also need DSW17[5] = OFF; DSW17[6] = ON.
 
--- 
-Thanks and Regards,
-Md Danish Anwar
+> +#define SD0_EMMC       1
+> +
+>  #include "rzt2h-n2h-evk-common.dtsi"
+>
+>  /*
 
+> --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+
+> @@ -44,6 +63,34 @@ sci0_pins: sci0-pins {
+>                 pinmux = <RZT2H_PORT_PINMUX(27, 4, 0x14)>,
+>                          <RZT2H_PORT_PINMUX(27, 5, 0x14)>;
+>         };
+> +
+> +#if SD0_EMMC
+> +       sdhi0-emmc-iovs-hog {
+> +               gpio-hog;
+> +               gpios = <RZT2H_GPIO(2, 6) GPIO_ACTIVE_HIGH>;
+> +               output-high;
+> +               line-name = "SD0_IOVS";
+> +       };
+> +#endif
+> +
+> +       sdhi0_emmc_pins: sd0-emmc-group {
+> +               sd0-emmc-data-pins {
+
+No need for repeated sd0-emmc-prefixes in the subnodes.
+
+
+> +                       pinmux = <RZT2H_PORT_PINMUX(12, 2, 0x29)>, /* SD0_DATA0 */
+> +                                <RZT2H_PORT_PINMUX(12, 3, 0x29)>, /* SD0_DATA1 */
+> +                                <RZT2H_PORT_PINMUX(12, 4, 0x29)>, /* SD0_DATA2 */
+> +                                <RZT2H_PORT_PINMUX(12, 5, 0x29)>, /* SD0_DATA3 */
+> +                                <RZT2H_PORT_PINMUX(12, 6, 0x29)>, /* SD0_DATA4 */
+> +                                <RZT2H_PORT_PINMUX(12, 7, 0x29)>, /* SD0_DATA5 */
+> +                                <RZT2H_PORT_PINMUX(13, 0, 0x29)>, /* SD0_DATA6 */
+> +                                <RZT2H_PORT_PINMUX(13, 1, 0x29)>; /* SD0_DATA7 */
+> +               };
+> +
+> +               sd0-emmc-ctrl-pins {
+> +                       pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
+> +                                <RZT2H_PORT_PINMUX(12, 1, 0x29)>, /* SD0_CMD */
+> +                                <RZT2H_PORT_PINMUX(13, 2, 0x29)>; /* SD0_RST# */
+> +               };
+> +       };
+>  };
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
