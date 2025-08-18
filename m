@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-773434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC50B29FF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:05:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6629B2A001
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1831781DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99AAA3BEDB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D50F30DEC8;
-	Mon, 18 Aug 2025 11:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A9B30E0DE;
+	Mon, 18 Aug 2025 11:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxPzdzj+"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kvhhAM/l"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074E3261B71
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52790261B67
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755515134; cv=none; b=c/1BoHWTN+CVWc8jMDg6PnFUTxpj/BE85o7/YUbO5qkoZVESZ8oGhUuXa3srXQmTCIddL3lLmwOrJxx5s58hkHkaGggSMYgsoeQy5NF8RWQ1R7fS7P9KFTDXCV0nlc29RywoszTKqMpUhJrxOrA7gkjfMKseDtGVYINv0+cambA=
+	t=1755515217; cv=none; b=kTr7ObIk62dOPIBhEFacF/N1f4M7b9yTf1QrDNBS4pgaElyDcfRgJkaEqqJAluzRppLZZJ+IngMo5WGszarGwnR9MymjjLk79geJnSjGdAExClaSMpZgXR1ClfQFEhsZ3TRBcTuKp9/GDoiMNZtVdBGpLzYTNM/KNCOOhEuTnfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755515134; c=relaxed/simple;
-	bh=OLeLQpTISXq/rVu2p1Au//0lGtCNf96NW1EBv6Tztyw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZHs5sgX7FXtq1Xfo/EYLFyhmR6aiRwHUWSzu7Lcr+n7bpHneXYKvAt0Ty7o61WHX0D7XfYXp/M42y5DsEo0PnBrD2ZYKsKfS3Zw2oH1xWGNqcP69zlpBslQPvdYXor8Vxnwgnt++YwZ2LkxfHTyM40XoNMLbQqhEMJg/9z0hfLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxPzdzj+; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b133b24e66so10531551cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:05:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755515132; x=1756119932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OLeLQpTISXq/rVu2p1Au//0lGtCNf96NW1EBv6Tztyw=;
-        b=TxPzdzj+wGp+CNq2jjXeNRI7SIZ7M+fYWAAQVC7DBUX4lfDQs3MQiUc+qZJDrPFe2P
-         Pp1wt8YfrAI3dgnznCjhLL1vGTZrWCgytwWYz2hy1tG+HGwLvpXsA/CX/edyfAFqZtqb
-         ka8I356D6Aw2cZ/zKiflqsT1qyojIMoORC711sYCfwllAtg/fdWXgAV0nk0FfSpfDnQs
-         8zt5GdaV9qe/WsK0Vm2WqCj651AA+OpZ4A2XCcA7ls2PdCC3yhFEZGUb/I75IgMb3nGV
-         peHC7lWAwsICK+BcHmDKdHXOUtRnE8gQHY0zOTFIwSlxMpR06TZtcbdeCsyJWrKgdVkw
-         PYig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755515132; x=1756119932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OLeLQpTISXq/rVu2p1Au//0lGtCNf96NW1EBv6Tztyw=;
-        b=mFb2qSA2FCEYH+Q5l6brCMGOkDePDYyIkgoUxHnT5VsyrhnHQrs5qQbUZ3YQ6Xo5+U
-         CUjFl1Uo6MTa61Wxv2hiuYedLeH0n+SDL6UYLf/tYOtRAJu2JzHKmq8dd2lnWihgh+f5
-         5F4ZbXWsZBp9ZBUoxJ/xfgsbmeiopVc2/3Y/fFgrraJIALqmuYzjzsBXhP0Vx85OofCI
-         5PcQlcWf7x8zQ9LSWY5H/iqjMkXnxJ6LS7edgjmzqLrOGGwuy/CL7hW7QWFeN2syCeFD
-         XHT8fQMmsK8Fi2u+ByNo3UgjRVQqE/EV/6WO+5Dx49lS9MwqfD5lkr0iKj+clVYFf/BG
-         T51Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUVireBLR2+YJon5y3MxuzBkNSXZ7j1fnr5r5L0eN6KGQM2BkhBA4CwYPEVT8nzJk0yVZgQsZTtOmC6Xjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHuDyhJcUAaMExj6Slxy3LTCuadSULAikBAO+FfCaVer8+7sGW
-	FnCcIo0mxRcaBr+5rqnWSpa31rMuHS9Vz3176N6bU4CVurmRYDkjo47ie3uKH19Z2hsFwGTYtmR
-	jRbDpFRPvqcNT4aEjDi2L47Se1Vu4sIUB0KwQ
-X-Gm-Gg: ASbGncudGUxRgMUT5IYTWex1MRggY2YkrwReviMZRzexIhg7SqxLss2Gt8SHf7TszQw
-	vjIG4NC9x7tjM73s9Zhquv7yo5llminDjMPFCiipnfGa4bgIBGU+uRMT9IY4hRYEx0l89eXHELu
-	O8c17tvGJ14hzRp+E0WRtEYkUjvNMop4ntTzXVEAkLZH0UudrTLAyWviOMWZIBj1tL758rLfVg6
-	rt0xKZdgs6ApaaXpv81OL7OVysDkQ==
-X-Google-Smtp-Source: AGHT+IHdU9VqdzI3gXq8fLjdBvjqpmK8iMvrHUgANzfNARCdszwgLZC2KNFthy1ZVUEXq3B7/aLfYNVPpI5t7max7YY=
-X-Received: by 2002:a05:622a:1a0d:b0:4ab:9335:7af4 with SMTP id
- d75a77b69052e-4b11e05b5b6mr129114271cf.2.1755515131588; Mon, 18 Aug 2025
- 04:05:31 -0700 (PDT)
+	s=arc-20240116; t=1755515217; c=relaxed/simple;
+	bh=KkRWsU9GEcmKhIcbI+UJZgptxr43GIeeAg1UbQNYROg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LEl9qWN78zvSOJIptonIGsLR5dqkrQ8eP6sm88TmTqMbQ4tA30zW6wVWSfKpdG/Pq599rAweBsnNQuQcgeplxWVkU+GQpziKnrPGq4yB2SUkPdFteshGCyLFZRhEkE8daY0e+CeOFYxIBL49shokQO9SX6+KssNJNEgJ/xLSsz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kvhhAM/l; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e4817ccc-bc8e-4a29-b202-ef30d95e8b65@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755515213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MGyM5mBEI84dMtOki1bsKxgSNO+vJrc7HUUiZpurZKc=;
+	b=kvhhAM/lGeri24XGcyBqNkezrDhr1PZhSaYJKNxvFBjv9J+x39KvViENzwfvp9DoQ9DMT1
+	8E22LKMOqbRiQV4cdO7u+nstScasO1AVUoRKmi/2gSpFBSeYsI7rmmbOp7pHY0e8Si4KPP
+	WiNKwUo7gkV+YYKm2zmD+nAxN7BXUtg=
+Date: Mon, 18 Aug 2025 12:06:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812093339.8895-1-xuewen.yan@unisoc.com> <cf7847e4-78a6-4286-baba-60ace0c3d507@arm.com>
- <CAB8ipk9BDzsTTcdRKc9R_Hc72cOY8YyUfrCoY3_9hPJ8D-Fg_Q@mail.gmail.com> <8a84e658-1c2d-4380-8979-e1cc5bf5768d@arm.com>
-In-Reply-To: <8a84e658-1c2d-4380-8979-e1cc5bf5768d@arm.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Mon, 18 Aug 2025 19:05:20 +0800
-X-Gm-Features: Ac12FXy5WVzUNA87UYEXlHCJAhfKEsxTiy75trluNtRJMwmhRftZ_njxa1Kysko
-Message-ID: <CAB8ipk8kf1+Vd94wQn1XnWPvWqP1szxAeUroos1iV6Z17vbxFg@mail.gmail.com>
-Subject: Re: [RFC PATCH] sched/feec: Simplify the traversal of pd'cpus
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Christian Loehle <christian.loehle@arm.com>, Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	vdonnefort@google.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net v2 2/2] microchip: lan865x: fix missing Timer
+ Increment config for Rev.B0/B1
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250818060514.52795-1-parthiban.veerasooran@microchip.com>
+ <20250818060514.52795-3-parthiban.veerasooran@microchip.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250818060514.52795-3-parthiban.veerasooran@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 15, 2025 at 9:01=E2=80=AFPM Dietmar Eggemann
-<dietmar.eggemann@arm.com> wrote:
->
-> On 14.08.25 10:52, Xuewen Yan wrote:
-> > Hi Dietmar,
-> >
-> > On Thu, Aug 14, 2025 at 4:46=E2=80=AFPM Dietmar Eggemann
-> > <dietmar.eggemann@arm.com> wrote:
-> >>
-> >> On 12.08.25 10:33, Xuewen Yan wrote:
->
-> [...]
->
-> >> Can you not mask cpus already early in the pd loop (1) and then profit
-> >> from (2) in these rare cases?
-> >
-> > I do not think the cpus_ptr chould place before the pd_cap calc,
-> > because the following scenario should be considered:
-> > the task's cpus_ptr cpus=EF=BC=9A 0,1,2,3
-> > pd's cpus: 0,1,2,3,4,5,6
-> > the pd's cap =3D cpu_cap * 6;
-> > if we cpumask_and(pd'scpus, p->cpus_ptr),
-> > the cpumask_weight =3D 4,
-> > the pd's cap =3D cpu_cap *4.
->
-> Yes, you're right! Missed this one.
->
-> >> IIRC, the sd only plays a role here in
-> >> exclusive cpusets scenarios which I don't thing anybody deploys with E=
-AS?
-> >
-> > I am also wondering if the check for SD's CPUs could be removed...
->
-> Still not 100% sure here. I would have to play with cpusets and EAS a
-> little bit more. Are you thinking that in those cases p->cpus_ptr
-> already covers the cpuset restriction so that the sd mask isn't necessary=
-?
+On 18/08/2025 07:05, Parthiban Veerasooran wrote:
+> Fix missing configuration for LAN865x silicon revisions B0 and B1 as per
+> Microchip Application Note AN1760 (Rev F, June 2024).
+> 
+> The Timer Increment register was not being set, which is required for
+> accurate timestamping. As per the application note, configure the MAC to
+> set timestamping at the end of the Start of Frame Delimiter (SFD), and
+> set the Timer Increment register to 40 ns (corresponding to a 25 MHz
+> internal clock).
+> 
+> Link: https://www.microchip.com/en-us/application-notes/an1760
+> 
+> Fixes: 5cd2340cb6a3 ("microchip: lan865x: add driver support for Microchip's LAN865X MAC-PHY")
+> Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+> ---
+>   .../net/ethernet/microchip/lan865x/lan865x.c  | 19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/microchip/lan865x/lan865x.c b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+> index d03f5a8de58d..84c41f193561 100644
+> --- a/drivers/net/ethernet/microchip/lan865x/lan865x.c
+> +++ b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+> @@ -32,6 +32,10 @@
+>   /* MAC Specific Addr 1 Top Reg */
+>   #define LAN865X_REG_MAC_H_SADDR1	0x00010023
+>   
+> +/* MAC TSU Timer Increment Register */
+> +#define LAN865X_REG_MAC_TSU_TIMER_INCR		0x00010077
+> +#define MAC_TSU_TIMER_INCR_COUNT_NANOSECONDS	0x0028
+> +
+>   struct lan865x_priv {
+>   	struct work_struct multicast_work;
+>   	struct net_device *netdev;
+> @@ -346,6 +350,21 @@ static int lan865x_probe(struct spi_device *spi)
+>   		goto free_netdev;
+>   	}
+>   
+> +	/* LAN865x Rev.B0/B1 configuration parameters from AN1760
+> +	 * As per the Configuration Application Note AN1760 published in the
+> +	 * link, https://www.microchip.com/en-us/application-notes/an1760
+> +	 * Revision F (DS60001760G - June 2024), configure the MAC to set time
+> +	 * stamping at the end of the Start of Frame Delimiter (SFD) and set the
+> +	 * Timer Increment reg to 40 ns to be used as a 25 MHz internal clock.
+> +	 */
+> +	ret = oa_tc6_write_register(priv->tc6, LAN865X_REG_MAC_TSU_TIMER_INCR,
+> +				    MAC_TSU_TIMER_INCR_COUNT_NANOSECONDS);
+> +	if (ret) {
+> +		dev_err(&spi->dev, "Failed to config TSU Timer Incr reg: %d\n",
+> +			ret);
+> +		goto oa_tc6_exit;
+> +	}
+> +
+>   	/* As per the point s3 in the below errata, SPI receive Ethernet frame
+>   	 * transfer may halt when starting the next frame in the same data block
+>   	 * (chunk) as the end of a previous frame. The RFA field should be
 
-I am not familiar with cpuset, so I can't guarantee this. Similarly, I
-also need to learn more about cpuset and cpu topology before I can
-answer this question.
-
-Thanks!
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
