@@ -1,173 +1,174 @@
-Return-Path: <linux-kernel+bounces-773510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115BCB2A134
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:13:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFC7B2A135
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04FB71895512
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA9817B2DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E02218ACC;
-	Mon, 18 Aug 2025 12:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1149827E041;
+	Mon, 18 Aug 2025 12:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fp18PK8o"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OiRPyjEy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F3F27B326
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9839927B335
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755518578; cv=none; b=KMyqbmDJJFQtJOkaDRa1JBLiHxeTJC/XHQNGdIE8pOQKiJLkUwc6v7WPi1nR9awwx3Nv8+Kw5wy6b+dEpeJGwB7+UozmWADQ2oxR1Gr957QbNRdLIeFiWcuiBJiNImW1Te764gETI9EaOkwuE4zQz79GkEeQ/o/isaXly8fVhzM=
+	t=1755518588; cv=none; b=fN4jCWeGH0gMw0ybc9VHV1vE/Ub+Jr6ypBFNOf8bnkb8JAB7fKxu7FfY5hzkqPYnPEQu9aP0gAKKzTyoCtg4OdRejt59xTQOfvnZ2KmkEmk7GvY/WSqc2P6V7IgiqQkRAhEU4VzPDqqTlorFPYU9wT+1gk85iGtB2+q0JtFgKxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755518578; c=relaxed/simple;
-	bh=v8TQVD2vn2z73mguUbqfgNSQQeQbImAiZzcexQv4K1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jECofQWWcyCYbcHe2WC2HVhMX6LMcw8+VW0s56cP/IvjNHsFGNgkBm9DIC1kp+8Ar2B9UTAR5HCkbPTHjI6AZO1gUhXkzdqOwQdXwqzqCIfzsEcyZCGFRhr4O/UPweYjYqNcNUUxV3QdOEknPxHQPuPCsLiFLtIffZcHEzqA1ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fp18PK8o; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I7VYpW026820
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:02:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CCju6bcx4FiaoDBIgpe/cizWDUazCG2B44X0S5ArA7E=; b=Fp18PK8oqdg7eB0Q
-	YrzI0r4a7Pjfp5CLiiFL7B2Vm7cSybNXwlFXwRl5UstuBRBxUKbxOb5Mf/+oOmxA
-	QNW+6A9BFI5YMvedye3lKFtQhtHo17tI/MvhQ5dtOpx5ZnBePGbb/VBicr8rEMt/
-	EX4QItoDp5zFOdKCHXWLZwA7r1je4hHSsUOnnK4nXVQNyrAgshxPVjNUu29uYb5j
-	pheu8bg4maEUT8gDego6+8ToSjhH0y1DuV0e86K6RFwNXAzSSS2K8knT2LIcDs2R
-	rpyIEgYi1sjlncPg9yFOd+23TsZCxQ3WdP1lBXMf4BUA4Hzw/4FmGq/3U4AKqNJc
-	evtmzw==
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48kyunru2h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:02:56 +0000 (GMT)
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7438204153aso4549594a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:02:55 -0700 (PDT)
+	s=arc-20240116; t=1755518588; c=relaxed/simple;
+	bh=aX0ppwvrxQtCilmjtLhlmGJxM/amdtR0qU3OoxYkR9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkoJPvIHous8Wna4hrgsbvhBslsDLxM94lHg20sg8xCbi4BOsZOgh3nlJoTvy2xwewsVFtrmkVzBaY2pruASHu5nDuTTuNMBbTcyLXmPzhzRUB8Bb/36QjJBn4sQdVxlRgDZHzl09QxSoIltvyL+V9DYoPAGnuL99PixoTY3UN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OiRPyjEy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755518584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oLE2lYRhrpJm9URBECoaPw5p007Ex98xqleh1QLEKQs=;
+	b=OiRPyjEyzhSqhU5Jf9zbFEz53Pa6LVjUS0zCCgfeuvhu8iLxiGBL4LRCYbCgT1xjWzNOC/
+	qw4SL7ChVQ9xUBuMGuExqB7yubcV70WL/XLi/pVh5eaVXwe3qOdc87iAX8G3dtRpbZTCTk
+	yns+VLFi5mmGbGyU+kCIxmtbfdaIdek=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-259-se1eYFRPPVmrA01QMWfLUg-1; Mon, 18 Aug 2025 08:03:02 -0400
+X-MC-Unique: se1eYFRPPVmrA01QMWfLUg-1
+X-Mimecast-MFC-AGG-ID: se1eYFRPPVmrA01QMWfLUg_1755518581
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b9d41c1147so2766270f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:03:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755518575; x=1756123375;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1755518581; x=1756123381;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCju6bcx4FiaoDBIgpe/cizWDUazCG2B44X0S5ArA7E=;
-        b=H98mhgqW55o0Vcgh+VQs6jCdoeb+MlQ6BAR8kepLabyxxNFPp48clhuqjsTIYn4yqv
-         aknUxA5KX8l7CeP3KQxNmLulNqjNXX7J4WJFwvUeTcFcCZfcvmrvYO0kvC3q0OyTXrbr
-         ZrzKLLum2FEBPLAZiu1GznQQOIF6bOd6/frjW0GyJ6MSgjwk8AXz9naEC5qaTVAp2JFR
-         eiKVb/q/BIOG/l9xWrwFqUdV8laBgEAtWg/2HkRcBeVePX3H17rc47Fg60pOeIWUWjIb
-         76quFz0APcbjCgBc2G/jWPJXgXG5GeV76j9yFurFBUuDId5FLRuuVMI3lrZBjuwjHAGR
-         G6bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBMzM943TaVmXAoP5i8POvrkgngeUxKTr9jix1CSqNuE0FV5ezN3n9mg7+FSQHURldL1a4CCRcXcDGtpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRNqXho+iYA/18OzoeQqdQ79hOz3z3TCMUmNK+vCV2fBHdEtLH
-	/QhVwkXifCxgvmQH3raiyXYaj7UoTk6eWb+06ZpwHKxuY/3XX0h0d3v5h1SXMv57rcLt299o+NH
-	6CJMh+p11bZY1LmeeDfpeETI1iDk+v4vC8U13O7bK2o4Y+LVmVn/BhtzPYHWsbQfTvlg=
-X-Gm-Gg: ASbGncsuoXmgs9k5esbvXS8szDTwDsNXiXa9iOGp3T9jJb3kV5j+AxMFMhsA5apduF7
-	rh1FLwzKpFs9y4CCTG0Ixnd3Y5PyXfs5plfbcMDyIzJOkO+Sw3RrekUt30XDOJJoDCxsR2kRf4g
-	1SUfPPc4kNf2r5Svyp9J9jSIzA44M3gtozcCen1IC/VcWPm2go7rMsB2mZnGjE/LV3DZGdkxAY/
-	aVDJN31jsIlvh12BbRv355/syUE2jqPJlXdpm1KwlN5Aufq9Myx41Yp4mJ7UWI4Dm1HZHfSfBRN
-	8Qdq/9DoraTvJKBtN2IJIsNzEHQuyDd4sv0c1eBhBeIApPl2pOkw5yfXBC7q47J7K8Y=
-X-Received: by 2002:a05:6830:f89:b0:743:2cc:d52d with SMTP id 46e09a7af769-7439248fff3mr7185078a34.27.1755518574796;
-        Mon, 18 Aug 2025 05:02:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH0S9aYXMwUyd6iZ9WqnqRGP0929twrrupyMw9RBL7nXISanLRiCa0LYDt7gDwmTn4IW7nOhg==
-X-Received: by 2002:a05:6830:f89:b0:743:2cc:d52d with SMTP id 46e09a7af769-7439248fff3mr7185018a34.27.1755518574235;
-        Mon, 18 Aug 2025 05:02:54 -0700 (PDT)
-Received: from [192.168.68.118] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3bb676ca37fsm12454389f8f.41.2025.08.18.05.02.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 05:02:53 -0700 (PDT)
-Message-ID: <ade7d6ed-b4fe-49f9-967b-340ac75a0ecc@oss.qualcomm.com>
-Date: Mon, 18 Aug 2025 13:02:52 +0100
+        bh=oLE2lYRhrpJm9URBECoaPw5p007Ex98xqleh1QLEKQs=;
+        b=bS4iMXhNtAZLJSwYY5nyFgfxw2sgsf3cL21vIvf0NJCIW+dCjDu7C9gRZ8xIJaLkE9
+         mU6B9E1uCrtMkNnvp7rA8nVW6XX3jpdXs0JzCbAwgHXPeFHDohUyDLvzlmV//YsuNkeu
+         J+8RSv+98wdu2go6aVJ7kkayGlbRVbVn+zQyJG5KepSr4bS36+5ADYbCNoCgLpYrdqJ3
+         eMEqvH9/C3SsXegvMQpKeiZM9s6M+ZVrQn7d2Ccd2rquiCg7vAt/VI6q5XMvZ2Z2TCjE
+         NpVdlc3eAVxHeR1mbwjmNyhvFNHvPlCxXMBYobNxPxniUi0oN6oHOb+h8XMLrktSaRUW
+         Q/ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWDhhSbfAuXab7KikqXy1Ucre/TFw30uYrypfP788EV6vc1X2b/OUlqLlaYN50Nfqu9D5USXjPpgjpJWqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO1euBGth+zQ+NaIe91DlTrSg9SvXsYqEByThJM4rtdDbpMHBA
+	IgUVJhqB0gmW96gSq+Lvy5R2mHmeAmr2S3lE/lrE/X8n5fBcxjTYlacCQQ6L1SJwDek+awghJYK
+	Te55YyEUpV/H7JEvm9ORxXQW4fUcifCyz96tPSbfmSZcDiySxwzvxmgqTtOqRzXyPOA==
+X-Gm-Gg: ASbGnct1IGmQwwrlQ7rav79QMyP1fJ1/fzKvW7q9zqgj1opQ9PmJz+UD9RBmbffulJq
+	1x8DdmKylR9xOSCMF5XQfCf9dDbDk6EfCKB6tpSoollb7EknbBSexh6HGUmYlkbTZQTTrzibEIj
+	gGgfRXQmhYw4n3cZSnrDdbbQHcjzygTXi/M1QFO5uBcuKgiKDs8L3SrZH48R6Ck+X6ARBLIM27x
+	z+onbwI9g7P0K0ykHaG6MUaz+XKqiT0QtKJdPAwuGq/e1MeN4iD0XcklTMZFzzpweJsVFw9kwoh
+	FrJ+P3H2QzJXqkxoTRfiZxprWCJR/MoK
+X-Received: by 2002:a05:6000:1a8e:b0:3b8:d115:e6c7 with SMTP id ffacd0b85a97d-3bb68a167c4mr8471599f8f.33.1755518581071;
+        Mon, 18 Aug 2025 05:03:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYzqZmffMklSj2Qi5PMXTUCEGdHYiVCyTvHGGQFSd6yY3SKyObBGhysM4csYFePqDKpPJBQw==
+X-Received: by 2002:a05:6000:1a8e:b0:3b8:d115:e6c7 with SMTP id ffacd0b85a97d-3bb68a167c4mr8471575f8f.33.1755518580568;
+        Mon, 18 Aug 2025 05:03:00 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb7f02578dsm12845133f8f.62.2025.08.18.05.02.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 05:02:59 -0700 (PDT)
+Date: Mon, 18 Aug 2025 08:02:57 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, xuanzhuo@linux.alibaba.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	hch@infradead.org
+Subject: Re: [PATCH V5 4/9] virtio: introduce vring_mapping_token
+Message-ID: <20250818075749-mutt-send-email-mst@kernel.org>
+References: <20250813054831.25865-1-jasowang@redhat.com>
+ <20250813054831.25865-5-jasowang@redhat.com>
+ <20250813043151-mutt-send-email-mst@kernel.org>
+ <CACGkMEuKmn4f9spFT1YxjVPxBFkdGVCTQEUpNG=xHd6hcL-a8w@mail.gmail.com>
+ <20250814063927-mutt-send-email-mst@kernel.org>
+ <CAJaqyWcxV+f6dhKLscGGy0bw2YWJ8NaJ4QN+Qe3Ax7C+Lf4X-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] ASoC: qcom: audioreach: add documentation for i2s
- interface type
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, lgirdwood@gmail.com,
-        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250818112810.1207033-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250818112810.1207033-3-srinivas.kandagatla@oss.qualcomm.com>
- <9f050ccd-0fc1-4fb2-94f5-36ed1f2f4f01@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <9f050ccd-0fc1-4fb2-94f5-36ed1f2f4f01@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: rV-V-cKTxxRuXYyxMgoDVWVmBo6CqYDq
-X-Authority-Analysis: v=2.4 cv=N6UpF39B c=1 sm=1 tr=0 ts=68a31670 cx=c_pps
- a=OI0sxtj7PyCX9F1bxD/puw==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=OPwlfTSxJuAJHfmk8b0A:9 a=QEXdDO2ut3YA:10 a=Z1Yy7GAxqfX1iEi80vsk:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDA3MSBTYWx0ZWRfX8H+ysJhZqcp1
- bhNbfnTYJ29ndGCzo4nv3o1H5JmpmgBwoIJ/ed4V+2qHl1YZYAnDGY+val4wdgPQ6OeJQ2iL6vR
- T6ogFHh6EbLT1bP9QEkHxOc1Z7QSdMznGhNtu8hRKgK8EzLJoReVeHAEMB+HuvSlJhtiLlXPyn2
- NxCDtaezpxsWzJpOQcCT6NAq6KX/RZhA6QT2UauSd4FR+Djol5wVNQyFeReLlOV2psCUK2ASJzr
- 6m4nX1OJTATvexh0waeroDcTSk9kpzAKa7ra27YZttQm8SF3e3J5u4Aa/cwYj76Wn9W6+pvdx4J
- sJpPnKNtmyCjYthNF+rBNdG2Gvx6YjT0iXBa+sR4MnLzqGSSgwCgZ7tO3k6+b24QoHVrmbokU+K
- c+1Dca8K
-X-Proofpoint-ORIG-GUID: rV-V-cKTxxRuXYyxMgoDVWVmBo6CqYDq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508180071
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJaqyWcxV+f6dhKLscGGy0bw2YWJ8NaJ4QN+Qe3Ax7C+Lf4X-g@mail.gmail.com>
 
-thanks Krzysztof,
-On 8/18/25 12:56 PM, Krzysztof Kozlowski wrote:
-> On 18/08/2025 13:28, srinivas.kandagatla@oss.qualcomm.com wrote:
->> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>
->> Add documentation of possible values for I2S interface types,
->> currently this is only documented for DMA module.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->> ---
->>  include/uapi/sound/snd_ar_tokens.h | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/include/uapi/sound/snd_ar_tokens.h b/include/uapi/sound/snd_ar_tokens.h
->> index bc0b1bede00c..3aa5f4928a2b 100644
->> --- a/include/uapi/sound/snd_ar_tokens.h
->> +++ b/include/uapi/sound/snd_ar_tokens.h
->> @@ -118,6 +118,12 @@ enum ar_event_types {
->>   *						LPAIF_WSA = 2,
->>   *						LPAIF_VA = 3,
->>   *						LPAIF_AXI = 4
->> + * Possible values for MI2S
->> + *						I2S_INTF_TYPE_PRIMARY = 0,
->> + *						I2S_INTF_TYPE_SECOINDARY = 1,
+On Mon, Aug 18, 2025 at 11:09:44AM +0200, Eugenio Perez Martin wrote:
+> On Thu, Aug 14, 2025 at 12:42 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Thu, Aug 14, 2025 at 11:36:22AM +0800, Jason Wang wrote:
+> > > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> > > > > index addbc209275a..37029df94aaf 100644
+> > > > > --- a/include/linux/virtio.h
+> > > > > +++ b/include/linux/virtio.h
+> > > > > @@ -40,6 +40,13 @@ struct virtqueue {
+> > > > >       void *priv;
+> > > > >  };
+> > > > >
+> > > > > +union vring_mapping_token {
+> > > > > +     /* Device that performs DMA */
+> > > > > +     struct device *dma_dev;
+> > > > > +     /* Transport specific token used for doing map */
+> > > > > +     void *opaque;
+> > > >
+> > > > Please just declare whatever structure you want it to be.
+> > >
+> > > It's an opaque one and so
+> > >
+> > > 1) the virtio core knows nothing about that because it could be
+> > > transport or device specific
+> > > 2) no assumption of the type and usage, it just receive it from the
+> > > transport and pass it back when doing the mapping
+> > >
+> > > It should work like page->private etc.
+> > >
+> > > Does this make sense?
+> > >
+> > > Thanks
+> >
+> > I fully expect most devices simply to use DMA here and no weird
+> > tricks. vduse is the weird one, but I don't see us making it
+> > grow much beyond that.
+> >
+> > So I think for now we can just make it vduse_iova_domain *. If we see
+> > it's getting out of hand with too many types, we can think of solutions.
+> >
 > 
-> Typo: SECONDARY
-> 
->> + *						I2S_INTF_TYPE_TERTINARY = 2,
-> 
-> And TERTIARY?
-> 
-> Although, they come from audioreach.h so, well, eh...
+> I've sent my series of adding ASID to VDUSE, which uses this series'
+> token on each vq group, on top of this version of the DMA rework.
+
+But then I see it drops it from vduse_iova_domain. So it does not
+look like they union is going to keep growing in an unmanageable way.
+
+> This patch [1] and the next one are the one that reworks the token to
+> an empty struct, so virtio can handle it in an opaque way and VDUSE
+> can convert it back and forth in a type safe way, skipping the void *.
+> Please let me know if you prefer to import a VDUSE header into the
+> virtio config header or to make a VDUSE forward declaration instead of
+> going through the empty struct to preserve layer boundaries.
+
+Personally for now I'd be happier with just a forward declaration.
+I just like seeing things at a glance: "it's a union, and
+can be one of two types", is better for me than
+"it can be anything grep the source to figure out what it is".
+And a forward declaration is opaque by design.
 
 
-True, I was doing vi autofill.. we should fix the audioreach.h as well,
-let me do that in v2.
-
-thanks,
--srini
+> There is one usage I've not been able to convert though. Jason, could
+> you take a look? It is marked as TODO in my series. I'm not sure if
+> that's also an abuse of the void * in the DMA rework to be honest, but
+> it should be easy to correct.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
+> [1] https://lore.kernel.org/all/20250818085711.3461758-4-eperezma@redhat.com/T/#u
 
 
