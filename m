@@ -1,105 +1,89 @@
-Return-Path: <linux-kernel+bounces-773988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38F8B2AD1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:46:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A71FB2AD43
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 041077A5A56
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:44:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 216221BA035E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2702036FA;
-	Mon, 18 Aug 2025 15:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2754D321F27;
+	Mon, 18 Aug 2025 15:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuE8IpLI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="W+2uVyTM"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20611283FC3;
-	Mon, 18 Aug 2025 15:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EDC320CD8;
+	Mon, 18 Aug 2025 15:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531955; cv=none; b=ue7XLE0Z94HJDPsv73TRW3gXAj6INDntumVn+5l3fjH8PsPckYzNzohdK8PMfNDZLNMFrbiHyGe0C5M8kQU85PQ7/Q/jEKnkbizcUTEao8jojLIw6J64o3RLxzE5xHeZuPMjbB5EJK7DO/KU+S39IxD9JnDoJpFlczNk3XlwFww=
+	t=1755531977; cv=none; b=d2fC4fA3+496KDweoAaVK8W7tticmRypoThxKMq45eXXunhG0DI+R5giKjwuMtx/hFj0cKjkARKJbJxr28SMWghJznesZgv7qdemtS56/vEi9/c8dn7HcrZ4/andzyhkbmIip6A8fyV6MTkHbipbYCqQ6lZYK1yJ5AmjCHAq9T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531955; c=relaxed/simple;
-	bh=hnsi28Tz7v23mH68o8SpW2Z9qHvy5g1uLMZ8O8gitfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DBhkt/y4u23D4mw+g+H/MXhKKqtciHHsk8zpNeoqeeUVkj0ruCvAiFJQfiG3iObimmPErkLqMQliqYF+NV8rqpA+jHE6N/uKVVx06srI/VOpdJIj/xqONjEzKbmyid/CT4O9vEWdb9Q/6VOssmW/85cEK7/9R0fwFqAW5VeLnBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuE8IpLI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCEBC4CEEB;
-	Mon, 18 Aug 2025 15:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755531954;
-	bh=hnsi28Tz7v23mH68o8SpW2Z9qHvy5g1uLMZ8O8gitfs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PuE8IpLIWWrlrb6jSAu+ChECzZUvehsysHKUgVTeOmEySKpy9v51Vvyz8PyCPdpp2
-	 3SVgvtIfmh5UZckZ7ySMcg0pZ+IKQx+KMr+Ld00EhS2tEEs2dMT4ISyg3IqVFxCqRI
-	 9s6APYhjaxQiwDz0NbIpjt6L07CkuVPGiVfcqiZ/GHXKLIPI3faUKqdyrVnfpt2zVf
-	 C8XUD0G2XKH/0sSSeZzoknRojICeeGLafizkciiQ6wGSVZIg5vvVw+XAz+qLqmJCfh
-	 zcsDePU6e2R9Bd81AAFaeFfN3mKdqwd9jum/0mnfktZhOMO5lF37euZNGNVSD7lLm0
-	 Ari8ZvaAgjjww==
-Date: Mon, 18 Aug 2025 08:45:52 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Shahar Shitrit <shshitrit@nvidia.com>
-Cc: Tariq Toukan <tariqt@nvidia.com>, Jiri Pirko <jiri@nvidia.com>, Jiri
- Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
- Corbet <corbet@lwn.net>, Brett Creeley <brett.creeley@amd.com>, Michael
- Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>,
- Cai Huoqing <cai.huoqing@linux.dev>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>, Linu
- Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin
- Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>, Subbaraya
- Sundeep <sbhatta@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon
- Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>, Ido Schimmel
- <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, Manish Chopra
- <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org, Gal Pressman
- <gal@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net-next V3 4/5] devlink: Make health reporter error
- burst period configurable
-Message-ID: <20250818084552.1d182f31@kernel.org>
-In-Reply-To: <016a3fed-2f4b-4721-b92c-cf00cd5f3125@nvidia.com>
-References: <1755111349-416632-1-git-send-email-tariqt@nvidia.com>
-	<1755111349-416632-5-git-send-email-tariqt@nvidia.com>
-	<20250815122627.77877d21@kernel.org>
-	<016a3fed-2f4b-4721-b92c-cf00cd5f3125@nvidia.com>
+	s=arc-20240116; t=1755531977; c=relaxed/simple;
+	bh=33SvtRRZKRpGEJgkApmw9XDN2PRubckU2zN/pwZlLD0=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eFnNkTKXWo6X33Li0/kFM8D/Vt8s4sIVmOhWAzvTSg06W1xhvwSzMVNECRCuOowftjPhqfBu9ly9Dy+XgM/FV9qoCqytVYVhndGQasmBIO5WqZVaSXPl0kUEBe55z85JwqbS+T7OOlSMl5BCE1cYUW1Wgvx64e7mvKmmc0zcV7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=W+2uVyTM; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 73B4E40AB4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755531968; bh=kZm0Bwd6RyfzEuTnBUIgBslD2YQ/6RG8WWIkX9TBaJ4=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=W+2uVyTMXR27DTowkNNp6+t5Lyo4/bR2sMpVLS6Bhvv5PEGFYjXoIOOyMo08MTS4l
+	 vyurismLfczWox23k9/cOuXvqJGl10PDHUDgIacjQyH1luudBuRYNpkhKp75rVVrVb
+	 73pBNW+EwZxzSvPdIcGHxnlZQwgnaEWHxNExRS08X62+sLs/snjhhN87ehWBmcQ1iX
+	 0s6UTYX46UWGrdEBW76Fvo2nDQoWdSDgpD3i8tGJZkC95MWs/9f1KS9IwTppR3Ax2T
+	 BbbjMYvnIjjQ/w0QuLjbp5tH8uvvY35tNa46a5MzIUJ/GP8V4R879xa5Vy1G3a4pAT
+	 T2fSQwzX22xlA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 73B4E40AB4;
+	Mon, 18 Aug 2025 15:46:08 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Iris Shi <0.0@owo.li>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation/sphinx: Fix typo in automarkup.py
+In-Reply-To: <8e5ddb7d-8faf-314f-b1b1-2d15d6900862@owo.li>
+References: <8e5ddb7d-8faf-314f-b1b1-2d15d6900862@owo.li>
+Date: Mon, 18 Aug 2025 09:46:07 -0600
+Message-ID: <87ms7wab0g.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Sun, 17 Aug 2025 19:08:47 +0300 Shahar Shitrit wrote:
-> On 15/08/2025 22:26, Jakub Kicinski wrote:
-> > On Wed, 13 Aug 2025 21:55:48 +0300 Tariq Toukan wrote:  
-> >> diff --git a/Documentation/netlink/specs/devlink.yaml b/Documentation/netlink/specs/devlink.yaml
-> >> index bb87111d5e16..0e81640dd3b2 100644
-> >> --- a/Documentation/netlink/specs/devlink.yaml
-> >> +++ b/Documentation/netlink/specs/devlink.yaml
-> >> @@ -853,6 +853,9 @@ attribute-sets:
-> >>          type: nest
-> >>          multi-attr: true
-> >>          nested-attributes: dl-rate-tc-bws
-> >> +      -
-> >> +        name: health-reporter-error-burst-period  
-> > 
-> > the "graceful-period" does not have the word "error"
-> > in it. Why is it necessary to include it in this parameter?
-> > What else would be bursting in an error reporter if not errors?  
-> 
-> I see. Would you suggest renaming it to "burst period" through the
-> entire series?
-> for example in devlink.h:
-> default_error_burst_period --> default_burst_period
+Iris Shi <0.0@owo.li> writes:
 
-Yes, AFAICT it won't result in any loss of clarity.
+> "whan" -> "when"
+>
+> Signed-off-by: Iris Shi <0.0@owo.li>
+> ---
+>  Documentation/sphinx/automarkup.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
+> index 563033f764bb..1d9dada40a74 100644
+> --- a/Documentation/sphinx/automarkup.py
+> +++ b/Documentation/sphinx/automarkup.py
+> @@ -244,7 +244,7 @@ def add_and_resolve_xref(app, docname, domain, reftype, target, contnode=None):
+>      return contnode
+>  
+>  #
+> -# Variant of markup_abi_ref() that warns whan a reference is not found
+> +# Variant of markup_abi_ref() that warns when a reference is not found
+>  #
+
+Applied, thanks.
+
+jon
 
