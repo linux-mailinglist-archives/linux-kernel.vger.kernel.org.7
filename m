@@ -1,149 +1,148 @@
-Return-Path: <linux-kernel+bounces-773716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116A8B2A742
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:51:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C114B2A780
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2A35821E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446936E04E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C591261B9D;
-	Mon, 18 Aug 2025 13:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46C3226D1F;
+	Mon, 18 Aug 2025 13:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+iJ5UBB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvFliavW"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CDD216E23;
-	Mon, 18 Aug 2025 13:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB23225413
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755524509; cv=none; b=skNG/l8vJFRf2jxKaiRP4dc5p/cNKeGSwLuZlWfMUiFKYiShd4cJvZKtCmVmfL7uEtK9+TPweAjC560TeuGqJCxidVrMg6mAKUf41WDyZ5LUQ97LiG6Y7YYBnAoa578GMYP6h8yfuPAkq5LNqpasIUogqsGpTbniKoH0R3n6K/k=
+	t=1755524617; cv=none; b=BoqcD12W5Pdh/mTUJ5h2oPPjqkKPfr2FcNUouENYuHs8dkqzmVW/rZ213tb4cD2sOKs1TJ5W0i4AA5bifoTZ/kREYsBqSmbORrOk/LuTM3Za8q8uXvxFjYayIe/IYMx6P73JWLw8ho7vQknNARwz6rA9/gIe3+kY/mIuwnsURBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755524509; c=relaxed/simple;
-	bh=/qwjj0atzITKVfuDYiSBj9szLOoWpImuXBeFRLR5PeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dHHU8COSh9HF53a/2uemI6IHWpGbG30KUNLkDgUp8xq9NAw3uJWO3/uyzyz7Y8gMfjqI6VrwHmnhtpYFMTxWIBRFsfe8GYWupZQ4RfJDMAaTjX4AnJ3VMa7DyIqZMKbIti7fZtj60ZDlFAsrBtN6CAjZzcdyt/EwUbArCKDQsGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+iJ5UBB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F30C4CEF1;
-	Mon, 18 Aug 2025 13:41:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755524508;
-	bh=/qwjj0atzITKVfuDYiSBj9szLOoWpImuXBeFRLR5PeQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L+iJ5UBBjokxA7sv5vyGm1JdZCxQKbGOCXlxlDzeWgM1Ck1L+r8x7qq78gUtuMB1N
-	 Y01VOGwJfEossTAST4bqWBYFmI7bDaCxXadmm9no+3tqwxdfK88Gux0GZPvB5kLaAk
-	 vpiUKxMzdyQfZVscF2C7ryj26r6mTWNGOmmO4ySGI1t8QXCtecy5nLW1fXjrMRyQSh
-	 O9CYCnfLhb4nR3jUj7FxJKjGOSnl06Pikdx0apcatpc0HUtEKySAAF2lGfXWjiOv+o
-	 +RG8XV9bCen7kkxvBD14Y/StNPnJNsjdmvKe8Z3O0/0vGo+V43uyXRFPaTCoXcVMtN
-	 JcZoukHZyF9Cw==
-Message-ID: <0784109c-bb3e-4c4e-a516-d9e11685f9fb@kernel.org>
-Date: Mon, 18 Aug 2025 15:41:43 +0200
+	s=arc-20240116; t=1755524617; c=relaxed/simple;
+	bh=GY033kBcdEgxbHngwDBH/yn9YX39oDLKhFn0sGJGqTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iKCiRU0xlsZI6NcCrpGFtvVS4l1r19mxkYuRdXEuwJ8SmsK5DVTtLnse4uF9Sh0agJ5z5kb6pDbaBT6QM4KyzJ0IfXbHgAwYQiI8qEtRbaUCxrN621iA4nz65UILHhCvk/cSijYDnlCeTF/QNdC/orz8dtcFLfvOB26lKzL+14U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvFliavW; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32372c05c5dso719095a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:43:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755524615; x=1756129415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qFXybMfT0F7pfONRtaANHA6qK/whFnwauoDe2iBodg=;
+        b=YvFliavWVKepM6KZLaDbZ5/tFbC5E55T9GkRKNzftcgC5B2jk5SPqDbrilb4VIgD6Y
+         glwYSN5Z8bK6e9M1MgRqNE2M7sN0EaBN6YEQih4Gd4alT31nIHUrdCXHNLMUEwIYxSho
+         vZIkZdl2TYfI8LTto5qAgd+gqCW8OkNJ70JllYFEO0MOaY9rZwYb8v/hQefzcCw8RkbA
+         8l+lgGyrI5Nn7w7ZnxDqONDm96djO6+Uls7xdM7vpxhMuH6EM8Yaa5zyKN7Kry7pCUhS
+         K1xCoS67kcgJD6rYIflAm1ME7vN41Y7yvZWzlDep11qAs2oCApfnQF6SeWMVcjLgJpBI
+         PPSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755524615; x=1756129415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7qFXybMfT0F7pfONRtaANHA6qK/whFnwauoDe2iBodg=;
+        b=BUfoHtBY5J0F7nV2j9EsE5s4cf1YCZH2nSBDWSY0mJgebSIhsJQvbCFM1mMeogx1Tq
+         1HgukePW1AxNW+63ub4jVYPcyv8jJVYZBgB97+ThkgqcQqHm23UrvTf4NiNEYo1TcEQU
+         c6kEGvSpKLQ93hAVCkfeUlrhRxDGE7szEAuu1pehGAhS57R32u70uYzzmnFQOBVmXBQI
+         kRr0oRZ7TvoQX43BB0iuqwEVcsOEK00KwRchp7nJMjp+Fu8ud4+ZGf5A1ESsKkkdsRyl
+         aM1eFiSEpU9geAik5EwU22Bn3uaLkY+8KUEAeA846O9ETBGFejjSVs4LDLCkVrA7Laep
+         6zaQ==
+X-Gm-Message-State: AOJu0YyhrQ894bmL5Jkzyo0QmlAqdpi30vJHuZ8jqMsFqjYby4aSbw8y
+	oGVEeLIlLWLU2EUTHe5OXEBcvKr8XS6HSwkS3knf71iz6kJITA64na0B
+X-Gm-Gg: ASbGncuuC/5t2X0JqjmaQo/FAYRJi37xRDM39LJLCnoHZpjhovNddsqPnqi8SS1882P
+	CcoH8b8hKEaU2L4quSIL4u0nY/1Ozoe5iVOKR49pZMN8nu+TnfuzREXhhmYTv2VVQdevBIWm7Gq
+	n4C8C5ocIWg6BI6r8ROGtVPWoj47yEPnDkXONLrJyhmNW4MjEhJeaxhCzg6vo8xcraOM8NmKw5f
+	gKV3FOvvTIl7Eb3uhJLxEqAEXCURpOxfIgDQZhRAzPOXyLiybrNiFK0RIG3vhksJZUewBdTKxyD
+	fGceTth7kwEHcKrzAC5KMKcqRo9L2dFi0U/+w3x44PfqL/dp6gep4/F2zqENV3PrgkOMquGTflR
+	7LuwswH97Pp+VASqhMsKViW4p2bTwkX49+t4VU4IoRTy124exg4LRNVTQMO8DPAO27BazsboaeV
+	0CEsRNpvWTx+cVhkW9dyyJpnY=
+X-Google-Smtp-Source: AGHT+IFUXtRL/BV8OhH7u51d59Zn+qQRMyYHv+mUm8SHWdo4AoKQhhH4kLrCQLItXf+EwUjuKYY8MQ==
+X-Received: by 2002:a17:90b:180d:b0:321:7a2f:985d with SMTP id 98e67ed59e1d1-3234216190bmr16631104a91.25.1755524614790;
+        Mon, 18 Aug 2025 06:43:34 -0700 (PDT)
+Received: from AHUANG12-3ZHH9X.lenovo.com (111-254-48-124.dynamic-ip.hinet.net. [111.254.48.124])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d76df62sm8122707a12.41.2025.08.18.06.43.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 06:43:34 -0700 (PDT)
+From: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+To: Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	ahuang12@lenovo.com,
+	"Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+Subject: [PATCH 1/1] signal: Fix memory leak for PIDFD_SELF* sentinels
+Date: Mon, 18 Aug 2025 21:43:10 +0800
+Message-Id: <20250818134310.12273-1-adrianhuang0701@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "D. Jeff Dionne" <jeff@coresemi.io>, Artur Rojek
- <contact@artur-rojek.eu>, Rob Landley <rob@landley.net>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250815194806.1202589-1-contact@artur-rojek.eu>
- <20250815194806.1202589-3-contact@artur-rojek.eu>
- <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
- <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
- <CAMuHMdVGv4UHoD0vbe3xrx8Q9thwrtEaKd6X+WaJgJHF_HXSaQ@mail.gmail.com>
- <26699eb1-26e8-4676-a7bc-623a1f770149@kernel.org>
- <295AB115-C189-430E-B361-4A892D7528C9@coresemi.io>
- <bc96aab8-fbb4-4869-a40a-d655e01bb5c7@kernel.org>
- <CAMuHMdW0NZHCX1V01N4oay-yKuOf+RR5YV3kjNFiM6X6aVAvdw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAMuHMdW0NZHCX1V01N4oay-yKuOf+RR5YV3kjNFiM6X6aVAvdw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 18/08/2025 12:57, Geert Uytterhoeven wrote:
->>>
->>> No.  It’s a generic IP core for multiple SoCs, which do have names.
->>
->> Then you need other SoCs compatibles, because we do not allow generic
->> items. See writing bindings.
->>
->>> This is the correct naming scheme.  All compatible devices and SoCs match properly.
->>
->> No, it is not a correct naming scheme. Please read writing bindings.
-> 
-> Can we please relax this for this specific compatible value?
+Commit f08d0c3a7111 ("pidfd: add PIDFD_SELF* sentinels to refer to own
+thread/process") introduced a leak by acquiring a pid reference through
+get_task_pid(), which increments pid->count but never drops it with
+put_pid().
 
-We can...
+As a result, kmemleak reports unreferenced pid objects after running
+tools/testing/selftests/pidfd/pidfd_test, for example:
 
-> All other devices in this specific hardware implementation were
-> accepted without SoC-specific compatible values ca. 9 years ago. AFAIK
-> the Ethernet MAC was the sole missing piece, because its Linux driver
-> was never attempted to be upstreamed before.
+  unreferenced object 0xff1100206757a940 (size 160):
+    comm "pidfd_test", pid 16965, jiffies 4294853028
+    hex dump (first 32 bytes):
+      01 00 00 00 00 00 00 00 00 00 00 00 fd 57 50 04  .............WP.
+      5e 44 00 00 00 00 00 00 18 de 34 17 01 00 11 ff  ^D........4.....
+    backtrace (crc cd8844d4):
+      kmem_cache_alloc_noprof+0x2f4/0x3f0
+      alloc_pid+0x54/0x3d0
+      copy_process+0xd58/0x1740
+      kernel_clone+0x99/0x3b0
+      __do_sys_clone3+0xbe/0x100
+      do_syscall_64+0x7b/0x2c0
+      entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-...just provide some context and rationale in the commit msg.
+Fix this by calling put_pid() after do_pidfd_send_signal() returns.
 
-Some (different) people pick up some irrelevant commits and use them as
-argument in different discussions in style: it was allowed there, so I
-can do the same.
+Fixes: f08d0c3a7111 ("pidfd: add PIDFD_SELF* sentinels to refer to own thread/process")
+Signed-off-by: Adrian Huang (Lenovo) <adrianhuang0701@gmail.com>
+---
+ kernel/signal.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/kernel/signal.c b/kernel/signal.c
+index e2c928de7d2c..fe9190d84f28 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -4067,6 +4067,7 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ {
+ 	struct pid *pid;
+ 	enum pid_type type;
++	int ret;
+ 
+ 	/* Enforce flags be set to 0 until we add an extension. */
+ 	if (flags & ~PIDFD_SEND_SIGNAL_FLAGS)
+@@ -4108,7 +4109,10 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 	}
+ 	}
+ 
+-	return do_pidfd_send_signal(pid, sig, type, info, flags);
++	ret = do_pidfd_send_signal(pid, sig, type, info, flags);
++	put_pid(pid);
++
++	return ret;
+ }
+ 
+ static int
+-- 
+2.43.0
+
 
