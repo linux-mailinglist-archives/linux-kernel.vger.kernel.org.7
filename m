@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-773521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB68B2A157
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:19:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF45CB2A1C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405305610DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88C81B24875
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B8A315778;
-	Mon, 18 Aug 2025 12:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1550C3203A5;
+	Mon, 18 Aug 2025 12:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hw7yqwRt"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMiZ0+i6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D567227B327;
-	Mon, 18 Aug 2025 12:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7070532038D;
+	Mon, 18 Aug 2025 12:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755518972; cv=none; b=IagEqSG2B27InQCyuTcHfpPfFHedt0tYr3WibxUzZd/q/6Ra4V6ojwPJ6W7UYi3Xy3o8HtXwyEvMPlqy20+rHnnydyYwRogQ+yrCKQUsRjbEDQnPKNlp7UzmRcaIB44z23iuclezSAmkjR1ePoBm6klq8DX1hSRaqyiiMFEvwVc=
+	t=1755520006; cv=none; b=teZ9irRihZqDj83wKdrG3GH4GSWCZG64xM/DmeeGms9sPyHladzuelyKNnOOtwGeo+arNEkV+C3SA2zVeU4EUmF5cw7OcmrEHHJBFBvCaMvLWgbdd5iG7W/bzCufEiUv4fA5gK8a8ECI60ScCPA023fVI8ASdaGfqPgYJ+fbpN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755518972; c=relaxed/simple;
-	bh=OpLQdy0G/Okp0F0LQiqP1NL9Gk/7mF8nmHn0cni2z3A=;
+	s=arc-20240116; t=1755520006; c=relaxed/simple;
+	bh=t4+uhsBkQu6PC00tarer6boEHDmE/F7D2ji+WgIEBJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPnYwa3e1jRZ9dubszOzFhliWS9PZSP4QkUwA6Ch2zPoR+lIVXcoyO+gVWKhEk0qp4FHUtW/8S+5+yZ/L4NemREsdnUUUdw+IdedgHdQMvjQ3y2/5cpng0PGQtKsnqiTuwY1OL4NPYZA77Ht5vc7QU5vljzRHVQcos43l98LjEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hw7yqwRt; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JIDCDEr/1d5V29Dqy9cjcsDweAzjIcSrXoBz7OAnOQc=; b=hw7yqwRtgfcqq+EjufE2Jc2iV3
-	3fgmJNFglB7kHDM+xLP3/4A2d2aAUgICLohp9OUwk/5+Y/8O6mojpbZ/Vq3JiWKbY0Wl2+niLNbY0
-	DhwP3Vcaus9WsenOgucD+O81dU4PMH+52JXxpr7aFfyvnuCI0WTUl4yNo+04j1BF4clFLWLmRqNFy
-	CIpHLDI9+fwQter0IIL4OFu37dXbdgBv//lIeXXrjE8qeUpux8tfIjv5+fsewXmbti1fYSNIsW39u
-	qp17HHNclKL1lnQFsuZMrxEOtvOgQMMDRrv8qV3qaV3VYNdqTAzawH6DW38ZuV3hnjOJLKTgHXJeA
-	jdeY576Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1unyfv-0000000HMQW-2uzq;
-	Mon, 18 Aug 2025 12:09:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 453B830029B; Mon, 18 Aug 2025 14:09:19 +0200 (CEST)
-Date: Mon, 18 Aug 2025 14:09:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Xin Li <xin@zytor.com>
-Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
-	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-	samitolvanen@google.com, ojeda@kernel.org
-Subject: Re: [PATCH v3 14/16] x86/fred: Play nice with invoking
- asm_fred_entry_from_kvm() on non-FRED hardware
-Message-ID: <20250818120919.GG3289052@noisy.programming.kicks-ass.net>
-References: <20250714102011.758008629@infradead.org>
- <20250714103441.245417052@infradead.org>
- <f6925ee5-bbd7-42e3-9e3b-59d2e8ec2681@zytor.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fb2cUuqexMNDSAKRv1xfcTLpdg7dznv3emGBthbFkVU//3Ygz2MOQo/UwOCxFcJhrWFs5J2rsCI14SRKvmznct6BNKoJZ9LeDhahQCUBPRQY6a0HQzZBO2QlMHBNw3cqqCD/guIROcec66gJ9sDl0NnlJPCofaVIT+tMFwMal7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMiZ0+i6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DE7C4CEEB;
+	Mon, 18 Aug 2025 12:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755520005;
+	bh=t4+uhsBkQu6PC00tarer6boEHDmE/F7D2ji+WgIEBJ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fMiZ0+i6ABoaGxgRcZSfRDHBY1hoSSgDV6NQcY0oF4nAJ3qurQiPlqqSBMtsOqA55
+	 msgNxMnNhohSDANx3D5nXmExTjTNLwCk1bZGb7oVTC+nyfUaFvoG7p1DigqdLFAjpR
+	 1TYoksrBwuVsJvk+shUMY0WHGpZTgiYAnDAy3tUoU4Lswl0rM/QG/Z0tWiFoxYRu5m
+	 hZR2kGSePMH+8H0OYEwKZ9sig2+sodjuPJ5U62kRso4ojhKA/ijzbtvsXNb1kyXs9Q
+	 zk8yOaG1e/XXfd6FzB83CkDi6hNVMP9bMbu70liWVHpTB8UVM8/yPqkkH/JbJTgMgV
+	 n3a/+17PBD3yw==
+Date: Mon, 18 Aug 2025 20:09:33 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: berlin: Fix wrong register in suspend/resume
+Message-ID: <aKMX_c3gvYc6E3DT@xhacker>
+References: <20250815031016.31000-1-jszhang@kernel.org>
+ <rscqtwztqwtihcq7rwvyjvnkbo5bmve257i66e3it52cnft7pb@6gwbgx5o7lpt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f6925ee5-bbd7-42e3-9e3b-59d2e8ec2681@zytor.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <rscqtwztqwtihcq7rwvyjvnkbo5bmve257i66e3it52cnft7pb@6gwbgx5o7lpt>
 
-On Fri, Jul 25, 2025 at 09:54:32PM -0700, Xin Li wrote:
-> On 7/14/2025 3:20 AM, Peter Zijlstra wrote:
-> >   	call __fred_entry_from_kvm		/* Call the C entry point */
-> > -	POP_REGS
-> > -	ERETS
-> > -1:
-> > +
-> > +1:	/*
+On Sun, Aug 17, 2025 at 12:52:01PM +0200, Uwe Kleine-König wrote:
+> Hello,
+
+Hi,
+
 > 
-> The symbol "1" is misplaced; it needs to be put after the ERETS
-> instruction.
-
-Doh, fixed.
-
-> > +	 * When FRED, use ERETS to potentially clear NMIs, otherwise simply
-> > +	 * restore the stack pointer.
-> > +	 */
-> > +	ALTERNATIVE "nop; nop; mov %rbp, %rsp", \
+> On Fri, Aug 15, 2025 at 11:10:16AM +0800, Jisheng Zhang wrote:
+> > The 'enable' register should be BERLIN_PWM_EN rather than
+> > BERLIN_PWM_ENABLE.
+> > 
+> > Fixes: bbf0722c1c66 ("pwm: berlin: Add suspend/resume support")
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > ---
+> >  drivers/pwm/pwm-berlin.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
+> > index 831aed228caf..858d36991374 100644
+> > --- a/drivers/pwm/pwm-berlin.c
+> > +++ b/drivers/pwm/pwm-berlin.c
+> > @@ -234,7 +234,7 @@ static int berlin_pwm_suspend(struct device *dev)
+> >  	for (i = 0; i < chip->npwm; i++) {
+> >  		struct berlin_pwm_channel *channel = &bpc->channel[i];
+> >  
+> > -		channel->enable = berlin_pwm_readl(bpc, i, BERLIN_PWM_ENABLE);
+> > +		channel->enable = berlin_pwm_readl(bpc, i, BERLIN_PWM_EN);
 > 
-> Why explicitly add two nops here?
+> BERLIN_PWM_ENABLE is 1 and BERLIN_PWM_EN is 0. What is the effect? Is
+> the low bit just ignored and the right thing happens? Or does this
 
-Because the CFI information for all alternative code flows must be the
-same. So by playing games with instruction offsets you can have
-conflicting CFI inside the alternative.
+operate the wrong address then kernel panic
 
-Specifically, we have:
+> result in a bus exception and the machine catches fire?
 
-0:	90        nop
-1:	90        nop
-2:	48 89 ec  mov %rbp, %rsp
+Yep, cpu exception then kernel panic.
 
-
-0:	48 83 c4 0c  add $12, %rsp
-4:      f2 0f 01 ca  erets
-
-This gets us CFI updates on 0, 2 and 4, without conflicts.
-
-
-> ALTERNATIVE will still pad three-byte nop after the MOV instruction.
 > 
-> > +	            __stringify(add $C_PTREGS_SIZE, %rsp; ERETS), \
-> > +		    X86_FEATURE_FRED
-> > +
-> >   	/*
-> > -	 * Objtool doesn't understand what ERETS does, this hint tells it that
-> > -	 * yes, we'll reach here and with what stack state. A save/restore pair
-> > -	 * isn't strictly needed, but it's the simplest form.
-> > +	 * Objtool doesn't understand ERETS, and the cfi register state is
-> > +	 * different from initial_func_cfi due to PUSH_REGS. Tell it the state
-> > +	 * is similar to where UNWIND_HINT_SAVE is.
-> >   	 */
-> >   	UNWIND_HINT_RESTORE
-> > +
-> >   	pop %rbp
-> >   	RET
-> 
+> If it's more the latter than the former, I wonder how that didn't pop up
+> earlier.
+
+This bug has been fixed in vendor's repo for a long time, it's just
+because we didn't upstream the fix.
+
+Thanks
 
