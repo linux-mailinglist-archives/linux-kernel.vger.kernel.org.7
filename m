@@ -1,81 +1,39 @@
-Return-Path: <linux-kernel+bounces-773944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C4DB2ACB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D364B2ACB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451BA1896181
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DFAB188CEDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83C7256C6D;
-	Mon, 18 Aug 2025 15:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ArY4HTC0"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA90E253B71
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE5D256C61;
+	Mon, 18 Aug 2025 15:24:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B36524CEE8
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530567; cv=none; b=TiJhcTtjjdyJNRmk8GzfRidKtl4iouQ4imwEcXIvtwd8Ww7arMGBQaE+AIcjhEfOXl2ok+ySjkXXeZNJTz7R1MRYMQdpWcbHQgDzHV437GqRnM1rOxz6zPQrNcKXKYUkAmagtxclaVBot2O0YcN61qDw5LaDzM/kQecmtQjeE8c=
+	t=1755530671; cv=none; b=MxxnZAw0h0B9QEYjVKRpvnIO+bq/drtjxmFIXSpCJi00q+Fi3peUQwONK5WJHBuoJchibQsigXD42tKtFQJS5Adn44dVK5ZZ5vCIA+0USsDhilF/X8WnPeTOUNRTKH65GBT4mpWn9vW9TFsxuKbPAmH1/mqL7+qF57VH+8ZO9vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530567; c=relaxed/simple;
-	bh=cL/BkRePawzT6v72IhLPr6FG3t3IqCKEZ0g1meuYxH8=;
+	s=arc-20240116; t=1755530671; c=relaxed/simple;
+	bh=ysUsvQk2nCmmYBwKtgoCb1F2gzQ6qL4Oc+YOwT35yJ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=txL0cfsMeu3AdSPdHQ5ycEWJQvsUMBXi3I0GsYalcsJp8FfcqeVG5YhUO3pcrrNf5FzrxvIX0NYRNollewPVMUgLUJn62fcW5ShpWeqNzFarTMWZHtehhSDQB8zx1gYjxyDQfXRfF1HxdkINlIKLoyG3M0Cs+q2cwpvGOaCDQYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ArY4HTC0; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-74381ff668cso2248714a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:22:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755530564; x=1756135364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YTxGCx4zj4KRJ8B1DI2WEkLZlXQbTwcBBSMe4+Qh/hw=;
-        b=ArY4HTC0Vs+Qzk4A7RbeiR0uhQcLYIQQJmOsiUPAvKYaIAtEquqJC9OPdJ6YEQVArt
-         DTgXLZa5UfY74Fd+lXPMf2MDLctEQ0ft3DmRhetxd/gaXFxQdljYa9ksyCyQOmAsSJEQ
-         GMMD6gyLbzbr1WtC9i3kwffESu05EiQO+MmFJN/3uXV4i4mERcP99LcQsdErx2OTLG56
-         vmjBNiTBVOVE4srAE66n5FUyM2HlRZTQcsIT90vLzoeXM4cFPP6BOafp6icDWnxZ6UBo
-         WtwRb90kWxsSMTO+nOpIj/z7CvhmBQAZfhz5e7X88yMIBjnXXFZXf0lKIXIR4pEkDJM5
-         o89g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755530564; x=1756135364;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YTxGCx4zj4KRJ8B1DI2WEkLZlXQbTwcBBSMe4+Qh/hw=;
-        b=deymcDnjoPomNxVd4pg9Bll+JNW3zQYq3675QoUQkw3GWy81e8o+Yz/dHDzM7mfbx2
-         moVedQ2DbQKpRvMJZoVWfvgHidLAfyZ3OkhtbcIhy05n2glctoMIapu+D3WH6vLZJ3PC
-         BVJPyx1UNQS74rQ8ApHqzwimsyPaBejq+nrrhNeGZ3SIW6lVVri+xYtOHqdY4dA1HrTM
-         fvbo6xr06Hnug9kg9HFM1ZOqLARjkT67xsOhHB8WdaqzBSd+Cf0AAv/8gWUT4FGVFPvv
-         555g89t4N7ppj14Fii5N6Brfl/yKuiUcq/jNDu/s1KJENOlXhSubg5SmrcCHOAZfUlng
-         Y0TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUus5XdxfxAxpz9mLlX8rDupxOUZ22ldKX+P9PfIAkXIk1Oh97DLTm8VU01+WiDSLdmf5BkAcvQ0SuCmfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9JPgVIYC6z3cY3rDb+8LHJHZN0AdGoYXI0OJHHFemtf1jqWsc
-	kSzVW6nVspATNGidbVhOFuxL3jMji7YowwBlQbSlaUATBSC8sTt3iKbSnSRhDBrSPMQ588y5vYt
-	vewiQ
-X-Gm-Gg: ASbGncv028crXnlSjvxP926JTO9c8kb4AmQFE4l1FP6spSroUe47koQmP5z2twieBiu
-	PZ846/utOukANNFGIZM49FCvztFQY6FqzMUyj0neLRTPT383Zo7Xdp8rGpzzmhME128vWJ3ddwT
-	STRfod2TcT/7QfG+hYz8TSDEamrTlJZdZ4RVdjbVkfj1U8W1k8i0DiLkJvz5v12hYk1FSuMcglL
-	EnPfS3o7qw6reMO/22B4Bx/f+f7B8KwW5gbP9Tu+MzWG7Z6jYLPWqd+5IpallgXYYzgNAFgSzZr
-	EUcXpt3GToOTGVm1cumLOeu5KJP2S8aKcZnNXvD9X+5COeUjwZPMxsohUpx+9AC5DMXTWgRdvFO
-	vK51cMutN1dyTt04/lPjr+DAg2ntwuwoLU865ExaeGwcGjOAOwHZ4lMb17gFrcn+VaqIk0yNsZy
-	A=
-X-Google-Smtp-Source: AGHT+IGPBTHW30IdobikaWZYenZffvlRVfNOQG0PIn6NtUluKl6ZS29TrtJlRc5HqzQnb05egqYH2g==
-X-Received: by 2002:a05:6808:50a0:b0:433:fdfa:913c with SMTP id 5614622812f47-435ec4c9ad7mr6463423b6e.30.1755530563885;
-        Mon, 18 Aug 2025 08:22:43 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73? ([2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ed1bfb0bsm1759838b6e.22.2025.08.18.08.22.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 08:22:43 -0700 (PDT)
-Message-ID: <0b9a3b8b-11d5-4722-a7ea-e80d893bc209@baylibre.com>
-Date: Mon, 18 Aug 2025 10:22:41 -0500
+	 In-Reply-To:Content-Type; b=g/cPGfwQhchGqh9PAdKiY8ul7T+AeH3UOc4YO0g7R4tfPbJYU3yyw72X7LwvI8JSjb6slEjFXpc3aINTU+0wduxLwHYPPdMoGggd8Vs53sxB0sdZKjnp8NwT7szU37fReSp4PcCO+bzB0pCIH3TdX23IgA47o7sqTfS+umvZaTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F2321596;
+	Mon, 18 Aug 2025 08:24:20 -0700 (PDT)
+Received: from [172.24.48.1] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A01803F738;
+	Mon, 18 Aug 2025 08:24:23 -0700 (PDT)
+Message-ID: <e3861092-71d3-4f36-8013-d721f60c1392@arm.com>
+Date: Mon, 18 Aug 2025 16:24:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,52 +41,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/9] dt-bindings: spi: Add spi-buses property
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>, Mark Brown <broonie@kernel.org>,
- Michal Simek <michal.simek@amd.com>, linux-spi@vger.kernel.org,
- Jinjie Ruan <ruanjinjie@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-References: <20250616220054.3968946-1-sean.anderson@linux.dev>
- <20250616220054.3968946-2-sean.anderson@linux.dev>
- <ded7ba99-089b-47a7-95b9-ca6666dc3e29@baylibre.com>
- <87frdp119x.fsf@bootlin.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <87frdp119x.fsf@bootlin.com>
+Subject: Re: [RFC PATCH] sched/feec: Simplify the traversal of pd'cpus
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+ Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ vdonnefort@google.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org
+References: <20250812093339.8895-1-xuewen.yan@unisoc.com>
+ <cf7847e4-78a6-4286-baba-60ace0c3d507@arm.com>
+ <CAB8ipk9BDzsTTcdRKc9R_Hc72cOY8YyUfrCoY3_9hPJ8D-Fg_Q@mail.gmail.com>
+ <8a84e658-1c2d-4380-8979-e1cc5bf5768d@arm.com>
+ <CAB8ipk8kf1+Vd94wQn1XnWPvWqP1szxAeUroos1iV6Z17vbxFg@mail.gmail.com>
+Content-Language: en-GB
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+In-Reply-To: <CAB8ipk8kf1+Vd94wQn1XnWPvWqP1szxAeUroos1iV6Z17vbxFg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 8/18/25 3:28 AM, Miquel Raynal wrote:
-> Hello,
-> 
->>> +  spi-buses:
->>> +    description:
->>> +      Array of bus numbers that describes which SPI buses of the controller are
->>> +      connected to the peripheral. This only applies to peripherals connected
->>> +      to specialized SPI controllers that have multiple SPI buses on a single
->>> +      controller.
->>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->>> +    minItems: 1
-> 
+On 18.08.25 12:05, Xuewen Yan wrote:
+> On Fri, Aug 15, 2025 at 9:01 PM Dietmar Eggemann
+> <dietmar.eggemann@arm.com> wrote:
 >>
->> Finally have some hardware to test this series with using 2 or 4 buses.
+>> On 14.08.25 10:52, Xuewen Yan wrote:
+>>> Hi Dietmar,
+>>>
+>>> On Thu, Aug 14, 2025 at 4:46 PM Dietmar Eggemann
+>>> <dietmar.eggemann@arm.com> wrote:
+>>>>
+>>>> On 12.08.25 10:33, Xuewen Yan wrote:
+>>
+>> [...]
+>>
+>>>> Can you not mask cpus already early in the pd loop (1) and then profit
+>>>> from (2) in these rare cases?
+>>>
+>>> I do not think the cpus_ptr chould place before the pd_cap calc,
+>>> because the following scenario should be considered:
+>>> the task's cpus_ptr cpus： 0,1,2,3
+>>> pd's cpus: 0,1,2,3,4,5,6
+>>> the pd's cap = cpu_cap * 6;
+>>> if we cpumask_and(pd'scpus, p->cpus_ptr),
+>>> the cpumask_weight = 4,
+>>> the pd's cap = cpu_cap *4.
+>>
+>> Yes, you're right! Missed this one.
+>>
+>>>> IIRC, the sd only plays a role here in
+>>>> exclusive cpusets scenarios which I don't thing anybody deploys with EAS?
+>>>
+>>> I am also wondering if the check for SD's CPUs could be removed...
+>>
+>> Still not 100% sure here. I would have to play with cpusets and EAS a
+>> little bit more. Are you thinking that in those cases p->cpus_ptr
+>> already covers the cpuset restriction so that the sd mask isn't necessary?
 > 
-> Out of curiosity, what is the practical use case and intended benefit?
-> Maybe an example of such device and an explanation of how useful this is
-> would be welcome, as it does not seem to fit the initial spi idea
-> (which has been greatly "improved", not saying it is bad, just unusual).
-> 
-> Thanks,
-> Miquèl
+> I am not familiar with cpuset, so I can't guarantee this. Similarly, I
+> also need to learn more about cpuset and cpu topology before I can
+> answer this question.
 
-From my side, I am working on supporting complex analog-digital converters.
-There are many of these that contain multiple converters in a single chip
-and have multiple serial data lines so that the data from each converter
-can be read on a separate serial line to speed up throughput. And in some
-cases multiple chips are also used in parallel to the same effect. I.e.
-all chips share the same conversion trigger and we want to read back the
-data from all chips at the same time to get max throughput.
+Looks like we do need also the sd cpumask here.
 
+Consider this tri-gear system:
+
+#  cat /sys/devices/system/cpu/cpu*/cpu_capacity
+160
+160
+160
+160
+498
+498
+1024
+1024
+
+and 2 exclusive cpusets cs1={0-1,4,6} and cs2={2-3,5,7}, so EAS is
+possible in all 3 root_domains (/, /cs1, /cs2):
+
+...
+[   74.691104] CPU1 attaching sched-domain(s):
+[   74.691180]  domain-0: span=0-1 level=MC
+[   74.691244]   groups: 1:{ span=1 cap=159 }, 0:{ span=0 cap=155 }
+[   74.693453]   domain-1: span=0-1,4,6 level=PKG
+[   74.693534]    groups: 0:{ span=0-1 cap=314 }, 4:{ span=4 cap=496 },
+6:{ span=6 cap=986 }
+...
+[   74.697890] root domain span: 0-1,4,6
+[   74.697994] root_domain 2-3,5,7: pd6:{ cpus=6-7 nr_pstate=4 } pd4:{
+cpus=4-5 nr_pstate=4 } pd0:{ cpus=0-3 nr_pstate=4 }
+[   74.698922] root_domain 0-1,4,6: pd6:{ cpus=6-7 nr_pstate=4 } pd4:{
+cpus=4-5 nr_pstate=4 } pd0:{ cpus=0-3 nr_pstate=4 }
+
+
+  sd = rcu_dereference(*this_cpu_ptr(&sd_asym_cpucapacity));
+
+
+Tasks running in '/' only have the sd to reduce the CPU affinity correctly.
+
+...
+[001] 5290.935663: select_task_rq_fair: kworker/u33:3 382 prev_cpu=0
+[001] 5290.935696: select_task_rq_fair: kworker/u33:3 382 prev_cpu=0
+pd=6-7 online=0-7 sd=0-1,4,6 cpus_ptr=0-7
+[001] 5290.935753: select_task_rq_fair: kworker/u33:3 382 prev_cpu=0
+pd=4-5 online=0-7 sd=0-1,4,6 cpus_ptr=0-7
+[001] 5290.935779: select_task_rq_fair: kworker/u33:3 382 prev_cpu=0
+pd=0-3 online=0-7 sd=0-1,4,6 cpus_ptr=0-7
+...
 
