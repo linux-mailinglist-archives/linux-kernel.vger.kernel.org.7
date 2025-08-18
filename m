@@ -1,176 +1,390 @@
-Return-Path: <linux-kernel+bounces-773104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C0BB29B71
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:59:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D74AB29B81
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D152A18A6573
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098E4622B0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FF029B8C7;
-	Mon, 18 Aug 2025 07:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C29D29ACFC;
+	Mon, 18 Aug 2025 07:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="CjoBP3za"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013032.outbound.protection.outlook.com [40.107.44.32])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SEImoTW8"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5E729ACF0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755503921; cv=fail; b=AoUvYAsHvP4paWHgPLqZyb0QEbd4qPMgJy/kvHSBn8Vnk7DLERO4ibJcIsM+vnyLBm9BeiW/WkfcP7QwwBNoKv5LED1wKxRUWCAv8/FNO6dw7VRwmZqKK2QoMdNhsHbj6QV1l2Hr9x46/JA9HMNJPa3tjR86dqRrhfEfsaEgrqM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755503921; c=relaxed/simple;
-	bh=6H/XOL6hEFEnFLKn2BPDPVutJ3jOfwnNJyLyn7oNIRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lbZKwx5iHqQsN605HTRQ0HweqPxMwCnKJriZC/mz9Eiv+pfARj5t/XjJ6GESDT00Gqj2tABUIBVf/UUBSbi61Z+ykOfCpZGwn6/OfRQrLjpMIeCyhG0M7OGqG14JAVvUOCdvF+3NKqS/cR4aD/JNMuikEqchYD77nGUFGhHcf2s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=CjoBP3za; arc=fail smtp.client-ip=40.107.44.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ay8wJtKhQrwkwNl7zaBdH2iSv0rcqCclBV5EBOWlEJFZFxXJOdbvbsusQYrpAbm+IOBVnlm+MDDnplG5KA8wGrqjfOSgoePhU2v43OBe9DDYufMaTfEAyz3LCO4Wjv27WEoatPQnCzxj3j2a8cTkzj3GRg6Chx0pXOTn2MqBIDoIDFY7SsxyIJg4ltiO0xBBzT67U8xQSVkmNmOR5AfYQhEmH6en2FTa3JtQS+FN3eOwmYgP9TebYTKQ13Ha1R6C9oe/vr1oTV3CkWj6aIqkuYyMS8GaAI7H8lCHlGTostZ/IB5MefXijUl62oizOflmMAjQdw+nwGLiMJsqYG+bmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bnO0qhs56rPCr7FcdBr2izMtmuDapPzEv9xfGkvoAUY=;
- b=tUx5r43ZPiu6jTp2t+SNvfNlI/00nUQc6HjLaeoKJXfaYKrFbrDnZlnfs/s4J86wOmx4ko1Ac/J9BszfS/T+ztP9VlIFXDZmq8qNsdpDOZR3F+DgGcQLVK9Cc37ivTJTPQjdQ8l2kvFeHRdFAsDjcGzNwaux/duXVcp16sD0/1A/cVhaKF3aee/wF23lq2dTm+stSQdw4KbaVdBePio+TzHpJg2E7QuaZMKU3xqll+KcVCFH5G9Gr5t/nRwBhHkaVZNIoIN716H8J3yPEq3vOgHeXiOBjIOOb1x0iWd6wPNxFvLGTVhjwsTegsMtg3jRdHBvCIChG3rXd/dNkH9Vsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bnO0qhs56rPCr7FcdBr2izMtmuDapPzEv9xfGkvoAUY=;
- b=CjoBP3zafsCHWpnZJzvNADdWR/h8UIGc90YCdqJUk9wXrGybE2uLmHL5DZ4xkd0fTyuJ0O2ixlUO+y49jY/4fSvY4Xqe81C63PrqaA9MxfjL5yKEPTtrI15/Vdq4lHg5esI26cAg8kL+M4e5kPDsWyVzoKvVcNzS5z6McrLPrJbfCCyoZLo724XfZ/o10luLReF2xirzjMP/xL2p7SfZfkAS/w379/FYdm9paEHKB5YcxXe1GaYSeYDwpdm43etE3tgXA3OH1H764NEBs2PHXVAvLdUv01eDpamCCfDhGWRVqr2VMjZWVwhhyP/LBmzpdnRL3/4edFaiBHye041trA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by SEZPR06MB6016.apcprd06.prod.outlook.com (2603:1096:101:f3::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Mon, 18 Aug
- 2025 07:58:31 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 07:58:31 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: sudipm.mukherjee@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] parport: use str_plural() to simplify the code
-Date: Mon, 18 Aug 2025 15:58:22 +0800
-Message-Id: <20250818075822.479693-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0038.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::20) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D7A29B214;
+	Mon, 18 Aug 2025 07:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755503922; cv=none; b=BS5HQHaA81so2L85KkhocV08rhJ8SKymVqaG232IeMA4+AUn8JLieBdPkOj/xQLhA7Xe1G7iG9Nq5R59lOHbNf0rKSd/6KccTn6nvJAsp5P/XiEkC9cqyQGVR2JoBrpkKhz0V7LbZt6v2vcvHtTvaSz7uy+5FfL4MYXYaFI8sbE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755503922; c=relaxed/simple;
+	bh=OW9f5Gz4q3W8mGYClWjgappBtP1YWzKFBndKdsW/UPM=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=ROXdN/7flezsyn5G3+D6CD/agec4Xllb+WAlLbSZPTkS+9Qtd2m12pFFgkHo0WMa7vL0CAGL9KJWTFHE+wCb9vnX+5bVPiw+/4AF+Yy3582c0wmZ9OdkH272EFV4PA3nXFBkvhmI0L3rh+ijwA/mn0rmy4T0OExumqajMNapDSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SEImoTW8; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F2B9717D1;
+	Mon, 18 Aug 2025 09:57:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755503856;
+	bh=OW9f5Gz4q3W8mGYClWjgappBtP1YWzKFBndKdsW/UPM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=SEImoTW8ayDBecy2mEM1DV0ANnq74VI+K8tQF04QYawS1JqegbnJsuGd/OK0IweXa
+	 CZJVL2loPHBU2jl2OtPYzQheafup6jMKobDYoiRpoB6/5plFPLr5axFeLu7OXtllfM
+	 pMZjU765pmUgAv7A5yrtas6+3Y/TOku90HJGojBs=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEZPR06MB6016:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65774911-879c-403f-914a-08ddde2d05b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?z7H5WkZ0Mij8as+oMSGQ1v4cC37Co4Lp2/zDxkzzM01qL44w49iYuGHl2QGs?=
- =?us-ascii?Q?mX967rpIkXYppid2f6idao4oLyo7up/6AR8Gko91yAjqsmOfmN9VrROPZ8EX?=
- =?us-ascii?Q?QMPL7IFOwbrLNJsY7j7hx8qJfuL1vdwu3XaGLf7v9kjjtdf0hv689d4FLV4r?=
- =?us-ascii?Q?1tI0H7Ix7pE+MoIWUGRlmvlvgBvb/A5UVQaImac6zUjWLiEErpE5EThfKsQq?=
- =?us-ascii?Q?NjDPeIgkKl7d+T7jAgjNSbldSs7dGlPa5fotM/6kv52Xcxc+xNf/Ata1IDo1?=
- =?us-ascii?Q?dNZRMH78Eo7SHue4UVCJiwwCUEaSVyIe3AXPIHvdMhfvzzmiGwsjDe8zVVFN?=
- =?us-ascii?Q?z29Jfh4xv2/xbUcc7LBpBWwPXec8KiXslazjS2Wlqhw0zDZ4xIVeMN86Sohn?=
- =?us-ascii?Q?AYSDbiUM2ov361EF1mnGE+iEmuv9OkbGDh2UupEfrfkoD8wObDpLmYTysVQT?=
- =?us-ascii?Q?g6q6xpN7F2rhTL1cjJlN1cF9faEoP7rm7RgCvB22ufOGSdxmspD1FkuGiQI6?=
- =?us-ascii?Q?MPn7tVppqnt/IjbBBW7ld9oaPWYwSbM/0HGxIzkLOruXoxbvWQDU5DU2x3sK?=
- =?us-ascii?Q?1Cx7jAeg2ZAWr8lc/vsqI7V8h8T+4+2mRs7EmnLykP5mPMW8Q5T4/8SWpJh1?=
- =?us-ascii?Q?yDU9MjzEuQ4B4ePKKDozGPpD001lwcGatK/wOAQuo6tws/hhndc+wVRbVrYW?=
- =?us-ascii?Q?0M/4JqCRpuRQ70BtCa17l9HoXYzT5FvTJ5PNXnpgsoDvNw1AqJbd5f50BHSM?=
- =?us-ascii?Q?/RJUh32NbND3Dx76dVwYjzp/2fGdooqHOQiz6QGMyHARLpQaMqOubD/EnZHC?=
- =?us-ascii?Q?CgIZ2qkEC0QFgAeQiresE7HwOdl9ioQyMnKkMROIsdZnswGHtz+DaLwa9yRJ?=
- =?us-ascii?Q?lqMRtz11e5BtZS8C3XQcaP3m93KxJ+Iuu7Lhw1W+LKuCDhUO+DHdHmj0V6ax?=
- =?us-ascii?Q?z9KlykXK70b+U0wMfEHzZXQEEj+IuKh6Y4fRQtemkNk1mbb8UU9LGuKPmElM?=
- =?us-ascii?Q?/AgOf9yaoBH58dVNibUk3CTaRcobC79GgxgsuhV5ZYgWiFWBBF+FyxZvf6xG?=
- =?us-ascii?Q?uc2t+qHe8TmO+YMh7uKcE3I5yS06wZZG+LEc3k8MYcjRBiJ5/1LuItGgN0y6?=
- =?us-ascii?Q?6gCbpcCwalH7aqEDYUiHGr3rAIL9d0hpnK6YbEPlEyv+RbEYuYdujnx4P/Mr?=
- =?us-ascii?Q?3G9pzUifQD2D6mVq8orK87KgI2Xeb6rjPdUmvsv+twqlEx3puiW2K3Lr/wD8?=
- =?us-ascii?Q?LH/vcyk81wc4zQ68+Yv3WsaprjkvfkFCN0D0qHQDlh7KdFIPMcGp17+dPCDv?=
- =?us-ascii?Q?2wtS/5W+Pwpfc/PwXPoetrM0xpfxQs+agH5MkpcK+Jou+jRzP4FFofR/QO5b?=
- =?us-ascii?Q?FjM6nfi8fJKrXSVmdN5G93E6aqMmQ69KY59RZl7/NjXsC75PaovkEpscs0kI?=
- =?us-ascii?Q?6mlUYOHV6NSLi4ZdFd/qbLKG1SnnxZ2o9xH1FIQgAkPhvZA3UTATEaGweMlL?=
- =?us-ascii?Q?9dqJrQ8BKzD1vfw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YcGGleicGOuKxp1j4Eu3Hv7RkMPMPYcJwCaVJTnkQS/hNfcGzRr9CO4qdUrW?=
- =?us-ascii?Q?IN2zHfo7+03OQxoM2PPQzhxNDJN6lYJljF18RRxjR4ShjDsYpQCTvqF1CQze?=
- =?us-ascii?Q?Ysd1+5anCNZulV0bxCmdYSk8KBgVGo2oXwaCWwITIQju509Grq9aPavsysW7?=
- =?us-ascii?Q?lkE9ABVG8902FyzoKE4PVHXhnFboqHKTpQplKfZGHDaOnCth7xFY1Zg32/u1?=
- =?us-ascii?Q?F9VVB/M4iJGD53KbjlDFyIyrgpVKazaSoB2w6xNYWnPbF25hxeQSrZ5rKxDX?=
- =?us-ascii?Q?F2yTCDG+81VIvAnb+TchlL+vE6qi/d7yJQOKZUa+400Cs+5Yd1/HsaQEeLYf?=
- =?us-ascii?Q?rJSdjeUWhYUHEjWY8PNs4F0TRcN3cm6KiVBhk86KO/J+bga+PnE87l1t4p5F?=
- =?us-ascii?Q?OfQ/jfqWiUyF6zacV8AwJFkPFGXXkM6px7wqj0qFj2YbSDz5aQlWoPm7K40R?=
- =?us-ascii?Q?n91tI5QVh8VOLKjeaNfRlOGc70ZdjGr4Gtc9Ly+qpDWlw65J2WR5YMVD+2sR?=
- =?us-ascii?Q?S6FZCFKGsU/C2qJNvGid5XJTa1xW9VBPdx8FwSZQzzELOwf1QSIejAmtAwc0?=
- =?us-ascii?Q?k2yZ3xKeCnKXsZnP9eN08iel3bGfzxMhU+VLsU9iSP2DoE4qpI3llV24NqbF?=
- =?us-ascii?Q?mWy1n034c6E9jB4E8Q2KPaI2hLFYnNdfGDaIsEhBaauMgB7s4quNDUQ1cx44?=
- =?us-ascii?Q?mc2n8nDrFPs9ABbMRp1msjrcvelg/3c2XDC8V8/wSMMw7J85EG8sQLTScMH1?=
- =?us-ascii?Q?nX9caO1evhnUHIlxDRU1B9Fgoumhf9AmSMBiPyelHRrp4TIrmTKG6B5U+7yl?=
- =?us-ascii?Q?lB4Znycg7yz22LZbbEURB8NkJuL0bc4zaIm9gPPeTro5TJ5tOVZtBNw7ovkC?=
- =?us-ascii?Q?YkvJ7RxiNULg8FkJGY6HAoPCE+u3qtV2gYTxktxRzDpfZvddNeYN3mLHUuBa?=
- =?us-ascii?Q?7nQ6CaWLJktEQRG8QPSO77Qoc+7KCnyNRq7/Azq2YBna3A4v7bciOCj6NfZr?=
- =?us-ascii?Q?1CbLbUQis9DR8b7Estiaau4w6F8rCCxtYculXJv4CbOjrdjbgWg3PCEuKFgy?=
- =?us-ascii?Q?UlgBXlF4By3OLWaowzhwl+4A17V2rn1KjDFnrhc1txm6DCgLqUqhKqgrg5Pw?=
- =?us-ascii?Q?SlpjS0+/uubvlsE3CPzlidflDP7Kl/EOfBlULjoHyVw3j1PQjqRacF0BBW74?=
- =?us-ascii?Q?FuocTeMm4OhMJouuQdUk1v/nIKc9qtV3xJDLfAC3KQV3Zu2dBohnTNbgj7/H?=
- =?us-ascii?Q?G8UchxQaB1r8IsobMNuQ9HYb/yiz3Ofyv0Ae0U7ciqmUS2kl4j9Y87WdmLay?=
- =?us-ascii?Q?UPxkRrhoprw7+S5h+Q8mc+jtQfkiTnFDZwGzOGiKb5F0H6H/RaWyLoEKqzTT?=
- =?us-ascii?Q?mYrJ6FVT/+FOzlIUhuOVzaTLel2n4XHwgvlmSCR4uujtGDvc7LuTFXn+SHih?=
- =?us-ascii?Q?R0FlVL2DwOUVc0xo3pPAVLkyE+P89louR2PDZIt2yxHBHOLYNs24pVApmx7B?=
- =?us-ascii?Q?gyVO/KkSJIFqL9Lo/j3a0XvuX/c/WAlR2BgnTVK4W9B5BVQvoGb0uARROqrF?=
- =?us-ascii?Q?o1cKA86gyUk7bsmyuWPuKO50ASe5VLl2OF9aMOkN?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65774911-879c-403f-914a-08ddde2d05b6
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 07:58:30.9782
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ae05j/3i44CluLlQtlKp9MO77RO9czrxgOZdvUJn+NonRS3JmbDmVol1qx+juhz9wTgctkaI4AYzaw4+aheYmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6016
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250816055432.131912-3-will@willwhang.com>
+References: <20250816055432.131912-1-will@willwhang.com> <20250816055432.131912-3-will@willwhang.com>
+Subject: Re: [PATCH v3 2/2] media: i2c: imx585: Add Sony IMX585 image-sensor driver
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Will Whang <will@willwhang.com>
+Date: Mon, 18 Aug 2025 08:58:29 +0100
+Message-ID: <175550390975.1721288.3121861926484209664@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-Use the string choice helper function str_plural() to simplify the code.
+Hi Will,
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/parport/parport_ip32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for working on getting this upstream! I'm always happy to see
+more cameras supported for all platforms!
 
-diff --git a/drivers/parport/parport_ip32.c b/drivers/parport/parport_ip32.c
-index 0919ed99ba94..a45ce3338199 100644
---- a/drivers/parport/parport_ip32.c
-+++ b/drivers/parport/parport_ip32.c
-@@ -372,7 +372,7 @@ static void parport_ip32_dump_state(struct parport *p, char *str,
- 		if ((cnfgA & CNFGA_ID_MASK) != CNFGA_ID_8)
- 			pr_cont(",%d byte%s left",
- 				cnfgA & CNFGA_PWORDLEFT,
--				((cnfgA & CNFGA_PWORDLEFT) > 1) ? "s" : "");
-+				str_plural(cnfgA & CNFGA_PWORDLEFT));
- 		pr_cont("\n");
- 		printk(KERN_DEBUG PPIP32 "    cnfgB=0x%02x", cnfgB);
- 		pr_cont(" irq=%u,dma=%u",
--- 
-2.34.1
+Please post the IMX585 camera sensor helpers to libcamera too - they're
+eligible for merge when a driver is posted publicly to the kernel
+mailing list.
 
+I'm only tackling the black level in this review at the moment as I
+noticied it so trimming out other parts for the review:
+
+
+Quoting Will Whang (2025-08-16 06:54:32)
+> Implements support for:
+>   * 4-lane / 2-lane CSI-2
+>   * 12-bit linear, 4K/FHD mode.
+>   * Monochrome variant.
+>   * Tested on Raspberry Pi 4/5 with 24 MHz clock.
+>=20
+> Signed-off-by: Will Whang <will@willwhang.com>
+> ---
+
+<snip>
+
+> +
+> +/* Black level control */
+> +#define IMX585_REG_BLKLEVEL             CCI_REG16_LE(0x30dc)
+> +#define IMX585_BLKLEVEL_DEFAULT         50
+
+50 ... seems surprisingly low to me ... Is that a 10 bit value or a 12
+bit value ? You only have 12 bit modes ...
+
+Oh - fortunately I can see a datasheet on this one.
+
+"""
+When the output data length is 10-bit output, increasing the register
+setting value by 1h increases the black level by 1 LSB. When the output
+data length is 12-bit output, increasing the register setting value by
+1h increases the black level by 4 LSB.
+
+Use with values shown below is recommended.
+10-bit output: 032h (50d in LSB units)
+12-bit output: 032h (200d in LSB units)
+"""
+
+
+Ok - so the value written is always a 10 bit number regardless of the
+mode, which gives 3200 as a 16 bit value which is more in the range I
+would have expected, so now it makes sense.
+
+> +
+> +/* Digital Clamp */
+> +#define IMX585_REG_DIGITAL_CLAMP        CCI_REG8(0x3458)
+> +
+
+<snip>
+
+> +/* ---------------------------------------------------------------------=
+-----
+> + * Controls
+> + * ---------------------------------------------------------------------=
+-----
+> + */
+> +
+> +static int imx585_set_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +       struct imx585 *imx585 =3D container_of(ctrl->handler, struct imx5=
+85, ctrl_handler);
+> +       const struct imx585_mode *mode, *mode_list;
+> +       struct v4l2_subdev_state *state;
+> +       struct v4l2_mbus_framefmt *fmt;
+> +       unsigned int num_modes;
+> +       int ret =3D 0;
+> +
+> +       state =3D v4l2_subdev_get_locked_active_state(&imx585->sd);
+> +       fmt =3D v4l2_subdev_state_get_format(state, 0);
+> +
+> +       get_mode_table(imx585, fmt->code, &mode_list, &num_modes);
+> +       mode =3D v4l2_find_nearest_size(mode_list, num_modes, width, heig=
+ht,
+> +                                     fmt->width, fmt->height);
+> +
+> +       /* Apply control only when powered (runtime active). */
+> +       if (!pm_runtime_get_if_active(imx585->clientdev))
+> +               return 0;
+> +
+> +       switch (ctrl->id) {
+> +       case V4L2_CID_EXPOSURE: {
+> +               u32 shr =3D (imx585->vmax - ctrl->val) & ~1U; /* SHR alwa=
+ys a multiple of 2 */
+> +
+> +               dev_dbg(imx585->clientdev, "EXPOSURE=3D%u -> SHR=3D%u (VM=
+AX=3D%u HMAX=3D%u)\n",
+> +                       ctrl->val, shr, imx585->vmax, imx585->hmax);
+> +
+> +               ret =3D cci_write(imx585->regmap, IMX585_REG_SHR, shr, NU=
+LL);
+> +               if (ret)
+> +                       dev_err_ratelimited(imx585->clientdev, "SHR write=
+ failed (%d)\n", ret);
+> +               break;
+> +       }
+> +       case V4L2_CID_ANALOGUE_GAIN:
+> +               dev_dbg(imx585->clientdev, "ANALOG_GAIN=3D%u\n", ctrl->va=
+l);
+> +               ret =3D cci_write(imx585->regmap, IMX585_REG_ANALOG_GAIN,=
+ ctrl->val, NULL);
+> +               if (ret)
+> +                       dev_err_ratelimited(imx585->clientdev, "Gain writ=
+e failed (%d)\n", ret);
+> +               break;
+> +       case V4L2_CID_VBLANK: {
+> +               u32 current_exposure =3D imx585->exposure->cur.val;
+> +
+> +               imx585->vmax =3D (mode->height + ctrl->val) & ~1U;
+> +
+> +               current_exposure =3D clamp_t(u32, current_exposure,
+> +                                          IMX585_EXPOSURE_MIN, imx585->v=
+max - IMX585_SHR_MIN);
+> +               __v4l2_ctrl_modify_range(imx585->exposure,
+> +                                        IMX585_EXPOSURE_MIN, imx585->vma=
+x - IMX585_SHR_MIN, 1,
+> +                                        current_exposure);
+> +
+> +               dev_dbg(imx585->clientdev, "VBLANK=3D%u -> VMAX=3D%u\n", =
+ctrl->val, imx585->vmax);
+> +
+> +               ret =3D cci_write(imx585->regmap, IMX585_REG_VMAX, imx585=
+->vmax, NULL);
+> +               if (ret)
+> +                       dev_err_ratelimited(imx585->clientdev, "VMAX writ=
+e failed (%d)\n", ret);
+> +               break;
+> +       }
+> +       case V4L2_CID_HBLANK: {
+> +               u64 pixel_rate =3D (u64)mode->width * IMX585_PIXEL_RATE;
+> +               u64 hmax;
+> +
+> +               do_div(pixel_rate, mode->min_hmax);
+> +               hmax =3D (u64)(mode->width + ctrl->val) * IMX585_PIXEL_RA=
+TE;
+> +               do_div(hmax, pixel_rate);
+> +               imx585->hmax =3D (u32)hmax;
+> +
+> +               dev_dbg(imx585->clientdev, "HBLANK=3D%u -> HMAX=3D%u\n", =
+ctrl->val, imx585->hmax);
+> +
+> +               ret =3D cci_write(imx585->regmap, IMX585_REG_HMAX, imx585=
+->hmax, NULL);
+> +               if (ret)
+> +                       dev_err_ratelimited(imx585->clientdev, "HMAX writ=
+e failed (%d)\n", ret);
+> +               break;
+> +       }
+> +       case V4L2_CID_HFLIP:
+> +               ret =3D cci_write(imx585->regmap, IMX585_FLIP_WINMODEH, c=
+trl->val, NULL);
+> +               if (ret)
+> +                       dev_err_ratelimited(imx585->clientdev, "HFLIP wri=
+te failed (%d)\n", ret);
+> +               break;
+> +       case V4L2_CID_VFLIP:
+> +               ret =3D cci_write(imx585->regmap, IMX585_FLIP_WINMODEV, c=
+trl->val, NULL);
+> +               if (ret)
+> +                       dev_err_ratelimited(imx585->clientdev, "VFLIP wri=
+te failed (%d)\n", ret);
+> +               break;
+> +       case V4L2_CID_BRIGHTNESS: {
+
+This is the wrong control to set blacklevel.
+
+Please use V4L2_CID_BLACK_LEVEL
+
+
+> +               u16 blacklevel =3D min_t(u32, ctrl->val, 4095);
+
+do you know if the value is specific to which mode the sensor is in ?
+
+I assume this is a 10 bit value if the sensor is in a 10 bit mode and a
+12 bit mode if the sensor is in 12 bit mode for example.
+
+
+Edit: Nope - now I've found a datasheet - this is /always/ a 10 bit
+value. Can you document that with a comment please? Especially as this
+driver only currently outputs 12 bit modes but uses a 10 bit black level
+that could be confusing otherwise.
+
+If we want to make that adjustable from libcamera we'll have to be
+careful to always use the correct units.
+
+
+
+> +
+> +               ret =3D cci_write(imx585->regmap, IMX585_REG_BLKLEVEL, bl=
+acklevel, NULL);
+> +               if (ret)
+> +                       dev_err_ratelimited(imx585->clientdev, "BLKLEVEL =
+write failed (%d)\n", ret);
+> +               break;
+> +       }
+> +       default:
+> +               dev_dbg(imx585->clientdev, "Unhandled ctrl %s: id=3D0x%x,=
+ val=3D0x%x\n",
+> +                       ctrl->name, ctrl->id, ctrl->val);
+> +               break;
+> +       }
+> +
+> +       pm_runtime_put(imx585->clientdev);
+> +       return ret;
+> +}
+> +
+> +static const struct v4l2_ctrl_ops imx585_ctrl_ops =3D {
+> +       .s_ctrl =3D imx585_set_ctrl,
+> +};
+> +
+> +static int imx585_init_controls(struct imx585 *imx585)
+> +{
+> +       struct v4l2_ctrl_handler *hdl =3D &imx585->ctrl_handler;
+> +       struct v4l2_fwnode_device_properties props;
+> +       int ret;
+> +
+> +       ret =3D v4l2_ctrl_handler_init(hdl, 16);
+> +
+> +       /* Read-only, updated per mode */
+> +       imx585->pixel_rate =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+> +                                              V4L2_CID_PIXEL_RATE,
+> +                                              1, UINT_MAX, 1, 1);
+> +
+> +       imx585->link_freq =3D
+> +               v4l2_ctrl_new_int_menu(hdl, &imx585_ctrl_ops, V4L2_CID_LI=
+NK_FREQ,
+> +                                      0, 0, &link_freqs[imx585->link_fre=
+q_idx]);
+> +       if (imx585->link_freq)
+> +               imx585->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
+> +
+> +       imx585->vblank =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+> +                                          V4L2_CID_VBLANK, 0, 0xFFFFF, 1=
+, 0);
+> +       imx585->hblank =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+> +                                          V4L2_CID_HBLANK, 0, 0xFFFF, 1,=
+ 0);
+> +       imx585->blacklevel =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+> +                                              V4L2_CID_BRIGHTNESS, 0, 0x=
+FFFF, 1,
+
+You're setting max to 0xFFFF but in the code you clamp it to 4095
+(0xFFF)?
+
+I'd use readable decimal values for the black level range rather than
+hex, as I think of black level in decimal values.
+
+If you set this to=20
+
+      imx585->blacklevel =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+                                              V4L2_CID_BLACK_LEVEL, 0, 4095=
+, 1,
+					      IMX585_BLKLEVEL_DEFAULT);
+
+you can remove the clamp from the set controls call as v4l2 will
+restrict the values.
+
+Oh ... I just looked at the datasheet again:=20
+
+Setting value
+
+Initial value 032h
+Setting value 000h to 3FFh
+
+So the actual maximum is 1023. Maybe hex (0x3ff) or decimal is fine
+either way depending on if you want to closely match the datasheet.
+
+
+
+
+> +                                              IMX585_BLKLEVEL_DEFAULT);
+> +
+> +       imx585->exposure =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+> +                                            V4L2_CID_EXPOSURE,
+> +                                            IMX585_EXPOSURE_MIN, IMX585_=
+EXPOSURE_MAX,
+> +                                            IMX585_EXPOSURE_STEP, IMX585=
+_EXPOSURE_DEFAULT);
+> +
+> +       imx585->gain =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops, V4L2_CI=
+D_ANALOGUE_GAIN,
+> +                                        IMX585_ANA_GAIN_MIN, IMX585_ANA_=
+GAIN_MAX,
+> +                                        IMX585_ANA_GAIN_STEP, IMX585_ANA=
+_GAIN_DEFAULT);
+> +
+> +       imx585->hflip =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+> +                                         V4L2_CID_HFLIP, 0, 1, 1, 0);
+> +       imx585->vflip =3D v4l2_ctrl_new_std(hdl, &imx585_ctrl_ops,
+> +                                         V4L2_CID_VFLIP, 0, 1, 1, 0);
+> +
+> +       if (hdl->error) {
+> +               ret =3D hdl->error;
+> +               dev_err(imx585->clientdev, "control init failed (%d)\n", =
+ret);
+> +               goto err_free;
+> +       }
+> +
+> +       ret =3D v4l2_fwnode_device_parse(imx585->clientdev, &props);
+> +       if (ret)
+> +               goto err_free;
+> +
+> +       ret =3D v4l2_ctrl_new_fwnode_properties(hdl, &imx585_ctrl_ops, &p=
+rops);
+> +       if (ret)
+> +               goto err_free;
+> +
+> +       imx585->sd.ctrl_handler =3D hdl;
+> +       return 0;
+> +
+> +err_free:
+> +       v4l2_ctrl_handler_free(hdl);
+> +       return ret;
+> +}
+> +
+> +static void imx585_free_controls(struct imx585 *imx585)
+> +{
+> +       v4l2_ctrl_handler_free(imx585->sd.ctrl_handler);
+> +}
+> +};
+
+<snip>
 
