@@ -1,151 +1,142 @@
-Return-Path: <linux-kernel+bounces-774072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89C6B2AE4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B181B2AE52
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0B33B903C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47B361BA1147
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393C8341ABE;
-	Mon, 18 Aug 2025 16:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00047342C8C;
+	Mon, 18 Aug 2025 16:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1REn+abr"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n5+vEN12";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="97vdCJ19"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA5835A293;
-	Mon, 18 Aug 2025 16:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7650341ADE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755534995; cv=none; b=Q2RfUUmeqXQafoPIhTazgLGcJnHroIokGz8sulwQbgIpV+gm8h91FtLtihEutT0oVmiyjmgmDnnPWF3Txd5eMnqvPA7DZO2I6LGbcaLxYZ+kEIIIdnCpg29I0D5aSZKy0enSp3ljQXwPRNcUY5AW4J2gVI1SFs0ju9+qt+UlP0A=
+	t=1755535039; cv=none; b=AAO/K6xLh4ZFu+tosFmjtJV8IYVsrQ7DKQ/O31HMpxzQO04MYGnNsR4F31TPosaVapfQ7pI7LzppLnIcbsT0CBaLRuUF6w4dlmkoXuEnUxJEkCCvaVPRFREA5Li3AXG3vaejYBsoNOo2T3CBIeW7QT1w3pVvW8PbLaFeXusNvlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755534995; c=relaxed/simple;
-	bh=S2odiuAWwf4l/aBcoEJweUAHkgf1oRU7Yp4RQ7lelfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFgF9oB09Ll7sOiD6i/QK751Z0VksCyk7H18wIaIKp4S+qiX6oyCx518stt1twfG2cH9u3ynSelR78Q7NZmcM87e9NWvHtH5gFTmyricFB9ZGj/YASnoboJXmbT4lzrALGo/oDZ2yBMymmRb421ssFJkPl5/KG2qr5XTovlURGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1REn+abr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=t+B3FIwTPUwvyJsUkYQ9oCKexdILGN0DuGzoxe3tROs=; b=1REn+abrd6DnvmxauV2/cuRsYy
-	LKKXI5B+UwlT5Eg5kTmYvv0ArKNbmCbhMqExXVGvkFtAE2C2Flly7+hIV+UhdFZPQ764yIgGxHk6S
-	IEI8v77s7LbXbjPYK35ITpaXuHpFS57QuTiQw8Uqpr/vqtX33UnYYbcjSVUTTYGWrkiKi3KbGWZMR
-	6Wlu/2sWaLJe8tC25xEtKL9ijWDXNbw1Z6o6wWC0cWzrShu+65x4Kaobuz6QFt/VpVufuThNQTRks
-	EMuq2s6SWKHnHJ3+s/4biGjwygI3WTa3URFz+uhqQ8kFkbiF5wO6CnCielRQoYR6/qurBmdavBHzd
-	6tCih5xA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uo2qW-000000082UQ-2pDq;
-	Mon, 18 Aug 2025 16:36:32 +0000
-Message-ID: <67156238-7915-4725-a030-d0b422a2aedc@infradead.org>
-Date: Mon, 18 Aug 2025 09:36:31 -0700
+	s=arc-20240116; t=1755535039; c=relaxed/simple;
+	bh=8eNf0iKa0ig3TuxwumQ2/QRd1bTDl/mqIxw/LuoIvZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CshQo75AmopyIEbIP1nXDSe5DuBTkit4O2h/pL3Ywrnhp70LpWlkSu0/ZA0hLGJvHlpy9A8rQavIkDPSieYkemH4Ry9NeJwm7DZLYfCXt0fZKUdJmxI7jU7pbEnqURAaq1JTg0WRgFty0EExkGc3lJxa0D7v/+loT9M5SuIWGPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n5+vEN12; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=97vdCJ19; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Aug 2025 18:37:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755535035;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZcfYUOp3ONarOFQ9ApEyTry+lTvGB64KU4u/3784Bfk=;
+	b=n5+vEN12rbGP5L/u4vO3Huz1gPEaGj+as65fKG1SvibuAo/vXWI2wwzBQXFAhP/Pa/cktX
+	nyjx1oXzEQJ+Q51q7NF7BqKRnBpDgfu18gCY0gZLcXDQYsIWruKwZzty76+RYkaZyMftNf
+	Jlio166ozQucntttojCT6hIqFiAM6gci3EUnHZxpy/D1xV+TqF76cPmFCil8M7ZX+jY9tI
+	RMxYfjg04/GPT4JLLTATmjNMFcOUk2d/wmz1DneNXPd0FNCQsx30y3nzSzIdrltPgelrtH
+	/oUgtNIyZXV6FV+HwlCK/c+PaQwke3UD347CJbNUupSFpYxekfU/NZf+REzycg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755535035;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZcfYUOp3ONarOFQ9ApEyTry+lTvGB64KU4u/3784Bfk=;
+	b=97vdCJ19J7JIIyOfNtDVegOcd1/0peo0SN0PASMkFjO4mt5vKasg/bors4uEpchDX8AZSL
+	OPrLUsJQd0kp+VCQ==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 00/34] x86: Introduce a centralized CPUID data model
+Message-ID: <aKNWuX6UHd_6wJoR@lx-t490>
+References: <20250815070227.19981-1-darwi@linutronix.de>
+ <ebab779b93b8be44bd5089ae6ecc9746b1517a68.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/11] HID: haptic: introduce hid_haptic_device
-To: Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
- Sean O'Brien <seobrien@google.com>
-References: <20250818-support-forcepads-v2-0-ca2546e319d5@google.com>
- <20250818-support-forcepads-v2-4-ca2546e319d5@google.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250818-support-forcepads-v2-4-ca2546e319d5@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ebab779b93b8be44bd5089ae6ecc9746b1517a68.camel@infradead.org>
 
-Hi,
+Hi!
 
-On 8/18/25 7:28 AM, Jonathan Denose wrote:
-> From: Angela Czubak <aczubak@google.com>
-> 
-> Define a new structure that contains simple haptic device configuration
-> as well as current state.
-> Add functions that recognize auto trigger and manual trigger reports
-> as well as save their addresses.
-> Verify that the pressure unit is either grams or newtons.
-> Mark the input device as a haptic touchpad if the unit is correct and
-> the reports are found.
-> 
-> Signed-off-by: Angela Czubak <aczubak@google.com>
-> Co-developed-by: Jonathan Denose <jdenose@google.com>
-> Signed-off-by: Jonathan Denose <jdenose@google.com>
-> ---
->  drivers/hid/Kconfig      |  11 +++++
->  drivers/hid/Makefile     |   1 +
->  drivers/hid/hid-haptic.c |  72 ++++++++++++++++++++++++++++++++
->  drivers/hid/hid-haptic.h | 105 +++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 189 insertions(+)
-> 
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 43859fc757470caf6ad43bd5f72f119e9c36aea7..cbbe82a0a2ba257e45f77ca014fb5f08b71fc62f 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -92,6 +92,17 @@ config HID_GENERIC
->  
->  	If unsure, say Y.
->  
-> +config HID_HAPTIC
-> +	bool "Haptic touchpad support"
+On Sat, 16 Aug 2025, David Woodhouse wrote:
+>
+> Nice work.
+>
 
-Why bool instead of tristate?
+Thanks a lot.
 
-> +	default n
-> +	help
-> +	Support for touchpads with force sensors and haptic actuators instead of a
-> +	traditional button.
-> +	Adds extra parsing and FF device for the hid multitouch driver.
-> +	It can be used for Elan 2703 haptic touchpad.
-> +
-> +	If unsure, say N.
-> +
+>
+> Looks like you haven't attempted to address hypervisor CPUID yet.
+>
 
-I do wish that hid/Kconfig indentation didn't vary so much from coding-style.rst.
+Yeah, I plan to tackle the hypervisor stuff after the X86_FEATURE(s)
+dependency graph mentioned in the Bhyve thread:
 
->  menu "Special HID drivers"
->  
->  config HID_A4TECH
+    https://lore.kernel.org/lkml/aKL0WlA4wIU8l9RT@lx-t490
 
+> I've attempted to document that in a section at the end of
+> http://david.woodhou.se/ExtDestId.pdf — I wonder if we should find
+> somewhere to publish it as canonical?
 
+That PDF, and the text file it links to, is some of the best
+documentation I ever saw in kernel land...
 
-> diff --git a/drivers/hid/hid-haptic.h b/drivers/hid/hid-haptic.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b729f8245aa60c3d06b79b11846dccf6fcc0c08b
-> --- /dev/null
-> +++ b/drivers/hid/hid-haptic.h
-> @@ -0,0 +1,105 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + *  HID Haptic support for Linux
-> + *
-> + *  Copyright (c) 2021 Angela Czubak <acz@semihalf.com>
-> + */
-> +
-> +/*
-> + */
-eh?
+I would be more than happy to cover the last section of that PDF
+('Hhypervisor Detection via CPUID') under the x86-cpuid-db umbrella.
 
-> +
-> +
-> +#include <linux/hid.h>
-?
+There's some very basic hypervisor-related things:
 
--- 
-~Randy
+    https://gitlab.com/x86-cpuid.org/x86-cpuid-db/-/blob/tip/db/xml/hypervisors.xml
+    https://gitlab.com/x86-cpuid.org/x86-cpuid-db/-/blob/tip/db/xml/leaf_40000000.xml
 
+But the idea of CPUID block "ranges", as in cpuid_base_hypervisor(), is
+not yet covered.  Also, the only thing these XMLs above actually do is
+generating the 'struct leaf_0x40000000_0' data type:
+
+    Subject: [PATCH v4 06/34] x86/cpuid: Introduce <asm/cpuid/leaf_types.h>
+    https://lore.kernel.org/lkml/20250815070227.19981-7-darwi@linutronix.de
+
+>
+> I suspect our loop in cpuid_base_hypervisor() should be 'fixed' to
+> comply with the new rule I just made up, that it should only scan each
+> block at 0x4000_0.00 until it finds an empty block, rather than going
+> all the way up to 0x4001_0000?
+>
+> Are there any hypervisors which provide more than one block, that
+> *aren't* just putting the Hyper-V leaves at 0x4000_0000 and their own
+> native leaves at 0x4000_0100 ?
+>
+
+I think, no, but you and others at Cc are definitely the more experienced
+folks regarding this :)
+
+Thanks!
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
