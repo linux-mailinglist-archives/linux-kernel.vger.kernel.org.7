@@ -1,198 +1,288 @@
-Return-Path: <linux-kernel+bounces-772883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B211DB298D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:21:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39E2B298DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DE017A6266
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCDAF4E7247
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F6A26B973;
-	Mon, 18 Aug 2025 05:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C59226E701;
+	Mon, 18 Aug 2025 05:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZOZ3Nhh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE8C1EF38F;
-	Mon, 18 Aug 2025 05:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HEwb6KL5"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B99326561D;
+	Mon, 18 Aug 2025 05:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755494489; cv=none; b=OVTYuixngFKZflyuRdBJOwI4b76V4zgRcnuEbrpBTHDXaOlngM3h9yeHBXPqE6lTQf96upAEeIQThpsNpiYSUIoGhMPDZZJLc6LPkuzO6ZZfQosH8TIaM9w0+iZuzHQj2Djx9lLuR4DCAjEUiKrYjOiBYl/AzXAxVQdDUvS+IWU=
+	t=1755494720; cv=none; b=Hvih7AWDN9h0qulBNwpIlf4hdLwegi+dfUzErAwyn717M92IcRERrBrFx0yVzru+7pWMrlVR82VkiIyscyUeNZAf1uniAdVEE26OCB32DJevXvBi6XWe+3K3r5aOnnFtdYIQSvZLQrR9SwuXb4hw8w8rpXOB/AAOdzwW/rz6b3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755494489; c=relaxed/simple;
-	bh=HApxKvm284DacfzNAPVw61LznOvwguaK6IzEWAXgmVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jh/BO/ULRJ+Vnn8kNAksWN5sCnbfOvliUOCWn5x90r/U7JpMn28RTpwJeDpGrntAOfoEy2gMqxiYgbxpJrTLDr5ErBs9WZVkbsDJPf6od58ECEgeGOoM0I6KHFhBYwF44qNUiHBeiQWKpvyn62Aip0vBDlYH+KvqQa7laeUwHrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZOZ3Nhh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71984C4CEEB;
-	Mon, 18 Aug 2025 05:21:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755494488;
-	bh=HApxKvm284DacfzNAPVw61LznOvwguaK6IzEWAXgmVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tZOZ3NhhyhQxyKUX5tQoNazkynSZPioocRJV3Sw58sOqOqA/fBJ/h+mIa0+kMv0np
-	 M0+tIKt4TZsomSYtEbk+QnrOGjFczejUhUGtkQlfX/Nwv0raiBoeNvQLBirN+PNQ/P
-	 JXubaOmyM4TtfUmcsQwh+uYvrLf32ybWXDxwiv/ioJFgKnjya0ZUDFVwitAqM8d+yv
-	 zp/UnD32ErIkUe8hU4f/qXAVOR+R61eRMFmjKYToRfO7zAxu0xMLl1bTXJhjZASUJI
-	 0LFuEwlZN+sCP7gnKUxUb+cJ6laPZSL8UywJHagX2uQgtpbkTI2yuOHziRPuzghXDH
-	 9O7U8z1UbD6fg==
-Date: Mon, 18 Aug 2025 10:51:19 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: Lukas Wunner <lukas@wunner.de>, bhelgaas@google.com, 
-	lpieralisi@kernel.org, kw@linux.com, kwilczynski@kernel.org, 
-	ilpo.jarvinen@linux.intel.com, jingoohan1@gmail.com, robh@kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] PCI/bwctrl: Replace legacy speed conversion with
- shared macro
-Message-ID: <cm35xzxgdepgxe3swq3q7pu6ikj7oqn7oihooldaj6dehzozng@ddyr7q3q55d2>
-References: <20250816154633.338653-1-18255117159@163.com>
- <20250816154633.338653-4-18255117159@163.com>
- <aKDmW6l6uxZGr1Wl@wunner.de>
- <35f6d6f3-b857-48cc-b3cb-11a27675adfd@163.com>
+	s=arc-20240116; t=1755494720; c=relaxed/simple;
+	bh=M7viinr4cQEs3xFCOmuhdWeFvoZm3vwXAa0LpwmAuRk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KxMt63d2btwUEwH7AbqArHdOrR935ZY8o+16VkFnnU3+XfSvYIe+MlEi/pC8wMZPkipF3glbfcRTW6XcG4a5S0AhQ8YFnG9KGlcADlqo7qim5jg5hvjbOl9QEF4bKhg9txC9da8cFRNIWNb4xa9hDLf26R7jl9OycXkStcezVtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HEwb6KL5; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=l/
+	IHpecqnCM1ZCfY8tH7Q5wz/GLmu4gBKl3ZQ+ufji4=; b=HEwb6KL5/jvX9fUiQa
+	M1kN7/gMLh1HZSJiXHznLtCr3L3AUPi5LhCXopjExCqjWidQ0wVnvs4Rr6r1x6+A
+	qOq/PnjIhY/ogWtn8khKSIYeFkeC5qfSyMyW784x6wEaionUqdMV5r3b8aampeSL
+	GyE3YQU5n3Mw6ahq4dkqcAfpo=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgCX5HsbuaJoHZL5AA--.36032S2;
+	Mon, 18 Aug 2025 13:24:43 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xin Zhao <jackzxcui1989@163.com>
+Subject: [PATCH net-next v4] net: af_packet: Use hrtimer to do the retire operation
+Date: Mon, 18 Aug 2025 13:24:41 +0800
+Message-Id: <20250818052441.172802-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <35f6d6f3-b857-48cc-b3cb-11a27675adfd@163.com>
+X-CM-TRANSID:PigvCgCX5HsbuaJoHZL5AA--.36032S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gw4kJF17Jr1xuryUXr1fWFg_yoWfuFW7pa
+	y5WryxGw47ZF4agw48Ars7ZFyFgw1UAryUG393Xw4Syasxtryrt3Wj9r90gFWftFZFyw47
+	ArsYqFn8Cw1DXrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zMXdjUUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbioxqtCmiir0rjxAAAsW
 
-On Sun, Aug 17, 2025 at 11:02:10PM GMT, Hans Zhang wrote:
-> 
-> 
-> On 2025/8/17 04:13, Lukas Wunner wrote:
-> > On Sat, Aug 16, 2025 at 11:46:33PM +0800, Hans Zhang wrote:
-> > > Remove obsolete pci_bus_speed2lnkctl2() function and utilize the common
-> > > PCIE_SPEED2LNKCTL2_TLS() macro instead.
-> > [...]
-> > > +++ b/drivers/pci/pcie/bwctrl.c
-> > > @@ -53,23 +53,6 @@ static bool pcie_valid_speed(enum pci_bus_speed speed)
-> > >   	return (speed >= PCIE_SPEED_2_5GT) && (speed <= PCIE_SPEED_64_0GT);
-> > >   }
-> > > -static u16 pci_bus_speed2lnkctl2(enum pci_bus_speed speed)
-> > > -{
-> > > -	static const u8 speed_conv[] = {
-> > > -		[PCIE_SPEED_2_5GT] = PCI_EXP_LNKCTL2_TLS_2_5GT,
-> > > -		[PCIE_SPEED_5_0GT] = PCI_EXP_LNKCTL2_TLS_5_0GT,
-> > > -		[PCIE_SPEED_8_0GT] = PCI_EXP_LNKCTL2_TLS_8_0GT,
-> > > -		[PCIE_SPEED_16_0GT] = PCI_EXP_LNKCTL2_TLS_16_0GT,
-> > > -		[PCIE_SPEED_32_0GT] = PCI_EXP_LNKCTL2_TLS_32_0GT,
-> > > -		[PCIE_SPEED_64_0GT] = PCI_EXP_LNKCTL2_TLS_64_0GT,
-> > > -	};
-> > > -
-> > > -	if (WARN_ON_ONCE(!pcie_valid_speed(speed)))
-> > > -		return 0;
-> > > -
-> > > -	return speed_conv[speed];
-> > > -}
-> > > -
-> > >   static inline u16 pcie_supported_speeds2target_speed(u8 supported_speeds)
-> > >   {
-> > >   	return __fls(supported_speeds);
-> > > @@ -91,7 +74,7 @@ static u16 pcie_bwctrl_select_speed(struct pci_dev *port, enum pci_bus_speed spe
-> > >   	u8 desired_speeds, supported_speeds;
-> > >   	struct pci_dev *dev;
-> > > -	desired_speeds = GENMASK(pci_bus_speed2lnkctl2(speed_req),
-> > > +	desired_speeds = GENMASK(PCIE_SPEED2LNKCTL2_TLS(speed_req),
-> > >   				 __fls(PCI_EXP_LNKCAP2_SLS_2_5GB));
-> > 
-> > No, that's not good.  The function you're removing above,
-> > pci_bus_speed2lnkctl2(), uses an array to look up the speed.
-> > That's an O(1) operation, it doesn't get any more efficient
-> > than that.  It was a deliberate design decision to do this
-> > when the bandwidth controller was created.
-> > 
-> > Whereas the function you're using instead uses a series
-> > of ternary operators.  That's no longer an O(1) operation,
-> > the compiler translates it into a series of conditional
-> > branches, so essentially an O(n) lookup (where n is the
-> > number of speeds).  So it's less efficient and less elegant.
-> > 
-> > Please come up with an approach that doesn't make this
-> > worse than before.
-> 
-> 
-> Dear Lukas,
-> 
-> Thank you very much for your reply.
-> 
-> I think the original static array will waste some memory space. Originally,
-> we only needed a size of 6 bytes, but in reality, the size of this array is
-> 26 bytes.
-> 
+In a system with high real-time requirements, the timeout mechanism of
+ordinary timers with jiffies granularity is insufficient to meet the
+demands for real-time performance. Meanwhile, the optimization of CPU
+usage with af_packet is quite significant. Use hrtimer instead of timer
+to help compensate for the shortcomings in real-time performance.
+In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
+enough, with fluctuations reaching over 8ms (on a system with HZ=250).
+This is unacceptable in some high real-time systems that require timely
+processing of network packets. By replacing it with hrtimer, if a timeout
+of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
+3 ms.
 
-This is just one time allocation as the array is a 'static const', which is not
-a big deal.
+Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
 
-> static const u8 speed_conv[] = {
-> 	[PCIE_SPEED_2_5GT] = PCI_EXP_LNKCTL2_TLS_2_5GT,
-> 	[PCIE_SPEED_5_0GT] = PCI_EXP_LNKCTL2_TLS_5_0GT,
-> 	[PCIE_SPEED_8_0GT] = PCI_EXP_LNKCTL2_TLS_8_0GT,
-> 	[PCIE_SPEED_16_0GT] = PCI_EXP_LNKCTL2_TLS_16_0GT,
-> 	[PCIE_SPEED_32_0GT] = PCI_EXP_LNKCTL2_TLS_32_0GT,
-> 	[PCIE_SPEED_64_0GT] = PCI_EXP_LNKCTL2_TLS_64_0GT,
-> };
+---
+Changes in v4:
+- Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
+  is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
+  (re)start the hrtimer; otherwise, use hrtimer_set_expires to update the expiration
+  time of the hrtimer
+  as suggested by Willem de Bruijn;
 
-[...]
+Changes in v3:
+- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
+  as suggested by Willem de Bruijn;
+- Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
+  as suggested by Willem de Bruijn;
+- Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
+  _prb_refresh_rx_retire_blk_timer
+  as suggested by Willem de Bruijn;
+- Link to v3: https://lore.kernel.org/all/20250816170130.3969354-1-jackzxcui1989@163.com/
 
-> drivers/pci/pci.h
-> #define PCIE_LNKCAP_SLS2SPEED(lnkcap)					\
-> ({									\
-> 	u32 lnkcap_sls = (lnkcap) & PCI_EXP_LNKCAP_SLS;			\
-> 									\
-> 	(lnkcap_sls == PCI_EXP_LNKCAP_SLS_64_0GB ? PCIE_SPEED_64_0GT :	\
-> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_32_0GB ? PCIE_SPEED_32_0GT :	\
-> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_16_0GB ? PCIE_SPEED_16_0GT :	\
-> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_8_0GB ? PCIE_SPEED_8_0GT :	\
-> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_5_0GB ? PCIE_SPEED_5_0GT :	\
-> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_2_5GB ? PCIE_SPEED_2_5GT :	\
-> 	 PCI_SPEED_UNKNOWN);						\
-> })
-> 
-> /* PCIe link information from Link Capabilities 2 */
-> #define PCIE_LNKCAP2_SLS2SPEED(lnkcap2) \
-> 	((lnkcap2) & PCI_EXP_LNKCAP2_SLS_64_0GB ? PCIE_SPEED_64_0GT : \
-> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_32_0GB ? PCIE_SPEED_32_0GT : \
-> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_16_0GB ? PCIE_SPEED_16_0GT : \
-> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_8_0GB ? PCIE_SPEED_8_0GT : \
-> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_5_0GB ? PCIE_SPEED_5_0GT : \
-> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_2_5GB ? PCIE_SPEED_2_5GT : \
-> 	 PCI_SPEED_UNKNOWN)
-> 
-> #define PCIE_LNKCTL2_TLS2SPEED(lnkctl2) \
-> ({									\
-> 	u16 lnkctl2_tls = (lnkctl2) & PCI_EXP_LNKCTL2_TLS;		\
-> 									\
-> 	(lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_64_0GT ? PCIE_SPEED_64_0GT :	\
-> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_32_0GT ? PCIE_SPEED_32_0GT :	\
-> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_16_0GT ? PCIE_SPEED_16_0GT :	\
-> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_8_0GT ? PCIE_SPEED_8_0GT :	\
-> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_5_0GT ? PCIE_SPEED_5_0GT :	\
-> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_2_5GT ? PCIE_SPEED_2_5GT :	\
-> 	 PCI_SPEED_UNKNOWN);						\
-> })
+Changes in v2:
+- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
+  as suggested by Willem de Bruijn;
+- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
 
-No, these macros are terrible. They generate more assembly code than needed for
-a simple array based lookup. So in the end, they increase the binary size and
-also doesn't provide any improvement other than the unification in the textual
-form.
+Changes in v1:
+- Do not add another config for the current changes
+  as suggested by Eric Dumazet;
+- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
+  as suggested by Eric Dumazet;
+- Add some performance details to the changelog
+  as suggested by Ferenc Fejes;
+- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
+  as suggested by Willem de Bruijn;
+- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
+  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
+- Just return HRTIMER_RESTART directly as all cases return the same value
+  as suggested by Willem de Bruijn;
+- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
+- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
+---
+ net/packet/af_packet.c | 52 ++++++++++++++++++++++++++++--------------
+ net/packet/diag.c      |  2 +-
+ net/packet/internal.h  |  5 ++--
+ 3 files changed, 38 insertions(+), 21 deletions(-)
 
-I have to take my Acked-by back as I sort of overlooked these factors. As Lukas
-rightly said, the pci_bus_speed2lnkctl2() does lookup in O(1), which is what we
-want here.
-
-Code refactoring shouldn't come at the expense of the runtime overhead.
-
-- Mani
-
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index a7017d7f0..5a1e80185 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -203,8 +203,8 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
+ static int prb_queue_frozen(struct tpacket_kbdq_core *);
+ static void prb_open_block(struct tpacket_kbdq_core *,
+ 		struct tpacket_block_desc *);
+-static void prb_retire_rx_blk_timer_expired(struct timer_list *);
+-static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
++static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
++static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *, bool);
+ static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
+ static void prb_clear_rxhash(struct tpacket_kbdq_core *,
+ 		struct tpacket3_hdr *);
+@@ -581,7 +581,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
+ 
+ static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+ {
+-	timer_delete_sync(&pkc->retire_blk_timer);
++	hrtimer_cancel(&pkc->retire_blk_timer);
+ }
+ 
+ static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
+@@ -603,9 +603,8 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
+ 	struct tpacket_kbdq_core *pkc;
+ 
+ 	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
+-	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
+-		    0);
+-	pkc->retire_blk_timer.expires = jiffies;
++	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
++		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
+ }
+ 
+ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+@@ -672,11 +671,10 @@ static void init_prb_bdqc(struct packet_sock *po,
+ 	p1->last_kactive_blk_num = 0;
+ 	po->stats.stats3.tp_freeze_q_cnt = 0;
+ 	if (req_u->req3.tp_retire_blk_tov)
+-		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
++		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
+ 	else
+-		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
+-						req_u->req3.tp_block_size);
+-	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
++		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
++						req_u->req3.tp_block_size));
+ 	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
+ 	rwlock_init(&p1->blk_fill_in_prog_lock);
+ 
+@@ -688,11 +686,27 @@ static void init_prb_bdqc(struct packet_sock *po,
+ 
+ /*  Do NOT update the last_blk_num first.
+  *  Assumes sk_buff_head lock is held.
++ *  We only need to (re)start an hrtimer in prb_open_block.
++ *  Otherwise, we just need to update the expiration time of the hrtimer.
+  */
+-static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
++static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
++		bool start)
+ {
+-	mod_timer(&pkc->retire_blk_timer,
+-			jiffies + pkc->tov_in_jiffies);
++	if (start)
++		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
++			      HRTIMER_MODE_REL_SOFT);
++	else
++		/* We cannot use hrtimer_forward_now here because the function
++		 * _prb_refresh_rx_retire_blk_timer can be called not only when
++		 * the retire timer expires, but also when the kernel logic for
++		 * receiving network packets detects that a network packet has
++		 * filled up a block and calls prb_open_block to use the next
++		 * block. This can lead to a WARN_ON being triggered in
++		 * hrtimer_forward_now when it checks if the timer has already
++		 * been enqueued.
++		 */
++		hrtimer_set_expires(&pkc->retire_blk_timer,
++				    ktime_add(ktime_get(), pkc->interval_ktime));
+ 	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
+ }
+ 
+@@ -719,8 +733,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+  * prb_calc_retire_blk_tmo() calculates the tmo.
+  *
+  */
+-static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
++static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
+ {
++	enum hrtimer_restart ret = HRTIMER_RESTART;
+ 	struct packet_sock *po =
+ 		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
+ 	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
+@@ -732,8 +747,10 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+ 	frozen = prb_queue_frozen(pkc);
+ 	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
+ 
+-	if (unlikely(pkc->delete_blk_timer))
++	if (unlikely(pkc->delete_blk_timer)) {
++		ret = HRTIMER_NORESTART;
+ 		goto out;
++	}
+ 
+ 	/* We only need to plug the race when the block is partially filled.
+ 	 * tpacket_rcv:
+@@ -786,10 +803,11 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
+ 	}
+ 
+ refresh_timer:
+-	_prb_refresh_rx_retire_blk_timer(pkc);
++	_prb_refresh_rx_retire_blk_timer(pkc, false);
+ 
+ out:
+ 	spin_unlock(&po->sk.sk_receive_queue.lock);
++	return ret;
+ }
+ 
+ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
+@@ -921,7 +939,7 @@ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
+ 	pkc1->pkblk_end = pkc1->pkblk_start + pkc1->kblk_size;
+ 
+ 	prb_thaw_queue(pkc1);
+-	_prb_refresh_rx_retire_blk_timer(pkc1);
++	_prb_refresh_rx_retire_blk_timer(pkc1, true);
+ 
+ 	smp_wmb();
+ }
+diff --git a/net/packet/diag.c b/net/packet/diag.c
+index 6ce1dcc28..c8f43e0c1 100644
+--- a/net/packet/diag.c
++++ b/net/packet/diag.c
+@@ -83,7 +83,7 @@ static int pdiag_put_ring(struct packet_ring_buffer *ring, int ver, int nl_type,
+ 	pdr.pdr_frame_nr = ring->frame_max + 1;
+ 
+ 	if (ver > TPACKET_V2) {
+-		pdr.pdr_retire_tmo = ring->prb_bdqc.retire_blk_tov;
++		pdr.pdr_retire_tmo = ktime_to_ms(ring->prb_bdqc.interval_ktime);
+ 		pdr.pdr_sizeof_priv = ring->prb_bdqc.blk_sizeof_priv;
+ 		pdr.pdr_features = ring->prb_bdqc.feature_req_word;
+ 	} else {
+diff --git a/net/packet/internal.h b/net/packet/internal.h
+index 1e743d031..19d4f0b73 100644
+--- a/net/packet/internal.h
++++ b/net/packet/internal.h
+@@ -45,12 +45,11 @@ struct tpacket_kbdq_core {
+ 	/* Default is set to 8ms */
+ #define DEFAULT_PRB_RETIRE_TOV	(8)
+ 
+-	unsigned short  retire_blk_tov;
++	ktime_t		interval_ktime;
+ 	unsigned short  version;
+-	unsigned long	tov_in_jiffies;
+ 
+ 	/* timer to retire an outstanding block */
+-	struct timer_list retire_blk_timer;
++	struct hrtimer  retire_blk_timer;
+ };
+ 
+ struct pgv {
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
