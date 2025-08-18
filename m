@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-773070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36BF2B29B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:45:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E55A9B29B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FEC95E740D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592EF205685
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B95283144;
-	Mon, 18 Aug 2025 07:45:01 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB989283FCB;
+	Mon, 18 Aug 2025 07:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ffsh8y/O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B70927CCF0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4B53FE7;
+	Mon, 18 Aug 2025 07:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755503101; cv=none; b=pNu8UZh+9z67eDl7I27vc63IZ0qVnnIt5dtW+fLPn1sY8/cIL8BE66SwscT7/PXCg9hWr6MqjIiSyBcsZaHf6QmYatmqWr/5Zph1Kkp1Sj29WpfG69ymig2CevwnY1PQq+Fq6lXZ8kljMB+cyKcavvrr3VrPbndGtwOo3fwDm+4=
+	t=1755503149; cv=none; b=iwpMyw61pp33LiKfNUzeF+RBb8xq/KNnUQZPhUG3/y4F6K1z1XUGK33zGFpGrtaTEqvw3pwdud1pZI/AMXT//5YaXA9WNeI76XQmQA6/FZBfyYlb/2Z4xaljcGNBHBPobMuNZtihH1Y2P7gIyuEaAnm4T0I4Qnr4Iom0N9KWRZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755503101; c=relaxed/simple;
-	bh=g4ONOxm0/VVrS2pMOFkdUfLc6wVu5Lh4XD7UvyAAQtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HnA+hkmX07mrJcubJbTzlGiL34fnMqT2CSn6IRI3P9+O5hlZxvvaESxctG/cKLcvKCQqdBuTloEZRThEQfFt0ZTqRFnNjz6hE+8yb3jcVWRtekSjgNiJPsx9zG08GaIQDVtECQ1HANLJdP7wxF7FxO1UnVoy7/KjwFjOdEgccxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c54Vs6dHmzvX44;
-	Mon, 18 Aug 2025 15:44:53 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id C5BD6140132;
-	Mon, 18 Aug 2025 15:44:56 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 15:44:56 +0800
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 15:44:55 +0800
-Message-ID: <d85d1411-80cb-4e5d-87bd-ae7c45f5fd0c@huawei.com>
-Date: Mon, 18 Aug 2025 15:44:55 +0800
+	s=arc-20240116; t=1755503149; c=relaxed/simple;
+	bh=f5gFJWZNQokzZOq71ViHREuQpbfVbZrgOrUABXKAViM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FO7bZDd1pAAL2kV+UEPfigz5UYmh6Wn9n+551uUVZrR06Ww3zqAspbQMcs2o0mMfRaWL2VOhJPK+NMVmEYz39jqXRqVkwJSwPCtck9+06UKBw27K3Rb/de/F+E/rrddpJpGw2hEcPSblD2vHS3UjX3PzCkbg3dnYaEPqzZNSh+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ffsh8y/O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA29BC116D0;
+	Mon, 18 Aug 2025 07:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755503148;
+	bh=f5gFJWZNQokzZOq71ViHREuQpbfVbZrgOrUABXKAViM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ffsh8y/O2JaZVNiMDIHY6BS5ex3bNjgqkeVeRgHjjgOrXt/CKunYwGK+7E+KZr+Wj
+	 A/7JOszRNc/HY8nA69woYUxdbkEtCzGDoZpAxbNELAgAKWEK7+8o05C0dTIgSdZDR2
+	 hSWufsu7FkJwAgMl4nobHGwul506MVUmFvN83RsimrHJDPG2O27L2zq4R6H5OTr0QB
+	 0NIDBNW9ZGZFNRwAQRpHGhnLrENgoVosGVy6uiZxMOx/zQKaAJFcv9mGzQVkfdkNQw
+	 BZyDxO1LMmyDWyq9e241PkiTNzMu/WbkvL60XM4i/GsftrbiI/fNaYYmeem9e4k7PU
+	 AVPqZ1djdeiEw==
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9dc5c8ee7so2434097f8f.1;
+        Mon, 18 Aug 2025 00:45:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0tnKPk9PLLxh0NNXqOfRQnZDA8g6+OpCpPcF0WTI3RFxOqKXqRcV+Ef4PLqkgmD5tnGQ=@vger.kernel.org, AJvYcCXOduHL0/uFMhtV+nrl7oBtKvjicKO1UJU9FVNMThFq242NFgb8/2iJ+MsGTonZkpj/0nKHlIwnJzODlGSF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvpMI5KA6VpotIy610aQMz+tu+mKS8E0CxZAM+TMRQnID7AEkc
+	AazYFRlK8RN9oSXsOk1ESMZLyu+tNB1BbI3VwdvIf0fUCT+rIb9qvFEADBhekZjqGn0YvoRRHDE
+	F8PAEIMW98UVwx5z9Ecz7ofbw6IIKVFs=
+X-Google-Smtp-Source: AGHT+IGB7LkhStNqvvKRj/omAM1mb4ypfuPD4iQ0j12D2cQIIBZbw8yOGFfbBk4SzXwHAZG+XPtcy3nV7EaiWd9UgmY=
+X-Received: by 2002:a5d:5887:0:b0:3b9:15eb:6464 with SMTP id
+ ffacd0b85a97d-3bb66f11537mr8108831f8f.15.1755503147364; Mon, 18 Aug 2025
+ 00:45:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 drm-dp 11/11] drm/hisilicon/hibmc: moving HDCP cfg
- after the dp reset operation.
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20250813094238.3722345-1-shiyongbang@huawei.com>
- <20250813094238.3722345-12-shiyongbang@huawei.com>
- <vsnpvyvebdzvythe3q4xj6ks5ionjtnd5jcsjjfbv3ptgdrw46@3ccvex2wqjho>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <vsnpvyvebdzvythe3q4xj6ks5ionjtnd5jcsjjfbv3ptgdrw46@3ccvex2wqjho>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq100007.china.huawei.com (7.202.195.175)
+References: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com> <CAJF2gTTqPMVTNdHL7PUwobXQr3dwzKPi13ZDpmkVz+3VXHLZVw@mail.gmail.com>
+In-Reply-To: <CAJF2gTTqPMVTNdHL7PUwobXQr3dwzKPi13ZDpmkVz+3VXHLZVw@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 18 Aug 2025 15:45:34 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQFWJzHhRoQ-oASO9nn1kC0dv+NuK-DD=JgfeHE90RWqw@mail.gmail.com>
+X-Gm-Features: Ac12FXzzM0il7f9K7PUzED9HklQztO75B3sc-fXWfkPu4ViWfodFZHTR1W6vw-E
+Message-ID: <CAJF2gTQFWJzHhRoQ-oASO9nn1kC0dv+NuK-DD=JgfeHE90RWqw@mail.gmail.com>
+Subject: Re: [PATCH V2] RISC-V: KVM: Write hgatp register with valid mode bits
+To: fangyu.yu@linux.alibaba.com
+Cc: anup@brainfault.org, atish.patra@linux.dev, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	guoren@linux.alibaba.com, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Aug 18, 2025 at 2:17=E2=80=AFPM Guo Ren <guoren@kernel.org> wrote:
+>
+> On Mon, Aug 18, 2025 at 1:42=E2=80=AFPM <fangyu.yu@linux.alibaba.com> wro=
+te:
+> >
+> > From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> >
+> > According to the RISC-V Privileged Architecture Spec, when MODE=3DBare
+> > is selected,software must write zero to the remaining fields of hgatp.
+> >
+> > We have detected the valid mode supported by the HW before, So using a
+> > valid mode to detect how many vmid bits are supported.
+> Good catch! It's a bug. The code seems copied from asids_init(), whose
+> old value is not bare mode. For real hardware, it would cause
+> problems, but the qemu buggy code hides the problem.
+>
+> It needs a tag: Fixes: fd7bb4a251df ("RISC-V: KVM: Implement VMID allocat=
+or")
+>
+> Others, Reviewed-by: Guo Ren <guoren@kerenl.org>
+
+Sorry for the typo:
+Reviewed-by: Guo Ren <guoren@kernel.org>
+                                                             ^^
+>
+> >
+> > Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> >
+> > ---
+> > Changes in v2:
+> > - Fixed build error since kvm_riscv_gstage_mode() has been modified.
+> > ---
+> >  arch/riscv/kvm/vmid.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+> > index 3b426c800480..5f33625f4070 100644
+> > --- a/arch/riscv/kvm/vmid.c
+> > +++ b/arch/riscv/kvm/vmid.c
+> > @@ -14,6 +14,7 @@
+> >  #include <linux/smp.h>
+> >  #include <linux/kvm_host.h>
+> >  #include <asm/csr.h>
+> > +#include <asm/kvm_mmu.h>
+> >  #include <asm/kvm_tlb.h>
+> >  #include <asm/kvm_vmid.h>
+> >
+> > @@ -28,7 +29,7 @@ void __init kvm_riscv_gstage_vmid_detect(void)
+> >
+> >         /* Figure-out number of VMID bits in HW */
+> >         old =3D csr_read(CSR_HGATP);
+> > -       csr_write(CSR_HGATP, old | HGATP_VMID);
+> > +       csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT=
+) | HGATP_VMID);
+> >         vmid_bits =3D csr_read(CSR_HGATP);
+> >         vmid_bits =3D (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
+> >         vmid_bits =3D fls_long(vmid_bits);
+> > --
+> > 2.49.0
+> >
+>
+>
+> --
+> Best Regards
+>  Guo Ren
 
 
-> On Wed, Aug 13, 2025 at 05:42:38PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> The DP reset was adding in the former commit, so move HDCP cfg after DP
->> controller deresets, so that configuration takes effect.
->>
->> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-> This should be squashed into reset commit.
 
-Okay, thanks!
-
-
->> ---
->> ChangeLog:
->> v3 -> v4:
->>    - fix the commit subject, suggested by Dmitry Baryshkov.
->> v2 -> v3:
->>    - split into 2 commits, suggested by Dmitry Baryshkov.
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> index 18beef71d85f..73a0c0156092 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> @@ -176,8 +176,6 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->>   	dp_dev->link.cap.lanes = 0x2;
->>   	dp_dev->link.cap.link_rate = DP_LINK_BW_8_1;
->>   
->> -	/* hdcp data */
->> -	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
->>   	/* int init */
->>   	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
->>   	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
->> @@ -187,6 +185,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->>   	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
->>   	usleep_range(30, 50);
->>   	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
->> +	/* hdcp data */
->> +	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
->>   	/* clock enable */
->>   	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
->>   
->> -- 
->> 2.33.0
->>
+--=20
+Best Regards
+ Guo Ren
 
