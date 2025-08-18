@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-773013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B3DB29A64
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:00:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBFDB29A74
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 118DE7ACE0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:59:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED2C5E5F9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731C627BF99;
-	Mon, 18 Aug 2025 06:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E272638BC;
+	Mon, 18 Aug 2025 06:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpmx6xQ/"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m2n5Pn/s";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZQBT1OMa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m2n5Pn/s";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZQBT1OMa"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C4D27876A;
-	Mon, 18 Aug 2025 06:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B139279358
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755500269; cv=none; b=R9TeNIwVzhRNwW/TWmzF+EXgfHWY+cTc9Yg9ZFQrLilDJh9SRghaDPKOfZUMTwmY0FuPLtuQ0Stc0+2qzLevQuNBxbqfmfoFSezz2lrMsBzACa9LLlGyyQGYelAT7Lq5c9o8K41h4liw+EziUiPQmCdIbBlu98S/eHvvDCA+Yok=
+	t=1755500271; cv=none; b=h3KXqB7nOMb6ukd6KJo4xtLVWnRpXV4hA7E50mIewzT8D8gmVOevDVHNzYxFtCxKwFrWg/LKDpLdv4AmXf8WzJ/L3rFzMxdA3uxfqo/DJZUNhHy9IOyFc2QdZ2ZxjHNgn+ATB17Oh/CH52mAeb1cDB3+I40HP5lm/fhkA7AT8IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755500269; c=relaxed/simple;
-	bh=VIIO1Ddvq/2Tvip1mlgLuURtsD3Hezu0NuUVGwFs0AU=;
+	s=arc-20240116; t=1755500271; c=relaxed/simple;
+	bh=lhtFdAMWxFCtq8+vdzMXqqRRrjkfeX7HX1NSCHa8I8E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PDzRrwLupz7AaI4CBYqOKJRXYOEeOXo5c7c11hv0eYYODcO9DSfnYB1TcFNyfIz4NpEwuF0nVunF77iWc7e35Py/icmkhgstd+Mx8UclP1BepyJwxYBqFzxpSeJrqjqSGwOa8qW0FRLO/IJrt2qpKg9JmsGZdwEX49mh6fo/qfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpmx6xQ/; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55ce509127bso2870640e87.0;
-        Sun, 17 Aug 2025 23:57:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755500266; x=1756105066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fT+mslwXDBpZyiRy+Srmj0nFRd3SCnBkaKd9wV14TaI=;
-        b=hpmx6xQ/9GfEbt2FE2tamIOgocuPrWpN/LdLz950eRpnaz/bi5OGtHKMrh5YLGPRtp
-         z3CxTAVJpO+RaNfsm/YR9EEKthFx7j0svx/ODl4wL3X6HT6WT7kp4jlsgVnwfcWD2obM
-         HqZKs2/HqIbfk8tAL69BqS9nC+/voqOJplPm3ke2cABgsKiHhQYGeocGYck6pr5oJquV
-         /cXjCAo79gbhOQlqeK+oK+BfjDbCNVlx2l1nTbSmIVMQHVC7R4+o8eeM4FxAnedC2LhW
-         20u/+sQ3foC/pgYrt1buOx0TeRCC0GoeZnUGcsNWMP3t3qvyh7eULxjtR89Tvox0EWs3
-         Zb8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755500266; x=1756105066;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fT+mslwXDBpZyiRy+Srmj0nFRd3SCnBkaKd9wV14TaI=;
-        b=MdP72FPWrL+5WoeeX1kGXpmuNXTcgIPznyjbfL9yd5s3A5+gJ4aIZ0xtPOS5yXLEQj
-         wHfuu1fIgnfDtqAbfGw+mf7RWshZ5iGhhGCcvgnPRD0Vde7OFHrSXuOcZdQGfcQ+QAEc
-         1tipXHu3bkqfF0qb40tVIrTVhzSSb+0UVAtszXdex++nfpVVwBjlTMWFeJ5xA36TCQhD
-         /38ujXm6A4ALCosEFnEHNjMot/8zcYQmvQ5blr5rK/Ysecl5RTIuwr848Hgu/6TOBVR8
-         8dxCA2RyiPcBzdI2mEU4EU4Aw7bIpsiFzHtOcQQCISUSAYx5avaGgFv+3oUfUPs77poa
-         bO5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWPLPWXX+XN5Wk1Dt5cvAIZ3BeuF3/7iV5wzPuWKCfAKTqUBA5BoVxk6QvKU99xrKPD+lOTrWQMxJmUlc1j@vger.kernel.org, AJvYcCWkbg8AEPJZT+HJnf06AeT/+ictvW3MZcitljve+AIe+LDx0MDqvUTgnMxHv2aJh8aoCpM6IGyUe7mwFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiSQeRZVHc+zzAiM8YpezGKiqEKp/L1vYPalAZ6RZD5dnWu9Zb
-	dXHmqJvcgwi7Wq2xIiwoOs/1eQ7obqKwXzfWuVXpCE7LWmHpKpNgiaox
-X-Gm-Gg: ASbGncuQ21z8xDd0MLfgWr0IchyBPfS2/JUFJR4cfQPkJ63EcTMWsBUaul7Qkbd9RQi
-	bDgYkLo4W5Mlu60o9+WRCI+ZJ34LdfM9RBGtltuzsvXMs1T6yBiOO8+VFl1WA3Zi9a3VL5NXKJt
-	XFM0CLmmpSi48fFKTgeN0tY3d0fg66/2zbq15metj7ng/9XTunq5gQOjaIpUVaaS/zp2Qgwln0B
-	GaFYqxnqDKyZiZjxfknrG1kocO1gBKMcyVyFwL6r7jimyqRXJMCPdMF88njuSm84S5GS3YrzU3d
-	KO/Yq8t9ALTRiPNBC1Kleo4TLACKc9biujpY0ilZunjGvLzSLZIcIutpbUnSGWcLdNX4pATOems
-	1Dl3ywjLOXCY1WzroQPi5rgexrwlKhhde+cjR+qTDHPUIldHOyMVu5i4VBMTBgD24nqlq/FEb69
-	dJJUkLzoXGEva9CEKnAfu+CyQr
-X-Google-Smtp-Source: AGHT+IGcaeQ8FuTrtKrzfNJ/q5x6HgjoAMfdIRafAYOq22ATmyShL+bb1qQM+av9ulhVac5DpR80bw==
-X-Received: by 2002:a05:6512:e9d:b0:553:2869:3a5 with SMTP id 2adb3069b0e04-55ceebae4f4mr2902840e87.48.1755500266029;
-        Sun, 17 Aug 2025 23:57:46 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351685sm1563858e87.36.2025.08.17.23.57.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 23:57:45 -0700 (PDT)
-Message-ID: <b15d7ac4-c751-4db8-a825-1e864570de37@gmail.com>
-Date: Mon, 18 Aug 2025 09:57:44 +0300
+	 In-Reply-To:Content-Type; b=qfF41/XbhQobPI5afINfSdeqzukq8fETXlfYL21Ao5W1nbu2fUcreeOCuZxcj4LdG+2v9ZAE7c50jZRSG3nfIz/9zown/wZ3+2C/E5piyqH+N1QjEyH3dRmxZC9ysDObhhdvnfPvryMs0WmoSnV+lWKK3N6CUJwbLt5ZyvFcJ20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m2n5Pn/s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZQBT1OMa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m2n5Pn/s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZQBT1OMa; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 40F982122E;
+	Mon, 18 Aug 2025 06:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755500268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J5NJv+yFL+xt33TWRdS3ak5apbcoiIS+C6qqfQR5hMU=;
+	b=m2n5Pn/swRjMcr/BL/mW3Rs9gdfHEjFiJUo43cfx+OPe7St/esbRFm66e8TgvfRnEKJ7AV
+	4ti+7xbLf833OrS8+6KIXn2yb2Dvpi1jkrOg0JF7HWXN5qMKo1HML4A/Q9NKLNv7XeMymf
+	V0H9V1V7Ayy6aaogQfT8XRfeLKZpd0U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755500268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J5NJv+yFL+xt33TWRdS3ak5apbcoiIS+C6qqfQR5hMU=;
+	b=ZQBT1OMaO/NhRqw9HziHqPbvJRKepl/M6W1RDhf2Lia5W0VeG00Zv3ap7PoxgXWa8+hrOQ
+	yyKvhycPlpCD56AA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="m2n5Pn/s";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ZQBT1OMa
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755500268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J5NJv+yFL+xt33TWRdS3ak5apbcoiIS+C6qqfQR5hMU=;
+	b=m2n5Pn/swRjMcr/BL/mW3Rs9gdfHEjFiJUo43cfx+OPe7St/esbRFm66e8TgvfRnEKJ7AV
+	4ti+7xbLf833OrS8+6KIXn2yb2Dvpi1jkrOg0JF7HWXN5qMKo1HML4A/Q9NKLNv7XeMymf
+	V0H9V1V7Ayy6aaogQfT8XRfeLKZpd0U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755500268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J5NJv+yFL+xt33TWRdS3ak5apbcoiIS+C6qqfQR5hMU=;
+	b=ZQBT1OMaO/NhRqw9HziHqPbvJRKepl/M6W1RDhf2Lia5W0VeG00Zv3ap7PoxgXWa8+hrOQ
+	yyKvhycPlpCD56AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CBEB413686;
+	Mon, 18 Aug 2025 06:57:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id awQEMOrOomiqCQAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 18 Aug 2025 06:57:46 +0000
+Message-ID: <728b9bd5-f423-48cf-a9e0-31270d0b9506@suse.de>
+Date: Mon, 18 Aug 2025 08:57:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,73 +97,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mfd: rohm-bd718x7: Use software nodes for gpio-keys
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Linus Walleij <linus.walleij@linaro.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250817224731.1911207-1-dmitry.torokhov@gmail.com>
- <20250817224731.1911207-3-dmitry.torokhov@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250817224731.1911207-3-dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
+To: David Hildenbrand <david@redhat.com>,
+ Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, willy@infradead.org,
+ Ritesh Harjani <ritesh.list@gmail.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+ mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
+ Pankaj Raghav <p.raghav@samsung.com>
+References: <20250811084113.647267-1-kernel@pankajraghav.com>
+ <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b>
+ <dfb01243-7251-444c-8ac6-d76666742aa9@redhat.com>
+ <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
+ <rr6kkjxizlpruc46hjnx72jl5625rsw3mcpkc5h4bvtp3wbmjf@g45yhep3ogjo>
+ <b087814e-8bdf-4503-a6ba-213db4263083@lucifer.local>
+ <lkwidnuk5qtb65qz5mjkjln7k3hhc6eiixpjmh3a522drfsquu@tizjis7y467s>
+ <57bec266-97c4-4292-bd81-93baca737a3c@redhat.com>
+ <osippshkfu7ip5tg42zc5nyxegrplm2kekskhitrapzjdyps3h@hodqaqh5r26o>
+ <6afa5cab-2044-46fb-9afb-8be82fe8a39f@redhat.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <6afa5cab-2044-46fb-9afb-8be82fe8a39f@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.de:mid,suse.de:dkim,suse.de:email];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,pankajraghav.com,google.com,arm.com,linux.alibaba.com,suse.cz,nvidia.com,kernel.org,linux.intel.com,suse.com,linux-foundation.org,linutronix.de,redhat.com,kernel.dk,vger.kernel.org,kvack.org,infradead.org,gmail.com,samsung.com,lst.de];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	R_RATELIMIT(0.00)[to_ip_from(RLxigy8pr3gnoabpfzcidubger)];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 40F982122E
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On 18/08/2025 01:47, Dmitry Torokhov wrote:
-> Refactor the rohm-bd7182x7 MFD driver to use software nodes for
-> instantiating the gpio-keys child device, replacing the old
-> platform_data mechanism.
+On 8/11/25 12:43, David Hildenbrand wrote:
+> On 11.08.25 12:36, Kiryl Shutsemau wrote:
+>> On Mon, Aug 11, 2025 at 12:21:23PM +0200, David Hildenbrand wrote:
+>>> On 11.08.25 12:17, Kiryl Shutsemau wrote:
+>>>> On Mon, Aug 11, 2025 at 11:09:24AM +0100, Lorenzo Stoakes wrote:
+>>>>> On Mon, Aug 11, 2025 at 11:07:48AM +0100, Kiryl Shutsemau wrote:
+>>>>>>
+>>>>>> Well, my worry is that 2M can be a high tax for smaller machines.
+>>>>>> Compile-time might be cleaner, but it has downsides.
+>>>>>>
+>>>>>> It is also not clear if these users actually need physical HZP or 
+>>>>>> virtual
+>>>>>> is enough. Virtual is cheap.
+>>>>>
+>>>>> The kernel config flag (default =N) literally says don't use unless 
+>>>>> you
+>>>>> have plenty of memory :)
+>>>>>
+>>>>> So this isn't an issue.
+>>>>
+>>>> Distros use one-config-fits-all approach. Default N doesn't help
+>>>> anything.
+>>>
+>>> You'd probably want a way to say "use the persistent huge zero folio 
+>>> if you
+>>> machine has more than X Gigs". That's all reasonable stuff that can 
+>>> be had
+>>> on top of this series.
+>>
+>> We have 'totalram_pages() < (512 << (20 - PAGE_SHIFT))' check in
+>> hugepage_init(). It can [be abstracted out and] re-used.
 > 
-> The power key's properties are now defined using software nodes and
-> property entries. The IRQ is passed as a resource attached to the
-> platform device.
+> I'll note that e.g., RHEL 10 already has a minimum RAM requirement of 2 
+> GiB. I think for Fedora it's 1 GiB, with the recommendation of having at 
+> least 2 GiB.
 > 
-> This will allow dropping support for using platform data for configuring
-> gpio-keys in the future.
-> ---
->   drivers/mfd/rohm-bd718x7.c | 76 ++++++++++++++++++++++++++++++--------
->   1 file changed, 60 insertions(+), 16 deletions(-)
+> What might be reasonable is having a kconfig option where one (distro) 
+> can define the minimum RAM size for the persistent huge zero folio, and 
+> then checking against totalram_pages() during boot.
 > 
-> diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
-> index 25e494a93d48..20150656ac9c 100644
-> --- a/drivers/mfd/rohm-bd718x7.c
-> +++ b/drivers/mfd/rohm-bd718x7.c
-> @@ -7,7 +7,6 @@
->   // Datasheet for BD71837MWV available from
->   // https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+> But again, I think this is something that goes on top of this series. 
+> (it might also be interesting to allow for disabling the persistent huge 
+> zero folio through a cmdline option)
+> 
+Please make this a kernel config option and don't rely on heuristics.
+They have the nasty habit of doing exactly the wrong thing at places
+where you really don't expect them to.
+(Consider SoCs with a large CMA area for video grabbing or similar stuff
+and very little main memory ...)
+A kernel option will give distros and/or admins the flexibility they
+need without having to rebuild the kernel and also not having to
+worry about heuristics going wrong.
 
-...
+Cheers,
 
->   
-> +static int bd718xx_reg_cnt;
-> +
-> +static int bd718xx_i2c_register_swnodes(void)
-> +{
-> +	int error;
-> +
-> +	if (bd718xx_reg_cnt == 0) {
-> +		error = software_node_register_node_group(bd718xx_swnodes);
-> +		if (error)
-> +			return error;
-> +	}
-> +
-> +	bd718xx_reg_cnt++;
-> +	return 0;
-> +}
-> +
-> +static void bd718xx_i2c_unregister_swnodes(void *dummy)
-> +{
-> +	if (bd718xx_reg_cnt != 0) {
-> +		software_node_unregister_node_group(bd718xx_swnodes);
-> +		bd718xx_reg_cnt--;
-> +	}
-> +}
-
-Same questions here as with the patch 2/3.
-
-
-Yours,
-	-- Matti
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
