@@ -1,172 +1,157 @@
-Return-Path: <linux-kernel+bounces-773625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E40B2A2C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:02:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C51EB2A2DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904333AFC60
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA9F33BE03B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0D331A04F;
-	Mon, 18 Aug 2025 12:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0E231CA4A;
+	Mon, 18 Aug 2025 12:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hul4eFcA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDaiubGW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA54A310640;
-	Mon, 18 Aug 2025 12:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9DB318144
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521860; cv=none; b=KCCkjDG7wGWH97s5/qagkGitEeV03KVOxMYlBcxJNd8izeWXtaZVa/2AfFeWjTlRiCJJdKyAaEUr1MSnGDAnUfmHUJUWANQMYznZT0EoRdPCPlvUSXqYzD/pISFVh+qOhTn3UkaRaYdLTl5nAdlL1JsgUlBdGBMi8Kr7mJl6Yno=
+	t=1755521908; cv=none; b=fSvNI0JrZ742s1W92f2vLr02sC9Vt9u5MawZZnEJL1E8caXKxBWygBK2yO66lluS2iIb39y0WRuoLz7uKZayCgrZUmkXDPX1neGgjIWr6/JlXkInoJL7vk2Be2NEq3ikC14SEIB8mJ+BwG92zv5k2O3JImwy1L/dDJtRad0r8AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521860; c=relaxed/simple;
-	bh=Rt8UoMe70JZeOm9tUAwEBVSkbYeeEkXxwDSun2NsHEM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=VD7tjYOrWD2C18rtUbymJjLY1TLKcR75q3nMVNjqx4wJ5WBCLZ2FiInWkU1+QGJSAW/HHFOK4XPc4FzpYppcQaA3hiNo0v7YeJo3GNTv7CyNh7L1EYyzWYxOE99RogLinPAGHohZZNVKARzoehFcO6SO0MtZXETkur0tzjJFeys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hul4eFcA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECDE6C4CEEB;
-	Mon, 18 Aug 2025 12:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755521859;
-	bh=Rt8UoMe70JZeOm9tUAwEBVSkbYeeEkXxwDSun2NsHEM=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=hul4eFcAS0exbrLQ38PAHDxGynaey7H1D3DzNRd/bF1ABnDm26auaweJ5Pz51Puon
-	 wxnj7CFNblwDxdY/NZDtdTdlsZtBXy7hk9JVQ/GjxVzd26aMVvdtkZfMTDyeCoMiLa
-	 e4aNDnMsHeqPKuSMZIW9Qa0naynM0qXBIHvLgyYkclLbjtKimSYoUkpTQ410PB4p+Y
-	 waJvI+QBcy/HOTy7nq3vk8EEOHTgMgtfy7vRsyC1HMDO2H+EigVJUA7a53nceBXBLA
-	 ZZD1n9Kw7QxDeKGtbCr57fo1/fGEFR3Bn6MQpihqsiAccH4D6asxPc5ufgizCwvxUH
-	 +65RmwLAYs7Sw==
+	s=arc-20240116; t=1755521908; c=relaxed/simple;
+	bh=Hoc6meK2yDvqKWSrM6Plqe2CWtgZzDDapQiukAxSrRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m34ojbnJsbXYGSJM6MPWqvtmH/TSp+rB0aBctwH58Io1NKItwPy2VddM+qnBv8+lRa6mOFsUhZvWQiva8iVns7Jt5J/WXVWjB7mtCUya0HzY1SFSmk0q7C2SG4xHVYyTk2eW2Y+0Y3rfFb/UmTW1fwn1uU9ysA7bfN4h0w6C4RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDaiubGW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755521905;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a4pUj9dH8CPUj1PDJpQPJJvedbec2AeoZzvhjEC1ZGI=;
+	b=bDaiubGW5qHV+S6PAx+BxQzu3VIK+Af0uiajxdRJ5ifIIHkZIJhfa6QhgzJbioEaM85R0L
+	yX/PRAkkf0KfKMYG5/ol/PVrIBuKU3xyEG9eHztbyPv+VNx8fmnhgIJox15LXDD3hG4dfi
+	94G4ENtkR/XjzD0v5rSNyYIAliJwPsw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-638-WubkzZN8NDSYNIikP3tm7Q-1; Mon, 18 Aug 2025 08:58:24 -0400
+X-MC-Unique: WubkzZN8NDSYNIikP3tm7Q-1
+X-Mimecast-MFC-AGG-ID: WubkzZN8NDSYNIikP3tm7Q_1755521903
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a1b0b14daso13423505e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:58:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755521903; x=1756126703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a4pUj9dH8CPUj1PDJpQPJJvedbec2AeoZzvhjEC1ZGI=;
+        b=bI4hCysMlqFXeW3FBMh8vqkETnandCB5fTtzsKlYfhttKLFTEycvF+aphXUPMgag7O
+         KHvUkV6TXtq6goaibB+RhWaSk2J7htRUjQk2ko7iXfPxMUegE1oA8i083ApxwVrIZtuW
+         Rhmjsl/jSK80Ii/U9x1bcLN0sfPVxnqzbg/25NAHKbtCLLFzc1LDoWi4R/LOy270pc9q
+         WHq+Ls7sDkXh0EX5zm0ARG6xjd0PU7XHEurvOi0wi2rMYkCcykU6zVyToI4CQNldJLEL
+         S7SRlG4A4I783OfFfVOzZV9oldKQDAWv3dtaWhrez/yOhLT0a96YSYbOvPsW4myuov2U
+         wmGA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+0+DvV8F8aRydjsNnLe9Km5QhsXY1Ul7+6lIFhurmcWvUNAQbMboheTggMoJEgagqS39dUm+zWMAlOY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlarNl58TaAtVYUoW02G4O/3SsFlrM+JPRRd303dzAmEhsat8N
+	RTKuh3RuuXwH3opxYZ0LgQIpRZDdHh/PZPlxTFSluj8ZtUXOR1ztwIotKqEnL8f/og2/2CrUwgm
+	kdx4G1LpKNXxp0JmGOJmYVzf4wMs9NWkJas6qbQOSzHxYrZ7HYHlt5GVw2oAuLX8swg==
+X-Gm-Gg: ASbGncsxcF0gsr4b3xP8xGCYeZN43s5eUwlJZWTxY1744F6TiExuOz7xtOCn5o4Tozc
+	Ef/ejtXIuTzNhmCWAtmYNHc7ytI22fcw9IqrZXAevSytHj50sAeVLh5dAFT9coCQZhYBUUjz6IG
+	HfAF5VnJAgI8NULee6w70aNFqbbjaYiYQf1lUbQl+QyvgANsPLHqg5W0PUIEVwuEMxYazplOeT2
+	/P61B2UHQRpR2un/dnWXNrMnOfJAGeedC0H0AMC9Ad+7WZYfVRqeJlOmx3p+bi3+AlsT4lvWcQ/
+	CxF84LfiG075XAQ/FSkuAOtnxArsO6F/I6jtY+JQhLyoSInrfmalITgjAk6abboLvK1e/Q==
+X-Received: by 2002:a05:600c:45cd:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-45a218590d5mr103925265e9.17.1755521903037;
+        Mon, 18 Aug 2025 05:58:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUpFhdT2bPtrNqg8A/9HFGtSXXsnBcNwuNUlbpznZYmqEk6yHYsE5XTIpK9tvEzUA/s3deYw==
+X-Received: by 2002:a05:600c:45cd:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-45a218590d5mr103924955e9.17.1755521902575;
+        Mon, 18 Aug 2025 05:58:22 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.43.21.221])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a223197fbsm137673155e9.8.2025.08.18.05.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 05:58:22 -0700 (PDT)
+Date: Mon, 18 Aug 2025 14:58:19 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Doug Berger <opendmb@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Subject: Re: [PATCH v2] sched/deadline: only set free_cpus for online
+ runqueues
+Message-ID: <aKMja4BvgQ5vFaNN@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250815012236.4053467-1-opendmb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 18 Aug 2025 14:57:34 +0200
-Message-Id: <DC5KK67M752R.N9PX4LUG2F68@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 1/4] rust: dma: implement DataDirection
-Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>, <acourbot@nvidia.com>,
- <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
- <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-References: <20250815171058.299270-1-dakr@kernel.org>
- <20250815171058.299270-2-dakr@kernel.org> <aKLzrp0m00J6CCYz@google.com>
- <DC5INEG2DXU5.DM4JIICEQ2PC@kernel.org> <aKMa7YzO-PwEv9AT@google.com>
-In-Reply-To: <aKMa7YzO-PwEv9AT@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815012236.4053467-1-opendmb@gmail.com>
 
-On Mon Aug 18, 2025 at 2:22 PM CEST, Alice Ryhl wrote:
-> On Mon, Aug 18, 2025 at 01:27:44PM +0200, Danilo Krummrich wrote:
->> On Mon Aug 18, 2025 at 11:34 AM CEST, Alice Ryhl wrote:
->> > On Fri, Aug 15, 2025 at 07:10:02PM +0200, Danilo Krummrich wrote:
->> >> Add the `DataDirection` struct, a newtype wrapper around the C
->> >> `enum dma_data_direction`.
->> >>=20
->> >> This provides a type-safe Rust interface for specifying the direction=
- of
->> >> DMA transfers.
->> >>=20
->> >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> >
->> >> +/// DMA data direction.
->> >> +///
->> >> +/// Corresponds to the C [`enum dma_data_direction`].
->> >> +///
->> >> +/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction=
-.h
->> >> +#[derive(Copy, Clone, PartialEq, Eq)]
->> >> +pub struct DataDirection(bindings::dma_data_direction);
->> >
->> > Perhaps this should be a real Rust enum so that you can do an exhausti=
-ve
->> > match?
->>=20
->> 	/// DMA data direction.
->> 	///
->> 	/// Corresponds to the C [`enum dma_data_direction`].
->> 	///
->> 	/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction.h
->> 	#[derive(Copy, Clone, PartialEq, Eq, Debug)]
->> 	#[repr(i32)]
->>=20
->> Does bindgen ever pick another type than i32 for C enums? If so, it'd be=
- a
->> downside that we'd have to mess with the type either in the `repr` or by=
- casting
->> the variants.
->>=20
->> 	pub enum DataDirection {
->> 	    /// The DMA mapping is for bidirectional data transfer.
->> 	    ///
->> 	    /// This is used when the buffer can be both read from and written =
-to by the device.
->> 	    /// The cache for the corresponding memory region is both flushed a=
-nd invalidated.
->> 	    Bidirectional =3D bindings::dma_data_direction_DMA_BIDIRECTIONAL,
->> =09
->> 	    /// The DMA mapping is for data transfer from memory to the device =
-(write).
->> 	    ///
->> 	    /// The CPU has prepared data in the buffer, and the device will re=
-ad it.
->> 	    /// The cache for the corresponding memory region is flushed.
->> 	    ToDevice =3D bindings::dma_data_direction_DMA_TO_DEVICE,
->> =09
->> 	    /// The DMA mapping is for data transfer from the device to memory =
-(read).
->> 	    ///
->> 	    /// The device will write data into the buffer for the CPU to read.
->> 	    /// The cache for the corresponding memory region is invalidated be=
-fore CPU access.
->> 	    FromDevice =3D bindings::dma_data_direction_DMA_FROM_DEVICE,
->> =09
->> 	    /// The DMA mapping is not for data transfer.
->> 	    ///
->> 	    /// This is primarily for debugging purposes. With this direction, =
-the DMA mapping API
->> 	    /// will not perform any cache coherency operations.
->> 	    None =3D bindings::dma_data_direction_DMA_NONE,
->> 	}
->> =09
->> 	impl From<DataDirection> for bindings::dma_data_direction {
->> 	    /// Returns the raw representation of [`enum dma_data_direction`].
->> 	    fn from(direction: DataDirection) -> Self {
->> 	        direction as Self
->> 	    }
->> 	}
->
-> My suggestion is to cast on the Rust-side.
->
-> #[repr(whateveryouwant)]
+Hello,
 
-What's your suggestion for whateveryouwant?
+On 14/08/25 18:22, Doug Berger wrote:
+> Commit 16b269436b72 ("sched/deadline: Modify cpudl::free_cpus
+> to reflect rd->online") introduced the cpudl_set/clear_freecpu
+> functions to allow the cpu_dl::free_cpus mask to be manipulated
+> by the deadline scheduler class rq_on/offline callbacks so the
+> mask would also reflect this state.
+> 
+> Commit 9659e1eeee28 ("sched/deadline: Remove cpu_active_mask
+> from cpudl_find()") removed the check of the cpu_active_mask to
+> save some processing on the premise that the cpudl::free_cpus
+> mask already reflected the runqueue online state.
+> 
+> Unfortunately, there are cases where it is possible for the
+> cpudl_clear function to set the free_cpus bit for a CPU when the
+> deadline runqueue is offline. When this occurs while a CPU is
+> connected to the default root domain the flag may retain the bad
+> state after the CPU has been unplugged. Later, a different CPU
+> that is transitioning through the default root domain may push a
+> deadline task to the powered down CPU when cpudl_find sees its
+> free_cpus bit is set. If this happens the task will not have the
+> opportunity to run.
+> 
+> One example is outlined here:
+> https://lore.kernel.org/lkml/20250110233010.2339521-1-opendmb@gmail.com
+> 
+> Another occurs when the last deadline task is migrated from a
+> CPU that has an offlined runqueue. The dequeue_task member of
+> the deadline scheduler class will eventually call cpudl_clear
+> and set the free_cpus bit for the CPU.
+> 
+> This commit modifies the cpudl_clear function to be aware of the
+> online state of the deadline runqueue so that the free_cpus mask
+> can be updated appropriately.
+> 
+> It is no longer necessary to manage the mask outside of the
+> cpudl_set/clear functions so the cpudl_set/clear_freecpu
+> functions are removed. In addition, since the free_cpus mask is
+> now only updated under the cpudl lock the code was changed to
+> use the non-atomic __cpumask functions.
+> 
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> ---
 
-And I mean this in general, not only for this case of dma::DataDirection. I=
-f we
-pick u32 than things break if a negative enum variant is added on the C sid=
-e. If
-we pick i32, it can happen that we overflow.
+This looks now good to me.
 
-> enum DataDirection {
->     Bidirectional =3D bindings::dma_data_direction_DMA_BIDIRECTIONAL as _=
-,
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
 
-We have a clippy lint that warns about `as _` casts, but I guess you meant
-`as whateveryouwant`. However, if bindgen picks whateveryouwant too, we als=
-o get
-a warning.
+Thanks,
+Juri
 
-Ultimately, we'd need to suppress a warning.
-
-> }
 
