@@ -1,335 +1,91 @@
-Return-Path: <linux-kernel+bounces-773606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0618B2A221
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:51:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172D9B2A215
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 635AE5E7B7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:50:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149E8620818
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C531B119;
-	Mon, 18 Aug 2025 12:50:42 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC0830E83F;
-	Mon, 18 Aug 2025 12:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701D130DD2C;
+	Mon, 18 Aug 2025 12:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mfJ49oK/"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B5E3218D7;
+	Mon, 18 Aug 2025 12:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521442; cv=none; b=BNIRl8/h7lW0XtXG6QNC4bEImOqCXSovylR1mcCL9pvCw43TdlR6O+sIZe32jBtHs/LOxCXdIqkpGsTBEacn2IEgCov8y7Z9RAQ3IZWPCHtXvrHC4VtRTh5xEsOF6t2WfAQJAQRjXHS+Alt25bhW/03qkFp5HOUWUN/9eFeRlYU=
+	t=1755521331; cv=none; b=Voss9xX+jmMostUtqxG0cH0StlKTxS0ae8dFO+WJbveNu17GCz/e8FmNoWbZCLnCerey2+Ng4gAEuAa0kJN1466H3hlTq9ODkiIs/IAyRXFzjYM+ZfHol+44zmf+5pFa/JRvTV17g+TdeC+u6GKTke1WBx9VNU7BBaAyr5N4to8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521442; c=relaxed/simple;
-	bh=WIwD/aV2APN6RKkjI1zciy6jWLCpZwtUH96xPLDt4PU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sTKZgWGDkFjtv5gHk1FC2W/HNYlMNqtSTLZqsAPrA8YeZH3sw6ga7iuJJ+XklVQJfZNbmRhKYJ/GjGvZm1fqo9/Ird+f4obo5pvTZvbKf0HVJMSfYNqgwa4FFxSlycdlw078rbz0elxzf0v7LIu9OD89iQbk1eJRDBCd4ys7IYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c5C6R02grz9sSn;
-	Mon, 18 Aug 2025 14:42:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id GsAukN0ObK6o; Mon, 18 Aug 2025 14:42:38 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c5C6Q68YSz9sSm;
-	Mon, 18 Aug 2025 14:42:38 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BE5318B764;
-	Mon, 18 Aug 2025 14:42:38 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id sE7NHJzNPKm3; Mon, 18 Aug 2025 14:42:38 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 912DD8B763;
-	Mon, 18 Aug 2025 14:42:38 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1755521331; c=relaxed/simple;
+	bh=4IB1tgKEiqeCPz5V53tVO/SIhyw2+to9wxscoO9Kil0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=h4rtRuiSiWJaD6ddu3IyU82Cs7i4RbJeTfjgV85sYDdtE/QYeolFFTl1mldhOPmwPLC64HfDDj8w1qZ/T1coZCGWIQ648mBf+7x2xOx0DaHOw+Piksd/uh4JdwYBkEq0ozbuNooBPqUULDK/f/OJ1O+HWpGLYau11J1i7eY4CsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mfJ49oK/; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1755521018; bh=4IB1tgKEiqeCPz5V53tVO/SIhyw2+to9wxscoO9Kil0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=mfJ49oK/cZuA+Cv9Vq2xNGKj2ggr0bH+LkY1IUxF54LmK7xHwChKuHI2jQBUuCgSo
+	 1FSfPGb7eySG4GHYSmBWmYED3qybBsuiuz+Veyp+zAWON//DAQB8nv1z0FqwLpCSl5
+	 sbwQgqZdMJfwbuDtFOObdwgwgo+5EujSMxE7GJiI=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id AE3B12E0; Mon, 18 Aug 2025 20:43:35 +0800
+X-QQ-mid: xmsmtpt1755521015t8giv81oj
+Message-ID: <tencent_F8BAB8BB23338A9E2C1B4F4BD11BD9252E08@qq.com>
+X-QQ-XMAILINFO: MyirvGjpKb1jvIfe0ZQPtffA1xM9u7Fz9RjGgPhMazjFVb/oLtXmsu2uu/1Ir2
+	 2mnRWGly+vnIqATp/Wo2B8NM6MegoMfCpUzG7CBCvg4u4nyRPuYCciaohTOTKPudln5uxf/V6mV4
+	 LeSv3Tz2FDY6sYfveRZUlfkMYTXaRO1yoyVuZJ77mf8q26ys2h8h70Yagjdlgm3nxgFApV9KoqzR
+	 5bFFoKq7HT07X5JIHf7fbElT66SPPOCEPwU4NlmV3mvGz7ikmBJECiUNZCKdUvdMQX3+YZ8MSfO7
+	 TRvcSp5TPyIUG12o6zb9GM7qiV/u9rH7Cly8PK9dQtYxPHw3wJ6D+jy9xBYSSetVD3+nroW5gVhG
+	 hFdVttLMNgEo98y6ysN3IW4Q4QV4mRKuNEal/VOtVCIq7mpUFTWMhKZ93N9jYp216iXNGI88nKA/
+	 5QSy7Pmoqo050a+R3X/4L2fMxi/8CU3ReHnj2S1cgrqY0XuXdR3H13U05nXCB6kH6Vsq0eJMUqJn
+	 5SBB7y3EOjRXbYZmbEiIevM04MUuDfOD2+keFK44omLueTovYXYYW3ivg5EWFxZJXkK/U78Hp2vp
+	 P1+EqWK9wjiZ3tg5ODZ7QKmoUElU+qMt+l86jZ+C0qIlMqAk/7Cs9gxHuB+wfi5ZmckPY3KXQ/3w
+	 cxXfufgEpDdDiVlhewt5HwqDOkbaboqL+xQN9EUBAO2Y4p4x89Q1fYdapgzXnAhOapVvp5GFwynv
+	 tIZOGEcShygCzAAknr/q8xxCs0vs2B36lRG/kNj4Oi4sobhFLQmxKuiFWLTLdiZrE0ukAeyhCOOw
+	 W5x8M3J3zXUjSBhvrQ2TL4FhMya7RBkARDvcOJEd95yzhGCUuPUHk36cdrF5/rny6GgDBmtUv25N
+	 KPef0OxvZkWb/fZTn98019xv4+GM2fo8kZKfwTnnOQeRR5U23crNMrtSfVgVSMez3kZ0RJ2vT54H
+	 R9DLwNhTWGlo2orfyQY2vHmEC3iezR0WRdSxpUwGj7GX/ThIQA0WJFjHJxHviI
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: smueller@chronox.de
+Cc: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	eadavis@qq.com,
+	linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Anatolij Gustschin <agust@denx.de>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] gpio: mpc5200: Drop legacy-of-mm-gpiochip.h header
-Date: Mon, 18 Aug 2025 14:42:24 +0200
-Message-ID: <9652736ef05b94d9113ea5ce7899734ef82343d1.1755520794.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] crypto: Mark intermediary memory as clean
+Date: Mon, 18 Aug 2025 20:43:36 +0800
+X-OQ-MSGID: <20250818124335.470340-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <aKMc5amKH9CLbKL8@gondor.apana.org.au>
+References: <aKMc5amKH9CLbKL8@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755520944; l=9508; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=WIwD/aV2APN6RKkjI1zciy6jWLCpZwtUH96xPLDt4PU=; b=v6uxfxPYngNij24z+iG6/2f7mq8NGHCHim/IJGuC0KkKPlZlogsEZmUUfLDt/gDm8dOqC18Z7 8weUTGAVd1oAgeq2r/bpTNj9q436vvsvFUNE3y+3SX7PvMqmkebvhvO
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-file provides an OF API that's deprecated. There is no agnostic
-alternatives to it and we have to open code the logic which was
-hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-drivers are using their own labeling schemas and resource retrieval
-that only a few may gain of the code deduplication, so whenever
-alternative is appear we can move drivers again to use that one.
+On Mon, 18 Aug 2025 20:30:29 +0800, Herbert Xu wrote:
+> Their values are equal, so why use sizeof to calculate?
+> Similarly, "if (sizeof(intermediary) != crypto_shash_digestsize(desc->tfm)) {",
+> why not just use SHA3_256_DIGEST_SIZE?
+Hi Stephan Mueller, can you explain it?
 
-[text copied from commit 34064c8267a6 ("powerpc/8xx:
-Drop legacy-of-mm-gpiochip.h header")]
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/gpio/Kconfig        |  1 -
- drivers/gpio/gpio-mpc5200.c | 78 ++++++++++++++++++++-----------------
- 2 files changed, 43 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index e43abb322fa6..07be52f6db7a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -485,7 +485,6 @@ config GPIO_MM_LANTIQ
- config GPIO_MPC5200
- 	def_bool y
- 	depends on PPC_MPC52xx
--	select OF_GPIO_MM_GPIOCHIP
- 
- config GPIO_MPC8XXX
- 	bool "MPC512x/MPC8xxx/QorIQ GPIO support"
-diff --git a/drivers/gpio/gpio-mpc5200.c b/drivers/gpio/gpio-mpc5200.c
-index dad0eca1ca2e..00f209157fd0 100644
---- a/drivers/gpio/gpio-mpc5200.c
-+++ b/drivers/gpio/gpio-mpc5200.c
-@@ -8,7 +8,7 @@
- #include <linux/of.h>
- #include <linux/kernel.h>
- #include <linux/slab.h>
--#include <linux/gpio/legacy-of-mm-gpiochip.h>
-+#include <linux/gpio/driver.h>
- #include <linux/io.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
-@@ -19,7 +19,8 @@
- static DEFINE_SPINLOCK(gpio_lock);
- 
- struct mpc52xx_gpiochip {
--	struct of_mm_gpio_chip mmchip;
-+	struct gpio_chip gc;
-+	void __iomem *regs;
- 	unsigned int shadow_dvo;
- 	unsigned int shadow_gpioe;
- 	unsigned int shadow_ddr;
-@@ -43,8 +44,8 @@ struct mpc52xx_gpiochip {
-  */
- static int mpc52xx_wkup_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct mpc52xx_gpio_wkup __iomem *regs = mm_gc->regs;
-+	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
-+	struct mpc52xx_gpio_wkup __iomem *regs = chip->regs;
- 	unsigned int ret;
- 
- 	ret = (in_8(&regs->wkup_ival) >> (7 - gpio)) & 1;
-@@ -57,9 +58,8 @@ static int mpc52xx_wkup_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- static inline void
- __mpc52xx_wkup_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
--	struct mpc52xx_gpio_wkup __iomem *regs = mm_gc->regs;
-+	struct mpc52xx_gpio_wkup __iomem *regs = chip->regs;
- 
- 	if (val)
- 		chip->shadow_dvo |= 1 << (7 - gpio);
-@@ -87,9 +87,8 @@ mpc52xx_wkup_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int mpc52xx_wkup_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
--	struct mpc52xx_gpio_wkup __iomem *regs = mm_gc->regs;
-+	struct mpc52xx_gpio_wkup __iomem *regs = chip->regs;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
-@@ -110,9 +109,8 @@ static int mpc52xx_wkup_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- static int
- mpc52xx_wkup_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct mpc52xx_gpio_wkup __iomem *regs = mm_gc->regs;
- 	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
-+	struct mpc52xx_gpio_wkup __iomem *regs = chip->regs;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
-@@ -136,30 +134,41 @@ mpc52xx_wkup_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int mpc52xx_wkup_gpiochip_probe(struct platform_device *ofdev)
- {
-+	struct device *dev = &ofdev->dev;
-+	struct device_node *np = dev->of_node;
- 	struct mpc52xx_gpiochip *chip;
- 	struct mpc52xx_gpio_wkup __iomem *regs;
- 	struct gpio_chip *gc;
- 	int ret;
- 
--	chip = devm_kzalloc(&ofdev->dev, sizeof(*chip), GFP_KERNEL);
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
- 	if (!chip)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(ofdev, chip);
- 
--	gc = &chip->mmchip.gc;
-+	gc = &chip->gc;
- 
-+	gc->base             = -1;
- 	gc->ngpio            = 8;
- 	gc->direction_input  = mpc52xx_wkup_gpio_dir_in;
- 	gc->direction_output = mpc52xx_wkup_gpio_dir_out;
- 	gc->get              = mpc52xx_wkup_gpio_get;
- 	gc->set              = mpc52xx_wkup_gpio_set;
- 
--	ret = of_mm_gpiochip_add_data(ofdev->dev.of_node, &chip->mmchip, chip);
-+	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-+	if (!gc->label)
-+		return -ENOMEM;
-+
-+	chip->regs = devm_of_iomap(dev, np, 0, NULL);
-+	if (IS_ERR(chip->regs))
-+		return PTR_ERR(chip->regs);
-+
-+	ret = devm_gpiochip_add_data(dev, gc, chip);
- 	if (ret)
- 		return ret;
- 
--	regs = chip->mmchip.regs;
-+	regs = chip->regs;
- 	chip->shadow_gpioe = in_8(&regs->wkup_gpioe);
- 	chip->shadow_ddr = in_8(&regs->wkup_ddr);
- 	chip->shadow_dvo = in_8(&regs->wkup_dvo);
-@@ -167,13 +176,6 @@ static int mpc52xx_wkup_gpiochip_probe(struct platform_device *ofdev)
- 	return 0;
- }
- 
--static void mpc52xx_gpiochip_remove(struct platform_device *ofdev)
--{
--	struct mpc52xx_gpiochip *chip = platform_get_drvdata(ofdev);
--
--	of_mm_gpiochip_remove(&chip->mmchip);
--}
--
- static const struct of_device_id mpc52xx_wkup_gpiochip_match[] = {
- 	{ .compatible = "fsl,mpc5200-gpio-wkup", },
- 	{}
-@@ -185,7 +187,6 @@ static struct platform_driver mpc52xx_wkup_gpiochip_driver = {
- 		.of_match_table = mpc52xx_wkup_gpiochip_match,
- 	},
- 	.probe = mpc52xx_wkup_gpiochip_probe,
--	.remove = mpc52xx_gpiochip_remove,
- };
- 
- /*
-@@ -207,8 +208,8 @@ static struct platform_driver mpc52xx_wkup_gpiochip_driver = {
-  */
- static int mpc52xx_simple_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct mpc52xx_gpio __iomem *regs = mm_gc->regs;
-+	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
-+	struct mpc52xx_gpio __iomem *regs = chip->regs;
- 	unsigned int ret;
- 
- 	ret = (in_be32(&regs->simple_ival) >> (31 - gpio)) & 1;
-@@ -219,9 +220,8 @@ static int mpc52xx_simple_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- static inline void
- __mpc52xx_simple_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
--	struct mpc52xx_gpio __iomem *regs = mm_gc->regs;
-+	struct mpc52xx_gpio __iomem *regs = chip->regs;
- 
- 	if (val)
- 		chip->shadow_dvo |= 1 << (31 - gpio);
-@@ -248,9 +248,8 @@ mpc52xx_simple_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int mpc52xx_simple_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
--	struct mpc52xx_gpio __iomem *regs = mm_gc->regs;
-+	struct mpc52xx_gpio __iomem *regs = chip->regs;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
-@@ -271,9 +270,8 @@ static int mpc52xx_simple_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- static int
- mpc52xx_simple_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
--	struct mpc52xx_gpio __iomem *regs = mm_gc->regs;
-+	struct mpc52xx_gpio __iomem *regs = chip->regs;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
-@@ -298,30 +296,41 @@ mpc52xx_simple_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int mpc52xx_simple_gpiochip_probe(struct platform_device *ofdev)
- {
-+	struct device *dev = &ofdev->dev;
-+	struct device_node *np = dev->of_node;
- 	struct mpc52xx_gpiochip *chip;
- 	struct gpio_chip *gc;
- 	struct mpc52xx_gpio __iomem *regs;
- 	int ret;
- 
--	chip = devm_kzalloc(&ofdev->dev, sizeof(*chip), GFP_KERNEL);
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
- 	if (!chip)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(ofdev, chip);
- 
--	gc = &chip->mmchip.gc;
-+	gc = &chip->gc;
- 
-+	gc->base             = -1;
- 	gc->ngpio            = 32;
- 	gc->direction_input  = mpc52xx_simple_gpio_dir_in;
- 	gc->direction_output = mpc52xx_simple_gpio_dir_out;
- 	gc->get              = mpc52xx_simple_gpio_get;
- 	gc->set              = mpc52xx_simple_gpio_set;
- 
--	ret = of_mm_gpiochip_add_data(ofdev->dev.of_node, &chip->mmchip, chip);
-+	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-+	if (!gc->label)
-+		return -ENOMEM;
-+
-+	chip->regs = devm_of_iomap(dev, np, 0, NULL);
-+	if (IS_ERR(chip->regs))
-+		return PTR_ERR(chip->regs);
-+
-+	ret = devm_gpiochip_add_data(dev, gc, chip);
- 	if (ret)
- 		return ret;
- 
--	regs = chip->mmchip.regs;
-+	regs = chip->regs;
- 	chip->shadow_gpioe = in_be32(&regs->simple_gpioe);
- 	chip->shadow_ddr = in_be32(&regs->simple_ddr);
- 	chip->shadow_dvo = in_be32(&regs->simple_dvo);
-@@ -340,7 +349,6 @@ static struct platform_driver mpc52xx_simple_gpiochip_driver = {
- 		.of_match_table = mpc52xx_simple_gpiochip_match,
- 	},
- 	.probe = mpc52xx_simple_gpiochip_probe,
--	.remove = mpc52xx_gpiochip_remove,
- };
- 
- static struct platform_driver * const drivers[] = {
--- 
-2.49.0
+BR,
+Edward
 
 
