@@ -1,124 +1,154 @@
-Return-Path: <linux-kernel+bounces-773358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD86FB29EDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49AC2B29EDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E851770DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:08:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28E14E5F98
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FC7310645;
-	Mon, 18 Aug 2025 10:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBC931077E;
+	Mon, 18 Aug 2025 10:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="dVBeylwH"
-Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCPaAp1Z"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62099310642
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835E7310768;
+	Mon, 18 Aug 2025 10:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755511707; cv=none; b=BTvKRYXHGF7QGTOjmQp3mITe2a2rmGRYi/81pRz2A9QMpso6p7F3q1cBo0g4VB1+xv2P0Plea14f6bAWoX0+J7IGV6/5EulczchwJYXtL4uYLr2XwL8V194bGC2oM8umbu/PFteqFUDonnURSQqOtCkbj7SfZ86iyZcCV7IusNw=
+	t=1755511760; cv=none; b=SrEWEpGyeZ/3SMN5tPPhQBi0SUQuY2G7G7q89xER26gQ/jI0ViHb5VTBl/aeY/8BWAYrGooBm0GUX7C7M8PQ+yVS0YU35batNxarhUkgA/UtuhRkZihoImW24gWca3tdh1XXYchLKnwUEpzCaeLE7NUuvELmQ2zjULsltplmVv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755511707; c=relaxed/simple;
-	bh=zjXG6WuxySoofRY719uXjFTJxOn5sdIbu67fLho2WCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EZR+RHxIJoGtp4qE1280YD9JMTujnCmdNa7WhOHXLNiJBGVRcdISS0PVk2pZg2/GlJTit7KVPMGd04KyRdH+Odz2uLHJyMtuOF0Yy26SOD3rh8Yr/EGyIL17TIMYF6KYC4C4zesWIDetx1JIvgJqetRm+kVJx7mEmpliM92WEBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=dVBeylwH; arc=none smtp.client-ip=202.108.3.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755511701;
-	bh=YYzIAf0R13QLBWU8U4BOSu0ixlCeodegePD6X3A0J2g=;
-	h=From:Subject:Date:Message-ID;
-	b=dVBeylwHYcjTKhG7WZKCqtbL5ywryYZ+V9JZ51+SSDjDNZ0gMqcy8muhrywA+YR5r
-	 w9IzJJrs/T6IEbdnqI2l8FBRq6PdzuTp2pz6XV+v9yK8nHnGS1y77/lVO3rxR1vO/2
-	 9FOMf2UV09xJ7MV5sON28fJM6sy7uLZFEg+Spl2s=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68A2FB87000052D9; Mon, 18 Aug 2025 18:08:09 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4946286685229
-X-SMAIL-UIID: 20D7D3B21E8245C9B76D6B1134AD62F3-20250818-180809-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+f65a2014305525a9f816@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context in vfree (2)
-Date: Mon, 18 Aug 2025 18:07:57 +0800
-Message-ID: <20250818100758.5020-1-hdanton@sina.com>
-In-Reply-To: <68a2decd.050a0220.e29e5.009a.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755511760; c=relaxed/simple;
+	bh=YTYTunFUE60jN+Q1wTGeRv0B7ez8k59yq7g+XQCx3Zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aBsdiP3AuVpQASdSfRkxrhEHJsA8CKLr60tpeCvk0rt0bZeGTzyrMA7fErKW95skDtotIzmmgvSlCh9/1UGyZYH/ghxsMHG5mwU+FNxLxesUvKGvDC3usGQth5YG5jsGyF7dfK2NlS32Z0bJAaPjjAoL0TS53uuBL0rf83yOvdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCPaAp1Z; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55ce510b4ceso4532423e87.1;
+        Mon, 18 Aug 2025 03:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755511755; x=1756116555; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FBdYlT7O+hJ5Ch3mWP5IIcE7+XCmcmEMEIQ8cDdUvbM=;
+        b=hCPaAp1Zm2bhW9z3D848uyFER96S/8614TsR1JXHhmJvgJNZtXJFjbMGmVy+vFNnlM
+         UYvbuZiUeAkA/0WxBmU5BNSbEZoHLTWQ3mYX8vxtBUotlOmP+mihPO6ruBjCbwzKENVp
+         8gB8HktCNqsWqnVEY7VaSKlSX4TKBk0eP/dZPTkgkR2puemLVYow2UqwVibm5Di+kq2t
+         xOOarerMgDCCSts9tmG3WgwVExgBH5WJO+2XqlRe0tivt4bWyt4EnxnxUrtG2tCXlimX
+         jksHazRdw3I/YbMNH6UeApKG8s88hRAY0JoviGiLtYDMGSCAopTbeDqxF3Lz6Ij9IioP
+         hYBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755511755; x=1756116555;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FBdYlT7O+hJ5Ch3mWP5IIcE7+XCmcmEMEIQ8cDdUvbM=;
+        b=kzzxjVFky3efsH+BKP2VSEr6MH1UjMaVP549x8ikBbSaH2UD6phwhNpgyldEUevSg/
+         PkcQwx+COHyFuweGc2ihRcvV2U69VPOO+xTHsDAPh4qfoSU/RSMFz6J497c0M6qP0uhd
+         glF1i90yr0mF/0VqU7lKRZh6PAuESLyEbwikHfirLedNHEmAduFZqRAfRGBrzs7AFnrR
+         7D7OimnRi+XUHILxE2q3BbBjnGNXEjZJcmLSsqQbVNqhQRPvkpfUElO666P/Maj2dLmJ
+         LDNKC+DbGMfzI6M/w07CIgyuQAQXQ4fRgfKxX30BYrMHVdU+XU4vD7AraHll1Xz/KJ8I
+         VJJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiWXbUXqxMLsTChJf0MbWBSpuYzzzU/94VgIUdmeiok5PRjUyFGCXI0OdeFiUfAaCUD9Z1bBw2UvkVeXM=@vger.kernel.org, AJvYcCXk3KhqMQn8l4b1Hrj0codgIgPKB5/is2mEGrspxb9nliZM5m+KVRCfjsD7Qsq9exjAPAkQyCdAtHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmHakmx59sNam/Lk5p5JZkyjjLy5mo4ohrKZQNuZE4VSirIxvX
+	C1inu8jhYvwT7LV831atUrhdDo7PT1zaZvfWiWk6j94jAGJU0fjn6/NZoLYMlw==
+X-Gm-Gg: ASbGncuY95DBZuUirFlGsooi156ReBpvRe2N+BXWlOvuynPbPnC/rQBB19CmHlkphYe
+	V51v7po/8X1aI4yMWgmEmuQu/wiif3tujBKqfmnoDvMAHdVWnucoFvWQiiBka19Ai5eFgQH+HUk
+	bTK7SsGSoseY3NKCtSDaPVH5SsRGFczxdjKZakONvZ2qsohk1PZH8dBvJqu65pZWsiUbFJAYtWc
+	LZz3AIwhe9WOTXA4QTG0UtUsgjUwypkp6letzv8EnbsVHbxHzAGZYramHdxv4xdf6G6gLXAP02a
+	Wok2BHyg0L2O51Ajqjzy0IxZN6gYV8hnCmEi+A4VVhMlJ04RCWIhEtNlD7MNtPORMkgeJf51Yp2
+	4BxcjI6lC6OgavdCCE1E2Sf0pq76P35A0kr0sD5luLACqGiyn7XIGXKvi4ZWIRi3/8VavhLjNPn
+	aypS2uSi1fMnBP1Q==
+X-Google-Smtp-Source: AGHT+IFinQuHZszSZxKOZIdPFJsBcuYolBD7tuJvb50efI6zUzShZoUUTTKiSFdOsuH6T6noy7UP9Q==
+X-Received: by 2002:a05:6512:244c:b0:55c:e6a6:e694 with SMTP id 2adb3069b0e04-55cf2ce5481mr1552335e87.54.1755511754417;
+        Mon, 18 Aug 2025 03:09:14 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef368d34sm1593570e87.58.2025.08.18.03.09.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 03:09:13 -0700 (PDT)
+Message-ID: <53198209-ff95-407d-89e9-11cc34b04b4e@gmail.com>
+Date: Mon, 18 Aug 2025 13:09:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info>
+ <20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
+ <bf82cd81-bcc7-4929-aa84-b749533d5b95@kernel.org>
+ <20250817101121.19a86716@akair>
+ <bbd17f22-8834-42d8-a109-971bdd2e0fa1@kernel.org>
+ <e8955365-73c0-4c7a-a579-0ee6940340b2@gmail.com>
+ <20250818103600.0c3a015d@akair>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250818103600.0c3a015d@akair>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Date: Mon, 18 Aug 2025 01:05:33 -0700	[thread overview]
-> Hello,
+On 18/08/2025 11:36, Andreas Kemnade wrote:
+> Hi Matti,
 > 
-> syzbot found the following issue on:
+> Am Mon, 18 Aug 2025 09:34:02 +0300
+> schrieb Matti Vaittinen <mazziesaccount@gmail.com>:
 > 
-> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15232442580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f65a2014305525a9f816
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14cbaba2580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1157faf0580000
+>> On 17/08/2025 11:13, Krzysztof Kozlowski wrote:
+>>> On 17/08/2025 10:11, Andreas Kemnade wrote:
+>>>> Am Sun, 17 Aug 2025 07:58:35 +0200
+>>>> schrieb Krzysztof Kozlowski <krzk@kernel.org>:
+>>>>   
+>>>>> On 16/08/2025 21:19, Andreas Kemnade wrote:
 
-#syz test upstream master
+> Newest rebase I have is for 6.15. Yes, capacity calculation is hard.
 
---- x/include/linux/mm_types.h
-+++ y/include/linux/mm_types.h
-@@ -1166,6 +1166,7 @@ struct mm_struct {
- #ifdef CONFIG_PREEMPT_RT
- 		struct rcu_head delayed_drop;
- #endif
-+		struct work_struct drop_work;
- #ifdef CONFIG_HUGETLB_PAGE
- 		atomic_long_t hugetlb_usage;
- #endif
---- x/kernel/fork.c
-+++ y/kernel/fork.c
-@@ -666,6 +666,14 @@ static void cleanup_lazy_tlbs(struct mm_
- 		on_each_cpu(do_check_lazy_tlb, (void *)mm, 1);
- }
- 
-+static void mmdrop_workfn(struct work_struct *work)
-+{
-+	struct mm_struct *mm;
-+
-+	mm = container_of(work, struct mm_struct, drop_work);
-+	futex_hash_free(mm);
-+	free_mm(mm);
-+}
- /*
-  * Called when the last reference to the mm
-  * is dropped: either by a lazy thread or by
-@@ -689,9 +697,8 @@ void __mmdrop(struct mm_struct *mm)
- 	mm_pasid_drop(mm);
- 	mm_destroy_cid(mm);
- 	percpu_counter_destroy_many(mm->rss_stat, NR_MM_COUNTERS);
--	futex_hash_free(mm);
--
--	free_mm(mm);
-+	INIT_WORK(&mm->drop_work, mmdrop_workfn);
-+	schedule_work(&mm->drop_work);
- }
- EXPORT_SYMBOL_GPL(__mmdrop);
- 
---
+Just a thing to note. I've drafted some support for another variant, on 
+top of the v6.6. Just pushed the latest version of that to:
+
+https://github.com/M-Vaittinen/linux/tree/bd72720-on-6.6-rohmpower
+
+It may have something useful for you (or then it doesn't). Following 
+could perhaps be checked:
+
+8c00ee888283 ("regulator: bd71828: Use platform device id")
+0ba48e3a48d4 ("mfd: bd71828: Add IPRE register")
+f6caf815fc2f ("power: supply: bd71828: Support setting trickle charge 
+current")
+56197c1819e5 ("dt-bindings: Add trickle-charge upper limit")
+af7500d7f278 ("mfd: bd71828: Definition for fast charge term current 
+register")
+98401932fb75 ("mfd: bd71815: Add EXTMOS_EN mask")
+e508c94159d8 ("mfd: bd71828: Add charge profile control masks")
+
+e751bf502e29 ("power: supply: bd71828: Support setting charging profiles")
+AND
+b84792488191 ("power: supply: bd71827-power: Fix pre- and trickle charge 
+currents")
+
+2f952952cecd ("power: supply: bd71827-charger: Fix print")
+
+
+These hopefully are already done:
+c4fe777755ef ("power: supply: bd71828: Fix Rsense resistor value")
+34d9261706b2 ("dt-bindings: mfd: bd71828: Fix sense resistor values")
+
+
+Rest may be just noise related to this new IC.
+
+Yours,
+	-- Matti
+
 
