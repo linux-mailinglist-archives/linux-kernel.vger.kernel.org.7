@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-774333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7E2B2B125
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:07:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3444B2B12C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666BC169A96
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48FA116E8D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3043C2D24AB;
-	Mon, 18 Aug 2025 19:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187993451AB;
+	Mon, 18 Aug 2025 19:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="muHF6STs"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j8PETSV+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD86E275AF2
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81F83451A3
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755543678; cv=none; b=kcIFXcKpX2ldG0FWN4qshjw5erLJe+yEKkXqSchqnanGwSy/giAATpSdiZMhxwSonaguNB64g/Cl07A9eD+BPioqjIH7/R4KeC8AtT2X+MCmhbUm0A46D0TwBEle1HqF8WNrIUhzVWoVUhOvS54sReffUQGt2TU9s0UzU2xg9LA=
+	t=1755543813; cv=none; b=A3P35CJM+/TbYvOusZnehoQCJuqTQGa6ogOoKGPM2hMVy7nBoDIzJxEmE5iA6RIUBC9duNq+30i37QCezmy6+e46FSl1mveFjEHwvgV8V6d6YXh2igD8ZxbfM9TUdudGdi8AnQrq0X5S4u+O68KwiU8DOsGiQ1Ae7Ans3A8cr2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755543678; c=relaxed/simple;
-	bh=lvqYr68z6pHbcyanDASME3E9x0MYc5/TWQ4PZi60V04=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uzCCvrBAze/g0nk3vCCT7TdVqfYiQWvYsag3f4qTKzy5wk5exeiepWmADysw66Err1OFWYaIHWWHrlbyaB67OXV/v7CPZNjsQ7bPGmVEAlSAIOBQx4s6on9EbjLKtoNZBH1tlkZjgue4qGouF+m/dgmfS0ldo1Z+uNb9GSha7Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=muHF6STs; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IEtnB4030306;
-	Mon, 18 Aug 2025 19:01:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=9mI0l
-	FKwyp53gFKvviW08JnOdUm+IPOCrtiJ8Jlz3H8=; b=muHF6STsct0UGkBKdb0Ha
-	7/CK2ZUNwlvGcGEOxoWNFpvR8GEK2auA6Oo+5wBVpdPNlS37AdzNqzX+XaaQeyls
-	DX8kffGZ6lWu0ueFzIz1gByLnAFWvRltm0mCr4VQrXaawuS/XshUeGH39g0eplAh
-	cIxcXlw8xbmMr63CZslbLp2djFeflPe3odJmrUEx2n8K8V5VjrdXKpHtNCQ29h6Z
-	Q9ETv5uijPQCLeeN1Oarjm+rs3/woO8MqtkcaHIgls9Qo3OlHNpojyk/Ut+tunU8
-	yexCOcLswNDMP2iOE9JeCbH/xd0r3rufEPsAgjfOOeWOZLMeUzRM560E6IRTlBCg
-	A==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48jj1e3tth-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 18 Aug 2025 19:01:06 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57IICQcg016749;
-	Mon, 18 Aug 2025 19:01:05 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48jge9d87n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 18 Aug 2025 19:01:05 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57IJ0sZf035076;
-	Mon, 18 Aug 2025 19:01:04 GMT
-Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48jge9d7p3-7;
-	Mon, 18 Aug 2025 19:01:04 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
-        airlied@gmail.com, simona@ffwll.ch, willy@infradead.org,
-        sidhartha.kumar@oracle.com
-Subject: [PATCH 6/6] drm: Convert tile_idr to XArray
-Date: Mon, 18 Aug 2025 19:00:46 +0000
-Message-ID: <20250818190046.157962-7-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1755543813; c=relaxed/simple;
+	bh=+67pc+x9z74A1Tm7iYQ128svS8To5PkK4sRLKDceaus=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gd0mMNJ4Pkkzaax5xEnlk+3i+v6UMy0dg7+C/oLYhnVVzVITzKgKEA0EfV03vpxLkh36iQv0B/csaezCbxUHr9vCHze6tvjMmk1WN6w0vm0dgf81I6sNvLL+IeMMvNhK1xnD4KOW8hm5xlHtLkSPsDGmF1Gil/pZWlNXahavL2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j8PETSV+; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755543812; x=1787079812;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+67pc+x9z74A1Tm7iYQ128svS8To5PkK4sRLKDceaus=;
+  b=j8PETSV+cERwu3SftafvJJAuDiWmZKbQomAOFQVhDFSbPAdBOpfs3OMR
+   fN/prwCGU9sK6myLeYmZaYy/iy3ELuOc1WlbzOv9+bdNAScFgQi2j7/If
+   dkztaN9BccNkRittBKejdeoWyggRf9I4wS/W8wjySCghuVHkByNbP0Yk4
+   9my5NSvjts2CRWWf5lUKlVQzzBSeVwcIxTR5MMGvEd/iIQ7IkjfTtbPWp
+   8RNSaNUmgQNjGyuf7frwaHjbpiMhTQD53FNszAKQSaI/gv5RiAfdj//N+
+   25CVrWTThVZokiO1uZUqDeZDzWTrsmnIwevXndh0rsQrIHCP9J7l6xh6L
+   g==;
+X-CSE-ConnectionGUID: 5K2fsitDQxqcZxN11j+Vew==
+X-CSE-MsgGUID: yKAuTykgTJGSUQHlMUSQjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="69151576"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="69151576"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 12:03:31 -0700
+X-CSE-ConnectionGUID: YlGjlJtKQE6ZrmCDBn78nQ==
+X-CSE-MsgGUID: EP+nHCLYQ3Wy+g2t2SYwqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="171890586"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by orviesa003.jf.intel.com with ESMTP; 18 Aug 2025 12:03:30 -0700
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Alex Murray <alex.murray@canonical.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] x86/intel: Refresh the old ucode revisions with a script
+Date: Mon, 18 Aug 2025 12:01:35 -0700
+Message-ID: <20250818190137.3525414-1-sohil.mehta@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250818190046.157962-1-sidhartha.kumar@oracle.com>
-References: <20250818190046.157962-1-sidhartha.kumar@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,153 +83,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- phishscore=0 suspectscore=0 mlxscore=0 bulkscore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2507300000 definitions=main-2508180177
-X-Proofpoint-GUID: 53vPTNC4LRGXFiS6C5lLqIIujzul0BQp
-X-Authority-Analysis: v=2.4 cv=dN2mmPZb c=1 sm=1 tr=0 ts=68a37872 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=2OwXVqhp2XgA:10 a=JfrnYn6hAAAA:8 a=yPCof4ZbAAAA:8 a=EcGSMKKx8drgTz_rwpoA:9
- a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDE3OCBTYWx0ZWRfXwFdeX1dny7Q4
- pLdT2+Oe0Pt5D4+zk4gvcs6YWqS9pc+G9fTC5MHmbc6syLXtmXx5LnDXfl2VA6I1DEMtTFN7Q13
- ozy2t3MGpGfzGfKFIUWUZW1pWLnhyTQKIUwY5LenkVS1Gqtb792+S+CPMFb3gHv5jXi0/jTTy2v
- pfmcXQ1h0e/3fTBDf1wZQKmx+P8Zqt93Z7NzrYmc+iURAOXXEr1NvNHvoy+qJULh0rGonysiWjU
- lKs5Qz7H/bGxWqzJo9y8VcgdbhF9ZF9r/Edmr8PdJTYLxm0KZ4lEzfg84XcnkgTVPmLsENYKFx7
- jg86QPcQZ45cjfp2B0yGh3EzUAHF9ZacOve8Ko7keTJjJ8/TlqZAgDYIHX1MgAdg6HR2USwIp4Z
- VqIcNT8wyb31XF8OSWxLx3J33YubzYWLwdB+73g6T+WrZMJveYa5wmbikia41/wZypPu6ZpH
-X-Proofpoint-ORIG-GUID: 53vPTNC4LRGXFiS6C5lLqIIujzul0BQp
 
-From: Matthew Wilcox <willy@infradead.org>
+The kernel maintains a list of recently released Intel microcode
+revisions for each family-model-stepping. Systems with microcode older
+than those listed are marked with X86_BUG_OLD_MICROCODE [1].
 
-Convert tile_idr to an Xarray.
+Naturally, the microcode list needs to be periodically updated to
+reflect the latest releases. This series introduces a script to simplify
+this process along with the first update.
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
----
- drivers/gpu/drm/drm_connector.c   | 26 ++++++++++----------------
- drivers/gpu/drm/drm_mode_config.c |  3 +--
- include/drm/drm_mode_config.h     | 12 ++++++------
- 3 files changed, 17 insertions(+), 24 deletions(-)
+Microcode revision update (Patch 1)
+-----------------------------------
+The update is based on the May 2025 Intel microcode release [2]. Even if
+this is taken through the x86/urgent branch, a gap of 3 months seems
+like enough time for systems to have been updated. If there are concerns
+regarding the timing, the patch can be taken through the regular merge
+window.
 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index 48b08c9611a7..91cfe06ca199 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -3489,9 +3489,7 @@ static void drm_tile_group_free(struct kref *kref)
- 	struct drm_tile_group *tg = container_of(kref, struct drm_tile_group, refcount);
- 	struct drm_device *dev = tg->dev;
- 
--	mutex_lock(&dev->mode_config.idr_mutex);
--	idr_remove(&dev->mode_config.tile_idr, tg->id);
--	mutex_unlock(&dev->mode_config.idr_mutex);
-+	xa_erase(&dev->mode_config.tiles, tg->id);
- 	kfree(tg);
- }
- 
-@@ -3523,19 +3521,18 @@ struct drm_tile_group *drm_mode_get_tile_group(struct drm_device *dev,
- 					       const char topology[8])
- {
- 	struct drm_tile_group *tg;
--	int id;
-+	unsigned long id;
- 
--	mutex_lock(&dev->mode_config.idr_mutex);
--	idr_for_each_entry(&dev->mode_config.tile_idr, tg, id) {
-+	xa_lock(&dev->mode_config.tiles);
-+	xa_for_each(&dev->mode_config.tiles, id, tg) {
- 		if (!memcmp(tg->group_data, topology, 8)) {
- 			if (!kref_get_unless_zero(&tg->refcount))
- 				tg = NULL;
--			mutex_unlock(&dev->mode_config.idr_mutex);
--			return tg;
-+			break;
- 		}
- 	}
--	mutex_unlock(&dev->mode_config.idr_mutex);
--	return NULL;
-+	xa_unlock(&dev->mode_config.tiles);
-+	return tg;
- }
- EXPORT_SYMBOL(drm_mode_get_tile_group);
- 
-@@ -3564,16 +3561,13 @@ struct drm_tile_group *drm_mode_create_tile_group(struct drm_device *dev,
- 	memcpy(tg->group_data, topology, 8);
- 	tg->dev = dev;
- 
--	mutex_lock(&dev->mode_config.idr_mutex);
--	ret = idr_alloc(&dev->mode_config.tile_idr, tg, 1, 0, GFP_KERNEL);
--	if (ret >= 0) {
--		tg->id = ret;
--	} else {
-+	ret = xa_alloc(&dev->mode_config.tiles, &tg->id, tg, xa_limit_32b,
-+			GFP_KERNEL);
-+	if (ret < 0) {
- 		kfree(tg);
- 		tg = NULL;
- 	}
- 
--	mutex_unlock(&dev->mode_config.idr_mutex);
- 	return tg;
- }
- EXPORT_SYMBOL(drm_mode_create_tile_group);
-diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
-index b4239fd04e9d..c3d1a6d81bc7 100644
---- a/drivers/gpu/drm/drm_mode_config.c
-+++ b/drivers/gpu/drm/drm_mode_config.c
-@@ -438,7 +438,7 @@ int drmm_mode_config_init(struct drm_device *dev)
- 	INIT_LIST_HEAD(&dev->mode_config.plane_list);
- 	INIT_LIST_HEAD(&dev->mode_config.privobj_list);
- 	idr_init_base(&dev->mode_config.object_idr, 1);
--	idr_init_base(&dev->mode_config.tile_idr, 1);
-+	xa_init_flags(&dev->mode_config.tiles, XA_FLAGS_ALLOC1);
- 	ida_init(&dev->mode_config.connector_ida);
- 	spin_lock_init(&dev->mode_config.connector_list_lock);
- 
-@@ -577,7 +577,6 @@ void drm_mode_config_cleanup(struct drm_device *dev)
- 	}
- 
- 	ida_destroy(&dev->mode_config.connector_ida);
--	idr_destroy(&dev->mode_config.tile_idr);
- 	idr_destroy(&dev->mode_config.object_idr);
- 	drm_modeset_lock_fini(&dev->mode_config.connection_mutex);
- }
-diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
-index 9e524b51a001..8412013914d9 100644
---- a/include/drm/drm_mode_config.h
-+++ b/include/drm/drm_mode_config.h
-@@ -392,8 +392,8 @@ struct drm_mode_config {
- 	/**
- 	 * @idr_mutex:
- 	 *
--	 * Mutex for KMS ID allocation and management. Protects both @object_idr
--	 * and @tile_idr.
-+	 * Mutex for KMS ID allocation and management. Protects the
-+	 * objects in @object_idr.
- 	 */
- 	struct mutex idr_mutex;
- 
-@@ -406,12 +406,12 @@ struct drm_mode_config {
- 	struct idr object_idr;
- 
- 	/**
--	 * @tile_idr:
-+	 * @tiles:
- 	 *
--	 * Use this idr for allocating new IDs for tiled sinks like use in some
--	 * high-res DP MST screens.
-+	 * Use this for allocating new IDs for tiled sinks like those
-+	 * used in some high-res DP MST screens.
- 	 */
--	struct idr tile_idr;
-+	struct xarray tiles;
- 
- 	/** @fb_lock: Mutex to protect fb the global @fb_list and @num_fb. */
- 	struct mutex fb_lock;
+It also includes a stable Cc to keep the stable trees up-to-date.
+
+The update script (Patch 2)
+---------------------------
+Below is the help text for the script. Any feedback on the interface or
+the help text is appreciated.
+
+$ ./scripts/update-intel-ucode-defs.py -h
+usage: update-intel-ucode-defs.py [-h] -u UCODE_PATH [-o HEADER]
+
+For Intel CPUs, update the microcode revisions that determine
+X86_BUG_OLD_MICROCODE.
+
+The script takes the Intel microcode files as input and uses the
+iucode-tool to extract the revision information. It formats the output
+and writes it to intel-ucode-defs.h which holds the minimum expected
+revision for each family-model-stepping.
+
+A typical usage is to get the desired release of the Intel Microcode
+Update Package at:
+https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files.git
+
+And run:
+    ./scripts/update-intel-ucode-defs.py -u /path/to/microcode/files
+
+Note: The microcode revisions are usually updated shortly after a new
+microcode package is released, allowing a reasonable time for systems to
+get the update.
+
+options:
+  -h, --help            show this help message and exit
+  -u UCODE_PATH, --ucode_path UCODE_PATH
+                        Path to the microcode files
+  -o HEADER, --output HEADER
+                        The microcode header file to be updated (default: intel-ucode-defs.h)
+
+Links
+-----
+[1]: https://lore.kernel.org/lkml/174530444932.31282.15748299566756052894.tip-bot2@tip-bot2/
+[2]: https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/releases/tag/microcode-20250512
+
+Sohil Mehta (2):
+  x86/microcode/intel: Refresh the revisions that determine
+    old_microcode
+  scripts/x86: Add a script to update minimum Intel ucode revisions
+
+ MAINTAINERS                                   |   1 +
+ .../kernel/cpu/microcode/intel-ucode-defs.h   |  86 ++++++-----
+ scripts/update-intel-ucode-defs.py            | 134 ++++++++++++++++++
+ 3 files changed, 183 insertions(+), 38 deletions(-)
+ create mode 100755 scripts/update-intel-ucode-defs.py
+
 -- 
 2.43.0
 
