@@ -1,65 +1,67 @@
-Return-Path: <linux-kernel+bounces-774366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF0AB2B165
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:17:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15523B2B163
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F188D2A7FB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525FB1B21753
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E78274FCB;
-	Mon, 18 Aug 2025 19:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCAF3451AA;
+	Mon, 18 Aug 2025 19:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSQq1w5J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bTwjMZGf"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0AF3451B2;
-	Mon, 18 Aug 2025 19:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5453451B3;
+	Mon, 18 Aug 2025 19:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755544269; cv=none; b=dfaL0tx51eY1ojSxHh5U/M62jKCtsqh1MfIF4f3xLL5OM0SUulNGHFm2E0uGUYCL8fQUhxyqetZQem5rYdY9ZPN3r4AjoctDlKSf79nzGBa3vrTOkuhMpHqA4MvSf+NcQ8NYR94dDLOboSDwlW9RqkX+0srWf3ig+D72tb3Cwtk=
+	t=1755544344; cv=none; b=D4Z0UKX2pnrKsY2GFEX0XD9a9n/OHggGiY0I4c+EWwWit6V3Uz3YHT3Mki69gYRpvOddaTDW9+eP9VZqO0ST0htJj2NB+YRv6Vf9TH358UYDw23zCHsvBDmer02ow7CGiSGyTQtyva7x74vt1vhhVtsT2Q1t5R9xhl5y4hOqBwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755544269; c=relaxed/simple;
-	bh=OZK5CyXw1PInn/yqI4pDY8A9Y5pwSG9xCax8VqYzUdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ndTrS6uxs7het8I6oBcaGxQ+3iS8ABbK01/bNHG6Fp5JKolMsSHeENPROVEAyoJuYDSQJV2lnWF0EVB/XjEQf/RjeJKhhcEZfxfNVLiXbVZwYE8Z9K0Tm34yTH7q4hFcoWA8KwxrxaIzt7Tw2yrmqceZKYtmYj3FB2nMfc83emg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSQq1w5J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5769AC4CEEB;
-	Mon, 18 Aug 2025 19:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755544269;
-	bh=OZK5CyXw1PInn/yqI4pDY8A9Y5pwSG9xCax8VqYzUdI=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=BSQq1w5JizmpSZUf4s5+tSO15Q/XuPUlIXNgf1lPgC6Pnth2YBndwPcZNe43Yz22l
-	 aiAO/8djv6cgRjptjNlsO74pfWV92BT333yfBGhdxxO98IDtl22SSCsx3zVYv4NqzB
-	 +BYzAH6+UQvq8qtZXQQ3H0ovg0z8at8SU1kKuzNcG+QMQnJGJclFDJwzkORw/cyvpw
-	 XzRJ6qLivhVK38NONmfhs3MqKXQMUPujPlT2Tk37jMqef1ss8NnQOXHk83xn7Ll5mD
-	 nyG/zTRJhjyz+DA7kC0kkMqTnXtCU4WEEjdG0E10KmP7TTsNiGgMRdmHrMmelN8F1f
-	 tOfVwQIQBekwg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 07D41CE0CC4; Mon, 18 Aug 2025 12:11:09 -0700 (PDT)
-Date: Mon, 18 Aug 2025 12:11:09 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH RFC] net: stmmac: Make DWMAC_ROCKCHIP and DWMAC_STM32 depend
- on PM_SLEEP
-Message-ID: <7ee6a142-1ed9-4874-83b7-128031e41874@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1755544344; c=relaxed/simple;
+	bh=CCOP3IBZmMISpkHVWD/9diklcVnJxOqqEJi+ywMNlMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DNpFHoXz+ifX//7m4gC0TxB1aPW0puZEWd3SGytnp6iRPNR0lrR+tVVk5M6/W5g+k6Q4gZwVj5j2mhrtT8qQe1Bdrp1op1ARbKWIvBSrM2HQhj1IswxMXLoPaBaCGCtXld2EfhleB7o8PtJFKQgZv/bst/0+pWidSySHIG9gKFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bTwjMZGf; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2x+GxjZ248PmhTqsF4mLrGb7s8fcbW6kRGfC8iXWAvY=; b=bTwjMZGfP9awoxE942ngh3Z6Ud
+	H8QZ8X8OjXmExBBZR+pns6QZLOq+Ip0ltmx/cmfP3WsQeqxM534JPWAUdRtn7fVdSbaLpR2//XTMe
+	ABhMiVJvi97SPDshdhGuiG09ZzQ68DcdzwDrMIeDemkdpYlmZ2atohv4kJUO6EpqRBuRPQzxT1fdA
+	8Ufao2W4j50m/Eph2OUrUylErf2RIxHMq8H0s3VEUgTOLh3uS4Wsw97FwX5Pi+n97FobRNSZx6BGU
+	SPgL6y/qkeIsZiljuGRXfGgs/KQuOfn3+3B7Df3kUzl+v7UppPFVWc+HPOe6xY0KxT/CN9H889gns
+	WYphfsvQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uo5H2-0000000HU4o-2z8W;
+	Mon, 18 Aug 2025 19:12:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AC00D300220; Mon, 18 Aug 2025 21:12:03 +0200 (CEST)
+Date: Mon, 18 Aug 2025 21:12:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, patches@lists.linux.dev,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com
+Subject: Re: [PATCH 09/10] objtool: Drop noinstr hack for KCSAN_WEAK_MEMORY
+Message-ID: <20250818191203.GK3289052@noisy.programming.kicks-ass.net>
+References: <20250818-bump-min-llvm-ver-15-v1-0-c8b1d0f955e0@kernel.org>
+ <20250818-bump-min-llvm-ver-15-v1-9-c8b1d0f955e0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +70,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250818-bump-min-llvm-ver-15-v1-9-c8b1d0f955e0@kernel.org>
 
-Hello!
+On Mon, Aug 18, 2025 at 11:57:25AM -0700, Nathan Chancellor wrote:
+> Now that the minimum supported version of LLVM for building the kernel
+> has been bumped to 15.0.0, __no_kcsan will always ensure that the thread
+> sanitizer functions are not generated, so remove the check for tsan
+> functions in is_profiling_func() and the always true depends and
+> unnecessary select lines in KCSAN_WEAK_MEMORY.
+> 
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-This might be more of a bug report than a patch, but here goes...
-
-Running rcuscale or refscale performance tests on datacenter ARM systems
-gives the following build errors with CONFIG_HIBERNATION=n:
-
-ERROR: modpost: "stmmac_simple_pm_ops" [drivers/net/ethernet/stmicro/stmmac/dwmac-rk.ko] undefined!
-ERROR: modpost: "stmmac_simple_pm_ops" [drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.ko] undefined!
-
-The problem is that these two drivers unconditionally reference
-stmmac_simple_pm_ops, which is not exported to modules in kernels built
-without CONFIG_PM_SLEEP, which depends on CONFIG_HIBERNATION.
-
-Therefore, update drivers/net/ethernet/stmicro/stmmac/Kconfig so that
-CONFIG_DWMAC_ROCKCHIP and CONFIG_DWMAC_STM32 depend on CONFIG_PM_SLEEP,
-thus preventing the dependence on a symbol when it is not exported.
-With this change, rcuscale and refscale build and run happily on the
-ARM system that I have access to.
-
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Cc: <netdev@vger.kernel.org>
-Cc: <linux-stm32@st-md-mailman.stormreply.com>
-Cc: <linux-arm-kernel@lists.infradead.org>
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 67fa879b1e521e..150f662953a24b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -146,7 +146,7 @@ config DWMAC_RENESAS_GBETH
- config DWMAC_ROCKCHIP
- 	tristate "Rockchip dwmac support"
- 	default ARCH_ROCKCHIP
--	depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
-+	depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST) && PM_SLEEP
- 	select MFD_SYSCON
- 	help
- 	  Support for Ethernet controller on Rockchip RK3288 SoC.
-@@ -231,7 +231,7 @@ config DWMAC_STI
- config DWMAC_STM32
- 	tristate "STM32 DWMAC support"
- 	default ARCH_STM32
--	depends on OF && HAS_IOMEM && (ARCH_STM32 || COMPILE_TEST)
-+	depends on OF && HAS_IOMEM && (ARCH_STM32 || COMPILE_TEST) && PM_SLEEP
- 	select MFD_SYSCON
- 	help
- 	  Support for ethernet controller on STM32 SOCs.
+Acked-by: Peter Zijlstra (Intel) <peterz@infraded.org>
 
