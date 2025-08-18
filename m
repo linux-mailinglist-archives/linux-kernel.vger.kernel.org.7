@@ -1,270 +1,197 @@
-Return-Path: <linux-kernel+bounces-772994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B798FB29A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:56:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C45E5B29A3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CED15E4C69
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:55:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FD6C7AA42B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8291A290F;
-	Mon, 18 Aug 2025 06:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072F027874F;
+	Mon, 18 Aug 2025 06:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DdrbmQi4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LwP9Xe7W";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="egQfyrqB"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C5B27877D;
-	Mon, 18 Aug 2025 06:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755500108; cv=fail; b=CRvd2RrudD8SXHpxuklt/ny1BZWpVOeHVCws1WcT/jCKs7Ic2UxnECEuqKKJPOmjKXOSSvKD7zNYwVrF+D5jXF5faW7NIbq12J1a0NmYiIvSTSEaXDsAvS2cNIUndbakYvM2uzxdgFOtTtnW2DBxYEBlrdjmJPk3qMNTD5fm62E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755500108; c=relaxed/simple;
-	bh=D0QIrQXrDYqmzWGetTCT2anfMDPo8ROmXHet4bPo+b0=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hZ2UBIuFx1hGUA0xQu9Hkd/TtqPdL9vd1YXq26SZqU5+Ex5UKZCuFBKbsAY9kPVMxTWsoEmi5iHan6FAeQHLu3/1LxTvBxa8DtTCBrr9ouzudAVw9ap1v532zCotncznWFYd4bmfqumu7W4i7Ie9MnlVOU4TTuQ/7vNdCA+9qI0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DdrbmQi4; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755500107; x=1787036107;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   mime-version;
-  bh=D0QIrQXrDYqmzWGetTCT2anfMDPo8ROmXHet4bPo+b0=;
-  b=DdrbmQi4aEV3Y4XsJVlcLcihd4dNrnmqU6rK2UZjzgIpLvsmpqRM9nIn
-   tswif5orBYOVkSf7gV9nJv1txe3nkDNGNckhTdwGn16HANHzNfr3whkW2
-   y48Sie708maWVW9YjdxAJ8+SBWYZPc6p3Gs60GGBhyJF/20IU3I4oE31h
-   drL2NBhWHxoixZ/7FfofpfYBrk7wlcdi3R7WuyLODTkYzZ5CYbyZxuknF
-   v41N4cEB7tPrfxKvU+0/KkewLKa8VjZ8rkMDnPf6LnyZYphpivDmbMK4z
-   OVyujbcW3oBtJFzO/SqaWZhLY1TWTY8Y5yepPy6k1s/wp6oKJ+h1X1a/A
-   g==;
-X-CSE-ConnectionGUID: XN4uvyHaSqS/dFhtALIJ1w==
-X-CSE-MsgGUID: DadIkHGOTESwvP/+Wt97RQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57823190"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57823190"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 23:55:03 -0700
-X-CSE-ConnectionGUID: DVeWY21RT2OyYYY1jOZ2YQ==
-X-CSE-MsgGUID: asnUSgU6TAKh49bF493mKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167474826"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 23:55:02 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 23:55:01 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Sun, 17 Aug 2025 23:55:01 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.58)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 23:55:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KtuLLjmFJYj1x1qhWOM/lUv3npvJPrzOCHxIR709SHZJvyAAewIxyFgvvHiZ2zxnjFljqKMch/uamvnfNcm1UUTDtLCOQrmmyiAWksOfdizWnPWPuvnxvTS3IbVzhTd6iYh1g+r3fDeC2EZz9EJt20Gm6ZpwEJ/24C9Y4gTWS6ffQ2SMIvfUE+hk7U7QnL6sQX9TX9O+oCps5VuYXIV06PK4M2EwELzKdcsDSJpbxxuh+CZ6EfKNr9WggZdLf17pw5jSpl6a49Tzl9zvFNLKizdPkYCqbkbQfwcEF1URTapkscEYxp6bY2OwYor2Orju5VxdauKCGqtfZC3jEN9wJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tdhM0g26vDYe4SkxGo6DbmypJ/Zg/abx+BOBtkWX+o0=;
- b=FNIQ1LxYyfbTnFn75NfOsykHYHPQACDnclid2+l6lfPSAVUhASoRB3WoPaXYMl5BFynJ9mJ9rO2BNVdgFL1XLYQWrGZ6/YKubNHjMSMB/fC6vbYQKx7cFn5FqJEzLRlg9BgMGfcy/Pk+7b8YMvLHOo+0rrO8/TC2FDgZC7zCqlyvYxFH260qrZxZ+x39fPGtBEoIAbeAWKNDdqupaDDcssQRGvOyY+K7U0XlrO1a120QpPi6MIUCsifuxr6VASSi/NjIWsFcjk16EHHMFJPuvzkx59LsFI97nsX3BBoOl0vBNlVlWe94GSOXObZqWYSqltPJrVmWhlqp2JiwRwS3ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by MN0PR11MB6088.namprd11.prod.outlook.com (2603:10b6:208:3cc::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Mon, 18 Aug
- 2025 06:54:58 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 06:54:58 +0000
-Date: Mon, 18 Aug 2025 14:54:49 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-pm@vger.kernel.org>,
-	"rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar
-	<viresh.kumar@linaro.org>, zhenglifeng <zhenglifeng1@huawei.com>,
-	<linux-kernel@vger.kernel.org>, Zihuan Zhang <zhangzihuan@kylinos.cn>,
-	<oliver.sang@intel.com>
-Subject: Re: [PATCH v1] cpufreq: Return current frequency when frequency
- table is unavailable
-Message-ID: <202508180834.3b8fe9d6-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250814085216.358207-1-zhangzihuan@kylinos.cn>
-X-ClientProxiedBy: SI2PR04CA0013.apcprd04.prod.outlook.com
- (2603:1096:4:197::6) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADE026B2D7;
+	Mon, 18 Aug 2025 06:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755500135; cv=none; b=hc6cF794vikVUJXQvv2latxVFUnhmjFPeh9gjRyz8omu2j9r/unJyA+/Lq72t6LIfCvUIZishW9hTEET/B5ZnIM6X1hrYnr4DeJci60g1E0oxPm0Myx8gPEQr3UskQie+71IpHufHJgMEClRdIPvgPOJexiRl1K8YCQb1yKUmyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755500135; c=relaxed/simple;
+	bh=By7usdss+rkiOW/yppLdzLOCtns31NFLt1Vz4bboPrc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CDhqTOMq5QCDeAFnbodd66Ul0LtDjYrMZcQcmIK8DkfL7vRiiNyOYz/Xq/R522fPlJ89zuL1ATqle1jU7Y4sv6j8mQfWiogk5zGxJRSWT1IkBuhceyY0Qh9FeiAGnulv+R+qg/M4Tv54SIoFUg/js7yGQdnykHOD6idrsi0Ukk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LwP9Xe7W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=egQfyrqB; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E66081400057;
+	Mon, 18 Aug 2025 02:55:31 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 18 Aug 2025 02:55:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755500131;
+	 x=1755586531; bh=WYIB1OF4/OZwEatf3qB7hEfLyA9RGtN/aMwO/wJhfno=; b=
+	LwP9Xe7W+Lzy38MUHEgh04p9cOmh9mgrqtvUBwaNarAa2gRU+6JFs9a/9mgi3Yny
+	eMUb8/sRMCb++S1/M7EZpNkyzfrTJuPbiXpCmLfAKBByP1cRVBGUCvjRds/XcwqM
+	gyPbHd9feikeXKXOIos83reu3vZPkYZd2FoL8mwJ+vNeL0Cs2UIclHF55dhBm7rH
+	umS8XqQxm5SIu2Ag3cYhfdpf3YZQ5qbDEBevtvGkLI+KW0qNOP+JNXnckyxAHzTA
+	7ngjOMLH4DFqa+2dco04+N7dVSDHqG5nVubdSG6xWJFJLGuyXBnkZCcncqssiSJ6
+	SmrP+lETCpC1YBXfK9wYEg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755500131; x=
+	1755586531; bh=WYIB1OF4/OZwEatf3qB7hEfLyA9RGtN/aMwO/wJhfno=; b=e
+	gQfyrqBHXiUs+GzNOYFT3vZJuzpYPJJFyzJxbPTuIO4pWQh4vRVTEy8/2nucfFZq
+	WwG62U4e3C/rLXpyIhL50AVeR+APFUGCWWS9QfyVeC1x+QAbEkCt1liY79WYT+6R
+	3znFj+ovFGRctDiI/cSGe9/FYXC5zLLt7URIbzeee+1RcdlGna8DuR7i6JSlJuY4
+	I+mDljp0iS8/iIjfL6H5k+RbIiqtj6OdJukfk4OYTcIRaqcuVnBaUFwhK2BczRna
+	GlBKClWATi7KRc1/0X/DLPF1soDwfQZKVRP0b5nQf5JIf4wIMuEx+fseUOFHEquY
+	vfafodIsH+GgoaxBMNmsw==
+X-ME-Sender: <xms:Ys6iaM0YUSXegmnuXs0bhJWoybv20cXM-kSx4_MIZ4VgkvYeSPBBEQ>
+    <xme:Ys6iaHHZwaoctjn-K4NMuMWFwB0bGVqX-IYah_ASwKCMPP9hS-cdm7PoSnqbY77wd
+    cxhXJVaQKojF9gYWbo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheduleehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpd
+    hrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegr
+    nhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepjhhsthhulhhtiiesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslh
+    hinhhuthhrohhnihigrdguvgdprhgtphhtthhopehthhhomhgrshdrfigvihhsshhstghh
+    uhhhsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepnhgrghgrrhgrthhhnhgrmh
+    drmhhuthhhuhhsrghmhiesohhrrggtlhgvrdgtohhm
+X-ME-Proxy: <xmx:Ys6iaHeR6RHZ1NvsbCo46ccqtM89lAijCLF3Z91aAstwYa-tNukFgQ>
+    <xmx:Ys6iaEcnT4yT5Rfc7qI2jiLXDqKTD0uWXJSSygjGuMfysP8n0kzzhw>
+    <xmx:Ys6iaLbK8dJRWcpolPWcrIfzB0Ix2jLSHnSrWeFkJQK_x8DK3xYc9w>
+    <xmx:Ys6iaI5bReBF-OCAcyKqWpwd1HToChNEkvZFZ5EUlZWebkVL3gpkeA>
+    <xmx:Y86iaDHgMnILPYEzx1rm_-lRtDBWUUrX2bY1iByhv9KKovwJnr1Y8Eb->
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 95D99700065; Mon, 18 Aug 2025 02:55:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MN0PR11MB6088:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5138903b-ec77-4216-5963-08ddde242542
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?GEUvuC30LIKpK0Dju0t+zGqPRY0L3J2K5y/aFTXNUTTsmefCvS04NSHFrN7u?=
- =?us-ascii?Q?1xn6J9UPdiEaWKwFBUTwNGIXZRpzqiw0K4yjOROPbj8TMiCRiaw0aAdfHD1O?=
- =?us-ascii?Q?JU2fAa/0J0047ggdBANKRTR2TGXz6eHvvEvz2rIxq4xhscKysFSIDCNikJ3M?=
- =?us-ascii?Q?BQI4QjM1h28QA7xl9zctkLE1aoBqvx3qmATHCTN4un8TCyOywfT/m25QLO9B?=
- =?us-ascii?Q?dLR4AB2a4YN81a0L0193WMfibDFnaFM5TtNMiRpf59x7uwFgGdjjg+0vbtIq?=
- =?us-ascii?Q?n36tmEq/TXfIfWUjQYMKWZmdF9DoI2J5NUibsX4QufAtZYxiqySSdernFfO0?=
- =?us-ascii?Q?AveId0SVWbsWdORB6sZdQxu47YoCvFk8PBsDFQhxyBBq5WRb9nPs7LBbR11v?=
- =?us-ascii?Q?AwQa0kRgNSagnfutr4Z3SE77rbqc3WsZNJthtQVUYc1YCosBpYYNtzsb6JCo?=
- =?us-ascii?Q?iERsABC4vFn8SzVV5ym2+K7APHRL3+k/ucGOyyBfDBFOpn9K1nCUJ63+cwOm?=
- =?us-ascii?Q?U99/aWLhJ7YxI2u5Afl38Kl4Gv785bxLVgMWQFGimsGkFehyp4X2tjQdHw1z?=
- =?us-ascii?Q?HcMUtZQHxr+732KsFsHyWWe+SpY+GgWn0wCndTkP/hkayNs85CM8eYebbQa+?=
- =?us-ascii?Q?iFMd+//Qi20FJ3D74WxhUpX1Urv+C6Mv+8o6XSCL1I78iTcCC1QnnF+7hyvM?=
- =?us-ascii?Q?DktLtv9RX/S5+xyWiOucGmfGno1YadofeNg6cW8N0nKRNhC90eP5AsZbhTC4?=
- =?us-ascii?Q?Sc4h9SwFNock9r8uZlm1JKM1E/muviCWjrIqvGsKH5cJQ63XUMFcXmyWGYxY?=
- =?us-ascii?Q?G95cLkGqTwPjLvx4HI5yTQGjaP0q+Io9J8G8ggglZ3fs69z40XaEdRJS+5+4?=
- =?us-ascii?Q?cxJ+a4l8QYmRNJKHFyPRpvXhnWjCO2cBkTDIo9crA4icqacB4FeheH4YknAI?=
- =?us-ascii?Q?kE4Y2R7mxxNgLoO/ZZYyRJZ9omwuXaBj4+xSjcjucagbm0ETb5rp0TYTiq49?=
- =?us-ascii?Q?lOtjnMKEgYEOzRzLowl62pQn/dD2w1TtIokBZRJDYlyS2CQkeql+GS97xFMv?=
- =?us-ascii?Q?w1pm9IPS7k3rOID6+qR2iK8k4FonyttV2QeFdxH5RM/My0v1SCb4XbeEVgbF?=
- =?us-ascii?Q?tVr3jLJ6dbFcv2u0ZfxLcOsC3i2YAx5kpS2n3790zDWRqixQihcUtZaWbtHm?=
- =?us-ascii?Q?NIBTLCDwSUiMdTdt+QD2l24Sxc/Bi/ISiGhPGaTzHpidR9v6unef7khgmAVs?=
- =?us-ascii?Q?YVNJuztBEaUS0psipJwO1Wxicitxvke9J8UR8VJWAJY8Zk7rjEijtWWBRZvC?=
- =?us-ascii?Q?vx8/rTbc7V8QLuWhPDIKlQY/3B9YyijnaHDiRgZi7ZsQZpIqdvdfoCGB40ON?=
- =?us-ascii?Q?OQF1C4PtYsdW6h3rJVUrUV+gADc8?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zzKls/EzTXFKFH3bVJiitB3mvvVOflxe9agoBvjA1p7/ISLemtHIEf0xyIft?=
- =?us-ascii?Q?VbaRjUgTphkAHC5jqA+JdeXrobbkeNalbv9B/uyKAu8FENus5Ve5ANbyijJ+?=
- =?us-ascii?Q?9bNYvo+F8OnUmkglSTCHBMn4gfumQiWeByKDV35wB3w2Y2BZASAOsjy8Q5ps?=
- =?us-ascii?Q?lKQrsNMbSnJzMD0sXrzwPSIan3sYb5W82pZqyJ/9I5xxE3pO83NaWEJWcgpO?=
- =?us-ascii?Q?p9cNGEEveRHJxwQwUoYHL01j1oLpLYJUZcQMbF4hPUaKjUvQ0B5vJLVHX9Zp?=
- =?us-ascii?Q?xJX7C/tSRjEzPHMxfgfAeAP6e6TWJjvW+7YrSshqooxLFl1NcMJrXxzLjLvu?=
- =?us-ascii?Q?i79FOX0KBAAfV3fxEs4lgqLLWyNsjADjjUlqQBWlyQZcs1GFKOCIoeV5RQQ+?=
- =?us-ascii?Q?6Ic1jLCa6/2ka+TD8nQX0qQHgNMPRF0gmnGZZBtzDlVo4MfyHZtOpGGClfiC?=
- =?us-ascii?Q?cSrunK818MGvVIH3zZYheXv6kvlEcX1oUeBsYum2LVUV4owM/1gFPeaeLzO2?=
- =?us-ascii?Q?MEc5E5eYK5PDOzKljvgaZrhN8Q8fS6w+d6QfQyUnSa62rVsoeIb847jOdNHz?=
- =?us-ascii?Q?Z5Tgzt2AYu0m+hAYKZL7VaF3yoyDkVENgPC7yQ+59Qpp0Bk8dnfhSet2rQYr?=
- =?us-ascii?Q?YBJEuzaZXtISE06u7Fy0tthkejJ9ylztG1skJ3lf+fGcWidC5oI1B0rZE4KT?=
- =?us-ascii?Q?wqY3Px1dN3E+WMPpVvPA1OM+dIONv9wE0Fe+1mrvEGrB+GAXkkw6CY45hm4w?=
- =?us-ascii?Q?56+rYXSn6i49zd2UCosniohHmeXgB/nVVKYo/KqJBu52E3Fg32wIAvz164TZ?=
- =?us-ascii?Q?T7m050L3p0TxCVbiN7yFxwRWVZi2ewOpd9wl7s5y8RPtjXUE1i6WNssYDAf0?=
- =?us-ascii?Q?oTzP4c5wnzIYo3hNYed/EQpkl1RBGJDi/DYDYc0VsIacAREATNxQloj+HO6v?=
- =?us-ascii?Q?b67+nxRFDrLHgfbIXc3pbQxi2LbPm/pgXqMcCSCNpRVqhfDPnPosC9/KlZE1?=
- =?us-ascii?Q?WH8rgMMtAtSgRRgD/JCjyWTG1TVn1v5ymkkdcfDnkgYhD3QSqImHluQsnO3t?=
- =?us-ascii?Q?qKXQ10DjCExey1FsURUYB08rcaImpGdjViQgioiOYOnHwG+Ps5d2hWoLocfh?=
- =?us-ascii?Q?6tTZBI2FGoi58HZkiMOfEIwl4N+6gIMy4e2lZZyY5/lD26AtBoH0viowSlGp?=
- =?us-ascii?Q?jWdlQQombLT6DnTKjDzD4/ddLJMJaWrjtFXcNrVgsf2o1a9IWzyJqQtkdxbB?=
- =?us-ascii?Q?dth03VGUXU4seKCxfwX/8Rj0jWZGYjXqkn2Su2Re7n/mx1oXqkiPpdXgSwRR?=
- =?us-ascii?Q?/nXnYZ98T1/0735/sWxceSVTGlWGW9//fs66c0YDI+ZrCdvU1Awk5YWcviLl?=
- =?us-ascii?Q?m4w+tKtXJPVEKecf5KWJpbN7fBf2tSPrAy5ceFJEyNcm+IwiuIZKH6UYDg/7?=
- =?us-ascii?Q?LOBde6r2rsvDVRPcTNLAOO9+zKhoss8n9plJw5i+VHO/hmHAF13PdNxVgxpa?=
- =?us-ascii?Q?AAAMS92OZJTFEVcfWKOLnquKevq2Mi5APyJKIUSv93p9LCCLZfpWrqnJpv06?=
- =?us-ascii?Q?YjmsP5OghQr68daJI2yzJEKQq+3Ng/NmmJ5Sqqz0O0F5gjYWDhuB0lCYHcXr?=
- =?us-ascii?Q?Xw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5138903b-ec77-4216-5963-08ddde242542
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 06:54:58.3204
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CSt5dJIzbMTaBRSN6iPxuA4DVT3Z4KXvn0lRXN354de8+lhLeMOgCdLoqNIFy/IbHZPDgJoAAQO8w527FSJugA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6088
-X-OriginatorOrg: intel.com
+X-ThreadId: ABINBsmLUku7
+Date: Mon, 18 Aug 2025 08:54:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: "Andy Lutomirski" <luto@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Nagarathnam Muthusamy" <nagarathnam.muthusamy@oracle.com>,
+ "Nick Alcock" <nick.alcock@oracle.com>, "John Stultz" <jstultz@google.com>,
+ "Stephen Boyd" <sboyd@kernel.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Message-Id: <dd77ac1f-9251-4ad2-ad5b-9d2b8969a476@app.fastmail.com>
+In-Reply-To: 
+ <20250818073135-130dfc53-225c-48a3-b960-e982faa866bf@linutronix.de>
+References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
+ <20250815-vdso-sparc64-generic-2-v2-12-b5ff80672347@linutronix.de>
+ <bf9ec82b-af1b-4684-ada5-8529b7ceb06a@app.fastmail.com>
+ <20250815142418-d28c6551-bec1-4a65-9c52-f1afd7b630ed@linutronix.de>
+ <5309ef99-9ae7-4525-8d58-f954c13797bc@app.fastmail.com>
+ <20250818073135-130dfc53-225c-48a3-b960-e982faa866bf@linutronix.de>
+Subject: Re: [PATCH v2 12/13] sparc64: vdso: Implement clock_getres()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 18, 2025, at 07:50, Thomas Wei=C3=9Fschuh wrote:
+> On Fri, Aug 15, 2025 at 10:09:23PM +0200, Arnd Bergmann wrote:
+>> On Fri, Aug 15, 2025, at 14:34, Thomas Wei=C3=9Fschuh wrote:
+>> > On Fri, Aug 15, 2025 at 02:13:46PM +0200, Arnd Bergmann wrote:
+>> >> On Fri, Aug 15, 2025, at 12:41, Thomas Wei=C3=9Fschuh wrote:
+>
+>> On 32-bit, we decided against adding a clock_getres_time64()
+>> syscall when we added clock_gettime64() because of this.
+>
+> My assumption was that clock_getres_time64() wouldn't make sense in the
+> first place, as no clock would have a resolution this big.
 
+While the type conversion is trivial, the general approach has
+been to use the new types consistently, so this would be an odd
+place to make an exception and require an explicit conversion
+from __kernel_old_timespec32 back to __kernel_timespec or the
+libc timespec.
 
-Hello,
+>> For time64 userspace, this means that glibc always calls
+>> the system call instead of the vdso, and old time32
+>> userspace wouldn't use the clock_getres() vdso because
+>> there was no vdso implementation when it was compiled.
+>
+> Is this paragraph meant to be specific for SPARC? Glibc does use the
+> clock_getres() vdso fastpath on time64 architectures. But on SPARC no
+> application would ever use clock_getres() through the vdso today,
+> as it doesn't exist yet.
 
-kernel test robot noticed "xfstests.xfs.177.fail" on:
+The glibc code has a weird mixup of the time32 and time64
+function names, but from what I can tell, it only ever sets
+dl_vdso_clock_getres_time64 on 64-bit architectures, where it
+gets set to the normal clock_getres vdso symbol. On 32-bit,
+glibc always skips vdso_clock_getres_time64() since it
+does not exist, and then it always calls clock_getres_time64()
+through the syscall interface, unless it runs on pre-5.6
+kernels that fall back to the time32 vdso or syscall.
 
-commit: 69f6747d99d0b1482fb38c36dfa26fe22654ff1f ("[PATCH v1] cpufreq: Return current frequency when frequency table is unavailable")
-url: https://github.com/intel-lab-lkp/linux/commits/Zihuan-Zhang/cpufreq-Return-current-frequency-when-frequency-table-is-unavailable/20250814-165519
-base: https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link: https://lore.kernel.org/all/20250814085216.358207-1-zhangzihuan@kylinos.cn/
-patch subject: [PATCH v1] cpufreq: Return current frequency when frequency table is unavailable
+From the kernel's perspective there is no such thing as a
+'time64 architecture', all 32-bit architectures (except x32)
+implement the time64 syscalls, most 32-bit architectures also
+have the old syscalls, and all 64-bit architectures (plus x32)
+only have the old syscalls.
 
-in testcase: xfstests
-version: xfstests-x86_64-e1e4a0ea-1_20250714
-with following parameters:
+glibc introduced a different view of the same thing, the
+internal names on some 32-bit architectures (rv32, arc) get
+redirected so they look more like x32. However, those
+architectures don't use vdso.
 
-	disk: 4HDD
-	fs: xfs
-	test: xfs-177
+> In any case, I have no strong opinions about this patch and am happy t=
+o drop it or support only SPARC64. Most likely nobody will bother to upd=
+ate glibc anyways.
 
+Agreed, I think the only real concern is maintainability here, so
+if you think it helps to have __vdso_clock_getres(), please keep
+that for sparc64, but let's leave it out for 32-bit altogether.
 
-config: x86_64-rhel-9.4-func
-compiler: gcc-12
-test machine: 4 threads Intel(R) Xeon(R) CPU E3-1225 v5 @ 3.30GHz (Skylake) with 16G memory
+Two related points:
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
+- something we could add on all 32-bit architectures after
+  everything uses the generic vdso implementation is
+  vdso_gettimeofday_time64(), this can shave off a few cycles
+  because it avoids a division that may be expensive on some
+  architectures, making it marginally more useful than
+  vdso_clock_getres_time64().
 
+- there is one catch on sparc64 in the way it defines
+  __kernel_old_timeval with a 32-bit __kernel_suseconds_t,
+  unlike all other 64-bit architectures. This is incompatible
+  with glibc's __timeval64 definition on sparc32, so there
+  would need to be a special case for sparc32 somewhere,
+  either in the kernel or in glibc.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202508180834.3b8fe9d6-lkp@intel.com
-
-2025-08-16 15:56:36 export TEST_DIR=/fs/sda1
-2025-08-16 15:56:36 export TEST_DEV=/dev/sda1
-2025-08-16 15:56:36 export FSTYP=xfs
-2025-08-16 15:56:36 export SCRATCH_MNT=/fs/scratch
-2025-08-16 15:56:36 mkdir /fs/scratch -p
-2025-08-16 15:56:36 export SCRATCH_DEV=/dev/sda4
-2025-08-16 15:56:36 export SCRATCH_LOGDEV=/dev/sda2
-2025-08-16 15:56:36 export SCRATCH_XFS_LIST_METADATA_FIELDS=u3.sfdir3.hdr.parent.i4
-2025-08-16 15:56:36 export SCRATCH_XFS_LIST_FUZZ_VERBS=random
-2025-08-16 15:56:36 echo xfs/177
-2025-08-16 15:56:36 ./check xfs/177
-FSTYP         -- xfs (non-debug)
-PLATFORM      -- Linux/x86_64 lkp-skl-d06 6.17.0-rc1-00011-g69f6747d99d0 #1 SMP PREEMPT_DYNAMIC Sat Aug 16 23:40:03 CST 2025
-MKFS_OPTIONS  -- -f /dev/sda4
-MOUNT_OPTIONS -- /dev/sda4 /fs/scratch
-
-xfs/177       - output mismatch (see /lkp/benchmarks/xfstests/results//xfs/177.out.bad)
-    --- tests/xfs/177.out	2025-07-14 17:48:52.000000000 +0000
-    +++ /lkp/benchmarks/xfstests/results//xfs/177.out.bad	2025-08-16 15:57:27.495121515 +0000
-    @@ -2,11 +2,14 @@
-     new file count is in range
-     inodes after creating files is in range
-     Round 1
-    -inodes after bulkstat is in range
-    +inodes after bulkstat has value of 4
-    +inodes after bulkstat is NOT in range 1023 .. 1033
-     inodes after expire is in range
-    ...
-    (Run 'diff -u /lkp/benchmarks/xfstests/tests/xfs/177.out /lkp/benchmarks/xfstests/results//xfs/177.out.bad'  to see the entire diff)
-
-HINT: You _MAY_ be missing kernel fix:
-      f38a032b165d xfs: fix I_DONTCACHE
-
-Ran: xfs/177
-Failures: xfs/177
-Failed 1 of 1 tests
-
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20250818/202508180834.3b8fe9d6-lkp@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+       Arnd
 
