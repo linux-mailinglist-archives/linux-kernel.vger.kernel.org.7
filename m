@@ -1,182 +1,155 @@
-Return-Path: <linux-kernel+bounces-773355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9D6B29EC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:04:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3725DB29EC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8873818A090A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:04:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AE11162AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CF831062A;
-	Mon, 18 Aug 2025 10:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975D2310626;
+	Mon, 18 Aug 2025 10:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="bUTJerPi";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="wr2h2Ieo"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A031A83F7;
-	Mon, 18 Aug 2025 10:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DMd43+nv"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23EF15573A;
+	Mon, 18 Aug 2025 10:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755511470; cv=none; b=WJBkGTX5/PpIIDE72VKCtWvT//XlE7KIB4WJ4MYjYrYnebRSZH9mtNrZbjFempsyDK2ckNdSwjiQ+HKFFKSJpPFgpHvgzz9Nf4v2bT0gK+WpkDCXu3lQz7qJyw+UZLnHNAM0IgIGKqGAMUiAezWXnWmYkky7oJBCOfEMCXxDCbg=
+	t=1755511508; cv=none; b=Jvo6unh6bVCjePRwfd8QG6SPBN7HhD/wL0wKCNE2EfxAxdntNvdmyo7mOy/2HChB+H6k579Mm3f0yQPfjmn07XMexSU9hdFzukNs20uiTE4prTBjcAFbXV4vzmTKN43itNFLv3ssMM+dVofCzHwr8kpILBblbEaPEMkOLSQ2nuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755511470; c=relaxed/simple;
-	bh=UWt7N+4RQyhLxa/8B24DwDg6beeMRBqY7R8dGE6WUXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDbxX3j82KRrEaPgVqSo3Byew7eR2U+eelHV0/CaEJ5ER7FI16U+6fAExXrC9wgOFxRMvnIsrHJb0j2WGvUTabab4Kb96nuHsst0EabU6rHeVWKDezuogI15g8/5hORvzvYsHqlUiwJb7MyRL9vE+PkCcdG/+Xy2c8EbCnsWjZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=bUTJerPi; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=wr2h2Ieo; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 9FA0C12FB458;
-	Mon, 18 Aug 2025 03:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1755511467; bh=UWt7N+4RQyhLxa/8B24DwDg6beeMRBqY7R8dGE6WUXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bUTJerPioqaY8k+zBGOi2XjjY4kTawdPV5Bv/XgJa+nWn6mffS5FoqUW61pE+PsOo
-	 f5ns+ddo9qlJORHSWUgEywbDF4OlpcNj616oGObQP3bCtUM5YXnbWzR8gLwLxVucS1
-	 Ccn38RVVYpV4BAJ014Fs973eFm/xMx/M/GlRCMtHDgY4nQIB+cKsT0fWEwAzQZ0oVh
-	 xxdqkswi+RO4Yz4w9/07BWO05Bs/2cCPnCyNZ4rZA1wuJqZbezZ/iuexuFPBBs+pG8
-	 4TXoCC0KNM9sosZqgB9lfLh31cGkIoY6z5EPG92TAst1dzlUlhXnePadW3j7SO3Z6V
-	 2DikY37PAMIHg==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id JJRSaq7kXkgL; Mon, 18 Aug 2025 03:04:24 -0700 (PDT)
-Received: from ketchup (unknown [117.171.67.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 6A54512FB42D;
-	Mon, 18 Aug 2025 03:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1755511464; bh=UWt7N+4RQyhLxa/8B24DwDg6beeMRBqY7R8dGE6WUXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wr2h2IeoUDA798Uf9bZU+Gg3cx2Bm4QG0bT76RLbm4eOlL65g48kcYKssKY99S+NJ
-	 /DwILeS4fCJXt5CbbH1hUrHKGrE+LI/TJ4FtBWZNaZpQB60+VB6wopQge7CuLK+Wqj
-	 h8FKi/csxSXf0cLoBceC56t6Muo0QzUJaQ76jB3WRa7gprf30GfB73q2+qlceYdy9N
-	 ZMnBqGqidE5dHnaqGv7bY5oL4Nv6aGZh4xapAqk1v30/PXd7qxXArFrBfKLge2SRCh
-	 ylCd5ZgTTCA7zCYFrv1L641Qg4VaTea/0YokiTG2NG69y9HXwogsSxDFJi5AIufGyk
-	 6Defpki1+nmjw==
-Date: Mon, 18 Aug 2025 10:04:18 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH v3 3/3] clk: spacemit: fix i2s clock
-Message-ID: <aKL6ormE1N72fwVG@ketchup>
-References: <20250818-k1-clk-i2s-generation-v3-0-8139b22ae709@linux.spacemit.com>
- <20250818-k1-clk-i2s-generation-v3-3-8139b22ae709@linux.spacemit.com>
+	s=arc-20240116; t=1755511508; c=relaxed/simple;
+	bh=l1KEDj31YEXYocPjGR5R8CCG6e8dn/BZexL6e906Au4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U2v0iC6KUrQZqsWFh4exASyoeqbRUOBDkswW1MOQSTHfTVG21fgOL0jPeh7gXg4Hbk4OHXvy7Jf6itTNgXsnKFG2sF3Y+YHUkVy8ihk3VHTZmeBlITp+xjKWPJnwqP4jk+3plv1h99VKJe7Ga+hkBOjDfivOxVsgLqTmv48zVpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DMd43+nv; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=awwiyH3s0NQNHsdDw497b+l067+DM4LXdYTHuIVv1cU=;
+	b=DMd43+nvcqImVbvhqh2Eh3CORxPAIEFx6XRQ6CnPrNU0umuSnWA/D2Do/IpaJr
+	7L/6t5O3wmyj8afVUQyYT9GsmycrULrVuWRrOnvmT55HTdrL/+2MRwb1hMdVa+Kv
+	UC3GIMEzsFdhkxaDdha0udI/OzBSn0t32THn0K56Wg7Xs=
+Received: from [10.42.20.201] (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD31_+o+qJoFtABCQ--.9173S2;
+	Mon, 18 Aug 2025 18:04:25 +0800 (CST)
+Message-ID: <9b3116ba-0f68-44bb-9ec9-36871fe6096e@163.com>
+Date: Mon, 18 Aug 2025 18:04:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818-k1-clk-i2s-generation-v3-3-8139b22ae709@linux.spacemit.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] mpage: terminate read-ahead on read error
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Matthew Wilcox <willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>,
+ Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>,
+ Chi Zhiling <chizhiling@kylinos.cn>
+References: <20250812072225.181798-1-chizhiling@163.com>
+ <20250817194125.921dd351332677e516cc3b53@linux-foundation.org>
+Content-Language: en-US
+From: Chi Zhiling <chizhiling@163.com>
+In-Reply-To: <20250817194125.921dd351332677e516cc3b53@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD31_+o+qJoFtABCQ--.9173S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCw1DWrWrtw1xJr15JFW8JFb_yoW5Ar4kpr
+	WFkFyktr9rJrWrZr1xJFsrJry8C3yI9a15GF93Ga47AF45WFyakryfKFW5ZayIyr97Ga1v
+	vw409FyfZF1DZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U8uciUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBaxStnWii93RePwAAsn
 
-On Mon, Aug 18, 2025 at 05:28:22PM +0800, Troy Mitchell wrote:
-> Defining i2s_bclk and i2s_sysclk as fixed-rate clocks is insufficient
-> for real I2S use cases.
+On 2025/8/18 10:41, Andrew Morton wrote:
+> On Tue, 12 Aug 2025 15:22:23 +0800 Chi Zhiling <chizhiling@163.com> wrote:
 > 
-> Moreover, the current I2S clock configuration does not work as expected
-> due to missing parent clocks.
+>> From: Chi Zhiling <chizhiling@kylinos.cn>
+>>
+>> For exFAT filesystems with 4MB read_ahead_size, removing the storage device
+>> during read operations can delay EIO error reporting by several minutes.
+>> This occurs because the read-ahead implementation in mpage doesn't handle
+>> errors.
+>>
+>> Another reason for the delay is that the filesystem requires metadata to
+>> issue file read request. When the storage device is removed, the metadata
+>> buffers are invalidated, causing mpage to repeatedly attempt to fetch
+>> metadata during each get_block call.
+>>
+>> The original purpose of this patch is terminate read ahead when we fail
+>> to get metadata, to make the patch more generic, implement it by checking
+>> folio status, instead of checking the return of get_block().
+>>
+>> ...
+>>
+>> --- a/fs/mpage.c
+>> +++ b/fs/mpage.c
+>> @@ -369,6 +369,9 @@ void mpage_readahead(struct readahead_control *rac, get_block_t get_block)
+>>   		args.folio = folio;
+>>   		args.nr_pages = readahead_count(rac);
+>>   		args.bio = do_mpage_readpage(&args);
+>> +		if (!folio_test_locked(folio) &&
+>> +		    !folio_test_uptodate(folio))
+>> +			break;
+>>   	}
+>>   	if (args.bio)
+>>   		mpage_bio_submit_read(args.bio);
 > 
-> This patch adds the missing parent clocks, defines i2s_sysclk as
-> a DDN clock, and i2s_bclk as a DIV clock.
+> So...  this is what the fs does when the device is unplugged?
+> Synchronously return an unlocked !uptodate folio?  Or is this specific
+> to FAT?
+
+It's fs behavior,
+
+AFAIK, all filesystems that use mpage will lock the folio until I/O 
+finishes or encounters an error. This avoids races like buffered writes, 
+etc. The uptodate flag being set or not depends on the I/O status.
+
+
+So, if a folio is synchronously unlocked and non-uptodate, should we 
+quit the read ahead?
+
+I think it depends on whether the error is permanent or temporary, and 
+whether further read ahead might succeed.
+
+A device being unplugged is one reason for returning such a folio, but 
+we could return it for many other reasons (e.g., metadata errors).
+
+I think most errors won't be restored in a short time, so we should quit 
+read ahead when they occur.
+
+
+Besides, IOMAP also quits read ahead when some errors are encountered in 
+iomap_begin().
+
 > 
-> A special note for i2s_bclk:
+> I think a comment here telling readers why we're doing this would be
+> helpful.  It isn't obvious that we're dealing with e removed device!
+
+okay, I will comment here.
+/*
+  * If read ahead failed synchronously, it may cause by removed device,
+  * or some filesystem metadata error.
+  */
+
 > 
-> From the definition of register, The i2s_bclk is a non-linear,
-> discrete divider clock.
+> Also, boy this is old code.  Basically akpm code from pre-git times.
+> It was quite innovative back then, but everybody who understood it has
+> since moved on,  got senile or probably died.  Oh well.
 
-No, it IS linear. It just comes with a 1/2 factor according to your code
-(I'm assuming there's a typo in the table below).
+Actually, I think this patch is safe, but I'm not sure if we should fix 
+this issue. After all, this code has existed for a long time, and it's 
+quite rare to unplug the device during a copy operation :)
 
-> In calculus and related areas, a linear function is a function whose
-> graph is a straight line, that is, a polynomial function of degree
-> zero or one. (From Wikipedia)
 
-> The following table shows the correspondence between index
-> and frequency division coefficients:
-> 
-> | index |  div  |
-> |-------|-------|
-> |   0   |   2   |
-> |   1   |   4   |
-> |   2   |   6   |
-> |   2   |   8   |
+Thanks,
+Chi Zhiling
 
-Index = 2 appears twice in the table. Is this a typo?
-
-> From a software perspective, introducing i2s_bclk_factor as the
-> parent of i2s_bclk is sufficient to address the issue.
-> 
-> The I2S-related clock registers can be found here [1].
-> 
-> Link:
-> https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-> [1]
-> 
-> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-> Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
-> Suggested-by: Haylen Chu <heylenay@4d2.org>
-> Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c    | 29 +++++++++++++++++++++++++++--
->  drivers/clk/spacemit/ccu_mix.h   |  2 +-
->  include/soc/spacemit/k1-syscon.h |  1 +
->  3 files changed, 29 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index 7155824673fb450971439873b6b6163faf48c7e5..b2c426b629a37a9901bbced26fc55c5f1b34eba5 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-
-...
-
-> + * i2s_bclk is a non-linear discrete divider clock.
-> + * Using i2s_bclk_factor as its parent simplifies software handling
-> + * and avoids dealing with the non-linear division directly.
-> + */
-
-And thus this comment is wrong and misleading. Suggest something like,
-
-	Divider of i2s_bclk always implies a 1/2 factor, which is
-	described by i2s_bclk_factor.
-
-> +CCU_DIV_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_bclk_factor), MPMU_ISCCR, 27, 2, BIT(29), 0);
-
->  static const struct clk_parent_data apb_parents[] = {
->  	CCU_PARENT_HW(pll1_d96_25p6),
-> @@ -756,6 +777,10 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
->  	[CLK_I2S_BCLK]		= &i2s_bclk.common.hw,
->  	[CLK_APB]		= &apb_clk.common.hw,
->  	[CLK_WDT_BUS]		= &wdt_bus_clk.common.hw,
-> +	[CLK_I2S_153P6]		= &i2s_153p6.common.hw,
-> +	[CLK_I2S_153P6_BASE]	= &i2s_153p6_base.common.hw,
-> +	[CLK_I2S_SYSCLK_SRC]	= &i2s_sysclk_src.common.hw,
-> +	[CLK_I2S_BCLK_FACTOR]	= &i2s_bclk_factor.common.hw,
->  };
->  
->  static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
-
-Best regards,
-Haylen Chu
 
