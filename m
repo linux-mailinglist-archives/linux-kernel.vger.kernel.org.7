@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-774613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A867B2B502
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:46:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8B2B2B50E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2254D188D27F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:45:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FB4C7A1C2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E5D2737EA;
-	Mon, 18 Aug 2025 23:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB6627BF99;
+	Mon, 18 Aug 2025 23:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lHaXPjCm"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E2/pq3f2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B25271A71
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3218D1F63CD;
+	Mon, 18 Aug 2025 23:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755560707; cv=none; b=SRx30S+sci2OERDGO2HOzPidxNOujxXjdzRD8d/E6WAA0stwKCIAwAJwDB8l1ccL6fPCE4PlCunR6xk8FMnYddoMgW3NvK2XYaERVW+mp9QV16c1OU0nqfEw6DANGxAGOIXA/J6vkrwl8aOIS7kvCk3xt2lyh26J8UzaUP7m59E=
+	t=1755560897; cv=none; b=KHlEopaTxtM+zshyBNDr5W2jugPwuC3OuV8fX5WQoihAi7fzJ29EsegX64KhnM0UutDIwmQohgwETluQL9ypPX2QehydsctpI5ghEMo5Zb5ph298tKNgcTrS/dlIhzm4La7D0C/pP3Y6bpsKn6A0jfx7hdCXjFy5WG/+KiMTbpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755560707; c=relaxed/simple;
-	bh=20GbQYSlKyvlXvDnnjkkcG80NKWGMOYxQbD0qXNg3pE=;
+	s=arc-20240116; t=1755560897; c=relaxed/simple;
+	bh=5QJHXbNfM4211hVWMn02LsMiHN+HyA2tvURmDFJHMnk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGJLCLj1ijdooFS69Zxv3g6rU80F4XqnIAsEfnU3CyxtmqVyuZbV0nTTJNnpzX8ov1Ql1WKb3v0QfKt1n6Vu9+SjGHl3il2/aJBuGGip+H42JEatMbvssfGgSlpn7PiMMwwz/AGUq92UapXJnhRtswRijNxEMW6miaJboqY0ZOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lHaXPjCm; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e56ffccadaso49471425ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755560705; x=1756165505; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tr/+srRnInstoyTTTLvFCgnYoosQgmYpeHv/fgPsY8Q=;
-        b=lHaXPjCmWqCSTJlzeQINh6keuNXZoDwfyrV4BmVDS2OgG4FoqW5wRPsaEVUVEh/0dA
-         U0DPFCZ77P6Y2cwZvz+bwFYMvApZpqmLYVhUdilEG0B/uCDJFvlXzGP8mKqO0oTf9Iwj
-         ygWP+fnrs+xNkB1+lJScsKHracnMmctTB7/srQTD3Hm71P8v/SdCOaQ4PKJ7jlJ1AdUv
-         1qhLt6RPk2yAaRHTy2d6buZ4EUW1vuPTGRDXUaxRTJ5qUdgTsj5m+kqhOqn/ZfXPnrNh
-         qFT8S1aWmBAOWmpnVxzjGYnl6U7i/SYC1VjTPH+kzlfW+R5m7ho3SPJf6U8I7hfUk980
-         EHQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755560705; x=1756165505;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tr/+srRnInstoyTTTLvFCgnYoosQgmYpeHv/fgPsY8Q=;
-        b=X02u4nc5+/C4GGC8fSY1nGkxhYDzHkiWR2Ui3lmYtRp1tZtElkveOHRnMgXnDgrqn8
-         kT1TILEJGgInGbabNg4G/5z/5aYTNTDRHnY3BYwxYOQAq0Oq452wf9YpAdBsvHSsNovG
-         QhlFdZQkRE51lKH3Wx1NlaQTSS6pPM9X1mDg7SrO5ZC4q0eg2OrxFnk1Is4GPJEjf7d2
-         bJsLDmOJJl0JUuMfDSjyG0PBRidjKPkwrqCyn9HdlFoA8MG0Hoty/wcupkO5YXtDUIZ9
-         pJOo+la9RFlHFZ0SvttZ5RhfEdNImZe3rllR1rk2edjqLr67Lj4HaVlJxeEh2y94FrBJ
-         BmVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVK7N71QYieqFZ1xazqYr/30YWD5QDJFmOMrkQoKAjqpKLtqscTLx41BP15eK1IjXkUl2WDjbPvSAFS2CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN+YG8/dnMruHlk8vo2hSkZ6DT58MkWC7eSYKmgq2ipISFiAcF
-	IdxQ1XxAZr5mIayiFk3V3Xm3X0nl6ZpTottXJht2VP2mQC4PD38WLX4e82W7sGSDyw==
-X-Gm-Gg: ASbGncvVIY5M4z6SI5vdUeWwKv3czXAdRx4JpWtT9lDj7cusQDl4e4y/++2IGyy+RI5
-	HnZUKWMw8Ytb9VYSrXKNor6Vz5OHs3T0VGgkFQg+Oivgfrt8IU+j/GV/BIVhWDsKe3o421xUMHW
-	UeTsZJzlWU/m4yMNMqOqMTJOEVmqTevII3ZBvmDUA8oAX6UHQY0HrxrG23J5jGeO8rqndf/OAwy
-	TD/nKslooWFh7UKC6Lu/iw63pdVO1VSGfAAfQCbG0rGzr3U+Y2hz8wTug+2YQYqZ4bUOa3H0pqu
-	Nm04hC3vfsd76MVf5rVVaF6se+CbbBGrPZTo/2Ub5eoB0nMdcNK2+DzH1Hb9XDWpD/T+YbhyYq6
-	uJWfJ7gtsR5EuuggyyWjqL0jcJvBtebDPtXqKQeZ3ag7t+e9fSz6xTdV+azRObxY=
-X-Google-Smtp-Source: AGHT+IFgrO8Ncrqq+4A/cmmyJGbffL5WUyP9hfiMe85kNg5r66Z0zlRCako1lOTHiPISU60//YjCvw==
-X-Received: by 2002:a05:6e02:2782:b0:3e5:4da2:93ad with SMTP id e9e14a558f8ab-3e676639feemr10482265ab.11.1755560704218;
-        Mon, 18 Aug 2025 16:45:04 -0700 (PDT)
-Received: from google.com (2.82.29.34.bc.googleusercontent.com. [34.29.82.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e58c57dsm38431015ab.4.2025.08.18.16.45.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 16:45:03 -0700 (PDT)
-Date: Mon, 18 Aug 2025 16:45:01 -0700
-From: Justin Stitt <justinstitt@google.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-hardening@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] MIPS: sni: Replace deprecated strcpy() in
- sni_console_setup()
-Message-ID: <2xo5aonnmv5wfyomeh3ju6x4m2x3akr2kcjwx3c25fxwgdgczm@v6m5gtp3apsf>
-References: <20250817183728.612012-1-thorsten.blum@linux.dev>
- <20250817183728.612012-3-thorsten.blum@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SNNIhuqWaHFAeJ+9JwODa7Xe7hZlRDoUqNXUyLBw+MB93uDE8HeSbExAtbRqQ2yvg05Jjk9tw0s97nqODMBknqv63BQ+B5UV+Rv32oGJvoqsgfa9abwOYExKUpxD6k42ZaK9RHyjX1as0foSnnIaNlxQSBm7bab8qxvdn+mNFyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E2/pq3f2; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755560896; x=1787096896;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5QJHXbNfM4211hVWMn02LsMiHN+HyA2tvURmDFJHMnk=;
+  b=E2/pq3f20kz/lBgGfReCVZgHxDk3C2kgSQ0cdlo5rQSmlzztrDjJ+1T+
+   bdX7XHT6zswXHuhGU1ZwnHIyU/cRVRb/lhPJQ2tyCxK6De9M/0sJhEi61
+   dCnX1ygAq/HW5ZmOIKkGu2Nj3T+NQBOQLZ4Weu+evybOXZK57ctQvQ0ju
+   i2CQ93KyxiK3o1CnKJcorJcTPj4L+CRLOXUUU0JORekCdFuoB4EfrfrIn
+   CDwDbeRwLw2n+BZQz2jUZrKE8PWUuwyrHKSXm43YSLbjrcr2S2Z725iuq
+   dME8ngNIkRc+DFPhGVw28uXWc2rd3vOHWyYg3FleCianN2qfumqZ9fNH+
+   g==;
+X-CSE-ConnectionGUID: c5P2Rh7IT5CZ//ceuDb6rA==
+X-CSE-MsgGUID: aeGqJKDsS6C/bGDPAgRxWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57753016"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="57753016"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 16:48:14 -0700
+X-CSE-ConnectionGUID: +pHZXG2DQViaQfHtzdVKMQ==
+X-CSE-MsgGUID: E+2tP5IsQ6esRMDfksxtvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="198715296"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 18 Aug 2025 16:48:10 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uo9Zd-000GJ9-2N;
+	Mon, 18 Aug 2025 23:47:48 +0000
+Date: Tue, 19 Aug 2025 07:46:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/3] PM/OPP: Support to match OPP based on both
+ frequency and level.
+Message-ID: <202508190712.5L4VOrmr-lkp@intel.com>
+References: <20250818-opp_pcie-v2-1-071524d98967@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,51 +91,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250817183728.612012-3-thorsten.blum@linux.dev>
+In-Reply-To: <20250818-opp_pcie-v2-1-071524d98967@oss.qualcomm.com>
 
-Hi,
+Hi Krishna,
 
-On Sun, Aug 17, 2025 at 08:37:13PM +0200, Thorsten Blum wrote:
-> strcpy() is deprecated; use strscpy() instead.
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  arch/mips/sni/setup.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/sni/setup.c b/arch/mips/sni/setup.c
-> index 03cb69937258..fc7da12284f5 100644
-> --- a/arch/mips/sni/setup.c
-> +++ b/arch/mips/sni/setup.c
-> @@ -13,6 +13,7 @@
->  #include <linux/export.h>
->  #include <linux/console.h>
->  #include <linux/screen_info.h>
-> +#include <linux/string.h>
+kernel test robot noticed the following build errors:
 
-This include isn't strictly necessary but I suppose it makes the
-dependency explicit.
+[auto build test ERROR on c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9]
 
-Reviewed-by: Justin Stitt <justinstitt@google.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-Chaitanya-Chundru/PM-OPP-Support-to-match-OPP-based-on-both-frequency-and-level/20250818-162759
+base:   c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+patch link:    https://lore.kernel.org/r/20250818-opp_pcie-v2-1-071524d98967%40oss.qualcomm.com
+patch subject: [PATCH v2 1/3] PM/OPP: Support to match OPP based on both frequency and level.
+config: parisc-allnoconfig (https://download.01.org/0day-ci/archive/20250819/202508190712.5L4VOrmr-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250819/202508190712.5L4VOrmr-lkp@intel.com/reproduce)
 
->  
->  #ifdef CONFIG_FW_ARC
->  #include <asm/fw/arc/types.h>
-> @@ -80,7 +81,7 @@ static void __init sni_console_setup(void)
->  			break;
->  		}
->  		if (baud)
-> -			strcpy(options, baud);
-> +			strscpy(options, baud);
->  		if (strncmp(cdev, "tty552", 6) == 0)
->  			add_preferred_console("ttyS", port,
->  					      baud ? options : NULL);
-> -- 
-> 2.50.1
-> 
->
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508190712.5L4VOrmr-lkp@intel.com/
 
-Thanks
-Justin
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/linux/cpufreq.h:18,
+                    from include/trace/events/power.h:8,
+                    from kernel/cpu.c:42:
+>> include/linux/pm_opp.h:297:20: warning: no previous prototype for 'dev_pm_opp_find_freq_level_exact' [-Wmissing-prototypes]
+     297 | struct dev_pm_opp *dev_pm_opp_find_freq_level_exact(struct device *dev,
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   hppa-linux-ld: kernel/sched/core.o: in function `dev_pm_opp_find_freq_level_exact':
+>> (.text+0xba4): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: kernel/sched/fair.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0x50ac): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: kernel/sched/build_policy.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0x4d44): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: kernel/sched/build_utility.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0x2b44): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: kernel/power/qos.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0x188): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: kernel/time/tick-common.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0x164): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: fs/proc/cpuinfo.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0x24): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: drivers/base/core.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0x5348): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+   hppa-linux-ld: drivers/base/syscore.o: in function `dev_pm_opp_find_freq_level_exact':
+   (.text+0xb8): multiple definition of `dev_pm_opp_find_freq_level_exact'; kernel/cpu.o:(.text+0x6a0): first defined here
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
