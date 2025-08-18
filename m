@@ -1,133 +1,274 @@
-Return-Path: <linux-kernel+bounces-772888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672D7B298E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:30:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB7CB298EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA2F3B22A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976E81896746
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD75B26A0D5;
-	Mon, 18 Aug 2025 05:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F2E26E6FF;
+	Mon, 18 Aug 2025 05:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUVEBIwQ"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IJ39ERdw"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF8B26F471
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55071DF987;
+	Mon, 18 Aug 2025 05:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755495009; cv=none; b=rFlX0SQ9M5u1Xyj1akeSMA/ZAIWviNegenahmvMTs5w8R98bJvMThHEkdxCedHOtPT6Q2duhaCUHXU+3tocOK8v/F+DJVrkcBPo0QzNnm5pxWbwqBO7RVj0b3cu98X/NtaovpPxKOqDpoxc9pDMiG7UoiJJMttX05Jf+Bxg74RQ=
+	t=1755495368; cv=none; b=K20XW88dUroj8BNr4aP7XcIZDk9ZUHdE+pCPDyS7SIYmo6FiXVK9phvHDuAMx+EHE+4Dau26MGxKs9/5yr/SjF/KWgggUAQkc1y31UFNfMTSxpGJK6b9eHFApeBtF0AFNWBpABfgEta7LiI6rysud/jMeF9NefB8EfuAOsS/+zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755495009; c=relaxed/simple;
-	bh=bxSUmziJrMUKQSakd2D2W+QeDKeos/RKqpcoLDWfOzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CSFws2AEJ+1g9Fg6pQDxN3LPBTfjQK+XLAzC6G9pTFxkqzxwrT55gragFEoKft/Oqr2TEIgs9AUC0EyG9IMg3jF6H/4+JcGXw4IRyWNWG2prkf2yg+jMUK1v7dpSSN74GlrmPM/iDSkm8z5QpeAjCgQlmCTTWlWRaF0DBzl9Hic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RUVEBIwQ; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55ce5287a47so3383114e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 22:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755495005; x=1756099805; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1BNjZ6vedifVSqfiCuk4T3yaxbR7jpS/6PUw88V836o=;
-        b=RUVEBIwQ44A0KOUjMVc878fo9y36UjGfkmhj2UR98d7zL/maJqM1mvQ/zos3bC+1M+
-         CluqgMoq0N+7t53+/yh/SinW/aQzceTB8o/FBd4Hnnki0BO3tWnlKW8n/5xK4dHyrmIV
-         WyH1nNNZEaE9Zdt7K4m33IpL/E+6yzIx02S9DGSldANYDwRUuCbQdVuK9/nDe+ZNIALB
-         r9azOiiqOVweZ6gpvZ7i0LgT+F9KU64ce4SCNGRdPNA5yUtdA7eMODKy9aA/CPf3mtiL
-         1RsQ0mMUMEtACVhZYXzI5Frs9F0NXkKPzvKk/tvAOd2fEfFjp38FOuLGiM+sA5cTEEdI
-         8Syg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755495005; x=1756099805;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1BNjZ6vedifVSqfiCuk4T3yaxbR7jpS/6PUw88V836o=;
-        b=hSuC09sB5Hrb5lXhnXR/jJqkNjD41oHZK7MrMN5k+OB++u+Z4LY9xY0VqSal/b0ZPg
-         mpygH43VhfYvLGmUJXOttBUnS/x2XMMlCdqsz3QIR30wEHsrBGktWiVWPFqOWVrUpE/v
-         0BJONowRk2K3UTOHqjmlAG+W48Dk28U6mfDPk6n+4k+NfBgWHmY4gAcW0fZpZg+8XFSx
-         7qDd1c9ZAHC1D2kNad9sxkM0UFI5PcHSITGxepKJEt+jbl1lFxlB5Zh5QUGbrxmYNWDt
-         C9orZhSaL3SDSqaUEZ8QRRRtKS3Tx9wRpVbJ07WjMPcdfwIcbO/02uhuW/xLPV6mzTrl
-         q/ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZjAuywNTEVTBis/7nj/1bHaKPCivwmLLhJwMKT+jfcJ/v3Whi8Nc8q3cOFAZVsmY8FCB4n2+2CKZor0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBNPip/Ra9psw4qXP7JvUYOcDC74GRqJXse/0MIkTgBBHLjQmJ
-	c5RrwUb/Q8tJGhZ5/8UnmsjrXlUuxb/QAwSp+1hvqjEWqCVdGm5xff8T
-X-Gm-Gg: ASbGncucr2hlZVjAxajbAB+Hk7mZJul1Ds5N4cZuflHQZcw/v3khDga9iLfLEmarKpm
-	zgn2Ew5Mb7SK1lezZgkCmQk8oojmde3eTj5p2MJCEp9tmxdIHjXVhAtt14+pWFU3/O4N9o13Klr
-	PUDS1aujMnE+qjYee8+idwiPBL8nTR3WurtiHgfdQACgVHBz8QoElRX/MOBAW2Ex1IfCqok7aU+
-	e/+QNoOupN/zK/kgx+5pEzaFsmOwNKYV/pK6QCzlLGUDQ1j0Va/ZxaLGv2520iIFSu+6Wfb1Rl4
-	Ubs3Y1+qzHelX4CzXOgI5rzMyuS3zfy7pXdVijXj9OeAXzKcNo0523xvt32eendOTO2eVKy9Ejw
-	k3iyeewd3uEG2n8TLioMMl/4znGoiindSp/ktrJJC4RfbEGGepno1vnQUNisXm9QUkzQWqi3Uqw
-	dTl5gmPvFhhYjkcw==
-X-Google-Smtp-Source: AGHT+IHyjBGAXRBpzFs35nEkMpvH61exSQ+9VdpCucsWB/0zTbhvH43rZaAZTVTM2SrXyFtSJYKMzQ==
-X-Received: by 2002:a05:6512:671b:b0:55b:95a2:d70f with SMTP id 2adb3069b0e04-55ceeadb366mr1895102e87.18.1755495005175;
-        Sun, 17 Aug 2025 22:30:05 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3cc736sm1480656e87.79.2025.08.17.22.30.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 22:30:04 -0700 (PDT)
-Message-ID: <eb3555e9-afc1-4f0f-969c-fdb66231d0b8@gmail.com>
-Date: Mon, 18 Aug 2025 08:30:03 +0300
+	s=arc-20240116; t=1755495368; c=relaxed/simple;
+	bh=31lpmXSQBLbLvXIsubVmRCNxts4TizAbzGQOWrRINLo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o84sJEkkLwV3lpUhWKDvi33bdX0WBiG7XqlVZ9UKoMG6paPuV8ZM8vSpYQC04rL6jNIX+ONZIrbLEYhodZMqjFnS+E3naGHFme5EMttqzYCcfInOOnD+2cBDzN1b1ElNuKry2dW5DwPEWes2+vT8+YtbV4HaCmcKvK/PU6ev3V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IJ39ERdw; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57I5ZbsT2585902;
+	Mon, 18 Aug 2025 00:35:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755495337;
+	bh=ZQqJLxn/uck2ZUWoChhjcCs9bxIpI9w0PlNK/2siEoQ=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=IJ39ERdw/bmMCyb6LoyfEhp83XHLt5GQ1RmUr4GyGOYmkf4+NvTL8FMpFMAb0oqEd
+	 Tdu51zKveZLvXWZB2EMLqBlnXPUy6TNTzdlPxkIG1SAZqNMrBz7WkmqdhHxTgtK0s5
+	 7+Sww05vkrrhX6fmV170nVv2rsJRx5Foh+Go9KfM=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57I5ZbUW069851
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 18 Aug 2025 00:35:37 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
+ Aug 2025 00:35:37 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.1748.24; Mon, 18 Aug
+ 2025 00:35:36 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 18 Aug 2025 00:35:36 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57I5ZZQc478080;
+	Mon, 18 Aug 2025 00:35:36 -0500
+Date: Mon, 18 Aug 2025 11:05:35 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <arm-scmi@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <sudeep.holla@arm.com>, <james.quinlan@broadcom.com>,
+        <f.fainelli@gmail.com>, <vincent.guittot@linaro.org>,
+        <quic_sibis@quicinc.com>, <dan.carpenter@linaro.org>,
+        <johan+linaro@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <quic_mdtipton@quicinc.com>
+Subject: Re: [PATCH 1/2] firmware: arm_scmi: Rework quirks framework header
+Message-ID: <20250818053535.owst4ilq2oxfgqnq@lcpd911>
+References: <20250815102736.81450-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator: bd718x7: Use kcalloc() instead of kzalloc()
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250817142327.174531-1-rongqianfeng@vivo.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250817142327.174531-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250815102736.81450-1-cristian.marussi@arm.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 17/08/2025 17:23, Qianfeng Rong wrote:
-> Replace calls of 'devm_kzalloc(dev, count * sizeof([type]), flags)'
-> with 'devm_kcalloc(dev, count, sizeof([type]), flags)' in
-> setup_feedback_loop() for safer memory allocation with built-in
-> overflow protection.
+Hi,
+
+On Aug 15, 2025 at 11:27:35 +0100, Cristian Marussi wrote:
+> Split and relocate the quirks framework header so as to be usable also by
+> SCMI Drivers and not only by the core.
+
+Could you elaborate a bit more on this reasoning? I am not fully
+convinced as to why I shouldn't just include quirks.h in the other scmi
+drivers as well?
+
+Oh or perhaps you mean to say scmi driver like scmi cpufreq / clk-scmi
+etc.. which lie outside the firmware/arm_scmi folder? If so then that's
+not coming out clearly in this patch commit message.
+
 > 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 > ---
->   drivers/regulator/bd718x7-regulator.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/firmware/arm_scmi/clock.c  |  2 +-
+>  drivers/firmware/arm_scmi/driver.c |  1 +
+>  drivers/firmware/arm_scmi/quirks.h | 33 +++-------------------
+>  include/linux/scmi_quirks.h        | 44 ++++++++++++++++++++++++++++++
+>  4 files changed, 50 insertions(+), 30 deletions(-)
+>  create mode 100644 include/linux/scmi_quirks.h
 > 
-> diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
-> index e803cc59d68a..022d98f3c32a 100644
-> --- a/drivers/regulator/bd718x7-regulator.c
-> +++ b/drivers/regulator/bd718x7-regulator.c
-> @@ -1598,7 +1598,7 @@ static int setup_feedback_loop(struct device *dev, struct device_node *np,
->   		if (desc->n_linear_ranges && desc->linear_ranges) {
->   			struct linear_range *new;
->   
-> -			new = devm_kzalloc(dev, desc->n_linear_ranges *
-> +			new = devm_kcalloc(dev, desc->n_linear_ranges,
->   					   sizeof(struct linear_range),
->   					   GFP_KERNEL);
->   			if (!new)
+> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+> index afa7981efe82..5599697de37a 100644
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+> @@ -7,11 +7,11 @@
+>  
+>  #include <linux/module.h>
+>  #include <linux/limits.h>
+> +#include <linux/scmi_quirks.h>
+>  #include <linux/sort.h>
+>  
+>  #include "protocols.h"
+>  #include "notify.h"
+> -#include "quirks.h"
+>  
+>  /* Updated only after ALL the mandatory features for that version are merged */
+>  #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30000
+> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> index bd56a877fdfc..6f5934cd3a65 100644
+> --- a/drivers/firmware/arm_scmi/driver.c
+> +++ b/drivers/firmware/arm_scmi/driver.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/processor.h>
+>  #include <linux/refcount.h>
+>  #include <linux/slab.h>
+> +#include <linux/scmi_quirks.h>
+>  #include <linux/xarray.h>
+>  
+>  #include "common.h"
+> diff --git a/drivers/firmware/arm_scmi/quirks.h b/drivers/firmware/arm_scmi/quirks.h
+> index a71fde85a527..260ae38d617b 100644
+> --- a/drivers/firmware/arm_scmi/quirks.h
+> +++ b/drivers/firmware/arm_scmi/quirks.h
+> @@ -4,49 +4,24 @@
+>   *
+>   * Copyright (C) 2025 ARM Ltd.
+>   */
+> -#ifndef _SCMI_QUIRKS_H
+> -#define _SCMI_QUIRKS_H
+> +#ifndef _SCMI_QUIRKS_INTERNAL_H
+> +#define _SCMI_QUIRKS_INTERNAL_H
 
-Thanks Qianfeng.
+Or as per your commit message wording, better to call it
+_SCMI_QUIRKS_CORE_H ?
 
-I don't think this is particularly hazardous, because the 
-n_linear_ranges is known to be small. (It's populated in this same file, 
-with a size of pre-defined array). Still, this seems like a valid change 
-to me. I know some would say we should use sizeof(*new), but I kind of 
-like the sizeof(struct linear_range).
+>  
+> -#include <linux/static_key.h>
+> +#include <linux/device.h>
+>  #include <linux/types.h>
+>  
+>  #ifdef CONFIG_ARM_SCMI_QUIRKS
+>  
+> -#define DECLARE_SCMI_QUIRK(_qn)						\
+> -	DECLARE_STATIC_KEY_FALSE(scmi_quirk_ ## _qn)
+> -
+> -/*
+> - * A helper to associate the actual code snippet to use as a quirk
+> - * named as _qn.
+> - */
+> -#define SCMI_QUIRK(_qn, _blk)						\
+> -	do {								\
+> -		if (static_branch_unlikely(&(scmi_quirk_ ## _qn)))	\
+> -			(_blk);						\
+> -	} while (0)
+> -
+>  void scmi_quirks_initialize(void);
+>  void scmi_quirks_enable(struct device *dev, const char *vend,
+>  			const char *subv, const u32 impl);
+>  
+>  #else
+>  
+> -#define DECLARE_SCMI_QUIRK(_qn)
+> -/* Force quirks compilation even when SCMI Quirks are disabled */
+> -#define SCMI_QUIRK(_qn, _blk)						\
+> -	do {								\
+> -		if (0)							\
+> -			(_blk);						\
+> -	} while (0)
+> -
+>  static inline void scmi_quirks_initialize(void) { }
+>  static inline void scmi_quirks_enable(struct device *dev, const char *vend,
+>  				      const char *sub_vend, const u32 impl) { }
+>  
+>  #endif /* CONFIG_ARM_SCMI_QUIRKS */
+>  
+> -/* Quirk delarations */
+> -DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
+> -DECLARE_SCMI_QUIRK(perf_level_get_fc_force);
+> -
+> -#endif /* _SCMI_QUIRKS_H */
+> +#endif /* _SCMI_QUIRKS_INTERNAL_H */
+> diff --git a/include/linux/scmi_quirks.h b/include/linux/scmi_quirks.h
+> new file mode 100644
+> index 000000000000..11657bd91ffc
+> --- /dev/null
+> +++ b/include/linux/scmi_quirks.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * System Control and Management Interface (SCMI) Message Protocol Quirks
+> + *
+> + * Copyright (C) 2025 ARM Ltd.
+> + */
+> +#ifndef _SCMI_QUIRKS_H
+> +#define _SCMI_QUIRKS_H
+> +
+> +#include <linux/static_key.h>
+> +#include <linux/types.h>
+> +
+> +#ifdef CONFIG_ARM_SCMI_QUIRKS
+> +
+> +#define DECLARE_SCMI_QUIRK(_qn)						\
+> +	DECLARE_STATIC_KEY_FALSE(scmi_quirk_ ## _qn)
+> +
+> +/*
+> + * A helper to associate the actual code snippet to use as a quirk
+> + * named as _qn.
+> + */
+> +#define SCMI_QUIRK(_qn, _blk)						\
+> +	do {								\
+> +		if (static_branch_unlikely(&(scmi_quirk_ ## _qn)))	\
+> +			(_blk);						\
+> +	} while (0)
+> +
+> +#else
+> +
+> +#define DECLARE_SCMI_QUIRK(_qn)
+> +/* Force quirks compilation even when SCMI Quirks are disabled */
+> +#define SCMI_QUIRK(_qn, _blk)						\
+> +	do {								\
+> +		if (0)							\
+> +			(_blk);						\
+> +	} while (0)
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Did you happen to run checkpatch on this?
+8<---------------------------------------------------------------------------
+WARNING: Argument '_qn' is not used in function-like macro
+#142: FILE: include/linux/scmi_quirks.h:32:
++#define SCMI_QUIRK(_qn, _blk)                                          \
++       do {                                                            \
++               if (0)                                                  \
++                       (_blk);                                         \
++       } while (0)
 
-Yours,
-	-- Matti
+total: 0 errors, 2 warnings, 0 checks, 116 lines checked
+--------------------------------------------------------------------------->8
+
+
+> +
+> +#endif /* CONFIG_ARM_SCMI_QUIRKS */
+> +
+> +/* Quirk delarations */
+> +DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
+> +DECLARE_SCMI_QUIRK(perf_level_get_fc_force);
+> +
+> +#endif /* _SCMI_QUIRKS_H */
+> -- 
+> 2.50.1
+> 
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
