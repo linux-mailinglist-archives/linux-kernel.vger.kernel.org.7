@@ -1,176 +1,145 @@
-Return-Path: <linux-kernel+bounces-773533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A802B2A187
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:29:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B42B2A183
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EB35170564
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AD8A188B501
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D0331B107;
-	Mon, 18 Aug 2025 12:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB149261B8C;
+	Mon, 18 Aug 2025 12:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="imPR8A/O"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4QmiyIlG"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A13326D40;
-	Mon, 18 Aug 2025 12:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AAE326D4B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755519663; cv=none; b=rsoBXKRRarTlO+upW1SDvXFavmmvLdnJAzDrYhWvxZf2Zh2IXl74PY4toPgpwSrntLe+1iiR5JEvMIUZz8GbH61v6pDva1KBhblXmRXHcjDDx5Xvo2AlNgGSE5w/WBrgt2LsdX0gYjzAoKoigJByBoCrDOzjYiwy+5/cNL0iI1c=
+	t=1755519621; cv=none; b=QJGP+6lYNiN1IspCNg0tTNG7BKsnGtzbeArEacDNLIEPpjjHRuRG95oiHrXnn2uWbcg8JOmxe31FZ0SJAsPURWnYorycq1GwAxbTTyqExT/MhgG5jvf1n5aRu703bBQSxtQNttuMWuDygyrh+56/ANCBRZliUClxSm9FbT1C4FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755519663; c=relaxed/simple;
-	bh=A8+8JTo1sCsIaH/3O1BVh4htmK/8hEKoBF4heRWvXIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Kxj0acXXFTcryWSBr1PmOy6uHzwtZL/sbphbvU+fZU+5pJXsM72uOPlG6JwDpX1lrXJzZtUZEmxppWD3pp6bsBkpeioR3tp56wyOoWxpmymPJFJmVb/9aOC/thDuJWdEEa40YVlkN6Mus0uUPzMvT/QaFsTpx4N5wMzV/uT9Ab8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=imPR8A/O; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IBGdPu032348;
-	Mon, 18 Aug 2025 14:20:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	lAMmpDtYCfkoYrqxpq6XktgA+w7f+7+MRuTH/F71Yto=; b=imPR8A/OMbS0hMQf
-	3WwZBJsZBgZ7gHblZoXzYvnYc7X/T6iczc5d+LtY0DqtQ6GASKg7Ycm0Ci6buwad
-	2BAf1kBb8ziVigu8YOjExHerj0oUQht0bmp7q+OkDCZ+z3UtTBKkhv5Ap8wOZPTp
-	p+5XhS3AHJB76arlVmnvKb6TYg0K2zoAfD/YGbEjK9dRDBInLD4zUP9aBrgFlJtu
-	82kMLF/enXswDX7n+i2gDcCNQbhorwNagtOn84ECes7jx1pkHDUxYBhcDpR9bDYL
-	FywPUFxngMRZGH2ih+3tLC+oIa46mYjzSqqdELl/4Etu40VrjIpSIGThaujVu2+6
-	iM2/8w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48jfdk6pkq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 14:20:45 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BA1D54004A;
-	Mon, 18 Aug 2025 14:19:39 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EE2BE723768;
-	Mon, 18 Aug 2025 14:18:47 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 14:18:47 +0200
-Message-ID: <c8076e56-4b5a-466c-8702-0a7a596f987e@foss.st.com>
-Date: Mon, 18 Aug 2025 14:18:44 +0200
+	s=arc-20240116; t=1755519621; c=relaxed/simple;
+	bh=cD8CE/3bhnnbXlx5QfO6l/YUWH5jZa+hBHlWEOFlU4s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MaWKo4EoT5ohNLbKys50Cl+eqNlTKdkA1zvhoY6RGViopMoVwYwe9a3a/mdEnaEFmRD3qeC4XhpJCRk9T/5/Sb9OeXLSWjhZoqW9rtgu53GY9DV56G2hKFusHY/SiJAK5u5j+aRhpBC5cBd5VdmBUVKI9RpJ9RxFwnCMgs3p+W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4QmiyIlG; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b9dc5c2c7dso2357488f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755519618; x=1756124418; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VXVEWh+UjIimvjXTo07gyoqfE3DCJt1vnCJfigFmAGs=;
+        b=4QmiyIlGrIOH1Vrmo4l+2yon7SAemGun/v7p3h5C7Y0e/XE7DprQQsABoe2v+SsQ0x
+         qtM1ObCTrn6iFvBmcsezI4bYMb6E0rYcOB5AUHlvr0fRtNUPFUW7NNdOpsTW4ZSq5OhV
+         VIpODr0JbhTJkZQbe4inUVoqU9MDFVbpPPrNOm0KadqBbjpyomMBsh8cpceJsCt32CSJ
+         znSk3TPvmzHuAmqQRo6FbDAk7+ang/2Fu6Ym5eIcNfGWVQ1fS5a2duVSIGgN8cvPd3UG
+         ZcKnGZ7h9zCC0V3oUeeVaxoLf/JkYEuSJdLSokH2uM0U0YkMveuhCAcU57WqpojuxHH5
+         HZbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755519618; x=1756124418;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VXVEWh+UjIimvjXTo07gyoqfE3DCJt1vnCJfigFmAGs=;
+        b=qx9wVMVNumyALe22vzQ7v00quEjt3w9AwoyDv/Fmj8PGvrL6Z5+LA8+/g/7xMBIGM5
+         w4nyjs034fXegXt7q9wEjTqLkq4vi2GMJ2DGSu/ykpoOLfoWdwQHAJtgfZ7OUll9maJx
+         KDCDgrsjTKGfSbR99cyw3CQxBVwpM8TOrtWS25XZako1KhUYLP4OyjHzXRotKlGDKimx
+         L8zmjWva7u0AQUyIgo93qUwxmkJVr2uahZdCYX5O1gCyar/5yCexwZ2BRhFCMMNeur11
+         uK177LS02I2SjxdBiCzmmRLVW4De3fZI8WqR0P+nHTiKeFsM2RqzkRd54nN3NTOLSRPi
+         ApWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUE/ULSeoE8MmXKRixfx16dKv7OQfEWgwBLEqfv0aO+JFZQLpcOoLjkO7ghDk6b/6q9HSen9menLRXUIuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylxCFAuovqu5QspA9LFtQQSH2u7I9Jfy/wQddZ+kCEG3Yim++Y
+	d79UB24kv4DsGgjvSVGsajqNJQ2HDFiIOeKbc9xVHPtsKZLd7DNvs1FzrfSaHpqG/Xa4B9NB+Oc
+	sYiIcJi4VFP3L0GnKGw==
+X-Google-Smtp-Source: AGHT+IEsgbrPLrIZ6y0LhI19/RSkSmWScuqCJSGurfxV+xVh2HQWIDNMmSN339uuKUPu69gmGloLDhhGrdmggRk=
+X-Received: from wrus6.prod.google.com ([2002:a5d:6a86:0:b0:3b7:9669:4858])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:430e:b0:3ba:d257:b662 with SMTP id ffacd0b85a97d-3bb6710022cmr7713380f8f.18.1755519617861;
+ Mon, 18 Aug 2025 05:20:17 -0700 (PDT)
+Date: Mon, 18 Aug 2025 12:20:16 +0000
+In-Reply-To: <DC5INTQKY0EX.1T4HD6OU8C4PI@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] PCI: stm32: use pinctrl_pm_select_init_state() in
- stm32_pcie_resume_noirq()
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linus.walleij@linaro.org>,
-        <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, kernel test robot <lkp@intel.com>
-References: <20250813190633.GA284987@bhelgaas>
-From: Christian Bruel <christian.bruel@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <20250813190633.GA284987@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+Mime-Version: 1.0
+References: <20250811213851.65644-1-christiansantoslima21@gmail.com>
+ <DC0INEKNZPSE.WLEQH24SLW1I@nvidia.com> <5204b598-7792-460b-bec2-e3a4a4c7e32d@gmail.com>
+ <DC5INTQKY0EX.1T4HD6OU8C4PI@nvidia.com>
+Message-ID: <aKMagEO9O6WNhIUK@google.com>
+Subject: Re: [PATCH v9] rust: transmute: Add methods for FromBytes trait
+From: Alice Ryhl <aliceryhl@google.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Christian <christiansantoslima21@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht, 
+	richard120310@gmail.com
+Content-Type: text/plain; charset="utf-8"
 
-
-
-On 8/13/25 21:06, Bjorn Helgaas wrote:
-> On Wed, Aug 13, 2025 at 01:53:19PM +0200, Christian Bruel wrote:
->> Replace direct access to dev->pins->init_state with the new helper
->> pinctrl_pm_select_init_state() to select the init pinctrl state.
->> This fixes build issues when CONFIG_PINCTRL is not defined.
->>
->> Depends-on: <20250813081139.93201-3-christian.bruel@foss.st.com>
->> Reported-by: Bjorn Helgaas <bhelgaas@google.com>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202506260920.bmQ9hQ9s-lkp@intel.com/
->> Fixes: 633f42f48af5 ("PCI: stm32: Add PCIe host support for STM32MP25")
->> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+On Mon, Aug 18, 2025 at 08:28:18PM +0900, Alexandre Courbot wrote:
+> On Wed Aug 13, 2025 at 3:00 AM JST, Christian wrote:
+> > Hi, Alexandre.
+> >
+> >> I mentioned it on v8 [1] and v7 [2], but the tests that break due to
+> >> this change need to be updated by this patch as well. This includes:
+> >>
+> >> * The doctests in `rust/kernel/dma.rs`,
+> >> * The `samples/rust/rust_dma.rs` sample,
+> >> * The example for `FromBytes` introduced by this patch which uses `?` without
+> >> defining a function.
+> >
+> > Sorry for my inattention, I'll fix this in the next version.
 > 
-> I can't merge 633f42f48af5 as-is because of the build issue.
+> Ah, as it turns out you might not need to.
 > 
-> Pinctrl provides stubs for the non-CONFIG_PINCTRL case; the issue is
-> that 633f42f48af5 uses dev->pins, which only exists when
-> CONFIG_PINCTRL is enabled.
+> We discussed this patch a bit during the DRM sync, and the consensus was
+> that it would probably be better to keep things a bit simpler for the
+> first version. The `FromBytesSized` trait in particular was not very
+> popular; a better long-term way to provide implementations for
+> `FromBytes` would be to use a derive macro, but that's out of scope for
+> now.
 > 
-> The possibilities I see are:
+> Instead, we agreed that the following would make a good first version:
 > 
->    1) Merge initial stm32 without suspend/resume support via PCI, merge
->       pinctrl_pm_select_init_state() via pinctrl, then add stm32
->       suspend/resume support.  pinctrl_pm_select_init_state() and stm32
->       (without suspend/resume) would appear in v6.18, and stm32
->       suspend/resume would be added in v6.19.
-> 
->    2) Temporarily #ifdef the dev->pins use.  pinctrl_pm_select_init_state()
->       and stm32 (with #ifdef) would appear in v6.18, follow-on patch to
->       replace #ifdef with pinctrl_pm_select_init_state() would appear
->       in v6.19.
->    3) Merge your [1] to add pinctrl_pm_select_init_state() via PCI with
->       Linus's ack, followed by the stm32 series with the change below
->       squashed in.  Everything would appear in v6.18.
+> - Make the `FromBytes` trait depend on `Sized`,
+> - Provide default implementations for `from_bytes` and `from_bytes_mut`
+>   directly in the `FromBytes` trait,
 
-or 4) Linus applies it in his PINCTRL branch and Mani cherry-pick it in 
-PCI. But that will be a conflict to solve when both comes to mainline.
+You can put the Sized requirement on the methods, rather than on the
+trait.
 
-Personally I prefer 3) if Linus Acks, to break the dependency
+trait FromBytes {
+    fn from_bytes(bytes: &[u8]) -> Option<&Self>
+    where
+        Self: Sized,
+    {
+        ...
+    }
+}
 
-Thank you
-
-Christian
-
+> - No implementation for slices for now,
+> - Consequently, no user code will break due to the addition of the
+>   methods, which is a big plus.
 > 
-> I'm OK with any of these.
+> The simpler version that would result from this covers all the immediate
+> use-cases and would be easier to merge, which will give us some time to
+> think about how to handle the non-sized use cases (probably via a derive
+> macro).
 > 
-> [1] https://lore.kernel.org/r/20250813081139.93201-1-christian.bruel@foss.st.com
+> Do you think you could write the next version along these lines?
 > 
->> ---
->> Changes in v1:
->>   - pinctrl_pm_select_init_state() return 0 if the state is not defined.
->>     No need to test as pinctrl_pm_select_default_state() is called.
->> ---
->>   drivers/pci/controller/dwc/pcie-stm32.c | 10 +++-------
->>   1 file changed, 3 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
->> index 50fae5f5ced2..8501b9ed0633 100644
->> --- a/drivers/pci/controller/dwc/pcie-stm32.c
->> +++ b/drivers/pci/controller/dwc/pcie-stm32.c
->> @@ -90,14 +90,10 @@ static int stm32_pcie_resume_noirq(struct device *dev)
->>   
->>   	/*
->>   	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
->> -	 * thus if no device is present, must force it low with an init pinmux
->> -	 * to be able to access the DBI registers.
->> +	 * thus if no device is present, must deassert it with a GPIO from
->> +	 * pinctrl pinmux before accessing the DBI registers.
->>   	 */
->> -	if (!IS_ERR(dev->pins->init_state))
->> -		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
->> -	else
->> -		ret = pinctrl_pm_select_default_state(dev);
->> -
->> +	ret = pinctrl_pm_select_init_state(dev);
->>   	if (ret) {
->>   		dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
->>   		return ret;
->> -- 
->> 2.34.1
->>
-
+> I feel like I misdirected you with the `FromBytesSized` trait, so please
+> accept my apologies for that.
 
