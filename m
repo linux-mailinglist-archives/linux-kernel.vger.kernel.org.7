@@ -1,153 +1,177 @@
-Return-Path: <linux-kernel+bounces-773900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6A5B2ABC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:56:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A8CB2AC01
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 300E07B52F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:54:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B21E189F392
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC7223816A;
-	Mon, 18 Aug 2025 14:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061FB23815D;
+	Mon, 18 Aug 2025 14:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGs8i5MQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlC6BW++"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6911E8836;
-	Mon, 18 Aug 2025 14:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF97F2367CD
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528979; cv=none; b=QQ8OzUkeyqkyg/ZkZfI3nmcSJyRzEBCDLL9wllw4PiOl2PHckLKjcWhaQZoia8KjN8TE7oZnW7RVctPJqgQZvaZ3rLp6fYqidW6egBAUcV8+fQx0cdYxW6mrJfRwRr9vXH6FwA9NPxUlWynVqtsAzbJsnzY5FgLejwbrhuvStRs=
+	t=1755529047; cv=none; b=jnXC1qUPyoZniH9giGkVekS5HEMzGWIqZP/24CR4kb70EQq6JcpwY+mCkH6CJ1q7FLf0KRtWGXIMm+fFT974lDAIZolYiHjoyEHWDpBRpOB84PAQwVC83DrgfzWjg5c41Pcufw4ENWtg8hmW+MgCeOm3BdIaJUmsAxeABiIqVtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528979; c=relaxed/simple;
-	bh=j79Kr2vIgsfUz//Ws0Wkm4E2WFNQVHp73NmbHApah+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FVg4X9/bMMuQbhiMRIrnoGjq1ne8LGBu5W4I/12lF9aeLuEvcxI1gN4tU/tqhNCN3BtznwsuDfB1mBX+cly6Kyl8zAY4EZ+mkV2yDswdlkctQb467uqSHTsnSn/VdbwvA6ZPmUOs1ZzLPVzwLFruElPn3kD/inLW3dj3BolNmY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGs8i5MQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05313C4CEEB;
-	Mon, 18 Aug 2025 14:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755528975;
-	bh=j79Kr2vIgsfUz//Ws0Wkm4E2WFNQVHp73NmbHApah+I=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=jGs8i5MQKoGkpsQWYGbDwSysvs8MdXQKkMylj+u+bNGtCLE6Se+fDOVma99zDVhav
-	 JAMtuBWLaMsZ8OESF4zaD9f/ZB3LBSDOFPhzWKQ0FHoDfQ4wS9N1+akhXWLAgoUAEh
-	 t/AmkDmxYE0SAz1K/PyZyKS130wA3HD1DpqvJ1JmZMgtNqn1Ar+ZzLVLy0lfCKrdCr
-	 YMPDb0SWJteThcsoFdGG6SrIEKBJwqAGCBOjLc2PevaqC7bKhSdM5HZI8sD9rDhVwI
-	 ou3xG9sBROxT/u5taSr390zi5qplu1TbTnglF5+dSsutwDtzu2w2y6ymE6bzbzWjV6
-	 mSHnRCVmTmlew==
-Message-ID: <651df530-797a-45e1-b199-917deda33222@kernel.org>
-Date: Mon, 18 Aug 2025 16:56:10 +0200
+	s=arc-20240116; t=1755529047; c=relaxed/simple;
+	bh=zM1QLTJ8d9ktsdYpqAp8azR1zWsMGreYGCU1Y7gItTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FnW6xPvlL3jULy/N4Xmph5USan4T3YgGG6E0BNeAjuKL0nInHP5YO+Y/tBthcsBtvje1V96vD5wEDP8lIXCaf46ujF2vusl8wQng0/6o/Pxf5EMkfdin7tpBpTM0Y0X8RDvgCwjXPS+9pOOtA3JlIogC/i3c08DbhH+h0OKFBBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FlC6BW++; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d60501806so36409697b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755529041; x=1756133841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W7O0UQ1pCQtHfpFhQ25ojbKTIwk2c1/Y6ODmytP6Xa8=;
+        b=FlC6BW++sY58ehg2Cz2eWAKYQ0MmNlzajhMPj7gycznmhYHAatrB2SrMTdknO2Qfrb
+         Zl6iWLr+AJa8BQKtocDfif3k827vllpIdTr5IRyKzQbjP13hWEn2iOvMZzWo9mU+ZDAn
+         i6nnWlP9VN2XvRZbRZZrZZfQ/9xm2UjqK5Jbjn4UFPAxgnH3JmLDjf4FwdYyVktRCOZP
+         1A9oPEWXa3A/sRpNGVDQOg44XF8+qmMMGEdQMyufvwi9zWNQtVLVM9jvk8lILYJJ68mL
+         +fSv6Or75vHKJ/eLT1E+Io79eaajY/ApWaoDE64/33+8fyOW9EMfCKm2s1uXVHwf0efy
+         7q/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755529041; x=1756133841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W7O0UQ1pCQtHfpFhQ25ojbKTIwk2c1/Y6ODmytP6Xa8=;
+        b=v9HByUS2EfjL4XO4I/hVotXx/VtUQRqCJAP/kSfmVejfUd6KiCruDvclsoGh2PVbS2
+         MJ11sJLliBaG04JITk8Z3dPv7a6LJZhQKzqjEbUp7KPcsaMfRqKOh7xiJInuABcs3man
+         aq1JO+fcv24uQmJ9lItjPRrEDbzBjXIqW03UjWZbD4l9j9VqXgNfKPaq2bzWUEzeneUc
+         WduBe2sj9m7bUvYY00EmDYw4rPaKKnS15TAA8aeDRPSP4PyV+pqWf5let8/U3SCoJa58
+         kqfjd2NO9UrJtaQ4kCGc/W11LQDHnm4nuaIUjSFX1Z1sVuKjvbkfsPz2LRFWCYS+/IeN
+         5Mpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGx63rlJRVWm/C1uAiHXvcLXsUc8u/AmkVEW2t3PoKzMyhIVIdsj3/XX3gLnFKBBO4dgnJBLCtHl2FEuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdMTFiDDhsQH/0pL7m1M2V/D9WgW3f2k2fH4ownvVb0vihqxaP
+	Bem/Co3UL6JWd9U7wih+gBNJK41CB6z8CcD8L1YKD0bTlS6karihpyGKzoygm/5t2wmxxDK5LMN
+	34zR4aWO/aM1aRSdZgE4ZYPwLOruRWb1FoDFqi6CiW8Ath/ufiQTd
+X-Gm-Gg: ASbGncubIklr3S6ezFwMem16auS2DcYtaoaavEzhmIggvoPvLOyQGzFy4eSh8simpzZ
+	9YI5JRBHSJkJWhtE9MaRzNNfW3CVlcMIhFWeGYlx+ouznIakmkjNwwO/7ksNbnz4uPKvo14bjd5
+	NNIXh/jW4WQCiuFCh97KqXPlKbEz+fN07hOap4scxK8QY2k3uOmD1xPJZCVr/D0MKZmoVlg+zn8
+	qsVkZSt
+X-Google-Smtp-Source: AGHT+IFrpy3Zh36/3rhDK9Yo1wKEo3VGJNpy/ovwmXZmsLaz1X1Vs5J2QxFrcBYfNMY8dyhO3nn0S7+Gkz85+LoYBJg=
+X-Received: by 2002:a05:690c:e0d:b0:71b:69fd:257b with SMTP id
+ 00721157ae682-71e7740a667mr102425067b3.0.1755529041394; Mon, 18 Aug 2025
+ 07:57:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: dts: stm32: Drop redundant status=okay
-To: Marek Vasut <marek.vasut@mailbox.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Christoph Niedermaier <cniedermaier@dh-electronics.com>,
- Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel@dh-electronics.com
-References: <20250818143730.244379-2-krzysztof.kozlowski@linaro.org>
- <388e6f81-383b-4b39-9b75-8d2cdbf95d37@mailbox.org>
- <259e72c0-b69a-42d4-aec5-ad8a6e03d416@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <259e72c0-b69a-42d4-aec5-ad8a6e03d416@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
+In-Reply-To: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 18 Aug 2025 16:56:44 +0200
+X-Gm-Features: Ac12FXzpIsw7z74y8Gp-wah-Wi-b7dV6r0hRPk1lXGPmvuoz888ocsyHK-dWIPs
+Message-ID: <CAPDyKFovFcBX+DwrVfKt_NKbWcTxk8ZOgn5ndo=fVT78Zk=qzQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] mmc: introduce multi-block read gap tuning
+To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/08/2025 16:51, Krzysztof Kozlowski wrote:
-> On 18/08/2025 16:45, Marek Vasut wrote:
->> On 8/18/25 4:37 PM, Krzysztof Kozlowski wrote:
->>> Device nodes are enabled by default, so remove confusing or duplicated
->>> enabling of few nodes.  No practical impact, verified with dtx_diff.
->> I assume the "no practical impact" means DTs are identical before/after 
->> this patch ? If yes,
-> 
-> 
-> No, DTS cannot be identical in this case because one had status, new one
-> does not have. Practical impact means... visible impact in practice. How
-> to say it more clearly?
-To illustrate: this is "no practical impact":
+On Mon, 18 Aug 2025 at 16:03, Beno=C3=AEt Monin <benoit.monin@bootlin.com> =
+wrote:
+>
+> This patchset implements the multi-block read gap tuning for the SDHCI
+> cadence driver.
+>
+> The first two patches introduce helpers to check for CMD23 support by
+> MMC card: mmc_card_can_cmd23 for support proper and mmc_card_blk_no_cmd23
+> for the NO_CMD23 quirk.
+>
+> The next two patches use the new helpers in mmc/core/mmc_test.c and
+> mmc/core/block.c.
+>
+> The next patch add mmc_read_tuning to read blocks from MMC as part of
+> the tuning. This function does not return the data read to the caller,
+> only the status of the read operation.
+>
+> Finally the last patch uses mmc_read_tuning to implement the multi-block
+> read gap tuning in the cadence host driver, by doing a multi-block read
+> and increasing the gap delay until the read succeeds.
+>
+> In the previous version of this series, mmc_read_tuning had a struct
+> mmc_card parameter and was making use of the helpers. This parameter has
+> been dropped so the last two patches are now independent of the rest of
+> the patchset.
+>
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
 
+Applied for next, thanks!
 
---- dts-old/st/stm32mp157c-dhcom-picoitx.dtb
-+++ dts-new/st/stm32mp157c-dhcom-picoitx.dtb
-@@ -691,14 +691,12 @@
- 					interrupt-controller;
- 					interrupts-extended = <0x49 0x00
- 					reg = <0x33>;
--					status = "okay";
+Kind regards
+Uffe
 
-
-But this would be a practical impact:
-
-
-@@ -1124,7 +1121,7 @@
- 					dmas = <0x26 0x59 0x400 0x01>;
- 					phandle = <0x39>;
- 					reg = <0x04 0x20>;
--					status = "okay";
-+					status = "disabled";
-
-
-Best regards,
-Krzysztof
+> ---
+> Changes in v4:
+> - Dropped the card parameter of mmc_read_tuning.
+> - Updated the last patch following the review of Adrian.
+> - Link to v3: https://lore.kernel.org/r/20250716-mobileye-emmc-for-upstre=
+am-4-v3-0-dc979d8edef0@bootlin.com
+>
+> Changes in v3:
+> - Move the changes related to CMD23 support by MMC card to separate
+>   patches at the beginning of the series.
+> - Change the mmc read function to be less appealing to reuse/abuse
+>   outside of tuning context.
+> - Link to v2: https://lore.kernel.org/linux-mmc/cover.1751898225.git.beno=
+it.monin@bootlin.com/
+>
+> Changes in v2:
+> - Split the code between the core and the driver by adding a generic
+>   function to read blocks from the MMC.
+> - Link to v1: https://lore.kernel.org/linux-mmc/2a43386ffef4012530ca2421a=
+d81ad21c36c8a25.1750943549.git.benoit.monin@bootlin.com/
+>
+> ---
+> Beno=C3=AEt Monin (6):
+>       mmc: core: add mmc_card_can_cmd23
+>       mmc: card: add mmc_card_blk_no_cmd23
+>       mmc: mmc_test: use mmc_card cmd23 helpers
+>       mmc: block: use mmc_card cmd23 helpers
+>       mmc: core: add mmc_read_tuning
+>       mmc: sdhci-cadence: implement multi-block read gap tuning
+>
+>  drivers/mmc/core/block.c         | 12 ++-----
+>  drivers/mmc/core/card.h          |  9 +++--
+>  drivers/mmc/core/core.c          |  9 +++++
+>  drivers/mmc/core/core.h          |  1 +
+>  drivers/mmc/core/mmc_ops.c       | 72 ++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/mmc/core/mmc_test.c      | 10 ++----
+>  drivers/mmc/host/sdhci-cadence.c | 63 ++++++++++++++++++++++++++++++++++=
+-
+>  include/linux/mmc/host.h         |  1 +
+>  8 files changed, 157 insertions(+), 20 deletions(-)
+> ---
+> base-commit: 8936497143de1da7958178d57db6011eceeb14a8
+> change-id: 20250716-mobileye-emmc-for-upstream-4-40ef552c3b59
+>
+> Best regards,
+> --
+> Beno=C3=AEt Monin, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+>
 
