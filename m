@@ -1,136 +1,107 @@
-Return-Path: <linux-kernel+bounces-774208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C51DB2AFE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:03:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6E1B2AFED
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF7C81B2532B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:04:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA697ACADD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52C226E6F3;
-	Mon, 18 Aug 2025 18:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C449226F443;
+	Mon, 18 Aug 2025 18:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEln5zqR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TR7pTsKC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E9D25F7A7;
-	Mon, 18 Aug 2025 18:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C7A258ED7;
+	Mon, 18 Aug 2025 18:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755540214; cv=none; b=pfX+O8UpEDHaKpnMZ9JaV2x7hi5NHu2t4blazUa2AVO1ltaGR/cpavnF5fMV+hBhDWSDf1Z1Zi5Ie3V/nfUeEW0EfvrK1cDNu6rBIj0MI9zslEJNerZsbzns2DyjlcWdBN4D4SY+d0E+1Cq4OxU+NE3f8/OevG6ZVLKFLqSt4RA=
+	t=1755540245; cv=none; b=FuFx1IuF6BQqO4WiKOIeLYtp2WazFoPmlASQxdgkrmXwc92Q+fdzmPyYNp3q+e3hxpH1x8GFZa+fk0tadsqreSMutW+hA1nULDWeM77CWS1+MkAwK/yNyGuhDYe1W+Cx7JE3qLrSOAVfoY5hmQHr8XVA7KSvTaNpCQiaQjZvufk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755540214; c=relaxed/simple;
-	bh=GvblV5SwQz9OeRdLWPDs8JbZ/Ug/XvPqiWwCMhLT2pE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TP8h+rRP0C4x1F93RSMsdW8A3kAKX+89tse6YsEGtuoPenitkXEVVVFhSH60SBDOoO8TmqMCJOMkh4cKOifgioOkTW0arIXEb2KOL6mJ3JdwzeyqUdfwOgpTTMHOBNIYviC25zph1/UiSVjjZO5X4E9ixo1DYWxRhBfNyLlJ5sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEln5zqR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A09CC4CEEB;
-	Mon, 18 Aug 2025 18:03:30 +0000 (UTC)
+	s=arc-20240116; t=1755540245; c=relaxed/simple;
+	bh=uh386kcAciOXGh7Qn4qCjKbKDm8DUQdvzybYZgQVinU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A71f4rMTJd6hklX++dROjOirBnt1pQCDs4gCRLI1+fJhrY/wXKFs8Cs4aPzH9qZNIROZdGHm6py+YZnUGxSx935wTgfXyeNCgwIABaUNf34vJqJ9eop6hHvTJkvbYiRmV3iCspO+qr68PrZ8et1S86HCEldJ1qnQTLvSJxEDan0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TR7pTsKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE81C4CEEB;
+	Mon, 18 Aug 2025 18:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755540213;
-	bh=GvblV5SwQz9OeRdLWPDs8JbZ/Ug/XvPqiWwCMhLT2pE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NEln5zqRZNfaSyLeaLVBRHjJctLwbcOzfnWAS9yI5MVs3EdSvWLtJE1x0ThllOyzL
-	 ZSOkmWk6Fy8JVVwnvqoAgAqhjaChlZqUsjo2cZqrQM/z2jUrv5Kp/cBxYXOTlYkqQB
-	 ctCt7O2U/ivg3J+u42UEq5UbW2GFx+B3pzNLD15tbA7jADEJVaEFaSkPc46uABiWJo
-	 OhnIBire7BzNl+YiQuW+kd1TjC4BxVzEcybsk3O7KOzcCjXQI06AhGsuaLWSgVebqT
-	 e+69ldA8w8yx+lEGW7s9JolWQnQtnv1QCeC/h4oqxQEOR8dTr0eMHh4H54W53u+eyf
-	 IrRIohc3OhYMw==
-Date: Mon, 18 Aug 2025 19:03:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ben Collins <bcollins@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Ben Collins
- <bcollins@watter.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] iio: mcp9600: Recognize chip id for mcp9601
-Message-ID: <20250818190325.23fd310c@jic23-huawei>
-In-Reply-To: <20250818035953.35216-4-bcollins@kernel.org>
-References: <20250818035953.35216-1-bcollins@kernel.org>
-	<20250818035953.35216-4-bcollins@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1755540244;
+	bh=uh386kcAciOXGh7Qn4qCjKbKDm8DUQdvzybYZgQVinU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TR7pTsKCNgQ+2AsLDRAyavDlal3rJmYGxuQWHQA1fzM4dx+fsJCU8xOoJM8WiAS0C
+	 SqcFe+lUwdB6pHRjpkgcWwhGh8PZ3MVnzeVXZuXe2i+7503ATSyw4nnkQ7VyYJpLxC
+	 62ZzhVBDZHoDknqwQMeN74Fe4oYCYOemu6rC12SIxC31A5TTSe+Qt38WvKgX+V8pPB
+	 Dbxpg80JtguE5xzvpnm53CXjDr5P5oiVE+tSkMShQ1ASwfchsXVpRkm+FkQZvVJMNN
+	 ucYdvSeBoeTgOAnJ6xLfQdVxVL7bYrXuve1k2eyyEbMGGorD3STrvLaTEU93u35ih2
+	 COnglGAtWDknw==
+From: Will Deacon <will@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH 0/2] Fix vsock error-handling regression introduced in v6.17-rc1
+Date: Mon, 18 Aug 2025 19:03:53 +0100
+Message-Id: <20250818180355.29275-1-will@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 17 Aug 2025 23:59:51 -0400
-Ben Collins <bcollins@kernel.org> wrote:
+Hi all,
 
-> From: Ben Collins <bcollins@watter.com>
-> 
-> The current driver works with mcp9601, but emits a warning because it
-> does not recognize the chip id.
-> 
-> MCP9601 is a superset of MCP9600. The drivers works without changes
-> on this chipset.
-> 
-> However, the 9601 chip supports open/closed-circuit detection if wired
-> properly, so we'll need to be able to differentiate between them.
-> 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
+Here are a couple of patches fixing the vsock error-handling regression
+found by syzbot [1] that I introduced during the recent merge window.
 
-Hi Ben
+Cheers,
 
-One minor thing inline that need fixing up.
+Will
 
-> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-> index 40906bb200ec9..54de38a39292e 100644
-> --- a/drivers/iio/temperature/mcp9600.c
-> +++ b/drivers/iio/temperature/mcp9600.c
-> @@ -42,6 +42,7 @@
+[1] https://lore.kernel.org/all/689a3d92.050a0220.7f033.00ff.GAE@google.com/
 
-> @@ -416,16 +422,33 @@ static int mcp9600_probe_alerts(struct iio_dev *indio_dev)
->  
->  static int mcp9600_probe(struct i2c_client *client)
->  {
-> +	const struct mcp_chip_info *chip_info = i2c_get_match_data(client);
->  	struct iio_dev *indio_dev;
->  	struct mcp9600_data *data;
-> -	int ret, ch_sel;
-> +	int ch_sel, dev_id, ret;
-> +
-> +	if (chip_info == NULL)
-> +		return dev_err_probe(&client->dev, -EINVAL,
-> +                                     "No chip-info found for device\n");
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Hillf Danton <hdanton@sina.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>
 
-This line seems to be indented with spaces, not tabs then spaces which
-is the coding style. I only noticed because of the shift seen in this reply.
+--->8
 
+Will Deacon (2):
+  net: Introduce skb_copy_datagram_from_iter_full()
+  vsock/virtio: Fix message iterator handling on transmit path
 
+ include/linux/skbuff.h                  |  2 ++
+ net/core/datagram.c                     | 14 ++++++++++++++
+ net/vmw_vsock/virtio_transport_common.c |  8 +++++---
+ 3 files changed, 21 insertions(+), 3 deletions(-)
 
-> +
-> +	dev_id = i2c_smbus_read_byte_data(client, MCP9600_DEVICE_ID);
-> +	if (dev_id < 0)
-> +		return dev_err_probe(&client->dev, dev_id,
-> +				     "Failed to read device ID\n");
-> +
-> +	switch (dev_id) {
-> +	case MCP9600_DEVICE_ID_MCP9600:
-> +	case MCP9600_DEVICE_ID_MCP9601:
-> +		if (dev_id != chip_info->chip_id)
-> +			dev_warn(&client->dev,
-> +				 "Expected id %02x, but device responded with %02x\n",
-> +				 chip_info->chip_id, dev_id);
-> +		break;
->  
-> -	ret = i2c_smbus_read_byte_data(client, MCP9600_DEVICE_ID);
-> -	if (ret < 0)
-> -		return dev_err_probe(&client->dev, ret, "Failed to read device ID\n");
-> -	if (ret != MCP9600_DEVICE_ID_MCP9600)
-> -		dev_warn(&client->dev, "Expected ID %x, got %x\n",
-> -				MCP9600_DEVICE_ID_MCP9600, ret);
-> +	default:
-> +		dev_warn(&client->dev, "Unknown id %x, using %x\n", dev_id,
-> +			 chip_info->chip_id);
-> +	}
+-- 
+2.51.0.rc1.167.g924127e9c0-goog
 
 
