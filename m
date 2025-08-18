@@ -1,35 +1,36 @@
-Return-Path: <linux-kernel+bounces-773347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F23B29EA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:00:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D201EB29EA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7264E2B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:00:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB334E39F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D43310633;
-	Mon, 18 Aug 2025 10:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F3A310761;
+	Mon, 18 Aug 2025 10:00:29 +0000 (UTC)
 Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4C73101CC;
-	Mon, 18 Aug 2025 10:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC9121CC49;
+	Mon, 18 Aug 2025 10:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755511227; cv=none; b=KE41M0fIm/3MqUU8G5Xh690QNurkeitfBMUvk7ppgSOKyKfLzCf8YwJNZWbH6gMI5C/xto12YpSIKRt9kP6+YZJIo8p7lF6c+nVzdQeWZnKaMoSL7uT2igU0fTTKUOq5RhpJtk/W6H9Y99VrAbg+4GByF6zUNh7t5wSTXmqxGZ0=
+	t=1755511228; cv=none; b=HLrPkHw8GYH4QZMyng8G2TJThDu6hapK1N68lgjVNkeIraR5wXfRK6kmSLYva59WmLt6V8mM1t70A7644JkJMV6DcKQtFRokC53UASpFrT+SVnLXdc5o8rlYUkxm0YCOMMZvNRekGlasIhQzcllDPHgqvfjMZi2uloVEY3ZVtQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755511227; c=relaxed/simple;
-	bh=jxVKyxAjf9HWYFNSKIZVKMYd59Fj2HC/k7Bjp0ZX1l0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ko93VYg+OkCusd2TLBcFfwUr0FJ2cPHESfRzdRC8p32Fcgvq7Yn0VD9IzjL2xx+pyzZcFGp16ftqdREno9K2t89dfX29Qy6VfVzViIBCdkJ6wC0X9A6c+JAgPRU1ADTz74aUO5khtRxWVqpBW9N2sb7/3KJJnwD3KuUEOtcAm1o=
+	s=arc-20240116; t=1755511228; c=relaxed/simple;
+	bh=2NxO0Gc3+LC1yksxA/fojlVlxNxTP7hES0U6g0mu7B0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MuVPZdcZ3Qn1dZp4BBJfWbk33infmEhofdJp7HNpnpiOJfTeqfX7J7MIhdlTDoMra36BiG4/blzR6iIEMwIPwVVcOR0yry8BO9F7wMCfJXNr1jzgEoaXCQAOWnThQNXVSs5MdtU+/8Dmyor2EHsli9IWfdyTddLMsO4kJ4bq/XY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
 Received: from localhost.localdomain (unknown [119.122.213.154])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1fbaa9cfa;
-	Mon, 18 Aug 2025 18:00:14 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1fbaa9cfe;
+	Mon, 18 Aug 2025 18:00:16 +0800 (GMT+08:00)
 From: Chukun Pan <amadeus@jmu.edu.cn>
 To: Heiko Stuebner <heiko@sntech.de>
 Cc: Chukun Pan <amadeus@jmu.edu.cn>,
@@ -40,10 +41,12 @@ Cc: Chukun Pan <amadeus@jmu.edu.cn>,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 0/4] arm64: dts: rockchip: Add HINLINK H66K/H68K
-Date: Mon, 18 Aug 2025 18:00:05 +0800
-Message-Id: <20250818100009.170202-1-amadeus@jmu.edu.cn>
+Subject: [PATCH 1/4] dt-bindings: vendor-prefixes: Add HINLINK
+Date: Mon, 18 Aug 2025 18:00:06 +0800
+Message-Id: <20250818100009.170202-2-amadeus@jmu.edu.cn>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250818100009.170202-1-amadeus@jmu.edu.cn>
+References: <20250818100009.170202-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,54 +54,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98bc9f502103a2kunm3d9619f636a214
+X-HM-Tid: 0a98bc9f57fe03a2kunm3d9619f636a237
 X-HM-MType: 10
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTUlJVhlOSxhJQ0lNGhlJGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVKTk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVU
-	tZBg++
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQ0xMVh9MH05LGkwYGhpITFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVKTk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVU
+	pCS0tZBg++
 
-The HINLINK H66K and H68K are development boards with the Rockchip
-RK3568 SoC. These boards are all SoM plus expansion board structures.
+Add vendor prefix for HINLINK, which is an SBC manufacturer.
 
-Both boards can be booted from eMMC or SD-card using the
-U-Boot 2025.07 generic-rk3568 target.
+Link: https://www.hinlink.cn/
+Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The SoM board has CPU, RAM, eMMC and RK809 PMIC.
-There is no schematic for this part.
-
-The rest of the schematic can be found here:
-https://www.hinlink.cn/wp-content/uploads/2024/03/20250329151432672651.pdf
-https://files.seeedstudio.com/wiki/LinkStar_V2/H68K_V2_Schematic.pdf
-
-It should be noted that there is a version of SeeedStudio called
-LinkStar H68K, which is different from HINLINK H68K only in the shell.
-
-The HINLINK H68K has two versions distinguished by the shell, and there
-is no actual difference. This series is tested on H68K and H68K-V2.
-
-difference |      H66K/H68K    |  H66K/H68K-V2
-           | 1x USB 3.0 Type-A | 1x USB 3.0 Type-A
-    USB    | 2x USB 2.0 Type-A | 1x USB 2.0 Type-A
-           |                   | 1x USB 2.0 (M.2 slot)
-
-Chukun Pan (4):
-  dt-bindings: vendor-prefixes: Add HINLINK
-  dt-bindings: arm: rockchip: Add HINLINK H66K / H68K
-  arm64: dts: rockchip: Add HINLINK H68K
-  arm64: dts: rockchip: Add HINLINK H66K
-
- .../devicetree/bindings/arm/rockchip.yaml     |   7 +
- .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
- arch/arm64/boot/dts/rockchip/Makefile         |   2 +
- .../boot/dts/rockchip/rk3568-hinlink-h66k.dts |  10 +
- .../boot/dts/rockchip/rk3568-hinlink-h68k.dts |  83 +++
- .../boot/dts/rockchip/rk3568-hinlink-opc.dtsi | 666 ++++++++++++++++++
- 6 files changed, 770 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-hinlink-h66k.dts
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-hinlink-h68k.dts
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-hinlink-opc.dtsi
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index a92261b10c52..7ce1970d3125 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -648,6 +648,8 @@ patternProperties:
+     description: HiDeep Inc.
+   "^himax,.*":
+     description: Himax Technologies, Inc.
++  "^hinlink,.*":
++    description: Shenzhen HINLINK Technology Co., Ltd.
+   "^hirschmann,.*":
+     description: Hirschmann Automation and Control GmbH
+   "^hisi,.*":
 -- 
 2.25.1
 
