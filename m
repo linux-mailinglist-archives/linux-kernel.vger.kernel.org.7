@@ -1,238 +1,132 @@
-Return-Path: <linux-kernel+bounces-773668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C864EB2A4F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:28:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12431B2A514
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF681895567
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:19:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAB45676E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44A03375DF;
-	Mon, 18 Aug 2025 13:15:43 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F11258EE6;
+	Mon, 18 Aug 2025 13:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R1aBZ/u6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vdbA64m9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920A93375AE;
-	Mon, 18 Aug 2025 13:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58C522A7E0
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522943; cv=none; b=hcY1VoLUSap1f9qBHNDHZEDRaCwepgnUq0kxAn18KTuopqJGmEsd6nzs5b4ZOSiELTLDa0UzY5BKRUM+ctJ5N2kMT6xN081HD91zfvxCP1Wcc73uBJwaymcffO3z3CiW2V+hlsuYnuL5oYZ/+CyIj53pn5qPenbsbEp3qDh7HPg=
+	t=1755523020; cv=none; b=dyAdIjELduheTJ/FVWTx0ya7gDvhHETLETBmyjiaPjtMi+6Z3Ds3NnOen83B4N41s5LIAKPCVljLcmGpzBhkKPDp3vA9bq/lPDuy1vgrI46LeIfGmMVL1l8ZhRX42oUZ3vhd6wi84n28+uSCRoKrScOdDxhE/KSqwJO1x1e4VMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522943; c=relaxed/simple;
-	bh=eZGvUeGw+fPtc8+ouIsGvEN/exUL+cRr1q5bKRNvYOQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rRyXl7fOSfU+sZ7XeH8gz0s61w+qFYe/J1ClmU1DDvGqZs0uikVCl5PITrJgZhzGdeR5miZFYmzqTZGqq5Usf8AqGsgRiLJpbVEZDZzXCd02XOtfm4UqebWfyAvuDVqbmNTvqDPKIq7dlf06PXXm58XyLIUgB4dFGO5I0pVqPm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-50f88cd722bso1178721137.1;
-        Mon, 18 Aug 2025 06:15:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755522940; x=1756127740;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k5pJEjXNDPDJzPITNSF2Cy+agebN0/imHucjVPw+eAg=;
-        b=BY/x+Rn12+a1dzjvYeklyW0VyleNK5roGK8gU5QB+rLvWB1AMNS90V/N12HCGzyyMG
-         YWkIV8fQ0mpGRlifZFFrqwLaiy9+aor/pxv20HB8RY3eXCEO1OErrB4wMexDvaLUVYYZ
-         esYi3b9igvTF49VN0z64Iio7QULEDrgm0EtPPIo0YcFhasTyyt59IgIIuoDtfm9y9dWC
-         OpudjC3A0KgcQpvvGtsk+4sHjdWTKRNVWQEy5k/8PcA5qKCdXiPyVWJZ+uuz8YyFDZd8
-         xTHgwgo4rLgD7n7MDpz6frS/MI9mVKbd7kHkaxMbO4TrmF+IJlWNAP42d2AijshyYivF
-         72zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaExJbtIFeNpvVU6ivbg4QNKbpem1BH0EmkllvdTC60ldha6g5+1TDemuAE9fHf48QZLp6l9AJJzmG@vger.kernel.org, AJvYcCXe7tS1sRxjJQqT/4kxKWpvVwleL7xs5Tr82i0ad0K0d+uOc3Rf0q+6N8E6x1L+1qOSOs8YUhoVKcrScZCq@vger.kernel.org, AJvYcCXtLAYGwM/tV94sOsBhR/tUqqSJXaqtEHu6WDEWC+wDUnIXPQK9Z3C8cGh3IpGAOIVdnpJNChaMnvY0XgtCM8aUitA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaalGR9JhZwR1aZ9fCCSvqmYgkT8he4DHxtWv98P3WKcSA4US1
-	tcfvf4Rl+BC6Y/heepvOhAUVP99VFGlQcZc9WjUuXgnEBCXY3wDv1c3eZcls0s3+
-X-Gm-Gg: ASbGncuNQiBuum78fUbT2zkolbpzFSCqTmx7kb1iR8bIN6+0j7mivsKcOJXeM2vt/iF
-	8sM5U+0rfzCnwjaJE8KFkzkU4jQVti8bUmyEgFKfadjRNLmKrGVI3e4Ly4BEDGI7uhR1TY+d2qc
-	ELIsfa94L16ZU2qoc5wzmyblzZKfeiMJ8Jv1eXj6Sx94dTW4SNhxEyzoB+2TIAZVjuCA0oa11Zv
-	CCG1CHVepVVMC94M7xecmNG5xTYQj9ZHI2l5tsLA4m0YLbV3r2fg3aYAxhe1D7eE0Lt5ZJ1Cmeb
-	R4kJF8pomaFPiUHePpOSriGzrYOTMNewhhJzHjnBeEWlVsowX6Bo0SjUwaOPTkzuYdWaTM7NACB
-	n4PyoqFHRs8ncPsG0KzYVUYMh41R43vJv3xbEnld33kq1jM6b4JMQg8VvB5u2
-X-Google-Smtp-Source: AGHT+IEL/I13AxSgETqSfXM8k+ZAf1L6zU8Qw4hF4wk5UA+zAhxTyB+K6nDu48cEjZ2lboh7yrybVg==
-X-Received: by 2002:a05:6102:dce:b0:518:9c6a:2c01 with SMTP id ada2fe7eead31-5189c6a33afmr136483137.28.1755522939811;
-        Mon, 18 Aug 2025 06:15:39 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-890277e2c70sm1751311241.6.2025.08.18.06.15.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 06:15:39 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-89018fa6f6dso1204634241.1;
-        Mon, 18 Aug 2025 06:15:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVwQx+47AJPElmZ91UbXuiRJ/WM3rQd6nW9mlutGANHt+4Powy0FRyb5CrIZcdqFOHrEBnV1DYgbEaP@vger.kernel.org, AJvYcCWunSkNYNIQMo9FbVEp2j8emZ6yHZedgac1s+cKthlXmt1KnyntO+A0pUsAnNFqo4MskNsHSrjuNmqZ9+tt@vger.kernel.org, AJvYcCX9PWEoAyHvt7tJIU4w2gsnJrmfFVhXBo4n/qr2ERZDw5HkDPblRxu9u5dGQi955LmUBIsqYyYCgswmSkuAgNr8AZY=@vger.kernel.org
-X-Received: by 2002:a05:6102:1627:b0:4e6:ddd0:96f7 with SMTP id
- ada2fe7eead31-5126cd388e8mr4319794137.13.1755522939084; Mon, 18 Aug 2025
- 06:15:39 -0700 (PDT)
+	s=arc-20240116; t=1755523020; c=relaxed/simple;
+	bh=4VsFzLn7yeppnxl0zFHdA8oC6di4rKpKDVwU1k1yYXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/HJvcDztE+nnZjHs/Mh8NNCg15nk2EBNWlme8DopjO/6cSabyQX5BW2Ddlszgp6xHhMItKFdyyFncifYieirgOGZzk+lQcvbub/H34dIlIsa9YO9abfkp6TmQkwUD8p4FQCVakUwL+UNpvQyBmerjj6uKQYqPssd815FTYjETc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R1aBZ/u6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vdbA64m9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Aug 2025 15:16:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755523016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5oGxlUxlwRzA7Te+PJK2UytkyniCrG3aVV5ezy6MYdM=;
+	b=R1aBZ/u6xA0E35B6RWc2ozIJ6OKPf5RUyQLfzC61Rh1HoyKrgjVfniuIwT8ZW73d32i5n0
+	MRxAsKsQrDWeEKXMHXrmFC+3g2au36m8l947CXOb3IjQ+HQUzaOJWGriCq4OTHc9MSuvMB
+	RM+nEBI3Zocskcmf2+k01VYMuZg4xquMinLCReOIaBNJ5mqm0qiygLTuLApBIpE28qA6gW
+	WbjIXstqNKZzKgZoMTJygH0HMO1bgSMWGrFt9V0RiKDaJvAnVGCDCL10qJvkHfxb/mGVTH
+	ycfEpPMxXjWPtUyPq8j5wEYR5LHb4s1Zt0BoBtMFfwrgcSG7aMRPQ/PudAAl6A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755523016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5oGxlUxlwRzA7Te+PJK2UytkyniCrG3aVV5ezy6MYdM=;
+	b=vdbA64m9Wig62jxQDvgZScddHzGZZdDQIpuqh3lQ2k9s+LrT/hKQSxCevpBPHuItnhzCef
+	IGnvOFwkXHd0jfBQ==
+From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+	"kprateek.nayak@amd.com" <kprateek.nayak@amd.com>,
+	"vineethr@linux.ibm.com" <vineethr@linux.ibm.com>
+Subject: Re: [PATCH V7 02/11] sched: Indicate if thread got rescheduled
+Message-ID: <20250818131655.1FybFuR4@linutronix.de>
+References: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
+ <20250724161625.2360309-3-prakash.sangappa@oracle.com>
+ <87a54bcmd7.ffs@tglx>
+ <BF199244-10DF-4B84-99AF-DDA125F775E4@oracle.com>
+ <87o6smb3a0.ffs@tglx>
+ <20250813161927.CFYHxNIv@linutronix.de>
+ <87jz376tzj.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250812200344.3253781-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 15:15:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVi26AXwQJDtxSp8hSsmZ1Lx4_GYFsbtmq_gxJyddkqTg@mail.gmail.com>
-X-Gm-Features: Ac12FXyX3G3j02_gxxBGNzChIx62VgPdJgiJgMtXXMqM8tO2f3w3kfm4CppbZcU
-Message-ID: <CAMuHMdVi26AXwQJDtxSp8hSsmZ1Lx4_GYFsbtmq_gxJyddkqTg@mail.gmail.com>
-Subject: Re: [PATCH 05/13] arm64: dts: renesas: r9a09g077m44-rzt2h-evk: Add
- user LEDs
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87jz376tzj.ffs@tglx>
 
-Hi Prabhakar,
+On 2025-08-13 18:56:16 [+0200], Thomas Gleixner wrote:
+> On Wed, Aug 13 2025 at 18:19, bigeasy@linutronix.de wrote:
+> > I spent some time on the review. I tried to test it but for some reason
+> > userland always segfaults. This is not subject to your changes because
+> > param_test (from tools/testing/selftests/rseq) also segfaults. Also on a
+> > Debian v6.12. So this must be something else and maybe glibc related.
+> 
+> Hrm. I did not run the rseq tests. I only used the test I wrote, but
+> that works and the underlying glibc uses rseq too, but I might have
+> screwed up there. As I said it's POC. I'm about to send out the polished
+> version, which survive the selftests nicely :)
 
-Thanks for your patch!
+It was not your code. Everything exploded here. Am right to assume that
+you had a recent/ current Debian Trixie environment testing? My guess is
+that glibc or gcc got out of sync. 
 
-On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add USER LED0-LED8, which are available on RZ/T2H EVK.
+> > gcc has __atomic_fetch_and() and __atomic_fetch_or() provided as
+> > built-ins.
+> > There is atomic_fetch_and_explicit() and atomic_fetch_or_explicit()
+> > provided by <stdatomic.h>. Mostly the same magic.
+> >
+> > If you use this like
+> > |  static inline int test_and_clear_bit(unsigned long *ptr, unsigned int bit)
+> > |  {
+> > |          return __atomic_fetch_and(ptr, ~(1 << bit), __ATOMIC_RELAXED) & (1 << bit);
+> > |  }
+> >
+> > the gcc will emit btr. Sadly the lock prefix will be there, too. On the
+> > plus side you would have logic for every architecture.
+> 
+> I know, but the whole point is to avoid the LOCK prefix because it's not
+> necessary in this context and slows things down. The only requirement is
+> CPU local atomicity vs. an interrupt/exception/NMI or whatever the CPU
+> uses to mess things up. You need LOCK if you have cross CPU concurrency,
+> which is not the case here. The LOCK is very measurable when you use
+> this pattern with a high frequency and that's what the people who long
+> for this do :)
 
-According to the schematics, only the first four are user LEDs?
+Sure. You can keep it on x86 and use the generic one in the else case
+rather than abort with an error.
+Looking at arch___test_and_clear_bit() in the kernel, there is x86 with
+its custom implementation. s390 points to generic___test_and_clear_bit()
+which is a surprise. alpha's and sh's isn't atomic so this does not look
+right. hexagon and m68k might okay and a candidate.
 
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Thanks,
+> 
+>         tglx
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-> @@ -7,10 +7,61 @@
->
->  /dts-v1/;
->
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
-> +
->  #include "r9a09g077m44.dtsi"
->  #include "rzt2h-n2h-evk-common.dtsi"
->
->  / {
->         model = "Renesas RZ/T2H EVK Board based on r9a09g077m44";
->         compatible = "renesas,rzt2h-evk", "renesas,r9a09g077m44", "renesas,r9a09g077";
-> +
-> +       leds {
-> +               compatible = "gpio-leds";
-> +
-> +               led0 {
-
-led-0
-
-Cfr. Documentation/devicetree/bindings/leds/leds-gpio.yaml:
-
-    # The first form is preferred, but fall back to just 'led' anywhere in the
-    # node name to at least catch some child nodes.
-    "(^led-[0-9a-f]$|led)":
-
-> +                       /* SW8-9: ON, SW8-10: OFF */
-> +                       gpios = <&pinctrl RZT2H_GPIO(23, 1) GPIO_ACTIVE_LOW>;
-
-color = <LED_COLOR_ID_GREEN>;
-function = LED_FUNCTION_DEBUG;
-function-enumerator = <0>;
-
-> +               };
-> +
-> +               led1 {
-> +                       /* SW5-1: OFF, SW5-2: ON */
-> +                       gpios = <&pinctrl RZT2H_GPIO(32, 2) GPIO_ACTIVE_LOW>;
-
-color = <LED_COLOR_ID_GREEN>;
-function = LED_FUNCTION_DEBUG;
-function-enumerator = <1>;
-
-> +               };
-> +
-> +               led2 {
-> +                       gpios = <&pinctrl RZT2H_GPIO(6, 7) GPIO_ACTIVE_LOW>;
-
-color = <LED_COLOR_ID_YELLOW>;
-function = LED_FUNCTION_DEBUG;
-function-enumerator = <2>;
-
-> +               };
-> +
-> +               led3 {
-> +                       /* SW2-3: OFF */
-> +                       gpios = <&pinctrl RZT2H_GPIO(8, 5) GPIO_ACTIVE_LOW>;
-
-color = <LED_COLOR_ID_RED>;
-function = LED_FUNCTION_DEBUG;
-function-enumerator = <3>;
-
-> +               };
-> +
-> +               led4 {
-> +                       /* SW8-3: ON, SW8-4: OFF */
-> +                       gpios = <&pinctrl RZT2H_GPIO(18, 0) GPIO_ACTIVE_LOW>;
-
-Schematics say "run", so perhaps LED_FUNCTION_ACTIVITY?
-
-    color = <LED_COLOR_ID_GREEN>;
-    function = LED_FUNCTION_ACTIVITY;
-
-> +               };
-> +
-> +               led5 {
-> +                       /* SW8-1: ON, SW8-2: OFF */
-> +                       gpios = <&pinctrl RZT2H_GPIO(18, 1) GPIO_ACTIVE_LOW>;
-
-Schematics say "error", so
-
-    color = <LED_COLOR_ID_RED>;
-    function = LED_FUNCTION_FAULT;
-
-> +               };
-> +
-> +               led6 {
-> +                       /* SW5-9: OFF, SW5-10: ON */
-> +                       gpios = <&pinctrl RZT2H_GPIO(22, 7) GPIO_ACTIVE_LOW>;
-
-Schematics says Ether-Cat link-activity, so LED_FUNCTION_LAN?
-
-    color = <LED_COLOR_ID_GREEN>;
-    function = LED_FUNCTION_LAN;
-    function-enumerator = <0>;
-
-> +               };
-> +
-> +               led7 {
-> +                       /* SW5-7: OFF, SW5-8: ON */
-> +                       gpios = <&pinctrl RZT2H_GPIO(23, 0) GPIO_ACTIVE_LOW>;
-
-color = <LED_COLOR_ID_GREEN>;
-function = LED_FUNCTION_LAN;
-function-enumerator = <1>;
-
-> +               };
-> +
-> +               led8 {
-> +                       /* SW7-5: OFF, SW7-6: ON */
-> +                       gpios = <&pinctrl RZT2H_GPIO(23, 5) GPIO_ACTIVE_LOW>;
-
-color = <LED_COLOR_ID_GREEN>;
-function = LED_FUNCTION_LAN;
-function-enumerator = <2>;
-
-> +               };
-> +       };
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sebastian
 
