@@ -1,284 +1,92 @@
-Return-Path: <linux-kernel+bounces-773684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7342DB2A592
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:35:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71EBCB2A522
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80AB718A5ECF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:26:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEEC37BF4DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9F733A000;
-	Mon, 18 Aug 2025 13:19:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C347F322A28;
-	Mon, 18 Aug 2025 13:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDD433A032;
+	Mon, 18 Aug 2025 13:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j092JZBx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2D9322773;
+	Mon, 18 Aug 2025 13:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755523198; cv=none; b=Y9K/oCZbtMRJPrXP5QhBeER27LUogU+F8Hor8Qfg7qsRcjHTe4AVMbffzxSFhs63j7D/K5mD8r6nfVgXjv7Orsi+q5D+5gMdxlKWX4pX9aRXHPmwpIm5axe5Z936bCe5LcLhyHFr/IlDRhPRhQ3oLfnbTj1UHjvvf/TPXgzjP7Y=
+	t=1755523201; cv=none; b=lC+RFCZkLfKiSBRBw+4UOVyg3eDOr8akbbiS75yMZtU8+xc4xP8mAke89e2Prq6cSl/dQUhg6kxswy/R1HMHILD7dRrQ9eM2xnrE8vpiawIRIQTR6opFTcgUkj6rGkYeA+ZgQnj0YoFR7IjGrzxsZwimP6SYVOwsxW/Np/OZe6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755523198; c=relaxed/simple;
-	bh=93ilWYv2pvnna99x75PdQXPZeAiucpWd/yIZ274yqrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNUTaOXNpmrZGYBvZ6K8TqTidDXTomDXb1bG9c1jTqJH0DDkdrVpU2C6pf1eAbNK7ULoP7unldUQfKf5xhhpLCoTdFTgXR1RrOwH69len9n+WdF+sTV89zbTo0gZXZ5nkG+Yw7zyPfb6ZFE5Y2AMXq8VrIViXWdUZOXlU0rK84M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A393A1596;
-	Mon, 18 Aug 2025 06:19:47 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D98FA3F738;
-	Mon, 18 Aug 2025 06:19:51 -0700 (PDT)
-Date: Mon, 18 Aug 2025 14:19:43 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-pm@vger.kernel.org,
-	sudeep.holla@arm.com, james.quinlan@broadcom.com,
-	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	quic_sibis@quicinc.com, dan.carpenter@linaro.org,
-	johan+linaro@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
-	quic_mdtipton@quicinc.com
-Subject: Re: [PATCH 1/2] firmware: arm_scmi: Rework quirks framework header
-Message-ID: <aKMob3SLE8AofNHw@pluto>
-References: <20250815102736.81450-1-cristian.marussi@arm.com>
- <20250818053535.owst4ilq2oxfgqnq@lcpd911>
+	s=arc-20240116; t=1755523201; c=relaxed/simple;
+	bh=DhrOBJkN/7ySaXw7u8RU2aOH47D+rwxpR5UFDr7scHQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JrQCQdPKExx7tOl+zzGztzj1UDrpORQQ2shv6jWCdfdvXgM4609asrBm4tAoXJKKEmZYa/AJ5cTKVe/2lp5iHmhJyTuTOWNfsWRbmX3gbFTJQ7UI5UX2gh3ZWNiAHshjQek/mqLJiJLSZ2/tD+Fme0P1TUb8tfA4tuGjVDTqEbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j092JZBx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85F5CC4CEEB;
+	Mon, 18 Aug 2025 13:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755523201;
+	bh=DhrOBJkN/7ySaXw7u8RU2aOH47D+rwxpR5UFDr7scHQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=j092JZBxJjtAsM1fSGc4TPOd5EwqaBj+p/xjr8tjL3/idh+gHDWeAWraFsoP6LRzo
+	 ZGiDD+BX+rviAXjl73jX+k9uvwLLc05D0ldhZc+Dc+60SkSCkFhq9T6hAi4Ad07Uz5
+	 ZH/mPoFDfK0pbGRJzvMou58dB8KJaKO68zjbBqezuDkd6+/2k5DAMQSUkpk2uah0mO
+	 xhOPg4bTrkiKD00KWmvcvLAPLaAe0idirp+AmjJoM/M5/1MzTEwQXA52Pt+xFYWziB
+	 mfU7Wav7Lcw+NwRYiaoK4ORGgAnf/haQ8iha5KmkY5iHwP466cwYQzLyE2ail7krfi
+	 dQ2hm8tseUuTA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD9C383BF4E;
+	Mon, 18 Aug 2025 13:20:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818053535.owst4ilq2oxfgqnq@lcpd911>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v2] bpf: Replace get_next_cpu() with
+ cpumask_next_wrap()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175552321149.2749470.18443459435706702983.git-patchwork-notify@kernel.org>
+Date: Mon, 18 Aug 2025 13:20:11 +0000
+References: <20250818032344.23229-1-wangfushuai@baidu.com>
+In-Reply-To: <20250818032344.23229-1-wangfushuai@baidu.com>
+To: Fushuai Wang <wangfushuai@baidu.com>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, martin.lau@linux.dev,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com,
+ song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
 
-On Mon, Aug 18, 2025 at 11:05:35AM +0530, Dhruva Gole wrote:
-> Hi,
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
+
+On Mon, 18 Aug 2025 11:23:44 +0800 you wrote:
+> The get_next_cpu() function was only used in one place to find
+> the next possible CPU, which can be replaced by cpumask_next_wrap().
 > 
-> On Aug 15, 2025 at 11:27:35 +0100, Cristian Marussi wrote:
+> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> ---
+>  kernel/bpf/bpf_lru_list.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 
-Ho Dhruva,
+Here is the summary with links:
+  - [bpf-next,v2] bpf: Replace get_next_cpu() with cpumask_next_wrap()
+    https://git.kernel.org/bpf/bpf-next/c/d87fdb1f27d7
 
-> > Split and relocate the quirks framework header so as to be usable also by
-> > SCMI Drivers and not only by the core.
-> 
-> Could you elaborate a bit more on this reasoning? I am not fully
-> convinced as to why I shouldn't just include quirks.h in the other scmi
-> drivers as well?
-> 
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-You can include quirks.h directly BUT you will have to use an ugly
 
-	#include ../drivers/firmware/arm_scmi/quirks.h
-
-...AND also you will endup exposing a couple of internal functions used
-by the quirk framework like:
-
-void scmi_quirks_initialize(void);                                               
-void scmi_quirks_enable(struct device *dev, const char *vend,                    
-                        const char *subv, const u32 impl);  
-
-..so I split out the interface needed for quirking and relocated the
-file to include/quirks
-	
-> Oh or perhaps you mean to say scmi driver like scmi cpufreq / clk-scmi
-> etc.. which lie outside the firmware/arm_scmi folder? If so then that's
-> not coming out clearly in this patch commit message.
-
-Yes when I say SCMI drivers I mean general drivers that use the SCMI
-stack BUT that are not part of the SCMI core....basically those drivers
-that use the API in include/linux/scmi_protocol.h
-
-Anyway...it seems like the only user of quirks in the SCMI drivers has
-just disappeared...so maybe this small patch can just wait...
-
-> 
-> > 
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > ---
-> >  drivers/firmware/arm_scmi/clock.c  |  2 +-
-> >  drivers/firmware/arm_scmi/driver.c |  1 +
-> >  drivers/firmware/arm_scmi/quirks.h | 33 +++-------------------
-> >  include/linux/scmi_quirks.h        | 44 ++++++++++++++++++++++++++++++
-> >  4 files changed, 50 insertions(+), 30 deletions(-)
-> >  create mode 100644 include/linux/scmi_quirks.h
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> > index afa7981efe82..5599697de37a 100644
-> > --- a/drivers/firmware/arm_scmi/clock.c
-> > +++ b/drivers/firmware/arm_scmi/clock.c
-> > @@ -7,11 +7,11 @@
-> >  
-> >  #include <linux/module.h>
-> >  #include <linux/limits.h>
-> > +#include <linux/scmi_quirks.h>
-> >  #include <linux/sort.h>
-> >  
-> >  #include "protocols.h"
-> >  #include "notify.h"
-> > -#include "quirks.h"
-> >  
-> >  /* Updated only after ALL the mandatory features for that version are merged */
-> >  #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30000
-> > diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> > index bd56a877fdfc..6f5934cd3a65 100644
-> > --- a/drivers/firmware/arm_scmi/driver.c
-> > +++ b/drivers/firmware/arm_scmi/driver.c
-> > @@ -34,6 +34,7 @@
-> >  #include <linux/processor.h>
-> >  #include <linux/refcount.h>
-> >  #include <linux/slab.h>
-> > +#include <linux/scmi_quirks.h>
-> >  #include <linux/xarray.h>
-> >  
-> >  #include "common.h"
-> > diff --git a/drivers/firmware/arm_scmi/quirks.h b/drivers/firmware/arm_scmi/quirks.h
-> > index a71fde85a527..260ae38d617b 100644
-> > --- a/drivers/firmware/arm_scmi/quirks.h
-> > +++ b/drivers/firmware/arm_scmi/quirks.h
-> > @@ -4,49 +4,24 @@
-> >   *
-> >   * Copyright (C) 2025 ARM Ltd.
-> >   */
-> > -#ifndef _SCMI_QUIRKS_H
-> > -#define _SCMI_QUIRKS_H
-> > +#ifndef _SCMI_QUIRKS_INTERNAL_H
-> > +#define _SCMI_QUIRKS_INTERNAL_H
-> 
-> Or as per your commit message wording, better to call it
-> _SCMI_QUIRKS_CORE_H ?
-> 
-
-...well mayeb yes....I have not bother to change the filename
-anyway ....
-
-> >  
-> > -#include <linux/static_key.h>
-> > +#include <linux/device.h>
-> >  #include <linux/types.h>
-> >  
-> >  #ifdef CONFIG_ARM_SCMI_QUIRKS
-> >  
-> > -#define DECLARE_SCMI_QUIRK(_qn)						\
-> > -	DECLARE_STATIC_KEY_FALSE(scmi_quirk_ ## _qn)
-> > -
-> > -/*
-> > - * A helper to associate the actual code snippet to use as a quirk
-> > - * named as _qn.
-> > - */
-> > -#define SCMI_QUIRK(_qn, _blk)						\
-> > -	do {								\
-> > -		if (static_branch_unlikely(&(scmi_quirk_ ## _qn)))	\
-> > -			(_blk);						\
-> > -	} while (0)
-> > -
-> >  void scmi_quirks_initialize(void);
-> >  void scmi_quirks_enable(struct device *dev, const char *vend,
-> >  			const char *subv, const u32 impl);
-> >  
-> >  #else
-> >  
-> > -#define DECLARE_SCMI_QUIRK(_qn)
-> > -/* Force quirks compilation even when SCMI Quirks are disabled */
-> > -#define SCMI_QUIRK(_qn, _blk)						\
-> > -	do {								\
-> > -		if (0)							\
-> > -			(_blk);						\
-> > -	} while (0)
-> > -
-> >  static inline void scmi_quirks_initialize(void) { }
-> >  static inline void scmi_quirks_enable(struct device *dev, const char *vend,
-> >  				      const char *sub_vend, const u32 impl) { }
-> >  
-> >  #endif /* CONFIG_ARM_SCMI_QUIRKS */
-> >  
-> > -/* Quirk delarations */
-> > -DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
-> > -DECLARE_SCMI_QUIRK(perf_level_get_fc_force);
-> > -
-> > -#endif /* _SCMI_QUIRKS_H */
-> > +#endif /* _SCMI_QUIRKS_INTERNAL_H */
-> > diff --git a/include/linux/scmi_quirks.h b/include/linux/scmi_quirks.h
-> > new file mode 100644
-> > index 000000000000..11657bd91ffc
-> > --- /dev/null
-> > +++ b/include/linux/scmi_quirks.h
-> > @@ -0,0 +1,44 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * System Control and Management Interface (SCMI) Message Protocol Quirks
-> > + *
-> > + * Copyright (C) 2025 ARM Ltd.
-> > + */
-> > +#ifndef _SCMI_QUIRKS_H
-> > +#define _SCMI_QUIRKS_H
-> > +
-> > +#include <linux/static_key.h>
-> > +#include <linux/types.h>
-> > +
-> > +#ifdef CONFIG_ARM_SCMI_QUIRKS
-> > +
-> > +#define DECLARE_SCMI_QUIRK(_qn)						\
-> > +	DECLARE_STATIC_KEY_FALSE(scmi_quirk_ ## _qn)
-> > +
-> > +/*
-> > + * A helper to associate the actual code snippet to use as a quirk
-> > + * named as _qn.
-> > + */
-> > +#define SCMI_QUIRK(_qn, _blk)						\
-> > +	do {								\
-> > +		if (static_branch_unlikely(&(scmi_quirk_ ## _qn)))	\
-> > +			(_blk);						\
-> > +	} while (0)
-> > +
-> > +#else
-> > +
-> > +#define DECLARE_SCMI_QUIRK(_qn)
-> > +/* Force quirks compilation even when SCMI Quirks are disabled */
-> > +#define SCMI_QUIRK(_qn, _blk)						\
-> > +	do {								\
-> > +		if (0)							\
-> > +			(_blk);						\
-> > +	} while (0)
-> 
-> Did you happen to run checkpatch on this?
-> 8<---------------------------------------------------------------------------
-> WARNING: Argument '_qn' is not used in function-like macro
-> #142: FILE: include/linux/scmi_quirks.h:32:
-> +#define SCMI_QUIRK(_qn, _blk)                                          \
-> +       do {                                                            \
-> +               if (0)                                                  \
-> +                       (_blk);                                         \
-> +       } while (0)
-> 
-> total: 0 errors, 2 warnings, 0 checks, 116 lines checked
-> --------------------------------------------------------------------------->8
->
-
-Oh yes I did on all the series...BUT this specific error on this branch
-of the #if was already present in the original patch that added the
-Quirk framework...I did not know how to avoid this warning and given it
-is pretty much harmless I just ignored it...
-
-> 
-> > +
-> > +#endif /* CONFIG_ARM_SCMI_QUIRKS */
-> > +
-> > +/* Quirk delarations */
-> > +DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
-> > +DECLARE_SCMI_QUIRK(perf_level_get_fc_force);
-> > +
-> > +#endif /* _SCMI_QUIRKS_H */
-> > -- 
-> > 2.50.1
-> > 
-> 
-
-Thanks for the review.
-Cristian
 
