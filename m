@@ -1,177 +1,95 @@
-Return-Path: <linux-kernel+bounces-773030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9469B29AA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:16:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BECB29A9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C17E188A29C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24B3204F08
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B0C27A916;
-	Mon, 18 Aug 2025 07:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D5F279DBC;
+	Mon, 18 Aug 2025 07:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i8zs/TIP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EED2797AC;
-	Mon, 18 Aug 2025 07:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CVaR7okJ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6055127978B;
+	Mon, 18 Aug 2025 07:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755501249; cv=none; b=OE8U91s2lqTtWa7LpZQ8k6mZJi/+URUyKABQbMCFuzQ6p2nPXt/y28nA6ShZiBAI+pNfoWrRMf/Lxyq1vqlYh/wLuyexEHVYEnREm6/mA7JvVAmx6niBCxaY7FE5+lw8ni1oBCuk4USxYtNknC3Uv+UG/Gojp2KtZShisouqd0E=
+	t=1755501248; cv=none; b=f8UH0zjqfHOnyCu6Cu8/aimoS0ynasMlwu0eqif6ogPvqONa5/RmDr3GMAp9zMAo/hLi2HjHE2uc0p5zZbRzjxnoGYdTuNnpdMzgxDf2Q/mZULhc0oJKlM9/x+xKORusEQQstLjZFiAQfS3pHb9bJyEUrvRpUSMtcyJmIym5OLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755501249; c=relaxed/simple;
-	bh=vOJ2GKotCBT/sq8+HRU47E6S57fE3G/dySeV4dTwl84=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y35Qw80JauCP4xJO8BEam3M7zIu7I1OuJiEZ1I13eSJ293jYOdRFeXqhAJ4gbg3JS554xcq87Qfr6HUgkLdi+6vUha0E1OOXp3Fz84jYWdKHayVwkplmgBncSnToMqdCITXJ0Dkvo7999nFB9tQ6tS7kKOSW7WCBVDDeVuxUH1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i8zs/TIP; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755501248; x=1787037248;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vOJ2GKotCBT/sq8+HRU47E6S57fE3G/dySeV4dTwl84=;
-  b=i8zs/TIPdhRaNQN7ZZdo2VlSB5mQKK5YSIajCUT3h8ic3XMpk5NJ/dmh
-   b8EawX0jSDpr4clL4/5Ezo4QELrvToWc9EbnPMztFbOnmfUCNg8+aA8lp
-   wzYbX5fIgFEfxQfgNpEioWXUvPsV4MKrG+Xd6q+LMBYXrZChZ5ztAneV4
-   pUZmhdwq180xcmsPVQOWQ9IatXUzMsXmjMeP92dOfUyASyB+j6sI3ZNYO
-   MnZwok8PCU9+nQAl8mWUeXqmVUUxjb30TFzqALNpG7FC9dgM42948cpyY
-   S2CLIN9pm00qodu/JMX9yFryJTYe4iUFoSUhj3KGMpkeEdYY3IIaMxXlz
-   A==;
-X-CSE-ConnectionGUID: Kr2ieCaIQMehbLYlJYGq5A==
-X-CSE-MsgGUID: WrIOB6XwSi+BDAVwh7lrxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68809430"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="68809430"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:14:08 -0700
-X-CSE-ConnectionGUID: kbfNj9XkRE28MbyAYqbmAQ==
-X-CSE-MsgGUID: Hqj9i+zuSzu6hOtocH/xUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="167421532"
-Received: from opintica-mobl1 (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.245.174])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:52 -0700
-From: Elena Reshetova <elena.reshetova@intel.com>
-To: dave.hansen@intel.com
-Cc: jarkko@kernel.org,
-	seanjc@google.com,
-	kai.huang@intel.com,
-	mingo@kernel.org,
-	linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com,
-	chongc@google.com,
-	erdemaktas@google.com,
-	vannapurve@google.com,
-	bondarn@google.com,
-	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v15 5/5] x86/sgx: Enable automatic SVN updates for SGX enclaves
-Date: Mon, 18 Aug 2025 10:11:23 +0300
-Message-ID: <20250818071304.1717183-6-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250818071304.1717183-1-elena.reshetova@intel.com>
-References: <20250818071304.1717183-1-elena.reshetova@intel.com>
+	s=arc-20240116; t=1755501248; c=relaxed/simple;
+	bh=FGb4UwrWywcSB3tZNn9tiihK3YGb6MlCyHl4JcBhygU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S0AAs9jByvwEiABQLLR+9Awvwq2ArtkKLv7bfGFREqdtRrE172IPrZXAd00Egp4FzMST5ySWYEEhaVAq4tchabXPLhXKThfICuEWbEGkSXWz+ybE5l39HAAjMXu5vP4pXCbxV+ZOPCVB33PYBqeSbAnIhS517KzXZPcXk8gcca4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CVaR7okJ; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Z2
+	UmjGkjZM9k3ZI8mTUmtYKnE0zL9Lra6xvHugeaaZM=; b=CVaR7okJb8tw5dkJDr
+	gOnXn93hkI6DNo+cgTBs3pinNF0W8K5AX2lZD2vOLOXL5H6d4KMlMhVEfd6w24/C
+	f9uZQyC1F8odtgu5QeHKF2IvmqoyQjIrSOgFK7Ks4YxMJAnLSb8s8ITJv8y5l5Bn
+	gif5m9fETKBDOYzD1HOVwJ92g=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBHFEie0qJoYZ87CQ--.18753S2;
+	Mon, 18 Aug 2025 15:13:35 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3] net: af_packet: Use hrtimer to do the retire operation
+Date: Mon, 18 Aug 2025 15:13:34 +0800
+Message-Id: <20250818071334.240913-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBHFEie0qJoYZ87CQ--.18753S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XF17Ww1xKFyUXr1fCw4UArb_yoWDCrgE9r
+	yDZF1jkw43GF4fGF43Gr43XrW3tFWUta45GayrArn2gryUZFZrCFs09ryDCa1rGa1vkasI
+	kFWDXrW7Gw12gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU10zutUUUUU==
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibgOtCmiizdOAJAAAs6
 
-== Background ==
+On Sun, 2025-08-17 at 21:28 +0800, Willem wrote:
 
-ENCLS[EUPDATESVN] is a new SGX instruction [1] which allows enclave
-attestation to include information about updated microcode SVN without a
-reboot. Before an EUPDATESVN operation can be successful, all SGX memory
-(aka. EPC) must be marked as “unused” in the SGX hardware metadata
-(aka.EPCM). This requirement ensures that no compromised enclave can
-survive the EUPDATESVN procedure and provides an opportunity to generate
-new cryptographic assets.
+> Here we cannot use hrtimer_add_expires for the same reason you gave in
+> the second version of the patch:
+> 
+> > Additionally, I think we cannot avoid using ktime_get, as the retire
+> > timeout for each block is not fixed. When there are a lot of network packets,
+> > a block can retire quickly, and if we do not re-fetch the time, the timeout
+> > duration may be set incorrectly.
+> 
+> Is that right?
+> 
+> Otherwise patch LGTM.
 
-== Solution ==
 
-Attempt to execute ENCLS[EUPDATESVN] every time the first file descriptor
-is obtained via sgx_(vepc_)open(). In the most common case the microcode
-SVN is already up-to-date, and the operation succeeds without updating SVN.
+Dear Willem,
 
-Note: while in such cases the underlying crypto assets are regenerated, it
-does not affect enclaves' visible keys obtained via EGETKEY instruction.
+While reviewing the code, I suddenly realized that previously I used 
+hrtimer_set_expires instead of hrtimer_forward_now to resolve the situation when
+handling the retire timer timeout while run into prb_open_block simultaneously.
+However, since there is now a distinction with the bool start variable in PATCH v4,
+it seems that we no longer need to use hrtimer_set_expires and can directly use
+hrtimer_forward_now instead. Therefore, I plan to make this change immediately and
+resend PATCH v4. Please take a look at it then.
 
-If it fails with any other error code than SGX_INSUFFICIENT_ENTROPY, this
-is considered unexpected and the *open() returns an error. This should not
-happen in practice.
-
-On contrary, SGX_INSUFFICIENT_ENTROPY might happen due to a pressure on the
-system's DRNG (RDSEED) and therefore the *open() can be safely retried to
-allow normal enclave operation.
-
-[1] Runtime Microcode Updates with Intel Software Guard Extensions,
-https://cdrdv2.intel.com/v1/dl/getContent/648682
-
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index ffc7b9496218..3eda7e7942e6 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -934,7 +934,7 @@ static int sgx_usage_count;
-  * *             entropy in RNG
-  * * %-EIO:    - Unexpected error, retries are not advisable
-  */
--static int __maybe_unused sgx_update_svn(void)
-+static int sgx_update_svn(void)
- {
- 	int ret;
- 
-@@ -992,14 +992,30 @@ static int __maybe_unused sgx_update_svn(void)
- 	return -EIO;
- }
- 
-+/* Mutex to ensure no concurrent EPC accesses during EUPDATESVN */
-+static DEFINE_MUTEX(sgx_svn_lock);
-+
- int sgx_inc_usage_count(void)
- {
-+	int ret;
-+
-+	guard(mutex)(&sgx_svn_lock);
-+
-+	if (!sgx_usage_count) {
-+		ret = sgx_update_svn();
-+		if (ret)
-+			return ret;
-+	}
-+
-+	sgx_usage_count++;
-+
- 	return 0;
- }
- 
- void sgx_dec_usage_count(void)
- {
--	return;
-+	guard(mutex)(&sgx_svn_lock);
-+	sgx_usage_count--;
- }
- 
- static int __init sgx_init(void)
--- 
-2.45.2
+Thanks
+Xin Zhao
 
 
