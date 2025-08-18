@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-774010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBA6B2AD8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:58:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BE4B2ADB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433781899A86
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708373BA356
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB2D32A3F7;
-	Mon, 18 Aug 2025 15:58:23 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86143375BC;
+	Mon, 18 Aug 2025 15:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ln4dXllP"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512B3322DC7;
-	Mon, 18 Aug 2025 15:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3572732A3F6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755532703; cv=none; b=TLeNwBR8xOPxh6gCsMtfo9yk+iMTclqyP04SnwUloveDD5CNF+o5Ak0QzrnbrN3f/dLwEfOdlM29mz2s5CH4RvUkQ3nfvygFyP1XsB/Vwq9waBvAmXznMhdegpRO+ym49jAdobedZPapb+IQMfVP2/kkZsCUkcl3VSF+pKSPBIo=
+	t=1755532747; cv=none; b=CwdJPPPJIsYQ0SOU5Tc1k+8U9x+dUQggr9GfAmeZ1NREQk8o1lmS2nokjZjhw72rWzqdZ3BqI17thVrnQih1ATnH2Zggu3K+w6lXPkMPMVImmn5AIZw084+iOnEUhGIN2ef6jvWOZQ+tDT55k+saGpwJFNi7TFv+BMNjy4ztLDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755532703; c=relaxed/simple;
-	bh=gBgvK3cn0huJsQKSbW38IqRZtFyWLdP/JwK2uEp2NWA=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Z6kFgiLfLFmSxES8X9fB+SzBHvd0ECBYPhh6UDfDXyd3f8si31mBw6akjBKyz+2dACTCDMu1FfVw1Eq9nP+c14NTxiz4r0moCrP7lCvnLI4vruL/fqVQgVgwLH8CztSL8jZMphVRacFolXwwJsiQQP7i4Ugc2ZERg2rIFxPocT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c5HR12QZJzqVXQ;
-	Mon, 18 Aug 2025 23:57:17 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9215D180B66;
-	Mon, 18 Aug 2025 23:58:16 +0800 (CST)
-Received: from [10.174.178.247] (10.174.178.247) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 23:58:15 +0800
-Subject: Re: [PATCH] ACPI: APEI: EINJ: Check if user asked for EINJV2
- injection
-To: Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki"
-	<rafael.j.wysocki@intel.com>
-CC: Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>, Len Brown
-	<lenb@kernel.org>, Zaid Alali <zaidal@os.amperecomputing.com>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>, "Lai, Yi1" <yi1.lai@intel.com>
-References: <20250814161706.4489-1-tony.luck@intel.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <230e2659-7838-2165-4490-3b3f89cb7838@huawei.com>
-Date: Mon, 18 Aug 2025 23:58:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+	s=arc-20240116; t=1755532747; c=relaxed/simple;
+	bh=bDgAox1aA/1Z5TbMBFoy9PpahJa5ubn8NvBpzYB69Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NnhhPJJiA9ZG79vaE0WjByrPAZIu3ux5rOdrqLjOGQ8Pi+L+OqE1jfTVT2hQifjmNjLQKdxacTIipKCgtuNkFoJtztOJBjl+ihjzWbx6NDMuPdbfZzxbTv/E/qinYnUxE2ikdNa4AivZBK7aylfzxif6AcpZeqbsUVk2FJ0i2S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ln4dXllP; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=bDgA
+	ox1aA/1Z5TbMBFoy9PpahJa5ubn8NvBpzYB69Ao=; b=ln4dXllPrbhpjdsx/FkG
+	PIszRwleiAD32PKSsO93WhXBNd9on2tJq6omXM+cxVgqHQv2Sgd2kEZWOZ7fFs1h
+	PhubR6Wx3Xp3Xkv91e3e5RRq428Sz5kd/VLDxeLTglXXoUrT8MI4eaj3ox13fIlz
+	E5GN+CFNxB/4lQyLiHB6kAhugQ4LA/0IzBniSSQgk/c1gEWwyP8nB5otIeaNF8ma
+	c6G9WAAjs2+Cy+ynyecygC89/o0DRx4JMx78Y6ev0LH3Dyb65spOjDc+9NyrV7dw
+	xiURhTAHGwy1thcrb+C8XpmWE4hVhnWL64VFEzbUj2VWaDOFaFbLt5dFZ0OcSTcr
+	lw==
+Received: (qmail 2452409 invoked from network); 18 Aug 2025 17:58:54 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Aug 2025 17:58:54 +0200
+X-UD-Smtp-Session: l3s3148p1@cy710KU8uNVtKDDl
+Date: Mon, 18 Aug 2025 17:58:52 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	stable@kernel.org
+Subject: Re: [PATCH] net: pcs-rzn1-miic: Correct MODCTRL register offset
+Message-ID: <aKNNvDwkehoit1eZ@shikoro>
+References: <20250818150757.3977908-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250814161706.4489-1-tony.luck@intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="R6lb8l05OCNcTM8G"
+Content-Disposition: inline
+In-Reply-To: <20250818150757.3977908-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 2025/8/15 0:17, Tony Luck wrote:
-> On an EINJV2 capable system, users may still use the old injection
-> interface but einj_get_parameter_address() takes the EINJV2 path to map
-> the parameter structure. This results in the address the user supplied
-> being stored to the wrong location and the BIOS injecting based on an
-> uninitialized field (0x0 in the reported case).
-> 
-> Check the version of the request when mapping the EINJ parameter
-> structure in BIOS reserved memory.
-> 
-> Fixes: 691a0f0a557b ("ACPI: APEI: EINJ: Discover EINJv2 parameters")
-> Reported-by: Lai, Yi1 <yi1.lai@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->   drivers/acpi/apei/einj-core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> index bf8dc92a373a..99f1b841fba9 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -315,7 +315,7 @@ static void __iomem *einj_get_parameter_address(void)
->   			memcpy_fromio(&v5param, p, v5param_size);
->   			acpi5 = 1;
->   			check_vendor_extension(pa_v5, &v5param);
-> -			if (available_error_type & ACPI65_EINJV2_SUPP) {
-> +			if (is_v2 && available_error_type & ACPI65_EINJV2_SUPP) {
->   				len = v5param.einjv2_struct.length;
->   				offset = offsetof(struct einjv2_extension_struct, component_arr);
->   				max_nr_components = (len - offset) /
 
-Reviewed-by: Hanjun Guo <gouhanjun@huawei.com>
+--R6lb8l05OCNcTM8G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
-Hanjun
+On Mon, Aug 18, 2025 at 04:07:57PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
+> According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
+> [0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offset
+> 0x8, not 0x20 as previously defined.
+>=20
+> [0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l=
+-group-users-manual-r-engine-and-ethernet-peripherals?r=3D1054571
+>=20
+> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+> Cc: stable@kernel.org
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+I can also test it on my N1D board next week.
+
+
+--R6lb8l05OCNcTM8G
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmijTbkACgkQFA3kzBSg
+KbabzA//b7l0e50rYMI1vWkipFbHB2lmpOrjAxvOizvQg9Rz+wFtJReysJMiEXy4
+/OiB6BdV7T9ES93ENGpSElIKpBXfcHxbGkda7n47Vhr8M+ptdEAUc85XJU+pSbys
+6Upda18MS9x+o1Ov0lUYDMp+gBlphT3ZbADLb2Y5hjqw/KFUQwTknLMmO7MSzSR1
+EgAI7f6zGKhloAigGpPvXtBpPrgGhSZX0Z21sderpHYlTeY3egnvy+4HlavnitwS
+TSZhLfPsI3t6E2G8d5GMJBYYC4sv6kxb9mZ8GRKfhyRFbi0RZu08jLlrvknQyWky
+drqpcCsZ+k0o6/1SCocjI5dglthTBq3vHa/y9JS7BxrEAWHN92Xcdk2XApCtUdUH
+kR2E17RfCwm77JwYioqyT0GRwPNQnHUTN+OHrdf4HPdXcp/Pq0hI1GsSelsiAZ96
+Xb/gI+rRskPeeJLRjeT3PpJO8Z7B4G/Rc4rlz6cvxuUyvAK53hl3iT2fkDVEW6KQ
+TzrQsgWIsJkqI2zcsz/gz9VAedN+EO0bgGZXZ9/4gpi7etkk89kjS7sY+xrf1RKB
+xdKg0syfcqNH+CGBDRAnOdsUDR90P9tilFqpl5Fmmyap8ySBsg6WbipSstuH+2Wq
+dHTwAbap8aOnU0a9e2MRB7GiS1T2+v4mvJ8X10DZmTYNbolLGLw=
+=v2w7
+-----END PGP SIGNATURE-----
+
+--R6lb8l05OCNcTM8G--
 
