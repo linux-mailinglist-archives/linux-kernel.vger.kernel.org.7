@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-774131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E68B2AEE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FF8B2AEE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE07D7B574F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A363BBB21
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F14E32C337;
-	Mon, 18 Aug 2025 17:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EF8343D9F;
+	Mon, 18 Aug 2025 17:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="adW9Plt4"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkRfL/7Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B6D32C322
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A47132C319;
+	Mon, 18 Aug 2025 17:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755536580; cv=none; b=sm0grcWExoXyV0bztGffWm6Hyep5v1bjJ/fQabxMQ0ZiqxfsDU08aS+wZsPai3PgKHlsXd66hSpM5zRcbpGNdAJGqcciiFPq9cboUgSkRNslr3MhAdp/XNXItvi97CgYJ5PxGNibg1ymYqnsFU4Qk7AW6brsVzN0Mulk4NXMXJ4=
+	t=1755536625; cv=none; b=tcrwTUNUjpvRd5MN55o8G4NxQ1QqmXXTilD6jOSWyhCt47teJXanELc72SZ95/9EtOiFqNI/4h3pNqSnkP2aplOZADWmf8ivmDMXgDr+E4ktP/b3tTwrA9JaRQ+a6OVUAQ1PRzSwT3Q1dCrGCiv8U4tRVrVU6u+6DluT9v7l6OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755536580; c=relaxed/simple;
-	bh=AcHBm4APEi3sdXhmN4WXx60+SUdPd+z/O8N3BsZLTIY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=A7MBs3cJJn4xalyQKJjichfCgx2KoZhwpGmZ/KVvk66MNIostFSlHDR69dmrNMcKqyEY2UkZ9AhcKdM8cg/r1AqfXhQKmOYsM7SoCSMTtN6Od7h5GUGggX8ktahmSE3ifHJUdp99bjvIwo2ajHNSfKCGL/oouZfPldGq2ICKc7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=adW9Plt4; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ae450780-f2a9-46fc-8e49-3528ff2e5daa@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755536577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8LmMGy7HSKihP9lQaYXfWbPIJLBdvs2p07iKRH6zNAo=;
-	b=adW9Plt41n1KE+VR1zmHNwyxZLJjr0IGtLFx7Yk9NfMdKY/Y9bjMjNNe+EPZ2pMhTOMnLH
-	DUAkVi4LWiwDemngfY+DBQLLeQssAKaDICNRoDKkxZMZSbw0wE0pn09vg/l+V0p8R+CwU2
-	4HCDb6AexFxaaviXWH6oJhGrImpMmms=
-Date: Mon, 18 Aug 2025 10:02:52 -0700
+	s=arc-20240116; t=1755536625; c=relaxed/simple;
+	bh=LsUeufe182oeOYuRXyKOtbmmFBfg6vhanNGoljpohVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHmcprTv2ZWXzP7F3aNP+3RdlPSjrmyONFKEq5r4VPEZ99++wyxuy6ZW+kgfpK9MPKQc9v/gsl6HBv1b0YPu69YIl2A9GU/nBdK5MaOaH82x4T79fjwNp/KNdVu8aGHwD3d0gJtQCYJ8RI9Xuh5wJBtQyORBTMdNL06tpcdS2+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkRfL/7Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50122C116C6;
+	Mon, 18 Aug 2025 17:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755536624;
+	bh=LsUeufe182oeOYuRXyKOtbmmFBfg6vhanNGoljpohVE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qkRfL/7ZkgW0LFbBk7UqwdcY1KYuQ/VkRLwHCquXycZ+zYdXc6Qyzz/Awl83lQYoE
+	 FWN9rIIT1cB5kePfP2+JBnr5mVW5jkyuX33cYUVEVlHzjaj6P7NsgkGWwIZVdquBsz
+	 hagQFujhG7jAHgNbZ4mDUi0dRqBbV4KKqTNn6I4tP51pJxXUi5nCJzeaM4OLtgztS7
+	 MC7WigYjh0JRnW5a3B0jaavtgAGHkDRJvU/sbR3GhBrAMwzhXpCkMgzROcq4bHKc/V
+	 RATz74UaTSb4LQ/291wp9JEPu6NlodBuotMR5PP3DzSDnaajt4RZZ7nsnPK3T9HSkT
+	 2Z3DXdYhjfCrw==
+Date: Mon, 18 Aug 2025 18:03:40 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] soc: fsl: qe: Add support of IRQ in QE GPIO
+Message-ID: <20250818-tyke-pungent-20d9ffd47ecc@spud>
+References: <cover.1755506608.git.christophe.leroy@csgroup.eu>
+ <cddc5e900b84826614a63b8b29a048c09dd20853.1755506608.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v4 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Content-Language: en-GB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-To: "Lecomte, Arnaud" <contact@arnaud-lcm.com>, song@kernel.org,
- jolsa@kernel.org
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, sdf@fomichev.me,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20250813204606.167019-1-contact@arnaud-lcm.com>
- <20250813205506.168069-1-contact@arnaud-lcm.com>
- <07d849b2-67c2-40b2-9cd3-75b8f3a4e0a6@arnaud-lcm.com>
- <ca5b2f4a-f92d-4749-9abe-c2af9254addc@linux.dev>
-In-Reply-To: <ca5b2f4a-f92d-4749-9abe-c2af9254addc@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kD3gyAnEQtUYwXo5"
+Content-Disposition: inline
+In-Reply-To: <cddc5e900b84826614a63b8b29a048c09dd20853.1755506608.git.christophe.leroy@csgroup.eu>
 
 
+--kD3gyAnEQtUYwXo5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 8/18/25 9:57 AM, Yonghong Song wrote:
->
->
-> On 8/18/25 6:49 AM, Lecomte, Arnaud wrote:
->> Hey,
->> Just forwarding the patch to the associated maintainers with 
->> `stackmap.c`.
->
-> Arnaud, please add Ack (provided in comments for v3) to make things 
-> easier
-> for maintainers.
->
-> Also, looks like all your patch sets (v1 to v4) in the same thread.
+On Mon, Aug 18, 2025 at 10:45:57AM +0200, Christophe Leroy wrote:
+> In the QE, a few GPIOs are IRQ capable. Similarly to
+> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
+> GPIO"), add IRQ support to QE GPIO.
+>=20
+> Add property 'fsl,qe-gpio-irq-mask' similar to
+> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
+>=20
+> Here is an exemple for port B of mpc8323 which has IRQs for
+> GPIOs PB7, PB9, PB25 and PB27.
+>=20
+> 	qe_pio_b: gpio-controller@1418 {
+> 		#gpio-cells =3D <2>;
+> 		compatible =3D "fsl,mpc8323-qe-pario-bank";
+> 		reg =3D <0x1418 0x18>;
+> 		interrupts =3D <4 5 6 7>;
+> 		fsl,qe-gpio-irq-mask =3D <0x01400050>;
+> 		interrupt-parent =3D <&qepic>;
+> 		gpio-controller;
+> 	};
+>=20
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+> v2: Document fsl,qe-gpio-irq-mask
+> ---
+>  .../bindings/soc/fsl/cpm_qe/qe/par_io.txt     | 19 ++++++++++++++++++
+>  drivers/soc/fsl/qe/gpio.c                     | 20 +++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.t=
+xt b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
+> index 09b1b05fa677..9cd6e5ac2a7b 100644
+> --- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
+> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
+> @@ -32,6 +32,15 @@ Required properties:
+>    "fsl,mpc8323-qe-pario-bank".
+>  - reg : offset to the register set and its length.
+>  - gpio-controller : node to identify gpio controllers.
+> +Optional properties:
+> +- fsl,qe-gpio-irq-mask : For banks having interrupt capability this item=
+ tells
+> +  which ports have an associated interrupt (ports are listed in the same=
+ order
+> +  QE ports registers)
+> +- interrupts : This property provides the list of interrupt for each GPI=
+O having
+> +  one as described by the fsl,cpm1-gpio-irq-mask property. There should =
+be as
+> +  many interrupts as number of ones in the mask property. The first inte=
+rrupt in
+> +  the list corresponds to the most significant bit of the mask.
+> +- interrupt-parent : Parent for the above interrupt property.
+> =20
+>  Example:
+>  	qe_pio_a: gpio-controller@1400 {
+> @@ -42,6 +51,16 @@ Example:
+>  		gpio-controller;
+>  	  };
+> =20
+> +	qe_pio_b: gpio-controller@1418 {
+> +		#gpio-cells =3D <2>;
+> +		compatible =3D "fsl,mpc8323-qe-pario-bank";
+> +		reg =3D <0x1418 0x18>;
+> +		interrupts =3D <4 5 6 7>;
+> +		fsl,qe-gpio-irq-mask =3D <0x01400050>;
+> +		interrupt-parent =3D <&qepic>;
+> +		gpio-controller;
+> +	  };
+> +
+>  	qe_pio_e: gpio-controller@1460 {
+>  		#gpio-cells =3D <2>;
+>  		compatible =3D "fsl,mpc8360-qe-pario-bank",
 
-sorry, it should be v3 and v4 in the same thread.
+Why is there a binding change hiding in here alongside a driver one?
 
-> It would be good to have all these versions in separate thread.
-> Please look at some examples in bpf mailing list.
->
->> Have a great day,
->> Cheers
->>
->> On 13/08/2025 21:55, Arnaud Lecomte wrote:
->>> Syzkaller reported a KASAN slab-out-of-bounds write in 
->>> __bpf_get_stackid()
->>> when copying stack trace data. The issue occurs when the perf trace
->>>   contains more stack entries than the stack map bucket can hold,
->>>   leading to an out-of-bounds write in the bucket's data array.
->>>
->>> Changes in v2:
->>>   - Fixed max_depth names across get stack id
->>>
->>> Changes in v4:
->>>   - Removed unnecessary empty line in __bpf_get_stackid
->>>
->>> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
->>> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
->>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->>> ---
->>>   kernel/bpf/stackmap.c | 23 +++++++++++++----------
->>>   1 file changed, 13 insertions(+), 10 deletions(-)
->>>
-> [...]
->
->
+--kD3gyAnEQtUYwXo5
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKNc6wAKCRB4tDGHoIJi
+0gifAP4zV29lsa0wp7PTs4uJEEK4ElPSQZMpreO7o/az7p/onQEA4mIyE/65qlAv
+TvH4uKCtgNCyRIAPqS8vTdBswhJBaws=
+=PqSq
+-----END PGP SIGNATURE-----
+
+--kD3gyAnEQtUYwXo5--
 
