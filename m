@@ -1,138 +1,147 @@
-Return-Path: <linux-kernel+bounces-773061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD10B29AF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:39:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1098B29AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639892009D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E92C203628
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7710E27BF6F;
-	Mon, 18 Aug 2025 07:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S+8X/nEY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB02D27E1D7;
+	Mon, 18 Aug 2025 07:41:50 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1865427A914;
-	Mon, 18 Aug 2025 07:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D671D514E;
+	Mon, 18 Aug 2025 07:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755502738; cv=none; b=bxWyfjZtPuDOVJKJxPy5QqOq83JTfcJ6m3lPNqBSgwjMxoFQ1xRGovrhr+yKJiD4Wd89Zoaq93Av+Z5BuqxShh6powTNFafnTeUz0cyDEtJz7I8/mQjGYo1pn63weZ8HPJ186+hlBARQwYnnDNpOAiuy91J75CKi60AJVjTZ6bw=
+	t=1755502910; cv=none; b=iAuhzJHSgPfz+TbQNAv3s7KqSytK0/MYCKa/lxcoNLnknl/CU0H3eQG2yuwdnfymMus4SyERCNxkei3Wu0edLn/2zIXf0OPJlkqqSeKZpGLb/EzrOyc71M5E7aOZaooQKndel5FsszbA1EsOIXFNqehZqRcgZaMzYL8QBbmy0FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755502738; c=relaxed/simple;
-	bh=XbvqUWoAr2QiGQSEbIQRQFzPuuiG5jhKpVOMj5hzuLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTxgl/NmsHLCEjad397uVHzUMq27Df4VOdUm696zJQv8EEHUT5ZfmFTTpM8V3B4dSvJQVp2PK8K/JMJC0ysCwKVeytd5Sph9o5UgRxHqt0hHJJFEu7d6iic/5l1/cgaCNhjquunzrZHJf55S658Cs03HvlMVcENPlL8zVrcGYJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S+8X/nEY; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755502737; x=1787038737;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=XbvqUWoAr2QiGQSEbIQRQFzPuuiG5jhKpVOMj5hzuLc=;
-  b=S+8X/nEYg4M8G6Gzp/8FosEB38klmjC5cZOK8hDjsW4ncpdRGV7ZxLO9
-   O4L4bZR0+I7MXw96ehctbVoDPFr8YcTFf0d+Rp83fArZ11E7DbL9LJ1Rz
-   4mvHfc0nCf/C0uhVnGYgPqEIPy7XnIaLQBOcxhdzq527/CCrZZv+SOM4N
-   MCq2Hge4V3BmmXy2+/k7he8ZgZoshz1gbi4dE9g0U1ddU20UnXdoz9cC+
-   V1liMXIw+f4qpDFNqjwHoND0MYUUGO7z7VGQzGM6U8pe7jhYZhiXDM6Op
-   Jyf2zzGy9znb8ecJrKbD3vy7rxpFU0dIdo6OvvEllEaOhM5/Yz53xwh9P
-   A==;
-X-CSE-ConnectionGUID: 8/mCGti6ROKOAu4fAqZU3Q==
-X-CSE-MsgGUID: KriLX0fPT+GDAGBUWF3rGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="56748249"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="56748249"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:38:56 -0700
-X-CSE-ConnectionGUID: A9bs3weXTJWfbitgYqUBmQ==
-X-CSE-MsgGUID: wlmyt3iJQzutoEhVwwMfgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171750576"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.152])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:38:54 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id CF2FB1212C6;
-	Mon, 18 Aug 2025 10:38:50 +0300 (EEST)
-Date: Mon, 18 Aug 2025 07:38:50 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: git@apitzsch.eu
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Daniel Scally <djrscally@gmail.com>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Val Packett <val@packett.cool>
-Subject: Re: [PATCH 3/7] media: i2c: dw9719: Add driver_data matching
-Message-ID: <aKLYis79QnAAWUoe@kekkonen.localdomain>
-References: <20250817-dw9719-v1-0-426f46c69a5a@apitzsch.eu>
- <20250817-dw9719-v1-3-426f46c69a5a@apitzsch.eu>
+	s=arc-20240116; t=1755502910; c=relaxed/simple;
+	bh=5JA+cOuCOXGZzGfCEMP4tZuqW26ojOfyc0jLnPTjPEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R9IEidQZyWLGrl6xPgRMMIHpllfOTVT7jtpefurMzGglMf0OoyFcY175feIIQxWaOPmAt81uWfVtxG/wiMsPmO5sooEb7jvJMxjZ9f+uOLGFTuhiStOKc0TxorI6Gyz1Z3tTSg543yAgGiD4kIoXz4qpSj3Zw1npDKCG6q1fheo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c54RF3vjKzKHNDl;
+	Mon, 18 Aug 2025 15:41:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id E75411A0359;
+	Mon, 18 Aug 2025 15:41:44 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgAHzdc22aJot9wEEA--.41552S2;
+	Mon, 18 Aug 2025 15:41:44 +0800 (CST)
+Message-ID: <df28c8ff-281b-46c7-8a96-9d0300307c38@huaweicloud.com>
+Date: Mon, 18 Aug 2025 15:41:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kernfs: Fix UAF in PSI polling when open file is released
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Greg KH <gregkh@linuxfoundation.org>
+Cc: tj@kernel.org, hannes@cmpxchg.org, peterz@infradead.org,
+ zhouchengming@bytedance.com, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+References: <20250815013429.1255241-1-chenridong@huaweicloud.com>
+ <2025081526-skeptic-cough-7fda@gregkh>
+ <ql5573r2nbex53fyygwczyjipmtalc22n3hxxzmqwi2sgadodt@a5pesn5gunf2>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <ql5573r2nbex53fyygwczyjipmtalc22n3hxxzmqwi2sgadodt@a5pesn5gunf2>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250817-dw9719-v1-3-426f46c69a5a@apitzsch.eu>
+X-CM-TRANSID:_Ch0CgAHzdc22aJot9wEEA--.41552S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr48Cw18Ary5XF4rXFyxKrg_yoW8ur18pr
+	n0kF4UtF4rJrykCr4kA3W093WrW39xtFyfXw1kW34fJwnIvr1kGF12gF4Yg3WDXrn3Jr4I
+	qF4a9ayjq3s5XaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	UAwIDUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Hi André, Val,
 
-On Sun, Aug 17, 2025 at 07:09:22PM +0200, André Apitzsch via B4 Relay wrote:
-> From: Val Packett <val@packett.cool>
-> 
-> In preparation for adding models with different register sets, start
-> assigning the model based on the i2c match data.
-> 
-> Signed-off-by: Val Packett <val@packett.cool>
-> Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> ---
->  drivers/media/i2c/dw9719.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/dw9719.c b/drivers/media/i2c/dw9719.c
-> index 5ed0042fce18acd9e6ce9f6cf6c6982e36fed275..7ce66eaede5a2a1ba9c4c30c0efc5fafcca339a0 100644
-> --- a/drivers/media/i2c/dw9719.c
-> +++ b/drivers/media/i2c/dw9719.c
-> @@ -282,6 +282,8 @@ static int dw9719_probe(struct i2c_client *client)
->  	if (!dw9719)
->  		return -ENOMEM;
->  
-> +	dw9719->model = (enum dw9719_model)i2c_get_match_data(client);
-> +
->  	dw9719->regmap = devm_cci_regmap_init_i2c(client, 8);
->  	if (IS_ERR(dw9719->regmap))
->  		return PTR_ERR(dw9719->regmap);
-> @@ -361,8 +363,8 @@ static void dw9719_remove(struct i2c_client *client)
->  }
->  
->  static const struct i2c_device_id dw9719_id_table[] = {
-> -	{ "dw9719" },
-> -	{ "dw9761" },
-> +	{ "dw9719", .driver_data = DW9719 },
-> +	{ "dw9761", .driver_data = DW9761 },
 
-Does something still depend on the I²C device ID table? Couldn't we just
-remove it?
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, dw9719_id_table);
+On 2025/8/15 22:42, Michal KoutnÃ½ wrote:
+> On Fri, Aug 15, 2025 at 08:11:39AM +0200, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>> diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+>>> index a6c692cac616..d5d01f0b9392 100644
+>>> --- a/fs/kernfs/file.c
+>>> +++ b/fs/kernfs/file.c
+>>> @@ -852,7 +852,7 @@ static __poll_t kernfs_fop_poll(struct file *filp, poll_table *wait)
+>>>  	struct kernfs_node *kn = kernfs_dentry_node(filp->f_path.dentry);
+>>>  	__poll_t ret;
+>>>  
+>>> -	if (!kernfs_get_active(kn))
+>>> +	if (of->released || !kernfs_get_active(kn))
+>>
+>> I can see why the cgroup change is needed,
 > 
+> I don't see it that much. of->priv isn't checked in cgroup code anywhere
+> so it isn't helpful zeroing. As Ridong writes it may trade UaF for NULL
+> pointer deref :-/ (Additionally, same zeroing would be needed in error
+> path in cgroup_file_open().)
+> 
+
+Thank you, Michal,
+
+I believe assigning NULL to of->priv should be harmless. This change would make the bug more
+observable in practice. Without this explicit NULL assignment, the use-after-free (UAF) issue might
+remain hidden in some cases, particularly when KASAN is disabled.
+
+> I _think_ the place to cleanup would be in
+> @@ -3978,6 +3978,8 @@ static ssize_t cgroup_pressure_write(struct kernfs_open_file *of,
+>                 psi->enabled = enable;
+>                 if (enable)
+>                         psi_cgroup_restart(psi);
+> +               else
+> +                       psi_trigger_destroy(???);
+>         }
+> 
+
+Could you please provide more details about this modification? Do you mean we need to consider
+additional cleanup work when disabling cgroup.pressure? The psi_trigger_destroy is invoked as
+follows:
+
+cgroup_file_show
+  kernfs_drain
+    kernfs_drain_open_files
+      kernfs_release_file
+        cgroup_file_release
+          cft->release(of);
+            cgroup_pressure_release
+              psi_trigger_destroy
+
+>         cgroup_kn_unlock(of->kn);
+> 
+> The issue is that cgroup_pressure_write doesn't know all possible
+> triggers to be cancelled. (The fix with of->released would only
+> sanitize effect but not the cause IMO.)
+> 
+> HTH,
+> Michal
 
 -- 
-Kind regards,
+Best regards,
+Ridong
 
-Sakari Ailus
 
