@@ -1,184 +1,136 @@
-Return-Path: <linux-kernel+bounces-772997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECAEB29A46
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E73B29A68
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9253B11D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1581C3A3089
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC42275AE2;
-	Mon, 18 Aug 2025 06:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017DF25392A;
+	Mon, 18 Aug 2025 06:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LC5muzpB"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8hAYZjN"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7233279359;
-	Mon, 18 Aug 2025 06:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65B4277C82;
+	Mon, 18 Aug 2025 06:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755500173; cv=none; b=kpG9v5QwGYHuDzxdNuxxOepSgSdvKlr/U+pjeoGyKRNVNGjU5A6gdFxbLJjm1aKFE6XFXRb5SzZT4h74d6UrU6dGZB3xUCT3DZEQJaOeS/45VEuDHweBYC7RY5xzQTmI33j+9mHuVn/BPchurzsCwjDJlDU66yfMRsaOfk7Mj8k=
+	t=1755500222; cv=none; b=D3UGMIHDGvB1qQdBanDOguQH9cn/bm0jh4D81WwrF/CjGY+00NCFgd9E4smpNoozJXQAbnhdcE9Az08/h5BWhx2q0anZvOTtK8VM4BwcTdUUiFasCACzdNqAI26K9KnR5XMxgkiBK9al1v6vWiXWWtXNZpC6evRuLn7++hwaIbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755500173; c=relaxed/simple;
-	bh=Kb/Y4ZK460ljfeplYBQGvoG4PxNfvQD9VZHJ8VklMo4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EY2fcHHVbMf5w74c7i1Xpm4W/czyNLWuYGjmrblPXGxj4GenEAmKz15S7aRBohKx8RldvDF9odUhSK0aaWWbbD11dapGLAooJ6/LtJ3krNDQP3rO3RphDmPvQzQcq/OIr4RH6iTv0w0+DKad8yDlpJBKA/bGV5mE4BF/rKh7Ecc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LC5muzpB; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1755500222; c=relaxed/simple;
+	bh=5B5ehd/ybTumioQAMnEZCPlDsR0Umh5x8SN3YdJ+EWM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qzsVi1faNwxB3lC7kfO9EAsd99j8SyZrioxvw08grTVjsL88/o0X2DvOmWFSnUkyT/tNbkSTS8GWqlLXQzaWkTiyqN3BdC9S1mXLEXjCAfwB3FxJ/4EHeMJoifd56o39tcfcDXJl+Ulp08Ex3RdKWwTxkWao7uuMDupwwShp0Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8hAYZjN; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55ce5095c8fso2992881e87.0;
-        Sun, 17 Aug 2025 23:56:11 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso18310275e9.3;
+        Sun, 17 Aug 2025 23:57:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755500170; x=1756104970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+        d=gmail.com; s=20230601; t=1755500219; x=1756105019; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=l5Kic20bbeQ0vyV99roIZYUVJbgaVWDghEKvweN/Yaw=;
-        b=LC5muzpBJbjtLV5fmUUC9gpw9ElULkGz7iGVQijvLs8XNOTpnXsjUqQGdU7o6zcBgD
-         KLfJ5XMKm/tiD4xX8ppNCm3BEShsjET52rU8A3dthM8T1EOMSC5Tk9yGdqcl1pnG5Rad
-         dU3fBBuszQfAgm4MLr5XyweB+AZWFLyq1laIlIRr3pZHDobINWs7gNbsuOB8yppjeaE8
-         wylOOAH3H3MC+07vrMpYowlUBCIRRQmNYMHCJKTkSOyrmUl8Py0kUOtSFRpFvoFjInQM
-         2ogZcLzYqW1Pu9EzWRlB0N3Jv/8GCK55g1vXAbZO4PAKbAvhhaHUn1IKl+FPq6R48b1p
-         csFw==
+        bh=EX4tIPF+9pA1B1ujJvfDs+/G2NtAVR/2RXmpw0nl6lk=;
+        b=i8hAYZjNvnyf1LR8YOeIp7CIZ0JxSyUMQdf6wxAX1k6q5W98UpMzt8RWgT75qtrmrS
+         Oqg18MdrQrVU6uFfokzN+Q6FpB1MnkbZi9FhvUhVwuuxYTzD3afjjkSbUA5dGmXbFd3k
+         FMyp/vfZQa/FENX/hVnMWCS+C+FmgWvXVOS9lPAr2xK0phDihXM6w+jj/1CaxvBRK5DJ
+         +Ltht7cKyCIcc+NjOOx8+ZlnuRQbu5omvQUbYdQlRsn72fGe7UT46ZOFYUVKzgybeiqj
+         fMD8E9mcM32jPBYRu212MMVJDn3ZS9PlgYN+NRS6l7s9qE01tCP6Twyt4iBySxZBaWBG
+         gHpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755500170; x=1756104970;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1755500219; x=1756105019;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l5Kic20bbeQ0vyV99roIZYUVJbgaVWDghEKvweN/Yaw=;
-        b=chzxoJrMSg/nOoBiVvh2x1px6jpJ+XZXsYu3EiwJeJXghu2hqy8YjB4RSaiXppPb0H
-         uiB7KBrz9n+n+ofsNJ15Y31vZjeO8avzfEaFyTFI3zMaHEyxoyO1Hx0TrBK3wdzZDdEh
-         APYv+pwz1oUdCNtu//GwBw7+/xNrl9PHOzcU6CI9B6UtA/B7xFWwmL01pGWy7jgNANhq
-         1GG9PywUcnCrfSTinySdipstON/DmhoEpLTrkAcZUxOuhr3Mg85fEsS4cMkAOlPgVHEn
-         0ACts5D4QvSNVuGXKC+NJblsij1JQUfdzxy0NhsdR7jEGhRInBF64o8Ac/zlhJtJogSN
-         CNNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVF3E889IxAaF0OH3XHwC+211/rlMbjtLj6O5i7eoAfWtX6GibE5P3g3GRp9vGMqe0uP5Hd3OwcaO1r01VB@vger.kernel.org, AJvYcCXrlzZVJwbae3cXrXNcD2OHdY17dDvGdX9D7RpTa/MVmu1szVZ17NdjkjTwR9ZZ/uiLr3HmBtZk5HEnMw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylkm0iKyaVqv1SrH1YW9DdnyMuk+qhWjcFVHq9nXK/HglQrDkA
-	gFZMnskGdEAspVX/J+UsUzS7pnGOCD2j8mw3ue0+3IMnTqrCC8Yvsctk
-X-Gm-Gg: ASbGncsna/embty05GomuFVI9gTyIZts8Ff9zS8AqJD20wHMLCmIICLzzxcUFu42O3N
-	cawhMWOzjr7KT31O6eBNh+ohIOGj7PWywpL31M/Kl1/mSnNy5maaZEeClS7vQ0VSJKDPjHbyrBv
-	vhzl2Ll0kvRvnjCfvEpy+bxFYg17FPnGh8iLwWlQZnldCk4vC3QRWSgnyF15HtYYtcoBrKd55jN
-	8ThjLABYxjIfbod3Qj+L/stZWEDNwl3wHoyPj6kBmjWUEGophgYrykID5+4bFKMRG29ERlLMVbO
-	Tn6x6pzNpxZjm1QjRLy3wKfHc1fdgXETQedoLarXigQDlAwVeKMDjYAVCnF1zJJh2/RqzHz2XEZ
-	gYBuEPHBFEMY1BpBqNyc6k3F9vcwxsP1ur6TwQQhXf7ZQnHIpBHU2AQFRqpaCY55dIx46MXfrZ2
-	RItR7LhK8jIBsx/g==
-X-Google-Smtp-Source: AGHT+IFq6hoJ0wh+wmh5pPKVcsAvVhU3kf8u4kTgyXO40Os8zdT77oyXbZTBU/3uK6clII8vHy7YZQ==
-X-Received: by 2002:a05:6512:3c8a:b0:55b:8476:ec8e with SMTP id 2adb3069b0e04-55ceeb42b83mr2402423e87.25.1755500169674;
-        Sun, 17 Aug 2025 23:56:09 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef35a8fasm1533034e87.49.2025.08.17.23.56.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 23:56:09 -0700 (PDT)
-Message-ID: <a3fb7466-6774-4ae6-9e67-d35247ffa765@gmail.com>
-Date: Mon, 18 Aug 2025 09:56:07 +0300
+        bh=EX4tIPF+9pA1B1ujJvfDs+/G2NtAVR/2RXmpw0nl6lk=;
+        b=D9xNUMh/l4ti5/XmafOJzZjrHEcjy5OSW1x56ODn+WsAnfb/R4cIZcO04cWH7k96tR
+         tBueLHCk+Rm/htJk0Ef48BONx9/QYqGa+FAhQ2sTUC82Sq/+ADfvMLCTLkUZu4dr/6Q9
+         +B19y7smY/H0GvJTiDGLNMVGbE2bOkqa3M4Yuql0KWTMCswnm42Nl6pf2EPAb6c2oySp
+         sR0a88o27NRr+nA5hY7hXJI1v7XzVP/ulR2Tvu/u8KavgB/cy2Ey5Fk3KXMBjs7VAgoY
+         zlk8SGnJok52hWWf2XqAbwjhTYoaiOx/eI8/pBbO/wHbt40jSgzpN6v9ygI+G4uuAY4y
+         zjpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJxIEARLwg1LVRCwlXNMEOfD2/IoWeD4ZsoF3FIYl0UyJKd8CHklSziqFgpc/quKDzWS4YdDCHzIfgVivk@vger.kernel.org, AJvYcCWcNjTESdCUxAesHmLXr1qjHsuQ6zgAvhSWLsYjFWeZHZO31QVbEAVGxe6v3cCdiGATUKg=@vger.kernel.org, AJvYcCXwQ2HCixeO5h6BODeusLrhkpebSzx1Uh3eklyR7euvjHjYveEycjco0DNmmq5pFW3iYuaA32blo/50PPZKMBiQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDlRjBEOlj2H2tkKYSq+9AxNxZNjpcuFwf5Gaq0nIQ6zfCYf3m
+	4pGp2PC7wmuZAVNxrN/usAFkxF1ybjSYToDR58CuF4abhpGvTbGHcd2g
+X-Gm-Gg: ASbGncudS6n+/hMtv0FPV7aMWaWOCveeJjvrfMnjx+Fc887K1qoFWEvwFiUIDkrO35s
+	bRrPtedUpb3vko83v+V15SsZP/iduRbQ97kvsxFeuxr8acI4JiFW0nwJKVOfEPDoljCfJiJHEx5
+	qshyPA8IyrApllLtcUt+iWkorH9tXOTt/d5j+LEmhHyBCVOMCOcLuuPUcWOZqOgMGAj/PTwobwD
+	nAMeFm750GsqT50x3JprvdyUMqef1Hq0r64ZICk9PZtBaE3a6Z7O/X1iEmo2yehDLPKwZTdC/rM
+	dh3CWO6lPN7PyszAlt57lJNcMYTMMA0cZgTCF/SWv/LHkP+0Tuu44IzsuyVJdZB+AhQHXdcl
+X-Google-Smtp-Source: AGHT+IHkd8i8YWmwuqUt6Dd9fdgrOhr29UsN7EafxxS8WuXHYyO+kPtvNtcQNMZmn2uUsKeLfd40Gg==
+X-Received: by 2002:a05:6000:188c:b0:3a3:7ba5:93a5 with SMTP id ffacd0b85a97d-3bb671f6b13mr6913879f8f.26.1755500218688;
+        Sun, 17 Aug 2025 23:56:58 -0700 (PDT)
+Received: from krava ([2a02:8308:a00c:e200::31e0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb6475863dsm11926662f8f.5.2025.08.17.23.56.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 23:56:58 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 18 Aug 2025 08:56:56 +0200
+To: =?utf-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, yonghong.song@linux.dev, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH bpf-next v10 3/3] selftests/bpf: make usdt_o2
+ reliably generate SIB USDT arg spec
+Message-ID: <aKLOuLGY93zYXbxA@krava>
+References: <20250814160740.96150-1-phoenix500526@163.com>
+ <20250814160740.96150-4-phoenix500526@163.com>
+ <aJ8rsK2-XcPXNX7h@krava>
+ <5f3a942c.1b6e.198b1b181ef.Coremail.phoenix500526@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mfd: rohm-bd71828: Use software nodes for gpio-keys
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Linus Walleij <linus.walleij@linaro.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250817224731.1911207-1-dmitry.torokhov@gmail.com>
- <20250817224731.1911207-2-dmitry.torokhov@gmail.com>
- <0adb5e0a-ea37-4bd5-87ff-654b770261f2@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-In-Reply-To: <0adb5e0a-ea37-4bd5-87ff-654b770261f2@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f3a942c.1b6e.198b1b181ef.Coremail.phoenix500526@163.com>
 
-On 18/08/2025 09:54, Matti Vaittinen wrote:
-> On 18/08/2025 01:47, Dmitry Torokhov wrote:
->> Refactor the rohm-bd71828 MFD driver to use software nodes for
->> instantiating the gpio-keys child device, replacing the old
->> platform_data mechanism.
+On Sat, Aug 16, 2025 at 03:04:17PM +0800, 赵佳炜 wrote:
 > 
-> Thanks for doing this Dmitry! I believe I didn't understand how 
-> providing the IRQs via swnode works... :)
 > 
-> If I visit the ROHM office this week, then I will try to test this using 
-> the PMIC HW. (Next week I'll be in ELCE, and after it I have probably 
-> already forgotten this...)
 > 
->> The power key's properties are now defined using software nodes and
->> property entries. The IRQ is passed as a resource attached to the
->> platform device.
->>
->> This will allow dropping support for using platform data for configuring
->> gpio-keys in the future.
->>
->> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->> ---
->>   drivers/mfd/rohm-bd71828.c | 81 +++++++++++++++++++++++++++-----------
->>   1 file changed, 58 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
->> index a14b7aa69c3c..c29dde9996b7 100644
->> --- a/drivers/mfd/rohm-bd71828.c
->> +++ b/drivers/mfd/rohm-bd71828.c
->> @@ -4,7 +4,6 @@
 > 
-> // ...snip
 > 
->> +static int bd71828_reg_cnt;
->> +
->> +static int bd71828_i2c_register_swnodes(void)
->> +{
->> +    int error;
->> +
->> +    if (bd71828_reg_cnt == 0) {
 > 
-> Isn't this check racy...
+> Hi, Jiri. Sorry for my oversight, the optimized compile condition didn't work properly.
 > 
->> +        error = software_node_register_node_group(bd71828_swnodes);
->> +        if (error)
->> +            return error;
->> +    }
->> +
->> +    bd71828_reg_cnt++;
+> Could you try to replace the `__attribute__((optimize("O2")))` with `#pragma GCC optimize("O2")`
+> in usdt_o2.c and verify it one more time?  I guess it'll help. In fact, the usdt1 argument spec generated 
+> by the `__attribute__((optimize("O2")))` on my machine was `8@%rax`, not `8@(%rdx,%rax,8)`.
 > 
-> ... with this...
+> For more detail:
 > 
->> +    return 0;
->> +}
->> +
->> +static void bd71828_i2c_unregister_swnodes(void *dummy)
->> +{
->> +    if (bd71828_reg_cnt != 0) {
+> > - #if defined(__GNUC__) && !defined(__clang__)
+> > - __attribute__((optimize("O2")))
+> >
+> > +#if (defined(__GNUC__) && !defined(__clang__))
+> > +#pragma GCC optimize("O2")
+> > +#else
+> > +#pragma message("non-gcc compiler: the correct probes might not be installed")
+> > +#endif
 > 
-> ...this...
-> 
->> +        software_node_unregister_node_group(bd71828_swnodes);
->> +        bd71828_reg_cnt--;
-> 
-> ...and this? Perhaps add a mutex or use atomics?
-> 
-> Also, shouldn't the software_node_unregister_node_group() be only called 
-> for the last instance to exit (Eg, "if (bd71828_reg_cnt == 0)" instead 
-> of the "if (bd71828_reg_cnt != 0) {")?
+> Thanks
 
-Oh. Probably "if (bd71828_reg_cnt == 1)".
+yep, that helped
 
-> 
->> +    }
->> +}
->> +
-> 
-> Other than that - I like this idea :)
-> 
-> Thanks!
-> 
-> Yours,
->      -- Matti
+  stapsdt              0x00000033       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: test
+    Name: usdt1
+    Location: 0x00000000007674d9, Base: 0x00000000035bc698, Semaphore: 0x0000000000000000
+    Arguments: 8@(%rdx,%rax,8)
 
+
+thanks,
+jirka
 
