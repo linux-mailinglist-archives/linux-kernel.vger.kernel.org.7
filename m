@@ -1,147 +1,126 @@
-Return-Path: <linux-kernel+bounces-774251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C48EB2B070
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68ED9B2B071
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0598A683AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF45564F34
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815611B87C0;
-	Mon, 18 Aug 2025 18:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jy6I86zo"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CB321E08D;
+	Mon, 18 Aug 2025 18:32:31 +0000 (UTC)
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098157404E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E0E125B2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541911; cv=none; b=Fhk6mVcHkYcbrMOmDm5J3T82JYS3aGmWCWbUyANHq7ffby5v+8cz8HyClH3qeBFrLg7DJJCysGu8OqixMU/bIbZQIialXRnDe92nlZV7wbOO/fDMHc0cLzMuONyHeQ21TaFWlM8h10iasGJIEaXlly0MapXtfK6JQ0Pvu4nH42Q=
+	t=1755541951; cv=none; b=jY2t6LrBELAEvyOpoH4BiCKtjCLeDADGc9ZwhLFz9s/U7sTU2iyZrRLnndBmR8/6AZzd52jI8Uc+6QxJ6skZouAersvcZhYqH9WUHSOYmCpYMh2MKsPQDQOnKD0Lw6qY0C2vsxNkGE3i1iHQ4KHYy9PaFDyHMO/pFfy06/d3zFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541911; c=relaxed/simple;
-	bh=KOkgUuihs4pXMo5Uy+m5Qp4FIS7N4JkZmvcjw7qGj04=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qd+7qi1LTArnnY7OT27xw2jtEjW7xlWlg14KyXgMDM/F8wQdTA4kFjr/AcQpWmoNMOHPtI5/MDLsiVHaOeKIf9zCJ/o6ufRQAmE3LJhuSv3Y4FYgVfXljjsKJOIp06+8S66DBT3KohdmtG/p1ez9bY+VP0RUBAJv+Pxeh7ybor8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jy6I86zo; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6188b794743so7155018a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755541907; x=1756146707; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pjGB0SFkv4MBKb4iw4skaOsLgOvxbygJAcvKTc98B44=;
-        b=jy6I86zoo7UNtj9fHzPW8CoeRnSK2yBu6CD4XJqT/YDM/TrWKvLIPqqRoIZpa4+7je
-         LkUUzLQCZRJjFDV1Lvff52RGNfyCNuF00gweI7g+Umo6Dh3cV08TG18G12tsx1pulcG2
-         qyGVufs91T6g3Z5dBv8sdr0lmKWB/Vq2Ftm5SRoffXYhmWZGzeENexcO6Gp4L8tP24dK
-         shGRDglgXK5Jt5Rl1K6vmwAETp8kV+iI/vCHCbbtoRtsVyCtvzzDWaXZnXZuBaIGuyEf
-         oTnZTsaPL1LuDyHwiaRFcACesVQaGsfxsziR6dLLswAU5MYD5uLNyE0yCfxVJhkRjd1B
-         SAdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755541907; x=1756146707;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pjGB0SFkv4MBKb4iw4skaOsLgOvxbygJAcvKTc98B44=;
-        b=HlTk3VXwa6RHKDIh+IbH5SU9tI9goi+w2O2T7a2WArPeZd1VE2eFKbHrd3bnZO2Tsc
-         auvMGT8oEnfAXIjPLA07GonEPkTNXDnHKxRX/GtXXslMePE2ZMNbzZnHV837OHJUgJyq
-         T6gw+eFjEA/pHtBEOmETSA0Po5/eKTBByi8fP6CAiFP5kzCPMeWjmiYZ6sXcUTYffg4G
-         ZMiD1hNO9ELgTEntniCNjxq9T1Vwupgx/kivg7RVNQmOBQaFNx71pBbSl/3t8eJA8iLi
-         XihTJqbEFY47DHuqhYfD0Lhb6leZzgQZLd35rPsGj2DYy3DiPwZvqyBU9FrwfRezk9uw
-         E/kw==
-X-Gm-Message-State: AOJu0YyTODT+z+enMLKUCcEfzesxyAiqIWbouXWvR3y1V3iKkwW3i1rc
-	EbF5ZjB8niwHfI9t9tHry4o9iwQDuJ/HwA6iUJMbgRH17TH3tRR1j/QzEPzHzbx2PkyiDZ0BAGl
-	JZ1YKgBGH+MCS7cQNSU86jottSCfEV5Y1ClnO2PS16xeZkPdYx1Dz
-X-Gm-Gg: ASbGncvn2Ob1ZItlZIcPuOEtysjlpxayTg08NK7x6nreNS597aJWztWQ3EjQLKd5P4i
-	DlvX/cYadHE/t+EVLh9a96O/j61xmqVNPiT5AZqmtsaZkw2pOlG3xsabU4pWz4e9q6+uQg8X4RX
-	vXezmG9BWSi12d3s+Djkbe/uBt/gjIJsbM5o3tDG2uSJOn4XnayajWnSGidN/wAaTsHyt7BSjsJ
-	Oe+Oeh6wz/nAT6Xq+fsJTNGIp7QEmaAZWs=
-X-Google-Smtp-Source: AGHT+IGqSl8L73R4Vo9ejBt0vBasMnPfvGJ08z8fntAtUKzrrLi0v8pEEOjQaG+5pgsw8Bcn1FtRYar+LPvGWV1YFDw=
-X-Received: by 2002:a17:907:986:b0:af9:9d7b:6f44 with SMTP id
- a640c23a62f3a-afdd9a8b1a5mr35098866b.19.1755541907580; Mon, 18 Aug 2025
- 11:31:47 -0700 (PDT)
+	s=arc-20240116; t=1755541951; c=relaxed/simple;
+	bh=WGnehDgNegV77GT+UcGpwcKqV0rviFBYs8IzWylswcI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lwm61wCo4v9vmkvrzPBp7xnJWfXVO0iQulnYbkP4lIuro4/9TbSb1qGI4nid9X/nPUdR9nEW06hr2/lpiCKpmc0+slYNK4L+y7EkWF23KpgHYX4l56YKJm2bL1T3NxEKal8EoqdSuu56WckiwmJ7W+UvyXMhWjqBUgALb0P2KRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <bcollins@kernel.org>
+To: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ben Collins <bcollins@watter.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Hepp <andrew.hepp@ahepp.dev>
+Subject: [PATCH v5 0/5] iio: mcp9600: Features and improvements
+Date: Mon, 18 Aug 2025 14:32:08 -0400
+Message-Id: <20250818183214.380847-1-bcollins@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 18 Aug 2025 20:31:36 +0200
-X-Gm-Features: Ac12FXzUhIUFY2dVNx6YHCxJPdcfbv7G4qSvst6qOsN6AJMqiBVTN1nrINRXEsA
-Message-ID: <CAKfTPtBp85jaM8sdOXqB1Fq7XcfgGP-T2A=fd4Qbhe48CUNUGA@mail.gmail.com>
-Subject: Call for Speakers: Join us at the Scheduler and Real-Time
- Microconference at LPC2025!
-To: linux-kernel <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Clark Williams <williams@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	John Stultz <jstultz@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Phil Auld <pauld@redhat.com>, dhaval@gianis.ca, Aaron Lu <ziqianlu@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello everyone,
+From: Ben Collins <bcollins@watter.com>
 
-We're pleased to announce that the Call for Topics for the upcoming
-Scheduler and Real-Time Microconference at Linux Plumbers 2025, is
-open!
+ChangeLog:
+v5 -> v6:
+  - Fix accidental typo added in dt-bindings: IRQ_TYPE_EDGE_RISIN
+  - Correct some constraints in dt-bindings
+  - Reverse if/then for mcp9601 vs mcp9600 constraints in dt-bindings
+  - Updates to changelog for patch 2/6 (dt-bindings mcp9600)
+  - Cleanup tabs that were converted to spaces
+  - Split thermocouple-type default to separate patch
 
-    https://lpc.events/event/19/sessions/218/
+v4 -> v5:
+  - Missed a one line fix to IIR patch (5/5)
 
-This event is designed to gather kernel developers and engineers to
-share knowledge on scheduler and/or real time issues in Linux and
-connect with peers. This year, we are joining the tightly linked
-Real-Time and scheduler topics in one same microconference.
+v3 -> v4:
+  - Based on feedback from David Lechner <dlechner@baylibre.com>
+    * Allow fallback compatible in dt-bindings for mcp9601.
+  - Based on feedback from Jonathan Cameron <jic23@kernel.org>
+    * Be explicit in patch description for fixed width changes.
+    * Check chip_info for NULL to quiet warnings from kernel-test-robot
+    * Remove "and similar" for long description of MCP9600.
+  - Based on lots of feedback, use frequency values for IIR, and use
+    filter_type[none, ema] to enable or disable.
+  - Set default 3 for thermocouple in dt-binding
+  - Rework open/short circuit in dt-bindings
 
-We're particularly interested in talks that:
+v2 -> v3:
+  - Improve changelogs in each patch
+  - Based on feedback from Andy Shevchenko <andy.shevchenko@gmail.com>
+    * Set register offsets to fixed width
+    * Fix typos
+    * Future-proof Kconfig changes
+    * Convert to using chip_info paradigm
+    * Verbiage: dt -> firmware description
+    * Use proper specifiers and drop castings
+    * Fix register offset to be fixed-width
+    * u8 for cfg var
+    * Fix % type for u32 to be %u
+    * Make blank lines consistent between case statements
+    * FIELD_PREP -> FIELD_MODIFY
+    * Remove explicit setting of 0 value in filter_level
+  - Based on feedback from David Lechner <dlechner@baylibre.com>
+    * Rework IIR values exposed to sysfs. Using the ratios, there was no
+      way to represent "disabled" (i.e. infinity). Based on the bmp280
+      driver I went with using the power coefficients (e.g. 1, 2, 4, 8,
+      ...) where 1 is disabled (n=0).
 
-    - Spark Discussion: The goal is to discuss open problems,
-preferably with patch sets already on the mailing list.
+v1 -> v2:
+  - Break into individual patches
 
-    - Are Concise: Presentations are meant to be limited to 2 or 3
-slides intended to seed a discussion and debate.
+v1:
+  - Initial patch to enable IIR and thermocouple-type
+  - Recognize mcp9601
 
-Some possible topics for discussions:
+Ben Collins (6):
+  dt-bindings: iio: mcp9600: Set default 3 for thermocouple-type
+  dt-bindings: iio: mcp9600: Add microchip,mcp9601 and add constraints
+  iio: mcp9600: White space and fixed width cleanup
+  iio: mcp9600: Recognize chip id for mcp9601
+  iio: mcp9600: Add support for thermocouple-type
+  iio: mcp9600: Add support for IIR filter
 
-    - Improve responsiveness of fair tasks
-    - Improve PREEMPT_RT
-    - Improve Locking and priority inversion
-    - Impact of new topology, including hybrid or heterogeneous system
-    - Improvements on SCHED_DEADLINE and DL server
-    - Tooling for debugging low latency analysis
+ .../iio/temperature/microchip,mcp9600.yaml    |  61 +++-
+ drivers/iio/temperature/Kconfig               |   8 +-
+ drivers/iio/temperature/mcp9600.c             | 295 +++++++++++++++++-
+ 3 files changed, 341 insertions(+), 23 deletions(-)
 
-It is also perfectly fine if you have a new topic that is not on the
-list above. People are encouraged to submit any topic related to
-real-time and/or scheduling.
+-- 
+2.39.5
 
-Ready to submit? Please fill out the submission form by
-
-    Sept 30th 2025
-
-at this link:
-
-    https://lpc.events/event/19/abstracts/
-
-and select
-
-    "Scheduler and Real-Time MC" as the track.
-
-We can't wait to see your proposal and build a fantastic lineup together.
-
-If you have any questions, don't hesitate to reach out.
-
-Best regards,
-
-The Scheduler and Real-Time Microconference Team
-- Dhaval Giani <dhaval.giani@gmail.com>
-- Juri Lelli <juri.lelli@redhat.com>
-- Phil Auld <pauld@redhat.com>
-- Steven Rostedt <rostedt@goodmis.org>
-- Vincent Guittot <vincent.guittot@linaro.org>
 
