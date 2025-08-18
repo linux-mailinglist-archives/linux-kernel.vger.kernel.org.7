@@ -1,156 +1,132 @@
-Return-Path: <linux-kernel+bounces-774023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34FBB2ADC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5997FB2ADA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A3068092F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C68C1897EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A31533EB17;
-	Mon, 18 Aug 2025 16:03:59 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350D92C234A;
-	Mon, 18 Aug 2025 16:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE4B33470B;
+	Mon, 18 Aug 2025 16:02:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DD831A070;
+	Mon, 18 Aug 2025 16:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533038; cv=none; b=rhWnlZptDAl5rCTl21/D1BV0pu73Lz0B+xVGKLEnok9TX4+sb5hlCOk84cfCD5VkLRmzIg5kn9uUlITZYH1rXtrUL6mBrzdF75h913yy+k2VKDNQF1s7tBUcAT5CAXBPDUxXW5rH3oOzfvM3wiRMMrJVmNs99bIiMu1oVz2potY=
+	t=1755532975; cv=none; b=DjahL8jIi8A5OqyGLtkS9JciiV4XojWOCJ+Lc0XFP7AQ6hKDMYFy10hxwby3J0nv/XV+qwje5wkl0+wId3hMzZjb2BV0oMwAEXnnDU/8PO/UYNqXd4cXdEALleGcVFggo9/2ZcgynaA5mm1PP+Pu3+ubbibFh60rxGD0BZgceEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533038; c=relaxed/simple;
-	bh=mYjBAMqZGZH/xLi6ms+MaVNfGzEp4zzE2h4TuEqsf8Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BnkSPO+itFPyLMilWviet7Ldjzs8HaCd4cx/ulhXNxFpc6Zr5Hv/hKpknWOXdPISG+YDTGba2e2y95YCOLyN1oivl8+s8yrMwcgUapbBDUuC0nQwtnW9BzC1Sm4HnHgyyoY8CktqTl+Ao4PD5JK+qGrN7bNSj7nXjx0hEBXFIHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-53b1757a920so1258406e0c.3;
-        Mon, 18 Aug 2025 09:03:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755533036; x=1756137836;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=umdH8EMkWoPb5BxW9RQK5UovCpX0AzcP/CDA3p4lJMI=;
-        b=idQlhkSJkdQAAozf9A3PGOU66mYLsNpoWjPoTzila1RQp18U8otID6MHQPTYbg3/d1
-         RsCsVqW2kfwGWswGlruH26QW6/VpqWFkb3uI7+NjKR6lmt2YfVfusJuclnVBojq06N6f
-         sqkpR6wnv54oFXkNENQFITGHX54Q3UGw31BwjpAD4uzyINDWHXBg/yob2NaaQyHleLJr
-         vCMt6ihxmba1onusWsYnM9vP2rfFjnTSscQ+cMU/VJI9RtS9KmEcg5tVln4nWx9UbYSn
-         XI3WrBcc+t7ogbETqd0dKOpchF4PqCJ7MArkfTObkFKNezmeyEGHDEnCfiYswluMflXb
-         NspA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ5JknN1ey4zwsrAlGOXdnpEm9uiS2MJQuwwrFBu+OHbEzMf+R4EN4c3z0wpWOPfti5OgcbXRo0Erv@vger.kernel.org, AJvYcCWF6aYX50EDsQ8vTx1PxX9sQci9FglHzKKkCae+DZwAht+rzsYSItNBN1cg7vAh8yZlFkG9cLxyLUNuM+W1stX2548=@vger.kernel.org, AJvYcCXRB54V7FXtSGjvijQD5q+XEC78ssQYOTIG0+lv7gst468kciONonbsNVK2HMucqR+uzBHgjqpO0cSGZVKh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8A/psSi4g1vlTRz1EvHG40pc++QW+biL52NZQ+ZZpjYb+nvWd
-	M3bijhlNIp0cCQipYmYnVG+CNI3TPnenYe9ziiQSyaF2O+5NCLiJWsU9tIrnB20P
-X-Gm-Gg: ASbGnctmsU6bxOkR5NcUZBLIFOuG3oweXNeWzMtacTn1AAPrX0jAkoLkeQaQOaX+Vbj
-	BOs3wTnKYdCJV4YhOowGV2TiaAwnm2AqPbCv+qt++Ttava1U78B2DjMNnIBea4MiGCrpHpZe+bf
-	nsQ+V+HCXD0abh47BBqAC9EZovzMbsSsDlxO/kVhKTLN6RciVffHyRJ1oLepXSDotvseLTb0XPA
-	mbjBdiO0zE7i/zsJ0T18YFMVTw/33tp7+6PvgifxAiMD97MxNzpvFBqUAoqsifCDe0677VsLklH
-	ywXoc7h2rAWVAQfx6pdz75j9BidrP9rn61/fOAVtNFDcW78OAmVXamny82s/F5lZasq5j7SaYoN
-	fz62Os7BcL7MCnzi6onsFVNKOWWVNchrDYYnkpSqlJ/9lU1c433qcoiuB5nV+
-X-Google-Smtp-Source: AGHT+IHBOGAJ3mu2ibKW0OzKUtoK8ZkdfeZw63tazlESlvJAWwYsb9DxB5r7NbE8tkNktkAEQbD8rA==
-X-Received: by 2002:a05:6122:32c3:b0:531:2413:ce62 with SMTP id 71dfb90a1353d-53b2b8d3c8fmr4196664e0c.11.1755532975706;
-        Mon, 18 Aug 2025 09:02:55 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bf05c9csm1940030e0c.28.2025.08.18.09.02.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 09:02:54 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-89021b256eeso1017325241.1;
-        Mon, 18 Aug 2025 09:02:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWlYaJNTtUuRjbji4gsZ0XQr+UdPnpW4vlh8Y4fPnkCH3GEm/qkR0rlb8IcQRX2M6cFIKAMJZHKvsv@vger.kernel.org, AJvYcCUsa7LYybOmnyTNaafZUov4mNI7+W5l3jFQujSrRyg6W5IALqAixMIte7UejnGkAqmo9RkFip4Q1TgCeMA9DJFpo18=@vger.kernel.org, AJvYcCXn7Z1pa/6g/NsQcstUh/JYhBEnR4ALSYJ+iqqEWR/yZ1C0v5JD7Dt4BHkazOunhzHkPSmJCoI3n8RhRB/c@vger.kernel.org
-X-Received: by 2002:a05:6102:290a:b0:4dd:b9bc:df71 with SMTP id
- ada2fe7eead31-5126b10f583mr4562417137.10.1755532973827; Mon, 18 Aug 2025
- 09:02:53 -0700 (PDT)
+	s=arc-20240116; t=1755532975; c=relaxed/simple;
+	bh=tz0d9rCWNPVFVAlcAoNU0yPn0mQPwXExjPwll0A+KXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ioClsGQ4lghOfCu6qGmdgqejZGmXmoRbM8DlBW/s/YkwvjFI2Y4JgALJeUyXMvesG2DLSqqXKERcd1p1SbrxBo+UYFSV+7nM7a9/BWcPIufjZz8xBb7tIvMAzczbZjpi7pCvCFIAs223aSbj046f3669DtLXFan2dQwh1NBKFmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5ECF31596;
+	Mon, 18 Aug 2025 09:02:44 -0700 (PDT)
+Received: from [10.57.58.12] (unknown [10.57.58.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0343F63F;
+	Mon, 18 Aug 2025 09:02:46 -0700 (PDT)
+Message-ID: <b6579c2a-2262-4279-81a5-8235092bea13@arm.com>
+Date: Mon, 18 Aug 2025 18:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250812200344.3253781-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 18:02:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXt9O==nuO7e+iWP7Efx=yy=TPakmSxC6BhPsWGw_hG_A@mail.gmail.com>
-X-Gm-Features: Ac12FXzF3SiGve5SGr_c4PZWmXIIUf8GhOhtRael8tL1-CxdX993SpeMnYVkOrc
-Message-ID: <CAMuHMdXt9O==nuO7e+iWP7Efx=yy=TPakmSxC6BhPsWGw_hG_A@mail.gmail.com>
-Subject: Re: [PATCH 12/13] arm64: dts: renesas: rzt2h/rzn2h: Enable MicroSD
- card slot
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 13/18] mm: Map page tables with privileged pkey
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Cc: "maz@kernel.org" <maz@kernel.org>, "luto@kernel.org" <luto@kernel.org>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "mbland@motorola.com" <mbland@motorola.com>,
+ "david@redhat.com" <david@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "rppt@kernel.org" <rppt@kernel.org>, "joey.gouly@arm.com"
+ <joey.gouly@arm.com>, "akpm@linux-foundation.org"
+ <akpm@linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "Weiny, Ira" <ira.weiny@intel.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+ "pierre.langlois@arm.com" <pierre.langlois@arm.com>,
+ "jeffxu@chromium.org" <jeffxu@chromium.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "kees@kernel.org" <kees@kernel.org>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "jannh@google.com" <jannh@google.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "will@kernel.org" <will@kernel.org>,
+ "qperret@google.com" <qperret@google.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "broonie@kernel.org" <broonie@kernel.org>, "x86@kernel.org" <x86@kernel.org>
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <20250815085512.2182322-14-kevin.brodsky@arm.com>
+ <616011cf17f1654ac3ad8757f0f33425b3af1ddd.camel@intel.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <616011cf17f1654ac3ad8757f0f33425b3af1ddd.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
-
-On Tue, 12 Aug 2025 at 22:04, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 15/08/2025 18:37, Edgecombe, Rick P wrote:
+> On Fri, 2025-08-15 at 09:55 +0100, Kevin Brodsky wrote:
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index d9371d992033..4880cb7a4cb9 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -34,6 +34,7 @@
+>>  #include <linux/slab.h>
+>>  #include <linux/cacheinfo.h>
+>>  #include <linux/rcuwait.h>
+>> +#include <linux/kpkeys.h>
+>>  
+>>  struct mempolicy;
+>>  struct anon_vma;
+>> @@ -2979,6 +2980,8 @@ static inline bool __pagetable_ctor(struct ptdesc *ptdesc)
+>>  
+>>  	__folio_set_pgtable(folio);
+>>  	lruvec_stat_add_folio(folio, NR_PAGETABLE);
+>> +	if (kpkeys_protect_pgtable_memory(folio))
+>> +		return false;
+>>  	return true;
+>>  }
+> It seems like this does a kernel range shootdown for every page table that gets
+> allocated? If so it throws a pretty big wrench into the carefully managed TLB
+> flush minimization logic in the kernel.
 >
-> Enable MicroSD card slot which is connected to SDHI1 on the RZ/T2H and
-> RZ/N2H EVKs.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Obviously this is much more straightforward then the x86 series' page table
+> conversion batching stuff, but TBH I was worried that even that was going to
+> have a performance hit. I think how to efficiently do direct map permissions is
+> the key technical problem to solve for pkeys security usages. They can switch on
+> and off fast, but applying the key is just as much of a hit as any other kernel
+> memory permission. (I assume this works the similarly to x86's?)
 
-Thanks for your patch!
+The benchmarking results (see cover letter) don't seem to point to a
+major performance hit from setting the pkey on arm64 (worth noting that
+the linear mapping is PTE-mapped on arm64 today so no splitting should
+occur when setting the pkey). The overhead may well be substantially
+higher on x86.
 
-> --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+I agree this is worth looking into, though. I will check the overhead
+added by set_memory_pkey() specifically (ignoring pkey register
+switches), and maybe try to allocate page tables with a dedicated
+kmem_cache instead, reusing this patch [1] from my other kpkeys series.
+A kmem_cache won't be as optimal as a dedicated allocator, but batching
+the page freeing may already improve things substantially.
 
-No mmc1 alias?
+- Kevin
 
-> @@ -91,6 +103,30 @@ sd0-emmc-ctrl-pins {
->                                  <RZT2H_PORT_PINMUX(13, 2, 0x29)>; /* SD0_RST# */
->                 };
->         };
-> +
-> +#if SD1_MICRO_SD
-> +       sdhi1-pwen-hog {
-> +               gpio-hog;
-> +               gpios = <RZT2H_GPIO(8, 5) GPIO_ACTIVE_HIGH>;
-> +               output-high;
-> +               line-name = "SD1_PWEN";
-> +       };
-> +#endif
-> +
-> +       sdhi1_pins: sd1-group {
-> +               sd1-data-pins {
+[1]
+https://lore.kernel.org/linux-hardening/20250815090000.2182450-4-kevin.brodsky@arm.com/
 
-No need for repeated sd1-prefixes in the subnodes.
-
-
-> +                       pinmux = <RZT2H_PORT_PINMUX(16, 7, 0x29)>, /* SD1_DATA0 */
-> +                                <RZT2H_PORT_PINMUX(17, 0, 0x29)>, /* SD1_DATA1 */
-> +                                <RZT2H_PORT_PINMUX(17, 1, 0x29)>, /* SD1_DATA2 */
-> +                                <RZT2H_PORT_PINMUX(17, 2, 0x29)>; /* SD1_DATA3 */
-> +               };
-> +
-> +               sd1-ctrl-pins {
-> +                       pinmux = <RZT2H_PORT_PINMUX(16, 5, 0x29)>, /* SD1_CLK */
-> +                                <RZT2H_PORT_PINMUX(16, 6, 0x29)>, /* SD1_CMD */
-> +                                <RZT2H_PORT_PINMUX(17, 4, 0x29)>; /* SD1_CD */
-> +               };
-> +       };
->  };
->
->  &sci0 {
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
