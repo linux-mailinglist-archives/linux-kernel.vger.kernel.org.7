@@ -1,175 +1,116 @@
-Return-Path: <linux-kernel+bounces-773792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81921B2A9E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:25:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CC5B2A9DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC6B683644
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771335A21C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6725E345750;
-	Mon, 18 Aug 2025 14:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F44342C87;
+	Mon, 18 Aug 2025 14:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LSkl7hrw"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="osr04jML"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27494345728;
-	Mon, 18 Aug 2025 14:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97845340DAD;
+	Mon, 18 Aug 2025 14:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525872; cv=none; b=ICbLQd2a+kZFDOFUxIzZLYltAdF0o9wGdyGbmaEB2PZbJ1ahDpuENHi0rvuUuXe898xIxwS/xwjtSGWrui2FIiYqgXLM8nDEky+jF5aJiUeVcK35EkElnEuvdptNo+Psxl+W7k+oc8zluFLM+0D71+XzsceXDvO/IGt/NEryC9s=
+	t=1755525794; cv=none; b=VXjMSnRvvWjFyBL9MzHnRyYZCNwcgcL1TFL0ZZv/GZPh3up2zCIP8HJAELfBAw9OxwynQoeYS9a9Z6NLXdxknXCAS0yuNfQmL6XAqgY0WXl5zjc8//iGVAZgPwxZKI8xu3om/KPvMAgNsO1uGvmpJiIlkc4gAn3o1NIdBrNah9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525872; c=relaxed/simple;
-	bh=OfjWWNW0FYxKl7Mc46vXvdZYAz7olG2xgHrBehp2UIY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=rF5Mjv3C3LVCIcdsy2RGbLf6VfenYkJFFfYSuHNx4OkGsK3/OEhUhpPTpDMj7G3cSYDvuBZVAfjuIcQdWZkFYzLvZfvsci6EyJUrutx/PoD50jHLZkFntIdr4qy9R6ptZKd7lNebOBqD7UQ+zdLmk9tEdunkKU1B2ccl1Hwjxso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LSkl7hrw; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IDFlnc021385;
-	Mon, 18 Aug 2025 16:04:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	SrMH3SB1Lk0TWtcGskbizL8CHJwognrV8tAWHyAvW4Q=; b=LSkl7hrwGpJl1uPA
-	IrjZ+Qwc1jbo+MVCSaB5vRbb8wdQQR77lPH5ESudCq+I5qggaWEX24lNvAmNtaDx
-	QoOdOU+pCtS2hYv4yDwundMwZUCtCGYc1lHhfzTaMOe+K+TXOy4NnrrtmOncAIIL
-	DOsyrNL0ULZBcmgsOwyjgwK50zAKV6XuW3yU/c4sN0smn1tMfdR/CFstFmN0NpaW
-	0vgEHiMbdByKcEeT+zYJH4ph6LeQTV3tdHYAI9IEKwHH03h1zYCtdMoOw4Mkr9lj
-	jp6kU5ewO+U1dGUbCiLYiVkz5CLvSImFslxncyKpX0s5Y27kW1le8ab7S++KQ3PK
-	oysCLA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48k4xmmefk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 16:04:10 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6D7E640048;
-	Mon, 18 Aug 2025 16:03:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AFDFA7383ED;
-	Mon, 18 Aug 2025 16:02:48 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 16:02:47 +0200
-Message-ID: <c390d61f-7f07-43d5-b212-92a5936dc16a@foss.st.com>
-Date: Mon, 18 Aug 2025 16:02:47 +0200
+	s=arc-20240116; t=1755525794; c=relaxed/simple;
+	bh=Ow9KW3YcVSr0/nPhBv9tKtnie2AY1M86cNe3h2YVq1k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=t49Qi47Uro71JYeZDGRsXHH/f/VsXvb+l+LfuEaJ2pVE4EzDImDy0a0y79yENy3wSoXScS2OubZ/j0AFBCE5zvO9w1PI23+4IibIoZN6pC4kUOrhy2X4JMk661ddgc6i7LyKsxDikqaQjT+D5SLHg3U229dYHY59HdFVvFK69/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=osr04jML; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A7E6B4397D;
+	Mon, 18 Aug 2025 14:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755525790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RLD1DeoM4SdeI+gMUKY34n91PgjQmdYcZNQgzI0w0C0=;
+	b=osr04jML1ESr7OjPB65yybVsVbodHWvlt7muqZURncfGobjkKazoFBaVp17WUmDGrIi5rq
+	TQBN7608NudoHjXuilWsA+h2xWB3BP5J1TmuP6LlrwKBvpI9c6HvqiX7UjwMftcuk5ahVI
+	Gqra+jITvPRfZkcmwRW/h1Sp7LEh/HZbnkmTOssvNm5Leksb00puN9uSgPRVqhSWHR7pd4
+	PtpKr/18ztpPPNxaNLDkIaXX5q+yP/E+zF2e5pPRC9uyBZ8RHwmSKMQbi/i1L+PHzzPPbY
+	PqdrygZTi1hSNGcC50MfgpMSUsh6HIrs+w1Zxv/tcmX24TCSQFjITVqB6+boRQ==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Date: Mon, 18 Aug 2025 16:02:48 +0200
+Subject: [PATCH v4 3/6] mmc: mmc_test: use mmc_card cmd23 helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] ARM: sti: removal of stih415/stih416 related
- entries
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Alain Volmat <avolmat@me.com>
-References: <20250714-sti-rework-v2-0-f4274920858b@gmail.com>
- <20250714-sti-rework-v2-2-f4274920858b@gmail.com>
- <b80cc04f-aa80-4124-97de-846bebc271a2@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <b80cc04f-aa80-4124-97de-846bebc271a2@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250818-mobileye-emmc-for-upstream-4-v4-3-34ecb3995e96@bootlin.com>
+References: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
+In-Reply-To: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomhepuegvnhhofphtucfoohhnihhnuceosggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedufefgudfgfffguefhgeeuvdeuhfekkedtleduledvleetleetjeejieetteevtdenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehpdhhvghloheplgduledvrdduieekrddutddrudekjegnpdhmrghilhhfrhhomhepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesi
+ hhnthgvlhdrtghomhdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhmtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrgh
+X-GND-Sasl: benoit.monin@bootlin.com
 
+Use mmc_card_can_cmd23 instead of using a local and partial
+implementation, and check for the CMD23 quirk with
+mmc_card_blk_no_cmd23.
 
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+ drivers/mmc/core/mmc_test.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-On 7/28/25 11:25, Patrice CHOTARD wrote:
-> 
-> 
-> On 7/14/25 15:49, Raphael Gallais-Pou wrote:
->> From: Alain Volmat <avolmat@me.com>
->>
->> ST's STiH415 and STiH416 platforms have already been removed since
->> a while.  Remove some remaining bits within the mach-sti.
->>
->> Signed-off-by: Alain Volmat <avolmat@me.com>
->> Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
->> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
->> ---
->>  arch/arm/mach-sti/Kconfig    | 20 +-------------------
->>  arch/arm/mach-sti/board-dt.c |  2 --
->>  2 files changed, 1 insertion(+), 21 deletions(-)
->>
->> diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
->> index b3842c971d31b80edaf88ab907f4377bea0a2af5..e58699e13e1a55ce46e68908c7ef51e18b040dc9 100644
->> --- a/arch/arm/mach-sti/Kconfig
->> +++ b/arch/arm/mach-sti/Kconfig
->> @@ -19,31 +19,13 @@ menuconfig ARCH_STI
->>  	select PL310_ERRATA_769419 if CACHE_L2X0
->>  	select RESET_CONTROLLER
->>  	help
->> -	  Include support for STMicroelectronics' STiH415/416, STiH407/10 and
->> +	  Include support for STMicroelectronics' STiH407/10 and
->>  	  STiH418 family SoCs using the Device Tree for discovery.  More
->>  	  information can be found in Documentation/arch/arm/sti/ and
->>  	  Documentation/devicetree.
->>  
->>  if ARCH_STI
->>  
->> -config SOC_STIH415
->> -	bool "STiH415 STMicroelectronics Consumer Electronics family"
->> -	default y
->> -	help
->> -	  This enables support for STMicroelectronics Digital Consumer
->> -	  Electronics family StiH415 parts, primarily targeted at set-top-box
->> -	  and other digital audio/video applications using Flattned Device
->> -	  Trees.
->> -
->> -config SOC_STIH416
->> -	bool "STiH416 STMicroelectronics Consumer Electronics family"
->> -	default y
->> -	help
->> -	  This enables support for STMicroelectronics Digital Consumer
->> -	  Electronics family StiH416 parts, primarily targeted at set-top-box
->> -	  and other digital audio/video applications using Flattened Device
->> -	  Trees.
->> -
->>  config SOC_STIH407
->>  	bool "STiH407 STMicroelectronics Consumer Electronics family"
->>  	default y
->> diff --git a/arch/arm/mach-sti/board-dt.c b/arch/arm/mach-sti/board-dt.c
->> index 488084b61b4acafb569ee9c51f5769393d55a9ce..1aaf61184685d754de57b487aef9a6b45a759b23 100644
->> --- a/arch/arm/mach-sti/board-dt.c
->> +++ b/arch/arm/mach-sti/board-dt.c
->> @@ -10,8 +10,6 @@
->>  #include "smp.h"
->>  
->>  static const char *const stih41x_dt_match[] __initconst = {
->> -	"st,stih415",
->> -	"st,stih416",
->>  	"st,stih407",
->>  	"st,stih410",
->>  	"st,stih418",
->>
-> 
-> 
-> Hi Raphael
-> 
-> Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
-> 
-> Thanks
-Applied to sti-next
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index 80e5d87a5e50bea772c06443bca8f48f042d6ad5..67d4a301895c905bf52776f970bfc7a8f86a65aa 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -180,20 +180,14 @@ static int mmc_test_set_blksize(struct mmc_test_card *test, unsigned size)
+ 	return mmc_set_blocklen(test->card, size);
+ }
+ 
+-static bool mmc_test_card_cmd23(struct mmc_card *card)
+-{
+-	return mmc_card_mmc(card) ||
+-	       (mmc_card_sd(card) && card->scr.cmds & SD_SCR_CMD23_SUPPORT);
+-}
+-
+ static void mmc_test_prepare_sbc(struct mmc_test_card *test,
+ 				 struct mmc_request *mrq, unsigned int blocks)
+ {
+ 	struct mmc_card *card = test->card;
+ 
+ 	if (!mrq->sbc || !mmc_host_can_cmd23(card->host) ||
+-	    !mmc_test_card_cmd23(card) || !mmc_op_multi(mrq->cmd->opcode) ||
+-	    (card->quirks & MMC_QUIRK_BLK_NO_CMD23)) {
++	    !mmc_card_can_cmd23(card) || !mmc_op_multi(mrq->cmd->opcode) ||
++	    mmc_card_blk_no_cmd23(card)) {
+ 		mrq->sbc = NULL;
+ 		return;
+ 	}
 
-Thanks
-Patrice
+-- 
+2.50.1
+
 
