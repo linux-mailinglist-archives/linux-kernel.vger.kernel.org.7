@@ -1,169 +1,116 @@
-Return-Path: <linux-kernel+bounces-773992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C401BB2AD46
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:50:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE60AB2AD4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 665751B63532
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:47:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B7C566977
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB7C31B13A;
-	Mon, 18 Aug 2025 15:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C996C2E22BE;
+	Mon, 18 Aug 2025 15:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2aSOb3D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="I8Bq11ah"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122EF258CFA;
-	Mon, 18 Aug 2025 15:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE452C2365
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755532023; cv=none; b=QMn99PFnsQXbHzrSsVTihZIeBPwjgAntzrDPsIXIj4caJj20bHz4Zae1612KgCtGbxTFMjzu4r5tN65gTImhC9GTZgj8RZQnXIPXD5j8IxMCAdDBiSpDKeOOpvg1ZaxQe4YpDbktAd3MzBOex3PwvHu3ZVkU1dceQepG6ytlA8Q=
+	t=1755532034; cv=none; b=E/BgUHfEyY6r/TMplEN1waRbDf1N5RKqDzThCC+v0xnNNvoQ8MfWlDha1txcylVG0kN8TRmRLeYvp8W3YqhrsOmz9B7ep2CHALlc4VpDHFD06cIemH1LafK9zAY1smaSROt1AOrtY4FJC7n+KObaT5HFc+o3cxjVXe9Qgu6AGcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755532023; c=relaxed/simple;
-	bh=W6AmuSmN9qaWu3EIFd4eq8W4sSZ6dygxL+NWbHPYrzc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nqt3YfkId69I3Zip62VMGLEApcyRBpOd6fQeQk+sEQBAMah1hnBkmLwZeBfCuRWCweZX3zQv4gkFQ+BECvwRWcpZmyXuxmHnJ53tmqj2KpkO//GXXveDHOs8gbsP0Jq5xk6jZ8UGf43c9hB+IzADH/DovUlCHhDrYbEIkRlm3ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2aSOb3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85585C4CEEB;
-	Mon, 18 Aug 2025 15:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755532022;
-	bh=W6AmuSmN9qaWu3EIFd4eq8W4sSZ6dygxL+NWbHPYrzc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e2aSOb3DJlmkn7hgl5ndvqTbohd07H4hP00GZjm+2z+su04i8FSpfejqd3OOkaYkW
-	 ne8R2t8XogWY46TX2nJd1iUl8+tV5eUeLk3QD76R4f0pMnzaED62uuxeNmF5bGr30d
-	 ryl4y+GI4y0uFapRJmBjm2AUD1DrfMtLDtlwbaIGH1wsMt8APOULhfOQiXRVqzDWgm
-	 Y5mI6UcP5ynpoVoDdzpSD0ajG0QIXhqAYHlhQZXGrmKHjxFV2hK3fBIE7w9Gexuc6I
-	 3Q8beDL32asIGC1xDvUZ3bUzh+YQ1hTPc7zEtK1Yf2OXwuRFV+dhkRwUKjN+C1ojqX
-	 rqKIs184FnKFg==
-Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uo24a-008fb5-Co;
-	Mon, 18 Aug 2025 16:47:00 +0100
-Date: Mon, 18 Aug 2025 16:46:59 +0100
-Message-ID: <87jz30my30.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] arm64/sysreg: Replace TCR_EL1 field macros
-In-Reply-To: <20250818045759.672408-3-anshuman.khandual@arm.com>
-References: <20250818045759.672408-1-anshuman.khandual@arm.com>
-	<20250818045759.672408-3-anshuman.khandual@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1755532034; c=relaxed/simple;
+	bh=WUakmhPTGh3JHJBduDtg9bHzUVeNreikaFApL4jcRsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d6bbGRYx7gZAjkx5bHcNf4esImSSVsBhrS6jUvYOVDXD3HfkUQv0F+cYByMLvvZuwAK/EzfqtLMe0yxhekFVVj4z0lGkqEm79tZhJRSxhiIpZ1A1k2wsFtxwexI77pGvrOtOKDiCk0wX6P8GGE7nZL2BqbmksLMtT6cW/ZS/6RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=I8Bq11ah; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b134f1c451so17857951cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1755532031; x=1756136831; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5NZWNuw9uqGyH6UBABpbY9lwXWb90jB/i2Dis4FmyQU=;
+        b=I8Bq11ahQhqfEnYtsoH7G5MNTr0RniVsDDpcFBN6FbPC3qcn8JVyOaS2C80/YmoXJh
+         g1u7ie7+sP+0lS4MEzyJlP0oS/jhWoi4vLDhkDlpm3cbKKseDCEXtCQDKGRTQt7xWdvw
+         7X0t7HkzqpmmCSBgY3ln+Ga3V6AK2TGdZRDON8MLGffvM09MWJJXCNwjsx4KsWVwpiiZ
+         bfVTXIGI2zXtnmz+g9mcKnasm2r5EK5PIazfJV3WQ1+gD+5GVIjlq9MJYcGVnCXV/d4P
+         lMnYu4tcRpgBZVJN8xep2x6VD7Uzacse/hc+5FPjaAA7BCUOmJLerQ5Z4JCQiBkx6g1I
+         Ub+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755532031; x=1756136831;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5NZWNuw9uqGyH6UBABpbY9lwXWb90jB/i2Dis4FmyQU=;
+        b=VpfoAXZUOfTDY8JyoXB7Pu6MUtiIvz9BJGEdOcYCajPQ+8SxpiFN1oTrtIgL5MEFVS
+         hZhJzp2udsOpC9IcNH3kK6JMse0K35XfokDcTmHpntxXkmfx0pusr+JAFpAYcjM8jCX1
+         aO1x1QNaWumWIXugJEeqyPtB+A3l9CpZc7OVZaxTjqSvShn2RuZO3aJ3Qw16NrBEwth8
+         v71f09M68nUuBfjTEkF+7SJYrSgv6Dg2B+FgtKMsgzNwZP05bKdKgHRLIFtF+8IwcvSb
+         7xQv4vlxiDc+ODIBNNgIIXZMbYBnuVr8GevswDc+JU7kG101Qx6OX8IJVwpZwMBXLQm+
+         JsAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVO/sH9V3vlump3S6/OMmA6199P5n01xyiNCaTcu88DEV7FCFrzmq/1JPww5XitfW81qMuJQl/Hp+0JfCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/TwwQtMYmIRwrKMg5iZtvBGLooRLM3mCM393dBZiucYMCj7Ng
+	asEX69vpIH+CkFsSd02wv7usLb7DtOhSuUxztD7nZCgeNoMLVaoz5amgCcJlhf4hWJY=
+X-Gm-Gg: ASbGncvlcI5il57Ya2RHUmGJ5iYc2vPYkVBQ4miZ/jpvq6u7xYDVewi2EYyYJDWgdT4
+	8Ih7wIRxxuSdA4JwEnYCrc7TscAtw2982TXn6nDQKypy9IRkMJDEhH0nhVytTQM0Uhct6sOwCPg
+	pz0jddxf+3093xVyE4RvVGugxSQ+BXx7myvhiCK77yOnwchScNg5K6+VY0VDkuiav29543htD3N
+	VW7eqsCciLT2UyBOrIKzr3t5Mr3aefHoc0b0qOMEjuXwLUtAyJGLTrlfBR8xJ1q8sCca2Q6Yi4W
+	Ybi8JM4a7dmAi1ZXwz6A3KHK5WEfr3ZEw04CLbX0zjH2AepEAMl22rSemVi7VcXSKtuaNvDdO2/
+	1XYtgVF8R8tw8cR096JystMG7+kZ+p5mbqLxbob6q
+X-Google-Smtp-Source: AGHT+IHtyZSzLjJeK5dygj5R68bwBBP999TKqLNyPthvXLv8L+n5/XjRwQcWRiuFAFjpEWW5iC0zvg==
+X-Received: by 2002:ac8:58c4:0:b0:4af:1837:778e with SMTP id d75a77b69052e-4b12a74e438mr104897681cf.31.1755532031187;
+        Mon, 18 Aug 2025 08:47:11 -0700 (PDT)
+Received: from [100.64.0.1] ([170.85.10.179])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1e15besm610112485a.72.2025.08.18.08.47.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 08:47:10 -0700 (PDT)
+Message-ID: <7502cad3-ca4c-490e-9b11-50e3297b6e32@sifive.com>
+Date: Mon, 18 Aug 2025 10:47:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 86.149.246.145
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, broonie@kernel.org, ryan.roberts@arm.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 046/114] clk: sifive: sifive-prci: convert from
+ round_rate() to determine_rate()
+To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-46-b3bf97b038dc@redhat.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-46-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 18 Aug 2025 05:57:57 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+On 2025-08-11 10:18 AM, Brian Masney via B4 Relay wrote:
+> From: Brian Masney <bmasney@redhat.com>
 > 
-> This just replaces all used TCR_EL1 field macros with tools sysreg variant
-> based fields and subsequently drops them from the header (pgtable-hwdef.h).
-> While here, also drop all the unused TCR_XXX macros from the header.
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> Note that the changes to the three header files were done by hand.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 > ---
->  arch/arm64/include/asm/assembler.h         |   6 +-
->  arch/arm64/include/asm/cputype.h           |   2 +-
->  arch/arm64/include/asm/kvm_arm.h           |  28 +++---
->  arch/arm64/include/asm/kvm_nested.h        |   6 +-
->  arch/arm64/include/asm/mmu_context.h       |   4 +-
->  arch/arm64/include/asm/pgtable-hwdef.h     | 107 +++------------------
->  arch/arm64/include/asm/pgtable-prot.h      |   2 +-
->  arch/arm64/kernel/cpufeature.c             |   4 +-
->  arch/arm64/kernel/pi/map_kernel.c          |   8 +-
->  arch/arm64/kernel/vmcore_info.c            |   2 +-
->  arch/arm64/kvm/arm.c                       |   6 +-
->  arch/arm64/kvm/at.c                        |  48 ++++-----
->  arch/arm64/kvm/hyp/include/hyp/switch.h    |   2 +-
->  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h |   2 +-
->  arch/arm64/kvm/hyp/nvhe/switch.c           |   2 +-
->  arch/arm64/kvm/hyp/nvhe/tlb.c              |   2 +-
->  arch/arm64/kvm/hyp/vhe/tlb.c               |   2 +-
->  arch/arm64/kvm/nested.c                    |   8 +-
->  arch/arm64/kvm/pauth.c                     |  12 +--
->  arch/arm64/mm/proc.S                       |  29 +++---
->  tools/arch/arm64/include/asm/cputype.h     |   2 +-
->  21 files changed, 101 insertions(+), 183 deletions(-)
+>  drivers/clk/sifive/fu540-prci.h  |  2 +-
+>  drivers/clk/sifive/fu740-prci.h  |  2 +-
+>  drivers/clk/sifive/sifive-prci.c | 11 ++++++-----
+>  drivers/clk/sifive/sifive-prci.h |  4 ++--
+>  4 files changed, 10 insertions(+), 9 deletions(-)
 
-[...]
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 888f7c7abf54..b47d6d530e57 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -2000,10 +2000,10 @@ static void __init cpu_prepare_hyp_mode(int cpu, u32 hyp_va_bits)
->  
->  	tcr = read_sysreg(tcr_el1);
->  	if (cpus_have_final_cap(ARM64_KVM_HVHE)) {
-> -		tcr &= ~(TCR_HD | TCR_HA | TCR_A1 | TCR_T0SZ_MASK);
-> -		tcr |= TCR_EPD1_MASK;
-> +		tcr &= ~(TCR_EL1_HD | TCR_EL1_HA | TCR_EL1_A1 | TCR_EL1_T0SZ_MASK);
-> +		tcr |= TCR_EL1_EPD1_MASK;
-
-Except that none of that code is about EL1. At all.
-
->  	} else {
-> -		unsigned long ips = FIELD_GET(TCR_IPS_MASK, tcr);
-> +		unsigned long ips = FIELD_GET(TCR_EL1_IPS_MASK, tcr);
->  
->  		tcr &= TCR_EL2_MASK;
->  		tcr |= TCR_EL2_RES1 | FIELD_PREP(TCR_EL2_PS_MASK, ips);
-> diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
-> index 0e5610533949..5f0f10ef38f0 100644
-> --- a/arch/arm64/kvm/at.c
-> +++ b/arch/arm64/kvm/at.c
-> @@ -134,8 +134,8 @@ static int setup_s1_walk(struct kvm_vcpu *vcpu, struct s1_walk_info *wi,
->  	tbi = (wi->regime == TR_EL2 ?
->  	       FIELD_GET(TCR_EL2_TBI, tcr) :
->  	       (va55 ?
-> -		FIELD_GET(TCR_TBI1, tcr) :
-> -		FIELD_GET(TCR_TBI0, tcr)));
-> +		FIELD_GET(TCR_EL1_TBI1, tcr) :
-> +		FIELD_GET(TCR_EL1_TBI0, tcr)));
-
-This is the reason number one why I dislike this patch.
-
-Here, we deal with both the EL1&0 *and* the EL2&0 translation
-regimes. And I left the original definition *on purpose* so that
-nobody would read this code as being EL1-only. Now, you will glance
-over it with warm fuzzy feeling that you know what this is about --
-purely EL1. And that's what bugs are made of.
-
-Of course, nothing changed functionally. But is it better? No.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
 
