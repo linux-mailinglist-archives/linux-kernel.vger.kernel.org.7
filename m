@@ -1,107 +1,223 @@
-Return-Path: <linux-kernel+bounces-774491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A24B2B2F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:53:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF103B2B2B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9811B22F9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB4F2561F4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DC726A0C6;
-	Mon, 18 Aug 2025 20:50:09 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979B51FBEA2;
+	Mon, 18 Aug 2025 20:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ATiECrNV"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013012.outbound.protection.outlook.com [40.107.159.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F327222584;
-	Mon, 18 Aug 2025 20:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755550209; cv=none; b=dGS2mEwY132T2BGAJ3Oemw+ORLeFtwOI/IpUzVbNpi3Vnx6Ltq2G8XRZxDM3fpC2WtB/ogmkdE31cljNnuClyebpzQ9mVbW/YB9or4Rn8YL7VnQQYLkEQ/XYx9ffL3DZ4uRGvO29kEqeEXSJMZk9qOofsNnbMvOWmBh7KvvF+KE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755550209; c=relaxed/simple;
-	bh=kzI1ji97StoZqXSmUTpzmElG3fr9N3s8DOq5wMv6AH0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jmloLg6RLWusWa63w8rk9o9JLCjh0JNXpADPc072NNbSnMv2cz1pJdNxnisASWzEWXHgoLtD7BrpI9Y796dkQu1GYk3lUa4ztDJhWuTd12qyJQgrAcqu9nEO3cGQz/8Qh3QHBtptyArFvycre/mVxOSfmnwfCTeIkbY5+7Rog4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
-	(Authenticated sender: kovalevvv)
-	by air.basealt.ru (Postfix) with ESMTPSA id CB93923384;
-	Mon, 18 Aug 2025 23:42:47 +0300 (MSK)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: Takashi Iwai <tiwai@suse.com>,
-	Kailang Yang <kailang@realtek.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Stefan Binding <sbinding@opensource.cirrus.com>,
-	kovalev@altlinux.org
-Subject: [PATCH] ALSA: hda/realtek: Fix headset mic on ASUS Zenbook 14
-Date: Mon, 18 Aug 2025 23:42:43 +0300
-Message-Id: <20250818204243.247297-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C679B19995E;
+	Mon, 18 Aug 2025 20:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755549923; cv=fail; b=FSiSxcbqsk3j8HHwiQGh2jtCjNhMVJTeROFYMQrrXHYuA+XsCdp0zcJKY7U9w0XesxfxKUHmjzvVecBFGDl9NGMMXKK+Xpy0dIlz35Yxldme/wdk+rpFvFaL/mjKzMJzjFPLPuFX+8sHAbXtveshiKcXtUlaDTru7SLt57DY7pM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755549923; c=relaxed/simple;
+	bh=uG9mKadJjf8XJXQX9h1mg/GpfA8PsvlrwKcr9D3dxqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Cz5LYX3+/Xga0KO/DrRz68Rzfhgsj5ygzl2UTqu4G896qbPgEzr10EsM70dq/E9omYOl2Dut5YIdOBz3UiV9eMVqtcaa1qcExckFfLN93rvVRIdwCjHiWNyTA1eX3KwlqiPH+saQ6X3OQAzXADZw+i/3kTiOBOXYcHfjODebgVI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ATiECrNV; arc=fail smtp.client-ip=40.107.159.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PBt1vrO2tlaT3uuKL3w0kU1PzI5qvY3x2awB53T02nOj7l04qKZGBPLUYS94iemptlr95I3uQ4++UFeQnaE9At6IJEXACgSVOG0qm4OpBA9Jva3kya6SR2Bu8jkbIBGEwdft4YRfd1LM165+vFFEQj+7xRbU+Tqf8yxh7+CvQRFJ1dibMn8RYKyI1gH6tLiF7fFj5njTAVh6u7ff4WegeiH/0w/9KuBVd2B8yvHgIUOhFvvTT4qbcOy5WXFvkSAODm/IYx1o2aqCml0Se7R7wzSVMbSYbKKjugYcQLsX/kfLb8n+ZrTsL4i18ZaGgO/RGeywQ2x2Ecg3r/O7gcVjfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LKsgPePhAUYu2E7HIONeHzUi4Re8KncIP0xPJaPKuNA=;
+ b=hIK4lPFH5SINfd5g5Hfo3Yblgstq6pAtC9KX9tlzbAOqbia0BN+yb3CLKru2u0XdvNVDqfkhXX6rnXpsZY41/1khSju98mMLj5zc7P2zkQ7lLh3kW+ollUA+zTselE7mu8D/0uuNJu2guU8BmEpnXE69NPrwPjgwFUn0nqLSlWxqjrBQs3Kod9asvYQpBZ34blTKkaw7oCSCj4isrU+NTQdIFP3hzt1r+/rT+2JMBlF6tvDwAapbB9zwgvAPnXe/HagN7UorrGSTPSHlT7hhkJE8YiPnTINePvJCAZDVGakilsXi508KBe7Pt5HtwI4prCux9MWdsZ8KpBr+IeRNgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LKsgPePhAUYu2E7HIONeHzUi4Re8KncIP0xPJaPKuNA=;
+ b=ATiECrNVZ2SHzk/GK2UFwn1EMUSJQExt7ghmlqTswua1DhRYQyh/b0Ixh13h0HwSjDcUqdhidEwdZV1V94zs4Ru5apmsa2Uqa2U0k3jzRT+bdt1kdgWNFWDBsWgsomkuaMGqsxkG2Yi7nJ/+fAyS1LalatgAlUPMIvzq5R4K60QfV12DSTI9Qu0zGI6dIJKp2vGcV13nIzwtmBTgSDJ238TURtJcXUn0TNyII8Ygmmgx4adg5Q+Gwb2lIKApT/rmp/Ls2cqDu92pBT+MdlJs/Anqxc/Wmi35O7DG25kOEWZ1+bFbAF6xN718w/7CAi7+3IbF9PUCKzgnGU5UKr10nQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by VI1PR04MB7040.eurprd04.prod.outlook.com (2603:10a6:800:121::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.8; Mon, 18 Aug
+ 2025 20:45:17 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%7]) with mapi id 15.20.9052.011; Mon, 18 Aug 2025
+ 20:45:17 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com
+Subject: [PATCH 0/4] Enable Remote GPIO over RPMSG on i.MX Platform
+Date: Mon, 18 Aug 2025 15:44:16 -0500
+Message-ID: <20250818204420.794554-1-shenwei.wang@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH7P221CA0021.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:510:32a::27) To PAXPR04MB9185.eurprd04.prod.outlook.com
+ (2603:10a6:102:231::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9185:EE_|VI1PR04MB7040:EE_
+X-MS-Office365-Filtering-Correlation-Id: a54397af-80ca-4933-d268-08ddde98237d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|19092799006|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bwAtgC2WAwvPtLrvvl6nxLM+wRJqwJUCK0pGfzEVRvmIDgw3JWZGwUblDmxQ?=
+ =?us-ascii?Q?XXxta7zC0FE1x88LXR41m8Ix3KneFtT0X2gw39F7rwbdkJgsKAvcw0Y7encT?=
+ =?us-ascii?Q?ApicLuq65eqRar9tLpOFAzG3+bG6i7o1kei1PW4Is0b+3ppWnUZg8vriWKEW?=
+ =?us-ascii?Q?Oi1TiTrHc3euA4Ig5vd+3PBlITrp7IUSCJVKhIgWqHSXqBjJfidnaFGuYFDE?=
+ =?us-ascii?Q?Bjk5XUfQnucn99JyAuP9CuPiaB2yM/E5225kZecjHyjAp96eSbKYtuhT0Axx?=
+ =?us-ascii?Q?jQ1gJzOlX5V3wmReit26eaixeQaHFUpj8rZy0pWDfzB1KVqrMIsk+lxM8tUK?=
+ =?us-ascii?Q?4tZy+0iSIoC1TfBftxjJBriGZ1SqJRrjT7IpCIl0y/nW8Se/C9bUy+NTl5Fh?=
+ =?us-ascii?Q?JvXYL5zpEj5l87rK71oU8Yl/LRpNFQRU8CAAi77bToSTLUpYj627vfGaBW/N?=
+ =?us-ascii?Q?k8dnu/01X+e4TkGCTFUvh0sz91/ueLyPA+VXvak5EqvekFyJ1drQ9imR4Irg?=
+ =?us-ascii?Q?olpu4eafHHQ/wXMMPUvce5ZLHGGC6NBTCkH2PH2NmPuR0Z4jM2uQxIukyvjn?=
+ =?us-ascii?Q?NEGgWiuZnkqj0iPS5Vc1mwPm7Id2/V2pfkx60+Mv6V96rFWfdVHPVwm02nNR?=
+ =?us-ascii?Q?920Gev9yXq9Nn/gS4LSwKZBcTnrbaLY4ilCTAsawuE8tTCJ14gG9n+8yvtpS?=
+ =?us-ascii?Q?s774/MapvZzuMtKl5meZf6hTG/Vxv7WezgZChYkCACujJQUrH5HhGh+LyR53?=
+ =?us-ascii?Q?spZGyPL5YqaRsCnxWDoAUYOWXqfGALYquUIfcVDhyjopMYnbZQE+ESAd6v0m?=
+ =?us-ascii?Q?AUiYI7BA9ZgHeoga5YpSujYsz7MgJsKjxR5oYaS/5hncrOXWIFN2+bQkzMQ9?=
+ =?us-ascii?Q?FXyOmDTeNDoXIpyRoELloBoa7H1q+skVAWjRRqxlYMCOraWowDWsADx0GDiO?=
+ =?us-ascii?Q?BwAtVsp68TmEVDnZGD7jYC4tzbsa+i132FAH+X53wGkjqvUey4MI7Rm3+HVw?=
+ =?us-ascii?Q?IY9l+LM+Tvj5IRMgojL3THWDkoavosiTyU4HG4SJ7FsJVx/cnJGc6LXoAX9y?=
+ =?us-ascii?Q?/sx9XUZhD5ZhZA5dJ5k00xnVvO7s1Pmht5Mjg+K4kGZizWyOXEGraq7L5ed2?=
+ =?us-ascii?Q?a4/SpYx7/XRu67+xr8ippYzfMKa7zxbIWDNZibrQsEmcQ136w6FMenFVBYFj?=
+ =?us-ascii?Q?FmdV5LX16o4PTLyS/39GEmkDjnY/z/G6x9eQ0VGpLnC6XMOSYvtJGOHDEsfz?=
+ =?us-ascii?Q?fYxwbRHI+w3/zvFvtU6aBwd4mu2dd08G2dEqZWCLgQt8vvGg9p9p2xxMWR89?=
+ =?us-ascii?Q?X+N/4L2OUxlj9+LhEa3LTbG/j9b0oBxlDLFQOlNkKkrCjjBduh9LQHOZa3L9?=
+ =?us-ascii?Q?0JLxVHOo3e33jjBocfITvz7Gibcf/bIa/Cgx0q31nb33a3EZUnD5hIl9l+rP?=
+ =?us-ascii?Q?4CNf0d7WIekTGMY3fSZ++QO3VMtYucSNp2xMmTL/0zg3zndrt2Sj1A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(19092799006)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/scmr7qtJ0hEIzpayoK9X4orQ76z2ruL5sqUgN/SrxAgUzJeWF/2ovBOiods?=
+ =?us-ascii?Q?XkKmhvPY5TwDl+XbAS3j1LS0Juv7sy7vRVzymm5AtGf8+wulj/9eml5c3Zm9?=
+ =?us-ascii?Q?2Igrid0ivH4tqcYFTzpN57usbg6LXeLSyvtpn6JwrfogHzbW40ZHeeXcPjFy?=
+ =?us-ascii?Q?JtEJINHD9nYysBkPkRoBV4z4tWnQQvVM0gaEFU8OkCl3FPoSbsvsrzXGRo9z?=
+ =?us-ascii?Q?RRuxXW8q+sSxnyogu80jJdAFKp+lgi+lEC5M3pZ9qTQKZNBNtP9soUIQ/BHp?=
+ =?us-ascii?Q?uqAZc+iNXeYpnc6NxVBHBROc6rHiAH/8FENltRsFyIoXMY1S+yOLJM2dkhOO?=
+ =?us-ascii?Q?sDb5Ktg2G3K/3wdeBPwhLAN6lnLpD9OmLLrriEhSyyMhCFrxy9Hu2jWnnyfo?=
+ =?us-ascii?Q?03fCSjNRgURDUFllMtkd8iYcsi8Xjqo6C9dkkO4skt+9lW014CcZrTy4wMHV?=
+ =?us-ascii?Q?UihgBxvEFFqCCSE9wk+RKz4gEVwzgAtcay9QgDINHr8+bTB9WZmRx7V6RNRf?=
+ =?us-ascii?Q?vUsPeBpmVQhj9YWBWrG6HaoGpdizU2AuWjZrU4xQelyRk0VnEr/x4MQ9OKK3?=
+ =?us-ascii?Q?97oPal45N2ZwF7PuuuUzTxtoHdBMCP904frbL7Mmi3eji8h3O4+ZeZsMfnku?=
+ =?us-ascii?Q?7TnwOV99vCQBbnbH5slASbE2dOcDZwFzMtyAjNzncBYRcXDour6zAAYSiPhv?=
+ =?us-ascii?Q?aP3JBd24iPudle6S4Y+6C0Gf2hWQKevoFXHLwICZ2DeXj5cfGBKp/xcgHdTq?=
+ =?us-ascii?Q?SqSBvkAVVdMGlWiZry9kW3Hp0a/YodLQCFHYBMVbdqzpgWWhP0HYCoXF4ocb?=
+ =?us-ascii?Q?0wh3HffC1EC8ESQThwwz6IKdh41lZdauJYvwjTC1qTxl79iUGMGpmgjJ67ZK?=
+ =?us-ascii?Q?SzRI74iKM1/fbqy82N8oBJiYiuKtDXDywtelFz59kpmLzAYuN1ijWUSp8HlK?=
+ =?us-ascii?Q?iJr/yKZPBYz6pvgvdvOvLB1GYqEViTgiWNvG1YH3A6ZZ5KLHa3xHvhtGzxug?=
+ =?us-ascii?Q?jHkqaun63DflDEoxhaqKf6RJ7UKz3wlv6NMdRVheGegdiuhMXR8HaAK8DoTH?=
+ =?us-ascii?Q?CaueyRwjnTxEz9/sal/1yyQaZqSCD3nnNKovhNI8jbkW5aIto17NtpKl4jMd?=
+ =?us-ascii?Q?i491ReGFGz2P32WQdLNIpO2i97OQv4O/lbYoaqjtOkOdMreaS5HvT7qchxdI?=
+ =?us-ascii?Q?sZQr2JJRf+U2aKWvK/zANaxArsDpxXq+WDb8GlsaNHpOHJToQLUfkY+QzLXY?=
+ =?us-ascii?Q?JqkW1DD+eor7rJOMRqULbbLMgrplH0uKSZ9fSOROFRA8Y2l/phimaB6NgmFI?=
+ =?us-ascii?Q?v/jghoGvyIUMKZLPzEkK+APRpy1pNZx5YvNn9T5akI3TaAId8o2zoVUusxpB?=
+ =?us-ascii?Q?+oXXGZiW7PNY72nEm7jFNh45YM89fdDkk6zfZxKdfnQIvpdzm9BlldVcBW2p?=
+ =?us-ascii?Q?hULCO74+7/R+NBKFQc5mwC13wAUw1yqw3EcTrya1ijkbi/qIWteN+MIOdzJY?=
+ =?us-ascii?Q?CN/pHi0zLFzHHUAhtGs/kA3Fpbl8NolLYkABuXDAlFRUUJeV9PyNHnpe2ENB?=
+ =?us-ascii?Q?S/5RxtZDdofyulB+1LTNTGmpHGl8TssU4dduzrKn?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a54397af-80ca-4933-d268-08ddde98237d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 20:45:17.4151
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QtSdRyeXfESRA4ySAuYfEdFO6/YGllmWUBLhvHQKXHFB8wOeYld9cW0UzgT189HfZySXtSp+JFoHk1RwXN9j1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7040
 
-Add a PCI quirk to enable microphone input on the headphone jack on
-the ASUS Zenbook 14 UM3406HA laptop.
+Support the remote devices on the remote processor via the RPMSG bus on
+i.MX platform.
 
-This model uses an ALC294 codec with CS35L41 amplifiers over I2C,
-and the existing fixup for it did not enable the headset microphone.
-A new fix is introduced to get the mic working while keeping the
-amplifier settings correct.
+The expected DTS layout structure is following:
 
-Fixes: 61cbc08fdb04 ("ALSA: hda/realtek: Add quirks for ASUS 2024 Zenbooks")
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
----
- sound/hda/codecs/realtek/alc269.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+    cm33: remoteproc-cm33 {
+             compatible = "fsl,imx8ulp-cm33";
 
-diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
-index db8e6352b9425..6c78a286172c5 100644
---- a/sound/hda/codecs/realtek/alc269.c
-+++ b/sound/hda/codecs/realtek/alc269.c
-@@ -3579,6 +3579,7 @@ enum {
- 	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
- 	ALC294_FIXUP_ASUS_MIC,
- 	ALC294_FIXUP_ASUS_HEADSET_MIC,
-+	ALC294_FIXUP_ASUS_I2C_HEADSET_MIC,
- 	ALC294_FIXUP_ASUS_SPK,
- 	ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
- 	ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
-@@ -4889,6 +4890,15 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_HEADSET_MIC
- 	},
-+	[ALC294_FIXUP_ASUS_I2C_HEADSET_MIC] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x19, 0x03a19020 }, /* use as headset mic */
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC287_FIXUP_CS35L41_I2C_2
-+	},
- 	[ALC294_FIXUP_ASUS_SPK] = {
- 		.type = HDA_FIXUP_VERBS,
- 		.v.verbs = (const struct hda_verb[]) {
-@@ -6730,7 +6740,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1043, 0x1b13, "ASUS U41SV/GA403U", ALC285_FIXUP_ASUS_GA403U_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x1b93, "ASUS G614JVR/JIR", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x1043, 0x1bbd, "ASUS Z550MA", ALC255_FIXUP_ASUS_MIC_NO_PRESENCE),
--	SND_PCI_QUIRK(0x1043, 0x1c03, "ASUS UM3406HA", ALC287_FIXUP_CS35L41_I2C_2),
-+	SND_PCI_QUIRK(0x1043, 0x1c03, "ASUS UM3406HA", ALC294_FIXUP_ASUS_I2C_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x1c23, "Asus X55U", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
- 	SND_PCI_QUIRK(0x1043, 0x1c33, "ASUS UX5304MA", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x1043, 0x1c43, "ASUS UX8406MA", ALC245_FIXUP_CS35L41_SPI_2),
--- 
-2.50.1
+             rpmsg {
+                     rpmsg-io-channel {
+                             gpio@0 {
+                                     compatible = "fsl,imx-rpmsg-gpio";
+                                     reg = <0>;
+                             };
+
+                             gpio@1 {
+                                     compatible = "fsl,imx-rpmsg-gpio";
+                                     reg = <1>;
+                             };
+
+                             ...
+                     };
+
+                     rpmsg-i2c-channel {
+                             i2c@0 {
+                                     compatible = "fsl,imx-rpmsg-i2c";
+                                     reg = <0>;
+                             };
+                     };
+
+                     ...
+             };
+     };
+
+
+Shenwei Wang (4):
+  dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+  remoteproc: imx_rproc: Populate devices under "rpmsg" subnode
+  gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+  arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    | 117 ++++
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  27 +
+ drivers/gpio/Kconfig                          |  11 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-imx-rpmsg.c                 | 559 ++++++++++++++++++
+ drivers/remoteproc/imx_rproc.c                | 125 ++++
+ include/linux/imx_rpmsg.h                     |  55 ++
+ 7 files changed, 895 insertions(+)
+ create mode 100644 drivers/gpio/gpio-imx-rpmsg.c
+ create mode 100644 include/linux/imx_rpmsg.h
+
+--
+2.43.0
 
 
