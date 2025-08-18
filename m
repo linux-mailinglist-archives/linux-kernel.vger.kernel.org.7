@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-773848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7137EB2AB76
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:48:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AC8B2AB62
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66DF1BC5A17
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:36:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 299DC5A5EE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7F0322C92;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6C2322DA0;
 	Mon, 18 Aug 2025 14:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kRRRVc2H"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NOgf5rJ6"
 Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639032277F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59451322A2F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755527350; cv=none; b=ShSOcw/gL97UiozaLefuHkyt/+tr2svmfRi4cdbWqBc7MknvwyagJomG+YXRAz2Bp7ItUFo6JYWGNNlJmJAQFGpKkoEdceFsyz1kvE1fQ7i79+JzpqPq79v+lkx9xlT6Uy5mXqQ7mr9MmEZPmOhBsP8b4D3SDHzpYY9sisS2qcc=
+	t=1755527351; cv=none; b=SgOtXMrz6cUj22Xiya9slu1faHF/OJRCCnP+bKqhG3DU1Y2Ou4n+ofoUFJgwefjm0bgldc0W/S744jC4ZrRiA875QHba9holem90zQP02uvvACeITZq0UaR3Q0H0gtY8wLWFwxP5JS3LWIAECRKAzbBFzinYSds6LI89LBOJ8j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755527350; c=relaxed/simple;
-	bh=NWZOt7Tv/JR11rhWhB2/TKtjzpxtTktoH9dWK3nHU4w=;
+	s=arc-20240116; t=1755527351; c=relaxed/simple;
+	bh=rCE3y8aoab+T16WIWRRfap0CwUtLbudmqpC74B556QQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=s9xkDeiJ6paX+9a3fJuik08sjFfeowLKJiniyuacQIfMoVNiD+bh6B0dWl/0b8355garLe/A/fA2ANuEF42GHsO+ZjRSBgN27lJEqG7Pr1C2EMkl9+A7AQmzy4G7DIYYOSu3AacF3v1+fvxDaHxdkR7Qu0r87KM2F8LdnwvVC4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kRRRVc2H; arc=none smtp.client-ip=209.85.210.74
+	 To:Cc:Content-Type; b=iH7r4Z1sfsN5qVigg0jkCyCIbQMrRkcqgW8zs2aIZcJcZtJAij+LP5DlartZm8G7OzrbLkHXL4DzIxPvRGcZS7/B0VUajUvzGc+/EF6oGT+aywTpBR73eKD+04F2tYPNKkQbImURAqlvLYkAe2yffKkw6bxwaLtdlf44/l76Pqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NOgf5rJ6; arc=none smtp.client-ip=209.85.210.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-74381ff6dcbso1092982a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:29:08 -0700 (PDT)
+Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-74381e20b87so685898a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:29:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755527347; x=1756132147; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755527348; x=1756132148; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OWqdzpYUL7+PpXDh/tU9TKsciamS6RX7nVkdacIMWsQ=;
-        b=kRRRVc2HQH1Jsn6PtczYQg50oJDl8xMJsg87ksNogm4YmBRjzZ4Nm/CS7Y/imJCft2
-         FLtrSJbLMhoKiu5D4k8YpWtuEhAqVwW3JQwjbtuhdzU7KUKU0baPC+uDK8ga2oj9HySr
-         8tNU85QTyuMYkd4YAfUTuKMV0eFUGZ57ArYfcdyyb0ZuI3Ta0x9n9obSc7sgwdr/Enkb
-         6On97Z/eUI4+mAEIsE7dHrLgyG+2+AxNMojRVTLR7jafYGHgVGKkU3+S76jjTeTdRdjp
-         sMiZ5GGVOlVOimcPEG9FzfoCAuC800JdUzAxKBipK07iqJH2fuXVyFX4hwYDI2YvgKw2
-         zP7w==
+        bh=CmbjY97js7MZoomYoQByPkN7C3yikiFKHaLpjjYDFzo=;
+        b=NOgf5rJ6kNQr7wPOvDAHivjUmduO1W/FQjVLwGfBFeB1JxRdqneYRWVi4ci+BNnk1A
+         yehO2b4ug89E8i8nw9erJp/+JE3yr1Z3tMZ083Z9QQQmBTzs17cghq7gKi6FAbcdt0rT
+         F1C6UEiGC4/tHZMiTvdS577WoChfEntkXCZ5IMNE9eDT3TSFDPmivaUEA0w5Q/FH4Tjt
+         BUB2PSiLBqDxq2PaWUJCdOEjtwNiUqb/MjkfHyZVKMmH72qcFQSNuvOY5ZPPViUz93ht
+         KVAsCKE7ZSkZp07x/1nlMbZtHsL6VRpOaxEvKnNa4AFygP8+yi8pBLzqvpRiNOfFn3Zc
+         Ysbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755527347; x=1756132147;
+        d=1e100.net; s=20230601; t=1755527348; x=1756132148;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OWqdzpYUL7+PpXDh/tU9TKsciamS6RX7nVkdacIMWsQ=;
-        b=ox718Az5CzsjoSgn4AcG9IVUdY4MZ0itWjKPR8KDfqyeMINs4tGsFrRN3XlfHjFtH1
-         xpw2TxdanIfysPESRPhH0BbbTXokjEQcMusp/oyBVMhOOjc87I3c8U4pb3eIk1wJCd5y
-         zOimRbSzxLf7ES5u/z+7t5vjgampjP/xj1+hcz0EFOB8vMju7IQuNIEGhkm8E9Djk54D
-         VqBJjVr1KugbvtlMluSdlofdJ5mgR9D7hLmAj/8K76HKIrXYT4PzVwUMZKbAAd2+ESIE
-         W/HW6rr2KCvRyfK21jTVasfzx6S+JBQpy0BvXPktweFeS86NJW/th1EVuMxHlP2K3MTW
-         mNNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+7Jh+eunB9OnSbZiJbNiXU4vj6rBHvOV9xeVJi/3MC9MRsSqryhqDJjIHM3mN2s7ACgCBhBGMx5TZyII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwttIBF4cENR8SvyEDZ+YcdM5papcbOrYxIqpQy1g2yRtc2uTDf
-	It56pY9lMTn/N8utygKsouJcQ+P8Atm9HEW2+QrpscD/OwipQ919Mbbyp/jD5GzWPBGXl0tdnGC
-	/6CgVCvmLrA==
-X-Google-Smtp-Source: AGHT+IH/qWzGqtEr/vp9llvd19SDMUbdy4409bfsCXcE5kPKwgW4iYVg3RWQ/06UA2ygO5oVNc/NYMA1/tmT
-X-Received: from otvq39.prod.google.com ([2002:a05:6830:4427:b0:741:614a:ed95])
- (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:6110:b0:743:8443:6b31
- with SMTP id 46e09a7af769-7439b9ccd8dmr4664627a34.6.1755527347292; Mon, 18
- Aug 2025 07:29:07 -0700 (PDT)
-Date: Mon, 18 Aug 2025 14:28:08 +0000
+        bh=CmbjY97js7MZoomYoQByPkN7C3yikiFKHaLpjjYDFzo=;
+        b=Ia1nkA7/gko+UwkKGzt2nlN3hscfFCh0ElGZjnv5xFsHxlXq8Wxm23uMGTLqVJHwcZ
+         PIqi6snVw+9bMyI5Y6KPrpv+snAJIHwWE6ayE/gb4K1WdmDhDUAYN53uh9yHkvtHy6gw
+         kl8ZP0MBCoJ7nL+/bqmVDGcANC+a/yEZdEN44W2ypEyHn3hP5N2Ftb55AERoyjGOuhmS
+         iCAlYHI3RElla5CqDi+9E9PHjoyfcgKXCVGUpVAJyrr7r9vVNhxj+a1rh0UNgzNSAvBs
+         rjDRPLovijOSvsNULi/jZ1qz0eCT8+Lv60frGDRg6ZyxbQOFbTJ8EZeqpkN3g4ICvhYp
+         ddtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpIYvdY7+NHbNEO2wpjtpyyBo63JarlfBvLJ++tgzYXIMIdGR70hHc0tM+I4rEJ76peVg6coezkY+5n/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfwOzdlb1zFN3tCcory9YOzYBxQ1cRRS86nUnezgrm6ftBMUqW
+	PoXEJS8dFRjWkFLE2GENxY8i0way0qHSJG1iWXBcB629ypHeumYbs7b6xd94G9LSSkir+M9Hwcr
+	tiMVC4uewQw==
+X-Google-Smtp-Source: AGHT+IED3u74ay8tcQaNJ38d6RJ25uk7CVOONcsE53tm1TMDzLqx0DtwfKRaMxJZbEPBl6IzeTe9X/CyNZfQ
+X-Received: from ottl45.prod.google.com ([2002:a05:6830:336d:b0:742:f8fd:5cbb])
+ (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:f94:b0:73e:9293:554b
+ with SMTP id 46e09a7af769-7439ba037a6mr5886059a34.12.1755527348469; Mon, 18
+ Aug 2025 07:29:08 -0700 (PDT)
+Date: Mon, 18 Aug 2025 14:28:09 +0000
 In-Reply-To: <20250818-support-forcepads-v2-0-ca2546e319d5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250818-support-forcepads-v2-0-ca2546e319d5@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250818-support-forcepads-v2-8-ca2546e319d5@google.com>
-Subject: [PATCH v2 08/11] HID: haptic: add functions handling events
+Message-ID: <20250818-support-forcepads-v2-9-ca2546e319d5@google.com>
+Subject: [PATCH v2 09/11] Input: MT - add INPUT_MT_TOTAL_FORCE flags
 From: Jonathan Denose <jdenose@google.com>
 To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
@@ -86,86 +86,70 @@ Content-Type: text/plain; charset="utf-8"
 
 From: Angela Czubak <aczubak@google.com>
 
-Implement hid_haptic_handle_press_release() which generates haptic feedback
-as well as saves the pressed state of the haptic device.
-Add functions to increase and reset the state of the pressure detected by
-the device.
+Add a flag to generate ABS_PRESSURE as sum of ABS_MT_PRESSURE across
+all slots.
+This flag should be set if one knows a device reports true force and would
+like to report total force to the userspace.
 
 Signed-off-by: Angela Czubak <aczubak@google.com>
 Co-developed-by: Jonathan Denose <jdenose@google.com>
 Signed-off-by: Jonathan Denose <jdenose@google.com>
 ---
- drivers/hid/hid-haptic.c | 20 +++++++++++++++++++-
- drivers/hid/hid-haptic.h | 15 +++++++++++++++
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ drivers/input/input-mt.c | 14 ++++++++++----
+ include/linux/input/mt.h |  1 +
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hid/hid-haptic.c b/drivers/hid/hid-haptic.c
-index ef09b4039f33f15d7220e69fbed10bd8b0362bb4..c02af820051c22d1c899db84496c5a44b868fe49 100644
---- a/drivers/hid/hid-haptic.c
-+++ b/drivers/hid/hid-haptic.c
-@@ -50,8 +50,13 @@ EXPORT_SYMBOL_GPL(hid_haptic_feature_mapping);
- bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
- 				    struct hid_input *hi, struct hid_field *field)
- {
--	if (field->unit == HID_UNIT_GRAM || field->unit == HID_UNIT_NEWTON)
-+	if (field->unit == HID_UNIT_GRAM || field->unit == HID_UNIT_NEWTON) {
-+		haptic->force_logical_minimum = field->logical_minimum;
-+		haptic->force_physical_minimum = field->physical_minimum;
-+		haptic->force_resolution = input_abs_get_res(hi->input,
-+							     ABS_MT_PRESSURE);
- 		return true;
-+	}
- 	return false;
- }
- EXPORT_SYMBOL_GPL(hid_haptic_check_pressure_unit);
-@@ -508,3 +513,16 @@ int hid_haptic_init(struct hid_device *hdev,
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(hid_haptic_init);
-+
-+void hid_haptic_pressure_reset(struct hid_haptic_device *haptic)
-+{
-+	haptic->pressure_sum = 0;
-+}
-+EXPORT_SYMBOL_GPL(hid_haptic_pressure_reset);
-+
-+void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
-+				 __s32 pressure)
-+{
-+	haptic->pressure_sum += pressure;
-+}
-+EXPORT_SYMBOL_GPL(hid_haptic_pressure_increase);
-diff --git a/drivers/hid/hid-haptic.h b/drivers/hid/hid-haptic.h
-index 402ac66954e315eb5444df277ab2b9a4ec415dd6..73601f429de16bae3b1d877445f7eebf41a69d94 100644
---- a/drivers/hid/hid-haptic.h
-+++ b/drivers/hid/hid-haptic.h
-@@ -74,6 +74,10 @@ int hid_haptic_input_configured(struct hid_device *hdev,
- 				struct hid_haptic_device *haptic,
- 				struct hid_input *hi);
- int hid_haptic_init(struct hid_device *hdev, struct hid_haptic_device **haptic_ptr);
-+void hid_haptic_handle_press_release(struct hid_haptic_device *haptic);
-+void hid_haptic_pressure_reset(struct hid_haptic_device *haptic);
-+void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
-+				  __s32 pressure);
- #else
- static inline
- void hid_haptic_feature_mapping(struct hid_device *hdev,
-@@ -107,4 +111,15 @@ int hid_haptic_init(struct hid_device *hdev, struct hid_haptic_device **haptic_p
- {
- 	return 0;
- }
-+static inline
-+void hid_haptic_handle_press_release(struct hid_haptic_device *haptic)
-+{}
-+static inline
-+void hid_haptic_pressure_reset(struct hid_haptic_device *haptic)
-+{}
-+static inline
-+void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
-+				  __s32 pressure)
-+{}
- #endif
-+
+diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
+index 337006dd9dcf72ef2eeb8580e4dd83babf8100be..09f518897d4a71a4a7625367dc2c652ee6035d98 100644
+--- a/drivers/input/input-mt.c
++++ b/drivers/input/input-mt.c
+@@ -198,6 +198,7 @@ void input_mt_report_pointer_emulation(struct input_dev *dev, bool use_count)
+ 	struct input_mt *mt = dev->mt;
+ 	struct input_mt_slot *oldest;
+ 	int oldid, count, i;
++	int p, reported_p = 0;
+ 
+ 	if (!mt)
+ 		return;
+@@ -216,6 +217,13 @@ void input_mt_report_pointer_emulation(struct input_dev *dev, bool use_count)
+ 			oldest = ps;
+ 			oldid = id;
+ 		}
++		if (test_bit(ABS_MT_PRESSURE, dev->absbit)) {
++			p = input_mt_get_value(ps, ABS_MT_PRESSURE);
++			if (mt->flags & INPUT_MT_TOTAL_FORCE)
++				reported_p += p;
++			else if (oldid == id)
++				reported_p = p;
++		}
+ 		count++;
+ 	}
+ 
+@@ -245,10 +253,8 @@ void input_mt_report_pointer_emulation(struct input_dev *dev, bool use_count)
+ 		input_event(dev, EV_ABS, ABS_X, x);
+ 		input_event(dev, EV_ABS, ABS_Y, y);
+ 
+-		if (test_bit(ABS_MT_PRESSURE, dev->absbit)) {
+-			int p = input_mt_get_value(oldest, ABS_MT_PRESSURE);
+-			input_event(dev, EV_ABS, ABS_PRESSURE, p);
+-		}
++		if (test_bit(ABS_MT_PRESSURE, dev->absbit))
++			input_event(dev, EV_ABS, ABS_PRESSURE, reported_p);
+ 	} else {
+ 		if (test_bit(ABS_MT_PRESSURE, dev->absbit))
+ 			input_event(dev, EV_ABS, ABS_PRESSURE, 0);
+diff --git a/include/linux/input/mt.h b/include/linux/input/mt.h
+index 2cf89a538b18bbc7c99c8705c2d22bdc95065238..d30286298a00a356bc9db954ae362f034cdd359b 100644
+--- a/include/linux/input/mt.h
++++ b/include/linux/input/mt.h
+@@ -17,6 +17,7 @@
+ #define INPUT_MT_DROP_UNUSED	0x0004	/* drop contacts not seen in frame */
+ #define INPUT_MT_TRACK		0x0008	/* use in-kernel tracking */
+ #define INPUT_MT_SEMI_MT	0x0010	/* semi-mt device, finger count handled manually */
++#define INPUT_MT_TOTAL_FORCE	0x0020	/* calculate total force from slots pressure */
+ 
+ /**
+  * struct input_mt_slot - represents the state of an input MT slot
 
 -- 
 2.51.0.rc1.163.g2494970778-goog
