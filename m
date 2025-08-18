@@ -1,164 +1,94 @@
-Return-Path: <linux-kernel+bounces-773438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2A4B2A019
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:10:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9979B2A018
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62B9207D75
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:10:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45AB18948DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECDD258EFB;
-	Mon, 18 Aug 2025 11:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207D530F55F;
+	Mon, 18 Aug 2025 11:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="GRpdzWov"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s9PdbNxY"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686DD30FF2C;
-	Mon, 18 Aug 2025 11:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A535261B75
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755515390; cv=none; b=k2xLDylEYPGzZ064oAthOu0lzDzs0DvJelurV9AI9aLFRWGQqUl3/jSPfUHRnC7kVkJCsSDyjKs0YW8/Rmu/T3MQPEaYPZWdRlIj8P4XKc8OTrBHR7yCFxPW7uIArvxLsUNNZc2lKoC5JIlF0NrQ4bEDDNL6bY/3YqSKq0GYcSM=
+	t=1755515378; cv=none; b=GNeCZzBiHhq1iu7XKse89+mmWSKK9lgIPf7sY9WBGTm03yhCTwbqIHnTXNeLgjZuliZBxw5da7H+S7a6G1qqPl/VBlefAubndvq2Dq4h3i4SBe+zN2m58zWBam/oXc127k1ycvfD5O+fwtwslAK6Xk2DAvz3PDey3u3ukQQF3cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755515390; c=relaxed/simple;
-	bh=8n5GupCLEuhx0wtjQRIf7NvAN9ecBgE2Ji61GnGuu2M=;
+	s=arc-20240116; t=1755515378; c=relaxed/simple;
+	bh=OR2DYq8Rl0wyBBPU7bl3PHpoIKLvpH9ZHB/YJ+Qzhyo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O6aXxeu18vzKgfBRPnU2psbKySI2BdLTKPcb9apWr51dEs25rekevBhY9igyh5OLJJj7d81Jpt8JdoxYKcfndZ/ZysBfRldpFgiywclI/UiVrZvwkJRtmQg17AkOHpOgCkLtVyHhMitmtAckvx0mZJDsdEnkqxIw2tzUH64bd3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=GRpdzWov; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=SPFZYYIEmOz63qGUOuLkE8hJrm4tJL5wiFLVGzeYuqQ=; t=1755515388;
-	x=1755947388; b=GRpdzWovY5X9x/93oRjc2Pht2cb16SLaXo4MEqfGkzPWAp+OwPpU99BN2V6Bn
-	Y/iuJBKId/S9wfCkzlRiurUlg4f9IuuFnSzjTWMuVZVcZTVA2AbKi496M9ymL12x+LAGHc5AlHsQJ
-	0frklJBdzKYoq5LET5/5riLZpVxxIy1IvEMMNVjmqbvcn3Grzno7jo/nL5mUFyAPIv1RMrcEfrwTN
-	q+cgJPHyhl2hlTWELqHPaUwQkRlfUQoLQpguR+WKOKoMjve0xBh+FvVemHqNVBqYpJxtLfxhvoLcX
-	gmt8fbpAyiJDhVSiybUTMNKNRlFdwk3A/m5GyLaxQfTSmqD2AQ==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1unxjz-00BrQm-21;
-	Mon, 18 Aug 2025 13:09:27 +0200
-Message-ID: <8aa05f08-ef6e-4dfe-9453-beaab7b3cb98@leemhuis.info>
-Date: Mon, 18 Aug 2025 13:09:26 +0200
+	 In-Reply-To:Content-Type; b=ba8FKiBJtn6ZKnaWAByQS8GKlAwgadDfw/b7saF3PlzfpexmEgfBWjmFKc0ErQmVUXODzxoRPlIakSpBvZAAXR88vdoaQ0kgF0xQpyXb6/otQAFVxFon8wOKyaAhYoHPQGB8UA7w6Oip3rxp15JUfjmnV2t3iwn9xhbkcQVxiLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s9PdbNxY; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dcce0303-8184-4ed0-a26d-f85dc469ab46@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755515374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oiI4Lo7dgIKpq91EheYYdUeo63Zgn5fpMIaRzAbNtFE=;
+	b=s9PdbNxY9pt01nUa/jDZlrc+V5+s6LqfC6YacW8Hblt8ku4JeoJpyd5TUX7g/Sw5YiVcv3
+	hXv8EZVYrlBG02zBty/PaGxfBLdVdWYiN78A+fcGe7nDVHfCz959hT1n05mauxBVogpjIm
+	BxJinPaeDGpMAW/2zd/bo02+VeKPnbE=
+Date: Mon, 18 Aug 2025 12:09:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Take ARCH_KMALLOC_MINALIGN into account for
- build-time XArray check
-To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
- <DC38NDRET9NB.31UDI8FHB7WAY@kernel.org>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <DC38NDRET9NB.31UDI8FHB7WAY@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net v4] phy: mscc: Fix timestamping for vsc8584
+To: Horatiu Vultur <horatiu.vultur@microchip.com>, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, rmk+kernel@armlinux.org.uk,
+ vladimir.oltean@nxp.com, rosenp@gmail.com, christophe.jaillet@wanadoo.fr,
+ viro@zeniv.linux.org.uk, quentin.schulz@bootlin.com, atenart@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250818081029.1300780-1-horatiu.vultur@microchip.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250818081029.1300780-1-horatiu.vultur@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1755515388;94df3ca1;
-X-HE-SMSGID: 1unxjz-00BrQm-21
+X-Migadu-Flow: FLOW_OUT
 
-On 15.08.25 21:12, Danilo Krummrich wrote:
-> On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
->> Alice Ryhl (2):
->>       rust: alloc: specify the minimum alignment of each allocator
+On 18/08/2025 09:10, Horatiu Vultur wrote:
+> There was a problem when we received frames and the frames were
+> timestamped. The driver is configured to store the nanosecond part of
+> the timestmap in the ptp reserved bits and it would take the second part
+> by reading the LTC. The problem is that when reading the LTC we are in
+> atomic context and to read the second part will go over mdio bus which
+> might sleep, so we get an error.
+> The fix consists in actually put all the frames in a queue and start the
+> aux work and in that work to read the LTC and then calculate the full
+> received time.
 > 
->     [ Add helper for ARCH_KMALLOC_MINALIGN; remove cast to usize. - Danilo ]
+> Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 > 
->>       rust: alloc: take the allocator into account for FOREIGN_ALIGN
+> ---
+> v3->v4:
+> - remove empty line
 > 
-> Applied to alloc-next, thanks!
+> v2->v3:
+> - make sure to flush the rx_skbs_list when the driver is removed
+> 
+> v1->v2:
+> - use sk_buff_head instead of a list_head and spinlock_t
+> - stop allocating vsc8431_skb but put the timestamp in skb->cb
 
-I had a build error with my daily linux-next builds for Fedora (using
-the Fedora rawhide config) on arm64 (ppc64le and x86_64 worked fine).
-From a quick look it seems it might be due to this series, which 
-turned up in -next today:
-
-"""
-error[E0428]: the name `ARCH_KMALLOC_MINALIGN` is defined multiple times
-      --> /builddir/build/BUILD/kernel-6.17.0-build/kernel-next-20250818/linux-6.17.0-0.0.next.20250818.423.vanilla.fc44.aarch64/rust/bindings/bindings_generated.rs:134545:1
-       |
-9622   | pub const ARCH_KMALLOC_MINALIGN: u32 = 8;
-       | ----------------------------------------- previous definition of the value `ARCH_KMALLOC_MINALIGN` here
-...
-134545 | pub const ARCH_KMALLOC_MINALIGN: usize = 8;
-       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `ARCH_KMALLOC_MINALIGN` redefined here
-       |
-       = note: `ARCH_KMALLOC_MINALIGN` must be defined only once in the value namespace of this module
-
-error: aborting due to 1 previous error
-
-For more information about this error, try `rustc --explain E0428`.
-make[2]: *** [rust/Makefile:539: rust/bindings.o] Error 1
-make[1]: *** [/builddir/build/BUILD/kernel-6.17.0-build/kernel-next-20250818/linux-6.17.0-0.0.next.20250818.423.vanilla.fc44.aarch64/Makefile:1294: prepare] Error 2
-make: *** [Makefile:256: __sub-make] Error 2
-"""
-
-Full log:
-https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/09439461-next-next-all/builder-live.log.gz
-
-Ciao, Thorsten
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
