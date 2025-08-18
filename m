@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-773799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B34B2AA3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:29:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85EB2B2AA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6995A560E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:18:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324865A53B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4F8322DA4;
-	Mon, 18 Aug 2025 14:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BD727B324;
+	Mon, 18 Aug 2025 14:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Km5u9DAj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NiUXYv2s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F76931E115;
-	Mon, 18 Aug 2025 14:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDE6207A0B;
+	Mon, 18 Aug 2025 14:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526109; cv=none; b=Qn0e9UpZfle8CMc90Osnias9BuhAhd9EJseXGte14e6rr+KKTNf7tz8ihFXXFrqsNfwp3jxYfCdKuzXlnt+/+YUm0k1fjLUpDbT3pcoGawvn+uxX7HgKGA6Unk4IgjpEX+t6CZENkcnTE5A9WaqDKSEb2h1Wa8J9E4YY9rQgmmw=
+	t=1755526142; cv=none; b=VEwRpgi1gLC5cK8L9hqCx3bRUd4LZUhc9SGOCQBT+7zlDtIzJwk5nq4h/HvXxuBRxoBC/s60fTa7HrjjAFiBYQWNwhekzPyDGCyKrQ7deK1EPUrIlsp8gH1q1NI5LValmr8aHKS7Y6BYndqaolBTpXQb5qSQ/FJZiowBl9gLrqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526109; c=relaxed/simple;
-	bh=AusUFo1aAO3tCckVZFsza0m/s9/T5RMu9QrGt8c7f4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BU49L8dY06QOfkBLhkurg0X19f5srtLUV6VCrQdMgNdjhfNw23n0uP5crfBh3ZM3hxf8QOmxro5qcbQ5lIUp7LjK5jOZ1H+/yQFDY1hPOD+V6M2TVMEUqHRjVgVm0PB8KwFxrROCA8+7S2ejT0sWIIrmurw0tTerZfAZNlSQfLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Km5u9DAj; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1755526142; c=relaxed/simple;
+	bh=3g19J1X9s3bz8Fgt5s8uW8MlkBC9D5GiHsIpGBalIe8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X2AbH1MWhS56v792KNhK77kzo/9bAXhIt2V6uLHB5bCmioPQNvQGNtdqDeA/SJac4ZjyHUhzLW016mBq3m+5dYoS85GavGKlbcROdTGr4FkMw2q0DGWdqzsYDnRQXvyWyvFKSnOtdFXm6yOFgwufliSIsfgYKD3UkNIJ0RrdirY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NiUXYv2s; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755526109; x=1787062109;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AusUFo1aAO3tCckVZFsza0m/s9/T5RMu9QrGt8c7f4M=;
-  b=Km5u9DAj5XLcNMt8Jmtd+wJKJrBrjc6uwHy+W5t01Y08ST8Jur2H8qLG
-   g4CRfIrCfLTomVtoq2X2S9+O9cxVjt66MHcPXlLg13fd37IRCwdvr7NDt
-   qQywXkgov2Z6CfX0DJ5MCC2+fKJNlKUWmYmvxjcTTzcdAShnXXL8WjjiD
-   21BceuEEBQ8yHjT28ENDO7ENW3XZLYKwzSO3t3kLrDN1XW9qczhMwC555
-   YKbAxLJOS/ik+rmI632Q4JtZK3snPjP9EnLevVg9kIYpAo7S1MJyH/DqO
-   b47SRm5hfF+XUd62evhBwUEpS3nATIy0RtJjOE+pooO8iE4CeSsEee/yY
-   w==;
-X-CSE-ConnectionGUID: 9hrleFycRRmmXl6Y3DPHHg==
-X-CSE-MsgGUID: T0wpiXUYRCCgkfQXqxRt/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="69198574"
+  t=1755526141; x=1787062141;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3g19J1X9s3bz8Fgt5s8uW8MlkBC9D5GiHsIpGBalIe8=;
+  b=NiUXYv2sgc3/Fsxwt9MRCwlA8TCsAPzt/N9Jxo9HWC5IrmZ14QAlI787
+   p7l7SJ5UcbZMr2xHSLz7RpnPp3y/7actNbylS652d02DCZkLRzWW4V11J
+   axHVXSVM1VlmdqkCoYC0hvtvG7ATKT12VnAYShio01QZUenJhLy62J9Oc
+   qoupmRPrjglgUXWLl4sT+AqqgC1IJ+SbfGYV0QOOwzbw6fnzkEjHQzvUq
+   HIbw9Hbjop4wN4u2/bhzgrQ9M841bBTFmATjNC9fzsuEmMz3GQJSVFfo/
+   3me5p1+e2VKP6/ThCJEMiVPG8kCTpfUVMZeQFGQo0rQ6HIGEcupLDPgmd
+   Q==;
+X-CSE-ConnectionGUID: QhLNGhjHRmi5/SrzZdi+lg==
+X-CSE-MsgGUID: cgB2/h3sQrWwUIZpNzOiHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57896837"
 X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="69198574"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:08:28 -0700
-X-CSE-ConnectionGUID: ufZnYX3OSRWI53WUPd34TA==
-X-CSE-MsgGUID: I+RxtllzQu27n+KGpviA+w==
+   d="scan'208";a="57896837"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:09:00 -0700
+X-CSE-ConnectionGUID: etcIFZB3Sbin3J6c2gfLaQ==
+X-CSE-MsgGUID: 4UM+PZ20QIKHjHfYv2T9mg==
 X-ExtLoop1: 1
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.252])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:08:26 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id A132112031C;
-	Mon, 18 Aug 2025 17:08:23 +0300 (EEST)
-Date: Mon, 18 Aug 2025 14:08:23 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: vd55g1: Fix duster register address
-Message-ID: <aKMz1xtvXvMLKUZ9@kekkonen.localdomain>
-References: <20250818-vd55g1_fix_duster-v1-1-1b9d115dee87@foss.st.com>
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171807103"
+Received: from cvapit-mobl1 (HELO [10.247.119.195]) ([10.247.119.195])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:08:52 -0700
+Message-ID: <cd3d3e33-7b2e-45f1-977f-2d634ff1ef81@intel.com>
+Date: Mon, 18 Aug 2025 07:08:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818-vd55g1_fix_duster-v1-1-1b9d115dee87@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] mm/memory_hotplug: Update comment for hotplug memory
+ callback priorities
+To: David Hildenbrand <david@redhat.com>, linux-cxl@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ marc.herbert@linux.intel.com, akpm@linux-foundation.org
+References: <20250814171650.3002930-1-dave.jiang@intel.com>
+ <20250814171650.3002930-2-dave.jiang@intel.com>
+ <c3e30bf7-403a-4105-8e04-a73b80039ea5@redhat.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <c3e30bf7-403a-4105-8e04-a73b80039ea5@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Benjamin,
 
-On Mon, Aug 18, 2025 at 03:50:58PM +0200, Benjamin Mugnier wrote:
-> The duster register needs to be disabled on test patterns. While the
-> code is correctly doing so, the register address contained a typo, thus
-> not disabling the duster correctly. Fix the typo.
+
+On 8/16/25 12:29 AM, David Hildenbrand wrote:
+> On 14.08.25 19:16, Dave Jiang wrote:
+>> Add clarification to comment for memory hotplug callback ordering as the
+>> current comment does not provide clear language on which callback happens
+>> first.
+>>
+>> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>> ---
+>>   include/linux/memory.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/memory.h b/include/linux/memory.h
+>> index 40eb70ccb09d..02314723e5bd 100644
+>> --- a/include/linux/memory.h
+>> +++ b/include/linux/memory.h
+>> @@ -116,7 +116,7 @@ struct mem_section;
+>>     /*
+>>    * Priorities for the hotplug memory callback routines (stored in decreasing
+>> - * order in the callback chain)
+>> + * order in the callback chain). The callback ordering happens from high to low.
+>>    */
+>>   #define DEFAULT_CALLBACK_PRI    0
+>>   #define SLAB_CALLBACK_PRI    1
 > 
-> Fixes: e56616d7b23c ("media: i2c: Add driver for ST VD55G1 camera sensor")
+> "stored in decreasing order in the callback chain"
+> 
+> is pretty clear? It's a chain after all that gets called.
+
+I can drop the patch. For some reason when I read it I'm thinking the opposite, and when Marc was also confused I started questioning things.
+
 > 
 
-Extra newline; I'll remove it while applying.
-
-> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-> ---
->  drivers/media/i2c/vd55g1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/vd55g1.c b/drivers/media/i2c/vd55g1.c
-> index b89fff7e11f891dea04a0085a9e7aac841b6643d..cf35f73fdd1086c6d4d76f67c2b6e4cf66eadff8 100644
-> --- a/drivers/media/i2c/vd55g1.c
-> +++ b/drivers/media/i2c/vd55g1.c
-> @@ -66,7 +66,7 @@
->  #define VD55G1_REG_READOUT_CTRL				CCI_REG8(0x052e)
->  #define VD55G1_READOUT_CTRL_BIN_MODE_NORMAL		0
->  #define VD55G1_READOUT_CTRL_BIN_MODE_DIGITAL_X2		1
-> -#define VD55G1_REG_DUSTER_CTRL				CCI_REG8(0x03ea)
-> +#define VD55G1_REG_DUSTER_CTRL				CCI_REG8(0x03ae)
->  #define VD55G1_DUSTER_ENABLE				BIT(0)
->  #define VD55G1_DUSTER_DISABLE				0
->  #define VD55G1_DUSTER_DYN_ENABLE			BIT(1)
-> 
-
--- 
-Regards,
-
-Sakari Ailus
 
