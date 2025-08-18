@@ -1,111 +1,126 @@
-Return-Path: <linux-kernel+bounces-773313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78A0B29E1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:37:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD58B29E25
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 310F97A8CF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FE13B4EF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020CE30DECA;
-	Mon, 18 Aug 2025 09:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6C630E0F4;
+	Mon, 18 Aug 2025 09:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zoDz7qfV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="47EHUOFG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XO6pwTJc"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EF1217716
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC7A307AEA;
+	Mon, 18 Aug 2025 09:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509855; cv=none; b=WDRySmwFSuvvwRMJYdel1MNhYkH1BaNI1dBSFlbHmEoeBEhKkEd/Xawb3pdvGPDtwskbgfRIfBRHZhnWLseGZiSFiagj21qlyE35WpXqON/rNa3tvP1x1dX3hKVTwIRKRGeLZMwLZn8k7nT1aKxxvKI20eb0SHBk5cFgNm1QsG4=
+	t=1755509931; cv=none; b=hIQky0aB3fLJK2utEYcH5M/zhL+rTqOwowCJcte6WToygaX+Rk9asWH42NKLYUooIn7w/UPoZZc/rX3VnQ5dD5aU1cuVBfxjVrEEy4ovMFGxpMckL44bktXvCOXrj7uzwFiaj0acG7yKZEATzgMbJojw5MK00/xm8z6FITx16MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509855; c=relaxed/simple;
-	bh=U8pyLjNXdfZ8PcB+p+pyaTOX/TwfKNup+TaLG5+Vnd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XumMAWhHM/NIWhNzSl/b43T/MRGcI12vkJvIgKHxz8KkrHwxG+0vxMI7ZBqSzdhMF5J1a4Arc+vZ/Do+xl/3BRGF/2O5mZ5SOpbMxGtH1BbNDyRSm4XEmHr1Nbl4mrh2d2hKpdLptxIcPXZ0irXFRLAaZQWl2fITS+aOiKii7Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zoDz7qfV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=47EHUOFG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 18 Aug 2025 11:37:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755509852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f72dzrk30Kvy10blES1ypXW/eSdngD8YGITCYhBYHvk=;
-	b=zoDz7qfVqUEUCGkrjO1N//HYEbClwbOroyHQa6Rq2W8Lap5OdZBclxG2AQmUwJ5IEv1cqq
-	XIftcWJBU7yjbXOaAO998R8gIA9SBjFimypbEhDTBRwnAspoIHAG2K+hzxnhJX9ZQZ7pqR
-	Zio7EUjy2lorog6v8HT8/cyjoq4dZZbpbAlX6o1H1by5lva3MCg38MkkF7y/qnfJFJePqk
-	DCG3GGUuTIlu7O2czD48lS/aBaoZvYriEKZm3YhlnO82cHBLP3Ruqpm3ofcoSDItof3R47
-	F0wlO4uHTz/d1O2dBjdgBJ/cQ5Sh9b8ZntX5eOku2GeY02e5xEmKz0hWqfrpRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755509852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f72dzrk30Kvy10blES1ypXW/eSdngD8YGITCYhBYHvk=;
-	b=47EHUOFG2niyb3wGJAls7L3RXTWpCMoZ1uZLW+EVQTGuybBVP4/rzqHwDZ7hU+s2iEowTw
-	3D1AR/fJP0zvvXAA==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Konstantin Belousov <kib@kib.kiev.ua>,
-	John Baldwin <jhb@freebsd.org>,
-	"<cperciva@tarsnap.com>" <cperciva@tarsnap.com>
-Subject: Re: [PATCH v2] x86/bhyve: Detect FreeBSD Bhyve hypervisor
-Message-ID: <aKL0WlA4wIU8l9RT@lx-t490>
-References: <140183ef0ad52cf0f5f892409d362f1ed09129f3.camel@infradead.org>
- <aJ4YnmxWspw1bb-1@lx-t490>
- <203725e3355d04b0ae6df383481e67636d116b65.camel@infradead.org>
+	s=arc-20240116; t=1755509931; c=relaxed/simple;
+	bh=NdEYA7o1VzPQoYIPoKPNZkexWdwuehcnlbt0D0zOaP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pN9uh9OkZXTKiHENxLhypwVyhdKansBgA4ePg363UHFYbGrsuFOTW7J+63kHmdHf52DCR+AFtORD7cOGV773OVP0DOQWChBMfgyS0RaaVJ/qM6dPhFYXlheGVAuMJlDAm3tTwY+8dPO5Nta/UhYC7R2YVCBifHmttciQa/zEZCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XO6pwTJc; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7a7bad8so513701466b.3;
+        Mon, 18 Aug 2025 02:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755509928; x=1756114728; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NdEYA7o1VzPQoYIPoKPNZkexWdwuehcnlbt0D0zOaP4=;
+        b=XO6pwTJc32/5shS5aWrAsJ+Zou8ND1hHK4v03Sr2xpaxOitwWT5KcJTyd0JxjB+21x
+         iDuXDV50r8LAJZHrkO/zL/nbkyWiLI4tv1yeb0ob7i8IeFDaKaCsDxMmJJ5VkNt6RRjW
+         eLFfRfA0L5my+4QSqtDDuQtj3WNaELxl2hIGSm4N2bLBrEjqpPOIbWBDwEaE9KWMVGGS
+         eLx5upcLGO6q3WoOKZDKFp0sGwYzO3wz6D70eq8XO9S9iWauPHW3Fd1lKQ+A5c8AAShV
+         /rcAIgi0jG4iXH+aepI2nF9lm82aNvKCKRKpbSHPOsYFthSK4KdYZdJSS0UP9YP+Qu+E
+         5trA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755509928; x=1756114728;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NdEYA7o1VzPQoYIPoKPNZkexWdwuehcnlbt0D0zOaP4=;
+        b=RCRBtBtfsLta267QG5bujErfPiVz6Hux1o2eEOmEix/d3c97WA8Khog9zgm6ZLXXvu
+         13rdOW8boZVKVQP3y6ZujBJnGBekDAFpgCZKQNEhX+dny6f2g1NUmZXdaoWQRKVoucRy
+         cMB3gAHmnvhenax2YWUBk/Qk030uKmfoe+QWs0iZN9V1TjlaLVPaPoASwsunqFN6xcLi
+         xU4T2FbNGVMzXehzFrjo06G8w43iW7Tp5smCEhRStlu/qo5m5sT28cr7855kHjsODhFC
+         qdh3LWOrKjskKCGw+L5vaJOIzr/q9CTQxoM1oBX99wdl5lR6R2tMJGOxDzEUhAg2KRT2
+         2L/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUwWZHaZmG5uzApCOF3GlhASD3xWtXAH68GakarlKVEFyMbZZw4NLhsMN4UqZ7nn58p67tHrRXvHcIxry8=@vger.kernel.org, AJvYcCV70NoGiCsDhZ2/vqPIlyZCtZqu90lDd5yKkoAvJ/YdXoxObuBEpt3fjaBp9vdUEnzrcJmRIfHeZ/wl@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJY9sxQ6zrLrvPgLLyqh8UGxPSof0lSkLu9fQl8Gn5+D3kLAs6
+	u42547z0/xjTnxjP+cSw1Tn+ApGxKTvQia0rNhlhWArYKoGSqGawUwZ3FYhUjtuJRLW1drCBDL0
+	78SivMxn4dixuXAi7MBJVG2v+UIK/8oA=
+X-Gm-Gg: ASbGncvo0D2yTPjgwbzopnivOnZuZeNftrPp9nFN0tIcKSRrovTlYh3vUzwn8ATZb5z
+	evmxwofKIJd/IcA/t9S0VBA9eWioSWpnHX/XwExM7gyR112/b1PsoQlWD/HdWRpADg++FgHTBST
+	X2yfifPsxYGG1TxxQsyheYwFc1wLVEWzYFT5mf/GCJ0Ddy6awqtqPlf09t5WXxUMr1hePt4ei2r
+	UMVtkwWUk5iV/Hs+w==
+X-Google-Smtp-Source: AGHT+IE05VSrIMyvebGx0unCj4GEX/dqppJmwwCUmpmbrew8a29RQ3aQtfuq56iATh9CZLY2/vFkW+lSc+G0qBDC+B8=
+X-Received: by 2002:a17:906:c107:b0:ae2:9291:9226 with SMTP id
+ a640c23a62f3a-afceaea7031mr791267166b.59.1755509927350; Mon, 18 Aug 2025
+ 02:38:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <203725e3355d04b0ae6df383481e67636d116b65.camel@infradead.org>
+References: <20250816104904.4779-2-xry111@xry111.site> <n5kdswq7oduruqiruyup4rcdwrs76tlinz26swotzeqklterey@off5cbv5i4e5>
+In-Reply-To: <n5kdswq7oduruqiruyup4rcdwrs76tlinz26swotzeqklterey@off5cbv5i4e5>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Mon, 18 Aug 2025 17:38:34 +0800
+X-Gm-Features: Ac12FXzZ4KQDTgw3dey84zGRTpNWmm8rMIDLoaxRtbeHhBij0UBaLMWuq9ycu7o
+Message-ID: <CAMpQs4LqEWSoMUZpcbyknuEvf48FMMgra+Jffk0AXvTiZYjANg@mail.gmail.com>
+Subject: Re: [PATCH] pwm: loongson: Fix LOONGSON_PWM_FREQ_DEFAULT
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, Binbin Zhou <zhoubinbin@loongson.cn>, 
+	Juxin Gao <gaojuxin@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Xuerui Wang <kernel@xen0n.name>, linux-pwm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 15 Aug 2025, David Woodhouse wrote:
+Hi Xi:
+
+Thanks for your patch.
+
+On Sun, Aug 17, 2025 at 6:59=E2=80=AFPM Uwe Kleine-K=C3=B6nig <ukleinek@ker=
+nel.org> wrote:
 >
-> Or just not, in the case of jailhouse and bhyve? Since cpuid_feature()
-> is hard-coded to true for x86_64 anyway, and they both depend on that
-> (like acrn, which already only checks for X86_FEATURE_HYPERVISOR).
+> Hello,
 >
-> And anyway, how is X86_FEATURE_HYPERVISOR even going to get set if
-> there's no CPUID? Can that happen?
+> [adding Juxin Gao to Cc:]
 >
+> On Sat, Aug 16, 2025 at 06:49:05PM +0800, Xi Ruoyao wrote:
+> > Per the 7A1000 and 7A2000 user manual, the clock frequency of their
+> > PWM controllers is 50 MHz, not 50 kHz.
+> >
+> > Fixes: 2b62c89448dd ("pwm: Add Loongson PWM controller support")
 
-Correct, these early-boot feature detection code paths are all already
-messed up.  I will clean them as part of the CPUID parser work.
+I have confirmed once again that this was indeed my mistake. Thank you agai=
+n!
 
-For example, in the CPUID parser patch queue next iteration (v5),
-X86_FEATURE flags are integrated.  There's also a Directed Acylic Graph
-of X86_FEATURE and CPUID bits dependencies.
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+>
+> A quick glimpse into
+> https://loongson.github.io/LoongArch-Documentation/Loongson-7A1000-userma=
+nual-EN.pdf
+> confirms this, so I tend to apply it. I'll wait a bit to give the people
+> involved in 2b62c89448dd a chance to comment.
+>
+> Best regards
+> Uwe
 
-So, in the above case, the dependencies table will just have:
-
-    X86_FEATURE_HYPERVISOR ► X86_FEATURE_CPUID (and whatever else)
-
-and all the circles of x86 vendor checking, CPUID max level checking,
-other CPUID-bits checking, X86_FEATURE dependency checking, etc. will all
-be removed from call sites.
-
-I will show more of that at LPC Japan x86 track, and hopefully much
-before that the CPUID parser v5 shall also be already posted to LKML.
-
-Thanks!
-Ahmed
+--=20
+Thanks.
+Binbin
 
