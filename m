@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-774496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F182EB2B328
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:01:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8D1B2B32B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B129D7B0890
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25E0189F025
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAA0270EAB;
-	Mon, 18 Aug 2025 21:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A9D22D9E9;
+	Mon, 18 Aug 2025 21:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ant9n3My"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeNO3M92"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0B520B7F4
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1E41E868;
+	Mon, 18 Aug 2025 21:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755550881; cv=none; b=aXci3ERe3lAYktYjromXyCzPIp+BWFuCZAc1saaSukXlFmGIzqt0mffug+jNDvYfAZ2N2dB/rXgPOlIL2HQwIm+JQnQuLO0UpIo/Y447D5QZytpuDuGK74P4s+w4SEfakP1slqjMjpsczsxbWWowozlYQ8Aru6Zwnm83eF/YCUg=
+	t=1755551039; cv=none; b=Qa8w1Py/wPTgSnjIG/a2R1gO2zCqD0IpF+ZZsFDrdm4SPyWCSQexXhtWzQ4SjZsJxPlvWf5mePKkTIKB3fMo9fO3LHcKXOZpAd3PcwrJodk2tvwtAxtBuWa+gPt0ffhZGawFcbrCBISAmHWbz2WlNe7NPCq/9upt7O37Og0Bb3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755550881; c=relaxed/simple;
-	bh=94V2oxncUNCGGpu+Iq+45gM38Y+E66NCd49Ad/nyJWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zi4tHh1Tg2Mxev69b5Eb+54trwZ/hUwHdoWCZI0b0xFvVMMc2N/laWftFSplA/owDGYdkxZVrYpmuV6zTHQTgS/Q+1uTsWkNS9kitUETUX0TWSl2jAAQi6L28cmeQf8l088zHEKtkm5H/2/Tgc5GshRp2VeQVdeC9MLsuZtGZhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ant9n3My; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-88432efaf45so37019539f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755550877; x=1756155677; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3nZTzF2lhsZGOWdY8YDL7P1nyHVBb5WBP5wnL3mixY4=;
-        b=ant9n3MyhidCzVK4theaKTpSBYdHnNf1AlnxKN4VruncyD/QKO5lRVnBcJxRRl18Ep
-         dBvUXCgywKh9f+pydfPoIDRfvxntqWL62fPbARpVwlr4aVNp1sZ1VJfXMuz3qzWY48Fs
-         eSzlQ29YVxyFrHBjB5v+owui42xEfoMVri60nVnNc+ehIe4FPjwFR29l7g6aMg1dlr3O
-         JJmfTlZdu7td/3gija5voI7T12pTQFtwEJcVXJhzmmyPcgUOd3rLkSaqmrsp+6QcB+vN
-         rPX4i1OKaaZc/D2aztEsXR9WQN/dREWhFlGe2JTd+7GJP2bxZvfqkoMwYSjh/TBsFrj9
-         d3BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755550877; x=1756155677;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3nZTzF2lhsZGOWdY8YDL7P1nyHVBb5WBP5wnL3mixY4=;
-        b=M2yv6lT3PJoHl8Fbn3oNpAjYhocL19bUovT4yyyH0B1LsvUY2UoVK1eOJRnRdKZzVe
-         Tv9Ic3QXKWoF0XVtsuQHDZkXjP3kzrUHUkhQ+FTSouHCSnGthkPQg0pARXU+Of65+aAO
-         QRu5Zl1RwFqy6eVy/hp1993DY9th0jQWTgnwlkk2B+yYSoE/6StW7TJgyNoOwGI13Eib
-         1HCiK4UH51ZszYjcekwYatpHsFYz5fJCmTq8jVrFcHdogr360g4HTDgk5uva6OR2cd87
-         gQBX8Gc/8rbI9IVoLBBmAjuLINymHtGIVTfdzjWrXyS9+WN5HhQpMdFggHF5j9rHKv3Q
-         omXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPDNmBfJ7LvKTL+xs49aB81yCj4ZGwnP0XrGbCw6x3p6XLS+pFRkHDXgkkdkyAeKS4pI72zoYaOTgQeUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUreH2d/mPnaSFcBM4VBQEtlQp7U12JJd6hziGJproG3fLxH/n
-	9MeQxYLIcZjIDX/4DdQi0pnGi5yE0o8RV6dCK1CPIkhro7uCipvKJI3FsXTZy3uTe/M=
-X-Gm-Gg: ASbGncs2aJRc40ZbvCa+aKV4MNh1CgfbutiiJ/coW8GXQ4ZUglE81LFb59xw2SaZJlu
-	GIKyavfFCwzXNdcuSPXNK0J3aHWHgotM9cF0BS/kkYFAEn3M1er/FpMX8mfco0z9Rxl3VYt3WWQ
-	Gv1+LDSagRTyWRksqAJYAlUAuUJAekkhA2rFfFc25kmrqDNkDOMvagCyhoqrx9Kd3hUovASL/0J
-	y8k6SbWKoI4xYzMIsv5q2UkmWAJb4VbFHO87Kj8FfkBDZ4WHmQu6ou/i5BwQr4Mq42CKQgs0wEb
-	jXL9rOtHR+l7TEWYOnMo0TW2HgOC+ErM6P4lKEwq9J1U7nH7T4u2kkDnR03NJtH+vxboGZh4+7n
-	WOr4SslV1sC/5IlxFQzLPvt41
-X-Google-Smtp-Source: AGHT+IFFpFqrnNZItu3L5GNLWSB269pADqOsIU+gIQEJhNsMNbkPMIMecR7fgqDGFDi8X/YtnL7Gbg==
-X-Received: by 2002:a05:6602:2cd1:b0:881:87ac:24a with SMTP id ca18e2360f4ac-88467ecf75amr19364539f.7.1755550877544;
-        Mon, 18 Aug 2025 14:01:17 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8843f9c47f5sm345226739f.20.2025.08.18.14.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 14:01:16 -0700 (PDT)
-Date: Mon, 18 Aug 2025 16:01:16 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: dayss1224@gmail.com
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atish.patra@linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Quan Zhou <zhouquan@iscas.ac.cn>
-Subject: Re: [PATCH v2 3/3] KVM: riscv: selftests: Add missing headers for
- new testcases
-Message-ID: <20250818-4672b703d0bf9518ee1d4162@orel>
-References: <cover.1754308799.git.dayss1224@gmail.com>
- <cafaa0b547d4a1fc45a38753038c011ea7201d04.1754308799.git.dayss1224@gmail.com>
+	s=arc-20240116; t=1755551039; c=relaxed/simple;
+	bh=btvZKybT7d1jpu02lvpOVxHne9dwrDNIeYligAnPnJ8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=JgPU41f6tKK7c73bG8nedsEGuOq5IAJmPqI9tQF0WNQyXnMtYjjDpvJ/xdSGdAYOfjxHT7RouklJ7ddkN9YRW7cDuv38D2iGgezMiuq+wqOGt/FVPwNog5O0iTQUqZZqs4ywn6RfJCidQ4QLGFOuFu1Y1IHPMVWxPbrov8rPWvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeNO3M92; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D64C4CEEB;
+	Mon, 18 Aug 2025 21:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755551038;
+	bh=btvZKybT7d1jpu02lvpOVxHne9dwrDNIeYligAnPnJ8=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=jeNO3M92hfVWyanIjhNQS9YJ6SXIZ0jeBTUsNv5b+OoN5gFcbndh0231FbcwpzfvY
+	 wXraXz3eDLauh0z/wE//yQCqzU9rID3vUk587q3ZT1+7JA5IoimTrEJLqc9hDRUXt4
+	 lef2lCV68yg07ZrqB/TzMhhZaE6h+F3QL1b98U7GuB7RW3miceLe9HTswx519dIe/o
+	 gJblTlrBfd2+RThfk5d2ffobxSADtT1goSdSDQbDVCQWTKH3DxadRN2lXt3p1/ozHm
+	 ndXJ73YR9rJb0g/78fNV8swNCIChnEjADFauj+ARwy6Z3TKuhy7bcZdJBA++RyOFLr
+	 +SrUJBNcQ5Nsw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cafaa0b547d4a1fc45a38753038c011ea7201d04.1754308799.git.dayss1224@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 18 Aug 2025 23:03:53 +0200
+Message-Id: <DC5UWIXHVAGI.1TTU2K9WIC1E9@kernel.org>
+Subject: Re: [PATCH 1/4] rust: dma: implement DataDirection
+Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>, <acourbot@nvidia.com>,
+ <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
+ <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250815171058.299270-1-dakr@kernel.org>
+ <20250815171058.299270-2-dakr@kernel.org> <aKLzrp0m00J6CCYz@google.com>
+ <DC5INEG2DXU5.DM4JIICEQ2PC@kernel.org> <aKMa7YzO-PwEv9AT@google.com>
+ <DC5KK67M752R.N9PX4LUG2F68@kernel.org>
+ <CAH5fLgi6OZaqjnDScDrJ3YjN2a8mJuPiO5MLPUqUWo62WkvvrA@mail.gmail.com>
+ <DC5Q80UUHSUV.360VLIC6DYZ78@kernel.org>
+ <CAH5fLgjymw6Mr8qv8NDFA8hz+nfh3-B4XcZ_N-UAmJrc3Ug_QQ@mail.gmail.com>
+In-Reply-To: <CAH5fLgjymw6Mr8qv8NDFA8hz+nfh3-B4XcZ_N-UAmJrc3Ug_QQ@mail.gmail.com>
 
-On Thu, Aug 07, 2025 at 10:59:30PM +0800, dayss1224@gmail.com wrote:
-> From: Dong Yang <dayss1224@gmail.com>
-> 
-> Add missing headers to fix the build for new RISC-V KVM selftests.
-> 
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> Signed-off-by: Dong Yang <dayss1224@gmail.com>
-> ---
->  tools/testing/selftests/kvm/include/riscv/processor.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/riscv/processor.h b/tools/testing/selftests/kvm/include/riscv/processor.h
-> index 162f303d9..4cf5ae117 100644
-> --- a/tools/testing/selftests/kvm/include/riscv/processor.h
-> +++ b/tools/testing/selftests/kvm/include/riscv/processor.h
-> @@ -9,7 +9,9 @@
->  
->  #include <linux/stringify.h>
->  #include <asm/csr.h>
-> +#include <asm/vdso/processor.h>
+On Mon Aug 18, 2025 at 8:47 PM CEST, Alice Ryhl wrote:
+> with no warnings and build-failure if out-of-bounds.
 
-This is fine, but...
-
->  #include "kvm_util.h"
-> +#include "ucall_common.h"
-
-...this isn't correct. We should instead add this include line to all the
-source files that need it:
-
-access_tracking_perf_test.c
-memslot_modification_stress_test.c
-memslot_perf_test.c
-
-
-Thanks,
-drew
-
->  
->  #define INSN_OPCODE_MASK	0x007c
->  #define INSN_OPCODE_SHIFT	2
-> -- 
-> 2.34.1
-> 
-> 
-> -- 
-> kvm-riscv mailing list
-> kvm-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kvm-riscv
++/// DMA data direction.
++///
++/// Corresponds to the C [`enum dma_data_direction`].
++///
++/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction.h
++#[derive(Copy, Clone, PartialEq, Eq, Debug)]
++#[repr(u32)]
++pub enum DataDirection {
++    /// The DMA mapping is for bidirectional data transfer.
++    ///
++    /// This is used when the buffer can be both read from and written to =
+by the device.
++    /// The cache for the corresponding memory region is both flushed and =
+invalidated.
++    Bidirectional =3D Self::const_cast(bindings::dma_data_direction_DMA_BI=
+DIRECTIONAL),
++
++    /// The DMA mapping is for data transfer from memory to the device (wr=
+ite).
++    ///
++    /// The CPU has prepared data in the buffer, and the device will read =
+it.
++    /// The cache for the corresponding memory region is flushed.
++    ToDevice =3D Self::const_cast(bindings::dma_data_direction_DMA_TO_DEVI=
+CE),
++
++    /// The DMA mapping is for data transfer from the device to memory (re=
+ad).
++    ///
++    /// The device will write data into the buffer for the CPU to read.
++    /// The cache for the corresponding memory region is invalidated befor=
+e CPU access.
++    FromDevice =3D Self::const_cast(bindings::dma_data_direction_DMA_FROM_=
+DEVICE),
++
++    /// The DMA mapping is not for data transfer.
++    ///
++    /// This is primarily for debugging purposes. With this direction, the=
+ DMA mapping API
++    /// will not perform any cache coherency operations.
++    None =3D Self::const_cast(bindings::dma_data_direction_DMA_NONE),
++}
++
++impl DataDirection {
++    /// Casts the bindgen-generated enum type to a `u32` at compile time.
++    ///
++    /// This function will cause a compile-time error if the underlying va=
+lue of the
++    /// C enum is out of bounds for `u32`.
++    const fn const_cast(val: bindings::dma_data_direction) -> u32 {
++        // CAST: The C standard allows compilers to choose different integ=
+er types for enums.
++        // To safely check the value, we cast it to a wide signed integer =
+type (`i128`)
++        // which can hold any standard C integer enum type without truncat=
+ion.
++        let wide_val =3D val as i128;
++
++        // Check if the value is outside the valid range for the target ty=
+pe `u32`.
++        // CAST: `u32::MAX` is cast to `i128` to match the type of `wide_v=
+al` for the comparison.
++        if wide_val < 0 || wide_val > u32::MAX as i128 {
++            // Trigger a compile-time error in a const context.
++            panic!("C enum value is out of bounds for the target type `u32=
+`.");
++        }
++
++        // CAST: This cast is valid because the check above guarantees tha=
+t `wide_val`
++        // is within the representable range of `u32`.
++        wide_val as u32
++    }
++}
++
++impl From<DataDirection> for bindings::dma_data_direction {
++    /// Returns the raw representation of [`enum dma_data_direction`].
++    fn from(direction: DataDirection) -> Self {
++        // CAST: `direction as u32` gets the underlying representation of =
+our `#[repr(u32)]` enum.
++        // The subsequent cast to `Self` (the bindgen type) assumes the C =
+enum is compatible
++        // with the enum variants of `DataDirection`, which is a valid ass=
+umption given our
++        // compile-time checks.
++        direction as u32 as Self
++    }
++}
 
