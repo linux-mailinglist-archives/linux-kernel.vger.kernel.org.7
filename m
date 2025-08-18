@@ -1,109 +1,187 @@
-Return-Path: <linux-kernel+bounces-774173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A53B2AF6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:31:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D575EB2AF79
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A82894E2AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EECA196492D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99923570C9;
-	Mon, 18 Aug 2025 17:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF002773D1;
+	Mon, 18 Aug 2025 17:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZEuau1i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6DKpFWE"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2830932C33A;
-	Mon, 18 Aug 2025 17:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C513235A29B;
+	Mon, 18 Aug 2025 17:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755538309; cv=none; b=WGtXvXVcmm/5gGhPk33XWC0u0GCcVxVfeOJMyABpkknxil36hUmwvXpAOT5v+8ppfb4s9dS278FmaVIAkcu5FaX4hJS2U1LORceDkKNn2XiFjP8Kkq9Ej2KSGSLNHXN7YcjS/UDDFoP0qkmNun+iGSM5L9Ugb4Q+Uj4ehlhy0IU=
+	t=1755538411; cv=none; b=tw3eMLLT9J6be1z4XoEEkT4lJT2WVBz9chXK34hxUUXem4g6k3lDIXgsZhmDtDd8Uuk+MBolht44BrdhXTTeNo2n7UGHJeIhYJiBRVeL3Oc+6gmQtUZtJX1CHcruZw637wH23WXrpzeO+Ogbe10yDwN0DY/cClVH5//PSlwXoXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755538309; c=relaxed/simple;
-	bh=mF/CW5aAEQgDT+OAezbsRp+d9z4XVVZyDXgDqKkePis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgo4oWNp9KcyLr4Q0Tyb/gRbSqy/p4Swxuvs0CIk6cFVWX0oOwjeOrZ2IOPOTp+zjpHtyYuJwsNWPZpRbU1XR0jofU0MVMWuul++MpaDiWuRZXhFPfRek5/SQF6oxtz7QaZbTkX75DOZe9wxjYI115ilzGoPTeNnHhgQdIllOk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZEuau1i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1DDC4CEEB;
-	Mon, 18 Aug 2025 17:31:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755538308;
-	bh=mF/CW5aAEQgDT+OAezbsRp+d9z4XVVZyDXgDqKkePis=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nZEuau1ilMigYR6sE3ycqybvBBfxu4cT4RDewaxT0p3Folqihwx4NGgVB3CmBCg48
-	 ihSDtZdmMy/unNb2Z5kB+E6+qYY6sZKL+h/Q2BxBBbscPlsxa2ZZy6H3I8e4UvTn1j
-	 krRlGfhS96PPTzu3w7WvCXmob+iBe954KeJMUCqdT7wTw39BALf7mDZ9Zq42Cm/pkD
-	 srQPQaLE8L/Z9VvB9R6e7wO5OUhZKvHFMtLaX5r1toCu12Uo2tiXLW1YJyza2AHGZG
-	 DDUhzXlFBL6plUl3fpG27Cuq+THU21JeY2AzUVeh5nmTw3Z1IvaDNsQZHQmGZB9UP6
-	 jrdbQ6U1u48jA==
-Date: Mon, 18 Aug 2025 12:31:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Gregory Fuchedgi <gfuchedgi@gmail.com>
-Cc: Robert Marko <robert.marko@sartura.hr>,
-	Luka Perkov <luka.perkov@sartura.hr>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: update TI TPS23861 bindings
- with per-port schema
-Message-ID: <20250818173147.GA1496879-robh@kernel.org>
-References: <20250811-hwmon-tps23861-add-class-restrictions-v2-0-ebd122ec5e3b@gmail.com>
- <20250811-hwmon-tps23861-add-class-restrictions-v2-2-ebd122ec5e3b@gmail.com>
- <eab6d2d2-9337-40fe-81c7-95dc1956ce6f@kernel.org>
- <CAAcybusHjAR67N0rumb6M_uG1ct3aa=zv2XkpUjhSSxv0NdzFA@mail.gmail.com>
- <ff167728-a4a7-4f7d-a809-d0e482ab7dd6@kernel.org>
+	s=arc-20240116; t=1755538411; c=relaxed/simple;
+	bh=A2NsIcg1V7edxkeV7A3sJ+VRxPdOcnPyky4g5/mQMfg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K2qnSBbDOsISrcGgDMhZvxMSF3bHuJDhnlffBkUI7h7iGfS94ViJLkWZXbnmfc8F4rMbiREcPqtCGgdFmQjRF6ri5wtJkM1wNMUXGLwEqoTG2nnGfhr++CrebdnHVNo6KzxNVreOaROAD1vwP1JspzUQSiH2hMEH2zbhjO5AN1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k6DKpFWE; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-323266d2d9eso3285363a91.0;
+        Mon, 18 Aug 2025 10:33:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755538409; x=1756143209; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dggd3LkH5i9MRkV2z8hWvgrPCcqA4YBYEr7TKwboQsQ=;
+        b=k6DKpFWEoe06/kjSUUTJCnHjR8Vai/dSzjmRd9lvoWVlUU/oN6yZtFY1io8bPGWcFe
+         SItqhn1OBTG9nH9nSeeGJbWlMlaWVlRDRjstN8o8/0OsMnDpOvELquDatbQhou01yIiP
+         AIx8vPHllBZc6KlEovRInwQgNQJYVHjgglIcYO7heD3Doauj/TjtN69dWRIQA7Y5+UmI
+         SFR6tsu/4AoRXPWGoHX8Y3pFLTBYpRKlXqLDwLAb9/b01gSaAyMmJHLP8fFO6Wa+J4kQ
+         cLAyRefVjAHwHblRKKWGsPO1fqH9QK0vJhBVeSy0vKiIgqxAxqOEUYcNygav6k0cjdXc
+         KWQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755538409; x=1756143209;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dggd3LkH5i9MRkV2z8hWvgrPCcqA4YBYEr7TKwboQsQ=;
+        b=Q5kPpergPmLUi/AIZ8aL36kcrPVlUWV/97CIusQ+s0lHRZ2J8jhscsRwaIesxu4mGk
+         PRq2NNiBM5mkCNtn7rNLqhfcT0uLuDSKPA+vOLIuRK3gYlrQN7xTqR++zxW1NSGpbkF3
+         1bbwAm2L8g/8YJmVujXQ+lgbJlxVkiBUgxCFRT7XxsYq4FLExb6bCGIfqxpgvFQkjNNq
+         RRGy1sp5IQjY3S2/1bCxnfZ3xVROzGrWAtbFTFro3RnGPfZNhTnD6p/zmcQ4xm4EAsrW
+         VBUaF+ucUafrrQ//NTTPge4mXbmXx28BRiH9K/eQC4UwokvSZQ7YUUMBaqdYiF9W0zl5
+         OVbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ8Zz3r5Zq6LzqCxsYeZr/IDpgsXFefrBEoOcvz/dnxlddWD5aB5Wjd4neQT9Anl0EBHdfJFShriI7clVF@vger.kernel.org, AJvYcCXca2nYstFk63D2BA6pvqI3erFQmitLbDcopMfYxit7HYGRJwx9z+ewNO+PsFokE4rHSfRAu1v5iFu0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNDFSN46m0MxScwL3MbJoDsjgFKaQwowH+UdqDUxsPcbbOd4mW
+	ynUUBjKOQgL0lJhuUYAA5IEq35n++cjZsT1vTV141oUGvJgsM65pbsxtpilr7g0zeTlebv6/Xo4
+	7yzI1Cflyod1OyDoC6xzMlq1X226mBwY=
+X-Gm-Gg: ASbGncuh3fZ8fMy7uM0Ye8F7SmXHbwIkYbjywS3waKh6gONAwKz61Cv2TnvI1Io690O
+	f01zTfnmafW7aNIChJEUEmN23Rs7kuZiF9x6C3raPB5E8Ra5GDGgcf+PuLjRB7Zdpz8KcCkRn8o
+	4RdYtJ48T1tVYuwRDg/cITKE2Lfsmcpt1P3HypKS16YjjCShCigbAW3DUJVZOSDnGFRLfcgba5l
+	W7uFDCWRnr4fCD1uxk9hzEF1uzfbYNfDxHJTgFz
+X-Google-Smtp-Source: AGHT+IEIvEqlY6hy2gXnuzZ42Ohw3RH859FU7WdGZFr3bJQwfaJBBUgRSD5AJykHVfcnrOzfydi/k81O4AG/UJtdRTs=
+X-Received: by 2002:a17:90b:2f4d:b0:312:26d9:d5a7 with SMTP id
+ 98e67ed59e1d1-3234dc3a458mr13978984a91.20.1755538408882; Mon, 18 Aug 2025
+ 10:33:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ff167728-a4a7-4f7d-a809-d0e482ab7dd6@kernel.org>
+References: <20250818162445.1317670-1-mmyangfl@gmail.com> <20250818162445.1317670-3-mmyangfl@gmail.com>
+ <2ac97f29-bfc2-4674-9569-278bb4492676@lunn.ch>
+In-Reply-To: <2ac97f29-bfc2-4674-9569-278bb4492676@lunn.ch>
+From: Yangfl <mmyangfl@gmail.com>
+Date: Tue, 19 Aug 2025 01:32:52 +0800
+X-Gm-Features: Ac12FXzNE_KrxMmsjOEUKM7XzmTbKs9oi25CPDYboQArNsZCNamMQ-IC-SwAv68
+Message-ID: <CAAXyoMNjukd-=cMDLiupNDYv1NLreWkCQufhAu_1y3N0udUrQw@mail.gmail.com>
+Subject: Re: [net-next v4 2/3] net: dsa: tag_yt921x: add support for Motorcomm
+ YT921x tags
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 17, 2025 at 09:23:09AM +0200, Krzysztof Kozlowski wrote:
-> On 13/08/2025 05:00, Gregory Fuchedgi wrote:
-> > On Tue, Aug 12, 2025 at 12:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >>> +  shutdown-gpios:
-> >> powerdown-gpios, see gpio-consumer-common.yaml
-> > It is called shutdown in the datasheet, but seems like neither powerdown nor
-> > shutdown truly reflects its purpose. This pin doesn't power down the controller
-> > itself. It shuts down the ports while keeping the controller available for
-> > configuration over i2c. Should I call it ti,ports-shutdown-gpios or maybe
-> > ti,shutdown-gpios? Any other suggestions?
-> 
-> 
-> Feels more like enable-gpios.
-> 
-> > 
-> >>> +patternProperties:
-> >>> +  "^port@[0-3]$":
-> >> This goes to ports property.
-> > Do you mean I should add another DT node that groups all ports? such as:
-> > compatible = "ti,tps23861"; ports { port@0 {...} port@1 {...} }
-> 
-> 
-> Yes.
+On Tue, Aug 19, 2025 at 1:07=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > +static struct sk_buff *
+> > +yt921x_tag_xmit(struct sk_buff *skb, struct net_device *netdev)
+> > +{
+> > +     struct dsa_port *dp =3D dsa_user_to_port(netdev);
+> > +     unsigned int port =3D dp->index;
+> > +     struct dsa_port *partner;
+> > +     __be16 *tag;
+> > +     u16 tx;
+> > +
+> > +     skb_push(skb, YT921X_TAG_LEN);
+> > +     dsa_alloc_etype_header(skb, YT921X_TAG_LEN);
+> > +
+> > +     tag =3D dsa_etype_header_pos_tx(skb);
+> > +
+> > +     /* We might use yt921x_priv::tag_eth_p, but
+> > +      * 1. CPU_TAG_TPID could be configured anyway;
+> > +      * 2. Are you using the right chip?
+> > +      */
+> > +     tag[0] =3D htons(ETH_P_YT921X);
+> > +     /* Service VLAN tag not used */
+> > +     tag[1] =3D 0;
+> > +     tag[2] =3D 0;
+> > +     tx =3D YT921X_TAG_PORT_EN | YT921X_TAG_TX_PORTn(port);
+> > +     if (dp->hsr_dev)
+> > +             dsa_hsr_foreach_port(partner, dp->ds, dp->hsr_dev)
+> > +                     tx |=3D YT921X_TAG_TX_PORTn(partner->index);
+>
+> As far as i remember, this was not in v1. When i spotting this in v2
+> that made me comment you should not add new features in revision of a
+> patch.
+>
+> Does the current version of the DSA driver support hsr? Is this
+> useful? Maybe it would be better to add hsr support as a follow up
+> patch?
 
-Except this is not an OF graph. Don't re-use it when it is not that. 
-Maybe 'poe-port@'? Is multiple ports/channels something common on PoE 
-chips? I'd guess so. If so, then come up with something common.
+Sorry, this was forgotten to undo.
 
-Whether you should have a container node like 'ports' is a separate 
-question. You get exactly 1 address space for any given node. So if you 
-ever might need to address multiple disjoint things, then you probably 
-want a container node.
 
-Rob
+> > +static struct sk_buff *
+> > +yt921x_tag_rcv(struct sk_buff *skb, struct net_device *netdev)
+> > +{
+> > +     unsigned int port;
+> > +     __be16 *tag;
+> > +     u16 rx;
+> > +
+> > +     if (unlikely(!pskb_may_pull(skb, YT921X_TAG_LEN)))
+> > +             return NULL;
+> > +
+> > +     tag =3D (__be16 *)skb->data;
+> > +
+> > +     /* Locate which port this is coming from */
+> > +     rx =3D ntohs(tag[1]);
+> > +     if (unlikely((rx & YT921X_TAG_PORT_EN) =3D=3D 0)) {
+> > +             netdev_err(netdev, "Unexpected rx tag 0x%04x\n", rx);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     port =3D FIELD_GET(YT921X_TAG_RX_PORT_M, rx);
+> > +     skb->dev =3D dsa_conduit_find_user(netdev, 0, port);
+> > +     if (unlikely(!skb->dev)) {
+> > +             netdev_err(netdev, "Cannot locate rx port %u\n", port);
+> > +             return NULL;
+> > +     }
+>
+> O.K. Stop. Think.
+>
+> You changed the rate limiting to an unlimiting netdev_err().
+>
+> What is the difference? Under what conditions would you want to use
+> rate limiting? When would you not use rate limiting?
+>
+> Please reply and explain why you made this change.
+>
+>         Andrew
+
+I copied the limited version from tag_vsc73xx_8021q.
+
+Under no conditions I expect either of them to appear: it is the case
+when I did my own tests; unless something really bad happens, like
+pouring a cup of coffee over your device.
+
+I know rate limiting is a way to prevent flooding the same message
+over dmesg, but if an event never happens, I would consider two
+methods are exchangeable. Theoretically if an event never happens, no
+warnings would ever be needed, but I placed one here in case you
+destroy your device accidentally.
+
+Thus if you think rate limiting is not appropriate here, I would fix
+it with another.
 
