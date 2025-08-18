@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-773865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDB2B2AB8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:51:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1881CB2ABCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F31805A7924
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27741A00EA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85728321F33;
-	Mon, 18 Aug 2025 14:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A00322529;
+	Mon, 18 Aug 2025 14:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZP1vKGn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StG9+XEF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52F61FF7BC;
-	Mon, 18 Aug 2025 14:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098BE321F3A;
+	Mon, 18 Aug 2025 14:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755527820; cv=none; b=N/L/ZTXwu6P34rfWMtHn6VTmHB5/t/FvHU3K7Y7DWhJpTu5thuNsM1z14rhkPuzHgoHpeVw7911PxA4g5SihaXxrNbW8Oksnq4vhMyV2PUjSH98hpdcu2+ZbmW391+RT/4ThGHvZ0xnelp7BUd9TGU8lVpAPAZpyQ/9AdS7O7Jg=
+	t=1755527821; cv=none; b=U00JWnV4Nxbu3CWTTAhI7B8YmQ7TVxL1mChQmALFogdpWe+FizlgNdUvMMnGEZhWOA4K3wFdnF3g49WNZVB8HpdV9fsz5LVnY4ISwiGhCutlqppD9hY6wVfHDfJtOOb1AQKKLTgcKyZteQcT7X8fHs96IIyJCjDYy/FJqC42/yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755527820; c=relaxed/simple;
-	bh=MEuQmN6dB4qhRlM2ZjIWDLLN/sxc9sQMj976sd99t70=;
+	s=arc-20240116; t=1755527821; c=relaxed/simple;
+	bh=jyvUe/Uvlpxb8/WNMi/NIGIZMsdMiJ0vXIXKRErcUzo=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Re3frUg53PwtUeef8oEsmgqI68f2bkp+A+gquTfQKXuC7JPCvZS7v/Yasc7zJOEWtTuxJlF2+EW668ctRFcueCgqcmcjoIYAHGe0lD7c7ZRxS3JKUXQ/zzigWBQWKvaeW3yqxQXpCBbeUixXIqWnUhJwwlLdeSWGDxtO8DH4GRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZP1vKGn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D2B9C4CEEB;
-	Mon, 18 Aug 2025 14:36:59 +0000 (UTC)
+	 Message-Id:Subject; b=f77EHiD1X7Jutzw9gmwcPK//CriJ01mDmT37JsJ0awuFJUXjn4VDXkPWWpgDFj9eFlLnAMHN1EDmJ1wWKSwCh3qpWgmUDkgxZateq8KI7QJXj0h2Sm5PiT8JR2vesQjEFraR6ibBuRlqZom2Xrm+k4tdrzKjjiYI1ccuiLCpDLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StG9+XEF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675E4C4CEEB;
+	Mon, 18 Aug 2025 14:37:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755527819;
-	bh=MEuQmN6dB4qhRlM2ZjIWDLLN/sxc9sQMj976sd99t70=;
+	s=k20201202; t=1755527820;
+	bh=jyvUe/Uvlpxb8/WNMi/NIGIZMsdMiJ0vXIXKRErcUzo=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=EZP1vKGnknr3Yr+gDnMlWUcDB3NILxB6yvh1iwapY4aQr6ySF0XyxO848RHHUMLZA
-	 2zMA9sxRNwoFLFKNeav019tKJoKIt0tgP/68X5U2xz6G0s902fHaA6fhyU4WNEOb9D
-	 uqudknUe86CdcMrlsp//Weao0bCfWr/r1TyThmjTBsP5VSFzyozlXTjRo7l54DeyOm
-	 fsaJiJ20kh+Jt7B8F8SeKR1wtkSYF1siRVVxjVYhpziqxJtm+68jnlo2par0SLsX66
-	 ncOgxmVGG2b59e0fqNTX1scyJK647YEm16Z8CiUkfPpDlyt1+JzF+OaXOtPVCpGL+i
-	 O8t74L5VuoxyA==
-Date: Mon, 18 Aug 2025 09:36:58 -0500
+	b=StG9+XEFrgzNq+p79mD4ztZh0jbQ1vCwRuSeLqB1qS7Iu+Hc6Dfv4L7qwJOeHaktO
+	 6/fmIiqF9ac1+tO36JaKI+zl2+ZEUliWcQ/ODtzUbqjqvvPWAOS8pVpeE2sT9l+VDb
+	 ex4s6gE53WqcTeibIamkuc8N8Fmzt0nb9ZZSEvOc1Css7SabPCqh0xuj9EdtZ8moG/
+	 YrZeo0YIhIRUo2D93AMpTEG2YgyqV+LLy8LrVPUq2c0+Qd2vJfBy8z5WNJFjtC6gPk
+	 PJ5N2LmpwpflXWqZUf0Ptng9v1BBoqlb2a7+s1LwEWOB+mf4iV1W7XrW2WCtUDy2Dj
+	 0p5yTt0prT/7g==
+Date: Mon, 18 Aug 2025 09:36:59 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,41 +50,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
- Chaotian Jing <chaotian.jing@mediatek.com>, 
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-clk@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>, 
+ netdev@vger.kernel.org, 
  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-mmc@vger.kernel.org, Wenbin Mei <wenbin.mei@mediatek.com>, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>, 
+ linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, jh.hsu@mediatek.com, 
+ Qiqi Wang <qiqi.wang@mediatek.com>, sirius.wang@mediatek.com, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ linux-mediatek@lists.infradead.org, vince-wl.liu@mediatek.com, 
  Ulf Hansson <ulf.hansson@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Mengqi Zhang <mengqi.zhang@mediatek.com>
-In-Reply-To: <20250818114855.8637-1-mengqi.zhang@mediatek.com>
-References: <20250818114855.8637-1-mengqi.zhang@mediatek.com>
-Message-Id: <175552781678.1170160.15905675256206563540.robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: mmc: Add compatible for MT8189 SoC
+ Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>
+In-Reply-To: <20250818115754.1067154-2-irving-ch.lin@mediatek.com>
+References: <20250818115754.1067154-1-irving-ch.lin@mediatek.com>
+ <20250818115754.1067154-2-irving-ch.lin@mediatek.com>
+Message-Id: <175552781756.1170283.17952756043799676005.robh@kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: mediatek: Add new MT8189 clock
 
 
-On Mon, 18 Aug 2025 19:47:27 +0800, Mengqi Zhang wrote:
-> Add a compatible string for the MT8189 SoC's mtk-sd mmc controllers.
+On Mon, 18 Aug 2025 19:57:29 +0800, irving.ch.lin wrote:
+> From: Irving-ch Lin <irving-ch.lin@mediatek.com>
 > 
-> Signed-off-by: Mengqi Zhang <mengqi.zhang@mediatek.com>
+> Add the new binding documentation for system clock
+> and functional clock on MediaTek MT8189.
+> 
+> Signed-off-by: Irving-ch Lin <irving-ch.lin@mediatek.com>
 > ---
->  .../devicetree/bindings/mmc/mtk-sd.yaml       | 29 +++++++++++++++++++
->  1 file changed, 29 insertions(+)
+>  .../bindings/clock/mediatek,mt8189-clock.yaml | 89 +++++++++++++++++++
+>  .../clock/mediatek,mt8189-sys-clock.yaml      | 58 ++++++++++++
+>  2 files changed, 147 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:333:10: [warning] wrong indentation: expected 10 but found 9 (indentation)
-./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:334:13: [warning] wrong indentation: expected 11 but found 12 (indentation)
 
 dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.example.dtb: imp_iic_wrap_ws_clk@11b21000 (mediatek,mt8189-iic-wrap-ws): reg: [[0, 296882176], [0, 4096]] is too long
+	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8189-clock.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.example.dtb: topckgen_clk@10000000 (mediatek,mt8189-topckgen): reg: [[0, 268435456], [0, 4096]] is too long
+	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt8189-sys-clock.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.example.dtb: topckgen_clk@10000000 (mediatek,mt8189-topckgen): reg: [[0, 268435456], [0, 4096]] is too long
+	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250818114855.8637-1-mengqi.zhang@mediatek.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250818115754.1067154-2-irving-ch.lin@mediatek.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
