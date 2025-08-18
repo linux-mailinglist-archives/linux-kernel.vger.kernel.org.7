@@ -1,117 +1,179 @@
-Return-Path: <linux-kernel+bounces-774037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED81B2ADD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460BEB2ADDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3839C4E1679
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD25189A1E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79A4335BCE;
-	Mon, 18 Aug 2025 16:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2E732A3E8;
+	Mon, 18 Aug 2025 16:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bwEc88ku"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="CalRsrjy";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="CalRsrjy"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93562278146;
-	Mon, 18 Aug 2025 16:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E7D32274F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533544; cv=none; b=N7MdopQ93NHrWR9USgWpOwpGCYONSAs00DaH/m2vrgtTjgqnmHQ5N26pzuVubXsVOxkjJQ8XFvo4wWX1gFiNqZ2Cw3HJMR6fqGSAgvJmLsUAkELaS7N7dP+gJMQZwRqw1krFWYxuKKXqKhq+u7u1WF2dXOFFmSVDMd/h1QvpX+A=
+	t=1755533683; cv=none; b=paN1I9Ob63591kALlax+jBMnzXBkct9/w5LfwXeKFRuAwc2mXDFXLnU2Yff7m1KezkkNAmLkbFesYQ/rCoB6FC1PwLh0/B9t9BEwf4PmRpnih1wBtYnN0uzj2P21ORvzPlvS9cScMK5wIVqyuABx3+NT4aKPGCNHWoGxX4UhaFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533544; c=relaxed/simple;
-	bh=0KlOKuDfOUdk5ngaWQoAWmJ0VU24ir66fy6JVhYV5wA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8bENesrk8fvnY5ZrXgxxu8jcUj5jQH6VwPcjZNvgxrtSiV8EQKJBPeu6nWPGpDzQk6LuGsnn6KMak/+BH1chGv/HbKeKjclcHb62uawrbJ+4QJZj1Dgyool5htm6s/YZ+cz1uoIfLdhBTSaxM69VMuGa+L50fP98SoviNz6TuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bwEc88ku; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KmfCSi8O/XddsGKdRcKOqeDj7Pe6vE7Gax1joOuFhh4=; b=bwEc88kumrWiUkBPFis3R2xC8x
-	1VSU964ojxy4pizILXyaiupvjmCF+9S/j3hMn/7+0O6Nq5XCPfRh9SWhm98h0t2UFUjmA1dzWRZgt
-	tbkFmQuB/mZqY6ky3oZFaXzKbsxU61JtKuUNYn7rd7psdx+2eesyLw8rFRzpJQ1Win9JV+gpfxIJX
-	B0ERXsVVo7c2wl1HSeiIdqRZ4++3ImaZyhHbocKrxLR1Y5j1GlmqWCDYwxZ0RlMOOcuzzqa8ePrTH
-	qkSXaxaLa6fA1jK8eqoW/9WZ9mA8to8qlNfcQ4735MGvUb9ThF8/IOfNGNvoRXzwQSiekxnBpg4fR
-	SmVuRZ6Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uo2Sx-0000000HRhy-0oaa;
-	Mon, 18 Aug 2025 16:12:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7731030029B; Mon, 18 Aug 2025 18:12:10 +0200 (CEST)
-Date: Mon, 18 Aug 2025 18:12:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Xin Li <xin@zytor.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, loongarch@lists.linux.dev,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Yongwei Ma <yongwei.ma@intel.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Xiong Zhang <xiong.y.zhang@linux.intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH v5 09/44] perf/x86: Switch LVTPC to/from mediated PMI
- vector on guest load/put context
-Message-ID: <20250818161210.GJ3289052@noisy.programming.kicks-ass.net>
-References: <20250806195706.1650976-1-seanjc@google.com>
- <20250806195706.1650976-10-seanjc@google.com>
- <20250815113951.GC4067720@noisy.programming.kicks-ass.net>
- <aJ9VQH87ytkWf1dH@google.com>
- <aJ9YbZTJAg66IiVh@google.com>
- <20250818143204.GH3289052@noisy.programming.kicks-ass.net>
- <aKNF7jc4qr9ab-Es@google.com>
+	s=arc-20240116; t=1755533683; c=relaxed/simple;
+	bh=lG3/HZN/oApQulXrFiLP6o6pN3Ev4BBURK5QR6bR8KQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dt7DV2EOvfR3wshYontBkq1pw7NFBguHDYuFVNbyaerfDqLsJyCpxxyNTQz3cU3mrxRn1QWth0KPSbH8BG40p6zOYVhhiCd8PDtZRKzmeraLtonEV6a3Ncse7SnE7HfyLNfow5OFtvKR607gP5WLbzO6hIfMxg0skeKohj6uKJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=CalRsrjy; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=CalRsrjy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E8512125E;
+	Mon, 18 Aug 2025 16:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755533679; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Rv14F8Ja44eIaCCKmqxgwzyp1sZSF8Esb2z+zs6Un5s=;
+	b=CalRsrjyaDhz0VGnnEBB6eE8938nlVeuPUHBkSSppBgn0pjvANjExpaypM9zESCQSvE4Pq
+	C9co4iiVTZxrxxNO6gyXn1jz5viNNAhOw4jLtQKzqQmLSj4hKkLS4lHzrOJ4QUOCoEKYXo
+	LK3qfKoSgt31CrwG919iHFuF5jfxZBU=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=CalRsrjy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755533679; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Rv14F8Ja44eIaCCKmqxgwzyp1sZSF8Esb2z+zs6Un5s=;
+	b=CalRsrjyaDhz0VGnnEBB6eE8938nlVeuPUHBkSSppBgn0pjvANjExpaypM9zESCQSvE4Pq
+	C9co4iiVTZxrxxNO6gyXn1jz5viNNAhOw4jLtQKzqQmLSj4hKkLS4lHzrOJ4QUOCoEKYXo
+	LK3qfKoSgt31CrwG919iHFuF5jfxZBU=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33EB813A55;
+	Mon, 18 Aug 2025 16:14:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YlZeDG9Ro2gzPwAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Mon, 18 Aug 2025 16:14:39 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.17-rc3
+Date: Mon, 18 Aug 2025 18:14:28 +0200
+Message-ID: <cover.1755532653.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKNF7jc4qr9ab-Es@google.com>
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 3E8512125E
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On Mon, Aug 18, 2025 at 08:25:34AM -0700, Sean Christopherson wrote:
+Hi,
 
-> > OK, so *IF* doing the VM-exit during PMI is sound, this is something
-> > that needs a comment somewhere. 
-> 
-> I'm a bit lost here.  Are you essentially asking if it's ok to take a VM-Exit
-> while the guest is handling a PMI?  If so, that _has_ to work, because there are
-> myriad things that can/will trigger a VM-Exit at any point while the guest is
-> active.
+please pull the following branch. There are several zoned mode fixes,
+mount option printing fixups, folio state handling fixes and one log
+replay fix. Thanks.
 
-Yes, that's what I'm asking. Why is this VM-exit during PMI nonsense not
-subject to the same failures that mandates the mid/late PMI ACK.
+- zoned mode
+  - zone activation and finish fixes
+  - block group reservation fixes
 
-And yes, I realize this needs to work. But so far I'm not sure I
-understand why that is a safe thing to do.
+- mount option fixes
+  - bring back printing of mount options with key=value that got
+    accidentally dropped during mount option parsing in 6.8
+  - fix inverse logic or typos when printing nodatasum/nodatacow
 
-Like I wrote, I suspect writing all the PMU MSRs serializes things
-sufficiently, but if that is the case, that needs to be explicitly
-mentioned. Because that also doesn't explain why we needs mid-ack
-instead of late-ack on ADL e-cores for instance.
+- folio status fixes
+  - writeback fixes in zoned mode
+  - properly reset dirty/writeback if submission fails
+  - properly handle TOWRITE xarray mark/tag
 
-Could it perhaps be that we don't let the guests do PEBS because DS
-doesn't virtualize? And thus we don't have the malformed PEBS record?
+- do not set mtime/ctime to current time when unlinking for log replay
+
+----------------------------------------------------------------
+The following changes since commit 7b632596188e1973c6b3ac1c9f8252f735e1039f:
+
+  btrfs: fix iteration bug in __qgroup_excl_accounting() (2025-08-07 17:07:16 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.17-rc2-tag
+
+for you to fetch changes up to 74857fdc5dd2cdcdeb6e99bdf26976fd9299d2bb:
+
+  btrfs: fix printing of mount info messages for NODATACOW/NODATASUM (2025-08-13 14:08:58 +0200)
+
+----------------------------------------------------------------
+Filipe Manana (1):
+      btrfs: do not set mtime/ctime to current time when unlinking for log replay
+
+Johannes Thumshirn (1):
+      btrfs: zoned: skip ZONE FINISH of conventional zones
+
+Kyoji Ogasawara (3):
+      btrfs: fix incorrect log message for nobarrier mount option
+      btrfs: restore mount option info messages during mount
+      btrfs: fix printing of mount info messages for NODATACOW/NODATASUM
+
+Naohiro Aota (5):
+      btrfs: zoned: fix data relocation block group reservation
+      btrfs: zoned: fix write time activation failure for metadata block group
+      btrfs: zoned: limit active zones to max_open_zones
+      btrfs: subpage: keep TOWRITE tag until folio is cleaned
+      btrfs: fix buffer index in wait_eb_writebacks()
+
+Qu Wenruo (3):
+      btrfs: clear block dirty if submit_one_sector() failed
+      btrfs: clear block dirty if btrfs_writepage_cow_fixup() failed
+      btrfs: clear TAG_TOWRITE from buffer tree when submitting a tree block
+
+ fs/btrfs/extent_io.c |  24 ++++++++--
+ fs/btrfs/inode.c     |  29 +++++++----
+ fs/btrfs/subpage.c   |  19 +++++++-
+ fs/btrfs/super.c     |  13 +++--
+ fs/btrfs/zoned.c     | 133 ++++++++++++++++++++++++++++++++++++++-------------
+ 5 files changed, 163 insertions(+), 55 deletions(-)
 
