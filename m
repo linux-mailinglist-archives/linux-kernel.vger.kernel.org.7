@@ -1,108 +1,154 @@
-Return-Path: <linux-kernel+bounces-774449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9110AB2B276
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:34:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383DBB2B272
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38D03ACC0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4031BA2096
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1D2223DDF;
-	Mon, 18 Aug 2025 20:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E703A21D599;
+	Mon, 18 Aug 2025 20:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="F5vg4gnA"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="F9uV7pJR"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0827021C16D
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2271199BC;
+	Mon, 18 Aug 2025 20:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755549137; cv=none; b=ffumj3B6fE3C5n9i5pTDbTil8rtWBjjTiJxKRfek514aGMipT8e3A11z0One3mfL54ydssSEE9kSBPOFuVPSHuMSs9sYYJt/z9t2NnKSa/PtyEwSHVJqBRjahRHk4bK/TIZ202fAug8TpYvIg69O3S+2mjH1qMOcUz3GDyhvth4=
+	t=1755549196; cv=none; b=ewc42cpGLyh5TMUbCiH+Z9S48RhPQ2ZvcXAwftxtmr6NlKiVG9wJw1JiBmvYipqY+tXo/OB6xnB0thMon6TzP0OEj5JIezfPKNTXxYmkqlVgI0hfV47g8+jymlhv31bV3GqEkRvwRgGDodIEs5hvXF6tmjH1SitGBkdiJAtdxQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755549137; c=relaxed/simple;
-	bh=auyqtb4rVQCIYE2YBsgUNUAZb45KHzNR0n+asi5V4Wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8z7Smg8i1OZ0thgL7w+7SZi62vr8BLWZm8e2NlUMkIwk6E2lc4g4bR9pp9TLSn/wGYbpNkQRs5j5ZBEDqaSVp8l2kdTtq13jC/o+fXRf4BkJcdCQfqe4ODn6mEAKbT8qmuz8gxph0hsY9ACAa0lHnmYovRPrnV+8IneVP+67oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=F5vg4gnA; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3e570045e05so41690485ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755549135; x=1756153935; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Vn7KGvnJ31CxElASYk+NIfs2sarLTulRtjwYt6vxT8=;
-        b=F5vg4gnAD+odU4VUqghw35yPowRi/dJkzdTkIkZCUPL32aoSDMmIUVbOwNYVRRhqsi
-         VLOJYOMYeqmkU4gkJvfmbMigKjrsqG1DNAgE9I6u0IR7+npFaAgbYjr1N9bt5dONYFcf
-         ULl/YG5u/NqwEhTC9EDDEvPj/aVZ/vBRw0QGy60F9ZB+vtK6ssFVNPtoR+/RTQrd4p3L
-         nPQd/CF4Ba33reZG8QzyuZ9cLJN7ivmwJfykeS5qioKqDaKIzpE2lsr5QPSKoY7rj5fX
-         mPlI6rPbIeou8Z9DM+iTwrv/CqKpNIsDe4Bw8QlmWH0SVM1xpog9xofkGkFfaZ7BBprx
-         tz5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755549135; x=1756153935;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Vn7KGvnJ31CxElASYk+NIfs2sarLTulRtjwYt6vxT8=;
-        b=SMZgIgrAi6ZHj6JPlLXnLis/+B5GPZ2OsicKcw6gCSqZhVBFfvBvjRc+5n6f0uIjPS
-         /jFFj9Ftax4wx79qIDhzkN1ernmjFODsquYxD6dpH+NQPLvOBgwSgSQu5hF6GhxRUbIE
-         AEtVRKmRoENoM2R3LZHjETHk9qAe4RFrMFcM46EVjrENftiBaqRthTyRHTnHPNamOMTM
-         1SjtDQCAveLWnfrlatWWxvg3dviyFlZQQTIfil1IGNAqDPoGylwzzJLX+qBCaotuMN/e
-         RWoZYllPcP8rI4ScAc6eoemkngRkbUuwo0BjRPqqaHLaXUJpB41kadpCFAcCQBh0+EtH
-         ZbNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYcFQz6WkxjkCj0xs4mqJmU03sl48DtSlQ1up1DjFMWySwaouEXRdw+RHyVNWEa4xPZF9yjWLDgYugll4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEh3KyGQ/R3I4/n9L4xoTSaAml0G/20om9ESGLNSek64WD7yT2
-	ScveiqdPfyYbd+PPZx0q/2O6naGtDUw1eYcdseVcHGkGPkutjkd5kUqBL/kN8+qGmds=
-X-Gm-Gg: ASbGncvrwSpkkc5YLoNigSfuXS3QI2V/BzRSHz8sTvi/ggB0GsIOjwqEGafOFhNfon9
-	USZZTwjssxaCXSl/cugV+Ibzvpqu9GwR6X2Sue81HgDklRWGPFP5zHSyyYEfFkJtxWrA0cNNil7
-	IjS9iCzP+SEds0JPN3I2/RuTjwWoZWj458ZvwdCYCwFGWqAhC9m/q0exvgzFVLl4+dphWRWAH+b
-	4sYwxGABpx3Ql8m5/nTmJ+HyrQ4wNNV+OGBdsEr14yQIqGZqQXAF+u9Wb3PnwIVk3mOMrrdtO/D
-	l+bV7EB7K0vdF/nkUvFPIHFSib72HoOSnhUayUyTI1qh7F0zqakNG6oLVIcFovZ876LbPGlMH6y
-	HqXQcW6t8cUk95U/RSkQZuudq
-X-Google-Smtp-Source: AGHT+IF/UJeN6VdS70sUHdd0WRTBcf8Mub8fIKvWwcAVcgm38V3gFnMMkeNmKxZ5+rkOte8i+tJYLQ==
-X-Received: by 2002:a92:ca4f:0:b0:3e5:1917:585b with SMTP id e9e14a558f8ab-3e676638e2cmr1709575ab.14.1755549135023;
-        Mon, 18 Aug 2025 13:32:15 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e66c6b0b12sm13085315ab.25.2025.08.18.13.32.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 13:32:14 -0700 (PDT)
-Date: Mon, 18 Aug 2025 15:32:13 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: zhouquan@iscas.ac.cn
-Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/6] RISC-V: KVM: Change zicbom/zicboz block size to
- depend on the host isa
-Message-ID: <20250818-f6b7d56c16a41351e90ca804@orel>
-References: <cover.1754646071.git.zhouquan@iscas.ac.cn>
- <fef5907425455ecd41b224e0093f1b6bc4067138.1754646071.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1755549196; c=relaxed/simple;
+	bh=Sez7dSRnO6KxpgtkcL9ClvHBvUep4IDePODisQnXZ+8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hbR38lYPAixcGmY04b6+t9UbakkYE4qpKsyDIhu4lxTFuI9LdBEr1rFQU1mtKTKidPO7ZwmKaj+i4QueSY2ztDN/U0oK9T+0+IB0epwzoq4SSKDECCPHreKSmQC0aGUZh2lXVfE5TBqasVwid+6kpivdl4+VIUOcCLh07x/1834=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=F9uV7pJR; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57IKXB3G2795289;
+	Mon, 18 Aug 2025 15:33:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755549191;
+	bh=IzzNOVctT9Ql4Qww2ajbvBZh+2KeckCVVmggygEskIM=;
+	h=From:To:CC:Subject:Date;
+	b=F9uV7pJRZv5nrPjg9SqKxlMLx64U7G5M80wD26B+lhuqqUbFWnN8cTFAnWnLuAZZb
+	 8SB6PQUJZ7mYLxbrEKTAs0PR/sLHoVxBiOZJbxiC2h4fLK4x4732q7ZXNnDG70iN4g
+	 fNr4o0EHsD5h20pU2XN1pg49iZdOzN8g8rK33ZuA=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57IKXAva072645
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 18 Aug 2025 15:33:10 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
+ Aug 2025 15:33:10 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 18 Aug 2025 15:33:10 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57IKXAkH1598805;
+	Mon, 18 Aug 2025 15:33:10 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf
+ Hansson <ulf.hansson@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis
+	<afd@ti.com>
+Subject: [PATCH v3] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and SR1.1
+Date: Mon, 18 Aug 2025 15:33:10 -0500
+Message-ID: <20250818203310.3066985-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fef5907425455ecd41b224e0093f1b6bc4067138.1754646071.git.zhouquan@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Aug 08, 2025 at 06:18:21PM +0800, zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
-> 
-> The zicbom/zicboz block size registers should depend on the host's isa,
-> the reason is that we otherwise create an ioctl order dependency on the VMM.
-> 
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> ---
->  arch/riscv/kvm/vcpu_onereg.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
+This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
+to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
+due to errata i2458 [0] so disable HS400 for these SoC revisions.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+[0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+This patch was separated from [0] since it will be merged to
+different trees anyways.
+
+Link to v2:
+[0] https://lore.kernel.org/linux-mmc/20250807225138.1228333-1-jm@ti.com
+---
+ drivers/mmc/host/sdhci_am654.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+index 8a099508b939..cc8c4145bf2b 100644
+--- a/drivers/mmc/host/sdhci_am654.c
++++ b/drivers/mmc/host/sdhci_am654.c
+@@ -155,6 +155,7 @@ struct sdhci_am654_data {
+ 
+ #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+ #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
++#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
+ };
+ 
+ struct window {
+@@ -764,6 +765,7 @@ static int sdhci_am654_init(struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
++	struct device *dev = mmc_dev(host->mmc);
+ 	u32 ctl_cfg_2 = 0;
+ 	u32 mask;
+ 	u32 val;
+@@ -819,6 +821,12 @@ static int sdhci_am654_init(struct sdhci_host *host)
+ 	if (ret)
+ 		goto err_cleanup_host;
+ 
++	if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400 &&
++	    host->mmc->caps2 & (MMC_CAP2_HS400 | MMC_CAP2_HS400_ES)) {
++		dev_info(dev, "Disable descoped HS400 mode for this silicon revision\n");
++		host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
++	}
++
+ 	ret = __sdhci_add_host(host);
+ 	if (ret)
+ 		goto err_cleanup_host;
+@@ -882,6 +890,12 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static const struct soc_device_attribute sdhci_am654_descope_hs400[] = {
++	{ .family = "AM62PX", .revision = "SR1.0" },
++	{ .family = "AM62PX", .revision = "SR1.1" },
++	{ /* sentinel */ }
++};
++
+ static const struct of_device_id sdhci_am654_of_match[] = {
+ 	{
+ 		.compatible = "ti,am654-sdhci-5.1",
+@@ -969,6 +983,10 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "parsing dt failed\n");
+ 
++	soc = soc_device_match(sdhci_am654_descope_hs400);
++	if (soc)
++		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_DISABLE_HS400;
++
+ 	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
+ 	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+ 
+-- 
+2.49.0
+
 
