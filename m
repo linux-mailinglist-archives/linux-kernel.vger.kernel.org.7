@@ -1,76 +1,119 @@
-Return-Path: <linux-kernel+bounces-772909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE48B29925
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:54:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D6FB29928
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A9B1963C7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:54:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E98397AEB7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FBF272802;
-	Mon, 18 Aug 2025 05:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B35026E715;
+	Mon, 18 Aug 2025 05:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sQIbIxYn"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="T1IMr5Lt"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA94126E711;
-	Mon, 18 Aug 2025 05:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276DE27056A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755496366; cv=none; b=uesCmvrl7lpSsXy4Q8p5zoFv8j9s2INYhvz5DE72eRZHdPui82SQXgmLL/LHwrAqui1FtPQNPV4OFVCokUCW3KR0qjyhhaMU60kfGF224QB8JUDltb9ZRWn7vtQX5MNesZhpC4Ru6OKlxbAcGc5tkt/KE6GFXhZJgy5IdafrACs=
+	t=1755496462; cv=none; b=JPXTpD+x4OUHaiVRLYWVZxOT0lSxR0PxpKcUOyOO8P0r/V9fysfeD1yMzPtFoMpDe+gK01kxvHH3Nlf1IFnCDkF9tWi70W4pliQiQJF4kPMyuIXGPNhw//aaPBKBZ4cIZaGblIimzygggcU8bd70He1I5mxU/FfZwQH3Fq07EP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755496366; c=relaxed/simple;
-	bh=+TFfy3LqtKNrPUR0rJlyKhGuXtg6n7Nco3CwrAsFQNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a48vIZEYa0FVGbpN8l114gHOayiSoDHBVHYD1eB6GSKZo85VJYoeTvDIsZOU/vz9n9UfTP3dDVZruk6GjePC6jmSWHAwM7iX1YVmwfH5y++mx6IVxSY4TTSJldXcsOWrDRZyjHlcrgxE49jFQBCxA33t+z/RdgPj4pjcgWy2eh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sQIbIxYn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qldtFRTQc/MaNY89VBZwlRVVq7wc7xMm/wizvObjV+g=; b=sQIbIxYnGYk+ZkuRHPnc4lYFg9
-	tfvf012CbVkkiJoLTpPaH0tPxNCovs0XL/m1I5cJdkXlUhjii2fL0RwtG8cHC5jcY3Qec/mYnrpGU
-	oMF/7gzNGIrT+S9jto9TjvBxFPdWs9J/PTpNI9sF7uudiaL4nJ+dykOVRCNM7Nj+FVP4/nblSGp7m
-	MljoXkVVYadq1kj3B8vwa9Mdn4CzteRmYJEbMJirZB5mkcjMjN0guYpVLDBELfDE9in9t25bzveaf
-	87WtcEiCDO2cChnRlryJx+4gJ0tFTn5mG5LrF5xr6mv10zg5CFj1mW2Hagok8uwBN5wKMPVI21xpc
-	AKOZ1GFA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1unsnS-00000006a60-1N7v;
-	Mon, 18 Aug 2025 05:52:42 +0000
-Date: Sun, 17 Aug 2025 22:52:42 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Ethan Ferguson <ethan.ferguson@zetier.com>
-Cc: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Subject: Re: [PATCH v2 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Message-ID: <aKK_qq9ySdYDjhAD@infradead.org>
-References: <CAKYAXd-B85ufo-h7bBMFZO9SKBeaQ6t1fvWGVEUd_RLGEEK5BA@mail.gmail.com>
- <20250817143200.331625-1-ethan.ferguson@zetier.com>
+	s=arc-20240116; t=1755496462; c=relaxed/simple;
+	bh=rSwNLEEae3P9QEq2Hme2YrXdZ7yJVM2ZDx26GAa5T6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DEMqq0czBKJjzjLIOp8yKK+TSGXXj8ubzUTOQq3nVbpSR621PtgAI6D8tz+tFCbtfWFZ5qmvrr6fozjg8/XI/w6p3TlNsqu6V+FvAEdxaajlprIUbt41wGpElSdtBZyxcuYXjA2fF+L/YySS+sSz8NutWDXJQ3ndHUiMtIoCCaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=T1IMr5Lt; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb78c77ebso595990166b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 22:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1755496459; x=1756101259; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rSwNLEEae3P9QEq2Hme2YrXdZ7yJVM2ZDx26GAa5T6A=;
+        b=T1IMr5LtRbt3st3jCDW41Yg8CU6X2qUVL/lH48ElYepRtMAE6v9UFbJKs25YYRLSpV
+         1iMJ0iqYKK18zY49CDvyFNfgkT8kPZynccAw0EJwGVo3a8iR82jIDMCFM+5qeKowrk5K
+         dEnhUVfFclYginAwaIMlfdRgb4Yod0vHRT1TJ6WH6lfIvUoPIEzMOKmon3RFL0GSoYZe
+         00DdRvRPWhAK2tiqYN0d/wKQhuJ/ecZ9K7wWpYfAap4GNo4y824DA8glgOv/+mMufxnk
+         kDYSkaH+FOOJZumRYxFLUAPin1YVrMISm+/cjS8phbOYeBJrYaAK38Xecgm5FnD/eSrd
+         /c4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755496459; x=1756101259;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rSwNLEEae3P9QEq2Hme2YrXdZ7yJVM2ZDx26GAa5T6A=;
+        b=kQIMoGbqPmDI9bbuaPketGZWxhjpFqoDRFxoQ/nmTooh5FbNSio0BWfhcDKJtwA+tp
+         xB44O79ZIUrxQeRUA7PBq9Qqgwevo+nNMyslHEBkBazQigWdPYnQo1DtOXIJOQ/ejNtj
+         JsMLJMk0ZvV1j6SvV1C87qKH8KoeB8DgCUmVwFKOa4q+wlQ8i+a6OL0vr0pgzSMcVpYu
+         LcF50mvDhazrvK7sdko7cBmKcq88x+sUxijM+RfNJFR/ryyrGdDL8NccFZG6Cws3BQgY
+         xP9vHMVdPKWFkvfxGt9hVGSLxw5KjrILpkFYbgECotCwTqb5pJBRByuwiwr+EZdSCoNZ
+         Y87Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWtwDHDUZrLdFPKQJSAHXrJlTRv1y66oSq0n1GI1Er0qdJhzMxYZp7m0oTQ2Eqs/vzQDO0h/rR5jYB7V+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziETThp4iXYmcNGXMUKz2zI5yU+w8Fym5vuwEkv8ykNSwLtzVx
+	s6+h66CnBTzVOZu/snRNsQMePOUJ6PpdJPMKC9ctwYE+W/KOq0r+TaC5RJjXNDeK/Bo=
+X-Gm-Gg: ASbGncsim0d0wHVT/W3ohIDeWRmVj1QWLPNlQIqTTKWv0xs9fqbp4VlIJ0FVL/hpk1m
+	ptRcgUV4oEwgXctJPIiYaGoFf88xlrPJlj7he4ytdiyVLnpZ79CU8hapzn4vsnaeiohwIaRCyoJ
+	wYYVT5Uvd62Fn9x/pP06VvClgjldV+nMyxqUc5ED8+V9BEu/RWdJHt1pQYJblLAW49HVzH5GeZ/
+	T39Uz4ITPLSXiW7YGp+qmIdmTOp/Rp50bHt42FQ5f37m7ZGHUcmx42ds7zd4POZrhkX422WY4Ii
+	Xn/H3QDjO2P6eZ3McmokhsfszDVUBQDWmMY503zqE+PFe1k7RNbDSDATjrpmzJrAOFseqEsNJkw
+	wyZ/2EJMeLs8a1zk+rWeN4jtTcYHkkBGLBMVeT2XN
+X-Google-Smtp-Source: AGHT+IEOCX/C/iBLx623bOubuTqA7Kdn4TAgxaXuZzrmlCOVef2rZUF+MeuUI3aZvz9jOtGjq4uPMQ==
+X-Received: by 2002:a17:907:96a7:b0:af9:a486:412e with SMTP id a640c23a62f3a-afcdc237cf9mr964877366b.26.1755496459172;
+        Sun, 17 Aug 2025 22:54:19 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.81])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd01ab55sm732429066b.97.2025.08.17.22.54.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 22:54:18 -0700 (PDT)
+Message-ID: <b064e3cf-466b-49b9-a66d-399441e1913d@tuxon.dev>
+Date: Mon, 18 Aug 2025 08:54:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250817143200.331625-1-ethan.ferguson@zetier.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] iio: adc: rzg2l: Cleanup suspend/resume path
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+References: <20250810123328.800104-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250810123328.800104-2-claudiu.beznea.uj@bp.renesas.com>
+ <20250816145334.7a538a19@jic23-huawei>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250816145334.7a538a19@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 17, 2025 at 10:32:00AM -0400, Ethan Ferguson wrote:
-> Both e2fsprogs and btrfs-progs now use the FS_IOC_{GET,SET}FSLABEL
-> ioctls to change the label on a mounted filesystem.
 
-Additionally userspace writes to blocks on mounted file systems are
-dangerous.  They can easily corrupt data when racing with updates
-performed by the kernel, and are impossible when the the
-CONFIG_BLK_DEV_WRITE_MOUNTED config option is disabled.
+
+On 16.08.2025 16:53, Jonathan Cameron wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> There is no need to manually track the runtime PM status in the driver.
+>> The pm_runtime_force_suspend() and pm_runtime_force_resume() functions
+>> already call pm_runtime_status_suspended() to check the runtime PM state.
+>>
+>> Additionally, avoid calling pm_runtime_put_autosuspend() during the
+>> suspend/resume path, as this would decrease the usage counter of a
+>> potential user that had the ADC open before the suspend/resume cycle.
+>>
+>> Fixes: cb164d7c1526 ("iio: adc: rzg2l_adc: Add suspend/resume support")
+> That SHA isn't upstream. I think it should be.
+> 563cf94f9329
+
+You're right! Thank you for handling it.
 
 
