@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-774387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4978B2B1A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:30:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A23B2B19D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54964626C98
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:27:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0AA77AEBD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D01E277CA4;
-	Mon, 18 Aug 2025 19:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDC7272E46;
+	Mon, 18 Aug 2025 19:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g5ZitLUM"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BEZaPvir"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182F42737E7;
-	Mon, 18 Aug 2025 19:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1C53451B4
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755545204; cv=none; b=EolY2rIR74ElroUofuQtEROsXzD/z3AjAzpOTigl6htBBcVAQE8/nG9huiXMpuRLl5a8kcNIjv5WH9FGX0QGvTNtTGyctehXtPo6D3y0M0EBFGn7RgYGF6wht0LBo7HJ9GPci18lqG9RgK4YUoc8T208Candh5edUOWpHzsczoY=
+	t=1755545292; cv=none; b=bNTSE4JRnYk5112MG4/O1jqPrwYYl4y1FW/ZRFuA2KEQkSdcvKsNmtg9+jzpcGjkB66rrGxDR7gDtHgOQUCq7WZ7G+ACau5lSJDdqJQZMNdXNa47IvoBwre5QosyNxqgvP+gitpiv0qonuF55KLNQUDKNJo+Vyq4OpHvQ4X7xV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755545204; c=relaxed/simple;
-	bh=eoLXwqOOfIRrHS8VYQfB6OgLGsfrMp71CnW1YYlCn0o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o1Z2sO7N83pN7MKhDfJPVvbrnnZPAEYlTwHGeGAWRrB6SXv8LDj5Y54KoZlDcwbtJFMLU1x2yU0kr8QqbFBeFfhjq4GHtXwhCoVIfly1RrZBADC7mgasvaMjy55hd6rbCXJqBp99JWJXiotflmcIWP0TwdBftRVS7o8Xn3PXx/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g5ZitLUM; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57IJQXQe2784525;
-	Mon, 18 Aug 2025 14:26:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755545193;
-	bh=UXRkk2zDcggKtqTefi0QIESttIf8M0uGEmhb4YEPw9E=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=g5ZitLUMZVY9XhusOnJzaZgC1dVg3TOVuLIw1Yth2hbrBTzQqnOshzzCjp4gkVGox
-	 9DdrO9tyNhC3l5IyFmx5mhBAztHm+ilBLZyRAZWb5fdIECK1XGlidR/nUWUl1KUhqO
-	 Y6eFxa7yK/sUNchkvG0VhP+eIMIJioPNoTbFoOik=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57IJQXMO039962
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 18 Aug 2025 14:26:33 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
- Aug 2025 14:26:33 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 18 Aug 2025 14:26:33 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57IJQWxY1525949;
-	Mon, 18 Aug 2025 14:26:33 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J
- . Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, Bryan
- Brattlof <bb@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: [PATCH 3/3] arm64: dts: ti: k3-am62p: Fix supported hardware for 1GHz OPP
-Date: Mon, 18 Aug 2025 14:26:32 -0500
-Message-ID: <20250818192632.2982223-4-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250818192632.2982223-1-jm@ti.com>
-References: <20250818192632.2982223-1-jm@ti.com>
+	s=arc-20240116; t=1755545292; c=relaxed/simple;
+	bh=YFBoCVch8eqMXndK0gyZ4n06EWvxHmxPzDgY0J4slFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FNMXbxSW5APfA0z4M87R92mpXKTA5L4AjQGAAVDLSFPCEwlfSBgsRGY5ODT4bvLvLAP6tiK28bkbn/9caeiBE+fNIeUw56wTz/UrL5pFNO+40TVGVP3bQI6CShqPPmKd02FGWnLIqpp9RErLUZvkRTKLIUoi/9WIu6IeUX+/4DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BEZaPvir; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-323267b98a4so3871602a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755545290; x=1756150090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sxfd31daBvqbLABwOMkfiAIHr4QY1nOru4f7dr2Usaw=;
+        b=BEZaPvir7LUTjeXAdm1zsMtNieSq5AXEEOYc5HY1omCXABfTt3A/s9Ip9hHxzC4dK5
+         m/VcMrSMMHaoefIqEV5hju2OFn+9bFWtbyK8I4ftEbr46jvTP2kLmXEjKKdlmDKFw28/
+         AYnM3/xzn9HC76ZJOqzC4nc9XBDogHVQuflh8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755545290; x=1756150090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sxfd31daBvqbLABwOMkfiAIHr4QY1nOru4f7dr2Usaw=;
+        b=sTsxzal7QdTOfEXry9V+H9gr8XSY9zTicacez6f0QaBqWT5lyEZAK8gqIfaXwJkebg
+         6EhOwLXaZXtBAJ78xlCGssrfsX1qh68mkLJpJ115YaTPTB6HzEIDMcwhNtV41ChSmwt4
+         /AvBO38qbOtOAvCyQ7lkhu3qkBat+liTqrO7VflmC/2zDgwJidlVVqcjyPpTKAs0z4tf
+         5QWRAL58z2VxeSYK9CeYmygLly88wSLen5aJmnHKObYv/79bZcOCQYg8oQQxKC7MFR7z
+         QVkCyIYYMCcUF5qkWdihQRiBuC2pa9jx/tUCbGC5BPm0xA/2YVnBbSZ0MDwrPurTKlq6
+         WRow==
+X-Forwarded-Encrypted: i=1; AJvYcCW52UX8cCHDrAIIl1DA+I6wY9RHY3ovo4PJO9q/bJH5jefPlZQkzGPYtk5GDKKWlyta7pVm5uoiJM0++7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj+VqTJrflLFtOF77diRtMi5LfMsOF2WQiVi6QiyLDH0zycz4k
+	p56be/6DECVC+X8ezAa6VogPD2m8PqV6eXFpxm1XwOWv4xZNbIqcXqScHNVWqLtghw==
+X-Gm-Gg: ASbGncvxzp3QZ+a/7paR/kn9vbz2hcbEMQND0zweCOHwezk1Gpxb/vwGhBYcY7pM6/X
+	WdwA11ZoW1m5JvfFk7Qe/gUlE4X6cborBDjmM09oEaqftMGYu1uklz79C2SkgmDd/2x0wz80fDy
+	HP0z6WkW5DKIcg/enxJvsNn3JbyZOCmLLJOAOsqMfVadguvdExFNgy4fDfhmNSjfi1+SIEo3MxA
+	emErTk0qGOGa0Y1qE7aBeZZF/tSRQbh/DneK8soE2gt20TYJt6c3nJxwGs9GgCHws+mjhoocNzV
+	csZZIaG5GLtN4mWcI5lEBbPcvvGkphVT/ea3aK8/wR6g96MPg3r7o7DpF0/ZJpq7N3aFyfGDksS
+	i2ps6y+NOmlg6EaggLXfOMjIehkD5YC2JlLmVBH935D+bI3R8KBzIP0UqTmZX
+X-Google-Smtp-Source: AGHT+IFM/NaQy7mDHxnyZrxb3wGlGreUvlaIt8ZmRUIFMbKk6qyKs6u9+nr5cCA3h4opb/Kh4ta2Yg==
+X-Received: by 2002:a17:90b:380f:b0:31f:6682:bd28 with SMTP id 98e67ed59e1d1-3245e591ac7mr97839a91.16.1755545290079;
+        Mon, 18 Aug 2025 12:28:10 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:87a3:e3ff:ace1:d763])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3237e415f64sm671475a91.30.2025.08.18.12.28.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 12:28:09 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Gow <davidgow@google.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-kernel@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 0/6] genirq/test: Platform/architecture fixes
+Date: Mon, 18 Aug 2025 12:27:37 -0700
+Message-ID: <20250818192800.621408-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,35 +85,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The 1GHz OPP is supported on speed grade "O" as well according to the
-device datasheet [0], so fix the opp-supported-hw property to support
-this speed grade for 1GHz OPP.
+The new kunit tests at kernel/irq/irq_test.c were primarily tested on
+x86_64, with QEMU and with ARCH=um builds. Naturally, there are other
+architectures that throw complications in the mix, with various CPU
+hotplug and IRQ implementation choices.
 
-[0] https://www.ti.com/lit/gpn/am62p
-Fixes: 76d855f05801 ("arm64: dts: ti: k3-am62p: add opp frequencies")
-Cc: stable@vger.kernel.org
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62p5.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Guenter has been dutifully noticing and reporting these errors, in
+places like:
+https://lore.kernel.org/all/b4cf04ea-d398-473f-bf11-d36643aa50dd@roeck-us.net/
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
-index 202378d9d5cf..8982a7b9f1a6 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
-@@ -135,7 +135,7 @@ opp-800000000 {
- 
- 		opp-1000000000 {
- 			opp-hz = /bits/ 64 <1000000000>;
--			opp-supported-hw = <0x01 0x0006>;
-+			opp-supported-hw = <0x01 0x0007>;
- 			clock-latency-ns = <6000000>;
- 		};
- 
+I hope I've addressed all the failures, but it's hard to tell when I
+don't have cross-compilers and QEMU setups for all of these
+architectures.
+
+I've tested what I could on arm, powerpc, x86_64, and um ARCH.
+
+This series is based on David's patch for these tests:
+
+[PATCH] genirq/test: Fix depth tests on architectures with NOREQUEST by default.
+https://lore.kernel.org/all/20250816094528.3560222-2-davidgow@google.com/
+
+
+Brian Norris (6):
+  genirq/test: Select IRQ_DOMAIN
+  genirq/test: Factor out fake-virq setup
+  genirq/test: Fail early if we can't request an IRQ
+  genirq/test: Skip managed-affinity tests with !SPARSE_IRQ
+  genirq/test: Drop CONFIG_GENERIC_IRQ_MIGRATION assumptions
+  genirq/test: Ensure CPU 1 is online for hotplug test
+
+ kernel/irq/Kconfig    |  1 +
+ kernel/irq/irq_test.c | 64 ++++++++++++++++++++-----------------------
+ 2 files changed, 31 insertions(+), 34 deletions(-)
+
 -- 
-2.49.0
+2.51.0.rc1.167.g924127e9c0-goog
 
 
