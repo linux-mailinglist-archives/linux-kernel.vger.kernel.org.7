@@ -1,158 +1,214 @@
-Return-Path: <linux-kernel+bounces-774203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA1BB2AFD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE45B2AFDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A7A3B4151
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 324C73BCE41
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C1C304BA0;
-	Mon, 18 Aug 2025 17:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FB733EAFD;
+	Mon, 18 Aug 2025 17:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="giHvqe5E"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ph7VQEYP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A126E70E;
-	Mon, 18 Aug 2025 17:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A182D24B0;
+	Mon, 18 Aug 2025 17:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755539867; cv=none; b=j7B9eU3m91vLr++zr42B29UiC4UPjqALFXnEqrAAhBjE2JLXgxrbY5YFpVEJtrPQ45motI3r5V2ejTO6BCqnqoeQnLq66Vz0abeeTUXtoVagamGWOpmZanw+JpDrVzFMw7QOBS9UQXucI/Fcl76H70ldN3Q2BoEmDh6o34cBh64=
+	t=1755539908; cv=none; b=WIrqGw7bVYNw2SwmxiTW1Z9fh774+tWqX0Ota5uuYyO4DDwQW4g+S8HTWydB73k8QroQCl+sIMqErmBQoKhJiVAOJDIBJElBdiLedSlO2SoK7TX6x2bkvwW8qWoCCQZBIDP28RMl51WnO2dQv1iocWVLbPvIDbVi+ksPbEZsRk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755539867; c=relaxed/simple;
-	bh=7reA1nrrhuVsRD/BNRdqB4StM9Zzk+kKYzf7IJRxOvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lxa/E961RNwK8pYFEuz264261jW/c/BZkhCL/hj4ogdlWavhzKEisnIeguw+WQ+nW8wrPXYvdFBbHVUDRQ3OEt3n+drKMOdOsCp/BxF3CEOXsnPuXObCFeLTvnQEYjpVoKOQc+b2Y/EXFtW8dCeZ36cpW7vfOldhxIC9L4gxEsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=giHvqe5E; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e8706491ecso668665385a.2;
-        Mon, 18 Aug 2025 10:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755539865; x=1756144665; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5dpAAc7F/8e7I8kDQez5QitfInVFnriBvKVZ+tJof7o=;
-        b=giHvqe5EXcqEFHfvZCj+O8kwRxKk8RjafSJGYkexITreIYVcdeISsTOuRcRRFBJzaE
-         cmOqlqIi25LMXaBGcKjzhi31wxyEtv4kVWLaS5VeBeOr/A+1GVO6H+JICDWYxnN3IxM8
-         dIR72/2lf6PJBuYblHQu0p+hgz7cefblbU4vsymPRVfJB/dPCmU0cKGTaW+kZW4zihow
-         Fi/N9uMXnXNGllp1DEeHh/Q6kPJSnJBrvxCzVgzv+zvBcUSFfQR4c3Ug58x8EoOWmlpq
-         eYwUtdcbppN/uxah8t50dLc+DxJZxLZKRs+l2itaVv6dz/qbmDbNd26DR4fEdmYOCX2j
-         yCEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755539865; x=1756144665;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5dpAAc7F/8e7I8kDQez5QitfInVFnriBvKVZ+tJof7o=;
-        b=c4PegHAhyB7i22pNd3Hcj+C8LUiIC5Wse4mqxI9BIpFXdOUXdYfnXMth87aBByR6tM
-         ZNVPaMmv7PnMggUnaCSvblmBAc57y1cnuqCPLDRYW4fAtBAeT2AATh8HiweySwY/GV+a
-         AuOT6Z4Um6bRohPYYeP1J6L1cbLUkPnERcFq56JkVXcCT5QfyrynkA3hjEenMqTcHnod
-         aypWg+iiGE7vnn/cufLBJ2WYY9mklPmAX0BV5N7gBXhKwHWdEz1flKl5sUzFaZTrrhjz
-         guBEA8eW/qG8JFsi6Z5MQfjg1n91tZKYc0CfN9vhxXwRlHoJUDpYyC+M7VKixJlmgdcT
-         pFTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnXI54xihiuE3kMYeJGBi1rjf9ffr2ZELKRqhQnMvWp8+weoxY5hmt/UI0S8Ghq6IED12WGiI6@vger.kernel.org, AJvYcCXxJXcCawE7R5XvnXTCNH1oYAw/3tVLnesJQCIgnJb9RkjKYX0NtyJakbtoSpurPMLr47PLWIjCdQA+kPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwSIZBIrd2Mif0NWv1RE0+9b+l78H10nrIaCx0M3VH5tdUP+s9
-	iCCZ6lH80nmDMMn8fnGqHVS2gb1tperJIJK97SKEb64HD5xbBneGpDaM
-X-Gm-Gg: ASbGncsvIHRzrXyr4eDL0BnvYSSdm+BlaFkMtVNxaS0BSV2nuDMD+yaEqXdYcahfY8g
-	9nRWKiS6o4mFItDLwpxoB3mKDOmAbifbvIHjwijKUXshkhE2heGHFcaJntLMBppb/OBK/O42pNM
-	nIqHXG56IciBk3FsI1vD23uUO5iPVMzTVQ6FIJpVS/JcNThHI/vq189iEtDaEEqRHUSPrY2PF9A
-	/9fksx6/g+HrDS7kKUMB48ZlRYJepCfBIhRm8Xsv+kCzeaUNLNWevvEsUlrr087na/U2nah7+XV
-	UBVcyLFAmKytPgOjQg84K7556sFu9oOMWYT/eSiPtRbLjHBVm7PRipHI6xEsHTbEitt8hHyl3zD
-	SgBiYf43e6LQKkzPvlcQ0HpLn2lCpuf6R0Oen9dQHLyID4pcc3g==
-X-Google-Smtp-Source: AGHT+IHYzzYhD1kG1DP3lCnGlBxWAQqboJMYhFCESN69WTGlbet6GMtTiUgPse6bErG/6aS9jEO+5w==
-X-Received: by 2002:a05:622a:2485:b0:4b0:71e9:1f99 with SMTP id d75a77b69052e-4b12a74e55bmr121025781cf.30.1755539865088;
-        Mon, 18 Aug 2025 10:57:45 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11de44f76sm55428721cf.50.2025.08.18.10.57.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 10:57:44 -0700 (PDT)
-Message-ID: <831e5459-a8f2-454f-8c2d-3d96c01c6c8e@gmail.com>
-Date: Mon, 18 Aug 2025 10:57:41 -0700
+	s=arc-20240116; t=1755539908; c=relaxed/simple;
+	bh=ulZLbUkKKsVBIPbfqGa1aUvDJTveq02TSZlicwCIS60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=InmIxrzX0eAeO5IuJysl1DhII3sTtLRsQ1Ol1n6S3vatgl8PD2SOLO6kaZxMbMXonbUctj6zV5KuZ26idKDMCCT6E8N0bUD4ATjFPsAnPSAA9czc6qxHEUyqWDLjNG2qbIQxEkpTib6LwRIV75+gLKcXfb1lo0hAVnge4tSj0fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ph7VQEYP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D36A7C4CEEB;
+	Mon, 18 Aug 2025 17:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755539908;
+	bh=ulZLbUkKKsVBIPbfqGa1aUvDJTveq02TSZlicwCIS60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ph7VQEYPaaGLHX1CxSttvwluawSFjJ3RhwRQ9sc+uLROmePoNX8S92BodjURNxi2u
+	 21Xkf9TnFa6S+lJ8PRefXN7/sK3AKhIaup4wJlKHmP4QLrGOcw3E101A8LCaNXf26G
+	 ira2dKOY0WOzYlvHIZiemDObNHQQQbAp1V2dP5sHjIf9INn0omUMjJuaYEFxL+oOTP
+	 so2CpM/Dz74nw3MwHJ1l+OKqMaQLubHKLXpVP/y72aDcAM1kIH/wnBd8WNXcaabEbz
+	 WFYuX8hGs114fJDBLaDFNt4+jVQIBMGI69iSa2gt0xa1cfn+Bdfa+JjASll7obpXa8
+	 SLObNXlw2ffWQ==
+Date: Mon, 18 Aug 2025 12:58:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH 1/3] dt-binding: pinctrl: Document Loongson 2K0300 pin
+ controller
+Message-ID: <20250818175827.GA1507697-robh@kernel.org>
+References: <20250811163749.47028-2-ziyao@disroot.org>
+ <20250811163749.47028-3-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250818124505.781598737@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCZ7gLLgUJMbXO7gAKCRBhV5kVtWN2DlsbAJ9zUK0VNvlLPOclJV3YM5HQ
- LkaemACgkF/tnkq2cL6CVpOk3NexhMLw2xzOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJn
- uAtCBQkxtc7uAAoJEGFXmRW1Y3YOJHUAoLuIJDcJtl7ZksBQa+n2T7T5zXoZAJ9EnFa2JZh7
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811163749.47028-3-ziyao@disroot.org>
 
-On 8/18/25 05:39, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.2 release.
-> There are 570 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Aug 11, 2025 at 04:37:48PM +0000, Yao Zi wrote:
+> The pincontroller integarted in Loongson 2K0300 is able to configure
+> function multiplexing for all the pins. It could also configure drive
+> strength on basis of functions, which means all pins set to the same
+> function share drive-strength setting. Drive-strength configuration
+> isn't available for all functions, either.
 > 
-> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
-> Anything received after that time might be too late.
+> This binding utilizes two levels of subnodes, where the outer represents
+> function and the inner represents groups. Drive-strength is allowed in
+> the outer since it's shared among all groups configured to the function.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  .../pinctrl/loongson,ls2k0300-pinctrl.yaml    | 92 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++
+>  2 files changed, 98 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/loongson,ls2k0300-pinctrl.yaml
 > 
-> thanks,
-> 
-> greg k-h
+> diff --git a/Documentation/devicetree/bindings/pinctrl/loongson,ls2k0300-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k0300-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..cbd74cb45342
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k0300-pinctrl.yaml
+> @@ -0,0 +1,92 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/loongson,ls2k0300-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Loongson-2K0300 SoC Pinctrl Controller
+> +
+> +maintainers:
+> +  - Yao Zi <ziyao@disroot.org>
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: loongson,ls2k0300-pinctrl
+> +
+> +  reg:
+> +    items:
+> +      - description: Pin function-multiplexing configuration registers
+> +      - description: Pin drive-strength configuration registers
+> +
+> +  reg-names:
+> +    items:
+> +      - const: mux
+> +      - const: drive
+> +
+> +patternProperties:
+> +  '^func-':
+> +    type: object
+> +
+> +    $ref: pincfg-node.yaml#
+> +
+> +    properties:
+> +      drive-strength:
+> +        description:
+> +          Maximum sink or source current as defined in pincfg-node.yaml. Note
+> +          that drive strength could only be configured on function basis, i.e.,
+> +          all pins multiplexed to the same function share the same
+> +          configuration.
+> +
+> +          This could only be configured for several functions, including jtag,
+> +          dvo, uart, gmac, sdio, spi, i2s, timer, usb and emmc.
+> +        enum: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+How do you know what pin this drive strength corresponds to without any 
+other properties? Node names generally aren't important, so you 
+shouldn't be using that. 
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+> +
+> +    additionalProperties: false
+> +
+> +    patternProperties:
+> +      '-pins$':
+> +        type: object
+> +        $ref: pinmux-node.yaml#
+
+Generally the pin config and muxing are in 1 node if you can control 
+both.
+
+> +
+> +        properties:
+> +          pinmux:
+> +            description:
+> +              Integer array, represents GPIO pin number and multiplexing
+> +              setting. Configuration for each pin takes one cell. The pin
+> +              number locates at the high 24 bits, and the setting locates at
+> +              the low 8 bits.
+> +
+> +        additionalProperties: false
+> +
+> +        required:
+> +          - pinmux
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pinctrl@1fe00420 {
+> +        compatible = "loongson,ls2k0300-pinctrl";
+> +        reg = <0x16000490 0x20>, <0x16000110 0x4>;
+> +        reg-names = "mux", "drive";
+> +
+> +        func-uart {
+> +            drive-strength = <2>;
+> +
+> +            uart0-pins {
+> +                pinmux = <((40 << 8) | 0x3)>, <((41 << 8) | 0x3)>;
+> +            };
+> +
+> +            uart1_pins: uart1-pins {
+> +                pinmux = <((42 << 8) | 0x3)>, <((43 << 8) | 0x3)>;
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7960e65d7dfc..dd50571b4072 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14414,6 +14414,12 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
+>  F:	drivers/thermal/loongson2_thermal.c
+>  
+> +LOONGSON-2K0300 SOC PINCTRL DRIVER
+> +M:	Yao Zi <ziyao@disroot.org>
+> +L:	linux-gpio@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/pinctrl/loongson,ls2k0300-pinctrl.yaml
+> +
+>  LOONGSON EDAC DRIVER
+>  M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
+>  L:	linux-edac@vger.kernel.org
+> -- 
+> 2.50.1
+> 
 
