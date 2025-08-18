@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-772894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C393B298FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:42:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FF4B29907
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641E74E168C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C9816B190
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22E62701CC;
-	Mon, 18 Aug 2025 05:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA64427054C;
+	Mon, 18 Aug 2025 05:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hPIwl/x4"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ofu2p8IH"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1FF26FA5E;
-	Mon, 18 Aug 2025 05:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2616AF9D6;
+	Mon, 18 Aug 2025 05:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755495746; cv=none; b=fhcJUVPbsPg738GAuF2bgq4m6iGnVVYONJFOCrIXYtRXLqSEPp0L3LxYGrvv/5P0oVQ+X/T+d8qIjWteiSvDlj2jaM4yHUlmKKGoENFoHwmLWcP9weNPnB/0t9nDG43yA3twiGSDKSIb+H0v1ZJ/Nn+2haQ+HIGAzhfv10PprZY=
+	t=1755495982; cv=none; b=WCRHipJnVL8lq0hkiGbcC4VpcGwR0qV/C29TxjuHqNHDS0XtiNdVLPeMNBmhgdda/RJYfdzyawCFVFFEcgDOWYkJB1xXdZ0c5Ky8ETQinDcMMy8UbxVN8snHSvYsPpx+3GjX+24Gy68ngI2rkUrFdchBj6RHHG24it40xC4+xl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755495746; c=relaxed/simple;
-	bh=XExVPFjM+tFXne7pcUVaqjrlJWN5Mo3/9a3ND1Rmit8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eGge0zMPA5lHMAcA2+RIG3Rua6NImghvT5mjQ+vVYSXFwSpPsLUofmoiXufQs9ikBAuLfG5z8ApsfF1wKtmdCOx2sxirIlAeuR0K6kiQ1Mo8GjKZT1vGPbAmNovECwei1kkoFt17/2zjlJh/L5hnsJNU6lbpXNMu70tHghoJpIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hPIwl/x4; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755495734; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=W4lHP3UjuHeCBUcDEIF9ZeVamIkRm6NrjeDmREzHBUM=;
-	b=hPIwl/x466LMKdD2zsBK0SqUCtPuPve8LARSTo62NI9PQqaVxjM8k5nih0mUEbv/1RcV2gs18W9L+S0P8GQi7JFfDwCgyaraHjPkBm93TefAKdtiD4j1WV/whZ3GDR8O9tuK0/GL8rHfKMYSG5k17coXXv52LIoCHCfXk/67ArQ=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0Wlvjb0u_1755495732 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 18 Aug 2025 13:42:14 +0800
-From: fangyu.yu@linux.alibaba.com
-To: anup@brainfault.org,
-	atish.patra@linux.dev,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: guoren@linux.alibaba.com,
-	guoren@kernel.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Fangyu Yu <fangyu.yu@linux.alibaba.com>
-Subject: [PATCH V2] RISC-V: KVM: Write hgatp register with valid mode bits
-Date: Mon, 18 Aug 2025 13:42:07 +0800
-Message-Id: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1755495982; c=relaxed/simple;
+	bh=Qh8AEOLAP5dE4ODWjLt+RQWSlSZSz8XYfojF836Obhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qweygqJCj2ONr3oKdtLhhLk6anJvEmB6RqpEda8+YzjTRC89uY1fcBCT/EKOQyThd1lZn/5ZKrF7rTECt39VERZ9BKp8/Iqa4yZ+H1dgg25i0dP+r9axchSngAwxcNI1UIX85RmhWMajfrB9l1aHqL99faT1WnSmYSGZO5ROrpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ofu2p8IH; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c51sz6yYSz9sqf;
+	Mon, 18 Aug 2025 07:46:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755495976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+HMM28RAcCoPopV+B/KmIH0dpYjZghZhDsRPoiJoe3U=;
+	b=ofu2p8IHiKS/srLSp4JuTAN3BgH+n993RaoKcO96DzdkOCmxRNGaQWl1uyj8kY9XD0sx3y
+	VaLQOtdXHxFq0hF30qLgO1cPGZ5Ri8Jwu5XzUAgGJZriF3PlHaUvJY2tO/mM3Tv8uMb76D
+	XYQxZDo0XYioh0gIqPpbRhEfwhWQLcVBpiXWlP9Mp83A1zZ9Au7GaS/6ubN8PXnQY83A9d
+	PguJocrzFrDI2ve2f+Hqsc2FXEzxqw8Q0CoBx6SmeKKSRUBPchMtxrk8UFRaoSD3IINgKo
+	LvKiBcbrKNFKBEWvnn2dWvtn7Wo7b63+N0z0WnI1vRSte8h83Wsie1A59RISNw==
+Date: Mon, 18 Aug 2025 15:46:05 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: alx@kernel.org, autofs@vger.kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, g.branden.robinson@gmail.com, jack@suse.cz, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-man@vger.kernel.org, mtk.manpages@gmail.com, raven@themaw.net, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+Message-ID: <2025-08-18.1755493208-minty-roomy-vessel-moisture-2LjJfF@cyphar.com>
+References: <2025-08-17.1755446479-rotten-curled-charms-robe-vWOBH5@cyphar.com>
+ <20250817185048.302679-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qrslywv37u3fshty"
+Content-Disposition: inline
+In-Reply-To: <20250817185048.302679-1-safinaskar@zohomail.com>
 
-From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 
-According to the RISC-V Privileged Architecture Spec, when MODE=Bare
-is selected,software must write zero to the remaining fields of hgatp.
+--qrslywv37u3fshty
+Content-Type: text/plain; charset=us-ascii; protected-headers=v1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+MIME-Version: 1.0
 
-We have detected the valid mode supported by the HW before, So using a
-valid mode to detect how many vmid bits are supported.
+On 2025-08-17, Askar Safin <safinaskar@zohomail.com> wrote:
+> I just sent to fsdevel fix for that RESOLVE_NO_XDEV bug.
 
-Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Thanks, I've sent some review comments.
 
----
-Changes in v2:
-- Fixed build error since kvm_riscv_gstage_mode() has been modified.
----
- arch/riscv/kvm/vmid.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> 	if (!(lookup_flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
+> 			   LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
+>=20
+> We never return -EISDIR in this "if" if we are in non-final component
+> thanks to LOOKUP_PARENT here. We fall to finish_automount instead.
 
-diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-index 3b426c800480..5f33625f4070 100644
---- a/arch/riscv/kvm/vmid.c
-+++ b/arch/riscv/kvm/vmid.c
-@@ -14,6 +14,7 @@
- #include <linux/smp.h>
- #include <linux/kvm_host.h>
- #include <asm/csr.h>
-+#include <asm/kvm_mmu.h>
- #include <asm/kvm_tlb.h>
- #include <asm/kvm_vmid.h>
- 
-@@ -28,7 +29,7 @@ void __init kvm_riscv_gstage_vmid_detect(void)
- 
- 	/* Figure-out number of VMID bits in HW */
- 	old = csr_read(CSR_HGATP);
--	csr_write(CSR_HGATP, old | HGATP_VMID);
-+	csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) | HGATP_VMID);
- 	vmid_bits = csr_read(CSR_HGATP);
- 	vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
- 	vmid_bits = fls_long(vmid_bits);
--- 
-2.49.0
+Grr, I re-read this conditional a few times and I still misunderstood
+what it was doing. My bad.
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--qrslywv37u3fshty
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKK+HRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/V6wD/YoQbj4tPRHlDjEHb/OQx
+ywcB7eDulYkzVyOOr83XOwgBAK2OMvD5MDyw+msA5wsI7g8wFAsL5ZDWA0Cn61OJ
+daYK
+=7p79
+-----END PGP SIGNATURE-----
+
+--qrslywv37u3fshty--
 
