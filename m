@@ -1,341 +1,258 @@
-Return-Path: <linux-kernel+bounces-773299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD0DEB29DF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:34:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B664B29DF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918D218848E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C832A5534
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D875030EF79;
-	Mon, 18 Aug 2025 09:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5658B30EF68;
+	Mon, 18 Aug 2025 09:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViuaguTJ"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CbdLXIEl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31BF30DED6;
-	Mon, 18 Aug 2025 09:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC3916E863
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509350; cv=none; b=EhnRBLbtTXgdBUUZpP9uZPF73tOH9L2VUIT/QHijVLyTTNnwpfKdJBjqx3RPB5SBeL385gBnnob6pNDRhtXjbYe2L7t1QiLkeOavb8dgUcSbqwZX8aMM4KsvWbpfqYfeW3XcI0A5d2duhI2CIsR/mxaAjgS5/FJFCWFQuBhQfCQ=
+	t=1755509396; cv=none; b=JGKx2kEhDwXqrbXmqSYe7hoaKAtPOcMQsK9lqMIvVefaBXM3knY5YK55MKiB8ggfrPU2pWoyeoYjC14sotUrkHGAFWbrzkaTM31J0/Y03+pNUEQCpdYCRucPaP1yaAd0jI/6cn/fjGVpCU3EDv/ypaOskD4ppxlLD5HEQYJZkQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509350; c=relaxed/simple;
-	bh=/1mj/gl8qXlZckJkiI3O0ol5G1mFeQX1eDFll7fc/tA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=evw2NoMe5Du2P98d1nhB3FRxQGzGjgY2Cjh7YKhbt79arXFQEq9YpVOfIxDc3hpW9woiDSnNa1sQXOzw0ub6t8hvg9+jpEbicdsZalzrMl4Eq3cBjZF4nE6KsJlInuSm+jqVX8lAExSogt+l9ULEeOnOrVy4sSGqgx0g6nqpgWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ViuaguTJ; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e87068760bso479836785a.3;
-        Mon, 18 Aug 2025 02:29:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755509348; x=1756114148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=seaHbWvJFrWGoMtI8mST65eg55ApuDSTJZsw8niTodE=;
-        b=ViuaguTJEZzMRk6nAgROGw769rTzeMq0rzniW3ADyqLBrVaaLp4GPKm5zaLeUIWtJ8
-         MaS2Gr7/ER1bl1PHJOFyUTLJpBkQwSoEQo4usG7fMzxi4zhj85o7xRCghzrdCdfTNmy2
-         wdHHJgXV95NfWww9FZCZt2hkbVXZLXkKnhfjqu9TDITpwxkb1WpFWyGt4KEpIffH9hlE
-         bQ+ix4tTJyzZZank/6sZk8fYoTyGcyWG7zxTDcKblgCAK2nkjgEOYA3iZm4gywnz0KnY
-         Ef4Oen4nfVmWLdj//kvi+HBsY8oTUrN3nGoH1gkKc8FXjdU8HdkobF1UOJjwsOHcGLKN
-         /qgw==
+	s=arc-20240116; t=1755509396; c=relaxed/simple;
+	bh=D/2r8fC7ff+pn5PrN0aya7skDH+ku9d60BqVMX2wSx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZNGq0nt+GkozL41uTcsHxS9qSYtSvWTQfR0eVUvpIZebH/bQSrXF9XPPGrHxJPIucjwt/gkdwJOXZmmnD+kV+Rtsz51EwpyqIlBjFcMQ0gv9+4inxT1tNHOB6eYYwCXTvZt3U8a00ZtfOd5XQKmum2N6MMuMkEnE+YZJw/cDSyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CbdLXIEl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I8O0K7015496
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:29:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DW0VxXLSXGTdFzZpRwKPAVDn88uevWk8bVT728uIol4=; b=CbdLXIElTrpNP7ZY
+	rlcKdSqJOnt3J1ZI9BT13rOp14wOvLJgu97zW9A/kZSz0Ahae8arvwVERDPfUqyL
+	hW/yyfbOIjCSUyBjv7S1huMk+lOlYIUWi0nuU+ArHs3vkPs/jpcSCaUduiGbRBMc
+	eC/h9/A0oW7H7sV4FsCBsRpHue7flZYk4YSQYgb8PCG5HNmkAQv693TekmazwMJy
+	C66sRgvG2sDb7j0PQBCK1BN/aXSzWCnC+DYZaoAwkImb9cH6Ba5+bJPl+o8x1cbc
+	xzP2oWNHMGfyV/TJnaBJyEIUaK/im7Anl3oSTmFh36rbs8eU7m8jOdbbm9TY74IB
+	vK/Q1g==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jhjyc4k5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:29:53 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4716fa1e59so3335216a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:29:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755509348; x=1756114148;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=seaHbWvJFrWGoMtI8mST65eg55ApuDSTJZsw8niTodE=;
-        b=OYVz1myDmiMjkrPWTBy3QEliCFhcut7YFmOpRDLovqE6FkV4CCTvX1/IlBmC1Y7jh9
-         87dhtCDpEuF5DreAxp5b0W7QyyminQ5pobH91ph/DmoDuTZbI9YzWwSoQDhNR82NojSv
-         LrzerLWFzUdwpphSh9nWJhIMFRnGyI2EHs0yqu0hUUDyV948wmx+UGoI+4LFKLnaXYu9
-         hqFbhi+EcAUxdbVu7YOozO3eXkaCkelHttIWetcn8b01QBHd66Uh5iGzp3hHoj8WmXKQ
-         TbUpwt04ziljexCDasOqhQpuS7kXZl33rzOrWgRPqMKkTc53ImcotHAKc4U9E6dEvrDI
-         uz6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCqOZFYk4TU1NB9jStmyxMzHF53eRNGtr3Xfc3G7oJNiAM5Jb0Pli6NDpoanxr3jFQyR1wZ2/GcK4JEb4=@vger.kernel.org, AJvYcCW2WoP84kiWBc96prR6o7eFd70iMB41ktSo39E++dIama9tXey3CciQ/SS1maTvCm1dJiL2FH1r@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCv5XrvuTQvzx7phBXPaPTuzEgpAZvBFIuUbbsJYLdjc8cf5lT
-	bgYALmUDyE/JVSwk9I7jbmDDNbVq8mFuktu9QW65oENVmz6+VBtyzkWzdLY9mglM
-X-Gm-Gg: ASbGncsCYkdNrJib27mPZgFuDqmPTzvZUUWXFndIJK54LcLZ6BT/QVZxPy8WM9w0Fn1
-	NLvVF9UodhkrRBHXqhh8mSo0taNxmi4yltWDDzwDDgMme1WATO0lF5CNMC0S+xERHQA5kF9g6H+
-	NDvygM1CukLew1d+ITH+fU61ZNXdy9ZjjObrp2oUMkY6k8H8OjtwklWTRS505XiQImYnlKWPG+Q
-	iVKW+328gvXMagJlRiMrlrbecEFlsnfMTgjmNAAcVVeJY4asHzitgbB3Xeu8ys/a1hRnseJ1UNt
-	jxfFkvgj2ix4VcGan78ciIebjvuv/7SW9ne3HWhe8DxQKLQhmDentc8PhuXGGe2Qf0QJPPpelok
-	thqdPhys6xSCUB/yTFejIxnXZvr6RZoJk8/OSEeC01ZzD0FlmVywpzmXYZhf7Qn+u3Rid3fO271
-	4f8QQX
-X-Google-Smtp-Source: AGHT+IFpkHaTIiuxYFoQ/IYth6ox3NqZk5IJD+GFdiR08+9X9+aaQcf3C/tNSWdl7MohDC7zkDsmgA==
-X-Received: by 2002:a05:620a:31a2:b0:7d4:49fa:3c59 with SMTP id af79cd13be357-7e87df92553mr1362019985a.15.1755509347564;
-        Mon, 18 Aug 2025 02:29:07 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e87e070b0csm553875185a.35.2025.08.18.02.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 02:29:07 -0700 (PDT)
-Date: Mon, 18 Aug 2025 05:29:06 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Xin Zhao <jackzxcui1989@163.com>
-Message-ID: <willemdebruijn.kernel.1ebfd7c0240d1@gmail.com>
-In-Reply-To: <20250818052441.172802-1-jackzxcui1989@163.com>
-References: <20250818052441.172802-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v4] net: af_packet: Use hrtimer to do the retire
- operation
+        d=1e100.net; s=20230601; t=1755509392; x=1756114192;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DW0VxXLSXGTdFzZpRwKPAVDn88uevWk8bVT728uIol4=;
+        b=l9C6q0XxeNXxJLbOA0bdkkoYXx3psDH+dVCb3W8ps+Fs0wLlrZ1omgWHpy7tKCs6Nz
+         Xyc+YPilHjcApRt3TaigoRpAzDwvpFUrBdyZM4k0kAD3PBtKZCVrgWLbN6DNuDOzqS+Z
+         qGO1oMy4nmmNSTkudVGmviyk3jmc1CDhe3yaixzy+PI/u0z73B4BDtUqwAdUA9aRgwUg
+         OvzIRfXU2p7pUB/lGtZ3S5/NmFtdte47dXjAb70B2cjhII4W4ywxPiBzMVk8ySZpe9JS
+         D9/d1dizZgP8c77aNnBwtggsvYTxKU3cpJ5VGeXSVamWgtSxKsCPOrPCGzzO2QcCOy30
+         XCsg==
+X-Forwarded-Encrypted: i=1; AJvYcCV15GdoJ1Q7xH/Q3mAhTyLinK7zUzRoSi8+QcdzXoW+yz+ONE85VbAq6nwbVsh5UJuPhZDb/FfYt1VOON8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3HIBgUVMrhwZD8qXyLsp06Ihybq+Dp9tOWAXkjT+oUR1dvtIJ
+	paxDRgYD/90vJk9lLqyVeFbK+Ed9NGbQhMTZgvHyZjD7npuzEiwZivfzQarTKpAQlKeftTh1wPE
+	aMpmnKLfciEyNpfdQPov55WMw8SlhkDDzMbRPSAhBZ+KTubDlxLw1EB570caxUIqt7YA=
+X-Gm-Gg: ASbGncsxX+S/XbHvNMCee3sgHeNjwMZLzI+9l/qSqf3ITU2RLx8EHQAPwWtyU1kACq6
+	z/oUv67aYdkn1CvWk3GFftkJ3bBdeFNltb/tI6Ar+wIc91j+B4Z8U2H5TrIj2TYp6yNMVRcE6r8
+	hBHaQC8lV/zWMrRFkjvQFwMe+a7qMOBVu+73vxQuutoqNJcHLnpKg6uo67XX5IsBfa/bZsJQDPR
+	6O9s8vtCwPAY5APeBXpXRvsd+gA1fYAjnsOB2Sw9kUNCQa5LknDlrRsJL2IZTvreQWaZ+P4DocZ
+	/PT+zjdxuBz+P0gUSxC+tOTsqK8FoBltrqBswQllAaeE7cOq3eweK/9wtGqn7OcbYfuaYxd6tKw
+	4ILY/quuEPg17iUJGjHARvajjAy0W2zo1
+X-Received: by 2002:a17:903:41c5:b0:240:72bb:db0b with SMTP id d9443c01a7336-24478f539b4mr99029195ad.21.1755509392197;
+        Mon, 18 Aug 2025 02:29:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdvgHuSgGPApqix8dgwheTWJ6eX5H3fi4YFMhUp3VuMy+VubG2cky38Pb7ZLmRxY6ZQMfL3g==
+X-Received: by 2002:a17:903:41c5:b0:240:72bb:db0b with SMTP id d9443c01a7336-24478f539b4mr99028775ad.21.1755509391723;
+        Mon, 18 Aug 2025 02:29:51 -0700 (PDT)
+Received: from [10.133.33.73] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f71bsm74496835ad.80.2025.08.18.02.29.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 02:29:51 -0700 (PDT)
+Message-ID: <932326f8-8650-44c6-b747-a12664e9e953@oss.qualcomm.com>
+Date: Mon, 18 Aug 2025 17:29:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: arm: qcom: Add Coresight Interconnect
+ TNOC
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+ <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel@oss.qualcomm.com, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250815-itnoc-v1-0-62c8e4f7ad32@oss.qualcomm.com>
+ <20250815-itnoc-v1-1-62c8e4f7ad32@oss.qualcomm.com>
+ <e82ca132-f312-45b5-bec0-9d83cd3771d4@kernel.org>
+Content-Language: en-US
+From: yuanfang zhang <yuanfang.zhang@oss.qualcomm.com>
+In-Reply-To: <e82ca132-f312-45b5-bec0-9d83cd3771d4@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-
-Xin Zhao wrote:
-> In a system with high real-time requirements, the timeout mechanism of
-> ordinary timers with jiffies granularity is insufficient to meet the
-> demands for real-time performance. Meanwhile, the optimization of CPU
-> usage with af_packet is quite significant. Use hrtimer instead of timer
-> to help compensate for the shortcomings in real-time performance.
-> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-> This is unacceptable in some high real-time systems that require timely
-> processing of network packets. By replacing it with hrtimer, if a timeout
-> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> 3 ms.
-> 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
-> 
-> ---
-> Changes in v4:
-> - Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
->   is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
->   (re)start the hrtimer; otherwise, use hrtimer_set_expires to update the expiration
->   time of the hrtimer
->   as suggested by Willem de Bruijn;
-> 
-> Changes in v3:
-> - return HRTIMER_NORESTART when pkc->delete_blk_timer is true
->   as suggested by Willem de Bruijn;
-> - Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
->   as suggested by Willem de Bruijn;
-> - Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
->   _prb_refresh_rx_retire_blk_timer
->   as suggested by Willem de Bruijn;
-> - Link to v3: https://lore.kernel.org/all/20250816170130.3969354-1-jackzxcui1989@163.com/
-> 
-> Changes in v2:
-> - Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
->   as suggested by Willem de Bruijn;
-> - Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
-> 
-> Changes in v1:
-> - Do not add another config for the current changes
->   as suggested by Eric Dumazet;
-> - Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
->   as suggested by Eric Dumazet;
-> - Add some performance details to the changelog
->   as suggested by Ferenc Fejes;
-> - Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
->   as suggested by Willem de Bruijn;
-> - Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
->   as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
-> - Just return HRTIMER_RESTART directly as all cases return the same value
->   as suggested by Willem de Bruijn;
-> - Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
-> - Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
-> ---
->  net/packet/af_packet.c | 52 ++++++++++++++++++++++++++++--------------
->  net/packet/diag.c      |  2 +-
->  net/packet/internal.h  |  5 ++--
->  3 files changed, 38 insertions(+), 21 deletions(-)
-> 
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index a7017d7f0..5a1e80185 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -203,8 +203,8 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
->  static int prb_queue_frozen(struct tpacket_kbdq_core *);
->  static void prb_open_block(struct tpacket_kbdq_core *,
->  		struct tpacket_block_desc *);
-> -static void prb_retire_rx_blk_timer_expired(struct timer_list *);
-> -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
-> +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
-> +static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *, bool);
->  static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
->  static void prb_clear_rxhash(struct tpacket_kbdq_core *,
->  		struct tpacket3_hdr *);
-> @@ -581,7 +581,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
->  
->  static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
->  {
-> -	timer_delete_sync(&pkc->retire_blk_timer);
-> +	hrtimer_cancel(&pkc->retire_blk_timer);
->  }
->  
->  static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
-> @@ -603,9 +603,8 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
->  	struct tpacket_kbdq_core *pkc;
->  
->  	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-> -	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> -		    0);
-> -	pkc->retire_blk_timer.expires = jiffies;
-> +	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> +		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
->  }
->  
->  static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-> @@ -672,11 +671,10 @@ static void init_prb_bdqc(struct packet_sock *po,
->  	p1->last_kactive_blk_num = 0;
->  	po->stats.stats3.tp_freeze_q_cnt = 0;
->  	if (req_u->req3.tp_retire_blk_tov)
-> -		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-> +		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
->  	else
-> -		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
-> -						req_u->req3.tp_block_size);
-> -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-> +		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-> +						req_u->req3.tp_block_size));
->  	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
->  	rwlock_init(&p1->blk_fill_in_prog_lock);
->  
-> @@ -688,11 +686,27 @@ static void init_prb_bdqc(struct packet_sock *po,
->  
->  /*  Do NOT update the last_blk_num first.
->   *  Assumes sk_buff_head lock is held.
-> + *  We only need to (re)start an hrtimer in prb_open_block.
-> + *  Otherwise, we just need to update the expiration time of the hrtimer.
-
-"We" don't do anything in the middle of a computation. Anyway, branch is
-self explanatory enough, can drop comment.
-
->   */
-> -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> +static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
-> +		bool start)
-
-Indentation, align with first argument on previous line
-
->  {
-> -	mod_timer(&pkc->retire_blk_timer,
-> -			jiffies + pkc->tov_in_jiffies);
-> +	if (start)
-> +		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
-> +			      HRTIMER_MODE_REL_SOFT);
-
-It's okay to call this from inside a timer callback itself and return
-HRTIMER_RESTART? I don't know off the top of my head.
-
-> +	else
-> +		/* We cannot use hrtimer_forward_now here because the function
-> +		 * _prb_refresh_rx_retire_blk_timer can be called not only when
-> +		 * the retire timer expires, but also when the kernel logic for
-> +		 * receiving network packets detects that a network packet has
-> +		 * filled up a block and calls prb_open_block to use the next
-> +		 * block. This can lead to a WARN_ON being triggered in
-> +		 * hrtimer_forward_now when it checks if the timer has already
-> +		 * been enqueued.
-> +		 */
-
-As discussed, this will be changed in v5.
-
-> +		hrtimer_set_expires(&pkc->retire_blk_timer,
-> +				    ktime_add(ktime_get(), pkc->interval_ktime));
->  	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
->  }
->  
-> @@ -719,8 +733,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
->   * prb_calc_retire_blk_tmo() calculates the tmo.
->   *
->   */
-> -static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-> +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
->  {
-> +	enum hrtimer_restart ret = HRTIMER_RESTART;
->  	struct packet_sock *po =
->  		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
->  	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-> @@ -732,8 +747,10 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
->  	frozen = prb_queue_frozen(pkc);
->  	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
->  
-> -	if (unlikely(pkc->delete_blk_timer))
-> +	if (unlikely(pkc->delete_blk_timer)) {
-> +		ret = HRTIMER_NORESTART;
->  		goto out;
-> +	}
->  
->  	/* We only need to plug the race when the block is partially filled.
->  	 * tpacket_rcv:
-> @@ -786,10 +803,11 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
->  	}
->  
->  refresh_timer:
-> -	_prb_refresh_rx_retire_blk_timer(pkc);
-> +	_prb_refresh_rx_retire_blk_timer(pkc, false);
->  
->  out:
->  	spin_unlock(&po->sk.sk_receive_queue.lock);
-> +	return ret;
->  }
->  
->  static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-> @@ -921,7 +939,7 @@ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
->  	pkc1->pkblk_end = pkc1->pkblk_start + pkc1->kblk_size;
->  
->  	prb_thaw_queue(pkc1);
-> -	_prb_refresh_rx_retire_blk_timer(pkc1);
-> +	_prb_refresh_rx_retire_blk_timer(pkc1, true);
->  
->  	smp_wmb();
->  }
-> diff --git a/net/packet/diag.c b/net/packet/diag.c
-> index 6ce1dcc28..c8f43e0c1 100644
-> --- a/net/packet/diag.c
-> +++ b/net/packet/diag.c
-> @@ -83,7 +83,7 @@ static int pdiag_put_ring(struct packet_ring_buffer *ring, int ver, int nl_type,
->  	pdr.pdr_frame_nr = ring->frame_max + 1;
->  
->  	if (ver > TPACKET_V2) {
-> -		pdr.pdr_retire_tmo = ring->prb_bdqc.retire_blk_tov;
-> +		pdr.pdr_retire_tmo = ktime_to_ms(ring->prb_bdqc.interval_ktime);
->  		pdr.pdr_sizeof_priv = ring->prb_bdqc.blk_sizeof_priv;
->  		pdr.pdr_features = ring->prb_bdqc.feature_req_word;
->  	} else {
-> diff --git a/net/packet/internal.h b/net/packet/internal.h
-> index 1e743d031..19d4f0b73 100644
-> --- a/net/packet/internal.h
-> +++ b/net/packet/internal.h
-> @@ -45,12 +45,11 @@ struct tpacket_kbdq_core {
->  	/* Default is set to 8ms */
->  #define DEFAULT_PRB_RETIRE_TOV	(8)
->  
-> -	unsigned short  retire_blk_tov;
-> +	ktime_t		interval_ktime;
->  	unsigned short  version;
-> -	unsigned long	tov_in_jiffies;
->  
->  	/* timer to retire an outstanding block */
-> -	struct timer_list retire_blk_timer;
-> +	struct hrtimer  retire_blk_timer;
->  };
->  
->  struct pgv {
-> -- 
-> 2.34.1
-> 
+X-Proofpoint-ORIG-GUID: 3lTa3TKphJmb-VtouBH1Lfr7VWCKjBzy
+X-Authority-Analysis: v=2.4 cv=ZJHXmW7b c=1 sm=1 tr=0 ts=68a2f291 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8
+ a=agCq8VLWhxUVNrkTfPUA:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+ a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-GUID: 3lTa3TKphJmb-VtouBH1Lfr7VWCKjBzy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyOCBTYWx0ZWRfXxWnXRV7xjzsX
+ a5naxDyNyWljpLqbyw4CQ5QIWqDcVXcTFEgTtdgYTd4iBwIFWGRN1ZlyKQIGn0QeoTFNqyigPZp
+ 76CVguYJetCBL/WecfYz+pGsjNWzRurPgxEHMzdq+fieUzhueC5XTa5TEnqQDxKRiDUWIe/7Gu/
+ nNq8E2ptg4kK4g1YSwE3mtAfo6ngyjaDxOnd85tJ2OTWZNtgM82ZlpA/wj1/Akc+PQ4G+QZebNa
+ MQzoCYjTyobJp8Do/afqTjrCDxaYLVTLP3JIK2fACYRVuvTevMunavXVXbcISCRJaKqW8nXF5Wz
+ i6DaGzu+6F364acurV4tixscU6hi9Z2ab11o6Gqo3TU/fz3J4WCxIjZlkcn0I4E9bu8gICx91+S
+ uSUu1uQy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_04,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160028
 
 
+On 8/16/2025 4:33 PM, Krzysztof Kozlowski wrote:
+> On 15/08/2025 15:18, Yuanfang Zhang wrote:
+>> Add device tree binding for Qualcomm Coresight Interconnect Trace
+>> Netwrok On Chip (ITNOC). This TNOC acts as a CoreSight
+>> graph link that forwards trace data from a subsystem to the
+>> Aggregator TNOC, without aggregation or ATID functionality.
+>>
+>> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+>> ---
+>>  .../bindings/arm/qcom,coresight-itnoc.yaml         | 108 +++++++++++++++++++++
+>>  1 file changed, 108 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-itnoc.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-itnoc.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..fd224e07ce68918b453210763aacda585d5a5ca2
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-itnoc.yaml
+>> @@ -0,0 +1,108 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/arm/qcom,coresight-itnoc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Interconnect Trace Network On Chip - ITNOC
+>> +
+>> +maintainers:
+>> +  - Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+>> +
+>> +description: |
+> Do not need '|' unless you need to preserve formatting.
+sure, will remove it.
+>> +  The Interconnect TNOC is a CoreSight graph link that forwards trace data
+>> +  from a subsystem to the Aggregator TNOC. Compared to Aggregator TNOC, it
+>> +  does not have aggregation and ATID functionality.
+>> +
+>> +select:
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        enum:
+>> +          - qcom,coresight-itnoc
+>> +  required:
+>> +    - compatible
+> Why all this? Drop
+sure.
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    pattern: "^tnoc(@[0-9a-f]+)?$"
+> Why are you requiring a non-generic name?
+will update the name.
+>> +
+>> +  compatible:
+>> +    items:
+> No need for items
+sure, will remove it.
+>> +      - const: qcom,coresight-itnoc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description: Base address and size of the ITNOC registers.
+> Drop, redundant
+sure, will remove it.
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: apb
+> Drop clock-names, obvious. Also, odd order - names are never before
+> actual property.
+sure, will update the order.
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  in-ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    properties:
+>> +      '#address-cells':
+>> +        const: 1
+>> +      '#size-cells':
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      '^port(@[0-9a-f]{1,2})?$':
+> Why do you have here 255 ports?
+It supports a maximum of 256 input ports, so it is limited to 0-255.
+>> +        description: Input connections from CoreSight Trace Bus
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +    additionalProperties: false
+> This goes after $ref
+sure, will update.
+>> +
+>> +  out-ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    properties:
+>> +      port:
+>> +        description: out connections to aggregator TNOC
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +    additionalProperties: false
+> This goes after ref
+sure, will update.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+> And here different order... Be consistent. See also DTS coding style.
+sure, will update the order.
+>> +  - in-ports
+>> +  - out-ports
+>> +
+>> +additionalProperties: false
+>> +
+>
+>
+> Best regards,
+> Krzysztof
 
