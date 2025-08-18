@@ -1,96 +1,198 @@
-Return-Path: <linux-kernel+bounces-772882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4DBB298D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:14:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B211DB298D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2845B18A243C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:14:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DE017A6266
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4626626B755;
-	Mon, 18 Aug 2025 05:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F6A26B973;
+	Mon, 18 Aug 2025 05:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="tsTLch9I"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZOZ3Nhh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279E713AD3F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE8C1EF38F;
+	Mon, 18 Aug 2025 05:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755494040; cv=none; b=SMXNy0qjv1+pT5S4BQkzHEKX+KYp+Kq1YLXwmKc4DkBbNUCS0IC5Pe/VnQW8Mjd7O+qWYGAkWJzJfmW3fBZt+0DneBG0rW+Ze0YxW+6WCIOfQWwS6PGpJ4CgLin/mE9jJWBKaCL8Bopcsz0dOLyFIIto9/39XS9BCNXRpl3DPzw=
+	t=1755494489; cv=none; b=OVTYuixngFKZflyuRdBJOwI4b76V4zgRcnuEbrpBTHDXaOlngM3h9yeHBXPqE6lTQf96upAEeIQThpsNpiYSUIoGhMPDZZJLc6LPkuzO6ZZfQosH8TIaM9w0+iZuzHQj2Djx9lLuR4DCAjEUiKrYjOiBYl/AzXAxVQdDUvS+IWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755494040; c=relaxed/simple;
-	bh=4/Lo7ANAThpJ2jKTanmgI8ssEdDpB4ycWMSopZHxwbg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hq5JKwUYuNxjikiUkwmjHRJ3niHbACcimCatQDnJFAKgB0SXrI1i6wtdmvKUqDjY1Ro4+sv6Cw6dHSTdPq/KnRZrFeGRkMPjDOTGMeWO4DheCRFue1CCF+j0mZYD5R8dn8Z+Mf0QK9fT97y8qa1QMDj5LFFAg+QE5FpfpM+l/WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=tsTLch9I; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1755494039; x=1787030039;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3q1NPV6E0XEHi/HPl47VDsSSGEfiKlQQ/KVoLITUTiE=;
-  b=tsTLch9Ig4zqBg/UHzjqt2eBpcb5Ss2UzH8rZ6Wa+l8g0Z160T7aZNL+
-   BSeWOWsy8qsb9dxYIZhenQmpJiJ3TDErYi8ZcLLimz2pniNKV4GS4p7nP
-   jllzKucOppMHw6nh5NRGEynr/XMHfy/uSOoZh7fh+qUQCmMmOCWIkMPF5
-   BLJaBq5hHifHUk/huBePWOBVvYUWVmle1D2bocZYngc8+fwlfOv+3pOEX
-   Xn/+za81cmzGJyXuxum343qGMGiZzkJbpb2K3DqH++ujHn4VVog0KLMZJ
-   noekboEpKmytxKhgO6lYCWhbihveyzcmwZsi5KyaWsCEgLfNWCx1AX2tR
-   g==;
-X-IronPort-AV: E=Sophos;i="6.17,293,1747699200"; 
-   d="scan'208";a="225310762"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 05:13:57 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:43968]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.29.152:2525] with esmtp (Farcaster)
- id 6b62d0b6-0e01-406c-886f-149212ee19bf; Mon, 18 Aug 2025 05:13:57 +0000 (UTC)
-X-Farcaster-Flow-ID: 6b62d0b6-0e01-406c-886f-149212ee19bf
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 18 Aug 2025 05:13:49 +0000
-Received: from HND-5CG1082HRX.ant.amazon.com (10.37.244.10) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Mon, 18 Aug 2025 05:13:48 +0000
-From: Yuichiro Tsuji <yuichtsu@amazon.com>
-To: <syzbot+20537064367a0f98d597@syzkaller.appspotmail.com>
-CC: <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [usb?] UBSAN: shift-out-of-bounds in ax88772_bind
-Date: Mon, 18 Aug 2025 14:12:10 +0900
-Message-ID: <20250818051210.850-1-yuichtsu@amazon.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <68a208d0.050a0220.e29e5.006e.GAE@google.com>
-References: <68a208d0.050a0220.e29e5.006e.GAE@google.com>
+	s=arc-20240116; t=1755494489; c=relaxed/simple;
+	bh=HApxKvm284DacfzNAPVw61LznOvwguaK6IzEWAXgmVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jh/BO/ULRJ+Vnn8kNAksWN5sCnbfOvliUOCWn5x90r/U7JpMn28RTpwJeDpGrntAOfoEy2gMqxiYgbxpJrTLDr5ErBs9WZVkbsDJPf6od58ECEgeGOoM0I6KHFhBYwF44qNUiHBeiQWKpvyn62Aip0vBDlYH+KvqQa7laeUwHrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZOZ3Nhh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71984C4CEEB;
+	Mon, 18 Aug 2025 05:21:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755494488;
+	bh=HApxKvm284DacfzNAPVw61LznOvwguaK6IzEWAXgmVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tZOZ3NhhyhQxyKUX5tQoNazkynSZPioocRJV3Sw58sOqOqA/fBJ/h+mIa0+kMv0np
+	 M0+tIKt4TZsomSYtEbk+QnrOGjFczejUhUGtkQlfX/Nwv0raiBoeNvQLBirN+PNQ/P
+	 JXubaOmyM4TtfUmcsQwh+uYvrLf32ybWXDxwiv/ioJFgKnjya0ZUDFVwitAqM8d+yv
+	 zp/UnD32ErIkUe8hU4f/qXAVOR+R61eRMFmjKYToRfO7zAxu0xMLl1bTXJhjZASUJI
+	 0LFuEwlZN+sCP7gnKUxUb+cJ6laPZSL8UywJHagX2uQgtpbkTI2yuOHziRPuzghXDH
+	 9O7U8z1UbD6fg==
+Date: Mon, 18 Aug 2025 10:51:19 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: Lukas Wunner <lukas@wunner.de>, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kw@linux.com, kwilczynski@kernel.org, 
+	ilpo.jarvinen@linux.intel.com, jingoohan1@gmail.com, robh@kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] PCI/bwctrl: Replace legacy speed conversion with
+ shared macro
+Message-ID: <cm35xzxgdepgxe3swq3q7pu6ikj7oqn7oihooldaj6dehzozng@ddyr7q3q55d2>
+References: <20250816154633.338653-1-18255117159@163.com>
+ <20250816154633.338653-4-18255117159@163.com>
+ <aKDmW6l6uxZGr1Wl@wunner.de>
+ <35f6d6f3-b857-48cc-b3cb-11a27675adfd@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWA004.ant.amazon.com (10.13.139.19) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+In-Reply-To: <35f6d6f3-b857-48cc-b3cb-11a27675adfd@163.com>
 
-#syz test
+On Sun, Aug 17, 2025 at 11:02:10PM GMT, Hans Zhang wrote:
+> 
+> 
+> On 2025/8/17 04:13, Lukas Wunner wrote:
+> > On Sat, Aug 16, 2025 at 11:46:33PM +0800, Hans Zhang wrote:
+> > > Remove obsolete pci_bus_speed2lnkctl2() function and utilize the common
+> > > PCIE_SPEED2LNKCTL2_TLS() macro instead.
+> > [...]
+> > > +++ b/drivers/pci/pcie/bwctrl.c
+> > > @@ -53,23 +53,6 @@ static bool pcie_valid_speed(enum pci_bus_speed speed)
+> > >   	return (speed >= PCIE_SPEED_2_5GT) && (speed <= PCIE_SPEED_64_0GT);
+> > >   }
+> > > -static u16 pci_bus_speed2lnkctl2(enum pci_bus_speed speed)
+> > > -{
+> > > -	static const u8 speed_conv[] = {
+> > > -		[PCIE_SPEED_2_5GT] = PCI_EXP_LNKCTL2_TLS_2_5GT,
+> > > -		[PCIE_SPEED_5_0GT] = PCI_EXP_LNKCTL2_TLS_5_0GT,
+> > > -		[PCIE_SPEED_8_0GT] = PCI_EXP_LNKCTL2_TLS_8_0GT,
+> > > -		[PCIE_SPEED_16_0GT] = PCI_EXP_LNKCTL2_TLS_16_0GT,
+> > > -		[PCIE_SPEED_32_0GT] = PCI_EXP_LNKCTL2_TLS_32_0GT,
+> > > -		[PCIE_SPEED_64_0GT] = PCI_EXP_LNKCTL2_TLS_64_0GT,
+> > > -	};
+> > > -
+> > > -	if (WARN_ON_ONCE(!pcie_valid_speed(speed)))
+> > > -		return 0;
+> > > -
+> > > -	return speed_conv[speed];
+> > > -}
+> > > -
+> > >   static inline u16 pcie_supported_speeds2target_speed(u8 supported_speeds)
+> > >   {
+> > >   	return __fls(supported_speeds);
+> > > @@ -91,7 +74,7 @@ static u16 pcie_bwctrl_select_speed(struct pci_dev *port, enum pci_bus_speed spe
+> > >   	u8 desired_speeds, supported_speeds;
+> > >   	struct pci_dev *dev;
+> > > -	desired_speeds = GENMASK(pci_bus_speed2lnkctl2(speed_req),
+> > > +	desired_speeds = GENMASK(PCIE_SPEED2LNKCTL2_TLS(speed_req),
+> > >   				 __fls(PCI_EXP_LNKCAP2_SLS_2_5GB));
+> > 
+> > No, that's not good.  The function you're removing above,
+> > pci_bus_speed2lnkctl2(), uses an array to look up the speed.
+> > That's an O(1) operation, it doesn't get any more efficient
+> > than that.  It was a deliberate design decision to do this
+> > when the bandwidth controller was created.
+> > 
+> > Whereas the function you're using instead uses a series
+> > of ternary operators.  That's no longer an O(1) operation,
+> > the compiler translates it into a series of conditional
+> > branches, so essentially an O(n) lookup (where n is the
+> > number of speeds).  So it's less efficient and less elegant.
+> > 
+> > Please come up with an approach that doesn't make this
+> > worse than before.
+> 
+> 
+> Dear Lukas,
+> 
+> Thank you very much for your reply.
+> 
+> I think the original static array will waste some memory space. Originally,
+> we only needed a size of 6 bytes, but in reality, the size of this array is
+> 26 bytes.
+> 
 
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c index d9f5942ccc44..792ddda1ad49 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -676,7 +676,7 @@ static int ax88772_init_mdio(struct usbnet *dev)
- 	priv->mdio->read = &asix_mdio_bus_read;
- 	priv->mdio->write = &asix_mdio_bus_write;
- 	priv->mdio->name = "Asix MDIO Bus";
--	priv->mdio->phy_mask = ~(BIT(priv->phy_addr) | BIT(AX_EMBD_PHY_ADDR));
-+	priv->mdio->phy_mask = ~(BIT(priv->phy_addr & 0x1f) | 
-+BIT(AX_EMBD_PHY_ADDR));
- 	/* mii bus name is usb-<usb bus number>-<usb device number> */
- 	snprintf(priv->mdio->id, MII_BUS_ID_SIZE, "usb-%03d:%03d", dev->udev->bus->busnum, dev->udev->devnum);
+This is just one time allocation as the array is a 'static const', which is not
+a big deal.
+
+> static const u8 speed_conv[] = {
+> 	[PCIE_SPEED_2_5GT] = PCI_EXP_LNKCTL2_TLS_2_5GT,
+> 	[PCIE_SPEED_5_0GT] = PCI_EXP_LNKCTL2_TLS_5_0GT,
+> 	[PCIE_SPEED_8_0GT] = PCI_EXP_LNKCTL2_TLS_8_0GT,
+> 	[PCIE_SPEED_16_0GT] = PCI_EXP_LNKCTL2_TLS_16_0GT,
+> 	[PCIE_SPEED_32_0GT] = PCI_EXP_LNKCTL2_TLS_32_0GT,
+> 	[PCIE_SPEED_64_0GT] = PCI_EXP_LNKCTL2_TLS_64_0GT,
+> };
+
+[...]
+
+> drivers/pci/pci.h
+> #define PCIE_LNKCAP_SLS2SPEED(lnkcap)					\
+> ({									\
+> 	u32 lnkcap_sls = (lnkcap) & PCI_EXP_LNKCAP_SLS;			\
+> 									\
+> 	(lnkcap_sls == PCI_EXP_LNKCAP_SLS_64_0GB ? PCIE_SPEED_64_0GT :	\
+> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_32_0GB ? PCIE_SPEED_32_0GT :	\
+> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_16_0GB ? PCIE_SPEED_16_0GT :	\
+> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_8_0GB ? PCIE_SPEED_8_0GT :	\
+> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_5_0GB ? PCIE_SPEED_5_0GT :	\
+> 	 lnkcap_sls == PCI_EXP_LNKCAP_SLS_2_5GB ? PCIE_SPEED_2_5GT :	\
+> 	 PCI_SPEED_UNKNOWN);						\
+> })
+> 
+> /* PCIe link information from Link Capabilities 2 */
+> #define PCIE_LNKCAP2_SLS2SPEED(lnkcap2) \
+> 	((lnkcap2) & PCI_EXP_LNKCAP2_SLS_64_0GB ? PCIE_SPEED_64_0GT : \
+> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_32_0GB ? PCIE_SPEED_32_0GT : \
+> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_16_0GB ? PCIE_SPEED_16_0GT : \
+> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_8_0GB ? PCIE_SPEED_8_0GT : \
+> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_5_0GB ? PCIE_SPEED_5_0GT : \
+> 	 (lnkcap2) & PCI_EXP_LNKCAP2_SLS_2_5GB ? PCIE_SPEED_2_5GT : \
+> 	 PCI_SPEED_UNKNOWN)
+> 
+> #define PCIE_LNKCTL2_TLS2SPEED(lnkctl2) \
+> ({									\
+> 	u16 lnkctl2_tls = (lnkctl2) & PCI_EXP_LNKCTL2_TLS;		\
+> 									\
+> 	(lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_64_0GT ? PCIE_SPEED_64_0GT :	\
+> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_32_0GT ? PCIE_SPEED_32_0GT :	\
+> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_16_0GT ? PCIE_SPEED_16_0GT :	\
+> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_8_0GT ? PCIE_SPEED_8_0GT :	\
+> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_5_0GT ? PCIE_SPEED_5_0GT :	\
+> 	 lnkctl2_tls == PCI_EXP_LNKCTL2_TLS_2_5GT ? PCIE_SPEED_2_5GT :	\
+> 	 PCI_SPEED_UNKNOWN);						\
+> })
+
+No, these macros are terrible. They generate more assembly code than needed for
+a simple array based lookup. So in the end, they increase the binary size and
+also doesn't provide any improvement other than the unification in the textual
+form.
+
+I have to take my Acked-by back as I sort of overlooked these factors. As Lukas
+rightly said, the pci_bus_speed2lnkctl2() does lookup in O(1), which is what we
+want here.
+
+Code refactoring shouldn't come at the expense of the runtime overhead.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
