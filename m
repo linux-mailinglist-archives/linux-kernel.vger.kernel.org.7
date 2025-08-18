@@ -1,171 +1,134 @@
-Return-Path: <linux-kernel+bounces-774522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0680B2B383
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:38:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D92B2B393
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696BE3AA7DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617351BA1B9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90B4215766;
-	Mon, 18 Aug 2025 21:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAF026FDBB;
+	Mon, 18 Aug 2025 21:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MVb0U/d7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="NAf3VkSl"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B3C18A6DB;
-	Mon, 18 Aug 2025 21:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE828217F23
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755553031; cv=none; b=k7il/sRga/y6+UR4pXJSbx6i6zo4tc/9L6btDLzGOUqwLIAp93E+32rUHMxp/fMCeBJ6CJK7iRCzcEWup4KOqKyYRAyrM5Y3KdHHnjdBP6Aww90ie62o0bMadWtD/YynLttn+2vA3dbbfMbWrCf6V9Jb5eDQ/panGMnouSf7jJw=
+	t=1755553327; cv=none; b=Et9qjHvTgbvQejWfbXwk+VMLesiKt3YI/0rzfoHgcJwNU7MfBsZk6emzk8gXDCSgqeyH3RhAika5ng9wpuwiLLqAXGtVBveLzOtyMr5NYlpwCuJY8LYZykhPqoG7DmVXOXiGZyHynpoe9183+os6LVO+a1wLWrEZ1A76RF3FR6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755553031; c=relaxed/simple;
-	bh=F/p7H+rGIe1jvJiKXdKD3uvPisdzpDiRsKGZ8Z/yroU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WORjJqh2wgswbf0HTR8fpQ9HCfsAzAP7i3skvbDTVKctAlomM65nGCZkIrmIU7pe3zuutyqL0UtNgqahMwzV0LU8rpWtWP5DYuCX1tVznJZC2GY9opc9xJOiomy/vmMJl8XeibnVPvhzgjgGxgzS4nwS2iU07rmXkJxTWztdCpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MVb0U/d7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0CB8040E023B;
-	Mon, 18 Aug 2025 21:37:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 292qZh3tMt0g; Mon, 18 Aug 2025 21:37:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755553021; bh=VOpF6rsvxG/61Oc9IdUb+SvxGX5wEXMkX49T2aBrX+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MVb0U/d7kN1zpE5VHbyDw5mLRqryclm9sc6tky/SOFi4PKoHojJPGr5WaZVVEv7kI
-	 JkXNKiGgZK72EjAK+xK8vY+2ZGw/8AlQn6sc0kUmVe/QUJ4xQhqyCCNBWBMUybwAs7
-	 KWHlVQ/MBVsS2HDvxD4x8jZL+vMuGYfzTxRtxyrnCnsAqgR9ogo2DCzF/oDufqlXSr
-	 nQZgdP2f9RW+kINo2gPNtg0hSBuCL8v6LMx08N+nTjUB1SSP9sw+ezoQPczB+HT2el
-	 QzJhc7Fhv0a+5N0F1IuEHg3AbKcoAaeVJB7Wdps576KxLvAV/gGHPaRk176rQ2m3kE
-	 yTxIpIDa8WFJwmJgF+lU5p4811cJZCej3Pya4jtgFPvhVr00JF3JsGR6rK4vU9/DC+
-	 tRTipjsMArGAQ4pzzUQtUvgSPA3Y24zgTrHXizYSMBwvui+AlWFusJ12wUl78/Yy6T
-	 KzRQYLk/itlpU4ptMmK3zrEeZJy0g/gir5z6MMoPg5oW29UL6mODgkli261E0svsqG
-	 dfOCKhbz/Yk6cL9xE9pO+h7eZ+HE92X2zPhafyvTSRqrQCdTiu0n3OQnirEliJGuHF
-	 loZp3XZQtLWWRjcWhaovcElD4NYGmnq9LWHyOogQvk23AEhnUhwB0bzJyJvhIhufRb
-	 tESsIHr4DXlAO3uw56dCEDhQ=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4685140E0185;
-	Mon, 18 Aug 2025 21:36:57 +0000 (UTC)
-Date: Mon, 18 Aug 2025 23:36:51 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, yazen.ghannam@amd.com,
+	s=arc-20240116; t=1755553327; c=relaxed/simple;
+	bh=LfMTzHrgXvJH1WzVBSPQTxWPwCFFoMLIhKpt6VyIHlQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=X0uYiP94gs/E/ADUviI2AJ1LORWsG76hzVVWY25vpIfcpTHq4QIvsPYFXZTMMbnW81WALp2c2aSARtjppp9J3OeF4OoDfkAbd4fGFXLOU662v7ud7VZEja1JwUYkKIiIVq0a7CGX9uZKXUTgOGp60Xx+oXGry0w10iZpDymVeuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=NAf3VkSl; arc=none smtp.client-ip=212.77.101.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 28773 invoked from network); 18 Aug 2025 23:41:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1755553315; bh=b++cVNitR7MJz4F2QuWH0QsXKvZh6qHTONJSyY8D1eU=;
+          h=From:To:Subject;
+          b=NAf3VkSltT0Q7PaF4RItKbn5ppPxIUcykV8kPJKCEerIBK84UvIH7FbpV6yheOMnN
+           ubCRJHksWBwiyrCox2RsbcprsMtmFAFNsjAPfxSizv4zQpeKRTRzXjaspfR1ajGTC5
+           OBqcyq95N2DeepMEFenN1nVB3QmEaRJVpW7zsLBtdF9YDKdUq7NwqTOJ69Da0PNXcX
+           /djJg/aeEen8eqIf5PAXAiVduzwKU2j0QffQA5137XKEF6gsN7vOf1lKIp+QbnTKHa
+           HsZhAGxj18qNjWo53t4eRfO4zje2HjsaLZpqGmJatXtxN3A3DWwDgp/lwPzHPtWFtg
+           Ka03aAlSUg8zg==
+Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.134.210])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <tsbogend@alpha.franken.de>; 18 Aug 2025 23:41:55 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: tsbogend@alpha.franken.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	olek2@wp.pl,
+	linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] EDAC/mc_sysfs: Increase legacy channel support to
- 16
-Message-ID: <20250818213651.GIaKOc88InL4iy-SGM@fat_crate.local>
-References: <20250807201843.4045761-1-avadhut.naik@amd.com>
- <20250807201843.4045761-3-avadhut.naik@amd.com>
+Subject: [PATCH v3] dt-bindings: mips: lantiq: Document lantiq dcdc binding
+Date: Mon, 18 Aug 2025 23:37:28 +0200
+Message-ID: <20250818214153.1084844-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250807201843.4045761-3-avadhut.naik@amd.com>
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 7d74713a7ee91f2f150aa2096ca6e0c0
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [UTNE]                               
 
-On Thu, Aug 07, 2025 at 08:14:54PM +0000, Avadhut Naik wrote:
-> Newer AMD systems can support up to 16 channels per EDAC "mc" device.
-> These are detected by the EDAC module running on the device, and the
-> current EDAC interface is appropriately enumerated.
-> 
-> The legacy EDAC sysfs interface however, provides device attributes for
-> channels 0 through 11 only. Consequently, the last four channels, 12
-> through 15, will not be enumerated and will not be visible through the
-> legacy sysfs interface.
-> 
-> Add additional device attributes to ensure that all 16 channels, if
-> present, are enumerated by and visible through the legacy EDAC sysfs
-> interface.
-> 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> ---
->  drivers/edac/edac_mc_sysfs.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-> index 0f338adf7d93..8689631f1905 100644
-> --- a/drivers/edac/edac_mc_sysfs.c
-> +++ b/drivers/edac/edac_mc_sysfs.c
-> @@ -305,6 +305,14 @@ DEVICE_CHANNEL(ch10_dimm_label, S_IRUGO | S_IWUSR,
->  	channel_dimm_label_show, channel_dimm_label_store, 10);
->  DEVICE_CHANNEL(ch11_dimm_label, S_IRUGO | S_IWUSR,
->  	channel_dimm_label_show, channel_dimm_label_store, 11);
-> +DEVICE_CHANNEL(ch12_dimm_label, S_IRUGO | S_IWUSR,
-> +	channel_dimm_label_show, channel_dimm_label_store, 12);
-> +DEVICE_CHANNEL(ch13_dimm_label, S_IRUGO | S_IWUSR,
-> +	channel_dimm_label_show, channel_dimm_label_store, 13);
-> +DEVICE_CHANNEL(ch14_dimm_label, S_IRUGO | S_IWUSR,
-> +	channel_dimm_label_show, channel_dimm_label_store, 14);
-> +DEVICE_CHANNEL(ch15_dimm_label, S_IRUGO | S_IWUSR,
-> +	channel_dimm_label_show, channel_dimm_label_store, 15);
->  
->  /* Total possible dynamic DIMM Label attribute file table */
->  static struct attribute *dynamic_csrow_dimm_attr[] = {
-> @@ -320,6 +328,10 @@ static struct attribute *dynamic_csrow_dimm_attr[] = {
->  	&dev_attr_legacy_ch9_dimm_label.attr.attr,
->  	&dev_attr_legacy_ch10_dimm_label.attr.attr,
->  	&dev_attr_legacy_ch11_dimm_label.attr.attr,
-> +	&dev_attr_legacy_ch12_dimm_label.attr.attr,
-> +	&dev_attr_legacy_ch13_dimm_label.attr.attr,
-> +	&dev_attr_legacy_ch14_dimm_label.attr.attr,
-> +	&dev_attr_legacy_ch15_dimm_label.attr.attr,
->  	NULL
->  };
->  
-> @@ -348,6 +360,14 @@ DEVICE_CHANNEL(ch10_ce_count, S_IRUGO,
->  		   channel_ce_count_show, NULL, 10);
->  DEVICE_CHANNEL(ch11_ce_count, S_IRUGO,
->  		   channel_ce_count_show, NULL, 11);
-> +DEVICE_CHANNEL(ch12_ce_count, S_IRUGO,
-> +		   channel_ce_count_show, NULL, 12);
-> +DEVICE_CHANNEL(ch13_ce_count, S_IRUGO,
-> +		   channel_ce_count_show, NULL, 13);
-> +DEVICE_CHANNEL(ch14_ce_count, S_IRUGO,
-> +		   channel_ce_count_show, NULL, 14);
-> +DEVICE_CHANNEL(ch15_ce_count, S_IRUGO,
-> +		   channel_ce_count_show, NULL, 15);
->  
->  /* Total possible dynamic ce_count attribute file table */
->  static struct attribute *dynamic_csrow_ce_count_attr[] = {
-> @@ -363,6 +383,10 @@ static struct attribute *dynamic_csrow_ce_count_attr[] = {
->  	&dev_attr_legacy_ch9_ce_count.attr.attr,
->  	&dev_attr_legacy_ch10_ce_count.attr.attr,
->  	&dev_attr_legacy_ch11_ce_count.attr.attr,
-> +	&dev_attr_legacy_ch12_ce_count.attr.attr,
-> +	&dev_attr_legacy_ch13_ce_count.attr.attr,
-> +	&dev_attr_legacy_ch14_ce_count.attr.attr,
-> +	&dev_attr_legacy_ch15_ce_count.attr.attr,
->  	NULL
->  };
+Lantiq DCDC is a voltage converter with a voltage sensor. The converter
+is inside the SoC. This driver only reads the voltage and prints it at
+startup. The voltage supplied by this converter powers one of the power
+domains. It powers the CPU core and probably other peripherals as well.
+The voltage is programmed by the bootloader and Linux never touches it.
 
-This is also slowly getting out of hand. All those should be allocated
-and initialized dynamically based on a number of MCs but not keep adding them
-here ad absurdum.
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+---
+v3:
+- extended commit description
+v2:
+- added missing commit description
+---
+ .../mips/lantiq/lantiq,dcdc-xrx200.yaml       | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
 
-Because if we were doing them dynamically, we'd never ever miss any new
-channels when the hw grows...
-
-Thx.
-
+diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
+new file mode 100644
+index 000000000000..d951012392bf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mips/lantiq/lantiq,dcdc-xrx200.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Lantiq DCDC (DC-DC converter with voltage sensor)
++
++maintainers:
++  - Aleksander Jan Bajkowski <olek2@wp.pl>
++
++description:
++  Lantiq DCDC is a voltage converter with a voltage sensor. The converter is
++  inside the xRX200 SoC. This driver only reads the voltage and prints it at
++  startup. The voltage supplied by this converter powers one of the power
++  domains. It powers the CPU core and probably other peripherals as well.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - lantiq,dcdc-xrx200
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    dcdc@106a00 {
++        compatible = "lantiq,dcdc-xrx200";
++        reg = <0x106a00 0x200>;
++    };
 -- 
-Regards/Gruss,
-    Boris.
+2.47.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
