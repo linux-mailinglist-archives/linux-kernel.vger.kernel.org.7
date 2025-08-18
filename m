@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-773887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E61B2ABD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:57:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494CCB2AB6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20AF45A6798
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:46:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C8597A9273
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBFE225390;
-	Mon, 18 Aug 2025 14:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487BC1D63EF;
+	Mon, 18 Aug 2025 14:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8s6Jp3m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rpw5cUfs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OOgbGEpC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D01E35A2AA;
-	Mon, 18 Aug 2025 14:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0CE35A28E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528388; cv=none; b=JSSaDgd1J/fvcy0otwJT9RrUWEg6a49p7YMA41th2xfQi5Au4IApE/h6UHZfzw8MFBWM1ULaH/s0qoaAZLWVuIuqGjt5kcSCvz5jQRvgexFoGB0qto1LFp1lOCiR7+wXgURGrE5pTqRZRdIEVnYQtkrR8FEWox5XLGi10w2NItU=
+	t=1755528458; cv=none; b=EQpzfpG5JuMpPyETjO9XHqYj5whbPia7xmsdYieS7oDXD2T7E+5hpUvEjnu9lG3h3a1A7D52Hp3tVW16yhprWfZniUfcvx2EjUqq5vYanS+3tthNdNRMDR/bBSbNN0qqKgX6o7uAWedf+lr3h8WXhoDKuXO+eff+KFuR6E9VgQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528388; c=relaxed/simple;
-	bh=rhMWOlKbgLB4SstwMrfyJxOrWkE39Ryuhps7LFLOsNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qyviqQJX3millFqpMCOuKUMLYWcY8Zj3CaP/NrMznwAfDpkNgy1qAJkSrpYOjToJMkkwZLad/tmUFpFxpej8fzDfXU9V1G2FXzFQ1/Y46bIt0j7wTS40loVo8UKtvnxHIkoIwQTSuSPVZtHpVmGFGoJkbnHuKTdMOEVaLdKICMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8s6Jp3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 366FBC4CEEB;
-	Mon, 18 Aug 2025 14:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755528388;
-	bh=rhMWOlKbgLB4SstwMrfyJxOrWkE39Ryuhps7LFLOsNY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E8s6Jp3m9CxTQzYk38FM8rV6oWfcWkD0vXdrbZ9DfwX0Zb9oLfBf6lLBYl583o8xg
-	 ay9UN4kuwGdxLyn4wKbDo+XXSPMLpj9XKipVufd6QcDvInq8dgwU9BcO9YHb3Tsh/K
-	 lKJMdRjt+o++FPZuqZqD2TG6XJdXU+QvM/xlVqbtYhmCszosR+gwllqZg/f9y1OeK2
-	 nvMMdUebJRcI0XuGDR6umR86509pVSuvwlzljhgscQQK2HYMPOjXQknEi9NZvd8lVB
-	 PwC0r6ckk3PHaDeBm9ZWLsDzjt6jVF5PPImiszlM//UWqUHm3kVZ4idlnQfVMED2QY
-	 Ah4wqitkdZ+Xw==
-Message-ID: <7ddd14b4-5da1-4df1-911b-654c567e9931@kernel.org>
-Date: Mon, 18 Aug 2025 16:46:21 +0200
+	s=arc-20240116; t=1755528458; c=relaxed/simple;
+	bh=/gevmWoGhr/iSvgSdPa6jgG1Fdb5jzFj8h50WFqbKMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XWFYWrHXDBc2TDx62II2GUQsqDvuJKuaTGOpPaobW3X6L49M3pCphQa1zHDT09qKvEjWy5UYCZV8A/6gPIIqbfyXUp3q5EjzSPA+9nomwG0xzxFv/jNNOgqYWNxetWCMr+rli7ikVAKSofK65GFgeO4FUnnvKiYadQJwtnIbTfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rpw5cUfs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OOgbGEpC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Aug 2025 16:47:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755528454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MD7BlFTIAjpDURHkhhochN+snxk6+ltTIEJ1JTtK1ss=;
+	b=Rpw5cUfslher2rbOCkLNveM/8tf4htp9SJmKyGJkiiuWCvTOvFWYSfvdVyEJKkanVf3FT8
+	+ZOpNolYBds2gYZejg9mp6ci+EaQyds6xkhggjR6vdkvJKBV9V2Qatd1d5h7jlG5Vm9MqB
+	49+P1EwT9h7Dmd5TRM9I/5828jTBxF8WQ3JgjYgWWShOcWJgElE+RHVXon06Ne7esmkYFh
+	opdjOyDOb0zgUvsypIXF22gi5hmCsrreNHlzZ4yhfbuyCGILuHWfoQa4NoQrIzTJMwaTC6
+	5SjpMitC/XomcX0DGPG7Fwo3zl3ee8knqc7qlxB/smPjDHYDFWx/oqtAaMu1Bg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755528454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MD7BlFTIAjpDURHkhhochN+snxk6+ltTIEJ1JTtK1ss=;
+	b=OOgbGEpCbZU8q/EFr4Tz8uWcgnpsaUmDuzPu7nMd2i0lloyGvqC+qZ7Y5/UUM3aVtbuNde
+	L/QiWsowXU4w4eDw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev
+Subject: Re: [PATCH v4 29/34] x86/amd_nb: Trickle down 'struct cpuinfo_x86'
+ reference
+Message-ID: <aKM9BH0q630ClMth@lx-t490>
+References: <20250815070227.19981-30-darwi@linutronix.de>
+ <202508180405.3e28d0dd-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] dt-bindings: power: mediatek: Add MT8189 power domain
- definitions
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, netdev@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-References: <20250818115754.1067154-1-irving-ch.lin@mediatek.com>
- <20250818115754.1067154-5-irving-ch.lin@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250818115754.1067154-5-irving-ch.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508180405.3e28d0dd-lkp@intel.com>
 
-On 18/08/2025 13:57, irving.ch.lin wrote:
-> From: Irving-ch Lin <irving-ch.lin@mediatek.com>
-> 
-> Add device tree bindings for the power domains of MediaTek MT8189 SoC.
-> These definitions will be used to describe the power domain topology in
-> device tree sources.
-> 
-> Signed-off-by: Irving-ch Lin <irving-ch.lin@mediatek.com>
-> ---
->  include/dt-bindings/power/mt8189-power.h | 38 ++++++++++++++++++++++++
-Same issues.
+On Mon, 18 Aug 2025, kernel test robot wrote:
+>
+> [    1.202568][    T1] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+> [ 1.202670][ T1] caller is init_amd_nbs (arch/x86/kernel/amd_nb.c:319)
+>
 
-Best regards,
-Krzysztof
+Hmm... This is triggered by:
+
+    static __init int init_amd_nbs(void)
+    {
+	struct cpuinfo_x86 *c = this_cpu_ptr(&cpu_info);
+	...
+    }
+
+Since this is all __init code anyway, for the next iteration I'll use
+'boot_cpu_data' instead of per-CPU cpu_info access.
+
+Thanks!
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
