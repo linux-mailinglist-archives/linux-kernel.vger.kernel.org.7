@@ -1,142 +1,158 @@
-Return-Path: <linux-kernel+bounces-773250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4D6B29D4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:12:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA61B29D51
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D7A1885223
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DB81886C81
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0485730DD1D;
-	Mon, 18 Aug 2025 09:09:50 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2799C2F39AD;
-	Mon, 18 Aug 2025 09:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A292630DD1D;
+	Mon, 18 Aug 2025 09:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eqdUyRkz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213692EE5FB
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755508189; cv=none; b=ilXHvnFTDYdo32lt6Dt6ptMygDA4ocPf98Ncn1r/5dQ3qtt0DlEih4xKbxndtFx+65LW0ZlWARk9m/jVH0gIuJ4dKTsKupTyewQxFiO/Y+BUQX2Kiiyqw0HwTdlRqdvAyFI2DPntYI4KvEVuWGgHbHbzcOdalHuVAEEdN94vL84=
+	t=1755508228; cv=none; b=RaAfOWruMdoG0YK6cdvCS8xtsZFqKQQeY7YJkOfR3pciCdhpGfAue2FOFWMLAPq1wgGFwXm4e2PJDUa9asPxix8ezSt6y6UZz8kzOoMNdDFE11SxZ/d45VKh3itW5J8xnvV0/NiQdU+qZE8lo8fTOOeaIubeWuHHIh05iSqnSVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755508189; c=relaxed/simple;
-	bh=/KdRHcDGWXyP7WLuTi2U69pxQDXRzKFZ85KzSNsDeIk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ESFVTArVU1FS3kfz4QcSaPEymvXbggWSoB8BhboAg0SBPr2qL7jVygXbGTKGxMKi1e7qRKqRQEU488Fxqwo8CS/W/WpR2Hhr0+QkExcsmyfd4POD/IbILWnJYBqJpg9hES9FXWpxeb3ZuZIyEJOzbb4iWy/YmIGBMz/DZsc/hWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: nkdLjKp5SHihoyfjIJdN+w==
-X-CSE-MsgGUID: CAncNOU5QnKUbQYdRKoAog==
-X-IronPort-AV: E=Sophos;i="6.17,293,1747670400"; 
-   d="scan'208";a="123826127"
-From: =?utf-8?B?5pyx5oG65Lm+?= <zhukaiqian@xiaomi.com>
-To: Christian Loehle <christian.loehle@arm.com>, "rafael@kernel.org"
-	<rafael@kernel.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>, "quic_zhonhan@quicinc.com"
-	<quic_zhonhan@quicinc.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [External Mail]Re: [PATCH] cpuidle: menu: find the typical
- interval by a heuristic classification method
-Thread-Topic: [External Mail]Re: [PATCH] cpuidle: menu: find the typical
- interval by a heuristic classification method
-Thread-Index: Adv2/kCxxcwMPvuoQ+OgADfpnC9xOwIZbxeABCrE0pA=
-Date: Mon, 18 Aug 2025 09:09:33 +0000
-Message-ID: <6ce0b683b2f94aef8b8cef8d44a491d1@xiaomi.com>
-References: <fa1c6faa96344fa9803675b179d7a329@xiaomi.com>
- <842e4029-e941-4024-9a1e-59bf8c8f1b18@arm.com>
-In-Reply-To: <842e4029-e941-4024-9a1e-59bf8c8f1b18@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1755508228; c=relaxed/simple;
+	bh=OoxFyzWMN9IiJadvJ63P+IvmvwWMqWQXae/OyA1JJCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NXh2Z9Italn1wCtauyWpUwi6P49XU/i2SPbS+M3cLWL5WX5L3eXPvDDfE1L3jGeNgwCTKdYndtEFO0SNwEH8H8uJJFRtrS2XxKvOJTQTO1+m4b/o/l9X50v+4uDVaKVpoADRsAbBmoWI5jICmjzw6Ng1qAq9nBxJpQxyDpWT2vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eqdUyRkz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755508224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JbqfCfcRPkiPSf4BnJf27P0ti29xxEnyI41pHA552G0=;
+	b=eqdUyRkz/KthtScv4so5tn7FUaUaTJk751bdekuuNnN9ENxix0q9ldiSkttw2c5ttvoNSJ
+	eaientCa3B2xwfVhUbDtBetfUCwCsXupYsqC8loc/3ldLRv9CRTUmP1WmVUZcUr4gMXah4
+	Yw2awutzL89V9FBDVfldJ9Miqiz6Ylg=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-nTa1eA-gNuONU-_rwUDtFw-1; Mon, 18 Aug 2025 05:10:22 -0400
+X-MC-Unique: nTa1eA-gNuONU-_rwUDtFw-1
+X-Mimecast-MFC-AGG-ID: nTa1eA-gNuONU-_rwUDtFw_1755508222
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32326de9d22so3905690a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:10:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755508221; x=1756113021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JbqfCfcRPkiPSf4BnJf27P0ti29xxEnyI41pHA552G0=;
+        b=PKdYJ5qXyuUH0zd2rgRV57wQjlYTpcgtnA/BgBG6dVB3X+CIxyTiaRQIP48U84rm9I
+         wtmyYCqvV7vd7Um6aaWS6ZcvtqG8GPZEQZYo2yBtw5jwPuBfbpdiA21T5MDOU6RHfAqA
+         aSOTxfiVctUEA7wIUU1ThJLWNLkJCLIC2Au3Rj97ACN3HfHrF1swWtb0W/GhtKhQgTjV
+         lKPmBs+Zspoa6PxPAwHy/lqTFmwIWmBCkv+R1SPDLaWsvzmump6FkRIoM89Y/bwtnyue
+         /DNiVTRBV2L7tC3o6BL8FQDH/15Xq1FQPFKqZ2zTXgFwSi1UYWkRdKaO3o/v/CUlA4/m
+         MF/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWp4uCR+zyFQ1jDsU7Uqai1NVBbQApBKrB+q5r08x5ophWpt0NRSImXS5LMz8hFnVUNjIynlYQoJi7DByE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLZSxG+NXgdHuGAdHQL9A7RMC2UJCZ+if50cdGRRzyGevJneNN
+	4+cvvse9NvuAZA08ORmG70aB7mbZfeyAHSW7AWY38ZPcSfaxQPm/SC8Pxe7ewkF01FfyzNdGi7V
+	WXKqGQzQ+T6/xRQJ3Tj/kgxInuzXRGLKU/9J23AUOupPaeYMgjcocbIwWYBqgJdejpc50HdpZ7h
+	9HlPQ9VPsTnQo2bk6U1CX53GQSXtJIfxYtsby3roKg
+X-Gm-Gg: ASbGncvTpwwKIso0wvCdhFcv1IxoMb6/D39KM+e1RrM8x3LrQRkrWK0ROpq6Z7w38Di
+	HxCHArtzf32Xnke3Ec8cRzPvFP9m9hqWQDHaCXZkFT001ysSIHIwHSVQA9AGgDt5wusstpEyp1h
+	77IYrbzQwg4/B6lnhgc8ZM
+X-Received: by 2002:a17:90b:3f85:b0:31f:35f:96a1 with SMTP id 98e67ed59e1d1-323407b888fmr17497495a91.15.1755508221453;
+        Mon, 18 Aug 2025 02:10:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkbIi8hMym2IDFiQZsok2ZF14sb98uoPQT+I2UMlsCLp+g2zYDDJHRmmtJoXScx/v9hOzXO0IqsunBpLjVMGs=
+X-Received: by 2002:a17:90b:3f85:b0:31f:35f:96a1 with SMTP id
+ 98e67ed59e1d1-323407b888fmr17497455a91.15.1755508220998; Mon, 18 Aug 2025
+ 02:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250813054831.25865-1-jasowang@redhat.com> <20250813054831.25865-5-jasowang@redhat.com>
+ <20250813043151-mutt-send-email-mst@kernel.org> <CACGkMEuKmn4f9spFT1YxjVPxBFkdGVCTQEUpNG=xHd6hcL-a8w@mail.gmail.com>
+ <20250814063927-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250814063927-mutt-send-email-mst@kernel.org>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 18 Aug 2025 11:09:44 +0200
+X-Gm-Features: Ac12FXwWauHktoes46vJLvSCJWNDiN_iFDjd86oNm9bmlCrp2KcPLKWq_c4Jgu4
+Message-ID: <CAJaqyWcxV+f6dhKLscGGy0bw2YWJ8NaJ4QN+Qe3Ax7C+Lf4X-g@mail.gmail.com>
+Subject: Re: [PATCH V5 4/9] virtio: introduce vring_mapping_token
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, xuanzhuo@linux.alibaba.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBXb3VsZCBiZSBuaWNlIHRvIGhhdmUgc3RhdGlzdGljYWwgc2lnbmlmaWNhbmNlIG9uIHRob3Nl
-IChJJ20gYXNzdW1pbmcgR2Vla2JlbmNoKQ0KPiBzY29yZXMgYW5kIGEgZGVzY3JpcHRpb24gb2Yg
-dGhlIHN5c3RlbXMgaWRsZSBzdGF0ZSBhbmQgbWF5YmUgYSBjb21wYXJpc29uIHRvDQo+IHNoYWxs
-b3dlc3QgKG9ubHkgV0ZJIGVuYWJsZWQpIGFuZCBkZWVwZXN0IChvbmx5IG1heCBpZGxlIHN0YXRl
-IGVuYWJsZWQpLg0KSGVyZSdzIGFuIG92ZXJ2aWV3IG9mIHRoZSBnZWVrYmVuY2ggc2NvcmUgYW5k
-IHRoZSBwb3dlciBjb25zdW1wdGlvbi4NClRoZSByZXN1bHRzIGJlbG93IGFyZSB0aGUgYXZlcmFn
-ZSBvZiB0aHJlZSBjb25zZWN1dGl2ZSB0ZXN0cy4gSW4NCmdlbmVyYWwsIG1lbnUgY29zdHMgdGhl
-IGxlYXN0IHBvd2VyLCBidXQgdGhlIHBlcmZvcm1hbmNlIGFsc28gaXMgdGhlDQp3b3JzdC4NCg0K
-ICAgICAgICAgICB8ICAgICAgZHZmcyBvbiAgICAgICB8ICAgICAgIGR2ZnMgb2ZmDQogICAgICAg
-ICAgIHwgIGdrYiAgICBjcHUgICBzcGx5IHwgICBna2IgICAgY3B1ICAgc3BseQ0KbWVudSB2Ni42
-ICB8IDc0NjkgICAyMzI2ICAgNTQ5MCB8ICA4MTc5ICAgMjU1NCAgIDU2MTENCm1lbnUgdjYuMTcg
-fCA3NjkwICAgMjM2MyAgIDU0OTUgfCAgODQxNCAgIDI1OTAgICA1ODQ0DQpwcm9wb3NlZCAgIHwg
-NzY3OSAgIDIzNjMgICA1NTI1IHwgIDg1MDAgICAyNTg3ICAgNTgxNA0KdGVvICAgICAgICB8IDc4
-NzcgICAyNDIwICAgNTU2MyB8ICA4NjQ4ICAgMjU5NCAgIDU5MTQNCmRlZXBlc3QgICAgfCA3MjQ2
-ICAgICAgICAgICAgICAgfCAgNzk1NA0Kd2ZpICAgICAgICB8IDc5NTUgICAgICAgICAgICAgICB8
-ICA4NjYzDQoNCkJ5IGNvbXBhaXJpbmcgdGhlIHN0YXRlcyBzZWxlY3RlZCwgd2UgY2FuIHNlZSB0
-aGUgZ292ZXJub3IgaXMgc2VsZWN0aW5nDQp0b28gbXVjaCBkZWVwIGlkbGUgc3RhdGVzLCBhbmQg
-bW9zdCBvZiB0aGVtIGFyZSBhYm92ZSB0aGUgaWRlYWwgc3RhdGUuDQpJdCBjYW4gd2FzdGUgdG9v
-IG11Y2ggdGltZSAmIHBvd2VyIG9uIGVudGVyaW5nL2V4aXRpbmcgdGhlIGRlZXAgc3RhdGUuDQoN
-CnNlbGVjdGVkICAgIHN0YXRlMCAgIHN0YXRlMSAgIHN0YXRlMg0KbWVudSB2Ni42ICAgMTM2MzQy
-ICAgIDEyMjU1ICAgIDQ4Nzg0DQptZW51IHY2LjE3ICAxNTEwNDUgICAgIDgzMTcgICAgMjU0MzUN
-CnByb3Bvc2VkICAgIDE2MDg2OSAgICAgNTkzNCAgICAyMzQ2Mg0KdGVvICAgICAgICAgMjA3MDk0
-ICAgIDEyMjgwICAgIDEyMDExDQoNCmFib3ZlICAgICAgIHN0YXRlMCAgIHN0YXRlMSAgIHN0YXRl
-Mg0KbWVudSB2Ni42ICAgICAgICAwICAgICA4MDA2ICAgIDMwNzM3DQptZW51IHY2LjE3ICAgICAg
-IDAgICAgIDM0OTQgICAgMTA0ODkNCnByb3Bvc2VkICAgICAgICAgMCAgICAgMjIyMSAgICAgODcw
-MA0KdGVvICAgICAgICAgICAgICAwICAgICA0NjA2ICAgICAzMzQ0DQoNClRoZSBzaXR1YXRpb24g
-aXMgbXVjaCBiZXR0ZXIgaW4gdjYuMTcuIExlc3MgZGVlcCBzdGF0ZXMgYXJlIHNlbGVjdGVkLCBh
-bmQgYmV0dGVyDQp0aGUgcGVyZm9ybWFuY2UgYmVjb21lcy4gQSBtb3JlIHBsZWFzaW5nIHJlc3Vs
-dCBpcyB0aGUgb3ZlcmFsbCBpZGxlIHRpbWUgYXMNCndlbGwgYXMgdGhlIGRlZXAgaWRsZSB0aW1l
-IGRvZXNuJ3QgY2hhbmdlLiBXaGljaCBtZWFucyB0aGUgcG93ZXIgZWZmaWNpZW5jeSBvZg0KdGhl
-IGdvdmVybm9yIGhhcyBpbmNyZWFzZWQuDQoNCkJlbG93IGlzIHRoZSBwZXJjZW50YWdlIG9mIGlk
-bGUgdGltZSBhbmQgZWFjaCBvZiB0aGUgc3RhdGVzIGZvciB0aGUgZGlmZmVyZW50IGNvcmUNCnR5
-cGVzIGluIHRoZSBzeXN0ZW0uIFNpbmNlIHRoZXkncmUgYWxsIHJ1bm5pbmcgdGhlIHNhbWUgYmVu
-Y2htYXJrLA0Kd2UgY2FuIGFzc3VtZSB0aGUgdG90YWwgdGltZSBzcGVudCBpcyBpZGVudGljYWwg
-YWNyb3NzIHRoZSB0ZXN0cy4NCg0KRnJvbSBpdCwgd2UgY2FuIHNlZSB0aGF0IFRFTyB0ZW5kcyB0
-byBjaG9vc2UgbW9yZSBzaGFsbG93IHN0YXRlcywgd2hpbGUgYWxsDQp0aGUgdmFyaWFudHMgb2Yg
-bWVudSBnb3Zlcm5vcnMgd2lsbCBrZWVwIHRoZSBDUFVzIHNsZWVwIGRlZXAuIFRoZSBwcm9wb3Nl
-ZA0KaGVyZSBpcyBhbiB1cGRhdGUgb2YgdGhlIHBhdGNoIHVwbG9hZGVkLCBhcyBJIHNlZSB0aGUg
-Y2hhbmdlIGluIHY2LjE3IGFsbG93cw0KdGhlIGdvdmVybm9yIHRvIHVzZSBtb3JlIHBvd2VyLiBU
-aGlzIHVwZGF0ZWQgdmVyc2lvbiBiZWhhdmVzIHNpbWlsYXIgd2l0aA0KdjYuMTcgbWVudSBpbiB0
-aGUgYmVuY2htYXJrIHNjb3JlIGFuZCBwb3dlciBjb25zdW1wdGlvbiwgYnV0IGlmIHdlIGxvb2sN
-CmF0IHRoZSBzdGF0ZXMgc2VsZWN0ZWQgYW5kIHRoZSBpZGxlIHRpbWUsIGl0IGNvdWxkIGJlIGEg
-bGl0dGxlIGJpdCBzaGFsbG93ZXIgYW5kDQptb3JlIGFjY3VyYXRlIG9uIHRoZSBkZWVwIHN0YXRl
-cyB0aGFuIHRoZSB2Ni4xNy4NCg0KdHlwZTEgICAgICAgICBpZGxlICAgc3RhdGUwICAgc3RhdGUx
-ICAgc3RhdGUyDQptZW51IHY2LjYgICA1MC42OSUgICAyNC4wNCUgICAgMS4wOSUgICAyNS41NSUN
-Cm1lbnUgdjYuMTcgIDU1LjI4JSAgIDI5Ljk5JSAgICAxLjA2JSAgIDI0LjIyJQ0KcHJvcG9zZWQg
-ICAgNTUuNzIlICAgMzAuNzAlICAgIDAuNTUlICAgMjQuNDYlDQp0ZW8gICAgICAgICA1MC42OCUg
-ICAyNS45OCUgICAxMi4zNCUgICAxMi4zNiUNCg0KdHlwZTIgICAgICAgICBpZGxlICAgc3RhdGUw
-ICAgc3RhdGUxICAgc3RhdGUyDQptZW51IHY2LjYgICA3MS4wOCUgICAgMS44NCUgICAgMi42MSUg
-ICA2Ni42MiUNCm1lbnUgdjYuMTcgIDczLjA1JSAgICAzLjQzJSAgICAxLjg4JSAgIDY3Ljc0JQ0K
-cHJvcG9zZWQgICAgNzMuMjUlICAgIDQuODklICAgIDEuOTklICAgNjYuMzYlDQp0ZW8gICAgICAg
-ICA3MS45MyUgICAxMC41NCUgICAgOC42OCUgICA1Mi43MCUNCg0KdHlwZTMgICAgICAgICBpZGxl
-ICAgc3RhdGUwICAgc3RhdGUxICAgc3RhdGUyDQptZW51IHY2LjYgICA3OC43OCUgICAgMC4xOCUg
-ICAgMC40NCUgICA3OC4xNiUNCm1lbnUgdjYuMTcgIDc4LjYwJSAgICAwLjcxJSAgICAwLjU2JSAg
-IDc3LjMyJQ0KcHJvcG9zZWQgICAgNzguODklICAgIDAuOTklICAgIDAuNDIlICAgNzcuNDglDQp0
-ZW8gICAgICAgICA3OC40NSUgICAgMS42MCUgICAxMC4xNSUgICA2Ni42OSUNCg0KdHlwZTQgICAg
-ICAgICBpZGxlICAgc3RhdGUwICAgc3RhdGUxICAgc3RhdGUyDQptZW51IHY2LjYgICA3Ni4yNiUg
-ICAgMC4wNCUgICAgMC41MCUgICA3NS43MiUNCm1lbnUgdjYuMTcgIDc1Ljc2JSAgICAwLjMzJSAg
-ICAwLjgzJSAgIDc0LjYxJQ0KcHJvcG9zZWQgICAgNzUuOTElICAgIDAuNTQlICAgIDAuNTElICAg
-NzQuODUlDQp0ZW8gICAgICAgICA3NC45MCUgICAgMS4xMyUgICAxMy44MiUgICA1OS45NCUNCg0K
-QWJvdXQgdGhlIGlkbGUgc3RhdGVzLCB0aGUgZGlmZmVyZW5jZSBvZiB0aGUgcG93ZXIgY29uc3Vt
-cHRpb24gYmV0d2VlbiB0aGUNCnN0YXRlcyBvbiB0eXBlMSBhbmQgdHlwZTIgYXJlIG5lZ2xpZ2li
-bGUuIEFzIHRvIHR5cGUzIGFuZCB0eXBlNCwgdGhlIGxhcmdlc3QNCmRyb3Agb24gcG93ZXIgaXMg
-c2VlbiBiZXR3ZWVuIHN0YXRlMCBhbmQgc3RhdGUxLg0KDQojLyoqKioqKuacrOmCruS7tuWPiuWF
-tumZhOS7tuWQq+acieWwj+exs+WFrOWPuOeahOS/neWvhuS/oeaBr++8jOS7hemZkOS6juWPkemA
-gee7meS4iumdouWcsOWdgOS4reWIl+WHuueahOS4quS6uuaIlue+pOe7hOOAguemgeatouS7u+S9
-leWFtuS7luS6uuS7peS7u+S9leW9ouW8j+S9v+eUqO+8iOWMheaLrOS9huS4jemZkOS6juWFqOmD
-qOaIlumDqOWIhuWcsOazhOmcsuOAgeWkjeWItuOAgeaIluaVo+WPke+8ieacrOmCruS7tuS4reea
-hOS/oeaBr+OAguWmguaenOaCqOmUmeaUtuS6huacrOmCruS7tu+8jOivt+aCqOeri+WNs+eUteiv
-neaIlumCruS7tumAmuefpeWPkeS7tuS6uuW5tuWIoOmZpOacrOmCruS7tu+8gSBUaGlzIGUtbWFp
-bCBhbmQgaXRzIGF0dGFjaG1lbnRzIGNvbnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGZy
-b20gWElBT01JLCB3aGljaCBpcyBpbnRlbmRlZCBvbmx5IGZvciB0aGUgcGVyc29uIG9yIGVudGl0
-eSB3aG9zZSBhZGRyZXNzIGlzIGxpc3RlZCBhYm92ZS4gQW55IHVzZSBvZiB0aGUgaW5mb3JtYXRp
-b24gY29udGFpbmVkIGhlcmVpbiBpbiBhbnkgd2F5IChpbmNsdWRpbmcsIGJ1dCBub3QgbGltaXRl
-ZCB0bywgdG90YWwgb3IgcGFydGlhbCBkaXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIG9yIGRpc3Nl
-bWluYXRpb24pIGJ5IHBlcnNvbnMgb3RoZXIgdGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMp
-IGlzIHByb2hpYml0ZWQuIElmIHlvdSByZWNlaXZlIHRoaXMgZS1tYWlsIGluIGVycm9yLCBwbGVh
-c2Ugbm90aWZ5IHRoZSBzZW5kZXIgYnkgcGhvbmUgb3IgZW1haWwgaW1tZWRpYXRlbHkgYW5kIGRl
-bGV0ZSBpdCEqKioqKiovIw0K
+On Thu, Aug 14, 2025 at 12:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com=
+> wrote:
+>
+> On Thu, Aug 14, 2025 at 11:36:22AM +0800, Jason Wang wrote:
+> > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> > > > index addbc209275a..37029df94aaf 100644
+> > > > --- a/include/linux/virtio.h
+> > > > +++ b/include/linux/virtio.h
+> > > > @@ -40,6 +40,13 @@ struct virtqueue {
+> > > >       void *priv;
+> > > >  };
+> > > >
+> > > > +union vring_mapping_token {
+> > > > +     /* Device that performs DMA */
+> > > > +     struct device *dma_dev;
+> > > > +     /* Transport specific token used for doing map */
+> > > > +     void *opaque;
+> > >
+> > > Please just declare whatever structure you want it to be.
+> >
+> > It's an opaque one and so
+> >
+> > 1) the virtio core knows nothing about that because it could be
+> > transport or device specific
+> > 2) no assumption of the type and usage, it just receive it from the
+> > transport and pass it back when doing the mapping
+> >
+> > It should work like page->private etc.
+> >
+> > Does this make sense?
+> >
+> > Thanks
+>
+> I fully expect most devices simply to use DMA here and no weird
+> tricks. vduse is the weird one, but I don't see us making it
+> grow much beyond that.
+>
+> So I think for now we can just make it vduse_iova_domain *. If we see
+> it's getting out of hand with too many types, we can think of solutions.
+>
+
+I've sent my series of adding ASID to VDUSE, which uses this series'
+token on each vq group, on top of this version of the DMA rework.
+
+This patch [1] and the next one are the one that reworks the token to
+an empty struct, so virtio can handle it in an opaque way and VDUSE
+can convert it back and forth in a type safe way, skipping the void *.
+Please let me know if you prefer to import a VDUSE header into the
+virtio config header or to make a VDUSE forward declaration instead of
+going through the empty struct to preserve layer boundaries.
+
+There is one usage I've not been able to convert though. Jason, could
+you take a look? It is marked as TODO in my series. I'm not sure if
+that's also an abuse of the void * in the DMA rework to be honest, but
+it should be easy to correct.
+
+[1] https://lore.kernel.org/all/20250818085711.3461758-4-eperezma@redhat.co=
+m/T/#u
+
 
