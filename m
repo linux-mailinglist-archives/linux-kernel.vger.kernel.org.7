@@ -1,554 +1,240 @@
-Return-Path: <linux-kernel+bounces-773556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50031B2A1CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:40:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA746B2A18E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30AE6188AAD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C97B3AD048
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A62F3203B0;
-	Mon, 18 Aug 2025 12:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813D22264B2;
+	Mon, 18 Aug 2025 12:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qfg+Y+8R";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="45pmVMIE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qfg+Y+8R";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="45pmVMIE"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="db2Gr3ZP"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABEE2877CA
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14FB2309BE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520064; cv=none; b=FmrzfuG3jIFNdCXWWJNYqXrOlv7uVGfg6xE0OFoe9lTd7ZpwlPbSUvtkE/8nWHkIhBr2m+4mhxDjzqZaND9xwqbw+dZUw0P57YbHj+WsxMxEOMP8N+49H7qX+HiNO46pm0j3SJoHag6HoWHhX1YUqbhJqdFFx69mNwUQtZK+tCE=
+	t=1755520077; cv=none; b=JWhlUbCgzO6FiqagwAVzKCSz/olZz7I6BGt4fNJ6G9JXiIqiXXpBIScLkGvjvkLY0OUD9lduSQ/a4Qu5Yl0a5VQLgGOhJEimafyLqXuOKBlAy18G81+gfwbYT0yrw+hsKSKbdCOB51mvWEllAmmi2bJfpuHgwktlIzDPbuzVbRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520064; c=relaxed/simple;
-	bh=5Bx57I5MZG/apa8alUsu4ulLZP1lIdz0QkCKRnmHix4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SByGYhdBGNCOP2Bb94vGxto3T65X/und4QI0kQgiEMgg4L5wUk8SDzMkRr6Lb92YtEOhLRZbZ/+oIsuib1PPr7BruxgB5UE41UZkiUYy4LPmmy4afHkAySGfEUBmdxyGAtmucD2xfTbvXyyTDU0qlAnnqIiWjkh/5527JuHCNsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qfg+Y+8R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=45pmVMIE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qfg+Y+8R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=45pmVMIE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 936561F78B;
-	Mon, 18 Aug 2025 12:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755520060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
-	b=Qfg+Y+8RKzth05LU/7tTDvYvVPSPhvvMbHNOJFimrgad23OTpo7yTqLrolBXD9udPjQtUL
-	ShE9ch6gcRb246g647QZQh0w3yE/LB+c5nw7p++Jvr6nQdlcSOyDmOXE9V9TU2Shc2Byoj
-	t0cXBWAHpF/clzpmrm8Pr0aw6yCt8H8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755520060;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
-	b=45pmVMIEkaNUyNG8/+qQFAOmTAd3aI6rwyIy4pvyCQItouuojd2GhIJepBa2hLagh1BOIK
-	gELV0x0637yjVDCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Qfg+Y+8R;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=45pmVMIE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755520060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
-	b=Qfg+Y+8RKzth05LU/7tTDvYvVPSPhvvMbHNOJFimrgad23OTpo7yTqLrolBXD9udPjQtUL
-	ShE9ch6gcRb246g647QZQh0w3yE/LB+c5nw7p++Jvr6nQdlcSOyDmOXE9V9TU2Shc2Byoj
-	t0cXBWAHpF/clzpmrm8Pr0aw6yCt8H8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755520060;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
-	b=45pmVMIEkaNUyNG8/+qQFAOmTAd3aI6rwyIy4pvyCQItouuojd2GhIJepBa2hLagh1BOIK
-	gELV0x0637yjVDCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FB6A13686;
-	Mon, 18 Aug 2025 12:27:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PLA2Cjwco2gtdAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 12:27:40 +0000
-Message-ID: <e3e73378-b9d8-4bf4-838c-66794dc1fad4@suse.de>
-Date: Mon, 18 Aug 2025 14:27:39 +0200
+	s=arc-20240116; t=1755520077; c=relaxed/simple;
+	bh=c44Z6yQp8ysYueekb2CfKo8BEtCobKFj2t3T1e9UxtQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=p8vTVKYoaZgYRuhLGFLLwxxJi0swicSsMP48/Qhfg3vcuhSCs7ZFssMEkrowdacczeDl0Fyx/142uaR/ti2AsTSmwDafKig1sNimCTmmfaPl0J8DwEgv93CV58Vj2QWFWtkamdn5O20rK/uOcG7SOTwTK5zZTTlHWR5w8IlmvX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=db2Gr3ZP; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b0d221aso16091045e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:27:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755520074; x=1756124874; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UwX7zuNS/X2mIasfqo3N5De8MZW3EwFMFitLgES6eLg=;
+        b=db2Gr3ZPF8wxYngqyAmUY5vs3AVB0U8/cPbrvg8SSCDHQVNqb1hUodSYaaBqM1jcSG
+         Hunlr/O5jtLruYIpmPe77SV1xPPjMYFWDIwhj9M0L9aVkzlgvsbGPHHBq/ru6uV788W3
+         pJv7B/nFKQ6rxnEk/E/iqCKYUs32jP3TIVJcKj27ZK57GUw2mY322s7/G8CurgxqM6Ad
+         lBD/oPcXsOZT+Tgwrq+6erxs1T0TJvE3+WZUSjDp7LrgqCNPJsvmzXZSKCOevDreH7UT
+         ftrWG78+8fggWwhmDxsUJ1jl/YyZpVGz1pZZHC+vO18yB9vrTtZ3UOX/Mua89iAKXIiu
+         q0Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755520074; x=1756124874;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UwX7zuNS/X2mIasfqo3N5De8MZW3EwFMFitLgES6eLg=;
+        b=RIC5Vh/DEsgtncpBi6I1gxyIY9OdSZOwgy52WwSf1IZ+0S8Eif7uypSImUJEad/th4
+         vHX6Pq5cViO2uYnUoW9Y7691B+0IytSrxPbwFul4857CQzlyv8/3dF0HTc6aMpG/WUJ0
+         uyzLxOitWzPCTMhUKGxaP+ZQ6jK7ldw7VcS1M4G5aHAzqQrn5mayx5VzhSiRgGN1vuq6
+         wwgUlmyd57zXoemgCAwf3/AEA2v3XWJcQ6G6PhkqCIUFU5xBCT/nbFzXTDv6dMPkdLHR
+         TB/xqkyuFJcM8gccwN/xdSH9fJCTs1IzJwjJKF7CDW5zLTd1rzbma9/X4CJ1ljxsJMr+
+         LZDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgy1K91wsMSbQICFlpAgQhVbOon8+whxEibwnQfucsnUNeJ7AVQaXzerbuuaWylXC6GGxMAwORrgw889Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk+dZJpMPI4Gle0Uji3aDy7pkbbyMms367txNzQSWomsSuajuo
+	2W3v8S8d2ohqGunNV40F1rBS6iSo1bIzaW2+YnT41qJ1axq77rEdFFwy0sht7WHpulTN13cXQ7i
+	+VHcd/FtyEEqB9NAHrQ==
+X-Google-Smtp-Source: AGHT+IFPVIzj1heJC4xdYp57RPHBBljMZk8U+lP7fm9+s51jcjtAr6Yb9xHWJbThKl2wyBq7MibFQndBCgCu4ws=
+X-Received: from wmpz13.prod.google.com ([2002:a05:600c:a0d:b0:459:dcca:571e])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8507:b0:456:2b4d:d752 with SMTP id 5b1f17b1804b1-45a285ca477mr54960285e9.20.1755520074198;
+ Mon, 18 Aug 2025 05:27:54 -0700 (PDT)
+Date: Mon, 18 Aug 2025 12:27:53 +0000
+In-Reply-To: <DC5IF4AUVJP6.5B68OUOXQLCM@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/gud: Replace simple display pipe with DRM atomic
- helpers
-To: Ruben Wauters <rubenru09@aol.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jani Nikula <jani.nikula@intel.com>,
- Jocelyn Falempe <jfalempe@redhat.com>
-Cc: dri-devel@lists.fredesktop.org, linux-kernel@vger.kernel.org
-References: <20250816100223.5588-1-rubenru09.ref@aol.com>
- <20250816100223.5588-1-rubenru09@aol.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250816100223.5588-1-rubenru09@aol.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
-	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,intel.com,redhat.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 936561F78B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Mime-Version: 1.0
+References: <20250815171058.299270-1-dakr@kernel.org> <20250815171058.299270-3-dakr@kernel.org>
+ <aKL338gQ7qPNKoBu@google.com> <DC5IF4AUVJP6.5B68OUOXQLCM@kernel.org>
+Message-ID: <aKMcSWXEFZXIkwG6@google.com>
+Subject: Re: [PATCH 2/4] rust: scatterlist: Add type-state abstraction for sg_table
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: akpm@linux-foundation.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
+	abdiel.janulgue@gmail.com, acourbot@nvidia.com, jgg@ziepe.ca, 
+	lyude@redhat.com, robin.murphy@arm.com, daniel.almeida@collabora.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi
+On Mon, Aug 18, 2025 at 01:16:55PM +0200, Danilo Krummrich wrote:
+> On Mon Aug 18, 2025 at 11:52 AM CEST, Alice Ryhl wrote:
+> > On Fri, Aug 15, 2025 at 07:10:03PM +0200, Danilo Krummrich wrote:
+> >> +/// A single entry in a scatter-gather list.
+> >> +///
+> >> +/// An `SGEntry` represents a single, physically contiguous segment of memory that has been mapped
+> >> +/// for DMA.
+> >> +///
+> >> +/// Instances of this struct are obtained by iterating over an [`SGTable`]. Drivers do not create
+> >> +/// or own [`SGEntry`] objects directly.
+> >> +#[repr(transparent)]
+> >> +pub struct SGEntry(Opaque<bindings::scatterlist>);
+> >
+> > Send/Sync?
+> 
+> I think SGEntry doesn't need it, but both would be valid.
+> 
+> For the other types, I simply forgot to impl Sync.
 
-Am 16.08.25 um 11:57 schrieb Ruben Wauters:
-> The simple display pipe is obsolete and the atomic helpers allow for
-> more control over the rendering process. As such, this patch replaces
-> the old simple display pipe system with the newer atomic helpers.
->
-> As the code is mainly the same, merely replaced with the new atomic
-> system, there should be no change in functionality.
->
-> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> ---
-> I have been able to test this now, having obtained the hardware, and it
-> works fine, though some other unrelated issues have popped up, which I
-> shall try and debug and address in other patches.
+I would add them when it's valid to do so.
 
-Thanks for the update. Great to hear that it works. What's that other 
-problem? Maybe it's a known issue with a known workaround.
+> >> +        // SAFETY: `self.as_raw()` is a valid pointer to a `struct scatterlist`.
+> >> +        unsafe { bindings::sg_dma_address(self.as_raw()) }
+> >> +    }
+> >> +
+> >> +    /// Returns the length of this SG entry in bytes.
+> >> +    pub fn dma_len(&self) -> u32 {
+> >
+> > Is u32 really the right length type?
+> 
+> The C type uses unsigned int unfortunately, and SG entries larger than u32
+> probably don't make sense.
+> 
+> Formally, bus addresses and hence this size, can exceed size_t. However, it
+> obviously makes no sense for this to happen, so size_t would be a reasonable
+> choice. ressource_size_t would be resonable too.
 
-I left additional comments below.
+resource_size_t is what makes sense in my mind.
 
+> >> +/// # Invariants
+> >> +///
+> >> +/// `sgt` is a valid pointer to a `struct sg_table` for the entire lifetime of an [`DmaMapSgt`].
+> >
+> > I think we probably want an invariant for why it's safe to call
+> > dma_unmap_sgtable in Drop.
+> 
+> I assume you're suggesting that the invariant should say that the SG table is
+> always mapped? And that we should add a safety requirement to DmaMapSgt::new()
+> that the caller must guarantee that the SG table is never unmapped other than by
+> dropping DmaMapSgt?
+> 
+> If so, that sounds reasonable.
 
->
-> v2 changes:
-> - address review comments by reorganising gud_probe()
-> ---
->   drivers/gpu/drm/gud/gud_connector.c | 24 +++++-----
->   drivers/gpu/drm/gud/gud_drv.c       | 52 +++++++++++++++++-----
->   drivers/gpu/drm/gud/gud_internal.h  | 13 +++---
->   drivers/gpu/drm/gud/gud_pipe.c      | 69 ++++++++++++++++++++---------
->   4 files changed, 108 insertions(+), 50 deletions(-)
+Something like that, yeah.
 
-AFAICT you should be able to un-include <drm/drm_simple_kms_helper.h> 
-from the various files within the driver.
+> >> +struct DmaMapSgt {
+> >> +    sgt: NonNull<bindings::sg_table>,
+> >> +    dev: ARef<Device>,
+> >> +    dir: dma::DataDirection,
+> >> +}
+> 
+> <snip>
+> 
+> >> +impl RawSGTable {
+> >> +    fn new(
+> >> +        mut pages: KVec<*mut bindings::page>,
+> >> +        size: usize,
+> >> +        max_segment: u32,
+> >> +        flags: alloc::Flags,
+> >> +    ) -> impl PinInit<Self, Error> {
+> >> +        try_pin_init!(Self {
+> >> +            sgt <- Opaque::try_ffi_init(|slot: *mut bindings::sg_table| {
+> >> +                // `sg_alloc_table_from_pages_segment()` expects at least one page, otherwise it
+> >> +                // produces a NPE.
+> >> +                if pages.is_empty() {
+> >> +                    return Err(EINVAL);
+> >> +                }
+> >> +
+> >> +                // SAFETY:
+> >> +                // - `slot` is a valid pointer to uninitialized memory.
+> >> +                // - As by the check above, `pages` is not empty.
+> >> +                error::to_result(unsafe {
+> >> +                    bindings::sg_alloc_table_from_pages_segment(
+> >> +                        slot,
+> >> +                        pages.as_mut_ptr(),
+> >> +                        pages.len().try_into()?,
+> >
+> > The `pages` vector is dropped immediately after this call to
+> > sg_alloc_table_from_pages_segment. Is that ok?
+> 
+> Yes, it's only needed during sg_alloc_table_from_pages_segment().
+> 
+> > If it's ok, then I would change `pages` to `&[*mut page]` so that the
+> > caller can manage the allocation of the array.
+> 
+> We can immediately drop it after sg_alloc_table_from_pages_segmen(), so why do
+> we want the caller to take care of the lifetime?
 
+I think the API is easier to understand that way. With a slice, it's
+clear that you only expect it to be alive for the duration of the
+method. Whereas with a vector, it looks like you're going to keep the
+allocation alive long-term, but that's not the case.
 
->
-> diff --git a/drivers/gpu/drm/gud/gud_connector.c b/drivers/gpu/drm/gud/gud_connector.c
-> index 0f07d77c5d52..75f404ec08b4 100644
-> --- a/drivers/gpu/drm/gud/gud_connector.c
-> +++ b/drivers/gpu/drm/gud/gud_connector.c
-> @@ -607,13 +607,16 @@ int gud_connector_fill_properties(struct drm_connector_state *connector_state,
->   	return gconn->num_properties;
->   }
->   
-> +static const struct drm_encoder_funcs gud_drm_simple_encoder_funcs_cleanup = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
->   static int gud_connector_create(struct gud_device *gdrm, unsigned int index,
->   				struct gud_connector_descriptor_req *desc)
->   {
->   	struct drm_device *drm = &gdrm->drm;
->   	struct gud_connector *gconn;
->   	struct drm_connector *connector;
-> -	struct drm_encoder *encoder;
->   	int ret, connector_type;
->   	u32 flags;
->   
-> @@ -681,20 +684,13 @@ static int gud_connector_create(struct gud_device *gdrm, unsigned int index,
->   		return ret;
->   	}
->   
-> -	/* The first connector is attached to the existing simple pipe encoder */
-> -	if (!connector->index) {
-> -		encoder = &gdrm->pipe.encoder;
-> -	} else {
-> -		encoder = &gconn->encoder;
-> -
-> -		ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_NONE);
-> -		if (ret)
-> -			return ret;
-> -
-> -		encoder->possible_crtcs = 1;
-> -	}
-> +	gdrm->encoder.possible_crtcs = drm_crtc_mask(&gdrm->crtc);
-> +	ret = drm_encoder_init(drm, &gdrm->encoder, &gud_drm_simple_encoder_funcs_cleanup,
-> +			       DRM_MODE_ENCODER_NONE, NULL);
+> >> +impl<P> Owned<P>
+> >> +where
+> >> +    for<'a> P: page::AsPageIter<Iter<'a> = VmallocPageIter<'a>> + 'static,
+> >
+> > If you specifically require the iterator type to be VmallocPageIter,
+> > then I would hard-code that in the trait instead of specifying it here.
+> 
+> I do not follow, hard-code in which trait?
 
-The display pipeline sends pixels from plane to CRTC to a number of 
-encoder/connector pairs. Hence you have to initialize the encoder at 
-gconn->encoder. The encoder in gud_device should  be removed.
+By hard-code, I meant that you refer to `VmallocPageIter` directly in
+`trait AsPageIter`. But I don't think that's the correct solution.
 
+> > But I think you just want `P: AsPageIter`.
+> 
+> Yeah, I thought for now it's probably good enough to require VmallocPageIter and
+> revisit once we get more implementors of AsPageIter, but I think we can also do
+> it right away.
+> 
+> I think we'd need a trait PageIterator, which implements page_count(), since we
+> technically can't rely on Iterator::size_hint(). Though, in this case I think we
+> can also just make AsPageIter::Iter: ExactSizeIterator?
 
-> +	if (ret)
-> +		return ret;
->   
-> -	return drm_connector_attach_encoder(connector, encoder);
-> +	return drm_connector_attach_encoder(connector, &gdrm->encoder);
->   }
->   
->   int gud_get_connectors(struct gud_device *gdrm)
-> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-> index 5385a2126e45..65c3a83c4037 100644
-> --- a/drivers/gpu/drm/gud/gud_drv.c
-> +++ b/drivers/gpu/drm/gud/gud_drv.c
-> @@ -16,6 +16,7 @@
->   #include <drm/clients/drm_client_setup.h>
->   #include <drm/drm_atomic_helper.h>
->   #include <drm/drm_blend.h>
-> +#include <drm/drm_crtc_helper.h>
->   #include <drm/drm_damage_helper.h>
->   #include <drm/drm_debugfs.h>
->   #include <drm/drm_drv.h>
-> @@ -289,7 +290,7 @@ static int gud_get_properties(struct gud_device *gdrm)
->   			 * but mask out any additions on future devices.
->   			 */
->   			val &= GUD_ROTATION_MASK;
-> -			ret = drm_plane_create_rotation_property(&gdrm->pipe.plane,
-> +			ret = drm_plane_create_rotation_property(&gdrm->plane,
->   								 DRM_MODE_ROTATE_0, val);
->   			break;
->   		default:
-> @@ -338,10 +339,30 @@ static int gud_stats_debugfs(struct seq_file *m, void *data)
->   	return 0;
->   }
->   
-> -static const struct drm_simple_display_pipe_funcs gud_pipe_funcs = {
-> -	.check      = gud_pipe_check,
-> -	.update	    = gud_pipe_update,
-> -	DRM_GEM_SIMPLE_DISPLAY_PIPE_SHADOW_PLANE_FUNCS
-> +static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs = {
-> +	.atomic_check = drm_crtc_helper_atomic_check
-> +};
-> +
-> +static const struct drm_crtc_funcs gud_crtc_funcs = {
-> +	.reset = drm_atomic_helper_crtc_reset,
-> +	.destroy = drm_crtc_cleanup,
-> +	.set_config = drm_atomic_helper_set_config,
-> +	.page_flip = drm_atomic_helper_page_flip,
-> +	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
-> +	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
-> +};
-> +
-> +static const struct drm_plane_helper_funcs gud_plane_helper_funcs = {
-> +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-> +	.atomic_check = gud_plane_atomic_check,
-> +	.atomic_update = gud_plane_atomic_update,
-> +};
-> +
-> +static const struct drm_plane_funcs gud_plane_funcs = {
-> +	.update_plane = drm_atomic_helper_update_plane,
-> +	.disable_plane = drm_atomic_helper_disable_plane,
-> +	.destroy = drm_plane_cleanup,
-> +	DRM_GEM_SHADOW_PLANE_FUNCS,
->   };
->   
->   static const struct drm_mode_config_funcs gud_mode_config_funcs = {
-> @@ -350,7 +371,7 @@ static const struct drm_mode_config_funcs gud_mode_config_funcs = {
->   	.atomic_commit = drm_atomic_helper_commit,
->   };
->   
-> -static const u64 gud_pipe_modifiers[] = {
-> +static const u64 gud_plane_modifiers[] = {
->   	DRM_FORMAT_MOD_LINEAR,
->   	DRM_FORMAT_MOD_INVALID
->   };
-> @@ -567,12 +588,17 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->   			return -ENOMEM;
->   	}
->   
-> -	ret = drm_simple_display_pipe_init(drm, &gdrm->pipe, &gud_pipe_funcs,
-> -					   formats, num_formats,
-> -					   gud_pipe_modifiers, NULL);
-> +	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
-> +				       &gud_plane_funcs,
-> +				       formats, num_formats,
-> +				       gud_plane_modifiers,
-> +				       DRM_PLANE_TYPE_PRIMARY, NULL);
->   	if (ret)
->   		return ret;
->   
-> +	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
-> +	drm_plane_enable_fb_damage_clips(&gdrm->plane);
-> +
->   	devm_kfree(dev, formats);
->   	devm_kfree(dev, formats_dev);
->   
-> @@ -582,7 +608,13 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
->   		return ret;
->   	}
->   
-> -	drm_plane_enable_fb_damage_clips(&gdrm->pipe.plane);
-> +	ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
-> +					&gud_crtc_funcs, NULL);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
->   
->   	ret = gud_get_connectors(gdrm);
->   	if (ret) {
-> diff --git a/drivers/gpu/drm/gud/gud_internal.h b/drivers/gpu/drm/gud/gud_internal.h
-> index d6fb25388722..6152a9b5da43 100644
-> --- a/drivers/gpu/drm/gud/gud_internal.h
-> +++ b/drivers/gpu/drm/gud/gud_internal.h
-> @@ -15,7 +15,9 @@
->   
->   struct gud_device {
->   	struct drm_device drm;
-> -	struct drm_simple_display_pipe pipe;
-> +	struct drm_plane plane;
-> +	struct drm_crtc crtc;
-> +	struct drm_encoder encoder;
+I mean, ExactSizeIterator is not an unsafe trait, so it's allowed to lie
+about the length. But it doesn't look like getting it wrong has any
+problematic consequences here. At most we allocate too much in the
+vector, or we have to reallocate it.
 
-As mentioned above, the encoder field should be removed.
+> >> +{
+> >> +    fn new(
+> >> +        dev: &Device<Bound>,
+> >> +        mut pages: P,
+> >> +        dir: dma::DataDirection,
+> >> +        flags: alloc::Flags,
+> >> +    ) -> Result<impl PinInit<Self, Error> + use<'_, P>> {
+> >
+> > We would probably want to move the logic into the initializer so that we
+> > don't have the double Result here.
+> 
+> That'd be nice, but I think it's not possible.
+> 
+> We can't borrow from pages in the initializer closure while at the same time
+> store pages with another initializer, can we?
+> 
+> Either way, it's not that big a deal I think, since this constructor is not
+> exposed to the outside world. Which is also why it didn't bother me too much.
 
->   	struct work_struct work;
->   	u32 flags;
->   	const struct drm_format_info *xrgb8888_emulation_format;
-> @@ -62,11 +64,10 @@ int gud_usb_set_u8(struct gud_device *gdrm, u8 request, u8 val);
->   
->   void gud_clear_damage(struct gud_device *gdrm);
->   void gud_flush_work(struct work_struct *work);
-> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
-> -		   struct drm_plane_state *new_plane_state,
-> -		   struct drm_crtc_state *new_crtc_state);
-> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
-> -		     struct drm_plane_state *old_state);
-> +int gud_plane_atomic_check(struct drm_plane *plane,
-> +			   struct drm_atomic_state *state);
-> +void gud_plane_atomic_update(struct drm_plane *plane,
-> +			     struct drm_atomic_state *atomic_state);
->   int gud_connector_fill_properties(struct drm_connector_state *connector_state,
->   				  struct gud_property_req *properties);
->   int gud_get_connectors(struct gud_device *gdrm);
-> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
-> index 8d548d08f127..6a0e6234224a 100644
-> --- a/drivers/gpu/drm/gud/gud_pipe.c
-> +++ b/drivers/gpu/drm/gud/gud_pipe.c
-> @@ -451,14 +451,15 @@ static void gud_fb_handle_damage(struct gud_device *gdrm, struct drm_framebuffer
->   	gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach, damage);
->   }
->   
-> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
-> -		   struct drm_plane_state *new_plane_state,
-> -		   struct drm_crtc_state *new_crtc_state)
-> +int gud_plane_atomic_check(struct drm_plane *plane,
-> +			   struct drm_atomic_state *state)
->   {
-> -	struct gud_device *gdrm = to_gud_device(pipe->crtc.dev);
-> -	struct drm_plane_state *old_plane_state = pipe->plane.state;
-> -	const struct drm_display_mode *mode = &new_crtc_state->mode;
-> -	struct drm_atomic_state *state = new_plane_state->state;
-> +	struct gud_device *gdrm = to_gud_device(plane->dev);
-> +	struct drm_plane_state *old_plane_state = drm_atomic_get_old_plane_state(state, plane);
-> +	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
-> +	struct drm_crtc *crtc = new_plane_state->crtc;
-> +	struct drm_crtc_state *crtc_state;
-> +	const struct drm_display_mode *mode;
->   	struct drm_framebuffer *old_fb = old_plane_state->fb;
->   	struct drm_connector_state *connector_state = NULL;
->   	struct drm_framebuffer *fb = new_plane_state->fb;
-> @@ -472,17 +473,35 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
->   	if (WARN_ON_ONCE(!fb))
->   		return -EINVAL;
->   
-> +	if (WARN_ON_ONCE(!crtc))
+Ok. Shrug.
 
-Please use drm_WARN_ON_ONCE() here.
-
-> +		return -EINVAL;
-> +
-> +	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-> +
-> +	mode = &crtc_state->mode;
-> +
-> +	ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
-> +						  DRM_PLANE_NO_SCALING,
-> +						  DRM_PLANE_NO_SCALING,
-> +						  false, false);
-> +
-
-No empty line here and before similar "if (ret)" statements.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!new_plane_state->visible)
-> +		return 0;
-> +
->   	if (old_plane_state->rotation != new_plane_state->rotation)
-> -		new_crtc_state->mode_changed = true;
-> +		crtc_state->mode_changed = true;
->   
->   	if (old_fb && old_fb->format != format)
-> -		new_crtc_state->mode_changed = true;
-> +		crtc_state->mode_changed = true;
->   
-> -	if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
-> +	if (!crtc_state->mode_changed && !crtc_state->connectors_changed)
->   		return 0;
->   
->   	/* Only one connector is supported */
-> -	if (hweight32(new_crtc_state->connector_mask) != 1)
-> +	if (hweight32(crtc_state->connector_mask) != 1)
->   		return -EINVAL;
-
-In case you're wondering: this is really a problem with user-space 
-programs. Most compositors (Xorg, Gnome, etc) don't support a single 
-display that is mirrored to multiple outputs. It's only found in low-end 
-hardware and complicated to get right; hence there's little incentive 
-for user space to fix the problem.
-
-
->   
->   	if (format->format == DRM_FORMAT_XRGB8888 && gdrm->xrgb8888_emulation_format)
-> @@ -500,7 +519,7 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
->   	if (!connector_state) {
->   		struct drm_connector_list_iter conn_iter;
->   
-> -		drm_connector_list_iter_begin(pipe->crtc.dev, &conn_iter);
-> +		drm_connector_list_iter_begin(plane->dev, &conn_iter);
->   		drm_for_each_connector_iter(connector, &conn_iter) {
->   			if (connector->state->crtc) {
->   				connector_state = connector->state;
-> @@ -567,16 +586,19 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
->   	return ret;
->   }
->   
-> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
-> -		     struct drm_plane_state *old_state)
-> +void gud_plane_atomic_update(struct drm_plane *plane,
-> +			     struct drm_atomic_state *atomic_state)
->   {
-> -	struct drm_device *drm = pipe->crtc.dev;
-> +	struct drm_device *drm = plane->dev;
->   	struct gud_device *gdrm = to_gud_device(drm);
-> -	struct drm_plane_state *state = pipe->plane.state;
-> -	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(state);
-> -	struct drm_framebuffer *fb = state->fb;
-> -	struct drm_crtc *crtc = &pipe->crtc;
-> +	struct drm_plane_state *old_state = drm_atomic_get_old_plane_state(atomic_state, plane);
-> +	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(atomic_state, plane);
-> +	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(new_state);
-> +	struct drm_framebuffer *fb = new_state->fb;
-> +	struct drm_crtc *crtc = new_state->crtc;
->   	struct drm_rect damage;
-> +	struct drm_rect dst_clip;
-> +	struct drm_atomic_helper_damage_iter iter;
->   	int ret, idx;
->   
->   	if (crtc->state->mode_changed || !crtc->state->enable) {
-> @@ -611,8 +633,15 @@ void gud_pipe_update(struct drm_simple_display_pipe *pipe,
->   	if (ret)
->   		goto ctrl_disable;
->   
-> -	if (drm_atomic_helper_damage_merged(old_state, state, &damage))
-> +	drm_atomic_helper_damage_iter_init(&iter, old_state, new_state);
-> +	drm_atomic_for_each_plane_damage(&iter, &damage) {
-> +		dst_clip = new_state->dst;
-> +
-> +		if (!drm_rect_intersect(&dst_clip, &damage))
-> +			continue;
-
-Where did you get this code snippet? This test should not be necessary 
-here and can even lead to incorrect display updates. Just call 
-gud_fb_handle_damage() with the damage area.
-
-Best regards
-Thomas
-
-> +
->   		gud_fb_handle_damage(gdrm, fb, &shadow_plane_state->data[0], &damage);
-> +	}
->   
->   	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
->   
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Alice
 
