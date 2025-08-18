@@ -1,119 +1,161 @@
-Return-Path: <linux-kernel+bounces-772910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D6FB29928
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97903B2993F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E98397AEB7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:53:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4957163D05
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B35026E715;
-	Mon, 18 Aug 2025 05:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC2827057B;
+	Mon, 18 Aug 2025 05:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="T1IMr5Lt"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV8v6fgY"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276DE27056A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51D826D4ED;
+	Mon, 18 Aug 2025 05:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755496462; cv=none; b=JPXTpD+x4OUHaiVRLYWVZxOT0lSxR0PxpKcUOyOO8P0r/V9fysfeD1yMzPtFoMpDe+gK01kxvHH3Nlf1IFnCDkF9tWi70W4pliQiQJF4kPMyuIXGPNhw//aaPBKBZ4cIZaGblIimzygggcU8bd70He1I5mxU/FfZwQH3Fq07EP8=
+	t=1755496571; cv=none; b=hz97oSyASjjMKm7H1UWTopCowJqlHSWl61ukqhdwZyQO++8fQi9RVJq7TFfIhaI48QJCc+FL5B6rQVS+hDECtgen8TcKDkJfh1/q4nZ/2D8P+VnyfXmak0bprwnY4F5jt0R6s80xosG6+Ajbkw/s23wSSCt8KJuSjgGKxYGJ7uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755496462; c=relaxed/simple;
-	bh=rSwNLEEae3P9QEq2Hme2YrXdZ7yJVM2ZDx26GAa5T6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DEMqq0czBKJjzjLIOp8yKK+TSGXXj8ubzUTOQq3nVbpSR621PtgAI6D8tz+tFCbtfWFZ5qmvrr6fozjg8/XI/w6p3TlNsqu6V+FvAEdxaajlprIUbt41wGpElSdtBZyxcuYXjA2fF+L/YySS+sSz8NutWDXJQ3ndHUiMtIoCCaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=T1IMr5Lt; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb78c77ebso595990166b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 22:54:20 -0700 (PDT)
+	s=arc-20240116; t=1755496571; c=relaxed/simple;
+	bh=gARdHJbs8b0x8u8t5QDtFMcbkXmNw7kgUbr/Vzt2dUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hh0W7hyFRGLd1hE0Bv3nBuhmadIhE5nmJqWBxtDiu/kGBFxpqDhD2oATHOKsgX0Yi9eThSXs2+TqLDfyKTxCEs152LDCJXTdCsy/0Z/0F6DrM4CLFdm+6X3P8AzubSyueax1WSL7nsNUvphiPkOJsPw6bvUwBDKl8cgkVmtLSAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EV8v6fgY; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-244582738b5so28649615ad.3;
+        Sun, 17 Aug 2025 22:56:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1755496459; x=1756101259; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rSwNLEEae3P9QEq2Hme2YrXdZ7yJVM2ZDx26GAa5T6A=;
-        b=T1IMr5LtRbt3st3jCDW41Yg8CU6X2qUVL/lH48ElYepRtMAE6v9UFbJKs25YYRLSpV
-         1iMJ0iqYKK18zY49CDvyFNfgkT8kPZynccAw0EJwGVo3a8iR82jIDMCFM+5qeKowrk5K
-         dEnhUVfFclYginAwaIMlfdRgb4Yod0vHRT1TJ6WH6lfIvUoPIEzMOKmon3RFL0GSoYZe
-         00DdRvRPWhAK2tiqYN0d/wKQhuJ/ecZ9K7wWpYfAap4GNo4y824DA8glgOv/+mMufxnk
-         kDYSkaH+FOOJZumRYxFLUAPin1YVrMISm+/cjS8phbOYeBJrYaAK38Xecgm5FnD/eSrd
-         /c4w==
+        d=gmail.com; s=20230601; t=1755496569; x=1756101369; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KDnEbrSfurZQ+Y1DvjkMBGJWcaizeGgNKLPFyaBX9ww=;
+        b=EV8v6fgYUGvKHYdurvhd1GFv+MZlIAFfnpXdIuDLhc2BcJzDVruachpMV0y50I7u+h
+         xV7q8ZWjCF6/dV2FBSxhZDp75jorhisJTqrvnpbb6k/N8ncqs62kbitzfyQiVWZho2/I
+         qmbN8akTOzEfUmgFAenqy+HHzemwzxJbGz/Y/Xftw1FebYld4wTFox9d5zoh2uL8IM12
+         R/xFEcjODE30xMWUtLq7qlC2sDUVB76uBk8oVEBksizZ7eZRUvAUHGG0yYx8n9h2Xn8y
+         J4BK0O+EanVOkv4/rfZGx6MEE/fQFiGzdnOwWAq+PXFA3BKnd0yvKo/J4lG4D8LkH/Xx
+         lDUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755496459; x=1756101259;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rSwNLEEae3P9QEq2Hme2YrXdZ7yJVM2ZDx26GAa5T6A=;
-        b=kQIMoGbqPmDI9bbuaPketGZWxhjpFqoDRFxoQ/nmTooh5FbNSio0BWfhcDKJtwA+tp
-         xB44O79ZIUrxQeRUA7PBq9Qqgwevo+nNMyslHEBkBazQigWdPYnQo1DtOXIJOQ/ejNtj
-         JsMLJMk0ZvV1j6SvV1C87qKH8KoeB8DgCUmVwFKOa4q+wlQ8i+a6OL0vr0pgzSMcVpYu
-         LcF50mvDhazrvK7sdko7cBmKcq88x+sUxijM+RfNJFR/ryyrGdDL8NccFZG6Cws3BQgY
-         xP9vHMVdPKWFkvfxGt9hVGSLxw5KjrILpkFYbgECotCwTqb5pJBRByuwiwr+EZdSCoNZ
-         Y87Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtwDHDUZrLdFPKQJSAHXrJlTRv1y66oSq0n1GI1Er0qdJhzMxYZp7m0oTQ2Eqs/vzQDO0h/rR5jYB7V+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziETThp4iXYmcNGXMUKz2zI5yU+w8Fym5vuwEkv8ykNSwLtzVx
-	s6+h66CnBTzVOZu/snRNsQMePOUJ6PpdJPMKC9ctwYE+W/KOq0r+TaC5RJjXNDeK/Bo=
-X-Gm-Gg: ASbGncsim0d0wHVT/W3ohIDeWRmVj1QWLPNlQIqTTKWv0xs9fqbp4VlIJ0FVL/hpk1m
-	ptRcgUV4oEwgXctJPIiYaGoFf88xlrPJlj7he4ytdiyVLnpZ79CU8hapzn4vsnaeiohwIaRCyoJ
-	wYYVT5Uvd62Fn9x/pP06VvClgjldV+nMyxqUc5ED8+V9BEu/RWdJHt1pQYJblLAW49HVzH5GeZ/
-	T39Uz4ITPLSXiW7YGp+qmIdmTOp/Rp50bHt42FQ5f37m7ZGHUcmx42ds7zd4POZrhkX422WY4Ii
-	Xn/H3QDjO2P6eZ3McmokhsfszDVUBQDWmMY503zqE+PFe1k7RNbDSDATjrpmzJrAOFseqEsNJkw
-	wyZ/2EJMeLs8a1zk+rWeN4jtTcYHkkBGLBMVeT2XN
-X-Google-Smtp-Source: AGHT+IEOCX/C/iBLx623bOubuTqA7Kdn4TAgxaXuZzrmlCOVef2rZUF+MeuUI3aZvz9jOtGjq4uPMQ==
-X-Received: by 2002:a17:907:96a7:b0:af9:a486:412e with SMTP id a640c23a62f3a-afcdc237cf9mr964877366b.26.1755496459172;
-        Sun, 17 Aug 2025 22:54:19 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.81])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd01ab55sm732429066b.97.2025.08.17.22.54.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Aug 2025 22:54:18 -0700 (PDT)
-Message-ID: <b064e3cf-466b-49b9-a66d-399441e1913d@tuxon.dev>
-Date: Mon, 18 Aug 2025 08:54:17 +0300
+        d=1e100.net; s=20230601; t=1755496569; x=1756101369;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KDnEbrSfurZQ+Y1DvjkMBGJWcaizeGgNKLPFyaBX9ww=;
+        b=oW3lpbbOofYPdSA8zvMkmSzSJdREaTEDqff+MA/XnBIzh825xSJ31cqNw/XUR5IbxG
+         2wcsau06cjEulLO/kMRqdoPZ3SoDqQmPbswg8ep4EtQ8bQvur/ZTzzX10VMwgEQsww21
+         OLBkZEZ9gpv5dkGUjAUpdkYZ91/Mccwvbw1KFQaZ5r0n1mb7prkaP4GtvRg9nTaIap4r
+         JHoHLH55HanZvHoT60jkzjHFCkawk3bw7zfZcipyOPnKMIbo/KiMRTvMqAdO3TPTxgWe
+         6pYuFn0lOZk4mBSE7NOBMFfscLITRmwgYdurheXzHsy34iattdTrNoEVxSbHG835XZVx
+         wHRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVL8hzWTs5ol8UvvdQBar8bTaDkR3PP4eM5V35NXa9ok8EleyOmHDpKg7yzr7f8tbjYa+MwWrzyNbjqbQ==@vger.kernel.org, AJvYcCVqyxBvt41FxurpMaFqyXtdo+Fe1YbrEhTSF9lnZeOYEMp2kDLIWIVKFIp0eX9fL8iunebyUs6cB9+t9AA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJmkJ69ET/Yt2PnmCVr6F9gNGnv/BciHb9JdjS5a/CadgcxM+q
+	bpjqfQfdww87tBl21kpwSym3WYO64uEH0HqR5wBrbBqpJ236pBpovQES
+X-Gm-Gg: ASbGncs3HZiK5xDlIre4zpdJPFFaaQC+0r4Aq5bV80bQj7na8vSUuG5ux9opMhwSLFg
+	I8hyD8gE2mZOFj8lYQWrouOfNYFHvs+1DnW4Z5xQ/cZAO6Xy0bQZm072cYLZpRIt+SBwmzTNrmo
+	Ft7UgeyBua3aarPCcqOSbhobucv6SDcEW1YMIeMn+MLwB4w2GA87XOZGHyiIS879Bz4D4QgtVnU
+	U73hEXgSdNuqejcWsAa0D9Zl74lE9BW728hzHlzJQFLlR/ncvN4vLLlYXJIHH5Jg+C27VYHIfJS
+	lhMPxHUUKI+DYIXNzXLsgdpoHOB2h15iwRL2VpOu8RBAPv2XqK32vbxdlhDWzqiQSlL4RO9js/W
+	yk/ZmmUqUlbhB3ZRdErqbGw==
+X-Google-Smtp-Source: AGHT+IGrZb2yXUpDByWXrf0RogRL3wdxGrw6LQsIafOIhXImWcKlQrD4Hqci3k0Rb6xnexOYz1c78g==
+X-Received: by 2002:a17:903:3c6f:b0:23f:df56:c74c with SMTP id d9443c01a7336-2446d715b0bmr129857355ad.14.1755496568819;
+        Sun, 17 Aug 2025 22:56:08 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d57f12esm69189155ad.157.2025.08.17.22.56.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 22:56:07 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 14B60459631D; Mon, 18 Aug 2025 12:56:03 +0700 (WIB)
+Date: Mon, 18 Aug 2025 12:56:03 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Javier Garcia <rampxxxx@gmail.com>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the drm-misc-fixes tree
+Message-ID: <aKLAc27XGAadB8n5@archie.me>
+References: <20250818123853.51aa3bc4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] iio: adc: rzg2l: Cleanup suspend/resume path
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-References: <20250810123328.800104-1-claudiu.beznea.uj@bp.renesas.com>
- <20250810123328.800104-2-claudiu.beznea.uj@bp.renesas.com>
- <20250816145334.7a538a19@jic23-huawei>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250816145334.7a538a19@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ys5Z0BDSBVttoXV4"
+Content-Disposition: inline
+In-Reply-To: <20250818123853.51aa3bc4@canb.auug.org.au>
 
 
+--Ys5Z0BDSBVttoXV4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 16.08.2025 16:53, Jonathan Cameron wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> There is no need to manually track the runtime PM status in the driver.
->> The pm_runtime_force_suspend() and pm_runtime_force_resume() functions
->> already call pm_runtime_status_suspended() to check the runtime PM state.
->>
->> Additionally, avoid calling pm_runtime_put_autosuspend() during the
->> suspend/resume path, as this would decrease the usage counter of a
->> potential user that had the ADC open before the suspend/resume cycle.
->>
->> Fixes: cb164d7c1526 ("iio: adc: rzg2l_adc: Add suspend/resume support")
-> That SHA isn't upstream. I think it should be.
-> 563cf94f9329
+On Mon, Aug 18, 2025 at 12:38:53PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the drm-misc-fixes tree, today's linux-next build (htmldocs)
+> produced these warnings:
+>=20
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2446: ERROR: Un=
+expected indentation. [docutils]
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2448: WARNING: =
+Block quote ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2452: WARNING: =
+Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2453: WARNING: =
+Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2457: ERROR: Un=
+expected indentation. [docutils]
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2458: WARNING: =
+Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2459: WARNING: =
+Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2460: WARNING: =
+Definition list ends without a blank line; unexpected unindent. [docutils]
+>=20
+> Introduced by commit
+>=20
+>   6cc44e9618f0 ("drm: Add directive to format code in comment")
+>=20
+> interacting with commit
+>=20
+>   bb324f85f722 ("drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected us=
+age in literal code block")
 
-You're right! Thank you for handling it.
+Duh! drm_gpuvm.c gets tangled...
 
+Danilo, can you please drop my commit (and kept Javier's one)?
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--Ys5Z0BDSBVttoXV4
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaKLAbgAKCRD2uYlJVVFO
+owDKAQCoKfhqaU9MYn5NO39SYn5JIOoZm6yD0EQIjQ8QNH3+YgD9GtPzY2zmWOwU
+dNDspoFrAULfH+otQwwYcVaT6w0F8Q8=
+=+vhx
+-----END PGP SIGNATURE-----
+
+--Ys5Z0BDSBVttoXV4--
 
