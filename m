@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-774381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D35AB2B198
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:28:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1E2B2B195
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B39621920
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:26:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 206817ACE5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DEC27466C;
-	Mon, 18 Aug 2025 19:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6337F2741CD;
+	Mon, 18 Aug 2025 19:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mH+VmKVX"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AxC/k8En"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0952273D6D
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3187D273809;
+	Mon, 18 Aug 2025 19:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755545184; cv=none; b=HtPa38jdulY/cxgin8JsMZmt4prXa5Yx4Q1jI88G/qkmeWdRdwnaFABFvmGwNmZDLxNH3ucvozFYHvHFxxaX5EGNUEdP5prrMPjupK52gN175X2e8qnKNGCsKx560lXmydYJYcAuBu3DhAuWtIE+GGQLdHKiQsQwFvrg5vg0TfQ=
+	t=1755545203; cv=none; b=gvKnHEYgrZGZwdjATCAHYox55ZaZGTY3huT/rDoVtiQQNKSIIce0JgHt/2gy7Tukt+k++PCJs8DdijBwZIH1tTNS1Mg8RN1voQzscKBSlcnr5aCgR1JbPJ8h6m2kjNdHpiKoSwqkIIZCW6S6n5YWZ+5ACULu0s+yk9t/stZjcr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755545184; c=relaxed/simple;
-	bh=N0KEz1rl1jL1PP3w97jH5JqOD9sO2N0qIXncXsx8V9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dW2fnbaHJ++WnysRVFv7iS7UU3AhgLo6uWkxRoMLT8pfdHIwJz31vk5hajex2FEQJXCIZmjnLnflqco0ZaUB59R1LqJZZmqtd/mRjlRT4/FsyPqRrfd/7LZRst1lm2FtS2Dc30pbz9Q+cgKF2bzjzOo9POp/eWwJwfo5KqhbAok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mH+VmKVX; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2a7e2450-5e31-40d6-bca4-ccc2c1d60b72@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755545179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q3UWG4FunCCbQLj+biR4a06QSU33PixM4sYuMp155u4=;
-	b=mH+VmKVX5OvdeT8AcQ2d9iNMPDRxQosoUJQ+Ob0OavqixnlEqb9GHwVlnTZnHxlnGMpvQU
-	OjkW/hosFEVjhKBL5FeQZXzERh9v0nZkwj9jqgbhKaFqNQpWUHm1XliM1mdeQ4VKL4/98u
-	OJWUdliYOG5PWDHcW4mIwyiL/5PnkNc=
-Date: Mon, 18 Aug 2025 12:26:13 -0700
+	s=arc-20240116; t=1755545203; c=relaxed/simple;
+	bh=ROtEZIiiHDU/BMVhYCsKLpgRLFFf6ZgX4SN6yEURSOM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gn8MfXBsn9bktroInB/mPhf9vMez1+HZI3m2NkDETmfHKTBQqBECcijUW/yGuUJ9ly2t7UTVfkckDWC3w6JtuqQw3kXhrfAoXj90PNLwL4L3j3KcGV09d3/5UKpCyaIhY+XbZe9QDaTG0eafw+Xw5OA2vJprOcnOUaBbAdjq6X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AxC/k8En; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57IJQXg62726732;
+	Mon, 18 Aug 2025 14:26:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755545193;
+	bh=12kQz3A/BbG6iESz2wksdkCzEHrQ+r7GsI58CIwRvvU=;
+	h=From:To:CC:Subject:Date;
+	b=AxC/k8EnDW38UPgNRBxMexkzSRy4FoqluD99EWO9qYKn70eTni64xHlnjhxwLJzCN
+	 iCuLhFwbuq4GbV447F+HWbgWILh66zISTGFSEduGK/k8kIMTIGMDNj36Nzpe9eqNsc
+	 vS45SGEcPerFb4HFvJsQPszNy80ERG3zjlBeKpew=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57IJQXnt039958
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 18 Aug 2025 14:26:33 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
+ Aug 2025 14:26:32 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 18 Aug 2025 14:26:32 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57IJQWxV1525949;
+	Mon, 18 Aug 2025 14:26:32 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        "Rafael J
+ . Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, Bryan
+ Brattlof <bb@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH 0/3] OPP: Support more speed grades and silicon revisions
+Date: Mon, 18 Aug 2025 14:26:29 -0500
+Message-ID: <20250818192632.2982223-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 1/2] ACPI: RISC-V: Fix FFH_CPPC_CSR error handling
-To: Anup Patel <apatel@ventanamicro.com>, Sunil V L
- <sunilvl@ventanamicro.com>, "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Len Brown <lenb@kernel.org>, Andrew Jones <ajones@ventanamicro.com>,
- Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Troy Mitchell <troy.mitchell@linux.dev>
-References: <20250818143600.894385-1-apatel@ventanamicro.com>
- <20250818143600.894385-2-apatel@ventanamicro.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Atish Patra <atish.patra@linux.dev>
-Content-Language: en-US
-In-Reply-To: <20250818143600.894385-2-apatel@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+As the AM62x, AM62ax, and AM62px SoC families mature, more speed
+grades are established and more silicon revisions are released. This
+patch series adds support for more speed grades on AM62Px SoCs in
+ti-cpufreq. Also allow all silicon revisions across AM62x, AM62Px,
+and AM62Ax SoCs to use the already established OPPs and instead determine
+approprate OPP application with speed grade efuse parsing.
 
-On 8/18/25 7:35 AM, Anup Patel wrote:
-> The cppc_ffh_csr_read() and cppc_ffh_csr_write() returns Linux error
-> code in "data->ret.error" so cpc_read_ffh() and cpc_write_ffh() must
-> not use sbi_err_map_linux_errno() for FFH_CPPC_CSR.
->
-> Fixes: 30f3ffbee86b ("ACPI: RISC-V: Add CPPC driver")
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> Reviewed-by: Troy Mitchell <troy.mitchell@linux.dev>
-> ---
->   drivers/acpi/riscv/cppc.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> index 440cf9fb91aa..42c1a9052470 100644
-> --- a/drivers/acpi/riscv/cppc.c
-> +++ b/drivers/acpi/riscv/cppc.c
-> @@ -119,7 +119,7 @@ int cpc_read_ffh(int cpu, struct cpc_reg *reg, u64 *val)
->   
->   		*val = data.ret.value;
->   
-> -		return (data.ret.error) ? sbi_err_map_linux_errno(data.ret.error) : 0;
-> +		return data.ret.error;
->   	}
->   
->   	return -EINVAL;
-> @@ -148,7 +148,7 @@ int cpc_write_ffh(int cpu, struct cpc_reg *reg, u64 val)
->   
->   		smp_call_function_single(cpu, cppc_ffh_csr_write, &data, 1);
->   
-> -		return (data.ret.error) ? sbi_err_map_linux_errno(data.ret.error) : 0;
-> +		return data.ret.error;
->   	}
->   
->   	return -EINVAL;
+Also fix 1GHz OPP which according to device datasheet [0], also supports
+speed grade "O".
 
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
+[0] https://www.ti.com/lit/gpn/am62p
 
+Judith Mendez (3):
+  cpufreq: ti: Support more speed grades on AM62Px SoC
+  cpufreq: ti: Allow all silicon revisions to support OPPs
+  arm64: dts: ti: k3-am62p: Fix supported hardware for 1GHz OPP
+
+ arch/arm64/boot/dts/ti/k3-am62p5.dtsi |  2 +-
+ drivers/cpufreq/ti-cpufreq.c          | 10 +++++++---
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+-- 
+2.49.0
 
 
