@@ -1,101 +1,153 @@
-Return-Path: <linux-kernel+bounces-773999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B019B2AD5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:53:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7C9B2AD79
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51E618A3DC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:51:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85D06260AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867E8322A2C;
-	Mon, 18 Aug 2025 15:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767C3322DA4;
+	Mon, 18 Aug 2025 15:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSiNvhzk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l2aitdjZ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C854231E119;
-	Mon, 18 Aug 2025 15:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D72C322747
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755532264; cv=none; b=MPPCM1x0SWtu+pFAI5167MjzRnE15FHP+ReH71wAwrytY3+sEg5V/5NutT3BA8LnkjeqKEF00rjvoR9nAxI5nk8KdRhhyNIHXDazT1KejYla8b1jDLP3lqtmo4hGSsRiOqV9XAS4cr4NwA1CUTyRMjrLhUge3xAUt4PyBDHCH0o=
+	t=1755532324; cv=none; b=ZuFZpN8wUBxZtxxN7yC8Ex3NSgMagYvCVDy39a7zg7y8SYqM3t/SkLSHrv0B3dMARxTzV5Aa6QhOYoF7wU40we0BicSkvPLbV4aVFTr+zdST93/9S9dqxxFMiFpscTAxFk+LwzXIS/kBaQsdt7B0eNk7n/yLwuU6lCCglIOC7Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755532264; c=relaxed/simple;
-	bh=r0yvrAIAXkXKJt14/95ZaNgQUPwCBY8YO4aKifN9lhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiiUa56yhW+90p6NG7KZjKxENmYT+eisXD6sd7L4zN/wOZP1lyAkuJYmASLUhgctow7hhmB8kYR89ZwZR8UwhVlwLCyF/+sTSYBV60U31Uql0yrrBAjXKJr+LeRllH132FM02gzi8yxPgr6gSXM+eGhcfa5tyhMwWFGjJiI/WxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSiNvhzk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744F0C4CEEB;
-	Mon, 18 Aug 2025 15:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755532264;
-	bh=r0yvrAIAXkXKJt14/95ZaNgQUPwCBY8YO4aKifN9lhk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VSiNvhzkqt0xqOWA/qUE5I8bsWGAB7vxvG5ef9otr2GZUiRn+2WLLbjzC2StcldWv
-	 Lcy7Efri0ZTxF6NJWBnMtOTu/3zhBb80CdR6KX5lAZ19uLEGY7+RAvcEIfgDTLuEUl
-	 jsvwGFmxZGaECOwxZ5e9hGg4bhtciWK3lhQTCekNc0ZxQmLVu1Z1Rdhyybj7c4WI26
-	 OXZQROnhEKBmelrPhM75MvFfh+J7pdRd9skmis55oRvI3LeTQB9gE48uyzm2EV+ZOl
-	 d2WtuOWtGbBlw/jqijHHbt/gxHRGaqEPS5vlMzmCxoL6OW2BAl97eHlF8Fr0sMCzfL
-	 8Yu1OD3u3Bgiw==
-Date: Mon, 18 Aug 2025 10:51:03 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luca Weiss <luca@lucaweiss.eu>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] dt-bindings: eeprom: at24: Add compatible for
- Belling BL24S64
-Message-ID: <20250818155103.GA1272375-robh@kernel.org>
-References: <20250810-msm8953-cci-v1-0-e83f104cabfc@lucaweiss.eu>
- <20250810-msm8953-cci-v1-3-e83f104cabfc@lucaweiss.eu>
+	s=arc-20240116; t=1755532324; c=relaxed/simple;
+	bh=78CPDCFp5nzoxHHBT0nHL9r7Uu+5xAhmDWdsc9UL2k0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvKQ6S2zPXi3gTIRexcvTx2Dz8zeDc50KWLTv8FeqRgcQEVTXJ4kVmhEVXr/OEiSNLEDhgpty5C71ndfqxVMRtNT3P8/VXjLIQpj2d7Ed/Wy1GBDIu56EVF0svltYTfRcYvMRZ0+ViWF4McuQaNXVLR/1SXA55FwGNkxg6k3HD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l2aitdjZ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-242d1e947feso383605ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755532321; x=1756137121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jhFVRc1NfpOXTxJauWn9T+QK0y3Sx+B3L8yuuFsdMS8=;
+        b=l2aitdjZTmfVGfN3CJ6oVjUrXnG9bwjQJbQTINeKBQL+slq96EXgJj0C9LVI9lWldh
+         wgTBUvLYELlsAOoUpWHsKmNZfqP7PFEOua3QGP2cD3HbpNRD6Oopza0kKIMdnzy7BpuD
+         IQ5kSgVy4+7Icc0Sfme57vP1BFJb6sti1xG319IIgkfyp5w9j8U61Ii2cKcWFPw+PHqr
+         K5nN6v6avAZRAgVcCo08UkQagqc7Il4offgobk/WPTJbCfdntAMGMeeNcXsc4KyOMIS6
+         fAAta10ipcJDsSjcoDgVJKI0GkMTE+nLCpf6FUA8Uj/Xs/sYA/1uC2V78AqX4hLNpB+4
+         hpTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755532321; x=1756137121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jhFVRc1NfpOXTxJauWn9T+QK0y3Sx+B3L8yuuFsdMS8=;
+        b=jdjemAenkKCmDdwM4X+isgh2fq5FfDYxOXxqRBTLTh8nj1ku8JRqB6nJ5Veag6jjUw
+         ZFrStJSDhlUGDMNcBRCBFC+AdU8KEsSznsA6rcVoSkbPxK4PWXDQUmp6PAFTmeg9esOp
+         XWqlBOYVPODTn7m8M+3RG3D5wADVfPZp9P7Uj7CM5iJhkoC4GszhHPIpIEDTRxSSr66f
+         wJKRo53lo0ayFSThZ0h2r1O8HtyWsd3E+A8uCxSyhD+gvsBOHs+EpzcEu9RR5rZ4N/np
+         SUcYYrJDMa2vQ47p26IQCWLO/cIJkpreppPiRvcOhsXXrkHKME7wf+sz7E3bJ9dJjN6N
+         Y9zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7iTDfqGD907PVGj0gXyN3tPiGAtsfy5IWJzExSGUukSuZ/kQTB/UkLs4ryQCXTCOXZ6yIh3krV+wSRGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYVKa1RC44OJk3ZXamqFfCGMaH5I2GaU3Ny8PA6YHOlQVbKcVF
+	+B86uTXbK40P+NEMNE2HHiK93WwxW5vIwfy382AJrOs7I6BJRudgNarknRO45tuOc9skcqT3hQU
+	DA3K5mhp3YZQvOszhVg/j7TemhHQySJ99cUkWvQWc
+X-Gm-Gg: ASbGncte9j904JkCwqcBQWLkIezM+SbshOJZmxwkruq2ICV2stNHUCuEhwPT3MugQIW
+	A1u/icUCofYwF4dRUpUBUeCZjx3Mz3ID62X3ClpZzyYAXcx2GuiLCFBWNpe9gxl/WAhnV62hms0
+	G1VPyKXasuaePtovPVEDP3ikGNoGjzkFQ6ugNHqJ1Wo89u/ALDYs4IPEUcSby5ZhWskj7yexA2u
+	q0DD3oyfyJfhWu+LUIAKSBkKAUhGQWmx0vurnxhCyx8JTU=
+X-Google-Smtp-Source: AGHT+IFBH6QXJvRW18+gfLm+VEHNtKAKh4EWppvXhfmrKKXkPioVQ+b0Kd0ODwqL4Zd3to4i9UzRN7iKxM94h8uE8ug=
+X-Received: by 2002:a17:902:e54e:b0:231:ddc9:7b82 with SMTP id
+ d9443c01a7336-2447a77afebmr6549035ad.13.1755532321031; Mon, 18 Aug 2025
+ 08:52:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810-msm8953-cci-v1-3-e83f104cabfc@lucaweiss.eu>
+References: <20250814-james-perf-feat_spe_eft-v7-0-6a743f7fa259@linaro.org> <20250814-james-perf-feat_spe_eft-v7-8-6a743f7fa259@linaro.org>
+In-Reply-To: <20250814-james-perf-feat_spe_eft-v7-8-6a743f7fa259@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 18 Aug 2025 08:51:50 -0700
+X-Gm-Features: Ac12FXyV1x2afpy-E2EhDR_cSfBMqeVdgvNI2wMfxjm0rwNa4JtVzwidrn9_Mpg
+Message-ID: <CAP-5=fXBot2K0MR9t7o6J7-FihNXzKcotdF6p3bfL7DwqR9jfg@mail.gmail.com>
+Subject: Re: [PATCH v7 08/12] perf: Add perf_event_attr::config4
+To: James Clark <james.clark@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 10, 2025 at 05:37:54PM +0200, Luca Weiss wrote:
-> Add the compatible for an 64Kb EEPROM from Belling.
+On Thu, Aug 14, 2025 at 2:26=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+>
+> Arm FEAT_SPE_FDS adds the ability to filter on the data source of a
+> packet using another 64-bits of event filtering control. As the existing
+> perf_event_attr::configN fields are all used up for SPE PMU, an
+> additional field is needed. Add a new 'config4' field.
 
-It is generally not required to add a compatible here assuming 
-"atmel,24c64" is enough to identify the specific device (i.e. read the 
-device's ID registers). If it is not sufficient, then some details here 
-about why would be useful.
+Somewhat off-topic, imo it would be nice if we could land:
+https://lore.kernel.org/lkml/20250603181634.1362626-1-ctshao@google.com/
+and show all the config values via fdinfo to better allow tools to
+diagnose when PMUs are busy, etc. The patch there tries to be minimal
+and just reveal config (even with being minimal the patch is stalled).
 
-> 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+Thanks,
+Ian
+
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> Tested-by: Leo Yan <leo.yan@arm.com>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
->  Documentation/devicetree/bindings/eeprom/at24.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> index 0ac68646c077790c67c424d0f9157d6ec9b9e331..1e88861674ac8525335edec1b214675c8efa3ffe 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> @@ -131,6 +131,7 @@ properties:
->            - const: atmel,24c32
->        - items:
->            - enum:
-> +              - belling,bl24s64
->                - onnn,n24s64b
->                - puya,p24c64f
->            - const: atmel,24c64
-> 
-> -- 
-> 2.50.1
-> 
+>  include/uapi/linux/perf_event.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_ev=
+ent.h
+> index 78a362b80027..0d0ed85ad8cb 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -382,6 +382,7 @@ enum perf_event_read_format {
+>  #define PERF_ATTR_SIZE_VER6                    120     /* Add: aux_sampl=
+e_size */
+>  #define PERF_ATTR_SIZE_VER7                    128     /* Add: sig_data =
+*/
+>  #define PERF_ATTR_SIZE_VER8                    136     /* Add: config3 *=
+/
+> +#define PERF_ATTR_SIZE_VER9                    144     /* add: config4 *=
+/
+>
+>  /*
+>   * 'struct perf_event_attr' contains various attributes that define
+> @@ -543,6 +544,7 @@ struct perf_event_attr {
+>         __u64   sig_data;
+>
+>         __u64   config3; /* extension of config2 */
+> +       __u64   config4; /* extension of config3 */
+>  };
+>
+>  /*
+>
+> --
+> 2.34.1
+>
 
