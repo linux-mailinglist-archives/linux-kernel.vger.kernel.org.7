@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-772750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E49B2971E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24049B2971B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A60201A52
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0944E761F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AFC257855;
-	Mon, 18 Aug 2025 02:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FA5257821;
+	Mon, 18 Aug 2025 02:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JDQ82g3L"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="irwfAP3q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4FE1487E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAAC1F582A;
 	Mon, 18 Aug 2025 02:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755484889; cv=none; b=uz2nCH2hBFEkI2AMK+nS+SEkD97th3cxKSa66pdTyplCLgwgvDL0S/WXXQirRcvt2028RIctK9sJQ6eQyWsW/Fp989r568Ww/fRBYd5HA2vm45WzPW7b+xjq2rQAAJWSVJDKH/3SWL2eq7RbU+h1KmwOSh/X0LAGvaWkm9/VcrI=
+	t=1755484887; cv=none; b=eOAvyEmeLKUn0Sx4cWz3Hd1l0bVjhVLlq6nSYynpvWEKyzF8da8MkBVXb9xubFf6fbJQRNGyucw0VoDpTc28R87q4V3K9tjs+sMFJsRkYX4p4UzPO0qxUCnNAyI7YHs3/GJKLvZR8BEqjEoyAzhxH6iYhB49NqcRJx0SMZPKG7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755484889; c=relaxed/simple;
-	bh=OYJ2wV7YEGlvd8sEDJAFrhHuUSIj06ibu6OWBTnRzNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hVkjQ49jAHBGej7xNVZKxbpoTgl9S3n3SdDamfzuATW7kWgs5rWhPUJCqHCa+OSPyN5PFL/026Dh1M+nbdfc/dxnytnpOsVezlfPQbBFMEdgWvk2Ba2mtCPzQ9AOskaP54+EEYOMuaXF4Z9l4Zajb3hVsn0AAROSu/H72f00njA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JDQ82g3L; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755484885;
-	bh=91ewaRB55Qgui8mCKdfj/EGnVi6e8/XSVqU1CqvlLts=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JDQ82g3LrHVrl/1gsxqNrYp81p4r3pmDujIpCxJ5kX2vEzV/RAa89pFLwZuYNoroO
-	 5ROudGemaxJ7mnf7vEu4gVsMVVtkaayyPZHLyg/WpGRNHakLt06dTRC69QbVXWhYvw
-	 yjfeBNow4BRhKIWmwds0XS2itwYN6FxJXDxxdMT80/aAhT4Xo/mXm+lIjB4bSrQXAV
-	 B1W3+oT6TjVeUuT2GQ7+OVLxyUuhQecktYc9xBGx0c3DJmrREW8Nti9jKQlsgCzqe3
-	 t0TS0Hx1rWvWmgfSjF5oi7ypfthpxGZCGVuzJsee8z2YZJMewW5rT4/lDcZ8Zabtew
-	 aErUxSfOPW62w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c4xmj4jltz4wbr;
-	Mon, 18 Aug 2025 12:41:25 +1000 (AEST)
-Date: Mon, 18 Aug 2025 12:41:24 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Lothar Rubusch <l.rubusch@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the iio tree
-Message-ID: <20250818124124.5b978e64@canb.auug.org.au>
+	s=arc-20240116; t=1755484887; c=relaxed/simple;
+	bh=XwyAzBzkyYUsxtoUqwoehmkxeFNQI6xkaYZl2/saPrY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=mw+yKJ52+fkY8AvIFDy2B5nBiJgNsp1LkKCvHrWeQhBAx4rmOQbOF/Gxp1RtKzfLe6894csznultOJu8sBAeRFFieyF09jYy5psn7kRAkzscoEHCcbBpWhpLHJJYzM73mUVyB2Hi+8cm96xHfubOZU4jUfHt1fNXFtxeXRuO43w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=irwfAP3q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF60C4CEEB;
+	Mon, 18 Aug 2025 02:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755484886;
+	bh=XwyAzBzkyYUsxtoUqwoehmkxeFNQI6xkaYZl2/saPrY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=irwfAP3qz5AAci8Aq0upT9TgWRluvcVPAPaXRn0dO424y2LSvfTdlD7Ny590XBTCt
+	 OVX0DbG4jariBuhxW4GWKWzNCfI8CnP+6HkbLWGJTSfTj2Ox91qSgIAfuMxi2ODrWi
+	 rwGqhFGQq7TZAS3jYsx1x5Ku4obXi8PzrMBNik84=
+Date: Sun, 17 Aug 2025 19:41:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chi Zhiling <chizhiling@163.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew
+ Wilcox <willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>, Sungjong
+ Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, Chi
+ Zhiling <chizhiling@kylinos.cn>
+Subject: Re: [PATCH 1/3] mpage: terminate read-ahead on read error
+Message-Id: <20250817194125.921dd351332677e516cc3b53@linux-foundation.org>
+In-Reply-To: <20250812072225.181798-1-chizhiling@163.com>
+References: <20250812072225.181798-1-chizhiling@163.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SkvU42YCu9jiRIKc7gQxG05";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/SkvU42YCu9jiRIKc7gQxG05
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Tue, 12 Aug 2025 15:22:23 +0800 Chi Zhiling <chizhiling@163.com> wrote:
 
-After merging the iio tree, today's linux-next build (htmldocs) produced
-this warning:
+> From: Chi Zhiling <chizhiling@kylinos.cn>
+> 
+> For exFAT filesystems with 4MB read_ahead_size, removing the storage device
+> during read operations can delay EIO error reporting by several minutes.
+> This occurs because the read-ahead implementation in mpage doesn't handle
+> errors.
+> 
+> Another reason for the delay is that the filesystem requires metadata to
+> issue file read request. When the storage device is removed, the metadata
+> buffers are invalidated, causing mpage to repeatedly attempt to fetch
+> metadata during each get_block call.
+> 
+> The original purpose of this patch is terminate read ahead when we fail
+> to get metadata, to make the patch more generic, implement it by checking
+> folio status, instead of checking the return of get_block().
+> 
+> ...
+>
+> --- a/fs/mpage.c
+> +++ b/fs/mpage.c
+> @@ -369,6 +369,9 @@ void mpage_readahead(struct readahead_control *rac, get_block_t get_block)
+>  		args.folio = folio;
+>  		args.nr_pages = readahead_count(rac);
+>  		args.bio = do_mpage_readpage(&args);
+> +		if (!folio_test_locked(folio) &&
+> +		    !folio_test_uptodate(folio))
+> +			break;
+>  	}
+>  	if (args.bio)
+>  		mpage_bio_submit_read(args.bio);
 
-Documentation/iio/adxl345.rst:161: ERROR: Unexpected indentation. [docutils]
+So...  this is what the fs does when the device is unplugged? 
+Synchronously return an unlocked !uptodate folio?  Or is this specific
+to FAT?
 
-Introduced by commit
+I think a comment here telling readers why we're doing this would be
+helpful.  It isn't obvious that we're dealing with e removed device!
 
-  fdcb9cb9178a ("docs: iio: add documentation for adxl345 driver")
+Also, boy this is old code.  Basically akpm code from pre-git times. 
+It was quite innovative back then, but everybody who understood it has
+since moved on,  got senile or probably died.  Oh well.
 
---=20
-Cheers,
-Stephen Rothwell
+Also, that if statement didn't need a newline ;)
 
---Sig_/SkvU42YCu9jiRIKc7gQxG05
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiiktQACgkQAVBC80lX
-0GzL8wf/WRGcGuhWBBIeKf3QsMO/X8K4mFT7wHQB5PH7KjzDT4NOKYSwy6N9UlFu
-j8LD3cnLLawrfMcxXgWpPHTIpZKFKMncJ6yoPhpI7rkNV8d/g4wyHxEe5/c+jU92
-dgjq5KUKKnS4sSQRpQfUbxhvHxpIF+lbr9Lb6Be5xybhXa34NaX+tQEhlgieNAx1
-x5kfx1WUFksP2uML6gQiSPnRnV6WJw/5azZOo+iuguVbS/wW1hntGg4CPL9poO6t
-7h9UKzzXVu//t9Vh1p3bUJpK28aDttRq/iVoIwWRLEJYKPKTNEoI2TSAnrnQG+Cl
-uqmpCTRfRi8Q+yCuPAQjFwmnONPOlg==
-=0Xsr
------END PGP SIGNATURE-----
-
---Sig_/SkvU42YCu9jiRIKc7gQxG05--
 
