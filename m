@@ -1,138 +1,101 @@
-Return-Path: <linux-kernel+bounces-774039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A54B2ADDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:15:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B019B2AD5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790773BFFB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:15:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51E618A3DC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62C13376B7;
-	Mon, 18 Aug 2025 16:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867E8322A2C;
+	Mon, 18 Aug 2025 15:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="tyklk9Lt"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.228])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSiNvhzk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98893278146;
-	Mon, 18 Aug 2025 16:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C854231E119;
+	Mon, 18 Aug 2025 15:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533701; cv=none; b=P0YBSxvF0LP4arrjl4chJJv5Naqz/IlbEwWnQ2izB/THhH5WepLkHsZFDl+oxhrkrCCRpUlatEm/gahQVkvEDLt0m5Bc5B7UiTLi3pafECjeVlkagyX+mQKnXuWfKVz/MwkfAq8uQ0nUaYg7deLG42FJmDH/sQpxPlaFRi6/mSw=
+	t=1755532264; cv=none; b=MPPCM1x0SWtu+pFAI5167MjzRnE15FHP+ReH71wAwrytY3+sEg5V/5NutT3BA8LnkjeqKEF00rjvoR9nAxI5nk8KdRhhyNIHXDazT1KejYla8b1jDLP3lqtmo4hGSsRiOqV9XAS4cr4NwA1CUTyRMjrLhUge3xAUt4PyBDHCH0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533701; c=relaxed/simple;
-	bh=Crynj0KpYqual1/+N1DhoLywG80ccPOdKO1wbUlhKtQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s9j+DSeEiLRTHQXUaw69/IgUTXwBGutLDfkLRene5bAAcvNTGANS7mh6PuHzB64C2I7Rvev/iWTW8RRRMD5pDZxYHsLfoH4ru2t/56JxVMxc9HdiJ0Kc2WSCRq9lP73GFNN/pck2ZnwCcvEaoP5ZS4oBYPamt+lORZh+fjZryu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=tyklk9Lt; arc=none smtp.client-ip=192.19.166.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 6FE2CC009BE2;
-	Mon, 18 Aug 2025 09:08:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 6FE2CC009BE2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1755533320;
-	bh=Crynj0KpYqual1/+N1DhoLywG80ccPOdKO1wbUlhKtQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tyklk9LtR8WtVWv5s5RuPNr2iiJYYrEBq6Hn+n8qg7W9Fp50jM+uGLwyzKltuG3Rr
-	 su/L2riiDDzlNn1jFzsHq5shbPj26+nKL916s2IjlD2MT4e7CBIPtcg7y8gFF40m36
-	 cSGNshL1RjmslXnPNXLYIklrYI4Eq0TeZy5qIALI=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id 51D7C4002F44;
-	Mon, 18 Aug 2025 12:08:34 -0400 (EDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Mike Tipton <quic_mdtipton@quicinc.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v3] cpufreq: scmi: Account for malformed DT in scmi_dev_used_by_cpus()
-Date: Mon, 18 Aug 2025 08:50:48 -0700
-Message-Id: <20250818155048.551054-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755532264; c=relaxed/simple;
+	bh=r0yvrAIAXkXKJt14/95ZaNgQUPwCBY8YO4aKifN9lhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiiUa56yhW+90p6NG7KZjKxENmYT+eisXD6sd7L4zN/wOZP1lyAkuJYmASLUhgctow7hhmB8kYR89ZwZR8UwhVlwLCyF/+sTSYBV60U31Uql0yrrBAjXKJr+LeRllH132FM02gzi8yxPgr6gSXM+eGhcfa5tyhMwWFGjJiI/WxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSiNvhzk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744F0C4CEEB;
+	Mon, 18 Aug 2025 15:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755532264;
+	bh=r0yvrAIAXkXKJt14/95ZaNgQUPwCBY8YO4aKifN9lhk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VSiNvhzkqt0xqOWA/qUE5I8bsWGAB7vxvG5ef9otr2GZUiRn+2WLLbjzC2StcldWv
+	 Lcy7Efri0ZTxF6NJWBnMtOTu/3zhBb80CdR6KX5lAZ19uLEGY7+RAvcEIfgDTLuEUl
+	 jsvwGFmxZGaECOwxZ5e9hGg4bhtciWK3lhQTCekNc0ZxQmLVu1Z1Rdhyybj7c4WI26
+	 OXZQROnhEKBmelrPhM75MvFfh+J7pdRd9skmis55oRvI3LeTQB9gE48uyzm2EV+ZOl
+	 d2WtuOWtGbBlw/jqijHHbt/gxHRGaqEPS5vlMzmCxoL6OW2BAl97eHlF8Fr0sMCzfL
+	 8Yu1OD3u3Bgiw==
+Date: Mon, 18 Aug 2025 10:51:03 -0500
+From: Rob Herring <robh@kernel.org>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] dt-bindings: eeprom: at24: Add compatible for
+ Belling BL24S64
+Message-ID: <20250818155103.GA1272375-robh@kernel.org>
+References: <20250810-msm8953-cci-v1-0-e83f104cabfc@lucaweiss.eu>
+ <20250810-msm8953-cci-v1-3-e83f104cabfc@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250810-msm8953-cci-v1-3-e83f104cabfc@lucaweiss.eu>
 
-Broadcom STB platforms were early adopters (2017) of the SCMI framework and as
-a result, not all deployed systems have a Device Tree entry where SCMI
-protocol 0x13 (PERFORMANCE) is declared as a clock provider, nor are the
-CPU Device Tree node(s) referencing protocol 0x13 as their clock
-provider. This was clarified in commit e11c480b6df1 ("dt-bindings:
-firmware: arm,scmi: Extend bindings for protocol@13") in 2023.
+On Sun, Aug 10, 2025 at 05:37:54PM +0200, Luca Weiss wrote:
+> Add the compatible for an 64Kb EEPROM from Belling.
 
-For those platforms, we allow the checks done by scmi_dev_used_by_cpus()
-to continue, and in the event of not having done an early return, we key
-off the documented compatible string and give them a pass to continue to
-use scmi-cpufreq.
+It is generally not required to add a compatible here assuming 
+"atmel,24c64" is enough to identify the specific device (i.e. read the 
+device's ID registers). If it is not sufficient, then some details here 
+about why would be useful.
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-Fixes: 6c9bb8692272 ("cpufreq: scmi: Skip SCMI devices that aren't used by the CPUs")
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
-Changes in v3:
-
-- corrected multi-line comment
-- added details about when STB platforms used SCMI and which commit
-  clarifid the binding requirements
-
-Changes in v2:
-
-- do not leverage the SCMI quirks framework which in spirit is for
-  dealing with SCMI firmware implementations, this right here,
-  specifically pertains to an older Device Tree. This also makes it
-  easier to backport that change into stable trees where the commit in
-  the Fixes tag is already present. There is no dependency upon the
-  presence of the SCMI quirks framework
-
- drivers/cpufreq/scmi-cpufreq.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index ef078426bfd5..38c165d526d1 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -15,6 +15,7 @@
- #include <linux/energy_model.h>
- #include <linux/export.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/pm_opp.h>
- #include <linux/pm_qos.h>
- #include <linux/slab.h>
-@@ -424,6 +425,15 @@ static bool scmi_dev_used_by_cpus(struct device *scmi_dev)
- 			return true;
- 	}
- 
-+	/*
-+	 * Older Broadcom STB chips had a "clocks" property for CPU node(s)
-+	 * that did not match the SCMI performance protocol node, if we got
-+	 * there, it means we had such an older Device Tree, therefore return
-+	 * true to preserve backwards compatibility.
-+	 */
-+	if (of_machine_is_compatible("brcm,brcmstb"))
-+		return true;
-+
- 	return false;
- }
- 
--- 
-2.34.1
-
+> 
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> ---
+>  Documentation/devicetree/bindings/eeprom/at24.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
+> index 0ac68646c077790c67c424d0f9157d6ec9b9e331..1e88861674ac8525335edec1b214675c8efa3ffe 100644
+> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
+> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
+> @@ -131,6 +131,7 @@ properties:
+>            - const: atmel,24c32
+>        - items:
+>            - enum:
+> +              - belling,bl24s64
+>                - onnn,n24s64b
+>                - puya,p24c64f
+>            - const: atmel,24c64
+> 
+> -- 
+> 2.50.1
+> 
 
