@@ -1,81 +1,83 @@
-Return-Path: <linux-kernel+bounces-773771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837EAB2A993
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:22:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0BEB2A98D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9569F6E5D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBFEB1BA5329
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360F6322A01;
-	Mon, 18 Aug 2025 13:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F07322A35;
+	Mon, 18 Aug 2025 13:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EsbW9yPo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JNQR1zH2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE45322779
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E97322A20
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525582; cv=none; b=TbWYm/52G9RLOxiqb1yDqcN4ZAJZ4qsPnVjvshC0C3oVyjYnpuJSlrV3w2F6YMAsP13Obeie8fhKv7tLW3urkZcJdTAD2j5aOxbLcMjl7dO+KjwJVg43RdgbttQQaxrrMym9oR+OZpvfxcqt111bqQVSK/E+hWNdZ4bWKVNIjWI=
+	t=1755525591; cv=none; b=FT89PW5+rZ8+kl4O+pBHJjVip3SvEUZ+5FQ3Tb2plH/lIKlA+BVt42WXH1Bwf/0Pgc1MaRHKfZ6ySkzxx3ND4KlVqysDmE6QzCENY50aqoTVXN7kFAbh6492Wp4++sgDuaPYaeitLPMg0G58ZWbRRpA5otWWGeeZa1pKOm54yOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525582; c=relaxed/simple;
-	bh=CiNgOZGMixsgD0/6qrG9yAA2HxAX+DcIvAlaTGUjvLs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jDgOZDym0qqS94oOQVPipl0m+NeGBD0ls6xCnEJJWUk0cWLEwsZKhSamvIw4Zu3O1XUlzCymI3eOAjUcK0SJspeMJJ1mtXNkVnWOvjlL3Wc3oLL7fp4q82UqpYAXZopiLixuVeyaKEUPSEcqXTZy1MklSgrRgymZ80abVEvOEb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EsbW9yPo; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1755525591; c=relaxed/simple;
+	bh=cgwwu95M0/PjQLKh9VcFW9sZO8JImGY2MFIZ04G52J4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=acaAXRsAMUwgEvU0kp7zcs2OPgqYlomQIubeVt7YnddDlSvWgW/Lkf1mTLmmvTVEQ+Zp1d6tp1GMSx3pFCvp4q+nHMDT7zIZmgIy2mXKk6ayh4kOz9392/UijCJmQzeIpjmZUEapFg6B7gXTZ86SR5+Whxvuc5+9SJ/mbKh7YX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JNQR1zH2; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755525580;
+	s=mimecast20190719; t=1755525588;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kyCc4a5+AO/yig/KWWz+VAyj7gnO9/iimj/mS2PVAmg=;
-	b=EsbW9yPooBa2XTevl1U4flJ3zLWRMWFMGbXtO1gZ8KrhTGJO+s4TFIrANrJ4tuoaneWCeh
-	ZqZHacHQ3bKDEzbkjDT/k45/l2rOIRPLAmwNTU0weQHoJbpRUeQN4CghcsKKW5DyDmDiYM
-	wLjCvFImVCh3PE9uHGZXhgBvblXDKmA=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n2CKq6YUad3/DjmNn/azhMuZRDmF+l+ZwOAVkMKXPNs=;
+	b=JNQR1zH28BjKjDGtsNSpqfZim77Z/vqEI1BhSkod+r30K2gqdEjnap55uCHcxN+E1A4ek6
+	rVET9xWIl2SLhSHrP9dOoTjicmnd6RFJ5Ns616yrjeg2GiNWR0Qdj8AEwRLJeSUoVgvQYU
+	/+r9Jaow5nKdus8tNQ68xm1Ecgf9Lr8=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-381-_Buovj2aM6K9OsoP0wiviw-1; Mon, 18 Aug 2025 09:59:38 -0400
-X-MC-Unique: _Buovj2aM6K9OsoP0wiviw-1
-X-Mimecast-MFC-AGG-ID: _Buovj2aM6K9OsoP0wiviw_1755525577
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32326779c67so3943396a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:59:38 -0700 (PDT)
+ us-mta-690-3eE1a3RkNJeILLsF9fWpBQ-1; Mon, 18 Aug 2025 09:59:46 -0400
+X-MC-Unique: 3eE1a3RkNJeILLsF9fWpBQ-1
+X-Mimecast-MFC-AGG-ID: 3eE1a3RkNJeILLsF9fWpBQ_1755525586
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b47174c8fd2so7984204a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:59:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755525577; x=1756130377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kyCc4a5+AO/yig/KWWz+VAyj7gnO9/iimj/mS2PVAmg=;
-        b=KTRNG2N2Uu6pSNG7lWYDN9ZW2NvY4Vj1+g4uLn0m9LbBgCUTcWY1CF/Jk/TUlLnuQn
-         VLgmHzNgQHAbQWWMXqilxIZG6RcjT/9DTq7RSaxjZ9RUDX0AM4mEBLAPlrdygDevRfhm
-         rkaX2Ksh14r9J9h141sKHuippbv8RwfTQu/A56RoBXpWnKH5lPVYbc35BPoHNd2sgLQF
-         LwSPXFFRIwkMQntrE/jRAwMQB/CzjLMgRne/QkKe8Z1fBG6p2VrVqECR93qMn2SMGmt0
-         gDCp1ta+t+54uVFpwLtwo+Wsqom2hdYJhhNWsfnViu8TUvlK3refr2kWva54z36QH08M
-         KfUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3FWXWi63jm4w7A/XGA4dcRxlwz6qyZ0gFSubEILcP3njFfP46bPuYxOd3DUYP/lTTO5fA5v09mTFlVjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDeFvnO5E9MWFkGivq4h0Le7eP/xRIXso94Z7oVS6eKCJEBGN6
-	7e26euatPbjOaXCJsNF5y1htsCeyE4kgl/IrYax2CsGby/OFL5gEgvjqzYg7emeAa2wtNEk9c1j
-	xfqwGT44KO4gvnZ7ubxCqgvvn04wMoUDIVAtvfn6xG157G5QHi1THxp6qiY6FW083JQ==
-X-Gm-Gg: ASbGnctyuqtxx43lCH1Ues+A4ZtHnVfR+6ey8Tw4afpusuBqLJMPmS7gVVx91Nhkk6d
-	4Cjxb8sI6XAZgOsTh3K/423dj0Bex13M34OwLg17BSJO2jnMlABS1TUkcmZyDpEfkl/mu8wHzju
-	yGA6q9Ij0xCMdSF/uB6RTmS4udMdYtP69hne/uDyY0FlfWcL5nU4kGcoEkgp+Uh1ph6fmTecPwi
-	AheumWPo910ABGM6K0es3g3ML9UqlkdEM9FpnNL67TDGcApNGG6QzAiiBYMvNlIaeNQBhPTDyj5
-	tuFu7YRWQMXF7PMkMOfCzplSgBIZi1P6bQ==
-X-Received: by 2002:a17:90a:dfc4:b0:321:d071:96a2 with SMTP id 98e67ed59e1d1-32341125b39mr20287924a91.0.1755525577054;
-        Mon, 18 Aug 2025 06:59:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEFZhqlZ8fij0sRgHmfXSCb3Qy2WxDI2YZmEvN4xLfCSTRfJG4cO4WUHjpLbXmfR2jjNnVBw==
-X-Received: by 2002:a17:90a:dfc4:b0:321:d071:96a2 with SMTP id 98e67ed59e1d1-32341125b39mr20287875a91.0.1755525576654;
-        Mon, 18 Aug 2025 06:59:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755525586; x=1756130386;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n2CKq6YUad3/DjmNn/azhMuZRDmF+l+ZwOAVkMKXPNs=;
+        b=JSBXnIbHCCgSxgMRmauIA1lLPN/Yb44OQ2vqF9NQu9sQmcUMjgGuL2etPQYW0y5CkL
+         5tajGxyurQPhgL9h2T/tSCWKyOZo1lh97M8Q9/9OAu4tLrC0PBMTEm7498FDwAbElNh5
+         RQyEc6alrkWyi9qQT9UFP+cQdgxLcVrIfUa5TI8hcU00COS0Ye9pQFk6PxIoZRGR/D7w
+         UQ76E5v9RSzistP0BHz4vTcxkALzSnvw5mftQPPQRylUf7eh0CuCZUv85cj7cu9gsfZ/
+         Cf9AF/yV/OttfABMlxXS6Tv/q9hIdci1mMJydzYYoPnkjH14/6e9R4MXPx9/um1D6d4d
+         qugg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcT2LNgmNj2dUS+iCwxP+L3MzMP7WhL1I+UqVrfi3VdJBsO6GmIVgW1T7TSPGsOlOHSc8OrlExV+GQn1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHv14xpz2zvzYTOj3ZX4Mx8CXRkT/Hl4rj6uxy7Xzds7tVChuv
+	nUesm29NCmXij545W9Qxj6yOfNIpGZq1WZ0iSU7WfwDj6mKhwwoBYr7TmWOS/lABQWT3Pwuth3m
+	xIOIbdcHy8TB57ra/Ge68QRkQ17lI/Br4zTa6AS0zy9EcdIennbFJoc37IJPk3dPbEQ==
+X-Gm-Gg: ASbGncsKRfoYrb5TtG/fdqDsC56wqVj72n0PEmdzUJYH637is/nXV1O01qYuhNQjaUY
+	fV5gcMk79xtzx9H3fgAJ4eLgw1YpmPaz+0NhcgUMUD+0sbRb1sEIAIZ8gVEf4we0cnZHzb3+3LB
+	K4LLD7KknjMlBAwq8REAuSlHHRINPMNAYYlH26NkDZcRNYr45Qo1BS55XSSl+T0MejLcho6PhCK
+	6n0ucJ57NuRMS1yOBC8Odqve7+n6dJPxRJDXMsHEBJTp4WZ8PfJ5z1aeyyliLcVVncuFf7/Heh8
+	oGUox9mf5g6cbKzHBN/1q854OcV4Cs76Nw==
+X-Received: by 2002:a05:6a20:939f:b0:240:a53:79fc with SMTP id adf61e73a8af0-240d2fb95ffmr17025513637.29.1755525585642;
+        Mon, 18 Aug 2025 06:59:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELiXPnW7YPO4rEF/tv+C6PkkDunFLclnjtOiZ6LrUtYCR63sCROrCmDGY+0H8Di4y4hwCxWg==
+X-Received: by 2002:a05:6a20:939f:b0:240:a53:79fc with SMTP id adf61e73a8af0-240d2fb95ffmr17025476637.29.1755525585240;
+        Mon, 18 Aug 2025 06:59:45 -0700 (PDT)
 Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d60978fsm8269896a12.26.2025.08.18.06.59.32
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d60978fsm8269896a12.26.2025.08.18.06.59.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 06:59:35 -0700 (PDT)
+        Mon, 18 Aug 2025 06:59:44 -0700 (PDT)
 From: Ryosuke Yasuoka <ryasuoka@redhat.com>
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -93,10 +95,12 @@ To: arnd@arndb.de,
 Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH rust-next 0/2] Add llseek support to miscdevice and samples
-Date: Mon, 18 Aug 2025 22:58:37 +0900
-Message-ID: <20250818135846.133722-1-ryasuoka@redhat.com>
+Subject: [PATCH rust-next 1/2] rust: miscdevice: add llseek support
+Date: Mon, 18 Aug 2025 22:58:38 +0900
+Message-ID: <20250818135846.133722-2-ryasuoka@redhat.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250818135846.133722-1-ryasuoka@redhat.com>
+References: <20250818135846.133722-1-ryasuoka@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,27 +109,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series introduces support for the llseek file operation to
-the Rust miscdevice abstraction.
+Add the ability to write a file_operations->llseek hook in Rust when
+using the miscdevice abstraction.
 
-The first patch, rust: miscdevice: add llseek support, extends the
-MiscDevice trait with a new llseek method.
+Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+---
+ rust/kernel/miscdevice.rs | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-The second patch, rust: samples: miscdevice: add lseek samples, add a
-simple example of how to use the new llseek feature. As currently the
-MiscDevice trait does not support any read/write file operation yet, the
-sample is fundamental one. 
-
-Ryosuke Yasuoka (2):
-  rust: miscdevice: add llseek support
-  rust: samples: miscdevice: add lseek samples
-
- rust/kernel/miscdevice.rs        | 36 +++++++++++++++++
- samples/rust/rust_misc_device.rs | 68 ++++++++++++++++++++++++++++++++
- 2 files changed, 104 insertions(+)
-
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index 6373fe183b27..597e7b66e493 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -125,6 +125,16 @@ fn release(device: Self::Ptr, _file: &File) {
+         drop(device);
+     }
+ 
++    /// Handler for llseek.
++    fn llseek(
++        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
++        _file: &File,
++        _offset: i64,
++        _whence: i32,
++    ) -> Result<isize> {
++        build_error!(VTABLE_DEFAULT_ERROR)
++    }
++
+     /// Handle for mmap.
+     ///
+     /// This function is invoked when a user space process invokes the `mmap` system call on
+@@ -245,6 +255,27 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         0
+     }
+ 
++    /// # Safety
++    ///
++    /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
++    unsafe extern "C" fn llseek(file: *mut bindings::file, offset: i64, whence: c_int) -> i64 {
++        // SAFETY: The llseek call of a file can access the private data.
++        let private = unsafe { (*file).private_data };
++        // SAFETY: This is a Rust Miscdevice, so we call `into_foreign` in `open` and
++        // `from_foreign` in `release`, and `fops_llseek` is guaranteed to be called between those
++        // two operations.
++        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
++        // SAFETY:
++        // * The file is valid for the duration of this call.
++        // * There is no active fdget_pos region on the file on this thread.
++        let file = unsafe { File::from_raw_file(file) };
++
++        match T::llseek(device, file, offset, whence) {
++            Ok(res) => res as i64,
++            Err(err) => i64::from(err.to_errno()),
++        }
++    }
++
+     /// # Safety
+     ///
+     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
+@@ -340,6 +371,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+     const VTABLE: bindings::file_operations = bindings::file_operations {
+         open: Some(Self::open),
+         release: Some(Self::release),
++        llseek: if T::HAS_LLSEEK {
++            Some(Self::llseek)
++        } else {
++            None
++        },
+         mmap: if T::HAS_MMAP { Some(Self::mmap) } else { None },
+         unlocked_ioctl: if T::HAS_IOCTL {
+             Some(Self::ioctl)
 -- 
 2.50.1
 
