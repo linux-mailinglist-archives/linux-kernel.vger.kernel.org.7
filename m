@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-774025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79682B2ADC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:09:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A4DB2ADB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17D868180D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06181964508
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACC2340D8B;
-	Mon, 18 Aug 2025 16:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E62340D8B;
+	Mon, 18 Aug 2025 16:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8aUYaC+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="jTDbiiow"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10677221294;
-	Mon, 18 Aug 2025 16:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9774A253F3A;
+	Mon, 18 Aug 2025 16:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533121; cv=none; b=ko67t/Uf9XE4VUyMHb09qLPfTLsWrxra33KLyJl6IiAnEiTH3uCwVURUjE4HHB2+d1OQbc8oFPoQedoWr0D2O2ayic8VHPQpqHbLNQ0v2aG51JZ5Di1wODXqoCf99/cCfziCCloTdlWBU5DclkNfe7QDUEXd7BQWCzmCRJd3IBs=
+	t=1755533128; cv=none; b=XI8SNMgOpAlmHH6nsACeglvyx0tzadj0dGAhoMgZYw8R7IgudA2NaA3b0WbWrlTV84QGsjqDygRgJbBeKQw3z18u6kbXS3yNIDIkGU4sge60hMCoi66TvDPYk1zgENZGKN7iFKEFZ3pipWBkKxewLHWDXo+u/ThURIXmRhwRIdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533121; c=relaxed/simple;
-	bh=UHJQ5AOO3NWQGsPJiDOZaBcoavjmPk3YU/SIDGJiLyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XUxR7bIDz0IaKrgZVCsUlbAznDzzr8mJJmST1obrS5Ub4jCQy8EwEf16kHv5+65P/clX5fBIzB6V4mUrGEtvfCNQzlspjXNEJaplGDSzEBdclOxUMlOfhGGjXQCATnRYM3+sFKwe9s/Pm4SOoSZls14yaaDURZ79XPS5R99FStY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8aUYaC+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5487AC4CEEB;
-	Mon, 18 Aug 2025 16:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755533120;
-	bh=UHJQ5AOO3NWQGsPJiDOZaBcoavjmPk3YU/SIDGJiLyQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X8aUYaC+edxp7UNq2Uhvs74jx45Zzsjskpqa+ccARjEADGRxh5HkkZpEoAWFZxdGw
-	 4C2oPWJrA+MBnUD7gCFKYT0ZOVozFiB3uS9yNpfp/uyC5sCpr+mTmRW5eqXQUspRV5
-	 AM5ODYjFyyITSI1XTe88efBsrxc0x+OyIMo+GekeZgp5NLUgbJfNQ6rKEqKkaqvFrC
-	 0q4FMUBvQkfjvO+ilBVtMWa+y6YqFlVFo6f+f2sqTbW1yHN9x+q0KeUiLWITotNXds
-	 KvTMUSO6piihyY0vLVnEt5hvotMh1giMieKoi8aWnl1SGkEC+BEZ6IcTrpZ84cTTaY
-	 y+80yAFB6NGRw==
-Date: Mon, 18 Aug 2025 09:05:19 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, xuanzhuo@linux.alibaba.com,
- dust.li@linux.alibaba.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, David
- Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
-Message-ID: <20250818090519.33335d5e@kernel.org>
-In-Reply-To: <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
-References: <20250812115321.9179-1-guwen@linux.alibaba.com>
-	<20250815113814.5e135318@kernel.org>
-	<2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
+	s=arc-20240116; t=1755533128; c=relaxed/simple;
+	bh=5mamOuwuN2q0c1HpCm7iCluXnDCuzCY0FW8G1fkNs8I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SCE66YrqFibZDyfTrGYuVy6xrrOS77FSgi+kw5UjeznLnlVsG16Bc7UW2P8j0hvGQ2042q/LeOLUAcTe/kyw87XPBQrUGfNbKOCQkJBNMUk+mhr0FAhT9C+rd0G2OUQZyzXJptFJbudIuWdexKBypOYV7Zs2rVPAmcfNHrSmUwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=jTDbiiow; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AB7A640AB4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755533126; bh=wk/rXX1AoG7L4arFu7XcJ27vQ+aO9yrhpMlrzmUyPdo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=jTDbiiowfIAA2xOD4uU5CeBeWqMnV7BuSLi6XqnYorLlyf5ORDCLrbvz6iIbWtys6
+	 Noh5+xeaOO2cxsWtOhIap65y9wTXy4pShJCTyw5m2xgpdFoJeWvysyXTV9ng0v96W0
+	 aRROIASopbyNyUnJUySksoJgTlPCW9Z03yPxAR+jznpiM9Z8asZnw2xnGvdb3EZolm
+	 BwCnva1idG2KoKtDV2UzTXApepaytbFj+Drf+stuCkUGuJ55fGkDLtPQk1EY3iqm/t
+	 XKtxXnBhOmfeLjYPJNrj9MZVwF85xNd4Bhut++3rAhnoTRcKm9s/+2ZAawPpQ9jvGD
+	 9XvvK8kNdszjQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id AB7A640AB4;
+	Mon, 18 Aug 2025 16:05:26 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>, tglx@linutronix.de,
+ bp@alien8.de, peterz@infradead.org, jpoimboe@kernel.org,
+ pawan.kumar.gupta@linux.intel.com, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, "Nikola Z. Ivanov"
+ <zlatistiv@gmail.com>
+Subject: Re: [PATCH] docs: Replace dead links to spectre side channel white
+ papers
+In-Reply-To: <20250816190028.55573-1-zlatistiv@gmail.com>
+References: <20250816190028.55573-1-zlatistiv@gmail.com>
+Date: Mon, 18 Aug 2025 10:05:25 -0600
+Message-ID: <875xekaa4a.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Sat, 16 Aug 2025 11:52:18 +0800 Wen Gu wrote:
-> > This driver is lacking documentation. You need to describe how the user
-> > is expected to interact with the device and document all these sysfs
-> > attributes.
-> >   
-> 
-> OK. I will add the description.
-> 
-> Would you prefer me to create a related .rst file under Documentation/
-> (perhaps in a new Documentation/clock/ptp/ directory?), or add the
-> description comments directly in this driver source?
+"Nikola Z. Ivanov" <zlatistiv@gmail.com> writes:
 
-It's supposed to be user-facing documentation, so Documentation.
+> The papers are published by Intel, AMD and MIPS.
+>
+> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+> ---
+> The MIPS blog post is nowhere to be found on mips.com,
+> instead a link is placed to the last time the web archive
+> has crawled it.
+>
+>  Documentation/admin-guide/hw-vuln/spectre.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-But you ignored David Woodhouse's response, and also skirted around
-Andrew's comment on OS kernel being an abstraction layer. So if you
-plan to post a v5 -- the documentation better clearly explain why
-this is a PTP device, and not a real time clock.
+I sure wish I understood why companies feel such a need to break links
+so often ... I've applied this, thanks.
+
+jon
 
