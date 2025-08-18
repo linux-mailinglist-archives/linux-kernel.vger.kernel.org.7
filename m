@@ -1,137 +1,171 @@
-Return-Path: <linux-kernel+bounces-774521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626D5B2B389
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0680B2B383
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCE45584013
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696BE3AA7DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EFC215075;
-	Mon, 18 Aug 2025 21:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90B4215766;
+	Mon, 18 Aug 2025 21:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J7Ec4Mvt"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MVb0U/d7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A933451D0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B3C18A6DB;
+	Mon, 18 Aug 2025 21:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755553015; cv=none; b=SIz8ql5WRRMLoO4tB2pfqmoWetzqVy0e+msCwwwr7z5z9srfrA6/snvxuQAUJxrWNcJ9VEHcJYJXWH77aPj0+W5mP4k/OIa1Sff5lGiu5popsoolFoE6ol+ylXfDkpkUSYA5W+zpy10o4Dh4KGyYJ09iFMuTA6n2ucguXEe1crI=
+	t=1755553031; cv=none; b=k7il/sRga/y6+UR4pXJSbx6i6zo4tc/9L6btDLzGOUqwLIAp93E+32rUHMxp/fMCeBJ6CJK7iRCzcEWup4KOqKyYRAyrM5Y3KdHHnjdBP6Aww90ie62o0bMadWtD/YynLttn+2vA3dbbfMbWrCf6V9Jb5eDQ/panGMnouSf7jJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755553015; c=relaxed/simple;
-	bh=qSXmxjkE7tWxGF9GYswWGcUoeX7dBav9UeXc81vA4C0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXNQKICg+L0hKtmhO8R7L44hEtZcWSFqIhG/ePGDcMBQGg5xlpyuuBA8AAveHBRJWTSnqmwhCgUbb1lgz2ssSCy2DvABOB/pc9JMD3/geAFHTBrrjHmvAodQfS7c4tOJX/YvXqKlER+T/gHhL4A4NFBjp+8+grQ0ocoW2mzcm+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=J7Ec4Mvt; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7347e09so743953766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1755553011; x=1756157811; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQ6Xr/RwWLTuxcCIJ1FhU8AVBTTArUeQ/AN3U4J5Pw8=;
-        b=J7Ec4Mvtfkvh2JkPL02eizTd+us1u4nL8RRyAQ+njST8t545fQiZpEfrBhdqyw3V7t
-         IpSZTKjbiX6rhPeIjCEaAUXcyUSxiVPzEejrcgqPAvVExv1is4yh9I3Kk1Np5yDijFBd
-         B4XYfMVpu0YouSVyVe4yygqAEo9UccIEnHNwk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755553011; x=1756157811;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aQ6Xr/RwWLTuxcCIJ1FhU8AVBTTArUeQ/AN3U4J5Pw8=;
-        b=CRToVbMPF+lu+nuvp8k/oV9lZDsbzszZOyulreexES2ItuJjM9aSSXg83XVZX7MREk
-         I8PwW6/0PCpWHEHhpefRM7u/qHPXCjmjdncd7m30ci8ighICKH8FfQqy709bKqNMeOsF
-         iUyqgfeb70s9hU76CkfI0a4/Hd/eqWmDLP/iM2L+edmpDqIx149Nw8KhfCGbHkzIi61/
-         iG1+AY7tIzIkV4AW5OYDPhpYOXRClQJWk9kYOOIgp/wz3eAQiQLhiwaRU5DeEaEt6TVU
-         3NdZCxr6tCUtlPuoZiQxy+VAVWVRHABKTs+lcJf5Dv4qPr1Y0AtpV2JaKV8LCE2uyJkg
-         ui2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVeMoKJY3hYsTe657e+y3l6yv8GwZA6LamedxHJQWc3w0PXiYp+8yyAckSYE4JTKG3qAI7OBc7Obo31Nf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8BdBix5Q2c5vEtinwhy5g5McC+KFuVDNpWYwRQ7XC0Un6EbrW
-	XXMdB4yUuvqz+DGyajWK1IWFASpfOks5+TxqO1hq0t0dL3Lr4rPNWpakTSpmpSqydVFpeg15sOD
-	6jV4QuTU=
-X-Gm-Gg: ASbGncuGSx1T6px2Q54DzA45s8w4YPsCXNCzoZvr9J6K4pmV8TplZoWqoPpwU2DkyWD
-	WV2N6ZXx79Rb5XqFQbMT/ulF0R53ewPvQS07PbmMqH/s2+wD3itHd6rTHURtYlc+oXchGuD7XCh
-	DE6VYu+iHMNbdIVGUhhHzH2VUBhDJR/ExT+OahRY5s/M8/G7OqttpAeDn6NJqXzfF3A61MOcOZx
-	QoZsgEHGxchjH2uSWyuIZwe1cExNWWmX2PAO5gMmOxwjpyTTn+DWPCsClE8uAGwXw/tywUg/Izy
-	vkbOtL+VhBRqrEPaq/IxTz7gnokLAEWS9TU5m5VvRdrvn/EvC17Wzxtmm+6BQQUAJapPklC4k04
-	krUuU337Q60lj2Ajyt6dxvTxgqNB8ZTwpzwFVjKipDP6lXxFQyq/PT9fSmDT1FFkuuWLx05bMS1
-	reCUaAH64=
-X-Google-Smtp-Source: AGHT+IEgxceSM3jKOLFeaZjaqTYX5fkg+RDlfNMpw6k+fKmB6aEEKNH8A+TMJLg301T+9QGFFSsPUQ==
-X-Received: by 2002:a17:907:6d06:b0:af2:80c9:7220 with SMTP id a640c23a62f3a-afddd0b5f4bmr25126466b.36.1755553010538;
-        Mon, 18 Aug 2025 14:36:50 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd01ab55sm870682266b.97.2025.08.18.14.36.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 14:36:49 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b7532f3so8319856a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:36:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVaz40HU26JYFO05rFE0wOp13KHAracKTxqNZkTLX8yV2x2JLoRUTw4uXOoBbhnVuBw3P04FQiJ/uRWzSg=@vger.kernel.org
-X-Received: by 2002:a05:6402:274f:b0:615:cb9c:d5a2 with SMTP id
- 4fb4d7f45d1cf-61a7e737ccemr64589a12.18.1755553008944; Mon, 18 Aug 2025
- 14:36:48 -0700 (PDT)
+	s=arc-20240116; t=1755553031; c=relaxed/simple;
+	bh=F/p7H+rGIe1jvJiKXdKD3uvPisdzpDiRsKGZ8Z/yroU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WORjJqh2wgswbf0HTR8fpQ9HCfsAzAP7i3skvbDTVKctAlomM65nGCZkIrmIU7pe3zuutyqL0UtNgqahMwzV0LU8rpWtWP5DYuCX1tVznJZC2GY9opc9xJOiomy/vmMJl8XeibnVPvhzgjgGxgzS4nwS2iU07rmXkJxTWztdCpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MVb0U/d7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0CB8040E023B;
+	Mon, 18 Aug 2025 21:37:06 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 292qZh3tMt0g; Mon, 18 Aug 2025 21:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755553021; bh=VOpF6rsvxG/61Oc9IdUb+SvxGX5wEXMkX49T2aBrX+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MVb0U/d7kN1zpE5VHbyDw5mLRqryclm9sc6tky/SOFi4PKoHojJPGr5WaZVVEv7kI
+	 JkXNKiGgZK72EjAK+xK8vY+2ZGw/8AlQn6sc0kUmVe/QUJ4xQhqyCCNBWBMUybwAs7
+	 KWHlVQ/MBVsS2HDvxD4x8jZL+vMuGYfzTxRtxyrnCnsAqgR9ogo2DCzF/oDufqlXSr
+	 nQZgdP2f9RW+kINo2gPNtg0hSBuCL8v6LMx08N+nTjUB1SSP9sw+ezoQPczB+HT2el
+	 QzJhc7Fhv0a+5N0F1IuEHg3AbKcoAaeVJB7Wdps576KxLvAV/gGHPaRk176rQ2m3kE
+	 yTxIpIDa8WFJwmJgF+lU5p4811cJZCej3Pya4jtgFPvhVr00JF3JsGR6rK4vU9/DC+
+	 tRTipjsMArGAQ4pzzUQtUvgSPA3Y24zgTrHXizYSMBwvui+AlWFusJ12wUl78/Yy6T
+	 KzRQYLk/itlpU4ptMmK3zrEeZJy0g/gir5z6MMoPg5oW29UL6mODgkli261E0svsqG
+	 dfOCKhbz/Yk6cL9xE9pO+h7eZ+HE92X2zPhafyvTSRqrQCdTiu0n3OQnirEliJGuHF
+	 loZp3XZQtLWWRjcWhaovcElD4NYGmnq9LWHyOogQvk23AEhnUhwB0bzJyJvhIhufRb
+	 tESsIHr4DXlAO3uw56dCEDhQ=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4685140E0185;
+	Mon, 18 Aug 2025 21:36:57 +0000 (UTC)
+Date: Mon, 18 Aug 2025 23:36:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-edac@vger.kernel.org, yazen.ghannam@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] EDAC/mc_sysfs: Increase legacy channel support to
+ 16
+Message-ID: <20250818213651.GIaKOc88InL4iy-SGM@fat_crate.local>
+References: <20250807201843.4045761-1-avadhut.naik@amd.com>
+ <20250807201843.4045761-3-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813150610.521355442@linutronix.de> <20250817144943.76b9ee62@pumpkin>
- <20250818222106.714629ee@pumpkin>
-In-Reply-To: <20250818222106.714629ee@pumpkin>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 18 Aug 2025 14:36:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
-X-Gm-Features: Ac12FXxf0x77QebHuGiALx_MGnJLRb3R5d6KhLXyrQWXnGFnx9g-2vQrxqt1ti0
-Message-ID: <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
-Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked access
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, x86@kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250807201843.4045761-3-avadhut.naik@amd.com>
 
-On Mon, 18 Aug 2025 at 14:21, David Laight <david.laight.linux@gmail.com> wrote:
->
-> Would something like this work (to avoid the hidden update)?
+On Thu, Aug 07, 2025 at 08:14:54PM +0000, Avadhut Naik wrote:
+> Newer AMD systems can support up to 16 channels per EDAC "mc" device.
+> These are detected by the EDAC module running on the device, and the
+> current EDAC interface is appropriately enumerated.
+> 
+> The legacy EDAC sysfs interface however, provides device attributes for
+> channels 0 through 11 only. Consequently, the last four channels, 12
+> through 15, will not be enumerated and will not be visible through the
+> legacy sysfs interface.
+> 
+> Add additional device attributes to ensure that all 16 channels, if
+> present, are enumerated by and visible through the legacy EDAC sysfs
+> interface.
+> 
+> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> ---
+>  drivers/edac/edac_mc_sysfs.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+> index 0f338adf7d93..8689631f1905 100644
+> --- a/drivers/edac/edac_mc_sysfs.c
+> +++ b/drivers/edac/edac_mc_sysfs.c
+> @@ -305,6 +305,14 @@ DEVICE_CHANNEL(ch10_dimm_label, S_IRUGO | S_IWUSR,
+>  	channel_dimm_label_show, channel_dimm_label_store, 10);
+>  DEVICE_CHANNEL(ch11_dimm_label, S_IRUGO | S_IWUSR,
+>  	channel_dimm_label_show, channel_dimm_label_store, 11);
+> +DEVICE_CHANNEL(ch12_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 12);
+> +DEVICE_CHANNEL(ch13_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 13);
+> +DEVICE_CHANNEL(ch14_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 14);
+> +DEVICE_CHANNEL(ch15_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 15);
+>  
+>  /* Total possible dynamic DIMM Label attribute file table */
+>  static struct attribute *dynamic_csrow_dimm_attr[] = {
+> @@ -320,6 +328,10 @@ static struct attribute *dynamic_csrow_dimm_attr[] = {
+>  	&dev_attr_legacy_ch9_dimm_label.attr.attr,
+>  	&dev_attr_legacy_ch10_dimm_label.attr.attr,
+>  	&dev_attr_legacy_ch11_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch12_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch13_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch14_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch15_dimm_label.attr.attr,
+>  	NULL
+>  };
+>  
+> @@ -348,6 +360,14 @@ DEVICE_CHANNEL(ch10_ce_count, S_IRUGO,
+>  		   channel_ce_count_show, NULL, 10);
+>  DEVICE_CHANNEL(ch11_ce_count, S_IRUGO,
+>  		   channel_ce_count_show, NULL, 11);
+> +DEVICE_CHANNEL(ch12_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 12);
+> +DEVICE_CHANNEL(ch13_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 13);
+> +DEVICE_CHANNEL(ch14_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 14);
+> +DEVICE_CHANNEL(ch15_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 15);
+>  
+>  /* Total possible dynamic ce_count attribute file table */
+>  static struct attribute *dynamic_csrow_ce_count_attr[] = {
+> @@ -363,6 +383,10 @@ static struct attribute *dynamic_csrow_ce_count_attr[] = {
+>  	&dev_attr_legacy_ch9_ce_count.attr.attr,
+>  	&dev_attr_legacy_ch10_ce_count.attr.attr,
+>  	&dev_attr_legacy_ch11_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch12_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch13_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch14_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch15_ce_count.attr.attr,
+>  	NULL
+>  };
 
-It would certainly work, but I despise code inside macro arguments
-even more than I dislike the hidden update.
+This is also slowly getting out of hand. All those should be allocated
+and initialized dynamically based on a number of MCs but not keep adding them
+here ad absurdum.
 
-If we want something like this, we should just make that last argument
-be a label, the same way unsafe_{get,put}_user() already works.
+Because if we were doing them dynamically, we'd never ever miss any new
+channels when the hw grows...
 
-That would not only match existing user access exception handling, it
-might allow for architecture-specific asm code that uses synchronous
-trap instructions (ie the label might turn into an exception entry)
+Thx.
 
-It's basically "manual exception handling", whether it then uses
-actual exceptions (like user accesses do) or ends up being some
-software implementation with just a "goto label" for the error case.
+-- 
+Regards/Gruss,
+    Boris.
 
-I realize some people have grown up being told that "goto is bad". Or
-have been told that exception handling should be baked into the
-language and be asynchronous. Both of those ideas are complete and
-utter garbage, and the result of minds that cannot comprehend reality.
-
-Asynchronous exceptions are horrific and tend to cause huge
-performance problems (think setjmp()). The Linux kernel exception
-model with explicit exception points is not only "that's how you have
-to do it in C", it's also technically superior.
-
-And "goto" is fine, as long as you have legible syntax and don't use
-it to generate spaghetti code. Being able to write bad code with goto
-doesn't make 'goto' bad - you can write bad code with *anything*.
-
-            Linus
+https://people.kernel.org/tglx/notes-about-netiquette
 
