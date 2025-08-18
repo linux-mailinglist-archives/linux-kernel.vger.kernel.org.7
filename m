@@ -1,119 +1,260 @@
-Return-Path: <linux-kernel+bounces-774233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566AAB2B027
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:23:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3583B2B02D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C9E17AD907
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F790565756
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388272D24BD;
-	Mon, 18 Aug 2025 18:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479A02E22BF;
+	Mon, 18 Aug 2025 18:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRCrtr9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lZMHZXlp"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877F52848B1;
-	Mon, 18 Aug 2025 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DB72D24A5
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541425; cv=none; b=N9s2l+AYPF6MVSc81pBfICZcO42bZmAc06RGqxUSXTwDHNG3fhvYFTWSrbXwAX3OwT8v6PvDTCWfIw0hSUc9mEiiHAd8OkfkDl86ga3EdwlTFgpYmucmPxBlDKHh4bN5LPptQlrvPjj+fGEsKgDNVL+kGAWPhbX9OdcRpaKbFwY=
+	t=1755541472; cv=none; b=UGuXCfzPBmZhH0bUVfj4fhBSUaGix320S7zJ1p6+PePRzEKdNdFw5T3dlp7Uz9C8o/MkqChd7KZSQ//l6lRv9hFpp1VfqAoVAATYwYqGY46+Oilsy+VDJmxI/3qej1Qt8FNXHbz9ZM0JM5FQCrt6v+9W5J7hFgExORUAN1yty3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541425; c=relaxed/simple;
-	bh=ZOIj05MFLCwF+DumLOC4eUsR6lIYbHJI9B1zVCxvqLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OwZ3o+cxNe6LTGRANxa3kG/Os/SehfFpmZD99QDqHhIZztq+RRF3rSag180saXZQmTWdZJcxDOSVlFLzWQIoqB75+NdJkd2dg6pA6KA6mHgur1D0VWAixeMwe+qXAcsGx68+7N648udwx69uz00DDktL5jULOblK1qamzfenQs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRCrtr9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E360C4CEEB;
-	Mon, 18 Aug 2025 18:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755541425;
-	bh=ZOIj05MFLCwF+DumLOC4eUsR6lIYbHJI9B1zVCxvqLY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cRCrtr9JpLKqj7OGAlfE3sQT9dG3wQFDgOoXncMKpWFYSEN5HMZAU72kx9vXmroWk
-	 C4U15p6Yy+VepETJO8Uws2xDG4yS7Jojl8bZpTNZv71VCJQlJBZass5EC+wY3BYI1V
-	 EaXMk8EaQAtHxHSIkrT4w8V12MO8GcggsFO46GY+H1cUr3g2fsYPU1VkPRuxx+IOSE
-	 JrVpyJSo+adVHRajs509oUcXxJBZEFTYf2BE9JGohj0d49ACGQobieahAWzcmRs+eP
-	 OetLx4s3SyRBnML+MJf7SOo7VJweK60dLTZTQHdrlkZjQ6vtmCNh22K+msWvaLKASa
-	 ZPDqw0yVdj36g==
-Date: Mon, 18 Aug 2025 19:23:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Salah Triki <salah.triki@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- Markus.Elfring@web.de
-Subject: Re: [PATCH v4 1/3] iio: pressure: bmp280: Use IS_ERR() in
- bmp280_common_probe()
-Message-ID: <20250818192337.2256ff4a@jic23-huawei>
-In-Reply-To: <20250818092740.545379-2-salah.triki@gmail.com>
-References: <20250818092740.545379-1-salah.triki@gmail.com>
-	<20250818092740.545379-2-salah.triki@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755541472; c=relaxed/simple;
+	bh=r3ziF6FIpOSnICwnBOocc54X14Txmjt3KuGTLFZl7Fk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n0Vxh6hLhpoUM3cYY92wJA6EwsX0oAUK5fRI6dTICrxbTSvRCvflquXTHM7gsuxfxRl7rsYpROxfY/VBlLShljX5mpXqB0NJ6A294vtO5RVdU1mGTTXff5qNyvaMM7XfaMw6Lbe7rCPwtfHd5uCy7LgOI7PvMzuf954Qu4DAt74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lZMHZXlp; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55cc715d0easo1322e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755541469; x=1756146269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Gk6e/YH5FgbMYAJ5Vg7RUZfD8zoa8dDrVdER5p5QR0=;
+        b=lZMHZXlpdcHUsePCWWzZzr6egM8IswmVTURNWT/bEpUsU1shOuqbLaHUpgOqHACe9J
+         p3voqVjFj3gJMEOL03mkOm+btKsAJ3T9lSO5ZemS2aLOvFmO7NhJVvLHZWmNFZr4LOp1
+         xEPwcrs4o1HRu81OxgPMEs6aqGL9cCGROyvH+T4VhPS+zobH7ou/jplXZ1nxwfeQhVYI
+         NhZA+stxCTpOjW+aN9btx5cuTreDXAudF5bSvIUunl2VMuiOwO7t+YS121jvnjZxkjgf
+         TarS1uOYMcwrRzRYpBqz1E0F96UKQwnkvumwa1+kF5yGxJP6TiBvHQyjuqNkLxRfaRYe
+         HAMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755541469; x=1756146269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Gk6e/YH5FgbMYAJ5Vg7RUZfD8zoa8dDrVdER5p5QR0=;
+        b=UxLgZEEHC/wNJHSyCuO9KrXsrdJYUREhP6iuQHl0KaKjRAJf2VVhPmTBcBofUNeski
+         kQuB1fAsQR3iPOs0FOfJKHebp+FM4IXPeRsgMnc49IrmERFlppv5YJHXBhV0E+ZPT1qD
+         MwlpdXl5iV6UIfFwcv1FoIHe9EdfFUJ3dgPAtcmQOqR9FBWOsvVibZ4O4IQ/f93Pvp0r
+         39f7R3HuHT2H4riGR/ROehhRQt5OaHTO/vfZr6kBQsblwZP8p3Ys0qIBPxHKkkeKBVol
+         tjCh0WPYkj5KT9ccQ4KVGVSJpm/xQDPGjXl/ht5uMEf3RwXzLUQM/B7S+/iyMgGkjYmd
+         q3+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXI3CX9I5Ox+5c3wu1HuSZp4Jgm3tKwjc48BxVAOraU54PAjS5/u9/CYOSec1Yv9dN5k3kiUfKdRVqEV6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBACFiTaCQz/Yl4DEOuBVw1iURcR5JjTmTkLaaFCG2wuEyZyit
+	FwP+sR9xWd0XWGv8Wv5fTib0LgBcpp8eN3hnDrc+ylXM/jE0g+5TI5ZYzSjXyuC6sGzilgohHL5
+	8dqZmVChLrMIKcNkdoebmfQpXQ/wR4VkdDC6x246t
+X-Gm-Gg: ASbGnctU77wM3FkoqDg+Jb7/IkiPD4+YMTLdl1ome6ZDVm0gNU5xmnbAwkKowG3l3Gc
+	pjG49lTHdrxO/EbCHtrW9wLn/aTur9fKMt0flelAEtLC1GBYnTzAoY6dwk2K/KUk9cOnob0won5
+	qCSfbkncV90lO4K1jALozWH0r0y++cAedUhlysVElHsr2sFqcNPSgFm34wakEgViApI9qZWI+Bt
+	xoBJtKT8OOI+2zMSEURu3NmE8e0h0Y5mSUwi3XP6lrytO9h
+X-Google-Smtp-Source: AGHT+IGAn4WnT8Lg5FsEQjh8Eec0AI1a1VEmxVb3umr5BGReigNnH+f589U2FdTwi+/AtO0vqKp9HuJBrX9X1gU2UUQ=
+X-Received: by 2002:a05:6512:4406:b0:542:6b39:1d57 with SMTP id
+ 2adb3069b0e04-55e001b1b0bmr15723e87.3.1755541468733; Mon, 18 Aug 2025
+ 11:24:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250815110401.2254214-2-dtatulea@nvidia.com> <20250815110401.2254214-8-dtatulea@nvidia.com>
+ <CAHS8izM-2vdudZeRu51TNCRzVPQVBKmrj0YoK80nNgWvR-ft3g@mail.gmail.com> <nv2z4vvycay3eygcjfmxcqjgrftmmqm3nmesui4vjenexjbnvk@ll7km6oblghm>
+In-Reply-To: <nv2z4vvycay3eygcjfmxcqjgrftmmqm3nmesui4vjenexjbnvk@ll7km6oblghm>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 18 Aug 2025 11:24:16 -0700
+X-Gm-Features: Ac12FXzSXHRpYaU6ywQMy4iDz4kSaLsPVJl0HDldMx4UTYWk5Icx9_nwhewKjtA
+Message-ID: <CAHS8izOosrkGw_aaL4-Rf1ue8UOMvaWWYXc48OBjO4F2UQa3VQ@mail.gmail.com>
+Subject: Re: [RFC net-next v3 6/7] net: devmem: pre-read requested rx queues
+ during bind
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, cratiu@nvidia.com, tariqt@nvidia.com, parav@nvidia.com, 
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 18 Aug 2025 10:27:30 +0100
-Salah Triki <salah.triki@gmail.com> wrote:
-
-> `devm_gpiod_get_optional()` may return non-NULL error pointer on failure.
-> Check its return value using `IS_ERR()` and propagate the error if
-> necessary.
->=20
-> Fixes: df6e71256c84 ("iio: pressure: bmp280: Explicitly mark GPIO optiona=
-l")
-> Cc: David Lechner <dlechner@baylibre.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Andy Shevchenko <andy@kernel.org>
-> Cc: Nuno S=C3=A1 <nuno.sa@analog.com>
-> Cc: Markus Elfring <Markus.Elfring@web.de>
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-
-Applied to the fixes-togreg branch of iio.git and marked for stable.
-
-The rest of the series will have to wait for that to work it's way back
-via upstream.=20
-
-Thanks
-
-Jonathan
-
-> ---
->  drivers/iio/pressure/bmp280-core.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bm=
-p280-core.c
-> index 74505c9ec1a0..6cdc8ed53520 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -3213,11 +3213,12 @@ int bmp280_common_probe(struct device *dev,
-> =20
->  	/* Bring chip out of reset if there is an assigned GPIO line */
->  	gpiod =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(gpiod))
-> +		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get reset GPIO\n"=
+On Sat, Aug 16, 2025 at 1:59=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> On Fri, Aug 15, 2025 at 11:05:56AM -0700, Mina Almasry wrote:
+> > On Fri, Aug 15, 2025 at 4:07=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia=
+.com> wrote:
+> > >
+> > > Instead of reading the requested rx queues after binding the buffer,
+> > > read the rx queues in advance in a bitmap and iterate over them when
+> > > needed.
+> > >
+> > > This is a preparation for fetching the DMA device for each queue.
+> > >
+> > > This patch has no functional changes.
+> > >
+> > > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > > ---
+> > >  net/core/netdev-genl.c | 76 +++++++++++++++++++++++++++-------------=
+--
+> > >  1 file changed, 49 insertions(+), 27 deletions(-)
+> > >
+> > > diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+> > > index 3e2d6aa6e060..3e990f100bf0 100644
+> > > --- a/net/core/netdev-genl.c
+> > > +++ b/net/core/netdev-genl.c
+> > > @@ -869,17 +869,50 @@ int netdev_nl_qstats_get_dumpit(struct sk_buff =
+*skb,
+> > >         return err;
+> > >  }
+> > >
+> > > -int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *in=
+fo)
+> > > +static int netdev_nl_read_rxq_bitmap(struct genl_info *info,
+> > > +                                    unsigned long *rxq_bitmap)
+> > >  {
+> > >         struct nlattr *tb[ARRAY_SIZE(netdev_queue_id_nl_policy)];
+> > > +       struct nlattr *attr;
+> > > +       int rem, err =3D 0;
+> > > +       u32 rxq_idx;
+> > > +
+> > > +       nla_for_each_attr_type(attr, NETDEV_A_DMABUF_QUEUES,
+> > > +                              genlmsg_data(info->genlhdr),
+> > > +                              genlmsg_len(info->genlhdr), rem) {
+> > > +               err =3D nla_parse_nested(
+> > > +                       tb, ARRAY_SIZE(netdev_queue_id_nl_policy) - 1=
+, attr,
+> > > +                       netdev_queue_id_nl_policy, info->extack);
+> > > +               if (err < 0)
+> > > +                       return err;
+> > > +
+> > > +               if (NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_=
+A_QUEUE_ID) ||
+> > > +                   NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_=
+A_QUEUE_TYPE))
+> > > +                       return -EINVAL;
+> > > +
+> > > +               if (nla_get_u32(tb[NETDEV_A_QUEUE_TYPE]) !=3D NETDEV_=
+QUEUE_TYPE_RX) {
+> > > +                       NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUE=
+UE_TYPE]);
+> > > +                       return -EINVAL;
+> > > +               }
+> > > +
+> > > +               rxq_idx =3D nla_get_u32(tb[NETDEV_A_QUEUE_ID]);
+> > > +
+> > > +               bitmap_set(rxq_bitmap, rxq_idx, 1);
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *in=
+fo)
+> > > +{
+> > >         struct net_devmem_dmabuf_binding *binding;
+> > >         u32 ifindex, dmabuf_fd, rxq_idx;
+> > >         struct netdev_nl_sock *priv;
+> > >         struct net_device *netdev;
+> > > +       unsigned long *rxq_bitmap;
+> > >         struct device *dma_dev;
+> > >         struct sk_buff *rsp;
+> > > -       struct nlattr *attr;
+> > > -       int rem, err =3D 0;
+> > > +       int err =3D 0;
+> > >         void *hdr;
+> > >
+> > >         if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_DEV_IFINDEX) ||
+> > > @@ -922,37 +955,22 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb,=
+ struct genl_info *info)
+> > >                 goto err_unlock;
+> > >         }
+> > >
+> > > +       rxq_bitmap =3D bitmap_alloc(netdev->num_rx_queues, GFP_KERNEL=
 );
-> +
->  	/* Deassert the signal */
-> -	if (gpiod) {
-> -		dev_info(dev, "release reset\n");
-> -		gpiod_set_value(gpiod, 0);
-> -	}
-> +	dev_info(dev, "release reset\n");
-> +	gpiod_set_value(gpiod, 0);
-> =20
->  	data->regmap =3D regmap;
-> =20
+> > > +       if (!rxq_bitmap) {
+> > > +               err =3D -ENOMEM;
+> > > +               goto err_unlock;
+> > > +       }
+> > > +       netdev_nl_read_rxq_bitmap(info, rxq_bitmap);
+> > > +
+> > >         dma_dev =3D netdev_queue_get_dma_dev(netdev, 0);
+> > >         binding =3D net_devmem_bind_dmabuf(netdev, dma_dev, DMA_FROM_=
+DEVICE,
+> > >                                          dmabuf_fd, priv, info->extac=
+k);
+> > >         if (IS_ERR(binding)) {
+> > >                 err =3D PTR_ERR(binding);
+> > > -               goto err_unlock;
+> > > +               goto err_rxq_bitmap;
+> > >         }
+> > >
+> > > -       nla_for_each_attr_type(attr, NETDEV_A_DMABUF_QUEUES,
+> > > -                              genlmsg_data(info->genlhdr),
+> > > -                              genlmsg_len(info->genlhdr), rem) {
+> > > -               err =3D nla_parse_nested(
+> > > -                       tb, ARRAY_SIZE(netdev_queue_id_nl_policy) - 1=
+, attr,
+> > > -                       netdev_queue_id_nl_policy, info->extack);
+> > > -               if (err < 0)
+> > > -                       goto err_unbind;
+> > > -
+> > > -               if (NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_=
+A_QUEUE_ID) ||
+> > > -                   NL_REQ_ATTR_CHECK(info->extack, attr, tb, NETDEV_=
+A_QUEUE_TYPE)) {
+> > > -                       err =3D -EINVAL;
+> > > -                       goto err_unbind;
+> > > -               }
+> > > -
+> > > -               if (nla_get_u32(tb[NETDEV_A_QUEUE_TYPE]) !=3D NETDEV_=
+QUEUE_TYPE_RX) {
+> > > -                       NL_SET_BAD_ATTR(info->extack, tb[NETDEV_A_QUE=
+UE_TYPE]);
+> > > -                       err =3D -EINVAL;
+> > > -                       goto err_unbind;
+> > > -               }
+> > > -
+> > > -               rxq_idx =3D nla_get_u32(tb[NETDEV_A_QUEUE_ID]);
+> > > -
+> > > +       for_each_set_bit(rxq_idx, rxq_bitmap, netdev->num_rx_queues) =
+{
+> >
+> > Is this code assuming that netdev->num_rx_queues (or
+> > real_num_rx_queues) <=3D BITS_PER_ULONG? Aren't there devices out there
+> > that support more than 64 hardware queues? If so, I guess you need a
+> > different data structure than a bitmap (or maybe there is arbirary
+> > sized bitmap library somewhere to use).
+> >
+> The bitmap API can handle any number of bits. Can it not?
+>
 
+Ah, yes, I missed this:
+
++       rxq_bitmap =3D bitmap_alloc(netdev->num_rx_queues, GFP_KERNEL);
+
+
+Which allocates netdev->num_rx_queues bits. I was confused by the fact
+that rxq_bitmap is an unsigned long * and thought that was the # of
+bits in the map.
+
+This patch should be good just with conversion to netdev->real_num_rx_queue=
+s.
+
+--=20
+Thanks,
+Mina
 
