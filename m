@@ -1,160 +1,190 @@
-Return-Path: <linux-kernel+bounces-773271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552F7B29D84
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:21:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F56B2AF64
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153923B3AEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:21:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22E677ABA0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD2530DEBB;
-	Mon, 18 Aug 2025 09:20:47 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E372D7D42;
-	Mon, 18 Aug 2025 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AC8345742;
+	Mon, 18 Aug 2025 17:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZO+tUVGW"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A123134573F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755508847; cv=none; b=TOqprEdY7ZJOxt12EVKmpZspLSSCzlYO7/IWNyKnPK+IQV98KuaWpwCzIs/oIgquQ/FczJaTIYGJQmoQYqffMny3aabYNwqwfljPiD9Q40aCy5ne7DWlXCRhvNHr4SeNkbOkNsEL2KbHMqyBYunD4pf6ubGb1CCGtFCBtKAxDAo=
+	t=1755538060; cv=none; b=AF/JDzmCkCA1tLpavm4WYccqTIuUnQrqnouSEWAnDttKhtkhsQrhmvOpL+C8fj0BvkeLDPDuSHZMw8DQyEUUKHbp/1+KANyq9ZR2Bk+kx2v/zjExOzzlavc7PsPFUL734F0z214nnfkFqw099dBIo3hHRddEb4bQN4js5MQoNEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755508847; c=relaxed/simple;
-	bh=FsJjFzo97CaIj8ecmEYrlheS4JZRtCwCquhmLdyFc7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XqkU5ePIkXtFKyOwIEFPyMXmJb5ykZRPnfMoGJHEMFLQaSFTtonEkMFwINQCoVMdownpSzatzBBua7JkJA9mLBengS4GzCwv8mrZ3rprMVtsxcCemkaVHUzAtJwy7Q3x0zxmywO7K3TQt/n+OKTgaY2Wa3SLgMAUN1fKJHbpkzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c55sf33SKz9sX4;
-	Mon, 18 Aug 2025 10:46:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id rx4zHsvHPdak; Mon, 18 Aug 2025 10:46:14 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c55sZ1ZzKz9sWh;
-	Mon, 18 Aug 2025 10:46:10 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 217968B763;
-	Mon, 18 Aug 2025 10:46:10 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id giALWGHkvImb; Mon, 18 Aug 2025 10:46:10 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EDCBB8B764;
-	Mon, 18 Aug 2025 10:46:09 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 5/5] dt-bindings: soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
-Date: Mon, 18 Aug 2025 10:45:58 +0200
-Message-ID: <be8952a26d7a8d55ff96e4547f6c107094988220.1755506608.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1755506608.git.christophe.leroy@csgroup.eu>
-References: <cover.1755506608.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1755538060; c=relaxed/simple;
+	bh=9JMXztg+Q8fI+L1JfmE621uB0vrUu2BhnBt+O8mpx+U=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=o1878oZjQn8tYdNOTpP3fEJAOHv3mNAU+2LtdcoeNZkUvN8b8UWwZj4hu2b8USXsjeuhS1BO/zZWV7a3FQ6nnY4le1PfpkyujwGE+zucFqw+aka9PVbv6RfW4VSkH/y4aYAXQaedyKonVBpKyds/c7tNgGVEiNVPhavEW+DqwHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZO+tUVGW; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250818171833epoutp02ed9b5e7c654b8c76ec95d72fe60d070e~c7BE58_fr3205532055epoutp02e
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:18:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250818171833epoutp02ed9b5e7c654b8c76ec95d72fe60d070e~c7BE58_fr3205532055epoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755537513;
+	bh=JmSGRyHuxg4sFJyN1+ZDBr/4xtXj34dMzItnfLdMcyY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=ZO+tUVGW9j76Gf6QNoG7EvuYBG0IN+U8H9BPj0zJnedSfLSj3GdVWqiZvli1wXQLw
+	 ZtQrILgZa8nIdVn5n70Qo/fmF6dRM/1FHqtrtz8e7N0GGRNkciMmIdRwJW5C7M5OdE
+	 axSFLqrFF8eZN9gdkQRDQel8pmBiLh/xdcjjWOf4=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250818171832epcas5p1538558efb743b5c6f4ca5021cfafef2c~c7BDlpN2R1081410814epcas5p1g;
+	Mon, 18 Aug 2025 17:18:32 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c5KDl11mXz3hhT3; Mon, 18 Aug
+	2025 17:18:31 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250818084620epcas5p3ddf1f9039fde76922af543c84d2a37c8~c0B2MjXJr3103431034epcas5p3u;
+	Mon, 18 Aug 2025 08:46:20 +0000 (GMT)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250818084617epsmtip1877f5f85d903a96326fc66b5943907e0~c0BzfnJte3004130041epsmtip1g;
+	Mon, 18 Aug 2025 08:46:17 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <linux-pci@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>
+Cc: <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
+	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
+	<pankaj.dubey@samsung.com>
+In-Reply-To: <9e065582-9349-4f39-88b5-048d333ab8d7@kernel.org>
+Subject: RE: [PATCH v3 07/12] dt-bindings: PCI: Add support for Tesla FSD
+ SoC
+Date: Mon, 18 Aug 2025 14:16:16 +0530
+Message-ID: <000901dc101c$917bf160$b473d420$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755506759; l=2392; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=FsJjFzo97CaIj8ecmEYrlheS4JZRtCwCquhmLdyFc7U=; b=hFHnrqREIMbLuXYAIGjkJ3D28meiD7b8MHSCYawlfY+LlUHthVv1wORv0SDpFEM2Ka+xgcy44 ih8BI2ai0K2Dpx8Wvzs9qmU5X2t5EZKhQym3hoV6sJGw8lmJpxLC2XS
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHWPHKmIG2WTsjb/5pkHKJ2GfeRPwFcVLShAs+fyqkBgLjEDbRGWWvg
+Content-Language: en-in
+X-CMS-MailID: 20250818084620epcas5p3ddf1f9039fde76922af543c84d2a37c8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250811154725epcas5p428fa3370a32bc2b664a4fd8260078097
+References: <20250811154638.95732-1-shradha.t@samsung.com>
+	<CGME20250811154725epcas5p428fa3370a32bc2b664a4fd8260078097@epcas5p4.samsung.com>
+	<20250811154638.95732-8-shradha.t@samsung.com>
+	<9e065582-9349-4f39-88b5-048d333ab8d7@kernel.org>
 
-The QUICC Engine provides interrupts for a few I/O ports. This is
-handled via a separate interrupt ID and managed via a triplet of
-dedicated registers hosted by the SoC.
+> > +
+> > +  phys:
+> > +    maxItems: 1
+> > +
+> > +  samsung,syscon-pcie:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    description: phandle for system control registers, used to
+> > +                 control signals at system level
+> 
+> What is "system level"? and what are these "signals" being controlled?
+> 
 
-Implement an interrupt driver for it for that those IRQs can then
-be linked to the related GPIOs.
+I will add a more detailed description for why the syscon is being used
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v2: Fixed problems reported by 'make dt_binding_check'
----
- .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+> 
+> > +title: Tesla FSD SoC series PCIe Host Controller
+> > +
+> > +maintainers:
+> > +  - Shradha Todi <shradha.t@samsung.com>
+> > +
+> > +description:
+> > +  Tesla FSD SoCs PCIe host controller inherits all the common
+> > +  properties defined in samsung,exynos-pcie.yaml
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/samsung,exynos-pcie.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: tesla,fsd-pcie
+> > +
+> > +  clocks:
+> > +    maxItems: 4
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: aux
+> > +      - const: dbi
+> > +      - const: mstr
+> > +      - const: slv
+> > +
+> > +  num-lanes:
+> > +    maximum: 4
+> > +
+> > +  samsung,syscon-pcie:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    description: phandle for system control registers, used to
+> > +                 control signals at system level
+> > +
+> > +required:
+> > +  - samsung,syscon-pcie
+> 
+> clocks are required, compatible as well.
+> 
 
-diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
-new file mode 100644
-index 000000000000..b7c74c66347c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale QUICC Engine I/O Ports Interrupt Controller
-+
-+maintainers:
-+  - Christophe Leroy <christophe.leroy@csgroup.eu>
-+
-+description:
-+  Interrupt controller for the QUICC Engine I/O ports found on some Freescale/NXP PowerQUICC and QorIQ SoCs.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fsl,mpc8323-qe-ports-ic
-+      - fsl,mpc8360-qe-ports-ic
-+      - fsl,mpc8568-qe-ports-ic
-+
-+  reg:
-+    maxItems: 1
-+    description: Base address and size of the QE I/O Ports Interrupt Controller registers.
-+
-+  interrupt-controller: true
-+
-+  '#address-cells':
-+    const: 0
-+
-+  '#interrupt-cells':
-+    const: 1
-+
-+  interrupts:
-+    maxItems: 1
-+    description: Interrupt line to which the QE I/O Ports controller is connected.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupt-controller
-+  - '#address-cells'
-+  - '#interrupt-cells'
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    interrupt-controller@c00 {
-+      interrupt-controller;
-+      compatible = "fsl,mpc8323-qe-ports-ic";
-+      #address-cells = <0>;
-+      #interrupt-cells = <1>;
-+      reg = <0xc00 0x18>;
-+      interrupts = <74 0x8>;
-+      interrupt-parent = <&ipic>;
-+    };
--- 
-2.49.0
+Since this was inheriting the common exynos yaml file and that had these properties
+under required, I did not mention again. Will take care in next version.
+
+> Missing supplies, both as properties and required. PCI devices do not
+> work without power.
+> 
+
+According to the HW design of FSD SoC, the control to manage PCIe power is given to
+a separate CPU where custom firmware runs. Therefore, the Linux side does not control
+the PCIe power supplies directly and are hence not included in the device tree.
+
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/fsd-clk.h>
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +
+> > +    soc {
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +
+> > +        pcierc1: pcie@16b00000 {
+> > +            compatible = "tesla,fsd-pcie";
+> > +            reg = <0x0 0x16b00000 0x0 0x2000>,
+> > +                  <0x0 0x168c0000 0x0 0x1000>,
+> > +                  <0x0 0x18000000 0x0 0x1000>;
+> > +            reg-names = "dbi", "elbi", "config";
+> > +            ranges =  <0x82000000 0x0 0x18001000 0x0 0x18001000 0x0 0xffefff>;
+> 
+> Misaligned. Follow closely DTS coding style.
+> 
+
+Will take care.
+
 
 
