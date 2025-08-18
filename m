@@ -1,96 +1,117 @@
-Return-Path: <linux-kernel+bounces-773798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A9FB2A97C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:21:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B34B2AA3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0C29B618C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6995A560E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E099132275F;
-	Mon, 18 Aug 2025 14:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4F8322DA4;
+	Mon, 18 Aug 2025 14:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="uKRtaEcV"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Km5u9DAj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B79261B9B;
-	Mon, 18 Aug 2025 14:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F76931E115;
+	Mon, 18 Aug 2025 14:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526051; cv=none; b=cRmow1JjK3cPzB3TcSNuHlx7h2Zk0jt520z5t9juFBMV7iqnNotfhSTxJOImJEkEB+SxvOHMqOi40O8aUHIMqnzh5nlHWBj7CWycQKO0Q7zYyyWKu12Nq49kjHTz0UoxRH3nge0edlQoT0y17lwHUT+EcA/PV5DQs4d6se4l6eI=
+	t=1755526109; cv=none; b=Qn0e9UpZfle8CMc90Osnias9BuhAhd9EJseXGte14e6rr+KKTNf7tz8ihFXXFrqsNfwp3jxYfCdKuzXlnt+/+YUm0k1fjLUpDbT3pcoGawvn+uxX7HgKGA6Unk4IgjpEX+t6CZENkcnTE5A9WaqDKSEb2h1Wa8J9E4YY9rQgmmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526051; c=relaxed/simple;
-	bh=aWJdNsIL+OfTpQ7wAhWqjKJj/AXrvG8KIwRxbSMd0Ks=;
+	s=arc-20240116; t=1755526109; c=relaxed/simple;
+	bh=AusUFo1aAO3tCckVZFsza0m/s9/T5RMu9QrGt8c7f4M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NGHNYCurfaQF76NxvXLWpmQa9velP5PevzqWPK/olROAawTNbBh5YK6ivpIcIbh50wEDVKNIpbKehBRh5A5L/oYo5ToNnLoJ5CsF+1PruLAytIn96DQUsjDRJAWh+eKnjEnMSs9GA5KD3TDnlvmJGUiOaVXa41QJ+qOro5yd7VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=uKRtaEcV; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1755526041;
-	bh=aWJdNsIL+OfTpQ7wAhWqjKJj/AXrvG8KIwRxbSMd0Ks=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uKRtaEcVKtXTiPWamZvVo+hWvY4SZTAPEAQF6+V7D5SvXfco8IGylDSVS2hFQt4Tv
-	 6NNb9/wjTU90ZBUD/TjktLML/FvQD5uT8RWQWyY4NDDhMhyreuCDffRSsB2rHvzS64
-	 lr3NbpCuzrO0AoTjHkuKFX5+UQ6x+RqlSqRDe56k=
-Date: Mon, 18 Aug 2025 16:07:21 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH 2/3] selftests/nolibc: don't pass CC to toplevel Makefile
-Message-ID: <d742c315-273d-417e-b1c7-00a9cec6a2c4@t-8ch.de>
-References: <20250719-nolibc-llvm-system-v1-0-1730216ce171@weissschuh.net>
- <20250719-nolibc-llvm-system-v1-2-1730216ce171@weissschuh.net>
- <20250721025627.GB1886@1wt.eu>
- <ebb84a9c-8771-4791-8a81-b615cecec7c3@t-8ch.de>
- <20250817093905.GA14213@1wt.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BU49L8dY06QOfkBLhkurg0X19f5srtLUV6VCrQdMgNdjhfNw23n0uP5crfBh3ZM3hxf8QOmxro5qcbQ5lIUp7LjK5jOZ1H+/yQFDY1hPOD+V6M2TVMEUqHRjVgVm0PB8KwFxrROCA8+7S2ejT0sWIIrmurw0tTerZfAZNlSQfLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Km5u9DAj; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755526109; x=1787062109;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AusUFo1aAO3tCckVZFsza0m/s9/T5RMu9QrGt8c7f4M=;
+  b=Km5u9DAj5XLcNMt8Jmtd+wJKJrBrjc6uwHy+W5t01Y08ST8Jur2H8qLG
+   g4CRfIrCfLTomVtoq2X2S9+O9cxVjt66MHcPXlLg13fd37IRCwdvr7NDt
+   qQywXkgov2Z6CfX0DJ5MCC2+fKJNlKUWmYmvxjcTTzcdAShnXXL8WjjiD
+   21BceuEEBQ8yHjT28ENDO7ENW3XZLYKwzSO3t3kLrDN1XW9qczhMwC555
+   YKbAxLJOS/ik+rmI632Q4JtZK3snPjP9EnLevVg9kIYpAo7S1MJyH/DqO
+   b47SRm5hfF+XUd62evhBwUEpS3nATIy0RtJjOE+pooO8iE4CeSsEee/yY
+   w==;
+X-CSE-ConnectionGUID: 9hrleFycRRmmXl6Y3DPHHg==
+X-CSE-MsgGUID: T0wpiXUYRCCgkfQXqxRt/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="69198574"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="69198574"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:08:28 -0700
+X-CSE-ConnectionGUID: ufZnYX3OSRWI53WUPd34TA==
+X-CSE-MsgGUID: I+RxtllzQu27n+KGpviA+w==
+X-ExtLoop1: 1
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.252])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:08:26 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id A132112031C;
+	Mon, 18 Aug 2025 17:08:23 +0300 (EEST)
+Date: Mon, 18 Aug 2025 14:08:23 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: vd55g1: Fix duster register address
+Message-ID: <aKMz1xtvXvMLKUZ9@kekkonen.localdomain>
+References: <20250818-vd55g1_fix_duster-v1-1-1b9d115dee87@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250817093905.GA14213@1wt.eu>
+In-Reply-To: <20250818-vd55g1_fix_duster-v1-1-1b9d115dee87@foss.st.com>
 
-On 2025-08-17 11:39:05+0200, Willy Tarreau wrote:
-> On Sun, Aug 17, 2025 at 10:30:52AM +0200, Thomas Weißschuh wrote:
-> > On 2025-07-21 04:56:27+0200, Willy Tarreau wrote:
-> > > On Sat, Jul 19, 2025 at 05:38:28PM +0200, Thomas Weißschuh wrote:
+Hi Benjamin,
 
-(...)
-
-> > > I think I'd be fine with this, but then we need to make it
-> > > explicit in the help message and fix the current one, possibly just
-> > > with this:
-> > > 
-> > > -	@echo "  nolibc-test       build the executable (uses \$$CC and \$$CROSS_COMPILE)"
-> > > +	@echo "  nolibc-test       build the executable (uses \$$CC)"
-> > 
-> > I don't think this is correct. $CC itself depends on $CROSS_COMPILE
-> > through tools/scripts/Makefile.include.
+On Mon, Aug 18, 2025 at 03:50:58PM +0200, Benjamin Mugnier wrote:
+> The duster register needs to be disabled on test patterns. While the
+> code is correctly doing so, the register address contained a typo, thus
+> not disabling the duster correctly. Fix the typo.
 > 
-> I don't understand what you mean by "depends on" here. CC defaults
-> to ${CROSS_COMPILE}gcc and may override it if set. So if one sets
-> CC, CROSS_COMPILE will not be used for it. Or maybe we could change
-> it to this to indicate a precedence if that's the idea you want to
-> convey ?
+> Fixes: e56616d7b23c ("media: i2c: Add driver for ST VD55G1 camera sensor")
 > 
->  -	@echo "  nolibc-test       build the executable (uses \$$CC and \$$CROSS_COMPILE)"
->  +	@echo "  nolibc-test       build the executable (uses \$$CC or \$$CROSS_COMPILE)"
 
-Yes, that is the idea. 
-I pushed a commit to this effect to nolibc/for-next.
+Extra newline; I'll remove it while applying.
 
+> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+> ---
+>  drivers/media/i2c/vd55g1.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/vd55g1.c b/drivers/media/i2c/vd55g1.c
+> index b89fff7e11f891dea04a0085a9e7aac841b6643d..cf35f73fdd1086c6d4d76f67c2b6e4cf66eadff8 100644
+> --- a/drivers/media/i2c/vd55g1.c
+> +++ b/drivers/media/i2c/vd55g1.c
+> @@ -66,7 +66,7 @@
+>  #define VD55G1_REG_READOUT_CTRL				CCI_REG8(0x052e)
+>  #define VD55G1_READOUT_CTRL_BIN_MODE_NORMAL		0
+>  #define VD55G1_READOUT_CTRL_BIN_MODE_DIGITAL_X2		1
+> -#define VD55G1_REG_DUSTER_CTRL				CCI_REG8(0x03ea)
+> +#define VD55G1_REG_DUSTER_CTRL				CCI_REG8(0x03ae)
+>  #define VD55G1_DUSTER_ENABLE				BIT(0)
+>  #define VD55G1_DUSTER_DISABLE				0
+>  #define VD55G1_DUSTER_DYN_ENABLE			BIT(1)
+> 
 
-Thomas
+-- 
+Regards,
+
+Sakari Ailus
 
