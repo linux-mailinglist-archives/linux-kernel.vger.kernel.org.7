@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-773210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0C9B29CBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:51:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D65B29C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAB1C3B1984
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:50:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C14169A19
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34C7304BB5;
-	Mon, 18 Aug 2025 08:50:42 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3B0304962;
-	Mon, 18 Aug 2025 08:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15ECE3009CE;
+	Mon, 18 Aug 2025 08:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="m6alafy7"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28BA2FF665
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755507042; cv=none; b=PGoRkcGbV0gUTFJ5DZavqAiZGFJD4J6RSw5BRpJ8WCKg2fp4hoWkOHI4qZfjn8k1MQfwNuTCkEyLoesIUaGdXEbVBeZfEGpABDtXFicWl0kcCBp4FPgsKiMJTV5DBf/v+J3Zq+QADeCm7qS21dXcwvVVot1+DUEI89Px2e5Tyr0=
+	t=1755506441; cv=none; b=HVy7p+dZ9lMd9TP4Uij5rNea/zE9nMeqGGwuTMx+/QtBkNR34UPx7uyOoKfcMRX0IATZ4JKxSdU4oxMtQ7+qcl6+vE8LMLajErCc7QwcIT8ILq9ErFWLHc0RSC+cERG4b920SobtK3vdOpBogUg2cSTPgi/5yBoXxXi9BeJrI6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755507042; c=relaxed/simple;
-	bh=i4pkSh+CLs8Uue0AHp7O0b9DSesGmkbEmw+FmH4nsh0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j3V1Xfn0D4WYuMD1VRqD+09qTI1Q831VSVM9m1efuNkT05p7LsON9kzur4LzYyz9f6Q5kt1SEWgv8K+n2aqYLnB6BrnnPqAg0d1CSQlRydUGZZVBWiEauCu1G6NLRVdCWNRuXcprGso5O07NWQ1KuBLJwGW8Wkyo6cJFN7KaATU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c55kL3mnlz9sWd;
-	Mon, 18 Aug 2025 10:39:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id b0_Y38SyLNAT; Mon, 18 Aug 2025 10:39:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c55kL2Zsnz9sWc;
-	Mon, 18 Aug 2025 10:39:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2AE7D8B764;
-	Mon, 18 Aug 2025 10:39:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 0VXbaU8cA_eG; Mon, 18 Aug 2025 10:39:54 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E12538B763;
-	Mon, 18 Aug 2025 10:39:53 +0200 (CEST)
-Message-ID: <88b259e8-433f-49f1-a25b-f65a40c8da65@csgroup.eu>
-Date: Mon, 18 Aug 2025 10:39:53 +0200
+	s=arc-20240116; t=1755506441; c=relaxed/simple;
+	bh=+uOz4NcMUj4DgMcB5calNycuKxf3I7WIu/7rLtSibn8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B1k6zzu1mab2Cc1TYYxNwUWi0DsH1RTT2f8z5HegposwxNfwvcIgt2VAFIgZFYABRBv5diOtAgKd024JUfyzXURDKHf7vYXtlq3w8ZOubeawjQ6KZ9Zcbe0L1WdwRvU53IhmaKu0Px7DJpzTqWUlf+sQz/dAr84O37/d4ldWAMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=m6alafy7; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 00bbb25a7c0f11f08729452bf625a8b4-20250818
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zTc9ILZszspIergQBlX6+NhSE6Fs5a72JurzfDZwPEA=;
+	b=m6alafy7KwEt+jurtbsy7hDyb/+QEIfB7gYhJzobDe1UYJ0JtwAaqbjrY8E53yz09COZVIG9vOC/VWD2KgVbR9AEk/LMly+HbYl+Zhqs4oydBXUtmnB9VQtO4L0EZCvVXp1Pbv/we2Rhd5x2djYC9g+HHv29KXGBpux01xOAW2U=;
+X-CID-CACHE: Type:Local,Time:202508181634+08,HitQuantity:2
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:9f07d84b-73c4-47e0-95b9-c696bdaa5d14,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:900b0bf4-66cd-4ff9-9728-6a6f64661009,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 00bbb25a7c0f11f08729452bf625a8b4-20250818
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <payne.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 574988635; Mon, 18 Aug 2025 16:40:32 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 18 Aug 2025 16:40:31 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 18 Aug 2025 16:40:31 +0800
+From: payne.lin <payne.lin@mediatek.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Bincai Liu <bincai.liu@mediatek.com>, Payne Lin <payne.lin@mediatek.com>
+Subject: [PATCH] gpu: drm: mediatek: correct clk setting AUX_RX_UI_CNT_THR_AUX_FOR_26M
+Date: Mon, 18 Aug 2025 16:40:23 +0800
+Message-ID: <20250818084028.1043856-1-payne.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] dt-bindings: soc: fsl: qe: Add an interrupt
- controller for QUICC Engine Ports
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
- <0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu>
- <0fd6fefc-9fad-4ea6-a619-e9f480747ac0@kernel.org>
- <CAL_Jsq+1Aw5AyBeW+BhTuyWZ8BN8BJUq047oJCDKVQPZWxWYCA@mail.gmail.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <CAL_Jsq+1Aw5AyBeW+BhTuyWZ8BN8BJUq047oJCDKVQPZWxWYCA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
+From: Bincai Liu <bincai.liu@mediatek.com>
 
+Updated the definition of AUX_RX_UI_CNT_THR_AUX_FOR_26M from 13 to 14.
+No other code or logic changes were made; only the macro value was modified.
+This change affects the timing configuration for AUX RX at 26MHz.
+The formula is xtal_clk / 2 + 1.
 
-Le 12/08/2025 à 19:16, Rob Herring a écrit :
-> On Tue, Aug 12, 2025 at 10:23 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 12/08/2025 13:02, Christophe Leroy wrote:
->>> The QUICC Engine provides interrupts for a few I/O ports. This is
->>> handled via a separate interrupt ID and managed via a triplet of
->>> dedicated registers hosted by the SoC.
->>>
->>> Implement an interrupt driver for it for that those IRQs can then
->>> be linked to the related GPIOs.
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->>> ---
->>>   .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       | 63 +++++++++++++++++++
->>>   1 file changed, 63 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
->>> new file mode 100644
->>> index 0000000000000..7c98706d03dd1
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
->>> @@ -0,0 +1,63 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +
->>> +title: Freescale QUICC Engine I/O Ports Interrupt Controller
->>> +
->>> +maintainers:
->>> +  - name: Christophe Leroy
->>> +    email: christophe.leroy@csgroup.eu
->>
->> Oh no...
->>
->>> +
->>> +description: |
->>> +  Interrupt controller for the QUICC Engine I/O ports found on some
->>> +  Freescale/NXP PowerQUICC and QorIQ SoCs.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - fsl,mpc8323-qe-ports-ic
->>> +      - fsl,mpc8360-qe-ports-ic
->>> +      - fsl,mpc8568-qe-ports-ic
->>> +
->>> +  reg:
->>> +    description: Base address and size of the QE I/O Ports Interrupt Controller registers.
->>> +    minItems: 1
->>> +    maxItems: 1
->>
->> This was never tested but more important this and everything further
->> looks like generated by AI. Please don't do that or at least mark it
->> clearly, so I will prioritize accordingly (hint: AI generates poor code
->> and burden to decipher AI slop should not be on open source reviewers
->> but on users of AI, but as one of maintainers probably you already know
->> that, so sorry for lecturing).
-> 
-> If anyone needs some AI (chatgpt) converted bindings, my "dt-convert"
-> branch has ~800 of them. Feeding the warnings back to AI to fix was
-> somewhat effective. The result is not the worst I've seen submitted.
-> It saves some of the boilerplate, but can't fix things that are just
-> wrong or unclear in .txt bindings. Despite my 'prompt engineering'
-> attempts, it still tends to get the same things wrong over and over.
+Signed-off-by: Bincai Liu <bincai.liu@mediatek.com>
+Signed-off-by: Payne Lin <payne.lin@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp_reg.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-By the way, the new binding was not generated from text binding. I fed 
-the AI with the driver C source file.
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp_reg.h b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
+index 8ad7a9cc259e..f8c7b3c0935f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp_reg.h
++++ b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
+@@ -301,7 +301,7 @@
+ #define AUX_TIMEOUT_THR_AUX_TX_P0_VAL			0x1595
+ #define MTK_DP_AUX_P0_3614			0x3614
+ #define AUX_RX_UI_CNT_THR_AUX_TX_P0_MASK		GENMASK(6, 0)
+-#define AUX_RX_UI_CNT_THR_AUX_FOR_26M			13
++#define AUX_RX_UI_CNT_THR_AUX_FOR_26M			14
+ #define MTK_DP_AUX_P0_3618			0x3618
+ #define AUX_RX_FIFO_FULL_AUX_TX_P0_MASK			BIT(9)
+ #define AUX_RX_FIFO_WRITE_POINTER_AUX_TX_P0_MASK	GENMASK(3, 0)
+-- 
+2.45.2
 
-Christophe
 
