@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-774535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A373B2B3E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:06:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A11B2B3EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCC219673C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:06:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EEB81B623AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770E127AC32;
-	Mon, 18 Aug 2025 22:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A9927AC4D;
+	Mon, 18 Aug 2025 22:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIA689si"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eUyIgmSg"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25B11BE871;
-	Mon, 18 Aug 2025 22:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1388427A925
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 22:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755554746; cv=none; b=r+8wiSkSjut5eOXs3qUk0e6bIfPuUqrodW/DTu/SW9wJrcMprcNdUAHKkUdh6T7dyzhQSzJn8dQ7cGqo8A+i2AQtpDSdpus1xAVZumZ6MLds9W+VZPwdDgk+9L7GPb8pD5rgxzlCan35LylqiHUtCmCwoIRssWpIZN6iXfGlMbg=
+	t=1755554769; cv=none; b=jAOOHPg4VbRzZfDI2gy63apteqQ9y02qisA0TnX/BgNTs9zdPsBepxAggWqe4eTuhJdelRKXsHJlGmLB8U1FVuyXyS6BN5TDVsZ/OiNflbOE3vgNAehmu1dZazZ7t912uqMjtju5kJuRmqqBAlfxU9EeV1skVsvjdSm438hXMng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755554746; c=relaxed/simple;
-	bh=tbdpi7XIur9WcAC+P5MSy6xDHzhA2ulOnLYBc9gKssY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=Trns+VtLmPDgfRBLNQwnuRVRJDmFPQE/X8zsgfoG55tju3JjS57DfWnPjUR9RnRfN2LTSoJXwlAOZNrngzuY5NWUQmqmoP6Ze5ePA80adsiOCVgYP+5Hv2M2xtb0vATV5ATMkeBLLOunrxE3pH5g4zsNQiW1G/R0kolahS6YRKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIA689si; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E155C4CEEB;
-	Mon, 18 Aug 2025 22:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755554746;
-	bh=tbdpi7XIur9WcAC+P5MSy6xDHzhA2ulOnLYBc9gKssY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MIA689siNo2YeYCKw/S/6qBkgFMqY1dVeqAYupbm9ir5sr/1OhW67LX07aleZOt6V
-	 yYU8dO0a65YhUBCwhyYXMWL2asbdbqB92Hsfjt8DnpPU5j7ZtflYp5SkbktQoG6C+R
-	 zwYLeO+YWeNOrXr21zzQpKs1zenxoO2qFAESgDfhOWeD8GnbtMh978x48gT0MpGQKR
-	 9qoaN4dZN21JRTJ2LA5XdB135rV/ENYb0OLcUF2xp3cHPMN42KKgRzFjE55gPCwRYf
-	 5YmN98Z+z3g1m+4M9ThbZ0DcvZuqlL6pb41mAd/gfrIche1fSYd3cjkbSqIsVJ8jE7
-	 ZpVqfZR2ITYIw==
+	s=arc-20240116; t=1755554769; c=relaxed/simple;
+	bh=N3tSa4eZY9kU9rIayo2ksXQAHAw93ivpiznq9dIOADU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eeH0v4UQkmqqXCNsxFwQSiVhg9woIE8p0JT1p0gBzG1Dsk30WW0XL8HdoEFoh0ExO8R3gP/doSpQB8vHRk/FGMDSJR8hyBL/BQI66quMC/BEhGTboeUjG7xOBYzhmV8+yTeYAGItAyWlD9s2yDFq42VZ6B2qkJRkepJVrS3yx/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eUyIgmSg; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso3294365f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755554765; x=1756159565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N3tSa4eZY9kU9rIayo2ksXQAHAw93ivpiznq9dIOADU=;
+        b=eUyIgmSgwMGpxG3HtV2ALZmX11xFjEi2wLVICOcCfZfpwYmswf8Qevd5opmgNFMq7S
+         dheQlOqCEMGkJGBZXtgrmgqstBdlKfn0bliEFCutds6KF0E0iMB26JBNUmPifDudoLxb
+         ESjqoSm88S2CN6dgg+ZI2jV+Y8XpNeb/8ciZxzGEZUIGhb9z7pHEVSeC8R7RxS8DL/3q
+         ZlPJxqnLpQIORfxSmGSP17YbJB4zycLEpqSx7EynpU+P5V2URqezTe1nk1rNAyvxompk
+         8YXPaJmI1RxHDj4HEJezrVUHT3unTJdSlJjRCtZQ2Xud9wh2EjYGxp9tui9S4FLX/CHV
+         ovcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755554765; x=1756159565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N3tSa4eZY9kU9rIayo2ksXQAHAw93ivpiznq9dIOADU=;
+        b=M39P9DlWm4HwMIlI/0Vgh1bEOJXpdg+Cnn2hFll9fbCn+rCYFl2UybiIdN/6tLuveu
+         74RbicTiobNHgbBvK2hiZDUKnQqk3QuTA69X0vnvJVHOJ7jbOLj+BZeLdfVZK6GpkEji
+         8maOck9t4gNlgvtK+qeYtOov3KDLxDxCjE2J9twZiuslzoUsxPyUD5MSd3Bia5QjZ1Mb
+         al4WthgejZgx+OcBOdxlmcZiWhAoc5g+EJL27hIDDlwFguGG3V4jwBmX8RynjrH7V0JK
+         qUQn9DggI+f5R0/PW+KIGctkEzr1J/Mi4ZHX4ayxNwkwxrXRmD405TsP58OWb0Pqsmf4
+         aXLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtWUbFaPq0HpMwZ9IUh3Ac3ke0J+mQ4s1hjQBf3CNjnYrr6GhnC5pFLi4ZmI4aZ/31rMvOzryJxC9/Apw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy33uSBvK9NY1Agupbl7khM8DXRa4NBYXEdxeKWjxK5btCgomwf
+	S9++WwQx5NwMa534MDeVjP/xBnhqEh1xacgqW/+gIPAj4hfThTyq9MFBGXTXge/Nwy3teT9D3CC
+	x21Lg7KzgsKPCeIVfaYwkwZTnlpzg6wXZYIpflhDp
+X-Gm-Gg: ASbGncuzwexR3qTlLGocS3mAb2/Mr1DX6uCbu2EpIooV1wE09gqyFBkSmW53CJNd0ud
+	AmLTFgoan++TDETBliHk3si4kyZKfg/pfZMjoRjoOYmd4EsOblrss80YYHCZQS62Z9ZlJf62hGt
+	ISvZV/y3owFMdpOgWLiPEfIsLvaNt7H8kEbVY31rj4dKXPlhx7ZJyKbS0o0ETaiuf2yvnypDI01
+	45GmgvkLIUsRaGNVLmYDsWXYg==
+X-Google-Smtp-Source: AGHT+IFCQt6uTdxNJOL8MDlH+UvsjGsdlpD1gJo+LDPFtuqTKkPLiGhf2m1VSyVS6vfpJ8pjthhmwUtwki2fM1T2D9w=
+X-Received: by 2002:a5d:5d0a:0:b0:3b7:8acf:1887 with SMTP id
+ ffacd0b85a97d-3c1333b5d05mr49367f8f.13.1755554765184; Mon, 18 Aug 2025
+ 15:06:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250816114409.10107-1-shankari.ak0208@gmail.com>
+ <aKKdULYbLFRMS9qe@mail.hallyn.com> <CAHC9VhRwpYx0jVybcAnGdm4AGDno-GwyCzZCS7U+56Fwu2tuCg@mail.gmail.com>
+In-Reply-To: <CAHC9VhRwpYx0jVybcAnGdm4AGDno-GwyCzZCS7U+56Fwu2tuCg@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 19 Aug 2025 00:05:52 +0200
+X-Gm-Features: Ac12FXxHVkHHjsjzroxYO2hLV5awVzQ5ch9P37B2T1QViWU5EDCtAQkTwIhqx1E
+Message-ID: <CAH5fLgin9OhTmf52i2hQKztYLcHTxE+n1gMPXDFN83atE+u_oA@mail.gmail.com>
+Subject: Re: [PATCH] rust: cred: update AlwaysRefCounted import to sync::aref
+To: Paul Moore <paul@paul-moore.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Shankari Anand <shankari.ak0208@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 19 Aug 2025 00:05:41 +0200
-Message-Id: <DC5W7UQHOJSG.310L4WJ0AKZFE@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Ryosuke Yasuoka" <ryasuoka@redhat.com>, <arnd@arndb.de>,
- <gregkh@linuxfoundation.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
- <dakr@kernel.org>, <lee@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH rust-next 2/2] rust: samples: miscdevice: add lseek
- samples
-X-Mailer: aerc 0.20.1
-References: <20250818135846.133722-1-ryasuoka@redhat.com>
- <20250818135846.133722-3-ryasuoka@redhat.com>
-In-Reply-To: <20250818135846.133722-3-ryasuoka@redhat.com>
 
-On Mon Aug 18, 2025 at 3:58 PM CEST, Ryosuke Yasuoka wrote:
-> +    fn llseek(me: Pin<&RustMiscDevice>, file: &File, offset: i64, whence=
-: i32) -> Result<isize> {
-> +        dev_info!(me.dev, "LLSEEK Rust Misc Device Sample\n");
-> +        let pos: i64;
-> +        let eof: i64;
-> +
-> +        // SAFETY:
-> +        // * The file is valid for the duration of this call.
-> +        // * f_inode must be valid while the file is valid.
-> +        unsafe {
-> +            pos =3D (*file.as_ptr()).f_pos;
-> +            eof =3D (*(*file.as_ptr()).f_inode).i_size;
-> +        }
+On Mon, Aug 18, 2025 at 11:22=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Sun, Aug 17, 2025 at 11:26=E2=80=AFPM Serge E. Hallyn <serge@hallyn.co=
+m> wrote:
+> > On Sat, Aug 16, 2025 at 05:14:09PM +0530, Shankari Anand wrote:
+> > > Update the import of `AlwaysRefCounted` in `cred.rs` to use `sync::ar=
+ef`
+> > > instead of `types`.
+> >
+> > Thank you for forwarding, Miguel.
+> >
+> > As far as I can see from the included links, this looks good.
+> >
+> > > This is part of the ongoing effort to move `ARef` and
+> > > `AlwaysRefCounted` to the `sync` module for better modularity.
+> > >
+> > > Suggested-by: Benno Lossin <lossin@kernel.org>
+> > > Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> > > Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 
-Please include abstractions for writing & reading the file position
-instead of using `unsafe`.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
----
-Cheers,
-Benno
+> > Acked-by: Serge Hallyn <serge@hallyn.com>
+>
+> As mentioned previously, I'm still not well versed in Rust so as long
+> as Serge is happy with it, I'm good with it too :)
+>
+> I'm guessing it probably makes sense to include rust/kernel/cred.rs in
+> the creds MAINTAINERS section just as we did (or will do) with the LSM
+> Rust shim?
 
-> +
-> +        let new_pos =3D match whence {
-> +            SEEK_SET =3D> offset,
-> +            SEEK_CUR =3D> pos + offset,
-> +            SEEK_END =3D> eof + offset,
-> +            _ =3D> {
-> +                dev_err!(me.dev, "LLSEEK does not recognised: {}.\n", wh=
-ence);
-> +                return Err(EINVAL);
-> +            }
-> +        };
-> +
-> +        if new_pos < 0 {
-> +            dev_err!(me.dev, "The file offset becomes negative: {}.\n", =
-new_pos);
-> +            return Err(EINVAL);
-> +        }
-> +
-> +        // SAFETY: The file is valid for the duration of this call.
-> +        let ret: isize =3D unsafe {
-> +            (*file.as_ptr()).f_pos =3D new_pos;
-> +            new_pos as isize
-> +        };
-> +
-> +        Ok(ret)
-> +    }
-> +
->      fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd: u32, arg: usiz=
-e) -> Result<isize> {
->          dev_info!(me.dev, "IOCTLing Rust Misc Device Sample\n");
-> =20
+That would make sense to me.
 
+My understanding is that this patch, unlike the pin-init one, is
+intended to go through the LSM / CRED tree rather than taking
+everything through a shared tree with Acked-bys.
+
+Alice
 
