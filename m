@@ -1,124 +1,163 @@
-Return-Path: <linux-kernel+bounces-774504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E2AB2B34C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CF0B2B34E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5583B17FA55
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A507E16F2AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234C025DCE5;
-	Mon, 18 Aug 2025 21:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E2C26FA5E;
+	Mon, 18 Aug 2025 21:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="qjbhtzNt"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRy6NIba"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770D1223DDF
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D36223DDF;
+	Mon, 18 Aug 2025 21:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755552021; cv=none; b=P3sckf88nnl74Q6mCz4E/icLv+pmogi1VgcnQeUHMuNo+YwF1kdMWUjZOGrxiyd6LFxafdsqq+rOI3v8hu8Sr5mT1FRg34+0NOxb+5omJ0nVjDs3QDmHgp1/0kWGByFJ6sEy2l6xHPUqpL0+WJ2qyZK9i29WgnwncMugr87YNl0=
+	t=1755552073; cv=none; b=fnSx2mnYx4Dg5BB9N7U8RE6Gg2YVcZ/3Uy10rWhEOalzPbAlv/2Q7/0ZkOwaL45mD7ccWUvaZWj2WvF2XOwX1MJ1jJqJnpCgf9XGMxSnT4eSikkuxZLIK9vXF+YScMt1lljW5zSr+w6Ei9NNpTIw1NpaiLcqYWg0b5eVtiZK/j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755552021; c=relaxed/simple;
-	bh=jUuKJMSnsAj8yEfULgTwdpau6FZrf5Blw3WxOj0VXTc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ZAr8O0gmWgSZFom2OszxEmrDyY6fbSD6qwYDmi5uol7gxseADnBj5Vv9KH6vTRzV9UjpXu/nuxcVJDAY7oIRuRuPFWDttK4F+nESvvxSHmUjP6yGgrZB3YlzLuoaGvHyKYd9tvYq2m8J5485LJnAu0JDpvd5qyPl1nwFXhgq/N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=qjbhtzNt; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1755552073; c=relaxed/simple;
+	bh=8sYxEPPi5m6As2djnx+RUdD2DWFle8xZd3DGnUL2Uyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QDWDn6KN7IMBXjzov9+k9j9b9rdLl5l7xd02zdSEKXLeC06UoCKlBDUxfgWyxoBtC7k9UDgf00eBJlzcKjjkqbOhROwbQKVcRpA/TSw5PUdAcV5qmLairl8VmMhvOYKCPSTF/+jFAHUGPsVHow55VdX/4vqd6jusJCOBnBq2z3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRy6NIba; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso32619035e9.3;
+        Mon, 18 Aug 2025 14:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755552070; x=1756156870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Mq5OOEmUE9OkgN/VAU4XTp9x+IbIBr1PXu6WZVa1WQ=;
+        b=gRy6NIbavEVTvVJoPpyAG715kJPRGDwiluehhS/DqH3YExDDF6z/lcVDP5dTXWwRBt
+         5laBolh4nrL0QjVx10YGVwTxXAd/upMViLWWbwBfYncb5Q2/nwCHPtndIQatiViPJR1g
+         uw7ymtaZC+tmw7zj6scp8RfFjMn2dgMAjlTXBC0prv6GoFbV0+cfK4TgFqOp9Z8VyDPO
+         t/zH5tC1iUmxK3TwiH7DFHrRd0vKes8gIp75n3imv0yc8dluCeTBGpxCBnCujb5dIZ50
+         /Hn5aXvZMA2EX/mQnoHVpySG3dKKMLQzGXhwuGPqkj3LBMgYY+foekuGaAyttsu4i+7V
+         KL6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755552070; x=1756156870;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Mq5OOEmUE9OkgN/VAU4XTp9x+IbIBr1PXu6WZVa1WQ=;
+        b=X0s2wpwyDZWOf9uf2lIxuD5ysSVdWJQve1oJyfzQdpdqR1fsT2cuwWpWBLJUhta7td
+         XTBZYTPLeoySQNLTMO4vRIu2ddMgTyLYrY7VWpltg1yE3wR3MpuuwRXO3X3ehCBFj/ad
+         IwJ0wsIxTArdWB0WgWAaNk4g3JeXDWM6vcXAPs5qsYy2NF4f2zFEEPcRhixtVmfq4dnO
+         oxoIIWpAYplDtnjP3Hy3E7TSGypZchyr/nyPTDTNBJ5HpIpbh9OanKbMS5JWwil7M/lP
+         VVSZOCzt8xJRkCH2gE1apJbidYkxGVwMPT8p4As3ji3B446bM36W9Zn/uyLRysCifntI
+         QDrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvgw658G2ZVGO4EcFK9mauMuKkbFHoeGrV1ofWbfhRg+IK9f+Kamb689vyKpUj60Pa24wZ7YEALx1Vm38p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+stMYiiqBQwHsmOsTe8Pvlz5sbIPSLAqqKI9Fhw1Efw6L2s8M
+	5VNGAneXEvQTW237yf9HESfqKd653YElyNHHDvV2Q+lUmQBmkLRAAApk
+X-Gm-Gg: ASbGnctO+/RrPGajS7fBSrklCTkt8xvXqWzcX/bNhMkNuVYqvU0HgYBuvDZ1zA3OKBq
+	cYvV0dRXV9qFUHoq1J2ycnPeScHCkr5TkYmdDJnfwTmx2joX48n43DPMZnLFG/++nGk4QG/DvWq
+	pwdcQ8qU5IRGXbTJ3Ymiz9+gAqQLb2TZmMg5+o8fMXotNxuGFXDUInl44u4VpIRT89xlthZxg/V
+	huTKYpbxxbhiC52foV3rY3IkU/G8Qig+4FZAuSWsrEjQj+qDccc6hCuj/d0fkAEbRM+WT0r3eAj
+	jT4lJXlW4YFNsmjBschJs/bIwqoxpM4f+mClfml4FdeZKhbkTUTTJa64fkcqvaYjRtAGDhHuGqe
+	8dct/Q41oPpCH38CN+bOEBO9zYdtCWcNeRSRZe6gfbc/Nb5fy+nd4g/fJa74z
+X-Google-Smtp-Source: AGHT+IFjeJcl/CIROyINJYz2N4GIyL7wH/l6ez3R9eVxdJEOCoo9/uJ8oeF1uCKxLhDwqBW8u1rNuA==
+X-Received: by 2002:a05:600c:1c0c:b0:456:1dd2:4e3a with SMTP id 5b1f17b1804b1-45b43db662amr522955e9.3.1755552069892;
+        Mon, 18 Aug 2025 14:21:09 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a6d7b7sm14313195e9.1.2025.08.18.14.21.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 14:21:09 -0700 (PDT)
+Date: Mon, 18 Aug 2025 22:21:06 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
+ access
+Message-ID: <20250818222106.714629ee@pumpkin>
+In-Reply-To: <20250817144943.76b9ee62@pumpkin>
+References: <20250813150610.521355442@linutronix.de>
+	<20250817144943.76b9ee62@pumpkin>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1755552016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XS7+GV2RkpfpXQCCQWs19kWJiga7BQll43I9ak8T6ss=;
-	b=qjbhtzNtYArFfyLJniwM9+d4q2aGuf7I1GONVIlMYFZ07i8uuP8Uu5IUUc6KbVdcI9NiNz
-	nE3no1ZIpnEQew9ebQPcdszgCsNd4cde4EsHkRl9b4v8lVLxKZ3lJjgVx0lphIGrthxx8Q
-	UxqE9t3Oyo3C0STZR4RCKBPDIXooXpgcDeSX/dp+cz4Wb18zUUC7M7ptgxcnrYA+paLu5L
-	yXGEubmWIIEIhKCOCdGJhtS2bzQODTKhb4qrTgFtk6BXV3DQssXzjBCH4r2dialzksYGT1
-	q0qUv0xOG0PGfj4IgTHSXDsauF8aZfQ6wQwY+gGRlmiw/PYYlqshz1mis8lNig==
-Content-Type: multipart/signed;
- boundary=f5a3337a4ddd79f69b97f3302687a1b89b63238d5c33cb848fb830109345;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Mon, 18 Aug 2025 23:20:00 +0200
-Message-Id: <DC5V8VGBDFQ8.3SZ2OASX2W75E@cknow.org>
-Cc: <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Diederik de Haas" <didi.debian@cknow.org>
-Subject: Re: [BUG report] kernel warnings with Samsung 970 EVO 2TB SSD
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Keith Busch" <kbusch@kernel.org>
-References: <DC3TO97G0RMI.3KKUONOCLJHFB@cknow.org>
- <aKCFjzai3Y0RcGHP@kbusch-mbp> <DC3WVB8IOMNV.14F1RIJHNO33Q@cknow.org>
- <aKN30RVeM3p5NJm1@kbusch-mbp> <DC5UKZ9F6CQZ.2NDFY4S322T2G@cknow.org>
-In-Reply-To: <DC5UKZ9F6CQZ.2NDFY4S322T2G@cknow.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---f5a3337a4ddd79f69b97f3302687a1b89b63238d5c33cb848fb830109345
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Sun, 17 Aug 2025 14:49:43 +0100
+David Laight <david.laight.linux@gmail.com> wrote:
 
-On Mon Aug 18, 2025 at 10:48 PM CEST, Diederik de Haas wrote:
-> On Mon Aug 18, 2025 at 8:58 PM CEST, Keith Busch wrote:
->> On Sat, Aug 16, 2025 at 04:11:00PM +0200, Diederik de Haas wrote:
->>> On Sat Aug 16, 2025 at 3:20 PM CEST, Keith Busch wrote:
->>>=20
->>> The other kernel warning is this:
->>>=20
->>>   nvme nvme0: using unchecked data buffer
->>>=20
->>> The SUBNQN message appears every time, this one appears often, but not
->>> always.
->>
->> That one means you've sent a user space passthrough command to a device
->> that doesn't support SGL DMA. Without that, the nvme protocol uses
->> implicitly sized DMA that the driver can't be sure is accurate. The user
->> could theoretically provide a short buffer that can corrupt memory if
->> done by accident, or be used as an attack vector if done by malicious
->> software.
->>
->> This is also not something to worry about unless you run malicious or
->> buggy software.
->
-> I would be surprised if I was running malicious software, but pretty
-> much all software has bugs, so that's ofc possible.
-> ...
->
-> Uninstalled the 3 programs from R5S that showed up the most around the
-> warning message and it's still there.=20
-> Would 'dyndbg' be helpful to determine what program is buggy?
- =20
-Looks like I found the 'winner': udisks2 (package)
+> On Wed, 13 Aug 2025 17:57:00 +0200 (CEST)
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> > commit 2865baf54077 ("x86: support user address masking instead of
+> > non-speculative conditional") provided an optimization for
+> > unsafe_get/put_user(), which optimizes the Spectre-V1 mitigation in an
+> > architecture specific way. Currently only x86_64 supports that.
+> > 
+> > The required code pattern screams for helper functions before it is copied
+> > all over the kernel. So far the exposure is limited to futex, x86 and
+> > fs/select.
+> > 
+> > Provide a set of helpers for common single size access patterns:  
+> 
+> (gmail hasn't decided to accept 1/4 yet - I need to find a better
+> mail relay...)
+> 
+> +/*
+> + * Conveniance macros to avoid spreading this pattern all over the place
+>     ^ spelling...
+> + */
+> +#define user_read_masked_begin(src) ({					\
+> +	bool __ret = true;						\
+> +									\
+> +	if (can_do_masked_user_access())				\
+> +		src = masked_user_access_begin(src);			\
+> +	else if (!user_read_access_begin(src, sizeof(*src)))		\
+> +		__ret = false;						\
+> +	__ret;								\
+> +})
 
-I uninstalled that and in the 10 boots after that, I did not see the
-message. Installed it again (without Recommends) and it was back on the
-first (re)boot.
+Would something like this work (to avoid the hidden update)?
 
-Thanks!
+#define user_read_begin(uaddr, size, error_code) ({	\
+	typeof(uaddr) __uaddr;				\
+	if (can_do_masked_user_access())		\
+		__uaddr = masked_user_access_begin(uaddr);\
+	else if (user_read_access_begin(uaddr, size))	\
+		__uaddr = uaddr;			\
+	else {						\
+		error_code;				\
+	}						\
+	__uaddr;					\
+})
 
-Cheers,
-  Diederik
+With typical use being either:
+	uaddr = user_read_begin(uaddr, sizeof (*uaddr), return -EFAULT);
+or:
+	uaddr = user_read_begin(uaddr, sizeof (*uaddr), goto bad_uaddr);
 
---f5a3337a4ddd79f69b97f3302687a1b89b63238d5c33cb848fb830109345
-Content-Type: application/pgp-signature; name="signature.asc"
+One problem is I don't think you can easily enforce the assignment.
+Ideally you'd want something that made the compiler think that 'uaddr' was unset.
+It could be done for in a debug/diagnostic compile by adding 'uaddr = NULL'
+at the bottom of the #define and COMPILE_ASSERT(!staticically_true(uaddr == NULL))
+inside unsafe_get/put_user().
 
------BEGIN PGP SIGNATURE-----
+	David
 
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKOZCAAKCRDXblvOeH7b
-bvlxAP9OjZ2a9vOVVf9jUCjeLoX2b1h1ZPtA6pVUfgGRKEx2JQEAhzTpzmfiuU85
-rMxVDHRZfDaHjgVp1YoYZZLYJEOp9wE=
-=EcQA
------END PGP SIGNATURE-----
-
---f5a3337a4ddd79f69b97f3302687a1b89b63238d5c33cb848fb830109345--
 
