@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-773473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CE1B2A0A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:40:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A59AB2A0B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47B54E597C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B40AC2A7AB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE782319853;
-	Mon, 18 Aug 2025 11:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEABB2E22A2;
+	Mon, 18 Aug 2025 11:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKBRtdr/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8Egfps0"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFC62E22A9;
-	Mon, 18 Aug 2025 11:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD642E2293
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755516831; cv=none; b=VqLETc4T2um7UBDoagDhE5FaVjJLNoLCW45q/LUrwXoemwWqIFZm7XVzEyPjuUDYlgOw9BuQEdRd7nWhXOVdv1pxkbIOt4gS7MPPVGBilyaXc/sWLyd8qk0KNcIXV1rGmEZ7Ywn0BdnngdNfSAQvSACHhpyMZpGXRodCNPE5cls=
+	t=1755516965; cv=none; b=Lkq3zMdGe9frtNiFP3kBM5yrWDXoy0TU113AtB8dTAH1dr68YIdIRly4/h9d/APOFv/nfJF/c/M4C0KHv+dW5AxtqZnZMNygqW5iF0Rz+Gs/S+Q0FiUBg3dViVDpbxgN6rPc/rYDLYUqJUtLw+xRYErg0yNposlnukMP/KCbbYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755516831; c=relaxed/simple;
-	bh=ZZKBTpL6UHyciqnKATbtrkmYynWeMCWrFd/2xcp++ww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XU6nlgSFgahhOxRhNcFU7wdAqhbLs8Ra7XxTipYaqKQqtp7v39J0ju+HaZOu9YE8a+aN4qG3R/YMTtCxZWejrgk6wU7nT/KBLqhjd1G2f0bWq/4NipYk+S7xYZyfe2lpNpZ2SRUI/1h6BFPoUnMzTeeuH8VjX/qIM3oLVe2s968=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKBRtdr/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7CDF3C4CEED;
-	Mon, 18 Aug 2025 11:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755516831;
-	bh=ZZKBTpL6UHyciqnKATbtrkmYynWeMCWrFd/2xcp++ww=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PKBRtdr/YTJTrl92zpHzzAovfqaynlZxJFZ667MTjd+V2zpPVbh/Qw2YkWFGl8Zeg
-	 JIv0gaRa7PdagA1GA06EbVEy4GO0sNTdf6FR9uMTB8QJLoShXHrFGEgBkV0GrW6GR2
-	 l8QjDRsmfKbIfV7udOOmrqR83UfsKpyVH4F39JlEvteIsWQni/6UESQxGlGkBryduS
-	 E2cVKO6sKNLJP6QVQf3TJeZsf5Xb+y/3xsqurGnhx7LD7r26jt0UaWQouihdlLn4lj
-	 AEw/X1Kg1G29aq65wiw0DT5mBXOiR0gDatBMXU/FSddyoCFlqbrMLijDrt/R6gGmcS
-	 tgOzuwrEZQhrA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9D7CA0EE4;
-	Mon, 18 Aug 2025 11:33:51 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 18 Aug 2025 15:33:47 +0400
-Subject: [PATCH 2/2] arm64: dts: qcom: ipq5018: Remove tsens v1 fallback
- compatible
+	s=arc-20240116; t=1755516965; c=relaxed/simple;
+	bh=pJxE+OEQ5Wyzmel59Y0sr7fQRcSfIty8hGB+7BBVnAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EJ82AujHQhTTA7qxGjuePeB2r68EDbAsFVrZzRoL6zWQS+g8qWLAd/J6CIlb1hNjJdNLfamlTEV/2OFZVl/qfNyRpA8vUQFiojDIBJkLbuxWQhCJyPHFMQCu+b+lqtz9svU0DfU0zkcT2qM5kaqhb7J2NKo4yEnlA2vPEqLCc80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8Egfps0; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b001f55so16446855e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755516962; x=1756121762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dDUdPZKNkg1iBDfC6ofC+qEV+2e3XCCr9Niar66w+L4=;
+        b=M8Egfps0+l5Th1z0iltvhjUPGWWgmjpKtUnz0IEAzKbIqxnNdqPuYQgIjymvncgubD
+         oEqHG3IxPl6CIUvVrba/5H49QhX/l2rWq0XeV7M12fWi7H/VtkKqSDkLMrTX7uQ/sU54
+         4QNrc3LCU1VCmSj6j3vfyb8Uv6D1xu3wkuiYj62o35G1bjzrTmZ8O32KK5DFvbYU3vZe
+         GmIk9wCT021prCMhirZ7Fpnb8f1AvqJqmUUZesH3YRyIKUoq4E9dsUpNtNB0vx6fxf3P
+         8uDvvYwBIrTrBWwmfX/nGyTWYcjVQ5HxSPYsjiHSRorLyPgnKWycOyWLbuGzQFR5qYcz
+         EA4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755516962; x=1756121762;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dDUdPZKNkg1iBDfC6ofC+qEV+2e3XCCr9Niar66w+L4=;
+        b=FXF6JaXPrdZGEURSYI6eo624lYeN/v/ry9y2fYy5QFzj6QzJpM2NviGKs6RSY5XgcI
+         lr+IPVUSDimSvlZo3S/oRdorHEReIvQs+hrsQF2y9DEfOL4TR9nT0SUudLuO/Nizmfl/
+         heVPHFT78j7viUw4gqsXIUihA6dcQ3yYiYN+UJwQq0N0rJ6rkT88voXP5IkQvoWEEREJ
+         sy9wyI6ntRxO/oWgx/vP/QwQoU/KGBMHi0UQSxBwisriyWf52DFABlTESSXGRHvO86+0
+         lBgCJoa/FL5utSVQuSrwV4R+iWWIhZF5wYbL9oan7cqlyex7bkFEfRDinP8IGxQaZECP
+         bQhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsWgFXkwWMu8oS7pO4F1P0wiDn1jHhCE8nII8oQLo/2BIErlU+yFEW0j/tlPhTrLEK+DHmsfWJtEDdoeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmbJoLrOY/Xp39qQSLhdmxEaA7tuVXAuLucTNeQSDZOHbunYT2
+	1avNREIorCkRb2MzO3Vziby/kNY56B9iVuOcH1whPS1OasSGodWwFqnl
+X-Gm-Gg: ASbGncsBAGWz8RsMFGFgDeft2hlGU9lqV/k0JThivkeFZ09ppRsSIfonDpbw8PMaLmK
+	/M+hbMFpKclJZ0VgLjwPl2/watsFFtzSqk/aieaIdvfLTNnJWvdS4h2yDiqf2MCjXVRicG88QG8
+	UZ9A9N74R+pV7p0OyhyDHfsUjEJYGjviUMnVyCQoB2mVe22TxT6FZdJr4QNsb6gP/sPrS5ozBdt
+	64dQMjiwy5XLdKZ2jBIzylSU3isXE/tWQrUOn60CUmZoNpZHyXvPR3bp+gutsJwkbqFf6BytLUh
+	30ywWd3tK+fdMOcdcXxRtNoFd54GShgpLt5c/QlPo7UGWjp6zZPIVIyhtH7VWr1oRo6kmhAtjv2
+	bi3/zpe4VL905g+TrEB88MJsOjNzW3S1BFQWogNgP2Eifc0YCvYpwJQ==
+X-Google-Smtp-Source: AGHT+IEvNQBZsuo8Hf7IiG7SsKJtDHqDwAW6SCT0x2vVEo9x1zPaztZ3dLK1klhGjAt39vstSNNDxw==
+X-Received: by 2002:a05:600c:4f4c:b0:459:d9a2:e92d with SMTP id 5b1f17b1804b1-45a27151246mr62315245e9.5.1755516961619;
+        Mon, 18 Aug 2025 04:36:01 -0700 (PDT)
+Received: from stiangglanda-IdeaPad.. ([85.233.101.104])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c74876csm169135535e9.14.2025.08.18.04.35.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 04:36:00 -0700 (PDT)
+From: Leander Kieweg <kieweg.leander@gmail.com>
+To: Gerd Hoffmann <kraxel@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Leander Kieweg <kieweg.leander@gmail.com>,
+	virtualization@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/tiny/bochs: Convert dev_err() to drm_err()
+Date: Mon, 18 Aug 2025 13:35:29 +0200
+Message-ID: <20250818113530.187440-1-kieweg.leander@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-ipq5018-tsens-fix-v1-2-0f08cf09182d@outlook.com>
-References: <20250818-ipq5018-tsens-fix-v1-0-0f08cf09182d@outlook.com>
-In-Reply-To: <20250818-ipq5018-tsens-fix-v1-0-0f08cf09182d@outlook.com>
-To: Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- George Moussalem <george.moussalem@outlook.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755516829; l=972;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=HJcOgtw7oiilIyh0aWOOzNZ2iln5P6lSb3GMC6Gave0=;
- b=uR1EVwZAX79JKZzxxM9N7TA/hO1CtlDORhZ/FGhSsA68dLhwH953wdmIPFDj4vfeWpsTsB3Bh
- 4W66WWUho9RBMALQ66he3JtRH90AzRDuzcypOj7GRnzE6ehzDO8Gl3R
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Transfer-Encoding: 8bit
 
-From: George Moussalem <george.moussalem@outlook.com>
+The DRM subsystem has a set of preferred, prefixed logging functions
+(drm_info, drm_warn, drm_err) which improve debuggability by including
+the driver and function name in the log output.
 
-Remove qcom,tsens-v1 as fallback compatible since this IP has no RPM
-and, as such, must use its own init routine available in the driver.
+As part of the ongoing effort to modernize logging calls,
+convert a dev_err() call in the bochs hardware initialization
+function to its drm_err() equivalent.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+This work was suggested by the DRM TODO list.
+
+Signed-off-by: Leander Kieweg <kieweg.leander@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/ipq5018.dtsi | 2 +-
+ drivers/gpu/drm/tiny/bochs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index 4ddb56d63f8f9a963cb49bc20e0a78b2d3490344..db7051a659221d45949cda93472e52c49815531f 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -340,7 +340,7 @@ prng: rng@e3000 {
- 		};
+diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+index 8d3b7c4fa6a4..d2d5e9f1269f 100644
+--- a/drivers/gpu/drm/tiny/bochs.c
++++ b/drivers/gpu/drm/tiny/bochs.c
+@@ -252,7 +252,7 @@ static int bochs_hw_init(struct bochs_device *bochs)
+ 		}
+ 		bochs->ioports = 1;
+ 	} else {
+-		dev_err(dev->dev, "I/O ports are not supported\n");
++		drm_err(dev, "I/O ports are not supported\n");
+ 		return -EIO;
+ 	}
  
- 		tsens: thermal-sensor@4a9000 {
--			compatible = "qcom,ipq5018-tsens", "qcom,tsens-v1";
-+			compatible = "qcom,ipq5018-tsens";
- 			reg = <0x004a9000 0x1000>,
- 			      <0x004a8000 0x1000>;
- 
-
 -- 
-2.50.1
-
+2.43.0
 
 
