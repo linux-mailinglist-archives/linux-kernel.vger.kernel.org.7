@@ -1,177 +1,135 @@
-Return-Path: <linux-kernel+bounces-773422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34957B29FC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F153BB29FC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7A11963ED8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AA865E65B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1114E2765D8;
-	Mon, 18 Aug 2025 10:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D5E32144E;
+	Mon, 18 Aug 2025 10:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oM8ryQTW"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQ+isTgo"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC6630FF3E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494E032142A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755514553; cv=none; b=QKeXcwKUtKuuveVexW3HW3tS1cvnaFF57Yj+jJG4n2Jw+9/O+SrIobBFAd+qR/R4MDET1E5Vd1/2/HqyDMQN4vOeh76jzK3vb7JSgFC1bgOUJEQNz417ufin1e7LxegANs9ZLm+PHgXmps5fgTPVnKNkjk9E15N3j5xwfQnkzGc=
+	t=1755514556; cv=none; b=oiqn9d9ugchkUq1iiPUD85NeL+89PC9UyecF+VoB9V+tIQTCvlbWC7w/UKJXOA+9jst7hdKz5X0xDKPLaTH5amAmtdJe/yJkXykXVj1xwJgPql8a0eE6q2cXoI7YDN+ndsY0DrKcshGK2hkSE+fWAhE4gP/VOAdVs96VoTxVLNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755514553; c=relaxed/simple;
-	bh=6uPzar8fnz6L8ml82QStz50hbQ5nxpvVN3h1tUdJAos=;
+	s=arc-20240116; t=1755514556; c=relaxed/simple;
+	bh=UP7+e4B8R1vPgU2CDLucQUs3/3XdVO4lV0FXk9HRIxA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nk4lr6VIfQ/eSYHHbQFW/V36ABYzoTc07a2EJDMkgwkjhiNDDcH/MHJhLmpraDSaUflMOQqj/LjhjZiMhrYAxkqA/NBHSJ5DX8+wKLQe+415EHHu2eB7mT0hT9nGHOD3Tpdj681Plli0PJFy4EgFJuDIK8KeI+Sa1y6cdDhtIiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oM8ryQTW; arc=none smtp.client-ip=209.85.219.182
+	 To:Cc:Content-Type; b=o9Rhs7ORJwHm+SjVbqdxczddYFeLGDTtC2xaZERG/2rKoPPJIuCYmlTbOjhKFWk4DvTzI43YEp+vsdMvZzWp+5BvLriSi8rs4cZLvmK/Xlg6VatFF26ZlImlxy83zfJ+IrNu5CDQ6g4PhRggjIuRUeAsH4fVRYnMW4mMC9uwbqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bQ+isTgo; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e934595701eso1184288276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 03:55:51 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e934bcb75f8so896683276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 03:55:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755514551; x=1756119351; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755514554; x=1756119354; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dSUcJw1TXruqA7NYhOWlsQiZC/PcevLoh3jJ9TCLJxk=;
-        b=oM8ryQTWNOMISk6HXymQy6AyJP4wzGxSJf2DGG172ok6NREbSEoF5v0uW6e7t1NhJL
-         x/MRkwuVpqTfSdhRec8erU6JaxZ0NOCPSmuHyPa58WLt+Q41Q1D4wCX+hcqG/CWFEGLW
-         8MbNwYfja9A4pO9j4zMhcIaQ6FdjeLwa8HMePpExcfgSogwNPM9DWGua36rdg8jiZu05
-         XxxA450TrqNuFamAID/qk7rXwRSOrOQYcs6F2fd+T0gCwlKdQD4jXMf8qyeyd0QljI2Z
-         LMCdt/p2n7A3WeTI0LHe5rtCawZ4NrMvVmH+XsR4Zkhuslne+bOlMVpfBjka9mcJmqBr
-         NxJg==
+        bh=QIGyc7zpEFVUm3lI2jgzfkEXQnPtPbTfkBgrHspZGAA=;
+        b=bQ+isTgo5+PCrNlA93Lw63SVtP0f7ydYX1Jr8MpFr7ZPR2OJ2yWZqhUbs0HLx1Mmw6
+         aY8OJ6IeQQJcLrSIv+DJ/TVEtjv8czQYpaf3yGH51aUBnt8dqgsdy1cr6lZ4FeYwWyio
+         6E5egB1g53KyrzqQDbBGuPdwydKdlGUT6tuhsUxPFuL2+/J+YiSOyyopTdGghbeC0f8m
+         dGBOUev1aNU6kkB2Rplw+IBt5gdWWGuTaiW+xfOPUeVLryfgyBXSMFZjjJzKhJ4dqsPe
+         c9D88aPJ99ebehZsJndzd4SaEVLrjOU/OGzOeRHFaTUD7n6UGQ/Z/7mM95DaDTCNu3m/
+         Ib2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755514551; x=1756119351;
+        d=1e100.net; s=20230601; t=1755514554; x=1756119354;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dSUcJw1TXruqA7NYhOWlsQiZC/PcevLoh3jJ9TCLJxk=;
-        b=WjltTIgCqKb5JlmNbSTJLE0aB8yNLHFGlfUKDSLzhPDo/U9ZoTgmIB7qEPLx/Qgx+f
-         NIqHBOkxrdEVaO9Xo88E2Sya8VNDHek+WxzxV+cjotk2cfUYHJjCXhdE+ykFNn1ndcLI
-         /pvZ3bEKJepelsxBWm22B4cgDNDwU1IJsBwWkkKy6p8dwiylt+djnE8hUv9DkoYDItbO
-         MvS2F2iBtwDpggU2ksg9SasSIiUODn0FQm5PbjqUexkgNEslLJjDXi7ffsBFVS37dCZF
-         KXC8a8MBt/kXbi1VA/P9N939DxzvSWY0bVMPk6a+poc6YiXR5iEriSc6W8i6UREK9pIp
-         6Tcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwA8WMJtGFD4A4xMdj3Zon+fB+5hrWvE+ywkyJROsbGxMgughjQ+D1JNENI9SBO/U4uk2SpJ68lDtMPPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsTFeJ+XuGe9wn/9UHI5gTH9cOTd+JuvQ/Ip8FKTScUO3xa+wO
-	PfLthb9/l+7g/8T38H1APObLGedO0TMX2sIKIYJvR2o033EU5L+dtLcHt4IaP+st3pxjWIwoK5o
-	uUpDuW0JukG2nlhKk4vEBCRRukRWeFavB6udE3P3VzQ==
-X-Gm-Gg: ASbGncvU25ejSS4HpaWDk5VxtbTdBkLuKGE6vYrH9Gnw+rLKqsGUusIYwoNpSqMiV0J
-	ZKsccz+QhmMXCJBtR7jMOHDGoiNyo6RKaXz9gYEgF9NiSbPELYw6AYw1FGlU8n3EdUcaMUB2Qwi
-	8kQLY31ZgoblwGT51/PwANr0l3fotgInk7GYCYVMQVjp1Q826WDw2fyS2pq890ynBTp1EHHxQ+D
-	pkv/d5W
-X-Google-Smtp-Source: AGHT+IGh7RVez0cYblanpn7QsvQTnxPk0VxeHoWXwhEM0PY4fYruJQmra/PgvlN67LU1aBTvJBYNVkGUDhr8hRBfu3Y=
-X-Received: by 2002:a05:6902:18ca:b0:e93:4df7:6889 with SMTP id
- 3f1490d57ef6-e934df76df2mr4130536276.5.1755514550706; Mon, 18 Aug 2025
- 03:55:50 -0700 (PDT)
+        bh=QIGyc7zpEFVUm3lI2jgzfkEXQnPtPbTfkBgrHspZGAA=;
+        b=LKfS6gAX64q21DzsdMwOsbNe44oX/YG6wR+1Z/En7rYNP2CnYuCZJnGaHuH4huHagf
+         U6pNEMgf+FyU+gmYJgbUMZuazruYMiEAsad98OHIXnDpZv3Sk4eXHe8r5PxQL96phyWc
+         5Dm9b0MMdcYEOEhxGgSz4iiOf+R5XMsBWHC1UxJnqRTUc6ESpEoQ/Xx+edHTgYtRO8KZ
+         qjzm+25VD0efMvZWxbhmIbGetmnofCtfYNDaotAsMAZcBNXRLKoITP7Mgd9lDQ4NPkVo
+         oBivdVRTLekjzrbVyNt56enWdvc+GtzoXChfq4C6lJY5wfBSy2TPoa6HNhKJHR3LV8jf
+         adnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7O6Kqyafvu2BkjjfcJ0xFHb+JH4DgllL/NoiDwxEIiN2gnp/BUMGVcPPD/1jtyiBxcqv8L98GcHs6hAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA9mRUK/cOI10vUULjxDSnlBX0BxcWe2i9PxyhbHtzYL97Cyr2
+	wLiCXUozDhQE53iqxsWpoy67ekguNkuVQYpxiYpdLgzAZ4ze6Oa+vHgR29DDaz2H/HiaMgKMHig
+	CzWWoVTf3Hx9zsjyd5PTiw8cr8qD+8Rej9F00zBoAUA==
+X-Gm-Gg: ASbGnctE0//U4H8NCMTnO+V0lnB90hFbncRMtsiHynyAPDyrPDnQ5sKseZkoguHS53Q
+	IktGIE+dXUiJELY7YT+Q3LRrN92NSzsuIGngrmWDJ/BkoFuByN3Xg3l+S3C0vWfjAlAVxZId5O6
+	Zy6lkwOAK0XUn3nvn0AVMJv/aDdUsatXIuZwfIlJY9y7k2mTH98Vem67ZoUmkuCcpKUaA4nLf8M
+	I2M+nS/
+X-Google-Smtp-Source: AGHT+IFkq8ZQsPYffmYGOn8sv5vUZY4ueg4jyolAPL3LCIeR/KHuj2dAdOaW0+N6sVeSogB72m6F5xqA/Vzy/BlhP84=
+X-Received: by 2002:a05:6902:1581:b0:e93:4575:4d51 with SMTP id
+ 3f1490d57ef6-e9345754e38mr8117383276.46.1755514554219; Mon, 18 Aug 2025
+ 03:55:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804013604.1311218-1-lijiayi@kylinos.cn>
-In-Reply-To: <20250804013604.1311218-1-lijiayi@kylinos.cn>
+References: <20250804024825.1565078-1-lijiayi@kylinos.cn>
+In-Reply-To: <20250804024825.1565078-1-lijiayi@kylinos.cn>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 18 Aug 2025 12:55:14 +0200
-X-Gm-Features: Ac12FXyqwG0c8SLIENypbwfR6jFFJ-FTW3VAEPm1_XbocLArGkOzSh1HDj0UOQA
-Message-ID: <CAPDyKFp4a_y-Om3CxEn2zO_s9yBeMmyMpgVL04j_xLEt7HtNqA@mail.gmail.com>
-Subject: Re: [PATCH v2] memstick: Fix deadlock by moving removing flag earlier
+Date: Mon, 18 Aug 2025 12:55:18 +0200
+X-Gm-Features: Ac12FXwrjUQMO0k8DZEzoreMphRWa6TOQ4HOnWDvjf8kvUENWbni2X6of6EJVDA
+Message-ID: <CAPDyKFr4CkPb5jTSsCOcsz+VaZRFOT5ZT-jJZ3oDahj14H_BWQ@mail.gmail.com>
+Subject: Re: [PATCH] memstick: Add timeout to prevent indefinite waiting
 To: Jiayi Li <lijiayi@kylinos.cn>
-Cc: maximlevitsky@gmail.com, gregkh@linuxfoundation.org, 
-	kai.heng.feng@canonical.com, oakad@yahoo.com, luoqiu@kylinsec.com.cn, 
-	viro@zeniv.linux.org.uk, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jiayi_dec@163.com, stable@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, kai.heng.feng@canonical.com, oakad@yahoo.com, 
+	maximlevitsky@gmail.com, luoqiu@kylinsec.com.cn, viro@zeniv.linux.org.uk, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, jiayi_dec@163.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 4 Aug 2025 at 03:36, Jiayi Li <lijiayi@kylinos.cn> wrote:
+On Mon, 4 Aug 2025 at 04:48, Jiayi Li <lijiayi@kylinos.cn> wrote:
 >
-> The existing memstick core patch: commit 62c59a8786e6 ("memstick: Skip
-> allocating card when removing host") sets host->removing in
-> memstick_remove_host(),but still exists a critical time window where
-> memstick_check can run after host->eject is set but before removing is set.
+> Add timeout handling to wait_for_completion calls in memstick_set_rw_addr()
+> and memstick_alloc_card() to prevent indefinite blocking in case of
+> hardware or communication failures.
 >
-> In the rtsx_usb_ms driver, the problematic sequence is:
->
-> rtsx_usb_ms_drv_remove:          memstick_check:
->   host->eject = true
->   cancel_work_sync(handle_req)     if(!host->removing)
->   ...                              memstick_alloc_card()
->                                      memstick_set_rw_addr()
->                                        memstick_new_req()
->                                          rtsx_usb_ms_request()
->                                            if(!host->eject)
->                                            skip schedule_work
->                                        wait_for_completion()
->   memstick_remove_host:                [blocks indefinitely]
->     host->removing = true
->     flush_workqueue()
->     [block]
->
-> 1. rtsx_usb_ms_drv_remove sets host->eject = true
-> 2. cancel_work_sync(&host->handle_req) runs
-> 3. memstick_check work may be executed here <-- danger window
-> 4. memstick_remove_host sets removing = 1
->
-> During this window (step 3), memstick_check calls memstick_alloc_card,
-> which may indefinitely waiting for mrq_complete completion that will
-> never occur because rtsx_usb_ms_request sees eject=true and skips
-> scheduling work, memstick_set_rw_addr waits forever for completion.
->
-> This causes a deadlock when memstick_remove_host tries to flush_workqueue,
-> waiting for memstick_check to complete, while memstick_check is blocked
-> waiting for mrq_complete completion.
->
-> Fix this by setting removing=true at the start of rtsx_usb_ms_drv_remove,
-> before any work cancellation. This ensures memstick_check will see the
-> removing flag immediately and exit early, avoiding the deadlock.
->
-> Fixes: 62c59a8786e6 ("memstick: Skip allocating card when removing host")
 > Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
-> Cc: stable@vger.kernel.org
 
-Applied for fixes, thanks!
+Applied for next, thanks!
 
 Kind regards
 Uffe
 
 
->
 > ---
-> v1 -> v2:
-> Added Cc: stable@vger.kernel.org
-> ---
->  drivers/memstick/core/memstick.c    | 1 -
->  drivers/memstick/host/rtsx_usb_ms.c | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
+>  drivers/memstick/core/memstick.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-> index 043b9ec756ff..95e65f4958f2 100644
+> index 95e65f4958f2..3eeb93b51f80 100644
 > --- a/drivers/memstick/core/memstick.c
 > +++ b/drivers/memstick/core/memstick.c
-> @@ -555,7 +555,6 @@ EXPORT_SYMBOL(memstick_add_host);
->   */
->  void memstick_remove_host(struct memstick_host *host)
+> @@ -370,7 +370,9 @@ int memstick_set_rw_addr(struct memstick_dev *card)
 >  {
-> -       host->removing = 1;
->         flush_workqueue(workqueue);
->         mutex_lock(&host->lock);
->         if (host->card)
-> diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-> index 3878136227e4..5b5e9354fb2e 100644
-> --- a/drivers/memstick/host/rtsx_usb_ms.c
-> +++ b/drivers/memstick/host/rtsx_usb_ms.c
-> @@ -812,6 +812,7 @@ static void rtsx_usb_ms_drv_remove(struct platform_device *pdev)
->         int err;
+>         card->next_request = h_memstick_set_rw_addr;
+>         memstick_new_req(card->host);
+> -       wait_for_completion(&card->mrq_complete);
+> +       if (!wait_for_completion_timeout(&card->mrq_complete,
+> +                       msecs_to_jiffies(500)))
+> +               card->current_mrq.error = -ETIMEDOUT;
 >
->         host->eject = true;
-> +       msh->removing = true;
->         cancel_work_sync(&host->handle_req);
->         cancel_delayed_work_sync(&host->poll_card);
+>         return card->current_mrq.error;
+>  }
+> @@ -404,7 +406,9 @@ static struct memstick_dev *memstick_alloc_card(struct memstick_host *host)
 >
+>                 card->next_request = h_memstick_read_dev_id;
+>                 memstick_new_req(host);
+> -               wait_for_completion(&card->mrq_complete);
+> +               if (!wait_for_completion_timeout(&card->mrq_complete,
+> +                               msecs_to_jiffies(500)))
+> +                       card->current_mrq.error = -ETIMEDOUT;
+>
+>                 if (card->current_mrq.error)
+>                         goto err_out;
 > --
 > 2.47.1
 >
