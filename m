@@ -1,185 +1,177 @@
-Return-Path: <linux-kernel+bounces-773157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B754B29C1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:26:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38198B29C30
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 982613B10AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1D7202162
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4168301499;
-	Mon, 18 Aug 2025 08:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF3430275E;
+	Mon, 18 Aug 2025 08:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="XLyJBkbm"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013026.outbound.protection.outlook.com [40.107.44.26])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="UdZmtK5L"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4279330148F;
-	Mon, 18 Aug 2025 08:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDC73009F0;
+	Mon, 18 Aug 2025 08:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505507; cv=fail; b=YMI/ltZpsUy3xkOa6Y8HsSbQoApzRjEmaUhLXncnqvFE+I41NcTmzDPHn28oNo4W4TJjsGpZxbX/mzs+HEkTxyZzT8Bxk5kcpydHhCTiLlNF9ffw2pdkziBk6cS9BBA8UGstFufmlq/6Z1/gSfnW877qdr4EJxmqBlxEDw/cnt0=
+	t=1755505606; cv=pass; b=XeLFqCP91uzE9Xf/lrA4dEcfhCbBRDKDbJ+lsPe3jBaELunxvVahXPvUyFJCIaFrcM+3lOu+KR2l5ez/nMUOqXFqv3IoorfTjurdIGmyG8NAtNFNKSXxMqnUzmMB46/+6o6DGOwXgb95A34J4gHwofT5bD9hCGi6ERNYdy+GSv8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505507; c=relaxed/simple;
-	bh=E5/RwSxbeErvtW6jh6fSwsKNsPmTWXxw2cKUKGDnBZ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=h4EJTocjrUqJtwY+8Poi9GaUkDs9TSXTniUSnUdM+PthZoGjbECNEhAA8UW1AHhvnXGTw2REVGOvjZ3o1oacG/ASY5t/A5Qn8fg0PJ7xHzI1zgTATm8LvFrsWzjXeFX2k5DrEPT7LGeWRdY9QUd0j8HGbFkBzs/4YB7DTAG2olo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=XLyJBkbm; arc=fail smtp.client-ip=40.107.44.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v9MGNLZu9N6/nHQsDbwmH6NVuT3uaFWVBaZGmdEtN79S4fDKGcn1fVe1sZL87rX1NJlNlhsrkmIbsGagk5IybknqXdbqcgJw+1OBiJDddXKsyrUC03IJIwUIhWnVrKZnpn19fzIiLz8eTD44Eq25qpX6nDizX/w2BvdFXfPuWdR7PuupO6B1+rNL7ibIzu25u68Q19Dpq59Mcia6IBBsHYePQjAs/wQovhrRm0MijU82Av7DkHI9K++fIpH/0KPdXmaJoj3iPyXb0Uz7iRTHFVFpMHex6nxEBvE+HojD9iv4C7UDl6dV+Jxh3d5bN5qBg1ycn6E87UArAu7qGQCBXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/yoda9aoIAsQnoDqvkVllnXMS1rDXJZxgJZXICtB+KQ=;
- b=sLrTIU6kno5yUYKCZe9WxDP/HELGBcRGzBlSOEJ65BTTkmQS6qqBDUOGMgpkkAJbWV5B8OGxAITtrrZhcMBcg9UZfc/JeqTXQ2hLYmJ0bfNPFABKQK81p79xEkuJ6VKgCr4amLl0RPl5k6m+1u8BYOweeu9RfCCiH9N+5Mwisy+RmEP06VZ3e3I7BpM5DxXWBuZ/172I7fuQnidhS3IY+c+DhzX/Ql4v9EJRCaXGzMZ6N9aApd4JtnegAJWyETdgyjyxD3qrgY37nkwaqx33M7zYDJXFuN3iT1uVyASUBk814MkPbLH9JJ0HPksP7YTcIgrRkmyeLWznDuqCnVoZ4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/yoda9aoIAsQnoDqvkVllnXMS1rDXJZxgJZXICtB+KQ=;
- b=XLyJBkbm794yqC6bhn5lw35xyj2e1I8SKkoea0bBuEjNmYdKH88J6M5fvSDKRFnjgOroVL8YbJ+R6p/uIuUSSusOMLLIeaQm4ZCKcM41xcyoLDniAn0qhm7yKo64Gt/kH34FB4z3FriyehvSXLoRwAOjiFHuP12oilbFsWl1s1bYEgDLX9DushKykYPSUQuGRPQG/0bP2keX5pC4hxkZ+dMfgQd8yGP7oMizI0ExGnFrNc16sm4G3vQ2e3ADto1PoN9rhXWLvPuL5LlOi+w6WBXZxW2kyYf2DcG79JEMrxQNcqqg102BJAvcdXb8jC1RO92cC2s1f6jJ9Omzf8nZKw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by JH0PR06MB6414.apcprd06.prod.outlook.com (2603:1096:990:10::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 08:25:01 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 08:25:01 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: perex@perex.cz,
-	rafael@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] pnp: isapnp: use str_plural() to simplify the code
-Date: Mon, 18 Aug 2025 16:24:51 +0800
-Message-Id: <20250818082451.497935-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR04CA0008.apcprd04.prod.outlook.com
- (2603:1096:404:f6::20) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	s=arc-20240116; t=1755505606; c=relaxed/simple;
+	bh=tj2yGevcfo5KIS3N2gQc2IK6xq5EamVZy8KjuhEWC4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YRUTDc2Jbbe0OpsYUjN7u+nfMGhCYtxTOTi4MolNnZ+sFKOHtG1aDjnIXmPBbc0HeiJlKZsJB4lisrGO3Qo8mqb8hmSwN0nqtOP91odNfrbatd7Bo3HcHU9y6DCjgICxGRgOKiUJ7dRQ/dP99e6xhqce9Z/+MnKzZcMe2a+3VVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=UdZmtK5L; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755505586; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TkJ31jB1dC74/EBx/flkMf5oj39dXFkwhuGHCgNWMHshBoZwvchGHGGaLjonlfPpqgvfLjUrSldiTo2oevGRJV0Lxe4HcEjF5MqnEWAUBqNviLmUMnnyBleq+Tsu1uW/POR83UfsEVEKZ42FucmIKAJK7uka8HXXft2/7JHakF4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755505586; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tj2yGevcfo5KIS3N2gQc2IK6xq5EamVZy8KjuhEWC4g=; 
+	b=PqLvXOzE7JsmOuiLkeNQpW6C6Ss9RuJxdxmj9VlOs0A1EyuMGiJ9/dNdOD+pwHb9e96QZ3t1QsqjyMlEVyrWOjQMdn9eu4RVi/WX4IPWcCN2X9Plb5eglP6XF07IoLEqOH+fhPvaS4EpcMSHMccPcGkinXnAZGF1yyfiQ4noLRk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755505586;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=tj2yGevcfo5KIS3N2gQc2IK6xq5EamVZy8KjuhEWC4g=;
+	b=UdZmtK5LGeSmkPXn3snFHzL0cEnDQv2TqrktxrtgQhUDAVyuoZYSchXasjg6Z5+e
+	NClvxAnPJEmnI5f3CqlQxKGBH6QzG4VI0aRtiD64hpcuAAWZxMUiq9sxUiDlFanjmFH
+	MIcPnxrtFGCBnWSho07TqHbBltep/zVYUH1aYLJA=
+Received: by mx.zohomail.com with SMTPS id 1755505583162870.9854534398668;
+	Mon, 18 Aug 2025 01:26:23 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Jonas Karlman <jonas@kwiboo.se>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Alex Bee <knaerzche@gmail.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] media: rkvdec: Add HEVC backend
+Date: Mon, 18 Aug 2025 04:25:58 -0400
+Message-ID: <6183937.lOV4Wx5bFT@earth>
+In-Reply-To: <d7446ed8-4af1-475f-88e0-07025c60d0b1@kwiboo.se>
+References:
+ <20250810212454.3237486-1-jonas@kwiboo.se> <13998356.uLZWGnKmhe@earth>
+ <d7446ed8-4af1-475f-88e0-07025c60d0b1@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|JH0PR06MB6414:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ead54ec-df14-47a0-bd7a-08ddde30b98c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yARpQ0TdaOnonSRqhKpFaUmUwJnV6rlSWHqrjFDmffN7qgNVeVA69rww9Pzu?=
- =?us-ascii?Q?aPPELO2HYe5kz9duWuOuuZoF/dodpoIfMj1lrZ4gNJVwoSRO3AjKlW/swIM3?=
- =?us-ascii?Q?dgPaWR5qA+2aIsyw+yO2ngxW01KjzduFRPdUuW3h09lKrdYwAwBC32C9nLxL?=
- =?us-ascii?Q?5pDSO0YRh+PHIrDrUsyBPG5QPuiOpOjKIVAHKAmygJlhWJeZhFfaCO36elbu?=
- =?us-ascii?Q?93c0o7zcFbYenMyMja2KDDu381MfEPNc2lrZ3Yvr6KgfJJvJHK09FQAFDs3M?=
- =?us-ascii?Q?0bBKcRijJdjf8rewsSCokwqGCdN9JI+sf5dldzI1q1LxkF0BSl2v4Uewcdan?=
- =?us-ascii?Q?JcF/r6jZTnLqRiD8i7zlW4wQ2uk2/iWnv1XonzVaK6Y80hoFAl+qBxi6L8tX?=
- =?us-ascii?Q?bArOJDTDNyFxKjVcw+svEtINZFfN2lHXkPR2vRJLa3s4GijxNfgerR4se2OD?=
- =?us-ascii?Q?y0wJLgdmsp07COawQ6/vS8Vwu3m0pzE7ChOdvU1b8TD9NjCREaQE2e7Z2I3r?=
- =?us-ascii?Q?ZGGPOoHfHUkZoBqeKLqarUx2nN/vBmLTODi1SFd/wvpUx5FaWYEPTqJSiHsI?=
- =?us-ascii?Q?BdWh4nFu7sQKDP9kfUNfjQv3p5EmblT5v7FAW4fGA856kgG7fMjFVsrJQZg8?=
- =?us-ascii?Q?FYwOqJePoOcloMmdGkmQ5pHGvE417IJ1q91QygCKLF+VcSqW+YwEZRusQOMv?=
- =?us-ascii?Q?9z4Poz3pex3sZZsH7VZnY5bht3YTy82uJQ4Q16ox1yI5LmdGDHp2HFAL0YV9?=
- =?us-ascii?Q?dGnAksBF7E2IfCTkLYMini7PbyRWgiCK2ignesYXjtK9bRXoOj9MHRTPPOKp?=
- =?us-ascii?Q?fbclf39VcJFzuCAJrXerBygYCoMsBB5V8OuZVbjHsOdGclEZZy/g5xZbeXn6?=
- =?us-ascii?Q?IkQKtpEoKWIUjyM3reZJHc4Tc4/RlWm9rwOKrn/7agx/QT3IFldrBRUj3R9Y?=
- =?us-ascii?Q?So16NfMPcnYKAZ0CkCVWr9ve57QmzetslZE8SuWTBP4ekY28eHtCUzoDT7f3?=
- =?us-ascii?Q?E7apbQ8tBhTL8I602in7fFYXDWvvOUMhr4RUhDqntN0NkVJPwhTl3MXTX7dN?=
- =?us-ascii?Q?BHDczuMnaIABGNff4tf31qGFmyXv8fVVWJuZoB5vSQeO/l0Kcsn2XdgEVeB8?=
- =?us-ascii?Q?OAYPOCX4za0A0WwiAXBOzTUmzTkboIxw/GpNPQ/7ACQvppBPMiYTIajpJZk6?=
- =?us-ascii?Q?/e1WrwHmMaCLKCVEWPucnR6Rpq1tb33rADbH/nPLdQR2DuQQQHGdZaa22OMA?=
- =?us-ascii?Q?S/CbFMg57rcsMYfOiybW92nEnNOAtLgXRpjCzrsScV/OVnT4NHai14YCz3Uo?=
- =?us-ascii?Q?51/2E1+ULT6OPRZKP4JxFl4RzEFeRNOurN+4naUhK9pkjvprxwFx01AstrX7?=
- =?us-ascii?Q?havAN7KyZiNnR11X3q64+oMndd5G5ek2ggpO0jbUWzgHWvpTw5fBvWIx2rhX?=
- =?us-ascii?Q?o1/+MU9Y0Wg367ZK9T/5SLUb9Sq6+NTgSjGv+O4DIIYbViawmS5a0A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pNPcEJJZ+1o+H0Eiryvxmw4SOTgcQgoAfTTaQsXL0ctmruAqH39L4WI3GOoF?=
- =?us-ascii?Q?5jCr0Wvpn/eLF7YH93luF3+MZls7PUfDvVITsP3wRlRuOceK/3ANep1pXw7q?=
- =?us-ascii?Q?GDKm7qf5RGdiomvj/3QK/nKrXYC46y0STGDo625rtQy+1KCLqcdwpvBy0uwj?=
- =?us-ascii?Q?TP6cSE9F4mEm8H8O/IgDRW2FRhppMOCAkXgya3oq+LiBAoJUB9QCOjpnx3Ce?=
- =?us-ascii?Q?hdCk77deWQLlaT6PhxIkLaDaxv0Cp7lsJhNeBKdl9/UxoX6YIX4OprqcDMWy?=
- =?us-ascii?Q?Q7q8QIb+KzVZoHqPVOS3Ziujz5Cett3A2wu1AVyllHj5t3q6N88Mx+goavUs?=
- =?us-ascii?Q?c4H3OoEkuVObo7yOLvYSg65I0xmkNVx7M3d6q2G5wX5VGTdJe2VDTd96oFg4?=
- =?us-ascii?Q?+VaeKCB99T4Q0O9dRP4RxXH4UvMv9kkMbygkbKaG7sLCKQdd37vhqYDM34Rl?=
- =?us-ascii?Q?MAqUQ+WPqkiQh7JKJ47yLt9BWJ6DHVxmNPfkNy4utTtVOXraElzimYzlFATB?=
- =?us-ascii?Q?5PBXpLd21xgV4tl2N9/Gboqr0u1gGvoOaB2aAoLMAimVbw9ifAK/RWQI3GqF?=
- =?us-ascii?Q?OlCdwz18uBpAd3v/+1lt6Ul7OZiifxU01ZmUcCPpLTLqzJMjqwbkNEuy6Jzs?=
- =?us-ascii?Q?WV/Kn13S/LvRoYRM9yeIRkYMxUr7TGRp9CU4zkoo1Dpz7nuB/NB044TdINq1?=
- =?us-ascii?Q?aluqn9lVvemLCx39WWzKPmh5WJBs3OyuHCWmVcTsYpx8LVCqTFcWuFRGZvrx?=
- =?us-ascii?Q?kW8pA4LCQpir6aIfo7scIg5+xArH6wyt61nCfq7O4aGE1ceeQBeTV1L6Cnr+?=
- =?us-ascii?Q?BMReDJxgu1UaWGeieYkZAFFpSFGTmXAZeaudsiihBRx0ADtUhgEvfGmdOZgS?=
- =?us-ascii?Q?UHOAI6L/idGyJh1P+bDE5BXd/ZFJ7UIjvmXbuFVlzYVlMyQXOXM7jkx4t90g?=
- =?us-ascii?Q?5LAHE0wNfVzcZStRrwQhZ4AWlEncTLlv8G0lw3dG3qUhzwdcbrTbzq2W9Z0a?=
- =?us-ascii?Q?s+f6PS+c4u2YFYLQ11dkFQWkuDC+l8NT8Z9GJLfLbtnfah6sZ+VqPffLsdbc?=
- =?us-ascii?Q?WGbT1ySyFnWWx+E4W1umrzERFp+D+WXseU8tW32V1SmDzQxRv9Jz9NbS+DvU?=
- =?us-ascii?Q?xTHCvuiMpNRPkEHUWVvnW/UTvUp4pfJI29CpCkBcrBsDEviwlnbKovBDSjR1?=
- =?us-ascii?Q?0h4FafCC+7cVFvT/ZgA470cJPwY4WtKbLY0D2O04llkdaQNGESMqxVGTryZN?=
- =?us-ascii?Q?nWsnfLWc4bgKYSAsXkGHM5tgsiR6tT2AgaR/mblNo9kn2ka6e63wuVT6yulo?=
- =?us-ascii?Q?Bh+X7iAiqKE5/Xpc/MEc/Dsyzl/PxBunJyp8SWrbFH9q2gbnFOp0xAZxT3pu?=
- =?us-ascii?Q?FT9YfA6oa1F5pu6rMeTwJF8qDMdDVfi5prCoSVWgo9LRVe7+uIYFirXK/bIV?=
- =?us-ascii?Q?vLL9cUmpCdcO+IRdCSn2nSsuuN1PWuuk3c777bOCW29BkzSTK47oV6xViZcT?=
- =?us-ascii?Q?ABeMZvW2+v6x0veYwaAR7i88JZAqvOvbtNU1BFrS26j98VkYWe9dL9hSKCXW?=
- =?us-ascii?Q?QxRmJN1cTncDZFZOiTl7awtLbQHZLK5ruS06UKXs?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ead54ec-df14-47a0-bd7a-08ddde30b98c
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 08:25:01.1551
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CMcyK8UIo0xMtDZOq+3IYOi0zUa+u0+kLBxhrdmWkmaISM7tqcKE791JfzEe+59i3tJu2i8SrtGubpe5cGY5mQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6414
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-Use the string choice helper function str_plural() to simplify the code.
+Hi Jonas,
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/pnp/isapnp/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Sunday, 17 August 2025 12:39:01 EDT Jonas Karlman wrote:
+> Hi Detlev,
+>=20
+> On 8/12/2025 9:54 PM, Detlev Casanova wrote:
+> > On Tuesday, 12 August 2025 09:07:33 EDT Nicolas Dufresne wrote:
+> >> Le mardi 12 ao=C3=BBt 2025 =C3=A0 02:58 +0200, Jonas Karlman a =C3=A9c=
+rit :
+> >>> Hi Nicolas,
+> >>>=20
+> >>> On 8/11/2025 11:07 PM, Nicolas Dufresne wrote:
+> >>>> First pass of review,
+> >>>>=20
+> >>>> There is obvious conflict between Detlev RK3388/3576 series, please
+> >>>> coordinate. By picking the same direction, the common code can be sp=
+lit
+> >>>> from platform code, and then both sets can share that common code and
+> >>>> avoid conflicts.>
+> >>>=20
+> >>> Yes, it is very unfortunate that Detlev did not base the work on v1 of
+> >>> this series, this has been sitting idle on the list for almost 2 years
+> >>> only waiting on its dependent H264 High10/4:2:2 series to be merged.
+> >>>=20
+> >>> Most feedback for v1 was related to unstaging and the series could be
+> >>> applied clean until iommu detach/attach was introduced very recently.
+> >>>=20
+> >>> This series has also been referenced in multiple threads related to
+> >>> rkvdec2 work, most recent at [1]. Unfortunately, I have missed both v1
+> >>> and v2 of Detlev's new rkvdec2 series, and was not able to send a v2 =
+of
+> >>> this until now due to family tragedy.
+> >>>=20
+> >>> I will take a closer look at Detlev's new rkvdec2 series and see what=
+ I
+> >>> can do in a v3 to ease any merge conflicts.
+> >>=20
+> >> All in all, I'd like to have both of these series ready for 6.18. To
+> >> avoid
+> >> the need for dependant series, I can pick top patches if the preparati=
+on
+> >> is
+> >> properly split from the platform specific code. Please make you
+> >> recommendation.
+> >>=20
+> >> My main concern at the moment is the back and forth from register to
+> >> structure, Detlev already ported everything else to structures, so
+> >> porting
+> >> a single codec for a single SoC seems like the least amount of work. I=
+'d
+> >> like to ear if any of you would be willing to convert it. This way I c=
+an
+> >> land the conversion early, and we remove one massive clash between the
+> >> two
+> >> sets.
+> >=20
+> > The conversion won't be too difficult to manage, I can do it as I did f=
+or
+> > h264 and add that to my serie over this one.
+>=20
+> Thanks, I very much appreciate that!, I won't have time to look into a
+> conversion until at earliest next weekend.
 
-diff --git a/drivers/pnp/isapnp/core.c b/drivers/pnp/isapnp/core.c
-index d2ff76e74a05..219f96f2aaaf 100644
---- a/drivers/pnp/isapnp/core.c
-+++ b/drivers/pnp/isapnp/core.c
-@@ -27,6 +27,7 @@
- #include <linux/init.h>
- #include <linux/isapnp.h>
- #include <linux/mutex.h>
-+#include <linux/string_choices.h>
- #include <asm/io.h>
- 
- #include "../base.h"
-@@ -1037,7 +1038,7 @@ static int __init isapnp_init(void)
- 	if (cards)
- 		printk(KERN_INFO
- 		       "isapnp: %i Plug & Play card%s detected total\n", cards,
--		       cards > 1 ? "s" : "");
-+		       str_plural(cards));
- 	else
- 		printk(KERN_INFO "isapnp: No Plug & Play card found\n");
- 
--- 
-2.34.1
+I pushed a branch with my series rebased on yours[1]. It ports the hevc cod=
+e=20
+to using structs (for registers).
+Also move the cabac table and common hevc functions.
+
+Reports indicate that all works well :)
+
+> > As my series is already doing a conversion, I'm not against keeping this
+> > one without structs and simply do the conversion later, even if that
+> > means merging code we know will change later.
+> >=20
+> > I'd also like to mention that currently, my serie changes the writel to
+> > structs only for the registers, not for PPS and SPS.
+> > So I don't mind keeping that part as is for rkvdec-hevc.
+> >=20
+> > For the variants support, I can also merge in my changes: my rkvdec_con=
+fig
+> > would just become an extention your rkvdec_variant.
+> >=20
+> > Finally, this series has been here for longer than mine, so it's only f=
+air
+> > to have me rebase mine, especially because it means doing a bit more of
+> > what I already did.
+>=20
+> Great, I will try to get a v3 out in next few days after addressing some
+> of the feedback.
+
+I will rebase on your v3 and send my v3 when this one is accepted.
+
+
+[1]: https://gitlab.collabora.com/detlev/linux/-/commits/add-vdpu381-and-38=
+3-to-rkvdec-v3
+Regards,
+Detlev.
+
 
 
