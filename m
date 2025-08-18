@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-774556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD58BB2B416
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:28:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6964AB2B414
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4833F17209C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111E71B66CEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA4E27702F;
-	Mon, 18 Aug 2025 22:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC942773CD;
+	Mon, 18 Aug 2025 22:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="weyqLJKk"
-Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rf3pDsbC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5929227603C
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 22:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4771F17A2E3;
+	Mon, 18 Aug 2025 22:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755556058; cv=none; b=oBCNXbegr/uVSoj57v/O5BffJ/MqpE5rk1xejSUEDGBgqXH+AjYggkxP8RElTqmu/ntFMq75jrlByiSCHHVu3MW4YAyhNCDkTfX33v4fM5hx2Tf9uEfA9kEHrT9xaLP4M4F5XjQpwU7z2VnP/t5EXjY09NhQj6tg65xF07fHnV8=
+	t=1755556045; cv=none; b=rygtfbwwprUuWQ1b0BK080UjjCNLnR8YV29J0xpiZysGxGV8AxE4ZT17T8T58fCRcBq5W1zKshwfl0r0tbUnKVuFsnVGfSSwMuGhW+8B4iB/mXh3dSn4+j3279Ta1LqaiNFOk9l9OZmdH6KrDWNInmTsvKjFa6oo9GEElYcUG/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755556058; c=relaxed/simple;
-	bh=bCPONr1Qtyz3N9oBKepPASZ0r46Hj8tztRncVRsnHLo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IZtfUf7bJ0Xv6jKQ44nQFVgQ95Otckz54Nv5aGwhmMumEjra7Xec1ikTNTm1F15itnwbg0NJp0n9Oohng68OYXVrrCMsya9yvMjadSWulz74ss/AeYhfsByyVY0kxqer+/1tktSd9GehxZDuTu74t/OVchA+NE0oqpDRJBB1sAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=weyqLJKk; arc=none smtp.client-ip=202.108.3.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755556053;
-	bh=7EghuakxsNW7L1YjQWnc7VCdy2bkOsiSmmq/lmW3TeQ=;
-	h=From:Subject:Date:Message-ID;
-	b=weyqLJKkMpRsbVZFZ1QA1wNgzvmtScnMxeRSLdq2U0H90mIq1DR1PlOKKnvS5f/CI
-	 bFrwer7R14EUNyGzZzHyjtZTS3BUTBPm0Q1c3JMNUZTT5/PT3Xbl9HptYAsa9DN4Dh
-	 gy4ykQQhKxcQrFSqAEags6vBWB/AfStmwlid+NTA=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68A3A8D000003CC2; Mon, 19 Aug 2025 06:27:30 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2472084456675
-X-SMAIL-UIID: 3C82A0469A79420784FCC32ED3925293-20250819-062730-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+1ec0f904ba50d06110b1@syzkaller.appspotmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	edumazet@google.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in sys_umount (3)
-Date: Tue, 19 Aug 2025 06:27:17 +0800
-Message-ID: <20250818222718.5061-1-hdanton@sina.com>
-In-Reply-To: <20250818182616.GB222315@ZenIV>
-References: <67555b72.050a0220.2477f.0026.GAE@google.com> <68a2f584.050a0220.e29e5.009d.GAE@google.com>
+	s=arc-20240116; t=1755556045; c=relaxed/simple;
+	bh=mL7bjSQLh4IOfTR++S4NwnZtMzCJn26uG02XVJtqMwI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=GMdyovJHiqd12T0YLeMPbAfCxD59oOWU3U+HNILSYUtNxlYl94feIlecSngaTZYircgZIpBcyfoxNuEXnqSdabpixVdPCivSowWqiECnUm5/fkCEOVEx37vscWMsydP1UDCZRSNd9Ms861+X4cQZELOKPBO2eibzjbOApRplZYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rf3pDsbC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84248C4CEEB;
+	Mon, 18 Aug 2025 22:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755556044;
+	bh=mL7bjSQLh4IOfTR++S4NwnZtMzCJn26uG02XVJtqMwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rf3pDsbCo3PS8ke9C98zEE4LvCqj6FrzZqos+6TXFQZ71ZcjW1PstuCBkdDR6UEUF
+	 jqLI0k1Nj2GiVGOxZUxRpbDdyFGOCwiPzwSOy5FTtA3AkS7BzSZUjpHjziRIZDqF/s
+	 pL2Y8xr/burSQT8YNH2C6iUjAmJ4L1RdvMfonktaL1w/ySTdYsczLP2mATZfWN9kTv
+	 JtsgLAjbamRbfifxxHGpF9qhuzeumBoftqG1ErhV4aTaG6++VBUZnfw+1iqM5tPeBn
+	 +51WwkSessfNWnql66fGeddawMxFBvs1hjwXiKPMfZTokg1OBFzYmDYBx5YbS05fx5
+	 WjxGmSbNFPxeQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 19 Aug 2025 00:27:21 +0200
+Message-Id: <DC5WOFIKX7VQ.30UNUNE37LOO5@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Oliver Mangold" <oliver.mangold@pm.me>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, "Asahi Lina" <lina+kernel@asahilina.net>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+X-Mailer: aerc 0.20.1
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+ <2OkNj7ab-vTaPaqMj_KRpIjaKTWgOW-F9Cn-CxnR12E6Dwg4lnjr6fx1vkjnoTx0boUeReeIVDbSyVFBWlYx7g==@protonmail.internalid> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me> <87o6scdchf.fsf@t14s.mail-host-address-is-not-set> <aKMkvHAfDozzDjkB@mango>
+In-Reply-To: <aKMkvHAfDozzDjkB@mango>
 
-On Mon, 18 Aug 2025 19:26:16 +0100 Al Viro wrote:
-> On Mon, Aug 18, 2025 at 02:42:28AM -0700, syzbot wrote:
-> > syzbot has found a reproducer for the following issue on:
-> > 
-> > HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1321eba2580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=1ec0f904ba50d06110b1
-> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> > userspace arch: arm64
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cba442580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a1eba2580000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/43186d9e448c/mount_0.gz
-> >   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=174ba442580000)
-> > 
-> > The issue was bisected to:
-> > 
-> > commit d15121be7485655129101f3960ae6add40204463
-> > Author: Paolo Abeni <pabeni@redhat.com>
-> > Date:   Mon May 8 06:17:44 2023 +0000
-> > 
-> >     Revert "softirq: Let ksoftirqd do its job"
-> 
-> Would be interesting to see how it behaves on 
+On Mon Aug 18, 2025 at 3:04 PM CEST, Oliver Mangold wrote:
+> On 250818 1446, Andreas Hindborg wrote:
+>> "Oliver Mangold" <oliver.mangold@pm.me> writes:
+>> > +impl<T: OwnableMut> DerefMut for Owned<T> {
+>> > +    fn deref_mut(&mut self) -> &mut Self::Target {
+>> > +        // SAFETY: The type invariants guarantee that the object is v=
+alid, and that we can safely
+>> > +        // return a mutable reference to it.
+>> > +        unsafe { self.ptr.as_mut() }
+>> > +    }
+>> > +}
+>>=20
+>> I think someone mentioned this before, but handing out mutable
+>> references can be a problem if `T: !Unpin`. For instance, we don't want
+>> to hand out `&mut Page` in case of `Owned<Page>`.
+>>
+>
+> That was the reason, why `OwnableMut` was introduced in the first place.
+> It's clear, I guess, that as-is it cannot be implemented on many classes.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git  fixes
+Yeah the safety requirements ensure that you can't implement it on
+`!Unpin` types.
+
+But I'm not sure it's useful then? As you said there aren't many types
+that will implement the type then, so how about we change the meaning
+and make it give out a pinned mutable reference instead?
+
+> Good question, I have been thinking about it, too. But it might
+> be, that it isn't needed at all. As I understand, usually Rust wrappers
+> are around non-movable C structs. Do we actually have a useful applicatio=
+n
+> for OwnableMut?
+
+Also, do we even need two different traits? Which types would only
+implement `Ownable` but not `OwnableMut`?
+
+---
+Cheers,
+Benno
 
