@@ -1,94 +1,47 @@
-Return-Path: <linux-kernel+bounces-772950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046A2B299B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:31:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC51EB299C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D87C7A681E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F80C3B5A4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827F82652AC;
-	Mon, 18 Aug 2025 06:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E28275845;
+	Mon, 18 Aug 2025 06:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TBo+RssG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hkq8SzjE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TBo+RssG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hkq8SzjE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9tQjYkx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE3A223DE8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33D0273D84;
+	Mon, 18 Aug 2025 06:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755498709; cv=none; b=UOYqJDaKdKz9djvgmInjqtox4+NW4HiDkqE0qJq84ycZ5ApfYtKWXQGE092D7VZjR5lVWdPLyI88stUhlSQgy3e2G8Vpc3hRfnHAJP/oonR25zTyc0Sk7n5iW74sRCaGFv2XZeoR5p094eNybeYOFbbt75MaP/2eRGD4hg9i1DI=
+	t=1755498753; cv=none; b=Lt1MYIWzofTYd856GNtajFYX/H4bZaDTXeDDCGdgO5U5rAQYeEdrGGMefha4dmqkqMTvRI3R+Wfhpwfjo8Nauhx+DvM/Ybx4eK2UQSprdNNQyO/CoZUsYsVwnzdG4ZtFkN/8a1d1TBEJ5vj3UC7YqiSf4aewlXbMe27I47bl50k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755498709; c=relaxed/simple;
-	bh=CE5qQ851TpBnQeg0Q5ojnAghTuzyEee3eJY4tSKcJnE=;
+	s=arc-20240116; t=1755498753; c=relaxed/simple;
+	bh=IqeYeauks1YJwsXt8Zs3h943HI/7m7G8G1Ab7AZ2Vp8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FuyG9eowleOsuQm15GDFQzHdGaJeg1kQS29ZAt6Wxjr0A52XnIhMiKhtdBl0Hc4Jw6ZR6dU1UpofVL1DRb7+7wFd5MlKLU7ZtsmgD/Xg0h97xaEbdoq0vU48TFcjqbDNyLaFqi7Q7AqUau7VCy5RhsnXAinevmIVhQ0MdQeHBnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TBo+RssG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hkq8SzjE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TBo+RssG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hkq8SzjE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F027211E6;
-	Mon, 18 Aug 2025 06:31:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755498705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OKNYr7Sr1Rv8RUdhjv8p0XIb/kkQer4wA6muKTtrKVo=;
-	b=TBo+RssGZrAiSXlAKNYgmq/qsRNusV1X0Kxs1D76VfxPt23twt41rpGreA31MJytupNgPw
-	CNgPdxnsmEEtLuKNgc0SZTbKMZBBR7y9ZyPQYtINVXymVzBbcNGTMCmkv4eGtCe3Vwrd0l
-	wkO77Mad+/7JqdjMQ0DcDxRvmJGRc3g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755498705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OKNYr7Sr1Rv8RUdhjv8p0XIb/kkQer4wA6muKTtrKVo=;
-	b=hkq8SzjE9MDdV98SBoYUFjno9CxF6K/O7qbDcPGEheiajZGZiXZINwkZ0Lm8yOGr2WCN+F
-	iHZ6kQ9MJmiYk4DQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755498705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OKNYr7Sr1Rv8RUdhjv8p0XIb/kkQer4wA6muKTtrKVo=;
-	b=TBo+RssGZrAiSXlAKNYgmq/qsRNusV1X0Kxs1D76VfxPt23twt41rpGreA31MJytupNgPw
-	CNgPdxnsmEEtLuKNgc0SZTbKMZBBR7y9ZyPQYtINVXymVzBbcNGTMCmkv4eGtCe3Vwrd0l
-	wkO77Mad+/7JqdjMQ0DcDxRvmJGRc3g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755498705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OKNYr7Sr1Rv8RUdhjv8p0XIb/kkQer4wA6muKTtrKVo=;
-	b=hkq8SzjE9MDdV98SBoYUFjno9CxF6K/O7qbDcPGEheiajZGZiXZINwkZ0Lm8yOGr2WCN+F
-	iHZ6kQ9MJmiYk4DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 792F813686;
-	Mon, 18 Aug 2025 06:31:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /DV1GdDIomhdAgAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 18 Aug 2025 06:31:44 +0000
-Message-ID: <a9ea0abf-1f11-4760-80b8-6a688e020093@suse.de>
-Date: Mon, 18 Aug 2025 08:31:43 +0200
+	 In-Reply-To:Content-Type; b=LwnIMsO9EbvRS2zF4NZgxJFDUKE5pHVhubLEgw6F75+GWCIxoPsGrXo25EiaGutRA99ymwsI+zBJBSsT6cjDO+3tY0jc9o3POQ8EGTDO+i2G1WRd0pO+0/sya0hTeNVSufQVHjPlkAN4GbKs6yEzTsbSCFluC/Z+NSqOrYwdewA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9tQjYkx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D2D5C4CEEB;
+	Mon, 18 Aug 2025 06:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755498753;
+	bh=IqeYeauks1YJwsXt8Zs3h943HI/7m7G8G1Ab7AZ2Vp8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=g9tQjYkxKSJYXuflHqpOhLHcjHwrYSD+4pdI8GtEUOYZ+y2T66B3B0D0j5+u0F9FZ
+	 4w9XRCzBpgdr2pSi4ZXIYNNPYKjYGkqKdHskDzneDAG4jCQJU28/JgHo9yEGUppoWo
+	 KzkyiPl0xD8HatrkvOGt3fIHUXIsrFnx/Fm8zdq21eUI7Lm4FmqlrjVq8Txo1y0Znc
+	 YLyUUn8TinGeoudyWOAFrjFHuzdIAFPdGF7mSzm6O0aY7z0ad2X+QGOI67oogQ0/24
+	 kQMsAr7KL+tp2Wro27lhBntIgSqEOnqdgYnEKG5bc/+SkNMSbOpWWYd66AwXSA9YLd
+	 HkTCGcI2Us86w==
+Message-ID: <2bfa6c0b-1f23-4d57-b618-688ed8dc7fae@kernel.org>
+Date: Mon, 18 Aug 2025 08:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,258 +49,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 1/1] net/tls: allow limiting maximum record size
-To: Wilfred Mallawa <wilfred.opensource@gmail.com>, chuck.lever@oracle.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, donald.hunter@gmail.com, borisp@nvidia.com,
- john.fastabend@gmail.com
-Cc: alistair.francis@wdc.com, dlemoal@kernel.org,
- kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wilfred Mallawa <wilfred.mallawa@wdc.com>
-References: <20250808072358.254478-3-wilfred.opensource@gmail.com>
- <20250808072358.254478-5-wilfred.opensource@gmail.com>
+Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
+ <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
+ <45fc52d9988d1bf17eca392364c63193@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250808072358.254478-5-wilfred.opensource@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,oracle.com,davemloft.net,google.com,kernel.org,redhat.com,nvidia.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <45fc52d9988d1bf17eca392364c63193@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/8/25 09:24, Wilfred Mallawa wrote:
-> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+On 17/08/2025 16:49, Kaustabh Chakraborty wrote:
+> On 2025-08-13 07:58, Krzysztof Kozlowski wrote:
+>> On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
+>>> This series implements changes in the SoC subsystem, which includes
+>>> devicetree additions. It depends on all sub-series listed below:
+>>> (Legend: [R]eviewed, [A]ccepted)
+>>>
+>>> exynosdrm-decon            - 
+>>> https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
+>>> exynos7870-mipi-phy        A 
+>>> https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+>>> exynos7870-mipi-phy-fix    - 
+>>> https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
+>>> exynos7870-dsim            - 
+>>> https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
+>>> panel-samsung-s6e8aa5x01   - 
+>>> https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
+>>> panel-synaptics-tddi       - 
+>>> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+>>>
+>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>>
+>> What is the status of the bindings from dependencies? I think they were
+>> not accepted.
 > 
-> During a handshake, an endpoint may specify a maximum record size limit.
-> Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
-> maximum record size. Meaning that, the outgoing records from the kernel
-> can exceed a lower size negotiated during the handshake. In such a case,
-> the TLS endpoint must send a fatal "record_overflow" alert [1], and
-> thus the record is discarded.
-> 
-> This patch adds support for retrieving the negotiated record size limit
-> during a handshake, and enforcing it at the TLS layer such that outgoing
-> records are no larger than the size negotiated. This patch depends on
-> the respective userspace support in tlshd [2] and GnuTLS [3].
-> 
-> [1] https://www.rfc-editor.org/rfc/rfc8449
-> [2] https://github.com/oracle/ktls-utils/pull/112
-> [3] https://gitlab.com/gnutls/gnutls/-/merge_requests/2005
-> 
-> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> ---
->   Documentation/netlink/specs/handshake.yaml |  3 +++
->   include/net/tls.h                          |  2 ++
->   include/uapi/linux/handshake.h             |  1 +
->   net/handshake/genl.c                       |  5 ++--
->   net/handshake/tlshd.c                      | 29 +++++++++++++++++++++-
->   net/tls/tls_sw.c                           |  6 ++++-
->   6 files changed, 42 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/netlink/specs/handshake.yaml b/Documentation/netlink/specs/handshake.yaml
-> index b934cc513e3d..4e6bc348f1fd 100644
-> --- a/Documentation/netlink/specs/handshake.yaml
-> +++ b/Documentation/netlink/specs/handshake.yaml
-> @@ -84,6 +84,9 @@ attribute-sets:
->           name: remote-auth
->           type: u32
->           multi-attr: true
-> +      -
-> +          name: record-size-limit
-> +          type: u32
->   
->   operations:
->     list:
-> diff --git a/include/net/tls.h b/include/net/tls.h
-> index 857340338b69..02e7b59fcc30 100644
-> --- a/include/net/tls.h
-> +++ b/include/net/tls.h
-> @@ -250,6 +250,8 @@ struct tls_context {
->   			       */
->   	unsigned long flags;
->   
-> +	u32 tls_record_size_limit;
-> +
->   	/* cache cold stuff */
->   	struct proto *sk_proto;
->   	struct sock *sk;
-> diff --git a/include/uapi/linux/handshake.h b/include/uapi/linux/handshake.h
-> index 3d7ea58778c9..0768eb8eb415 100644
-> --- a/include/uapi/linux/handshake.h
-> +++ b/include/uapi/linux/handshake.h
-> @@ -54,6 +54,7 @@ enum {
->   	HANDSHAKE_A_DONE_STATUS = 1,
->   	HANDSHAKE_A_DONE_SOCKFD,
->   	HANDSHAKE_A_DONE_REMOTE_AUTH,
-> +	HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
->   
->   	__HANDSHAKE_A_DONE_MAX,
->   	HANDSHAKE_A_DONE_MAX = (__HANDSHAKE_A_DONE_MAX - 1)
-> diff --git a/net/handshake/genl.c b/net/handshake/genl.c
-> index f55d14d7b726..44c43ce18361 100644
-> --- a/net/handshake/genl.c
-> +++ b/net/handshake/genl.c
-> @@ -16,10 +16,11 @@ static const struct nla_policy handshake_accept_nl_policy[HANDSHAKE_A_ACCEPT_HAN
->   };
->   
->   /* HANDSHAKE_CMD_DONE - do */
-> -static const struct nla_policy handshake_done_nl_policy[HANDSHAKE_A_DONE_REMOTE_AUTH + 1] = {
-> +static const struct nla_policy handshake_done_nl_policy[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT + 1] = {
+> Except panel-synaptics-tddi, all have been accepted. A lot of them
+> haven't hit next though. I'm waiting for that to send the next revision.
 
-Shouldn't that be 'HANDSHAKE_A_DONE_MAX'?
+What does it mean - accepted but not hit next? If it is accepted, it
+must be visible in next. Which maintainer's tree are not in the next?
 
->   	[HANDSHAKE_A_DONE_STATUS] = { .type = NLA_U32, },
->   	[HANDSHAKE_A_DONE_SOCKFD] = { .type = NLA_S32, },
->   	[HANDSHAKE_A_DONE_REMOTE_AUTH] = { .type = NLA_U32, },
-> +	[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT] = { .type = NLA_U32, },
->   };
->   
->   /* Ops table for handshake */
-> @@ -35,7 +36,7 @@ static const struct genl_split_ops handshake_nl_ops[] = {
->   		.cmd		= HANDSHAKE_CMD_DONE,
->   		.doit		= handshake_nl_done_doit,
->   		.policy		= handshake_done_nl_policy,
-> -		.maxattr	= HANDSHAKE_A_DONE_REMOTE_AUTH,
-> +		.maxattr	= HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
 
-HANDSHAKE_A_DONE_MAX - 1?
-
->   		.flags		= GENL_CMD_CAP_DO,
->   	},
->   };
-> diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
-> index d6f52839827e..f4e793f6288d 100644
-> --- a/net/handshake/tlshd.c
-> +++ b/net/handshake/tlshd.c
-> @@ -19,6 +19,7 @@
->   #include <net/handshake.h>
->   #include <net/genetlink.h>
->   #include <net/tls_prot.h>
-> +#include <net/tls.h>
->   
->   #include <uapi/linux/keyctl.h>
->   #include <uapi/linux/handshake.h>
-> @@ -37,6 +38,8 @@ struct tls_handshake_req {
->   	key_serial_t		th_certificate;
->   	key_serial_t		th_privkey;
->   
-> +	struct socket		*th_sock;
-> +
->   	unsigned int		th_num_peerids;
->   	key_serial_t		th_peerid[5];
->   };
-> @@ -52,6 +55,7 @@ tls_handshake_req_init(struct handshake_req *req,
->   	treq->th_consumer_data = args->ta_data;
->   	treq->th_peername = args->ta_peername;
->   	treq->th_keyring = args->ta_keyring;
-> +	treq->th_sock = args->ta_sock;
->   	treq->th_num_peerids = 0;
->   	treq->th_certificate = TLS_NO_CERT;
->   	treq->th_privkey = TLS_NO_PRIVKEY;
-> @@ -85,6 +89,27 @@ static void tls_handshake_remote_peerids(struct tls_handshake_req *treq,
->   	}
->   }
->   
-> +static void tls_handshake_record_size(struct tls_handshake_req *treq,
-> +				      struct genl_info *info)
-> +{
-> +	struct tls_context *tls_ctx;
-> +	struct nlattr *head = nlmsg_attrdata(info->nlhdr, GENL_HDRLEN);
-> +	struct nlattr *nla;
-> +	u32 record_size_limit;
-> +	int rem, len = nlmsg_attrlen(info->nlhdr, GENL_HDRLEN);
-> +
-> +	nla_for_each_attr(nla, head, len, rem) {
-> +		if (nla_type(nla) == HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT) {
-> +			record_size_limit = nla_get_u32(nla);
-> +			if (treq->th_sock) {
-> +				tls_ctx = tls_get_ctx(treq->th_sock->sk);
-> +				tls_ctx->tls_record_size_limit = record_size_limit;
-> +			}
-> +			break;
-> +		}
-> +	}
-> +}
-> +
->   /**
->    * tls_handshake_done - callback to handle a CMD_DONE request
->    * @req: socket on which the handshake was performed
-> @@ -98,8 +123,10 @@ static void tls_handshake_done(struct handshake_req *req,
->   	struct tls_handshake_req *treq = handshake_req_private(req);
->   
->   	treq->th_peerid[0] = TLS_NO_PEERID;
-> -	if (info)
-> +	if (info) {
->   		tls_handshake_remote_peerids(treq, info);
-> +		tls_handshake_record_size(treq, info);
-> +	}
->   
->   	if (!status)
->   		set_bit(HANDSHAKE_F_REQ_SESSION, &req->hr_flags);
-> diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
-> index fc88e34b7f33..70ffc4f5e382 100644
-> --- a/net/tls/tls_sw.c
-> +++ b/net/tls/tls_sw.c
-> @@ -1024,6 +1024,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
->   	ssize_t copied = 0;
->   	struct sk_msg *msg_pl, *msg_en;
->   	struct tls_rec *rec;
-> +	u32 tls_record_size_limit;
->   	int required_size;
->   	int num_async = 0;
->   	bool full_record;
-> @@ -1045,6 +1046,9 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
->   		}
->   	}
->   
-> +	tls_record_size_limit = min_not_zero(tls_ctx->tls_record_size_limit,
-> +					     TLS_MAX_PAYLOAD_SIZE);
-> +
->   	while (msg_data_left(msg)) {
->   		if (sk->sk_err) {
->   			ret = -sk->sk_err;
-> @@ -1066,7 +1070,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
->   		orig_size = msg_pl->sg.size;
->   		full_record = false;
->   		try_to_copy = msg_data_left(msg);
-> -		record_room = TLS_MAX_PAYLOAD_SIZE - msg_pl->sg.size;
-> +		record_room = tls_record_size_limit - msg_pl->sg.size;
->   		if (try_to_copy >= record_room) {
->   			try_to_copy = record_room;
->   			full_record = true;
-
-Otherwise:
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Best regards,
+Krzysztof
 
