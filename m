@@ -1,106 +1,119 @@
-Return-Path: <linux-kernel+bounces-773570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4F5B2A1F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCA8B2A1EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C983C18988CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:32:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77A8C17A223
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAF93218BD;
-	Mon, 18 Aug 2025 12:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C58927B345;
+	Mon, 18 Aug 2025 12:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="apkXGnNX"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wEXzxqwv"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2082231CA5C
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0485820C00E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520140; cv=none; b=qwJfUEr6pq9FtBQF3hsIjlYGgP8xkDmNybWBNYAcWTPK4V05fNTfo1sQIEGQB7ekT3nhbKE873hNJ9l4S97hRjUT0sD7+Z20Zo9ADV33FKoPE0KBpYvmCFY9Po7xsma+yGAzFqHeovqTg2RRIqxdrAM7urh0KhOzR/PfwGEUzhc=
+	t=1755520222; cv=none; b=s11RXk4CF2DCrZOhzSn5Xl8f96DVy4CGbKfnrfDsLOUN8e5fFNlowvc/Ky8+Y+yL0aFXk0DwXqQHz4vevMPh2l6v45LoB2H8Z4YITt/DhZ3Mq/JmwBJRLoBwvIIKntwngI1tKhTwGPMYRwx8NHduVriGEwpNcp2O7mnMScaLdEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520140; c=relaxed/simple;
-	bh=NQlTT8wrBf6/5TXR7NEJIm2qofkpWCiqbqPMT/ijYsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OvISu+KIOcg8xX7OcjGGIlr88ALbHJcbZeXHLNoJJAJ7GzJhvYnMWx8t5JsznBHnAJhWtYnisIFCC7tyPlgpkG0VZbL/O7fecRgTIAUzLYopS4CaFHiRHPWRalz3E9SG8lfE7k5T0gpLUmNdk9Xc5rGZXPTLxlUSqLOa5SeNDs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=apkXGnNX; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e934724e512so1236528276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:28:56 -0700 (PDT)
+	s=arc-20240116; t=1755520222; c=relaxed/simple;
+	bh=JlaSzZxFUUDEKFzH+GanUwNC9293wOpUa3UXPCil240=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GbfOOZpk3OMrYb2/dyVZrSLSf7oDYkXkttCD4DjXO4uFiXdRqTOJA8FFCH8MjJm1MYF7RZcM8msdNdsnD7JnjW6omofUfZzlWl9p4zR9q00DqdbG5psmf3zjeM+kXG+lDGja0cIk1FpP1p/nVCymRilg0w/fb+D/cefkcBl5ZiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wEXzxqwv; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so24003635e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:30:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755520136; x=1756124936; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NQlTT8wrBf6/5TXR7NEJIm2qofkpWCiqbqPMT/ijYsM=;
-        b=apkXGnNXgGl7aZxSKibTdp0qeTPDTjWudLdbIDXHjAoMM9924TTUZQFW9AuxSMVXtt
-         rl9Amti5ULwkeK4fcGv5CTV/3fIpDQzZZyCIHX6B7kZ9s681OyGUkigJIHkDj0RkBB1J
-         nj3+vaku01NR1/y8Q5j/ZFTJT6QLouWVAYJp5Kc0xo2PDbwbV72r4EKhQI9XUaTYa1/C
-         6vSEloZOCMUFA5C7yfXG1EzwMgPeD6dZ0pO8bx6FfVHPF45Xj5PCQkVEGjTgcPYjAU7c
-         PSrNrqMWG+KjN8fZneGUn4hZMKjtw6TT+CsyCYg6HVYuCuvMtqXLahRPOTkzHdP420bf
-         s+Vg==
+        d=linaro.org; s=google; t=1755520219; x=1756125019; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9JnfrGseb6nwzv9RscumfuSdQYxOK2zLF1Z1VoJgRh0=;
+        b=wEXzxqwvJEl6kSqhaNKimR1iGEZmAXacel+z9x/BZYjG0+5ocOUOod9TIzV7zVOtXG
+         ImOuLHXK+vYwhmmLO9fEQbBzlD65CMfpVnRkLykOQRPsDOWsaWq+BwPdj/S49M2k70JM
+         UktvMaT1Q2CHm7lLBjsDJ6MI/mgO5+p3o31SLwTdSpK2cf8KC5/Zg5peRGbNnG05QXg7
+         jjOaXpA1Dn5UAYkgs+lOWE1mkUIVR5tTVtuHs3buf3LVCtvC9NFSO3u8YakC7SSPdre6
+         esi80xaq3ZJzFXn6viJGIKAlea4YwtlSZa9pApcwQWapr+xjrqMXJU/kBtkvgGJGcBSV
+         QwdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755520136; x=1756124936;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NQlTT8wrBf6/5TXR7NEJIm2qofkpWCiqbqPMT/ijYsM=;
-        b=iJ73YIgE8Y2eSoZHKZqVI4nKygwcb1CVSu1Rm4prIYhxVNll0c2ziopDxH+1FPc02T
-         FLTXPlIsux7S+mfLhOyt4ztBJ1Br+iIkggs/gjX2eaVmGVaIwPwrqPv5DyC9OKkQLozH
-         eKm82d7gDPQQGUQUyGUwIcYXIxM1XKTNNqIHAtII8CnC5gkSeCodsSSV8dDK7XMBRCHh
-         gbXK0s3rLsGT3MFlB8kysxup0kR+gEyUDNQoJccAYhwnzfgWArJ/5G6FnJN3SpoMcnFr
-         27fBwF1iCXTIJwNsQIsBiTPOpIPAcibZjb9sv12s33CrxDDWhPruQb4xAkvprarKMFXJ
-         l70w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/FysrLsoNCS5qiXoJD65PARTdvJLW1QjMNIRnon/ZYO99N/TlsgWlfwcdPeOqYB7C79gTQi36v7FAFHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ZVyprX0v7227Whs5RHeETfxxdOLc5OctlmQteNsCcgYXoXgJ
-	8gQmM9N+tOUPdI90U/drt5yogWRbocR3eltoTjaNJV3VzPQ7XKCv26hQMQquzVdq62VRxT2QOPg
-	DltqHkryzKmV343e4+EyI3WWOEax0vPE7ts5nSJQjAQ==
-X-Gm-Gg: ASbGncsHORHh6KbJXzKINQT/7Cd7nJm4EkRPH9/ahpT81eJNtt1lwz38B/fQPYvr58T
-	40U/nnyBX4hqxBp7PNnKCvcLAlIvRZmgNvdzTLQSxl3CB0zqS6A7yQNGqWmIaHvoIYt0aAl72OS
-	RB1Z4Ds7nQQxF0GiQ5rwKhZRpdX1SP8+kPdQJyELK8IEmZnTm7BNxXpzuuwFwrHEwj008NxMs1s
-	PzVuQ==
-X-Google-Smtp-Source: AGHT+IFx20xElPVqlagxACjExJ+Sc5Ef/knSr80J9ZkH6gy2bssr57qeuBMFLMu09POyk3VR+IV54ktaJ+qDsdY+z6Q=
-X-Received: by 2002:a05:6902:72c:b0:e93:4496:a2b9 with SMTP id
- 3f1490d57ef6-e934496a74bmr9054970276.13.1755520135996; Mon, 18 Aug 2025
- 05:28:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755520219; x=1756125019;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9JnfrGseb6nwzv9RscumfuSdQYxOK2zLF1Z1VoJgRh0=;
+        b=jJvdLXafR7ekC6U0GWWf9jWCqytun/Ok0AhQhCJVYGkdGbCuL/fcYZpw7PjXoBxrsi
+         0hizvhCMyvIW/Atmb6Y76oY7A0k8Mtx6a1WDx9fQKjyvB0DVQc3VUhH4Z2yoBZRuHjCA
+         hnk9ZfnUzPAzHd4drjDsdM9oVlOjbM4cbiGnB/Knc/cUDWGH+l5JnSakLdDj6MeyjJRB
+         uRKC3QeS5pcnCo0mCRo/yMJj3uNvUs+vjdAcDhvQaavvMZolmt/AcsnKP2LjY3zu3+dt
+         Z8ac/bJbIP1GF4lyXdmpHnodGqxkoB7hYxy3ru7jMGezL0rSM7FlzmX9z/xEN+fQIju/
+         1TsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjaPi+rtSj6yFmGEb8Ox2L26qQ/gDP5UzjyLVTwwrntBeXHJW/6ajVggEdlOThKJSiMWDPIkaiU28iMR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn6fPLPK7TgUbX9RW3SGT+1/esPjemEcmDSboODhS77yaZwDx2
+	A+gWEzp1Tcej2dFvskO3Nx/RTv2BdQUwCjVKTrbHmEMgAfpt962RNnbVgOfasg/M1uE=
+X-Gm-Gg: ASbGnctNutAkL+GyXiaUsR/EfW3J7Zt5vQRk8tr8kDAODnAHII3H29IfI115y5Dxc9b
+	DK5qIubjZmguhgYtRILFeD1erK3yvFDTwVqWUhTeRCSb+pJfEWt8HhchwvylRAI15M8IYuph9GK
+	pBagl/qEZtr6kyVVgT1YSwFdWHtp0vs4fsS9Xf2K4Q5DLBwCKHU4YZXIqFsghorvzlgKCJ+6ADF
+	rvJij+kPOTT0Wnh2pcq0S1f8luqpqVvWmLJ7L5Cjhz2kVPxrSsszIrsuRpvZw9Ghdnx6Qzxw1sO
+	drVmWKAUG4m7toPRdYAI3ymiF2bn6tTnMNLopJsRXaS5S2BOjey7hHjK9EHU2ISKCTEVJeo2BPr
+	HAIz5pePUL7hsObb9lel2tw8cNchZhWoWDdU5VVVMgek=
+X-Google-Smtp-Source: AGHT+IHbHsTWwwaFVik9BbWGPWwZYPFU0j7xb33QVY4O0gkyyCAWkV0Jsoyi3ARB4eQMlZj+lbRkSg==
+X-Received: by 2002:a05:600c:630e:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-45b3e827f65mr32714475e9.9.1755520219188;
+        Mon, 18 Aug 2025 05:30:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb64e27843sm12680828f8f.19.2025.08.18.05.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 05:30:18 -0700 (PDT)
+Date: Mon, 18 Aug 2025 15:30:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jeff Chang <jeff_chang@richtek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
+ rt5133_validate_vendor_info()
+Message-ID: <aKMc1oK-7yY4cD3K@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815-working_dma_0701_v2-v4-0-62145ab6ea30@riscstar.com>
- <20250815-working_dma_0701_v2-v4-6-62145ab6ea30@riscstar.com> <34485B93B03EAD10+aJ7NVbe8aqjWBFd-@LT-Guozexi>
-In-Reply-To: <34485B93B03EAD10+aJ7NVbe8aqjWBFd-@LT-Guozexi>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Mon, 18 Aug 2025 20:28:45 +0800
-X-Gm-Features: Ac12FXzcLxiREAyDvYqUpnp8Sh2Su74nBhalceLEh9KttzUfLjprws3CtQrXJOY
-Message-ID: <CAH1PCMahKsCsgmZixartnu6Tq8Oo28bMVNfoAWjnFA2McOOU3Q@mail.gmail.com>
-Subject: Re: [PATCH v4 6/8] riscv: dts: spacemit: Add PDMA node for K1 SoC
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, duje@dujemihanovic.xyz, Alex Elder <elder@riscstar.com>, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Fri, Aug 15, 2025 at 2:04=E2=80=AFPM Troy Mitchell
-<troy.mitchell@linux.spacemit.com> wrote:
->
-> Thanks.
->
-> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
->
+The "priv->cdata" pointer isn't an error pointer; this should be a NULL
+check instead.  Otherwise it leads to a NULL pointer dereference in the
+caller, rt5133_probe().
 
-Thanks Troy.
+Fixes: 714165e1c4b0 ("regulator: rt5133: Add RT5133 PMIC regulator Support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: rebase
+
+ drivers/regulator/rt5133-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/rt5133-regulator.c b/drivers/regulator/rt5133-regulator.c
+index 39532618e73d..129b1f13c880 100644
+--- a/drivers/regulator/rt5133-regulator.c
++++ b/drivers/regulator/rt5133-regulator.c
+@@ -510,7 +510,7 @@ static int rt5133_validate_vendor_info(struct rt5133_priv *priv)
+ 			break;
+ 		}
+ 	}
+-	if (IS_ERR(priv->cdata)) {
++	if (!priv->cdata) {
+ 		dev_err(priv->dev, "Failed to find regulator match version\n");
+ 		return -ENODEV;
+ 	}
+-- 
+2.47.2
+
 
