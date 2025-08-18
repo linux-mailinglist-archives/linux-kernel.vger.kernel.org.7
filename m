@@ -1,358 +1,143 @@
-Return-Path: <linux-kernel+bounces-773637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDD5B2A378
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:10:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C550B2A334
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65AB418A181D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BC227B83A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D7D31E105;
-	Mon, 18 Aug 2025 13:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1440A31E0FD;
+	Mon, 18 Aug 2025 13:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="C2R5O80o"
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="evxV2HZP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4C431B13E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF7728C849
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522254; cv=none; b=Zgrs05IFXAoSwsTWc6PQJm7mpUuN4y13ObHQZTj7IEpXdjRRSbaBgUth8y5uYYmt9UXprnBCYsDAaUw7D5YWqBR6dPxdcxeOhum290l+0tI8PKaK4O9v5ShNaSgORHfDdDfEGTDXZFw0G4DunP2VLOkvwGYJiHEkvLnnV0JvRcU=
+	t=1755522360; cv=none; b=Oe39rxzgZc/InWyrNk2jc8k1WSLXrpa1q89rQ39HS6JTDdc/hFyaBqpUd7n4pAWNWZSoWPK/CHXkOWuwp/k5QWa/GuG+M/K2SIR6R5aqRlUYgJktDUDd9cTjSKsRCD+6Xx8FB4EVl49hvzo1GNqV4QA5T2ALfw2Aw2cJE8KFZig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522254; c=relaxed/simple;
-	bh=ovtw76AST8X0yEqX9EV8DDMSo4gT4mWdbUggDhpSdYM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V2peGOL+ZEtVV/6p8f9UIqMPuKU3FvvswXVH9m/U3C95nrpkVdf/X/ML7Lt0nIZ/0zRyTHkCiquTHvvdOW+nYCGyKeVhJCCBo1Ygi2c2s9U2xgyZO3BXR1yUDXAp5f7bI6IAFJ0tui/c7KVlMXl1O5KdRKCrpdSpb4xmKngqm/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=C2R5O80o; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1755522250; x=1755781450;
-	bh=DZvjTHaI8k6zlVcmqY/Yl0UN/uJQddBW9hhcPGqy7lM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=C2R5O80oCDt8PRIygEWYCtwRxRXhs7JFy3JxROn8ajpuc394Abb+NMIZi4EIL4LPm
-	 9X2LfztlQkt58jXi/HoPonegblL5W7qOOJh6ffrx+7AVVHUBE598eFrdjiXcMj79g7
-	 aBQ7qye3x7vGAmmEROfRPT0H+Lqh1NCFoOW1ym+34KVqome82NsLAZPVA2DHvDiBL0
-	 RGDg9+hfUrwjbLVOvvQ2mkeLVkjp0GSxSxE1Ufa6sIui6JxDPFhYsqMst0siPoX1oL
-	 Y1aJmJMtamSvLoPOFeo7ZGUxEZKy0xkineJ/sDsgXn1PfM2liLePyqEz8dfTXCXDus
-	 xT5iRgxsbb7Fg==
-Date: Mon, 18 Aug 2025 13:04:02 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-Message-ID: <aKMkvHAfDozzDjkB@mango>
-In-Reply-To: <87o6scdchf.fsf@t14s.mail-host-address-is-not-set>
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <2OkNj7ab-vTaPaqMj_KRpIjaKTWgOW-F9Cn-CxnR12E6Dwg4lnjr6fx1vkjnoTx0boUeReeIVDbSyVFBWlYx7g==@protonmail.internalid> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me> <87o6scdchf.fsf@t14s.mail-host-address-is-not-set>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: be97ba88dc5725431ec7c2111e29f76722a0897b
+	s=arc-20240116; t=1755522360; c=relaxed/simple;
+	bh=LVJlZcHzGYt9RgpmISld6bzB/0duxLzZuYmGksm7/2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EUddnBx+N0U7QVXt4lIzajJSGdSqPQdcxaPBBgUlvHJW9IKMgIvMa/9THHD2eVrdmLSk1J1Pai9bEAuQDcanzLSV15blhboSUHjyDiTnhaKUZxeCWsPRzBgBcCnUo4d9P9f8LGvBYNz4/VZeDYa+okquEfbar7UmqUgkIwo3ybY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=evxV2HZP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755522358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QyzL3GSkiAQfeG6g6YvIMRozhZr0+dfb72trcSazY0Y=;
+	b=evxV2HZPCsCVpZxhMpMMII3W+XuzbmPhX7kCYWCGxq21nQB7LRicZg9H4UELWpw5WvmRxC
+	IXHPxMJOejfJ4fQIz4jb9qwM68ER/9Ca/OVZUy5C7cBeh0fa5PKwQh2lz/etYEauOVoDOU
+	QdK79me15YaaM/Gxwk24TAl8WqHFs5A=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-284-XlWK2UtwMF-ScKJ_-M8afQ-1; Mon,
+ 18 Aug 2025 09:05:53 -0400
+X-MC-Unique: XlWK2UtwMF-ScKJ_-M8afQ-1
+X-Mimecast-MFC-AGG-ID: XlWK2UtwMF-ScKJ_-M8afQ_1755522351
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5711A19560AE;
+	Mon, 18 Aug 2025 13:05:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.24])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5D9E6195419F;
+	Mon, 18 Aug 2025 13:05:38 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 18 Aug 2025 15:04:28 +0200 (CEST)
+Date: Mon, 18 Aug 2025 15:04:20 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: syzbot <syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, dvyukov@google.com,
+	elver@google.com, glider@google.com, jack@suse.cz,
+	kasan-dev@googlegroups.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	willy@infradead.org, Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev
+Subject: Re: [syzbot] [fs?] [mm?] INFO: task hung in v9fs_file_fsync
+Message-ID: <20250818130419.GD18626@redhat.com>
+References: <20250818114404.GA18626@redhat.com>
+ <68a31e33.050a0220.e29e5.00a6.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68a31e33.050a0220.e29e5.00a6.GAE@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 250818 1446, Andreas Hindborg wrote:
-> "Oliver Mangold" <oliver.mangold@pm.me> writes:
->=20
-> > From: Asahi Lina <lina+kernel@asahilina.net>
-> >
-> > By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
-> > (typically C FFI) type that *may* be owned by Rust, but need not be. Un=
-like
-> > `AlwaysRefCounted`, this mechanism expects the reference to be unique
-> > within Rust, and does not allow cloning.
-> >
-> > Conceptually, this is similar to a `KBox<T>`, except that it delegates
-> > resource management to the `T` instead of using a generic allocator.
-> >
-> > Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@=
-asahilina.net/
-> > Signed-off-by: Asahi Lina <lina@asahilina.net>
-> > [ om:
-> >   - split code into separate file and `pub use` it from types.rs
-> >   - make from_raw() and into_raw() public
-> >   - fixes to documentation and commit message
-> > ]
-> > Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
-> >  rust/kernel/types.rs         |   7 +++
-> >  rust/kernel/types/ownable.rs | 134 +++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 141 insertions(+)
-> >
-> > diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> > index 22985b6f69820d6df8ff3aae0bf815fad36a9d92..c12ff4d2a3f2d79b760c34c=
-0b84a51b507d0cfb1 100644
-> > --- a/rust/kernel/types.rs
-> > +++ b/rust/kernel/types.rs
-> > @@ -11,6 +11,9 @@
-> >  };
-> >  use pin_init::{PinInit, Zeroable};
-> >
-> > +pub mod ownable;
-> > +pub use ownable::{Ownable, OwnableMut, Owned};
-> > +
-> >  /// Used to transfer ownership to and from foreign (non-Rust) language=
-s.
-> >  ///
-> >  /// Ownership is transferred from Rust to a foreign language by callin=
-g [`Self::into_foreign`] and
-> > @@ -425,6 +428,10 @@ pub const fn raw_get(this: *const Self) -> *mut T =
-{
-> >  /// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) =
-to create reference-counted
-> >  /// instances of a type.
-> >  ///
-> > +/// Note: Implementing this trait allows types to be wrapped in an [`A=
-Ref<Self>`]. It requires an
-> > +/// internal reference count and provides only shared references. If u=
-nique references are required
-> > +/// [`Ownable`] should be implemented which allows types to be wrapped=
- in an [`Owned<Self>`].
-> > +///
-> >  /// # Safety
-> >  ///
-> >  /// Implementers must ensure that increments to the reference count ke=
-ep the object alive in memory
-> > diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.r=
-s
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..f4065a0d627a62d3ecb15ed=
-abf306e9b812556e1
-> > --- /dev/null
-> > +++ b/rust/kernel/types/ownable.rs
-> > @@ -0,0 +1,134 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Owned reference types.
-> > +
-> > +use core::{
-> > +    marker::PhantomData,
-> > +    mem::ManuallyDrop,
-> > +    ops::{Deref, DerefMut},
-> > +    ptr::NonNull,
-> > +};
-> > +
-> > +/// Types that may be owned by Rust code or borrowed, but have a lifet=
-ime managed by C code.
-> > +///
-> > +/// It allows such types to define their own custom destructor functio=
-n to be called when a
-> > +/// Rust-owned reference is dropped.
-> > +///
-> > +/// This is usually implemented by wrappers to existing structures on =
-the C side of the code.
-> > +///
-> > +/// Note: Implementing this trait allows types to be wrapped in an [`O=
-wned<Self>`]. This does not
-> > +/// provide reference counting but represents a unique, owned referenc=
-e. If reference counting is
-> > +/// required [`AlwaysRefCounted`](crate::types::AlwaysRefCounted) shou=
-ld be implemented which allows
-> > +/// types to be wrapped in an [`ARef<Self>`](crate::types::ARef).
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// Implementers must ensure that:
-> > +/// - The [`release()`](Ownable::release) method leaves the underlying=
- object in a state which the
-> > +///   kernel expects after ownership has been relinquished (i.e. no da=
-ngling references in the
-> > +///   kernel is case it frees the object, etc.).
-> > +pub unsafe trait Ownable {
-> > +    /// Releases the object (frees it or returns it to foreign ownersh=
-ip).
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// Callers must ensure that:
-> > +    /// - `this` points to a valid `Self`.
-> > +    /// - The object is no longer referenced after this call.
-> > +    unsafe fn release(this: NonNull<Self>);
-> > +}
-> > +
-> > +/// Type where [`Owned<Self>`] derefs to `&mut Self`.
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// Implementers must ensure that access to a `&mut T` is safe, implyi=
-ng that:
-> > +/// - It is safe to call [`core::mem::swap`] on the [`Ownable`]. This =
-excludes pinned types
-> > +///   (i.e. most kernel types).
-> > +/// - The kernel will never access the underlying object (excluding in=
-ternal mutability that follows
-> > +///   the usual rules) while Rust owns it.
-> > +pub unsafe trait OwnableMut: Ownable {}
-> > +
-> > +/// An owned reference to an ownable kernel object.
-> > +///
-> > +/// The object is automatically freed or released when an instance of =
-[`Owned`] is
-> > +/// dropped.
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// The pointer stored in `ptr` can be considered owned by the [`Owned=
-`] instance.
-> > +pub struct Owned<T: Ownable> {
-> > +    ptr: NonNull<T>,
-> > +    _p: PhantomData<T>,
-> > +}
-> > +
-> > +// SAFETY: It is safe to send `Owned<T>` to another thread when the un=
-derlying `T` is `Send` because
-> > +// it effectively means sending a `&mut T` (which is safe because `T` =
-is `Send`).
-> > +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
-> > +
-> > +// SAFETY: It is safe to send `&Owned<T>` to another thread when the u=
-nderlying `T` is `Sync`
-> > +// because it effectively means sharing `&T` (which is safe because `T=
-` is `Sync`).
-> > +unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
-> > +
-> > +impl<T: Ownable> Owned<T> {
-> > +    /// Creates a new instance of [`Owned`].
-> > +    ///
-> > +    /// It takes over ownership of the underlying object.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// Callers must ensure that:
-> > +    /// - Ownership of the underlying object can be transferred to the=
- `Owned<T>` (i.e. operations
-> > +    ///   which require ownership will be safe).
-> > +    /// - No other Rust references to the underlying object exist. Thi=
-s implies that the underlying
-> > +    ///   object is not accessed through `ptr` anymore after the funct=
-ion call (at least until the
-> > +    ///   the `Owned<T>` is dropped).
-> > +    /// - The C code follows the usual shared reference requirements. =
-That is, the kernel will never
-> > +    ///   mutate or free the underlying object (excluding interior mut=
-ability that follows the usual
-> > +    ///   rules) while Rust owns it.
-> > +    /// - In case `T` implements [`OwnableMut`] the previous requireme=
-nt is extended from shared to
-> > +    ///   mutable reference requirements. That is, the kernel will not=
- mutate or free the underlying
-> > +    ///   object and is okay with it being modified by Rust code.
-> > +    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-> > +        // INVARIANT: The safety requirements guarantee that the new i=
-nstance now owns the
-> > +        // reference.
-> > +        Self {
-> > +            ptr,
-> > +            _p: PhantomData,
-> > +        }
-> > +    }
-> > +
-> > +    /// Consumes the [`Owned`], returning a raw pointer.
-> > +    ///
-> > +    /// This function does not actually relinquish ownership of the ob=
-ject. After calling this
-> > +    /// function, the caller is responsible for ownership previously m=
-anaged
-> > +    /// by the [`Owned`].
-> > +    pub fn into_raw(me: Self) -> NonNull<T> {
-> > +        ManuallyDrop::new(me).ptr
-> > +    }
-> > +}
-> > +
-> > +impl<T: Ownable> Deref for Owned<T> {
-> > +    type Target =3D T;
-> > +
-> > +    fn deref(&self) -> &Self::Target {
-> > +        // SAFETY: The type invariants guarantee that the object is va=
-lid.
-> > +        unsafe { self.ptr.as_ref() }
-> > +    }
-> > +}
-> > +
-> > +impl<T: OwnableMut> DerefMut for Owned<T> {
-> > +    fn deref_mut(&mut self) -> &mut Self::Target {
-> > +        // SAFETY: The type invariants guarantee that the object is va=
-lid, and that we can safely
-> > +        // return a mutable reference to it.
-> > +        unsafe { self.ptr.as_mut() }
-> > +    }
-> > +}
->=20
-> I think someone mentioned this before, but handing out mutable
-> references can be a problem if `T: !Unpin`. For instance, we don't want
-> to hand out `&mut Page` in case of `Owned<Page>`.
+On 08/18, syzbot wrote:
 >
+> Hello,
+>
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+>
+> Reported-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
+> Tested-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
+>
+> Tested on:
+>
+> commit:         038d61fd Linux 6.16
 
-That was the reason, why `OwnableMut` was introduced in the first place.
-It's clear, I guess, that as-is it cannot be implemented on many classes.
+And trans_fd.c wasn't changed since 038d61fd...
 
-> Could we do something like this:
->=20
->   diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.r=
-s
->   index 29729dc10cb4..52d21e41c26b 100644
->   --- a/rust/kernel/types/ownable.rs
->   +++ b/rust/kernel/types/ownable.rs
->   @@ -3,6 +3,7 @@
->   //! Owned reference types.
->=20
->   use crate::{
->   +    prelude::*,
->       sync::aref::{ARef, RefCounted},
->       types::ForeignOwnable,
->   };
->   @@ -112,6 +113,17 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
->       pub fn into_raw(me: Self) -> NonNull<T> {
->           ManuallyDrop::new(me).ptr
->       }
->   +
->   +    /// Get a pinned mutable reference to the data owned by this `Owne=
-d<T>`.
->   +    pub fn get_pin_mut(&mut self) -> Pin<&mut T> {
->   +        // SAFETY: The type invariants guarantee that the object is va=
-lid, and that we can safely
->   +        // return a mutable reference to it.
->   +        let unpinned =3D unsafe { self.ptr.as_mut() };
->   +
->   +        // SAFETY: We never hand out unpinned mutable references to th=
-e data in
->   +        // `Self`, unless the contained type is `Unpin`.
->   +        unsafe { Pin::new_unchecked(unpinned) }
->   +    }
->   }
->=20
->   impl<T: Ownable> Deref for Owned<T> {
->   @@ -123,7 +135,7 @@ fn deref(&self) -> &Self::Target {
->       }
->   }
->=20
->   -impl<T: OwnableMut> DerefMut for Owned<T> {
->   +impl<T: OwnableMut + Unpin> DerefMut for Owned<T> {
->       fn deref_mut(&mut self) -> &mut Self::Target {
->           // SAFETY: The type invariants guarantee that the object is val=
-id, and that we can safely
->           // return a mutable reference to it.
->=20
+Dominique, David,
 
-Good question, I have been thinking about it, too. But it might
-be, that it isn't needed at all. As I understand, usually Rust wrappers
-are around non-movable C structs. Do we actually have a useful application
-for OwnableMut?
+Perhaps you can reconsider the fix that Prateek and I tried to propose
+in this thread
 
-Best,
+	[syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+	https://lore.kernel.org/all/67dedd2f.050a0220.31a16b.003f.GAE@google.com/
 
-Oliver
+Oleg.
+---
+
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 339ec4e54778..474fe67f72ac 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -666,7 +666,6 @@ static void p9_poll_mux(struct p9_conn *m)
+ 
+ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ {
+-	__poll_t n;
+ 	int err;
+ 	struct p9_trans_fd *ts = client->trans;
+ 	struct p9_conn *m = &ts->conn;
+@@ -686,13 +685,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ 	list_add_tail(&req->req_list, &m->unsent_req_list);
+ 	spin_unlock(&m->req_lock);
+ 
+-	if (test_and_clear_bit(Wpending, &m->wsched))
+-		n = EPOLLOUT;
+-	else
+-		n = p9_fd_poll(m->client, NULL, NULL);
+-
+-	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
+-		schedule_work(&m->wq);
++	p9_poll_mux(m);
+ 
+ 	return 0;
+ }
 
 
