@@ -1,230 +1,336 @@
-Return-Path: <linux-kernel+bounces-773328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD03AB29E5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:50:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BECB29E68
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E97207B28E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B2B172BE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A8D30F7EA;
-	Mon, 18 Aug 2025 09:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A104330FF35;
+	Mon, 18 Aug 2025 09:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CUmVXqYD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1003298CC4
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Bz24B1Sl"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571FB30F7F0;
+	Mon, 18 Aug 2025 09:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510589; cv=none; b=NPNjOq+R+FalHvZLeHxKHtlVCSwZTQieKEwKTbZxYEkNFtDwndI/OU5ikbKPDHt1lfmPA6mVWaXaG0kIi9GGUovdlMnisrYvkT096+YI9Dafi7iYMDCqVuKQXSA7GsMtvLMIrlID9amfiY0o8wbVAWEnZpGNFkqCdRT+vJZmN+8=
+	t=1755510651; cv=none; b=GKzL7mdJWUlxMQyFqhAf+MS/ZQnJWxspEfT/rHwZEaSMC0P1jxnWl7ABNZny6h0ArBAMXBARwhaGKDZxN2PSDuN5ks+oMJuFzGn8nGe+adDyo0ogivkxueLaytP2J+FSDcap1I1wUaiGWdxnTgVn1PNdXI/yZzVsUMQJcOV8sgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510589; c=relaxed/simple;
-	bh=ruD90fmD45BZjpBmCszzza9dEygahhyzuZFLh8fMlYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwPuUWjxDm0IfExkBrhq0sEyE4Qsvyi39OkoOdboymwb/kGk7q79lJ24EtOXFPacnxNkFhPQYKGZG437laXpKzXIHz0JDBqLkh4zpJUfngw6T/HjPj22+RccNW3F/qxkMMr2Yt2uvOpYXXCwoK34Hc6N6LSRlzeVpx34z2fb2jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CUmVXqYD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755510586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lJ19cF2qHS7qAecDWBARhPKr/77IMYO29rQr0c/HTVQ=;
-	b=CUmVXqYD5aIgf9cLjvSQYn/tqTwjdKbBh09hA9YRrXHK2y6E82ENHNuLqCRcVLnEb96/Ki
-	Xj5WuuFo6ZZt4BW8em0uQ0mothIhlq+7DPxefZbzO3TXWNpGmaaVVJKCs/NAtnweLL77OX
-	t0ByQfhM1LAACXAre1UHis5p6merv78=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-uaEpfO1NOWuYwaUg-qRpYg-1; Mon, 18 Aug 2025 05:49:44 -0400
-X-MC-Unique: uaEpfO1NOWuYwaUg-qRpYg-1
-X-Mimecast-MFC-AGG-ID: uaEpfO1NOWuYwaUg-qRpYg_1755510584
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b9d41b82beso3272113f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:49:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755510584; x=1756115384;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lJ19cF2qHS7qAecDWBARhPKr/77IMYO29rQr0c/HTVQ=;
-        b=Ot5FFpzS2epbXf0jtj7+t5Kix6aO0AqG7WRNhfKnub4LzOQXDHyGN6dRzAWROJwD9R
-         mMBYsE11JFejg/Q5u4LHsezcFkB1jlgx2TG0jNsvgJdKehZrjH+W5Ozw+Ya1uLRmXdbQ
-         a/m/TfGSjcn4qDVeQYKuLE0GOxpjpSdkDkyGgtdwPNR9zEkfD4aVmTvETzcYFzbRTYEB
-         robYZ9PM+++cRUnHYl0UCfIIm0HcU9UVA0PGsQEfSt1UQ8wnn31rJVdv1yyzL6kAwHHw
-         MJNe+8GdzIiG2qOJVOUgHa4nS4ocrvVjtH134Lpi+qD/h2IQO3op/+wLWgmg7v9jCDeY
-         7+qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOeChs1l2fxiiA5+TJjYXPe4P1wZGdtvFCyekPJvBvCGxM4Oa9bct7UXdMv0Ay5iHdam8UWIbJmTOFpv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydNwtv5ihccAWth5fsFHhsQRI4Off3A1vw7fIwlO920tfvrAK0
-	AtkQEmMYLVttHMsrd2I0+08+7P01LD2RJdanpVyLR5TQbEcMDJQFDnN00fxwEG03u7OdXSGamKO
-	Gu9Ss2fTd1USinyO9VIJVcsh0ZrfHLLZ5SbqjZk3r2ZcIBZ5nWO6z8mc8uAPEfeQHAA==
-X-Gm-Gg: ASbGncsP70gusH7Kv6fi0vv8IB8Y2dVOY47Rc4qSl0uVnwgKAmeeR2XZkEWHJBQsnpY
-	zeEibvYRYFNeFob/MvZFiFkz2OEwtQLGZFt2dWmZteyY+P9d7MsiiIII1HQ5GIA+iEwP874qUI4
-	Yr9ItHsMKZ+4H2S3T4iTcm/vipuuLOloqRc/rG7VY9CWBQm+a6OYqtqzCjuunDm4Lckhm+iOV/N
-	CBfX3cvd1eTFL4MVCqNcNOYBQtE6++u65I4J1npQsR/KYvSSzx+5p6qIKSBPqqHu0vctET3C/de
-	66jA4FUpRvdDLw/oXrmmNctmQX+TzNNKYKwCIU5wBN8lKvetdp7LfRoS1SKVw6rgjv12H/bGNrj
-	+vmeQJDlIa/bl3UhNZi4eCidTzEOK079mm1OQa4ixunTfM4obhW71TQNi+ub+Q6IW
-X-Received: by 2002:a05:6000:2310:b0:3b7:8b64:3107 with SMTP id ffacd0b85a97d-3bc688ab9a7mr5661626f8f.26.1755510583693;
-        Mon, 18 Aug 2025 02:49:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJaAWqgw5QTC3l/jewXPtJbxd2DyXWRBJjgRtYobnv0HyqwBobL37m1mf4apF3o86Qm2R/cA==
-X-Received: by 2002:a05:6000:2310:b0:3b7:8b64:3107 with SMTP id ffacd0b85a97d-3bc688ab9a7mr5661608f8f.26.1755510583279;
-        Mon, 18 Aug 2025 02:49:43 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f22:600:53c7:df43:7dc3:ae39? (p200300d82f22060053c7df437dc3ae39.dip0.t-ipconnect.de. [2003:d8:2f22:600:53c7:df43:7dc3:ae39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6bd172sm174744525e9.6.2025.08.18.02.49.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 02:49:42 -0700 (PDT)
-Message-ID: <c0600abd-18fd-4bfa-ba8d-45303ee3a9ee@redhat.com>
-Date: Mon, 18 Aug 2025 11:49:41 +0200
+	s=arc-20240116; t=1755510651; c=relaxed/simple;
+	bh=H84eiAraM41DK2JnCnv9EUuemVnoAHbaPQwwvu0/Zog=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B9t0CL7lk9A9T2KEEzDvx7uZpuQklhSTQiffj3dQcAekaEN2E6O7waCVecu+d31xU0iaqLBCH8c3YvTt4X/QpYhhZKkyfRBYIvJH0Jo8mC7vsBDTPm1lSWC7/VBDOqzajqC1YJ1mnoFqfgVnKuiaBFSaDC6845oFhKOEGoV/Ap8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Bz24B1Sl; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=MV
+	T1cY0EUo/p/pzzSG1IhoOoglOOePjguLh2CLUwazw=; b=Bz24B1Sl+wPQ4BID3S
+	zoMRPUGilMFYgGbDaFZwjHWZTjRz62BMZgiyGiMHheXmO5ELd/8swURhierxVryx
+	6ykvfj9sV7bp4ghZZzPjkzSspkBNeLN8dpisOWe34u/u0TLNDKy8g9ZsjPztZ+Vy
+	MjKqSD2BsUSqxM5T1hu3i0iPA=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD393lQ96JoTA8wCw--.43197S4;
+	Mon, 18 Aug 2025 17:50:24 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [BUG] general protection fault when connecting an old mp3/usb device
+Date: Mon, 18 Aug 2025 17:50:08 +0800
+Message-ID: <20250818095008.6473-1-00107082@163.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] drivers/base/node: Add a helper function
- node_update_perf_attrs()
-To: Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
- dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
- marc.herbert@linux.intel.com, akpm@linux-foundation.org
-References: <20250814171650.3002930-1-dave.jiang@intel.com>
- <20250814171650.3002930-3-dave.jiang@intel.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250814171650.3002930-3-dave.jiang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:_____wD393lQ96JoTA8wCw--.43197S4
+X-Coremail-Antispam: 1Uf129KBjvAXoWfGFW8uw1UKr47Xw48AryxXwb_yoW8GF15to
+	W7GF1rGr48Cr43Kr4vyr9IqrWDJ34qyFnFvryDA398Ga9FqF4UXr4UAr1kXw13Wa1UJr15
+	Aan5tws3J3y5AF97n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcPl1UUUUU
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMwOtqmii83eOHgAAsp
 
-On 14.08.25 19:16, Dave Jiang wrote:
-> Add helper function node_update_perf_attrs() to allow update of node access
-> coordinates computed by an external agent such as CXL. The helper allows
-> updating of coordinates after the attribute being created by HMAT.
-> 
-> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->   drivers/base/node.c  | 39 +++++++++++++++++++++++++++++++++++++++
->   include/linux/node.h |  8 ++++++++
->   2 files changed, 47 insertions(+)
-> 
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 3399594136b2..cf395da18c9b 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -248,6 +248,45 @@ void node_set_perf_attrs(unsigned int nid, struct access_coordinate *coord,
->   }
->   EXPORT_SYMBOL_GPL(node_set_perf_attrs);
->   
-> +/**
-> + * node_update_perf_attrs - Update the performance values for given access class
-> + * @nid: Node identifier to be updated
-> + * @coord: Heterogeneous memory performance coordinates
-> + * @access: The access class the for the given attributes
+Hi,
 
-"the for": there is probably something missing
+My loptop is running 6.16.0, once when I connect with an old mp3 via usb fo=
+r file
+transfer, the connection could not be established correctly, after I reconn=
+ect it
+several times, got following kernel error:
+(The device is old, and maybe buggy, but it works. And eventually I can con=
+nect it
+for file transfers)
 
-> + */
-> +void node_update_perf_attrs(unsigned int nid, struct access_coordinate *coord,
-> +			    enum access_coordinate_class access)
-> +{
-> +	struct node_access_nodes *access_node;
-> +	struct node *node;
-> +	int i;
-> +
-> +	if (WARN_ON_ONCE(!node_online(nid)))
-> +		return;
-> +
-> +	node = node_devices[nid];
-> +	list_for_each_entry(access_node, &node->access_list, list_node) {
-> +		if (access_node->access != access)
-> +			continue;
-> +
-> +		access_node->coord = *coord;
-> +		for (i = 0; access_attrs[i]; i++) {
-> +			sysfs_notify(&access_node->dev.kobj,
-> +				     NULL, access_attrs[i]->name);
-> +		}
-> +		break;
-> +	}
-> +
-> +	/* When setting CPU access coordinates, update mempolicy */
-> +	if (access == ACCESS_COORDINATE_CPU) {
-> +		if (mempolicy_set_node_perf(nid, coord)) {
-> +			pr_info("failed to set mempolicy attrs for node %d\n",
-> +				nid);
-> +		}
-if (access == ACCESS_COORDINATE_CPU &&
-     mempolicy_set_node_perf(nid, coord))
-	pr_info("failed to set mempolicy attrs for node %d\n", nid);
+[Sat Aug 23 03:56:02 2025] usb 1-5: new high-speed USB device number 35 usi=
+ng xhci_hcd
+[Sat Aug 23 03:56:02 2025] usb 1-5: New USB device found, idVendor=3D12d1, =
+idProduct=3D1082, bcdDevice=3D 3.18
+[Sat Aug 23 03:56:02 2025] usb 1-5: New USB device strings: Mfr=3D1, Produc=
+t=3D2, SerialNumber=3D3
+[Sat Aug 23 03:56:02 2025] usb 1-5: Product: ATU-AL10
+[Sat Aug 23 03:56:02 2025] usb 1-5: Manufacturer: HUAWEI
+[Sat Aug 23 03:56:02 2025] usb 1-5: SerialNumber: TPE9X18915C02308
+[Sat Aug 23 03:56:02 2025] usb-storage 1-5:1.1: USB Mass Storage device det=
+ected
+[Sat Aug 23 03:56:02 2025] scsi host2: usb-storage 1-5:1.1
+[Sat Aug 23 03:56:03 2025] scsi 2:0:0:0: CD-ROM            Linux    File-CD=
+ Gadget   0318 PQ: 0 ANSI: 2
+[Sat Aug 23 03:56:03 2025] sr 2:0:0:0: Power-on or device reset occurred
+[Sat Aug 23 03:56:03 2025] sr 2:0:0:0: [sr0] scsi3-mmc drive: 0x/0x caddy
+[Sat Aug 23 03:56:03 2025] sr 2:0:0:0: Attached scsi CD-ROM sr0
+[Sat Aug 23 03:56:03 2025] sr 2:0:0:0: Attached scsi generic sg0 type 5
+[Sat Aug 23 03:56:03 2025] /dev/sr0: Can't open blockdev
+[Sat Aug 23 03:56:03 2025] ISO 9660 Extensions: Microsoft Joliet Level 1
+[Sat Aug 23 03:56:03 2025] ISOFS: changing to secondary root
+[Sat Aug 23 03:56:07 2025] usb 1-5: reset high-speed USB device number 35 u=
+sing xhci_hcd
+[Sat Aug 23 03:56:07 2025] sr 2:0:0:0: Power-on or device reset occurred
+[Sat Aug 23 03:56:07 2025] usb 1-5: reset high-speed USB device number 35 u=
+sing xhci_hcd
+[Sat Aug 23 03:56:08 2025] sr 2:0:0:0: Power-on or device reset occurred
+[Sat Aug 23 03:56:09 2025] usb 1-5: USB disconnect, device number 35
+[Sat Aug 23 03:56:09 2025] Oops: general protection fault, probably for non=
+-canonical address 0x2e2e2f2e2e2f308e: 0000 [#1] SMP NOPTI
+[Sat Aug 23 03:56:09 2025] CPU: 6 UID: 0 PID: 355615 Comm: umount Not taint=
+ed 6.16.0-linan-0 #50 PREEMPT(voluntary)=20
+[Sat Aug 23 03:56:09 2025] Hardware name: Acer S40-53/Lily_TL, BIOS V1.01 0=
+8/28/2020
+[Sat Aug 23 03:56:09 2025] RIP: 0010:scsi_block_when_processing_errors+0x27=
+/0xf0 [scsi_mod]
+[Sat Aug 23 03:56:09 2025] Code: 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 55 53 =
+48 83 ec 30 65 48 8b 1d 61 b1 13 f0 48 89 5c 24 28 48 89 fb e8 2c 73 cd ee =
+48 8b 13 <8b> 82 60 02 00 00 83 e8 05 83 f8 02 76 09 f6 82 20 02 00 00 10 74
+[Sat Aug 23 03:56:09 2025] RSP: 0018:ffffaff30f777c70 EFLAGS: 00010246
+[Sat Aug 23 03:56:09 2025] RAX: 0000000000000000 RBX: ffff920700e06000 RCX:=
+ 0000000000000000
+[Sat Aug 23 03:56:09 2025] RDX: 2e2e2f2e2e2f2e2e RSI: ffffaff30f777d40 RDI:=
+ ffff920700e06000
+[Sat Aug 23 03:56:09 2025] RBP: ffff920700e06000 R08: ffffaff30f777db4 R09:=
+ 0000000000000004
+[Sat Aug 23 03:56:09 2025] R10: ffffaff30f777db4 R11: ffffffffb06dff80 R12:=
+ ffffaff30f777cc0
+[Sat Aug 23 03:56:09 2025] R13: ffff9206360b2c00 R14: 0000000000000000 R15:=
+ ffffaff30f777d40
+[Sat Aug 23 03:56:09 2025] FS:  00007f28311db840(0000) GS:ffff92092fe60000(=
+0000) knlGS:0000000000000000
+[Sat Aug 23 03:56:09 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Sat Aug 23 03:56:09 2025] CR2: 000055c1ad2b1058 CR3: 000000011eaae002 CR4:=
+ 0000000000f72ef0
+[Sat Aug 23 03:56:09 2025] PKRU: 55555554
+[Sat Aug 23 03:56:09 2025] Call Trace:
+[Sat Aug 23 03:56:09 2025]  <TASK>
+[Sat Aug 23 03:56:09 2025]  sr_do_ioctl+0x5b/0x1c0 [sr_mod]
+[Sat Aug 23 03:56:09 2025]  sr_packet+0x2c/0x50 [sr_mod]
+[Sat Aug 23 03:56:09 2025]  cdrom_get_disc_info+0x60/0xe0 [cdrom]
+[Sat Aug 23 03:56:09 2025]  cdrom_mrw_exit+0x29/0xb0 [cdrom]
+[Sat Aug 23 03:56:09 2025]  ? xa_destroy+0xaa/0x120
+[Sat Aug 23 03:56:09 2025]  unregister_cdrom+0x76/0xc0 [cdrom]
+[Sat Aug 23 03:56:09 2025]  sr_free_disk+0x44/0x50 [sr_mod]
+[Sat Aug 23 03:56:09 2025]  disk_release+0xb0/0xe0
+[Sat Aug 23 03:56:09 2025]  device_release+0x37/0x90
+[Sat Aug 23 03:56:09 2025]  kobject_put+0x8e/0x1d0
+[Sat Aug 23 03:56:09 2025]  blkdev_release+0x11/0x20
+[Sat Aug 23 03:56:09 2025]  __fput+0xe3/0x2a0
+[Sat Aug 23 03:56:09 2025]  task_work_run+0x59/0x90
+[Sat Aug 23 03:56:09 2025]  exit_to_user_mode_loop+0xd6/0xe0
+[Sat Aug 23 03:56:09 2025]  do_syscall_64+0x1c1/0x1e0
+[Sat Aug 23 03:56:09 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[Sat Aug 23 03:56:09 2025] RIP: 0033:0x7f2831407b37
+[Sat Aug 23 03:56:09 2025] Code: cf 92 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 =
+0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 =
+00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 99 92 0c 00 f7 d8 64 89 02 b8
+[Sat Aug 23 03:56:09 2025] RSP: 002b:00007ffd4805c858 EFLAGS: 00000202 ORIG=
+_RAX: 00000000000000a6
+[Sat Aug 23 03:56:09 2025] RAX: 0000000000000000 RBX: 00005590f636c0f8 RCX:=
+ 00007f2831407b37
+[Sat Aug 23 03:56:09 2025] RDX: 0000000000000000 RSI: 0000000000000002 RDI:=
+ 00005590f636c210
+[Sat Aug 23 03:56:09 2025] RBP: 0000000000000002 R08: 00007f28314d1cc0 R09:=
+ 0000000000000040
+[Sat Aug 23 03:56:09 2025] R10: 0000000000000000 R11: 0000000000000202 R12:=
+ 00007f2831542264
+[Sat Aug 23 03:56:09 2025] R13: 00005590f636c210 R14: 00005590f63716f0 R15:=
+ 00005590f636bfe0
+[Sat Aug 23 03:56:09 2025]  </TASK>
+[Sat Aug 23 03:56:09 2025] Modules linked in: sd_mod isofs sr_mod cdrom sg =
+uas usb_storage snd_usb_audio snd_usbmidi_lib snd_rawmidi hid_generic usbhi=
+d hid ccm rfcomm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device xt_CHECKS=
+UM ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp nft_compa=
+t x_tables nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 =
+nf_tables nfnetlink bridge stp llc cmac algif_hash algif_skcipher af_alg qr=
+tr bnep binfmt_misc nls_ascii nls_cp437 vfat fat snd_ctl_led snd_soc_skl_hd=
+a_dsp snd_soc_intel_sof_board_helpers snd_soc_intel_hda_dsp_common snd_sof_=
+probes snd_hda_codec_realtek snd_hda_codec_generic snd_hda_scodec_component=
+ snd_soc_dmic snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda=
+_generic soundwire_intel soundwire_generic_allocation snd_sof_intel_hda_sdw=
+_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_=
+sof_intel_hda snd_hda_codec_hdmi snd_hda_ext_core soundwire_cadence snd_sof=
+_pci intel_rapl_msr snd_sof_xtensa_dsp intel_rapl_common snd_sof
+[Sat Aug 23 03:56:09 2025]  x86_pkg_temp_thermal snd_sof_utils snd_soc_acpi=
+_intel_match intel_powerclamp snd_soc_acpi_intel_sdca_quirks coretemp snd_s=
+oc_acpi crc8 iwlmvm soundwire_bus kvm_intel snd_soc_sdca snd_soc_core mac80=
+211 snd_compress kvm libarc4 snd_hda_intel ptp btusb snd_intel_dspcfg uvcvi=
+deo pps_core mei_hdcp irqbypass btrtl snd_intel_sdw_acpi ghash_clmulni_inte=
+l videobuf2_vmalloc aesni_intel btintel uvc snd_hda_codec videobuf2_memops =
+btbcm videobuf2_v4l2 rapl snd_hda_core iwlwifi snd_hwdep intel_cstate snd_p=
+csp videodev bluetooth iTCO_wdt snd_pcm videobuf2_common ecdh_generic acer_=
+wmi mc intel_uncore snd_timer intel_pmc_bxt ecc platform_profile wmi_bmof s=
+nd cfg80211 iTCO_vendor_support ee1004 mei_me soundcore watchdog mei rfkill=
+ ac intel_hid sparse_keymap acpi_pad joydev acer_wireless evdev serio_raw m=
+sr parport_pc ppdev lp parport fuse loop efi_pstore dm_mod configfs autofs4=
+ ext4 crc16 mbcache jbd2 btrfs blake2b_generic efivarfs raid10 raid456 asyn=
+c_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq raid1
+[Sat Aug 23 03:56:09 2025]  raid0 md_mod ahci libahci libata nvme scsi_mod =
+nvme_core scsi_common i915 cec drm_buddy ttm i2c_algo_bit r8169 drm_display=
+_helper xhci_pci drm_client_lib realtek xhci_hcd mdio_devres drm_kms_helper=
+ psmouse libphy usbcore intel_lpss_pci drm mdio_bus i2c_i801 intel_lpss i2c=
+_smbus usb_common idma64 vmd fan video button battery wmi
+[Sat Aug 23 03:56:09 2025] ---[ end trace 0000000000000000 ]---
+[Sat Aug 23 03:56:10 2025] pstore: backend (efi_pstore) writing error (-28)
+[Sat Aug 23 03:56:10 2025] RIP: 0010:scsi_block_when_processing_errors+0x27=
+/0xf0 [scsi_mod]
+[Sat Aug 23 03:56:10 2025] Code: 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 55 53 =
+48 83 ec 30 65 48 8b 1d 61 b1 13 f0 48 89 5c 24 28 48 89 fb e8 2c 73 cd ee =
+48 8b 13 <8b> 82 60 02 00 00 83 e8 05 83 f8 02 76 09 f6 82 20 02 00 00 10 74
+[Sat Aug 23 03:56:10 2025] RSP: 0018:ffffaff30f777c70 EFLAGS: 00010246
+[Sat Aug 23 03:56:10 2025] RAX: 0000000000000000 RBX: ffff920700e06000 RCX:=
+ 0000000000000000
+[Sat Aug 23 03:56:10 2025] RDX: 2e2e2f2e2e2f2e2e RSI: ffffaff30f777d40 RDI:=
+ ffff920700e06000
+[Sat Aug 23 03:56:10 2025] RBP: ffff920700e06000 R08: ffffaff30f777db4 R09:=
+ 0000000000000004
+[Sat Aug 23 03:56:10 2025] R10: ffffaff30f777db4 R11: ffffffffb06dff80 R12:=
+ ffffaff30f777cc0
+[Sat Aug 23 03:56:10 2025] R13: ffff9206360b2c00 R14: 0000000000000000 R15:=
+ ffffaff30f777d40
+[Sat Aug 23 03:56:10 2025] FS:  00007f28311db840(0000) GS:ffff92092fe60000(=
+0000) knlGS:0000000000000000
+[Sat Aug 23 03:56:10 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Sat Aug 23 03:56:10 2025] CR2: 000055c1ad2b1058 CR3: 000000011eaae002 CR4:=
+ 0000000000f72ef0
+[Sat Aug 23 03:56:10 2025] PKRU: 55555554
 
-or
-
-if (access != ACCESS_COORDINATE_CPU)
-	return
-if (mempolicy_set_node_perf(nid, coord))
-	pr_info("failed to set mempolicy attrs for node %d\n", nid);
 
 
-With both things sorted
+Parsing with a vmlinux image build with DEBUG_INFO:
+=20
+[Sat Aug 23 03:56:09 2025] Oops: general protection fault, probably for non=
+-canonical address 0x2e2e2f2e2e2f308e: 0000 [#1] SMP NOPTI
+[Sat Aug 23 03:56:09 2025] CPU: 6 UID: 0 PID: 355615 Comm: umount Not taint=
+ed 6.16.0-linan-0 #50 PREEMPT(voluntary)
+[Sat Aug 23 03:56:09 2025] Hardware name: Acer S40-53/Lily_TL, BIOS V1.01 0=
+8/28/2020
+[Sat Aug 23 03:56:09 2025] RIP: 0010:scsi_block_when_processing_errors (./i=
+nclude/scsi/scsi_host.h:755 drivers/scsi/scsi_error.c:388) scsi_mod=20
+[Sat Aug 23 03:56:09 2025] Code: 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 55 53 =
+48 83 ec 30 65 48 8b 1d 61 b1 13 f0 48 89 5c 24 28 48 89 fb e8 2c 73 cd ee =
+48 8b 13 <8b> 82 60 02 00 00 83 e8 05 83 f8 02 76 09 f6 82 20 02 00 00 10 74
+All code
+=3D=3D=3D=3D=3D=3D=3D=3D
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	f3 0f 1e fa          	endbr64
+   7:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   c:	55                   	push   %rbp
+   d:	53                   	push   %rbx
+   e:	48 83 ec 30          	sub    $0x30,%rsp
+  12:	65 48 8b 1d 61 b1 13 	mov    %gs:-0xfec4e9f(%rip),%rbx        # 0xfff=
+ffffff013b17b
+  19:	f0=20
+  1a:	48 89 5c 24 28       	mov    %rbx,0x28(%rsp)
+  1f:	48 89 fb             	mov    %rdi,%rbx
+  22:	e8 2c 73 cd ee       	call   0xffffffffeecd7353
+  27:	48 8b 13             	mov    (%rbx),%rdx
+  2a:*	8b 82 60 02 00 00    	mov    0x260(%rdx),%eax		<-- trapping instruct=
+ion
+  30:	83 e8 05             	sub    $0x5,%eax
+  33:	83 f8 02             	cmp    $0x2,%eax
+  36:	76 09                	jbe    0x41
+  38:	f6 82 20 02 00 00 10 	testb  $0x10,0x220(%rdx)
+  3f:	74                   	.byte 0x74
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Code starting with the faulting instruction
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+   0:	8b 82 60 02 00 00    	mov    0x260(%rdx),%eax
+   6:	83 e8 05             	sub    $0x5,%eax
+   9:	83 f8 02             	cmp    $0x2,%eax
+   c:	76 09                	jbe    0x17
+   e:	f6 82 20 02 00 00 10 	testb  $0x10,0x220(%rdx)
+  15:	74                   	.byte 0x74
+[Sat Aug 23 03:56:09 2025] RSP: 0018:ffffaff30f777c70 EFLAGS: 00010246
+[Sat Aug 23 03:56:09 2025] RAX: 0000000000000000 RBX: ffff920700e06000 RCX:=
+ 0000000000000000
+[Sat Aug 23 03:56:09 2025] RDX: 2e2e2f2e2e2f2e2e RSI: ffffaff30f777d40 RDI:=
+ ffff920700e06000
+[Sat Aug 23 03:56:09 2025] RBP: ffff920700e06000 R08: ffffaff30f777db4 R09:=
+ 0000000000000004
+[Sat Aug 23 03:56:09 2025] R10: ffffaff30f777db4 R11: ffffffffb06dff80 R12:=
+ ffffaff30f777cc0
+[Sat Aug 23 03:56:09 2025] R13: ffff9206360b2c00 R14: 0000000000000000 R15:=
+ ffffaff30f777d40
+[Sat Aug 23 03:56:09 2025] FS:  00007f28311db840(0000) GS:ffff92092fe60000(=
+0000) knlGS:0000000000000000
+[Sat Aug 23 03:56:09 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Sat Aug 23 03:56:09 2025] CR2: 000055c1ad2b1058 CR3: 000000011eaae002 CR4:=
+ 0000000000f72ef0
+[Sat Aug 23 03:56:09 2025] PKRU: 55555554
+[Sat Aug 23 03:56:09 2025] Call Trace:
+[Sat Aug 23 03:56:09 2025]  <TASK>
+[Sat Aug 23 03:56:09 2025] sr_do_ioctl (drivers/scsi/sr_ioctl.c:202 (discri=
+minator 1)) sr_mod=20
+[Sat Aug 23 03:56:09 2025] sr_packet (drivers/scsi/sr.c:928) sr_mod=20
+[Sat Aug 23 03:56:09 2025] cdrom_get_disc_info (drivers/cdrom/cdrom.c:385) =
+cdrom=20
+[Sat Aug 23 03:56:09 2025] cdrom_mrw_exit (drivers/cdrom/cdrom.c:538) cdrom=
+=20
+[Sat Aug 23 03:56:09 2025] ? xa_destroy (lib/xarray.c:956 lib/xarray.c:2390=
+)=20
+[Sat Aug 23 03:56:09 2025] unregister_cdrom (drivers/cdrom/cdrom.c:657) cdr=
+om=20
+[Sat Aug 23 03:56:09 2025] sr_free_disk (drivers/scsi/sr.c:578) sr_mod=20
+[Sat Aug 23 03:56:09 2025] disk_release (block/genhd.c:1312)=20
+[Sat Aug 23 03:56:09 2025] device_release (drivers/base/core.c:2572)=20
+[Sat Aug 23 03:56:09 2025] kobject_put (lib/kobject.c:693 lib/kobject.c:720=
+ ./include/linux/kref.h:65 lib/kobject.c:737)=20
+[Sat Aug 23 03:56:09 2025] blkdev_release (block/fops.c:686)=20
+[Sat Aug 23 03:56:09 2025] __fput (fs/file_table.c:465)=20
+[Sat Aug 23 03:56:09 2025] task_work_run (kernel/task_work.c:227)=20
+[Sat Aug 23 03:56:09 2025] exit_to_user_mode_loop (./include/linux/resume_u=
+ser_mode.h:50 kernel/entry/common.c:114)=20
+[Sat Aug 23 03:56:09 2025] do_syscall_64 (./include/linux/entry-common.h:33=
+0 ./include/linux/entry-common.h:414 ./include/linux/entry-common.h:449 arc=
+h/x86/entry/syscall_64.c:100)=20
+[Sat Aug 23 03:56:09 2025] entry_SYSCALL_64_after_hwframe (arch/x86/entry/e=
+ntry_64.S:130)=20
+[Sat Aug 23 03:56:09 2025] RIP: 0033:0x7f2831407b37
 
--- 
-Cheers
 
-David / dhildenb
+
+The offending address 0x2e2e2f2e2e2f308e seems interesting:
+	0x2e2e2f2e2e2f308e =3D 0x2e2e2f2e2e2f2e2e+0x260
+as in:
+   2a:*  8b 82 60 02 00 00       mov    0x260(%rdx),%eax         <-- trappi=
+ng instruction
+
+It seems part of the device structure has been erased with 0x2e2e2f2e2e2f2e=
+2e, when=20
+scsi_block_when_processing_errors tried to access it.
+
+
+Thanks
+David
+
+=20
 
 
