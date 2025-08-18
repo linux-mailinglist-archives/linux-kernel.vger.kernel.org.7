@@ -1,176 +1,139 @@
-Return-Path: <linux-kernel+bounces-773178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A5DB29C65
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:37:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95501B29CCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F6D4189A6B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DDF018A3056
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4739C2FB98E;
-	Mon, 18 Aug 2025 08:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="H3gVDOEe"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012055.outbound.protection.outlook.com [52.101.126.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955AD25D549;
-	Mon, 18 Aug 2025 08:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755506206; cv=fail; b=iLV0OL0pJ4bkF5ZaIWMKpQK3PU5RJ+5TVOt1FTejAgIQ+NKcZ9EnjrrHprfmjm0/OzavwCgOy92mxlEFGKVTqOYaUHGq/wD8f6h26r4GbctCkPJJTSV4ONj16nSXproTPZPuHshZZ83/FqW7JaTenF3yZVBXvT19K8tw1fBTI1c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755506206; c=relaxed/simple;
-	bh=w4v93K2iMie2sPx3G14PvxIqIIpOUYMrtf0ML0FbMrk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=u211ykvgNc3QxXLogpfiLXfZfAU+a6rmPjgX1Rd528kFrMjLnVGQH1wvkDCYap8mWs1rgsiAK3nJpC/DIM6/nord2cMutEQ/wWPzWTzdY90jAl9cAW086NzUu3dprDDUXI8ueml+Qvs3b31oeW/EhNapYUX1dRN3Ms1p0Ut3ooQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=H3gVDOEe; arc=fail smtp.client-ip=52.101.126.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C4PYusffo42Gri4z7eIkKOX8/IgY46Kp3PWJfxP1x9M37XlyYKBYKxjCM5K4dYZFh3BiEKV/Ktr40T8ksxlE8OBfmamGMSia8vrxOitQNhgQTj0XPkNYxUJ6JxpoycS8mRkJWLoC0H6/TVdZ/8cO6aWtagha+h93H2PGS+TjMZgYZxKoRAMKCiFrO8FU2nOmcT8oidp38nVMaiXIBM4P7gcrQ6ivyYU4M7l+uAjeMOWnNn7lcjn1UXzfIajflOMKWl6aVvGEGVOy74sGefMokrgHo042/r0od7tk2cuwuotgdfQ1OQtPG4LypC70ILJSVaGUd78LEttL0Bk1voq4pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xA15McHruuVKkTKiSJM/jKkiCdZDeACOgrCUBXKt/yQ=;
- b=KwHpRmmpi4AhvLkVOW2P2sHwdHz+kVcLKIRJZwue8eK3j5ogGjQkobCIjhc4JcurjaqKvGKiG/JXERjCBXmASJa7ZnjWLg1d8XaKN3qipAl74gYu9Jm0LCoaJDyUEBYMaKwk207tX+CWbmA4sQEv1HqEwFv6flKEuU20vYyIk82wHwSl2Pk+qGtQZeDpARQHoQUTFR7ODMY30I/JjArb6gTMclHVQMa6g9uNXCb6VCc5cDG2/tBDLKIsy+jJlegsfeNnGogBbUW5sBY9yc0lXFCxX1VBid/GPoFYyQczz/lbG3GiK/lx2lYKw+C8aMqwzm88UkuT7oT5ZFOXu4MPLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xA15McHruuVKkTKiSJM/jKkiCdZDeACOgrCUBXKt/yQ=;
- b=H3gVDOEeDfCdHT+u4LCbxLuylEY/UOvjGSPJGoHJLgJSQQN2Wo1VndGSYBYXrs/wZYcXK1SfroA+h7gFEuyap7EPE3cVJN50++R54jOh7SR+gQoBx//pkLZyt1UupgC0cfKID6niSu4uc5TsgDdlDCTketZOD1V5Li/Layb3X6vlTgIpbMFQPeNvnmJiBmaf9TY6SzF0UnZYU+7zni2ciqtIsF2ADvgemSQ/lKRUiNCUR1HxYk8SDt380eElDIjxOx0TufoYdu2GUuh71zWe8ioAxPZ1Twxj/xq4hdK9h3wDD0YM8H7U8EjCgKcC+bJiXrMZLxftLiA0J4VdQGYQDA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by SEYPR06MB8091.apcprd06.prod.outlook.com (2603:1096:101:2d7::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.19; Mon, 18 Aug
- 2025 08:36:40 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 08:36:40 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: ukleinek@kernel.org
-Cc: linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] pwm: use str_plural() to simplify the code
-Date: Mon, 18 Aug 2025 16:36:29 +0800
-Message-Id: <20250818083629.503250-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::19)
- To KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED249304960;
+	Mon, 18 Aug 2025 08:50:56 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AD73009E1;
+	Mon, 18 Aug 2025 08:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755507056; cv=none; b=LuuX1SGbGjE48+y5jMELWV1lWfhXwKpTH7tGF+dQlJ7GV3ozPYIGtwbRLqP6dRP/O1MdwwO6inwiudeD4eViyZT2tK3st6ce+l44HBrPSomLwPFaLsBs/Z+n/f6H21XDR/sDhctUJ53TkOjrKLR+tLfcUs+dlwEDNx82gx54NYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755507056; c=relaxed/simple;
+	bh=52MqNBhfxIXlW4z+xIwz2mVXD3DBPmvokEdteP4bV/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ph5Uqa+GrDs0pBEYIfVFEnDknwvGWNOhqm7Yw+F10SpL+bMwx/O6Poz1YxQ1hKsW8/fdX141ivafsuvScoskq99g71pnkEmYTN7/0ApLxouNpsx0xevyxdKI5+rYyWcg7oZNJMnJv+bBU1SjrQVjzfJfPNhYVkgSyi3K9V04L0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c55g45CxBz9sWv;
+	Mon, 18 Aug 2025 10:37:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ZkJOApxeOfnh; Mon, 18 Aug 2025 10:37:04 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c55g43xC4z9sWt;
+	Mon, 18 Aug 2025 10:37:04 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6ECF68B764;
+	Mon, 18 Aug 2025 10:37:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id U_Z-I48WiQ0s; Mon, 18 Aug 2025 10:37:04 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D1758B763;
+	Mon, 18 Aug 2025 10:37:04 +0200 (CEST)
+Message-ID: <a14e4ec5-74ff-4f0b-bc26-76c59ecb2357@csgroup.eu>
+Date: Mon, 18 Aug 2025 10:37:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEYPR06MB8091:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01811757-c5b8-450c-a2a4-08ddde325a38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yZGUNUQZ6PIV/hthjFvfmn8WRz/7rzlm3CwQg7NZHLfVAk/H5pKU67Rrwtc9?=
- =?us-ascii?Q?pnXhi1z2e4egtN5hMxGTvRNzSh8tG9ruaCsrCDbe5STLV9V3pG/Yaksk3Tik?=
- =?us-ascii?Q?dZ3CAEERAG7nqSOuTIuKqi/JasYEgBOZnFsNgb2L9T0zer2/6KmnxyEHsDnQ?=
- =?us-ascii?Q?VqrxRKyfOAPeeKOacZ94DDKbBAeNakOin2M74HIQ25x6NSW0s3oWdA4pNuum?=
- =?us-ascii?Q?JevsN1P2vTH8qs5elW3I/OH3kBpjBG/t8InXckcGzh03bwW0x+EE4Rjn32qD?=
- =?us-ascii?Q?V+8AbDD8SUnpZoKaZ1lFKnslYJ+9Q3ItZWX9MXhRhhdMxJoF2nGsqNNxAJFf?=
- =?us-ascii?Q?2ZlHEp1YIpcW64KMu0PsKQVoNaiV63c0SkETda4rvtmj4+Onc3heTHUknK9M?=
- =?us-ascii?Q?IS/oHI9yrGgiRsfT5AjkV2HOdF1uhl1lddbqV1F0tzzy3UJjPQFIfYg5w0QI?=
- =?us-ascii?Q?FNBco5493ycD8QaGvuW2YPi6UYaFqFPMYfpDa3GMmhMHTJAzTOzizAKXVAF7?=
- =?us-ascii?Q?RqGqTreQGZfbqFrW2ueltqxN07scZprDZLScL4/glHX04treL587geknDUwx?=
- =?us-ascii?Q?NoOe9ohcQH94ekElMWePBEv9QC86S3YBQhjMA/mpLCC7XAx4JIVYmJwmfTe7?=
- =?us-ascii?Q?H3JR0o1qhrtuItBGEcH6Y0atgdI44cSnOiD7VY6FHUe4XErz0Wnl6RlbDu0A?=
- =?us-ascii?Q?UbKpk/dJb8j1BFEs8ZF/Ib4AREBnP7CCVHs9pw8uxhbaYYiFpEp1eLB97il7?=
- =?us-ascii?Q?nB3Kp7n9cCUQRg4RYa6Lt08MRZioVIKrqcOHWlEDTrhx5/BWVhwxyGU+8Ltb?=
- =?us-ascii?Q?HmegVW7H8TqBN5s3nh3ORhJmde5nAtSeEsqQBfoQNIm5I9JoYUlT/eoHqBiU?=
- =?us-ascii?Q?ESzSb4+6h9uKoyDev47DJpmjvAsl9LbjwtKGfSMfPH1iRLIvm5Ae8J4Eyuiw?=
- =?us-ascii?Q?bx5PZzqDKr92FDT0pSD6umoNz88h/ro4VorAEFaIC+iwKor3BQL5n1PJK69A?=
- =?us-ascii?Q?GUjI/MQBEYG3LnnZAldT/1T6Z4mNrvIinNQmgPJKdbVsByVTvD72D6AqRl3z?=
- =?us-ascii?Q?dyca/Uz+EzPwrYhcszE/3QHTiMM/n5sIdlbMXA1zq8ogw/pIO1Js7P8mueSb?=
- =?us-ascii?Q?gO359mPr2pO9iPm5M7Z43ZnNaXeRnV34YrmLXd5+YDdSYlhJpsX/pTGP2hSG?=
- =?us-ascii?Q?OWdLdK2G3gRr6ErSqbpkc0nzA7qhlIWyudjPwsvtCfGE1j/UMU/lzLMLYH5a?=
- =?us-ascii?Q?qX1fBsJeJca99Q6wZ9D7NY1NTMwCCC/tpt8Yq4UrVxg6LeK8fOyQErrhddVh?=
- =?us-ascii?Q?X9QQAunSiMFdvUor2fP5e5fgD/aBguighp4VmiWBwfSzQn7HJz6OZy3OLhrz?=
- =?us-ascii?Q?PsxEjCYS+w/HHd05GskgWmWTfyDuu7z+wui0YiqBGdMMosEthZ8MO4C24pLA?=
- =?us-ascii?Q?o04F2I33fiZK4kgGrCQ6dSxu7CZaNgSVmQreda+LnYzjS5hsD0fzuT3sRR8O?=
- =?us-ascii?Q?CLvRO5jJ3M256G0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?My54lDLe37b/EcmPW7FkUGBE+iHo9MIh0CiPXHRPzXzRG9nyIt+OiKJUM551?=
- =?us-ascii?Q?XiLs7k/cei29PIAqnv+Cbd4ccfJRPXuYAY/A5+L//vSX/oiJjDDTUFwzYHUH?=
- =?us-ascii?Q?g2NRZby7dXDwVkVNptIIcmpTVa5vo3WduCwIQ876Rg8Bc0IS/zt3fObZK3YI?=
- =?us-ascii?Q?rmnUyAftwP8R/WVMyhjCL0jzjIZP8ndulkP546lomeyZngl9UspzLGqRvU6J?=
- =?us-ascii?Q?CMb/QEK6+wdbAIYql3RQxun67cG//spIJoQ5zU+yUVc76SOzbFr4v7pBjwdw?=
- =?us-ascii?Q?71MHduQRHDigV2luLInexJgt2ZQiRJinAT358J4e+GhS1/NBKwNa5dNcOzF8?=
- =?us-ascii?Q?CYtOWzeikIy6y3LPGOiW+pbqb2rgf2HUgSiOiL/F4f6fTpvzsDq0E8n/sF8K?=
- =?us-ascii?Q?MoI7YKL/HoRFXLsVYjY7ilsnh4SoFugcUnYv28+4OKALpPlnKwIfglCmEjZk?=
- =?us-ascii?Q?7LduFAZIPbkRuCOTsgjChQoJWXt64nwwozkUmc5G6p7IPUHU217rVW3ZW2Uq?=
- =?us-ascii?Q?VbsYcxw3zWOJDQhzPI06S3eWmURm8AGxRPMjAyYvkZO0WOZ3NcgvMXWT4B4H?=
- =?us-ascii?Q?uz/ptnzJf04xpxbfhLznLNWdZ6oL+DWmyKbRb9HagCfNbzRpLi7Ipa/EeMYp?=
- =?us-ascii?Q?XMwjI2t0/M5bx7MANrnIwc/JDhLHfL41SPeADr5xrPGt/jvEATOHuIzot+U3?=
- =?us-ascii?Q?sICbb1ncPTZEDcqs4HCqMdlzuBiP0IswvPGQLNHp7SJtvJJ5+S+aS4O+P4HK?=
- =?us-ascii?Q?ZzkB2E0NLRCCUmrcw8I5xHTAMuzZ0COQ9gcJSlHS+SFUbX6Bt5E7RfAz14tm?=
- =?us-ascii?Q?4ml0tNQvAb52fYzxBIcW+O2gfFC9IjCzEtbtQOtNIjueQg5pUioGTnY1AJY9?=
- =?us-ascii?Q?CqdV6iETk6VhfWVhsY956cFESTN4JYZK3ujdL2M2xRGFVCA99SFbJ8NKXKNh?=
- =?us-ascii?Q?Hu7U0ahmGyQt0KV65ilzdK8ESaXsWlR7ONsOsvxAHM2aoFy8PYE4HDdkTeLx?=
- =?us-ascii?Q?SSrzF1uI9xxxkEBFFpO0K1faGuUx0oc4N1U5IVYKbkqcZKMhbneoQH+gkBNA?=
- =?us-ascii?Q?GUEPuKmlBLDbR63NDtna0d//t3vf4UIEN1FZY8foHYmVedlz60dg9kq36jVV?=
- =?us-ascii?Q?BWrfxccpLsbHtllXk5ZE10b4+Ev+BeaqJMZYLe8dXwa+QqTP2VQGGuqmmNed?=
- =?us-ascii?Q?aJS1Rw9gAeP8IydbZaZx6+T8fUGkkNH1bNV8HjoWh6zaUfn37X0kL3YzpuOg?=
- =?us-ascii?Q?OZ8gmuXHrz4QH+XpC/ppdHZkApHe09RHRf7J8WCB45khUTQZ8+BorY2Mddrl?=
- =?us-ascii?Q?7bByUhbfZO+8SBy6mvNOKZFijpQZuxDS5gtwZ69XWrDL1UR/RyTpl2gAu4Ma?=
- =?us-ascii?Q?bITbu4DZMlRoQf7t2WRPhZXEiM3aXPG2mV1fyFXQjHpwYy6XREInt13RIv1b?=
- =?us-ascii?Q?yj3eRLl5dRBWlaWj4vDZQHKWqX52xSPHQZV8vZI8PwIsDXYUXlhlxgeVA4oR?=
- =?us-ascii?Q?dIs9/qPmpieTIkkrxyCKE4UQukDUp2FHlEjC4DYRuukysWHbaxywQycROiV/?=
- =?us-ascii?Q?gmrmyeLGe5Rc6li9rnvILN1U7dBhyapvSb+mT5Dx?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01811757-c5b8-450c-a2a4-08ddde325a38
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 08:36:40.2572
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aEFp1vykxdlqWUIS0KATotsqtZWTQSFEQ4faR67AZjrvH1nSuwUoE5ROPgNlc04D9HWQEjKUW1ld48VHpisZzg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB8091
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] dt-bindings: soc: fsl: qe: Add an interrupt
+ controller for QUICC Engine Ports
+To: Krzysztof Kozlowski <krzk@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
+ <0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu>
+ <0fd6fefc-9fad-4ea6-a619-e9f480747ac0@kernel.org>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <0fd6fefc-9fad-4ea6-a619-e9f480747ac0@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Use the string choice helper function str_plural() to simplify the code.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/pwm/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 0d66376a83ec..732d22dee035 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -2620,7 +2620,7 @@ static int pwm_seq_show(struct seq_file *s, void *v)
- 		   (char *)s->private, chip->id,
- 		   pwmchip_parent(chip)->bus ? pwmchip_parent(chip)->bus->name : "no-bus",
- 		   dev_name(pwmchip_parent(chip)), chip->npwm,
--		   (chip->npwm != 1) ? "s" : "");
-+		   str_plural(chip->npwm));
- 
- 	pwm_dbg_show(chip, s);
- 
--- 
-2.34.1
+Le 12/08/2025 à 17:23, Krzysztof Kozlowski a écrit :
+> On 12/08/2025 13:02, Christophe Leroy wrote:
+>> The QUICC Engine provides interrupts for a few I/O ports. This is
+>> handled via a separate interrupt ID and managed via a triplet of
+>> dedicated registers hosted by the SoC.
+>>
+>> Implement an interrupt driver for it for that those IRQs can then
+>> be linked to the related GPIOs.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> ---
+>>   .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       | 63 +++++++++++++++++++
+>>   1 file changed, 63 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+>> new file mode 100644
+>> index 0000000000000..7c98706d03dd1
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+>> @@ -0,0 +1,63 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +
+>> +title: Freescale QUICC Engine I/O Ports Interrupt Controller
+>> +
+>> +maintainers:
+>> +  - name: Christophe Leroy
+>> +    email: christophe.leroy@csgroup.eu
+> 
+> Oh no...
+> 
+>> +
+>> +description: |
+>> +  Interrupt controller for the QUICC Engine I/O ports found on some
+>> +  Freescale/NXP PowerQUICC and QorIQ SoCs.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - fsl,mpc8323-qe-ports-ic
+>> +      - fsl,mpc8360-qe-ports-ic
+>> +      - fsl,mpc8568-qe-ports-ic
+>> +
+>> +  reg:
+>> +    description: Base address and size of the QE I/O Ports Interrupt Controller registers.
+>> +    minItems: 1
+>> +    maxItems: 1
+> 
+> This was never tested but more important this and everything further
+> looks like generated by AI. Please don't do that or at least mark it
+> clearly, so I will prioritize accordingly (hint: AI generates poor code
+> and burden to decipher AI slop should not be on open source reviewers
+> but on users of AI, but as one of maintainers probably you already know
+> that, so sorry for lecturing).
 
+Yes sorry, overconfidence into AI. Until now I knew almost nothing about 
+YAML and the generated file had a good look. I didn't know there was a 
+special procedure to test bindings, I thought checkpatch was doing all 
+necessary checks.
+
+Fixed in v2.
 
