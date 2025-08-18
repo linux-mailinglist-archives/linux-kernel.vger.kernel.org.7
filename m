@@ -1,217 +1,111 @@
-Return-Path: <linux-kernel+bounces-773135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC64DB29BC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DB4B29BCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6A418A7FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:13:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81303A66B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B50B2FB984;
-	Mon, 18 Aug 2025 08:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4DD2F90C4;
+	Mon, 18 Aug 2025 08:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhdFxWw9"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMlIXmsk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9361029B8E8;
-	Mon, 18 Aug 2025 08:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F48E29B8C7;
+	Mon, 18 Aug 2025 08:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755504793; cv=none; b=NmizGjXSKGZ3743kqUHfZ5VIvfmbBabdrDx6j3kiFe1zVB6rnwKWh4uhFHxKABTj6y8e/lGQj9CKGIKtl2FHHfo/cMTQSh0+Dc7XEYMRSNG7JM1Ytkjwk90hSbQ2gjP3tlG52tRhy7hRAkuX4BtEUPP0RZc9Mp4QQBMmhHy/adU=
+	t=1755504876; cv=none; b=fICjHZMxf6NyNPF0B65k+/OXiMGVO3k3xKm9blbIg1ZGAia0M2rElcRSPeIvay/5fLX4DnEj7o00KQuTJpG/2hVJg+uXW6E+omk+f5qUOojbENS2wDNGA7U+O1j5dpdPnw+u8FEF8e0eP3gKiNkzrJtXw9ZWNM9OYv+XnsWSGxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755504793; c=relaxed/simple;
-	bh=cDspve00JkSSRewIpWUs+J183I8NCCc4Mrdww7zgQ8E=;
+	s=arc-20240116; t=1755504876; c=relaxed/simple;
+	bh=KvZQZv9nSeMhMC+WLocbJbELHHUMhySmf4NucpEpZDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTt9lu9EfLTMXSkUTqREitiWkblkMlEz7qssGpp53yY73jq6K6UxgQFH9BEQx+Ox4XssYQswbwlc5vROmTyx8iKRa8nERQPTxDk881cwP1chJQQQqfr5wr3CHmnNG/sD7L2UNWHVvoPqjgrIdHF+GH0oyTRtQvS8Wyy+PAtOru4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhdFxWw9; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55ce52658a7so3667858e87.2;
-        Mon, 18 Aug 2025 01:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755504790; x=1756109590; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IYRgAQUvxLKNi4PbWgiLV7X80YSaNGAIcr48EAtGXXw=;
-        b=bhdFxWw9DmDRElRR8R6thEIWiqdrtAoob3Xl8kbUfkNy64EhZfYzVc+aMr0wb2OGpL
-         +oURvotGuIcojub1hl4XEighB71Kn4UuIegHeoAxo48bAWBYPqCLlnArfZC3AmYZJnx8
-         rqQEE8eTiPFbsKYZDVuCUD5oOuxWvLDdaoT+t+b62/yyVMZG4Hpbj/8j0zU5MHXER+1v
-         dIRsE6KOrv2yRBvc0qLkQPsQbbxIaCTHaCqggigKLGaCy3gugObhjSiuSjvCdNzkQrYA
-         SRxIy1YruF+SNmzCj6Z6kYg8gNwYaOsp5Sws807l/y0/t0uMsHZHePJtGBqRwZzEwnu2
-         81Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755504790; x=1756109590;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IYRgAQUvxLKNi4PbWgiLV7X80YSaNGAIcr48EAtGXXw=;
-        b=W/KTGLbDMnQ9Eci4e5PCTK5Gzp4OyeJc3Df+BapxI78A/GtccTRVEIoRi857qyP+NC
-         fodCEe2SaMDtfYuCafW1akrxX6yiWEu2kpReeMzMO2dlibbNRrugoF635dQSwBJ0Ui6G
-         RAyPgqQiWYkUoUvcFg1QUpKK9u4rf9+TULbmEH50CSWIlRbYRpgj42JYChWe6WT/bDOj
-         PLA0VLHLFW1l8nVXAjdMihvAJ0dzttLwcS3RAE5jhaMCjik5dPkrlZstABfuEHsYgNrf
-         tIs+poNPrrTTS4pO+p4OSgFYkxytakzefu1HR+gVr/zFSmhavhYbRp+iS1jsiXztAUtI
-         xJxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFxIkMbhEs/5VKii7h9ap8xrHtqVWc55skJ4m4zMveb7FISr3DUDxdid4XonlBYxTkPt/sNmgVcrNEFBDO@vger.kernel.org, AJvYcCUPmwzDVPC4SZ5qnIvI5N5YylsoK2nqXdvRBbPEz/B+pOGFKM0LAGActwTsmwblX9BMnwdx5/b8xI3C@vger.kernel.org, AJvYcCWY6vIv0m14zk1NkfGqZiDtHZ3OslXk9MzwwiijsaJHaawmoUcwWCCeIcPwaGWjTH3wil7gqS1BqyM1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk474x0sTghpPJb2lMFceChGcM9+3Be0Aw2pBor0Bm2PggNC8q
-	QB4ndedwrT620WONUJpmk4+bdj7+GPkCjKRu1mArIdGpSHMWhh9I9liw
-X-Gm-Gg: ASbGncvv1iVKdJHwJpD3NVwHxxcHJLZLvAQv53Q0wTu83iLC8eXO0RIt6xsxLbwwqZu
-	PqhUY84kVACPLvxaN/DQL8exZHzhLYOW8aNsGnC1W6O6RSLJqIJE45rQXzeXZ9DCXAijAmJUxT9
-	/9wUUL1/eaBVz7vLhgS64x2oItrVj6ZFthg49FPbHXEEZTSRouv/By29xollpNx2zGJ7VC+mKCL
-	lvH+Nh+JMXEMifywcimsetMstVuOVZVt29uZ/LunDu9JL1lZk/73Ulxw+dS0kKOQ0WyuT7M5AXa
-	FMJomCBteJZFpltL8MpdVhvd2ShWBlZz++T4iqSPNI/5Ev0oL6iXxQqnwu/NL68/TObV50LEeEo
-	kps9y1QpjbBLLkqu0WKRpSQX2LmfidW2l5SpWb4A=
-X-Google-Smtp-Source: AGHT+IFGPfr9SQPFZB+G55QonwIJAX1krxFzDIx+0BD6Qf1mcJ187Ej4f4KvKZztE5CpSVYaHCtlPQ==
-X-Received: by 2002:a05:6512:340a:b0:55c:e594:ff94 with SMTP id 2adb3069b0e04-55ceebb9343mr2488267e87.49.1755504789477;
-        Mon, 18 Aug 2025 01:13:09 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef369d83sm1586556e87.67.2025.08.18.01.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 01:13:08 -0700 (PDT)
-Date: Mon, 18 Aug 2025 11:13:05 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] iio: adc: adc128s052: Support ROHM BD7910[0,1,2,3]
-Message-ID: <bb7a775fd1a6135889a72ae63c45e2a4347a2aa5.1755504346.git.mazziesaccount@gmail.com>
-References: <cover.1755504346.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tl/FYZnYFJFSKp29jbWZ+dtR7hdS0o/ieQ0+iWTROTOeK5FzVbJqJJqr3+aSIeWPWaP8WBBpjpfvTx6jSEa/ynteUdXpJDwjpT/Z6ToPnFfmGoz76V+Om955Lt5wDgEmHSG836RiKsogbNjG1AzGyboxvLMWvojxVUa92TXarKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMlIXmsk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3123AC4CEEB;
+	Mon, 18 Aug 2025 08:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755504875;
+	bh=KvZQZv9nSeMhMC+WLocbJbELHHUMhySmf4NucpEpZDk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZMlIXmskkGUoInlwuI1I1SNEbQ77pfX9HElgGLo8NtHs7v0mTdXarcHHO0EEJhHAI
+	 oMl7lY1QB2zoXKBmY28OTZ6vbAkdrlbHjMQ02MWQlS9DAYJvBtmwlzBlTOaduED2VF
+	 8VQXcLnqvC96laDXOqVWTLzraQMlreQAzWUmVDKxTNbjZ78M0l4ZRtcEWeZwfQc6AK
+	 opAuyenDh+wZ8wH5NAz5RaR8YNglSQJKGXVGIZVi3Y140hhpkhCcmXsjOAcQQmePrX
+	 Y0SUo38rOJ521UPs5QCeyZMwrdyoERVECRwL6/ONOm9hKniXcAvZ/SRza7vkh/8pZb
+	 O3XeaqKiK/2WA==
+Date: Mon, 18 Aug 2025 13:44:28 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bus: mhi: host: pci_generic: Add more Foxconn T99W696
+ modem
+Message-ID: <ma7am34lifhb3avqyiodtbsfmlmi6s5tsw7kqf2rp2eyiq3uqw@ty57xdfbe5ao>
+References: <20250729085726.106807-1-slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="stQVvdqvZQ7uOc1t"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1755504346.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250729085726.106807-1-slark_xiao@163.com>
 
+On Tue, Jul 29, 2025 at 04:57:26PM GMT, Slark Xiao wrote:
+> There are more platforms need support Foxconn T99W696 modem.
+> This requirement comes from Lenovo side since they want 1 platform
+> to correspond to 1 modem SKU.
+> 
+> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 4edb5bb476ba..1fc43f1b86be 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -932,6 +932,24 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* Foxconn T99W696.00, Foxconn SKU */
+>  	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe146),
+>  		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.05, Lenovo T14 */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe150),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.06, Lenovo T15 */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe151),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.07, Lenovo T16 */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe152),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.08, Lenovo P14s */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe153),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.09, Lenovo P16s */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe154),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.10, Lenovo P1 */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe155),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
 
---stQVvdqvZQ7uOc1t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since all T99W696 derivatives are using the same config, can't you use below?
 
-The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
-ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
-the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
-and, based on the data sheets, they seem identical from the software
-point-of-view.
+	PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, PCI_ANY_ID),
+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+I'm presumed that all 0x0308 based modems are T99W696 derivatives.
 
----
-Revision history:
- v1 =3D> v2
- - Rename channel structs as discussed in review round 1.
+- Mani
 
-Tested only using the BD79104. The ROHM hardware colleagues swore this
-testing should be sufficient...
----
- drivers/iio/adc/ti-adc128s052.c | 36 +++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s05=
-2.c
-index 9b8ecaca01ed..4ae65793ad9b 100644
---- a/drivers/iio/adc/ti-adc128s052.c
-+++ b/drivers/iio/adc/ti-adc128s052.c
-@@ -99,6 +99,10 @@ static int adc128_read_raw(struct iio_dev *indio_dev,
- 		.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE) \
- 	}
-=20
-+static const struct iio_chan_spec simple_1chan_adc_channels[] =3D {
-+	ADC128_VOLTAGE_CHANNEL(0),
-+};
-+
- static const struct iio_chan_spec simple_2chan_adc_channels[] =3D {
- 	ADC128_VOLTAGE_CHANNEL(0),
- 	ADC128_VOLTAGE_CHANNEL(1),
-@@ -142,6 +146,30 @@ static const struct adc128_configuration adc128s_confi=
-g =3D {
- 	.refname =3D "vref",
- };
-=20
-+static const struct adc128_configuration bd79100_config =3D {
-+	.channels =3D simple_1chan_adc_channels,
-+	.num_channels =3D ARRAY_SIZE(simple_1chan_adc_channels),
-+	.refname =3D "vdd",
-+	.other_regulators =3D &bd79104_regulators,
-+	.num_other_regulators =3D 1,
-+};
-+
-+static const struct adc128_configuration bd79101_config =3D {
-+	.channels =3D simple_2chan_adc_channels,
-+	.num_channels =3D ARRAY_SIZE(simple_2chan_adc_channels),
-+	.refname =3D "vdd",
-+	.other_regulators =3D &bd79104_regulators,
-+	.num_other_regulators =3D 1,
-+};
-+
-+static const struct adc128_configuration bd79102_config =3D {
-+	.channels =3D simple_4chan_adc_channels,
-+	.num_channels =3D ARRAY_SIZE(simple_4chan_adc_channels),
-+	.refname =3D "vdd",
-+	.other_regulators =3D &bd79104_regulators,
-+	.num_other_regulators =3D 1,
-+};
-+
- static const struct adc128_configuration bd79104_config =3D {
- 	.channels =3D simple_8chan_adc_channels,
- 	.num_channels =3D ARRAY_SIZE(simple_8chan_adc_channels),
-@@ -210,6 +238,10 @@ static const struct of_device_id adc128_of_match[] =3D=
- {
- 	{ .compatible =3D "ti,adc124s021", .data =3D &adc124s_config },
- 	{ .compatible =3D "ti,adc124s051", .data =3D &adc124s_config },
- 	{ .compatible =3D "ti,adc124s101", .data =3D &adc124s_config },
-+	{ .compatible =3D "rohm,bd79100", .data =3D &bd79100_config },
-+	{ .compatible =3D "rohm,bd79101", .data =3D &bd79101_config },
-+	{ .compatible =3D "rohm,bd79102", .data =3D &bd79102_config },
-+	{ .compatible =3D "rohm,bd79103", .data =3D &bd79104_config },
- 	{ .compatible =3D "rohm,bd79104", .data =3D &bd79104_config },
- 	{ }
- };
-@@ -223,6 +255,10 @@ static const struct spi_device_id adc128_id[] =3D {
- 	{ "adc124s021", (kernel_ulong_t)&adc124s_config },
- 	{ "adc124s051", (kernel_ulong_t)&adc124s_config },
- 	{ "adc124s101", (kernel_ulong_t)&adc124s_config },
-+	{ "bd79100", (kernel_ulong_t)&bd79100_config },
-+	{ "bd79101", (kernel_ulong_t)&bd79101_config },
-+	{ "bd79102", (kernel_ulong_t)&bd79102_config },
-+	{ "bd79103", (kernel_ulong_t)&bd79104_config },
- 	{ "bd79104", (kernel_ulong_t)&bd79104_config },
- 	{ }
- };
---=20
-2.50.1
-
-
---stQVvdqvZQ7uOc1t
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmii4JEACgkQeFA3/03a
-ocXYcwf/W2Qd3O6/fc/iY1FVO+L23BNP9uJJcySfQqdCsT8UKfu8My3UfkUq6WaV
-QmPgfhRmQYcf5A8JTgX4m8E6ll7pRJ/MfbYgXN4ZdgDyPa1Zbz/hf8NbM7rw0f5D
-t8KkZ2DY/EVQv5DC5Y/225Y5iCbHEntY/qot8eWGb7C85lPgZLUUgPhEQ8dVubSI
-4tQLYfOBeSiGKxA5wJrsStHaGWjbP+zSB8U91NIn/B4D0GPnElcghKdJdjnzfRn2
-DymDCyhwFZIqVOb8LrgNSVu0Vgm/mYgIn0w+eCYEp3cQTICVvgARLaKX0mjAE+S3
-Efl7JtN3xgB9dtzEM4HKyL6Vi9wt/Q==
-=Ngj8
------END PGP SIGNATURE-----
-
---stQVvdqvZQ7uOc1t--
+-- 
+மணிவண்ணன் சதாசிவம்
 
