@@ -1,89 +1,169 @@
-Return-Path: <linux-kernel+bounces-773991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A71FB2AD43
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:50:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C401BB2AD46
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 216221BA035E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 665751B63532
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2754D321F27;
-	Mon, 18 Aug 2025 15:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB7C31B13A;
+	Mon, 18 Aug 2025 15:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="W+2uVyTM"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2aSOb3D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EDC320CD8;
-	Mon, 18 Aug 2025 15:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122EF258CFA;
+	Mon, 18 Aug 2025 15:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531977; cv=none; b=d2fC4fA3+496KDweoAaVK8W7tticmRypoThxKMq45eXXunhG0DI+R5giKjwuMtx/hFj0cKjkARKJbJxr28SMWghJznesZgv7qdemtS56/vEi9/c8dn7HcrZ4/andzyhkbmIip6A8fyV6MTkHbipbYCqQ6lZYK1yJ5AmjCHAq9T4=
+	t=1755532023; cv=none; b=QMn99PFnsQXbHzrSsVTihZIeBPwjgAntzrDPsIXIj4caJj20bHz4Zae1612KgCtGbxTFMjzu4r5tN65gTImhC9GTZgj8RZQnXIPXD5j8IxMCAdDBiSpDKeOOpvg1ZaxQe4YpDbktAd3MzBOex3PwvHu3ZVkU1dceQepG6ytlA8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531977; c=relaxed/simple;
-	bh=33SvtRRZKRpGEJgkApmw9XDN2PRubckU2zN/pwZlLD0=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eFnNkTKXWo6X33Li0/kFM8D/Vt8s4sIVmOhWAzvTSg06W1xhvwSzMVNECRCuOowftjPhqfBu9ly9Dy+XgM/FV9qoCqytVYVhndGQasmBIO5WqZVaSXPl0kUEBe55z85JwqbS+T7OOlSMl5BCE1cYUW1Wgvx64e7mvKmmc0zcV7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=W+2uVyTM; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 73B4E40AB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755531968; bh=kZm0Bwd6RyfzEuTnBUIgBslD2YQ/6RG8WWIkX9TBaJ4=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=W+2uVyTMXR27DTowkNNp6+t5Lyo4/bR2sMpVLS6Bhvv5PEGFYjXoIOOyMo08MTS4l
-	 vyurismLfczWox23k9/cOuXvqJGl10PDHUDgIacjQyH1luudBuRYNpkhKp75rVVrVb
-	 73pBNW+EwZxzSvPdIcGHxnlZQwgnaEWHxNExRS08X62+sLs/snjhhN87ehWBmcQ1iX
-	 0s6UTYX46UWGrdEBW76Fvo2nDQoWdSDgpD3i8tGJZkC95MWs/9f1KS9IwTppR3Ax2T
-	 BbbjMYvnIjjQ/w0QuLjbp5tH8uvvY35tNa46a5MzIUJ/GP8V4R879xa5Vy1G3a4pAT
-	 T2fSQwzX22xlA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 73B4E40AB4;
-	Mon, 18 Aug 2025 15:46:08 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Iris Shi <0.0@owo.li>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/sphinx: Fix typo in automarkup.py
-In-Reply-To: <8e5ddb7d-8faf-314f-b1b1-2d15d6900862@owo.li>
-References: <8e5ddb7d-8faf-314f-b1b1-2d15d6900862@owo.li>
-Date: Mon, 18 Aug 2025 09:46:07 -0600
-Message-ID: <87ms7wab0g.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755532023; c=relaxed/simple;
+	bh=W6AmuSmN9qaWu3EIFd4eq8W4sSZ6dygxL+NWbHPYrzc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nqt3YfkId69I3Zip62VMGLEApcyRBpOd6fQeQk+sEQBAMah1hnBkmLwZeBfCuRWCweZX3zQv4gkFQ+BECvwRWcpZmyXuxmHnJ53tmqj2KpkO//GXXveDHOs8gbsP0Jq5xk6jZ8UGf43c9hB+IzADH/DovUlCHhDrYbEIkRlm3ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2aSOb3D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85585C4CEEB;
+	Mon, 18 Aug 2025 15:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755532022;
+	bh=W6AmuSmN9qaWu3EIFd4eq8W4sSZ6dygxL+NWbHPYrzc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e2aSOb3DJlmkn7hgl5ndvqTbohd07H4hP00GZjm+2z+su04i8FSpfejqd3OOkaYkW
+	 ne8R2t8XogWY46TX2nJd1iUl8+tV5eUeLk3QD76R4f0pMnzaED62uuxeNmF5bGr30d
+	 ryl4y+GI4y0uFapRJmBjm2AUD1DrfMtLDtlwbaIGH1wsMt8APOULhfOQiXRVqzDWgm
+	 Y5mI6UcP5ynpoVoDdzpSD0ajG0QIXhqAYHlhQZXGrmKHjxFV2hK3fBIE7w9Gexuc6I
+	 3Q8beDL32asIGC1xDvUZ3bUzh+YQ1hTPc7zEtK1Yf2OXwuRFV+dhkRwUKjN+C1ojqX
+	 rqKIs184FnKFg==
+Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uo24a-008fb5-Co;
+	Mon, 18 Aug 2025 16:47:00 +0100
+Date: Mon, 18 Aug 2025 16:46:59 +0100
+Message-ID: <87jz30my30.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] arm64/sysreg: Replace TCR_EL1 field macros
+In-Reply-To: <20250818045759.672408-3-anshuman.khandual@arm.com>
+References: <20250818045759.672408-1-anshuman.khandual@arm.com>
+	<20250818045759.672408-3-anshuman.khandual@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 86.149.246.145
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, broonie@kernel.org, ryan.roberts@arm.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Iris Shi <0.0@owo.li> writes:
-
-> "whan" -> "when"
->
-> Signed-off-by: Iris Shi <0.0@owo.li>
+On Mon, 18 Aug 2025 05:57:57 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> This just replaces all used TCR_EL1 field macros with tools sysreg variant
+> based fields and subsequently drops them from the header (pgtable-hwdef.h).
+> While here, also drop all the unused TCR_XXX macros from the header.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: kvmarm@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
->  Documentation/sphinx/automarkup.py | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
-> index 563033f764bb..1d9dada40a74 100644
-> --- a/Documentation/sphinx/automarkup.py
-> +++ b/Documentation/sphinx/automarkup.py
-> @@ -244,7 +244,7 @@ def add_and_resolve_xref(app, docname, domain, reftype, target, contnode=None):
->      return contnode
+>  arch/arm64/include/asm/assembler.h         |   6 +-
+>  arch/arm64/include/asm/cputype.h           |   2 +-
+>  arch/arm64/include/asm/kvm_arm.h           |  28 +++---
+>  arch/arm64/include/asm/kvm_nested.h        |   6 +-
+>  arch/arm64/include/asm/mmu_context.h       |   4 +-
+>  arch/arm64/include/asm/pgtable-hwdef.h     | 107 +++------------------
+>  arch/arm64/include/asm/pgtable-prot.h      |   2 +-
+>  arch/arm64/kernel/cpufeature.c             |   4 +-
+>  arch/arm64/kernel/pi/map_kernel.c          |   8 +-
+>  arch/arm64/kernel/vmcore_info.c            |   2 +-
+>  arch/arm64/kvm/arm.c                       |   6 +-
+>  arch/arm64/kvm/at.c                        |  48 ++++-----
+>  arch/arm64/kvm/hyp/include/hyp/switch.h    |   2 +-
+>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h |   2 +-
+>  arch/arm64/kvm/hyp/nvhe/switch.c           |   2 +-
+>  arch/arm64/kvm/hyp/nvhe/tlb.c              |   2 +-
+>  arch/arm64/kvm/hyp/vhe/tlb.c               |   2 +-
+>  arch/arm64/kvm/nested.c                    |   8 +-
+>  arch/arm64/kvm/pauth.c                     |  12 +--
+>  arch/arm64/mm/proc.S                       |  29 +++---
+>  tools/arch/arm64/include/asm/cputype.h     |   2 +-
+>  21 files changed, 101 insertions(+), 183 deletions(-)
+
+[...]
+
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 888f7c7abf54..b47d6d530e57 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -2000,10 +2000,10 @@ static void __init cpu_prepare_hyp_mode(int cpu, u32 hyp_va_bits)
 >  
->  #
-> -# Variant of markup_abi_ref() that warns whan a reference is not found
-> +# Variant of markup_abi_ref() that warns when a reference is not found
->  #
+>  	tcr = read_sysreg(tcr_el1);
+>  	if (cpus_have_final_cap(ARM64_KVM_HVHE)) {
+> -		tcr &= ~(TCR_HD | TCR_HA | TCR_A1 | TCR_T0SZ_MASK);
+> -		tcr |= TCR_EPD1_MASK;
+> +		tcr &= ~(TCR_EL1_HD | TCR_EL1_HA | TCR_EL1_A1 | TCR_EL1_T0SZ_MASK);
+> +		tcr |= TCR_EL1_EPD1_MASK;
 
-Applied, thanks.
+Except that none of that code is about EL1. At all.
 
-jon
+>  	} else {
+> -		unsigned long ips = FIELD_GET(TCR_IPS_MASK, tcr);
+> +		unsigned long ips = FIELD_GET(TCR_EL1_IPS_MASK, tcr);
+>  
+>  		tcr &= TCR_EL2_MASK;
+>  		tcr |= TCR_EL2_RES1 | FIELD_PREP(TCR_EL2_PS_MASK, ips);
+> diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
+> index 0e5610533949..5f0f10ef38f0 100644
+> --- a/arch/arm64/kvm/at.c
+> +++ b/arch/arm64/kvm/at.c
+> @@ -134,8 +134,8 @@ static int setup_s1_walk(struct kvm_vcpu *vcpu, struct s1_walk_info *wi,
+>  	tbi = (wi->regime == TR_EL2 ?
+>  	       FIELD_GET(TCR_EL2_TBI, tcr) :
+>  	       (va55 ?
+> -		FIELD_GET(TCR_TBI1, tcr) :
+> -		FIELD_GET(TCR_TBI0, tcr)));
+> +		FIELD_GET(TCR_EL1_TBI1, tcr) :
+> +		FIELD_GET(TCR_EL1_TBI0, tcr)));
+
+This is the reason number one why I dislike this patch.
+
+Here, we deal with both the EL1&0 *and* the EL2&0 translation
+regimes. And I left the original definition *on purpose* so that
+nobody would read this code as being EL1-only. Now, you will glance
+over it with warm fuzzy feeling that you know what this is about --
+purely EL1. And that's what bugs are made of.
+
+Of course, nothing changed functionally. But is it better? No.
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
