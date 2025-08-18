@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-773113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F214CB29B93
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA69B29B95
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7576F18851F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529AF1885995
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56DE274B3D;
-	Mon, 18 Aug 2025 08:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E17F27E060;
+	Mon, 18 Aug 2025 08:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="PKRmjwvn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XFgsRTOf"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wkolqyu/"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D281E23E358
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F4822256F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755504251; cv=none; b=jHTezK8MW1m/etmcg+rydy41ICiHU1l5kUXy3r5hHfvrYLRQNj3o4upNPUu20/O4aov5ZH7/nYdZ64UiH8QJoh/Q4tXGEKy4QNYd7X/e71mrlcGTY1dvDIJTEReu/+KfR6hn3tBiQGgl0MK5sFcUry8z2EnKKPZBWZyAmZ84ACY=
+	t=1755504270; cv=none; b=K5EYleFSwPd49HMVTCHR37KG4Xoij3raQxAyqhCSoa3zIpONjOfYEL6nWqtIONmuP884vKs9I5zWRdQu6h+VriFJXOiJZFXqj1pu5VXwzmkrw9t/0PRqrpYM6q9guNIa7dFaqOOqVaFKo0i5NzXyTzIjwxGFMOjFlBrqGDqhtOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755504251; c=relaxed/simple;
-	bh=ga8Yr8TPD5StrTcn5jOSlFuv0+fyKp1usklVDk3WmQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwIrKWOz8HYOM46MI2GrykLZjg624goxINadwTPmelISNY/yEKCOkvXBF2eonCnfJMDDrCieVy71c3K4kxeLMLOyw8CvXlif72EgRLUa2gSh/WwtkFnJ/brdQ23Sarpbcb+CmTIz02+XiRSgS/MeKP4vEb2/0Tpn+6Q8cQPzIGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=PKRmjwvn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XFgsRTOf; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 8CBAC1D000C5;
-	Mon, 18 Aug 2025 04:04:08 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 18 Aug 2025 04:04:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1755504248; x=
-	1755590648; bh=LNvIM431twoZOupygQQzHuiZqlwtEMuo7aaUS+jvExU=; b=P
-	KRmjwvn626i7UZI4aKyPHjUKwYeDNmTUnAtOQBvDC4DpYLgHmXUPf+kaqysUJFih
-	EvKmZvRsurycSmShXskAAvT46uzA/MQhsKsBeM2mypxXnZWBOJauU2bGDeHFi8U9
-	Zm3olYjrF/FkIjQd3quSwaRpXh3E+ZQc5kbBL9mA2Q9/276gmuAW5b3qA5XVslNf
-	qr75akxuWS6IywELyhfH+HABQi4nR0oVqGuO1L0x80VDjMtq6n3IgoGyhHDtXBY2
-	gjt3/AkBlkbc1TvjJSk86hTNidRt0cs6bKCKK3bYNlcPDo3ZkjnYSwb5LSly7TZD
-	cBeEdBphtjjplozOet8mw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755504248; x=1755590648; bh=LNvIM431twoZOupygQQzHuiZqlwtEMuo7aa
-	US+jvExU=; b=XFgsRTOfqh6KPt8Uf1TpOMXnMIYB1WKP6+Bd9xhksjN7as5Rnjs
-	jWvZSsQ3qGxMlDnxZzihtcZYoB44/jxKqJZAebqWsjYhDYZ8Qd8JRN7DJPVxdIEI
-	e1mu3XF56VE5Xl2+urMvYFWP0EJSOsoHlnfVYcsyVnSvlsBzU9Iw7OnqF5M3Uy9C
-	TC20mrh+N5wRLL5P5gQDJgvHAqgEBSaosGl/pMMiIQti0OyCMpspyCbSFl41iUxg
-	7BOFfIcbESSfDlFW06Avk9JviESrHXCbLJ9Ks4b/I0/zNh+FBAdyNsw7B/XGSSks
-	/TD2eNs9MfLKmdkDy5YRkZAX1q07x9OrU5g==
-X-ME-Sender: <xms:d96iaGoVlQoPxfxT2cJ3rMps6f2ZCmDTOXbmWSgw87OKkDG6aKk2Hg>
-    <xme:d96iaKxenrfKcwrggBWkhPenTS6NMc8BWjLQ4GBfS0F0MPhziXYxkSCMmJSswBwm-
-    ZzEqcsaYH6T7z9-QM0>
-X-ME-Received: <xmr:d96iaAx_yJAAEv3nCpbhVjVgJ6pppKxQk7gVgebU75-D2ReIGjaRc-l2k7tu>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvtdekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhhihiguhgrnhdriihhrghose
-    hhohhtmhgrihhlrdgtohhmpdhrtghpthhtohepshgrthhhhigrnhgrrhgrhigrnhgrnhdr
-    khhuphhpuhhsfigrmhihsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepug
-    grvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopeht
-    ghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehmihhnghhosehrvgguhh
-    grthdrtghomhdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopeig
-    keeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhphgrseiihihtohhrrdgtohhmpd
-    hrtghpthhtoheplhhinhhugidqtghotghosehlihhsthhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:d96iaJR9uJQkWOW58lSneZUyCW_TQPHiKoe-5MW2jpbQqXRVJ6C9Xg>
-    <xmx:d96iaDM3PUvwYC5yYZdQ8rggSIM_oUV3TlNScFfjgzVWW1cLH59upQ>
-    <xmx:d96iaESWavow_MeYO_V32Ri3VT6WgpihO5vJDrfSivQ0veIZVMGX4w>
-    <xmx:d96iaO9pS_fisH2SNs4TfgWfeHerX8VD5V8K90Kvl6jK2Uq2cwLpPA>
-    <xmx:eN6iaN9aEpjUBg3yivlNcAdPedpShAsGmk7wY_GgzT9Kne9pQtvsR9G3>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Aug 2025 04:04:06 -0400 (EDT)
-Date: Mon, 18 Aug 2025 09:04:04 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Shixuan Zhao <shixuan.zhao@hotmail.com>
-Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/tdx: support VM area addresses for
- tdx_enc_status_changed
-Message-ID: <xqi2bkulnhen2vax5msbzczlaywx3dsc7ezpn7oo5qn7u7xzap@xmaseinov7tf>
-References: <enhnj775ryshjrqer24ki7wibngxaj5ydos7xjgone6wobuvdn@77luyq4cawva>
- <OS9PR01MB15202207C488796172F1F179B8D34A@OS9PR01MB15202.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1755504270; c=relaxed/simple;
+	bh=+ogGHNp5B2vuw8Sx3cR50dRQPqv7sPx9Uj4pSENJ8eI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N6ehkHc1CvvzF/24ZEB7aJZyqTxdHHTeltkf54mNBtPC3y/wT1oeBV4ktme/j2n9njqZHCgSAcAq/iMh8q0oAK5gX75MmmcQNijnBVcRVElRQQifRwXPz3aB6/ulufh0E/ATgQVG2BpxcrcIeGW5Fy32FFI15Ip5Xi2g9wvtsvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wkolqyu/; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9d41c1963so1823723f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:04:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755504267; x=1756109067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+ogGHNp5B2vuw8Sx3cR50dRQPqv7sPx9Uj4pSENJ8eI=;
+        b=Wkolqyu/+7gjEymkd5EfbpQ4sKgwlle1xv3Omwa66DAwGACFoxKiGJUKVYW4NYZayC
+         qMorlle65vAlRUZEKUdvpvA7H/9Q6qr/dwfMmii8HwZr2h9HHl/7579U5ZcBRXhxyO1w
+         YF4zkm+KCraamRZD+zrpvERZV50p3Wm5O62lJ9ycez6QjALqOnIu3i6v+0jGbUN7fMxh
+         U+NPEv9UQhlcR9xU/7CywN++1scd09szxSxH2vTTB9NkCuxrfMQMNucOhPQmC5iNeKZg
+         KQUve7M2X8B+BhwkfpYiae76YCcLxL+e0TMaI1Ycn3nf3a5wkFopn1ez8ibKsNBi9qyQ
+         9z6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755504267; x=1756109067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+ogGHNp5B2vuw8Sx3cR50dRQPqv7sPx9Uj4pSENJ8eI=;
+        b=qF6SVZFxVY0KknLrvFojSS2XND1GD6IxVlgDdAMraqSs09njqdm92dT4Kh4sCl2uo2
+         meuJ/plvzoCaDTh5mF2RM+f/C9N3jCLblCdtRRvWsWFTCyHJjjybswFLm/YFMvL567eF
+         0UjUsvSUkU8rOCOaduK4UZCQK+h8ZIrD4S4IpQBjew8VYp41hi96Q6KE0c7OraF6jymx
+         IBi9fT0u0oUNG8FQV6DVouhsJ9ngnUfe8aJHKpCtzE0J4Ur7L/snrIVsBrT+93eGUh2n
+         LSk1cQhqXy5Z3Yt+zmpDDhdyMO8Y5ILq2yda0ZSZbYdnk8yoYULZYj2owdsWIRT5Nrzq
+         PszA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRVjikFOCPnXe1JLdFeaQBuHcKWysCjZtAS/aI5rZfKYWEoaX6qJKbAUyEKRc3+gUUUF5d1pNb6petDYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXKjCWDXU9OBqe6U4QQAJ7R0zV5JV4Xzo2gmiMil8UvOzY+IEq
+	uu4NNkm4D2QB/BmN/dH8WI7l7WQL3Dv99CG36YoXViJAuX5/6aU67LW6J/ADcegoKNFOAbQR4aW
+	sAGjvWeTgSL9yMY5iwXvPehC3Pwtty+QNNW9gDkEL
+X-Gm-Gg: ASbGnctILw052hlJjtAThsspOTjizhOe6uEu0fDrggjITZtFOsuy9pjASoLjuGPMZMw
+	dscCoNqlYN9cDatvfKzD0+KrvN4TUxXEqitK9VcWjXaZK6231XT+ADT7BM8EQWHSzt8OV2ByZW+
+	DRbkHUx8Fk8mZ+dj4ev9DsfYX/Q9doZDYnIOuV7+v4E3Yh2Y+vslfggPqqcuFhSNKOFhys3rGXt
+	YCGCFvE2jOCjuq7iFzHTN7CLkKRFoR6bDxikYDQpQwPCAOtp6N5N0LYLMPoTvvFxg==
+X-Google-Smtp-Source: AGHT+IH5aPA+4lsEWIpz23XPee5Gucilm6/jJy0D1IJSOLJ53lXfZLmhPLBb0e339QHvRNfI1jCf5ECE7BVeDepIOLQ=
+X-Received: by 2002:a5d:5849:0:b0:3b7:9d87:97c6 with SMTP id
+ ffacd0b85a97d-3bc6aa272aemr6301618f8f.44.1755504266794; Mon, 18 Aug 2025
+ 01:04:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS9PR01MB15202207C488796172F1F179B8D34A@OS9PR01MB15202.jpnprd01.prod.outlook.com>
+References: <20250818012648.1841387-1-lingfuyi@126.com>
+In-Reply-To: <20250818012648.1841387-1-lingfuyi@126.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 18 Aug 2025 10:04:11 +0200
+X-Gm-Features: Ac12FXzx_I9gusmbozL2_QUwPunlyuZ1-_AVDrLW-ZxrD10YAx95V3gJEW6eTDk
+Message-ID: <CAH5fLgh0OSDnVDwO1wY9kd3UjVqaYvk-jJA-nwiz2ghR0Yu3Zg@mail.gmail.com>
+Subject: Re: [PATCH] rust: xarray: optimize lock functions with inline attribute
+To: lingfuyi@126.com
+Cc: Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lingfuyi <lingfuyi@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 15, 2025 at 02:18:34PM -0400, Shixuan Zhao wrote:
-> Sorry got the Message ID wrong. Resending it.
-> 
-> > Could you tell more about use-case?
-> 
-> So basically I'm writing a project involving a kernel module that
-> communicates with the host which we plan to do it via a shared buffer.
-> That shared buffer has to be marked as shared so that the hypervisor can
-> read it. The shared buffer needs a fixed physical address in our case so
-> we reserved a range and did ioremap for it.
+On Mon, Aug 18, 2025 at 3:27=E2=80=AFAM <lingfuyi@126.com> wrote:
+>
+> From: lingfuyi <lingfuyi@kylinos.cn>
+>
+> The XArray lock and try_lock functions are simple wrappers around
+> the C functions xa_lock and xa_trylock. These Rust functions don't
+> add significant logic beyond the unsafe FFI calls and safety guarantees.
+>
+> Mark them as inline to avoid unnecessary function call overhead in
+> hot paths where XArray locking is frequent, such as in page cache
+> operations and other kernel data structure management.
+>
+> This follows the same optimization pattern as other Rust kernel
+> modules where simple C function wrappers are marked inline to
+> improve performance.
+>
+> Signed-off-by: lingfuyi <lingfuyi@kylinos.cn>
 
-So on the host side it is going non-contiguous. Is it going to be some
-kind of scatter-gather? Seems inefficient.
+Thanks for the patch. Please see the Developer=E2=80=99s Certificate of Ori=
+gin 1.1
+https://docs.kernel.org/process/submitting-patches.html#developer-s-certifi=
+cate-of-origin-1-1
 
-What sizes are we talking about? When do you allocate it?
+You need to use a known identity such as your real name to submit
+patches to the kernel. Anonymous contributions aren't possible.
 
-If it is small enough and/or allocated early enough I would rather go
-with guest physically contiguous. 
+Also please include a version number in the email subject when sending
+a new version of a patch.
 
-> > I am not sure we ever want to convert vmalloc()ed memory to shared as it
-> > will result in fracturing direct mapping.
-> 
-> Currently in this patch, linear mapping memory will still be handled in
-> the old way so there's technically no change to existing behaviour. These
-> memory ranges are still mapped in a whole chunk instead of page-by-page It
-> merely added a fall back path for vmalloc'ed or ioremap'ed or whatever
-> mapping that's not in the linear mapping.
-
-You cannot leave the same GPAs mapped as private in the direct mapping
-as it will cause unrecoverable SEPT violation when someone would touch
-this memory. For instance, load_unaligned_zeropad()
-
-> tdx_enc_status_changed is called by set_memory_decrypted/encrypted which
-> takes vmalloc'ed addresses just fine on other platforms like SEV. It would
-> be an exception for TDX to not support VM area mappings.
-> 
-> > And it seems to the wrong layer to make it. If we really need to go
-> > this pass (I am not convinced) it has to be done in set_memory.c
-> 
-> set_memory_decrypted handles vmalloc'ed memory. It's just that on TDX it
-> has to call the TDX-specific enc_status_change_finish which is
-> tdx_enc_status_changed that does not handle vmalloc'ed memory. This
-> means that when people call the set_memory_decrypted with a vmalloc'ed,
-> it will fail on TDX but will succeed in other platforms (e.g., SEV).
-
-I don't know SEV specifics, but with TDX, I don't want to add support
-for vmalloc, unless it is a must. It requires fracturing direct mapping
-and we need really strong reason to do this.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Alice
 
