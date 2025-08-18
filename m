@@ -1,63 +1,141 @@
-Return-Path: <linux-kernel+bounces-772709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D864B29662
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B05B29657
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E47F1962D9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA7081734F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3424A233704;
-	Mon, 18 Aug 2025 01:53:13 +0000 (UTC)
-Received: from mail78-50.sinamail.sina.com.cn (mail78-50.sinamail.sina.com.cn [219.142.78.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECCD22A817;
+	Mon, 18 Aug 2025 01:51:31 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9189522D7B0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C4122D7B0
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755481992; cv=none; b=IP4j56g6ecaMHzG55T9j1wVoqz3M13IqxKcdU4s9lKQogHq1MFIvISEjX4/VFJflhQ3w8F6LsyJsaipwr2946UXm1VPJnJHtNm0ra3fLUH1Q0Pl4UTwK84SSSd60vC7mLa18fRZc9U/Ssx9zAzTtWwnVlJLj1ju+booaI7Urd/U=
+	t=1755481891; cv=none; b=HwFCkUfOpAFPu4QS3/6/66yYDA0DHHNidVirV7hheyeSTwjezqNWl8jaCUF3+YnYKtuogUv5sNT16Q6GPF2LJ7U3GZn3AOQTPhOHSgdqCpW6oBM0rgI6ddpPiFCRrxUSOmS+W07h9iHzXz/qhO9ohMBqjnyVxqAhvXjk1G/qUJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755481992; c=relaxed/simple;
-	bh=dOpMsWyD+xgBXRLdesy7FDW3THzxxzGpJ6oI3+RNelM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=BgxtDPe9PlULFh9T9pBqi2kkuJaGp4aYta4xv/EzZ3TA4l4Vh6A1PqXx/xkpsfSWb/fknh738X/cJAWxPmhOVHksoLOUSpvn5XEosj/T4c9Ph5YWssKjouguqXAuGmddJvsETUWfpk4kvLwWSiYuzoijSgREh9CRJsCKkjLvl7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=219.142.78.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
-Received: from unknown (HELO zy-virtual-machine.localdomain)([180.154.41.66])
-	by sina.net (10.185.250.30) with ESMTP
-	id 68A286F000005FF3; Mon, 18 Aug 2025 09:50:41 +0800 (CST)
-X-Sender: zhangyi@everest-semi.com
-X-Auth-ID: zhangyi@everest-semi.com
-Authentication-Results: sina.net;
-	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=zhangyi@everest-semi.com
-X-SMAIL-MID: 039FF8A482114002AF9C2621D5CA46BE
-X-SMAIL-UIID: 039FF8A482114002AF9C2621D5CA46BE-20250818-095041
-From: Zhang Yi <zhangyi@everest-semi.com>
-To: broonie@kernel.org
-Cc: tiwai@suse.com,
-	lgirdwood@gmail.com,
-	perex@perex.cz,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: RE: [PATCH] ASoC: codecs: ES9389: Modify the standby configuration
-Date: Mon, 18 Aug 2025 09:50:39 +0800
-Message-Id: <20250818015039.2915-1-zhangyi@everest-semi.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1755481891; c=relaxed/simple;
+	bh=GTKj99jgKPX44cFsHEjuWHT3/Sv1bBvUxx4iw1Ex1Uk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Whl60jvKa2rzqKCW0CLYsfN4rUCmizfFkSyNuz9V+KlckO/rzvXbOgsduQ4r1eQZuS4HRu54s9/4cqVoDJyRwI0KlAuxVMleI2UQH2FM8eDBjfen07sHZ2Wj4o0roc+jFCIKiZZnrLbvQuY5TnHwvLm9+QKHlNEkvkUw8TBPOe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88432d9ae89so380725739f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 18:51:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755481888; x=1756086688;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RK5qO1TPZ8k2YOyWwCFjYhmfAaUf62lFW133PN4xikA=;
+        b=qziJYhjpch+lITc9kHgqtvS6Vtx1f4cHZCSLLNJOGR7FeLlUGSpq0/cGYgLTIJMXVL
+         AQPe5ywzTMqTBj8HU4oyQCgtPis78xhi5TKCfe4iPAsgt7jW0GIJUMwtxre3CoVjJONW
+         LswFvst6DPttKJlM88/ZEnHaI8pRYnkV/Viiz4rpk2kCId0mxDDQPCP4EinKslsPXMNu
+         Njzw1Cx0nUDtJAOhdrKTQLhVvUH0Nrj5p381kSh5kpVMm/ZD8l2u2xa/k7sU4krSvWCb
+         Q75Bso194xi26sx5WpSSRy7qS5cZyDyo4lUDjkcOkDezB0UBSQamNmbEBl7Fd+CxUm9p
+         /vLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPJ1NnirVyV+Psuv+7As0aJxnkxp62GH2cEMDuaj+s3EjbfFAwp4IZZCWoGwh08z2E/7YJaHlzjhtyFog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWqVoBvnJqTMLVeEkPb8NnrbKZNKS1Rv57mLCsQxoeZRpBPCRh
+	8NTHZas8wxcq7iCNSCG3ZKWpqbUNE8wRJkGX5e55EiyGp+Q2czUnXi0Z/3QRjYXKZCnyarMB8tY
+	0s2ki55PHPuxE0HSxmvPkRl+kKg0jUwuw+YG+LitJE+rCHKDFedDb175Tx1A=
+X-Google-Smtp-Source: AGHT+IFUtAwSNFpept1CqNTKNeDDA07oPYmKqdl6pqgDtDO8tElJJ1359AwRLqXK2QGmHt2IAqsqS3NHAt3lbXiGrPjU1aO6t0zP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:6d84:b0:87c:30c6:a7cf with SMTP id
+ ca18e2360f4ac-8843e23ef9fmr1885138139f.0.1755481888561; Sun, 17 Aug 2025
+ 18:51:28 -0700 (PDT)
+Date: Sun, 17 Aug 2025 18:51:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a28720.050a0220.e29e5.0080.GAE@google.com>
+Subject: [syzbot] [xfs?] WARNING in xfs_trans_alloc
+From: syzbot <syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com>
+To: cem@kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> Why?  Is this a fix?  You're just changing one magic number for another here...
+Hello,
 
-I apologize for not providing an explanation. 
-Because the old configuration caused the I2C address to change when standby was entered,
-I modified the configuration.
+syzbot found the following issue on:
+
+HEAD commit:    dfc0f6373094 Merge tag 'erofs-for-6.17-rc2-fixes' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12bfcda2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=13f39c6a0380a209
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab02e4744b96de7d3499
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/471a095bde0f/disk-dfc0f637.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dfa0446324a1/vmlinux-dfc0f637.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9a43829df052/bzImage-dfc0f637.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 990 at fs/xfs/xfs_trans.c:256 xfs_trans_alloc+0x4d8/0x980 fs/xfs/xfs_trans.c:256
+Modules linked in:
+CPU: 0 UID: 0 PID: 990 Comm: kworker/0:2 Tainted: G        W           6.17.0-rc1-syzkaller-00036-gdfc0f6373094 #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: xfs-inodegc/loop2 xfs_inodegc_worker
+RIP: 0010:xfs_trans_alloc+0x4d8/0x980 fs/xfs/xfs_trans.c:256
+Code: 89 ef e8 1b 49 fa ff 85 c0 0f 85 14 02 00 00 e8 8e 3e 57 fe b0 01 89 44 24 24 4c 8b 64 24 78 e9 f9 fb ff ff e8 79 3e 57 fe 90 <0f> 0b 90 e9 3f fc ff ff 89 d9 80 e1 07 fe c1 38 c1 0f 8c 13 fc ff
+RSP: 0018:ffffc90004acf7f8 EFLAGS: 00010293
+RAX: ffffffff83671cc7 RBX: 0000000000000004 RCX: ffff8880253cd940
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff888053a08000 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff1e3a727 R12: ffff888053a08130
+R13: 0000000000000000 R14: 1ffff1100a741073 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8881268c5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff8b6a64f98 CR3: 000000002370a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ xfs_inactive_truncate+0xa5/0x1b0 fs/xfs/xfs_inode.c:1152
+ xfs_inactive+0x949/0xcd0 fs/xfs/xfs_inode.c:1454
+ xfs_inodegc_inactivate fs/xfs/xfs_icache.c:1944 [inline]
+ xfs_inodegc_worker+0x31e/0x7c0 fs/xfs/xfs_icache.c:1990
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
