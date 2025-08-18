@@ -1,120 +1,169 @@
-Return-Path: <linux-kernel+bounces-773800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EB2B2AA05
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:27:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF1EB2AAC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324865A53B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88ABD1BA3124
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BD727B324;
-	Mon, 18 Aug 2025 14:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622983375AF;
+	Mon, 18 Aug 2025 14:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NiUXYv2s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nweMstTk"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDE6207A0B;
-	Mon, 18 Aug 2025 14:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9263533471F;
+	Mon, 18 Aug 2025 14:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526142; cv=none; b=VEwRpgi1gLC5cK8L9hqCx3bRUd4LZUhc9SGOCQBT+7zlDtIzJwk5nq4h/HvXxuBRxoBC/s60fTa7HrjjAFiBYQWNwhekzPyDGCyKrQ7deK1EPUrIlsp8gH1q1NI5LValmr8aHKS7Y6BYndqaolBTpXQb5qSQ/FJZiowBl9gLrqs=
+	t=1755526247; cv=none; b=nh8YR0NuG+j2WsE2bBCoYe+qG1jH1RxAig2GXk3lx8WxW8IZSPvK8VPyiGY/YCetp5/FuBzmaRcKxecZ4c7JIFoZF997zG4tCjK7SZBm/mwtXpkp3Lv1DsTho4W8fJui9kgy7sfvyjFTCuP+ZDlhVOmtY7OTnHOdjEC2SO/G+zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526142; c=relaxed/simple;
-	bh=3g19J1X9s3bz8Fgt5s8uW8MlkBC9D5GiHsIpGBalIe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X2AbH1MWhS56v792KNhK77kzo/9bAXhIt2V6uLHB5bCmioPQNvQGNtdqDeA/SJac4ZjyHUhzLW016mBq3m+5dYoS85GavGKlbcROdTGr4FkMw2q0DGWdqzsYDnRQXvyWyvFKSnOtdFXm6yOFgwufliSIsfgYKD3UkNIJ0RrdirY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NiUXYv2s; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755526141; x=1787062141;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3g19J1X9s3bz8Fgt5s8uW8MlkBC9D5GiHsIpGBalIe8=;
-  b=NiUXYv2sgc3/Fsxwt9MRCwlA8TCsAPzt/N9Jxo9HWC5IrmZ14QAlI787
-   p7l7SJ5UcbZMr2xHSLz7RpnPp3y/7actNbylS652d02DCZkLRzWW4V11J
-   axHVXSVM1VlmdqkCoYC0hvtvG7ATKT12VnAYShio01QZUenJhLy62J9Oc
-   qoupmRPrjglgUXWLl4sT+AqqgC1IJ+SbfGYV0QOOwzbw6fnzkEjHQzvUq
-   HIbw9Hbjop4wN4u2/bhzgrQ9M841bBTFmATjNC9fzsuEmMz3GQJSVFfo/
-   3me5p1+e2VKP6/ThCJEMiVPG8kCTpfUVMZeQFGQo0rQ6HIGEcupLDPgmd
-   Q==;
-X-CSE-ConnectionGUID: QhLNGhjHRmi5/SrzZdi+lg==
-X-CSE-MsgGUID: cgB2/h3sQrWwUIZpNzOiHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57896837"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57896837"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:09:00 -0700
-X-CSE-ConnectionGUID: etcIFZB3Sbin3J6c2gfLaQ==
-X-CSE-MsgGUID: 4UM+PZ20QIKHjHfYv2T9mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171807103"
-Received: from cvapit-mobl1 (HELO [10.247.119.195]) ([10.247.119.195])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 07:08:52 -0700
-Message-ID: <cd3d3e33-7b2e-45f1-977f-2d634ff1ef81@intel.com>
-Date: Mon, 18 Aug 2025 07:08:46 -0700
+	s=arc-20240116; t=1755526247; c=relaxed/simple;
+	bh=j0lyo02IFV4zcgXPYgENMtO59Au22hO0nmUipu26tPk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:References; b=elExSWWS/R2HB5U8rlvPjkIkvwPR2ABgz5XH5yexSjf6egfZ0DloPYyh55+xTEu00CBO0qcwCp8W5LZNe6jhxqygAvcXV+QuMwMqDyS8cyfJAlVCc1N85TXJhujWAvwA7WYa1cMt+GTzOY9ohz8ffNXVOPqTLQMle+6m8S17yGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nweMstTk; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250818141041euoutp01198781292bd5d26e9ea7136d3d3d73e8~c4dDIkjfs2135921359euoutp01S;
+	Mon, 18 Aug 2025 14:10:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250818141041euoutp01198781292bd5d26e9ea7136d3d3d73e8~c4dDIkjfs2135921359euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755526241;
+	bh=ts3A4MvB+pLF9b1fYr1OaRKHsIG9rXzjaSyR872fx0Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nweMstTkqZUfTDcgSuzWRYVoV9JvbPK+l2fq2+I3gRx0SKOetrGBglidgci/XLRHG
+	 yKiRGPTghNY65ZYuW+rQetbaj0UlX84N/HJy2tuH4Qs0xmThMbES7YZyWuK/y2EQwa
+	 pANBPLppgOKGZUguwTqkajXJsHrX4XbKh4XzMW6k=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250818141040eucas1p12598f376bdd8cfcb984a8a799373111d~c4dCdErup2133021330eucas1p1j;
+	Mon, 18 Aug 2025 14:10:40 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.111]) by eusmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250818141040eusmtip168497366a830534395c067398c2a3939~c4dCY3Ph_0814408144eusmtip1d;
+	Mon, 18 Aug 2025 14:10:40 +0000 (GMT)
+From: Lukasz Stelmach <l.stelmach@samsung.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org,  linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,  linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
+Subject: Re: [PATCH 11/65] media: Replace file->private_data access with
+ custom functions
+Date: Mon, 18 Aug 2025 16:10:40 +0200
+In-Reply-To: <20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+	(Jacopo Mondi's message of "Sat, 02 Aug 2025 11:22:33 +0200")
+Message-ID: <oypijda53wra8v.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm/memory_hotplug: Update comment for hotplug memory
- callback priorities
-To: David Hildenbrand <david@redhat.com>, linux-cxl@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
- dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
- marc.herbert@linux.intel.com, akpm@linux-foundation.org
-References: <20250814171650.3002930-1-dave.jiang@intel.com>
- <20250814171650.3002930-2-dave.jiang@intel.com>
- <c3e30bf7-403a-4105-8e04-a73b80039ea5@redhat.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <c3e30bf7-403a-4105-8e04-a73b80039ea5@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+	protocol="application/pgp-signature"
+X-CMS-MailID: 20250818141040eucas1p12598f376bdd8cfcb984a8a799373111d
+X-Msg-Generator: CA
+X-RootMTR: 20250802092520eucas1p2d0edfe269d3c423e6157bd7a0ec0b43c
+X-EPHeader: CA
+X-CMS-RootMailID: 20250802092520eucas1p2d0edfe269d3c423e6157bd7a0ec0b43c
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+	<CGME20250802092520eucas1p2d0edfe269d3c423e6157bd7a0ec0b43c@eucas1p2.samsung.com>
+	<20250802-media-private-data-v1-11-eb140ddd6a9d@ideasonboard.com>
+
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+It was <2025-08-02 sob 11:22>, when Jacopo Mondi wrote:
+> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> Accessing file->private_data manually to retrieve the v4l2_fh pointer is
+> error-prone, as the field is a void * and will happily cast implicitly
+> to any pointer type.
+>
+> Replace all remaining locations that read the v4l2_fh pointer directly
+> from file->private_data and cast it to driver-specific file handle
+> structures with driver-specific functions that use file_to_v4l2_fh() and
+> perform the same cast.
+>
+> No functional change is intended, this only paves the way to remove
+> direct accesses to file->private_data and make V4L2 drivers safer.
+> Other accesses to the field will be addressed separately.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> ---
+
+[...]
+
+> diff --git a/drivers/media/platform/samsung/s5p-g2d/g2d.c b/drivers/media=
+/platform/samsung/s5p-g2d/g2d.c
+> index ffed16a34493be2edbdaee13619467417487c1e7..44fcedbbc90a9863827aacbcd=
+5f56d850cb552ea 100644
+> --- a/drivers/media/platform/samsung/s5p-g2d/g2d.c
+> +++ b/drivers/media/platform/samsung/s5p-g2d/g2d.c
+> @@ -25,7 +25,10 @@
+>  #include "g2d.h"
+>  #include "g2d-regs.h"
+>=20=20
+> -#define fh2ctx(__fh) container_of(__fh, struct g2d_ctx, fh)
+> +static inline struct g2d_ctx *file2ctx(struct file *filp)
+> +{
+> +	return container_of(file_to_v4l2_fh(filp), struct g2d_ctx, fh);
+> +}
+>=20=20
+>  static struct g2d_fmt formats[] =3D {
+>  	{
+> @@ -272,7 +275,7 @@ static int g2d_open(struct file *file)
+>  static int g2d_release(struct file *file)
+>  {
+>  	struct g2d_dev *dev =3D video_drvdata(file);
+> -	struct g2d_ctx *ctx =3D fh2ctx(file->private_data);
+> +	struct g2d_ctx *ctx =3D file2ctx(file);
+>=20=20
+>  	mutex_lock(&dev->mutex);
+>  	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
 
 
+Acked-by: Lukasz Stelmach <l.stelmach@samsung.com>
 
-On 8/16/25 12:29 AM, David Hildenbrand wrote:
-> On 14.08.25 19:16, Dave Jiang wrote:
->> Add clarification to comment for memory hotplug callback ordering as the
->> current comment does not provide clear language on which callback happens
->> first.
->>
->> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
->> ---
->>   include/linux/memory.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/linux/memory.h b/include/linux/memory.h
->> index 40eb70ccb09d..02314723e5bd 100644
->> --- a/include/linux/memory.h
->> +++ b/include/linux/memory.h
->> @@ -116,7 +116,7 @@ struct mem_section;
->>     /*
->>    * Priorities for the hotplug memory callback routines (stored in decreasing
->> - * order in the callback chain)
->> + * order in the callback chain). The callback ordering happens from high to low.
->>    */
->>   #define DEFAULT_CALLBACK_PRI    0
->>   #define SLAB_CALLBACK_PRI    1
-> 
-> "stored in decreasing order in the callback chain"
-> 
-> is pretty clear? It's a chain after all that gets called.
 
-I can drop the patch. For some reason when I read it I'm thinking the opposite, and when Marc was also confused I started questioning things.
+[...]
 
-> 
 
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmijNGAACgkQsK4enJil
+gBDoIQgAm0zhFQfQO2pDJE9DC0t6P4lrJ//jtdrQJtVSYpcaXDYP9Oq1iygQ3s54
+2wjf/n/+kXlE2cUM5pvbFc0c1qeuZipb+lexBpwBdogDE3njAsinDf4ohsWPGhJC
+TMOuWPadHmM0CXjuSWpeF+MoKtOJYJjdyVizq8ZoFwgGHssYApRxGVuXx6DRlsZK
+aqNXp4P9HNaVsxLl5JOCaeEaJLBkU++5rhIooxbmm/jPuM6WuOWil+jQKADaODeJ
+UfkLjfRCLFc4WdsXOBZuwqUiyU4imB8qJOlrjosCChiqKqr7up+cyr3YZ7PJEXPv
+jN4MErP/mPjxbYUi+bON3CbY2FlWfw==
+=alRq
+-----END PGP SIGNATURE-----
+--=-=-=--
 
