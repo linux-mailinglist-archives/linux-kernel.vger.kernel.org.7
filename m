@@ -1,276 +1,146 @@
-Return-Path: <linux-kernel+bounces-773009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59680B29A6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:01:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C286B29A76
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32DE03AC84E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24AB95E64A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A13C27A456;
-	Mon, 18 Aug 2025 06:57:21 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF6327C162;
+	Mon, 18 Aug 2025 06:58:42 +0000 (UTC)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA294279DCE;
-	Mon, 18 Aug 2025 06:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCA7278772;
+	Mon, 18 Aug 2025 06:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755500240; cv=none; b=HthZNCeMAyF3RmR6w1PK7AHahhegXoKqa9r84FsIsi+yVnwg3+swbMqG+p/KYQxYtEJEGo1UfVj6nJLOaeESwCSSKQZ7ZZRixzC6KSXJ2MX4/16j2Gqr2aIL3FLJ1V5XhbV/TfN5lXtowV1EbSX5S5KJvoWa9neNzFwCb/vI/r4=
+	t=1755500322; cv=none; b=W7ZF422jMcC3ht44sKVTXXsRAEEio8zd6LF6fGHPzTNxlktwAi8we4rnXBThz/zk+oEhzy2fsP6/Z4RMF8BQ5q04Enzr12y39V0lGTDzOMMnp1Ek5FZDy+a8hJtMjfpJ/V1rq4+z8f9gcNtbYQ2i/qmMto4knkUHCRaWMLG9WXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755500240; c=relaxed/simple;
-	bh=VZsuGeZRdPCWNg6T6HQEKhZN8ss8knjbtAqlaoTDdA8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VB8fFdm+lzFAlN6zR3XhMP1SKXsSQqO5ULOf0xC/FGSsGhkZp/2MDj9kKHLn2JnHONc01eRCZBXFA+Q5IckUJT2l3SyAkTFVoLXI01H2c1mbGJUfI1lR1EeJ73jJPM2LNSl7ypnLsHghxZK2CAgeVjyGTQSMUY54KtOaelKpfwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c53Ld1PpFzFrjQ;
-	Mon, 18 Aug 2025 14:52:41 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id F0F1C140132;
-	Mon, 18 Aug 2025 14:57:16 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 14:57:16 +0800
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 14:57:16 +0800
-From: Chenghai Huang <huangchenghai2@huawei.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<qianweili@huawei.com>, <linwenkai6@hisilicon.com>,
-	<wangzhou1@hisilicon.com>, <taoqi10@huawei.com>
-Subject: [PATCH v2 3/3] crypto: hisilicon/sec2 - support skcipher/aead fallback for hardware queue unavailable
-Date: Mon, 18 Aug 2025 14:57:14 +0800
-Message-ID: <20250818065714.1916898-4-huangchenghai2@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250818065714.1916898-1-huangchenghai2@huawei.com>
-References: <20250818065714.1916898-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1755500322; c=relaxed/simple;
+	bh=ubUFzesfUYXlPF17yj2IvT/HDmVZpKMUPllKQ1ADwfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h5DSUwMnRXQWQ1ipJ3fbYE5adnV+pGPUkAbgxCoI3/2rHpSG/yH/3gHvfyWTBpUpyw7Ztji5En8mpH08zcdUKTpaErUsNemP2nqXn/K12mYMPYdjcUUqgTBU6ZhdZ8tMueb1HtdCtRsNANL6KQVe6Tyae55DweQL3dOJUj46t/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip4t1755500244t6fc68c41
+X-QQ-Originating-IP: sLmbQl3vBpNZ30bWX5N0sBTYr4LYaC7/m/aS7e2wyqY=
+Received: from [IPV6:240f:10b:7440:1:e696:3c18 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 18 Aug 2025 14:57:21 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1927108559509469176
+Message-ID: <BCD8E43E564BC334+1e45d36f-edc7-4c3c-90c9-7b0f2a52360f@radxa.com>
+Date: Mon, 18 Aug 2025 15:57:21 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: rockchip: remove vcc_3v3_pmu regulator
+ for Radxa E52C
+To: Chukun Pan <amadeus@jmu.edu.cn>, Heiko Stuebner <heiko@sntech.de>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250816080030.183931-1-amadeus@jmu.edu.cn>
+ <20250816080030.183931-3-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20250816080030.183931-3-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OBUGnm9pFasAcNPGHYEMAopgoh5OwK6sDVK9bpqjd4LE8UhdUNPQ9bKd
+	Eft9UalMA+yEWVadv5T6zu8vxV885J/dFccTojhVAHOFPp4bMUXBCPSVwxd/LFYHuOK47Dk
+	4Pf3qcgL8BXEGSElSYv/4M8iBjpN221bvXwzxf8nlQimUGPyLQFOc72o8jk3WWvQhwvyVJk
+	N++pAcPjMhGi6EZwh8mYFVZg8yybg6OL6jAIN7DcfscMlSpCA8Qm9BAnPvA/XkZcLkrF01P
+	cU83tt+n0jxG39QLqnam+jEniLdShLddKJpN7FbQ2IQRhhuJ2Ae7yC3JcwKiCT1KRbm4L1o
+	55uisvFusSs0snQ/pBidg1zdinBWowBbUbTp7c8FAiQ3SQBuQYY+nIhOCmHoVoOoDd/6qgj
+	UodG2CUSlHj/UxAcVPHDdRkZdBlyz6sAK4fqG9pvdQyfmyqzrqx3oUcWNhkOMSa17XUl/Hl
+	tw5v+HFbDJHUDLX7y4vkfJ8KD7h3qGV82mlWgSmYDhnD+Bx433C4H/vuMDSSlCygbJcAXYS
+	GnUuBjWqcKWV3RO4rzkM7+PZ/y31YoyU4/OE+PQjp36PmdLMnnYOx7ej8A6Rqy4uVBjZVju
+	mm1vqI8w1mdjpQ0tpi4GE+V7+7eotK1libg4gEWWS6MPlRetQn+mA3zAeuvXFrUy+u86pYG
+	g1Z8L0iK+doHUhhyvrAAPkOpsbObkDjS39ZocN/zY5mCTx9X/ryvHW6198iVAC+/Up8vsy9
+	+fVElV2mut9qi7JF001tr4iGW13YAvuTWAYMrXmCX24wgwq7UfcPTNaLwbjtdyveMt+4m1X
+	+TNSjx6dHnY53Sl57Uexu6tfzD9aYWezAGfdJukbeaqFefyzxG0b0yJvDyuT6aBdqJ7tFYx
+	dA8bU2U7pDMLx3DkNj7CWf2L6B0DHJ3aqhVAhfZeiGRmuJPZ8iLjsey9UFpnQUc42aadKSJ
+	H6FS267F7p60Ccr3jSDqVod3S4fvQq+gpNU3Ro0JRGPZmOyoQ/dCAxDiNy1xoW7jBvN4=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-From: Qi Tao <taoqi10@huawei.com>
+Hi Chukun,
 
-There is an upper limit on the number of hardware queues.
-When all hardware queues are busy, new processes fail to
-apply for queues. To avoid affecting tasks, support fallback
-mechanism when hardware queues are unavailable.
+On 8/16/25 17:00, Chukun Pan wrote:
+> According to Radxa E52C Schematic V1.2 [1] page 5, vcc_3v3_pmu
+> is directly connected to vcc_3v3_s3 via a 0 ohm resistor.
+> The vcc_3v3_pmu is not a new regulator, so remove it.
+> 
+> [1] https://dl.radxa.com/e/e52c/hw/radxa_e52c_v1.2_schematic.pdf
+> 
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> ---
+>   arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts | 12 +-----------
+>   1 file changed, 1 insertion(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
+> index 1883bd183396..4a3ae95f122f 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
+> @@ -98,16 +98,6 @@ vcc_1v1_nldo_s3: regulator-1v1 {
+>   		vin-supply = <&vcc_sysin>;
+>   	};
+>   
+> -	vcc_3v3_pmu: regulator-3v3-0 {
+> -		compatible = "regulator-fixed";
+> -		regulator-name = "vcc_3v3_pmu";
+> -		regulator-always-on;
+> -		regulator-boot-on;
+> -		regulator-min-microvolt = <3300000>;
+> -		regulator-max-microvolt = <3300000>;
+> -		vin-supply = <&vcc_3v3_s3>;
+> -	};
+> -
+>   	vcc_3v3_s0: regulator-3v3-1 {
+>   		compatible = "regulator-fixed";
+>   		regulator-name = "vcc_3v3_s0";
+> @@ -255,7 +245,7 @@ eeprom@50 {
+>   		reg = <0x50>;
+>   		pagesize = <16>;
+>   		read-only;
+> -		vcc-supply = <&vcc_3v3_pmu>;
+> +		vcc-supply = <&vcc_3v3_s3>;
 
-Signed-off-by: Qi Tao <taoqi10@huawei.com>
-Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
----
- drivers/crypto/hisilicon/sec2/sec_crypto.c | 62 ++++++++++++++++------
- 1 file changed, 47 insertions(+), 15 deletions(-)
+How about the following instead?
 
-diff --git a/drivers/crypto/hisilicon/sec2/sec_crypto.c b/drivers/crypto/hisilicon/sec2/sec_crypto.c
-index d044ded0f290..8c983c561053 100644
---- a/drivers/crypto/hisilicon/sec2/sec_crypto.c
-+++ b/drivers/crypto/hisilicon/sec2/sec_crypto.c
-@@ -669,10 +669,8 @@ static int sec_ctx_base_init(struct sec_ctx *ctx)
- 	int i, ret;
- 
- 	ctx->qps = sec_create_qps();
--	if (!ctx->qps) {
--		pr_err("Can not create sec qps!\n");
-+	if (!ctx->qps)
- 		return -ENODEV;
--	}
- 
- 	sec = container_of(ctx->qps[0]->qm, struct sec_dev, qm);
- 	ctx->sec = sec;
-@@ -708,6 +706,9 @@ static void sec_ctx_base_uninit(struct sec_ctx *ctx)
- {
- 	int i;
- 
-+	if (!ctx->qps)
-+		return;
-+
- 	for (i = 0; i < ctx->sec->ctx_q_num; i++)
- 		sec_release_qp_ctx(ctx, &ctx->qp_ctx[i]);
- 
-@@ -719,6 +720,9 @@ static int sec_cipher_init(struct sec_ctx *ctx)
- {
- 	struct sec_cipher_ctx *c_ctx = &ctx->c_ctx;
- 
-+	if (!ctx->qps)
-+		return 0;
-+
- 	c_ctx->c_key = dma_alloc_coherent(ctx->dev, SEC_MAX_KEY_SIZE,
- 					  &c_ctx->c_key_dma, GFP_KERNEL);
- 	if (!c_ctx->c_key)
-@@ -731,6 +735,9 @@ static void sec_cipher_uninit(struct sec_ctx *ctx)
- {
- 	struct sec_cipher_ctx *c_ctx = &ctx->c_ctx;
- 
-+	if (!ctx->qps)
-+		return;
-+
- 	memzero_explicit(c_ctx->c_key, SEC_MAX_KEY_SIZE);
- 	dma_free_coherent(ctx->dev, SEC_MAX_KEY_SIZE,
- 			  c_ctx->c_key, c_ctx->c_key_dma);
-@@ -752,6 +759,9 @@ static void sec_auth_uninit(struct sec_ctx *ctx)
- {
- 	struct sec_auth_ctx *a_ctx = &ctx->a_ctx;
- 
-+	if (!ctx->qps)
-+		return;
-+
- 	memzero_explicit(a_ctx->a_key, SEC_MAX_AKEY_SIZE);
- 	dma_free_coherent(ctx->dev, SEC_MAX_AKEY_SIZE,
- 			  a_ctx->a_key, a_ctx->a_key_dma);
-@@ -789,7 +799,7 @@ static int sec_skcipher_init(struct crypto_skcipher *tfm)
- 	}
- 
- 	ret = sec_ctx_base_init(ctx);
--	if (ret)
-+	if (ret && ret != -ENODEV)
- 		return ret;
- 
- 	ret = sec_cipher_init(ctx);
-@@ -898,6 +908,9 @@ static int sec_skcipher_setkey(struct crypto_skcipher *tfm, const u8 *key,
- 	struct device *dev = ctx->dev;
- 	int ret;
- 
-+	if (!ctx->qps)
-+		goto set_soft_key;
-+
- 	if (c_mode == SEC_CMODE_XTS) {
- 		ret = xts_verify_key(tfm, key, keylen);
- 		if (ret) {
-@@ -928,13 +941,14 @@ static int sec_skcipher_setkey(struct crypto_skcipher *tfm, const u8 *key,
- 	}
- 
- 	memcpy(c_ctx->c_key, key, keylen);
--	if (c_ctx->fbtfm) {
--		ret = crypto_sync_skcipher_setkey(c_ctx->fbtfm, key, keylen);
--		if (ret) {
--			dev_err(dev, "failed to set fallback skcipher key!\n");
--			return ret;
--		}
-+
-+set_soft_key:
-+	ret = crypto_sync_skcipher_setkey(c_ctx->fbtfm, key, keylen);
-+	if (ret) {
-+		dev_err(dev, "failed to set fallback skcipher key!\n");
-+		return ret;
- 	}
-+
- 	return 0;
- }
- 
-@@ -1398,6 +1412,9 @@ static int sec_aead_setkey(struct crypto_aead *tfm, const u8 *key,
- 	struct crypto_authenc_keys keys;
- 	int ret;
- 
-+	if (!ctx->qps)
-+		return sec_aead_fallback_setkey(a_ctx, tfm, key, keylen);
-+
- 	ctx->a_ctx.a_alg = a_alg;
- 	ctx->c_ctx.c_alg = c_alg;
- 	c_ctx->c_mode = c_mode;
-@@ -2057,6 +2074,9 @@ static int sec_skcipher_ctx_init(struct crypto_skcipher *tfm)
- 	if (ret)
- 		return ret;
- 
-+	if (!ctx->qps)
-+		return 0;
-+
- 	if (ctx->sec->qm.ver < QM_HW_V3) {
- 		ctx->type_supported = SEC_BD_TYPE2;
- 		ctx->req_op = &sec_skcipher_req_ops;
-@@ -2065,7 +2085,7 @@ static int sec_skcipher_ctx_init(struct crypto_skcipher *tfm)
- 		ctx->req_op = &sec_skcipher_req_ops_v3;
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static void sec_skcipher_ctx_exit(struct crypto_skcipher *tfm)
-@@ -2133,7 +2153,7 @@ static int sec_aead_ctx_init(struct crypto_aead *tfm, const char *hash_name)
- 	int ret;
- 
- 	ret = sec_aead_init(tfm);
--	if (ret) {
-+	if (ret && ret != -ENODEV) {
- 		pr_err("hisi_sec2: aead init error!\n");
- 		return ret;
- 	}
-@@ -2175,7 +2195,7 @@ static int sec_aead_xcm_ctx_init(struct crypto_aead *tfm)
- 	int ret;
- 
- 	ret = sec_aead_init(tfm);
--	if (ret) {
-+	if (ret && ret != -ENODEV) {
- 		dev_err(ctx->dev, "hisi_sec2: aead xcm init error!\n");
- 		return ret;
- 	}
-@@ -2320,6 +2340,9 @@ static int sec_skcipher_crypto(struct skcipher_request *sk_req, bool encrypt)
- 	bool need_fallback = false;
- 	int ret;
- 
-+	if (!ctx->qps)
-+		goto soft_crypto;
-+
- 	if (!sk_req->cryptlen) {
- 		if (ctx->c_ctx.c_mode == SEC_CMODE_XTS)
- 			return -EINVAL;
-@@ -2337,9 +2360,12 @@ static int sec_skcipher_crypto(struct skcipher_request *sk_req, bool encrypt)
- 		return -EINVAL;
- 
- 	if (unlikely(ctx->c_ctx.fallback || need_fallback))
--		return sec_skcipher_soft_crypto(ctx, sk_req, encrypt);
-+		goto soft_crypto;
- 
- 	return ctx->req_op->process(ctx, req);
-+
-+soft_crypto:
-+	return sec_skcipher_soft_crypto(ctx, sk_req, encrypt);
- }
- 
- static int sec_skcipher_encrypt(struct skcipher_request *sk_req)
-@@ -2547,6 +2573,9 @@ static int sec_aead_crypto(struct aead_request *a_req, bool encrypt)
- 	bool need_fallback = false;
- 	int ret;
- 
-+	if (!ctx->qps)
-+		goto soft_crypto;
-+
- 	req->flag = a_req->base.flags;
- 	req->aead_req.aead_req = a_req;
- 	req->c_req.encrypt = encrypt;
-@@ -2557,11 +2586,14 @@ static int sec_aead_crypto(struct aead_request *a_req, bool encrypt)
- 	ret = sec_aead_param_check(ctx, req, &need_fallback);
- 	if (unlikely(ret)) {
- 		if (need_fallback)
--			return sec_aead_soft_crypto(ctx, a_req, encrypt);
-+			goto soft_crypto;
- 		return -EINVAL;
- 	}
- 
- 	return ctx->req_op->process(ctx, req);
-+
-+soft_crypto:
-+	return sec_aead_soft_crypto(ctx, a_req, encrypt);
- }
- 
- static int sec_aead_encrypt(struct aead_request *a_req)
--- 
-2.33.0
+@@ -538,7 +538,7 @@ regulator-state-mem {
+  				};
+  			};
+
+-			vcc_3v3_s3: dcdc-reg8 {
++			vcc_3v3_pmu: vcc_3v3_s3: dcdc-reg8 {
+  				regulator-name = "vcc_3v3_s3";
+  				regulator-always-on;
+  				regulator-boot-on;
+
+Best regards,
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+>   	};
+>   };
+>   
 
 
