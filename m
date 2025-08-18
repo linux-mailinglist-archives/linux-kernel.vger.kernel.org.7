@@ -1,149 +1,155 @@
-Return-Path: <linux-kernel+bounces-773979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357BCB2AD24
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:47:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6B9B2AD08
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C0B188C689
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:43:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 721C17B2C8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7B127F758;
-	Mon, 18 Aug 2025 15:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF05C2E425E;
+	Mon, 18 Aug 2025 15:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="iP4Z2NV5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SKC+/2vK"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iklW+d8F"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E35271449;
-	Mon, 18 Aug 2025 15:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5267F246BB7;
+	Mon, 18 Aug 2025 15:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531672; cv=none; b=TxYG8lEdcvuiUngcmdbVt/CGbz7VNXPcMDJ8+et+EHEZztoUNRTWEvpOZf+3RIMkQJ03YHRTcjkJVtsXx0FeRfS0sVaSpU/96pEmhE45wac4gUmj22fvL8tbSCLDPUeqUi2Vi+I7nBJKu0M0NwWK3CAkLWXUkssdz53BL9NmwY0=
+	t=1755531732; cv=none; b=Xj9kMjTGyZhm/xevqwrCyWC6zCnX5kmVW3XX3Hz8+rCC+TA9ur0q5PRUT1UYhZRiieEZad2lyXqR4ACQeZSUX1jm1tVQss5CCNlhzNJa+CRJlNaE+D1RbQzQsTQZ86CeO84SWSMv2UnSYgEwDPA8jKflLi1icYVil0W5Fa/lxks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531672; c=relaxed/simple;
-	bh=ZsEcHhPxn/Ea9qTne3Rrj4zmGzqobeF0bv/BWvcqzD8=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=dNcJePt/PvVst1biYjWpqRVqFuK+Bz+xU4Kqcr5m04/pH5oachOizri4vz3OZu9Ly8iMgLf6X/ioTrgEI7SY+6MYarFyCUy2GIUHI6fRDufO5IJG36a99zycSkBoZWfMWH0NCGuHoMcZXdyLnealuYtSE1iWlKEAMExT0isw6Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=iP4Z2NV5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SKC+/2vK; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 478BC14004D6;
-	Mon, 18 Aug 2025 11:41:08 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-12.internal (MEProxy); Mon, 18 Aug 2025 11:41:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1755531668;
-	 x=1755618068; bh=vFW6QBRYfsq8CJmexn1lKzszzkLnWWDYygvjmw+xj+o=; b=
-	iP4Z2NV5qm/hnVOJxy9SyYLvY/dsXSjjLa6z/jvNu3CAWSnEzYdfi5MCwbCBN/v8
-	c2Jr/pr25VFyjUjAvZzv4Sk7rU3kjebgeaJ5wjYQQwaFqWpMt2Dic8tqYxJgOhKB
-	GvPZT5SH3URDQkltuODuOwIaPf9IGU0svAfZC8BmCmzUSCKum91coh/adiZQBfD2
-	Xkt7xgYLjW32yQEe6zozUwpqU3sJf4RmQnG9twkrw6CdGVL9YhKk3mhImgGsZHeu
-	iZk9/fzbL7nLQTyJ0wGV4CPPyowkli7YhOptmxL5aNtqogS+gm0Gk8RnTzSkSoym
-	EnpRT+LiiUg7URSHwxv1Jw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1755531668; x=1755618068; bh=v
-	FW6QBRYfsq8CJmexn1lKzszzkLnWWDYygvjmw+xj+o=; b=SKC+/2vKJ4XGhnf1j
-	BdyBnQzLrEGR4Q+j4uhGDqkFECu6nylsjFwI4p0f7hCVBZpfJuuCcHAeuzaJoZ/f
-	ZoQC6lrSjybbA5fwOJ/TV9sByTF4NI77pZyVaTfvNcN9ZpEPvyH7qZs9OHj54qV3
-	IFF5nFZyUYIBOpBJznbjGuER2nLdsxjrnIW9C0szIcpmbiygidol3tgem+50qskS
-	YDUDF9mQcOYSWhBFs79QMIzphEelnHHRLJFKYUXV4uqapb2JP3BtuewW2ltzTzD+
-	aQ99MmydkCQSD+zHU64Oe2c4Qa6yL+hpkIquO/4Y5Tc6fIc68d3yq4JJfvvR9+7e
-	Bg41A==
-X-ME-Sender: <xms:k0mjaOhpLXz-tteDQFX8_BKxIizxChUXrQBYMnAoa0HOXOUurBDvDQ>
-    <xme:k0mjaPCjUsbav8FxVbcUOnS5tKdCk2bgBHynOjhDHqP4ucANyPWECF45EZBZpj-5-
-    BHxZnNwZHg14owFsK0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvleelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvffkjghfufgtgfesthejredtredttdenucfhrhhomhepfdforghrkhcu
-    rfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrg
-    eqnecuggftrfgrthhtvghrnhepkeffuedtveekjeeukefgleejgeetleduueetudefudeh
-    fefhheefleehheffffeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgdpnhgs
-    pghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepihhrvghnih
-    gtrdhrrghjnhgvvghshhesghhmrghilhdrtghomhdprhgtphhtthhopegurghvihgurdgv
-    rdgsohigsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihhlphhordhjrg
-    hrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopeigihdrphgr
-    rhguvggvsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephhguvghgohgvug
-    gvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdig
-    keeisehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:lEmjaCR9TsVzoKeSgABiR6Gxu5h1BflUCI6cBmEebWezIFONMb1HNA>
-    <xmx:lEmjaDfZr48tcMm2ZyyaeX-yfYUmHpLA09fZPTYxxMwR1UUFSDH39A>
-    <xmx:lEmjaMTnL0zvNyLuHI1_LdV5VzG83wG08eXLCaU3A96hXER_mGqzEQ>
-    <xmx:lEmjaHKebXfir9zdhnrRulo918yeLFaQgMDy2Nrzb9zorPG2eBGkuA>
-    <xmx:lEmjaEXrVgPwPLARbhTrL8tqfiHM9RoJPGolHKULyiXnZni9rCrRuRIg>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DAC502CE0071; Mon, 18 Aug 2025 11:41:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755531732; c=relaxed/simple;
+	bh=+NmdFytJ0gXG7Bo8cllHYmsAn/QEZFQ+qq8h8vZ0W4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e+SVohNEgPuwzpGAaSNqAvTcQENh5bqIixZoFb6ms/KEF8TotjExwtskF8ZZ/2gxfnrEWWrrPAKpLwbNRexFeVgKsBcDJNnLqZ6qjexoHZhj30vZT8s/WjQP5tqGk9AAK7hQVZIFfiPfYWzOBf6Jo4nWRK31x10/AQVz4MNBz6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iklW+d8F; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9e413a219so3588873f8f.3;
+        Mon, 18 Aug 2025 08:42:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755531728; x=1756136528; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rDJO4S9SUngj9lrL9qvOE/EfiNfp31e+G+t+JHqtX+I=;
+        b=iklW+d8F2rZSCq5ovLD6vxx3UTD7tvJZWzGm87FGax9L7iXBmiycEvfTJH+uvAps+Y
+         atOQ6/UVQBa41Vm2W3yxJtEaPDwDT+shwmGZXKH8S1JmN9WgVOauwsnw3ioS1BCudAE8
+         It+h/qym9hp2i0wBMWMfcNPQRLuCfpzNh7AkmiYFirHh/X3WuzunWSvKjhJgoqNFZG7y
+         lvmi1jmdeux87GQGNuX/hLS4HIxKLSGuRUvxkNMc4mq1FgVltugbsxOEJpZI8nfUn5aq
+         iTDVW2h8tsHTtRfJHrM2Cv0F+Q/YCwWn3JRLq8MDoXxxvSuCpjBi3tixjLfvWT9+Xcxd
+         uR7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755531728; x=1756136528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rDJO4S9SUngj9lrL9qvOE/EfiNfp31e+G+t+JHqtX+I=;
+        b=KkZdQTcPob/Kl+F+nXvsnaJtdAw+OU2B8yaVoJ3KpGEu7JPq5q6fnmJZo/s3OpA34N
+         pAwgEmhJe65mFzqdKcjHsxmwdLcH47w2i1dIk4IwEOEoc/aQTEs7tZ0emXMSptISuvH3
+         FFCDLmpYdqklvnt/V9NSBPjkQQbyG6mgvfwWkofdsafl9RX/g4j7cvxvnRV8psXxcNLy
+         oS7ShjUwyVVl0Z6DQmdSa+kI5gTSuujzEU0OP37szsU6IzhkLDw9gP3GIip0MSmOJr0X
+         m3/RFiMctN0OwAiShxyzz3Majykw45wt9gvJB+h7Rtzyl6TTAI3M9BVZZGBVPIG+UkhI
+         HziQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPQnXVJFZ0oGP5pyQaDMAGCz4p8lZfPa1KnYzjrp/VtKvAjhKYW2a3g5LRn8OioTn6n4RqhDtmNhDX@vger.kernel.org, AJvYcCVbjbG26xUP8jLcameTkV0CEty2ib/fonQ4FUWw3lcXrTt/BvjiDQprNBFFHvj/97obIb2r4a3sdsje/QCA@vger.kernel.org, AJvYcCXwYUCINGtl3CiwascVwWd1mOUkOMeNUBqe2GkoxG4QmkI0b4/AGFRyei0si87cuDLWZb6f1T0sthtp3m5CbBu/WzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZE78Sjd31Mb2e+nYHQD9nQC5QNgEP/RAinnBVN0UQdbXRLbye
+	6EtH7nGzSeXPsTt5Uzr7rL9hytKVAxLT2mrYhnmKqba0znguXMEY0y+ClzUo/BF1EydP4QeV7lD
+	jgpdQmvSUtL+/RavXPajE4tkjgPi+MEs=
+X-Gm-Gg: ASbGncspNOKcDpcqH3irXytUfsMBmw9/hXUYKLx93Cw6+bbewC9lv8VzzW9a+rUQvp/
+	GFkKaiQZLUdoakcvR/n2o0VG6l4K7eoqzIg9ZxcqPdYjil3vRz/0mE6BCzZeCxB63ILwzp4NYMB
+	TOVS4A1pXIiclt+uWKkKo3ieBNo8l0UD0xHTt9IlUGeEtbujZBuwriy60JTft2EtrHuqkTSuFmC
+	cKOKf5l
+X-Google-Smtp-Source: AGHT+IHuf+MvJxcd6cxxgK2f0rQ89u7zGQVvm1WKkidkRLxUuQIm22/F8vo7L6B8cEL6Tb16PT2JGnnRgqfDV6TXc5s=
+X-Received: by 2002:a05:6000:22c2:b0:3a6:f2d7:e22b with SMTP id
+ ffacd0b85a97d-3bb672efaa2mr8144889f8f.18.1755531728311; Mon, 18 Aug 2025
+ 08:42:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AIq4ZBvdF6b7
-Date: Mon, 18 Aug 2025 11:40:47 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Xi Pardee" <xi.pardee@linux.intel.com>, irenic.rajneesh@gmail.com,
- david.e.box@linux.intel.com, "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Message-Id: <88da5769-1eae-4520-99b0-78a59bdbd867@app.fastmail.com>
-In-Reply-To: <20250814195156.628714-1-xi.pardee@linux.intel.com>
-References: <20250814195156.628714-1-xi.pardee@linux.intel.com>
-Subject: Re: [PATCH] platform/x86:intel/pmc: Update Arrow Lake telemetry GUID
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250812200344.3253781-8-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWJCAa_A-2NZMPNL49A6LmhGn7hokU=xfDwytz08pR4dA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWJCAa_A-2NZMPNL49A6LmhGn7hokU=xfDwytz08pR4dA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 18 Aug 2025 16:41:42 +0100
+X-Gm-Features: Ac12FXyLKjxPKui3JMb0ls6wfCMdR8JjN3ugTT3iO-gFWAsZfInfbbmNEyDxhEw
+Message-ID: <CA+V-a8ubECWM1sEbK+YKYXSiixd69kCNLHk0-pyrvHgScNAcZA@mail.gmail.com>
+Subject: Re: [PATCH 07/13] arm64: dts: renesas: rzt2h-evk-common: Add pinctrl
+ for SCI0 node
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Xi
+Hi Geert,
 
-On Thu, Aug 14, 2025, at 3:51 PM, Xi Pardee wrote:
-> Updated ARL_PMT_DMU_GUID value. Arrow Lake PMT DMU GUID has
-> been updated after it was released. This updates ensures that
-> the die c6 value is available in the debug filesystem.
+Thank you for the review.
+
+On Mon, Aug 18, 2025 at 2:35=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> Fixes: 83f168a1a437 ("platform/x86/intel/pmc: Add Arrow Lake S support 
-> to intel_pmc_core driver")
-> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
-> ---
->  drivers/platform/x86/intel/pmc/core.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Prabhakar,
 >
-> diff --git a/drivers/platform/x86/intel/pmc/core.h 
-> b/drivers/platform/x86/intel/pmc/core.h
-> index 4a94a4ee031e6..24139617eef61 100644
-> --- a/drivers/platform/x86/intel/pmc/core.h
-> +++ b/drivers/platform/x86/intel/pmc/core.h
-> @@ -282,7 +282,7 @@ enum ppfear_regs {
->  /* Die C6 from PUNIT telemetry */
->  #define MTL_PMT_DMU_DIE_C6_OFFSET		15
->  #define MTL_PMT_DMU_GUID			0x1A067102
-> -#define ARL_PMT_DMU_GUID			0x1A06A000
-> +#define ARL_PMT_DMU_GUID			0x1A06A102
-> 
->  #define LNL_PMC_MMIO_REG_LEN			0x2708
->  #define LNL_PMC_LTR_OSSE			0x1B88
-> -- 
-> 2.43.0
+> On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add pinctrl for SCI0 node.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> > @@ -5,6 +5,8 @@
+> >   * Copyright (C) 2025 Renesas Electronics Corp.
+> >   */
+> >
+> > +#include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
+>
+> This relies on RZT2H_PORT_PINMUX() =3D=3D RZN2H_PORT_PINMUX.
+> So perhaps it is best to get rid of the latter, and always use the former=
+?
+>
+Ok makes sense, I'll drop the RZN2H_* macro definitions from patch
+04/13 and use RZT2H_* macros for RZ/N2H.
 
-Tested this on my Lenovo P1 G8 and confirmed that it fixed the error message that was seen previously.
+Cheers,
+Prabhakar
 
-Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-
-Mark
+> > +
+> >  / {
+> >         aliases {
+> >                 serial0 =3D &sci0;
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v6.18.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
