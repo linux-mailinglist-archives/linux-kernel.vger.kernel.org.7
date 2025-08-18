@@ -1,224 +1,630 @@
-Return-Path: <linux-kernel+bounces-773183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2716B29C74
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:41:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F75B29C75
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85BC416F0AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB1E18A1E2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1A83009F0;
-	Mon, 18 Aug 2025 08:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E70B3002DA;
+	Mon, 18 Aug 2025 08:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b="wpeUs8A4"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2070.outbound.protection.outlook.com [40.107.93.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DS0SoZF/"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DA725D549;
-	Mon, 18 Aug 2025 08:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755506487; cv=fail; b=dHIjp+3FixBeMKXO19O+UZ7mLDz2GhLTJpCNZ7/NpxfPD377xcwMOfgSVeBA5NowxVjHmYp3YXyuV3ptV7S1yVvYDVdyjIjH7NlfbreGzqizWC69jX+VFsrOyPbPrJ5RkzmdUaghlFTG8fi9nLOOY0uOuGVeVcoHYua35se2i4Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755506487; c=relaxed/simple;
-	bh=dLA2yuOdZr2/8C2tR7uHQGGNBdPZvw2a7xzhK0XZkog=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cHFiGzKGEz/sao+yZ9HFuZMq9+qwrTGHw24MN8emdxsmAG08/OBOnSIWMtSQD8UCd4L7FrQEA2WtictFrVzQu7y5XWB+TpzmR6MzQmEHNIIU9j44MTfOpPcXczFUet9gojXvXtH0hUGgIVk0rN0jjUugHR/NeLr1NZoQz7jmaWM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com; spf=pass smtp.mailfrom=maxlinear.com; dkim=pass (2048-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b=wpeUs8A4; arc=fail smtp.client-ip=40.107.93.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxlinear.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IoONfniIHFDkefQJ/cqFmQpf0WJ6P42cfcVhzzgv7NSfQicmScGVJ0xOIHagvkQqwmT4B5QegA5fwJ2N6loA8yHDkWimqyK7Z4CyL4yXM3jSo0P+8YCNosKegR0CwpJ5AnIS/bFJzrV6oiTeB97H2gwdoIUc2ij1ZkHbhEyG/QS1aS5kbz7r0I8UKQTpTHgpItOzbJEIbefApiF85sCqh7xLNORRcsBgytjdCROqH0mzs8nOT9lT+Eco01shljvR6zG95vsAEcnDcy76REXpYC/5JTCY1Fc0N3nZDHkxUjqS+KfqDt8mtW3230jeBwYihGCOrXirdL0itfC3JIY7nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dLA2yuOdZr2/8C2tR7uHQGGNBdPZvw2a7xzhK0XZkog=;
- b=MWDQJWCsDKmy3pasgZWH6tryLmjH9y7Cnx57HysiKKdZzSuNnHTovIIMr8U38FTo6JNQ2Gk263KRCKouoN/sRf5pk4hvJpQE+yPjqj/+uX6g8DMDGL1dHqtYHYLT2ow4zmB+83x62xJ4yuSwq92n8oF7M9R2J9nvvFUt6Q3x61jFT/+E+UuFHQmJBAs20l0pFLqXtbP3rlDKWWURs3dA4sv7Kk398EnUhyh3F4I1/VINXATYfVK01h/s46ZL3LhjTTNLbgyjiePrRGfhNhC5SFaR2XzCySDw2Ab3iCUAQ9qjIY+k/9ASajy4JAAetlx8U2HweElTr1C6PYAtjR2x/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=maxlinear.com; dmarc=pass action=none
- header.from=maxlinear.com; dkim=pass header.d=maxlinear.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dLA2yuOdZr2/8C2tR7uHQGGNBdPZvw2a7xzhK0XZkog=;
- b=wpeUs8A4VnCpV2BPSCIHBqhPMiA69rdH+1zM3c6mU90tVgP+PQiaI1UEmvkLlCSvuRz/mISCNA2qo4z4CjMyMEfjbrGMqim/a9bO0Sp5DI03rq/O2vwdRbdxws+qtzGidF16Pm3qis+29ja9Ym5+XaCAI1Euk60F0nTepJi2onT5Bmm7sI78jSjmae1WahYvpOgJ09IuA+YhsNoWnZ5zARQ54s7glCNdHpsIuBzW0IRFJDIZFPMdBeBLXjeaChzpR8xELoAGH+oFT3P/Bg3KIMMmFeJ5oduQMef3utT5ORsKsXJ7P7I7JO6Yu48WA3AMhoH3pyD6NClbMNmaFVdIzw==
-Received: from SA1PR19MB4909.namprd19.prod.outlook.com (2603:10b6:806:1a7::17)
- by MW4PR19MB6933.namprd19.prod.outlook.com (2603:10b6:303:221::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Mon, 18 Aug
- 2025 08:41:22 +0000
-Received: from SA1PR19MB4909.namprd19.prod.outlook.com
- ([fe80::6ff2:7087:8d0f:903f]) by SA1PR19MB4909.namprd19.prod.outlook.com
- ([fe80::6ff2:7087:8d0f:903f%4]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 08:41:21 +0000
-From: Yi xin Zhu <yzhu@maxlinear.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "vkoul@kernel.org"
-	<vkoul@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "kees@kernel.org"
-	<kees@kernel.org>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"av2082000@gmail.com" <av2082000@gmail.com>, "dmaengine@vger.kernel.org"
-	<dmaengine@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc
- property.
-Thread-Topic: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc
- property.
-Thread-Index:
- AQHcCBPALrBJpgW7V0mdzTs1Qi24hLRYReGAgAsMz+CAABtMgIAADGZAgAAXYQCABH7ZMA==
-Date: Mon, 18 Aug 2025 08:41:21 +0000
-Message-ID:
- <SA1PR19MB490914561C8ADF3012814D69C231A@SA1PR19MB4909.namprd19.prod.outlook.com>
-References: <20250808032243.3796335-1-yzhu@maxlinear.com>
- <32a2ec88-b9b8-4c4d-9836-838702e4e136@kernel.org>
- <SA1PR19MB490961745C428F56D7E114F7C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
- <a0a1bc99-0322-4f63-a903-12983facddc9@kernel.org>
- <SA1PR19MB4909BA87E8CE98B5A6389349C234A@SA1PR19MB4909.namprd19.prod.outlook.com>
- <1826bd7a-621d-49d0-b6ff-7ff723ec9f2c@kernel.org>
-In-Reply-To: <1826bd7a-621d-49d0-b6ff-7ff723ec9f2c@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=maxlinear.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR19MB4909:EE_|MW4PR19MB6933:EE_
-x-ms-office365-filtering-correlation-id: 00932871-c3f4-4084-5498-08ddde330226
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UWtNNS9TODdyR1duazJCNFJOcWdaemp4WUZheFlENW9xN0ZKVzNnQjlZMlky?=
- =?utf-8?B?NU8xV0FieU1pNE5McmVvSmpCY2RMbmc2cUZWeGNmbHdNVEh5UEJMZFkyYjRa?=
- =?utf-8?B?VlMzcG9LeFBuMkthK1Z1S0sxdkJWeUxSSUFkWFZ2NUhxMU1rQ0IrVjlTaVNH?=
- =?utf-8?B?S1VuL2pMZUVZa3dNa05mWFJxTVhDcWUxd09oWEszcW1lOWgrREhCNWVRM2ZD?=
- =?utf-8?B?anU5bmgxOEtVWVZRK3pxQjFodzd0aWJRYlNYK1RYSjRRR1Vqc044WlNsSlkx?=
- =?utf-8?B?cHBGSmlPTzlTV2N2ck5Lbkw1d2RxL09KZ3l3WlByRGJyenBJbStua2h4Z3pI?=
- =?utf-8?B?Vy80TlpLVFFNUFpVMU54cHVXSy9TdGllMHF2dkVJOHhHN3lMTU1Cc0lQT2dl?=
- =?utf-8?B?RkVaUTFEaFg1WnRiVkIveXJ0SnpVWDhFN0pnUkJMdjNhcE5mNzI1ZUx1WW9k?=
- =?utf-8?B?QWxaZWlSblZQMGFodlF1dCsxS0gvRGZ6ZENjdHduUkpsRGJIdkxKajBOVlJN?=
- =?utf-8?B?TmtLSFlxSDBreEpYZ0xZK0JCRXZWNUNJaTdQTmlWclgvakhjZXlkVE9kQmxo?=
- =?utf-8?B?YU01L0xiVFFndzgyWjZScmdKUCtFS3kxeVcvYVFiZ0lGVG9KR2U3bmNVNkp4?=
- =?utf-8?B?T3ZmMEZKc0tZS0hFODJNLzlnbjk5YURXUXIwSklKZlpWYSs2NGFDZlBDSE5L?=
- =?utf-8?B?ZTk0b01jZE1IdE40MWxxU3hZeUZIWHhTSTExRGIwd0hKOFlCS1pMNCtJb2Jl?=
- =?utf-8?B?Z2xWYmV0NXpsV2E1VTFSeGduQVFLRzFKYlkzWWZocFdZcm9OTTNRQjhDRWNp?=
- =?utf-8?B?bXRqRVhtdEhIUWJ4VXkvdURyLzd4YklCZW9DTG9MVUxKNWswR0V5ak1NMUVL?=
- =?utf-8?B?SXBXSzRlSFh3U29JOFpsdVdKQWplWnNaRittbERUS1BzZlhHVkFweXBtK09o?=
- =?utf-8?B?aHRNQk5RL0xzdHMxaG11N0w5TERtSkllK2RIZ053bExRVURlMWs2TkN1eHRL?=
- =?utf-8?B?Rkc5TGRKRXdpaE5aWHhrV0hxOVljZThUMEhsVUZndnp4V011VFpOeGd1akZD?=
- =?utf-8?B?dUxVdmQ2VGdrZjBDNUJkYVZaMDVHV1YyZVpzMEZ1cWRsMGxHZG9Pb0ZsRjdF?=
- =?utf-8?B?WVVUSFJHc1lVNVVvR3FzMFBFOGRYcnIzMzdjZDNGVU1WMWxUSDMwNm0yK2Nv?=
- =?utf-8?B?RklHb2VmaFpkc2lBUkpWdUZUV2E2ZVl1RjFGdzQ0Q0ZJUk9ibHNyK2p4Ny9K?=
- =?utf-8?B?dUhPczhhSjdkajRoOFNzUHZXUC9xNmRJTkswQzJKbzJ0YkF1VDhwNTRMU0s1?=
- =?utf-8?B?Y0dFSU1iN2J5b2NGeERKQVlQaldsakY5aHRsZHZTd2I4cjQ4N09IY2w1ODJn?=
- =?utf-8?B?SE1GQzZHNWV0L2V6RCs3VFhad0R2ZU1VaHFuWFRVMjdQTjc1cTl4RHBJN0hj?=
- =?utf-8?B?VnEyamsvYjRFQURQQkJWSzVGa0oxWDJQMlhPckVSTGFVNURsWW5lc2JFcmR1?=
- =?utf-8?B?WmFaSlV5WERKT0JkK09mWjl6ZmdSWnRoWWpTVDBUalJvUWtvelNRUm44ZDZH?=
- =?utf-8?B?SDNZK0tjZ0daNWt3S21NZjFudlpmZ0JKSUhXS2RwQjVlbnQrd2FEZnh3NHJL?=
- =?utf-8?B?dXN2RGVZT3NCSU5nOWxWZmp0aFR6aHZuZ3Q2Q21ENnI5dGdxdlk0RHBLRlV4?=
- =?utf-8?B?a0xUT3dlSmZpNnVJbEtESHJqZDFXT1RQdXUrYW5HRktDU1g2WExZdm43UDh1?=
- =?utf-8?B?Ymlxa1BtbW9Zb0h2dFZscllzVXRRSVBHVHc1SnVHNHBzYVdzWEtYRk5FYXVj?=
- =?utf-8?B?aVNNUkpjQ2N2NVFvMmpqNHRVWG9hMFU1dzNkeTBPSGQzK1lJYmRqMVhUS0RG?=
- =?utf-8?B?NHRvREdIaDFKNzIzZ0JwZ25xNGR3N0JQck94cU5HSTdPalVyd3pvRzd5bjc4?=
- =?utf-8?B?azJYQVdWclc2Y0tpOHBHVzhtSjh4SExkRmZNamRPaGVoMDlySU9WUDNiRTV6?=
- =?utf-8?Q?lXULrNVlXFPLHaPyibGkJsOAt0hIlg=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR19MB4909.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?V3V4emovMGk2WEdmcEZGUTh2RVhtbWlFVWcwL1ZzZW9aQ0dkWmlBVVBIRGZ3?=
- =?utf-8?B?SjN0T3F1SWoyRUpGckhZSDhubUtibkdIVjhrRVdlcXdiU1QwRGJValFPeGxz?=
- =?utf-8?B?c3NSYndrY3NhNm90dFIzbTVSYVJBdDRuME54R0FsazNuc2h2WEdSY2FrOHcv?=
- =?utf-8?B?VmJ0TklyWkJGNWFUQTZmMENsUmJza0piZk9LeElKZncwMytMUHltZ0Fyd0hI?=
- =?utf-8?B?RnlYK29BZVVkMkR5Y0xMWUhDOGlFdFJTQThuRDUwalM3NnVDREcwNmY1NmJs?=
- =?utf-8?B?S0taSUlHMTJzaTYvOFdpOG95K1pwbzJ1N1laNGxhd2tzQkN6Yk43U28rWmpY?=
- =?utf-8?B?RjlHQm1VT1B3SUtRZHM0ZHhBeHYxQmgxYWlXbjlaalh6VTJxVHlQVmEwOXEy?=
- =?utf-8?B?RStEemcxVHhMcUp4dlRVeXlRVldVcGcrUmU2QjUwN0ozREtoYVJ2T2xRWHow?=
- =?utf-8?B?SmF6eGpqb0tSY1VFMXJ5YUpheEN5UnJoMHdSVGttV2pBcTRqZCtLWmFCYVE4?=
- =?utf-8?B?Z2E5cWg1bFBMVWpuUWpVUk10b2lwOVdqYnJKWjJHdDJtSTZiODRlMXpZNml1?=
- =?utf-8?B?MXJWSTN1aEFDdkR3QlVCeUdIa0FEK0FSaUxiNHpTYURSTlNGRlo1eDRLcmQz?=
- =?utf-8?B?L3E2N2FHWlFnakNMeGx1UW1QREFKZUkrZmpnWWdZYkcvNENLTEZHbTExVTZP?=
- =?utf-8?B?RnFTcTBscFlBNW1XUzJCL05UTEdIYTNob2pXUEdMN1JoS211SVdhL0dvc2wx?=
- =?utf-8?B?UDYxZklXKzlabzNieWF3emZ1L0ozYkVTTjdySzNnYkp4KzVQNjhsM3NMU3pp?=
- =?utf-8?B?d21USUZuNFo2RG9LT0taK09zU2N5MkhsUC9zU0ZzbHY3eldiWUJ3dmxwZmNQ?=
- =?utf-8?B?SlQrY01EUTZkVlpHNjJnWWRqWkw5WHg0d2krbW85ZGZnemhtSUlWQUUzOWRl?=
- =?utf-8?B?c2k5dVVRQTFoVUd0ZnIrMTlZalBrUVNFaGpWUGxGWTA1MndJbFRUbk5Ddlh2?=
- =?utf-8?B?RzhmUk5OTnRlZWpsREQrR1JUYlhXOUEwakUrNmp3NHhCUCtxekVhZVJSUFhY?=
- =?utf-8?B?L0lQc1V3S256cnlpaVZVL0R3aFp5b1N1bXpvdDdrSEhQajBUR2xrVmpIU1cr?=
- =?utf-8?B?MjMvckp6MEd6R1RzUjZ4bVV0aEJKUE4zYlE5QTF6ditLTVlid0QwNUxZNzlr?=
- =?utf-8?B?RVpNSEVQSkJZQ2JtVE1oZldoUDVWTSsreHRtdzFNUFpTWVF4SmlWQmx6VkVo?=
- =?utf-8?B?cWhvRjZVc0hTaDNFdnZ2QVBML2gxUHRyNVRiQjl5VWd6VzJ1Wm8yWTFpYmlZ?=
- =?utf-8?B?S0hoTEVla2l2akVBUHZ6aEFkNkM3S0syZTV4cUU1amZJcTFXOHhhTmZianht?=
- =?utf-8?B?QytqYnBVNWVVQ1l5dmRiU3hOT2JXUGxPVXAvWlNUSXdUb2RSSENJbWJIa3Nw?=
- =?utf-8?B?MnRVT1pyaXVyM3hWSWNnWTM0cERQcUFBbFVWNWJhV0lWQ0lhSWNkRUdvb3NH?=
- =?utf-8?B?Q3lvTjk0Z3U0VU5NSXlaNE9ERFBNSXJaZ0VVbG56aE8rWTZXTEc3U2o4NkxE?=
- =?utf-8?B?MC9xNkhWdG5wRFFTamM4eFlyM1A0eUR3Q29nU1VBK1R0cytNQTEwcVV4bmQ3?=
- =?utf-8?B?OFdlWjVWVzhOUm5jQS83anVqOHdiSm8wbktCeVNrVVMrTkVZQW85TnRsWUFL?=
- =?utf-8?B?YjZkS2FPTldWdVJFaEdJQlNiWFIzamFtbHBkRS9pYnpiTEhFQjY0aDBjazAy?=
- =?utf-8?B?U25pSVYzaXBXTFlhdnJCTkp0WFMrUzRTbUZjZXR2ay9sbmhsUWwxVXg1a3dB?=
- =?utf-8?B?QVhoN0tOSXBBakYrSTBueitsT2N5cHhrUEdxS2FOOEJaTXZDTHpPbjBWV0lj?=
- =?utf-8?B?cllOT3d1bU4zUHAwWnV5S1VVSExTZjl6dG9pR0FJYTBock80c3FGbmtlRHl1?=
- =?utf-8?B?TmVtcjlENE1MV2JYN2dqdFJFRW5kSEh3SDkrM3h6NVY1RmVSR3ZCalFodXRk?=
- =?utf-8?B?Y1RYTWQzMzd1UXIyWkNvczRtYk9vOHF2em5wRTlTbUdQL29xRzQ5ck03aDlJ?=
- =?utf-8?B?SzhoVVB3cUFRS051bDFwSkpvaEN1L1dVVnJWclE0eTV2cE5ybDJZbklnNW1J?=
- =?utf-8?Q?s5IDgklC2frEokX/xUA4Uwdk3?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0489F27602C
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755506505; cv=none; b=tpbvmizohQ41fx2h3MkPIpsRizODB9SN3yvxVIpwWBpYPtOd/uxwqw/GKcVcXdTzxfIwphs6w87L4TF42e5033Fq7Op7oGwSR/1KabA9FvqQggCq3863GrPtzWEDNx8JDMYlv6Pdip1JfFsAA/IfjIUzWAJ7fOqncDIwDHDWY3g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755506505; c=relaxed/simple;
+	bh=nOX6/SQg3PFfHFSVx+Ot0C7LNqSzuYk6oRLJ3jeU30w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D2ifgQkD2bKZYpxww4JgTPN3skx/4oDtkYOXn4izHT71EqaCuA+j9mCu0xBsoZBlW9N9DTuvf4JYNy1LVrsbrnktS2B3iXBHQO1pABVWfkIQc+N7V4+Q9mus1HErVLrWm6rbovD0wrd0nSsOGfMXIQbigtmOp3yr7zFLHP4vpsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DS0SoZF/; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32326e06496so4400861a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755506502; x=1756111302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7V3ndf0AVYzK4CjmdlZOILGIkrZFODvV2ZMg+myf1XM=;
+        b=DS0SoZF/HBz5RXtLZZr7GnLC2dUUTwRnGHtVnZJLQWxeBkROQWsbcGQK0+G/WKFv74
+         5+RWbntY3sabkfhRqqIK0oMHsvxNUFQAa05MlznTJeGG6AWxWRrz70xmSwwVPdSWEMv8
+         KtitJBhFgV8RKGHimg0T9NYhhWen2jvxlCJyJFXA1sR0IwBeEzXqRZFbstZsiGTTqVYQ
+         wuWd/iQUE3tNqwMI1JkYEhDJI7X6hHChBgPbzTmPXYu4l2RsjcyQmxLTAXL62SM1PKxQ
+         vfiKJhmVWmMGmwWC0PtBqYj8mQpz626CgS9Pcy0JGrF5C5s89lGA9HbQB04YuKOqUHHq
+         0/VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755506502; x=1756111302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7V3ndf0AVYzK4CjmdlZOILGIkrZFODvV2ZMg+myf1XM=;
+        b=BElyr9KRxbdH96QPPkkdEBO7dMzO68OmhtzYsLxnizPxyAWFRSLRJIcbla2Blszy91
+         mCWz+fp16EF4w9Q3wlQFawLKduw77WTwB2oTItYprCFk3/4PAsnLvEOzm9rv8lfaG/hP
+         TeUla/JtY+trQ0NA61AqyvUYBiPQNJt4CLS+Lvcm16gntLe1K60tmQ1x9j0rpWXxrvca
+         bYsF5dNToyW4Pej+K3DtbTdCMJnhRoGf2mwo5bjWp5ZOtxHfk7Tox0DaWW9ueVhKkHvG
+         MkdALQYCc1669gC+/RskhbZNTio3uLUq0zmFSI0IbRZzZfk4dAfpTvBiokYaFlCbR1Uq
+         AqMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxZig31KYtHc2h8Np+INKGEgRPQH91U3nUkyRhXldL/tMaLDW8oM6Q5QsZCoS+RTwDPNB7FPJszZ3u2MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXKy4oVISjlDmfXxUxCW3DXJctdiKBbgD4Rf71NG5v7Lmot/OB
+	BoGaYo5dSR5BLehdxOw0ogvpO8pT8XIATfTXhwmXKoYIJn+XvtAzxjPBrSvxSu47mEgCPGBoVQO
+	L9N2WbYgg6bGYsrtb42d9eJsAyYklXsmPQc05
+X-Gm-Gg: ASbGncvWkiKxn6pmdeolXGdzBw28iAXaKikgEbhL0BxIF1hW7k0JnvDrZXKgC/tvU/D
+	3/QFH0zu15XeUdUhwe+9okaMVtCeBu6kLJBZ4/8G1uJfjlpy0Rj8F6hgY8SPcespFbJCEMsa3t4
+	Zon9EplJX7TNJ9npQ6s98NPDpvYjBTjKSnil1lnkhxaTEDDbZDxuqonxladYvbPyIqIThrqcei3
+	csEAA==
+X-Google-Smtp-Source: AGHT+IETr/F4coh8A2kB6u6YDtISX917/k0AGWo1RqD9l2gPpTiV5flRaPhucalpYkttUxoIeBDBsC9YiZXrF6aTzQw=
+X-Received: by 2002:a17:90b:3fcf:b0:31e:998f:7b75 with SMTP id
+ 98e67ed59e1d1-32341e0d69cmr15049665a91.9.1755506501950; Mon, 18 Aug 2025
+ 01:41:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: maxlinear.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR19MB4909.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00932871-c3f4-4084-5498-08ddde330226
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2025 08:41:21.6965
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jVGrfGPLzHOZMXnhYakI2yFyWiHdkSRueC+9VQgKbM2sAdsI8e0TK/yXFm8TVGZvVJFFr8lTAnqS6V6wR+Bd/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR19MB6933
+References: <20250729174332.3acd1a86@gandalf.local.home> <CAFLxGvxZJv_A+YKCxVcd4yxPXLhHD5L9VzkvbFKPytxXc5vWaw@mail.gmail.com>
+ <aKCLGvmPLPwjyw13@shell.armlinux.org.uk> <CAFLxGvwPwrG6KVsF=hKn1SmbC0yjLVjm6h8t1+qFE0GkO7rUbQ@mail.gmail.com>
+In-Reply-To: <CAFLxGvwPwrG6KVsF=hKn1SmbC0yjLVjm6h8t1+qFE0GkO7rUbQ@mail.gmail.com>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Mon, 18 Aug 2025 10:41:28 +0200
+X-Gm-Features: Ac12FXwLopEmne9bhBU-Gc0V2KBeE647FcdMtGdzqLFPMs69QdXGU2Qq6VwMZpY
+Message-ID: <CAFLxGvzcaGjNAWzCjdQdnOQjGPOqPg_VY2UBpp7Q6pGVBvAa_A@mail.gmail.com>
+Subject: Re: [GIT PULL] runtime verification: Updates for 6.17
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco <gmonaco@redhat.com>, 
+	Nam Cao <namcao@linutronix.de>, John Kacur <jkacur@redhat.com>, 
+	Tomas Glozar <tglozar@redhat.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgS3J6eXN6dG9mLA0KDQpPbiAxNS8wOC8yMDI1IDE4OjQwLCBLcnp5c3p0b2Ygd3JvdGU6DQo+
-IA0KPiANCj4gV2hhdCBpcyBhICJTb0MgbGV2ZWwgY29uZmlndXJhdGlvbiI/DQo+IA0KPiBGcm9t
-IHlvdXIgZXhwbGFuYXRpb24gMSsyIGl0IGZlZWxzIGxpa2UgY29uc3VtZXIgY2hvb3NlcyBpdC4g
-V2hlcmUgaXMgYSBmdWxsIERUUw0KPiBzaG93aW5nIGFsbCB0aGlzPw0KPiANCj4gDQo+ID4gb2Yg
-dGhlIERNQSBpbnN0YW5jZXMgd29yayBpbiBoYXJkd2FyZSBkZXNjcmlwdG9yIG1vZGUgd2hpbGUg
-b3RoZXIgRE1BDQo+ID4gaW5zdGFuY2VzIHdvcmsgaW4gc29mdHdhcmUgZGVzY3JpcHRvciBtb2Rl
-IG9yIGFsbCBpbiBIVy9TVyBtb2RlLg0KPiA+DQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlz
-enRvZg0KDQpJbiB0aGUgTEdNIFNvQywgIFRoZSBETUEgaW5zdGFuY2VzIGFyZSBkZWZhdWx0IGNv
-bm5lY3RlZCB0byBDQk0oY2VudHJhbCBidWZmZXIgbWFuYWdlcikgdG8gYXV0b21hdGUgdGhlIERN
-QSBkZXNjcmlwdG9ycy4gIA0KSXQgY2FuIGFsc28gYmUgZGV0YWNoZWQgZnJvbSBDQk0gdG8gdXNl
-IGl0IGluIGRpZmZlcmVudCB1c2UgY2FzZXMgaW5kaXZpZHVhbGx5Lg0KDQpJbiB0aGUgSFcgZGVz
-Y3JpcHRvciBjYXNlLCAgdGhlIGRldmljZSB0cmVlIHdvdWxkIGJlIGxpa2U6DQoNCmRtYTF0eDog
-ZG1hLWNvbnRyb2xsZXJAZTczMDAwMDAgew0KICAgICAgY29tcGF0aWJsZSA9ICJpbnRlbCxsZ20t
-ZG1hMXR4IjsNCiAgICAgIHJlZyA9IDwweGU3MzAwMDAwIDB4MTAwMD47DQogICAgICAuLi4NCiAg
-ICAgICNkbWEtY2VsbHMgPSA8Mz47DQogICAgICBpbnRlbCxkbWEtcG9sbC1jbnQgPSA8MTY+Ow0K
-fTsNCg0KY2JtOiBjYm1AZTEwMDAwMDAgew0KICAgZG1hcyA9IDwmZG1hMXR4IDAgMCA2ND4sIDwm
-ZG1hMXR4IDEgMCA2ND4gLi4uIDwmZG1hMXR4IDE1IDAgNjQ+Ow0KICAgDQp9Ow0KDQpETUEgSFcg
-ZmVhdHVyZSwgZGVzY19mb2QoZGVzY3JpcHRvciBmZXRjaCBvbiBkZW1hbmQpIGFuZCBkZXNjX2lu
-X3NyYW0gYXJlIHR1cm5lZCBvbiBpbiB0aGUgRE1BIGNvbnRyb2xsZXIgaW4gdGhpcyBjYXNlLg0K
-VGhlc2UgSFcgZmVhdHVyZXMgYXJlIGRlZmluZWQgaW4gcGxhdGZvcm0gZGF0YSBpbiB0aGUgZXhp
-c3RpbmcgRE1BIGRyaXZlciBhcyBkZWZhdWx0IGVuYWJsZWQuDQpzdGF0aWMgY29uc3Qgc3RydWN0
-IGxkbWFfaW5zdF9kYXRhIGRtYTF0eCA9IHsNCgkuLi4NCgkuZGVzY19mb2QgPSB0cnVlOw0KCS5k
-ZXNjX2luX3NyYW0gPSB0cnVlOw0KfTsNCg0KSW4gdGhlIFNXIGRlc2NyaXB0b3IgbWFuYWdlbWVu
-dCBjYXNlLCAgdGhlIGRldmljZSB0cmVlIHdvdWxkIGJlIGxpa2U6DQoNCmRtYTF0eDogZG1hLWNv
-bnRyb2xsZXJAZTczMDAwMDAgew0KICAgICAgY29tcGF0aWJsZSA9ICJpbnRlbCxsZ20tZG1hMXR4
-IjsNCiAgICAgIHJlZyA9IDwweGU3MzAwMDAwIDB4MTAwMD47DQogICAgICAuLi4NCiAgICAgICNk
-bWEtY2VsbHMgPSA8Mz47DQogICAgICBpbnRlbCxkbWEtcG9sbC1jbnQgPSA8MTY+Ow0KICAgICAg
-aW50ZWwsZG1hLXN3LWRlc2M7DQp9Ow0KDQpldGg6IGV0aEBhMDAwMDAgew0KICAgZG1hcyA9IDwm
-ZG1hMXR4IDAgMCA2ND47DQp9Ow0KRXRoZXJuZXQgZHJpdmVyIGlzIGFuIGV4YW1wbGUgdG8gdXNl
-IHRoZSBETUEgdG8gdHJhbnNmZXIgZGF0YS4gIA0KSW4gdGhlIFNXIGRlc2NyaXB0b3IgbWFuYWdl
-bWVudCBjYXNlLCAgRE1BIGRyaXZlciBtdXN0IHR1cm4gb2ZmDQpETUEgSFcgZmVhdHVyZSBkZXNj
-X2ZvZCBhbmQgZGVzY19pbl9zcmFtIHRvIGdpdmUgdGhlIGNvbnRyb2wgdG8gQ1BVLg0KDQpCZXN0
-IHJlZ2FyZHMsDQpZaXhpbg0KDQo=
+On Sat, Aug 16, 2025 at 9:26=E2=80=AFPM Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+> > Also please check whether you're using frame pointers or the unwinder
+> > (CONFIG_UNWINDER_FRAME_POINTER or CONFIG_ARM_UNWIND).
+>
+> With CONFIG_UNWINDER_FRAME_POINTER the stack trace is sane,
+> so only CONFIG_ARM_UNWIND is broken.
+> I kind of expected it the other way around...
+
+I found time to gather more details, maybe it rings a bell...
+
+The problem is related to va_list. As soon as va_list is passed as
+function argument the
+unwinder is no longer able to unwind correctly.
+Unwinding vpanic() does not lead to a correct frame anymore.
+Maybe because of va_list the function arguments are passed via stack?
+
+The unwind table entries for panic() and vpanic() are:
+0xc0302e20 <vpanic>: 0x808489b0
+ Compact model index: 0
+ 0x84 0x89 pop {r4, r7, r11, r14}
+ 0xb0      finish
+
+0xc0303190 <panic>: @0xc1c63ebc
+ Compact model index: 1
+ 0x02      vsp =3D vsp + 12
+ 0x84 0x00 pop {r14}
+ 0xb1 0x0f pop {r0, r1, r2, r3}
+ 0xb0      finish
+
+Disassembly of vpanic and panic:
+
+c0303558 <vpanic>:
+* @args: Arguments for the format string
+*
+* Display a message, then perform cleanups. This function never returns.
+*/
+void vpanic(const char *fmt, va_list args)
+{
+c0303558:       e92d4890        push    {r4, r7, fp, lr}
+c030355c:       e52de004        push    {lr}            @ (str lr, [sp, #-4=
+]!)
+c0303560:       eb00a54f        bl      c032caa4 <__gnu_mcount_nc>
+       static char buf[1024];
+       long i, i_next =3D 0, len;
+       int state =3D 0;
+       int old_cpu, this_cpu;
+       bool _crash_kexec_post_notifiers =3D crash_kexec_post_notifiers;
+c0303564:       e3084464        movw    r4, #33892      @ 0x8464
+c0303568:       e34c4222        movt    r4, #49698      @ 0xc222
+{
+c030356c:       e1a05000        mov     r5, r0
+c0303570:       e1a07001        mov     r7, r1
+       bool _crash_kexec_post_notifiers =3D crash_kexec_post_notifiers;
+c0303574:       e5d4602c        ldrb    r6, [r4, #44]   @ 0x2c
+c0303578:       e3560001        cmp     r6, #1
+c030357c:       9a000002        bls     c030358c <vpanic+0x34>
+c0303580:       e59f0324        ldr     r0, [pc, #804]  @ c03038ac
+<vpanic+0x354>
+c0303584:       e1a01006        mov     r1, r6
+c0303588:       eb17f5b4        bl      c0900c60
+<__ubsan_handle_load_invalid_value>
+
+       if (panic_on_warn) {
+c030358c:       e3043f08        movw    r3, #20232      @ 0x4f08
+c0303590:       e34c31f0        movt    r3, #49648      @ 0xc1f0
+c0303594:       e5932000        ldr     r2, [r3]
+c0303598:       e3520000        cmp     r2, #0
+                * This thread may hit another WARN() in the panic path.
+                * Resetting this prevents additional WARN() from panicking =
+the
+                * system on this thread.  Other threads are blocked by the
+                * panic_mutex in panic().
+                */
+               panic_on_warn =3D 0;
+c030359c:       13a02000        movne   r2, #0
+c03035a0:       15832000        strne   r2, [r3]
+}
+
+#define arch_local_irq_disable arch_local_irq_disable
+static inline void arch_local_irq_disable(void)
+{
+       asm volatile(
+c03035a4:       f10c0080        cpsid   i
+        * Use the __builtin helper when available - this results in better
+        * code, especially when using GCC in combination with the per-task
+        * stack protector, as the compiler will recognize that it needs to
+        * load the TLS register only once in every function.
+        */
+       cur =3D __builtin_thread_pointer();
+c03035a8:       ee1d3f70        mrc     15, 0, r3, cr13, cr0, {3}
+        * so go ahead.
+        * `old_cpu =3D=3D this_cpu' means we came from nmi_panic() which se=
+ts
+        * panic_cpu to this CPU.  In this case, this is also the 1st CPU.
+        */
+       old_cpu =3D PANIC_CPU_INVALID;
+       this_cpu =3D raw_smp_processor_id();
+c03035ac:       e5932008        ldr     r2, [r3, #8]
+{
+#if defined(arch_atomic_cmpxchg)
+       return arch_atomic_cmpxchg(v, old, new);
+#elif defined(arch_atomic_cmpxchg_relaxed)
+       int ret;
+       __atomic_pre_full_fence();
+c03035b0:       f57ff05b        dmb     ish
+
+#if __LINUX_ARM_ARCH__ >=3D 7 && defined(CONFIG_SMP)
+#define ARCH_HAS_PREFETCHW
+static inline void prefetchw(const void *ptr)
+{
+       __asm__ __volatile__(
+c03035b4:       e59f32f4        ldr     r3, [pc, #756]  @ c03038b0
+<vpanic+0x358>
+c03035b8:       f593f000        pldw    [r3]
+       unsigned long res;
+
+       prefetchw(&ptr->counter);
+
+       do {
+               __asm__ __volatile__("@ atomic_cmpxchg\n"
+c03035bc:       e3e01000        mvn     r1, #0
+c03035c0:       e1930f9f        ldrex   r0, [r3]
+c03035c4:       e3a0c000        mov     ip, #0
+c03035c8:       e1300001        teq     r0, r1
+c03035cc:       0183cf92        strexeq ip, r2, [r3]
+               "teq    %1, %4\n"
+               "strexeq %0, %5, [%3]\n"
+                   : "=3D&r" (res), "=3D&r" (oldval), "+Qo" (ptr->counter)
+                   : "r" (&ptr->counter), "Ir" (old), "r" (new)
+                   : "cc");
+       } while (res);
+c03035d0:       e35c0000        cmp     ip, #0
+c03035d4:       1afffff9        bne     c03035c0 <vpanic+0x68>
+       ret =3D arch_atomic_cmpxchg_relaxed(v, old, new);
+       __atomic_post_full_fence();
+c03035d8:       f57ff05b        dmb     ish
+
+       /* atomic_try_cmpxchg updates old_cpu on failure */
+       if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu)) {
+               /* go ahead */
+       } else if (old_cpu !=3D this_cpu)
+c03035dc:       e1520000        cmp     r2, r0
+c03035e0:       13700001        cmnne   r0, #1
+c03035e4:       0a000000        beq     c03035ec <vpanic+0x94>
+               panic_smp_self_stop();
+c03035e8:       eb00a127        bl      c032ba8c <panic_smp_self_stop>
+
+       console_verbose();
+c03035ec:       eb034d54        bl      c03d6b44 <console_verbose>
+       bust_spinlocks(1);
+c03035f0:       e3a00001        mov     r0, #1
+c03035f4:       eb15167b        bl      c0848fe8 <bust_spinlocks>
+       len =3D vscnprintf(buf, sizeof(buf), fmt, args);
+c03035f8:       e59f02b4        ldr     r0, [pc, #692]  @ c03038b4
+<vpanic+0x35c>
+c03035fc:       e1a03007        mov     r3, r7
+c0303600:       e1a02005        mov     r2, r5
+c0303604:       e3a01b01        mov     r1, #1024       @ 0x400
+       bool _crash_kexec_post_notifiers =3D crash_kexec_post_notifiers;
+c0303608:       e2066001        and     r6, r6, #1
+       len =3D vscnprintf(buf, sizeof(buf), fmt, args);
+c030360c:       eb45cce9        bl      c14769b8 <vscnprintf>
+
+       if (len && buf[len - 1] =3D=3D '\n')
+c0303610:       e3500000        cmp     r0, #0
+c0303614:       0a000011        beq     c0303660 <vpanic+0x108>
+c0303618:       e2405001        sub     r5, r0, #1
+c030361c:       e3550b01        cmp     r5, #1024       @ 0x400
+c0303620:       3a000002        bcc     c0303630 <vpanic+0xd8>
+c0303624:       e59f028c        ldr     r0, [pc, #652]  @ c03038b8
+<vpanic+0x360>
+c0303628:       e1a01005        mov     r1, r5
+c030362c:       eb17f56c        bl      c0900be4 <__ubsan_handle_out_of_bou=
+nds>
+c0303630:       e0843005        add     r3, r4, r5
+c0303634:       e5d33030        ldrb    r3, [r3, #48]   @ 0x30
+c0303638:       e353000a        cmp     r3, #10
+c030363c:       1a000007        bne     c0303660 <vpanic+0x108>
+               buf[len - 1] =3D '\0';
+c0303640:       e3550b01        cmp     r5, #1024       @ 0x400
+c0303644:       3a000002        bcc     c0303654 <vpanic+0xfc>
+c0303648:       e59f026c        ldr     r0, [pc, #620]  @ c03038bc
+<vpanic+0x364>
+c030364c:       e1a01005        mov     r1, r5
+c0303650:       eb17f563        bl      c0900be4 <__ubsan_handle_out_of_bou=
+nds>
+c0303654:       e0845005        add     r5, r4, r5
+c0303658:       e3a03000        mov     r3, #0
+c030365c:       e5c53030        strb    r3, [r5, #48]   @ 0x30
+
+       pr_emerg("Kernel panic - not syncing: %s\n", buf);
+c0303660:       e59f124c        ldr     r1, [pc, #588]  @ c03038b4
+<vpanic+0x35c>
+c0303664:       e30e07b4        movw    r0, #59316      @ 0xe7b4
+c0303668:       e34c019d        movt    r0, #49565      @ 0xc19d
+c030366c:       eb0003c7        bl      c0304590 <_printk>
+       /*
+        * Unlike the bitops with the '__' prefix above, this one *is* atomi=
+c,
+        * so `volatile` must always stay here with no cast-aways. See
+        * `Documentation/atomic_bitops.txt` for the details.
+        */
+       return 1UL & (addr[BIT_WORD(nr)] >> (nr & (BITS_PER_LONG-1)));
+c0303670:       e5943008        ldr     r3, [r4, #8]
+#ifdef CONFIG_DEBUG_BUGVERBOSE
+       /*
+        * Avoid nested stack-dumping if a panic occurs during oops processi=
+ng
+        */
+       if (!test_taint(TAINT_DIE) && oops_in_progress <=3D 1)
+c0303674:       e3130080        tst     r3, #128        @ 0x80
+c0303678:       1a000005        bne     c0303694 <vpanic+0x13c>
+c030367c:       e30a3284        movw    r3, #41604      @ 0xa284
+c0303680:       e34c3222        movt    r3, #49698      @ 0xc222
+c0303684:       e5933000        ldr     r3, [r3]
+c0303688:       e3530001        cmp     r3, #1
+c030368c:       ca000000        bgt     c0303694 <vpanic+0x13c>
+               dump_stack();
+c0303690:       eb006216        bl      c031bef0 <dump_stack>
+        * If we want to run this after calling panic_notifiers, pass
+        * the "crash_kexec_post_notifiers" option to the kernel.
+        *
+        * Bypass the panic_cpu check and call __crash_kexec directly.
+        */
+       if (!_crash_kexec_post_notifiers)
+c0303694:       e3560000        cmp     r6, #0
+c0303698:       1a000001        bne     c03036a4 <vpanic+0x14c>
+               __crash_kexec(NULL);
+c030369c:       e1a00006        mov     r0, r6
+c03036a0:       eb050e94        bl      c04470f8 <__crash_kexec>
+       if (panic_print & SYS_INFO_ALL_CPU_BT) {
+c03036a4:       e5943000        ldr     r3, [r4]
+c03036a8:       e3130040        tst     r3, #64 @ 0x40
+c03036ac:       0a000007        beq     c03036d0 <vpanic+0x178>
+* to allow calling code to fall back to some other mechanism:
+*/
+#ifdef arch_trigger_cpumask_backtrace
+static inline bool trigger_all_cpu_backtrace(void)
+{
+       arch_trigger_cpumask_backtrace(cpu_online_mask, -1);
+c03036b0:       e3e01000        mvn     r1, #0
+c03036b4:       e3040f14        movw    r0, #20244      @ 0x4f14
+c03036b8:       e34c01f0        movt    r0, #49648      @ 0xc1f0
+               panic_triggering_all_cpu_backtrace =3D true;
+c03036bc:       e3a03001        mov     r3, #1
+c03036c0:       e5c43430        strb    r3, [r4, #1072] @ 0x430
+c03036c4:       eb00a103        bl      c032bad8
+<arch_trigger_cpumask_backtrace>
+               panic_triggering_all_cpu_backtrace =3D false;
+c03036c8:       e3a03000        mov     r3, #0
+c03036cc:       e5c43430        strb    r3, [r4, #1072] @ 0x430
+       if (!crash_kexec)
+c03036d0:       e3560000        cmp     r6, #0
+c03036d4:       1a000001        bne     c03036e0 <vpanic+0x188>
+               smp_send_stop();
+c03036d8:       eb00a0b0        bl      c032b9a0 <smp_send_stop>
+c03036dc:       ea000000        b       c03036e4 <vpanic+0x18c>
+               crash_smp_send_stop();
+c03036e0:       eb00a7e6        bl      c032d680 <crash_smp_send_stop>
+
+       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+
+       printk_legacy_allow_panic_sync();
+c03036e4:       eb035931        bl      c03d9bb0
+<printk_legacy_allow_panic_sync>
+
+       /*
+        * Run any panic handlers, including those that might need to
+        * add information to the kmsg dump output.
+        */
+       atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
+c03036e8:       e59f21c4        ldr     r2, [pc, #452]  @ c03038b4
+<vpanic+0x35c>
+c03036ec:       e3a01000        mov     r1, #0
+c03036f0:       e59f01c8        ldr     r0, [pc, #456]  @ c03038c0
+<vpanic+0x368>
+c03036f4:       eb024681        bl      c0395100 <atomic_notifier_call_chai=
+n>
+
+       sys_info(panic_print);
+c03036f8:       e5940000        ldr     r0, [r4]
+c03036fc:       eb45b2ff        bl      c1470300 <sys_info>
+
+       kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
+c0303700:       e59f11ac        ldr     r1, [pc, #428]  @ c03038b4
+<vpanic+0x35c>
+c0303704:       e3a00001        mov     r0, #1
+c0303708:       eb036048        bl      c03db830 <kmsg_dump_desc>
+        * Note: since some panic_notifiers can make crashed kernel
+        * more unstable, it can increase risks of the kdump failure too.
+        *
+        * Bypass the panic_cpu check and call __crash_kexec directly.
+        */
+       if (_crash_kexec_post_notifiers)
+c030370c:       e3560000        cmp     r6, #0
+c0303710:       0a000001        beq     c030371c <vpanic+0x1c4>
+               __crash_kexec(NULL);
+c0303714:       e3a00000        mov     r0, #0
+c0303718:       eb050e76        bl      c04470f8 <__crash_kexec>
+
+       console_unblank();
+c030371c:       eb035ede        bl      c03db29c <console_unblank>
+        * buffer.  Try to acquire the lock then release it regardless of th=
+e
+        * result.  The release will also print the buffers out.  Locks debu=
+g
+        * should be disabled to avoid reporting bad unlock balance when
+        * panic() is not being callled from OOPS.
+        */
+       debug_locks_off();
+c0303720:       eb151570        bl      c0848ce8 <debug_locks_off>
+       console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+c0303724:       e3a00000        mov     r0, #0
+c0303728:       eb035f7a        bl      c03db518 <console_flush_on_panic>
+
+       if ((panic_print & SYS_INFO_PANIC_CONSOLE_REPLAY) ||
+c030372c:       e5943000        ldr     r3, [r4]
+c0303730:       e3130020        tst     r3, #32
+c0303734:       0a000002        beq     c0303744 <vpanic+0x1ec>
+               panic_console_replay)
+               console_flush_on_panic(CONSOLE_REPLAY_ALL);
+c0303738:       e3a00001        mov     r0, #1
+c030373c:       eb035f75        bl      c03db518 <console_flush_on_panic>
+c0303740:       ea000007        b       c0303764 <vpanic+0x20c>
+       if ((panic_print & SYS_INFO_PANIC_CONSOLE_REPLAY) ||
+c0303744:       e5d4543c        ldrb    r5, [r4, #1084] @ 0x43c
+c0303748:       e3550001        cmp     r5, #1
+c030374c:       9a000002        bls     c030375c <vpanic+0x204>
+c0303750:       e59f016c        ldr     r0, [pc, #364]  @ c03038c4
+<vpanic+0x36c>
+c0303754:       e1a01005        mov     r1, r5
+c0303758:       eb17f540        bl      c0900c60
+<__ubsan_handle_load_invalid_value>
+c030375c:       e3150001        tst     r5, #1
+c0303760:       1afffff4        bne     c0303738 <vpanic+0x1e0>
+
+       if (!panic_blink)
+c0303764:       e5943440        ldr     r3, [r4, #1088] @ 0x440
+c0303768:       e30e8b08        movw    r8, #60168      @ 0xeb08
+c030376c:       e34c81b7        movt    r8, #49591      @ 0xc1b7
+               panic_blink =3D no_blink;
+
+       if (panic_timeout > 0) {
+c0303770:       e5941444        ldr     r1, [r4, #1092] @ 0x444
+       if (!panic_blink)
+c0303774:       e3530000        cmp     r3, #0
+               panic_blink =3D no_blink;
+c0303778:       03053010        movweq  r3, #20496      @ 0x5010
+c030377c:       034c3036        movteq  r3, #49206      @ 0xc036
+c0303780:       05843440        streq   r3, [r4, #1088] @ 0x440
+       if (panic_timeout > 0) {
+c0303784:       e3510000        cmp     r1, #0
+       int state =3D 0;
+c0303788:       d3a05000        movle   r5, #0
+       long i, i_next =3D 0, len;
+c030378c:       d1a07005        movle   r7, r5
+       if (panic_timeout > 0) {
+c0303790:       da00001c        ble     c0303808 <vpanic+0x2b0>
+       int state =3D 0;
+c0303794:       e3a05000        mov     r5, #0
+                       touch_nmi_watchdog();
+                       if (i >=3D i_next) {
+                               i +=3D panic_blink(state ^=3D 1);
+                               i_next =3D i + 3600 / PANIC_BLINK_SPD;
+                       }
+                       mdelay(PANIC_TIMER_STEP);
+c0303798:       e30cbb60        movw    fp, #52064      @ 0xcb60
+c030379c:       e340bccc        movt    fp, #3276       @ 0xccc
+       long i, i_next =3D 0, len;
+c03037a0:       e1a07005        mov     r7, r5
+               for (i =3D 0; i < panic_timeout * 1000; i +=3D PANIC_TIMER_S=
+TEP) {
+c03037a4:       e1a06005        mov     r6, r5
+c03037a8:       e3a0affa        mov     sl, #1000       @ 0x3e8
+               pr_emerg("Rebooting in %d seconds..\n", panic_timeout);
+c03037ac:       e30e07d8        movw    r0, #59352      @ 0xe7d8
+c03037b0:       e34c019d        movt    r0, #49565      @ 0xc19d
+c03037b4:       eb000375        bl      c0304590 <_printk>
+               for (i =3D 0; i < panic_timeout * 1000; i +=3D PANIC_TIMER_S=
+TEP) {
+c03037b8:       e5941444        ldr     r1, [r4, #1092] @ 0x444
+c03037bc:       e003019a        mul     r3, sl, r1
+c03037c0:       e1530006        cmp     r3, r6
+c03037c4:       da00000f        ble     c0303808 <vpanic+0x2b0>
+                       if (i >=3D i_next) {
+c03037c8:       e1560007        cmp     r6, r7
+c03037cc:       ba000005        blt     c03037e8 <vpanic+0x290>
+                               i +=3D panic_blink(state ^=3D 1);
+c03037d0:       e2255001        eor     r5, r5, #1
+c03037d4:       e5943440        ldr     r3, [r4, #1088] @ 0x440
+c03037d8:       e1a00005        mov     r0, r5
+c03037dc:       e12fff33        blx     r3
+c03037e0:       e0866000        add     r6, r6, r0
+                               i_next =3D i + 3600 / PANIC_BLINK_SPD;
+c03037e4:       e28670c8        add     r7, r6, #200    @ 0xc8
+{
+c03037e8:       e3a09064        mov     r9, #100        @ 0x64
+                       mdelay(PANIC_TIMER_STEP);
+c03037ec:       e5983004        ldr     r3, [r8, #4]
+c03037f0:       e1a0000b        mov     r0, fp
+c03037f4:       e12fff33        blx     r3
+c03037f8:       e2599001        subs    r9, r9, #1
+c03037fc:       1afffffa        bne     c03037ec <vpanic+0x294>
+               for (i =3D 0; i < panic_timeout * 1000; i +=3D PANIC_TIMER_S=
+TEP) {
+c0303800:       e2866064        add     r6, r6, #100    @ 0x64
+c0303804:       eaffffeb        b       c03037b8 <vpanic+0x260>
+               }
+       }
+       if (panic_timeout !=3D 0) {
+c0303808:       e3510000        cmp     r1, #0
+c030380c:       0a000007        beq     c0303830 <vpanic+0x2d8>
+               /*
+                * This will not be a clean reboot, with everything
+                * shutting down.  But if there is a chance of
+                * rebooting the system it will be rebooted.
+                */
+               if (panic_reboot_mode !=3D REBOOT_UNDEFINED)
+c0303810:       e3083194        movw    r3, #33172      @ 0x8194
+c0303814:       e34c31f2        movt    r3, #49650      @ 0xc1f2
+c0303818:       e5932000        ldr     r2, [r3]
+c030381c:       e3720001        cmn     r2, #1
+                       reboot_mode =3D panic_reboot_mode;
+c0303820:       13083198        movwne  r3, #33176      @ 0x8198
+c0303824:       134c31f2        movtne  r3, #49650      @ 0xc1f2
+c0303828:       15832000        strne   r2, [r3]
+               emergency_restart();
+c030382c:       eb024cbd        bl      c0396b28 <emergency_restart>
+       }
+#endif
+#if defined(CONFIG_S390)
+       disabled_wait();
+#endif
+       pr_emerg("---[ end Kernel panic - not syncing: %s ]---\n", buf);
+c0303830:       e59f107c        ldr     r1, [pc, #124]  @ c03038b4
+<vpanic+0x35c>
+c0303834:       e30e07f8        movw    r0, #59384      @ 0xe7f8
+c0303838:       e34c019d        movt    r0, #49565      @ 0xc19d
+c030383c:       eb000353        bl      c0304590 <_printk>
+
+       /* Do not scroll important messages printed above */
+       suppress_printk =3D 1;
+c0303840:       e3043f70        movw    r3, #20336      @ 0x4f70
+c0303844:       e34c31f0        movt    r3, #49648      @ 0xc1f0
+       /*
+        * The final messages may not have been printed if in a context that
+        * defers printing (such as NMI) and irq_work is not available.
+        * Explicitly flush the kernel log buffer one last time.
+        */
+       console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+c0303848:       e3a00000        mov     r0, #0
+       suppress_printk =3D 1;
+c030384c:       e3a02001        mov     r2, #1
+c0303850:       e5832000        str     r2, [r3]
+       console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+c0303854:       eb035f2f        bl      c03db518 <console_flush_on_panic>
+       nbcon_atomic_flush_unsafe();
+c0303858:       eb03684e        bl      c03dd998 <nbcon_atomic_flush_unsafe=
+>
+       asm volatile(
+c030385c:       f1080080        cpsie   i
+               touch_softlockup_watchdog();
+               if (i >=3D i_next) {
+                       i +=3D panic_blink(state ^=3D 1);
+                       i_next =3D i + 3600 / PANIC_BLINK_SPD;
+               }
+               mdelay(PANIC_TIMER_STEP);
+c0303860:       e30cab60        movw    sl, #52064      @ 0xcb60
+c0303864:       e340accc        movt    sl, #3276       @ 0xccc
+       for (i =3D 0; ; i +=3D PANIC_TIMER_STEP) {
+c0303868:       e3a06000        mov     r6, #0
+               if (i >=3D i_next) {
+c030386c:       e1560007        cmp     r6, r7
+c0303870:       ba000005        blt     c030388c <vpanic+0x334>
+                       i +=3D panic_blink(state ^=3D 1);
+c0303874:       e2255001        eor     r5, r5, #1
+c0303878:       e5943440        ldr     r3, [r4, #1088] @ 0x440
+c030387c:       e1a00005        mov     r0, r5
+c0303880:       e12fff33        blx     r3
+c0303884:       e0866000        add     r6, r6, r0
+                       i_next =3D i + 3600 / PANIC_BLINK_SPD;
+c0303888:       e28670c8        add     r7, r6, #200    @ 0xc8
+       for (i =3D 0; ; i +=3D PANIC_TIMER_STEP) {
+c030388c:       e3a09064        mov     r9, #100        @ 0x64
+               mdelay(PANIC_TIMER_STEP);
+c0303890:       e5983004        ldr     r3, [r8, #4]
+c0303894:       e1a0000a        mov     r0, sl
+c0303898:       e12fff33        blx     r3
+c030389c:       e2599001        subs    r9, r9, #1
+c03038a0:       1afffffa        bne     c0303890 <vpanic+0x338>
+       for (i =3D 0; ; i +=3D PANIC_TIMER_STEP) {
+c03038a4:       e2866064        add     r6, r6, #100    @ 0x64
+               touch_softlockup_watchdog();
+c03038a8:       eaffffef        b       c030386c <vpanic+0x314>
+c03038ac:       c1f231bc        .word   0xc1f231bc
+c03038b0:       c1f231cc        .word   0xc1f231cc
+c03038b4:       c2228494        .word   0xc2228494
+c03038b8:       c1f231d0        .word   0xc1f231d0
+c03038bc:       c1f231e4        .word   0xc1f231e4
+c03038c0:       c2228898        .word   0xc2228898
+c03038c4:       c1f231f8        .word   0xc1f231f8
+
+c03038c8 <panic>:
+}
+EXPORT_SYMBOL(vpanic);
+
+/* Identical to vpanic(), except it takes variadic arguments instead
+of va_list */
+void panic(const char *fmt, ...)
+{
+c03038c8:       e92d000f        push    {r0, r1, r2, r3}
+c03038cc:       e52de004        push    {lr}            @ (str lr, [sp, #-4=
+]!)
+c03038d0:       e24dd00c        sub     sp, sp, #12
+c03038d4:       e52de004        push    {lr}            @ (str lr, [sp, #-4=
+]!)
+c03038d8:       eb00a471        bl      c032caa4 <__gnu_mcount_nc>
+c03038dc:       ee1d3f70        mrc     15, 0, r3, cr13, cr0, {3}
+       va_list args;
+
+       va_start(args, fmt);
+c03038e0:       e28d1014        add     r1, sp, #20
+       vpanic(fmt, args);
+c03038e4:       e59d0010        ldr     r0, [sp, #16]
+{
+c03038e8:       e5932508        ldr     r2, [r3, #1288] @ 0x508
+c03038ec:       e58d2004        str     r2, [sp, #4]
+c03038f0:       e3a02000        mov     r2, #0
+       va_start(args, fmt);
+c03038f4:       e58d1000        str     r1, [sp]
+       vpanic(fmt, args);
+c03038f8:       ebffff16        bl      c0303558 <vpanic>
+
+--=20
+Thanks,
+//richard
 
