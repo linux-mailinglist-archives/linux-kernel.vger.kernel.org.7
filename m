@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-773390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9B7B29F36
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:37:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4680B29F38
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4ED18A290D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:37:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 874724E1B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C882765C2;
-	Mon, 18 Aug 2025 10:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5BE2765C1;
+	Mon, 18 Aug 2025 10:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WGzYcKZj"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fFX5/YZQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DCCvhyao";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fFX5/YZQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DCCvhyao"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85DA2C2346;
-	Mon, 18 Aug 2025 10:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B25258EF7
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755513444; cv=none; b=huMyitN2R/NnUTtuL9tX9Wypb0UH2qoz7wXwTtcUkCq5adDFYrDJ+nYcYhxKI0E2ycuULN2r/cxV3pJ4zEOCgk7/HNLtR8XNXK9E0puL7yU35pRgy5w/gKfz1jLyiq60nYbDySXbI9hhkXR2htvpNNw2O2rq+R1Ohjnyp8e+i2c=
+	t=1755513453; cv=none; b=Q/aEbjjAaVOU0btOQjFaLilz4RjllI7Y3iMPaZTiG/M9eT4i2x30Ext1pBI52ESQlJfGROzVF9YqNlib2Q66FAQhvI8JxQqAHMwP3xbAW68H0GDRqTcEdHxFI8EDVPyoDrdWBXsMONqOiIWe/bOx5LWbTtl5bFz8STj+Gc6UQoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755513444; c=relaxed/simple;
-	bh=obRvKFjFF9Ph4yb683ydZkubdyABhWe8E+Nb4yeus5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JJw7+G/Lx6kaTN1ArcDLWNebSrV6dABTAL9civ6Mva8nKSPsMIYaYH0+YfLqLWFLLtKV/7M2h2rxrUFP0UCUyLJpFD3lFSUlh/R5TKxWF6Pw9Ja4fyWLrp6AoRPcN/B/9w9KI5bN9IuXaL2R6gi5wI/JbK4lL2O5tA0PdvwlZL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WGzYcKZj; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KxEF2mWH99v4+b1UrI9IK7DaLZgRBo7s4tDuR3rNvE0=; b=WGzYcKZjsItpYvqVp29yV+vgRp
-	y4Ct18bPaIkE+HS/bVCm2xb50P20W6c92pPHVUv8fAxu4m+m69fZgTHQ4GWekfIducpBwQFFlUmGz
-	bfMwYmSZ+7H4xRsfd4uxfbWyBRH3ZcY1OBCzjZoh8aQQ/Pov4YUVyhINrjH1mZpJ4lX+kmgzzMXig
-	4bRvwMNibvAXVosRpFLjtsvsAVJaJ0/Bgx1rz6n0EsRd0YOl/SBas2gF5X5eoY/nk8PJ2POafcD3Z
-	ItEjON1qKKCUOBtW5+oYjqXLQzoqmOQ7yDza71uEpgc7A6vfawFANH/yuP1IBQ+z86KTcHmVfJEBe
-	bg01KTiQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1unxEk-0000000HLsT-1dC2;
-	Mon, 18 Aug 2025 10:37:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E405530029B; Mon, 18 Aug 2025 12:37:09 +0200 (CEST)
-Date: Mon, 18 Aug 2025 12:37:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, pbonzini@redhat.com, ardb@kernel.org,
-	kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-	samitolvanen@google.com, ojeda@kernel.org
-Subject: Re: [PATCH v3 07/16] x86/kvm/emulate: Introduce EM_ASM_1SRC2
-Message-ID: <20250818103709.GE3289052@noisy.programming.kicks-ass.net>
-References: <20250714102011.758008629@infradead.org>
- <20250714103440.394654786@infradead.org>
- <aIF7ZhWZxlkcpm4y@google.com>
+	s=arc-20240116; t=1755513453; c=relaxed/simple;
+	bh=KLnOlT6LtB13skdfqvYXB1zN4BJeB3RTchndbveOY0k=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kHpPbUmehLC5N8fUA3B0qmAqEn3u9GoRbO1cuyF7P5/7wJWRX73z3t2tuT4dli7+HuW5Hz7C7jLrVCzMpw+xqTGiC6EVuLTTRxcMQfWDW4XWNJVDkz2RWRk6vYUdM5ywbis3snMCfhsubqKGQw42TA98/2xdsCMsNAFKgJ2g6go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fFX5/YZQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DCCvhyao; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fFX5/YZQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DCCvhyao; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6B409211EF;
+	Mon, 18 Aug 2025 10:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755513449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i5ysTGocTdn3plDN7+3DQTWuJBsF1ExHjxfOzLNMXTU=;
+	b=fFX5/YZQUozt9sXNrO5iAEtNLMRiKcvDNrz5DElWzjD4oZS7aAKsPccHhREnBCO89yOech
+	XbSJyQkIeZDHtCY266W7Bb3/CAeEHUdXkaSZS9+Eh6/mlDJZCmAralvQGw6nWTyu+Kf6/L
+	vlzdPLPJegiIf2IARB5gxL9TSTtZh3U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755513449;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i5ysTGocTdn3plDN7+3DQTWuJBsF1ExHjxfOzLNMXTU=;
+	b=DCCvhyaonsJ6tEz45xZQRGyRFPVFmkmA3eRafxo2Xa6u4kY+5/SjfjDnvEs5j79+L2GRoh
+	dtysJ8KD2xNg//Aw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="fFX5/YZQ";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=DCCvhyao
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755513449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i5ysTGocTdn3plDN7+3DQTWuJBsF1ExHjxfOzLNMXTU=;
+	b=fFX5/YZQUozt9sXNrO5iAEtNLMRiKcvDNrz5DElWzjD4oZS7aAKsPccHhREnBCO89yOech
+	XbSJyQkIeZDHtCY266W7Bb3/CAeEHUdXkaSZS9+Eh6/mlDJZCmAralvQGw6nWTyu+Kf6/L
+	vlzdPLPJegiIf2IARB5gxL9TSTtZh3U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755513449;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i5ysTGocTdn3plDN7+3DQTWuJBsF1ExHjxfOzLNMXTU=;
+	b=DCCvhyaonsJ6tEz45xZQRGyRFPVFmkmA3eRafxo2Xa6u4kY+5/SjfjDnvEs5j79+L2GRoh
+	dtysJ8KD2xNg//Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 273AA13686;
+	Mon, 18 Aug 2025 10:37:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CoRLCGkCo2g1UQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 18 Aug 2025 10:37:29 +0000
+Date: Mon, 18 Aug 2025 12:37:28 +0200
+Message-ID: <87v7mkx6dz.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Karol Kosik <k.kosik@outlook.com>,
+	Youngjun Lee <yjjuny.lee@samsung.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Fix size validation in convert_chmap_v3()
+In-Reply-To: <aKL5kftC1qGt6lpv@stanley.mountain>
+References: <aKL5kftC1qGt6lpv@stanley.mountain>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIF7ZhWZxlkcpm4y@google.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 6B409211EF
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[outlook.com];
+	FREEMAIL_CC(0.00)[suse.de,perex.cz,suse.com,outlook.com,samsung.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
 
-On Wed, Jul 23, 2025 at 05:16:38PM -0700, Sean Christopherson wrote:
-> For all of the KVM patches, please use
+On Mon, 18 Aug 2025 11:59:45 +0200,
+Dan Carpenter wrote:
 > 
->   KVM: x86:
+> The "p" pointer is void so sizeof(*p) is 1.  The intent was to check
+> sizeof(*cs_desc), which is 3, instead.
 > 
-> "x86/kvm" is used for guest-side code, and while I hope no one will conflate this
-> with guest code, the consistency is helpful.
+> Fixes: ecfd41166b72 ("ALSA: usb-audio: Validate UAC3 cluster segment descriptors")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Sure.
+Applied now.  Thanks.
 
-> On Mon, Jul 14, 2025, Peter Zijlstra wrote:
-> > Replace the FASTOP1SRC2*() instructions.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  arch/x86/kvm/emulate.c |   34 ++++++++++++++++++++++++++--------
-> >  1 file changed, 26 insertions(+), 8 deletions(-)
-> > 
-> > --- a/arch/x86/kvm/emulate.c
-> > +++ b/arch/x86/kvm/emulate.c
-> > @@ -317,6 +317,24 @@ static int em_##op(struct x86_emulate_ct
-> >  	ON64(case 8: __EM_ASM_1(op##q, rax); break;) \
-> >  	EM_ASM_END
-> >  
-> > +/* 1-operand, using "c" (src2) */
-> > +#define EM_ASM_1SRC2(op, name) \
-> > +	EM_ASM_START(name) \
-> > +	case 1: __EM_ASM_1(op##b, cl); break; \
-> > +	case 2: __EM_ASM_1(op##w, cx); break; \
-> > +	case 4: __EM_ASM_1(op##l, ecx); break; \
-> > +	ON64(case 8: __EM_ASM_1(op##q, rcx); break;) \
-> > +	EM_ASM_END
-> > +
-> > +/* 1-operand, using "c" (src2) with exception */
-> > +#define EM_ASM_1SRC2EX(op, name) \
-> > +	EM_ASM_START(name) \
-> > +	case 1: __EM_ASM_1_EX(op##b, cl); break; \
-> > +	case 2: __EM_ASM_1_EX(op##w, cx); break; \
-> > +	case 4: __EM_ASM_1_EX(op##l, ecx); break; \
-> > +	ON64(case 8: __EM_ASM_1(op##q, rcx); break;) \
-> 
-> This needs to be __EM_ASM_1_EX().  Luckily, KVM-Unit-Tests actually has testcase
-> for divq (somewhere in the morass of testcases).  I also now have an extension to
-> the fastops selftest to explicitly test all four flavors of div-by-zero; I'll get
-> it posted tomorrow.
-> 
-> (also, don't also me how long it took me to spot the copy+paste typo; I was full
->  on debugging the exception fixup code before I realized my local diff looked
->  "odd", *sigh*)
 
-Urgh, sorry about that. Typically I use regex for these things, clearly
-I messed up here.
-
-Thanks and fixed!
+Takashi
 
