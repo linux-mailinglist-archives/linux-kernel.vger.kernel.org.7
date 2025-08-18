@@ -1,184 +1,240 @@
-Return-Path: <linux-kernel+bounces-773036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A3BB29AB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:20:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E0DB29AB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58955204A4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:19:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B90E47A41FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA03727990D;
-	Mon, 18 Aug 2025 07:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A2027A448;
+	Mon, 18 Aug 2025 07:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zn7wyT7z"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X3a2ttWF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4TjsnFb0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X3a2ttWF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4TjsnFb0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2391327874F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02626279DA4
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755501590; cv=none; b=Xt3u76pm4v6ipbZyoPdi0bT0FphJ32KYGwp4oxrL0VbvZFP/ryVPWul7BblWsZVLL4dtruD4PACrb5MHZ0Cv67TSNndUlWWJgoU8g3I/96NWFAm3HRbpmCq8yT8FH66aJBh/UNlrEqkKA5ZHXNeZd6TsCkZ5QXnbnVYejxHG+is=
+	t=1755501593; cv=none; b=fKmlxc51NtDoPjoHgswMzL55qTxr3Ouie1XmRbkYsQlT1PSN6vKLlDkPLiwLm13EFzEsIzX4uHpP3HSTraPGhyYoXXP99OgwS8S+7gZ+Lf4HQCTutMQ9wT2kDYe4ISgPKEWq7D04JM7/KyDGI3TmHaTXV35+F+UiVxuV51LGuSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755501590; c=relaxed/simple;
-	bh=FQTwmlOpSlpiDox1C07+RYr3g+cTRJXiQ5qNfxI4FSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZOTFl/K8PgDRYuH0/JA1ouz1wYy04Boy9rnvRmLlQLhA41hmlbmlPEUq/N0X8sjeaR8Pipbr5hm152SqECpVqz2pMNaC9a9F/VYn4TsPHBtRshNLtsQaHj6nZkKYguiHV5a5ZtG2ofTQa8BOotGIYjcijBXVqoJgn8igvOAl3nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zn7wyT7z; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0cd668so18561105e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755501585; x=1756106385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zFG+ph3piKAY7MCJLonbSvB1EXUkHi8G1gdERzBPH0=;
-        b=zn7wyT7z5/PlPg5kAea3rYkRNKt98AB+Tb0R4VI/cLKBsF5HrEF7w4IBmq8M+eYi7q
-         A6qPBcEGkQQbom3TC21DdE3EfEI676YlC9TvPsU/mAdD1VOpEl/WuzZtK+Ln833tDWeB
-         CEH9T0Mv5p6h9z+X4S2UBWIksUR79i/NVkNYCXlCLJWW9JsdHps9LtsUSOEcUOcoxK5P
-         aen3fqyvPutlHyId58Axk1HpitAAG6rRcLteufyYoeXmt9d2NHlGnQ8lW00RxZxiQk4E
-         wV/Gz7MYTi2raFkN4iKXBHfJOuyGRep3NkwP+VDpO+sQAApiukB6r1U75fnxfROQ5BYI
-         x+rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755501585; x=1756106385;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3zFG+ph3piKAY7MCJLonbSvB1EXUkHi8G1gdERzBPH0=;
-        b=CHejozD7IZyAutEMcHZnq0RPPj1nmaWfHU1z7Diu6zoxTBR3y7isZLccfswIv245sr
-         lLQmtirR76cTpgi9XjNg+5F7ARHsIcpoaPDVkIB3ak1oDC312RJpVozyImsvv3zi7FoH
-         rA1Vliw2/HbvAlZkJhf/PXWvX4wHwVzyonE0UTMBCgnoIf/sH1NeKCFswmJqPwTYTsKd
-         gOzqmM0e2X8k4gmLt80urtR1bHwgUFC3iLS4sKqxE0L3pZdU1Rm1tqEPX7eABjTM31Ae
-         sF77+aObwEKh5S2naNj7xK+duLk7Z2tSMk6kCj4XbZhhorw7WQbu8Bnss+2gjX21VMkI
-         e1Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+tFT4CFj3b9/5lzWeEkPwANx/pb3AT7oK5LPGq4xIsPgOtoPGSQJDcbB3gbr7zL6OcOeRlm3osS4jiiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRvd2bMUN3gfNTCh++dZ83vOdAoWTv+cug8hkD4gGUtU14xmaa
-	7XnZjbvoQKfulZ+QTQ5XzFxziJwangAgbhyQm4VRp7wDFUtdp+xBYo3hPos0ExeckQk=
-X-Gm-Gg: ASbGncsBFPYZSQ737fVB8lk1HTygL4QJPBIdKD05DNjpCeUiziVOq4zVJDFEJQpkpiO
-	/K1slTxsrTvPCmgiimbXFbJMiCOZrhyqs20fDRy/K54N7k/RlYMbDeob8ugZ+K2Ry7Jalr478dq
-	KqjkWw4nj6C+ybnhrQFP3sxSAeZDHhKNRPbvRZeU3vrMQpV0AdyBN+j8OasL0aiG03tSltsFdM6
-	+3UrVntwcoy9OMNUng9EHqN6n/k6XVYdMqp666PYIRff+FkM2dsBKC6fpjxnvbkxpi50R2ftLBQ
-	bfwdYNvBAj9DH2b9p6hkgJbC1KNg+53QA4fqWJ2oxAPyfZoJfVDqMY6eBqhYfspmVa27I/dXkq7
-	s2ocMgkLauMOV3guSLymFHPw3et0L9Ucskvz8qg==
-X-Google-Smtp-Source: AGHT+IHM4h5TvUroAVFtgE7l1uKXONfdURffdRsQdfk8r4Doc4NPI78w6r1cZehK5yFOkTP2w9cGBA==
-X-Received: by 2002:a05:600c:3594:b0:453:66f:b96e with SMTP id 5b1f17b1804b1-45a218095camr84039995e9.11.1755501585402;
-        Mon, 18 Aug 2025 00:19:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a209c25a1sm131087915e9.22.2025.08.18.00.19.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 00:19:44 -0700 (PDT)
-Date: Mon, 18 Aug 2025 10:19:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Mohammad Gomaa <midomaxgomaa@gmail.com>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	kenalba@google.com, hbarnor@chromium.org, rayxu@google.com,
-	Mohammad Gomaa <midomaxgomaa@gmail.com>
-Subject: Re: [PATCH WIP v2] i2c: add tracepoints to aid debugging in
- i2c-core-base
-Message-ID: <202508181525.GKAXMVYv-lkp@intel.com>
+	s=arc-20240116; t=1755501593; c=relaxed/simple;
+	bh=t6AgPSQ28rWSgokcDKN6mlhg4ohK0Oo9SU0kuGqj+rs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4ECiU8Ad8TgDlMAFQzNVU8mnIdUUWoS614iFHFMYLYtQChViHFVSxbBSQNh4N+YPfIcC6fp5UhHfHi1LN0x3CdkCGdV/YzmrtDFaNeYiThb20RUKb25naJEGeumKdmzyJA+eQmJbyZ+Khk9aNnseWP6PAgM7Ey9dJkaxUycJuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X3a2ttWF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4TjsnFb0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X3a2ttWF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4TjsnFb0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1AF1C2124E;
+	Mon, 18 Aug 2025 07:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755501590; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fDObMno5796K3X+vCGAZ9Nq4/Zn9DnIJRXDn7rn8wvY=;
+	b=X3a2ttWF3iUqhZhs6Sb35gcmGsQJi1mboSUF4LCyesMtaTzy01g/M0jgxe1p7CbAWqjogv
+	edV8k91ebfFLY/hqoGfTv4nCgrwnOHEjk7JC219tkO066n/RPRDbMI4i3/+0li0XGjFnAF
+	JEOCcGZriZO3grbBQkLsi+/PKXFsULY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755501590;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fDObMno5796K3X+vCGAZ9Nq4/Zn9DnIJRXDn7rn8wvY=;
+	b=4TjsnFb0Prr8LbsYljJyEdKNTSgCgF/SukgbXcLgIOI8bRZ1dgES1xAYwvOOch7gUUCAGG
+	dpKQY3SWrSAiw8Aw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755501590; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fDObMno5796K3X+vCGAZ9Nq4/Zn9DnIJRXDn7rn8wvY=;
+	b=X3a2ttWF3iUqhZhs6Sb35gcmGsQJi1mboSUF4LCyesMtaTzy01g/M0jgxe1p7CbAWqjogv
+	edV8k91ebfFLY/hqoGfTv4nCgrwnOHEjk7JC219tkO066n/RPRDbMI4i3/+0li0XGjFnAF
+	JEOCcGZriZO3grbBQkLsi+/PKXFsULY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755501590;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fDObMno5796K3X+vCGAZ9Nq4/Zn9DnIJRXDn7rn8wvY=;
+	b=4TjsnFb0Prr8LbsYljJyEdKNTSgCgF/SukgbXcLgIOI8bRZ1dgES1xAYwvOOch7gUUCAGG
+	dpKQY3SWrSAiw8Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAB8013A55;
+	Mon, 18 Aug 2025 07:19:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id od7PLxXUomhUEQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 07:19:49 +0000
+Message-ID: <2daa5756-fac5-41b1-a21a-54290112df7a@suse.de>
+Date: Mon, 18 Aug 2025 09:19:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/efidrm: Match framebuffer device by id instead of
+ driver name
+To: Yao Zi <ziyao@disroot.org>, Javier Martinez Canillas
+ <javierm@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250816153430.51235-1-ziyao@disroot.org>
+ <20250816153430.51235-2-ziyao@disroot.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250816153430.51235-2-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,disroot.org:email];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[disroot.org,redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,disroot.org:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-Hi Mohammad,
+Hi
 
-kernel test robot noticed the following build warnings:
+Am 16.08.25 um 17:34 schrieb Yao Zi:
+> Currently the driver matches the platform framebuffer device registered
+> by sysfb through driver name, "efi-framebuffer", this is a little
+> confusing since this driver registers a DRM device, instead of a
+> framebuffer.
+>
+> Moreover, we have a driver with the same name, enabled by CONFIG_FB_EFI,
+> that acts as a consumer of efi-framebuffer as well. They cannot be both
+> loaded into the kernel.
+>
+> Making these two drivers coexist is sometimes useful, e.g., a
+> distribution may want to build fbcon into the kernel image for debugging
+> purpose, but keep the whole DRM subsystem enabled as module. In such
+> case efidrm could serve as a solution for running DRM-specific userspace
+> programs on platforms with only UEFI framebuffer supplied.
+>
+> Let's rename the driver as "efi-display" to avoid possible confusion.
+> A platform_device_id table is introduced to match "efi-framebuffer"
+> devices.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mohammad-Gomaa/i2c-add-tracepoints-to-aid-debugging-in-i2c-core-base/20250817-155936
-base:   7e161a991ea71e6ec526abc8f40c6852ebe3d946
-patch link:    https://lore.kernel.org/r/20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e%40gmail.com
-patch subject: [PATCH WIP v2] i2c: add tracepoints to aid debugging in i2c-core-base
-config: x86_64-randconfig-161-20250818 (https://download.01.org/0day-ci/archive/20250818/202508181525.GKAXMVYv-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+NAK, please see the rsp vesa-framebuffer patch for the rational
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202508181525.GKAXMVYv-lkp@intel.com/
+https://lore.kernel.org/dri-devel/d74f16f0-9615-4816-a49c-efa35b9ab344@suse.de/
 
-smatch warnings:
-drivers/i2c/i2c-core-base.c:535 i2c_device_probe() error: uninitialized symbol 'err_reason'.
+Best regards
+Thomas
 
-vim +/err_reason +535 drivers/i2c/i2c-core-base.c
-
-f37dd80ac2a67e4 drivers/i2c/i2c-core.c      David Brownell           2007-02-13  491  static int i2c_device_probe(struct device *dev)
-^1da177e4c3f415 drivers/i2c/i2c-core.c      Linus Torvalds           2005-04-16  492  {
-5763a474c887d4a drivers/i2c/i2c-core-base.c Andy Shevchenko          2025-04-16  493  	struct fwnode_handle	*fwnode = dev_fwnode(dev);
-51298d1257b9f0a drivers/i2c/i2c-core.c      Jean Delvare             2009-09-18  494  	struct i2c_client	*client = i2c_verify_client(dev);
-51298d1257b9f0a drivers/i2c/i2c-core.c      Jean Delvare             2009-09-18  495  	struct i2c_driver	*driver;
-79ece9b292af6b0 drivers/i2c/i2c-core-base.c Ricardo Ribalda          2022-11-14  496  	bool do_power_on;
-50c3304a5e1e521 drivers/i2c/i2c-core.c      Hans Verkuil             2008-03-12  497  	int status;
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  498  	int err_reason;
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  499  	bool has_id_table, has_acpi_match, has_of_match;
-7b4fbc50fabb810 drivers/i2c/i2c-core.c      David Brownell           2007-05-01  500  
-51298d1257b9f0a drivers/i2c/i2c-core.c      Jean Delvare             2009-09-18  501  	if (!client)
-51298d1257b9f0a drivers/i2c/i2c-core.c      Jean Delvare             2009-09-18  502  		return 0;
-51298d1257b9f0a drivers/i2c/i2c-core.c      Jean Delvare             2009-09-18  503  
-6e76cb7dfd34a2e drivers/i2c/i2c-core-base.c Charles Keepax           2019-06-27  504  	client->irq = client->init_irq;
-6e76cb7dfd34a2e drivers/i2c/i2c-core-base.c Charles Keepax           2019-06-27  505  
-0c2a34937f7e4c4 drivers/i2c/i2c-core-base.c Wolfram Sang             2020-06-30  506  	if (!client->irq) {
-845c877009cf014 drivers/i2c/i2c-core.c      Mika Westerberg          2015-05-06  507  		int irq = -ENOENT;
-845c877009cf014 drivers/i2c/i2c-core.c      Mika Westerberg          2015-05-06  508  
-331c34255293cd0 drivers/i2c/i2c-core.c      Dmitry Torokhov          2017-01-04  509  		if (client->flags & I2C_CLIENT_HOST_NOTIFY) {
-331c34255293cd0 drivers/i2c/i2c-core.c      Dmitry Torokhov          2017-01-04  510  			dev_dbg(dev, "Using Host Notify IRQ\n");
-72bfcee11cf8950 drivers/i2c/i2c-core-base.c Jarkko Nikula            2019-04-30  511  			/* Keep adapter active when Host Notify is required */
-72bfcee11cf8950 drivers/i2c/i2c-core-base.c Jarkko Nikula            2019-04-30  512  			pm_runtime_get_sync(&client->adapter->dev);
-331c34255293cd0 drivers/i2c/i2c-core.c      Dmitry Torokhov          2017-01-04  513  			irq = i2c_smbus_host_notify_to_irq(client);
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  514  			err_reason = I2C_TRACE_REASON_HOST_NOTIFY;
-5763a474c887d4a drivers/i2c/i2c-core-base.c Andy Shevchenko          2025-04-16  515  		} else if (is_of_node(fwnode)) {
-5d9424b00b577b6 drivers/i2c/i2c-core-base.c Andy Shevchenko          2025-04-16  516  			irq = fwnode_irq_get_byname(fwnode, "irq");
-3fffd1283927342 drivers/i2c/i2c-core.c      Dmitry Torokhov          2015-08-17  517  			if (irq == -EINVAL || irq == -ENODATA)
-5d9424b00b577b6 drivers/i2c/i2c-core-base.c Andy Shevchenko          2025-04-16  518  				irq = fwnode_irq_get(fwnode, 0);
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  519  			err_reason = I2C_TRACE_REASON_FROM_OF;
-5763a474c887d4a drivers/i2c/i2c-core-base.c Andy Shevchenko          2025-04-16  520  		} else if (is_acpi_device_node(fwnode)) {
-b38f2d5d9615cf9 drivers/i2c/i2c-core-base.c Raul E Rangel            2022-09-29  521  			bool wake_capable;
-b38f2d5d9615cf9 drivers/i2c/i2c-core-base.c Raul E Rangel            2022-09-29  522  
-b38f2d5d9615cf9 drivers/i2c/i2c-core-base.c Raul E Rangel            2022-09-29  523  			irq = i2c_acpi_get_irq(client, &wake_capable);
-b38f2d5d9615cf9 drivers/i2c/i2c-core-base.c Raul E Rangel            2022-09-29  524  			if (irq > 0 && wake_capable)
-b38f2d5d9615cf9 drivers/i2c/i2c-core-base.c Raul E Rangel            2022-09-29  525  				client->flags |= I2C_CLIENT_WAKE;
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  526  			err_reason = I2C_TRACE_REASON_FROM_ACPI;
-3fffd1283927342 drivers/i2c/i2c-core.c      Dmitry Torokhov          2015-08-17  527  		}
-
-err_reason not set on else { path.
-
-3c3dd56f760da05 drivers/i2c/i2c-core-base.c Alain Volmat             2020-04-30  528  		if (irq == -EPROBE_DEFER) {
-5c52473b4496b35 drivers/i2c/i2c-core-base.c Xu Yang                  2025-05-07  529  			status = dev_err_probe(dev, irq, "can't get irq\n");
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  530  			err_reason = I2C_TRACE_REASON_EPROBE_DEFER_IRQ;
-3c3dd56f760da05 drivers/i2c/i2c-core-base.c Alain Volmat             2020-04-30  531  			goto put_sync_adapter;
-3c3dd56f760da05 drivers/i2c/i2c-core-base.c Alain Volmat             2020-04-30  532  		}
-331c34255293cd0 drivers/i2c/i2c-core.c      Dmitry Torokhov          2017-01-04  533  
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  534  		if (irq < 0) {
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17 @535  			trace_i2c_device_probe_debug(dev, err_reason);
-                                                                                                                                          ^^^^^^^^^^
-
-6f34be7400c68d3 drivers/i2c/i2c-core.c      Geert Uytterhoeven       2014-11-17  536  			irq = 0;
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  537  		}
-2fd36c55264926e drivers/i2c/i2c-core.c      Laurent Pinchart         2014-10-30  538  
-2fd36c55264926e drivers/i2c/i2c-core.c      Laurent Pinchart         2014-10-30  539  		client->irq = irq;
-2fd36c55264926e drivers/i2c/i2c-core.c      Laurent Pinchart         2014-10-30  540  	}
-2fd36c55264926e drivers/i2c/i2c-core.c      Laurent Pinchart         2014-10-30  541  
-0c2a34937f7e4c4 drivers/i2c/i2c-core-base.c Wolfram Sang             2020-06-30  542  	driver = to_i2c_driver(dev->driver);
-0c2a34937f7e4c4 drivers/i2c/i2c-core-base.c Wolfram Sang             2020-06-30  543  
-dc94c3bf033524a drivers/i2c/i2c-core-base.c Mohammad Gomaa           2025-08-17  544  	has_id_table = driver->id_table;
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>   drivers/gpu/drm/sysfb/efidrm.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sysfb/efidrm.c b/drivers/gpu/drm/sysfb/efidrm.c
+> index 1883c4a8604c..7f76e8961788 100644
+> --- a/drivers/gpu/drm/sysfb/efidrm.c
+> +++ b/drivers/gpu/drm/sysfb/efidrm.c
+> @@ -3,6 +3,7 @@
+>   #include <linux/aperture.h>
+>   #include <linux/efi.h>
+>   #include <linux/limits.h>
+> +#include <linux/mod_devicetable.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/screen_info.h>
+>   
+> @@ -375,10 +376,17 @@ static void efidrm_remove(struct platform_device *pdev)
+>   	drm_dev_unplug(dev);
+>   }
+>   
+> +static const struct platform_device_id efidrm_platform_id[] = {
+> +	{ "efi-framebuffer" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, efidrm_platform_id);
+> +
+>   static struct platform_driver efidrm_platform_driver = {
+>   	.driver = {
+> -		.name = "efi-framebuffer",
+> +		.name = "efi-display",
+>   	},
+> +	.id_table = efidrm_platform_id,
+>   	.probe = efidrm_probe,
+>   	.remove = efidrm_remove,
+>   };
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
