@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-774437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55753B2B231
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADFDB2B237
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814E617FBBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:16:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E32C567C96
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739FB275860;
-	Mon, 18 Aug 2025 20:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C722277013;
+	Mon, 18 Aug 2025 20:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MJwKW3nC"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XlJhJ9a8"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37D422370A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8DA22D7A5
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755548144; cv=none; b=nQZzULMljUiTWVwGSCq82snjRA/ndNfGa1NleysTn+1iZ8fYPAJ8Olp2nRm7d/yEkidjuHCwLHPCSkQ3HOggYmK7XHSGzkV8PeKvduUkPlIzMw441sJ3k285/7boVhbj6Nvr6ETEe42+FJWcqAn0GodlJCLSs0BCVApklps1lpA=
+	t=1755548145; cv=none; b=Gg1p/HbHopepnVvNlksAWPG2vlUqzlG39RcjcOPwZsF4Bv9S9uyMmsBVT813zxb2c9CvClJSIPn05Ser/TWfnUwrQmWH55jANn7hJCGHeBWo1LTpS8oby3urpzPsAMDyju5OM0m+fPusW43NawC/wjSU140OcNAXwwSaOylND6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755548144; c=relaxed/simple;
-	bh=2p2FtkZ4Lnr9IlWB9wAFHpMJBW9ofPI2RfNGv3X02BE=;
+	s=arc-20240116; t=1755548145; c=relaxed/simple;
+	bh=tFoInIAvGowRuxA5IgYJwn3ZqXOXAj0ZwAR5l80sflk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XMtKJ9NGSHNr9vjaCeWYAH+pIbRoOEpITBikH6rh/Q5soLxgX1usEHzJWEMT9wjgLAIFWjtXgDjlsIprsYBF2mDwil0VdkViwib+vOxRep3M35Lc9YsH85pFBiUb4osbDHfp1qbKRbvdrtcu3AW6ty0n7XdbZ7aAVYlbDrdChTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MJwKW3nC; arc=none smtp.client-ip=209.85.167.43
+	 In-Reply-To:To:Cc; b=f9jS+P6x/kB2DDgFUgf4xp70hPP52ozPwDnC5gzf3+Sr9qrLKfEAznePlW7TYi7TrHtmMhW1FJfy8OwZLhSajylxOS482+e/AdEsuPGRDgKd5/k0tSJVWdvgfqSVuxGdacWIzfBxBwg6lM66Gu/7eUnxorqVI3vPA02M1Fyp9c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XlJhJ9a8; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55ce528a0f5so4591995e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:15:42 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55ce527ffbfso4053012e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755548141; x=1756152941; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1755548142; x=1756152942; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DLzqZRdyOLv8EDpzaUnt0Q4MFdVvX6ZyIG6yl0VPoqc=;
-        b=MJwKW3nC5WAQCeoA87IfFmIEnX1LOg7Un3ZpZuJ/K49fBFHJGf8S5DChYqONTSOnlY
-         hDJTmPwfUpw3ACmF0ztuB+ExZ/RpWxj5bwrELwNwuar3O2awYAYPCQ0LI8lVOl3fHJf5
-         5mQAQRdX1uo+hbCNP0mJa0FCeRSbxo8TaVoCU=
+        bh=dEpJBKB+qWy+9B0fWWzvqhUsl5wcxZoDtzLEu16z0Dw=;
+        b=XlJhJ9a8kaQ/JBClQW53Y8r7tWR3vj7pYmb7BvZXSxo3nXqd7YEM2I2/Fx931xpuj0
+         L8lDzMvHjyzKAkrGJW1xLrtcEO5Va1kQ0oe30ZXoCnUknlVepwnABww+nao+Y06/J7/O
+         w349MXU9ofixjUHFjbH6l9kJ1G6/lJuvpcMVo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755548141; x=1756152941;
+        d=1e100.net; s=20230601; t=1755548142; x=1756152942;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DLzqZRdyOLv8EDpzaUnt0Q4MFdVvX6ZyIG6yl0VPoqc=;
-        b=h/YIDj355BDaLWhN+dm/cCjCr7gsxOppXRxo35twxbvSY6pes9PllHzIBSZxp4V/KD
-         r7xYX6hn4XMjrUiUl6igPsX0EJSGnUGy0ZNCRF4zWs/T+ppItWUNgRK0+EXNHIE+BYNY
-         mR9tH2kAFlyUefFFcEpfXOiWMpINvAWjURj2ggSSjSxHloiM8L0VI7YQA13gQf87CFlN
-         N1J+PDecUCv5BIfxuDdJm2T56a2Q8tRHj+dSeHNvL4g6Q5GUGqNEcwtj7Ndx0uTRzm+w
-         DAF9BYN1UKmc33bCjLRMVpx7MJsdlVFF5xsCoRXKDN4IxJsQcCMmlHpV5uk7+MB0cgb2
-         MigA==
-X-Forwarded-Encrypted: i=1; AJvYcCULajzMImNs7c8A/0BHaajr8VL0rLxgNpNHLXXSIYmLkR1yylzlVOssbFh/+N51tE7GxCbLzr6RMTzKo/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwES7+8GXq7ENU5Enu7l+MTbgvUFVpQrjjW3sq3z8ATLnNddDU1
-	cQhUVIHatIOpoV9QBePRsoqxQ/EgVqEAREozvtsEzzz4Rux8+E7InP+mjpitxJXTbQ==
-X-Gm-Gg: ASbGnctrIfQk9/q4u/+fBgjzO+Ip9HaI4cWTxp3HuHsoIo+Y3VpWeXFHEhkbyQ1jjxM
-	NF9eZOniCSN36clsDqvPlhTyqyA7EUBjXoxciwKCWipgwTHqJLI0HiWa2Iwq06oq6g/5QiNreKK
-	rgPWQcqjieSLO+if61gvhuCP8+gNHjg/JnT6uturw/Nl9bWHpv7ceS1MOJ5DpTqPm02M/woWSdy
-	RuS2B/DKzgLnM5WF9qIIbpvKOdl1jMjh35+ZiRlVbNfr2OIHf3OCxcOfnJSRrFmYmd0Gih2q6Bd
-	pkLatHaNe7mhPW7lq0CIhO5e1cx+WawEDZOHu79cn88b4oQNAKwWXMh4gaDcb34i6Bd+WYowl6P
-	DSgk9SpBOV4fpgRHoFZD5AhZWfv80yj1UxEkDVluaPFkZbHZ5rBpevpacVyvM6zyJ/LZOOpzGnw
-	w=
-X-Google-Smtp-Source: AGHT+IHomcZrlLRv3tAqMDJkW/VO0hvBuw4jaQNof58elMwk6nl++cYJMU4IoI47742CxSR4XiYzsg==
-X-Received: by 2002:a05:6512:2348:b0:55c:e752:e9c5 with SMTP id 2adb3069b0e04-55e007512d8mr55584e87.7.1755548141083;
+        bh=dEpJBKB+qWy+9B0fWWzvqhUsl5wcxZoDtzLEu16z0Dw=;
+        b=DlHLoOOnvQNoESkRmYqFoKxTOY09p83gWcHSkuUiRbSFbWxU7Ucu70m8ETa2f/ka0H
+         jT9cRfVgJ/HC6gfd7lWRk3xI/N7H9Et6VFD4/7pkTFgec2dVtbDZUuIqqOZwUFcvRmsI
+         XXtD6yjxq4Bia3TPFyhrw1fl8ggk4pYudbjghd0HPpDWaUalbMdUcG6+2VjjcPkKXDNh
+         buxDFlAXMYcQrFnBGv9tbCUV06UYq7HU3E4J2WywIRPdCr7Ass7fW8B+euANziyRG/Nw
+         qUnJFMIbV+Wm4z6So7PYvMBkiMh/Aw2+icB3iOGD0ekJVJNrCiC9ujp97tCBXFR5d9JK
+         62qA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7aOOTST+VdcQtCh0Pa151boBW402ldHa6L18hEn2Q0EwKnH2TZMWuIZWc944dqkxePQLa/afvca2NQZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKKIu+GhQFmhca8k2PMJHvqSAMdHQVmKzTqZPKjuF20iFjuRp1
+	h030YptL5natZUt+uvEVMVrp1DN0fXDFic0S5JWzolaZ3yzIFZ6b2Q+VwEeawtacMw==
+X-Gm-Gg: ASbGncvnHDhe/nmORc+CNxUeQ0yip6MPC60VDB184D2ZwiBDw+uGwv4+6VieaIis0kC
+	++9LjsM9LyEbk+P9lNGtUTZX8rS1SjwFjgo4Y/Hoq1wv7B1vjfXijG8GbP4GZStrKIOxQ+c5zZJ
+	NfaKkCyj0RPYEEqhCi8vhBfNFvbXqY9Qxubs9Vd+R8ljucWS1CmxdimbsjyYzChlA4d5tNCBCBn
+	o/UEN4Cw7zdW0m/mtGS+YPAOMFByobBOtnoxwpghW9HQS+h27WIUw2wF6yqlK5LmqM7JHjzk0M3
+	ZpgdJUVPDBRNgM+WpzaGG4ji1G9Iot0Cu3jNsjnpCEZHzucA2ssI+J94FQmpAl8ajLs4MyFkuR3
+	pJg9aeuJ4fYq8/EbHz5rURjEhpgvvcBq2ouYJlinAs5hkaD4asciaT4ARvUHawQ2sByt5u440rW
+	A=
+X-Google-Smtp-Source: AGHT+IE0mjNwJY/EwDnV+q6jH14CZm8UZca+WUBq2p3wQXYyERXzxqjD4/n+WbcQCdVvPQYFzgQcjA==
+X-Received: by 2002:a05:6512:10ca:b0:55b:886e:d50a with SMTP id 2adb3069b0e04-55e007a774emr46019e87.13.1755548141670;
         Mon, 18 Aug 2025 13:15:41 -0700 (PDT)
 Received: from ribalda.c.googlers.com (237.65.88.34.bc.googleusercontent.com. [34.88.65.237])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f3476sm1789268e87.107.2025.08.18.13.15.40
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f3476sm1789268e87.107.2025.08.18.13.15.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 13:15:40 -0700 (PDT)
+        Mon, 18 Aug 2025 13:15:41 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 18 Aug 2025 20:15:38 +0000
-Subject: [PATCH 3/4] media: uvcvideo: Run uvc_ctrl_init_ctrl for all
- controls
+Date: Mon, 18 Aug 2025 20:15:39 +0000
+Subject: [PATCH 4/4] media: uvcvideo: Support UVC_CROSXU_CONTROL_IQ_PROFILE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-uvc-iq-switch-v1-3-f7ea5e740ddd@chromium.org>
+Message-Id: <20250818-uvc-iq-switch-v1-4-f7ea5e740ddd@chromium.org>
 References: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
 In-Reply-To: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -94,47 +93,97 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-usb@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.14.2
 
-The function uvc_ctrl_init_ctrl() is called for every control for every
-entity, but it exits early if the entity is a extension unit. The comment
-claims that this is done to avoid querying XU controls during probe.
+The ChromeOS XU provides a control to change the IQ profile for a camera.
+It can be switched from VIVID (a.k.a. standard) to NONE (a.k.a. natural).
 
-We only query a control if its entity GUIDs and index matches the
-uvc_ctrls list. There are only controls for the following GUIDs:
-UVC_GUID_UVC_PROCESSING, UVC_GUID_UVC_CAMERA and
-UVC_GUID_EXT_GPIO_CONTROLLER.
-
-In other words, XU controls will not be queried even without this
-condition.
-
-In future patches we want to add ChromeOS XU controls that need to the
-initialized. We will make sure that all cameras with ChromeOS XU can
-be queried at probe time.
+Wire it up to the standard v4l2 control.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/media/usb/uvc/uvc_ctrl.c | 32 ++++++++++++++++++++++++++++++++
+ include/linux/usb/uvc.h          |  5 +++++
+ 2 files changed, 37 insertions(+)
 
 diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index efe609d7087752cb2ef516eef0fce12acd13e747..ff975f96e1325532e2299047c07de5d1b9cf09db 100644
+index ff975f96e1325532e2299047c07de5d1b9cf09db..8766a441ad1d8554c0daaed3f87758321684246b 100644
 --- a/drivers/media/usb/uvc/uvc_ctrl.c
 +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -3181,15 +3181,6 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
+@@ -376,6 +376,15 @@ static const struct uvc_control_info uvc_ctrls[] = {
+ 				| UVC_CTRL_FLAG_GET_DEF
+ 				| UVC_CTRL_FLAG_AUTO_UPDATE,
+ 	},
++	{
++		.entity		= UVC_GUID_CHROMEOS_XU,
++		.selector	= UVC_CROSXU_CONTROL_IQ_PROFILE,
++		.index		= 3,
++		.size		= 1,
++		.flags		= UVC_CTRL_FLAG_SET_CUR
++				| UVC_CTRL_FLAG_GET_RANGE
++				| UVC_CTRL_FLAG_RESTORE,
++	},
+ };
+ 
+ static const u32 uvc_control_classes[] = {
+@@ -384,6 +393,17 @@ static const u32 uvc_control_classes[] = {
+ };
+ 
+ static const int exposure_auto_mapping[] = { 2, 1, 4, 8 };
++static const int cros_colorfx_mapping[] = { 1, // V4L2_COLORFX_NONE
++					    -1, // V4L2_COLORFX_BW
++					    -1, // V4L2_COLORFX_SEPIA
++					    -1, // V4L2_COLORFX_NEGATIVE
++					    -1, // V4L2_COLORFX_EMBOSS
++					    -1, // V4L2_COLORFX_SKETCH
++					    -1, // V4L2_COLORFX_SKY_BLUE
++					    -1, // V4L2_COLORFX_GRASS_GREEN
++					    -1, // V4L2_COLORFX_SKIN_WHITEN
++					    0}; // V4L2_COLORFX_VIVID};
++
+ 
+ static bool uvc_ctrl_mapping_is_compound(struct uvc_control_mapping *mapping)
  {
- 	unsigned int i;
+@@ -975,6 +995,18 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+ 		.data_type	= UVC_CTRL_DATA_TYPE_BITMASK,
+ 		.name		= "Region of Interest Auto Ctrls",
+ 	},
++	{
++		.id		= V4L2_CID_COLORFX,
++		.entity		= UVC_GUID_CHROMEOS_XU,
++		.selector	= UVC_CROSXU_CONTROL_IQ_PROFILE,
++		.size		= 8,
++		.offset		= 0,
++		.v4l2_type	= V4L2_CTRL_TYPE_MENU,
++		.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
++		.menu_mapping	= cros_colorfx_mapping,
++		.menu_mask	= BIT(V4L2_COLORFX_VIVID) |
++				  BIT(V4L2_COLORFX_NONE),
++	},
+ };
  
--	/*
--	 * XU controls initialization requires querying the device for control
--	 * information. As some buggy UVC devices will crash when queried
--	 * repeatedly in a tight loop, delay XU controls initialization until
--	 * first use.
--	 */
--	if (UVC_ENTITY_TYPE(ctrl->entity) == UVC_VC_EXTENSION_UNIT)
--		return;
--
- 	for (i = 0; i < ARRAY_SIZE(uvc_ctrls); ++i) {
- 		const struct uvc_control_info *info = &uvc_ctrls[i];
+ /* ------------------------------------------------------------------------
+diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
+index 12a57e1d34674a3a264ed7f88bed43926661fcd4..22e0dab0809e296e089940620ae0e8838e109701 100644
+--- a/include/linux/usb/uvc.h
++++ b/include/linux/usb/uvc.h
+@@ -29,6 +29,9 @@
+ #define UVC_GUID_EXT_GPIO_CONTROLLER \
+ 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
+ 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
++#define UVC_GUID_CHROMEOS_XU \
++	{0x24, 0xe9, 0xd7, 0x74, 0xc9, 0x49, 0x45, 0x4a, \
++	 0x98, 0xa3, 0xc8, 0x07, 0x7e, 0x05, 0x1c, 0xa3}
+ #define UVC_GUID_MSXU_1_5 \
+ 	{0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
+ 	 0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
+@@ -50,6 +53,8 @@
+ #define UVC_MSXU_CONTROL_FIELDOFVIEW2_CONFIG	0x0f
+ #define UVC_MSXU_CONTROL_FIELDOFVIEW2		0x10
  
++#define UVC_CROSXU_CONTROL_IQ_PROFILE		0x04
++
+ #define UVC_GUID_FORMAT_MJPEG \
+ 	{ 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
+ 	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
 
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
