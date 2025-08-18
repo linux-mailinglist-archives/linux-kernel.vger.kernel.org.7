@@ -1,88 +1,110 @@
-Return-Path: <linux-kernel+bounces-773324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D86B29E50
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:48:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08111B29E51
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1FD3A75AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:47:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA0A47ADC4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF9C30E85B;
-	Mon, 18 Aug 2025 09:47:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812601448E0;
+	Mon, 18 Aug 2025 09:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=owo.li header.i=@owo.li header.b="O6Qt4cqR"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37165226CE5
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7375422068F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510425; cv=none; b=sL9Ee02G7Kve9/1pyvEAulOooRKM8+AL/uiIvHEXxyuNrwlgKIqnBUC3OvV4myaIY/BFXVa+uZKO87H9in5rywAti0DcH9/neNtO3AnPrXRpMiJx1wUSNmFNax7fE/b9jXYu7Bd0NBfW0Oz2w1itrvuLXya6j86yE00k4UXT19I=
+	t=1755510485; cv=none; b=GRiqHwPZVCkkyX4q3o5i71gzYdD5lEB+PIfIi9Jp/p4JkzSvQhaIZkEWdkMF8vtW6jiA0uW3OwkVlrfr6fw5Ogpp/Mw2pNaMSWnOJBO2kq45piF1542cqqm3JGA5hpw43gYsmkLHmjTcQ/U3OAMOiF5zwurO265n/4V9Huk5sC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510425; c=relaxed/simple;
-	bh=j+FmuxJLqFJHowEK3/yJtg3duqQ4gE9lojwmJG6bfOg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jdBswwMLgHiZXBjsQ8TPtreYUiZmBKg9KJfVeW8naWCuuR/zL8icg7WBki6nZMsCxL5h312Toq3VIUxhCbxUXHwFeJKAHXMy2TyahXptvHzRwY5imtmJUYrAieSpGPfuGTR7EzQQYOA1GCpy8PeVOZt/jwdF/Rzu+PJQIP3eF+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88432cebd70so1079973039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:47:03 -0700 (PDT)
+	s=arc-20240116; t=1755510485; c=relaxed/simple;
+	bh=z0Y5zlKyq1iyjTdrH5tIm8cQtHMJc2M8Qax87gsnJ9Y=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=GlPYe2asWmJExq45ZFxw6iCVl2C4aLWH9q+9cNmo6L2S82sJQ3X8zXx+TRt00Lx9G0o2Fo6IZQAc92IniRKPvp5RgP/33BU7AuRPTzRJapWpXUM67ZdCgHWv1q3WJMNabScJ8F+vCaOfKoLx9SjeZ8wTHosTje15IRIqoeljaIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=owo.li; spf=pass smtp.mailfrom=owo.li; dkim=pass (2048-bit key) header.d=owo.li header.i=@owo.li header.b=O6Qt4cqR; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=owo.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=owo.li
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2ea6ccb7so2791832b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owo.li; s=google; t=1755510484; x=1756115284; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bxXt0HrR/xsywipkhm+/TKQI7O+RQHahjEth/TvbAXA=;
+        b=O6Qt4cqRkCnN+lrIgKTA1xdboUVE1Cf39VE0kPsHMaFfqYEqyDPUZPLaPVg1B+ozM6
+         EaqcDItl6mIGBqir8/lMsvdDa5GxAnuEssAYtepYfWchVgr4zSuhF9H/B1BAXcodR3tD
+         2vKrPbxXBg9LZFP8cNTlVclKNsldTS6WNlC5mJ0pkZnPGbfBSVArOp66967ypko9kEe/
+         uv+dCcJWWvTd2BbczJpt1Gjx7GammvpPxxnqaebB9aIbvrIedIxJW5qIxlW7A7m/CJ4y
+         BgtoSixqaKZyDUU2eyXYuP0jJHKAfzQMkBlTSo88hKRVLUcCW8BZfpkUwkxu2XeII+K/
+         gzAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755510423; x=1756115223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PkMjJGrkjVySoMn5WUIsXfAuu46L+OAHGE+8UPnrlbw=;
-        b=FtmcSIV/U6kHofz1B37nvvAZfav4+2fpkKSoaKMAQnWgMQyvdVAjcv+J4riZVl1GLv
-         4vKTzG0VZLmnzbgqz+gTIlTjTjdfaSbKMerJkJJZbH+JQTJWba45nxeHZ4Y1FZf5qaYR
-         42jc6sp9sa3ImEgdQmmFLFCUy+18ligjGy0HXASlHtCNiUZf3ItrXUI/9d3EJ4iKV3Nj
-         EjksbcaEXINRHmjJTykWdO/+JeNtDmxfmZfx9JrAnzkVaGWM6kGXVNjePu/wglSoeow7
-         ncM4NqlHHVeLwbWSLrr/6hKCm5wKU2hmrQ609JY69RUh5mK62qxxQeDraEryWSTSjFfP
-         6rrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLvi4VChV90SzNrR5BM3lpFE2DNjOu/PzyqBS6NanLveVbEve9hGQi+dhVgyLeD/TDpYn/XBAnJEO5/iM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGu3HzhdZWebY6cpvwipXAn1dc8ogrUN9fiCb+d5gzHFAeDmI0
-	IASEpyGtzWH7j/ZxnnQnp+UtEYIhCTrQmDGGybUFvktytpAaN1YYlK3dEjLBoFwNF6OkMrdin0O
-	b+c4NnzUbskfEelWEePvfnEmCvAT/UYmI/kciap3JyUB07mXtsLvU3holJmo=
-X-Google-Smtp-Source: AGHT+IGWUcZwKlpR1WfhXpRXr2xT4iYjelxQ83g46H3PivCQEmEjdRaEaKvXLvfVzNk24rULoCFJxycHskTkQu7aCYcK8E5ZRKJM
+        d=1e100.net; s=20230601; t=1755510484; x=1756115284;
+        h=mime-version:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bxXt0HrR/xsywipkhm+/TKQI7O+RQHahjEth/TvbAXA=;
+        b=HpFkGMcJZSKczV6YkcFECmPxeunOaafTwVt6nBUOkRlCmPc8gF2Pv1QF7DGkbdJxv/
+         2qf1+iAZ88j9AvYOu8vSaTe5S2H745xVY6KmtOyTzxBIE3r0XPr3nsu9xlDb64P+JCfW
+         aADbYZNI3XVheaA95Vdv0TyYshBmlLOJMBMWEh8Zog8FX54NhIyEeV1YDzfKkFqFo5w5
+         uzN7rUFPbcsX/bp4g+MiaJgBzxBcdrr8Na9alYPTY4xnt4g79bp90WqJylBbd/KwWCEE
+         otMF7QPzDXB8m3KDC3nkDl1v12Zb5snkZ8w3mYi6IEG5y1BDlsgAez4tzohcgoMPgp+c
+         rARg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxeQQHizcEqyANSNPhaOijWkau2K5jXhm1sWIgCWtuwtruMItYcJbk3N5LEwAtFr0cY1kNfZSxwD5O+Kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7b+BXo8rfkZuQY/KubYnLQe0FkpujY9FpR9l+j6Ajm9KZp/6x
+	+0d48O4nUU/1a7kN6T49TiCMBTIhA+DIw1H7fFLuFv478ls0vWWi5mkSSVxdPj5VXvo=
+X-Gm-Gg: ASbGncultEL2rzZEpp9EiwA2ym6Np5qbgrGSU3fSl9enG6qeeFRvNY13Ke/xOZDlpbv
+	Q/Qf95O5tfGtmZgv8VZynxGKe5P/qRuErH48W/f7TS7AChXPpUtaZskKV4JoicFj2t9EB8a1Kll
+	67OeksHE51N5xQEls/6sstALSbmnJwGaKHIa60xiIDz1l2k6kfdwcXHSD8i9lJhXrKlcf+Vvnt0
+	BZq1yYSdpaTR5ApdVEE2GMM8mupAlIRX39eVkkDXpcTEDvhaQrscY7RCdnp2u/XAqKDdT0gvvkP
+	R1AMTIrNZy1UGM1yil7O6eT++QrJ63rnQDPPJeLVy9Eat67JVh+5kTjjB6b8SR8Spefo6uFI95g
+	udVIWBLrOmJ24
+X-Google-Smtp-Source: AGHT+IHLlw/No5aFyj88EmI3LVwF09WQd0xKKENW6U+K7hMbKaPgJph2PKeZJwvSaWehvHET7VDF1w==
+X-Received: by 2002:a05:6a00:21d6:b0:76b:da70:487b with SMTP id d2e1a72fcca58-76e447bf8f4mr14007768b3a.15.1755510483798;
+        Mon, 18 Aug 2025 02:48:03 -0700 (PDT)
+Received: from Iris-s-laptop ([103.143.92.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45565da9sm6703596b3a.60.2025.08.18.02.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 02:48:02 -0700 (PDT)
+Date: Mon, 18 Aug 2025 17:47:48 +0800 (+08)
+From: Iris Shi <0.0@owo.li>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation/sphinx: Fix typo in automarkup.py
+Message-ID: <8e5ddb7d-8faf-314f-b1b1-2d15d6900862@owo.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:27c8:b0:876:adf1:b263 with SMTP id
- ca18e2360f4ac-8843e3bd847mr2426139339f.6.1755510423112; Mon, 18 Aug 2025
- 02:47:03 -0700 (PDT)
-Date: Mon, 18 Aug 2025 02:47:03 -0700
-In-Reply-To: <20250818091720.4948-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a2f697.050a0220.e29e5.009e.GAE@google.com>
-Subject: Re: [syzbot] [overlayfs?] WARNING in shmem_unlink
-From: syzbot <syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, neil@brown.name, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello,
+"whan" -> "when"
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Iris Shi <0.0@owo.li>
+---
+ Documentation/sphinx/automarkup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reported-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
-Tested-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
+diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
+index 563033f764bb..1d9dada40a74 100644
+--- a/Documentation/sphinx/automarkup.py
++++ b/Documentation/sphinx/automarkup.py
+@@ -244,7 +244,7 @@ def add_and_resolve_xref(app, docname, domain, reftype, target, contnode=None):
+     return contnode
+ 
+ #
+-# Variant of markup_abi_ref() that warns whan a reference is not found
++# Variant of markup_abi_ref() that warns when a reference is not found
+ #
+ def markup_abi_file_ref(docname, app, match):
+     return markup_abi_ref(docname, app, match, warning=True)
+-- 
+2.50.1
 
-Tested on:
 
-commit:         c17b750b Linux 6.17-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e1eba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e9f694461848a008
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec9fab8b7f0386b98a17
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1413a442580000
-
-Note: testing is done by a robot and is best-effort only.
 
