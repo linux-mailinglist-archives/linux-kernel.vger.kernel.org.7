@@ -1,134 +1,161 @@
-Return-Path: <linux-kernel+bounces-772936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA236B2998C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A20B29995
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E95A172B33
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:18:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5FDA3BDF2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ADE273D92;
-	Mon, 18 Aug 2025 06:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C204E27464F;
+	Mon, 18 Aug 2025 06:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laMUJFQX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DzPRt50w"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ECB26E710;
-	Mon, 18 Aug 2025 06:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1432925CC58;
+	Mon, 18 Aug 2025 06:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755497889; cv=none; b=Ij6GKaPmQCYX8HuC7xa/GxUm4k4bvme2ViTgKDi84zjAb4tFY9lRuhF9HekGiiiMocb6fgaMC9F/PI2k98kN2LKdpsc6fGCHiVU91ww5lZT1K04zpzYISPi973h0Z5RnN3GffirR1ar1HiAxJDk9o2gb9ehLQiNxWBjUZwjrtSk=
+	t=1755498083; cv=none; b=gTZ3sewgM6dcrpcU8kq4c+IMkWcXJwm8L4NF3+SkeFU0sqGDuuaeMJS+aqnzX14EldZjzPi6ivgWceE7PCL6XXRzGlqbkErlN+UUY9sZLZ7opmMcjaR6UFnpUxxm0Ag3q7AcSvc8yGDKeidD78/Me28m9PbctD+g06CXycZwpy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755497889; c=relaxed/simple;
-	bh=SxRnpB9Bal81XXxAIu3Q8ZpoPbgIPFb2u57i3OfkJn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TPJNqwQsWpmDdWwNAqQD54FwqA99Ty7/LC5HnXTmkBkM/hmbwdokcR2TvL+WNY6Ghc2TN7WQ2wb8nHGpJVlWybNFxqCL37pl3sS0X+WZ3tA2DgJSQJvnLlTHl2rH/oIR8KPx+u0Km/padn/W5zr6HpRkorTXiLpz5mZ130/iex8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laMUJFQX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BE3C4CEED;
-	Mon, 18 Aug 2025 06:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755497889;
-	bh=SxRnpB9Bal81XXxAIu3Q8ZpoPbgIPFb2u57i3OfkJn4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=laMUJFQXl2mCTsBR8Aj8KWJCfW9gocrsjiFvWEqQkqQoCFAtT0GXb/LbwyS0+lvd+
-	 Dj3Oh7ExjaL5Msh0jTbPparqfDvl/oPOytkYYYwXmcQExM7aguQuBzTSuQk1B0KwVv
-	 TUUa+8nwaN8wUacIzkpv1BrvQQPdjTLtmJDSVX6OLjuM9Y7x5nEQRfbdEyOwnlXFan
-	 dUgqRX+foCqpMpErfuTtRvwGggtdQ7unEyEUzasS/hytnqWa4HTTZs7RICVmEx8O7S
-	 kQqdxMrmpIoXhy92bY7vVrIRORG2FO9GcKmwAOh+aFVVsUek7vuIrzTR8Eb6DOf7uz
-	 q4p4mnGEjrSAw==
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9e418ba08so2124218f8f.3;
-        Sun, 17 Aug 2025 23:18:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVRLzt60xhuyBMwzkoNP5oONYGXTs9qGmJoNQNgVMvzveQyu7Aqiv8Y4dQbcAwvLQwF1c3ZqkJXvHcqHvCo@vger.kernel.org, AJvYcCWUfi/JT6ShVdgCgBkGd8M69LdFwKNhD24K4Ygxtwa5af7UvD9ozIX8dy0l0TAvTX/htE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiBkAVyn71wdRYJRlC1+lDTFRco+0HJZ6+pKTJh34oSIyswYzP
-	jP0rbodNdS6gFk3eDFtxuSyi0Bo8/sjeyaBQPVymqx31Ugpo7oUZPdl2+YoKnicm2L1rFZuTtKd
-	jRbbqO0n4CxaeCAk83Up/wjN8dJi7OIs=
-X-Google-Smtp-Source: AGHT+IGBvHqXTFBiXkW4Wmjw2VtbPEWEJ5aSZd47qOUAUK/NhJrcIBKM4XbpKEJyrLNJfIG5cFebxW0rtn6XVIe7mOQ=
-X-Received: by 2002:a05:6000:26c4:b0:3b4:9b82:d42c with SMTP id
- ffacd0b85a97d-3bc68b89d03mr4788942f8f.17.1755497887956; Sun, 17 Aug 2025
- 23:18:07 -0700 (PDT)
+	s=arc-20240116; t=1755498083; c=relaxed/simple;
+	bh=wWQWZYbnoRcL5oSUcWqBudDMOrlVVKErs4YSQvuoh2Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKWHQmwhiVQ7UOasV5KsirpqvLOsy5c0W5W8ILJ82VlEOqkomHbLVZCi5zqcLU9nSFi/C5g55wxSOIP08rq5GocJiXy0GAjYWTDWm1Wp0Pv/LWCjfl6u58aCCuugIIDVA/5ZX64GVbQToVIK+IUA+cXS08bZpmzHl+7X5vMDOgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DzPRt50w; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57I6KkKV2653885;
+	Mon, 18 Aug 2025 01:20:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755498046;
+	bh=4oHV6eDv/jSipaBzI1+qlMqK2ITIVXOlUp3nua4gFpk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=DzPRt50w+q2spgh7NxBisUjPt9yBaIOK1KzpkfMH7nGX2ebDA3XFXELuFwIfGBwEN
+	 dguytTXvWx6sW4cZfckp/JVJmpwyvV945/yyVayTjzUxbQdOQBjAi0+QGn3YMU9PHB
+	 83AlAMkY6fE96+U7n7LE1FKVTXTwKsGCtu2Vr1J8=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57I6KkMj3594812
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 18 Aug 2025 01:20:46 -0500
+Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
+ Aug 2025 01:20:46 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE211.ent.ti.com
+ (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.1748.24; Mon, 18 Aug
+ 2025 01:20:45 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 18 Aug 2025 01:20:45 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57I6Ki38544316;
+	Mon, 18 Aug 2025 01:20:45 -0500
+Date: Mon, 18 Aug 2025 11:50:44 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <arm-scmi@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <sudeep.holla@arm.com>, <james.quinlan@broadcom.com>,
+        <f.fainelli@gmail.com>, <vincent.guittot@linaro.org>,
+        <quic_sibis@quicinc.com>, <dan.carpenter@linaro.org>,
+        <johan+linaro@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <quic_mdtipton@quicinc.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>
+Subject: Re: [PATCH 2/2] [NOT_FOR_UPSTREAM] cpufreq: scmi: Add quirk to
+ disable checks in scmi_dev_used_by_cpus()
+Message-ID: <20250818062044.zawqkalphvxjwt2w@lcpd911>
+References: <20250815102736.81450-1-cristian.marussi@arm.com>
+ <20250815102736.81450-2-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
-In-Reply-To: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Mon, 18 Aug 2025 14:17:55 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTqPMVTNdHL7PUwobXQr3dwzKPi13ZDpmkVz+3VXHLZVw@mail.gmail.com>
-X-Gm-Features: Ac12FXyXjItsm--fBQaoqgkGrtBgmoHkt-wNlAEue7p0M-vAfPTlga2pclf0gMI
-Message-ID: <CAJF2gTTqPMVTNdHL7PUwobXQr3dwzKPi13ZDpmkVz+3VXHLZVw@mail.gmail.com>
-Subject: Re: [PATCH V2] RISC-V: KVM: Write hgatp register with valid mode bits
-To: fangyu.yu@linux.alibaba.com
-Cc: anup@brainfault.org, atish.patra@linux.dev, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
-	guoren@linux.alibaba.com, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250815102736.81450-2-cristian.marussi@arm.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Aug 18, 2025 at 1:42=E2=80=AFPM <fangyu.yu@linux.alibaba.com> wrote=
-:
->
-> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->
-> According to the RISC-V Privileged Architecture Spec, when MODE=3DBare
-> is selected,software must write zero to the remaining fields of hgatp.
->
-> We have detected the valid mode supported by the HW before, So using a
-> valid mode to detect how many vmid bits are supported.
-Good catch! It's a bug. The code seems copied from asids_init(), whose
-old value is not bare mode. For real hardware, it would cause
-problems, but the qemu buggy code hides the problem.
-
-It needs a tag: Fixes: fd7bb4a251df ("RISC-V: KVM: Implement VMID allocator=
-")
-
-Others, Reviewed-by: Guo Ren <guoren@kerenl.org>
-
->
-> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->
+On Aug 15, 2025 at 11:27:36 +0100, Cristian Marussi wrote:
+> From: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> Broadcom STB platforms were early adopters of the SCMI framework and as
+> a result, not all deployed systems have a Device Tree entry where SCMI
+> protocol 0x13 (PERFORMANCE) is declared as a clock provider, nor are the
+> CPU Device Tree node(s) referencing protocol 0x13 as their clock
+> provider.
+> 
+> Leverage the quirks framework recently introduce to match on the
+> Broadcom SCMI vendor and in that case, disable the Device Tree
+> properties checks being done by scmi_dev_used_by_cpus().
+> 
+> Suggested-by: Cristian Marussi <cristian.marussi@arm.com>
+> Fixes: 6c9bb8692272 ("cpufreq: scmi: Skip SCMI devices that aren't used by the CPUs")
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> [Cristian: Moved quirk directly into scmi_dev_used_by_cpus]
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> 
+> ----
+> @Florian: I reworked this minimally to avoid the global as I was mentioning.
+> No change around the version match either...so the NOT_FOR_UPSTREAM tag.
+> (also the if (true) i smaybe a bit idiotic...)
+> Please check if it is fine and modify as you see fit.
 > ---
-> Changes in v2:
-> - Fixed build error since kvm_riscv_gstage_mode() has been modified.
-> ---
->  arch/riscv/kvm/vmid.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-> index 3b426c800480..5f33625f4070 100644
-> --- a/arch/riscv/kvm/vmid.c
-> +++ b/arch/riscv/kvm/vmid.c
-> @@ -14,6 +14,7 @@
->  #include <linux/smp.h>
->  #include <linux/kvm_host.h>
->  #include <asm/csr.h>
-> +#include <asm/kvm_mmu.h>
->  #include <asm/kvm_tlb.h>
->  #include <asm/kvm_vmid.h>
->
-> @@ -28,7 +29,7 @@ void __init kvm_riscv_gstage_vmid_detect(void)
->
->         /* Figure-out number of VMID bits in HW */
->         old =3D csr_read(CSR_HGATP);
-> -       csr_write(CSR_HGATP, old | HGATP_VMID);
-> +       csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) =
-| HGATP_VMID);
->         vmid_bits =3D csr_read(CSR_HGATP);
->         vmid_bits =3D (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
->         vmid_bits =3D fls_long(vmid_bits);
-> --
-> 2.49.0
->
+>  drivers/cpufreq/scmi-cpufreq.c     | 9 +++++++++
+>  drivers/firmware/arm_scmi/quirks.c | 2 ++
+>  include/linux/scmi_quirks.h        | 1 +
+>  3 files changed, 12 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+> index ef078426bfd5..9b7cbc4e87d9 100644
+> --- a/drivers/cpufreq/scmi-cpufreq.c
+> +++ b/drivers/cpufreq/scmi-cpufreq.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/pm_qos.h>
+>  #include <linux/slab.h>
+>  #include <linux/scmi_protocol.h>
+> +#include <linux/scmi_quirks.h>
+>  #include <linux/types.h>
+>  #include <linux/units.h>
+>  
+> @@ -393,6 +394,12 @@ static struct cpufreq_driver scmi_cpufreq_driver = {
+>  	.set_boost	= cpufreq_boost_set_sw,
+>  };
+>  
+> +#define QUIRK_SCMI_CPUFREQ_CHECK_DT_PROPS			\
+> +	({							\
+> +		if (true)					\
+> +			return true;				\
+> +	})
+> +
+
+Probably another checkpatch warning to fix:
+8<--------------------------------------------------------------------
+WARNING: Macros with flow control statements should be avoided                                                                                                                                                     
+#50: FILE: drivers/cpufreq/scmi-cpufreq.c:397:                                                                                                                                                                     
++#define QUIRK_SCMI_CPUFREQ_CHECK_DT_PROPS                      \                                        
++       ({                                                      \                                                                                                                                                  
++               if (true)                                       \                                        
++                       return true;                            \        
++       })                                                                                               
+                                                                                                         
+total: 0 errors, 1 warnings, 0 checks, 47 lines checked                                                  
+-------------------------------------------------------------------->8
 
 
---=20
-Best Regards
- Guo Ren
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
