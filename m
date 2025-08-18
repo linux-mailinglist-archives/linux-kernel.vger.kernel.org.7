@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-774423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D2CB2B204
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:00:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7A3B2B207
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84AE018962AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11875526111
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46C9201033;
-	Mon, 18 Aug 2025 20:00:41 +0000 (UTC)
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67C21F1932;
+	Mon, 18 Aug 2025 20:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvVaJmpA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1B3F510
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C461E868
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755547241; cv=none; b=mBvYE4i6kXcuG7DUsBMh8djIVJOByC/N0MnOL0no0cUmJkpRvGlo4UWA/tNcnFWsc0eLuGrk9x9IjbmNoDw2wnyK8VAHAM6WtOndekTC5bmdAwKa+DbEKieMuMiTHv4s0AkKm9e8YAQ3dmOdRjRBL1odtvqSazxInjVv1MBhMVc=
+	t=1755547335; cv=none; b=TmiSU69KDZDD6kgLL4HLkXw4FHsWJa9Ht5Hy8y5B2fUhoWNMHkxFLqQjDc787VPEVOLy6YgaB2bE8ATmTH6FfXQCsaAJD13nrpIwfu+RIG8XJ2DhV6NzkK1MP5UnmLhSzgCzSFHj1UOb8n3a2daT9IFRGoVnj1KRcbq3pGgrBb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755547241; c=relaxed/simple;
-	bh=Y1fhPF4EO1aqpABek6ibxSTTIAeQUqnqZr+jBm8oxdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiBlHjeMsce7zzzezVcYrzLTbTzbhR8tX7aYWvsvM9RXJhiUWzPrQNmVKkjK6gZoKVvFESFgfffPletX9UDw/4vnB2kJuqSlCrtd/wVouwm3qfCSBTmFLDFSuxOUnQsaPBPnlu79C7USiuruKhCx4RE21Eee7T08MMFpU37gZRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 18 Aug 2025 16:00:20 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ben Collins <bcollins@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] iio: mcp9600: Add support for IIR filter
-Message-ID: <2025081815-encouraging-swift-df1d16@boujee-and-buff>
-Mail-Followup-To: Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250818035953.35216-1-bcollins@kernel.org>
- <20250818035953.35216-6-bcollins@kernel.org>
- <20250818191539.69e1882a@jic23-huawei>
- <2025081814-grumpy-prawn-ef1a0e@boujee-and-buff>
- <20250818201035.7a107dec@jic23-huawei>
+	s=arc-20240116; t=1755547335; c=relaxed/simple;
+	bh=qjmLUZjHQ5QD9oJntM9nVj7N7ya7TqMjrnF99c2YdS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1JWHjbRNvMJlYQASyzpEOpFJXTigsP3yFl4Cyxw3hcPMFlDA5g9Ta0xp9/vCm3waLYWch2ewtK73HSSMrNxdo8xe5Nt/qvlWrlr2r0aIJFjLxw+xJFWZIxRYgMnrGJp706IOtGMK8zBT0cboeR1V8A0wD9C7ghbqiH1sAvcD0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvVaJmpA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755547332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+fG5ZGl1C62cZQFaAJ90q87NcBu2h7Rp+foxmE8Ttek=;
+	b=dvVaJmpAuJfSkUAcngRfzMOLLgRjRGfSTRz60i11JxBKVngadB5sZg2b0MbZvsgIQGmmpc
+	GfoJFQ37Av6EibHcQ+7LLwn48uoV/diuEtXsGCZdvNJhT+q2TPtkimLWyNR2IgRcq+wRnt
+	uzhvv6RbADOmXeWCDDoKPtmo0cAYav4=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-662-GhhZlo6RM-eriJXObtcUXg-1; Mon, 18 Aug 2025 16:02:11 -0400
+X-MC-Unique: GhhZlo6RM-eriJXObtcUXg-1
+X-Mimecast-MFC-AGG-ID: GhhZlo6RM-eriJXObtcUXg_1755547330
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-6188b5b2c03so3530816a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:02:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755547330; x=1756152130;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+fG5ZGl1C62cZQFaAJ90q87NcBu2h7Rp+foxmE8Ttek=;
+        b=L4YN/56DL/fmklShFnHTjDgKb2xWvWKy3Dx82FxypcgTdzplPMCQoZ5ZR2gNKVB6sS
+         lyA40akCmvSuw7JbCU0phbot1f4XRt/cjXOo0wWkryERm8o1rIMtJ8RBmOjEsYP1pIpn
+         uOqQM0085saz1zJQ3NP3T79QlS+AUZ/AsdxlpeSpR+vLxFIsKOFYiBPl+7T/NEQCN4i+
+         vfuBaXr2/b3PBwcatr8BFPzlGaTJnvVubSBKQqTmTUod4ijOpuaFj7+lKgprXlMBx3GZ
+         yGOLEzlbeG14xvmaq/Cnkc3Z7X7Uxn+PwDPepVa4Yv14A1MjS/+XJIhkR/i/W5wYnIlU
+         sYZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsMKLEYnp6fWryrrbZUirUI9cd88upR60DPRM0A/2QfXdNJGkukE04a+1A+RbQeYttUB/XeA7vlWmK27k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxv9eeTZHHhR0wMy61OWEJjmwR/sMXUJ8V4uDcLRfQS2UBZDSn
+	ipHk/OV26g7fFzLz/AuFJlV4FHdz/3LM3bdGb6LGY3GNktyE62lI6Az+WAfK1PlzXbDumoGwUF7
+	GJ+eSqm9TsLngvhOp73E+TSHjTVhOzUY+4hg59Gc3fXErcjHIo6PFfzWRU17KDBlzaVv4K6NNGM
+	jX32ZScBB8rRT8OGPR1AMoIzdJn+r+jpFIE+BOi+l3
+X-Gm-Gg: ASbGncvGCvdf82xz72dInFTVs/RU6roQiMaHzmEEMMTPdONeYsZTN//UzR4QuDmz+tR
+	IEhl2T+yHAGz0HWNrt9zzWFvt3KAL2x/RWI6ZSbpQ1IgLEheezgX2S0xOpSfSJKmsQswmFmek/6
+	6hr9Y9DdOhggheNn/d1EhtW/bGD+8E
+X-Received: by 2002:a17:907:6e9e:b0:af9:566c:4cd1 with SMTP id a640c23a62f3a-afddcb815ffmr6649966b.24.1755547329838;
+        Mon, 18 Aug 2025 13:02:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/Z6YJYYcpHHX5vpa68pR+vUhD0YFs4ADGuF96s+2h4oESeiqbIO9Y8YyPLEqoOxV16y8wZ3QXEoGXDLW/TU4=
+X-Received: by 2002:a17:907:6e9e:b0:af9:566c:4cd1 with SMTP id
+ a640c23a62f3a-afddcb815ffmr6647666b.24.1755547329385; Mon, 18 Aug 2025
+ 13:02:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5fxbv3hrdirmhyra"
-Content-Disposition: inline
-In-Reply-To: <20250818201035.7a107dec@jic23-huawei>
-X-Migadu-Flow: FLOW_OUT
-
-
---5fxbv3hrdirmhyra
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com> <20250812-clk-tests-docs-v3-3-054aed58dcd3@redhat.com>
+In-Reply-To: <20250812-clk-tests-docs-v3-3-054aed58dcd3@redhat.com>
+From: Brian Masney <bmasney@redhat.com>
+Date: Mon, 18 Aug 2025 16:01:56 -0400
+X-Gm-Features: Ac12FXxrVE5SCQ9rFBJfDNiF5LVNb7p52sPwt4Nq3ZChgQz7oePbloiikJEf1XA
+Message-ID: <CABx5tq+yDZ2GL+ekvQAXHGXUbFF3KfwN5ts5020RpYFYZNcUzg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/9] clk: test: introduce clk_dummy_div for a mock divider
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 5/5] iio: mcp9600: Add support for IIR filter
-MIME-Version: 1.0
 
-On Mon, Aug 18, 2025 at 08:10:35PM -0500, Jonathan Cameron wrote:
->=20
-> > > >  	case IIO_CHAN_INFO_SCALE:
-> > > >  		*val =3D 62;
-> > > >  		*val2 =3D 500000;
-> > > >  		return IIO_VAL_INT_PLUS_MICRO;
-> > > > + =20
-> > > If you want the extra space put it in previous patch.
-> > >  =20
-> > > >  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-> > > >  		*val =3D mcp9600_tc_types[data->thermocouple_type];
-> > > >  		return IIO_VAL_CHAR;
-> > > > +
-> > > > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> > > > +		if (data->filter_level =3D=3D 0) =20
-> > >=20
-> > > Return the current requested value. An error is just going to confuse
-> > > someone who tried to write this before enabling the filter and then
-> > > checked to see if the write was successful. =20
-> >=20
-> > I could not get a concensus on this. On the one hand, if a user sets a
-> > value here, would they not assume that the filter was enabled? What
-> > about cases where a filter_type can be more than one valid type with
-> > different available coefficients for each? What should it show then?
->=20
-> So I was thinking of this like other things with 'enables' such as events.
-> For those you always set the value first.  They don't really have a type
-> field though (well they do but the ABI allows multiple at once unlike fil=
-ters
-> so we end up with a quite different looking ABI).
->=20
-> Agreed it gets challenging with multiple filter types. If it weren't for
-> advertising the range I'd suggest just stashing whatever was written and
-> then mapping it to nearest possible when the filter type is set.
-> That's what the ad7124 does for changing between filters anyway
-> though oddly it doesn't seem to have a control for filter type.
->=20
-> This is a good argument against the whole 'none' value for filter type
-> - that's not much used so we could deprecate it for new drivers.
->=20
-> I'm not particularly keen on filter_enable but seems we are coming back
-> around to that option to avoid this corner case.  Alternative being what
-> you have here which isn't great for ease of use.
+On Tue, Aug 12, 2025 at 10:40=E2=80=AFAM Brian Masney <bmasney@redhat.com> =
+wrote:
+> +static long clk_dummy_div_round_rate(struct clk_hw *hw, unsigned long ra=
+te,
+> +                                    unsigned long *parent_rate)
+> +{
+> +       return divider_round_rate(hw, rate, parent_rate, NULL,
+> +                                 CLK_DUMMY_DIV_WIDTH, CLK_DUMMY_DIV_FLAG=
+S);
+> +}
 
-I'm somewhat wondering if the filter frequency and frequency_available
-attributes should not even show in sysfs unless the filter_type was
-something other than "none".
+I sent the wrong version of this patch with the round_rate instead of
+the determine_rate implementation. Kind of ironic given that I posted
+various series across the kernel to get rid of round_rate!
 
-> So for next version let's go for that. Make sure to include Documentation
-> in a separate patch though so it's easy to see an poke holes in.
+Brian
 
-Just to make sure I understand, you'd like to see a filter_enable
-attribute and filter_type would not contain "none", then frequency and
-frequency_available would always show something for whatever was in
-filter_type?
-
-> ABI design is a pain sometimes.
-
-The epitome of being able to paint yourself into a corner.
-
---=20
- Ben Collins
- https://libjwt.io
- https://github.com/benmcollins
- --
- 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
-
---5fxbv3hrdirmhyra
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEPsl1mBZylhoRORc6XVpXxyQrIs8FAmijhlQACgkQXVpXxyQr
-Is//dw//Wj23qhhjbGDXw9ShxxpZDXjwpjXMeF2kdzusIndozPx/C2KahxQtPdZf
-3dfyBqNFgSogJhVjoEysS49UApngDucxUawbNDD4YfOvDEnF6bZJ7z3givvAINGF
-eDO/RZehCHiCtoIe7aA38SMxDZcc54V85f2vA+HbmhgPNSp0tgKuFbFdgDohChxc
-1hJBsQuYTbD7PBPODLdR8gYLsoDENKjY3TYIB1ozKxIGtQo+uv1v0x9N3hzgmP0O
-c/2DZpNkBTKcEKYAgakmTOaGmvlhWkBlHMIntVlLjTyOYGSOOEwtDGmHNbVq2jj2
-yKy5+h7QzMQJthbjcMgxAH/Et/Y0uv3AZeGXnPyQaGcqqEiN2yJ7zq126nZFlieO
-SLg+VBPFLyMHC4q2KIwJYG2qF9IIsXrbh6YBSHvtQav++uj4wBxPmngi3ghW/uAT
-Wr3AkXya25EeapNlWBQdD33GkMFIpnx4l0CJoCPnx65+GppezoOC+0WQ6e9iqaXH
-290hwLxcDIh4JMVH2BrIoClgqM2RptB+h7jq6y1kYzp3Fk6U/KPAbK2JBIgj+FIw
-voh5V8fkiaA6JGlX0ccST6DdwzyYB4YTGQ/Oh50BBXZfe2vQE8OLHnZSVqeEcduk
-STsSjlmTR7AV1pspyKCmOZ6QCnA/0WJWGM4sdI//dgtS1/+kkHc=
-=oSUx
------END PGP SIGNATURE-----
-
---5fxbv3hrdirmhyra--
 
