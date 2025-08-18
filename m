@@ -1,201 +1,205 @@
-Return-Path: <linux-kernel+bounces-773740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAC0B2A8AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6DAB2A8A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8417687F54
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E134B1899548
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B546261B9B;
-	Mon, 18 Aug 2025 13:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8201631A04F;
+	Mon, 18 Aug 2025 13:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y/Eo1Zb0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2PMTLTq7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J42GqNK4"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1382221CC55
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525303; cv=none; b=CwI7va4n41IANOJyvSNMiIgY68Wlj6w3gbwhjLJA2PXM3FHdw/WuFvoYGfMl9mnFOZk72iaNKqaPyAu0u7giC5d4SNcU3Qkb56jpITDzauyuvhILn07DL6E2HofUMlJCeXMODg9ilUdH/iLcKaIXtbD/I9UzH+DNHko/ge8vylk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525303; c=relaxed/simple;
-	bh=0eCUlqAAsqJcNGUR1OnZEimZckJHmDPQMr7i0sDlfOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cl2y++qV9ekeoa9un/pPjr9LL1pfRdaOkbTyj7Nk9J5CxlIPY9PlFXd/7oJrPOTxB/JtgiSq21lZSTEy1RAMUMYZphkl+36hWjZcDC3iszkhfrAedUpJ7DeVlT2GmJHiSMFh8VbZU4kMdsLMGffySwf2ficxnjoZEzRKGudKEoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y/Eo1Zb0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2PMTLTq7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 18 Aug 2025 15:54:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755525300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B9sw/LNj8FrRJkDdgvvdNZRPlm9O6QUXm10PZqzxzM4=;
-	b=Y/Eo1Zb00jzjYyZwmEUO9+bWMM3WxhgdB7qgJtYQ9i98O1Ldp+nGebnTsUkXMJVzkG7T7f
-	s5A8fkOnDjaM+tldFNFBRBJo2vv7E+PV1g46YlB5F8iTW+DU/GL1iUTCKk0jt1M3AhwT1k
-	TIHDgxJd2RdPqZcU8u+hd4X0FqAi0sgwoP1Th8m00l3PvO0waPLEIxNpiFlEH+ClpFCRMs
-	vIybQ+Un9fuDwh5mCKNHmkcOSXMAVT8ytExsnFUsp1kUcoBTwdEUmKG+bacrmRMSYDd13q
-	CuPK2wiTtGT3C2sL9tKVw9O0ZAwnhiJON/eFdxBVik7RNlUf/x9AFmu3mUDzQQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755525300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B9sw/LNj8FrRJkDdgvvdNZRPlm9O6QUXm10PZqzxzM4=;
-	b=2PMTLTq7uZOhLA8fv53FDc01p5knY4G7Tta3A/7QbmfKc4reJ03p+la/0UgTVhc2gArTiH
-	5URM5Sk0eDgJbnBg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH v2] selftests/futex: Compile also on libnuma < 2.0.16
-Message-ID: <20250818135458.F352St6W@linutronix.de>
-References: <202507150858.bedaf012-lkp@intel.com>
- <20250715075735.tdXLHcEA@linutronix.de>
- <20250715095203.vVbUIvob@linutronix.de>
- <87h5z5tq51.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A48627BF84;
+	Mon, 18 Aug 2025 13:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755525316; cv=fail; b=W31I2/kHUAslqILdhdmOo+hvyZ+huI3GrmZo3JWDWpjAc3SIShI0Juqo1uw0yyhizVsakPRqLz6wJdSUroRMUNNKgnkoPLxNUfyPsyi1pYbD9mwa7kx1jtZR+i2LPEu1xMACyt8rbzWEMNtM6/1AFGhloGn1C12V+VKZIdf/UE4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755525316; c=relaxed/simple;
+	bh=GLVttyAec2BomIywVC7uYR4tJftZYRB4+zCTnuajy44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bz1YoNQ3ORBHUNPDFHqB4URbCg0z0oy7092bK4uAeb5Ol5Gp9ZzScFXYfjagbLhLuA1QOH2ZJtgUwUcrjWyqS0B5Pv1XweJTZ3VBsOmUAbHzJtpZ6ZcRPp80PQlWj8qvW/bkMYGp3DPlTFEVHVPUsHo81J430iBCPRHflztuekY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J42GqNK4; arc=fail smtp.client-ip=40.107.220.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GqiVcUIiWULDdDdwToFG5TePDjdMhlvu7F+2INyQnmSxpUN/pcZiSAQZTcHopMswq/G2gAx6hoQ/nDRLIvplrQAHeKrTKX0zPxsFPbJqBMhl55EOgag1Xcl5PyNHMFqDy6Zokf74ec9DK6GQ4ox2xnQbegiyLsDOjYIRgzXr2nOkE/DIc6VqdE4k4MnbiCIaYLKcZ8D9wYriubyjHWfygdhKbirnfunpWnmouqs392lnsQhXjoH0Sc0qZ74zcWqYFl4Cd9/2JS6ZIncoZaLZGrH/+LrsPY1M0exBmTZgS4LRXWcvXdiZlCpNqtUXJL4SbcLjUa/cfTlFfpLp2a4+5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fXuwZHaPD8ErL4USrctAkqmnoAkbrX6RxrXIriX4VqM=;
+ b=wwOKWBEaebcrGdj9MohwcjRwK4Ib/J2okPbZB6YX9ef21DS6XwDaWvjXOs1zHcVlNzjHWfxJ0+MN6Fn7xbsUjJH3ZwlUVyz1a4KsIwoyMQt7KfI2NLX8Z+3Pa9AeTgQ3sNyaR7p14Fl3/L5aUESI+4IcojXiK/0s8LEEy48nCpNdojHo49sS7Aqu94cCbcyRUlfpcbJjGvsF70Ie9Yc8Ue+hPjl8MB/cVm3jOa6KgEexJp4rruHncr7RZ7OtfJsQuVJs4qb9zorMGJHcRo4VeJAz0xDEA6wJbZZ/mrb3hkdgZw4IYxyvWeTs1PXZWsF/UCScman4Pm0dnBFNWe2U3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fXuwZHaPD8ErL4USrctAkqmnoAkbrX6RxrXIriX4VqM=;
+ b=J42GqNK43D6BEQwOzRb7ZDSbKzYdh4U6Fgec5aEIQnFl0L/h5pgassu/joYbB6eDT/Q7fMFCk9Bbl8t7/KpglzYXmjoGY+sBIziCPe/4yZK2xZnKXrZcjzmKd+nQWX1/SWr/aXhBRzqdZrah3YceL0hHSF1GFfjX9fxiNbDrhmgq2krZKJVqmajPtmY9sZAC3EuLq2ZW3YNz3MI8Xez9jSTruofAKrOD5Nuolh+fFJ8F9OgTuR61qY/totSdpERnGyEDt6bUy8iKxXCfIke2xpkuizk0YYZk+TR2B8ME8IGsB1HuefshSbgXK9qkjzN6b1kiC1bhDvef6I2rSd9lmQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CH3PR12MB7764.namprd12.prod.outlook.com (2603:10b6:610:14e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
+ 2025 13:55:11 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 13:55:11 +0000
+Date: Mon, 18 Aug 2025 10:55:09 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
+	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
+	witu@nvidia.com
+Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
+ physical memory ranges
+Message-ID: <20250818135509.GK802098@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-8-pasha.tatashin@soleen.com>
+ <20250814132233.GB802098@nvidia.com>
+ <aJ756q-wWJV37fMm@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJ756q-wWJV37fMm@kernel.org>
+X-ClientProxiedBy: BL0PR02CA0131.namprd02.prod.outlook.com
+ (2603:10b6:208:35::36) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <87h5z5tq51.ffs@tglx>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH3PR12MB7764:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2263c24-9d73-48a1-d365-08ddde5ed93c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qqlsPz2ATyqjSe2h2YUoZTApYq/48IHKPxijtHQSg9cS1vrlMiTelhuYG5m3?=
+ =?us-ascii?Q?S1PCEMoEjO0D/ZVS2TrWeriuyodAIGmDEnuAFlLAFIDgoivd9yRSw6G4IDnJ?=
+ =?us-ascii?Q?JjJ84/ZtUmx0sjP9NAJOmxuaeIM1ayuujh0hfRhtaIqjqZr/UTGW8x9wST6B?=
+ =?us-ascii?Q?xkDjIREBiaA9W/4Wk/kctAOZZ1pRfogbk0ggWL4DMd1TZw3ncuss4HI0l/Bx?=
+ =?us-ascii?Q?9jRF5MhEq4XxI+Z7HItOGGk9J0voJY2Ysw4euTaxMHaQKDAs6lo+8muU/Am6?=
+ =?us-ascii?Q?/hZBN7n+ipihCj0J0M+GOUorTvp2QjF+GNIL+JoI0eyIQsEEYymCCkNskGvN?=
+ =?us-ascii?Q?JO38L48s5qI6seBxuvlJ+Qp3bXtK3ZP0lU+tlW/RUvl1iJh1MQjlBDhFdXHJ?=
+ =?us-ascii?Q?3pNvzbVfRghHnWY/87s3B6MpppE4rxurogdx7EK6FSl12vTZXWdoZ14JdzPI?=
+ =?us-ascii?Q?5B88Hl0HqdIBRfiemtRvaSLBIJ7eHWTnHtciwDXCzmY9CNWDiamm+q/5LTSX?=
+ =?us-ascii?Q?rAuQtUG3qGPHOgLDCGfguc3tmhVEP0JQG9helWYwJre9wpa3jIC/JYOOgIUL?=
+ =?us-ascii?Q?vnxva49woPB+XN/Q4+oiR8kE0elOWzMHvK3WGGD5uuAMsxRxrq3zvc3bTxAw?=
+ =?us-ascii?Q?ppGny56raPEDM+xXTyriqmm76k0ACXij4P/4KmKVMfDZ183sBuHktgLZNQAP?=
+ =?us-ascii?Q?0fctWw1mxVB2JbwgvpTH+EKvpHR2aa0mC84yxg2iPxP4qNnznI0tQ0n/X8mY?=
+ =?us-ascii?Q?qaOTHa9jldAjwQQwE9r3qL5IsmwOgLLNVhphtYbeXPurccx9lJZrO5YlJNKq?=
+ =?us-ascii?Q?ITZ0EEP054pHopbQcISsAFhoxzoHDK9aki+u3IJh+ll1WeiOwhDXR3wW0Sgi?=
+ =?us-ascii?Q?bkZ4k1MMThellUZGKubj5NiXK2UEY/hhm4gg6prBWm2DL2GtsiykdzHBL3x4?=
+ =?us-ascii?Q?s/ZdcaEEBrCIYVg/BY7qvlE1wIqIEQ1oLJPjxPUq3rF5/h8fdCWty1FJY/7s?=
+ =?us-ascii?Q?0ig5xBTgN7sb27pkRVWaUgmQPaKoEBLAJD5IQ3bT7T+O+RE18Xw47olSyVej?=
+ =?us-ascii?Q?BSlVhXLgPRy01miyOrQiEhlmrN5YW5jftLJJTQFA48N4FA3fzFLtB+D+N63H?=
+ =?us-ascii?Q?IVuiTsx0/gp5CpL7f8KucZqzT7BEMfwFg1TT0+hpfWGJ0fCSxqKwBkdhW0mF?=
+ =?us-ascii?Q?oJjeiNjoIKTF5xd+08GPmahiqYwWKI+MnRF+eCa/+woFe+qwEuAIAT8m1J4a?=
+ =?us-ascii?Q?y/Fdmf7f37lp2s9Egkyeeect0tvjfC6qrLdqdkfMYn8mnVMB9NRmCfcdPvCa?=
+ =?us-ascii?Q?gYDBm9LWFx7Y+VMLIesZCSvnDhqS3YbigjLYWiJrB8rMVRiQo71NLs2zqIXO?=
+ =?us-ascii?Q?9Zv1KKCUBjqAJ5jrXE+fzzj0l49NnwtAKiCgPbcxXB+vlliyKQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kedtl8OYLGvsO1a5sVU03d0dlY/Fuchm8GXDD9uS6qsiMX5aSCyaaLIq4Pbh?=
+ =?us-ascii?Q?pNS+PMlrYi8toda1MQgrhJXavoauGw1ZzSiyzwOxRlYQ3I/8m+VT+jgYQbwZ?=
+ =?us-ascii?Q?y7CJAJXpaoCtcomG0Q8U/pmT+3e3AM1Q+0pUUOI+uGo3eHABhcMvpi4R1lln?=
+ =?us-ascii?Q?oLAm7lVH5ZDfCTN7vKn/NxKWjcnT5BsrAvkgEefuJEwa4AqM4jW96TfwiCrM?=
+ =?us-ascii?Q?OH/yW0CTWpwpo0DbyW8rAMRgct1vgBJNVymX30eofDsHn9HDcK0yHMYqRQnp?=
+ =?us-ascii?Q?U8/Evug+4xJzC33nFFSWocmcHb147Sux1JbMD2pUb+fJ+F48+J1VKlB+/RQz?=
+ =?us-ascii?Q?pG2jcpcIp/bL52LAte6XTIoxbNoMD8CNCkdV5uSoo3yyqPvBcHoxJCKd/8T/?=
+ =?us-ascii?Q?QIO1Trk/aSlXECLrVHx3wC19Ye36ISS9/OV0xUXbFgVzTyP7vNHsO+LF4Co2?=
+ =?us-ascii?Q?bkg4hUvWrOGciMZC3ETerfh5uhWNQVQnwaY9EZ3dnbT8GCwMEVmeZ88MJ/6i?=
+ =?us-ascii?Q?B+h1faVRq7/J6/YGwuCsIjD+8M7V/D36VDSszyAKfn1n+b3YdSEZyqwyqNac?=
+ =?us-ascii?Q?ftMsiLZkIuCvUrguHMnWA+guxG348xdJdtabAO7lFGLLMC+37V5B1+gljyK7?=
+ =?us-ascii?Q?JvPq4E560NIekXUQ14X67wDa3yTeN9GuGA2fCDhBGVu0St/8pmQzibYIfTiB?=
+ =?us-ascii?Q?hplmtXxaJ6MTyoJh8UAGI+k2267vXWk+KaxCvg5ucxuV/NA937pmPmSGpkNH?=
+ =?us-ascii?Q?WzNrgEmBP4UslTtQgZUGhRdFG6ZATQhK3LGJ6c/YfiFor7E7alMbV3CggOYS?=
+ =?us-ascii?Q?iGd11MJcpaWEBMnjzeuS7WCqLIxKkkUGGQ6sTQvcx5WrmiOtwHwRhohJsQEx?=
+ =?us-ascii?Q?TY6wuvCvERWfCLxRyrqfHXm4ejyv2g4f6Sk6goVR0Jy1Kha1yT+puatULlwQ?=
+ =?us-ascii?Q?T2ezVUazx9wu9NkdRfcrWWrwPEYYEKTbnQJseY2w7en7rXPLXan+PaLTzGRY?=
+ =?us-ascii?Q?7b3re7odAhReI28Frs6GV1MrDq6AU1WeCu2TGLVNxOlhZZ6js6jdAtRrwXJX?=
+ =?us-ascii?Q?TWfi9yZwfWOlizeITIhkdGLzLx7cS5Z7f+t/JeYWYrIHbfJBuvi6va1MiIZp?=
+ =?us-ascii?Q?xwvemJkhEL+eyLUe/L099dtKkfDX7LnPdBHXihb2HgHP7VBTifTbyuduPsPo?=
+ =?us-ascii?Q?aRoYdXHdRenrf6PLixlc9YLrulGgHJnX7Y5Hy84K1ohfR9Z8ao5abBCu6hLa?=
+ =?us-ascii?Q?LH4yaq4++C6jrRxdKnzVWZsfP8pMbKfqt7e1LGucJJVVWRi8mp6y+vD4ojqM?=
+ =?us-ascii?Q?Oh3tmjgjdAiTgzRiNC99Dxl4TfaM81jDXmDMc1ffhSUnLBPRwVeM9Gtni5H7?=
+ =?us-ascii?Q?d8mYtWP0deC/ix1Fy14EgRwHzxZcarA8NYCwe2xH6w6UdB7LzcafetQr8QsW?=
+ =?us-ascii?Q?Z/QoiyAZBmXO+lRg1KAMhwLqx8C0iFz5X9rLSvH0i2MB93aWznjpd2EdhweE?=
+ =?us-ascii?Q?ekxUcigng94UThJePzGui+M24nkJ5O2/TuPkYRRjqrLi8XDlasWgNf9+A0Qy?=
+ =?us-ascii?Q?N2tGMlIC0QeieWYZ6H9041TW9bjj+LwHKtSwvwoU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2263c24-9d73-48a1-d365-08ddde5ed93c
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 13:55:11.2925
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NMoqcknRCrBdw3BXglkeAsBzzIM5xiHnuc2NMOewKC+V6bpq4JBaHcyJljexVZ46
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7764
 
-After using numa_set_mempolicy_home_node() the test fails to compile on
-systems with libnuma library versioned lower than 2.0.16.
+On Fri, Aug 15, 2025 at 12:12:10PM +0300, Mike Rapoport wrote:
+> > Which is perhaps another comment, if this __get_free_pages() is going
+> > to be a common pattern (and I guess it will be) then the API should be
+> > streamlined alot more:
+> > 
+> >  void *kho_alloc_preserved_memory(gfp, size);
+> >  void kho_free_preserved_memory(void *);
+> 
+> This looks backwards to me. KHO should not deal with memory allocation,
+> it's responsibility to preserve/restore memory objects it supports.
 
-In order to allow lower library version add a pkg-config related check
-and exclude that part of the code. Without the proper MPOL setup it
-can't be tested.
+Then maybe those are luo_ helpers
 
-Make a total number of tests two. The first one is the first batch and
-the second is the MPOL related one. The goal is to let the user know if
-it has been skipped due to library limitation.
+But having users open code __get_free_pages() and convert to/from
+struct page, phys, etc is not a great idea.
 
-Remove test_futex_mpol(), it was unused and it is now complained by the
-compiler if the part is not compiled.
+The use case is simply to get some memory to preserve, it should work
+in terms of void *. We don't support slab today so this has to be
+emulated with full pages, but this detail should not leak out of the
+API.
 
-Fixes: 0ecb4232fc65e ("selftests/futex: Set the home_node in futex_numa_mpo=
-l")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202507150858.bedaf012-lkp@intel.com
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-v1=E2=80=A6v2:
-   - typo in LIBNUMA fixed
-   - avoid __maybe_unused
-
- .../selftests/futex/functional/Makefile       |  5 ++++-
- .../futex/functional/futex_numa_mpol.c        | 21 +++++++++----------
- 2 files changed, 14 insertions(+), 12 deletions(-)
-
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/test=
-ing/selftests/futex/functional/Makefile
-index 8cfb87f7f7c50..6f7887f585afb 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -1,6 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
-+PKG_CONFIG ?=3D pkg-config
-+LIBNUMA_TEST =3D $(shell sh -c "$(PKG_CONFIG) numa --atleast-version 2.0.1=
-6 > /dev/null 2>&1 && echo SUFFICIENT || echo NO")
-+
- INCLUDES :=3D -I../include -I../../ $(KHDR_INCLUDES)
--CFLAGS :=3D $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
-+CFLAGS :=3D $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES) -=
-DLIBNUMA_VER_$(LIBNUMA_TEST)=3D1
- LDLIBS :=3D -lpthread -lrt -lnuma
-=20
- LOCAL_HDRS :=3D \
-diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/t=
-ools/testing/selftests/futex/functional/futex_numa_mpol.c
-index a9ecfb2d3932a..120ea7d5a3cf9 100644
---- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-+++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-@@ -125,11 +125,6 @@ static void test_futex(void *futex_ptr, int must_fail)
- 	__test_futex(futex_ptr, must_fail, FUTEX2_SIZE_U32 | FUTEX_PRIVATE_FLAG |=
- FUTEX2_NUMA);
- }
-=20
--static void test_futex_mpol(void *futex_ptr, int must_fail)
--{
--	__test_futex(futex_ptr, must_fail, FUTEX2_SIZE_U32 | FUTEX_PRIVATE_FLAG |=
- FUTEX2_NUMA | FUTEX2_MPOL);
--}
--
- static void usage(char *prog)
- {
- 	printf("Usage: %s\n", prog);
-@@ -142,7 +137,7 @@ static void usage(char *prog)
- int main(int argc, char *argv[])
- {
- 	struct futex32_numa *futex_numa;
--	int mem_size, i;
-+	int mem_size;
- 	void *futex_ptr;
- 	int c;
-=20
-@@ -165,7 +160,7 @@ int main(int argc, char *argv[])
- 	}
-=20
- 	ksft_print_header();
--	ksft_set_plan(1);
-+	ksft_set_plan(2);
-=20
- 	mem_size =3D sysconf(_SC_PAGE_SIZE);
- 	futex_ptr =3D mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | =
-MAP_ANONYMOUS, 0, 0);
-@@ -201,8 +196,11 @@ int main(int argc, char *argv[])
- 	ksft_print_msg("Memory back to RW\n");
- 	test_futex(futex_ptr, 0);
-=20
-+	ksft_test_result_pass("futex2 memory boundarie tests passed\n");
-+
- 	/* MPOL test. Does not work as expected */
--	for (i =3D 0; i < 4; i++) {
-+#ifdef LIBNUMA_VER_SUFFICIENT
-+	for (int i =3D 0; i < 4; i++) {
- 		unsigned long nodemask;
- 		int ret;
-=20
-@@ -221,15 +219,16 @@ int main(int argc, char *argv[])
- 			ret =3D futex2_wake(futex_ptr, 0, FUTEX2_SIZE_U32 | FUTEX_PRIVATE_FLAG =
-| FUTEX2_NUMA | FUTEX2_MPOL);
- 			if (ret < 0)
- 				ksft_test_result_fail("Failed to wake 0 with MPOL: %m\n");
--			if (0)
--				test_futex_mpol(futex_numa, 0);
- 			if (futex_numa->numa !=3D i) {
- 				ksft_exit_fail_msg("Returned NUMA node is %d expected %d\n",
- 						   futex_numa->numa, i);
- 			}
- 		}
- 	}
--	ksft_test_result_pass("NUMA MPOL tests passed\n");
-+	ksft_test_result_pass("futex2 MPOL hints test passed\n");
-+#else
-+	ksft_test_result_skip("futex2 MPOL hints test requires libnuma 2.0.16+\n"=
-);
-+#endif
- 	ksft_finished();
- 	return 0;
- }
---=20
-2.50.1
-
+Jason
 
