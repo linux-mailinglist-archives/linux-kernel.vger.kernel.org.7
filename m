@@ -1,203 +1,140 @@
-Return-Path: <linux-kernel+bounces-773452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2CCB2A076
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:34:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA7BB2A07B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451EC1883121
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11DC42A73F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC2326F2A9;
-	Mon, 18 Aug 2025 11:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B4B319863;
+	Mon, 18 Aug 2025 11:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FPTV0Erx"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdtd+tCz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED231B112;
-	Mon, 18 Aug 2025 11:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCA6318144;
+	Mon, 18 Aug 2025 11:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755516446; cv=none; b=tDpXHjiSMvZyNAgEixfGDcN0ejKBVtBQ8Ob+VNZOlbQx/HFUsTNiO2P9zXbk1rAdJnadelOenBBoV8bLvQNgG8YT5SpJBBN+tUDFtaVgv5y9VmMncmlTizYda8ZM4+pYrK4qZocekCyVAwf/pevtsppoS/5de93+o5TqfIw3eX4=
+	t=1755516470; cv=none; b=N26RoUGummgN6o72FwD3L6pwOgo4YDRb5nCzrBDJ5Ah4CC26ChXWezEm9E6Tx6hTPPtNaYjgBuX8kUeYtwPyVHWUjfWLKAksH8tvkGrYU143fH0n6Afr5Jw8SCykxclqsNienkxbAg2GSfUG3Bi7qqjSws3JeTjdA3LW2xjroKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755516446; c=relaxed/simple;
-	bh=uKl0nQGd8CCEZ8Elq2yeMm2FWiyMJbfJHA9mUf47WrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBVYzDoWjI4sKeciQk/xRk80HMT44Yq55ksizcQvjqDPFp/wwGPvJ2bQ5FL339E82h/L1kG6QHuaZkleViC8GCWYl7f5Ktla+uye5v0oPnlYkTP52cBuf/woCM4r5QbWyeu/dHMpPdYUUwHT3IfiOeaPKVNHJx6zdMlDypW+njA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FPTV0Erx; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 992F640E0217;
-	Mon, 18 Aug 2025 11:27:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bqNe3jsJHRJ2; Mon, 18 Aug 2025 11:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755516438; bh=SD4F+pqPWXwwjsV9r2Or5I2Ph1uRjmHv+22D7V4Ujd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FPTV0Erx6eQvMggG/XA7GV7dIbaw+G9RNEM4z7veA3hArTqkqOmOemNyQPgja8lDU
-	 jnpkYlrugJqopVaV/wmnt1ZmtaXCmC0+dsckJeKh8RGBydJLj9Auqt7bcjcBp5zfml
-	 GGsPYry41WmiDicbCmS86AKWjnSH4f01p4nyxJYvBmxEMn5Dv9svwJ2cY7oefvHGH5
-	 uIGTdivThE51+4wYiiMaSrw6ypaSTpVx64CkAccAtNpDNlnHALWdvXuvpMW3l9SfAY
-	 D77vXiywmlK/+UiIff/VLiPTQSPNxXqOa3uqTFnvuQVV1J/gu8MkLAMC02nC8Pvo/E
-	 0aq2aLj/7xj3GATIxkajkUfXG7ks0ThqkHdvBjzsJ/yCqKrM//JXkyfRumtM1+SmGk
-	 XaUARys4E4tkCnhOzqfeGZPg0V5stlDt+b/HK3DDc6Su6wsbDg9L0N/ppHnxt9hjFr
-	 lU6yetzhDiemtM23AxtORkB2s2dMrg7bNa02qKQkAcPvHLnnIAl6sx7BakcIcgjUS4
-	 1t8bzI0lrUJwMb592hvO98UqC62xhsfec8ntWqDPJ5IUu1zfxw1EnY8OnZlU4ITbwj
-	 cvA4pbCIgj4r9BMyBxAbRC1O9ICWEjDomj0T4MmcKvkFdyw6kspef9t0onLMTDNyKF
-	 ES8RlHYa1CWDdeg4UwMwLnNM=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F196940E0206;
-	Mon, 18 Aug 2025 11:26:55 +0000 (UTC)
-Date: Mon, 18 Aug 2025 13:26:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, francescolavra.fl@gmail.com,
-	tiala@microsoft.com
-Subject: Re: [PATCH v9 03/18] x86/apic: Populate .read()/.write() callbacks
- of Secure AVIC driver
-Message-ID: <20250818112650.GFaKMN-kR_4SLxrqov@fat_crate.local>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
- <20250811094444.203161-4-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1755516470; c=relaxed/simple;
+	bh=1fu4UXJCphXsblbUVd77hsc65GaDeA3m1yolgAzFEGw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=QUHcTP5GPejLR7JyrukNOxtN0Ti2QcELL0b+wZjzgyXzpHuL9hMXiJZgVI2sIVRS8Q/NzG+V5RQ8FVPkpLNTZKufs6Vh3nQJNtP0LI8UJghouZuuWcozFJmh9v5EU508CxF0eeZZQzCdZ2A8gQDSvxcnJigHNxCMFVisdVVvSpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdtd+tCz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A3A0C4CEEB;
+	Mon, 18 Aug 2025 11:27:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755516469;
+	bh=1fu4UXJCphXsblbUVd77hsc65GaDeA3m1yolgAzFEGw=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=mdtd+tCzxiWI0xHmUVBYOLe9lPtB1BOLAwvwR1LQL8TgeDTVqfpl6gHSfNQukBAjk
+	 g2dBOsACYWz65Eya+ad6iMIvuFFHHQGwy26LPc4EThTacx3LWrdAQaFVD7rEHc0Csv
+	 66mxnuw4ykZNA7gp+q49QjX3AUgxusgeSCnpao11OhacY1S3HVzyQzj76gecCnpzQC
+	 ksXbC2sXsJ+uaEqvsZcnoDt8j9QuSSwoYt/+uMIw/WlkBWulD45BRs65uRJBhNivzz
+	 O1sWxoNhaPXb1nn9Rm1r5Z4oGWlr9u75CEgl5Kul+s8b/ydfEwuWhRHyKJzo1uqWna
+	 l/2hZ1CExGqCg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811094444.203161-4-Neeraj.Upadhyay@amd.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 18 Aug 2025 13:27:44 +0200
+Message-Id: <DC5INEG2DXU5.DM4JIICEQ2PC@kernel.org>
+Subject: Re: [PATCH 1/4] rust: dma: implement DataDirection
+Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>, <acourbot@nvidia.com>,
+ <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
+ <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250815171058.299270-1-dakr@kernel.org>
+ <20250815171058.299270-2-dakr@kernel.org> <aKLzrp0m00J6CCYz@google.com>
+In-Reply-To: <aKLzrp0m00J6CCYz@google.com>
 
-On Mon, Aug 11, 2025 at 03:14:29PM +0530, Neeraj Upadhyay wrote:
-> Add read() and write() APIC callback functions to read and write x2APIC
-> registers directly from the guest APIC backing page of a vCPU.
-> 
-> The x2APIC registers are mapped at an offset within the guest APIC
-> backing page which is same as their x2APIC MMIO offset. Secure AVIC
-> adds new registers such as ALLOWED_IRRs (which are at 4-byte offset
-> within the IRR register offset range) and NMI_REQ to the APIC register
-> space.
-> 
-> When Secure AVIC is enabled, guest's rdmsr/wrmsr of APIC registers
-> result in VC exception (for non-accelerated register accesses) with
+On Mon Aug 18, 2025 at 11:34 AM CEST, Alice Ryhl wrote:
+> On Fri, Aug 15, 2025 at 07:10:02PM +0200, Danilo Krummrich wrote:
+>> Add the `DataDirection` struct, a newtype wrapper around the C
+>> `enum dma_data_direction`.
+>>=20
+>> This provides a type-safe Rust interface for specifying the direction of
+>> DMA transfers.
+>>=20
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>
+>> +/// DMA data direction.
+>> +///
+>> +/// Corresponds to the C [`enum dma_data_direction`].
+>> +///
+>> +/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction.h
+>> +#[derive(Copy, Clone, PartialEq, Eq)]
+>> +pub struct DataDirection(bindings::dma_data_direction);
+>
+> Perhaps this should be a real Rust enum so that you can do an exhaustive
+> match?
 
-s/VC/#VC/g since you're talking about an exception vector.
+	/// DMA data direction.
+	///
+	/// Corresponds to the C [`enum dma_data_direction`].
+	///
+	/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction.h
+	#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+	#[repr(i32)]
 
-> error code VMEXIT_AVIC_NOACCEL. The VC exception handler can read/write
-> the x2APIC register in the guest APIC backing page to complete the
-> rdmsr/wrmsr.
+Does bindgen ever pick another type than i32 for C enums? If so, it'd be a
+downside that we'd have to mess with the type either in the `repr` or by ca=
+sting
+the variants.
 
-All x86 insns in caps pls: RDMSR/WRMSR.
-
-> +static u32 savic_read(u32 reg)
-> +{
-> +	void *ap = this_cpu_ptr(secure_avic_page);
-> +
-> +	/*
-> +	 * When Secure AVIC is enabled, rdmsr/wrmsr of APIC registers
-> +	 * result in VC exception (for non-accelerated register accesses)
-> +	 * with VMEXIT_AVIC_NOACCEL error code. The VC exception handler
-> +	 * can read/write the x2APIC register in the guest APIC backing page.
-> +	 * Since doing this would increase the latency of accessing x2APIC
-> +	 * registers, instead of doing rdmsr/wrmsr based accesses and
-> +	 * handling apic register reads/writes in VC exception, the read()
-
-s/apic/APIC/g
-
-Please be consistent across the whole set. Acronyms are in all caps. Insn
-names too.
-
-> +	 * and write() callbacks directly read/write APIC register from/to
-> +	 * the vCPU APIC backing page.
-> +	 */
-
-Move that comment above the function. And also split it in paragraphs: when it
-becomes more than 4-5 lines, split the next one with a new line.
-
-> +	switch (reg) {
-> +	case APIC_LVTT:
-> +	case APIC_TMICT:
-> +	case APIC_TMCCT:
-> +	case APIC_TDCR:
-> +	case APIC_ID:
-> +	case APIC_LVR:
-> +	case APIC_TASKPRI:
-> +	case APIC_ARBPRI:
-> +	case APIC_PROCPRI:
-> +	case APIC_LDR:
-> +	case APIC_SPIV:
-> +	case APIC_ESR:
-> +	case APIC_LVTTHMR:
-> +	case APIC_LVTPC:
-> +	case APIC_LVT0:
-> +	case APIC_LVT1:
-> +	case APIC_LVTERR:
-> +	case APIC_EFEAT:
-> +	case APIC_ECTRL:
-> +	case APIC_SEOI:
-> +	case APIC_IER:
-> +	case APIC_EILVTn(0) ... APIC_EILVTn(3):
-> +		return apic_get_reg(ap, reg);
-> +	case APIC_ICR:
-> +		return (u32) apic_get_reg64(ap, reg);
-			    ^
-
-no need for that space.
-
-> +	case APIC_ISR ... APIC_ISR + 0x70:
-> +	case APIC_TMR ... APIC_TMR + 0x70:
-> +		if (WARN_ONCE(!IS_ALIGNED(reg, 16),
-> +			      "APIC reg read offset 0x%x not aligned at 16 bytes", reg))
-> +			return 0;
-> +		return apic_get_reg(ap, reg);
-> +	/* IRR and ALLOWED_IRR offset range */
-> +	case APIC_IRR ... APIC_IRR + 0x74:
-> +		/*
-> +		 * Either aligned at 16 bytes for valid IRR reg offset or a
-> +		 * valid Secure AVIC ALLOWED_IRR offset.
-> +		 */
-> +		if (WARN_ONCE(!(IS_ALIGNED(reg, 16) ||
-> +				IS_ALIGNED(reg - SAVIC_ALLOWED_IRR, 16)),
-> +			      "Misaligned IRR/ALLOWED_IRR APIC reg read offset 0x%x", reg))
-
-What is that second thing supposed to catch?
-
-reg can be aligned to 16 but reg - SAVIC_ALLOWED_IRR cannot be?
-
-I can't follow the comment... perhaps write it out and not try to be clever.
-
-> +			return 0;
-> +		return apic_get_reg(ap, reg);
-> +	default:
-> +		pr_err("Permission denied: read of Secure AVIC reg offset 0x%x\n", reg);
-
-Permission denied?
-
-"Error reading unknown Secure AVIC reg offset..."
-
-I'd say.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+	pub enum DataDirection {
+	    /// The DMA mapping is for bidirectional data transfer.
+	    ///
+	    /// This is used when the buffer can be both read from and written to =
+by the device.
+	    /// The cache for the corresponding memory region is both flushed and =
+invalidated.
+	    Bidirectional =3D bindings::dma_data_direction_DMA_BIDIRECTIONAL,
+=09
+	    /// The DMA mapping is for data transfer from memory to the device (wr=
+ite).
+	    ///
+	    /// The CPU has prepared data in the buffer, and the device will read =
+it.
+	    /// The cache for the corresponding memory region is flushed.
+	    ToDevice =3D bindings::dma_data_direction_DMA_TO_DEVICE,
+=09
+	    /// The DMA mapping is for data transfer from the device to memory (re=
+ad).
+	    ///
+	    /// The device will write data into the buffer for the CPU to read.
+	    /// The cache for the corresponding memory region is invalidated befor=
+e CPU access.
+	    FromDevice =3D bindings::dma_data_direction_DMA_FROM_DEVICE,
+=09
+	    /// The DMA mapping is not for data transfer.
+	    ///
+	    /// This is primarily for debugging purposes. With this direction, the=
+ DMA mapping API
+	    /// will not perform any cache coherency operations.
+	    None =3D bindings::dma_data_direction_DMA_NONE,
+	}
+=09
+	impl From<DataDirection> for bindings::dma_data_direction {
+	    /// Returns the raw representation of [`enum dma_data_direction`].
+	    fn from(direction: DataDirection) -> Self {
+	        direction as Self
+	    }
+	}
 
