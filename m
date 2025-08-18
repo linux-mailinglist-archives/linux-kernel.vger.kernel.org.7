@@ -1,158 +1,109 @@
-Return-Path: <linux-kernel+bounces-774194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F16B2AFBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CE1B2AFC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A80718A723F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5812A5315
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6582D2495;
-	Mon, 18 Aug 2025 17:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EB12D24A5;
+	Mon, 18 Aug 2025 17:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/84uaES"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0/PUpVI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447452D2490;
-	Mon, 18 Aug 2025 17:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4997F2D2482;
+	Mon, 18 Aug 2025 17:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755539319; cv=none; b=pu5VQQ8r6wdGsZikiAJgfuh0+s4yhjMtSq1+HBr0iqm3f1+BEE+Clo0orWtZTPORuiMmyM5piFC0sc5gftbUkv9uEKsxqj4ZqVjxJDT7NfjYgfAOKzgF2uQO8xoYw234Bfr6O/xni7SH1JP16tHKnuffiimEjhzagirpBTslEmI=
+	t=1755539341; cv=none; b=QlL+ubeCR65WJQ4Jp1iMBNscNcNS/Rw/gHrgxfBh6/OHqC2yfvdmkTnGTKw9taescsO4vgR3q8brQj/Lm+qV/D+EM7d812ol+bSpEzLZElXzbsKsr29juR95XTvCwbCsyZQH0TahmXSxSM4DWjr5dU99wr8lvDRTbtXY1eCIKtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755539319; c=relaxed/simple;
-	bh=sWMqAvKl92t9P4XWOs/9MD+AtJ5R4Y6BJACPvbLDQhw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LLpcp/C9wb1pxt5GQQN0cA9Z3Sr7q9sZ0Ct9MbVlJBG9EQWwJF6YrzJlIx7z3w6yjlkBwwTNvNnkksbYOMIjVMeCptLFHvfL5hy2YdFFVTFusZsU3MZpm3EELmRJN3GQDwkhHNhNzS6BcjoBkTVhUJDM4OjH/du70E/ANp0wdWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/84uaES; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b109c4af9eso35768281cf.3;
-        Mon, 18 Aug 2025 10:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755539315; x=1756144115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0cuPJBk5sGkDgFsoLQEzIJEyWXhsR2QY0y/FBEqj2BQ=;
-        b=l/84uaESSDuVkvm/by2KMXPAF94T3NmJ4PGf8hUxSTEJTF8Ac6tRMhhbY/QRo8OqX7
-         zr0qweCabTnTMWK8TQMrZUgqegdWPxeaNLA1DH7ba5EOVCcIujpBrNv0fULTIn6WGz0D
-         Gj1Yso4Tafalu9xPnRPXJPGhRkLmhdfLSmzNlgPvY2yZUWOepwIZxJ7HZOzvpAakjinx
-         YpG1qJcKqlVt/IbEsTA1SJGjRhlUGfUiRrwGT/s2bum5EArFfyFxkOP869jiI+qcNPS3
-         EhZDEo62dEYZh0oF3sWbLs6aDIsm98xeUIcyHgiKTtL3z8AasvUK132UpSOl62Hb3SpS
-         h23g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755539315; x=1756144115;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0cuPJBk5sGkDgFsoLQEzIJEyWXhsR2QY0y/FBEqj2BQ=;
-        b=TbFkbyz6CRPmT2MDtOdybrydAoMPVBv63PSiVuJgVOnwHHabvKaKpOFWYahKYMByTk
-         5XnbNEOyU8SOgvGwFrOv1ZnjO7SpuzfajR3izJkAcyY7wHXuFT1ywh9tQoKuDRPqPmqB
-         yU5cNwfBK7nJRYiGKEFZxabag3mJkS0VXh4FtEF1fVnv5GTnc0ejr+dFGDiSLPtucZjg
-         wWrwvFad48/L84NlH18PhHuT6ZDIPH28oe5A/gl2gYd+jdG07CHlcYCEj5pGwDHrrAOg
-         PasqfER+T+nPyLnsQj7Fit5cVB5lYYfXX3uE/8aMHXwJX3/199U00T+nSGS8DKYdB/IL
-         FG5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWCgXHE+05Yf8o/KLkWKAIrujP0A2qTxR8wJUzNwps8k5BTSElkpHZa0AEz6nLccgu5Q/sPqwICXkbgyf0=@vger.kernel.org, AJvYcCXreUWK3Hf1lrhbbF5xBYFvEq3o3bEAP7G9kTW3HoghhZpf4MzBtfHf8vw007vdd4Bqb9uEO9RM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwblPs1NsipPHHJYfb43fo8MRc88Y+WhbFZqy4ms+yIN2la5dkg
-	5+MzHdF+juHNfb7wjEnJ96GmaOx82EbMVHL0ysZcWFPTxtcSM0/OGZ+y
-X-Gm-Gg: ASbGncuq2mViU9dTWs/RHX6YvA3Aazkja6wd62uGXQR+JIulk3MGUSnA52kmHlhOqMt
-	PqDibz0t56DO7ZRnayQn0xqAX/DAwCC/wmK0B4Nr5T3tXRxSC6fm3+zVy5TBbs/D89YMJT4WQvC
-	4eEYrorgNqio/BjokFXtMZKT2cJ6RnKnxZt0uSwMuePI8Aw6BpAOPYPCRb9uGYgGjlnv13yMxJz
-	/B40vtmfKC+wbCYkEq8heisthaYlJcngqX2uwfYWrEQXCYqYqWugfL8AZiCP0yDOYqgCr6Dqy5r
-	Uzf9N6lQ3j8ugfWq3fYLc2GIL9X8m6qGpkGsRE9LtZ8+QG2IyZjUu6/L5TuGpUmfS2NY1djwfg9
-	2ta4HgQfXi883d4eLUOdH2zBsdpYZJgN/UKSZ8RsrzHyGYahHTA==
-X-Google-Smtp-Source: AGHT+IFTZ0OzZbAII1mBXaoJKvZBiOFfLDxC/Wh/xqec0/rK3zAiEWmhYFPdxi2rpBpWO2IsiMThvA==
-X-Received: by 2002:ac8:5fce:0:b0:4af:21e5:3e7d with SMTP id d75a77b69052e-4b11e23cab3mr167313151cf.38.1755539315005;
-        Mon, 18 Aug 2025 10:48:35 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc1aa56sm56032301cf.7.2025.08.18.10.48.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 10:48:33 -0700 (PDT)
-Message-ID: <50f89267-5730-4bdf-b028-5847b4b621f0@gmail.com>
-Date: Mon, 18 Aug 2025 10:48:30 -0700
+	s=arc-20240116; t=1755539341; c=relaxed/simple;
+	bh=yzg89wI4WRGyBpC4fKo2pvNxEu1GN0EWvVjsQRCbtcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHvMjikUyw65FtViIF5vwCJQ/iUmIe5xjNM0Cqk57iQXDQc5JdOXftglsMHJ/Al3ag4PwtSgKMAyBQFZm1XN7mrhEqiiqH918nNU2Y0bsBkXCabHrqUqWhNjUBCBvpdSBsJRDsc7c4yGCLbRoc2J0k5D4zIYiF3ZeifFsVHEadw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0/PUpVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF82CC4CEEB;
+	Mon, 18 Aug 2025 17:48:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755539340;
+	bh=yzg89wI4WRGyBpC4fKo2pvNxEu1GN0EWvVjsQRCbtcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j0/PUpVIsr0FxfF03cj7AiRvp2SZa1QBYuWG6Vd6oxCrqWOMGAutg91pLETYR3zzO
+	 HRoKTY3lkhWGy9O/m9h1LvohwkN216kD9hhXdZWGdDi+ayC7thnLVWt+1bqH5S4s4D
+	 Qf5LVxIb4FLTmE3OfSBp+QfEM9BbjwaICINlttAVBBYBYOtvjchqhe8HX+ctp04O5n
+	 dHjVpw2vHUt4KFgNUkqTGbJTE0ucmPhFj30GcX6h8FjssBaMBcQD7gM94mq+J3bi4n
+	 bzi9l5ehsUCItwSw4584+vtAvInOZubUl9ktrOqXYqnnKRp9bwZ46LjWxB+0JQOQWd
+	 qhdD/RcR5gaJg==
+Date: Mon, 18 Aug 2025 18:48:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 2/5] dt-bindings: net: cdns,macb: Add compatible for
+ Raspberry Pi RP1
+Message-ID: <20250818-quack-lid-59e71737f242@spud>
+References: <20250815135911.1383385-1-svarbanov@suse.de>
+ <20250815135911.1383385-3-svarbanov@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 000/515] 6.15.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250818124458.334548733@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250818124458.334548733@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wajkoaFh9Mksd++G"
+Content-Disposition: inline
+In-Reply-To: <20250815135911.1383385-3-svarbanov@suse.de>
 
-On 8/18/25 05:39, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.11 release.
-> There are 515 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+--wajkoaFh9Mksd++G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+On Fri, Aug 15, 2025 at 04:59:08PM +0300, Stanimir Varbanov wrote:
+> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+>=20
+> The Raspberry Pi RP1 chip has the Cadence GEM ethernet
+> controller, so add a compatible string for it.
+>=20
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--wajkoaFh9Mksd++G
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKNnhgAKCRB4tDGHoIJi
+0mjsAP97kK0IfQ7Ov50V5elnbXgZcegx4hBcq+cQedRkxNgC6AEAth4I1+sps9OD
+bT0La5XO5WyCakSYJpYh7050t8S+0gY=
+=9lyu
+-----END PGP SIGNATURE-----
+
+--wajkoaFh9Mksd++G--
 
