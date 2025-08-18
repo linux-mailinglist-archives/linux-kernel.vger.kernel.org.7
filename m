@@ -1,136 +1,244 @@
-Return-Path: <linux-kernel+bounces-774283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0DBB2B0D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:51:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4874B2B0CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A955C6863C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805C417BF5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F43A2727E4;
-	Mon, 18 Aug 2025 18:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF1A272807;
+	Mon, 18 Aug 2025 18:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="Pzzq2FfK"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MlnC1+aY"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0259E2737EF;
-	Mon, 18 Aug 2025 18:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CC61E51FE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755542981; cv=none; b=eR0uFdF3Vnx7xKapNkkm6PDh/kmyJZKKSCmT/ZY30Sycec8aVSHfLg+8akPueXCnV9aDGAmYtyqvCMWQKIEWtmqePqRk4Jhr+SF5bq1EQmFlnNBAf/cXmz96HtNLXgbWM70Fo2dK4gU2yW0lEyqLZ3xTo4U5XeNYVFCe/RsfVr8=
+	t=1755542928; cv=none; b=ketxBP02y9jdWNlPGn02H0mcWhj6Pb+5Z/YkTic5btlzIKxDHJ1NpxULkaR8lrCWwWzc6Vc7Oncl60xiqbdYwxVzUwYKKE/U4f3u0CEWaWZtwWeU2YvNd7FTz7FelWKRra4dTz8PJMw1+vywO4GcrQdSBtG6kcGVo0jdbyeBQ/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755542981; c=relaxed/simple;
-	bh=rVceH7WgH8GnEORYZZ+4H0wG/EmxIJmj1SeQ3K/SX9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sGS8IVXmsj513IhD2Mg809shyjl1JQZJPWTKVYzYdztktAOfUlCcLQwZ/ynTV8YYk4ZiU6KAyw1ElROotB8CQiBpR9AuSaotnfmhMve/DlPEU0Tr8FGpXYf6Xcfb2PL9LOTKznVYA7AJ1goRhpv+DGW9PJyjLMfSs2iLb8tBrRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=Pzzq2FfK; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IFM767019664;
-	Mon, 18 Aug 2025 18:49:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pps0720; bh=ameLDw0BR3vTu
-	DkjRtRePwqEBLDRYpdpUNQ9YWBBFhU=; b=Pzzq2FfKxNIZVGigK3y3z3sBIZRZy
-	YWwkaPJEGVqSYeBXVfNFBXiTgy2tFAIqezVS+53NWP8BlKo5k4wPMGqFf02bbt5C
-	tOnnHNulCVv+psyt+vdsIbHSz6X7r1/rnhWI3ZGwht5c9Gvbj5Ngt4DjWhWDFBzu
-	LneEPXSBJQcX5hXdmD9epxsewQty3okKM/SP/rsgFO0bnRSeYV5nfpk9ybeAKrAH
-	+0NUDnRO91wg+VmprzqesnIiDMYrbnsa+XrV8+Lov8kFedLBi8wBSG24nXReeIJA
-	Ta27Sj6rCGHs/ojt9b/WbNTGaLvdYTUf9JoeloNJg26E6CQGytwMqZsUw==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48m69f9yhe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 18:49:21 +0000 (GMT)
-Received: from test-build-fcntl.hpe.com (unknown [192.58.206.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id B3A18805E2F;
-	Mon, 18 Aug 2025 18:48:48 +0000 (UTC)
-Received: by test-build-fcntl.hpe.com (Postfix, from userid 1000)
-	id 45933883B910; Mon, 18 Aug 2025 18:48:28 +0000 (UTC)
-From: Rajeev Mishra <rajeevm@hpe.com>
-To: axboe@kernel.dk, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajeev Mishra <rajeevm@hpe.com>
-Subject: [PATCH v4 2/2] loop: use vfs_getattr_nosec for accurate file size
-Date: Mon, 18 Aug 2025 18:48:21 +0000
-Message-ID: <20250818184821.115033-3-rajeevm@hpe.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20250818184821.115033-1-rajeevm@hpe.com>
-References: <20250818184821.115033-1-rajeevm@hpe.com>
+	s=arc-20240116; t=1755542928; c=relaxed/simple;
+	bh=pcQbWfmvaZOJq8LTxdPwJOEnZsClRjrrGSQ0kCojTns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hAHaIPQ6DskFiPVALpnRTtdJpadc25fu++yVJW/nC7mVajoTA/EfjnQ+4nncgY2hD5Ip/zm3jWnT0k72rBlTEhwLycwGqBRGw4JBmeDe+LW/N31Rc7OtbiiB0Qu+RWE3xFvWxVXMafbNP531W0vYktmPclj6cDDBdBIsU0gnwjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MlnC1+aY; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24458317464so49485755ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:48:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755542925; x=1756147725; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O1Na1G1GEfTB1Z7+rFe2hu/qJ/LK+DYFvyX3BQfjabc=;
+        b=MlnC1+aYgOOVwX4ZXA69ASrvJUqkiv2z12HDXxkeh7MM5kigbVd8MDB9k9e4NqGtl3
+         uhr0adj/YkifVUwKGpqlqfwHbXE5jY/g/SWZLX2zhilnbaA1fJkWWt8v8MDii2+xcz6r
+         yedLe3+5Uk1xw8ohhwsNJrquSN55RnPmLcGkG6CK6UnKwVh0Q8zt1CmqUx+EJBtuKg/c
+         EwR79AzbjlUrsUg8FWAvvz/lRjxA9FN4cOWVb4vD6DiAHkz7Z/k1FyXKjYEcHvyabcDX
+         mfS3wkM9gpTmsEo5sVxMinoivMirR4FbZ6HeFHo16aWb7lUS3vMcgE1PD0hoMjGLAfXY
+         dJcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755542925; x=1756147725;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O1Na1G1GEfTB1Z7+rFe2hu/qJ/LK+DYFvyX3BQfjabc=;
+        b=aedEOZTtlNcliaDkmtzmx3wZMgmDH7Q92TxDA0I0MnARFdhe5u4D6+jiEwYNdTYAus
+         lrVrryLbAxO+jeISVPDuLhqbh3QKouRAj2DVmw1y7f9pjB3R79dsfx0AGNRebsXIUHYD
+         W3OyH5plwAnGtLMXLGtBrIDe2qBF0QgaPCOpgphnAQ0ovxAm8aBskkWY5fiWBvcTjriC
+         PRJtKJbUGyqwa4pHFs8neEIq/wdu5w7uqfwpys9g1hcFSCgKIpYrw9gBScjH4JmgUiqM
+         Ucao87OttjNTyUMsrgV8I3DUl/WOtt94FyvgpqDx0qDEuHubb6lA6G631u591XfPk+W+
+         nWxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe93tlTbCNY8KUIQrupIFVJZwW/W+kdD9Yzp02X8rWM2GjyDFVvsaN2wq3qedrrkbokem1hubABhiZT30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAvPIYML9raMiCD5xmzU0pHinaT/Xz2MlZbu7pXBVi13NL+/EF
+	WqWGd+A/W55HKXVuSQZmMarzWoUgaw2n51CHMketSnYB4XPA1beXew0YQjwCWtfj2gcrgbX6eMM
+	GH+b8GXFbJ8QSslCGYKc3Amkii3zZq0sioBoy32F9mQ==
+X-Gm-Gg: ASbGncu4tmjRjvPQEMvWsln08YaL6QNlusEucj3N7m7NPZrmdSsZoiQGPEm47qeL+RE
+	yHLHibF47HDEfLsUCms8ID4+kvbxCE+juVITgW5qdmsjJPp5vhtjqJDTkgFTQeB/y0Sjo7oxlor
+	KdvGvmHINueofHuv3k89y35Swzvqj6unWyGz30xsknYt+e4SQdBneXZVQil6dFCiC6DzzVXxEDt
+	hbnm4yyfN9DosMwy+FEZ9Ar0DPNaHtdOhzfpaNtEoAVNLptpVg=
+X-Google-Smtp-Source: AGHT+IHmOMJz7nCYS/tZ+DC/rzqutFB5PsuRPGV79kAw2iKn1BK0MGU5HrYZKUaPZJ8Wp385fx6Fyv1c//DR81jG32o=
+X-Received: by 2002:a17:902:f78a:b0:240:84b:a11a with SMTP id
+ d9443c01a7336-2449cf43f7fmr5618825ad.17.1755542925263; Mon, 18 Aug 2025
+ 11:48:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDE3NiBTYWx0ZWRfX77RX9fNJQzhV
- yl5nePVcIIelNoUFqUjmK8+zZwdEIQej3txt/jvvnYOwP3v6wrX1a0VhAGzwTKLx4BkNu5mmLCa
- hG5jHrtvhfwI0Zn9GQgPDFvETIaJ6M2NIyyjlc4Q9BnOi9YnFVMXcBzhn46LT6R/M8YXHmjbkVF
- 7hkws8/wy5U0oug9x8ZMK8aSsiohyMsAE4iK5siXrg6Ata7uAj5zbnEZU4Ky1ww1XmUCKPBw9xt
- 4S8soYrbZEoVXmWcPQ+ko4pLs9QrbfK8ea7aBZcp95lgX34e9/KH3E+vCY1Yz1Nl17dwydSFs1Y
- NwAkERHTCLtHGqGa5p+i/ZVk3tEtALED57sMHpmcR55hKuYPSlDNFIFxO1B3D41spZCTyBdj1yC
- eao6Sjlfy9vy2n+en4bmSF/VBBIdgwbPTHhdbpQQDtcgYs3hAjfBZI5lohNdiBVNzHaGuOnJ
-X-Proofpoint-ORIG-GUID: RVY0BQg0QJVX-WlJTRXOuE34fIw80MJS
-X-Authority-Analysis: v=2.4 cv=Asfu3P9P c=1 sm=1 tr=0 ts=68a375b1 cx=c_pps
- a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
- a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=XZbkMGOcC_xTVlInkEgA:9
-X-Proofpoint-GUID: RVY0BQg0QJVX-WlJTRXOuE34fIw80MJS
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0 spamscore=0
- bulkscore=0 mlxscore=0 adultscore=0 phishscore=0 mlxlogscore=999
- suspectscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508180176
+References: <20250818124458.334548733@linuxfoundation.org>
+In-Reply-To: <20250818124458.334548733@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 19 Aug 2025 00:18:33 +0530
+X-Gm-Features: Ac12FXy3q6ijpYJlZM9lDBDRg0-eeJWhMQBu6-QX-xroiq3SJXWRlW-B4Umf5T8
+Message-ID: <CA+G9fYt5sknJ3jbebYZrqMRhbcLZKLCvTDHfg5feNnOpj-j9Wg@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/515] 6.15.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, srinivas.kandagatla@oss.qualcomm.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-In lo_calculate_size, use vfs_getattr_nosec() instead of
-i_size_read(), which improves accuracy for network and
-distributed filesystems.
+On Mon, 18 Aug 2025 at 18:45, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.11 release.
+> There are 515 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.11-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
----
- drivers/block/loop.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Boot regression occurs on the Qualcomm DragonBoard 410c (arm64) with
+stable-rc 6.15.11-rc1. The kernel crashes during early boot with a
+NULL pointer dereference in the Qualcomm SCM/TZMEM subsystem.
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 0e1b9eb9db10..57263c273f0f 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -139,9 +139,20 @@ static int part_shift;
- 
- static loff_t lo_calculate_size(struct loop_device *lo, struct file *file)
- {
-+	struct kstat stat;
- 	loff_t loopsize;
--	/* Compute loopsize in bytes */
--	loopsize = i_size_read(file->f_mapping->host);
-+	int ret;
-+
-+	/*
-+	 * Get the accurate file size. This provides better results than
-+	 * cached inode data, particularly for network filesystems where
-+	 * metadata may be stale.
-+	 */
-+	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
-+	if (ret)
-+		return 0;
-+
-+	loopsize = stat.size;
- 	if (lo->lo_offset > 0)
- 		loopsize -= lo->lo_offset;
- 	/* offset is beyond i_size, weird but possible */
--- 
-2.43.7
+The crash originates in qcom_scm_shm_bridge_enable()
+(drivers/firmware/qcom/qcom_scm.c:1618) and is invoked by
+qcom_tzmem_enable() (drivers/firmware/qcom/qcom_tzmem.c:97 and :474).
+This happens while probing SCM during platform initialization, preventing
+the board from reaching userspace due to kernel panic.
 
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
+
+Boot regression: stable-rc 6.15.11-rc1 arm64 Qualcomm Dragonboard 410c
+Unable to handle kernel NULL pointer dereference
+qcom_scm_shm_bridge_enable
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Test log oom03
+[    1.191790] scmi_core: SCMI protocol bus registered
+[    1.194074] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000000
+[    1.198306] Mem abort info:
+[    1.207295]   ESR = 0x0000000096000004
+[    1.209796]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    1.213635]   SET = 0, FnV = 0
+[    1.219095]   EA = 0, S1PTW = 0
+[    1.221945]   FSC = 0x04: level 0 translation fault
+[    1.225004] Data abort info:
+[    1.229874]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[    1.232977]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    1.238286]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    1.243409] [0000000000000000] user address but active_mm is swapper
+[    1.248798] Internal error: Oops: 0000000096000004 [#1]  SMP
+[    1.255110] Modules linked in:
+[    1.260744] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+6.15.11-rc1 #1 PREEMPT
+[    1.263622] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+[    1.271517] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    1.278199] pc : qcom_scm_shm_bridge_enable
+(drivers/firmware/qcom/qcom_scm.c:1618)
+[    1.284878] lr : qcom_tzmem_enable
+(drivers/firmware/qcom/qcom_tzmem.c:97
+drivers/firmware/qcom/qcom_tzmem.c:474)
+[    1.290085] sp : ffff80008002b720
+[    1.294508] x29: ffff80008002b7b0 x28: 0000000000000000 x27: 0000000000000000
+[    1.297819] x26: 0000000000000000 x25: 0000000000000000 x24: ffff00003faf6128
+[    1.304937] x23: ffff00003fac6c68 x22: 0000000000000000 x21: ffff0000036ba410
+[    1.312055] x20: ffff0000036ba400 x19: ffff8000831a4000 x18: 0000000000000352
+[    1.319173] x17: 0000000000000000 x16: 0000000000000001 x15: 0000000000000002
+[    1.326292] x14: ffffffffffffffff x13: 0000000000000000 x12: 0000000000000002
+[    1.333410] x11: 0000000000000000 x10: 0000000000000019 x9 : ffff8000813e6d74
+[    1.340527] x8 : 0000000000000000 x7 : 7f7f7f7f7f7f7f7f x6 : fefefeff35302f37
+[    1.347645] x5 : 8080808000000000 x4 : 0000000000000020 x3 : 0000000000000010
+[    1.354763] x2 : 000000000000001c x1 : 000000000000000c x0 : 0000000000000000
+[    1.361882] Call trace:
+[    1.368986] qcom_scm_shm_bridge_enable
+(drivers/firmware/qcom/qcom_scm.c:1618) (P)
+[    1.371251] qcom_tzmem_enable
+(drivers/firmware/qcom/qcom_tzmem.c:97
+drivers/firmware/qcom/qcom_tzmem.c:474)
+[    1.376455] qcom_scm_probe (drivers/firmware/qcom/qcom_scm.c:2256)
+[    1.380534] platform_probe (drivers/base/platform.c:1405)
+[    1.384180] really_probe (drivers/base/dd.c:581)
+[    1.387998] __driver_probe_device (drivers/base/dd.c:?)
+[    1.391647] driver_probe_device (drivers/base/dd.c:829)
+[    1.395987] __driver_attach (drivers/base/dd.c:1216)
+[    1.399978] bus_for_each_dev (drivers/base/bus.c:369)
+[    1.403798] driver_attach (drivers/base/dd.c:1233)
+[    1.407965] bus_add_driver (drivers/base/bus.c:679)
+[    1.411523] driver_register (drivers/base/driver.c:250)
+[    1.415083] __platform_driver_register (drivers/base/platform.c:867)
+[    1.418905] qcom_scm_init (drivers/firmware/qcom/qcom_scm.c:2362)
+[    1.423763] do_one_initcall (init/main.c:1257)
+[    1.427409] do_initcall_level (init/main.c:1318)
+[    1.430969] do_initcalls (init/main.c:1332)
+[    1.435134] do_basic_setup (init/main.c:1355)
+[    1.438434] kernel_init_freeable (init/main.c:1571)
+[    1.442254] kernel_init (init/main.c:1459)
+[    1.446593] ret_from_fork (arch/arm64/kernel/entry.S:865)
+[ 1.449810] Code: a905ffff a904ffff a903ffff f9001bff (f9400100)
+All code
+========
+   0: a905ffff stp xzr, xzr, [sp, #88]
+   4: a904ffff stp xzr, xzr, [sp, #72]
+   8: a903ffff stp xzr, xzr, [sp, #56]
+   c: f9001bff str xzr, [sp, #48]
+  10:* f9400100 ldr x0, [x8] <-- trapping instruction
+
+Code starting with the faulting instruction
+===========================================
+   0: f9400100 ldr x0, [x8]
+[    1.453637] ---[ end trace 0000000000000000 ]---
+[    1.459661] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+[    1.464318] SMP: stopping secondary CPUs
+[    1.471696] ---[ end Kernel panic - not syncing: Attempted to kill
+init! exitcode=0x0000000b ]---
+
+Please refer full test log information in the below links.
+
+## Source
+* Kernel version: 6.15.11-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git describe: v6.15.9-993-g1cf711608500
+* Git commit: 1cf71160850064e9e506eda37e0386948bedd6b4
+* Architectures: arm64 Dragonboard 410c
+* Toolchains: gcc-13, clang-20
+* Kconfigs: defconfig+lkft
+
+## Test
+* Boot log: https://qa-reports.linaro.org/api/testruns/29589408/log_file/
+* Boot lava log: https://lkft.validation.linaro.org/scheduler/job/8407660#L2708
+* Boot details:
+https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.15.y/v6.15.9-993-g1cf711608500/log-parser-boot/panic-multiline-kernel-panic-not-syncing-attempted-to-kill-init-exitcode/
+* Boot plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/31SjnwYvj7Mmcay6Qa54CFbNfP9
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31SjkxSlW3Ssjf1eGdFHJPPU4Yw/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/31SjkxSlW3Ssjf1eGdFHJPPU4Yw/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
