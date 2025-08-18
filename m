@@ -1,189 +1,149 @@
-Return-Path: <linux-kernel+bounces-772960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60A3B299D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:38:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D3CB299D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA04A203DD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:38:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C12F3BBBBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA464275854;
-	Mon, 18 Aug 2025 06:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079B7275AFA;
+	Mon, 18 Aug 2025 06:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vNrZ5qvK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bcxpf1FF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XfryVcvv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eX8tHYxx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v0XlbMI7"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F0C1DF982
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AB5275AF4
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755499132; cv=none; b=S/OMeSxtiLIFZu2z6k0JwL4K2H1AVgq49DC0ihbI07D5fAg6IxGLUCzeFyu/JBSS2BJsY09oqWJR95LlXTNZkmOvclA5VkuCd8gmg1Gsd7Jjs0mnZ9TOj2r793sR5/eaTpXfiN4Lu+HptZmB3KbKQZ17LJsy61LrhxIvGTUsWvM=
+	t=1755499143; cv=none; b=Ukn/OGD6CeQ1/HJEvRX6wmlnS2dh4Bp2Q7fdZ9nJYsh8Hdd/4zp5F4Ufq7b79qMsty2NnZWUnHdiDDyKva3uLaA8OpYUHLGK1NwyaFwr55Q6GZIy8qKFrlAtLt4Jd+Hpb6eklZPwH7ZnJWbVQoh6fCPAl5VblvCDl+RSl1BW+y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755499132; c=relaxed/simple;
-	bh=SIaGcMfKgDQSiqTxbPlJGulJ+RFrVEnWarOcKyCFWg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CIYML8b1l7znzKOJ9d/DSshCDrCZF3369ZQACNm3rrT4pl2mPba4ZlBvrfTlKaoHUYTK3TjWHokxEsqgS7St/zaxpg+5ZoDdEe1pZZ676rM5Tjxuj2JRLLk+frXd2qx/yxQuT4iDNFi/3oqETt+p1DQKydRq+KLFg7tSpA9H2iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vNrZ5qvK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bcxpf1FF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XfryVcvv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eX8tHYxx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B1E49211A2;
-	Mon, 18 Aug 2025 06:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755499128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
-	b=vNrZ5qvKXndkMLAoznbqyLSTFePX3kh6KnRZbHoB9C2zjNYPRlSZNqV1rs87VkIN/NFGA0
-	epO2K8Z7f0c9H8dsf/cWUbqIgfkSDfNRGRDND39rNvY8/xCfs/tNHRHV7tNN0+ADyD5VlJ
-	bdOli6rKzBHRDtEdMB6qsFlPXB5BZNo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755499128;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
-	b=bcxpf1FF5NsMzd0krz+WQR2MFA9E1G0HxMmkiuXlc9+WUvsPrOT8Vm8rqnMZYOF+i+Rb/N
-	aHIjWw3qaa96IUCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XfryVcvv;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eX8tHYxx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755499127; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
-	b=XfryVcvv/Xm/N5A4Mnz0Ajiv+Cf6ifBCBsKqFJtZs8dq+AT/GoxM9groiQMa4kcylxrOVz
-	/94/ult5O2fshQOyeuqzB/qaKTN9maaE/Th5IqJBkGyK8d4LsS7cE3058t21c4tAq1JhCX
-	G4TCi10TJ/pTuH29hHszkqfIeg52AYg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755499127;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+1+7D85kOQ97EVvudAvVmc/NF5mfjwf/0sAeafgfM4Y=;
-	b=eX8tHYxxj3BHjPj961nVeOjzv++ZbhA1I1wWTvkD1AwqIaG9B5HtDESZSwNrDDdPYl9phW
-	9jBS4Iek66isxuAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DB6413686;
-	Mon, 18 Aug 2025 06:38:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id V01TAXbKomgdBAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 18 Aug 2025 06:38:46 +0000
-Message-ID: <bbf3759f-c337-4084-80f5-170e6f1ced34@suse.de>
-Date: Mon, 18 Aug 2025 08:38:45 +0200
+	s=arc-20240116; t=1755499143; c=relaxed/simple;
+	bh=fdsSMUVN1tYyzzsYzCtSu+U/f8dLCqieMT5Xde4c0lU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMWCrRBQGwXp6j+3FfkHWGPJAlR/7QBK+Qhtijacy3F28PqUzJ4BkSUx7BM3Wb/oMUTJ8Pqh2UN7NMXI9INZIZOa6KRJ2vM5jjOyoR0cK0mAbTaje+PqJ3bh4O/ImL/fkGlwcLZn8zKpCuPWxJaBV9+FWNxdXmkzHI/KAy2qABU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v0XlbMI7; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24456f3f669so36356255ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 23:39:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755499141; x=1756103941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dWdZCD7J/kohgzpk9nhXOytmOUzsGpBOAbeomBtF8rg=;
+        b=v0XlbMI730Z1GoPkyjE9LMZLTtwd/ItJQ1M9oEfYgvHSlBul79b8OA3qtIXMl+LVYa
+         ci7ZrpSYRsGYrak/TnCk0IC5U41JBi0Fnq6PpSkYuEZhiU78IeUrH5ZaRQVVgEt/bWKL
+         Pk96Bwai5rgytS7Ft6a2ZGERboCgOIeAoC5Cqeg9D6OuMJg6zkAUiNXM3evip24RALKo
+         hqEqfbPkEDhJbqqvrPrYo2a2dhfy2PqXXQ28I7FpKrmQoGiXTxUYZ/a4zBKT8vF8He2P
+         Ic/+6C6JlhXd4M2j/tjbWfaB3hNrrmfTkKaro2wVaqMUudUFSGFHdH1tafBXoZ3XLwEQ
+         XLqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755499141; x=1756103941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dWdZCD7J/kohgzpk9nhXOytmOUzsGpBOAbeomBtF8rg=;
+        b=FOJwuq+1RwcPbjV88VXLLtGvNBdxGXNxOsOWMm96SBR0XkPIxBFh2TpybPjq5AJTcZ
+         w8SgfAku7jz2TfblJwzWeGFOgChWxu0pkd0pMv+24UoLhL0OhXJDBLhhye/TjEAcIm+e
+         CZxct4PCtgaFPOIbPD9r6m37CpmJCGDxWR+X9HK0Xxi93ZTB6qYb9LG/VXEfoENwBC5S
+         G2BG+UmJGPdiTHafPGuzUh/4DpJ2484AypvhqzZneXOLs2IsSx9ZTktmysxcM3+bGlLH
+         pMrzsLP6k7Z8gg+ZckuMr3jl8FodzM31E/4Ly4z7xjCmh3gznq8980d42SEzlTrKYwAU
+         zP6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ/bGWvdjmfK8HCCui68hX5fy5yDw1BNf7Dt81kjO2I3/NC0OZ9gCsjmxBBLhrQ1lpa+ljdnO/zX5+agY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyOdHmc7JKqqgOLScIgRpFYlC2yKLnAn6pXibzS50B2+PVF1mD
+	6hZXKY6Fm9NI21NNDurXgW9YpXc7+YsJcqWaEFRKtNaB8PsCPt8xPb9v4kExTGtC6D8=
+X-Gm-Gg: ASbGncuxPBKI2H9YXE7COAt6I4D0tUmgXPw/iZm/j8WbzSIS36BKOq5X4J3jIKDonyu
+	4NJUCs52g9J8iH4ORdE2ql9Ni4TR3/icWCYCHV9IhNJvQDKRtk29qmb+qnyvxF5U8yAckSoz1//
+	TCLrVubMkjhoK9r7YHPwA2BKx8nK8uecIDitt6tUgukKdZoV11Hw+7k2ALhBZNzuOJICGWCzQ+i
+	kWbEnmIYT4YKBz4ZaHfQPt6qBf/rHv2zV0ePyde0aAPiQc+1d9S1MvXEhyRS33fjNfi6JB6WXNl
+	nxtXVT6e5fTPm3nHEHWfhjz69kP8fq3TKobD+pkFqRMSIFA1dkAJbqybR6kPd4Q4Gn3xvl1cu2d
+	mehtXHcFQ/Bh+rNSwyrYaJ1hauslTsJkqjNg=
+X-Google-Smtp-Source: AGHT+IEIqesHT4FYr8rc/TuuqDEF+1Y4JGz8Td6OnM3CiT51lBb9Lc+1prXyz1kcF+i7d3fJEqxJOQ==
+X-Received: by 2002:a17:903:181:b0:23f:b94d:7da7 with SMTP id d9443c01a7336-2445978c962mr231605965ad.14.1755499140970;
+        Sun, 17 Aug 2025 23:39:00 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32330f836cfsm10420234a91.5.2025.08.17.23.38.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 23:39:00 -0700 (PDT)
+Date: Mon, 18 Aug 2025 12:08:58 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Aubin Constans <aubin.constans@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Manuel Lauss <manuel.lauss@gmail.com>,
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Chaotian Jing <chaotian.jing@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Ben Dooks <ben-linux@fluff.org>, Viresh Kumar <vireshk@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Alexey Charkov <alchark@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 25/38] mmc: sdhci-spear: use modern PM macros
+Message-ID: <20250818063858.azqmrwjrlugafuvl@vireshk-i7>
+References: <20250815013413.28641-1-jszhang@kernel.org>
+ <20250815013413.28641-26-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] mm: rename huge_zero_page to huge_zero_folio
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka
- <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
- Ritesh Harjani <ritesh.list@gmail.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
- mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
- Pankaj Raghav <p.raghav@samsung.com>
-References: <20250808121141.624469-1-kernel@pankajraghav.com>
- <20250808121141.624469-2-kernel@pankajraghav.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250808121141.624469-2-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	FREEMAIL_CC(0.00)[vger.kernel.org,infradead.org,kvack.org,gmail.com,kernel.org,samsung.com,lst.de];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLxigy8pr3gnoabpfzcidubger)];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: B1E49211A2
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815013413.28641-26-jszhang@kernel.org>
 
-On 8/8/25 14:11, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On 15-08-25, 09:34, Jisheng Zhang wrote:
+> Use the modern PM macros for the suspend and resume functions to be
+> automatically dropped by the compiler when CONFIG_PM or
+> CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
 > 
-> As the transition already happened from exposing huge_zero_page to
-> huge_zero_folio, change the name of the shrinker and the other helper
-> function to reflect that.
+> This has the advantage of always compiling these functions in,
+> independently of any Kconfig option. Thanks to that, bugs and other
+> regressions are subsequently easier to catch.
 > 
-> No functional changes.
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 > ---
->   mm/huge_memory.c | 34 +++++++++++++++++-----------------
->   1 file changed, 17 insertions(+), 17 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+>  drivers/mmc/host/sdhci-spear.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Cheers,
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Hannes
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+viresh
 
