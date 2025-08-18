@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-773583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F624B2A1BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:38:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B90B2A1F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83817B3375
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EBDB2A7553
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23A71D618A;
-	Mon, 18 Aug 2025 12:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA0B3218D0;
+	Mon, 18 Aug 2025 12:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="iN0BP3XS"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4F9fHBm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5155A3218A9;
-	Mon, 18 Aug 2025 12:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520663; cv=pass; b=TinFHqZ7CyPTafaqR32As9kp+peCBoj/NSMU4VOkcIQ+miLgAN3/E0sEXuXdUy0RdC3U7LDofNQMZOutPcMX3fX4QrdWw4G53UBjqK2amf+/aGuMvedaH8uEhG49IvZ9nBFX2QAvZBQUf5Z8s2C8h6FvP18pDFIK/uRP5iPBrwA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520663; c=relaxed/simple;
-	bh=rkp6z7TVKY7PMEz67LeKxscNTqqubl3DaI+stNdUHl8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=qzCxmGaK88Icgm3JkawZA37ryFvPcGQ6XYMyeqG344Ob2H+n9sUzyXH+khOKJwH6XAI+hyspAGSydQWr6Eh7wrrbi7XKMsPHDNR89WHXgfGUHJEGkPgGmEcNTv0aGnaXIKDvb928ukHw/F4QpIjMAjCNUqB+ihTekNPbD286ndw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=iN0BP3XS; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755520619; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Nc0dOVxblQWfkMMD1dJeSrA++MrL01Tqs6hMI404ZNjeFjnzzE2yHWALxejppkfkCyPKxiYQ2zhPYHhXsoEMCZTYIc7CBl7DMjFwnVwEGPnuJpIX1kuZYuCiKjrAUEHktGlLfOdcqTD8lV2jdD3d5BY152sC9pcRVVK74EI7Aj4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755520619; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rkp6z7TVKY7PMEz67LeKxscNTqqubl3DaI+stNdUHl8=; 
-	b=BJSXZbf+oZ8lS5Hxy9b6cfzq5lO2H2PwBOzhzdZ6cytwyEhss7ugdWBmuPRbDsKruQgxBO1YFiFJxh69xjGe25x5uVdEQqzOp/T2N0OfeVfQqobrIGrVMOMsDC1vn4ye9vCboi5QlunLqNY3walL3ilh2akX2I/A+WNH3UVudZE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755520619;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=rkp6z7TVKY7PMEz67LeKxscNTqqubl3DaI+stNdUHl8=;
-	b=iN0BP3XSJ4tEOZWR6YKebeHJQcmCEV13dnoD1e+vO59BYp9q4dGoI1VQ8/QZo98d
-	QUKofqEZqMt/uN86BIEG6VAXIKMB0LHDCYWzuu//ZJpvHEdvCv8yQBWDNQb47WAl4AW
-	+d3xQbivLMptZKkFty2zRWuDeldw+hFHtrtzLbxs=
-Received: by mx.zohomail.com with SMTPS id 1755520616688473.89732619527456;
-	Mon, 18 Aug 2025 05:36:56 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A373218BF;
+	Mon, 18 Aug 2025 12:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755520640; cv=none; b=Aq+gDotaaeCYQ/mzc4LPtrkbGChSMhVDl2T2m9KTdJwj1Ne7XMxb39yt2jnmO8FSMeUVxRQinNyemTN9o+wYIqkAQl2HzHxcNMwY5hVE75srxqv99uyXoZCoiivrbSxvlfw2NTE2jCX1yThISnhRfY3eQQmU5kzvQWczyzSUsX8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755520640; c=relaxed/simple;
+	bh=1FPIbN0q+6sKO/Cq1SGIMpTlewV8QV4WIFDaJwRFQO0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=l2bho3q/xisssTUg83z01sNsWSJS5wZYWVBeUgl8YCrXnE88MrciHmaCF6++RZsb51a+XsdGuFhdJYNjCALANFmjs0BZOIayogc+UMUgmGpXeXfbR6Jn4ImH0qMShbnpyc90F+MbxfxFatsqp5R445eKUp+c8lst2L9oOvnJQJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4F9fHBm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CAAC4CEEB;
+	Mon, 18 Aug 2025 12:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755520640;
+	bh=1FPIbN0q+6sKO/Cq1SGIMpTlewV8QV4WIFDaJwRFQO0=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=l4F9fHBmwL46+OLOEX21tLfcKox9ZW5RvsKcrXYtApMmSw9/1IJeVLm3cKpVzQYga
+	 FOjtnx8VT94mVnvqwAZjpxl7tM5g/ArdJJNL4f0dt5ARpS/u+M6sjLJQfsKo+zalEK
+	 3Xqp5DS+bbL+HmWjQuK+m00cDTyM5MOQuKcJZfMHZtGwp2t90Ow8zLk9NjzSCCoWlc
+	 3+n9hT/OPwIVGtrCDwrGbyVEin/p2a2Rn4Z1gUDjsrgWrJAzQua8dEbS5M4HiOOOTt
+	 UaO+qKH/xhZSxUU1caoTRHvvL3npTvMlB+LdV8wTS0s+BM/A1eL9Knr2M6Ru4SUHKF
+	 q3Ufxn1ue/klA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v9 3/7] rust: irq: add support for non-threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <87wm71cahd.fsf@t14s.mail-host-address-is-not-set>
-Date: Mon, 18 Aug 2025 09:36:38 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Benno Lossin <lossin@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org,
- Joel Fernandes <joelagnelf@nvidia.com>,
- Dirk Behme <dirk.behme@de.bosch.com>
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <78006490-2576-4A10-9B8F-0AE43AE9030A@collabora.com>
-References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com>
- <ZBiGWoEXSxAUvEwNj8vzyDa5L6KvqTuKBTKz3mzyhMGBAja6PJsMtIiSdAUKDmn_FumrmDYuOk4PKlXRW055Qw==@protonmail.internalid>
- <20250811-topics-tyr-request_irq2-v9-3-0485dcd9bcbf@collabora.com>
- <87wm71cahd.fsf@t14s.mail-host-address-is-not-set>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 18 Aug 2025 14:37:15 +0200
+Message-Id: <DC5K4M9BQORO.1P8RCL0R7350D@kernel.org>
+Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>, <acourbot@nvidia.com>,
+ <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
+ <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 2/4] rust: scatterlist: Add type-state abstraction for
+ sg_table
+References: <20250815171058.299270-1-dakr@kernel.org>
+ <20250815171058.299270-3-dakr@kernel.org> <aKL338gQ7qPNKoBu@google.com>
+ <DC5IF4AUVJP6.5B68OUOXQLCM@kernel.org> <aKMcSWXEFZXIkwG6@google.com>
+In-Reply-To: <aKMcSWXEFZXIkwG6@google.com>
 
-Hi Andreas,
-
-> On 18 Aug 2025, at 05:14, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
->=20
->> This patch adds support for non-threaded IRQs and handlers through
->> irq::Registration and the irq::Handler trait.
+On Mon Aug 18, 2025 at 2:27 PM CEST, Alice Ryhl wrote:
+> On Mon, Aug 18, 2025 at 01:16:55PM +0200, Danilo Krummrich wrote:
+>> On Mon Aug 18, 2025 at 11:52 AM CEST, Alice Ryhl wrote:
+>> > On Fri, Aug 15, 2025 at 07:10:03PM +0200, Danilo Krummrich wrote:
+>> >> +{
+>> >> +    fn new(
+>> >> +        dev: &Device<Bound>,
+>> >> +        mut pages: P,
+>> >> +        dir: dma::DataDirection,
+>> >> +        flags: alloc::Flags,
+>> >> +    ) -> Result<impl PinInit<Self, Error> + use<'_, P>> {
+>> >
+>> > We would probably want to move the logic into the initializer so that =
+we
+>> > don't have the double Result here.
 >>=20
->> Registering an irq is dependent upon having a IrqRequest that was
->> previously allocated by a given device. This will be introduced in
->> subsequent patches.
+>> That'd be nice, but I think it's not possible.
 >>=20
->> Tested-by: Joel Fernandes <joelagnelf@nvidia.com>
->> Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->> ---
+>> We can't borrow from pages in the initializer closure while at the same =
+time
+>> store pages with another initializer, can we?
+>>=20
+>> Either way, it's not that big a deal I think, since this constructor is =
+not
+>> exposed to the outside world. Which is also why it didn't bother me too =
+much.
+>
+> Ok. Shrug.
 
-This was merged as you noticed in the other thread, but I can of course =
-send
-new patches to address your comments.
+I mean, don't get me wrong, if you see a way to avoid the double Result, I'=
+m
+happy to change it.
 
-I will get back to you on this soon.
-
-=E2=80=94 Daniel
-
-
+(What I meant is, given the above, I thought it's not possible. But at the =
+same
+time I did not spend too much brain cycles, since the constructor is privat=
+e
+anyways.)
 
