@@ -1,440 +1,289 @@
-Return-Path: <linux-kernel+bounces-772804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13889B297AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:10:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBE2B29815
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B523BA9B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD491895AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F06F25A359;
-	Mon, 18 Aug 2025 04:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1007D25A359;
+	Mon, 18 Aug 2025 04:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="QhthNkzR"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U22rY9n+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08AD218E97
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755490200; cv=none; b=HytEW2haCVpjr+gGF481R5+Kmp9IMeuJsG0vCmUXI/SyU8zubqxEPIA2vokv1cLeYP14tEA7VQfzBcKMTFt+jl6WQ9ZraP6Vcvtx7WQca6KsiuTlD15Ty+7g2ClAXWOmpiRQe6Wr4Al4HpMaMIwSLXHv+FZsSQutJF0FFAYTFf4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755490200; c=relaxed/simple;
-	bh=KDAUZIOQ9mn09XpD8lWNv8EwZqCbtqu3Vn6LHsRD3Jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqvxl62Nk16T3J9qZrGTWbofB9FWD4xyWESpRkBqiYKqFi/y484UJpwhFfw+gpcL+3wX8nSVGxKKs50SAM0bC3vI+yr88EFdq5dMsRUwTi2raLvRzhfVstLbCeHy36gZyV9R6IHle2BGE4vRPCxB1hXtZxfqTtwcK/yESTQ8mJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=QhthNkzR; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24457f53d2eso43550945ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 21:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755490198; x=1756094998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cic6m/dj0aD9eVh/PT4j71J5W/VVI1QVdV93xvllQvk=;
-        b=QhthNkzRNqPcHBQORei6GgD3r4t6Ptfh86pn+854SXyuPUOlXpygxolIXoEEhMrazC
-         F10+tyzMdDmN8B6pVDxWwzK8q/UxEOBtJZ2o1ieJWzSoTko8E6BSVGg/jVHgM7BvzvNu
-         Rfq/LZX/7/P/P3AqgJF9O+Qjyt/clcNC+vDYndTbZSS7bAZAcyXFx6alvBq/R72ywuj3
-         Yt0diSafI4KPfRf19UYUawR97tfsBBCr7pEcg1ngvdNu/TFzQqcZaOpLmv6RFCOjJ9iP
-         fuQi3goc778bJaeWs0ZKbAZE/8B4BKS3hZug2Wp5s+eeYKZwAChs5yzFcehGCEnS5cHF
-         m5BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755490198; x=1756094998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cic6m/dj0aD9eVh/PT4j71J5W/VVI1QVdV93xvllQvk=;
-        b=Qf5FmTmdfkfivtkiS+chtnNOczPL3g5Mmc1MQZ6DR4hdi8PcG/UOHkHgxox1x4G2cP
-         /T1mqvCPhDDOw5p0kTP4c0fm0DD8pYH7J3tllA0D9pqAv4ZQ/n2rE9cUSzufAHBDGV5B
-         7X+ovtlfooIdYp/wcG9j35Ec3VBaL/4Dy8FNs2GOE8JciPmQJZBsjMPNN+ZVX60Pgyod
-         5gLYcTLHMCWByYXxLcM+scqE0FdAO5aVXmJOHuppxa4C9+kS0Op71zjKZws57tGRbwjX
-         7CcZKmabxi5roQTVWBKcpA9nkl3e/UcPKO4qJxKcYIY4nYa8kfA+gyL18iAQkXreq18A
-         A69Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVBPdTvKPVX1OIMih04L4jX+CjzXkylViJmFdwNerLsfXMNnmXq8V5afkjfFEqadf+ZxgvIh1S9bMcJWP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVLuxaBjIiU34/2MTbVKmdnJMcwXWVIDQtAC+pFMPXo26sGMTF
-	2MkkVgeOKLNFW1KlbdxzZ2Ff/ImtCGW/5EKsGiXDBjtGaN8Nym46E3ulPA+GzdQWS6A=
-X-Gm-Gg: ASbGnct8/3lEqzHQoEolJCuy9//GVQAbP0may93hkbWGcAdIxsHlCLbI0IPko4rv4mT
-	tf6h9C40q8ARC4CvMjCe3bIVQksycArApTkNl8OzmeQ7E1a2qaFNrdKyxI9FM01A8d6iVfrN8vr
-	0I5LUK4jIMNWuhto7PsPDlidz/vNbjg8XmmVSSCNdJs0dSqOyKdLGAq84DvBcfEb4H83H4bImPp
-	sQsE8ftUQfittNouTc1N0UZ0pj9lK+dCzREQXSk43fjnZ5G4Dyxk5vN/czTX4q1nifKdrVvWAIK
-	BWxhdOU8cd2853u7w5cy3xpOGjAi1gxj8dRhfczW5MWD6zlCtmMHHHwKXgdqEXRR5p0NJsu6qju
-	owPINW41ESeMO8oDy9WZsh7kkum7F6EhmQ1yTBw==
-X-Google-Smtp-Source: AGHT+IECZ/fHWu0eLpHlyIlOaOKTW7TB5KbiIYIV2gyGFhcdQyqL1sbiVLLuzteuinhCHVBZ4RQLFQ==
-X-Received: by 2002:a17:903:4b4c:b0:23f:f3e1:7363 with SMTP id d9443c01a7336-2446d73e7c9mr128300415ad.23.1755490197940;
-        Sun, 17 Aug 2025 21:09:57 -0700 (PDT)
-Received: from sunil-laptop ([106.51.199.3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d578aa4sm66701445ad.153.2025.08.17.21.09.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 21:09:57 -0700 (PDT)
-Date: Mon, 18 Aug 2025 09:39:48 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] RISC-V: Add common csr_read_num() and
- csr_write_num() functions
-Message-ID: <aKKnjDt5bSTFtFQX@sunil-laptop>
-References: <20250815161406.76370-1-apatel@ventanamicro.com>
- <20250815161406.76370-3-apatel@ventanamicro.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C26279F5;
+	Mon, 18 Aug 2025 04:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755490842; cv=fail; b=cDUp7gRxb704ZLBr/MJ7Gz+24FXeV3KMzpnGoZzSKVingGu8t/EZNhOKUjTFGWw2DLlfpvWGyXiYjO1T06MjSbwxuRRqIosOQS9mOxH25zskZdOIyUWZbWrmepDFRd4ss3UTTnf3KNA9jo0oGfpAaH9xy/oylBkbw3lRQxR630w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755490842; c=relaxed/simple;
+	bh=3Dh4vAaV6K8fAXpd8BOqwicDopjokptc2XAhE53WrDE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gZySIeWzUdw073ge5BEV31jCBFaFg1fPzkpXfAgoivBVwk5eTWMffiJ+NZ6jUano70GDoyo4RV+ryrJ5oenvz/qQ0UKDycBkvPHOBPcL55JnddBvxk+Zadwjk1UiZECE0SIsJJUz/cNMHbHYU1VGaU/9DLxczd8IPxuz15O91ko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U22rY9n+; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755490840; x=1787026840;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=3Dh4vAaV6K8fAXpd8BOqwicDopjokptc2XAhE53WrDE=;
+  b=U22rY9n+SDv/mvPxfumEdcfxnoIu6uzGwPggrqXXbS943ckbFPBdOvjh
+   b9abmiKnbt2Ap6jytplAXmrVoEblGsRHRjuKPFYp1KqPHQITE6OX8EArM
+   dlboD2qDL2ptfY8wu9/zeo733HcX2/n17jpdVhPG0Y0MmUKWDI9yS9QJc
+   CyAGfSv5cDzFQ4ZWcpQVvDRNYsdwI1bqDC2rU5PMNa1yYIthoX90qDpo5
+   OIm619ou2DEzm147gRoz303MNvHdjeo68RXed8AwqPQduCSN9e+O9y92e
+   YTutHArlJauAyoHg96TXWj5/MzOwaI5+A3eC86Yv+XKamFiTHDztW44C+
+   g==;
+X-CSE-ConnectionGUID: PL362IxGTX6ERlmo725zDg==
+X-CSE-MsgGUID: YV/mLNqiTtKjb7wttHREig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68420127"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="68420127"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 21:20:38 -0700
+X-CSE-ConnectionGUID: 2WitjwIWTKy0W58p3CCEQg==
+X-CSE-MsgGUID: OwzsqElRTGOh6qKlZlxjgA==
+X-ExtLoop1: 1
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 21:20:38 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 17 Aug 2025 21:20:37 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Sun, 17 Aug 2025 21:20:37 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.50)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 17 Aug 2025 21:20:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pR7o3Xe6EB0aLUhErWRtBJlv7FZx0i2TTvJKU4p16Ow95VhUDekMAg+ZUsvhB0ASBMLl33SAC048tQcHRQBfKGeuL1MCuxSr547FApImGwOZR2kd9Bu/eNAl3VO/GSESCY1OnVYUCoxKhAHuQDXvf7HAqzTdYeZXlbpbGEMhDdumOSyGGHsRtHK2/3QRgUz59R0jvPIWLHOiJc65a7A4Fuu3xjjhfg150E5jNpwYPyJQ4f87lKAvGdvrR6wChMnfc0z5jfGKHeL7nct//bQrZZk0Eyz0l7jrTOEap6pimmaH2Z7C/7y6kz8QzznV4iwv+m+b4T2joumyN89tMF9V7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l/TRkj/CbGAp7UJLka//rBdAp+WdFuK9TnIhZwRVVh0=;
+ b=l2VpoiOBAJdWYPfShzIMjhcVLwytUn1eHD+J8HGceQ+R3YzK+f9l1haUjfDRFjn+W7opYhOndUzQYsvt2EU6aGOiSVd2FE3DiNNnotEPFETmmx0hJeMCPusFzUdjPnGN4LoZYQ3JNVZlBayrauBHuGsO5HM+DgqwkucYsSkR2ixu/uU8dsfCIFvcmse5Mtw1OibKMmZ5blWSGb+Z8/Rttq33FwJ447Q4mQBMJIWSO/XKhB9C/QpYVLQ26SBqKGZbfAFvdTr848JvUWblflzIOi8rk/RH5mn0SdgB9pXz0tBIwDr/i9+FJX5kUzITqWOFCvvfbunrLqOOYut1QR/VpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ IA0PR11MB8333.namprd11.prod.outlook.com (2603:10b6:208:491::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
+ 2025 04:20:29 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%7]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 04:20:29 +0000
+Date: Mon, 18 Aug 2025 12:19:41 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Vishal Annapurve <vannapurve@google.com>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <x86@kernel.org>,
+	<rick.p.edgecombe@intel.com>, <dave.hansen@intel.com>, <kas@kernel.org>,
+	<tabba@google.com>, <ackerleytng@google.com>, <quic_eberman@quicinc.com>,
+	<michael.roth@amd.com>, <david@redhat.com>, <vbabka@suse.cz>,
+	<thomas.lendacky@amd.com>, <pgonda@google.com>, <fan.du@intel.com>,
+	<jun.miao@intel.com>, <ira.weiny@intel.com>, <isaku.yamahata@intel.com>,
+	<xiaoyao.li@intel.com>, <binbin.wu@linux.intel.com>, <chao.p.peng@intel.com>
+Subject: Re: [RFC PATCH v2 22/23] KVM: TDX: Handle Dynamic PAMT on page split
+Message-ID: <aKKp3fyoYgaaqidm@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+ <20250807094616.4776-1-yan.y.zhao@intel.com>
+ <CAGtprH8a4i-U-4Z6=Bk87FsC2nG+UbTVWB1Sc8oYXMJs7pHUwA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGtprH8a4i-U-4Z6=Bk87FsC2nG+UbTVWB1Sc8oYXMJs7pHUwA@mail.gmail.com>
+X-ClientProxiedBy: SI2PR06CA0007.apcprd06.prod.outlook.com
+ (2603:1096:4:186::9) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815161406.76370-3-apatel@ventanamicro.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|IA0PR11MB8333:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d39086d-44c8-4dd6-44d5-08ddde0e906d
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?M2cwOE1EcnZ1VnlNWWQvcVFsTWxGclhLdGRjS3ArQ2RWL2JZVFpGajJuYzlE?=
+ =?utf-8?B?bUthb0lFUlJIWnRLMjNxUzBFVXI1RVBKNm1SekV2T3I2Snd3TWpNOG5wWVlp?=
+ =?utf-8?B?MjVpTU9HNHNNZk10NC9neHNVL1VFNkpXM211dzc5WTU2ajdHbjBWOXYxQ3FQ?=
+ =?utf-8?B?VHVYRGphRXY3SWtWeFBObG5vVFhQa01zMTdKMlZpVk85Rm1ma3hTYW1UR0xV?=
+ =?utf-8?B?UGE0dFhrMUkycnR0ODlTYUNJR3I1N2poUWtuSUo3Yml1eWFhY09VVlRsVFRI?=
+ =?utf-8?B?TjcwV1k0NTNpOW1FU2ZSK1Q5aU16YnRUTytIZm4zdk9qU0VBZURzZndWbTZ2?=
+ =?utf-8?B?UmNGbUJFdXp2QjNGVXFscDhRa3MvNXBOMDhwVWs0cDE2MGNpR2k3b3lsMUhZ?=
+ =?utf-8?B?aGFCbENHdkFxS0NINnVQY29sWk8vQTZJWXN2bWlIN3gvNWhCUi9HOHlXRWJs?=
+ =?utf-8?B?OFhYV2FSREd6TlA3YU00UmNRUGdSMHAydUZWMndGMUZUSEEwUVlUVm94Zit3?=
+ =?utf-8?B?T1Urb2E3SHZkTnJwTXBzbXVFY0xCeGVFRUwzQ3JaK0dWa1ZQeStnRVRUTDNz?=
+ =?utf-8?B?TThFR0tKQzRYTEcwK3U2Wkg4dzB3c0sxRWtDRDY1czFXQnVCdGxnSVlkeXVU?=
+ =?utf-8?B?c0xxUlRqY0lubzZETk1DNlFyM0hzQit0UmR5ZGFFbUdJQ09OOU1wMitkUjAx?=
+ =?utf-8?B?cWZ6SVdMUmN1UmpNZFl3Z3lGcDRoS3NZaGtFWXJJSjNGdWFvKzYzWWFZRXBi?=
+ =?utf-8?B?SVJyZ3BaQVJRYS81VVAvQkZyTnhaS3B2ZTNsQWpDcGZHaHM5UTM1TW9UN29i?=
+ =?utf-8?B?Z0poRGtyTmVUUkRqY3ZmZ1BGbmhnTzBCTHl0MzJyZk9WQ25iUFptWmlwL2Na?=
+ =?utf-8?B?Rjl4NXkyVEFXZ3BOOFVIbHVBVStCMnlscFd4WWg3QXIwUHJSbWRSYm9Hbmhs?=
+ =?utf-8?B?ZVlyZEl5amlVaTEwbnFpK2VCSXlJeG1GNkZHTDBuSkdRL1JWaVRyTTZRc0dh?=
+ =?utf-8?B?bXhUbDYwaWs2d0xtVjk3eXRzODZxbGt4b2RLaGhCTEdjUGtuME1ldWNKNEdN?=
+ =?utf-8?B?TnR4a1Z3T0FNOXBNV0RoOVFCMDJyd3I3djNVMUxkdVV3Um5CRlhaMDNDMnZR?=
+ =?utf-8?B?alIyRmo0Qnd2SjFwWllwTkZQaHo1ZEE5OURYcWVWempjQ3dDcndtdXhRaStL?=
+ =?utf-8?B?ZEc4K3JVanZFMzJkRHNSY3l5RHZDMzJReDIzOC9kUngzVUFZQUN2MFN2bWpl?=
+ =?utf-8?B?SzhHNDgvcjBLdDNObWJVa0FXT0tzTFQzQWhVeHNqM2VOOENDSXpwQXpYVEEw?=
+ =?utf-8?B?MUxSYSs0eUxwclQwajZwR3p1cHJEVlFPYWVzc2dJTG1oUlFsVGM4Q2prVy9z?=
+ =?utf-8?B?NUIzVExDS1Rta0JoNXNCTm5MMFU1TnJBVjd2cXJlWG1XY2xKUnQ2SE5PY2oz?=
+ =?utf-8?B?cXVHZ01kUHVhdDhxQ1RzMzNlUC9HMUFXcEFHN3NRakVIYkNvN1hoT05rcDJ5?=
+ =?utf-8?B?aHh1em8ycUhkMkJrQS9pVitUMEx2RjlzRGQzUkFvcm1BTUJ0WStSMFdGNmps?=
+ =?utf-8?B?b21DWDFVSjB3bVhJYUIwUEJQV1JQVVZ2cDE2K0JOSTg2bWFsam5sT2ZwZm9V?=
+ =?utf-8?B?ZXljaThneU9NSTR0cXhSQ3BUUmt6ZmZsTHY5RFd6QlpjOEFNM1dWaEg4S0NV?=
+ =?utf-8?B?QmZzMUFOTitoTjkwTGpFN3FlSjgxR1dlUnRsektCNlh0NlA2TSs4MHpJeE5j?=
+ =?utf-8?B?MENEb28wTzlBUUVmbUdaUlozQ0lzTm0wKzB2N0RSakJORVhEUnByVzR2YXc0?=
+ =?utf-8?B?QWkrdEdIS0RBc2hWL045UUE3UHlvTzBvUi84dmtxQzNYTzl6OFQvQjE1MGE0?=
+ =?utf-8?B?Z25NYkM2dldOcTc3b0JSV1gwSTg0SUNXVnI2OUlNam1rbnNmQ0hKVzdHUjFy?=
+ =?utf-8?Q?aaEgsiwEiws=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VzFUdE91Z2UycFY4amQ2QlJ4SmlyTWR1eHNSYkpwTUUzd0F6NzJHSXVlTDNz?=
+ =?utf-8?B?RTk4WEgraVNvSHAxdGx3MkhjQWJCWjUwN0JabkthZEtqc1FZeW05VWZFNGxQ?=
+ =?utf-8?B?U200OGw4SDA0d1pKRVdab0lGdWZOY2FJY3d1dDNINWFQMENuNVZVK3VRdHpN?=
+ =?utf-8?B?Mk55VHJPTzBFV0w0NzVsanV1NDdDUG5EOEdCSmg2NHNTNkxtckwzeFhuQnRD?=
+ =?utf-8?B?ZEFjKzNhb1lhL0pkMXNIUDdhK3NOUHV4eU9nWWdlU1Z2K2RJMEVsRkNDSENx?=
+ =?utf-8?B?RkkvNXJyTWhtSXVVK3Q0REpZVU1IZE8zb0lkZWRpUGVqdHZyV0x4VlBsbS8y?=
+ =?utf-8?B?TUY3c1V0dXgxZGxrR3FLdDZ6SnBwWi9QVlU2MHVucEMxWldiU0daTUxPWlRk?=
+ =?utf-8?B?enhBM2tIWlRnRkZyZUVhTi9qa3djVUppS0JCU3k1OGFBWUEwZ29FQ1lLY3h4?=
+ =?utf-8?B?blRYVXNnbDBHL3lCN0dNaVJuSk9ucVJKbGJPcU1NY0sxK0tZb282ZVBvajRt?=
+ =?utf-8?B?K3dSV0tTdkp0cGg2WUcwb0NGNlNscjkyVmF3WHU1MUY1VkpBVXpsWCtwbzVW?=
+ =?utf-8?B?RzRoTDNGMlVyRGJqK05LODAyTng4N01JaEdCcGVIeXJNNytPNWg0NjE5d2hx?=
+ =?utf-8?B?RkxlV2FuV0tJSnBKVHYybG5hamVWeVptMmZ1RFY2RGJXOURUTzVLQ1h5d2JE?=
+ =?utf-8?B?WTM0NGZDTCtYMzdnVjhCa0I3S2tHcGxST2dtYzkrNmtUeEpnWVNyUmVlc3ht?=
+ =?utf-8?B?VXlncjhRbGluRXhmQnVzbk1sb3grV3Z1QWsyTEFENzVSU3ZFRVB3SEU5RkRG?=
+ =?utf-8?B?ano4UjlQQ1pMdTZuT2dSblJ0T1lsbFVjRGdzT3BQZzZDb2dtb1owRGV0aEYz?=
+ =?utf-8?B?R2hGU3loZ08ycVVCR3M3THZIdGlQak8zVXF6bEk3MkM2VHNqcllIdVN4dVFY?=
+ =?utf-8?B?SXBKUkwwZ1p5aUdlSUpicC9VUXdxTHd5ZHNZc0RmSjdCT1RNVnlkZFJiRm84?=
+ =?utf-8?B?dForaFN3UCtSK2RBSXlZemtuTTdGWU81SGVZUGlvTWNqaEdzN1VsenpuTHA3?=
+ =?utf-8?B?UDltWVQ2QzR0VEdFSEN6OStIekkra1crSk9JRThyc0phZW5naGwveXVRTE05?=
+ =?utf-8?B?S0ZTd0N3S08vQkRyU2dBazhXK3pxOTB1MWRDSXlHSnROTVRwZ3d1M0FvdHcz?=
+ =?utf-8?B?cGxpMURLcnZuYnBiUHgzZnQ4VlVKVy9LcGdwNXVyWGdxeWZ4WEhNTWlENm1k?=
+ =?utf-8?B?TEdIZTM4R09VNHVHTkQrSUpvWjd1aXpocGs0U3N4Y0oyeXRFRWtCR1RraGty?=
+ =?utf-8?B?b2pCbmZzM01GcWRFT000UEpuSEhzREpDNTJodTlDbUJFeENabVlMdFRuRlg3?=
+ =?utf-8?B?d2d6azRmZDduR0MwdkF6SHBFZTI2anFUNGFMbkVSemprd3RWdE5IZlFTV0xj?=
+ =?utf-8?B?WTYza2hza1VkODMrRG1aclMrSXNzWWFXSzlCczY3QUpLR1UzQkVDRCtYMlEv?=
+ =?utf-8?B?NHBuamYwK3Nxdlk4dUJIZ1pCZ1JyMFpDeDZYOWVvSm5yVVRwZDJUYTlFMGFQ?=
+ =?utf-8?B?bkwzWFFoamlVNWo0RXlaWlJxanE5RFplMW1hSUlScU9GWTZTMjhHeStiYlEw?=
+ =?utf-8?B?dmtwMjNLT3RscGRxMDJGZ01xc1VqY3VEZUlvK0puTUZRaHNpaUpkYUNYUFBE?=
+ =?utf-8?B?bWhYRXVpaUpxZXZ4VUU1TmxBM3dqWE1IM29YQWdZRlNKRzNKbDZsN0pTL0RJ?=
+ =?utf-8?B?ZGgyNm5DUzB3U2l3ZWFJdWR6Nkp4QXdGTXhFWlBSU2J6M2g4Z3gwanpkb05u?=
+ =?utf-8?B?Zms3M1NRN0tvOGE0b2hRT2NLQ3hkd1gzMG9qQjJDUjkycnZEN0Q2cGFSV1Z2?=
+ =?utf-8?B?dHNKOTlNVytZSjE5YVBUeldtRVNuMGNncXVHcm9iaVdQMkpGL0wrUVlpZWta?=
+ =?utf-8?B?SnRRYlZHWldnVWN4SExSU1RuVDRlRVNSclEzVFN1ZTk2dm80NTBNdytEN2Jr?=
+ =?utf-8?B?T2dpUmVodVFTVHRwdlFJNG5BUEFxR1dWR25IUHZLR1hjV1pPKytLWHhacHgv?=
+ =?utf-8?B?UHZvTEJsTWk0cjJpRUwxejJ2TTFDSnhhZzkrNXV0Z0xDMjhzaldOdVl4TUcy?=
+ =?utf-8?Q?le7stNFdKDfIc9jnO8ZIFF8GO?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d39086d-44c8-4dd6-44d5-08ddde0e906d
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 04:20:29.2945
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LNQDH6ScmFJr+nToJNnpnA44QorMF+ijDimp/Bd3L9Ov5Gd8ZAcMusEclRoYrL+aXPcik15PAVH8+JbHDGkY5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8333
+X-OriginatorOrg: intel.com
 
-On Fri, Aug 15, 2025 at 09:44:06PM +0530, Anup Patel wrote:
-> In RISC-V, there is no CSR read/write instruction which takes CSR
-> number via register so add common csr_read_num() and csr_write_num()
-> functions which allow accessing certain CSRs by passing CSR number
-> as parameter. These common functions will be first used by the
-> ACPI CPPC driver and RISC-V PMU driver.
+On Wed, Aug 13, 2025 at 10:31:27PM -0700, Vishal Annapurve wrote:
+> On Thu, Aug 7, 2025 at 2:46 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
+> >
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > +static struct page *tdx_alloc_pamt_page_split(void *data)
+> > +{
+> > +       struct kvm *kvm = data;
+> > +       void *p;
+> > +
+> > +       p = kvm_mmu_memory_cache_alloc(&kvm->arch.pamt_page_cache);
+> > +       return virt_to_page(p);
+> > +}
+> > +
+> >  static int tdx_spte_demote_private_spte(struct kvm *kvm, gfn_t gfn,
+> > -                                       enum pg_level level, struct page *page)
+> > +                                       enum pg_level level, struct page *page,
+> > +                                       kvm_pfn_t pfn_for_gfn)
+> >  {
+> >         int tdx_level = pg_level_to_tdx_sept_level(level);
+> > +       hpa_t hpa = pfn_to_hpa(pfn_for_gfn);
+> >         struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> >         gpa_t gpa = gfn_to_gpa(gfn);
+> >         u64 err, entry, level_state;
+> > +       LIST_HEAD(pamt_pages);
+> > +
+> > +       tdx_pamt_get(page, PG_LEVEL_4K, tdx_alloc_pamt_page_split, kvm);
 > 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/csr.h |   3 +
->  arch/riscv/kernel/Makefile   |   1 +
->  arch/riscv/kernel/csr.c      | 177 +++++++++++++++++++++++++++++++++++
->  drivers/acpi/riscv/cppc.c    |  17 ++--
->  drivers/perf/riscv_pmu.c     |  43 +--------
->  5 files changed, 189 insertions(+), 52 deletions(-)
->  create mode 100644 arch/riscv/kernel/csr.c
+> This invocation needs a return value check.
+Ack.
+
+> > +       tdx_alloc_pamt_pages(&pamt_pages, tdx_alloc_pamt_page_split, kvm);
 > 
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 6fed42e37705..1540626b3540 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -575,6 +575,9 @@
->  			      : "memory");			\
->  })
->  
-> +extern unsigned long csr_read_num(unsigned long csr_num, int *out_err);
-> +extern void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err);
-> +
->  #endif /* __ASSEMBLY__ */
->  
->  #endif /* _ASM_RISCV_CSR_H */
-> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> index c7b542573407..0a75e20bde18 100644
-> --- a/arch/riscv/kernel/Makefile
-> +++ b/arch/riscv/kernel/Makefile
-> @@ -50,6 +50,7 @@ obj-y	+= soc.o
->  obj-$(CONFIG_RISCV_ALTERNATIVE) += alternative.o
->  obj-y	+= cpu.o
->  obj-y	+= cpufeature.o
-> +obj-y	+= csr.o
->  obj-y	+= entry.o
->  obj-y	+= irq.o
->  obj-y	+= process.o
-> diff --git a/arch/riscv/kernel/csr.c b/arch/riscv/kernel/csr.c
-> new file mode 100644
-> index 000000000000..f7de45bb597c
-> --- /dev/null
-> +++ b/arch/riscv/kernel/csr.c
-> @@ -0,0 +1,177 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 Ventana Micro Systems Inc.
-> + */
-> +
-> +#define pr_fmt(fmt) "riscv: " fmt
-> +#include <linux/err.h>
-> +#include <linux/export.h>
-> +#include <linux/printk.h>
-> +#include <linux/types.h>
-> +#include <asm/csr.h>
-> +
-> +#define CSR_CUSTOM0_U_RW_BASE		0x800
-> +#define CSR_CUSTOM0_U_RW_COUNT		0x100
-> +
-> +#define CSR_CUSTOM1_U_RO_BASE		0xCC0
-> +#define CSR_CUSTOM1_U_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM2_S_RW_BASE		0x5C0
-> +#define CSR_CUSTOM2_S_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM3_S_RW_BASE		0x9C0
-> +#define CSR_CUSTOM3_S_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM4_S_RO_BASE		0xDC0
-> +#define CSR_CUSTOM4_S_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM5_HS_RW_BASE		0x6C0
-> +#define CSR_CUSTOM5_HS_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM6_HS_RW_BASE		0xAC0
-> +#define CSR_CUSTOM6_HS_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM7_HS_RO_BASE		0xEC0
-> +#define CSR_CUSTOM7_HS_RO_COUNT		0x040
-> +
-> +#define CSR_CUSTOM8_M_RW_BASE		0x7C0
-> +#define CSR_CUSTOM8_M_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM9_M_RW_BASE		0xBC0
-> +#define CSR_CUSTOM9_M_RW_COUNT		0x040
-> +
-> +#define CSR_CUSTOM10_M_RO_BASE		0xFC0
-> +#define CSR_CUSTOM10_M_RO_COUNT		0x040
-> +
-> +unsigned long csr_read_num(unsigned long csr_num, int *out_err)
-> +{
-> +#define switchcase_csr_read(__csr_num)				\
-> +	case (__csr_num):					\
-> +		return csr_read(__csr_num)
-> +#define switchcase_csr_read_2(__csr_num)			\
-> +	switchcase_csr_read(__csr_num + 0);			\
-> +	switchcase_csr_read(__csr_num + 1)
-> +#define switchcase_csr_read_4(__csr_num)			\
-> +	switchcase_csr_read_2(__csr_num + 0);			\
-> +	switchcase_csr_read_2(__csr_num + 2)
-> +#define switchcase_csr_read_8(__csr_num)			\
-> +	switchcase_csr_read_4(__csr_num + 0);			\
-> +	switchcase_csr_read_4(__csr_num + 4)
-> +#define switchcase_csr_read_16(__csr_num)			\
-> +	switchcase_csr_read_8(__csr_num + 0);			\
-> +	switchcase_csr_read_8(__csr_num + 8)
-> +#define switchcase_csr_read_32(__csr_num)			\
-> +	switchcase_csr_read_16(__csr_num + 0);			\
-> +	switchcase_csr_read_16(__csr_num + 16)
-> +#define switchcase_csr_read_64(__csr_num)			\
-> +	switchcase_csr_read_32(__csr_num + 0);			\
-> +	switchcase_csr_read_32(__csr_num + 32)
-> +#define switchcase_csr_read_128(__csr_num)			\
-> +	switchcase_csr_read_64(__csr_num + 0);			\
-> +	switchcase_csr_read_64(__csr_num + 64)
-> +#define switchcase_csr_read_256(__csr_num)			\
-> +	switchcase_csr_read_128(__csr_num + 0);			\
-> +	switchcase_csr_read_128(__csr_num + 128)
-> +
-> +	if (out_err)
-> +		*out_err = 0;
-> +
-> +	switch (csr_num) {
-> +	switchcase_csr_read_32(CSR_CYCLE);
-> +	switchcase_csr_read_32(CSR_CYCLEH);
-> +	switchcase_csr_read_256(CSR_CUSTOM0_U_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM1_U_RO_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM2_S_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM3_S_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM4_S_RO_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM5_HS_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM6_HS_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM7_HS_RO_BASE);
-> +#ifdef CONFIG_RISCV_M_MODE
-> +	switchcase_csr_read_64(CSR_CUSTOM8_M_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM9_M_RW_BASE);
-> +	switchcase_csr_read_64(CSR_CUSTOM10_M_RO_BASE);
-> +#endif
-> +	default:
-> +		if (out_err)
-> +			*out_err = -EINVAL;
-> +		else
-> +			pr_err("%s: csr 0x%lx not supported\n", __func__, csr_num);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +#undef switchcase_csr_read_256
-> +#undef switchcase_csr_read_128
-> +#undef switchcase_csr_read_64
-> +#undef switchcase_csr_read_32
-> +#undef switchcase_csr_read_16
-> +#undef switchcase_csr_read_8
-> +#undef switchcase_csr_read_4
-> +#undef switchcase_csr_read_2
-> +#undef switchcase_csr_read
-> +}
-> +EXPORT_SYMBOL_GPL(csr_read_num);
-> +
-> +void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err)
-> +{
-> +#define switchcase_csr_write(__csr_num, __val)			\
-> +	case (__csr_num):					\
-> +		csr_write(__csr_num, __val);			\
-> +		break
-> +#define switchcase_csr_write_2(__csr_num, __val)		\
-> +	switchcase_csr_write(__csr_num + 0, __val);		\
-> +	switchcase_csr_write(__csr_num + 1, __val)
-> +#define switchcase_csr_write_4(__csr_num, __val)		\
-> +	switchcase_csr_write_2(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_2(__csr_num + 2, __val)
-> +#define switchcase_csr_write_8(__csr_num, __val)		\
-> +	switchcase_csr_write_4(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_4(__csr_num + 4, __val)
-> +#define switchcase_csr_write_16(__csr_num, __val)		\
-> +	switchcase_csr_write_8(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_8(__csr_num + 8, __val)
-> +#define switchcase_csr_write_32(__csr_num, __val)		\
-> +	switchcase_csr_write_16(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_16(__csr_num + 16, __val)
-> +#define switchcase_csr_write_64(__csr_num, __val)		\
-> +	switchcase_csr_write_32(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_32(__csr_num + 32, __val)
-> +#define switchcase_csr_write_128(__csr_num, __val)		\
-> +	switchcase_csr_write_64(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_64(__csr_num + 64, __val)
-> +#define switchcase_csr_write_256(__csr_num, __val)		\
-> +	switchcase_csr_write_128(__csr_num + 0, __val);		\
-> +	switchcase_csr_write_128(__csr_num + 128, __val)
-> +
-> +	if (out_err)
-> +		*out_err = 0;
-> +
-> +	switch (csr_num) {
-> +	switchcase_csr_write_256(CSR_CUSTOM0_U_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM2_S_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM3_S_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM5_HS_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM6_HS_RW_BASE, val);
-> +#ifdef CONFIG_RISCV_M_MODE
-> +	switchcase_csr_write_64(CSR_CUSTOM8_M_RW_BASE, val);
-> +	switchcase_csr_write_64(CSR_CUSTOM9_M_RW_BASE, val);
-> +#endif
-> +	default:
-> +		if (out_err)
-> +			*out_err = -EINVAL;
-> +		else
-> +			pr_err("%s: csr 0x%lx not supported\n", __func__, csr_num);
-> +		break;
-> +	}
-> +#undef switchcase_csr_write_256
-> +#undef switchcase_csr_write_128
-> +#undef switchcase_csr_write_64
-> +#undef switchcase_csr_write_32
-> +#undef switchcase_csr_write_16
-> +#undef switchcase_csr_write_8
-> +#undef switchcase_csr_write_4
-> +#undef switchcase_csr_write_2
-> +#undef switchcase_csr_write
-> +}
-> +EXPORT_SYMBOL_GPL(csr_write_num);
-> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> index 42c1a9052470..fe491937ed25 100644
-> --- a/drivers/acpi/riscv/cppc.c
-> +++ b/drivers/acpi/riscv/cppc.c
-> @@ -65,24 +65,19 @@ static void sbi_cppc_write(void *write_data)
->  static void cppc_ffh_csr_read(void *read_data)
->  {
->  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)read_data;
-> +	int err;
->  
-> -	switch (data->reg) {
-> -	/* Support only TIME CSR for now */
-> -	case CSR_TIME:
-> -		data->ret.value = csr_read(CSR_TIME);
-> -		data->ret.error = 0;
-> -		break;
-> -	default:
-> -		data->ret.error = -EINVAL;
-> -		break;
-> -	}
-> +	data->ret.value = csr_read_num(data->reg, &err);
-> +	data->ret.error = err;
->  }
->  
->  static void cppc_ffh_csr_write(void *write_data)
->  {
->  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)write_data;
-> +	int err;
->  
-> -	data->ret.error = -EINVAL;
-> +	csr_write_num(data->reg, data->val, &err);
-> +	data->ret.error = err;
->  }
->  
->  /*
-> diff --git a/drivers/perf/riscv_pmu.c b/drivers/perf/riscv_pmu.c
-> index 7644147d50b4..aa053254448d 100644
-> --- a/drivers/perf/riscv_pmu.c
-> +++ b/drivers/perf/riscv_pmu.c
-> @@ -16,6 +16,7 @@
->  #include <linux/smp.h>
->  #include <linux/sched_clock.h>
->  
-> +#include <asm/csr.h>
->  #include <asm/sbi.h>
->  
->  static bool riscv_perf_user_access(struct perf_event *event)
-> @@ -88,46 +89,6 @@ void arch_perf_update_userpage(struct perf_event *event,
->  	userpg->cap_user_time_short = 1;
->  }
->  
-> -static unsigned long csr_read_num(int csr_num)
-> -{
-> -#define switchcase_csr_read(__csr_num, __val)		{\
-> -	case __csr_num:					\
-> -		__val = csr_read(__csr_num);		\
-> -		break; }
-> -#define switchcase_csr_read_2(__csr_num, __val)		{\
-> -	switchcase_csr_read(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read(__csr_num + 1, __val)}
-> -#define switchcase_csr_read_4(__csr_num, __val)		{\
-> -	switchcase_csr_read_2(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_2(__csr_num + 2, __val)}
-> -#define switchcase_csr_read_8(__csr_num, __val)		{\
-> -	switchcase_csr_read_4(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_4(__csr_num + 4, __val)}
-> -#define switchcase_csr_read_16(__csr_num, __val)	{\
-> -	switchcase_csr_read_8(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_8(__csr_num + 8, __val)}
-> -#define switchcase_csr_read_32(__csr_num, __val)	{\
-> -	switchcase_csr_read_16(__csr_num + 0, __val)	 \
-> -	switchcase_csr_read_16(__csr_num + 16, __val)}
-> -
-> -	unsigned long ret = 0;
-> -
-> -	switch (csr_num) {
-> -	switchcase_csr_read_32(CSR_CYCLE, ret)
-> -	switchcase_csr_read_32(CSR_CYCLEH, ret)
-> -	default :
-> -		break;
-> -	}
-> -
-> -	return ret;
-> -#undef switchcase_csr_read_32
-> -#undef switchcase_csr_read_16
-> -#undef switchcase_csr_read_8
-> -#undef switchcase_csr_read_4
-> -#undef switchcase_csr_read_2
-> -#undef switchcase_csr_read
-> -}
-> -
->  /*
->   * Read the CSR of a corresponding counter.
->   */
-> @@ -139,7 +100,7 @@ unsigned long riscv_pmu_ctr_read_csr(unsigned long csr)
->  		return -EINVAL;
->  	}
->  
-> -	return csr_read_num(csr);
-> +	return csr_read_num(csr, NULL);
->
-I think it is better to pass valid error pointer here.
+> IIUC tdx_pamt_get() will result in pamt_pages allocation above, so
+> this step is not needed.
 
->  }
->  
->  u64 riscv_pmu_ctr_get_width_mask(struct perf_event *event)
-> -- 
-> 2.43.0
+This step is to allocate pamt_pages for the guest 2MB page that needs splitting.
+The above tdx_pamt_get() is for the EPT page to be added.
+I'll add comments or update the param names for better clarity.
+
+Regarding the absence of return value check for the tdx_alloc_pamt_pages(), I
+think it's because the tdx_alloc_pamt_page_split() retrieves pages from the
+pamt_page_cache via kvm_mmu_memory_cache_alloc(), which is guaranteed to succeed
+(otherwise, there's a BUG_ON() in kvm_mmu_memory_cache_alloc()).
+
+> >
+> >         err = tdh_mem_page_demote(&kvm_tdx->td, gpa, tdx_level, page,
+> > -                                 NULL, &entry, &level_state);
+> > +                                 &pamt_pages, &entry, &level_state);
+> >
+> >         if (unlikely(tdx_operand_busy(err))) {
+> >                 tdx_no_vcpus_enter_start(kvm);
+> >                 err = tdh_mem_page_demote(&kvm_tdx->td, gpa, tdx_level, page,
+> > -                                         NULL, &entry, &level_state);
+> > +                                         &pamt_pages, &entry, &level_state);
+> >                 tdx_no_vcpus_enter_stop(kvm);
+> >         }
+> >
+> >         if (KVM_BUG_ON(err, kvm)) {
+> > +               tdx_free_pamt_pages(&pamt_pages);
 > 
-
-Otherwise, LGTM.
-
-Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
+> If tdx_alloc_pamt_pages() is not needed then this can be dropped as well.
+> 
+> > +               tdx_pamt_put(page, PG_LEVEL_4K);
+> >                 pr_tdx_error_2(TDH_MEM_PAGE_DEMOTE, err, entry, level_state);
+> >                 return -EIO;
+> >         }
+> > +
+> > +       if (tdx_supports_dynamic_pamt(tdx_sysinfo))
+> > +               atomic_set(tdx_get_pamt_refcount(hpa), PTRS_PER_PMD);
+> 
+> Should this be
+> atomic_set(tdx_get_pamt_refcount(hpa), PTRS_PER_PMD -1 );
+> 
+> as tdx_pamt_get would have increased the refcount by 1 already above?
+This hpa is for guest 2MB memory range. There shouldn't have any increased
+pamt_refcount for this range before a successful demote.
+So, atomic_set() to PTRS_PER_PMD looks correct, though atomic_add() seems even
+safer.
 
