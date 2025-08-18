@@ -1,233 +1,187 @@
-Return-Path: <linux-kernel+bounces-773107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FDFB29B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:59:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1153B29B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C46B4E21E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62943B88C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA2029D27A;
-	Mon, 18 Aug 2025 07:59:35 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67EC22424E;
+	Mon, 18 Aug 2025 08:00:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE7727E1AC
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BEF22A4D6;
+	Mon, 18 Aug 2025 08:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755503974; cv=none; b=ktgSjKOEUUa8GQ0LTuF11TpRxLOH4qrf2gEBsw0mpUJKhbDrvSH07h+cw4kEATsbICNY1zjQbpGeIejC1ir0qd44RjdDqCIicT/+JqLy0TQnkv+m4Qs04R0J3RcvOfvuN6ye4htsGLErqjij9eg0fn73afg7YEhGnT++tUCxXoo=
+	t=1755504017; cv=none; b=N1ZjvdpVthYC9deTQvQo0j5EnoiiZdFDAI4s6sBTrEtMFa8yn97ms7YBHoxGmRu8pTJy6MknHdxE1Dw4gdO+7wqPqAq0NwG2MBXXgGkCwZhNrvCoePfhYQmRfSmaEubKrizgLulrixg24dZSQ0NP2DlWEcmnEMG5aypeMA6MVss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755503974; c=relaxed/simple;
-	bh=/pqSSPndeW94Qw0Cfkt0F2CGstz9Z4x1ZQ9UDaUe6nw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LDxRTlMYOn8DGmlQLu3Wk6z9jkHyBfphjXtBlnSIF3PEiAEPF7Sjr8qQRRM182eHCYghVvtavMothbbMU4uNCrrD3VasawT9Q09JXWpfywCcef0rtDsPCJVjPFv6HosvHr/n1nTiAQqXk+hxL01fCkCIUcFoAxDlSoaCMPoxAGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-88432e1f068so445083739f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:59:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755503972; x=1756108772;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7BSYpuBDwucpyaMQl070i2SR5XklPKyoMcgXiBMplEo=;
-        b=HgivsZabesgK9PUnWNV4eSB7HPRADdW1g7h33DLj9xgZwJGrRg8s1lgYByuXbsq100
-         QBUza4TIHcqO/OO7H8cmfiA6CUmQyrdEF6qgpOqGstBnje4ixwQ0ehUfSbykhgRuEWDm
-         xTQJuAQvNjtw6XbJ2L0jLwP+8vC2LuCkyOQ+Y3ndfqiRxMtE+eBM+CERC7jCucb5Eknl
-         dc1l/vV9pKd1vemClGBp31owcBKwV7rnHA04A9ONKH8MggUDqsZh3YmmSNWsa3Y4cTam
-         AC/lcLzeaaqgHWbKnOsQpwg/17Bc2g+ut57hbvpaMS19KQhDL651CqTM+HqdQM/bmbH4
-         haew==
-X-Forwarded-Encrypted: i=1; AJvYcCUgnmMhnUdQCtfmunLh4h7R+DmXzI2vRFVn2VnqIJklptYxsMU0w1iy1uUt3k5zafq0dDr2e7kx7Xxl40U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6iaxygTWWwueUUOr/cHa1LRvok+YvURrS8aK6BqGwVfnVO00l
-	/WSbJqWiWNa+U7We+vv0o9PhnbsoMrUTfPF+XRytyLk5U902VJ6dFoAzGDvKMBKPRs+zJXsaLeW
-	L53DlsbJf82tLQOAxiOpXbwfuXbYhhQ8ecArOZkMQfIfM7eN22IcO1RmY2lM=
-X-Google-Smtp-Source: AGHT+IHtYz4hPIB7+FEXGrEHfyEu8Yul6+5/2gTfNNCoOVB/vSVR4PTAaAc5Z7UAjnRZpnyan7q6zpHbTfm1inicvQhxuhqDFer8
+	s=arc-20240116; t=1755504017; c=relaxed/simple;
+	bh=auSW/DxOzm5fFM+bWYFuVs+sb0KJ2/am0pG7R1xd4Cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bc4U9PvKbtF1DyUKlTcySjAUJ8I6VVkYLeDC90eWVnuY/aEitr0hKIFwJKiM0l0bwjzvWqlZ0T5/sVXs7mFTayHcVqUIFg07g5rMl4228T1iiTn9JaZfJ+yBN8+2WTxNLtQKE0i+id5Z6OjbUBoB6peNV6KhaPbFggVGWKSGzJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c54rY3xRZzYQvJ6;
+	Mon, 18 Aug 2025 16:00:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 235B81A018D;
+	Mon, 18 Aug 2025 16:00:12 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgBXIRKI3aJoSd5TEA--.35675S2;
+	Mon, 18 Aug 2025 16:00:11 +0800 (CST)
+Message-ID: <e485b38a-183b-42c8-9aed-9c2d939add0b@huaweicloud.com>
+Date: Mon, 18 Aug 2025 16:00:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160a:b0:3e5:81ef:b099 with SMTP id
- e9e14a558f8ab-3e5837f086fmr155291385ab.1.1755503972053; Mon, 18 Aug 2025
- 00:59:32 -0700 (PDT)
-Date: Mon, 18 Aug 2025 00:59:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a2dd64.050a0220.e29e5.0096.GAE@google.com>
-Subject: [syzbot] [x86?] BUG: soft lockup in xfrm_timer_handler
-From: syzbot <syzbot+b6ae1c4eede4e0ea287f@syzkaller.appspotmail.com>
-To: ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, jgross@suse.com, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	virtualization@lists.linux.dev, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    8742b2d8935f Merge tag 'pull-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=109d2af0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=412ee2f8b704a5e6
-dashboard link: https://syzkaller.appspot.com/bug?extid=b6ae1c4eede4e0ea287f
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/306c9da968d7/disk-8742b2d8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/30ecb8c8194f/vmlinux-8742b2d8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ed161655b985/bzImage-8742b2d8.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b6ae1c4eede4e0ea287f@syzkaller.appspotmail.com
-
-watchdog: BUG: soft lockup - CPU#0 stuck for 144s! [swapper/0:0]
-Modules linked in:
-irq event stamp: 2440187
-hardirqs last  enabled at (2440186): [<ffffffff8172210b>] kvm_wait+0x1fb/0x290 arch/x86/kernel/kvm.c:-1
-hardirqs last disabled at (2440187): [<ffffffff8b792e6e>] sysvec_apic_timer_interrupt+0xe/0xc0 arch/x86/kernel/apic/apic.c:1050
-softirqs last  enabled at (2386480): [<ffffffff8184f4da>] __do_softirq kernel/softirq.c:613 [inline]
-softirqs last  enabled at (2386480): [<ffffffff8184f4da>] invoke_softirq kernel/softirq.c:453 [inline]
-softirqs last  enabled at (2386480): [<ffffffff8184f4da>] __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
-softirqs last disabled at (2386487): [<ffffffff8184f4da>] __do_softirq kernel/softirq.c:613 [inline]
-softirqs last disabled at (2386487): [<ffffffff8184f4da>] invoke_softirq kernel/softirq.c:453 [inline]
-softirqs last disabled at (2386487): [<ffffffff8184f4da>] __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc1-syzkaller-00016-g8742b2d8935f #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
-Code: 13 e8 02 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d 33 f7 0e 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900000077b8 EFLAGS: 00000246
-RAX: ffffffff8172213d RBX: 0000000000000003 RCX: ffffffff8de95100
-RDX: 0000000000000100 RSI: ffffffff8d9b6da5 RDI: ffffffff8be33400
-RBP: ffffc90000007890 R08: ffffffff8fa37e37 R09: 1ffffffff1f46fc6
-R10: dffffc0000000000 R11: fffffbfff1f46fc7 R12: dffffc0000000000
-R13: 0000000000000200 R14: 0000000000000003 R15: 1ffff92000000efc
-FS:  0000000000000000(0000) GS:ffff888125c1c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000563a9e26fa58 CR3: 000000000df36000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- kvm_wait+0x232/0x290 arch/x86/kernel/kvm.c:1064
- pv_wait arch/x86/include/asm/paravirt.h:569 [inline]
- pv_wait_head_or_lock kernel/locking/qspinlock_paravirt.h:466 [inline]
- __pv_queued_spin_lock_slowpath+0x7bf/0xb60 kernel/locking/qspinlock.c:325
- pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:557 [inline]
- queued_spin_lock_slowpath+0x43/0x50 arch/x86/include/asm/qspinlock.h:51
- queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
- do_raw_spin_lock+0x21f/0x290 kernel/locking/spinlock_debug.c:116
- spin_lock include/linux/spinlock.h:351 [inline]
- __xfrm_state_delete+0xba/0xca0 net/xfrm/xfrm_state.c:818
- xfrm_timer_handler+0x18f/0xa00 net/xfrm/xfrm_state.c:716
- __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
- __hrtimer_run_queues+0x52c/0xc60 kernel/time/hrtimer.c:1825
- hrtimer_run_softirq+0x187/0x2b0 kernel/time/hrtimer.c:1842
- handle_softirqs+0x283/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
-Code: 13 e8 02 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d 33 f7 0e 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffffff8de07d80 EFLAGS: 000002c2
-RAX: 3d439e448e506a00 RBX: ffffffff81968308 RCX: 3d439e448e506a00
-RDX: 0000000000000001 RSI: ffffffff8d9b6da5 RDI: ffffffff8be33400
-RBP: ffffffff8de07eb8 R08: ffff8880b8632f9b R09: 1ffff110170c65f3
-R10: dffffc0000000000 R11: ffffed10170c65f4 R12: ffffffff8fa37e30
-R13: 0000000000000000 R14: 0000000000000000 R15: 1ffffffff1bd2a20
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:757
- default_idle_call+0x74/0xb0 kernel/sched/idle.c:122
- cpuidle_idle_call kernel/sched/idle.c:190 [inline]
- do_idle+0x1e8/0x510 kernel/sched/idle.c:330
- cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:428
- rest_init+0x2de/0x300 init/main.c:744
- start_kernel+0x3a9/0x410 init/main.c:1097
- x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
- x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
- common_startup_64+0x13e/0x147
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 7440 Comm: syz.2.420 Not tainted 6.17.0-rc1-syzkaller-00016-g8742b2d8935f #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:check_kcov_mode kernel/kcov.c:183 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x18/0x70 kernel/kcov.c:217
-Code: cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 04 24 65 48 8b 0c 25 08 40 a0 92 65 8b 15 68 94 e0 10 <81> e2 00 01 ff 00 74 11 81 fa 00 01 00 00 75 35 83 b9 3c 16 00 00
-RSP: 0000:ffffc9001d36f0d8 EFLAGS: 00000297
-RAX: ffffffff8a216ca4 RBX: 0000000001000000 RCX: ffff888028cb8000
-RDX: 0000000000000402 RSI: 000000000007ffff RDI: 0000000000080000
-RBP: ffffc9001d36f230 R08: 0000000000000000 R09: ffffffff8a216a10
-R10: dffffc0000000000 R11: fffff52003a6de0c R12: dffffc0000000000
-R13: ffff88805489b300 R14: 0000000007000000 R15: ffffc9001d36f6a0
-FS:  0000000000000000(0000) GS:ffff888125d1c000(0063) knlGS:00000000f54ceb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000072956000 CR4: 00000000003526f0
-DR0: 0000040000000000 DR1: 000000000000064f DR2: 0000000000000006
-DR3: 0000000000000006 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- xfrm_state_lookup_spi_proto net/xfrm/xfrm_state.c:1707 [inline]
- xfrm_alloc_spi+0x534/0xf30 net/xfrm/xfrm_state.c:2589
- xfrm_alloc_userspi+0x70b/0xc90 net/xfrm/xfrm_user.c:1873
- xfrm_user_rcv_msg+0x7a0/0xab0 net/xfrm/xfrm_user.c:3501
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg+0x164/0x220 net/socket.c:2700
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb6/0x2b0 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x34/0x80 arch/x86/entry/syscall_32.c:331
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf70de539
-Code: 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f54ce55c EFLAGS: 00000206 ORIG_RAX: 0000000000000172
-RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 0000000080000740
-RDX: 0000000000000050 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kernfs: Fix UAF in PSI polling when open file is released
+To: Baokun Li <libaokun1@huawei.com>
+Cc: cgroups@vger.kernel.org, chenridong@huawei.com,
+ gregkh@linuxfoundation.org, hannes@cmpxchg.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, mkoutny@suse.com,
+ peterz@infradead.org, tj@kernel.org, zhouchengming@bytedance.com,
+ Yang Erkun <yangerkun@huawei.com>
+References: <20250815013429.1255241-1-chenridong@huaweicloud.com>
+ <0319ee9b-ce2c-4c02-a731-c538afcf008f@huawei.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <0319ee9b-ce2c-4c02-a731-c538afcf008f@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBXIRKI3aJoSd5TEA--.35675S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr48tFy3CFy8tFW3tF1DZFb_yoW5CFWrpa
+	9Ikr1UKw4DXryqyr4Iq3W0g3WrtayxXFWIgrnakr93ta4ftryvywn7Cr45XFyDJrsxJrsF
+	qanIk34jkw4YyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	UAwIDUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2025/8/16 17:53, Baokun Li wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> A use-after-free (UAF) vulnerability was identified in the PSI (Pressure
+>> Stall Information) monitoring mechanism:
+>>
+>> BUG: KASAN: slab-use-after-free in psi_trigger_poll+0x3c/0x140
+>> Read of size 8 at addr ffff3de3d50bd308 by task systemd/1
+>>
+>> psi_trigger_poll+0x3c/0x140
+>> cgroup_pressure_poll+0x70/0xa0
+>> cgroup_file_poll+0x8c/0x100
+>> kernfs_fop_poll+0x11c/0x1c0
+>> ep_item_poll.isra.0+0x188/0x2c0
+>>
+>> Allocated by task 1:
+>> cgroup_file_open+0x88/0x388
+>> kernfs_fop_open+0x73c/0xaf0
+>> do_dentry_open+0x5fc/0x1200
+>> vfs_open+0xa0/0x3f0
+>> do_open+0x7e8/0xd08
+>> path_openat+0x2fc/0x6b0
+>> do_filp_open+0x174/0x368
+>>
+>> Freed by task 8462:
+>> cgroup_file_release+0x130/0x1f8
+>> kernfs_drain_open_files+0x17c/0x440
+>> kernfs_drain+0x2dc/0x360
+>> kernfs_show+0x1b8/0x288
+>> cgroup_file_show+0x150/0x268
+>> cgroup_pressure_write+0x1dc/0x340
+>> cgroup_file_write+0x274/0x548
+>>
+>> Reproduction Steps:
+>> 1. Open test/cpu.pressure and establish epoll monitoring
+>> 2. Disable monitoring: echo 0 > test/cgroup.pressure
+>> 3. Re-enable monitoring: echo 1 > test/cgroup.pressure
+>>
+>> The race condition occurs because:
+>> 1. When cgroup.pressure is disabled (echo 0 > cgroup.pressure), it:
+>>    - Releases PSI triggers via cgroup_file_release()
+>>    - Frees of->priv through kernfs_drain_open_files()
+>> 2. While epoll still holds reference to the file and continues polling
+>> 3. Re-enabling (echo 1 > cgroup.pressure) accesses freed of->priv
+>>
+>> epolling			disable/enable cgroup.pressure
+>> fd=open(cpu.pressure)
+>> while(1)
+>> ...
+>> epoll_wait
+>> kernfs_fop_poll
+>> kernfs_get_active = true	echo 0 > cgroup.pressure
+>> ...				cgroup_file_show
+>> 				kernfs_show
+>> 				// inactive kn
+>> 				kernfs_drain_open_files
+>> 				cft->release(of);
+>> 				kfree(ctx);
+>> 				...
+>> kernfs_get_active = false
+>> 				echo 1 > cgroup.pressure
+>> 				kernfs_show
+>> 				kernfs_activate_one(kn);
+>> kernfs_fop_poll
+>> kernfs_get_active = true
+>> cgroup_file_poll
+>> psi_trigger_poll
+>> // UAF
+>> ...
+>> end: close(fd)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thank you, Baokun.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> I think the problem is that kernfs_show() handles enable and disable
+> inconsistently. When disable is called, it sets kn->active and then frees
+> cgroup_file_ctx and psi_trigger. But when enable is called, it only sets
+> kn->active. This mismatch means we can end up accessing the freed
+> cgroup_file_ctx and psi_trigger later on.
+>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+I agree with that.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> A potential solution is to make the lifecycles of cgroup_file_ctx and
+> psi_trigger match the struct kernfs_open_file they're associated with.
+> Maybe we could just get rid of the kernfs_release_file call in
+> kernfs_drain_open_files?
+>
+
+Hi, Tj, what do you think about this solution?
+
+> That way, the resources would be safely released only when the file
+> descriptor is actually freed. Plus, if cgroup.pressure is re-enabled,
+> any open file descriptors would still work as expected.
+> 
+> 
+> Cheers,
+> Baokun
+> 
+
+-- 
+Best regards,
+Ridong
+
 
