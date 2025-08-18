@@ -1,167 +1,131 @@
-Return-Path: <linux-kernel+bounces-773138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4638FB29BCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:15:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF89B29BEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC0A16A9D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC2A3AF0C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BA62FD1AD;
-	Mon, 18 Aug 2025 08:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C228C3002BA;
+	Mon, 18 Aug 2025 08:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcLvZodf"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zvVmPLrR"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F662FB965
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02B21D9346;
+	Mon, 18 Aug 2025 08:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755504906; cv=none; b=IOtAKzJ1xe1EtHHBggzEpRS6Ou7M7lpdVPrL1byf2FJbR+AzRAkjTGwNetIO3Me/9lDiLj+HWJZItogoWyEzsYDXM4E6uijCZSQUNbo9JyYhRJ0F5YiC2xurmAllqrXZcfaXwy4sl04yO7AEqGqekqwdehmKLWTkN1BIgbwpSo4=
+	t=1755505341; cv=none; b=OfarMtMXXXuytF9J3QipS6FUDFeODNiPQuPwRy4qiHqdaFPJHl0AVaRDHAAZQNpJc44wKgxxk9+nBf3RcDv5vklxTRIXfj++gSWePhHxN4Zb7wQF+TcW3Ye4JhVy0HKQ/Mrx2Ng1JRoSKLebWTzlGSqZLc/mVvnNFaJTbZh/a4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755504906; c=relaxed/simple;
-	bh=FAuZm45PTXR0LWoM+PcA07+5sxHDHoee2jh7K74eHKo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=W4YCC1bhU5EWiBFKCCdhF/nhzvnLkm7ROJi/HjtkaBttacuBwGSu+S/nDi5A5m5mWf0+pkversShgbG8ZbBH/JsFyyAe4P6vitPuHn77yPgm7xaZNTFqZjn9/+totNGpinZBNGrZHkjVE2Rhfw0+hLdxosvC+H+qd5x8pP7HBvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcLvZodf; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4743621044so523910a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755504904; x=1756109704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fuEzqJOVVeoeTBUIUIB8tmvher8Rs8pIZxy+DUFvxQY=;
-        b=LcLvZodfXS4UdZLislpuXZvhCi4hhAcMoKklV2bzXxYqZbAt6K9M0zv4OlKrrJdltw
-         X8fv7RIpdkgVLr00Dxc+081BtNMxJCPwVTx/dt8LEzbTC83eozxAI9OmQADIDQO9FSGr
-         aMezV/7XqQrqV8P7pezrg31f9Q9CJj4OpGNfPATd7zyaDSIBP9ojiCTEIXg1nXd70Pvp
-         NBts0QFEq5JGUta2ymat+8EyUo67RQll0zx4XW6uFlsU3lGxP+JAuS4eCJyocHvXzQAR
-         8k4psdFVR4lJz/eXRrOVtZUXl7AvncmJr87yAl7m2Oz7TZ5KK1VNIWols68yjvtcW8Sc
-         etFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755504904; x=1756109704;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fuEzqJOVVeoeTBUIUIB8tmvher8Rs8pIZxy+DUFvxQY=;
-        b=o4CRcrnif9TzoVPbZcyG/7qGbDfd2RqzDfqtADBCpVUYBhkrrfokvGi58m5Cd8Kz9L
-         2K8jEj/bA+Lqg+JdlXcQtaoDuQfhjrpzzkG7le3cRuOh7mrwxWRAauiWVQNJUSPH8Mrs
-         e/g2bkSWwCcx+m8/Pqh0AM2Jb+XfwpQ33qvw/urmDcF7aMNrgmE3gUHg0ZIq9W4/pqll
-         Ojfz62GgEAIyPAUWJ+u7u+rypedGLl6qrrFG01moG0Rt7+QIR9K5a22rSt67+HGVxy6N
-         0d5WCoTZJkxmio7gbuYGTvqj7QJAUDaZQ5nwrr07ywzbmGOM0gFUD0BKmJOvd2BvoJ+2
-         n2iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsgM4pF0hNTg6U40l9WQQkf0b6Tat+96Ng3RsalAxheyIBuIFaziu3gLyBgZ6Bq53ckAUdU/2VnRtwB4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV/YH0zPFPQIV/NSxENchsayTA2d94IhvMBETkS47Iv59tLK3B
-	ydikGdB/Atu1vSDwTm7CCrthYOQEq0lV7C09jUJtpGs/kspd9PR1MkJH
-X-Gm-Gg: ASbGncvohK89PKROkfYF9xB1BDuh/uPF7Df6rg3gjyS/538XSC5YET3cRQsyO/BMteb
-	ugaCPBDE4NF8mEzLmYD5+UjkaS4MQxpQD5rwWjMOidQHJVABFnrCpUkMzQLR8NjCUODbrUWMker
-	asn52i+Mv7yvk0Qx5uhu1VSYkKa4OjX2zLqB4d2kQ00jnzaK1AusoWOcGBVsGjREjbxK3SUU1Tq
-	VA5naqEQCJsr10j7kMdtYoiFzOnZzLlJYsvohKpYwi/+kQc/T6x086cEDONiQvjybzTk06WnaIa
-	r9A8FdTsmsi0sbnqES+SK1kojD5OeraG8zq+PLrju/2hQeMvkwwaFUcw0jFmagzhfahIVGTafKP
-	ImyfttL2oSiNOUV4=
-X-Google-Smtp-Source: AGHT+IF5d9GdHdsxE2rDEgrRbfrYCRgqS/5cJIpwE71E5Ox80mt5mOaSYEhoorB8K282scsSk1ttMQ==
-X-Received: by 2002:a17:902:e790:b0:242:ffca:acff with SMTP id d9443c01a7336-2446d8c637cmr154405605ad.33.1755504904324;
-        Mon, 18 Aug 2025 01:15:04 -0700 (PDT)
-Received: from localhost.localdomain ([47.76.234.63])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb0635csm72749965ad.53.2025.08.18.01.15.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 18 Aug 2025 01:15:03 -0700 (PDT)
-From: yaozhenguo <yaozhenguo1@gmail.com>
-X-Google-Original-From: yaozhenguo <yaozhenguo@jd.com>
-To: tglx@linutronix.de,
-	yaoma@linux.alibaba.com,
-	akpm@linux-foundation.org
-Cc: max.kellermann@ionos.com,
-	lihuafei1@huawei.com,
-	yaozhenguo@jd.com,
-	linux-kernel@vger.kernel.org,
-	ZhenguoYao <yaozhenguo1@gmail.com>
-Subject: [PATCH V2] watchdog/softlockup:Fix incorrect CPU utilization output during softlockup
-Date: Mon, 18 Aug 2025 16:14:38 +0800
-Message-Id: <20250818081438.40540-1-yaozhenguo@jd.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1755505341; c=relaxed/simple;
+	bh=tQz09CQnpg2v7hXSM+rrQMxQLWtYNk13pbjlIvre16E=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=V6KjxdRE9YS724+exKXPoM06s6WoujOK4Db9OlQK9lprDGLRDne5hDMYQjRNpQEZwOS9I/gcpMNIWhqWRyBdyTs/W0nzZ0gJNHGAAFd6Y9at+GR5D08FpOBk9A87E2vQivZYHx/Pfa2alU8SitpHacxAVZf74HS0IBX3G8pMy6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zvVmPLrR; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id D928D1A0D74;
+	Mon, 18 Aug 2025 08:16:29 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A577E606A6;
+	Mon, 18 Aug 2025 08:16:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id EE6F21C22DA38;
+	Mon, 18 Aug 2025 10:15:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1755504988; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=+9Qk2NYCjGmfOUHqDVJHq6gqBPxiEeC5lSxafUieh6E=;
+	b=zvVmPLrR3DlHxwdDO+5udyfppBCbTiVOErcQUikGwVc2r7fpVow4GrUqinlVopdb8ctYOd
+	im04COl7V2zFSJTQWAqeqEnC6roiK+MGn7oTyI2xtVdbUIYU/nQidoytH2k7mH9120zAZf
+	e2fEEEZYKBu+O+e0+dDhej56qlFxqvEJfjJQ7z1eedeWKi0A0lc0lSwvSLSQ6daXwC5Odd
+	bvM8AjxsHhnjz+vDqp4qqx3uI34WTgVrlO9ewWH/WD3mQ58TsBk24HsO6uM0qRR86jIaL7
+	r1JSwb9Yu1PEetB/HQV+TOK/66F+T5reJUGCGgDhpXGgSBIQAZyTdp7vN2oMhQ==
+From: "Maxime Chevallier" <maxime.chevallier@bootlin.com>
+In-Reply-To: <20250815063509.743796-6-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+References: <20250815063509.743796-1-o.rempel@pengutronix.de> <20250815063509.743796-6-o.rempel@pengutronix.de>
+Date: Mon, 18 Aug 2025 10:15:56 +0200
+Cc: "Andrew Lunn" <andrew@lunn.ch>, "Jakub Kicinski" <kuba@kernel.org>, =?utf-8?q?David_S=2E_Miller?= <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>, "Donald Hunter" <donald.hunter@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>, "Heiner Kallweit" <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>, "Kory Maincent" <kory.maincent@bootlin.com>, "Nishanth Menon" <nm@ti.com>, kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org, "Michal Kubecek" <mkubecek@suse.cz>, "Roan van Dijk" <roan@protonic.nl>
+To: "Oleksij Rempel" <o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <1df-68a2e100-1-20bf1840@149731379>
+Subject: =?utf-8?q?Re=3A?= [PATCH net-next v2 5/5] =?utf-8?q?net=3A?=
+ =?utf-8?q?_phy=3A?==?utf-8?q?_dp83td510=3A?= add MSE interface support for 
+ 10BASE-T1L
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: None
 
-From: ZhenguoYao <yaozhenguo1@gmail.com>
+Hi Oleksij,
 
-Since we use 16-bit precision, the raw data will undergo
-integer division, which may sometimes result in data loss.
-This can lead to slightly inaccurate CPU utilization calculations.
-Under normal circumstances, this isn’t an issue.  However,
-when CPU utilization reaches 100%, the calculated result might
-exceed 100%.  For example, with raw data like the following:
+On Friday, August 15, 2025 08:35 CEST, Oleksij Rempel <o.rempel@pengutr=
+onix.de> wrote:
 
-sample_period 400000134 new_stat 83648414036 old_stat 83247417494
+> Implement get=5Fmse=5Fconfig() and get=5Fmse=5Fsnapshot() for the DP8=
+3TD510E
+> to expose its Mean Square Error (MSE) register via the new PHY MSE
+> UAPI.
+>=20
+> The DP83TD510E does not document any peak MSE values; it only exposes
+> a single average MSE register used internally to derive SQI. This
+> implementation therefore advertises only PHY=5FMSE=5FCAP=5FAVG, along=
+ with
+> LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
+> refresh interval/number of symbols are estimated from 10BASE-T1L
+> symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+>=20
+> For 10BASE-T1L deployments, SQI is a reliable indicator of link
+> modulation quality once the link is established, but it does not
+> indicate whether autonegotiation pulses will be correctly received
+> in marginal conditions. MSE provides a direct measurement of slicer
+> error rate that can be used to evaluate if autonegotiation is likely
+> to succeed under a given cable length and condition. In practice,
+> testing such scenarios often requires forcing a fixed-link setup to
+> isolate MSE behaviour from the autonegotiation process.
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-sample_period=400000134/2^24=23
-new_stat=83648414036/2^24=4985
-old_stat=83247417494/2^24=4961
-util=105%
+[...]
 
-Below log will output：
+> +static int dp83td510=5Fget=5Fmse=5Fsnapshot(struct phy=5Fdevice *phy=
+dev, u32 channel,
+> +				      struct phy=5Fmse=5Fsnapshot *snapshot)
+> +{
+> +	int ret;
+> +
+> +	if (channel !=3D PHY=5FMSE=5FCHANNEL=5FLINK &&
+> +	    channel !=3D PHY=5FMSE=5FCHANNEL=5FA)
+> +		return -EOPNOTSUPP;
 
-CPU#3 Utilization every 0s during lockup:
-    #1:   0% system,          0% softirq,   105% hardirq,     0% idle
-    #2:   0% system,          0% softirq,   105% hardirq,     0% idle
-    #3:   0% system,          0% softirq,   100% hardirq,     0% idle
-    #4:   0% system,          0% softirq,   105% hardirq,     0% idle
-    #5:   0% system,          0% softirq,   105% hardirq,     0% idle
+The doc in patch 1 says :
 
-To avoid confusion, we enforce a 100% display cap when
-calculations exceed this threshold.
+  > + * Link-wide mode:
+  > + *  - Some PHYs only expose a link-wide aggregate MSE, or cannot m=
+ap their
+  > + *    measurement to a specific channel/pair (e.g. 100BASE-TX when=
+ MDI/MDI-X
+  > + *    resolution is unknown). In that case, callers must use the L=
+INK selector.
 
-We also round to the nearest multiple of 16.8 milliseconds to improve
-the accuracy.
+The way I understand that is that PHYs will report either channel-speci=
+fic values or
+link-wide values. Is that correct or are both valid ? In BaseT1 this is=
+ the same thing,
+but maybe for consistency, we should report either channel values or li=
+nk-wide values ?
 
-Signed-off-by: ZhenguoYao <yaozhenguo1@gmail.com>
----
- kernel/watchdog.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 9c7134f7d2c4..5413aa85e8a4 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -425,7 +425,11 @@ static DEFINE_PER_CPU(u8, cpustat_tail);
-  */
- static u16 get_16bit_precision(u64 data_ns)
- {
--	return data_ns >> 24LL; /* 2^24ns ~= 16.8ms */
-+	/*
-+	 * 2^24ns ~= 16.8ms
-+	 * Round to the nearest multiple of 16.8 milliseconds.
-+	 */
-+	return (data_ns + (1 << 23)) >> 24LL;
- }
- 
- static void update_cpustat(void)
-@@ -444,6 +448,14 @@ static void update_cpustat(void)
- 		old_stat = __this_cpu_read(cpustat_old[i]);
- 		new_stat = get_16bit_precision(cpustat[tracked_stats[i]]);
- 		util = DIV_ROUND_UP(100 * (new_stat - old_stat), sample_period_16);
-+		/*
-+		 * Since we use 16-bit precision, the raw data will undergo
-+		 * integer division, which may sometimes result in data loss,
-+		 * and then result might exceed 100%. To avoid confusion,
-+		 * we enforce a 100% display cap when calculations exceed this threshold.
-+		 */
-+		if (util > 100)
-+			util = 100;
- 		__this_cpu_write(cpustat_util[tail][i], util);
- 		__this_cpu_write(cpustat_old[i], new_stat);
- 	}
--- 
-2.43.5
+Maxime
 
 
