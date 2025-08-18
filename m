@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-773894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE49B2ABAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:54:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D658FB2ABA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C55057AFF57
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:52:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95DC7AF934
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4D135A2B9;
-	Mon, 18 Aug 2025 14:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACA3214A6A;
+	Mon, 18 Aug 2025 14:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ZD/CjvBM"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0Xg/oI1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA79136358;
-	Mon, 18 Aug 2025 14:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8300735A2AC;
+	Mon, 18 Aug 2025 14:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528829; cv=none; b=kUlmnwYwVsMQQID/c+JHC7Z5vtXtOFohMhztCf/5TlwwEQ4dbiuEX3uqaJHkqYd4F/d585QGh1M6c5UOmkj/+zcNFbsgP9J7Nv0ksuyxix9lf1qasfgh2bDecNXcgivsXlRjW4MJkje39Kibk9T6q34l0gkjiTEymzABm2RjN6A=
+	t=1755528774; cv=none; b=Y0cdMexOI0nJVNRT/YnA3+DS/FGwb33J8U7Vu/AcH7Lz4WRApEAkNWCGBIGVBSOdFlkD3KWpkH1So/aW+M+xwGx6XoI4Q8srkLQUOZVXwPQjc8lqbyH60snWtr0PV5EXYkUiGDmDeMsG3Ul/4ohswLwmi9sdy41UUV7ptr63yW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528829; c=relaxed/simple;
-	bh=c/QKZ8Y0emGKWKV7g4dCcuZGfd+Fq2Qp0OrgNg0pg8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kUc53WYv4R43SMziKagQ/3Fe5WyMS/4YKi8kz7Clf1Xf1nmPMzbuxmn21V25Mn0eFt8ovQTlDU2D+++KaQ6bvZDCR3HeA0QhEfTx2NTKiTGcynOhugSXD7apyFycFSIMB0dVDw3KaHCgJ1Jt1FqITPiFnQEwnDg6Q4Jg70bfEd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ZD/CjvBM; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IBSstQ008630;
-	Mon, 18 Aug 2025 16:53:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	A3H8GlnS5IGsbVeiPQFUfGjUlKvjNRte3jkEoUZg3Yw=; b=ZD/CjvBM4dKRhHcW
-	Kh5U+EMhijdB8mpFLDvRfMfNxyNlg/OXgtBAo6JLsiuAlJDerDIOykiekBFFpKko
-	cTOAmQt0Q+GHT/WkQ7Z9ceVi8GzNJUvND1GcrspbUf3pWIpJzfyEQGOxoJzFbRnd
-	+MOvr0b0vvtqk9NRvrc8h+BlmX1ScwReuj8u+e4kyBnqwzQOQ9YtRgVuPDINSFgS
-	lMA16B2jUOKG2ztaMzJdcMIWH1D28MWUBac80+DQ+HbEkWt3J5mGTdWCvWHapxkP
-	Q9Vz7Nh27Ug0LszesWp/xD4M3kFBu+bQX6RfBOevYupMkcbfZhW0EjSD/AfIQ1zr
-	VU0YzQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48jhb1py22-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 16:53:39 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A75114002D;
-	Mon, 18 Aug 2025 16:53:00 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3D2A773C431;
-	Mon, 18 Aug 2025 16:52:41 +0200 (CEST)
-Received: from [10.130.78.67] (10.130.78.67) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 16:52:40 +0200
-Message-ID: <9fa2ac32-ad3c-4aea-b2f6-b476745cb7d5@foss.st.com>
-Date: Mon, 18 Aug 2025 16:52:38 +0200
+	s=arc-20240116; t=1755528774; c=relaxed/simple;
+	bh=4Ezi4qd/vRMwuKHWb4eCTtPIoPzHHNvvx+V6bUm3ZAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIYcylDNkmkl8EnuKV0dL6GR7V6u2IuB2mq13uXsrh9S1vIqjwKAID3ZihHz0MPjXpb4xX2GC7ELCbYDKo/mcEVZd2M7OcUgaO2Dh4auA7LEm8lY6YMSZYrt+g2Ny1pIUj8uED4sSE3Bd/md+QEv+eyKDy/K0QY8fXTP7pZrJjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0Xg/oI1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21466C4CEEB;
+	Mon, 18 Aug 2025 14:52:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755528774;
+	bh=4Ezi4qd/vRMwuKHWb4eCTtPIoPzHHNvvx+V6bUm3ZAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M0Xg/oI17+ZOqL9ZkkNYDusfgbL/LP3b450AzcYAEvcjo2W69znvLDlRzH3enng21
+	 EptpSPYGxWHbGpNy4TazNe6YrcNMrudiijpLhc4GqGpXVUyA7LPJrqXmAq8gNYtbEA
+	 hC92ljJNREp12C2jaek/FqHr00FUZYCU2Os0Oar94Efqq3I6sLDcJLoNtykEkRqEi5
+	 FPAIqYOYixVAPIbu43HjcN0mrTYxagAkJzBuY2MWiI2PdUlfySk1ViAbGnRuBcCZ0E
+	 Ry1vkruVWibUEWFvUnUgPSYJN2/DljlJObOhf/lIGDHQvD0pfb/+eGYuqK/twc+HD7
+	 u4aQeyv/9hDZw==
+Date: Mon, 18 Aug 2025 15:52:47 +0100
+From: Will Deacon <will@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>,
+	davem@davemloft.net, edumazet@google.com, eperezma@redhat.com,
+	horms@kernel.org, jasowang@redhat.com, kuba@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com, sgarzare@redhat.com,
+	stefanha@redhat.com, syzkaller-bugs@googlegroups.com,
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in
+ virtio_transport_send_pkt_info
+Message-ID: <aKM-P7LJTIPZIi6v@willie-the-truck>
+References: <20250812052645-mutt-send-email-mst@kernel.org>
+ <689b1156.050a0220.7f033.011c.GAE@google.com>
+ <20250812061425-mutt-send-email-mst@kernel.org>
+ <aJ8HVCbE-fIoS1U4@willie-the-truck>
+ <20250815063140-mutt-send-email-mst@kernel.org>
+ <aJ8heyq4-RtJAPyI@willie-the-truck>
+ <aJ9WsFovkgZM3z09@willie-the-truck>
+ <20250816063301-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: vd55g1: Fix duster register address
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: Sylvain Petinot <sylvain.petinot@foss.st.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250818-vd55g1_fix_duster-v1-1-1b9d115dee87@foss.st.com>
- <aKMz1xtvXvMLKUZ9@kekkonen.localdomain>
-Content-Language: en-US
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-In-Reply-To: <aKMz1xtvXvMLKUZ9@kekkonen.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816063301-mutt-send-email-mst@kernel.org>
 
-Hi Sakari,
-
-On 8/18/25 16:08, Sakari Ailus wrote:
-> Hi Benjamin,
+On Sat, Aug 16, 2025 at 06:34:29AM -0400, Michael S. Tsirkin wrote:
+> On Fri, Aug 15, 2025 at 04:48:00PM +0100, Will Deacon wrote:
+> > On Fri, Aug 15, 2025 at 01:00:59PM +0100, Will Deacon wrote:
+> > > On Fri, Aug 15, 2025 at 06:44:47AM -0400, Michael S. Tsirkin wrote:
+> > > > On Fri, Aug 15, 2025 at 11:09:24AM +0100, Will Deacon wrote:
+> > > > > On Tue, Aug 12, 2025 at 06:15:46AM -0400, Michael S. Tsirkin wrote:
+> > > > > > On Tue, Aug 12, 2025 at 03:03:02AM -0700, syzbot wrote:
+> > > > > > > Hello,
+> > > > > > > 
+> > > > > > > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> > > > > > > WARNING in virtio_transport_send_pkt_info
+> > > > > > 
+> > > > > > OK so the issue triggers on
+> > > > > > commit 6693731487a8145a9b039bc983d77edc47693855
+> > > > > > Author: Will Deacon <will@kernel.org>
+> > > > > > Date:   Thu Jul 17 10:01:16 2025 +0100
+> > > > > > 
+> > > > > >     vsock/virtio: Allocate nonlinear SKBs for handling large transmit buffers
+> > > > > >     
+> > > > > > 
+> > > > > > but does not trigger on:
+> > > > > > 
+> > > > > > commit 8ca76151d2c8219edea82f1925a2a25907ff6a9d
+> > > > > > Author: Will Deacon <will@kernel.org>
+> > > > > > Date:   Thu Jul 17 10:01:15 2025 +0100
+> > > > > > 
+> > > > > >     vsock/virtio: Rename virtio_vsock_skb_rx_put()
+> > > > > >     
+> > > > > > 
+> > > > > > 
+> > > > > > Will, I suspect your patch merely uncovers a latent bug
+> > > > > > in zero copy handling elsewhere.
+> > > 
+> > > I'm still looking at this, but I'm not sure zero-copy is the right place
+> > > to focus on.
+> > > 
+> > > The bisected patch 6693731487a8 ("vsock/virtio: Allocate nonlinear SKBs
+> > > for handling large transmit buffers") only has two hunks. The first is
+> > > for the non-zcopy case and the latter is a no-op for zcopy, as
+> > > skb_len == VIRTIO_VSOCK_SKB_HEADROOM and so we end up with a linear SKB
+> > > regardless.
+> > 
+> > It's looking like this is caused by moving from memcpy_from_msg() to
+> > skb_copy_datagram_from_iter(), which is necessary to handle non-linear
+> > SKBs correctly.
+> > 
+> > In the case of failure (i.e. faulting on the source and returning
+> > -EFAULT), memcpy_from_msg() rewinds the message iterator whereas
+> > skb_copy_datagram_from_iter() does not. If we have previously managed to
+> > transmit some of the packet, then I think
+> > virtio_transport_send_pkt_info() can end up returning a positive "bytes
+> > written" error code and the caller will call it again. If we've advanced
+> > the message iterator, then this can end up with the reported warning if
+> > we run out of input data.
+> > 
+> > As a hack (see below), I tried rewinding the iterator in the error path
+> > of skb_copy_datagram_from_iter() but I'm not sure whether other callers
+> > would be happy with that. If not, then we could save/restore the
+> > iterator state in virtio_transport_fill_skb() if the copy fails. Or we
+> > could add a variant of skb_copy_datagram_from_iter(), say
+> > skb_copy_datagram_from_iter_full(), which has the rewind behaviour.
+> > 
+> > What do you think?
+> > 
+> > Will
 > 
-> On Mon, Aug 18, 2025 at 03:50:58PM +0200, Benjamin Mugnier wrote:
->> The duster register needs to be disabled on test patterns. While the
->> code is correctly doing so, the register address contained a typo, thus
->> not disabling the duster correctly. Fix the typo.
->>
->> Fixes: e56616d7b23c ("media: i2c: Add driver for ST VD55G1 camera sensor")
->>
-> 
-> Extra newline; I'll remove it while applying.
-> 
+> It is, at least, self-contained. I don't much like hacking around
+> it in virtio_transport_fill_skb. If your patch isn't acceptable,
+> skb_copy_datagram_from_iter_full seem like a better approach, I think.
 
-Thanks a lot.
+Thanks. I'll send something out shortly with you on cc.
 
->> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
->> ---
->>  drivers/media/i2c/vd55g1.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/i2c/vd55g1.c b/drivers/media/i2c/vd55g1.c
->> index b89fff7e11f891dea04a0085a9e7aac841b6643d..cf35f73fdd1086c6d4d76f67c2b6e4cf66eadff8 100644
->> --- a/drivers/media/i2c/vd55g1.c
->> +++ b/drivers/media/i2c/vd55g1.c
->> @@ -66,7 +66,7 @@
->>  #define VD55G1_REG_READOUT_CTRL				CCI_REG8(0x052e)
->>  #define VD55G1_READOUT_CTRL_BIN_MODE_NORMAL		0
->>  #define VD55G1_READOUT_CTRL_BIN_MODE_DIGITAL_X2		1
->> -#define VD55G1_REG_DUSTER_CTRL				CCI_REG8(0x03ea)
->> +#define VD55G1_REG_DUSTER_CTRL				CCI_REG8(0x03ae)
->>  #define VD55G1_DUSTER_ENABLE				BIT(0)
->>  #define VD55G1_DUSTER_DISABLE				0
->>  #define VD55G1_DUSTER_DYN_ENABLE			BIT(1)
->>
-> 
-
--- 
-Regards,
-Benjamin
+Will
 
