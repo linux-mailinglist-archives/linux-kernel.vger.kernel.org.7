@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-772980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B504BB29A05
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:47:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60344B29A07
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 388597AD384
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E063B7985
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C475E277C9B;
-	Mon, 18 Aug 2025 06:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8192798EB;
+	Mon, 18 Aug 2025 06:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHwvojO5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0Rpyu4y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C23C25C83A;
-	Mon, 18 Aug 2025 06:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA98625C83A;
+	Mon, 18 Aug 2025 06:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755499594; cv=none; b=PXYby5tEh6GN5PViM9kuQifTxi6DL2iI5NPRXivrZE/k3+c4ii3kmjb8njCR3LQxbk07bC1Bfr0N9pHKdr9bQ7bRTWQlZdxh9TE5fEO8DnvpJuPQWSjaiHEpwhEL1Q+h/LBNfk5YJCpM5mw9DUhVqIxT+qU9eROAksxkMS6ANAA=
+	t=1755499597; cv=none; b=uneCBYueVItCwGjen+uE1LSZcuNReKX5vOWpSBO4hRUmQf1VNn1i/rJiGAAQT4SjyBqLn0GzQz1+az9mVkAF2AXqarfqTH7+D0q4B/wV+lJaw8cL5x/ydG2HsGutHwkLG8nfywA6JpGgQt4DaqdS/cqhHvsz3V9MfOoMGTqxJBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755499594; c=relaxed/simple;
-	bh=DisL+u0A+oDt7cK+lZ4T+ubCByoMEuH39AEZRCnBWcM=;
+	s=arc-20240116; t=1755499597; c=relaxed/simple;
+	bh=mWBw2dxrn3qCb6ZjGXqIStKZeXRZV0QwSHDvWZaNzXg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ACSrboQOBEj6TdfY28cZ2xyUSUotTrEsIMpcp3uDcb12sRwXrvlAtY73+POepzWiMWto0MbuVhfKCMQmA+MXzIwD1f3X/aYRruw+dUjNBN1jOlVeHxdlKjImWymIxG3N6zCHrG/zvYVtd04KE2iUF+SaPM2hizMLaO4ZQ/pLCsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHwvojO5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96028C4CEED;
-	Mon, 18 Aug 2025 06:46:30 +0000 (UTC)
+	 MIME-Version; b=XYaTldkY4j4JlPPTGuw/gyuvDu2WWzptplKLuNcyDY+KQ5elhvPzbJv6age3NWHyV+3gvmlK9C6ZwGbgTwRjw3/8hwncMEnZkRLaAJePNntLJBjqm/i4bGCkWyp65uRwxP8/6AwboKCwEj/uLBHYSNXNMfpoeXZvU63UixqAw+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0Rpyu4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 325E2C4CEEB;
+	Mon, 18 Aug 2025 06:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755499593;
-	bh=DisL+u0A+oDt7cK+lZ4T+ubCByoMEuH39AEZRCnBWcM=;
+	s=k20201202; t=1755499597;
+	bh=mWBw2dxrn3qCb6ZjGXqIStKZeXRZV0QwSHDvWZaNzXg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MHwvojO5ZNQ/vIbqTX2n+p36PC7eGEFq5CKUCZcbcf+pDLqlU5qIAkSNiv7MO9IzM
-	 PQ+YPYOTEmQ6eW0FZFl5PgCJQQZ/kBct1QG9lJweWjnLh238X+HGsXGJpWZaxA+ZAT
-	 ysCq4vtiZoiCv5ENtSwG7GMkrUD0nlaTBdMdsKdNF2YkXz4Tt0TIHQXjaqMxIgK6py
-	 D3LwtTcQRZpsR7d7rN2my9k+45XHP9FfmM3HzPbEUET+rQG1IBYvvNkkrDWZgchm7q
-	 ktz1nk2n5SFzJXxJljWaJUdV6ZUj3gw6WBkd3ccgikDjUGIGuuFIfEkDt8zXNC4ewp
-	 B63YizXPZVfYA==
+	b=u0Rpyu4y8bEUq8EbFwZHD5j3l2gjivkI8HDDJLhyxDRHEzCdCC1nxhMjOdh19vgTq
+	 l2Rzc/qXKbDwoWkF8Ma9mBNItHubHiDEcL60X2pyfsp/yozfyASpmtNvkn2ppiP6bB
+	 K6wWyhJ/w6QjVyS96IfFo28aq/M+NW61AdgJE1nl989dXsHPbfrR1fQmRp6glOM3xP
+	 5DSgy8XwoD+L7Spl9BPnUEIZbM9qVXYU7mj/i2XxngBbxSUtSsf8JKLy3qvkjxZySg
+	 d7lut5t2oHgzynTJjzf0lUc+6ZM4fT2vERwhMokUsHvgPSi31DWsxsDcw2doc3jVyJ
+	 qazIie45dnMmQ==
 From: Mike Rapoport <rppt@kernel.org>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -53,9 +53,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	llvm@lists.linux.dev
-Subject: [PATCH 3/4] mm/mm_init: drop deferred_init_maxorder()
-Date: Mon, 18 Aug 2025 09:46:14 +0300
-Message-ID: <20250818064615.505641-4-rppt@kernel.org>
+Subject: [PATCH 4/4] memblock: drop for_each_free_mem_pfn_range_in_zone_from()
+Date: Mon, 18 Aug 2025 09:46:15 +0300
+Message-ID: <20250818064615.505641-5-rppt@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250818064615.505641-1-rppt@kernel.org>
 References: <20250818064615.505641-1-rppt@kernel.org>
@@ -69,176 +69,139 @@ Content-Transfer-Encoding: 8bit
 
 From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-deferred_init_memmap_chunk() calls deferred_init_maxorder() to initialize
-struct pages in MAX_ORDER_NR_PAGES because according to commit 0e56acae4b4d
-("mm: initialize MAX_ORDER_NR_PAGES at a time instead of doing larger
-sections") this provides better cache locality than initializing the memory
-map in larger sections.
+for_each_free_mem_pfn_range_in_zone_from() and its "backend" implementation
+__next_mem_pfn_range_in_zone() were only used by deferred initialization of
+the memory map.
 
-The looping through free memory ranges is quite cumbersome in the current
-implementation as it is divided between deferred_init_memmap_chunk() and
-deferred_init_maxorder(). Besides, the latter has two loops, one that
-initializes struct pages and another one that frees them.
-
-There is no need in two loops because it is safe to free pages in groups
-smaller than MAX_ORDER_NR_PAGES. Even if lookup for a buddy page will
-access a struct page ahead of the pages being initialized, that page is
-guaranteed to be initialized either by memmap_init_reserved_pages() or by
-init_unavailable_range().
-
-Simplify the code by moving initialization and freeing of the pages into
-deferred_init_memmap_chunk() and dropping deferred_init_maxorder().
+Remove them as they are not used anymore.
 
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- mm/mm_init.c | 122 ++++++++++++---------------------------------------
- 1 file changed, 29 insertions(+), 93 deletions(-)
+ .clang-format            |  1 -
+ include/linux/memblock.h | 22 --------------
+ mm/memblock.c            | 64 ----------------------------------------
+ 3 files changed, 87 deletions(-)
 
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 1ecfba98ddbe..bca05891cb16 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2046,111 +2046,47 @@ static unsigned long __init deferred_init_pages(struct zone *zone,
+diff --git a/.clang-format b/.clang-format
+index 48405c54ef27..f371a13b4d19 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -294,7 +294,6 @@ ForEachMacros:
+   - 'for_each_fib6_node_rt_rcu'
+   - 'for_each_fib6_walker_rt'
+   - 'for_each_file_lock'
+-  - 'for_each_free_mem_pfn_range_in_zone_from'
+   - 'for_each_free_mem_range'
+   - 'for_each_free_mem_range_reverse'
+   - 'for_each_func_rsrc'
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index b96746376e17..20b61e910f4d 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -323,28 +323,6 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+ 	for (i = -1, __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid); \
+ 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
+ 
+-#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+-void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+-				  unsigned long *out_spfn,
+-				  unsigned long *out_epfn);
+-
+-/**
+- * for_each_free_mem_pfn_range_in_zone_from - iterate through zone specific
+- * free memblock areas from a given point
+- * @i: u64 used as loop variable
+- * @zone: zone in which all of the memory blocks reside
+- * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
+- * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
+- *
+- * Walks over free (memory && !reserved) areas of memblock in a specific
+- * zone, continuing from current position. Available as soon as memblock is
+- * initialized.
+- */
+-#define for_each_free_mem_pfn_range_in_zone_from(i, zone, p_start, p_end) \
+-	for (; i != U64_MAX;					  \
+-	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
+-
+-#endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+ 
+ /**
+  * for_each_free_mem_range - iterate through free memblock areas
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 154f1d73b61f..337c025109fa 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1438,70 +1438,6 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+ 	return 0;
  }
  
- /*
-- * This function is meant to pre-load the iterator for the zone init from
-- * a given point.
-- * Specifically it walks through the ranges starting with initial index
-- * passed to it until we are caught up to the first_init_pfn value and
-- * exits there. If we never encounter the value we return false indicating
-- * there are no valid ranges left.
+-#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+-/**
+- * __next_mem_pfn_range_in_zone - iterator for for_each_*_range_in_zone()
+- *
+- * @idx: pointer to u64 loop variable
+- * @zone: zone in which all of the memory blocks reside
+- * @out_spfn: ptr to ulong for start pfn of the range, can be %NULL
+- * @out_epfn: ptr to ulong for end pfn of the range, can be %NULL
+- *
+- * This function is meant to be a zone/pfn specific wrapper for the
+- * for_each_mem_range type iterators. Specifically they are used in the
+- * deferred memory init routines and as such we were duplicating much of
+- * this logic throughout the code. So instead of having it in multiple
+- * locations it seemed like it would make more sense to centralize this to
+- * one new iterator that does everything they need.
 - */
--static bool __init
--deferred_init_mem_pfn_range_in_zone(u64 *i, struct zone *zone,
--				    unsigned long *spfn, unsigned long *epfn,
--				    unsigned long first_init_pfn)
+-void __init_memblock
+-__next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+-			     unsigned long *out_spfn, unsigned long *out_epfn)
 -{
--	u64 j = *i;
+-	int zone_nid = zone_to_nid(zone);
+-	phys_addr_t spa, epa;
 -
--	if (j == 0)
--		__next_mem_pfn_range_in_zone(&j, zone, spfn, epfn);
+-	__next_mem_range(idx, zone_nid, MEMBLOCK_NONE,
+-			 &memblock.memory, &memblock.reserved,
+-			 &spa, &epa, NULL);
 -
--	/*
--	 * Start out by walking through the ranges in this zone that have
--	 * already been initialized. We don't need to do anything with them
--	 * so we just need to flush them out of the system.
--	 */
--	for_each_free_mem_pfn_range_in_zone_from(j, zone, spfn, epfn) {
--		if (*epfn <= first_init_pfn)
--			continue;
--		if (*spfn < first_init_pfn)
--			*spfn = first_init_pfn;
--		*i = j;
--		return true;
--	}
+-	while (*idx != U64_MAX) {
+-		unsigned long epfn = PFN_DOWN(epa);
+-		unsigned long spfn = PFN_UP(spa);
 -
--	return false;
--}
+-		/*
+-		 * Verify the end is at least past the start of the zone and
+-		 * that we have at least one PFN to initialize.
+-		 */
+-		if (zone->zone_start_pfn < epfn && spfn < epfn) {
+-			/* if we went too far just stop searching */
+-			if (zone_end_pfn(zone) <= spfn) {
+-				*idx = U64_MAX;
+-				break;
+-			}
 -
--/*
-- * Initialize and free pages. We do it in two loops: first we initialize
-- * struct page, then free to buddy allocator, because while we are
-- * freeing pages we can access pages that are ahead (computing buddy
-- * page in __free_one_page()).
-+ * Initialize and free pages.
-+ *
-+ * At this point reserved pages and struct pages that correspond to holes in
-+ * memblock.memory are already intialized so every free range has a valid
-+ * memory map around it.
-+ * This ensures that access of pages that are ahead of the range being
-+ * initialized (computing buddy page in __free_one_page()) always reads a valid
-+ * struct page.
-  *
-- * In order to try and keep some memory in the cache we have the loop
-- * broken along max page order boundaries. This way we will not cause
-- * any issues with the buddy page computation.
-+ * In order to try and improve CPU cache locality we have the loop broken along
-+ * max page order boundaries.
-  */
- static unsigned long __init
--deferred_init_maxorder(u64 *i, struct zone *zone, unsigned long *start_pfn,
--		       unsigned long *end_pfn)
-+deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
-+			   struct zone *zone)
- {
--	unsigned long mo_pfn = ALIGN(*start_pfn + 1, MAX_ORDER_NR_PAGES);
--	unsigned long spfn = *start_pfn, epfn = *end_pfn;
-+	int nid = zone_to_nid(zone);
- 	unsigned long nr_pages = 0;
--	u64 j = *i;
+-			if (out_spfn)
+-				*out_spfn = max(zone->zone_start_pfn, spfn);
+-			if (out_epfn)
+-				*out_epfn = min(zone_end_pfn(zone), epfn);
 -
--	/* First we loop through and initialize the page values */
--	for_each_free_mem_pfn_range_in_zone_from(j, zone, start_pfn, end_pfn) {
--		unsigned long t;
--
--		if (mo_pfn <= *start_pfn)
--			break;
--
--		t = min(mo_pfn, *end_pfn);
--		nr_pages += deferred_init_pages(zone, *start_pfn, t);
--
--		if (mo_pfn < *end_pfn) {
--			*start_pfn = mo_pfn;
--			break;
+-			return;
 -		}
+-
+-		__next_mem_range(idx, zone_nid, MEMBLOCK_NONE,
+-				 &memblock.memory, &memblock.reserved,
+-				 &spa, &epa, NULL);
 -	}
 -
--	/* Reset values and now loop through freeing pages as needed */
--	swap(j, *i);
--
--	for_each_free_mem_pfn_range_in_zone_from(j, zone, &spfn, &epfn) {
--		unsigned long t;
--
--		if (mo_pfn <= spfn)
--			break;
-+	phys_addr_t start, end;
-+	u64 i = 0;
- 
--		t = min(mo_pfn, epfn);
--		deferred_free_pages(spfn, t - spfn);
-+	for_each_free_mem_range(i, nid, 0, &start, &end, NULL) {
-+		unsigned long spfn = PFN_UP(start);
-+		unsigned long epfn = PFN_DOWN(end);
- 
--		if (mo_pfn <= epfn)
-+		if (spfn >= end_pfn)
- 			break;
--	}
- 
--	return nr_pages;
+-	/* signal end of iteration */
+-	if (out_spfn)
+-		*out_spfn = ULONG_MAX;
+-	if (out_epfn)
+-		*out_epfn = 0;
 -}
-+		spfn = max(spfn, start_pfn);
-+		epfn = min(epfn, end_pfn);
- 
--static unsigned long __init
--deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
--			   struct zone *zone)
--{
--	unsigned long nr_pages = 0;
--	unsigned long spfn, epfn;
--	u64 i = 0;
-+		while (spfn < epfn) {
-+			unsigned long mo_pfn = ALIGN(spfn + 1, MAX_ORDER_NR_PAGES);
-+			unsigned long chunk_end = min(mo_pfn, epfn);
- 
--	deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn, start_pfn);
-+			nr_pages += deferred_init_pages(zone, spfn, chunk_end);
-+			deferred_free_pages(spfn, chunk_end - spfn);
- 
--	/*
--	 * Initialize and free pages in MAX_PAGE_ORDER sized increments so that
--	 * we can avoid introducing any issues with the buddy allocator.
--	 */
--	while (spfn < end_pfn) {
--		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
--		cond_resched();
-+			spfn = chunk_end;
-+			cond_resched();
-+		}
- 	}
- 
- 	return nr_pages;
+-
+-#endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+-
+ /**
+  * memblock_alloc_range_nid - allocate boot memory block
+  * @size: size of memory block to be allocated in bytes
 -- 
 2.50.1
 
