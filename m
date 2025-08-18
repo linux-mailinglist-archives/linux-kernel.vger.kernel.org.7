@@ -1,156 +1,337 @@
-Return-Path: <linux-kernel+bounces-773040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53970B29ABD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:23:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7120BB29A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B4851673DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF665189FB9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6B8279DA3;
-	Mon, 18 Aug 2025 07:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D69C27933E;
+	Mon, 18 Aug 2025 07:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HlF2kawC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lO93rG/T"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6995627990D
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B3A2749CB;
+	Mon, 18 Aug 2025 07:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755501807; cv=none; b=MyNR0YNTulXOhdkbM0uaHnaqNgYSqRB6jr+0fIOEI0AYDrk1PimecVG0BYCAP/0OIEo39FkjNzbADJwXiXnCNTy3wUs8NYIcUJWJj8nBbHQgBZiFL874TisJsGed7c6q+O4S9f1kwq9N1bdA5tmBySKS2lxgqSjjnUkGqjhLz8Y=
+	t=1755501206; cv=none; b=nNDgHBXIUq7hbM9uIyn7ApgtQ1TVMphdpq4lj5Gc2qJ6SNOhN32lPEFuyCscsZ6QiWj8Wi8anh+6gb++Ih0VqXGPgEWJeSqfR3W8//lS2bib18r+ono8YTLaZm2ZKEcdFjvyvIFUd/5P7xbvtL2d9lc0Zmzm+3vB6zA7bYqOER0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755501807; c=relaxed/simple;
-	bh=0171qvNEwhctc8IfFKLfbfF7b9YjDUBrifuNLF1OewA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I92DEcVK7F5lQipZqP7DMtg0YPDe/y6M1C3lWfgVJ6zi6VtRbPv0CnIErV7EqsAIQq99CGjOl7S2z85NfJ8fJc29NMF4fL5xPvzli5Gzb9/9i35qzC4DhpUyblL8vCwMwULagPnBFoVx4pN6dPFMKG7OwD64IbEujFGzOvEutAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HlF2kawC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I6c6T6007903
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:23:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CljCLWxC3VuOUrt1/JUd1oMX4O4FgjwPAOwwS6aA++M=; b=HlF2kawC+j703on/
-	tH5fytuhbAfUDjBtj0KO0CikZ2/NCfa+q9or3wRHbgqp13aUjx+Ud6kQCPRUpzBO
-	9IveNJ1Y3to6RGWVghPNpGt8tPAeuuq59leOkbMqbcgUSoizMqyGpSdN/m2+N4Cc
-	PfIYK65uQFyrOFX7EK9R0juooZhyIWJfz/c2Qm1U//3dps9ujo+qxbg4ZVaIstRe
-	5nEB1W2xB5Mz8iCUczH85RGtwmdNHb92adpboptyWY+xlpZxse6U4KTAuL3F+odZ
-	v+oWNt/Pj1bxVUQyWXrVykC64EWHpok9icoe4hgh1WpptpVuht+EK1gcxEEJrUoY
-	Zq9xAA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj743qed-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:23:25 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e8704c5867so1652336185a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:23:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755501804; x=1756106604;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CljCLWxC3VuOUrt1/JUd1oMX4O4FgjwPAOwwS6aA++M=;
-        b=Nsrqc9FcdjZ+3nDVKQwj4OZzc14j1M3OlizZ/cey6gCh2mtQMn4uqYDRD+RkUfdXDT
-         i5ZS08gMGt4hPRzFqTAQVx2rp4nBP6irr8tRDr51xwB9hLWTFXBX2KwSvcCVcQYzonRZ
-         aHRquso2AFnHqm3amj/IKHJQaWeOGwbmTVNCydhIzB5K5vV3ZCRJ7fR15PpAbLpCKl2o
-         xPXyn/qerD/mOxhOEbUU9qyBPGGS5ihA5VLFIwSdI5CDO/7NrwbTSq/AOCZvr5pUy205
-         VgKs5Tey3BTQc2RMNnVBJufgj5R5dTTHIgTXopBcvXUQAFXBM7Bul9unt4yR06Jkmp9M
-         xCpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdOGZZVXzECRj+8uhZZq2KQQL3VEh6BhoKWpZ6lycHlysFMlbI5EgyfWxWfaTKAds/HNqaPvkFniBi6sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFO1pJi2RevU52GUgc10H5GwGG/yjQA18aGL3y2lj8/azb2uHF
-	ZlC4NCXvZxOvDYKORKo48NR6W+GZbvbQWvMCzZeXxdUhl1vhVIdIIF2iUEInC3PQOInJE+sBSQC
-	Rtmj01zSe0DoZ5aJNXp1bjDV50H3LGPWulPHnr42Tuz+Z2iUdoOyso8dDfEYZJHrXOLM=
-X-Gm-Gg: ASbGncsRUFDR3BFBuzEk5eO2MekDk3y0peXLR8HEXfIlNsmTOjKqu5c+A4hbtvgBj8B
-	ptbabMYO2bluE1Ld9Sya4Lw4aSi6hls38A0HcB5+JAZ0Z+g4Fz8Ctq9QppiTsToNPcqOkC1Zb3s
-	ifOR8OT6jNUMdksjsPlxMo55UcsbT10AXObJUHFlEOMGEB7LRObq28Bm1EnWMZxcGE3stHJhMsA
-	47XAb68hnrQHxX+2+SATOI97PBsYsM8gu3kmWEgNkTYBSi27UD4Lror0P16APp8KxcNbn/6Hnww
-	gDiU/lMUzTTQRvHWKVZu6aIYR7H6SHVrn1Lubm8/0IlJrYfUBArXUuVzLmdW2Yf7tQ==
-X-Received: by 2002:a17:903:b8e:b0:240:9dd8:219b with SMTP id d9443c01a7336-24478fd2a8emr122795125ad.49.1755501054563;
-        Mon, 18 Aug 2025 00:10:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGm7LsS8pR5b68tpo9G2VcNmUMBXY1NQ7esD+UdwLtswNRa5j63VuLnVBb7Rr2C4YZHwcX2Nw==
-X-Received: by 2002:a17:903:b8e:b0:240:9dd8:219b with SMTP id d9443c01a7336-24478fd2a8emr122794915ad.49.1755501054124;
-        Mon, 18 Aug 2025 00:10:54 -0700 (PDT)
-Received: from [10.64.16.151] ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d54f8b9sm72276985ad.130.2025.08.18.00.10.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 00:10:53 -0700 (PDT)
-Message-ID: <77067ec1-4f1f-45d1-8027-4c7a6f66ecff@oss.qualcomm.com>
-Date: Mon, 18 Aug 2025 15:10:47 +0800
+	s=arc-20240116; t=1755501206; c=relaxed/simple;
+	bh=xzP5oWHUYMpygfH/5xeV4jKNoEgTqRpzdaC31IWZXZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hIq8VZK5zfiIRthqoN3jLju1RGtRYGFePQcq8GWtVSWyad8HvXJrN4tLDtI/oFDe+0fAj+WWDtvBs3gEAIychoieAdpEQOMT/vy3UPenpJNCszfoNB83bpQ1BErY28DOO1QyE9EKQiNZPupVvNqZpYVzExmG+Q23WswGnWFrZww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lO93rG/T; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755501205; x=1787037205;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xzP5oWHUYMpygfH/5xeV4jKNoEgTqRpzdaC31IWZXZc=;
+  b=lO93rG/ThMYFn/b9Gp/px4nYlb9Z/LW3eNMiuluP1xZj3l/0pBqQVm47
+   6Vb+W3M9m5C6LMQ7txe+JVInlq6253vj0daELIUpnE+6N9F4LPiLHhM/S
+   I7+JDBV7xaR3suzksqDBkQMnrK8IiXMWlTMCgRS9VtTboCxey0lYVu9+9
+   rdHd55ccDovWZJ37+HNOhHgAbyQViNSADNoA21NhWPR0iybo4fjp2o0/U
+   pOqEJn6P1LowKCiZIWUKkuSs7kElhYHFr1z1oKZOFiRR9sLcm2xlClRNI
+   CICdXil1+rE9EfPRJ/h/JVcVSdYmoZohjs/1VcFIGMImgYMX3JPLzqAHc
+   Q==;
+X-CSE-ConnectionGUID: E7pAtzgSSZOJcId37ErS0Q==
+X-CSE-MsgGUID: e0aqpHuLToSDsIYRPYaDNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68809290"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="68809290"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:24 -0700
+X-CSE-ConnectionGUID: y2EZ8wF4R6WNgD9IsP4nMA==
+X-CSE-MsgGUID: NjwKIWwoTA6Hwa56o/BQeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="167421398"
+Received: from opintica-mobl1 (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.245.174])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:13:18 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v15 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Mon, 18 Aug 2025 10:11:18 +0300
+Message-ID: <20250818071304.1717183-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: defconfig: Modularize SX150X GPIO expander
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dmitry.baryshkov@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        xiangxu.yin@oss.qualcomm.com
-References: <20250818-modularize-sx150x-gpio-expander-v1-0-c2a027200fed@oss.qualcomm.com>
- <20250818-modularize-sx150x-gpio-expander-v1-2-c2a027200fed@oss.qualcomm.com>
- <43e2a824-d7a3-4142-9b59-416df0c0c2c9@kernel.org>
-Content-Language: en-US
-From: Fange Zhang <fange.zhang@oss.qualcomm.com>
-In-Reply-To: <43e2a824-d7a3-4142-9b59-416df0c0c2c9@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: DWfVHq0NegfIL0q0B_tTW9fWBgjmRLY8
-X-Proofpoint-ORIG-GUID: DWfVHq0NegfIL0q0B_tTW9fWBgjmRLY8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMyBTYWx0ZWRfX3tZ1zZe3NZ7o
- 0YJbKCIN2l0cDT0DHHgCZyhBEPah9wZZ58GzyVFFkIlah7MM0cF+nSoTYwZm3ov5BNy5yrfgqGI
- LIDeIT4wHsRGuYIaS19vSIEeF3Tb43VBSzwqjWR45GyPXjhhHjsR3BhA+FCCJD2WUfTFJeGvHqy
- RVTQ7++khf+l1s1Vdag2+8xD/2JTrDvQqhD9/jxkdb0mC9yI/ZSIEYr4Do2OYifnootogd8mbY+
- +LEZcMnc7sAMZMDDfrCZQDmEH46+IaUJaEdEkwT6YAWxZG7kpiY4XvJwgXZL7M1edDBUz5eJTNT
- mTEV1pZSyOt8DAK/6QMlSObzUU/1pSoMbFywHj1aWyDPxXCN8704wFVveF6JYKidSuEvDxGudXI
- MY3LSwqt
-X-Authority-Analysis: v=2.4 cv=MJtgmNZl c=1 sm=1 tr=0 ts=68a2d4ed cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=qthNqDW-ekIAEVpD3OwA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_03,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
- phishscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160033
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Changes since v14 following reviews by Dave ad Kai:
+
+ - added mutex to sgx_dec_usage_count()
+ - fixed a formatting issue pointed by Kai
+ - added review-by from Kai on patches 4-5
+
+Changes since v13 following reviews by Kai:
+
+ - changed implementation of sgx_inc_usage_count() to 
+ only increment the sgx_usage_count at the end of
+ function and adjusted the counter check inside sgx_update_svn().
+ No functional changes here. 
+ - fixed two more formatting/comments issues pointed by Kai
+
+Changes since v12 following reviews by Kai:
+
+ - added review-by from Kai on patches 1 & 3
+ - fixed sgx_inc_usage_count() to decrement the sgx_usage_count
+ in a rare case when sgx_update_svn() fails. The latter
+ is really an exceptional scenario (hw failure or
+ explicit attack/heavy load on RNG) and that's why the
+ fast path (increment by default) is left as it is. 
+
+Changes since v11 following reviews by Kai and Jarkko:
+
+ - added review-by from Jarkko on the whole series
+ - fixed all format and commit issues pointed out by Kai
+
+Changes since v10 following reviews by Dave:
+
+ - merge patch 1 and 2
+ - patch 1: clarify the comment about the function prototype
+ - patch 3: clarify the description of SGX_NO_UPDATE
+  error code, move the definition of EUPDATESVN enum leaf
+  to patch 4
+ - patch 4: clarify commit, adjust sgx_update_svn() function
+  according to feedback
+
+Changes since v9 following reviews by Kai:
+
+ - postpone the definition of sgx_inc_usage_count
+   until patch 6
+ - clarify the commit message in patch 6
+ - minor fixes
+
+Note: I didn't merge patch 1 and 2 since it goes against
+previous suggestion made by Jarkko.
+
+Changes since v8 following reviews by Dave and Jarkko:
+
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
+
+Changes since v7 following reviews by Dave:
+
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
+
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
+
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
+ 
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
+ 
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
 
 
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
 
-On 8/18/2025 2:33 PM, Krzysztof Kozlowski wrote:
-> On 18/08/2025 06:41, Fange Zhang wrote:
->> Modularize the SX150X GPIO expander which is equipped on the QCS615 Ride
-> 
-> Qualcomm QCS615 Ride
-> 
-> You are changing defconfig for all platforms, it's not your personal or
-> company defconfig.
 
-Thank you for the feedback. Yes, The change is intended to support the 
-Qualcomm QCS615 Ride platform, which is now upstream-ready and actively 
-maintained.
-I believe enabling it as a module ensures it's available without 
-impacting other platforms. While it's not currently used directly in the 
-kernel, having it built as a module allows flexibility for platforms 
-like QCS615 that may require it in future use cases.
+Proposed solution
+-----------------
 
-> 
->>
-> 
-> 
-> Best regards,
-> Krzysztof
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel 6.17.0_rc1 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly
+appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |   1 +
+ arch/x86/include/asm/sgx.h               |  37 +++++----
+ arch/x86/kernel/cpu/cpuid-deps.c         |   1 +
+ arch/x86/kernel/cpu/scattered.c          |   1 +
+ arch/x86/kernel/cpu/sgx/driver.c         |  19 ++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |   1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |   5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 101 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |   3 +
+ arch/x86/kernel/cpu/sgx/virt.c           |  20 ++++-
+ tools/arch/x86/include/asm/cpufeatures.h |   1 +
+ 11 files changed, 173 insertions(+), 17 deletions(-)
+
+-- 
+2.45.2
 
 
