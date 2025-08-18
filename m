@@ -1,76 +1,84 @@
-Return-Path: <linux-kernel+bounces-774024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB16B2ADAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:05:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79682B2ADC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7468118A620B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17D868180D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD626321447;
-	Mon, 18 Aug 2025 16:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACC2340D8B;
+	Mon, 18 Aug 2025 16:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="ECCLMsux"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4040A31E10C
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533094; cv=none; b=qgmUDux23m5plk9RWjO405SSvWCt8iEmlauvnOSHyusQZ5PpPzTPNKvtu0SRp8HhKR0gG4Gka9gKOvSXdy92wE71a7FP/34uiUs8qIQJmy3IXZ6XLBVq9sX+s4BH7PcvPGQuoalYWemxPCpuaiuAt2iIZ7VcZ4t/hrerv46WDsg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533094; c=relaxed/simple;
-	bh=+HE8A4JWz4VOW6rcIWSp8fVZhJmOl4vISHIqSSqtBOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCH3OPaATH1J1ycWH0mzse6ffMWmNcqdDnf/Zlj5/L+WV/FR3Rfjg1G0NqcBcpDmIE4u/LRGuK33Sza8/8NgU6bhUYAuznM9Q99KYjUqodZxauz15qkj4xMdsv6auUja8TafMS/+dQKS1wv6ebmh0sM+ozypVXVdRCbsdMUIzb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=ECCLMsux; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p54921b16.dip0.t-ipconnect.de [84.146.27.22])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8aUYaC+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id C51AA4DB60;
-	Mon, 18 Aug 2025 18:04:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1755533084;
-	bh=+HE8A4JWz4VOW6rcIWSp8fVZhJmOl4vISHIqSSqtBOw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ECCLMsuxisOpKzJ5tVcq7oXLflbwj4uXblrhPCtJkejg2SyM6AvXBuTiy/LWIObGA
-	 B9W8O3uPaVaQkUmjGnwAs/Zd1tfQNf63Z27x4gGooOf1YJqXK9l45hjA+hPhp76eQd
-	 +FaNC4LRhYWVXemV397o4NRtKa3jrxcSNCLGeHEHekp7pVSV3/hwPkMPA/h9zfSHaG
-	 YX1luiMLzAnELjv4xZc0cft4SWOsFOxsXpud1lA07vLT0QaSSpy6YPqiXPGDFY5IAH
-	 E1dJs69JJGd4fbOIzfu2vR3dasCos4I4HrjSg/TYuO6NwfnucS34fsMJPyEZxFxSLL
-	 UM9Np4/SjqizQ==
-Date: Mon, 18 Aug 2025 18:04:43 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: XianLiang Huang <huangxianliang@lanxincomputing.com>, 
-	tjeznach@rivosinc.com, markus.elfring@web.de, will@kernel.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, iommu@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iommu/riscv: prevent NULL deref in iova_to_phys
-Message-ID: <44osnwyfiiqdqppu4q56bbzy6kl7xxe6mnxaujviydvm6tlutg@r5jujxv3pksp>
-References: <20250815071244.13982-1-huangxianliang@lanxincomputing.com>
- <aJ8FbvCJEOj2XjT-@8bytes.org>
- <e87aa091-5c02-4cd6-9636-0cb6c0015768@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10677221294;
+	Mon, 18 Aug 2025 16:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755533121; cv=none; b=ko67t/Uf9XE4VUyMHb09qLPfTLsWrxra33KLyJl6IiAnEiTH3uCwVURUjE4HHB2+d1OQbc8oFPoQedoWr0D2O2ayic8VHPQpqHbLNQ0v2aG51JZ5Di1wODXqoCf99/cCfziCCloTdlWBU5DclkNfe7QDUEXd7BQWCzmCRJd3IBs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755533121; c=relaxed/simple;
+	bh=UHJQ5AOO3NWQGsPJiDOZaBcoavjmPk3YU/SIDGJiLyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XUxR7bIDz0IaKrgZVCsUlbAznDzzr8mJJmST1obrS5Ub4jCQy8EwEf16kHv5+65P/clX5fBIzB6V4mUrGEtvfCNQzlspjXNEJaplGDSzEBdclOxUMlOfhGGjXQCATnRYM3+sFKwe9s/Pm4SOoSZls14yaaDURZ79XPS5R99FStY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8aUYaC+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5487AC4CEEB;
+	Mon, 18 Aug 2025 16:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755533120;
+	bh=UHJQ5AOO3NWQGsPJiDOZaBcoavjmPk3YU/SIDGJiLyQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X8aUYaC+edxp7UNq2Uhvs74jx45Zzsjskpqa+ccARjEADGRxh5HkkZpEoAWFZxdGw
+	 4C2oPWJrA+MBnUD7gCFKYT0ZOVozFiB3uS9yNpfp/uyC5sCpr+mTmRW5eqXQUspRV5
+	 AM5ODYjFyyITSI1XTe88efBsrxc0x+OyIMo+GekeZgp5NLUgbJfNQ6rKEqKkaqvFrC
+	 0q4FMUBvQkfjvO+ilBVtMWa+y6YqFlVFo6f+f2sqTbW1yHN9x+q0KeUiLWITotNXds
+	 KvTMUSO6piihyY0vLVnEt5hvotMh1giMieKoi8aWnl1SGkEC+BEZ6IcTrpZ84cTTaY
+	 y+80yAFB6NGRw==
+Date: Mon, 18 Aug 2025 09:05:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Wen Gu <guwen@linux.alibaba.com>
+Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, xuanzhuo@linux.alibaba.com,
+ dust.li@linux.alibaba.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, David
+ Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
+Message-ID: <20250818090519.33335d5e@kernel.org>
+In-Reply-To: <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
+References: <20250812115321.9179-1-guwen@linux.alibaba.com>
+	<20250815113814.5e135318@kernel.org>
+	<2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e87aa091-5c02-4cd6-9636-0cb6c0015768@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 03:43:25PM +0100, Robin Murphy wrote:
-> It's a valid PA on many systems of many architectures, but it's also been
-> the "not mapped/error" value for the iova_to_phys operation all the way back
-> to the very very first intel_iommu_iova_to_pfn() nearly 17 years ago, so hey
-> :)
+On Sat, 16 Aug 2025 11:52:18 +0800 Wen Gu wrote:
+> > This driver is lacking documentation. You need to describe how the user
+> > is expected to interact with the device and document all these sysfs
+> > attributes.
+> >   
+> 
+> OK. I will add the description.
+> 
+> Would you prefer me to create a related .rst file under Documentation/
+> (perhaps in a new Documentation/clock/ptp/ directory?), or add the
+> description comments directly in this driver source?
 
-Right, the sins of the past finally haunt me ;)
+It's supposed to be user-facing documentation, so Documentation.
+
+But you ignored David Woodhouse's response, and also skirted around
+Andrew's comment on OS kernel being an abstraction layer. So if you
+plan to post a v5 -- the documentation better clearly explain why
+this is a PTP device, and not a real time clock.
 
