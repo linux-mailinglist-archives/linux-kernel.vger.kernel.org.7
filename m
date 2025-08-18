@@ -1,122 +1,111 @@
-Return-Path: <linux-kernel+bounces-774379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1D4B2B187
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:26:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D35AB2B198
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C742189BDBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B39621920
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801422727E4;
-	Mon, 18 Aug 2025 19:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DEC27466C;
+	Mon, 18 Aug 2025 19:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="goN7U/QS"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mH+VmKVX"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1135FE555;
-	Mon, 18 Aug 2025 19:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0952273D6D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755545178; cv=none; b=AGS37eX4DFP/nl4trb6z+ZqCT0jjXfBr5FKBFPdarKWJJcRZamsh+JEd/6FXLqw/GqEab07sH9sRZOVYyhVAsBtJwIBwQxDHao+DRF+hHRsB1KDDk40lPxTTV7HwcfJb81qZQzArc1wkOPrGvUIsnQd+VZ1dUJ3q1N/im5qepc8=
+	t=1755545184; cv=none; b=HtPa38jdulY/cxgin8JsMZmt4prXa5Yx4Q1jI88G/qkmeWdRdwnaFABFvmGwNmZDLxNH3ucvozFYHvHFxxaX5EGNUEdP5prrMPjupK52gN175X2e8qnKNGCsKx560lXmydYJYcAuBu3DhAuWtIE+GGQLdHKiQsQwFvrg5vg0TfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755545178; c=relaxed/simple;
-	bh=69W23qFghf8b0DLplTxLuxTLlICbMFs0XcgmXglH2hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3pAkkLvum+SA7HoMZH2L92nyN8RU5xD5fbVAHUSZGM2DcHt0dHod3i2uMy43wz80HLxSQ3Orui4nVy2J91xZxxEYkryHVlT4llhL8JOTvPNDfT26bWCgIUdo8nnrlkU1WUWv5SXaXnbbhfTuxXQcHGMjkgZd0eCD7coxjUdUI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=goN7U/QS; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Kd+IXbkrMS5qiS+Sd0sXzW37rFNI73FRN7pVjSKY668=; b=goN7U/QS6bPVXFS85mifHaha++
-	mt627KyDXT7bQ2rbldEKEwyKL+Ibd3XZWKVfwmUKRPWs3t+Vc1yCjqDWYl17Ix4BhYydjKdaEZURC
-	XHvfokBXFoV5bhY0UTdkJlpesXobGS0EwLeQ/oyzLRnnH7xpjYU/6iMO6iUKYenZO9bRO6C/IWgA1
-	XYISo4fsVze3vSN3CN5MvoopPNbxehtEildTjTg1dncrsgZTrIfNJI7qUfpN5o+MhsQCFJ0Ho0T9t
-	CzW+rD19rT5+KsztxLUvx/66g58mMe3/Q5KbH6nxNwBpzLPjihysdilfP3aOMmW+4kbsMhxj0YpYA
-	dY/3SAaA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38234)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uo5Uf-00028K-1Q;
-	Mon, 18 Aug 2025 20:26:10 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uo5Ub-0002hA-1M;
-	Mon, 18 Aug 2025 20:26:05 +0100
-Date: Mon, 18 Aug 2025 20:26:05 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC] net: stmmac: Make DWMAC_ROCKCHIP and DWMAC_STM32
- depend on PM_SLEEP
-Message-ID: <aKN-Tdfvc3_hD2p7@shell.armlinux.org.uk>
-References: <7ee6a142-1ed9-4874-83b7-128031e41874@paulmck-laptop>
+	s=arc-20240116; t=1755545184; c=relaxed/simple;
+	bh=N0KEz1rl1jL1PP3w97jH5JqOD9sO2N0qIXncXsx8V9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dW2fnbaHJ++WnysRVFv7iS7UU3AhgLo6uWkxRoMLT8pfdHIwJz31vk5hajex2FEQJXCIZmjnLnflqco0ZaUB59R1LqJZZmqtd/mRjlRT4/FsyPqRrfd/7LZRst1lm2FtS2Dc30pbz9Q+cgKF2bzjzOo9POp/eWwJwfo5KqhbAok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mH+VmKVX; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2a7e2450-5e31-40d6-bca4-ccc2c1d60b72@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755545179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q3UWG4FunCCbQLj+biR4a06QSU33PixM4sYuMp155u4=;
+	b=mH+VmKVX5OvdeT8AcQ2d9iNMPDRxQosoUJQ+Ob0OavqixnlEqb9GHwVlnTZnHxlnGMpvQU
+	OjkW/hosFEVjhKBL5FeQZXzERh9v0nZkwj9jqgbhKaFqNQpWUHm1XliM1mdeQ4VKL4/98u
+	OJWUdliYOG5PWDHcW4mIwyiL/5PnkNc=
+Date: Mon, 18 Aug 2025 12:26:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ee6a142-1ed9-4874-83b7-128031e41874@paulmck-laptop>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Subject: Re: [PATCH v2 1/2] ACPI: RISC-V: Fix FFH_CPPC_CSR error handling
+To: Anup Patel <apatel@ventanamicro.com>, Sunil V L
+ <sunilvl@ventanamicro.com>, "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Len Brown <lenb@kernel.org>, Andrew Jones <ajones@ventanamicro.com>,
+ Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Troy Mitchell <troy.mitchell@linux.dev>
+References: <20250818143600.894385-1-apatel@ventanamicro.com>
+ <20250818143600.894385-2-apatel@ventanamicro.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20250818143600.894385-2-apatel@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 18, 2025 at 12:11:09PM -0700, Paul E. McKenney wrote:
-> Hello!
-> 
-> This might be more of a bug report than a patch, but here goes...
-> 
-> Running rcuscale or refscale performance tests on datacenter ARM systems
-> gives the following build errors with CONFIG_HIBERNATION=n:
-> 
-> ERROR: modpost: "stmmac_simple_pm_ops" [drivers/net/ethernet/stmicro/stmmac/dwmac-rk.ko] undefined!
-> ERROR: modpost: "stmmac_simple_pm_ops" [drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.ko] undefined!
 
-The kernel build bot caught this, and I asked questions of Rafael last
-week and have been waiting for a response that still hasn't come.
+On 8/18/25 7:35 AM, Anup Patel wrote:
+> The cppc_ffh_csr_read() and cppc_ffh_csr_write() returns Linux error
+> code in "data->ret.error" so cpc_read_ffh() and cpc_write_ffh() must
+> not use sbi_err_map_linux_errno() for FFH_CPPC_CSR.
+>
+> Fixes: 30f3ffbee86b ("ACPI: RISC-V: Add CPPC driver")
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> Reviewed-by: Troy Mitchell <troy.mitchell@linux.dev>
+> ---
+>   drivers/acpi/riscv/cppc.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
+> index 440cf9fb91aa..42c1a9052470 100644
+> --- a/drivers/acpi/riscv/cppc.c
+> +++ b/drivers/acpi/riscv/cppc.c
+> @@ -119,7 +119,7 @@ int cpc_read_ffh(int cpu, struct cpc_reg *reg, u64 *val)
+>   
+>   		*val = data.ret.value;
+>   
+> -		return (data.ret.error) ? sbi_err_map_linux_errno(data.ret.error) : 0;
+> +		return data.ret.error;
+>   	}
+>   
+>   	return -EINVAL;
+> @@ -148,7 +148,7 @@ int cpc_write_ffh(int cpu, struct cpc_reg *reg, u64 val)
+>   
+>   		smp_call_function_single(cpu, cppc_ffh_csr_write, &data, 1);
+>   
+> -		return (data.ret.error) ? sbi_err_map_linux_errno(data.ret.error) : 0;
+> +		return data.ret.error;
+>   	}
+>   
+>   	return -EINVAL;
 
-However, there was some discussion over the weekend (argh) on IRC from
-rdd and arnd, but I didn't have time over a weekend (shocking, I know,
-we're supposed to work 24x7 on the kernel, rather than preparing to
-travel to a different location for medical stuff) to really participate
-in that discussion.
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
-Nevertheless, I do have a patch with my preferred solution - but whether
-that solution is what other people prefer seems to be a subject of
-disagreement according to that which happened on IRC. This affects every
-driver that I converted to use stmmac_simple_pm_ops, which is more than
-you're patching.
 
-I've been missing around with medical stuff today, which means I also
-haven't had time today to do anything further.
-
-It's a known problem, but (1) there's been no participation from the
-kernel community to help address it and (2) over the last few days I've
-been busy myself doing stuff related to medical stuff.
-
-Yea, it's shocking, but it's also real life outside of the realms of
-kernel hacking.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
