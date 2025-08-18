@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-773901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11DA2B2ABD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:57:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284F3B2AC07
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 736807A73FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:55:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E5F2A221C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC08A2264B0;
-	Mon, 18 Aug 2025 14:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9E0217722;
+	Mon, 18 Aug 2025 14:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KJEvzW/q"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cYEqHqx6"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E9C23505E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9E02367CE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755529030; cv=none; b=NIO9GYkA0JzZNowBl7ZXZoRqFIZQHvs4cu+4jLpDBKtLYEM99RFhHpJpzqFleK2wEJqxVGTzDT1BJIy8S21Jf2alz+vK4wIU/TiNi5Rp8DSrvWvwtnZkZHoq8hj0a2sn9cDWkXDDHrGpaDhPd6oRDyt2k8bkLMpj9Wb+wT2Fehg=
+	t=1755529053; cv=none; b=u+2r9INaZa+aNma2EwMBt+mXrTTJo0sG3NInTpZY6phR1cE4yi3+aIdMehnI2GJcdi03MnY1HdJIATcDZ7aQZAUSFC1Z2hKni3g0W8NVDZYB/lrPxZkvpARHheaiOxm7UOAufjWxDnbZSfoFSlJLT09MvIfteUd6UdXr55FWl9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755529030; c=relaxed/simple;
-	bh=LNvE4zpWNqd2iGNmZXznuKyVTpKjjxWo3c8go/svefI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMw20ihvKR+hxq+PI3i0oz8GrGoGYBbighqiD2ejg0WlID2N//B3K5KH0UoIVs/+Np+YqtKd02bV9R2C57cnsHV397GaJiWuzO953iSS10Ib1vsmPq9+DYWfhG0iglRKZ10OmwGrVDLazal5+wLtmtkNvY0k6ehaNFv0oMqrb6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KJEvzW/q; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F253D40E0286;
-	Mon, 18 Aug 2025 14:57:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id b5rO5ZouPHPD; Mon, 18 Aug 2025 14:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755529021; bh=AIAf2EokjAc/oXHY1uqaLGKogcjDtiV+JksDO1o757s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KJEvzW/qSKzkgQ06SAf6VOQkD8BC6OPhWKA7+VlnGSCtrJVObZT9IK1ziRRqg/Acr
-	 r9cYDeDelKY6LpUqpHh4QQ9t5s4yx/J3OBMHjXGew2iF3Z02WJcDOORvjwlQ8cLTS4
-	 nOpNgeY4I3dIQozWTVb9UBlJob5qLjXGfelkamq57KUAx+JOiBno9wlbwwyJU3dpSO
-	 ShCOiircmYGZkySmJiwEg3HWr/RHw5WSlbV97ffCNbyBigp4XuVuZjkiwFvn1ZoSVG
-	 /BflgYOvIw8R+kEgLXTjKGmCK92ZkD4blxX+TLSweleYPDeoaMGSM6l7A6e4aQk/i/
-	 4p6hK+RhZUak+H/EMtlbV8CaI4fnVFT/QSPy08GhrHjyWvueNk9jx2E4u/Wxsc7OIP
-	 9MtTDt8cBRiyYdujttG8YrT1hKn5TWLLkGbjspbsBW3kgabEgkpvyuVtjhLA/dvAS7
-	 3hHcFkOFSGJtDjDo9jz9XoDsY2BbkhySb3KqsE/y6RJO2/wJomtzb77bjACDV1kalR
-	 crn4rgp5/lhj798HbVXNRnzL/mEqFB9cTtXMO/yg7ikajKYocINSXGeCqksXgK1Lz2
-	 miriAtQlIbZJsG7GP4fYFZrdXpC9/IIUXo1Bp8baF6xI5qu3zQoD14qz7Ye+rVEEJ+
-	 Yt8mbx834XeJR6YiUUW4p00c=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3642940E023B;
-	Mon, 18 Aug 2025 14:56:47 +0000 (UTC)
-Date: Mon, 18 Aug 2025 16:56:46 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 02/34] ASoC: Intel: avs: Include CPUID header at file
- scope
-Message-ID: <20250818145646.GGaKM_Ltrggbwkj2TB@fat_crate.local>
-References: <20250815070227.19981-1-darwi@linutronix.de>
- <20250815070227.19981-3-darwi@linutronix.de>
+	s=arc-20240116; t=1755529053; c=relaxed/simple;
+	bh=EtpwQWSiJMe0N0G9xdPULlAZaQP/BS5/BHcWMwdb+eA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JkZk4kwF/Kipd1eZ2G5KF8dFBMwGnJH9UI+Xv+ONUC35UePPT0dRTiiL2+5E1mjKmgs+1wz55DhLPr8azABPoIVuTKj/d3Tl1eS3Wb5Lkflg2nSymiDlakEDKZFYHWU02O8lmpOELaahEsgEQ+uUWl1gUYrPwWKhZkXUOuUmLko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cYEqHqx6; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0a3b69b8-e868-49c8-a0ca-c448ee3cd488@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755529036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rnKB1/Ufaqgg4Uj8GyIwDI8Vao4ATbv9GiVbMHy8WVA=;
+	b=cYEqHqx6zmsFWzI1DlT26wxFXuVBrL8Y04M0JduHYf20UEoKf3C4ZGl/okEeKg2iMlPMzc
+	ABfD0lBg/TUR6igtOjna9ThcFbkwt0iWhjWPnuEZ/EY1bdm76sbVYyLvUohMvhjpZ3sybL
+	1n9RWwZDZRaAJ1ePZ6MfkhaOa6WOPjU=
+Date: Mon, 18 Aug 2025 10:56:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815070227.19981-3-darwi@linutronix.de>
+Subject: Re: [PATCH v2 1/9] dt-bindings: spi: Add spi-buses property
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>,
+ Michal Simek <michal.simek@amd.com>, linux-spi@vger.kernel.org
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+References: <20250616220054.3968946-1-sean.anderson@linux.dev>
+ <20250616220054.3968946-2-sean.anderson@linux.dev>
+ <ded7ba99-089b-47a7-95b9-ca6666dc3e29@baylibre.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <ded7ba99-089b-47a7-95b9-ca6666dc3e29@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 15, 2025 at 09:01:55AM +0200, Ahmed S. Darwish wrote:
-> Commit
+On 8/15/25 11:49, David Lechner wrote:
+> On 6/16/25 5:00 PM, Sean Anderson wrote:
+>> From: David Lechner <dlechner@baylibre.com>
+>> 
+>> Add a spi-buses property to the spi-peripheral-props binding to allow
+>> specifying the SPI bus or buses that a peripheral is connected to in
+>> cases where the SPI controller has more than one physical SPI bus.
+>> 
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>> 
+>> Changes in v2:
+>> - New
+>> 
+>>  .../devicetree/bindings/spi/spi-peripheral-props.yaml  | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+>> index 8fc17e16efb2..cfdb55071a08 100644
+>> --- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+>> +++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+>> @@ -89,6 +89,16 @@ properties:
+>>      description:
+>>        Delay, in microseconds, after a write transfer.
+>>  
+>> +  spi-buses:
+>> +    description:
+>> +      Array of bus numbers that describes which SPI buses of the controller are
+>> +      connected to the peripheral. This only applies to peripherals connected
+>> +      to specialized SPI controllers that have multiple SPI buses on a single
+>> +      controller.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 1
 > 
->     cbe37a4d2b3c ("ASoC: Intel: avs: Configure basefw on TGL-based platforms")
+> Finally have some hardware to test this series with using 2 or 4 buses.
+> I found that we also need an absolute max here to make the bindings checker
+> happy. 8 seems sensible since I haven't seen more than that on a peripheral.
+> We can always increase it if we find hardware that requires more buses.
 > 
-> includes the main CPUID header from within a C function.  This works by
-> luck and forbids valid refactorings inside the CPUID header.
-> 
-> Include the CPUID header at file scope instead.
-> 
-> Note, for the CPUID(0x15) leaf number, use CPUID_LEAF_TSC instead of
-> defining a custom local macro for it.
-> 
-> Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-> Acked-by: Cezary Rojewski <cezary.rojewski@intel.com>
-> ---
->  sound/soc/intel/avs/tgl.c | 25 ++++++++++++++++---------
->  1 file changed, 16 insertions(+), 9 deletions(-)
+> 	maxItems: 8
 
-I'm guessing that:
+What is the error you get without this?
 
-https://lore.kernel.org/r/aGv8AWwHbi5seDxi@lx-t490
+--Sean
 
-still needs to happen yet?
-
-Because I don't see it in this set...
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
