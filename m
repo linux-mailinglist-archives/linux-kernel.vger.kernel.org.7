@@ -1,111 +1,156 @@
-Return-Path: <linux-kernel+bounces-774452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DC1B2B274
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1691B2B282
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C572561495
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:34:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6DD5E533C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05058222578;
-	Mon, 18 Aug 2025 20:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8717D2236EE;
+	Mon, 18 Aug 2025 20:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="S9lZQARt"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IEyknZHQ"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D23A3451D8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281E815278E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755549243; cv=none; b=ClkXlwwkMqv1KyefYj5erXGUqFeRAMHMWFep/cn1dyND/XwwVkP8NjLT7FCSTaKF84/VjAfR9FnMsGywURndzK8qZVZYAWDfwQNgfuuQ171UK6t4kitxOYzvVE5Q3PWWDt+VoMNzMPIO2mpcFwj5+69I3DXCbgktQw7xEtyLGtA=
+	t=1755549327; cv=none; b=WJcqB1N34qHE54zuZhoTvHVY+FqWMEm23AEZ6Fr4huOyLepJkwh9JG4M2ZnSt3p67Kb5UbJvApy2rlAl2EXxbHUJIfmcRnR9liRMkHCXuNdq5XtAyNzAp/cx+uCgA2stla75xFZCWhCFnQ91AVwiWKFVcmJgOPQHEYMaRpYULOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755549243; c=relaxed/simple;
-	bh=/dvxnJ7wY7jaLn1XY7+LGBz3G+AXEAX/pF//VdJh4EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D48qPGkrgR8lbLDttViXgjuxj6VXdSSv8vDDczHra8vXjQWA4GDnhXEaGkxCjAKJLUdwrfXJMypO+waJCU0ZfzXc3NkPnSmFvDhLrzFYhV0hPPB01FqJvWGUmQ/M83FkqD+ac8Fc8KLkAA5TQsI9KG+p+v3O5D9MqUQ5s8EkAVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=S9lZQARt; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3e56fc0f337so29660425ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:34:01 -0700 (PDT)
+	s=arc-20240116; t=1755549327; c=relaxed/simple;
+	bh=eqVkeZYur4vB9IiQRm1NCdJ4YaR7bQVBv12DWTl1zCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qe/xiHT5gQ1jELr8popAJwgofm32XocEgeyoi5qMIywZs5UgWOITcLuK/ngjnrf9FR3n9fOlho7z4MO86h6CVmNqS+5hH3rKrafKcZC8zOY3Yn6RcL070t/SEpHyy5zHcXdxkT9WmBsUdYFwKIFIDJigu/4wjW+4s0SsJbqwMNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IEyknZHQ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb72d5409so733902566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:35:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755549241; x=1756154041; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wjJrmy2stspTCrvdXY1WIU0SYuKr2K0lvsiwRgTRkkg=;
-        b=S9lZQARtfycaRGokGWKyRvyMAaKusty0X39WhTdGiY2TaFhNXqC7sf0st7wBQOC0Qq
-         IQGkubFUD8liKEwWnLI4bDdfuDehv5EQoIHi99eH+qQuU8GAuPqHVLmrk8DGCzXTy593
-         JiCWOzZFZVSdJdP4XKPzLTUVzh5dfOIYoWV81/a8Y+kdrLJXRPQ1joDBMVQzid3vkZtY
-         FrjOFIjtIxBiWmq/MQQsDgilIC7zQMd1CS4KE26aQGD2EqzVp0rrjOlANvaGV2duesjP
-         iYUgS4EXSFN2iVEkivLzajBuDhv+21YjyZHHswUfJ/xa4b8R0TJp5XbvkyeqxglpN8uk
-         n7Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755549241; x=1756154041;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1755549323; x=1756154123; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wjJrmy2stspTCrvdXY1WIU0SYuKr2K0lvsiwRgTRkkg=;
-        b=RQ1GHiiMdkKF7g/bkJ29XBOamcwbsXRR61zHYfGeavnSR/CAQ3/E1hSomnhuO0et20
-         LOMBoPoVBGgFkOVOKCQa2Asxm9149g1SzdxJBPg4H/XS6CT/rY70a6EswNXWP/xX5D3u
-         Nz/qhXtZkCmemo3ahuRxIxU3eSCzr+dfCSz8R80fL/5TFORX5WWano05DmUvCmInHD/S
-         nMkePd835pffc9H6hamUe+0EhQ2qu9/7qg62e9oLP6wjvgq6qlip4Y+FkUqRa3MfPmft
-         QsWUVUbpYFUVXmBosctAE1N5XwZ0Pp4ZYKKNDO4L0hHxj/Fg9ycllIUTGgS//Nq9B8ZB
-         oAMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoYpljjRetQvU1pzW5RhY+VtXfrw+J7tUdyoZVqWXLAop2P2GLjOrOtGRG+fKSqPOC23tlBlJ9v9uRmbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpLsuv3rr1hEz97SVyd82z9FZ9J25cHSgpalqg1vO3FQKIcKOk
-	ZgFR8JDdgXxVKauBJBmKl6CG8m9YcOrF14tRS3FinFCbgjuksc6qzAkbG3SmhSk+sic=
-X-Gm-Gg: ASbGncsJLeEVUw4pKZkMBkOCyCK/F6VAWqsdk8aaty1tLpcmmk1NKrQdMCDGfG9xeBR
-	B2HabohE7dLKsBizGsGxmcICjy+qg9kL+IHOmVoGPF4q+p8u1pq6g9rIhrROG5ndXb78Hn+1j71
-	PqNMaGvseCxDMZu4mj2kQeljCj+k4cFY+Np5Cdnqla9LVn5RdFyHzTm0Fd20tjRqO7f67v7Tk6i
-	w+UUbIvKFGhwJ7ghJJXM4sAXRbQe77ZHUb+qRyzZAdMs+TEkGeyXF9lu//f0GhptaZDV+Jr/j6y
-	XH+0BpCVLO03EHHlFCzHmgTIy+0Fwu/hqOhRCLv2o4XdZXsejlF0/NaoDwtJzw2Mm3m7s+QJWDf
-	TOohjDi3vfztUI+1oGxfFXzH+
-X-Google-Smtp-Source: AGHT+IGRTgu1GwXkFLnvLr28LEmoS61swGqzhfNvkiuvx4bYf7qu9UcnEVK45d2zFEeHx8uZ9BB7/A==
-X-Received: by 2002:a92:c267:0:b0:3e5:70b0:4f9c with SMTP id e9e14a558f8ab-3e674fe559cmr16147595ab.6.1755549241100;
-        Mon, 18 Aug 2025 13:34:01 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e66c6b0b12sm13099125ab.25.2025.08.18.13.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 13:34:00 -0700 (PDT)
-Date: Mon, 18 Aug 2025 15:33:59 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: zhouquan@iscas.ac.cn
-Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/6] RISC-V: KVM: Provide UAPI for Zicbop block size
-Message-ID: <20250818-8beeedd83482f6e618be2ea0@orel>
-References: <cover.1754646071.git.zhouquan@iscas.ac.cn>
- <befd8403cd76d7adb97231ac993eaeb86bf2582c.1754646071.git.zhouquan@iscas.ac.cn>
+        bh=RrUPoAix4GJmNCXAtshi2uvFt0DKJJ/xCnFV+qY1rgk=;
+        b=IEyknZHQ5HTtcAo2Oh+mFmqwS3k4mFoYqp712C8v/Sb+O4Q3ElF5T+kEfmrpD6fjQ6
+         bPFCnWEmV1CvJFPBS/Xiw1x1I5YCZAACr6zpV3J+7l6quwDpV772nWLCeJZe7CFq2vZu
+         C76MyV2JkX53mtKnHiYY6rCi34DNYEV8uZvEU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755549323; x=1756154123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RrUPoAix4GJmNCXAtshi2uvFt0DKJJ/xCnFV+qY1rgk=;
+        b=qrvh9+32QtHK1BcpjDbjdk6r/TYwtWuwKHc0b+U65BMqSwHrt/ZMVtEOOejY3XH6wz
+         dPh3VHiaXo0hoNB3yhsbzPXairPyT29t0lC1KKiKkqDotW8glYv6ocNO3taTW/DJeumY
+         QgtNe3fCRXmXjn44jTKrtD8iuw0oAePAoLeok7Mm+aVmPxu4NOLfsvJqdk+Lo3Ni5za8
+         e2mRSM7tUJNAx8rRRn0j6HJqs+BaZo7IoEhJcyBA15Y0UMezJ8UhssfSk+HcrLSrvMv2
+         NorMqzEfFS4YuLL51eeqRx1g4arfPDg/jxkPDm8OPViNRfPcnTceL2cmVXwdb0irj1UJ
+         dJKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwTErb5TUaV6+g/WxAgmDAFnafp20yzhMp+JH0nrZAOvtMdwlF2R3cKejghXZMpK9yVHeHiR9Itf6TtcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFZDc4ReapFC5DVMKaLBijHuq8m53vLVAVtpDPIOQ9j8J11OiF
+	9EejtRsK+crF/vvLNStJ6DE6FZ3hd4srMC9meUNqIQzzkK6czSkpSg/9cnETBND+Z1caFPMpcgP
+	tpw1jY8Lz
+X-Gm-Gg: ASbGnctGfZdhaW+JFHss7EuPz83ik2oPlfUjykPtDb5TC8ZzhbRB4erjzHQ30+/BRr+
+	5f/rBuhxsS/OAaBhrS0BMrWyJekJMJlZl9+k2oojrkgFDgn4jc4V2+/AQTBTCALm9eN9tAEsaI3
+	G2UHbL70uEAWpK8jd2OSEP5Z4FC6lUHrbewLVltp5+32bnhpQuxKSXrOOOU5IrfM3Ro0qDhBQ7D
+	gaOa6OtiEcc3xZ+0Mz4sG1GrD/PsXiwwBNv9vj3eUGXAUsqj7fPVU+qyK4fbPSpfzjHzWL6+hO8
+	nHLyhC6zfCkuRanNFCYgY/9LLhfy8y/7FHREd6kOBT4QYrGFGfbY/PssDiuwc20LOqlkV3ECxyJ
+	pmnSFUo5RiXX0iUZFFuVVydWLz3OLVfeWqecgBXIcfDY5zQIdbKgRt4ULwZ6W1gVDNNLt+mIC
+X-Google-Smtp-Source: AGHT+IF8a75bKlaD6vjH3sZFXLxLIU68+UO6/ymmjyrxO3p+Zkp8+yYURXEfA7Cw5j1gXXvFbsvfjw==
+X-Received: by 2002:a17:907:3d8e:b0:afa:1453:662c with SMTP id a640c23a62f3a-afddc96169cmr11837166b.8.1755549323270;
+        Mon, 18 Aug 2025 13:35:23 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd018a4bsm846200566b.100.2025.08.18.13.35.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 13:35:22 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7a8dd3dso651138366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:35:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVsYyxG3kAxojgSoT9GDijhTWEVFBhAtjn1KBP0DNreQ/3LHqeTMGwTkSO2hMnU7i6AnWEkDZO6/Z7u0E4=@vger.kernel.org
+X-Received: by 2002:a17:907:94c8:b0:afd:d9e4:51e7 with SMTP id
+ a640c23a62f3a-afddd24e88emr11714066b.63.1755549321531; Mon, 18 Aug 2025
+ 13:35:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <befd8403cd76d7adb97231ac993eaeb86bf2582c.1754646071.git.zhouquan@iscas.ac.cn>
+References: <20250818181153.661431-1-thorsten.blum@linux.dev> <20250818181153.661431-3-thorsten.blum@linux.dev>
+In-Reply-To: <20250818181153.661431-3-thorsten.blum@linux.dev>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 18 Aug 2025 13:35:06 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=W7Qhz4dNnhb3t4+Bz3Fk5iKxRNwrq8u4X73tpGsg=hyA@mail.gmail.com>
+X-Gm-Features: Ac12FXzfHvX5IPb4DpSB34IuOPv7zZbGkqkbrqt_GWvH8ZKvsXy6Qt9lVJvk3rU
+Message-ID: <CAD=FV=W7Qhz4dNnhb3t4+Bz3Fk5iKxRNwrq8u4X73tpGsg=hyA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] kdb: Replace deprecated strcpy() with memcpy() in parse_grep()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>, 
+	Nir Lichtman <nir@lichtman.org>, Yuran Pereira <yuran.pereira@hotmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-hardening@vger.kernel.org, 
+	Daniel Thompson <daniel@riscstar.com>, kgdb-bugreport@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 08, 2025 at 06:18:34PM +0800, zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
-> 
-> We're about to allow guests to use the Zicbop extension.
-> KVM userspace needs to know the cache block size in order to
-> properly advertise it to the guest. Provide a virtual config
-> register for userspace to get it with the GET_ONE_REG API, but
-> setting it cannot be supported, so disallow SET_ONE_REG.
-> 
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> ---
->  arch/riscv/include/uapi/asm/kvm.h |  1 +
->  arch/riscv/kvm/vcpu_onereg.c      | 14 ++++++++++++++
->  2 files changed, 15 insertions(+)
+Hi,
+
+On Mon, Aug 18, 2025 at 11:14=E2=80=AFAM Thorsten Blum <thorsten.blum@linux=
+.dev> wrote:
 >
+> strcpy() is deprecated; use memcpy() instead.
+>
+> We can safely use memcpy() because we already know the length of the
+> source string 'cp' and that it is guaranteed to be NUL-terminated within
+> the first KDB_GREP_STRLEN bytes.
+>
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  kernel/debug/kdb/kdb_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index 7a4d2d4689a5..cdf91976eb7c 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -860,7 +860,7 @@ static void parse_grep(const char *str)
+>                 kdb_printf("search string too long\n");
+>                 return;
+>         }
+> -       strcpy(kdb_grep_string, cp);
+> +       memcpy(kdb_grep_string, cp, len + 1);
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+I'm OK with this:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+A part of me would rather use strscpy() the way it's supposed to be
+used to simplify the code a tiny bit... AKA (untested):
+
+-       len =3D strlen(cp);
++       len =3D strscpy(kdb_grep_string, cp);
+        if (!len)
+                return;
+-       if (len >=3D KDB_GREP_STRLEN) {
++       if (len < 0) {
+                kdb_printf("search string too long\n");
+                return;
+        }
+-       strcpy(kdb_grep_string, cp);
+
+I guess this does "change" the behavior in that `kdb_grep_string` will
+still be set to the empty string in the case that "len" was 0 and will
+still be set to a truncated copy in the case that "len" was too big,
+but based on my quick analysis of the code that should be fine.
+
+In any case, we're getting pretty far into nitpicks here, so I'm also
+OK w/ just leaving it the way you have it. ;-)
 
