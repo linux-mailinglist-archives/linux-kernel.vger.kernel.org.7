@@ -1,280 +1,129 @@
-Return-Path: <linux-kernel+bounces-773851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D29B2AAD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:36:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CABCB2AB8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AEBC7AC631
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA4F1BC5E43
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FCA322A2F;
-	Mon, 18 Aug 2025 14:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yYwH4BXL"
-Received: from mail-il1-f202.google.com (mail-il1-f202.google.com [209.85.166.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C04322C75
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B527E231836;
+	Mon, 18 Aug 2025 14:30:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519651624C5;
+	Mon, 18 Aug 2025 14:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755527354; cv=none; b=HTD9uQWwB8jYxnBgoNJajGrQtz/JNUhiHJi5ypuXWcA0eCSZAWPtl8Ou0nfFMZ1kpdT9yNrriaiuX6VTXO4SRhb/u21QxYUfmvF7MMexR7ZpoO90TCS15mm8nhT9vDF9otgJmtXaJDZ6z9PTPHat6fGqFsj68OYm84p2GEMXXno=
+	t=1755527419; cv=none; b=tWlarf8Aja8EgFwUmzPbG8WDFnLa4+Flf+T5Wsl7JrffpbqEuWpY4s5f5+Naw/+ZkXj6cEVMuxSSWt4WU5Gxs15pBU5XK9c7nI0+2hJjzanEXffZljuLEzevVRs1l+0pzOe+A67bCAAk2Vp6ueoD/+1b5GFComOrcQOpqrx3z3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755527354; c=relaxed/simple;
-	bh=LLDKD3jhhd01cSyNnUJ72AfCscFxZnYBV4yXzLlYTqo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CRQ6YmrKSP6ZdP569d38a2rShRsUudr6o+rXsILYxkafZGH34mA9HyQppXWhaK9A2FU3MBhu3hvjQb0FCmVC6nT9kQ28wtqXHEcdXqt9Mp7krKqiP2ouST23rnbeMFsXaD5UQwrO9wHWrNO2DS1Oupm5EMNLCbIRFGcpCUiKr2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yYwH4BXL; arc=none smtp.client-ip=209.85.166.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-3e56ff8e3d1so156541095ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755527351; x=1756132151; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6sergV1NCFzSiZ+q+TgB6G9QZTiH10/oQ/v7cI0WS4=;
-        b=yYwH4BXLRpPkdDTd8DPpEQ8nykfudYucIX2MC7fKyHBu785pvk5A7KcxpwwIU2y961
-         xJAJCa1U53oHvJuTmKnWLCsKy2CfyIlmaldhpnCu1+GbhEOQcAd8sjHbKAyIfvBOLXYo
-         3Td+v3ek2eio8RVHObiquTCKxujsRp+iWdgSpnw7P3+p++piRu9ioyWSjwhBUjbZjmPg
-         VPJhe+edYIsshlBUs7KyjKZsnlO3iZ/BaKuYfsj4yiBp5/GSuDVRua7lWJOESPXAC6iE
-         tYVFYYiC9b9CHPOI7FYuLh2V6O91j6DpNYla5AIiTK/+ne5IVsXM82GFhh8h+XoHNcbG
-         VGVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755527351; x=1756132151;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6sergV1NCFzSiZ+q+TgB6G9QZTiH10/oQ/v7cI0WS4=;
-        b=b9YjmrmCJ3xoQVZlJ8RbvEyw+pomjcl2KVAkzTsbVW7N7AaQ+JcwTkPjiCZSarqRHB
-         6w60bf5cuuBLIV7H1fJ39L1ddYTfNuDVhYTQnnmZgCjaWMSpJ4WDYAllDUk4+6jfSmOT
-         /tA4MQ61E4ysof12l1fshDgHtRvWGMr9DMC/MEwDcfSr1dHiSSKAcXhBpl6YaofdiCni
-         FkOWr/Ajh9BZKFXIAmoZkayVk6mMKmsd9z4Cwa8LTVLBX/L6ZpxtX866H8livWGzCf9g
-         bmjNI3v7lcsHuaBmi4an6sXY4YGwZHXqsbIDxTXmiUcafrcDY5kGLZ1i0OKS0j8SmZYi
-         HCEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUi0d0MogGK0taqaf73CmKulpeDaaxqDpJg9ca7JcCuUr1qtsTfhZ3iuhZqYCne1i190sGPFcjtpVANwU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxim/zB3eeb3kuH8cJy94dbGGO6/0mg555gVIQ1hto5c9lzHarJ
-	9x9MRL3lwuIOuPCChPw1OzPVoqlCv1L2qXanfByxg7pDMKOSIpOTdm6fNfelgM52uWe4jHKleFH
-	qnlmJsaUfmw==
-X-Google-Smtp-Source: AGHT+IEVI4czH0v4ysw3PzKSt8mNpOp3N0G7bFAqtIz9bfKarZAPIeOxGROw17qMCYOdTJuFKSBK+rdcnw2i
-X-Received: from jabhb19.prod.google.com ([2002:a05:6638:6c13:b0:4fd:c6b9:3df7])
- (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:1b03:b0:3e5:4631:549e
- with SMTP id e9e14a558f8ab-3e57e8b109cmr245148445ab.12.1755527350269; Mon, 18
- Aug 2025 07:29:10 -0700 (PDT)
-Date: Mon, 18 Aug 2025 14:28:11 +0000
-In-Reply-To: <20250818-support-forcepads-v2-0-ca2546e319d5@google.com>
+	s=arc-20240116; t=1755527419; c=relaxed/simple;
+	bh=k+W6ZWMIkn25jUyNMFtX6rNmrziEa+B3M/eWxufJOlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZbjgxLrO2CtXjupGVQn/XSw5QwUtdw8kHNsMc/gQiXARY0Ko/C2qYRpOwP9+pyAz3obnPu8KRISARloAeiWCQ89GmIhU3L6SajNRhxVEnV2rYtBujkqhwfL7GaZzm7nuXQKc/tTY+4n4YpnfXF/BHC0VlKbicjhyCDosY31hHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C0571596;
+	Mon, 18 Aug 2025 07:30:05 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37D7D3F63F;
+	Mon, 18 Aug 2025 07:30:13 -0700 (PDT)
+Date: Mon, 18 Aug 2025 15:30:11 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	kernel@oss.qualcomm.com, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] coresight-tnoc: Add runtime PM support for
+ Interconnect TNOC
+Message-ID: <20250818143011.GB8071@e132581.arm.com>
+References: <20250815-itnoc-v1-0-62c8e4f7ad32@oss.qualcomm.com>
+ <20250815-itnoc-v1-3-62c8e4f7ad32@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250818-support-forcepads-v2-0-ca2546e319d5@google.com>
-X-Mailer: b4 0.14.2
-Message-ID: <20250818-support-forcepads-v2-11-ca2546e319d5@google.com>
-Subject: [PATCH v2 11/11] HID: multitouch: add haptic multitouch support
-From: Jonathan Denose <jdenose@google.com>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
-	"Sean O'Brien" <seobrien@google.com>, Jonathan Denose <jdenose@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815-itnoc-v1-3-62c8e4f7ad32@oss.qualcomm.com>
 
-From: Angela Czubak <aczubak@google.com>
+On Fri, Aug 15, 2025 at 06:18:14AM -0700, Yuanfang Zhang wrote:
+> This patch adds runtime power management support for platform-based
+> CoreSight Interconnect TNOC (ITNOC) devices. It introduces suspend and
+> resume callbacks to manage the APB clock (`pclk`) during device runtime
+> transitions.
+> 
+> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-tnoc.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
+> index aa6f48d838c00d71eff22c18e34e00b93755fd82..f12a1698824bc678545319a3f482fd27e67a7352 100644
+> --- a/drivers/hwtracing/coresight/coresight-tnoc.c
+> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
+> @@ -270,6 +270,31 @@ static void itnoc_remove(struct platform_device *pdev)
+>  	pm_runtime_disable(&pdev->dev);
+>  }
+>  
+> +#ifdef CONFIG_PM
+> +static int itnoc_runtime_suspend(struct device *dev)
+> +{
+> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev);
+> +
+> +	clk_disable_unprepare(drvdata->pclk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int itnoc_runtime_resume(struct device *dev)
+> +{
+> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(drvdata->pclk);
+> +
+> +	return ret;
 
-If CONFIG_HID_HAPTIC is configured, and the device is recognized to have
-simple haptic capabilities, try initializing the haptic device, check
-input frames for pressure and handle it using hid_haptic_* API.
+Here can be simplified:
 
-Signed-off-by: Angela Czubak <aczubak@google.com>
-Co-developed-by: Jonathan Denose <jdenose@google.com>
-Signed-off-by: Jonathan Denose <jdenose@google.com>
----
- drivers/hid/hid-haptic.h     | 16 ++++++++++-----
- drivers/hid/hid-multitouch.c | 47 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+), 5 deletions(-)
+    return clk_prepare_enable(drvdata->pclk);
 
-diff --git a/drivers/hid/hid-haptic.h b/drivers/hid/hid-haptic.h
-index 73601f429de16bae3b1d877445f7eebf41a69d94..6fbe07a8df42c2dc77681b013a6f948357253bf8 100644
---- a/drivers/hid/hid-haptic.h
-+++ b/drivers/hid/hid-haptic.h
-@@ -107,19 +107,25 @@ int hid_haptic_input_configured(struct hid_device *hdev,
- {
- 	return 0;
- }
-+static inline
-+void hid_haptic_reset(struct hid_device *hdev, struct hid_haptic_device *haptic)
-+{}
-+static inline
- int hid_haptic_init(struct hid_device *hdev, struct hid_haptic_device **haptic_ptr)
- {
- 	return 0;
- }
- static inline
--void hid_haptic_handle_press_release(struct hid_haptic_device *haptic)
--{}
-+void hid_haptic_handle_press_release(struct hid_haptic_device *haptic) {}
- static inline
--void hid_haptic_pressure_reset(struct hid_haptic_device *haptic)
--{}
-+bool hid_haptic_handle_input(struct hid_haptic_device *haptic)
-+{
-+	return false;
-+}
-+static inline
-+void hid_haptic_pressure_reset(struct hid_haptic_device *haptic) {}
- static inline
- void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
- 				  __s32 pressure)
- {}
- #endif
--
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index b41001e02da7e02d492bd85743b359ed7ec16e7f..bbbd5c49dbd480ecad2a0c074b2f973f099dc054 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -49,6 +49,8 @@ MODULE_LICENSE("GPL");
- 
- #include "hid-ids.h"
- 
-+#include "hid-haptic.h"
-+
- /* quirks to control the device */
- #define MT_QUIRK_NOT_SEEN_MEANS_UP	BIT(0)
- #define MT_QUIRK_SLOT_IS_CONTACTID	BIT(1)
-@@ -167,11 +169,13 @@ struct mt_report_data {
- struct mt_device {
- 	struct mt_class mtclass;	/* our mt device class */
- 	struct timer_list release_timer;	/* to release sticky fingers */
-+	struct hid_haptic_device *haptic;	/* haptic related configuration */
- 	struct hid_device *hdev;	/* hid_device we're attached to */
- 	unsigned long mt_io_flags;	/* mt flags (MT_IO_FLAGS_*) */
- 	__u8 inputmode_value;	/* InputMode HID feature value */
- 	__u8 maxcontacts;
- 	bool is_buttonpad;	/* is this device a button pad? */
-+	bool is_haptic_touchpad;	/* is this device a haptic touchpad? */
- 	bool serial_maybe;	/* need to check for serial protocol */
- 
- 	struct list_head applications;
-@@ -525,6 +529,8 @@ static void mt_feature_mapping(struct hid_device *hdev,
- 			mt_get_feature(hdev, field->report);
- 		break;
- 	}
-+
-+	hid_haptic_feature_mapping(hdev, td->haptic, field, usage);
- }
- 
- static void set_abs(struct input_dev *input, unsigned int code,
-@@ -856,6 +862,9 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		case HID_DG_TIPPRESSURE:
- 			set_abs(hi->input, ABS_MT_PRESSURE, field,
- 				cls->sn_pressure);
-+			td->is_haptic_touchpad =
-+				hid_haptic_check_pressure_unit(td->haptic,
-+							       hi, field);
- 			MT_STORE_FIELD(p);
- 			return 1;
- 		case HID_DG_SCANTIME:
-@@ -980,6 +989,8 @@ static void mt_sync_frame(struct mt_device *td, struct mt_application *app,
- 
- 	app->num_received = 0;
- 	app->left_button_state = 0;
-+	if (td->is_haptic_touchpad)
-+		hid_haptic_pressure_reset(td->haptic);
- 
- 	if (test_bit(MT_IO_FLAGS_ACTIVE_SLOTS, &td->mt_io_flags))
- 		set_bit(MT_IO_FLAGS_PENDING_SLOTS, &td->mt_io_flags);
-@@ -1137,6 +1148,9 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
- 			minor = minor >> 1;
- 		}
- 
-+		if (td->is_haptic_touchpad)
-+			hid_haptic_pressure_increase(td->haptic, *slot->p);
-+
- 		x = hdev->quirks & HID_QUIRK_X_INVERT ?
- 			input_abs_get_max(input, ABS_MT_POSITION_X) - *slot->x :
- 			*slot->x;
-@@ -1324,6 +1338,9 @@ static int mt_touch_input_configured(struct hid_device *hdev,
- 	if (cls->is_indirect)
- 		app->mt_flags |= INPUT_MT_POINTER;
- 
-+	if (td->is_haptic_touchpad)
-+		app->mt_flags |= INPUT_MT_TOTAL_FORCE;
-+
- 	if (app->quirks & MT_QUIRK_NOT_SEEN_MEANS_UP)
- 		app->mt_flags |= INPUT_MT_DROP_UNUSED;
- 
-@@ -1359,6 +1376,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	struct mt_device *td = hid_get_drvdata(hdev);
- 	struct mt_application *application;
- 	struct mt_report_data *rdata;
-+	int ret;
- 
- 	rdata = mt_find_report_data(td, field->report);
- 	if (!rdata) {
-@@ -1421,6 +1439,11 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	if (field->physical == HID_DG_STYLUS)
- 		hi->application = HID_DG_STYLUS;
- 
-+	ret = hid_haptic_input_mapping(hdev, td->haptic, hi, field, usage, bit,
-+				       max);
-+	if (ret != 0)
-+		return ret;
-+
- 	/* let hid-core decide for the others */
- 	return 0;
- }
-@@ -1635,6 +1658,14 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 	struct hid_report *report;
- 	int ret;
- 
-+	if (td->is_haptic_touchpad && (td->mtclass.name == MT_CLS_WIN_8 ||
-+	    td->mtclass.name == MT_CLS_WIN_8_FORCE_MULTI_INPUT)) {
-+		if (hid_haptic_input_configured(hdev, td->haptic, hi) == 0)
-+			td->is_haptic_touchpad = false;
-+	} else {
-+		td->is_haptic_touchpad = false;
-+	}
-+
- 	list_for_each_entry(report, &hi->reports, hidinput_list) {
- 		rdata = mt_find_report_data(td, report);
- 		if (!rdata) {
-@@ -1777,6 +1808,11 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
- 		return -ENOMEM;
- 	}
-+	td->haptic = devm_kzalloc(&td->hdev->dev, sizeof(*(td->haptic)), GFP_KERNEL);
-+	if (!td->haptic)
-+		return -ENOMEM;
-+
-+	td->haptic->hdev = hdev;
- 	td->hdev = hdev;
- 	td->mtclass = *mtclass;
- 	td->inputmode_value = MT_INPUTMODE_TOUCHSCREEN;
-@@ -1840,6 +1876,17 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 
- 	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
- 
-+	if (td->is_haptic_touchpad) {
-+		if (hid_haptic_init(hdev, &td->haptic)) {
-+			dev_warn(&hdev->dev, "Cannot allocate haptic for %s\n",
-+				 hdev->name);
-+			td->is_haptic_touchpad = false;
-+			devm_kfree(&td->hdev->dev, td->haptic);
-+		}
-+	} else {
-+		devm_kfree(&td->hdev->dev, td->haptic);
-+	}
-+
- 	return 0;
- }
- 
-
--- 
-2.51.0.rc1.163.g2494970778-goog
-
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops itnoc_dev_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(itnoc_runtime_suspend, itnoc_runtime_resume, NULL)
+> +};
+> +
+>  static const struct of_device_id itnoc_of_match[] = {
+>  	{ .compatible = "qcom,coresight-itnoc" },
+>  	{}
+> @@ -282,6 +307,7 @@ static struct platform_driver itnoc_driver = {
+>  	.driver = {
+>  		.name = "coresight-itnoc",
+>  		.of_match_table = itnoc_of_match,
+> +		.pm = &itnoc_dev_pm_ops,
+>  	},
+>  };
+>  
+> 
+> -- 
+> 2.34.1
+> 
+> _______________________________________________
+> CoreSight mailing list -- coresight@lists.linaro.org
+> To unsubscribe send an email to coresight-leave@lists.linaro.org
 
