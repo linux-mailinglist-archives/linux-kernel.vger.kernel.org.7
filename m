@@ -1,214 +1,340 @@
-Return-Path: <linux-kernel+bounces-773285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE4EB29DBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:25:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A9AB29DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F993ACE48
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA16016C419
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8045630EF68;
-	Mon, 18 Aug 2025 09:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4899430DEBD;
+	Mon, 18 Aug 2025 09:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="V9zeMKKX"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RD3kqroW"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137CA30E826;
-	Mon, 18 Aug 2025 09:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509110; cv=fail; b=YVfjDum2aS4kLTtrE+VJjIcbkDS+HHXRJwsMuQwgrYZ7X+VSWupXD2PJEocCD/JP/7FLObTSDkGJyRqBk7kHoWlBZcuczlGEpalOuExvt0J4QMlyYnTKmcoyD3PZhHlqVpX8xIidrTRN2hcKO9y+raoiSnf8lh5gAk5garSRki8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509110; c=relaxed/simple;
-	bh=iOFxZUZpBgwAU38cEgii4F7g0nIzLRZky1WG3iVfUOg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BEaEoekfvG3/oQT9b3Wdkm05T33uVkI0ATSmhTAPEs+ElGjdHIl167tDTTYBpM7fSxZWvIom+qlPiP2ZVS0IXDDrXAMkmyEtQXMQCSvyBMCKPUdZDmeo9awkADajq+ihopVJEA2Zd/00WWi4Qa78LJogmuXDOF1ZGW33iifWMq8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=V9zeMKKX; arc=fail smtp.client-ip=40.107.236.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x1wkQhicGDq54ri6IDo1N9dKCGrbOH8QbHwQ6KLG88NdQE2t7UFSzNRJFkBE3gputd6cDQZWrxBo13CJYsIuCQ6j2ZmVEf1qub1A02F8RPvnA5LyIhD8GCwSIDWmU7e/pbl/i0/Nfb77NWjOHceknyHrDenNzlqQ6O4x9gHNupJ0S01j6ph5kKwFG2Z126WfZra7dTfW4x8kmAedEDH4LoahF/6YTu2F7wmZXezH4UYcF7t4M7TcwydGb4F85Lt4YbFVrtoFW0vUC73sa2Rvke/Ff2faFRk+2lyn16VQ9hw9oUAmApMnv8nwpi0dNCy0cZ2jQZer/Fa1+QnUNZWzsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qAa3I5hT8HTOqPKlmTXIrj7x0HiJI2MnNwkTmvefJ14=;
- b=tGVfQe4DmO5L4FM459Fx7tK9i6ljs1DrxU0GW1GwgNOM0b565YkzStDuT7PP7OxpKwttg3Sv7Ac9UkzAM5/EabkxqvRzUcstLWBGaxxqwTRCl/4X1Z8Ho+swEqSIw+/qwUqyiE+jsGTI7mMfcQI+gYHfneSHmMkYuIW7fDULpQ5WwS7Yvnfyefw+ArJxicIK6kC2LDmpQnAsXxtfQrPUQt7WrN25cpxbmUZPUrKyYi8vD67Arx/Z8PyQY8Sj1PQN2jiI5I1zXp9jWCHG3yhGhHKhzIQda8PCVM7x2b9GM+BvhvrBmFoFJi9lxJYvawnYSo/qNs+igSKbtTvpkanaFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qAa3I5hT8HTOqPKlmTXIrj7x0HiJI2MnNwkTmvefJ14=;
- b=V9zeMKKXEmUhfgOJJrr7A6Xo9/BFXy69LR9koVVu2OOoFeS2LL4ak0ya2Wn4ldwDxqvCWwFMHaWj4F7lrejfTrlwXhpfuPFob6/y6w9pEoTVq4wjOzOgtOZOIJaBF81ouf9oYJj9ISqSLHs1afZsQtIKNDsAVAnXvFreLZrGweyoVWWVCpEZB/AKa8x2rabIVamSMtjb7Nya64DTDAGy0dinSG5NClKOf1S4ZDSWiYT+6FBx2M+p0Dp7ghD6KccRXQfM2/Akukmp8+dcxKTRxvAiKvRL9GG/UwbP8GvVEDs4/BdmGn4/41lDYVipXe07kmR8UzQynUk9OVW3w9Qfhg==
-Received: from CH0P223CA0021.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:116::9)
- by DM6PR12MB4137.namprd12.prod.outlook.com (2603:10b6:5:218::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 18 Aug
- 2025 09:25:05 +0000
-Received: from CH3PEPF0000000D.namprd04.prod.outlook.com
- (2603:10b6:610:116:cafe::9a) by CH0P223CA0021.outlook.office365.com
- (2603:10b6:610:116::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.20 via Frontend Transport; Mon,
- 18 Aug 2025 09:25:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH3PEPF0000000D.mail.protection.outlook.com (10.167.244.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.8 via Frontend Transport; Mon, 18 Aug 2025 09:25:05 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 18 Aug
- 2025 02:24:53 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 18 Aug
- 2025 02:24:52 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Mon, 18 Aug 2025 02:24:48 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <akhilrajeev@nvidia.com>, <andi.shyti@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <digetx@gmail.com>,
-	<linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kkartik@nvidia.com>
-Subject: [PATCH v4 5/5] i2c: tegra: Add Tegra264 support
-Date: Mon, 18 Aug 2025 14:54:11 +0530
-Message-ID: <20250818092412.444755-6-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250818092412.444755-1-kkartik@nvidia.com>
-References: <20250818092412.444755-1-kkartik@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD35430DD36
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755509066; cv=none; b=bs3B61LSgoMmnKO06442lu4UV+fyy3epdldYzcJ6GImgSO3eJ54fFgjlEc0PR5wN8lVcIPtb6A+WFUvrJEX0eji72yngKItnOZffLKGd64HfdRljIolmitxZowoS0z/Pt0WCJU8veSDKrjPzKOUh9HLY8zWOdsls558AQejE4ps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755509066; c=relaxed/simple;
+	bh=YvxsY+Z2rR/tDtWVq4Fk/DYGDpQGYqfsXXFJ55KZoEM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=kZyDCKm4270EK6sPyPgB8rucXOt3ULO/nWYsXcmqIDpUQIrAnqdg2q53m0IP6W1c9wjAEail3+zFggRosvX2/5FJWfkmcDOUR6Yyg3m+Dp1L20Qxc4s5EaqHk8lE4aG4EZkLkOKoClpcUEBYWi48xQXdoffxEYi36kV8PsYm9hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RD3kqroW; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250818092416euoutp01cec8ffbdc2b22d0da78d97ff1a43b72a~c0i_O6rzg1440414404euoutp010
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:24:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250818092416euoutp01cec8ffbdc2b22d0da78d97ff1a43b72a~c0i_O6rzg1440414404euoutp010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755509056;
+	bh=CUVkvEB7qcjjjbdgamK6No4EyCD3JCY4GZz02bbbnTo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=RD3kqroWYZX0J65gYIqEJmQsXpdUQJMx/2zVLjR0x449B/S+prxLZH5gwypimZvif
+	 Mm6SZnWQxnCFNa/Hg6uLfp08i02eQBBMIcKK0UVkHRDQ2S8F52PfixFVPXxBzC797X
+	 Okx+oYBdltM4ld1CDn41XvJcwS/YgIckArYdU/tU=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250818092415eucas1p1792b85d0bc1292cda35b299e7d9a5d6f~c0i9aNFe00262702627eucas1p1_;
+	Mon, 18 Aug 2025 09:24:15 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250818092414eusmtip2b4be89dde162d82f95410bbc0fd6e51a~c0i8PvlWy1768217682eusmtip2_;
+	Mon, 18 Aug 2025 09:24:14 +0000 (GMT)
+Message-ID: <93f695c1-af9a-47cf-854f-bcfeb159c0c7@samsung.com>
+Date: Mon, 18 Aug 2025 11:24:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000D:EE_|DM6PR12MB4137:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9da89426-fc50-4991-881c-08ddde391e1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?62mNraPZojSLcFu7i3Q5peji21+6275gJDcw+qXajx7tsRGSwe+bF1vzVVnW?=
- =?us-ascii?Q?1RXUysM9nX2ay7OmwJOyNPZYz8yIDN1qHa0oiEwQuX6U9EgErx+UGTA4Gtfa?=
- =?us-ascii?Q?e8QXFR6OKVMWSRN0vPnVuzhCQqO8XVYyA9wa0ICdRUJHAXrFNUXmVYnXPdNZ?=
- =?us-ascii?Q?PpxckH73iJNbaIS+LFPZoUDM6Ejej9X2ltp4Dae2fHNIdfT340UhtXE1Zhbg?=
- =?us-ascii?Q?PnEEZZdHeWAZ+ymbEnZ4YtgLKinMpqtPKNRjGapdI350iNclrFsjpNpvkbu6?=
- =?us-ascii?Q?EhZ3LFBqkM59HtuTgraxvODlCMKjCn4Gf2ozLOT3OCVZmdVJwFR1aiZsXGHE?=
- =?us-ascii?Q?RJs2syVbwL7TbY/tT3lDvmORTmkxt1v3gLh3hokS0kEVo+q2usoK2gvfjPRC?=
- =?us-ascii?Q?7fGCyHEc6eyMU15ioJZw7B7izN+93UV0GhuX+LaS1qC5cyYOiSoyGSPBExk0?=
- =?us-ascii?Q?NwwVLRdEbfRkPAQzNs9yyAPT0yftiiK8vdRPQDwn4KSQkhfQTEIh+bnc8wyb?=
- =?us-ascii?Q?wZRuC+6RiHohVYyIA9jnnakPzR87zw4aGa8y/wlxRq7hS9aFQcHLtUEGaQQV?=
- =?us-ascii?Q?7HaKBddSC0Gr3Trjjp5/HSrRAafbIsrqIrIVFexPek2GwKIlLsgHM7DX60IT?=
- =?us-ascii?Q?Zv8PenNHWwWNgOQwZMYRPShiyNG7CcOhz16vhyFT5VEsygLvDF+HteLQHtjH?=
- =?us-ascii?Q?WcqRv+Pl0oYYWQK1rMvMJAnR5wfpM+eX6i8xfZNIo5nxFYjg9pxQf7NMOQbw?=
- =?us-ascii?Q?vycY+lo1AvPgagu8/sZslyX/IqMv60HAHeFfjtNZfygiZSbIoeERgzfoly9Y?=
- =?us-ascii?Q?yXDh5C1LJ58jh4o+t52Kx9tecXSc6uhhleura7LQg47FERR4mkaNhtZBQA1d?=
- =?us-ascii?Q?Cqdd5dwFpUgA+zme/IQn0bhcs6LlRAF6Cp+XyzsNtUeLxyUDkkn/9g+fJRDu?=
- =?us-ascii?Q?gGnw1JGZ5u8L/43y+bFCDX9lZjGT1+Z1+kXNBf4NWUsR3c+TIWGerlzhkXWa?=
- =?us-ascii?Q?5WruCrUiQ+iUoBoFKSK6tYme5owo+mAL7FM7BMhKmOPBM1DLFRbPmAbReFcv?=
- =?us-ascii?Q?y+Pmccx3C7e2wro4tDcB7qYRq7VyjEyPatQpNwE5vsk1r7mM1J6UmRfYjlOp?=
- =?us-ascii?Q?mP/h8yYr4fG/QMdkrQ9B1K7YkB9zAaz33HiA2i9BRD9qZVFcKvOFyrvs1gwR?=
- =?us-ascii?Q?H6z58xcikDdDKYEQ2dzEivcUWP0AX8ZYuKlkhNn55tR8dMzO0qwtP5CiNouN?=
- =?us-ascii?Q?wr+MkRgVqyjficJBsr2AzwTr8Vvbx35C2nUSHMGEjgN3auORvh86O/PbPrQs?=
- =?us-ascii?Q?kNu79cv78yW/hotXK0VOnT6hNfu1W2ITQq3fBfbOBHy5S+vMCRqPHgfzlT+l?=
- =?us-ascii?Q?2JItI537rTys2SeHV1yJQ9a/uxFafdxxs9lipJyVA4yQstkMFlSFi3PDLLO6?=
- =?us-ascii?Q?gl6Ato9PJS02BzOXFThscdoO+KO6JxUCadJ4xQBKIEsqVwCAwLoZn6fjrPdY?=
- =?us-ascii?Q?oSYL0FyeUhdt2IxBNEPk9aw89gI8e8C/Rzx3PwpMUnwd+A26GDFqvyT6Yg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 09:25:05.4682
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9da89426-fc50-4991-881c-08ddde391e1a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000D.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4137
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Miguel Ojeda
+	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
+	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
+	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Drew Fustini <fustini@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20250806-rust-next-pwm-working-fan-for-sending-v13-0-690b669295b6@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250818092415eucas1p1792b85d0bc1292cda35b299e7d9a5d6f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c
+X-EPHeader: CA
+X-CMS-RootMailID: 20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c
+References: <CGME20250806074252eucas1p1ce94c3149ad49acf50d96fba9ca6b67c@eucas1p1.samsung.com>
+	<20250806-rust-next-pwm-working-fan-for-sending-v13-0-690b669295b6@samsung.com>
 
-From: Akhil R <akhilrajeev@nvidia.com>
 
-Add support for Tegra264 SoC which supports 17 generic I2C controllers,
-two of which are in the AON (always-on) partition of the SoC. In
-addition to the features supported by Tegra194 it also supports a
-SW mutex register to allow sharing the same I2C instance across
-multiple firmware.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
-v1 -> v4:
-	* Update commit message to mention the SW mutex feature
-	  available on Tegra264.
----
- drivers/i2c/busses/i2c-tegra.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+On 8/6/25 09:42, Michal Wilczynski wrote:
+> This patch series introduces Rust support for the T-HEAD TH1520 PWM
+> controller and demonstrates its use for fan control on the Sipeed Lichee
+> Pi 4A board.
+> 
+> The primary goal of this patch series is to introduce a basic set of
+> Rust abstractions for the Linux PWM subsystem. As a first user and
+> practical demonstration of these abstractions, the series also provides
+> a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
+> of its PWM channels and ultimately enables temperature controlled fan
+> support for the Lichee Pi 4A board. This work aims to explore the use of
+> Rust for PWM drivers and lay a foundation for potential future Rust
+> based PWM drivers.
+> 
+> The core of this series is a new rust/kernel/pwm.rs module that provides
+> abstractions for writing PWM chip provider drivers in Rust. This has
+> been significantly reworked from v1 based on extensive feedback. The key
+> features of the new abstraction layer include:
+> 
+>  - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
+>    by ARef, correctly tying its lifetime to its embedded struct device
+>    reference counter. Chip registration is handled by a pwm::Registration
+>    RAII guard, which guarantees that pwmchip_add is always paired with
+>    pwmchip_remove, preventing resource leaks.
+> 
+>  - Modern and Safe API: The PwmOps trait is now based on the modern
+>    waveform API (round_waveform_tohw, write_waveform, etc.) as recommended
+>    by the subsystem maintainer. It is generic over a driver's
+>    hardware specific data structure, moving all unsafe serialization logic
+>    into the abstraction layer and allowing drivers to be written in 100%
+>    safe Rust.
+> 
+>  - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
+>    types (State, Args, Device, etc.) and uses standard kernel error
+>    handling patterns.
+> 
+> The series is structured as follows:
+>  - Expose static function pwmchip_release.
+>  - Rust PWM Abstractions: The new safe abstraction layer.
+>  - TH1520 PWM Driver: A new Rust driver for the TH1520 SoC, built on
+>    top of the new abstractions.
+>  - Device Tree Bindings & Nodes: The remaining patches add the necessary
+>    DT bindings and nodes for the TH1520 PWM controller, and the PWM fan
+>    configuration for the Lichee Pi 4A board.
+> 
+> Testing:
+> Tested on the TH1520 SoC. The fan works correctly. The duty/period
+> calculations are correct. Fan starts slow when the chip is not hot and
+> gradually increases the speed when PVT reports higher temperatures.
+> 
+> The patches doesn't contain any dependencies that are not currently in
+> the mainline kernel anymore.
+> 
+> ---
+> Changes in v13:
+> - Re-add the T-HEAD TH1520 PWM driver and its device tree bindings, as
+>   Iomem series got merged into mainline kernel.
+> - Fix Args struct to be consistent with State - no Opaque needed for
+>   copies.
+> - Replace tuple retur type in the PwmOps trait with dedicated struct
+>   for improved clarity.
+> - Use build_assert for WfHw size, as it doesn't have to be runtime
+>   check.
+> - Various cosmetic changes.
+> - Link to v12: https://lore.kernel.org/r/20250717-rust-next-pwm-working-fan-for-sending-v12-0-40f73defae0c@samsung.com
+> 
+> Changes in v12:
+>  - Reworked the PWM abstractions to use the subclassing pattern as
+>    suggested by reviewers.
+>  - pwm::Chip and its driver data are now allocated in a single, contiguous
+>    memory block via pwmchip_alloc() sizeof_priv argument.
+>  - Chip::new() now uses the pin init API to construct the driver data
+>    in place, removing the need for a separate allocation.
+>  - The  PwmOps trait is now implemented directly by the driver data struct
+>    itself, removing the DrvData associated type and the ForeignOwnable
+>    trait.
+>  - The custom release handler has been updated to call drop_in_place on the driver
+>    data, ensuring destructors are run correctly before the underlying
+>    memory is freed.
+>  - Moved the pwmchip_release prototype in the C header to a separate
+>    section to clarify it is for FFI use only, as requested.
+>  - Added a Prerequisite-patch-id trailer to the cover letter to declare
+>    the dependency on the PWM_WFHWSIZE patch.
+> 
+> - Link to v11: https://lore.kernel.org/r/20250710-rust-next-pwm-working-fan-for-sending-v11-0-93824a16f9ec@samsung.com
+> 
+> Changes in v11:
+> - Dropped driver and DT commits, as they don't compile based on publicly
+>   known commit.
+> - Re-based on top of pwm/for-next.
+> - Reverted back to devres::Devres::new_foreign_owned, as pwm/for-next
+>   doesn't contain 'register' re-factor, which is present in linux-next,
+>   queued for the next merge window. The conflict is trivial, simply
+>   change 'new_foreign_owned' -> 'register'.
+> - Added list to MAINTAINERS entry as requested.
+> - Link to v10: https://lore.kernel.org/r/20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com
+> 
+> Changes in v10:
+>  - Exported the C pwmchip_release function and called it from the custom
+>    Rust release_callback to fix a memory leak of the pwm_chip struct.
+>  - Removed the PwmOps::free callback, as it is not needed for idiomatic
+>    Rust resource management.
+>  - Removed the redundant is_null check for drvdata in the release handler,
+>    as the Rust API guarantees a valid pointer is always provided.
+> 
+> - Link to v9: https://lore.kernel.org/r/20250706-rust-next-pwm-working-fan-for-sending-v9-0-42b5ac2101c7@samsung.com
+> 
+> Changes in v9:
+>  - Encapsulated vtable setup in Chip::new(): The Chip::new() function is
+>    now generic over the PwmOps implementation. This allows it to create and
+>    assign the vtable internally, which simplifies the public API by
+>    removing the ops_vtable parameter from Registration::register().
+>  - Fixed memory leak with a release handler: A custom release_callback is
+>    now assigned to the embedded struct device's release hook. This
+>    guarantees that driver specific data is always freed when the chip is
+>    destroyed, even if registration fails.
+>  - The PwmOpsVTable is now defined as a const associated item to ensure
+>    it has a 'static lifetime.
+>  - Combined introductory commits: The Device, Chip, and PwmOps abstractions
+>    are now introduced in a single commit. This was necessary to resolve the
+>    circular dependencies between them and present a clean, compilable unit
+>    for review.
+> 
+> - Link to v8: https://lore.kernel.org/r/20250704-rust-next-pwm-working-fan-for-sending-v8-0-951e5482c9fd@samsung.com
+> 
+> Changes in v8:
+>  - Dropped already accepted commit, re-based on top of linux-next
+>  - Reworked the Chip and PwmOps APIs to address the drvdata() type-safety
+>    comment. Chip is now generic, and PwmOps uses an associated type
+>    to provide compile-time guarantees.
+>  - Added a parent device sanity check to Registration::register().
+>  - Updated drvdata() to return the idiomatic T::Borrowed<'_>.
+>  - added temporary unsafe blocks in the driver, as the current
+>    abstraction for Clk is neiter Safe nor Sync. I think eventually
+>    proper abstraction for Clk will be added as in a current state it's
+>    not very useful.
+> 
+> - Link to v7: https://lore.kernel.org/r/20250702-rust-next-pwm-working-fan-for-sending-v7-0-67ef39ff1d29@samsung.com
+> 
+> Changes in v7:
+> - Made parent_device function private and moved casts to Device<Bound>
+>   there as well.
+> - Link to v6: https://lore.kernel.org/r/20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com
+> 
+> Changes in v6:
+>  - Re-based on top of linux-next, dropped two already accepted commits.
+>  - After re-basing the IoMem dependent patchset stopped working,
+>    reworked it to use similar API like the PCI subsystem (I think it
+>    will end up the same). Re-worked the driver for it as well.
+>  - Remove the apply and get_state callbacks, and most of the State as
+>    well, as the old way of implementing drivers should not be possible
+>    in Rust. Left only enabled(), since it's useful for my driver.
+>  - Removed the public set_drvdata() method from pwm::Chip
+>  - Moved WFHWSIZE to the public include/linux/pwm.h header and renamed it
+>    to PWM_WFHWSIZE, allowing bindgen to create safe FFI bindings.
+>  - Corrected the ns_to_cycles integer calculation in the TH1520 driver to
+>    handle overflow correctly.
+>  - Updated the Kconfig entry for the TH1520 driver to select the Rust
+>    abstractions for a better user experience.
+> 
+> - Link to v5: https://lore.kernel.org/r/20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com
+> 
+> Changes in v5:
+> - Reworked `pwm::Chip` creation to take driver data directly, which
+>   allowed making the `chip.drvdata()` accessor infallible
+> - added missing `pwm.c` file lost during the commit split (sorry !)
+> - Link to v4: https://lore.kernel.org/r/20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com
+> 
+> Changes in v4:
+>  - Reworked the pwm::Registration API to use the devres framework,
+>    addressing lifetime issue.
+>  - Corrected the PwmOps trait and its callbacks to use immutable references
+>    (&Chip, &Device) for improved safety.
+>  - Applied various code style and naming cleanups based on feedback
+> 
+> - Link to v3: https://lore.kernel.org/r/20250617-rust-next-pwm-working-fan-for-sending-v3-0-1cca847c6f9f@samsung.com
+> 
+> Changes in v3:
+>  - Addressed feedback from Uwe by making multiple changes to the TH1520
+>    driver and the abstraction layer.
+>  - Split the core PWM abstractions into three focused commits to ease
+>    review per Benno request.
+>  - Confirmed the driver now works correctly with CONFIG_PWM_DEBUG enabled
+>    by implementing the full waveform API, which correctly reads the
+>    hardware state.
+>  - Refactored the Rust code to build cleanly with
+>    CONFIG_RUST_BUILD_ASSERT_ALLOW=n, primarily by using the try_* family of
+>    functions for IoMem access.
+>  - Included several cosmetic changes and cleanups to the abstractions
+>    per Miguel review.
+> 
+> - Link to v2: https://lore.kernel.org/r/20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com
+> 
+> Changes in v2:
+>  - Reworked the PWM abstraction layer based on extensive feedback.
+>  - Replaced initial devm allocation with a proper ARef<Chip> lifetime model
+>    using AlwaysRefCounted.
+>  - Implemented a Registration RAII guard to ensure safe chip add/remove.
+>  - Migrated the PwmOps trait from the legacy .apply callback to the modern
+>    waveform API.
+>  - Refactored the TH1520 driver to use the new, safer abstractions.
+>  - Added a patch to mark essential bus clocks as CLK_IGNORE_UNUSED to fix
+>    boot hangs when the PWM and thermal sensors are enabled.
+> - Link to v1: https://lore.kernel.org/r/20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com
+> 
+> ---
+> Michal Wilczynski (7):
+>       pwm: Export `pwmchip_release` for external use
+>       rust: pwm: Add Kconfig and basic data structures
+>       rust: pwm: Add complete abstraction layer
+>       pwm: Add Rust driver for T-HEAD TH1520 SoC
+>       dt-bindings: pwm: thead: Add T-HEAD TH1520 PWM controller
+>       riscv: dts: thead: Add PWM controller node
+>       riscv: dts: thead: Add PWM fan and thermal control
+> 
+>  .../devicetree/bindings/pwm/thead,th1520-pwm.yaml  |  48 ++
+>  MAINTAINERS                                        |  10 +
+>  arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  |  67 ++
+>  arch/riscv/boot/dts/thead/th1520.dtsi              |   7 +
+>  drivers/pwm/Kconfig                                |  24 +
+>  drivers/pwm/Makefile                               |   1 +
+>  drivers/pwm/core.c                                 |   3 +-
+>  drivers/pwm/pwm_th1520.rs                          | 355 +++++++++
+>  include/linux/pwm.h                                |   6 +
+>  rust/bindings/bindings_helper.h                    |   1 +
+>  rust/helpers/helpers.c                             |   1 +
+>  rust/helpers/pwm.c                                 |  20 +
+>  rust/kernel/lib.rs                                 |   2 +
+>  rust/kernel/pwm.rs                                 | 790 +++++++++++++++++++++
+>  14 files changed, 1334 insertions(+), 1 deletion(-)
+> ---
+> base-commit: eacf91b0c78a7113844830ed65ebf543eb9052c5
+> change-id: 20250524-rust-next-pwm-working-fan-for-sending-552ad2d1b193
+> 
+> Best regards,
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 4b889dc66ba7..53bd1e38ff94 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1773,7 +1773,36 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_mutex = false,
- };
- 
-+static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
-+	.has_continue_xfer_support = true,
-+	.has_per_pkt_xfer_complete_irq = true,
-+	.clk_divisor_hs_mode = 1,
-+	.clk_divisor_std_mode = 0x1d,
-+	.clk_divisor_fast_mode = 0x15,
-+	.clk_divisor_fast_plus_mode = 0x8,
-+	.has_config_load_reg = true,
-+	.has_multi_master_mode = true,
-+	.has_slcg_override_reg = true,
-+	.has_mst_fifo = true,
-+	.quirks = &tegra194_i2c_quirks,
-+	.supports_bus_clear = true,
-+	.has_apb_dma = false,
-+	.tlow_std_mode = 0x8,
-+	.thigh_std_mode = 0x7,
-+	.tlow_fast_fastplus_mode = 0x2,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.tlow_hs_mode = 0x4,
-+	.thigh_hs_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x08080808,
-+	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
-+	.setup_hold_time_hs_mode = 0x090909,
-+	.has_interface_timing_reg = true,
-+	.has_hs_mode_support = true,
-+	.has_mutex = true,
-+};
-+
- static const struct of_device_id tegra_i2c_of_match[] = {
-+	{ .compatible = "nvidia,tegra264-i2c", .data = &tegra264_i2c_hw, },
- 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
- 	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+Hi all,
+
+Since this series was sent during the merge window, I just wanted to
+check in. I can rebase everything on v6.17-rc1 and send a v14 if that
+would be helpful for review.
+
+Best regards,
 -- 
-2.43.0
-
+Michal Wilczynski <m.wilczynski@samsung.com>
 
