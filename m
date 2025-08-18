@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-773346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03DEB29E9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:00:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F23B29EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EFE816D5FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7264E2B0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481E03101B2;
-	Mon, 18 Aug 2025 09:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ysd5xhYD"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D43310633;
+	Mon, 18 Aug 2025 10:00:27 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BC33101A1
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4C73101CC;
+	Mon, 18 Aug 2025 10:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755511192; cv=none; b=AuxHjY8CMHxjz9hYM8mM430pTLKUZfKlQ6ZrrFriX/7GTsoI/mfC+GAvUY3Svg+IPfMi8XnMWwTSV+PVvdRQ2SjujqYeDtKpXzt6O+MisnIFQ6nXusMqe6S9cZbRU2bwW69OeqfEQAfvJcztdLXcUbm5xlf29p+6ih3TEnittFA=
+	t=1755511227; cv=none; b=KE41M0fIm/3MqUU8G5Xh690QNurkeitfBMUvk7ppgSOKyKfLzCf8YwJNZWbH6gMI5C/xto12YpSIKRt9kP6+YZJIo8p7lF6c+nVzdQeWZnKaMoSL7uT2igU0fTTKUOq5RhpJtk/W6H9Y99VrAbg+4GByF6zUNh7t5wSTXmqxGZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755511192; c=relaxed/simple;
-	bh=uXo2HfKIzXZcEAqe1+Cgkmi5au4JHjAcMP56tR1hXWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u4oq+cLQAkijDevVvY/YVkXkFLz2DbltHjjlHdFuUrLIWNBhCDJIpZkrdi6btquhwwEw3HNibQwYPSUd6JD0bxQ80Ra0JUwLqJ+TzubaOkVMpXHUNCXwuBsyOYzKImGBezy+coD1OcGn4DZePtvy6BL8AyVJgAk7g3naWtUVpsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ysd5xhYD; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0c82eeso31463365e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755511189; x=1756115989; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PAzYeYzFTOC96kJwyQ7IcW6iscdjbjDH2bcXfWJ1JYU=;
-        b=ysd5xhYDGXECGnAT/n2KyxCW/wbIFMGMBZy94OODzaLfyZxJmFXkzETADId29xJTa3
-         8TDcOFD6hTtRX6xc8l2liTlwmU+YCBh6Y9bcUq1BjRwJiW9HixocDe+C6p3xyDPYCM4i
-         g+R7QoiUaICNqfCPAUgnbkqV8R8UWWmdnRSnI/mhwflRIFFLZjfYPWVzJuuYABadpsC6
-         Re2ARFBEkoqRL3b9cwKUv0Bfm0kojG30PtEciz49yHJdzgKpvb7nEt4XFKHJl7abo44w
-         7olO/9qNdg+YINzyN8S5yTCDlk3WsXkmvcsmKkWoXKWivH3+CF2AiSqKINbk49jPqqsI
-         lLJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755511189; x=1756115989;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PAzYeYzFTOC96kJwyQ7IcW6iscdjbjDH2bcXfWJ1JYU=;
-        b=Aw378nGpsnJh4tALRsdBlz3fP7Y8avkHy/ggW1SA4iRad4jIvEMV8Gv8J9xvM4FL0h
-         /cJYZt1PCkAOUvCePhKZYpuusrYFcSzzDF/VMGm4sGe2wQnbOjHS6JZCzawlvD89Ir/z
-         bjFeXM+o1VwAkUTfHInrvxxMUi/uR200h12dXIbn4VB7ROCR7+Kd620JHfcyBogkAkrD
-         iFbHskOLlsroyoZiBYkjmFd8N1qXbpIxw45pfttq/hH51fbDZ3Py2OfUSJBCmXrokEAw
-         S+/C0I9eE/MTgQ+qOT50h1rXblqIb1GGxt1md0FC0+FH0NLDyHF3ejrRrvXs9guMOfRk
-         JkoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWo01GMYhTZZra8lltwG/gGFC7IK7Ezg+skvT9Tb3XYXlADbAoNaJDhxuNpsoZfXaPR95zsQ1yJSrb5gFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxxMHt8jxmKdxGAcd8tqnqejvY8KEhXuvp+C6HeiOD8ZdtpMAv
-	mJOwuAJgKs2dfRLIw56mJikMTr9UHN2qNRAFWlk3KFbc1mgYPw8V2yI589vyI4AGHTg=
-X-Gm-Gg: ASbGncv/kXDurXoulXGJtsuQZ/2VO7xz+9Rz9WqAdrXDJYaPlOGmchpr3G5XikuqhTp
-	Ic6lL0LZnof7Wql96unRF9JorFmuErBKyOLkFW5zBOH4VfaJQTHOlSuznhN89sXynt0Sbsygab+
-	kiaUJWKHkYTQsfI6J4Z3S4MPkopfVIUiHpuLmoB9j95mTA2Dv85qFh/V6KurYuz7jSZCs00IiK7
-	DVqZPJHbPlRcbCphJQZBhIq7shungQz3zFFpK1FVHNtj4GSrt+2h/tZFzhzs6qWuYyhBc0W8BKb
-	xOS7FqAO3QiDsYILn2244DJpIOpgF1KJPDfSEpQ7MTrW99yocIwxBIIP4xarKUD6TdjQu0UZFi7
-	v+hZUFxXHwOW28NNFMK527vSymT1906Hms5j8LHYYaBs=
-X-Google-Smtp-Source: AGHT+IESeM6A+8YV4kbdeq3Rgqzb28xUjkrQolArR+kWnKAsQ9pql4kCFEogW9+cFxcDvalPpojZnQ==
-X-Received: by 2002:a05:600c:444b:b0:459:db80:c2ce with SMTP id 5b1f17b1804b1-45a2748c3a4mr49153035e9.7.1755511189272;
-        Mon, 18 Aug 2025 02:59:49 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c78b410sm172408255e9.24.2025.08.18.02.59.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 02:59:49 -0700 (PDT)
-Date: Mon, 18 Aug 2025 12:59:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Karol Kosik <k.kosik@outlook.com>,
-	Youngjun Lee <yjjuny.lee@samsung.com>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: Fix size validation in convert_chmap_v3()
-Message-ID: <aKL5kftC1qGt6lpv@stanley.mountain>
+	s=arc-20240116; t=1755511227; c=relaxed/simple;
+	bh=jxVKyxAjf9HWYFNSKIZVKMYd59Fj2HC/k7Bjp0ZX1l0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ko93VYg+OkCusd2TLBcFfwUr0FJ2cPHESfRzdRC8p32Fcgvq7Yn0VD9IzjL2xx+pyzZcFGp16ftqdREno9K2t89dfX29Qy6VfVzViIBCdkJ6wC0X9A6c+JAgPRU1ADTz74aUO5khtRxWVqpBW9N2sb7/3KJJnwD3KuUEOtcAm1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.213.154])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1fbaa9cfa;
+	Mon, 18 Aug 2025 18:00:14 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 0/4] arm64: dts: rockchip: Add HINLINK H66K/H68K
+Date: Mon, 18 Aug 2025 18:00:05 +0800
+Message-Id: <20250818100009.170202-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a98bc9f502103a2kunm3d9619f636a214
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTUlJVhlOSxhJQ0lNGhlJGVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVKTk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVU
+	tZBg++
 
-The "p" pointer is void so sizeof(*p) is 1.  The intent was to check
-sizeof(*cs_desc), which is 3, instead.
+The HINLINK H66K and H68K are development boards with the Rockchip
+RK3568 SoC. These boards are all SoM plus expansion board structures.
 
-Fixes: ecfd41166b72 ("ALSA: usb-audio: Validate UAC3 cluster segment descriptors")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/usb/stream.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Both boards can be booted from eMMC or SD-card using the
+U-Boot 2025.07 generic-rk3568 target.
 
-diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-index acf3dc2d79e0..5c235a5ba7e1 100644
---- a/sound/usb/stream.c
-+++ b/sound/usb/stream.c
-@@ -349,7 +349,7 @@ snd_pcm_chmap_elem *convert_chmap_v3(struct uac3_cluster_header_descriptor
- 		u16 cs_len;
- 		u8 cs_type;
- 
--		if (len < sizeof(*p))
-+		if (len < sizeof(*cs_desc))
- 			break;
- 		cs_len = le16_to_cpu(cs_desc->wLength);
- 		if (len < cs_len)
+The SoM board has CPU, RAM, eMMC and RK809 PMIC.
+There is no schematic for this part.
+
+The rest of the schematic can be found here:
+https://www.hinlink.cn/wp-content/uploads/2024/03/20250329151432672651.pdf
+https://files.seeedstudio.com/wiki/LinkStar_V2/H68K_V2_Schematic.pdf
+
+It should be noted that there is a version of SeeedStudio called
+LinkStar H68K, which is different from HINLINK H68K only in the shell.
+
+The HINLINK H68K has two versions distinguished by the shell, and there
+is no actual difference. This series is tested on H68K and H68K-V2.
+
+difference |      H66K/H68K    |  H66K/H68K-V2
+           | 1x USB 3.0 Type-A | 1x USB 3.0 Type-A
+    USB    | 2x USB 2.0 Type-A | 1x USB 2.0 Type-A
+           |                   | 1x USB 2.0 (M.2 slot)
+
+Chukun Pan (4):
+  dt-bindings: vendor-prefixes: Add HINLINK
+  dt-bindings: arm: rockchip: Add HINLINK H66K / H68K
+  arm64: dts: rockchip: Add HINLINK H68K
+  arm64: dts: rockchip: Add HINLINK H66K
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   7 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   2 +
+ .../boot/dts/rockchip/rk3568-hinlink-h66k.dts |  10 +
+ .../boot/dts/rockchip/rk3568-hinlink-h68k.dts |  83 +++
+ .../boot/dts/rockchip/rk3568-hinlink-opc.dtsi | 666 ++++++++++++++++++
+ 6 files changed, 770 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-hinlink-h66k.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-hinlink-h68k.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-hinlink-opc.dtsi
+
 -- 
-2.47.2
+2.25.1
 
 
