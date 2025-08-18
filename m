@@ -1,134 +1,81 @@
-Return-Path: <linux-kernel+bounces-774563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A25B2B437
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:49:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC54BB2B43A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2391BA060E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:49:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933F87A6AE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08DC25E814;
-	Mon, 18 Aug 2025 22:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D532F25E814;
+	Mon, 18 Aug 2025 22:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVHeeeAt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8F91B4247;
-	Mon, 18 Aug 2025 22:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bJamyyQd"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFE21EC01D;
+	Mon, 18 Aug 2025 22:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755557369; cv=none; b=uKX8smAZwpfdzgUL5l3fU9CtLxCmafEYPGhiUxpAOqHDG6XsJ/2k5YpWLqiITy+woNVG41EPtcjtwKOuoskvrzo09gahM+zuQMJZItXk/BUeL2gth1Mekhp+tRCpsG/JqFgH6Z5JJqCwfBt2Nnlht1j60QDZfJFzT12//Wc6IIo=
+	t=1755557465; cv=none; b=opbPc5KawhZvUXQK5CABK0O+ZR1S3jyUNsrZsYdAAteJQKBhemWs9w/Shb+0mp2QLjK9eh6+whK1Yha3RgVv9QMq9AoJoVRB5dvwHbh0vF5gw4U6P285Ab4lUWxyXjAatXZQVMejm+496yHPoHkuWP6gDQ4PCeW0Lydd7P89W7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755557369; c=relaxed/simple;
-	bh=e8raUYSx+kB5duYi2EeS2q/qnA85lKxEqn2nshSlYrs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Xy4AO//IZm1vj/kRpBAFr4CbqOTP6VC4mjE9p4284LKSQxW1sM4J/+1Mzkrf8sTyjC9AKZTRyXBOlwoBjpxcqoHdGkVPe1j5zY8wtg7HWmwZZ5L24fmGRNhRfigRg1+Gvlb3NeSq3evfI2bse2FQUY/JxPdvkuNqGtyIWRslCw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVHeeeAt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEC1C4CEEB;
-	Mon, 18 Aug 2025 22:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755557368;
-	bh=e8raUYSx+kB5duYi2EeS2q/qnA85lKxEqn2nshSlYrs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=kVHeeeAtKZTMPzraDJRX8+GreH31xIDktiuKOIY+U6VzjLxjw7jQHtCZI4C/8YEyk
-	 3PlBVC0jcUzIm0BJdmYHjhZROeq9wYH2qf832/pqjyDg/VdOqxLpncoeCAuPxXPA4L
-	 DmLNLp37EnKwcxGr1lkg14cGnJGUOxgT3Kt5IVYyh3h7y5VBBKbryWG7rB827fT9iQ
-	 RufMvrNznuNqoI8kB4nsc5gv/+WNHLbC4jPJ9kpvjRL0N1iNiJIePhmzViMWIkFzri
-	 sXgkzbjnZ2aLlH7qLRmzJnLNvvNTqddHrhfbsh1rqz714Wco60qxaSTEH/86Sh/hgn
-	 gDrQ3wCAzMChw==
+	s=arc-20240116; t=1755557465; c=relaxed/simple;
+	bh=rroISPl003D1rKJy9f+OWvTrPACCxw/3r1WT3Ct7X34=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=AhEmKSb7WhQNGPSZ1W7OxJoXLK7WQLsHzUeUMiTDdyPDA5PHAwe/b4vkeinAH5sKJv4GPuhko7MYqWra8aXGER6x0uBACr5/1FXaByorlT7PjZmajCt8OzC5K9AYD3ZFxK6L1xB0naWx2izmvQlgVjZa64gKUUsctHQZPsT9WmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bJamyyQd; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 800A92015E53; Mon, 18 Aug 2025 15:51:03 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 800A92015E53
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755557463;
+	bh=rroISPl003D1rKJy9f+OWvTrPACCxw/3r1WT3Ct7X34=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bJamyyQdKDAQ1lxSvpcDCI790L1htKL6G+A4kWHjwXEthrqhzJl4W1Y0asw3erUQb
+	 kWwwfG6T1LqlkXPne3270S9OieEArOJMTDx1knLhkIMo0Dt1Yav4TGXKaPFc6CneEk
+	 HekL8t0rBEJNAkuD6i6EwIPBxWXjNk0Y0RnuvRDA=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: hargar@linux.microsoft.com
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	gregkh@linuxfoundation.org,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re:  [PATCH 6.16 000/570] 6.16.2-rc1 review
+Date: Mon, 18 Aug 2025 15:51:03 -0700
+Message-Id: <1755557463-14842-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1754011892-27600-1-git-send-email-hargar@linux.microsoft.com>
+References: <1754011892-27600-1-git-send-email-hargar@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 19 Aug 2025 00:49:22 +0200
-Message-Id: <DC5X5AJHD5XZ.1QNTV43HZ2F9L@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v8 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250719030827.61357-1-boqun.feng@gmail.com>
- <20250719030827.61357-7-boqun.feng@gmail.com>
- <DC0AKAL1LW84.MR2RFTMX1H61@kernel.org> <aKCtbSDuJNrtdLNp@tardis-2.local>
- <DC43RPUDBY6M.1TGSQKJV9BKSF@kernel.org> <aKFGtzQnUdH4zUGD@tardis-2.local>
-In-Reply-To: <aKFGtzQnUdH4zUGD@tardis-2.local>
 
-On Sun Aug 17, 2025 at 5:04 AM CEST, Boqun Feng wrote:
-> On Sat, Aug 16, 2025 at 09:35:26PM +0200, Benno Lossin wrote:
->> On Sat Aug 16, 2025 at 6:10 PM CEST, Boqun Feng wrote:
->> > On Tue, Aug 12, 2025 at 10:04:12AM +0200, Benno Lossin wrote:
->> >> On Sat Jul 19, 2025 at 5:08 AM CEST, Boqun Feng wrote:
->> >> > +/// Types that support atomic add operations.
->> >> > +///
->> >> > +/// # Safety
->> >> > +///
->> >> > +/// `wrapping_add` any value of type `Self::Repr::Delta` obtained =
-by [`Self::rhs_into_delta()`] to
->> >>=20
->> >> Can you add a normal comment TODO here:
->> >>=20
->> >>     // TODO: properly define `wrapping_add` in this context.
->> >
->> > Yeah, this sounds good to me. How do you propose we arrange the normal
->> > comment with the doc comment, somthing like:
->> >
->> >     // TODO: properly define `wrapping_add` in this context.
->> >    =20
->> >     /// Types that support atomic add operations.
->> >     ///
->> >     /// # Safety
->> >     ///
->> >     /// `wrapping_add` any value of type `Self::Repr::Delta` obtained =
-by [`Self::rhs_into_delta()`] to
->> >     ...
->> >     pub unsafe trait AtomicAdd<...> {
->> >         ...
->> >     }
->>=20
->>=20
->> Inline maybe?
->>=20
->>     /// Types that support atomic add operations.
->>     ///
->>     /// # Safety
->>     ///
->>     // TODO: properly define `wrapping_add` in this context:
->
-> The colon looks a bit weird to me. I would replace that with a period,
-> i.e.
->
->      // TODO: properly define `wrapping_add` in the following comment.
->      /// `wrapping_add` any value of type `Self::Repr::Delta` obtained by=
- [`Self::rhs_into_delta()`] to
->
-> Thoughts?
+The kernel, bpf tool, perf tool, and kselftest builds fine for v6.16.2-rc1 on x86 and arm64 Azure VM.
 
-Also works for me :)
 
----
-Cheers,
-Benno
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+
+
+Thanks,
+Hardik
 
