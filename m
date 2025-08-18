@@ -1,136 +1,105 @@
-Return-Path: <linux-kernel+bounces-773989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0E9B2AD40
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:50:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38F8B2AD1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C99E58209A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:46:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 041077A5A56
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADE93203B4;
-	Mon, 18 Aug 2025 15:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2702036FA;
+	Mon, 18 Aug 2025 15:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pAgOcfzu"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuE8IpLI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6359C2036FA
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20611283FC3;
+	Mon, 18 Aug 2025 15:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531968; cv=none; b=rxCmPb35KG2Lkegoqy/MP9dte+RmUYdQv+0s6IbhCrySCWtazF5yhnMm0n54KA0Swyby0lpMF/f9pLor/zZZqplER8fuSxO1kh8rVm6qHSqS6me5Ua+45OEyVA/SAW8B8K0oR6IVPTpyGFJOrY53fqQ6QsPhzlDScfnfSW4nXKw=
+	t=1755531955; cv=none; b=ue7XLE0Z94HJDPsv73TRW3gXAj6INDntumVn+5l3fjH8PsPckYzNzohdK8PMfNDZLNMFrbiHyGe0C5M8kQU85PQ7/Q/jEKnkbizcUTEao8jojLIw6J64o3RLxzE5xHeZuPMjbB5EJK7DO/KU+S39IxD9JnDoJpFlczNk3XlwFww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531968; c=relaxed/simple;
-	bh=V9A8nqHTup9ZR91fdAkDX3/VWJ7GOgH3IYdlBgF2tus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D/3QgfA6wBPjWK4NTcLBt6ozEWy/l8MtAjUbk05Lfy1impZsUMGmxqRtdXq6RTYeWoqFYRzzh1TQ1wzaQ1ugscG/MCTzm6BMO7DkAJoN7bh5rhU8jxk98sPUSfeZ9obF0aGavhwu15/9fVf02Ci0zV7Wb7KMiA4mwQjAoMx3Y/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pAgOcfzu; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333f929adb3so36401441fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755531963; x=1756136763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=51DTC+MITTH703qrd2I1XRJ94G7+1YiQ7tYFyiKxmzY=;
-        b=pAgOcfzuZdNXo1QLi+fdQv34MCOtqrpMynZ0eBD00VmnEmvuGzoMFEH7DDj0x43JzN
-         vq5kx7nXJtGxc+upulCbwaOfSSvcH6avZ1FpAIDz03rUvwVYgacupaJbHyKbmenvNdKJ
-         VcxHX/WM6FAtodKfDyerntyX/JZN3ki6UGW7STWzUwTisrlA8xZ8Q0ZlIvm2WkySeXYC
-         ZzRiK9tTX5KRPDeHP7l4sALiLbQZpuOuYXbvqpSHBvoA7rb7BBJP/XDxhV509A10uWvK
-         aq4eWbJvlFDf5Eu+JxUI/TaW3cb6arhmOxtsXeqVgHiXnr5DwKqCU5M9Igm5NGtcsb36
-         pkbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755531963; x=1756136763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=51DTC+MITTH703qrd2I1XRJ94G7+1YiQ7tYFyiKxmzY=;
-        b=GH/snCP/GCRV9mdGRbiKl2CYZNr2SNv89H2XZ/lrnM7NKny7pRPL4LbAKj9Fkt89Yk
-         okE36h3RXH1xzMqSSXNi+MHGbF3yoAqxO/I/7/utugZwdCZpd6x7IuI+fPbWc3DFf6sl
-         /38SIV/plxoan7vuTwUHUP1WXn2Iw3Od5poisSQU/JkuS3TMn9kRvorJCRlMyZF1cydo
-         GSnhimjkMZ3phSKxUnQI4+W6eEo/MJopbrGp673+gJBNDcSxbqD2gwMGlokLcUBw2k2Q
-         sLDFTlstcm38Am8UyBENAwS/jyava7/4eTiAEVCJFsp4T69FhddYGFBaeOpeEtgkcxec
-         K2Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUt7FmTQ8e+E1eNeluFi8sckct6Awqgro+gzv4DaFptFMxdayl7j+y18mFfr2OuckSwHjRYaIp7a7Ss/lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoS3QALvOFlS441gBZ2cFn3fWbbNM2y5mq4JZMb11q3ZNMjtC/
-	cFFth/KZ3O0f8gFMR3CKukQ6XG4s9Udf7PccRQ3/JnKUjLZjWmH10ihGMBswcj1pbo03yPWKLBu
-	MwSC5/ghA1GqzlLr4HHAVuaXAeCFprwJJ9yO0mbccqw==
-X-Gm-Gg: ASbGncuUasCCeOjxPD18UjAqYoY6nID+nlmRVXzTnVmBpturyEBxhuqxFsLytodkmGH
-	LqYxnkppTOqPaJn1J3aczfDYL5O+jSHZE/W/cahhClL0tmA/GlzQ0mU0UaJ/Gms0+rI2iEbMbzl
-	FSnpxEkBBS6W1n/91g4AHV8WFtWceibRXiSqC/AW9WVHovxGGzOrvkQzq+DhUFIGdbe5DUkz2rn
-	JMGVwuL2Lw6
-X-Google-Smtp-Source: AGHT+IHwmWtaGT/XklYdjGHxL0ZkWBsslCIIfDul9Sr0lAl+wS4aHTOEpnoQAPHxKPwDMb6Ei8e0PuqlGjO+zjkpvos=
-X-Received: by 2002:a05:651c:510:b0:333:f3e6:9f2d with SMTP id
- 38308e7fff4ca-334097ca050mr27791091fa.6.1755531963498; Mon, 18 Aug 2025
- 08:46:03 -0700 (PDT)
+	s=arc-20240116; t=1755531955; c=relaxed/simple;
+	bh=hnsi28Tz7v23mH68o8SpW2Z9qHvy5g1uLMZ8O8gitfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DBhkt/y4u23D4mw+g+H/MXhKKqtciHHsk8zpNeoqeeUVkj0ruCvAiFJQfiG3iObimmPErkLqMQliqYF+NV8rqpA+jHE6N/uKVVx06srI/VOpdJIj/xqONjEzKbmyid/CT4O9vEWdb9Q/6VOssmW/85cEK7/9R0fwFqAW5VeLnBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuE8IpLI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCEBC4CEEB;
+	Mon, 18 Aug 2025 15:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755531954;
+	bh=hnsi28Tz7v23mH68o8SpW2Z9qHvy5g1uLMZ8O8gitfs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PuE8IpLIWWrlrb6jSAu+ChECzZUvehsysHKUgVTeOmEySKpy9v51Vvyz8PyCPdpp2
+	 3SVgvtIfmh5UZckZ7ySMcg0pZ+IKQx+KMr+Ld00EhS2tEEs2dMT4ISyg3IqVFxCqRI
+	 9s6APYhjaxQiwDz0NbIpjt6L07CkuVPGiVfcqiZ/GHXKLIPI3faUKqdyrVnfpt2zVf
+	 C8XUD0G2XKH/0sSSeZzoknRojICeeGLafizkciiQ6wGSVZIg5vvVw+XAz+qLqmJCfh
+	 zcsDePU6e2R9Bd81AAFaeFfN3mKdqwd9jum/0mnfktZhOMO5lF37euZNGNVSD7lLm0
+	 Ari8ZvaAgjjww==
+Date: Mon, 18 Aug 2025 08:45:52 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Shahar Shitrit <shshitrit@nvidia.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Jiri Pirko <jiri@nvidia.com>, Jiri
+ Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
+ Corbet <corbet@lwn.net>, Brett Creeley <brett.creeley@amd.com>, Michael
+ Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>,
+ Cai Huoqing <cai.huoqing@linux.dev>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>, Linu
+ Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin
+ Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>, Subbaraya
+ Sundeep <sbhatta@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon
+ Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>, Ido Schimmel
+ <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, Manish Chopra
+ <manishc@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org, Gal Pressman
+ <gal@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
+Subject: Re: [PATCH net-next V3 4/5] devlink: Make health reporter error
+ burst period configurable
+Message-ID: <20250818084552.1d182f31@kernel.org>
+In-Reply-To: <016a3fed-2f4b-4721-b92c-cf00cd5f3125@nvidia.com>
+References: <1755111349-416632-1-git-send-email-tariqt@nvidia.com>
+	<1755111349-416632-5-git-send-email-tariqt@nvidia.com>
+	<20250815122627.77877d21@kernel.org>
+	<016a3fed-2f4b-4721-b92c-cf00cd5f3125@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-aaeon-up-board-pinctrl-support-v9-0-29f0cbbdfb30@bootlin.com>
- <20250811-aaeon-up-board-pinctrl-support-v9-10-29f0cbbdfb30@bootlin.com>
-In-Reply-To: <20250811-aaeon-up-board-pinctrl-support-v9-10-29f0cbbdfb30@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 18 Aug 2025 17:45:49 +0200
-X-Gm-Features: Ac12FXw-f5f96UXYk89oFAKTC8GUPUN3mfWKfLNKZL2BLwooNi64tGeRuwAt8AM
-Message-ID: <CACRpkdb6XjX0unh70Gwq1dmLdGjo=19W39fziDd0L8vT3g39hA@mail.gmail.com>
-Subject: Re: [PATCH v9 10/10] pinctrl: Add pin controller driver for AAEON UP boards
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 3:25=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
+On Sun, 17 Aug 2025 19:08:47 +0300 Shahar Shitrit wrote:
+> On 15/08/2025 22:26, Jakub Kicinski wrote:
+> > On Wed, 13 Aug 2025 21:55:48 +0300 Tariq Toukan wrote:  
+> >> diff --git a/Documentation/netlink/specs/devlink.yaml b/Documentation/netlink/specs/devlink.yaml
+> >> index bb87111d5e16..0e81640dd3b2 100644
+> >> --- a/Documentation/netlink/specs/devlink.yaml
+> >> +++ b/Documentation/netlink/specs/devlink.yaml
+> >> @@ -853,6 +853,9 @@ attribute-sets:
+> >>          type: nest
+> >>          multi-attr: true
+> >>          nested-attributes: dl-rate-tc-bws
+> >> +      -
+> >> +        name: health-reporter-error-burst-period  
+> > 
+> > the "graceful-period" does not have the word "error"
+> > in it. Why is it necessary to include it in this parameter?
+> > What else would be bursting in an error reporter if not errors?  
+> 
+> I see. Would you suggest renaming it to "burst period" through the
+> entire series?
+> for example in devlink.h:
+> default_error_burst_period --> default_burst_period
 
-> This enables the pin control support of the onboard FPGA on AAEON UP
-> boards.
->
-> This FPGA acts as a level shifter between the Intel SoC pins and the pin
-> header, and also as a mux or switch.
->
-> +---------+          +--------------+             +---+
->           |          |              |             |   |
->           | PWM0     |       \      |             | H |
->           |----------|------  \-----|-------------| E |
->           | I2C0_SDA |              |             | A |
-> Intel SoC |----------|------\       |             | D |
->           | GPIO0    |       \------|-------------| E |
->           |----------|------        |             | R |
->           |          |     FPGA     |             |   |
-> ----------+          +--------------+             +---+
->
-> For most of the pins, the FPGA opens/closes a switch to enable/disable
-> the access to the SoC pin from a pin header.
-> Each switch, has a direction flag that is set depending the status of the
-> SoC pin.
->
-> For some other pins, the FPGA acts as a mux, and routes one pin (or the
-> other one) to the header.
->
-> The driver also provides a GPIO chip. It requests SoC pins in GPIO mode,
-> and drives them in tandem with FPGA pins (switch/mux direction).
->
-> This commit adds support only for UP Squared board.
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-
-This patch applied on top of the pile I pulled in from Bartosz!
-
-Yours,
-Linus Walleij
+Yes, AFAICT it won't result in any loss of clarity.
 
