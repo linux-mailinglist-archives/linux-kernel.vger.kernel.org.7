@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-774616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA792B2B516
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:50:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFAFB2B518
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4648D18A1BD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:51:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2401A2A8362
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECD827C158;
-	Mon, 18 Aug 2025 23:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2682765FB;
+	Mon, 18 Aug 2025 23:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kEjs35mY"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Kku+p2z+"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AAD27146F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A0721576E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755561030; cv=none; b=ozSM695SUvvBvqj8/J0AuFT85xqntZoEpgtvuWwcvaAoYt5VtIgkCmDZZeJLKobrDV1lKrqmz/pplNha/gEBPJb0wddtGXlufOQG2fDPI70PWMUsYkX4/Sw86GjXD25Pbf8zI/ycsKsnU8uCu03l6oeFhzZ59bTlsgCxaiNUwEs=
+	t=1755561228; cv=none; b=C3VkjSGNqp2mMMzUBEB4vp5j2dZbb7kumlFyj7Ss5EcXLthBC7vRJHbXpjTjFh/zbExFpNpoWuH5AhLYFHX2Y3M7B9muC6u+22Lf59ZFlPpmuXTEtNjRtRT1I1VdOah6bKSbAPvt5KEmFQRvKYz0qwNK50lPPNYCUih8t/rhu7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755561030; c=relaxed/simple;
-	bh=LcsNuZAmmSgBbn7Rx/F0jKuldnOTvv9gOB0r7oIHRPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fiw/b614HeKVxeYBpNphzKFQFN1E/SK6DQdUqp5ZmH3/hJu6Go1iK1klzwmeKKveOBm33G3qVlKtEYa6TjXI8FX+6HQ/CadcCpkbjwWS+czSn9Z6/OoUudT2nsxe1SCI7TAF88O8sI6F/UeqZfMJKSG6aJ505ZA/C0e/lvVx5Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kEjs35mY; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55cef2f624fso1979e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:50:28 -0700 (PDT)
+	s=arc-20240116; t=1755561228; c=relaxed/simple;
+	bh=Nht0mdPJltmD++9k46F2FYhtjUh0UhQGYhqewb3paJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtJzLdRdP/g/V41jaw/SVg4rHgJwzfwxj+W41woPCa4ILGTDDXgDYXoBqehssekhtfWixQWvqOcze7cGQIKvy8HfXM6gS4OYXVtEkNoV2+u9Vf8F8fqvrq/oNxk5tpf+KccnCF/qKt8AN5qobUS6fOaK+7AT9qiDrUM9wUCHM2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Kku+p2z+; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-30cce5da315so1419017fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755561027; x=1756165827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LcsNuZAmmSgBbn7Rx/F0jKuldnOTvv9gOB0r7oIHRPo=;
-        b=kEjs35mY/abuBvRXcO10QPH8S6ZRk31NPSrdR0MCCAQkyIIOAv/SfHtJ4N/US1LPef
-         i/I8jM0Mhxy1gBQ0AzsabvyDg8xjtqck/Nfh9Yx1IZv20xHuokHS7WLRbTNmYN9BUDil
-         xwh1f8zGh7cEjQhwq8p8n1PGZ+HMFyvCqzZXCYhunBemhUojKo0yfHyFOvzj2McBqINc
-         pPrxjwXNu381/fHTr6R50CLBIJfn7UBbKeDdUxmyAMpMH38GONFiZwgjtAgwDkj5PeA1
-         Vz4vhz19VZ2UESv8chQbJ0WP9FyBv1m5C8qBhVDMHHABH9RQd8c46T/ZJ/8Guhbqvf5m
-         Y7wQ==
+        d=ziepe.ca; s=google; t=1755561225; x=1756166025; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3wBQqsSZdP4vMjgFP1xZzlO0vzxLbE0wxJRdpLrh6Qs=;
+        b=Kku+p2z+ZD10tkLcvXbrOSkFreJC8EKHbeW+4BGEzv1nFhDu6mWB2tDTjsbhk758sE
+         ztSfD3xBxVQ54QnMu51AvgElfaK0rmvT7nnjoUj9OJzMFougheJFAnVc8VtaNKQMa2mG
+         OZW7BNq1Quq2oLBfVCu5fy3KEGvZh/V/h2Bo+86ijMX5HvBAdTF8X/AE3wmjoEvP24B0
+         1MgSfdnCUejK+HCpa4VcHaYx/vKTufpa55nNmiUlHcJMevt5xfkVEM0JSeziB+b5yOLZ
+         vj7fK9L/5X826Y+RBkQ1p4gTRG/4cuUxMnewPlM+PR9XG3THAq3CFqpmrAk5pss6k6gY
+         gFLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755561027; x=1756165827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LcsNuZAmmSgBbn7Rx/F0jKuldnOTvv9gOB0r7oIHRPo=;
-        b=Nx658Hv/W8eix6SvW0t40CRDgLybnsR/suhjZFM76c2fRLPCq9393K3V+xBI2jqe1G
-         lEcdnnBlfUBQ/GQ07V9FNii/flETsWg/ya7FRVBvCxh2o/YWLuKx4y1hFsUsdipzycek
-         reqU+giCPPennV7weEJo42tB81CGhNABiIUMgvrZ/UIzroCSn7lqEREryOB0sjPLGk6u
-         dqUHp+Ff7TN6rIY4zT83eOD8zqZQvcp3RaytEMnfMc7TLLkwH3Nho7hZALaiQK3YDmvq
-         cVmoRiwzVeSEoRhwY10CgLrscwb+wHdGcDZoBMmTePOLCp34+88FwMrv6vKBefRgKAi0
-         JgZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWG3saKSopdbf7YPiE81QBuflo4pHNXg4Lv/0GHAoI5wu1YJ3ZWUZUXrABaTjsV4spiPHBtgxbSlLA+arQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm106ArGMEjmM/r1WBtzAqOCKyeqdkdPuzIyCK99nAeXAGehMa
-	ajL7VfmWAbgJn1yvUyOeQi8Avz3Np+R06UKwWEbnUkKsOL4BP4u6JnuZrRf2A6warq2Ee0BIaEr
-	VSH+dGs8hp922UdghwM4sxDpDfqv2+LrycwJ2+ILs
-X-Gm-Gg: ASbGnctJSo0CKSbxNjvhE011Nxz9+d2BrFYA+SVpItGuyHVp7OGEN3+zirkoM3wxmuf
-	O9yh74dVo40PemCNyBPvFMazhRsn9yVJtdpNdCSSVVtc5kbvY4ocT5ZK8qrYY7sYAlpOMFYiLXC
-	CFkcdtWpMiasOGODPQsEQZFlsExDhfbGGqqj7B8qyvN1vFnsVJ1NG4Xs1VP4oagAGI9i2pb8byy
-	R480IxP3Ww06g6osYwvQuy+Qljuq85h86ne/rqYup2S
-X-Google-Smtp-Source: AGHT+IEz9461t1FLeYjqAPV9IC+YLeWd69snIPkzWT8jdh/N0oHfH1jree3Vr3yZo117hlh5lONNshD+tvF4WSbIHxw=
-X-Received: by 2002:a05:6512:250d:b0:55b:7c73:c5f0 with SMTP id
- 2adb3069b0e04-55e0095dfb9mr92067e87.2.1755561026720; Mon, 18 Aug 2025
- 16:50:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755561225; x=1756166025;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3wBQqsSZdP4vMjgFP1xZzlO0vzxLbE0wxJRdpLrh6Qs=;
+        b=LVkzr559/YLa299s18Fd13K2I+ZFyk0PlFbXxb+nRM4zW/M1K71cgRuunwRA5d8q4r
+         92xaR/7m7mm4Ab1GTWSU0aEuxEOSxlGb3G3x9qHY0P1zk3X/ChPvvHvEY0whBMS6gy/V
+         /fTahLe+Sqvnpc4ZhmCskqeCDg/ZUi8TWfy4uKkODIRxQlL/Hzvf16/m2+VyFffGsI4G
+         GY/R3xjR1mlIo3wZ5P2ZHe2b02cuNXEh3RJJbS7mbgRM8c7eOlAlbbQxqAPWjKoZWbxW
+         JPT25e3SR8tWAHD7ia+9YtnBgbATHsM64ejTqjM4+Bdeuwbl/8+iVQmIDG9TlX4i9qoP
+         IktA==
+X-Forwarded-Encrypted: i=1; AJvYcCU34ijEko+UHJvP7/ukeGEhl3ZIyhazdeTcgZZK5LEyQPaHyzjVMm6Z0FK2N7an7JndF+jrKssqXjC6urA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE267IO+shzWiNq9/sFYPawvw7pPhc0ofQJKLL7QIq2rXWDJ4v
+	93WAK//XJf0swiXtgVZc0H42RTqWs/BTEz71SddF+itzD5kiePBWGagDAKfiVhf4uZ0=
+X-Gm-Gg: ASbGncsv212PiP5OP9Q26QAf1fUoG1/2U6dDKls0yXfsJcVTdJ7atuxTfGbUjDKiuyB
+	yOhlXTEkcA9CLM44xeiJAzyhojM2j0oHEzaoLDwny6okfg+2SJqVwJsjPepKLULinVS5L8aUyXz
+	F3fUhzXHXb9c4NXMr6fF7vsBB9ZbF6WaaX9fjoIHa6rGNiCTejJitlhbj73y7/TqrqgzpdpmH1f
+	t8kovlFlEmzhX+m8CT86H8Q8DdThgdg5UsgD1QrLLxVXrz8nEeql/HN0jnGxE8pzMP3mz26XrEF
+	WECvV5qglOWx8QqL4Yd5LlWZvvWGglMtnEFxucWVaWrkvVt1H/lx4FCL3ukB7qvy+GtCdzE+Z7j
+	CwCgqmgs=
+X-Google-Smtp-Source: AGHT+IG4XGLQZR4wLXUR4bNYCGLPxYgNkMO+6vuslEdlEnlKjMHiP2tnm5B4xgYGljOnp8ugBhvB5Q==
+X-Received: by 2002:a05:6871:e01d:b0:2ff:a1b9:881d with SMTP id 586e51a60fabf-3110c328f4dmr624215fac.36.1755561225136;
+        Mon, 18 Aug 2025 16:53:45 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7439204e556sm2119680a34.43.2025.08.18.16.53.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 16:53:44 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uo9fb-00000004bf9-2L2h;
+	Mon, 18 Aug 2025 20:53:43 -0300
+Date: Mon, 18 Aug 2025 20:53:43 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: saeedm@nvidia.com, itayavr@nvidia.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, Jonathan.Cameron@huawei.com,
+	Markus.Elfring@web.de, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+Subject: Re: [PATCH v2] fwctl: mlx5: fix memory alloc/free in mlx5ctl_fw_rpc()
+Message-ID: <20250818235343.GK599331@ziepe.ca>
+References: <aJjiRqLx9TEg2NFj@bhairav-test.ee.iitb.ac.in>
+ <aKAjCoF9cT3VEbSE@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755499375.git.asml.silence@gmail.com> <353e0195a0f44800c0b5aa4a6d751d3655d9842b.1755499376.git.asml.silence@gmail.com>
-In-Reply-To: <353e0195a0f44800c0b5aa4a6d751d3655d9842b.1755499376.git.asml.silence@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 18 Aug 2025 16:50:14 -0700
-X-Gm-Features: Ac12FXym-AdI0-6m9FtombEI_KXbKYd4WM0Qi3aWvTpPx0DSoGpMt0F2tRTsGrw
-Message-ID: <CAHS8izNEVecwoh+f1nUBmTOGHKS+A6Up8R-0KTFMSwPn4+VzdA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/23] docs: ethtool: document that rx_buf_len
- must control payload lengths
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
-	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
-	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKAjCoF9cT3VEbSE@bhairav-test.ee.iitb.ac.in>
 
-On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> From: Jakub Kicinski <kuba@kernel.org>
->
-> Document the semantics of the rx_buf_len ethtool ring param.
-> Clarify its meaning in case of HDS, where driver may have
-> two separate buffer pools.
->
-> The various zero-copy TCP Rx schemes we have suffer from memory
+On Sat, Aug 16, 2025 at 11:49:54AM +0530, Akhilesh Patil wrote:
+> Use kvfree() to free memory allocated by kvzalloc() instead of kfree().
+> Avoid potential memory management issue considering kvzalloc() can
+> internally choose to use either kmalloc() or vmalloc() based on memory
+> request and current system memory state. Hence, use more appropriate
+> kvfree() which automatically determines correct free method to avoid
+> potential hard to debug memory issues.
+> Fix this issue discovered by running spatch static analysis tool using
+> coccinelle script - scripts/coccinelle/api/kfree_mismatch.cocci
+> 
+> Fixes: 52929c2142041 ("fwctl/mlx5: Support for communicating with mlx5 fw")
+> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+> changes v1 -> v2:
+> - Update commit message with details on why this issue needs to be fixed
+>   as suggested by Alison <alison.schofield@intel.com>
+> - Update commit message with details on how this issue was discovered
+>   using coccinelle scripts as suggested by Markus <Markus.Elfring@web.de>
+> - Carry forward Reviewd-by tag from Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/fwctl/mlx5/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-nit: 'we have suffer' sounds weird, probably meant just 'suffer'.
+Applied to for-rc, thanks
 
-> management overhead. Specifically applications aren't too impressed
-> with the number of 4kB buffers they have to juggle. Zero-copy
-> TCP makes most sense with larger memory transfers so using
-> 16kB or 32kB buffers (with the help of HW-GRO) feels more
-> natural.
->
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-
---=20
-Thanks,
-Mina
+Jason
 
