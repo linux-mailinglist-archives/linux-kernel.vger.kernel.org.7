@@ -1,236 +1,273 @@
-Return-Path: <linux-kernel+bounces-772755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94651B29725
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA83B29724
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C3B1965568
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6BA196486D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAD125785F;
-	Mon, 18 Aug 2025 02:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tyy7lDhf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA56257827;
+	Mon, 18 Aug 2025 02:51:30 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B067111A8;
-	Mon, 18 Aug 2025 02:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755485499; cv=fail; b=EUpFkvGTT+Ng4N0Bcrjc+fV29MI+nGAKzOdD/2SAUxoqoqnQ/cIVc0SeI5R/woltpN13mkhuUHfiZUYk3SPS/fmjZVlFU2f20m88WHQUbbaRuSgm+CKzoa/937tWHiuCpASrSEm3RU8HI2vFrBfO1r/tHQH/IQ9WUbn8aDZkVqE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755485499; c=relaxed/simple;
-	bh=X1fcA0FSwkThteH6Cxgz4S4HJNgIYJjntUwPVwy3gzk=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=ZFD9xYdF8dhTRV7TT9Z3Ww4cznVuZVd2H5+FUBfIRjxNAzK4rppnt33dW7YnAj4TRpt0fwfDuOtTqWsPBLD76dCl+DMwMeYLEFMv5+EczUEqo/ac+/OdYYKgwgtdWFGZ2kddQ6ghk4COVSBgnFAO2W0fVfe/5q23gbPWaMXclQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tyy7lDhf; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755485498; x=1787021498;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=X1fcA0FSwkThteH6Cxgz4S4HJNgIYJjntUwPVwy3gzk=;
-  b=Tyy7lDhfBz6yT39ddJcYAZu6ceu60BwZERxbWLAJw1Zmv9IK8jLunIEw
-   +4HYXiPNmMe/zc8F/tqyJiIUoVCgeQZ8OCG534N9zAp0XY9FogcZ/Bvyv
-   vZuziyqe/TLVur5irhZ0hVZ4+JBocLnWyzeB/PU4r7aRnbRSqAp0Hg2bL
-   8RxiNDAjBQQZA6qHHur1gbxxsgPAlk9fBrIFkOg/E+slE5A8puG3VDaxg
-   m4Z+S8ZwA0bqMjE8yE5aFTYtzLrHo7DPvqwRQ7u3HApMftXx5LOxPXnLi
-   tTQzAXNFsSaztwJPdubrhMZrRQma3urtiN/pleWFx2SQXzjZRI0Gmg3Hz
-   A==;
-X-CSE-ConnectionGUID: GvO/8OURQxuVJmDtCIX1WQ==
-X-CSE-MsgGUID: dhTP3dSvSi26k2AxLzzw+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68415402"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="68415402"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 19:51:37 -0700
-X-CSE-ConnectionGUID: chJ7LwI3QaKISclWvusVGA==
-X-CSE-MsgGUID: ErMFo2pnQ0KmDE4sHtityg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171682970"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 19:51:37 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 19:51:36 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Sun, 17 Aug 2025 19:51:36 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.88)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 19:51:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r9KxlHqJ0xXWmIA7y/xz4INgSTLbpxavIPYJMnZ52fhndQrQcYmKmWIbFFSVbSlJXAGmjNHcLuu3I80n79GLZSvrgS8Nu6VDBhGUoGFG03DptW9ZkGRxbv7vTLcL3/3811zNNrYlVNQ6t/l1kFVzb43ZAEeUq/4OcSW8pvQbXzhaWl+ukPOpDTud8BAZD2fE63iZYmU38iBeWoatc1EOk2qGI8WFQ47f2C9Kt/x2qJdTeBXDFi75Ll8WWAb359dkQQcwZMb6MffC38+gMoAobBD6IcgY6r6rvH7a4xDaEV+rfLVy/CUcv4U2R3iPobUsp/kggg01D08YZs0M2hgFfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NkZmM6EZFS5Cnk1cspklEDiSai9gRK7JXz/bXWXGCYk=;
- b=dTiBR4lnN0XuTiJRO1LX4vEzsPj0rzaAFHEUNJ6w0KyhHqZo7VvvAdg0M4ZuMHUuHSLLNZKJqWLngxj75GJfw4laY3ojyIAh4ZSjnAC7rhDp0yYdapXVOqskrU/K6QfnEsRjq1Y9VBC7nT934bfrgTlBNLAYTe98OtZ1n+ahGfaUl/CsTPzJIVu3Ov3Ahy4k22dAocqvja9RZgHLSB4pqtNhAL5s6ji+2jmRQahDafOqSDYKWGZzZ3oNlLW6YJzjN/CKKq6rgxJckR9eMhn6CnbXV0bFRzZtpcBTylMoY9l1mY5DmZTntaUghasHtlPUtHIYLSZNQ7Thx9uXgNChzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by SJ2PR11MB8401.namprd11.prod.outlook.com (2603:10b6:a03:539::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 02:51:34 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9031.021; Mon, 18 Aug 2025
- 02:51:34 +0000
-Date: Mon, 18 Aug 2025 10:51:25 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Ian Rogers <irogers@google.com>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<oliver.sang@intel.com>
-Subject: [linus:master] [perf stat]  faebee18d7:
- perf-sanity-tests.perf_stat_CSV_output_linter.fail
-Message-ID: <202508180436.51c7951a-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SGAP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::23)
- To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52B01A8412
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755485489; cv=none; b=j60Fds8MDmcSc11JNHLWgC8mGQCi0BJUJux5YknU9blGQmAYB52uILHpSzksR8SoF8hrRw24RkwpGNElaTpwGcbOoQ6lW5Ed5fmLXeLxfHPOxkFQ7ip9Et9DnYQLSh5ayYAfImVXdg+IfSvKXrp/AOh5KpI/Y1Y/TAImcwDOudE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755485489; c=relaxed/simple;
+	bh=zGPNhia5mulCJUUAaQihqHAOPp/31yRSzl25zKoPYFg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZGA8VYUQnZZLALCF7NoGebDX4BJowZg00uHabi7kvI+BwTZGpe6nWaiN3YAa3+Wh0N10WtDC1JmLIfVph1LGtKjKp5UJQj/5ULEi3RmwO1RelRnq7ovZYeLEZwW7KIH5lyb9Uphcw44io2WNqaZyr1btAh1NwQBP0FDYMIPUZRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88432e3c4ffso399638639f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 19:51:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755485487; x=1756090287;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e4o/cOKlJzDW0KLKKJzyDWLe4z4qJv/hHqlCpRPUX/U=;
+        b=ch0uCvQ7eOdFmurP0gMFumbO53aqgvu3gEvBndgedv8foEJ+bmuwoE3FyiR83XIMKf
+         VrG5o/TTLWoCm0RgCTJFiNZkSftFmrnNf/I2T+6HtL3rwuZeC9RqPVYXQbz1gZSCcTkX
+         30jJjeWdHzoG1K7c3VJM7bJWUw6lgiKfpVf901Dy4ah5pqexnpvsgu627la/+Ck8Adr2
+         jwH+At845TIpDhfOZZdUXLMrA7qpdmGio2khmlAQ7otZp35H4BKja8NhfnGSse+BldtP
+         kU86LeaGFD1DnQYo4g4ZKWNxIQDkeqE/571QSyww5LtgCCa5t5vR6xD0xkaJdxRbIteX
+         TmKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX29NQwUBJBy9I/rFPARJJ7wijKqYC71FaRvSsaYAcys62Xe04rRV/ePqKf9HZHztVYiCi46j8nBOdNLkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt3sCP552s5HNnDySjzDZnhrA7jYp6k+aeoo/FNCCG+1XhB9P2
+	MYI237bVO0ocMoDXMCtQ0y4+v1XJk/kt6mGBrQ5JWwJjcFz+KN95Ymt7LDDic18sxrgkOoPFczO
+	lGYDly1ASkKnOhD5j9SUmL4jSXlSm6ZBxf6A1n54AoSXiA3C5JQXvWnuHkcs=
+X-Google-Smtp-Source: AGHT+IEZlVR4ig7U58KLgYHb/VMg1Xbvkiya7m8reUy54F9uVcrytnNwD6vV+7rduM38Tp8RFwarpDZ9wGalquq0ZONhWGpm7jzC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SJ2PR11MB8401:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4cdd7b9e-b608-4f30-b234-08ddde022455
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?KcnPc1VlykT8l1Ns4+YPLw12DyYZRnKVvufP6bYQ48zOJcqR73MtGWHeTD4S?=
- =?us-ascii?Q?toMmYy4/j0fWUof80ULT0D+ozmTCnpyWG78bBwjl1oFq31TW3nurr0MtvUlz?=
- =?us-ascii?Q?HOdR0yW8/wEagt3C2LsaX4MpeWZ4NHUO3pdSLGuMcky4CsBIMO4W5jEGaj/k?=
- =?us-ascii?Q?UDfq2vICm1gwPA7F9ADIAz2zh1QeDU8ltTEosz/o4gj61JIFWJhGpPGAen42?=
- =?us-ascii?Q?JzimC4Xy+EwZgbqyniLTUAHgfaZ2Eynz6d1wsSH+KVWj10ROueuYqxkqvSJw?=
- =?us-ascii?Q?/XgWrobgSxWMjvP34sM9/4zt9+6OL5kRRVbUKCKyHeCbGAJN5++7bB/dIq4Q?=
- =?us-ascii?Q?78QN/2WOjE9CaRb6iDOZJyDwZNY3vVHtL472zksiMA/WrOTDFdZ77VMFMR0l?=
- =?us-ascii?Q?QJVcE31B5FkvlrOXy/DmlnoHQtKgcHZZUQ21S4YoBVonZuLm5wOH9G9yc+B4?=
- =?us-ascii?Q?hbQ+xA6jPV9He5Pu9SxcoGIu8mLpWN8NcYEunFUwZjlev2of//rhqiC8Kg/Z?=
- =?us-ascii?Q?9huG3IPNvQBPHa2qf9oQ3zcl9h7Jt3/0UXknuzeVzzKB0ZZY135B0vzf3lR1?=
- =?us-ascii?Q?3T6031iu2tw55FBKnv1cUSvBUbdXJIbvpXO0Sd45ldzr+9poWaDaEt5/sJNk?=
- =?us-ascii?Q?LYpekGAOMGAgYiCjRM45wb5KRYZXVFZA0OEEXB5/dxy2/fim77Makgcf5L5F?=
- =?us-ascii?Q?5mwKQZPRPSZlo7va+SpjdsxdxBzoRznQuFd2G0ou4nORac+t5TO/lZe+Tirp?=
- =?us-ascii?Q?uzpwkDp3jFddYLuWIXYDsxH4mPiGOM0AIL0U698h7VQCFqaF9+Yo8GDzMcUQ?=
- =?us-ascii?Q?Mlpsk7iNqaxWNSCoM74ZHTkTWBEetw0agbFiDptu7LOsRgXmWJbJGBgP8iT0?=
- =?us-ascii?Q?6qLt5nVuVKuJNcKRGMuOfGVpkrkVc9iqxJocGoloA/DGpKptvp9eFZt+91yu?=
- =?us-ascii?Q?dmRSd+5tdVJWWpoULZsAvfQ47aamFgrNc2Ng8ecDwYI3yMGzTxXIhJgKAaBs?=
- =?us-ascii?Q?VcduNF0QAF8Sux+7MF+InyDxP2QfxDM3by3V5pkMfdLt+9mm6dYoQhldtY4Y?=
- =?us-ascii?Q?KcIqCVqL9KWzdkQdy4z2dpk2jeP3sbZZ+R4cTJVPtX1GTATOlgoC63KRMjzo?=
- =?us-ascii?Q?0VDJPUmIylUZ7jFVHA85GOhTLUciLIjFv1iAlgNShFJuJ86wEFcQ/shKhci8?=
- =?us-ascii?Q?+uyjUCncvELJIpcVwvcDDLdaIQIninAJGP7Q0nrVYKv1r09PpguBFwZ5dedr?=
- =?us-ascii?Q?Pbg3O7Xf1mQt6H8XJfb1MaYgV5FwWuAA050ABc3o5Qv43wHdJS7r1VSa4bTt?=
- =?us-ascii?Q?oIdBl4bqFf2YtN3XumWMqqzGttt9TpYT3YHJnzohbgGKEC5t2I3CMHQeghsz?=
- =?us-ascii?Q?414b2B1Ihe8Mj0ooQ+75DN0b2HCY?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cWktxmVsAr6AbA7GSdvfP8uvbfJbxHqobQ+TDR/cqMdhMqcBFgStuyqfp5++?=
- =?us-ascii?Q?XJy+3HG/z9FH8R38quMWncAVuQV3wPNjMPTzT09lN0Km9/aHxX5F+oa7Zs2s?=
- =?us-ascii?Q?f/twu4s4akNk7W9MOTYZcoh5jOxrSLkfpTWfAqQdsPQp8nt//ne9wTerpLjJ?=
- =?us-ascii?Q?dpQMECDv9T3mXKlOBKd8mG7Ff+XZzxZxdfJUmQCALjhAidDagY1Kdlge2VZQ?=
- =?us-ascii?Q?LpjX7Cbg3gAjCRxUu9Xf9cH56mMdkkQ9CYhA3Uegk6taPQ+6hScbaDtNG+RJ?=
- =?us-ascii?Q?s6WNa4Y6mpvhEdgbJw7yHu4YLFbDNSsoWttYSTnTL8S4AVPEEZYBjL+XODL0?=
- =?us-ascii?Q?R7zU+7NeW2QYZA9rkC6bJEykDQlICa4VTSHZqPu+Jgj6zWffxLYJ2nxsfeKT?=
- =?us-ascii?Q?b4GxceTOuuCwCkfnZl4EESjUYFsWGD5NARRBuroeC85jUR/kLtRMNKzrIXDC?=
- =?us-ascii?Q?ndHmr+YJvCSlE0JFyYE1zq425wwdG9DP+EqeAejnOUSURDY9x7FwihbxQSTv?=
- =?us-ascii?Q?5X6DYMl2/IVLwDPIL/4yh3oaCdY4sILGeuQoNG/z1tW8JZxABc9uuJeBC0LM?=
- =?us-ascii?Q?4yDmlG8UuDFcTi4uclyiy/VWwoxlFwHQw5oDVsDQIURSxiA9RXmXETGaDY2I?=
- =?us-ascii?Q?ikW8fFGZa71KiSBU3feHCLmawYd73bsWYHpI0CIArJdfp62g6aBBkrHfb29F?=
- =?us-ascii?Q?Erpb1pvQSRhGFy+8ePNecgFHWLoFBfpgveNpooJBKLle2WuWa4jldLArXGyv?=
- =?us-ascii?Q?LnnZJZk2H6PRMbuXk+bbrf0jVYAoCiPsKGurh0uKsepkkvoZI9O9a9UBKYm4?=
- =?us-ascii?Q?BMQg42QbjM3ezGF/h23QeXf9nezkzbn6Y+AYtDUFxrUSrbJEe7/kONA6W9B+?=
- =?us-ascii?Q?N9wtWrbws1xepE3RHd8S1YHsNcXSIuBFvnABQ2m/1+uWl5dI8kI4crT+/fel?=
- =?us-ascii?Q?klreYUNYE9hwogqXGqoa+tfutBA+HQh/8VC6B5WunB0LSCA6N2uEe8Jy1d4p?=
- =?us-ascii?Q?bPQIahaZghLFQ6NRcQKCWjDNK0M5M1h8Gzy62tMGaU+W9hY7A8E/M6rVyXd4?=
- =?us-ascii?Q?IkUT0ij94mKNfypiU3B9YjGaFyPrxvCVgOZxQOPZV7QxdkFyYsOK7RtgKqB7?=
- =?us-ascii?Q?0RFoVEk7v3iaEZs1kjDg4UW6LVFlahSJJtaNFjvfn99KQdsGtNUmjcESMS3q?=
- =?us-ascii?Q?ZhDXSfqYTsvRyIud0A8iWWwNca37njAkCQWo88Yi8QWwmxDaIcOCkdLdCQLN?=
- =?us-ascii?Q?J/VTY68f8PUDz2xkmTkZccgvNwRAl37dXcMUsq5Kt4tUMw6fDu0GM7YXhCmm?=
- =?us-ascii?Q?srpvqG/4kLWKQmvAA0plQmAA6z/E2jQNaN6GVYTiq4spGTUj+MCtqSRA2c1m?=
- =?us-ascii?Q?dLajzNx/vG53LSh1tbOIVCFJvzS4TaV7A9s+9CPm3V0XyQoCaZiDZerFz0Ir?=
- =?us-ascii?Q?qh/t4ryzeO0AxoSenqqONZ0OnlduDgJ1vChCTx0FDca1yG4uSrfw8JnHzSgs?=
- =?us-ascii?Q?TPArP9coiBNP8sHD81doLlJoVsynv3yJs12BiBHy+2w8nfVnhvL7JhIPFxMi?=
- =?us-ascii?Q?wU7gmV6XkfeV3h6RU0S0xLdxQh/hWU5mTX9Go/XGzUSGwTBQK6kk91JYcWVx?=
- =?us-ascii?Q?EA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4cdd7b9e-b608-4f30-b234-08ddde022455
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 02:51:34.0320
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pKjoDY1y723ZWJvh5PI2dnG9F6j9cVsLTT9b9/0UC8G0+r810sVL0Tn/hKT4CYkRDnIVg/+YpKKSmRcZFHXxjQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8401
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6602:1549:b0:884:1ddb:2ca9 with SMTP id
+ ca18e2360f4ac-8843e35bbfamr1806019139f.1.1755485486923; Sun, 17 Aug 2025
+ 19:51:26 -0700 (PDT)
+Date: Sun, 17 Aug 2025 19:51:26 -0700
+In-Reply-To: <67f2bf20.050a0220.0a13.0270.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a2952e.050a0220.e29e5.0083.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only_work (2)
+From: syzbot <syzbot+674ccd0645d379ed5f80@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mmpgouride@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    8d561baae505 Merge tag 'x86_urgent_for_v6.17_rc2' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164606f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=98e114f4eb77e551
+dashboard link: https://syzkaller.appspot.com/bug?extid=674ccd0645d379ed5f80
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e66ba2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c29234580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/595e1e4d6418/disk-8d561baa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ab14cc587702/vmlinux-8d561baa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/368a3a55dcfb/bzImage-8d561baa.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d34a76f45dd5/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+674ccd0645d379ed5f80@syzkaller.appspotmail.com
+
+INFO: task kworker/0:2:5165 blocked for more than 143 sec[  348.252664][   T38] INFO: task kworker/0:2:5165 blocked for more than 143 seconds.
+      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:2     state:D stack:19368 pid:5165  tgid:5165  ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: events_long bch2_fs_read_only_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1e04/0x25e0 kernel/locking/rtmutex.c:1760
+ rt_mutex_slowlock+0xb5/0x160 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14f/0x750 kernel/locking/rwbase_rt.c:244
+ bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:408
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+INFO: task kworker/0:3:5894 blocked for more than 143 seconds.
+      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:3     state:D stack:19368 pid:5894  tgid:5894  ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: events_long bch2_fs_read_only_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
+ rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+ __rt_mutex_slowlock_locked+0x1e04/0x25e0 kernel/locking/rtmutex.c:1760
+ rt_mutex_slowlock+0xb5/0x160 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14f/0x750 kernel/locking/rwbase_rt.c:244
+ bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:408
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+INFO: task syz.3.29:6306 blocked for more than 143 seconds.
+      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.29        state:D stack:22952 pid:6306  tgid:6256  ppid:5968   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ __closure_sync+0x163/0x220 lib/closure.c:146
+ closure_sync include/linux/closure.h:195 [inline]
+ bch2_dev_allocator_remove+0x7ad/0x9c0 fs/bcachefs/alloc_background.c:2651
+ __bch2_dev_read_only fs/bcachefs/super.c:1705 [inline]
+ bch2_dev_remove+0x504/0x13a0 fs/bcachefs/super.c:1792
+ bch2_ioctl_disk_remove+0x130/0x170 fs/bcachefs/chardev.c:226
+ bch2_fs_ioctl+0xb41/0x1920 fs/bcachefs/chardev.c:730
+ bch2_fs_file_ioctl+0x564/0x1dd0 fs/bcachefs/fs-ioctl.c:411
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5de5d0ebe9
+RSP: 002b:00007f5de5355038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f5de5f36090 RCX: 00007f5de5d0ebe9
+RDX: 00002000000000c0 RSI: 000000004010bc05 RDI: 0000000000000004
+RBP: 00007f5de5d91e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f5de5f36128 R14: 00007f5de5f36090 R15: 00007fffe9406a88
+ </TASK>
+INFO: task syz.1.37:6366 blocked for more than 143 seconds.
+      Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.37        state:D stack:15976 pid:6366  tgid:6364  ppid:5967   task_flags:0x400140 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ __closure_sync+0x163/0x220 lib/closure.c:146
+ closure_sync include/linux/closure.h:195 [inline]
+ bch2_dev_allocator_remove+0x7ad/0x9c0 fs/bcachefs/alloc_background.c:2651
+ __bch2_dev_read_only fs/bcachefs/super.c:1705 [inline]
+ bch2_dev_remove+0x504/0x13a0 fs/bcachefs/super.c:1792
+ bch2_ioctl_disk_remove+0x130/0x170 fs/bcachefs/chardev.c:226
+ bch2_fs_ioctl+0xb41/0x1920 fs/bcachefs/chardev.c:730
+ bch2_fs_file_ioctl+0x564/0x1dd0 fs/bcachefs/fs-ioctl.c:411
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbae6e3ebe9
+RSP: 002b:00007fbae64ae038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fbae7065fa0 RCX: 00007fbae6e3ebe9
+RDX: 00002000000000c0 RSI: 000000004010bc05 RDI: 0000000000000004
+RBP: 00007fbae6ec1e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fbae7066038 R14: 00007fbae7065fa0 R15: 00007ffc4fe142e8
+ </TASK>
+INFO: lockdep is turned off.
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 38 Comm: khungtaskd Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+ watchdog+0xf93/0xfe0 kernel/hung_task.c:491
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 8017 Comm: syz.2.386 Tainted: G        W           6.17.0-rc1-syzkaller-00224-g8d561baae505 #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:xas_clear_mark+0x28/0x530 lib/xarray.c:-1
+Code: 90 90 f3 0f 1e fa 55 41 57 41 56 41 55 41 54 53 48 83 ec 18 89 74 24 04 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 b8 1e ca f6 <48> 89 5c 24 08 48 8d 7b 18 48 89 f8 48 c1 e8 03 42 80 3c 28 00 74
+RSP: 0018:ffffc900060df4a8 EFLAGS: 00000293
+RAX: ffffffff8af43c88 RBX: ffffc900060df580 RCX: ffff888091b5bb80
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101341a6d0 R12: 0000000000000001
+R13: dffffc0000000000 R14: ffff88806492a638 R15: dffffc0000000000
+FS:  00007f86571066c0(0000) GS:ffff8881269c5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1deed16000 CR3: 000000003e458000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ xas_init_marks+0x6c/0xc0 lib/xarray.c:955
+ page_cache_delete mm/filemap.c:142 [inline]
+ __filemap_remove_folio+0x3cf/0x500 mm/filemap.c:224
+ filemap_remove_folio+0xe6/0x200 mm/filemap.c:253
+ truncate_inode_folio+0x5d/0x70 mm/truncate.c:176
+ shmem_undo_range+0x3a9/0x14b0 mm/shmem.c:1153
+ shmem_truncate_range mm/shmem.c:1269 [inline]
+ shmem_evict_inode+0x272/0xa70 mm/shmem.c:1397
+ evict+0x504/0x9c0 fs/inode.c:810
+ __dentry_kill+0x209/0x660 fs/dcache.c:669
+ dput+0x19f/0x2b0 fs/dcache.c:911
+ __fput+0x69d/0xa80 fs/file_table.c:476
+ fput_close_sync+0x119/0x200 fs/file_table.c:573
+ __do_sys_close fs/open.c:1587 [inline]
+ __se_sys_close fs/open.c:1572 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1572
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8657a9d84a
+Code: 48 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c 24 0c e8 43 91 02 00 8b 7c 24 0c 89 c2 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 36 89 d7 89 44 24 0c e8 a3 91 02 00 8b 44 24
+RSP: 002b:00007f8657105e00 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f8657a9d84a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000010 R08: 0000000000000000 R09: 00000000000059da
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 00007f8657105ef0 R14: 00007f8657106668 R15: 00007f864ece6000
+ </TASK>
 
 
-
-Hello,
-
-kernel test robot noticed "perf-sanity-tests.perf_stat_CSV_output_linter.fail" on:
-
-commit: faebee18d720d9e209946ece3e468c06cf13f5ec ("perf stat: Move metric list from config to evlist")
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-
-[test failed on      linus/master d0efc9e4276cda07c2f76652d240b165c30b05b8]
-[test failed on linux-next/master 1357b2649c026b51353c84ddd32bc963e8999603]
-
-in testcase: perf-sanity-tests
-version: 
-with following parameters:
-
-	perf_compiler: clang
-	group: group-01
-
-
-config: x86_64-rhel-9.4-bpf
-compiler: gcc-12
-test machine: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480+ (Sapphire Rapids) with 256G memory
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202508180436.51c7951a-lkp@intel.com
-
-
-
-2025-07-29 17:16:45 sudo /usr/src/linux-perf-x86_64-rhel-9.4-bpf-faebee18d720d9e209946ece3e468c06cf13f5ec/tools/perf/perf test 94 -v
- 94: perf stat CSV output linter                                     : Running (1 active)
---- start ---
-test child forked, pid 13116
-Checking CSV output: no args wrong number of fields. expected 6 in @1269590@100.00@10.6@%  tma_backend_bound
----- end(-1) ----
- 94: perf stat CSV output linter                                     : FAILED!
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20250818/202508180436.51c7951a-lkp@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
