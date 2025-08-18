@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-772677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB913B295FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:56:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E62AB295FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B226C196287A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:56:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50E537A2AD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4C12236E3;
-	Mon, 18 Aug 2025 00:56:15 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B7D224AF1;
+	Mon, 18 Aug 2025 01:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPThXPig"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D46F1DF75C;
-	Mon, 18 Aug 2025 00:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4607F20ED;
+	Mon, 18 Aug 2025 01:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755478575; cv=none; b=IDY6r5dS8NWmyNDsQlFIQCZw/+GhzXN/bEiociytIJTX04NhJqtc/jLVn7kqKsPF7JasmNW8DU5R3SepWDMwVW7K4TuCfSuH9u8UKkcWXz7VeP9btpq3UtSIelxMqbaAQPLy7qCnprt5ad5TipBGsJLha1i4NLpWshR3dNzFCIo=
+	t=1755479007; cv=none; b=IMxqFRG5A/9hEZzbNOpA+3wdM7wplzTRG9Dpqg0TTPPXVDAJ2m1uHhWS3EhTIArIMBj5qwDTpI5DcFnthHyWny+AgOkaYElcSkRRVvHqGPm43PVewmZ8UJw3SdllvV/26VeNMnoC+xlATbVjsiU2d5VBfB3+RTfY37PVtDEpAbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755478575; c=relaxed/simple;
-	bh=lQQXRYy245OiG2IPuYscDsZGqJXrQUjtXiEFU+b6U5I=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PjXmWJnGltEGjeh3PN3e6I5Gj72uQhujnHM5dKzW8OYAVScY29PRp937AOE7hJ/l/r5zObNQgPC1aIcebZccqFSIV/VQtw4mmMBUiKSJohI3OizuFW56/HQC+KPkreMcdIVrTk8M/EEmu2IVMpNoyKVZGMb3tsDVq9RCtKGaAUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c4vR84Jr9zKHMVF;
-	Mon, 18 Aug 2025 08:56:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 03CF81A1797;
-	Mon, 18 Aug 2025 08:56:04 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDnrxAieqJoRB0yEA--.17918S3;
-	Mon, 18 Aug 2025 08:56:03 +0800 (CST)
-Subject: Re: [PATCH] md/raid5-ppl: Fix invalid context sleep in
- ppl_io_unit_finished() on PREEMPT_RT
-To: Yunseong Kim <ysk@kzalloc.com>, Song Liu <song@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250817113114.1335810-3-ysk@kzalloc.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <acd0a040-18ce-05f5-4896-ad24dda6fb00@huaweicloud.com>
-Date: Mon, 18 Aug 2025 08:56:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755479007; c=relaxed/simple;
+	bh=lPWkM6/aGOC82OFr+CdZicGB7D5qUtsPzKDzWM+gvAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6LxrYl87n8U1on8nEFCPLfe0REOBJBJBEAdIGkuC9D3iUwKAi2ITUsv4bPyh3p2aUg+cylO/OkYJeWrX7mJv/0s57jClTrMpPC8q7jNMwsuQApXPGE4TQ76BLsqyiOt20oEJUgnm7vTU4GMw5aI92PkGA21Hjef4AFFlWTi6SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPThXPig; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-321cf75482fso4090345a91.0;
+        Sun, 17 Aug 2025 18:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755479005; x=1756083805; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gYwZB/8iXqdOiGxYCeYKtVmTqeIoc1DG08tofpYl6z4=;
+        b=NPThXPigXVFyViKKKnbwfowK7hsL58eNcPKwrHJWdKiA4RYOmhWlsHSK3dJ/SDvLZX
+         cCk9v1aqWaODVNrpaVmhFxc2/LYqhnqvIaWtkQfZXNIdD8jHA4IpmQjkBUpUw+egM6IC
+         2Soeanj0Kf2R+jLSkrpo8ZNx7BM/Qyq3DoNpeHHEdgMZfX3clbiT+LydXV3SlrSOQVhr
+         T6QSDCBNwOyiyirxw1/uGlXgh/nCIN1DMwGRRhoFSlnGxzloIBQHc3Ewck3PK4vhJfJ4
+         uu7F8v4ifhATNAOitSOzhOAVjTO1AdVoG7shjqw3GwCQaX8+VTwfXlCVx/Gg4nh+pTh5
+         7UVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755479005; x=1756083805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gYwZB/8iXqdOiGxYCeYKtVmTqeIoc1DG08tofpYl6z4=;
+        b=JMa4voRiQSL/ztzhH/ipoLJrxOhxUsuu2RIdSXUQOAo21wU+vq/k/ZKIwCpd/9gSrP
+         JbGTE5oW35XQLFxH729h+BAWhwtf2P7Olu/CMk/NWiZNMRlopSTAenQz0xcZ5I7T6SCg
+         4gqUbBRKFdz+QTIdawAA1r6C0HCB/8raB1CI3YOqfzr0aVI//CPa8MABn4yXvBcbu1Gc
+         v0eHcxQBW16giJtkc8spX9CKdgT07GfHtjO9km/hKj81bZD0PbeyT/1+3HhF/HKd0waM
+         R87PEkZDwQpYDH/9gCmUUW0/caO5rBpAtciEC89XgV044z7XMZxxHjbr5tJB7e7qIFVC
+         hMgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ8/XsXmtYMEMRPtN7sacfDAyClb5LcT/tebJuuVpUscEJsngJ0Bc0QxLZy/eZiajw9x3vnfjeVMU92dY=@vger.kernel.org, AJvYcCXbSMBaBAQlw9e/ZIusTJB72ZvbvZoj1S+bJavOmi3BegFUxyBBQzxxzmDVztYkMX45FfQ85kBG3Hqa6eF4@vger.kernel.org, AJvYcCXiF+1bvoJA+/n0U887Q8cEZbEJNYRURAUHB3LNr6l8nUNA9wN5AqWuGUMizG227+/FfYGz2qS51/aH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSxSFz1fI8qA/q+oq/f8rRCdWJe7oQTVx1FHTPXwEaOF2lmtZk
+	ODMq8LEoNzS9+++JN97Z/1cb6wGniyWj9Z1OBhM7w6bRsJqZweD32MSUZfDREw==
+X-Gm-Gg: ASbGncu6CGxTDtNj+WEMBpva2pKJob1o2rDj78k8pwCFLBC/Tl6mnwGG6yBPiEZqn+q
+	W0/l2auD5fvUsxbinh/qvE+UOFwYpomz3RDbE4wArrYkOZijUm9NjmcRNfxiLc8HKE5bsTNGSgO
+	3hdIygjTlmWivjZgEuS/ypP7NidMgQwia4ExOHzT7/uT9awaB901KLkUJH2XmQDXHD9CIqSOG1P
+	MnAiYaeJxJJAztwuAc77AgL8uT15oLV/bNinuWUcHpqeJZBed1633571QWwHx4xIqMf7BQaqpxs
+	phdanps0ZHjzXgqxj31Nl2Nxl1nbDDs+rrhiVNlFegYDogi/y7wwfDHsoD9driiROymWit0VvxY
+	P/7UlO3CFT6k3+N6KjtzHiA==
+X-Google-Smtp-Source: AGHT+IH0ywCqTDaTPt0HtiECHGQvjnjnnZey9w6/K0zpNKk7zCfmG+nuIjSSnBPTkE6xxC7lG8kb1g==
+X-Received: by 2002:a17:90b:3b4a:b0:2fa:17e4:b1cf with SMTP id 98e67ed59e1d1-323402c9ee2mr14424015a91.2.1755479005424;
+        Sun, 17 Aug 2025 18:03:25 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:11e:c24d:ff01:22c4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d602713sm6726707a12.27.2025.08.17.18.03.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Aug 2025 18:03:24 -0700 (PDT)
+Date: Sun, 17 Aug 2025 18:03:22 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Alexander Kurz <akurz@blala.de>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dzmitry Sankouski <dsankouski@gmail.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] Input: mc13783-pwrbutton: add OF support
+Message-ID: <si3wootxtnyuurqarxudvflzoblryhrlgan5g2x7rip6aq5v3e@zoy2dcswd2lk>
+References: <20250817102751.29709-1-akurz@blala.de>
+ <20250817102751.29709-7-akurz@blala.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250817113114.1335810-3-ysk@kzalloc.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnrxAieqJoRB0yEA--.17918S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFy5XFW7Wry7Cry7XF1kZrb_yoW8uryUpF
-	WrWF9Iv3WkXrsYqwsFk3WIkrWfta1Igry7Cw45uwn7ArZ8XryxJr17Jr9xGryqqF4xJrW8
-	Xa4UJa9xCrsxA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
-	tUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817102751.29709-7-akurz@blala.de>
 
-Hi,
+Hi Alexander,
 
-ÔÚ 2025/08/17 19:31, Yunseong Kim Ð´µÀ:
-> The function ppl_io_unit_finished() uses a local_irq_save()/spin_lock()
-> sequence. On a PREEMPT_RT enabled kernel, spin_lock() can sleep. Calling it
-> with interrupts disabled creates an atomic context where sleeping is
-> forbidden.
+On Sun, Aug 17, 2025 at 10:27:50AM +0000, Alexander Kurz wrote:
+> Add OF support for the mc13783-pwrbutton so that it can be used with
+> modern DT based systems.
 > 
-What? I believe spin_lock can never sleep.
-
-> Ensuring that the interrupt state is managed atomically with the lock
-> itself. The change is applied to both the 'log->io_list_lock' and
-> 'ppl_conf->no_mem_stripes_lock' critical sections within the function.
-> 
-> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+> Signed-off-by: Alexander Kurz <akurz@blala.de>
 > ---
->   drivers/md/raid5-ppl.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
+>  drivers/input/misc/mc13783-pwrbutton.c | 78 +++++++++++++++++++++++++-
+>  1 file changed, 75 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
-> index 56b234683ee6..650bd59ead72 100644
-> --- a/drivers/md/raid5-ppl.c
-> +++ b/drivers/md/raid5-ppl.c
-> @@ -553,15 +553,13 @@ static void ppl_io_unit_finished(struct ppl_io_unit *io)
->   
->   	pr_debug("%s: seq: %llu\n", __func__, io->seq);
->   
-> -	local_irq_save(flags);
-> -
-> -	spin_lock(&log->io_list_lock);
-> +	spin_lock_irqsave(&log->io_list_lock, flags);
->   	list_del(&io->log_sibling);
-> -	spin_unlock(&log->io_list_lock);
-> +	spin_unlock_irqrestore(&log->io_list_lock, flags);
->   
->   	mempool_free(io, &ppl_conf->io_pool);
->   
-> -	spin_lock(&ppl_conf->no_mem_stripes_lock);
-> +	spin_lock_irqsave(&ppl_conf->no_mem_stripes_lock, flags);
+> diff --git a/drivers/input/misc/mc13783-pwrbutton.c b/drivers/input/misc/mc13783-pwrbutton.c
+> index 49bc5d25f098..11a97ce070a5 100644
+> --- a/drivers/input/misc/mc13783-pwrbutton.c
+> +++ b/drivers/input/misc/mc13783-pwrbutton.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/mfd/mc13783.h>
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+> +#include <linux/of.h>
 
-Please notice, local_irq_save + spin_lock is the same as
-spin_lock_irqsave, I don't think your changes have any functonal
-chagnes.
+Please use generic device properties API (device_property_read_XX()).
 
-Thanks,
-Kuai
+Thanks.
 
->   	if (!list_empty(&ppl_conf->no_mem_stripes)) {
->   		struct stripe_head *sh;
->   
-> @@ -571,9 +569,7 @@ static void ppl_io_unit_finished(struct ppl_io_unit *io)
->   		set_bit(STRIPE_HANDLE, &sh->state);
->   		raid5_release_stripe(sh);
->   	}
-> -	spin_unlock(&ppl_conf->no_mem_stripes_lock);
-> -
-> -	local_irq_restore(flags);
-> +	spin_unlock_irqrestore(&ppl_conf->no_mem_stripes_lock, flags);
->   
->   	wake_up(&conf->wait_for_quiescent);
->   }
-> 
-
+-- 
+Dmitry
 
