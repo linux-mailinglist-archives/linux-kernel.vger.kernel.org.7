@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-773529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E634EB2A160
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:22:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F346AB2A131
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817E81B2604D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083B05E4D53
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6825131A05E;
-	Mon, 18 Aug 2025 12:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3E0319875;
+	Mon, 18 Aug 2025 12:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="PSxNhDdZ"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L+61y+Sg"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FAB326D6E;
-	Mon, 18 Aug 2025 12:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E57C2765DF
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755519186; cv=none; b=JiyrAsExyrHbpUoGEX2n9u0cVkI2gkfLpiujhFjmNB4SQPlfv6eMtbVSejM9Yjhrl1/BuT63HhIsm364oWv+RMNm1q4/wyAeJDSyMvsPGVvDbyiCsfnBAuBFS24ICarvgG1D6UMon+FwSoQVpXyF36vgXJLBN8UC0MpkPswS5uk=
+	t=1755518946; cv=none; b=c+OvFiDflGl5w137hyMowwHAJ+Hl9psHSLSzaLuWQiy+HkUjJJlkcCT7UFrzzRrJ0g0QeniTIxy4j6lquL+bZk2DxRRyI/CwAjFfS/r14VJmgcvR7xdwdWlYWIdb+2cFaHRNAsY3tIg3NiZb/5fxJvsCtOPKuaXNbb4hu9oUUPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755519186; c=relaxed/simple;
-	bh=rp49452Teg70crejMOwAEBmVAEoVcBUXfqqRBjXnNik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IdffwLuxs6ScLEMmM2resXli/VXxfegMPknQey0b6rljCxKVEtas9Rd9UP/kLWThtodD3Ed7qRke2AuCt7HyewWX3UviPbHB6T08GkSXKerBe0h3ja1/07xHacsLRtKXZeNeF6lTmiCEOr4mstCJ8HpDZY/BcZ3pK8qXV7/vKJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=PSxNhDdZ; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IAJpjQ011221;
-	Mon, 18 Aug 2025 14:12:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	vF8oVy6/ZMtowVhAnxsrKfpp6JXqFRBEiZTXs8imWKc=; b=PSxNhDdZaYr8EoNw
-	8aZMzG+HAc5zZ/G6iGzm7FWO+i9981Jvk6JfEpE+hG0VOKlKZPoIa46QiLFU4DYx
-	sUznRsmqgIiHeCSbPJoiisAuzQzZ6hgkO4CmmJIHG7kce+fJ4nFBIscnYKnoIKbX
-	3aYq4auNUAVqWfPNpND0uGOiy/LN0NcMei0rDbyUEd+d+AzIAj5hnYsC2UnS0xR7
-	owFelE/4Cju4Q5ND97wzWltji6xPXOGJ9DX+MuHSSWyyGgT9iyzcWsaxj1P2gIhN
-	ZoZAmieb/bp+Dh/tSZAo0g1gI8TJ7Cp2gxhDUWfG1cXNsAamFT96b+DTHpo8oG9Y
-	4YsXyw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48k3j4capj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 14:12:15 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DD37C40046;
-	Mon, 18 Aug 2025 14:10:01 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CD98B6D4186;
-	Mon, 18 Aug 2025 14:08:47 +0200 (CEST)
-Received: from [10.48.87.121] (10.48.87.121) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 14:08:43 +0200
-Message-ID: <20437dbf-9d45-4a51-815f-ad1d1d15346e@foss.st.com>
-Date: Mon, 18 Aug 2025 14:08:25 +0200
+	s=arc-20240116; t=1755518946; c=relaxed/simple;
+	bh=zhQlJd80zNi92fHJAP62i7dk7OewyujHJUO3nPQQmXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pm6hio/YT4w3TXjPX5Q2V8cqQsE+8px/MIOzynGXG9xh4GfXFfT7oFhsAPhxvMcP742+0/v+idMzhPE49Wk7jyYta2Il4eB8UH3cfKc4yAnbBYrr5c2eTxZTX+lNDHTPtuokp0pQcQL9uI6ql1eNNMSnC0Xu04CMt6vGjJ1pJE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L+61y+Sg; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb78d5e13so62220466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755518943; x=1756123743; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7/wf4XEW96LfYgNJS81FI5VbVkVliDM/dqMzkSgUY1Y=;
+        b=L+61y+SgfSbpy2xnI3KHytoQeZxOUBF4Ef93L8sOTnUK7VFe0+Weekh7QB2mq3s38L
+         3PPHtKgo5cIm29V+IYSJmj8gclpz2KUV6hG4kHBfGLU7VfjsC1MJk747HOUV+gnkTzJb
+         Kg4mDbwK2gn/FPNfiLyobsvTKpPSihBE91ytQHoI4kNm57rMf/7Dv9oeiAMCh/IunUz7
+         jquyJYAcHGy4wOx/nJVuc8dpuRTi6YmtxAAyNcsV35yYZfM310z1S5equZV/axoAKY2Y
+         9Xr8scUQtX53ODLetgqsPjxcLRYIzz9tfFm7lghsFzcsljTUZlwbeSX6jEy9sSeWnyE8
+         7CQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755518943; x=1756123743;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/wf4XEW96LfYgNJS81FI5VbVkVliDM/dqMzkSgUY1Y=;
+        b=fz1g0YQ0wTLBI4POVolnyKWk01k0MSUK84KVSsSmRETrdSJFazW+QuEjNZSSnRBU51
+         X5waocA2uYhUEc1dGEM6SpwWPB5iwyxVFwYpGOtQ3JyPOrCd2dPvdRMHujj4+9+raPx/
+         LvjazNpXhTzb4MQ4usVBOWBLXz5juESz6z5z/ATJsejksZ8reQXnr8/bpzLUxDIpW9c4
+         bJUj2kU/eJDi+5eDSjPraIErep5uKzuz1rJDrYBQeXKuiwksefs9vRMMR3M/qQRp6GsM
+         CXmBxSItS3SW6clQ9Tt9I5PIqwygMB4+Zs0dOIIzDna4Ltm0JzrKJLs4If8Ss6hE2TNm
+         AhuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBYl7c26VoFeiThmOwTIjy4x88JxD2j94z5tQ+A968I7rpppva2Yi1oGQ6jco9VaisIiR6PLPjipVESx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZyh5M5Y9BCAIvXCk1vWTRQTjLFTYicehGqZRGvwGcwKCD1VVo
+	FN4S7PX3qTj3dGm+UrJyjwJn6kR9m8mZxD7YJpznENZwjpDNKDYXj4FX66qEBQnkjog=
+X-Gm-Gg: ASbGncsT2y1J+HzgFRRstV0+7Da1yQvPe4SSo/Mck5SmXb3LM9RkwBwGVDB57EK+N1m
+	UliFGbaa/MnaSpER4b/gUmhOHq7+XCM/CfXsu/sS6iqO6c4gJnNkMmO6HiYdCCvisC2pVPDlpvP
+	QC0WOZBXNSn16a10eB1BrfFyseVEE5elS5ywiY4xKMFS7AOocsQMMFDhXQHGNL0LkWoLC3uWVwm
+	S/VhR7HcRiLdD+kH4DIU/k8wWUAIso9FLsQJQJyOQ2R3okHc8e1hTOHrlBBw7SZ5Ca035RlAbj2
+	mRPD9mzCtfavGFTRh000j8Llq1zvsBFfvtraKeI/yl6DpWwl6cDLDelUbJZhLxtFGN8DLvmRCw4
+	ycenGmTn+Ap35Gy3j7MepKFMHMjGYApaEfCzBJGcm+rY=
+X-Google-Smtp-Source: AGHT+IGRMfpFIZvZ7u29pacmvJz4C0owYxR5kq96xs19isCciYLvnmOhz9IJXUPk4ZUiUsTh++K2ag==
+X-Received: by 2002:a17:906:6a0f:b0:af8:fd22:6e28 with SMTP id a640c23a62f3a-afcdc29e30cmr498595566b.7.1755518942902;
+        Mon, 18 Aug 2025 05:09:02 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce72cbbsm797994966b.35.2025.08.18.05.09.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 05:09:02 -0700 (PDT)
+Message-ID: <2cc1cee7-5580-48cc-bb63-cb993643f2bc@linaro.org>
+Date: Mon, 18 Aug 2025 14:09:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,193 +81,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 058/114] clk: stm32: stm32-core: convert from round_rate()
- to determine_rate()
-To: <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-        "Cristian Marussi" <cristian.marussi@arm.com>,
-        Chen Wang
-	<unicorn_wang@outlook.com>,
-        Inochi Amaoto <inochiama@gmail.com>,
-        Nicolas
- Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Keguang Zhang
-	<keguang.zhang@gmail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        "Takao Orito" <orito.takao@socionext.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team
-	<kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Huang
-	<ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        "Vladimir
- Zapolskiy" <vz@mleia.com>,
-        Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Samuel Holland
-	<samuel.holland@sifive.com>,
-        Yixun Lan <dlan@gentoo.org>,
-        Steen Hegelund
-	<Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang
-	<baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@amd.com>,
-        "Maxime
- Ripard" <mripard@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?=
-	<afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>, Sven Peter
-	<sven@kernel.org>,
-        Janne Grunau <j@jannau.net>, Alyssa Rosenzweig
-	<alyssa@rosenzweig.io>,
-        Neal Gompa <neal@gompa.dev>,
-        Eugeniy Paltsev
-	<Eugeniy.Paltsev@synopsys.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>,
-        Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner
-	<heiko@sntech.de>,
-        Andrea della Porta <andrea.porta@suse.com>,
-        "Krzysztof
- Kozlowski" <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        "Ulf
- Hansson" <ulf.hansson@linaro.org>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>,
-        Nobuhiro Iwamatsu
-	<nobuhiro1.iwamatsu@toshiba.co.jp>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <sophgo@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-riscv@lists.infradead.org>,
-        <spacemit@lists.linux.dev>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <patches@opensource.cirrus.com>, <linux-actions@lists.infradead.org>,
-        <asahi@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <soc@lists.linux.dev>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-58-b3bf97b038dc@redhat.com>
+Subject: Re: [PATCH] media: i2c: imx: Add note to prevent buggy code re-use
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Leon Luo <leonl@leopardimaging.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250817084824.31117-2-krzysztof.kozlowski@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-58-b3bf97b038dc@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250817084824.31117-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
 
-
-On 8/11/25 17:18, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-Reviewed-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-
+On 17/08/2025 10:48, Krzysztof Kozlowski wrote:
+> Multiple Sony IMX sensor drivers have mixed up logical and line level
+> for XCLR signal.  They call it a reset signal (it indeed behaves like
+> that), but drivers assert the reset to operate which is clearly
+> incorrect and relies on incorrect DTS.
+> 
+> People in discussions copy existing poor code and claim they can repeat
+> same mistake, so add a note to prevent that.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->   drivers/clk/stm32/clk-stm32-core.c | 28 ++++++++++++++++++----------
->   1 file changed, 18 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
-> index 933e3cde0795386c3e5e6902aa0989cf3dffc01e..72825b9c36a4d3b8ba3f7615b9026c09ffaf88d1 100644
-> --- a/drivers/clk/stm32/clk-stm32-core.c
-> +++ b/drivers/clk/stm32/clk-stm32-core.c
-> @@ -351,14 +351,14 @@ static int clk_stm32_divider_set_rate(struct clk_hw *hw, unsigned long rate,
->   	return ret;
->   }
->   
-> -static long clk_stm32_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-> -					 unsigned long *prate)
-> +static int clk_stm32_divider_determine_rate(struct clk_hw *hw,
-> +					    struct clk_rate_request *req)
->   {
->   	struct clk_stm32_div *div = to_clk_stm32_divider(hw);
->   	const struct stm32_div_cfg *divider;
->   
->   	if (div->div_id == NO_STM32_DIV)
-> -		return rate;
-> +		return 0;
->   
->   	divider = &div->clock_data->dividers[div->div_id];
->   
-> @@ -369,14 +369,22 @@ static long clk_stm32_divider_round_rate(struct clk_hw *hw, unsigned long rate,
->   		val =  readl(div->base + divider->offset) >> divider->shift;
->   		val &= clk_div_mask(divider->width);
->   
-> -		return divider_ro_round_rate(hw, rate, prate, divider->table,
-> -				divider->width, divider->flags,
-> -				val);
-> +		req->rate = divider_ro_round_rate(hw, req->rate,
-> +						  &req->best_parent_rate,
-> +						  divider->table,
-> +						  divider->width,
-> +						  divider->flags, val);
-> +
-> +		return 0;
->   	}
->   
-> -	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
-> -					 rate, prate, divider->table,
-> -					 divider->width, divider->flags);
-> +	req->rate = divider_round_rate_parent(hw, clk_hw_get_parent(hw),
-> +					      req->rate,
-> +					      &req->best_parent_rate,
-> +					      divider->table,
-> +					      divider->width, divider->flags);
-> +
-> +	return 0;
->   }
->   
->   static unsigned long clk_stm32_divider_recalc_rate(struct clk_hw *hw,
-> @@ -392,7 +400,7 @@ static unsigned long clk_stm32_divider_recalc_rate(struct clk_hw *hw,
->   
->   const struct clk_ops clk_stm32_divider_ops = {
->   	.recalc_rate	= clk_stm32_divider_recalc_rate,
-> -	.round_rate	= clk_stm32_divider_round_rate,
-> +	.determine_rate = clk_stm32_divider_determine_rate,
->   	.set_rate	= clk_stm32_divider_set_rate,
->   };
->   
->
+>  drivers/media/i2c/imx219.c | 4 ++++
+>  drivers/media/i2c/imx274.c | 2 ++
+>  drivers/media/i2c/imx334.c | 4 ++++
+>  3 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> index 3b4f68543342..9857929a3321 100644
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -1034,6 +1034,10 @@ static int imx219_power_on(struct device *dev)
+>  		goto reg_off;
+>  	}
+>  
+> +	/*
+> +	 * Note: Misinterpreation of reset assertion - do not re-use this code.
+
+
+Typo here: Misinterpretation
+
+I will send a v2.
+
+Best regards,
+Krzysztof
 
