@@ -1,249 +1,179 @@
-Return-Path: <linux-kernel+bounces-773877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983DFB2AB95
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:51:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1165B2ABB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A58A5C0018
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0BFC1BC24C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610703218B1;
-	Mon, 18 Aug 2025 14:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD0F24A063;
+	Mon, 18 Aug 2025 14:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHkKX+js"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="T4hWLo32"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2085.outbound.protection.outlook.com [40.107.220.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE0B321448
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528063; cv=none; b=Zf5zDTWAC32Zf5Hx8+LvhEFeNjugRCjqv+HtTGcZpArY55fHXXKclYz0exM4JDk76Xz+WUi5Ofi44dObpPbCip4fQuGPh961JiEpri2hG4YoOJDJarEOW/LeGgLrFvoMhRyy3ARxQS7X5aO0qxqYNKyoee4oUvaRMGDeV8MvplQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528063; c=relaxed/simple;
-	bh=hUrN8X66aiYm96Km2llUj/Mpt5uGUgCzzoe8GK4Eiio=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OLE6mAqNh1rm92LhVeRu5C6t2QAPKo+CAHO1kKyHt8iQ6Qe5qtNoa3jAVYEBo93SgJU5OAmIYnjE7I/OAw+4OBSLuvOlAAvNoUT5wNThXea6RMN6MIZqmTDO9gdOMVXLv4wDtV3md5HDHjEdNUJF8Wp2P4Zp9O/1BBHFHW5HoJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHkKX+js; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e39ec6fd1so160855b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755528061; x=1756132861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ga7x4F6HXFvk/iDnErF+LYjvyTvsTBsxWHavwkOdolE=;
-        b=FHkKX+js6y85FldIxq2o94bqvW9emzVmWtE2HH8l2SpapJvIovJfxOZjgIj+ZOGV9+
-         Lc1q8zMUqcYIloqqNM8DuxfXBdD0O1GTcJBz3epfUUD0u0bFN/Oq2g6HUEd29GBCUuHw
-         hcqHOXhAKC1wfmOLJib/Nk869QYSOFxQOSM1QOkRZ+lrsQIFsO3EOS12z5vGCgJrj4/P
-         sO8tmcLLtwo9P/HQKo0jNAdn6I45wsJszYc9hvjer/jj/lyLIWKmkVG0K1kS4B06XU+r
-         Ja/rp0UVMOhCzduM8haPgYigZ3yu5jyX1yjYzRUKbx/PZBWA1ZdtKC2lF6JxB3W5e38P
-         ZGFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755528061; x=1756132861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ga7x4F6HXFvk/iDnErF+LYjvyTvsTBsxWHavwkOdolE=;
-        b=ZKc+9OD4xh0ZydE5HSQ2FVVhm8TPrvonNLoZ3crjT/CP1KXlVsZ4UGv5n5r4quV2W+
-         6HGeIpxgvoOwB4VobPGlKj22KQReutZ6456H1aQGnMQFdPoRYiM16l0S4REnEYOsvf1Q
-         11RG7ZsyfknoudtTTtb6/0BSgdb5W8FBGMgUB3LiPLfquJr1obYW2e1MfBqcA6Mmt8b4
-         ajYfCOoHfn/6DEdylZXVxBKtyg83gf7Jpf/jrP96Yab/pjfsNcf5ZOzmAIg4zzRTexWb
-         YzU0+AkW3cXKnih7Fj9YHQ15mrzmaJEd2XUGPjePAuyOWLDx1hhZ/TxHGPR6J+d5g6n9
-         u4OA==
-X-Forwarded-Encrypted: i=1; AJvYcCUksrHYkATkImoNQWgfwZbYZb7yYWN0KtDPrXgoCvaSQ/UQ+QddBN2QWaIDY6BPLsvbDcygY5b/YRRCznY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj91DRywlswSoeC9ZEcePbWF5uBgMKqj+Iy8N61uLrzEPw90E4
-	8EcXg13X6yEU2HPMw315/qDovvUPMBQO7KLNiMRMUuatThJokcs3LmQsaMQupvLYK4QF5htgCHl
-	k7ReJqHZROCEFgpeG2KcxYWJk7krGXt6Ty0mT
-X-Gm-Gg: ASbGncsAQGZ929ALgJz8Ens4u2AsBDxACp7ssZ/mGBmezQ7uciuBjS8bpzfB7cHuXL0
-	RaIMwfzyjC4V897Agny4S5yWnyMxY+US7pVe0V7e4ogdDmU9ljCvcba4m0eZWWdOjMMkGtvou+A
-	qQTepvL1J6nPVbPrG/EN/fx6DC4jNDzaDBPgk07plMPyb0l1EdT2s0Wc97dmuQuz3HixvNOqxJN
-	9Gzf0U=
-X-Google-Smtp-Source: AGHT+IFrZuHxnN6IEK2r0tU2rCISF4H6sQekXuMVPVLd12u6wT/T0WzrgzvbiXwK8pkxTScnu7v9TIQRfM72tM0NwgE=
-X-Received: by 2002:a17:902:ce81:b0:240:b9c0:bc6f with SMTP id
- d9443c01a7336-2446d9b61a8mr85410995ad.10.1755528060990; Mon, 18 Aug 2025
- 07:41:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833F321773D;
+	Mon, 18 Aug 2025 14:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755528058; cv=fail; b=aOcxKeUbHSqlZwN0LfxYDXRTOYbRt16C/E69GX19spVX8ynMSwfvFKJnRzAFU5/KEBQoBposIT5tjCAnK6ZoGVIWwRZI/YfRx85ndzja7xtQFqx4Cx+o7P1LCg4wFtcw4HnyjhiEIhfMvGx6tpLSNZnH9ub6uGv0uLubAeW9Gb8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755528058; c=relaxed/simple;
+	bh=zk4kHkD4qc56SNF8M0SYlq6+9z2CO+E7k8Kg3ZRPmp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=FWLlvtwyVegZgRgfCpa82UWC3HgEwdrhadMdZFM9YV7/3JH4vYM0zafmj7crJttLbaeVKaFXnfWqBXkJ02zH/VwOzMZtMqDMz36zOL9XcMTDLAgFTsNT9ggyWb9wqXhdcmxkrvJV65GSWHqozxz0o89vK0ZusU/of3LNqslDcoo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=T4hWLo32; arc=fail smtp.client-ip=40.107.220.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wf+QnQlg1AfV6RPIYbIxHzLZvX3RfMSS6jxslBSKLabSEBVcTtFNjZKXvl/EShnruDKUqvq9jIWDhZwbsnsouOaW3biDmUX+AVrLHYRABgWabD7DkTWO8a0+kmJbKJnGBSIDzBC/XuClcIflWxfv+SsPgWQ1SLNXkPHk1IssEKbpGxrNonjL3xbhrDperFKJdq7u+j6DMOoA6qfnitgHXotqyaoHLHUWjiKsECV5yWhQDjcSgo8O+5kmwPhL0t4zvk6VokVNkT+LIMQnNbjZ2PiYzXf/EDPpzgZIOWfgMQ8xTJm49VdVKb3hasbyMWRP+VC8h1ulKkNR0miAG36iHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zk4kHkD4qc56SNF8M0SYlq6+9z2CO+E7k8Kg3ZRPmp8=;
+ b=nB5AbpTnSmhJbOItJuegiW9eMMZ2us/DuTmHS+JfG7/2Q5VGhEPE5lK1OuXVwfxaF7SfgA7keShy2yzIYOonP+9DajhyFBxUDkJcKZgNPZ8TJeW1stSQ2Um36vbWBw3g4K8q5X+1/sv6BZmx/HVuJcvHXs6HGU9e9Mn0q7e3vJwl2loU+9FEIUnnaGXc61T2BulEG9K5dLCR++VOY54/TB480Q1AaBDkW+dyiwhvDw9W68AfY8oz1IoL9WGmR0HWFAxDZBhrUL44ZBAuuqQxlvJYvEn3K9W5doddLdJtdFD+Mp1SGB0nRjfHrUhi0lTu3he7c4FvrqmyDAzVRxtUNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zk4kHkD4qc56SNF8M0SYlq6+9z2CO+E7k8Kg3ZRPmp8=;
+ b=T4hWLo324bQTlso0vC0K7nu0JvTdA4xi0QN2F0ZWCH0vzzNlYG+l+prmaCfBq1uRCtqtPEhNhghYFA/z+jeM6dW4m6Ja2d+ZMnCptLY/xViX7ckEJUlZJSDHgAmUMwU8Zo32Z4+p6L+C4TgX91wrf1XxHXI2vQ4V9wXqJIGCkj7DyMO/P3cuB5xq8md0bq80lj4kM9xZehaU5vy9kkcB1ukdVxrOYoUBUoYh4Bn+ozLw9M/o5Ft8gjyIZ69avCOUXI3q+rS5roS9PZf5cE2WTjuFgsR0Mbp2GI8apq9TwNfDT6YIBVqy1XeIovJPKggBVa4v/Cb6dfx6VXXP6LVXtQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SA1PR12MB9490.namprd12.prod.outlook.com (2603:10b6:806:45b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Mon, 18 Aug
+ 2025 14:40:54 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 14:40:54 +0000
+Date: Mon, 18 Aug 2025 11:40:51 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, robin.murphy@arm.com,
+	joro@8bytes.org, bhelgaas@google.com, will@kernel.org,
+	robin.clark@oss.qualcomm.com, yong.wu@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	rafael@kernel.org, lenb@kernel.org, kevin.tian@intel.com,
+	yi.l.liu@intel.com, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, patches@lists.linux.dev,
+	pjaroszynski@nvidia.com, vsethi@nvidia.com, helgaas@kernel.org,
+	etzhao1900@gmail.com
+Subject: Re: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
+ helper
+Message-ID: <20250818144051.GP802098@nvidia.com>
+References: <cover.1754952762.git.nicolinc@nvidia.com>
+ <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
+ <aeb04f91-ffce-4092-8dbc-17d116cd7c7e@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aeb04f91-ffce-4092-8dbc-17d116cd7c7e@linux.intel.com>
+X-ClientProxiedBy: BYAPR04CA0013.namprd04.prod.outlook.com
+ (2603:10b6:a03:40::26) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsO+EmR0QgFGjCbq74gzwbQbb76wjt1vOOOJnsCqj9hAhg@mail.gmail.com>
-In-Reply-To: <CABXGCsO+EmR0QgFGjCbq74gzwbQbb76wjt1vOOOJnsCqj9hAhg@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 18 Aug 2025 10:40:49 -0400
-X-Gm-Features: Ac12FXwnCiAjxoLjrPm2Gg52sSUwUKE37VYAtOU7LySFLtZAWT--6c5O3IBbCZY
-Message-ID: <CADnq5_PdzYSzFL7KDsPV7zqX2avwn-NhSJqyVVPYF9LOMEyhWg@mail.gmail.com>
-Subject: Re: REGRESSION drm/amdgpu: Radeon 7900 XTX hang & gpu_sched "Trying
- to push to a killed entity" since 1f02f2044bda (6.17-rc)
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Gang.Ba@amd.com, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA1PR12MB9490:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd4a396e-c398-4a45-a8b5-08ddde653c0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IQckryFAjENWddx5TCU7fyBd8PLDncG/8POZInB6i1rJlV5Bs05x5hiYgVHf?=
+ =?us-ascii?Q?/o1fXEzP3ovPIqBfDHRrLfg4H7QLfNTBeCZhFgb3zkWg2sz5lVCYa4tcXbCo?=
+ =?us-ascii?Q?pDioJHjaE9WwIO5oOCGcDZGfEnZMX3m0EXPUJF//s1BFWjqnnLIMJI13Z+22?=
+ =?us-ascii?Q?5YpLCu8nK2sy+a0z4mf9FtiUFk4PsOtf2oxlusqbADvgYQofQK1uuVBg86kq?=
+ =?us-ascii?Q?vYJKQdOo28Y3N7tJ3jxsn8LHIpyGTmG/QWHTxiYkMSP4OIsKL10QzE5mmg52?=
+ =?us-ascii?Q?VHC2Qn/pzaETupKdvE9dV7e4JQFJT9LyaKUeCg7wjGuJjaogmkg8WBRWU1tZ?=
+ =?us-ascii?Q?LOfrdNlPIGta2nzF2c3jE1RUjvlbazYw7XbMEq189Q3GxeQzkFVEzs4rxcL6?=
+ =?us-ascii?Q?r94U9u293CkXIqf1RIkkJ8Za58rWxuL2ZNHI9722rKRB2hF1ego8fI6+uVdf?=
+ =?us-ascii?Q?tcWF3r0sOd7OLIlqK6y7rgxOOH1AvteUQnho7ICBs1zbUccUBu+PIgnysCEO?=
+ =?us-ascii?Q?u+X2p5KdvJYrd5hWFXmsjannhgeHo51c/jV3ASly6ftn8oPk2m1/EXvbCfnE?=
+ =?us-ascii?Q?NkqU0O1B6+raG8duOzsFJ01BQONsij9uDwTS/MiSpCdgsC2mYi+a+jsny5qt?=
+ =?us-ascii?Q?rCI1WjhFDv9yXyiXcDOMboYiRneNod5dVL/48lCNe+enML3YnhC0M+utJTwY?=
+ =?us-ascii?Q?KK8GLC41i62/w6uq3x9HoWqfzVdTy2CZnJZYpzb1KmC2U4iXX5m7JzQe5SWn?=
+ =?us-ascii?Q?EZaqQYd5eUbg0/+LCMiwKAs32Jurdvcjix5Pg1Ow49onZg56wnvXAfPl26vw?=
+ =?us-ascii?Q?ULiXQKkqiU602iwiWj1SK/k4hylynT4JLAnCoy5PchO1qReL2n/eTUvFC7bU?=
+ =?us-ascii?Q?1lVN+KMjgabxzfYJCiI8AYMR0HT2XIcHmw3wgfi0jZAahMKtBI+H7MfmRBS8?=
+ =?us-ascii?Q?oY78wD0fiIZCgk6v6DCZG8/5C/FPSPcN92Iicb52lEkW6LiXckLRnWl/uNcj?=
+ =?us-ascii?Q?XBsPkizHuUp0ioQ5ZiWN4ThXfQVL4nbD0N9nyyZN//fSNSurTYItx7MhrhMb?=
+ =?us-ascii?Q?9+IYZzeWMKmqvYzuPAQiCoY675jKJQQvxuZMF7UENGpnxK2n+QKyUWU6W6rX?=
+ =?us-ascii?Q?HLJ/Qr0E3MupPLUx2BSMi/+8OioSKedBfnWZE9pJzX346a9QDNbK3fsYT/hy?=
+ =?us-ascii?Q?BNrHSZOcYGVAAsVARiScNQPeIvFSld6OJqZkCkSKiwuGeo8Vp2HD9efF8gaz?=
+ =?us-ascii?Q?Q1mWxm/mDOd0kOMHdBFfJKVHr/kLcDyi//Atw4eQL9ogOPVa/tpgtaVFQCwM?=
+ =?us-ascii?Q?JVdApX6/3xlYJQX3Pp2oa14cRHzQIrrEQAXMiu1SE5rdlamJb3AVz7h2C0TG?=
+ =?us-ascii?Q?Px8vmoAoJFbu82EzWRPKxF9LKg08FGf5s8J1zGv1q+kpK/EAEK4a1LPthouR?=
+ =?us-ascii?Q?ChySmyxgu0g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FOFWn7Gmb6gK32/tX1nbeqMQJ79Ixof+yIjj3SlRgUXA+3cvojM3NmEa8ZCm?=
+ =?us-ascii?Q?CVcjY/wrG+ssu6MhgutROjmngCpNwBFtKHi9RhcmzxmKz6nHx1Y6b53kJeEl?=
+ =?us-ascii?Q?EsgWRlKKsojWPcy60LdjOKWnhudedmX6UZwlKCj9UZAEQCUIJ5ugQxSZVsEO?=
+ =?us-ascii?Q?6R/xsLvCm/JKmGT/Zj+y4WMtssft3N9nrkdvVmpnHBp8lF7o0ngtEVSkXWeD?=
+ =?us-ascii?Q?uS+v1qqHITGaUmqj+7IqtWVDdzVkubYhoqDymqJ+mYsqxXYWzySg+DY2CXsL?=
+ =?us-ascii?Q?mRG9+mi8tUP6ljfxtEFW9h2TRTju4BK5YwdBpx5U2GAUxW/hEvuElEGGk4N/?=
+ =?us-ascii?Q?ZuwZeo6/COyUWto7dCoS1NzQkWZlcwW/XphlhdKgHilsNXQmc8O0QMsht61f?=
+ =?us-ascii?Q?u0/5jp4kpq7r+YmGSGLDzibWM58XIdnlIomefAgfRJYBCcbdOIRokcKqgUfS?=
+ =?us-ascii?Q?3VD5N+BclNuOCiBT20Gj4EzYnzy1BSzRJS+xa/zvg7dS8Yg+8ndmTbdXNqix?=
+ =?us-ascii?Q?L/49ItPeKr6zYSBXMmlIniGFnVPiEIKRCRXKlgrpryeQjduOT4A/QRlmH8RZ?=
+ =?us-ascii?Q?8fy2s5+mcarSF86ZN5BFgRXV6phNBbWmdwpVL3bnwsLOTb7xTtfsd8GXyj7X?=
+ =?us-ascii?Q?vub5jLmfFvlHd7ZVduPQtPPjLevoe7FRIWubkNMJUVzMVVufDAwmuxL2GM5X?=
+ =?us-ascii?Q?kz+LVTd7rwLMIKM0tyxRPKlnz0rJbQkSEibePb29Q6Yzm5m9nzvzdUkxWuU9?=
+ =?us-ascii?Q?r0WeYeYj7Sj+OZoRCsw1k0dADf1a6pj5N0ZnKyXZ7B98oX7/rR9pO3vLbU/Q?=
+ =?us-ascii?Q?5xq7yjdTSu/5DjA7vMJxvWnNRu+o+xoYPrXNOkQ3rppoIQ731KH4EepQBEOh?=
+ =?us-ascii?Q?e2Mv8SvCwagQbgb/4+UVNU3w7kJZzJQ3F27UKf5OBuWrE9hcOprYVKJryV81?=
+ =?us-ascii?Q?F4IuYN15ki0X74GSaaSRq/7vXas/3QU/VjQmDExvrcqDVFB4REGXjY9vkImx?=
+ =?us-ascii?Q?gMD28VW/mMS8IdI4pHjbRgg6J0yQDb/74u+AC/ZpmYi7iT2+2GARO5nZ6g/Z?=
+ =?us-ascii?Q?6/OkrZ3SM9IWkYiPSexm5SFtlPHmcKC4AZXmbLzSNPUjl26PseoUmWRSEpDb?=
+ =?us-ascii?Q?0Iw3yro4gBywQs1nwAxjZhEo2C/KU3mdrh9TMcFYl834jT7AAyf9iPdyumZx?=
+ =?us-ascii?Q?mdO5Rg2swJuAj+YznUlQPWV1TlqAVCXIla+SyPoIr89OIETUT1wKPJwDF0mz?=
+ =?us-ascii?Q?B/qikp9hbMkDxnIG+BzgWQNFSk5cr+mSr9UDALbTpKfKISU7/Rcj7dPHVWcA?=
+ =?us-ascii?Q?S5s7OT2Gz5PiwtwIguXzi0DWCVHjRIAXXmJTQmsmdUxWGQ7ubw1jMu2ocQe6?=
+ =?us-ascii?Q?gflH/pEsKa9E8iCBSKPlcCna0AcBHDXTlwukNayzSpvQYqvnbSpM0ZCq0WBO?=
+ =?us-ascii?Q?p+fQE00V7SBmQyxuFIxliTRxDukkNCOxfhxFtjc9bw6iVb6O91unYQ9Nzfyc?=
+ =?us-ascii?Q?c/kVj/k8djSzYqMs/Gsl1BlHRoRV6FvrUCiInwjRycNdzUW6l/d/IfIn8u5G?=
+ =?us-ascii?Q?FqO97N+Dq5kh1NFFcAkgW5p9q0Klo0/O84TpIRJX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd4a396e-c398-4a45-a8b5-08ddde653c0d
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 14:40:53.8977
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D67O7VRQBVvD3tcKIPn4bqOk4Gynq/D5yG5ZReREUJmbzFoWROKr9lH8ckOlefjm
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9490
 
-On Mon, Aug 18, 2025 at 10:32=E2=80=AFAM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
->
-> Hi Gang,
->
-> Between commits 4b290aae788e and 89748acdf226 my Radeon 7900 XTX
-> starts hanging when Steam performs shader compilation, with the
-> following messages/stack trace:
->
-> [ 9254.082549] kworker/u129:2 (15855) used greatest stack depth: 19656
-> bytes left
-> [ 9435.589185] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9435.590340] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9435.590465] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9435.590881] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9435.592513] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9435.594059] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9435.596428] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9435.597828] [drm:drm_sched_entity_push_job [gpu_sched]] *ERROR*
-> Trying to push to a killed entity
-> [ 9585.848993] INFO: task kworker/u132:12:18278 blocked for more than
-> 122 seconds.
-> [ 9585.849006]       Tainted: G             L     ------  ---
-> 6.17.0-0.rc0.250801g89748acdf226.7.fc43.x86_64+debug #1
-> [ 9585.849010] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> disables this message.
-> [ 9585.849013] task:kworker/u132:12 state:D stack:28600 pid:18278
-> tgid:18278 ppid:2      task_flags:0x4208060 flags:0x00004000
-> [ 9585.849022] Workqueue: ttm ttm_bo_delayed_delete [ttm]
-> [ 9585.849032] Call Trace:
-> [ 9585.849034]  <TASK>
-> [ 9585.849037]  __schedule+0x8d2/0x1be0
-> [ 9585.849044]  ? __pfx___schedule+0x10/0x10
-> [ 9585.849051]  ? __lock_release.isra.0+0x1cb/0x340
-> [ 9585.849059]  schedule+0xd4/0x260
-> [ 9585.849062]  schedule_timeout+0x17f/0x260
-> [ 9585.849065]  ? __pfx_schedule_timeout+0x10/0x10
-> [ 9585.849067]  ? find_held_lock+0x2b/0x80
-> [ 9585.849074]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
-> [ 9585.849076]  ? trace_hardirqs_on+0x18/0x150
-> [ 9585.849081]  dma_fence_default_wait+0x472/0x700
-> [ 9585.849087]  ? find_held_lock+0x2b/0x80
-> [ 9585.849089]  ? __pfx_dma_fence_default_wait+0x10/0x10
-> [ 9585.849092]  ? __pfx_dma_fence_default_wait_cb+0x10/0x10
-> [ 9585.849095]  ? mark_held_locks+0x40/0x70
-> [ 9585.849098]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
-> [ 9585.849103]  dma_fence_wait_timeout+0x344/0x540
-> [ 9585.849107]  dma_resv_wait_timeout+0xeb/0x190
-> [ 9585.849111]  ? __pfx_dma_resv_wait_timeout+0x10/0x10
-> [ 9585.849117]  ? rcu_is_watching+0x15/0xe0
-> [ 9585.849122]  ttm_bo_delayed_delete+0x34/0x100 [ttm]
-> [ 9585.849128]  process_one_work+0x87a/0x14d0
-> [ 9585.849140]  ? __pfx_process_one_work+0x10/0x10
-> [ 9585.849145]  ? find_held_lock+0x2b/0x80
-> [ 9585.849153]  ? assign_work+0x156/0x390
-> [ 9585.849161]  worker_thread+0x5f2/0xfd0
-> [ 9585.849172]  ? __pfx_worker_thread+0x10/0x10
-> [ 9585.849175]  kthread+0x3b0/0x770
-> [ 9585.849178]  ? local_clock_noinstr+0xf/0x130
-> [ 9585.849182]  ? __pfx_kthread+0x10/0x10
-> [ 9585.849186]  ? rcu_is_watching+0x15/0xe0
-> [ 9585.849188]  ? __pfx_kthread+0x10/0x10
-> [ 9585.849192]  ret_from_fork+0x3ef/0x510
-> [ 9585.849196]  ? __pfx_kthread+0x10/0x10
-> [ 9585.849198]  ? __pfx_kthread+0x10/0x10
-> [ 9585.849201]  ret_from_fork_asm+0x1a/0x30
-> [ 9585.849210]  </TASK>
->
-> I can also reproduce the same error when starting a campaign in Halo
-> Infinite (without relying on Steam=E2=80=99s shader pre-cache UI), which =
-made
-> bisecting feasible.
->
-> 1f02f2044bda1db1fd995bc35961ab075fa7b5a2 is the first bad commit
-> commit 1f02f2044bda1db1fd995bc35961ab075fa7b5a2 (HEAD)
-> Author: Gang Ba <Gang.Ba@amd.com>
-> Date:   Tue Jul 8 14:36:13 2025 -0400
->
->     drm/amdgpu: Avoid extra evict-restore process.
->
->     If vm belongs to another process, this is fclose after fork,
->     wait may enable signaling KFD eviction fence and cause parent
-> process queue evicted.
->
->     [677852.634569]  amdkfd_fence_enable_signaling+0x56/0x70 [amdgpu]
->     [677852.634814]  __dma_fence_enable_signaling+0x3e/0xe0
->     [677852.634820]  dma_fence_wait_timeout+0x3a/0x140
->     [677852.634825]  amddma_resv_wait_timeout+0x7f/0xf0 [amdkcl]
->     [677852.634831]  amdgpu_vm_wait_idle+0x2d/0x60 [amdgpu]
->     [677852.635026]  amdgpu_flush+0x34/0x50 [amdgpu]
->     [677852.635208]  filp_flush+0x38/0x90
->     [677852.635213]  filp_close+0x14/0x30
->     [677852.635216]  do_close_on_exec+0xdd/0x130
->     [677852.635221]  begin_new_exec+0x1da/0x490
->     [677852.635225]  load_elf_binary+0x307/0xea0
->     [677852.635231]  ? srso_alias_return_thunk+0x5/0xfbef5
->     [677852.635235]  ? ima_bprm_check+0xa2/0xd0
->     [677852.635240]  search_binary_handler+0xda/0x260
->     [677852.635245]  exec_binprm+0x58/0x1a0
->     [677852.635249]  bprm_execve.part.0+0x16f/0x210
->     [677852.635254]  bprm_execve+0x45/0x80
->     [677852.635257]  do_execveat_common.isra.0+0x190/0x200
->
->     Suggested-by: Christian K=C3=B6nig <christian.koenig@amd.com>
->     Signed-off-by: Gang Ba <Gang.Ba@amd.com>
->     Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
->     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->     Cc: stable@vger.kernel.org
->
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> Reverting 1f02f2044bda on top of 6.17-rc2 fully eliminates the hang on
-> my system.
+On Fri, Aug 15, 2025 at 01:28:02PM +0800, Baolu Lu wrote:
 
-Should be fixed in:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
-it/?id=3Daa5fc4362fac9351557eb27c745579159a2e4520
+> Given that iommu_group->mutex is transparent to the iommu driver, how
+> about
 
-Alex
+It is not actually transparent, alot of drivers are implicitly
+assuming that the core single threads their struct device for alot of
+the ops callbacks and we exposed the lockdep test to the drivers to
+help the document this.
 
->
-> Environment:
->     GPU: AMD Radeon 7900 XTX
->     Kernel: 6.17-rc2
->     Distro: Fedora Rawhide
->     Hardware probe: https://linux-hardware.org/?probe=3D99f5cf44a4
->     Kernel config and full dmesg are attached.
->
-> Reproducer (two ways)
->     Launch Steam and trigger shader compilation (automatic background
-> pre-cache or any action that compiles shaders).
->     Alternatively, launch Halo Infinite and start a campaign. Within a
-> short time the GPU hang occurs and gpu_sched prints repeated
-> *ERROR* Trying to push to a killed entity, followed by a blocked
-> ttm_bo_delayed_delete worker as in the trace above.
->
-> Impact / notes
->     This is a runtime GPU hang on a current RDNA3 card; the offending
-> commit is CC=E2=80=99d to stable, so it would be good to fix or revert be=
-fore
-> it propagates.
->
-> Thanks for looking into this.
->
-> --
-> Best Regards,
-> Mike Gavrilov.
+Jason
 
