@@ -1,131 +1,145 @@
-Return-Path: <linux-kernel+bounces-773878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679F5B2ABA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:53:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5C9B2AB56
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2E515C2A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:44:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EEE47A931C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D2535A296;
-	Mon, 18 Aug 2025 14:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C1135A298;
+	Mon, 18 Aug 2025 14:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4AIWgoz"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxI+QpqY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D8535A28A;
-	Mon, 18 Aug 2025 14:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC435A293;
+	Mon, 18 Aug 2025 14:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528136; cv=none; b=m541qftepMe9/IKx/UcM0em63adni05KoxWFiEXyhpMjX6l/6cwIHByuZauAVNOjd9RpMGEV5ZGSu6hTr+8ErsSrE1QmRUOIOJKGBkGRV5km2COyglD2DjOvj86UvWyFk6bLQZwi+tyLnYTnlg7wEQmndR5sSSHpN1FT4c5/gew=
+	t=1755528148; cv=none; b=lBg/j/VzYkrevPk0CoGNV+47EZvc6wi5a/VzUVuArJ+GNi87FEFAbY8naWxjQN0EdCeT6Hf7YSm9Bz0e9ugGLC77o+y/VlZdzSVgJNLVfp7PCVyNLkke+crCxQ5vkLrjR+LJ790fP4kJlNfs1JayirLc33ElVheAXg0aJSxVw+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528136; c=relaxed/simple;
-	bh=g8huDsrE0kNMAJ4YeKQeYZ+Jxmi3wLlT5sYTAM6ravQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K0BKnInuiff4QvAqQaa34EbRCSVZNJLu9pcTLBAA9bM4Ai/U1UU8yMdNBICEz+eBZdLUDC5n9QdIXXL1DgC3+XQ5TOaYzhleKImcOFKR6wnwQMpHNXFrUPQudxhVKJmDC/+Jqx1b1hC/SWNq1R05XtyuSFoa9E+4UnQ6SyVI2og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4AIWgoz; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so22026875e9.2;
-        Mon, 18 Aug 2025 07:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755528133; x=1756132933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2VylDR1oWkJ0EiX1c8eLC+dJ8zDkBar7+OrlY7elEsc=;
-        b=V4AIWgozUCxGMK8sf5iEQS/UR0LICoxh7TFSjDC7N/iUl78cVJpAXoZ7oYu8gZ75Q/
-         WWmw2GJnp0jDuQW4or3crBczSfqC2kFeYZ6fRABpa2eJisb/0Cc/bcykKwBD0POUR2Dc
-         GEhDIqTlAXKDydfjQpvytCaJilJmPA0OIQYxcmVf7Xkk2MSxIN6HSIJ7/NZMOmwSOz5Q
-         IoB1z4wDPAFD6acwmA8l1VgH2RoE2tLibBybIvrIOTezmJ7wnYTlj2Zzm6rlhYEU8btW
-         7+eunoFu3VPX/lflPKcSl5HUts5Y0cMFjkUdA+2UdYDgDZcXlfCF885qg9JVxHuu7tVC
-         7FiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755528133; x=1756132933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2VylDR1oWkJ0EiX1c8eLC+dJ8zDkBar7+OrlY7elEsc=;
-        b=jnkQrX5joVQuy3hOepCAyUWaO7OGEi4kPyC0ahbw+GagZdrEK4v8NwC9JPH3vC858m
-         3bK1BwJg0J94nEK00s/rIEU2r9ZI0+rx7nZZTKKrNjnvMicVR32Q8ngUh5n+bK0I2/V2
-         wre9OmSvuI20mnBdNnYSxek7OTFnC+rMZiTSKUGonZr7xmmCd3shf7cwnJJ8qKzpfrne
-         PNL9fz07xYlmA+Uajpwj8UDnHNITkc5+ct/0luW+bYBBpI4kdxtaSXbdhPwdzVxn9Wdu
-         ysi0JPD1J63g+4rQKpLDxClK1Z8nv84F4OTvIDL4LcSQ6pHLN1U/FEbqEyZeaiVqo2dQ
-         5rjA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9/v4fjTmVAnXcrINa7ar9uM3W2ZNz86fvsYL2FQUPJWh88FD5HIakvwWQ06JS5ocHIswMW7+vWO6v@vger.kernel.org, AJvYcCXwBsRFiAdihL5EKzxSJAJzN25epy6xvUodSSSqeCTv/IS69RZvVA2LKB9yH4FJa5x58OEXAosu+6BgemlY@vger.kernel.org, AJvYcCXwsSDXrJ2kTouludwQGYRoWbAKUKk0HltiihC7KnP5XAn11dtnFtHCRjBMxEc1FcfXZWE+zwgnrH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpQS/PFGAwqQPWEpNA5r/fNli+Zzn9GyNhQB5mglH5FsMsFgWj
-	RhLG3o+SnMuhZvh+BXPTMKaQWclbUe36I2q4ZOuh3jMx6Kg4l0X1wUliJkZxL26u9nR0Me3dPtD
-	8Kr5THrAgAYr4nNrfI6NKk0+vnCcp9kW4lyuRCZFxNw==
-X-Gm-Gg: ASbGncsk0Zj3t1BZ6oLiJ7U3HuxjvNpM5f5VD4Pe5+/dhviZENLJoF45n/gowzaxcda
-	RMzDQvFs3Tl9LPwBkNKgZn6kL2C90lSywprMHYXz4w5jWCAc0t80/d2sXeXTZZSAnn+aNISaxQp
-	5w0DlyfQh/Rl87DFb+Y6fEdJXVFU9u5wBHMuo5kmjXhIjBYkB6uc3d7Ye0w9sD9ILFOhf8aaxr3
-	xFEENUTvg==
-X-Google-Smtp-Source: AGHT+IF6uyFUGlyDCHbyGxLbiebW15nl1dAN+7KqllTQkgQUSLDjBnckdQ4PrtuCjAiIJxTGaqJ/sn4x3b+8l/vlLUI=
-X-Received: by 2002:a05:6000:24c5:b0:3a4:f50b:ca2 with SMTP id
- ffacd0b85a97d-3bb6636cb19mr9221513f8f.8.1755528132931; Mon, 18 Aug 2025
- 07:42:12 -0700 (PDT)
+	s=arc-20240116; t=1755528148; c=relaxed/simple;
+	bh=fGHdn9+ygD6wlu1IBkHUW+r7l+vTsYKlue/b33fPSm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dws8RXW7uIFSUR1js2MHNhbDZOB9aROiX1wMpZWUPInKXFtdQS7dp6VdmS3Rnqd+XsdeMxP17U5YWLA6TYuUWHTyo2A3JxkgC1UmeAzu9/wDS9lO3yrNWMM4ErqkP4IkbnlfdpDqirWetAqTXt4Mm4ua7ENs5WBYReHbWcVTfS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxI+QpqY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F81C4CEEB;
+	Mon, 18 Aug 2025 14:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755528147;
+	bh=fGHdn9+ygD6wlu1IBkHUW+r7l+vTsYKlue/b33fPSm8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AxI+QpqYR1kFMN1tDndYVoLEFWEYphqlaWEVCTWJcs5r3gjJ3QzHrLrHWskc0FJul
+	 Uj5dhIjKKCagZQ5NhWD7/vWqNqoiMaZ33lowG+/oOJ65NNicjWWsp8TpQBhslUoWvr
+	 bSar+K0AU9kmag9nmho5q8VCoaWvofmDPkUnGmhre7Wjyh0aF/sabAvLLwUJnWqXZO
+	 mhg2mDvDv/vjewUoP+UMMyiTCwfPN3bCAi7TYLsrYXXsB+EWsN7b1PaJRWNmaLJcJ3
+	 ldrKlXi/XCgKp2ycfwNVbTXObFAVFDRtkkNiGyqVnmKEDrgSuDnQpu+YNMRd+zxyao
+	 nnwjRkppAtXHA==
+Message-ID: <b1807a5a-9507-49e2-9a4b-5101078c7a90@kernel.org>
+Date: Mon, 18 Aug 2025 16:42:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818075051.996764-1-yeoreum.yun@arm.com> <20250818075051.996764-2-yeoreum.yun@arm.com>
- <CA+fCnZcce88Sj=oAe-cwydu7Ums=wk2Ps=JZkz0RwO-M_DjfVQ@mail.gmail.com> <aKMmcPR8ordnn1AG@e129823.arm.com>
-In-Reply-To: <aKMmcPR8ordnn1AG@e129823.arm.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Mon, 18 Aug 2025 16:42:02 +0200
-X-Gm-Features: Ac12FXwekbsyapeljRABB8AE1hyjZDIfFB0HZbnsKW56XSmgXNqVbJdHAoiUZKU
-Message-ID: <CA+fCnZd9m3WBPimikuxSMNar-xbDaNFNQEJ9Bn=8uCMe-uYHeQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] kasan/hw-tags: introduce kasan.write_only option
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, dvyukov@google.com, 
-	vincenzo.frascino@arm.com, corbet@lwn.net, catalin.marinas@arm.com, 
-	will@kernel.org, akpm@linux-foundation.org, scott@os.amperecomputing.com, 
-	jhubbard@nvidia.com, pankaj.gupta@amd.com, leitao@debian.org, 
-	kaleshsingh@google.com, maz@kernel.org, broonie@kernel.org, 
-	oliver.upton@linux.dev, james.morse@arm.com, ardb@kernel.org, 
-	hardevsinh.palaniya@siliconsignals.io, david@redhat.com, 
-	yang@os.amperecomputing.com, kasan-dev@googlegroups.com, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: clock: mediatek: Add new MT8189 clock
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org, netdev@vger.kernel.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
+ vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
+References: <20250818115754.1067154-1-irving-ch.lin@mediatek.com>
+ <20250818115754.1067154-2-irving-ch.lin@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250818115754.1067154-2-irving-ch.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 3:11=E2=80=AFPM Yeoreum Yun <yeoreum.yun@arm.com> w=
-rote:
->
-> > > +           hw_enable_tag_checks_write_only()) {
-> > > +               kasan_arg_write_only =3D=3D KASAN_ARG_WRITE_ONLY_OFF;
-> >
-> > Typo in =3D=3D in the line above. But also I think we can just drop the
-> > line: kasan_arg_write_only is KASAN_ARG_WRITE_ONLY_ON after all, it's
-> > just not supported and thus kasan_flag_write_only is set to false to
-> > reflect that.
->
-> Sorry :\ I've missed this fix from patch 3... this should be =3D=3D to =
-=3D.
->
-> However, we couldn't remove kasan_arg_write_only check in condition.
-> If one of cpu get failed to hw_enable_tag_checks_write_only() then
-> By changing this with KASAN_ARG_WRITE_ONLY_OFF, It prevent to call
-> hw_eanble_tag_checks_write_only() in other cpu.
+On 18/08/2025 13:57, irving.ch.lin wrote:
+> From: Irving-ch Lin <irving-ch.lin@mediatek.com>
+> 
+> Add the new binding documentation for system clock
+> and functional clock on MediaTek MT8189.
+> 
+> Signed-off-by: Irving-ch Lin <irving-ch.lin@mediatek.com>
 
-Is it possible that the write-only mode will fail to be enabled on one
-CPU but then get enabled successfully for another?
+Never tested so just quick review to for obvious issues. I won't bother
+with full review :(
 
-What would happen with the current code if the first CPU succeeds in
-enabling the write-only mode, and the second one fails?
 
-> As you said, kasan_flag_write_only reflects the state.
-> But like other option, I keep the condition to call the hw_enable_xxx()
-> by checking the "argments" and keep the "hw enable state" with
-> kasan_flag_write_only.
 
-Assuming we keep this behavior, please add a comment explaining all this.
+> +
+> +examples:
+> +  - |
+> +    imp_iic_wrap_ws_clk@11b21000 {
+
+1. Follow closely DTS coding style.
+
+2. Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+Best regards,
+Krzysztof
 
