@@ -1,142 +1,93 @@
-Return-Path: <linux-kernel+bounces-773527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D14BB2A142
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD226B2A15E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8C23A595F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:12:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE6A656241B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205CE31A079;
-	Mon, 18 Aug 2025 12:12:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC52319875;
+	Mon, 18 Aug 2025 12:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMlllXjV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82BD27B35B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AB427B320;
+	Mon, 18 Aug 2025 12:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755519133; cv=none; b=Veme80a01FzG3JGx87DT2SCw1aH8QEJekO6t6nnMAVeUQATdrPx0P+5h4ENl52Mm/DSs3ZZUr7z6pK92RsY0qXB39g0jAhzTSWoVprey+rJ11MZu8V0CRps+dCRD3Ts5FjRIzFn7xBIDg8rYBthpkVQc3fFVoiS/+ZrYL+PtQRM=
+	t=1755519132; cv=none; b=mrwKEe8TH/LzepQk9xobwIoQxJEMHcsaxcAZvC0RzLiBQ23etnvFCXuGJOKG7f3dG4QaODBbIVlyaiu0tL4zdc5QSuIK3Ab8p3bQ7qMjP6GO82B2AGtQADkRhOQT+vFsMYJlm9CDvIRDTJYkRIl9hDO5jFm9N8ud5vFr5l/uksQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755519133; c=relaxed/simple;
-	bh=/J98xdwnslQwtH1HCM4at7pMtZKEBOa06YFopFGnrVk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QSKlPn1UdAW6enYG6Qo4xEd0GMT5xWSPPAKYeC+sZHfmSoiM6qRR4IPb2dRd5e8TBEapiQ6v0k65DLYJjQfTLgTljDYS//Jk023+kkbpwdqDWgjNMAFeNqJTGkDqtr1Gsscn+PrSqvFtvXMPQEtzqTGzSuEJhe5DRGInUPBxE5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1unyiY-00050w-3F; Mon, 18 Aug 2025 14:12:02 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1unyiW-000ttZ-0B;
-	Mon, 18 Aug 2025 14:12:00 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1unyiV-00CBic-3A;
-	Mon, 18 Aug 2025 14:11:59 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH net v1 1/1] net: phy: Clear link-specific data on link down
-Date: Mon, 18 Aug 2025 14:11:59 +0200
-Message-Id: <20250818121159.2904967-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1755519132; c=relaxed/simple;
+	bh=pFQiRNiAx2KA64iJllDiUG0KBdl/BAjnjqPi21Hk2yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0ojvTKEDur/OGZbdrDS21iq2lSTOYHsJz4y60joHreR01pDXCj2P49r6MTfw8z6gzIlgiMR7Rau4xI/geyJKSZ9Ydx0svQNkh0S35IaMxvAkwNaBsZcpZKy5b9Eex9KFUgsOFMOW1RNBs2RsCs7eiT8ZLoaGNKQhL4Q6ooJX3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMlllXjV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED7F0C4CEF1;
+	Mon, 18 Aug 2025 12:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755519131;
+	bh=pFQiRNiAx2KA64iJllDiUG0KBdl/BAjnjqPi21Hk2yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vMlllXjV23P9OaT8bW9Iciyq0kyfpVL6LjY+QkGkL2leuSqZhf+aFWDIMhvpiTjgD
+	 Md3NAn3piFo4BLPf4fKgmeawE0lcv8dboTgalyTXeNMYMQFhBXxl9xbahankS1mwkb
+	 483Ye6vpVAlCcmUDTVcipZlHpgsgQy9xpT0Lvcncy6r9ZBkkpwXt9w3Yp+DialouVe
+	 DB/WJmCl/CuuPQGrMxnXywC+8M0dJymdsZ5MqgCLrTeajKTYFTEGE8vfW1XPfVPijH
+	 f2TR++t2Zh+yEM3+EFKHS4MfcLAxSVNl/loLlXRoJr6AzpeBAU5KAS2IkWYparuTnY
+	 K9v6O2K+e5PsA==
+Date: Mon, 18 Aug 2025 13:12:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jeff Chang <jeff_chang@richtek.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
+ rt5133_validate_vendor_info()
+Message-ID: <50e34f5e-410e-4a5c-a1de-34becd9056da@sirena.org.uk>
+References: <aJ7YivhlWlE6ifw1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WdoSpSVQ4oG3PH20"
+Content-Disposition: inline
+In-Reply-To: <aJ7YivhlWlE6ifw1@stanley.mountain>
+X-Cookie: A grammarian's life is always in tense.
 
-When a network interface is brought down, the associated PHY is stopped.
-However, several link-specific parameters within the phy_device struct
-are not cleared. This leads to userspace tools like ethtool reporting
-stale information from the last active connection, which is misleading
-as the link is no longer active.
 
-For example, after running `ip link set dev lan2 down`, ethtool might
-show the following outdated information, indicating a 1000Mb/s Full
-duplex link with a link partner, even though the link is detected as down:
+--WdoSpSVQ4oG3PH20
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  # ethtool lan2
-  Settings for lan2:
-        Supported ports: [ TP MII ]
-        Supported link modes:   10baseT/Half 10baseT/Full
-                                100baseT/Half 100baseT/Full
-                                1000baseT/Full
-        ...
-        Link partner advertised link modes:  10baseT/Half 10baseT/Full
-                                             100baseT/Half 100baseT/Full
-                                             1000baseT/Full
-        ...
-        Speed: 1000Mb/s
-        Duplex: Full
-        Auto-negotiation: on
-        master-slave cfg: preferred master
-        master-slave status: slave
-        ...
-        Link detected: no
+On Fri, Aug 15, 2025 at 09:49:46AM +0300, Dan Carpenter wrote:
+> The "priv->cdata" pointer isn't an error pointer, it should be a NULL
+> check instead.  Otherwise it leads to a NULL pointer dereference in the
+> caller, rt5133_probe().
 
-This patch fixes the issue by clearing all outdated link parameters within
-the `phy_link_down()` function. This seems to be the correct place to reset
-this data, as it is called whenever the link transitions to a down state.
+This doesn't apply against current code, please check and resend.
 
-The following parameters are now reset:
-- Speed and duplex are set to UNKNOWN.
-- Link partner advertising information is zeroed out.
-- Master/slave state is set to UNKNOWN.
-- MDI-X status is set to INVALID.
-- EEE active status is set to false.
+--WdoSpSVQ4oG3PH20
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/phy.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index 13df28445f02..6bdd49d93740 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -83,6 +83,16 @@ static void phy_link_down(struct phy_device *phydev)
- {
- 	phydev->phy_link_change(phydev, false);
- 	phy_led_trigger_change_speed(phydev);
-+
-+	/* Clear the outdated link parameters */
-+	phydev->speed = SPEED_UNKNOWN;
-+	phydev->duplex = DUPLEX_UNKNOWN;
-+	if (phydev->master_slave_state != MASTER_SLAVE_STATE_UNSUPPORTED)
-+		phydev->master_slave_state = MASTER_SLAVE_STATE_UNKNOWN;
-+	phydev->mdix = ETH_TP_MDI_INVALID;
-+	linkmode_zero(phydev->lp_advertising);
-+	phydev->eee_active = false;
-+
- 	WRITE_ONCE(phydev->link_down_events, phydev->link_down_events + 1);
- }
- 
--- 
-2.39.5
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmijGJUACgkQJNaLcl1U
+h9BF9wf8CvCQTwSqdYdU48v5WRHGGLUFLpF5CBk1kLP8ebNuOwY2kGnQL3ew6V5L
+YByMNX5hjBvY3FKUGeP36qMr5A5aJyVe51rFYBiVtv5mtJfMElb5qJrpI4DnPpIw
+YPwAwRbmbsL3mZQVuuOL7C5iRi5DJYJ5jnoVqC7HmEdcWuH3hnSB1SM48Q+fG+3N
+EwbuTDCPHiZCy4pR2zh6sFSEqimXWOzbqNpXQ4nVbPZ3BYw6hxUyRTDMHZKumtIP
+IqkRUFnm3w3x4IWcyiJa09lu71w6TPq1LnPFRqXXsXZArC4DdBbeJoeVqh060fXd
+RkC6be0kmtNw+Qiu5FvWXby/xJSkeg==
+=6yU2
+-----END PGP SIGNATURE-----
 
+--WdoSpSVQ4oG3PH20--
 
