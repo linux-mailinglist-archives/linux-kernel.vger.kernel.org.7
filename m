@@ -1,114 +1,158 @@
-Return-Path: <linux-kernel+bounces-773933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40CDB2AC9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:23:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6276DB2AC9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D503B0FE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690D8189F34F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA3A23E356;
-	Mon, 18 Aug 2025 15:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C09LzqeP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E642550AD;
+	Mon, 18 Aug 2025 15:18:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB7621ABDB;
-	Mon, 18 Aug 2025 15:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE06C21ABDB;
+	Mon, 18 Aug 2025 15:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530320; cv=none; b=BX2KEVHIDnzF/eF+W5HSEBcynsli/ZOg4K3SIFRIOJAdHUEBaLG/m3+CCB5DoVredQzpSaprGKyb0X3sPK3oT4UVX4rCUMhhDMjhJFuCGo76rrQkNr8nnmodncPWRJWPwkXTOlL5bmyeLNVEBR2lA/SwDjPYiwScT77ixu9XBgU=
+	t=1755530334; cv=none; b=j45Qz58haPzOAqaL0QjsoeNnubp0CCobmDz6QvEBcHtX9oSSGcpWr5PPzjJ4JrabgkwaVmUmIfwDdM4sC9s4qmN8EzegkzUU4gLP1B0lh+i4vi9hRkh/9ZR3reldSgpp6d5XwzHcZdB0tCT35AvQfiJz08naBrJCOBbwLFK64zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530320; c=relaxed/simple;
-	bh=QJEtlbsljO1cRUNNutDsrpeVJivV7FXwntkgcCfCtGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fd5mJ4JaCyp1n5PdQfYMZIsMkpghU7uH3sgtalN3pkKqhJeMPGOcHpYUfWHtpW0yQSdCHupXOjXqusws95f4GS9tZJTKWikuOFzWv4H7GuXjFYucfUXez2V+9b/6XxUy9YkZ2ggmV1+kY+g8B3PPOqdqvNTED5eeSB2KdLSny2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C09LzqeP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8502AC4CEEB;
-	Mon, 18 Aug 2025 15:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755530318;
-	bh=QJEtlbsljO1cRUNNutDsrpeVJivV7FXwntkgcCfCtGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C09LzqePS/Fb4k7SJVgOSBBo16oUsAoNCKzD8whALVN9ZBzBpjvs2ITTo5NVOslqR
-	 v3R8FsdAC5xLJN9GbCuogFhwQ+AO7T+/0TeqJKUERl5OsRf8wMf8C25iyhKF3ruaUT
-	 9HIKOY+0y/3zHTFTeDJqOlC+8Y3tb76SUo2XYtr9NdnRPI+YTWWOTkW881m8f/lxIg
-	 Jrm8KX2kXPasz7JzZ8SsWnE6winjRokSnB0cet9kX8hVVvZynJ8jqdFMvioIgRZPpy
-	 aij2awFL1rCpfnaYKgBC0ejmBWJmBhTSS44S0TXkD1bBfUUNbsLTIlK2OJIOjTaFYm
-	 /e6lVfi0nFCPg==
-Date: Mon, 18 Aug 2025 16:18:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Frank Li <Frank.li@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	Fugang Duan <B38611@freescale.com>, Gao Pan <pandy.gao@nxp.com>,
-	Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Larisa Grigore <larisa.grigore@oss.nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 10/13] spi: spi-fsl-lpspi: Add compatible for S32G
-Message-ID: <35f6a3be-d924-403d-b60b-d4c78d833a60@sirena.org.uk>
-References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
- <20250814-james-nxp-lpspi-v1-10-9586d7815d14@linaro.org>
- <aJ4qNVIp788gc2ZU@lizhi-Precision-Tower-5810>
- <1f3b68d4-e0cc-4952-a695-322ed9756b95@linaro.org>
+	s=arc-20240116; t=1755530334; c=relaxed/simple;
+	bh=ukmlTHTouf5G9dMeqhHxsdEphPg6Nyz2tjN77gIOvQc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xv7ppXTA9SVW5CseTWCrTayDmREqETqngDzEzHe4pPBS9lFgatV4xy94uJ1LTPFGB0kLW63RlywVF71KoU2NNeWUTbbLt+RWfCv5Oy7HC5kW/fjxQDI4Nl3HqTBd2jpcWquXPZBx7Dha1RuwlnZdZWlx+1G/O0Ea/oDL2LlDrjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c5GX54YLFz6D9JR;
+	Mon, 18 Aug 2025 23:16:37 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 55A881402F8;
+	Mon, 18 Aug 2025 23:18:42 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 18 Aug
+ 2025 17:18:41 +0200
+Date: Mon, 18 Aug 2025 16:18:40 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Nathan Chancellor <nathan@kernel.org>
+CC: Jonathan Cameron <jic23@kernel.org>, kernel test robot <lkp@intel.com>,
+	Ben Collins <bcollins@watter.com>, David Lechner <dlechner@baylibre.com>,
+	Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
+	<andy@kernel.org>, <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] iio: mcp9600: Recognize chip id for mcp9601
+Message-ID: <20250818161840.00002ecd@huawei.com>
+In-Reply-To: <20250818150659.GA2948920@ax162>
+References: <20250815164627.22002-4-bcollins@watter.com>
+	<202508161646.PDl6V4EU-lkp@intel.com>
+	<20250816110243.06fbf7fb@jic23-huawei>
+	<20250818150659.GA2948920@ax162>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5H3ikhGOIq/UysY2"
-Content-Disposition: inline
-In-Reply-To: <1f3b68d4-e0cc-4952-a695-322ed9756b95@linaro.org>
-X-Cookie: No guts, no glory.
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Mon, 18 Aug 2025 08:06:59 -0700
+Nathan Chancellor <nathan@kernel.org> wrote:
 
---5H3ikhGOIq/UysY2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Jonathan,
+> 
+> On Sat, Aug 16, 2025 at 11:02:43AM +0100, Jonathan Cameron wrote:
+> > On Sat, 16 Aug 2025 16:46:12 +0800
+> > kernel test robot <lkp@intel.com> wrote:
+> >   
+> > > Hi Ben,
+> > > 
+> > > kernel test robot noticed the following build warnings:
+> > > 
+> > > [auto build test WARNING on jic23-iio/togreg]
+> > > [also build test WARNING on linus/master v6.17-rc1 next-20250815]
+> > > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > > And when submitting patch, we suggest to use '--base' as documented in
+> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > > 
+> > > url:    https://github.com/intel-lab-lkp/linux/commits/Ben-Collins/dt-bindings-iio-mcp9600-Add-compatible-for-microchip-mcp9601/20250816-005705
+> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+> > > patch link:    https://lore.kernel.org/r/20250815164627.22002-4-bcollins%40watter.com
+> > > patch subject: [PATCH 3/5] iio: mcp9600: Recognize chip id for mcp9601
+> > > config: riscv-randconfig-001-20250816 (https://download.01.org/0day-ci/archive/20250816/202508161646.PDl6V4EU-lkp@intel.com/config)
+> > > compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+> > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250816/202508161646.PDl6V4EU-lkp@intel.com/reproduce)
+> > > 
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202508161646.PDl6V4EU-lkp@intel.com/
+> > > 
+> > > All warnings (new ones prefixed by >>):  
+> 
+> <trim unrelated -Wnull-pointer-arithmetic>
+> 
+> > > >> drivers/iio/temperature/mcp9600.c:440:53: warning: invalid conversion specifier '\x0a' [-Wformat-invalid-specifier]    
+> > >      440 |                                 "Expected id %02x, but device responded with %02\n",
+> > >          |                                                                              ~~~^
+> > >    include/linux/dev_printk.h:156:62: note: expanded from macro 'dev_warn'
+> > >      156 |         dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
+> > >          |                                                                     ^~~
+> > >    include/linux/dev_printk.h:19:22: note: expanded from macro 'dev_fmt'
+> > >       19 | #define dev_fmt(fmt) fmt
+> > >          |                      ^~~
+> > >    include/linux/dev_printk.h:110:16: note: expanded from macro 'dev_printk_index_wrap'
+> > >      110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+> > >          |                              ^~~  
+> > > >> drivers/iio/temperature/mcp9600.c:441:26: warning: data argument not used by format string [-Wformat-extra-args]    
+> > >      440 |                                 "Expected id %02x, but device responded with %02\n",
+> > >          |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >      441 |                                  chip_info->chip_id, dev_id);
+> > >          |                                                      ^
+> > >    include/linux/dev_printk.h:156:70: note: expanded from macro 'dev_warn'
+> > >      156 |         dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
+> > >          |                                                                     ~~~     ^
+> > >    include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
+> > >      110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+> > >          |                              ~~~    ^
+> > >    drivers/iio/temperature/mcp9600.c:428:22: warning: unused variable 'ret' [-Wunused-variable]
+> > >      428 |         int ch_sel, dev_id, ret;
+> > >          |                             ^~~
+> > >    10 warnings generated.
+> > > 
+> > > 
+> > > vim +/x0a +440 drivers/iio/temperature/mcp9600.c
+> > > 
+> > >    422	
+> > >    423	static int mcp9600_probe(struct i2c_client *client)
+> > >    424	{
+> > >    425		const struct mcp_chip_info *chip_info = i2c_get_match_data(client);  
+> > 
+> > Probably a false positive as I don't think we can probe without something matching and hence
+> > that not being NULL but an error check on that match is still a nice to have and should
+> > resolve this build warning.  Note there is very little chance a compiler could ever figure
+> > out if this can be NULL or not so it's a reasonable warning!  
+> 
+> I am not sure I follow if you are referring to the -Wformat warnings
+> above. Isn't it pointing out that the second specifier is missing the
+> actual type? Shouldn't it be '%02x' or something of the sort?
 
-On Mon, Aug 18, 2025 at 03:31:08PM +0100, James Clark wrote:
-> On 14/08/2025 7:25 pm, Frank Li wrote:
+I think I completely misread the report!  Sorry about that. Ignore my comment.
 
-> > binding doc should first patch. Create new patch serial for add S32G
-> > support only.
+Jonathan
 
-> I'm not sure putting the binding doc commit first would be right? That would
-> imply it was a valid binding before it really was because the code change
-> hasn't been made yet. Practically both are required so it doesn't really
-> matter which way around they are.
+> 
+> Cheers,
+> Nathan
+> 
 
-It's the general practice everyone has adopted (though in this case the
-bugfix bits might want to go before the bindings, possibly it's also a
-bit unusual to do that).  An unused binding is more acceptable than an
-undocumented one.
-
---5H3ikhGOIq/UysY2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmijREcACgkQJNaLcl1U
-h9ADAwf9EA9tjGoRA6LQDgfOw247uZwjo291ecBkDaxkVbX3dq953UASin7Wjo/3
-HePo5osEfES6M+Bt4fRqamFLriHmv/Z8FoWffHS9q4Pa9RcimZmbxS8kV5IjQBAh
-8uBngTX1ACW317uz1l7Jb3BUArfHC2zzyqKv8IZlOGpvimlEhNrRVJBHbYkRAPXp
-8DfRqvKDLg7W4iFvi1MwGEasq9d4atnxxYkANLmRq3LJJS8/J13WtnLPDz9fG0+0
-h6QyWfqIBsKHRc/bIKnbeFq0XiuNqh6fPUsIxCgtVAiMmlgOAfH8yGE0eauSX7SA
-W6px4TOYn/AjOyeNBqXLTlDUiLuz6g==
-=SRkW
------END PGP SIGNATURE-----
-
---5H3ikhGOIq/UysY2--
 
