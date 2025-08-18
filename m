@@ -1,165 +1,150 @@
-Return-Path: <linux-kernel+bounces-774457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB811B2B28A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:38:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F83B2B296
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558BF1BA2903
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:39:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56BE67B5500
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4BE22A4D6;
-	Mon, 18 Aug 2025 20:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8A2253B58;
+	Mon, 18 Aug 2025 20:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B3Y0+REL"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDhvxDRb"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF873451B8;
-	Mon, 18 Aug 2025 20:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B056822759C;
+	Mon, 18 Aug 2025 20:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755549528; cv=none; b=u85vXVF5PRx8wtsPBb18LPkEBz7tIOCb8sv9sEuwNStBkVjRaJ3V8whRT1lmIZQszTbi2e75mlxIF1Mf1O6rR4E9lHr8cEbrh+NIPOE1oYGWna62c35YFkc91pFiPx424uO2zWipW17X5HEdKNT8ejABvfthZYBXwOw65w7i5Ew=
+	t=1755549554; cv=none; b=SNUVCb24n3uEn6hjxGuzdUkCmYiXiHupYcxelTnJd3PDJ8GuPXn0HTyU6lJ0dFAsOPIQzELzP9QOK7/pa8JWWN9i1Z+5QY9/KPNDayeMcINE76aGhfxBt3h5mjTJbLqgLNfFxdnRcxUNGfPhMDOSgGKcRXtEcE0UEXPav3lNcIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755549528; c=relaxed/simple;
-	bh=0IYYWO0B6ZvRp5vVTH+D51pMvA6PkpLd76CN79sMSrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cFUxqT/StOcC1hA2wzfdUM5ZckEHRiG5xYBelpDdE2MTm9W7YtTK3tSOuJ0JG8wdD84PLNGYbv9KCVw2vyzsD/qUPjNLBEkSPTiK1KnqZob6aJQv+HH+xC089sr6/iVKyLdHt9Y7zZZZDA2wUhs6T2GF/qmsSwo7gqbE+hHEYaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B3Y0+REL; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57IKcghd2737585;
-	Mon, 18 Aug 2025 15:38:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755549522;
-	bh=77vEtxKLEbZUsC10RpC+fq6efe6YOvp3tLDFxWRZ9wg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=B3Y0+RELmAh6rsWrZ++7aGVaZf+NDEVKJLsoixbMiF4mixsOt+YBADu8H24z3+2KB
-	 Rc+WBBzAWl2ZvvdK9lZwZT7B5VmUz5NSlg+Tdyc2rdUqTyvP40wjxA1/wkfayAjuOP
-	 PmR3uIglKzWUytYytYS5hU9TKNNX4O7Cwwxiuiqc=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57IKcg7L767705
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 18 Aug 2025 15:38:42 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
- Aug 2025 15:38:41 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 18 Aug 2025 15:38:41 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57IKcf2W1603499;
-	Mon, 18 Aug 2025 15:38:41 -0500
-Message-ID: <f07d0353-4103-4776-a303-f6a3aad5bf15@ti.com>
-Date: Mon, 18 Aug 2025 15:38:41 -0500
+	s=arc-20240116; t=1755549554; c=relaxed/simple;
+	bh=UgzXDRPHCY+iSvediDp0yrz0486YqPoJsIGQAuwmtCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jERZYGj9UvNzYQ+oyYVhePhMEvt1xd7tK5TVYF/VjmV95XhriCFw0y3DE0zE0fBw/Qidhxt0jn/We6xzGfpSkq1fR+vo00FwgDNj0puqJmj3nT4JzJEpZRU+GkHiLvWipDmSgEYN7x7uCFwJ5PRw/Cx6kp4wkgpsVRmq2SSxwJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDhvxDRb; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a25ce7978so12715255e9.3;
+        Mon, 18 Aug 2025 13:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755549551; x=1756154351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQrccaRXBs1IVl7ydgWqPXcB0FTcYEexKWi9dkMZ1eY=;
+        b=EDhvxDRbUQYwM6U98hcH4zrAD7KDqjE1tcjxSaNSioyuTMLsD4ZndrsLgV9C063HGf
+         ap8KeaUp3lK6JZ1x9ayg2bUvu1vK43omL1UGQzqAN286GtOD4dtRyucUs2NehYPwrtRJ
+         scPFbo5OCk7ffIhAgHl4cCyhpgFUsgB4r0FmGxAsBu30VF2FjFsSQoFlBn2UuEMuOuI0
+         Bt6MsSx9GR8ZtIxLu+z3Hl01pfMSPv3Q6Kl9XiljUw/qdB7jAtm3lRKA2MHLv6T3yM2H
+         KP0nZ3rdgLJQUsUVRRWxvhHWMy/+OsDh7ay9aoFqABoSh8ySEvuErxOmegC9WSeImYSz
+         eXXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755549551; x=1756154351;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kQrccaRXBs1IVl7ydgWqPXcB0FTcYEexKWi9dkMZ1eY=;
+        b=qZ3nfCBZa5hu+e8NaI8CxvdsGCav7HRPr8lWgeaJpXVIGdABi+sd/YKBxuUCy+0qlm
+         MHyjn5v/P0zftoOkM5vbRoo171NNSnPXbQSvdMLmZIEk8+l4c6wCNo4S9gm81fEEVwqW
+         aBbq7dZg7lfeXOpYT+doEeMOkNMZ0uHX2UQFxa0I/EIOTtJvTW186LB21NtJlpO7Sdh1
+         zMCOGpMe3HA4J7tv5728xK0Gw1qKPax7YeZf2eLebnXwNHorNEH+1qmvwoyl8rP7Q2cF
+         S0YbTb21/iiPJSNL0IT95x3NK89n6ugFYarc4bTSkgtPhlB0kpc8oCaA4wQA1IN5JLD/
+         nH+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUiYjYEa7rthwVfwjCJDu0hwBOVwRKfoYIYhTALJGxbyGrpgMUSE+aR5N+6Gbehf3taWl1FaU+aeBUeFgo=@vger.kernel.org, AJvYcCXH/i6qOZpU4db9sJDjynvh5KKxYtT2TxPfAU92O6S2ltO1Djg9yfgxXo6mf/Ke0/HNQ2sQjTakckse6Qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbhE8mZDDDVjkzTreUPhwOAHcYk71VG2MpY5sz9YqrNq7Cxt9T
+	+H+cPhOU53RIRTn49ivb7FrMMgRo714WD72Z98bT+1KJ8tX8Yxdyu4ii
+X-Gm-Gg: ASbGnctVw//NQgzlU9W+arwaE6Af/SNBiowSuaIgxu19RU85LcPqF81TNVGVphypMuE
+	WLr8eOGg4Ne4GNlDuW+3AlIyBQLsHb3Yiy7YkisV2OsXX8NFuS8eIpB8uy52omtQQmr6ki8I2qC
+	dVElAhlY9rtQdY5uYCwzZbfdd2zWNHYUQOemV2ar6fISwKvfwOzj+809AcLzqdorJ6YqtsZeXgi
+	dqsebjs1s5xJKsr+pUg12Ud43Y4EsJUJU4sAxokbsa3AibuBlK0G32TRgwYq9zK288Zsa9AgfjT
+	b7RRY0wzs1lBx1P2Aq5HW0v+UWF8XeuKp+1PG4AKL49aeS/UF4UiX3TWrqdUNbnt5j9iGphF7fN
+	4m/SgkjqZPg/JxXvOTs7SqjGFteyZWiZwHzQ1qg==
+X-Google-Smtp-Source: AGHT+IF9VloGoXS4W+Ovzqx4/XtENldzlW4keJIOZcxpWYMhXaJGZR7c5xMhCCHCrd/WiBlGuPuENw==
+X-Received: by 2002:a05:600c:4f51:b0:459:d709:e59f with SMTP id 5b1f17b1804b1-45b435a7475mr3839545e9.0.1755549550693;
+        Mon, 18 Aug 2025 13:39:10 -0700 (PDT)
+Received: from simo-20nx006jmx ([41.141.149.229])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a24e5562csm130648395e9.20.2025.08.18.13.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 13:39:10 -0700 (PDT)
+From: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+To: marvin24@gmx.de,
+	gregkh@linuxfoundation.org
+Cc: ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Mohammed Guermoud <mohammed.guermoud@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] staging: nvec: Remove unused NVEC_PHD macro
+Date: Mon, 18 Aug 2025 21:38:55 +0100
+Message-ID: <20250818203855.11914-1-mohammed.guermoud@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and
- SR1.1
-To: Judith Mendez <jm@ti.com>, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf
- Hansson <ulf.hansson@linaro.org>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250818203310.3066985-1-jm@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250818203310.3066985-1-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On 8/18/25 3:33 PM, Judith Mendez wrote:
-> This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
-> to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
-> due to errata i2458 [0] so disable HS400 for these SoC revisions.
-> 
-> [0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
-> This patch was separated from [0] since it will be merged to
-> different trees anyways.
-> 
-> Link to v2:
-> [0] https://lore.kernel.org/linux-mmc/20250807225138.1228333-1-jm@ti.com
-> ---
->   drivers/mmc/host/sdhci_am654.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-> index 8a099508b939..cc8c4145bf2b 100644
-> --- a/drivers/mmc/host/sdhci_am654.c
-> +++ b/drivers/mmc/host/sdhci_am654.c
-> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
->   
->   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
->   #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
-> +#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
->   };
->   
->   struct window {
-> @@ -764,6 +765,7 @@ static int sdhci_am654_init(struct sdhci_host *host)
->   {
->   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->   	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-> +	struct device *dev = mmc_dev(host->mmc);
->   	u32 ctl_cfg_2 = 0;
->   	u32 mask;
->   	u32 val;
-> @@ -819,6 +821,12 @@ static int sdhci_am654_init(struct sdhci_host *host)
->   	if (ret)
->   		goto err_cleanup_host;
->   
-> +	if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400 &&
-> +	    host->mmc->caps2 & (MMC_CAP2_HS400 | MMC_CAP2_HS400_ES)) {
-> +		dev_info(dev, "Disable descoped HS400 mode for this silicon revision\n");
+The NVEC_PHD macro is a debugging helper that is only enabled when
+NVEC_PS2_DEBUG is defined. As this flag is never defined in the kernel,
+the macro and all of its call sites are dead code.
 
-Messages to the user do not need to be imperative, maybe:
+As suggested by Greg Kroah-Hartman, removing the code is the cleanest
+solution. This also fixes a build error discovered by the kernel test
+robot after the v1 patch modified the macro's body.
 
-"Disabling HS400 mode not supported on this silicon revision\n"
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508182005.4PiKxXcN-lkp@intel.com/
+Signed-off-by: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+---
+ drivers/staging/nvec/nvec_ps2.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-Not a blocker,
-
-Reviewed-by: Andrew Davis <afd@ti.com>
-
-> +		host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
-> +	}
-> +
->   	ret = __sdhci_add_host(host);
->   	if (ret)
->   		goto err_cleanup_host;
-> @@ -882,6 +890,12 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->   	return 0;
->   }
->   
-> +static const struct soc_device_attribute sdhci_am654_descope_hs400[] = {
-> +	{ .family = "AM62PX", .revision = "SR1.0" },
-> +	{ .family = "AM62PX", .revision = "SR1.1" },
-> +	{ /* sentinel */ }
-> +};
-> +
->   static const struct of_device_id sdhci_am654_of_match[] = {
->   	{
->   		.compatible = "ti,am654-sdhci-5.1",
-> @@ -969,6 +983,10 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->   	if (ret)
->   		return dev_err_probe(dev, ret, "parsing dt failed\n");
->   
-> +	soc = soc_device_match(sdhci_am654_descope_hs400);
-> +	if (soc)
-> +		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_DISABLE_HS400;
-> +
->   	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
->   	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->   
+diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
+index 7accdcafeeac..2e36893e0008 100644
+--- a/drivers/staging/nvec/nvec_ps2.c
++++ b/drivers/staging/nvec/nvec_ps2.c
+@@ -23,14 +23,6 @@
+ #define DISABLE_MOUSE	0xf5
+ #define PSMOUSE_RST	0xff
+ 
+-#ifdef NVEC_PS2_DEBUG
+-#define NVEC_PHD(str, buf, len) \
+-	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
+-			16, 1, buf, len, false)
+-#else
+-#define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
+-#endif
+-
+ enum ps2_subcmds {
+ 	SEND_COMMAND = 1,
+ 	RECEIVE_N,
+@@ -70,18 +62,13 @@ static int nvec_ps2_notifier(struct notifier_block *nb,
+ 	case NVEC_PS2_EVT:
+ 		for (i = 0; i < msg[1]; i++)
+ 			serio_interrupt(ps2_dev.ser_dev, msg[2 + i], 0);
+-		NVEC_PHD("ps/2 mouse event: ", &msg[2], msg[1]);
+ 		return NOTIFY_STOP;
+ 
+ 	case NVEC_PS2:
+ 		if (msg[2] == 1) {
+ 			for (i = 0; i < (msg[1] - 2); i++)
+ 				serio_interrupt(ps2_dev.ser_dev, msg[i + 4], 0);
+-			NVEC_PHD("ps/2 mouse reply: ", &msg[4], msg[1] - 2);
+ 		}
+-
+-		else if (msg[1] != 2) /* !ack */
+-			NVEC_PHD("unhandled mouse event: ", msg, msg[1] + 2);
+ 		return NOTIFY_STOP;
+ 	}
+ 
+-- 
+2.50.1
 
 
