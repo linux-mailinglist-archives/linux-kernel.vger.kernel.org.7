@@ -1,173 +1,116 @@
-Return-Path: <linux-kernel+bounces-774228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F80B2B01B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:18:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC89DB2B01F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EDCB6830B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7370E1897A79
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC642848B1;
-	Mon, 18 Aug 2025 18:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A292D24A4;
+	Mon, 18 Aug 2025 18:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="whZP111d"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSRmy2hC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE183275114
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A820E32BF51;
+	Mon, 18 Aug 2025 18:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541106; cv=none; b=nTyJSvqbRN0nlPGiIVOgIhjgx2LySEOWdgjsBArWgv1YNC3bimXWkd2YV75+vYWFnTLGslYrPPBaSFgsaPq9vdiMCxqa8NKlNxxARbaZhmbTJVwi+Y1+xwa2RQkUB2RsTpNP0p8XZlx1tGYH97u9ErZbfh9kjoNLmdzeFXKL2no=
+	t=1755541182; cv=none; b=Cgg8YjnTLjvIh2yOvbyCj01ajo7CYnfWYCUQ3pCMKq3QVeVko0a6Ig0fjEY/TxvAVP5qg1aVYPR+jyVf+XiZwHCiKLsbfI2Cwlbnh1bhmaQGci4e4f2CKN9eoVwvux9oMc8PncZ440r1KiVp9XMGoetvMFcKZv+EP6ewQPBjWWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541106; c=relaxed/simple;
-	bh=MN6cMEgwQsI9LU7L5DTRfKs2G4F7QGv63KzoSuBphFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p5g59qi5g+WyLCBdUoydXv52tW7kgBFoyTGk8FoqUdqNZOpbVcucLknXJBPYL68I6TKhUWXwgmybHjnXEIvtyq38WZ9PzudOKBfDwkHtiMGVenjigps3q1p+YdS894jDGSyeCH7YGjb5omG1ZdDBhaqiNbhBo3e+Aud+2acZS+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=whZP111d; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55cc715d0easo1252e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:18:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755541103; x=1756145903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DWR/SbaxqayRTD44wtFfLeF4GeVcOog9WH0lYeaW0Bk=;
-        b=whZP111dGGJjKbnvTu+26xDruGuckzCeh7COcoy+vugK0Xm5ehmvm5SYzgDi+PcQiE
-         qUtSkUXQFijFC7C64i5ErUmK3YGC8l0G34PpgHH7UI2mSN1vLWyQvNYCqzX1wAR/AI2v
-         lG7HPDoAlXnbqjbWoWyoQSkLssTCvDArhXIlZnn0PeVzjHI005wV24RW2emTnqvghPON
-         d6YIFMjeT/yLP/SD4HyAiS4ZquRD8uPHfHQCfoww/Dz5u6vWprZc9H1lgS17CebvYkdk
-         1yDGH6n/qnGM3/jsUG2E8Zdz2QuXSroaMjWgWKSNOXaDe5COm5UBb+ZDschVsDFcJivf
-         Ys+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755541103; x=1756145903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DWR/SbaxqayRTD44wtFfLeF4GeVcOog9WH0lYeaW0Bk=;
-        b=vmpT5mSOCy6KuCIrdtPdiL5RSQmarp6PE60tKlapQLAromONRSRBxGXbqBcxbUL9k0
-         asiigxjZyNK6QYIaX8w4xhkaCP9pmHQlHzbxY5jnZgxe4w7sAwSb4BQ75eB5uiAjwUm9
-         klcRyoy9TIghxFWHDFeyks57ObfSzbu8NmM/gVkK2EEnL71/qxT3UCjblfheQF5rTDET
-         htRYKcS+ma52CIKBMpI5hkeWE9llT2ayNQF+2p6JAoszcj0LOqJcss5rdeXa0m7niO2v
-         zaT6XIFVXolfNuTJmjjj8mSZMa0QjIg+tUy3CZxR4SoyvbuMSNhLW6JTErUP0cUlKhwy
-         04TA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdnhZWSGxnaP5Pyx5xSCVMZ6+d5SF6Deuv9K9K9c7xzlTMV4Rv0YjOK8em2CjjFTGr3nEkt9siXt4J8PE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkyaJJqZ8ZLmpRZ6c+HAdwKr4QvbrfcmCttAnsnMMsALgDXeoO
-	2mC6nWbdQy1YVnx18B6jTWi0MRoOQf80lPiDpxV/xzNV2cQe6ok0EuzT+PM312CBL8WU1n2CRPR
-	lDE1ajlKfZZJOtESXzAQ6yiCxgp6s0iNhhUahPtkc
-X-Gm-Gg: ASbGnculX1CVIznGyWJWaf0oAK+jMvxvCYP5irup12rctEYPCCQd7Ig6Ah3643CWb3g
-	HrnBYWmB56ItdeN7DuO4cBlp1DCSVF6FqZGaeNChBFV1L8UxAe9ifd797poAfUCg2W3D0GKvKEE
-	vE1889HJmPPxGmGajnOY6p7D3a+rVRjzCidzKw4Im76b+qgwl75147Nw43YtMKgPmd7c4AXnae4
-	sLeDNW7+OGsyU3qX9YhQ8ognvFZk9Jmfu/nBnr4Zpm7s5iD
-X-Google-Smtp-Source: AGHT+IHs2hDwNnShp2o5vXlAxIJDY3ZyuELs6Qbn9swcDZaVjFbHPjN6aHjnakTgYOX9eOvexrRF6+S71VUKA4qKz/A=
-X-Received: by 2002:a05:6512:1c3:b0:55b:9f89:928b with SMTP id
- 2adb3069b0e04-55e001125d4mr11794e87.1.1755541102509; Mon, 18 Aug 2025
- 11:18:22 -0700 (PDT)
+	s=arc-20240116; t=1755541182; c=relaxed/simple;
+	bh=muDSM2DZU/m3dtUC2L4Y87gha2PMNNE8QFT/hIEEopk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qmoQTyqwL1Wwh5sAUI0vwsCZ6Ki8dzw3FYrgCBnOHdWlVNCTSznnnIz0L9MxQKSHQf26mypSCzyOuRbdsufOCHRHPjcCq8Hovlrg90SDMvx3aaf6WfF5coN9wNKLC/rCdQpjxlEZplW1mDbCMwi90k3sr65Gqr6pLJ/EoMy7eTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSRmy2hC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA86FC4CEEB;
+	Mon, 18 Aug 2025 18:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755541182;
+	bh=muDSM2DZU/m3dtUC2L4Y87gha2PMNNE8QFT/hIEEopk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HSRmy2hCKx1u6sbrj2ICa3M3ZVE2sVGrUioOL8RwhmrKI5mgc6d8cIQdAzf/j6hCn
+	 YHA5chHfS8zgetCUoFBgOjHpOotxzuMQBYRpcno94nZLyI/Eex9jVS559O50d5wNVC
+	 mBtriYA8OZpJi1Y8L0mviamkiEIQU8S+pPgjGtQZNFu6lzEB3vyLyAcpUMbKVAdNJO
+	 q8OQRBAznaGQVa7YzWvfe97gfzcBR/ik+i5yQlEQhW9lnSiJxOmdCGUagvsu9lKhfs
+	 AtZuhunwnC6B9wzFmcQz6vieKqEaNZFvGJSsGHaQJvdIbQXraif92k3Tr9ZhCejlJF
+	 4UjB2vMAxLHWg==
+Date: Mon, 18 Aug 2025 19:19:32 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, David
+ Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sukrut Bellary
+ <sbellary@baylibre.com>, Lothar Rubusch <l.rubusch@gmail.com>
+Subject: Re: [PATCH v2 0/4] Support ROHM BD7910[0,1,2,3]
+Message-ID: <20250818191932.42c22df3@jic23-huawei>
+In-Reply-To: <cover.1755504346.git.mazziesaccount@gmail.com>
+References: <cover.1755504346.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815110401.2254214-2-dtatulea@nvidia.com> <20250815110401.2254214-6-dtatulea@nvidia.com>
- <CAHS8izO327v1ZXnpqiyBRyO1ntgycVBG9ZLGMdCv4tg_5wBWng@mail.gmail.com> <jvbtvbmgqspgfc7q2bprtdtigrhdsrjqf3un2wvxnbydngyc7r@y2sgbxgqkdyi>
-In-Reply-To: <jvbtvbmgqspgfc7q2bprtdtigrhdsrjqf3un2wvxnbydngyc7r@y2sgbxgqkdyi>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 18 Aug 2025 11:18:10 -0700
-X-Gm-Features: Ac12FXyie8zJRkeTDcLtpvBJzFcHj52yCohewjEDLantFzz9m9oBZlFv4CV91bE
-Message-ID: <CAHS8izNWStDWNfNro3oX1v5mwyzK_xmA0YfffqSeB0JZwArK7w@mail.gmail.com>
-Subject: Re: [RFC net-next v3 4/7] net/mlx5e: add op for getting netdev DMA device
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: asml.silence@gmail.com, Saeed Mahameed <saeedm@nvidia.com>, 
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	cratiu@nvidia.com, parav@nvidia.com, Christoph Hellwig <hch@infradead.org>, 
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 10:40=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.co=
-m> wrote:
->
-> On Fri, Aug 15, 2025 at 10:37:15AM -0700, Mina Almasry wrote:
-> > On Fri, Aug 15, 2025 at 4:07=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia=
-.com> wrote:
-> > >
-> > > For zero-copy (devmem, io_uring), the netdev DMA device used
-> > > is the parent device of the net device. However that is not
-> > > always accurate for mlx5 devices:
-> > > - SFs: The parent device is an auxdev.
-> > > - Multi-PF netdevs: The DMA device should be determined by
-> > >   the queue.
-> > >
-> > > This change implements the DMA device queue API that returns the DMA
-> > > device appropriately for all cases.
-> > >
-> > > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> > > ---
-> > >  .../net/ethernet/mellanox/mlx5/core/en_main.c | 24 +++++++++++++++++=
-++
-> > >  1 file changed, 24 insertions(+)
-> > >
-> > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/driv=
-ers/net/ethernet/mellanox/mlx5/core/en_main.c
-> > > index 21bb88c5d3dc..0e48065a46eb 100644
-> > > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> > > @@ -5625,12 +5625,36 @@ static int mlx5e_queue_start(struct net_devic=
-e *dev, void *newq,
-> > >         return 0;
-> > >  }
-> > >
-> > > +static struct device *mlx5e_queue_get_dma_dev(struct net_device *dev=
-,
-> > > +                                             int queue_index)
-> > > +{
-> > > +       struct mlx5e_priv *priv =3D netdev_priv(dev);
-> > > +       struct mlx5e_channels *channels;
-> > > +       struct device *pdev =3D NULL;
-> > > +       struct mlx5e_channel *ch;
-> > > +
-> > > +       channels =3D &priv->channels;
-> > > +
-> > > +       mutex_lock(&priv->state_lock);
-> > > +
-> > > +       if (queue_index >=3D channels->num)
-> > > +               goto out;
-> > > +
-> > > +       ch =3D channels->c[queue_index];
-> > > +       pdev =3D ch->pdev;
-> >
-> > This code assumes priv is initialized, and probably that the device is
-> > up/running/registered. At first I thought that was fine, but now that
-> > I look at the code more closely, netdev_nl_bind_rx_doit checks if the
-> > device is present but doesn't seem to check that the device is
-> > registered.
-> >
-> > I wonder if we should have a generic check in netdev_nl_bind_rx_doit
-> > for NETDEV_REGISTERED, and if not, does this code handle unregistered
-> > netdev correctly (like netdev_priv and priv->channels are valid even
-> > for unregistered mlx5 devices)?
-> >
-> netdev_get_by_index_lock() returns non-NULL only when the device is in
-> state NETDEV_REGISTERED or NETREG_UNINITIALIZED. So I think  that this
-> check should suffice.
->
+On Mon, 18 Aug 2025 11:11:56 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Ack, thanks for checking. For the patch:
+> Add support for ROHM BD7910[0,1,2,3] ADCs.
+> 
+> The ROHM BD79100, BD79101, BD79102 and BD79103 are ADCs derived from the
+> BD79104. According to the data-sheets, the BD79103 is compatible with the
+> BD79104. Rest of the ICs have different number of analog input channels.
+> 
+> This series adds support for these ICs using the ti-adc128s052.c.
+> 
+> NOTE: There has been work on couple of other patch series [1][2] touching
+> this same driver. I haven't considered those changes because, AFAICS,
+> there has been no new revisions of these series since mid June.
+> 
+> [1]: https://lore.kernel.org/all/20250614091504.575685-1-sbellary@baylibre.com/
+> [2]: https://lore.kernel.org/all/20250625170218.545654-2-l.rubusch@gmail.com/
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
+Pretty simple replies to the changes requested in v1 reviews and nice and clean
+so I'll gamble (a tiny bit) that everyone is happy with this and at least
+queue it up for build testing.
 
+Applied to the togreg branch of iio.git and pushed out as testing for
+0-day to have it's fun.
 
+Jonathan
 
---=20
-Thanks,
-Mina
+> 
+> Revision history:
+>   v1 => v2:
+>     dt-bindings:
+>     - Fix the fallback compatible for BD79103.
+>     - Drop the excess 'items'
+>     other:
+>     - Rename the channel structs as discussed during v1 review.
+> 
+> Matti Vaittinen (4):
+>   dt-bindings: iio: adc: Add BD7910[0,1,2,3]
+>   iio: adc: adc128s052: Simplify matching chip_data
+>   iio: adc: adc128s052: Rename channel structs
+>   iio: adc: adc128s052: Support ROHM BD7910[0,1,2,3]
+> 
+>  .../bindings/iio/adc/rohm,bd79104.yaml        |  10 +-
+>  drivers/iio/adc/ti-adc128s052.c               | 132 ++++++++++++------
+>  2 files changed, 95 insertions(+), 47 deletions(-)
+> 
+> 
+> base-commit: 856d7be7f3c459a6d646b1f8432c6f616ade0d10
+
 
