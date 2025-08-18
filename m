@@ -1,204 +1,166 @@
-Return-Path: <linux-kernel+bounces-772837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1267EB29835
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:35:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5B7B29837
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F032B20177D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5EE4E6B9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DED262FD3;
-	Mon, 18 Aug 2025 04:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AF82627F9;
+	Mon, 18 Aug 2025 04:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fVhNP1gG"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2046.outbound.protection.outlook.com [40.107.100.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L+XAX+S2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387831990C7;
-	Mon, 18 Aug 2025 04:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755491690; cv=fail; b=LZp94lhm5J90IV08+Ns/PP9PO2rzBHNhZkVZfGp/20pAI6PWAcPC4usesuDYvyPd9FOZbUCJtLO2EcyrQymuFMrM+I/UXMZtdtbVQtugJcZ2b52xS9FDmaGL9eUYXNexL8sA6aWgtT7CxY5zgkKowgHK/UBYJQ2oXUyaFz5Uejo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755491690; c=relaxed/simple;
-	bh=u5bKl/NuSbEbA1e9VG6yOmnBlIEiefMBlv35YwTeTUM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tu2pLwECdUs9zn/h32j95lI0ftMI/ukTB7N17rPgthgRikhUqiaiJ8TAq2OHvGR/aRM2wSaEShb+aiB8qzmzMPbEA7Iir0ewMmGFcmPRjkp0G2QhmOZHjzSm7lPCwtmf70AapOTWwPsIpmm487DMNCkqWf6ZHJf04NlFter8N9M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fVhNP1gG; arc=fail smtp.client-ip=40.107.100.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QoWcMhXY7uc4NqteXY6XUl1z/u1uj5mUy217gA3fGjTISdngnAqjKA5KDqF3Qa2YMHzIKqgJHuBbHc9MNDm0BfxbOn/Bo+OPUysiSU+/bJ5GGlWEDKfA8KuMxZTIEUboZn+n895lgcW+byi/DdjRj9GjOxfftz2mdviE9f0CupmL3S+MsJ4P0fsjwKFrvzZFe2mlxne9/EUEmAdnehxBdx0pBynMsA7uLC24A+fM4rzh38yJ64UR7mcGM1eS6TWe1vprUslU59oZ3sg5bJBIYhYSl5AC+8cVyaqKjn8Ux9Y9MBD2f2by3AnZ+vQKe+eXb2Hj31WPApp7wfeDC9qWqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BLdpwbc4qXU6fhwdsprmb5qYscljC1kFomI/QJQ0Lm0=;
- b=rpn+oJWWQbEYc7BWoWe1gGXZaPsAjp7e04m4/wgO3c6F+XbAkK3pRptRAeopb0KlamhpF3yMKKkiVxRESZqkwIcoVvqDZyrtvEkNWCDYuNWxPysProt5y9l825zjf7kWOx8Ts28fJetM6Bp44pcDsJ2Udlr5ONHM0Te6u91n4lxkmiOruKo+1veahbuB6G09VPDfJYQk7yZZGSa0h64mYeaAu+XwX61/HqcVOzFq+z1gW+K5tMaDEbmU3pjABiYjCk1o9erBdccDtfooQORfc6MLRtjgWWe2G2KSleejL+Lso6k6FtBRPH9vS8d1Pn4/7U05fF+upDJKN1LLZIm25A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BLdpwbc4qXU6fhwdsprmb5qYscljC1kFomI/QJQ0Lm0=;
- b=fVhNP1gGeBlp7bMhZDYtq2bNQ+0Zgqdc/z+99w/i5XNOr98bFt3KhdtopgO6chExQj0MsXCUmodpeT2AENZHuAJQI9pJ+JH5/mN+rjhZr3JumkFrw1Mq17AdXoFULL7f4xHfTgLNvOXBo0ycxgDU7r63pAnPqOQtgCxuLhaBP1EnBpyvnGctTVMXKad6qnVQ4UuwcuzPK/b9xpwqXk1+9IvsWI+6R7z2kLa3cjIUVfK4WiS+6WjGA+sJlUCgCAbkvDpAzWAYSzaEKs+VAPizJYOUQUGeIGxHr4kA9O2Anq1hFxVJbgBLV1BERAC5Vb5vuraXt2xpQTLzXAnjBy9IvQ==
-Received: from BN9PR03CA0033.namprd03.prod.outlook.com (2603:10b6:408:fb::8)
- by MW4PR12MB7357.namprd12.prod.outlook.com (2603:10b6:303:219::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 04:34:44 +0000
-Received: from BN2PEPF000044AC.namprd04.prod.outlook.com
- (2603:10b6:408:fb:cafe::ad) by BN9PR03CA0033.outlook.office365.com
- (2603:10b6:408:fb::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.20 via Frontend Transport; Mon,
- 18 Aug 2025 04:34:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF000044AC.mail.protection.outlook.com (10.167.243.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.8 via Frontend Transport; Mon, 18 Aug 2025 04:34:42 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 17 Aug
- 2025 21:34:28 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 17 Aug
- 2025 21:34:28 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Sun, 17 Aug 2025 21:34:24 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <andi.shyti@kernel.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <digetx@gmail.com>, <jonathanh@nvidia.com>,
-	<krzk+dt@kernel.org>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-CC: <akhilrajeev@nvidia.com>, <ldewangan@nvidia.com>, <robh@kernel.org>,
-	<thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
-Subject: [PATCH RESEND 2/2] i2c: tegra: Add Tegra256 support
-Date: Mon, 18 Aug 2025 10:03:45 +0530
-Message-ID: <20250818043345.65899-3-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250818043345.65899-1-akhilrajeev@nvidia.com>
-References: <20250818043345.65899-1-akhilrajeev@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F276125F97C
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755491732; cv=none; b=LiY79LQtPEsRzL6gd7GTxvaaBi1UZf11Qcnm/9gQBPmUiq9KSPgg4gJl7lVOm00s6lYeZDlUUKAr2FFu3399WGVr4cgV69mEnVe4z6CqDLTXjzvITTiblIC1JTNZtHS/7CUNJpJAhz1Q4rAszUsE6JSWvhmubIQbG8oSoZzxAhs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755491732; c=relaxed/simple;
+	bh=KciFTpXuSAsZ+o3vOeWfNg+7MtMXBhNG2HcImimrGhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njkvGauD+SsPup8f3yBgig4koGweO43DsCCAk3aoKcqqvg2hxyFDU2/akGuI3VYNHY7xD9hJYFLzHpdT7dFf2N8AZuyAaUekCCGLMMGrVxDwDaC9pYNeTijeR5VXVD1VhYdiCh0K+kfl2Z4R2Trj8U58IpSHWx90OeI6qxzXHHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L+XAX+S2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755491729;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Qr7GKeY7iraK1JMYtgr9HkjBsEWy/WVlfeLC9I+VeY=;
+	b=L+XAX+S2yXZVoa3TLfoFEtgcaP60x9BTNwKgCRpipfQRJr9W/L80fcUk+d8VRK/evLIU1u
+	Ym98UowIZveuzAx86WE4OsrG3R3q3nizu6RZ3XFD5gwbALElqL+CM0cz6MeqJYImLl/jGt
+	EFffsjVudBRQZZJWtd1Ybd+EpBqz9EE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-oewtGDdxN-6hnhgvIdtzNQ-1; Mon,
+ 18 Aug 2025 00:35:24 -0400
+X-MC-Unique: oewtGDdxN-6hnhgvIdtzNQ-1
+X-Mimecast-MFC-AGG-ID: oewtGDdxN-6hnhgvIdtzNQ_1755491723
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EB9C1800289;
+	Mon, 18 Aug 2025 04:35:23 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.210])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08347180047F;
+	Mon, 18 Aug 2025 04:35:21 +0000 (UTC)
+Date: Mon, 18 Aug 2025 12:35:16 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/8] mm/vmalloc: Support non-blocking GFP flags in
+ __vmalloc_area_node()
+Message-ID: <aKKthIZbD4oNywY4@MiWiFi-R3L-srv>
+References: <20250807075810.358714-1-urezki@gmail.com>
+ <20250807075810.358714-8-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044AC:EE_|MW4PR12MB7357:EE_
-X-MS-Office365-Filtering-Correlation-Id: d0305726-e67b-4f4c-e4fb-08ddde108d88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oZ3m/v6h/lxyQeQysP5H7p1K/NAXsjV+I+c+3yERx6E07ZmtX7pJ7VF8RAAW?=
- =?us-ascii?Q?JXMt0/Vi5/rz+mbG6R5wEVlNT7hc3BwpLISHUPj4lZXY15yL0RDjbmLx3l8i?=
- =?us-ascii?Q?mKqddWU+SI1ag2cAOygetM67dL6epSLk2vekDtMyYfB0d7hixTc+6QpEG00J?=
- =?us-ascii?Q?74aKi71t75gFl83k3PtKLj76pG3Z3pL5K8w9xBsBhMn7+zvEC2pes+E6jFE5?=
- =?us-ascii?Q?9FMmLREDU1yhWIFxHNZslMprIjwRY9u9Wp+JRS+ZKDwKgS+AGx4D2aUGTwKk?=
- =?us-ascii?Q?fKMM3iARM32FzMi4M0mnrK+MJY/W1iGNn6s1m+bBwySfJPXoZh4u4ouNb03/?=
- =?us-ascii?Q?XymLOMYIzsV9teZWgkboamAntSshIWJih15aGJFeS6oeyvLMBekPZzgfF8HH?=
- =?us-ascii?Q?geo8eim/jQr6iZv+T9CfirMODT5+Zu5znlZesnsS+9J4yQljYTpwGx64stf4?=
- =?us-ascii?Q?1kmuKS35LT4I6McMCtYwt/UZAR3YmEp50oD+MZQqAQG+vFYJDDz3nIGJJTg+?=
- =?us-ascii?Q?VQZjhBIoijEjJDQwQkeRmvsklLLBkP48lZdECCx5nTgVYiWskzWKTbHBbu1K?=
- =?us-ascii?Q?nazsRLoeqAk6OOqVAZNVdUFxmjOaU2sWnoB465SQ6p8lEv8DyF/eXimdrAxi?=
- =?us-ascii?Q?TcDMIuj+XudQ9Gutvbv1m68XapZLVbNlo8pXHBOTau/Pv8/LHn3D4uXOCMVs?=
- =?us-ascii?Q?hxfXxuxxKGmYASupYQf/WgaGywou1th8WPz46dLHZCbeJWBPmlsa8kv/aWD9?=
- =?us-ascii?Q?DOp/kfL/tKXUBHgtO5A6UXjuaC4LO+uBZpPoT9hICK0nIQ11quMx7u7B20Mq?=
- =?us-ascii?Q?Bx90TLIFE5hKINWnMoGrK92kBk6lxyvRHUwHT3ZNgSeNYzTZgnmEHkU4Pm6v?=
- =?us-ascii?Q?827rIOQMDSK2bbF651Fe5eOGsAXUH7dnNbn0AjueBua+fxyNCkAZrWSMWltL?=
- =?us-ascii?Q?ExkLxW1f8CzD6pB/sx+Yx6e8zex9mYOauJO1dGN40vPhBZGDB6qPuEYGNgRz?=
- =?us-ascii?Q?R2RMvGCWAiQ7mzW+mbf0Wkw+ibzGKtRtFkJK4hZPZ94ihd8+z0PTIeB8p6PE?=
- =?us-ascii?Q?iwluwEfOM++7v//z911mIRo+RiHhTdxfTF07Y2693mZKTwtC1jk3YVbgFsbm?=
- =?us-ascii?Q?SdjjMzCPgsORby5eJDmIY8Hb0YzNuAgla+kBW0Z86nqPCPA069mHT5peXm4k?=
- =?us-ascii?Q?W1LAnUEz76zoQnG4GJqyoRRMvH0saH/vIpHbA6S58DmTEnSMxOg5pw+4ZE3+?=
- =?us-ascii?Q?RYSdzGihE74fz+CtiP7l2Kdue9rduiSMALtkjgOIPY7I9PR8Ki5SzWLn/9q/?=
- =?us-ascii?Q?UpiyB3YIEKuDTCk5Kv1HqYkjZvY6sV5Frv3dGLMl4JCPGqXZnNcAaCq/Nndr?=
- =?us-ascii?Q?QOKRRg+l+Sa/BqWzUU2ufHnZUSdQjtGQVelIKxgmdsbYDbYerhXg4hCdBL7n?=
- =?us-ascii?Q?4L8Ae6XR9muJvs0vYNXPxpkU9sEQPNLktPudXRROwK9dAks0VwvxSNxlGMA+?=
- =?us-ascii?Q?aySdq8Ugv2HAoiwvuw99he8PjMgoOQljCE/6?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 04:34:42.9661
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0305726-e67b-4f4c-e4fb-08ddde108d88
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044AC.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7357
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807075810.358714-8-urezki@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Add compatible and the hardware struct for Tegra256. Tegra256 controllers
-use a different parent clock. Hence the timing parameters are different
-from the previous generations to meet the expected frequencies.
+On 08/07/25 at 09:58am, Uladzislau Rezki (Sony) wrote:
+> This patch makes __vmalloc_area_node() to correctly handle non-blocking
+> allocation requests, such as GFP_ATOMIC and GFP_NOWAIT. Main changes:
+> 
+> - Add a __GFP_HIGHMEM to gfp_mask only for blocking requests
+>   if there are no DMA constraints.
+> 
+> - vmap_page_range() is wrapped by memalloc_noreclaim_save/restore()
+>   to avoid memory reclaim related operations that could sleep during
+>   page table setup or mapping pages.
+> 
+> This is particularly important for page table allocations that
+> internally use GFP_PGTABLE_KERNEL, which may sleep unless such
+> scope restrictions are applied. For example:
+> 
+> <snip>
+> __pte_alloc_kernel()
+>     pte_alloc_one_kernel(&init_mm);
+>         pagetable_alloc_noprof(GFP_PGTABLE_KERNEL & ~__GFP_HIGHMEM, 0);
+> <snip>
+> 
+> Note: in most cases, PTE entries are established only up to the level
+> required by current vmap space usage, meaning the page tables are typically
+> fully populated during the mapping process.
+> 
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> ---
+>  mm/vmalloc.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 2424f80d524a..8a7eab810561 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3721,12 +3721,20 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  	unsigned int nr_small_pages = size >> PAGE_SHIFT;
+>  	unsigned int page_order;
+>  	unsigned int flags;
+> +	bool noblock;
+>  	int ret;
+>  
+>  	array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
+> +	noblock = !gfpflags_allow_blocking(gfp_mask);
+>  
+> -	if (!(gfp_mask & (GFP_DMA | GFP_DMA32)))
+> -		gfp_mask |= __GFP_HIGHMEM;
+> +	if (noblock) {
+> +		/* __GFP_NOFAIL and "noblock" flags are mutually exclusive. */
+> +		nofail = false;
+> +	} else {
+> +		/* Allow highmem allocations if there are no DMA constraints. */
+> +		if (!(gfp_mask & (GFP_DMA | GFP_DMA32)))
+> +			gfp_mask |= __GFP_HIGHMEM;
+> +	}
+>  
+>  	/* Please note that the recursion is strictly bounded. */
+>  	if (array_size > PAGE_SIZE) {
+> @@ -3790,7 +3798,9 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  	 * page tables allocations ignore external gfp mask, enforce it
+>  	 * by the scope API
+>  	 */
+> -	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+> +	if (noblock)
+> +		flags = memalloc_noreclaim_save();
+> +	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+>  		flags = memalloc_nofs_save();
+>  	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
+>  		flags = memalloc_noio_save();
+> @@ -3802,7 +3812,9 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  			schedule_timeout_uninterruptible(1);
+>  	} while (nofail && (ret < 0));
+>  
+> -	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+> +	if (noblock)
+> +		memalloc_noreclaim_restore(flags);
+> +	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+>  		memalloc_nofs_restore(flags);
+>  	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
+>  		memalloc_noio_restore(flags);
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+Can we use memalloc_flags_restore(flags) directly to replace above if
+else checking? It can reduce LOC, might be not as readable as the change
+in patch surely. Not strong opinion.
 
----
- drivers/i2c/busses/i2c-tegra.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 4eb31b913c1a..e533460bccc3 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1649,7 +1649,33 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_interface_timing_reg = true,
- };
- 
-+static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
-+	.has_continue_xfer_support = true,
-+	.has_per_pkt_xfer_complete_irq = true,
-+	.clk_divisor_hs_mode = 7,
-+	.clk_divisor_std_mode = 0x7a,
-+	.clk_divisor_fast_mode = 0x40,
-+	.clk_divisor_fast_plus_mode = 0x19,
-+	.has_config_load_reg = true,
-+	.has_multi_master_mode = true,
-+	.has_slcg_override_reg = true,
-+	.has_mst_fifo = true,
-+	.has_mst_reset = true,
-+	.quirks = &tegra194_i2c_quirks,
-+	.supports_bus_clear = true,
-+	.has_apb_dma = false,
-+	.tlow_std_mode = 0x8,
-+	.thigh_std_mode = 0x7,
-+	.tlow_fast_fastplus_mode = 0x3,
-+	.thigh_fast_fastplus_mode = 0x3,
-+	.setup_hold_time_std_mode = 0x08080808,
-+	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
-+	.setup_hold_time_hs_mode = 0x090909,
-+	.has_interface_timing_reg = true,
-+};
-+
- static const struct of_device_id tegra_i2c_of_match[] = {
-+	{ .compatible = "nvidia,tegra256-i2c", .data = &tegra256_i2c_hw, },
- 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
- 	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
--- 
-2.50.1
+	memalloc_flags_restore(flags);
 
 
