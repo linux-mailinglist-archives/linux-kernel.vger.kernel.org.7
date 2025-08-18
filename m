@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-774096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33D5B2AE95
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:55:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896BCB2AE98
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514B468054C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E16E2A5379
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6863342CA9;
-	Mon, 18 Aug 2025 16:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BuaHtJtK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D250342CA9;
+	Mon, 18 Aug 2025 16:56:08 +0000 (UTC)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0CB1581EE;
-	Mon, 18 Aug 2025 16:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDE21F9F47;
+	Mon, 18 Aug 2025 16:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755536125; cv=none; b=Zi6W1k4c2Yo+/P83JaVSHJxgggkCoP5iKkJ5L4RULOJA/EGXSgrYYQy+W8Khef/vE8eEPTSwWxZ6ISFhpn9m+YsNtP2nFf9FUj8CxEcdZZyUOZmGoZ0CH6/QI3fX1RvNGHnatjv1yIRPlzAziurjP9hgB0w78wA4lrhkbWRNQHg=
+	t=1755536167; cv=none; b=rScWxgKaN2ZmJ4ESyjd5SvPMYLKxL5fs1QZAGctdqUaL0tqjVpm7pKEZcsATOz7c5lnUqOKJalHOKZzbgjZo9SEj7RJI1xs6XXD2KKDFPcn6ltRSVa63vTHi8hPyc1NarRD/5QN+yyKmKBrC4z2hkj5t3/oxNR4UbYncYXO/Gg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755536125; c=relaxed/simple;
-	bh=g4CIE3yRi37sTgTwAwcHt2iySMTeRTXJa+ahuYCtcgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwSN2VE7NQnxv3ynKq9DV2I8ZJjkWGXOu5x/RoH8ffhD9/Wz4/gacy1GhiNZL6Ud8Z1XgPXohbm084f7dcoB1gQXZN1P/P4OSIttErH6wu12qEZYHB6q7mAsMbe8HfPfl8SMFoxJA9+urXowui3vsa6sYPo/jWC7CnSlbwXcATQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BuaHtJtK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QnKxa06RRJ+jhOD5mej1Uo0AmcaFzK3gAg2IgogA8nA=; b=BuaHtJtKwkpSVs+iLrjnAgeJ7O
-	5wC3MHN5ZiBeBMxakDs1ESkotR2+U8lLXVfeKonj2SlFKfZtQYjjQuS5AGiz5Z+6EjJ/aTVN4qxGT
-	Y5LHvARE5CfCzuYOIMSF25jDTL1olqtjRLgTUzkXdvcB8l0eswi2QsykuQS4sVW8ruqs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uo38d-0055Cu-Up; Mon, 18 Aug 2025 18:55:15 +0200
-Date: Mon, 18 Aug 2025 18:55:15 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next v4 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
- YT921x switch support
-Message-ID: <7c4bc4cc-61d5-40ce-b0d5-c47072ee2f16@lunn.ch>
-References: <20250818162445.1317670-1-mmyangfl@gmail.com>
- <20250818162445.1317670-2-mmyangfl@gmail.com>
+	s=arc-20240116; t=1755536167; c=relaxed/simple;
+	bh=IFg0D4g6Egie7/QmgFZH3hnlqMPxOHmfSJD63T/Ug0M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MKu57J326Q8TaRBSJ/L6RvnAQPYCYDXuXClI03jfRtxUOPnD50FyEe4JwJCQprJ+H1bEcSBtLelDxeEQNcoZORk8p7agb331LQaBC9dt8FqZ6B5SgjWWie4zXD3fVEB2ztDDKqEsfajw676rDJtcEvkDtbFK/7d4LSbFs2WOByU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-244580692f3so4647275ad.1;
+        Mon, 18 Aug 2025 09:56:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755536166; x=1756140966;
+        h=content-transfer-encoding:organization:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zcw7UQVd8NcuUoJtmjMZ4xGFWAzLft8voRj5P/6UCyA=;
+        b=MhjN6XgAtyyJ3f9BlFko52UEvvZDC/2C9msJl68sKheiyBtZ9aX+mgam5yWv+7iWjx
+         HL7zVoIBi/15SgCW/MBD0xgChPFr7aUmZjgZ+/UVCVI0G3kZqsGJfSPKaF3FeT3ZFrvP
+         Ki4tOTWlIern2+3cY/agu5YdyXJVYij+7CZr2re00yvykQkEfU6gQLIUd6tQHuHrNNDd
+         YhW6EFPkEcWkx7ChwyHtuMCT/6eCg8JZUJKuBdjvXvaC1r7FqOkMtDMRjdAApEiLj7H8
+         aTdHSZUhtrzbLBlXHjdol422KCC0wX3mR404xIgLWxk/8Q02FVQmBlw9MS6ocfpkClYO
+         WevA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBxBP2S23IlxLDqnmEJj72NFNLYtJrB8G+mdZ76wrbDsjfH9k9eWG5hUgbRWF75qDPNzBCyMZ/Fjz+m0cfh1A=@vger.kernel.org, AJvYcCW+UNZM+aYiYYP+c//0RC4v7yLRrXGPnflUQhYO5oQsMiBhQfNUSR6a0uHftnZur5KdKzZVsnBwAe0r7DM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWkYCpPGoS1jgVYyBtp7nXTDWjncsgorTwx2RnccMwPbYk5pz5
+	5BwEcOcNtjvIZffTq4QYnyoPo6Hg2/7Kxo0JQOLKQHysYUmRhF7TjZsN
+X-Gm-Gg: ASbGncuvz7/2fwb98FkZSSrhyCx9Tg+NjPBGHWV5VbO00xwkkI1qCzHgCPbAiwz0nv3
+	tBf0+7JsigiDSV4VmIQ5TaIXfExZ2CWnzxgDrCv8OnWd0m1zEKpEUJfhzvxlssD8Iwu0HlbPqMV
+	31ATbvAVTXNktSIr5Ktmo7gILyMu8CL3dlr7ROspmwOnMGGtNHDwBs6hCf/uBvZB8Hss8QjNVjz
+	PB0AaotQ0EBCZBefUfSGna7rP/XG7l43xEKR8VxKT3PLWQazgoKMa5l/X/UNJjkWpk8uM/DLftC
+	rK9zIJhaHWpGpph7YoClA+m67emPXfVXU9AImlCiGtndanCf/gJouvZggK5mN77mdaSrnN9NlXS
+	FEfuQsNtnZCsDozse+LV8fzl/bt2y+db/
+X-Google-Smtp-Source: AGHT+IGnVrA59DmOzJy5E4sN18kKqIy9b2FRTAzN1UkHFYriAbF897/ODgMzzWDNmt9+Bqs94Fa7gg==
+X-Received: by 2002:a17:902:d4c1:b0:234:df51:d190 with SMTP id d9443c01a7336-2446d756119mr88110485ad.4.1755536165478;
+        Mon, 18 Aug 2025 09:56:05 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb09ff8sm85254045ad.50.2025.08.18.09.56.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 09:56:05 -0700 (PDT)
+Message-ID: <c15a819a-51de-467c-93fd-c321dd2e8ec9@kzalloc.com>
+Date: Tue, 19 Aug 2025 01:56:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818162445.1317670-2-mmyangfl@gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Jiri Kosina <jkosina@suse.cz>, Aaron Hill <aa1ronham@gmail.com>,
+ Lukas Redlinger <rel+kernel@agilox.net>, Oleksii Shevchuk
+ <alxchk@gmail.com>, =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?=
+ <toke@redhat.com>, linux-wireless@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+From: Yunseong Kim <ysk@kzalloc.com>
+Subject: [RFC] mac80211: Potential sleep in atomic context in
+ __ieee80211_wake_txqs
+Organization: kzalloc
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> +  motorcomm,switch-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Value selected by Pin SWITCH_ID_1 / SWITCH_ID_0.
-> +
-> +      Up to 4 chips can share the same MII port ('reg' in DT) by giving
-> +      different SWITCH_ID values. The default value should work if only one chip
-> +      is present.
-> +    enum: [0, 1, 2, 3]
-> +    default: 0
+Hi,
 
-It is like getting blood from a stone.
+I found a potential PREEMPT_RT issue I noticed in __ieee80211_wake_txqs()
 
-So what you are saying is that you have:
+ static void __ieee80211_wake_txqs(struct ieee80211_sub_if_data *sdata, int ac)
+ {
+     ...
+     local_bh_disable();
+     spin_lock(&fq->lock);
+     ...
+ }
 
-    mdio {
-        #address-cells = <1>;
-        #size-cells = <0>;
+This sequence of local_bh_disable() followed by spin_lock(). On an 
+RT-enabled system, spin_lock() is converted to a sleeping lock. Calling it
+immediately after local_bh_disable() creates a situation where a sleeping
+function is called from an atomic context, which will lead to a sleep in
+atomic context if the lock is contended.
 
-        switch@1d {
-            compatible = "motorcomm,yt9215";
-            /* default 0x1d, alternate 0x0 */
-            reg = <0x1d>;
-            motorcomm,switch-id = <0>;
-            reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-...
-	}
+The conventional fix for this pattern is to replace the two lines with a
+single, RT-safe call to spin_lock_bh(&fq->lock).
 
-        switch@1d {
-            compatible = "motorcomm,yt9215";
-            reg = <0x1d>;
-            motorcomm,switch-id = <1>;
-            reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-...
-	}
+I wanted to bring this up for discussion before preparing a patch. Is this
+a valid concern, and would a patch to correct this locking be the right
+approach?
 
-        switch@1d {
-            compatible = "motorcomm,yt9215";
-            reg = <0x1d>;
-            motorcomm,switch-id = <2>;
-            reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-...
-	}
-    }
+Thank you for your time and consideration.
 
-Have you tested this? My _guess_ is, it does not work.
 
-I'm not even sure DT allows you to have the same reg multiple times on
-one bus.
-
-I'm pretty sure the MDIO core does not allow multiple devices on one
-MDIO address. Each device is represented by a struct
-mdio_device. struct mii_bus has an array of 32 of these, one per
-address on the bus. You cannot have 4 of them for one address.
-
-    Andrew
-
----
-pw-bot: cr
+Best regards,
+Yunseong Kim
 
