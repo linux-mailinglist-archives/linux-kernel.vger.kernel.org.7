@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-774530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3638B2B3C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:55:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F26B2B3E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F2F62085C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CF7620D5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA8827603A;
-	Mon, 18 Aug 2025 21:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A91227A925;
+	Mon, 18 Aug 2025 22:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="moSNTz60"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA40275869;
-	Mon, 18 Aug 2025 21:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIsZmG9f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8291CAA85;
+	Mon, 18 Aug 2025 22:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755554140; cv=none; b=ffFX0zTauiJ18iGG6rWpqQF16PXfA3nwyDOcm+2jX1MY2a3DZ2piuYTMz+HU+OQUiUfTWhqqpHAnhyN3n66xvi663mzikydzLBx+BgoKBF5nnW8LP1R7yNDMr6DTVHebhzqe80rrPK/AkOZ7YxpLGxeVhOpMX8yi/AWBppacTmo=
+	t=1755554450; cv=none; b=FYBcwvEHrMwczxYW9rslOo+GDkBq2hc+85vZkAtM/OgpplmIO4Jt3ZQv+B68yYDJucKWOePQNtWOmOi3nN4QKK62AhUQU36NvUWH1FIRgn1/eGJwv1RhI6dzLh75QBcY2gY5GaUDVMAJMTDhTApkhIuClQ/LGkYL7oMU3+CqFxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755554140; c=relaxed/simple;
-	bh=AvPnhp8uiVkXXK54PS71qwBLejCBhN5BMJOLT95GAbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWmq7cmqPP1x+0LVdRLJg64nDF3Pk9sbd2/HUiw68zSOSxGK4RripO09RaPDHDqrBaW09yh/ife9su8Rwly/Wb2BOeJ5Gw4PvwCEV1WgwvAEMmU+uDL5ud9lBmdJviBB85+b8bqV958evRz3XSIEzB//SQVrjXlkiey5iFhdlpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=moSNTz60; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id C157514C2D3;
-	Mon, 18 Aug 2025 23:55:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1755554135;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=auLOhWoJLzMo5J4E2hQaw+rrZVFMM1bMgBRMGY/PL2o=;
-	b=moSNTz60+w3p/T7Zd9IShd1kdgP0RV90fFSfnL1+vsHRSeh7tj/xyJii/z3OkUe+FH5nC6
-	nDIO9qHEMECFFjhGZMOLkqH8yUAM0Ai8uTeYNHFA90EYfsqxqbzBhPJ+TK7a9bv0eiGMuP
-	81V/4OSzpxsKhGaX+yZzdQ9VeD8rJB4c17ywfQUb2sLa7sGbm6H1iJ4i7zTPzIdcG0EAD6
-	q6aVhSJDZeodIqNpr0c6vxMg/IC8+57UCNk1ybDfE1powYj1yG2Q1Dxrf1CCkgRkQCX7YC
-	emBsonRLxlE+KQdqi/00x1h+EfKsFJb+q1hvEaIK9T0W8yoWtDdh2iA66ixJYw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 05349875;
-	Mon, 18 Aug 2025 21:55:29 +0000 (UTC)
-Date: Tue, 19 Aug 2025 06:55:13 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: syzbot <syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com>,
-	David Howells <dhowells@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>, akpm@linux-foundation.org,
-	brauner@kernel.org, dvyukov@google.com, elver@google.com,
-	glider@google.com, jack@suse.cz, kasan-dev@googlegroups.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk, willy@infradead.org
-Subject: Re: [syzbot] [fs?] [mm?] INFO: task hung in v9fs_file_fsync
-Message-ID: <aKOhQcVwLd1Kvt6N@codewreck.org>
-References: <20250818114404.GA18626@redhat.com>
- <68a31e33.050a0220.e29e5.00a6.GAE@google.com>
- <20250818125625.GC18626@redhat.com>
+	s=arc-20240116; t=1755554450; c=relaxed/simple;
+	bh=7xdRSu3yuYWbOst77dbEL+lRIYNYXotOyq5T3LRic/Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=HDGioSeSfzhfPAIgLMczRUJIETngEh3lLKZ5rShA7w1CF7tGot8Y5cusO6qZcEhqv6CBil+Zv/28gD/zz4jb6VUX0dwHJurCC4n1vYCPXd4eglA+6XrIFE9WEFBMc5oh0fM2WTEZOv9NtxWjIhw4SAsQNU+ZLlT12ZDR8bqeT00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIsZmG9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA89CC4CEEB;
+	Mon, 18 Aug 2025 22:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755554450;
+	bh=7xdRSu3yuYWbOst77dbEL+lRIYNYXotOyq5T3LRic/Q=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=aIsZmG9fAN2JECx9Ca0EZHLsviLPjxkHaChQMXolg3KUkQqdsDVE9iNe9iCco1Hy9
+	 44DKtbIAMM1hOQHRj1ZTWEb8iOX299ovtv3gzEtR2PFAgiNmIZB5RF6J3OLMr+BP1o
+	 68f37s13kj5dK1V2eNfAQxP26+90sW09OXWqpGDvtAnJ9Fn9TwGWkaqgDUVKOAXbGm
+	 z7DKW5lbVcol572FlPbCeQd8bXq03bXRfsj8HC6zZ6hKiiemqg7iBI2A5kpDYFbjiw
+	 Scv2Fgda/xRajRIe5XQxs+i3GI4qV1qEbNiPUh1ZdFFDZ4lLrozLqW7u7WkVJdXoY5
+	 Pj5gtZi5SgS+A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250818125625.GC18626@redhat.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 19 Aug 2025 00:00:45 +0200
+Message-Id: <DC5W42NRS92U.3DYP6CWWHWJSE@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: cred: update AlwaysRefCounted import to
+ sync::aref
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Shankari Anand" <shankari.ak0208@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250816114409.10107-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250816114409.10107-1-shankari.ak0208@gmail.com>
 
-Hi Oleg,
+On Sat Aug 16, 2025 at 1:44 PM CEST, Shankari Anand wrote:
+> Update the import of `AlwaysRefCounted` in `cred.rs` to use `sync::aref`
+> instead of `types`.
+>
+> This is part of the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to the `sync` module for better modularity.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+> ---
+> It part of a subsystem-wise split series, as suggested in:
+> https://lore.kernel.org/rust-for-linux/CANiq72=3DNSRMV_6UxXVgkebmWmbgN4i=
+=3DsfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+> This split series is intended to ease review and subsystem-level maintena=
+nce.
+>
+> The original moving patch is here: (commit 07dad44aa9a93)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D07dad44aa9a93b16af19e8609a10b241c352b440
+>
+> Gradually the re-export from types.rs will be eliminated in the
+> future cycle.
+> ---
+>  rust/kernel/cred.rs | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 
-Oleg Nesterov wrote on Mon, Aug 18, 2025 at 02:56:26PM +0200:
-> On 08/18, syzbot wrote:
-> > syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-(I hate that syzbot identified "hung in v9fs_file_fsync" but doesn't
-bother to Cc 9p folks... all the time..)
-
-> Dominique, David,
-> 
-> Perhaps you can reconsider the fix that Prateek and I tried to propose
-> in this thread
-> 
-> 	[syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-> 	https://lore.kernel.org/all/67dedd2f.050a0220.31a16b.003f.GAE@google.com/
-
-I've re-read that thread, and I still think this must be a problem
-specific to syzbot doing obviously bogus things (e.g. replying before
-request, or whatever it is this particular repro is doing), but I guess
-your patch is also sane enough and the 9p optimization is probably not
-really needed here
-
-Please resend as a proper patch, and I'll just run some quick check (and
-a trivial benchmark) and pick it up
-
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+---
+Cheers,
+Benno
 
