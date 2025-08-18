@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-773654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2D2B2A466
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:20:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBC3B2A4D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B8E623C1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:14:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B52BF4E328C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEF7320CCF;
-	Mon, 18 Aug 2025 13:13:45 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF07322A2D;
+	Mon, 18 Aug 2025 13:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="HDQeo03a";
+	dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b="q/H9e93p"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D9F31CA6E;
-	Mon, 18 Aug 2025 13:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522825; cv=none; b=YcxttFJjDdAhTP1JHhqmt/bBnr+qpwZthjUnRK/PYzEsk4OsN7SS27oSRrCqAT8BwTbAy3cAopl2E/wGwR+Psf/f3pRKe1SK7SCxlt2pgS6KzxhKKrJH9aeqA4gyZcYAdphTInMdAR6sPjGnez7JNyTF8OHKEAjZiSX0A2Zlr7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522825; c=relaxed/simple;
-	bh=bHXamoYbn4iRYbHyS4qmXEWpEMHvJ8sBxGn2lLdPu5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=ejB/TUXiFsjzQHQZy9yU77UIBLDc6SRgVaIV/LBNIVryr7vA+TU6Sz0QJafFw5gt94v/FGoSfTjIersZrKvIsZ7xg4m/Z1upQfP+QlmLg4lDlQWq+RbLWDE3WXtyN0Z+5AP5dqORNEBNL5/ZQG9EyZ2j7n/2Yyuv9T8tut22eLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4A8BC60213AD0;
-	Mon, 18 Aug 2025 15:13:36 +0200 (CEST)
-Message-ID: <17f959be-7270-4cc1-85bf-ec2516b8e3d0@molgen.mpg.de>
-Date: Mon, 18 Aug 2025 15:13:35 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AD2322A25;
+	Mon, 18 Aug 2025 13:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.164
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755523196; cv=pass; b=gnbV5ZAKwNCzpVI+YZP8OMjFRrEHabWxTVZD4X4jf9Z+l1uCQeJD8hAvlNgK5HcDRBgRWZlDuyH3YqkbVjybRp7HQnbMbDNmQrgrrQ02YXZeOkwsIopE6WT3NNHVjZl0Ue3m02fyeYXbc5BSnNP3iyUVaRHl91vPSImQlfr1U+g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755523196; c=relaxed/simple;
+	bh=wn8el64YoQiHP7Z0ilqvfhc+uJwkjuW4CfXUttHHKV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mA5SBHj/YEQz3M/AzGHQK8/KpFa9/miTU5Q4dYDFR71k4rY/Uw+FwIsoH8NX2uMMMGW6rPcEPe2Dod4FNfMV2526Xnwo0SSAK2YpbSD+V7MUdBDEjNk6qDcQI7IUJL/GaAa8LTzoo2xaczHj09p8dlGgUujzE/MrdS+zM9LErVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=HDQeo03a; dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b=q/H9e93p; arc=pass smtp.client-ip=81.169.146.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
+ARC-Seal: i=1; a=rsa-sha256; t=1755522828; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=FOroSdsWP59IJQ6aW0lXzSTlVX3hzkfglECuNZTrMQu8m/KZIJTmwsFHB1eGFyQMpe
+    d+gXbCq6qLJg/32jcNwHlRUd16KK0ZTJkoXKTB6l6ATM8eG1QDzNn2Kgt5RmUy/i5WWF
+    ++f3/RLK/CjjzBiwuKp9ekbNkZSrnD7BAyYSsPjga+cwHQu6wZu+AAuxnAO16aZZo/ly
+    8eyzHyNwh6Q2nUHAvq+MOu88xj3f6F9+Qg6sWGJPlh4/xO68/9Emh2IpORZK+jppyp98
+    fzcf6esKLrZJfnwKiEPDRPcVsSnYkgzXNkYtRlY+gVzOxe7Xvdggtm0jupR9o/7JeHuV
+    7esg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1755522828;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=wn8el64YoQiHP7Z0ilqvfhc+uJwkjuW4CfXUttHHKV0=;
+    b=GSSaB2Lneb7ojydcoWghB8UJNR6KxWPuEplGDWrgdxj2HWWlMFSbhdgkK7E/JsZD6R
+    3CpLt7TBmNKXbZwkMltIawDVOCHDv7F2bnIV5Do8mFQba4LKqZ477f1zkTBVVZVEmgp5
+    sj4gfmFLqGplhRUKLx1n+LjGBDIJvCnj2ChF4J98885FCqSTqsegZmUWWAoIkQZFOu9i
+    if0T1EYddFLigFZt410wj/ekqwttqVN17NHrkGdtJg8cU9phq35M4t08PWC1W9LhAfOO
+    x67covBx+V/mfluckdJ4BGp6mZca8GVgWXqTNQ5aJbj1XTL921AJkXRRR2DKIgZ8H4ZL
+    0wZw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1755522828;
+    s=strato-dkim-0002; d=chronox.de;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=wn8el64YoQiHP7Z0ilqvfhc+uJwkjuW4CfXUttHHKV0=;
+    b=HDQeo03aOFyFNrCjLxDj2Z8zlbpMUO7aaVVhNbXkb0N/shSMmbbEVYtsns6dj+lSuQ
+    PM8ZJKuDJsHdeAG2yUegYNJA8XtbP21n/4Ivx8Js3KcK8H8QcujRYDq1iMHFuJZYVzk3
+    DbSOdkMWIlsjApvmxRqE8mX0MKr3s38sSzXl8xJYChQGxZ4NKvoHFHDGWC8aMphxQ0Z5
+    OTca9g90w7Gi3XOxpD7XKEarpu6zScpLOWLxMmg3uvfpGcfxTdmJpvbi8QCUdO1687Wo
+    BqUnf6He06JwnWKfDOadPjsxk9j5InMgz3ntKpvBOdeuVOkyjqsSN+Ms84uC0yy8JacL
+    SwKQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1755522828;
+    s=strato-dkim-0003; d=chronox.de;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=wn8el64YoQiHP7Z0ilqvfhc+uJwkjuW4CfXUttHHKV0=;
+    b=q/H9e93pYIsi8QrL7eLi/sO+MugFn4MT0iuDk8JTANc2+flHSlKNNXFTvQ/OdvKegr
+    QbbzWLygYXsi+VWW/LDQ==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDYJPSciIGX"
+Received: from tauon.localnet
+    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
+    with ESMTPSA id f5f78e17IDDmyM4
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 18 Aug 2025 15:13:48 +0200 (CEST)
+From: Stephan Mueller <smueller@chronox.de>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, eadavis@qq.com,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] crypto: Mark intermediary memory as clean
+Date: Mon, 18 Aug 2025 15:13:47 +0200
+Message-ID: <7740195.jRhZ6ZUK3Y@tauon>
+In-Reply-To: <tencent_F8BAB8BB23338A9E2C1B4F4BD11BD9252E08@qq.com>
+References:
+ <aKMc5amKH9CLbKL8@gondor.apana.org.au>
+ <tencent_F8BAB8BB23338A9E2C1B4F4BD11BD9252E08@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: hci_ldisc: Remove redundant 0 value
- initialization
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-References: <20250818123638.635566-1-liaoyuanhong@vivo.com>
-Content-Language: en-US
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250818123638.635566-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Dear Liao,
+Am Montag, 18. August 2025, 14:43:36 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb=20
+Edward Adam Davis:
 
+Hi Edward,
 
-Thank you for the patch.
+> On Mon, 18 Aug 2025 20:30:29 +0800, Herbert Xu wrote:
+> > Their values are equal, so why use sizeof to calculate?
+> > Similarly, "if (sizeof(intermediary) !=3D
+> > crypto_shash_digestsize(desc->tfm)) {", why not just use
+> > SHA3_256_DIGEST_SIZE?
+>=20
+> Hi Stephan Mueller, can you explain it?
 
-Am 18.08.25 um 14:36 schrieb Liao Yuanhong:
-> The hci_uart struct is already zeroed by kzalloc(). It's redundant to
-> initialize hu->padding to 0.
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->   drivers/bluetooth/hci_ldisc.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-> index d0adae3267b4..e7a55c2e63f1 100644
-> --- a/drivers/bluetooth/hci_ldisc.c
-> +++ b/drivers/bluetooth/hci_ldisc.c
-> @@ -508,7 +508,6 @@ static int hci_uart_tty_open(struct tty_struct *tty)
->   
->   	/* disable alignment support by default */
->   	hu->alignment = 1;
-> -	hu->padding = 0;
->   
->   	/* Use serial port speed as oper_speed */
->   	hu->oper_speed = tty->termios.c_ospeed;
+If the question is why using sizeof(intermediary) instead of=20
+SHA3_256_DIGEST_SIZE, then it is very trivial: I always want to avoid any k=
+ind=20
+of double work. If for any reason the buffer size of intermediary changes, =
+the=20
+current code only requires *one* location to fix it.
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+When changing the branching condition to use SHA3_256_DIGEST_SIZE, we would=
+=20
+have to change *two* locations which is more error-prone than to change one=
+=2E=20
+This approach is my common coding style to try to minimize the possibilitie=
+s=20
+where inconsistencies can occur.
+
+Ciao
+Stephan
 
 
-Kind regards,
-
-Paul
 
