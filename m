@@ -1,113 +1,168 @@
-Return-Path: <linux-kernel+bounces-773439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5811EB2A021
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:14:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A5CB2A024
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6CF4E8666
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10726175F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4ED310648;
-	Mon, 18 Aug 2025 11:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBC5258EE4;
+	Mon, 18 Aug 2025 11:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aamuVr2g"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcOJaqG6"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AE43009EF;
-	Mon, 18 Aug 2025 11:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0256D261B9A;
+	Mon, 18 Aug 2025 11:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755515686; cv=none; b=JMb4jYUiYFGXFiLhCMwy41urNTe5kOXKGAKmmB+TlY5GQ/iQMotMLdOGRT8MLvOyzkM0+JAXHt6in35fuGwWjMOUJfG2LOL9/X20aWCPYKBdZT2spwMnluatILGmFAc0JbRAshpgA7bFsuLoRd1uV9GZW/3PtU/cU2aJo0E0tMs=
+	t=1755515777; cv=none; b=f7JKdwDkZadcpzad8t82lpAqkrWV8oxYcCjnzuzfBF3I7DrS0B7dhvWfosgXCYo0RVKKyS9JN9sECBPVfINiB7OIFbMgBSd6wTVSbFlMqYtPshmrE37zlEAL4sbP4X1LLHPuRj7HO0o3sB7KfVUeFZ4LGUntmgUBRDlIiTLT190=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755515686; c=relaxed/simple;
-	bh=QGK+8BU43Z/BLfmsImDku8HtvcxMQmdcoWqcXyADLeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2/0/DybdJ8oP7NABAR3jLJhRuvn8tFlEf7o1eCKVoN53LGxZG68mXDJ8bH3VgjJ8OnwEdGWBfzSkLMHQdibbGovJy1h5HV6AKGjK9af2NyhQgi/gQ5Ln1898Bw0q+6DE9woP2BQMPJmjmVRO79l6ayrIJfROwIpMg8smNzcNkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aamuVr2g; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755515685; x=1787051685;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QGK+8BU43Z/BLfmsImDku8HtvcxMQmdcoWqcXyADLeM=;
-  b=aamuVr2gO+0Mg68e6s0JDue8jTUvoUaYteFsJEjbuxNayPJloBE4gyye
-   u1opSK47lm+0Oxml0sYK1sAZ2lGv/ET/uwW+k76PG6ILPulQ3zdmq7UYx
-   mALb++BDfD4xr56XZro2kYXP4nWcqPS8Pq8AsmaLommSVZCYKRAoDN/81
-   2gk+vs5UFU1Jr7ySku/L1Uf5GlQm6u0HqMKnmRFhonbJX9ESjvA7vi4qm
-   3cPtXcJzUOkxqTlXb+fyhZdlI/6FC4gWDvoNoiorUZ+ykcGinu7GlbbpQ
-   M2sxI7FKwse0iYQdDbHkYG/Dx0ffM/eyI18+0fTgsn1h6AQ4pf+QGzJO1
-   Q==;
-X-CSE-ConnectionGUID: atYJse1XQkqw7sGHax2e6A==
-X-CSE-MsgGUID: AbwLk5WzQ7Ksq/lqF/BOLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57691299"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="57691299"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 04:14:44 -0700
-X-CSE-ConnectionGUID: tjX8Qo3mSp6UVkCsC5F00w==
-X-CSE-MsgGUID: XhMFdXstTkyHp4iT5G9jqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171789223"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.252])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 04:14:41 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id ECB35120230;
-	Mon, 18 Aug 2025 14:14:39 +0300 (EEST)
-Date: Mon, 18 Aug 2025 11:14:39 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Will Whang <will@willwhang.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] media: i2c: imx585: Add Sony IMX585 image-sensor
- driver
-Message-ID: <aKMLH_S5J_8EENwa@kekkonen.localdomain>
-References: <20250816055432.131912-1-will@willwhang.com>
- <20250816055432.131912-3-will@willwhang.com>
- <7e27b69b-40df-4ac4-aebf-dbd00044b71b@kernel.org>
- <CAFoNnrxbzcF+YranTL8Von3BkROhq8X=RX5sa90M6PYgS_vjkQ@mail.gmail.com>
- <daa45e3e-84a6-4c39-854a-1429fb68d415@kernel.org>
- <CAFoNnrw4yRKGL_m0=g14C583o13ptC6e84TN---ABdyeg8jMhg@mail.gmail.com>
- <04fd00bb-beb4-4f35-88fb-bf1cc7691505@kernel.org>
- <CAFoNnrxd_2=9aJqo9yQ8bcDsyW9pVRCfmUU6tOHoeX5wEB2AhA@mail.gmail.com>
- <11e35902-a19a-44b2-b816-15a495048d41@kernel.org>
- <CAFoNnrxT83nz0qxf8HTapqOXuEQ0Vh+RbxyqRGQy_sJp9nzpAg@mail.gmail.com>
+	s=arc-20240116; t=1755515777; c=relaxed/simple;
+	bh=UHl3YSxJthkwgkiqXlD2Ds3JkvMLkpeU3sRkVQlByDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qNLsYxSmqW81g0VklqctmXjwm/KE9226qeiiWUSmNsOKIw8tz1sYhEN3pHvgIeQNaIzGiUJ9KPm5Yj913RtLDS0PXkzO+RU2F8SHrbCbmwvF/pJId/FGeD3L1fjbkXX4hLadWiEO9LQi5pLdTfBER9Ck67Z1hYEpFq56uAWLk9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcOJaqG6; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-618aea78f23so3543807a12.3;
+        Mon, 18 Aug 2025 04:16:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755515774; x=1756120574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MV0cIbZnj4xhKyQPoyhNPQGNNuLSSXTuac6vTpZ00k=;
+        b=gcOJaqG6Z6Yud2c2hisHGX4qaf7g/sLssX8alArdffqUWcb7DG8cFYMU5S/qPALrRx
+         PfxT30OC7YHdhWRa0wajvq40plFP35sk4WjqnJL2U7eAHghXPx+97NB4pfGmKBlgerYg
+         4XdZUBO6wqD3NnNlLnBDhfafzj4ib6mid6MRWa/PUqVCcvKSkl/4HY/DY5F9GYKdBwT/
+         VT9Berm+asZ/twM2x+lcDyKWYn36F3/iuX31k/XHK2XBtqgo0zdpOzAieE0HmW2coh9C
+         Tj9ISs3JQk8asnSlKztb1iL16yIu6vpdu8TORkqNwPAAv55acia4I70v9WfEjPfnuqFq
+         hRfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755515774; x=1756120574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2MV0cIbZnj4xhKyQPoyhNPQGNNuLSSXTuac6vTpZ00k=;
+        b=jjjpPnGjeA16s1+GahynCad1kMFUXUqPt2s0O2UFcA+cmVc/D0u84vKbfdWmYSIHhA
+         DbcGM091Dis69zTYQwCoDap7LqUhbx+CBMt/XeWp8jNIwiRXrhA2LA3/h0tZ01hbJleo
+         TTML2wrS2/NRh+UosvzLfyv0ZRsrkDPhq9Z42eB38ArNg9ohfUXKZSC7l4/apcyzMuSN
+         tG2cS4BZmYaxJU/uwfZuUDncdH9oTPhpNk7feJnuhgk6hu60sf8dpmAmGq/l377EON5C
+         RsWRR4/QWsHSfOPFBhYlYRNOZvKc2VxBVIJnTiabrDrV88jfsagrYURRHUwbGjyCJl0M
+         HcXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ltdVz9Io25fqRiL/PuR+nBU3N01SS7O4rX8BH1HYLAVTbFM+m0Y262diKDXPYaDshc86yvsgQ1yf8Z321w==@vger.kernel.org, AJvYcCXgQUYYdwlvmq9079BmrGrlV+wTIbTpHyq43YXoJZgUxvTakhLNnySuExPFlqegW0FHi7pmMVdymnG6H20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzt+S5knQ7odVH0MCiiFwoG8hLLF1b0JG04BiB+tP8zlMktOQh
+	457glIj+HEYfYg9qDHAi1iYz0jbQ6Ea5P6l4D2npvIFcCd50vl3lLitCAgBwUj9sYe1ksteU/QX
+	QBuRMWnl/ffScDw6XNHuLUgQT45vik00=
+X-Gm-Gg: ASbGncsC/JO9tbITzrv6SRCfvGnpXZuCHKx5d9B3UMt6oFRsyLSEW2G48qtX1V17xPW
+	2O5g31yJjCqykwonD0Ak2yFMQdl/VabxqOcFr65rYkoFInW+60NIddRT2CswC/4zMS5xjgeat0K
+	Nn/6+E4yuN2R7fnNFtc+6eFjkLMjZsuyGZDPaa5uw5N2oWl+fW2F7jwGW+1qh29EyKINRU6Eg1f
+	a1nNq8=
+X-Google-Smtp-Source: AGHT+IFayKKz6BhBN8U24mL6NLXtdlzlqVhgCQvhy6H2IU9A+S5OQWOAXUAMtxWhVFkAtaWwAEy2hD9TXbVE7fAwyW4=
+X-Received: by 2002:a05:6402:84d:b0:615:a847:c179 with SMTP id
+ 4fb4d7f45d1cf-618b054b8e0mr9835935a12.18.1755515773982; Mon, 18 Aug 2025
+ 04:16:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFoNnrxT83nz0qxf8HTapqOXuEQ0Vh+RbxyqRGQy_sJp9nzpAg@mail.gmail.com>
+References: <689ff631.050a0220.e29e5.0033.GAE@google.com> <CAOQ4uxibh4-ZM+77i7pxe_LH-Rt-QG4d0QtDQ27PXV-8Jnj+Mw@mail.gmail.com>
+ <175547723217.2234665.3959316236142184849@noble.neil.brown.name>
+In-Reply-To: <175547723217.2234665.3959316236142184849@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 18 Aug 2025 13:16:02 +0200
+X-Gm-Features: Ac12FXzPwuRcrJ--vTMcoQPncBLZIAZcYYb_22yGAoWNQUni51mIyyCXCmtmjzQ
+Message-ID: <CAOQ4uxhEzxvgpJ=_a++xdGAptsywc4gLmnJXBA7ipFmM+qHR3g@mail.gmail.com>
+Subject: Re: [syzbot] [overlayfs?] WARNING in shmem_unlink
+To: NeilBrown <neil@brown.name>
+Cc: syzbot <syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com>, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Will,
+On Mon, Aug 18, 2025 at 2:34=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> On Mon, 18 Aug 2025, Amir Goldstein wrote:
+> > Neil,
+> >
+> > I will have a look tomorrow.
+> > If you have ideas I am open to hear them.
+> > The repro is mounting overlayfs all over each other in concurrent threa=
+ds
+> > and one of the rmdir of "work" dir triggers this assertion
+>
+> My guess is that by dropping and retaking the lock, we open the
+> possibility of a race so that by the time vfs_unlink() is called the
+> dentry has already been unlinked.  In that case it would be unhashed.
+> So after retaking the lock we need to check d_unhashed() as well as
+> ->d_parent.
+>
+> So something like
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -1552,7 +1552,8 @@ void ovl_copyattr(struct inode *inode)
+>  int ovl_parent_lock(struct dentry *parent, struct dentry *child)
+>  {
+>         inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> -       if (!child || child->d_parent =3D=3D parent)
+> +       if (!child ||
+> +           (!d_unhashed(child) && child->d_parent =3D=3D parent))
+>                 return 0;
+>
+>         inode_unlock(parent->d_inode);
+>
+>
+> NeilBrown
+>
 
-On Sun, Aug 17, 2025 at 12:53:49AM -0700, Will Whang wrote:
-> You are asking me to code a bug in the driver and the arguments don't
-> make sense.
-> As much as I appreciate your feedback, I want a working driver
-> upstream and will have to point to the existing code base to prove
-> that it works.
+Nice!
+I pushed this commit to ovl-fixes:
 
-Please do address Krysztof's comments, otherwise there won't be progress in
-upstreaming this driver. I can recommend reading section "The active low
-and open drain semantics" in Documentation/driver-api/gpio/consumer.rst .
+commit c56976d86e11afcd6b23633395a7f2e6e920e42d (HEAD -> ovl-fixes)
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Mon Aug 18 11:23:55 2025 +0200
 
--- 
-Regards,
+    ovl: fix possible double unlink
 
-Sakari Ailus
+    commit 9d23967b18c6 ("ovl: simplify an error path in
+    ovl_copy_up_workdir()") introduced the helper ovl_cleanup_unlocked(),
+    which is later used in several following patches to re-acquire the pare=
+nt
+    inode lock and unlink a dentry that was earlier found using lookup.
+    This helper was eventually renamed to ovl_cleanup().
+
+    The helper ovl_parent_lock() is used to re-acquire the parent inode loc=
+k.
+    After acquiring the parent inode lock, the helper verifies that the
+    dentry has not since been moved to another parent, but it failed to
+    verify that the dentry wasn't unlinked from the parent.
+
+    This means that now every call to ovl_cleanup() could potentially
+    race with another thread, unlinking the dentry to be cleaned up
+    underneath overlayfs and trigger a vfs assertion.
+
+    Reported-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
+    Tested-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
+    Fixes: 9d23967b18c6 ("ovl: simplify an error path in ovl_copy_up_workdi=
+r()")
+    Suggested-by: NeilBrown <neil@brown.name>
+    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+Neil,
+
+Please review my commit message.
+If you want me to assign you ownership please sign off on this commit messa=
+ge.
+
+Thanks,
+Amir.
 
