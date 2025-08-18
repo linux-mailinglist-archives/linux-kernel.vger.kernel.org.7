@@ -1,242 +1,302 @@
-Return-Path: <linux-kernel+bounces-773597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4F6B2A231
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE727B2A200
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9551D1891A4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A001E3B2972
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9057C26F2AF;
-	Mon, 18 Aug 2025 12:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A8831AF24;
+	Mon, 18 Aug 2025 12:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iUEsdV2+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AqAnuQfh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iUEsdV2+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AqAnuQfh"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l92Zmez9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B3F1E9905
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535D73218DA;
+	Mon, 18 Aug 2025 12:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521167; cv=none; b=uGZiDORn6c/vQ6lakq5+KqSSnuKG67dE2pGO7csKHJWfpGN7lIRr4VNhwTW5Ce+L50hmsbZjCUvir3BqckU7aVmb3CzV8ZMuSaup8wTejNHmybNAVJrGw1SHMC8bGuBJrzVnC10qnUSj9MWfJFJWqhs6WmcS7y3Xae4Yqh6HceI=
+	t=1755521174; cv=none; b=aZQQNbuPLc1AVq1vIkW4K1F+qMWDTgAM+4sr2+qRSViObly7a5xBRwylHjWHsYt8Cw+K7T7WJ4KlRmRDgWUUQt2n0+fpmLT9r6ZJaxpGSrurT4GWTTrq8wgXbHOVyOICPln8u1YIPaWjJ75CAVC6Egr1cGWOyMD5d9PN3hEg118=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521167; c=relaxed/simple;
-	bh=xOSBC4XrMZ8JAupJZmPq6It+DWa+bypcke8bHJybzYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1eGpyV2UaphTLHY+7ig7jjRz9jM0G2GlrxSp2z2uI09jTI1eK86Moc2aDNKb49h4/GEkWehYSau4LCgtwEjxMRcDHK7yRekaPOz3HyutiArH1y8JEE4kLXZ62SvUbWv+pi06OfdYcRVGGEKAXUrY+Xcy1M87WJ2RXxuMZDhckE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iUEsdV2+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AqAnuQfh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iUEsdV2+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AqAnuQfh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 22C0621202;
-	Mon, 18 Aug 2025 12:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755521164; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZyTaJV4H2K1FdAE1ksZTx4V5FzCI7Mttwmp8s0NSmLE=;
-	b=iUEsdV2+ChkIQA0SzYMWcyWMjcps0SL7S5CegkYTFeWgU8nZVoFh9W5kNXBisO+YQ9B1eX
-	mSTFCsR7H0E8rxOGqmrkDZbEiRyoGHqzlshEAwiReKVkQL3OognDAtkhV6od2SwnIh9kTM
-	RvmiKxd+9KYdyO0Jdl9Bo5Q7aCSpI3w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755521164;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZyTaJV4H2K1FdAE1ksZTx4V5FzCI7Mttwmp8s0NSmLE=;
-	b=AqAnuQfhuvpzjyQvAwc3VRdBGhUaakPMmd2PVcmZKNNB3Xjhx26usfLdsaNmdSCGZxLulZ
-	UTYUhIeQsE3kXRBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755521164; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZyTaJV4H2K1FdAE1ksZTx4V5FzCI7Mttwmp8s0NSmLE=;
-	b=iUEsdV2+ChkIQA0SzYMWcyWMjcps0SL7S5CegkYTFeWgU8nZVoFh9W5kNXBisO+YQ9B1eX
-	mSTFCsR7H0E8rxOGqmrkDZbEiRyoGHqzlshEAwiReKVkQL3OognDAtkhV6od2SwnIh9kTM
-	RvmiKxd+9KYdyO0Jdl9Bo5Q7aCSpI3w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755521164;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZyTaJV4H2K1FdAE1ksZTx4V5FzCI7Mttwmp8s0NSmLE=;
-	b=AqAnuQfhuvpzjyQvAwc3VRdBGhUaakPMmd2PVcmZKNNB3Xjhx26usfLdsaNmdSCGZxLulZ
-	UTYUhIeQsE3kXRBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFE8C13686;
-	Mon, 18 Aug 2025 12:46:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id prFpLYsgo2iqeQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 12:46:03 +0000
-Message-ID: <7c2d8894-7eb5-4c86-a80a-935fcf24ef83@suse.de>
-Date: Mon, 18 Aug 2025 14:46:03 +0200
+	s=arc-20240116; t=1755521174; c=relaxed/simple;
+	bh=24WakrD9fixJlitRHi8Gn7rJ/IlnrJTZ5fFbAmLiezE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hibtDaha7sFMJRi+a3xI2t2bvfxxoJT+b/TGKnBtnek7d4Flb5BN8l3crkihF14vgv9COIqnKU3vCKRgPgmxR0YE0BJ2bXjd4X/TlEl2mKLl7FwQ6XwlwtVhmxOFmT0yzufeXCQkMFPJcmarpOyAZwPd76tB+qHnEHiQ+gUdvpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l92Zmez9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BB80C4CEEB;
+	Mon, 18 Aug 2025 12:46:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755521173;
+	bh=24WakrD9fixJlitRHi8Gn7rJ/IlnrJTZ5fFbAmLiezE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=l92Zmez9tMbXAX42s/rK8pmChjhD5oFF1E9vV4ASffQeNHsgI+eKX5/0QDNkXlI78
+	 rzbG+xVfVgF8jFCUEb+3sQeqwoaA+wd58Ve72FkzuERpCzPr3NkFX9UnC76bQFq7Em
+	 9VpvST4VHDaatAvgh0/WaJ0GlFocXkM6Ygv0MYByrCAT+BW8bGPlOtE6RAyZRaEHFS
+	 rMziECu1SYQgP28jC49I4WTxm00eyga5xAnr6MnUheMxaN0XhsyaKsqhFaiSHaV/r8
+	 +1cHz8VfGnUjFkMLBYOZbhdo33m1JbkICKADCPGFXRuTfNHGcuGKtIqGolygioLcDA
+	 AlZyUeGuc+H/g==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno
+ Lossin <lossin@kernel.org>, Asahi Lina <lina+kernel@asahilina.net>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver
+ Mangold <oliver.mangold@pm.me>
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+In-Reply-To: <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+ <2OkNj7ab-vTaPaqMj_KRpIjaKTWgOW-F9Cn-CxnR12E6Dwg4lnjr6fx1vkjnoTx0boUeReeIVDbSyVFBWlYx7g==@protonmail.internalid>
+ <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
+Date: Mon, 18 Aug 2025 14:46:04 +0200
+Message-ID: <87o6scdchf.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: Pin buffer while vmap'ing exported dma-buf
- objects
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- sumit.semwal@linaro.org, oushixiong@kylinos.cn, alexander.deucher@amd.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org
-References: <20250818084148.212443-1-tzimmermann@suse.de>
- <6f409954-2e01-4e87-b8b7-5688bea837f6@amd.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <6f409954-2e01-4e87-b8b7-5688bea837f6@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FREEMAIL_TO(0.00)[amd.com,linaro.org,kylinos.cn,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain
 
-Hi
+"Oliver Mangold" <oliver.mangold@pm.me> writes:
 
-Am 18.08.25 um 14:40 schrieb Christian König:
-[...]
->> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
->> +{
->> +	struct drm_gem_object *obj = dma_buf->priv;
->> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->> +	int ret;
->> +
->> +	/*
->> +	 * Pin to keep buffer in place while it's vmap'ed. The actual
->> +	 * location is not important as long as it's mapable.
-> Yeah, exactly that won't work here. Most of the locations are not CPU accessible.
+> From: Asahi Lina <lina+kernel@asahilina.net>
 >
-> You could use AMDGPU_GEM_DOMAIN_GTT, that should most likely work in all cases but isn't necessarily the most optimal solution.
-
-No problem about that, but why not a bit more flexibility? When udl 
-copies from the buffer, it is likely pinned to VRAM.
-
-A bit mask of _CPU, _GTT, and _VRAM should work fine. The other domains 
-are probably irrelevant for our use case.
-
-Best regards
-Thomas
-
+> By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
+> (typically C FFI) type that *may* be owned by Rust, but need not be. Unlike
+> `AlwaysRefCounted`, this mechanism expects the reference to be unique
+> within Rust, and does not allow cloning.
 >
-> Regards,
-> Christian.
+> Conceptually, this is similar to a `KBox<T>`, except that it delegates
+> resource management to the `T` instead of using a generic allocator.
 >
->> +	 *
->> +	 * This code is required for exporting to GEM-SHMEM without S/G table.
->> +	 * Once GEM-SHMEM supports dynamic imports, it should be dropped.
->> +	 */
->> +	ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_MASK);
->> +	if (ret)
->> +		return ret;
->> +	ret = drm_gem_dmabuf_vmap(dma_buf, map);
->> +	if (ret)
->> +		amdgpu_bo_unpin(bo);
->> +
->> +	return ret;
->> +}
->> +
->> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
->> +{
->> +	struct drm_gem_object *obj = dma_buf->priv;
->> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->> +
->> +	drm_gem_dmabuf_vunmap(dma_buf, map);
->> +	amdgpu_bo_unpin(bo);
->> +}
->> +
->>   const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>   	.attach = amdgpu_dma_buf_attach,
->>   	.pin = amdgpu_dma_buf_pin,
->> @@ -294,8 +326,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>   	.release = drm_gem_dmabuf_release,
->>   	.begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
->>   	.mmap = drm_gem_dmabuf_mmap,
->> -	.vmap = drm_gem_dmabuf_vmap,
->> -	.vunmap = drm_gem_dmabuf_vunmap,
->> +	.vmap = amdgpu_dma_buf_vmap,
->> +	.vunmap = amdgpu_dma_buf_vunmap,
->>   };
->>   
->>   /**
+> Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@asahilina.net/
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> [ om:
+>   - split code into separate file and `pub use` it from types.rs
+>   - make from_raw() and into_raw() public
+>   - fixes to documentation and commit message
+> ]
+> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  rust/kernel/types.rs         |   7 +++
+>  rust/kernel/types/ownable.rs | 134 +++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 141 insertions(+)
+>
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index 22985b6f69820d6df8ff3aae0bf815fad36a9d92..c12ff4d2a3f2d79b760c34c0b84a51b507d0cfb1 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -11,6 +11,9 @@
+>  };
+>  use pin_init::{PinInit, Zeroable};
+>
+> +pub mod ownable;
+> +pub use ownable::{Ownable, OwnableMut, Owned};
+> +
+>  /// Used to transfer ownership to and from foreign (non-Rust) languages.
+>  ///
+>  /// Ownership is transferred from Rust to a foreign language by calling [`Self::into_foreign`] and
+> @@ -425,6 +428,10 @@ pub const fn raw_get(this: *const Self) -> *mut T {
+>  /// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to create reference-counted
+>  /// instances of a type.
+>  ///
+> +/// Note: Implementing this trait allows types to be wrapped in an [`ARef<Self>`]. It requires an
+> +/// internal reference count and provides only shared references. If unique references are required
+> +/// [`Ownable`] should be implemented which allows types to be wrapped in an [`Owned<Self>`].
+> +///
+>  /// # Safety
+>  ///
+>  /// Implementers must ensure that increments to the reference count keep the object alive in memory
+> diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f4065a0d627a62d3ecb15edabf306e9b812556e1
+> --- /dev/null
+> +++ b/rust/kernel/types/ownable.rs
+> @@ -0,0 +1,134 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Owned reference types.
+> +
+> +use core::{
+> +    marker::PhantomData,
+> +    mem::ManuallyDrop,
+> +    ops::{Deref, DerefMut},
+> +    ptr::NonNull,
+> +};
+> +
+> +/// Types that may be owned by Rust code or borrowed, but have a lifetime managed by C code.
+> +///
+> +/// It allows such types to define their own custom destructor function to be called when a
+> +/// Rust-owned reference is dropped.
+> +///
+> +/// This is usually implemented by wrappers to existing structures on the C side of the code.
+> +///
+> +/// Note: Implementing this trait allows types to be wrapped in an [`Owned<Self>`]. This does not
+> +/// provide reference counting but represents a unique, owned reference. If reference counting is
+> +/// required [`AlwaysRefCounted`](crate::types::AlwaysRefCounted) should be implemented which allows
+> +/// types to be wrapped in an [`ARef<Self>`](crate::types::ARef).
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers must ensure that:
+> +/// - The [`release()`](Ownable::release) method leaves the underlying object in a state which the
+> +///   kernel expects after ownership has been relinquished (i.e. no dangling references in the
+> +///   kernel is case it frees the object, etc.).
+> +pub unsafe trait Ownable {
+> +    /// Releases the object (frees it or returns it to foreign ownership).
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that:
+> +    /// - `this` points to a valid `Self`.
+> +    /// - The object is no longer referenced after this call.
+> +    unsafe fn release(this: NonNull<Self>);
+> +}
+> +
+> +/// Type where [`Owned<Self>`] derefs to `&mut Self`.
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers must ensure that access to a `&mut T` is safe, implying that:
+> +/// - It is safe to call [`core::mem::swap`] on the [`Ownable`]. This excludes pinned types
+> +///   (i.e. most kernel types).
+> +/// - The kernel will never access the underlying object (excluding internal mutability that follows
+> +///   the usual rules) while Rust owns it.
+> +pub unsafe trait OwnableMut: Ownable {}
+> +
+> +/// An owned reference to an ownable kernel object.
+> +///
+> +/// The object is automatically freed or released when an instance of [`Owned`] is
+> +/// dropped.
+> +///
+> +/// # Invariants
+> +///
+> +/// The pointer stored in `ptr` can be considered owned by the [`Owned`] instance.
+> +pub struct Owned<T: Ownable> {
+> +    ptr: NonNull<T>,
+> +    _p: PhantomData<T>,
+> +}
+> +
+> +// SAFETY: It is safe to send `Owned<T>` to another thread when the underlying `T` is `Send` because
+> +// it effectively means sending a `&mut T` (which is safe because `T` is `Send`).
+> +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
+> +
+> +// SAFETY: It is safe to send `&Owned<T>` to another thread when the underlying `T` is `Sync`
+> +// because it effectively means sharing `&T` (which is safe because `T` is `Sync`).
+> +unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
+> +
+> +impl<T: Ownable> Owned<T> {
+> +    /// Creates a new instance of [`Owned`].
+> +    ///
+> +    /// It takes over ownership of the underlying object.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that:
+> +    /// - Ownership of the underlying object can be transferred to the `Owned<T>` (i.e. operations
+> +    ///   which require ownership will be safe).
+> +    /// - No other Rust references to the underlying object exist. This implies that the underlying
+> +    ///   object is not accessed through `ptr` anymore after the function call (at least until the
+> +    ///   the `Owned<T>` is dropped).
+> +    /// - The C code follows the usual shared reference requirements. That is, the kernel will never
+> +    ///   mutate or free the underlying object (excluding interior mutability that follows the usual
+> +    ///   rules) while Rust owns it.
+> +    /// - In case `T` implements [`OwnableMut`] the previous requirement is extended from shared to
+> +    ///   mutable reference requirements. That is, the kernel will not mutate or free the underlying
+> +    ///   object and is okay with it being modified by Rust code.
+> +    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+> +        // INVARIANT: The safety requirements guarantee that the new instance now owns the
+> +        // reference.
+> +        Self {
+> +            ptr,
+> +            _p: PhantomData,
+> +        }
+> +    }
+> +
+> +    /// Consumes the [`Owned`], returning a raw pointer.
+> +    ///
+> +    /// This function does not actually relinquish ownership of the object. After calling this
+> +    /// function, the caller is responsible for ownership previously managed
+> +    /// by the [`Owned`].
+> +    pub fn into_raw(me: Self) -> NonNull<T> {
+> +        ManuallyDrop::new(me).ptr
+> +    }
+> +}
+> +
+> +impl<T: Ownable> Deref for Owned<T> {
+> +    type Target = T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: The type invariants guarantee that the object is valid.
+> +        unsafe { self.ptr.as_ref() }
+> +    }
+> +}
+> +
+> +impl<T: OwnableMut> DerefMut for Owned<T> {
+> +    fn deref_mut(&mut self) -> &mut Self::Target {
+> +        // SAFETY: The type invariants guarantee that the object is valid, and that we can safely
+> +        // return a mutable reference to it.
+> +        unsafe { self.ptr.as_mut() }
+> +    }
+> +}
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+I think someone mentioned this before, but handing out mutable
+references can be a problem if `T: !Unpin`. For instance, we don't want
+to hand out `&mut Page` in case of `Owned<Page>`.
+
+Could we do something like this:
+
+  diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.rs
+  index 29729dc10cb4..52d21e41c26b 100644
+  --- a/rust/kernel/types/ownable.rs
+  +++ b/rust/kernel/types/ownable.rs
+  @@ -3,6 +3,7 @@
+  //! Owned reference types.
+
+  use crate::{
+  +    prelude::*,
+      sync::aref::{ARef, RefCounted},
+      types::ForeignOwnable,
+  };
+  @@ -112,6 +113,17 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+      pub fn into_raw(me: Self) -> NonNull<T> {
+          ManuallyDrop::new(me).ptr
+      }
+  +
+  +    /// Get a pinned mutable reference to the data owned by this `Owned<T>`.
+  +    pub fn get_pin_mut(&mut self) -> Pin<&mut T> {
+  +        // SAFETY: The type invariants guarantee that the object is valid, and that we can safely
+  +        // return a mutable reference to it.
+  +        let unpinned = unsafe { self.ptr.as_mut() };
+  +
+  +        // SAFETY: We never hand out unpinned mutable references to the data in
+  +        // `Self`, unless the contained type is `Unpin`.
+  +        unsafe { Pin::new_unchecked(unpinned) }
+  +    }
+  }
+
+  impl<T: Ownable> Deref for Owned<T> {
+  @@ -123,7 +135,7 @@ fn deref(&self) -> &Self::Target {
+      }
+  }
+
+  -impl<T: OwnableMut> DerefMut for Owned<T> {
+  +impl<T: OwnableMut + Unpin> DerefMut for Owned<T> {
+      fn deref_mut(&mut self) -> &mut Self::Target {
+          // SAFETY: The type invariants guarantee that the object is valid, and that we can safely
+          // return a mutable reference to it.
+
+
+Best regards,
+Andreas Hindborg
 
 
 
