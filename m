@@ -1,205 +1,142 @@
-Return-Path: <linux-kernel+bounces-773021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E882EB29A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFC1B29A8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED65203F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:10:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EBD32041AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF80227979F;
-	Mon, 18 Aug 2025 07:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56CC277CB1;
+	Mon, 18 Aug 2025 07:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W32LT4To"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="l9qdOH6S"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EDE277CB1;
-	Mon, 18 Aug 2025 07:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3109B1E008B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755500996; cv=none; b=EQ6jH3qianblVMizRgmhiGT8ACai0SYggZmiIrgXBwB4li4RworEpiDZSkGsdOTKIYx/Q5KI3jDKkf9SvNaO42zqCw0Ny6PfmIQ0NkKDGAQUj3y7UjzMc0DeCqWN0/+AsVHtp9XqMZrOyRRQpQydIrbebQ6SDrY5qc0IrOQQvJ4=
+	t=1755501047; cv=none; b=LtTq1LPh5jCsPz6rOB9TC6dtWubqIOcRDhndrQKwS4T8BnoO6Vv8BrEIZ85auGY6go8b+eBUGFXArsza/XOL5Oz/C2Z2hG/xv4s7caToiBfPih2q0KXVDuyN1qNhVLusQt7kKds+enaw+F3zrsvZU/4KV40tluExjw9/f8GTqds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755500996; c=relaxed/simple;
-	bh=XvgFub5eWHK2y36TAgRUO9tAFUs63v+IadSoFQ/DpsU=;
+	s=arc-20240116; t=1755501047; c=relaxed/simple;
+	bh=16BbQFcv29+6Uk4By1bC4nzIcQZgln+mYt1XP6RjV/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImNPB6fIGxC+k41tEK5SF908PLeIKYq6AmnSyz9jYocpDIdudV3x/OQDGENdxTXnXqlMeHcVaQ0a5GAUu6LahAdT3HvutvwGhLhrHPNDIzWgUiPfeERBcKpKt7PyUXJqXGBRVwJSPc5ZH8KWniI0rAv5QaHYZnCT492izLwctwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W32LT4To; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87486C4CEED;
-	Mon, 18 Aug 2025 07:09:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755500995;
-	bh=XvgFub5eWHK2y36TAgRUO9tAFUs63v+IadSoFQ/DpsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W32LT4Tosdsx+2NXw2u1isMpVYDjyZqPlCxbxMEXJ2WiHtGJNx+6Dl4kNSSzgtt9O
-	 UKIIpqaXhWbtd1vaKSTyL4WYFy3CEJpqR7Z8fiTLy/dgNr8UDaz/4eeH9gUs4KS7CN
-	 pGIaPa6ONNgBsB8FtUUotkdv/dWGXdEGMmu15YRxBZJFDMXc/HEy8Jbrc3gDjKv/Zu
-	 u8yM0YaWBeCUZ5Xr5voXpvcn3ohs4GlilhyzXggY80rtNjpGUAVWgFhBAIqXRJPQbD
-	 zlP5Gd2KtgRLxAsV7sp71gXi/U1/ERE2mkBDLDuvfELhqWRwg/UGtIh36+eO+nkUu7
-	 Atgtpqo8BIU2g==
-Date: Mon, 18 Aug 2025 12:39:43 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	mhi@lists.linux.dev, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
-	qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com, 
-	quic_mrana@quicinc.com, Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v4 02/11] PCI/bwctrl: Add support to scale bandwidth
- before & after link re-training
-Message-ID: <mrsdwtzz7x6uuoakjr6kymqccfxs3lndplols7j33apbru7jii@tjdljisgaqny>
-References: <20250711213602.GA2307197@bhelgaas>
- <55fc3ae6-ba04-4739-9b89-0356c3e0930c@oss.qualcomm.com>
- <d4078b6c-1921-4195-9022-755845cdb432@oss.qualcomm.com>
- <68a78904-e2c7-4d4d-853d-d9cd6413760e@oss.qualcomm.com>
- <ycbh6zfwae3q4s6lfxepmxoq32jaqu5i7csa2ayuqaanwbvzvi@id4prmhl3yvh>
- <ec0e3b33-76f4-4ad5-8497-5c8c8b42f67e@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RrhykNDAQs+zKDIqB5blMyOUxKpCGJrWr7pFfA000UQiR17lol0eKI7d+vJUVgxpCKXaRQSF1kJqVsNPf1NEupsOk1XOc7x/70x7jT5lyofYtgTJkYGbPRC7cxNiZYgp+tF9kLPPO7xFfqhQGwklhLfEpjvqIch0rCJqwZPXNxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=l9qdOH6S; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1755501033;
+	bh=DIyLi8TReoN+5AF3jvUXWckVHC2MAP2cCVjZaPo6GQw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=l9qdOH6SuVBnYSZj+wjxhn+mvv9XN/PmDpQhQAMuNdM5hmG0h5t3vvtwMW+1zoWG5
+	 Yib/VO077FBPGrtxgZQPyc0aPqSc9Hg7cqAR8s/6fqWF1dNsmW1FIM10jju4bLs3pB
+	 rQiiOdhiP/WuA3gsrbZXNFkjpoI5MoedclxU+OkU=
+X-QQ-mid: esmtpsz16t1755501030t18f06d0f
+X-QQ-Originating-IP: Yz02jh1oqjelU7qc2kAra1/3BSe5M9Cdk8a1P5ZaNVc=
+Received: from = ( [14.123.254.114])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 18 Aug 2025 15:10:28 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5468809535196601441
+EX-QQ-RecipientCnt: 14
+Date: Mon, 18 Aug 2025 15:10:28 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: guoren@linux.alibaba.com, guoren@kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH V2] RISC-V: KVM: Write hgatp register with valid mode bits
+Message-ID: <BA652752F35145B4+aKLR5OHaYZ99CvHb@LT-Guozexi>
+References: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec0e3b33-76f4-4ad5-8497-5c8c8b42f67e@oss.qualcomm.com>
+In-Reply-To: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: Nw75Pb9ZsEyGbGU/2uZNGJ4RZ6ryd1WtxxExHkav3qUwsG1PE/VrAI9V
+	VmW09g42524DoIl2yystSHVSpnX0Qjm7SgnAsbFFYM8zAiDzv6e75exzHVZeyYd5JNg6Mme
+	rri4YI3By5RNWFOPdPOdxYCRTAAblyAWkyym0lVQ0cB4XEpZ/oF6FoHBCdfFtSDidePz2nu
+	oAE4NgvCTGsSJbCfZzpB5sYg5M4rFoVqD1fAZCZEGGoeaPxQb6YJYQO89lf49/2UsvWiN6Q
+	BqlX4/FS0xUptyfoNs8zKd4ekUs7Nb/wsD2NApScUw5Ij4oHfApEw0s73OPRhMEyXCC3OSK
+	5ITF9KmCb7jBHweSF2Na6yLYc//zAhcbI81bMMdCYIh8+NbaR9Vpc/0VQokmob6BmueWXwE
+	A1gFa1xa46HYJz8WkpVkPkvOGk9YgEQJUpIFwTuvMcE7RY0PbZT7vOBgLH9gjmIyx4fus1Y
+	X0n2geTVKozqTbjMaXQ0yHAQRGUj/pGHOrvxpi8c8VB8CflltQvVvztCSmEroKsh6tqfYlt
+	tGcPPU+fTBSYZYmgk82ysUZHd72sD/4i5OtghmtpkkpYKTSZY/EE4LCapCDS2Du5t7vmvG0
+	JADzBA05vZDXEPHs4Ikf5sQPKFqEyr1YFzG/PoHVt/NLZuSatd1isW2Scet/S3Z1f677WoX
+	IXk+WnlQp9lgWRNkXsOsOXk6iPlcpmX+rtUV1o+DB6+kWzTH3pk4PDZdNpFsoB0EbdhESXC
+	uo6NtkSoZKCsnY3CBAL+ZDUGe57v8NPMhM248E371jDc2Vi+lSlIQXsp6Em9DpNrPeOuBYk
+	PcW5nr8d4xZxjsEWWom43sb5SFbWll2ipivQHsE7cVqzda3Cwm++fJnB42hnDXxWFVda+ao
+	BUThJTQDyUr7hX50PEHHeHu/E/W30xiTenhFGSZqocHSqpuA0zJ7YlQDyRArfYYiQrE5Rx+
+	youg6TWbKqoHI+Wce0uLJ7MQW2CNI6rP8srBEkCNsNPdBlWxOjQOCTxQUil5lOWL6jz56Kd
+	n7aaLWImzmo5IQLXQpCFZ5wH1xyNxyWEEhWtoBQ3f+MCETF7MbB6WErbHhQGgG78U5cwKus
+	H8JAkgaTCbw+x1s12pXO8AgLvr4PAiPRQ==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Aug 13, 2025 at 09:25:03AM GMT, Krishna Chaitanya Chundru wrote:
+On Mon, Aug 18, 2025 at 01:42:07PM +0800, fangyu.yu@linux.alibaba.com wrote:
+> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> 
+> According to the RISC-V Privileged Architecture Spec, when MODE=Bare
+> is selected,software must write zero to the remaining fields of hgatp.
+> 
+> We have detected the valid mode supported by the HW before, So using a
+> valid mode to detect how many vmid bits are supported.
+> 
+> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+With Fixed tag, feel free to add:
+
+Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> 
+> ---
+> Changes in v2:
+> - Fixed build error since kvm_riscv_gstage_mode() has been modified.
+> ---
+>  arch/riscv/kvm/vmid.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+> index 3b426c800480..5f33625f4070 100644
+> --- a/arch/riscv/kvm/vmid.c
+> +++ b/arch/riscv/kvm/vmid.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/smp.h>
+>  #include <linux/kvm_host.h>
+>  #include <asm/csr.h>
+> +#include <asm/kvm_mmu.h>
+>  #include <asm/kvm_tlb.h>
+>  #include <asm/kvm_vmid.h>
+>  
+> @@ -28,7 +29,7 @@ void __init kvm_riscv_gstage_vmid_detect(void)
+>  
+>  	/* Figure-out number of VMID bits in HW */
+>  	old = csr_read(CSR_HGATP);
+> -	csr_write(CSR_HGATP, old | HGATP_VMID);
+> +	csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) | HGATP_VMID);
+>  	vmid_bits = csr_read(CSR_HGATP);
+>  	vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
+>  	vmid_bits = fls_long(vmid_bits);
+> -- 
+> 2.49.0
 > 
 > 
-> On 8/12/2025 10:13 PM, Manivannan Sadhasivam wrote:
-> > On Tue, Aug 12, 2025 at 09:35:46AM GMT, Krishna Chaitanya Chundru wrote:
-> > > 
-> > > 
-> > > On 7/22/2025 4:33 PM, Krishna Chaitanya Chundru wrote:
-> > > > 
-> > > > 
-> > > > On 7/12/2025 4:36 AM, Krishna Chaitanya Chundru wrote:
-> > > > > 
-> > > > > 
-> > > > > On 7/12/2025 3:06 AM, Bjorn Helgaas wrote:
-> > > > > > On Mon, Jun 09, 2025 at 04:21:23PM +0530, Krishna Chaitanya
-> > > > > > Chundru wrote:
-> > > > > > > If the driver wants to move to higher data rate/speed than
-> > > > > > > the current data
-> > > > > > > rate then the controller driver may need to change certain
-> > > > > > > votes so that
-> > > > > > > link may come up at requested data rate/speed like QCOM PCIe
-> > > > > > > controllers
-> > > > > > > need to change their RPMh (Resource Power Manager-hardened) state. Once
-> > > > > > > link retraining is done controller drivers needs to adjust their votes
-> > > > > > > based on the final data rate.
-> > > > > > > 
-> > > > > > > Some controllers also may need to update their bandwidth voting like
-> > > > > > > ICC BW votings etc.
-> > > > > > > 
-> > > > > > > So, add pre_link_speed_change() & post_link_speed_change() op to call
-> > > > > > > before & after the link re-train. There is no explicit
-> > > > > > > locking mechanisms
-> > > > > > > as these are called by a single client Endpoint driver.
-> > > > > > > 
-> > > > > > > In case of PCIe switch, if there is a request to change
-> > > > > > > target speed for a
-> > > > > > > downstream port then no need to call these function ops as these are
-> > > > > > > outside the scope of the controller drivers.
-> > > > > > 
-> > > > > > > +++ b/include/linux/pci.h
-> > > > > > > @@ -599,6 +599,24 @@ struct pci_host_bridge {
-> > > > > > >        void (*release_fn)(struct pci_host_bridge *);
-> > > > > > >        int (*enable_device)(struct pci_host_bridge *bridge,
-> > > > > > > struct pci_dev *dev);
-> > > > > > >        void (*disable_device)(struct pci_host_bridge *bridge,
-> > > > > > > struct pci_dev *dev);
-> > > > > > > +    /*
-> > > > > > > +     * Callback to the host bridge drivers to update ICC BW
-> > > > > > > votes, clock
-> > > > > > > +     * frequencies etc.. for the link re-train to come up
-> > > > > > > in targeted speed.
-> > > > > > > +     * These are intended to be called by devices directly
-> > > > > > > attached to the
-> > > > > > > +     * Root Port. These are called by a single client
-> > > > > > > Endpoint driver, so
-> > > > > > > +     * there is no need for explicit locking mechanisms.
-> > > > > > > +     */
-> > > > > > > +    int (*pre_link_speed_change)(struct pci_host_bridge *bridge,
-> > > > > > > +                     struct pci_dev *dev, int speed);
-> > > > > > > +    /*
-> > > > > > > +     * Callback to the host bridge drivers to adjust ICC BW
-> > > > > > > votes, clock
-> > > > > > > +     * frequencies etc.. to the updated speed after link
-> > > > > > > re-train. These
-> > > > > > > +     * are intended to be called by devices directly attached to the
-> > > > > > > +     * Root Port. These are called by a single client Endpoint driver,
-> > > > > > > +     * so there is no need for explicit locking mechanisms.
-> > > > > > 
-> > > > > > No need to repeat the entire comment.  s/.././
-> > > > > > 
-> > > > > > These pointers feel awfully specific for being in struct
-> > > > > > pci_host_bridge, since we only need them for a questionable QCOM
-> > > > > > controller.  I think this needs to be pushed down into qcom somehow as
-> > > > > > some kind of quirk.
-> > > > > > 
-> > > > > Currently these are needed by QCOM controllers, but it may also needed
-> > > > > by other controllers may also need these for updating ICC votes, any
-> > > > > system level votes, clock frequencies etc.
-> > > > > QCOM controllers is also doing one extra step in these functions to
-> > > > > disable and enable ASPM only as it cannot link speed change support
-> > > > > with ASPM enabled.
-> > > > > 
-> > > > Bjorn, can you check this.
-> > > > 
-> > > > For QCOM devices we need to update the RPMh vote i.e a power source
-> > > > votes for the link to come up in required speed. and also we need
-> > > > to update interconnect votes also. This will be applicable for
-> > > > other vendors also.
-> > > > 
-> > > > If this is not correct place I can add them in the pci_ops.
-> > > Bjorn,
-> > > 
-> > > Can you please comment on this.
-> > > 
-> > > Is this fine to move these to the pci_ops of the bridge.
-> > > Again these are not specific to QCOM, any controller driver which
-> > > needs to change their clock rates, ICC bw votes etc needs to have
-> > > these.
-> > > 
-> > 
-> > No, moving to 'pci_ops' is terrible than having it in 'pci_host_bridge' IMO. If
-> > we want to get rid of these ops, we can introduce a quirk flag in
-> > 'pci_host_bridge' and when set, the bwctrl code can disable/enable ASPM
-> > before/after link retrain. This clearly states that the controller is quirky and
-> > we need to disable/enable ASPM.
-> > 
-> > For setting OPP, you can have a separate callback in 'pci_host_bridge' that just
-> > allows setting OPP *after* retrain, like 'pci_host_bridge:link_change_notify()'.
-> > I don't think you really need to set OPP before retrain though. As even if you
-> > do it pre and post link retrain, there is still a small window where the link
-> > will operate without adequate vote.
-> > 
-> Hi Mani,
-> 
-> we need to update the OPP votes before link retrain, for example if
-> there is request  to change data rate from 5 GT/s to 8 GT/s on some
-> platforms we need to update RPMh votes from low_svs to NOM corner
-> without this clocks will not scale for data rates 8 GT/s and link
-> retrain will fail. For that reason we are trying to add pre and post
-> callbacks.
-> 
-
-If we are targetting OPP only, then can't we do direct OPP setting from the
-bwctrl driver itself? Or we also need to set ICC votes directly also (in the
-non-opp case)?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
