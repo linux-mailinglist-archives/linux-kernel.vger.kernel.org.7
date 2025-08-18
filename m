@@ -1,138 +1,181 @@
-Return-Path: <linux-kernel+bounces-773294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8E3B29DDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:30:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726AEB29DE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF36196473E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35C5F5E5E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D4C27E060;
-	Mon, 18 Aug 2025 09:28:21 +0000 (UTC)
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E073C30E826;
+	Mon, 18 Aug 2025 09:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NFG2P6UD"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013058.outbound.protection.outlook.com [40.107.44.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AF22882DC
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509301; cv=none; b=NzfJjgX0ud/d+8MnZX+ZcT1IRhVs3mp5ygmuC8q5viXnJiS8REHqWrbMDS89O8XwEVomQU58wPKAy7ZJgq79irB9zSSiR6KJP+0Q5NFvD/FQb9PXssDbjj8YkAXGk/FZjlChwYn8TaKc4Rj39woctDZXfguKIAPi+Tz1qHObUjk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509301; c=relaxed/simple;
-	bh=wkxXxM55u6xiafcEX1i5/qPwViPKndBguofdjqgnuic=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=YHSgdFMBZcxk6Xh/USLbWeNovNj9SbAOLukskUq1M+begb8s+tzte3zx7a9FviTLFPaLdmCXmoK6Sj5Tx1OmSMTC9ONXIZWCMUtoKHwvG0ZaOQ2tertTzhpWQaSChofy4wJIsqzUpbun0HdtCunBk4H8mgR9JArqoCM+d+7mmJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-	by 156.147.23.51 with ESMTP; 18 Aug 2025 18:28:16 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: chanho.min@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
-	by 156.147.1.121 with ESMTP; 18 Aug 2025 18:28:16 +0900
-X-Original-SENDERIP: 10.178.31.96
-X-Original-MAILFROM: chanho.min@lge.com
-From: Chanho Min <chanho.min@lge.com>
-To: Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna.schumaker@netapp.com>
-Cc: linux-nfs@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133CF30E0C5;
+	Mon, 18 Aug 2025 09:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755509310; cv=fail; b=eYB/4stCxOGmJHhaegFG8eCnku1Md5RQN8pLU004qqiGQDWbkrqUoirbRGm4rPU/DRNXxfYZhxb9QN81GK45WKeBr/rGARgNrSerAiOQFzTO4ZrqRXdoXqVj/tU4R/Hm68gYOQ5FZw1LkEpbYE0+bEyowAdxwwgLEUaqnDv4NQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755509310; c=relaxed/simple;
+	bh=epxknCKVCsCOiC4ElJpNLAJLkIVCIuHGwLquwICDJ14=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JsCRATB9maleZf6ijVsSF09dsma74O2Xic2Jg7Y8Bw2PeT2y3I+Sh2BFB2Q2k+YZO7DLapnH3m8wqTw0tGJaoX5Fu02tAktmC5UdgNZKJ8Bgd3A7HyVNC4qlq6TOMgaL+6MHVl+K/SiwICn4yNqVeYq0Fx/n2X1t+vU1A+tue+w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NFG2P6UD; arc=fail smtp.client-ip=40.107.44.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WrlpRNtqDjxMcBU7ZNJMYl4KJaaWjHhtM4hetIuEF/Lfe271p7WSdI5fyxDCl9X4VcJg8peT1NpfV8uNS5DrZC48X57rM3+eaYpEnb2M/KqEOyv4KNND7TVBsS4ipriq3O56N0LFXloS1QpBJcCcdjBNqj4SVmEPicC85hea06oFJ3n4W44ulUXEwTJeXjuZU+FIpY6UW7bee4yY1Tc+PLKQuvUKNVpooPZnE100IPCnE1DD+8IogVrkgCgUKC8pHqznIfcZ7VxIKH8eUHWVZ0VTj33Or2h1HRA/TPhqAknfqk/kblef47Tva9+RPUJMmGMmy1dPNtm4UtC7IRFL2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1EoCy6iIhWnu+rSIy4wQsuCc732VEUTQV9EeqaD9KsM=;
+ b=F3FFMB0zc9fTJJdzumoBrb5/uCr6w+rtBoHRJrEyYe8ed04LLeKbuYg7wdD9lj6SIZnE/E93wyEMNG3yCZB5L0wlHqzXZbFrKd20xEEoVTPTXyJDvJEvpbJQkPYRx58q22wjhPOoAxtGMllV6m3fSEvv+jYqhJoabN3PIhu1kKz2s0x0pNCA7OhHTLUdkGm8ntv3b9zjxLayKhwfHuqkGvxYobTEMKTQTdV+lB9JwDd4I9wh54wzKwWN/R0knayaDRAPRmq6hxzH7JG803VPu7FQpTYt8tl1K2hw4yPLiQanusrPY9KSxPDfdwWpSExb69HPDY+resD+LTM6iBPQgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1EoCy6iIhWnu+rSIy4wQsuCc732VEUTQV9EeqaD9KsM=;
+ b=NFG2P6UDa3c4CfqSgqqIQMCNM97khH28puwkDhnRuryp09U/bTYTSJfo7xY1TddgYO51P+rEs0QMViKN+mg35rz2cRmw30eF6U/Eo2/5+RSh/1fQkbZsmWdK2aGpbDEnMKdGkZRzDiFaK9BGCoq6Jl7JSGOXt8Sra/weVVl5XdVJKzFYR4tuU8/bOgQdm+sFQ5IEa8LHy018NpNIWobV7hR0l9boNWdQ7SLzAicF+nCIg7fXfjciOaVqcov4HhDPDtnMS2tYvIxqIQUStbMzHMVIGUDZPTCRzfjp0LNb8s2GVTK0sfpQu9O5TytTGZNgadM/vxx6OSfpln8bksgMnQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by TYSPR06MB7258.apcprd06.prod.outlook.com (2603:1096:405:94::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.21; Mon, 18 Aug
+ 2025 09:28:24 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 09:28:24 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: yuezhang.mo@sony.com,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Chanho Min <chanho.min@lge.com>
-Subject: [PATCH] NFS: Fix up commit deadlocks
-Date: Mon, 18 Aug 2025 18:28:05 +0900
-Message-Id: <20250818092805.38743-1-chanho.min@lge.com>
-X-Mailer: git-send-email 2.17.1
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] exfat: drop redundant conversion to bool
+Date: Mon, 18 Aug 2025 17:28:15 +0800
+Message-Id: <20250818092815.556750-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0017.apcprd04.prod.outlook.com
+ (2603:1096:4:197::15) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|TYSPR06MB7258:EE_
+X-MS-Office365-Filtering-Correlation-Id: 864b32fc-a0e3-4a8d-1b16-08ddde39945e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dZdPLDQSGsD6rhjC7N9xvXoRx8JY9hYfl7P6Vy9TwZW+uepu4aS5NNYpc1E4?=
+ =?us-ascii?Q?h9oQtw7zcxrVAHmgr1NK9TO2IivP4B3pm5ea/VZ7RLzxukXDvTdVOWBpeK4Z?=
+ =?us-ascii?Q?mJdcmYLX9Na5CcYjlYLuuaQXuzMwYZMyC5WkIvV0yrmDqiL6+LoMQtDcCwyY?=
+ =?us-ascii?Q?buxY3JMpuD5T7ZmPJTRFopt8xutsJXruV58Qgc/fb5b5uuCiUHAoh6BZL2Km?=
+ =?us-ascii?Q?fPtDymVOdGqAbZEaJatTmVanXy3jvCkcdmgkdIDXbXhI9Vi0ekYsWfTOf5Ot?=
+ =?us-ascii?Q?N9uUyLANBQCWk3x0scckDhQaf+t3F1tvar8BSU+95Rtyecaf0qcNknucLnNL?=
+ =?us-ascii?Q?20xoshz9Xdfa9xor137e/39+y03glsZTGncQRE0kyIPZdqIVDHulGjxLFmwQ?=
+ =?us-ascii?Q?UyQelVV+625k0oDJwm/IdQatlfBzMbjw5Ky6pQRpiG1N68NYKlKgJ16T4B07?=
+ =?us-ascii?Q?aXSyNGrk4V4Iuyokn8ggrE8fOPT+VGF6qOsgF8Y0ePBiu4xQaJpv5DkS8lGO?=
+ =?us-ascii?Q?XMSsZVn0FxtYcJqzhz/nHbphbE9rocm2Tw4/iUvm5MvpXSD5LNwMLNmep+R1?=
+ =?us-ascii?Q?89f2vP3p6P7NyBNvkJ1++oa19YBeB/klgmwvlQ5ksnCEzlOJ5WBG0Z0R+T+i?=
+ =?us-ascii?Q?XloydL1RMo1GAWvSEk46rgXS7ffHr1gKjEpuluHvrvD84pMviEC5Dk53b5FW?=
+ =?us-ascii?Q?94tm/fPf2tzI+m1XDzwbQ8a9zE5P5s/nhXG6afEs1AJh14EAkFf06AQwmOu9?=
+ =?us-ascii?Q?EsuqCnUtUhKQhBlv0t2P9XLqIg6INxXufNQ9y/glY8JPLRvlZiys8Fmb7qLy?=
+ =?us-ascii?Q?J/4taY4brWqH5fEKg3yY0K2z28o6NbatZu+DJ7wdBt+4lxwdWGsJwbPWDLnP?=
+ =?us-ascii?Q?5nosujiRrWwVvJRwS8eGUohdjOid8T/1xl4RIMUs72xwhQjNJudy+m0i3Obf?=
+ =?us-ascii?Q?HjNLyD76Kajy/yrHV0//w1Zj974iCcmtWPX0Nnz5kNlgoXRDBhoyUDWQrDNg?=
+ =?us-ascii?Q?RdMmjUDJvghsJf++9Y5nBLlPOIVX1IxiApbNoaC/gUHvWN7plXPWckMZP0pb?=
+ =?us-ascii?Q?ICrOn4COy486+6VGFTbZDClPNW7NyjmPXjilDdC9bcvCjcWOA8XRjgApCZCl?=
+ =?us-ascii?Q?dhiYspT9fcbSzDrtzeQc5K8M3vEpnRvN6T1JFgGgF5Nb55DmJomvijjIVYpW?=
+ =?us-ascii?Q?/Att0EbdbplF+EC9qlBRM/4aKgWHFxJcVe2SXfMjCxIId/WIBwLSP0YSNG2t?=
+ =?us-ascii?Q?utaYsKHQV4nVOcSnb580uISVDauvbIKXFyw6Bc//m1zB+lTwgg4lxxpTl8uw?=
+ =?us-ascii?Q?uw3Ehwwd+w+FvpcFotFu8lvG+FSEKh9+ZoEN0fqyzdU9SaFovH+UlgLIWruZ?=
+ =?us-ascii?Q?59t7jq1qbDz3EgCSJJB6kwaSFv8dVUZGNSDnx6igp6GX1XmAaBUd2qsvG84l?=
+ =?us-ascii?Q?+4itRb9asPwhRfby9MDA8DmJnjEs6MLEnQWHcQM/8A4qTgxnX6GLIg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vGA3RG2/JU5tP30PR6ng6qTNROKXSL8WYVhyqQOZfGIIh2BDHs7C3YOG/QRX?=
+ =?us-ascii?Q?WwDJl47Tn0RcwHHSWBZqMC3wbVcsv1FG9pabeYHyrc4KSkMts6i/6GqtV9gm?=
+ =?us-ascii?Q?ae3tfiGZSNP7lznVLbKFXnNGFAGyKXQ8g7RjJmytvO1nTDBz9OACph0D+LxS?=
+ =?us-ascii?Q?DZIYHiXGbHhT4HQfUAPR652x7eqn3eSLXeWKvuzhFG2ApphzgpUOtil8Ak5K?=
+ =?us-ascii?Q?O7H4N7D6ydziz26PleB49mfr47ogAbZmsJcXShY9j5tyc9fk+K2cC+/ZINdG?=
+ =?us-ascii?Q?pQRFtI7MXEzoSUMvDzFckvrWBbvvd6r2UApvx/r+JLsKuKZo7TJWU81p9urD?=
+ =?us-ascii?Q?P59MPCP3j6AqQ9sfAjY0eeQmRXuTtQKSifN9r5tH3OGwha2IPGert6Gce3YF?=
+ =?us-ascii?Q?uOp7X3xXtaTj2LL7qLs9ihtbFFzD3H6gikZ12Q4PLGxne39RgU65G7zmKd5D?=
+ =?us-ascii?Q?GRGnmFHiiGyOeYe2yQdAllDrZJ35119W4YAeALCwneSPsm1uNfTBHUic7D22?=
+ =?us-ascii?Q?kZNMw2ppGqL5+nKu9pyw2FbgpqfO4yyw42FgZdoTgiAUUaXxx1eOXYdekY0c?=
+ =?us-ascii?Q?/3TTu5cIkGFH+LdfNOIIo/H40ABBR6Ep/SqzRCTi/Hz5K8isWxHXaF2DpHqJ?=
+ =?us-ascii?Q?eDMUVScUrs/MR7u3DOa07Bojv6936t3JWJOaiJyfzCH2fk6EgF4RT/cV5i7v?=
+ =?us-ascii?Q?TGSrtHavLkZ8QoeP79qQ1uuoZabhESSYVFCi8feZocdKmqX6duKSTCFM4phM?=
+ =?us-ascii?Q?lm69W0hEMEOqybIXtd+W24JoQApedjIjgisn8bB2oVr8OZb/ch/+R9jzhkHY?=
+ =?us-ascii?Q?feYmvPY9AUHU1wQiEL9eMVNITXLtdo3SS4zrg2IQjRiR2GWwzaXqDSUiaSzc?=
+ =?us-ascii?Q?c4bWQFbzED45JqnogtFq1JMkvGEv4IIYjln/3t1dX7ZnyIplmX+9lLASPUEU?=
+ =?us-ascii?Q?KC3g3gZg37XakPW3OL4i5Z73cYl1VUl/XXvQC9taiA9clRXY2ydJhxwR4EbE?=
+ =?us-ascii?Q?KAdCk6VUSGeu6KNUhklhL/VMeUqENK5fxSN0z+MDSQ800aUaRljoNrdzzl65?=
+ =?us-ascii?Q?0/cuTw1oIV+zJu+6TjPopUS1axy6giwBndo0GzzesWkBoKpAVWZK88E/ymT0?=
+ =?us-ascii?Q?eRFhQTbcccPS6l8zRnubhdkiOq5nTxn5bxdcv1E4ndC218afJoZ3jadRpc7P?=
+ =?us-ascii?Q?qtqyfmeUfSr2eHkSwEfDQYjgcUdRuQc9Hrv804y3vq8VunnJsp3aKSgo2n1+?=
+ =?us-ascii?Q?pFFhwvUkD64Fsvy3PJVOBNVossT/5vLOVy8FZs4QEdCgDIYp8f9eWdpMIJ25?=
+ =?us-ascii?Q?aM5JDqBUos/E11HANwz+rCY6rDWk8f8poxNWiFrLXtJdTGnxU5cgWNLwPCVv?=
+ =?us-ascii?Q?Wea/pNBH468rV0I3j5CeZsvFtixzhsWNfcQFg4dQI6p138ThDN6pmmUQqSYb?=
+ =?us-ascii?Q?P12lOJKDqxxJCTuD7aQOvPIK2E1CCruGk5MAZ4tksSXtmiHe965obZ5VSBwR?=
+ =?us-ascii?Q?LwhbTVuWRrlcAJT9/s8Uze7iEv/x345qllZlcbD1mHE54JjQ8WNLpjOLkCtQ?=
+ =?us-ascii?Q?NGJGq55KY5CNWzMZ3xdvWdsKgXS8bEuPzRsFBhVQ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 864b32fc-a0e3-4a8d-1b16-08ddde39945e
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 09:28:24.2825
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2Bf02wkVqN7l29YWZ1EvQrew/X5BDoHrAlCVxvYtUsbgfCMgBCjWV5qzAMl7zf46lK8qhv7QxhhCo2UZQ2ZEyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7258
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+The result of integer comparison already evaluates to bool. No need for
+explicit conversion.
 
-[ Upstream commit 133a48abf6ecc535d7eddc6da1c3e4c972445882 ]
+No functional impact.
 
-If O_DIRECT bumps the commit_info rpcs_out field, then that could lead
-to fsync() hangs. The fix is to ensure that O_DIRECT calls
-nfs_commit_end().
-
-Cc: stable@vger.kernel.org # 5.4
-Fixes: 723c921e7dfc ("sched/wait, fs/nfs: Convert wait_on_atomic_t() usage to the new wait_var_event() API")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-[ chanho: Backports to v5.4.y ]
-Signed-off-by: Chanho Min <chanho.min@lge.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 ---
- fs/nfs/direct.c        | 2 +-
- fs/nfs/write.c         | 9 ++++++---
- include/linux/nfs_fs.h | 1 +
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ fs/exfat/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 0682037f972be..32dc176ea1aba 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -700,7 +700,7 @@ static void nfs_direct_commit_complete(struct nfs_commit_data *data)
- 		nfs_unlock_and_release_request(req);
- 	}
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index c10844e1e16c..f9501c3a3666 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -25,7 +25,7 @@ int __exfat_write_inode(struct inode *inode, int sync)
+ 	struct super_block *sb = inode->i_sb;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	struct exfat_inode_info *ei = EXFAT_I(inode);
+-	bool is_dir = (ei->type == TYPE_DIR) ? true : false;
++	bool is_dir = (ei->type == TYPE_DIR);
+ 	struct timespec64 ts;
  
--	if (atomic_dec_and_test(&cinfo.mds->rpcs_out))
-+	if (nfs_commit_end(cinfo.mds))
- 		nfs_direct_write_complete(dreq);
- }
- 
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index 10ce264a64567..c9895316fc070 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -1658,10 +1658,13 @@ static void nfs_commit_begin(struct nfs_mds_commit_info *cinfo)
- 	atomic_inc(&cinfo->rpcs_out);
- }
- 
--static void nfs_commit_end(struct nfs_mds_commit_info *cinfo)
-+bool nfs_commit_end(struct nfs_mds_commit_info *cinfo)
- {
--	if (atomic_dec_and_test(&cinfo->rpcs_out))
-+	if (atomic_dec_and_test(&cinfo->rpcs_out)) {
- 		wake_up_var(&cinfo->rpcs_out);
-+		return true;
-+	}
-+	return false;
- }
- 
- void nfs_commitdata_release(struct nfs_commit_data *data)
-@@ -1756,6 +1759,7 @@ void nfs_init_commit(struct nfs_commit_data *data,
- 	data->res.fattr   = &data->fattr;
- 	data->res.verf    = &data->verf;
- 	nfs_fattr_init(&data->fattr);
-+	nfs_commit_begin(cinfo->mds);
- }
- EXPORT_SYMBOL_GPL(nfs_init_commit);
- 
-@@ -1801,7 +1805,6 @@ nfs_commit_list(struct inode *inode, struct list_head *head, int how,
- 
- 	/* Set up the argument struct */
- 	nfs_init_commit(data, head, NULL, cinfo);
--	atomic_inc(&cinfo->mds->rpcs_out);
- 	return nfs_initiate_commit(NFS_CLIENT(inode), data, NFS_PROTO(inode),
- 				   data->mds_ops, how, 0);
- }
-diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
-index 49cf5c855cbe5..a96b116cc9224 100644
---- a/include/linux/nfs_fs.h
-+++ b/include/linux/nfs_fs.h
-@@ -549,6 +549,7 @@ extern int nfs_wb_page_cancel(struct inode *inode, struct page* page);
- extern int  nfs_commit_inode(struct inode *, int);
- extern struct nfs_commit_data *nfs_commitdata_alloc(bool never_fail);
- extern void nfs_commit_free(struct nfs_commit_data *data);
-+bool nfs_commit_end(struct nfs_mds_commit_info *cinfo);
- 
- static inline int
- nfs_have_writebacks(struct inode *inode)
+ 	if (inode->i_ino == EXFAT_ROOT_INO)
+-- 
+2.34.1
+
 
