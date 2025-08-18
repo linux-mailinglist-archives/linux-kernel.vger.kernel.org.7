@@ -1,208 +1,286 @@
-Return-Path: <linux-kernel+bounces-773985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF367B2AD39
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:49:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA768B2AD18
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E9206863FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:44:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCF137AA748
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AA425DD1E;
-	Mon, 18 Aug 2025 15:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1B2E229B;
+	Mon, 18 Aug 2025 15:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdNd+gU2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIGjp06h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF167308F13;
-	Mon, 18 Aug 2025 15:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE8D2522B1;
+	Mon, 18 Aug 2025 15:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531812; cv=none; b=QVN9KmTdNPvukCjFqm/KwSZlkA4UD5vV3WXFaob6z/eIhQZtbTfM89JwWDpbblN584FOM7znNO1a5der6ofm0z3al4dSITIF2qB29rLhUT32OnoPNcrmIJhQKJ2fwo8XpblG/2DLf6MwrB6/STDjzaf+DYAv4vdcdzIpCPbTLN4=
+	t=1755531911; cv=none; b=fH9tWDqqgzwhtslBSx812mUJPNgtUGHaFlsdegz3wyCJwt2dJUBcwfg8SUGasE7TuWMm4oQ3w2vCs69bzWFt+HFDkZuYlQM0KOw0YQ/VBovQcmkS25iL3T4kGULSKdhRZ/dmQRPRt0bWYrK8GB9ZStuTkuzx/JGr/BlOzHX5Dhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531812; c=relaxed/simple;
-	bh=2gw9bufPdvuGnWtKJzkTzSHcYSXunQ7KQaWLcstisag=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EJ2n+4gZFyw8MnVR7J+ayysyynWBB/czrNwD3PPOFwjukhPSCBI9yn8pejDy709hG+jv+7+WCdtrpcfGBu/Zo2p/BeZ5qlzacbGVFWEaw0vQH35rjvJ6ZUoxkDfFcDxN5rzOy1EI5BzYjHOjpnBgki0qlSSHvNsKVUSJLhpsx58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdNd+gU2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E6FC4CEEB;
-	Mon, 18 Aug 2025 15:43:32 +0000 (UTC)
+	s=arc-20240116; t=1755531911; c=relaxed/simple;
+	bh=6Wryc3PmrtxtoKADR+WUjeXXnn0GQyLwSoyz3sHAopY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l9AAeJM4Ofu+vMRy7GsxmesxRSu1cW341tgK/eZzuAVuKia4KWVlVEr/6lRLoseja/0VujJm0CsEgGpuZgHtV2L+xnA18axhfFIF5r6PEvvy3v0UHy6fl1AxXW4J37h3Tyh3Sk+Tyz+FV6PvYkoHs/EoI1AuDkCC47rl2aYnVWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIGjp06h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7BAC4CEEB;
+	Mon, 18 Aug 2025 15:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755531812;
-	bh=2gw9bufPdvuGnWtKJzkTzSHcYSXunQ7KQaWLcstisag=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OdNd+gU2RzCHnheu7QHypV85qYdEmzkXGbMRwN4Ud74Gu7537V/ABBSmlTU32xpAW
-	 R+Y49WjaELw1uuf9aIRhtJ1LpMFcuNqTVDVIGWs/eU4iaX8tP7vlcSv8mTJIFjnVs5
-	 M/+zJhzPrK05V/89tT/liw3X3Rr/PMVRpmU0lKchrSlqoQ01p+Ij0eF7WNMq0CNVrk
-	 iQ0t+WqUw42wFZ0JTwzDDPBPGWbcqH5vYCB/Dx7vKVFUjY9QkFRWtI60nzOpHf/f21
-	 KIpf2zswgKLuI8VJqxBOqByd9GCOi33UgxPXKWj8tXZUlLvxxl3kbsar25O0XVgGFk
-	 343glz0N3v44A==
-Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uo218-008fTF-Hr;
-	Mon, 18 Aug 2025 16:43:26 +0100
-Date: Mon, 18 Aug 2025 16:43:06 +0100
-Message-ID: <87ldngmy9h.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64/sysreg: Add TCR_EL2 register
-In-Reply-To: <20250818045759.672408-4-anshuman.khandual@arm.com>
-References: <20250818045759.672408-1-anshuman.khandual@arm.com>
-	<20250818045759.672408-4-anshuman.khandual@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1755531911;
+	bh=6Wryc3PmrtxtoKADR+WUjeXXnn0GQyLwSoyz3sHAopY=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MIGjp06hrMilOmTtSunNZ+HBbmwqNWva5Wd91dkWBO9bub6jraCJ44p2GiBck+476
+	 E834MTE/2M7MCs48gnHaprZe2nXk8jvCt9s9xd3bVu+6jWMakBiiaakg5phmA5aSlw
+	 QeqdsbuR2paDNPx478S6UN/7szeit+nFktZhJIhCaAGzwNU0X7ebs4kdm0SkY+4gUV
+	 B7asqvInYFFVcwevNAJPZq2LLgf38KR9fL/3wuIB18WqwaFja0Rn4w4p7Sc48BsV1C
+	 RysoElzItO5Rfjh9n0KIogqR+C9AbBMZ0DJ+v6sLWoGftSO3qSiOyPN9httvr9MA4u
+	 T3vNbP+CtdSGA==
+Message-ID: <e8320a2a-06f8-47b9-88ef-6c4764d96714@kernel.org>
+Date: Mon, 18 Aug 2025 23:45:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 86.149.246.145
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, broonie@kernel.org, ryan.roberts@arm.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: yukuai@kernel.org
+Subject: Re: [PATCH v2 1/3] md/raid1,raid10: don't broken array on failfast
+ metadata write fails
+To: Kenta Akagi <k@mgml.me>, Yu Kuai <yukuai1@huaweicloud.com>,
+ Song Liu <song@kernel.org>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+ Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250817172710.4892-1-k@mgml.me>
+ <20250817172710.4892-2-k@mgml.me>
+ <51efe62a-6190-1fd5-7f7b-b17c3d1af54b@huaweicloud.com>
+ <fb752529-6802-4ef9-aeb3-9b04ba86ef5f@huaweicloud.com>
+ <0164bc8e-129c-41fa-b236-9efc1b01f7b9@mgml.me>
+Content-Language: en-US
+From: Yu Kuai <yukuai@kernel.org>
+In-Reply-To: <0164bc8e-129c-41fa-b236-9efc1b01f7b9@mgml.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 18 Aug 2025 05:57:58 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> Add TCR_EL2 register fields as per the latest ARM ARM DDI 0487 7.B in tools
+Hi,
 
-7.B??? My copy of the published ARM ARM has L.B as the version suffix.
+在 2025/8/18 20:48, Kenta Akagi 写道:
+> On 2025/08/18 11:48, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/08/18 10:05, Yu Kuai 写道:
+>>> Hi,
+>>>
+>>> 在 2025/08/18 1:27, Kenta Akagi 写道:
+>>>> A super_write IO failure with MD_FAILFAST must not cause the array
+>>>> to fail.
+>>>>
+>>>> Because a failfast bio may fail even when the rdev is not broken,
+>>>> so IO must be retried rather than failing the array when a metadata
+>>>> write with MD_FAILFAST fails on the last rdev.
+>>> Why just last rdev? If failfast can fail when the rdev is not broken, I
+>>> feel we should retry for all the rdev.
+> Thank you for reviewing.
+>
+> The reason this retry applies only to the last rdev is that the purpose
+> of failfast is to quickly detach a faulty device and thereby minimize
+> mdev IO latency on rdev failure.
+> If md retries all rdevs, the Faulty handler will no longer act
+> quickly enough, which will always "cause long delays" [1].
+> I believe this is not the behavior users want.
+>
+> [1] https://git.kernel.org/pub/scm/utils/mdadm/mdadm.git/tree/mdadm.8.in?h=main&id=34f21b7acea8afbea9348d0f421beeeedca7a136#n784
+>
+>> BTW, I couldn't figure out the reason, why failfast is added for the
+>> meta write. I do feel just remove this flag for metadata write will fix
+>> this problem.
+> By issuing metadata writes with failfast in md, it becomes possible to
+> detect rdev failures quickly.
+> Most applications never issue IO with the REQ_FAILFAST flag set,
+> so if md issues its metadata writes without failfast,
+> rdev failures would not be detected quickly.
+> This would undermine the point of the md's failfast feature.
+> And this would also "cause long delays" [1].
+> I believe this is also not what users want.
 
-Also, if you got the registers from the ARM ARM, please stop doing
-so. This is terribly error prone, and likely to be incomplete, given
-that the ARM ARM lags about a year behind the published architecture.
+Yes, this make sense. But I was thinking failfast will work on normal IO,
+not metadata IO like updating superblock, which doesn't happen quite often
+for user. But consider we have this behavior for such a long time, I agree
+we'd better not change it.
 
-You have the BSD-licensed MRS at your disposal, please make use of it.
+>> Thanks,
+>> Kuai
+>>
+>>>> A metadata write with MD_FAILFAST is retried after failure as
+>>>> follows:
+>>>>
+>>>> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
+>>>>
+>>>> 2. In md_super_wait, which is called by the function that
+>>>> executed md_super_write and waits for completion,
+>>>> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
+>>>>
+>>>> 3. The caller of md_super_wait (such as md_update_sb)
+>>>> receives a negative return value and then retries md_super_write.
+>>>>
+>>>> 4. The md_super_write function, which is called to perform
+>>>> the same metadata write, issues a write bio without MD_FAILFAST
+>>>> this time.
+>>>>
+>>>> When a write from super_written without MD_FAILFAST fails,
+>>>> the array may broken, and MD_BROKEN should be set.
+>>>>
+>>>> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
+>>>> calling md_error on the last rdev in RAID1/10 always sets
+>>>> the MD_BROKEN flag on the array.
+>>>> As a result, when failfast IO fails on the last rdev, the array
+>>>> immediately becomes failed.
+>>>>
+>>>> This commit prevents MD_BROKEN from being set when a super_write with
+>>>> MD_FAILFAST fails on the last rdev, ensuring that the array does
+>>>> not become failed due to failfast IO failures.
+>>>>
+>>>> Failfast IO failures on any rdev except the last one are not retried
+>>>> and are marked as Faulty immediately. This minimizes array IO latency
+>>>> when an rdev fails.
+>>>>
+>>>> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
+>>>> Signed-off-by: Kenta Akagi <k@mgml.me>
+>>>> ---
+>>>>    drivers/md/md.c     |  9 ++++++---
+>>>>    drivers/md/md.h     |  7 ++++---
+>>>>    drivers/md/raid1.c  | 12 ++++++++++--
+>>>>    drivers/md/raid10.c | 12 ++++++++++--
+>>>>    4 files changed, 30 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>>>> index ac85ec73a409..61a8188849a3 100644
+>>>> --- a/drivers/md/md.c
+>>>> +++ b/drivers/md/md.c
+>>>> @@ -999,14 +999,17 @@ static void super_written(struct bio *bio)
+>>>>        if (bio->bi_status) {
+>>>>            pr_err("md: %s gets error=%d\n", __func__,
+>>>>                   blk_status_to_errno(bio->bi_status));
+>>>> +        if (bio->bi_opf & MD_FAILFAST)
+>>>> +            set_bit(FailfastIOFailure, &rdev->flags);
+>>> I think it's better to retry the bio with the flag cleared, then all
+>>> underlying procedures can stay the same.
+> That might be a better approach. I'll check the call hierarchy and lock dependencies.
 
-> sysreg format and drop all the existing redundant macros from the header
-> (arch/arm64/include/asm/kvm_arm.h). While here also drop an explicit sysreg
-> definction SYS_TCR_EL2 from sysreg.h header.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  arch/arm64/include/asm/kvm_arm.h | 13 ----------
->  arch/arm64/include/asm/sysreg.h  |  1 -
->  arch/arm64/tools/sysreg          | 44 ++++++++++++++++++++++++++++++++
->  3 files changed, 44 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index 560d9cb63413..8994cddef182 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -107,19 +107,6 @@
->  
->  #define MPAMHCR_HOST_FLAGS	0
->  
-> -/* TCR_EL2 Registers bits */
-> -#define TCR_EL2_DS		(1UL << 32)
-> -#define TCR_EL2_RES1		((1U << 31) | (1 << 23))
-> -#define TCR_EL2_HPD		(1 << 24)
-> -#define TCR_EL2_TBI		(1 << 20)
-> -#define TCR_EL2_PS_SHIFT	16
-> -#define TCR_EL2_PS_MASK		(7 << TCR_EL2_PS_SHIFT)
-> -#define TCR_EL2_PS_40B		(2 << TCR_EL2_PS_SHIFT)
-> -#define TCR_EL2_TG0_MASK	TCR_EL1_TG0_MASK
-> -#define TCR_EL2_SH0_MASK	TCR_EL1_SH0_MASK
-> -#define TCR_EL2_ORGN0_MASK	TCR_EL1_ORGN0_MASK
-> -#define TCR_EL2_IRGN0_MASK	TCR_EL1_IRGN0_MASK
-> -#define TCR_EL2_T0SZ_MASK	0x3f
->  #define TCR_EL2_MASK	(TCR_EL2_TG0_MASK | TCR_EL2_SH0_MASK | \
->  			 TCR_EL2_ORGN0_MASK | TCR_EL2_IRGN0_MASK)
->  
-> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> index ad5c901af229..112d5d0acb50 100644
-> --- a/arch/arm64/include/asm/sysreg.h
-> +++ b/arch/arm64/include/asm/sysreg.h
-> @@ -523,7 +523,6 @@
->  
->  #define SYS_TTBR0_EL2			sys_reg(3, 4, 2, 0, 0)
->  #define SYS_TTBR1_EL2			sys_reg(3, 4, 2, 0, 1)
-> -#define SYS_TCR_EL2			sys_reg(3, 4, 2, 0, 2)
->  #define SYS_VTTBR_EL2			sys_reg(3, 4, 2, 1, 0)
->  #define SYS_VTCR_EL2			sys_reg(3, 4, 2, 1, 2)
->  
-> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-> index 4bdae8bb11dc..d2b40105eb41 100644
-> --- a/arch/arm64/tools/sysreg
-> +++ b/arch/arm64/tools/sysreg
-> @@ -4812,6 +4812,50 @@ Sysreg	TCR_EL12        3	5	2	0	2
->  Mapping	TCR_EL1
->  EndSysreg
->  
-> +Sysreg	TCR_EL2        3	4	2	0	2
-> +Res0	63:34
-> +Field	33	MTX
-> +Field	32	DS
-> +Res1	31
-> +Field	30	TCMA
-> +Field	29	TBID
-> +Field	28	HWU62
-> +Field	27	HWU61
-> +Field	26	HWU60
-> +Field	25	HWU59
-> +Field	24	HPD
-> +Res1	23
-> +Field	22	HD
-> +Field	21	HA
-> +Field	20	TBI
-> +Res0	19
-> +Field   18:16	PS
-> +UnsignedEnum	15:14	TG0
-> +	0b00	4K
-> +	0b01	64K
-> +	0b10	16K
-> +EndEnum
-> +UnsignedEnum	13:12	SH0
-> +	0b00	NONE
-> +	0b10	OUTER
-> +	0b11	INNER
-> +EndEnum
-> +UnsignedEnum	11:10	ORGN0
-> +	0b00	NC
-> +	0b01	WBWA
-> +	0b10	WT
-> +	0b11	WBnWA
-> +EndEnum
-> +UnsignedEnum	9:8	IRGN0
-> +	0b00	NC
-> +	0b01	WBWA
-> +	0b10	WT
-> +	0b11	WBnWA
-> +EndEnum
-> +Res0    7:6
-> +Field   5:0	T0SZ
-> +EndSysreg
+You might need to add a new async work to resubmit this bio.
 
-This is only the E2H==0 version of TCR_EL2. IF you are going to
-describe this register in a useful manner, then add both formats so
-that we know what we are dealing with.
+Thanks,
+Kuai
 
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+> Thanks,
+> Akagi
+>
+>
+>>> Thanks,
+>>> Kuai
+>>>
+>>>>            md_error(mddev, rdev);
+>>>>            if (!test_bit(Faulty, &rdev->flags)
+>>>>                && (bio->bi_opf & MD_FAILFAST)) {
+>>>> +            pr_warn("md: %s: Metadata write will be repeated to %pg\n",
+>>>> +                mdname(mddev), rdev->bdev);
+>>>>                set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
+>>>> -            set_bit(LastDev, &rdev->flags);
+>>>>            }
+>>>>        } else
+>>>> -        clear_bit(LastDev, &rdev->flags);
+>>>> +        clear_bit(FailfastIOFailure, &rdev->flags);
+>>>>        bio_put(bio);
+>>>> @@ -1048,7 +1051,7 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
+>>>>        if (test_bit(MD_FAILFAST_SUPPORTED, &mddev->flags) &&
+>>>>            test_bit(FailFast, &rdev->flags) &&
+>>>> -        !test_bit(LastDev, &rdev->flags))
+>>>> +        !test_bit(FailfastIOFailure, &rdev->flags))
+>>>>            bio->bi_opf |= MD_FAILFAST;
+>>>>        atomic_inc(&mddev->pending_writes);
+>>>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>>>> index 51af29a03079..cf989aca72ad 100644
+>>>> --- a/drivers/md/md.h
+>>>> +++ b/drivers/md/md.h
+>>>> @@ -281,9 +281,10 @@ enum flag_bits {
+>>>>                     * It is expects that no bad block log
+>>>>                     * is present.
+>>>>                     */
+>>>> -    LastDev,        /* Seems to be the last working dev as
+>>>> -                 * it didn't fail, so don't use FailFast
+>>>> -                 * any more for metadata
+>>>> +    FailfastIOFailure,    /* A device that failled a metadata write
+>>>> +                 * with failfast.
+>>>> +                 * error_handler must not fail the array
+>>>> +                 * if last device has this flag.
+>>>>                     */
+>>>>        CollisionCheck,        /*
+>>>>                     * check if there is collision between raid1
+>>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>>> index 408c26398321..fc7195e58f80 100644
+>>>> --- a/drivers/md/raid1.c
+>>>> +++ b/drivers/md/raid1.c
+>>>> @@ -1746,8 +1746,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>>>>     *    - recovery is interrupted.
+>>>>     *    - &mddev->degraded is bumped.
+>>>>     *
+>>>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>>>> - * &mddev->fail_last_dev is off.
+>>>> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
+>>>> + * failed in failfast and will be retried, so the @mddev did not fail.
+>>>> + *
+>>>> + * @rdev is marked as &Faulty excluding any cases:
+>>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>>>     */
+>>>>    static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>    {
+>>>> @@ -1758,6 +1762,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>        if (test_bit(In_sync, &rdev->flags) &&
+>>>>            (conf->raid_disks - mddev->degraded) == 1) {
+>>>> +        if (test_bit(FailfastIOFailure, &rdev->flags)) {
+>>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>>>> +            return;
+>>>> +        }
+>>>>            set_bit(MD_BROKEN, &mddev->flags);
+>>>>            if (!mddev->fail_last_dev) {
+>>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>>>> index b60c30bfb6c7..ff105a0dcd05 100644
+>>>> --- a/drivers/md/raid10.c
+>>>> +++ b/drivers/md/raid10.c
+>>>> @@ -1995,8 +1995,12 @@ static int enough(struct r10conf *conf, int ignore)
+>>>>     *    - recovery is interrupted.
+>>>>     *    - &mddev->degraded is bumped.
+>>>>     *
+>>>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>>>> - * &mddev->fail_last_dev is off.
+>>>> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
+>>>> + * failed in failfast, so the @mddev did not fail.
+>>>> + *
+>>>> + * @rdev is marked as &Faulty excluding any cases:
+>>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>>>     */
+>>>>    static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>    {
+>>>> @@ -2006,6 +2010,10 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>        spin_lock_irqsave(&conf->device_lock, flags);
+>>>>        if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
+>>>> +        if (test_bit(FailfastIOFailure, &rdev->flags)) {
+>>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>>>> +            return;
+>>>> +        }
+>>>>            set_bit(MD_BROKEN, &mddev->flags);
+>>>>            if (!mddev->fail_last_dev) {
+>>>>
+>>> .
+>>>
+>>
+>
 
