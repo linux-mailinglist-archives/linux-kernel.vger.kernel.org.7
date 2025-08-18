@@ -1,230 +1,131 @@
-Return-Path: <linux-kernel+bounces-774141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2FEB2AF05
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40500B2AF11
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C1B6249B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C621BA472A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4E732C31C;
-	Mon, 18 Aug 2025 17:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E0732C33B;
+	Mon, 18 Aug 2025 17:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHe7kpOS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Hi2iBBvu"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010E532C301;
-	Mon, 18 Aug 2025 17:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD4E32C316;
+	Mon, 18 Aug 2025 17:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755536905; cv=none; b=rOwNwALxnBT/EBah+JTInwUV+Qsa0+c3CZLQHFxFNn+pwbrCVTA2ZwRY4FA5Iler6Vn7L+G3BuzOekVIvjsfoInP42ITC/YdHNM2CWrmUH0A9ISZqulRypY/0Fw/xh3fF3bBDabQq79TOgZcDS4Co7JkwLWS2b1ChNBZDf5NXoc=
+	t=1755536909; cv=none; b=hjQvnoxLdn/GiLobT3wXmPOU2Hzxyki58gTjU7p2c5qxIDay6P/uj1MtWqEDjbCmmLmdAD5HkDsEko/CAGy5Ys7jxxoQeS0bDO1nhkdRgFFidAh6in/sBrl4RI7c6+qk0+mdtnVwMeXWMHfkmvH8ECyNENMp1upL357x7QI8CKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755536905; c=relaxed/simple;
-	bh=zQxTuAvYIfNO8cz+oNsAkBS/V5FhHPFGI5pi8bMfH7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LRPSN/2X4ujX7hjWLoNeRxSoEi4DIG8SGXVMwsySARP0WrD6/DShBDT4n52Stv9Le4qCYocrdFBnZ0tYNoxHBhrYP1gT46NjPR5Y64WqrpUE72+fgfuIJW5MLg5pfn+tHaAL0Fgdwt6tlE4BxuUMAF+7bLU//3xC13OtHqnGaHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHe7kpOS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5AB8C113D0;
-	Mon, 18 Aug 2025 17:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755536904;
-	bh=zQxTuAvYIfNO8cz+oNsAkBS/V5FhHPFGI5pi8bMfH7Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AHe7kpOSYCeVenSQSDlBdWJbhWw9+6xpG5Z9Xd/rWt/Agzc4uHcefnXu6fpfW8DB/
-	 ZVNFWSxVjLiv2pgvhCmEqI0XwGvNqVa2rGa5/Y3owm+eLbOXwCMxjfIRvKUz4gQ+lM
-	 dnXjVYm2pxJo1WWliQowWLkD5OlRHXaOArLyZn41N+2MHMVhs9cqhvVXyTnG6QQWfl
-	 r6tw0ry5G0JgQz+PRxXnwRmLUispbqIj/bh0pSbbcZm16Jg3COU7SHTQvbGbcbCpCM
-	 s53Q0gJbYa8PaI/Awjs/3Xt0dx3B9scGBpOYYeDMbA28Yl2P/6CmByij5UN2145NNK
-	 RnTCC+U8Im4cg==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-61bf9ef4f1fso1505389eaf.3;
-        Mon, 18 Aug 2025 10:08:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUK6n4Dm+l5eqZGKZRU38IxnM2L5je0Dl+CMldDrkfbr3irL7X6Lf8ecz/A3YMMk+l7wnh7US9HCsM=@vger.kernel.org, AJvYcCVW4R1Ho6xGtmTdWhD31HPIKAcbMLmyUXQUFyuyq2tHK1iLlkQQpBc7JJTN4sC0fjtwrWhcUNL3nD3xExA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2YT110P44eTE8Ll21esMu/ho/Pd2uGyJnJtsbUrrMp4WUTykS
-	LQisw5acLXQldsW5OespOFQ3WCHx1YJYafluupqvnXQAcLJu2+NOn65+gPHA3x1t9ABkPtEvZja
-	rGmO9R6XjRAer842Ic9sPBX4A0Tj2liw=
-X-Google-Smtp-Source: AGHT+IEuxEPvxBQjnopblcKv41S8Q91oq3BerfWHUDFh6phFeM73xEMNjROm8iMJIjhJt1jijjn/DfnJ5NYDB5XKM6g=
-X-Received: by 2002:a05:6820:1690:b0:61c:4fa:7465 with SMTP id
- 006d021491bc7-61c04fa7528mr4551613eaf.0.1755536904134; Mon, 18 Aug 2025
- 10:08:24 -0700 (PDT)
+	s=arc-20240116; t=1755536909; c=relaxed/simple;
+	bh=rPMW5veYC6Pqzzt/IvNOl92DEwVRpPy8WEfW0ZS5F5I=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=itOrmSyYSSl1/jhQgeEyltuRZp4ZiwKwCVf5huzCREg3xxYoRdhoGf5GhgUcj5H3DFMP4tRbbEjbylM5qXbHK+PKPg8IYDhKvMCiQ978jwedDuQp/ng3xfOLKFFrUExxfSMhF8rmpR+IfVV746ARw/v8dB9Gfms3UEr8IYuZlSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Hi2iBBvu; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8080C22F8E;
+	Mon, 18 Aug 2025 19:08:22 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id pMVZN71AsQAe; Mon, 18 Aug 2025 19:08:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755536900; bh=rPMW5veYC6Pqzzt/IvNOl92DEwVRpPy8WEfW0ZS5F5I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=Hi2iBBvuuvtwAY05hT4157aaA2jyJ96dwAODLyT5zFIyFINe4HwlkjPicA27h7aLr
+	 b/xBfuwcShAv0mY46xn9qj46G1rQVVU5cIXJFiwcbGRInMrNAj0+t1UHSTLYPNcTDo
+	 o3VqZFGrdiUQClNIVMgxYzBYGv1FVJeRdl0PKItGIL73lnFYSr97RXquqQ8u1HdMVh
+	 RFIWDcMrX0mPWr7AX9XvP8xcytDOjs1OCSot0047gjM4/hm4Gv/8dxM0NCoM8CO8RX
+	 ++TSWDpuoJ0ciwrtxmSag0OkUDlfbiMODVDxob+QHzlh2mvoLb/zEQJYZA7cji8MWK
+	 UHs1kllj/r0CA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <5043159.31r3eYUQgx@rafael.j.wysocki>
- <0da8086f-2b6c-46e3-92ca-e156b9374a2a@arm.com>
-In-Reply-To: <0da8086f-2b6c-46e3-92ca-e156b9374a2a@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 18 Aug 2025 19:08:07 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jpfZt-BB579mBkSkNX6em4sHKwiLYCgm4dzzkUFeexmQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwD6X_DNc5siHpU3QcBm0fI4CvCLa2kVu59QXSF-3Y9_CyL9_6PGkZ1AeM
-Message-ID: <CAJZ5v0jpfZt-BB579mBkSkNX6em4sHKwiLYCgm4dzzkUFeexmQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] cpuidle: governors: menu: Avoid selecting states
- with too much latency
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 18 Aug 2025 17:08:20 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
+ MIPIPHY, DSIM, etc.)
+In-Reply-To: <2bfa6c0b-1f23-4d57-b618-688ed8dc7fae@kernel.org>
+References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
+ <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
+ <45fc52d9988d1bf17eca392364c63193@disroot.org>
+ <2bfa6c0b-1f23-4d57-b618-688ed8dc7fae@kernel.org>
+Message-ID: <afd9e6c8095df785fa7f39265111e357@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 9:13=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 8/13/25 11:25, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Occasionally, the exit latency of the idle state selected by the menu
-> > governor may exceed the PM QoS CPU wakeup latency limit.  Namely, if th=
-e
-> > scheduler tick has been stopped already and predicted_ns is greater tha=
-n
-> > the tick period length, the governor may return an idle state whose exi=
-t
-> > latency exceeds latency_req because that decision is made before
-> > checking the current idle state's exit latency.
-> >
-> > For instance, say that there are 3 idle states, 0, 1, and 2.  For idle
-> > states 0 and 1, the exit latency is equal to the target residency and
-> > the values are 0 and 5 us, respectively.  State 2 is deeper and has the
-> > exit latency and target residency of 200 us and 2 ms (which is greater
-> > than the tick period length), respectively.
-> >
-> > Say that predicted_ns is equal to TICK_NSEC and the PM QoS latency
-> > limit is 20 us.  After the first two iterations of the main loop in
-> > menu_select(), idx becomes 1 and in the third iteration of it the targe=
-t
-> Can drop "of it" here?
+On 2025-08-18 06:32, Krzysztof Kozlowski wrote:
+> On 17/08/2025 16:49, Kaustabh Chakraborty wrote:
+>> On 2025-08-13 07:58, Krzysztof Kozlowski wrote:
+>>> On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
+>>>> This series implements changes in the SoC subsystem, which includes
+>>>> devicetree additions. It depends on all sub-series listed below:
+>>>> (Legend: [R]eviewed, [A]ccepted)
+>>>> 
+>>>> exynosdrm-decon            -
+>>>> https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
+>>>> exynos7870-mipi-phy        A
+>>>> https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+>>>> exynos7870-mipi-phy-fix    -
+>>>> https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
+>>>> exynos7870-dsim            -
+>>>> https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
+>>>> panel-samsung-s6e8aa5x01   -
+>>>> https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
+>>>> panel-synaptics-tddi       -
+>>>> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+>>>> 
+>>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>>> 
+>>> What is the status of the bindings from dependencies? I think they 
+>>> were
+>>> not accepted.
+>> 
+>> Except panel-synaptics-tddi, all have been accepted. A lot of them
+>> haven't hit next though. I'm waiting for that to send the next 
+>> revision.
+> 
+> What does it mean - accepted but not hit next? If it is accepted, it
+> must be visible in next. Which maintainer's tree are not in the next?
 
-But it also doesn't really hurt I think.
+drm-exynos [1] branches haven't been rebased to v6.17-rc1. This should
+include all some DECON and all DSIM patches.
 
-> > residency of the current state (state 2) is greater than predicted_ns.
-> > State 2 is not a polling one and predicted_ns is not less than TICK_NSE=
-C,
-> > so the check on whether or not the tick has been stopped is done.  Say
-> > that the tick has been stopped already and there are no imminent timers
-> > (that is, delta_tick is greater than the target residency of state 2).
-> > In that case, idx becomes 2 and it is returned immediately, but the exi=
-t
-> > latency of state 2 exceeds the latency limit.
-> >
-> > Address this issue by modifying the code to compare the exit latency of
-> > the current idle state (idle state i) with the latency limit before
-> > comparing its target residecy with predicted_ns, which allows one
-> residency
+Although [2] has been accepted, I don't see the commit in [3] anymore.
+But, there's [4] which mentions my panel patches, but then I don't see
+them in next (there should be a panel-samsung-s6e8aa5x01-ams561ra01.c
+in [5]).
 
-Fixed while applying.
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/
+[2] 
+https://lore.kernel.org/all/175432157792.3671011.1104200917154441096.b4-ty@linaro.org
+[3] 
+https://gitlab.freedesktop.org/drm/misc/kernel/-/commits/drm-misc-next?ref_type=heads
+[4] https://lore.kernel.org/all/20250814072454.GA18104@linux.fritz.box
+[5] 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/panel?h=next-20250818
 
-> > more exit_latency_ns check that becomes redundant to be dropped.
-> >
-> > However, after the above change, latency_req cannot take the predicted_=
-ns
-> > value any more, which takes place after commit 38f83090f515 ("cpuidle:
-> > menu: Remove iowait influence"), because it may cause a polling state
-> > to be returned prematurely.
-> >
-> > In the context of the previous example say that predicted_ns is 3000 an=
-d
-> > the PM QoS latency limit is still 20 us.  Additionally, say that idle
-> > state 0 is a polling one.  Moving the exit_latency_ns check before the
-> > target_residency_ns one causes the loop to terminate in the second
-> > iteration, before the target_residency_ns check, so idle state 0 will b=
-e
-> > returned even though previously state 1 would be returned if there were
-> > no imminent timers.
-> >
-> > For this reason, remove the assignment of the predicted_ns value to
-> > latency_req from the code.
-> >
-> > Fixes: 5ef499cd571c ("cpuidle: menu: Handle stopped tick more aggressiv=
-ely")
-> > Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/cpuidle/governors/menu.c |   29 ++++++++++++-----------------
-> >  1 file changed, 12 insertions(+), 17 deletions(-)
-> >
-> > --- a/drivers/cpuidle/governors/menu.c
-> > +++ b/drivers/cpuidle/governors/menu.c
-> > @@ -287,20 +287,15 @@
-> >               return 0;
-> >       }
-> >
-> > -     if (tick_nohz_tick_stopped()) {
-> > -             /*
-> > -              * If the tick is already stopped, the cost of possible s=
-hort
-> > -              * idle duration misprediction is much higher, because th=
-e CPU
-> > -              * may be stuck in a shallow idle state for a long time a=
-s a
-> > -              * result of it.  In that case say we might mispredict an=
-d use
-> > -              * the known time till the closest timer event for the id=
-le
-> > -              * state selection.
-> > -              */
-> > -             if (predicted_ns < TICK_NSEC)
-> > -                     predicted_ns =3D data->next_timer_ns;
-> > -     } else if (latency_req > predicted_ns) {
-> > -             latency_req =3D predicted_ns;
-> > -     }
-> > +     /*
-> > +      * If the tick is already stopped, the cost of possible short idl=
-e
-> > +      * duration misprediction is much higher, because the CPU may be =
-stuck
-> > +      * in a shallow idle state for a long time as a result of it.  In=
- that
-> > +      * case, say we might mispredict and use the known time till the =
-closest
-> > +      * timer event for the idle state selection.
-> > +      */
-> > +     if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
-> > +             predicted_ns =3D data->next_timer_ns;
-> >
-> >       /*
-> >        * Find the idle state with the lowest power while satisfying
-> > @@ -316,13 +311,15 @@
-> >               if (idx =3D=3D -1)
-> >                       idx =3D i; /* first enabled state */
-> >
-> > +             if (s->exit_latency_ns > latency_req)
-> > +                     break;
-> > +
-> >               if (s->target_residency_ns > predicted_ns) {
-> >                       /*
-> >                        * Use a physical idle state, not busy polling, u=
-nless
-> >                        * a timer is going to trigger soon enough.
-> >                        */
-> >                       if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLIN=
-G) &&
-> > -                         s->exit_latency_ns <=3D latency_req &&
-> >                           s->target_residency_ns <=3D data->next_timer_=
-ns) {
-> >                               predicted_ns =3D s->target_residency_ns;
-> >                               idx =3D i;
-> > @@ -354,8 +351,6 @@
-> >
-> >                       return idx;
-> >               }
-> > -             if (s->exit_latency_ns > latency_req)
-> > -                     break;
-> >
-> >               idx =3D i;
-> >       }
-> >
-> >
-> >
->
-> Good catch!
-> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-
-Thank you!
+> 
+> 
+> Best regards,
+> Krzysztof
 
