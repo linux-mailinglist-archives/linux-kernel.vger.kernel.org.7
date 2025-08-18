@@ -1,175 +1,133 @@
-Return-Path: <linux-kernel+bounces-773520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F346AB2A131
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:12:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB68B2A157
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083B05E4D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405305610DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3E0319875;
-	Mon, 18 Aug 2025 12:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B8A315778;
+	Mon, 18 Aug 2025 12:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L+61y+Sg"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hw7yqwRt"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E57C2765DF
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D567227B327;
+	Mon, 18 Aug 2025 12:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755518946; cv=none; b=c+OvFiDflGl5w137hyMowwHAJ+Hl9psHSLSzaLuWQiy+HkUjJJlkcCT7UFrzzRrJ0g0QeniTIxy4j6lquL+bZk2DxRRyI/CwAjFfS/r14VJmgcvR7xdwdWlYWIdb+2cFaHRNAsY3tIg3NiZb/5fxJvsCtOPKuaXNbb4hu9oUUPc=
+	t=1755518972; cv=none; b=IagEqSG2B27InQCyuTcHfpPfFHedt0tYr3WibxUzZd/q/6Ra4V6ojwPJ6W7UYi3Xy3o8HtXwyEvMPlqy20+rHnnydyYwRogQ+yrCKQUsRjbEDQnPKNlp7UzmRcaIB44z23iuclezSAmkjR1ePoBm6klq8DX1hSRaqyiiMFEvwVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755518946; c=relaxed/simple;
-	bh=zhQlJd80zNi92fHJAP62i7dk7OewyujHJUO3nPQQmXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pm6hio/YT4w3TXjPX5Q2V8cqQsE+8px/MIOzynGXG9xh4GfXFfT7oFhsAPhxvMcP742+0/v+idMzhPE49Wk7jyYta2Il4eB8UH3cfKc4yAnbBYrr5c2eTxZTX+lNDHTPtuokp0pQcQL9uI6ql1eNNMSnC0Xu04CMt6vGjJ1pJE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L+61y+Sg; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb78d5e13so62220466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755518943; x=1756123743; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7/wf4XEW96LfYgNJS81FI5VbVkVliDM/dqMzkSgUY1Y=;
-        b=L+61y+SgfSbpy2xnI3KHytoQeZxOUBF4Ef93L8sOTnUK7VFe0+Weekh7QB2mq3s38L
-         3PPHtKgo5cIm29V+IYSJmj8gclpz2KUV6hG4kHBfGLU7VfjsC1MJk747HOUV+gnkTzJb
-         Kg4mDbwK2gn/FPNfiLyobsvTKpPSihBE91ytQHoI4kNm57rMf/7Dv9oeiAMCh/IunUz7
-         jquyJYAcHGy4wOx/nJVuc8dpuRTi6YmtxAAyNcsV35yYZfM310z1S5equZV/axoAKY2Y
-         9Xr8scUQtX53ODLetgqsPjxcLRYIzz9tfFm7lghsFzcsljTUZlwbeSX6jEy9sSeWnyE8
-         7CQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755518943; x=1756123743;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7/wf4XEW96LfYgNJS81FI5VbVkVliDM/dqMzkSgUY1Y=;
-        b=fz1g0YQ0wTLBI4POVolnyKWk01k0MSUK84KVSsSmRETrdSJFazW+QuEjNZSSnRBU51
-         X5waocA2uYhUEc1dGEM6SpwWPB5iwyxVFwYpGOtQ3JyPOrCd2dPvdRMHujj4+9+raPx/
-         LvjazNpXhTzb4MQ4usVBOWBLXz5juESz6z5z/ATJsejksZ8reQXnr8/bpzLUxDIpW9c4
-         bJUj2kU/eJDi+5eDSjPraIErep5uKzuz1rJDrYBQeXKuiwksefs9vRMMR3M/qQRp6GsM
-         CXmBxSItS3SW6clQ9Tt9I5PIqwygMB4+Zs0dOIIzDna4Ltm0JzrKJLs4If8Ss6hE2TNm
-         AhuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBYl7c26VoFeiThmOwTIjy4x88JxD2j94z5tQ+A968I7rpppva2Yi1oGQ6jco9VaisIiR6PLPjipVESx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZyh5M5Y9BCAIvXCk1vWTRQTjLFTYicehGqZRGvwGcwKCD1VVo
-	FN4S7PX3qTj3dGm+UrJyjwJn6kR9m8mZxD7YJpznENZwjpDNKDYXj4FX66qEBQnkjog=
-X-Gm-Gg: ASbGncsT2y1J+HzgFRRstV0+7Da1yQvPe4SSo/Mck5SmXb3LM9RkwBwGVDB57EK+N1m
-	UliFGbaa/MnaSpER4b/gUmhOHq7+XCM/CfXsu/sS6iqO6c4gJnNkMmO6HiYdCCvisC2pVPDlpvP
-	QC0WOZBXNSn16a10eB1BrfFyseVEE5elS5ywiY4xKMFS7AOocsQMMFDhXQHGNL0LkWoLC3uWVwm
-	S/VhR7HcRiLdD+kH4DIU/k8wWUAIso9FLsQJQJyOQ2R3okHc8e1hTOHrlBBw7SZ5Ca035RlAbj2
-	mRPD9mzCtfavGFTRh000j8Llq1zvsBFfvtraKeI/yl6DpWwl6cDLDelUbJZhLxtFGN8DLvmRCw4
-	ycenGmTn+Ap35Gy3j7MepKFMHMjGYApaEfCzBJGcm+rY=
-X-Google-Smtp-Source: AGHT+IGRMfpFIZvZ7u29pacmvJz4C0owYxR5kq96xs19isCciYLvnmOhz9IJXUPk4ZUiUsTh++K2ag==
-X-Received: by 2002:a17:906:6a0f:b0:af8:fd22:6e28 with SMTP id a640c23a62f3a-afcdc29e30cmr498595566b.7.1755518942902;
-        Mon, 18 Aug 2025 05:09:02 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce72cbbsm797994966b.35.2025.08.18.05.09.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 05:09:02 -0700 (PDT)
-Message-ID: <2cc1cee7-5580-48cc-bb63-cb993643f2bc@linaro.org>
-Date: Mon, 18 Aug 2025 14:09:00 +0200
+	s=arc-20240116; t=1755518972; c=relaxed/simple;
+	bh=OpLQdy0G/Okp0F0LQiqP1NL9Gk/7mF8nmHn0cni2z3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPnYwa3e1jRZ9dubszOzFhliWS9PZSP4QkUwA6Ch2zPoR+lIVXcoyO+gVWKhEk0qp4FHUtW/8S+5+yZ/L4NemREsdnUUUdw+IdedgHdQMvjQ3y2/5cpng0PGQtKsnqiTuwY1OL4NPYZA77Ht5vc7QU5vljzRHVQcos43l98LjEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hw7yqwRt; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JIDCDEr/1d5V29Dqy9cjcsDweAzjIcSrXoBz7OAnOQc=; b=hw7yqwRtgfcqq+EjufE2Jc2iV3
+	3fgmJNFglB7kHDM+xLP3/4A2d2aAUgICLohp9OUwk/5+Y/8O6mojpbZ/Vq3JiWKbY0Wl2+niLNbY0
+	DhwP3Vcaus9WsenOgucD+O81dU4PMH+52JXxpr7aFfyvnuCI0WTUl4yNo+04j1BF4clFLWLmRqNFy
+	CIpHLDI9+fwQter0IIL4OFu37dXbdgBv//lIeXXrjE8qeUpux8tfIjv5+fsewXmbti1fYSNIsW39u
+	qp17HHNclKL1lnQFsuZMrxEOtvOgQMMDRrv8qV3qaV3VYNdqTAzawH6DW38ZuV3hnjOJLKTgHXJeA
+	jdeY576Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1unyfv-0000000HMQW-2uzq;
+	Mon, 18 Aug 2025 12:09:20 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 453B830029B; Mon, 18 Aug 2025 14:09:19 +0200 (CEST)
+Date: Mon, 18 Aug 2025 14:09:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Xin Li <xin@zytor.com>
+Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
+	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
+	samitolvanen@google.com, ojeda@kernel.org
+Subject: Re: [PATCH v3 14/16] x86/fred: Play nice with invoking
+ asm_fred_entry_from_kvm() on non-FRED hardware
+Message-ID: <20250818120919.GG3289052@noisy.programming.kicks-ass.net>
+References: <20250714102011.758008629@infradead.org>
+ <20250714103441.245417052@infradead.org>
+ <f6925ee5-bbd7-42e3-9e3b-59d2e8ec2681@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: imx: Add note to prevent buggy code re-use
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Leon Luo <leonl@leopardimaging.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250817084824.31117-2-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250817084824.31117-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6925ee5-bbd7-42e3-9e3b-59d2e8ec2681@zytor.com>
 
-On 17/08/2025 10:48, Krzysztof Kozlowski wrote:
-> Multiple Sony IMX sensor drivers have mixed up logical and line level
-> for XCLR signal.  They call it a reset signal (it indeed behaves like
-> that), but drivers assert the reset to operate which is clearly
-> incorrect and relies on incorrect DTS.
+On Fri, Jul 25, 2025 at 09:54:32PM -0700, Xin Li wrote:
+> On 7/14/2025 3:20 AM, Peter Zijlstra wrote:
+> >   	call __fred_entry_from_kvm		/* Call the C entry point */
+> > -	POP_REGS
+> > -	ERETS
+> > -1:
+> > +
+> > +1:	/*
 > 
-> People in discussions copy existing poor code and claim they can repeat
-> same mistake, so add a note to prevent that.
+> The symbol "1" is misplaced; it needs to be put after the ERETS
+> instruction.
+
+Doh, fixed.
+
+> > +	 * When FRED, use ERETS to potentially clear NMIs, otherwise simply
+> > +	 * restore the stack pointer.
+> > +	 */
+> > +	ALTERNATIVE "nop; nop; mov %rbp, %rsp", \
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/media/i2c/imx219.c | 4 ++++
->  drivers/media/i2c/imx274.c | 2 ++
->  drivers/media/i2c/imx334.c | 4 ++++
->  3 files changed, 10 insertions(+)
+> Why explicitly add two nops here?
+
+Because the CFI information for all alternative code flows must be the
+same. So by playing games with instruction offsets you can have
+conflicting CFI inside the alternative.
+
+Specifically, we have:
+
+0:	90        nop
+1:	90        nop
+2:	48 89 ec  mov %rbp, %rsp
+
+
+0:	48 83 c4 0c  add $12, %rsp
+4:      f2 0f 01 ca  erets
+
+This gets us CFI updates on 0, 2 and 4, without conflicts.
+
+
+> ALTERNATIVE will still pad three-byte nop after the MOV instruction.
 > 
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index 3b4f68543342..9857929a3321 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -1034,6 +1034,10 @@ static int imx219_power_on(struct device *dev)
->  		goto reg_off;
->  	}
->  
-> +	/*
-> +	 * Note: Misinterpreation of reset assertion - do not re-use this code.
-
-
-Typo here: Misinterpretation
-
-I will send a v2.
-
-Best regards,
-Krzysztof
+> > +	            __stringify(add $C_PTREGS_SIZE, %rsp; ERETS), \
+> > +		    X86_FEATURE_FRED
+> > +
+> >   	/*
+> > -	 * Objtool doesn't understand what ERETS does, this hint tells it that
+> > -	 * yes, we'll reach here and with what stack state. A save/restore pair
+> > -	 * isn't strictly needed, but it's the simplest form.
+> > +	 * Objtool doesn't understand ERETS, and the cfi register state is
+> > +	 * different from initial_func_cfi due to PUSH_REGS. Tell it the state
+> > +	 * is similar to where UNWIND_HINT_SAVE is.
+> >   	 */
+> >   	UNWIND_HINT_RESTORE
+> > +
+> >   	pop %rbp
+> >   	RET
+> 
 
