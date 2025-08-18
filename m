@@ -1,185 +1,318 @@
-Return-Path: <linux-kernel+bounces-773727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCDCB2A7DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB78B2A7BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77FCD5A000D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ABE817F0D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3AB335BBE;
-	Mon, 18 Aug 2025 13:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1072206AF;
+	Mon, 18 Aug 2025 13:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPNJqgXd"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EYuHFWKH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yTnoPfbn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D262B335BAF
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1FE1F4177
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755524940; cv=none; b=Kzfm9zJKW+yQymKOQCojffCT3BZboZawvKADqyUuuc5pqd1rvoIp2WF1OelA+CxpkPSdDQ60lbyGJtqgzdlN8IILiEd00Eir7hKPOJc6K6RRRMdZNLuMsdVw825r3GbjOfbkPfF8DUiaklFRX1s5pmqwLvl0TiQNv4I8hIBVyOk=
+	t=1755524949; cv=none; b=alKwMjnLLepATEBKZyQXEaTaeV/iK93C8nqQi9x+/OTQ4GvO6vd4ViyKNLUQh/0zwRVj8bgamdgo7N3Zkyl325zFXUyFzczlULONC7KvHLRaFkR/IdolInuKsbuxzHQb5MiEbpEDMMOaYSAeJwVa8BNcxi4MeMXOKoW0rcsNxIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755524940; c=relaxed/simple;
-	bh=Iq41YliHm0d8n8rWWR3bza0G/ceeGQ4+coO+hydkSXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rmautl1e5uzDRf1Mi2JQYhN2MT1zjWSkl3z8v1w3hCKX4TeN3R4Gn5oiYbNRyzEEvVRU0HRMBtdDgEN29WCLLQRSBBH8UBNuCi9k4k6CwuMg/tBUcSgfregr7yF0uLDf8QRBV+j6+eM4FhTAr5pDhn94Bq79lE3gAsEedE/RC6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPNJqgXd; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9e415a68eso2128355f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755524937; x=1756129737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sh+bHoKKtm/hsPtjkx/NyjNhDEo2COTVB4L7LsR7sJ4=;
-        b=HPNJqgXdAJU7G6N3CBwRg5bE1IrspC8AyG4V1Xd04ZTS0q+WVCV2Uqdj3cePJGvh2M
-         jKQ+UaEJUR1vhSpNtcdAJ5kzeu4IcqXysa+/v5SinH/FAJRH9khJxVXas0B2N8eYXFri
-         FFMmz9STTViKkJCL0bG4AKLkdSYi552lAw0bmELSt8qzjKWNKDrk0tjCG0KZ9Ie428h7
-         E247CYTUWBV2afJtmLR9+ni0nyLLw+TaJyIkHbzo55VeI+0CQuuuShvlibqwYrhxM+4E
-         l54JcQsDSCY/gBPro51+QVxeAQx+6DdauLljn8UCznKvDq5oRzFcyvdwDohlhp4vVvCk
-         pIgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755524937; x=1756129737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sh+bHoKKtm/hsPtjkx/NyjNhDEo2COTVB4L7LsR7sJ4=;
-        b=DnZGms1AlhuZjvEMyjYqewTHtwH98WI7u2RSHa9PzcmBGUozQmceOzOym78cfYDw7v
-         qt5s1FSIYsuIIH7czpWZmw8cDTdy0xZOIKM3234/v2k6PPOXxAF0kGHt4oLJ6vHejw2y
-         +1f57NhXlijaA9lNdW2Bgc7oPcxkb9MqlH2PN+3HP4w/RC20CANcDMyRiCp06ef56LI/
-         mIDwIx/TpgEkaHerUfiHK5R/voXy4jQFgfF/wo2CNFecG56U6FF/03ylEnMqx8q15rnd
-         M9DYrZJEQDmefDc+dZyHnbPHe3oS3RAJ4UK/sZurl5HK8Adk+kzlNIa4xV9VG5WNQjZ1
-         NUJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkQ2vFCNVdoIRc1whL4m934rcfyLqY9J/t0cvGdVuMuo0YwjPn5ap6gtQGVLa0w971TDvb/NbXNTqFrFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws3J4XMA0qQHa+LOd91HjPPkiQuqJpj+DWr6sK+d3LyQUdlwON
-	cLvIi+U6v8vb2rv3x1aWCkBVZKnq1G9GPV9bVNT2fp++c3URfBGw3HbEGGy9jRQc3B4=
-X-Gm-Gg: ASbGncstRyQnW/U3qcpfSLObjes7D98Kycf+RPlfcP0kaE+rDjsQPZjRHLj9N2u5MBK
-	8vmAgZCZyu4plzMzEFBV+F1+I5DzjNYPitCTNt34Onxm+aEFF9gz6l8SgSt91GRcXb1MZGK1hOd
-	BzdI8tn8dsTMXE231+mqPDX7UPUl0VNUbD4/Al4M0l9XLEecFqXOMvJ7aEAWsq0hTJf1gLNn4EI
-	Q3/Pmw5JTdL0ptKPMu2Gd4HiajeNfmYY5D5c6xB65JI80XuDdhng3mi1VCmdNZxFWiVUMBr8cJ1
-	Q9nB7bACWTvl8G9fAF53N7xv55QKwO5OiYdhuvAWQeIbLSeiTFl0QfOcIySheMRyqL78HMiWIqd
-	oCf/zLBNhmoJcK+RNRExlXrlwd7I=
-X-Google-Smtp-Source: AGHT+IEKz79YyPVBfJQGlFogDcQJMYXgYE5WI5cAwBE2CTscdIWf8BDHmqXB1zUVqxIISepL6GSx+Q==
-X-Received: by 2002:a05:6000:430c:b0:3b7:8984:5134 with SMTP id ffacd0b85a97d-3bb66a3b2ddmr9157492f8f.16.1755524936995;
-        Mon, 18 Aug 2025 06:48:56 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bc5e232534sm10573878f8f.24.2025.08.18.06.48.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 06:48:56 -0700 (PDT)
-Message-ID: <84498b4b-9023-4a39-bc75-d2b7a495821f@linaro.org>
-Date: Mon, 18 Aug 2025 14:48:54 +0100
+	s=arc-20240116; t=1755524949; c=relaxed/simple;
+	bh=irpuInIcTBcDJKOsw++EYv/f6G5MNBcuwSrPyrjjvpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VYXaGwx2lRRJ9eBesQ8rIqsT1mt2Gmz2WNfBRMtdKCEpAQXLN/125RKU6Tjqryxc1oOghrCJvSyKo6xfrHcW18XojLAwwaIcMTyw/x45v69SRu93rpsJLadS3xTc4evLls5rdPv1GlLUpsT1A763B78TS/wuSSIFGt1qHeihdaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EYuHFWKH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yTnoPfbn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Aug 2025 15:49:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755524945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxFjMKZWZrjA/Q2sRWad+Q3znnfgN6cMMTYAA4e8uHA=;
+	b=EYuHFWKHWXKoEhTVNsQQQLh0GKtmAMCWh3ykX4yCxWHa1oKD4+33KkcuZP9lE180PwxZhE
+	Loqze/aMBiZnrR1+r9FsfGLWVtjn9OraSttGP3NSLC7A5AQ+wM+EhcTq9HTYZfXNrzlmyW
+	4poh5dP5BxKNykZU7Aibt+J3uyrJtTiOCOINLyGnT4iZsrWQR5EFTBo55uNZuMVDJn36P9
+	USOAsQG1kZbSYIDC9hNTWfD0WUlhziWlUjv91zHESur1+y3dhsVgAJDkss9wegH5JXrW1P
+	wcTV0RdBkl6L2/kb70jRpS283V2ITVULB5zzkcjhhS88X0xOTIsxCqrd6kB4CA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755524945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxFjMKZWZrjA/Q2sRWad+Q3znnfgN6cMMTYAA4e8uHA=;
+	b=yTnoPfbnNxoQylgS80SqsgFZpG5I/HGvF1yU8633vHo2UqkRqnlei98LyAUkePIivhDYLL
+	TGZLYAfXCW2vHjCw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 07/34] x86/cpuid: Introduce a centralized CPUID data
+ model
+Message-ID: <aKMvTrrKYgJNWX8L@lx-t490>
+References: <20250815070227.19981-1-darwi@linutronix.de>
+ <20250815070227.19981-8-darwi@linutronix.de>
+ <aJ9TbaNMgaplKSbH@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/13] spi: spi-fsl-lpspi: Enumerate all pin configuration
- definitions
-To: Frank Li <Frank.li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Clark Wang <xiaoning.wang@nxp.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Larisa Grigore <larisa.grigore@oss.nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
- Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
- linux-spi@vger.kernel.org, imx@lists.linux.dev,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
- <20250814-james-nxp-lpspi-v1-5-9586d7815d14@linaro.org>
- <aJ4mfDUcbrP7OSOH@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <aJ4mfDUcbrP7OSOH@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJ9TbaNMgaplKSbH@google.com>
 
+Hi!
 
+On Fri, 15 Aug 2025, Sean Christopherson wrote:
+>
+> IMO, the end result is quite misleading for leaves with "repeated" entries.  0xd
+> in particular will be bizarre due to its array starting at ECX=2.  E.g.
+> cpuid_subleaf_index() straight up won't work (without lying) due to hardcoding
+> '0' as the subleaf.
+>
+> #define cpuid_subleaf_index(_cpuinfo, _leaf, _idx)			\
+> ({									\
+> 	__cpuid_assert_leaf_has_dynamic_subleaves(_cpuinfo, _leaf);	\
+> 	__cpuid_table_subleaf_idx(&(_cpuinfo)->cpuid, _leaf, 0, _idx);	\
+>                                                              ^
+>                                                              |
+>
+> And then the usage would be similarly bizarre, e.g.
+>
+> 	for (i = XFEATURE_YMM; i < ARRAY_SIZE(xstate_sizes); i++) {
+> 		struct cpuid_xstate_sizes *xs = &xstate_sizes[i];
+> 		struct cpuid_0xd_2 *c = cpuid_subleaf_index(..., 0xD, i - 2);
+>
+> 		...
+> 	}
+>
+> Even the cases where the array starts at '0' look weird:
+>
+> 	const struct leaf_0x4_0 *regs = cpuid_subleaf_index(c, 0x4, index);
+>
+> because the code is obviously not grabbing CPUID(0x4).0.
+>
+> And the subleaf_index naming is also weird, because they're essentially the same
+> thing, e.g. the SDM refers to "sub-leaf index" for more than just the repeated
+> cases.
+>
+> Rather than define the structures names using an explicit starting subleaf, what
+> if the structures and APIs explicitly reference 'n' as the subleaf?  That would
+> communicate that the struct represents a repeated subleaf, explicitly tie the API
+> to that structure, and would provide macro/function names that don't make the
+> reader tease out the subtle usage of "index".
+>
+> And then instead of just the array size, capture the start:end of the repeated
+> subleaf so that the caller doesn't need to manually do the math.
+>
+> E.g.
+>
+> 	const struct leaf_0x4_n *regs = cpuid_subleaf_n(c, 0x4, index);
+>
+> 	struct cpuid_0xd_n *c = cpuid_subleaf_n(..., 0xD, i);
+>
 
-On 14/08/2025 7:10 pm, Frank Li wrote:
-> On Thu, Aug 14, 2025 at 05:06:45PM +0100, James Clark wrote:
->> Add all the possible options, use names more similar to the reference
-> 
-> Add all the possible pincfg options,
-> 
->> manual and convert _OFFSET to _MASK so we can use FIELD_PREP() and
->> FIELD_FITS() macros etc.
->>
->> This will make it slightly easier to add a DT property for this in the
->> next commit.
-> 
-> Make it slightly easier to add a DT property ...
-> 
-> No funtionality change.
-> 
+Thanks a lot for all these remarks.  I was indeed struggling with good
+names for the array indexing case, so the above was really helpful.
 
-Ack
+In this v4 iteration, I did not add a CPUID parser API for the cases
+where the subleaves are repeated but do not start from zero.  Not for any
+technical reason, but to avoid having kernel APIs with no call sites.
 
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   drivers/spi/spi-fsl-lpspi.c | 21 +++++++++++++++------
->>   1 file changed, 15 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
->> index 79b170426bee..816e48bbc810 100644
->> --- a/drivers/spi/spi-fsl-lpspi.c
->> +++ b/drivers/spi/spi-fsl-lpspi.c
->> @@ -69,7 +69,11 @@
->>   #define DER_RDDE	BIT(1)
->>   #define DER_TDDE	BIT(0)
->>   #define CFGR1_PCSCFG	BIT(27)
->> -#define CFGR1_PINCFG	(BIT(24)|BIT(25))
->> +#define CFGR1_PINCFG_MASK		GENMASK(25, 24)
->> +#define CFGR1_PINCFG_SIN_IN_SOUT_OUT	0
->> +#define CFGR1_PINCFG_SIN_ONLY		1
->> +#define CFGR1_PINCFG_SOUT_ONLY		2
->> +#define CFGR1_PINCFG_SOUT_IN_SIN_OUT	3
->>   #define CFGR1_PCSPOL_MASK	GENMASK(11, 8)
->>   #define CFGR1_NOSTALL	BIT(3)
->>   #define CFGR1_HOST	BIT(0)
->> @@ -411,8 +415,9 @@ static int fsl_lpspi_dma_configure(struct spi_controller *controller)
->>
->>   static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
->>   {
->> -	u32 temp;
->> +	u32 temp = 0;
->>   	int ret;
->> +	u8 pincfg;
->>
->>   	if (!fsl_lpspi->is_target) {
->>   		ret = fsl_lpspi_set_bitrate(fsl_lpspi);
->> @@ -422,10 +427,14 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
->>
->>   	fsl_lpspi_set_watermark(fsl_lpspi);
->>
->> -	if (!fsl_lpspi->is_target)
->> -		temp = CFGR1_HOST;
->> -	else
->> -		temp = CFGR1_PINCFG;
->> +	if (!fsl_lpspi->is_target) {
->> +		temp |= CFGR1_HOST;
->> +		pincfg = CFGR1_PINCFG_SIN_IN_SOUT_OUT;
->> +	} else {
->> +		pincfg = CFGR1_PINCFG_SOUT_IN_SIN_OUT;
->> +	}
->> +	temp |= FIELD_PREP(CFGR1_PINCFG_MASK, pincfg);
->> +
->>   	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
->>   		temp |= FIELD_PREP(CFGR1_PCSPOL_MASK,
->>   				   BIT(fsl_lpspi->config.chip_select));
->>
->> --
->> 2.34.1
->>
+What I internally have is:
 
+  /**
+   * __cpuid_subleaf_index() - Access parsed CPUID data at runtime subleaf index
+   * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
+   * @_leaf:	CPUID leaf in compile-time 0xN format; e.g. 0x4, 0x8000001d
+   * @_subleaf:	CPUID subleaf in compile-time decimal format; e.g. 0, 1, 3
+   * @_idx:	Index within CPUID(@_leaf).@_subleaf output storage array.
+   *		Unlike @_leaf and @_subleaf, this index value can be provided
+   *		dynamically.
+   * ...
+   */
+  #define __cpuid_subleaf_index(_cpuinfo, _leaf, _subleaf, @_idx)	\
+  ...
+
+Thus, the arch/x86/kvm/cpuid.c loop you quoted would be tokenized as:
+
+    const struct leaf_0xd_2 *ld;
+    for (int i = 0; i < ARRAY_SIZE(xstate_sizes) - XFEATURE_YMM; i++) {
+        ...
+        ld = __cpuid_subleaf_index(c, 0xd, 2, i);
+	                           |   |   |  └───────┐
+                                   |   |   └────────┐ |
+                                   |   └─────────┐  | |
+                                   *             *  * v
+        ld =                      &c.cpuid.leaf_0xd_2[i];
+        ...
+    }
+
+I actually agree that, in this case, types like "struct leaf_0xd_2" are
+deceiving... Let's divide the problem in two.
+
+Easy case: Subleaves start repeating from subleaf = 0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This would be the CPUID leaves:
+
+    x86-cpuid-db/db/xml (tip)> git grep 'id="0" array='
+    leaf_04.xml:        <subleaf id="0" array="32">
+    leaf_0b.xml:        <subleaf id="0" array="2">
+    leaf_18.xml:        <subleaf id="0" array="32">
+    leaf_1b.xml:        <subleaf id="0" array="32">
+    leaf_1f.xml:        <subleaf id="0" array="6">
+    leaf_8000001d.xml:	<subleaf id="0" array="32">
+    leaf_80000026.xml:	<subleaf id="0" array="4">
+
+For example, patch 24/34 ("x86/cacheinfo: Use parsed CPUID(0x4)"):
+
+    static int
+    intel_fill_cpuid4_info(struct cpuinfo_x86 *c, int index, ...)
+    {
+	const struct leaf_0x4_0 *regs = cpuid_subleaf_index(c, 0x4, index);
+	...
+    }
+
+In that case, we might actually generate leaf data types in the form:
+
+    struct leaf_0x4_n { ... };
+
+And have the access macros called cpuid_subleaf_n():
+
+    static int
+    intel_fill_cpuid4_info(struct cpuinfo_x86 *c, int index, ...) {
+    {
+	const struct leaf_0x4_n *regs = cpuid_subleaf_n(c, 0x4, index);
+	...
+    }
+
+I think this indeed looks much much better.
+
+I will do that for v5 of the model.
+
+Hard case: Subleaves start repeating from subleaf > 0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This would be the CPUID leaves:
+
+    x86-cpuid-db/db/xml (tip)> git grep 'id="[1-9][0-9]*" array='
+
+    leaf_0d.xml:    <subleaf id="2" array="62">
+    leaf_10.xml:    <subleaf id="1" array="2">
+    leaf_12.xml:    <subleaf id="2" array="30">
+    leaf_17.xml:    <subleaf id="1" array="3">
+
+For something like CPUID(0xd), I cannot just blindly define a 'struct
+cpuid_0xd_n' data type.  We already have:
+
+    struct leaf_0xd_0 { ... };
+    struct leaf_0xd_1 { ... };
+    struct leaf_0xd_2 { ... };
+
+and they all have different bitfields.  A similar case exist for
+CPUID(0x10), CPUID(0x12), and CPUID(0x17).
+
+But, we can still have:
+
+    struct leaf_0xd_0	{ ... };
+    struct leaf_0xd_1	{ ... };
+    struct leaf_0xd_2_n	{ ... };
+
+With this, the CPUID(0x12) call site at kernel/cpu/sgx/main.c can change
+from:
+
+    u32 eax, ebx, ecx, edx;
+
+    for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
+        ...
+	cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC, &eax, ...);
+    }
+
+to:
+
+    const struct leaf_0x12_2_n *l;
+
+    for (i = 0; i < ARRAY_SIZE(sgx_epc_sections); i++) {
+        ...
+	l = __cpuid_subleaf_n(0x12, 2, i);
+    }
+
+And the aforementioned KVM snippet would be:
+
+    const struct leaf_0xd_2_n *l;
+
+    for (int i = 0; i < ARRAY_SIZE(xstate_sizes) - XFEATURE_YMM; i++) {
+        l = __cpuid_subleaf_n(c, 0xd, 2, i);
+    }
+
+I'm open for better names than __cpuid_subleaf_n() for this.  The only
+constraint with any suggested name is that I need to have 0xd and 2 both
+passed as CPP literals.
+
+API Summary
+~~~~~~~~~~~
+
+For CPUID leaves with static subleaves:
+
+    cpuid_leaf(_cpuinfo, _leaf)
+    cpuid_subleaf(_cpuinfo, _leaf, _subleaf)
+
+For CPUID leaves with dynamic subleaves:
+
+    cpuid_subleaf_n(_cpuinfo, _leaf, _idx)
+    __cpuid_subleaf_n(_cpuinfo, _leaf, _subleaf, _idx)
+
+Sounds good?
+
+>
+> Tangentially related, having to manually specific count=1 to CPUID_LEAF() for
+> the common case is also ugly.  If a dedicated CPUID_LEAF_N() macro is added to
+> specificy the start:end of the range, then CPUID_LEAF() can just hardcode the
+> count to '1'.  E.g.
+>
+> struct cpuid_leaves {
+> 	CPUID_LEAF(0x0,		 	0);
+> 	CPUID_LEAF(0x1,			0);
+> 	CPUID_LEAF(0x2,		 	0);
+> 	CPUID_LEAF_N(0x4,		0,	7);
+> 	CPUID_LEAF(0xd,			0);
+> 	CPUID_LEAF(0xd,			1);
+> 	CPUID_LEAF_N(0xd,		2,	63);
+> 	CPUID_LEAF(0x16,	 	0);
+> 	CPUID_LEAF(0x80000000,		0);
+> 	CPUID_LEAF(0x80000005,		0);
+> 	CPUID_LEAF(0x80000006,		0);
+> 	CPUID_LEAF_N(0x8000001d,	0,	7);
+> };
+>
+
+This is much better; will do.
+
+Thanks!
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
