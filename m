@@ -1,151 +1,165 @@
-Return-Path: <linux-kernel+bounces-774458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEDFB2B28C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB811B2B28A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 012C8562714
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558BF1BA2903
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AD62701CC;
-	Mon, 18 Aug 2025 20:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4BE22A4D6;
+	Mon, 18 Aug 2025 20:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ySnic6EQ"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B3Y0+REL"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4685266EE7
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF873451B8;
+	Mon, 18 Aug 2025 20:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755549532; cv=none; b=g8MbdanQcaIxrwEoLhtWGU/ZE7K9jcOKoybVSDxk333yOJdIsBEA8/xZlPpFWZu10jE0UykgL04Xp87yvu9LwlwUS4Ivoz1BnVXtoAzrlVssnEddkb9av0/UJ6a3VA7Ed+AcoMN81+Bnnp1FzRfkvwLspOS6JnQwKSucNh7b6o0=
+	t=1755549528; cv=none; b=u85vXVF5PRx8wtsPBb18LPkEBz7tIOCb8sv9sEuwNStBkVjRaJ3V8whRT1lmIZQszTbi2e75mlxIF1Mf1O6rR4E9lHr8cEbrh+NIPOE1oYGWna62c35YFkc91pFiPx424uO2zWipW17X5HEdKNT8ejABvfthZYBXwOw65w7i5Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755549532; c=relaxed/simple;
-	bh=sz7NOl+fgrqNpK2nVMKw/tO/iJarJvYPOgaEmzQIyHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BjCIebws963qZ/tHHdwOhMVFuPIv2OSSYg8AjMyfBfikCGGiVYGf5u/67tpTVb0cVW9hG5J4dYFbiW8Dl1BwAvGt0ZeiQ0Jr9Uoae88rmevrrwut3WhxE/WNxgms6nfP5is9B3ZyXphKQe/8gBb3/1wARPTlAD/JiAKffabyCdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ySnic6EQ; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-242d1e947feso55695ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755549530; x=1756154330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GWVBpHlCEROG5vPrjHJMy+NzPEPZF2lwJBc9InMC8qg=;
-        b=ySnic6EQBMTjSqD8h4gQj3vCFyO2WmeQK7yY73k5Z7lJHRojquVHtfMCt7H8NaEJ0b
-         fBYDRRqKvwRoX5R0DE5E0ziphkIAve6mOK3q6LfLRY4NvfyoOeIq64RuQkrO68/MOrzK
-         9K61LuzhZL1QIoszK0H3FiiCaTU7xv9tFfRrZKQMz3YvCLEmaDBcA2GO2T9WX04ZxyD7
-         kfc56mTyG428l3QgU5daYjlkpajAtRqhT2Hm7elfOUBMkKJXjfaYvm5GLq111XcWzbrj
-         GBLycC8yeQxErtH/gpiiVY0Sw8f/Bbt/pC+fHxoLPbeotoE8QPsKwcv5ZNARlxg8Bo+o
-         zPkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755549530; x=1756154330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GWVBpHlCEROG5vPrjHJMy+NzPEPZF2lwJBc9InMC8qg=;
-        b=qipw5kV6x73O9BK8nhVKBMjnGmZjc6aK+QqKao7jhGhu1bEfzcUbJJvB6c3F9bLcPo
-         x6xR31XXRItBiNop+fwfQZ1HIBh4poUEAOoSKHOHqIPAh9slokXNry8j32I33kMJ0ol/
-         ShQNoX8tZlhE0/XsZRpr/HwoMNj01vnY8MmhFWokPiSWdmJWU0j4Rq+/6Is9CDMh08cA
-         81y4F36E0C2yEUZuE6v7FkxYuoIggHLmbQKB66mqaiK4VJx23PkeNXABjBVgBIQD4eo7
-         sOa4UuBfwkJvDOvBePFODrn9VlPR7BWk4cSNpvk8K0JCVtMfdcse14BB8Dl6VpeOpZUs
-         F42g==
-X-Forwarded-Encrypted: i=1; AJvYcCUF/gFHsfz33v1rbI4IeHmOxkIbC3HocfN+1eYL5L1yfu1wYE3go5QCGEs1nsdvQRkFeNrIN+EpQFAsPJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSwc8MgLj+LK+Mw1LSkZbrdROnAt+Cre3ZF4ccFyNd6nLbkqMk
-	/J1geoK3WZvf6ql5YbyR8ClJGUCbGO5s5uzTRApaC5FOqwEe537tPpGNMJnWL42rNAXycTorDqu
-	jPFLhUjqtMQiK35eSAsa3v3dJ6ZauT92pFs5VvLjR
-X-Gm-Gg: ASbGncuylzcljfA1K4FBBTVUkoVWF4ZznxAREHJhoCsphfDKODaE7SGBKLK3w7zvSku
-	s0e7KnkcE62EEnBAWi43piQJIwch0BtV3WEDIOxvsh75hEozC67R3D4PJfwOfNmFHCBdS3v3l9i
-	ZmBhPlEwPUryw5lGkeRdbKllUj2QKzpnSTErQFpTHxocFEOMKEeBD9gAXtu8PZ5e+dTWvlZcWjH
-	4q/9DqaWaOG4lprSuOGmzUWGpQ9T7sIp1KCf7edBSY=
-X-Google-Smtp-Source: AGHT+IH3tjzSRCFCOW7iAKcAC0SgLTYc7BmvYcDLfXGyGlsPJaZgSG2eggUuwK9HCMqKYzPfWIw1JuYWE8yAbLmEQUE=
-X-Received: by 2002:a17:902:ecc7:b0:242:abac:2aae with SMTP id
- d9443c01a7336-245bd9fca9bmr276595ad.12.1755549529421; Mon, 18 Aug 2025
- 13:38:49 -0700 (PDT)
+	s=arc-20240116; t=1755549528; c=relaxed/simple;
+	bh=0IYYWO0B6ZvRp5vVTH+D51pMvA6PkpLd76CN79sMSrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cFUxqT/StOcC1hA2wzfdUM5ZckEHRiG5xYBelpDdE2MTm9W7YtTK3tSOuJ0JG8wdD84PLNGYbv9KCVw2vyzsD/qUPjNLBEkSPTiK1KnqZob6aJQv+HH+xC089sr6/iVKyLdHt9Y7zZZZDA2wUhs6T2GF/qmsSwo7gqbE+hHEYaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B3Y0+REL; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57IKcghd2737585;
+	Mon, 18 Aug 2025 15:38:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755549522;
+	bh=77vEtxKLEbZUsC10RpC+fq6efe6YOvp3tLDFxWRZ9wg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=B3Y0+RELmAh6rsWrZ++7aGVaZf+NDEVKJLsoixbMiF4mixsOt+YBADu8H24z3+2KB
+	 Rc+WBBzAWl2ZvvdK9lZwZT7B5VmUz5NSlg+Tdyc2rdUqTyvP40wjxA1/wkfayAjuOP
+	 PmR3uIglKzWUytYytYS5hU9TKNNX4O7Cwwxiuiqc=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57IKcg7L767705
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 18 Aug 2025 15:38:42 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
+ Aug 2025 15:38:41 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 18 Aug 2025 15:38:41 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57IKcf2W1603499;
+	Mon, 18 Aug 2025 15:38:41 -0500
+Message-ID: <f07d0353-4103-4776-a303-f6a3aad5bf15@ti.com>
+Date: Mon, 18 Aug 2025 15:38:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728093153.2330009-1-changqing.li@windriver.com>
-In-Reply-To: <20250728093153.2330009-1-changqing.li@windriver.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 18 Aug 2025 13:38:38 -0700
-X-Gm-Features: Ac12FXwxVCsygGvGV4l8trkx-_0w16GjHamI7RWBq0DaCtdziw9C_ni1xL_yXG4
-Message-ID: <CAP-5=fW983q0NUEvxibY+QKLss+_TsyRGtgZF_n_q-XFZ98JLA@mail.gmail.com>
-Subject: Re: [PATCH] tools/build: make in-target rule robust against too long
- argument error
-To: changqing.li@windriver.com
-Cc: namhyung@kernel.org, james.clark@linaro.org, charlie@rivosinc.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and
+ SR1.1
+To: Judith Mendez <jm@ti.com>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf
+ Hansson <ulf.hansson@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250818203310.3066985-1-jm@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250818203310.3066985-1-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Jul 28, 2025 at 2:31=E2=80=AFAM <changqing.li@windriver.com> wrote:
->
-> From: Changqing Li <changqing.li@windriver.com>
->
-> The command length of in-target scales with the depth of the directory
-> times the number of objects in the Makefile. When there are many
-> objects, and O=3D[absolute_path] is set, and the absolute_path is
-> relatively long. It is possile that this line "$(call
-> if_changed,$(host)ld_multi)" will report error:
-> "make[4]: /bin/sh: Argument list too long"
->
-> For example, build perf tools with O=3D/long/output/path
->
-> Like built-in.a and *.mod rules in scripts/Makefile.build, add
-> $(objpredix)/ by the shell command instead of by Make's builtin
-> function.
->
-> Signed-off-by: Changqing Li <changqing.li@windriver.com>
-
-Thanks Changqing, the change makes sense to me. The printf is pushing
-the values into xargs rather than using $^ with ld. I've tried
-reproducing the error to test your fix by creating long directory
-names in /tmp and then passing them to O=3D. I've not been able to do
-this. Could you send a reproduction for me to test?
-
-Thanks,
-Ian
-
+On 8/18/25 3:33 PM, Judith Mendez wrote:
+> This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
+> to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
+> due to errata i2458 [0] so disable HS400 for these SoC revisions.
+> 
+> [0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
+> Signed-off-by: Judith Mendez <jm@ti.com>
 > ---
->  tools/build/Makefile.build | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/build/Makefile.build b/tools/build/Makefile.build
-> index 3584ff308607..39066a3ef2fc 100644
-> --- a/tools/build/Makefile.build
-> +++ b/tools/build/Makefile.build
-> @@ -70,11 +70,13 @@ quiet_cmd_gen =3D GEN     $@
->  # If there's nothing to link, create empty $@ object.
->  quiet_cmd_ld_multi =3D LD      $@
->        cmd_ld_multi =3D $(if $(strip $(obj-y)),\
-> -                     $(LD) -r -o $@  $(filter $(obj-y),$^),rm -f $@; $(A=
-R) rcs $@)
-> +                     printf "$(objprefix)%s " $(patsubst $(objprefix)%,%=
-,$(filter $(obj-y),$^)) | \
-> +                     xargs $(LD) -r -o $@,rm -f $@; $(AR) rcs $@)
->
->  quiet_cmd_host_ld_multi =3D HOSTLD  $@
->        cmd_host_ld_multi =3D $(if $(strip $(obj-y)),\
-> -                          $(HOSTLD) -r -o $@  $(filter $(obj-y),$^),rm -=
-f $@; $(HOSTAR) rcs $@)
-> +                          printf "$(objprefix)%s " $(patsubst $(objprefi=
-x)%,%,$(filter $(obj-y),$^)) | \
-> +                          xargs $(HOSTLD) -r -o $@,rm -f $@; $(HOSTAR) r=
-cs $@)
->
->  ifneq ($(filter $(obj),$(hostprogs)),)
->    host =3D host_
-> --
-> 2.34.1
->
+> This patch was separated from [0] since it will be merged to
+> different trees anyways.
+> 
+> Link to v2:
+> [0] https://lore.kernel.org/linux-mmc/20250807225138.1228333-1-jm@ti.com
+> ---
+>   drivers/mmc/host/sdhci_am654.c | 18 ++++++++++++++++++
+>   1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index 8a099508b939..cc8c4145bf2b 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
+>   
+>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>   #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+> +#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
+>   };
+>   
+>   struct window {
+> @@ -764,6 +765,7 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>   {
+>   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>   	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> +	struct device *dev = mmc_dev(host->mmc);
+>   	u32 ctl_cfg_2 = 0;
+>   	u32 mask;
+>   	u32 val;
+> @@ -819,6 +821,12 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>   	if (ret)
+>   		goto err_cleanup_host;
+>   
+> +	if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400 &&
+> +	    host->mmc->caps2 & (MMC_CAP2_HS400 | MMC_CAP2_HS400_ES)) {
+> +		dev_info(dev, "Disable descoped HS400 mode for this silicon revision\n");
+
+Messages to the user do not need to be imperative, maybe:
+
+"Disabling HS400 mode not supported on this silicon revision\n"
+
+Not a blocker,
+
+Reviewed-by: Andrew Davis <afd@ti.com>
+
+> +		host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
+> +	}
+> +
+>   	ret = __sdhci_add_host(host);
+>   	if (ret)
+>   		goto err_cleanup_host;
+> @@ -882,6 +890,12 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>   	return 0;
+>   }
+>   
+> +static const struct soc_device_attribute sdhci_am654_descope_hs400[] = {
+> +	{ .family = "AM62PX", .revision = "SR1.0" },
+> +	{ .family = "AM62PX", .revision = "SR1.1" },
+> +	{ /* sentinel */ }
+> +};
+> +
+>   static const struct of_device_id sdhci_am654_of_match[] = {
+>   	{
+>   		.compatible = "ti,am654-sdhci-5.1",
+> @@ -969,6 +983,10 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		return dev_err_probe(dev, ret, "parsing dt failed\n");
+>   
+> +	soc = soc_device_match(sdhci_am654_descope_hs400);
+> +	if (soc)
+> +		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_DISABLE_HS400;
+> +
+>   	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
+>   	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>   
+
 
