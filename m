@@ -1,124 +1,311 @@
-Return-Path: <linux-kernel+bounces-773926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB550B2AC43
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:15:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA3EB2AC85
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50E5C7AD202
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:13:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34703B918E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6C32512E6;
-	Mon, 18 Aug 2025 15:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF16B24E4C4;
+	Mon, 18 Aug 2025 15:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OTjjYTFJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AebxJxuG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vbhlxq45"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD5F24E4C6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F022135CE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530094; cv=none; b=LbwrDm+EEZAK09AT+rg2sTy1caDDtmLhcWxtR1/ZcciMpOXbpezNge559nskjDSmy4hlR4tFbc/JhNFld3cimIBrzDkBWDdHScsoaFzJdi7vrfE+xbRX6w4m8xuxg8dPXcqPCPDJaKOLPZ6SepwqxieBIpNoY/R0LiGSguw/wTQ=
+	t=1755530128; cv=none; b=FO5TLHzHfMri/e42cKT6N7kWfTpzEbnS3X5hYBn5PH4Ed7IQG3hMXlVytRiO1ajplbl66cq6oZLd2eBCtUitZUWh2ml2UDS3hVTRGAoHNyrf7mfj5O4i23yHs4K04v7/DLx1ibs2Tv+TMCAWI+2iH9s9F7Og0vfJpPD7/o8XJ2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530094; c=relaxed/simple;
-	bh=O6aTlMjnDiIFzMitmclGJsYDjPXGvGHf475d82Bm3LA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLRkdj8BLCJseoCAUlbAOilfx0cI/oqzAH9L2E2ml9CBTfRhOWk2briCYU9WLo04YjQdu22jjWtQbQgqeaHZUoNGPcDdz42plhqIQM1r8CSeaVfRIU5f9P7NyIHFmbEgsGjQyVK/uZfWttGb8VBLLQM4lgGiiQ2UXCJdHpD4lGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OTjjYTFJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AebxJxuG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 18 Aug 2025 17:14:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755530091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NOjgkoXz2OJkl1SQS5nGgXmhcpxnRfnVH+2MCIzyCr0=;
-	b=OTjjYTFJcrkRSCwwpZFD27b3FoL3qXDDbwg6aU/4I6sD2ZGrg4cB/+NylemMmmHeXVyuC1
-	+SryT3Xl8IBtoZ2/2FtPHreMr9p/ZKNzRjR6QGIe75o7q/xmIttpV01udHktc4FoswD+3c
-	yfElSmrptL2GIr++k71IfXNfLdkN1yMbncHUDtwzpBjoEI0/qf3WXfhF4gbHqWFEfYS9Kr
-	WlRmVQp0VwcOX8p+YELgwaQ8PFl7kLLl6902BV+AwMCpX0MZnrk7sdPvNT4t/Vy2oV3Esr
-	jfOKy6NGAWEzu/x60Kr5lewWKjSItDovshmlwVkAbyKaGQmBeuzMn+mULv/6JQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755530091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NOjgkoXz2OJkl1SQS5nGgXmhcpxnRfnVH+2MCIzyCr0=;
-	b=AebxJxuGDUPUEaVAMnHvWQbgEv+KZH95RErUBe2ZcSoW4ATWcQgO+gcp48fnH6DzrFKBRz
-	N74UOXMupUunJuDg==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 02/34] ASoC: Intel: avs: Include CPUID header at file
- scope
-Message-ID: <aKNDZ3mWYUABwOzJ@lx-t490>
-References: <20250815070227.19981-1-darwi@linutronix.de>
- <20250815070227.19981-3-darwi@linutronix.de>
- <20250818145646.GGaKM_Ltrggbwkj2TB@fat_crate.local>
+	s=arc-20240116; t=1755530128; c=relaxed/simple;
+	bh=YUzSS0tMH4Lq6dvFjtrqpGRKZ3/fBTf3Sv/BZoWFalk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZACxEntpsPuJBS7rCoHkxiNYgCyvfZw8kSc55lbjHjor5dHZEMdyadpr4rVZ/Wjvc8tfh5LtM8nW5njCju9xTR3JwGtTPVPCGfleQ5GRGrjhuDVcArwrENkNGBDjojQYbUamImV9DgUQGP7Fj53Sk9/oBEy8V2Sm4H9kigjTF/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vbhlxq45; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381f39a3eso1939861a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755530125; x=1756134925; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rx5f0xAbVvUAkSbSeLOjDbq5b/QH3eN1AqJzxGe0lPg=;
+        b=Vbhlxq451x67B+liVgebADFE7ImDp6Lx9XcWm++eOxngDIpvuW7F489XYtID3b8yFp
+         0J33SgYjB62ImnY+hIGZ/xaGEc7W01z3X2hpvRQ2ecfZ8j9u9cZ6dIl6oT2UfbNjxKjd
+         F7hiUD7jHjLYATyYmsdiESMclV4Y1AQbq/YKwEr1YGd/U9cYlqkLaAxe677aS/2VHNI+
+         EsTqINM9pZvQwDsnEDwnBDKso9b3vUV+FoAfD4ivqwPHjOD+9nj12XXVIX8bxCUmattM
+         LEEXpGP14mQy1hSkV16VCCrBPirEFmk+mIExJQmRDlS0jTyILkxEReSJfySxYRV/8WCv
+         1VkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755530125; x=1756134925;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rx5f0xAbVvUAkSbSeLOjDbq5b/QH3eN1AqJzxGe0lPg=;
+        b=qp5xYHh4p4hhva1nR5+Uk1snxS42SqUxWv56tnYDgQmpLLzaqVLJa3wSzZThI5Ba97
+         GHQmLgH6FpxXEBudeI6pnM0Z5u5VEGu3xMniJMdh9E7yNPLYj9UErfCMNL9PfRUXwaho
+         yD9lZx3273d6KzxWs0JDjyW4o3vOloS8vAmAo/Zz3zl2lVgnb8Abx6I8/xyZmxNQqEjF
+         03wt6OkNZ1AOXD1Wlp2BhX6ValistiLPq6bGGZpWISkS5ieFbLV/STgZgk9D4Re0m2Me
+         ErF8U9XdBZfT+LYtq29kS0rUjYKRP1TCNx1bjtupj3k53jBfEHlIVoJ1qdQAhYZ0AEFx
+         P4kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSfPy/5MILBhYzMUp+QRinawh3UQUUrrC88XKJr2nAERPCcIB1MFioUdbrzMGzZbXRgX9gOrpIHXh6Csg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoS1/DviF0EpEqPC7SYAZlY9SEQrfE+me1m6zSFvYaXn5r4idP
+	gFdGKT2BMIUyMVFi/WxvqJDIv57+a9jtmRpalsTlqT3jB/cyR8YpuRy6fPR5j1DI/+o=
+X-Gm-Gg: ASbGncuotJCXwhwpHWya+jN82F0YPjcne8bLOiciN/1t5Sw/RA/697OTNQDWEhiPWoe
+	BazLfbpZbmZWYdXqJOqTualhdqFEubVgAOkmnwJ6iNZzBocNy+UYdeNVoUt9JDjxWpsGJBGAsxY
+	kwR00lIHZEbVNKU5WnPhfRlj2qDMQUS0HQcptfqeaf2NzbKfUAn8sPDFFLAZc/pE2B3kC1CCtPv
+	1b//WA5XUi8EVWTs2YjL30R93ZZWP0isU7/XXmjVVqXLccoRPBOjNu3rLK4Yvx5w/NKkQfZDblU
+	6/F5TQynEWyJr9qmmW/ide40GARhXAC0i34wKy6GsMj6YR07stszBA23m3x97tsiWZnwrUyTAUr
+	Go8RDEmuwLHYkyT2GYRLMeysus37PG0f6nTwD8dDh1k7bj/4BZrJ+tcTssLc2xjvxyoGlJ7FVxU
+	Dyk46PP5i2Yg==
+X-Google-Smtp-Source: AGHT+IHb9rH2wLfVz0O8elzP2+rT3F9w2k8wvdCdA9WSm2W7n0uohkYyH7F+p03AyGk3vMxrFUDpig==
+X-Received: by 2002:a05:6830:2692:b0:741:924c:3f60 with SMTP id 46e09a7af769-74392487172mr8034059a34.20.1755530125226;
+        Mon, 18 Aug 2025 08:15:25 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73? ([2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7439203b4fesm1901272a34.30.2025.08.18.08.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 08:15:24 -0700 (PDT)
+Message-ID: <eb9c06de-04e2-427f-9c04-eaaaf4837da6@baylibre.com>
+Date: Mon, 18 Aug 2025 10:15:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818145646.GGaKM_Ltrggbwkj2TB@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] iio: adc: update ad7779 to use IIO backend
+To: Ioana Risteiu <Ioana.Risteiu@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Ramona Nechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250818131253.8854-1-Ioana.Risteiu@analog.com>
+ <20250818131253.8854-5-Ioana.Risteiu@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250818131253.8854-5-Ioana.Risteiu@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Boris,
+On 8/18/25 8:12 AM, Ioana Risteiu wrote:
+> Add a new functionality to ad7779 driver that streams data through data
+> output interface using IIO backend interface.
+> 
+> Signed-off-by: Ioana Risteiu <Ioana.Risteiu@analog.com>
+> ---
+>  drivers/iio/adc/ad7779.c | 107 ++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 106 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ad7779.c b/drivers/iio/adc/ad7779.c
+> index f7e681c0e8c0..abf3fff20dd4 100644
+> --- a/drivers/iio/adc/ad7779.c
+> +++ b/drivers/iio/adc/ad7779.c
+> @@ -31,6 +31,8 @@
+>  #include <linux/iio/triggered_buffer.h>
+>  #include <linux/iio/trigger_consumer.h>
+>  
+> +#include <linux/iio/backend.h>
 
-On Mon, 18 Aug 2025, Borislav Petkov wrote:
->
-> I'm guessing that:
->
-> https://lore.kernel.org/r/aGv8AWwHbi5seDxi@lx-t490
->
-> still needs to happen yet?
->
-> Because I don't see it in this set...
->
+This should be grouped in alphabetical order with other
+linux/iio/ includes.
 
-Yeah, I discovered that I need to do the X86_FEATURE integration within
-the CPUID model before touching the CPUID(0x15) call sites.
+> +
+>  #define AD7779_SPI_READ_CMD			BIT(7)
+>  
+>  #define AD7779_DISABLE_SD			BIT(7)
+> @@ -157,6 +159,8 @@ struct ad7779_state {
+>  	u8			reg_rx_buf[3];
+>  	u8			reg_tx_buf[3];
+>  	u8			reset_buf[8];
+> +
+> +	struct iio_backend *back;
 
-Quoting the cover:
+This field needs to be placed in the struct before
+__aligned(IIO_DMA_MINALIGN) to avoid issues cache lines.
 
-  State of Affairs: By now, all CPUID leaves which do not interact with
-  the X86_FEATURE mechanism(s) has been transformed to the CPUID model.
-  Remaining leaves have dependencies on X86_FEATURE.
+>  };
+>  
+>  static const char * const ad7779_filter_type[] = {
+> @@ -630,12 +634,38 @@ static int ad7779_reset(struct iio_dev *indio_dev, struct gpio_desc *reset_gpio)
+>  	return ret;
+>  }
+>  
+> +static int ad7779_update_scan_mode(struct iio_dev *indio_dev,
+> +				   const unsigned long *scan_mask)
+> +{
+> +	struct ad7779_state *st = iio_priv(indio_dev);
+> +	unsigned int c;
+> +	int ret;
+> +
+> +	for (c = 0; c < AD7779_NUM_CHANNELS; c++) {
+> +		if (test_bit(c, scan_mask))
+> +			ret = iio_backend_chan_enable(st->back, c);
+> +		else
+> +			ret = iio_backend_chan_disable(st->back, c);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct iio_info ad7779_info = {
+>  	.read_raw = ad7779_read_raw,
+>  	.write_raw = ad7779_write_raw,
+>  	.debugfs_reg_access = &ad7779_reg_access,
+>  };
+>  
+> +static const struct iio_info ad7779_info_data = {
+> +	.read_raw = ad7779_read_raw,
+> +	.write_raw = ad7779_write_raw,
+> +	.debugfs_reg_access = &ad7779_reg_access,
+> +	.update_scan_mode = &ad7779_update_scan_mode,
+> +};
+> +
+>  static const struct iio_enum ad7779_filter_enum = {
+>  	.items = ad7779_filter_type,
+>  	.num_items = ARRAY_SIZE(ad7779_filter_type),
+> @@ -674,6 +704,7 @@ static const struct iio_chan_spec_ext_info ad7779_ext_filter[] = {
+>  
+>  #define AD777x_CHAN_FILTER_S(index)					\
+>  	AD777x_CHAN_S(index, ad7779_ext_filter)
+> +
 
-  For example, some callsites _directly_ enumerate CPUID(0x15)
-  [ART_CPUID_LEAF / CPUID_LEAF_TSC] even though that leaf has important
-  dependencies on X86_FEATURE_ART and its tsc_async_resets flag.
+Unrelated blank line add (should not be in this patch).
 
-  The CPUID parser work will not propagate such call sites brokedness and
-  will integrate the X86_FEATURE infrastructure within it first.
+>  static const struct iio_chan_spec ad7779_channels[] = {
+>  	AD777x_CHAN_NO_FILTER_S(0),
+>  	AD777x_CHAN_NO_FILTER_S(1),
+> @@ -752,6 +783,44 @@ static int ad7779_conf(struct ad7779_state *st, struct gpio_desc *start_gpio)
+>  	return 0;
+>  }
+>  
+> +static int ad7779_set_data_lines(struct iio_dev *indio_dev,
+> +				 unsigned int num_lanes)
+> +{
+> +	struct ad7779_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = ad7779_set_sampling_frequency(st, num_lanes * AD7779_DEFAULT_SAMPLING_1LINE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = iio_backend_num_lanes_set(st->back, num_lanes);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
+> +				    AD7779_DOUT_FORMAT_MSK,
+> +				    FIELD_PREP(AD7779_DOUT_FORMAT_MSK, 2 - ilog2(num_lanes)));
+> +}
+> +
+> +static int ad7779_setup_channels(struct iio_dev *indio_dev, const struct ad7779_state *st)
+> +{
+> +	struct iio_chan_spec *channels;
+> +	struct device *dev = &st->spi->dev;
+> +
+> +	channels = devm_kmemdup_array(dev, st->chip_info->channels,
+> +					ARRAY_SIZE(ad7779_channels),
+> +					sizeof(*channels), GFP_KERNEL);
+> +	if (!channels)
+> +		return -ENOMEM;
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(ad7779_channels); i++)
+> +		channels[i].scan_type.endianness = IIO_CPU;
+> +
+> +	indio_dev->channels = channels;
+> +
+> +	return 0;
+> +}
+> +
+>  static int ad7779_setup_without_backend(struct ad7779_state *st, struct iio_dev *indio_dev)
+>  {
+>  	int ret;
+> @@ -796,6 +865,38 @@ static int ad7779_setup_without_backend(struct ad7779_state *st, struct iio_dev
+>  				    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
+>  }
+>  
+> +static int ad7779_setup_backend(struct ad7779_state *st, struct iio_dev *indio_dev)
+> +{
+> +	struct device *dev = &st->spi->dev;
+> +	int ret = -EINVAL;
+> +	int num_lanes;
+> +
+> +	indio_dev->info = &ad7779_info_data;
+> +
+> +	ret = ad7779_setup_channels(indio_dev, st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->back = devm_iio_backend_get(dev, NULL);
+> +	if (IS_ERR(st->back))
+> +		return dev_err_probe(dev, PTR_ERR(st->back),
+> +				     "failed to get iio backend");
+> +
+> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_iio_backend_enable(dev, st->back);
+> +	if (ret)
+> +		return ret;
+> +
 
-As I mentioned in the Bhyve thread, this shall also include a directed
-acyclic graph of dependencies for the X86_FEATURE flags themselves:
+The usual way of doing this is to set num_lanes = 4 here.
 
-  https://lore.kernel.org/lkml/aKL0WlA4wIU8l9RT@lx-t490
+> +	ret = device_property_read_u32(dev, "adi,num-lanes", &num_lanes);
+> +	if (ret)
 
-v5 should cover this.
+It is best to not ignore all errors. So typically, we would have
 
-Thanks!
+	if (ret && ret != -EINVAL)
+		return ret;
 
---
-Ahmed S. Darwish
-Linutronix GmbH
+here. In the -EINVAL case, the default we set above will be used.
+
+We should also validate that the value is 1, 2 or 4 so that later
+calculations that use this are valid.
+
+> +		return ad7779_set_data_lines(indio_dev, 4);
+> +
+> +	return ad7779_set_data_lines(indio_dev, num_lanes);
+
+Then we don't have to have 2 calls to the same function.
+
+> +}
+> +
+>  static int ad7779_probe(struct spi_device *spi)
+>  {
+>  	struct iio_dev *indio_dev;
+> @@ -848,7 +949,10 @@ static int ad7779_probe(struct spi_device *spi)
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  	indio_dev->num_channels = ARRAY_SIZE(ad7779_channels);
+>  
+> -	ret = ad7779_setup_without_backend(st, indio_dev);
+> +	if (device_property_present(dev, "io-backends"))
+> +		ret = ad7779_setup_backend(st, indio_dev);
+> +	else
+> +		ret = ad7779_setup_without_backend(st, indio_dev);
+>  
+>  	if (ret)
+>  		return ret;
+> @@ -943,3 +1047,4 @@ module_spi_driver(ad7779_driver);
+>  MODULE_AUTHOR("Ramona Alexandra Nechita <ramona.nechita@analog.com>");
+>  MODULE_DESCRIPTION("Analog Devices AD7779 ADC");
+>  MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS("IIO_BACKEND");
+
 
