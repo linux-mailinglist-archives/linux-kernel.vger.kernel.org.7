@@ -1,174 +1,150 @@
-Return-Path: <linux-kernel+bounces-774266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ABFB2B0A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96250B2B0B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835716844D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:40:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1844E6F3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68381271468;
-	Mon, 18 Aug 2025 18:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD32270578;
+	Mon, 18 Aug 2025 18:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQVOqmPP"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SJvpZ7ph"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04904263F43;
-	Mon, 18 Aug 2025 18:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F0226D4E2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755542404; cv=none; b=n1Nmr58nH5pyZEFEc0u2FxTUs4MxvOr1L+WyGNvGQpzr0GLB0uSZ20W+3cCcEuXVqrpzjzL1UGtMhVosaQ6U+Yn6bGUTwSTvIMj6NevSoO1XmKQIb78dWyuQV7m7DRaNTYKn47kTwMwnNKo43J67wTrML+rjtfg7WnHRi36+eLE=
+	t=1755542648; cv=none; b=dWSXYNvOJEwRMJGntH0qjtMsB4CYkWmV79vuhKvsgo91X+cyzFKfUXRPzwjffM7zj3DWT5mcv1lkz/O9GpdKHrDZ1SBwukgUBMZ38URafp8GJilLb8vMml+ngdmYBZNJ2i5tUN9O3DYabcs2IOmqr/pd9OyjWSY3N/HQumJJOXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755542404; c=relaxed/simple;
-	bh=dD5udPYcdw+R2VGmCouPujWySrsi6OZs03UQR0ljOZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nZ2/MK5pGypUx3GN+5LGPJyxC5crLe6VcaYOxBU2bvcRZtj97ylR2RFE2+/kQW+IShzRFf1Ex7EEQlDW8BOW9FVOUofJsf11vSvy+udNqw6XvpxlY9pQkJDiilL5/iTfdUd9DpHlYUIBo+yIZcRcgxGVjFZ+PeZSIWBDTQEZ8t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQVOqmPP; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce5287a47so4068580e87.3;
-        Mon, 18 Aug 2025 11:40:02 -0700 (PDT)
+	s=arc-20240116; t=1755542648; c=relaxed/simple;
+	bh=r2XxQ52lHCyHEOLTg4w2owfYJdEu3Z61WuKp6V4myxY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=T/4/BXqETgldM1shFOoUOdHV/4aMgxVAefXsC6OCIpgiwiDA++HzSr+RDHmDixfuNQGxrr66ebTnB7PwPiZTG/N31R4ScGueW5C4QvU7j48EIEjGWBgf9S2GML5ZYB/Rosmlkki/ro6O+p9x+B+jgjcBKv3IWZZFPz0hOf/Mxi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SJvpZ7ph; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32326e6b1deso4038848a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755542401; x=1756147201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bmM7ItIjaraXAGSyLnrAC2qMTcYYNxGTgbCl2d6rdYM=;
-        b=mQVOqmPPcGN24UCnYHWGzvB+/5riYf+n4hoIQM94VZ0FpxjtXjCF15ct/WkkU27OlW
-         UDH7siQZwTB/i9wLpwqOlaUi2vnr4QjEzHjHIca44xBxbnaGMp5xv5DwgZV/WiGk78sA
-         sdo3BzER039vDGy8sCI1bwaAMqRNLWIyPpmumwyRt0RKeD+M5DMbMzp7yschbNL8o1Tr
-         BS565p0FXJr8RZ3ZFPG7mpldyDbrwwTyoGZ/IrDO6MLJtRSiWbS0To1Y1KFY1Iym5jFb
-         lx8ypF/WvhpCTVyduxytUH5x+NyUwLVcz2dSFHiJ8AJ/YWTz3dUT7Ls1IDHHjhbP3vM+
-         vjVg==
+        d=google.com; s=20230601; t=1755542646; x=1756147446; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7VFs4hq2gNspXwqVl6VRBHdFDdDcXCC8KhRWDTZiRw=;
+        b=SJvpZ7phvIzd0jLeR3bo3NX3aXEAAPqgHU+zBjjiwKwiZo09sEGh7E4qCd5CFzc4Np
+         hMfgxv1MhFFORpxB8xJPmLOsE7WOY+96Xnwou9bj0yuoEdqrV4g+8BX3KTlLsBYWLaYq
+         CZT7JiJKMNdAKca9fdfFXerTlP/nvederJX8JJnwFLfn26cnIeFVb93zmMVIwSYQT36O
+         D48XCLgMNaupfp7oau9LbZvjUlDsWKsDtbdu3w4Z3gLXafGPjOrVNzB2qq0OxMSgTisi
+         I/uar+RfYBLoQk73bfdJUj701w42aZHTApP0eJNTEF1/5HewxtwUB+0OgcOmRVioIo/o
+         mRog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755542401; x=1756147201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bmM7ItIjaraXAGSyLnrAC2qMTcYYNxGTgbCl2d6rdYM=;
-        b=J95gKfIZrldek0XJuKn4ltgxo4xkIxFjolWcneCNjxXkLtmFDLYW1Edk5X2zCS4+RF
-         suF/Br0dZgIMhdiK4pCuekZjO4cParF3Ip5cBbZfgZy1NUpI7n/wC4YL17yE6Gph3hgT
-         2jeAcRGLqT1OTbzusBglOEZDPynLZkShpW/9u8MxqrIH6/nKf/2vFGnSDQ2YptMsk1AX
-         RYfcWVH+d9jjq+oM5275bQ1gjrmV3qhf+2iUCsVVoO1wwqaZWKTp2O4MTTAZ+4qrgOUI
-         +47TovLSbiuHQmb7Otxz6w2bC8DxXAZB5PUXgkKQOT8lMT3PD8ODlU2GRmplQ8nurcTK
-         atUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6a87qakJ1JNySwpzBgjGzzcbqRMpx2vHB2mLLz4sCFR32pFFrdAwqupDYwLk+Vv3YT3p0oIRXjgM=@vger.kernel.org, AJvYcCVacGIm8sL/gB9Tbzy0DPxCIiiW/w31EjH+ACykyUNJjd/jJWE8xHQPnZt1ouXohf48Z4ijNinWHc/TrRM=@vger.kernel.org, AJvYcCXXN5xyeBlIAA1BOAmT4x3YiyKOdajDA28gtfIvoJP3+W1jeqGI/lpMeYDdlkXteUIeUOS9PsUjBGSp4oQ=@vger.kernel.org, AJvYcCXhX8tZTBz09t/xNdh8xG8dXBJFFYcugyE7Vp3Z/DNx6VSsfNArteECWWRGMHtsVhRSyJtv2jQNiVmQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzChb3Y+mgWkhpxiV8JBf7rPlMBuMKN5stnuu5G1j0BY1xTEEfW
-	jsxDzxmQ8whBvgq1XkD9X6UB38vZHNxilq3LQAoQ3dWeLPkBLrGtlVVHThL6Ly2MT273PRm5Z5y
-	SDTKo0Y+zMsN7kj1G4jPG5r2p3GCyELQ=
-X-Gm-Gg: ASbGncvEYaDxloBcvQRqK+gr+dMDiDRMglUK1R6Hs7UrwceON8c+Homak26u6oPAiQb
-	FU+FNwoxPYGnZpPvsgqyMP3T6ZhBvgutKsZm6n4mFNyvJh3ErRg+9CrHKPpmq6gxqAJ9//lkF7i
-	IIela6bPitoF7kjiwzaIaKZ2adXDg3I6tnbW7uBhlF5vUfWH658WEsNpDVSofFSVeXBrce7Lz45
-	z4MsUqMxHmhmfc6yA==
-X-Google-Smtp-Source: AGHT+IFg0y+xEYU/HgP9HL4d5sN72FK5jZ52E7S9n06a5baoH9Fv+JwoDsRpAOqS2jtsH3a0D5vcAWadwlMcLhp9uK8=
-X-Received: by 2002:a05:6512:6418:b0:55c:df64:3780 with SMTP id
- 2adb3069b0e04-55e00148f8amr46834e87.50.1755542400596; Mon, 18 Aug 2025
- 11:40:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755542646; x=1756147446;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7VFs4hq2gNspXwqVl6VRBHdFDdDcXCC8KhRWDTZiRw=;
+        b=ErOU8x53mNDykY03hdVPJ4kSM8ZUfiuVoVBcgQjGf5u2hbOGKCGtwtVOIU3asMF1r4
+         jbXktkZeHw6rpIBgrFt2hq03o80cXqYrLcB9XlUaUNG8Rsklsf5U3Zy/jke3qCm2DgaD
+         OVUVUHa0qiH6YhD27djDR3FMlzLzrVuc8rc8gabwUwPFKX9WUnID7oOmTZFIkbr8Z9CI
+         EmdImKGkDy74Sd//fhFM4xDvNR6VV+IAZBjNEeweh0bdd1Bstei3kyKphlW6enW4K1vY
+         Ttl53LOg/TVoKRpRC8Q08M8aIAK8CwF0OmfE+nSRiAGQjdQlKbA0YosGBP8X83FrOT1B
+         SIVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/UhnCuEZUNWTfRcI41kYxQCA8qvqlDmOjtBwD3iAWi9bCihAIiDyZgApvUEOCIDTZt02EafN/BI8Vm9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQrngu+YzL6+XYaNMeTOeLOk+wTmbQG9QxBdk7OWBSJFpACkfS
+	79U/JokyXyg5e3H6GhldQMW1fa9ObIQDh1AWex0lQ0KK986ojzpN4qTFHhoTTaI6qFm2YT44cja
+	wiBO93w==
+X-Google-Smtp-Source: AGHT+IFbv6MSiYoyRwcd/L+br4Cu17Db/XUTz80bmXGN7MeXNKUOMQuWXjPjvJM0zzLKaUedGZrb9HX2C8M=
+X-Received: from pjbqi14.prod.google.com ([2002:a17:90b:274e:b0:321:c36d:1b8a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1350:b0:31f:253e:d34f
+ with SMTP id 98e67ed59e1d1-3237f5b035emr409973a91.19.1755542646569; Mon, 18
+ Aug 2025 11:44:06 -0700 (PDT)
+Date: Mon, 18 Aug 2025 11:44:05 -0700
+In-Reply-To: <aKMvTrrKYgJNWX8L@lx-t490>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250731-pci-tegra-module-v7-0-cad4b088b8fb@gmail.com>
- <CALHNRZ9tOJccZ5sQjvkoPe4-+VUtWRxAzAOUainGUCs4+_RBCw@mail.gmail.com> <omchhpbmsydfcsm6mzmbdiupsrxmxxvkxqf33fgi563akn76vf@vkc7k2zhlvee>
-In-Reply-To: <omchhpbmsydfcsm6mzmbdiupsrxmxxvkxqf33fgi563akn76vf@vkc7k2zhlvee>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 18 Aug 2025 13:39:48 -0500
-X-Gm-Features: Ac12FXyL-zgUyoJv4HtF59wJM8pPidfHQghJAOvbeDQ3uqVg48agQEUJcLS4nZE
-Message-ID: <CALHNRZ8PZzseaTSCvhM6o7jMVYtVdHTczurXh1q+DY5MG62+DA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/3] PCI: tegra: Allow building as a module
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250815070227.19981-1-darwi@linutronix.de> <20250815070227.19981-8-darwi@linutronix.de>
+ <aJ9TbaNMgaplKSbH@google.com> <aKMvTrrKYgJNWX8L@lx-t490>
+Message-ID: <aKN0debsio7ocitW@google.com>
+Subject: Re: [PATCH v4 07/34] x86/cpuid: Introduce a centralized CPUID data model
+From: Sean Christopherson <seanjc@google.com>
+To: "Ahmed S. Darwish" <darwi@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sohil Mehta <sohil.mehta@intel.com>, John Ogness <john.ogness@linutronix.de>, x86@kernel.org, 
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Aug 1, 2025 at 1:01=E2=80=AFAM Manivannan Sadhasivam <mani@kernel.o=
-rg> wrote:
->
-> On Thu, Jul 31, 2025 at 05:01:55PM GMT, Aaron Kling wrote:
-> > On Thu, Jul 31, 2025 at 4:59=E2=80=AFPM Aaron Kling via B4 Relay
-> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > >
-> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > ---
-> > > Changes in v7:
-> > > - Rebased on 6.16
-> > > - Updated mailing address list
-> > > - Link to v6: https://lore.kernel.org/r/20250507-pci-tegra-module-v6-=
-0-5fe363eaa302@gmail.com
-> > >
-> > > Changes in v6:
-> > > - Remove unused debugfs cleanup function, as caught by kernel ci
-> > > - Link to v5: https://lore.kernel.org/r/20250505-pci-tegra-module-v5-=
-0-827aaac998ba@gmail.com
-> > >
-> > > Changes in v5:
-> > > - Copy commit message exactly word for word on patch 1, as required b=
-y reviewer
-> > > - Delete remove callback in patch 3, per request
-> > > - Don't clean up debugfs, per request, which drops patch 4 entirely
-> > > - Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-=
-0-088b552c4b1a@gmail.com
-> > >
-> > > Changes in v4:
-> > > - Updated commit messages for patches 1 and 2, per review
-> > > - Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-=
-0-556a49732d70@gmail.com
-> > >
-> > > Changes in v3:
-> > > - Add patch to drop remove callback, per request
-> > > - Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-=
-0-c11a4b912446@gmail.com
-> > >
-> > > Changes in v2:
-> > > - Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
-> > >   building pci-tegra as a module for arm
-> > > - Drop module exit to prevent module unloading, as requested
-> > > - Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-=
-0-c0a1f831354a@gmail.com
-> > >
-> > > ---
-> > > Aaron Kling (3):
-> > >       irqdomain: Export irq_domain_free_irqs
-> > >       cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
-> > >       PCI: tegra: Allow building as a module
-> > >
-> > >  drivers/cpuidle/cpuidle-tegra.c    |  1 +
-> > >  drivers/pci/controller/Kconfig     |  2 +-
-> > >  drivers/pci/controller/pci-tegra.c | 35 ++++------------------------=
--------
-> > >  kernel/irq/irqdomain.c             |  1 +
-> > >  4 files changed, 7 insertions(+), 32 deletions(-)
-> > > ---
-> > > base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> > > change-id: 20250313-pci-tegra-module-7cbd1c5e70af
-> > >
-> > > Best regards,
-> > > --
-> > > Aaron Kling <webgeek1234@gmail.com>
-> > >
-> > >
+On Mon, Aug 18, 2025, Ahmed S. Darwish wrote:
+> > Rather than define the structures names using an explicit starting subleaf, what
+> > if the structures and APIs explicitly reference 'n' as the subleaf?  That would
+> > communicate that the struct represents a repeated subleaf, explicitly tie the API
+> > to that structure, and would provide macro/function names that don't make the
+> > reader tease out the subtle usage of "index".
 > >
-> > Continuing the conversation from the last revision [0]. Is there any
-> > path forward for this series?
+> > And then instead of just the array size, capture the start:end of the repeated
+> > subleaf so that the caller doesn't need to manually do the math.
 > >
->
-> Daniel, could you please look into the cpufreq patch?
+> > E.g.
+> >
+> > 	const struct leaf_0x4_n *regs = cpuid_subleaf_n(c, 0x4, index);
+> >
+> > 	struct cpuid_0xd_n *c = cpuid_subleaf_n(..., 0xD, i);
+> Hard case: Subleaves start repeating from subleaf > 0
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> This would be the CPUID leaves:
+> 
+>     x86-cpuid-db/db/xml (tip)> git grep 'id="[1-9][0-9]*" array='
+> 
+>     leaf_0d.xml:    <subleaf id="2" array="62">
+>     leaf_10.xml:    <subleaf id="1" array="2">
+>     leaf_12.xml:    <subleaf id="2" array="30">
+>     leaf_17.xml:    <subleaf id="1" array="3">
+> 
+> For something like CPUID(0xd), I cannot just blindly define a 'struct
+> cpuid_0xd_n' data type.
 
-Another two weeks with no response to a review request. And over two
-months total since the cpuidle maintainers were initially asked to
-look. Is there a policy for dealing with lack of responses?
+Why not?  Like C structs, there can only be one variable sized array, i.e. there
+can't be multiple "n" subleafs.  If the concern is calling __cpuid_subleaf_n()
+with i < start, then I don't see how embedding start in the structure name helps
+in any way, since 'i' isn't a compile-time constant and so needs to be checked at
+runtime no matter what.
 
-Aaron
+> We already have:
+> 
+>     struct leaf_0xd_0 { ... };
+>     struct leaf_0xd_1 { ... };
+>     struct leaf_0xd_2 { ... };
+> 
+> and they all have different bitfields.  A similar case exist for
+> CPUID(0x10), CPUID(0x12), and CPUID(0x17).
+> 
+> But, we can still have:
+> 
+>     struct leaf_0xd_0	{ ... };
+>     struct leaf_0xd_1	{ ... };
+>     struct leaf_0xd_2_n	{ ... };
+> 
+
+...
+
+> And the aforementioned KVM snippet would be:
+> 
+>     const struct leaf_0xd_2_n *l;
+> 
+>     for (int i = 0; i < ARRAY_SIZE(xstate_sizes) - XFEATURE_YMM; i++) {
+>         l = __cpuid_subleaf_n(c, 0xd, 2, i);
+
+IMO, this is still ugly and confusing.
 
