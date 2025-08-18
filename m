@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-774313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57D5B2B112
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:02:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E0EB2B114
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3AED584706
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754EB17F346
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9182D2497;
-	Mon, 18 Aug 2025 18:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28731311946;
+	Mon, 18 Aug 2025 18:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A+2qamSl"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Gg2zHW0y"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AB8272E48
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5E22750E2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755543565; cv=none; b=Bvk7zwhKt5ct6CcBzP2zvuvKtRq2VVDxQn9lk8rOQkfeprNqT9wa+RMu62epupqF5rIYqezGMVQUuAatcWbhNRhJ0R5wulc2vsQQabbZq0Z8V/sH75MukA7CfNhjB1qLXAZdGFgsevMPykgbtXBqDGCZrxoF3kBVtBgg40r63yU=
+	t=1755543566; cv=none; b=GFt9ZPdfpRuB4ZunXBn/E0D1ewe3dD8ypC6lfSxc0O3x+jo10G52+3DU91Qm1kB5UCnnn60u9gvPKlt/Ym0SqkekPLjczOFUZRW+zxDu2Z2dUQ0seWmFD7P/8/RJL5os7F/ijby1fd39iCzzfKiNDzp2w0LuX1aSiH2mxf/oHKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755543565; c=relaxed/simple;
-	bh=CZzIqLl7txM9v2LMT0cPyUUYe+agcYOKK/tHV7hSgl0=;
+	s=arc-20240116; t=1755543566; c=relaxed/simple;
+	bh=irKcJZIe7TwYJwaAlkqPUW4Mfr+hk+yQ1POjL3nKlqA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IZNoi7wf5g1hkMP+aYBzaBbi2uq4zzOjyy9OK2sFdwYbBRnsAcAC0H7iXkMYjwPjXXb2QmjiSAYKR6SXJvRvo8bO32dmJYEjY+vS0OLR87N5ub6uO891XxhBWOF8+Zu7vcEQkN2pkGoi9ZTnS5q12PkCmP3I/T8xeQwN5OBsJ9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A+2qamSl; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=VHRLS/FIx7tKs4pqIXaSH7fXVk2rwWF5VXD5UMMoFjhY0f7Ag9HYnYAB/SZXGcj8nXchrsMQUhGN9ZGqWtY9dIQ0qCq8gstVVxlQR0ru6lvb1XWVuZK5LpMEgfV/5HbBom1IcC3zd6as5yGnCytGD/ay+ehWhBlmW5XBU7l6QVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Gg2zHW0y; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755543562;
-	bh=CZzIqLl7txM9v2LMT0cPyUUYe+agcYOKK/tHV7hSgl0=;
+	s=mail; t=1755543563;
+	bh=irKcJZIe7TwYJwaAlkqPUW4Mfr+hk+yQ1POjL3nKlqA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=A+2qamSlFvOOkTXKsmlDcOoY9MndK8kRVJlezQlz82QSjs1nMGEh8dch2/0Vv3wRz
-	 Od5T2+NyapQKKgUTbDW2oALczAM6n9In4CxitKuVMZy1ZlOaUy94SDDqPRIND7itJW
-	 N1i9Nd8Pe166TFaRvodYrhMn0I/CoSg58i61ZFMuQ8G2oi31raqw1HPusv3sSvDaIq
-	 BuwTz1pY32DeSQ/yi9tm/a/WhpRQPUThRNHhVMF4nE6o9zIIlW6zJd1dJz2v4T8SGf
-	 nkQTG3qkJBmQM0CUf4DMavNuPHgDY74GiW2sTozyfxADl6HYoaL6GbwN5TznclfDFz
-	 lHmw5b9K+F10Q==
+	b=Gg2zHW0y2Tjh07zwpmlmP3KHnbkcmbsMGXc25TtK7hXPakcZkBydjH4gWiZpN3JEx
+	 7YdFxvhCYjXSi4Gfm4odO89syIWdkBGH72t+KZ5QfWZHOux8vJIX77A/Dj+T1T9wj8
+	 gcmgclIbdlan25Nu/gferlg7cMAy6MPqSve3ZX23jCkmfGRhLjW6RfU8DdVgZ/odnD
+	 09V4GyC9Mx6yL5ynED0Qoa0pvwQZxMc8PDG9NC1omF923ixvP/3dhyzHtPurdi6u18
+	 Wpbk781Ts3PR0FnAzao8GsdTh0q8ZWKPU71bTlj3U8PRzXX0Tf3jemqzXYbf8NOWxt
+	 oIjuXIfAEs6JA==
 Received: from localhost (unknown [82.79.138.60])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 413C717E1319;
-	Mon, 18 Aug 2025 20:59:22 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 0AFAF17E1322;
+	Mon, 18 Aug 2025 20:59:23 +0200 (CEST)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Mon, 18 Aug 2025 21:59:03 +0300
-Subject: [PATCH v3 03/14] phy: rockchip: samsung-hdptx: Reduce ROPLL loop
- bandwidth
+Date: Mon, 18 Aug 2025 21:59:04 +0300
+Subject: [PATCH v3 04/14] phy: rockchip: samsung-hdptx: Prevent Inter-Pair
+ Skew from exceeding the limits
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-phy-hdptx-frl-v3-3-c79997d8bb2b@collabora.com>
+Message-Id: <20250818-phy-hdptx-frl-v3-4-c79997d8bb2b@collabora.com>
 References: <20250818-phy-hdptx-frl-v3-0-c79997d8bb2b@collabora.com>
 In-Reply-To: <20250818-phy-hdptx-frl-v3-0-c79997d8bb2b@collabora.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -71,43 +71,48 @@ Cc: kernel@collabora.com, linux-phy@lists.infradead.org,
  linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
 
-Due to its relatively low frequency, a noise stemming from the 24MHz PLL
-reference clock may traverse the low-pass loop filter of ROPLL, which
-could potentially generate some HDMI flash artifacts.
-
-Reduce ROPLL loop bandwidth in an attempt to mitigate the problem.
+Fixup PHY deskew FIFO to prevent the phase of D2 lane going ahead of
+other lanes.  It's worth noting this might only happen when dealing with
+HDMI 2.0 rates.
 
 Fixes: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
 Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
 Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index 8adf6e84fc0b762a7a6042459601c3271572de8e..9751f7ad00f4faf7041dbf4339f633e09f97b107 100644
+index 9751f7ad00f4faf7041dbf4339f633e09f97b107..5605610465bc812737f773e0f6232cb6dbdc78a4 100644
 --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
 +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -500,9 +500,7 @@ static const struct reg_sequence rk_hdtpx_common_cmn_init_seq[] = {
- 	REG_SEQ0(CMN_REG(0043), 0x00),
- 	REG_SEQ0(CMN_REG(0044), 0x46),
- 	REG_SEQ0(CMN_REG(0045), 0x24),
--	REG_SEQ0(CMN_REG(0046), 0xff),
- 	REG_SEQ0(CMN_REG(0047), 0x00),
--	REG_SEQ0(CMN_REG(0048), 0x44),
- 	REG_SEQ0(CMN_REG(0049), 0xfa),
- 	REG_SEQ0(CMN_REG(004a), 0x08),
- 	REG_SEQ0(CMN_REG(004b), 0x00),
-@@ -575,6 +573,8 @@ static const struct reg_sequence rk_hdtpx_tmds_cmn_init_seq[] = {
- 	REG_SEQ0(CMN_REG(0034), 0x00),
- 	REG_SEQ0(CMN_REG(003d), 0x40),
- 	REG_SEQ0(CMN_REG(0042), 0x78),
-+	REG_SEQ0(CMN_REG(0046), 0xdd),
-+	REG_SEQ0(CMN_REG(0048), 0x11),
- 	REG_SEQ0(CMN_REG(004e), 0x34),
- 	REG_SEQ0(CMN_REG(005c), 0x25),
- 	REG_SEQ0(CMN_REG(005e), 0x4f),
+@@ -668,13 +668,9 @@ static const struct reg_sequence rk_hdtpx_common_lane_init_seq[] = {
+ 
+ static const struct reg_sequence rk_hdtpx_tmds_lane_init_seq[] = {
+ 	REG_SEQ0(LANE_REG(0312), 0x00),
+-	REG_SEQ0(LANE_REG(031e), 0x00),
+ 	REG_SEQ0(LANE_REG(0412), 0x00),
+-	REG_SEQ0(LANE_REG(041e), 0x00),
+ 	REG_SEQ0(LANE_REG(0512), 0x00),
+-	REG_SEQ0(LANE_REG(051e), 0x00),
+ 	REG_SEQ0(LANE_REG(0612), 0x00),
+-	REG_SEQ0(LANE_REG(061e), 0x08),
+ 	REG_SEQ0(LANE_REG(0303), 0x2f),
+ 	REG_SEQ0(LANE_REG(0403), 0x2f),
+ 	REG_SEQ0(LANE_REG(0503), 0x2f),
+@@ -687,6 +683,11 @@ static const struct reg_sequence rk_hdtpx_tmds_lane_init_seq[] = {
+ 	REG_SEQ0(LANE_REG(0406), 0x1c),
+ 	REG_SEQ0(LANE_REG(0506), 0x1c),
+ 	REG_SEQ0(LANE_REG(0606), 0x1c),
++	/* Keep Inter-Pair Skew in the limits */
++	REG_SEQ0(LANE_REG(031e), 0x02),
++	REG_SEQ0(LANE_REG(041e), 0x02),
++	REG_SEQ0(LANE_REG(051e), 0x02),
++	REG_SEQ0(LANE_REG(061e), 0x0a),
+ };
+ 
+ static struct tx_drv_ctrl tx_drv_ctrl_rbr[4][4] = {
 
 -- 
 2.50.1
