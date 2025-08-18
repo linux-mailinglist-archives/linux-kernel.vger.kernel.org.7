@@ -1,230 +1,205 @@
-Return-Path: <linux-kernel+bounces-773020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A373B29A89
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:09:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E882EB29A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7633BF0D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:09:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED65203F11
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56F127877F;
-	Mon, 18 Aug 2025 07:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF80227979F;
+	Mon, 18 Aug 2025 07:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fqe6KbI0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oipOcqni";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fqe6KbI0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oipOcqni"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W32LT4To"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CBC1E008B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EDE277CB1;
+	Mon, 18 Aug 2025 07:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755500985; cv=none; b=YBv7VQDq6pX4L4t1jcvNezCZqEsdsyiATa7Ber4oFRxEmUD6zMSSS72KuZIgYF5bDRW8eLV2swXGkm+MJt1xyFwsc6VTgEEOtp/zlJ83NPkXmaj2O59ZpuWnm/F7pH+b5chgq16/AhnNJgvmv7Rlo0TqENuMzZ0z1eTNMPVmA7o=
+	t=1755500996; cv=none; b=EQ6jH3qianblVMizRgmhiGT8ACai0SYggZmiIrgXBwB4li4RworEpiDZSkGsdOTKIYx/Q5KI3jDKkf9SvNaO42zqCw0Ny6PfmIQ0NkKDGAQUj3y7UjzMc0DeCqWN0/+AsVHtp9XqMZrOyRRQpQydIrbebQ6SDrY5qc0IrOQQvJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755500985; c=relaxed/simple;
-	bh=R9F2QlL/9MNd+NF4d8fbiZWRLMsjyMciDQ54aA5FUc8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwOBq9Z+xTtTCBkrK6bUOtrM7TNHSjkGOr6cKhmpFAGZNcLT4HqoK9zhTU+OT9yup5H5JTtJhALiFHxh94JpeeiS9clCA/UXpMBwsCeRBYEMnXDjthFKoD23KpOwPw4WH0LQ6LBrjCFEpc5IvW70/nS3D3cZFpBtIGKMYjPVaGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fqe6KbI0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oipOcqni; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fqe6KbI0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oipOcqni; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6ED11211CF;
-	Mon, 18 Aug 2025 07:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755500981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r1SKe6v7lQrzDTTSi58N3HMliy6+S9Vce6+IGxrmE3Y=;
-	b=Fqe6KbI0dUMWb2RMAr7KwcMgkYuPVUlp7dQNOzFQ+A4uAWTPtnKA4f1rt6zh+mekZiJnBf
-	WfInhiuXJWT09n5ze4cpEcqnbcxsedISlNBvQegYTGyMoHsGnI1n5u3wslIfXg7m25V7Zo
-	vPaD8t9iE2YoXJxZj8EAbqzXD3vDe68=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755500981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r1SKe6v7lQrzDTTSi58N3HMliy6+S9Vce6+IGxrmE3Y=;
-	b=oipOcqniIcbMVQ5ph0g8M9r1anfO7omqNrdgo5PX/oStj+ffyYZsVjXj5Lwh9fXP3YJmLr
-	5pKEH2igLsNJTDBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755500981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r1SKe6v7lQrzDTTSi58N3HMliy6+S9Vce6+IGxrmE3Y=;
-	b=Fqe6KbI0dUMWb2RMAr7KwcMgkYuPVUlp7dQNOzFQ+A4uAWTPtnKA4f1rt6zh+mekZiJnBf
-	WfInhiuXJWT09n5ze4cpEcqnbcxsedISlNBvQegYTGyMoHsGnI1n5u3wslIfXg7m25V7Zo
-	vPaD8t9iE2YoXJxZj8EAbqzXD3vDe68=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755500981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r1SKe6v7lQrzDTTSi58N3HMliy6+S9Vce6+IGxrmE3Y=;
-	b=oipOcqniIcbMVQ5ph0g8M9r1anfO7omqNrdgo5PX/oStj+ffyYZsVjXj5Lwh9fXP3YJmLr
-	5pKEH2igLsNJTDBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28D4013A55;
-	Mon, 18 Aug 2025 07:09:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CWVICLXRomgXDgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 07:09:41 +0000
-Message-ID: <f94151b4-893a-4758-a118-153076a20d3c@suse.de>
-Date: Mon, 18 Aug 2025 09:09:40 +0200
+	s=arc-20240116; t=1755500996; c=relaxed/simple;
+	bh=XvgFub5eWHK2y36TAgRUO9tAFUs63v+IadSoFQ/DpsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImNPB6fIGxC+k41tEK5SF908PLeIKYq6AmnSyz9jYocpDIdudV3x/OQDGENdxTXnXqlMeHcVaQ0a5GAUu6LahAdT3HvutvwGhLhrHPNDIzWgUiPfeERBcKpKt7PyUXJqXGBRVwJSPc5ZH8KWniI0rAv5QaHYZnCT492izLwctwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W32LT4To; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87486C4CEED;
+	Mon, 18 Aug 2025 07:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755500995;
+	bh=XvgFub5eWHK2y36TAgRUO9tAFUs63v+IadSoFQ/DpsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W32LT4Tosdsx+2NXw2u1isMpVYDjyZqPlCxbxMEXJ2WiHtGJNx+6Dl4kNSSzgtt9O
+	 UKIIpqaXhWbtd1vaKSTyL4WYFy3CEJpqR7Z8fiTLy/dgNr8UDaz/4eeH9gUs4KS7CN
+	 pGIaPa6ONNgBsB8FtUUotkdv/dWGXdEGMmu15YRxBZJFDMXc/HEy8Jbrc3gDjKv/Zu
+	 u8yM0YaWBeCUZ5Xr5voXpvcn3ohs4GlilhyzXggY80rtNjpGUAVWgFhBAIqXRJPQbD
+	 zlP5Gd2KtgRLxAsV7sp71gXi/U1/ERE2mkBDLDuvfELhqWRwg/UGtIh36+eO+nkUu7
+	 Atgtpqo8BIU2g==
+Date: Mon, 18 Aug 2025 12:39:43 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	mhi@lists.linux.dev, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+	qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com, 
+	quic_mrana@quicinc.com, Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v4 02/11] PCI/bwctrl: Add support to scale bandwidth
+ before & after link re-training
+Message-ID: <mrsdwtzz7x6uuoakjr6kymqccfxs3lndplols7j33apbru7jii@tjdljisgaqny>
+References: <20250711213602.GA2307197@bhelgaas>
+ <55fc3ae6-ba04-4739-9b89-0356c3e0930c@oss.qualcomm.com>
+ <d4078b6c-1921-4195-9022-755845cdb432@oss.qualcomm.com>
+ <68a78904-e2c7-4d4d-853d-d9cd6413760e@oss.qualcomm.com>
+ <ycbh6zfwae3q4s6lfxepmxoq32jaqu5i7csa2ayuqaanwbvzvi@id4prmhl3yvh>
+ <ec0e3b33-76f4-4ad5-8497-5c8c8b42f67e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpu/drm: Replace the deprecated logging functions in
- drm_gem* files
-To: Athul Raj Kollareth <krathul3152@gmail.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, skhan@linuxfoundation.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250816152604.14667-1-krathul3152@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250816152604.14667-1-krathul3152@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch,linuxfoundation.org];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ec0e3b33-76f4-4ad5-8497-5c8c8b42f67e@oss.qualcomm.com>
 
-Hi
+On Wed, Aug 13, 2025 at 09:25:03AM GMT, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 8/12/2025 10:13 PM, Manivannan Sadhasivam wrote:
+> > On Tue, Aug 12, 2025 at 09:35:46AM GMT, Krishna Chaitanya Chundru wrote:
+> > > 
+> > > 
+> > > On 7/22/2025 4:33 PM, Krishna Chaitanya Chundru wrote:
+> > > > 
+> > > > 
+> > > > On 7/12/2025 4:36 AM, Krishna Chaitanya Chundru wrote:
+> > > > > 
+> > > > > 
+> > > > > On 7/12/2025 3:06 AM, Bjorn Helgaas wrote:
+> > > > > > On Mon, Jun 09, 2025 at 04:21:23PM +0530, Krishna Chaitanya
+> > > > > > Chundru wrote:
+> > > > > > > If the driver wants to move to higher data rate/speed than
+> > > > > > > the current data
+> > > > > > > rate then the controller driver may need to change certain
+> > > > > > > votes so that
+> > > > > > > link may come up at requested data rate/speed like QCOM PCIe
+> > > > > > > controllers
+> > > > > > > need to change their RPMh (Resource Power Manager-hardened) state. Once
+> > > > > > > link retraining is done controller drivers needs to adjust their votes
+> > > > > > > based on the final data rate.
+> > > > > > > 
+> > > > > > > Some controllers also may need to update their bandwidth voting like
+> > > > > > > ICC BW votings etc.
+> > > > > > > 
+> > > > > > > So, add pre_link_speed_change() & post_link_speed_change() op to call
+> > > > > > > before & after the link re-train. There is no explicit
+> > > > > > > locking mechanisms
+> > > > > > > as these are called by a single client Endpoint driver.
+> > > > > > > 
+> > > > > > > In case of PCIe switch, if there is a request to change
+> > > > > > > target speed for a
+> > > > > > > downstream port then no need to call these function ops as these are
+> > > > > > > outside the scope of the controller drivers.
+> > > > > > 
+> > > > > > > +++ b/include/linux/pci.h
+> > > > > > > @@ -599,6 +599,24 @@ struct pci_host_bridge {
+> > > > > > >        void (*release_fn)(struct pci_host_bridge *);
+> > > > > > >        int (*enable_device)(struct pci_host_bridge *bridge,
+> > > > > > > struct pci_dev *dev);
+> > > > > > >        void (*disable_device)(struct pci_host_bridge *bridge,
+> > > > > > > struct pci_dev *dev);
+> > > > > > > +    /*
+> > > > > > > +     * Callback to the host bridge drivers to update ICC BW
+> > > > > > > votes, clock
+> > > > > > > +     * frequencies etc.. for the link re-train to come up
+> > > > > > > in targeted speed.
+> > > > > > > +     * These are intended to be called by devices directly
+> > > > > > > attached to the
+> > > > > > > +     * Root Port. These are called by a single client
+> > > > > > > Endpoint driver, so
+> > > > > > > +     * there is no need for explicit locking mechanisms.
+> > > > > > > +     */
+> > > > > > > +    int (*pre_link_speed_change)(struct pci_host_bridge *bridge,
+> > > > > > > +                     struct pci_dev *dev, int speed);
+> > > > > > > +    /*
+> > > > > > > +     * Callback to the host bridge drivers to adjust ICC BW
+> > > > > > > votes, clock
+> > > > > > > +     * frequencies etc.. to the updated speed after link
+> > > > > > > re-train. These
+> > > > > > > +     * are intended to be called by devices directly attached to the
+> > > > > > > +     * Root Port. These are called by a single client Endpoint driver,
+> > > > > > > +     * so there is no need for explicit locking mechanisms.
+> > > > > > 
+> > > > > > No need to repeat the entire comment.  s/.././
+> > > > > > 
+> > > > > > These pointers feel awfully specific for being in struct
+> > > > > > pci_host_bridge, since we only need them for a questionable QCOM
+> > > > > > controller.  I think this needs to be pushed down into qcom somehow as
+> > > > > > some kind of quirk.
+> > > > > > 
+> > > > > Currently these are needed by QCOM controllers, but it may also needed
+> > > > > by other controllers may also need these for updating ICC votes, any
+> > > > > system level votes, clock frequencies etc.
+> > > > > QCOM controllers is also doing one extra step in these functions to
+> > > > > disable and enable ASPM only as it cannot link speed change support
+> > > > > with ASPM enabled.
+> > > > > 
+> > > > Bjorn, can you check this.
+> > > > 
+> > > > For QCOM devices we need to update the RPMh vote i.e a power source
+> > > > votes for the link to come up in required speed. and also we need
+> > > > to update interconnect votes also. This will be applicable for
+> > > > other vendors also.
+> > > > 
+> > > > If this is not correct place I can add them in the pci_ops.
+> > > Bjorn,
+> > > 
+> > > Can you please comment on this.
+> > > 
+> > > Is this fine to move these to the pci_ops of the bridge.
+> > > Again these are not specific to QCOM, any controller driver which
+> > > needs to change their clock rates, ICC bw votes etc needs to have
+> > > these.
+> > > 
+> > 
+> > No, moving to 'pci_ops' is terrible than having it in 'pci_host_bridge' IMO. If
+> > we want to get rid of these ops, we can introduce a quirk flag in
+> > 'pci_host_bridge' and when set, the bwctrl code can disable/enable ASPM
+> > before/after link retrain. This clearly states that the controller is quirky and
+> > we need to disable/enable ASPM.
+> > 
+> > For setting OPP, you can have a separate callback in 'pci_host_bridge' that just
+> > allows setting OPP *after* retrain, like 'pci_host_bridge:link_change_notify()'.
+> > I don't think you really need to set OPP before retrain though. As even if you
+> > do it pre and post link retrain, there is still a small window where the link
+> > will operate without adequate vote.
+> > 
+> Hi Mani,
+> 
+> we need to update the OPP votes before link retrain, for example if
+> there is request  to change data rate from 5 GT/s to 8 GT/s on some
+> platforms we need to update RPMh votes from low_svs to NOM corner
+> without this clocks will not scale for data rates 8 GT/s and link
+> retrain will fail. For that reason we are trying to add pre and post
+> callbacks.
+> 
 
-Am 16.08.25 um 17:26 schrieb Athul Raj Kollareth:
-> Replace the deprecated logging functions used in drm_gem* helper files
-> with their appropriate ones specified in drm_print.h.
->
-> Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
-> ---
->   drivers/gpu/drm/drm_gem.c            | 4 ++--
->   drivers/gpu/drm/drm_gem_dma_helper.c | 2 +-
->   2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index 4a89b6acb6af..91f528d8900f 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -102,7 +102,7 @@ drm_gem_init(struct drm_device *dev)
->   	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
->   					  GFP_KERNEL);
->   	if (!vma_offset_manager) {
-> -		DRM_ERROR("out of memory\n");
-> +		drm_err(dev, "out of memory\n");
->   		return -ENOMEM;
->   	}
->   
-> @@ -805,7 +805,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
->   
->   	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
->   		ret = -EFAULT;
-> -		DRM_DEBUG("Failed to copy in GEM handles\n");
-> +		drm_dbg_core(NULL, "Failed to copy in GEM handles\n");
+If we are targetting OPP only, then can't we do direct OPP setting from the
+bwctrl driver itself? Or we also need to set ICC votes directly also (in the
+non-opp case)?
 
-Passing NULL here is somewhat unfortunate. I think you could pass the 
-dev from the callers to drm_gem_objects_lookup() and use it here. There 
-are only 3 cases AFAICT. [1]
-
-[1] 
-https://elixir.bootlin.com/linux/v6.17-rc1/C/ident/drm_gem_objects_lookup
-
-Best regards
-Thomas
-
->   		goto out;
->   	}
->   
-> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
-> index 4f0320df858f..a507cf517015 100644
-> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
-> @@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
->   
->   	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
->   	if (ret) {
-> -		DRM_ERROR("Failed to vmap PRIME buffer\n");
-> +		drm_err(dev, "Failed to vmap PRIME buffer\n");
->   		return ERR_PTR(ret);
->   	}
->   
+- Mani
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+மணிவண்ணன் சதாசிவம்
 
