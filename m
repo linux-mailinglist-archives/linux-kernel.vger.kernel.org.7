@@ -1,142 +1,130 @@
-Return-Path: <linux-kernel+bounces-774159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98115B2AF45
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A69EB2AF4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D2756248E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1FDA163007
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B47724BBFD;
-	Mon, 18 Aug 2025 17:20:24 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FFA343D96;
+	Mon, 18 Aug 2025 17:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haOCffmM"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88D521D3DC;
-	Mon, 18 Aug 2025 17:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3601F271453;
+	Mon, 18 Aug 2025 17:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755537623; cv=none; b=AxBjTAtgTxCiOOYThEZl2kAvGDyK+oUBQOFI/oo5+dwUkm2dGP/C4W2AA+3pbfNp4yleE0gGq4Rb5uXLOZy6ervuKFafKsgNn78N07klcHAtl4vaE+V2HkF5kceIc9S5OLpUhSSoyGuIsoP7k8pThD7cUlQlNcgeFdBB9hPFP2s=
+	t=1755537770; cv=none; b=l7g8VGiAbMB7fi2/+LcVRATw9eFTMI4Ks7R2zpbqLMh/j6VfQgNu9upbBMqrhjgWzNRuVudECbFdMt9b/9wK1f85xnIRmRWXCR36gQC0iqw9+fNSpekEwnIIPtSoJXY8hpu07VDuXmnGUd6+GT0naKdY2vEQi79Cf6hvJ5vj8/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755537623; c=relaxed/simple;
-	bh=FLeQ4+JKflMPvM/Dz11rbcDrnCkZbSZwPTCwfMMBuUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g02gHzMvPCMKE88ow29+gJYa/6PxCfjFzYIBnKEKlRxG8yILxeBey/wrTOCr53xplqg4gTkTX4CyoWR0DDtoRf77ZbUTa/fBpDKw5228LIyRkPuQUxf8Ibs5VK9wXUXIqTEBVZjE+1dmj7x0nK0oH2IKNXkMiv67/PJMQfbdTcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=mail.ru; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=mail.ru
+	s=arc-20240116; t=1755537770; c=relaxed/simple;
+	bh=uHAOJ797snaDrkcy+tcW05va71LSdkDm6EybUIj4G2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTl+Nm7FAgDNq35HEdIdJH6bGSjX81fyaR3LB6HjFrYl3KijpM3tlDhZMRbf3ewobKcpR53ac9sQV7Qy9gKC/7DQr8RLcQdzVCPgXRY3s3/X3DqiCiFNm1fFf4SoaE7OB+VRo6sNoO6c+77laSWfedg2GYA2JIVubju5Drt+CfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haOCffmM; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445826fd9dso49612305ad.3;
-        Mon, 18 Aug 2025 10:20:21 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e6cbb9956so890711b3a.0;
+        Mon, 18 Aug 2025 10:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755537768; x=1756142568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUa68E1nteoaGSXTMTcC9sqWgdV9aURqk+eyEEJTUS4=;
+        b=haOCffmMyRtG4y82WsXcbRiP3FEgAt9GeBMdY98EzspHVvzFRuV9EfHYhX4TVXAuxN
+         ZAjVOFmnCmo3F/yx446irfUclppMH0N9Bi22kkuArR4KMcf383EbtADHsKXZB4J7I2iU
+         6GqhWZV/H9Uf1ePQ5DDQ8WE1Iag7DTsFpfJKoVQOX388KEmx31qsNhLcw+MIQTloA5tj
+         +X3NhuYA/cJKaLzKJWKtbGMM/raTOoqpsiJ1HrbrGt07Ukug0pridsXYXNhYmqWT/8Tg
+         KSAV7AzV9chpzKSHm0neJ8gajI5OosK1cdeqdjdG93gNLNvY4Hobl4vQPuzcyFQZ34Rn
+         7fcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755537621; x=1756142421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UwoejNvkuML9Z6Jm4R+g0KULg+/6ABawxJNnc7Rp5AU=;
-        b=uQZWS90rnXr1v0tT+NxV30Xj2MuK7rHAskM7/5hZ4TNzwLy+D2kpwgXk9eyaoXu5iV
-         UNqbRcfDKPxECYADeRaOyxtG5bHGb1O5a88qp62v+d2Trrs0TlhOml613x3P9atOTeQw
-         vNO0RM8aVIGxaqjWQ9JBae/jTp/+mwIXrOQdq3goWbxt+aytQhvnOzryL3/hqwohY1/8
-         fzIty495LTNLinrkqjUuhwOW3YAWXSSeq/WMlIXf2E9230Olr4HlwDFBc3T4p4qeED+W
-         Nz4K7eLSoZL4axXCwcmjfuHsSs7DW1jwaTa/AJN8T8+KkuhmmPknns9RrpkM3uOFt0qx
-         shIg==
-X-Forwarded-Encrypted: i=1; AJvYcCURiPxtBHdlEA7skJJ4tIvW/l0gJABRWj96bgEhh7K+aBOusc/tiviHjS/D2MMWnBuyquXsnsV4vbwNDw==@vger.kernel.org, AJvYcCWAjo+8MGRl2oD99TLiDRYor8kzo3DgMbX/ERpYgB7ZoGWgA4AooDcGpD6ZS4g380jORf6SKmNichv4e4mO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpZKLjbS9ZFaYrKpdM/S8Xy9a2aFpuJ2HVn6xKp9ggaiLMhxoi
-	WDTZ3Ld1jbbvQ+O4fxpbc8wetbTybFpqskPyZxl5dsehaRoMBukaQPXe
-X-Gm-Gg: ASbGncuCwOtCVMMHeXVnwBz+pnRI0pJYpdtLKXaN7OdUJtT+fcSggGIQE4NzLdpdI+a
-	rfcSDoP/1Nc8EyUPxVzxxWT7YQDzs/5wbwNelDBIojJzMVZArYIKnYkvH0MwxuW54hMJzV8b5H7
-	VJmLV9A6cR05SFlwnMO5bV1p/czH4SSQ3Rd+siq3npcdpK6hcgmjTZzOPDet6fGk5RewpYdwTOu
-	iGsF8hycVMXZ2drdHxOho3139yxxRvS9qEdIUnj6bhxF7GXX9rYd1T8OP1AF8P/XohxC7Z+WDen
-	7r+Tmrq2U1cmuY9dBWPhVp+Fo8zmsRTMPQb+LQCQS3XBoirvgjmipY9zbXFi3BC1WcB6n6SKewa
-	SamxqvKA1xHYSXCw=
-X-Google-Smtp-Source: AGHT+IEP8ypl4DnEA9ePzYYdAIZM7mfW4yBcg7sUt3c4DthERUHwm6I7itsQX+/xheLOctNaBBW6/g==
-X-Received: by 2002:a17:902:d4c7:b0:240:7308:aecb with SMTP id d9443c01a7336-2449d05e08dmr2589905ad.32.1755537620840;
-        Mon, 18 Aug 2025 10:20:20 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:11e:c24d:ff01:22c4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d53bf5dsm84849625ad.114.2025.08.18.10.20.20
+        d=1e100.net; s=20230601; t=1755537768; x=1756142568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wUa68E1nteoaGSXTMTcC9sqWgdV9aURqk+eyEEJTUS4=;
+        b=czz/kuZFey5XCzEZ3oRQrQ2FoXqBWXGR/T/2aJ39VOyamByGHFaF612GdV7S5cjCZU
+         XNufzF10JQkvfHgk9IctRqAUJNJTzJaxfPgMPkGhMepRshDcEUlAIeE32B6taQ9GEteZ
+         xwY3Kyn0dk8DXgF3oSKScBjmCcL7y2qriwsq4/8zvPJq1guYUbJx8/u6Oqo3Vh2XoTNN
+         M+jTb2iHUiDtXvsEYFNPp+grR5KDapouGa03gBsl/V5GSI5ig7aJlXZZHT0Ca2ZdzC9G
+         iqNuuq5xBuA+/MYxrESMJ++wRpON42lfZ3eNMC0V+LQAdM3CWlys+rzPjdeGswb55Ko1
+         IzLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgCRhTRTIs3EPheNpjzmw4vMHLMWTzQRwFj29GMp1VrcuJcKXilSQxvJevfJY0WuYSdePjqTa2JaSS0uE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNDwbOjMAUtQr985YCyAYyWdWxcW9F2kPOmEPuR833pviFjTB6
+	8nmosHu69JbfTLXWW4VHlmJOW45io3thfH44yIADFbCAVdjQ//pDyhEn
+X-Gm-Gg: ASbGncvy6mJDHccvKF311438hLRUKnAp+KmxkCHCyIX8/pT/NlVT2vr10D+rl4hZ6JQ
+	MtAdcOJ9RjE2Xrb6/tvKvW7vYd50kde+HtF7EBra6GsdHsCtRAAPgfEi2sWhzedtwnOdF2BOBey
+	9WQS0zksjaBt92ESOcSY+n4vzChAi51HicoRa4w8p1yu9FdSYFgQFEBPA5K1tYhNrFRiN4sb4YR
+	icNoIrNH/ibtyRPuUSoM0qF056HAIdlrEyBlF5Tqnho7Vnjbgr0zunjpCpJhwKXhd95JB0juUrn
+	3VeO0a6tRZM9QNoIxVAc6X3QfjCY4sPn89R2ElovJ+AnXeGb0gbcl2tre/gVNgj1w2UIXC1CrdW
+	TWKmhBJ9vUlAyb0+yr0tuAflc
+X-Google-Smtp-Source: AGHT+IFpIFoFxxk/K0di9Ho4RhhPZWQ934ntdvj1PbqjitsJusNWV5Esu4Fkoi7xUxfhnpPn0P+4AA==
+X-Received: by 2002:a17:902:e550:b0:242:fb7d:1d57 with SMTP id d9443c01a7336-24478f9e7famr120733685ad.42.1755537768429;
+        Mon, 18 Aug 2025 10:22:48 -0700 (PDT)
+Received: from localhost.localdomain ([2406:5900:2:f21::2a1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5769a9sm85242985ad.151.2025.08.18.10.22.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 10:20:20 -0700 (PDT)
-Date: Mon, 18 Aug 2025 10:20:17 -0700
-From: Dmitry Torokhov <dtor@mail.ru>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: jikos@kernel.org, bentiss@kernel.org, x0r@dv-life.ru, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: axff: add cleanup allocated struct axff_device heap
-Message-ID: <fv32i2ejsupm64mpadzsfudaeuzkavkazpmnn2e4ijqeobl4gs@porr2zpxn4aj>
-References: <20250818154302.811718-1-aha310510@gmail.com>
+        Mon, 18 Aug 2025 10:22:48 -0700 (PDT)
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Ryan Chung <seokwoo.chung130@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] fs/namespace.c: fix mountpath handling in do_lock_mount()
+Date: Tue, 19 Aug 2025 02:22:35 +0900
+Message-ID: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818154302.811718-1-aha310510@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Jeongjun,
+Updates documentation for do_lock_mount() in fs/namespace.c
+to clarify its parameters and return description to fix
+warning reported by syzbot.
 
-On Tue, Aug 19, 2025 at 12:43:02AM +0900, Jeongjun Park wrote:
-> Currently, acrux hid driver allocates heap memory equal to
-> sizeof(struct axff_device) to support force feedback, but there's no code
-> to free this memory except when initialization fails. This causes the
-> allocated memory to not be freed even if the driver is detached.
-> 
-> Therefore, to properly clean up and safely manage the allocated heap,
-> must be modified to use devm_kzalloc().
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202506301911.uysRaP8b-lkp@intel.com/
+Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+---
+ fs/namespace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-You have not tested this, have you? The private data that is passed to
-input_ff_create_memless() is freed by ml_ff_destroy() which is invoked
-when input core calls input_ff_destroy() as part of input device
-teardown. Your change introduces double-free. 
-
-> 
-> Fixes: c0dbcc33c652 ("HID: add ACRUX game controller force feedback support")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  drivers/hid/hid-axff.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-axff.c b/drivers/hid/hid-axff.c
-> index fbe4e16ab029..b8202737f4c8 100644
-> --- a/drivers/hid/hid-axff.c
-> +++ b/drivers/hid/hid-axff.c
-> @@ -96,7 +96,7 @@ static int axff_init(struct hid_device *hid)
->  		return -ENODEV;
->  	}
->  
-> -	axff = kzalloc(sizeof(struct axff_device), GFP_KERNEL);
-> +	axff = devm_kzalloc(&hid->dev, sizeof(struct axff_device), GFP_KERNEL);
->  	if (!axff)
->  		return -ENOMEM;
->  
-> @@ -104,7 +104,7 @@ static int axff_init(struct hid_device *hid)
->  
->  	error = input_ff_create_memless(dev, axff, axff_play);
->  	if (error)
-> -		goto err_free_mem;
-> +		return error;
->  
->  	axff->report = report;
->  	hid_hw_request(hid, axff->report, HID_REQ_SET_REPORT);
-> @@ -112,10 +112,6 @@ static int axff_init(struct hid_device *hid)
->  	hid_info(hid, "Force Feedback for ACRUX game controllers by Sergei Kolzun <x0r@dv-life.ru>\n");
->  
->  	return 0;
-> -
-> -err_free_mem:
-> -	kfree(axff);
-> -	return error;
->  }
->  #else
->  static inline int axff_init(struct hid_device *hid)
-> --
-> 
-
-Thanks.
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ddfd4457d338..577fdff9f1a8 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2741,6 +2741,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ /**
+  * do_lock_mount - lock mount and mountpoint
+  * @path:    target path
++ * @pinned: on success, holds a pin guarding the mountpoint
+  * @beneath: whether the intention is to mount beneath @path
+  *
+  * Follow the mount stack on @path until the top mount @mnt is found. If
+@@ -2769,8 +2770,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+  * to @mnt->mnt_mp->m_dentry. But if @mnt has been unmounted it will
+  * point to @mnt->mnt_root and @mnt->mnt_mp will be NULL.
+  *
+- * Return: Either the target mountpoint on the top mount or the top
+- *         mount's mountpoint.
++ * Return: On success, 0 is returned. On failure, err is returned.
+  */
+ static int do_lock_mount(struct path *path, struct pinned_mountpoint *pinned, bool beneath)
+ {
 -- 
-Dmitry
+2.43.0
+
 
