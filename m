@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-773702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD29B2A65B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5467B2A5E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4052E1B67680
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386D91B233D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D351A33A021;
-	Mon, 18 Aug 2025 13:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ys3fxudx"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B7A322DA8;
-	Mon, 18 Aug 2025 13:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E94132252B;
+	Mon, 18 Aug 2025 13:24:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D755E322525
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755523767; cv=none; b=qJY1FXmx0DIfEgAP0QdvIYm3ggjp+QTt9yGGx0fDj3pLt6D9wslWrQbK5IN3W3dK3sju+4sN6gADPB48g/ZP3sWf92zS0R+BrflzgI0TCvYH6H/t5wk5CSAE4JeFbOBRFT9DZq5uu3FpSi958ww/D5JsisdGPYfRCpJ/RZlZdlk=
+	t=1755523474; cv=none; b=q96+i3oAzjJ0gY0RzbZbTiMwlgLXhnsnJZa9Qabr7yBcyPoRskmaJfn+V+67KlhR0ZLbt2sTFwsKxp+rYFCOfc1r5AZZgS2k+kvaXKS/ryAaU+mfPBknL1aBtIfdqfLCxQnkQtLzLXzy75gd33bSfPVbiHVMWO5uG6dUo0tU7bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755523767; c=relaxed/simple;
-	bh=IHPCL9NciFRTPjsEAA6jgQki23Pf5YryMMxNG/u9Jvc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=eb54wiGzXs+TH3w7aFxsIJGG5e7hetQPWoggRu3GSwV9BNKTOpq7EE5HezTLjJPeY4G6LZes8k4Qcpfp7X7z2JDC2m3+IBItVzKchLlcuIuXILH/gvY7C1US1QUC9cLQDK9xy94OP+cul9z6E1yhKC0sZpufUMCAIJuaBok+h6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ys3fxudx; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755523459; bh=YFDrAEjU3496y8AhHqyJeA7JDgzWZh949O3UUTcG2ds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ys3fxudxqdvyILTat3pR0jxauYiH+2NmXda33oH37gjyvbixDCX85OCwblMmKKCbg
-	 iEMRSFbAbqwN8qMdK3ifQI8zW4gmKGlgjegRJ5D5QYsXbB825k4ng9fvM1GVvBPu77
-	 qGSSV+AhkjUDebKwMyfch+6P1o3gETPtnpovotNE=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 610A60F3; Mon, 18 Aug 2025 21:24:16 +0800
-X-QQ-mid: xmsmtpt1755523456tagj73z4m
-Message-ID: <tencent_65C6578989EEED6EE78C8B67E586DE92EB06@qq.com>
-X-QQ-XMAILINFO: N7h1OCCDntuja/RQqnIxE4tzzwahIh0BXszjdCKfCd3rEGinhnU9oeCSPeZuA9
-	 R9foEhMJCmZmVvDIjG/Vuf2OLC+3cO4c/qdCr2C3QaPH+jDjaRPFIT10R/iZogNXo28utE9SdpBz
-	 87OIo+thwO87OL0sIyelAn67IM2J7VXuxwz1uoXfLuRD540CjO4bo3SsTVDzGXNI87Z+RCH25g28
-	 evM82xJMcA3S5GDuC1AQH7XhpBFHSePmx14AEc4jwZEDoWQXHM6gAEt8MSX7H/vWLBJj/z0ewMHl
-	 9/5u6DX2hyvGGm87t4ryqZI55RK2vEnmRIHnB2rS6a2FL36oVj1HU0t6awJTJ55xDKvgbYcu/LPM
-	 vTEzpLEh0c7/GsDinNravA7FYAOFFX/J8xxuvNBW42Q1qRYAEBgpGSZD0kqYOAyV7fv25D1g6cEm
-	 +IBPPsGodjw8avpNyZfFYikMyHLO3LGpVr6GxQThevcErQvBCfLtvpwSCheNp37Ri2Fprga4FL/K
-	 ix1qJcPLDpcgM6qouS7hLBB5cqIn2LzL87jhJPbAF+ojNVBOSB0ho3j12vfMeOgnjP1cVhB9QeEO
-	 s/IPdjEW7r2sm0kxAsYStLRKLnUjzjQddFg1eH6jl/kHLYiMO7mTV6Z0KHa+gd8P1PauCIdgVrli
-	 BRt4FCapk0H6jQDzv+hC2DCsiZbKcCDrNX7s2+k8+TmXCYQU6SGMgKmR3ZErPY+uEg67qW8xzsDR
-	 kznyGpAJBNs5yHHWdH5mgXXnWj+0RzvciJmf6e4xuCcQKK7+N8AuK+Nfc6J+Hf5iztk/z8HKc2IB
-	 Ne8Q7fGTNxC30zu1ouwV+av/C1DiuRbX6VvpP9mEBiG3XhCNAkhnc0Y7vHm7/QDMjoeGbqObLeLJ
-	 NvHLL5XtHmXWDCW0YD9p818Fvf7rAvcxVXxyjrDoQ1+XPzV3g3RFnkFhYGDFfLCS20W6AQwTEYTR
-	 rl2jeFhJ2SdAQ72k+kS3s8N3KWDkj2yLHRa7PUzfd/Cwa/7YFiQdR8GRZsI8bEQ3HbuGAdBU7PgE
-	 PfSSgYSmby83jV5HwZh0E7PSg42ihgeZqtKz2XmLvIyeEN8Hb7
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: smueller@chronox.de
-Cc: davem@davemloft.net,
-	eadavis@qq.com,
-	herbert@gondor.apana.org.au,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V3] crypto: Mark intermediary memory as clean
-Date: Mon, 18 Aug 2025 21:24:17 +0800
-X-OQ-MSGID: <20250818132416.506338-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <7740195.jRhZ6ZUK3Y@tauon>
-References: <7740195.jRhZ6ZUK3Y@tauon>
+	s=arc-20240116; t=1755523474; c=relaxed/simple;
+	bh=ZIt/8w+UJkdvLXYCLqzxQ/7y6bqoXrJBtRTFVDudyVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YjR1M5tABiy4JhWsZYZ+go1tQNIzSBqPjJvulptI6CAZF1OHyCIn8BN02kHXPjrOvxI+M/U/jYAVHorKwapaTFrFnWnJmACd6F5eC0dPSIpE/h3tlfiO8WURLNOnk0p41GwqZ8Mz8SQLuWtQjGJ4878ue+RGFbpXw1kqGoFrcuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E87151596;
+	Mon, 18 Aug 2025 06:24:23 -0700 (PDT)
+Received: from [10.1.37.41] (e127648.arm.com [10.1.37.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC9073F738;
+	Mon, 18 Aug 2025 06:24:29 -0700 (PDT)
+Message-ID: <87212818-1f59-45e4-9a51-dca62ddb9633@arm.com>
+Date: Mon, 18 Aug 2025 14:24:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] sched/fair: Remove sched_idle_cpu() usages in
+ select_task_rq_fair()
+To: Chengming Zhou <chengming.zhou@linux.dev>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org
+References: <20250818124702.163271-1-chengming.zhou@linux.dev>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250818124702.163271-1-chengming.zhou@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is not a leak! The stack memroy is hashed and fed into the
-entropy pool. We can't recover the original kernel memory from it.
+On 8/18/25 13:47, Chengming Zhou wrote:
+> These sched_idle_cpu() considerations in select_task_rq_fair() is based
+> on an assumption that the wakee task can pick a cpu running sched_idle
+> task and preempt it to run, faster than picking an idle cpu to preempt
+> the idle task.
+> 
+> This assumption is correct, but it also brings some problems:
+> 
+> 1. work conservation: Often sched_idle tasks are also picking the cpu
+> which is already running sched_idle task, instead of utilizing a real
+> idle cpu, so work conservation is somewhat broken.
+> 
+> 2. sched_idle group: This sched_idle_cpu() is just not correct with
+> sched_idle group running. Look a simple example below.
+> 
+> 		root
+> 	/		\
+> 	kubepods	system
+> 	/	\
+> burstable	besteffort
+> 		(cpu.idle == 1)
+> 
+> When a sched_idle cpu is just running tasks from besteffort group,
+> sched_idle_cpu() will return true in this case, but this cpu pick
+> is bad for wakee task from system group. Because the system group
+> has lower weight than kubepods, work conservation is somewhat
+> broken too.
+> 
+> In a nutshell, sched_idle_cpu() should consider the wakee task group's
+> relationship with sched_idle tasks running on the cpu.
+> 
+> Obviously, it's hard to do so. This patch chooses the simple approach
+> to remove all sched_idle_cpu() considerations in select_task_rq_fair()
+> to bring back work conservation in these cases.
 
-Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: mark it as unpoison
-V2 -> V3: replace to sizeof, minimize the possibilities where inconsistencies can occur
-
- crypto/jitterentropy-kcapi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/crypto/jitterentropy-kcapi.c b/crypto/jitterentropy-kcapi.c
-index 1266eb790708..4020a6e41b0e 100644
---- a/crypto/jitterentropy-kcapi.c
-+++ b/crypto/jitterentropy-kcapi.c
-@@ -117,6 +117,7 @@ int jent_hash_time(void *hash_state, __u64 time, u8 *addtl,
- 		pr_warn_ratelimited("Unexpected digest size\n");
- 		return -EINVAL;
- 	}
-+	kmsan_unpoison_memory(intermediary, sizeof(intermediary));
- 
- 	/*
- 	 * This loop fills a buffer which is injected into the entropy pool.
--- 
-2.43.0
-
+OTOH sched_idle_cpu() CPUs are guaranteed to not be in an idle state and
+potentially already have DVFS on some higher level...
 
