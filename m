@@ -1,120 +1,114 @@
-Return-Path: <linux-kernel+bounces-773940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16403B2ACAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:25:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40CDB2AC9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0153BC2F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D503B0FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04E9256C88;
-	Mon, 18 Aug 2025 15:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA3A23E356;
+	Mon, 18 Aug 2025 15:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="maSQ1Lw/"
-Received: from pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.245.243.92])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C09LzqeP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EA62550D5;
-	Mon, 18 Aug 2025 15:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.245.243.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB7621ABDB;
+	Mon, 18 Aug 2025 15:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530415; cv=none; b=psjrVZti7j/s/wJ394BkdxdRdmqFev5R5cJmB5p8kom2D28XdvGqR/1zNQM4djDKvnchnOjYaDBgKICrsa7WVed7Wj0pktztJlVpEgVYxao3v/ROp5Q4Ld1G8aho0wlxtHw7j0PFVEmBK0z/0LJVV8umZ4U7IeSwL8UIxxrCwLA=
+	t=1755530320; cv=none; b=BX2KEVHIDnzF/eF+W5HSEBcynsli/ZOg4K3SIFRIOJAdHUEBaLG/m3+CCB5DoVredQzpSaprGKyb0X3sPK3oT4UVX4rCUMhhDMjhJFuCGo76rrQkNr8nnmodncPWRJWPwkXTOlL5bmyeLNVEBR2lA/SwDjPYiwScT77ixu9XBgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530415; c=relaxed/simple;
-	bh=Z6k9OoEzvVJHICmTc0rywQMHoOB5Bpgv7yvaBBbim/E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TD9hkFMB8XHZjo6z3zUb7gTdsJ3opyVqFQRbNPBg1K/EMLLhCNwFWqWwku64NV9kK+w2K8R38hIQgcT9qF+GwcW1HMhxjw3zh6peQV8r75ZFZ0fBW0MpXPKAnmanG+hCuVD2HA2jHpP0TBEFmSCOBgQiLQgJl/2RgnY5JIETt8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=maSQ1Lw/; arc=none smtp.client-ip=44.245.243.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1755530413; x=1787066413;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XMYejQHNqpjFbERCaP8aLdVx7eISvzwexSyDRnFQHOA=;
-  b=maSQ1Lw/+2Jb/jAjFAtLkGIPY3CXu+fWrxCGWQVUnpFXmfcN3K9wsYmL
-   TCHSoKJ7UgEqVYOjnGIxzBkc6DV2IMWwVAIl5jtMU9dEZuJJIyOoNE9s8
-   SU0wVJeBd6mIN57fMjWboj95yiHzi1jKqfVhpsOEJxL8I2NbZbg6CBXkT
-   xPwzmZYx4GfgsV6LX3vVQEH6miY3be+99tlUzvtsZC3NHJCn0A+yHKK9k
-   npmqMZISF/WSksglOCpyKCBAsXWCN5Fg7PT13fEc0YiUtPcoIo07oE6hO
-   uNspByDJ0Js5aUMfCjmWbhoVuFp9d1mMhpzsGL2hMk4YpMwFLSJfh+u4g
-   g==;
-X-CSE-ConnectionGUID: GvNU4AY7ScqpFe9ijYZcyA==
-X-CSE-MsgGUID: NOYTGUURQ1qeT1MfdGWN1Q==
-X-IronPort-AV: E=Sophos;i="6.17,293,1747699200"; 
-   d="scan'208";a="1310829"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 15:20:11 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:42477]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.244:2525] with esmtp (Farcaster)
- id 8a5d81ca-8000-47fd-9d85-193fbc95c6eb; Mon, 18 Aug 2025 15:20:11 +0000 (UTC)
-X-Farcaster-Flow-ID: 8a5d81ca-8000-47fd-9d85-193fbc95c6eb
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 18 Aug 2025 15:20:11 +0000
-Received: from b0be8375a521.amazon.com (10.37.245.11) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Mon, 18 Aug 2025 15:20:08 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<kohei.enju@gmail.com>, Kohei Enju <enjuk@amazon.com>, Paul Menzel
-	<pmenzel@molgen.mpg.de>
-Subject: [PATCH v2 iwl-next 2/2] igbvf: remove redundant counter rx_long_byte_count from ethtool statistics
-Date: Tue, 19 Aug 2025 00:18:27 +0900
-Message-ID: <20250818151902.64979-6-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250818151902.64979-4-enjuk@amazon.com>
-References: <20250818151902.64979-4-enjuk@amazon.com>
+	s=arc-20240116; t=1755530320; c=relaxed/simple;
+	bh=QJEtlbsljO1cRUNNutDsrpeVJivV7FXwntkgcCfCtGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fd5mJ4JaCyp1n5PdQfYMZIsMkpghU7uH3sgtalN3pkKqhJeMPGOcHpYUfWHtpW0yQSdCHupXOjXqusws95f4GS9tZJTKWikuOFzWv4H7GuXjFYucfUXez2V+9b/6XxUy9YkZ2ggmV1+kY+g8B3PPOqdqvNTED5eeSB2KdLSny2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C09LzqeP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8502AC4CEEB;
+	Mon, 18 Aug 2025 15:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755530318;
+	bh=QJEtlbsljO1cRUNNutDsrpeVJivV7FXwntkgcCfCtGw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C09LzqePS/Fb4k7SJVgOSBBo16oUsAoNCKzD8whALVN9ZBzBpjvs2ITTo5NVOslqR
+	 v3R8FsdAC5xLJN9GbCuogFhwQ+AO7T+/0TeqJKUERl5OsRf8wMf8C25iyhKF3ruaUT
+	 9HIKOY+0y/3zHTFTeDJqOlC+8Y3tb76SUo2XYtr9NdnRPI+YTWWOTkW881m8f/lxIg
+	 Jrm8KX2kXPasz7JzZ8SsWnE6winjRokSnB0cet9kX8hVVvZynJ8jqdFMvioIgRZPpy
+	 aij2awFL1rCpfnaYKgBC0ejmBWJmBhTSS44S0TXkD1bBfUUNbsLTIlK2OJIOjTaFYm
+	 /e6lVfi0nFCPg==
+Date: Mon, 18 Aug 2025 16:18:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Frank Li <Frank.li@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	Fugang Duan <B38611@freescale.com>, Gao Pan <pandy.gao@nxp.com>,
+	Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Larisa Grigore <larisa.grigore@oss.nxp.com>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+	Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 10/13] spi: spi-fsl-lpspi: Add compatible for S32G
+Message-ID: <35f6a3be-d924-403d-b60b-d4c78d833a60@sirena.org.uk>
+References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
+ <20250814-james-nxp-lpspi-v1-10-9586d7815d14@linaro.org>
+ <aJ4qNVIp788gc2ZU@lizhi-Precision-Tower-5810>
+ <1f3b68d4-e0cc-4952-a695-322ed9756b95@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D038UWC001.ant.amazon.com (10.13.139.213) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5H3ikhGOIq/UysY2"
+Content-Disposition: inline
+In-Reply-To: <1f3b68d4-e0cc-4952-a695-322ed9756b95@linaro.org>
+X-Cookie: No guts, no glory.
 
-rx_long_byte_count shows the value of the GORC (Good Octets Received
-Count) register. However, the register value is already shown as
-rx_bytes and they always show the same value.
 
-Remove rx_long_byte_count as the Intel ethernet driver e1000e did in
-commit 0a939912cf9c ("e1000e: cleanup redundant statistics counter").
+--5H3ikhGOIq/UysY2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tested on Intel Corporation I350 Gigabit Network Connection.
+On Mon, Aug 18, 2025 at 03:31:08PM +0100, James Clark wrote:
+> On 14/08/2025 7:25 pm, Frank Li wrote:
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Kohei Enju <enjuk@amazon.com>
----
- drivers/net/ethernet/intel/igbvf/ethtool.c | 1 -
- 1 file changed, 1 deletion(-)
+> > binding doc should first patch. Create new patch serial for add S32G
+> > support only.
 
-diff --git a/drivers/net/ethernet/intel/igbvf/ethtool.c b/drivers/net/ethernet/intel/igbvf/ethtool.c
-index c6defc495f13..9c08ebfad804 100644
---- a/drivers/net/ethernet/intel/igbvf/ethtool.c
-+++ b/drivers/net/ethernet/intel/igbvf/ethtool.c
-@@ -36,7 +36,6 @@ static const struct igbvf_stats igbvf_gstrings_stats[] = {
- 	{ "lbtx_bytes", IGBVF_STAT(stats.gotlbc, stats.base_gotlbc) },
- 	{ "tx_restart_queue", IGBVF_STAT(restart_queue, zero_base) },
- 	{ "tx_timeout_count", IGBVF_STAT(tx_timeout_count, zero_base) },
--	{ "rx_long_byte_count", IGBVF_STAT(stats.gorc, stats.base_gorc) },
- 	{ "rx_csum_offload_good", IGBVF_STAT(hw_csum_good, zero_base) },
- 	{ "rx_csum_offload_errors", IGBVF_STAT(hw_csum_err, zero_base) },
- 	{ "rx_header_split", IGBVF_STAT(rx_hdr_split, zero_base) },
--- 
-2.48.1
+> I'm not sure putting the binding doc commit first would be right? That would
+> imply it was a valid binding before it really was because the code change
+> hasn't been made yet. Practically both are required so it doesn't really
+> matter which way around they are.
 
+It's the general practice everyone has adopted (though in this case the
+bugfix bits might want to go before the bindings, possibly it's also a
+bit unusual to do that).  An unused binding is more acceptable than an
+undocumented one.
+
+--5H3ikhGOIq/UysY2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmijREcACgkQJNaLcl1U
+h9ADAwf9EA9tjGoRA6LQDgfOw247uZwjo291ecBkDaxkVbX3dq953UASin7Wjo/3
+HePo5osEfES6M+Bt4fRqamFLriHmv/Z8FoWffHS9q4Pa9RcimZmbxS8kV5IjQBAh
+8uBngTX1ACW317uz1l7Jb3BUArfHC2zzyqKv8IZlOGpvimlEhNrRVJBHbYkRAPXp
+8DfRqvKDLg7W4iFvi1MwGEasq9d4atnxxYkANLmRq3LJJS8/J13WtnLPDz9fG0+0
+h6QyWfqIBsKHRc/bIKnbeFq0XiuNqh6fPUsIxCgtVAiMmlgOAfH8yGE0eauSX7SA
+W6px4TOYn/AjOyeNBqXLTlDUiLuz6g==
+=SRkW
+-----END PGP SIGNATURE-----
+
+--5H3ikhGOIq/UysY2--
 
