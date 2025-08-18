@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-773152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE690B29C0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:25:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2AFB29C15
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C42819617EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B018D62085D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124A3304BCA;
-	Mon, 18 Aug 2025 08:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434613002BA;
+	Mon, 18 Aug 2025 08:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbggAU+P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hh8Z2d4t"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F0529E0FD;
-	Mon, 18 Aug 2025 08:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C84628C849;
+	Mon, 18 Aug 2025 08:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505412; cv=none; b=AShRPaTLF/8uD3f6apHAmOFV4l9ZTU9O7Fb1wWIu4NSbEI03JVGS4kgVysUivV8kg95A1oulBd75VIv45waW93hEQq4BdSx9XYeNNyVzQmj1yEKxNrJXRbH7DZPe9an4JIrQ3bhSFQ9CwuzIARqxIK/xHWCyzJovBipaOISboe0=
+	t=1755505481; cv=none; b=Gy6goB9IhB6QPH20MpVfWtYUtYjT7oFLu33wbgU3YqzjHsDnLFj/B/pBvJwIdoQZr11j4Ni1Hko2C2h0wmdRqkUX5nzHsshgSaFTNThZIhSzoPi6Uj0n9dleMl0pzFqcPYbcx2G+mTVCid8CkpAE8BymwyoVPYkA3DmXnmxynJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505412; c=relaxed/simple;
-	bh=u6GAt90hanys0b3MiNsesXpPjjtcQ0gIDwbSkJKsM8k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BNSv/TFTDQ2xdeIo0v7GTE1LTCkkyf2PKXI76HAtDgsjo2F96W3AxqFoe43HoRJGcEz2x/DAwhRuLx7NVugP6obL93g3JXOCE9SjtK6xVN7Mh7xvFegYUQ1D1M7nZU0nV1dZe8kcYGc9ASL4ZzMu7JY1N5GbBXNmUsAu8nnFrGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbggAU+P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645A9C4CEEB;
-	Mon, 18 Aug 2025 08:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755505412;
-	bh=u6GAt90hanys0b3MiNsesXpPjjtcQ0gIDwbSkJKsM8k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZbggAU+PfOD+nSVZG25ad8arPO/fiQPki1nRSkHPJMPVdL/bk530TJRl7QmJb8M0m
-	 p7MMyNq0eo8VWbN1Xmkf2+ksBvZmguNIeefGg5fa76Td2uBldwYXKnk9dLfk0oOGNf
-	 W3Ju2DwOMvZle2sQPrH55d8glA6RyJoZ6B0DNtRLTJO6b8S79QYZq+dyVjXAAPEvnc
-	 DzWaLcwlRms+VLYjwU0qqdBsrdCqa50RkHKcatRc0scNk2je7HKgKG8oICZaYDbRQj
-	 e4lfmFzZpbHQf2MFMm6DEYNWoNHLierduucl7A/5/Hrls6ESpbHdOFjarXTS/pr92i
-	 ONnfjPpPBHc6w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>, Daniel Almeida
- <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Bjorn
- Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Benno Lossin <lossin@kernel.org>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>, Dirk
- Behme <dirk.behme@de.bosch.com>
-Subject: Re: [PATCH v9 0/7] rust: add support for request_irq
-In-Reply-To: <DC0OOFT2RTO7.2PCAP981HCCN3@kernel.org>
-References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com>
- <bL5l0lXohHy-SbvhHpQTRfWPqfZWJg3DiOfkBU7ehVCq3rC6yzFvYQN6d9rSU_ELZr8zh-lKNKPEeUfbgeu2Mw==@protonmail.internalid>
- <DC0OOFT2RTO7.2PCAP981HCCN3@kernel.org>
-Date: Mon, 18 Aug 2025 10:23:21 +0200
-Message-ID: <87tt25ca2u.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1755505481; c=relaxed/simple;
+	bh=dxpe8aA0NDPM07o/fCGnJPe+dkVLsQeArSJFXVbAhEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=evBtEQBPrnVL6er/tRYMQCi9q9NBoEHKLXkiX6VLEQhp1S7Ilu2IvK6QMq3koI+9c8fu/VlgW5DmgEwFS9OugOLvAYBZ7bn9FNFkTtYOsQGPKE3mds5NxQh69YRiDEWaQug5oHwk3etLFByz3n2EN+dQYBpeONDrUyaseII24Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hh8Z2d4t; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b05a49cso27417645e9.1;
+        Mon, 18 Aug 2025 01:24:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755505476; x=1756110276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NmdjK9UebULbcMt04uH82Nfk5/1T4hy7+EliweCIJN4=;
+        b=hh8Z2d4tmxrFsO7a+pE4gGzSprc/T9vq0xJs+8XBIOKUgrelxhNAoXVrggeuIyauww
+         eOiuGtXkA83/XCZSvDezF0+jWdENd0xLZYCstWMtD6OAQ/+/Xbe4zLIT/QF9gDEjLYYU
+         kBW8CnU5w0PewOiTEWyvv3eO5SFk1h2zYIiOpKXppFi1qrQ9xfplwQ8N7Ex0P6nOGvgs
+         QKHk2lBsaTd3UxZFvjLKkyiB7nmTQPvOQkKdy3alZgNZfQ8GGSlPosomJAF6FhG/a58l
+         maqtZ95eHHApb+7UZ6ksRYHlSgWgeE7ZzhRFhOngPQsOWim7wAC5IarQjixDy0fS91XZ
+         p/JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755505476; x=1756110276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NmdjK9UebULbcMt04uH82Nfk5/1T4hy7+EliweCIJN4=;
+        b=MiDu8g+uyoPhP4JZDyJV3k7Xn5Nv+zan3NWHdoPACxSfEGdmsyAhQajDdkv1JPATkK
+         Wk6mt5mn842qKEpkFtgkajAuH7pJcVKm3wQM9tYRQDvCOqrVNOfTtEK/lwhUYwPAAA8m
+         wOLfjlIrBXHDy7y24VMxJgDWfjgGaSDI6G4dFCcr4AkaQ4c7kDKl2XTtyx+4LXzyj8o0
+         oAL8MQlQ/suEkWq4sccBW9VLWnTNg6CZYunabfez2Ewp+LHyF0obmA6a56QcQG4We43L
+         7tWX+4JGxnqgXPYjpdD/HDOjkALiF+LNsSvh72Ut2hiPjGbdIfjfbTUW7SEZYc6F8Owd
+         2KgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBDJ35eIIItH4HX1cQJJOzebD74By56czM12ZswqPOh/rNz2wg0nkOpCzO9mA2H1JlxTsC3uD3AUHBzXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUwN9C/dnUQdLuLwAdR0ZAkGuaLO37Q0jHR4kvX+XSgC8T2hyp
+	HlxP58hNUCFUutgLwQj1SuU4k83M3SmHm6yBqIlqbo6rvgFXi6g6HO1gMIVPrw==
+X-Gm-Gg: ASbGnctn2X+oRK0ScoluSWSBB4Xv0FOn1Y4kIrF2DyO8W1nLhP38x/KXbEoXSbPEEuA
+	u0BSpWB8MRWyNivJTSqwFMeNotIFJc5cNzZnEeF5xCGS0DhGSSk3d8kQLpuANo90THpeWqRv82W
+	ILuUTo1/y3nF6as7DrR7ppwK3PJuq0Ji4Hou/X2gTb8Pnebu4DE/W+EB+5hNb1puMb18kq2yQXR
+	Ioh0+BOVM0L2fiFN+xUXV2LNt1bb2bjqmw7sBr2TvT0dWVXZyqkJUA+Hdoa+UxuLL72YH7z7IhA
+	jCuGzIyg2hyereWc3J/8IFGu2BpjmGRJccrjVoyJXygIaSII4ujocPI6B6YNcgwtCA08vYQvPnq
+	gHDOHeXLlt+MNRC7+r5Ha5McKeveAd7rGiFgazBkIn/Zf162YAw==
+X-Google-Smtp-Source: AGHT+IEBNtwT9spSTXwJedKPCMoGwCkm1vx89mWQKiXQgD/LeFYcLxz096KxIqcW2UEX0eoSp9oKEQ==
+X-Received: by 2002:a05:600c:4715:b0:458:b4a6:19e9 with SMTP id 5b1f17b1804b1-45a2180417cmr2344045e9.13.1755505475864;
+        Mon, 18 Aug 2025 01:24:35 -0700 (PDT)
+Received: from localhost.localdomain ([196.235.158.236])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a223299ebsm126848085e9.23.2025.08.18.01.24.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 01:24:35 -0700 (PDT)
+From: Salah Triki <salah.triki@gmail.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	Markus.Elfring@web.de,
+	salah.triki@gmail.com
+Subject: [PATCH v3 0/2] iio: pressure: bmp280: GPIO error handling and cleanup 
+Date: Mon, 18 Aug 2025 09:23:29 +0100
+Message-ID: <20250818082409.543197-1-salah.triki@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Danilo Krummrich" <dakr@kernel.org> writes:
+Hi all,
 
-> On Mon Aug 11, 2025 at 6:03 PM CEST, Daniel Almeida wrote:
->
-> Applied to driver-core-testing, thanks!
->
->> Alice Ryhl (1):
->>       rust: irq: add &Device<Bound> argument to irq callbacks
->>
->> Daniel Almeida (6):
->>       rust: irq: add irq module
->>       rust: irq: add flags module
->
->     [ Use expect(dead_code) for into_inner(), fix broken intra-doc link and
->       typo. - Danilo ]
->
->>       rust: irq: add support for non-threaded IRQs and handlers
->
->     [ Remove expect(dead_code) from Flags::into_inner(), add
->       expect(dead_code) to IrqRequest::new(), fix intra-doc links. - Danilo ]
->
->>       rust: irq: add support for threaded IRQs and handlers
->
->     [ Add now available intra-doc links back in. - Danilo ]
->
->>       rust: platform: add irq accessors
->
->     [ Remove expect(dead_code) from IrqRequest::new(), re-format macros and
->       macro invocations to not exceed 100 characters line length. - Danilo ]
->
->>       rust: pci: add irq accessors
+This patch series improves the GPIO handling in the bmp280 driver.
 
-I somehow missed that you already applied this, so I just sent comments
-for patch 3. I think there are some issues. If you want my comments for
-the rest of the series, let me know. Otherwise I'll just skip that.
+Changes in v3:
+  - Split into two separate patches, as suggested by Andy Shevchenko.
+  - Improve the error message to "failed to get reset GPIO", as
+    suggested by David Lechner.
+  - Add Fixes and Cc tags where appropriate, as suggested by
+    Markus Elfring.
 
+Changes in v2:
+  - Use IS_ERR() instead of IS_ERR_OR_NULL()
+  - Drop dev_info()
+  - Use gpiod_set_value_cansleep()
+  - Improve commit title and message
 
-Best regards,
-Andreas Hindborg
+Salah Triki (2):
+  iio: pressure: bmp280: Use IS_ERR() in bmp280_common_probe()
+  iio: pressure: bmp280: Use gpiod_set_value_cansleep()
 
+ drivers/iio/pressure/bmp280-core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+2.43.0
 
 
