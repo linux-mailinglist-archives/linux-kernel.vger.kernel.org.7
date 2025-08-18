@@ -1,288 +1,145 @@
-Return-Path: <linux-kernel+bounces-774058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D369B2AE1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:29:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CB7B2AE43
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCA06219A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48221965760
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F77B334715;
-	Mon, 18 Aug 2025 16:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/es2bJz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA3B18FDBE;
-	Mon, 18 Aug 2025 16:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755534499; cv=fail; b=L9oFC/86wMcRkYdwlzzwTT9zkqiEjZqvooUoAquER9BTdSaBJOt3oICv9V9nK4SEUuPvCiS0uJsFumwVtdE36pnz7ER4DRWK3w0L9oaI2Fmfv+nEbXwuo0jlGwQWZYoCDDtYDcyyQJuhE1ZMO+38ZX5QLlHQLl2mVhqyfLO/8U4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755534499; c=relaxed/simple;
-	bh=APpyJtkJtjhWW9otMjKTtO4lzXCiBwpa+o8G4j0Doos=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=t/fJlF5xKlWuZ7jOBDlP+qzG84AdNCO/ZnJ0E8ZOjEfmIk3cJtLHJk4+hYymU11QSWWlDDXj+TNdGlFCr9FjGUeIX/fpjo0tAl/dKC6kfwttstkBKCDHZ54f3n3OOe8brgGBmdsdm6eGxOwkA6q0H91QMnX9bS2dS9/6+TpebRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/es2bJz; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755534498; x=1787070498;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=APpyJtkJtjhWW9otMjKTtO4lzXCiBwpa+o8G4j0Doos=;
-  b=K/es2bJzyoSpnfetT2y7/DbD+GN+yAnzzkVIdEsbSCVQXRYQ1faIBCBa
-   ZbXj90vfPIgw/JoZ44XSzlC6xDDYPU1QnolHPpFwp9nbI6eSxopysB8w0
-   3tLBoTdv45DDpP52sq7YzJuhG3FuiB0KqJU6mHbNuvaGhNQLRdNw2iXf2
-   ReC8C8J71kWrC1PENvU6kNeiZlLGO0Bc2bL4B1/lB5CnGVxYFoiJzdIQ2
-   Z2Bo7rXKEIWzmT+NCq+6VTc8kkYKDiWmtHNmBDhPyOIhKAi5QyWNSe6+Y
-   Nq3mJEa15Ik1l/lj/uLXVNBBVzx2QrNDE3mGhMqKEgzUMEPLaT4ceR35k
-   Q==;
-X-CSE-ConnectionGUID: tj8OOiDMTkeNu3nbQbRIKA==
-X-CSE-MsgGUID: qJ7itPlRSveWGcBzlVKLOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="75331055"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="75331055"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 09:28:17 -0700
-X-CSE-ConnectionGUID: cTBt3yJOTPqSljfQg4oGwg==
-X-CSE-MsgGUID: Apo9BB+HQdWKsbf7B5HOfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="172952235"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 09:28:17 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 18 Aug 2025 09:28:16 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Mon, 18 Aug 2025 09:28:16 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.88)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 18 Aug 2025 09:28:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NViOi4b1/XDhcU9uOc8vEJwR4+xvockHYJ2wejbJKH0OkWMKmqNflBkbm3P3+tjm1DppXDNmzbhKdzKoCqUfSuA1ILXNIGWDWebaArDv3+IJMVflYUxaGOTqr7NvPsWlKd2DnNzGiX+jjNqD7FBWJgAAnuwjEO4drvc8VtFrrALBz8jkaHw2RYmpkLmXd0iXib707agz/tiASi8Vu0jWZmyelm++yyfB/Q77aXrlozlz+Fgz7+kAOIbj7r9dZLg/89gH8KdUz9Hp4sBUIIIsbGzXiT1WhSPYzD4ZeY3HCx4VcX6nkopPdz3dql9Rbh92AHmmvoWMnRLsnh3PAngmIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fbGyi1zomGU9RzHEifjZuvkswxLjgZEPue4ILlwZwtE=;
- b=yWkCZweabDLZkGYLhhV3QEzNabB864MNWCUfUbyOE2Wk8kLk9Tu9ch5b9WY6P3Jv2DqyJBEcoOGCce/jNmkAgH70gRrk7HnKfCIi1MNT5ohfFmSp0CytzbnveGNk+0jvMJ9fMlj+uXtp9f24IvLi+4eFIn8RgrK98MlMoXDMP3DZFcoKyD2JAjZ+b/UlWEgUfHYBwOTlMPJa6jTIgU4CNlZATaVGlgy6qG+XQxr0HkcU6MJrLtNVIuI+EN/lie5QBAqiV4y5icnOiOfikxkkQXg2nFlB1C+5JbW+DR6kmeOc1Bm7eZcrK4TN+EeYDFZ9hE2FZjSX/ouuUZtWDdyfdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by IA0PR11MB8301.namprd11.prod.outlook.com (2603:10b6:208:48d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 16:28:13 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408%4]) with mapi id 15.20.9031.019; Mon, 18 Aug 2025
- 16:28:13 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: "Schmidt, Michal" <mschmidt@redhat.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Jesse
- Brandeburg" <jesse.brandeburg@intel.com>, Alexander Duyck
-	<alexander.h.duyck@intel.com>
-CC: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH net] i40e: fix IRQ freeing in
- i40e_vsi_request_irq_msix error path
-Thread-Topic: [Intel-wired-lan] [PATCH net] i40e: fix IRQ freeing in
- i40e_vsi_request_irq_msix error path
-Thread-Index: AQHcEFZXcrRmBpixlU+vh9GSTGqoD7RomWUA
-Date: Mon, 18 Aug 2025 16:28:13 +0000
-Message-ID: <IA3PR11MB898608D2CD911C0F903B6EC7E531A@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20250818153903.189079-1-mschmidt@redhat.com>
-In-Reply-To: <20250818153903.189079-1-mschmidt@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|IA0PR11MB8301:EE_
-x-ms-office365-filtering-correlation-id: c0b17d54-8d75-4caf-92b0-08ddde743a8e
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018|921020;
-x-microsoft-antispam-message-info: =?us-ascii?Q?FK0QBV4naFbzXg2Am3O5EjPIs0acYW5GRSpHoXzgD9II7Eq0cPco0DWpj2bf?=
- =?us-ascii?Q?x7k+cDQipFl+IEiEFt1kAlrBTUfs8LT0XW95p860Pvjo8j3pKQf85I/30GXF?=
- =?us-ascii?Q?Zxs1Uz2H1zaEhlIRwOcat3Xe+Xo3+BR4HpP70zwbdIzNTuOy3xQyyxDXZLJG?=
- =?us-ascii?Q?FQcFpc1Q0W/AfP9NxwspS6oURXTU2K1561KqD6BhtI5MflFmQDKzRgUYMiC1?=
- =?us-ascii?Q?l/jqAodA0y57bSfbtGO7a4DRTI8G2Lp2xTNoNwzLukpyrA4Aj/QvtDXHJID0?=
- =?us-ascii?Q?WaZj3DAzcmGHGlQrx8CyS1A1g9b9MkFI9BO9hme17scrGO4i3T9raNu8F0K/?=
- =?us-ascii?Q?YHeScm7tqkGKFdcdCP5zy9U7tojYlzZZ4YcXR4SXc4a1xL6fvlaLbmLLY7fO?=
- =?us-ascii?Q?po7sEhbMehXgHeuE4ME272BYPUJDzyOsk3Oh/FqKanEgGfO7CppbTcyFVoq1?=
- =?us-ascii?Q?6z4skzjnR8is0q03zUpq0mwBl1IlElX+cPyUvUxRQIv110CRLn0Gctdk8ZCX?=
- =?us-ascii?Q?62qC1mapCYnMdD/NEyPvbC8xfOb6P7LvL/QOTU9hZj3OVHCzSB+/7p/GCovf?=
- =?us-ascii?Q?uXoJCokmJNarPgBDIQa/GjWmkyLql4y1VtY1Cua5w7S6eBoXNgAGln6G9iZm?=
- =?us-ascii?Q?ENjOO+5aFtqEWjuK5SD1bBUfAz58Dg8Md/osw0u4etElxq876zhZBhwf1hLF?=
- =?us-ascii?Q?f294lMzS964XhaRD+SUBZBZ8xr2fDRJvJD9MX0WMF/jzRdFUjPfIe9nPylBl?=
- =?us-ascii?Q?YtLYMcEjRa0Sz4iW3GG/vECR6VSE5kBJqaIo0pPqixYozyThCI8hhxHpxgRd?=
- =?us-ascii?Q?dKNa1O2f+oKmomV3SZd/sDVW61sKxlNpm1oBPP6J5do3pA97Lw3XwYMmM12p?=
- =?us-ascii?Q?zJfaBgmb9DqZeNbVs+TqvWQBs7foRyRGeaOLVV9Ebeql+Mc1oAb9EZo3UuF1?=
- =?us-ascii?Q?uMKPCP4EO5vCnuoETgWeqS7j4Ru64ITkKW9GiuMa0D7UZiiDT5Hvcn5IByHP?=
- =?us-ascii?Q?tUbj9r5eS4GbnuM4/hUlz1Vu32d+cQE4apy2hxuV/z+Rue8icsAMHioyNwXC?=
- =?us-ascii?Q?vx6QhB/E3sBxFU0TdMWCsjuc4+wlPnT8Rqo65YqAIl3aMdJQUc679r+Yzxnh?=
- =?us-ascii?Q?rwnIv5wIKxIVbhRPnO9pNFU7Z2QeiHuuRaino8pjXFrrCmwF+Te+1uIabsSb?=
- =?us-ascii?Q?jspAyzXUuaSMTJwpJMlhTdXnY0VgAU/JsZzzQvcluqutxNUgyA0P3CQcEji7?=
- =?us-ascii?Q?dsGzhR/3gFifAvvKEi6afQPjdNQtAPs2U8XDBzpDm94bCZFQ7m8pQZFvBOfz?=
- =?us-ascii?Q?1+zcht4hZVO/Jbzg0adJqzV+ChcJq18khuK2vM0TrmELzb5zrAGO/CJKnOnz?=
- =?us-ascii?Q?jUFtoKKg6YM2y1wPxdfub/Wm9K3ObPP5MQpGkWucGVgwyqq8r/1fVEBmZ69b?=
- =?us-ascii?Q?VdWKNNp9pROG41qP8CEP2/uGemXKy+bl5Kng8Fwhgq54Ll0vOnnfzU6LNrXn?=
- =?us-ascii?Q?9Qt883zdrQ8DGl4=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6Jnwsn4tLKU4axFTC+H74pEKfwrCvZqb+hxZLEh05koiPK068MvY74ET3dZA?=
- =?us-ascii?Q?G8U+zhrEtcId2fB/RA0QVoHLd8pDNUcD2hHoWPHpl9mcUSR2kircJQX5Bzz2?=
- =?us-ascii?Q?cg7IK/1FAlwmM9VJ6CN4nk9gwsOJrn1CT81/MB+gTIigXdBF4oBbLbee8kUv?=
- =?us-ascii?Q?l6DNrqBtEniWs3GOL2jP9J9W9Cbhrvv05iQIbbQk3/jyycucoe9HKrSnM6tR?=
- =?us-ascii?Q?0sA0bAnl3d90F2bM8jIm+iY1IhF30uh5GF2ovKkMeFtZpO5x0c11AFU8OTX0?=
- =?us-ascii?Q?M4G3KIRPHcHDvOPix21CTLa/6WsQZRAzQu1RkjHYPmSXsqKs1kyCXLDMXEM6?=
- =?us-ascii?Q?xvVo2HjtVKm9mcLnZ9UxWLGtKIlucfPo8HGtKAusFGlLKi2hYSkhuruRCQYX?=
- =?us-ascii?Q?Jm3I6N/g/1FJ4gDUS48ftbCxkNi2PJCOMCvVXTFmb+eU/+xH/Q+Palprg8U6?=
- =?us-ascii?Q?U3gR8e7G9N8mmV7mdcKkBEX0FWFTnEbuK7o3GETp8cEsWzEo8OCVrRi+PqVF?=
- =?us-ascii?Q?3hp4x2Rp7eDyA0H27CZ99YLm7PRHeLW6gT+Qrov7Omhei8bysvvz+y+XY0sH?=
- =?us-ascii?Q?JXjAvDsMnla3c182hVbOKduLyVnM95OGdTGXAmghjM0Q/dVkHwyaoY/Tu5SD?=
- =?us-ascii?Q?LovxpZskTK2+uOckDE8KML+DHrEqTnVgTFDhwTge7exEOuz2yj6IIm9d05Bn?=
- =?us-ascii?Q?H32pQPlpevwEw2Vll1SUMQHP4OK/lR01LFxN9wb+6jaZmoWm+0CX+5SGEjTz?=
- =?us-ascii?Q?x6RjimyGnbzEZ2y2raj6JLLg6RVIXD+4jP67VeDtdLreWXmpjvm07qWcXPkR?=
- =?us-ascii?Q?hfulHmNJw1xiNeY3xLX0b1Li7UbDcjD0XtFMFMQkPx+LrayMC+n+2NNQuJWu?=
- =?us-ascii?Q?kepHu9AYsxtkprlq9deGmUp6t/wT12dvzqzDPZOaNPHcGiJanvLo6MdAPpBd?=
- =?us-ascii?Q?nAErFQ6+6BgLDUnfamaj7A4TqWoZ9iskrNMHqegyuI/lj2A4Sg9wwtkCIBZD?=
- =?us-ascii?Q?A9eHyx1mN3Ypn7xFa4rc14w1FTQQmcBtJLbweD527tCLysM5qpR92orftAbc?=
- =?us-ascii?Q?ovMOPFOcqs7GSXXvvw+iWhG6gdQlOwHgE+1mUXJmrQZSuhW6BjxtrBH2LMZ6?=
- =?us-ascii?Q?tSW7hHYMGV02MjqIP3l2N35IzvrD7KIvQJo0Cn6B+XN89dxLJrwMrjjTMBTe?=
- =?us-ascii?Q?Yvr4PBQ5svjiurMHbmXILq8e9oLyLANb9KqBh4pFLZPsNAeG2vSJGPBrxuqy?=
- =?us-ascii?Q?Pk90Yuizv0No90jT5nP0ffpse7VxUhreR8niFWw/dfc66jaF7mi3w13EGqAX?=
- =?us-ascii?Q?BZVDvVKfQhYqL35WKHC00duduLsvULg8krcIw3AFcKYoaff21tVRW6fyO18k?=
- =?us-ascii?Q?Jn7mCQ7rw3KIpZ7w+pYI/2WkM0RjJpnrprU/WdL1CFCFBr1UdWvrxgS819Te?=
- =?us-ascii?Q?zxjhnboHH2Xna5kHKdH6w8r0JiiL3t26V7o6wwfSNY/Ov8e56xRGhiLHwM2h?=
- =?us-ascii?Q?WYt4pT+iwRW+keNDqxPGOeSmTBHbjRGmWuWXDOYLIBeKlmWDKMznWhV5y1vr?=
- =?us-ascii?Q?SzMfhqKe2VnSUTS3PmPcMjn1e2eClLPuI/qtEIHLmkyXLK+EnT0Svp0wpHCk?=
- =?us-ascii?Q?Ug=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D65E341ABB;
+	Mon, 18 Aug 2025 16:34:28 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F2A1487F6;
+	Mon, 18 Aug 2025 16:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755534867; cv=none; b=M2PKfFGwQg+OnKzJwYFa9FcccuL0ryV6VtKV5Hep/Tvoh0qL2Ay2YWYtvf3bO+LnvaMg3MXWINJSucbLfZhvc7FjSL6zlhWlkzNqkBZ12LkB2qy5ApFyCXQzLxm6qr4yF3ZCxPddwTzDUUJowKhQ+SngdQ0uW32XcpRufLd+rDI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755534867; c=relaxed/simple;
+	bh=b+8xl3kJyoIBoGBShp8jqH4z1P8YP+8Xxs9gdLHGlqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K4TLZ1ADM9x121CX8xCmM+CWd4K8WTgH2jpOB9+Qr2RDahgJyN1hqT5oMtDA0c8v5grshnFwLBwjRU/gIr7ynfSEB90WnAYJvbtP+hyMOxWUQdb8xO7tDp6UXKsgjc4MsWav6aHL7FG+qOpdrxuIsP6KKbfnnRHvHcl3DuVxrJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: LqwVSRBoTjiY8DtsXwpQtw==
+X-CSE-MsgGUID: tSnWmMSYTWGUQCIhitJZog==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2025 01:29:14 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.24.0.173])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C6E784016EDD;
+	Tue, 19 Aug 2025 01:29:07 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	catalin.marinas@arm.com,
+	will@kernel.org
+Cc: john.madieu@gmail.com,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	biju.das.jz@bp.renesas.com,
+	linux-arm-kernel@lists.infradead.org,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v7 0/6] thermal: renesas: Add support for RZ/G3E
+Date: Mon, 18 Aug 2025 18:28:46 +0200
+Message-ID: <20250818162859.9661-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0b17d54-8d75-4caf-92b0-08ddde743a8e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2025 16:28:13.5837
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aym1xZPXh+78OnFZb9yh0Tum12/89LW243D3iplnDbCgoCZbZLdkl1my/WS0XQN+rr0hiDsBH5bfrfQgKCP5UuLabLSAA7s5/gDlfmW0M04=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8301
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+
+This series adds support for the temperature sensor unit (TSU) found on the
+Renesas RZ/G3E SoC.
+
+The series consists of 5 patches (one of which is not related to the thermal
+framework) that progressively add TSU support as follows:
+- patch 1/6:    adds syscon/regmap support for accessing system controller
+                registers, enabling access to TSU calibration values
+
+- patch 2-6/6:  adds dt-bindings, actual driver, DT node, and config symbol.
+
+Patch 1/6 has been duplicated at [1] in USB series. This series addresses comments
+got from there.
+
+Changes:
+
+v1 -> v2
+ * Fix yaml warnings from dt-binding
+ * Update IRQ names to reflect TSU expectations
+
+v2 -> v3
+ * Remove useless 'renesas,tsu-operating-mode' property
+
+v3 -> v4
+ * Improve commit messages
+
+v4 -> v5
+ * Remove useless curly braces on single line-protected scoped guards
+
+v5 -> v6
+ * Minor typo fix
+ * Constify regmap config in patch 1/5
+
+v6 -> v7
+ * Update DTS trim priperty name and specifier, updading the documentation
+ accordingly
+ * Refactor main driver: remove spinlock usage, using polling timeout as computed
+ from datasheet. Also use polling for get_temp() while using IRQ for trip-point
+ cross detection, and finally add both runtime and sleep PM support.
+ * Add new patch to update sys #address-cells as trim specifier now requires an
+ offet from sys base
+
+Regards,
+
+[1] https://lore.kernel.org/all/20250808061806.2729274-2-claudiu.beznea.uj@bp.renesas.com/
 
 
+John Madieu (6):
+  soc: renesas: rz-sysc: Add syscon/regmap support
+  dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
+  thermal: renesas: rzg3e: Add thermal driver for the Renesas RZ/G3E SoC
+  arm64: dts: renesas: r9a09g047: Add #address-cells property in sys
+    node
+  arm64: dts: renesas: r9a09g047: Add TSU node
+  arm64: defconfig: Enable the Renesas RZ/G3E thermal driver
 
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf
-> Of Michal Schmidt
-> Sent: Monday, August 18, 2025 5:39 PM
-> To: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; Kitszel,
-> Przemyslaw <przemyslaw.kitszel@intel.com>; Andrew Lunn
-> <andrew+netdev@lunn.ch>; David S. Miller <davem@davemloft.net>; Eric
-> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
-> Abeni <pabeni@redhat.com>; Jesse Brandeburg
-> <jesse.brandeburg@intel.com>; Alexander Duyck
-> <alexander.h.duyck@intel.com>
-> Cc: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH net] i40e: fix IRQ freeing in
-> i40e_vsi_request_irq_msix error path
->=20
-> If request_irq() in i40e_vsi_request_irq_msix() fails in an iteration
-> later than the first, the error path wants to free the IRQs requested
-> so far. However, it uses the wrong dev_id argument for free_irq(), so
-> it does not free the IRQs correctly and instead triggers the warning:
->=20
->  Trying to free already-free IRQ 173
->  WARNING: CPU: 25 PID: 1091 at kernel/irq/manage.c:1829
-> __free_irq+0x192/0x2c0
->  Modules linked in: i40e(+) [...]
->  CPU: 25 UID: 0 PID: 1091 Comm: NetworkManager Not tainted 6.17.0-rc1+
-> #1 PREEMPT(lazy)
->  Hardware name: [...]
->  RIP: 0010:__free_irq+0x192/0x2c0
->  [...]
->  Call Trace:
->   <TASK>
->   free_irq+0x32/0x70
->   i40e_vsi_request_irq_msix.cold+0x63/0x8b [i40e]
->   i40e_vsi_request_irq+0x79/0x80 [i40e]
->   i40e_vsi_open+0x21f/0x2f0 [i40e]
->   i40e_open+0x63/0x130 [i40e]
->   __dev_open+0xfc/0x210
->   __dev_change_flags+0x1fc/0x240
->   netif_change_flags+0x27/0x70
->   do_setlink.isra.0+0x341/0xc70
->   rtnl_newlink+0x468/0x860
->   rtnetlink_rcv_msg+0x375/0x450
->   netlink_rcv_skb+0x5c/0x110
->   netlink_unicast+0x288/0x3c0
->   netlink_sendmsg+0x20d/0x430
->   ____sys_sendmsg+0x3a2/0x3d0
->   ___sys_sendmsg+0x99/0xe0
->   __sys_sendmsg+0x8a/0xf0
->   do_syscall_64+0x82/0x2c0
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   [...]
->   </TASK>
->  ---[ end trace 0000000000000000 ]---
->=20
-> Use the same dev_id for free_irq() as for request_irq().
->=20
-> I tested this with inserting code to fail intentionally.
->=20
-> Fixes: 493fb30011b3 ("i40e: Move q_vectors from pointer to array to
-> array of pointers")
-> Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+ .../thermal/renesas,r9a09g047-tsu.yaml        |  87 +++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  49 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/soc/renesas/Kconfig                   |   1 +
+ drivers/soc/renesas/r9a08g045-sysc.c          |   1 +
+ drivers/soc/renesas/r9a09g047-sys.c           |   1 +
+ drivers/soc/renesas/r9a09g057-sys.c           |   1 +
+ drivers/soc/renesas/rz-sysc.c                 |  28 +-
+ drivers/soc/renesas/rz-sysc.h                 |   2 +
+ drivers/thermal/renesas/Kconfig               |   7 +
+ drivers/thermal/renesas/Makefile              |   1 +
+ drivers/thermal/renesas/rzg3e_thermal.c       | 575 ++++++++++++++++++
+ 13 files changed, 760 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+ create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
 
-> ---
->  drivers/net/ethernet/intel/i40e/i40e_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c
-> b/drivers/net/ethernet/intel/i40e/i40e_main.c
-> index b83f823e4917..dd21d93d39dd 100644
-> --- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-> +++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-> @@ -4156,7 +4156,7 @@ static int i40e_vsi_request_irq_msix(struct
-> i40e_vsi *vsi, char *basename)
->  		irq_num =3D pf->msix_entries[base + vector].vector;
->  		irq_set_affinity_notifier(irq_num, NULL);
->  		irq_update_affinity_hint(irq_num, NULL);
-> -		free_irq(irq_num, &vsi->q_vectors[vector]);
-> +		free_irq(irq_num, vsi->q_vectors[vector]);
->  	}
->  	return err;
->  }
-> --
-> 2.50.1
+-- 
+2.25.1
 
 
