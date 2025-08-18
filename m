@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-773169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4777AB29C4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D20B29CC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB60D7A3C5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087AB2A2B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0344265CBB;
-	Mon, 18 Aug 2025 08:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFe21OFb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155997E9;
-	Mon, 18 Aug 2025 08:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05673009E1;
+	Mon, 18 Aug 2025 08:51:04 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DD9304BD0;
+	Mon, 18 Aug 2025 08:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505937; cv=none; b=cDZsArZbpGbok7Y6yttjlFCJ2hSwh6BvmIb2jw7nkXR9Bu7EZkpVhrzE9hjaJjp/cDyPPGWxcHW7JPRHoaigiS3Y8NDiB89eIA/Ph0M3j2dDST4tGaGlr16GY+lHX8toxOcgZZrhXJLnXdCJBmACRDnRVRa/vxngFNAl1qibjSM=
+	t=1755507064; cv=none; b=AE9F49UhZJdTE0TWMokGVW1I1e+AkdmI2t4tf2561XN9UBZVULsRs1XpPP8LsTkm8eVR6rKZiD/dgYNj/CqckPeK5LvUTYz88QJYbI0vuF7bE14VaWzQAh+bSw6LUdo3bbksnbkEzbwIeEORExypuJxy/wokRe/MrqLjlduGDO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505937; c=relaxed/simple;
-	bh=nNOBI0F8EkG+NeIt2D1S0Fuj4+shs+JG9u5tILSOhyU=;
+	s=arc-20240116; t=1755507064; c=relaxed/simple;
+	bh=KcvJq8M0HpwaZwcXQIlx7Axgnixjejn3gLTyh60tocg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5qRe7tdh0P48CgU3O4B4abRNCcSkW22KiHOnKg6drSLKSv6MPx4lLuKEWZttR5o5UsDZWEquUc/93SfU+bhaji5OqTONhs2AiQ45k3+52y+3wk1vwm5amSsHU74CbCK9Fb5YXlyBuPPjD4hbcimpU62CGtH3Q13P64/gqV5k4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFe21OFb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42BADC4CEEB;
-	Mon, 18 Aug 2025 08:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755505936;
-	bh=nNOBI0F8EkG+NeIt2D1S0Fuj4+shs+JG9u5tILSOhyU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CFe21OFb+bEd+KZWrl1NSWnS6cBxbGJTHGeVk3t2pdcmgvkOK3Q7t71xKg41sFi97
-	 zAprJLG9Tw61IZDsSQYRSqPiEoegSTaFEREUt1/+EHJ+35WWpa5duIpNPUlpv6BcQ/
-	 inarCAhBDRTuWLL37wDbCJ6g85hFXO3mLbhJ0YUW4qY/icFdD+20sJxJQWubkyYWUI
-	 KhAtSR5L8Ls5mfbt66mDU8Yv2Cd466iMN8613YGj8tqJ9+xgF4KM4iyoXnvs9yPRmF
-	 M/3QMyn5BijD5GYnwMToSzLj3LBDbtybU8WinY56+m6jjiSoLtklVcLD7fcs9GN/57
-	 r9RG8sF92Jx6A==
-Message-ID: <1b37bc94-8f2b-4da3-be2e-4d0076672169@kernel.org>
-Date: Mon, 18 Aug 2025 10:32:07 +0200
+	 In-Reply-To:Content-Type; b=DU9s/dO7gQ2DWVuNM/txafuhNx+cPb7LQHle2NERO31BiPFVqRPBaqxC8/Jy9UYv8/wx/hhC0O1p0cILFo4FduEaXpCN/HqctlpFZOT2EcEdjS3w1V7uvewh3n/fpEbjuNNgSxQUHtTjEE+ayeLrWQ9dmvByf2RND2fUfIaiWog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c55ZV6vqDz9sVP;
+	Mon, 18 Aug 2025 10:33:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5hybM51rxMvV; Mon, 18 Aug 2025 10:33:06 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c55ZV5jRkz9sVL;
+	Mon, 18 Aug 2025 10:33:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A2A4C8B764;
+	Mon, 18 Aug 2025 10:33:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id bcNwoLJxTpMP; Mon, 18 Aug 2025 10:33:06 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 715818B763;
+	Mon, 18 Aug 2025 10:33:06 +0200 (CEST)
+Message-ID: <d085efdd-fe8b-4efa-92e1-34573c55ade5@csgroup.eu>
+Date: Mon, 18 Aug 2025 10:33:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,80 +55,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] arm64: defconfig: Enable FSD CSIS DMA driver
-To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
- cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
- martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
- catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- ravi.patel@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
- festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141057epcas5p21ca33641e42164886dc1bf404237876d@epcas5p2.samsung.com>
- <20250814140943.22531-12-inbaraj.e@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250814140943.22531-12-inbaraj.e@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 14/08/2025 16:09, Inbaraj E wrote:
-> Enable CSIS DMA driver support for FSD based platforms.
-
-Tesla FSD
-
-You are changing defconfig for all platforms, it's not your personal or
-company defconfig.
+Subject: Re: [PATCH 3/4] soc: fsl: qe: Add support of IRQ in QE GPIO
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
+ <22b3847fd0011024c10aff48f1e5223894ce718a.1754996033.git.christophe.leroy@csgroup.eu>
+ <CAMRc=Mce3LHtCUd-oO3uZjVAS-fywn86Zn+qmehZPJTKLzk6Sg@mail.gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <CAMRc=Mce3LHtCUd-oO3uZjVAS-fywn86Zn+qmehZPJTKLzk6Sg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-Best regards,
-Krzysztof
+
+Le 12/08/2025 à 16:21, Bartosz Golaszewski a écrit :
+> On Tue, 12 Aug 2025 13:02:53 +0200, Christophe Leroy
+> <christophe.leroy@csgroup.eu> said:
+>> In the QE, a few GPIOs are IRQ capable. Similarly to
+>> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
+>> GPIO"), add IRQ support to QE GPIO.
+>>
+>> Add property 'fsl,qe-gpio-irq-mask' similar to
+>> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
+>>
+>> Here is an exemple for port B of mpc8323 which has IRQs for
+>> GPIOs PB7, PB9, PB25 and PB27.
+>>
+>> 	qe_pio_b: gpio-controller@1418 {
+>> 		#gpio-cells = <2>;
+>> 		compatible = "fsl,mpc8323-qe-pario-bank";
+>> 		reg = <0x1418 0x18>;
+>> 		interrupts = <4 5 6 7>;
+>> 		fsl,qe-gpio-irq-mask = <0x01400050>;
+>> 		interrupt-parent = <&qepic>;
+>> 		gpio-controller;
+>> 	};
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> ---
+>>   drivers/soc/fsl/qe/gpio.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+>> index b502377193192..59145652ad850 100644
+>> --- a/drivers/soc/fsl/qe/gpio.c
+>> +++ b/drivers/soc/fsl/qe/gpio.c
+>> @@ -13,6 +13,7 @@
+>>   #include <linux/err.h>
+>>   #include <linux/io.h>
+>>   #include <linux/of.h>
+>> +#include <linux/of_irq.h>
+>>   #include <linux/gpio/legacy-of-mm-gpiochip.h>
+>>   #include <linux/gpio/consumer.h>
+>>   #include <linux/gpio/driver.h>
+>> @@ -32,6 +33,8 @@ struct qe_gpio_chip {
+>>
+>>   	/* saved_regs used to restore dedicated functions */
+>>   	struct qe_pio_regs saved_regs;
+>> +
+>> +	int irq[32];
+>>   };
+>>
+>>   static void qe_gpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+>> @@ -141,6 +144,13 @@ static int qe_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+>>   	return 0;
+>>   }
+>>
+>> +static int qe_gpio_to_irq(struct gpio_chip *gc, unsigned int gpio)
+>> +{
+>> +	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
+>> +
+>> +	return qe_gc->irq[gpio] ? : -ENXIO;
+>> +}
+>> +
+>>   struct qe_pin {
+>>   	/*
+>>   	 * The qe_gpio_chip name is unfortunate, we should change that to
+>> @@ -304,6 +314,7 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+>>   	struct qe_gpio_chip *qe_gc;
+>>   	struct of_mm_gpio_chip *mm_gc;
+>>   	struct gpio_chip *gc;
+>> +	u32 mask;
+>>
+>>   	qe_gc = kzalloc(sizeof(*qe_gc), GFP_KERNEL);
+>>   	if (!qe_gc) {
+>> @@ -313,6 +324,14 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+>>
+>>   	spin_lock_init(&qe_gc->lock);
+>>
+>> +	if (!of_property_read_u32(np, "fsl,qe-gpio-irq-mask", &mask)) {
+> 
+> AFAICT: you can drop the of.h include and just use
+> device_property_present() here.
+
+This line reads the value of the mask, I can't see how it can be 
+replaced by device_property_present().
+
+> 
+>> +		int i, j;
+>> +
+>> +		for (i = 0, j = 0; i < 32; i++)
+>> +			if (mask & (1 << (31 - i)))
+>> +				qe_gc->irq[i] = irq_of_parse_and_map(np, j++);
+>> +	}
+>> +
+>>   	mm_gc = &qe_gc->mm_gc;
+>>   	gc = &mm_gc->gc;
+>>
+>> @@ -323,6 +342,7 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+>>   	gc->get = qe_gpio_get;
+>>   	gc->set = qe_gpio_set;
+>>   	gc->set_multiple = qe_gpio_set_multiple;
+>> +	gc->to_irq = qe_gpio_to_irq;
+>>
+>>   	ret = of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
+>>   	if (!ret)
+>> --
+>> 2.49.0
+>>
+>>
+> 
+> Bart
+
 
