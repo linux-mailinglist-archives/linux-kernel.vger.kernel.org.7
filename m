@@ -1,152 +1,123 @@
-Return-Path: <linux-kernel+bounces-774429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EEDB2B21D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:11:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61773B2B21F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2278527983
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A977C19645E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D1425F984;
-	Mon, 18 Aug 2025 20:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040F5272E71;
+	Mon, 18 Aug 2025 20:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AhFaCD4N"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IgQ0HwdY"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F71B253B56
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F8A253B56
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755547904; cv=none; b=VlKRzZvkh57URVS49FHmuh2QFmWgVjeI97j08UiT1eOkiGczF4UW+x62AqbuamMLI4CxHM3IHpRf8jMKJQycyfbITzJ024zXDkH8cC90lrbjGX+c81QRTfoNVh2fY4IWDO63Lq1NjKW9ldQvOPaRf9jP+eRK2Vw4cqYZREb/XY8=
+	t=1755547928; cv=none; b=oHU23mXB+XJsMBlN3d7fiOX2fVOnEZAksSeQLC8ovI8+50AKrkZopSmYqaS15+IQZ4761Jn2Cnhh7KQvjnsdC/JAQ515Od7RKDPC+ukC3X9BxdDWRdkLAHYa3NRxPvPwejjsQKpoxeOBTUjywSW+Swhmbenfxud3mXmFZ5yjwYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755547904; c=relaxed/simple;
-	bh=bMc4MEiytgUN5MSZi4bOBd3NylG8Y4lOdPTMucUwZM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ro53Z3THkHUsgBvExn1sOdes19Hq7cE9H+ehALLeglF5w2eZ07OFEpthpW9AyX3idO4pUl4XvnjPbiygnQy/DTmLKgKqE19exMBNPXgsldNAlzllWKRIk75GGUyGKGKl8nKNrYFvf6qyvpt3LyTmaxdeSUmtChdpwT4rIIvxmtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AhFaCD4N; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb78c66dcso646386466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:11:42 -0700 (PDT)
+	s=arc-20240116; t=1755547928; c=relaxed/simple;
+	bh=ZTEw3v59byAbxSZgmjys08ROhmY00iv+6lSpKMPh+2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e6wnETThCfz2ZVMyXUwT7OuEa1DXV9Sw0ikqCG8yv4gp4sQQRfnfrmmhPY1W+XDN1RenJgKqCDwCyG2HgFjzlAJeHvyyBp9eosv3K1PWvUUj5b2H/csQmZJB9L9OSVQhC8cy1SujYlfiNj4H50YsfCLXHip18c19FOaZMCo5cMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IgQ0HwdY; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e66b5492c9so8010015ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755547896; x=1756152696; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MgER9EDMTIBQYEXALGtaORMx9kWQNeO2USv3gouUbwI=;
-        b=AhFaCD4Nl9EopiaGZc8HNwqYRWJj52O1wK+l2J3UFkhKUTc5PVXPkp19RFFd4JF9sy
-         lCupkBnjq/E8jupojAcWlh5l2yMen7YPTGamNDrxhvhEbHjQX6sDV8hN1LRM1AtegCQA
-         AgH6wA7K68dgE1uAH3SPuciQsdhBuMSX6HAj8=
+        d=linuxfoundation.org; s=google; t=1755547926; x=1756152726; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sfUMdozgYccOdsGAt0DPTeKUGhDvpTTBYKEk2M/luYc=;
+        b=IgQ0HwdYzu2I2C7Gr77HnXW8n8lpSwCu3WDkt/3qzBJ0l6WapWvNYbcDEoA63vKEPM
+         SxcIBIubZthEViBpTG2Z3R59mlKMjKKez52zMDm5QHDuzSQZei/3nfYI7bO/71VD7z35
+         gAyJYEdPc3A1jC4ClyLiswKRU0Fgy+EM16u9U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755547896; x=1756152696;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MgER9EDMTIBQYEXALGtaORMx9kWQNeO2USv3gouUbwI=;
-        b=KTaKadC5xoMg7XsYPAO1XdmqoHTIwb3Z82387SVU4OMfPLkQWEpv+aZio13i0aHSQN
-         OZqyyLu3nO5VfxMcFD46H2GdhtGUezqOAAORR7VzduBq7U9mn+O2AY0unYhU71zAFyCL
-         gMVbomKmjjHV7l3dY3x0oeCgnSydVdDhDCSesQ+4el/bsLHAH/RZCsZafPX7Ae749mue
-         ekID+HnCQAE9GOPuUYm9oLZXA38eiZeQVDzO/JjSANY9Ca+hUjWNokX3RXgCevYlSN9i
-         Qb9JpCG1atymd1nGdW60K2OZ1CHVbrzYggqplvw499u93kGu+RTNl43xFT1NBzt8Dyuq
-         MFzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMxtl/YxyZ4nfSrmY8BZEqFUaTr0lQ0+HTD62Vk2/PVWyaE9QOETaWXPDAsEbhOx4aIIrb4CaY3qQJWFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOrpjtRkdZrBu6MHmXnYtiA5tnuY0yi5T92YqijYzxpzD0JUAN
-	N6qdxN0b3JMYMTrRIM8o1YqtVmmUtwaqecYVpiKvLiXQEWCm8hLr4cgWNQgXYsTR48J/nslBfIM
-	yNXIwlQ==
-X-Gm-Gg: ASbGnctGDqtVNr8W5Ma8gx9UQx3bAhSJQge4nteHu+MdesQ3X9hAI9qd6dQJpIh+NIG
-	cZI8mftdvt2sp96okUV4/8l30zXdMgvbreDChV3836m67VUK0gs8121YDLbPlZMeRAt8kJOVmrx
-	W13nQvBjbBlD/7BJvP+QrqGI/R2dpy6Mzu0iR0rVCHmuPKetvHLXntbCDquMbIR4oJZygOmm6rw
-	wUmO/Fz+ePFhyqkrpgvznnIjZ+qOHj0ulQZSjQ9/CxoXFnNSSMSiUFNR7Fl9Hu4Y6OaLftFj6oj
-	wJh9wryjT8TWZ9cCeJsgDt9NT6ZR3Udhklhm/BcLnRcQa6MXBILzTgEjkWGjATrB4dYw9HMAK4l
-	qFrcp65WYIYdWa+ARRTuvplE/lzhRW1MoAEl29C/8Mguzz2IG5xN6WPV0WbmN6KKgeCr698n1
-X-Google-Smtp-Source: AGHT+IEcNs04oNAXIPG2/71CdV0M5UBk6+YOxdiSZpAexW4g41Dklrpw/X45ZpzG63WA9HRsLB5teg==
-X-Received: by 2002:a17:906:a413:b0:af6:3248:62bb with SMTP id a640c23a62f3a-afddcfb5a3amr6824866b.30.1755547896240;
-        Mon, 18 Aug 2025 13:11:36 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd010e8asm849637866b.92.2025.08.18.13.11.34
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1755547926; x=1756152726;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sfUMdozgYccOdsGAt0DPTeKUGhDvpTTBYKEk2M/luYc=;
+        b=m/ZLJ38gkYTr3T2dZ9/jILaRZMj8EH5xIR2WtscqY7HjA68AeQ6rjnlRmRLn6wPX6J
+         vBLvpj3ZcoW10Nkwet3ZMEyy9IJ3R8/RVsfURvXrtDoAc4U7E58ZojtKbo4HKfuSeqJ0
+         ayBki1Px9qaYGhD1fBupK4sVKBjpwfC/VbtJmIydnylB96F1Gqofq0HstBKR0gkeegma
+         zpaVqe+ivPrlO0Q9XpkKGdSN+EnFV8qr6hzVEwBeAKOBD9V+h7cfHERcCo8pxmEHgGMq
+         HJltMOSbZlNGGwVp9vvgw0eM0hEcLHV5+T1i5pe8FZITS4QLifHeThXzZbNfBd4BsLeZ
+         bGPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfaUoh9DQ2CiZKMnRzfbyJgECzxw5rAdm1wA3eYUpEqvSh2bbPHEbt+cVGnzu2JxlRkdHeeyRDKWGrSIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxXzYA6Ko7VNfYrjBzD9oFidfGIXLHvkTGYXzCgzFYeAvObmz3
+	Njss7K5j5UmDHlxEbNkxUVC6gDyEmW5n3QZxBXzVbzedDirUGxUI1519sDMlgFnqyqM=
+X-Gm-Gg: ASbGncu4p6bbhpZ2WePbhTai7no2rajqqV0mTkUNQg0CL/KLBSVluYfk6tcEypYoK+G
+	tVr+yXSz6Kv1lhlcnZM9RdOOCSF7+muBbqse4+/Kcdc2OFkIxjaFwcSB8tFWFF0/XNzQS61WspA
+	U4fJRBCoNvgF0XClnyxYmXPVcLiXGXJxSgyEGuTBFmBiLVUae12vy5FuwQR9wr/RIWbUKIfLTdi
+	gSvZlXkH5fkmHOK6K5TlFB0aPW1pMAfpzGeMTOGyL+VTjnP4cvkCnqxzvecdXqMXD9vlHMTspFl
+	+7vnEQj6fMXR4YvxqeyWL504yiwROgJY6SdfJEeW9ZwvxL+0uB/SiQ+1seT87gRhtBdYiRXfCvW
+	lZYDvCSNfjsGQlSNhzKbs6gqa0/Gb0rCm5VYvkVnBgbp84A==
+X-Google-Smtp-Source: AGHT+IFcGP4eRLk9XuN/IRxuYbZSmR1FokdhKrwhASissjzBWd2Po9X+zsiqxt4bWrarLNWlvZDNHQ==
+X-Received: by 2002:a05:6e02:3e93:b0:3e6:72e4:c5c with SMTP id e9e14a558f8ab-3e6766555d2mr930395ab.19.1755547921189;
+        Mon, 18 Aug 2025 13:12:01 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c9477ef61sm2927751173.8.2025.08.18.13.12.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 13:11:34 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb7a7bad8so606754766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:11:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVfuVvv8bMLPyMmPcb30TT1102qI5byGzIwvsA1uBzdjU2qMLEQCZsssarUc90vXDFHQ/D9dMutYxd9mjI=@vger.kernel.org
-X-Received: by 2002:a17:907:7ea6:b0:af9:3116:e110 with SMTP id
- a640c23a62f3a-afddd20426dmr6122366b.58.1755547893874; Mon, 18 Aug 2025
- 13:11:33 -0700 (PDT)
+        Mon, 18 Aug 2025 13:12:00 -0700 (PDT)
+Message-ID: <bb7f37d2-dba8-4d9a-81f3-e1125a620bc8@linuxfoundation.org>
+Date: Mon, 18 Aug 2025 14:11:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818115015.2909525-1-treapking@chromium.org>
-In-Reply-To: <20250818115015.2909525-1-treapking@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 18 Aug 2025 13:11:18 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XZK3HO8iC3VyMH+fP_XG2ogSNvUWuUcPFUxn1jU6-JZA@mail.gmail.com>
-X-Gm-Features: Ac12FXyrfB2_QJdzc3F-AXnavWgZcAA1_jLXyiQVztCZpVvUWjbjdascj2sVMMs
-Message-ID: <CAD=FV=XZK3HO8iC3VyMH+fP_XG2ogSNvUWuUcPFUxn1jU6-JZA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] drm/panel: Allow powering on panel follower after
- panel is enabled
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250818124505.781598737@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 8/18/25 06:39, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.2 release.
+> There are 570 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-On Mon, Aug 18, 2025 at 4:50=E2=80=AFAM Pin-yen Lin <treapking@chromium.org=
-> wrote:
->
-> Some touch controllers have to be powered on after the panel's backlight
-> is enabled. To support these controllers, introduce .panel_enabled() and
-> .panel_disabling() to panel_follower_funcs and use them to power on the
-> device after the panel and its backlight are enabled.
->
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
->
-> ---
->
-> Changes in v3:
-> - Update kernel-docs of drm_panel_add_follower() and drm_panel_remove_fol=
-lower()
-> - Fix the order of calling .panel_disabling() and .panel_unpreparing()
-> - Add a blank line before the goto label
->
-> Changes in v2:
-> - Replace after_panel_enabled flag with enabled/disabling callbacks
->
->  drivers/gpu/drm/drm_panel.c | 73 +++++++++++++++++++++++++++++++------
->  include/drm/drm_panel.h     | 14 +++++++
->  2 files changed, 76 insertions(+), 11 deletions(-)
+Compiled and booted on my test system. No dmesg regressions.
 
-Looks good to me now.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-If there are no objections, I'll plan to apply patch #1 next week to
-give people a little time to speak up. As per discussion in v2 [1],
-unless we hear back an "Ack" from HID maintainers then patch #2 will
-just need to wait a while before it can land in the HID tree.
-
-Question for Jessica / Neil: what do you think about landing
-${SUBJECT} patch in drm-misc-fixes instead of drm-misc-next? This is a
-dependency for the next patch which is marked as a "Fix". It'll mean
-that the patch can make it into mainline faster so the HID patch could
-land faster. The patch is also pretty low risk...
-
-[1] https://lore.kernel.org/r/CAD=3DFV=3DUV8_XGmxC=3D7Z18PEnj6wKz+yZQuV_4h+=
-LJh_MNCqszvg@mail.gmail.com/
-
-
--Doug
+thanks,
+-- Shuah
 
