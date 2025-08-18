@@ -1,124 +1,172 @@
-Return-Path: <linux-kernel+bounces-774048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05AEB2ADFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B99B2AE02
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A887B3D89
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1EA3BDF19
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5860D340DA5;
-	Mon, 18 Aug 2025 16:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA76340D9A;
+	Mon, 18 Aug 2025 16:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdil02pz"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQxzTJfm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B62E322DB1;
-	Mon, 18 Aug 2025 16:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D8B1487F6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755534128; cv=none; b=uNbv1HRjzzJxgJxbliR2uXz7B31G9He4yFjrszbQzywr5KOvIxhiPk1RdjL6FxYiPBi6uswnd9wf+AXRywwfxvBCbhHfhpF8b1HGD4AVTW+TeBc0+ZWrkfltVHtvwCh+qCU/4YX2pwmq5DSXhpUoai+gCGzMWBz1mskUkL9Jhyk=
+	t=1755534226; cv=none; b=GR2TRzBiyoY0jSAKLeAFckZIQ9vzEygBnT/9vzFjm6L9dEOSkD7otxUU85LkhigfWjN2E3VccFr+aN6v5dknG/iqozH4OJuhDYqdKlCiLGlanuWvUCG3jRhc6v48EfDO+2M68rIjfD+vddhaedhzYndBNlNZFeGV77GpypOeybM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755534128; c=relaxed/simple;
-	bh=Qfj7pMI5nMca/IztHecfq2L2z9ctOJVAhHH/VFFcIq8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpQgJZtEmYdirgMcA63ENzyY9Fc4yMVaoZAiJBiZRmGV/ATBgqtnxDXPyWpYis9eG9y3turRDWByICLdvnHJptl1vwMPfC6KuKOA85flwXrk8FPOS9sJE9Qm/OTCqdaehk2DWotfDkopon3nrxVAip2ZRM4dT6tJIcjwZspF4M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdil02pz; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9dc5c2f0eso2880297f8f.1;
-        Mon, 18 Aug 2025 09:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755534125; x=1756138925; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qfj7pMI5nMca/IztHecfq2L2z9ctOJVAhHH/VFFcIq8=;
-        b=bdil02pzmMYgQLib8kv7PrNfWjTae3sbg8KRi5+V6HimzRDRjtBU6WyOYytYZRXG+k
-         OGryJ7Fz/356fYe35r7LQhOt665sscvmK3KtaMF0TniIe0S+echZYEcKkeeT2Wcek9Oy
-         0+dtO7KbOcED+Q/auc/vm3cV1zyZwk0NPAMWLJMpJSXWmpGa3UcmBYhDRy/SWFaxR6tR
-         NLobr8Dc61XYd5gwjgEM74lcBwmJzmj3PR1Gqiw4KYr5wetFELmDwO6TiNqpNCkcklo8
-         OzGNk4VTAAN44L6LJ7r5X7ikB4gMKfz4I9LcDBF1vYCi/77AucUp+3QBwkj5iluqCT2E
-         AInQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755534125; x=1756138925;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qfj7pMI5nMca/IztHecfq2L2z9ctOJVAhHH/VFFcIq8=;
-        b=WglqjYNaNLRU8piyS9pZfsvZEJ/8Eoh6RDkhRvKAoYbOY8U1l1trBqr1zYr3M+rwic
-         BIo7PrSVxTN/RnmEKM8Js9MXq5blQrp6M85k703XO0MuhA/Gj0BCnM2humIbI+XG0/Z7
-         AxqJNVQvMl8QtjMhHYHxfbzF+hhT0RQNodneFl/I8eaqyrJSz+7vDzzDpnM9mhFnCgri
-         n9FnmjQ2QPpwzmIY5+licjV4u3Rla6fBZhTyxG+7vgMwW0RO3EFF9XBejyPpkQIQNLDS
-         fMD7hOdU6rMwvGkmcm3n4RFLyuHYr9YFG+1PfviuR7EVYzRAIjxappIsR/L3k9FozQNr
-         0vFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYT0JBtnnaNeSolaLAkg7sO0FBTmYcl0ARvl601Gf3RROaDcOQY1VktskfCkPgYe6xp6zA6T5Dgp99wJw=@vger.kernel.org, AJvYcCV3cjOIcotxrGKbSXQleHTR3vEZLg6bgtJWIKbcXaAYZo7X8qBoH0+H1GZMf9KPFDXxsmEe8Dg73nfh1yFco6qKN8Y=@vger.kernel.org, AJvYcCXKmJQpAJLj3n/Ms9oYlV5MKzn4u+u72FOmOSQ3wwa7jV53NHC7EbTusObd100eub5qIFBS5mdr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzByZ8ErA7/4zbLg/f0N6v/2MzdboIxpHLzLmoGJlrXfc0/8B2B
-	W1TqIZM40CVsGl6Mfy3vcHr1dr/BjMUT2kiq/f/zud5bCoyrsE/FWmK5qefK3Mo/G5LolEZYrHy
-	NL9A4tvNi5EHkaMXB/igzJBxFRspRw1s=
-X-Gm-Gg: ASbGncsj9PdjwtUWHFeaMb1I8PvRIcyDXn2XBzs1O/t/WwuhrlJzm7wpahvImTahda0
-	gPJsMK8GVsYaRWv/9/STQxMuC0qAchbBb0tOZUJk/yFbL6Ko//6qzU3M+rTfNemaTlWWyoggCWM
-	RdieNqO5UJw9iXcoJgNFYHa/vXNVHlqueuP2aFqYmUs3LgublxXo5sWte9wWwJPjRVCTm/68Vz8
-	L6Q9Yapr6quUrJTwjQ=
-X-Google-Smtp-Source: AGHT+IEbGGnQPMWCIXAvL8L/280oabkOTCvuCKOcom0cP0aggBgCZfl5KWPrE4xRC8bDhh/xPsTfXReBOIP5EAo/xvg=
-X-Received: by 2002:a05:6000:2008:b0:3b7:970d:a565 with SMTP id
- ffacd0b85a97d-3bc6aa27b1cmr6648147f8f.46.1755534125386; Mon, 18 Aug 2025
- 09:22:05 -0700 (PDT)
+	s=arc-20240116; t=1755534226; c=relaxed/simple;
+	bh=bavou1z2bEx1QMmOkYWVYFeIDWBWoCDHUEhUP8khiAg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F8TEV03QY6iIHzPcVsGTYF1lTgZJ25f/DyScyHTDnqFhE9kymg4V+KY+iM+PL8vHxSfKI4LCNGivOtcUrKM4NrP/+b3Dw4gCrhh9g9BTZ9W3bhLTfQiNptjNQ0mNRu+3/fBNs0UWYxVWHwb1WPVQXOl+pLhXnNVDEDLqMjqGOHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQxzTJfm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68635C4CEEB;
+	Mon, 18 Aug 2025 16:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755534226;
+	bh=bavou1z2bEx1QMmOkYWVYFeIDWBWoCDHUEhUP8khiAg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cQxzTJfmFQMmtGX1g+/qHHGZ+tzYFA0fn5/QVe/lf80Lf6NxhKOfswUmusWfmrcur
+	 5UGsuLabAQtEdxdxObJ8RsBiWvpUOuowgdKAo3ajUMclAGk+GnVa3N1Eit42G9Gpxn
+	 4jOR4p/quZZ8aknJgwVfsrdWUmqxHLeWbMP1cFdfwpDrf3OMApn+wC+2seX0E78Ils
+	 rRz1ooCoTPEkzUBrdlKgkQXgDOhX+uISyO6zC7m5dUSAqc9U435FEftS/54tf3Aayh
+	 +qnUITBsqDJZ2DARXR+hqLITYkMyEMVRQf/q7AhvhyErPOZg34G0FC9bquHoX/NM5z
+	 8zC25mwfgo4Gw==
+Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uo2e8-008gFV-Bc;
+	Mon, 18 Aug 2025 17:23:44 +0100
+Date: Mon, 18 Aug 2025 17:23:43 +0100
+Message-ID: <87ikikmwds.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: <tglx@linutronix.de>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<fabrice.gasnier@foss.st.com>,
+	<mani@kernel.org>
+Subject: Re: [PATCH v1] irqchip: gic-v2m: Handle Multiple MSI base IRQ Alignment
+In-Reply-To: <20250811103942.4144-1-christian.bruel@foss.st.com>
+References: <20250811103942.4144-1-christian.bruel@foss.st.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250818150757.3977908-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <d33d201d-7777-4ed6-b50c-7429c54a2533@lunn.ch>
-In-Reply-To: <d33d201d-7777-4ed6-b50c-7429c54a2533@lunn.ch>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 18 Aug 2025 17:21:38 +0100
-X-Gm-Features: Ac12FXzeNb6IleaROwMEVtexu0XsPJ7th3VmpiAvAFefIU4smznv10ITNB_ba98
-Message-ID: <CA+V-a8v+b3qHL=64xnVPoG8M+7drieanw5wWRPZFSZe-XqOigw@mail.gmail.com>
-Subject: Re: [PATCH] net: pcs-rzn1-miic: Correct MODCTRL register offset
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 86.149.246.145
+X-SA-Exim-Rcpt-To: christian.bruel@foss.st.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, fabrice.gasnier@foss.st.com, mani@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Andrew,
+On Mon, 11 Aug 2025 11:39:42 +0100,
+Christian Bruel <christian.bruel@foss.st.com> wrote:
+> 
+> The PCI Local Bus Specification (section 6.8.3.4 in Rev 3) permits
+> modifying the low-order bits of the DATA register to encode the interrupt
+> number. These bits must be reserved, but the base SPI may not be aligned to
+> the requested number of SPIs.
 
-Thank you for the feedback.
+The PCI spec knows nothing of SPIs.
 
-On Mon, Aug 18, 2025 at 4:12=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+> For example, with an initial MSI_TYPER base SPI of 0x16A and allocating a
+> multiple MSI of size 8, the offset returned is 8, resulting in an MSI DATA
+> base of 0x172.
+> This causes the endpoint device to send interrupt 3 wrong interrupt number:
 >
-> On Mon, Aug 18, 2025 at 04:07:57PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
->
-> Please set the Subject: correctly.
->
-My bad, I'll take care of this in the next version.
 
-> > Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
-> > According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
-> > [0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offse=
-t
-> > 0x8, not 0x20 as previously defined.
->
-> What effect does this have? How would i notice it is broken?
->
-I will update the commit description.
+Please use the correct terminology: an interrupt is a signal delivered
+to the CPU. A *message* is what the device sends, which the GIC turns
+into an interrupt. Here, you are using the same word for two different
+things.
 
-Cheers,
-Prabhakar
+The problem is that the device encodes a delta from a base message,
+that the delta is encoded with log2(nr_vectors) bits, OR'ing the
+vector number with the base message. If the base message is not
+correctly aligned, shit happens.
+
+> 1st MSI = 0x172 | 0x0 = 0x172
+> 2nd MSI = 0x172 | 0x1 = 0x173
+> 3rd MSI = 0x172 | 0x2 = 0x172 wrongly triggers the 1st MSI
+> ...
+> 
+> To fix this, use bitmap_find_next_zero_area_off() instead of
+> bitmap_find_free_region() applying an initial offset of
+> base_spi - rounded(base_spi, nr_irqs) to accommodate the required alignment
+> for the first MSI.
+> 
+> With the above case, the returned bitmap offset is 6 which results in the
+> correct interrupts number encoding:
+> 
+> 1st MSI = 0x170 | 0x0 = 0x170
+> 2nd MSI = 0x170 | 0x1 = 0x171
+> 3rd MSI = 0x170 | 0x2 = 0x172
+> ...
+
+Please rephrase this commit message so that it actually makes sense.
+We shouldn't need examples if the commit message was correctly
+written.
+
+> 
+> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> ---
+> Changes in v1:
+>    (Marc Zyngier)
+>  - Replace the incorrect usage of msi_attrib.multiple with nr_irqs
+>  - Reworked changelog
+> ---
+>  drivers/irqchip/irq-gic-v2m.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+> index 24ef5af569fe..2d5cf36340b1 100644
+> --- a/drivers/irqchip/irq-gic-v2m.c
+> +++ b/drivers/irqchip/irq-gic-v2m.c
+> @@ -153,14 +153,18 @@ static int gicv2m_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+>  {
+>  	msi_alloc_info_t *info = args;
+>  	struct v2m_data *v2m = NULL, *tmp;
+> -	int hwirq, offset, i, err = 0;
+> +	int hwirq, i, err = 0;
+> +	unsigned long align_off, offset;
+
+Move the definition of align_off inside the loop.
+
+> +	unsigned long align_mask = nr_irqs - 1;
+>  
+>  	spin_lock(&v2m_lock);
+>  	list_for_each_entry(tmp, &v2m_nodes, entry) {
+> -		offset = bitmap_find_free_region(tmp->bm, tmp->nr_spis,
+> -						 get_count_order(nr_irqs));
+> -		if (offset >= 0) {
+> +		align_off = tmp->spi_start - (tmp->spi_start & ~align_mask);
+> +		offset = bitmap_find_next_zero_area_off(tmp->bm, tmp->nr_spis, 0,
+> +							nr_irqs, align_mask, align_off);
+> +		if (offset < tmp->nr_spis) {
+>  			v2m = tmp;
+> +			bitmap_set(v2m->bm, offset, nr_irqs);
+>  			break;
+>  		}
+>  	}
+
+Isn't the GICv3 MBI driver affected by the same issue?
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
