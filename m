@@ -1,173 +1,165 @@
-Return-Path: <linux-kernel+bounces-773330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8808FB29E60
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47646B29DC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1A63A7A78
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713283BAC30
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2278A30F81C;
-	Mon, 18 Aug 2025 09:50:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1675330F81E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD0330F540;
+	Mon, 18 Aug 2025 09:25:20 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8603B30DEDE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510645; cv=none; b=mQzw/C43xC8vRL+CheYKY2leZ1RYZfLQpBoMlyTkdMH7dDgjEFr8EC/cmU78aLaVp0etV8JH6X+m0lF1DOWbrOgTi+nI3Q3gAwjI/PtdJjjvKnHLbiTudJYSJ1gsYoz72XAaNBM9TNJzCilPKnFKDk2yh0yiXZeD6LDCe4eLr9Y=
+	t=1755509120; cv=none; b=RXdDfCT9HopKIUgNSXRz12LaFO7w8XrM5MDnbyBGkIif9TltLSiYQQLHoOjUbd2AFna5uFUTMxALKKWc0cmfBcTBz6f6DbB4eXKkbAHR2gcourAehXWRc4I7LI3spmcSPZvvVeOa0SRRfSvlfm1sT/kA43r+HVsrBqcd43rck40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510645; c=relaxed/simple;
-	bh=TAsscSyJtpUCGKm9ZAZDquJX675SP3WAqWe4d5FCqsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nN5CaDzGoEsxzX7WxRenmQm4ILGv0M+UzimdoP75//2Iuizg30mOzaeo54nzgeGK6TPrLuhKXYRrkBUautwLVDh5XgZ/Y6a3xRP8DiEQKzFkNJtsAGXczcvlihxE/vmzWazE87zKTWRXeT5fx0wqqvwzqzuPdHlQcAQ7DcvgzaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c56jh6bZ5z9sSb;
-	Mon, 18 Aug 2025 11:24:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id PrRcsrkZHasd; Mon, 18 Aug 2025 11:24:24 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c56jh5Kwwz9sSL;
-	Mon, 18 Aug 2025 11:24:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A19568B764;
-	Mon, 18 Aug 2025 11:24:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id iktC4Suv_m60; Mon, 18 Aug 2025 11:24:24 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7F5358B763;
-	Mon, 18 Aug 2025 11:24:24 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	s=arc-20240116; t=1755509120; c=relaxed/simple;
+	bh=0HMfgsC4jFQW6qhuB5RULVJukoMoLBlHTiXRFu0GaPQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=okeooI98agUqBdvLYepy2UmnC9RQDVgwBD6zZipsZxJnoY+uMpyd5HK907hPB6rAPxOsRViAJe/9RZdFVeihHGUH4vCmAYKJCSpc0LuVreYQwr8twgga1mjf2MLk1eeDt37GWcB5vDOsKz9zYvBoeV6A3KlNNH/Gji7d+7hhoOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+	by 156.147.23.51 with ESMTP; 18 Aug 2025 18:25:08 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
+	by 156.147.1.127 with ESMTP; 18 Aug 2025 18:25:08 +0900
+X-Original-SENDERIP: 10.178.31.96
+X-Original-MAILFROM: chanho.min@lge.com
+From: Chanho Min <chanho.min@lge.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/8xx: Remove offset in SPRN_M_TWB
-Date: Mon, 18 Aug 2025 11:24:22 +0200
-Message-ID: <9710d960b512996e64beebfd368cfeaadb28b3ba.1755509047.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	gunho.lee@lge.com,
+	stable@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Chanho Min <chanho.min@lge.com>,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH] ipv6: mcast: extend RCU protection in igmp6_send()
+Date: Mon, 18 Aug 2025 18:24:53 +0900
+Message-Id: <20250818092453.38281-1-chanho.min@lge.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755509062; l=3826; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=TAsscSyJtpUCGKm9ZAZDquJX675SP3WAqWe4d5FCqsY=; b=RWSzwQK+jm9lIDUEzWeDOAVOPN+4fOow1YA3gENnqhWmpUJzpyJT8NKCSyZib+NMG+3ptGUcT 3jvCrlaLhTjCoCZHpuEYabHWnWnpcpW39JpthwYDm7O4y4Vo+lUyT9H
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
 
-SPRN_M_TWB contains the address of task PGD minus an offset which
-compensates the offset required when accessing the kernel PGDIR.
-However, since commit ac9f97ff8b32 ("powerpc/8xx: Inconditionally use
-task PGDIR in DTLB misses") and commit 33c527522f39 ("powerpc/8xx:
-Inconditionally use task PGDIR in ITLB misses") kernel PGDIR is not
-used anymore in hot pathes.
+From: Eric Dumazet <edumazet@google.com>
 
-Remove this offset which was added by
-commit fde5a9057fcf ("powerpc/8xx: Optimise access to swapper_pg_dir")
+[ Upstream commit 087c1faa594fa07a66933d750c0b2610aa1a2946 ]
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+igmp6_send() can be called without RTNL or RCU being held.
+
+Extend RCU protection so that we can safely fetch the net pointer
+and avoid a potential UAF.
+
+Note that we no longer can use sock_alloc_send_skb() because
+ipv6.igmp_sk uses GFP_KERNEL allocations which can sleep.
+
+Instead use alloc_skb() and charge the net->ipv6.igmp_sk
+socket under RCU protection.
+
+Cc: stable@vger.kernel.org # 5.4
+Fixes: b8ad0cbc58f7 ("[NETNS][IPV6] mcast - handle several network namespace")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reviewed-by: David Ahern <dsahern@kernel.org>
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Link: https://patch.msgid.link/20250207135841.1948589-9-edumazet@google.com
+[ chanho: Backports to v5.4.y. v5.4.y does not include
+commit b4a11b2033b7(net: fix IPSTATS_MIB_OUTPKGS increment in OutForwDatagrams),
+so IPSTATS_MIB_OUTREQUESTS was changed to IPSTATS_MIB_OUTPKGS defined as
+'OutRequests'. ]
+Signed-off-by: Chanho Min <chanho.min@lge.com>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/head_8xx.S       | 16 +++++++++-------
- arch/powerpc/mm/nohash/mmu_context.c | 10 +---------
- 2 files changed, 10 insertions(+), 16 deletions(-)
+ net/ipv6/mcast.c | 32 +++++++++++++++-----------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
 
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 56c5ebe21b99..78942fd6b4b9 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -190,7 +190,7 @@ instruction_counter:
- 	INVALIDATE_ADJACENT_PAGES_CPU15(r10, r11)
- 	mtspr	SPRN_MD_EPN, r10
- 	mfspr	r10, SPRN_M_TWB	/* Get level 1 table */
--	lwz	r11, (swapper_pg_dir-PAGE_OFFSET)@l(r10)	/* Get level 1 entry */
-+	lwz	r11, 0(r10)	/* Get level 1 entry */
- 	mtspr	SPRN_MD_TWC, r11
- 	mfspr	r10, SPRN_MD_TWC
- 	lwz	r10, 0(r10)	/* Get the pte */
-@@ -233,7 +233,7 @@ instruction_counter:
- 	 */
- 	mfspr	r10, SPRN_MD_EPN
- 	mfspr	r10, SPRN_M_TWB	/* Get level 1 table */
--	lwz	r11, (swapper_pg_dir-PAGE_OFFSET)@l(r10)	/* Get level 1 entry */
-+	lwz	r11, 0(r10)	/* Get level 1 entry */
+diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
+index 7d0a6a7c9d283..c2dc70a69be94 100644
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -1977,21 +1977,21 @@ static void mld_send_cr(struct inet6_dev *idev)
  
- 	mtspr	SPRN_MD_TWC, r11
- 	mfspr	r10, SPRN_MD_TWC
-@@ -375,7 +375,7 @@ FixupPGD:
- 	mfspr	r10, SPRN_DAR
- 	mtspr	SPRN_MD_EPN, r10
- 	mfspr	r11, SPRN_M_TWB	/* Get level 1 table */
--	lwz	r10, (swapper_pg_dir - PAGE_OFFSET)@l(r11)	/* Get the level 1 entry */
-+	lwz	r10, 0(r11)	/* Get the level 1 entry */
- 	cmpwi	cr1, r10, 0
- 	bne	cr1, 1f
- 
-@@ -384,7 +384,7 @@ FixupPGD:
- 	lwz	r10, (swapper_pg_dir - PAGE_OFFSET)@l(r10)	/* Get the level 1 entry */
- 	cmpwi	cr1, r10, 0
- 	beq	cr1, 1f
--	stw	r10, (swapper_pg_dir - PAGE_OFFSET)@l(r11)	/* Set the level 1 entry */
-+	stw	r10, 0(r11)	/* Set the level 1 entry */
- 	mfspr	r10, SPRN_M_TW
- 	mtcr	r10
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
-@@ -412,9 +412,10 @@ FixupDAR:/* Entry point for dcbx workaround. */
- 	tophys(r11, r10)
- 	mfspr	r11, SPRN_M_TWB	/* Get level 1 table */
- 	rlwinm	r11, r11, 0, 20, 31
--	oris	r11, r11, (swapper_pg_dir - PAGE_OFFSET)@ha
-+	oris	r11, r11, (swapper_pg_dir - PAGE_OFFSET)@h
-+	ori	r11, r11, (swapper_pg_dir - PAGE_OFFSET)@l
- 3:
--	lwz	r11, (swapper_pg_dir-PAGE_OFFSET)@l(r11)	/* Get the level 1 entry */
-+	lwz	r11, 0(r11)	/* Get the level 1 entry */
- 	rlwinm	r11, r11, 0, ~_PMD_PAGE_8M
- 	mtspr	SPRN_MD_TWC, r11
- 	mfspr	r11, SPRN_MD_TWC
-@@ -535,7 +536,8 @@ start_here:
- 	li	r0,0
- 	stwu	r0,THREAD_SIZE-STACK_FRAME_MIN_SIZE(r1)
- 
--	lis	r6, swapper_pg_dir@ha
-+	lis	r6, swapper_pg_dir@h
-+	ori	r6, r6, swapper_pg_dir@l
- 	tophys(r6,r6)
- 	mtspr	SPRN_M_TWB, r6
- 
-diff --git a/arch/powerpc/mm/nohash/mmu_context.c b/arch/powerpc/mm/nohash/mmu_context.c
-index a1a4e697251a..28a96a10c907 100644
---- a/arch/powerpc/mm/nohash/mmu_context.c
-+++ b/arch/powerpc/mm/nohash/mmu_context.c
-@@ -203,15 +203,7 @@ static unsigned int steal_context_up(unsigned int id)
- static void set_context(unsigned long id, pgd_t *pgd)
+ static void igmp6_send(struct in6_addr *addr, struct net_device *dev, int type)
  {
- 	if (IS_ENABLED(CONFIG_PPC_8xx)) {
--		s16 offset = (s16)(__pa(swapper_pg_dir));
--
--		/*
--		 * Register M_TWB will contain base address of level 1 table minus the
--		 * lower part of the kernel PGDIR base address, so that all accesses to
--		 * level 1 table are done relative to lower part of kernel PGDIR base
--		 * address.
--		 */
--		mtspr(SPRN_M_TWB, __pa(pgd) - offset);
-+		mtspr(SPRN_M_TWB, __pa(pgd));
+-	struct net *net = dev_net(dev);
+-	struct sock *sk = net->ipv6.igmp_sk;
++	const struct in6_addr *snd_addr, *saddr;
++	int err, len, payload_len, full_len;
++	struct in6_addr addr_buf;
+ 	struct inet6_dev *idev;
+ 	struct sk_buff *skb;
+ 	struct mld_msg *hdr;
+-	const struct in6_addr *snd_addr, *saddr;
+-	struct in6_addr addr_buf;
+ 	int hlen = LL_RESERVED_SPACE(dev);
+ 	int tlen = dev->needed_tailroom;
+-	int err, len, payload_len, full_len;
+ 	u8 ra[8] = { IPPROTO_ICMPV6, 0,
+ 		     IPV6_TLV_ROUTERALERT, 2, 0, 0,
+ 		     IPV6_TLV_PADN, 0 };
+-	struct flowi6 fl6;
+ 	struct dst_entry *dst;
++	struct flowi6 fl6;
++	struct net *net;
++	struct sock *sk;
  
- 		/* Update context */
- 		mtspr(SPRN_M_CASID, id - 1);
--- 
-2.49.0
-
+ 	if (type == ICMPV6_MGM_REDUCTION)
+ 		snd_addr = &in6addr_linklocal_allrouters;
+@@ -2002,20 +2002,21 @@ static void igmp6_send(struct in6_addr *addr, struct net_device *dev, int type)
+ 	payload_len = len + sizeof(ra);
+ 	full_len = sizeof(struct ipv6hdr) + payload_len;
+ 
+-	rcu_read_lock();
+-	IP6_UPD_PO_STATS(net, __in6_dev_get(dev),
+-		      IPSTATS_MIB_OUT, full_len);
+-	rcu_read_unlock();
++	skb = alloc_skb(hlen + tlen + full_len, GFP_KERNEL);
+ 
+-	skb = sock_alloc_send_skb(sk, hlen + tlen + full_len, 1, &err);
++	rcu_read_lock();
+ 
++	net = dev_net_rcu(dev);
++	idev = __in6_dev_get(dev);
++	IP6_INC_STATS(net, idev, IPSTATS_MIB_OUTPKTS);
+ 	if (!skb) {
+-		rcu_read_lock();
+-		IP6_INC_STATS(net, __in6_dev_get(dev),
+-			      IPSTATS_MIB_OUTDISCARDS);
++		IP6_INC_STATS(net, idev, IPSTATS_MIB_OUTDISCARDS);
+ 		rcu_read_unlock();
+ 		return;
+ 	}
++	sk = net->ipv6.igmp_sk;
++	skb_set_owner_w(skb, sk);
++
+ 	skb->priority = TC_PRIO_CONTROL;
+ 	skb_reserve(skb, hlen);
+ 
+@@ -2040,9 +2041,6 @@ static void igmp6_send(struct in6_addr *addr, struct net_device *dev, int type)
+ 					 IPPROTO_ICMPV6,
+ 					 csum_partial(hdr, len, 0));
+ 
+-	rcu_read_lock();
+-	idev = __in6_dev_get(skb->dev);
+-
+ 	icmpv6_flow_init(sk, &fl6, type,
+ 			 &ipv6_hdr(skb)->saddr, &ipv6_hdr(skb)->daddr,
+ 			 skb->dev->ifindex);
 
