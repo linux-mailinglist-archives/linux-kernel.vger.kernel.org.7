@@ -1,454 +1,537 @@
-Return-Path: <linux-kernel+bounces-773407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2768B29F7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9C4B29FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A49657A502F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A5D5E1C72
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38F22C2342;
-	Mon, 18 Aug 2025 10:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0FF30F81E;
+	Mon, 18 Aug 2025 10:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PlK95fxE"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Ns5OP/Vn"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B77258ED3
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A4C30100E;
+	Mon, 18 Aug 2025 10:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755514159; cv=none; b=mRUnL/Msb2sTnhwAn1dwjkDX7JByYY4YVAF5ZXMBjipo/F6pW0/FZBvdq0z+dLXMEzdHOyo/YUJ37dNESzwqvguxAU3TR9muvoaRiaDgpJDOnlTW4SvCoPVWTicNNq/TNXuVYrBN13nae+EDw4LV6ehzBNlc62HHNzHVeNdmDMo=
+	t=1755514412; cv=none; b=ajNZ5hAof0lFpLR1PIo1Ix5BTy6oj4X2dQnfphBlIM7o6FW5ivFVvSxD40BCbnfh6YCTgmmi//zmkrJwNbbwESejoMIRib7YmZ5tz/sOTyMA+5rAXXA2XytdOIu0Gh4ClPVZ3Q70EONk6qTF8Ri/HkxA43TCL4nWF6PGR4k+8v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755514159; c=relaxed/simple;
-	bh=IAEOM6wFG+JjnMSUmO9V1dy6UtYDEU6ikDrtJGuCMNA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ircxm+N/YPmwJx/uWAwyAONCA4X8pe/YiY7+CRLNORmHSi1NzvJDAGgGEnWLS7TP/Gqas2KiuaZWVGg9ekrwE7kh0a3QDNeIaiWt5FzLudiBVc9J42AkbsrjHvbrIpsVuvSAlaABiTo4Ye9kU/XznsDtFjseyGmYrQs1SGyNKL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PlK95fxE; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d6083cc69so32395477b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 03:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755514155; x=1756118955; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rsgBw0jCb6w00Tew/2kEPPc7DZ1CJpSeSzBPZVy1z1c=;
-        b=PlK95fxETqkp33bhTge1JdB87ya1w8EQlG68M0z/ofGQWERb6nnonjwk1XPrV5JrbA
-         Fq3ba3t+zS8Xb1JayjMWcVgUC6uBPeT1thXJzDqYnmxmJOcVAAybUjOBZQ5IW54BhuEk
-         4sZ9/dNX9fs5a321v1q2qwdkc7P6+kPwthF+9p/uOY9YICqbBGV0UoThQg3BmL6Nsaka
-         5mxPoRg90Ur+njmeXuVvxqSvEB11VV6cuQiWkJ3xSh2q4BjqchurgQ2GvcCWnW+8eHq7
-         6RDT4f7ncR/RGDNKW5GiLtHvcVoX8l3F8r5T16D/CFIZTDltxF/DP66NZXYhooM1/bNo
-         hF4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755514155; x=1756118955;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rsgBw0jCb6w00Tew/2kEPPc7DZ1CJpSeSzBPZVy1z1c=;
-        b=mFHfnqZvKvYZOGpyWG2VhtDZOjjbmStAH5rN3OTVzAoBknLELHJM0NrOSd0SMDadvc
-         FDL/z7hL+UVA1lV8C3Ib5R8vdJQFZtzqawhrwN2clG6g34Tk5xf/2i007S/JYvoXbBlB
-         rKoRveS03KocsGBUC8XzaDbnpGKXNcHBCPwPh9TasoWkQcyW+kF1CLUdANFgEu7YLzls
-         uHSzz2HamnSYO0LA/LFfRvY4/fin2RZfw/k4mUYhpGPKYr2YqCUdX9xhjihXwO5cRLXX
-         5dcaK0PEk5Aeh/EmPYrSe3+wjHgVrKwA+/7bgM76QQYbbH/CpgpB7y0elptYXwRDp7Np
-         70MA==
-X-Forwarded-Encrypted: i=1; AJvYcCXejFpqORVTgJgdqszZFfbqAztxpLTVwJyIIIyEa49RKNp4dclpnebSkwGpGF/o14xnk9rBhHme1PkrR9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcKW4Im1nz6AmmXgYEXEGox3Rs7XQzYVkA61rEo8ty2UlkZ8jk
-	+M5gj7e47G7EVy+JN/isBTkc3Itui6m1+Gjcttaes+97UudPjY9v/ucAlaf1P9RKEkJPB8POQH6
-	2ZjQlEDEt1hgh3voOcklZFDiWQHi2aQfsmCKo+2PCCw==
-X-Gm-Gg: ASbGncvjb22pOGY98Ws+8iO+m+VXWn8X8veO4BbsJP5hljdXLZNLfJ8Hq4Ohs8qXFRp
-	Bj9B98Atswux67AroJodFJExzgs/LqFK3LwwFes6GlTOl7RHGcN9c/9cxroxvCfxEh/0O7gpcuK
-	vRMK3fmvQtymeu0fqyP8b+1Iep7Uwd/7MeEDwmeW0/GyaSC55jlGDLYHfH3MSiyenR1tA/XRYne
-	YjBmSWt
-X-Google-Smtp-Source: AGHT+IEQ5PAJ4E2MJ+RFp/vP7SFnTECMSFB5weGhPlm12BRaWfgE5t1lY9Zr2miit8j/tOc4AIdQ75NrG+fq+kHyFjI=
-X-Received: by 2002:a05:690c:f82:b0:71c:1754:269b with SMTP id
- 00721157ae682-71e6ddeae92mr122547007b3.27.1755514155297; Mon, 18 Aug 2025
- 03:49:15 -0700 (PDT)
+	s=arc-20240116; t=1755514412; c=relaxed/simple;
+	bh=6hYQE+9xexyUbJIFBA4b/3yXIwMMyZeUUKgRm6gKxQk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=p3irtjSbtelQ2bzxB2/Z9n2WUY1p8rIn+UnLukxTzh16RrKuWCMvhSGIbec12eSz/+yYYfj1VxEGZkQBeRTKi+IOQpoJupBW8FZiWQDSIxYIPWUmROecbiH9NRdImdVkGg9fjzfBWFOSkx++uaCbCEMGDn7+1OmW71d2/9Azry8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Ns5OP/Vn; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I9Z0je028985;
+	Mon, 18 Aug 2025 12:53:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	sX1oBWhQYj9bxa1O4MkbKyeiDwQaF+Lccrzrfxq3YzE=; b=Ns5OP/VnvRmLnLgD
+	9RA7z5rw5ag2xsjnGb3k1KdgsZch33rgXeoxnkh1IqNN0vq/u1d1grsiwnxEflvQ
+	5MUxN+aEKGwXH9XHDVzXA1SzGoiHClTs0QbFbxXXzBeLDqU5ZzccSAZRQaRrNRtq
+	YFhivY3eoVm7RjDHXDyFMDJTS+NCHEYW/3c8jUG0LhrWjLghZJAq7LV0cINe/Myy
+	ALf4IoFuRUlgKWMmahZlfYYPh5ILdmgrdjF5WE0e/HXQXQ/wIUIOEOqwt8JmHo1C
+	Z8nf0xhPTRWRdqb6LmfcQu6Yy2zn7+6GpWyrru8Ui0fBhI7TFgQ+0KHa66eoPnQr
+	VNZylg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48jfdk6ds4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 12:53:02 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8530040045;
+	Mon, 18 Aug 2025 12:51:40 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7A72D723BAA;
+	Mon, 18 Aug 2025 12:50:22 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
+ 2025 12:50:21 +0200
+Message-ID: <917c9323-9c0c-406f-a314-a6e4a5511b45@foss.st.com>
+Date: Mon, 18 Aug 2025 12:50:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812123110.2090460-1-yangzh0906@thundersoft.com> <20250812123110.2090460-6-yangzh0906@thundersoft.com>
-In-Reply-To: <20250812123110.2090460-6-yangzh0906@thundersoft.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 18 Aug 2025 12:48:39 +0200
-X-Gm-Features: Ac12FXxjKi3b8yfDU1lEnhhcDgUF2rL-OaQszzKJu25a5rk-Ae9QC1wQeMPNpMc
-Message-ID: <CAPDyKFon7Q2UHOJbbVtPTHvqxYeOJr8HK5BOk6TAJaph8FcwvQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] mmc: sdhci: add Black Sesame Technologies BST
- C1200 controller driver
-To: Albert Yang <yangzh0906@thundersoft.com>
-Cc: krzk@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
-	adrian.hunter@intel.com, robin.murphy@arm.com, ding.wang@bst.ai, 
-	gordon.ge@bst.ai, bst-upstream@bstai.top, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, soc@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Christian Bruel <christian.bruel@foss.st.com>
+Subject: Re: [PATCH v12 2/9] PCI: stm32: Add PCIe host support for STM32MP25
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <p.zabel@pengutronix.de>,
+        <johan+linaro@kernel.org>, <cassel@kernel.org>,
+        <shradha.t@samsung.com>, <thippeswamy.havalige@amd.com>,
+        <quic_schintav@quicinc.com>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250813192957.GA286749@bhelgaas>
+Content-Language: en-US
+In-Reply-To: <20250813192957.GA286749@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_04,2025-08-14_01,2025-03-28_01
 
-On Tue, 12 Aug 2025 at 14:31, Albert Yang <yangzh0906@thundersoft.com> wrote:
->
-> Add SDHCI controller driver for Black Sesame Technologies C1200 SoC.
->
-> This driver supports the DWCMSHC SDHCI controller with BST-specific
-> enhancements including:
-> - Custom clock management and tuning
-> - Power management support
-> - BST-specific register configurations
-> - Support for eMMC and SD card interfaces
-> - Hardware limitation workaround for 32-bit DMA addressing
->
-> The driver addresses specific hardware constraints where:
-> - System memory uses 64-bit bus, eMMC controller uses 32-bit bus
-> - eMMC controller cannot access memory through SMMU due to hardware bug
-> - All system DRAM is configured outside 4GB boundary (ZONE_DMA32)
-> - Uses SRAM-based bounce buffer within 32-bit address space
->
-> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+On 8/13/25 21:29, Bjorn Helgaas wrote:
+> On Tue, Jun 10, 2025 at 11:07:07AM +0200, Christian Bruel wrote:
+>> Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
+>> controller based on the DesignWare PCIe core.
+>> ...
+> 
+>> +struct stm32_pcie {
+>> +	struct dw_pcie pci;
+>> +	struct regmap *regmap;
+>> +	struct reset_control *rst;
+>> +	struct phy *phy;
+>> +	struct clk *clk;
+>> +	struct gpio_desc *perst_gpio;
+>> +	struct gpio_desc *wake_gpio;
+>> +};
+>> +
+>> +static void stm32_pcie_deassert_perst(struct stm32_pcie *stm32_pcie)
+>> +{
+>> +	/* Delay PERST# de-assertion until the power stabilizes */
+>> +	msleep(PCIE_T_PVPERL_MS);
+>> +
+>> +	gpiod_set_value(stm32_pcie->perst_gpio, 0);
+>> +
+>> +	/* Wait for the REFCLK to stabilize */
+>> +	if (stm32_pcie->perst_gpio)
+>> +		msleep(PCIE_T_RRS_READY_MS);
+> 
+> This obviously relies on gpiod_set_value(stm32_pcie->perst_gpio, 0)
+> being a no-op when perst_gpio == NULL.  Since we're testing perst_gpio
+> anyway, I think it might be more readable to avoid relying on
+> gpiod_set_value() being a no-op:
+> 
+>    msleep(PCIE_T_PVPERL_MS);
+> 
+>    if (stm32_pcie->perst_gpio) {
+>      gpiod_set_value(stm32_pcie->perst_gpio, 0);
+>      msleep(PCIE_T_RRS_READY_MS);
+>    }
+> 
+> (And a similar change in stm32_pcie_assert_perst())
+> 
+> But this seems wrong because PCIE_T_PVPERL_MS is a delay before PERST#
+> is deasserted, but when perst_gpio == NULL, PERST# has already *been*
+> deasserted.
+> 
+> So it seems like it would make more sense as:
+> 
+>    if (stm32_pcie->perst_gpio) {
+>      msleep(PCIE_T_PVPERL_MS);
+>      gpiod_set_value(stm32_pcie->perst_gpio, 0);
+>    }
+> 
+>    msleep(PCIE_T_RRS_READY_MS);
 
+I agree, grouping pvperl_ms and the PERST# deassertion together makes 
+sense. thank you.
 
+> 
+>> +}
+>> +
+>> +static void stm32_pcie_assert_perst(struct stm32_pcie *stm32_pcie)
+>> +{
+>> +	gpiod_set_value(stm32_pcie->perst_gpio, 1);
+>> +}
+>> +
+>> +static int stm32_pcie_start_link(struct dw_pcie *pci)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+>> +
+>> +	return regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>> +				  STM32MP25_PCIECR_LTSSM_EN,
+>> +				  STM32MP25_PCIECR_LTSSM_EN);
+>> +}
+>> +
+>> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+>> +
+>> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>> +			   STM32MP25_PCIECR_LTSSM_EN, 0);
+>> +}
+>> +
+>> +static int stm32_pcie_suspend_noirq(struct device *dev)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+>> +	int ret;
+>> +
+>> +	ret = dw_pcie_suspend_noirq(&stm32_pcie->pci);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	stm32_pcie_assert_perst(stm32_pcie);
+>> +
+>> +	clk_disable_unprepare(stm32_pcie->clk);
+>> +
+>> +	if (!device_wakeup_path(dev))
+>> +		phy_exit(stm32_pcie->phy);
+>> +
+>> +	return pinctrl_pm_select_sleep_state(dev);
+>> +}
+>> +
+>> +static int stm32_pcie_resume_noirq(struct device *dev)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
+>> +	 * thus if no device is present, must force it low with an init pinmux
+>> +	 * to be able to access the DBI registers.
+> 
+> What happens on initial probe if no device is present?  I assume we
+> access DBI registers in the dw_pcie_host_init() path, and it seems
+> like we'd have the same issue with DBI not being accessible when no
+> device is present.
 
-> ---
-> Change for v3:
-> Code improvements based on review feedback:
-> - Simplified dwcmshc_priv structure by removing unused fields
-> - Improved helper functions with better encapsulation
-> - Used devm_platform_ioremap_resource() for resource management
-> - Updated Kconfig description and alphabetical ordering
-> - clarify documentation on hardware limitations and bounce buffer
-> approach
-> - remove duplicate sdhci_writew SDHCI_CLOCK_CONTROL
->
-> Changes for v2:
-> 1.  Dependency Simplification :
->    - Removed COMMON_CLK dependency from Kconfig (MMC_SDHCI_BST)
->    - Add ARCH_BST || COMPILE_TEST dependency from Kconfig (MMC_SDHCI_BST)
->
-> 2.  Resource Management Improvements :
->    - Replaced temporary ioremap with persistent mapping
->      * Mapped CRM registers once during probe instead of per-access
->      * Added proper cleanup in remove callback
->    - Refactored bounce buffer allocation:
->      * Simplified error handling and memory management
->      * Removed unnecessary DMA configuration layers
->
-> 3.  Code Cleanup & Optimization :
->    - Pruned unused headers and legacy vendor debug code
->    - Removed deprecated sdhci_bst_print_vendor() export
->    - Converted internal functions to static scope
->    - Standardized naming conventions:
->      * Renamed DRIVER_NAME to match kernel standards
->      * Changed default_max_freq to DEFAULT_MAX_FREQ
->    - Optimized clock configuration routines
->
-> 4.  Hardware Integration Fixes :
->    - Fixed register access macros for EMMC_CTRL
->      * Added proper offset calculation via SDHCI_VENDOR_PTR_R
->    - Corrected device tree compatibility string to:
->      "bst,c1200-dwcmshc-sdhci"
->
-> 5.  Error Handling Enhancements :
->    - Added robust ioremap error checking
->    - Improved bounce buffer allocation failure handling
->    - Streamlined probe/remove flow
->
-> 6.  Maintainability :
->    - Updated MODULE_DESCRIPTION and AUTHOR fields
->    - Added explanatory comments for hardware limitations
->    - Removed redundant multi-host setup infrastructure
->
-> 7. fix build warnings from lkp
->   | Reported-by: kernel test robot <lkp@intel.com>
->   | Closes:
->   https://lore.kernel.org/oe-kbuild-all/202505290615.GZzN5rNL-lkp@intel.com/
-> ---
->  drivers/mmc/host/Kconfig              |  14 +
->  drivers/mmc/host/Makefile             |   1 +
->  drivers/mmc/host/sdhci-of-bst-c1200.c | 510 ++++++++++++++++++++++++++
->  3 files changed, 525 insertions(+)
->  create mode 100644 drivers/mmc/host/sdhci-of-bst-c1200.c
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index c3f0f41a426d..fb057c46949b 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -429,6 +429,20 @@ config MMC_SDHCI_BCM_KONA
->
->           If you have a controller with this interface, say Y or M here.
->
-> +config MMC_SDHCI_BST
-> +       tristate "SDHCI support for Black Sesame Technologies BST C1200 controller"
-> +       depends on ARCH_BST || COMPILE_TEST
-> +       depends on MMC_SDHCI_PLTFM
-> +       depends on OF
-> +       help
-> +         This selects the Secure Digital Host Controller Interface (SDHCI)
-> +         for Black Sesame Technologies BST C1200 SoC. The controller is
-> +         based on Synopsys DesignWare Cores Mobile Storage Controller but
-> +         requires platform-specific workarounds for hardware limitations.
-> +
-> +         If you have a controller with this interface, say Y or M here.
-> +         If unsure, say N.
-> +
->  config MMC_SDHCI_F_SDH30
->         tristate "SDHCI support for Fujitsu Semiconductor F_SDH30"
->         depends on MMC_SDHCI_PLTFM
-> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-> index 75bafc7b162b..bb5df05c3174 100644
-> --- a/drivers/mmc/host/Makefile
-> +++ b/drivers/mmc/host/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_MMC_MXS)         += mxs-mmc.o
->  obj-$(CONFIG_MMC_SDHCI)                += sdhci.o
->  obj-$(CONFIG_MMC_SDHCI_UHS2)   += sdhci-uhs2.o
->  obj-$(CONFIG_MMC_SDHCI_PCI)    += sdhci-pci.o
-> +obj-$(CONFIG_MMC_SDHCI_BST)            += sdhci-of-bst-c1200.o
->  sdhci-pci-y                    += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
->                                    sdhci-pci-dwc-mshc.o sdhci-pci-gli.o
->  obj-$(CONFIG_MMC_SDHCI_ACPI)   += sdhci-acpi.o
-> diff --git a/drivers/mmc/host/sdhci-of-bst-c1200.c b/drivers/mmc/host/sdhci-of-bst-c1200.c
-> new file mode 100644
-> index 000000000000..6d2ba4232306
-> --- /dev/null
-> +++ b/drivers/mmc/host/sdhci-of-bst-c1200.c
+Correct, same issue. The magic happens with the PINCTRL init state that 
+is automatically called before probe. As I tried to explain in the 
+Documentation in the pinctrl patch:
 
-[...]
+- if ``init`` and ``default`` are defined in the device tree, the "init"
+   state is selected before the driver probe and the "default" state is
+   selected after the driver probe.
 
-> +/**
-> + * sdhci_bst_timeout - Set timeout value for commands
-> + * @host: SDHCI host controller
-> + * @cmd: MMC command
-> + *
-> + * Sets the timeout control register to maximum value (0xE).
-> + */
-> +static void sdhci_bst_timeout(struct sdhci_host *host, struct mmc_command *cmd)
-> +{
-> +       sdhci_writeb(host, 0xE, SDHCI_TIMEOUT_CONTROL);
-> +}
-> +
-> +/**
-> + * sdhci_bst_set_power - Set power mode and voltage
-> + * @host: SDHCI host controller
-> + * @mode: Power mode to set
-> + * @vdd: Voltage to set
-> + *
-> + * Sets power mode and voltage, also configures MBIU control register.
-> + */
-> +static void sdhci_bst_set_power(struct sdhci_host *host, unsigned char mode,
-> +                               unsigned short vdd)
-> +{
-> +       sdhci_set_power(host, mode, vdd);
-> +       sdhci_writeb(host, 0xF, SDHCI_POWER_CONTROL);
-> +       sdhci_writew(host,
-> +                    (sdhci_readw(host, MBIU_CTRL) & (~0xf)) | BURST_EN,
-> +                    MBIU_CTRL);
-> +}
-> +
-> +/**
-> + * bst_sdhci_execute_tuning - Execute tuning procedure
-> + * @host: SDHCI host controller
-> + * @opcode: Opcode to use for tuning
-> + *
-> + * Performs tuning procedure by trying different values and selecting the best one.
-> + *
-> + * Return: 0 on success, negative errno on failure
-> + */
-> +static int bst_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host;
-> +       unsigned int clk = 0, timeout;
-> +       int ret = 0, error;
-> +       int start0 = -1, end0 = -1, best = 0;
-> +       int start1 = -1, end1 = -1, flag = 0;
-> +       int i;
-> +
-> +       pltfm_host = sdhci_priv(host);
-> +
-> +       for (i = 0; i < SDHCI_TUNING_COUNT; i++) {
-> +               /* Protected write */
-> +               bst_crm_write(pltfm_host, REG_WR_PROTECT, REG_WR_PROTECT_KEY);
-> +               /* Write tuning value */
-> +               bst_crm_write(pltfm_host, DELAY_CHAIN_SEL, (1ul << i) - 1);
-> +
-> +               timeout = 20;
-> +               while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL)) &
-> +                       SDHCI_CLOCK_INT_STABLE)) {
-> +                       if (timeout == 0) {
-> +                               dev_err(mmc_dev(host->mmc), "Internal clock never stabilised\n");
-> +                               return -EBUSY;
-> +                       }
-> +                       timeout--;
-> +                       usleep_range(1000, 1100);
-> +               }
+> 
+>> +	if (!IS_ERR(dev->pins->init_state))
+>> +		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
+>> +	else
+>> +		ret = pinctrl_pm_select_default_state(dev);
+>> +
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	if (!device_wakeup_path(dev)) {
+>> +		ret = phy_init(stm32_pcie->phy);
+>> +		if (ret) {
+>> +			pinctrl_pm_select_default_state(dev);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(stm32_pcie->clk);
+>> +	if (ret)
+>> +		goto err_phy_exit;
+>> +
+>> +	stm32_pcie_deassert_perst(stm32_pcie);
+>> +
+>> +	ret = dw_pcie_resume_noirq(&stm32_pcie->pci);
+>> +	if (ret)
+>> +		goto err_disable_clk;
+>> +
+>> +	pinctrl_pm_select_default_state(dev);
+>> +
+>> +	return 0;
+>> +
+>> +err_disable_clk:
+>> +	stm32_pcie_assert_perst(stm32_pcie);
+>> +	clk_disable_unprepare(stm32_pcie->clk);
+>> +
+>> +err_phy_exit:
+>> +	phy_exit(stm32_pcie->phy);
+>> +	pinctrl_pm_select_default_state(dev);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct dev_pm_ops stm32_pcie_pm_ops = {
+>> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(stm32_pcie_suspend_noirq,
+>> +				  stm32_pcie_resume_noirq)
+>> +};
+>> +
+>> +static const struct dw_pcie_host_ops stm32_pcie_host_ops = {
+>> +};
+>> +
+>> +static const struct dw_pcie_ops dw_pcie_ops = {
+>> +	.start_link = stm32_pcie_start_link,
+>> +	.stop_link = stm32_pcie_stop_link
+>> +};
+>> +
+>> +static int stm32_add_pcie_port(struct stm32_pcie *stm32_pcie)
+>> +{
+>> +	struct device *dev = stm32_pcie->pci.dev;
+>> +	unsigned int wake_irq;
+>> +	int ret;
+>> +
+>> +	/* Start to enable resources with PERST# asserted */
+> 
+> I guess if device tree doesn't describe PERST#, we assume PERST# is
+> actually *deasserted* already at this point (because
+> stm32_pcie_deassert_perst() does nothing other than the delay)?
 
-Please convert into using some of the readx_poll_timeout functions
-instead of the loop above. Moreover, please add defines to specify the
-period/timeout.
+yes, this also implies that PV is stable
 
-> +
-> +               ret = mmc_send_tuning(host->mmc, opcode, &error);
-> +               if (ret != 0) {
-> +                       flag = 1;
-> +               } else {
-> +                       if (flag == 0) {
-> +                               if (start0 == -1)
-> +                                       start0 = i;
-> +                               end0 = i;
-> +                       } else {
-> +                               if (start1 == -1)
-> +                                       start1 = i;
-> +                               end1 = i;
-> +                       }
-> +               }
-> +       }
-> +
-> +       /* Calculate best tuning value */
-> +       if (end0 - start0 >= end1 - start1)
-> +               best = ((end0 - start0) >> 1) + start0;
-> +       else
-> +               best = ((end1 - start1) >> 1) + start1;
-> +
-> +       if (best < 0)
-> +               best = 0;
-> +
-> +       bst_crm_write(pltfm_host, DELAY_CHAIN_SEL, (1ul << best) - 1);
-> +       timeout = 20;
-> +
-> +       while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL)) &
-> +               SDHCI_CLOCK_INT_STABLE)) {
-> +               if (timeout == 0) {
-> +                       dev_err(mmc_dev(host->mmc), "Internal clock never stabilised\n");
-> +                       return -EBUSY;
-> +               }
-> +               timeout--;
-> +               usleep_range(1000, 1100);
-> +       }
+> 
+>> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = phy_init(stm32_pcie->phy);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>> +				 STM32MP25_PCIECR_TYPE_MASK,
+>> +				 STM32MP25_PCIECR_RC);
+>> +	if (ret)
+>> +		goto err_phy_exit;
+>> +
+>> +	stm32_pcie_deassert_perst(stm32_pcie);
+>> +
+>> +	if (stm32_pcie->wake_gpio) {
+>> +		wake_irq = gpiod_to_irq(stm32_pcie->wake_gpio);
+>> +		ret = dev_pm_set_dedicated_wake_irq(dev, wake_irq);
+>> +		if (ret) {
+>> +			dev_err(dev, "Failed to enable wakeup irq %d\n", ret);
+>> +			goto err_assert_perst;
+>> +		}
+>> +		irq_set_irq_type(wake_irq, IRQ_TYPE_EDGE_FALLING);
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +err_assert_perst:
+>> +	stm32_pcie_assert_perst(stm32_pcie);
+>> +
+>> +err_phy_exit:
+>> +	phy_exit(stm32_pcie->phy);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void stm32_remove_pcie_port(struct stm32_pcie *stm32_pcie)
+>> +{
+>> +	dev_pm_clear_wake_irq(stm32_pcie->pci.dev);
+>> +
+>> +	stm32_pcie_assert_perst(stm32_pcie);
+>> +
+>> +	phy_exit(stm32_pcie->phy);
+>> +}
+>> +
+>> +static int stm32_pcie_parse_port(struct stm32_pcie *stm32_pcie)
+>> +{
+>> +	struct device *dev = stm32_pcie->pci.dev;
+>> +	struct device_node *root_port;
+>> +
+>> +	root_port = of_get_next_available_child(dev->of_node, NULL);
+>> +
+>> +	stm32_pcie->phy = devm_of_phy_get(dev, root_port, NULL);
+>> +	if (IS_ERR(stm32_pcie->phy)) {
+>> +		of_node_put(root_port);
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
+>> +				     "Failed to get pcie-phy\n");
+>> +	}
+>> +
+>> +	stm32_pcie->perst_gpio = devm_fwnode_gpiod_get(dev, of_fwnode_handle(root_port),
+>> +						       "reset", GPIOD_OUT_HIGH, NULL);
+>> +	if (IS_ERR(stm32_pcie->perst_gpio)) {
+>> +		if (PTR_ERR(stm32_pcie->perst_gpio) != -ENOENT) {
+>> +			of_node_put(root_port);
+>> +			return dev_err_probe(dev, PTR_ERR(stm32_pcie->perst_gpio),
+>> +					     "Failed to get reset GPIO\n");
+>> +		}
+>> +		stm32_pcie->perst_gpio = NULL;
+> 
+> This looks like perst_gpio is optional in device tree?  Is that really
+> the case?  It seems hard to ensure we have the PCIE_T_PVPERL_MS and
+> PCIE_T_RRS_READY_MS delays in the right place if we don't have
+> perst_gpio.
 
-Ditto.
+perst_gpio was initially made optional for pre-silicon platforms with 
+hooked PHY functions (or no PHY).
+It is assumed that the PV and REFCLK signals are already stable, I 
+suppose that without perst_gpio, the system must rely on these 
+assumptions. But my experience with other models without perst as gpio 
+is limited to this.
 
-> +
-> +       return 0;
-> +}
-> +
+> 
+>> +	}
+>> +
+>> +	stm32_pcie->wake_gpio = devm_fwnode_gpiod_get(dev, of_fwnode_handle(root_port),
+>> +						      "wake", GPIOD_IN, NULL);
+>> +
+>> +	if (IS_ERR(stm32_pcie->wake_gpio)) {
+>> +		if (PTR_ERR(stm32_pcie->wake_gpio) != -ENOENT) {
+>> +			of_node_put(root_port);
+>> +			return dev_err_probe(dev, PTR_ERR(stm32_pcie->wake_gpio),
+>> +					     "Failed to get wake GPIO\n");
+>> +		}
+>> +		stm32_pcie->wake_gpio = NULL;
+>> +	}
+>> +
+>> +	of_node_put(root_port);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int stm32_pcie_probe(struct platform_device *pdev)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
+>> +	if (!stm32_pcie)
+>> +		return -ENOMEM;
+>> +
+>> +	stm32_pcie->pci.dev = dev;
+>> +	stm32_pcie->pci.ops = &dw_pcie_ops;
+>> +	stm32_pcie->pci.pp.ops = &stm32_pcie_host_ops;
+>> +
+>> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
+>> +	if (IS_ERR(stm32_pcie->regmap))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
+>> +				     "No syscfg specified\n");
+>> +
+>> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
+>> +	if (IS_ERR(stm32_pcie->clk))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
+>> +				     "Failed to get PCIe clock source\n");
+>> +
+>> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
+>> +	if (IS_ERR(stm32_pcie->rst))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
+>> +				     "Failed to get PCIe reset\n");
+>> +
+>> +	ret = stm32_pcie_parse_port(stm32_pcie);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	platform_set_drvdata(pdev, stm32_pcie);
+>> +
+>> +	ret = stm32_add_pcie_port(stm32_pcie);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	reset_control_assert(stm32_pcie->rst);
+>> +	reset_control_deassert(stm32_pcie->rst);
+>> +
+>> +	ret = clk_prepare_enable(stm32_pcie->clk);
+>> +	if (ret) {
+>> +		dev_err(dev, "Core clock enable failed %d\n", ret);
+>> +		goto err_remove_port;
+>> +	}
+>> +
+>> +	ret = pm_runtime_set_active(dev);
+>> +	if (ret < 0) {
+>> +		clk_disable_unprepare(stm32_pcie->clk);
+>> +		stm32_remove_pcie_port(stm32_pcie);
+>> +		return dev_err_probe(dev, ret, "Failed to activate runtime PM\n");
+>> +	}
+>> +
+>> +	pm_runtime_no_callbacks(dev);
+>> +
+>> +	ret = devm_pm_runtime_enable(dev);
+>> +	if (ret < 0) {
+>> +		clk_disable_unprepare(stm32_pcie->clk);
+>> +		stm32_remove_pcie_port(stm32_pcie);
+>> +		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+>> +	}
+>> +
+>> +	ret = dw_pcie_host_init(&stm32_pcie->pci.pp);
+>> +	if (ret)
+>> +		goto err_disable_clk;
+>> +
+>> +	if (stm32_pcie->wake_gpio)
+>> +		device_init_wakeup(dev, true);
+>> +
+>> +	return 0;
+>> +
+>> +err_disable_clk:
+>> +	clk_disable_unprepare(stm32_pcie->clk);
+>> +
+>> +err_remove_port:
+>> +	stm32_remove_pcie_port(stm32_pcie);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void stm32_pcie_remove(struct platform_device *pdev)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = platform_get_drvdata(pdev);
+>> +	struct dw_pcie_rp *pp = &stm32_pcie->pci.pp;
+>> +
+>> +	if (stm32_pcie->wake_gpio)
+>> +		device_init_wakeup(&pdev->dev, false);
+>> +
+>> +	dw_pcie_host_deinit(pp);
+>> +
+>> +	clk_disable_unprepare(stm32_pcie->clk);
+>> +
+>> +	stm32_remove_pcie_port(stm32_pcie);
+>> +
+>> +	pm_runtime_put_noidle(&pdev->dev);
+>> +}
+>> +
+>> +static const struct of_device_id stm32_pcie_of_match[] = {
+>> +	{ .compatible = "st,stm32mp25-pcie-rc" },
+>> +	{},
+>> +};
+>> +
+>> +static struct platform_driver stm32_pcie_driver = {
+>> +	.probe = stm32_pcie_probe,
+>> +	.remove = stm32_pcie_remove,
+>> +	.driver = {
+>> +		.name = "stm32-pcie",
+>> +		.of_match_table = stm32_pcie_of_match,
+>> +		.pm = &stm32_pcie_pm_ops,
+>> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+>> +	},
+>> +};
+>> +
+>> +module_platform_driver(stm32_pcie_driver);
+>> +
+>> +MODULE_AUTHOR("Christian Bruel <christian.bruel@foss.st.com>");
+>> +MODULE_DESCRIPTION("STM32MP25 PCIe Controller driver");
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DEVICE_TABLE(of, stm32_pcie_of_match);
+>> diff --git a/drivers/pci/controller/dwc/pcie-stm32.h b/drivers/pci/controller/dwc/pcie-stm32.h
+>> new file mode 100644
+>> index 000000000000..387112c4e42c
+>> --- /dev/null
+>> +++ b/drivers/pci/controller/dwc/pcie-stm32.h
+>> @@ -0,0 +1,15 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * ST PCIe driver definitions for STM32-MP25 SoC
+>> + *
+>> + * Copyright (C) 2025 STMicroelectronics - All Rights Reserved
+>> + * Author: Christian Bruel <christian.bruel@foss.st.com>
+>> + */
+>> +
+>> +#define to_stm32_pcie(x)	dev_get_drvdata((x)->dev)
+>> +
+>> +#define STM32MP25_PCIECR_TYPE_MASK	GENMASK(11, 8)
+>> +#define STM32MP25_PCIECR_LTSSM_EN	BIT(2)
+>> +#define STM32MP25_PCIECR_RC		BIT(10)
+>> +
+>> +#define SYSCFG_PCIECR			0x6000
+>> -- 
+>> 2.34.1
+>>
 
-[...]
-
-> +
-> +static int bst_sdhci_reallocate_bounce_buffer(struct sdhci_host *host)
-> +{
-> +       struct mmc_host *mmc = host->mmc;
-> +       unsigned int max_blocks;
-> +       unsigned int bounce_size;
-> +       int ret;
-> +
-> +       /*
-> +        * Cap the bounce buffer at 32KB. Using a bigger bounce buffer
-> +        * has diminishing returns, this is probably because SD/MMC
-> +        * cards are usually optimized to handle this size of requests.
-> +        */
-> +       bounce_size = SZ_32K;
-> +       /*
-> +        * Adjust downwards to maximum request size if this is less
-> +        * than our segment size, else hammer down the maximum
-> +        * request size to the maximum buffer size.
-> +        */
-> +       if (mmc->max_req_size < bounce_size)
-> +               bounce_size = mmc->max_req_size;
-> +       max_blocks = bounce_size / 512;
-> +
-> +       ret = of_reserved_mem_device_init_by_idx(mmc_dev(mmc), mmc_dev(mmc)->of_node, 0);
-> +       if (ret) {
-> +               dev_err(mmc_dev(mmc), "Failed to initialize reserved memory\n");
-> +               return ret;
-> +       }
-> +
-> +       host->bounce_buffer = dma_alloc_coherent(mmc_dev(mmc), bounce_size,
-> +                                                &host->bounce_addr, GFP_KERNEL);
-> +       if (!host->bounce_buffer)
-> +               return -ENOMEM;
-> +
-> +       host->bounce_buffer_size = bounce_size;
-> +
-> +       /* Lie about this since we're bouncing */
-> +       mmc->max_segs = max_blocks;
-> +       mmc->max_seg_size = bounce_size;
-> +       mmc->max_req_size = bounce_size;
-> +
-> +       return 0;
-> +}
-> +
-> +static int dwcmshc_probe(struct platform_device *pdev)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host;
-> +       struct sdhci_host *host;
-> +       struct dwcmshc_priv *priv;
-> +       int err;
-> +
-> +       host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
-> +                               sizeof(struct dwcmshc_priv));
-> +       if (IS_ERR(host))
-> +               return PTR_ERR(host);
-> +
-> +       pltfm_host = sdhci_priv(host);
-> +       priv = sdhci_pltfm_priv(pltfm_host);
-> +
-> +       err = mmc_of_parse(host->mmc);
-> +       if (err)
-> +               goto err;
-> +
-> +       sdhci_get_of_property(pdev);
-> +
-> +       /* Get CRM registers from the second reg entry */
-> +       priv->crm_reg_base = devm_platform_ioremap_resource(pdev, 1);
-> +       if (IS_ERR(priv->crm_reg_base)) {
-> +               err = PTR_ERR(priv->crm_reg_base);
-> +               goto err;
-> +       }
-> +
-> +       err = sdhci_add_host(host);
-> +       if (err)
-> +               goto err;
-> +
-> +       /*
-> +        * Silicon constraints for BST C1200:
-> +        * - System RAM base is 0x800000000 (above 32-bit addressable range)
-> +        * - The eMMC controller DMA engine is limited to 32-bit addressing
-> +        * - SMMU cannot be used on this path due to hardware design flaws
-> +        * - These are fixed in silicon and cannot be changed in software
-> +        *
-> +        * Bus/controller mapping:
-> +        * - No registers are available to reprogram the address mapping
-> +        * - The 32-bit DMA limit is a hard constraint of the controller IP
-> +        *
-> +        * Given these constraints, an SRAM-based bounce buffer in the 32-bit
-> +        * address space is required to enable eMMC DMA on this platform.
-> +        */
-> +       err = bst_sdhci_reallocate_bounce_buffer(host);
-> +       if (err) {
-> +               dev_err(&pdev->dev, "Failed to allocate bounce buffer: %d\n", err);
-> +               goto err_remove_host;
-> +       }
-
-FYI, I will be awaiting a confirmation from Arnd to be with the above
-hack, before I queue this up.
-
-> +
-> +       return 0;
-> +
-> +err_remove_host:
-> +       sdhci_remove_host(host, 1);
-> +err:
-> +       sdhci_pltfm_free(pdev);
-> +       return err;
-> +}
-> +
-
-[...]
-
-Kind regards
-Uffe
 
