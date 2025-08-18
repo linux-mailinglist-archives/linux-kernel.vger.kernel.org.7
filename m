@@ -1,123 +1,138 @@
-Return-Path: <linux-kernel+bounces-773293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E22FB29DDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:30:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8E3B29DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1AD5E1797
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF36196473E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8A930E0CE;
-	Mon, 18 Aug 2025 09:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KndbGZR3"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D4C27E060;
+	Mon, 18 Aug 2025 09:28:21 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96A730E842;
-	Mon, 18 Aug 2025 09:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AF22882DC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509280; cv=none; b=rB12f32sxt+kuW14K2VWOF3XfVA+RMit2nqBpf29ISXYgrfvHd4BwGXM4M9Csy6rZgKSP+F+LGXncrhVGtRrQOfhCkXDb46Iipr6chlWodF+iEdDHqGWcKEAqGzpqt7fvIuwXvFPMCRyxih6tWzcLgNt2K83rZ5XAl6C3pCIrm4=
+	t=1755509301; cv=none; b=NzfJjgX0ud/d+8MnZX+ZcT1IRhVs3mp5ygmuC8q5viXnJiS8REHqWrbMDS89O8XwEVomQU58wPKAy7ZJgq79irB9zSSiR6KJP+0Q5NFvD/FQb9PXssDbjj8YkAXGk/FZjlChwYn8TaKc4Rj39woctDZXfguKIAPi+Tz1qHObUjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509280; c=relaxed/simple;
-	bh=cNmqpKBj1slJLrb+5OV5kG981wn13xEUaIe/6WOkbCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l0pNgBkp153YNJc/kgrKRq3/p97GrcdQilwZqgK5n+VIVu1fmXA6C6dyuKY8kgTmnLSpw7FteKozobQS249TOozg8C+C4Axh8ZXX2oYj+DY/T1DABM8r+G2uzTwJEhLUv4oQbhAZ+pG7C/cBXT3QfF7kIEduOn0ZWlDe1LNSGmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KndbGZR3; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a25ce7978so8047675e9.3;
-        Mon, 18 Aug 2025 02:27:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755509277; x=1756114077; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qRw+pAj8sfSuPQ+P3KBL1U5pvOOQDVuGVwznkOJYZfo=;
-        b=KndbGZR35us+DLjt0j5aTCB2rBcRUJ7i97M2tLt7FqPdj2esL6SB2EEWybvilLHuVZ
-         zNNZdpYAYMk4gx8QmENXriqNQ7Xqgvppm4vJN1+9zpkm12UWCYwPM4B2/uRH3S2Qb7Fb
-         C1V1cSLzo0OlfglTcAQ29Y9GPvVOkX1VwPY3UChPAtPMcC2b4y0/thlubG7ZuM0EepcE
-         qkcYwGBji/fD29G7o0aE6oIdPxvBI/jstIzGEw09nBdgT5S23chmMCD4G2tnKlsbB7hT
-         46wJ16xdH2TEkDrZx5Tl+G1HdXsgcA0pGaE1aoVT2QDL60eU/Z5cZHNZ7Pc2N3ASOhHv
-         BWag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755509277; x=1756114077;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qRw+pAj8sfSuPQ+P3KBL1U5pvOOQDVuGVwznkOJYZfo=;
-        b=SKNTt4YNHwW8Xml4lSYtXK2uOAUHP3U+idR2tkSKlpgdTxS7D6C1qJOehwGMi2aXz+
-         alJ2m6fMvNFj5rUrD9Mk0bluVVJinrFfTVRwHZDdJme4IZunyyUSFGL7irDLyNzaiWhv
-         4ZyoTzci1N5KPLdXHd7J/A1qcnobL6D8J+LobzXlCob1QXOJYS0EkPVlqRAstlFBNzv9
-         clfUhUelWcKdrpqUMDODTiOBb4DksvSQK2ab2mWh0p3LeHhSJCMXdf9bR1GJBWqRdLTr
-         PsnqHLBO7CahgqIjzoXl0/URAsP9WgksysgS07NvH/MnaTK3ScUyzCuqbh7zanhEPvJ6
-         +sFA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3+CiuMkz4ireLMQ7BEd0PMWLQta9x8vV5UTkzonfMLGxvgIstMWXvZHQKxG4OZZFCf/hOaf7uZN6E2/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLUpLeUQv03CXE88YT27o9EG8vARGXX9rVI0x/fy/tu0wbo2ht
-	ZRlEkjMyOtWbzVfAhqDIGJxK0uUrIDbKnkh+k722w9B21nwRHi36Kutgn8WOTg==
-X-Gm-Gg: ASbGncuKT7Od9vGuBfY9c/O+6NnqD/Ew1owjKd1pelUyUgIs7fd710FAq/sZpKy7gJj
-	Y+fjdhqjeIOKYRyY7hN8sZo0ifiwV5m7B2/f9GVGzh/GKnFqAzqyN+S3aS9x2ryljAklNQbi4D9
-	uaEtVdAJvb6ERAwosqMfQEuXA43cXe+uWyWHHQHxXR8r+/T57DLMEIw8ZPDFPiDjkGoQGyO2vrZ
-	4m3RRZA+RujC+H5jp3L93y4lxejdexZmIHCmyWy7/UN7TOwPkwDWfOPQdnet1+CzBDAywwECsAS
-	MvkZ2T7MgZcRX4DgE7ec/gBqT45pibA2X6QQQiGFKu6/SeZuKirLKxyxTSEx5wumu1lgutMuLr+
-	xhfd2KxfGR7lqMnd6ZPFhgjmXUnXf/RCKGFE+Ev7ak3OEEr1TJBTmDMjo
-X-Google-Smtp-Source: AGHT+IGS2JBy/YYF3bpAQNsAOgGAJJWB8tn2zwE1kYWtqIgjD2zA9xnW0j3EWiTP7RTx8FegbOXefw==
-X-Received: by 2002:a05:600c:19d3:b0:458:c002:6888 with SMTP id 5b1f17b1804b1-45a218637a8mr76008515e9.32.1755509276629;
-        Mon, 18 Aug 2025 02:27:56 -0700 (PDT)
-Received: from localhost.localdomain ([165.51.41.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6be10esm173793365e9.3.2025.08.18.02.27.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 02:27:56 -0700 (PDT)
-From: Salah Triki <salah.triki@gmail.com>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	Markus.Elfring@web.de,
-	salah.triki@gmail.com
-Subject: [PATCH v4 3/3] iio: pressure: bmp280: Use gpiod_set_value_cansleep()
-Date: Mon, 18 Aug 2025 10:27:32 +0100
-Message-ID: <20250818092740.545379-4-salah.triki@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250818092740.545379-1-salah.triki@gmail.com>
-References: <20250818092740.545379-1-salah.triki@gmail.com>
+	s=arc-20240116; t=1755509301; c=relaxed/simple;
+	bh=wkxXxM55u6xiafcEX1i5/qPwViPKndBguofdjqgnuic=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=YHSgdFMBZcxk6Xh/USLbWeNovNj9SbAOLukskUq1M+begb8s+tzte3zx7a9FviTLFPaLdmCXmoK6Sj5Tx1OmSMTC9ONXIZWCMUtoKHwvG0ZaOQ2tertTzhpWQaSChofy4wJIsqzUpbun0HdtCunBk4H8mgR9JArqoCM+d+7mmJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+	by 156.147.23.51 with ESMTP; 18 Aug 2025 18:28:16 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
+	by 156.147.1.121 with ESMTP; 18 Aug 2025 18:28:16 +0900
+X-Original-SENDERIP: 10.178.31.96
+X-Original-MAILFROM: chanho.min@lge.com
+From: Chanho Min <chanho.min@lge.com>
+To: Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna.schumaker@netapp.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chanho Min <chanho.min@lge.com>
+Subject: [PATCH] NFS: Fix up commit deadlocks
+Date: Mon, 18 Aug 2025 18:28:05 +0900
+Message-Id: <20250818092805.38743-1-chanho.min@lge.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Switch to `gpiod_set_value_cansleep()`, which is safe to use in
-sleepable contexts like the driver probe function.
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+[ Upstream commit 133a48abf6ecc535d7eddc6da1c3e4c972445882 ]
+
+If O_DIRECT bumps the commit_info rpcs_out field, then that could lead
+to fsync() hangs. The fix is to ensure that O_DIRECT calls
+nfs_commit_end().
+
+Cc: stable@vger.kernel.org # 5.4
+Fixes: 723c921e7dfc ("sched/wait, fs/nfs: Convert wait_on_atomic_t() usage to the new wait_var_event() API")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+[ chanho: Backports to v5.4.y ]
+Signed-off-by: Chanho Min <chanho.min@lge.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/pressure/bmp280-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/direct.c        | 2 +-
+ fs/nfs/write.c         | 9 ++++++---
+ include/linux/nfs_fs.h | 1 +
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-index 1f0852fc3414..656f6189c84c 100644
---- a/drivers/iio/pressure/bmp280-core.c
-+++ b/drivers/iio/pressure/bmp280-core.c
-@@ -3217,7 +3217,7 @@ int bmp280_common_probe(struct device *dev,
- 		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get reset GPIO\n");
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 0682037f972be..32dc176ea1aba 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -700,7 +700,7 @@ static void nfs_direct_commit_complete(struct nfs_commit_data *data)
+ 		nfs_unlock_and_release_request(req);
+ 	}
  
- 	/* Deassert the signal */
--	gpiod_set_value(gpiod, 0);
-+	gpiod_set_value_cansleep(gpiod, 0);
+-	if (atomic_dec_and_test(&cinfo.mds->rpcs_out))
++	if (nfs_commit_end(cinfo.mds))
+ 		nfs_direct_write_complete(dreq);
+ }
  
- 	data->regmap = regmap;
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 10ce264a64567..c9895316fc070 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1658,10 +1658,13 @@ static void nfs_commit_begin(struct nfs_mds_commit_info *cinfo)
+ 	atomic_inc(&cinfo->rpcs_out);
+ }
  
--- 
-2.43.0
-
+-static void nfs_commit_end(struct nfs_mds_commit_info *cinfo)
++bool nfs_commit_end(struct nfs_mds_commit_info *cinfo)
+ {
+-	if (atomic_dec_and_test(&cinfo->rpcs_out))
++	if (atomic_dec_and_test(&cinfo->rpcs_out)) {
+ 		wake_up_var(&cinfo->rpcs_out);
++		return true;
++	}
++	return false;
+ }
+ 
+ void nfs_commitdata_release(struct nfs_commit_data *data)
+@@ -1756,6 +1759,7 @@ void nfs_init_commit(struct nfs_commit_data *data,
+ 	data->res.fattr   = &data->fattr;
+ 	data->res.verf    = &data->verf;
+ 	nfs_fattr_init(&data->fattr);
++	nfs_commit_begin(cinfo->mds);
+ }
+ EXPORT_SYMBOL_GPL(nfs_init_commit);
+ 
+@@ -1801,7 +1805,6 @@ nfs_commit_list(struct inode *inode, struct list_head *head, int how,
+ 
+ 	/* Set up the argument struct */
+ 	nfs_init_commit(data, head, NULL, cinfo);
+-	atomic_inc(&cinfo->mds->rpcs_out);
+ 	return nfs_initiate_commit(NFS_CLIENT(inode), data, NFS_PROTO(inode),
+ 				   data->mds_ops, how, 0);
+ }
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index 49cf5c855cbe5..a96b116cc9224 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -549,6 +549,7 @@ extern int nfs_wb_page_cancel(struct inode *inode, struct page* page);
+ extern int  nfs_commit_inode(struct inode *, int);
+ extern struct nfs_commit_data *nfs_commitdata_alloc(bool never_fail);
+ extern void nfs_commit_free(struct nfs_commit_data *data);
++bool nfs_commit_end(struct nfs_mds_commit_info *cinfo);
+ 
+ static inline int
+ nfs_have_writebacks(struct inode *inode)
 
