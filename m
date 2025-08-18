@@ -1,143 +1,181 @@
-Return-Path: <linux-kernel+bounces-773639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C550B2A334
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:07:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACBEB2A397
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BC227B83A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C3E1B60430
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1440A31E0FD;
-	Mon, 18 Aug 2025 13:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005CE31E0F1;
+	Mon, 18 Aug 2025 13:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="evxV2HZP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="txS1dG3I"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF7728C849
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC703218D5
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522360; cv=none; b=Oe39rxzgZc/InWyrNk2jc8k1WSLXrpa1q89rQ39HS6JTDdc/hFyaBqpUd7n4pAWNWZSoWPK/CHXkOWuwp/k5QWa/GuG+M/K2SIR6R5aqRlUYgJktDUDd9cTjSKsRCD+6Xx8FB4EVl49hvzo1GNqV4QA5T2ALfw2Aw2cJE8KFZig=
+	t=1755522322; cv=none; b=rJrsDwVrpU8McUumfwzatz/JjFdAiBxX1x/X8xQ5YMeqyNDDP+3P1Gm1DCaRSgDcONK/sRe5RySxTEUipqDhwGs3P4bcU+8IZC81gIHFtVje9QUeqtgL5sumbG5ZGeJYvyOzN018Xl23maaZQvCgJlHUwaUCfmXJzEaOfQ8Er94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522360; c=relaxed/simple;
-	bh=LVJlZcHzGYt9RgpmISld6bzB/0duxLzZuYmGksm7/2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUddnBx+N0U7QVXt4lIzajJSGdSqPQdcxaPBBgUlvHJW9IKMgIvMa/9THHD2eVrdmLSk1J1Pai9bEAuQDcanzLSV15blhboSUHjyDiTnhaKUZxeCWsPRzBgBcCnUo4d9P9f8LGvBYNz4/VZeDYa+okquEfbar7UmqUgkIwo3ybY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=evxV2HZP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755522358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QyzL3GSkiAQfeG6g6YvIMRozhZr0+dfb72trcSazY0Y=;
-	b=evxV2HZPCsCVpZxhMpMMII3W+XuzbmPhX7kCYWCGxq21nQB7LRicZg9H4UELWpw5WvmRxC
-	IXHPxMJOejfJ4fQIz4jb9qwM68ER/9Ca/OVZUy5C7cBeh0fa5PKwQh2lz/etYEauOVoDOU
-	QdK79me15YaaM/Gxwk24TAl8WqHFs5A=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-284-XlWK2UtwMF-ScKJ_-M8afQ-1; Mon,
- 18 Aug 2025 09:05:53 -0400
-X-MC-Unique: XlWK2UtwMF-ScKJ_-M8afQ-1
-X-Mimecast-MFC-AGG-ID: XlWK2UtwMF-ScKJ_-M8afQ_1755522351
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5711A19560AE;
-	Mon, 18 Aug 2025 13:05:45 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.24])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5D9E6195419F;
-	Mon, 18 Aug 2025 13:05:38 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 18 Aug 2025 15:04:28 +0200 (CEST)
-Date: Mon, 18 Aug 2025 15:04:20 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: syzbot <syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, dvyukov@google.com,
-	elver@google.com, glider@google.com, jack@suse.cz,
-	kasan-dev@googlegroups.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-	willy@infradead.org, Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [fs?] [mm?] INFO: task hung in v9fs_file_fsync
-Message-ID: <20250818130419.GD18626@redhat.com>
-References: <20250818114404.GA18626@redhat.com>
- <68a31e33.050a0220.e29e5.00a6.GAE@google.com>
+	s=arc-20240116; t=1755522322; c=relaxed/simple;
+	bh=RpAhxP2uLqbqjInuTE70JRXrQca1fdqD+vDq2S1ckfg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iM5w+ZLFa9i9drgT+OXuBlfAC2hnHd7sxMMXzvHFLODKLU2SD1sXEzHnLNXms/1Obki3tCjsOzx76j3FaejlVwSTZTgUBfPe+WUSQFj19nu3bqXTQounu5oeJ/XrdQaXPFbUypkm6vsGxHft78qytnIi24cekNgSSYC4ETWjS9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=txS1dG3I; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9e4193083so3891764f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:05:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755522319; x=1756127119; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=86BJmrJXeETeW2kp8meE7Uq7AvyYwzMOqYpCJJXyfLs=;
+        b=txS1dG3IyrSDBriMFeWWgHeQgrwquh8uAPpEcdMV0g79noALWuVRWDccj7GLJ7S74Y
+         xkcSjVV0TP3EUphTRiqj2wd00Nv2vZtKKlt1+cDQk7vHlDVDZWqNg6CFHB5jtR2pYed4
+         KYa/OM2BVxixE02a5tGd5K80r8nMYfogIWCMXiAMVqBbLFZxIJP4MTmZ/M/xq0ln6npN
+         bJFKbOMdXwvy5iqAHXiX3HMH8XHxU0VRsE89AMD/mE/GT0+6VlT+0LoB7/CsNA3TtOoN
+         0FmczBnNwrvZHas8ZQEyissCYVIzhwnGkBJyR0OlpcvH/LtbFw05tsOL04Z7JnJuRv7X
+         6fZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755522319; x=1756127119;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=86BJmrJXeETeW2kp8meE7Uq7AvyYwzMOqYpCJJXyfLs=;
+        b=Ec3hO6wXJH4fSnIofkTWDT/8BOOPERa5dPHcLaSnQRW/w4PozNIC6IxVbEGMfbMETX
+         dYSqIQDPxmTACmp187B20GJozXfpAuDCmej0VWPfwn+1hIIt3nPfo/WekSG+wnEVJead
+         ljOlNKIp7w7J4oNqk/GkScx2S9ktXkEe+3v/hdMSWDd9KipYFMf/pJocDRnF8pNroE01
+         Lx7DuwAgiT+xoyiegqalXN1SMGaMj6svgRQdLpVycdHtCEp3656ZaLeROUc3kUyAW8WF
+         m72o8q16A1nXDXjoxwOMBA8m/lnqcBB3xmT8zntuDyMHL3K42gXQwPx9bxQtEfMZ3ICn
+         Aa0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVk/SCaGkQ8eiJcI12Tz9TEauvRWy2gCrjdN32JVL6UF9x4RX+ffxzA1fslAnTdUf+nW+h/MGRDC1t33pw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9LNu2e1Fyp35WoG3/IhMYTPG9bt6qYRQjCpOK2210jQtilieR
+	Cg/HmTsNa8VTwPJ/1F0pxnPbCr56SW1yrRs2Zrkl0TmnNuhkpoYa9iD+UztXuP93oWk=
+X-Gm-Gg: ASbGncu3v78v8wcSUcao2NC4ty5MxjQS8rxRmJRSRFVRT5GFcrh93MXTVjyQ9juugAb
+	ZuuYI7ZCxEP0832vOLwm2bZnYSt5+NaGVzNcgo8CkjS+zJbGRdF1zyRk2EoVXlHHxQh3httv8lt
+	AQ1yfnU3d18XAgG2tQ9OIbYYVjsGqrpSOHmhxZsqeMo7lAZbjIjw24unW1j+yePqkZU2+wMDAw7
+	c6TC6Q2HO49q8x/+vm+tbqjkHrOKh4UMy2uFwuIZeHQ6gLlm4vCojFfoi8BfyaCEw3cl2RsU3cQ
+	9XrU8B3sx8qk07eK5EYN/8eSAg3o7jx7SDVFw8vidmjaGivKHNGcJT0psx1uLvxHIhcbm6X+H0f
+	HU8FhEWjTHhng9qOx1Zol2zgpuMIDks4dHQAytg==
+X-Google-Smtp-Source: AGHT+IHcwykrBK8tXrdhApeeaxgZhKOjTfFirzDPuKeFi7nfZYLL6OLNQGBRz5fJTm0ZvXzAmYWt9A==
+X-Received: by 2002:a05:6000:1788:b0:3b8:d493:31ed with SMTP id ffacd0b85a97d-3bb690d3800mr10683315f8f.47.1755522318746;
+        Mon, 18 Aug 2025 06:05:18 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64758d1csm13236548f8f.8.2025.08.18.06.05.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 06:05:17 -0700 (PDT)
+Message-ID: <90d40899-c9b8-4628-a0b5-06ee0aa497be@linaro.org>
+Date: Mon, 18 Aug 2025 14:05:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68a31e33.050a0220.e29e5.00a6.GAE@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/13] spi: spi-fsl-lpspi: Set correct chip-select
+ polarity bit
+To: Frank Li <Frank.li@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, Clark Wang <xiaoning.wang@nxp.com>,
+ Fugang Duan <B38611@freescale.com>, Gao Pan <pandy.gao@nxp.com>,
+ Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Larisa Grigore <larisa.grigore@oss.nxp.com>,
+ Larisa Grigore <larisa.grigore@nxp.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+ Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
+ <20250814-james-nxp-lpspi-v1-2-9586d7815d14@linaro.org>
+ <aJ4TkKdkIPiJhhF4@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <aJ4TkKdkIPiJhhF4@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 08/18, syzbot wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
->
-> Reported-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
-> Tested-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
->
-> Tested on:
->
-> commit:         038d61fd Linux 6.16
 
-And trans_fd.c wasn't changed since 038d61fd...
 
-Dominique, David,
+On 14/08/2025 5:49 pm, Frank Li wrote:
+> On Thu, Aug 14, 2025 at 05:06:42PM +0100, James Clark wrote:
+>> From: Larisa Grigore <larisa.grigore@nxp.com>
+>>
+>> The driver currently supports multiple chip-selects, but only sets the
+>> polarity for the first one (CS 0). Fix it by setting the PCSPOL bit for
+>> the desired chip-select.
+>>
+>> Fixes: 5314987de5e5 ("spi: imx: add lpspi bus driver")
+>> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   drivers/spi/spi-fsl-lpspi.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+>> index d44a23f7d6c1..c65eb6d31ee7 100644
+>> --- a/drivers/spi/spi-fsl-lpspi.c
+>> +++ b/drivers/spi/spi-fsl-lpspi.c
+>> @@ -70,7 +70,7 @@
+>>   #define DER_TDDE	BIT(0)
+>>   #define CFGR1_PCSCFG	BIT(27)
+>>   #define CFGR1_PINCFG	(BIT(24)|BIT(25))
+>> -#define CFGR1_PCSPOL	BIT(8)
+>> +#define CFGR1_PCSPOL_MASK	GENMASK(11, 8)
+>>   #define CFGR1_NOSTALL	BIT(3)
+>>   #define CFGR1_HOST	BIT(0)
+>>   #define FSR_TXCOUNT	(0xFF)
+>> @@ -425,7 +425,9 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
+>>   	else
+>>   		temp = CFGR1_PINCFG;
+>>   	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
+>> -		temp |= CFGR1_PCSPOL;
+>> +		temp |= FIELD_PREP(CFGR1_PCSPOL_MASK,
+>> +				   BIT(fsl_lpspi->config.chip_select));
+>> +
+> 
+> Feel like FILED_PREP(..., BIT()) is stranged.
+> 
+> I suggest #define CFGR1_PCSPOL(x) BIT((x) + 8)
+> 
+> Frank
 
-Perhaps you can reconsider the fix that Prateek and I tried to propose
-in this thread
+It's using an existing macro that everyone knows though and I found 65 
+instances of exactly this. It can be read as "set bit X and put it into 
+the PCSPOL field without any further investigation.
 
-	[syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-	https://lore.kernel.org/all/67dedd2f.050a0220.31a16b.003f.GAE@google.com/
+If we make a new macro, first the reader will have to jump to it, then 
+it still doesn't immediately explain what the "+ 8" part is. Using 
+FIELD_PREP() also has the potential to use autogenerated field masks 
+from a machine readable version of the reference manual. You can't 
+statically check your macro to see if + 8 is correct or not, and it also 
+doesn't catch overflow errors like FIELD_PREP() does.
 
-Oleg.
----
+There might be an argument to add a new global macro like 
+FIELD_BIT(mask, bit). But it's not very flexible (can't set multiple 
+bits) and you can already accomplish the same thing by adding BIT() to 
+the existing one.
 
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index 339ec4e54778..474fe67f72ac 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -666,7 +666,6 @@ static void p9_poll_mux(struct p9_conn *m)
- 
- static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
- {
--	__poll_t n;
- 	int err;
- 	struct p9_trans_fd *ts = client->trans;
- 	struct p9_conn *m = &ts->conn;
-@@ -686,13 +685,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
- 	list_add_tail(&req->req_list, &m->unsent_req_list);
- 	spin_unlock(&m->req_lock);
- 
--	if (test_and_clear_bit(Wpending, &m->wsched))
--		n = EPOLLOUT;
--	else
--		n = p9_fd_poll(m->client, NULL, NULL);
--
--	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
--		schedule_work(&m->wq);
-+	p9_poll_mux(m);
- 
- 	return 0;
- }
+Thanks
+James
+
+> 
+>>   	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
+>>
+>>   	temp = readl(fsl_lpspi->base + IMX7ULP_CR);
+>>
+>> --
+>> 2.34.1
+>>
 
 
