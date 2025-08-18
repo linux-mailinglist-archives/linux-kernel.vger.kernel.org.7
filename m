@@ -1,196 +1,286 @@
-Return-Path: <linux-kernel+bounces-773796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC139B2A9C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:24:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CE8B2A98C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E05567B2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:16:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22089B625E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7BE32252B;
-	Mon, 18 Aug 2025 14:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45AA322556;
+	Mon, 18 Aug 2025 14:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D/UeaWEp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJrU1Dno"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE8A321F4F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99F2321F43;
+	Mon, 18 Aug 2025 14:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526025; cv=none; b=dEwvkhxq0YBZ4qUy4ZCRnsy5Gxlv/IxLWpNTZLJnAFh06mXD9jTa3njHzI/SSF5Z7r+aYLg66Gc6tQYRZbm7yPt7sCs65HkKYDOqLhPnHdoeV6Kphy/KBgnNsaZ+4FBTx8o0RQFj0/IgXF7KdKdaEa3cXERqP5XhJg6f/J3qsck=
+	t=1755526050; cv=none; b=GeGz5JxDNpt+t6QsnekWPBNnXqckIxE7klXIcTUF2OJ53S7SBfj+K279MjA76+bHn06cTK7Qc+h2Z6gMFMpq275asL33TKzd1Jb1szynJvuARJJw1YoU15etwkAUdfwSTkpbYa7NZmVzdVQ1ONANKN4UTPXFYYFuRKo6s6HYA9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526025; c=relaxed/simple;
-	bh=iDJR1tfwk7UFUubIp+MA5lVvSTge8acmqtK4SGQWHBY=;
+	s=arc-20240116; t=1755526050; c=relaxed/simple;
+	bh=pXb2zlx7R4Dr2XArFNTqGHL2x7yl2LcSAOVrRtJS7GU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KGKE/oZl8oXflCr0B36Ddiu1G0/gCalAQ3k8wTAlhX9NU7FrIRdVadUn8T0AC5LfcTZtDABQNKVtj+V6mDT4wb84mhPAf0EjJIlCWGC04QKybhWQ3x8opqnXVXavn5dkDkvbdmcD0LU6cQqLIvpeAdPqXi5pn4NyDhQ9+KWwhaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D/UeaWEp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I8ISs1030458
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:07:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	chLwK+SsPQhHTytM+7iGONL6X0o4wGCEiPMrGgw75ts=; b=D/UeaWEpAUWr/gmE
-	WZwGHoUPLUcKr79Zd51wp7wQI0dwsdSBaOAHu78btslcr/KrdR/bGGhyK46HZqo+
-	d7CcZ88NvoPaijN+ZaCV8SJ4Zoj3k42YheITNwu2EepURGBWsBIFaUTcebUiIHLb
-	veAudXcNEk8HxCuQxsDLGlmR4tPaVw/UrcHpJ59RwxUDMnybMAmOYjfuT2tRS3YF
-	+Z7W4DKOF2aMyJ98APKMORCikS8re5V3SDR/IIxj1CzopHIGKJgRGXIXnNxACm9e
-	Crv+BISMW5jApN6gq6ZqrIOVlOMeklP7vUddhJ/ES0OIpOdFZGY5XWuNmliBTg3v
-	RSDmFg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jhagvx9d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:07:01 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e1ff27cfaso4438823b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:07:01 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=g+p4rlFzeSMFkvVmdM9I3DfCCZjUun+zYHdJzXw+ECouXL4iX+plZaOKq8upuxSF/EkJ3yCaGg4ggNCtgVyIMDtdGqEOwjJWy7AVwIJ2MRaF4Azy/ka8+I1Tb1WWCyaDUUj9v8Iz3f7hnlbYXP1OV2UOOuhawwvZANfCmA2LNeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJrU1Dno; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9dc52c430so1994957f8f.0;
+        Mon, 18 Aug 2025 07:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755526047; x=1756130847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8gJPSsdmU5FvXviVMdeP/ttQ4aHCnDCwIi9RQdDjZ14=;
+        b=cJrU1DnoZTENBPmqCxC2ONG7sugtmwNl/qgXikc/mSfQ1qe3vFg33lV0ML/dS3BNEg
+         wxNaHdzKH2t+o/P/I0hVprTo4dUrGoi1c69K/G+vZh+3EdpilnA78APZ7Di0LJwFhhky
+         R4gftnMz0KkYwPoWvHzhS0saX1EpehBL/YKsGGXyudWpSjjHDCewr7sXCa/L4OKhD1gg
+         gb/SHdAP1bCA1RJKsTc+E8S158Dxl1ct1S47zzUR/OeMNDpsprW2SVIxijfdxJg5538F
+         Ji1iP74nMqVHvLBSlmuQ44xBGalcXz/EezXjyYGsDL0jH6HFZeT54HywlQmOdiI2O8s/
+         8R/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755526020; x=1756130820;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=chLwK+SsPQhHTytM+7iGONL6X0o4wGCEiPMrGgw75ts=;
-        b=GIgDOo5K9gXktiX2FdfuLsPLKNlyaO2g6Lfiq+Qyl4/EyIFxWGf9aY81lz3x00GrAX
-         mfOMqdJOuXBUfc3BdIFOdX1L+SQS04sCRyCAD8Yp9vP7Hsm51ghcx01w3KN5s6HVWS04
-         9uzZshi4oavjYyXCSE003Rq+EgxUK14mYyqfBheWlLkVFmTHh7B+4768ch0a5YHUzzDT
-         lThMCUmOHSa6oRpeMYo+pTqGt5R3ikYXlLTwR7QEGLx2nHl7UO8L8Ssoul6TtGFFu9HY
-         vpu7xBjkl8Pqn4rU/RWgaa4CdkceBWrh4sRpv/JVnogzpSHca27KHqLQnJY8nONd5tB9
-         gl9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXno4W+t9rd1OWP/XuizwB0oqhQ2jq8MRYvUGeIohUFOoeV6Nq8YZH1jnu9E4ZJHTmTxIMLemE5SIwd1nI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAvz8Ho3LFTRYXsFpdHiv6HxmEOpCDeLmgJiaZHPM1nqHSFqUQ
-	4F+0kmh9q0Cv5GFbpp3CtVF45dCphDluXv0TX1WK9UiBsH/PWQxKvx78Z/RGgGu9mEBQ6XT3jeZ
-	JcuReUVsirtvH7oj3zMKgyrbjolA5r2MTHsCj0OQRHPP6x3Pmpox/undOg5hmoa4ys9Q=
-X-Gm-Gg: ASbGncvx03LnXO4DawB2aQQMrnRkHhuHe/xnttuYuN8WazcALfFujiLRxfVAK1lCAKP
-	tId3OJZaGD2p8qGmYw5xO5mMxgoW+qji3juOSqzAsqOCWwk58aDTPkSUMOBALDjymQ2OdqREP0c
-	zbqA0wgFZh+FmBkPdtAczOpRIhzxS7FVMfEl8Ci5kDKxQwp5QJcAxGTKNmWaHEW8aQCkfDq+3EB
-	0x/tdknh9sV422XssLy+/mD59EOv1DdiYVSOdAgK5c3MdXjo70tN66zNaRCj3QQiutHuYQBsYoB
-	wBhG1PI5m2dru6yxRaOjH6CpJXXws2lkJ84d9x3dY9jhVzGTzEU307s3GMyDC1Sa
-X-Received: by 2002:a05:6a00:14cc:b0:736:4e14:8ec5 with SMTP id d2e1a72fcca58-76e438f0ec5mr15651398b3a.11.1755526019860;
-        Mon, 18 Aug 2025 07:06:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEaW5O7M2POFlUVEtIHKn+I++/iHZWm/6mA4hEC46cPlJZweEv7D5U88CqdrtLREpBxLoXmhw==
-X-Received: by 2002:a05:6a00:14cc:b0:736:4e14:8ec5 with SMTP id d2e1a72fcca58-76e438f0ec5mr15651177b3a.11.1755526017550;
-        Mon, 18 Aug 2025 07:06:57 -0700 (PDT)
-Received: from [192.168.1.4] ([106.222.229.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e45588c05sm7492056b3a.82.2025.08.18.07.06.53
+        d=1e100.net; s=20230601; t=1755526047; x=1756130847;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8gJPSsdmU5FvXviVMdeP/ttQ4aHCnDCwIi9RQdDjZ14=;
+        b=Kh88dg1r+FLp+4vD5hYuKTBaQH1s0SDvCuADXuZI6nIhjakRrdkolIz9cRP1Qtjv1a
+         9h1o3QoedhOoGQCrNc6u3k2F5+n36blKVV9Mv4Lk9OE1YMk34MrZfEf9VDz9JD4Gequz
+         UU+K0oyNf+mM1Yefv3RKg4fADHi+Mn9qGogGpiiBEq+yzjrgkVxJnvvH13c9504i+sjG
+         Xhye+SbGMPN5onSvj1bH2zuSRgqtdAUHvIA87/2BNeJPHD0TGFqBNJjCoTrCpWzyhUgw
+         HkMl6NiDF1Qz4GM5MKm0BRm57ZHG4hG9TAtPQGhvfEQqsoYFv2IzhRFArxXglQAA2KV/
+         AaZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/2+CGINEIGUyWBqDN5d/vqJDsT2mDwI2pn+3tvA7KmCq1wcNdaNGxlb75HJUlK8UxNElCAf6V@vger.kernel.org, AJvYcCUv2w8AcLLTw03PiqN5AmeYm8ZIaZIoAqrXepCgEb0efnlTyLk/MKTIdgvUiwbntwsLEgjyzVmbDmKqqq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4naLFYMQewnrGImwR+YDtZhw+F02Xl0cxBE0/qZ/Cw7L4OSzA
+	Uxwd9UWIuDbF+/h6+6Pp2QkUpA1bZutabBqRII0QyjBLTznhD7gagJEd
+X-Gm-Gg: ASbGnctIY9zvsV8rfn04/thuMpd55fHPg8/KMFcg2S3tB00SM3Zf7/116qvMKwijwDV
+	2GSdZo27pZaAqrpy9VEmR1f0TJINgp02NUqrCshh+DZvNYdU0AYOnV9F61XmhhLl4QsnGRTDtyp
+	hgWRwOlnboHEqs1NB5bpbtyxObwywgrPiNJu1ZMcvuiDtcFHQzNWE/bPWfSTRxuIklh6FGFItw4
+	gpFXP7mlm3zrnkWu2sY5ZAXAX4nIOmT6pd9gMyMWePt70HKYv4hSTJhAFIMuvTtK0Dr8nY6v6Fk
+	4mLTGiFlfMedRGhn4sq/MoA2XMMowL87Xn2bHeh2FhhJjSisdOKY8j3dc7DmgMOFiqbA+bpmqup
+	tG3ZJS18PG4/cFmnEmmKGOMokI2e4rch9Zw==
+X-Google-Smtp-Source: AGHT+IGR8cqHW8hnYVWDdKS72RlL4t9RClBECmBxm6JheoalRqO0sNBC0agJEeF7VuRgL6sY4Zl75Q==
+X-Received: by 2002:a05:6000:2309:b0:3b9:1108:e6f with SMTP id ffacd0b85a97d-3bb676ca7e3mr9011651f8f.25.1755526046699;
+        Mon, 18 Aug 2025 07:07:26 -0700 (PDT)
+Received: from localhost ([45.10.155.11])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a771ecsm1797925e9.9.2025.08.18.07.07.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 07:06:57 -0700 (PDT)
-Message-ID: <9f94c6d7-7b39-455c-83d1-81c694672775@oss.qualcomm.com>
-Date: Mon, 18 Aug 2025 19:36:52 +0530
+        Mon, 18 Aug 2025 07:07:26 -0700 (PDT)
+Message-ID: <af4938f9-424d-460b-90b7-487ab9237a4d@gmail.com>
+Date: Mon, 18 Aug 2025 16:07:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm: skip re-emitting IBs for unusable VMs
-To: rob.clark@oss.qualcomm.com, Antonino Maniscalco <antomani103@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250813-unusable_fix_b4-v1-1-3218d166b8a8@gmail.com>
- <272d2a39-19ce-4ac5-b3c6-3e3d6d9985c5@oss.qualcomm.com>
- <CACSVV00Yo=cZxUztB5Jf7153bsnnuATrh3L1utw4SrOQmYERug@mail.gmail.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <CACSVV00Yo=cZxUztB5Jf7153bsnnuATrh3L1utw4SrOQmYERug@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/5] net: gso: restore ids of outer ip headers
+ correctly
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, alexander.duyck@gmail.com,
+ corbet@lwn.net, shenjian15@huawei.com, salil.mehta@huawei.com,
+ shaojijie@huawei.com, andrew+netdev@lunn.ch, saeedm@nvidia.com,
+ tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
+ ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
+ kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me, ahmed.zaki@intel.com,
+ aleksander.lobakin@intel.com, linux-kernel@vger.kernel.org,
+ linux-net-drivers@amd.com
+References: <20250814114030.7683-1-richardbgobert@gmail.com>
+ <20250814114030.7683-4-richardbgobert@gmail.com>
+ <willemdebruijn.kernel.26e28ce8a7fe@gmail.com>
+ <willemdebruijn.kernel.2963bd70f4104@gmail.com>
+ <9be872a7-1523-48ef-86a4-dad899fc0a03@gmail.com>
+ <willemdebruijn.kernel.ee1a9b43eb45@gmail.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <willemdebruijn.kernel.ee1a9b43eb45@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=D9xHKuRj c=1 sm=1 tr=0 ts=68a33385 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=9Q8gPALlkHEzzDxkdHlyxw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8
- a=1QxSUWC4Tu4TNCmoOX8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: EIycykTKCqoCOq3LP1EwPXY7UCtvJsuI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyNCBTYWx0ZWRfXwRugKa2drxbk
- 7YSoTwAGVHiXR8VZrjcecFacWnLfsBaIQxotgxVTdSGaGxseaCDela6i9B3Z/PVDoSaosLkEVZS
- Cpq/WaY0w/EslhH//WL2CT7syr11Au6J6+EpNb69nFgIvAGcxN/NY3DY7CRZYBh4xt0X5uvsKrh
- j+8/YzT9WUvvMHgw3eOPCQswt7VWSHrxshTU781ULSpdYGvxRJ7cki9rSld/p84Px4bBlXzWn2M
- Ea2idtuWsbYLFq5FMEzCcHp3kZPkfKEEmgQypDBleU3j0lmtVAq22gavu+4itt5P/O1bro3Zqqf
- nMaFc0+vGhGXV77BHabmi5hR2XpQg71bUIPyS87Wr0GEY+6Wm+g/kKS2ZTZU6M/jQJ79IzrcjOF
- FeP6sPls
-X-Proofpoint-GUID: EIycykTKCqoCOq3LP1EwPXY7UCtvJsuI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160024
+Content-Transfer-Encoding: 7bit
 
-On 8/18/2025 6:48 PM, Rob Clark wrote:
-> On Mon, Aug 18, 2025 at 5:10 AM Akhil P Oommen <akhilpo@oss.qualcomm.com> wrote:
+Willem de Bruijn wrote:
+> Richard Gobert wrote:
+>> Willem de Bruijn wrote:
+>>> Willem de Bruijn wrote:
+>>>> Richard Gobert wrote:
+>>>>> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
+>>>>> be mangled. Outer IDs can always be mangled.
+>>>>>
+>>>>> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
+>>>>> both inner and outer IDs to be mangled. In the future, we could add
+>>>>> NETIF_F_TSO_MANGLEID_{INNER,OUTER} to provide more granular control to
+>>>>> drivers.
+>>>>>
+>>>>> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
+>>>>>
+>>>>> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+>>>>> ---
+>>>>>  Documentation/networking/segmentation-offloads.rst |  4 ++--
+>>>>>  drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  2 +-
+>>>>>  drivers/net/ethernet/mellanox/mlx5/core/en_rx.c    |  8 ++++++--
+>>>>>  drivers/net/ethernet/sfc/ef100_tx.c                | 14 ++++++++------
+>>>>>  include/linux/netdevice.h                          |  9 +++++++--
+>>>>>  include/linux/skbuff.h                             |  6 +++++-
+>>>>>  net/core/dev.c                                     |  7 +++----
+>>>>>  net/ipv4/af_inet.c                                 | 13 ++++++-------
+>>>>>  net/ipv4/tcp_offload.c                             |  4 +---
+>>>>>  9 files changed, 39 insertions(+), 28 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/networking/segmentation-offloads.rst b/Documentation/networking/segmentation-offloads.rst
+>>>>> index 085e8fab03fd..21c759b81f4e 100644
+>>>>> --- a/Documentation/networking/segmentation-offloads.rst
+>>>>> +++ b/Documentation/networking/segmentation-offloads.rst
+>>>>> @@ -42,8 +42,8 @@ also point to the TCP header of the packet.
+>>>>>  
+>>>>>  For IPv4 segmentation we support one of two types in terms of the IP ID.
+>>>>>  The default behavior is to increment the IP ID with every segment.  If the
+>>>>> -GSO type SKB_GSO_TCP_FIXEDID is specified then we will not increment the IP
+>>>>> -ID and all segments will use the same IP ID.  If a device has
+>>>>> +GSO type SKB_GSO_TCP_FIXEDID_{OUTER,INNER} is specified then we will not
+>>>>> +increment the IP ID and all segments will use the same IP ID.  If a device has
+>>>>>  NETIF_F_TSO_MANGLEID set then the IP ID can be ignored when performing TSO
+>>>>>  and we will either increment the IP ID for all frames, or leave it at a
+>>>>>  static value based on driver preference.
+>>>>> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+>>>>> index bfa5568baa92..b28f890b0af5 100644
+>>>>> --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+>>>>> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+>>>>> @@ -3868,7 +3868,7 @@ static int hns3_gro_complete(struct sk_buff *skb, u32 l234info)
+>>>>>  		skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_ECN;
+>>>>>  
+>>>>>  	if (l234info & BIT(HNS3_RXD_GRO_FIXID_B))
+>>>>> -		skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_FIXEDID;
+>>>>> +		skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_FIXEDID_OUTER;
+>>>>>  
+>>>>>  	skb->csum_start = (unsigned char *)th - skb->head;
+>>>>>  	skb->csum_offset = offsetof(struct tcphdr, check);
+>>>>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+>>>>> index b8c609d91d11..78df60c62225 100644
+>>>>> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+>>>>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+>>>>> @@ -1289,8 +1289,12 @@ static void mlx5e_shampo_update_ipv4_tcp_hdr(struct mlx5e_rq *rq, struct iphdr *
+>>>>>  	tcp->check = ~tcp_v4_check(skb->len - tcp_off, ipv4->saddr,
+>>>>>  				   ipv4->daddr, 0);
+>>>>>  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4;
+>>>>> -	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id)
+>>>>> -		skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_FIXEDID;
+>>>>> +	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id) {
+>>>>> +		bool encap = rq->hw_gro_data->fk.control.flags & FLOW_DIS_ENCAPSULATION;
+>>>>> +
+>>>>> +		skb_shinfo(skb)->gso_type |= encap ?
+>>>>> +					     SKB_GSO_TCP_FIXEDID_INNER : SKB_GSO_TCP_FIXEDID_OUTER;
+>>>>> +	}
+>>>>>  
+>>>>>  	skb->csum_start = (unsigned char *)tcp - skb->head;
+>>>>>  	skb->csum_offset = offsetof(struct tcphdr, check);
+>>>>> diff --git a/drivers/net/ethernet/sfc/ef100_tx.c b/drivers/net/ethernet/sfc/ef100_tx.c
+>>>>> index e6b6be549581..aab2425e62bb 100644
+>>>>> --- a/drivers/net/ethernet/sfc/ef100_tx.c
+>>>>> +++ b/drivers/net/ethernet/sfc/ef100_tx.c
+>>>>> @@ -189,7 +189,8 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>>>>>  {
+>>>>>  	bool gso_partial = skb_shinfo(skb)->gso_type & SKB_GSO_PARTIAL;
+>>>>>  	unsigned int len, ip_offset, tcp_offset, payload_segs;
+>>>>> -	u32 mangleid = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+>>>>> +	u32 mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+>>>>> +	u32 mangleid_inner = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+>>>>>  	unsigned int outer_ip_offset, outer_l4_offset;
+>>>>>  	u16 vlan_tci = skb_vlan_tag_get(skb);
+>>>>>  	u32 mss = skb_shinfo(skb)->gso_size;
+>>>>> @@ -200,8 +201,10 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>>>>>  	bool outer_csum;
+>>>>>  	u32 paylen;
+>>>>>  
+>>>>> -	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
+>>>>> -		mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>>>>> +	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID_OUTER)
+>>>>> +		mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>>>>> +	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID_INNER)
+>>>>> +		mangleid_inner = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>>>>>  	if (efx->net_dev->features & NETIF_F_HW_VLAN_CTAG_TX)
+>>>>>  		vlan_enable = skb_vlan_tag_present(skb);
+>>>>>  
+>>>>> @@ -239,14 +242,13 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>>>>>  			      ESF_GZ_TX_TSO_CSO_INNER_L4, 1,
+>>>>>  			      ESF_GZ_TX_TSO_INNER_L3_OFF_W, ip_offset >> 1,
+>>>>>  			      ESF_GZ_TX_TSO_INNER_L4_OFF_W, tcp_offset >> 1,
+>>>>> -			      ESF_GZ_TX_TSO_ED_INNER_IP4_ID, mangleid,
+>>>>> +			      ESF_GZ_TX_TSO_ED_INNER_IP4_ID, mangleid_inner,
+>>>>>  			      ESF_GZ_TX_TSO_ED_INNER_IP_LEN, 1,
+>>>>>  			      ESF_GZ_TX_TSO_OUTER_L3_OFF_W, outer_ip_offset >> 1,
+>>>>>  			      ESF_GZ_TX_TSO_OUTER_L4_OFF_W, outer_l4_offset >> 1,
+>>>>>  			      ESF_GZ_TX_TSO_ED_OUTER_UDP_LEN, udp_encap && !gso_partial,
+>>>>>  			      ESF_GZ_TX_TSO_ED_OUTER_IP_LEN, encap && !gso_partial,
+>>>>> -			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, encap ? mangleid :
+>>>>> -								     ESE_GZ_TX_DESC_IP4_ID_NO_OP,
+>>>>> +			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, mangleid_outer,
+>>>>>  			      ESF_GZ_TX_TSO_VLAN_INSERT_EN, vlan_enable,
+>>>>>  			      ESF_GZ_TX_TSO_VLAN_INSERT_TCI, vlan_tci
+>>>>>  		);
+>>>>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+>>>>> index 5e5de4b0a433..e55ba6918b0a 100644
+>>>>> --- a/include/linux/netdevice.h
+>>>>> +++ b/include/linux/netdevice.h
+>>>>> @@ -5287,13 +5287,18 @@ void skb_warn_bad_offload(const struct sk_buff *skb);
+>>>>>  
+>>>>>  static inline bool net_gso_ok(netdev_features_t features, int gso_type)
+>>>>>  {
+>>>>> -	netdev_features_t feature = (netdev_features_t)gso_type << NETIF_F_GSO_SHIFT;
+>>>>> +	netdev_features_t feature;
+>>>>> +
+>>>>> +	if (gso_type & (SKB_GSO_TCP_FIXEDID_OUTER | SKB_GSO_TCP_FIXEDID_INNER))
+>>>>> +		gso_type |= __SKB_GSO_TCP_FIXEDID;
+>>>>
+>>>> This is quite peculiar.
+>>>>
+>>>> Is there a real use case for specifying FIXEDID separately for outer
+>>>> and inner? Can the existing single bit govern both together instead?
+>>>> That would be a lot simpler.
+>>>
+>>> I guess not, as with GRO this is under control of the sender, and
+>>> possibly a separate middlebox in control of encapsulation.
+>>>
+>>> Still, possible to preserve existing FIXEDID for the unencapsulated
+>>> or inner, and add only one extra FIXEDID for outer? Or is there value
+>>> in having three bits?
 >>
->> On 8/13/2025 6:34 PM, Antonino Maniscalco wrote:
->>> When a VM is marked as an usuable we disallow new submissions from it,
->>> however submissions that where already scheduled on the ring would still
->>> be re-sent.
->>>
->>> Since this can lead to further hangs, avoid emitting the actual IBs.
->>>
->>> Fixes: 6a4d287a1ae6 ("drm/msm: Mark VM as unusable on GPU hangs")
->>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
->>> ---
->>>  drivers/gpu/drm/msm/msm_gpu.c | 9 ++++++++-
->>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
->>> index c317b25a8162edba0d594f61427eac4440871b73..e6cd85c810bd2314c8bba53644a622464713b7f2 100644
->>> --- a/drivers/gpu/drm/msm/msm_gpu.c
->>> +++ b/drivers/gpu/drm/msm/msm_gpu.c
->>> @@ -553,8 +553,15 @@ static void recover_worker(struct kthread_work *work)
->>>                       unsigned long flags;
->>>
->>>                       spin_lock_irqsave(&ring->submit_lock, flags);
->>> -                     list_for_each_entry(submit, &ring->submits, node)
->>> +                     list_for_each_entry(submit, &ring->submits, node) {
->>> +                             /*
->>> +                              * If the submit uses an unusable vm make sure
->>> +                              * we don't actually run it
->>> +                              */
->>> +                             if (to_msm_vm(submit->vm)->unusable)
->>> +                                     submit->nr_cmds = 0;
->>
->> Just curious, why not just retire this submit here?
+>> The ideal solution would be to split NETIF_F_TSO_MANGLEID into
+>> NETIF_F_TSO_MANGLEID_OUTER and NETIF_F_TSO_MANGLEID_INNER.
+>>  
+>> As I noted, we can add this in the future, then each SKB_GSO_FIXEDID
+>> bit will have a corresponding NETIF_F_TSO_MANGLEID bit. This would
+>> be a much bigger change, as it requires modifying all of the
+>> drivers that use NETIF_F_TSO_MANGLEID. My proposed solution is
+>> somewhat of a middle-ground, as it preserves the current behavior of
+>> NETIF_F_TSO_MANGLEID.
+>>  
+>> Preserving the existing FIXEDID for unencapsulated or inner headers
+>> seems confusing to me, and just moves the ugly code elsewhere. We also
+>> still need to compare both SKB_GSO_FIXEDID bits against NETIF_F_TSO_MANGLEID.
 > 
-> Because then you'd end up with submits retiring out of order (ie.
-> fences on the same timeline signaling out of order)
-
-Yeah, that makes sense.
-
-Reviewed-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-
--Akhil
-
+> Is it not simpler to keep NETIF_F_TSO_MANGLEID and SKB_GSO_FIXEDID as
+> meaning unencapsulated, and add an ENCAP variant for outer headers of
+> encapsulated packets. Similar to separate UDP_TUNNEL bits.
 > 
-> BR,
-> -R
+> No device currently advertises support for outer FIXEDID. We don't
+> intend to add this as an ethtool configurable feature. It is only used
+> for GRO packets to maintain GRO+GSO semanticss when forwarding. So no
+> matching NETIF_F flag is probably okay. 
 > 
->> -Akhil
->>
->>>                               gpu->funcs->submit(gpu, submit);
->>> +                     }
->>>                       spin_unlock_irqrestore(&ring->submit_lock, flags);
->>>               }
->>>       }
->>>
->>> ---
->>> base-commit: 8290d37ad2b087bbcfe65fa5bcaf260e184b250a
->>> change-id: 20250813-unusable_fix_b4-10bde6f3b756
->>>
->>> Best regards,
->>
+> 
+
+I dabbled with your suggestion for a bit. I think GRO/GSO code is clearer
+with separate OUTER and INNER variants.
+ 
+Your suggestion lets us remove __SKB_GSO_TCP_FIXEDID, but keeping it has the
+advantage of allowing SKB_GSO_TCP_FIXEDID_INNER == SKB_GSO_TCP_FIXED_ID_OUTER << 1
+which simplifies (and slightly optimizes) other areas of the code. It's also
+simpler to check whether the header is outer or inner than it is
+to check whether it is the "inner-most" or "outer in the case of encapsulation".
 
 
