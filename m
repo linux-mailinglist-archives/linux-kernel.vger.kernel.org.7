@@ -1,124 +1,311 @@
-Return-Path: <linux-kernel+bounces-774582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51EA9B2B478
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:13:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B188EB2B496
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 101AE7A30B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D1FB4E6280
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A922765C5;
-	Mon, 18 Aug 2025 23:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7D4271A71;
+	Mon, 18 Aug 2025 23:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CP8PALMH"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Rpsiob6B"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7F22727EE;
-	Mon, 18 Aug 2025 23:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755558814; cv=none; b=ai2retZB+hTEIw541dTmk9Pue75WpNMe03l434SdLZ2awhJ8iFRKtfVFo+h8kgdv2mKEi5gGumgJmbF5qRhuI6W18vgG+2IYf2nAS8XJqrQ+iwBqf8/hNNFPMhe/LCQdgcSPRlTV8iE/G4K5trimJOTSonSsvFHnx3vJizDQfBY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755558814; c=relaxed/simple;
-	bh=c8HzGd/TDaCgrjaWIMeuTNCXcuACmbYECvWUUre4PIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UY+TYXUpYgbX1Z2HJovgqmBbFFw4vE+ijdf/587XbTfZ28KJP85Mep5Kthh0belhcSM65cPpfEoUYQx1yaOs0lgScm3ueojn1Wq0DnB3AV8snnx0h16TNvm8pvjRtxVhawW7SAsOiDVC4DRW0YTgeqx8LYKoE27O/j/BHosd2F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=CP8PALMH; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b00f23eso25825325e9.0;
-        Mon, 18 Aug 2025 16:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1755558811; x=1756163611; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mnq9RhUyvZf92U8sAKjR3y1PDGecrVMkyD6LjbdWrCk=;
-        b=CP8PALMHPATAiY7l84kAD2Gpf9AxFgT/yWLBSMx/OpW9P2sftKeI2K4Q0d/BlBHdqM
-         NRA8Z6XPa/ZCtNa9IzBiQzgCfk8uqelU4zFhjcClJt3UB0ku2lZSFBM+OQZUhyWW5jwv
-         KFDW6TCOTWt+gkaEOyam6kUw9dGZLSGZ6Mbkp7mk57pXKin8Z5cJ/vtdCdujRBcSJ6NZ
-         sgoe1UzvHKV9C5KcT2RZEo/zxory8mJrhzNYjrnsUPS25fZy/dZRyW1YP2OwVSVZLQPB
-         DNXSLhxR0OeS5DdPZ3InCUyITJwxLKUg9/tTtdo0a0hjVqdeg6siUnNwDE7iWw+bh0ET
-         uVog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755558811; x=1756163611;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mnq9RhUyvZf92U8sAKjR3y1PDGecrVMkyD6LjbdWrCk=;
-        b=lXl6P0ZL8N3Hsz3VucDqHfV9QrH/xEbhZHBerP6EmIcNELwnND5Wq/W1za5miE7xx/
-         6RalcN0eYNaqq4+Jr/A3a1wyGTwDqES8O36oeKem1DTFXun+rbfpNDOBKSSPyPYSAC4Q
-         h2gWTBAYA5Zdpk24RkXP/JjGWpyL+bQGAIXmE9gk+bnNro2HhDaH9laAYRxM2dmgITj/
-         YbghgCnMLEdMOXFodn+RicFYFdLGnO8tHE4CbxXRrhgAol7BU/BD4K4qZt6wamdOAnnH
-         28trfB6SVg8O7+N7T05eNg3Eq+kYBDJeaZA3CFSbH2NkBIpPqj7tW19cbcQVt5VQQHQo
-         UMww==
-X-Forwarded-Encrypted: i=1; AJvYcCWl1hnlFBGs2XPYcb869ZRn7j4uf+hHSbcilmxXdAF7qTGxEkj3CuUQxl7W8dcjDE7PoQ94towQ8O9bMhs=@vger.kernel.org, AJvYcCXhaIAvvKA4kY9C10WxVT20/0hpaVN1fRrNAkUruG3tOUSR0WThdUCPhvyaeu2AoNPoivJew22J@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFWyFTgI9xsxvqaXyLmj+q2RhsFd577o0jkDOlR1RnP3d8nb/1
-	W6kNTkjG5K9zjIIv767fZOtAfK8XCuVgXkLIIw3bvXeg5cCzV77O3hY=
-X-Gm-Gg: ASbGncvDab9d92Ann3oMsRc2d82jGOfz6NtkmJjdi0vYY2Brbplv1KqFSvg6lxYxRZu
-	gYxwe2zMx1ffpFBkokLuIq3nsFP0/+bxke8AGEkRPdweAZLuhVDTJ4QUMK2pZYiS8PSyacISkz2
-	2UulSjSn2jRIYSpg4NZeXkvxCFcJT2rMmFbGJvZWRogh446gxafNqab9+N1FnTfZppdk1L+lOGv
-	Vgwr/97kW5G6AmHnnXK2PDf+mGJcE4ynW5Td/Ndjulr9K/JMcQIObH/dNJdj8EONwxcVNhmkrVb
-	r6s45luFHe/BTgqIKbauIhzPkVAi64Zed7fYJLR5O7y79sN3zreTuN6L8/d4cojIMNLF9fdTPh5
-	VjS1FimGK3pJRGvqomlvkl1EQg0E9G1Gy6ZHc7OOzsdbRvAICiELqV3cug+Nj1LGwtJ3U6IxT1Y
-	o=
-X-Google-Smtp-Source: AGHT+IFqtwFtg9Rad+LKYSBINL0XN0Q32hE+79dF5jl3tp+I1u2wZ1gYBLESupv7TuKefkG18KJrPg==
-X-Received: by 2002:a05:600c:4587:b0:459:d645:bff7 with SMTP id 5b1f17b1804b1-45b43dc654cmr2368665e9.12.1755558810606;
-        Mon, 18 Aug 2025 16:13:30 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4eef.dip0.t-ipconnect.de. [91.43.78.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c1708sm1169163f8f.38.2025.08.18.16.13.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 16:13:30 -0700 (PDT)
-Message-ID: <cf35c5d9-643a-4dd5-bd1d-45cccb64de61@googlemail.com>
-Date: Tue, 19 Aug 2025 01:13:29 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CE53451BF;
+	Mon, 18 Aug 2025 23:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755559442; cv=fail; b=dK/qOOx40wE23BXblsqXpPovXqLtakHRFZt1Gos+KSNWQ3U84uwEPCGrjP23HVm/VJcOrXLk8YX6igOee6CMe1ry/lYLwDUcpU6XdmDnqSa7t8xGr3AjIrhxk5Uw90sUrNWDiNpCXRuag5GiXshsYQdp+lABGna2RzZM8bhgBkI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755559442; c=relaxed/simple;
+	bh=LgiSbm2Shu6LPQSgqbEXTCNIRlUlXFm7wYW11YISOVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=espkTGaOW03IE7GUFtEg8YVUXQ7g39HrFjqeWJvfIZhTfBTRWEReWTC6beXTp9TWgWNtHPBH4A6V4Kg4jhpxFqFdyTWbgjaazRIjwYvn8rj4Y4pmbv4+Xv2N0HOmhmgiU3UDQEXcsPtB+DwRHK5aswwvzUY1HsXSeYvXMyqWm2U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Rpsiob6B; arc=fail smtp.client-ip=40.107.220.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BALuyTM7Xk/gCG/zGF+p8f+8ZeMOECpNiZW7UoNSLZmv8XEbOEPM/ZIMlpzoJBS+ntFP8xnRusqOCLOsEQDXPMrcKM5o5zvteuDMwGcxKLrgO3X5lxhClXi/U6DvY/aLdeEjfMJBlCC320/qebUFz/g3K7pdY9B1XXg8KTu4ZF3GWCSayRRwnlMVQetxG4/4zwEANayNflmonp1s5SeJgx2qG2Lwg4Pnj5Iz1Me1wfXmDcdpZT5YSuKBeZjxH3vPQaE2LjvK0bNhYTHChmzcOtCzMK4pbOctnSgAxGG0jQEmfaICsOkL8/eLU3b6II5MVZuQU/df6rKsxXDnTJS6jQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qb7BcD36UB6pV/zvOuGc9DLIBGAVQMDkM7YIadwpprQ=;
+ b=ZTINLXtPk/PX/ivKbHjuo9OCVIhHQM8jakf9puETYehcd8spC3qd0jik01r4amcEGVjIK2bKQ/KgK2Ffl/8X7EpyOHmbL9lsM4nGudyBTco2dH8jVUJ1nKCHU88HdE8voEdg7pDCz+EJzZM7aU4hywvI7dv5BjfkJg9BwMlKoEkehdISxNDY+3CcCKiiiV6tc+X2ED6bbPk9d0JkyXSXyqMHLzjXFgv43kKf9KlVlCm4H97aKdQp9fPECh+IS+Fba54W1B/Yh1EPlLuoydkqdK0rctHJUhSAIom/P7o62K482IL7CxYjkmMTWsC1BQdy9vzH+Z8SmOtmHl50AXtIFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gondor.apana.org.au smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qb7BcD36UB6pV/zvOuGc9DLIBGAVQMDkM7YIadwpprQ=;
+ b=Rpsiob6BtfrRxVMzLMMveX6LigMOBVthLUzrIBQsE16c/mC8/SKJQL0NzR9wgWQUXfNo3A/jQqF5Q8D9zoYlzxqtTGeWgTGjKa/4vl9DjMX1FtXSoh0BnK50WHTXWnybksBIy3M3ciYMtnHJ17xxn+nYUT90lRRjQD6G4v33Vqo=
+Received: from BYAPR02CA0051.namprd02.prod.outlook.com (2603:10b6:a03:54::28)
+ by CH3PR12MB8712.namprd12.prod.outlook.com (2603:10b6:610:171::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
+ 2025 23:23:56 +0000
+Received: from CO1PEPF000066E7.namprd05.prod.outlook.com
+ (2603:10b6:a03:54:cafe::97) by BYAPR02CA0051.outlook.office365.com
+ (2603:10b6:a03:54::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.20 via Frontend Transport; Mon,
+ 18 Aug 2025 23:23:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000066E7.mail.protection.outlook.com (10.167.249.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Mon, 18 Aug 2025 23:23:55 +0000
+Received: from [10.236.30.53] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
+ 2025 18:23:53 -0500
+Message-ID: <a16f1420-fe20-4c3c-9b75-806b1da22336@amd.com>
+Date: Mon, 18 Aug 2025 18:23:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.12 000/444] 6.12.43-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250818124448.879659024@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250818124448.879659024@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/7] Add SEV-SNP CipherTextHiding feature support
+To: "Kalra, Ashish" <ashish.kalra@amd.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>
+CC: <Neeraj.Upadhyay@amd.com>, <aik@amd.com>, <akpm@linux-foundation.org>,
+	<ardb@kernel.org>, <arnd@arndb.de>, <bp@alien8.de>, <corbet@lwn.net>,
+	<dave.hansen@linux.intel.com>, <davem@davemloft.net>, <hpa@zytor.com>,
+	<john.allen@amd.com>, <kvm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<michael.roth@amd.com>, <mingo@redhat.com>, <nikunj@amd.com>,
+	<paulmck@kernel.org>, <pbonzini@redhat.com>, <rostedt@goodmis.org>,
+	<seanjc@google.com>, <tglx@linutronix.de>, <thomas.lendacky@amd.com>,
+	<x86@kernel.org>
+References: <cover.1752869333.git.ashish.kalra@amd.com>
+ <20250811203025.25121-1-Ashish.Kalra@amd.com>
+ <aKBDyHxaaUYnzwBz@gondor.apana.org.au>
+ <f2fc55bb-3fc4-4c45-8f0a-4995e8bf5890@amd.com>
+ <51f0c677-1f9f-4059-9166-82fb2ed0ecbb@amd.com>
+ <c17990ac-30b2-4bdc-b31a-811af6052782@amd.com>
+From: Kim Phillips <kim.phillips@amd.com>
+Content-Language: en-US
+In-Reply-To: <c17990ac-30b2-4bdc-b31a-811af6052782@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E7:EE_|CH3PR12MB8712:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac4b4607-fe41-4cc1-a26f-08dddeae4d47
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VEszREJsZ3gxcEwvVytOdUZrQXdLS25HWk1HQTZDR0xaUGxQYmxlNGNjYzE3?=
+ =?utf-8?B?THEyOWRaek54aWlqM25WckRrTVVrUzFYT2tmVnpOV3hJcTUxQUhBWGNVTWNV?=
+ =?utf-8?B?VnZsWDY1eUh6Q1BhMWRheWZ0SG5ocnE2TlVwVVRVZng3TWYrMEo5bHVZdFo0?=
+ =?utf-8?B?cUQ4L2R5VVREZ1d4dlc0eVZoakFNUjE1VXBTWTNwVkVVbkw1a3pZVjVIU3NR?=
+ =?utf-8?B?cXB5WUZFd2x5aVE3L0IwQnd1MndkWjhQamhyOU5kSXVRZW9uZmVPb0RBOGZU?=
+ =?utf-8?B?djBJSmRWalNsRjVVSG9QQlM2aFRxeXc5KzdYK1E4ZGU4eUl4b1dXVzdsZFRv?=
+ =?utf-8?B?aCtscFpNRFRQSUNmNWZSR05aTmsxdmovaWxiVXdoL3MwRHJxV3NNOTFNTlB3?=
+ =?utf-8?B?eDNLUkRsY2R5V090LzZMM1VKNXB2Y2g4MTlKd3Y1c2hGVE4yQlU1cW5QenNv?=
+ =?utf-8?B?dGsrS2RJVHEwd2ZHYUxWTTNPeHZ5cDZJZk8rZXlTUlhZcTNPb2xSWGIzYkVr?=
+ =?utf-8?B?aEVtdE03dGVaaU5namt2Y1hZaWZ6WnMxWkNCRWd3YXVMNU16bWxtUFBOWUc4?=
+ =?utf-8?B?aUtVbUpDcm9EdGk5RkNORWhZcnZnS2ZOY1A5cGJHRjZ5bFpNaElzMXdsZS9C?=
+ =?utf-8?B?SUxhNlV3ZXBMcUZuWnlnZ3hIdGErb1pYalZTUWtZODlDWDdJSkZ5R0VZUldx?=
+ =?utf-8?B?dFVuTnJ4N3V6L3I2RXFtdFVXK3kwY0wxMTFuNnErZE96ZzRvZWNFVjBmcnlG?=
+ =?utf-8?B?Z0xTSG1pMWI0VHg3Nk9SZ3l3NjM4b3E5d0ZpV3NGcTlrcG1oSDB1N2lMTHJG?=
+ =?utf-8?B?cHhPclh3U09LajZ3YjIzK3pwTmxBZC9PV21JWGtZRFY1ekcyVk1xYlQrb1dQ?=
+ =?utf-8?B?Y2tYRHdxTzNqcHJWNkdDV2hJNjJEdXhiVWx0TitUSTFOT1NmeUlXUys4bW8w?=
+ =?utf-8?B?cm94blo2ejAwY3VTN2Q2ZWYwZVpzbWhiendHZHJqWnZGYzh2RG5xaHVhU0l0?=
+ =?utf-8?B?VC92TjRPallmdTdMUlcxanhhWVZ2QktWUGY1UXIyNnBmMTg1ZjF0ejBuWlRO?=
+ =?utf-8?B?b2RxaUFFV25WQmhXV09EL1RRWjdycEtTb0ZlcmdJczIwZnRTL2VpZXljTUs2?=
+ =?utf-8?B?aThNVjNYdDJsbCtXUGZScHhHdG1sY0VLK0hjREtZdWNteWlmUmwwKzBCcXZY?=
+ =?utf-8?B?eE5YSVAxbm05K0dSMnA4b2o0d2EvZ2Q0emwya2hMcmZ3bEhXcytveU43dnlF?=
+ =?utf-8?B?WVRURGZHNGhWU2hITGdXYWtEZkN4S3k2OVhvUFVYS05oSWYyL1NnR0ZtcGZQ?=
+ =?utf-8?B?N1kxS0Z2UEpaYlpPNTVENWRTb1RyMDgvWkNBcE5hZi9PQVIxQkJPeWFhaUV4?=
+ =?utf-8?B?R01HVkZHVFhvVWRQU0VzOTgrR3lZVFpCWUNjSXlzb3M5ZHdaSE9aUjhacm9Y?=
+ =?utf-8?B?ZGo3MU1wSzV2WkZZUlkvSnliVk1STUJYb0tHSkdtOXBPWGN5OSs2bE14aVpx?=
+ =?utf-8?B?Yk96YVNJby8rNk5JYXdwR2tOdDBST1pxN21zRUNvRy9oNkN3TStCMVk0aXc2?=
+ =?utf-8?B?Tm4yc0J4Z2ErOGtvbkJzVzN0K096NXozMjgzYy8vZ28wM3FuR1Rmd3Y1c09L?=
+ =?utf-8?B?cmN6cGlWWWVXLzZ0dHVjMVFuaTNVcFAyVzloWGxtRlVkdFBudW9xOTNHVFl4?=
+ =?utf-8?B?NVgvVGVVWjlKdE5xT2s1aHVqSVlsOHZYUDh5YiszdTZqeVdvb3FnRW0zSDNN?=
+ =?utf-8?B?ZGQzcmJ4c0tPNHRYSE8xV1RVbXdVeEpSc1NZaEZWbUNGMmRwbTBHazBLbVZT?=
+ =?utf-8?B?WUh5TWI5RnpleCtGOVJTQW5yZjZqbVpvMlZLNWhhTWk5MkhDNU90TWkyQUM2?=
+ =?utf-8?B?VE5Oa0dHZmYzem04U3lDYi9pMlM1cDM4OVRlaFBwR3Z6MUZMdHZsbmM1Uk5l?=
+ =?utf-8?B?cGJrV0ZkR0szVWFNY2tadXFyMXYwcSt3K1FmSUhGeERZdWU4Mzd1YnFsRkZn?=
+ =?utf-8?B?SzAvd1dUWnBBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 23:23:55.7342
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac4b4607-fe41-4cc1-a26f-08dddeae4d47
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8712
 
-Am 18.08.2025 um 14:40 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.12.43 release.
-> There are 444 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 8/18/25 3:39 PM, Kalra, Ashish wrote:
+> On 8/18/2025 2:38 PM, Kim Phillips wrote:
+>> On 8/18/25 2:16 PM, Kalra, Ashish wrote:
+>>> On 8/16/2025 3:39 AM, Herbert Xu wrote:
+>>>> On Mon, Aug 11, 2025 at 08:30:25PM +0000, Ashish Kalra wrote:
+>>>>> Hi Herbert, can you please merge patches 1-5.
+>>>>>
+>>>>> Paolo/Sean/Herbert, i don't know how do you want handle cross-tree merging
+>>>>> for patches 6 & 7.
+>>>> These patches will be at the base of the cryptodev tree for 6.17
+>>>> so it could be pulled into another tree without any risks.
+>>>>
+>>>> Cheers,
+>>> Thanks Herbert for pulling in patches 1-5.
+>>>
+>>> Paolo, can you please merge patches 6 and 7 into the KVM tree.
+>> Hi Ashish,
+>>
+>> I have pending comments on patch 7:
+>>
+>> https://lore.kernel.org/kvm/e32a48dc-a8f7-4770-9e2f-1f3721872a63@amd.com/
+>>
+>> If still not welcome, can you say why you think:
+>>
+>> 1. The ciphertext_hiding_asid_nr variable is necessary
+> I prefer safe coding, and i don't want to update max_snp_asid, until i am sure there are no sanity
+> check failures and that's why i prefer using a *temp* variable and then updating max_snp_asid when i
+> am sure all sanity checks have been done.
+>
+> Otherwise, in your case you are updating max_snp_asid and then rolling it back in case of sanity check
+> failures, i don't like that.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+Item (1):
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+The rollback is in a single place, and the extra variable's existence 
+can be avoided, or, at least have 'temp' somewhere in its name.
 
+FWIW, any "Safe coding" practices should have been performed prior to 
+the submission of the patch, IMO.
 
-Beste Grüße,
-Peter Schneider
+>> 2. The isdigit(ciphertext_hiding_asids[0])) check is needed when it's immediately followed by kstrtoint which effectively makes the open-coded isdigit check  redundant?
+> isdigit() is a MACRO compared to kstrtoint() call, it is more optimal to do an inline check and avoid
+> calling kstrtoint() if the parameter is not a number.
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Item (2):
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+This is module initialization code, it's better optimized for 
+readability than for performance.  As a reader of the code, I'm 
+constantly wondering why the redundancy exists, and am sure it is made 
+objectively easier to read if the isdigit() check were removed.
+
+>> 3. Why the 'invalid_parameter:' label referenced by only one goto statement can't be folded and removed.
+> This is for understandable code flow :
+>
+> 1). Check module parameter is set by user.
+> 2). Check ciphertext_hiding_feature enabled.
+> 3). Check if parameter is numeric.
+>      Sanity checks on numeric parameter
+>      If checks fail goto invalid_parameter
+> 4). Check if parameter is the string "max".
+> 5). Set max_snp_asid and min_sev_es_asid.
+> 6). Fall-through to invalid parameter.
+> invalid_parameter:
+>
+> This is overall a more understandable code flow.
+
+Item (3):
+
+That's not how your original v7 flows, but I do now see the non-obvious 
+fall-through from the else if (...'max'...).  I believe I am not alone 
+in missing that, and that a comment would have helped. Also, the 'else' 
+isn't required
+
+Flow readability-wise, comparing the two, after the two common if()s, 
+your original v7 goes:
+
+{
+...
+     if (isdigit() {
+         if (kstrtoint())
+             goto invalid_parameter
+         if (temporary variable >= min_sev_asid) {
+             pr_warn()
+             return false;
+     } else if (..."max"...) {
+         temporary variable = ...
+         /* non-obvious fallthrough to invalid_parameter iff 
+temporary_variable == 0 */
+     }
+
+     if (temporary variable) {
+         max_snp_asid = ...
+         min_sev_es_asid = ...
+         pr_info(..."enabled"...)
+         return true;
+     }
+
+invalid_parameter:
+     pr_warn()
+     return false;
+}
+
+vs the result of my latest diff:
+
+{
+...
+     if (..."max"...) {
+         max_snp_asid =
+         min_sev_es_asid = ...
+         return true;
+     }
+
+     if (kstrtoint()) {
+         pr_warn()
+         return false
+     }
+
+     if (max_snp_asid < 1 || >= min_sev_asid) {
+         pr_warn()
+         max_snp_asid = /* rollback */
+         return false;
+     }
+
+     min_sev_es_asid = ...
+
+     return true;
+}
+
+So, just from an outright flow perspective, I believe my latest diff is 
+objectively easier to follow.
+
+> Again, this is just a module parameter checking function and not something which will affect runtime performance by eliminating a single temporary variable or jump label.
+With this statement, you self-contradict your rationale to keep your 
+version of the above to Item (2): "isdigit() is a MACRO compared to 
+kstrtoint() call, it is more optimal to do an inline check and avoid 
+calling kstrtoint() if the parameter is not a number". If not willing to 
+take my latest diff as-is, I really would like to see:
+
+Item (1)'s variable get a temporary-sounding name,
+item (2)'s the isdigit() check (and thus a whole indentation level) 
+removed, and
+item (3)'s flow reconsidered given the (IMO objective) readability 
+enhancement.
+
+Thanks,
+
+Kim
+
 
