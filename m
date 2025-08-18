@@ -1,165 +1,113 @@
-Return-Path: <linux-kernel+bounces-773287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47646B29DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:26:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEACB29DBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713283BAC30
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:26:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3429A3AA1B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD0330F540;
-	Mon, 18 Aug 2025 09:25:20 +0000 (UTC)
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FF830DD37;
+	Mon, 18 Aug 2025 09:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tTKMA83C"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8603B30DEDE
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3076C30EF73
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509120; cv=none; b=RXdDfCT9HopKIUgNSXRz12LaFO7w8XrM5MDnbyBGkIif9TltLSiYQQLHoOjUbd2AFna5uFUTMxALKKWc0cmfBcTBz6f6DbB4eXKkbAHR2gcourAehXWRc4I7LI3spmcSPZvvVeOa0SRRfSvlfm1sT/kA43r+HVsrBqcd43rck40=
+	t=1755509114; cv=none; b=Y6sOmN+BaHtXfZ03IhKCag7+U5ysYJr0tOPfVbZCOpVmo6mkeIYYwywBsEq5R2KLI/oGx9NOR9k914yJc74lg+v/Uv9EOdi0/ZagK5+hUJT5ag5d34ML+AcrbxLmdSbcTJDETvb8f0vcTY3nyP9OyuZcq+uj6/j7jIsmVJ3aaaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509120; c=relaxed/simple;
-	bh=0HMfgsC4jFQW6qhuB5RULVJukoMoLBlHTiXRFu0GaPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=okeooI98agUqBdvLYepy2UmnC9RQDVgwBD6zZipsZxJnoY+uMpyd5HK907hPB6rAPxOsRViAJe/9RZdFVeihHGUH4vCmAYKJCSpc0LuVreYQwr8twgga1mjf2MLk1eeDt37GWcB5vDOsKz9zYvBoeV6A3KlNNH/Gji7d+7hhoOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
-	by 156.147.23.51 with ESMTP; 18 Aug 2025 18:25:08 +0900
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: chanho.min@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
-	by 156.147.1.127 with ESMTP; 18 Aug 2025 18:25:08 +0900
-X-Original-SENDERIP: 10.178.31.96
-X-Original-MAILFROM: chanho.min@lge.com
-From: Chanho Min <chanho.min@lge.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gunho.lee@lge.com,
-	stable@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Chanho Min <chanho.min@lge.com>,
-	Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH] ipv6: mcast: extend RCU protection in igmp6_send()
-Date: Mon, 18 Aug 2025 18:24:53 +0900
-Message-Id: <20250818092453.38281-1-chanho.min@lge.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1755509114; c=relaxed/simple;
+	bh=HWl9Wdg6tQt829hLiKPSU5FXqMuW8JcenL87lFgKzLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NeZVN9Q8NMw/k7sqWRuEoRKNmSeuFjDO6q7lVazkcJkgiDnFpi9qzyqR2VzktwTXPGGByZvaUGCRX8PieNspchkpuFN7ptOuuAYhpxl6VpuWxYuYz5eyMm1MOhOEh3wlTv6ryEOZMLL1Nj2WcF8bYH9C2l8f06hl+LGCuVPVoCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tTKMA83C; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55ce5253a57so3874177e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:25:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755509110; x=1756113910; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HWl9Wdg6tQt829hLiKPSU5FXqMuW8JcenL87lFgKzLo=;
+        b=tTKMA83CTZnwG1Fzs1wd+x8pdeVp4sIF+sUxFUEH+4OCpsOj5gcch24dW2ify0XSN1
+         MtYzgg3CAawwvv9RsQQFAQFRyBGqhr7hB79k9djrywVjEHdjH1sDtAv6fJkLQ0NN8Kg9
+         9gGV3b6eBVV9lsgDTW5CzQp79BVUckLC5oc1/mWQfYQ/kn80xYMmrQkcA/RWf8QEl6ZH
+         WWLHae5aVyX05yRdufqBGvyxSIS+Frc3bXDtoTGcJ8892M4MBPkGg7bbnl+606sUiLwd
+         auOs74ZiVNn+2CBJ7c7ivVpxjnPc/Hj5Rdf1DLTgvlRtyx8q2MhCErrfPTwZ7b8nsQPS
+         tTBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755509110; x=1756113910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HWl9Wdg6tQt829hLiKPSU5FXqMuW8JcenL87lFgKzLo=;
+        b=G5RGF1z0EiZjplrUioS0THfWiy65jL64ZTsZwRtDkF0RmMjo6Q3HVoOIoGlJvkL2vz
+         PaMKx2Wn98u04g8rMZ75t0tDhjD18luqq1vhPA4LwcvPzK00ymhCOGyhRamTlshzF6bG
+         6et+rB0Gn0ovdJ3TcdtFsOOa3STnyzJ1GN9r6M3a0NyVbqxa/zEJ6k4y4PzHlTHPilxZ
+         IzGHLOFfY+yL91iLdzQ6ZMrfj+rZxgjoXZEk5hwkrzsiQKn9BKFIEBEjwp+vDUwT1NWv
+         kaKy7Na/KUFYVKZO00dtYXR9ACF6rJULoU28r6UhTans2jvCkRZpEmWeu7+8shmxeVh8
+         K3mw==
+X-Forwarded-Encrypted: i=1; AJvYcCU25v9O7BNqkpqjRNCjOov7UfyYGsuIaHikCIknI8AN57EP8gT+cg8QnkfTzFYezRonYjU4675u9xFwQ9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/3pPgJk/5EnuQyd+sXs7bzEnCrxpE5rjMxBdMjaoq28SGT/iE
+	r+P5jwctRXysDJW/IEIy+a0m6Og2WBel5CGHuCVqKfVGg9IhGmq2bmqegLo0rrhdwkYUlziuQKk
+	OuT20iTQGyctA0aM+LXpZFnYS5O5gBeerqxXodk8k1Q==
+X-Gm-Gg: ASbGncsH4W8xcLS/GXAbaAeOWTFFxkLH+CjP1RCyaphzHMxcvgQ/BhHVhu8SrSnwK+0
+	m1vvWvhDZVsnF77z+1iELdkBpwwD4SI+cSL2e4PlaeUMQzlJ8mrHLCoa3YsIIHGuKyvPu0b8o1X
+	BPsT1FyoY1DvZ07VAR0IskVHj+CGPWiNNt9jTq4GeLpacipCOS5aNynWvHXdJszsJotvE/enI61
+	r+A88W3oI+I
+X-Google-Smtp-Source: AGHT+IFC1ZjNERncmt6aCwcSemfraYYSYedGgU7En/j6NqE3CZM6qjD72eC9aTSLaWwQX3FdwMknfiQchSSy/0ZOP1k=
+X-Received: by 2002:a05:6512:104a:b0:55b:760d:c2f2 with SMTP id
+ 2adb3069b0e04-55ceeb68062mr2942102e87.33.1755509110245; Mon, 18 Aug 2025
+ 02:25:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250730061748.1227643-1-me@brighamcampbell.com> <20250730061748.1227643-2-me@brighamcampbell.com>
+In-Reply-To: <20250730061748.1227643-2-me@brighamcampbell.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 18 Aug 2025 11:24:59 +0200
+X-Gm-Features: Ac12FXwBqttAHWn-Fzo0FTZhwhrfc7nvpSbb3PEL3L84qoflel5B9j8C02N8kLo
+Message-ID: <CACRpkdaZxPKmi3XWxKVG+HpssdH=HGDa68Ek=bcX-GEaQXaSbw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] drm/panel: novatek-nt35560: Fix invalid return value
+To: Brigham Campbell <me@brighamcampbell.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, neil.armstrong@linaro.org, 
+	jessica.zhang@oss.qualcomm.com, sam@ravnborg.org, dianders@chromium.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Eric Dumazet <edumazet@google.com>
+On Wed, Jul 30, 2025 at 8:17=E2=80=AFAM Brigham Campbell <me@brighamcampbel=
+l.com> wrote:
 
-[ Upstream commit 087c1faa594fa07a66933d750c0b2610aa1a2946 ]
+> Fix bug in nt35560_set_brightness() which causes the function to
+> erroneously report an error. mipi_dsi_dcs_write() returns either a
+> negative value when an error occurred or a positive number of bytes
+> written when no error occurred. The buggy code reports an error under
+> either condition.
+>
+> Fixes: 8152c2bfd780 ("drm/panel: Add driver for Sony ACX424AKP panel")
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
 
-igmp6_send() can be called without RTNL or RCU being held.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Extend RCU protection so that we can safely fetch the net pointer
-and avoid a potential UAF.
+(Maybe this is applied already...)
 
-Note that we no longer can use sock_alloc_send_skb() because
-ipv6.igmp_sk uses GFP_KERNEL allocations which can sleep.
-
-Instead use alloc_skb() and charge the net->ipv6.igmp_sk
-socket under RCU protection.
-
-Cc: stable@vger.kernel.org # 5.4
-Fixes: b8ad0cbc58f7 ("[NETNS][IPV6] mcast - handle several network namespace")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reviewed-by: David Ahern <dsahern@kernel.org>
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Link: https://patch.msgid.link/20250207135841.1948589-9-edumazet@google.com
-[ chanho: Backports to v5.4.y. v5.4.y does not include
-commit b4a11b2033b7(net: fix IPSTATS_MIB_OUTPKGS increment in OutForwDatagrams),
-so IPSTATS_MIB_OUTREQUESTS was changed to IPSTATS_MIB_OUTPKGS defined as
-'OutRequests'. ]
-Signed-off-by: Chanho Min <chanho.min@lge.com>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/ipv6/mcast.c | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
-
-diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-index 7d0a6a7c9d283..c2dc70a69be94 100644
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -1977,21 +1977,21 @@ static void mld_send_cr(struct inet6_dev *idev)
- 
- static void igmp6_send(struct in6_addr *addr, struct net_device *dev, int type)
- {
--	struct net *net = dev_net(dev);
--	struct sock *sk = net->ipv6.igmp_sk;
-+	const struct in6_addr *snd_addr, *saddr;
-+	int err, len, payload_len, full_len;
-+	struct in6_addr addr_buf;
- 	struct inet6_dev *idev;
- 	struct sk_buff *skb;
- 	struct mld_msg *hdr;
--	const struct in6_addr *snd_addr, *saddr;
--	struct in6_addr addr_buf;
- 	int hlen = LL_RESERVED_SPACE(dev);
- 	int tlen = dev->needed_tailroom;
--	int err, len, payload_len, full_len;
- 	u8 ra[8] = { IPPROTO_ICMPV6, 0,
- 		     IPV6_TLV_ROUTERALERT, 2, 0, 0,
- 		     IPV6_TLV_PADN, 0 };
--	struct flowi6 fl6;
- 	struct dst_entry *dst;
-+	struct flowi6 fl6;
-+	struct net *net;
-+	struct sock *sk;
- 
- 	if (type == ICMPV6_MGM_REDUCTION)
- 		snd_addr = &in6addr_linklocal_allrouters;
-@@ -2002,20 +2002,21 @@ static void igmp6_send(struct in6_addr *addr, struct net_device *dev, int type)
- 	payload_len = len + sizeof(ra);
- 	full_len = sizeof(struct ipv6hdr) + payload_len;
- 
--	rcu_read_lock();
--	IP6_UPD_PO_STATS(net, __in6_dev_get(dev),
--		      IPSTATS_MIB_OUT, full_len);
--	rcu_read_unlock();
-+	skb = alloc_skb(hlen + tlen + full_len, GFP_KERNEL);
- 
--	skb = sock_alloc_send_skb(sk, hlen + tlen + full_len, 1, &err);
-+	rcu_read_lock();
- 
-+	net = dev_net_rcu(dev);
-+	idev = __in6_dev_get(dev);
-+	IP6_INC_STATS(net, idev, IPSTATS_MIB_OUTPKTS);
- 	if (!skb) {
--		rcu_read_lock();
--		IP6_INC_STATS(net, __in6_dev_get(dev),
--			      IPSTATS_MIB_OUTDISCARDS);
-+		IP6_INC_STATS(net, idev, IPSTATS_MIB_OUTDISCARDS);
- 		rcu_read_unlock();
- 		return;
- 	}
-+	sk = net->ipv6.igmp_sk;
-+	skb_set_owner_w(skb, sk);
-+
- 	skb->priority = TC_PRIO_CONTROL;
- 	skb_reserve(skb, hlen);
- 
-@@ -2040,9 +2041,6 @@ static void igmp6_send(struct in6_addr *addr, struct net_device *dev, int type)
- 					 IPPROTO_ICMPV6,
- 					 csum_partial(hdr, len, 0));
- 
--	rcu_read_lock();
--	idev = __in6_dev_get(skb->dev);
--
- 	icmpv6_flow_init(sk, &fl6, type,
- 			 &ipv6_hdr(skb)->saddr, &ipv6_hdr(skb)->daddr,
- 			 skb->dev->ifindex);
+Yours,
+Linus Walleij
 
