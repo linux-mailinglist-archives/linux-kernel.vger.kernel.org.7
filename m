@@ -1,152 +1,142 @@
-Return-Path: <linux-kernel+bounces-772972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C9EB299FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DC0B299FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10D22068BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:43:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7261D2A0E64
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3145126FA6C;
-	Mon, 18 Aug 2025 06:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmX4cNcg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B93127602F;
+	Mon, 18 Aug 2025 06:43:41 +0000 (UTC)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CB1209F43;
-	Mon, 18 Aug 2025 06:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEEF275AFB;
+	Mon, 18 Aug 2025 06:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755499382; cv=none; b=nkQtMBxJ+7X16VyYp+u+HbHsixBKCDiAl3rCdiSVml0ZPHfO/HAH9A7cKMMmHgiNYU5PglyZp6ZPcswrAMzYFc701PNlLch/UizG8i+InXdDPkyuJ2uqQjTp+Xl3Q3sMtiUwRr7cROcXECox9lpPK943/DDfdbEqt4hKkSf0dIk=
+	t=1755499420; cv=none; b=P3veZT77bmox4rQxpqZDtN97GH9d0hQfFT/GRDjCvS/4qtLkoe287mkiFOU1qbn3VxBTNgHVmuya4kP70FgXh/FPOC0R6u0LEBd37RZRNzdCESPpfZc/vmSySFGzvrvnpTSnv7H6xhJDZXYk6YYgaDcLdQ+vj8MRp65WOA51dGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755499382; c=relaxed/simple;
-	bh=rHLZVE+q9UBpLepVIpZp8NDD7WiYm8U2I5diRkJMZoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VLvCXe5dxwie9blDM7ObAEOQd3BMOMPebXxK137n24An1PqXsgGb4Nw7iSHSTm/bVd35aYJCY3BVAreBvuVkQSw6Nx+XYiVkXUEnYDhC+UKB/N9txggPoPBYZ2hQJpefPcMgDSsH9gxrlxcXeZZnylnMl5aa3RyRi3TiVxT+ZRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmX4cNcg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF64C4CEEB;
-	Mon, 18 Aug 2025 06:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755499382;
-	bh=rHLZVE+q9UBpLepVIpZp8NDD7WiYm8U2I5diRkJMZoA=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=VmX4cNcg9f5KeLUQMKQdBbU627r45g6Y0/OgTBDsFfmF/1yW9b0Ag26MqHtANg5tt
-	 WPOQxgzfYlLRWpRoxeA30LQljto+IhNuupS4LD6SevlMP4LzeifcEc1FJoX4mciz1Y
-	 qWOCKKTTLjdrCgyybKuEeIM/I/IKwgLIOpwhPSapLJy/Bgxd5JkHGb6F46Strhr9Ya
-	 g3YY7nfzjmj5SmYBthSWPxWni5U63T4BvNwvaZ9wZURQ17FC0u4ixXYX/mnRW8R85S
-	 KiE3v03YMUiORZTqhKLBpQfXoQ5WoBEs7FvJX29zeqZG6YPXZlkYGj/u6D7es6um7S
-	 m7+GvQ+cNec5Q==
-Message-ID: <3f256b8e-dc7a-466d-be53-d6e324b44cb7@kernel.org>
-Date: Mon, 18 Aug 2025 08:42:57 +0200
+	s=arc-20240116; t=1755499420; c=relaxed/simple;
+	bh=4y4pH6gN4GxRFalEamSO6SCS1LBe5XYo+LoD6hpfYaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iDTcPvH7V5N3nesS9UzYjAC0CRooM7ZXPgOFwMtAULpLlSrdxXfqqpilxm89z4+GFd82AvjYMRab7yqm2v4kDaAyOWaDWhbGHLs52ah3Y34hUBvDBvHiNtqgItonMnM/wrrV47r+uBYZ52zRsetWeP/KKwD5MI4QOFudskX1MPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-50f8ad279f8so2742714137.2;
+        Sun, 17 Aug 2025 23:43:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755499416; x=1756104216;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hsLPgPjctI1RmC5h18ctG1S8IZm9ltAPjDvM4QJ/h4Q=;
+        b=KVqrl+7XjfaOiz9LQ7caKxH5CDsjeZKgi4HJ3rvoRebz29U9ZWqEYVO+lkdc8hIcrx
+         FSzUWYX0mB1pWki+brDt9Hjfmlo7yGk357CjRgrfq7qsXoVMV1hiV91pjaQ/p5nJKBMc
+         zDZ8vFzoWjeW37f6s1ABDg4igNXgOgUlKvTeB/0MviMWEqknUgtmz3RuXLhdiDZW3ijQ
+         Ap2JFIVmr4kz/iNvE8CHbmupfM/Ud1iAC858tzFAw0UggE9jCBFEJGpQe6do7oIaoUOr
+         pYc4HwMTMcfJDmw1sqcj/eB6h/gYOmvCcPhv1/OhLyuPwmynKKckAQBu/aoSnRQyQjIf
+         W1Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl7xiRBprczB9zAfAUr3+KlBesTmZCjpZOqY3Q7Qr9eWtvmO9nmwqCu6RppzFz0Dc3/K7TJh5VNQwp@vger.kernel.org, AJvYcCW/mS8iiQIip/YC0lRtpBgRBVAb5yDKD9EM3mjM6O8Cii3mLTWsMrJ/dL4hl2hWK3A3Ou/0eyn6@vger.kernel.org, AJvYcCWzRj87OT1BKi5NEt5a4i/iCUaUAdv/WUZtOtmyvDLSyBtU+pSxAH4WoUggvKC2vR6wmR3VXick6BlYNobI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX/0aab9NLKMJ/zhT0FWtAh4IiuOH8AVetKz7pYA+VbtL8Jo1v
+	f0Jv42KwCgpxHQJb6gL8jUnnFVg8wV9kmL2GSH4jfcoXWasCmZEks5eMQ7F/uV7u
+X-Gm-Gg: ASbGnctJpdqgxm/Y2tjwBuOTJimRvgKOx9VqYn1lKoILErgbE3C74by9z0/PV1kVilG
+	KU5Mb4fxQzyWnCWHg93D4ALkpcdFacba1eIztraf2tJyajbqaEFGxaySrWU+6wWQYL2yC/RjcG5
+	FnTQ3OdcCWLCTwwgz9+qzZ2zPLNRA6sApGHv1aA1z0SX8cjEe8QE5HbIxm3ggxCGx6JBED5MEiK
+	Tg92t3WwQMlu+fOSUNMS4l228o5ioaxS2g1Z1LTlGWUOEpAyK9MdGRpz0fGzcpfRJqDP8DHtoCV
+	XnURV3LK9ZlJnhwUqqrC/k1z0pGp7wqs2o+n9f7g3GFjR1JhQEvzzwwok1iCKSHyEAg+N+M6AFk
+	sZsAbsrxHe0wB9kTI2QRFZfQmpzhtIdqMBRNwfiuCXVn2Pbv2MxaoXf9UWzRv
+X-Google-Smtp-Source: AGHT+IF3pZhOuJGl9BVwfxR24MRdWP5DOFuetTKxXP561t5voHwu5lYeWzH9tzF5lHdc/3ekX1Ur+w==
+X-Received: by 2002:a05:6102:6cc:b0:4e9:b793:1977 with SMTP id ada2fe7eead31-51267dc1b45mr4089407137.0.1755499415792;
+        Sun, 17 Aug 2025 23:43:35 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127d4e3036sm1870363137.8.2025.08.17.23.43.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 23:43:35 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-89018fc2a2fso2430647241.1;
+        Sun, 17 Aug 2025 23:43:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSpKyg+gLwGI0Xe7mtrB6s+5pDu5Daj4E31EJWVr5NFMnTY19NeV0XsEPfwPmDev662sBmGJ53hI8x@vger.kernel.org, AJvYcCW7v7tcQ+uZAzoFf7M8+/06zdKgsZ7BZ7tgtiT6cteGtnZ+6m4K5Le6kAFYDV/D4V6TQIJu9MuQq/ypFBSq@vger.kernel.org, AJvYcCWPCenHjZv9NxJG45AgW9/N+ppO2zgcjBkYwtMA5944enwmlcSJntihifkCCK2oD9L14+Orcu1S@vger.kernel.org
+X-Received: by 2002:a05:6102:5129:b0:4fc:2b88:d26d with SMTP id
+ ada2fe7eead31-5126cc420aemr4108789137.16.1755499415163; Sun, 17 Aug 2025
+ 23:43:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: iio: mcp9600: Add compatible for
- microchip,mcp9601
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>, Ben Collins <bcollins@watter.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250815164627.22002-1-bcollins@watter.com>
- <20250815164627.22002-2-bcollins@watter.com>
- <20250816105825.35e69652@jic23-huawei>
- <66063382-78c6-4d93-be25-46e972e390f4@baylibre.com>
- <2025081711-coral-aardwark-9f061b@boujee-and-buff>
- <8e228d2d-d22f-4092-8c6d-94ce989b4a84@baylibre.com>
- <2025081713-wooden-clam-aee35a@boujee-and-buff>
- <65ca6431-56e1-4798-9ecc-6e6adf664f96@baylibre.com>
- <2025081716-tan-pillbug-ff2cb5@boujee-and-buff>
- <2025081717-fabulous-chameleon-5ad9bb@boujee-and-buff>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <2025081717-fabulous-chameleon-5ad9bb@boujee-and-buff>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250815194806.1202589-1-contact@artur-rojek.eu>
+ <20250815194806.1202589-3-contact@artur-rojek.eu> <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
+ <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
+In-Reply-To: <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 08:43:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVGv4UHoD0vbe3xrx8Q9thwrtEaKd6X+WaJgJHF_HXSaQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyQUUDD_v0XZWp4qvaGvKu_U_VjElg-BZC_JMJQPGN3TDaGQppTU27YJys
+Message-ID: <CAMuHMdVGv4UHoD0vbe3xrx8Q9thwrtEaKd6X+WaJgJHF_HXSaQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
+To: Artur Rojek <contact@artur-rojek.eu>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Landley <rob@landley.net>, Jeff Dionne <jeff@coresemi.io>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/08/2025 23:10, Ben Collins wrote:
->>>>>
->>>>
->>>> I couldn't find anything that would easily describe this type of layout:
-> ...
->>> We usually do this the other way around. The base binding lists
->>> all of the possibilities then an -if: constraint limits them
->>> if needed.
->>>
->>>
->>> So don't change what is there already and then add:
->>>
-> ...
->> This might be a little more complicated. I want to add a boolean for
->> microchip,vsense so the SC/OC aren't even available without that flag
->> being true (default false).
->>
->> I could just assume that having the interrupts means this flag is true,
->> but that doesn't cover the case where the interrupts might not be used
->> or even wired up, but the SC/OC detection in the status register can be
->> used.
->>
->> I was going with this:
->>
-> 
-> Nevermind, I figured this out. I'll send v4 soon.
+Hi Artur,
 
-You received from David correct code, good idea... yet you ignored it
-and sent something incorrect - breaking ABI.
-Best regards,
-Krzysztof
+On Sat, 16 Aug 2025 at 14:06, Artur Rojek <contact@artur-rojek.eu> wrote:
+> On 2025-08-16 10:19, Krzysztof Kozlowski wrote:
+> > On 15/08/2025 21:48, Artur Rojek wrote:
+> >> Add a documentation file to describe the Device Tree bindings for the
+> >> Ethernet Media Access Controller found in the J-Core family of SoCs.
+> >>
+> >> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/net/jcore,emac.yaml
+
+> >> +properties:
+> >> +  compatible:
+> >> +    const: jcore,emac
+> >
+> > You need SoC-based compatibles. And then also rename the file to match
+> > it.
+>
+> Given how the top-most compatible of the bindings [1] of the board I am
+> using has "jcore,j2-soc", this driver should probably go with
+> "jcore,j2-emac".
+>
+> But as this is an FPGA design, I don't know how widespread the use is
+> across other jcore derived SoCs (if any?).
+> I will wait for Jeff (who's design this is) to clarify on that.
+>
+> PS. Too bad we already have other IP cores following the old pattern:
+>
+> > $ grep -r "compatible = \"jcore," bindings/ | grep -v "emac"
+> > bindings/timer/jcore,pit.yaml:        compatible = "jcore,pit";
+> > bindings/spi/jcore,spi.txt:   compatible = "jcore,spi2";
+> > bindings/interrupt-controller/jcore,aic.yaml:        compatible =
+> > "jcore,aic2";
+
+I would go with "jcore,emac", as it is already in use.
+If an incompatible version comes up, it should use a different
+(versioned?) compatible value.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
