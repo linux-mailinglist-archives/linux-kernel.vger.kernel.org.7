@@ -1,345 +1,269 @@
-Return-Path: <linux-kernel+bounces-772898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F590B29912
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9E4B29909
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064DA18A2F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 389A216A457
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40E226F471;
-	Mon, 18 Aug 2025 05:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45802270569;
+	Mon, 18 Aug 2025 05:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MyZyDMNJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WpZ5N/9l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E9B220F2C;
-	Mon, 18 Aug 2025 05:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755496139; cv=fail; b=R679DEL01C0Wrt/gt8/SwWQPZMMGtoxotN6zhuG3lg0jvGEPa382EJo/K88LYRboKiHWOnUW8oqvOTHeJbG7RyGSARve/au0J6xEte7YJiVttVPJPG2Z0PZpqG2uw2z/HdO5BRnIbAHlP1nfNNesREHn3MsmPyM67Hch+/50Bww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755496139; c=relaxed/simple;
-	bh=Kn8EBSG83tCsyqEmCQtqM/0/FAmA20Chvg2IX7P/avI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=my8hiff9uwCLOlzr4W9i5eaXtte21GTcjweSHWhbFWSPSRgXkjUfNhGj7wjde+9YKN9RhcfNOfHJ7ZxjKiJAD2V1qTdv3lcTqvEPWS8YIcYb13pFYNnUNhXtGQFk5wI9AfcdST+2lLa9DUIW2UWMZsiZczFs/RmVdxhFanPOwV0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MyZyDMNJ; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755496138; x=1787032138;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=Kn8EBSG83tCsyqEmCQtqM/0/FAmA20Chvg2IX7P/avI=;
-  b=MyZyDMNJtJgi0dHc7Z95gs7NaYl37fJiXQ+etISEttbkuAaKtm5NTeyp
-   MQ+PAaptaQvQ9HQOoR2yWJMtwfUbgxDZOJPJHACneAuSpOt0P5QL7ixx6
-   fGVJR6o8kqqvovOKBHGerQNXv/5O1ApQYpyACk1EyLvsRrZTVzymAYAHA
-   MOqrYa+2PfNK8/tARzoAnrpMIspTVPjf5jI7erSmopfPULd1xyonDkof4
-   GPY4UtmkcXkpDJhPI/s4hnjIE9Jc5FK3sVbDV2Au2+EjV+mJi9eVcEQFI
-   BuLWgtifSeMcw5xQi07z9PtnBiyYy29hlOl9jgE7NGv7cbLe6pdEAo3/R
-   g==;
-X-CSE-ConnectionGUID: tT7LEvJ9RrKlQsGcrDZfLw==
-X-CSE-MsgGUID: 6Q5I8EXRQwe+qT3EhSfqqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="56740620"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="56740620"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 22:48:56 -0700
-X-CSE-ConnectionGUID: 7F1Aqh9URgKZ57e6ZER3EA==
-X-CSE-MsgGUID: Lo8bMffcSk+JaDOAKQTJSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="166718654"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 22:48:55 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 22:48:54 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Sun, 17 Aug 2025 22:48:54 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.58)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 17 Aug 2025 22:48:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MuIFG9EmIFday4lcIL0eGsi+CHfpQEZfUYc+Cor6rhEega/EWrEzN8kzzFcLX8+pKPI2Cnzj2S72p6Bo8pwhQSZgbk225MLYiMmrn62QvAFrsAP8zZM007IkBfIspb/VN+sS1RB6wZ2Vgx0oH0xLr58+Mm7X7nZSmQco8RWLZs8+9GVyU6WMV/8UQzDpKwmh14mt5FeKeq0KVYCNIuufrZt6tlCQS8PWQQy8swliOFmcCa5SjAALrt3ke1t8ll0TcskRNORPYsMlBpWzH0jz5kjKeI/RSCPJThsrbnSWNCnR5EpJEW9priBtuKKGL0VAc879FF6rNFeXdVu/VrsaWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=496JEvK9IiuMJA+AnA57foYZDwfNly1U/h8UhaR1Ox0=;
- b=is/WycuBpkUByW0QOxkqt9rFFsjib7iKHwYtU6smB/Wskb4RoqhNR5jhNoYgNqNKlCesK2k/Crtffkk3xYqNa8w95nPNfIUVg/3n5rPoW+Un3g8SlP0XeIV4vZFhx7GMzCyPshWetqU91sD1fgl9HcImg3tD3uJbFqiGf5DlokX3Tq/WSTojsTOMn5eDZJcYmek0yy7nMtQBnLYjWSAawk9f2xmZcrtrV3XDumhYrpXsDKc8GSOfJ/ugxB3e6rVfMpVjAzV87Rk7d40L1l0s0yhgQNF5KDZ4pW6Zp0uZF/8owKpWWPI/qeADRCNcHUl48bC3Cewn7XYjvkuYnu1adg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
- by CH0PR11MB8087.namprd11.prod.outlook.com (2603:10b6:610:187::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
- 2025 05:48:51 +0000
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2%6]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 05:48:50 +0000
-Date: Mon, 18 Aug 2025 07:47:09 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <nathan@kernel.org>, <arnd@arndb.de>, <broonie@kernel.org>,
-	<Liam.Howlett@oracle.com>, <urezki@gmail.com>, <will@kernel.org>,
-	<kaleshsingh@google.com>, <leitao@debian.org>, <coxu@redhat.com>,
-	<surenb@google.com>, <akpm@linux-foundation.org>, <luto@kernel.org>,
-	<jpoimboe@kernel.org>, <changyuanl@google.com>, <hpa@zytor.com>,
-	<dvyukov@google.com>, <kas@kernel.org>, <corbet@lwn.net>,
-	<vincenzo.frascino@arm.com>, <smostafa@google.com>,
-	<nick.desaulniers+lkml@gmail.com>, <morbo@google.com>,
-	<andreyknvl@gmail.com>, <alexander.shishkin@linux.intel.com>,
-	<thiago.bauermann@linaro.org>, <catalin.marinas@arm.com>,
-	<ryabinin.a.a@gmail.com>, <jan.kiszka@siemens.com>, <jbohac@suse.cz>,
-	<dan.j.williams@intel.com>, <joel.granados@kernel.org>, <baohua@kernel.org>,
-	<kevin.brodsky@arm.com>, <nicolas.schier@linux.dev>, <pcc@google.com>,
-	<andriy.shevchenko@linux.intel.com>, <wei.liu@kernel.org>, <bp@alien8.de>,
-	<ada.coupriediaz@arm.com>, <xin@zytor.com>, <pankaj.gupta@amd.com>,
-	<vbabka@suse.cz>, <glider@google.com>, <jgross@suse.com>, <kees@kernel.org>,
-	<jhubbard@nvidia.com>, <joey.gouly@arm.com>, <ardb@kernel.org>,
-	<thuth@redhat.com>, <pasha.tatashin@soleen.com>,
-	<kristina.martsenko@arm.com>, <bigeasy@linutronix.de>,
-	<lorenzo.stoakes@oracle.com>, <jason.andryuk@amd.com>, <david@redhat.com>,
-	<graf@amazon.com>, <wangkefeng.wang@huawei.com>, <ziy@nvidia.com>,
-	<mark.rutland@arm.com>, <dave.hansen@linux.intel.com>,
-	<samuel.holland@sifive.com>, <kbingham@kernel.org>,
-	<trintaeoitogc@gmail.com>, <scott@os.amperecomputing.com>,
-	<justinstitt@google.com>, <kuan-ying.lee@canonical.com>, <maz@kernel.org>,
-	<tglx@linutronix.de>, <samitolvanen@google.com>, <mhocko@suse.com>,
-	<nunodasneves@linux.microsoft.com>, <brgerst@gmail.com>,
-	<willy@infradead.org>, <ubizjak@gmail.com>, <peterz@infradead.org>,
-	<mingo@redhat.com>, <sohil.mehta@intel.com>, <linux-mm@kvack.org>,
-	<linux-kbuild@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<x86@kernel.org>, <llvm@lists.linux.dev>, <kasan-dev@googlegroups.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 07/18] mm: x86: Untag addresses in EXECMEM_ROX related
- pointer arithmetic
-Message-ID: <5i5x54pntwjhpmalenhemyra5ybnqrransk5leukpmj3o53e6l@jgjiy4ycduhz>
-References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
- <aa501a8133ee0f336dc9f905fdc3453d964109ed.1755004923.git.maciej.wieczor-retman@intel.com>
- <aJ2Pm2XzcM3H4aTN@kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aJ2Pm2XzcM3H4aTN@kernel.org>
-X-ClientProxiedBy: DU7PR01CA0026.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50e::22) To MN2PR11MB3934.namprd11.prod.outlook.com
- (2603:10b6:208:152::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C5E225779
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755496080; cv=none; b=T6Setc41zH9xaDmq8U8I9rdu3OfiMrUdXEcZhhPfxTVdyKbvTW/VJkT3UIdy/pfKUjHJuCCowgJWZThtaimscBzf/01o9mr6oTfXOvVz7YgoIcl4nIS3aJHjjL7bamewnvc4ZPqHGoevT3BGlGE3Vrokq6zZZEFM0WE5OzyWsGw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755496080; c=relaxed/simple;
+	bh=6RL9+Xn5aegTJY0wjfAGUb6Cr92tP/PpJ2hnpOZOiWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GCaMOX1Qjxd4EBBXg5uX6n4eRpsHc1q/w4Ph4RzSfiRVOCzP2WCmTS15EMEZH/i7ya8EiHbsJAcW0xUdiERbhtQ5uY/JMCiHuolz1Z65NXreKLHid6Y64y7V/6dqCOW0Wh1WILGUR6CVP92I+Q5p/hT3gDoBpuEX6V2Q6GeEspQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WpZ5N/9l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57HMZQ6u004083
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:47:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UeidIzr/dKJkWw7XetUW6GunyrwIPKaUXOvs0jevNFA=; b=WpZ5N/9lLxtvIiLL
+	tvCtZGO6DxuJNKFjeGBEAEw53dQ6VjgKlknokGx5ZCc71GJ9wmZpYK1RnmMpbP/i
+	EcUpg1j9CxTzngUGbVkEDfQJF9ZTWTbKa9KG5ZWPSk9S0LObhKUnnZj3OCFiI0SP
+	fMwh8HxIDR70+9MuKs6TAdz6ouni790VfwOO5zeVKWSu4EwI21u23JV49aZwgUCZ
+	9a1ZWtIf7oCeO0OCgSwxh4sjaUOs+BMT3fwbQtmZDn1JA47odMnL1yhcMtPZgovo
+	ON7pLqDlAajFnRvPgta8UhmjASThtb5c/rs5YPpaomcdwcM8xxK7NrbGSAOBE5Gm
+	ccyr0w==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jk99kadu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:47:57 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2445805d386so39098945ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Aug 2025 22:47:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755496077; x=1756100877;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UeidIzr/dKJkWw7XetUW6GunyrwIPKaUXOvs0jevNFA=;
+        b=PsZ75LNWMwOygkecwrsmzmzfBtftJj/xQfZHyKQjK+Iok+q0T1k74zlVcDUf/8GwoY
+         Wu0w0NkzhU5lH2MOKTjF6I7Cf572KxRoeEJGbgTppmYTjO/t0BG/beUWwkZhUeJdXh46
+         Qm6KJjidvR1Vez+ndG3RPNmAzWhV7sYcQ54VN9REJyOW1nQZOjAre25Z6QQWgxMHjwg4
+         bfGCC4Fp1wW/Tv6f2l00ImGLqQayUQpkI3OrjCuGxx2a0sFz+RZ8+tSOIHR+iDxmPLy/
+         tRIv5jRQyCX1/CAG/RFoaLDIdt0wwBH8Ag0T4qPi50BCkclJ4dq/cQJsrH8Q+mnfb9gn
+         6Wsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAJqx6rKzLrf5EGtyXVS1zhC3APS+7vIDQpXjj/uXOW3zLhi96P1PeHvQJvTegApA/aXQQvITOAwl2BlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZbfD+zZTYs1MaCYHvnDsCoGlfeUCII/1Q13xnArd6nQCrlSZg
+	nxjQ10mhoYD8L3eqQHtK0bKtDjwrHG8XIG7pZvkajgfMtwHMqThKmqTTtlJ3qOO8BdsS1xhzthb
+	xeSWkIOwQgBzwQ/8re4rHoJYrXZ5JcfPxIpX46Gtb8ybwudU719v3VaXyQszYCrOanMQ=
+X-Gm-Gg: ASbGncteIOB3AAeo7GicHcY7SqILFe+vL8EoGvqB+HSjI8fj2c3dvBePDl8jPXet6o/
+	PyNeEec7XGU7dvtWCmfadaVCN9lxlqinYYxE0d4dfBsE2h9aYYYFTbrQGJtLAIUN9Ma1l+i7RDh
+	CAN90FN1KvoaO9glqd7an9SZRdsGk4akKX78GpOkUf9Ywkbhxxkkg11xKaNk/trynMyIAJOlIvB
+	NlzHHzqZMA5tOO2bUxeApnMPEu3e+8DPsC6qNTm/BYk+YNp7BNntv+B+xyg5OueiGjtvY+9omr/
+	HwIDRpedoV/9ydXoxY2A0dUWKWlxKLjWZD1J7bayrAwwYNd6W5WWRQW6SqxILHBRorjn+trcfw=
+	=
+X-Received: by 2002:a17:902:ef02:b0:244:6b77:5b10 with SMTP id d9443c01a7336-2446d89d221mr126078925ad.36.1755496077036;
+        Sun, 17 Aug 2025 22:47:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IER4IOalNWar66B22rHJVMIAjJY1v2hPIOrJvCuOPmIDSJbaYtKfcaHS83aej4K/R2Bxeoqgw==
+X-Received: by 2002:a17:902:ef02:b0:244:6b77:5b10 with SMTP id d9443c01a7336-2446d89d221mr126078695ad.36.1755496076565;
+        Sun, 17 Aug 2025 22:47:56 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5a9b9esm69293305ad.167.2025.08.17.22.47.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Aug 2025 22:47:56 -0700 (PDT)
+Message-ID: <bb1b095f-4198-495d-a82d-1d1d7b7367d1@oss.qualcomm.com>
+Date: Mon, 18 Aug 2025 11:17:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|CH0PR11MB8087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6eebce60-6654-4aa8-7912-08ddde1ae862
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?0Qc2OeMSq3U1zgCYrlCVtdEhwt9fi7xfR8+JhlvYCbVqDK2xYUmJOknn80?=
- =?iso-8859-1?Q?8hU8vbLLOfsN2gAjwOEBPY06/AlAfeKMsTyaE7/+zrwu7G2Sdp/IQYSyiD?=
- =?iso-8859-1?Q?oD+qH/WgXFZF65qrLquSLnJUEjXHQ08a9jxPbkbTY80aujKVevm5XAJQb4?=
- =?iso-8859-1?Q?dLkzBfWr812yj62c7iR9fNeE/95Ds26WCyFYLmtzUfgSXpHRo9sQQte43s?=
- =?iso-8859-1?Q?A0WLjWtOkFUsCIaiQi33peazR7yj8oX9oS4ufmV3ysyIN8xa6BOdz2Rj8X?=
- =?iso-8859-1?Q?NGYoM+mIwUV7qs51WHbRi1bIS6J3Vo53+UKX/jxWiknbwwrmhGPsUlfKD3?=
- =?iso-8859-1?Q?6M0gEQPEpVYt77wQ7ZawuUFgKz6I4c9ZgdcvA6cWDkVoETEoqdymIK5VRF?=
- =?iso-8859-1?Q?7Fl5B+4TkkdjSjIlg0SND7/Oqa/K3CNzdFUsZhjhuKIwP5dNE7LVy5243f?=
- =?iso-8859-1?Q?qlGTLIG1CAYPKLyCUDuR7E/ptjpV857uttdvCh6kFaKh5oP58XA/aWgxun?=
- =?iso-8859-1?Q?2Zm5EXFeicWTHnQrpSBO8nFnt6sDjrt4qPvYQkxVpq1Qn+mfW2Ic/nlCXJ?=
- =?iso-8859-1?Q?YLETH1sFxPpzSJwdC5BNDti0456dngmZwxZakeH3jpcs4TTIqP9ohdeMwA?=
- =?iso-8859-1?Q?U64WrwbSlFamCst9zPVcy+yvTkM7Ub5qgdGtWDDvlAyiVaOmhOMjN9bECP?=
- =?iso-8859-1?Q?kSmHcJjNl8Y1R6mhGCjGJ7OqiGrmNJhlMFElpAacUNSIdvB7V4U4j1zKFv?=
- =?iso-8859-1?Q?4wPReegCbh6pTYybEiXBGTXYZ+UFxhQ8yUycnywWQSDYnbs33GonPbl9uB?=
- =?iso-8859-1?Q?nr0Qd/p1zJOzPQNoYpmTGvlgqhcvhHbh+4+AWcE9nLgW24eCH4KBSimb0K?=
- =?iso-8859-1?Q?aMaGOGSr+LjL5ybd8/io2geIIi7ZeVIOUpuCb+TAEJopgNPKy6tVqaJ1MM?=
- =?iso-8859-1?Q?Niio/tHwYaeJFHBupaycdDVQvONFyTlUO1Vw3IX43XuQMnHTnPAMiH5Z8j?=
- =?iso-8859-1?Q?OMEeC31W01laDJ3JDWwZ98QvUOWVZLefJTCat0CbtJivxF1LH8jyBmmL3O?=
- =?iso-8859-1?Q?VYnrpghZ9Sxo2/xPwJK9EGsQzX/koMlUMDXkH0ln3+W51Jbbe+z+2zEHvK?=
- =?iso-8859-1?Q?YVApb4ONUadbrXEhTZ1h/qdTk20t57HkBmPncPII1THC4rb6lPdAc3vpYr?=
- =?iso-8859-1?Q?F9/ObjaHnYzyQt34Ks9o8duvKEJeVoPHABvWTRcO3R75VLy4ZhviW/NRLp?=
- =?iso-8859-1?Q?PaebT87S0SAafA8W0sAQ6S4ZLm/OrutJ/zlGWq4S1H1qjsYTkDveP3P3O1?=
- =?iso-8859-1?Q?uk8WcDA9eYlySaPNPkPlSqIkVz/MPGaCLGsY0o1+QYBoeqfW2q4Y3kS3wJ?=
- =?iso-8859-1?Q?AJFJkvADFyWtbfmYfqA5VJac3zkPlcCV9Z/io8oo3AegxbBHNJl9kjD3sX?=
- =?iso-8859-1?Q?INFIdY0FNwuKW7w6lh4Dg1BLeBnyuboXKbFwsct1RJ4fKAkDix1m5HG7xn?=
- =?iso-8859-1?Q?8=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?dUPl7vQwKSlHCp4mrNBmviNz3mnEEKXEE4A9VoqcxNj3mytmceznX1G8Kr?=
- =?iso-8859-1?Q?gs1L0lCtO75XLPhE6ubmw09peUaKdqlWKsntLWSZCaerxfvasE94H8+X/v?=
- =?iso-8859-1?Q?2DXBJ24b5k7DDDIihdVrujFW1jSrlJMb0q/bINr4YIca1wQpFlvqdAJZdT?=
- =?iso-8859-1?Q?SryzS9pSAwbZ9IJqFFMJ6S2+thftGGjwJpENnwi6I5NrPPUEpsLHqUc4CV?=
- =?iso-8859-1?Q?WScMG/tC5WZ+5mhqH6oJyQIMQy7h6TZNmFxvPa8H89IXk3nl74SD96mkWX?=
- =?iso-8859-1?Q?X7DDmLv04MtXVPJILDv2noQ1w0edZPr4FDS9LnbLDr6H9W1uZHVyRqFApk?=
- =?iso-8859-1?Q?hy/wrz9yqj4bO9NeeP79PvR79OY6rAyDteXkvgLHpOKGeewDayb1WfrSNg?=
- =?iso-8859-1?Q?Dn1rHjClM5eOICrEq+q9Fp3Xx0lihpdD4xz+Fch9zg2jwG/C3iB6F2gSh4?=
- =?iso-8859-1?Q?IG8BZP+XsxSOVNhahwGaA+bwLL34FInxmqcLCsrRwvk/WmiKuRctGhb1z9?=
- =?iso-8859-1?Q?1btPLY9NvUT52p4wMRhg+MjqSFC1Ag+TtmpIzftslO6liAHQxuyl5XJEyg?=
- =?iso-8859-1?Q?+NXFDHx6OGIww7Pg7PQ6Xbss7zs3BmisVPRj3RGEdTCmxdlojuVP8SYro0?=
- =?iso-8859-1?Q?Vq5l2+Yc5Nj4CfBE8NDrkRvxl4lenZULWGConmiSMsXwQg7NVqEjEBh9qE?=
- =?iso-8859-1?Q?SvgrmQjh7zTed966A6YLVqKwAIoRjmBSWKw+uwAo+wwHOjrb2BXkLsZFLi?=
- =?iso-8859-1?Q?KRuWm/KgNZB/CcKjPLjI6eWN6TzZ8YShVLUA81LeQPovreIVccf4qemJDs?=
- =?iso-8859-1?Q?xWh9QnWerDMMQtDPhkoVb8gLFdbNfQ994Bj1qOfhP56MCZRWS5j+quhm2p?=
- =?iso-8859-1?Q?m4xuZQJN9RQ/gJMxiy3S3K9JZCiK20op61sbtgZlRAWzKdl4cmQWeVqi6k?=
- =?iso-8859-1?Q?jjZiLPiwpiIDd+BzDKnyk2pesE+/c7C9mqq4+n9PFJZWEGuKz8k/XRoavp?=
- =?iso-8859-1?Q?RkodIWdoGcbz+8QtTOMMNlb4kZkoVl6yLGlj/ALfJX/7xL+9l6QLcBuVzR?=
- =?iso-8859-1?Q?rAANRx3pKAOyU/U4m75FfGb3vRii1enDajvvVdtY/aWWZOQNp/mNBlfXdP?=
- =?iso-8859-1?Q?nWf9IhbQ1dPshpga+PGlyuGocCpKvkz8pdVFbYqf7hYiTKTfzWkXEgwv6j?=
- =?iso-8859-1?Q?Kv0MhN+Vyq1wwTS0NxpQPK0GBF9tKHUhUPjz4QyTdjxFRO5U5PZQJrYfnN?=
- =?iso-8859-1?Q?9bBQarPGj0MUkpqseFY7Mzwql4KWZUxthn4ZOsJkh/IwILF0f/fon/0MLa?=
- =?iso-8859-1?Q?y1wr5EA2KeYfClvU4vZcEkN6fjdSwbG+A8gD/8qicl+oyEzaclOj3+j4vB?=
- =?iso-8859-1?Q?H1otSNdbyqmSz6sniFJp9/lfQql4XOR5o+Mp8dWMFDrWtGSjhm7rEQ0zC2?=
- =?iso-8859-1?Q?O3W2EVOrBADgr3ld0eDZG7cjx9U4OGgQRAhO/B/WrFvQmf8gy4tj7sDd7V?=
- =?iso-8859-1?Q?C13smeX2K6zGkc0p1iVmHGbIgDuINv8ze37W0rhK2bVTwQIk6gNu8c9TiZ?=
- =?iso-8859-1?Q?WC3Zc6RarTb4FqFqCBDxOhQRdEcGl9RpCSGIaXbcj8BBpAM1DU0spN4mEr?=
- =?iso-8859-1?Q?bC62QcklCkiF18h+LxnRhx4JSLlmpF925u1tQ28rkKBaWt55MzDNuh76sz?=
- =?iso-8859-1?Q?Ur/8ze8IyZ+t7RhXGCo=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6eebce60-6654-4aa8-7912-08ddde1ae862
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 05:48:50.7832
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cJ0LR1H7cizuKmGManYTD4AC8VXFJuPlhALO0+ogJ1gLcE8FQdPjD5DRliyav1B0BZrzBaS1mmFRpkX1NAPfHcIhmhZ5sNVuxMwC8saeU1Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB8087
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/11] bus: mhi: host: Add support to read MHI
+ capabilities
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
+ <20250609-mhi_bw_up-v4-3-3faa8fe92b05@qti.qualcomm.com>
+ <ttjbjmixxbzatcfthaucuy3j4hosu4azpizes6ptxjnkzsawa5@5axodfdyjff2>
+ <5625ffa1-f952-4646-a17a-fbbfffcdba2a@oss.qualcomm.com>
+ <4c68074e-5809-bc4c-185a-88ddcb81f31b@linux.intel.com>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <4c68074e-5809-bc4c-185a-88ddcb81f31b@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: O7HNKidF8PeFyTIPBYTj_WPjS4AiF9Q1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDA0NSBTYWx0ZWRfXzEQHn7nJFSKi
+ LQomUWcbvWgc2hBB4KJy43bZuXUe5+tOwgukBvvdfv04JFEvzhrwmC+o6CuQvv6cbJ5Pm1Zud3v
+ LAqFY0cYtz856mGX1fsMKSd0hjDj862A8XcmU3Dn/b5hx8IbYbHFKXII5ZK3mS55ufixcNYQJh0
+ rU/ZFuCRfoaQt9MqcAhvtL8LL66oPG6uvvQSXJNIK/SnMZgbgf88DkLs8fOvKUiEUm0vtfgkUo0
+ IWEIEtUK7esGS98MMFRNtFGZ1m0j4LohWpQ2ayDQT3aaB8uFT+KxJRpeXCLgPGIPSDSNja70wQH
+ xNkWZtVVaS/nKYEG8TBiT4JhDd0cWvGaRgOGA7gnVRfYnpBCnr2QphGe9Dgb79gj0fIIT8gHq+p
+ wlnJxCHe
+X-Authority-Analysis: v=2.4 cv=IIMCChvG c=1 sm=1 tr=0 ts=68a2be8e cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=BTqdaEJVcAPEW8WuxcAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: O7HNKidF8PeFyTIPBYTj_WPjS4AiF9Q1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160045
 
-On 2025-08-14 at 10:26:19 +0300, Mike Rapoport wrote:
->On Tue, Aug 12, 2025 at 03:23:43PM +0200, Maciej Wieczor-Retman wrote:
->> ARCH_HAS_EXECMEM_ROX was re-enabled in x86 at Linux 6.14 release.
->> Related code has multiple spots where page virtual addresses end up used
->> as arguments in arithmetic operations. Combined with enabled tag-based
->> KASAN it can result in pointers that don't point where they should or
->> logical operations not giving expected results.
->> 
->> vm_reset_perms() calculates range's start and end addresses using min()
->> and max() functions. To do that it compares pointers but some are not
->> tagged - addr variable is, start and end variables aren't.
->> 
->> within() and within_range() can receive tagged addresses which get
->> compared to untagged start and end variables.
->> 
->> Reset tags in addresses used as function arguments in min(), max(),
->> within() and within_range().
->> 
->> execmem_cache_add() adds tagged pointers to a maple tree structure,
->> which then are incorrectly compared when walking the tree. That results
->> in different pointers being returned later and page permission violation
->> errors panicking the kernel.
->> 
->> Reset tag of the address range inserted into the maple tree inside
->> execmem_cache_add().
->> 
->> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
->> ---
->> Changelog v4:
->> - Add patch to the series.
->> 
->>  arch/x86/mm/pat/set_memory.c | 1 +
->>  mm/execmem.c                 | 4 +++-
->>  mm/vmalloc.c                 | 4 ++--
->>  3 files changed, 6 insertions(+), 3 deletions(-)
->> 
->> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
->> index 8834c76f91c9..1f14a1297db0 100644
->> --- a/arch/x86/mm/pat/set_memory.c
->> +++ b/arch/x86/mm/pat/set_memory.c
->> @@ -222,6 +222,7 @@ static inline void cpa_inc_lp_preserved(int level) { }
->>  static inline int
->>  within(unsigned long addr, unsigned long start, unsigned long end)
->>  {
->> +	addr = (unsigned long)kasan_reset_tag((void *)addr);
->>  	return addr >= start && addr < end;
->>  }
->>  
->> diff --git a/mm/execmem.c b/mm/execmem.c
->> index 0822305413ec..743fa4a8c069 100644
->> --- a/mm/execmem.c
->> +++ b/mm/execmem.c
->> @@ -191,6 +191,8 @@ static int execmem_cache_add_locked(void *ptr, size_t size, gfp_t gfp_mask)
->>  	unsigned long lower, upper;
->>  	void *area = NULL;
->>  
->> +	addr = arch_kasan_reset_tag(addr);
->
->Shouldn't this use kasan_reset_tag()?
->And the calls below as well?
 
-Yes, my mistake, the kernel bot pointed that out for me too :b.
 
->
->Also this can be done when addr is initialized 
+On 7/9/2025 5:50 PM, Ilpo JÃ¤rvinen wrote:
+> On Wed, 9 Jul 2025, Krishna Chaitanya Chundru wrote:
+>> On 7/8/2025 10:06 PM, Manivannan Sadhasivam wrote:
+>>> On Mon, Jun 09, 2025 at 04:21:24PM GMT, Krishna Chaitanya Chundru wrote:
+>>>> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+>>>>
+>>>> As per MHI spec v1.2,sec 6.6, MHI has capability registers which are
+>>>> located after the ERDB array. The location of this group of registers is
+>>>> indicated by the MISCOFF register. Each capability has a capability ID to
+>>>> determine which functionality is supported and each capability will point
+>>>> to the next capability supported.
+>>>>
+>>>> Add a basic function to read those capabilities offsets.
+>>>>
+>>>> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+>>>> Signed-off-by: Krishna Chaitanya Chundru
+>>>> <krishna.chundru@oss.qualcomm.com>
+>>>> ---
+>>>>    drivers/bus/mhi/common.h    | 13 +++++++++++++
+>>>>    drivers/bus/mhi/host/init.c | 34 ++++++++++++++++++++++++++++++++++
+>>>>    2 files changed, 47 insertions(+)
+>>>>
+>>>> diff --git a/drivers/bus/mhi/common.h b/drivers/bus/mhi/common.h
+>>>> index
+>>>> dda340aaed95a5573a2ec776ca712e11a1ed0b52..58f27c6ba63e3e6fa28ca48d6d1065684ed6e1dd
+>>>> 100644
+>>>> --- a/drivers/bus/mhi/common.h
+>>>> +++ b/drivers/bus/mhi/common.h
+>>>> @@ -16,6 +16,7 @@
+>>>>    #define MHICFG				0x10
+>>>>    #define CHDBOFF				0x18
+>>>>    #define ERDBOFF				0x20
+>>>> +#define MISCOFF				0x24
+>>>>    #define BHIOFF				0x28
+>>>>    #define BHIEOFF				0x2c
+>>>>    #define DEBUGOFF			0x30
+>>>> @@ -113,6 +114,9 @@
+>>>>    #define MHISTATUS_MHISTATE_MASK		GENMASK(15, 8)
+>>>>    #define MHISTATUS_SYSERR_MASK		BIT(2)
+>>>>    #define MHISTATUS_READY_MASK		BIT(0)
+>>>> +#define MISC_CAP_MASK			GENMASK(31, 0)
+>>>> +#define CAP_CAPID_MASK			GENMASK(31, 24)
+>>>> +#define CAP_NEXT_CAP_MASK		GENMASK(23, 12)
+>>>>      /* Command Ring Element macros */
+>>>>    /* No operation command */
+>>>> @@ -204,6 +208,15 @@
+>>>>    #define MHI_RSCTRE_DATA_DWORD1
+>>>> cpu_to_le32(FIELD_PREP(GENMASK(23, 16), \
+>>>>    							       MHI_PKT_TYPE_COALESCING))
+>>>>    +enum mhi_capability_type {
+>>>> +	MHI_CAP_ID_INTX = 0x1,
+>>>> +	MHI_CAP_ID_TIME_SYNC = 0x2,
+>>>> +	MHI_CAP_ID_BW_SCALE = 0x3,
+>>>> +	MHI_CAP_ID_TSC_TIME_SYNC = 0x4,
+>>>> +	MHI_CAP_ID_MAX_TRB_LEN = 0x5,
+>>>> +	MHI_CAP_ID_MAX,
+>>>> +};
+>>>> +
+>>>>    enum mhi_pkt_type {
+>>>>    	MHI_PKT_TYPE_INVALID = 0x0,
+>>>>    	MHI_PKT_TYPE_NOOP_CMD = 0x1,
+>>>> diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+>>>> index
+>>>> 13e7a55f54ff45b83b3f18b97e2cdd83d4836fe3..9102ce13a2059f599b46d25ef631f643142642be
+>>>> 100644
+>>>> --- a/drivers/bus/mhi/host/init.c
+>>>> +++ b/drivers/bus/mhi/host/init.c
+>>>> @@ -467,6 +467,40 @@ int mhi_init_dev_ctxt(struct mhi_controller
+>>>> *mhi_cntrl)
+>>>>    	return ret;
+>>>>    }
+>>>>    +static int mhi_find_capability(struct mhi_controller *mhi_cntrl, u32
+>>>> capability, u32 *offset)
+>>>> +{
+>>>> +	u32 val, cur_cap, next_offset;
+>>>> +	int ret;
+>>>> +
+>>>> +	/* Get the first supported capability offset */
+>>>> +	ret = mhi_read_reg_field(mhi_cntrl, mhi_cntrl->regs, MISCOFF,
+>>>> MISC_CAP_MASK, offset);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	*offset = (__force u32)le32_to_cpu(*offset);
+>>>
+>>> Why do you need __force attribute? What does it suppress? Is it because the
+>>> pointer is not le32?
+>>>
+>> yes to suppress warnings.
+> 
+> I'm pretty sure sparce with endianness checking won't be happy with that
+> construct as you pass u32 where le32_to_cpu() expects __le32. Have you
+> checked this with sparse? (It might not check endianness with default args.)
+> 
+>>>> +	do {
+>>>> +		if (*offset >= mhi_cntrl->reg_len)
+>>>> +			return -ENXIO;
+>>>> +
+>>>> +		ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, *offset, &val);
+>>>> +		if (ret)
+>>>> +			return ret;
+>>>> +
+>>>> +		val = (__force u32)le32_to_cpu(val);
+>>>> +		cur_cap = FIELD_GET(CAP_CAPID_MASK, val);
+>>>> +		next_offset = FIELD_GET(CAP_NEXT_CAP_MASK, val);
+>>>> +		if (cur_cap >= MHI_CAP_ID_MAX)
+>>>> +			return -ENXIO;
+>>>> +
+>>>> +		if (cur_cap == capability)
+>>>> +			return 0;
+>>>> +
+>>>> +		*offset = next_offset;
+>>>> +	} while (next_offset);
+>>>> +
+>>>> +	return -ENXIO;
+>>>> +}
+> 
+> There's a generalization of capability search in Hans Zhang's series,
+> can it be used here too?
+I Checked this option, the mhi capabilities will not fit in to the
+series mentioned for not matching the mask for cap ID, size etc. mhi
+capability are similar to PCI, but they vary between mask of cap ID, 
+size of the space etc. so going with current approach only.
 
-Sure, I'll do that there.
-
->
->> +
->>  	lower = addr;
->>  	upper = addr + size - 1;
->>  
->> @@ -216,7 +218,7 @@ static int execmem_cache_add(void *ptr, size_t size, gfp_t gfp_mask)
->>  static bool within_range(struct execmem_range *range, struct ma_state *mas,
->>  			 size_t size)
->>  {
->> -	unsigned long addr = mas->index;
->> +	unsigned long addr = arch_kasan_reset_tag(mas->index);
->
->AFAIU, we use plain address without the tag as an index in
->execmem_cache_add(), so here mas->index will be a plain address as well
-
-I'll recheck to make sure but I had some unspecific errors such as "page
-permission violation". So I thought a page address must be picked incorrectly
-somewhere due to tagging. After revising most places where there is pointer
-arithmetic / comparisons and printing these addresses I found some were tagged
-in within_range().
-
-But I'll recheck if my other changes didn't make this line redundant. I added
-this first which fixed some issues but then I found more which were fixed by
-resetting addr in execmem_cache_add_locked().
-
->  
->>  	if (addr >= range->start && addr + size < range->end)
->>  		return true;
->> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->> index 6dbcdceecae1..83d666e4837a 100644
->> --- a/mm/vmalloc.c
->> +++ b/mm/vmalloc.c
->> @@ -3328,8 +3328,8 @@ static void vm_reset_perms(struct vm_struct *area)
->>  			unsigned long page_size;
->>  
->>  			page_size = PAGE_SIZE << page_order;
->> -			start = min(addr, start);
->> -			end = max(addr + page_size, end);
->> +			start = min((unsigned long)arch_kasan_reset_tag(addr), start);
->> +			end = max((unsigned long)arch_kasan_reset_tag(addr) + page_size, end);
->>  			flush_dmap = 1;
->>  		}
->>  	}
->> -- 
->> 2.50.1
->> 
->
->-- 
->Sincerely yours,
->Mike.
-
--- 
-Kind regards
-Maciej Wieczór-Retman
+- Krishna Chaitanya.
+> 
+> 
 
