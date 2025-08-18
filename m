@@ -1,192 +1,86 @@
-Return-Path: <linux-kernel+bounces-773258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D025CB29D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:14:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107BFB29D6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F09507A5584
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCF61889CB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7E130DD36;
-	Mon, 18 Aug 2025 09:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnYVEOiO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B6302CB9;
-	Mon, 18 Aug 2025 09:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61891307AEA;
+	Mon, 18 Aug 2025 09:14:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9813A302CB9
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755508447; cv=none; b=TrPDCyYqrBvcDfN/LN/TcYiaBYudP4sfVN+ahxVEOnhH8hZavG2KY6PUZFUnNPZrgGkTrSqQ2RDo5FCJLSQtP9cgvP99kzZZjqU+D8nCaeOe+8bfs6fUy95gXz2+OacyWIZ+ZITuNqB7a4+yPKmHOlRUhHe+k911g1sME3kU2ls=
+	t=1755508486; cv=none; b=jnbjngzplPMZen7BDEs30CqcfxV7VX2LN+WUejQCW24gJu7bUaJQxZ5VOVnXq9UyafP4ZPC4cU68YwFCEoilrviPknOmQwnv9PoDGp8BNfPwYsC+NVZc5eKOSDH9GRIGrOQmu+FCK9or6y/HV+UcGyIgHMPtiQ6O2CjajdaxMuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755508447; c=relaxed/simple;
-	bh=JAPc9uyIRalo+ADWFrsMcLG/NhCXBlPWfWD8cLyQzFU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=L4CQWoeURdahNukI7nKU6UIFyPRWU6H4HzqougXT93BdbDI8xEkvuH54N1EAmsk9saDDoo4+mFbzYFPCoNr1CHpFwsplzvklxyM+RG0D1xVA8ybXqT6duWVcJ6RIdWcSulktaRfDndoJiNYqRoU3zAmvSRhROaooMXmhXTP1WHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnYVEOiO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347CCC4CEED;
-	Mon, 18 Aug 2025 09:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755508447;
-	bh=JAPc9uyIRalo+ADWFrsMcLG/NhCXBlPWfWD8cLyQzFU=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=CnYVEOiOya6CbXD/prfTWqb6blgEaNy7nK8xZqMNT9W24TBzZnwyvjt061SS8JHe1
-	 i66rVhsQgn0lsCI+3Cy/M33tYNNCAOUINAiaArYGtOhHLjQ7i5K5CS5xKUFZQrkCFi
-	 c3t5FdaE4SVToMZXkYECkOV/BvfwqOghJoQA1yRqCnNvYDaev8BD28u7HGj+uWkz/x
-	 H7DNbNkGSmlpL+PMhsSJX79x4EdfgyrUXNssDS3DuJjjmP6OmVvZA06xp+7jUTHcRG
-	 09dWTXMyy1lyQQOb/wGcmdvXqE5s+F8LimY8WCzDFrDyRaBGXeTgo2bC61/VCvL9QZ
-	 doA1sI6SbqIMg==
+	s=arc-20240116; t=1755508486; c=relaxed/simple;
+	bh=iEgMdHCj64lPwtzO/Q8uUiUIa0QLyyep5PSIGpPb0ao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rk01tMpigcDVnnnoCVoNWXnh5EVXVPyIy4dOXvG6DhzHvphf5Ws0/ZDR4ADavkpo7RlLQ7mUCGwvRhuN8JPXym6wFULT+pHrPZV1ieo61VgCw8iVeEsyPT+jMIjlRBRKNXmijjHLp2xBpCEoRtSYhbs6CLcOu2e+5wcczLgSeSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E45C21424;
+	Mon, 18 Aug 2025 02:14:35 -0700 (PDT)
+Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AD7203F58B;
+	Mon, 18 Aug 2025 02:14:41 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [RFC 0/3] arm64/ptdump: Add ARM64_PTDUMP_CONSOLE
+Date: Mon, 18 Aug 2025 14:44:33 +0530
+Message-Id: <20250818091436.938517-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 18 Aug 2025 11:14:02 +0200
-Message-Id: <DC5FT0XAFW59.VN0EKI1LYNKW@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 2/7] rust: v4l2: add support for v4l2_device
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <kernel@collabora.com>,
- <linux-media@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-References: <20250818-v4l2-v1-0-6887e772aac2@collabora.com>
- <20250818-v4l2-v1-2-6887e772aac2@collabora.com>
-In-Reply-To: <20250818-v4l2-v1-2-6887e772aac2@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon Aug 18, 2025 at 7:49 AM CEST, Daniel Almeida wrote:
-> +/// A logical V4L2 device handle.
-> +///
-> +/// # Invariants
-> +///
-> +/// - `inner` points to a valid `v4l2_device` that has been registered.
-> +#[pin_data]
-> +#[repr(C)]
-> +pub struct Device<T: Driver> {
-> +    #[pin]
-> +    inner: Opaque<bindings::v4l2_device>,
-> +    #[pin]
-> +    data: T::Data,
-> +}
-> +
-> +impl<T: Driver> Device<T> {
-> +    /// Converts a raw pointer to a `Device<T>` reference.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `ptr` must be a valid pointer to a `struct v4l2_device` that m=
-ust
-> +    ///   remain valid for the lifetime 'a.
+Enable early kernel page table dump for debug purpose when required through
+a new config ARM64_PTDUMP_CONSOLE. But first this reorganizes ptdump_init()
+separating out the debugfs creation so that it can be called early on. Then
+adds kernel console print support for existing pt_dump_seq_[printf|puts]()
+helpers.
 
-"valid pointer to a `struct v4l2_device`" is not sufficient for casting it =
-to
-Device<T>.
+This series applies on v6.17-rc2
 
-> +    #[expect(dead_code)]
-> +    pub(super) unsafe fn from_raw<'a>(ptr: *mut bindings::v4l2_device) -=
-> &'a Device<T> {
-> +        // SAFETY: `ptr` is a valid pointer to a `struct v4l2_device` as=
- per the
-> +        // safety requirements of this function.
-> +        unsafe { &*(ptr.cast::<Device<T>>()) }
-> +    }
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-<snip>
+Anshuman Khandual (3):
+  arm64/ptdump: Re-organize ptdump_init()
+  arm64/ptdump: Enable console output in pt_dump_seq_[printf|puts]()
+  arm64/ptdump: Add ARM64_PTDUMP_CONSOLE
 
-> +/// Represents the registration of a [`Device`].
-> +///
-> +/// # Invariants
-> +///
-> +/// - The underlying device was registered via [`bindings::v4l2_device_r=
-egister`].
-> +pub struct Registration<T: Driver>(ARef<Device<T>>);
-> +
-> +impl<T: Driver> Registration<T> {
-> +    /// Creates and registers a [`Device`] given a [`kernel::device::Dev=
-ice`] reference and
-> +    /// the associated data.
-> +    pub fn new(
-> +        dev: &device::Device,
-> +        data: impl PinInit<T::Data, Error>,
-> +        flags: alloc::Flags,
-> +    ) -> Result<Self> {
+ arch/arm64/Kconfig.debug           | 12 +++++++++
+ arch/arm64/include/asm/ptdump.h    |  9 +++++++
+ arch/arm64/kernel/setup.c          |  3 +++
+ arch/arm64/mm/ptdump.c             | 42 ++++++++++++++++++++++--------
+ drivers/firmware/efi/arm-runtime.c |  4 +--
+ 5 files changed, 57 insertions(+), 13 deletions(-)
 
-Why does Registration::new() create the Device<T> instance?
+-- 
+2.25.1
 
-I think Device<T> should have its own constructor. It is confusing that the
-Device<T> is silently created by the Registration and to get a reference on=
-e has
-to call `reg.device().into()` afterwards.
-
-> +        let v4l2_dev =3D try_pin_init!(Device {
-> +            inner <- Opaque::try_ffi_init(move |slot: *mut bindings::v4l=
-2_device| {
-> +                let v4l2_dev =3D bindings::v4l2_device {
-> +                    release: Some(Device::<T>::release_callback),
-> +                    // SAFETY: All zeros is valid for this C type.
-> +                    ..unsafe { MaybeUninit::zeroed().assume_init() }
-> +                };
-> +
-> +                // SAFETY: The initializer can write to the slot.
-> +                unsafe { slot.write(v4l2_dev) };
-> +
-> +                // SAFETY: It is OK to call this function on a zeroed
-> +                // v4l2_device and a valid `device::Device` reference.
-> +                to_result(unsafe { bindings::v4l2_device_register(dev.as=
-_raw(), slot) })
-> +            }),
-> +            data <- data,
-> +        });
-> +
-> +        let v4l2_dev =3D KBox::pin_init(v4l2_dev, flags)?;
-> +
-> +        // SAFETY: We will be passing the ownership of the increment to =
-ARef<T>,
-> +        // which treats the underlying memory as pinned throughout its l=
-ifetime.
-> +        //
-> +        // This is true because:
-> +        //
-> +        // - ARef<T> does not expose a &mut T, so there is no way to mov=
-e the T
-> +        // (e.g.: via a `core::mem::swap` or similar).
-> +        // - ARef<T>'s member functions do not move the T either.
-> +        let ptr =3D KBox::into_raw(unsafe { Pin::into_inner_unchecked(v4=
-l2_dev) });
-> +
-> +        // SAFETY:
-> +        //
-> +        // - the refcount is one, and we are transfering the ownership o=
-f that
-> +        // increment to the ARef.
-> +        // - `ptr` is non-null as it came from `KBox::into_raw`, so it i=
-s safe
-> +        // to call `NonNulll::new_unchecked`.
-> +        Ok(Self(unsafe { ARef::from_raw(NonNull::new_unchecked(ptr)) }))
-> +    }
-> +
-> +    /// Returns a reference to the underlying [`Device`].
-> +    pub fn device(&self) -> &Device<T> {
-> +        &self.0
-> +    }
-> +}
-> +
-> +impl<T: Driver> Drop for Registration<T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: Safe as per the invariants of [`Registration`].
-> +        unsafe { bindings::v4l2_device_unregister(self.0.as_raw()) }
-> +    }
-> +}
 
