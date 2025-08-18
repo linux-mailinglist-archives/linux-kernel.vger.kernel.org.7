@@ -1,234 +1,110 @@
-Return-Path: <linux-kernel+bounces-774230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D82AB2B021
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B485BB2B029
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD12B1B60117
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D4F5E27C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27982D24AC;
-	Mon, 18 Aug 2025 18:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66F32D24B2;
+	Mon, 18 Aug 2025 18:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JOrsX/+j"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wGNArSgz"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8C62773FE
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F32D32BF4A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541230; cv=none; b=XbmbrPDjp+phzIBBpY2owBBmNIjV1RuC8R6EaVwMLIi7L7xD07gWBTA/Vh1twQc/q+4KbPREtX/KeYpVTnoUcmsza2n3igO3ReDfMjx/W6wrcH0/gOBB5hLcj5SCpcgablytnKizOaZ4mUAaNPsFK4Sh4ryZ1A0J6FJUNjDu0+k=
+	t=1755541373; cv=none; b=iNg3j5c+gkeBVXjRwe4fmthB6HSe7Kw1nB0rN9/E0pr99nfX6WU7ueKCQpsYbVQIPwL4Y4/7sN+Qbnog7sMyfHDhXu7PJUrvjoKmkFj9bzz/ip9qAhrJaMwOQKdzJHhzYVOzW06ZKVgn95qW4zb+O2zNBwc0xst2a73y0U/cl9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541230; c=relaxed/simple;
-	bh=38sZH6JuVgSMOyf4B27yV9I0wAobtIYP27/Wcj+eUOI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JUBuq/0qmmuvWKauXncdMj14K2H/vPoYRMpVW4FD7dqdddI4amRHwZD34LqwQhtWS7zSF/OjtVd8WlWC3e/IuDHF2PuwYL/Dd8rJJJQ4A+ncSqtI/u2XiIPBKDOm3EgNZLahlP1e9XvS3HaTRs/bHetqHfOhshNEMjXIGYWDQu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JOrsX/+j; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1755541373; c=relaxed/simple;
+	bh=DT4bocGlF2j9Ni322/TBmOHO3AL56WqHF7f/9O9uhPY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l1b97N8QF+hRn3KLRSq4bBx1WWnx8Bbydah/oOyC1S/j98ZFEiFeyVW3NBmVpeKK2TGBB82fuZFv59Ax1VhRKXKjGM2AblKSd5na8yBIYyr1TzkGxGZ927Wbbo+5gZD7gN89WBQWh9Iyb4IwQI8Fpm/pid1Zsuipo/3ryX37eYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wGNArSgz; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-323266dca73so3783795a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:20:28 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55cc715d0easo1295e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755541228; x=1756146028; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c+Iq2txiStcKOuqn2xWSupDgERuUU7vo0HWget122Wg=;
-        b=JOrsX/+jQNaoU4MBaOGyvA12GkFcFM52vtju6631noru5C8JEpHC407f2ogW808Lla
-         iBhVV+R8p+u3QBlfMcUWZ/ICVlcc1tUtfl8p3+S5MLVcmVYrQ0GSybov+7jTdwRBdEeD
-         Lf2W+sIXUXLLThO2Jydk4+mTtgmXzIY2iOeyfFaViaZJADhxfAgQNvna2ux7uu8ds4oD
-         hh7cnjnYNwYH0z9mOJijhv9wygeDqAdzyTZKhFolpzFEixJUi8TxX9ECTZqwilApocBM
-         v1yGLILiw9oOVAOd8eAhuvWNd7Vk9+yCj1z1q/nEd/8MoFinoN63QWnZ3DFYo5vFXwfJ
-         F7ZA==
+        d=google.com; s=20230601; t=1755541369; x=1756146169; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DT4bocGlF2j9Ni322/TBmOHO3AL56WqHF7f/9O9uhPY=;
+        b=wGNArSgzawI63dj4Uld/U5lCcb1WVdko8j7tbt1K0xmoUz01hRIs0ldByjP7PdmkEu
+         /2wsoCQ63u+NLC8gLEmLOSmYcH/qtt4MoQ2c4gb9IGTXwEYMiQdtWTaczuAl3uIMq4vV
+         iYSSK7l7IvsFG0xT1BEZMPQLMPBYCU/yRWYtQdFdZegxcQjJLD9NgtLJ1NCv6WTW/dsT
+         J1mWk2iisTUMiEmM+iVdpLXTJFIHzpPbSMpQAbc81UOJcj8jsxo3XfMlDS+t8ABC0VYR
+         H1O4JE5iGI0tnKhATbGsDjQv3jqOsEGwV8DB6dSplNh+l6w6vl24M4lMcIdat4WkjGtq
+         nEQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755541228; x=1756146028;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c+Iq2txiStcKOuqn2xWSupDgERuUU7vo0HWget122Wg=;
-        b=DikKIkQEZ02jw7V3GVWzRhw1NyU9pTSTdsGa8G/ZTpf5lscxlX4ux+LKLsxHVc4yh1
-         7zrkPdpE/RMIgjpSr1hwfX2XUui7opEhj/LneZI20G6vL/61PaoJ6WGeocO+kdH+3OJh
-         wIUBA0ecb69DE5KoVxRiOxzIRJAPMaeDaBWTOARSca1Cm+bP1kruDcPBunYUR0YTUNjk
-         2a2vlvEBZMLszCF+49fFmZ0iEE9YsTsUjR5szCjcBBYF+jUDwSxzS92aSxUSZ7QWkjYx
-         Ts+bIstKiUUOpxqDFNVWjb2IoKR1YnX/YD8AzHaqiLzcNZd+nlEoOJpx+s5aWg09nD/4
-         TL7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXvGLRrWmZpXu0QgKBBPTgDpDf5bmq49owQO3rPfkBzY2DpUjPA9BKaaMdNphj2XJ/ysIUMQipbC1+e3yU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKnkwWnp9FuJdcz20Iv1CPhxrefW+T9pgU856/KFdvhgyQWfdd
-	+HI2ZL2MhwjtGKX27VCcVCxyT0RqJa8jFkzgc4YgJSXGtcr6FjW0NEN5qBTWtbwwVHVLD01n0WI
-	TidasBw==
-X-Google-Smtp-Source: AGHT+IELTRFHW9KUb9D80Nbvrwyz0fNQE4bUdMf4smEIgxSpRcYtBKnsaEnIrAtTdAW2ja3MqRjx5g0/Rl8=
-X-Received: from pjbpq4.prod.google.com ([2002:a17:90b:3d84:b0:30a:7da4:f075])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:224e:b0:321:b953:85ad
- with SMTP id 98e67ed59e1d1-3234dc61e08mr12748477a91.30.1755541227800; Mon, 18
- Aug 2025 11:20:27 -0700 (PDT)
-Date: Mon, 18 Aug 2025 11:20:26 -0700
-In-Reply-To: <20250813192313.132431-4-mlevitsk@redhat.com>
+        d=1e100.net; s=20230601; t=1755541369; x=1756146169;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DT4bocGlF2j9Ni322/TBmOHO3AL56WqHF7f/9O9uhPY=;
+        b=GuHx+rTpBSDVq/MJuSDaZY2LKFwpymqy2KRlXyRIsChmVqGeLov+J4HfbtWHl9htri
+         NgFU+Ar5yoFU/TAPCSElyQi0Ayd75DHNZ97AkBOGidQIjdTGv8EZhbABbXYG9eCqI0Uo
+         nnsRaXD9vVdCfbP1qqFTFbG/inFq8OvLAeQSBan8aCfZAz9ksJt2+N8/S55cfTlg5ciL
+         gha8s8RKSIW0srhvcycuI1lHlz4kkH3MnzgyGHskPr4e5QFLB4eFaJ64RdD1WfUN0++s
+         1sHz3wUihJv7claDrJURwm4hxCrgRuFgZbD96CMS//Ugl4PQHFiuDXYqcch1F4zohrnV
+         Jsmw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5uBKIiK4w9gb7gi23eqfM8xBBU5dOpfh6gakqJBfNu66cBkIWHTZFkxT/MG5Wud2XHIcEYMPoamSEmM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGjvowxnBkhO3qsErGeiIEOKjao/Hct1yqIwTzTazXezr8u3Xo
+	u9g1FwDM7/GqWyTOsy95N7Tg2Q6/j3ec4DY7f4Dv3fR9SeKKa2u+/AGUL0dc9cGlRMljTUiARG+
+	TSO5SU/LruzHYb60FspaYmLkhzZWRybg4FXGwnlJk
+X-Gm-Gg: ASbGncviMcNgJv4b+8Q08gPCIsOrdmaAa9AxDQL24pMB0/AiJtdWxMW9+y/uiixTvzV
+	xeHTXSRL3LipJcVeyXlSL0QA4oqZWcgnAO/a3AQd79/5zdB6vw/Rgwfv3I/1ic4y6SF9NJp6vBp
+	WkaLN5y5RbTgmkgF00dOqv1O9WUcIEw7bna3gFBz+Ev9puHkNllzatTnuGM9x9zsF6/T4QTqdEk
+	7gOjT//Oc1IcxG3rU5YASy92XcC+d1CTTR8yA==
+X-Google-Smtp-Source: AGHT+IE/ZypGD903Psnz6sgZwBXeLKnJ06+8qD7CmCx7MVRcdInxK4pxAypFIbDfggBhfCkhl5iLUbK0SD2EBRPwbow=
+X-Received: by 2002:a05:6512:4406:b0:542:6b39:1d57 with SMTP id
+ 2adb3069b0e04-55e001b1b0bmr15322e87.3.1755541369330; Mon, 18 Aug 2025
+ 11:22:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250813192313.132431-1-mlevitsk@redhat.com> <20250813192313.132431-4-mlevitsk@redhat.com>
-Message-ID: <aKNu6gYNO1j_Wpdj@google.com>
-Subject: Re: [PATCH 3/3] KVM: x86: Fix the interaction between SMM and the
- asynchronous pagefault
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250815110401.2254214-2-dtatulea@nvidia.com> <20250815110401.2254214-7-dtatulea@nvidia.com>
+In-Reply-To: <20250815110401.2254214-7-dtatulea@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 18 Aug 2025 11:22:35 -0700
+X-Gm-Features: Ac12FXzkAeLodaPcBrWTY9tocxP-EHC3O1a5Xv_mbMxpvvGeCp-LCxHvluNIGic
+Message-ID: <CAHS8izPjyZHDigixCZkcTiNd2JLdgzTMBUZ9+kT_M+SO-uAS-g@mail.gmail.com>
+Subject: Re: [RFC net-next v3 5/7] net: devmem: pull out dma_dev out of net_devmem_bind_dmabuf
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, cratiu@nvidia.com, tariqt@nvidia.com, parav@nvidia.com, 
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025, Maxim Levitsky wrote:
-> Currently a #SMI can cause KVM to drop an #APF ready event and
-> subsequently causes the guest to never resume the task that is waiting
-> for it.
-> This can result in tasks becoming permanently stuck within the guest.
-> 
-> This happens because KVM flushes the APF queue without notifying the guest
-> of completed APF requests when the guest exits to real mode.
-> 
-> And the SMM exit code calls kvm_set_cr0 with CR.PE == 0, which triggers
-> this code.
-> 
-> It must be noted that while this flush is reasonable to do for the actual
-> real mode entry, it is actually achieves nothing because it is too late to
-> flush this queue on SMM exit.
-> 
-> To fix this, avoid doing this flush altogether, and handle the real
-> mode entry/exits in the same way KVM already handles the APIC
-> enable/disable events:
-> 
-> APF completion events are not injected while APIC is disabled,
-> and once APIC is re-enabled, KVM raises the KVM_REQ_APF_READY request
-> which causes the first pending #APF ready event to be injected prior
-> to entry to the guest mode.
-> 
-> This change also has the side benefit of preserving #APF events if the
-> guest temporarily enters real mode - for example, to call firmware -
-> although such usage should be extermery rare in modern operating systems.
-> 
-> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-> ---
->  arch/x86/kvm/x86.c | 11 +++++++----
->  arch/x86/kvm/x86.h |  1 +
->  2 files changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 3d45a4cd08a4..5dfe166025bf 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1118,15 +1118,18 @@ void kvm_post_set_cr0(struct kvm_vcpu *vcpu, unsigned long old_cr0, unsigned lon
->  	}
->  
->  	if ((cr0 ^ old_cr0) & X86_CR0_PG) {
-> -		kvm_clear_async_pf_completion_queue(vcpu);
-> -		kvm_async_pf_hash_reset(vcpu);
-> -
->  		/*
->  		 * Clearing CR0.PG is defined to flush the TLB from the guest's
->  		 * perspective.
->  		 */
->  		if (!(cr0 & X86_CR0_PG))
->  			kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-> +
-> +		/*
-> +		 * Re-check APF completion events, when the guest re-enables paging.
-> +		 */
-> +		if ((cr0 & X86_CR0_PG) && kvm_pv_async_pf_enabled(vcpu))
+On Fri, Aug 15, 2025 at 4:07=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> Fetch the DMA device before calling net_devmem_bind_dmabuf()
+> and pass it on as a parameter.
+>
+> This is needed for an upcoming change which will read the
+> DMA device per queue.
+>
+> This patch has no functional changes.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
 
-I'm tempted to make this an elif, i.e.
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-		if (!(cr0 & X86_CR0_PG))
-			kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-		else if (kvm_pv_async_pf_enabled(vcpu))
-			kvm_make_request(KVM_REQ_APF_READY, vcpu);
-
-In theory, that could set us up to fail if another CR0.PG=1 case is added, but I
-like to think future us will be smart enough to turn it into:
-
-		if (!(cr0 & X86_CR0_PG)) {
-			kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-		} else {
-			if (kvm_pv_async_pf_enabled(vcpu))
-				kvm_make_request(KVM_REQ_APF_READY, vcpu);
-
-			if (<other thing>)
-				...
-		}
-
-
-> +			kvm_make_request(KVM_REQ_APF_READY, vcpu);
->  	}
->  
->  	if ((cr0 ^ old_cr0) & KVM_MMU_CR0_ROLE_BITS)
-> @@ -3547,7 +3550,7 @@ static int set_msr_mce(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  	return 0;
->  }
->  
-> -static inline bool kvm_pv_async_pf_enabled(struct kvm_vcpu *vcpu)
-> +bool kvm_pv_async_pf_enabled(struct kvm_vcpu *vcpu)
-
-This is in the same file, there's no reason/need to expose this via x86.h.  The
-overall diff is small enough that I'm comfortable hoisting this "up" as part of
-the fix, especially since this needs to go to stable@.
-
-If we use an elif, this?
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 6bdf7ef0b535..2bc41e562314 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1030,6 +1030,13 @@ bool kvm_require_dr(struct kvm_vcpu *vcpu, int dr)
- }
- EXPORT_SYMBOL_GPL(kvm_require_dr);
- 
-+static inline bool kvm_pv_async_pf_enabled(struct kvm_vcpu *vcpu)
-+{
-+       u64 mask = KVM_ASYNC_PF_ENABLED | KVM_ASYNC_PF_DELIVERY_AS_INT;
-+
-+       return (vcpu->arch.apf.msr_en_val & mask) == mask;
-+}
-+
- static inline u64 pdptr_rsvd_bits(struct kvm_vcpu *vcpu)
- {
-        return vcpu->arch.reserved_gpa_bits | rsvd_bits(5, 8) | rsvd_bits(1, 2);
-@@ -1122,15 +1129,15 @@ void kvm_post_set_cr0(struct kvm_vcpu *vcpu, unsigned long old_cr0, unsigned lon
-        }
- 
-        if ((cr0 ^ old_cr0) & X86_CR0_PG) {
--               kvm_clear_async_pf_completion_queue(vcpu);
--               kvm_async_pf_hash_reset(vcpu);
--
-                /*
-                 * Clearing CR0.PG is defined to flush the TLB from the guest's
--                * perspective.
-+                * perspective.  If the guest is (re)enabling, check for async
-+                * #PFs that were completed while paging was disabled.
-                 */
-                if (!(cr0 & X86_CR0_PG))
-                        kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-+               else if (kvm_pv_async_pf_enabled(vcpu))
-+                       kvm_make_request(KVM_REQ_APF_READY, vcpu);
-        }
- 
-        if ((cr0 ^ old_cr0) & KVM_MMU_CR0_ROLE_BITS)
-@@ -3524,13 +3531,6 @@ static int set_msr_mce(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-        return 0;
- }
- 
--static inline bool kvm_pv_async_pf_enabled(struct kvm_vcpu *vcpu)
--{
--       u64 mask = KVM_ASYNC_PF_ENABLED | KVM_ASYNC_PF_DELIVERY_AS_INT;
--
--       return (vcpu->arch.apf.msr_en_val & mask) == mask;
--}
--
- static int kvm_pv_enable_async_pf(struct kvm_vcpu *vcpu, u64 data)
- {
-        gpa_t gpa = data & ~0x3f;
+--=20
+Thanks,
+Mina
 
