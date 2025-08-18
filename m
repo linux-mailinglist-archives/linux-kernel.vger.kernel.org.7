@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-773235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61948B29CFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:02:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719EBB29D0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9818C3BBE2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2744205773
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCA53009C8;
-	Mon, 18 Aug 2025 09:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEfqujXp"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23C330C36A;
+	Mon, 18 Aug 2025 09:02:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBA629D27A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A45224B1B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755507707; cv=none; b=nUJZBfEapFJ2YcA8vyXTdtINj8qtMrBEChzaGOyJSlz9Zxt405d7Tloy8Wg9TSN6LGxJAqPJUfB4Ctzq5voLtFK7cwEPkIetQVgKWA+1emnzuIm3ioTXtCBgMeK5omCNyzCTIAp9sJcHHjJz8Mq9Jzl1D3hJGzVV8iCrGGvA0+M=
+	t=1755507758; cv=none; b=TuYP4cVZWHAVAb1eh9G0ngHhuZbKsFdPyUUF1bo9N2iwldfD+xs4Ik2buiG4bCfUeNcE5KrEFvoEVhsEgRJefsCVHc2hakXpRC6vRPuRAaYWfypM0j0+GN2SvK/Z1HO9AilZ3wn4xoeNRC2bVonxkXFMbhAR+TpKlMn+6HCpx14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755507707; c=relaxed/simple;
-	bh=EBmIGqr9okzPx2vGqCpS7J+AzgDqHAdhPp3xjnLfU28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=auLQqspnnByFmDFnx5VpcL7g9vQ6BRLLIOA3lt01rv8iDa63s8tGaEJGr9lR/1T/8EHjHwE2uIsV6rTzkeZaKlIk/aKwJ/qMLgPXQSUyamGwCd9KLmPByhR91Y5opLISLsRtAjIexVBKvU8YL61PuJX7sPzPG9I1fwRiIRFBLu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEfqujXp; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4717390ad7so2602286a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:01:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755507705; x=1756112505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OcTOinIlKkgzYvoZaHWXm+nnbinthSn1xXH8lpBhhbM=;
-        b=UEfqujXpCfV9pwsqBf5wGzfwnax65OEzQuEijMDCQdutQ4j6o/8Hd8KVe5GON2/kUa
-         zZDVkLVH7urHjL9zF6DPb87vfodNGEwslpsQ8ArFApga3aHQuGXUpC4iLM07AjboKQHi
-         96OkwmjuFkCb/TouH4mSKSdbgBzZlC2vXviKR/kvUC5Q62EskSf6gnrbYghNLIwlj5Wl
-         z3CRIbmrdQY67/zIcAdcS0X5iPxKHZpUnv/2xU00+JY+FenExmOILAvg16daIWNINRyW
-         f6ROiBtUNWOpNTlXqXYOhbVYYC/b+0ALsgTyOjni0DbN/RSRkYyJh9h6SOlC2L4F9fyI
-         3nSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755507705; x=1756112505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OcTOinIlKkgzYvoZaHWXm+nnbinthSn1xXH8lpBhhbM=;
-        b=R8EBvoEeu0MNMpfimb5JQuwPRVxtj0oKP2GoHZKnJX+VLqli7zChkpvrZ/fPRbm9mb
-         fw2RnQzocKuH+jM9S+wu7W/DNFBkGubfP2OkyjSj8hwTCwrkxlSE/Zo52n3a1DWrp1cP
-         SKeuVjhT7z3jzpBwN6YAEJTfuHohOTuCcEYtbYRKbliNGxqdB16LKIT5OK1SaSJ58MCH
-         BkrdgJmYHQTaR+JiWO9IUfMUd7UngV8+iJ2wO4Vkgzk/E74RSH5urXDcgRpib0NODIBL
-         JCCAS05BZbC8p7+XLc3IXb8W7KG+O20MrrSDP1MkRU669BKQPigedWhqQdXvkYyN+lQi
-         K48Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWvmpMJ8uYNSYQChzQMKMQleD0AKMq00ocsyGSzmRHCD3EX98CvYTn71+MQmPVYRT6tR/DPxK1KOCJQkuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTO4I6O1E7WTjNCgM7xo6F9JlfOcyImDwmJ3Tuf5cdT390hKSR
-	xbNqxElvNA8h4wUva9JGBTa0qePVUCwXL/qfDiH7Gm82kKyEphqKDODUMQfuAOhvCVu/c3T7Jb9
-	slEccmZBAMh0638kgPtvRcVsaXtJO5A0=
-X-Gm-Gg: ASbGncvjXu+r/GC/4jR5+Suh2uNxOmFxYgZs/XasC//BLyKH6WxrDk6F+o0UErtBfzO
-	At2Z2ktmoqlbhv3cHTzjsmIxuAq9oSQZnTMJPJP6Xco2rBw3P8wV4TWNzVLOHniarSqncDsEqwz
-	dt2Etj716xApiGWNIwGYMnR9U/ZaJ7DdZYVTdKR2OxQek96PZyY+ElTB+pHTeHiiL9vv2T7LuaR
-	FwWwA==
-X-Google-Smtp-Source: AGHT+IHFiMvOj6zE4tw13IbbqMhK1S0rP2Re6EX64vcHvfnbK+PVm/hE+V+4Pgpj6IMVJbdklE9XRrAj8pwnH4P5Dbo=
-X-Received: by 2002:a17:903:b07:b0:23d:fa76:5c3b with SMTP id
- d9443c01a7336-2446d745130mr162855865ad.22.1755507705452; Mon, 18 Aug 2025
- 02:01:45 -0700 (PDT)
+	s=arc-20240116; t=1755507758; c=relaxed/simple;
+	bh=vwWq2gQjuhdr2jRIjEhG3Jn96WIa3/SjAzzadW8kWnw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mv6L9FDGh5zRbL6JGWkr+ZwU3UUXtaYH4y2OLHzZeDqxSo1y7B2CKp9NBWN5kdT7x08I/IJKaOLHpEALZjIIPdb3pjiu47L5T9YdR0kXQxBs+lGpMEIh1n+na+yUZznTkFQwsNnRrvSYzqrhA05BnKZf/xLrBrIE5Hb3iTaAogE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1unvky-0003N2-Rd; Mon, 18 Aug 2025 11:02:20 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1unvkw-000sBB-2F;
+	Mon, 18 Aug 2025 11:02:18 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1unvkw-00Bhgg-1y;
+	Mon, 18 Aug 2025 11:02:18 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
+Subject: [PATCH net-next v1 0/3] stmmac: stop silently dropping bad checksum packets
+Date: Mon, 18 Aug 2025 11:02:14 +0200
+Message-Id: <20250818090217.2789521-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818164635573BQolnx5DcBqRicqxF0DMl@zte.com.cn>
-In-Reply-To: <20250818164635573BQolnx5DcBqRicqxF0DMl@zte.com.cn>
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Mon, 18 Aug 2025 11:01:32 +0200
-X-Gm-Features: Ac12FXy4yBxw9ty29Vpw3cXzgph1ImGW6cgDm4IopFR2nOck3AfRDA4sfwW0U_k
-Message-ID: <CAFLxGvz-NnCRYXrn59Gh9EYnoBTAQ-5LBN=1=MQN=Yz3iEQsTw@mail.gmail.com>
-Subject: Re: [PATCH] ubifs: address bit flips in unused free space
-To: shao.mingyin@zte.com.cn
-Cc: chengzhihao1@huawei.com, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, yang.yang29@zte.com.cn, xu.xin16@zte.com.cn, 
-	yang.tao172@zte.com.cn, richard@nod.at
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Aug 18, 2025 at 10:46=E2=80=AFAM <shao.mingyin@zte.com.cn> wrote:
->
-> From: Shao Mingyin <shao.mingyin@zte.com.cn>
->
-> When the recovery detects a free space bit flip, the UBIFS mount fails,
-> rendering the UBIFS unusable. This issue can be addressed by reclaiming
-> the affected erase block, which involves relocating its valid data. So
-> attempting to fix free space bit flip during recovery reduces scenarios
-> where users cannot access UBIFS normally.
+Hi all,
 
-UBIFS should never see bit flips in empty space.
-Fixing this situation happens in the NAND layer.
-Please see  nand_check_erased_ecc_chunk() and it's users.
+this series reworks how stmmac handles receive checksum offload
+(CoE) errors on dwmac4.
 
-Maybe your NAND driver does not call it?
+At present, when CoE is enabled, the hardware silently discards any
+frame that fails checksum validation. These packets never reach the
+driver and are not accounted in the generic drop statistics. They are
+only visible in the stmmac-specific counters as "payload error" or
+"header error" packets, which makes it harder to debug or monitor
+network issues.
 
---=20
-Thanks,
-//richard
+Following discussion [1], the driver is reworked to propagate checksum
+error information up to the stack. With these changes, CoE stays
+enabled, but frames that fail hardware validation are no longer dropped
+in hardware. Instead, the driver marks them with CHECKSUM_NONE so the
+network stack can validate, drop, and properly account them in the
+standard drop statistics.
+
+[1] https://lore.kernel.org/all/20250625132117.1b3264e8@kernel.org/
+
+Oleksij Rempel (3):
+  net: stmmac: Correctly handle Rx checksum offload errors
+  net: stmmac: dwmac4: report Rx checksum errors in status
+  net: stmmac: dwmac4: stop hardware from dropping checksum-error
+    packets
+
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       | 1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c | 8 ++++++--
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   | 2 ++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 3 ++-
+ 4 files changed, 11 insertions(+), 3 deletions(-)
+
+--
+2.39.5
+
 
