@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-773927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA3EB2AC85
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:21:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D693B2AC78
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34703B918E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D6216CA3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF16B24E4C4;
-	Mon, 18 Aug 2025 15:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48261254AE4;
+	Mon, 18 Aug 2025 15:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vbhlxq45"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RYWCd55x";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cRz4Sfdg";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RYWCd55x";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cRz4Sfdg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F022135CE
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F20E253B40
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530128; cv=none; b=FO5TLHzHfMri/e42cKT6N7kWfTpzEbnS3X5hYBn5PH4Ed7IQG3hMXlVytRiO1ajplbl66cq6oZLd2eBCtUitZUWh2ml2UDS3hVTRGAoHNyrf7mfj5O4i23yHs4K04v7/DLx1ibs2Tv+TMCAWI+2iH9s9F7Og0vfJpPD7/o8XJ2A=
+	t=1755530134; cv=none; b=dOQtvtfYyIYXMoJvadmb9srM9GG9PdI+X87FjZNuN6ErFFP1wL9XH5qAdwKbqS72+n59CPKhWfpKzc7UPnFXMDNaW2R76lOsA81Ky9Y6n8dBo11x48UW9osWOH0iYq9ZbvRfLQtWQZ0LHFOMw/DhrSq5ei0l0x66/ahm9TNFF4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530128; c=relaxed/simple;
-	bh=YUzSS0tMH4Lq6dvFjtrqpGRKZ3/fBTf3Sv/BZoWFalk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZACxEntpsPuJBS7rCoHkxiNYgCyvfZw8kSc55lbjHjor5dHZEMdyadpr4rVZ/Wjvc8tfh5LtM8nW5njCju9xTR3JwGtTPVPCGfleQ5GRGrjhuDVcArwrENkNGBDjojQYbUamImV9DgUQGP7Fj53Sk9/oBEy8V2Sm4H9kigjTF/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vbhlxq45; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381f39a3eso1939861a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:15:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755530125; x=1756134925; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rx5f0xAbVvUAkSbSeLOjDbq5b/QH3eN1AqJzxGe0lPg=;
-        b=Vbhlxq451x67B+liVgebADFE7ImDp6Lx9XcWm++eOxngDIpvuW7F489XYtID3b8yFp
-         0J33SgYjB62ImnY+hIGZ/xaGEc7W01z3X2hpvRQ2ecfZ8j9u9cZ6dIl6oT2UfbNjxKjd
-         F7hiUD7jHjLYATyYmsdiESMclV4Y1AQbq/YKwEr1YGd/U9cYlqkLaAxe677aS/2VHNI+
-         EsTqINM9pZvQwDsnEDwnBDKso9b3vUV+FoAfD4ivqwPHjOD+9nj12XXVIX8bxCUmattM
-         LEEXpGP14mQy1hSkV16VCCrBPirEFmk+mIExJQmRDlS0jTyILkxEReSJfySxYRV/8WCv
-         1VkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755530125; x=1756134925;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rx5f0xAbVvUAkSbSeLOjDbq5b/QH3eN1AqJzxGe0lPg=;
-        b=qp5xYHh4p4hhva1nR5+Uk1snxS42SqUxWv56tnYDgQmpLLzaqVLJa3wSzZThI5Ba97
-         GHQmLgH6FpxXEBudeI6pnM0Z5u5VEGu3xMniJMdh9E7yNPLYj9UErfCMNL9PfRUXwaho
-         yD9lZx3273d6KzxWs0JDjyW4o3vOloS8vAmAo/Zz3zl2lVgnb8Abx6I8/xyZmxNQqEjF
-         03wt6OkNZ1AOXD1Wlp2BhX6ValistiLPq6bGGZpWISkS5ieFbLV/STgZgk9D4Re0m2Me
-         ErF8U9XdBZfT+LYtq29kS0rUjYKRP1TCNx1bjtupj3k53jBfEHlIVoJ1qdQAhYZ0AEFx
-         P4kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSfPy/5MILBhYzMUp+QRinawh3UQUUrrC88XKJr2nAERPCcIB1MFioUdbrzMGzZbXRgX9gOrpIHXh6Csg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoS1/DviF0EpEqPC7SYAZlY9SEQrfE+me1m6zSFvYaXn5r4idP
-	gFdGKT2BMIUyMVFi/WxvqJDIv57+a9jtmRpalsTlqT3jB/cyR8YpuRy6fPR5j1DI/+o=
-X-Gm-Gg: ASbGncuotJCXwhwpHWya+jN82F0YPjcne8bLOiciN/1t5Sw/RA/697OTNQDWEhiPWoe
-	BazLfbpZbmZWYdXqJOqTualhdqFEubVgAOkmnwJ6iNZzBocNy+UYdeNVoUt9JDjxWpsGJBGAsxY
-	kwR00lIHZEbVNKU5WnPhfRlj2qDMQUS0HQcptfqeaf2NzbKfUAn8sPDFFLAZc/pE2B3kC1CCtPv
-	1b//WA5XUi8EVWTs2YjL30R93ZZWP0isU7/XXmjVVqXLccoRPBOjNu3rLK4Yvx5w/NKkQfZDblU
-	6/F5TQynEWyJr9qmmW/ide40GARhXAC0i34wKy6GsMj6YR07stszBA23m3x97tsiWZnwrUyTAUr
-	Go8RDEmuwLHYkyT2GYRLMeysus37PG0f6nTwD8dDh1k7bj/4BZrJ+tcTssLc2xjvxyoGlJ7FVxU
-	Dyk46PP5i2Yg==
-X-Google-Smtp-Source: AGHT+IHb9rH2wLfVz0O8elzP2+rT3F9w2k8wvdCdA9WSm2W7n0uohkYyH7F+p03AyGk3vMxrFUDpig==
-X-Received: by 2002:a05:6830:2692:b0:741:924c:3f60 with SMTP id 46e09a7af769-74392487172mr8034059a34.20.1755530125226;
-        Mon, 18 Aug 2025 08:15:25 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73? ([2600:8803:e7e4:1d00:ee1a:f057:94fa:9a73])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7439203b4fesm1901272a34.30.2025.08.18.08.15.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 08:15:24 -0700 (PDT)
-Message-ID: <eb9c06de-04e2-427f-9c04-eaaaf4837da6@baylibre.com>
-Date: Mon, 18 Aug 2025 10:15:23 -0500
+	s=arc-20240116; t=1755530134; c=relaxed/simple;
+	bh=/DEWLfNZmTeQoMapMuFwvgUXML/vKMdXW8QhW0BLYj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S3CuRLvBeWl5D7PMg51NkrGclL7HTaixkIr+ou4Ia2FIYe7KvdIS9xzdS4xJJcIcaUIAxOfAfFmukCGhoEY+/qgYek7gHjkxx1dRtpUFIrgw/Qi32lu5HmVgCsOg6ocMsKpfS5cnBUyDG6bFdrCsx0Lq6GAr4mRQxaIGqiZJKc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RYWCd55x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cRz4Sfdg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RYWCd55x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cRz4Sfdg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3D3F921747;
+	Mon, 18 Aug 2025 15:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755530130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
+	b=RYWCd55xZLaZONp7prQ3mH50rrSmh1QQtWKv8V+nio8tdSTQHXRYh5PmwpFl+N6Sy1VF1o
+	6/FwfAZVGfp10PzYPSASQb5xyjxFZQ25Uj/hj8ncNTItLzbECMxocBfjmaajynAtHbiA69
+	pa3y1YcBYek9CeYfJ1h/YLd6G+S61Qo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755530130;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
+	b=cRz4Sfdg3ADJWsIAuK/dNAM76hCO7xUoz0dlG2jiVqh6Wc/l+ztT9xi9RMEEyprkCUOI7C
+	MlLhzOZY5szA5pAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RYWCd55x;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cRz4Sfdg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755530130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
+	b=RYWCd55xZLaZONp7prQ3mH50rrSmh1QQtWKv8V+nio8tdSTQHXRYh5PmwpFl+N6Sy1VF1o
+	6/FwfAZVGfp10PzYPSASQb5xyjxFZQ25Uj/hj8ncNTItLzbECMxocBfjmaajynAtHbiA69
+	pa3y1YcBYek9CeYfJ1h/YLd6G+S61Qo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755530130;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pPaXx3GogupYUzudWeXDprQsHT8asP4kTul//FivS9Q=;
+	b=cRz4Sfdg3ADJWsIAuK/dNAM76hCO7xUoz0dlG2jiVqh6Wc/l+ztT9xi9RMEEyprkCUOI7C
+	MlLhzOZY5szA5pAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D549C13A55;
+	Mon, 18 Aug 2025 15:15:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vDi1MpFDo2jXLQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 15:15:29 +0000
+Message-ID: <7a470b3f-fc20-476e-bc97-be9008d5aeef@suse.de>
+Date: Mon, 18 Aug 2025 17:15:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,230 +97,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] iio: adc: update ad7779 to use IIO backend
-To: Ioana Risteiu <Ioana.Risteiu@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Ramona Nechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250818131253.8854-1-Ioana.Risteiu@analog.com>
- <20250818131253.8854-5-Ioana.Risteiu@analog.com>
+Subject: Re: [PATCH] drm/amdgpu: Pin buffer while vmap'ing exported dma-buf
+ objects
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ sumit.semwal@linaro.org, oushixiong@kylinos.cn, alexander.deucher@amd.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org
+References: <20250818084148.212443-1-tzimmermann@suse.de>
+ <6f409954-2e01-4e87-b8b7-5688bea837f6@amd.com>
+ <7c2d8894-7eb5-4c86-a80a-935fcf24ef83@suse.de>
+ <6cb1d152-898a-4cc4-a086-44d85cf7a24d@amd.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250818131253.8854-5-Ioana.Risteiu@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <6cb1d152-898a-4cc4-a086-44d85cf7a24d@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 3D3F921747
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[amd.com,linaro.org,kylinos.cn,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-On 8/18/25 8:12 AM, Ioana Risteiu wrote:
-> Add a new functionality to ad7779 driver that streams data through data
-> output interface using IIO backend interface.
-> 
-> Signed-off-by: Ioana Risteiu <Ioana.Risteiu@analog.com>
-> ---
->  drivers/iio/adc/ad7779.c | 107 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 106 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ad7779.c b/drivers/iio/adc/ad7779.c
-> index f7e681c0e8c0..abf3fff20dd4 100644
-> --- a/drivers/iio/adc/ad7779.c
-> +++ b/drivers/iio/adc/ad7779.c
-> @@ -31,6 +31,8 @@
->  #include <linux/iio/triggered_buffer.h>
->  #include <linux/iio/trigger_consumer.h>
->  
-> +#include <linux/iio/backend.h>
+Hi Christian
 
-This should be grouped in alphabetical order with other
-linux/iio/ includes.
+Am 18.08.25 um 15:23 schrieb Christian König:
+> On 18.08.25 14:46, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 18.08.25 um 14:40 schrieb Christian König:
+>> [...]
+>>>> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
+>>>> +{
+>>>> +    struct drm_gem_object *obj = dma_buf->priv;
+>>>> +    struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+>>>> +    int ret;
+>>>> +
+>>>> +    /*
+>>>> +     * Pin to keep buffer in place while it's vmap'ed. The actual
+>>>> +     * location is not important as long as it's mapable.
+>>> Yeah, exactly that won't work here. Most of the locations are not CPU accessible.
+>>>
+>>> You could use AMDGPU_GEM_DOMAIN_GTT, that should most likely work in all cases but isn't necessarily the most optimal solution.
+>> No problem about that, but why not a bit more flexibility? When udl copies from the buffer, it is likely pinned to VRAM.
+>>
+>> A bit mask of _CPU, _GTT, and _VRAM should work fine. The other domains are probably irrelevant for our use case.
+> The problem is that as soon as you pin into this domain you get an error if you try to pin into another domain.
+>
+> So if you try to use the same buffer with udl and amdgpu scanout and pin it into GTT -> error.
+>
+> If you try to use the same buffer with udl and V4L and pin it into VRAM -> error.
 
-> +
->  #define AD7779_SPI_READ_CMD			BIT(7)
->  
->  #define AD7779_DISABLE_SD			BIT(7)
-> @@ -157,6 +159,8 @@ struct ad7779_state {
->  	u8			reg_rx_buf[3];
->  	u8			reg_tx_buf[3];
->  	u8			reset_buf[8];
-> +
-> +	struct iio_backend *back;
+What you're describing is exactly the current situation for udl plus 
+amdgpu now. When udl tries to pin, amdgpu has already pinned the buffer 
+to VRAM. So it doesn't work. There needs to be at least VRAM and GTT in 
+the list. What does work is to try pinning to various domains in the 
+preferred order.
 
-This field needs to be placed in the struct before
-__aligned(IIO_DMA_MINALIGN) to avoid issues cache lines.
+Best regards
+Thomas
 
->  };
->  
->  static const char * const ad7779_filter_type[] = {
-> @@ -630,12 +634,38 @@ static int ad7779_reset(struct iio_dev *indio_dev, struct gpio_desc *reset_gpio)
->  	return ret;
->  }
->  
-> +static int ad7779_update_scan_mode(struct iio_dev *indio_dev,
-> +				   const unsigned long *scan_mask)
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	unsigned int c;
-> +	int ret;
-> +
-> +	for (c = 0; c < AD7779_NUM_CHANNELS; c++) {
-> +		if (test_bit(c, scan_mask))
-> +			ret = iio_backend_chan_enable(st->back, c);
-> +		else
-> +			ret = iio_backend_chan_disable(st->back, c);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct iio_info ad7779_info = {
->  	.read_raw = ad7779_read_raw,
->  	.write_raw = ad7779_write_raw,
->  	.debugfs_reg_access = &ad7779_reg_access,
->  };
->  
-> +static const struct iio_info ad7779_info_data = {
-> +	.read_raw = ad7779_read_raw,
-> +	.write_raw = ad7779_write_raw,
-> +	.debugfs_reg_access = &ad7779_reg_access,
-> +	.update_scan_mode = &ad7779_update_scan_mode,
-> +};
-> +
->  static const struct iio_enum ad7779_filter_enum = {
->  	.items = ad7779_filter_type,
->  	.num_items = ARRAY_SIZE(ad7779_filter_type),
-> @@ -674,6 +704,7 @@ static const struct iio_chan_spec_ext_info ad7779_ext_filter[] = {
->  
->  #define AD777x_CHAN_FILTER_S(index)					\
->  	AD777x_CHAN_S(index, ad7779_ext_filter)
-> +
+>
+> There is not works for everybody case here and we need to guess. Pinning it into GTT is just what works most likely.
+>
+> Regards,
+> Christian.
+>
+>> Best regards
+>> Thomas
+>>
+>>> Regards,
+>>> Christian.
+>>>
+>>>> +     *
+>>>> +     * This code is required for exporting to GEM-SHMEM without S/G table.
+>>>> +     * Once GEM-SHMEM supports dynamic imports, it should be dropped.
+>>>> +     */
+>>>> +    ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_MASK);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +    ret = drm_gem_dmabuf_vmap(dma_buf, map);
+>>>> +    if (ret)
+>>>> +        amdgpu_bo_unpin(bo);
+>>>> +
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
+>>>> +{
+>>>> +    struct drm_gem_object *obj = dma_buf->priv;
+>>>> +    struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+>>>> +
+>>>> +    drm_gem_dmabuf_vunmap(dma_buf, map);
+>>>> +    amdgpu_bo_unpin(bo);
+>>>> +}
+>>>> +
+>>>>    const struct dma_buf_ops amdgpu_dmabuf_ops = {
+>>>>        .attach = amdgpu_dma_buf_attach,
+>>>>        .pin = amdgpu_dma_buf_pin,
+>>>> @@ -294,8 +326,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
+>>>>        .release = drm_gem_dmabuf_release,
+>>>>        .begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
+>>>>        .mmap = drm_gem_dmabuf_mmap,
+>>>> -    .vmap = drm_gem_dmabuf_vmap,
+>>>> -    .vunmap = drm_gem_dmabuf_vunmap,
+>>>> +    .vmap = amdgpu_dma_buf_vmap,
+>>>> +    .vunmap = amdgpu_dma_buf_vunmap,
+>>>>    };
+>>>>      /**
 
-Unrelated blank line add (should not be in this patch).
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
->  static const struct iio_chan_spec ad7779_channels[] = {
->  	AD777x_CHAN_NO_FILTER_S(0),
->  	AD777x_CHAN_NO_FILTER_S(1),
-> @@ -752,6 +783,44 @@ static int ad7779_conf(struct ad7779_state *st, struct gpio_desc *start_gpio)
->  	return 0;
->  }
->  
-> +static int ad7779_set_data_lines(struct iio_dev *indio_dev,
-> +				 unsigned int num_lanes)
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = ad7779_set_sampling_frequency(st, num_lanes * AD7779_DEFAULT_SAMPLING_1LINE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = iio_backend_num_lanes_set(st->back, num_lanes);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-> +				    AD7779_DOUT_FORMAT_MSK,
-> +				    FIELD_PREP(AD7779_DOUT_FORMAT_MSK, 2 - ilog2(num_lanes)));
-> +}
-> +
-> +static int ad7779_setup_channels(struct iio_dev *indio_dev, const struct ad7779_state *st)
-> +{
-> +	struct iio_chan_spec *channels;
-> +	struct device *dev = &st->spi->dev;
-> +
-> +	channels = devm_kmemdup_array(dev, st->chip_info->channels,
-> +					ARRAY_SIZE(ad7779_channels),
-> +					sizeof(*channels), GFP_KERNEL);
-> +	if (!channels)
-> +		return -ENOMEM;
-> +
-> +	for (int i = 0; i < ARRAY_SIZE(ad7779_channels); i++)
-> +		channels[i].scan_type.endianness = IIO_CPU;
-> +
-> +	indio_dev->channels = channels;
-> +
-> +	return 0;
-> +}
-> +
->  static int ad7779_setup_without_backend(struct ad7779_state *st, struct iio_dev *indio_dev)
->  {
->  	int ret;
-> @@ -796,6 +865,38 @@ static int ad7779_setup_without_backend(struct ad7779_state *st, struct iio_dev
->  				    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
->  }
->  
-> +static int ad7779_setup_backend(struct ad7779_state *st, struct iio_dev *indio_dev)
-> +{
-> +	struct device *dev = &st->spi->dev;
-> +	int ret = -EINVAL;
-> +	int num_lanes;
-> +
-> +	indio_dev->info = &ad7779_info_data;
-> +
-> +	ret = ad7779_setup_channels(indio_dev, st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->back = devm_iio_backend_get(dev, NULL);
-> +	if (IS_ERR(st->back))
-> +		return dev_err_probe(dev, PTR_ERR(st->back),
-> +				     "failed to get iio backend");
-> +
-> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_iio_backend_enable(dev, st->back);
-> +	if (ret)
-> +		return ret;
-> +
-
-The usual way of doing this is to set num_lanes = 4 here.
-
-> +	ret = device_property_read_u32(dev, "adi,num-lanes", &num_lanes);
-> +	if (ret)
-
-It is best to not ignore all errors. So typically, we would have
-
-	if (ret && ret != -EINVAL)
-		return ret;
-
-here. In the -EINVAL case, the default we set above will be used.
-
-We should also validate that the value is 1, 2 or 4 so that later
-calculations that use this are valid.
-
-> +		return ad7779_set_data_lines(indio_dev, 4);
-> +
-> +	return ad7779_set_data_lines(indio_dev, num_lanes);
-
-Then we don't have to have 2 calls to the same function.
-
-> +}
-> +
->  static int ad7779_probe(struct spi_device *spi)
->  {
->  	struct iio_dev *indio_dev;
-> @@ -848,7 +949,10 @@ static int ad7779_probe(struct spi_device *spi)
->  	indio_dev->modes = INDIO_DIRECT_MODE;
->  	indio_dev->num_channels = ARRAY_SIZE(ad7779_channels);
->  
-> -	ret = ad7779_setup_without_backend(st, indio_dev);
-> +	if (device_property_present(dev, "io-backends"))
-> +		ret = ad7779_setup_backend(st, indio_dev);
-> +	else
-> +		ret = ad7779_setup_without_backend(st, indio_dev);
->  
->  	if (ret)
->  		return ret;
-> @@ -943,3 +1047,4 @@ module_spi_driver(ad7779_driver);
->  MODULE_AUTHOR("Ramona Alexandra Nechita <ramona.nechita@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices AD7779 ADC");
->  MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("IIO_BACKEND");
 
 
