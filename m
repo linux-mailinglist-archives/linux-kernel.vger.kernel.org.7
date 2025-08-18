@@ -1,157 +1,111 @@
-Return-Path: <linux-kernel+bounces-773816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5078B2AA46
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04B2B2AAE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B61257B272E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0C45A2416
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD34322772;
-	Mon, 18 Aug 2025 14:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="UNyTYBSn"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A908322A20;
+	Mon, 18 Aug 2025 14:19:39 +0000 (UTC)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E746322756
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DD2183CC3;
+	Mon, 18 Aug 2025 14:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755526734; cv=none; b=Qv2X6+52J6GOor164dB/s5HCcrTxNpigamKgn561SNDD0gOLwHPiTG166r8dwCAyfRfAzs8jwiUxdsI31QxD+i+fk7weX3MCJDCnFMpexXa5Akfjl2/IAD37D+e2NMc6wu6Uj+u9vA6CK0g0yt7rt+9dRHuCTfiNhZkHiH1hLA4=
+	t=1755526778; cv=none; b=WSgO2jBbUYKQJXiD2RP9DKoHCJyvYTG/5hN5tiD2drEo7i92do+WsRIdT4e4tB0o/en4jMheuztFQorTDJitpFI1b9PWYJ5u5jyjFKexEM52DBxagXuLEKr1uIz+5MSsmB54QG56uXcZlpAiE7d2wOaAwZb5UOomAd7BWT4LFhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755526734; c=relaxed/simple;
-	bh=lfdMRn/uV9tLn3vOKRg4RShWFCamS+SfodjLk9JPqhY=;
+	s=arc-20240116; t=1755526778; c=relaxed/simple;
+	bh=ESrBPqxtSvV3SYSH5nYTlamKrrdru6Kbea3SG+txnjw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K1G1NRkMsXbElUAsB+AsROdhR+LQFOfvGhhGJP0/zoKNP4OV0XXHAVyhGaipDm8g0xbnDCfyLtyvjfIDxl8a44lH10j53scKcr13UCZ2is32vRFsBKdtc5Odxd9kmlOijwTndhsEf/4v+iMf8mTvv38dZ1jdx3v7lLEL6eoHz14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=UNyTYBSn; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-88432d932d6so35122539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1755526731; x=1756131531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AYOfhNBP3fLXotYDWFjRKcPRzvbpTIEaDDDJFw248X4=;
-        b=UNyTYBSnCq6bBL8i4qE3QY30te5PrtZWG9vqca6Dub0SrFSUdW2kow4hfxudsEE7xp
-         f1ep9hi/vRmnNG7jWdK/ld5JafJqijdE1l7Ol148DG7BTuWRha1JNyT59rqXOD5Dy/1/
-         CTk6ihM0k5thQqCid2tKOUzQS8kj89CkFA5MVzvjpyZ+yP+hGmZE+HGY3CCbwpQ84CpR
-         ttyHdh+0FjgT1oR6UW3pLGRTbv5/nGPnuCQ4WRlbaLnNSd9G8gBYarbyoXF56OvUmI3h
-         utYtUVhIhDNLAtzFkcSUxpyK7Q5PI+lO2tlVu+mCT8ujllQ3n9eDi3WLgW/C0/BRd0Uc
-         kDiA==
+	 To:Cc:Content-Type; b=JD6qe5yvK7+xeUTF89/6LGDZ56wcGveLhM4AVz2Xux8sVGZlEKpYSmlyACh4RO97Ps9Uz1BudBDZ+YLquiXbRTyhhoyaO0rY56MCBRUgJT0gCAHxEqzFhRDp2QdKeptvlWx6kNFDs/dQijgS/ulCs1KJZbGj3uGihnPiR+fEN2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-89018fa6f6dso1233710241.1;
+        Mon, 18 Aug 2025 07:19:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755526731; x=1756131531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AYOfhNBP3fLXotYDWFjRKcPRzvbpTIEaDDDJFw248X4=;
-        b=RIdWIj03j/YOpJVIfre3WK5/KNzhzcqQlItGil51ePa2TX+JM+3qT63N2g9xcB0B4U
-         XQKh1NhGAQKfH8X/XhibdgsmdgJ7Hr0ffU68HxFPjSSO33IgfOGJV4fTsNZfo+p02b7j
-         IK3Zg1CqS9HT43N9bJEfKds5a1+4SOFcbqujJEXNwPMWHV3TDPhydWYD2/ardqZpNz+R
-         KCzv7R4Vrn2r+sEzyU1BaYtjUvVuARIkWjvx2ktj3hazaslVnxFB17qh58BvF7pUYJuQ
-         LLCViFsqOo+/4//IgfHPb6DxS2GT8oimr6F76nJJhfD3xzxyqNz1luE9Uv9IgM2EYNb1
-         BFKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqrwFaaHE+bLgS4ggWfit2U3rX7ErOACwZ6EpTua3ACp1wb1hwIj23wNZ6PwU7lC0V7Uni1b7NTLzwmWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/43yidBGeOpamUh+wDCE1ylKfnLcXuAPId6MhXO69RnnFIbVX
-	wwpNOfUTy5MTq86d0dgasjshVXC6Rv0k6lH112CM5fyflAdNa6BI8wjglD1mnA5f5jMK0JYcC99
-	/hujViWhcSrpRVpS06sl/dopTOjer9x5fhZvAZmI+YA==
-X-Gm-Gg: ASbGncvyUrYPW2O1Jtv0PIqyQRKvZ0vg4m0Bozj7IcQYJrG9dcZHCdJOHJ/6BvsyS4r
-	WKaCeu4DLFspiYW5mYQd6hek/qbYFSlGio7hgWKfApfq4leVUeuDi4DjmzrUNZIkJtw5DhYJuq0
-	XXS3/tIBb9md6pwNkyAVzQS5WXfl2udtRNXBR9Q2qI20CbAiBrsjOBdAVOkH6sb4HYBUIKwnjpd
-	BXcfTcP
-X-Google-Smtp-Source: AGHT+IFj/CqMCPnATLcRtW5vpKziqlXbmXhL2wmmOXkawwJHhjlum+QCcKdXnS+PQpPXSzExCCtbyPz6bmKR709p8ek=
-X-Received: by 2002:a05:6e02:2148:b0:3e5:3ce4:6953 with SMTP id
- e9e14a558f8ab-3e57e9c4a78mr180851065ab.22.1755526731206; Mon, 18 Aug 2025
- 07:18:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755526776; x=1756131576;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TSSjmqhZWaZj/G7djCVPw3nP+4ngxEQSa1i85bdz9R8=;
+        b=Vpq5kZSmJM8aCo2NmUl6ohQC+6kgRm7QC3IdjU1TKJWBoj91n27xNriwf5hkFBwp0J
+         QHeBTv+wu67q8kVF28UZXzXOallBs2EC87MFojIQbGUhQIA5U4oOhZ2ZcyCeWVGwlwlE
+         SeKJGDKhckz6EhjrA734caHkXZysSmZ1XZXswDg0E683fRTUSyRNHPOE3xbNXNlumMnl
+         k2gJpHch4VOx4e1bOENGqCOyWk6dSqOvzuP//EQlEVDmCfvBeT1UskzLp4GY1Qbtn5ug
+         4MS4ykAzvlxWskoA3GWdEYGk0QiouT6PPrgAZyEzJB3iVaLlefH+i3Wp6xbQIp/G3PNH
+         udoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUl0yrEIYsizcS5AlaKTdo9zp2Gi7mdtDCY2YYAmtuKtbFHP5W6B35J076r+xSsZ2GTv8vtcF3mfmhxbuetY11bWzg=@vger.kernel.org, AJvYcCW9v9kvos19dQvyGzSIc0Oi+IVGDXaVvz0zsnDLp74a5S0sqzpupKtrv5WocOPVkLeTBBnIrdlGuVOpp6to@vger.kernel.org, AJvYcCX4EUUuX2WTo6nxIdTxwcLzfX4vpltGgWY+28+yiT8p6FLCSM/PlkE5GE+OZX7lX6NEhY//n4RbzwVc@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjtNe5DCRgdfFTSDHfVsJ3nfzILAjOXV8si3uj4O95oCAa9Jog
+	HZRL6ELkUWoJs9CPuiCYX9KJ5Kw6l2qcXSN0Rc3kc1qSWF83uxbvsPgxVEPmOn0m
+X-Gm-Gg: ASbGncsyuagYhZqDZbg/OEve42hvuJPeXJIlsV9gFOSpWdbPcBoWVTTQ3XKGxzkK8d9
+	IB6cgLVlwcnitxehAZyQfUUtPOiSqP4iYaaWVbWwPjqXFg7Ku/KRxoGiWhW/pPA9KfrSdAcJLX2
+	mUVR3EZY53bc/jVzbmlJoDyk0SOw+ryWXN67yRxNZp7jtbRzVh2/JZks9CxIdiTV1Wk3FgOOK+s
+	OwkG7B4DiJBPjfO5l2p8x7VK/rnZaIBeAV9AIj5sbIWhwmDV2a00PRdgyvh1FgnhEvDr2eTAJxU
+	he09GaPrQYaRVjx3G0qbMCHXNjs2L+y8dOvAjRdVt2A8GchSHs0BHQNpCFVauWEJtMLJ61ts6UQ
+	inXuDbeM2fG7N4JDyh7SyFDIfEuYUSZ+IPE41wrZBXZdt/mI8AloIMmIU8wNO
+X-Google-Smtp-Source: AGHT+IE9BHl2rKS2Qzff3xIjEtPATZDLKZY6sdzJzwOn9G59UnJVFLP0/bEwIVgcYONPbMfOijpBEw==
+X-Received: by 2002:a05:6102:2596:10b0:4e9:91b2:c74c with SMTP id ada2fe7eead31-5126cd3ab6amr2686465137.14.1755526775906;
+        Mon, 18 Aug 2025 07:19:35 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127cff4717sm2148124137.1.2025.08.18.07.19.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 07:19:35 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-50f88cd722bso1199700137.1;
+        Mon, 18 Aug 2025 07:19:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVO0YU/96XFv16/R/iJX8xoQLRSXGYKdK2yMWkAQoPAKqlwzvekC5++VdMED/WBlDCczYpEUMiR5YJD+I8N@vger.kernel.org, AJvYcCVPbqDOs/NqaEgmiTwmata1HpvogYnJHRSpv/Vq9M0/CbTlw8QCOVMTBKgIN7YiXZsgbACBDXsIsKGA87emBN7V0e0=@vger.kernel.org, AJvYcCX41s8+OcsvAELP9Rn0OaPpLYu/CFFIg0Mi+xFjMP59JARYneYJqxRq8WuTw/a5FiqaUd5eYVbKWIN/@vger.kernel.org
+X-Received: by 2002:a05:6102:9d6:b0:4f7:d553:3cfa with SMTP id
+ ada2fe7eead31-5126b30079amr4376506137.12.1755526775104; Mon, 18 Aug 2025
+ 07:19:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807070729.89701-1-fangyu.yu@linux.alibaba.com>
-In-Reply-To: <20250807070729.89701-1-fangyu.yu@linux.alibaba.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 18 Aug 2025 19:48:39 +0530
-X-Gm-Features: Ac12FXxG0RSI1dIc2x76x-tlkVbmLS809vZnHg6zH0-npCpI10lDp4FSEF7jb90
-Message-ID: <CAAhSdy3omyk7YGVHNV5mgR13cON1SxdpqsxGQJsWWE1Hoyw=5A@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: KVM: Using user-mode pte within kvm_riscv_gstage_ioremap
-To: fangyu.yu@linux.alibaba.com
-Cc: atish.patra@linux.dev, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, guoren@linux.alibaba.com, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812200344.3253781-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 16:19:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUqG5-NJG8+8ZjftFxV8axSL=TYnJFE=tS+66XomF7dXQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyQnAlM1L7t2_q4FrDfxXQvHY6ysD0DN55y2OOE673c9acoHzcOZNEQsmU
+Message-ID: <CAMuHMdUqG5-NJG8+8ZjftFxV8axSL=TYnJFE=tS+66XomF7dXQ@mail.gmail.com>
+Subject: Re: [PATCH 10/13] arm64: dts: renesas: rzt2h-evk-common: Enable
+ EEPROM on I2C0
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 7, 2025 at 12:37=E2=80=AFPM <fangyu.yu@linux.alibaba.com> wrote=
-:
+On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> Enable support for the R1EX24016 EEPROM connected to I2C0 on the
+> Renesas RZ/T2H and RZ/N2H Evaluation Kits.
 >
-> Currently we use kvm_riscv_gstage_ioremap to map IMSIC gpa to the spa of
-> guest interrupt file within IMSIC.
->
-> The PAGE_KERNEL_IO property does not include user mode settings, so when
-> accessing the IMSIC address in the virtual machine,  a  guest page fault
-> will occur, this is not expected.
->
-> According to the RISC-V Privileged Architecture Spec, for G-stage address
-> translation, all memory accesses are considered to be user-level accesses
-> as though executed in Umode.
->
-> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Overall, a good fix. Thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The patch subject and description needs improvements. Also, there is no
-Fixes tag which is required for backporting.
+Gr{oetje,eeting}s,
 
-I have taken care of the above things at the time of merging this patch.
+                        Geert
 
-Queued this patch as fixes for Linux-6.17
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks,
-Anup
-
-> ---
->  arch/riscv/kvm/mmu.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> index 1087ea74567b..800064e96ef6 100644
-> --- a/arch/riscv/kvm/mmu.c
-> +++ b/arch/riscv/kvm/mmu.c
-> @@ -351,6 +351,7 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t g=
-pa,
->         int ret =3D 0;
->         unsigned long pfn;
->         phys_addr_t addr, end;
-> +       pgprot_t prot;
->         struct kvm_mmu_memory_cache pcache =3D {
->                 .gfp_custom =3D (in_atomic) ? GFP_ATOMIC | __GFP_ACCOUNT =
-: 0,
->                 .gfp_zero =3D __GFP_ZERO,
-> @@ -359,8 +360,11 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t =
-gpa,
->         end =3D (gpa + size + PAGE_SIZE - 1) & PAGE_MASK;
->         pfn =3D __phys_to_pfn(hpa);
->
-> +       prot =3D pgprot_noncached(PAGE_WRITE);
-> +
->         for (addr =3D gpa; addr < end; addr +=3D PAGE_SIZE) {
-> -               pte =3D pfn_pte(pfn, PAGE_KERNEL_IO);
-> +               pte =3D pfn_pte(pfn, prot);
-> +               pte =3D pte_mkdirty(pte);
->
->                 if (!writable)
->                         pte =3D pte_wrprotect(pte);
-> --
-> 2.39.3 (Apple Git-146)
->
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
