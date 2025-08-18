@@ -1,122 +1,114 @@
-Return-Path: <linux-kernel+bounces-773234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89A7B29CEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55F0B29CF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD89917B444
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:59:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53854E6DA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBA430DD1B;
-	Mon, 18 Aug 2025 08:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E555D30C35A;
+	Mon, 18 Aug 2025 08:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7deRLou"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="joLgrfFF"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CCD30DD19
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC13130BF7D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755507478; cv=none; b=PLRAFduUSfLJMUZE23wtsE/gO2mgu3IorrXsp2baaqpK2HrrjOyqf9uq3W8UlZ3iUCG+fOpGSzmF9S1Cks4bRcwIiS62nNUl1Xi2xNGyXoPMrAo0tqZSMDWqF18/+ffoizB92TZ1v4S29vj5gtX6lTrQ3x24Q0dz0xM/MfuNSEQ=
+	t=1755507467; cv=none; b=T6h5JAt1BP0ZF9Cn6lceWkelm9XA7JrCGcXFJtjj5jybdUR4Ij2n2lVuiYuGrS85eCCI5NlDa86cEheLWL2mJYNkYxcG1EFQiE53z8888PWkyFB6Xj3bcmkLRQfZInrCPQ7MjcjLt2y3Y7R/DnTHwesiR6hScn7rcaqqAIW6/Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755507478; c=relaxed/simple;
-	bh=w2x9ThFG/3oIaisD6f6vvsQ8qKWULGWziBs21QqVWAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZWwdX2pi5hY0palhiR8vDlEGcuRZ8ziZ5RZzCEVd2y6WzWA1wd4SKzErO0GWlahv0YghitWDFZnhtt+CKw/mch0AUOst+LxeilsZ2Mch4yo0LgY7WRLTPD8NvwHIQmLB9rFVpjXAe8euTF7ji65/3rui5nquayG4QVsVKgrjVfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W7deRLou; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755507476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3PG84EHC3mShb3Y0J40UmsNIyZdZBlJ04AfluOXhawc=;
-	b=W7deRLouPblEUumvFGm7iOCZYsIbmNsNv7mM9Mp4whE+EMK7VHo+DvPNGozXnMrxtvQ624
-	82HD8yV3e/ODALoZwaFUbQ3JED65Bh3nOqO00H2YRfkEwVH3gk3LGhCF3YKfmjhThLP8h5
-	OgQDE8IchM1cV98TsBwUS3cq4XHnL5Q=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-lhbsMwHQMziFeZbFk0XgFw-1; Mon,
- 18 Aug 2025 04:57:52 -0400
-X-MC-Unique: lhbsMwHQMziFeZbFk0XgFw-1
-X-Mimecast-MFC-AGG-ID: lhbsMwHQMziFeZbFk0XgFw_1755507471
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E94661954B2D;
-	Mon, 18 Aug 2025 08:57:50 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.44.32.213])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E8361180028B;
-	Mon, 18 Aug 2025 08:57:46 +0000 (UTC)
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To: "Michael S . Tsirkin " <mst@redhat.com>
-Cc: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Laurent Vivier <lvivier@redhat.com>,
-	virtualization@lists.linux.dev,
-	jasowang@redhat.com,
-	Cindy Lu <lulu@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Subject: [RFC v3 7/7] vduse: bump version number
-Date: Mon, 18 Aug 2025 10:57:11 +0200
-Message-ID: <20250818085711.3461758-8-eperezma@redhat.com>
-In-Reply-To: <20250818085711.3461758-1-eperezma@redhat.com>
-References: <20250818085711.3461758-1-eperezma@redhat.com>
+	s=arc-20240116; t=1755507467; c=relaxed/simple;
+	bh=U8a6I0ZFus0vFy7ECIXwDx8gidXc8/GABtP4Ugbvj3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mHMzqhcECwNOQtd+yeAa5SwfvHSPjxK4cDMZxlOU0vEljxrkGsCmeqeDm0CklZjmLJDGEDF27G1yZd1dZZrUpzGrF6/jP8BbbbxnKSKD/fzuHlq2jRU7QGPtKBRr6TSHT1d52eozSJs4riB3WtnyCEzIygQGE0DSD0Fdm0BJFao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=joLgrfFF; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b47174beb13so2785640a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755507465; x=1756112265; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qe8G70eom6/4JetV7QH5UUKrtlBYh00PHg/YyriqGHk=;
+        b=joLgrfFFDMF16c+OlfLqbc5LYzBoGzeW35Vcb+Ih/6SmgZvK9rQ4GB3Igx7zk1SRSa
+         7Cqb/mOpzGIfuC7Url08iHGhfnTCVeYaKIP1OhAjkwPwiTfnr3phCpTazRTH8UCGXQpR
+         yik3oTCKDfUpW2MvVykzbXPiZmo4vtPkRIJlPSXA7paAFCztpx3TMFZ6n2+Se6oyFUIo
+         3GGczL2lrkSXMpMfRc78QdGFIewHmM9F84mgpkuS80Vu6ob6/8wfSRgTJS9L12OU3SfF
+         yOa6SBNYgxZk2Meg/9pL29vhWKK/P+gqydI47mS0dVdbN8tmZBHo59Cz6gQe02qDHJR/
+         7zFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755507465; x=1756112265;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qe8G70eom6/4JetV7QH5UUKrtlBYh00PHg/YyriqGHk=;
+        b=ZZweWVHU9VOY9yCKZ0xEy43DsiSuhDdzD6CfJfLkcP0GFVBCQkftTS7AfUU/ltnSi9
+         ia857E70qT4RfKKZ5vgZ5UQkqysLXvNcXfSsGnbPZ4ZrZkujX7diOEYOgckaIZ+Pzt4l
+         q/gQlRJpWhYzvbvm6Rn2TnOQxWTxQFS87sMEpSCpdsL9yqgYMq9kql1k9ZR+ErvhEZdb
+         BjUaF8u72GxxR5YexymrBvEIXgEdHsxjVm9f6tDGAH9cainVmm9NcNSLlu8abDA76E4g
+         /zhtBXlDcwqnWa5haHpuK8F8YBQB3ceQrrh6DoK1jx1nGuGPjHiTrjQviUbi57FjU+8N
+         mEIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqHjiArWtNJWZFJrKGqXykod4BTuatb+QC3xc0ix3cRPLnTkzbLFJ4ZxIz885MlMAl7bixreHVXYNR6CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG7nvcRdG4s2z7d0J7I9+GQ1/kiUaIP8zNnTWXhU0AKo0WN/Ok
+	T+/YpwUnCdNa0oNubMO/h+IOk74SjG032XgiAiDy6O0h0TGcY58mN1CQVBHfP2WHDOY=
+X-Gm-Gg: ASbGncvQep3NTaz6BybisJKyKNlQKq63E8OcOwFpH3jdkV1gGUkmM4LKeHrb2d3c2+h
+	T9puHAu7iZJvqNpf/EFB6VkiLfrEpgtCHgTpEjyX1x6jH62zjEGSU6+k215vfI9CXeHWJaS7oL1
+	yxVf/FtEFi2rJsl9ql1PfcWZ8lDgu6gN2prDsNzB3qgFOu++4TGUbY3JAxVguL6MdLqGOrQUcQI
+	6Ltx1SIYD38XzX3OQJBRJiEJo4q1GjQ6FenFNgG500b7xQBitIEfS0uldVrYxb2Z1HaV8dSYFtu
+	S41HIZHAoUbc4UWvJNcKDwPX3xfUIELlIahkHhj74q/y/8tjVbdZTAX2j03CcKBVtKbkW5xsd5t
+	mzK7scGvH21mZDGgxO2izIs3O
+X-Google-Smtp-Source: AGHT+IGpOHn1sY/HqKXMp8oqym8EA0mZNqXhfzJusUYFoebvw0MYrgm3dTzw/LGlv+S50fD/of1ijQ==
+X-Received: by 2002:a17:903:228a:b0:234:a139:1206 with SMTP id d9443c01a7336-2446d916185mr159740845ad.40.1755507462625;
+        Mon, 18 Aug 2025 01:57:42 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb0dc22sm74615795ad.66.2025.08.18.01.57.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 01:57:42 -0700 (PDT)
+Date: Mon, 18 Aug 2025 14:27:40 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] PM/OPP: Support to match OPP based on both
+ frequency and level.
+Message-ID: <20250818085740.czv5lpbktpmj7cit@vireshk-i7>
+References: <20250818-opp_pcie-v2-0-071524d98967@oss.qualcomm.com>
+ <20250818-opp_pcie-v2-1-071524d98967@oss.qualcomm.com>
+ <20250818085517.dj2nk4jeex263hvj@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818085517.dj2nk4jeex263hvj@vireshk-i7>
 
-Finalize the series by advertising VDUSE API v1 support to userspace.
+On 18-08-25, 14:25, Viresh Kumar wrote:
 
-Now that all required infrastructure for v1 (ASIDs, VQ groups,
-update_iotlb_v2) is in place, VDUSE devices can opt in to the new
-features.
+Also subject should be: "OPP: Add support to find OPP for a set of
+keys" or something on those lines (I was more looking for the OPP:
+prefix).
 
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
----
- drivers/vdpa/vdpa_user/vduse_dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index de9550fd1cc8..dbabb1e527bf 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -2143,7 +2143,7 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
- 			break;
- 
- 		ret = -EINVAL;
--		if (api_version > VDUSE_API_VERSION)
-+		if (api_version > VDUSE_API_VERSION_1)
- 			break;
- 
- 		ret = 0;
-@@ -2210,7 +2210,7 @@ static int vduse_open(struct inode *inode, struct file *file)
- 	if (!control)
- 		return -ENOMEM;
- 
--	control->api_version = VDUSE_API_VERSION;
-+	control->api_version = VDUSE_API_VERSION_1;
- 	file->private_data = control;
- 
- 	return 0;
 -- 
-2.50.1
-
+viresh
 
