@@ -1,153 +1,184 @@
-Return-Path: <linux-kernel+bounces-773147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEF4B29BF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:23:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2ADB29BFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09BB3B6448
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:22:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1206719612A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27832FF67D;
-	Mon, 18 Aug 2025 08:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EE23009E1;
+	Mon, 18 Aug 2025 08:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7NUkrR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZOLu68f4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E7F2FFDF1;
-	Mon, 18 Aug 2025 08:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B832FF67D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505368; cv=none; b=CViigXi7i3ycA6x4jx2q6V/L44mJ1fqryXlkSVeREksA/t0EW5KDlXxnn1ElOazb7xckTRivQaFtlVRdgmYNDsjVDdnrg/8ADvCpgOS8BXN+jD+BGk2ri1/xDlnGbl2n8Oex2u3Fv4TbS8ScKgeTh3+JPDHzNVLUEtOHWpYbkzw=
+	t=1755505392; cv=none; b=TEIFH2Y6tzM7DBUF43g/S9NKsGYkeFjz9ZEd6/4WNBWZFyQ7lIlZtctcC1GKAJdaMh+iE2NE56j7olbEAM2VaVrVddd4u9xovZH5KgJksZ0vGOcGLID81OwOyGtySAZDtbsTBG5x+fAnqYWNT0a5WwU1h2zNt7gDfQ7uSYHClgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505368; c=relaxed/simple;
-	bh=G5KjcXCcfVMEVsjscb4Ys/l1/DUNqEaAxB7u6lNcs7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NOK+OPhK2aY9WfrRQ9h8zTe+Z+/zDtYOIAXu3+jAEMNL1AL2iE29SCE/fVwbt6QEabkkH8IuxR9wdh+Dg34ZRZCa4PXUD85OBcSphiQraGry7EiEGUOoq2YUap2F7kV9IVXIO8cP7BQ99xDLe2OECewjSxxxTw4PMOUdhm4TcCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7NUkrR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F8EC4CEEB;
-	Mon, 18 Aug 2025 08:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755505366;
-	bh=G5KjcXCcfVMEVsjscb4Ys/l1/DUNqEaAxB7u6lNcs7A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q7NUkrR+lL70kb7FWfE7SwLKXc2u4ErdmJAmrympHHMqrMapsTnf7U+Vgm+n4sd27
-	 JaqV6b6fY2tBPOH+3jg0MZLlb1g2Bz2e5vm/KHs54+I0kOVk4/Dot0BLkHxoI3ADMu
-	 pbd5coJAVX5IoNOAW7N1NqHQY/ZzKiR6BKqOupptlnqhhFas93qCSlZaGBrnlRv/31
-	 y21sqMJu2mdvJn2GukyD80DW3fJzspHCZDuigNZlP4S9JwM3XdTKDDCBtAARSX75hi
-	 XJFzCTzwxFlGnSNQW5fSlc69q9ebc8HPPZH+YF0TwEnGofhmvkkBhEC9NmuCQSpHtH
-	 C8khRVzSe6P9Q==
-Message-ID: <05da83dd-2cd2-4f51-8169-e8cf0190d6c1@kernel.org>
-Date: Mon, 18 Aug 2025 10:22:38 +0200
+	s=arc-20240116; t=1755505392; c=relaxed/simple;
+	bh=GvZqiBCu+/F4OQDyTy9j/Xj81EpQEyqz/k2GQN1r4pU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cKbucZq3l2qgfZHXKnjjfwJKa7K8deP1/L3+O+nBap5QZ/4uKYKvFG6g4wvzaCt0vNMtzJkgpnxxT1qndbgx9UpP6eAs8tbP+XaSfT4bITh6n/idxjZJzgzrP/Runx7AEf6hhTs3O1AXib5R2fB4f4ovtRsgTWAIS4LDj+vuOVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZOLu68f4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I82qeO023991
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:23:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=sSUvaZhK6DTL7YPkhrLfaa
+	kOI/BNtncTWIEPa/JXSuY=; b=ZOLu68f4ADeXv3xg7FtI37VK4iO3X+qp2QpAQF
+	CAYbZL37HMIKkX9nTC0X/OM0ccxUkkWu7HuwOXiV/+9s6oLcn3o1ZPPIFrMeg06O
+	tWToNXAXDQJu4/Q5LVlIYezsLWZNn8Lu22dThoVy2Nw7BTU83Sb3C+KZ8gkNxXuy
+	UZf+Dva3b7pooojTNMYkAQbILADnnLKPuJ1nh+SPPAreAbVEULa/7L6+kEsKC1HA
+	EZptiA+kXDcSEnHH0yt6zmh5CeG5jfXTa9BP8W+eQqd3j3gS7yyDkuGi7TGfCvYW
+	6aab6qubOERaoMvFlCzms1QoQAmJlqz7X2pob31zNX2SLnHQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jhjybwus-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:23:09 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-244581187c6so43478355ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:23:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755505388; x=1756110188;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sSUvaZhK6DTL7YPkhrLfaakOI/BNtncTWIEPa/JXSuY=;
+        b=sEeNC8R3LGqRZHBYaAXFcW0fyia3YpKk+eoDw8+uPPuBR3c/A00aMKoAS14h7yWw9z
+         gj+xaEt64lcPc6BSYuV8Nvl/GvgFWxEmxOCqhD9jhshiSVgWm8FjpYcnemDvXkggRBM3
+         8hiU9B+nZJRDF3AGay21TV9ml1myGVrGJIr6prPRD0wZgTa27KejQ/16OjBB3e1rxdeN
+         d77GIKUfvYLSteQoll9MKHrs4ivkAHAKyve50z031Uks5ZRVU/GsFsaI6y8Wa6aJF//0
+         FF5CCMuOzF5Lfxbho4bC+gXOaBKXG7VijUs/kaMNgM7bIgi8/q0p+ZCAtDUHRHlW8tVs
+         eBGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrHVjfc+v5bX7bgmDPWhYO1YiT++dI758e2ekAwi43mjkH7i+iVlwGOnqH8OobfcMdmqo2cHB0NE9WJys=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2O/GF2iW+erlTl4B1Frp6KjbnnviU2yMxEBOouKN+8WT/aktl
+	WzJW2oWmtYZAyR26ubbzNs1FuTyCaWi2lgNV4N1c+ffp0HMq06NU65ljPV12RtcsoRa2jIxW1kV
+	WvK/UOPN3KHl07zfPJrw7MXfDcgkNYRObLUyXQJin/Pqs9AEDITitGoqOanjKPI2wnTFZFvQm+g
+	Y=
+X-Gm-Gg: ASbGncuS/ZsBeALI6SLirsKjzK3qdrXGEOw4n4+jAKamwU7+GhpDYKH0HBFaPsVhN0B
+	mzQzJSYepju+Tn7cL1rMSLcvjlWp9M+Z2+B/81OsIRU0ndOpjPq3jqIRUdlEOcoQBW2gdIuB65n
+	iFY5BZ5t+gzmAdhYVPmLn/O24SY6sDVgwiz0vYAMgjW2gTaFwYOKu+gV6UM/yxYUIx1Pdwh3ijo
+	Jpxp8aOqr25rr62la3I2Uz/kJXVYX20F4TlmBobuig9xq+nXdqetCLAgsnZdAyZ7nC3PIoGujye
+	MRe+AOhG0f9eS1Vxze/CUrchYMAmBkddpOi1ulNAyTc6rUC0Ew8nJShOI0D5RO/iF+6sQ3eDDsg
+	=
+X-Received: by 2002:a17:902:ce01:b0:242:9bc5:31a0 with SMTP id d9443c01a7336-2447900399emr125251345ad.56.1755505387685;
+        Mon, 18 Aug 2025 01:23:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7UKH2BYH2s2muvdsSEjdw2nQNlCqECvUztT56wJ2uYOK4l3Qbze4nYGd1xgDsxqUBdiaTvw==
+X-Received: by 2002:a17:902:ce01:b0:242:9bc5:31a0 with SMTP id d9443c01a7336-2447900399emr125250975ad.56.1755505387201;
+        Mon, 18 Aug 2025 01:23:07 -0700 (PDT)
+Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d5536c3sm73225155ad.137.2025.08.18.01.23.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 01:23:06 -0700 (PDT)
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: [PATCH v2 0/3] PM/OPP: Support to match OPP based on both
+ frequency and level
+Date: Mon, 18 Aug 2025 13:52:52 +0530
+Message-Id: <20250818-opp_pcie-v2-0-071524d98967@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/12] Add FSD CSI support
-To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
- cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
- martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
- catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- ravi.patel@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
- festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <CGME20250814140956epcas5p480aa24441933523484da5c241a201d3c@epcas5p4.samsung.com>
- <20250814140943.22531-1-inbaraj.e@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250814140943.22531-1-inbaraj.e@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANziomgC/22MQQ6CMBBFr0JmbUmnWBpdcQ9DDIVBJhFaW200h
+ LtbWbv5yft5eStECkwRzsUKgRJHdksGdSign7rlRoKHzKCk0tKgEc77q++ZhDlVWEurLGIFWfe
+ BRn7vqUubeeL4dOGzlxP+3j+RhEKKYaB6PGqlDdrGxVg+Xt29d/Nc5oF227Yvr0prO6cAAAA=
+X-Change-ID: 20250717-opp_pcie-793160b2b113
+To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755505382; l=1749;
+ i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
+ bh=GvZqiBCu+/F4OQDyTy9j/Xj81EpQEyqz/k2GQN1r4pU=;
+ b=NBAwXcG7xy7dEOrbbtrG0I6TLEChSDdpm/jiSfgUFG+NXMpWpkBgsbzHUSa7RZggxf6xaXxrI
+ /u7NoIGLqCZA3C3wP9fsxYaiTdLowFRfO6L/1BBBvVojZVGkvBzT5mw
+X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-Proofpoint-ORIG-GUID: 66AjTEDkhwi8N5EfkeiASQmLV28Hxh_O
+X-Authority-Analysis: v=2.4 cv=ZJHXmW7b c=1 sm=1 tr=0 ts=68a2e2ed cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=qIbWdXD6M1inJYch3NYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: 66AjTEDkhwi8N5EfkeiASQmLV28Hxh_O
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyOCBTYWx0ZWRfX8wTOhsDMLWGS
+ KDkiek+CzgvdZ1rVe/k6ElRixQ5aioxmE5iRvyAfMZA8dPu/CcdbwJ8S5M9GfqE724sFhQeifEj
+ ebm/oqI/upgm2QSkxRsFJubz2PKUxFZEj5eDG96i98Be4yTcgmkGDi/U8uZC2ooTJi4ct8PCElH
+ fiB+L5/zxKDjIMEtuGqfVRFHH/SaDUTM9Y8FjQJf9IPewMEQljKtPeNCAALxb6sJ9dBEdWiM5/q
+ M97xRRl+yIVeKbDGj+4LAaG7F3Fx6+EeWjIndhsOqpnMgCNpKMgd/FOQBnbUYH6owIH2nnJd7vW
+ 9kQwGRozyxDCwG4cojhqwnury5HatWHyhsT7+nUIMwAJ62rT+fcNrMYQBICa8HoeCB4b6gJ3Lhx
+ wAag1GjF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_03,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160028
 
-On 14/08/2025 16:09, Inbaraj E wrote:
-> FSD CSI(Camera Serial Interface) IP bundles Link controller and DMA
-> controller for receiving frames. FSD SoC has 12 instances of CSI IP and
-> 3 D-PHY. 4 instances of CSI IP use 1 D-PHY.
-> 
-> This patch series does the following:
-> 1) Refactor the imx-mipi-csis driver to support platform specific
-> clock names and interrupt handlers through device specific data
-> (struct mipi_csis_info).
-> 2) Add FSD CSI link controller support in imx-mipi-csis driver.
-> 3) Introduce a new media driver for FSD CSI DMA providing support for
-> video capture and streaming.
->  
-> These patches were tested on the FSD platform using the
-> capture_raw_frames application.
-> 
-> Changes since v1:
-> 1. Addressed review comments from Laurent Pinchart to integrate the
-> with imx-mipi-csis.c to handle the CSIS and expose it as a subdev.
-> 
-> Here is the link to v1 patch for reference:
-> https://patchwork.kernel.org/project/linux-media/patch/7e7832c16925386b771ddb7e00e08661115aa0ea.1668963790.git.sathya@samsung.com/
+The existing OPP table in the device tree for PCIe is shared across
+different link configurations such as data rates 8GT/s x2 and 16GT/s x1.
+These configurations often operate at the same frequency, allowing them
+to reuse the same OPP entries. However, 8GT/s and 16 GT/s may have
+different characteristics beyond frequency—such as RPMh votes in QCOM
+case, which cannot be represented accurately when sharing a single OPP.
 
-Use lore links. b4 gives them for free..
+In such cases, frequency alone is not sufficient to uniquely identify
+an OPP. To support these scenarios, introduce a new API
+dev_pm_opp_find_freq_level_exact() that allows OPP lookup using both
+frequency and performance level.
 
-> 
-> Inbaraj E (12):
->   dt-bindings: clock: Add CAM_CSI clock macro for FSD
->   clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
->   dt-bindings: media: nxp: Add support for FSD SoC
->   arm64: dts: fsd: Add CSI nodes
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+---
+Changes in v2:
+- Use opp-level to indentify data rate and use both frequency and level
+  to identify the OPP. (Viresh)
+- Link to v1: https://lore.kernel.org/r/20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com
 
-Please split patches targeting different subsystems, since they are
-completely independent. There is little benefit in combining independent
-work into one huge patchset.
+---
+Krishna Chaitanya Chundru (3):
+      PM/OPP: Support to match OPP based on both frequency and level.
+      arm64: dts: qcom: sm8450: Add opp-level to indicate PCIe data rates
+      PCI: qcom: Use frequency and level based OPP lookup
+
+ arch/arm64/boot/dts/qcom/sm8450.dtsi   |  41 ++++++++++---
+ drivers/opp/core.c                     | 103 +++++++++++++++++++++++++++++++++
+ drivers/opp/opp.h                      |  13 +++++
+ drivers/pci/controller/dwc/pcie-qcom.c |   3 +-
+ include/linux/pm_opp.h                 |  13 +++++
+ 5 files changed, 163 insertions(+), 10 deletions(-)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250717-opp_pcie-793160b2b113
+
 Best regards,
-Krzysztof
+-- 
+Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+
 
