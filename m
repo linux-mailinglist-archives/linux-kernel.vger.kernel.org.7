@@ -1,75 +1,63 @@
-Return-Path: <linux-kernel+bounces-774186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C915B2AFA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D4DB2AFA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E603AE9FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D18621A07
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26917320CCE;
-	Mon, 18 Aug 2025 17:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5753B32C333;
+	Mon, 18 Aug 2025 17:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UeXTIgll"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wk2hD5/Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303763115A3
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B386B257AD3;
+	Mon, 18 Aug 2025 17:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755538926; cv=none; b=b1W5/opf9tdPF1NwwR4z4TuAiOjjyVjIOwxCEvb8sUbmmKJlUiI4M0A9X4dVUYa7Q/3Gfzplpa5YrMx1BlXk8KXK+3tZifWVvjLxrZMX5DNuwJqakcEa2LWP3iFGoidxtT1l52vcMHroO5+jop1oy9FQCcx2KqeBEgRmPwOryPA=
+	t=1755538976; cv=none; b=RW7aObO3b0QUee6DTr9yYi/Jz39hMc0a+UxMKhMaD4wCGuqqxkrTM6tv9BxjGNtBg8oG4c1xQK1XMutkpXdfrRlPvvkvE1rM+lx9oy/fvVHIqmEGIRHZVMXcLjgDTv4+FpBybB7eED91g9mf5VEv7w3Cs+vkxqSDastaKFcXd6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755538926; c=relaxed/simple;
-	bh=LbtR3P8SaBsWjgvH8LAVEysttbIz8gVtRuCE3CgLZzk=;
+	s=arc-20240116; t=1755538976; c=relaxed/simple;
+	bh=POtnzVuu7StIyvbzEGfi+cQTdego30RYNaxXqHlh65A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TkJc+OTEKtp6yusrgm5Mu3AnyfFtQMDgYKh/j07cEvqdt+gkFpEW2MfXTFDej4ydmOMUWeZRaedCSTKoT61eVVGWTXrs8b3UJKTw/A3jrlyyY2jEgwYgp+ff7tzJBX73vz3F07s3Y/kSJDazR9KUR446O/hsRwkrJX3imySNZrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UeXTIgll; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755538925; x=1787074925;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LbtR3P8SaBsWjgvH8LAVEysttbIz8gVtRuCE3CgLZzk=;
-  b=UeXTIgll/d1AdSs1i2Wa7X6oZdmUdYTMTnXgw4mOTZ8bbjyzT6eGBhRL
-   vsLdvA3WgG5q3p3dVI5ehNXyhFv3vYgL7NHIQxynruWW6eaEDlah8osKg
-   y4R0QQ9wv2eSiUmmHJmOQedjQPRuUopR2mIrdnpPGUKjfbvqOs0Vrb0rj
-   Rol9JY0TYE7+aI82i2bMk+SwTYCS/CM+eZ67XCodmD9bmx2D6l6kmxZbY
-   gHnu/Dt8AfcbP0ftMpv9lRA8DCuNZtnoJslZm4Th1fyqA/noU+g44+okU
-   lI91eHXwwtcRzLTf1eSZZcdlKPi4/Lmb+FYEji0IbJHBOr5aZIDl8g7c9
-   w==;
-X-CSE-ConnectionGUID: 7irktuVFQFOTZrhz3/h05Q==
-X-CSE-MsgGUID: sdbB+EVQQkSUBahmDK7h0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="61583744"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="61583744"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 10:42:04 -0700
-X-CSE-ConnectionGUID: aTGO48EcSoC0KCd8EU2CzQ==
-X-CSE-MsgGUID: qlv2DHr1RveGk8SBWSFOlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="171869148"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO desk) ([10.124.220.33])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 10:42:04 -0700
-Date: Mon, 18 Aug 2025 10:41:57 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] x86/bugs: Simplify SSB cmdline parsing
-Message-ID: <20250818174157.c6bzy5bgw54fopgi@desk>
-References: <20250811142659.152248-1-david.kaplan@amd.com>
- <20250811142659.152248-4-david.kaplan@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFaPhjknQE9gl151ULyr1LfHBQrPWUFlr+CJcGJSYqXLGClK6fPKUhWwJaR6QVJ6KBFP3844dNr2A4okvCNiw0+BJ6DCPEH+KHkZYkceoeovvSYpTjbfhdPX5PxRbqbQinZ4dWlseb9eD5ZLa0n32vRBoFZgUbQixb4ht4olwEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wk2hD5/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7182C4CEEB;
+	Mon, 18 Aug 2025 17:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755538976;
+	bh=POtnzVuu7StIyvbzEGfi+cQTdego30RYNaxXqHlh65A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wk2hD5/YAUwyD/nQrN2mX6EvZwaZRCIc/hDgaBAWQ2hD+lN4YEG3xLNSpdJYYkLo0
+	 EAIue/5hEt12jahxQZ+pjEQeDHTBY2YJARb55qc3vFMLFH529KEUajvnC5NjlVZbl2
+	 8KsZFtnerTrJK2gXcfLBo37gJWkcWuvHlz/C03CXN/sLShJDpRqZatXy9/NiNIAviz
+	 HXhvG2SUHgMk0neX3JBCCZfbOhwPHaxgKrDRxZ+yFv/p6GdS8GOXYaNQSPUK3w6sSd
+	 jyxpy51xgnHIa06ScIgBG2DDNbeHC4ziXr08c1fKoyZ+H/J0+dXLXpxZWfnlSEJZwi
+	 O6xzNRAaBfXOQ==
+Date: Mon, 18 Aug 2025 20:42:52 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Chris Fenner <cfenn@google.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
+Message-ID: <aKNmHDVHV1DufJEd@kernel.org>
+References: <20250814162252.3504279-1-cfenn@google.com>
+ <aJ8iNLwlf4PAC0h1@kernel.org>
+ <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
+ <aJ9fy_sO6tza9qLF@iki.fi>
+ <CAMigqh2=Kmnv_rrT-gBtESSXtnMrxU=VJdrYE6_9NGhKBN+ZrA@mail.gmail.com>
+ <aJ9ySGv0JZ0DiNgf@kernel.org>
+ <aJ9z4OlwvFdEA2Q_@kernel.org>
+ <aJ91KX97WVOQ3nVk@kernel.org>
+ <aJ92qt6oSYyRYPZG@iki.fi>
+ <CAMigqh3yx7S2T=b-gTfdTG5BRs_JbHkXar4DT32AB3v_beNveA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,40 +66,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811142659.152248-4-david.kaplan@amd.com>
+In-Reply-To: <CAMigqh3yx7S2T=b-gTfdTG5BRs_JbHkXar4DT32AB3v_beNveA@mail.gmail.com>
 
-On Mon, Aug 11, 2025 at 09:26:59AM -0500, David Kaplan wrote:
-> Simplify the SSB command line parsing by selecting a mitigation directly,
-> as is done in most of the simpler vulnerabilities.  Use early_param instead
-> of cmdline_find_option for consistency with the other mitigation
-> selections.
+On Fri, Aug 15, 2025 at 11:09:07AM -0700, Chris Fenner wrote:
+> > I'm happy to make patch next week for this change too. So probably this
+> > where I align myself to. It's just the best average IMHO. Everyone gets
+> > exactly what they want, right?
 > 
-> Signed-off-by: David Kaplan <david.kaplan@amd.com>
-> ---
->  arch/x86/kernel/cpu/bugs.c | 118 ++++++++++++-------------------------
->  1 file changed, 39 insertions(+), 79 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index 19a3891953c3..3766dff9a699 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -2625,16 +2625,8 @@ void cpu_bugs_smt_update(void)
->  #undef pr_fmt
->  #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
->  
-> -static enum ssb_mitigation ssb_mode __ro_after_init = SPEC_STORE_BYPASS_NONE;
-> -
-> -/* The kernel command line selection */
-> -enum ssb_mitigation_cmd {
-> -	SPEC_STORE_BYPASS_CMD_NONE,
-> -	SPEC_STORE_BYPASS_CMD_AUTO,
-> -	SPEC_STORE_BYPASS_CMD_ON,
-> -	SPEC_STORE_BYPASS_CMD_PRCTL,
-> -	SPEC_STORE_BYPASS_CMD_SECCOMP,
-> -};
-> +static enum ssb_mitigation ssb_mode __ro_after_init =
-> +	IS_ENABLED(CONFIG_MITIGATION_SSB) ? SPEC_STORE_BYPASS_PRCTL : SPEC_STORE_BYPASS_NONE;
+> To be clear: I already have what I want (the ability to disable this
+> feature because it seems broken to me), I'm just making
+> recommendations as a TPM abyssal domain expert. I hope my feedback is
+> of some use on this -- the work of dealing with interposer attackers
+> is quite important and I appreciate the effort already put in by the
+> team.
 
-Other mitigations default to "AUTO", but not this one. Isn't that something
-that attack-vector controls rely on?
+So, if the feature is locked into persistent handle, the net effect
+meets the same goals. I'll pursue on a patch.
+
+> 
+> Thanks
+> Chris
+
+BR, Jarkko
 
