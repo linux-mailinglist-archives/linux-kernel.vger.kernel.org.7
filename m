@@ -1,192 +1,131 @@
-Return-Path: <linux-kernel+bounces-773599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D208B2A204
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956D0B2A23D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3351E3A898A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:47:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897BD189722A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167ED26F29D;
-	Mon, 18 Aug 2025 12:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F52030DD2C;
+	Mon, 18 Aug 2025 12:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mob6ZTVN"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n18g+dpo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158F3218DA
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD233218D7;
+	Mon, 18 Aug 2025 12:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521245; cv=none; b=VXfMaax/0KP4p8ekr25J9STbUBZ1BK+Bv5ZoSyuhxMFwKsk03iLZwdceNY9cZ9lDEmE1i3X5X4AkkqJGi1UP0OHJ4VwC7uG8Qp2XSG8cIQ2u711pt8ACe6yxFt00s8FeKvpH892n7jNwFKD2loZoWPIMSoeOFjODs2XLjOxoEyU=
+	t=1755521288; cv=none; b=gix3NoYo060eLL2WkoUn/AjXW6+wiO9Ohwef9TxKkNXLpyXBpanIfLIFI7mV9HumN6Orn4Qd7YLCzt4y2byAz5GXi3uU4oMJO+ygUTxUFbXigGwmwyI+2XgWc2W/sfCbaqeZrchgjqK7UPPEm9tWWmCJT0beKNROdntQGze1N4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521245; c=relaxed/simple;
-	bh=ziNuDJPFgkV499fIzFHozEfsCpCyKEu3TAleA8yHsNc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n9H7Qy9gjoEyVJ2hE7yogpvSjZRxSUtRuR6VUGlRMfE9yodgBxOi/5iG0SaV2SvQY9PeQ2pMLWzWa+uwpoALjodYF6DmoHvMlKQkWnKDGQ74PDbeCkp/TmJGqcHrATB+mT6BfKct6fv9S82p2UDLJ2NTDxDy7m9QHCrm68FPtm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mob6ZTVN; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755521238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4k9g/c5HGOWuI7zMBJbr5oPSHWVBPCB9+ekSdZV/mZk=;
-	b=mob6ZTVNjI/LkWqABiZCl+y9Q6hMoYRrVDGCmGLCY6xFjCZgSlhkxT4L15gwJbgNbLOIea
-	+c6KbOGUa72StEoHcUd6rhQ4625it/Z5/6P2+iGdlPIMMvaCyOim2nfDptMpiVKR5t9Tba
-	JiNKUKSEJRWWI60aSI3AC1I4zcFucBg=
-From: Chengming Zhou <chengming.zhou@linux.dev>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	chengming.zhou@linux.dev
-Subject: [RFC PATCH] sched/fair: Remove sched_idle_cpu() usages in select_task_rq_fair()
-Date: Mon, 18 Aug 2025 20:47:02 +0800
-Message-Id: <20250818124702.163271-1-chengming.zhou@linux.dev>
+	s=arc-20240116; t=1755521288; c=relaxed/simple;
+	bh=RfJbadEG1WXqCbA+L6puR7/SdieeHuzNWBQVsVWP4Us=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
+	 In-Reply-To; b=YdV901cukZvcKgiv948icCFt2MnwQu3VZSJfRY3QaFH7mcsY4lX4+/mbbfgT3sRaqM8S7WsTN6Vm68itGPzWDeIjoujZPSNAdGP3LD8M+MDrRiErlYzo+8C8pX3VMX4U7sOs+1XyZhYx9gOaYRHBOxYi+3IBInqCqxoXtUF4xkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n18g+dpo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6107C113D0;
+	Mon, 18 Aug 2025 12:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755521288;
+	bh=RfJbadEG1WXqCbA+L6puR7/SdieeHuzNWBQVsVWP4Us=;
+	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
+	b=n18g+dpoNlQYiFSwWCCD/5j0vkRu2KWMp7n30uC9KZm2gl1yoABRwoZu4SWAo1Pnc
+	 lEOQfrO1cf1h8/JCrZDhODe5if+suJh1egobeJQOCo5F42HylkYGAElk0clbJoJSQt
+	 JQzWsQP6m54kk6GTaZU0YQW1NzQJacSGW+ZG4rKdlUttOixB335EGnZnyqP/JBsOyJ
+	 a4SFHZV2vJ8NbR4xJiHSMuYrOCOJ/FWa1EgUZmtjXGSuZPH5z4OaBL9a4Fs2QhpKTP
+	 Svn6rnvF+/gqVNVcWoE1i/n+G3w/B52a5MD20eEFlZ4pdZwbZBM/Ymz5f8VkHPvqKD
+	 sPi//gt4b4ftg==
+Content-Type: multipart/signed;
+ boundary=c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 18 Aug 2025 14:47:55 +0200
+Message-Id: <DC5KCSEUZQUJ.3KPENNUQBUFM8@kernel.org>
+To: "Stephan Gerhold" <stephan.gerhold@linaro.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Dmitry Baryshkov"
+ <lumag@kernel.org>
+Subject: Re: [PATCH 0/2] driver core: platform: / drm/msm: dp: Delay
+ applying clock defaults
+Cc: "Rob Clark" <robin.clark@oss.qualcomm.com>, "Abhinav Kumar"
+ <abhinav.kumar@linux.dev>, "Jessica Zhang"
+ <jessica.zhang@oss.qualcomm.com>, "Sean Paul" <sean@poorly.run>, "Marijn
+ Suijten" <marijn.suijten@somainline.org>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
+ <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Abel Vesa"
+ <abel.vesa@linaro.org>, "Bjorn Andersson" <andersson@kernel.org>, "Konrad
+ Dybcio" <konradybcio@kernel.org>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Nishanth Menon" <nm@ti.com>
+From: "Michael Walle" <mwalle@kernel.org>
+X-Mailer: aerc 0.16.0
+References: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
+In-Reply-To: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-These sched_idle_cpu() considerations in select_task_rq_fair() is based
-on an assumption that the wakee task can pick a cpu running sched_idle
-task and preempt it to run, faster than picking an idle cpu to preempt
-the idle task.
+--c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-This assumption is correct, but it also brings some problems:
+Hi,
 
-1. work conservation: Often sched_idle tasks are also picking the cpu
-which is already running sched_idle task, instead of utilizing a real
-idle cpu, so work conservation is somewhat broken.
+On Thu Aug 14, 2025 at 11:18 AM CEST, Stephan Gerhold wrote:
+> Michael had a somewhat related problem in the PVR driver recently [1],
+> where of_clk_set_defaults() needs to be called a second time from the PVR
+> driver (after the GPU has been powered on) to make the assigned-clock-rat=
+es
+> work correctly.
 
-2. sched_idle group: This sched_idle_cpu() is just not correct with
-sched_idle group running. Look a simple example below.
+I've come back to this and just noticed that the
+assigned-clock-rates do actually work. What doesn't work is the
+caching of the clock rate. That bug was then masked by calling
+of_clk_set_defaults() again in the driver.
 
-		root
-	/		\
-	kubepods	system
-	/	\
-burstable	besteffort
-		(cpu.idle == 1)
+Here is what the driver is doing:
+ (1) driver gets handle to the clock with clk_get().
+ (2) driver enables clock with clk_enable()
+ (3) driver does a clk_get_rate() which returns 0, although there is
+     already a hardware default in my case. That got me curious
+     again..
 
-When a sched_idle cpu is just running tasks from besteffort group,
-sched_idle_cpu() will return true in this case, but this cpu pick
-is bad for wakee task from system group. Because the system group
-has lower weight than kubepods, work conservation is somewhat
-broken too.
+Now on the k3 platforms the clocking is handled by a firmware and it
+appears that the firmware is reporting a clock rate of 0 unless the
+clock is actually enabled. After the clock is enabled it will report
+the correct rate. (FWIW, I can modify the hardware/firmware default
+rate with the assigned-clock-rates DT property).
 
-In a nutshell, sched_idle_cpu() should consider the wakee task group's
-relationship with sched_idle tasks running on the cpu.
+I've hacked the clock driver to register all clocks with
+CLK_GET_RATE_NO_CACHE and then everything is working as expected.
 
-Obviously, it's hard to do so. This patch chooses the simple approach
-to remove all sched_idle_cpu() considerations in select_task_rq_fair()
-to bring back work conservation in these cases.
+I'm no expert for the clocking framework, but it seems that
+clk_get() will ask the HW for the clk rate and caches it early on.
 
-Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
----
- kernel/sched/fair.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+-michael
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a059315c..d9de63cdc314 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7355,9 +7355,6 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
- 		if (!sched_core_cookie_match(rq, p))
- 			continue;
- 
--		if (sched_idle_cpu(i))
--			return i;
--
- 		if (available_idle_cpu(i)) {
- 			struct cpuidle_state *idle = idle_get_state(rq);
- 			if (idle && idle->exit_latency < min_exit_latency) {
-@@ -7446,7 +7443,7 @@ static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct tas
- 
- static inline int __select_idle_cpu(int cpu, struct task_struct *p)
- {
--	if ((available_idle_cpu(cpu) || sched_idle_cpu(cpu)) &&
-+	if (available_idle_cpu(cpu) &&
- 	    sched_cpu_cookie_match(cpu_rq(cpu), p))
- 		return cpu;
- 
-@@ -7519,13 +7516,9 @@ static int select_idle_core(struct task_struct *p, int core, struct cpumask *cpu
- 	for_each_cpu(cpu, cpu_smt_mask(core)) {
- 		if (!available_idle_cpu(cpu)) {
- 			idle = false;
--			if (*idle_cpu == -1) {
--				if (sched_idle_cpu(cpu) && cpumask_test_cpu(cpu, cpus)) {
--					*idle_cpu = cpu;
--					break;
--				}
-+			if (*idle_cpu == -1)
- 				continue;
--			}
-+
- 			break;
- 		}
- 		if (*idle_cpu == -1 && cpumask_test_cpu(cpu, cpus))
-@@ -7555,7 +7548,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
- 		 */
- 		if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
- 			continue;
--		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
-+		if (available_idle_cpu(cpu))
- 			return cpu;
- 	}
- 
-@@ -7677,7 +7670,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
- 	for_each_cpu_wrap(cpu, cpus, target) {
- 		unsigned long cpu_cap = capacity_of(cpu);
- 
--		if (!available_idle_cpu(cpu) && !sched_idle_cpu(cpu))
-+		if (!available_idle_cpu(cpu))
- 			continue;
- 
- 		fits = util_fits_cpu(task_util, util_min, util_max, cpu);
-@@ -7748,7 +7741,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	 */
- 	lockdep_assert_irqs_disabled();
- 
--	if ((available_idle_cpu(target) || sched_idle_cpu(target)) &&
-+	if (available_idle_cpu(target) &&
- 	    asym_fits_cpu(task_util, util_min, util_max, target))
- 		return target;
- 
-@@ -7756,7 +7749,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	 * If the previous CPU is cache affine and idle, don't be stupid:
- 	 */
- 	if (prev != target && cpus_share_cache(prev, target) &&
--	    (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
-+	    available_idle_cpu(prev) &&
- 	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
- 
- 		if (!static_branch_unlikely(&sched_cluster_active) ||
-@@ -7788,7 +7781,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	if (recent_used_cpu != prev &&
- 	    recent_used_cpu != target &&
- 	    cpus_share_cache(recent_used_cpu, target) &&
--	    (available_idle_cpu(recent_used_cpu) || sched_idle_cpu(recent_used_cpu)) &&
-+	    available_idle_cpu(recent_used_cpu) &&
- 	    cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
- 	    asym_fits_cpu(task_util, util_min, util_max, recent_used_cpu)) {
- 
--- 
-2.20.1
+--c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaKMg/RIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/iUoAF+J3OaVC3IxUeIFloGDoJ8dv5T/iTrFSoA
++swW8sUuXrerXJYNsOz5CEpkMw5MWCHhAYD/qVKeufcrPpXb/T8mC9Q7mY7menjZ
+YTiG9V2kBLg2wK8UiF2WoE+54Vcry3zejqc=
+=y5fA
+-----END PGP SIGNATURE-----
+
+--c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20--
 
