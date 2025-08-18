@@ -1,131 +1,148 @@
-Return-Path: <linux-kernel+bounces-773362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAF0B29EF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:21:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8182EB29E99
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97E40189E120
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92DB4E2ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3307931578E;
-	Mon, 18 Aug 2025 10:20:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550882701C3;
-	Mon, 18 Aug 2025 10:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1373101A1;
+	Mon, 18 Aug 2025 09:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbYFcOhj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CC31E008B;
+	Mon, 18 Aug 2025 09:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755512436; cv=none; b=Go0DY2+uQTglUCIjA2L9GI+Ih0YlmKpFpO0kYL2vax7jDevAnCGWZF4em0dtYPeU7jHgcYA2C7tYUrd+qIDvcJbifaMzAva8GW3pZ2j3JutdHLZWkuTfxsTPmsN3jfZtPhOl4dUfXLCdAelcWZmlSGL5+/XoUzKfZMD2zjn1E1Y=
+	t=1755511093; cv=none; b=cXkA/MCbC4r0xBFfqOKieHDYz/sEYcwaRyJX7yq63ghyxQ1Tc+5Gqm3XyAltx0qg8llXqyiW2+qaHyNEQC5GPq2Bt7FMnDm/cc5nqZ4qhz6DdxWt1dC1/rlgff9yAsX/HoUxVj0yfi4PLG5Ku2JECqvovERJ2blCqK05tXmGzzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755512436; c=relaxed/simple;
-	bh=+XhdQ/6Cv07xh5XJuWky6AAJAqEv9jeFuZbvrkyhrmk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NmrConCPHoZ0QvDOSw+17TN7p+GxnCEzaHGp2F2o2azGaVrHbE2NrzxpAjW3CkpY67ui1gw+Mj0LnNxDc8M5mVY8O+s+5BzfjtlIquSmal7c83RQSQTc1oShHK63uT6LwYvQIMg26M7NpIAqlR5C6lTeYx8BYubaEA0s57HUr+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c57Rd3yS1z9sSd;
-	Mon, 18 Aug 2025 11:57:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id h80lqdebdhir; Mon, 18 Aug 2025 11:57:17 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c57Rd3CJwz9sRs;
-	Mon, 18 Aug 2025 11:57:17 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5050A8B764;
-	Mon, 18 Aug 2025 11:57:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id tlZNreI0Ep2e; Mon, 18 Aug 2025 11:57:17 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2436D8B763;
-	Mon, 18 Aug 2025 11:57:17 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Leo Yan <leo.yan@arm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH RESEND] perf: Completely remove possibility to override MAX_NR_CPUS
-Date: Mon, 18 Aug 2025 11:57:15 +0200
-Message-ID: <b205802edbb6fcc78822f558dff7104e64b29864.1755510867.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1755511093; c=relaxed/simple;
+	bh=mQ63q3SrLsiGYe3hS2uVLaCBUISPOc7zkn8OeC14lGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gs/Z2U9Qx3MtJVwOHl2AXliVwY15ssAKUiblMkynmp0w76cXvumNY2AnTbcBJfd1YFXCfpP1XV8nkatQZHi1qwfIi+c90uhnRGRM/san9Ugp54Ds/4zcXlCs9p12NMwkFJ9i85gPyw4B6NJJ7BJdLh3BmNsRScIc5AhLms+FFH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbYFcOhj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB269C4CEED;
+	Mon, 18 Aug 2025 09:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755511092;
+	bh=mQ63q3SrLsiGYe3hS2uVLaCBUISPOc7zkn8OeC14lGc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RbYFcOhj84BoYqiCplFH3y2QUNnrUU2IDGUlhlWHQZK0FBWFNKIr68JJyb1Gzbul5
+	 8UDO/DLLHEkI+Fhz+TkzP2eNowzXpwSNCebR3zp9PLKDm322O9NOEU2SqvwR/0wNWh
+	 mlnk0IGoOWgcsWWp+CP88G/PkL9Vt/NpHxul9S5pC1hO/hPACmjTiGQ/AJCr1wz23u
+	 2QOP4SCpp8fXz+6wiJktUHqrGcSv8jrWA/oe66puxOHEuklyMJOP64xudNPEYWhE3k
+	 adci0Qz3WmycdRWg3SrWZLhW/ORNZ/5Sx4rE169dk/TvHL/BMfyDDGShPXZvMUcaA4
+	 AaUbua4taDljA==
+Message-ID: <bc96aab8-fbb4-4869-a40a-d655e01bb5c7@kernel.org>
+Date: Mon, 18 Aug 2025 11:58:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755511036; l=1837; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=+XhdQ/6Cv07xh5XJuWky6AAJAqEv9jeFuZbvrkyhrmk=; b=zdPN0IV1SNTGhsT/B/ZD7T275sgUgqXxPLny2G78OqJ6BvMFbf5LABG+tvEdnb5BCwv3d3520 PCs+mIsM2s9DbHVPxqJ5mL+Z3bGQ2YafBB+1s8Vay76lq2zTo774wof
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
+To: "D. Jeff Dionne" <jeff@coresemi.io>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Artur Rojek <contact@artur-rojek.eu>, Rob Landley <rob@landley.net>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250815194806.1202589-1-contact@artur-rojek.eu>
+ <20250815194806.1202589-3-contact@artur-rojek.eu>
+ <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
+ <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
+ <CAMuHMdVGv4UHoD0vbe3xrx8Q9thwrtEaKd6X+WaJgJHF_HXSaQ@mail.gmail.com>
+ <26699eb1-26e8-4676-a7bc-623a1f770149@kernel.org>
+ <295AB115-C189-430E-B361-4A892D7528C9@coresemi.io>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <295AB115-C189-430E-B361-4A892D7528C9@coresemi.io>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Commit 21b8732eb447 ("perf tools: Allow overriding MAX_NR_CPUS at
-compile time") added the capability to override MAX_NR_CPUS. At
-that time it was necessary to reduce the huge amount of RAM used
-by static stats variables.
+On 18/08/2025 10:21, D. Jeff Dionne wrote:
+> On Aug 18, 2025, at 17:07, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+>> git grep jcore,emac
+>>
+>> Gives me zero?
+> 
+> Um, right.  It’s not upstream yet.  Thanks for your work to get that done, Artur.
+> 
+>>> If an incompatible version comes up, it should use a different
+>>> (versioned?) compatible value.
+>>
+>> Versions are allowed if they follow some documented and known vendor SoC versioning scheme. Is this the case here?
+>>
+>> This is some sort of SoC, right? So it should have actual SoC name?
+> 
+> No.  It’s a generic IP core for multiple SoCs, which do have names.
 
-But this has been unnecessary since commit 6a1e2c5c2673 ("perf stat:
-Remove a set of shadow stats static variables"), and
-commit e8399d34d568 ("libperf cpumap: Hide/reduce scope of
-MAX_NR_CPUS") broke the build in that case because it failed to
-add the guard around the new definition of MAX_NR_CPUS.
+Then you need other SoCs compatibles, because we do not allow generic
+items. See writing bindings.
 
-So cleanup things and remove guards completely to officialise it
-is not necessary anymore to override MAX_NR_CPUS.
+> 
+> This is the correct naming scheme.  All compatible devices and SoCs match properly.
 
-Link: https://lore.kernel.org/all/8c8553387ebf904a9e5a93eaf643cb01164d9fb3.1736188471.git.christophe.leroy@csgroup.eu/
-Fixes: e8399d34d568 ("libperf cpumap: Hide/reduce scope of MAX_NR_CPUS")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- tools/perf/perf.h                        | 2 --
- tools/perf/util/bpf_skel/kwork_top.bpf.c | 2 --
- 2 files changed, 4 deletions(-)
+No, it is not a correct naming scheme. Please read writing bindings.
 
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 3cb40965549f..e004178472d9 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -2,9 +2,7 @@
- #ifndef _PERF_PERF_H
- #define _PERF_PERF_H
- 
--#ifndef MAX_NR_CPUS
- #define MAX_NR_CPUS			4096
--#endif
- 
- enum perf_affinity {
- 	PERF_AFFINITY_SYS = 0,
-diff --git a/tools/perf/util/bpf_skel/kwork_top.bpf.c b/tools/perf/util/bpf_skel/kwork_top.bpf.c
-index 73e32e063030..6673386302e2 100644
---- a/tools/perf/util/bpf_skel/kwork_top.bpf.c
-+++ b/tools/perf/util/bpf_skel/kwork_top.bpf.c
-@@ -18,9 +18,7 @@ enum kwork_class_type {
- };
- 
- #define MAX_ENTRIES     102400
--#ifndef MAX_NR_CPUS
- #define MAX_NR_CPUS     4096
--#endif
- #define PF_KTHREAD      0x00200000
- #define MAX_COMMAND_LEN 16
- 
--- 
-2.49.0
 
+Best regards,
+Krzysztof
 
