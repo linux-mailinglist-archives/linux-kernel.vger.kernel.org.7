@@ -1,94 +1,113 @@
-Return-Path: <linux-kernel+bounces-773437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9979B2A018
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5811EB2A021
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45AB18948DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6CF4E8666
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207D530F55F;
-	Mon, 18 Aug 2025 11:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4ED310648;
+	Mon, 18 Aug 2025 11:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s9PdbNxY"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aamuVr2g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A535261B75
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AE43009EF;
+	Mon, 18 Aug 2025 11:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755515378; cv=none; b=GNeCZzBiHhq1iu7XKse89+mmWSKK9lgIPf7sY9WBGTm03yhCTwbqIHnTXNeLgjZuliZBxw5da7H+S7a6G1qqPl/VBlefAubndvq2Dq4h3i4SBe+zN2m58zWBam/oXc127k1ycvfD5O+fwtwslAK6Xk2DAvz3PDey3u3ukQQF3cQ=
+	t=1755515686; cv=none; b=JMb4jYUiYFGXFiLhCMwy41urNTe5kOXKGAKmmB+TlY5GQ/iQMotMLdOGRT8MLvOyzkM0+JAXHt6in35fuGwWjMOUJfG2LOL9/X20aWCPYKBdZT2spwMnluatILGmFAc0JbRAshpgA7bFsuLoRd1uV9GZW/3PtU/cU2aJo0E0tMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755515378; c=relaxed/simple;
-	bh=OR2DYq8Rl0wyBBPU7bl3PHpoIKLvpH9ZHB/YJ+Qzhyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ba8FKiBJtn6ZKnaWAByQS8GKlAwgadDfw/b7saF3PlzfpexmEgfBWjmFKc0ErQmVUXODzxoRPlIakSpBvZAAXR88vdoaQ0kgF0xQpyXb6/otQAFVxFon8wOKyaAhYoHPQGB8UA7w6Oip3rxp15JUfjmnV2t3iwn9xhbkcQVxiLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s9PdbNxY; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <dcce0303-8184-4ed0-a26d-f85dc469ab46@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755515374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oiI4Lo7dgIKpq91EheYYdUeo63Zgn5fpMIaRzAbNtFE=;
-	b=s9PdbNxY9pt01nUa/jDZlrc+V5+s6LqfC6YacW8Hblt8ku4JeoJpyd5TUX7g/Sw5YiVcv3
-	hXv8EZVYrlBG02zBty/PaGxfBLdVdWYiN78A+fcGe7nDVHfCz959hT1n05mauxBVogpjIm
-	BxJinPaeDGpMAW/2zd/bo02+VeKPnbE=
-Date: Mon, 18 Aug 2025 12:09:28 +0100
+	s=arc-20240116; t=1755515686; c=relaxed/simple;
+	bh=QGK+8BU43Z/BLfmsImDku8HtvcxMQmdcoWqcXyADLeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2/0/DybdJ8oP7NABAR3jLJhRuvn8tFlEf7o1eCKVoN53LGxZG68mXDJ8bH3VgjJ8OnwEdGWBfzSkLMHQdibbGovJy1h5HV6AKGjK9af2NyhQgi/gQ5Ln1898Bw0q+6DE9woP2BQMPJmjmVRO79l6ayrIJfROwIpMg8smNzcNkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aamuVr2g; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755515685; x=1787051685;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QGK+8BU43Z/BLfmsImDku8HtvcxMQmdcoWqcXyADLeM=;
+  b=aamuVr2gO+0Mg68e6s0JDue8jTUvoUaYteFsJEjbuxNayPJloBE4gyye
+   u1opSK47lm+0Oxml0sYK1sAZ2lGv/ET/uwW+k76PG6ILPulQ3zdmq7UYx
+   mALb++BDfD4xr56XZro2kYXP4nWcqPS8Pq8AsmaLommSVZCYKRAoDN/81
+   2gk+vs5UFU1Jr7ySku/L1Uf5GlQm6u0HqMKnmRFhonbJX9ESjvA7vi4qm
+   3cPtXcJzUOkxqTlXb+fyhZdlI/6FC4gWDvoNoiorUZ+ykcGinu7GlbbpQ
+   M2sxI7FKwse0iYQdDbHkYG/Dx0ffM/eyI18+0fTgsn1h6AQ4pf+QGzJO1
+   Q==;
+X-CSE-ConnectionGUID: atYJse1XQkqw7sGHax2e6A==
+X-CSE-MsgGUID: AbwLk5WzQ7Ksq/lqF/BOLA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57691299"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57691299"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 04:14:44 -0700
+X-CSE-ConnectionGUID: tjX8Qo3mSp6UVkCsC5F00w==
+X-CSE-MsgGUID: XhMFdXstTkyHp4iT5G9jqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="171789223"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.252])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 04:14:41 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id ECB35120230;
+	Mon, 18 Aug 2025 14:14:39 +0300 (EEST)
+Date: Mon, 18 Aug 2025 11:14:39 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Will Whang <will@willwhang.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] media: i2c: imx585: Add Sony IMX585 image-sensor
+ driver
+Message-ID: <aKMLH_S5J_8EENwa@kekkonen.localdomain>
+References: <20250816055432.131912-1-will@willwhang.com>
+ <20250816055432.131912-3-will@willwhang.com>
+ <7e27b69b-40df-4ac4-aebf-dbd00044b71b@kernel.org>
+ <CAFoNnrxbzcF+YranTL8Von3BkROhq8X=RX5sa90M6PYgS_vjkQ@mail.gmail.com>
+ <daa45e3e-84a6-4c39-854a-1429fb68d415@kernel.org>
+ <CAFoNnrw4yRKGL_m0=g14C583o13ptC6e84TN---ABdyeg8jMhg@mail.gmail.com>
+ <04fd00bb-beb4-4f35-88fb-bf1cc7691505@kernel.org>
+ <CAFoNnrxd_2=9aJqo9yQ8bcDsyW9pVRCfmUU6tOHoeX5wEB2AhA@mail.gmail.com>
+ <11e35902-a19a-44b2-b816-15a495048d41@kernel.org>
+ <CAFoNnrxT83nz0qxf8HTapqOXuEQ0Vh+RbxyqRGQy_sJp9nzpAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v4] phy: mscc: Fix timestamping for vsc8584
-To: Horatiu Vultur <horatiu.vultur@microchip.com>, andrew@lunn.ch,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, rmk+kernel@armlinux.org.uk,
- vladimir.oltean@nxp.com, rosenp@gmail.com, christophe.jaillet@wanadoo.fr,
- viro@zeniv.linux.org.uk, quentin.schulz@bootlin.com, atenart@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250818081029.1300780-1-horatiu.vultur@microchip.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250818081029.1300780-1-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFoNnrxT83nz0qxf8HTapqOXuEQ0Vh+RbxyqRGQy_sJp9nzpAg@mail.gmail.com>
 
-On 18/08/2025 09:10, Horatiu Vultur wrote:
-> There was a problem when we received frames and the frames were
-> timestamped. The driver is configured to store the nanosecond part of
-> the timestmap in the ptp reserved bits and it would take the second part
-> by reading the LTC. The problem is that when reading the LTC we are in
-> atomic context and to read the second part will go over mdio bus which
-> might sleep, so we get an error.
-> The fix consists in actually put all the frames in a queue and start the
-> aux work and in that work to read the LTC and then calculate the full
-> received time.
-> 
-> Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> 
-> ---
-> v3->v4:
-> - remove empty line
-> 
-> v2->v3:
-> - make sure to flush the rx_skbs_list when the driver is removed
-> 
-> v1->v2:
-> - use sk_buff_head instead of a list_head and spinlock_t
-> - stop allocating vsc8431_skb but put the timestamp in skb->cb
+Hi Will,
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+On Sun, Aug 17, 2025 at 12:53:49AM -0700, Will Whang wrote:
+> You are asking me to code a bug in the driver and the arguments don't
+> make sense.
+> As much as I appreciate your feedback, I want a working driver
+> upstream and will have to point to the existing code base to prove
+> that it works.
+
+Please do address Krysztof's comments, otherwise there won't be progress in
+upstreaming this driver. I can recommend reading section "The active low
+and open drain semantics" in Documentation/driver-api/gpio/consumer.rst .
+
+-- 
+Regards,
+
+Sakari Ailus
 
