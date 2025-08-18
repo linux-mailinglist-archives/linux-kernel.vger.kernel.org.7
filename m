@@ -1,224 +1,189 @@
-Return-Path: <linux-kernel+bounces-773870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439A4B2AB31
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CC5B2AB3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C98037BDF5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:40:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6C17BC47B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6910F35A29E;
-	Mon, 18 Aug 2025 14:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C00242D9E;
+	Mon, 18 Aug 2025 14:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IohbkpI8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GxjOKLG+"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9856935A280;
-	Mon, 18 Aug 2025 14:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755527967; cv=none; b=ODmqKJxShQxs18J5yAsOC/OpMvy9V4usXC72k4d3lMm1BAmpGFJ8L/HtZmZdH557eu3OT2RfbdUW6UIE9cfNkwOQPlMZzXkBL42tF4strDKiFZ9HRBFsU4SERIBigGc1gcmVaPdobG8uVetf11zA8Xje6vIxbAllRQ42Q6sAnX4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755527967; c=relaxed/simple;
-	bh=NNGx1BhKiXpo8fP1NrAIVQqjVfRV0yTMXi9fh1F4zrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=do/NLePdXWW4RVjmkXxmoEEosd/JaKKs/BnZZjtQ1+iZ3DhgzW5nL4PA0yQb/M2ZxA9MVM8uJCEPVyqn9PLp6Ljm6wMUbfO/ijGYmeF8c4II6p5dE2WMomr/DcTm4hoMuT2HZRLsMxxtnNhBZW+J6JuoyJv1DtUz1CcgvkiImf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IohbkpI8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C3CC4CEEB;
-	Mon, 18 Aug 2025 14:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755527967;
-	bh=NNGx1BhKiXpo8fP1NrAIVQqjVfRV0yTMXi9fh1F4zrg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IohbkpI8Oqjzlt/YDjYYRVYKn0OTs7UpZ3CYOJTtRM0KKfLEG1mXf7DnloIT8p/of
-	 9U1LnNJ7jRGeYBndKXNgPCjeF69GvqZgWjAqN+9NvvpuGcKr8WaXJqW4aqKRulGOzW
-	 sevKtR2n4c8VtLo/4jDooMKRi9n8SJtSduy/gbGw5ewRPEgrNX3zWsKXcYQkAca5LO
-	 8BuUy5rdvuU99dw3mwlKHIP7zlWPI2eQP/QHENnpk+mkF247WOX6v32+l0Om8XZFmU
-	 G33Nre2FH6SHIJw0k6l8TehFUFvf4uaz0WnBw4OZm26HEvRbw+F7V/CUyVUDwjRth3
-	 n5Il0Pkuozg5Q==
-Date: Mon, 18 Aug 2025 09:39:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
-Subject: Re: [PATCH v2 01/32] dt-bindings: media: add DW MIPI CSI-2 Host
- support
-Message-ID: <20250818143926.GA1025181-robh@kernel.org>
-References: <20250808-95_cam-v2-0-4b29fa6919a7@nxp.com>
- <20250808-95_cam-v2-1-4b29fa6919a7@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7299C35A2BE;
+	Mon, 18 Aug 2025 14:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755527997; cv=fail; b=G/ga1gHci/Bj1XGu13NUdW4gOjBbpdSRdTd8LUBXTbleFupqofkekZFbl0iu9CvWpd7bYbRGJSjXgDt2d97i/Ob4rr6fdO2aRzuy+sOMh0yeF4VTqhaaN56YSUVq6c8+tuXNndUmYD4JQlpGj+dpsvmlvz+F95I/qrsLaUEcZsc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755527997; c=relaxed/simple;
+	bh=JgRmyxhEtkLEQ2XWSLhl94nbvmNc/JI43Wl/37L4V5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HB5FvpN+aSjpZwi3kOkFcKTckfIxywaVhZ8wAzlrgy8Fe1oYdkTzERH6proLjiDap9cKIH7ned2/wMoYCmedPjLtn/wI+kDpslPE4bkpiN1JThISzfABFvPhgoZk4+eyqxA+s1XC5BPYsk5fb5uAa612cI0Gjo0VN9Oh+3WpYG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GxjOKLG+; arc=fail smtp.client-ip=40.107.223.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yeAO0yy/P7vyFvPapS62Mdixo0MEuQNIQcJymTBp9XgE3DBmMVm8IHteTHyLLJLogMnZk288gKlzx5q9xky+uxeJXkGkXy8AnWtBRjR4Mt+8LbeSYHEuT1/vHG1qg6WSWNeXm+RInfnZ9Pvy8wP9WOQhlR8R5pskuk7xSfMDroCkR2+ZRurJo/DlUV6LgbzMniBfD1ZGb7x2kEG1zSZrXoCaO5iiR8l8f0uWEkahD4PUDCArh9xo8OmzFLrKRlMYPWw59FAbpe4WIQ3YFZqc+PUQbOJTQ7KcNQA4ozbQY90zQ3g0sOx/n8CJQQFZslitSbZwifN3Jdm3KXJ3LNiHqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AweLgKazAhLALAGyH9QZrKcgleQGcoxbR+3GhZmsf6A=;
+ b=lZFM8z/x/5KbYx7+F+MdTlKg/tYOQzwhEFLqQy3fnTtz1rdaGCjlzfEIzR7Qx6GBUF6C9L5xG2Ua/xmTJTUwcx+ctDQBHnVf1VOiENOHYSZmO6Ry1Vkwrbc3A+kA3ZdkX0AYh0/4EddmAS6shzsuMwPVPPGNzqRIL0KQRamGKc7A24cWXvE3A4ZKNZPN3SSBRzHAzKSFsX/E8UCdQXR9NN+tujJtdCmVYIvhA05MGjeC9/A2pVu+jRR98G+a5ccpa2HRLUOpVXuDxWn6sMkA+Yjll8JTuySr75K5k81uKPJMU4NqjVNOYSy3+wEWO4UBEnbrkbndlyb/OnOkrM34tA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AweLgKazAhLALAGyH9QZrKcgleQGcoxbR+3GhZmsf6A=;
+ b=GxjOKLG+0L//xoZLSLbZctUg9nbJIprig4yFF2VZbJHOBuG5wH4GvmrsMOcb6/rHI9eUDBwhkmEad9eIKxcJOnQpbPr26lYqjnnV7RdX/vZLiYiVwi/Pa2Ln89DLGcLhiXz3Z5hEy634FRmS43mssPRCzzONKibFO0PoRbr/IlOu9xaSVehDJCTlHA6IMtCig38Us1FaZIUYfCp20hiLbfh6xVzBGxfqCCNZA9+WsbwfM659JStSIkrxWKt2N2uSoTq8uV7i8m8vZt2kLq241OEp0osHLnGFag742b3IxnEzBJ+pyjVh7/8aF46afghAx20phW4dD2hjm9LUhX07Ag==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SJ2PR12MB8160.namprd12.prod.outlook.com (2603:10b6:a03:4af::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
+ 2025 14:39:52 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 14:39:52 +0000
+Date: Mon, 18 Aug 2025 11:39:49 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: robin.murphy@arm.com, joro@8bytes.org, bhelgaas@google.com,
+	will@kernel.org, robin.clark@oss.qualcomm.com, yong.wu@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	rafael@kernel.org, lenb@kernel.org, kevin.tian@intel.com,
+	yi.l.liu@intel.com, baolu.lu@linux.intel.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+	patches@lists.linux.dev, pjaroszynski@nvidia.com, vsethi@nvidia.com,
+	helgaas@kernel.org, etzhao1900@gmail.com
+Subject: Re: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
+ helper
+Message-ID: <20250818143949.GO802098@nvidia.com>
+References: <cover.1754952762.git.nicolinc@nvidia.com>
+ <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BYAPR06CA0027.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::40) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808-95_cam-v2-1-4b29fa6919a7@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ2PR12MB8160:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b9c7a53-20a3-4ecf-c8f2-08ddde651775
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iWr+V0pK4Aqfa4wy7yyxnNk1teYaLXGtP1/PuNJbrWIlldI0mWzRNYqzRixK?=
+ =?us-ascii?Q?PpKGXBPklwDXTak+UDTRBuKxPl6YSyMzA1rc8+fGTdTptWNdMfTSea4NDdgs?=
+ =?us-ascii?Q?gmdWDluDHHmLqaAxaTZPlUG2JeHpJHm/fF9G0Ypp8pSUvadBpJtWiwRxTe7I?=
+ =?us-ascii?Q?L26AIY7KLCnatiaJkFWrF3w+eoO2vmNaRKqOjP69wt/BVRIHM3klkwUz2Dr4?=
+ =?us-ascii?Q?odn4hBeCvMK62xYPOjEdjMIdBl2JM7uceNN9PMbS4NHEfI60Cfv7AE4pX3Bk?=
+ =?us-ascii?Q?6uCQMBUKmhAwslxsSQ6QkYDoB2tmK5Bw4T8kvcMvW0WoGEYrEiiUWDRQZf2f?=
+ =?us-ascii?Q?+z+Ynulai8/wriq6zz5Bs0Ok/HfbB8T/4iSNSz8JcG2aNIR60cKcRs6GovqD?=
+ =?us-ascii?Q?EF9v/TnDGu2ay1nFNM8qEPplyIEdughex23S9lYp/ArlqzGIODlgoPW5MRJA?=
+ =?us-ascii?Q?eCQmho8HtiUGfW1R7Xwq2RRlyfoek1anxlaHrg2y63ZQebizCVyeugw/2iKq?=
+ =?us-ascii?Q?AGiBAunjB+6Kbr6Ik9rnIrIYMgCXrkx11tVU5vIz8Pkqna9jju2+0h01jQcg?=
+ =?us-ascii?Q?8Hvd5H5Z4gs7qJXXRNEhVGUaC10ZnArH8b/iu7sL5fdUobaW5eEwuh/8IHTQ?=
+ =?us-ascii?Q?L96SAr9XfXKQTsH4YifR7Cimw5Kqna73DxWzb68F4Ndgj7EctvueE2CB/jQ0?=
+ =?us-ascii?Q?SEmEBEd9uUI+lP/uLKJXTOYE+dSbwbCzh2+YDh3EAbQtyW4IuRe7STpXfiA7?=
+ =?us-ascii?Q?3cmSMmW1eIimU/eBHYZCYmn8AnaupsT/h2sEecUInsF9xARtN6U6rTK9rcBR?=
+ =?us-ascii?Q?23pyH8hghtk1eEojopV9DXmOFtwU2tlJOYfsoalHtqcw5W0H6B5g4ay8QQ6p?=
+ =?us-ascii?Q?knfYCARfMb3dNows/DydkAKGVu738kW32QeG69n6zTbnklb+s0wDCe3LjgqJ?=
+ =?us-ascii?Q?EkED2lG1Yu1qth0VRR33blQ27qQcnBbq4PWIhdCgLI+omSPP3QIdBuJN08zJ?=
+ =?us-ascii?Q?H8UTLeQNK66ssXLMSTFEWnddww5tVF76YhlOOqsueWhCUYbtjuPji9gVN20t?=
+ =?us-ascii?Q?CBmCOQsMLKtrDfKnW41FJo8B8NmW6cHZS0qOtuizL6jWUBsdtY0iAdPkWftU?=
+ =?us-ascii?Q?8jp3CJZv5twcj3sUP6swwbX4bq2bNWO6vueWZLLXVKTV/hgG+/+eQP1h56Kq?=
+ =?us-ascii?Q?Z0jjlkrm6HehQlU08ibGMJx1aII+pk8w16tkiruTYQzntKMkya18qXGUey00?=
+ =?us-ascii?Q?KoH3Xp6BAZda72lgTe/PXOHT60GJktQmAxO1pg3atJdO6lfVZwn8qcfV63Kv?=
+ =?us-ascii?Q?mwBwfYTEhpH62FvUNm24gnZh1tEeq7+J4VuM5NEQeNBWOu3a+EFfpOU5sDgF?=
+ =?us-ascii?Q?AHVYdcYvRpp2PhmJNsNO0R7eBMTBvbDeS7yOCafJSJ0P8h895g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CD+evpHNlP42f6qShI+djiPoRvRnRMRlNN0Sj6ewq8zB/p6qeh9pRKlLHya+?=
+ =?us-ascii?Q?rlcPHm3aS/3AniR2eSCoFh2uR5XFJ3XZuDTx43TGHsiUy7qIhwQqjQTCHcdz?=
+ =?us-ascii?Q?cHbvlXjjj2pXwJEfvJTLhyOzg/rEfGuqJbD+TIZfkoAR+sw0iatEWXWnHvy1?=
+ =?us-ascii?Q?vbYAdMkUAyXH3heqBEWR//pAOtBGqg6qb0FFRujqvpEsE5oOSYGo0UsDlZPK?=
+ =?us-ascii?Q?V+6mcAPsdZrnipbXA/ZyrforrK3l2Vp3dxBlRqMBPrdFt+Kdi6ybvnyXtFJJ?=
+ =?us-ascii?Q?+a6UgV9TPV8C79org5FY2W9D4qAyo02PEy4JHVunY8xgoG+JhQN92zTc+G6f?=
+ =?us-ascii?Q?YopOTZbDrvGYjKfxVKlSI2Drru3Tt24oVxwuCYQecqmwio7f+4yvpICMkcaC?=
+ =?us-ascii?Q?2+s9xbKL7eSkhG9HeSKcrL9VFLnl3coxW4ic92GpYCYtUYCSqKjgI4HYtf4R?=
+ =?us-ascii?Q?yqcZmhkH9nu4wdqFxjQA07QquEgbxtPRddYip4s3C7i1kIboJagUfD9rf0Ei?=
+ =?us-ascii?Q?kw4/SbUbLFuehtBu19QbV8fGm53w+LEeVx9s6XxYwJmfBvnfclY7oHz6Dryw?=
+ =?us-ascii?Q?GI6bd9lG9GyxuOtjKoHSdog0HrifxZe4PErr0HvV17pNFNTNNNFYImvo7iOy?=
+ =?us-ascii?Q?AlX4/zSJkUZlXPkp645t77SAWeIpHkuzKoVU/y1uuk3VuCjMpYu75hH5wWV4?=
+ =?us-ascii?Q?Gn8wH0ulpiYd9bLeHt88Q82VexV7rmEk5iZ+pqLQyZzTPbYa4pmKrjx9B9da?=
+ =?us-ascii?Q?oVULW/L1xP61pg7qV/qvK9UqV1rq5BM2GCTrx51OmjoeK/LR2CysfKf5xFTy?=
+ =?us-ascii?Q?f60ApcS0z6r2qaAyIFjZa4r1T+nvZU3VP5g9u8KW/C1BQErMPOwFqOQDKxUC?=
+ =?us-ascii?Q?W+4DuQT7Bme7puoC9yu+EO/qdLq3fOiwe+HhQPk0IOYnSMHCUSTXhlsV7g3w?=
+ =?us-ascii?Q?lnyGVFAhVlOKtIjnXD7Ioufu+7Ypp/JovCsaiNx5CJIgX3JJXHsTY6MlsBFf?=
+ =?us-ascii?Q?QvLnkJyTbIBUjXb6g484aTYdL7qxTtpcbu5KstihVV7K2Pk55XUePmZQgxkw?=
+ =?us-ascii?Q?DDt+BgqIjSMYuOm73k9pH/xITMcrocv0NxOsWXk+DY1J3gKdwsNj7z9x536K?=
+ =?us-ascii?Q?qjW9JMFB14IGzRvmdeNXkRuPPKUc5+hYwYXz1ZctnwBjUndGPvtSOWY1yhkg?=
+ =?us-ascii?Q?XVnxggSWl4iLiNVvVmJe3wqo2SAZeR5Xih8u5l+eyKNa86Em2C8S5FV6c67N?=
+ =?us-ascii?Q?Vf4nU9piN0veKWoSiErRN/ZZo3BO80ulNcIpdDgckPg7z89ljfDz+Q0aNIWu?=
+ =?us-ascii?Q?YYB25tkZyaBvPoXYPxxOqMAHvBcZNSdZ1xBj1uqC3DBCYf/lmW7cz+SYRYv5?=
+ =?us-ascii?Q?HiIdx8y5FLc/sDDt37uQ4i3397h/34EHmyB2RnYQYfh7X1pI8DimBDY5z3wN?=
+ =?us-ascii?Q?y3XO+bU1PIMKPWww6ECfFCTj4Hh7mMvwBBwxwu5SaSj8xSlSplhQwqaxk9nz?=
+ =?us-ascii?Q?R/mopgdkRNEmydZKaLPYqZ2p4mt2tvnc9l21dj9+DIolq3EIP458njMh0fyr?=
+ =?us-ascii?Q?pJquWh4nn+CsUyeyj6qc9ne2xg40z8qvNtRRaa/c?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b9c7a53-20a3-4ecf-c8f2-08ddde651775
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 14:39:52.5706
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ljPGnCGyIA/hgLUj9EVSgCmg8EqeEnRh/b+y/OHem4th+CBx6BPbWZ5NuSbzp/sq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8160
 
-On Fri, Aug 08, 2025 at 06:39:04PM -0400, Frank Li wrote:
-> From: Eugen Hristev <eugen.hristev@linaro.org>
-> 
-> Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
-> and i.MX95 platform.
-> 
-> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
-> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change in v2
-> - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
-> - update ugen Hristev's s-o-b tag to align original author's email address
-> - remove single snps,dw-mipi-csi2-v150 compatible string
-> - move additionalProperties after required
-> ---
->  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 158 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 159 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..fc1b167d6d3b142a01e2ea7f04230934260a05e6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
-> @@ -0,0 +1,158 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +description:
-> +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
-> +  camera. It will convert the incoming CSI-2 stream into a dedicated
-> +  interface called the Synopsys IDI (Image Data Interface).
-> +  This interface is a 32-bit SoC internal only, and can be assimilated
-> +  with a CSI-2 interface.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,imx93-mipi-csi2
-> +      - const: snps,dw-mipi-csi2-v150
-> +
-> +  reg:
-> +    items:
-> +      - description: MIPI CSI-2 core register
-> +
-> +  reg-names:
-> +    items:
-> +      - const: core
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: per
-> +      - const: pixel
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: MIPI D-PHY
-> +
-> +  phy-names:
-> +    items:
-> +      - const: rx
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port node, single endpoint describing the input port.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +            description: Endpoint connected to input device
-> +
-> +            properties:
-> +              bus-type:
-> +                const: 4
-> +
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +                items:
-> +                  maximum: 4
-> +
-> +              clock-lanes:
-> +                maxItems: 1
+On Mon, Aug 11, 2025 at 03:59:10PM -0700, Nicolin Chen wrote:
 
-Drop. clock-lanes is always 1 entry.
+> Introduce a new iommu_get_domain_for_dev_locked() helper to be used by
+> those drivers in a context that is already under the protection of the
+> group->mutex, e.g. those attach_dev callback functions. And roll out the
+> new helper to all the existing IOMMU drivers.
 
-> +
-> +              remote-endpoint: true
+I still don't much care for this, I think it would be better to
+approach this problem by passing the old domain to the driver callback:
 
-Drop.
+> @@ -390,7 +390,7 @@ static int qcom_iommu_attach_dev(struct iommu_domain *domain, struct device *dev
+>  static int qcom_iommu_identity_attach(struct iommu_domain *identity_domain,
+>  				      struct device *dev)
+>  {
+> -	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+> +	struct iommu_domain *domain = iommu_get_domain_for_dev_locked(dev);
 
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Output port node, single endpoint describing the output port.
-> +
-> +        properties:
-> +          endpoint:
-> +            unevaluatedProperties: false
-> +            $ref: video-interfaces.yaml#
-> +            description: Endpoint connected to output device
-> +
-> +            properties:
-> +              bus-type:
-> +                const: 4
-> +
-> +              remote-endpoint: true
+Because this is a very common pattern in drivers.
 
-Drop.
+Once that is done we can see what calls to iommu_get_domain_for_dev()
+are even left, arguably we should be trying to eliminate this badly
+locked thing...
 
-Rob
+Jason
 
