@@ -1,128 +1,106 @@
-Return-Path: <linux-kernel+bounces-773961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CB0B2ACE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:38:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3365B2ACE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB9A564C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C153565D2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CBC24DCF9;
-	Mon, 18 Aug 2025 15:37:06 +0000 (UTC)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDD8261B78;
+	Mon, 18 Aug 2025 15:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/jeC3FS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A977425CC73;
-	Mon, 18 Aug 2025 15:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A825725FA13;
+	Mon, 18 Aug 2025 15:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531426; cv=none; b=X4IvGB3zvUnZApIAYgsoBk5Vp4Oq5Ek8IUTzO3z07snqAcuD5EcojcxrUqAtvQL11jxsqr2pArrjs5vLq+G8nSaJK28tZtzLzt6+s1ne3noGXA09wUTjz8AhIPCA7THax5mFnBO5CYsSpEhzqXCkwxWiso1s6ULi2FOoQBqQEiU=
+	t=1755531427; cv=none; b=rC2S/c3K52YOom0SOZKKm5vaqQZlKXqPMst0P4jLSG58FOAOHqnZiwxzFX0oY4bMPJcBgZBlUdLSjBPSKRRHlpHKNa32w/6n4qtuqgHvrMv2aEFtO4In/a6URlf62nzFJO0j/sdMWEwGeTlTJ1ziR41vSRxL/pw1pwTqIffgsEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531426; c=relaxed/simple;
-	bh=k/H8oG8FJ/KNAXVFQEahMziIkd6GKMRM8pwD91rQQ9g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CF2UtvMXuYmGdDKPUPZHUkAlROafjMoQaDohCZJtWPbuBmZSbMAZU6Rwa75zbIKNWO1O5mHKXHXG1sXmX1A0fEd/yFFEeM62A9MNMC+0NEIdtPo+DHmK3/v2wE0J6tVjMk2DnFjamdd8r1VMAYdtpsYwn9ZxgCnDlHyAD1Y0AbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-50f85ec0885so2982920137.0;
-        Mon, 18 Aug 2025 08:37:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755531423; x=1756136223;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KPnXyjQyRiPNxWrfvyKTF8MriephV3eeN7jOjaXGjKk=;
-        b=qijQ+Pz5O5TWt8aICVsVtvdNF9SZexQRzNW9RSAXykJq/P+5LJ1RU7Nhq4CGNTU/WR
-         c5UZN+GX8Z8f3AdNbD4XNXottGZ1v3tdUFMigyQSLPpova7Se3aocQ3yzx/2VRTcygQB
-         YyH91pxZ6pZndSoae4ePPZGv1mAjJAVtCjei/ufrExMcRsQzzfwtmcrNu1/MZnOU8onF
-         VR36a+q5o9n4CXcoGUaeeeu4aNhptLRUBtxxg1lscM1c5nAAZGAt+IVtOQC7qHN2pTsz
-         XrmXKaJl1SwEGIgY9peRtry1ssF8nrtQtz/1plkmboMshrJ1P74jxuXKHNrLs7DExmDC
-         tRjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVafoTRl0YwmpD/8+0L1C+CiWjUnHquRKJ5pCFsN9mTRZOYytHUwzJPJ0ZZu4rT18lPy3HFmWffn/qMc60=@vger.kernel.org, AJvYcCWtLMsxaAoW2BxNn7vTUQAZ8EPUYWNZvbFiw3Fyi5qdJNER5lYXDrdsHStN/t6WuUdLMilpdoy5hkRTPRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMqPShmCjgmv9+XJoh8COQfY6qbkfS799ibHLKOlT7L1e5Fpym
-	GbWs8uPZy00A1vtGQjQBdatxItgRg8kdclZEZ0gVJBxFpHbVFwUdUh2pFsdFJrEV
-X-Gm-Gg: ASbGnctaaCoyEFMMoZZwkOSS44Z2MMtMPdBcVtx1DXY60tSNXPPpUTpIeVTTc49dBFW
-	keYEGtd8gzUhZ3dDo8/grwGy3mCA+xyhSAfRvh0gwipmpsHRltL583r691WEXyAfI+NMB6DhzV0
-	ZLl3XySYuoKDIjNgS4jmWxPkhhO3Be1L2hVhxhOEPFnwmpPsIWnBn4CuvkX5mabw/TYQBq2GpoB
-	l5YtUytc8GG0m5WxBGwkLRvrbNM4Uv+u2BQDM9ap6zfVeZhm/zeFVfn9izyJTBoXKRFoMkQFyco
-	mygmHT6oHrydmFbGiN3T2uIoLX2jPwwVAqi4o3z0koI6aN0k263G1OEIN76w1u7wjf0bqGY4j3g
-	5k8mQVrzDfC3B2mHvZU98d1x2V85pRZSkMSOBGka24IIyGL7ZDAydBnOupH8p
-X-Google-Smtp-Source: AGHT+IE1p7HQE8jcxTfzSEQChtRQi3fjUTieEsJ3XZr+Wd3o420HqePGkwqGoVlsC5jP6lBF/6L2sA==
-X-Received: by 2002:a05:6102:dc8:b0:4e6:f7e9:c4a5 with SMTP id ada2fe7eead31-5126d30d22emr4633194137.22.1755531423212;
-        Mon, 18 Aug 2025 08:37:03 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127f2269e4sm2067681137.10.2025.08.18.08.37.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 08:37:02 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-50f85ec0885so2982906137.0;
-        Mon, 18 Aug 2025 08:37:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEwDJEqfAfy6D15Du+khIY9xDuVitnmwYop31nzThrYoxuGXsmmF7RxpqivkAx+ZkGx86gkrBJOhhk2cA=@vger.kernel.org, AJvYcCWbXuXl9sMOqO0IMCSqLT48XkKO5gA/FN96DlJhCHPlzUrMiPt5ArbNbcU3hUd5Da3IOyfL/Pke4AIGl8A=@vger.kernel.org
-X-Received: by 2002:a05:6102:4a84:b0:4ec:b2cc:de60 with SMTP id
- ada2fe7eead31-5126af22cf7mr5384089137.11.1755531422341; Mon, 18 Aug 2025
- 08:37:02 -0700 (PDT)
+	s=arc-20240116; t=1755531427; c=relaxed/simple;
+	bh=h2jMzXsrdLhcRVYsIHxcAZjoHTNjv1iL4iICT9J8AbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUrH0tLiOb28NXDCRXCcoa/3dtQ40CyiQr/GlxLQUpcQoKSC/WTd3JRoWz2OQ25hIcMscKaghnNUF9yLeooFJrj+07UpwONfjbIJa55obcs9q2HWv+ePXEIPixGRyhQ7tYT/uJ5D4SHrwmFDM1G+iZW2ZjxYUPQ2h5RBDl+2X1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/jeC3FS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2B7C4CEF1;
+	Mon, 18 Aug 2025 15:37:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755531427;
+	bh=h2jMzXsrdLhcRVYsIHxcAZjoHTNjv1iL4iICT9J8AbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e/jeC3FSqUYoEbLprmY8nBJBik/VMnt8fS4ljlO/zMI9wds2uCVADNTy+mvgKA48W
+	 MeG12AgqiQVyQsQ0EJ2Ksk8sE5o/J3+apMckImO6t3eNyikHoYsTYxWJUn2EytOr0B
+	 MPmHLiLYmNp7zipF12yRDEWmfLp9uDFgKrK+7yASi2MAb3aRfRUV/XsE9e2bJklikL
+	 +70IRtD2rnyHhg07fmu70SMoEhZ4kuqfo33p4uOFa8fUCtkenANREsGyN0oTG5Jr6R
+	 Pc+DaRtxVAMlGZrS9DMS/XKxSa9lZqsAdc8ouqYfaqhoFTavBaU3grOCtay1P4abIM
+	 RV7NaICgEgGAg==
+Date: Mon, 18 Aug 2025 10:37:06 -0500
+From: Rob Herring <robh@kernel.org>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: i2c: qcom-cci: Document msm8953
+ compatible
+Message-ID: <20250818153706.GA1238481-robh@kernel.org>
+References: <20250810-msm8953-cci-v1-0-e83f104cabfc@lucaweiss.eu>
+ <20250810-msm8953-cci-v1-1-e83f104cabfc@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
-In-Reply-To: <20250817192425.12983-1-mohammed.guermoud@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Aug 2025 17:36:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXQfUCYdt-PJX8rYP3bf8Z_ea3Obgunm-_7KmJxMrU_fQ@mail.gmail.com>
-X-Gm-Features: Ac12FXw4gbFdT9fnsf3GhA6Uid_mXhbaQ1tCt30kMl8rgK4UTMaDn8DaYsPtEDE
-Message-ID: <CAMuHMdXQfUCYdt-PJX8rYP3bf8Z_ea3Obgunm-_7KmJxMrU_fQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: nvec: Silence unused argument warning in
- NVEC_PHD macro
-To: Mohammed Guermoud <mohammed.guermoud@gmail.com>
-Cc: marvin24@gmx.de, gregkh@linuxfoundation.org, ac100@lists.launchpad.net, 
-	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250810-msm8953-cci-v1-1-e83f104cabfc@lucaweiss.eu>
 
-Hi Mohammed,
+On Sun, Aug 10, 2025 at 05:37:52PM +0200, Luca Weiss wrote:
+> Add the msm8953 CCI device string compatible.
+> 
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> ---
+>  Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+> index 73144473b9b24e574bfc6bd7d8908f2f3895e087..be6cebc4ee054d3100e5c4c676f1a0c4fd8d2e1e 100644
+> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+> @@ -15,6 +15,7 @@ properties:
+>      oneOf:
+>        - enum:
+>            - qcom,msm8226-cci
+> +          - qcom,msm8953-cci
+>            - qcom,msm8974-cci
+>            - qcom,msm8996-cci
+>  
+> @@ -128,6 +129,7 @@ allOf:
+>                  enum:
+>                    - qcom,msm8916-cci
+>  
+> +            - const: qcom,msm8953-cci
 
-On Mon, 18 Aug 2025 at 17:10, Mohammed Guermoud
-<mohammed.guermoud@gmail.com> wrote:
-> The NVEC_PHD macro was defined with three arguments (str, buf, len)
-> that were not used in its empty body, causing a compiler warning.
->
-> This patch silences the warning by explicitly casting the unused
-> arguments to (void), making the intent clear without changing
-> functionality.
->
-> Signed-off-by: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+This should be added to the enum above.
 
-Thanks for your patch!
-
-> --- a/drivers/staging/nvec/nvec_ps2.c
-> +++ b/drivers/staging/nvec/nvec_ps2.c
-> @@ -28,7 +28,7 @@
->         print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
->                         16, 1, buf, len, false)
->  #else
-> -#define NVEC_PHD(str, buf, len) do { } while (0)
-> +#define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; } while (0)
->  #endif
->
->  enum ps2_subcmds {
-
-The proper solution would be to remove the custom NVEC_PHD() macro (and
-NVEC_PS2_DEBUG), and just call print_hex_dump_debug() directly instead.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>              - const: qcom,msm8996-cci
+>      then:
+>        properties:
+> 
+> -- 
+> 2.50.1
+> 
 
