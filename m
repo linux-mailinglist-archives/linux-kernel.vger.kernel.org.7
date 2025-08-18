@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-774511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAFEB2B362
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D261B2B378
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7568E189BEE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD26682C17
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623E41EC01B;
-	Mon, 18 Aug 2025 21:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TnyjMCtj"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6596553A7
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55D5214A94;
+	Mon, 18 Aug 2025 21:35:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85B4202C5C;
+	Mon, 18 Aug 2025 21:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755552623; cv=none; b=D1SDnF9x+YLbJpIfqHfPsV0IfACpfVvdgU692k3shzRFz4IVtmkvrvXaOqo8fWlKkVM7am+It0Iocj+YZ78CLMOoKR4ngCXuOa0RNIBV4D4mhfyhDVSUmb5MFJvBwc8h9Y3MxPFMGuC9GWq5MCznW15YLl2tZUpGe1zuba6DT20=
+	t=1755552918; cv=none; b=iGSxN2Gat9TMwnCP5QqFcynXYfWs1RtKamR8jQZ0VfFpiGGK4k1vf+M4t10NpwHEYS5EgTcQkGNOkDtv6BkPE1/ki+MMnHqWp69zXPh31Du/7ECR8YElBtuJt/Ew1D6sasgkV2qT+vXnSvzjbholAxhy8D/+SCPqXoHAX9JfPi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755552623; c=relaxed/simple;
-	bh=sWWwbfGZnMtusIB0fCiGSV1DGRh/FWKARAGxmZUfHqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y4Ak1OVDeWoYUOsrCL1HP4Aebqo1EL4s+gvuH/Mw/A+X4JnsxP7jkyqe6KwY6IPfRV8qhZIyNnc2ZCzrEGbL0Y3ucUQla86Ot2+hY9fih6YLsrBXQ+mdamGWTLqKR862qog28u/Cl57OXiNIQewazV0FPoEMvr6HNSbr5j37nfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TnyjMCtj; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-242d3be6484so20615ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755552622; x=1756157422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GlGqJIlxYa8JPzVYG9ATkkS2RNUZQWMskrpzXY/rMK4=;
-        b=TnyjMCtjrDv8JQRYEQNIvCYKhr8S/K9N1+vqxaVFnPspNqztow8vsGFObbV3Wt8g8/
-         w1lqmCk20AVnpwJrqyaanhsjxHflruAFgFPBNPP7wzSIc4h1l0FlP/zk9DsvWdzkF96V
-         z8uisKK1aJNV+8pnDgu80YSBCtDZcLEg/faKKV9JZ7eEfwCGOPoOu/W9LfPAF7UILxEl
-         Oa6pvMCI2VnGsqr4IvSE/kzfmAJZdinw6uFyj4XdWKLxhrmjaOPoKmtaUrnK9UWhW3RL
-         S1Suwg1ii89rW1M27tmlRKyv/xA9inU2RJ0as//oM9oqnAVLbNy630hHIH1cxg1+6G4R
-         ty3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755552622; x=1756157422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GlGqJIlxYa8JPzVYG9ATkkS2RNUZQWMskrpzXY/rMK4=;
-        b=XWPfBMbqoxtPFTpjoDIdeYbC8Zq06f9/KMz39GbQji/1+cJjT3trLT8zTtOSb2ovYp
-         GdxHEm01beVqumqHJXdkTkZ4bbOGkSh+YN89WmN95NZgMAp5D4N35aIqcmO98u/3HHY1
-         vsUAqxj/tpLDUF7xPEq4UjBX8+uUFHWYQ2WOYyCMc71UqYTqloO18uT+5rfkiiw56U5X
-         LgcMQhTA89AlLJK6ltSMcTaFGOKv6DTwHpZ1/rjp8HwRQvRCArlqVkIZq5W63L0BTMlu
-         +wl9XchCQ9o+AUUmou+/k0FSDqOM8u6iSXO8SN8LN2c+DkvRQMUI7GVSwJ4KRxuXvnzL
-         S4XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNq8H8oPZ6D/ybMbXKxrzuKs2V4WrdehOmHiI/ap1rn/qqNI1/JTOLzO5VkwXsVRkXp+lqioVNCl5O+OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCBJPXeb2Vlhtjfput36mrhpmXYbAC2XODLFaDeXYzoqgaOn52
-	Jma99jGqR6lepGn+DfkrYKySt7ED7vPBlbGhgqXpaBjL7EVHtSO9EMNT6WYFEJK6JMnH6sROFtR
-	aEuvEc9+kD3y65MTH0BhkHqS0gT6RQgmrPMXH8Yb4
-X-Gm-Gg: ASbGnct2j0hFOe9E+FAlqQvxajb2Elb5pSpTZF9bi3hktrfIa6AAEzfYN/H15kxpCHC
-	g9Oz+CUwRxfqDvZqhYO83WWFKEmMSftDabKUsG4lPGTydnVH5D30YG/sJtSJ7BiINCSIPVGh5xa
-	D8R5psA7ffTm2Jr8VhkmKSdbR9n54G6hfIySGSq2HSVGJ9A4H1WbkKLIw0KyO60TEjtXW69PP8d
-	sa+vtBYMz1+lvaMabIRM+TEPvSDQsG65qIVgdkYC6U=
-X-Google-Smtp-Source: AGHT+IGpzjIX9dwiWXKMpvHQqGAMp7qHKE+kta0wJX1OObH6fa6pfTymKeTi3YH0pWOEbCdRHlIQ08sZYsqQ3QpK7nM=
-X-Received: by 2002:a17:902:f549:b0:240:589e:c8c9 with SMTP id
- d9443c01a7336-245e00cd8c4mr568575ad.10.1755552621445; Mon, 18 Aug 2025
- 14:30:21 -0700 (PDT)
+	s=arc-20240116; t=1755552918; c=relaxed/simple;
+	bh=tCI4mVgtJlFeGbDKsIP03sIungsACBdTcfeddQ74uGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gawx+CMAeKmru0ULceWZtJ1Qzo/ha02Gs8dRUzYHQwQ1XiKZKBrpAsm3hEPx7sF8wSOEmcVzqHDjj60eWCapaiKO6S/hKPRCspeQcgIdePJhrsFoZufKwHbPfnF4EKn5LIgUw824d2ZTd9E5+AItlfk6/ywA2lr2SLWiqxkBjTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD3361596;
+	Mon, 18 Aug 2025 14:35:05 -0700 (PDT)
+Received: from u200865.usa.arm.com (U203867.austin.arm.com [10.118.30.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38EBB3F738;
+	Mon, 18 Aug 2025 14:35:13 -0700 (PDT)
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: linux-trace-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org,
+	oleg@redhat.com,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	thiago.bauermann@linaro.org,
+	broonie@kernel.org,
+	yury.khrustalev@arm.com,
+	kristina.martsenko@arm.com,
+	liaochang1@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v6 0/7] arm64: Enable UPROBES with GCS
+Date: Mon, 18 Aug 2025 16:34:45 -0500
+Message-ID: <20250818213452.50439-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813033432.8943-1-zhaoguohan@kylinos.cn>
-In-Reply-To: <20250813033432.8943-1-zhaoguohan@kylinos.cn>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 18 Aug 2025 14:30:10 -0700
-X-Gm-Features: Ac12FXwNR5TecROABcdaMEakc_vF-IACGcE4lnxADtYA0Z1Lq05sdXbeGcof7dI
-Message-ID: <CAP-5=fXkzoJJvn6h-dbTGvxkO3DEtGUfauTSZOAGPjcQMrFUpg@mail.gmail.com>
-Subject: Re: [PATCH v2] perf drm_pmu: fix fd_dir leaks in for_each_drm_fdinfo_in_dir()
-To: zhaoguohan@kylinos.cn
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 8:35=E2=80=AFPM <zhaoguohan@kylinos.cn> wrote:
->
-> From: GuoHan Zhao <zhaoguohan@kylinos.cn>
->
-> Fix file descriptor leak when callback function returns error. The
-> function was directly returning without closing fdinfo_dir_fd and
-> fd_dir when cb() returned non-zero value.
->
-> Fixes: 28917cb17f9d ("perf drm_pmu: Add a tool like PMU to expose DRM inf=
-ormation")
-> Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
+Currently uprobes and the Arm Guarded Control Stack (GCS) feature are
+exclusive of each other. This restriction needs to be lifted in order
+to utilize GCS for generic Linux distro images where the expectation
+is that core debugging features like uprobes work.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+This series adds some user accessors to read/push/pop the userspace
+shadow stack. It then utilizes those functions in the uprobe paths as
+needed to synchronize GCS with the changes in control flow at probe
+locations.
 
-Thanks,
-Ian
+The KCONFIG restriction is then dropped.
 
-> ---
-> V1 -> V2: Added the Fixes tag in commit message
-> ---
->  tools/perf/util/drm_pmu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/util/drm_pmu.c b/tools/perf/util/drm_pmu.c
-> index 988890f37ba7..424a76d1a953 100644
-> --- a/tools/perf/util/drm_pmu.c
-> +++ b/tools/perf/util/drm_pmu.c
-> @@ -458,8 +458,10 @@ static int for_each_drm_fdinfo_in_dir(int (*cb)(void=
- *args, int fdinfo_dir_fd, c
->                 }
->                 ret =3D cb(args, fdinfo_dir_fd, fd_entry->d_name);
->                 if (ret)
-> -                       return ret;
-> +                       goto cleanup;
->         }
-> +
-> +cleanup:
->         if (fdinfo_dir_fd !=3D -1)
->                 close(fdinfo_dir_fd);
->         closedir(fd_dir);
-> --
-> 2.43.0
->
+v5->v6: Add additional review-by's
+	Post the version with the complete function rename that
+	     builds with/without GCS (patch 3)
+	Drank my coffee before posting this time.
+
+v4->v5: Fix ret xn handing
+	Renames, comment tweaks, formatting, per review comments
+	rebase 6.17, drop first patch
+	Add reviewed-by's
+
+v3->v4: Much delayed v4 rebased to 6.16
+	Move existing gcs accessors to gcs.h and then add the new
+	     ones. This fixes some of the forward reference issues,
+	     the build break and keeps them all together.
+
+v2->v3: Cleanup RET logic to alwaays use LR, and not update IP on aborts
+	Correct generic uprobe_warn bug even though we aren't using it
+
+v1->v2:
+	Drop uprobe_warn() patch
+	Fix copy_thread_gcs() bug created by fixing task_gcs_el0_enabled()
+	Comments, now describe issues with reading userspace GCS pages
+	Rebased to 6.15
+
+Jeremy Linton (7):
+  arm64: probes: Break ret out from bl/blr
+  arm64: uaccess: Move existing GCS accessors definitions to gcs.h
+  arm64: uaccess: Add additional userspace GCS accessors
+  arm64: probes: Add GCS support to bl/blr/ret
+  arm64: uprobes: Add GCS support to uretprobes
+  arm64: Kconfig: Remove GCS restrictions on UPROBES
+  uprobes: uprobe_warn should use passed task
+
+ arch/arm64/Kconfig                       |  1 -
+ arch/arm64/include/asm/gcs.h             | 89 ++++++++++++++++++++++++
+ arch/arm64/include/asm/uaccess.h         | 40 -----------
+ arch/arm64/kernel/probes/decode-insn.c   |  7 +-
+ arch/arm64/kernel/probes/simulate-insn.c | 50 ++++++++++---
+ arch/arm64/kernel/probes/simulate-insn.h |  3 +-
+ arch/arm64/kernel/probes/uprobes.c       | 33 +++++++++
+ kernel/events/uprobes.c                  |  2 +-
+ 8 files changed, 171 insertions(+), 54 deletions(-)
+
+-- 
+2.50.1
+
 
