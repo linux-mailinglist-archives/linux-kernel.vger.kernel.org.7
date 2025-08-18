@@ -1,190 +1,124 @@
-Return-Path: <linux-kernel+bounces-773392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91358B29F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:40:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05769B29F3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2DF3BF786
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:38:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E34F74E1734
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34642765C9;
-	Mon, 18 Aug 2025 10:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907242765C1;
+	Mon, 18 Aug 2025 10:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3rR1E4r"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XNrfVQ/R"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFFF2727EC
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95F12C236C
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 10:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755513481; cv=none; b=mkQq1sGaiuQNmOvLNR7xhsjGPWET1EZ1wFSdqNgHLwmLGZKRlNH7i7yYmqkqjkbPnOvTXf3GcIdKdeL5hXYDNQeXen02796BydVuRZAETmKr9QcRL9V9vxoUwMPoj0/mSX8/usMZt9bYjk9KlqfvIr/G4IeiV2CQdtjgS0ZU0OQ=
+	t=1755513561; cv=none; b=ntQf3vhEpNLS0CQBkaglsIbN4a+xeaGlxhzVx32FYVwKWwScis8TzY1RyauDAa9f0lR2KnfO7E5cSWJvv2EU8/8MILmMgpnq71vk/ApKVddSfXrKgBcaADLbiX4Z2d+PCgiPJvQVloANcSnb3cjt7tHLleULPGbiLurx1hm/jIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755513481; c=relaxed/simple;
-	bh=s8IwXCiUQ0FxlihavqVxQsLHd47yJOgvxCiikfOxmxY=;
+	s=arc-20240116; t=1755513561; c=relaxed/simple;
+	bh=4lurvmTL/vxhyC7uZfzIjOlPkzZ0y3mYQVgtrBNm/xs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bh4OapfwzoxL+6cdR67xYtNne5y5I4eWizjXnfsHrNAga6PYsYy+heMPK53XQdBmTxomAeb1uu6gFbTM1kCDMCboJbrbxMHAc69Y6xRdYBFMwDIX2tFSw8u4n7wUNjyrXsiI6hPbjjmTkjnqJV0p2zctq/I8OaiEhkyp0zSCUJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3rR1E4r; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b0becf5so20164385e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 03:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755513477; x=1756118277; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MJ+dLG7D8VMA5zUxamVufYYDcWdBwujLeZKSQ4qaAMA=;
-        b=o3rR1E4rJFwrg7CZUW03Sr4xdmf25dhIq+EpRU5K4Tt9KcGs2mGu9Ca5Ju/lh03Jf5
-         +3QETiXW1MEXBOhLDcj8hQNkQ7hPQXNczsaKwni+s9/5NjUbh8qU7NSf44shtTjx+pag
-         SoxkRH3sjroN+TffGPQhHUn2c6CJgdYBrF/48N19VBSJ2dhjWCGd7wlE+6+w+2Y/JWA2
-         vlDD+p7utAyWPPgIE2O7ALXPPnN2XOmRTL2a6C2SFkwdUrRd3NlOByQh1KlN9/yJFxye
-         Z3BRZaBBD4DZ4JsIox/z48MZ9Z6igfmpO+nIFaNx7rwPIS4k/fZB8I33mj9EXgvJZsGo
-         vroQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755513477; x=1756118277;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MJ+dLG7D8VMA5zUxamVufYYDcWdBwujLeZKSQ4qaAMA=;
-        b=g5W3MMvPmutr5ZBfqlWaHYYgk4WGqC5zHHXos7f+CIoi8h8M2pjrmbkupdUhAjInSp
-         RCUa8/KjB0ramvuPFrEtZufH01zUiYCMmMgIruuh2FymwfgAUc3JsHMtEtBeROIT3V2y
-         KqL2M4j4Gufgu2mjCF0mkcjmrj8+1QZ83KlDi+yME667WLLXiPtXVpqwqCVZZQumhWs6
-         3rJYJvpP7no/dNHaZTlexGZtLopvLAF50uvJC+YzQZ9Xrgm//Okxhm81qA0IBRLeU6JP
-         XFcR5zC4CB1voE3squ6LclDYV54Z+J9w4LB6D6ilcXlEaUivjkyyp1h7gQM73AOkNtRh
-         4txg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKCxQ3J401NjShSD+9/skAe4DvApc5edPCKF5NCGRB8dtscuq4/K2jP7+GCEyL8YOCch+hxF35d/RjInQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSgI+jv5h0cBD6q8jQ8cxTZ3tgaYUi/q5/yZmZZ1zsBCl50gRU
-	CLe+ceXU/UTmzAX7zUxW/rSP7UQUaMWV+M35nwbXEedK2XsnyH/cAOJZWhMrxouhqGE=
-X-Gm-Gg: ASbGncvb0d63n6wzop5Wn8vgnUlXTfJpZDVATbmQBZFd0zuTsKhS4WWKgPuX0DGqUXp
-	RGsk6T/6xCKCO5KgK/9woRFmyfN5Oxp1PYVH0y3Uzi9c86Vuj2lsyVYwAoLV3KZitL4f9+kMmg4
-	ysMm/rKFyZ9hFHak8taKVAXG0kesanBxZ+KK9NPz757Rco3Y5Xi1pablNmRwFEEz1q/dzMb4aGK
-	65wbH9bUetGCIagwirWb/BqedOg3WIC0mogcO9gP8bM3hG/LBrRN8q22+B1D6FIymCx5eNMUmYu
-	voUXPDO+Rw6p5yvlNDik0Av+T8gVix99CTRIY6M9/anIIMdOom5LdC0AG/Gtl2s8AqrX3aISsDI
-	rm02774khp9y0fhAs0Cg/iV0YNUNX4stS
-X-Google-Smtp-Source: AGHT+IH/iXgPgP6GZzzqwOmyT3dKbeYre4usD+yo4PWWSrFhchZe3s7Qf6anzEm7JhSB0vvjno+pSQ==
-X-Received: by 2002:a05:600c:198e:b0:456:1904:27f3 with SMTP id 5b1f17b1804b1-45a2183d444mr88116475e9.18.1755513477021;
-        Mon, 18 Aug 2025 03:37:57 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:d6e:23fa:76e1:25d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6cf151sm168054945e9.8.2025.08.18.03.37.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 03:37:56 -0700 (PDT)
-Date: Mon, 18 Aug 2025 12:37:48 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	Abel Vesa <abel.vesa@linaro.org>, Xilin Wu <wuxilin123@gmail.com>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-	Christopher Obbard <christopher.obbard@linaro.org>
-Subject: Re: [PATCH 1/9] arm64: dts: qcom: x1-asus-zenbook-a14: Add missing
- pinctrl for eDP HPD
-Message-ID: <aKMCfJW-Qv4Z-gnz@linaro.org>
-References: <20250814-x1e80100-add-edp-hpd-v1-0-a52804db53f6@linaro.org>
- <20250814-x1e80100-add-edp-hpd-v1-1-a52804db53f6@linaro.org>
- <pmhy2ogyorelllgandehtzlen64tzegp5pc6fkg7al7xzjcb2h@lq4lpaaavr6j>
- <aKLZ5M12Q-qTuB4n@linaro.org>
- <ubagrwewqqyvdgjmibhqp57x7ttqukqtv6ziftwsayuomlght6@j2k7i63rldsd>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oq8ze4NQWPV0cVdJhLFF2RZH7vvE80Mu5gkUKGkt+Sh/LZvPXp2PfGdXO38zvE31S1KcJPdIxVPbuPuN7a8NosI30VTX4Q7n3bj32Cxg5wfszNL6VaZ9+6jVCg804oGAcXn4ZS3bRXFHImss2h0U4zF4/ANJj2Y5e0Odd+yX6vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XNrfVQ/R reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 097E740E023B;
+	Mon, 18 Aug 2025 10:39:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 7wpdnpPmb79X; Mon, 18 Aug 2025 10:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755513552; bh=1Levj26XMA+D8akUdtEC9aHEIt3U3memk+4H+vzIoNM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNrfVQ/ROV2+WquOtBFj+p0ryv3mVsTb9lqyNLsFpS/hW1t2fgq+/xDhpr1C4X7r+
+	 RZQzLDihwCsRgu+MatpSd4Nmzpiufh5CsPdcSPsAzwUgRUAeksOE5xXo8kgm3WB0Rn
+	 2KmyC8e+/BwxYOt77CvngHjETTZREEyhwyDXfnZNAJ5/J247gog1rqmyWgXOcQUb7r
+	 SdWqQW+NaOVN7jhmxP6JBvhGo6CHFCAAbT+hlJrrBQL2lWvmn+7xOFu6v686/x53F6
+	 Qbo3ErMdgnQCbl155T9mk1Fkj2e0FawgGRmhfjtawBJxj/3eYjNUTMyg/gBAglrvzP
+	 hcBhlmUtgMpsdVkV8G9iRJAMjGz3VW+HdLX/4/5ZMN5YfXetempCd4ue9fbmjybbel
+	 liK7ASzT8Eki9LdAEHSGmx3rrv/CYh2zGkbGSUSnbHPoWbXQhz49SFYG+cOfNUjCjC
+	 Okitd1nIvS/DhWmhBqYGg+en3HMakyfEZup3tvS1OuiqvnM6yXPzaiKNaNJnFrfzVw
+	 BacIaUkdjET2VAD28dTPO+GjicUHee0/BvpVWmm76d2YD30Fw0iU/E7z0biNqzgWTa
+	 xc8lNprNLksv3ID4/Y6WQztwHWwcS6oAyMKPkC1ai8MsKvwU079ib0ODaa0KvDEGnO
+	 TjPIzWVHlpBysugO9bQvcx6M=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B7FA840E0232;
+	Mon, 18 Aug 2025 10:38:59 +0000 (UTC)
+Date: Mon, 18 Aug 2025 12:38:53 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	linux-kernel@vger.kernel.org, Konstantin Belousov <kib@kib.kiev.ua>,
+	John Baldwin <jhb@freebsd.org>,
+	"<cperciva@tarsnap.com>" <cperciva@tarsnap.com>
+Subject: Re: [PATCH v4] x86/bhyve: Detect FreeBSD Bhyve hypervisor
+Message-ID: <20250818103853.GEaKMCvbtnA3J197yP@fat_crate.local>
+References: <03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ubagrwewqqyvdgjmibhqp57x7ttqukqtv6ziftwsayuomlght6@j2k7i63rldsd>
+In-Reply-To: <03802f6f7f5b5cf8c5e8adfe123c397ca8e21093.camel@infradead.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 01:33:43PM +0300, Dmitry Baryshkov wrote:
-> On Mon, Aug 18, 2025 at 09:44:36AM +0200, Stephan Gerhold wrote:
-> > On Sat, Aug 16, 2025 at 01:06:50AM +0300, Dmitry Baryshkov wrote:
-> > > On Thu, Aug 14, 2025 at 03:30:28PM +0200, Stephan Gerhold wrote:
-> > > > At the moment, we indirectly rely on the boot firmware to set up the
-> > > > pinctrl for the eDP HPD line coming from the internal display. If the boot
-> > > > firmware does not configure the display (e.g. because a different display
-> > > > is selected for output in the UEFI settings), then the display fails to
-> > > > come up and there are several errors in the kernel log:
-> > > > 
-> > > >  [drm:dpu_encoder_phys_vid_wait_for_commit_done:544] [dpu error]vblank timeout: 80020041
-> > > >  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
-> > > >  [drm:dpu_encoder_frame_done_timeout:2715] [dpu error]enc40 frame done timeout
-> > > >  ...
-> > > > 
-> > > > Fix this by adding the missing pinctrl for gpio119 (func1/edp0_hot and
-> > > > bias-disable according to the ACPI DSDT).
-> > > > 
-> > > > Fixes: 6516961352a1 ("arm64: dts: qcom: Add support for X1-based Asus Zenbook A14")
-> > > > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> > > > ---
-> > > >  arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi | 9 +++++++++
-> > > >  1 file changed, 9 insertions(+)
-> > > > 
-> > > > diff --git a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-> > > > index 16d045cf64c08c02c420787e000f4f45cfc2c6ff..613c675aac296f931293a1ba3d8506c6663bad21 100644
-> > > > --- a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-> > > > +++ b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-> > > > @@ -1001,6 +1001,9 @@ &mdss_dp1_out {
-> > > >  &mdss_dp3 {
-> > > >  	/delete-property/ #sound-dai-cells;
-> > > >  
-> > > > +	pinctrl-0 = <&edp_hpd_default>;
-> > > > +	pinctrl-names = "default";
-> > > > +
-> > > >  	status = "okay";
-> > > >  
-> > > >  	aux-bus {
-> > > > @@ -1236,6 +1239,12 @@ cam_indicator_en: cam-indicator-en-state {
-> > > >  		bias-disable;
-> > > >  	};
-> > > >  
-> > > > +	edp_hpd_default: edp-hpd-default-state {
-> > > > +		pins = "gpio119";
-> > > > +		function = "edp0_hot";
-> > > > +		bias-disable;
-> > > > +	};
-> > > 
-> > > I think this is common enough. Let's maybe push this into the SoC dtsi
-> > > instead of copying it to all devices?
-> > > 
-> > 
-> > I had it there before, but Johan commented on the patch set from Chris
-> > that he would prefer to keep the potentially board-specific pinctrl out
-> > of the SoC dtsi [1]. So I can either address his feedback or yours. :-)
-> > 
-> > There isn't really a convention for X1E either - we have a wild mix
-> > where some pinctrl is defined in the SoC dtsi (UART, I2C, SDHCI, ...)
-> > and others is copied for each board (e.g. PCIe).
-> 
-> PCIe pinctrl is a part of SoC DTSI for SM8[4567]0.
-> 
+On Sat, Aug 16, 2025 at 11:06:32AM +0100, David Woodhouse wrote:
+> +static uint32_t bhyve_features(void)
+> +{
+> +	if (bhyve_cpuid_max < bhyve_cpuid_base | CPUID_BHYVE_FEATURES)
 
-For some reason it's not on X1E.
+Forgot those parentheses again:
 
-> > The reason I chose this approach is that I didn't feel it is guaranteed
-> > that the HPD pin has external pull down. It seems to be the case on most
-> > devices, but in theory a device could maybe rely on the internal pull
-> > down. Might be better to have it explicitly defined, the 5 additional
-> > lines are not that much at the end.
-> 
-> I don't think anybody will use internal pull-down for this, it would be
-> too risky in case the eDP cable is bad. I have checked several laptops,
-> they use external pull-down or two MOSFETs.
-> 
+arch/x86/kernel/cpu/bhyve.c: In function =E2=80=98bhyve_features=E2=80=99=
+:
+arch/x86/kernel/cpu/bhyve.c:42:29: warning: suggest parentheses around co=
+mparison in operand of =E2=80=98|=E2=80=99 [-Wparentheses]
+   42 |         if (bhyve_cpuid_max < bhyve_cpuid_base | CPUID_BHYVE_FEAT=
+URES)
+      |
 
-So are you suggesting to put just the "template" (the
-edp-hpd-default-state node) into the SoC dtsi and keep the
-pinctrl-0/pinctrl-names reference in the board DT, or to put everything
-into the SoC dtsi? I'm not sure if there is a use case where there
-wouldn't be any HPD connected to GPIO119.
+Tztztz.
 
-Thanks,
-Stephan
+:-P
+
+I did the below. Ok?
+
+static uint32_t bhyve_features(void)
+{
+        unsigned int cpuid_leaf =3D bhyve_cpuid_base | CPUID_BHYVE_FEATUR=
+ES;
+
+        if (bhyve_cpuid_max < cpuid_leaf)
+                return 0;
+
+        return cpuid_eax(cpuid_leaf);
+}
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
