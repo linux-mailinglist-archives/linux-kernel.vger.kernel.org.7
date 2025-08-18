@@ -1,122 +1,112 @@
-Return-Path: <linux-kernel+bounces-773932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD05B2AC86
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA760B2ACA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A251687A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61F72196724E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6CC254AE4;
-	Mon, 18 Aug 2025 15:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE300255F28;
+	Mon, 18 Aug 2025 15:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WtUF3//N"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="VDnSxP6d"
+Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E1025228B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AD32566D3;
+	Mon, 18 Aug 2025 15:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530283; cv=none; b=HCopXjVeGpi2+3O2CeOalMnEvKkxyJErELkZOCNLBqvIarzP92Tm0DXZoPFzBjB2RJDCCTviPkz4RL3j8rMYD8m8QOQMNqq+DDy7SLxZOYx/MkS5kp8fxmkeB5Xh+QlhnD0vPKbicheYxHUjYPahXP9Bqec1IhDzytIuJ8TzQPo=
+	t=1755530359; cv=none; b=DaEV8mfGORxFp7TqRHpEqODPHOI7nz+ZYkvncm9K9leHVQl6amMSZqHerjn2CI4ehpC6XMyiEv5cc3gWJpaYtFdgJJqJMPZ1G+kizhY2mpu8uAao3WgjLfFS5aY0dLwYWAytTW/NmBf4e7i5zwPe3lcXakLu+fYjr0kJrlOEwyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530283; c=relaxed/simple;
-	bh=ZMr9xoaIvvzsvVDKBkZPG6cWCCooP8ZucmJRQKxCeD0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TTTvk3CasvB7WkyKE5a17itFOyFvGPaxjXviSy//zBqYlaKNN0ADs9b8tj8Kf5ABNwhjhay/LVcldmbTv1AeaoyYHmX026uUYrZUZWc3zC3Ko3fxcdzPs2m3dI6uY6Zj1PU+B9vP2PB4cbO0+GFgPx04eMDBCssgAfxfVdm13UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WtUF3//N; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333f8d24c6fso36553371fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:18:01 -0700 (PDT)
+	s=arc-20240116; t=1755530359; c=relaxed/simple;
+	bh=+4Fs7Qy+5QfQkhCW1ldMCRWSp1qeb+vgo9mEqV61/wg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e2KCwygRaOOHF9DX+wDAku0k0wodt59RGb1//hAxzVS9J/72jbahN8QMsmG8m7p0sxkh6Xj+0++UFEe/4QMd9GWVknLtD6whTF+TiiiewOCNxAtqZcITxy5LMsU2JpAiLCvTXDSF+4pM5kEqKdYzbYjsnwzmQ+A+Of9pkMfbLhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=VDnSxP6d; arc=none smtp.client-ip=35.83.148.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755530279; x=1756135079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZMr9xoaIvvzsvVDKBkZPG6cWCCooP8ZucmJRQKxCeD0=;
-        b=WtUF3//NLZ7/6hLzLU3o++OolJELwmdrByUWCDGxI2WRn5OV/sXuEIqm79PpAd7/Zq
-         CpJybuE4DU+X0K8r+iOaLiNmhnzULnDMdWiRovRmiZIKjJOv0nDKhMS+V1iO9qa1NK9N
-         yhgyCSVBbZwYmpZH28VS+XwSqPiouUpkftA6XtF23HbWZBYdrb3KA2DnK3yVmD8STS4v
-         +EK3lQHJhpjW+0jPv925s2tu1LOR5vKWxpMNcwgUxG6rsgbReLg77KlIzc5ni/aJ9ExS
-         YNSOXpiqy+OHQPVyDHTeIGjufPfPTBLg9SXDPuNutPWCUkoFpB1dPPUFZryZWy3tkq1T
-         jEfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755530279; x=1756135079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZMr9xoaIvvzsvVDKBkZPG6cWCCooP8ZucmJRQKxCeD0=;
-        b=KBFWNN9oAys+4ppJaCUOyxZ/wFuQIkl9v4JqxAJkfKWPQc3k4HOQmllVHHD6lVIMxo
-         nna93JMWtuxhxDQBp94LxrOePpXzqBdD665A4BwDZjPliu/He4PHw3G7/15OS2Ik3+4Z
-         iA6/JgjMcI3OX7R9wbt51/SEJzMO+wplG7kD+vGtpSF9DQDi4w+S+rjRwpeOA/Nfqr/0
-         QMOoUtTftrlhCshZI4+kxFwSE6WcQM6NYcCijKGSp7texl+srF98w2NB729Anfj3HswV
-         1V58KKQoFxV43+9bnTqGpJkxR3HrUXYGsfAi5zPmzzLqaEzf+AUuV3FN+LxoUEwEUmfb
-         Yj9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWxSzkStAo+y/0lXRK/rTzUwI/6iUF5ErAN+Mldp42sBSfDLxG5bPo+w7lkHU27r78ebk2yKRE4NGI/ujg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeljuzThpiOU2It85kxHl5SxrEBjIKgMxuIbG827NTr1IMGtO0
-	kb8v4qnCPbJO6ldSCmt8sxpoVpEw2xSLi6Kbw+d1kA1I8FSg9lDvsMI6SS3Sw5Vm6U9Syektb8W
-	kPStb3FQ6A9nJ+HglkUyQ5HcJQlIW70WY2V2SnVB1sA==
-X-Gm-Gg: ASbGncvk0Cnz0dFq6ts9Er2mE4aT+1QAP4KfPPpjUp9MOxxA01ZZImCVEhPVqaGFOMQ
-	7JmVN3oSM7v2rXVtbeBKtsSatIDmVJWpYQBIv7OhfA8YDXomfH0dpYzEIbAqgbkM+8lAl8iHFK7
-	Rj9TL68sUt7cZIMF/uXLup9lua3613jW3zYUiz/EdZQy/UAaR7asPjwzy0yGCBuq1tRbQj+JOY2
-	YizHhI=
-X-Google-Smtp-Source: AGHT+IHpEkQH4zE8nZNumut6IyOKwzxXwXZPLXikec1wNlOm0bT1vQJ2AuF2DGHtOC/up+K5+uVQHVhxHrEqbksxztM=
-X-Received: by 2002:a2e:be83:0:b0:333:7e57:67f0 with SMTP id
- 38308e7fff4ca-3340996a3d6mr37277621fa.28.1755530279380; Mon, 18 Aug 2025
- 08:17:59 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1755530357; x=1787066357;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6yuSU9QtOrPsASctmh4Lb/blPVMIH5637/TpUeKDT48=;
+  b=VDnSxP6dRJlRaLIriXtwjG6bEXLYJbe/AhZZV813fDLwhN7hxE2+GJLq
+   D4bHhEKstvwHlu++xy/+we5fPPpt62P9pFSlwjEtCf2g6M0t9MEwLQ1SE
+   Bx72UG0XYeT45TnPrf9e2LY4uFXr9Bs+MrIBNv5Nm9stPMuOMgVB7NA1n
+   Blqx1CsMU9TwH3mC1ulypQTbB5lKOsMpfg4rDF/7cziVHCRChdaOa7T5w
+   aGdLjekQJUNFlWO1dwizNBdumS2+URPpSgeT2FbIYAq3GoRzigAj+9lSG
+   mzy3B4mM7XWXFJoDkEmAaV9/KOzDg0a/vHAcZIO7HxrRMg321ojlxg6uU
+   w==;
+X-CSE-ConnectionGUID: 0d1gPxN4RMO49u0YWCL96w==
+X-CSE-MsgGUID: bXrj//2bTay4wpr6HK24Vw==
+X-IronPort-AV: E=Sophos;i="6.16,315,1744070400"; 
+   d="scan'208";a="1194597"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 15:19:15 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:29098]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.45.64:2525] with esmtp (Farcaster)
+ id fb48a1f8-a8bf-4ec8-b8a9-149eebf8bd5a; Mon, 18 Aug 2025 15:19:15 +0000 (UTC)
+X-Farcaster-Flow-ID: fb48a1f8-a8bf-4ec8-b8a9-149eebf8bd5a
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 18 Aug 2025 15:19:15 +0000
+Received: from b0be8375a521.amazon.com (10.37.245.11) by
+ EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Mon, 18 Aug 2025 15:19:12 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<kohei.enju@gmail.com>, Kohei Enju <enjuk@amazon.com>
+Subject: [PATCH v2 iwl-next 0/2] igbvf: ethtool statistics improvements
+Date: Tue, 19 Aug 2025 00:18:25 +0900
+Message-ID: <20250818151902.64979-4-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805150701.129113-1-hendrik.hamerlinck@hammernet.be>
-In-Reply-To: <20250805150701.129113-1-hendrik.hamerlinck@hammernet.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 18 Aug 2025 17:17:47 +0200
-X-Gm-Features: Ac12FXwu4f8Ac5IEmqGAiQiNmOLkl0amKoCINQhS7HVe6tsTOs7Qh5vl8eGuhWc
-Message-ID: <CACRpkdYK5-Ga+TpwKSroZN_Tku7R7gwA6LrV52W8ydYOqmLk+w@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: spacemit: remove extra line in debug output
-To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Cc: dlan@gentoo.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D033UWC001.ant.amazon.com (10.13.139.218) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Tue, Aug 5, 2025 at 5:08=E2=80=AFPM Hendrik Hamerlinck
-<hendrik.hamerlinck@hammernet.be> wrote:
+This series contains:
+1. Add missing lbtx_packets and lbtx_bytes counters that are available
+in hardware but not exposed via ethtool
+2. Remove rx_long_byte_count counter that shows the same value as
+rx_bytes
 
-> The debug output for spacemit_pinconf_dbg_show() prints an extra newline
-> at the end. This is redundant as pinconf_pins_show() in pinconf.c already
-> adds a newline in its for loop.
->
-> Remove the newline to avoid the extra line in the output.
->
-> Example current output:
-> $ cat /sys/kernel/debug/pinctrl/d401e000.pinctrl/pinconf-pins
-> Pin config settings per pin
-> Format: pin (name): configs
-> pin 0 (GPIO_00): , bias pull disabled, io type (Fixed/1V8), drive strengt=
-h (32 mA), register (0x1041)
->
-> pin 1 (GPIO_01): slew rate (0x0), bias pull disabled, io type (Fixed/1V8)=
-, drive strength (32 mA), register (0x1041)
->
-> pin 2 (GPIO_02): slew rate (0x0), bias pull disabled, io type (Fixed/1V8)=
-, drive strength (32 mA), register (0x1041)
->
-> ...
->
-> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Tested on Intel Corporation I350 Gigabit Network Connection.
 
-Patch applied!
+Changes:
+  v1: https://lore.kernel.org/intel-wired-lan/20250813075206.70114-1-enjuk@amazon.com/
+  v2:
+    - Remove Tested-by: tag
+    - Add Reviewed-by: tag
+    - s/duplicated/redundant/ in commit message of the 2/2 patch
 
-Yours,
-Linus Walleij
+Kohei Enju (2):
+  igbvf: add lbtx_packets and lbtx_bytes to ethtool statistics
+  igbvf: remove redundant counter rx_long_byte_count from ethtool
+    statistics
+
+ drivers/net/ethernet/intel/igbvf/ethtool.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+-- 
+2.48.1
+
 
