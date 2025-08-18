@@ -1,280 +1,124 @@
-Return-Path: <linux-kernel+bounces-774580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D87B2B476
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:12:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EA9B2B478
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6358C1B68484
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:12:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 101AE7A30B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699CE283FE1;
-	Mon, 18 Aug 2025 23:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A922765C5;
+	Mon, 18 Aug 2025 23:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jOrlyiBK"
-Received: from mail-oi1-f202.google.com (mail-oi1-f202.google.com [209.85.167.202])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CP8PALMH"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388DB28000F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7F22727EE;
+	Mon, 18 Aug 2025 23:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755558648; cv=none; b=C8aeKsY7r+MXKNjPD0ZFoVoT11lRRUfN9gC9Vv4SByV0TwNYn26AhE4NAOYHQp44S3Kxankbnb7mdwqmGeCkxeNO41PdaNtaJdklKm/zDoJDLwOScZvS7Lhzmf9XfBu0VjjrF5cjCHW1F5OH42dZ7cMeDXtqReISI+eWe0jCtnE=
+	t=1755558814; cv=none; b=ai2retZB+hTEIw541dTmk9Pue75WpNMe03l434SdLZ2awhJ8iFRKtfVFo+h8kgdv2mKEi5gGumgJmbF5qRhuI6W18vgG+2IYf2nAS8XJqrQ+iwBqf8/hNNFPMhe/LCQdgcSPRlTV8iE/G4K5trimJOTSonSsvFHnx3vJizDQfBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755558648; c=relaxed/simple;
-	bh=2hHEU72PYJh+SNwdPqD8UkbjBlmg8/6dhsKpY3DeON4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WAQR+n4phAxlaJziWQSvSsLtZ812+hzXwAWhQ6zTZ+hb4WMSEdETg3cR4URb/XZ4myjt4Wf19CJUqzUo+gQrtWqTfFep7wtG71oJRa+YISttE+xcLSjlU2cewsggkjy019DeVhu3YeIqXKu0nEKQCo4Zb36DGn0mFYxJBrBEUTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jOrlyiBK; arc=none smtp.client-ip=209.85.167.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-oi1-f202.google.com with SMTP id 5614622812f47-435de71710cso7150158b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:10:46 -0700 (PDT)
+	s=arc-20240116; t=1755558814; c=relaxed/simple;
+	bh=c8HzGd/TDaCgrjaWIMeuTNCXcuACmbYECvWUUre4PIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UY+TYXUpYgbX1Z2HJovgqmBbFFw4vE+ijdf/587XbTfZ28KJP85Mep5Kthh0belhcSM65cPpfEoUYQx1yaOs0lgScm3ueojn1Wq0DnB3AV8snnx0h16TNvm8pvjRtxVhawW7SAsOiDVC4DRW0YTgeqx8LYKoE27O/j/BHosd2F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=CP8PALMH; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b00f23eso25825325e9.0;
+        Mon, 18 Aug 2025 16:13:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755558645; x=1756163445; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v6LP4kbkBa88jvBhrFEiryEKhPYdSyeLgBMrYzBXaW8=;
-        b=jOrlyiBKYTnXaAb79/VUneC6kJzsV7MaCwLamcSHrzUJQSxMM8EdLcYRWSLp/GHZyC
-         VZzzJBJ1sT6+TL1AxydN/rLis6nxQ0Nw3Y2KKnNvVJ7/EKZP5OoDshHGkv//nquCaF6K
-         iO/rmbxs7V/o7TV6pzzthOB2dZGiX0+zIJTQiFQeNi9GuQZnZ1g44tRczaETACzqHT6b
-         Jirpihi+3OvKupb6u/9CNfm6VFeAY/lIba/SCN6qx8umljrQkl9kiND8ZSIwJ/MhgrJA
-         kjmLGoO49sfY2XT+OYxgqoT9SLJNTJzXIDy6H19YIfjSMhfnOkGwCVDONpJcTnINFx4/
-         Qi8A==
+        d=googlemail.com; s=20230601; t=1755558811; x=1756163611; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mnq9RhUyvZf92U8sAKjR3y1PDGecrVMkyD6LjbdWrCk=;
+        b=CP8PALMHPATAiY7l84kAD2Gpf9AxFgT/yWLBSMx/OpW9P2sftKeI2K4Q0d/BlBHdqM
+         NRA8Z6XPa/ZCtNa9IzBiQzgCfk8uqelU4zFhjcClJt3UB0ku2lZSFBM+OQZUhyWW5jwv
+         KFDW6TCOTWt+gkaEOyam6kUw9dGZLSGZ6Mbkp7mk57pXKin8Z5cJ/vtdCdujRBcSJ6NZ
+         sgoe1UzvHKV9C5KcT2RZEo/zxory8mJrhzNYjrnsUPS25fZy/dZRyW1YP2OwVSVZLQPB
+         DNXSLhxR0OeS5DdPZ3InCUyITJwxLKUg9/tTtdo0a0hjVqdeg6siUnNwDE7iWw+bh0ET
+         uVog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755558645; x=1756163445;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v6LP4kbkBa88jvBhrFEiryEKhPYdSyeLgBMrYzBXaW8=;
-        b=vFQFTLWnnbMKiLHBHmxGA5/LIRktakgTyzoPtMfgtoc9hr30nJrHYQ+KipxBVmqnso
-         3TqTJuQzVs7eAynsU4UbDQuX9CjhLfQ8GfYAQdEo+ZAqnr+4X7oXp4+Q+EIN9Oceyh1D
-         lJSlen/6CU0QXuwtyhylTor4dhq2ikBRMSxJRV8qlo/MH4WZXtNCC5IHpp/ihIfHrKMM
-         kMVFGO1qexQjJqy8moW6QikAV9wLEr3lY89gMsb476SoVixOfUkCpVT40Di1eEnY4Bnv
-         aNX1+wLUDRpB7R8hzaTG6DLTbWFbgp4rcG9v6UbbzoBONwqlifA3rlfu7Pq8XGrZ9blO
-         J/fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQgMBxNx9B/FhVywmVZrKqnS+zraWdeeR+qsyuKXNPAUIjvXnnbycGpVS/SBGaqLQocTBpI9gQdy7asdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOSOIvM5K6EABwB/LVN0zluhi8uMKcZJm+YUEmzJULU7wKwgrG
-	dpYdDdAAzb+5/4HoKqKNmcLj1cVtb41xyvU6coFAg09AUb3Bz9vRGFmyVdyU83ww6W9So9rvx4M
-	NAj9x5LnBcg==
-X-Google-Smtp-Source: AGHT+IGvHvXylkHG6WHZrQWzPSMwYKk8K05RhCTgWLj+FR1COmKkfK+rlfyJhr4vBYqNgMXFLIyPTGnZ4b1E
-X-Received: from oibbj22.prod.google.com ([2002:a05:6808:1996:b0:408:fef8:9c6e])
- (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6808:218f:b0:406:71fd:b610
- with SMTP id 5614622812f47-436da1e7e5cmr308794b6e.33.1755558645195; Mon, 18
- Aug 2025 16:10:45 -0700 (PDT)
-Date: Mon, 18 Aug 2025 23:08:52 +0000
-In-Reply-To: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+        d=1e100.net; s=20230601; t=1755558811; x=1756163611;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mnq9RhUyvZf92U8sAKjR3y1PDGecrVMkyD6LjbdWrCk=;
+        b=lXl6P0ZL8N3Hsz3VucDqHfV9QrH/xEbhZHBerP6EmIcNELwnND5Wq/W1za5miE7xx/
+         6RalcN0eYNaqq4+Jr/A3a1wyGTwDqES8O36oeKem1DTFXun+rbfpNDOBKSSPyPYSAC4Q
+         h2gWTBAYA5Zdpk24RkXP/JjGWpyL+bQGAIXmE9gk+bnNro2HhDaH9laAYRxM2dmgITj/
+         YbghgCnMLEdMOXFodn+RicFYFdLGnO8tHE4CbxXRrhgAol7BU/BD4K4qZt6wamdOAnnH
+         28trfB6SVg8O7+N7T05eNg3Eq+kYBDJeaZA3CFSbH2NkBIpPqj7tW19cbcQVt5VQQHQo
+         UMww==
+X-Forwarded-Encrypted: i=1; AJvYcCWl1hnlFBGs2XPYcb869ZRn7j4uf+hHSbcilmxXdAF7qTGxEkj3CuUQxl7W8dcjDE7PoQ94towQ8O9bMhs=@vger.kernel.org, AJvYcCXhaIAvvKA4kY9C10WxVT20/0hpaVN1fRrNAkUruG3tOUSR0WThdUCPhvyaeu2AoNPoivJew22J@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFWyFTgI9xsxvqaXyLmj+q2RhsFd577o0jkDOlR1RnP3d8nb/1
+	W6kNTkjG5K9zjIIv767fZOtAfK8XCuVgXkLIIw3bvXeg5cCzV77O3hY=
+X-Gm-Gg: ASbGncvDab9d92Ann3oMsRc2d82jGOfz6NtkmJjdi0vYY2Brbplv1KqFSvg6lxYxRZu
+	gYxwe2zMx1ffpFBkokLuIq3nsFP0/+bxke8AGEkRPdweAZLuhVDTJ4QUMK2pZYiS8PSyacISkz2
+	2UulSjSn2jRIYSpg4NZeXkvxCFcJT2rMmFbGJvZWRogh446gxafNqab9+N1FnTfZppdk1L+lOGv
+	Vgwr/97kW5G6AmHnnXK2PDf+mGJcE4ynW5Td/Ndjulr9K/JMcQIObH/dNJdj8EONwxcVNhmkrVb
+	r6s45luFHe/BTgqIKbauIhzPkVAi64Zed7fYJLR5O7y79sN3zreTuN6L8/d4cojIMNLF9fdTPh5
+	VjS1FimGK3pJRGvqomlvkl1EQg0E9G1Gy6ZHc7OOzsdbRvAICiELqV3cug+Nj1LGwtJ3U6IxT1Y
+	o=
+X-Google-Smtp-Source: AGHT+IFqtwFtg9Rad+LKYSBINL0XN0Q32hE+79dF5jl3tp+I1u2wZ1gYBLESupv7TuKefkG18KJrPg==
+X-Received: by 2002:a05:600c:4587:b0:459:d645:bff7 with SMTP id 5b1f17b1804b1-45b43dc654cmr2368665e9.12.1755558810606;
+        Mon, 18 Aug 2025 16:13:30 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4eef.dip0.t-ipconnect.de. [91.43.78.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c1708sm1169163f8f.38.2025.08.18.16.13.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 16:13:30 -0700 (PDT)
+Message-ID: <cf35c5d9-643a-4dd5-bd1d-45cccb64de61@googlemail.com>
+Date: Tue, 19 Aug 2025 01:13:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
-X-Mailer: b4 0.14.2
-Message-ID: <20250818-support-forcepads-v3-11-e4f9ab0add84@google.com>
-Subject: [PATCH v3 11/11] HID: multitouch: add haptic multitouch support
-From: Jonathan Denose <jdenose@google.com>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
-	"Sean O'Brien" <seobrien@google.com>, Jonathan Denose <jdenose@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 000/444] 6.12.43-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250818124448.879659024@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250818124448.879659024@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Angela Czubak <aczubak@google.com>
+Am 18.08.2025 um 14:40 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.43 release.
+> There are 444 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-If CONFIG_HID_HAPTIC is enabled, and the device is recognized to have
-simple haptic capabilities, try initializing the haptic device, check
-input frames for pressure and handle it using hid_haptic_* API.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-Signed-off-by: Angela Czubak <aczubak@google.com>
-Co-developed-by: Jonathan Denose <jdenose@google.com>
-Signed-off-by: Jonathan Denose <jdenose@google.com>
----
- drivers/hid/hid-haptic.h     | 16 ++++++++++-----
- drivers/hid/hid-multitouch.c | 47 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+), 5 deletions(-)
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-diff --git a/drivers/hid/hid-haptic.h b/drivers/hid/hid-haptic.h
-index abdd7d710c0b832ad0be8fe63ebfa7692c8ea5ca..c6539ac04c1dbd36fb25eed9370e6fe747a28f10 100644
---- a/drivers/hid/hid-haptic.h
-+++ b/drivers/hid/hid-haptic.h
-@@ -103,19 +103,25 @@ int hid_haptic_input_configured(struct hid_device *hdev,
- {
- 	return 0;
- }
-+static inline
-+void hid_haptic_reset(struct hid_device *hdev, struct hid_haptic_device *haptic)
-+{}
-+static inline
- int hid_haptic_init(struct hid_device *hdev, struct hid_haptic_device **haptic_ptr)
- {
- 	return 0;
- }
- static inline
--void hid_haptic_handle_press_release(struct hid_haptic_device *haptic)
--{}
-+void hid_haptic_handle_press_release(struct hid_haptic_device *haptic) {}
- static inline
--void hid_haptic_pressure_reset(struct hid_haptic_device *haptic)
--{}
-+bool hid_haptic_handle_input(struct hid_haptic_device *haptic)
-+{
-+	return false;
-+}
-+static inline
-+void hid_haptic_pressure_reset(struct hid_haptic_device *haptic) {}
- static inline
- void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
- 				  __s32 pressure)
- {}
- #endif
--
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index b41001e02da7e02d492bd85743b359ed7ec16e7f..94dd0033290d6ae37d82f0992b94e24ebbc1f301 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -49,6 +49,8 @@ MODULE_LICENSE("GPL");
- 
- #include "hid-ids.h"
- 
-+#include "hid-haptic.h"
-+
- /* quirks to control the device */
- #define MT_QUIRK_NOT_SEEN_MEANS_UP	BIT(0)
- #define MT_QUIRK_SLOT_IS_CONTACTID	BIT(1)
-@@ -167,11 +169,13 @@ struct mt_report_data {
- struct mt_device {
- 	struct mt_class mtclass;	/* our mt device class */
- 	struct timer_list release_timer;	/* to release sticky fingers */
-+	struct hid_haptic_device *haptic;	/* haptic related configuration */
- 	struct hid_device *hdev;	/* hid_device we're attached to */
- 	unsigned long mt_io_flags;	/* mt flags (MT_IO_FLAGS_*) */
- 	__u8 inputmode_value;	/* InputMode HID feature value */
- 	__u8 maxcontacts;
- 	bool is_buttonpad;	/* is this device a button pad? */
-+	bool is_haptic_touchpad;	/* is this device a haptic touchpad? */
- 	bool serial_maybe;	/* need to check for serial protocol */
- 
- 	struct list_head applications;
-@@ -525,6 +529,8 @@ static void mt_feature_mapping(struct hid_device *hdev,
- 			mt_get_feature(hdev, field->report);
- 		break;
- 	}
-+
-+	hid_haptic_feature_mapping(hdev, td->haptic, field, usage);
- }
- 
- static void set_abs(struct input_dev *input, unsigned int code,
-@@ -856,6 +862,9 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		case HID_DG_TIPPRESSURE:
- 			set_abs(hi->input, ABS_MT_PRESSURE, field,
- 				cls->sn_pressure);
-+			td->is_haptic_touchpad =
-+				hid_haptic_check_pressure_unit(td->haptic,
-+							       hi, field);
- 			MT_STORE_FIELD(p);
- 			return 1;
- 		case HID_DG_SCANTIME:
-@@ -980,6 +989,8 @@ static void mt_sync_frame(struct mt_device *td, struct mt_application *app,
- 
- 	app->num_received = 0;
- 	app->left_button_state = 0;
-+	if (td->is_haptic_touchpad)
-+		hid_haptic_pressure_reset(td->haptic);
- 
- 	if (test_bit(MT_IO_FLAGS_ACTIVE_SLOTS, &td->mt_io_flags))
- 		set_bit(MT_IO_FLAGS_PENDING_SLOTS, &td->mt_io_flags);
-@@ -1137,6 +1148,9 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
- 			minor = minor >> 1;
- 		}
- 
-+		if (td->is_haptic_touchpad)
-+			hid_haptic_pressure_increase(td->haptic, *slot->p);
-+
- 		x = hdev->quirks & HID_QUIRK_X_INVERT ?
- 			input_abs_get_max(input, ABS_MT_POSITION_X) - *slot->x :
- 			*slot->x;
-@@ -1324,6 +1338,9 @@ static int mt_touch_input_configured(struct hid_device *hdev,
- 	if (cls->is_indirect)
- 		app->mt_flags |= INPUT_MT_POINTER;
- 
-+	if (td->is_haptic_touchpad)
-+		app->mt_flags |= INPUT_MT_TOTAL_FORCE;
-+
- 	if (app->quirks & MT_QUIRK_NOT_SEEN_MEANS_UP)
- 		app->mt_flags |= INPUT_MT_DROP_UNUSED;
- 
-@@ -1359,6 +1376,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	struct mt_device *td = hid_get_drvdata(hdev);
- 	struct mt_application *application;
- 	struct mt_report_data *rdata;
-+	int ret;
- 
- 	rdata = mt_find_report_data(td, field->report);
- 	if (!rdata) {
-@@ -1421,6 +1439,11 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	if (field->physical == HID_DG_STYLUS)
- 		hi->application = HID_DG_STYLUS;
- 
-+	ret = hid_haptic_input_mapping(hdev, td->haptic, hi, field, usage, bit,
-+				       max);
-+	if (ret != 0)
-+		return ret;
-+
- 	/* let hid-core decide for the others */
- 	return 0;
- }
-@@ -1635,6 +1658,14 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 	struct hid_report *report;
- 	int ret;
- 
-+	if (td->is_haptic_touchpad && (td->mtclass.name == MT_CLS_WIN_8 ||
-+	    td->mtclass.name == MT_CLS_WIN_8_FORCE_MULTI_INPUT)) {
-+		if (hid_haptic_input_configured(hdev, td->haptic, hi) == 0)
-+			td->is_haptic_touchpad = false;
-+	} else {
-+		td->is_haptic_touchpad = false;
-+	}
-+
- 	list_for_each_entry(report, &hi->reports, hidinput_list) {
- 		rdata = mt_find_report_data(td, report);
- 		if (!rdata) {
-@@ -1777,6 +1808,11 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
- 		return -ENOMEM;
- 	}
-+	td->haptic = devm_kzalloc(&hdev->dev, sizeof(*(td->haptic)), GFP_KERNEL);
-+	if (!td->haptic)
-+		return -ENOMEM;
-+
-+	td->haptic->hdev = hdev;
- 	td->hdev = hdev;
- 	td->mtclass = *mtclass;
- 	td->inputmode_value = MT_INPUTMODE_TOUCHSCREEN;
-@@ -1840,6 +1876,17 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 
- 	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
- 
-+	if (td->is_haptic_touchpad) {
-+		if (hid_haptic_init(hdev, &td->haptic)) {
-+			dev_warn(&hdev->dev, "Cannot allocate haptic for %s\n",
-+				 hdev->name);
-+			td->is_haptic_touchpad = false;
-+			devm_kfree(&hdev->dev, td->haptic);
-+		}
-+	} else {
-+		devm_kfree(&hdev->dev, td->haptic);
-+	}
-+
- 	return 0;
- }
- 
+
+Beste Grüße,
+Peter Schneider
 
 -- 
-2.51.0.rc1.193.gad69d77794-goog
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
