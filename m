@@ -1,333 +1,265 @@
-Return-Path: <linux-kernel+bounces-773486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F9CB2A0C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:51:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C772B2A0C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B97A07B7565
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:49:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D8D27B77CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716D431A05F;
-	Mon, 18 Aug 2025 11:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD2231AF08;
+	Mon, 18 Aug 2025 11:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oRVhocTw"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="C6xNShL7"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B8D31A046
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31278258EE8;
+	Mon, 18 Aug 2025 11:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755517827; cv=none; b=POO7Liadn1GShd9mYEtnk/yG++4l6blM1SogEaf242eNH55Ws2REWqyzrrdMLwOHguuVPvfsEBLhHSjNm+Kfs1bFeHo/5wRbnSFQdwx7L1ZEcrUbY6yg7C+/9Gkd5Gyx4JW7f65LCTECekbUFlL5evl20AO4jxQPekLRSGl0Rd0=
+	t=1755517922; cv=none; b=SgA4HfE8VX/qM98pG1RXcQsWuuhO1rNg/OkQZa9xJK0behrNDWMSIYwBmHPzgvougpBtJr8xP7bX57rZHPOcld5Q1ymTVwAUjdrzEJENcGAFkVJ46mxgmzE6cswkPeSCQ3CY16KPb31cWJs+k+nZ02SeKwPgMNA3nJS8ge5WS2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755517827; c=relaxed/simple;
-	bh=2F+LQBZ/eBkS2ZxR7ElP8NsgBUf5s8KGbrnq9GqVgok=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s9tZu49HwSY7IXIcoYKSuBgavE0ACjRSQ5pviWyKHH3IzNjNKRn3EskxKyxpFj4HKB2QkZoccmMhYL9fhVe3zeA3Sa5VajGOndwAEV3iHe5zqUgCBqgceD89U4deEz1uSNPulaWtC61+fRxEhC0eAcKMEt63VWrWmv0UAwCCNI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oRVhocTw; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b474e8d6d03so220562a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:50:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755517825; x=1756122625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zb1sCPo77mcuKw2zTHcH238POIGc59QSz6qQTiNa2Mw=;
-        b=oRVhocTwrZXDM1tP9B7f0kJK/9LjSmpR7iowfpUU58N4poBJfIc58B8Owi6cabLtbd
-         0w4yixAiWkB1b53mcoqmK/hsv08c3QmBTNpaDJt9Hekm46Qu9ncS8C8ZuUU8gMOgEn1G
-         Crt1UdfCt9JzVGR03TUQiJ51PIMwwYyFG6nmk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755517825; x=1756122625;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zb1sCPo77mcuKw2zTHcH238POIGc59QSz6qQTiNa2Mw=;
-        b=cqhjn3vBGa0ZRSPr5aGqIPvrZkUJQ3G/xInFnMlfN4brls7W/MabnfxvQaE0Rxxtbr
-         67hyslE3YTj1Vm4LOr70GwFUv2WHaI8C1FxJN1vlrzHTljMS7kpF2dKN9U5hpv+Sn9fK
-         Nr02sKtiCSwJy4DwDY2oSs2srSd8rjc2B+tMQM7XSbA4THRgJcRA/eOJkNO3pgeZvo5i
-         LTDUHaL7Pyife1b6EMrr9JOkhVwzahuKHkPpkWgUvbssnQfL9lRjsWH9EMHiCEg9v/HV
-         duJ1lLu2epgSmLGTa3zBHzs8H5TQBIVVf1X/jcr9hLWBrv6jYGbRtRgq1LxkBJ4Is/Zv
-         rl7w==
-X-Gm-Message-State: AOJu0YzgN4S9h4imMYb8fnkvK6CQmNwavb3VnEMllTTMSQIiDW8sUyzO
-	gKI161fQw0LV0KWfuQ/27xhNv1zplDhHTTWxcSKSPF23M00iiHu/XXgNT95tAWmz5g==
-X-Gm-Gg: ASbGncvE7XViecQw7F2QGtqYlWoq2caGsZFYBfbqC4ywlwaLfDDf9vtXo7Wgq2JOMjM
-	EwkT0Ye/NqtQBeklTA6/IJ9sfcuA5y7yGOXZgIvYn54gTGRSudZFlOl4nPA+Tv+fmrEh3JdGmpb
-	Nj/Mtns6SqcoAoM7G6b0eMOHBlTZz5kvMDGFgb+hkhVQWVInCL03RrS4YnDH6S5Va+Wd92mt/nJ
-	hjNh8gstg4V7wsso/977WMIPUefXeiyQqTukQFO+fxzs5kgnRNB0UrovljMMaumgiOlMYCrlyVY
-	bPd+6naaTla7gzTVDuxow6PXmrMP0e//W8OXF1Dv8TqUC6KpZXQr2B4AtriGl8YxuAJO5nTGtXh
-	BuN2grCn2k9n0U7a0jwpylFlBAtR/RmgOPDtd+6BJ9gglGWxt9H0xnUBd
-X-Google-Smtp-Source: AGHT+IEnZmo97hTPFZMCorIymSRvtFy/EQxRfq2GVJu7TQxCxXPZYFAQNMo9Bj8lA2NgaOC3Q4hnKw==
-X-Received: by 2002:a17:902:d2c9:b0:242:461b:7d4 with SMTP id d9443c01a7336-2446d71ed3amr173689245ad.15.1755517825070;
-        Mon, 18 Aug 2025 04:50:25 -0700 (PDT)
-Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:5130:767b:3a09:59d6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9ee03sm78997715ad.15.2025.08.18.04.50.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 04:50:24 -0700 (PDT)
-From: Pin-yen Lin <treapking@chromium.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-input@vger.kernel.org,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	dri-devel@lists.freedesktop.org,
-	Pin-yen Lin <treapking@chromium.org>
-Subject: [PATCH v3 2/2] HID: Make elan touch controllers power on after panel is enabled
-Date: Mon, 18 Aug 2025 19:49:34 +0800
-Message-ID: <20250818115015.2909525-2-treapking@chromium.org>
-X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-In-Reply-To: <20250818115015.2909525-1-treapking@chromium.org>
-References: <20250818115015.2909525-1-treapking@chromium.org>
+	s=arc-20240116; t=1755517922; c=relaxed/simple;
+	bh=zroE3ZRBcvTHvfTeomTUce9CH8qHiYvB5mEwVo14FDY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=NJH+VNTnyCaeYaaUkRr88eqWSwxNem/HvF1CuE0DQsrsv0tN8gFroVyv4PSUa4vWxG+hhwSc2QRUpYNNhGdr5hHf8rZnTXu6JH4j2o921W1FzdCO7ZswjLWKnErs2o4L10rWURAEEHWLvKobSmggDmxfYG4e5OD30QMGsgT7cEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=C6xNShL7; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IBlw3d025526;
+	Mon, 18 Aug 2025 07:51:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=UVel09Sb15hnFFOi4la6QUq0xmk
+	S12lWEQvBOxj0434=; b=C6xNShL7L37/S05zi83iNWxkEiUNhhakX4ZT4wZcVf1
+	82Ddy0JkMhVJojTVfJVXiGe3+M9jPxa8WZzSzpMbGjOKfaNSAk4Y/GNckWkYfen7
+	Ggy3u7lfxeJIAiAUOxh7rWHpUClR5Byv93J9GTOsGpuXnsF0Sp6OxVDiCa3xkrof
+	OHYYzKTBoNeIRy6tLWjgycJZYSe6sAVB7rZaIfTm9Wt22si8TNqBBCyKMvmtyVZF
+	i5dLdnjqZ1GtNSNLPjcB9CwL4Wt+fk5lrWIqelACLtp2Kkw+qSy2fYGMuQhFP+Jb
+	q1f5waKmKnHds9QkKKFgTJK3ojJE33bcHI6VVWB8xqw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48kn0supy5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 07:51:31 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 57IBpUrx002220
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 18 Aug 2025 07:51:30 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 18 Aug
+ 2025 07:51:30 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 18 Aug 2025 07:51:30 -0400
+Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.44.3.53])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57IBpIJS022575;
+	Mon, 18 Aug 2025 07:51:20 -0400
+From: Jorge Marques <jorge.marques@analog.com>
+Subject: [PATCH v7 0/2] Add ADI I3C Controller
+Date: Mon, 18 Aug 2025 13:51:12 +0200
+Message-ID: <20250818-adi-i3c-master-v7-0-f7207902669d@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALATo2gC/3XR3UrEMBAF4FdZcm0kv5N0EfE9xItJMt0N2K22t
+ SrLvrtpV7ASvQoT+p22c85spCHTyPa7MxtozmPuT2VwNzsWj3g6EM+pzEwJZQUIwzFlnnXkHY4
+ TDVyhlcZH66NxrKCXgdr8sQY+PpX5mMepHz7X/Fkut/9GzZILLoz35EXCNoYHPOFzf7iNfceWr
+ FltPVReFU/gQ4OYFGhReb3x0lderx6kEwgxNLbyZuNV/X5TvPYGULYAyVLl7Y930lbeFh99Y7S
+ JAds/PGy9qzwUDxG8o+RkoPTLX67lDPT6Vkqerg2xjsYR15L3u7vvH1Nr6PuwPPTMB8JUjnW5C
+ tukDcWyW9iE3y/FBxyJl6HL035nZQPaeR28A1StaTRqwigIGwqonIwBvGiwfNblC1KeO/KDAgA
+ A
+X-Change-ID: 20250604-adi-i3c-master-2a5148c58c47
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Frank Li
+	<Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Kees Cook
+	<kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>
+CC: <linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <gastmaier@gmail.com>,
+        <linux-hardening@vger.kernel.org>,
+        Jorge Marques <jorge.marques@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755517878; l=5873;
+ i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
+ bh=zroE3ZRBcvTHvfTeomTUce9CH8qHiYvB5mEwVo14FDY=;
+ b=ksB28LpgmtRqkBom2wNuTsepJjgUZLUjcTbmvfGWokqNSRsawuuBJoNEbJD7oHA6R09F5GoHp
+ nimxI9j6jYyD1Xzpqanw4eyMrIFBp1YG52cb7deue9bN5OrJPRboT3Y
+X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
+ pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: NcnSr65xXA3uWgKSxIpuOD0KbHGtv6KY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE3MDE5OSBTYWx0ZWRfXwo2CnGJrLZZ9
+ Y2F7zzLb4Kb4cSCfruQhhrt18gOq4ZVK3e8IB7zn9xSxAcgdnPa0yhSy6XVc5/mZmP8UtaLpVwK
+ I/k8Vu/ykuSFwAwtZfrl9PTHrCuqIhZ0EiuQSSSi96gJsjkkMK3uoZxURKqSK5JPhnXgSiZqoOf
+ 56InsKlGfwwdwmTnR0vGyTTtR+cI7SWznPOK+Pww0rMlZ/46eJCjtdwzrf3v3JDP/XbgnM/Eo58
+ k29LmTAesIuW84k3+IsHbEwdX372NDVvY64neCey1Mvn+4rpVMQlaxmqlYCcHyYeklBcUcaJRVR
+ 36/+HrPZkaLDipLE0ldyfT8JH1o++NkcMHbcxZD1a+B78jkfQ9lp69jPBBI509mGl/Qkw0pO+eP
+ t28DSHlO
+X-Authority-Analysis: v=2.4 cv=T6qMT+KQ c=1 sm=1 tr=0 ts=68a313c3 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=wI1k2SEZAAAA:8 a=VwQbUJbxAAAA:8
+ a=gAnH3GRIAAAA:8 a=ze3ezcZjs5cA45okC0AA:9 a=QEXdDO2ut3YA:10 a=2-210J_X17oA:10
+ a=6HWbV-4b7c7AdzY24d_u:22
+X-Proofpoint-ORIG-GUID: NcnSr65xXA3uWgKSxIpuOD0KbHGtv6KY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1011
+ priorityscore=1501 suspectscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508170199
 
-Introduce a new HID quirk to indicate that this device has to be enabled
-after the panel's backlight is enabled, and update the driver data for
-the elan devices to enable this quirk. This cannot be a I2C HID quirk
-because the kernel needs to acknowledge this before powering up the
-device and read the VID/PID. When this quirk is enabled, register
-.panel_enabled()/.panel_disabling() instead for the panel follower.
+I3C Controller is subset of the I3C-basic specification to interface
+peripherals through I3C and I2C. The controller RTL is FPGA
+synthesizable and documentation is provided at
+https://analogdevicesinc.github.io/hdl/library/i3c_controller
 
-Also rename the *panel_prepare* functions into *panel_follower* because
-they could be called in other situations now.
+The main target for the I3C Controller IP is low-cost FPGAs.
+In this version the driver supports IBI (only the MDB), I3C and I2C
+transfers.
 
-Fixes: bd3cba00dcc63 ("HID: i2c-hid: elan: Add support for Elan eKTH6915 i2c-hid touchscreens")
-Fixes: d06651bebf99e ("HID: i2c-hid: elan: Add elan-ekth6a12nay timing")
+The IP Core is versioned following ADI's open source HDL guidelines
+for devicetree bindings and drivers described at
+https://analogdevicesinc.github.io/hdl/user_guide/contributing.html#devicetree-bindings-drivers
+in summary, follows Semantic Versioning 2.0.0, with the dt-binding suffixed
+by -v<major>.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+If necessary, the contents of
+https://analogdevicesinc.github.io/hdl/user_guide/contributing.html#devicetree-bindings-drivers
+can be replicated to a file in a different series, similar to AMD Xilinx
+at Documentation/devicetree/bindings/xilinx.txt, but as adi.txt or
+similar.
 
+Depends on https://lore.kernel.org/linux-i3c/20250622-i3c-writesl-readsl-v2-0-2afd34ec6306@analog.com/T/#t
+
+Signed-off-by: Jorge Marques <jorge.marques@analog.com>
 ---
+Changes in v7:
+- Edit cover linking guidelines to ADI IP Core versioning.
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Extend second clock description to explain relation to synthesized topology.
+- Link to v6: https://lore.kernel.org/r/20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com
+
+Changes in v6:
+- Format 0x05C undercase
+- Link to v5: https://lore.kernel.org/r/20250715-adi-i3c-master-v5-0-c89434cbaf5e@analog.com
+
+Changes in v5:
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Use semantic versioning major field for dt-binding compatible, with
+  the format adi,<ip-name>-v<major>
+
+adi-i3c-master.c:
+- Rename MAX_DEVS to ADI_MAX_DEVS
+- Encapsulate REG_CMD_FIFO_0_DEV_ADDR var
+- Reorder struct adi_i3c_i2c_dev_data fields
+- Start addr at 0 instead of 8 at adi_i3c_master_get_rr_slot
+- Minor rework on adi_i3c_master_handle_ibi to most logic out of the
+  lock. Even if length is 0 (BCR[2]=0), the mdb field is extracted and
+  written to the slot buffer. Since the length is 0, the written data
+  doesn't matter.
+  In a future update with additional bytes support (e.g., bits 31-23),
+  len would be incremented and an IBI FIFO would be read.
+- Version check against first stable release, major v1.
+  Driver+RTL features updates affect the minor field, therefore check
+  for major == 1.
+- Link to v4: https://lore.kernel.org/r/20250626-adi-i3c-master-v4-0-3846a1f66d5e@analog.com
+
+Changes in v4:
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Add -1.00.a suffix where missing
+- Extend clocks descriptions
+- Add minItems to clock-names, to match clocks
+- Use header in example
+
+adi-i3c-master.c:
+- Regmap:
+  - Add new controller info registers (dyn_addr, dcr, bcr, pid)
+  - Always decreasing fields
+  - Add line break between registers
+  - Reformat REG_DEV_CHAR_BSCR_IBI to use easier to read FIELD_GET,
+    FIELD_PREP
+- Read controller info from regmap with explanation comment
+- Use linux/fpga/adi-axi-common.h macros
+- Use __counter_by macro on ncmds
+- Use __free macro
+- Use new i3c_writel_fifo and i3c_readl_fifo macros
+- Rename bytes to buf when nbytes is present
+- Use scoped_guard instead of spin_lock, spin_unlock
+- Reformat loops to read fifo status, use while single line alternative
+- Drop adi_i3c_master.max_devs, use MAX_DEVS directly
+- Use devm_clk_bulk_get_all_enabled, dropping clock name match (CHECK_DTB does it)
+- Init spin_lock
+- Init list head
+- Link to v3: https://lore.kernel.org/r/20250618-adi-i3c-master-v3-0-e66170a6cb95@analog.com
 
 Changes in v3:
-- Collect review tag
-- Add fixes tags
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Small reworking of the description
+- Add -1.00.a suffix to compatible
+
+adi-i3c-master.c:
+- Misspelling
+- Remove REG_CMD_FIFO_0_LEN_MAX since it is a HDL parameter
+- Use adapter timeout value for I2C transfers, as in
+  https://lore.kernel.org/linux-i3c/aEBd%2FFIKADYr%2F631@lizhi-Precision-Tower-5810/T/#t
+
+- Link to v2: https://lore.kernel.org/r/20250606-adi-i3c-master-v2-0-e68b9aad2630@analog.com
 
 Changes in v2:
-- Rename *panel_prepare* functions to *panel_follower*
-- Replace after_panel_enabled flag with enabled/disabling callbacks
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Move allof
+- Rename clocks to axi, i3c
 
- drivers/hid/i2c-hid/i2c-hid-core.c    | 46 ++++++++++++++++-----------
- drivers/hid/i2c-hid/i2c-hid-of-elan.c | 11 ++++++-
- include/linux/hid.h                   |  2 ++
- 3 files changed, 40 insertions(+), 19 deletions(-)
+adi-i3c-master.c:
+- Update license year
+- Rework regmap to use FIELD_GET, FIELD_PREP
+- Reformat regmap to have FIELDS after REG, prefixed by reg name.
+- Add overflow safeguards to cmd, tx fifos
+- Fix macro related macros (mostly erroneous `| ~BITMASK`
+- Use guard macros, remove goto.
+- Simplify daa logic
+- Replace devm_clk_get with devm_clk_get_enabled
+- Solve 64bit->32bit warnings on x86_64 systems by casting to u32
+- Immediate clear irq request flags, then handle it.
 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index d3912e3f2f13a..99ce6386176c6 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -112,9 +112,9 @@ struct i2c_hid {
- 
- 	struct i2chid_ops	*ops;
- 	struct drm_panel_follower panel_follower;
--	struct work_struct	panel_follower_prepare_work;
-+	struct work_struct	panel_follower_work;
- 	bool			is_panel_follower;
--	bool			prepare_work_finished;
-+	bool			panel_follower_work_finished;
- };
- 
- static const struct i2c_hid_quirks {
-@@ -1110,10 +1110,10 @@ static int i2c_hid_core_probe_panel_follower(struct i2c_hid *ihid)
- 	return ret;
- }
- 
--static void ihid_core_panel_prepare_work(struct work_struct *work)
-+static void ihid_core_panel_follower_work(struct work_struct *work)
- {
- 	struct i2c_hid *ihid = container_of(work, struct i2c_hid,
--					    panel_follower_prepare_work);
-+					    panel_follower_work);
- 	struct hid_device *hid = ihid->hid;
- 	int ret;
- 
-@@ -1130,7 +1130,7 @@ static void ihid_core_panel_prepare_work(struct work_struct *work)
- 	if (ret)
- 		dev_warn(&ihid->client->dev, "Power on failed: %d\n", ret);
- 	else
--		WRITE_ONCE(ihid->prepare_work_finished, true);
-+		WRITE_ONCE(ihid->panel_follower_work_finished, true);
- 
- 	/*
- 	 * The work APIs provide a number of memory ordering guarantees
-@@ -1139,12 +1139,12 @@ static void ihid_core_panel_prepare_work(struct work_struct *work)
- 	 * guarantee that a write that happened in the work is visible after
- 	 * cancel_work_sync(). We'll add a write memory barrier here to match
- 	 * with i2c_hid_core_panel_unpreparing() to ensure that our write to
--	 * prepare_work_finished is visible there.
-+	 * panel_follower_work_finished is visible there.
- 	 */
- 	smp_wmb();
- }
- 
--static int i2c_hid_core_panel_prepared(struct drm_panel_follower *follower)
-+static int i2c_hid_core_panel_follower_resume(struct drm_panel_follower *follower)
- {
- 	struct i2c_hid *ihid = container_of(follower, struct i2c_hid, panel_follower);
- 
-@@ -1152,29 +1152,36 @@ static int i2c_hid_core_panel_prepared(struct drm_panel_follower *follower)
- 	 * Powering on a touchscreen can be a slow process. Queue the work to
- 	 * the system workqueue so we don't block the panel's power up.
- 	 */
--	WRITE_ONCE(ihid->prepare_work_finished, false);
--	schedule_work(&ihid->panel_follower_prepare_work);
-+	WRITE_ONCE(ihid->panel_follower_work_finished, false);
-+	schedule_work(&ihid->panel_follower_work);
- 
- 	return 0;
- }
- 
--static int i2c_hid_core_panel_unpreparing(struct drm_panel_follower *follower)
-+static int i2c_hid_core_panel_follower_suspend(struct drm_panel_follower *follower)
- {
- 	struct i2c_hid *ihid = container_of(follower, struct i2c_hid, panel_follower);
- 
--	cancel_work_sync(&ihid->panel_follower_prepare_work);
-+	cancel_work_sync(&ihid->panel_follower_work);
- 
--	/* Match with ihid_core_panel_prepare_work() */
-+	/* Match with ihid_core_panel_follower_work() */
- 	smp_rmb();
--	if (!READ_ONCE(ihid->prepare_work_finished))
-+	if (!READ_ONCE(ihid->panel_follower_work_finished))
- 		return 0;
- 
- 	return i2c_hid_core_suspend(ihid, true);
- }
- 
--static const struct drm_panel_follower_funcs i2c_hid_core_panel_follower_funcs = {
--	.panel_prepared = i2c_hid_core_panel_prepared,
--	.panel_unpreparing = i2c_hid_core_panel_unpreparing,
-+static const struct drm_panel_follower_funcs
-+				i2c_hid_core_panel_follower_prepare_funcs = {
-+	.panel_prepared = i2c_hid_core_panel_follower_resume,
-+	.panel_unpreparing = i2c_hid_core_panel_follower_suspend,
-+};
-+
-+static const struct drm_panel_follower_funcs
-+				i2c_hid_core_panel_follower_enable_funcs = {
-+	.panel_enabled = i2c_hid_core_panel_follower_resume,
-+	.panel_disabling = i2c_hid_core_panel_follower_suspend,
- };
- 
- static int i2c_hid_core_register_panel_follower(struct i2c_hid *ihid)
-@@ -1182,7 +1189,10 @@ static int i2c_hid_core_register_panel_follower(struct i2c_hid *ihid)
- 	struct device *dev = &ihid->client->dev;
- 	int ret;
- 
--	ihid->panel_follower.funcs = &i2c_hid_core_panel_follower_funcs;
-+	if (ihid->hid->initial_quirks | HID_QUIRK_POWER_ON_AFTER_BACKLIGHT)
-+		ihid->panel_follower.funcs = &i2c_hid_core_panel_follower_enable_funcs;
-+	else
-+		ihid->panel_follower.funcs = &i2c_hid_core_panel_follower_prepare_funcs;
- 
- 	/*
- 	 * If we're not in control of our own power up/power down then we can't
-@@ -1237,7 +1247,7 @@ int i2c_hid_core_probe(struct i2c_client *client, struct i2chid_ops *ops,
- 	init_waitqueue_head(&ihid->wait);
- 	mutex_init(&ihid->cmd_lock);
- 	mutex_init(&ihid->reset_lock);
--	INIT_WORK(&ihid->panel_follower_prepare_work, ihid_core_panel_prepare_work);
-+	INIT_WORK(&ihid->panel_follower_work, ihid_core_panel_follower_work);
- 
- 	/* we need to allocate the command buffer without knowing the maximum
- 	 * size of the reports. Let's use HID_MIN_BUFFER_SIZE, then we do the
-diff --git a/drivers/hid/i2c-hid/i2c-hid-of-elan.c b/drivers/hid/i2c-hid/i2c-hid-of-elan.c
-index 3fcff6daa0d3a..0215f217f6d86 100644
---- a/drivers/hid/i2c-hid/i2c-hid-of-elan.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-of-elan.c
-@@ -8,6 +8,7 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/hid.h>
- #include <linux/i2c.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -23,6 +24,7 @@ struct elan_i2c_hid_chip_data {
- 	unsigned int post_power_delay_ms;
- 	u16 hid_descriptor_address;
- 	const char *main_supply_name;
-+	bool power_after_backlight;
- };
- 
- struct i2c_hid_of_elan {
-@@ -97,6 +99,7 @@ static int i2c_hid_of_elan_probe(struct i2c_client *client)
- {
- 	struct i2c_hid_of_elan *ihid_elan;
- 	int ret;
-+	u32 quirks = 0;
- 
- 	ihid_elan = devm_kzalloc(&client->dev, sizeof(*ihid_elan), GFP_KERNEL);
- 	if (!ihid_elan)
-@@ -131,8 +134,12 @@ static int i2c_hid_of_elan_probe(struct i2c_client *client)
- 		}
- 	}
- 
-+	if (ihid_elan->chip_data->power_after_backlight)
-+		quirks = HID_QUIRK_POWER_ON_AFTER_BACKLIGHT;
-+
- 	ret = i2c_hid_core_probe(client, &ihid_elan->ops,
--				 ihid_elan->chip_data->hid_descriptor_address, 0);
-+				 ihid_elan->chip_data->hid_descriptor_address,
-+				 quirks);
- 	if (ret)
- 		goto err_deassert_reset;
- 
-@@ -150,6 +157,7 @@ static const struct elan_i2c_hid_chip_data elan_ekth6915_chip_data = {
- 	.post_gpio_reset_on_delay_ms = 300,
- 	.hid_descriptor_address = 0x0001,
- 	.main_supply_name = "vcc33",
-+	.power_after_backlight = true,
- };
- 
- static const struct elan_i2c_hid_chip_data elan_ekth6a12nay_chip_data = {
-@@ -157,6 +165,7 @@ static const struct elan_i2c_hid_chip_data elan_ekth6a12nay_chip_data = {
- 	.post_gpio_reset_on_delay_ms = 300,
- 	.hid_descriptor_address = 0x0001,
- 	.main_supply_name = "vcc33",
-+	.power_after_backlight = true,
- };
- 
- static const struct elan_i2c_hid_chip_data ilitek_ili9882t_chip_data = {
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 2cc4f1e4ea963..c32425b5d0119 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -364,6 +364,7 @@ struct hid_item {
-  * | @HID_QUIRK_HAVE_SPECIAL_DRIVER:
-  * | @HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE:
-  * | @HID_QUIRK_IGNORE_SPECIAL_DRIVER
-+ * | @HID_QUIRK_POWER_ON_AFTER_BACKLIGHT
-  * | @HID_QUIRK_FULLSPEED_INTERVAL:
-  * | @HID_QUIRK_NO_INIT_REPORTS:
-  * | @HID_QUIRK_NO_IGNORE:
-@@ -391,6 +392,7 @@ struct hid_item {
- #define HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE	BIT(20)
- #define HID_QUIRK_NOINVERT			BIT(21)
- #define HID_QUIRK_IGNORE_SPECIAL_DRIVER		BIT(22)
-+#define HID_QUIRK_POWER_ON_AFTER_BACKLIGHT	BIT(23)
- #define HID_QUIRK_FULLSPEED_INTERVAL		BIT(28)
- #define HID_QUIRK_NO_INIT_REPORTS		BIT(29)
- #define HID_QUIRK_NO_IGNORE			BIT(30)
+- Link to v1: https://lore.kernel.org/r/20250604-adi-i3c-master-v1-0-0488e80dafcb@analog.com
+
+---
+Jorge Marques (2):
+      dt-bindings: i3c: Add adi-i3c-master
+      i3c: master: Add driver for Analog Devices I3C Controller IP
+
+ .../devicetree/bindings/i3c/adi,i3c-master.yaml    |   72 ++
+ MAINTAINERS                                        |    6 +
+ drivers/i3c/master/Kconfig                         |   11 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/adi-i3c-master.c                | 1019 ++++++++++++++++++++
+ 5 files changed, 1109 insertions(+)
+---
+base-commit: 51963783b876a2f493a3eac0ea9eba271cb6809a
+change-id: 20250604-adi-i3c-master-2a5148c58c47
+prerequisite-message-id: <20250622-i3c-writesl-readsl-v2-0-2afd34ec6306@analog.com>
+prerequisite-patch-id: 5443f14ca82fc08593960fafdb43488cce56f7d9
+prerequisite-patch-id: 647084f5fe09f4887f633b0b02b306912a156672
+prerequisite-patch-id: 6f582bb2ef1aafb66f26c515a19d5efa06ab8968
+
+Best regards,
 -- 
-2.51.0.rc1.163.g2494970778-goog
+Jorge Marques <jorge.marques@analog.com>
 
 
