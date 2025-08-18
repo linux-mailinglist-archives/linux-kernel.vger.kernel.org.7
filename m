@@ -1,155 +1,103 @@
-Return-Path: <linux-kernel+bounces-772675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F125AB295F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:52:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279E2B295F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56F319630AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:52:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D367B0E6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 00:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D401021D3DC;
-	Mon, 18 Aug 2025 00:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ELlkNW0T"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07661EF092;
-	Mon, 18 Aug 2025 00:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB8D21A436;
+	Mon, 18 Aug 2025 00:52:42 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498C21F9F47;
+	Mon, 18 Aug 2025 00:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755478283; cv=none; b=K9NnN9IkEdm4kKhcQ5lHFol4DkX2EjE0QPSm0/H54oLLgxXtVqxMnIivtssS4/pN5YDmtbcCrspJPR7FD72cVF3MVgdsTCVylNpEQMdOTOvn818liuocQd5pQlYeoN2qv9zxDzkZPnpAfuNe4zXKFdaObBFAsXW3vqpa4YUvmek=
+	t=1755478362; cv=none; b=in4YBLDh/9nlYRuM4cnDWdpwqX0L+JkfviXkO+SWDEeLItyY8PY683bCfL1aamcNqQpRp+cG0UUJ9MYAFAYXTm1QNwufJ/V+OJYXIZQvOFArkWrb1FfrjqxUXkuPjpoNbXtAVDVgR04meaO/dp+8NrkPY0fH567By9pP2sE5SCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755478283; c=relaxed/simple;
-	bh=HRDV7d/PaCaH4Hi8NGvoS4QDvqvAaxN1e4OXjFRTlpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lMtlLTA8zfrfW4Z3VF1Fx/bdqa2Q9XirU54hMA98Um9mwpezGwJVx4H9bPorOGCdCjaKHMbw/VuF/EGlPtv9gfA7KT8wlM3zlI+z7NUgGOnArzmdP3BQgibUlKKMbUWG1CaQd19RrSQn18/mpi8nt7UxEKYfmsrM278Wktk2cb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ELlkNW0T; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755478276;
-	bh=zMn+PHO2tsa0PDDuAHWDh8cMSU5uEaOH8EZoPoM1DWA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ELlkNW0Towd2VRpOzXrju9ngXkqgGs44fejxqrnlIXXiit2+MYW6nEwd1c7xLJY43
-	 Xx9CGwxR6RLkghW33CRtSISK9YarSBor7TQiRehDnpGdr5fXviiTZYhLexR1zPeCsu
-	 OSmSdTsdhXme81ipdlfcrEs1565q0oSymLr5f6Loa58MIZMqksEmQFYRLVT4k7plNG
-	 MwaPev/xCFrxNxv5GRpoVNIOTg8e17qp+COCN2PDTYmwFLyNfgpmVxHUHpWEsvCs0/
-	 wXLboWAIV5FYDV0kd3opxZjJuXXNaq/VCW/aw12FuPSM/hx4Zwlwox6vf44e8a4jJT
-	 rF+zdoO+w3oMg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c4vKc49CTz4wbn;
-	Mon, 18 Aug 2025 10:51:16 +1000 (AEST)
-Date: Mon, 18 Aug 2025 10:51:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
- <johan.hedberg@gmail.com>, David Miller <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bluetooth tree
-Message-ID: <20250818105115.2adf8ef8@canb.auug.org.au>
+	s=arc-20240116; t=1755478362; c=relaxed/simple;
+	bh=zverf+i839FeEH1z5oH6cTC5zYeVbvbSWasiO5A2aBE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Dni87uE7oyoYAJ36U7vPJZHLN9qtIHhPMmQFh1+N+klzAEH0peIrtbUfnujdsNIUfKC41/XgTxBK2g34QsU4PnrEqJgQ+PfxQHGdWk1V6FM+HkLudNsW1xKh9dkKoWfX7NQ7ms7lwpzBfuppSpBAURWKLB49HQoxDPdhhTqE+LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: CUT4fKZSSq+EPIuxPCTUOQ==
+X-CSE-MsgGUID: PcQg34JjTGWhMxizu7Ij5w==
+X-IronPort-AV: E=Sophos;i="6.17,293,1747670400"; 
+   d="scan'208";a="149500033"
+From: =?gb2312?B?wqy5+rrq?= <luguohong@xiaomi.com>
+To: =?gb2312?B?Sm9zqKYgRXhwqK5zaXRv?= <jose.exposito89@gmail.com>, Jiri Kosina
+	<jikos@kernel.org>
+CC: "bentiss@kernel.org" <bentiss@kernel.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, =?gb2312?B?y87D3MPc?= <songmimi@xiaomi.com>,
+	=?gb2312?B?VGhvbWFzIFpoYW8g1dTqzQ==?= <zhaohui7@xiaomi.com>,
+	"tkjos@google.com" <tkjos@google.com>, =?gb2312?B?wqy5+rrq?=
+	<luguohong@xiaomi.com>
+Subject: =?gb2312?B?tPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFtQQVRDSCB2MiAyLzJdIEhJRDog?=
+ =?gb2312?B?aW5wdXQ6IHJlcG9ydCBiYXR0ZXJ5IHN0YXR1cyBjaGFuZ2VzIGltbWVkaWF0?=
+ =?gb2312?Q?ely?=
+Thread-Topic: [External Mail]Re: [PATCH v2 2/2] HID: input: report battery
+ status changes immediately
+Thread-Index: AQHcCrXbrGKdcLZC0kSUAM9u6AlyFrRhdOIAgAYpLxg=
+Date: Mon, 18 Aug 2025 00:52:31 +0000
+Message-ID: <5209b6cc4fd94859896b0ec7c3f34be3@xiaomi.com>
+References: <20250806073944.5310-1-jose.exposito89@gmail.com>
+ <20250806073944.5310-2-jose.exposito89@gmail.com>
+ <4q4qn3p8-6s3s-289n-44s2-43s76qrs2oo4@xreary.bet>,<aJ29tlqoQYFa-WYt@fedora>
+In-Reply-To: <aJ29tlqoQYFa-WYt@fedora>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8scfY5joeHAvvN/z5DHENta";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/8scfY5joeHAvvN/z5DHENta
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-The following commits are also in the net tree as different commits
-(but the same patches):
-
-  3ae443de7edf ("Bluetooth: hci_core: Fix not accounting for BIS/CIS/PA lin=
-ks separately")
-  3f9a516852b6 ("Bluetooth: btnxpuart: Uses threaded IRQ for host wakeup ha=
-ndling")
-  8477821d5f12 ("Bluetooth: hci_conn: do return error from hci_enhanced_set=
-up_sync()")
-  ad2f0c8792ef ("Bluetooth: hci_event: fix MTU for BN =3D=3D 0 in CIS Estab=
-lished")
-  3e383124ce63 ("Bluetooth: hci_sync: Prevent unintended PA sync when SID i=
-s 0xFF")
-  c244fc08ac4e ("Bluetooth: hci_core: Fix using ll_privacy_capable for curr=
-ent settings")
-  3ca23aaba210 ("Bluetooth: hci_core: Fix using {cis,bis}_capable for curre=
-nt settings")
-  5ecd1fbdacce ("Bluetooth: btmtk: Fix wait_on_bit_timeout interruption dur=
-ing shutdown")
-  9c533991fe15 ("Bluetooth: hci_conn: Fix not cleaning up Broadcaster/Broad=
-cast Source")
-  b69b1f91b84d ("Bluetooth: hci_conn: Fix running bis_cleanup for hci_conn-=
->type PA_LINK")
-  408410a0a0cb ("Bluetooth: ISO: Fix getname not returning broadcast fields=
-")
-  dc996aa11328 ("Bluetooth: hci_sync: Fix scan state after PA Sync has been=
- established")
-  fdbb50f1b26d ("Bluetooth: hci_sync: Avoid adding default advertising on s=
-tartup")
-
-These are commits
-
-  9d4b01a0bf8d ("Bluetooth: hci_core: Fix not accounting for BIS/CIS/PA lin=
-ks separately")
-  e489317d2fd9 ("Bluetooth: btnxpuart: Uses threaded IRQ for host wakeup ha=
-ndling")
-  0eaf7c7e85da ("Bluetooth: hci_conn: do return error from hci_enhanced_set=
-up_sync()")
-  0b3725dbf61b ("Bluetooth: hci_event: fix MTU for BN =3D=3D 0 in CIS Estab=
-lished")
-  4d19cd228bbe ("Bluetooth: hci_sync: Prevent unintended PA sync when SID i=
-s 0xFF")
-  3dcf7175f2c0 ("Bluetooth: hci_core: Fix using ll_privacy_capable for curr=
-ent settings")
-  709788b154ca ("Bluetooth: hci_core: Fix using {cis,bis}_capable for curre=
-nt settings")
-  099799fa9b76 ("Bluetooth: btmtk: Fix wait_on_bit_timeout interruption dur=
-ing shutdown")
-  3ba486c5f3ce ("Bluetooth: hci_conn: Fix not cleaning up Broadcaster/Broad=
-cast Source")
-  d36349ea73d8 ("Bluetooth: hci_conn: Fix running bis_cleanup for hci_conn-=
->type PA_LINK")
-  aee29c18a38d ("Bluetooth: ISO: Fix getname not returning broadcast fields=
-")
-  ca88be1a2725 ("Bluetooth: hci_sync: Fix scan state after PA Sync has been=
- established")
-  de5d7d3f27dd ("Bluetooth: hci_sync: Avoid adding default advertising on s=
-tartup")
-
-in the net tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8scfY5joeHAvvN/z5DHENta
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiieQMACgkQAVBC80lX
-0GwbVgf/SoF0vEYiiFCZC9vrml+u1Oe7F+WuBXK081OWrZfCJl9THWAHQT0Owa2Q
-R5Zkjb2ZymIu4lSOIzkKCxU/KTtyWrDvhx1qQe0iS1+HnKQ5xWHMnVxbvyjOwiE+
-WDMyxel1vdkWsgKlkxz53giHVzYBZi+06ti/PCUg3CfGd9kNTZEe1os1D0ggznA/
-6HI6v6fbhB5emGBlbPCkh3nZWyAZnted/g+Mfq1nE6II4sQeOM8ZEPhw6IqF8DCq
-mDr8s1+AMetahY8DkJAJNyt/Q5vUx8DKLn7a2i5W9TuKLX1jfyh5uIe2l+cwnip2
-WyG2/Ezp23iD74QuLEUk18MAn+KLVA==
-=41M/
------END PGP SIGNATURE-----
-
---Sig_/8scfY5joeHAvvN/z5DHENta--
+SGkgSmlyaSwNCkhvdydzIHlvdXIgcmV2aWV3IG9mIHRoaXMgcGF0Y2ggZ29pbmc/IFdlIGxvb2sg
+Zm9yd2FyZCB0byBoZWFyaW5nIGZyb20geW91LiBUaGFuayB5b3UhDQpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fDQq3orz+yMs6IEpvc6imIEV4cKiuc2l0byA8am9zZS5l
+eHBvc2l0bzg5QGdtYWlsLmNvbT4NCreiy83KsbzkOiAyMDI1xOo41MIxNMjVIDE4OjQzDQrK1bz+
+yMs6IEppcmkgS29zaW5hDQqzrcvNOiBiZW50aXNzQGtlcm5lbC5vcmc7IMKsufq66jsgbGludXgt
+aW5wdXRAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQrW98zi
+OiBbRXh0ZXJuYWwgTWFpbF1SZTogW1BBVENIIHYyIDIvMl0gSElEOiBpbnB1dDogcmVwb3J0IGJh
+dHRlcnkgc3RhdHVzIGNoYW5nZXMgaW1tZWRpYXRlbHkNCg0KW83isr/Tyrz+XSC0y9PKvP7AtNS0
+09rQocPXuavLvs3isr+jrMfrvffJ97SmwO2ho8j0ttTTyrz+sLLIq9DUtObSyaOsx+u9q9PKvP7X
+qreiuPhtaXNlY0B4aWFvbWkuY29tvfjQ0Le0wKENCg0KSGkgSmlyaSwNCg0KT24gTW9uLCBBdWcg
+MTEsIDIwMjUgYXQgMDE6NDg6MjJQTSArMDIwMCwgSmlyaSBLb3NpbmEgd3JvdGU6DQo+IE9uIFdl
+ZCwgNiBBdWcgMjAyNSwgSm9zqKYgRXhwqK5zaXRvIHdyb3RlOg0KPg0KPiA+IFdoZW4gdGhlIGJh
+dHRlcnkgc3RhdHVzIGNoYW5nZXMsIHJlcG9ydCB0aGUgY2hhbmdlIGltbWVkaWF0ZWx5IHRvIHVz
+ZXINCj4gPiBzcGFjZS4NCj4NCj4gQ291bGQgeW91IHBsZWFzZSBtYWtlIHRoZSBjaGFuZ2Vsb2cg
+YSBsaXR0bGUgYml0IG1vcmUgZWxhYm9yYXRpdmUsIGkuZS4NCj4gd2h5IGlzIGl0IG5lZWRlZCwg
+d2hhdCB1c2VyLXZpc2libGUgYmVoYXZpb3IgY2hhbmdlL2ltcHJvdmVtZW50IGl0IGJyaW5ncywN
+Cj4gZXRjLg0KPg0KPiBJIGtub3cgaXQncyBpbiB0aGUgZS1tYWlsIHRocmVhZCwgYnV0IGF0IGxl
+YXN0IHNvbWUgc3VtbWFyeSBzaG91bGQgZ28gYWxzbw0KPiB0byB0aGUgY29tbWl0IGl0c2VsZi4N
+Cg0KVGhhbmtzIGEgbG90IGZvciByZXZpZXdpbmcgdGhlc2UgcGF0Y2hlcy4NCg0KSSBzZW50IHYz
+IHdpdGggYSBtb3JlIGRldGFpbGVkIGRlc2NyaXB0aW9uIG9mIHRoZSBmaXg6DQpodHRwczovL2xv
+cmUua2VybmVsLm9yZy9saW51eC1pbnB1dC8yMDI1MDgxNDEwMzk0Ny4xMTYxMzktMS1qb3NlLmV4
+cG9zaXRvODlAZ21haWwuY29tLw0KDQpKb3NlDQoNCj4gVGhhbmtzLA0KPg0KPiAtLQ0KPiBKaXJp
+IEtvc2luYQ0KPiBTVVNFIExhYnMNCj4NCiMvKioqKioqsb7Tyrz+vLDG5Li9vP66rNPQ0KHD17mr
+y761xLGjw9zQxc+io6y99s/e09q3osvNuPjJz8PmtdjWt9bQwdCz9rXEuPbIy7vyyLrX6aGjvfvW
+ucjOus7G5Mv7yMvS1MjOus7Qzsq9yrnTw6OosPzAqLWrsrvP3tPayKuyv7vysr+31rXY0LnCtqGi
+uLTWxqGiu/LJoreio6mxvtPKvP7W0LXE0MXPoqGjyOe5+8T6tO3K1cHLsb7Tyrz+o6zH68T6waK8
+tLXnu7C78tPKvP7NqNaqt6K8/sjLsqLJvrP9sb7Tyrz+o6EgVGhpcyBlLW1haWwgYW5kIGl0cyBh
+dHRhY2htZW50cyBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBmcm9tIFhJQU9NSSwg
+d2hpY2ggaXMgaW50ZW5kZWQgb25seSBmb3IgdGhlIHBlcnNvbiBvciBlbnRpdHkgd2hvc2UgYWRk
+cmVzcyBpcyBsaXN0ZWQgYWJvdmUuIEFueSB1c2Ugb2YgdGhlIGluZm9ybWF0aW9uIGNvbnRhaW5l
+ZCBoZXJlaW4gaW4gYW55IHdheSAoaW5jbHVkaW5nLCBidXQgbm90IGxpbWl0ZWQgdG8sIHRvdGFs
+IG9yIHBhcnRpYWwgZGlzY2xvc3VyZSwgcmVwcm9kdWN0aW9uLCBvciBkaXNzZW1pbmF0aW9uKSBi
+eSBwZXJzb25zIG90aGVyIHRoYW4gdGhlIGludGVuZGVkIHJlY2lwaWVudChzKSBpcyBwcm9oaWJp
+dGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0
+aGUgc2VuZGVyIGJ5IHBob25lIG9yIGVtYWlsIGltbWVkaWF0ZWx5IGFuZCBkZWxldGUgaXQhKioq
+KioqLyMNCg==
 
