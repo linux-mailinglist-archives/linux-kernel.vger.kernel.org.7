@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-774139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9907B2AEFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:10:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4FAB2AE6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890673BD6FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ED2A17AF5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209E4253F03;
-	Mon, 18 Aug 2025 17:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50E4341ABE;
+	Mon, 18 Aug 2025 16:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4Zht8J9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="maw53CTF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7039032C304;
-	Mon, 18 Aug 2025 17:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0AF27B353
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755536852; cv=none; b=hGSMMhe/gqxlAyimgvf+08QcE1QOLz3LJSHfMm0LLk3mS/sjyEa0PW9ElbGqs8edAfrI5akTaISmu+Vu41baiplZMroT2KhoSI3sPZCHwO7kOr95QBgTv415hx22ROr23zXgpDU+gEFDCG6zzWHXET3sOSDDKcOw7KxYHHcYsnE=
+	t=1755535377; cv=none; b=h2esYAEDc9BGL1vhpx3w8lD62SUYjKfqdXCznRMj0GNeCfwV5ABn1TZKtWSywE584ds2hz4kYm2HDUq4L+jHT39XDRPY6FIWMinGnZTj72FbN4pygZ4AMTX/5YM4+f6uzVa9CtrQOAAKP7sXu8jx/MsFI2Qx789PjwxIcjSziIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755536852; c=relaxed/simple;
-	bh=KhHns3MO0aHvf+3Asuji1SH4gKY6cGswxL3bjgtAUSI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O++Ynm7RK2bWNIbpbJMmiNpErPUwxZM3iL18IurF6YTb28484vjqOwiwCZ1V/c6DmTwHQCozQfVsWcVnxkX+CiX6nQabYenNThAP3BBCw+my3YAo/HvbU4xv8dp85hr6WY1R/kKr0nqrFOHTGxSynzk85Rrj8NmDDBjGuHvSBpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4Zht8J9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB006C4CEEB;
-	Mon, 18 Aug 2025 17:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755536852;
-	bh=KhHns3MO0aHvf+3Asuji1SH4gKY6cGswxL3bjgtAUSI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=J4Zht8J9cq28qvrFdNfKEhj6+9ZF3/cDfE7ThTl02xFlct9SSpXoQdeE+ZpCY+KM0
-	 EYTnSOOkZ/JwKjy5XlRnbhw+Y/6XpZcrlzAm1+IIOp1fzbb1LAdT7qBr1h+ViURf1d
-	 KdZgz3aD2/S5BBlkUT//+2y307Hk5JjZFIJbzRaxWAV4eBFHuZsllpGzIzuQLXZQRT
-	 FAYbTz6kW81T5dWMQZyfCYCVrS10hZDko46lU1fHnWNouAKx4Im9wJNTtRxbfGeJmZ
-	 lJJlSM8Sa30BxbDZuKP+A7L7D6AaGCqCyiIs9lPGIAoed8mGkZhY0mmF3J+p+A4uc0
-	 q0vt3kfqcYVBg==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 18 Aug 2025 17:41:00 +0100
-Subject: [PATCH] KVM: arm64: selftests: Sync ID_AA64MMFR3_EL1 in
- set_id_regs
+	s=arc-20240116; t=1755535377; c=relaxed/simple;
+	bh=FFRgUjm1Gro1I+69P/TMbAic2wfSm8DMVKGUgEm0vxw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dzo2Xh9tQ4rStYWrALxg2F6OFsUwKi4Ns+9I5JcDmBoCoqyGt7op2A4eqFo5VeRLMsmeg3SAjD3L1M8UelmVkeWLgyRoNClxy2ChKfINqS44PMZPx48nLXSkmGuCVoijDmrC76dL+iw2ovyGvoxZl/eDK43SONDnnDiT1kJLMxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=maw53CTF; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755535376; x=1787071376;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=FFRgUjm1Gro1I+69P/TMbAic2wfSm8DMVKGUgEm0vxw=;
+  b=maw53CTFmkrYF7Mg2LCtKnBqlqr8Sbb/RPP+EJm8zmWfSaT61XZZBXU4
+   uzUuM5YsNnH+h+v7ZK2E5iaxwGN9IGdPDYPcGPPUZyQ3xiomveY7MClfu
+   7sYS5OlRprSH/q6PfqA9/6d2YfZccjDsYHpsyBGjuDnECsNO8tiQD+I9G
+   PG37JQjHebWFMh+uv5D9G4QDnzxsd31LStvFS4sLEbNDSsJIphrk85nxu
+   dpvQV9IumKLY1V0UCPLJ+nXtr3dSoGLgIIGaSPz9Qqm3LeuTkE45XtypK
+   67Pv6n04/Bs0NVO+8EZFmYZxGBhnFsekTItkbygwPN7UcXvkI+TsUfWsA
+   g==;
+X-CSE-ConnectionGUID: mckg41UmQzGsquXAUXM3Bw==
+X-CSE-MsgGUID: shb22CqcScCfa5D0N/GqtQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57913905"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="57913905"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 09:42:55 -0700
+X-CSE-ConnectionGUID: hg58vD3gT1C5B79/FUkiiQ==
+X-CSE-MsgGUID: wD+yurJLT02ZIM7X6sfNmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="167863384"
+Received: from abityuts-desk.ger.corp.intel.com (HELO [10.245.244.38]) ([10.245.244.38])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 09:42:52 -0700
+Message-ID: <d34ba6c8c68a2fa85f052bdb4d27be15561f4861.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 1/6] mm/mmu_notifier: Allow multiple struct
+ mmu_interval_notifier passes
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Matthew Brost <matthew.brost@intel.com>
+Cc: intel-xe@lists.freedesktop.org, Andrew Morton
+ <akpm@linux-foundation.org>,  Simona Vetter <simona.vetter@ffwll.ch>, Dave
+ Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Christian
+ =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>
+Date: Mon, 18 Aug 2025 18:42:36 +0200
+In-Reply-To: <20250818163617.GI599331@ziepe.ca>
+References: <20250809135137.259427-1-thomas.hellstrom@linux.intel.com>
+	 <20250809135137.259427-2-thomas.hellstrom@linux.intel.com>
+	 <20250818160726.GH599331@ziepe.ca>
+	 <aKNT8GUu0r3i4Ikq@lstrano-desk.jf.intel.com>
+	 <20250818163617.GI599331@ziepe.ca>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-kvm-arm64-selftests-mmfr3-idreg-v1-1-2f85114d0163@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAJtXo2gC/x2NywqDMBAAf0X27IKJ8UF/RTykZmOXNrbsihQk/
- 27wODDMnKAkTAqP6gShg5W/WwFTV7C8/LYScigMtrFdM5oO30dCL6l3qPSJO+mumFKUtohCKw5
- PH8cwWOdaA6XyE4r8vw/TnPMFI+NEvXEAAAA=
-X-Change-ID: 20250815-kvm-arm64-selftests-mmfr3-idreg-7baf8d724431
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1114; i=broonie@kernel.org;
- h=from:subject:message-id; bh=KhHns3MO0aHvf+3Asuji1SH4gKY6cGswxL3bjgtAUSI=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoo13QE86Q+y16bpfWE+6x/9uKmyweiprMs5xFd
- i2iompCKpmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaKNd0AAKCRAk1otyXVSH
- 0BLnB/47gyQvwyahO0s7MsRSP2NgxKt/teBkTEhY6fNSSnTUGClsLhO1v7AwheWNVNuF7pMb9N3
- sSFAFAcJwQaJmtRlJQca/uTn5FLMGV5Fp3EznJ1nOatvjL17YpmJixZyGZOppo5cNL6+TBLCiUp
- CTVDIgAWbUAkzhA8NVdmyRQgcoQA/cW7vq2y5/2tLPCkcr9vZqkjeiDA45szgLRWm0KtfEXRcRe
- FU63m2c+k07H7iPqyDtf0m9qDWgrgvNHD1yaqpyze2ryyrVywr7tMsxSJSryueQ3TMxHXU0ymMk
- MVb302LVklf1wglLZJWS4Q8yT52k9g+yv/ZiLqqVnk2lf6+H
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-When we added coverage for ID_AA64MMFR3_EL1 we didn't add it to the list
-of registers we read in the guest, do so.
+On Mon, 2025-08-18 at 13:36 -0300, Jason Gunthorpe wrote:
+> On Mon, Aug 18, 2025 at 09:25:20AM -0700, Matthew Brost wrote:
+> > I think this choice makes sense: it allows embedding the wait state
+> > from
+> > the initial notifier call into the pass structure. Patch [6] shows
+> > this
+> > by attaching the issued TLB invalidation fences to the pass. Since
+> > a
+> > single notifier may be invoked multiple times with different ranges
+> > but
+> > the same seqno,
+>=20
+> That should be explained, but also seems to be a bit of a different
+> issue..
+>=20
+> If the design is really to only have two passes and this linked list
+> is about retaining state then there should not be so much freedom to
+> have more passes.
 
-Fixes: 0b593ef12afc ("KVM: arm64: selftests: Catch up set_id_regs with the kernel")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/arm64/set_id_regs.c | 1 +
- 1 file changed, 1 insertion(+)
+Actually the initial suggestion was two passes only. Then I thought I
+saw a use-case for even three passes and added the multi-pass thing,
+but I think it turned out we didn't have such a use-case. IMO we could
+restrict it to two-pass. Matthew, that should be completely OK for the
+SVM use-case, right?
 
-diff --git a/tools/testing/selftests/kvm/arm64/set_id_regs.c b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-index d3bf9204409c..97d5ab9ef0fe 100644
---- a/tools/testing/selftests/kvm/arm64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-@@ -243,6 +243,7 @@ static void guest_code(void)
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR0_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR1_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR2_EL1);
-+	GUEST_REG_SYNC(SYS_ID_AA64MMFR3_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64ZFR0_EL1);
- 	GUEST_REG_SYNC(SYS_CTR_EL0);
- 	GUEST_REG_SYNC(SYS_MIDR_EL1);
+/Thomas
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250815-kvm-arm64-selftests-mmfr3-idreg-7baf8d724431
 
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+>=20
+> Jason
 
 
