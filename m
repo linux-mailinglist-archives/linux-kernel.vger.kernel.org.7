@@ -1,93 +1,148 @@
-Return-Path: <linux-kernel+bounces-774495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F5EB2B327
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:01:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F182EB2B328
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375FD586C4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:00:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B129D7B0890
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC09238C0F;
-	Mon, 18 Aug 2025 20:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAA0270EAB;
+	Mon, 18 Aug 2025 21:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JNzFI0tu"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ant9n3My"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46C21FBCB2;
-	Mon, 18 Aug 2025 20:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0B520B7F4
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755550792; cv=none; b=eyuSvZfpGJ767JVzr2e7clQHnnSFSOsd3UfdTu40/Bx85r8IL45VyqhVsmOw50X8xrBkVQkU5y4uQ+wCVStDXIqs/6tHrLFqGownb2WXHjefa62jAlLZVvGgKR0bsiGj50UU2+d8jTqX3h7luMVe6eESsBG5vKxbAOStrgQj8P8=
+	t=1755550881; cv=none; b=aXci3ERe3lAYktYjromXyCzPIp+BWFuCZAc1saaSukXlFmGIzqt0mffug+jNDvYfAZ2N2dB/rXgPOlIL2HQwIm+JQnQuLO0UpIo/Y447D5QZytpuDuGK74P4s+w4SEfakP1slqjMjpsczsxbWWowozlYQ8Aru6Zwnm83eF/YCUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755550792; c=relaxed/simple;
-	bh=BTDLB1c4YWuP7ypwEDVl5hczsMlu/uvmqdjn4I5F7Ao=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=WPYD9QOBoHBjcD7m/nkGpx4pGBTrh06GJ1gnrNfAMxqebdekF2b3rk+Twyn0saQY3+e14vAwcXX3ucJ/bAfyHt0wQ8T3xrpbVSqe17+K/3Y5bjwoxgnJxLjFJR/4XtF4xFkrwjBv9F8sgMGoUlARz0KWE93ClIQv9MA62h4wLZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JNzFI0tu; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755550789;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9s14oyC6Y23cr8qVEDnKGPSBJDMao28DU8LVQLQXYK8=;
-	b=JNzFI0tuE0B6jJZzVzll5qsMZUi7ooiEWkuE9Vz4SbhjNbU9LcK9ygd4PPgX8KtKqFWtNZ
-	DEfEZ3pGja9GxEc+rS76JRVWks765CRD4fxI+jpMe14J+siqv31euCUSghCm6eS7b8c0m0
-	z9V3zT90toqVr9Lr+r8wye0HBDQySdc=
+	s=arc-20240116; t=1755550881; c=relaxed/simple;
+	bh=94V2oxncUNCGGpu+Iq+45gM38Y+E66NCd49Ad/nyJWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zi4tHh1Tg2Mxev69b5Eb+54trwZ/hUwHdoWCZI0b0xFvVMMc2N/laWftFSplA/owDGYdkxZVrYpmuV6zTHQTgS/Q+1uTsWkNS9kitUETUX0TWSl2jAAQi6L28cmeQf8l088zHEKtkm5H/2/Tgc5GshRp2VeQVdeC9MLsuZtGZhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ant9n3My; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-88432efaf45so37019539f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755550877; x=1756155677; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3nZTzF2lhsZGOWdY8YDL7P1nyHVBb5WBP5wnL3mixY4=;
+        b=ant9n3MyhidCzVK4theaKTpSBYdHnNf1AlnxKN4VruncyD/QKO5lRVnBcJxRRl18Ep
+         dBvUXCgywKh9f+pydfPoIDRfvxntqWL62fPbARpVwlr4aVNp1sZ1VJfXMuz3qzWY48Fs
+         eSzlQ29YVxyFrHBjB5v+owui42xEfoMVri60nVnNc+ehIe4FPjwFR29l7g6aMg1dlr3O
+         JJmfTlZdu7td/3gija5voI7T12pTQFtwEJcVXJhzmmyPcgUOd3rLkSaqmrsp+6QcB+vN
+         rPX4i1OKaaZc/D2aztEsXR9WQN/dREWhFlGe2JTd+7GJP2bxZvfqkoMwYSjh/TBsFrj9
+         d3BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755550877; x=1756155677;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3nZTzF2lhsZGOWdY8YDL7P1nyHVBb5WBP5wnL3mixY4=;
+        b=M2yv6lT3PJoHl8Fbn3oNpAjYhocL19bUovT4yyyH0B1LsvUY2UoVK1eOJRnRdKZzVe
+         Tv9Ic3QXKWoF0XVtsuQHDZkXjP3kzrUHUkhQ+FTSouHCSnGthkPQg0pARXU+Of65+aAO
+         QRu5Zl1RwFqy6eVy/hp1993DY9th0jQWTgnwlkk2B+yYSoE/6StW7TJgyNoOwGI13Eib
+         1HCiK4UH51ZszYjcekwYatpHsFYz5fJCmTq8jVrFcHdogr360g4HTDgk5uva6OR2cd87
+         gQBX8Gc/8rbI9IVoLBBmAjuLINymHtGIVTfdzjWrXyS9+WN5HhQpMdFggHF5j9rHKv3Q
+         omXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPDNmBfJ7LvKTL+xs49aB81yCj4ZGwnP0XrGbCw6x3p6XLS+pFRkHDXgkkdkyAeKS4pI72zoYaOTgQeUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUreH2d/mPnaSFcBM4VBQEtlQp7U12JJd6hziGJproG3fLxH/n
+	9MeQxYLIcZjIDX/4DdQi0pnGi5yE0o8RV6dCK1CPIkhro7uCipvKJI3FsXTZy3uTe/M=
+X-Gm-Gg: ASbGncs2aJRc40ZbvCa+aKV4MNh1CgfbutiiJ/coW8GXQ4ZUglE81LFb59xw2SaZJlu
+	GIKyavfFCwzXNdcuSPXNK0J3aHWHgotM9cF0BS/kkYFAEn3M1er/FpMX8mfco0z9Rxl3VYt3WWQ
+	Gv1+LDSagRTyWRksqAJYAlUAuUJAekkhA2rFfFc25kmrqDNkDOMvagCyhoqrx9Kd3hUovASL/0J
+	y8k6SbWKoI4xYzMIsv5q2UkmWAJb4VbFHO87Kj8FfkBDZ4WHmQu6ou/i5BwQr4Mq42CKQgs0wEb
+	jXL9rOtHR+l7TEWYOnMo0TW2HgOC+ErM6P4lKEwq9J1U7nH7T4u2kkDnR03NJtH+vxboGZh4+7n
+	WOr4SslV1sC/5IlxFQzLPvt41
+X-Google-Smtp-Source: AGHT+IFFpFqrnNZItu3L5GNLWSB269pADqOsIU+gIQEJhNsMNbkPMIMecR7fgqDGFDi8X/YtnL7Gbg==
+X-Received: by 2002:a05:6602:2cd1:b0:881:87ac:24a with SMTP id ca18e2360f4ac-88467ecf75amr19364539f.7.1755550877544;
+        Mon, 18 Aug 2025 14:01:17 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8843f9c47f5sm345226739f.20.2025.08.18.14.01.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 14:01:16 -0700 (PDT)
+Date: Mon, 18 Aug 2025 16:01:16 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: dayss1224@gmail.com
+Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atish.patra@linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: Re: [PATCH v2 3/3] KVM: riscv: selftests: Add missing headers for
+ new testcases
+Message-ID: <20250818-4672b703d0bf9518ee1d4162@orel>
+References: <cover.1754308799.git.dayss1224@gmail.com>
+ <cafaa0b547d4a1fc45a38753038c011ea7201d04.1754308799.git.dayss1224@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 4/4] kdb: Replace deprecated strcpy() with helper function
- in kdb_defcmd()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <CAD=FV=UhEeZdCwL0kVmDHZF03q+Jp5iOiUvbNNoCDuBr3os9qQ@mail.gmail.com>
-Date: Mon, 18 Aug 2025 22:59:35 +0200
-Cc: Jason Wessel <jason.wessel@windriver.com>,
- Daniel Thompson <danielt@kernel.org>,
- Nir Lichtman <nir@lichtman.org>,
- Yuran Pereira <yuran.pereira@hotmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Zhang Heng <zhangheng@kylinos.cn>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- linux-hardening@vger.kernel.org,
- Daniel Thompson <daniel@riscstar.com>,
- kgdb-bugreport@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <33D2B62D-9052-42A8-AB66-DF2903BBA52F@linux.dev>
-References: <20250818181153.661431-1-thorsten.blum@linux.dev>
- <20250818181153.661431-4-thorsten.blum@linux.dev>
- <CAD=FV=UhEeZdCwL0kVmDHZF03q+Jp5iOiUvbNNoCDuBr3os9qQ@mail.gmail.com>
-To: Doug Anderson <dianders@chromium.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cafaa0b547d4a1fc45a38753038c011ea7201d04.1754308799.git.dayss1224@gmail.com>
 
-On 18. Aug 2025, at 22:42, Doug Anderson wrote:
->> +	memcpy(s, str, len);
->> +	s[len - 1] = '\0';
+On Thu, Aug 07, 2025 at 10:59:30PM +0800, dayss1224@gmail.com wrote:
+> From: Dong Yang <dayss1224@gmail.com>
 > 
-> Very nitty, but technically the above memcpy() could pass "len - 1", right?
-
-Ah yes, I missed this after adding the manual NUL-termination.
-
-I'll send a v2 tomorrow.
-
-> It doesn't really matter other than the wasteful copy of 1-byte, so:
+> Add missing headers to fix the build for new RISC-V KVM selftests.
 > 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> Signed-off-by: Dong Yang <dayss1224@gmail.com>
+> ---
+>  tools/testing/selftests/kvm/include/riscv/processor.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/include/riscv/processor.h b/tools/testing/selftests/kvm/include/riscv/processor.h
+> index 162f303d9..4cf5ae117 100644
+> --- a/tools/testing/selftests/kvm/include/riscv/processor.h
+> +++ b/tools/testing/selftests/kvm/include/riscv/processor.h
+> @@ -9,7 +9,9 @@
+>  
+>  #include <linux/stringify.h>
+>  #include <asm/csr.h>
+> +#include <asm/vdso/processor.h>
+
+This is fine, but...
+
+>  #include "kvm_util.h"
+> +#include "ucall_common.h"
+
+...this isn't correct. We should instead add this include line to all the
+source files that need it:
+
+access_tracking_perf_test.c
+memslot_modification_stress_test.c
+memslot_perf_test.c
+
 
 Thanks,
-Thorsten
+drew
 
+>  
+>  #define INSN_OPCODE_MASK	0x007c
+>  #define INSN_OPCODE_SHIFT	2
+> -- 
+> 2.34.1
+> 
+> 
+> -- 
+> kvm-riscv mailing list
+> kvm-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kvm-riscv
 
