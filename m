@@ -1,63 +1,70 @@
-Return-Path: <linux-kernel+bounces-774187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D4DB2AFA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:44:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71E7B2AFAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D18621A07
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:43:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5BE362814B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5753B32C333;
-	Mon, 18 Aug 2025 17:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCE12765EC;
+	Mon, 18 Aug 2025 17:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wk2hD5/Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsqVydyW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B386B257AD3;
-	Mon, 18 Aug 2025 17:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BBC315783
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755538976; cv=none; b=RW7aObO3b0QUee6DTr9yYi/Jz39hMc0a+UxMKhMaD4wCGuqqxkrTM6tv9BxjGNtBg8oG4c1xQK1XMutkpXdfrRlPvvkvE1rM+lx9oy/fvVHIqmEGIRHZVMXcLjgDTv4+FpBybB7eED91g9mf5VEv7w3Cs+vkxqSDastaKFcXd6w=
+	t=1755538999; cv=none; b=J3NfqLVsP19FR8As4FX8QZ8ZF0FzGI51YHLKnubSq6dKIobvFoK0iXX3ygQqA9/kBCRvhk9cs7Th8G5eYBJWlsZvH546dqHgRSv+AanQdYU1pXPO17OhjDWWbgeMFXs9u6hLUzdoGSLFMiBRQyr4ZCzaNJ7066iiSbl/AfqzNfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755538976; c=relaxed/simple;
-	bh=POtnzVuu7StIyvbzEGfi+cQTdego30RYNaxXqHlh65A=;
+	s=arc-20240116; t=1755538999; c=relaxed/simple;
+	bh=6yGFbng6TuvlASm0gMlvUw3GVPYLN4WydFGBaRcbEGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AFaPhjknQE9gl151ULyr1LfHBQrPWUFlr+CJcGJSYqXLGClK6fPKUhWwJaR6QVJ6KBFP3844dNr2A4okvCNiw0+BJ6DCPEH+KHkZYkceoeovvSYpTjbfhdPX5PxRbqbQinZ4dWlseb9eD5ZLa0n32vRBoFZgUbQixb4ht4olwEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wk2hD5/Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7182C4CEEB;
-	Mon, 18 Aug 2025 17:42:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ti81gTl7Vakk5WF/gnd4yjZFJwsxeaBnWqrUR6Jsr9yFoRz0UTj/G8arCJtFQHAEB4JBAbjXkxVCQV71a7KxRyDeoEeWvv17z/XoJdaivRBnlY/k6rsEZia9RPyv3khl1CsvLleTALUxDBKSOT9sx1lDhkwKuk4KUEXaA15N3p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsqVydyW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87A0BC4CEEB;
+	Mon, 18 Aug 2025 17:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755538976;
-	bh=POtnzVuu7StIyvbzEGfi+cQTdego30RYNaxXqHlh65A=;
+	s=k20201202; t=1755538999;
+	bh=6yGFbng6TuvlASm0gMlvUw3GVPYLN4WydFGBaRcbEGY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wk2hD5/YAUwyD/nQrN2mX6EvZwaZRCIc/hDgaBAWQ2hD+lN4YEG3xLNSpdJYYkLo0
-	 EAIue/5hEt12jahxQZ+pjEQeDHTBY2YJARb55qc3vFMLFH529KEUajvnC5NjlVZbl2
-	 8KsZFtnerTrJK2gXcfLBo37gJWkcWuvHlz/C03CXN/sLShJDpRqZatXy9/NiNIAviz
-	 HXhvG2SUHgMk0neX3JBCCZfbOhwPHaxgKrDRxZ+yFv/p6GdS8GOXYaNQSPUK3w6sSd
-	 jyxpy51xgnHIa06ScIgBG2DDNbeHC4ziXr08c1fKoyZ+H/J0+dXLXpxZWfnlSEJZwi
-	 O6xzNRAaBfXOQ==
-Date: Mon, 18 Aug 2025 20:42:52 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chris Fenner <cfenn@google.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-Message-ID: <aKNmHDVHV1DufJEd@kernel.org>
-References: <20250814162252.3504279-1-cfenn@google.com>
- <aJ8iNLwlf4PAC0h1@kernel.org>
- <CAMigqh1RTVzz0ffY8M3mZuc7NDaBKpMmCU4q0LuNyM2eAi+NFg@mail.gmail.com>
- <aJ9fy_sO6tza9qLF@iki.fi>
- <CAMigqh2=Kmnv_rrT-gBtESSXtnMrxU=VJdrYE6_9NGhKBN+ZrA@mail.gmail.com>
- <aJ9ySGv0JZ0DiNgf@kernel.org>
- <aJ9z4OlwvFdEA2Q_@kernel.org>
- <aJ91KX97WVOQ3nVk@kernel.org>
- <aJ92qt6oSYyRYPZG@iki.fi>
- <CAMigqh3yx7S2T=b-gTfdTG5BRs_JbHkXar4DT32AB3v_beNveA@mail.gmail.com>
+	b=BsqVydyWM+6jlf9FYWHFklNLd7YI9yd4iS3WUI5R2l6QcSTzHVoczw/vtY5ohjAFs
+	 2D6OkDdmUoysE2G2NN70Gw+lVf10M4PUYc8hmxJnznnU+zTfudhufvJVkRLvMyBiR/
+	 eHkp474VXD3CnEzAWb+QAZrYn3MN5zs6Qp3fkvjWaktGMv9UhbD7chB+bLKHB8WDbS
+	 O4OY0ZUSSYvCKaS84PgdJD4kqofSCHPmWEPZul8kWQR2rCWqVzg1OyAJ+GJkb3WY+f
+	 6SXyhY/ZgMqYa9vMSd0hNk6ljSeu7kc3PkyjblnoXK1VKtGWP3mkA8jC0SWyzrkEVt
+	 LXSQhTKarjmZg==
+Date: Mon, 18 Aug 2025 07:43:18 -1000
+From: 'Tejun Heo' <tj@kernel.org>
+To: liuwenfang <liuwenfang@honor.com>
+Cc: 'David Vernet' <void@manifault.com>, 'Andrea Righi' <arighi@nvidia.com>,
+	'Changwoo Min' <changwoo@igalia.com>,
+	'Ingo Molnar' <mingo@redhat.com>,
+	'Peter Zijlstra' <peterz@infradead.org>,
+	'Juri Lelli' <juri.lelli@redhat.com>,
+	'Vincent Guittot' <vincent.guittot@linaro.org>,
+	'Dietmar Eggemann' <dietmar.eggemann@arm.com>,
+	'Steven Rostedt' <rostedt@goodmis.org>,
+	'Ben Segall' <bsegall@google.com>, 'Mel Gorman' <mgorman@suse.de>,
+	'Valentin Schneider' <vschneid@redhat.com>,
+	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] sched_ext: Fix pnt_seq calculation
+Message-ID: <aKNmNmN7YX94CO0n@slm.duckdns.org>
+References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
+ <aFmwHzO2AKFXO_YS@slm.duckdns.org>
+ <7ae16e02aba64a318d8e67be9e3b7f8e@honor.com>
+ <aHlvpRIcymNPPWh9@slm.duckdns.org>
+ <46cef95e02d64b35a9d9d51d5debee22@honor.com>
+ <6ccd5ef5752d4cc1818e152f6b3458b0@honor.com>
+ <aJqExL-CjemhWfqB@slm.duckdns.org>
+ <aJqLPLxpNgKWbFmu@slm.duckdns.org>
+ <b1898ea1365d460e89b64989304ea0f7@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,26 +73,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMigqh3yx7S2T=b-gTfdTG5BRs_JbHkXar4DT32AB3v_beNveA@mail.gmail.com>
+In-Reply-To: <b1898ea1365d460e89b64989304ea0f7@honor.com>
 
-On Fri, Aug 15, 2025 at 11:09:07AM -0700, Chris Fenner wrote:
-> > I'm happy to make patch next week for this change too. So probably this
-> > where I align myself to. It's just the best average IMHO. Everyone gets
-> > exactly what they want, right?
-> 
-> To be clear: I already have what I want (the ability to disable this
-> feature because it seems broken to me), I'm just making
-> recommendations as a TPM abyssal domain expert. I hope my feedback is
-> of some use on this -- the work of dealing with interposer attackers
-> is quite important and I appreciate the effort already put in by the
-> team.
+Hello,
 
-So, if the feature is locked into persistent handle, the net effect
-meets the same goals. I'll pursue on a patch.
+On Mon, Aug 18, 2025 at 10:45:55AM +0000, liuwenfang wrote:
+> +void scx_put_prev_set_next(struct rq *rq, struct task_struct *prev,
+> +                          struct task_struct *next)
 
-> 
-> Thanks
-> Chris
+Might as well match the surrounding naming convention and use
+__put_prev_set_next_scx()
 
-BR, Jarkko
+> Any suggestions will be appreciated and a formal patch will be sent out later.
+
+Other than that, looks fine to me.
+
+Thanks.
+
+-- 
+tejun
 
