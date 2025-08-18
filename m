@@ -1,154 +1,127 @@
-Return-Path: <linux-kernel+bounces-773882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740C8B2ABA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8B1B2ABCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A491BA3E7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C161BA7469
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B561DE4EC;
-	Mon, 18 Aug 2025 14:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438CA1E8836;
+	Mon, 18 Aug 2025 14:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="M2YuH+oK"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="qKal9UKa"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2054335A2B2;
-	Mon, 18 Aug 2025 14:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF95635A2B2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528281; cv=none; b=RHiR1wCH8JCdXQFz4EcCb22v6Ga6ZcD0tFDn1jUYLNzKpEZy0rfA9JliqoW2vTdFjUwLgesQInV+5ydEvQiEjvQo79RJ/Oq70PYIl6/eiVHLsMVnHVQasMEfe+0Ku7MLodL7BmaPVvuq2TWoG8qHhikLiUUWBCbcFZNVfNUH0dA=
+	t=1755528301; cv=none; b=fNBNwbbHfTNbepPcN3vOJvMqGXArQjj886zMYM6RloOQXIE1JpSZZGrGSo+CvBKyx58e8ZCiikgtRW7+PsPgXytmG9RrdbVuut9df4+nd+YEoCYWDPjw6J9NXhbX2sbfbfKo2JQp4qPxfCNdxlQtydbBIfWG2vNYGH8r7Ov9yfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528281; c=relaxed/simple;
-	bh=mMKIkhPKdEqNAGhDWDIfws0cG0Cg578nDe0eBj6SHHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=IG4+THhetn9uDdbj+3XMre667gbobd3RgnP312imkUW0ZoRjaxxVF//9OOH7+P6HDwkWSMX1Wl0I7k3T4ox0u5oMk5IC2UfjHDjTpKeJTmvG3iVpKBiHgg6wFN1a87ahNVym4c92VtLfEH2Srr5g+rMbawVQRy96kTQ9x3mgqXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=M2YuH+oK; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IEYiww025389;
-	Mon, 18 Aug 2025 10:44:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=lW3/LPo9dCqQoq2/cIX+6sSFCzF
-	WxgpwuV5nvG1cwHU=; b=M2YuH+oKVjHg+BPuQySTVY56lEVZ+J2ijaR4BLO9qBW
-	BhFfowSXdh5bRg6+l2t2UtdWJRQLzKz0lGPXoiw8QpLdQl3s48LP4gt+bRGbaqAk
-	fMmEGY61TABK6fmEM7UudpsBRTVR7uhlhi7oNY8KP9875KMiEWAZLRdkCA/dj79w
-	hvNxBaNU0mU7bPsNyHd6GRxpLYyhihVOlGFucYeHTgRlYLvClIRPmnD/dFWd6hE0
-	2MBnqLfZuf+1X2XFK2HD4dflzVYoMqJeB2h2JqioOKU4xvoix11pCwG7K46oJlVv
-	s8JQpvwEeJ7QfswRVLh3wDYn/vYwplmCXMKagrdjIZA==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48kn0svs6x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 10:44:36 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 57IEiZW6051886
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 18 Aug 2025 10:44:35 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 18 Aug 2025 10:44:34 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 18 Aug 2025 10:44:34 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 18 Aug 2025 10:44:34 -0400
-Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.44.3.53])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57IEiOH0012430;
-	Mon, 18 Aug 2025 10:44:26 -0400
-From: Jorge Marques <jorge.marques@analog.com>
-Date: Mon, 18 Aug 2025 16:44:23 +0200
-Subject: [PATCH] docs: iio: ad3552r: Fix malformed code-block directive
+	s=arc-20240116; t=1755528301; c=relaxed/simple;
+	bh=7w9RInTYAzbNcsrQPptuJXaRVRPQLncyuDK9SXdi+7o=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Nr2w1M5aV6ZKeCI7nVcr6PVso27XK+n8RYukr4tisSNbVWLBACr1apPVqBFbxmrRqhBE79XqdaB/ljwB1S0xDc8227K5+xAtU+Rrog/lSxGVT0q+Ic99oOgADmIUwjHsuwDdZtIUEjOnqkRlgtayV4uDBmpKgIrey0mVKPuRl3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=qKal9UKa; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1755528293;
+	bh=LqLLtWOIbYpdhN63Gaju063UjZzQBe2vxmRPt7noPkE=;
+	h=From:To:Cc:Subject:Date;
+	b=qKal9UKarchSzBRxDlW1HHBtUuXNdEQ01lcekjvaaD6GvtO1jMIVtIUY8kXpj56Y6
+	 RLGBl6m+BBXIwV7tH1TPw+XpMe3ujaqPMZHX64RsuGA4LuP8c6o4auA4ddx8NixVK7
+	 pBZuTYI4EIkN4LKevPYQEpeTEPQwHiV2fZPHxYlw=
+Received: from zm.. ([2408:8340:a29:3fc0:20c:29ff:fe69:94c7])
+	by newxmesmtplogicsvrszc13-1.qq.com (NewEsmtp) with SMTP
+	id B342E2AA; Mon, 18 Aug 2025 22:44:52 +0800
+X-QQ-mid: xmsmtpt1755528292t3poiqlkz
+Message-ID: <tencent_9DE7CC9367096503F6ADD2BD960079267406@qq.com>
+X-QQ-XMAILINFO: MB5+LsFw85NoO6R2+tnWRSxYDLXxmAumKWjcvwRqDFOCrv/NAyfoCuQd4F2iHb
+	 VxwxcL1rzpoUU6kdYpyoTETQp4HDz7sTSNu0bVZSIdwj5gqxUz5fWNBUAb7FMaixdXIyr1ue775U
+	 G1TlcHOGBQaQvKMtwDgjJJ5HCvbnwhKURj1MMsnVFO7t88vhfWFQ77ol/Od7Lz6zomn6ZX2uuZ0p
+	 gGNd5QwysTO4i85wVhJvhK9RbcbJ1fdVQZI1VNyGTDn4szqvueUDBSZYSzBxkgoWOR3x+FVcSi3y
+	 YxjoRpYap08L0v6dTdmHg3cuk1ZvoqEVij7A1DewvPQpS9daNlVoLKi5FIEjtPIKhYxfB4kX31YF
+	 3FxGEe7Eb/GndPzwgtpszdUy2ppvnE69Nt/CophKxwkAS8QMb8IKeblc/gPBihkiMy9mununshxz
+	 Yu2bIwv7YZQ3j/VkJ1Bz6RDQhvWeZ/OmuYPSxp6jJQVQxphv+P8wpEJq9wzA2cTbcKuGk7CIqZIV
+	 GSG3JeQ/zGYObL5wJUVu+gQwqFThOhuayMLgyCJEGb4WSTof6Xb5VyHBncXgjgQgMC0XfoYydJs0
+	 T7pgo7EE7OVRFQano8MO2Zx7Z+UAG1BkZOh/Q/2w0HQdLVcUxPxulUoiEMiyc0s/jQzGSncb1BA9
+	 QQ40DlXeZRIrnPi5jj7JX64OrKV+30RW0Avxu8fg+cAy6IiRxyIZy6slz8y3WrMxrH3itBCBQU7z
+	 pAGINAu7Zcs3KAchhbdrZWh+qiW4Fyj6bGwNlNDW0gIhEPEHI0TDrHzciDL+MJMfJ8S//eVi3LRD
+	 eyrwftqEjx3eOP3gs0VJoCTvbSaXfwhKfb2AdpmeeLhmRJ/bN0IUyBlCBi4o5tE12qRTjhvGOms4
+	 3DNaAEA1ZJbBmi0Ri7fN/pn1fKZs2G2Ds6yynbfQmLL4GlJ3u4lA7q3G5w90ErUt8j8jvXvAtyuo
+	 Djm8OEeU8aW+lT6q8q6zKF5f7rZEohEj3plAzxKiGnzJZA9fVDQv+MX9FsCfIenNu0SKEmhhY/42
+	 oDDk4B/Yr0otRfU4qCIvOiVdoZMqFsYSi+tyStJAsGyKny4bPsuj1mZLjuL8+xfFi5p9d4eFbYoj
+	 2BOy0o
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: zhoumin <teczm@foxmail.com>
+To: hirofumi@mail.parknet.co.jp
+Cc: linux-kernel@vger.kernel.org,
+	zhoumin <teczm@foxmail.com>
+Subject: [PATCH] vfat:remove unused variable
+Date: Mon, 18 Aug 2025 22:44:49 +0800
+X-OQ-MSGID: <20250818144449.1143692-1-teczm@foxmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250818-docs-ad3552r-code-block-fix-v1-1-4430cbc26676@analog.com>
-X-B4-Tracking: v=1; b=H4sIAEY8o2gC/x3MQQqEMAxA0atI1hNoq5XiVWQWNYkaFCstDAPi3
- S0u31/8C4pklQJDc0GWnxZNR4X9NEBrPBZB5WpwxnkTbEBOVDBy673LSIkFpz3RhrP+sZ/7YNi
- 6TjxBPZxZan7v4/e+H/whBm9tAAAA
-X-Change-ID: 20250818-docs-ad3552r-code-block-fix-6f680d124e5c
-To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Jonathan Cameron
-	<jic23@kernel.org>,
-        David Lechner <dlechner@baylibre.com>,
-        Andy Shevchenko
-	<andy@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-CC: <linux-iio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jorge Marques <jorge.marques@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755528264; l=1010;
- i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
- bh=mMKIkhPKdEqNAGhDWDIfws0cG0Cg578nDe0eBj6SHHQ=;
- b=+hsDxYSXH2Uqi86QlI8NPUrQtWyjjoSnx/TQrdFtgVia00Ndw11RsBrIeGT5IL2jYd3GYzsCc
- iT6TXZ0ngk+B0ShxIWnuUQGXxdaOUKnwWgd6lI4Wh20TJuZkKLQ2TJ6
-X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
- pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: oru05bQXb3Me-rQLmyEU2Rrunz1r81CR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE3MDE5OSBTYWx0ZWRfXxhILP4/A/oQK
- KikVY+hX8czvhLy4GiHY6l2REbz8ChAkuudDC3ZxO4Cv6+9jSgqyanFSU3iWhQhR6HnYCs/oKce
- Gwkrqauhc4CYV5svNLDZzI31rLvo094dGwHS6tntNCWf7ua+r0/xrgobBE2zgB+/vyy3txCwJPK
- IBOqjMVkOlh1FLS6FF2twVuMpUG+Go4R6wmJdfYXa+bKUYI5jVfxct2iCu4csYXYRvgYBhCHl0R
- 9ntqbVfqyU36L1pSMhV415V643HG6vkCkT35hMJ5rZJOv4FoJDaE8ZnHkmonWVcE+BinqLhzFZi
- WxtQV1QU5an12qrMt7e4H+4g0TtK+N8TllYFqW5qt1aIP7DOEa+2CJ9f+BN1Pnzj8KgFPneDPGl
- 2NWtRN9m
-X-Authority-Analysis: v=2.4 cv=T6qMT+KQ c=1 sm=1 tr=0 ts=68a33c54 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gAnH3GRIAAAA:8 a=0rILtPB_kMdZEppRk8EA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: oru05bQXb3Me-rQLmyEU2Rrunz1r81CR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1011
- priorityscore=1501 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508170199
+Content-Transfer-Encoding: 8bit
 
-Missing required double dot and line break.
+Remove unused variable definition and related function definition
+and redundant variable assignments within functions.
 
-Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+Signed-off-by: zhoumin <teczm@foxmail.com>
 ---
-To resolve the code-block directive syntax not being parsed.
----
- Documentation/iio/ad3552r.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/fat/dir.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/iio/ad3552r.rst b/Documentation/iio/ad3552r.rst
-index f5d59e4e86c7ec8338f3f4e82d7a07587e3d8404..4274e35f503d9f7d8a5427a72d761d6549f4c683 100644
---- a/Documentation/iio/ad3552r.rst
-+++ b/Documentation/iio/ad3552r.rst
-@@ -64,7 +64,8 @@ specific debugfs path ``/sys/kernel/debug/iio/iio:deviceX``.
- Usage examples
- --------------
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index acbec5bdd521..92b091783966 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -1209,7 +1209,7 @@ EXPORT_SYMBOL_GPL(fat_alloc_new_dir);
  
--. code-block:: bash
-+.. code-block:: bash
-+
- 	root:/sys/bus/iio/devices/iio:device0# cat data_source
- 	normal
- 	root:/sys/bus/iio/devices/iio:device0# echo -n ramp-16bit > data_source
-
----
-base-commit: 35e3d0cd8e89d811b915593cbd8d9891d21d4a1a
-change-id: 20250818-docs-ad3552r-code-block-fix-6f680d124e5c
-
-Best regards,
+ static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
+ 			       int *nr_cluster, struct msdos_dir_entry **de,
+-			       struct buffer_head **bh, loff_t *i_pos)
++			       struct buffer_head **bh)
+ {
+ 	struct super_block *sb = dir->i_sb;
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+@@ -1269,7 +1269,6 @@ static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
+ 	get_bh(bhs[n]);
+ 	*bh = bhs[n];
+ 	*de = (struct msdos_dir_entry *)((*bh)->b_data + offset);
+-	*i_pos = fat_make_i_pos(sb, *bh, *de);
+ 
+ 	/* Second stage: clear the rest of cluster, and write outs */
+ 	err = fat_zeroed_cluster(dir, start_blknr, ++n, bhs, MAX_BUF_PER_PAGE);
+@@ -1298,7 +1297,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+ 	struct buffer_head *bh, *prev, *bhs[3]; /* 32*slots (672bytes) */
+ 	struct msdos_dir_entry *de;
+ 	int err, free_slots, i, nr_bhs;
+-	loff_t pos, i_pos;
++	loff_t pos;
+ 
+ 	sinfo->nr_slots = nr_slots;
+ 
+@@ -1386,7 +1385,7 @@ int fat_add_entries(struct inode *dir, void *slots, int nr_slots,
+ 		 * add the cluster to dir.
+ 		 */
+ 		cluster = fat_add_new_entries(dir, slots, nr_slots, &nr_cluster,
+-					      &de, &bh, &i_pos);
++					      &de, &bh);
+ 		if (cluster < 0) {
+ 			err = cluster;
+ 			goto error_remove;
 -- 
-Jorge Marques <jorge.marques@analog.com>
+2.43.0
 
 
