@@ -1,125 +1,228 @@
-Return-Path: <linux-kernel+bounces-773114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA69B29B95
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:04:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54757B29B96
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529AF1885995
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:04:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E5A84E213C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E17F27E060;
-	Mon, 18 Aug 2025 08:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wkolqyu/"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A322F1FE2;
+	Mon, 18 Aug 2025 08:04:34 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F4822256F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7E82D3EEE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755504270; cv=none; b=K5EYleFSwPd49HMVTCHR37KG4Xoij3raQxAyqhCSoa3zIpONjOfYEL6nWqtIONmuP884vKs9I5zWRdQu6h+VriFJXOiJZFXqj1pu5VXwzmkrw9t/0PRqrpYM6q9guNIa7dFaqOOqVaFKo0i5NzXyTzIjwxGFMOjFlBrqGDqhtOE=
+	t=1755504273; cv=none; b=N9cZLay8t5HUVu9j7XxQfBsLvH+DHC7vdldBSncPxoEVb0mXO+pNLqFQPlJ3W46c2y1gkxO3jnPgjUL1+AqBgjmBK/wx6qrJ4+S/Q12T7J0kTn6svMaDGldxRkcChOePBUIYizU3QlPaRSH1G5HZ1iqorfO8KKz4QOhEWCu6jlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755504270; c=relaxed/simple;
-	bh=+ogGHNp5B2vuw8Sx3cR50dRQPqv7sPx9Uj4pSENJ8eI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N6ehkHc1CvvzF/24ZEB7aJZyqTxdHHTeltkf54mNBtPC3y/wT1oeBV4ktme/j2n9njqZHCgSAcAq/iMh8q0oAK5gX75MmmcQNijnBVcRVElRQQifRwXPz3aB6/ulufh0E/ATgQVG2BpxcrcIeGW5Fy32FFI15Ip5Xi2g9wvtsvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wkolqyu/; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9d41c1963so1823723f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755504267; x=1756109067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ogGHNp5B2vuw8Sx3cR50dRQPqv7sPx9Uj4pSENJ8eI=;
-        b=Wkolqyu/+7gjEymkd5EfbpQ4sKgwlle1xv3Omwa66DAwGACFoxKiGJUKVYW4NYZayC
-         qMorlle65vAlRUZEKUdvpvA7H/9Q6qr/dwfMmii8HwZr2h9HHl/7579U5ZcBRXhxyO1w
-         YF4zkm+KCraamRZD+zrpvERZV50p3Wm5O62lJ9ycez6QjALqOnIu3i6v+0jGbUN7fMxh
-         U+NPEv9UQhlcR9xU/7CywN++1scd09szxSxH2vTTB9NkCuxrfMQMNucOhPQmC5iNeKZg
-         KQUve7M2X8B+BhwkfpYiae76YCcLxL+e0TMaI1Ycn3nf3a5wkFopn1ez8ibKsNBi9qyQ
-         9z6Q==
+	s=arc-20240116; t=1755504273; c=relaxed/simple;
+	bh=RHk19o0hxuJWW/AUjMGx3j6AyVeEotI75BaRvs/6usI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sWTjRvWr1WMDHvdJdDZd3cJRwaRYBDQCjNVfG03endK+G9I0vhfQPZhDAdPjwHvr4ps8xBUb+DvqFNri1RxC+qRNExJ7WRHHqTBJ+PCSV8fX/BQsSI3vaybklriXhTAn3SCxLeRGaVih9aGl1eSVw8JUSfTpikM2wstri5Gqd94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88432cbe110so426276939f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:04:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755504267; x=1756109067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+ogGHNp5B2vuw8Sx3cR50dRQPqv7sPx9Uj4pSENJ8eI=;
-        b=qF6SVZFxVY0KknLrvFojSS2XND1GD6IxVlgDdAMraqSs09njqdm92dT4Kh4sCl2uo2
-         meuJ/plvzoCaDTh5mF2RM+f/C9N3jCLblCdtRRvWsWFTCyHJjjybswFLm/YFMvL567eF
-         0UjUsvSUkU8rOCOaduK4UZCQK+h8ZIrD4S4IpQBjew8VYp41hi96Q6KE0c7OraF6jymx
-         IBi9fT0u0oUNG8FQV6DVouhsJ9ngnUfe8aJHKpCtzE0J4Ur7L/snrIVsBrT+93eGUh2n
-         LSk1cQhqXy5Z3Yt+zmpDDhdyMO8Y5ILq2yda0ZSZbYdnk8yoYULZYj2owdsWIRT5Nrzq
-         PszA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRVjikFOCPnXe1JLdFeaQBuHcKWysCjZtAS/aI5rZfKYWEoaX6qJKbAUyEKRc3+gUUUF5d1pNb6petDYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXKjCWDXU9OBqe6U4QQAJ7R0zV5JV4Xzo2gmiMil8UvOzY+IEq
-	uu4NNkm4D2QB/BmN/dH8WI7l7WQL3Dv99CG36YoXViJAuX5/6aU67LW6J/ADcegoKNFOAbQR4aW
-	sAGjvWeTgSL9yMY5iwXvPehC3Pwtty+QNNW9gDkEL
-X-Gm-Gg: ASbGnctILw052hlJjtAThsspOTjizhOe6uEu0fDrggjITZtFOsuy9pjASoLjuGPMZMw
-	dscCoNqlYN9cDatvfKzD0+KrvN4TUxXEqitK9VcWjXaZK6231XT+ADT7BM8EQWHSzt8OV2ByZW+
-	DRbkHUx8Fk8mZ+dj4ev9DsfYX/Q9doZDYnIOuV7+v4E3Yh2Y+vslfggPqqcuFhSNKOFhys3rGXt
-	YCGCFvE2jOCjuq7iFzHTN7CLkKRFoR6bDxikYDQpQwPCAOtp6N5N0LYLMPoTvvFxg==
-X-Google-Smtp-Source: AGHT+IH5aPA+4lsEWIpz23XPee5Gucilm6/jJy0D1IJSOLJ53lXfZLmhPLBb0e339QHvRNfI1jCf5ECE7BVeDepIOLQ=
-X-Received: by 2002:a5d:5849:0:b0:3b7:9d87:97c6 with SMTP id
- ffacd0b85a97d-3bc6aa272aemr6301618f8f.44.1755504266794; Mon, 18 Aug 2025
- 01:04:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755504271; x=1756109071;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SXCnyKQ3Vm9M1IoDEuwjwfWaE/02hODwJqv40lVhlK0=;
+        b=OAJ+/svbCMRd0DR3HFre2VLrf4wsteqgJjSDh5KGMF4KN9aTSsjg3lQyRMSGTM29Oi
+         EbQvuA3kv4Y6NCTLU8tpRSquFhDlRfoqIzsAloCKVxXrkldRjmM1FLDCqTwqlNmDUxsX
+         XCtf9ShaMmFNJw8zInqL3omAryK6Vdt8G9qfbwiZMyDFXdXSrIqxWRvOvuM0G4KaWfqM
+         K8u8SwdJvS0ruEePr8wPjaeiI489nVat1/BqiclKllVAx7D37ZlvNBywhfXfE0YShbzV
+         yezg607ngkC4NcR83C9rzS4CFlS4h1iqGitckUTf5Th5786xFSWDk2xRS4sx2C4nTF6q
+         61gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtw8JmOM3+46+6h/ju/Ga4In23M+vBauQPrttrosZ4kqfShxSTvXP/WDnpQ1sjL3yknVvsoXFxC8C5bB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrkEZ+ixRuNfMMygguU9/fsR6oiQqZyv1yY/qD4peFEegq/req
+	fnAKaiwML7PpboarWdcLjGmXOZN/8urbSR4fHp0LuWAz7PSjWzahORGcQn9kny6RNJQ0ViidKTw
+	PXreoX/BXPjgq8dXscdEsowQUE776v57tfEABwFYSqqchGWdPMMIcx8/bB44=
+X-Google-Smtp-Source: AGHT+IG3kt2iy1xjjQ4YX7zLb09k9beA7lbFy2HID79JSAPU010RsT/rmQ5oO/ogDnt62ofaqeiOBwbktkqzqJ3/+ro7iQksbLgp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818012648.1841387-1-lingfuyi@126.com>
-In-Reply-To: <20250818012648.1841387-1-lingfuyi@126.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 18 Aug 2025 10:04:11 +0200
-X-Gm-Features: Ac12FXzx_I9gusmbozL2_QUwPunlyuZ1-_AVDrLW-ZxrD10YAx95V3gJEW6eTDk
-Message-ID: <CAH5fLgh0OSDnVDwO1wY9kd3UjVqaYvk-jJA-nwiz2ghR0Yu3Zg@mail.gmail.com>
-Subject: Re: [PATCH] rust: xarray: optimize lock functions with inline attribute
-To: lingfuyi@126.com
-Cc: Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lingfuyi <lingfuyi@kylinos.cn>
+X-Received: by 2002:a05:6602:15c7:b0:876:a8dc:96cc with SMTP id
+ ca18e2360f4ac-8843e39e913mr1960591339f.6.1755504271041; Mon, 18 Aug 2025
+ 01:04:31 -0700 (PDT)
+Date: Mon, 18 Aug 2025 01:04:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a2de8f.050a0220.e29e5.0097.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] INFO: task hung in v9fs_file_fsync
+From: syzbot <syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, brauner@kernel.org, dvyukov@google.com, 
+	elver@google.com, glider@google.com, jack@suse.cz, kasan-dev@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, oleg@redhat.com, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 3:27=E2=80=AFAM <lingfuyi@126.com> wrote:
->
-> From: lingfuyi <lingfuyi@kylinos.cn>
->
-> The XArray lock and try_lock functions are simple wrappers around
-> the C functions xa_lock and xa_trylock. These Rust functions don't
-> add significant logic beyond the unsafe FFI calls and safety guarantees.
->
-> Mark them as inline to avoid unnecessary function call overhead in
-> hot paths where XArray locking is frequent, such as in page cache
-> operations and other kernel data structure management.
->
-> This follows the same optimization pattern as other Rust kernel
-> modules where simple C function wrappers are marked inline to
-> improve performance.
->
-> Signed-off-by: lingfuyi <lingfuyi@kylinos.cn>
+Hello,
 
-Thanks for the patch. Please see the Developer=E2=80=99s Certificate of Ori=
-gin 1.1
-https://docs.kernel.org/process/submitting-patches.html#developer-s-certifi=
-cate-of-origin-1-1
+syzbot found the following issue on:
 
-You need to use a known identity such as your real name to submit
-patches to the kernel. Anonymous contributions aren't possible.
+HEAD commit:    038d61fd6422 Linux 6.16
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15f5a234580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=515ec0b49771bcd1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1b5dace43896bc386c3
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=158063a2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1335d3a2580000
 
-Also please include a version number in the email subject when sending
-a new version of a patch.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/34e894532715/disk-038d61fd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b6a27a46b9dc/vmlinux-038d61fd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f97a9c8d8216/bzImage-038d61fd.xz
 
-Alice
+The issue was bisected to:
+
+commit aaec5a95d59615523db03dd53c2052f0a87beea7
+Author: Oleg Nesterov <oleg@redhat.com>
+Date:   Thu Jan 2 14:07:15 2025 +0000
+
+    pipe_read: don't wake up the writer if the pipe is still full
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1498e3a2580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1698e3a2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1298e3a2580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
+Fixes: aaec5a95d596 ("pipe_read: don't wake up the writer if the pipe is still full")
+
+INFO: task syz-executor224:5849 blocked for more than 143 seconds.
+      Not tainted 6.16.0-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor224 state:D stack:22952 pid:5849  tgid:5849  ppid:5848   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5397 [inline]
+ __schedule+0x16aa/0x4c90 kernel/sched/core.c:6786
+ __schedule_loop kernel/sched/core.c:6864 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6879
+ io_schedule+0x81/0xe0 kernel/sched/core.c:7724
+ folio_wait_bit_common+0x6b0/0xb90 mm/filemap.c:1317
+ folio_wait_writeback+0xb0/0x100 mm/page-writeback.c:3126
+ __filemap_fdatawait_range+0x147/0x230 mm/filemap.c:539
+ file_write_and_wait_range+0x275/0x330 mm/filemap.c:798
+ v9fs_file_fsync+0xcf/0x1a0 fs/9p/vfs_file.c:418
+ generic_write_sync include/linux/fs.h:3031 [inline]
+ netfs_file_write_iter+0x3d8/0x4a0 fs/netfs/buffered_write.c:494
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x54b/0xa90 fs/read_write.c:686
+ ksys_write+0x145/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb29049bef9
+RSP: 002b:00007ffeb3361588 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000200000000140 RCX: 00007fb29049bef9
+RDX: 0000000000007fec RSI: 0000200000000300 RDI: 0000000000000007
+RBP: 0030656c69662f2e R08: 0000000000000006 R09: 0000000000000006
+R10: 0000000000000006 R11: 0000000000000246 R12: 0000200000000180
+R13: 00007fb2904e504e R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+Showing all locks held in the system:
+2 locks held by kworker/u8:0/12:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8e13f0e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8e13f0e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8e13f0e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
+2 locks held by kworker/u8:6/1337:
+ #0: ffff88801a489148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
+ #0: ffff88801a489148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3321
+ #1: ffffc9000451fbc0 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
+ #1: ffffc9000451fbc0 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3321
+2 locks held by getty/5596:
+ #0: ffff88803095f0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900036cb2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+1 lock held by syz-executor224/5849:
+ #0: ffff88807f8cc428 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3096 [inline]
+ #0: ffff88807f8cc428 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x211/0xa90 fs/read_write.c:682
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
+ watchdog+0xfee/0x1030 kernel/hung_task.c:470
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.16.0-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
+Code: 53 de 02 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d d3 ad 21 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffffff8de07d80 EFLAGS: 000002c2
+RAX: eefad1cde067ed00 RBX: ffffffff81976918 RCX: eefad1cde067ed00
+RDX: 0000000000000001 RSI: ffffffff8d982fba RDI: ffffffff8be1ba40
+RBP: ffffffff8de07ea8 R08: ffff8880b8632f5b R09: 1ffff110170c65eb
+R10: dffffc0000000000 R11: ffffed10170c65ec R12: ffffffff8fa0b3f0
+R13: 0000000000000000 R14: 0000000000000000 R15: 1ffffffff1bd2a50
+FS:  0000000000000000(0000) GS:ffff888125c57000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055943a295660 CR3: 000000000df38000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:749
+ default_idle_call+0x74/0xb0 kernel/sched/idle.c:117
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x1e8/0x510 kernel/sched/idle.c:325
+ cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:423
+ rest_init+0x2de/0x300 init/main.c:745
+ start_kernel+0x47d/0x500 init/main.c:1102
+ x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
+ x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
+ common_startup_64+0x13e/0x147
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
