@@ -1,145 +1,398 @@
-Return-Path: <linux-kernel+bounces-773879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5C9B2AB56
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:46:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193A6B2ABD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EEE47A931C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5ED11BC66A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C1135A298;
-	Mon, 18 Aug 2025 14:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6EC225390;
+	Mon, 18 Aug 2025 14:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxI+QpqY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2tF93qOC"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC435A293;
-	Mon, 18 Aug 2025 14:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755528148; cv=none; b=lBg/j/VzYkrevPk0CoGNV+47EZvc6wi5a/VzUVuArJ+GNi87FEFAbY8naWxjQN0EdCeT6Hf7YSm9Bz0e9ugGLC77o+y/VlZdzSVgJNLVfp7PCVyNLkke+crCxQ5vkLrjR+LJ790fP4kJlNfs1JayirLc33ElVheAXg0aJSxVw+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755528148; c=relaxed/simple;
-	bh=fGHdn9+ygD6wlu1IBkHUW+r7l+vTsYKlue/b33fPSm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dws8RXW7uIFSUR1js2MHNhbDZOB9aROiX1wMpZWUPInKXFtdQS7dp6VdmS3Rnqd+XsdeMxP17U5YWLA6TYuUWHTyo2A3JxkgC1UmeAzu9/wDS9lO3yrNWMM4ErqkP4IkbnlfdpDqirWetAqTXt4Mm4ua7ENs5WBYReHbWcVTfS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxI+QpqY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F81C4CEEB;
-	Mon, 18 Aug 2025 14:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755528147;
-	bh=fGHdn9+ygD6wlu1IBkHUW+r7l+vTsYKlue/b33fPSm8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AxI+QpqYR1kFMN1tDndYVoLEFWEYphqlaWEVCTWJcs5r3gjJ3QzHrLrHWskc0FJul
-	 Uj5dhIjKKCagZQ5NhWD7/vWqNqoiMaZ33lowG+/oOJ65NNicjWWsp8TpQBhslUoWvr
-	 bSar+K0AU9kmag9nmho5q8VCoaWvofmDPkUnGmhre7Wjyh0aF/sabAvLLwUJnWqXZO
-	 mhg2mDvDv/vjewUoP+UMMyiTCwfPN3bCAi7TYLsrYXXsB+EWsN7b1PaJRWNmaLJcJ3
-	 ldrKlXi/XCgKp2ycfwNVbTXObFAVFDRtkkNiGyqVnmKEDrgSuDnQpu+YNMRd+zxyao
-	 nnwjRkppAtXHA==
-Message-ID: <b1807a5a-9507-49e2-9a4b-5101078c7a90@kernel.org>
-Date: Mon, 18 Aug 2025 16:42:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5F835A293;
+	Mon, 18 Aug 2025 14:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755528185; cv=fail; b=oxtQDXUXuIO5jun2nUFqaU0FeAaraeEL0YL2k/PNSe/CQcE9EspyEEGpaT3dS4Yqg9E25KAAQwpCHvKPW3baf9G5QyUMCfT6Bveoe2JXPh/x9kO/x24UJ+I7LMsQbZDuF+HEGcIrgBL2OHeFGjQIgl71PQrhRbSNiL99wZILnyg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755528185; c=relaxed/simple;
+	bh=dtTLg6WNrVRssZBMB/eDtNy2INqcbl2A8cWa98e2ndQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ck6NGSSE3yIal3XYbM9gKy8TiMo5eNi5ynOSJj9D9SesFVfhWoTF1Cl9N24ntyXwXZqki5LJNpqfulKpJqhzSCJdLli+TM5GLlbRtEDcuYL3Rq1reTkX2jYCN7aWqo7RqhA6tA92bOP+wJqPHwukb4i68EresYMJLMl911w00hE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2tF93qOC; arc=fail smtp.client-ip=40.107.220.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oKFndPcLwBKni1Y0K+SJuQtsVWjwl1OZp2zCRQC8qDeQxMhNnn88r6ySPAjZwYjmqqFIFy178Ap161aYZK4UJX9j7fx+Vo4VfA0SRMRA2uAULhxdJRgHKTyUt1PBmJGQzodk98DpoiWlGydX1vIEyfDbqNkYs5RM77RYfJhgg0EGcIh+Mc4CgDhTts0Y9V81KjHd9nvzs/z+ltGv1Sg9hrqHAPTpwUo46jQxCMeZoXyTKLHzZvP+KY3KrgWls+DzdwZAx7VgfJ7L/FdCsnZigNr5rpo75DjSW8iRGAwU3JSxkqvBRneCjx2fGhQBVmm1OZ+MNKTg9SaUApPb0Agz9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LcTGsoPxoOzIsECi4KMNSJHZ+KqpS5nS/sWPJB1lqSg=;
+ b=fig+l93ikYtFcVGKV5SdiZ5R/03TanuqsXuXo18MYSCMYOMCPpYoQzBXaHd/08mrF9n/b52HjxD+BxBpWphli+NELitK50pQ1R35/mvfbTfEgDhXWCjr2iO73wzFdhmmj7DDtBJV0ppRLf2oMmy/fswsu9t8o7tWkU/dki08NKTQWvKCYwWEWbr7VLW3yb2S7bSa7IceW9qvVois9E/cRBaS14Y2rfrlOFnq0HQ9Ll2RuiAfAs9IzbxQDgShPPI1T5E/J7nvCMpkojbLTrlaJGjehdMwVzFlbPrqwMbU+vcRIYrtrHX43U3IhamlV3Z/nw3r3WO2CP0cwrsFbICX+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LcTGsoPxoOzIsECi4KMNSJHZ+KqpS5nS/sWPJB1lqSg=;
+ b=2tF93qOC/vxHLVc8eL6Qat/ikKui9uH0YYIoyuAtnwK2XX3UDikrVY5Z/yro4SqEumMulpVGBL/74fKPVQLbKMnjC7uYtX+B5iJMERMti+KMzjb9jRJzhPnKVpQW9dnymwQi+HmSqUjGQPL1n5tBZ5j8teIT9qZuGTBCFhNiDY4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CY8PR12MB7097.namprd12.prod.outlook.com (2603:10b6:930:51::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
+ 2025 14:43:01 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 14:43:01 +0000
+Message-ID: <c4bac4d8-9c5b-446c-b9a1-1bc7ac6b38ff@amd.com>
+Date: Mon, 18 Aug 2025 16:42:56 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] dma-buf/fence-chain: Speed up processing of rearmed
+ callbacks
+To: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ Chris Wilson <chris.p.wilson@linux.intel.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org
+References: <20250814094824.217142-6-janusz.krzysztofik@linux.intel.com>
+ <20250814094824.217142-10-janusz.krzysztofik@linux.intel.com>
+ <0920872a-6f8d-4301-b9fb-c8fa54b7ffe7@amd.com>
+ <2443311.NG923GbCHz@jkrzyszt-mobl2.ger.corp.intel.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <2443311.NG923GbCHz@jkrzyszt-mobl2.ger.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MN2PR07CA0028.namprd07.prod.outlook.com
+ (2603:10b6:208:1a0::38) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: clock: mediatek: Add new MT8189 clock
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, netdev@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-References: <20250818115754.1067154-1-irving-ch.lin@mediatek.com>
- <20250818115754.1067154-2-irving-ch.lin@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250818115754.1067154-2-irving-ch.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY8PR12MB7097:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48790f47-a178-4b16-f601-08ddde6587f3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YVg5QktsZFB1Y2JKR0labk9raEZvbHpBZng2UWR1a2pnVXpsbEplZkxLM3I0?=
+ =?utf-8?B?ZE5xMUNnMVFUNWRNNnpsK0RkZ2JzL3JETUVjSCt6ZlZEVnczbFN2N0RJMVRk?=
+ =?utf-8?B?bHZkcmgyN2V1VlV6MVI4aUQwRjh4YkdhZFllRkVJTUR2NXBidGFSWE1jZUtp?=
+ =?utf-8?B?dDNvei9EbHo2M25jSHloeHhlVU5rRERicllFVDI5SHJkcTkxZHBTOTlFSDha?=
+ =?utf-8?B?dkIvWVRzVWs4Q3pTTHJmWFE5eU16RjF3Ky8xZUtYeFBaRWNJN1NHaG16Tkl6?=
+ =?utf-8?B?aGt4Z3FwWGw2ZWpnU012NVFEM1pnckNaNTRDTXJhNEQxZW9xNlM4OUN5aUlQ?=
+ =?utf-8?B?UVJTTDdpeUMxVVM0ampkQmNkSk05M0k5elZvcFJtS2xic0VoclFJZzFVNXVk?=
+ =?utf-8?B?eXlMMTlieTZueE9zUjV6ZnJPMDM5ZjZXbUFxZHdjd2Nrc2RpUkJ1QnFCNzd6?=
+ =?utf-8?B?d0JOa3dzNEJsN1YrU3c1WEY4MSt0Z25HcVNJSGtmeENXWm9YeWs1WDVyeVlp?=
+ =?utf-8?B?b2xCUHV4SmVHOEN2MzFJUzFvMWJSQmlPYzhGbFhhOC8zLzUzRHl0QXJpOWVF?=
+ =?utf-8?B?ZDE4ckhYaXlsTEtpckhQQ1hGRkpLSHdldXZwVEJXTERxUG12VmU0dlI3eFU0?=
+ =?utf-8?B?RHNjeVJlSHBKb2hSenk3Rm0vWkVVNktuajJiUWF5b2VXaWJ1eEpXNmtvYVVN?=
+ =?utf-8?B?Vmc3ZGI5ZnZ6cFlLYUVSVkdlWUxRQ2liaktlcjNhazFUd3Vib1lYcWZrVEJa?=
+ =?utf-8?B?S2swZ3h1ZitaWjlXcS9MY3hNV3U0Mk9DcTcyYW5pVUUrMmloQjltL0gwSFlN?=
+ =?utf-8?B?NlI4Q2RXRTZDZUdrTzIrU1FYQWtOeGNFNjJjdUo3dFBrTlRPY29pakp2dkZw?=
+ =?utf-8?B?VFJ6YkcrZTJtL1lKbHU5YkJrMm14ckNKS24yTGZBaFByR1l3ZDd0TGRXWnJR?=
+ =?utf-8?B?eDYrd2NTNzBpUkZ2VitvMktKSEp2RlpuU05sbVA3bzJsOEFjNll6YnBNeWtx?=
+ =?utf-8?B?cnMzQ3Z3cUlWWmp5akl3YlphNHYvZEt5c0lDZ3BTbFpSdUE3cGJva2VBV0ZL?=
+ =?utf-8?B?YVZ1RXE1MmRNOWtGMHlYNk1kUlY4NTFDdlBtZHRsc3pVVWFWNmhWaFpUdTFU?=
+ =?utf-8?B?NmVHNXBPZ2pyRmpLbThhK0Z2UHAyTFg2MStIY1B4QkRCUmZnQkROYXdrQXE1?=
+ =?utf-8?B?ZzZFSURGNGRXV3ZjdWoyQjJrK0hvZG5rR1hON254bzR3cCs5Q0RXSmowVWEv?=
+ =?utf-8?B?MXd3RGd5K1EwQ3NMT3hXSWltMlVmVjI2L0FJL1BHZVdSUXZGYUt6WEJIUUds?=
+ =?utf-8?B?TXdOaTk2NnBSaVdCWmV6RllZWGdwSGJ2UEtpWm9KNHdRT3JCQnpFZmtSQkFF?=
+ =?utf-8?B?amRBb3JhZUxPRDN0Z25mK2lURldpeUxHdEFzc2hPcGxlVTkrZUtJQ3hkUFd4?=
+ =?utf-8?B?bmpPckF6cDdSTFlYVmV3SjhsanVwU29zd0VQWTVyY2ZXdVFjZ1FMcGYrOUtG?=
+ =?utf-8?B?RndsMG5PT05WNk1lV1dyaFlmU3RCWFpVSTNpYVNPOHBoRzR3WFRITi9YaEtp?=
+ =?utf-8?B?R0Q1eUw0OXQrYkRFVm12cXhkS3pBMGNlT2EwMzJkTUx0Y3J5Mng1QkJVU05n?=
+ =?utf-8?B?UGx5RXhpclpLTm8zbGpjSkM1MVZudDFHS1hOY3hsQjJCWGhOMzEyaExXZFR5?=
+ =?utf-8?B?dmlHZnZUQXVrSUd5U3Y5Qm90b0RHNllzcFNtaW10MWFxaGlKa2Nnd3BYSnFS?=
+ =?utf-8?B?am02Ni9GWHVjMlordE5QNEhRcFN5cVRXMlpCeU5jVDdmOEZpOHdMa0RScE9s?=
+ =?utf-8?Q?1irsLPvp26K0+PoxKGMwavcDR6lLJDXbVDu/M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OTROTEhidDMvQmM2Y04vbVpvR2FQdWdYR0VQS3U5Z25jSHRKbUhEVytHc0tR?=
+ =?utf-8?B?cTZ5TTBhU29jWHg3V3lJS094Y0lxbkFGQ2NJd1JWN3o5TVNWTkRXMDF3bFVo?=
+ =?utf-8?B?bFVVYlQ1b0tEVjBuTitNMG9PVVo0UVZDT1JPUVhEYnlUdHpscytHV1FZZXhu?=
+ =?utf-8?B?V2IzMERydU1ZdlQ0TGZUOXk2K0tPMFRTVmxYVW9NcUJaQW4rTVJLZmlkeHF0?=
+ =?utf-8?B?dmZMaE1QQmlCYjJBOUNsM0gvREtudjFNNnlKVzRGdU13aXJ6T0NMVXBHaTZs?=
+ =?utf-8?B?S3J6dVJUQ1huKzN6aE1zR1I5TTFQdjNwbUZLeUxPQXVLNmVjNjcxSmIrakxw?=
+ =?utf-8?B?RFYrZ2ZtRk5id1NvY1pFUndnNXFHWG94ZjJWSldFVXMzem94eVNIM3FIL1gx?=
+ =?utf-8?B?bVZoUklqUlZHTk5aZm1Qa3Uwb0pVeUtOSURjVFhUOEppV24vUXVvQUhDVXV6?=
+ =?utf-8?B?VEdrdEk2RDhoUEhEczlxTlhLQ080b1lvYXRwQ1UreFg2QXNIUjBqbUlWR1pP?=
+ =?utf-8?B?WFRxU2hpSzhiek1TdXArUTZyNWFRNGI4dG82ckRqSmZsNjFqSVNaa0pZMnRB?=
+ =?utf-8?B?aXhabnl6VjZYSzBKanJBUHp3YWcyMWRpai80U3BNUFRNVks0REVrY29lWm5s?=
+ =?utf-8?B?LzJlb1FVYyt3RTQ1U0ZVbnh5R0haRmt2aDA4Vmc2SURtSE0wd284eXpqRDVn?=
+ =?utf-8?B?TzA5TmZ3ZFJHZFBPZ0Z1TXg3TXZPSFI1SFBLV0NQazFQN3NhQUhPSGZsR3Yx?=
+ =?utf-8?B?QlZocFhOSUdHZ2h2dDZHTnBXblY3SS84VFNvdzZGelJWamIvaHRSR2Fib2U3?=
+ =?utf-8?B?MWJhTnAvY0hiN0tsRDVsWUw2Qkh5TzQ2NEg4NGNFdmlBSlBON2lMRlY1ZTFu?=
+ =?utf-8?B?azJqTXQ1SjFRQlFjNTUrdlk1dWt2M1F4RU5PdE93UU1vaDFEbERjL1o1bGpK?=
+ =?utf-8?B?eVpZcDJON1JacHZBV0FRdU03UGJUK0RoZDlLTUI3RXYzeWI3cEVGWjhnTzEz?=
+ =?utf-8?B?Y3ZKWDNpWndjOURQR1VBTzF6TEF3Skc0YlRNU1A1WTFINCtRem43Nmp0MEJI?=
+ =?utf-8?B?bS85WG0rSTZIa1RvYVQyWjVRNlphYnN0eHdIV3Z0Q2xqY1lZSTFCU1duelBN?=
+ =?utf-8?B?L1YzQ1JtVWwxQmxLQXhpMTJ6SGltdkVhaXc4N2g2NllEdXRoTTZJQ0dFTFhP?=
+ =?utf-8?B?RWFvZFRCOTVMTHE0UTRRTWpFekZPREZCeVBSaVI4Y0dHTnFkYmNOSEdmMmxy?=
+ =?utf-8?B?ZGFrM255dGNjaGhQMG1kTzZ6Q09ubXI2Q3lNRitFWXRRVVRJbzA1UFlRTGxv?=
+ =?utf-8?B?aXNPRmU2aUZuT3NZTFluUzJVZHFyQ3lhVXkyOHQ4Q1dSWWp4S21LV2FHSXZv?=
+ =?utf-8?B?SGVVWHB3NUxjZjBkTEgrRWgyYnMvbmZVcTdITVVFdU9JWk96OFpQMUM3blZt?=
+ =?utf-8?B?U2oxNHk4c3pvcFVMTnhNbEljWDFFblpLemg3OVBvMFgxcVpWbXJwNmpSZFdt?=
+ =?utf-8?B?QUpYQUl3OGxJNmFzR1lmTzRKTWs5WStZUVBKK1NLUWYrS2dwQ041QTBHNVQ0?=
+ =?utf-8?B?V3lacnlwRG5JdVg4N0NUSlROL0UwdHFwTGpCbXJsdytCenNTUmh2KysrT1JR?=
+ =?utf-8?B?WTdmVk5GWFQ2QnpPVE10cGxtNGJqMUpVb1JPK1BsdXRubGJrcFRLRXgwMEhW?=
+ =?utf-8?B?WDdFU1FWWHUxZjJQdEVLSnRvdGRCZXNiT3g4MUQrTXJkN00wR0JkRzdJL3RG?=
+ =?utf-8?B?emNHNkg5ekpyY1MyTlgrSlM3NytVT1p2NnhHeFpya3RSdUwrRDBIa3BOb0lK?=
+ =?utf-8?B?NVdJWWJIWCs0K0kyaGhHSldJOFdBbGQxMWk2bEo0ZUdRbFhBOFl3bUJZNkhH?=
+ =?utf-8?B?UDJoaFNuQUVOWU1iQ01ra3V6V1JVYUY2YkJ3OXlSYjhoSjhaSkxyMVVoS1Zp?=
+ =?utf-8?B?WXZKaGxoZXZsVlh5Uk1xVWpqRjNDSS9jUXRmb0NoUUFSeDZsWUVPNTBnNnhn?=
+ =?utf-8?B?L2NGQ1JKbUlLR01LWjBUSHFlcHJFNDdOSnpzSEtzd3ZBK3hzc2xxZlJJVkxE?=
+ =?utf-8?B?dVZvN0FXTUZCS3FWdFdmbHR6THc5VXYvSnJaYjRIQUI5aXRWZ0ZZcG8wTUdS?=
+ =?utf-8?Q?vI3ulcY530ZRJ0uQYa0gssvms?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48790f47-a178-4b16-f601-08ddde6587f3
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 14:43:01.3119
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /chb0O9WPXRUxkDPY1xHH0SFfrBY7dIHIXqqUtWeY9tTYLygEpskzVf/axKeOPoL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7097
 
-On 18/08/2025 13:57, irving.ch.lin wrote:
-> From: Irving-ch Lin <irving-ch.lin@mediatek.com>
+On 18.08.25 16:30, Janusz Krzysztofik wrote:
+> Hi Christian,
 > 
-> Add the new binding documentation for system clock
-> and functional clock on MediaTek MT8189.
+> On Thursday, 14 August 2025 14:24:29 CEST Christian König wrote:
+>>
+>> On 14.08.25 10:16, Janusz Krzysztofik wrote:
+>>> When first user starts waiting on a not yet signaled fence of a chain
+>>> link, a dma_fence_chain callback is added to a user fence of that link.
+>>> When the user fence of that chain link is then signaled, the chain is
+>>> traversed in search for a first not signaled link and the callback is
+>>> rearmed on a user fence of that link.
+>>>
+>>> Since chain fences may be exposed to user space, e.g. over drm_syncobj
+>>> IOCTLs, users may start waiting on any link of the chain, then many links
+>>> of a chain may have signaling enabled and their callbacks added to their
+>>> user fences.  Once an arbitrary user fence is signaled, all
+>>> dma_fence_chain callbacks added to it so far must be rearmed to another
+>>> user fence of the chain.  In extreme scenarios, when all N links of a
+>>> chain are awaited and then signaled in reverse order, the dma_fence_chain
+>>> callback may be called up to N * (N + 1) / 2 times (an arithmetic series).
+>>>
+>>> To avoid that potential excessive accumulation of dma_fence_chain
+>>> callbacks, rearm a trimmed-down, signal only callback version to the base
+>>> fence of a previous link, if not yet signaled, otherwise just signal the
+>>> base fence of the current link instead of traversing the chain in search
+>>> for a first not signaled link and moving all callbacks collected so far to
+>>> a user fence of that link.
+>>
+>> Well clear NAK to that! You can easily overflow the kernel stack with that!
 > 
-> Signed-off-by: Irving-ch Lin <irving-ch.lin@mediatek.com>
+> I'll be happy to propose a better solution, but for that I need to understand 
+> better your message.  Could you please point out an exact piece of the 
+> proposed code and/or describe a scenario where you can see the risk of stack 
+> overflow?
 
-Never tested so just quick review to for obvious issues. I won't bother
-with full review :(
+The sentence "rearm .. to the base fence of a previous link" sounds like you are trying to install a callback on the signaling to the previous chain element.
 
+That is exactly what I pointed out previously where you need to be super careful because when this chain signals the callbacks will execute recursively which means that you can trivially overflow the kernel stack if you have more than a handful of chain elements.
 
+In other words A waits for B, B waits for C, C waits for D etc.... when D finally signals it will call C which in turn calls B which in turn calls A.
 
-> +
-> +examples:
-> +  - |
-> +    imp_iic_wrap_ws_clk@11b21000 {
+Even if the chain is a recursive data structure you absolutely can't use recursion for the handling of it.
 
-1. Follow closely DTS coding style.
+Maybe I misunderstood your textual description but reading a sentence like this rings all alarm bells here. Otherwise I can't see what the patch is supposed to be optimizing.
 
-2. Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+>>
+>> Additional to this messing with the fence ops outside of the dma_fence code is an absolute no-go.
+> 
+> Could you please explain what piece of code you are referring to when you say 
+> "messing with the fence ops outside the dma_fence code"?  If not this patch 
+> then which particular one of this series did you mean?  I'm assuming you 
+> didn't mean drm_syncobj code that I mentioned in my commit descriptions.
 
+See below.
 
-Best regards,
-Krzysztof
+> 
+> Thanks,
+> Janusz
+> 
+>>
+>> Regards,
+>> Christian.
+>>
+>>>
+>>> Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12904
+>>> Suggested-by: Chris Wilson <chris.p.wilson@linux.intel.com>
+>>> Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+>>> ---
+>>>  drivers/dma-buf/dma-fence-chain.c | 101 +++++++++++++++++++++++++-----
+>>>  1 file changed, 84 insertions(+), 17 deletions(-)
+>>>
+>>> diff --git a/drivers/dma-buf/dma-fence-chain.c b/drivers/dma-buf/dma-fence-chain.c
+>>> index a8a90acf4f34d..90eff264ee05c 100644
+>>> --- a/drivers/dma-buf/dma-fence-chain.c
+>>> +++ b/drivers/dma-buf/dma-fence-chain.c
+>>> @@ -119,46 +119,113 @@ static const char *dma_fence_chain_get_timeline_name(struct dma_fence *fence)
+>>>          return "unbound";
+>>>  }
+>>>  
+>>> -static void dma_fence_chain_irq_work(struct irq_work *work)
+>>> +static void signal_irq_work(struct irq_work *work)
+>>>  {
+>>>  	struct dma_fence_chain *chain;
+>>>  
+>>>  	chain = container_of(work, typeof(*chain), work);
+>>>  
+>>> -	/* Try to rearm the callback */
+>>> -	if (!dma_fence_chain_enable_signaling(&chain->base))
+>>> -		/* Ok, we are done. No more unsignaled fences left */
+>>> -		dma_fence_signal(&chain->base);
+>>> +	dma_fence_signal(&chain->base);
+>>>  	dma_fence_put(&chain->base);
+>>>  }
+>>>  
+>>> -static void dma_fence_chain_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+>>> +static void signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+>>> +{
+>>> +	struct dma_fence_chain *chain;
+>>> +
+>>> +	chain = container_of(cb, typeof(*chain), cb);
+>>> +	init_irq_work(&chain->work, signal_irq_work);
+>>> +	irq_work_queue(&chain->work);
+>>> +}
+>>> +
+>>> +static void rearm_irq_work(struct irq_work *work)
+>>> +{
+>>> +	struct dma_fence_chain *chain;
+>>> +	struct dma_fence *prev;
+>>> +
+>>> +	chain = container_of(work, typeof(*chain), work);
+>>> +
+>>> +	rcu_read_lock();
+>>> +	prev = rcu_dereference(chain->prev);
+>>> +	if (prev && dma_fence_add_callback(prev, &chain->cb, signal_cb))
+>>> +		prev = NULL;
+>>> +	rcu_read_unlock();
+>>> +	if (prev)
+>>> +		return;
+>>> +
+>>> +	/* Ok, we are done. No more unsignaled fences left */
+>>> +	signal_irq_work(work);
+>>> +}
+>>> +
+>>> +static inline bool fence_is_signaled__nested(struct dma_fence *fence)
+>>> +{
+>>> +	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+>>> +		return true;
+>>> +
+
+>>> +	if (fence->ops->signaled && fence->ops->signaled(fence)) {
+
+Calling this outside of dma-fence.[ch] is a clear no-go.
+
+Regards,
+Christian.
+
+>>> +		unsigned long flags;
+>>> +
+>>> +		spin_lock_irqsave_nested(fence->lock, flags, SINGLE_DEPTH_NESTING);
+>>> +		dma_fence_signal_locked(fence);
+>>> +		spin_unlock_irqrestore(fence->lock, flags);
+>>> +
+>>> +		return true;
+>>> +	}
+>>> +
+>>> +	return false;
+>>> +}
+>>> +
+>>> +static bool prev_is_signaled(struct dma_fence_chain *chain)
+>>> +{
+>>> +	struct dma_fence *prev;
+>>> +	bool result;
+>>> +
+>>> +	rcu_read_lock();
+>>> +	prev = rcu_dereference(chain->prev);
+>>> +	result = !prev || fence_is_signaled__nested(prev);
+>>> +	rcu_read_unlock();
+>>> +
+>>> +	return result;
+>>> +}
+>>> +
+>>> +static void rearm_or_signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+>>>  {
+>>>  	struct dma_fence_chain *chain;
+>>>  
+>>>  	chain = container_of(cb, typeof(*chain), cb);
+>>> -	init_irq_work(&chain->work, dma_fence_chain_irq_work);
+>>> +	if (prev_is_signaled(chain)) {
+>>> +		/* Ok, we are done. No more unsignaled fences left */
+>>> +		init_irq_work(&chain->work, signal_irq_work);
+>>> +	} else {
+>>> +		/* Try to rearm the callback */
+>>> +		init_irq_work(&chain->work, rearm_irq_work);
+>>> +	}
+>>> +
+>>>  	irq_work_queue(&chain->work);
+>>> -	dma_fence_put(f);
+>>>  }
+>>>  
+>>>  static bool dma_fence_chain_enable_signaling(struct dma_fence *fence)
+>>>  {
+>>>  	struct dma_fence_chain *head = to_dma_fence_chain(fence);
+>>> +	int err = -ENOENT;
+>>>  
+>>> -	dma_fence_get(&head->base);
+>>> -	dma_fence_chain_for_each(fence, &head->base) {
+>>> -		struct dma_fence *f = dma_fence_chain_contained(fence);
+>>> +	if (WARN_ON(!head))
+>>> +		return false;
+>>>  
+>>> -		dma_fence_get(f);
+>>> -		if (!dma_fence_add_callback(f, &head->cb, dma_fence_chain_cb)) {
+>>> +	dma_fence_get(fence);
+>>> +	if (head->fence)
+>>> +		err = dma_fence_add_callback(head->fence, &head->cb, rearm_or_signal_cb);
+>>> +	if (err) {
+>>> +		if (prev_is_signaled(head)) {
+>>>  			dma_fence_put(fence);
+>>> -			return true;
+>>> +		} else {
+>>> +			init_irq_work(&head->work, rearm_irq_work);
+>>> +			irq_work_queue(&head->work);
+>>> +			err = 0;
+>>>  		}
+>>> -		dma_fence_put(f);
+>>>  	}
+>>> -	dma_fence_put(&head->base);
+>>> -	return false;
+>>> +
+>>> +	return !err;
+>>>  }
+>>>  
+>>>  static bool dma_fence_chain_signaled(struct dma_fence *fence)
+>>
+>>
+> 
+> 
+> 
+> 
+
 
