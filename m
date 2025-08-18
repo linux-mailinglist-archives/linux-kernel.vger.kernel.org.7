@@ -1,131 +1,287 @@
-Return-Path: <linux-kernel+bounces-773600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956D0B2A23D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:54:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E80B2A20C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897BD189722A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:48:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9D057B1446
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F52030DD2C;
-	Mon, 18 Aug 2025 12:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F1131A055;
+	Mon, 18 Aug 2025 12:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n18g+dpo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="dIkYuNtf"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD233218D7;
-	Mon, 18 Aug 2025 12:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7803218DA
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521288; cv=none; b=gix3NoYo060eLL2WkoUn/AjXW6+wiO9Ohwef9TxKkNXLpyXBpanIfLIFI7mV9HumN6Orn4Qd7YLCzt4y2byAz5GXi3uU4oMJO+ygUTxUFbXigGwmwyI+2XgWc2W/sfCbaqeZrchgjqK7UPPEm9tWWmCJT0beKNROdntQGze1N4I=
+	t=1755521289; cv=none; b=FOSoxcd+DYkSlMnTdCdHFX2n4r5VkN8S6wJrzT+4wkQIwZga6eHqyvk1X8w/NkTYVeccxhmm4XjVWNDccv/tMx8TvkOwZyHGccHobbFHcOcR/zZnkYt3BBxtKexp7bjSbyqRx48AzhhVve5RNNP8pci4Q/s8A+c4lVSkHZjKCts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521288; c=relaxed/simple;
-	bh=RfJbadEG1WXqCbA+L6puR7/SdieeHuzNWBQVsVWP4Us=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
-	 In-Reply-To; b=YdV901cukZvcKgiv948icCFt2MnwQu3VZSJfRY3QaFH7mcsY4lX4+/mbbfgT3sRaqM8S7WsTN6Vm68itGPzWDeIjoujZPSNAdGP3LD8M+MDrRiErlYzo+8C8pX3VMX4U7sOs+1XyZhYx9gOaYRHBOxYi+3IBInqCqxoXtUF4xkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n18g+dpo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6107C113D0;
-	Mon, 18 Aug 2025 12:48:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755521288;
-	bh=RfJbadEG1WXqCbA+L6puR7/SdieeHuzNWBQVsVWP4Us=;
-	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
-	b=n18g+dpoNlQYiFSwWCCD/5j0vkRu2KWMp7n30uC9KZm2gl1yoABRwoZu4SWAo1Pnc
-	 lEOQfrO1cf1h8/JCrZDhODe5if+suJh1egobeJQOCo5F42HylkYGAElk0clbJoJSQt
-	 JQzWsQP6m54kk6GTaZU0YQW1NzQJacSGW+ZG4rKdlUttOixB335EGnZnyqP/JBsOyJ
-	 a4SFHZV2vJ8NbR4xJiHSMuYrOCOJ/FWa1EgUZmtjXGSuZPH5z4OaBL9a4Fs2QhpKTP
-	 Svn6rnvF+/gqVNVcWoE1i/n+G3w/B52a5MD20eEFlZ4pdZwbZBM/Ymz5f8VkHPvqKD
-	 sPi//gt4b4ftg==
-Content-Type: multipart/signed;
- boundary=c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 18 Aug 2025 14:47:55 +0200
-Message-Id: <DC5KCSEUZQUJ.3KPENNUQBUFM8@kernel.org>
-To: "Stephan Gerhold" <stephan.gerhold@linaro.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Dmitry Baryshkov"
- <lumag@kernel.org>
-Subject: Re: [PATCH 0/2] driver core: platform: / drm/msm: dp: Delay
- applying clock defaults
-Cc: "Rob Clark" <robin.clark@oss.qualcomm.com>, "Abhinav Kumar"
- <abhinav.kumar@linux.dev>, "Jessica Zhang"
- <jessica.zhang@oss.qualcomm.com>, "Sean Paul" <sean@poorly.run>, "Marijn
- Suijten" <marijn.suijten@somainline.org>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
- <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Abel Vesa"
- <abel.vesa@linaro.org>, "Bjorn Andersson" <andersson@kernel.org>, "Konrad
- Dybcio" <konradybcio@kernel.org>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Nishanth Menon" <nm@ti.com>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
-In-Reply-To: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
+	s=arc-20240116; t=1755521289; c=relaxed/simple;
+	bh=39w9gkOFfWg2xRrHb2lvEGUzaV7cux9KDaUrCzi6TQk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=e2iu/NU0xoQx1KynBEgDdMZE7+udaEs9FF55r5iLmtbKcRqqF1I5ayy3fG9e+QwC0EJ114qJ/bUaKkj4ZfvXSRVvoN2eXZcUWi/1tv3GR6hGrhKMwmaanwws2hxSGTtRV5tRwS9mjodsXiv+YSQTH+nmYNpvNvMwKZe9LqcmwDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=dIkYuNtf; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from NEET (p3174069-ipxg00b01tokaisakaetozai.aichi.ocn.ne.jp [122.23.47.69])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57ICm4kY081744
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 18 Aug 2025 21:48:05 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=DKA411x9bYIeo7Xgn3DNC+PxNKrqfJ07oq3nFFDb+a4=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250315; t=1755521285; v=1;
+        b=dIkYuNtfJiiAM9vrnK1nmfcXP+qB6GKDdbGOdUnwvoPnuV4ikuAK0dOrtXPUn5Uz
+         7vsR46K7DjzdgbYcKLr8Mt1ipsFVGkAFAyVTlzv8NUtv0aBIyD3kcNvkj62F/iUI
+         Wt1ax1WTfaF2BJbfB2WnukB/g7Kg8YUf4YphPRaI97ZV24YBxVyYPQIpK6HGrLDt
+         /YGG2Otl/iBOetOnhqZfF7FZCSFXpNLtNmpXNO/Qz39WVRnPa+giHKF4/R9tFbUN
+         Ulgglhtj0zrntolRQBF/Q2djtJWcL6xrK6IRUMZwX2U8A3IUV5OLmSzbxBTJ3Nlp
+         Dh2821zkM7pdeIfBtJ5h3Q==
+Message-ID: <0164bc8e-129c-41fa-b236-9efc1b01f7b9@mgml.me>
+Date: Mon, 18 Aug 2025 21:48:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "yukuai (C)" <yukuai3@huawei.com>, Kenta Akagi <k@mgml.me>
+Subject: Re: [PATCH v2 1/3] md/raid1,raid10: don't broken array on failfast
+ metadata write fails
+To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
+        Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+        Guoqing Jiang <jgq516@gmail.com>
+References: <20250817172710.4892-1-k@mgml.me>
+ <20250817172710.4892-2-k@mgml.me>
+ <51efe62a-6190-1fd5-7f7b-b17c3d1af54b@huaweicloud.com>
+ <fb752529-6802-4ef9-aeb3-9b04ba86ef5f@huaweicloud.com>
+Content-Language: en-US
+From: Kenta Akagi <k@mgml.me>
+In-Reply-To: <fb752529-6802-4ef9-aeb3-9b04ba86ef5f@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 2025/08/18 11:48, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/08/18 10:05, Yu Kuai 写道:
+>> Hi,
+>>
+>> 在 2025/08/18 1:27, Kenta Akagi 写道:
+>>> A super_write IO failure with MD_FAILFAST must not cause the array
+>>> to fail.
+>>>
+>>> Because a failfast bio may fail even when the rdev is not broken,
+>>> so IO must be retried rather than failing the array when a metadata
+>>> write with MD_FAILFAST fails on the last rdev.
+>>
+>> Why just last rdev? If failfast can fail when the rdev is not broken, I
+>> feel we should retry for all the rdev.
 
-On Thu Aug 14, 2025 at 11:18 AM CEST, Stephan Gerhold wrote:
-> Michael had a somewhat related problem in the PVR driver recently [1],
-> where of_clk_set_defaults() needs to be called a second time from the PVR
-> driver (after the GPU has been powered on) to make the assigned-clock-rat=
-es
-> work correctly.
+Thank you for reviewing.
 
-I've come back to this and just noticed that the
-assigned-clock-rates do actually work. What doesn't work is the
-caching of the clock rate. That bug was then masked by calling
-of_clk_set_defaults() again in the driver.
+The reason this retry applies only to the last rdev is that the purpose 
+of failfast is to quickly detach a faulty device and thereby minimize 
+mdev IO latency on rdev failure.
+If md retries all rdevs, the Faulty handler will no longer act 
+quickly enough, which will always "cause long delays" [1].
+I believe this is not the behavior users want.
 
-Here is what the driver is doing:
- (1) driver gets handle to the clock with clk_get().
- (2) driver enables clock with clk_enable()
- (3) driver does a clk_get_rate() which returns 0, although there is
-     already a hardware default in my case. That got me curious
-     again..
+[1] https://git.kernel.org/pub/scm/utils/mdadm/mdadm.git/tree/mdadm.8.in?h=main&id=34f21b7acea8afbea9348d0f421beeeedca7a136#n784
 
-Now on the k3 platforms the clocking is handled by a firmware and it
-appears that the firmware is reporting a clock rate of 0 unless the
-clock is actually enabled. After the clock is enabled it will report
-the correct rate. (FWIW, I can modify the hardware/firmware default
-rate with the assigned-clock-rates DT property).
+> 
+> BTW, I couldn't figure out the reason, why failfast is added for the
+> meta write. I do feel just remove this flag for metadata write will fix
+> this problem.
 
-I've hacked the clock driver to register all clocks with
-CLK_GET_RATE_NO_CACHE and then everything is working as expected.
+By issuing metadata writes with failfast in md, it becomes possible to 
+detect rdev failures quickly.
+Most applications never issue IO with the REQ_FAILFAST flag set, 
+so if md issues its metadata writes without failfast, 
+rdev failures would not be detected quickly.
+This would undermine the point of the md's failfast feature.
+And this would also "cause long delays" [1].
+I believe this is also not what users want.
 
-I'm no expert for the clocking framework, but it seems that
-clk_get() will ask the HW for the clk rate and caches it early on.
+> Thanks,
+> Kuai
+> 
+>>>
+>>> A metadata write with MD_FAILFAST is retried after failure as
+>>> follows:
+>>>
+>>> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
+>>>
+>>> 2. In md_super_wait, which is called by the function that
+>>> executed md_super_write and waits for completion,
+>>> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
+>>>
+>>> 3. The caller of md_super_wait (such as md_update_sb)
+>>> receives a negative return value and then retries md_super_write.
+>>>
+>>> 4. The md_super_write function, which is called to perform
+>>> the same metadata write, issues a write bio without MD_FAILFAST
+>>> this time.
+>>>
+>>> When a write from super_written without MD_FAILFAST fails,
+>>> the array may broken, and MD_BROKEN should be set.
+>>>
+>>> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
+>>> calling md_error on the last rdev in RAID1/10 always sets
+>>> the MD_BROKEN flag on the array.
+>>> As a result, when failfast IO fails on the last rdev, the array
+>>> immediately becomes failed.
+>>>
+>>> This commit prevents MD_BROKEN from being set when a super_write with
+>>> MD_FAILFAST fails on the last rdev, ensuring that the array does
+>>> not become failed due to failfast IO failures.
+>>>
+>>> Failfast IO failures on any rdev except the last one are not retried
+>>> and are marked as Faulty immediately. This minimizes array IO latency
+>>> when an rdev fails.
+>>>
+>>> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
+>>> Signed-off-by: Kenta Akagi <k@mgml.me>
+>>> ---
+>>>   drivers/md/md.c     |  9 ++++++---
+>>>   drivers/md/md.h     |  7 ++++---
+>>>   drivers/md/raid1.c  | 12 ++++++++++--
+>>>   drivers/md/raid10.c | 12 ++++++++++--
+>>>   4 files changed, 30 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>>> index ac85ec73a409..61a8188849a3 100644
+>>> --- a/drivers/md/md.c
+>>> +++ b/drivers/md/md.c
+>>> @@ -999,14 +999,17 @@ static void super_written(struct bio *bio)
+>>>       if (bio->bi_status) {
+>>>           pr_err("md: %s gets error=%d\n", __func__,
+>>>                  blk_status_to_errno(bio->bi_status));
+>>> +        if (bio->bi_opf & MD_FAILFAST)
+>>> +            set_bit(FailfastIOFailure, &rdev->flags);
+>>
+>> I think it's better to retry the bio with the flag cleared, then all
+>> underlying procedures can stay the same.
 
--michael
+That might be a better approach. I'll check the call hierarchy and lock dependencies.
 
---c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Akagi
 
------BEGIN PGP SIGNATURE-----
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaKMg/RIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/iUoAF+J3OaVC3IxUeIFloGDoJ8dv5T/iTrFSoA
-+swW8sUuXrerXJYNsOz5CEpkMw5MWCHhAYD/qVKeufcrPpXb/T8mC9Q7mY7menjZ
-YTiG9V2kBLg2wK8UiF2WoE+54Vcry3zejqc=
-=y5fA
------END PGP SIGNATURE-----
+>>
+>> Thanks,
+>> Kuai
+>>
+>>>           md_error(mddev, rdev);
+>>>           if (!test_bit(Faulty, &rdev->flags)
+>>>               && (bio->bi_opf & MD_FAILFAST)) {
+>>> +            pr_warn("md: %s: Metadata write will be repeated to %pg\n",
+>>> +                mdname(mddev), rdev->bdev);
+>>>               set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
+>>> -            set_bit(LastDev, &rdev->flags);
+>>>           }
+>>>       } else
+>>> -        clear_bit(LastDev, &rdev->flags);
+>>> +        clear_bit(FailfastIOFailure, &rdev->flags);
+>>>       bio_put(bio);
+>>> @@ -1048,7 +1051,7 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
+>>>       if (test_bit(MD_FAILFAST_SUPPORTED, &mddev->flags) &&
+>>>           test_bit(FailFast, &rdev->flags) &&
+>>> -        !test_bit(LastDev, &rdev->flags))
+>>> +        !test_bit(FailfastIOFailure, &rdev->flags))
+>>>           bio->bi_opf |= MD_FAILFAST;
+>>>       atomic_inc(&mddev->pending_writes);
+>>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>>> index 51af29a03079..cf989aca72ad 100644
+>>> --- a/drivers/md/md.h
+>>> +++ b/drivers/md/md.h
+>>> @@ -281,9 +281,10 @@ enum flag_bits {
+>>>                    * It is expects that no bad block log
+>>>                    * is present.
+>>>                    */
+>>> -    LastDev,        /* Seems to be the last working dev as
+>>> -                 * it didn't fail, so don't use FailFast
+>>> -                 * any more for metadata
+>>> +    FailfastIOFailure,    /* A device that failled a metadata write
+>>> +                 * with failfast.
+>>> +                 * error_handler must not fail the array
+>>> +                 * if last device has this flag.
+>>>                    */
+>>>       CollisionCheck,        /*
+>>>                    * check if there is collision between raid1
+>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>> index 408c26398321..fc7195e58f80 100644
+>>> --- a/drivers/md/raid1.c
+>>> +++ b/drivers/md/raid1.c
+>>> @@ -1746,8 +1746,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>>>    *    - recovery is interrupted.
+>>>    *    - &mddev->degraded is bumped.
+>>>    *
+>>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>>> - * &mddev->fail_last_dev is off.
+>>> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
+>>> + * failed in failfast and will be retried, so the @mddev did not fail.
+>>> + *
+>>> + * @rdev is marked as &Faulty excluding any cases:
+>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>>    */
+>>>   static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>   {
+>>> @@ -1758,6 +1762,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>       if (test_bit(In_sync, &rdev->flags) &&
+>>>           (conf->raid_disks - mddev->degraded) == 1) {
+>>> +        if (test_bit(FailfastIOFailure, &rdev->flags)) {
+>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>>> +            return;
+>>> +        }
+>>>           set_bit(MD_BROKEN, &mddev->flags);
+>>>           if (!mddev->fail_last_dev) {
+>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>>> index b60c30bfb6c7..ff105a0dcd05 100644
+>>> --- a/drivers/md/raid10.c
+>>> +++ b/drivers/md/raid10.c
+>>> @@ -1995,8 +1995,12 @@ static int enough(struct r10conf *conf, int ignore)
+>>>    *    - recovery is interrupted.
+>>>    *    - &mddev->degraded is bumped.
+>>>    *
+>>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>>> - * &mddev->fail_last_dev is off.
+>>> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
+>>> + * failed in failfast, so the @mddev did not fail.
+>>> + *
+>>> + * @rdev is marked as &Faulty excluding any cases:
+>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>>    */
+>>>   static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>   {
+>>> @@ -2006,6 +2010,10 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>       spin_lock_irqsave(&conf->device_lock, flags);
+>>>       if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
+>>> +        if (test_bit(FailfastIOFailure, &rdev->flags)) {
+>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>>> +            return;
+>>> +        }
+>>>           set_bit(MD_BROKEN, &mddev->flags);
+>>>           if (!mddev->fail_last_dev) {
+>>>
+>>
+>> .
+>>
+> 
+> 
 
---c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20--
 
