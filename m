@@ -1,187 +1,120 @@
-Return-Path: <linux-kernel+bounces-774176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D575EB2AF79
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19326B2AF76
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EECA196492D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:34:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1E91962EAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF002773D1;
-	Mon, 18 Aug 2025 17:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56B23570C6;
+	Mon, 18 Aug 2025 17:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6DKpFWE"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AjFGOHMR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C513235A29B;
-	Mon, 18 Aug 2025 17:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7657B343D89
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755538411; cv=none; b=tw3eMLLT9J6be1z4XoEEkT4lJT2WVBz9chXK34hxUUXem4g6k3lDIXgsZhmDtDd8Uuk+MBolht44BrdhXTTeNo2n7UGHJeIhYJiBRVeL3Oc+6gmQtUZtJX1CHcruZw637wH23WXrpzeO+Ogbe10yDwN0DY/cClVH5//PSlwXoXU=
+	t=1755538392; cv=none; b=OFxj/qVmK2WKK7IZW4SLIndBMSU1gq3tV6KI1IwQs2dwIzBMDOOMbmygenrO02eKqyNsNx9cXMQNXvHOIshwSSzz2wHZLc5MQ752OHBfjrY2+tjoviZxmVnZ9Pu72xVw+V1SPVcPUE3eYc3GhYursSKO8n9/hTlK46Ast/VB8MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755538411; c=relaxed/simple;
-	bh=A2NsIcg1V7edxkeV7A3sJ+VRxPdOcnPyky4g5/mQMfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2qnSBbDOsISrcGgDMhZvxMSF3bHuJDhnlffBkUI7h7iGfS94ViJLkWZXbnmfc8F4rMbiREcPqtCGgdFmQjRF6ri5wtJkM1wNMUXGLwEqoTG2nnGfhr++CrebdnHVNo6KzxNVreOaROAD1vwP1JspzUQSiH2hMEH2zbhjO5AN1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k6DKpFWE; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-323266d2d9eso3285363a91.0;
-        Mon, 18 Aug 2025 10:33:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755538409; x=1756143209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dggd3LkH5i9MRkV2z8hWvgrPCcqA4YBYEr7TKwboQsQ=;
-        b=k6DKpFWEoe06/kjSUUTJCnHjR8Vai/dSzjmRd9lvoWVlUU/oN6yZtFY1io8bPGWcFe
-         SItqhn1OBTG9nH9nSeeGJbWlMlaWVlRDRjstN8o8/0OsMnDpOvELquDatbQhou01yIiP
-         AIx8vPHllBZc6KlEovRInwQgNQJYVHjgglIcYO7heD3Doauj/TjtN69dWRIQA7Y5+UmI
-         SFR6tsu/4AoRXPWGoHX8Y3pFLTBYpRKlXqLDwLAb9/b01gSaAyMmJHLP8fFO6Wa+J4kQ
-         cLAyRefVjAHwHblRKKWGsPO1fqH9QK0vJhBVeSy0vKiIgqxAxqOEUYcNygav6k0cjdXc
-         KWQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755538409; x=1756143209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dggd3LkH5i9MRkV2z8hWvgrPCcqA4YBYEr7TKwboQsQ=;
-        b=Q5kPpergPmLUi/AIZ8aL36kcrPVlUWV/97CIusQ+s0lHRZ2J8jhscsRwaIesxu4mGk
-         PRq2NNiBM5mkCNtn7rNLqhfcT0uLuDSKPA+vOLIuRK3gYlrQN7xTqR++zxW1NSGpbkF3
-         1bbwAm2L8g/8YJmVujXQ+lgbJlxVkiBUgxCFRT7XxsYq4FLExb6bCGIfqxpgvFQkjNNq
-         RRGy1sp5IQjY3S2/1bCxnfZ3xVROzGrWAtbFTFro3RnGPfZNhTnD6p/zmcQ4xm4EAsrW
-         VBUaF+ucUafrrQ//NTTPge4mXbmXx28BRiH9K/eQC4UwokvSZQ7YUUMBaqdYiF9W0zl5
-         OVbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ8Zz3r5Zq6LzqCxsYeZr/IDpgsXFefrBEoOcvz/dnxlddWD5aB5Wjd4neQT9Anl0EBHdfJFShriI7clVF@vger.kernel.org, AJvYcCXca2nYstFk63D2BA6pvqI3erFQmitLbDcopMfYxit7HYGRJwx9z+ewNO+PsFokE4rHSfRAu1v5iFu0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNDFSN46m0MxScwL3MbJoDsjgFKaQwowH+UdqDUxsPcbbOd4mW
-	ynUUBjKOQgL0lJhuUYAA5IEq35n++cjZsT1vTV141oUGvJgsM65pbsxtpilr7g0zeTlebv6/Xo4
-	7yzI1Cflyod1OyDoC6xzMlq1X226mBwY=
-X-Gm-Gg: ASbGncuh3fZ8fMy7uM0Ye8F7SmXHbwIkYbjywS3waKh6gONAwKz61Cv2TnvI1Io690O
-	f01zTfnmafW7aNIChJEUEmN23Rs7kuZiF9x6C3raPB5E8Ra5GDGgcf+PuLjRB7Zdpz8KcCkRn8o
-	4RdYtJ48T1tVYuwRDg/cITKE2Lfsmcpt1P3HypKS16YjjCShCigbAW3DUJVZOSDnGFRLfcgba5l
-	W7uFDCWRnr4fCD1uxk9hzEF1uzfbYNfDxHJTgFz
-X-Google-Smtp-Source: AGHT+IEIvEqlY6hy2gXnuzZ42Ohw3RH859FU7WdGZFr3bJQwfaJBBUgRSD5AJykHVfcnrOzfydi/k81O4AG/UJtdRTs=
-X-Received: by 2002:a17:90b:2f4d:b0:312:26d9:d5a7 with SMTP id
- 98e67ed59e1d1-3234dc3a458mr13978984a91.20.1755538408882; Mon, 18 Aug 2025
- 10:33:28 -0700 (PDT)
+	s=arc-20240116; t=1755538392; c=relaxed/simple;
+	bh=J7LqyvkWkUvqJQb3l/i1q0ZlM9WXi8+q8i+jLoNgf8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9K9wSGbhXxvo845gCzXuFbGe9bB4Joh8TG17nZVE+N1WmvWnfjQVwDv2IN+fwkvmqh+rKaURR0afPK9XWFNXn4/xKPBz3qZIO5g8qM42Rme0BiJ2C7t0bX/MVNAHTXTZMC2DrWmU1kZdFT26zXIxRoYNWlQWbEHnwNWyJkoHZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AjFGOHMR; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755538391; x=1787074391;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J7LqyvkWkUvqJQb3l/i1q0ZlM9WXi8+q8i+jLoNgf8c=;
+  b=AjFGOHMRNPicjuXyfgHjd4ad2U0ATHkLJ6xT0LhoZNfO4wO3nQ9lwoTT
+   6EUXTX4bsrBaGsDVa84FgfMgiOIRAdG5dBfcCH/dAAOqhyY3Bz6MlJCl1
+   UduaFty0YWfJPPPZqXHX68RO/mu0F/M1mtvR/ubg+FyRu0y+CoDOfX0nD
+   TamQgp/2FnLv9Hfk4jocyIFNzpaYVTAm/BzmpEtfHS58q/836fiMe42rj
+   6GaKel2dQ7sECGYAPRt8p7m2/lAQdZarjGeYErvu+GtjAAA08EYL7qGSG
+   qP/AI8QNy555SaD8FVQDXpFI3vjeY8hHImSiQQHud73+qqnJUPTDL+0pb
+   A==;
+X-CSE-ConnectionGUID: 2KblqEpaQR20sgiHCR4eEA==
+X-CSE-MsgGUID: b1InxJ8oSJ+Tw58flOJuyw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57698961"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="57698961"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 10:33:10 -0700
+X-CSE-ConnectionGUID: QldLS/1fQV6NMIo79B5hTQ==
+X-CSE-MsgGUID: RmLVfJzKT1mPl4MY2EPHIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="172838175"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO desk) ([10.124.220.33])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 10:33:09 -0700
+Date: Mon, 18 Aug 2025 10:33:02 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: lirongqing <lirongqing@baidu.com>
+Cc: tglx@linutronix.de, bp@alien8.de, peterz@infradead.org,
+	jpoimboe@kernel.org, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, david.kaplan@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][v2] x86/bugs: Fix GDS mitigation select for
+ non-ARCH_CAP_GDS_CTRL CPUs
+Message-ID: <20250818173302.33x5qvvw3mjmnixn@desk>
+References: <20250816001905.2270-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818162445.1317670-1-mmyangfl@gmail.com> <20250818162445.1317670-3-mmyangfl@gmail.com>
- <2ac97f29-bfc2-4674-9569-278bb4492676@lunn.ch>
-In-Reply-To: <2ac97f29-bfc2-4674-9569-278bb4492676@lunn.ch>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Tue, 19 Aug 2025 01:32:52 +0800
-X-Gm-Features: Ac12FXzNE_KrxMmsjOEUKM7XzmTbKs9oi25CPDYboQArNsZCNamMQ-IC-SwAv68
-Message-ID: <CAAXyoMNjukd-=cMDLiupNDYv1NLreWkCQufhAu_1y3N0udUrQw@mail.gmail.com>
-Subject: Re: [net-next v4 2/3] net: dsa: tag_yt921x: add support for Motorcomm
- YT921x tags
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816001905.2270-1-lirongqing@baidu.com>
 
-On Tue, Aug 19, 2025 at 1:07=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > +static struct sk_buff *
-> > +yt921x_tag_xmit(struct sk_buff *skb, struct net_device *netdev)
-> > +{
-> > +     struct dsa_port *dp =3D dsa_user_to_port(netdev);
-> > +     unsigned int port =3D dp->index;
-> > +     struct dsa_port *partner;
-> > +     __be16 *tag;
-> > +     u16 tx;
-> > +
-> > +     skb_push(skb, YT921X_TAG_LEN);
-> > +     dsa_alloc_etype_header(skb, YT921X_TAG_LEN);
-> > +
-> > +     tag =3D dsa_etype_header_pos_tx(skb);
-> > +
-> > +     /* We might use yt921x_priv::tag_eth_p, but
-> > +      * 1. CPU_TAG_TPID could be configured anyway;
-> > +      * 2. Are you using the right chip?
-> > +      */
-> > +     tag[0] =3D htons(ETH_P_YT921X);
-> > +     /* Service VLAN tag not used */
-> > +     tag[1] =3D 0;
-> > +     tag[2] =3D 0;
-> > +     tx =3D YT921X_TAG_PORT_EN | YT921X_TAG_TX_PORTn(port);
-> > +     if (dp->hsr_dev)
-> > +             dsa_hsr_foreach_port(partner, dp->ds, dp->hsr_dev)
-> > +                     tx |=3D YT921X_TAG_TX_PORTn(partner->index);
->
-> As far as i remember, this was not in v1. When i spotting this in v2
-> that made me comment you should not add new features in revision of a
-> patch.
->
-> Does the current version of the DSA driver support hsr? Is this
-> useful? Maybe it would be better to add hsr support as a follow up
-> patch?
+On Sat, Aug 16, 2025 at 08:19:05AM +0800, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> The current GDS mitigation logic incorrectly returns early when
+> ARCH_CAP_GDS_CTRL is not present, which leads to two problems:
 
-Sorry, this was forgotten to undo.
+... not present? or the attack vector mitigation is turned off?
 
+> 1. CPUs without ARCH_CAP_GDS_CTRL support are incorrectly marked with
+>    GDS_MITIGATION_OFF when they should be marked as
+>    GDS_MITIGATION_UCODE_NEEDED.
+> 
+> 2. The mitigation state checks and locking verification that follow are
+>    skipped, which means:
+>    - fail to detect if the mitigation was locked
+>    - miss the warning when trying to disable a locked mitigation
+> 
+> Remove the early return to ensure proper mitigation state handling. This
+> allows:
+> - Proper mitigation classification for non-ARCH_CAP_GDS_CTRL CPUs
+> - Complete mitigation state verification
+> 
+> The change fixes the following runtime issues observed:
+> 
+> [    2.809147] unchecked MSR access error: WRMSR to 0x123 (tried to write 0x0000000000000010) at rIP: 0xffffffffb34527b8 (update_gds_msr+0x38/0xe0)
+> [    2.809147] Call Trace:
+> [    2.809147]  <TASK>
+> [    2.809147]  identify_secondary_cpu+0x72/0x90
+> [    2.809147]  start_secondary+0x7a/0x140
+> [    2.809147]  common_startup_64+0x13e/0x141
+> [    2.809147]  </TASK>
+> [    2.809147] ------------[ cut here ]------------
+> [    2.809147] WARNING: CPU: 1 PID: 0 at arch/x86/kernel/cpu/bugs.c:1053 update_gds_msr+0x9b/0xe0
+> 
+> Fixes: 8c7261abcb7ad ("x86/bugs: Add attack vector controls for GDS")
+> Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
 
-> > +static struct sk_buff *
-> > +yt921x_tag_rcv(struct sk_buff *skb, struct net_device *netdev)
-> > +{
-> > +     unsigned int port;
-> > +     __be16 *tag;
-> > +     u16 rx;
-> > +
-> > +     if (unlikely(!pskb_may_pull(skb, YT921X_TAG_LEN)))
-> > +             return NULL;
-> > +
-> > +     tag =3D (__be16 *)skb->data;
-> > +
-> > +     /* Locate which port this is coming from */
-> > +     rx =3D ntohs(tag[1]);
-> > +     if (unlikely((rx & YT921X_TAG_PORT_EN) =3D=3D 0)) {
-> > +             netdev_err(netdev, "Unexpected rx tag 0x%04x\n", rx);
-> > +             return NULL;
-> > +     }
-> > +
-> > +     port =3D FIELD_GET(YT921X_TAG_RX_PORT_M, rx);
-> > +     skb->dev =3D dsa_conduit_find_user(netdev, 0, port);
-> > +     if (unlikely(!skb->dev)) {
-> > +             netdev_err(netdev, "Cannot locate rx port %u\n", port);
-> > +             return NULL;
-> > +     }
->
-> O.K. Stop. Think.
->
-> You changed the rate limiting to an unlimiting netdev_err().
->
-> What is the difference? Under what conditions would you want to use
-> rate limiting? When would you not use rate limiting?
->
-> Please reply and explain why you made this change.
->
->         Andrew
-
-I copied the limited version from tag_vsc73xx_8021q.
-
-Under no conditions I expect either of them to appear: it is the case
-when I did my own tests; unless something really bad happens, like
-pouring a cup of coffee over your device.
-
-I know rate limiting is a way to prevent flooding the same message
-over dmesg, but if an event never happens, I would consider two
-methods are exchangeable. Theoretically if an event never happens, no
-warnings would ever be needed, but I placed one here in case you
-destroy your device accidentally.
-
-Thus if you think rate limiting is not appropriate here, I would fix
-it with another.
+Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
