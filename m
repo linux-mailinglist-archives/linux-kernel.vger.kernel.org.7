@@ -1,206 +1,114 @@
-Return-Path: <linux-kernel+bounces-773056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20560B29AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:34:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15315B29B50
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B849918A2A66
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3427D1896D80
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD6727B4FA;
-	Mon, 18 Aug 2025 07:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="W61BvZ2x"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF9A286D49;
+	Mon, 18 Aug 2025 07:52:06 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A47C27F756;
-	Mon, 18 Aug 2025 07:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9056426B942;
+	Mon, 18 Aug 2025 07:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755502406; cv=none; b=d5MBDggPN5AzqhuCXc3kAZulQK3T+YPIOeOJaMdE+qmAvI3c1/WXHzoPAduQghgXHD/Q2RUPAaUKpTznLSezQ8aDDnF47ZzSBEkfxlSjQP3gtnwA02Bu7YQXEiyA2kPJN6Oq4soApcKUzweV3M9Vxf+3KoH6KrYCrQcUMwfef9U=
+	t=1755503525; cv=none; b=th24gNffq93OzLewDs3LI/ox6HJXONoR//C1iEWLQ2v3LztmIidqvVfrP+08pwZFSXB7Lz65ExGZI9+isq123C2JPZbIsLe+1AwXeI1otb33EeXOXQTBraOspvqpp8T3WFAgaQ+lES5PvZkrIYLTkXE78Q4Cc6d2EqAHwpYEVA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755502406; c=relaxed/simple;
-	bh=HFhXrifZno/dPB7M4JG3n3MLisMdU+y2W94PDsHVhhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NFm8W7764Bik5hMFrcdSzsrcJgXrFVYtndJ5NaWHF25o5TJY/O5msMKxetx6WD1I9moAcyB4v4Dk/2lNuYQtb01I1leiqYk7ggpYW/S9FTy8GeEAnvQOLhazYuaAIdPvvmh8wgOXW/LWeoh+ycd7PMZ1njMTyacB/mQI2Vv0Ft4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=W61BvZ2x; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755502389;
-	bh=uwNK2cvpl14UHlk6Q5HkI+LCPc7KO0VzPNrORHnwh5I=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=W61BvZ2xoHRXH+yg9R/6GYIReVXi0MSgronvvyLPLYB4xdHMQf9qIfJZwUBU48Clb
-	 A+qEjsvmbTKLPiiVDqJ48mqB6HQIs/Y5kZDI3HiwxEJ/8eaoR1s6IunOx/fefvjjy0
-	 gQGI0xdBi9GHRe71gz9VKWAQb/rq7m1a8w8iGlbc=
-X-QQ-mid: esmtpgz16t1755502387t4d77be40
-X-QQ-Originating-IP: rqQDzakR9JIpcJNuoSEqQ+Nb63NMEXIV97JzDC/KoEo=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 18 Aug 2025 15:33:06 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13474632048173593548
-EX-QQ-RecipientCnt: 16
-Date: Mon, 18 Aug 2025 15:33:06 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Haylen Chu <heylenay@4d2.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH v2 3/4] clk: spacemit: introduce factor for div clock
-Message-ID: <0CBDC60ECB91670B+aKLXMuKPpicjd3_r@LT-Guozexi>
-References: <20250811-k1-clk-i2s-generation-v2-0-e4d3ec268b7a@linux.spacemit.com>
- <20250811-k1-clk-i2s-generation-v2-3-e4d3ec268b7a@linux.spacemit.com>
- <aKKN05w88uKP_HY7@ketchup>
+	s=arc-20240116; t=1755503525; c=relaxed/simple;
+	bh=z2smK6xAm8mG+5SS7qS5KBINR52sJGF/BRqzgrG3g0o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KkirnP5pGNYE7JnLXHPwqMblr8mgSodXC90VnwAXJ5WCYnV0ePv3HYNpBgrjH8khGyZiAaKX/gsLS1haH6Uv+ELa1+5c2raAb4Bp5vI0cD/JERhKwNdMUXdZIS03SPjCCNjqgII/yCI8EIF0i2rt44JT9XLpG4+SHjuiU9JIBkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c54Z26421z2CgD4;
+	Mon, 18 Aug 2025 15:47:38 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA3C21A016C;
+	Mon, 18 Aug 2025 15:52:00 +0800 (CST)
+Received: from kwepemn100005.china.huawei.com (7.202.194.108) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 18 Aug 2025 15:52:00 +0800
+Received: from huawei.com (10.67.174.49) by kwepemn100005.china.huawei.com
+ (7.202.194.108) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Aug
+ 2025 15:51:59 +0800
+From: Ye Weihua <yeweihua4@huawei.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+	<mhiramat@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+	<mathieu.desnoyers@efficios.com>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Ye Weihua <yeweihua4@huawei.com>
+Subject: [PATCH -next] trace/fgraph: Fix the warning caused by missing unregister notifier
+Date: Mon, 18 Aug 2025 07:33:32 +0000
+Message-ID: <20250818073332.3890629-1-yeweihua4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKKN05w88uKP_HY7@ketchup>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MMwjR1C73eIs2XdBW7qSlV6LRbNeI2hXjQ0Xh4DwmqYMro31EF3+xc8w
-	+n3N9pNYb+8a+jeHrwSmGHIHmX0oXB8LF+fIA9JaBJNwcsjTbSpZu4B/8hEo8dlRaHP/PES
-	RUmLysgtP6ndXszT+w1rKPmxQjZbm5wuUuQDRXyGS1CaShu3LuM/yeqprnec+e5YcykWWS7
-	QcArUfvFGOizqIkrNMHVo4Xl7zPr6IrUbAB4hE6yR+atvyznWOhK9cACb5/OT9YF8+RHX7c
-	9OxmbxVgY5awCOnt1n6qP5XPvvopA2bGc49vaxrypJJhyEQP/17DBv2vI5kQW8vyRFbRQdt
-	ROnydP+8cPAj9vJ/Je3RgcAqjvktRrlpaOeAVVovPzD8HGjJTz+Y5eYExHUF7o21PyqvgMB
-	n7NxxSuM6rIPF4qlGvyMz34O3AEwUn58bu7tfEBSwmuj0HDD8LZS7XJWn1RsWXmr7e8Kcs0
-	gmHvbawdQV6VVUbKZUAX1zyyIpfowK2QIZ4KSMnaR0xYikMt2eZSHU6ZAEw72/YYcbg/VcG
-	sGSIimojUW3oBm8b+7PajwM7HXEZqDEPhjSBge2wuh/3vE8PfqlI8y0y4Fvd1fNvFIKtn1g
-	0dJCCdXigsb4qw19NdUh3UNdwFcZYoQGsgcohNyeFa8Hr+ukRe/komj9Nvkw85rHJ2NeaNX
-	W4pzxrtl+jMtbdLleZK11GLYNbQCRgB2OF6RUQ8pUlF2pKrqZN5JnszeJa11sqL+jMGPS17
-	rAyHNDN4e8wiNbHgpwd/4Vyae84AXjg57ygU8LKvwfgj1CL7qfMaxqAsOR1Y+0SV4/lJTwp
-	v2k159vLdJ8VRlAM+GdeGqbnhgHD4WCJ7gLtEu5ze3DivgQalIpE0BfpqqXKDVHKU2t0KGs
-	C/QZp2guqTduk8HAzN0PEINtEATsm2HV43vzNGalYk7N5tmvrPoaDaiIA/O6Qaed6z5g8fl
-	zIKidlTcTlRkFyP/QSYmnMkArJF0tyqzRyAoxQkCQP9byJFnezOdyFVFp/5u/Qbrwe9BmVW
-	EwprftJihKeXQy+w9oAyGPO33lJelCYKfdtTUbAgJCe58dlZBWR0vKhU0a7TkzhkXRVMCEo
-	v3WdEQrhMyCQDVqPtqnR9QuZ0LirFjL64QDrH3sFtwD
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemn100005.china.huawei.com (7.202.194.108)
 
-On Mon, Aug 18, 2025 at 02:20:03AM +0000, Haylen Chu wrote:
-> On Mon, Aug 11, 2025 at 10:04:29PM +0800, Troy Mitchell wrote:
-> > From the definition of register, The i2s_bclk is a non-linear,
-> > discrete divider clock.
-> > 
-> > The following table shows the correspondence between index
-> > and frequency division coefficients:
-> > 
-> > | index |  div  |
-> > |-------|-------|
-> > |   0   |   2   |
-> > |   1   |   4   |
-> > |   2   |   6   |
-> > |   3   |   8   |
-> > 
-> > But from a software perspective and this table, dividing the
-> > actual div value by 2 is sufficient to obtain a continuous
-> > divider clock.
-> > 
-> > Rather than introducing a new clock type to handle this case,
-> > a factor parameter has been added to CCU_DIV_GATE_DEFINE.
-> 
-> Actually, I expected you to represent the factor simply with
-> CCU_FACTOR_DEFINE, introducing no new clock-calculation code...
-I'll change it in the next version.
+This warning was triggered during testing on v6.16:
 
-> 
-> > Suggested-by: Haylen Chu <heylenay@4d2.org>
-> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > ---
-> >  drivers/clk/spacemit/ccu_mix.c | 7 ++++++-
-> >  drivers/clk/spacemit/ccu_mix.h | 4 +++-
-> >  2 files changed, 9 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/spacemit/ccu_mix.c b/drivers/clk/spacemit/ccu_mix.c
-> > index 9b852aa61f78aed5256bfe6fc3b01932d6db6256..dbd2cf234bf81d8e110b19868ff9af7373e2ab55 100644
-> > --- a/drivers/clk/spacemit/ccu_mix.c
-> > +++ b/drivers/clk/spacemit/ccu_mix.c
-> > @@ -56,7 +56,10 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
-> >  	val = ccu_read(&mix->common, ctrl) >> div->shift;
-> >  	val &= (1 << div->width) - 1;
-> >  
-> > -	return divider_recalc_rate(hw, parent_rate, val, NULL, 0, div->width);
-> > +	if (!div->factor)
-> > +		return divider_recalc_rate(hw, parent_rate, val, NULL, 0, div->width);
-> 
-> Please adapt all div-related macros to make them assign one to the
-> factor, which helps you get rid of this if and the one in
-> ccu_mix_calc_best_rate().
-> 
-> > +	return divider_recalc_rate(hw, parent_rate, val, NULL, 0, div->width) / div->factor;
-> >  }
-> >  
-> >  /*
-> > @@ -115,6 +118,8 @@ ccu_mix_calc_best_rate(struct clk_hw *hw, unsigned long rate,
-> >  
-> >  		for (int j = 1; j <= div_max; j++) {
-> >  			unsigned long tmp = DIV_ROUND_CLOSEST_ULL(parent_rate, j);
-> > +			if (mix->div.factor)
-> 			---- this if ------
-> 
-> > +				tmp /= mix->div.factor;
-> >  
-> >  			if (abs(tmp - rate) < abs(best_rate - rate)) {
-> >  				best_rate = tmp;
-> > diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-> > index 54d40cd39b2752260f57d2a96eb8d3eed8116ecd..7dd00d24ec4b1dab70663b9cb7b9ebb02abeaecb 100644
-> > --- a/drivers/clk/spacemit/ccu_mix.h
-> > +++ b/drivers/clk/spacemit/ccu_mix.h
-> > @@ -34,6 +34,7 @@ struct ccu_mux_config {
-> >  struct ccu_div_config {
-> >  	u8 shift;
-> >  	u8 width;
-> > +	unsigned int factor;
-> >  };
-> >  
-> >  struct ccu_mix {
-> > @@ -130,10 +131,11 @@ static struct ccu_mix _name = {							\
-> >  }
-> >  
-> >  #define CCU_DIV_GATE_DEFINE(_name, _parent, _reg_ctrl, _shift, _width,		\
-> > -			    _mask_gate,	_flags)					\
-> > +			    _mask_gate,	_factor, _flags)			\
-> 
-> This isn't that consistent: why could only divider-gate come with a
-> factor? This is another reason why I think representing the factor
-> separately with the CCU_FACTOR_DEFINE() macro is better.
-> 
-> >  static struct ccu_mix _name = {							\
-> >  	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> >  	.div	= CCU_DIV_INIT(_shift, _width),					\
-> > +	.div.factor = _factor,						\
-> >  	.common = {								\
-> >  		.reg_ctrl	= _reg_ctrl,					\
-> >  		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_div_gate_ops,	\
-> > 
-> > -- 
-> > 2.50.1
-> > 
-> 
-> Best regards,
-> Haylen Chu
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+notifier callback ftrace_suspend_notifier_call already registered
+WARNING: CPU: 2 PID: 86 at kernel/notifier.c:23 notifier_chain_register+0x44/0xb0
+...
+Call Trace:
+ <TASK>
+ blocking_notifier_chain_register+0x34/0x60
+ register_ftrace_graph+0x330/0x410
+ ftrace_profile_write+0x1e9/0x340
+ vfs_write+0xf8/0x420
+ ? filp_flush+0x8a/0xa0
+ ? filp_close+0x1f/0x30
+ ? do_dup2+0xaf/0x160
+ ksys_write+0x65/0xe0
+ do_syscall_64+0xa4/0x260
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+When writing to the function_profile_enabled interface, the notifier was
+not unregistered after start_graph_tracing failed, causing a warning the
+next time function_profile_enabled was written.
+
+Fixed by adding unregister_pm_notifier in the exception path.
+
+Fixes: 4a2b8dda3f870 ("tracing/function-graph-tracer: fix a regression while suspend to disk")
+Signed-off-by: Ye Weihua <yeweihua4@huawei.com>
+---
+ kernel/trace/fgraph.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index c5b207992fb4..dac2d58f3949 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1391,10 +1391,11 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ error:
+ 	if (ret) {
+ 		ftrace_graph_active--;
+ 		gops->saved_func = NULL;
+ 		fgraph_lru_release_index(i);
++		unregister_pm_notifier(&ftrace_suspend_notifier);
+ 	}
+ 	return ret;
+ }
+ 
+ void unregister_ftrace_graph(struct fgraph_ops *gops)
+-- 
+2.34.1
+
 
