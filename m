@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-774505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CF0B2B34E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:21:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E7CB2B354
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A507E16F2AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:21:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E99C7A74E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E2C26FA5E;
-	Mon, 18 Aug 2025 21:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262CD2737E3;
+	Mon, 18 Aug 2025 21:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRy6NIba"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TYafCGnY"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D36223DDF;
-	Mon, 18 Aug 2025 21:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC5C3451D0
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755552073; cv=none; b=fnSx2mnYx4Dg5BB9N7U8RE6Gg2YVcZ/3Uy10rWhEOalzPbAlv/2Q7/0ZkOwaL45mD7ccWUvaZWj2WvF2XOwX1MJ1jJqJnpCgf9XGMxSnT4eSikkuxZLIK9vXF+YScMt1lljW5zSr+w6Ei9NNpTIw1NpaiLcqYWg0b5eVtiZK/j0=
+	t=1755552168; cv=none; b=bY2eR/TNRbwOfVZrV2ZHBHwYkCJS5ZXLjM5EvcJQYilqGF5tcEEaLlx2Rf2iN1gIegMws1pUTe3kr1YUmlkTqj0VwLFbhcRqXrxSTSlpKM9zz2PrO1KyIB3G9cw0F2+u3C0F9U2c2PwQxm6Azp/LxHCcmtFKQVMKBnf3ieDT7jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755552073; c=relaxed/simple;
-	bh=8sYxEPPi5m6As2djnx+RUdD2DWFle8xZd3DGnUL2Uyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QDWDn6KN7IMBXjzov9+k9j9b9rdLl5l7xd02zdSEKXLeC06UoCKlBDUxfgWyxoBtC7k9UDgf00eBJlzcKjjkqbOhROwbQKVcRpA/TSw5PUdAcV5qmLairl8VmMhvOYKCPSTF/+jFAHUGPsVHow55VdX/4vqd6jusJCOBnBq2z3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRy6NIba; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso32619035e9.3;
-        Mon, 18 Aug 2025 14:21:11 -0700 (PDT)
+	s=arc-20240116; t=1755552168; c=relaxed/simple;
+	bh=SV0SovoncvtQUIWdiz5ZimeTSUpDBwkq5eqoPwW+Sy4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jg0nQx+3ALDuMgaSx2rjkxh4sEqZQGs1zkErT/OrVzWZOMQKnC3UnHqadkYaww+jNJuzmqcO71ERGQEXsZURq/sdrAtAZ6MgwXCjOPP61AjG9e0C4VfizuQKWqaZpEPEsLvxBe3r/4jNra/utw2v0CZ7onfLxAE8sMaIEgkz0Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TYafCGnY; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso1144134b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:22:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755552070; x=1756156870; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1755552165; x=1756156965; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Mq5OOEmUE9OkgN/VAU4XTp9x+IbIBr1PXu6WZVa1WQ=;
-        b=gRy6NIbavEVTvVJoPpyAG715kJPRGDwiluehhS/DqH3YExDDF6z/lcVDP5dTXWwRBt
-         5laBolh4nrL0QjVx10YGVwTxXAd/upMViLWWbwBfYncb5Q2/nwCHPtndIQatiViPJR1g
-         uw7ymtaZC+tmw7zj6scp8RfFjMn2dgMAjlTXBC0prv6GoFbV0+cfK4TgFqOp9Z8VyDPO
-         t/zH5tC1iUmxK3TwiH7DFHrRd0vKes8gIp75n3imv0yc8dluCeTBGpxCBnCujb5dIZ50
-         /Hn5aXvZMA2EX/mQnoHVpySG3dKKMLQzGXhwuGPqkj3LBMgYY+foekuGaAyttsu4i+7V
-         KL6Q==
+        bh=SV0SovoncvtQUIWdiz5ZimeTSUpDBwkq5eqoPwW+Sy4=;
+        b=TYafCGnYL/KXogHJLkvcXm3NOyc4KE4KkR2QZ513U1WcBGTJsFVPVFqNXzU4iWNMEc
+         lCTXxMJs869490o/wIGJbf9EaEGTBPAlSLzVELa+ipCNCswRw0WdOTNeRAKYq+iyfOb6
+         t3X0oqwGoxFYhGMHzngc8AERibyBQ1G8V3seOWdZ28MlPuMDY+xZWzLpPqSPLVOyKAsh
+         W2rnZyPDyANwOkC6E16dN+KRCAYh3IiaRJFVdVwgmGsmLL99mBMuq1Gc0thfhFnwvZpQ
+         rX/BaoZkYALKSugMMOhmAi3qxMxItSZlubNWQ+ayiMum/1jBT+twJ5kFb9tPJuKgVGP0
+         kdrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755552070; x=1756156870;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755552165; x=1756156965;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7Mq5OOEmUE9OkgN/VAU4XTp9x+IbIBr1PXu6WZVa1WQ=;
-        b=X0s2wpwyDZWOf9uf2lIxuD5ysSVdWJQve1oJyfzQdpdqR1fsT2cuwWpWBLJUhta7td
-         XTBZYTPLeoySQNLTMO4vRIu2ddMgTyLYrY7VWpltg1yE3wR3MpuuwRXO3X3ehCBFj/ad
-         IwJ0wsIxTArdWB0WgWAaNk4g3JeXDWM6vcXAPs5qsYy2NF4f2zFEEPcRhixtVmfq4dnO
-         oxoIIWpAYplDtnjP3Hy3E7TSGypZchyr/nyPTDTNBJ5HpIpbh9OanKbMS5JWwil7M/lP
-         VVSZOCzt8xJRkCH2gE1apJbidYkxGVwMPT8p4As3ji3B446bM36W9Zn/uyLRysCifntI
-         QDrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvgw658G2ZVGO4EcFK9mauMuKkbFHoeGrV1ofWbfhRg+IK9f+Kamb689vyKpUj60Pa24wZ7YEALx1Vm38p@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+stMYiiqBQwHsmOsTe8Pvlz5sbIPSLAqqKI9Fhw1Efw6L2s8M
-	5VNGAneXEvQTW237yf9HESfqKd653YElyNHHDvV2Q+lUmQBmkLRAAApk
-X-Gm-Gg: ASbGnctO+/RrPGajS7fBSrklCTkt8xvXqWzcX/bNhMkNuVYqvU0HgYBuvDZ1zA3OKBq
-	cYvV0dRXV9qFUHoq1J2ycnPeScHCkr5TkYmdDJnfwTmx2joX48n43DPMZnLFG/++nGk4QG/DvWq
-	pwdcQ8qU5IRGXbTJ3Ymiz9+gAqQLb2TZmMg5+o8fMXotNxuGFXDUInl44u4VpIRT89xlthZxg/V
-	huTKYpbxxbhiC52foV3rY3IkU/G8Qig+4FZAuSWsrEjQj+qDccc6hCuj/d0fkAEbRM+WT0r3eAj
-	jT4lJXlW4YFNsmjBschJs/bIwqoxpM4f+mClfml4FdeZKhbkTUTTJa64fkcqvaYjRtAGDhHuGqe
-	8dct/Q41oPpCH38CN+bOEBO9zYdtCWcNeRSRZe6gfbc/Nb5fy+nd4g/fJa74z
-X-Google-Smtp-Source: AGHT+IFjeJcl/CIROyINJYz2N4GIyL7wH/l6ez3R9eVxdJEOCoo9/uJ8oeF1uCKxLhDwqBW8u1rNuA==
-X-Received: by 2002:a05:600c:1c0c:b0:456:1dd2:4e3a with SMTP id 5b1f17b1804b1-45b43db662amr522955e9.3.1755552069892;
-        Mon, 18 Aug 2025 14:21:09 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a6d7b7sm14313195e9.1.2025.08.18.14.21.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 14:21:09 -0700 (PDT)
-Date: Mon, 18 Aug 2025 22:21:06 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
- access
-Message-ID: <20250818222106.714629ee@pumpkin>
-In-Reply-To: <20250817144943.76b9ee62@pumpkin>
-References: <20250813150610.521355442@linutronix.de>
-	<20250817144943.76b9ee62@pumpkin>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=SV0SovoncvtQUIWdiz5ZimeTSUpDBwkq5eqoPwW+Sy4=;
+        b=vrDYCnKe+BZJmbPoHjtQS8lY0UB33oLdWVNPoGEO8Ssib4guvvbWT4gvYqL9xzYcAA
+         I9nSXNpnLjUiDQUsMiRJ3fTjogV17u1en7Wfl24uhU02JW3xGZwUvnC8oxVtTr2S2Ah7
+         L1LdYXG1tNhpFpGVFLmAoT8m7WfmjYcKpORysICxQsehGgklckg6wwNU/U/wEmqmydlj
+         Lf5Uq4OCGQS5pDSVYLyT2KUcWV9HsacESv/t4wsBBJ+WsaX+1gKOFJCn2od6RFGMysIZ
+         sQ+TYXkCOkrZJJ2NjPbmT9Jk+VXKyIjOuCzdSwiBKOhWyFA0qMaTjJLbfMNFJxOOL6kV
+         gzrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXVB0I0xqaVVHEiWq0JP+KMh8itrDOu5SG4oV9dwk92IXcTwfa+bJpcNKGB3/DGgbU3KAjwWmqzzNlrs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpY8skgZkGj9PA7xEO+2Y/2EH/9iRORb78PEs3hf0DynJSckZl
+	aVb9RII37eHeuqZcIcyT6n4RJU6zGRfnqB+LfEISl9FlHQpJR31a8YDLmLhiUbNHquFKdJZk4Hm
+	9LuX9eKJICFOOey7hqXDbz5wzBHQK+ocV3wSP1/Xn
+X-Gm-Gg: ASbGncvptbUBes7y2LCc0VqTuCaTfzcSF4BNCcIAMeHAs0BaHs2sBlKenMwW3+sLedq
+	1NQd7pE0Fppazx67Op5qyLp6j4ugwRVqMXKnMRFKGQNiZp4dCghqv1K4PeFqZS5c/aYwBLLGSOx
+	S6+H+0IaYMWTS8A86M+RR0FCGu952xZv1PtxI623717BCSMSuehK4uZ32FEWJIdfP0lGiz2PHb1
+	dsp6nw=
+X-Google-Smtp-Source: AGHT+IFrpf2SwebDg+GiltDgtPrrGLf0iUO2py4Zq3qOIraT9VCfP5Xv4Pr/eE1gzrWGIUk8h6MeQPTZ/yeBUsgJzAo=
+X-Received: by 2002:a05:6a21:3282:b0:22b:3da9:fb33 with SMTP id
+ adf61e73a8af0-2430d2fa39bmr98481637.12.1755552165437; Mon, 18 Aug 2025
+ 14:22:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250816114409.10107-1-shankari.ak0208@gmail.com> <aKKdULYbLFRMS9qe@mail.hallyn.com>
+In-Reply-To: <aKKdULYbLFRMS9qe@mail.hallyn.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 18 Aug 2025 17:22:33 -0400
+X-Gm-Features: Ac12FXwqH4hs8Wu1pRkY76N_A0MiHuz9hahX6-bMGzQ9hZA7cdN0mZsOzdI8Fsc
+Message-ID: <CAHC9VhRwpYx0jVybcAnGdm4AGDno-GwyCzZCS7U+56Fwu2tuCg@mail.gmail.com>
+Subject: Re: [PATCH] rust: cred: update AlwaysRefCounted import to sync::aref
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Shankari Anand <shankari.ak0208@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 17 Aug 2025 14:49:43 +0100
-David Laight <david.laight.linux@gmail.com> wrote:
+On Sun, Aug 17, 2025 at 11:26=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com>=
+ wrote:
+> On Sat, Aug 16, 2025 at 05:14:09PM +0530, Shankari Anand wrote:
+> > Update the import of `AlwaysRefCounted` in `cred.rs` to use `sync::aref=
+`
+> > instead of `types`.
+>
+> Thank you for forwarding, Miguel.
+>
+> As far as I can see from the included links, this looks good.
+>
+> > This is part of the ongoing effort to move `ARef` and
+> > `AlwaysRefCounted` to the `sync` module for better modularity.
+> >
+> > Suggested-by: Benno Lossin <lossin@kernel.org>
+> > Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> > Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
 
-> On Wed, 13 Aug 2025 17:57:00 +0200 (CEST)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> > commit 2865baf54077 ("x86: support user address masking instead of
-> > non-speculative conditional") provided an optimization for
-> > unsafe_get/put_user(), which optimizes the Spectre-V1 mitigation in an
-> > architecture specific way. Currently only x86_64 supports that.
-> > 
-> > The required code pattern screams for helper functions before it is copied
-> > all over the kernel. So far the exposure is limited to futex, x86 and
-> > fs/select.
-> > 
-> > Provide a set of helpers for common single size access patterns:  
-> 
-> (gmail hasn't decided to accept 1/4 yet - I need to find a better
-> mail relay...)
-> 
-> +/*
-> + * Conveniance macros to avoid spreading this pattern all over the place
->     ^ spelling...
-> + */
-> +#define user_read_masked_begin(src) ({					\
-> +	bool __ret = true;						\
-> +									\
-> +	if (can_do_masked_user_access())				\
-> +		src = masked_user_access_begin(src);			\
-> +	else if (!user_read_access_begin(src, sizeof(*src)))		\
-> +		__ret = false;						\
-> +	__ret;								\
-> +})
+As mentioned previously, I'm still not well versed in Rust so as long
+as Serge is happy with it, I'm good with it too :)
 
-Would something like this work (to avoid the hidden update)?
+I'm guessing it probably makes sense to include rust/kernel/cred.rs in
+the creds MAINTAINERS section just as we did (or will do) with the LSM
+Rust shim?
 
-#define user_read_begin(uaddr, size, error_code) ({	\
-	typeof(uaddr) __uaddr;				\
-	if (can_do_masked_user_access())		\
-		__uaddr = masked_user_access_begin(uaddr);\
-	else if (user_read_access_begin(uaddr, size))	\
-		__uaddr = uaddr;			\
-	else {						\
-		error_code;				\
-	}						\
-	__uaddr;					\
-})
-
-With typical use being either:
-	uaddr = user_read_begin(uaddr, sizeof (*uaddr), return -EFAULT);
-or:
-	uaddr = user_read_begin(uaddr, sizeof (*uaddr), goto bad_uaddr);
-
-One problem is I don't think you can easily enforce the assignment.
-Ideally you'd want something that made the compiler think that 'uaddr' was unset.
-It could be done for in a debug/diagnostic compile by adding 'uaddr = NULL'
-at the bottom of the #define and COMPILE_ASSERT(!staticically_true(uaddr == NULL))
-inside unsafe_get/put_user().
-
-	David
-
+--=20
+paul-moore.com
 
