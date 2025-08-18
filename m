@@ -1,131 +1,81 @@
-Return-Path: <linux-kernel+bounces-774142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40500B2AF11
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:11:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351D7B2AF19
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C621BA472A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:09:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3043583ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E0732C33B;
-	Mon, 18 Aug 2025 17:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FAB32C320;
+	Mon, 18 Aug 2025 17:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Hi2iBBvu"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cB3fT4AE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD4E32C316;
-	Mon, 18 Aug 2025 17:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDCD32C30F;
+	Mon, 18 Aug 2025 17:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755536909; cv=none; b=hjQvnoxLdn/GiLobT3wXmPOU2Hzxyki58gTjU7p2c5qxIDay6P/uj1MtWqEDjbCmmLmdAD5HkDsEko/CAGy5Ys7jxxoQeS0bDO1nhkdRgFFidAh6in/sBrl4RI7c6+qk0+mdtnVwMeXWMHfkmvH8ECyNENMp1upL357x7QI8CKc=
+	t=1755536921; cv=none; b=PG6uHU0fe/Lhd/lLW7UZG0fgpo14QMyGolgZGiJXqST41jfrLGe5z4XmLZk5ZCXjXHm9QJ/oc878xUql7Z+rcymcpOdo5nDbTUpXjNWX3qU0Or8Vjf37IAw65AYL09MG79gwag4mpiBseaesplQZwlDmssJOVvGse2OQm+MxWHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755536909; c=relaxed/simple;
-	bh=rPMW5veYC6Pqzzt/IvNOl92DEwVRpPy8WEfW0ZS5F5I=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=itOrmSyYSSl1/jhQgeEyltuRZp4ZiwKwCVf5huzCREg3xxYoRdhoGf5GhgUcj5H3DFMP4tRbbEjbylM5qXbHK+PKPg8IYDhKvMCiQ978jwedDuQp/ng3xfOLKFFrUExxfSMhF8rmpR+IfVV746ARw/v8dB9Gfms3UEr8IYuZlSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Hi2iBBvu; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 8080C22F8E;
-	Mon, 18 Aug 2025 19:08:22 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id pMVZN71AsQAe; Mon, 18 Aug 2025 19:08:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755536900; bh=rPMW5veYC6Pqzzt/IvNOl92DEwVRpPy8WEfW0ZS5F5I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=Hi2iBBvuuvtwAY05hT4157aaA2jyJ96dwAODLyT5zFIyFINe4HwlkjPicA27h7aLr
-	 b/xBfuwcShAv0mY46xn9qj46G1rQVVU5cIXJFiwcbGRInMrNAj0+t1UHSTLYPNcTDo
-	 o3VqZFGrdiUQClNIVMgxYzBYGv1FVJeRdl0PKItGIL73lnFYSr97RXquqQ8u1HdMVh
-	 RFIWDcMrX0mPWr7AX9XvP8xcytDOjs1OCSot0047gjM4/hm4Gv/8dxM0NCoM8CO8RX
-	 ++TSWDpuoJ0ciwrtxmSag0OkUDlfbiMODVDxob+QHzlh2mvoLb/zEQJYZA7cji8MWK
-	 UHs1kllj/r0CA==
+	s=arc-20240116; t=1755536921; c=relaxed/simple;
+	bh=64CcmkGtdUxeHQ1pBgSUaPFesNmD3+o91YK6wmGkYJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dsbP+A46tjUOQ+Mwa3vrO493QgnEOOLXC7JE/2e/HXu2qhlzR8rFO+uPauDaCFENgsEDL+Cr/Te2VWgnGfYkSrVkNXpmfxI+nq8sGiWRXN284Tz/VwcE/Ff8sFbtBKeCwUEgu1qMp2/QOPhBkzOGevSouAMwsVrKYxV2apC0trQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cB3fT4AE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F574C4CEEB;
+	Mon, 18 Aug 2025 17:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755536920;
+	bh=64CcmkGtdUxeHQ1pBgSUaPFesNmD3+o91YK6wmGkYJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cB3fT4AEF3Up/BvqosBGRperiBFtvAvgJ1bC3UdhNTb65WHq0vzhH1S6kulu+uLcl
+	 w0n9UZWXiIxmL69PScnQZNRdyl5jhIum4rRpXKCqxhxYP/L1wfCyy+DUlGGYNzkOHR
+	 7mSVhgW7Z2Kp3TOPYWYMN0wL/gHPbjN/bT6WANkHx06KnCP9Sg+vY3ULXVcMWaxae5
+	 rUCRKCXmWKOSIRqrsIFQXAO3C6ge8712FlH2b41Utl/78x/NB4vBhuJb6DA/p/Lbob
+	 Yb7M4jEqFmIbEvZXr4xKvSJr1AdFw8Ju4tZXygiEUn3Tm8EhbWT4l1sRGc/eVmt42h
+	 r4YO2Hl7N9JiQ==
+Date: Mon, 18 Aug 2025 07:08:39 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: hannes@cmpxchg.org, mkoutny@suse.com, lizefan@huawei.com,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com, chenridong@huawei.com, hdanton@sina.com,
+	gaoyingjie@uniontech.com
+Subject: Re: [PATCH v5] cgroup: split cgroup_destroy_wq into 3 workqueues
+Message-ID: <aKNeF68tmjLKB6dK@slm.duckdns.org>
+References: <20250818034315.1303955-1-chenridong@huaweicloud.com>
+ <20250818061435.1304516-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 18 Aug 2025 17:08:20 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
- MIPIPHY, DSIM, etc.)
-In-Reply-To: <2bfa6c0b-1f23-4d57-b618-688ed8dc7fae@kernel.org>
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
- <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
- <45fc52d9988d1bf17eca392364c63193@disroot.org>
- <2bfa6c0b-1f23-4d57-b618-688ed8dc7fae@kernel.org>
-Message-ID: <afd9e6c8095df785fa7f39265111e357@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818061435.1304516-1-chenridong@huaweicloud.com>
 
-On 2025-08-18 06:32, Krzysztof Kozlowski wrote:
-> On 17/08/2025 16:49, Kaustabh Chakraborty wrote:
->> On 2025-08-13 07:58, Krzysztof Kozlowski wrote:
->>> On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
->>>> This series implements changes in the SoC subsystem, which includes
->>>> devicetree additions. It depends on all sub-series listed below:
->>>> (Legend: [R]eviewed, [A]ccepted)
->>>> 
->>>> exynosdrm-decon            -
->>>> https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
->>>> exynos7870-mipi-phy        A
->>>> https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
->>>> exynos7870-mipi-phy-fix    -
->>>> https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
->>>> exynos7870-dsim            -
->>>> https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
->>>> panel-samsung-s6e8aa5x01   -
->>>> https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
->>>> panel-synaptics-tddi       -
->>>> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
->>>> 
->>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>> 
->>> What is the status of the bindings from dependencies? I think they 
->>> were
->>> not accepted.
->> 
->> Except panel-synaptics-tddi, all have been accepted. A lot of them
->> haven't hit next though. I'm waiting for that to send the next 
->> revision.
-> 
-> What does it mean - accepted but not hit next? If it is accepted, it
-> must be visible in next. Which maintainer's tree are not in the next?
+Hello,
 
-drm-exynos [1] branches haven't been rebased to v6.17-rc1. This should
-include all some DECON and all DSIM patches.
+On Mon, Aug 18, 2025 at 06:14:35AM +0000, Chen Ridong wrote:
+...
+> + * Rationale for using separate workqueues:
+> + * The cgroup root free work may depend on completion of other css offline
+> + * operations. If all tasks were enqueued to a single workqueue, this could
+> + * create a deadlock scenario where:
+> + * - Free work waits for other css offline work to complete.
+> + * - But other css offline work is queued after free work in the same queue.
 
-Although [2] has been accepted, I don't see the commit in [3] anymore.
-But, there's [4] which mentions my panel patches, but then I don't see
-them in next (there should be a panel-samsung-s6e8aa5x01-ams561ra01.c
-in [5]).
+Can you please refer to the concrete example too?
 
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/
-[2] 
-https://lore.kernel.org/all/175432157792.3671011.1104200917154441096.b4-ty@linaro.org
-[3] 
-https://gitlab.freedesktop.org/drm/misc/kernel/-/commits/drm-misc-next?ref_type=heads
-[4] https://lore.kernel.org/all/20250814072454.GA18104@linux.fritz.box
-[5] 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/panel?h=next-20250818
+Thanks.
 
-> 
-> 
-> Best regards,
-> Krzysztof
+-- 
+tejun
 
