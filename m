@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-774432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5421DB2B223
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56277B2B22A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 22:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE793B4BCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:14:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25312684320
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA2027381E;
-	Mon, 18 Aug 2025 20:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ECF2264B7;
+	Mon, 18 Aug 2025 20:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vTV6n8y5"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SsjrAwXa"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2F69475;
-	Mon, 18 Aug 2025 20:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12B822615
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755548073; cv=none; b=Xt5AyLhy+Rcg69958lRnHOGSJ8kYDReEz5VbLnd+fwryjAhuTa+nJe8hn8KB2libm1+DJFszDlSScuMJoed3xuWOj/Whf+ENzldsxFh9SfGzdZiG2yn/X3JLvxsXHA0TXlcstYIVlSXm9V1K/wR50D6kjT66JF+atmuTQyru6Ys=
+	t=1755548142; cv=none; b=BbeRGtkwaJ6krAioSibarTBEduR71U8Oi6PYn20+TYmqHVpGhEBs6nrRxTHkIaALTnqTT3/RdHad0tDcxOlvoA6Bfc2WWlEg33cxBs17rvdtBMmqsLDzLMJusu8eQFMPLY4QpK/3z02LyUnrlInDS58oCJh8HLm41pQkQy7x0ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755548073; c=relaxed/simple;
-	bh=nl/IWC/Nvzc8t2ULH6NtHlrLaRZWiMXPP9CMSUVcwvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIEJgY7kogXrRXx9muevpqjCEVOqWvTuYIpK9U25j83EOPv7hikZz6EFY4XPdrHtPoX+0OWrUf/bxmv9bBQ9DahTWlP1gL8Ulkzjjz9Rdq1auWcyhV8CSFjEVE5rDEoEMiKA+WHBlKLHChC6WXk59k9AfDBLo2uctFa/rN3ihBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vTV6n8y5; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PQ15qKsPUaZyRbSFVHZobmG/J+b1QS6GyW39N1u8Wiw=; b=vTV6n8y5enEba8WE6DA53X/k/t
-	6mlfe2+he+LJBB/CRvd5hcnb1l8uzkjIiEHoJv9/g3V1XEtlwlbmEJQGAcKKsw58SFtH7jiJYhBOn
-	2F+EULn1lUNJAsS4qEUyPRoaDM38E2euDHJAu9asB6AukQVh7TGsYc+6SVHPhNbXWRfn+pX5G0lwB
-	JlTO5J/mFqDtuKQbe915qzP1l4djqBn5WIH1sg78t6UbzY7rMZQUWkuy87SrvXBLMaUZywvJoZohS
-	I74/E8s1ud8ww4uYW6dUmkY21Aa31Y0DJBsHY3vmRWC9g04Bgi0nxY3v2rj+d8oI7NbcA+KLWvp+N
-	nvi3cCHw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uo6FQ-000000083dD-2Kdv;
-	Mon, 18 Aug 2025 20:14:28 +0000
-Date: Mon, 18 Aug 2025 21:14:28 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ryan Chung <seokwoo.chung130@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	kernel test robot <lkp@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC] {do_,}lock_mount() behaviour wrt races and move_mount(2) with
- empty to_path (was Re: [PATCH] fs/namespace.c: fix mountpath handling in
- do_lock_mount())
-Message-ID: <20250818201428.GC222315@ZenIV>
-References: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
+	s=arc-20240116; t=1755548142; c=relaxed/simple;
+	bh=AJRr1pmfwAFojoj8scQGayhsSG5RjYydyI+9N43dH0Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U5pmCZitIHAFkM2UH1CG9QccfxW5mO8a9xht0VerUeULt6kTf68pogzxWPofGUwvlYtzE1nij86WC/9//O3mC6zk9BnD+M1BaX78g8uOCkiaQm3XIys42wKtmwuHKhL3IY+yPJ2PpSl2zyUeYWAA1DuY8cmroSBWpTfqNVw7q1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SsjrAwXa; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55ce509f80dso4492096e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755548139; x=1756152939; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3pQTw4pj+T7PRPBakG+ijRSJnANn71d9h/koPyWygvM=;
+        b=SsjrAwXa++UN5sfgF7L+n7fEi/mYt3bHoIwaoMx1QhR0Fm3OR8xtG47tkdxLcbSxQl
+         9T6J3sP5zcecSVfYEeNnVLJChEcPmVOKLZAOKio1VKDJJafbQNPSatSRf6zfMH2GHXmM
+         0p8zm2FEJXarFZHGe5tcddKDktc37fZtq8/ME=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755548139; x=1756152939;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3pQTw4pj+T7PRPBakG+ijRSJnANn71d9h/koPyWygvM=;
+        b=vrQlETCXUILutvdSqRS6m8cm0dMGoLW4KcFkPF5tzMGw7gjNXw2x1oR+lBaVToaNqE
+         fpqaYDLnRsoHHpUIEwd5TDZRJ6a1ShvlwG0LMeSnr14T8mlk+Fs2S7Y6W3yUW2P5jIbE
+         KkaO6J6VMNjFSEYdd+feyApe7qZvQr0RqSeOtlCBGZ2zRYe4Qa0NN2ZERR95pfPSzLm9
+         1ypDBPccI11mkcvQINKoM9vW1J9gg3Kb3oV1Cy9hJVWQ04sM5RNaewQB3t5sfZHujQXM
+         9nVKzbmi0vqc0faQNJVtdn/kHvx0o8HdReVtR0levzv8G1sZJARbSX3TyVNYpIoQigTj
+         3Tww==
+X-Forwarded-Encrypted: i=1; AJvYcCVXHUFwlx/RQQSFC+EQm8wAlVqRADY3CFfUCc/ad9EkYfxrS8Re/HcTZs3k3XftpV2iOklM32FhnVNkiug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe6C1WYg4OpKWvwEDe4rygsNrCkqIxYmyAR6QJWLnBvWnA0CMw
+	MJAMfP8Afhulwna+IoLm+tqxD48oqif83tRULGVg9G7wjWERoVBh0QD8DyfbfjgGyg==
+X-Gm-Gg: ASbGncuKcoqyMzDwbaoXCq5wqrgR8XyvUz9R+3hYztppvZqDdP050Bri8Vj8Ga6/72A
+	S2aaS1K3pOCTGyyGBWWqpqBRVYElD/ggFa8aZriI2cs5eCr78fAm2/MoydsadUj4aWfj15qXHum
+	5/QcyPlyxaIf/UA6LhwqBdPprritItM/4x8DyVUB2Ty6YcdiZT/youQgnt/r2dzPibitF694wpL
+	+R6YlvOcMTbv2cwTX8vMhmnjf7g75DY9HbhOAMph5crZ9D8sVx0onEp0w/uIx7JYxSylWPJC9Hu
+	L3f4P1ycgSVsdOV4Q7lTNWE9hiXPjemXVkv51c0t/3y3AODAkLL1FIAgRq5S9Xbww4eeAaz+jPv
+	Bc2oJXypteNcuMJDg6l30j9t/Mq8ljG2/ASfXLaOoheNm7wlF8qaGTk7wAJtVGEwaA5r+63iuaN
+	g=
+X-Google-Smtp-Source: AGHT+IG3TFzShY6yfe6XJmMNX+zhm5pE0AhCdI1YMtdo5PB/hPLK1e4o0t2sgzIesjN97Glq5qiZsg==
+X-Received: by 2002:a05:6512:ea5:b0:55b:9647:8e64 with SMTP id 2adb3069b0e04-55e0082d2ebmr42174e87.36.1755548139043;
+        Mon, 18 Aug 2025 13:15:39 -0700 (PDT)
+Received: from ribalda.c.googlers.com (237.65.88.34.bc.googleusercontent.com. [34.88.65.237])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f3476sm1789268e87.107.2025.08.18.13.15.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 13:15:38 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH 0/4] media: uvcvideo: Add support for
+ UVC_CROSXU_CONTROL_IQ_PROFILE
+Date: Mon, 18 Aug 2025 20:15:35 +0000
+Message-Id: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOeJo2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0Nj3dKyZN3MQt3i8syS5AxdY/M0EzNDM1PzNEtTJaCegqLUtMwKsHn
+ RsbW1AAQehqRfAAAA
+X-Change-ID: 20250813-uvc-iq-switch-37f461657f95
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans Verkuil <hverkuil@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
-On Tue, Aug 19, 2025 at 02:22:35AM +0900, Ryan Chung wrote:
-> Updates documentation for do_lock_mount() in fs/namespace.c
-> to clarify its parameters and return description to fix
-> warning reported by syzbot.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506301911.uysRaP8b-lkp@intel.com/
-> Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> ---
->  fs/namespace.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ddfd4457d338..577fdff9f1a8 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2741,6 +2741,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->  /**
->   * do_lock_mount - lock mount and mountpoint
->   * @path:    target path
-> + * @pinned: on success, holds a pin guarding the mountpoint
+Add support for switching the IQ profile of a ChromeOS camera.
 
-I'm not sure if 'pin' is suitable here and in any case, that's not the
-only problem in that description - take a look at "Return:" part in there.
+This patchset depends on 2 patches in uvc/for-next:
+- media: uvcvideo: Fix comments in uvc_meta_detect_msxu
+- media: uvcvideo: Move MSXU_CONTROL_METADATA definition to header
 
-The underlying problem is the semantics of function itself.  lock_mount()
-assumed that it was called on the result of pathname resolution; the
-question is what to do if we race with somebody mounting something
-on top of the same location while we had been grabbing namespace_sem?
-"Follow through to the root of whatever's been mounted on top, same as
-we'd done if pathname resolution happened slightly later" used to be a
-reasonable answer, but these days we have move_mount(2), where we have
-	* MOVE_MOUNT_T_EMPTY_PATH combined with empty pathname, which
-will have us start with whatever the descriptor is pointing to, mounts
-or no mounts.  Choosing to treat that as "follow mounts anyway" is not
-a big deal.
-	* MOVE_MOUNT_BENEATH - treated as "follow mounts and slip the
-damn thing under the topmost one".  Again, OK for non-empty pathname,
-but... for empty ones the rationale is weaker.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Laurent Pinchart (1):
+      media: uvcvideo: Move MSXU_CONTROL_METADATA definition to header
 
-Alternative would be to treat these races as "act as if we'd won and
-the other guy had overmounted ours", i.e. *NOT* follow mounts.  Again,
-for old syscalls that's fine - if another thread has raced with us and
-mounted something on top of the place we want to mount on, it could just
-as easily have come *after* we'd completed mount(2) and mounted their
-stuff on top of ours.  If userland is not fine with such outcome, it needs
-to provide serialization between the callers.  For move_mount(2)... again,
-the only real question is empty to_path case.
+Ricardo Ribalda (3):
+      media: uvcvideo: Fix comments in uvc_meta_detect_msxu
+      media: uvcvideo: Run uvc_ctrl_init_ctrl for all controls
+      media: uvcvideo: Support UVC_CROSXU_CONTROL_IQ_PROFILE
 
-Comments?
+ drivers/media/usb/uvc/uvc_ctrl.c     | 41 ++++++++++++++++++++++++++++--------
+ drivers/media/usb/uvc/uvc_metadata.c | 22 +++++++++++--------
+ include/linux/usb/uvc.h              | 22 +++++++++++++++++++
+ 3 files changed, 67 insertions(+), 18 deletions(-)
+---
+base-commit: 078f1a7eb48eef9b3cb78bcd2254356f3a332358
+change-id: 20250813-uvc-iq-switch-37f461657f95
 
-Note, BTW, that attach_recursive_mnt() used to require dest_mnt/dest_mp
-to be on the very top; since 6.16 it treats that as "slip it under
-whatever's on top of that" - that's exactly what happens in 'beneath'
-case.  So the second alternative is easily doable these days.  And
-it would really simplify the lock_mount()/do_lock_mount()...
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
