@@ -1,98 +1,194 @@
-Return-Path: <linux-kernel+bounces-773967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944DEB2ACF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:42:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F04B2ACFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501E81B22FFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489B518A59F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04E6278161;
-	Mon, 18 Aug 2025 15:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C5123D7D3;
+	Mon, 18 Aug 2025 15:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5Gcr2Wa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtPsWEIX"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FB2274FDB;
-	Mon, 18 Aug 2025 15:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6DC2765EB
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531559; cv=none; b=YX5+2iLmHFw7Jtb+e3exgqjYVv9SbcBdtmPY2sS2kXDAkj8RWXHCDL//WELs+DLSAhDYkujzROEBqHh57b73pttHhckatzW+pU+CcndaLBNWH7kAKqfkjzRObbYeR9GXjn7WGdkTNLI2Cr2jyLVSMpVJzL+8ET3VTkEphTG9kQM=
+	t=1755531579; cv=none; b=tQkYMKn6oGsJb2e+BEkyOG6p5ZDE0gf36Kzy9I4VQEtY51e9Wc9rQ4nO5MimLi0mlke8e0tEPpF1WYfxCAZoAQFaBF9zLBsDZgMhbDCVs7U0cq6P7P2eiIUA30RmKDYkTbAJOV00koRnWFw/p0rN2cTx8mBHl/TugxUXX9gUd2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531559; c=relaxed/simple;
-	bh=uo+eilYO4oF8TuPssFwLv6m+/cY9ysnICDRqi7G/yho=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cwyHrY/jVNK5W6YCtCaFiBmmQ+iL+w5Gbm+4DeOSJRar+PNmch8qvBcRsWRcajDz0zE+A/0biYFzpeE6+KJCf0Ok4KPSMwBWfUCnHwC4YUWOLwnS3UkbdJT1DTZkRJnL2+KjzYTZrZ6nvZkxVgKtadDdh3aDSVL2Emiq0rSpji4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5Gcr2Wa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233F2C4CEEB;
-	Mon, 18 Aug 2025 15:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755531558;
-	bh=uo+eilYO4oF8TuPssFwLv6m+/cY9ysnICDRqi7G/yho=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r5Gcr2WaCtdIunh9lUs1z3HPI5LuKTQNsOIok0BMFOaE4QoGK3kk4AemMmHu+vllA
-	 2+y75tx3aD+iDbK3Op/fcdPe6viltoWZiJlxMOM5zJaYOSBBeKaz3qjTEiZTi0meRO
-	 GnTO1O/boLTpSBwyOYM7vnwcAxlBToC1f4Q7C1eSD8sG6GeQA6/y2PehjHFZCxmdfp
-	 VZb0O1EuvpwKmudxQCsEaYT8fYjS2R7U3+00vgOKRGTXvctJVFN/evZYeeAYzucbi5
-	 G6eFNjKe2Cdd3aXEUKLDSrU7pkBEfXudFz54Pc8fGDwJKenIyQVKmTOocTY46gxJwA
-	 qYTtaLkHcFj2Q==
-Date: Mon, 18 Aug 2025 08:39:17 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Junnan Wu <junnan01.wu@samsung.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- eperezma@redhat.com, jasowang@redhat.com, lei19.wang@samsung.com,
- linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org,
- pabeni@redhat.com, q1.huang@samsung.com, virtualization@lists.linux.dev,
- xuanzhuo@linux.alibaba.com, ying123.xu@samsung.com
-Subject: Re: [PATCH net] virtio_net: adjust the execution order of function
- `virtnet_close` during freeze
-Message-ID: <20250818083917.435a4263@kernel.org>
-In-Reply-To: <20250818011522.1334212-1-junnan01.wu@samsung.com>
-References: <20250815085503.3034e391@kernel.org>
-	<CGME20250818011515epcas5p21295745d0e831fd988706877d598f913@epcas5p2.samsung.com>
-	<20250818011522.1334212-1-junnan01.wu@samsung.com>
+	s=arc-20240116; t=1755531579; c=relaxed/simple;
+	bh=yP9gVZGTEEwNyCB+9wqg7OQOZOtS1ZAoqVKOaXojnE0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lwso/SbYzidiqsBRNGt5Y5W+odMw4cJGtAfSufkvJy5vF4wRQ/lLTFANqxGajxTquGBWaNrpJ/beBdpLnmrcH+1fxToFDPVxwTO9d4FfYvosOA07wQJu8cLRtQ3GowmQ9+eilplW+aIAlODAFGVPUZ1KiYMZvX1esNEfb49C7aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DtPsWEIX; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2445806ca1aso6978655ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755531577; x=1756136377; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JfnjYmDvi00kKX9ijywUbzGRAHiyS/deinjfiKUZLgs=;
+        b=DtPsWEIXWGOCSgZSOPrNo8Jgl2UXq1zijZr5DJZyLiHTeeERaeZNa62LsXHBHg0x91
+         Qc0CkeC3f6s6GJ+YRF5eNawsiTQy0W62Lyi86/pSaxjKGxS9OnRTcobNfppa+cUWkUSb
+         XUX95xR5dxhAQnTRD6SLOMr8Z4NyY+SRkPh5Chi0N401Yu0I4ZBONtyt/mpR+rWGLEMY
+         ot8gNcUmjbendXddS++zVkdFKE+MzS68ebo/C8SzGQax1PYGPDKTQRgQbxtCzyw8OW8d
+         XL++ROXdt4gsjhutf3cjrse4qJHvR5FymZKz7bnf15wQQmyHA6Vl8TOd9arbBzXnsqWV
+         yI8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755531577; x=1756136377;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JfnjYmDvi00kKX9ijywUbzGRAHiyS/deinjfiKUZLgs=;
+        b=aeTHdFlQgl2dDyiKwnVqZVDxrrZVTQSH2CfpUvIgSntuoTdwdPrEm0CUUGzOAy5HTy
+         Sm2ytxKLrtzE2yvVoRYZwa5fOZTc4DgGboZOKLwxeWRXt3od0qyT0r1QHNxobMUUxWjm
+         q3ZyVN8bD8rF8XUbAmrs0uMyP+KvflPv3wAYdhEd61qBwi9t8iPvPxSMY0AhQ0wIdZYr
+         9dPLouD8GyTJ3n7hwnuSefLF+D5zMnil1n0BCc8oP3w5vnvWWjopphw9YRkwRhgDulo7
+         XCXg41cLK3O7yMXxsaPK7Iqa5VGGKxXMTYu+XxQ7vULi45U2m+NKo8S666kd17qfhSi2
+         t4zg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9r7xwR0hnJFYlz/agTAy/gj4YoVWmwHqW3QaYINBb87uOlZ+hh5sZqpSXV0OAp71UHq+5OTaXOUg/CDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwddJ3QXh8oXqwA3Utxt42C6jDVPT2NGcJQ2WXfticgW3z+Yuir
+	jYqnjVFdyhyGwGEfjaOzD237K8h4cHoDJzWEG78LrQ6BhoHCfNB4i8l57gOYb+TNFL9UmyCaguk
+	qH6VklzbypDpspABmJk8CZJb2QuSWwe4=
+X-Gm-Gg: ASbGncvN5rw7rAv9XbT16R1pN6LrIsBWq7Uo+7dhdyQM2FvHpSn0SHNz8ej3uQsZ1Ns
+	ZnGVwDS4RgntEVR42wVNkYhq6uShtOoPUzGAgrBZIZCNTI5QE3eWaI0I1hLcCjMjcoDmCsGQIQf
+	44xZLMMGhdZ74hlh4NQ0vpkn0PkfAwSAmoJwwiVnDF2UxPw1fD3NwZEcNlNMCCnwTOI4lST+Kzr
+	C7EkcbqaCM2dJoMyw==
+X-Google-Smtp-Source: AGHT+IGlBBr60eEbVg+cyrKDQeXKdn03ukayzCoYut2ij9XXvWFExe6ybSIht++TyMeCrw7fNNqpAsNO0VXJEYzuY60=
+X-Received: by 2002:a17:902:f541:b0:240:9ab5:4cae with SMTP id
+ d9443c01a7336-2446d5d6193mr75967755ad.1.1755531576879; Mon, 18 Aug 2025
+ 08:39:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <tencent_E5B1CAABB0320691EB730CDB19E55EA85E05@qq.com>
+In-Reply-To: <tencent_E5B1CAABB0320691EB730CDB19E55EA85E05@qq.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 18 Aug 2025 11:39:23 -0400
+X-Gm-Features: Ac12FXwUP180FjaCeVT5J4NoIEAVhWgK5DTtLaA6rivx92DVvZ_oACTVYjptjCA
+Message-ID: <CADnq5_NbWeLRvXGtb5sSKOwN+do=hbPo5iWiwB9Y9Q-vPV9YEQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Fixed an issue where audio did not turn off
+ properly after unplugging HDMI
+To: 2564278112@qq.com
+Cc: alex.williamson@redhat.com, christian.koenig@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, sunil.khatri@amd.com, alexandre.f.demers@gmail.com, 
+	boyuan.zhang@amd.com, jiangwang@kylinos.cn, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 18 Aug 2025 09:15:22 +0800 Junnan Wu wrote:
-> > > Yes, you are right. The commit of this fix tag is the first commit I
-> > > found which add function `virtnet_poll_cleantx`. Actually, we are not
-> > > sure whether this issue appears after this commit.
-> > > 
-> > > In our side, this issue is found by chance in version 5.15.
-> > > 
-> > > It's hard to find the key commit which cause this issue
-> > > for reason that the reproduction of this scenario is too complex.  
-> > 
-> > I think the problem needs to be more clearly understood, and then it
-> > will be easier to find the fixes tag. At the face of it the patch
-> > makes it look like close() doesn't reliably stop the device, which
-> > is highly odd.  
-> 
-> Yes, you are right. It is really strange that `close()` acts like
-> that, because current order has worked for long time. But panic call
-> stack in our env shows that the function `virtnet_close` and
-> `netif_device_detach` should have a correct execution order. And it
-> needs more time to find the fixes tag. I wonder that is it must have
-> fixes tag to merge?
-> 
-> By the way, you mentioned that "the problem need to be more clearly
-> understood", did you mean the descriptions and sequences in commit
-> message are not easy to understand? Do you have some suggestions
-> about this?
+On Fri, Aug 15, 2025 at 11:23=E2=80=AFAM <2564278112@qq.com> wrote:
+>
+> From: Wang Jiang <jiangwang@kylinos.cn>
+>
+> In commit 3c021931023a ("drm/amdgpu: replace drm_detect_hdmi_monitor() wi=
+th drm_display_info.is_hdmi")',
+> the method for determining connector types has been modified.
+> After the modification, when disconnecting the monitor, the information f=
+rom the previous connection cannot be retrieved,
+> because display_info.is_hdmi has been reset, resulting in the connector t=
+ype returned as dvi.
+> On AMD Oland and other cards, the audio driver determines whether to turn=
+ off audio based on connector type
+> However, when the monitor is disconnected, the information from the previ=
+ous connection cannot be obtained, resulting in the inability to turn off t=
+he audio.
+> I don't understand why this is being done, I think the right thing to do =
+is to decide whether or not to enable audio based on whether the connector =
+has audio.
+> This commit modifies the code to retrieve audio information from the conn=
+ected EDID.
+> Now, the decision to turn audio on/off is based on the audio information =
+in the EDID.
+>
+> Signed-off-by: Wang Jiang <jiangwang@kylinos.cn>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 21 ++++++++++++++++-----
 
-Perhaps Jason gets your explanation and will correct me, but to me it
-seems like the fix is based on trial and error rather than clear
-understanding of the problem. If you understood the problem clearly
-you should be able to find the Fixes tag without a problem..
+This only fixes up DCE6.  I would suggest one of the following to fix this:
+1. Revert the changes from 3c021931023a in atombios_encoders.c
+or
+2. Add amdgpu_connector->is_hdmi and set it when
+connector->display_info.is_hdmi is valid and use that rather than
+connector->display_info.is_hdmi.
+
+Alex
+
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/=
+amdgpu/dce_v6_0.c
+> index 276c025c4c03..c56b2027d53e 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> @@ -3253,17 +3253,22 @@ static void dce_v6_0_encoder_mode_set(struct drm_=
+encoder *encoder,
+>                           struct drm_display_mode *adjusted_mode)
+>  {
+>         struct amdgpu_encoder *amdgpu_encoder =3D to_amdgpu_encoder(encod=
+er);
+> -       int em =3D amdgpu_atombios_encoder_get_encoder_mode(encoder);
+> -
+> +       struct drm_connector *connector;
+> +       struct amdgpu_connector *amdgpu_connector =3D NULL;
+>         amdgpu_encoder->pixel_clock =3D adjusted_mode->clock;
+>
+>         /* need to call this here rather than in prepare() since we need =
+some crtc info */
+>         amdgpu_atombios_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
+> +       connector =3D amdgpu_get_connector_for_encoder_init(encoder);
+> +       amdgpu_connector =3D to_amdgpu_connector(connector);
+> +       if (!amdgpu_connector) {
+> +               DRM_ERROR("Couldn't find encoder's connector\n");
+> +       }
+>
+>         /* set scaler clears this on some chips */
+>         dce_v6_0_set_interleave(encoder->crtc, mode);
+>
+> -       if (em =3D=3D ATOM_ENCODER_MODE_HDMI || ENCODER_MODE_IS_DP(em)) {
+> +       if (drm_detect_monitor_audio(amdgpu_connector_edid(connector))) {
+>                 dce_v6_0_afmt_enable(encoder, true);
+>                 dce_v6_0_afmt_setmode(encoder, adjusted_mode);
+>         }
+> @@ -3322,12 +3327,18 @@ static void dce_v6_0_encoder_disable(struct drm_e=
+ncoder *encoder)
+>  {
+>         struct amdgpu_encoder *amdgpu_encoder =3D to_amdgpu_encoder(encod=
+er);
+>         struct amdgpu_encoder_atom_dig *dig;
+> -       int em =3D amdgpu_atombios_encoder_get_encoder_mode(encoder);
+> +       struct drm_connector *connector;
+> +       struct amdgpu_connector *amdgpu_connector =3D NULL;
+>
+>         amdgpu_atombios_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
+> +       connector =3D amdgpu_get_connector_for_encoder_init(encoder);
+> +       amdgpu_connector =3D to_amdgpu_connector(connector);
+> +       if (!amdgpu_connector) {
+> +               DRM_ERROR("Couldn't find encoder's connector\n");
+> +       }
+>
+>         if (amdgpu_atombios_encoder_is_digital(encoder)) {
+> -               if (em =3D=3D ATOM_ENCODER_MODE_HDMI || ENCODER_MODE_IS_D=
+P(em))
+> +               if (drm_detect_monitor_audio(amdgpu_connector_edid(connec=
+tor)))
+>                         dce_v6_0_afmt_enable(encoder, false);
+>                 dig =3D amdgpu_encoder->enc_priv;
+>                 dig->dig_encoder =3D -1;
+> --
+> 2.25.1
+>
 
