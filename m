@@ -1,155 +1,213 @@
-Return-Path: <linux-kernel+bounces-773483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E10B2A0B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:49:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E2EB2A0B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 079097B6B2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:47:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A8F7B63C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DD5319878;
-	Mon, 18 Aug 2025 11:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F806304BAA;
+	Mon, 18 Aug 2025 11:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Ts5uEDSh"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tWW2/ElX"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D9C319847;
-	Mon, 18 Aug 2025 11:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D796F2C2372
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 11:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755517748; cv=none; b=t0RTOjjYfEMSuzynThY6RaQ055rKJ+nzZ3+CvujNBr9GxZ2LM8vTAbr36AZbvj/7yggVfKdX2JYkeD6JFlyYsLkFQz1m8BLXYXMFDnJvxBd2hrWyDObnOh4V8gD2TS+5zCOPtU4s8Tiu0DTLM9yiDxj0/fi1zm5j35hkmh8srF0=
+	t=1755517672; cv=none; b=Iw3LLLMOSJquqH3JGtMXSdacA72ebjhNqzz99rtvblrmgQqjiH5pCHcF3CdLAhCqZO4CYFHxAfzhCXRuHDZpRmBMAnbDxVxQMh9KzYrTiGmAZOcywU1h3gmOTp6sIUYBPhSAs0DeMaDwnPf2ihzllpfH7CXYiwZlZyUOsndaLvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755517748; c=relaxed/simple;
-	bh=SAKxyLiHdmjapI/0v82ehEcOeJtGZPTqAaeUY42UAmE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k/Pqsxz3eN6hwy5KnhEGT7/KE0P/AMhYKiJgGmUr+J6ktt56IM7aXr/t6+sc5hnCfbtqrETmEEp6t5Hlt72aYKGM78Ib0Mj7xuLTF4O8tRmIjJ6ic0H+VYLDfqw3XRLD6MjO5p/a8pU1sYPD/2jSIuLB6UDpTg6XIibjJfrjV4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Ts5uEDSh; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 543ec4de7c2911f08729452bf625a8b4-20250818
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=lyPRgtJIrl+DCxGXCftDbyg/RUx12+pyN49Ht/Rz3Ao=;
-	b=Ts5uEDShSHdxHPRZ2FhRS2c1TFPtaL1BpYBKo8Wrn4bpNQ+ZhzSC+t+sApbc+VkFz2j6co1AHYNqgHhx6Eziz6KSrfGC5YZ+0gpL6mAs/9jpDACIzXhqBSorRLQelj0j3sKB+bPshGr+Zqnkhf5SORTqJA0kwtobjubl24JOy3Y=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:93b5a144-6427-463a-969f-6aff181eb48e,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:f1326cf,CLOUDID:6e869844-18c5-4075-a135-4c0afe29f9d6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 543ec4de7c2911f08729452bf625a8b4-20250818
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <mengqi.zhang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 217536809; Mon, 18 Aug 2025 19:48:59 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 18 Aug 2025 19:48:58 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 18 Aug 2025 19:48:57 +0800
-From: Mengqi Zhang <mengqi.zhang@mediatek.com>
-To: Chaotian Jing <chaotian.jing@mediatek.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Wenbin Mei
-	<wenbin.mei@mediatek.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Mengqi Zhang
-	<mengqi.zhang@mediatek.com>
-Subject: [PATCH] dt-bindings: mmc: Add compatible for MT8189 SoC
-Date: Mon, 18 Aug 2025 19:47:27 +0800
-Message-ID: <20250818114855.8637-1-mengqi.zhang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1755517672; c=relaxed/simple;
+	bh=tGBqh60Un0TalerAF7oi+EQiBm/FcItRtvBszAhPCVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N8q6ek9owjyWvyBVnjMPHw6iaGlsvnEerhzyHCH8FTj8zwPcmZr0bdwTCduRJEGVTyW3CwvTHPl5JnGwzHRQyEFE8sbgmHb/27ADfxIjpaEGyxKOFBdfLPU3C0FrF/a10x+9+CTrM7sgV6Aewb3NayYVqfj/IqjeOUgVm2zcKIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tWW2/ElX; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61a54560c1fso74265a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:47:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755517669; x=1756122469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=wyRfBryJejL1jcHUi+Bp1Ubw25EetLDqaChcg3c+p3w=;
+        b=tWW2/ElXDR2LouGbmaJdlOQBfr0wYzqFht5acK0oSN8UZwM/L5eoVksNbzXmL9yHDl
+         fOuVaYrrG6j85PqpUK7sBifLVfh/slP1HApgHOAVrvZDjbdL57Rof0bYk5xYWa5KeT0s
+         H+jX4ytSkVBGIm7CFcxSibzumGDrVG5E09EwnqgGcln+nGuZWPqJEibSu/GhYIwZOgqB
+         VHVsfRDLkHDDL8l932Uj2UbPSrDH2bUcClq9IfBy/1e1WmiwrET+CeDP3UHfRVLco8PN
+         qTJsHmHrbW95avjG0M17NTgaPj+jVzSCLyNjaaE7rjosogedm6cGldbddz5k2k0l+dfP
+         OmuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755517669; x=1756122469;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wyRfBryJejL1jcHUi+Bp1Ubw25EetLDqaChcg3c+p3w=;
+        b=JR3ER3fj3ytK3goOhD0fW2au3gAo2XE0ydgjf2JRntUeGjrRDK4uLzffiGOR9wsrpW
+         XRCHYtOGaE12BkXufBk9HdTBTs5pdm+gM1J/kuhakbTjg5D+p51TzHUolmT8kmVIAyko
+         iAk9BbuIyJTgmz2OLpqk5OEepR7+flcPn/GJ7eKsEv5CjwQNnwVXALdqUVQszCzp50no
+         XPQssX/EPvXGX48n9psr8b6Wdh41AaDfdFRIoi2gNJu5BUKqqBdiqynkjEMlmsF5YTPT
+         8+3WiRbXX6Sfpz6yWJjl+/yppKNsDBLsdrY3b3bX8DrBjxJN8J4HrBLAHD0YcPOHPrtv
+         CqDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMWBi2J/uq7/tvWj5glAp3T6OgWz3a8l9te0O1qyoAwyPNlHLBk0AcG7K6lP9S4WxQ+jYxGSS60dZTyUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzum22QlujB81LQumNF5fKB6vdWKHd8v6Y71g+UucbogTpvyVu1
+	xdnHhy2jkUHCjAq2als+dEnY9zzJ80krHQL0GtFNfZLz9XAylMKxL7qVXql2yl32GJE=
+X-Gm-Gg: ASbGncu1d8kyLF6pTNhM++/YTQ0E+GyDoNHinyPl8DZbRP4tf5cDpYLWCYkm1JBGGnq
+	h7dGJ+xZ0pGaSH2kWbXu1cCvjBg0O8w8lYgOjcTEsfLq59Y33EUPlpwPdqhI0XTXnPhklrmX8OI
+	y+dlGWfw0jVvbZjdcgzaSsINzNky98mWKWziQcmcEcUFVl0g2l/UHWvLdI66LItW/ztgBXrOWCQ
+	vNSIk8fwn/u2+ppa33UBDQtLM/fHUH4wPaXb6VseWj52h9NLM/+nJboOx+v/3rb3wFnMw5hEw4o
+	jNzWaV9ak5ApP1jaXCWoO75dMyRqQAqMDWGA0lrZ8Z0SkxzKRpCXzBxVdxdT7kIKbK9l+igoVmd
+	Nx1/jfDroPcJ/4eGnrnba1I0g/583OfX2Shxb25c65YwoISifvihQaQ==
+X-Google-Smtp-Source: AGHT+IGL6fqxjaynuafgC5BqIzUloo+GykeyBNTQgTdgf+l4Lyt5a1MZcGz9r615RaktpZ8JU4TDbw==
+X-Received: by 2002:a05:6402:520f:b0:618:227b:8848 with SMTP id 4fb4d7f45d1cf-618b0f2715cmr4571238a12.7.1755517669110;
+        Mon, 18 Aug 2025 04:47:49 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618af9da3e7sm7004184a12.13.2025.08.18.04.47.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 04:47:48 -0700 (PDT)
+Message-ID: <63e044d1-ad3e-4971-9b7d-6b58c2ccc852@linaro.org>
+Date: Mon, 18 Aug 2025 13:47:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: qcom: q6apm-lpass-dais: Fix NULL pointer
+ dereference if source graph failed
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250815113915.168009-2-krzysztof.kozlowski@linaro.org>
+ <70abcfee-e4c1-42d9-b623-266140aa2ff3@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <70abcfee-e4c1-42d9-b623-266140aa2ff3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a compatible string for the MT8189 SoC's mtk-sd mmc controllers.
+On 15/08/2025 17:56, Srinivas Kandagatla wrote:
+> Thanks Krzysztof,
+> On 8/15/25 12:39 PM, Krzysztof Kozlowski wrote:
+>> If earlier opening of source graph fails (e.g. ADSP rejects due to
+> 
+> I think you are referring to the err patch in prepare.
 
-Signed-off-by: Mengqi Zhang <mengqi.zhang@mediatek.com>
----
- .../devicetree/bindings/mmc/mtk-sd.yaml       | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
+True I am working on feature relying on that other patch, but the code
+here is not really relevant to that other patch, I think.
 
-diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-index 6dd26ad31491..1285dddeaec9 100644
---- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-@@ -25,6 +25,7 @@ properties:
-           - mediatek,mt8135-mmc
-           - mediatek,mt8173-mmc
-           - mediatek,mt8183-mmc
-+          - mediatek,mt8189-mmc
-           - mediatek,mt8196-mmc
-           - mediatek,mt8516-mmc
-       - items:
-@@ -192,6 +193,7 @@ allOf:
-             - mediatek,mt8183-mmc
-             - mediatek,mt8186-mmc
-             - mediatek,mt8188-mmc
-+            - mediatek,mt8189-mmc
-             - mediatek,mt8195-mmc
-             - mediatek,mt8196-mmc
-             - mediatek,mt8516-mmc
-@@ -240,6 +242,7 @@ allOf:
-               - mediatek,mt7986-mmc
-               - mediatek,mt7988-mmc
-               - mediatek,mt8183-mmc
-+              - mediatek,mt8189-mmc
-               - mediatek,mt8196-mmc
-     then:
-       properties:
-@@ -319,6 +322,32 @@ allOf:
-             - const: source_cg
-             - const: crypto
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: mediatek,mt8189-mmc
-+    then:
-+      properties:
-+        clocks:
-+         items:
-+            - description: source clock
-+            - description: HCLK which used for host
-+            - description: independent source clock gate
-+            - description: bus clock used for internal register access
-+            - description: peripheral bus clock gate
-+            - description: AXI bus clock gate
-+            - description: crypto clock used for data encrypt/decrypt (optional)
-+        clock-names:
-+          items:
-+            - const: source
-+            - const: hclk
-+            - const: source_cg
-+            - const: bus_clk
-+            - const: pclk_cg
-+            - const: axi_cg
-+            - const: crypto
-+
-   - if:
-       properties:
-         compatible:
--- 
-2.46.0
+> 
+>> incorrect audioreach topology), the graph is closed and
+>> "dai_data->graph[dai->id]" is assigned NULL.  Preparing the DAI for sink
+>> graph continues though and next call to q6apm_lpass_dai_prepare()
+>> receives dai_data->graph[dai->id]=NULL leading to NULL pointer
+>> exception:
+>>
+>>   qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+>>   qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+>>   q6apm-lpass-dais 30000000.remoteproc:glink-edge:gpr:service@1:bedais: fail to start APM port 78
+>>   q6apm-lpass-dais 30000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at snd_soc_pcm_dai_prepare on TX_CODEC_DMA_TX_3: -22
+>>   Unable to handle kernel NULL pointer dereference at virtual address 00000000000000a8
+>>   ...
+>>   Call trace:
+>>    q6apm_graph_media_format_pcm+0x48/0x120 (P)
+>>    q6apm_lpass_dai_prepare+0x110/0x1b4
+>>    snd_soc_pcm_dai_prepare+0x74/0x108
+>>    __soc_pcm_prepare+0x44/0x160
+>>    dpcm_be_dai_prepare+0x124/0x1c0
+>>
+>> Fixes: 30ad723b93ad ("ASoC: qdsp6: audioreach: add q6apm lpass dai support")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  sound/soc/qcom/qdsp6/q6apm-lpass-dais.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+>> index f90628d9b90e..7520e6f024c3 100644
+>> --- a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+>> +++ b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+>> @@ -191,6 +191,12 @@ static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct s
+>>  			return rc;
+>>  		}
+>>  		dai_data->graph[graph_id] = graph;
+>> +	} else if (!dai_data->graph[dai->id]) {
+>> +		/*
+>> +		 * Loading source graph failed before, so abort loading the sink
+>> +		 * as well.
+>> +		 */
+>> +		return -EINVAL;
+>>  	}
+> I guess this is the capture graph that is triggering the error, normally
+> we do not open/close the capture graph in prepare, we do
+> stop/prepare/start for capture graphs and handle open close in
+> startup/shutdown.
+> 
+> Can you try this change and see if it fixes the issue, as prepare could
+> be called multiple times and your patch will not give chance for trying
+> new parameters incase the failure was due to unsupported params.
 
+
+Yes, this works.
+
+Best regards,
+Krzysztof
 
