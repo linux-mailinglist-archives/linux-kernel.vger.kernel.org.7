@@ -1,103 +1,142 @@
-Return-Path: <linux-kernel+bounces-774519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4FEB2B385
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:38:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8588DB2B386
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF80563A01
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301F2582A60
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F390277C9E;
-	Mon, 18 Aug 2025 21:35:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ECA277013;
-	Mon, 18 Aug 2025 21:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D8D26FA58;
+	Mon, 18 Aug 2025 21:35:46 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4A725BEE5;
+	Mon, 18 Aug 2025 21:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755552936; cv=none; b=chtJ61LlmtiZhw95pR/MRq1QqwQT0K1bm7SzqVQimi8gKzifCGVO8XQDkr/0bLwJXyQWIaMFehN2ZwyY//s2i8S4DGHfQElmY7atXnbjFIRGt/8GJhiAJoghWqUZvvNQyLJWWZbaJY//O5P/X5E3InsKcz2LTHRXIq1JU3FOWa0=
+	t=1755552946; cv=none; b=Bop7Eu8Yxlslwc3UcIFe0PLXNu7CY9Vtk4vvZlN4IMBWe3sgRgAQeOL6tIRfP4NxF8D673aBOQf78RxJUVzJJzhWCxjmEjg05OTwQw0dy6HNCunrsnE6hzlGZKun2nG2o4befeR4fbzTgJ2Fvl3dWSXr6pHvkuEh2vVRdiBqJOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755552936; c=relaxed/simple;
-	bh=qGKi7nFEQeTEbuUFTQQot3rZpaYZ++xqYf/CsvSj1kg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QPRrMC/Uh5iAuAKn8YnwigTTkRhv1s13sN1TeaUFVog/HybGNsgk2mc+Qj/W+WI8FTLz8ccXbhDhppmAb2dsB5ve14sxxoSB2/4773FpjVzoKX8cbnOvMQf4QFFajciqrr6c3iD35eKJ5odOhN5iORuaBluGo6jJnkgTmaEUd3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E7C51BB2;
-	Mon, 18 Aug 2025 14:35:26 -0700 (PDT)
-Received: from u200865.usa.arm.com (U203867.austin.arm.com [10.118.30.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFA373F738;
-	Mon, 18 Aug 2025 14:35:33 -0700 (PDT)
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: linux-trace-kernel@vger.kernel.org
-Cc: linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org,
-	oleg@redhat.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	thiago.bauermann@linaro.org,
-	broonie@kernel.org,
-	yury.khrustalev@arm.com,
-	kristina.martsenko@arm.com,
-	liaochang1@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v6 7/7] uprobes: uprobe_warn should use passed task
-Date: Mon, 18 Aug 2025 16:34:52 -0500
-Message-ID: <20250818213452.50439-8-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250818213452.50439-1-jeremy.linton@arm.com>
-References: <20250818213452.50439-1-jeremy.linton@arm.com>
+	s=arc-20240116; t=1755552946; c=relaxed/simple;
+	bh=pHP2UloFNhPWbVA2ptsztxk/LX9+PCs9szDxUpNRu7Y=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=mOIRTEWSEImHJ2z8jIeqGVEkrhPVH+jpsc5yf4bBR1uO4qMAIFjafRouELTggxW7uQ6x7Py+bBbvjEj4M7+7R8cOTp71ZqfSf5sNykJaFqzM8KPvJUKWRCFUYkBEPMsHhrGdC8kVA3T8FWnLytYn+pUJkubVNP4e+ow0qE0ipLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uo7Vy-006Fdk-R8;
+	Mon, 18 Aug 2025 21:35:40 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neil@brown.name>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "syzbot" <syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [overlayfs?] WARNING in shmem_unlink
+In-reply-to:
+ <CAOQ4uxhEzxvgpJ=_a++xdGAptsywc4gLmnJXBA7ipFmM+qHR3g@mail.gmail.com>
+References:
+ <>, <CAOQ4uxhEzxvgpJ=_a++xdGAptsywc4gLmnJXBA7ipFmM+qHR3g@mail.gmail.com>
+Date: Tue, 19 Aug 2025 07:35:40 +1000
+Message-id: <175555294028.2234665.14790599995742040769@noble.neil.brown.name>
 
-uprobe_warn() is passed a task structure, yet its using current. For
-the most part this shouldn't matter, but since a task structure is
-provided, lets use it.
+On Mon, 18 Aug 2025, Amir Goldstein wrote:
+> On Mon, Aug 18, 2025 at 2:34=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+> >
+> > On Mon, 18 Aug 2025, Amir Goldstein wrote:
+> > > Neil,
+> > >
+> > > I will have a look tomorrow.
+> > > If you have ideas I am open to hear them.
+> > > The repro is mounting overlayfs all over each other in concurrent threa=
+ds
+> > > and one of the rmdir of "work" dir triggers this assertion
+> >
+> > My guess is that by dropping and retaking the lock, we open the
+> > possibility of a race so that by the time vfs_unlink() is called the
+> > dentry has already been unlinked.  In that case it would be unhashed.
+> > So after retaking the lock we need to check d_unhashed() as well as
+> > ->d_parent.
+> >
+> > So something like
+> > --- a/fs/overlayfs/util.c
+> > +++ b/fs/overlayfs/util.c
+> > @@ -1552,7 +1552,8 @@ void ovl_copyattr(struct inode *inode)
+> >  int ovl_parent_lock(struct dentry *parent, struct dentry *child)
+> >  {
+> >         inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> > -       if (!child || child->d_parent =3D=3D parent)
+> > +       if (!child ||
+> > +           (!d_unhashed(child) && child->d_parent =3D=3D parent))
+> >                 return 0;
+> >
+> >         inode_unlock(parent->d_inode);
+> >
+> >
+> > NeilBrown
+> >
+>=20
+> Nice!
+> I pushed this commit to ovl-fixes:
+>=20
+> commit c56976d86e11afcd6b23633395a7f2e6e920e42d (HEAD -> ovl-fixes)
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Mon Aug 18 11:23:55 2025 +0200
+>=20
+>     ovl: fix possible double unlink
+>=20
+>     commit 9d23967b18c6 ("ovl: simplify an error path in
+>     ovl_copy_up_workdir()") introduced the helper ovl_cleanup_unlocked(),
+>     which is later used in several following patches to re-acquire the pare=
+nt
+>     inode lock and unlink a dentry that was earlier found using lookup.
+>     This helper was eventually renamed to ovl_cleanup().
+>=20
+>     The helper ovl_parent_lock() is used to re-acquire the parent inode loc=
+k.
+>     After acquiring the parent inode lock, the helper verifies that the
+>     dentry has not since been moved to another parent, but it failed to
+>     verify that the dentry wasn't unlinked from the parent.
+>=20
+>     This means that now every call to ovl_cleanup() could potentially
+>     race with another thread, unlinking the dentry to be cleaned up
+>     underneath overlayfs and trigger a vfs assertion.
+>=20
+>     Reported-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
+>     Tested-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
+>     Fixes: 9d23967b18c6 ("ovl: simplify an error path in ovl_copy_up_workdi=
+r()")
+>     Suggested-by: NeilBrown <neil@brown.name>
+>     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>=20
+> Neil,
+>=20
+> Please review my commit message.
+> If you want me to assign you ownership please sign off on this commit messa=
+ge.
 
-Fixes: 248d3a7b2f10 ("uprobes: Change uprobe_copy_process() to dup return_instances")
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/events/uprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good to me.  No changes needed.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 7ca1940607bd..4b97d16f731c 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -121,7 +121,7 @@ struct xol_area {
- 
- static void uprobe_warn(struct task_struct *t, const char *msg)
- {
--	pr_warn("uprobe: %s:%d failed to %s\n", current->comm, current->pid, msg);
-+	pr_warn("uprobe: %s:%d failed to %s\n", t->comm, t->pid, msg);
- }
- 
- /*
--- 
-2.50.1
+NeilBrown
+
+
+>=20
+> Thanks,
+> Amir.
+>=20
 
 
