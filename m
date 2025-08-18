@@ -1,206 +1,145 @@
-Return-Path: <linux-kernel+bounces-773176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40F5B29C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:36:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5398FB29C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63FFD16E7C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:36:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A13DF7AB952
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDCA3009E3;
-	Mon, 18 Aug 2025 08:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91208286D49;
+	Mon, 18 Aug 2025 08:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="xWVscVB+"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2Wp4L/Yu"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B212E8882;
-	Mon, 18 Aug 2025 08:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8727027E060
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755506174; cv=none; b=B1METy1tLPNRHp5ZQ7cwMuJQz1xVsYfxIfG1MT900ix5cF1SRljDcPRNvqmpTv4RZLAqMNATBwNwfWbfMrtmZXVVWQh6tRW+PRcFQjPJQ0LHkE8kSmavABG0pbCYVG+WzP3WW4Nllwj8est3CIrTnzdyEg7ntIVRGljxqhgDzIQ=
+	t=1755506190; cv=none; b=bk9mg0iQkVyoP0hP4EkAI/mM9jJk52Qvfn6MYeKYPrZuqcBwG8wWYOCEVf1RqC/ePcU1Bfcr1LE8eFuJ7UeI0E/h3DFdEznVyOUFa/PmmksVTQH7vGq6o/hKltCHIaJnZhVf84Qky+a8KeCoE4hG+gHjr5jzYQ2eqS7jAyVRLso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755506174; c=relaxed/simple;
-	bh=QeVAQag6ztkKUKJJ0C2/50dQ0rrA9knXp8myGX40y+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r2QVzL+MwVvR9HqVNXM9FwBA1OpCejhAOUkZP0DunGEpi55PgJyKHE+uwz1xN6apPZuPCblK5Pzc+rHnZ30mcTYL42CH3C+Xxak++ui5vU5v6MLTedFoG+u2AUkT9R9h8lhZygKt/vQvoiewazgzba5+1zQw92nbAlmIjVZ4+LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=xWVscVB+; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=1KZckO++ELDKqo+XKW18f12FZQAdjW9bBCW3YHfnxN0=; b=xWVscVB+lVOc+nHH8k6JPrX1Xo
-	nizgyxDbmOfACo77EBnFsvnwzDJL9ERxK5382O3ax1Uwf5h8+h23qpgCVFJ5iSasFy6JpwB7wLbIA
-	86J123TDg+kM+HMlp91MzopZvN3AY+ZDFhEdiKvMKS+q32rhsOCngn9Gra/VIoHEh3cdQbHqaXI5D
-	N/T4m/zz71gc1Fg251NBEYfQWNHy0JHFJsFIKtraNhm29MbK/ZnSzpnrM499FOzdxtdpx5C/BkdN8
-	1LNTNSOEbXiQXt/K3P5GSVs8H/38xigjBHhu6caoN8egFuMNTHrzcEI5qXC3edGpAYxAfcQjz0INU
-	xdfYMNdw==;
-Date: Mon, 18 Aug 2025 10:36:00 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
-Message-ID: <20250818103600.0c3a015d@akair>
-In-Reply-To: <e8955365-73c0-4c7a-a579-0ee6940340b2@gmail.com>
-References: <20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info>
-	<20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
-	<bf82cd81-bcc7-4929-aa84-b749533d5b95@kernel.org>
-	<20250817101121.19a86716@akair>
-	<bbd17f22-8834-42d8-a109-971bdd2e0fa1@kernel.org>
-	<e8955365-73c0-4c7a-a579-0ee6940340b2@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755506190; c=relaxed/simple;
+	bh=UvyQ1ii45k76lBQYuglYZfEw8Hf0AGtC8Z2caMa8MMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJyM5AOoeOyLIRmaP4Fh0sPJq98ikj39r4jBDdfGL2mPdO2fxhYDVkjIU+jb23BufPql7HxkNI5bk9rmS9q/U6i8KHWF1lFWTqY6XxKwUhvE3f84WhgFDtRoap6FRYI6N0RP/2vZR5yZDJ+LKuUwqkiepadymAMkMttbqvIi6sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2Wp4L/Yu; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9d41c1964so2672282f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755506186; x=1756110986; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T/fuzU1CTZGxzc/q4P90tyALZYXOtiuEX4kwF+NT7w4=;
+        b=2Wp4L/YuPQPpjJ/JCaFX1mQ+/K/+0HyhwMXBznl6NiOnQY+9HcpWhbf4ccD6UEv8ku
+         u9aKVsFjyA9dF/MBiaXzr3NT2W9CxIjrMYxtSltrETghm0L8TgoyKHqdItGUu59QP7qI
+         AdFiKiUK7a7AO9A3naOosDrdwUrEl61GngXeM9OR3SrXgopXNsJvZv1nUnXwKU2rwOyc
+         b78mZNJaRgTvMvBSASdLRlQw93TRJ8y49n7oCxxVR/yD4G6idsSifqGe/wEkUz4VWUVP
+         0JCsUHDtvKmEaITmoGMTPuIOwPBDBfFy7nzTOY2SFaZlXaDC1WpsucryV78Pfn1192ed
+         H3Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755506186; x=1756110986;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T/fuzU1CTZGxzc/q4P90tyALZYXOtiuEX4kwF+NT7w4=;
+        b=uWf0/qCnV59XfWE/NlIw0trvHyz13+MVUbqvkto/ttG3GDSjnqdK4ih8luJvo8qi+P
+         PldpT6nCLLxpra2wKbEvGby/ew3vj0ayqKTErB6aNadU0PEWvNF/t+64/R/3FL1jPawp
+         lPNRAK/ww4yyUVAIeYF+pyOcg19uNWu8JhmM+cpoUOobGk/SCRl3dATyGEcPQzQCqsgY
+         qYV4NivvDvHGaPRtuFxzFr7anMtQHweopy6V2ObYZqMJ9YYW259a2DJCroOwRY50RFr1
+         8sXsqubMFdlEdFbXipt9K6UVdr1ioXmxd69TIQgiYh1yHRAoK+bryd9VMk/dP6YxhSo9
+         3iZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgXr5BYkZ4w6gSOXkdHYaRSDnmdqB0iulQleOXQing9xD+inVoNO+QftLKdHVGsZhllTYCFGFSwiTvISI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGGBhybrr5OcZZqO0bi6tMJWokfsc4Ffcf+gXJimTZWOodUEM5
+	79xK8XiksnGwW8p0km6oQiQiN/FwUKwbhnkJx2h3IxvCczzJA+YO0TL/yrnSPjIV8AI=
+X-Gm-Gg: ASbGnctT4G3sufYwnWS2O7zxGYbVVpXBgWheFV12aMvfD2g/eco8AYrVRSVC5jnflRy
+	LBmWmQ9+PB7o3OTaexDKTM3wgDYCoE1N+uAwSBCFjZK+K7ouR5uyGEh/jfmYLguinXoW6Gj4nUZ
+	AyTMkpQXhiPbPvzl6TwCJpC1GNgamPa3G/pLZYkZ9lj/ENEn7YXZvgZyuH+olJShXIzdmLXsNc7
+	IfaE9orkR2Gp5zwrUgr2Ne54SYNAjG8qVuxxeIou3lRx7SKuYAT2Gsb5psX+c/+ZW2Ped54ZLIo
+	aUQQG7h+o1851Gtwh+jsYNgh8IBK5fijF4OXgu6QwTzqaoFcu91grv3xt1kDJOgJItgENCI4QDV
+	UECaLjIte2R+9JnNbo89lIpjjDczMn3bFMZOLHMPHh5cVWndXhCufYqu+S7Deeeq0
+X-Google-Smtp-Source: AGHT+IEbLnDMKnwvqWfBZ1E5khya82qmf9ZPJV8Fnpd7QImeAaD2olfsndaI2Uyb+53tMbAQ4id+AQ==
+X-Received: by 2002:a5d:5f4d:0:b0:3b7:9d99:c0cc with SMTP id ffacd0b85a97d-3bb69699cbdmr9494395f8f.51.1755506185805;
+        Mon, 18 Aug 2025 01:36:25 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb676c99dbsm12357861f8f.36.2025.08.18.01.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 01:36:25 -0700 (PDT)
+Date: Mon, 18 Aug 2025 10:36:23 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: linux-pwm@vger.kernel.org
+Cc: David Jander <david@protonic.nl>, 
+	Clemens Gruber <clemens.gruber@pqgruber.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] pwm: pca9586: Convert to waveform API
+Message-ID: <iv5dubjuahdfrvzye2cfa5iiiwydatm7thl2l6x5laro6ej5tq@5rowhjnq5tof>
+References: <cover.1753784092.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-Hi Matti,
-
-Am Mon, 18 Aug 2025 09:34:02 +0300
-schrieb Matti Vaittinen <mazziesaccount@gmail.com>:
-
-> On 17/08/2025 11:13, Krzysztof Kozlowski wrote:
-> > On 17/08/2025 10:11, Andreas Kemnade wrote:  
-> >> Am Sun, 17 Aug 2025 07:58:35 +0200
-> >> schrieb Krzysztof Kozlowski <krzk@kernel.org>:
-> >>  
-> >>> On 16/08/2025 21:19, Andreas Kemnade wrote:  
-> >>>> Add charger driver for ROHM BD718(15/28/78) PMIC charger block.
-> >>>> It is a stripped down version of the driver here:
-> >>>> https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/  
-> >>>
-> >>> Why are you duplicating the driver? Why original cannot be used?
-> >>>
-> >>>  
-> >> I am not duplicating the driver. That patch series never went in. I am
-> >> stripping it down to let things go in step by step. I have also talked
-> >> with Sebastian about this. And he also prefers a step by step approach
-> >> to have it more easily reviewed.
-> >> I also do not have the infrastructure to test things like capacity
-> >> degradation over time. There is non-trivial rebasing work involved, so
-> >> I even do not feel confident submitting such at all.  
-> > 
-> > 
-> > OK, but if you refer to other work, then also please explain why this is
-> > stripped down.  
-> 
-> First of all, thanks a ton Andreas for continuing this work which I 
-> never managed to finish!
-> 
-> Battery fuel-gauging with coulomb-counter is hard. I believe we can get 
-> some results with the original RFC code - but it requires quite a bit of 
-> effort. AFAIR, there are (at least) 4 "pain-points".
-> 
-Newest rebase I have is for 6.15. Yes, capacity calculation is hard.
-Even the ugly-patched Kobo vendor driver has some surprises. It once
-says battery is empty, then I put in charger, rebooted into debian,
-Vbat = 4.1V even with charger detached.
-I think the fuel-gauging stuff itself should go in a step by step
-approach. I am wondering how sophisticated other drivers and hardware
-are.
-The rn5t618/rc5t619 mainline driver just uses raw coloumb counter
-values and there is no compensation for anything. Some hardware does
-more sophisticated things itself.
-
-> 1. Lack of persistent storage for charging cycles. For proper 
-> fuel-gauging, we would need information about battery aging. The PMIC 
-> has nothing to store the charging cycle counter when power is cut. 
-> That'd require some user-space solution which could store the cycle 
-> information in a persistent storage && tell it to the driver at 
-> start-up. I don't know if there is open-source userspace solution for this.
-> 
-I do not think so, and you will have trouble if you have dual-boot or
-from some alternative boot media involved. The BQ27000 stuff has afaik
-hw calculation of battery capacity to deal with this.
-
-> 2. Battery parameters. This is the real problem. In order to make the 
-> fuel-gauging work, the driver needs proper battery information. I wrote 
-> the original driver to be able to retrieve the data from a 
-> static-battery DT node - but I have a feeling the device-vendor using 
-> this PMIC provided battery-info via module parameters. I am not sure if 
-> those parameters can be recovered - and as Andreas said, defining them 
-> is not easy task. By minimum we would need the OCV-tables and some aging 
-> + temperature degradation effects (or VDR-tables which ROHM uses for 
-> it's zero-correction algorithm - but AFAIR, defining those VDR tables is 
-> not widely known information).
->
-Kobo kernels have these tables as part of the driver, the right one is
-selected via an index in the NTX_HWCONFIG blob provided by the
-bootloader to the kernel. So that is not necessarily a problem. It
-could be translated into dt.
-
-static int ocv_table_28_PR284983N[23] = {
-        //4200000, 4162288, 4110762, 4066502, 4025265, 3988454, 3955695, 3926323, 3900244, 3876035, 3834038, 3809386, 3794093, 3782718, 3774483, 3768044, 3748158, 3728750, 3704388, 3675577, 3650676, 3463852, 2768530
-        4200000, 4166349, 4114949, 4072016, 4031575, 3995353, 3963956, 3935650, 3910161, 3883395, 3845310, 3817535, 3801354, 3789708, 3781393, 3774994, 3765230, 3749035, 3726707, 3699147, 3671953, 3607301, 3148394
-};
-
-static int vdr_table_h_28_PR284983N[23] = {
-        //100, 100, 101, 101, 102, 102, 103, 103, 104, 104, 105, 106, 106, 107, 107, 108, 108, 109, 110, 112, 124, 157, 786
-        100, 100, 101, 102, 102, 105, 106, 107, 112, 108, 108, 105, 105, 108, 110, 110, 110, 111, 112, 114, 120, 131, 620
-};
-
-static int vdr_table_m_28_PR284983N[23] = {
-        //100, 100, 101, 101, 102, 102, 103, 103, 104, 104, 105, 102, 100, 100, 102, 103, 103, 105, 108, 112, 124, 157, 586
-        100, 100, 103, 106, 110, 114, 115, 119, 122, 122, 115, 113, 112, 114, 117, 124, 126, 123, 122, 126, 140, 156, 558
-};
-
-static int vdr_table_l_28_PR284983N[23] = {
-        //100, 100, 103, 105, 110, 110, 113, 112, 112, 112, 105, 110, 110, 111, 122, 131, 138, 143, 150, 166, 242, 354, 357
-        100, 100, 105, 110, 114, 117, 121, 125, 126, 122, 116, 114, 115, 118, 124, 132, 140, 148, 156, 170, 210, 355, 579
-};
-
-static int vdr_table_vl_28_PR284983N[23] = {
-        //100, 100, 103, 106, 108, 111, 114, 117, 118, 115, 108, 106, 108, 113, 115, 114, 118, 125, 144, 159, 204, 361, 874
-        100, 100, 109, 115, 118, 123, 127, 130, 140, 139, 134, 130, 128, 138, 140, 150, 154, 164, 178, 204, 271, 362, 352
-};
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wkgo3na3oonkqra7"
+Content-Disposition: inline
+In-Reply-To: <cover.1753784092.git.u.kleine-koenig@baylibre.com>
 
 
-> 3. ADC offset. The coulomb-counter operates by measuring and integrating 
-> voltage-drop over known Rsense resistor. If (when) the ADC has some 
-> measurement offset, it will produce a systematic error which accumulates 
-> over time. Hence a calibration is required. The BD718[15/28] have an ADC 
-> calibration routine, but AFAIR, there was some limitations. I don't 
-> remember all the dirty details, but it probably didn't work too well if 
-> current consumption was varying during the calibration(?). I think 
-> running the calibration is not supported by the driver.
-> 
-Yes, that is a pain.
+--wkgo3na3oonkqra7
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/5] pwm: pca9586: Convert to waveform API
+MIME-Version: 1.0
 
-[...]
-> TLDR; It'd be hard to do accurate fuel-gauging without proper
-battery 
-> information and some extra work. We could probably get some rough 
-> estimates about the capacity - but implementing it only makes sense if 
-> there is someone really using it. Charger control on the other hand 
-> makes some sense. [It at least allows Andreas to charge his eReader 
-> using solar-power when on a biking hiking! How cool is that? ;)]
-> 
-And using a hub dynamo.
-For now I have a user space script to help me, probably moving that into
-input_current_limit.
+Hello,
 
-But it is really nice to see if things are charging or are discharging
-unusually fast.
-It is a pity that such power sources are not taken into consideration
-in standards or charges much. Around 20 year ago or something, I could
-just attach a Thinkpad to a solar panel, there was a smooth transition
-between discharging a litte (displaying battery discharging time in
-weeks) and more ore less charging. Today often the recommendation is to
-put somehow another battery in between. But that is technically
-somehow nonsense. You need a buffer for power and another one in the
-row.
+On Tue, Jul 29, 2025 at 12:35:59PM +0200, Uwe Kleine-K=F6nig wrote:
+> this series eventually converts the pca9685 driver to the new waveform
+> callbacks. It starts with a few minor fixes and cleanups before the
+> actual conversion.
+>=20
+> Note that this driver was the only one that supported the usage_power
+> flag and when it was set increased the duty_offset. Now duty_offset is
+> under control of the consumer, so no functionallity is lost.
+>=20
+> Patch #4 drops GPIO support. Though the internal details differ a bit,
+> this is superseded by patch
+> https://lore.kernel.org/linux-pwm/20250717151117.1828585-2-u.kleine-koeni=
+g@baylibre.com
+> which provides generic GPIO support for waveform PWM chips.
 
-Regards,
-Andreas
+Applied to
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for=
+-next
+
+with a minor conflcit due to commit d9d87d90cc0b ("treewide: rename
+GPIO set callbacks back to their original names").
+
+Best regards
+Uwe
+
+--wkgo3na3oonkqra7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmii5gUACgkQj4D7WH0S
+/k6HeAf9ESmBPXIUKGBXsGsIYSI7QvaHRcQlyjzvJWQZmh3eX304rzS8Wkdb4nGu
++bWFT5DEUXJ4V3MtFx9DDUdxupPCvibdi2Kcrzbqp1nnEU6YFJ4CjUp3fUpjW8mN
+HQITCnMmY7IjHMwl73UIKzxZrh2qwgE18ed3TyEthIDocVhFZm/m9qhpc+/wgxZS
+zmmeT7SHVsx/B3J2UF0/xHZPssNVXSQmDdVos/cwSC5ZeT8Lrab6lYtjcceDt8I9
+bivcsMmrQByI5+SYzmqFbdqZpWlD/vk53degVc6FV0KyfRfQVABpQchrUyFGyb14
+o+qy4I6CSX5g6VfkGNeOrEaHX5uzHQ==
+=Y24E
+-----END PGP SIGNATURE-----
+
+--wkgo3na3oonkqra7--
 
