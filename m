@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-774411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03E6B2B1DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF993B2B1E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA481B654C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A63C0524981
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7C42741CF;
-	Mon, 18 Aug 2025 19:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DD8274B2A;
+	Mon, 18 Aug 2025 19:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cUYjT4gb"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ep+/jGWT"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0ED259CA7;
-	Mon, 18 Aug 2025 19:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3353451A9;
+	Mon, 18 Aug 2025 19:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755546472; cv=none; b=sn+pfAMCdOgWuyz/CwWwGB9RE3qAzdZ7AwkEvU9yUR4u4czLKCxE2cF4ALuf+Y3FtPQqkaoziZjhXlVY+CBC6yyiKYxoPG1sZqxsEgeSmUOQNHzLrjxNtLExmUw5/LqwN8cdJQEAMuRwCS42xktGuH/FP2BuAyGnLZTz3+4fPz4=
+	t=1755546798; cv=none; b=YI0p2unF8nmFTLHeXZxVrBRZeUEFvpH+bbtYCzR6VX5UKiEbVsYvN80VLU6UUc2+TC7R0/LkQ/JbA9HVdoVUXwN/22reXQQlPuWu2d7/jzwPPWoyhBxS2z2Me9RMYA36I8nU6zL+fxfMwZza0oTOzDWyNndL2UXWpCIin+VRzb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755546472; c=relaxed/simple;
-	bh=902WPU4xQKWeQ0OCIkYgyMri7TjMAcWjbBE7PZsEiGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tTwpxsPCXvMptGRY5z4jQNejo832bXqg2v8OW/AbLEjxYTXZsMCsEi5TqNJy4AKkoOE4HLN9oOtaws2roPBSsfxUgLcsd2p3eDs87StQ+Iz86o1PFB20ixCI/4DC8e2oHf9vnAnXFC5Q5lktIBydN3vrDzQB9ZTqSk+Vo75uvDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cUYjT4gb; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=SxySystUolElsZ8oKWT++LDXpxEDwIiYseF8Su16NVY=; b=cUYjT4gbI1gpOVIT6pOU121qvn
-	b8fbNHhgBZLchyPkNK3cCqiRG83om9upg7EDR7oikdkFM4YHZyQR0hzvs3UtJZh0LJyAtb/qLhbwC
-	hvgICRpdHczCYEB0xWfy60mkhOqd+AoK5FSy6YWf6132x9cwzR56KWZRqIMDaOhCk76CMIG1eZS4R
-	QiUy0PTJ9MPLQl7O5Ii7n1gG2tTTTfnzQNLfnF1EPG175XaoJw2P5Hn8Mi7jtcWllX7lTQuDFIiGA
-	hrfqqImWPmywOQgarHM0q4cKzo4jH3a7a3UrPThYDDKTPosGGx/zN0ynts1Vk8VcLy7OJVD/TlSe0
-	3GcLbiMw==;
-Received: from i53875ad4.versanet.de ([83.135.90.212] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uo5pU-0001Ei-Lz; Mon, 18 Aug 2025 21:47:40 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH] thermal: rockchip: shut up GRF warning
-Date: Mon, 18 Aug 2025 21:47:39 +0200
-Message-ID: <2890475.6YUMPnJmAY@diego>
-In-Reply-To: <b6cqwtj73twqxstslbhuulkgsmpds2hdyfsn7yewllkbtj7jz3@2kk74kgtefvp>
-References:
- <20250818-thermal-rockchip-grf-warning-v1-1-134152c97097@kernel.org>
- <8402789.eFmWaWnqpD@diego>
- <b6cqwtj73twqxstslbhuulkgsmpds2hdyfsn7yewllkbtj7jz3@2kk74kgtefvp>
+	s=arc-20240116; t=1755546798; c=relaxed/simple;
+	bh=LH0EOAloHY+TBXO5ZIVuNQjI4NF4jj37/tc2rIx+kSk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hC52r/0mMfLwdMwAMgr/Sn+YpY6XsuqGMIlKhoTnp3wAF/srTDlLebXEoarh8BLwMhJE+5HNBe8gFVYEwaA1LFdSwr7/yhV3VDO1gYXUtkbgD1mobFlvotxvVU5yChRT/EDKNgKIEqTGYzX6WB8c+/FYF782UVjylVU/fT9iGZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ep+/jGWT; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-323266cdf64so3521792a91.0;
+        Mon, 18 Aug 2025 12:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755546796; x=1756151596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ddujuKZzdznsNRHmWIL8Rav8U13raNV9R5xEbx1RJto=;
+        b=Ep+/jGWTxCFpFCDF0Z8FPM1xRMXtZXIK7I4qDXDaeHBE7AbDUwE8Zl7g7dwNBIKfo+
+         4aHT+RVW1YkoA6wK97y3QB6msbt/N6WemovtTnh6CMufE19qAAQwKJOl7dkyUkzBTQO/
+         sdnQB8p+4DWqRXbQx0poz7oZAe0FrQkG4sBhMOTbZxxutxr9/C9xADT3stvNrX5Sk6q1
+         pBzxg9mFpFDO76avvFcc5kO4GdVMXyN+AEY7lEvlbaR4vVTUlgfDcHb1eP1dtROQLGAW
+         KtYFUOkf5nvEsF+SBOlFLS4JAE07G+TJQUTclJJlJh7xrPEoGSIZ5brNxs8f+fNfzpIx
+         JztQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755546796; x=1756151596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ddujuKZzdznsNRHmWIL8Rav8U13raNV9R5xEbx1RJto=;
+        b=QUpO3Tj2jlEStQHzPRxwhNkjQaD+3p054cpgozvQkKYGHthKLjrDYpkqS+mDYU8Gvo
+         D8/AE4TPcwZzIjAvzU7RwnB9VxDh+h+FXkX3GAXOgLvgCErHN3VT2RcYHg8nQ5Dw9L8a
+         bW/A9rQH3oE642IMsD3aRX6ENYlTHYKvPusiaSHD+YJM4LjBshiLMf8oDIIkOpm1TedV
+         /pt6WFJbpq3hnZdDS1Vn650Pk5ADaujb5oJ+EL93BK/xGY6gczY3BpJXAJG46VpdK8AB
+         6geTIJIFF5kTexnZ58TRnWSgmzmutnEG0wj6IXMTvGGr1bLZyafZSlO3muAMgipjRvZr
+         oJXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDx0U+hz59LykkNYdYQ8aySesVsOhH/4AF7P3qH2gX3sSGvDYdXnj1oY9vAAik5DVZLsTfMNNQ+YytuQM=@vger.kernel.org, AJvYcCUM0zRCeOwaZB3MLuURuTPNAmS730BIW/v1IHM2P3fbCnA2uu9U/U2JHOewQxTduDxjW4aT+eHPhGdMFTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWhDb1IMgO2vPHe+DJgazVs7UNl0qzCw2a1cS9IJAE9eHH8K65
+	7PCg56rrsBRGZ/DljNUK/uuRa2awLGF8vYY813ySrjsjsuLu/+JmhruNRMPeiLKSmeXcWfg4skb
+	gRCPyqwSQ0RqTVmuR1fa0bxoxW3YCN/ttb02piUbZ2/E9cqI=
+X-Gm-Gg: ASbGncuGbm+6Jt7x2AeC+rJKAAink6JOrRpkM1XTCDt+6oN3cY/enkMTGRXkjHij8ya
+	Q/7OFOFRUdOC6/WZflCwpnhvbpElFdG0fyRY+wR7AoA04FRMFPDRY/3kFpOdrsEzrgzYDQl1AsH
+	Lsw2VCl2Ctkzq8oJtffHSac3fvmcxabsvJI4jqXjR7o1rqsu0NukGQ7iUjwJeqik+pFpiPrTXJS
+	DbM5hcb
+X-Google-Smtp-Source: AGHT+IEOXjh8m7XOu9uCTimW1hsmXKnD/yesqpDGGJb1xX58q/XN0hA0shVUPi2bcss3U64Ds2mbaAdmVSGdxcgyB20=
+X-Received: by 2002:a17:90b:1f89:b0:313:dcf4:37bc with SMTP id
+ 98e67ed59e1d1-32476abbf1bmr125297a91.34.1755546795610; Mon, 18 Aug 2025
+ 12:53:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250817192425.12983-1-mohammed.guermoud@gmail.com> <CAMuHMdXQfUCYdt-PJX8rYP3bf8Z_ea3Obgunm-_7KmJxMrU_fQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXQfUCYdt-PJX8rYP3bf8Z_ea3Obgunm-_7KmJxMrU_fQ@mail.gmail.com>
+From: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+Date: Mon, 18 Aug 2025 20:52:39 +0100
+X-Gm-Features: Ac12FXwyElvAUJvFi82Gmun_imSpGpqzSHFgcqTf4mVT3MjvaXtgPn6FrUMByEs
+Message-ID: <CA+Vbt5GwiaNaFEVa+U_dFe3jLpYAE+7PbTXC7jgOoqt1YqQo_Q@mail.gmail.com>
+Subject: Re: [PATCH] staging: nvec: Silence unused argument warning in
+ NVEC_PHD macro
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: marvin24@gmx.de, gregkh@linuxfoundation.org, ac100@lists.launchpad.net, 
+	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Am Montag, 18. August 2025, 21:23:54 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Sebastian Reichel:
-> On Mon, Aug 18, 2025 at 08:44:15PM +0200, Heiko St=C3=BCbner wrote:
-> > Am Montag, 18. August 2025, 19:26:15 Mitteleurop=C3=A4ische Sommerzeit =
-schrieb Sebastian Reichel:
-> > > @@ -1621,12 +1656,16 @@ static int rockchip_configure_from_dt(struct =
-device *dev,
-> > >  		return -EINVAL;
-> > >  	}
-> > > =20
-> > > -	/* The tsadc wont to handle the error in here since some SoCs didn't
-> > > -	 * need this property.
-> > > -	 */
-> > > -	thermal->grf =3D syscon_regmap_lookup_by_phandle(np, "rockchip,grf"=
-);
-> > > -	if (IS_ERR(thermal->grf))
-> > > -		dev_warn(dev, "Missing rockchip,grf property\n");
-> > > +	if (thermal->chip->grf_mode !=3D GRF_NONE) {
-> > > +		thermal->grf =3D syscon_regmap_lookup_by_phandle(np, "rockchip,grf=
-");
-> > > +		if (IS_ERR(thermal->grf)) {
-> > > +			ret =3D PTR_ERR(thermal->grf);
-> > > +			if (thermal->chip->grf_mode =3D=3D GRF_OPTIONAL)
-> > > +				dev_warn(dev, "Missing rockchip,grf property\n");
-> >=20
-> > I guess it might make it easier for people seeing the log, if we could
-> > insert an "optional" into that message for the optional tier.
->=20
-> Sure, I can add an "optional". I'm not sure how "optional" they
-> really are, though. Code like this looks quite fishy to me:
->=20
-> if (grf)
->     regmap_write(grf, ..., RK3568_GRF_TSADC_TSEN);
->=20
-> I marked these as optional, as the driver should probe without the
-> GRF. But to me it looks like most platforms with optional GRF
-> support should have been made mandatory in the first place.
+Hi Greg, Dan, and Geert,
 
-okay ... then I take it back, and we should leave out the optional.
+Thank you all for the detailed feedback. This has been a great
+learning experience.
 
-That way people may wonder and possibly verify their soc variant
-or build setup.
+My initial patch was incorrect and broke the build, as the test robot found=
+.
+
+Following Greg's advice, I will send a v2 patch that removes the
+unused NVEC_PHD macro and all the places it is used.
+
+Thanks,
+Mohammed
 
 
-Heiko
+Mohammed GUERMOUD
+Software Architect
+Stellantis (Formerly Groupe PSA Peugeot Citro=C3=ABn) - Morocco
 
 
+On Mon, Aug 18, 2025 at 4:42=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Mohammed,
+>
+> On Mon, 18 Aug 2025 at 17:10, Mohammed Guermoud
+> <mohammed.guermoud@gmail.com> wrote:
+> > The NVEC_PHD macro was defined with three arguments (str, buf, len)
+> > that were not used in its empty body, causing a compiler warning.
+> >
+> > This patch silences the warning by explicitly casting the unused
+> > arguments to (void), making the intent clear without changing
+> > functionality.
+> >
+> > Signed-off-by: Mohammed Guermoud <mohammed.guermoud@gmail.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/staging/nvec/nvec_ps2.c
+> > +++ b/drivers/staging/nvec/nvec_ps2.c
+> > @@ -28,7 +28,7 @@
+> >         print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
+> >                         16, 1, buf, len, false)
+> >  #else
+> > -#define NVEC_PHD(str, buf, len) do { } while (0)
+> > +#define NVEC_PHD(str, buf, len) do { (void)str; (void)buf; (void)len; =
+} while (0)
+> >  #endif
+> >
+> >  enum ps2_subcmds {
+>
+> The proper solution would be to remove the custom NVEC_PHD() macro (and
+> NVEC_PS2_DEBUG), and just call print_hex_dump_debug() directly instead.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
