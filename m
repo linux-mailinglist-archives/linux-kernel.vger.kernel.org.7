@@ -1,197 +1,238 @@
-Return-Path: <linux-kernel+bounces-773666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27736B2A4BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:24:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C864EB2A4F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42563681EDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF681895567
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380E7334737;
-	Mon, 18 Aug 2025 13:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tu+7gXqE"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44A03375DF;
+	Mon, 18 Aug 2025 13:15:43 +0000 (UTC)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E633472D;
-	Mon, 18 Aug 2025 13:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920A93375AE;
+	Mon, 18 Aug 2025 13:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522939; cv=none; b=YFAB5SiS59+7a8PLS048J1VnkeyKknGSSViYBtRb9nnZ4FQtEQnj6qJMLkJD7hVzvtyXrK4rYSsL1XaRKHhM6xMOIVdrW+oFd1MfrFcFsAfo8TH9NUZpLVP0epjmE7FGsl6tW4PnFifuUtRNIxTAQndVrA+hhmA3zO3/+zNrqHo=
+	t=1755522943; cv=none; b=hcY1VoLUSap1f9qBHNDHZEDRaCwepgnUq0kxAn18KTuopqJGmEsd6nzs5b4ZOSiELTLDa0UzY5BKRUM+ctJ5N2kMT6xN081HD91zfvxCP1Wcc73uBJwaymcffO3z3CiW2V+hlsuYnuL5oYZ/+CyIj53pn5qPenbsbEp3qDh7HPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522939; c=relaxed/simple;
-	bh=mLd7BZogqKcenILnPCzuRX50DR7oIy0Az02q9N/0AGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHzf+m1OssPYN77+ILGIpyYEAqES5VXHsAkxYwfIby89iAStPWNTwLLokKrAehFOjb+MoVpDyxnwP8NtauKw4DdWA5kninLFCMA2Qm75vfbgGgX3DcK7vb0u8wBdfiZMi9QLU1zU9VN7om3aFcUT4vdELQt92gyyViNZ+gmNn/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tu+7gXqE; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E2C671249;
-	Mon, 18 Aug 2025 15:14:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755522879;
-	bh=mLd7BZogqKcenILnPCzuRX50DR7oIy0Az02q9N/0AGE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tu+7gXqEIdN9xZeZ/GM9Ce2Sf2/dCS6rSTP9l4dP+zgHdqkeEazgH6Uaxk7wXhb6Q
-	 bWg8e87DRKgFwAVU60wbf0ocILyCxvld9ABPUQHCSVlnrTDtG8MmVXGpN/96HXOgvt
-	 2X/hpIWd1tqPNeFLdnOPEfZWirn4WQpH0Uwys2d4=
-Date: Mon, 18 Aug 2025 16:15:14 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Andy Walls <awalls@md.metrocast.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] media: ivtv: Fix invalid access to file *
-Message-ID: <20250818131514.GE5862@pendragon.ideasonboard.com>
-References: <20250818-cx18-v4l2-fh-v2-0-3f53ce423663@ideasonboard.com>
- <20250818-cx18-v4l2-fh-v2-2-3f53ce423663@ideasonboard.com>
+	s=arc-20240116; t=1755522943; c=relaxed/simple;
+	bh=eZGvUeGw+fPtc8+ouIsGvEN/exUL+cRr1q5bKRNvYOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rRyXl7fOSfU+sZ7XeH8gz0s61w+qFYe/J1ClmU1DDvGqZs0uikVCl5PITrJgZhzGdeR5miZFYmzqTZGqq5Usf8AqGsgRiLJpbVEZDZzXCd02XOtfm4UqebWfyAvuDVqbmNTvqDPKIq7dlf06PXXm58XyLIUgB4dFGO5I0pVqPm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-50f88cd722bso1178721137.1;
+        Mon, 18 Aug 2025 06:15:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755522940; x=1756127740;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k5pJEjXNDPDJzPITNSF2Cy+agebN0/imHucjVPw+eAg=;
+        b=BY/x+Rn12+a1dzjvYeklyW0VyleNK5roGK8gU5QB+rLvWB1AMNS90V/N12HCGzyyMG
+         YWkIV8fQ0mpGRlifZFFrqwLaiy9+aor/pxv20HB8RY3eXCEO1OErrB4wMexDvaLUVYYZ
+         esYi3b9igvTF49VN0z64Iio7QULEDrgm0EtPPIo0YcFhasTyyt59IgIIuoDtfm9y9dWC
+         OpudjC3A0KgcQpvvGtsk+4sHjdWTKRNVWQEy5k/8PcA5qKCdXiPyVWJZ+uuz8YyFDZd8
+         xTHgwgo4rLgD7n7MDpz6frS/MI9mVKbd7kHkaxMbO4TrmF+IJlWNAP42d2AijshyYivF
+         72zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaExJbtIFeNpvVU6ivbg4QNKbpem1BH0EmkllvdTC60ldha6g5+1TDemuAE9fHf48QZLp6l9AJJzmG@vger.kernel.org, AJvYcCXe7tS1sRxjJQqT/4kxKWpvVwleL7xs5Tr82i0ad0K0d+uOc3Rf0q+6N8E6x1L+1qOSOs8YUhoVKcrScZCq@vger.kernel.org, AJvYcCXtLAYGwM/tV94sOsBhR/tUqqSJXaqtEHu6WDEWC+wDUnIXPQK9Z3C8cGh3IpGAOIVdnpJNChaMnvY0XgtCM8aUitA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaalGR9JhZwR1aZ9fCCSvqmYgkT8he4DHxtWv98P3WKcSA4US1
+	tcfvf4Rl+BC6Y/heepvOhAUVP99VFGlQcZc9WjUuXgnEBCXY3wDv1c3eZcls0s3+
+X-Gm-Gg: ASbGncuNQiBuum78fUbT2zkolbpzFSCqTmx7kb1iR8bIN6+0j7mivsKcOJXeM2vt/iF
+	8sM5U+0rfzCnwjaJE8KFkzkU4jQVti8bUmyEgFKfadjRNLmKrGVI3e4Ly4BEDGI7uhR1TY+d2qc
+	ELIsfa94L16ZU2qoc5wzmyblzZKfeiMJ8Jv1eXj6Sx94dTW4SNhxEyzoB+2TIAZVjuCA0oa11Zv
+	CCG1CHVepVVMC94M7xecmNG5xTYQj9ZHI2l5tsLA4m0YLbV3r2fg3aYAxhe1D7eE0Lt5ZJ1Cmeb
+	R4kJF8pomaFPiUHePpOSriGzrYOTMNewhhJzHjnBeEWlVsowX6Bo0SjUwaOPTkzuYdWaTM7NACB
+	n4PyoqFHRs8ncPsG0KzYVUYMh41R43vJv3xbEnld33kq1jM6b4JMQg8VvB5u2
+X-Google-Smtp-Source: AGHT+IEL/I13AxSgETqSfXM8k+ZAf1L6zU8Qw4hF4wk5UA+zAhxTyB+K6nDu48cEjZ2lboh7yrybVg==
+X-Received: by 2002:a05:6102:dce:b0:518:9c6a:2c01 with SMTP id ada2fe7eead31-5189c6a33afmr136483137.28.1755522939811;
+        Mon, 18 Aug 2025 06:15:39 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-890277e2c70sm1751311241.6.2025.08.18.06.15.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 06:15:39 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-89018fa6f6dso1204634241.1;
+        Mon, 18 Aug 2025 06:15:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVwQx+47AJPElmZ91UbXuiRJ/WM3rQd6nW9mlutGANHt+4Powy0FRyb5CrIZcdqFOHrEBnV1DYgbEaP@vger.kernel.org, AJvYcCWunSkNYNIQMo9FbVEp2j8emZ6yHZedgac1s+cKthlXmt1KnyntO+A0pUsAnNFqo4MskNsHSrjuNmqZ9+tt@vger.kernel.org, AJvYcCX9PWEoAyHvt7tJIU4w2gsnJrmfFVhXBo4n/qr2ERZDw5HkDPblRxu9u5dGQi955LmUBIsqYyYCgswmSkuAgNr8AZY=@vger.kernel.org
+X-Received: by 2002:a05:6102:1627:b0:4e6:ddd0:96f7 with SMTP id
+ ada2fe7eead31-5126cd388e8mr4319794137.13.1755522939084; Mon, 18 Aug 2025
+ 06:15:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250818-cx18-v4l2-fh-v2-2-3f53ce423663@ideasonboard.com>
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812200344.3253781-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 15:15:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVi26AXwQJDtxSp8hSsmZ1Lx4_GYFsbtmq_gxJyddkqTg@mail.gmail.com>
+X-Gm-Features: Ac12FXyX3G3j02_gxxBGNzChIx62VgPdJgiJgMtXXMqM8tO2f3w3kfm4CppbZcU
+Message-ID: <CAMuHMdVi26AXwQJDtxSp8hSsmZ1Lx4_GYFsbtmq_gxJyddkqTg@mail.gmail.com>
+Subject: Re: [PATCH 05/13] arm64: dts: renesas: r9a09g077m44-rzt2h-evk: Add
+ user LEDs
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 18, 2025 at 03:06:36PM +0200, Jacopo Mondi wrote:
-> Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-> all ioctl handlers have been ported to operate on the file * first
-> function argument.
-> 
-> The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
-> needs to start streaming. This function calls the s_input() and
-> s_frequency() ioctl handlers directly, but being called from the driver
-> context, it doesn't have a valid file * to pass them. This causes the
-> ioctl handlers to deference an invalid pointer.
-> 
-> Fix this by wrapping the ioctl handlers implementation in helper
-> functions which accepts a ivtv_open_id pointer as first argument
-> and make the ivtv_init_on_first_open() function call the helpers
-> without going through the ioctl handlers.
-> 
-> The bug has been reported by Smatch.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
-> Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  drivers/media/pci/ivtv/ivtv-driver.c |  4 ++--
->  drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
->  drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
->  3 files changed, 23 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
-> index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..bcbb03271047df9b127039759dbfefbaae67f9c3 100644
-> --- a/drivers/media/pci/ivtv/ivtv-driver.c
-> +++ b/drivers/media/pci/ivtv/ivtv-driver.c
-> @@ -1310,13 +1310,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
->  
->  	video_input = itv->active_input;
->  	itv->active_input++;	/* Force update of input */
-> -	ivtv_s_input(NULL, &fh, video_input);
-> +	ivtv_do_s_input(&fh, video_input);
->  
->  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
->  	   in one place. */
->  	itv->std++;		/* Force full standard initialization */
->  	itv->std_out = itv->std;
-> -	ivtv_s_frequency(NULL, &fh, &vf);
-> +	ivtv_do_s_frequency(&fh, &vf);
->  
->  	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
->  		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
-> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
-> index 8077a71d4850ec773caa20c3fca08f92f3117d69..ba1fce42a8d6d7d9a3779bfc9dfd310060e61103 100644
-> --- a/drivers/media/pci/ivtv/ivtv-ioctl.c
-> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
-> @@ -974,9 +974,9 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
->  	return 0;
->  }
->  
-> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-> +int ivtv_do_s_input(struct ivtv_open_id *id, unsigned int inp)
->  {
-> -	struct ivtv *itv = file2id(file)->itv;
-> +	struct ivtv *itv = id->itv;
->  	v4l2_std_id std;
->  	int i;
->  
-> @@ -1017,6 +1017,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
->  	return 0;
->  }
->  
-> +static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-> +{
-> +	return ivtv_do_s_input(file2id(file), inp);
-> +}
-> +
->  static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
->  {
->  	struct ivtv *itv = file2id(file)->itv;
-> @@ -1065,10 +1070,11 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
->  	return 0;
->  }
->  
-> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
-> +int ivtv_do_s_frequency(struct ivtv_open_id *id,
-> +			const struct v4l2_frequency *vf)
->  {
-> -	struct ivtv *itv = file2id(file)->itv;
-> -	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
-> +	struct ivtv *itv = id->itv;
-> +	struct ivtv_stream *s = &itv->streams[id->type];
+Hi Prabhakar,
 
-Same comments as for 1/2. Additionally, you can pass the ivtv_stream
-pointer to this function, either along with the ivtv pointer, or alone
-as you can access ivtv through s->itv.
+Thanks for your patch!
 
->  
->  	if (s->vdev.vfl_dir)
->  		return -ENOTTY;
-> @@ -1082,6 +1088,12 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
->  	return 0;
->  }
->  
-> +static int ivtv_s_frequency(struct file *file, void *fh,
-> +			    const struct v4l2_frequency *vf)
-> +{
-> +	return ivtv_do_s_frequency(file2id(file), vf);
-> +}
+On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add USER LED0-LED8, which are available on RZ/T2H EVK.
+
+According to the schematics, only the first four are user LEDs?
+
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+> --- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
+> @@ -7,10 +7,61 @@
+>
+>  /dts-v1/;
+>
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
 > +
->  static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
->  {
->  	struct ivtv *itv = file2id(file)->itv;
-> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
-> index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..7c91b8963b420761c2afcab1dece4d19a4ec0322 100644
-> --- a/drivers/media/pci/ivtv/ivtv-ioctl.h
-> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
-> @@ -17,7 +17,9 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
->  void ivtv_set_funcs(struct video_device *vdev);
->  void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
->  void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
-> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
-> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
+>  #include "r9a09g077m44.dtsi"
+>  #include "rzt2h-n2h-evk-common.dtsi"
+>
+>  / {
+>         model = "Renesas RZ/T2H EVK Board based on r9a09g077m44";
+>         compatible = "renesas,rzt2h-evk", "renesas,r9a09g077m44", "renesas,r9a09g077";
 > +
-> +struct ivtv_open_id;
-> +int ivtv_do_s_frequency(struct ivtv_open_id *id, const struct v4l2_frequency *vf);
-> +int ivtv_do_s_input(struct ivtv_open_id *id, unsigned int inp);
->  
->  #endif
-> 
+> +       leds {
+> +               compatible = "gpio-leds";
+> +
+> +               led0 {
+
+led-0
+
+Cfr. Documentation/devicetree/bindings/leds/leds-gpio.yaml:
+
+    # The first form is preferred, but fall back to just 'led' anywhere in the
+    # node name to at least catch some child nodes.
+    "(^led-[0-9a-f]$|led)":
+
+> +                       /* SW8-9: ON, SW8-10: OFF */
+> +                       gpios = <&pinctrl RZT2H_GPIO(23, 1) GPIO_ACTIVE_LOW>;
+
+color = <LED_COLOR_ID_GREEN>;
+function = LED_FUNCTION_DEBUG;
+function-enumerator = <0>;
+
+> +               };
+> +
+> +               led1 {
+> +                       /* SW5-1: OFF, SW5-2: ON */
+> +                       gpios = <&pinctrl RZT2H_GPIO(32, 2) GPIO_ACTIVE_LOW>;
+
+color = <LED_COLOR_ID_GREEN>;
+function = LED_FUNCTION_DEBUG;
+function-enumerator = <1>;
+
+> +               };
+> +
+> +               led2 {
+> +                       gpios = <&pinctrl RZT2H_GPIO(6, 7) GPIO_ACTIVE_LOW>;
+
+color = <LED_COLOR_ID_YELLOW>;
+function = LED_FUNCTION_DEBUG;
+function-enumerator = <2>;
+
+> +               };
+> +
+> +               led3 {
+> +                       /* SW2-3: OFF */
+> +                       gpios = <&pinctrl RZT2H_GPIO(8, 5) GPIO_ACTIVE_LOW>;
+
+color = <LED_COLOR_ID_RED>;
+function = LED_FUNCTION_DEBUG;
+function-enumerator = <3>;
+
+> +               };
+> +
+> +               led4 {
+> +                       /* SW8-3: ON, SW8-4: OFF */
+> +                       gpios = <&pinctrl RZT2H_GPIO(18, 0) GPIO_ACTIVE_LOW>;
+
+Schematics say "run", so perhaps LED_FUNCTION_ACTIVITY?
+
+    color = <LED_COLOR_ID_GREEN>;
+    function = LED_FUNCTION_ACTIVITY;
+
+> +               };
+> +
+> +               led5 {
+> +                       /* SW8-1: ON, SW8-2: OFF */
+> +                       gpios = <&pinctrl RZT2H_GPIO(18, 1) GPIO_ACTIVE_LOW>;
+
+Schematics say "error", so
+
+    color = <LED_COLOR_ID_RED>;
+    function = LED_FUNCTION_FAULT;
+
+> +               };
+> +
+> +               led6 {
+> +                       /* SW5-9: OFF, SW5-10: ON */
+> +                       gpios = <&pinctrl RZT2H_GPIO(22, 7) GPIO_ACTIVE_LOW>;
+
+Schematics says Ether-Cat link-activity, so LED_FUNCTION_LAN?
+
+    color = <LED_COLOR_ID_GREEN>;
+    function = LED_FUNCTION_LAN;
+    function-enumerator = <0>;
+
+> +               };
+> +
+> +               led7 {
+> +                       /* SW5-7: OFF, SW5-8: ON */
+> +                       gpios = <&pinctrl RZT2H_GPIO(23, 0) GPIO_ACTIVE_LOW>;
+
+color = <LED_COLOR_ID_GREEN>;
+function = LED_FUNCTION_LAN;
+function-enumerator = <1>;
+
+> +               };
+> +
+> +               led8 {
+> +                       /* SW7-5: OFF, SW7-6: ON */
+> +                       gpios = <&pinctrl RZT2H_GPIO(23, 5) GPIO_ACTIVE_LOW>;
+
+color = <LED_COLOR_ID_GREEN>;
+function = LED_FUNCTION_LAN;
+function-enumerator = <2>;
+
+> +               };
+> +       };
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
