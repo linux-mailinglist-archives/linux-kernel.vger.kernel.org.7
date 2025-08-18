@@ -1,142 +1,156 @@
-Return-Path: <linux-kernel+bounces-773022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFC1B29A8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53970B29ABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EBD32041AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:10:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B4851673DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56CC277CB1;
-	Mon, 18 Aug 2025 07:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6B8279DA3;
+	Mon, 18 Aug 2025 07:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="l9qdOH6S"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HlF2kawC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3109B1E008B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6995627990D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755501047; cv=none; b=LtTq1LPh5jCsPz6rOB9TC6dtWubqIOcRDhndrQKwS4T8BnoO6Vv8BrEIZ85auGY6go8b+eBUGFXArsza/XOL5Oz/C2Z2hG/xv4s7caToiBfPih2q0KXVDuyN1qNhVLusQt7kKds+enaw+F3zrsvZU/4KV40tluExjw9/f8GTqds=
+	t=1755501807; cv=none; b=MyNR0YNTulXOhdkbM0uaHnaqNgYSqRB6jr+0fIOEI0AYDrk1PimecVG0BYCAP/0OIEo39FkjNzbADJwXiXnCNTy3wUs8NYIcUJWJj8nBbHQgBZiFL874TisJsGed7c6q+O4S9f1kwq9N1bdA5tmBySKS2lxgqSjjnUkGqjhLz8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755501047; c=relaxed/simple;
-	bh=16BbQFcv29+6Uk4By1bC4nzIcQZgln+mYt1XP6RjV/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RrhykNDAQs+zKDIqB5blMyOUxKpCGJrWr7pFfA000UQiR17lol0eKI7d+vJUVgxpCKXaRQSF1kJqVsNPf1NEupsOk1XOc7x/70x7jT5lyofYtgTJkYGbPRC7cxNiZYgp+tF9kLPPO7xFfqhQGwklhLfEpjvqIch0rCJqwZPXNxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=l9qdOH6S; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755501033;
-	bh=DIyLi8TReoN+5AF3jvUXWckVHC2MAP2cCVjZaPo6GQw=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=l9qdOH6SuVBnYSZj+wjxhn+mvv9XN/PmDpQhQAMuNdM5hmG0h5t3vvtwMW+1zoWG5
-	 Yib/VO077FBPGrtxgZQPyc0aPqSc9Hg7cqAR8s/6fqWF1dNsmW1FIM10jju4bLs3pB
-	 rQiiOdhiP/WuA3gsrbZXNFkjpoI5MoedclxU+OkU=
-X-QQ-mid: esmtpsz16t1755501030t18f06d0f
-X-QQ-Originating-IP: Yz02jh1oqjelU7qc2kAra1/3BSe5M9Cdk8a1P5ZaNVc=
-Received: from = ( [14.123.254.114])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 18 Aug 2025 15:10:28 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5468809535196601441
-EX-QQ-RecipientCnt: 14
-Date: Mon, 18 Aug 2025 15:10:28 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: guoren@linux.alibaba.com, guoren@kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH V2] RISC-V: KVM: Write hgatp register with valid mode bits
-Message-ID: <BA652752F35145B4+aKLR5OHaYZ99CvHb@LT-Guozexi>
-References: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
+	s=arc-20240116; t=1755501807; c=relaxed/simple;
+	bh=0171qvNEwhctc8IfFKLfbfF7b9YjDUBrifuNLF1OewA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I92DEcVK7F5lQipZqP7DMtg0YPDe/y6M1C3lWfgVJ6zi6VtRbPv0CnIErV7EqsAIQq99CGjOl7S2z85NfJ8fJc29NMF4fL5xPvzli5Gzb9/9i35qzC4DhpUyblL8vCwMwULagPnBFoVx4pN6dPFMKG7OwD64IbEujFGzOvEutAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HlF2kawC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I6c6T6007903
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:23:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CljCLWxC3VuOUrt1/JUd1oMX4O4FgjwPAOwwS6aA++M=; b=HlF2kawC+j703on/
+	tH5fytuhbAfUDjBtj0KO0CikZ2/NCfa+q9or3wRHbgqp13aUjx+Ud6kQCPRUpzBO
+	9IveNJ1Y3to6RGWVghPNpGt8tPAeuuq59leOkbMqbcgUSoizMqyGpSdN/m2+N4Cc
+	PfIYK65uQFyrOFX7EK9R0juooZhyIWJfz/c2Qm1U//3dps9ujo+qxbg4ZVaIstRe
+	5nEB1W2xB5Mz8iCUczH85RGtwmdNHb92adpboptyWY+xlpZxse6U4KTAuL3F+odZ
+	v+oWNt/Pj1bxVUQyWXrVykC64EWHpok9icoe4hgh1WpptpVuht+EK1gcxEEJrUoY
+	Zq9xAA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj743qed-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:23:25 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e8704c5867so1652336185a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 00:23:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755501804; x=1756106604;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CljCLWxC3VuOUrt1/JUd1oMX4O4FgjwPAOwwS6aA++M=;
+        b=Nsrqc9FcdjZ+3nDVKQwj4OZzc14j1M3OlizZ/cey6gCh2mtQMn4uqYDRD+RkUfdXDT
+         i5ZS08gMGt4hPRzFqTAQVx2rp4nBP6irr8tRDr51xwB9hLWTFXBX2KwSvcCVcQYzonRZ
+         aHRquso2AFnHqm3amj/IKHJQaWeOGwbmTVNCydhIzB5K5vV3ZCRJ7fR15PpAbLpCKl2o
+         xPXyn/qerD/mOxhOEbUU9qyBPGGS5ihA5VLFIwSdI5CDO/7NrwbTSq/AOCZvr5pUy205
+         VgKs5Tey3BTQc2RMNnVBJufgj5R5dTTHIgTXopBcvXUQAFXBM7Bul9unt4yR06Jkmp9M
+         xCpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdOGZZVXzECRj+8uhZZq2KQQL3VEh6BhoKWpZ6lycHlysFMlbI5EgyfWxWfaTKAds/HNqaPvkFniBi6sc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFO1pJi2RevU52GUgc10H5GwGG/yjQA18aGL3y2lj8/azb2uHF
+	ZlC4NCXvZxOvDYKORKo48NR6W+GZbvbQWvMCzZeXxdUhl1vhVIdIIF2iUEInC3PQOInJE+sBSQC
+	Rtmj01zSe0DoZ5aJNXp1bjDV50H3LGPWulPHnr42Tuz+Z2iUdoOyso8dDfEYZJHrXOLM=
+X-Gm-Gg: ASbGncsRUFDR3BFBuzEk5eO2MekDk3y0peXLR8HEXfIlNsmTOjKqu5c+A4hbtvgBj8B
+	ptbabMYO2bluE1Ld9Sya4Lw4aSi6hls38A0HcB5+JAZ0Z+g4Fz8Ctq9QppiTsToNPcqOkC1Zb3s
+	ifOR8OT6jNUMdksjsPlxMo55UcsbT10AXObJUHFlEOMGEB7LRObq28Bm1EnWMZxcGE3stHJhMsA
+	47XAb68hnrQHxX+2+SATOI97PBsYsM8gu3kmWEgNkTYBSi27UD4Lror0P16APp8KxcNbn/6Hnww
+	gDiU/lMUzTTQRvHWKVZu6aIYR7H6SHVrn1Lubm8/0IlJrYfUBArXUuVzLmdW2Yf7tQ==
+X-Received: by 2002:a17:903:b8e:b0:240:9dd8:219b with SMTP id d9443c01a7336-24478fd2a8emr122795125ad.49.1755501054563;
+        Mon, 18 Aug 2025 00:10:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGm7LsS8pR5b68tpo9G2VcNmUMBXY1NQ7esD+UdwLtswNRa5j63VuLnVBb7Rr2C4YZHwcX2Nw==
+X-Received: by 2002:a17:903:b8e:b0:240:9dd8:219b with SMTP id d9443c01a7336-24478fd2a8emr122794915ad.49.1755501054124;
+        Mon, 18 Aug 2025 00:10:54 -0700 (PDT)
+Received: from [10.64.16.151] ([114.94.8.21])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d54f8b9sm72276985ad.130.2025.08.18.00.10.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 00:10:53 -0700 (PDT)
+Message-ID: <77067ec1-4f1f-45d1-8027-4c7a6f66ecff@oss.qualcomm.com>
+Date: Mon, 18 Aug 2025 15:10:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: Nw75Pb9ZsEyGbGU/2uZNGJ4RZ6ryd1WtxxExHkav3qUwsG1PE/VrAI9V
-	VmW09g42524DoIl2yystSHVSpnX0Qjm7SgnAsbFFYM8zAiDzv6e75exzHVZeyYd5JNg6Mme
-	rri4YI3By5RNWFOPdPOdxYCRTAAblyAWkyym0lVQ0cB4XEpZ/oF6FoHBCdfFtSDidePz2nu
-	oAE4NgvCTGsSJbCfZzpB5sYg5M4rFoVqD1fAZCZEGGoeaPxQb6YJYQO89lf49/2UsvWiN6Q
-	BqlX4/FS0xUptyfoNs8zKd4ekUs7Nb/wsD2NApScUw5Ij4oHfApEw0s73OPRhMEyXCC3OSK
-	5ITF9KmCb7jBHweSF2Na6yLYc//zAhcbI81bMMdCYIh8+NbaR9Vpc/0VQokmob6BmueWXwE
-	A1gFa1xa46HYJz8WkpVkPkvOGk9YgEQJUpIFwTuvMcE7RY0PbZT7vOBgLH9gjmIyx4fus1Y
-	X0n2geTVKozqTbjMaXQ0yHAQRGUj/pGHOrvxpi8c8VB8CflltQvVvztCSmEroKsh6tqfYlt
-	tGcPPU+fTBSYZYmgk82ysUZHd72sD/4i5OtghmtpkkpYKTSZY/EE4LCapCDS2Du5t7vmvG0
-	JADzBA05vZDXEPHs4Ikf5sQPKFqEyr1YFzG/PoHVt/NLZuSatd1isW2Scet/S3Z1f677WoX
-	IXk+WnlQp9lgWRNkXsOsOXk6iPlcpmX+rtUV1o+DB6+kWzTH3pk4PDZdNpFsoB0EbdhESXC
-	uo6NtkSoZKCsnY3CBAL+ZDUGe57v8NPMhM248E371jDc2Vi+lSlIQXsp6Em9DpNrPeOuBYk
-	PcW5nr8d4xZxjsEWWom43sb5SFbWll2ipivQHsE7cVqzda3Cwm++fJnB42hnDXxWFVda+ao
-	BUThJTQDyUr7hX50PEHHeHu/E/W30xiTenhFGSZqocHSqpuA0zJ7YlQDyRArfYYiQrE5Rx+
-	youg6TWbKqoHI+Wce0uLJ7MQW2CNI6rP8srBEkCNsNPdBlWxOjQOCTxQUil5lOWL6jz56Kd
-	n7aaLWImzmo5IQLXQpCFZ5wH1xyNxyWEEhWtoBQ3f+MCETF7MbB6WErbHhQGgG78U5cwKus
-	H8JAkgaTCbw+x1s12pXO8AgLvr4PAiPRQ==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: defconfig: Modularize SX150X GPIO expander
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dmitry.baryshkov@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        xiangxu.yin@oss.qualcomm.com
+References: <20250818-modularize-sx150x-gpio-expander-v1-0-c2a027200fed@oss.qualcomm.com>
+ <20250818-modularize-sx150x-gpio-expander-v1-2-c2a027200fed@oss.qualcomm.com>
+ <43e2a824-d7a3-4142-9b59-416df0c0c2c9@kernel.org>
+Content-Language: en-US
+From: Fange Zhang <fange.zhang@oss.qualcomm.com>
+In-Reply-To: <43e2a824-d7a3-4142-9b59-416df0c0c2c9@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: DWfVHq0NegfIL0q0B_tTW9fWBgjmRLY8
+X-Proofpoint-ORIG-GUID: DWfVHq0NegfIL0q0B_tTW9fWBgjmRLY8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMyBTYWx0ZWRfX3tZ1zZe3NZ7o
+ 0YJbKCIN2l0cDT0DHHgCZyhBEPah9wZZ58GzyVFFkIlah7MM0cF+nSoTYwZm3ov5BNy5yrfgqGI
+ LIDeIT4wHsRGuYIaS19vSIEeF3Tb43VBSzwqjWR45GyPXjhhHjsR3BhA+FCCJD2WUfTFJeGvHqy
+ RVTQ7++khf+l1s1Vdag2+8xD/2JTrDvQqhD9/jxkdb0mC9yI/ZSIEYr4Do2OYifnootogd8mbY+
+ +LEZcMnc7sAMZMDDfrCZQDmEH46+IaUJaEdEkwT6YAWxZG7kpiY4XvJwgXZL7M1edDBUz5eJTNT
+ mTEV1pZSyOt8DAK/6QMlSObzUU/1pSoMbFywHj1aWyDPxXCN8704wFVveF6JYKidSuEvDxGudXI
+ MY3LSwqt
+X-Authority-Analysis: v=2.4 cv=MJtgmNZl c=1 sm=1 tr=0 ts=68a2d4ed cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=qthNqDW-ekIAEVpD3OwA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_03,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ phishscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160033
 
-On Mon, Aug 18, 2025 at 01:42:07PM +0800, fangyu.yu@linux.alibaba.com wrote:
-> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
-> 
-> According to the RISC-V Privileged Architecture Spec, when MODE=Bare
-> is selected,software must write zero to the remaining fields of hgatp.
-> 
-> We have detected the valid mode supported by the HW before, So using a
-> valid mode to detect how many vmid bits are supported.
-> 
-> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
-With Fixed tag, feel free to add:
 
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+
+On 8/18/2025 2:33 PM, Krzysztof Kozlowski wrote:
+> On 18/08/2025 06:41, Fange Zhang wrote:
+>> Modularize the SX150X GPIO expander which is equipped on the QCS615 Ride
 > 
-> ---
-> Changes in v2:
-> - Fixed build error since kvm_riscv_gstage_mode() has been modified.
-> ---
->  arch/riscv/kvm/vmid.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Qualcomm QCS615 Ride
 > 
-> diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-> index 3b426c800480..5f33625f4070 100644
-> --- a/arch/riscv/kvm/vmid.c
-> +++ b/arch/riscv/kvm/vmid.c
-> @@ -14,6 +14,7 @@
->  #include <linux/smp.h>
->  #include <linux/kvm_host.h>
->  #include <asm/csr.h>
-> +#include <asm/kvm_mmu.h>
->  #include <asm/kvm_tlb.h>
->  #include <asm/kvm_vmid.h>
->  
-> @@ -28,7 +29,7 @@ void __init kvm_riscv_gstage_vmid_detect(void)
->  
->  	/* Figure-out number of VMID bits in HW */
->  	old = csr_read(CSR_HGATP);
-> -	csr_write(CSR_HGATP, old | HGATP_VMID);
-> +	csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) | HGATP_VMID);
->  	vmid_bits = csr_read(CSR_HGATP);
->  	vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
->  	vmid_bits = fls_long(vmid_bits);
-> -- 
-> 2.49.0
+> You are changing defconfig for all platforms, it's not your personal or
+> company defconfig.
+
+Thank you for the feedback. Yes, The change is intended to support the 
+Qualcomm QCS615 Ride platform, which is now upstream-ready and actively 
+maintained.
+I believe enabling it as a module ensures it's available without 
+impacting other platforms. While it's not currently used directly in the 
+kernel, having it built as a module allows flexibility for platforms 
+like QCS615 that may require it in future use cases.
+
+> 
+>>
 > 
 > 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> Best regards,
+> Krzysztof
+
 
