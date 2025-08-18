@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-772971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521BCB299F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C9EB299FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A534420615D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10D22068BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4998227702C;
-	Mon, 18 Aug 2025 06:42:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3145126FA6C;
+	Mon, 18 Aug 2025 06:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmX4cNcg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CC6209F43;
-	Mon, 18 Aug 2025 06:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CB1209F43;
+	Mon, 18 Aug 2025 06:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755499361; cv=none; b=CYKvHRlLjqDImZt9cjpOrEUqkv8IS46aBvWSzRnkaakVC523uT7SycPec9YFB6BE95UsTB7CN16WidDPn3qDLt3FxJXeEYszH1A6HBMVmIy/cvtp2m4iM8lGPd7OTlMXnYpUqj65C7ZS4HPGJfvUGpsbGgh0e0f2JmiYofQ6v8g=
+	t=1755499382; cv=none; b=nkQtMBxJ+7X16VyYp+u+HbHsixBKCDiAl3rCdiSVml0ZPHfO/HAH9A7cKMMmHgiNYU5PglyZp6ZPcswrAMzYFc701PNlLch/UizG8i+InXdDPkyuJ2uqQjTp+Xl3Q3sMtiUwRr7cROcXECox9lpPK943/DDfdbEqt4hKkSf0dIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755499361; c=relaxed/simple;
-	bh=nwAs0aFFINWtk3kW/um6oQyqyTzq6VoxcQzO7Ik0Jf4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aBPL8uMBAX/vjrUuqrrXrM4HTyBqqgaiLjp5oBAKpEixialpT1zPW7SBYXK6v7Hie2MUm0vI4JRIWUSmBXKvsdesaRm3k+oZONGYArm6peClghwwgtHt1tkzqtAzhKrqcohl1efvyzMiUcHKzsgpKLsCVdynukf7xGVitQcqvjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c536z3tJwzYQvWF;
-	Mon, 18 Aug 2025 14:42:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 205F21A018D;
-	Mon, 18 Aug 2025 14:42:34 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgAnM7VYy6JoRfoREA--.42486S2;
-	Mon, 18 Aug 2025 14:42:33 +0800 (CST)
-Message-ID: <7d180c47-07c8-4d33-ab64-f9bf31671b9f@huaweicloud.com>
-Date: Mon, 18 Aug 2025 14:42:32 +0800
+	s=arc-20240116; t=1755499382; c=relaxed/simple;
+	bh=rHLZVE+q9UBpLepVIpZp8NDD7WiYm8U2I5diRkJMZoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VLvCXe5dxwie9blDM7ObAEOQd3BMOMPebXxK137n24An1PqXsgGb4Nw7iSHSTm/bVd35aYJCY3BVAreBvuVkQSw6Nx+XYiVkXUEnYDhC+UKB/N9txggPoPBYZ2hQJpefPcMgDSsH9gxrlxcXeZZnylnMl5aa3RyRi3TiVxT+ZRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmX4cNcg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF64C4CEEB;
+	Mon, 18 Aug 2025 06:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755499382;
+	bh=rHLZVE+q9UBpLepVIpZp8NDD7WiYm8U2I5diRkJMZoA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=VmX4cNcg9f5KeLUQMKQdBbU627r45g6Y0/OgTBDsFfmF/1yW9b0Ag26MqHtANg5tt
+	 WPOQxgzfYlLRWpRoxeA30LQljto+IhNuupS4LD6SevlMP4LzeifcEc1FJoX4mciz1Y
+	 qWOCKKTTLjdrCgyybKuEeIM/I/IKwgLIOpwhPSapLJy/Bgxd5JkHGb6F46Strhr9Ya
+	 g3YY7nfzjmj5SmYBthSWPxWni5U63T4BvNwvaZ9wZURQ17FC0u4ixXYX/mnRW8R85S
+	 KiE3v03YMUiORZTqhKLBpQfXoQ5WoBEs7FvJX29zeqZG6YPXZlkYGj/u6D7es6um7S
+	 m7+GvQ+cNec5Q==
+Message-ID: <3f256b8e-dc7a-466d-be53-d6e324b44cb7@kernel.org>
+Date: Mon, 18 Aug 2025 08:42:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,68 +49,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] cgroup: split cgroup_destroy_wq into 3 workqueues
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, lizefan@huawei.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com, hdanton@sina.com,
- gaoyingjie@uniontech.com
-References: <20250818034315.1303955-1-chenridong@huaweicloud.com>
- <20250818061435.1304516-1-chenridong@huaweicloud.com>
+Subject: Re: [PATCH 1/5] dt-bindings: iio: mcp9600: Add compatible for
+ microchip,mcp9601
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>, Ben Collins <bcollins@watter.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250815164627.22002-1-bcollins@watter.com>
+ <20250815164627.22002-2-bcollins@watter.com>
+ <20250816105825.35e69652@jic23-huawei>
+ <66063382-78c6-4d93-be25-46e972e390f4@baylibre.com>
+ <2025081711-coral-aardwark-9f061b@boujee-and-buff>
+ <8e228d2d-d22f-4092-8c6d-94ce989b4a84@baylibre.com>
+ <2025081713-wooden-clam-aee35a@boujee-and-buff>
+ <65ca6431-56e1-4798-9ecc-6e6adf664f96@baylibre.com>
+ <2025081716-tan-pillbug-ff2cb5@boujee-and-buff>
+ <2025081717-fabulous-chameleon-5ad9bb@boujee-and-buff>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20250818061435.1304516-1-chenridong@huaweicloud.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <2025081717-fabulous-chameleon-5ad9bb@boujee-and-buff>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAnM7VYy6JoRfoREA--.42486S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKw1kJr1UZr1rZF43Xw1kXwb_yoWkuFc_ua
-	9rWrn0krZxJw4vg3yqgrn8XFZYkF45GFy8tF45tw17CF98Jwn8CrsxJr13CrWDAayxXFnx
-	Gr9xGas2kwnxCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-
-
-On 2025/8/18 14:14, Chen Ridong wrote:
-
+On 17/08/2025 23:10, Ben Collins wrote:
+>>>>>
+>>>>
+>>>> I couldn't find anything that would easily describe this type of layout:
+> ...
+>>> We usually do this the other way around. The base binding lists
+>>> all of the possibilities then an -if: constraint limits them
+>>> if needed.
+>>>
+>>>
+>>> So don't change what is there already and then add:
+>>>
+> ...
+>> This might be a little more complicated. I want to add a boolean for
+>> microchip,vsense so the SC/OC aren't even available without that flag
+>> being true (default false).
+>>
+>> I could just assume that having the interrupts means this flag is true,
+>> but that doesn't cover the case where the interrupts might not be used
+>> or even wired up, but the SC/OC detection in the status register can be
+>> used.
+>>
+>> I was going with this:
+>>
 > 
-> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> index 312c6a8b55bb..679dc216e3ed 100644
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -126,8 +126,22 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
->   * of concurrent destructions.  Use a separate workqueue so that cgroup
->   * destruction work items don't end up filling up max_active of system_wq
->   * which may lead to deadlock.
-> + *
-> + * A cgroup destruction should enqueue work sequentially to:
-> + * cgroup_offline_wq: use for css offline work
-> + * cgroup_release_wq: use for css release work
-> + * cgroup_free_wq: use for free work
-> + *
-> + * Rationale for using separate workqueues:
-> + * The cgroup root free work may depend on completion of other css offline
-> + * operations. If all tasks were enqueued to a single workqueue, this could
-> + * create a deadlock scenario where:
-> + * - Free work waits for other css offline work to complete.
-> + * - But other css offline work is queued after free work in the same queue.
->   */
+> Nevermind, I figured this out. I'll send v4 soon.
 
-More comments are added to clarify why we split the destroy work into 3 workqueues in v5.
-
--- 
+You received from David correct code, good idea... yet you ignored it
+and sent something incorrect - breaking ABI.
 Best regards,
-Ridong
-
+Krzysztof
 
