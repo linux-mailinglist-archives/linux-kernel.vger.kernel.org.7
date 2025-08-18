@@ -1,198 +1,162 @@
-Return-Path: <linux-kernel+bounces-773767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA99DB2A902
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8836B2A91F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252D01BA2FA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:05:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EEE01BA4934
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01573341ACB;
-	Mon, 18 Aug 2025 13:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHoIT5lE"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D00320CD5;
+	Mon, 18 Aug 2025 13:58:30 +0000 (UTC)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C85322C87;
-	Mon, 18 Aug 2025 13:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A65331B11E;
+	Mon, 18 Aug 2025 13:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525437; cv=none; b=ilwTb7L9Y7tdvWFl+XmLLd5fRMS1qn3JVNgoDhWTigC/cZsdbvUy3cJoQ8fP+GGD6lRp39jw/T8HEA7iAFUXxm0pGeOA2ueB9ThUMsDYSy0S3B3dWYhTh+YWY3S6QCXXnUi0F8fYS+rJxGtvnjrNLhjtMnbQQtH4AAgCvMHt7ws=
+	t=1755525510; cv=none; b=kCvPZw1pruOPhtYrRPFAILG4Z66J5aPQoFmy8qtLhd7jFKOIgaxZ1HMq+pMPBXyhkknxQKvyMJ6wKvgXrCzfdUWhftKFw5PG2jQnxCgHFQkLVUMA0cwnPKUrY3rDR0Xqg3UrNpmzPSnYh7g7wgKPxwLEfe69C8gsDFqcI/dQ9sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525437; c=relaxed/simple;
-	bh=uPhOZodCNAiYT0WW4/0KEJWaonMqErn9eznseuAcoic=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oIj746RHnRRp21hx47shaijfC84u5mscbQoYeNFfsxxMgZZ4LetIFui3IkrtIqSt83u8zgVAz/n/yttCYpBPKVnzUnDypUQRlk88lu8fUYyx201pKMdSwd5f6JwufpVvl46HmN1cEZ8B2WLJHP3rcVu6YlhmvMuioN1qE3XCyXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHoIT5lE; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1755525510; c=relaxed/simple;
+	bh=r6b8o6bsLro/7yyL8l9nrunXrsD6uZ1zGQTYvzQ1BfE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UhLqOwk/9sBHypbFQpLWlWUYEDEzhr0P4ZHueSvempb0/wT9jLeTJZW5tLbAX9w+X8qIoO/pp8phY4JDXCGi934UUrOtUvZuWKjs7ta0ny9IxQUkj6Qv2ZbAgk6a/3vwT0N4GyakPqgt4SBClFYPwuTTx7RdJbwfuMKLZMnBJVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45a1b004954so29738605e9.0;
-        Mon, 18 Aug 2025 06:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755525434; x=1756130234; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EO4rhFnxoPdE6uV4o0KSojzsehfdwFllHuXNXl4bHdg=;
-        b=SHoIT5lEMwesPGETf6FwuGGzHZh8PAUCaMtGAAOYK1Dr9FlygA62n3tN7wNheE1PVO
-         NdkgLUVEctchgzBucj5hSjZHRVHTlMx0luWSQA45K7m6YbpIrgtYbbWgOqaU9ZsQdlZE
-         nydilSvXs0JKT8R3TfLifE2rAm+oAAYltxPeW+Tzsi7dHjtyol7SgXSDwUUKxU5rMxJB
-         idve7QdEScSz6xgCufrt1sTq2+6bkSk6HnrKGbiz4xlagimfT01FCvmG9H1Gch+TvnOJ
-         j0UNKnHPju/6TwewrUdNI826hCLR171scnUt5iOQrmvGb5W1XCEyTy1pxYV4ikxoE8mi
-         NdUQ==
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8901912bcfeso959248241.3;
+        Mon, 18 Aug 2025 06:58:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755525434; x=1756130234;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755525507; x=1756130307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EO4rhFnxoPdE6uV4o0KSojzsehfdwFllHuXNXl4bHdg=;
-        b=sZuc3kaiJfcVnmQPJsH4Ck46csYidTrZl/WgfSBRQHUy2aCloF/BzwRk1szoNDZ3jb
-         Jj8jO1ILJe/XjrdBDttwIc/RxrSFmKhH+VI7miWLN3JgYZOW6RuogjS+M/Qf5pNusmuj
-         gWCLqTp8k8cTuSkMs0soi7kPQjWrqyfVlc39+4xCABGRA0dwUMZqatW9CZlpuRfbzlsS
-         JQPHe7+hB3sx862XqJKVlkVyvUnlzBegbLSwzinaHVdg9FWvK8h6ZI33eYjYaag45j9z
-         ajVT/Rt6NG29DS3XQp6ZCz9ycZVGY45PxSGU7alkQ8rJyT7lSXicVXtkYXALmKVN8yvR
-         6FqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs6d1RWVM8f9cI6c5lRiV2erlIz5usVJak4NxeODwBx+n8o3OybaA8rwSoZRsNLT4e17uEZdxQ@vger.kernel.org, AJvYcCWpFk9qBRJkE8hJB+93L1Hzx8UQ3YpoYd2Bl0JWLVuY3GfSCSRnZcUidh6NQ/AxQ80+h3DUqHbdLg==@vger.kernel.org, AJvYcCXaH8WXn/dNHgx8QvPxRaXiWEvViR0DH7Hy1FDTvYNpa4gyVtymAmPjPqiHtELbXLvf/+vwMynsPr7jliM1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVwdaa1bpm/o8TSHmraWxbl47XUx0RkYAfUFoMZyGArKXoshXS
-	rIKTeAf3FCD+AeCO2mH6C4cDHypud4lB39mD1bAJwJ/XIYX0vvbi3VcM
-X-Gm-Gg: ASbGncvmJLMWYkK5SR2NrQwhXrwixckKi9uh3LVTi5jbzJadn2ZMg+UV/Tktk8P0MfG
-	aCJ8YPEc29fRwqVtr/nk0RFN0VS15K2ZoOn1woD1JQZa3cM9jM5rYWom9T02oTPpMIxHQHx33o9
-	rGE3pnFmEHcpEUq0V/fqQ3wRuS+kKi/ayBLwdqqwwLyP0Zo52I3IulBcpV7n/3i5YYyEwwMgi2y
-	n3d0rq8JDUvgYWWh6DFTw+Cyz5Y5x7lxogn/U19UpXNCQezP4SkUV+0qeZS0d3v9iATXcmRWQBZ
-	bwZjjpun9cXK82lrXq4362AhCUHOKvZQ7o9ctV6VZwGJ8o9VGAn29EaducHHrLbZikJ0ePPm7Qd
-	REthksHgfSlEWevU8NM5j82n5n45wA0Q5jg==
-X-Google-Smtp-Source: AGHT+IGwIAP1mf1GI9G+rzGUBGLqZz7cZDoMgatT5HDZq6aN5orhtgKenBZxfYBMO0vD4Z/+YO1Ymw==
-X-Received: by 2002:a05:600c:1f10:b0:450:cabd:b4a9 with SMTP id 5b1f17b1804b1-45a26790db8mr66136765e9.29.1755525433654;
-        Mon, 18 Aug 2025 06:57:13 -0700 (PDT)
-Received: from 127.0.0.1localhost ([185.69.144.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b899338sm91187345e9.7.2025.08.18.06.57.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 06:57:12 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	Eric Dumazet <edumazet@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org,
-	davem@davemloft.net,
-	sdf@fomichev.me,
-	almasrymina@google.com,
-	dw@davidwei.uk,
-	michael.chan@broadcom.com,
-	dtatulea@nvidia.com,
-	ap420073@gmail.com,
-	linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: [PATCH net-next v3 23/23] net: validate driver supports passed qcfg params
-Date: Mon, 18 Aug 2025 14:57:39 +0100
-Message-ID: <417cf28f3bf129d1a0d1b231220aa045abac3263.1755499376.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1755499375.git.asml.silence@gmail.com>
-References: <cover.1755499375.git.asml.silence@gmail.com>
+        bh=dQFafCNnR6ehDHFzyrrp2DqVJKO1WFVvZqmwWpe95Nk=;
+        b=ZsgiTbD4VW3AGga2wpvvYAtMeNUuhcELgLWOe1EeoNESbZq0SNdAcimilinHWtZ/q4
+         e/w8jRBxV8XeieCbt4S1KYpbTtFIhdQbKmPLUV+FqR6JKKliLAXuvYchYA3TsDhJeArh
+         9rdc8jeRfTgstyDe8Nj45Jfs1bkWxHLAaDPmVTS9HtcOS3loypqjPHhN14tl+VXikDIu
+         F0vCPVVUI6845wwZZ2gnEnTc+0B86nWkUkqMmvSZuz3xVVw8DNvY/0pO3TEg1QzF8hLZ
+         rSru5bTXfHJtYdRnyt2J8KPbjeYVVCRtn+QK45truyUVNU7v3Q1PR4ZPJMiaouW+7Few
+         6YmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVf10X+TKLlEpd2yMOSYIOl0Gx3wBtQtOVwX5wUAK97DDkTj1jcj0t4nlh3vIgXoel7NFq+NALixZ7S@vger.kernel.org, AJvYcCVqGfO9sd4g1CiqNmva5sh8lU7aN871nk0Vflh+pLV5cIB0pQ2LvYsZu1m4q8dg5suaWk3zSVQCM26lPHT1@vger.kernel.org, AJvYcCWLTrTHWWNnIg5xl/5GGIY7hDT/HgYKfkqEBekhtFVqaPaFhh/TEsAT+rRJuhU1F0P5CUFm4GBvfppuoZmtn1MOS04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZnxCQoOcnMhL/4+miLzSlgFodcps52kc1FK1c0MfRDMDkCZjG
+	ZC5wHrJHzaiu0tpbxR5fKJ+rUG9RrW0gQlt5hh0iVw8qMLbq/kSS11UWOiEG75pZ
+X-Gm-Gg: ASbGnctixoB5KV8ggCfKNdTZprTTdfia9FzqkoswEdN4hijYbLlqZydg3KR3/moSxz/
+	NW4ygHA1TkodDyswgASpoCq3CTeE31sGij+CpnTyOB4lHfOGz1VJGAtZ3LiPCjzvm97dFojicG6
+	ChJwKMWlqS9uYc2pp0savgxh3kmNNntmBZCo7GAi8TLRhhVFZQfV/Wqi6IMdOT1gbeQLBc1vL4J
+	q6u48KFxkYbD5ckz4ClcWij2TWuQc84ig4xHCXAvpWd3GeLfmv3wqbNzWPcXQvnjnHqU33APU56
+	dxX3EdOEBUBSqDOvv7EjIDk313CaxPioVsJ1oJj/n0R77/2i7ALI+r8B84LqmFUsgkkE8i2cOxr
+	fMs8dwegDzwyYbOGbBKwFx4SHTHVxFT9sgJQoc5Urp2YtWXZHKGP2b2/MAbYw
+X-Google-Smtp-Source: AGHT+IGLnhLc+85W8owZdOh7XwNLQcGE2xXp77/E+SXCQFiMg28WkivDwqcw/hHJZAIEILR91tdWrQ==
+X-Received: by 2002:a05:6102:809e:b0:50a:530f:baad with SMTP id ada2fe7eead31-5126cd388cdmr5032717137.13.1755525507193;
+        Mon, 18 Aug 2025 06:58:27 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127d4dc422sm2026687137.6.2025.08.18.06.58.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 06:58:27 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-89021b256eeso971823241.1;
+        Mon, 18 Aug 2025 06:58:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6vfugWBAIvDO3CfJjfmOdmvo+9zu4ZfETRfJonfwamEDYTOrcdzomUv39p0HsgyZghB/l2+w+hKdG@vger.kernel.org, AJvYcCVlkLlkkwC9DPiwxr4s9JKSoA8aVJ/OD6ubHob0HGbHRFZ0N1HxOoFByMv0kASp/XmXCr+7zwlgoE1O7wew@vger.kernel.org, AJvYcCVvg9SVq5LepxDCn+PSeMchz4P3p/+0kJGboh2HTi8w3uwXmLGwB7OgR2kzcsjA4eRE56iPy9esdiOi8VkjCae5UNE=@vger.kernel.org
+X-Received: by 2002:a05:6102:2911:b0:4f6:25ca:e797 with SMTP id
+ ada2fe7eead31-5126d8dcd68mr3610886137.25.1755525506566; Mon, 18 Aug 2025
+ 06:58:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250812200344.3253781-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdX=8rdWHyTpUmreOy5Nf-kiAoQMVakU051AyC2BoVP8vA@mail.gmail.com> <CA+V-a8tk8FJoynigy0JSWbb7x-BOjUEuzC9fYY0wC+GQKCRiBA@mail.gmail.com>
+In-Reply-To: <CA+V-a8tk8FJoynigy0JSWbb7x-BOjUEuzC9fYY0wC+GQKCRiBA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 15:58:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVG4EUkEL18ugJAyoKDnoy=8Wzkw5hrwSJMqLkuoH09cQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwTBblVBQX_UscO6NJ4rEO0w4zfYRKGXgyDshWqIwj6XIqRWHLY2icOQZs
+Message-ID: <CAMuHMdVG4EUkEL18ugJAyoKDnoy=8Wzkw5hrwSJMqLkuoH09cQ@mail.gmail.com>
+Subject: Re: [PATCH 04/13] arm64: dts: renesas: r9a09g087: Add pinctrl node
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When we pass a qcfg to a driver, make sure it supports the set
-parameters by checking it against ->supported_ring_params.
+Hi Prabhakar,
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- net/core/dev.h             |  3 +++
- net/core/netdev_config.c   | 26 ++++++++++++++++++++++++++
- net/core/netdev_rx_queue.c |  8 +++-----
- 3 files changed, 32 insertions(+), 5 deletions(-)
+On Mon, 18 Aug 2025 at 15:44, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Aug 18, 2025 at 2:34=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add pinctrl node to RZ/N2H ("R9A09G087") SoC DTSI.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> > > @@ -5,6 +5,17 @@
+> > >   * Copyright (C) 2025 Renesas Electronics Corp.
+> > >   */
+> > >
+> > > +#define RZN2H_PINS_PER_PORT    8
+> > > +
+> > > +/*
+> > > + * Create the pin index from its bank and position numbers and store=
+ in
+> > > + * the upper 16 bits the alternate function identifier
+> > > + */
+> > > +#define RZN2H_PORT_PINMUX(b, p, f)     ((b) * RZN2H_PINS_PER_PORT + =
+(p) | ((f) << 16))
+> > > +
+> > > +/* Convert a port and pin label to its global pin index */
+> > > +#define RZN2H_GPIO(port, pin)  ((port) * RZN2H_PINS_PER_PORT + (pin)=
+)
+> >
+> > Shouldn't this be in a header file under include/dt-bindings/pinctrl/?
+>
+> Agreed, theT2H related macros are used in the driver whereas the above
+> aren't. In the past DT maintainers opposed including such headers
+> which aren't used in the DT and drivers. Hence I choose this approach.
+> Please let me know if you want me to move this into a header file
+> under dt-bindings.
 
-diff --git a/net/core/dev.h b/net/core/dev.h
-index c1cc54e38fe4..c53b8045d685 100644
---- a/net/core/dev.h
-+++ b/net/core/dev.h
-@@ -103,6 +103,9 @@ int netdev_queue_config_revalidate(struct net_device *dev,
- 				   struct netlink_ext_ack *extack);
- void netdev_queue_config_update_cnt(struct net_device *dev, unsigned int txq,
- 				    unsigned int rxq);
-+int netdev_queue_config_validate(struct net_device *dev, int rxq_idx,
-+				  struct netdev_queue_config *qcfg,
-+				  struct netlink_ext_ack *extack);
- 
- /* netdev management, shared between various uAPI entry points */
- struct netdev_name_node {
-diff --git a/net/core/netdev_config.c b/net/core/netdev_config.c
-index 2c9b06f94e01..ffe997893cd1 100644
---- a/net/core/netdev_config.c
-+++ b/net/core/netdev_config.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- 
- #include <linux/netdevice.h>
-+#include <linux/ethtool.h>
- #include <net/netdev_queues.h>
- #include <net/netdev_rx_queue.h>
- 
-@@ -136,6 +137,31 @@ void netdev_queue_config(struct net_device *dev, int rxq,
- }
- EXPORT_SYMBOL(netdev_queue_config);
- 
-+int netdev_queue_config_validate(struct net_device *dev, int rxq_idx,
-+				  struct netdev_queue_config *qcfg,
-+				  struct netlink_ext_ack *extack)
-+{
-+	const struct netdev_queue_mgmt_ops *qops = dev->queue_mgmt_ops;
-+	int err;
-+
-+	if (WARN_ON_ONCE(!qops))
-+		return -EINVAL;
-+
-+	if (!(qops->supported_ring_params & ETHTOOL_RING_USE_RX_BUF_LEN) &&
-+	    qcfg->rx_buf_len &&
-+	    qcfg->rx_buf_len != dev->cfg_pending->rx_buf_len) {
-+		NL_SET_ERR_MSG_MOD(extack, "changing rx-buf-len not supported");
-+		return -EINVAL;
-+	}
-+
-+	if (qops->ndo_queue_cfg_validate) {
-+		err = qops->ndo_queue_cfg_validate(dev, rxq_idx, qcfg, extack);
-+		if (err)
-+			return err;
-+	}
-+	return 0;
-+}
-+
- int netdev_queue_config_revalidate(struct net_device *dev,
- 				   struct netlink_ext_ack *extack)
- {
-diff --git a/net/core/netdev_rx_queue.c b/net/core/netdev_rx_queue.c
-index 39834b196e95..d583a9ead9c4 100644
---- a/net/core/netdev_rx_queue.c
-+++ b/net/core/netdev_rx_queue.c
-@@ -37,11 +37,9 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
- 
- 	netdev_queue_config(dev, rxq_idx, &qcfg);
- 
--	if (qops->ndo_queue_cfg_validate) {
--		err = qops->ndo_queue_cfg_validate(dev, rxq_idx, &qcfg, extack);
--		if (err)
--			goto err_free_old_mem;
--	}
-+	err = netdev_queue_config_validate(dev, rxq_idx, &qcfg, extack);
-+	if (err)
-+		goto err_free_old_mem;
- 
- 	err = qops->ndo_queue_mem_alloc(dev, &qcfg, new_mem, rxq_idx);
- 	if (err)
--- 
-2.49.0
+We need to share the definitions between DT sources and DT overlay
+sources, so that sounds like a convincing argument for a header file
+to me.
 
+Now, as RZT2H_PORT_PINMUX() must be identical to RZN2H_PORT_PINMUX(),
+this could be the existing
+<dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h> file
+(cfr. my comment on [PATCH 07/13]).
+
+> > Else you have to duplicate these definitions in DT overlays.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
