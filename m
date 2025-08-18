@@ -1,128 +1,179 @@
-Return-Path: <linux-kernel+bounces-773303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EE3B29E0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:35:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39750B29E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A917189D910
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:31:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E9B18A5DA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3CB30E85B;
-	Mon, 18 Aug 2025 09:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WEvCwHrt"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3B330E0F7;
+	Mon, 18 Aug 2025 09:31:11 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3473B27A477;
-	Mon, 18 Aug 2025 09:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21ED30E0D1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509457; cv=none; b=KRYGbxOwqnWvwz5ucan5hH/1kDFunZny6qQIEIdreCn+zqMC7B8ZdjEABPKBIJS/5JITHuL8vNMoGR0o+IgmFxBtIJ++iJeZg9IoxPn178JF2Wab5mylEGNSVBhS9dFBN4Aff8iWDSGJ6eQNu8nOEOSR3oUglyAy5W5oSKP1Ico=
+	t=1755509470; cv=none; b=eMvpnbKas8ZNZNn20jJa81k91zNcQhHSZ/OA2s5SDDXvEXukqtrUMBbCFeBJTY3zQGuyS6QtlLkK2kphlxPW/T/EJWRO/NhlCDgDiMtOIcyHDli49af8FbhoLgiNt/0PheDCZPid3xxOWggLT0BvtL4bIUJOcRQC3NqIA3ry138=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509457; c=relaxed/simple;
-	bh=H/RXtCGHHBQ1De/TaksVJ3qWD5+W1hECG5Q6BNf8hho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kD/BnymMtDxQudn6FXKj0Kr99LOa1scjkxzQRUeFHDoQpgWYzwgS4P8bVmWAhu/QXArkxgW/Z7fGAJ87Sfor9yVu3T2dq4u+LXnyP+YWT7eBhKJqOHaRFn3NGRYqR3nFg7fmSeTIGYYrqUfQI6R7yEzEdR7mjnYNrwyk5j9ck04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WEvCwHrt; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A84E817D1;
-	Mon, 18 Aug 2025 11:29:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755509395;
-	bh=H/RXtCGHHBQ1De/TaksVJ3qWD5+W1hECG5Q6BNf8hho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WEvCwHrtO2zW5f35Nzm4LD1pik4x3m01g/rzVvq5amdOzMDfxcHEbM1SBjhuZlUbn
-	 cdHrFSzhbRD36iU9dU+fKvvVVshrRm+mbJ8cLFex0lqSZnIQV0Ha12azlU7PpeCFla
-	 GIGsF+cQc6JPBw8OXJRgPKDt1IUfesZndTSM1xpY=
-Date: Mon, 18 Aug 2025 12:30:30 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Inbaraj E <inbaraj.e@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
-	s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
-	cw00.choi@samsung.com, rmfrfs@gmail.com, martink@posteo.de,
-	mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
-	catalin.marinas@arm.com, pankaj.dubey@samsung.com,
-	shradha.t@samsung.com, ravi.patel@samsung.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-	linux-samsung-soc@vger.kernel.org, kernel@puri.sm,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 08/12] media: imx-mipi-csis: Add support to dump all
- vc regs
-Message-ID: <20250818093030.GB5862@pendragon.ideasonboard.com>
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141041epcas5p2b281659391a8e45c95e8db21d9867f98@epcas5p2.samsung.com>
- <20250814140943.22531-9-inbaraj.e@samsung.com>
+	s=arc-20240116; t=1755509470; c=relaxed/simple;
+	bh=G9LZ1tgerP7BCq/4zzhNbwknKEclbuQsJ9X23FInDmY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=F4rD3t8XgB6iXdgW1tEI3VJOPyY1csppHrF0goAmdHwX2gVzlZrUS/95Q91vSCQEMzkTdpscr5nRH9sYGukCW/YODV5Gjpz+Fr4OSMQfEnNch6ERN0+tcT7mNSiFt4VrzpBVYLildfn2NExAedNbGXWGbx3pu7g/D4RtZlM/zbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+	by 156.147.23.51 with ESMTP; 18 Aug 2025 18:31:05 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
+	by 156.147.1.127 with ESMTP; 18 Aug 2025 18:31:05 +0900
+X-Original-SENDERIP: 10.178.31.96
+X-Original-MAILFROM: chanho.min@lge.com
+From: Chanho Min <chanho.min@lge.com>
+To: Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna.schumaker@netapp.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	gunho.lee@lge.com,
+	Sasha Levin <sashal@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Chanho Min <chanho.min@lge.com>
+Subject: [PATCH] nfs: fix UAF in direct writes
+Date: Mon, 18 Aug 2025 18:31:03 +0900
+Message-Id: <20250818093103.39233-1-chanho.min@lge.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250814140943.22531-9-inbaraj.e@samsung.com>
 
-Hi Inbaraj,
+From: Josef Bacik <josef@toxicpanda.com>
 
-Please see [1] and in particular [2]. I would like to get that series
-merged for v6.18, but it's missing reviews. If you want to speed it up,
-you can review the patches :-)
+[ Upstream commit 17f46b803d4f23c66cacce81db35fef3adb8f2af ]
 
-[1] https://lore.kernel.org/linux-media/20250608235840.23871-1-laurent.pinchart@ideasonboard.com
-[2] https://lore.kernel.org/linux-media/20250608235840.23871-9-laurent.pinchart@ideasonboard.com/
+In production we have been hitting the following warning consistently
 
-On Thu, Aug 14, 2025 at 07:39:39PM +0530, Inbaraj E wrote:
-> Extend support to dump all 4 virtual channel register.
-> 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index 4f6c417fdf58..c1653a738854 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -876,11 +876,26 @@ static int mipi_csis_dump_regs(struct mipi_csis_device *csis)
->  		{ MIPI_CSIS_DPHY_SCTRL_L, "DPHY_SCTRL_L" },
->  		{ MIPI_CSIS_DPHY_SCTRL_H, "DPHY_SCTRL_H" },
->  		{ MIPI_CSIS_ISP_CONFIG_CH(0), "ISP_CONFIG_CH0" },
-> +		{ MIPI_CSIS_ISP_CONFIG_CH(1), "ISP_CONFIG_CH1" },
-> +		{ MIPI_CSIS_ISP_CONFIG_CH(2), "ISP_CONFIG_CH2" },
-> +		{ MIPI_CSIS_ISP_CONFIG_CH(3), "ISP_CONFIG_CH3" },
->  		{ MIPI_CSIS_ISP_RESOL_CH(0), "ISP_RESOL_CH0" },
-> +		{ MIPI_CSIS_ISP_RESOL_CH(1), "ISP_RESOL_CH1" },
-> +		{ MIPI_CSIS_ISP_RESOL_CH(2), "ISP_RESOL_CH2" },
-> +		{ MIPI_CSIS_ISP_RESOL_CH(3), "ISP_RESOL_CH3" },
->  		{ MIPI_CSIS_SDW_CONFIG_CH(0), "SDW_CONFIG_CH0" },
-> +		{ MIPI_CSIS_SDW_CONFIG_CH(1), "SDW_CONFIG_CH1" },
-> +		{ MIPI_CSIS_SDW_CONFIG_CH(2), "SDW_CONFIG_CH2" },
-> +		{ MIPI_CSIS_SDW_CONFIG_CH(3), "SDW_CONFIG_CH3" },
->  		{ MIPI_CSIS_SDW_RESOL_CH(0), "SDW_RESOL_CH0" },
-> +		{ MIPI_CSIS_SDW_RESOL_CH(1), "SDW_RESOL_CH1" },
-> +		{ MIPI_CSIS_SDW_RESOL_CH(2), "SDW_RESOL_CH2" },
-> +		{ MIPI_CSIS_SDW_RESOL_CH(3), "SDW_RESOL_CH3" },
->  		{ MIPI_CSIS_DBG_CTRL, "DBG_CTRL" },
->  		{ MIPI_CSIS_FRAME_COUNTER_CH(0), "FRAME_COUNTER_CH0" },
-> +		{ MIPI_CSIS_FRAME_COUNTER_CH(1), "FRAME_COUNTER_CH1" },
-> +		{ MIPI_CSIS_FRAME_COUNTER_CH(2), "FRAME_COUNTER_CH2" },
-> +		{ MIPI_CSIS_FRAME_COUNTER_CH(3), "FRAME_COUNTER_CH3" },
->  	};
->  
->  	unsigned int i;
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 17 PID: 1800359 at lib/refcount.c:28 refcount_warn_saturate+0x9c/0xe0
+Workqueue: nfsiod nfs_direct_write_schedule_work [nfs]
+RIP: 0010:refcount_warn_saturate+0x9c/0xe0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ? __warn+0x9f/0x130
+ ? refcount_warn_saturate+0x9c/0xe0
+ ? report_bug+0xcc/0x150
+ ? handle_bug+0x3d/0x70
+ ? exc_invalid_op+0x16/0x40
+ ? asm_exc_invalid_op+0x16/0x20
+ ? refcount_warn_saturate+0x9c/0xe0
+ nfs_direct_write_schedule_work+0x237/0x250 [nfs]
+ process_one_work+0x12f/0x4a0
+ worker_thread+0x14e/0x3b0
+ ? ZSTD_getCParams_internal+0x220/0x220
+ kthread+0xdc/0x120
+ ? __btf_name_valid+0xa0/0xa0
+ ret_from_fork+0x1f/0x30
 
--- 
-Regards,
+This is because we're completing the nfs_direct_request twice in a row.
 
-Laurent Pinchart
+The source of this is when we have our commit requests to submit, we
+process them and send them off, and then in the completion path for the
+commit requests we have
+
+if (nfs_commit_end(cinfo.mds))
+	nfs_direct_write_complete(dreq);
+
+However since we're submitting asynchronous requests we sometimes have
+one that completes before we submit the next one, so we end up calling
+complete on the nfs_direct_request twice.
+
+The only other place we use nfs_generic_commit_list() is in
+__nfs_commit_inode, which wraps this call in a
+
+nfs_commit_begin();
+nfs_commit_end();
+
+Which is a common pattern for this style of completion handling, one
+that is also repeated in the direct code with get_dreq()/put_dreq()
+calls around where we process events as well as in the completion paths.
+
+Fix this by using the same pattern for the commit requests.
+
+Before with my 200 node rocksdb stress running this warning would pop
+every 10ish minutes.  With my patch the stress test has been running for
+several hours without popping.
+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Cc: stable@vger.kernel.org # 5.4
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+[ chanho : Backports v5.4.y, commit 133a48abf6ec (NFS: Fix up commit deadlocks)
+is needed to use nfs_commit_end ]
+Signed-off-by: Chanho Min <chanho.min@lge.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/nfs/direct.c        | 11 +++++++++--
+ fs/nfs/write.c         |  2 +-
+ include/linux/nfs_fs.h |  1 +
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 32dc176ea1aba..982f0eeac3dfa 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -727,10 +727,17 @@ static void nfs_direct_commit_schedule(struct nfs_direct_req *dreq)
+ 	LIST_HEAD(mds_list);
+ 
+ 	nfs_init_cinfo_from_dreq(&cinfo, dreq);
++	nfs_commit_begin(cinfo.mds);
+ 	nfs_scan_commit(dreq->inode, &mds_list, &cinfo);
+ 	res = nfs_generic_commit_list(dreq->inode, &mds_list, 0, &cinfo);
+-	if (res < 0) /* res == -ENOMEM */
+-		nfs_direct_write_reschedule(dreq);
++	if (res < 0) { /* res == -ENOMEM */
++		spin_lock(&dreq->lock);
++		if (dreq->flags == 0)
++			dreq->flags = NFS_ODIRECT_RESCHED_WRITES;
++		spin_unlock(&dreq->lock);
++	}
++	if (nfs_commit_end(cinfo.mds))
++		nfs_direct_write_complete(dreq);
+ }
+ 
+ static void nfs_direct_write_schedule_work(struct work_struct *work)
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index c9895316fc070..f3c672b11c4fc 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1653,7 +1653,7 @@ static int wait_on_commit(struct nfs_mds_commit_info *cinfo)
+ 				       !atomic_read(&cinfo->rpcs_out));
+ }
+ 
+-static void nfs_commit_begin(struct nfs_mds_commit_info *cinfo)
++void nfs_commit_begin(struct nfs_mds_commit_info *cinfo)
+ {
+ 	atomic_inc(&cinfo->rpcs_out);
+ }
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index a96b116cc9224..b2b441f3572be 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -549,6 +549,7 @@ extern int nfs_wb_page_cancel(struct inode *inode, struct page* page);
+ extern int  nfs_commit_inode(struct inode *, int);
+ extern struct nfs_commit_data *nfs_commitdata_alloc(bool never_fail);
+ extern void nfs_commit_free(struct nfs_commit_data *data);
++void nfs_commit_begin(struct nfs_mds_commit_info *cinfo);
+ bool nfs_commit_end(struct nfs_mds_commit_info *cinfo);
+ 
+ static inline int
 
