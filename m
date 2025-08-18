@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-774312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787BDB2B113
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:02:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57D5B2B112
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F5B3B0183
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3AED584706
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2368277C88;
-	Mon, 18 Aug 2025 18:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9182D2497;
+	Mon, 18 Aug 2025 18:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="af9MmNf8"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A+2qamSl"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D6A274B50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AB8272E48
 	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755543565; cv=none; b=GsARGLREav3FxniMnPv1ZrqfGDKkhL6w40SoNDAuy1LGfmfK8A8Sy6xQW7CSKULa2z24un6abz3qZ2UMszR8IHoVWzDqn1qXQ+yL+l3I3CUyeufebwsqKFhu4Aqujqfi4w7qzzLkwoAP7VZQrrN/CfOptKD7RE64Ob/hPUF1KnA=
+	t=1755543565; cv=none; b=Bvk7zwhKt5ct6CcBzP2zvuvKtRq2VVDxQn9lk8rOQkfeprNqT9wa+RMu62epupqF5rIYqezGMVQUuAatcWbhNRhJ0R5wulc2vsQQabbZq0Z8V/sH75MukA7CfNhjB1qLXAZdGFgsevMPykgbtXBqDGCZrxoF3kBVtBgg40r63yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755543565; c=relaxed/simple;
-	bh=z2OM3+rx83A3V9ym7RSXQfddzzsMXYLBw5vA4FCqwJo=;
+	bh=CZzIqLl7txM9v2LMT0cPyUUYe+agcYOKK/tHV7hSgl0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YOq8rDp/1UwqOw0VV4ukDbOMdPT3vB6cw3DHjg7RT6rERBTDI8exdwrHJEk92ehuUfILZqyjmLugIepqyBZCtx2v0JHlJR8VCa/ZTLGdJVzi1F0x3BVfZtqYIzEIHHdlp1DdSNTStsKuySdghJzItvSqubOjlB8aJ+TA4hDAlpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=af9MmNf8; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=IZNoi7wf5g1hkMP+aYBzaBbi2uq4zzOjyy9OK2sFdwYbBRnsAcAC0H7iXkMYjwPjXXb2QmjiSAYKR6SXJvRvo8bO32dmJYEjY+vS0OLR87N5ub6uO891XxhBWOF8+Zu7vcEQkN2pkGoi9ZTnS5q12PkCmP3I/T8xeQwN5OBsJ9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A+2qamSl; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755543561;
-	bh=z2OM3+rx83A3V9ym7RSXQfddzzsMXYLBw5vA4FCqwJo=;
+	s=mail; t=1755543562;
+	bh=CZzIqLl7txM9v2LMT0cPyUUYe+agcYOKK/tHV7hSgl0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=af9MmNf8KQjzKABMu+lGlhCMKVHVynoRq+6yr5SnXN0maz6/5YCoOxXGcSQj+P38k
-	 nnEGNGt8iLYNu6TacIIA8cWBq8NPoFKYkgoraHgFxgkVvCyPJeSjTkYjgVn0adRikJ
-	 24PsqwDXzXN3EY42mL8R7tk/vRr4P7Lb2uIRCtODgsCCnC8oNHrnhASXwP7EU10oC9
-	 MpiKmZsWpUBixkmvL1rX0VibFru6jaudhi5Zf2Nd2a6Iao0fc+CAWikdi3nQzhxelZ
-	 tpl2GxCO5LIOZFmAxHr1QRMCSEQ3ktNeV0mf/eZAB9gvJfOzKDrUvTOWum8snNcQNF
-	 9VFrfu999qWYQ==
+	b=A+2qamSlFvOOkTXKsmlDcOoY9MndK8kRVJlezQlz82QSjs1nMGEh8dch2/0Vv3wRz
+	 Od5T2+NyapQKKgUTbDW2oALczAM6n9In4CxitKuVMZy1ZlOaUy94SDDqPRIND7itJW
+	 N1i9Nd8Pe166TFaRvodYrhMn0I/CoSg58i61ZFMuQ8G2oi31raqw1HPusv3sSvDaIq
+	 BuwTz1pY32DeSQ/yi9tm/a/WhpRQPUThRNHhVMF4nE6o9zIIlW6zJd1dJz2v4T8SGf
+	 nkQTG3qkJBmQM0CUf4DMavNuPHgDY74GiW2sTozyfxADl6HYoaL6GbwN5TznclfDFz
+	 lHmw5b9K+F10Q==
 Received: from localhost (unknown [82.79.138.60])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 7A12017E090E;
-	Mon, 18 Aug 2025 20:59:21 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 413C717E1319;
+	Mon, 18 Aug 2025 20:59:22 +0200 (CEST)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Mon, 18 Aug 2025 21:59:02 +0300
-Subject: [PATCH v3 02/14] phy: rockchip: samsung-hdptx: Fix reported clock
- rate in high bpc mode
+Date: Mon, 18 Aug 2025 21:59:03 +0300
+Subject: [PATCH v3 03/14] phy: rockchip: samsung-hdptx: Reduce ROPLL loop
+ bandwidth
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-phy-hdptx-frl-v3-2-c79997d8bb2b@collabora.com>
+Message-Id: <20250818-phy-hdptx-frl-v3-3-c79997d8bb2b@collabora.com>
 References: <20250818-phy-hdptx-frl-v3-0-c79997d8bb2b@collabora.com>
 In-Reply-To: <20250818-phy-hdptx-frl-v3-0-c79997d8bb2b@collabora.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -68,70 +68,46 @@ To: Vinod Koul <vkoul@kernel.org>,
  Dmitry Baryshkov <lumag@kernel.org>
 Cc: kernel@collabora.com, linux-phy@lists.infradead.org, 
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, Andy Yan <andy.yan@rock-chips.com>
+ linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
 
-When making use of the clock provider functionality, the output clock
-does normally match the TMDS character rate, which is what the PHY PLL
-gets configured to.
+Due to its relatively low frequency, a noise stemming from the 24MHz PLL
+reference clock may traverse the low-pass loop filter of ROPLL, which
+could potentially generate some HDMI flash artifacts.
 
-However, this is only applicable for default color depth of 8 bpc.  For
-higher depths, the output clock is further divided by the hardware
-according to the formula:
+Reduce ROPLL loop bandwidth in an attempt to mitigate the problem.
 
-  output_clock_rate = tmds_char_rate * 8 / bpc
-
-Since the existence of the clock divider wasn't taken into account when
-support for high bpc has been introduced, make the necessary adjustments
-to report the correct clock rate.
-
-Fixes: 9d0ec51d7c22 ("phy: rockchip: samsung-hdptx: Add high color depth management")
-Reported-by: Andy Yan <andy.yan@rock-chips.com>
+Fixes: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
+Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index 79db57ee90d1487b51f4ddadde870a275dd7b17b..8adf6e84fc0b762a7a6042459601c3271572de8e 100644
+index 8adf6e84fc0b762a7a6042459601c3271572de8e..9751f7ad00f4faf7041dbf4339f633e09f97b107 100644
 --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
 +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -1038,7 +1038,8 @@ static int rk_hdptx_ropll_tmds_cmn_config(struct rk_hdptx_phy *hdptx)
- 
- 	ret = rk_hdptx_post_enable_pll(hdptx);
- 	if (!ret)
--		hdptx->hw_rate = hdptx->hdmi_cfg.tmds_char_rate;
-+		hdptx->hw_rate = DIV_ROUND_CLOSEST_ULL(hdptx->hdmi_cfg.tmds_char_rate * 8,
-+						       hdptx->hdmi_cfg.bpc);
- 
- 	return ret;
- }
-@@ -1896,19 +1897,20 @@ static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	 * hence ensure rk_hdptx_phy_clk_set_rate() won't be invoked with
- 	 * a different rate argument.
- 	 */
--	return hdptx->hdmi_cfg.tmds_char_rate;
-+	return DIV_ROUND_CLOSEST_ULL(hdptx->hdmi_cfg.tmds_char_rate * 8, hdptx->hdmi_cfg.bpc);
- }
- 
- static int rk_hdptx_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 				     unsigned long parent_rate)
- {
- 	struct rk_hdptx_phy *hdptx = to_rk_hdptx_phy(hw);
-+	unsigned long long tmds_rate = DIV_ROUND_CLOSEST_ULL(rate * hdptx->hdmi_cfg.bpc, 8);
- 
- 	/* Revert any unlikely TMDS char rate change since round_rate() */
--	if (hdptx->hdmi_cfg.tmds_char_rate != rate) {
--		dev_warn(hdptx->dev, "Reverting unexpected rate change from %lu to %llu\n",
--			 rate, hdptx->hdmi_cfg.tmds_char_rate);
--		hdptx->hdmi_cfg.tmds_char_rate = rate;
-+	if (hdptx->hdmi_cfg.tmds_char_rate != tmds_rate) {
-+		dev_warn(hdptx->dev, "Reverting unexpected rate change from %llu to %llu\n",
-+			 tmds_rate, hdptx->hdmi_cfg.tmds_char_rate);
-+		hdptx->hdmi_cfg.tmds_char_rate = tmds_rate;
- 	}
- 
- 	/*
+@@ -500,9 +500,7 @@ static const struct reg_sequence rk_hdtpx_common_cmn_init_seq[] = {
+ 	REG_SEQ0(CMN_REG(0043), 0x00),
+ 	REG_SEQ0(CMN_REG(0044), 0x46),
+ 	REG_SEQ0(CMN_REG(0045), 0x24),
+-	REG_SEQ0(CMN_REG(0046), 0xff),
+ 	REG_SEQ0(CMN_REG(0047), 0x00),
+-	REG_SEQ0(CMN_REG(0048), 0x44),
+ 	REG_SEQ0(CMN_REG(0049), 0xfa),
+ 	REG_SEQ0(CMN_REG(004a), 0x08),
+ 	REG_SEQ0(CMN_REG(004b), 0x00),
+@@ -575,6 +573,8 @@ static const struct reg_sequence rk_hdtpx_tmds_cmn_init_seq[] = {
+ 	REG_SEQ0(CMN_REG(0034), 0x00),
+ 	REG_SEQ0(CMN_REG(003d), 0x40),
+ 	REG_SEQ0(CMN_REG(0042), 0x78),
++	REG_SEQ0(CMN_REG(0046), 0xdd),
++	REG_SEQ0(CMN_REG(0048), 0x11),
+ 	REG_SEQ0(CMN_REG(004e), 0x34),
+ 	REG_SEQ0(CMN_REG(005c), 0x25),
+ 	REG_SEQ0(CMN_REG(005e), 0x4f),
 
 -- 
 2.50.1
