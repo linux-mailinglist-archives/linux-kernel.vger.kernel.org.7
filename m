@@ -1,210 +1,114 @@
-Return-Path: <linux-kernel+bounces-774035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB9AB2ADD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E67B2ADD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AE54560AA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158A15651F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF34334704;
-	Mon, 18 Aug 2025 16:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9940334711;
+	Mon, 18 Aug 2025 16:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOFcLOEB"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQ6eMRyh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC893203B0;
-	Mon, 18 Aug 2025 16:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9D7322546;
+	Mon, 18 Aug 2025 16:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533483; cv=none; b=gbtr19AyvUF4SQR6Zjo/pRGum3OMTtUV7rBiAFUfZIp8wrTj7+NKqnnw6cKOMlIIZPMWJBP+WjE4WLqAw6Dp9LXPisPdN4C816tJYG3G5sXe4OzCzk0ZyTyomJA/vl8B3FwAKEFAoXI9SaMcDrReVo5pO1jFNeFQ0LyLakACScM=
+	t=1755533502; cv=none; b=BWWaCyZKtBch5PVhwlHBmyLGtJMx+NEv9Crjtvlx8mW9VYkiRdcizHgl7n3Q+28gzzEh8wuZ+g8ZNLLYnwAt8goKsVYg/uHCs3wBHNblrcfHmg8aaQhKg0MzPin9gPRbVahnZwj59K9CZ9ppfAaciTUWX3NROysjmlWDCTK8yj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533483; c=relaxed/simple;
-	bh=pyQRwWEObJuHvr9ty8xXMUnJrmo5nvSMXaHj+3kqbw8=;
+	s=arc-20240116; t=1755533502; c=relaxed/simple;
+	bh=DA2OL45OCBR1TJ2bykT55Ml1phhesDr/KzBENSzRPoc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EW8keMbkNo7WJbudq8rVa4ozVVtp8QdfU7rZRRLeG9HTQUwHDPRFnnYOTbsf9Q42++q+qrx+CAyXU0qUBsSusbhuTkr2r+Hc7AAOAdcQ4UjcRdRxCubFJCsWU27pUqd2Gv9Zc7XFCf9kPRMlypdRGWPACC3x7nVefgs1iAIeq5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOFcLOEB; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7438175d42aso2677583a34.1;
-        Mon, 18 Aug 2025 09:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755533481; x=1756138281; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XVMUYwe5tHhDclXcSvK/OoInVyX1p4cYa0l7+9pr+2k=;
-        b=JOFcLOEB3PrEG8YbAvOL8p44oaQzdy0DhP66lg0UBZJ+qFccD676X4fIdCJBtN3AwM
-         2Vf/1H/Da9VnS9xvG1s1U71SV/xb1LItWWG4uzPrci/FQX1QNMW7Rdasg97BJBmbmnmI
-         3fsXlP4pPF4ubCDCVBinGWmd/MvsP0q9XKNEHYbFzRiLwBprpUJpJaiUqwWC5ibYXhI1
-         WvBaxZRE7OHvfK4vrlu3j9Y8H+YPJoz3NdXVB7CqytcyQ/4a6+demldZ1Q14WPVwRXcq
-         1wqC4g2LZ1FkOer9Y7maVDwz/bz8Mh0V7xjme7Jo8ifcguPMjsVrwBPe9iWKG+OvLqaK
-         2w+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755533481; x=1756138281;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XVMUYwe5tHhDclXcSvK/OoInVyX1p4cYa0l7+9pr+2k=;
-        b=Y3d+agYiClY14cAkAKHL3qmvOK/8slNb4M+dstmO+H2GhXiSeNsCmTHmaFL6ocJh2G
-         JtAS5Q9gFyw/1Bsswi4lsOuBrdTp/3A/gMkxxl5Tbeb5fJyMKxazhe09jCuYZN3RfC6X
-         zio+3R+10Kor9yU1JjmwVnTxjAj+3Ylyo4XQ0J6o3oZkqNMHcvQ9gz/AwyDJOIA7/BT+
-         8qWrX5LID4+ejGUgmBxbg5zqM1k/6RZoJggWYp4jzOVnSCEbyOus21t0/X85ZbMnWyr2
-         NF62k4tw+nXqlDDwPrcwNv3P3xIpjdU4niQWUlR1zg7sH3hAGIm74JgmsfPhmaAAmCj0
-         ObkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNI8NFAkPnTomASBSrE8O3RH7WXaYKUGQrpdLLQze3+83avbRbqlQo+slaKPWiuiLVncwcJ+UZfK6x@vger.kernel.org, AJvYcCUee2XwUVhEvOujmOwgdprHBGNHhU2eUtHawY9lWwmFrZL+Cfoctl6Ni7bpnvy0nmCh+GRQDyETIjdh@vger.kernel.org, AJvYcCUxBVileoz6OaEot0uZKXpjKOGwRtdgXO+wREWmy3gPJNEwoIS7myw8Tz9ht3IFNL/i4ILuGkmaHu32AoWF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxh/e4+L+dIba6A47nN5divn4xi9hD9cndSWNBju6N3lzCge4H
-	XpBt7j0qMW5i2JfpSCE9TagohClOANFfz9bk0XPJ9oXQJYEhVFDnswmHgo5JnGL7QadIWeN3Zf0
-	26vmQvgE2XMzAEdNofGhzdeZWnRMhCR0=
-X-Gm-Gg: ASbGncvGSqlXIF3sikrSLOqGD9b2uXLMwynsiiI7xFnFt1awq8eYG5huOmPONegS0Jv
-	JRJOFbduD1GivV6oN4Cmz+XoyaPcHR0IxpCumBtcnzz1Z2yCL3GZ6dWjAD3/ZuufdYcLktYgxjA
-	HD5hcdE+zGIUNWPLmxeqf/cnnr7Ewtq6Go+ecG7vFtg+SKK2HeDTQQTjrvJsLPSI+rCcb1k926U
-	4A+Gxlm9A==
-X-Google-Smtp-Source: AGHT+IH1nWR4P3RblHYTY/yamzarKnJLPoqzR+Fate6NXmOw4iYB85bdAFBy0VflTuqaJyyCfs7H/68kiB7cq8VC2aE=
-X-Received: by 2002:a05:6830:1201:b0:73e:9fea:f2a5 with SMTP id
- 46e09a7af769-744df036b12mr110871a34.4.1755533481065; Mon, 18 Aug 2025
- 09:11:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=kdSSD1OJilFwYPbMqFDyam7jzhZcz8DhP2aUncl8QMJn5dqbBNnKUkBcXtfGBzEsRiq5yppnfMWN1y+LQHxKHmm7wyzoWgd0zeqn2da0+CWUL+w0j2g8XYkVE6gUHE+OzcdHIrKFX0h6FjeMPfAn1IN7c1hE760XfvJTi7ytEM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQ6eMRyh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9996DC4AF09;
+	Mon, 18 Aug 2025 16:11:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755533501;
+	bh=DA2OL45OCBR1TJ2bykT55Ml1phhesDr/KzBENSzRPoc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nQ6eMRyhcJaRYj88m0OBCu19k0BuZR6ddgKbe1p6UefKyG2ibNz8uATq5a9qstqD4
+	 9ILu9m/QvrqsNHFfJ/RKUSWj9c5xJI0Tvf44+45iL414sq2TBRzXMhmpShqSQn1Eqd
+	 0gplahw+vYZJiGfnReKptDmtltfP/9eAlNf3yY3QmNo77lqASeeFHmHexB4eU57fxS
+	 pWZ+1qZyX74ee5ybVdLw6z773fOSm0oSdOLyQRlfeJxl1kDL5c2RHIdi3VgVAfx7Rk
+	 ZirpEDrCpX/TFptiSg3RzjAq4dqUui5dfZzMg9A1Bj4tBi9Ylneq8K6xcpHG7PHDtZ
+	 eK4MnvlbEfBdQ==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-3110269717aso193974fac.1;
+        Mon, 18 Aug 2025 09:11:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+HBMjiUjU/BjH2lxihE2w3GXA6dTfgOvFli9R1DTKb83H9QuPJEHCIRK8evIuwglhePY/qviADnHtIpuI@vger.kernel.org, AJvYcCVsxqBLOWAyTuo7AdwJUWpxcTYkZxLxcl4gAUJCMQSMmVVCQCUDiru+dw/Iwshn3HnE6WaV3C0xz5Xu@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywykel/XDCZoBrdEcXX8B8UH5bZ1+XaGJ9cXZJ5SV7U+9YrHYlD
+	d/JFV1JF5KQKM4+jl5YgJc+DYRasv001oDbA49Fhea9kEPH7DsLlPy7TvcZlsKauaDkU2woEnBZ
+	hrxEGvdbc8hUwQHqUf4Ftl2bsQ8JYkhc=
+X-Google-Smtp-Source: AGHT+IGRp9f0ioUBjySVzfXidVBa+XHyCZfz8f8VuFeDGWT+KV57H8QNmIA3QWX4Ufn7LrA+hEC1Rjs7o0cf48peGh0=
+X-Received: by 2002:a05:6870:1f19:b0:2e9:925b:206f with SMTP id
+ 586e51a60fabf-3110842a516mr89866fac.17.1755533500977; Mon, 18 Aug 2025
+ 09:11:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815-ltc2495-v4-0-2d04e6005468@gmail.com> <20250816111855.7e934f4d@jic23-huawei>
-In-Reply-To: <20250816111855.7e934f4d@jic23-huawei>
-From: Alper Bilgin <y.alperbilgin@gmail.com>
-Date: Mon, 18 Aug 2025 18:11:09 +0200
-X-Gm-Features: Ac12FXzQTFQattZe625ZGzNR7DODPUn-uR4-1v7Ba64mu7PW0JdDtp_v2P06sRg
-Message-ID: <CAGgmJFsqfo4ddGdgDaPg4BRkYjQfn25wo0yrf1tB2f8g9L6aEw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] Add LTC2495 support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Beguin <liambeguin@gmail.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250815024207.3038-1-hanchunchao@inspur.com> <547301a8-5a66-7958-15be-0bcf01dd8a62@huawei.com>
+In-Reply-To: <547301a8-5a66-7958-15be-0bcf01dd8a62@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 18 Aug 2025 18:11:23 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iTc+F8AX_sOY_79A9AeTJMe+QiCdK9ZTSwJ8fi4djB=Q@mail.gmail.com>
+X-Gm-Features: Ac12FXwNWiT8VzzqS9Kmb7N0NYAwTVvby8mVUV2dCdK4l0REuhuU_SXYD5Nmzz8
+Message-ID: <CAJZ5v0iTc+F8AX_sOY_79A9AeTJMe+QiCdK9ZTSwJ8fi4djB=Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: APEI: EINJ: fix potential NULL dereference in __einj_error_inject
+To: Hanjun Guo <guohanjun@huawei.com>, tony.luck@intel.com, 
+	Charles Han <hanchunchao@inspur.com>
+Cc: bp@alien8.de, mchehab@kernel.org, xueshuai@linux.alibaba.com, 
+	lenb@kernel.org, ira.weiny@intel.com, zaidal@os.amperecomputing.com, 
+	Jonathan.Cameron@huawei.com, colin.i.king@gmail.com, dan.carpenter@linaro.org, 
+	dan.j.williams@intel.com, sudeep.holla@arm.com, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
-
-Thank you for this guidance on the review process, that makes perfect
-sense. I will wait longer for feedback on future versions and
-contributions.
-
-Best regards,
-
-Alper
-
-On Sat, Aug 16, 2025 at 12:19=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
-> wrote:
+On Mon, Aug 18, 2025 at 6:07=E2=80=AFPM Hanjun Guo <guohanjun@huawei.com> w=
+rote:
 >
-> On Fri, 15 Aug 2025 12:02:01 +0200
-> Yusuf Alper Bilgin <y.alperbilgin@gmail.com> wrote:
->
-> > Hi All,
+> On 2025/8/15 10:42, Charles Han wrote:
+> > The __einj_error_inject() function allocates memory via kmalloc()
+> > without checking for allocation failure, which could lead to a
+> > NULL pointer dereference.
 > >
-> > This is the v4 of the patch series to add support for the LTC2495 ADC
-> > and to enable the internal temperature channel for the LTC2495 and
-> > LTC2499.
+> > Return -ENOMEM in case allocation fails.
 > >
-> > Thanks to Andy Shevchenko for his helpful reviews on earlier versions,
-> > and to David Lechner and Krzysztof Kozlowski for their feedbacks on
-> > v3. This version addresses all feedback from v3.
-> >
-> > Best Regards,
-> >
-> > Alper
->
-> Hi Alper,
->
-> A small process thing.  Wait a little longer between versions
-> as it tends to save time for both the submitter and reviewers.
->
-> At least a few days is appropriate typically and for first versions
-> I'd generally advise a week. Many reviewers only get to the list
-> once a week or so (some less than that!)
->
-> Thanks,
->
-> Jonathan
->
-> >
-> > Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
+> > Fixes: b47610296d17 ("ACPI: APEI: EINJ: Enable EINJv2 error injections"=
+)
+> > Signed-off-by: Charles Han <hanchunchao@inspur.com>
 > > ---
-> > Changes in v4:
-> >   - Removed the verbose formula derivation comment from `read_raw`.
-> >   - Reworked the temperature channel definition to omit the redundant
-> >     `.address` and `.channel` fields.
-> >   - Moved I2C-specific bit definitions from the shared header into
-> >     `ltc2497.c` and removed the pre-combined command macro.
-> >   - Simplified I2C logic to check the channel type instead of a
-> >     non-standard address.
-> >   - Combined the basic device support (#2) and temperature sensor featu=
-re (#3)
-> >     patches into a single patch (#2).
-> >   - Link to v3: https://lore.kernel.org/r/20250814-ltc2495-v3-0-c2a6cec=
-d6b99@gmail.com
+> >   drivers/acpi/apei/einj-core.c | 3 +++
+> >   1 file changed, 3 insertions(+)
 > >
-> > Changes in v3:
-> >   - Used the standard `kelvin_to_celsius()` helper instead of a custom
-> >     define.
-> >   - Corrected macro definition style.
-> >   - Renamed `LTC2497_CHANNELS` and `LTC_T_CHAN` for clarity.
-> >   - Combined all struct layout optimizations into a single patch.
-> >   - Link to v2: https://lore.kernel.org/r/20250813-ltc2495-v2-0-bbaf20f=
-6ba07@gmail.com
+> > diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-cor=
+e.c
+> > index bf8dc92a373a..93a3ae1325e5 100644
+> > --- a/drivers/acpi/apei/einj-core.c
+> > +++ b/drivers/acpi/apei/einj-core.c
+> > @@ -540,6 +540,9 @@ static int __einj_error_inject(u32 type, u32 flags,=
+ u64 param1, u64 param2,
+> >               struct set_error_type_with_address *v5param;
 > >
-> > Changes in v2:
-> >   - Rewrote all commit messages to use the imperative mood.
-> >   - Added a justification for the new compatible string to the device
-> >     tree binding commit message.
-> >   - Removed all unrelated whitespace and formatting changes.
-> >   - Removed redundant explicit `false` initializers from structs.
-> >   - Replaced the magic number for Kelvin conversion with a define.
-> >   - Improved comments for defines and temperature scaling constants.
-> >   - Renamed confusing macros and struct fields to be more descriptive.
-> >   - Replaced dynamic channel allocation with a static array approach
-> >     using a shared macro to improve readability.
-> >   - Optimized data structure layouts based on pahole output to remove
-> >     memory holes.
-> >   - Link to v1: https://lore.kernel.org/r/20250812-ltc2495-v1-0-7bf4c6f=
-eec2e@gmail.com
-> > ---
-> > Implementation Notes
-> >  - checkpatch warning: The new static array approach uses a shared macr=
-o
-> >    for the common channels (`LTC2497_CHANNELS`), which triggers a
-> >    checkpatch.pl warning: "Macros with complex values should be enclose=
-d
-> >    in parentheses". However, this will cause a compilitaion error, as a=
-n
-> >    initializer list cannot be parenthesized.
-> >  - uV to mV conversion: I could not find a standard macro, so a manual
-> >    division is used for now. This could be a point of future
-> >    improvement.
-> >
-> > ---
-> > Yusuf Alper Bilgin (3):
-> >       dt-bindings: iio: adc: ltc2497: add lltc,ltc2495 bindings
-> >       iio: adc: ltc2497: add support for LTC2495
-> >       iio: adc: ltc2497: reorder struct members to fix memory holes
-> >
-> >  .../devicetree/bindings/iio/adc/lltc,ltc2497.yaml  |   3 +
-> >  drivers/iio/adc/ltc2497-core.c                     | 132 +++++++++++++=
-+-------
-> >  drivers/iio/adc/ltc2497.c                          |  39 +++++-
-> >  drivers/iio/adc/ltc2497.h                          |  19 ++-
-> >  4 files changed, 147 insertions(+), 46 deletions(-)
-> > ---
-> > base-commit: acbbb5a20971089064ca6b271dd251e629be8d4d
-> > change-id: 20250811-ltc2495-572817c13fd3
-> >
-> > Best regards,
+> >               v5param =3D kmalloc(v5param_size, GFP_KERNEL);
+> > +             if (!v5param)
+> > +                     return -ENOMEM;
+> > +
+> >               memcpy_fromio(v5param, einj_param, v5param_size);
+> >               v5param->type =3D type;
+> >               if (type & ACPI5_VENDOR_BIT) {
 >
+> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+
+Applied as 6.17-rc material, thanks!
 
