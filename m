@@ -1,282 +1,181 @@
-Return-Path: <linux-kernel+bounces-773067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A844EB29B03
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 914D4B29B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F459203CB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C325E7371
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0437E27FB2A;
-	Mon, 18 Aug 2025 07:44:29 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241EC280CC8;
+	Mon, 18 Aug 2025 07:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Thtj8RMQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2260B27F747
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79CF280035;
+	Mon, 18 Aug 2025 07:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755503068; cv=none; b=D7elQJuwg0jatlP4RIbA3qPUNi4Je7nzHWRbtz3peKTxSKDjkrjsL2saEI3UrutD0A3b23rSjCa6PLwWQCC48I1guItC2bP5gOLrKacMzmTgGOCCjiywAoVy9oM7gg5RXXgsVEkLPVUJGZVanUooJHPGl+lVnkGwoOFMlN0y80I=
+	t=1755503079; cv=none; b=BS3tvKq/ecL0s0v4kqylLettQaNZXaEf0YKvU/M8tFExb+9dZSmbgpdnO5+9vbyCU8Zs83pGBuT71CxUTENlHasjTmZRWCo7oyV1q61c9gZMGVAx+pNz7zTElgBOqYhHMeAlqdQuhGcuW9xf74LHJiSQm8vGUar2ANQOqdFZ9oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755503068; c=relaxed/simple;
-	bh=1gmo/dDd2M6PFOCt84GRNWna3/I+GXcdVLCQTZsET2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sLGavFb3ziuRwSuwmPit7v7qw7NqWNUf782sGam9BLGJUqsgDmPuBMck9XnTAK2hX1arLH1gRESjboCfmqaK2zcWCZDWyYuOwXP/2ERTEIsMpXx6C42sNdRNTOjPcFeQGPbykVVLRclCIKjf4/lOEODnZ1oXaih+VutIwDL2i10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c54WX0spjz3TqYW;
-	Mon, 18 Aug 2025 15:45:28 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E67F1402CC;
-	Mon, 18 Aug 2025 15:44:23 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 15:44:22 +0800
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 15:44:22 +0800
-Message-ID: <048a04e8-2589-48c4-9754-5217adb5f385@huawei.com>
-Date: Mon, 18 Aug 2025 15:44:21 +0800
+	s=arc-20240116; t=1755503079; c=relaxed/simple;
+	bh=IKEc1I2OJR13oC2ScvzhXBsU1/PrtRAkuEoIy4Zrdis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQ+dNYQclGj2m/Ke+48P3/5KgZ/4Emxa9SE4CVTew87P+BQ/p8WVOky5F4O1KKEqhInRGIe3AEz5GXPOU79GbU9pGhBZ2q9sVtojxGYkP0FtTvo0nYn7r8UxKrljPjOJCfekd8xS8F+1Xb3Xo7w4fY7f5ask8pvyPJR5e2EPqZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Thtj8RMQ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755503078; x=1787039078;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=IKEc1I2OJR13oC2ScvzhXBsU1/PrtRAkuEoIy4Zrdis=;
+  b=Thtj8RMQjkRni1o9M7w49Yk0xENJz4ziYoz6nI88LycYcN6uMSygyJi7
+   xUfykDfiHYrjpmQ5sXfD11n1yajx7hnDkfmYolP4wLqll+t2t4s7NbYhR
+   iymE3z9fJDz5F9j1UBBUliTaI3f0yQO9wQxGsO8xlxHFdS1DWgVtmxDdN
+   WOI9l1rr/2ttb14w3KsFly0s9Kva/nlz8ijEhzGMg2YnTEvQX16u3l+jW
+   mR5+bNpVO8VMSnDt88Bnvl1FZ1QrM5cJDnK0t/E09zDB1lOZ4Mm+7+NOD
+   sSUQ6E6yzAXKJzSNPpZ9Bc+cg9l/E/LwKowmY4YPFU7Wggd+ZhQ+vIMIf
+   w==;
+X-CSE-ConnectionGUID: 3POw+fskSzi6Tln5GN8F+g==
+X-CSE-MsgGUID: a7ww4TX0RnqisCaPl4+Kng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="61556165"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="61556165"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:44:37 -0700
+X-CSE-ConnectionGUID: zECi+cTeSkK5bfgNY2VcPQ==
+X-CSE-MsgGUID: 7UKN+WePTdCrQSRSOwb8Qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="198522267"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.152])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 00:44:34 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id A159012031D;
+	Mon, 18 Aug 2025 10:44:31 +0300 (EEST)
+Date: Mon, 18 Aug 2025 07:44:31 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: git@apitzsch.eu
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Daniel Scally <djrscally@gmail.com>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Val Packett <val@packett.cool>
+Subject: Re: [PATCH 7/7] media: i2c: dw9719: Fix power on/off sequence
+Message-ID: <aKLZ39IzI_azrDIu@kekkonen.localdomain>
+References: <20250817-dw9719-v1-0-426f46c69a5a@apitzsch.eu>
+ <20250817-dw9719-v1-7-426f46c69a5a@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 drm-dp 08/11] drm/hisilicon/hibmc: fix no showing when
- no connectors connected
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20250813094238.3722345-1-shiyongbang@huawei.com>
- <20250813094238.3722345-9-shiyongbang@huawei.com>
- <slyapb5axqt5kw2l3da6k2iwkrqllame5bqz6hzjsqgi5j6lnh@obhd3xluk4te>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <slyapb5axqt5kw2l3da6k2iwkrqllame5bqz6hzjsqgi5j6lnh@obhd3xluk4te>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq100007.china.huawei.com (7.202.195.175)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250817-dw9719-v1-7-426f46c69a5a@apitzsch.eu>
 
+Hi André,
 
-> On Wed, Aug 13, 2025 at 05:42:35PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> Our chip support KVM over IP feature, so hibmc driver need to support
->> displaying without any connectors plugged in. If no connectors connected,
->> set the vdac connector status to 'connected' to handle BMC KVM. Use
->> is_connected to check all physical outputs.
->> For get_modes: using BMC modes for connector if no display is attached to
->> phys VGA cable, otherwise use EDID modes by drm_connector_helper_get_modes,
->> because KVM doesn't provide EDID reads.
->>
->> Fixes: 4c962bc929f1 ("drm/hisilicon/hibmc: Add vga connector detect functions")
-> It feels like being too big for a fix...
+On Sun, Aug 17, 2025 at 07:09:26PM +0200, André Apitzsch via B4 Relay wrote:
+> From: Val Packett <val@packett.cool>
+> 
+> The "jiggle" code was not actually expecting failure, which it should
+> because that's what actually happens when the device wasn't already woken
+> up by the regulator power-on (i.e. in the case of a shared regulator).
+> 
+> Also, do actually enter the internal suspend mode on shutdown, to save
+> power in the case of a shared regulator.
+> 
+> Also, wait a bit longer (2x tOPR) on waking up, 1x is not enough at least
+> on the DW9718S as found on the motorola-nora smartphone.
+> 
+> Signed-off-by: Val Packett <val@packett.cool>
+> Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> ---
+>  drivers/media/i2c/dw9719.c | 23 ++++++++++++++++-------
+>  1 file changed, 16 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/dw9719.c b/drivers/media/i2c/dw9719.c
+> index 63c7fd4ab70a0e02518252b23b89c45df4ba273d..dd28a0223d6ac980084b1f661bd029ea6b0be503 100644
+> --- a/drivers/media/i2c/dw9719.c
+> +++ b/drivers/media/i2c/dw9719.c
+> @@ -95,12 +95,19 @@ struct dw9719_device {
+>  
+>  static int dw9719_power_down(struct dw9719_device *dw9719)
+>  {
+> +	u32 reg_pwr = (dw9719->model == DW9718S) ? DW9718S_PD : DW9719_CONTROL;
 
-Okay, how about I move this change to next series as a KVM feature?
+Extra parentheses.
 
+> +
+> +	/*
+> +	 * Worth engaging the internal SHUTDOWN mode especially due to the
+> +	 * regulator being potentially shared with other devices.
+> +	 */
+> +	cci_write(dw9719->regmap, reg_pwr, DW9719_SHUTDOWN, NULL);
 
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->> ChangeLog:
->> v3 -> v4:
->>    - add KVM edid in commit message, suggested by Dmitry Baryshkov.
->>    - fix magic values, suggested by Dmitry Baryshkov.
->> v2 -> v3:
->>    - fix hibmc_connector_get_modes() and hibmc_vdac_detect() to realize BMC KVM, suggested by Dmitry Baryshkov.
->> ---
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 20 ++++--
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  2 +
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  7 +++
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  | 62 +++++++++++++------
->>   4 files changed, 68 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> index 5cac04b7d4a4..9626c60a9115 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> @@ -35,12 +35,22 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
->>   static int hibmc_dp_detect(struct drm_connector *connector,
->>   			   struct drm_modeset_acquire_ctx *ctx, bool force)
->>   {
->> -	struct hibmc_dp *dp = to_hibmc_dp(connector);
->> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(connector->dev);
->> +	int ret;
->> +
->> +	mutex_lock(&priv->connect_lock);
->> +
->> +	if (priv->dp.hpd_status) {
->> +		priv->connect_status_map |= HIBMC_DP_STATUS;
->> +		ret = connector_status_connected;
->> +	} else {
->> +		priv->connect_status_map &= ~HIBMC_DP_STATUS;
->> +		ret = connector_status_disconnected;
->> +	}
->>   
->> -	if (dp->hpd_status)
->> -		return connector_status_connected;
->> -	else
->> -		return connector_status_disconnected;
->> +	mutex_unlock(&priv->connect_lock);
->> +
->> +	return ret;
->>   }
->>   
->>   static int hibmc_dp_mode_valid(struct drm_connector *connector,
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
->> index 289304500ab0..bdf14ad52cd3 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
->> @@ -162,6 +162,8 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
->>   	drm_for_each_encoder(encoder, dev)
->>   		encoder->possible_clones = clone_mask;
->>   
->> +	mutex_init(&priv->connect_lock);
->> +
->>   	return 0;
->>   }
->>   
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> index ca8502e2760c..4eee33fbc1f4 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> @@ -24,6 +24,8 @@
->>   
->>   #define HIBMC_MIN_VECTORS	1
->>   #define HIBMC_MAX_VECTORS	2
->> +#define HIBMC_DP_STATUS		BIT(0)
->> +#define HIBMC_VGA_STATUS	BIT(1)
->>   
->>   struct hibmc_vdac {
->>   	struct drm_device *dev;
->> @@ -31,6 +33,7 @@ struct hibmc_vdac {
->>   	struct drm_connector connector;
->>   	struct i2c_adapter adapter;
->>   	struct i2c_algo_bit_data bit_data;
->> +	int phys_status;
->>   };
->>   
->>   struct hibmc_drm_private {
->> @@ -43,6 +46,10 @@ struct hibmc_drm_private {
->>   	struct drm_crtc crtc;
->>   	struct hibmc_vdac vdac;
->>   	struct hibmc_dp dp;
->> +
->> +	/* VGA and DP phys connect status, BIT(0) is DP, BIT(1) is VGA */
->> +	u32 connect_status_map;
->> +	struct mutex connect_lock; /* protect connect_status_map value */
->>   };
->>   
->>   static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
->> index 841e81f47b68..922c0810723d 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
->> @@ -25,27 +25,18 @@
->>   static int hibmc_connector_get_modes(struct drm_connector *connector)
->>   {
->>   	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
->> -	const struct drm_edid *drm_edid;
->>   	int count;
->>   
->> -	drm_edid = drm_edid_read_ddc(connector, &vdac->adapter);
->> -
->> -	drm_edid_connector_update(connector, drm_edid);
->> -
->> -	if (drm_edid) {
->> -		count = drm_edid_connector_add_modes(connector);
->> -		if (count)
-> Here you are refactoring to use drm_edid_connector_add_modes() and
-> fixing the connector issue. Please don't mix those together.
+I'd still complain if this fails as we don't return the error.
 
-Alright! I will separate them later.
+>  	return regulator_disable(dw9719->regulator);
+>  }
+>  
+>  static int dw9719_power_up(struct dw9719_device *dw9719, bool detect)
+>  {
+> -	u32 reg_pwr;
+> +	u32 reg_pwr = (dw9719->model == DW9718S) ? DW9718S_PD : DW9719_CONTROL;
 
+Extra parentheses.
 
->> -			goto out;
->> +	if (vdac->phys_status == connector_status_connected) {
->> +		count = drm_connector_helper_get_modes(connector);
->> +	} else {
->> +		drm_edid_connector_update(connector, NULL);
->> +		count = drm_add_modes_noedid(connector,
->> +					     connector->dev->mode_config.max_width,
->> +					     connector->dev->mode_config.max_height);
->> +		drm_set_preferred_mode(connector, 1024, 768);
->>   	}
->>   
->> -	count = drm_add_modes_noedid(connector,
->> -				     connector->dev->mode_config.max_width,
->> -				     connector->dev->mode_config.max_height);
->> -	drm_set_preferred_mode(connector, 1024, 768);
->> -
->> -out:
->> -	drm_edid_free(drm_edid);
->> -
->>   	return count;
->>   }
->>   
->> @@ -57,10 +48,45 @@ static void hibmc_connector_destroy(struct drm_connector *connector)
->>   	drm_connector_cleanup(connector);
->>   }
->>   
->> +static int hibmc_vdac_detect(struct drm_connector *connector,
->> +			     struct drm_modeset_acquire_ctx *ctx,
->> +			     bool force)
->> +{
->> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(connector->dev);
->> +	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
->> +	int ret = connector_status_disconnected;
->> +	int status;
->> +
->> +	status = drm_connector_helper_detect_from_ddc(connector, ctx, force);
->> +
->> +	vdac->phys_status = status;
->> +
->> +	mutex_lock(&priv->connect_lock);
->> +
->> +	if (status == connector_status_connected) {
->> +		priv->connect_status_map |= HIBMC_VGA_STATUS;
->> +		ret = connector_status_connected;
->> +		goto exit;
->> +	}
->> +
->> +	priv->connect_status_map &= ~HIBMC_VGA_STATUS;
->> +
->> +	/* if all connectors are disconnected,
->> +	 * return connected to support BMC KVM display.
->> +	 */
->> +	if (!priv->connect_status_map)
->> +		ret = connector_status_connected;
->> +
->> +exit:
->> +	mutex_unlock(&priv->connect_lock);
->> +
->> +	return ret;
->> +}
->> +
->>   static const struct drm_connector_helper_funcs
->>   	hibmc_connector_helper_funcs = {
->>   	.get_modes = hibmc_connector_get_modes,
->> -	.detect_ctx = drm_connector_helper_detect_from_ddc,
->> +	.detect_ctx = hibmc_vdac_detect,
->>   };
->>   
->>   static const struct drm_connector_funcs hibmc_connector_funcs = {
->> -- 
->> 2.33.0
->>
+>  	u64 val;
+>  	int ret;
+>  	int err;
+> @@ -109,13 +116,15 @@ static int dw9719_power_up(struct dw9719_device *dw9719, bool detect)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/* Jiggle SCL pin to wake up device */
+> -	reg_pwr = (dw9719->model == DW9718S) ? DW9718S_PD : DW9719_CONTROL;
+> -	cci_write(dw9719->regmap, reg_pwr, DW9719_SHUTDOWN, &ret);
+> -	fsleep(100);
+> +	/*
+> +	 * Need 100us to transition from SHUTDOWN to STANDBY.
+> +	 * Jiggle the SCL pin to wake up the device (even when the regulator
+> +	 * is shared) and wait double the time to be sure, then retry the write.
+
+Why double? Isn't the datasheet correct when it comes to the power-on
+sequence?
+
+> +	 */
+> +	cci_write(dw9719->regmap, reg_pwr, DW9719_STANDBY, &ret);
+> +	ret = 0; /* the jiggle is expected to fail, don't even log that as error */
+> +	fsleep(200);
+>  	cci_write(dw9719->regmap, reg_pwr, DW9719_STANDBY, &ret);
+
+Just pass NULL instead of ret as we don't check the value and the ret
+assignment above becomes redundant. Please spare the comment though.
+
+> -	/* Need 100us to transit from SHUTDOWN to STANDBY */
+> -	fsleep(100);
+>  
+>  	if (detect) {
+>  		/* This model does not have an INFO register */
+> 
+
+-- 
+Regards,
+
+Sakari Ailus
 
