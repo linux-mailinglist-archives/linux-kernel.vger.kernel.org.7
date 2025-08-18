@@ -1,172 +1,135 @@
-Return-Path: <linux-kernel+bounces-773732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07B1B2A80F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:59:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A14B2A65E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39395A0FC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:51:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BD27BF5F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F5F1A5B92;
-	Mon, 18 Aug 2025 13:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="AL/uq1mr";
-	dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b="NBiBZgxu"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83362221F15;
+	Mon, 18 Aug 2025 13:34:07 +0000 (UTC)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F95335BC6;
-	Mon, 18 Aug 2025 13:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525052; cv=pass; b=llgMwrBbzJVbaHrsISYLL7/dpl1P3BKlMfZuhqdO/V3/0LQQl4jgg4gfTZPOiJs1JlHLDllmrtiuYe9ViAIoF/MIXGA3h0V7/woXcO5yueFk4dr4SlTbMC7ynDg389DOuO5l/fVmXYiMrktNeHdZgllMwXLXWSPGnWffCK9nLic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525052; c=relaxed/simple;
-	bh=+s0IBbOlIkEqcYFWxsJGtno7Sqd4WsfU8DnxSquCTv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z5U9bWHhVP4va4mqGqCSyVn09Ns0qLepAGSv2yRgQbQalDgM1/JB3e0zUeqCNc5idqQn4KqTIMc7mtnOZW/PD/v52VQufz94VhYfEPGkEWHbc+BEQbWCG4/e0FJRUIFpPdQYg9ehyshnY2IpY1X1S8fDV12b5xKE7su9Asv8XlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=AL/uq1mr; dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b=NBiBZgxu; arc=pass smtp.client-ip=81.169.146.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
-ARC-Seal: i=1; a=rsa-sha256; t=1755523964; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Jtr5V/JwOkXxjJaG+T0rUgAXc+RSUFrkY2pWe9AKT3T0QpFh+DAg1XXH0JVbS6UKci
-    kG/UxzaPkcuhnr3cFPDT7ahaukeObsnd8KBft8cPPPDPIGBeYxCd8alekxircIib8nQl
-    EGVDao6ySslTyo57RseqCidI6pHcuVYSxSdBrSV4VMaDrqJxqpEZHXRiKw13aL5pSUe8
-    q08jyI/xW7Is1FOVZ94YqWitiSfi1YRhOOkM13N8EqJhxdWvI/juVCXGyO2Up5qxBFgK
-    B0adMjzHcof+Rt++i3x42zUc0+ZOhj44Fwy4/xCnIUv/I21jReHHp8unULn417NFLo1c
-    uJvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1755523964;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=bGPJDDIK0A+1nB5ACwSZqwTY1dyeSldR3vEYMiGGouA=;
-    b=a9q/MUKj+/I3h8s4gD0cHNiTVX4Gdj44mEbqRLx5yzXcuoV3zfKgbl/4B8EtBwSvLM
-    nIP+otzpRd/MSS68sekjwiCOznAZ55DMD5eeRiEAh3PaWxMwc3cBu+4scU/IJvFe23DH
-    lnqf2xjRYOgsojDhWcheyz517oLXK7wEOrsbI46lK1gKRqkLs7upRuMbPUQgMFYKGXfl
-    7zVYkO6Aatb0ZBT0Ig/EKBkJx3rqXNEuGsNe7iE03sVCGhE8LOhFjqv+IS0MELoMoBbZ
-    ptnU4liA/qnvqWqhuf/TwaBjQDk+tFQrQ2l+cP0pxBuv1w0u5aRIhWvBktP51xF/2+cT
-    RE8w==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1755523964;
-    s=strato-dkim-0002; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=bGPJDDIK0A+1nB5ACwSZqwTY1dyeSldR3vEYMiGGouA=;
-    b=AL/uq1mrJxcb5au+Qz0F8RIBE41VqvlA/bs+WGQlMnwDSpY49etWrX6TiDVPT5sEyI
-    QOqd2tCvwhM1KoZYiq/gencxdljJeB8dIcuX/rSTlMdMofIk41+8ldush/62ylxxHf4e
-    G0ORiGARmHu0Sm72qTfEfr+xbxL3tpT30VFF//RPKV+wG2W+a8JIV5TQnE0ZXKWUQfKT
-    +XDbUwm4lBeYYmQwu1H5WNnI/KYlYsb9Cs8v/Arnn3hixVBjfpbjyqoatbhZVHbDrXw6
-    1KxOnkzGG7m9vbJzGDyx/Qv4m0h2GVApvmE0g6JqCWaOdzT6I77jiTx2DmZ2ED6fgZ+k
-    KPXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1755523964;
-    s=strato-dkim-0003; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=bGPJDDIK0A+1nB5ACwSZqwTY1dyeSldR3vEYMiGGouA=;
-    b=NBiBZgxueyqwXBCxmgVlQeK/iebqkrsTDo/syadgWKGfRJH7kMjb7td4HGOl1AYW8b
-    wopu6MWR+LTRqpkjDNBw==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDYJPSciIGX"
-Received: from tauon.localnet
-    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
-    with ESMTPSA id f5f78e17IDWhySG
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 18 Aug 2025 15:32:43 +0200 (CEST)
-From: Stephan Mueller <smueller@chronox.de>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: davem@davemloft.net, eadavis@qq.com, herbert@gondor.apana.org.au,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V3] crypto: Mark intermediary memory as clean
-Date: Mon, 18 Aug 2025 15:32:43 +0200
-Message-ID: <2401599.22IY78Rhhi@tauon>
-In-Reply-To: <tencent_65C6578989EEED6EE78C8B67E586DE92EB06@qq.com>
-References:
- <7740195.jRhZ6ZUK3Y@tauon>
- <tencent_65C6578989EEED6EE78C8B67E586DE92EB06@qq.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F6C220696;
+	Mon, 18 Aug 2025 13:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755524047; cv=none; b=YhZfJtzoxOt0WatL9zUwUV8jF3sHCcFl0W5m+tysEoyGBEwcbGxd7tOmE9YO8rnfuLf/RMjSgFaemn146+gxj4MW6HMttxZtLei613qDkGyyHbaCdooyX3+21CL2AAYX0M9JCPAabL+NvcKEdiP594i/s5tTa51eA7r2acnenA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755524047; c=relaxed/simple;
+	bh=1pw3jI7BBV2KzsRXPuwqddCmk1U5bGLWdpUliQrhCAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EIP3CMEFHsEI7dyUDmWqeNx9vNu4j2c14wWkXnGnodlRZAyIoXzF8tg/rTzMdlThfo5IwCw/pbgfKN8JyQeyzSBwtqvf+XthQ/wFXTOvlEZvwaY6N//Vlc2iQWcDzFsAmy0+1Batr/GTeWi5nD/dh/plEajhveukxZvxSVENAfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-53b174ca9bdso3172118e0c.2;
+        Mon, 18 Aug 2025 06:34:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755524044; x=1756128844;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QgSit3yr4YOi0EHhRCuskcW3KZWGO3LCsBYUVodTm00=;
+        b=BKibIjQhol/5gtHk0EsF2b8+JtBVvlMOEa/ITifiK6tKmc5qZwpu4AIIOTqAwPDjpl
+         TGIaXTyu/PV+GegqvGtKYd2HwxN6oCk1zCEFn2+mE1mpHfz89Fw+kJuakOaMbR97fyiv
+         jjY98nsyWCzLSHonj27RCCRBEFMx2g+y0k2f+/ao9vPIborD1HpXLbjhpJ83u3cLDuSS
+         HRLPcShknLuRkzlenOwO2tmpFNEueNTvBW9oedzd6HjUDsnBwpldZ8f9VXC2WgsLcIu3
+         hzxm0wAm/0tZY3eX49HrSZKMeng1z99F7zjz9sidOc7D5nyacZEfIoND7xU4AQvaMeI7
+         yM4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUYWn1b7EZIGp9hPD5p3ofZqKGmEXXNUfu+IN75RRfsIsAsTbDk31E6UBR8Mq3avY/+LT4LXa2up/z1KgVEh9srqaI=@vger.kernel.org, AJvYcCV2cktIO3ndXNTXQMi72NSvIuG3PmAt3bMG4M34Yk9J7XNwBtUa/6WEchW5BaK9buqwvEuZdGYvYWZcCxgU@vger.kernel.org, AJvYcCXkJneKfnL2lx8voPtbOjGFMOAgdrgjFZkfZc4+AHZyAiS+DUHvIJUXwW9AU1RSFIAvZXJWcinigQy1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+1B1/Oh11VnHw7kAxgQoz3RVh3AmUaSgQUxRvS3+hbZjJ1cIN
+	wf8VTeTcLeG/L9G52rPcTn/dcc2QjNjv6RPNAoyVmql6SgaIbD6JHk6UwGVOE/AI
+X-Gm-Gg: ASbGncszr6eiDVWE4jDCofkSF7gG/kA4jIPJI65At8VZMse1FX4aJw8fueqHYknLuTQ
+	VdpjrVw6hK8rDUTJctytdHYkwLgilniJAamVjJ8wozn1oImrQvjS4iBUJ1l+RHS+32093jRIj8F
+	320TGL7Y2Rr2MbQzaKXnf2s8v1xs3caf1fdBMHNjxwENKYkeHt0bsFHnhbvmdGq6smKkOZp7OVc
+	/jjt8OIJ4VFwqOBdqztKLOEA9hqWW27FilmJSsqpWMx/AfkbM5tOTpaDcK3s7NOvMup/bZ+M+/F
+	APb2NTfwCm6x98VrTXsHNdGFH+b86yWvw4CKyppYTmioTJC7KUHeEkcOGXKhseMHlkCkzJJ24ik
+	IsWyYpFus5roCIpNdT0Th5XDsI0D7pfY6Cn3cf14bDBoYo8AttReEiFRU99rK
+X-Google-Smtp-Source: AGHT+IFY/0cfE4Ke9QE/QqwL7fCTa2dQInoYvb5Vyit6HT01a0rri0l50/XZp35P+S2dtEd0deXc7A==
+X-Received: by 2002:a05:6122:3129:b0:538:dbc9:17a6 with SMTP id 71dfb90a1353d-53b2b81e77dmr4525471e0c.4.1755524043891;
+        Mon, 18 Aug 2025 06:34:03 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bed9fe1sm1965369e0c.16.2025.08.18.06.34.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 06:34:03 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-50f88ed81c8so2739539137.1;
+        Mon, 18 Aug 2025 06:34:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUo1EJYH8YugCY2vnMNK9SY/zkQsyAy8PSpf9hHwrSTjWysZzLBzQvXhDx6hgYZs943GZIyypRQmkLH@vger.kernel.org, AJvYcCUq9c999X062YLuH3zH2lW1oBWO2OWgD0EH47K6lZS8V6Q5LTCVqnl2HwInIKaFDKACdGA92gO8Qub7dSunlhlNC7Y=@vger.kernel.org, AJvYcCVlZqSw2l2+5heuunZmbBX+GrWpa83xkahrhC33RCVWyyj0p7cemW2F4HiHRhxK2u0DmcqBmHFvH5Sy/I7d@vger.kernel.org
+X-Received: by 2002:a05:6102:a4f:b0:4e6:ddd0:96ea with SMTP id
+ ada2fe7eead31-5126af22ce8mr4578600137.10.1755524043532; Mon, 18 Aug 2025
+ 06:34:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812200344.3253781-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 15:33:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX=8rdWHyTpUmreOy5Nf-kiAoQMVakU051AyC2BoVP8vA@mail.gmail.com>
+X-Gm-Features: Ac12FXz7U2bymUEbDTug3-Nx7SFQ-o7CnKN2bmCFrxf4VUWmLJsbplYrboKH96U
+Message-ID: <CAMuHMdX=8rdWHyTpUmreOy5Nf-kiAoQMVakU051AyC2BoVP8vA@mail.gmail.com>
+Subject: Re: [PATCH 04/13] arm64: dts: renesas: r9a09g087: Add pinctrl node
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Am Montag, 18. August 2025, 15:24:17 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb=20
-Edward Adam Davis:
+Hi Prabhakar,
 
-Hi Edward,
+On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add pinctrl node to RZ/N2H ("R9A09G087") SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> This is not a leak! The stack memroy is hashed and fed into the
-> entropy pool. We can't recover the original kernel memory from it.
->=20
-> Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3De8bcd7ee3db6cb5cb875
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Thanks for your patch!
 
-Thank you for the patch. Just for the records:
+> --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> @@ -5,6 +5,17 @@
+>   * Copyright (C) 2025 Renesas Electronics Corp.
+>   */
+>
+> +#define RZN2H_PINS_PER_PORT    8
+> +
+> +/*
+> + * Create the pin index from its bank and position numbers and store in
+> + * the upper 16 bits the alternate function identifier
+> + */
+> +#define RZN2H_PORT_PINMUX(b, p, f)     ((b) * RZN2H_PINS_PER_PORT + (p) | ((f) << 16))
+> +
+> +/* Convert a port and pin label to its global pin index */
+> +#define RZN2H_GPIO(port, pin)  ((port) * RZN2H_PINS_PER_PORT + (pin))
 
-=2D the intermediary buffer could be initialized to 0 without any effect on=
- the=20
-Jitter RNG, because all it wants is actually the execution of the Keccak=20
-operation as part of crypto_shhash_finup.
+Shouldn't this be in a header file under include/dt-bindings/pinctrl/?
+Else you have to duplicate these definitions in DT overlays.
 
-=2D the intermediary buffer is inserted into the Jitter RNG state to ensure=
- that=20
-the compiler cannot optimize away the loop if the intermediary buffer would=
-=20
-not be used at all
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-=2D the intermediary buffer is not credited with any entropy as we only wan=
-t the=20
-Keccak operation
+Gr{oetje,eeting}s,
 
-=2D by keeping the intermediary uninitialized, the Jitter RNG may get some=
-=20
-variations from the uninitialized buffer so that its internal state may=20
-benefit from it
-
-That said, I am fine with this current patch. But if there is still lingeri=
-ng=20
-concern, I am equally fine to have it initialized to zero.
-
-Thanks a lot
-Stephan
-
-> ---
-> V1 -> V2: mark it as unpoison
-> V2 -> V3: replace to sizeof, minimize the possibilities where
-> inconsistencies can occur
->=20
->  crypto/jitterentropy-kcapi.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/crypto/jitterentropy-kcapi.c b/crypto/jitterentropy-kcapi.c
-> index 1266eb790708..4020a6e41b0e 100644
-> --- a/crypto/jitterentropy-kcapi.c
-> +++ b/crypto/jitterentropy-kcapi.c
-> @@ -117,6 +117,7 @@ int jent_hash_time(void *hash_state, __u64 time, u8
-> *addtl, pr_warn_ratelimited("Unexpected digest size\n");
->  		return -EINVAL;
->  	}
-> +	kmsan_unpoison_memory(intermediary, sizeof(intermediary));
->=20
->  	/*
->  	 * This loop fills a buffer which is injected into the entropy pool.
+                        Geert
 
 
-Ciao
-Stephan
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
