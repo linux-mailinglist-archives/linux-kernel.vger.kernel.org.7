@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-773784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990CBB2A9C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:24:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90176B2A9F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AAD45A4543
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB90E5E32F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713FA342C94;
-	Mon, 18 Aug 2025 14:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632C234E183;
+	Mon, 18 Aug 2025 14:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q5+Vf1tb"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q4DwIlLQ"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B090340DA8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912AD340DAE;
 	Mon, 18 Aug 2025 14:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525794; cv=none; b=qxR6VO+7xOirZECCMZlxP5Bi4HSuqCtoVGJ8g7BpT6e3ehWM1fyLhKMWsGQjOp073vHGWcts6xZlAbPAOBLyFpEFF/HJcae9PqKt9Grr4eofkXrNw9y9QKdXSIJrh7H3c/eg0t3xhKpugzQQiQ1rgOIeIh7b4do7ROGqEQ0aloM=
+	t=1755525795; cv=none; b=f22nWSluYflkq3DlGq35bcr4oy14B0V9WnZJMU8uxAf/BzTtCHNmGXR4NQfjOCZj1Km+LYIC/PDytQPXEEVt3nRotyXIyhH6jyZ9DgIIQfbM/fEUXtca9KWhZ5ztOC86SYj16Qnr3Ye3pjvhDLzGGDAtx8Az6hPXVK7w5Dfx3rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525794; c=relaxed/simple;
-	bh=RIZotKOz5Ep3lz0wNnNwyPOQQr0lY5YGcfA7KjZMSCc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ODLOyNoofiaf839nQEHJCCtpef8h7p1VoY1YzalUjxrMQXIGIGa8wEk4afINsAFviWLLv/L7aL8uKPR6CNFEq7Hznh1QKlUNUTbYIUft0xCF/qwwAqEFBhkmedpGAwFpoLo+osLxUBzuuxXxcNUuObT+wvcw87UNPfzGnpia2ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q5+Vf1tb; arc=none smtp.client-ip=217.70.183.200
+	s=arc-20240116; t=1755525795; c=relaxed/simple;
+	bh=Upf/68ziVHah6Rlks/oNHiBue0nYeJly5A97BtbIxys=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gVBaNeGwWTuf4+FvmTxz6lY44lYsjiqfE5TbqUsyf2d/ZaEbpYuXkO0wammdujZ8tW+7cEHYeOV/WpDakROZMtV6L2Fd5G1w31RAqKipotNVxO0/HShmxuEAoVwI4eaHT9Z1ZTRiL++75dlwGQ5g5iVthebDfdX7LZvfo28XlNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q4DwIlLQ; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0F11443968;
-	Mon, 18 Aug 2025 14:03:07 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B3CB843974;
+	Mon, 18 Aug 2025 14:03:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1755525788;
+	t=1755525789;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FF+Y7GQlFFWDqelcq6YU/BMH84OMF9/QX3GwhYnuBYA=;
-	b=Q5+Vf1tbhhQogyy290hbWlzGzWfE3Lb0NQaIXtfW2TMAcAmaIkiM/YcPCmxD6q3127roX7
-	W1TLwqfQltHlZFNSi+ipGKc1cpbSKm4jL7tw1BLli6x6CkMPmRUJO0HdmShY1wqrJTUFJv
-	2/3kazbHxbZLvkiFfVHLBKyrqFMH+oxg6P2I5th6PEo2E+4YHJnIISco1Mkd3Ix2cbeMVo
-	1Bhv4B1VNZtR1BMfvCEAMD5JbwKwnfwemFCvF8hBK/RJZ33Ey3scjYGomikJZlSRdDjT0U
-	vPnsRrcbtUX4MhdqMcwaJjYdiKj5rjITF6UAhlA8a2zd+xKuNrmDprYS3YgY3w==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2K3ECqs8b7BXS3Z8XIsoknOfTvpoi8O6hgk61rndGZg=;
+	b=Q4DwIlLQUdGNk9+8OgINidpKR2icZhPwJbKkER7jBmO4XGHmSe72dp6D+g9GZRwlQnuzrS
+	vdxP5VBBhQnwszE2XbFNZLo1ZSwXlip8gYkelz/RjBeSAyejWRPNjRrHbYPli9n8wZC/wo
+	QdCoXsAMjX8zB/PDvshh7Oy5oBzdiSoWaAdifetHq2SaTM5RIKB7cGzilOQdhQaXQapyk4
+	aySUUIbyps2NwpMSBF72pumZro4B2VIfjNtSrApj3lkKqa7e54sNav3T9cMYR4OQ/1U1Jp
+	N6K0U3MUv2Zz1/4uxcJ66U4y6AKtdN2rESeUkntTCleKqmlC8lczIOa9/iUGqQ==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Subject: [PATCH v4 0/6] mmc: introduce multi-block read gap tuning
-Date: Mon, 18 Aug 2025 16:02:45 +0200
-Message-Id: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
+Date: Mon, 18 Aug 2025 16:02:46 +0200
+Subject: [PATCH v4 1/6] mmc: core: add mmc_card_can_cmd23
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,11 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAIUyo2gC/43NQQ6CMBCF4auQWTumAhVx5T0MC2inMgllSItEQ
- ri7lRO4/N7ifxtECkwR7tkGgRaOLGNCecrA9O34ImSbDLnKtaouV/TS8UArIXlv0EnA9xTnQK3
- HEktFTuvcFJ2uISWmQI4/R/7ZJPccZwnr8bYUv/XP8FKgQmvqqrY3suTUoxOZBx7PRjw0+75/A
- cL1pe3KAAAA
-X-Change-ID: 20250716-mobileye-emmc-for-upstream-4-40ef552c3b59
+Message-Id: <20250818-mobileye-emmc-for-upstream-4-v4-1-34ecb3995e96@bootlin.com>
+References: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
+In-Reply-To: <20250818-mobileye-emmc-for-upstream-4-v4-0-34ecb3995e96@bootlin.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, 
  Adrian Hunter <adrian.hunter@intel.com>
 Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -70,78 +69,54 @@ Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepuegvnhhofphtucfoohhnihhnuceosggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeefgeelfedvtdfghffftdegieefieehhedthefhteehgfekkeffueejkeeukedvueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvhedphhgvlhhopegludelvddrudeikedruddtrddukeejngdpmhgrihhlfhhrohhmpegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehvlhgrughimhhirhdrkhhonhgurhgrthhivghvsehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtl
- hhinhdrtghomhdprhgtphhtthhopegrughrihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpthhtohepthgrfihfihhkrdgsrgihohhukhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmhgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhg
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduhedvkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomhepuegvnhhofphtucfoohhnihhnuceosggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedufefgudfgfffguefhgeeuvdeuhfekkedtleduledvleetleetjeejieetteevtdenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehpdhhvghloheplgduledvrdduieekrddutddrudekjegnpdhmrghilhhfrhhomhepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesi
+ hhnthgvlhdrtghomhdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhmtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrgh
 X-GND-Sasl: benoit.monin@bootlin.com
 
-This patchset implements the multi-block read gap tuning for the SDHCI
-cadence driver.
-
-The first two patches introduce helpers to check for CMD23 support by
-MMC card: mmc_card_can_cmd23 for support proper and mmc_card_blk_no_cmd23
-for the NO_CMD23 quirk.
-
-The next two patches use the new helpers in mmc/core/mmc_test.c and
-mmc/core/block.c.
-
-The next patch add mmc_read_tuning to read blocks from MMC as part of
-the tuning. This function does not return the data read to the caller,
-only the status of the read operation.
-
-Finally the last patch uses mmc_read_tuning to implement the multi-block
-read gap tuning in the cadence host driver, by doing a multi-block read
-and increasing the gap delay until the read succeeds.
-
-In the previous version of this series, mmc_read_tuning had a struct
-mmc_card parameter and was making use of the helpers. This parameter has
-been dropped so the last two patches are now independent of the rest of
-the patchset.
+Add a dedicated helper to check for CMD23 support for MMC card, similar
+to mmc_host_can_cmd23 for the host, as it is easy to get the check
+wrong.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
-Changes in v4:
-- Dropped the card parameter of mmc_read_tuning.
-- Updated the last patch following the review of Adrian.
-- Link to v3: https://lore.kernel.org/r/20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com
+ drivers/mmc/core/core.c | 9 +++++++++
+ drivers/mmc/core/core.h | 1 +
+ 2 files changed, 10 insertions(+)
 
-Changes in v3:
-- Move the changes related to CMD23 support by MMC card to separate
-  patches at the beginning of the series.
-- Change the mmc read function to be less appealing to reuse/abuse
-  outside of tuning context.
-- Link to v2: https://lore.kernel.org/linux-mmc/cover.1751898225.git.benoit.monin@bootlin.com/
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 874c6fe92855e3535ec0ebc0254146f4b96bccc3..88fd231fee1d150b22baebddb7ad47472c24fb32 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1875,6 +1875,15 @@ bool mmc_card_can_secure_erase_trim(struct mmc_card *card)
+ }
+ EXPORT_SYMBOL(mmc_card_can_secure_erase_trim);
+ 
++bool mmc_card_can_cmd23(struct mmc_card *card)
++{
++	return ((mmc_card_mmc(card) &&
++		 card->csd.mmca_vsn >= CSD_SPEC_VER_3) ||
++		(mmc_card_sd(card) && !mmc_card_ult_capacity(card) &&
++		 card->scr.cmds & SD_SCR_CMD23_SUPPORT));
++}
++EXPORT_SYMBOL(mmc_card_can_cmd23);
++
+ int mmc_erase_group_aligned(struct mmc_card *card, sector_t from,
+ 			    unsigned int nr)
+ {
+diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+index 622085cd766f91334d5b9362cd7b96245af8884d..73f5d3d8c77d5da53795fe09beb384f134d6a886 100644
+--- a/drivers/mmc/core/core.h
++++ b/drivers/mmc/core/core.h
+@@ -123,6 +123,7 @@ bool mmc_card_can_trim(struct mmc_card *card);
+ bool mmc_card_can_discard(struct mmc_card *card);
+ bool mmc_card_can_sanitize(struct mmc_card *card);
+ bool mmc_card_can_secure_erase_trim(struct mmc_card *card);
++bool mmc_card_can_cmd23(struct mmc_card *card);
+ int mmc_erase_group_aligned(struct mmc_card *card, sector_t from, unsigned int nr);
+ unsigned int mmc_calc_max_discard(struct mmc_card *card);
+ 
 
-Changes in v2:
-- Split the code between the core and the driver by adding a generic
-  function to read blocks from the MMC.
-- Link to v1: https://lore.kernel.org/linux-mmc/2a43386ffef4012530ca2421ad81ad21c36c8a25.1750943549.git.benoit.monin@bootlin.com/
-
----
-Benoît Monin (6):
-      mmc: core: add mmc_card_can_cmd23
-      mmc: card: add mmc_card_blk_no_cmd23
-      mmc: mmc_test: use mmc_card cmd23 helpers
-      mmc: block: use mmc_card cmd23 helpers
-      mmc: core: add mmc_read_tuning
-      mmc: sdhci-cadence: implement multi-block read gap tuning
-
- drivers/mmc/core/block.c         | 12 ++-----
- drivers/mmc/core/card.h          |  9 +++--
- drivers/mmc/core/core.c          |  9 +++++
- drivers/mmc/core/core.h          |  1 +
- drivers/mmc/core/mmc_ops.c       | 72 ++++++++++++++++++++++++++++++++++++++++
- drivers/mmc/core/mmc_test.c      | 10 ++----
- drivers/mmc/host/sdhci-cadence.c | 63 ++++++++++++++++++++++++++++++++++-
- include/linux/mmc/host.h         |  1 +
- 8 files changed, 157 insertions(+), 20 deletions(-)
----
-base-commit: 8936497143de1da7958178d57db6011eceeb14a8
-change-id: 20250716-mobileye-emmc-for-upstream-4-40ef552c3b59
-
-Best regards,
 -- 
-Benoît Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.50.1
 
 
