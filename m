@@ -1,152 +1,255 @@
-Return-Path: <linux-kernel+bounces-773244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5371EB29D17
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:06:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB3BB29D2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 11:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4AC1202FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:05:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89AF8163974
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 09:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2D830DD0A;
-	Mon, 18 Aug 2025 09:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504F630DD19;
+	Mon, 18 Aug 2025 09:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ciOEI2o9"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNQwpjpR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0299030DD08
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F3D30C366;
+	Mon, 18 Aug 2025 09:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755507895; cv=none; b=Bui6yXkTVs6vMQiCAvnyzEHASFdpoTJV/CQ/jRsF9+C+Bd6xv4ehZ4Y8a2opEkfhwPbDwBZCIXToEvXxHuY7jTyctLMfQov7lF6cqutfd3GcuItuSobHXo/ExWTYp0PwdpdL+QEuUdBBfN3vBbBQrqi50gTERlw0I31qzEbacqw=
+	t=1755507935; cv=none; b=WiAHxob4uwZzY0PJliCTYjEQFPWgw2oWQ1tw8EzlwEO4ywrrlc7G8LtC75XD1/P5nd+3Oc7kAEC1RJ/lN9I7NJ9CxfH8hGVLVqfi4dnEpzWg22u6/le8j7lFraC4K/xM2CyhISiMv9saNMTcc8nq6eujUJIWEYNFQUUHQQV4E5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755507895; c=relaxed/simple;
-	bh=pwru74nUBrj/6jwTNjLAYELApPWZA0ydTt/S7KryGzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pxDc4qhVgutbivR0M7T/NrYIlHZ2p9NQJedRNaKPMRMvCCdkWFhTiXbJRgJkMyTAQSAei5XoxqxUeu0yFkFAH8japf6FqI0u4FtvSnCBIq+aH/5QzophEKwnw4m1Ojmdpzb3non7rNw9Cw0pj8kyNxhFe/hBiRhHn9nYnBPbp1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ciOEI2o9; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7a41b78so50433966b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:04:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755507892; x=1756112692; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BDZrxtQNL1cjju+DxpVQbK6Cw/4VhJ9hB52KbgYlXK8=;
-        b=ciOEI2o9bGEor27UXeCTZk2VAIFlbTME0jgAjSgV+Zkrhm6lQalKrApvb+aecsPnlG
-         KbU5ZGp6lj7+xHldyHjcaHhEe4C+qlRqMYgToBYTCqktghT/uxxNUrWkjALhPB/hXL3+
-         T3wSRGZiK7T9j7Zbi/bNzYkSA1MrB6m8QAIjG9FpNAx33Jg+fJ6/2w8JF2tPZ35ZWQW6
-         rcRgddTk3IuixvkBqn9Joasgcf6bQJ8XVXTrkUy1f0VNOASO8peOsj3dj6fRN9wNyGD6
-         YjJRWJ6bcJL1uYWAWY+TavSBWXb9blshOEQgHcSWWO1SntbEvOmDuOrFp5PXkEh+nZv5
-         8LHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755507892; x=1756112692;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BDZrxtQNL1cjju+DxpVQbK6Cw/4VhJ9hB52KbgYlXK8=;
-        b=qOzHvMtcQXzYel40uHa2hclsMqEsCHnatsVpsbDwUltMi1N53/HZV/ELqscpg3l0OR
-         inDlzN+6zpn8tc2+vdlcj3KX1MaG4eLtW8GcMEtWhRUQLPuHqqy3BFg6W6H3z3j7KAuZ
-         TCoW1PaLmSfvpduGCGHObWeTdM7ZD5BCvgya7i/icdO79PFEYOnmYtMlxJ43dWVBM7Sw
-         YRV6+O1+p1XvHdHj3M4J7DzWKmjsBSa9MMZK+96xbtGH1u+QbhwlsfqzLpSZjEGHrSao
-         7kDx5m60nrJgF6G/BfjPzsofcYCdoNnUUPiLfYWo5U2veD7cHS4p1b0pKmGJECkGbKyX
-         xuig==
-X-Forwarded-Encrypted: i=1; AJvYcCUqLqLP6xVbSxtYjpkG6j0FRQrB+9xlNjwVqUKx8xmpBZTkb5exJNM2AJ+veMua9OOmGojDkA1brfWTL/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxNUFZRoiIKGLxbtk61D87YVvkO0yJyCfEq8o+UhT4CFbxwfRw
-	GEc1E3T/+n4lkT+pcI8Kg13dBzUHfi/nrLgCfL97GW05IG0M6mpZXQeLCrNr6nSfhNg=
-X-Gm-Gg: ASbGncstQTW8AjWxgd34dWg1dBd8vLrwwZjM+Op3AFEECIzAUvdIyWk4alp4W4/kyqR
-	mpaa76uIctvioopwoPJVDEK/YlpEuzUOAfra+YYsC198JUiAGoEZKqoyNTHv7B+8gCARx4BiHK5
-	WDITyLahPwNT8foEC+xPXufuYTW6NeqxpLxMUhHxW2mgHxJWla9Mi5rwf0BfcsCNkeDq8fjbjG0
-	YSdnaSEItZOBwRhvhJQ+EMVHG9qTOwQjC1iz2s7MqlvUW8XWM4O2s/dAEH9nU7XX7NVIKxub37g
-	BwRzDfwa9ieBwc9elDP2h+g504cFVjuf26bPwv3qaIFvE5xvetcKVzsreDQUqBA/SaDgTEQkIrK
-	T5FhPon4DyFNAoPp1HoIepAFftybS+7vqkA==
-X-Google-Smtp-Source: AGHT+IGq9lztDokuEp0O51njstSDbd3e4FseAM46gupWoCcNAfFZtIUknBul7pcS812ROxIqHMTIfg==
-X-Received: by 2002:a17:906:9f8e:b0:ae3:63fd:c3b4 with SMTP id a640c23a62f3a-afcdc1dbdcamr526558166b.5.1755507892088;
-        Mon, 18 Aug 2025 02:04:52 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce72cbbsm767622966b.35.2025.08.18.02.04.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 02:04:51 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Hsun Lai <i@chainsx.cn>,
-	Alex Bee <knaerzche@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable+noautosel@kernel.org
-Subject: [PATCH 2/2] arm64: dts: rockchip: Fix Bluetooth interrupts flag on Neardi LBA3368
-Date: Mon, 18 Aug 2025 11:04:47 +0200
-Message-ID: <20250818090445.28112-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250818090445.28112-3-krzysztof.kozlowski@linaro.org>
-References: <20250818090445.28112-3-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1755507935; c=relaxed/simple;
+	bh=vPUErYbWGmNKxPxliyJVPTXbvWnb22hHtW7n+fRfO2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRJPaU0NnCNzmOHM/PXHcqntfz/QRQO74N+4h54lHprmH/qrBgMdt+ZUqBc7Mi+7nWmII1Yai6Hl/5kLliuPnbYtCDO8L7TMUckqpf3T4UdgBVW2Z4MkWn6qJdAA1XoaG5BaxWhuhu4/mCiLtw3CA4Z5fVNMYDUAogC5mGqIkYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNQwpjpR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FA5AC4CEEB;
+	Mon, 18 Aug 2025 09:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755507935;
+	bh=vPUErYbWGmNKxPxliyJVPTXbvWnb22hHtW7n+fRfO2E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eNQwpjpRulUDez2+KKdE1mtVLN8u75gAEGBFGNYMqcUhcDsvnoUp+EeBtBaq/Tk+b
+	 zSW30CPVBKB1eS/2O2Fm5OvGimQ+CvltFn09SAh9r8U04CVXmAGoF1B1FdTTRMmQf6
+	 vmg3ZOOjGfcb7/YWE6w6WJ4S10e9PlAXY0H0uvgQYqBM+BJc5Fd6EkDI3O6vomcvQC
+	 0bYEUlilK9/3UicTXbtCIm9RZVMWJydEAsyavIV/B49I40vm+cdt2Y1MBIew1HHyr3
+	 XbAbcQAQJxAZMQnZIk1a/WfK+jknTGVYHCPby+QkO3mgDsGeyQ3FRvb0/Uhi87cCKX
+	 zBreGL3foGLbw==
+Date: Mon, 18 Aug 2025 11:05:32 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	andriy.shevchenko@intel.com, =?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v13 04/10] pwm: max7360: Add MAX7360 PWM support
+Message-ID: <l5crrk3ugpo2ggjtykcy5eretclgntebyq52xuouekoimbrsvh@u4koyu5z2wwi>
+References: <20250811-mdb-max7360-support-v13-0-e79fcabff386@bootlin.com>
+ <20250811-mdb-max7360-support-v13-4-e79fcabff386@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1424; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=pwru74nUBrj/6jwTNjLAYELApPWZA0ydTt/S7KryGzI=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoouyuJwWXWjg5+9nddxSx+zw45kGmYNImxXL5p
- J1ew0lu3MWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKLsrgAKCRDBN2bmhouD
- 10TnEACaEmyQoUlWyEpk/aLUCrVBW+9m7xj5cp+3+QItxmClOSA+H9SVkSbX8zLDVfFtPLcz73q
- DwqHWhEwRIPtnnb9FFQhoUgv8U+Tw9VaBT6W9nDPTDoz/i25OpcPaTO7rC0l5V4d9aCvn8DJWdt
- 3x4yTymHn7ecUhHsdyqqa7kcJXk33bSbimkLAyyju2371kQL7PazjayfKZ4D9Wm58wt4Nbt8Pj0
- mYT3bM/Os6gEy8RIgcMKgj/AUeI62mimpDk63gdcTyZvntzmTlJVtDfC+G9Zy7TutOj+uVSHAAj
- wWOfa6eRPxFTWtx/KRVNEceInusTlt8JwLXUCcdxXSQtXApEWc6lBGIG/EELojAODWH7o4c7mYL
- YS7Wz4FhRXxvoEBjNNl4kCYPLsTlgNDaGjfnv+dUzel8/gDcNXXlu8E4jm1Dl8vCI4bZv9ZjCt4
- hFbe3uwnykPX24ZoqRDKl+Do72SQ1Xqt8VKfbm1pcAIpZVp53CKp8gv2C1eX1MgXRoMnqxx+jlg
- 4IPTPJc2kun5tDxZRK80u4CJmQ0HtMoA06ewxyMJ+FNTU1fLDEeBzVAeMe97mOap7DeGdbPn/rU
- pQH5d29nYK2bQhpK/ui+nG6FoZL9q7nghi7lc7gRzBZFfi2xf/ELQ08ndvDzr8L+WTYLtHaVqB+ KZvYcCNg7/RJY/w==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f5yur2tjb4sfvpro"
+Content-Disposition: inline
+In-Reply-To: <20250811-mdb-max7360-support-v13-4-e79fcabff386@bootlin.com>
 
-GPIO_ACTIVE_x flags are not correct in the context of interrupt flags.
-These are simple defines so they could be used in DTS but they will not
-have the same meaning: GPIO_ACTIVE_HIGH = 0 = IRQ_TYPE_NONE.
 
-Correct the interrupt flags, assuming the author of the code wanted same
-logical behavior behind the name "ACTIVE_xxx", this is:
-  ACTIVE_HIGH  => IRQ_TYPE_LEVEL_HIGH
+--f5yur2tjb4sfvpro
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v13 04/10] pwm: max7360: Add MAX7360 PWM support
+MIME-Version: 1.0
 
-Fixes: 7b4a8097e58b ("arm64: dts: rockchip: Add Neardi LBA3368 board")
-Cc: <stable+noautosel@kernel.org> # Needs testing, because actual level is just a guess
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hello,
 
----
+On Mon, Aug 11, 2025 at 12:46:22PM +0200, Mathieu Dubois-Briand wrote:
+> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+>=20
+> Add driver for Maxim Integrated MAX7360 PWM controller, supporting up to
+> 8 independent PWM outputs.
+>=20
+> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> Co-developed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pwm/Kconfig       |  10 +++
+>  drivers/pwm/Makefile      |   1 +
+>  drivers/pwm/pwm-max7360.c | 209 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 220 insertions(+)
+>=20
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index f00ce973dddf..f2b1ce47de7f 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -432,6 +432,16 @@ config PWM_LPSS_PLATFORM
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-lpss-platform.
+> =20
+> +config PWM_MAX7360
+> +	tristate "MAX7360 PWMs"
+> +	depends on MFD_MAX7360
+> +	help
+> +	  PWM driver for Maxim Integrated MAX7360 multifunction device, with
+> +	  support for up to 8 PWM outputs.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called pwm-max7360.
+> +
+>  config PWM_MC33XS2410
+>  	tristate "MC33XS2410 PWM support"
+>  	depends on OF
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index ff4f47e5fb7a..dfa8b4966ee1 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -38,6 +38,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+=3D pwm-lpc32xx.o
+>  obj-$(CONFIG_PWM_LPSS)		+=3D pwm-lpss.o
+>  obj-$(CONFIG_PWM_LPSS_PCI)	+=3D pwm-lpss-pci.o
+>  obj-$(CONFIG_PWM_LPSS_PLATFORM)	+=3D pwm-lpss-platform.o
+> +obj-$(CONFIG_PWM_MAX7360)	+=3D pwm-max7360.o
+>  obj-$(CONFIG_PWM_MC33XS2410)	+=3D pwm-mc33xs2410.o
+>  obj-$(CONFIG_PWM_MEDIATEK)	+=3D pwm-mediatek.o
+>  obj-$(CONFIG_PWM_MESON)		+=3D pwm-meson.o
+> diff --git a/drivers/pwm/pwm-max7360.c b/drivers/pwm/pwm-max7360.c
+> new file mode 100644
+> index 000000000000..5a0c10d2320e
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-max7360.c
+> @@ -0,0 +1,209 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2025 Bootlin
+> + *
+> + * Author: Kamel BOUHARA <kamel.bouhara@bootlin.com>
+> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> + *
+> + * PWM functionality of the MAX7360 multi-function device.
+> + * https://www.analog.com/media/en/technical-documentation/data-sheets/M=
+AX7360.pdf
+> + *
+> + * Limitations:
+> + * - Only supports normal polarity.
+> + * - The period is fixed to 2 ms.
+> + * - Only the duty cycle can be changed, new values are applied at the b=
+eginning
+> + *   of the next cycle.
+> + * - When disabled, the output is put in Hi-Z immediately.
+> + */
+> +#include <linux/bits.h>
+> +#include <linux/dev_printk.h>
+> +#include <linux/err.h>
+> +#include <linux/math64.h>
+> +#include <linux/mfd/max7360.h>
+> +#include <linux/minmax.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/regmap.h>
+> +#include <linux/time.h>
+> +#include <linux/types.h>
+> +
+> +#define MAX7360_NUM_PWMS			8
+> +#define MAX7360_PWM_MAX				255
+> +#define MAX7360_PWM_STEPS			256
+> +#define MAX7360_PWM_PERIOD_NS			(2 * NSEC_PER_MSEC)
+> +
+> +struct max7360_pwm_waveform {
+> +	u8 duty_steps;
+> +	bool enabled;
+> +};
+> +
+> +static int max7360_pwm_request(struct pwm_chip *chip, struct pwm_device =
+*pwm)
+> +{
+> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
+> +
+> +	/*
+> +	 * Make sure we use the individual PWM configuration register and not
+> +	 * the global one.
+> +	 * We never need to use the global one, so there is no need to revert
+> +	 * that in the .free() callback.
+> +	 */
+> +	return regmap_write_bits(regmap, MAX7360_REG_PWMCFG(pwm->hwpwm),
+> +				 MAX7360_PORT_CFG_COMMON_PWM, 0);
+> +}
+> +
+> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
+> +					   struct pwm_device *pwm,
+> +					   const struct pwm_waveform *wf,
+> +					   void *_wfhw)
+> +{
+> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
+> +	u64 duty_steps;
+> +
+> +	/*
+> +	 * Ignore user provided values for period_length_ns and duty_offset_ns:
+> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of =
+0.
+> +	 * Values from 0 to 254 as duty_steps will provide duty cycles of 0/256
+> +	 * to 254/256, while value 255 will provide a duty cycle of 100%.
+> +	 */
+> +	if (wf->duty_length_ns >=3D MAX7360_PWM_PERIOD_NS) {
+> +		duty_steps =3D MAX7360_PWM_MAX;
+> +	} else {
+> +		duty_steps =3D (u32)wf->duty_length_ns * MAX7360_PWM_STEPS / MAX7360_P=
+WM_PERIOD_NS;
+> +		if (duty_steps =3D=3D MAX7360_PWM_MAX)
+> +			duty_steps =3D MAX7360_PWM_MAX - 1;
+> +	}
+> +
+> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX, duty_steps);
+> +	wfhw->enabled =3D !!wf->period_length_ns;
+> +
+> +	if (wf->period_length_ns < MAX7360_PWM_PERIOD_NS)
 
-Please kindly test... Not cc-ing stable on purpose, because this might
-have impact, so needs actual testing.
----
- arch/arm64/boot/dts/rockchip/rk3368-lba3368.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I know this code was suggested as is by me, but I think we need:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3368-lba3368.dts b/arch/arm64/boot/dts/rockchip/rk3368-lba3368.dts
-index b99bb0a5f900..b9801a691b48 100644
---- a/arch/arm64/boot/dts/rockchip/rk3368-lba3368.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3368-lba3368.dts
-@@ -609,7 +609,7 @@ &uart0 {
- 
- 	bluetooth {
- 		compatible = "brcm,bcm4345c5";
--		interrupts-extended = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
-+		interrupts-extended = <&gpio3 RK_PA7 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "host-wakeup";
- 		clocks = <&rk808 RK808_CLKOUT1>;
- 		clock-names = "lpo";
--- 
-2.48.1
+	if (wf->period_length_ns && wf->period_length_ns < MAX7360_PWM_PERIOD_NS)
 
+here to prevent to trigger a PWM_DEBUG warning. Sorry to spot this only
+now.
+
+> +		return 1;
+> +	else
+> +		return 0;
+> +}
+
+Best regards
+Uwe
+
+--f5yur2tjb4sfvpro
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmii7NkACgkQj4D7WH0S
+/k5D8wf9GBIjiwJiHOnPpVDsuFnX8sxtuJdUua7aE1rqfhF/xgF9iV8F9B20QvX2
+eBP2xYJ3wgAuICwvYFKZO5GvS3axiblep6ptsGS9Rl9PBgMSchCcaqPLguzHm/6T
+SNtAuW6vQZ8dph7yzaMcLA6GCGTPd5PytE5WXIssrYlfHDBAw4UIcTTE1v4oh1g6
+1V6vlfC+bmQHa73IlG/CChUlN4x/ZIfs1jUqKnSOpIMCdWaY4DiBJ3YF0SYUFvny
+V75ilLDG25R3Dz5iVkcMYWImrdLAQwem1yBkdvsykjQHcNOB0susXmEVpw3UmxCR
+sDbWK5JFIwOD7kRJ5T9o+blRHyRvjw==
+=UJjy
+-----END PGP SIGNATURE-----
+
+--f5yur2tjb4sfvpro--
 
