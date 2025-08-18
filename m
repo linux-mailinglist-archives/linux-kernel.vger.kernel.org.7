@@ -1,125 +1,76 @@
-Return-Path: <linux-kernel+bounces-772900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D33B29916
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE48B29925
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9893C16D126
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:50:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A9B1963C7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324DD26F471;
-	Mon, 18 Aug 2025 05:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FBF272802;
+	Mon, 18 Aug 2025 05:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="acXOpBKS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x9UajhGU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sQIbIxYn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C742A13B797;
-	Mon, 18 Aug 2025 05:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA94126E711;
+	Mon, 18 Aug 2025 05:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755496253; cv=none; b=E349H+X5h/OaryoCmC1uH5lXGMu0Z1o+0sSuzH4/HDi7lTxeH88Kzj/9HBkusZa+mNz08P+rS4Ve1AIrxKBYM1bkqtliD+6Fpy8VxZ7aEbrLxPewzjGPyN2O4Vu5cRGWHBzIMJ96AGt04f/26Yx+eX+WrYmRzG4rPv04ueAiUoI=
+	t=1755496366; cv=none; b=uesCmvrl7lpSsXy4Q8p5zoFv8j9s2INYhvz5DE72eRZHdPui82SQXgmLL/LHwrAqui1FtPQNPV4OFVCokUCW3KR0qjyhhaMU60kfGF224QB8JUDltb9ZRWn7vtQX5MNesZhpC4Ru6OKlxbAcGc5tkt/KE6GFXhZJgy5IdafrACs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755496253; c=relaxed/simple;
-	bh=CQfufM/VTcXp9QjfED6rlaMvi8drm6PxmTWrxo8/Kcc=;
+	s=arc-20240116; t=1755496366; c=relaxed/simple;
+	bh=+TFfy3LqtKNrPUR0rJlyKhGuXtg6n7Nco3CwrAsFQNM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmB9aOMKcpdO40a8ViHGY+ot8LGkPjqZuZM3phCCr/ZqdUXmgs/wBrUqOM+ZemVvUvxJFmr+sRVqkEtROMNlPmsZwlNvvwdZN7Pz4sFiTGHcFYRpQ4t66GSFS3v3uKEJLMAOBmROTZgbxUYDjJhHdpgkDNDpqRnUyfvwH5X60Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=acXOpBKS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x9UajhGU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 18 Aug 2025 07:50:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755496249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9wf0Z6OuOZWleNnvHLFh/d+cICHHxWRzn2uEG6isVr8=;
-	b=acXOpBKSyhRByqLNIQzAZTPy/XUcnLqJX49grd40/d/CXEcwRZ9iJe2WB7v1YipL09uJ7a
-	QE/e96IgkWbm+vL9rjxnSaXJvEn7JC/jzGStRe/SSTgBr/YwLd29L1a35LHQhQ6BEBipyB
-	WWq3nU69+Pwhl7nYYqVWWKA8NdMr7VZPqv0QciRFSJRoPX1yPLB9smZ34kyKN11nVkaTm8
-	zVCmL6sm73z7/BegZRGXinjxNFvWF+DBuiOorOpEf6HfPWBncPIay1D8rj50Y7yqCHjd2m
-	jTs1rI/nOSloMbp+4C8zjnWn3Jyk4+vntRHklNwPZcUjhEAWR9oIMcF6wnHn3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755496249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9wf0Z6OuOZWleNnvHLFh/d+cICHHxWRzn2uEG6isVr8=;
-	b=x9UajhGUzCtg3Mtvek0as/vcInY9ug5TfqQwzmOrlprr2+LurZaJRXUvbcgAq1sTDGPB9w
-	9E1IN1iVjXjr/YAw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	"David S . Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2 12/13] sparc64: vdso: Implement clock_getres()
-Message-ID: <20250818073135-130dfc53-225c-48a3-b960-e982faa866bf@linutronix.de>
-References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
- <20250815-vdso-sparc64-generic-2-v2-12-b5ff80672347@linutronix.de>
- <bf9ec82b-af1b-4684-ada5-8529b7ceb06a@app.fastmail.com>
- <20250815142418-d28c6551-bec1-4a65-9c52-f1afd7b630ed@linutronix.de>
- <5309ef99-9ae7-4525-8d58-f954c13797bc@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a48vIZEYa0FVGbpN8l114gHOayiSoDHBVHYD1eB6GSKZo85VJYoeTvDIsZOU/vz9n9UfTP3dDVZruk6GjePC6jmSWHAwM7iX1YVmwfH5y++mx6IVxSY4TTSJldXcsOWrDRZyjHlcrgxE49jFQBCxA33t+z/RdgPj4pjcgWy2eh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sQIbIxYn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qldtFRTQc/MaNY89VBZwlRVVq7wc7xMm/wizvObjV+g=; b=sQIbIxYnGYk+ZkuRHPnc4lYFg9
+	tfvf012CbVkkiJoLTpPaH0tPxNCovs0XL/m1I5cJdkXlUhjii2fL0RwtG8cHC5jcY3Qec/mYnrpGU
+	oMF/7gzNGIrT+S9jto9TjvBxFPdWs9J/PTpNI9sF7uudiaL4nJ+dykOVRCNM7Nj+FVP4/nblSGp7m
+	MljoXkVVYadq1kj3B8vwa9Mdn4CzteRmYJEbMJirZB5mkcjMjN0guYpVLDBELfDE9in9t25bzveaf
+	87WtcEiCDO2cChnRlryJx+4gJ0tFTn5mG5LrF5xr6mv10zg5CFj1mW2Hagok8uwBN5wKMPVI21xpc
+	AKOZ1GFA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1unsnS-00000006a60-1N7v;
+	Mon, 18 Aug 2025 05:52:42 +0000
+Date: Sun, 17 Aug 2025 22:52:42 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ethan Ferguson <ethan.ferguson@zetier.com>
+Cc: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Subject: Re: [PATCH v2 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Message-ID: <aKK_qq9ySdYDjhAD@infradead.org>
+References: <CAKYAXd-B85ufo-h7bBMFZO9SKBeaQ6t1fvWGVEUd_RLGEEK5BA@mail.gmail.com>
+ <20250817143200.331625-1-ethan.ferguson@zetier.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5309ef99-9ae7-4525-8d58-f954c13797bc@app.fastmail.com>
+In-Reply-To: <20250817143200.331625-1-ethan.ferguson@zetier.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Aug 15, 2025 at 10:09:23PM +0200, Arnd Bergmann wrote:
-> On Fri, Aug 15, 2025, at 14:34, Thomas Weißschuh wrote:
-> > On Fri, Aug 15, 2025 at 02:13:46PM +0200, Arnd Bergmann wrote:
-> >> On Fri, Aug 15, 2025, at 12:41, Thomas Weißschuh wrote:
+On Sun, Aug 17, 2025 at 10:32:00AM -0400, Ethan Ferguson wrote:
+> Both e2fsprogs and btrfs-progs now use the FS_IOC_{GET,SET}FSLABEL
+> ioctls to change the label on a mounted filesystem.
 
-(...)
+Additionally userspace writes to blocks on mounted file systems are
+dangerous.  They can easily corrupt data when racing with updates
+performed by the kernel, and are impossible when the the
+CONFIG_BLK_DEV_WRITE_MOUNTED config option is disabled.
 
-> >> On sparc64 kernels, I think you only need the
-> >> clock_getres_fallback() for 64-bit userspace, while
-> >> the compat path probably doesn't care about getres, neither
-> >> the time32 nor time64 variant.
-> >
-> > Why?
-> 
-> The clock_getres() vdso call is questionable even on 64-bit
-> systems, though we appear to have ended up with one on all
-> the major ones. Realistically if an application needs the
-> resolution often enough to want a fast way to get it, it can
-> just store it in a variable.
-
-Agreed.
-
-> On 32-bit, we decided against adding a clock_getres_time64()
-> syscall when we added clock_gettime64() because of this.
-
-My assumption was that clock_getres_time64() wouldn't make sense in the
-first place, as no clock would have a resolution this big.
-
-> For time64 userspace, this means that glibc always calls
-> the system call instead of the vdso, and old time32
-> userspace wouldn't use the clock_getres() vdso because
-> there was no vdso implementation when it was compiled.
-
-Is this paragraph meant to be specific for SPARC? Glibc does use the
-clock_getres() vdso fastpath on time64 architectures. But on SPARC no
-application would ever use clock_getres() through the vdso today,
-as it doesn't exist yet.
-
-In any case, I have no strong opinions about this patch and am happy to drop it
-or support only SPARC64. Most likely nobody will bother to update glibc anyways.
-
-
-Thomas
 
