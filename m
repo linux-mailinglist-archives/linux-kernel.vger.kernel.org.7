@@ -1,64 +1,44 @@
-Return-Path: <linux-kernel+bounces-772706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AECB2964D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:37:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55A8B29653
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E694E41CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42041780D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 01:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A57C2264B1;
-	Mon, 18 Aug 2025 01:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DBt5Hng+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46EE2327A3;
+	Mon, 18 Aug 2025 01:43:06 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F3619EED3;
-	Mon, 18 Aug 2025 01:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFDF2264B1;
+	Mon, 18 Aug 2025 01:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755481014; cv=none; b=QW5oqA2b6gJVuS56tfGjdnds1c12H+YXimJJk/v1LMb53G8RcRsGAGsAXVYlzhGgb3pbcLq4G2vDQj+TSrSgijRnWOHFFF9r066GE8QiZyeweDkCI8dbPfHkQ/GaJANjfSa8hPvUMbDtW+zbe41QEE8wDuFv0kaor8IKt517JtY=
+	t=1755481386; cv=none; b=ctQEW1YCjkW2RAlKRRJ0ycLxKTikY+X0/qXoSwikPggBpOTfRuuS3/ekXwSq1PvSPjfL77DAkpRuYJVrmFy/rckmPYyACJqFE/NPtrU7GlGBFhbIZDycI7v2r10on+9nsC9KYLlWTlRN0/ZJKJ/O6RPBDdDHcFHtcgB0E8YyDAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755481014; c=relaxed/simple;
-	bh=InyrvjXOENBGSKCdzMBpByyBC9uvIFGLRxeOFxuiCMU=;
+	s=arc-20240116; t=1755481386; c=relaxed/simple;
+	bh=3BrdEm9YWQ4b9T8dYVemL7Ff85aMXjPNNHmqsSoFDS4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KihXgis44QRxI+8CZty9qBcmoknb2XNDE1QDVEkyS0+bFci+XJguyoC1djM+IIeTZEl6UHHgLmnRzszVICF1ZSTBrTEbfbVFSCWOAo1BcuZdpiN4ONzkkuIoBrXC6YpB3nfSAsUoLK2zuIz1i9CDwcM4IDDLUh6XKww5HNGC+ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DBt5Hng+; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755481013; x=1787017013;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=InyrvjXOENBGSKCdzMBpByyBC9uvIFGLRxeOFxuiCMU=;
-  b=DBt5Hng+VvWMN14Q0XiYogCDb3bipBXkmomiRuMMGNMgoAG9bzW/2iZI
-   DWBELYX0HxteiDHkdxD20Ae+yazaEmPbHHIbKiCZ55ryxR70+P+Yr7h+b
-   g9RxFAD+zkgulX/LKn+mZCMO75pkwTLYLWZbb9+2wE/eYUpVpBlP2x37b
-   b59rPDVhe8HGXsY9h5sB6IDFVe7DNsvvZ16F3q8DPE8plKZMpUu0/9G7z
-   dCtdLgTmYBDtFWulg8cYYKfMuSr4eHulPjKZKnd5E3KWHywbgYFi0sCPf
-   pnReWiIKA5vRebPMv/C9IvzW+nBFFZBnWL8FUSUg9rHEMrVga5/5Ri/TC
-   g==;
-X-CSE-ConnectionGUID: YAz7F4SZRJ+HaVpr6AShkw==
-X-CSE-MsgGUID: cay0B+6rQF25wt/VK04r9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="68301439"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="68301439"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 18:36:52 -0700
-X-CSE-ConnectionGUID: lj1rSDdOTqy7O6aMoh8Hxw==
-X-CSE-MsgGUID: KRx9Xue4Rkqd6ii6zXe1Jw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
-   d="scan'208";a="171890354"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 18:36:48 -0700
-Message-ID: <4cc2ef88-19e6-4d96-9ccf-6485d5e489c5@linux.intel.com>
-Date: Mon, 18 Aug 2025 09:34:36 +0800
+	 In-Reply-To:Content-Type; b=rFuLyyJ63V4nRgl+Y2V8qKQmGQ56b88dudhjhvHwlBN7pMl+oOqbGQyaI3ny9p881epnPFs4S0vx4ImYfAUBuG5nXME+W357Efi41RfBW28vqgeXNOCinjAhZkhcxhbEdeN0LTa0I47fPh3FTwdgAYBBHoxEfDERO5hDkjXmwdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c4wTL0jTWzYQv8W;
+	Mon, 18 Aug 2025 09:43:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A71FF1A018D;
+	Mon, 18 Aug 2025 09:43:00 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAHgxMfhaJo6Ns1EA--.15154S3;
+	Mon, 18 Aug 2025 09:42:57 +0800 (CST)
+Message-ID: <95a4a94b-7aa0-4e3c-a386-7692dde66a4f@huaweicloud.com>
+Date: Mon, 18 Aug 2025 09:42:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,54 +46,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <4ce79c80-1fc8-4684-920a-c8d82c4c3dc8@intel.com>
- <b6defa2a-164e-4c2f-ac55-fef5b4a9ba0f@linux.intel.com>
- <20250811125753.GT184255@nvidia.com>
+Subject: Re: [PATCH blktests v2 0/3] blktest: add unmap write zeroes tests
+To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ hch <hch@lst.de>, "tytso@mit.edu" <tytso@mit.edu>,
+ "djwong@kernel.org" <djwong@kernel.org>,
+ "bmarzins@redhat.com" <bmarzins@redhat.com>,
+ "chaitanyak@nvidia.com" <chaitanyak@nvidia.com>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+ "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+ "yukuai3@huawei.com" <yukuai3@huawei.com>,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>
+References: <20250813024421.2507446-1-yi.zhang@huaweicloud.com>
+ <7dswufawxmyqblokjesulhdexqld3bx7sycgmylbaeqs43ougk@25rseyqm3beg>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250811125753.GT184255@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <7dswufawxmyqblokjesulhdexqld3bx7sycgmylbaeqs43ougk@25rseyqm3beg>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAHgxMfhaJo6Ns1EA--.15154S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy3tFy8uFWrXr15tr1rXrb_yoW8tw15pr
+	W5Xa4Dtws8GrWDJa4vvayq9Fy3Jws7Zry7A3Z5tr18Cr15ZFyfWrZ8Xw4aga17KrnxGw1I
+	v3W2gryS93WUJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 8/11/25 20:57, Jason Gunthorpe wrote:
-> On Fri, Aug 08, 2025 at 01:15:12PM +0800, Baolu Lu wrote:
->> +static void kernel_pte_work_func(struct work_struct *work)
->> +{
->> +	struct ptdesc *ptdesc, *next;
->> +
->> +	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
->> +
->> +	guard(spinlock)(&kernel_pte_work.lock);
->> +	list_for_each_entry_safe(ptdesc, next, &kernel_pte_work.list, pt_list) {
->> +		list_del_init(&ptdesc->pt_list);
->> +		pagetable_dtor_free(ptdesc);
->> +	}
-> Do a list_move from kernel_pte_work.list to an on-stack list head and
-> then immediately release the lock. No reason to hold the spinock while
-> doing frees, also no reason to do list_del_init, that memory probably
-> gets zerod in pagetable_dtor_free()
+On 8/17/2025 2:14 PM, Shinichiro Kawasaki wrote:
+> On Aug 13, 2025 / 10:44, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Change since v2:
+>>  - Modify the sysfs interfaces according to the kernel implementation.
+>>  - Determine whether the kernel supports it by directly checking the
+>>    existence of the sysfs interface, instead of using device_requries(). 
+>>  - Drop _short_dev() helper and directly use _real_dev() to acquire dm
+>>    path.
+>>  - Check the return value of setup_test_device().
+>>  - Fix the '"make check'" errors.
+>>
+>>
+>> The Linux kernel (since version 6.17)[1] supports FALLOC_FL_WRITE_ZEROES
+>> in fallocate(2) and add max_{hw|user}_wzeroes_unmap_sectors parameters
+>> to the block device queue limit. These tests test those block device
+>> unmap write zeroes sysfs interface
+>>
+>>         /sys/block/<disk>/queue/write_zeroes_max_bytes
+>>         /sys/block/<disk>/queue/write_zeroes_unmap_max_hw_bytes
+>>
+>> with various SCSI/NVMe/device-mapper devices.
+>>
+>> The value of /sys/block//queue/write_zeroes_unmap_max_hw_bytes should be
+>> equal to a nonzero value of /sys/block//queue/write_zeroes_max_bytes if
+>> the block device supports the unmap write zeroes command; otherwise, it
+>> should return 0. We can also disable unmap write zeroes command by
+>> setting /sys/block/<disk>/queue/write_zeroes_max_bytes to 0.
+>>
+>>  - scsi/010 test SCSI devices.
+>>  - dm/003 test device mapper stacked devices.
+>>  - nvme/065 test NVMe devices.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
+> 
+> I applied this v2 series. Of note is that I amended the 2nd and 3rd patches to
+> fix the shellcheck warnings below. Anyway, thanks for the patches!
+> 
+> $ make check
+> shellcheck -x -e SC2119 -f gcc check common/* \
+>         tests/*/rc tests/*/[0-9]*[0-9] src/*.sh
+> common/rc:679:7: note: Double quote to prevent globbing and word splitting. [SC2086]
+> tests/nvme/065:44:7: warning: Quote this to prevent word splitting. [SC2046]
+> tests/nvme/065:44:7: note: Useless echo? Instead of 'echo $(cmd)', just use 'cmd'. [SC2005]
+> make: *** [Makefile:21: check] Error 1
 
-Done.
+Sorry for missing these warnings, and thank you for fixing them! :-)
 
-Thanks,
-baolu
+Thanks.
+Yi.
+
 
