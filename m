@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-773618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FB9B2A2D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 670A3B2A2E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09646562B63
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8B4167F11
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522BD320CC9;
-	Mon, 18 Aug 2025 12:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OwSFGVCD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QbFanGte"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856EA31CA76;
+	Mon, 18 Aug 2025 12:54:17 +0000 (UTC)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE08320CC3
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F14031B107;
+	Mon, 18 Aug 2025 12:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521567; cv=none; b=YHYDUophWCi3+sT6lyuk5f7bIXsHdlHACcBF5CFjtZVB/E+fcfMesFSMbVCN/qzEhpt5vNxYo4JRWE6K6v9QZO5+v0X3ty5KYLe0U9Gdm6JkvDF5HmI3ocdidSdIfeRzJa64R0tsQnCqsD3ZbF4SWgmgXmaVrZz0lFvYLqiH6EM=
+	t=1755521657; cv=none; b=lZ8zwGoroCCGsLnwmw2x0br7tWiFeAqFyL5r9RXj/PIntVrKrL9moC3ciUVCrnY+Z/TcF5LgzmVu5qNHBJDXCPzra+nI3fuE4RludIqm13PMWaaV+Pgl/oxG5WKZOZV+U6NQ2kn7SkL94xX9sqP7kLAOPsw5YED8vzMqdA+Yk8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521567; c=relaxed/simple;
-	bh=WS1GAw/EoGg7F4iUR6kmjSFg+XPs96VJRDDL9js7iUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlT7UvsGTtRBfYJSNYqWcxhmQdd/C74va4JTW89sMvHHsXMPbL68ge6A7PQoPPdZv4/dCU503mxalqXGH//RpdpUlNoogoPWih9Hb4EIONN1PiZjncyzqCzfkd6g3fe8UPDEj4NBQVVgPQJ3cDHUj5zyAITGmFVtVJ2sP2s3AsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OwSFGVCD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QbFanGte; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 18 Aug 2025 14:52:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755521564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fe699vDAzc3LvWXFMREqbcBvlpPNmNxfbNTNF0p9oB4=;
-	b=OwSFGVCD9r2d7xTK6ka83OfqpkqJtvEP9DLf4R9X4v4CdiDFhapl9jJQY1hTo/0fldne0j
-	z1AvSea/+1pXPrYiT7ePEJG+/GJnkJMDXDQhkSYqWkma3StsmVtxGjiFSBvny+akPOBJGU
-	A2xDX6uVM38DS3mW0wNjVmKxiXBYDKWKMUEQgLQpRb2YWoehm8qXAjxCKHdGKq0rrE9AC9
-	FEv/6+SG9V+/6uu0T6jHmNRQ+9sEVtgCQS8zYbFwGVZf57gQjVP50JbsV9OxBXT6zzWA7j
-	Xd38DZHVF15TJNNCc7RcL1qJ9E8n9Q2So5Kaeie/aujG2idAxYwKMSQ/nYOy2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755521564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fe699vDAzc3LvWXFMREqbcBvlpPNmNxfbNTNF0p9oB4=;
-	b=QbFanGteD15lihsMonjrtYNKt8UZjlIjp1eIobB4eR8SlwXUQFgV4BMBc5RFvAkWwm3oA3
-	C8/X5JD8loGdzpDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
- polling on PREEMPT_RT
-Message-ID: <20250818125242.vJ4wGk20@linutronix.de>
-References: <20250812143930.22RBn5BW@linutronix.de>
- <20250812145359.QMcaYh9g@linutronix.de>
- <aJuYStGVBjyfVmZM@slm.duckdns.org>
- <20250813063311.33m0TDKl@linutronix.de>
- <aJzT7rqwkRQrLGqo@slm.duckdns.org>
+	s=arc-20240116; t=1755521657; c=relaxed/simple;
+	bh=1BLfdJ8Dbu/W2vFpjvjXm7I1iWe3RjmyWoBKeO+gbeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ri6hCLz48yk0fi1RK8IeSOwpSYDf6fVBnKNW+knXDMULHw1QQxSOoKrBQkSgfw3sGJS6AqREBPBcxeni54h7FbBpDL1nJ2qZTpsPvDhoK3x7k+JX/nKGMpF57S8Wqk7nFHqKg1HZfqGDA9zSZrh3ft9yws7jbPzvuTcq7XFAZRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-89018fd51a0so1087923241.1;
+        Mon, 18 Aug 2025 05:54:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755521654; x=1756126454;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OSOgWhnQelCymbUJXHvf5wQch/Wh4T+JWcFrhmtVTeU=;
+        b=nthjJbxr+TZRgGD84f/h8Bx2jUbuipywfqxhtZG5lpgaO6tzHvbo0EwTXHjUrETdcD
+         TcEMUo9wEFUPFZT9BgJakr+CfF+vkqE3qh+EhXw7nn0E5y8a3Yj90dGe5t2XcWy7SBKQ
+         w/R9LMVZIE0O8WR1lO2wXH55PTT465W6inbWOmyJ/ghf61gKDashsv747iamIpn0Eor+
+         oAUDQZ7FAUy/mwF7MZZB1iQ/QQXvE2g+d/xh/Q/g2zR/JDxebJBtsRMqxFjmMEw76UPN
+         T83Tagqgz+6ql4LE5lMDcf/utgOXR372tCopqZ0VPMlHfhCNiFvrQFUxagMcMDdOF0Gy
+         3g+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU1FfiG9iDxW3o1xwpev2wZVd/EeHNcKptw8yiNtokiEQlI6gN26zmZs6vOcMFskM/lRY0JPaQS1oNN@vger.kernel.org, AJvYcCVQnWftbHvDIR4qk+aEiKYyZkCajBkeq+MwleTjk+yWoLNR97ehyp6di76hzM3ZZW7CjFR1ysiryREx+YjoXzR25Ko=@vger.kernel.org, AJvYcCXXsF29QuqaQuFjnwf8duV07RvwX9fnFE74F8qTLthi5rQyj4sdO6dgs0wE9GwzWB+zI0igm6OtOz+SK7wQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS/dHbj9ubwPD8HAbRHoiymIibchH4QPR8Khya08piiEz3tPvu
+	sBpE7UwFc4WgwfXb4YPoSlabqS3Tbnn+pGDGRV9zOxcZ4yBhEH6rSid+O7NZNyoY
+X-Gm-Gg: ASbGncsd6AsRb+k4TZnAbr9g0iq4chM+lfUNOvI0W62LFTkHGwySUMwktPQMl5i2YZB
+	ixzCqqTsCS/7lkENeG52X5HYEO1Mwpkt28A/1Za8joc+XMM+JHCTA8JWjrt3BK6xbhEibq7u4Ve
+	UcshjnaTcjX+uYDwaeXoBmikQB3hKDkNh8IvOKS3llqqAAOz7nJrxblqzt/tm5AkgFR1neBEXli
+	u57iJdOzycfi59PpIrcZF7j3NmSXa9uAtoXpZHEIu+ArMeLrNfAwu4ucY2ARsAkOnSXFAYPRCOG
+	jkybD1T7E1BcW5No8n6LsKu/KVjVmpf2GolXD9+KHhyxMzoZCEiuY2tBOUkDzFpQdTrFVh///O4
+	Fl4ndHdYk2UjxOfR44iDnuuEkFoM3VCspIyy561nwhXDjxnaQkb6fgOrM5PdP+TTCSb2gChc=
+X-Google-Smtp-Source: AGHT+IHMv3LXHiauT5mLci9+D+/iBJDFVLUHgvGpQlYacaUBih2XAd23TrAx8GSGzVNGaF0LPjSimg==
+X-Received: by 2002:a05:6102:6c9:b0:4f9:69a9:4ec4 with SMTP id ada2fe7eead31-514cb1b0de2mr3331408137.26.1755521654193;
+        Mon, 18 Aug 2025 05:54:14 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2beff2fcsm1832192e0c.26.2025.08.18.05.54.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 05:54:14 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-890190c0ea4so1168138241.2;
+        Mon, 18 Aug 2025 05:54:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdsyF5ROLJxfwiRu8LZ5+F09nPmrrvsam5nzNO32LPZpIsr8PfUMuxO/wQ7cyQlBgjFa/d+tQq6YoV@vger.kernel.org, AJvYcCWFMCpQ93vB1xvYPamJOuu5K1b2GH2ZxU3/xixzeQF3bhgWsQYgpAqeUinzBqVtfYySUahJ6KuY0+OU1NSQ@vger.kernel.org, AJvYcCWkzoJdyfXn9NLF8uW78kbd9nINeR3L8pB28hJ/FggYpbD2oLiBVoO4BApwWNVIuGs6pIhAZLzMZ8xu5U9UNQmG7ec=@vger.kernel.org
+X-Received: by 2002:a05:6102:6c9:b0:4f9:69a9:4ec4 with SMTP id
+ ada2fe7eead31-514cb1b0de2mr3331399137.26.1755521653758; Mon, 18 Aug 2025
+ 05:54:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aJzT7rqwkRQrLGqo@slm.duckdns.org>
+References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250812200344.3253781-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812200344.3253781-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Aug 2025 14:54:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWvgwNVaum+YT5QMZ0TJxGxSqd8wizZ6zW=6zEJ66r+mg@mail.gmail.com>
+X-Gm-Features: Ac12FXxHU0PS5CsSUCz7eirxLqkJlaM_eqEX1YTjYuq7SraDrPP0tb_ia-P5fq8
+Message-ID: <CAMuHMdWvgwNVaum+YT5QMZ0TJxGxSqd8wizZ6zW=6zEJ66r+mg@mail.gmail.com>
+Subject: Re: [PATCH 01/13] arm64: dts: renesas: r9a09g077: Add DT nodes for
+ SCI channels 1-5
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-08-13 08:05:34 [-1000], Tejun Heo wrote:
-> Hello,
-Hi Tejun,
+On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The RZ/T2H SoC exposes six SCI controllers; sci0 was already present in
+> the SoC DTSI. Add the remaining SCI nodes (sci1-sci5).
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> On Wed, Aug 13, 2025 at 08:33:11AM +0200, Sebastian Andrzej Siewior wrote:
-> ...
-> > > The intention is to convert all BH users to workqueue-BH and remove BH
-> > > (that's what Linus wants and why workqueue-BH came to be), so the APIs
-> > > should be able to match up, I'm afraid. There were some attempts at pushing
-> > > the conversion but we've only made minimal progress. If you're looking at BH
-> > > users anyway and feel like it, please feel free to convert them.
-> > 
-> > I understand this but I am talking about legacy users:
-> > 
-> > | drivers/atm/eni.c:      tasklet_disable_in_atomic(&ENI_DEV(vcc->dev)->task);
-> > | drivers/net/wireless/ath/ath9k/beacon.c:        tasklet_disable_in_atomic(&sc->bcon_tasklet);
-> > | drivers/pci/controller/pci-hyperv.c:    tasklet_disable_in_atomic(&channel->callback_event);
-> > 
-> > This is what is left. (There is also i915 but this is "special").
-> > So we are talking about establishing an API and behaviour for those here
-> > after we painfully managed converting everyone else away:
-> 
-> Right, given how early in conversion, we can definitely leave this as
-> something to think about later. I have no objection to leave it be for now.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.18.
 
-Okay. Do I need to update __flush_work() in anyway to make it obvious?
-The local_bh_disable()/ local_bh_enable() will become a nop in this
-regard and should be removed.
-It would be the revert of commit 134874e2eee93 ("workqueue: Allow
-cancel_work_sync() and disable_work() from atomic contexts on BH work
-items"). The commit added the possibility to flush BH work from atomic
-context but it is unclear if there already a requirement for this or if
-it was to match the legacy part of the tasklet API.
+Gr{oetje,eeting}s,
 
-> Thanks.
+                        Geert
 
-Sebastian
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
