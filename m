@@ -1,287 +1,249 @@
-Return-Path: <linux-kernel+bounces-772878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22EAB298BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BA5B298BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 07:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E0727A3797
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CB47203518
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A16526A1C9;
-	Mon, 18 Aug 2025 05:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2DB26A1B9;
+	Mon, 18 Aug 2025 05:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="g41Y9JGd"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C105F1487E9;
-	Mon, 18 Aug 2025 05:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755493400; cv=none; b=WlZtQQuGLUQ2UNCXU43eo4FGexR1N9G29rIDsRUqUjdgb7k4cqmdxFDoCmjIgB3fM46ey1bJd4HqauBrYiqV2+tM6ydenQBDyhc7WiCjgR4/EfIduPnJYD3r+PUgMKefagPXembOCXSJpiGyDi5C40GNvvarnx0p2jU+l+sJkJc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755493400; c=relaxed/simple;
-	bh=6cU68ZuXw/wBW7VvbcAWKqmyjRI2mggS4E9J2UxboOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h4vabhtYtqd/Ry+aMiMwnuPPT0TxaQBN3nJSiwvQApH3DgPzLjJZCQ0Ogw06nFTuRa7c8a3kWuI3P2gGKPzUcvzdtc0H6aSy9bThpLrsaAF8SMRT4O2TVJF2ptF+D4TOb9px18Agsi2xypKzesgatl48FWbe5rqUuGcl8SLtOHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=g41Y9JGd; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=yZ
-	6M105Af4O3tAkh4Svx0T8DTaCqoK10g8Ja5jSPUMc=; b=g41Y9JGduqDGhrPK31
-	pj2T27zh/3HyKRO9ZcWvJZ9mthOtzSQcay3UNskyjNdi6YLoU1da285FRKP7atrq
-	j14JboHMLZDMTVZXhsavJf8W987KaMI50xhulGKjB77kVHPv4uFC/KlPLqa+N3Gf
-	361ahr9EHulek0R9iKmzBpdnQ=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wBXVcLqs6JoFIL7Cg--.15455S2;
-	Mon, 18 Aug 2025 13:02:35 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH net-next v4] net: af_packet: Use hrtimer to do the retire operation
-Date: Mon, 18 Aug 2025 13:02:33 +0800
-Message-Id: <20250818050233.155344-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VJ7vOQ52"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A3025634;
+	Mon, 18 Aug 2025 05:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755493427; cv=fail; b=UHzbP08+OuISLttp+/qieyssyYI1zAPEbufTo7ib9bR4ErvAqDAk1XhJ8zNrfbndyCiyqYQ0MT+wHq8QaMRDpawGexo5urkzxDT1jgn6y42kUQ7eVOaBKW78rN9kVz04A5TrILYwgvPGQdWjYvlcegYeJSwuh+iPfqLppzFAewA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755493427; c=relaxed/simple;
+	bh=vve1aw4GEX+YyCFD0pVU5DbuGD4v5gwyyLTg404m/64=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=k/X9WycyKR3oO/yVj9Ipx4OfVczfXybH0Fn03SATX/L9hPCxP+xBgaMfDj9TtbFCJjx4Y1hXGnESocnYfUiBnHG2ITAcJtch6i7ke/r3JdP3bl5u3mb0JzWRprVo407OkaM9JQNf41FYxVrNY4g5annPN9gGJGY/18Q1QRVAOro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VJ7vOQ52; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755493426; x=1787029426;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=vve1aw4GEX+YyCFD0pVU5DbuGD4v5gwyyLTg404m/64=;
+  b=VJ7vOQ52hkvbsIFfSNM4KNh+WrIQHD7c/VYZV6MjzyBhx0V4WBzussXX
+   Qlj0R6loTcqFXS9VUDMUyjwLpmaxpNkZfsSns1uVvzzsW6nu2LJidSZCL
+   BFlLlW9oPQTlPUS6GZcYneBZ/G5uuV61StZl+DF59zkEKHQQUBstUjWhH
+   p5rNmnwenp3YoXyZ3nCYnmKhf2mWU2iqw0+ZU+WdEFVzlcAGEtvBSiq3R
+   p/Rf86tW/Ku7eH6xAFFadvCdq0SS+cslnD2jHwtSKVT3JpD8WBDWQ+Cq6
+   l8SbPvnjkNALj1ivFX1ISjpRrM0ewACuXxkRpWhFKA64AVgbg++pqkVme
+   w==;
+X-CSE-ConnectionGUID: xfZQCQlTSqiFLhSBJtUcXQ==
+X-CSE-MsgGUID: jFA/UHY/Q36XCzZu1mXiEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57816648"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="57816648"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 22:03:45 -0700
+X-CSE-ConnectionGUID: a31pNsvnQVKZiyaC/wW/CA==
+X-CSE-MsgGUID: zhzVPKzPSHWOP4BO2Nf4wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; 
+   d="scan'208";a="167457007"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2025 22:03:45 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 17 Aug 2025 22:03:44 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Sun, 17 Aug 2025 22:03:44 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.74) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 17 Aug 2025 22:03:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gw16ze+Nj9P0msJeRUYIW+x0na1Iyw7Y+P47bgjWEEHb6lof2AaLCIjZF141d9wiFB5cYGpTm+iloJk6SSHZ74FEYJgFbNY0NmiFLnatqlrudaqAzGt/aJkjDTqdQpyuNUvBLCu0MeUxnHJEqsp61eOTekZVCq9qiAt0KPStNuSFxgud98ONU3qJ7a3xDalsmJCK+8naKt8p80X3G7PacY5cmHNkPCsdBs8xC65lt+Uoumc28hjZ5/Cf44suM9BnXZZvcNiWVYg9/Q9ujmoVka6yy76zlhG5NdmApXQdksUE1ZhgRxg6xwqq2Bu5+1r8sGu9kRxmoP2kgOHJ+vUXww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vve1aw4GEX+YyCFD0pVU5DbuGD4v5gwyyLTg404m/64=;
+ b=AOCtlP3y0hPlJ8IlKEkP0Jinxm0oApWwzaea/BTMmMkudiNeN/rSMQyrH7MW4MsBvC8xoTmyVsIVl3DDom7YBOqhqCUIGrSdqQd5o1juKJe8nsMMdgztnGg5fJVGsiAsSTP9SvbVc7kn78fCwxdnnY/xxPeWsbbF+ha79HdxNnkFUUKCjnJrchUsLBa5P4bH7MKMVN5RHwa4/UAmezc9ctY6EnI1aEaQSTZjHTUZEDt/TJJLUmHyjUQ0jD2lDuaGuKU/iDxMCqikXfMfLfTu+ceegCSjaXBDrlHQ1vBsGR5j82h4iMIeL5Xec9sNlqPHFsL4jEeRxd2bDo00Chu/NA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
+ by PH8PR11MB6928.namprd11.prod.outlook.com (2603:10b6:510:224::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 18 Aug
+ 2025 05:03:41 +0000
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66%4]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
+ 05:03:41 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "Reshetova, Elena" <elena.reshetova@intel.com>, "Hansen, Dave"
+	<dave.hansen@intel.com>
+CC: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"mingo@kernel.org" <mingo@kernel.org>, "Scarlata, Vincent R"
+	<vincent.r.scarlata@intel.com>, "x86@kernel.org" <x86@kernel.org>,
+	"jarkko@kernel.org" <jarkko@kernel.org>, "Annapurve, Vishal"
+	<vannapurve@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
+	"Bondarevska, Nataliia" <bondarn@google.com>, "seanjc@google.com"
+	<seanjc@google.com>, "Raynor, Scott" <scott.raynor@intel.com>
+Subject: Re: [PATCH v14 5/5] x86/sgx: Enable automatic SVN updates for SGX
+ enclaves
+Thread-Topic: [PATCH v14 5/5] x86/sgx: Enable automatic SVN updates for SGX
+ enclaves
+Thread-Index: AQHcDO5TnQHIa6baW0CdldyvXyq8LrRiXVoAgABQ5QCAAJwngIAElqaA
+Date: Mon, 18 Aug 2025 05:03:40 +0000
+Message-ID: <c9a730751f34087bdde3ea63a8c0d3a70b8d84b5.camel@intel.com>
+References: <20250814073640.1507050-1-elena.reshetova@intel.com>
+		 <20250814073640.1507050-6-elena.reshetova@intel.com>
+		 <4baa3bd4-cbc3-49b3-b8e6-09a2079c8363@intel.com>
+	 <31d0ac3b0b25efde64d502755e7c5f4717fb7f38.camel@intel.com>
+	 <DM8PR11MB5750EADDEFCA1160E6E75B0AE734A@DM8PR11MB5750.namprd11.prod.outlook.com>
+In-Reply-To: <DM8PR11MB5750EADDEFCA1160E6E75B0AE734A@DM8PR11MB5750.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|PH8PR11MB6928:EE_
+x-ms-office365-filtering-correlation-id: a720a802-ef81-48fa-9c26-08ddde14995b
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?bGZaaUIwa2c4aGhldzd0LzZNV3NMSXBzeXNoWU5sNVQzaGkyQzkreDkyakky?=
+ =?utf-8?B?Y3VqZEJOTWwyOTlxSXVVRmlBY3FpTU13U2N6UEdRV1JFNjB1Ukt3Qm1xcys5?=
+ =?utf-8?B?cGhBa3BFZTlrdEVvVFBEcVVIMWQ5dC9WSGh3bksrV1ZFT3ZveThsZDVLTU8z?=
+ =?utf-8?B?cURONWVmVGhwZlphdHVmZVNrQ05hTnVGZ1R3VWJQWVdWTDlTTnR5UzJDU25o?=
+ =?utf-8?B?dDNoQjNPKzVraUpick9GaFB1VHRxcXR5TWdkQ2FWcUgvQUdqQStKZ2w2Y2Ft?=
+ =?utf-8?B?NUtEdTlsVS9vcVptd2N1K2pEdjQzQ3pnSkdjQjlmQkZ1QytvcG5MMXJDWjhL?=
+ =?utf-8?B?bDdCKzIwVmZtcGh0UW5ieFRycjJvSmlSWEdaUDk3QW5FYmwra2l1ZERxUVow?=
+ =?utf-8?B?VDQrR1hCKzFpcDF3R2hZYkFTWGt4T0RqVDFNNVlEVDVtakRCdEcxUHpDQmt3?=
+ =?utf-8?B?cGR1a04zdGdVSGlPMkpVeHQwV29tQzFHNTIyM0ZlU0lpcm9aWStGMDlNWmRV?=
+ =?utf-8?B?M3NBdVFmaENZWFNLYlplRDN0SzQzbzdwUjg0eWE5YjNOREFDRDAxSWQxNFAx?=
+ =?utf-8?B?c2J4QzhYdzZSRDEyZzlOL0lWUEMyeHNzYldXNWJySWE2RnliN1o5M3FyN01x?=
+ =?utf-8?B?MGlVUGg5OWtSQjlNYXIwRW1yUXZJaDhtaFhUazI5cGc0UFJGblczbVVScVlD?=
+ =?utf-8?B?b3hOTkk4UzBTMjRQcDF4V1ozc1YvM2tMVDFKQnVZTmQvTzJUVUd1bTVSNEg2?=
+ =?utf-8?B?ano5Z1BxWkVFZDVsdXIvR3BpMTZxRFBQd1h2Zy93UkpQM2dtd1RBR2V3WkU5?=
+ =?utf-8?B?dVB3UmZ1TEVYQTFtbElUU1pIQ2pDRTMrdzVZdTBQNTJHRDlhUHNZRWtaV2ZP?=
+ =?utf-8?B?TExRY2VvTFdocUhSaUUyQmFjRzFRZFVodHdFbVF0N0J4RUhVcWNxSVVHOE5q?=
+ =?utf-8?B?MHNqYlhXWFJHeUJCenpXOEk5dTRxMVh5OVJRWUFIdXVkQlNMZWtJRFlyYUIv?=
+ =?utf-8?B?V2xxZFhlekhnTk80Q000cXRIZS9rUjlkUUNad09jVVk3ZUIweEsvb3NHTjRj?=
+ =?utf-8?B?bjhtQWFXR2NxQVlrZzEwek1JS3ZVZFRaSHdHR1d5NlZiSHBkZU5NM0dxdkpL?=
+ =?utf-8?B?UFk5NUdma3A5TzBKWUFuMUdvWlRpankvTGRMYWcvL0VsT1dweFZYV0hSWmFq?=
+ =?utf-8?B?TU1oYlgwcFN1RERIcnkrcGRHallpTDdIUVgwaDVQcitXMWM2dFlDc0IrWTBU?=
+ =?utf-8?B?VnM4ZFNnbVBvSnNmbWg1RjRRQjRmVnpLb2ZIUVJqMGxveG5nM0hmeWxhOXVF?=
+ =?utf-8?B?eG1LSEcvbHRyZnZiV1ZyT0lDS0FaOERiM29LU1hDTXZvR1crUEVuVEdsajdz?=
+ =?utf-8?B?QUZNRGVWR1ZEcWlpRkxxZG1hcmp2aXRRbVYzY1BOQnhHdUxoV2VMUHRWbFc5?=
+ =?utf-8?B?ZW5Wb0lKUk9XWVkySjdlR0dreDNnM2lHYWlLbmJmU0tNa2RpU0E1a2twLzhn?=
+ =?utf-8?B?dHBPN1JlcU5wTy9MQVN5ZFB2TklVVkhFME9UdkNrL1hDMTdNcElIR0JUU0p6?=
+ =?utf-8?B?M0U0czFwdnNUeWtWWStqVUhoQzRxNG9hSlRRNitxUmFSMWpOMzVJVStXSjA3?=
+ =?utf-8?B?NXIxQ0poaVhERm5Ea0xtNG84STl6RU9iOC9FQ0E2MnNuQUlMYTV0dVBYQW1x?=
+ =?utf-8?B?UXYwUnlJRzFjYjB0aGhXRWluOHozYmNadWFHaUJ6Smp0dC9ycXpNRzhwdjVt?=
+ =?utf-8?B?TUtyVkNOQjFqK2VSQS8wZ3BYTlZKdk1maW9ZUWZ2ajRpU2wraHBPYXpPM0ZZ?=
+ =?utf-8?B?ajJ5QmRKUjJPanFQT1g0Y0RNWUZQOHlUR2pFU2J1ZElsalREdFA5V2FONWFx?=
+ =?utf-8?B?YVI0Q0M2aFg3RmVSWXJKeTVYN2F2U3dJdm1ENEQxbEFGdUNxTUxmVVNVdGlZ?=
+ =?utf-8?Q?3sWnrrEHAPv122HepTt5EdzGkU9nP/w4?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?R0RYMFVaaUllVzdRNkVaZzRJR0NzaUZGd1piVnlFVVlWOVZRZzJscUlQajlL?=
+ =?utf-8?B?bUpoWkdDTE1MVTR1Nk85Y0Z6aVo4MHZVM2JBS2M5bWhXMmUyTThNYlJ5TGMx?=
+ =?utf-8?B?ZXhtMnBHZjNaSy9YU0tsMnhBcmVRMTJMWWMreUZYRW9WYnRONWhwcDlnWUdG?=
+ =?utf-8?B?cE5QeGZwdWNZMUNVdy9rU2Q1V1hBa2xtdTFENkorRlIyZWZocWJySEgrOThD?=
+ =?utf-8?B?eFJ0ZlErWktaRm9zQmtleWJnOUY3VjF2bUJJNGpWNzdoMmhnMDFjT1A4YkRy?=
+ =?utf-8?B?cjFUYk9hNHc3dUh6TUZyandVdmErVUhRa1BMZVlsQjc3YUVGZGcrK3F1dDFY?=
+ =?utf-8?B?K0FSV2VRTEx3Y1NQMlVGZG9OTHJUQWszcnZ2WmVkYUpxU0lmUTBzV2dIR0sz?=
+ =?utf-8?B?WWczQmpYUTFhOGlrcHpRcVZwRVFmOFhpbzk1ZDhoNHBoejRzOXI5bEgwQ1NN?=
+ =?utf-8?B?UTJlNFlCSncrTmNybDVrQmcxWnNFbTg2S0tJTEVQYU5IY2pTblk2R0o0TEVi?=
+ =?utf-8?B?TGVJUCtvVVJZYTdTeXpQTDNhTGkxaHpYMW9LSkNhNGQrdVRDWk0vSG5NQ0hR?=
+ =?utf-8?B?SmVPZFJHb0VXNzdRWisxN1o4UlpPNUJIQnA5ZG9JTkloR0FiMFg4RnBjL21Q?=
+ =?utf-8?B?Z3RUbjYyWmFpaUVUR3dxMlBseGVpOVdvYVFZNGpZckd1SlFtQjhYNEdoM1Mv?=
+ =?utf-8?B?aFNZYkxTc2lkRGpvcXRSSW5TRGhaNG1kdDY4Mng1cG9vT2VUWnh0eHNvOGt3?=
+ =?utf-8?B?MXRaS2RqR2UrV0RDeTU1M1p1WjBBa0xHaEJaRHFyZ0hjQktRd1p2MGZaSG40?=
+ =?utf-8?B?czJqSlBnNlN0MmNGaEluMEt6ZUZ6Y0RYY0dNTU1CWVh4bUNQU3NHVTJCR2xm?=
+ =?utf-8?B?eHhtbkc3YlM5MDk4bFJQNDdTM01rWWNMbm5SSTl2Z2hKZ0xFTHJIaDVseE1U?=
+ =?utf-8?B?N3NjeFd4YUJUcmRZVWQyM2ZQWk5tNVJ2WE0vT1BjaW5RQjZKaGwwYjdnNThH?=
+ =?utf-8?B?NFIyTmJJMnVmeVN1RVIxSHpBbHZKaXRpTUF6TVV6M2I0MFFRdlhnd3ZUV2hq?=
+ =?utf-8?B?VEcyWVc0Q0JnQkFYbnlrUE5VRDdQdHl2NlZqdktpNm5sNTl1aVBUNStKNTY3?=
+ =?utf-8?B?Wjd4VVdjb3JoYmhBUFJSL01FYXFWa1B5VlFhMmd1QVJhRXlEUk9aMjdPczZy?=
+ =?utf-8?B?TTVWUnpsNXBxa1RtWVRCMDZmVW8zb2VtU2V2a05DWUd0ZWtvZU10Ri9IdnJi?=
+ =?utf-8?B?VGRYRG5lMkpPcTZPaW1vVzA3Sk5nYUJpOGgvcWF6TUZJTmdPcndaT1dRalh3?=
+ =?utf-8?B?UUlObWRtczZ4QzByVUxocHJOWGJ2c29rUEJBbXRmSGFvRU0zNWEyMlQ2SGNw?=
+ =?utf-8?B?aElmR2w3UklDMm5rcjFMZEY4OHFtZnQxODNsWFVXdEZHcnpoZVN3a0t6clhR?=
+ =?utf-8?B?Tk5pTkw1WVA3UVVvN2ZSa0JLL0JRYWhpTG9NaUNRaituVFJmU2dMZFcrbWIw?=
+ =?utf-8?B?Qk9WRmZBUU50TU4xV1FhVFVhRDVIaUkrcGlCVGNkTlV5TnY3Nk5pdUxGQ0Jt?=
+ =?utf-8?B?dTFUVVpJdnVsNDR4YWQ0THRHMEM4NVlVYXZUbldUZ1lhOUt6T2VuRnpqdTZB?=
+ =?utf-8?B?M3JWa3JlcklGVFpSdlRnbHRXOWhjVWdWNitIWGN4YUxCaEFzcVQ2Nno1K2d2?=
+ =?utf-8?B?N29EbEtsQVRacFpNa3Q4Y3hTUTJaaEtTanBoMDMrVU9pUDljeDZISHZiQVIx?=
+ =?utf-8?B?QWN2czdJOU5SaXBTR1ExY3IyRGdXb1I1UWFqUW9KS0FvVFNFOG1nalRNSjhw?=
+ =?utf-8?B?NjR0MCszc21TM1VuUFNPS1c1QkNrMEQ4bkx0VnkyVC9EcGU2bUh4Tm9CQjM2?=
+ =?utf-8?B?NW1hNEYyYmsvdGtPcWZqU2tkbmhJQ0U0MmF1MjNkZThScmRNM2FnVnZJVmQ3?=
+ =?utf-8?B?VXdlaitjK25raTNQaGhCdC9FUy8xd2I5RTB3bEFJcDVhZlYySzlGc3Babkth?=
+ =?utf-8?B?Q1VCVGpnRmlMQm1RcDhQS3FJdjVJRU9yQ3ZIOERoenoxSUhRcmV0elRUNzh3?=
+ =?utf-8?B?SWxGQ0JOTk5Sa1BkbUJwbXRoZ2MzZXNWMm5rMFFMT1hjWlJnZHhWcjR1TjBt?=
+ =?utf-8?Q?quL1KVVcuuYn2SXtK4C4fnI3B?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0FB2255EE633454DABFEE37EF4A736AB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBXVcLqs6JoFIL7Cg--.15455S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Gw4kJF17Jr1xuryUXr1fWFg_yoWfZw45pa
-	y5WryxGw47ZF4agw48Ars7ZFyFgw1UAryUG393Xw4Syasxtryrt3Wj9r90gFWftFZFyw47
-	ArsYqF15Cw1DXrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0z_rWrxUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiox2tCmiir0pmcwAAsj
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a720a802-ef81-48fa-9c26-08ddde14995b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2025 05:03:40.9618
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Af/4vdqv80dQKAceaU0+p+hgba4lu7YLlS0V6dsX7DXuOKsnqe8cqDZjdqNLFO6Z0oQNpnPDGr66z7liHXNvfg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6928
+X-OriginatorOrg: intel.com
 
-In a system with high real-time requirements, the timeout mechanism of
-ordinary timers with jiffies granularity is insufficient to meet the
-demands for real-time performance. Meanwhile, the optimization of CPU
-usage with af_packet is quite significant. Use hrtimer instead of timer
-to help compensate for the shortcomings in real-time performance.
-In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-This is unacceptable in some high real-time systems that require timely
-processing of network packets. By replacing it with hrtimer, if a timeout
-of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-3 ms.
-
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
-Changes in v4:
-- Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
-  is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
-  (re)start the hrtimer; otherwise, use hrtimer_set_expires to update the expiration
-  time of the hrtimer
-  as suggested by Willem de Bruijn;
-Changes in v3:
-- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
-  as suggested by Willem de Bruijn;
-- Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
-  as suggested by Willem de Bruijn;
-- Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
-  _prb_refresh_rx_retire_blk_timer
-  as suggested by Willem de Bruijn;
-
-Changes in v2:
-- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
-  as suggested by Willem de Bruijn;
-- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
-
-Changes in v1:
-- Do not add another config for the current changes
-  as suggested by Eric Dumazet;
-- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
-  as suggested by Eric Dumazet;
-- Add some performance details to the changelog
-  as suggested by Ferenc Fejes;
-- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
-  as suggested by Willem de Bruijn;
-- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
-  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
-- Just return HRTIMER_RESTART directly as all cases return the same value
-  as suggested by Willem de Bruijn;
-- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
-- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
-
----
----
- net/packet/af_packet.c | 52 ++++++++++++++++++++++++++++--------------
- net/packet/diag.c      |  2 +-
- net/packet/internal.h  |  5 ++--
- 3 files changed, 38 insertions(+), 21 deletions(-)
-
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index a7017d7f0..5a1e80185 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -203,8 +203,8 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
- static int prb_queue_frozen(struct tpacket_kbdq_core *);
- static void prb_open_block(struct tpacket_kbdq_core *,
- 		struct tpacket_block_desc *);
--static void prb_retire_rx_blk_timer_expired(struct timer_list *);
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
-+static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *, bool);
- static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
- static void prb_clear_rxhash(struct tpacket_kbdq_core *,
- 		struct tpacket3_hdr *);
-@@ -581,7 +581,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
- 
- static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
- {
--	timer_delete_sync(&pkc->retire_blk_timer);
-+	hrtimer_cancel(&pkc->retire_blk_timer);
- }
- 
- static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
-@@ -603,9 +603,8 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
- 	struct tpacket_kbdq_core *pkc;
- 
- 	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
--	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
--		    0);
--	pkc->retire_blk_timer.expires = jiffies;
-+	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-+		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
- }
- 
- static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-@@ -672,11 +671,10 @@ static void init_prb_bdqc(struct packet_sock *po,
- 	p1->last_kactive_blk_num = 0;
- 	po->stats.stats3.tp_freeze_q_cnt = 0;
- 	if (req_u->req3.tp_retire_blk_tov)
--		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-+		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
- 	else
--		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
--						req_u->req3.tp_block_size);
--	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-+		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-+						req_u->req3.tp_block_size));
- 	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
- 	rwlock_init(&p1->blk_fill_in_prog_lock);
- 
-@@ -688,11 +686,27 @@ static void init_prb_bdqc(struct packet_sock *po,
- 
- /*  Do NOT update the last_blk_num first.
-  *  Assumes sk_buff_head lock is held.
-+ *  We only need to (re)start an hrtimer in prb_open_block.
-+ *  Otherwise, we just need to update the expiration time of the hrtimer.
-  */
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-+static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
-+		bool start)
- {
--	mod_timer(&pkc->retire_blk_timer,
--			jiffies + pkc->tov_in_jiffies);
-+	if (start)
-+		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
-+			      HRTIMER_MODE_REL_SOFT);
-+	else
-+		/* We cannot use hrtimer_forward_now here because the function
-+		 * _prb_refresh_rx_retire_blk_timer can be called not only when
-+		 * the retire timer expires, but also when the kernel logic for
-+		 * receiving network packets detects that a network packet has
-+		 * filled up a block and calls prb_open_block to use the next
-+		 * block. This can lead to a WARN_ON being triggered in
-+		 * hrtimer_forward_now when it checks if the timer has already
-+		 * been enqueued.
-+		 */
-+		hrtimer_set_expires(&pkc->retire_blk_timer,
-+				    ktime_add(ktime_get(), pkc->interval_ktime));
- 	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
- }
- 
-@@ -719,8 +733,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-  * prb_calc_retire_blk_tmo() calculates the tmo.
-  *
-  */
--static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
- {
-+	enum hrtimer_restart ret = HRTIMER_RESTART;
- 	struct packet_sock *po =
- 		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
- 	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-@@ -732,8 +747,10 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 	frozen = prb_queue_frozen(pkc);
- 	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
- 
--	if (unlikely(pkc->delete_blk_timer))
-+	if (unlikely(pkc->delete_blk_timer)) {
-+		ret = HRTIMER_NORESTART;
- 		goto out;
-+	}
- 
- 	/* We only need to plug the race when the block is partially filled.
- 	 * tpacket_rcv:
-@@ -786,10 +803,11 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 	}
- 
- refresh_timer:
--	_prb_refresh_rx_retire_blk_timer(pkc);
-+	_prb_refresh_rx_retire_blk_timer(pkc, false);
- 
- out:
- 	spin_unlock(&po->sk.sk_receive_queue.lock);
-+	return ret;
- }
- 
- static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-@@ -921,7 +939,7 @@ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
- 	pkc1->pkblk_end = pkc1->pkblk_start + pkc1->kblk_size;
- 
- 	prb_thaw_queue(pkc1);
--	_prb_refresh_rx_retire_blk_timer(pkc1);
-+	_prb_refresh_rx_retire_blk_timer(pkc1, true);
- 
- 	smp_wmb();
- }
-diff --git a/net/packet/diag.c b/net/packet/diag.c
-index 6ce1dcc28..c8f43e0c1 100644
---- a/net/packet/diag.c
-+++ b/net/packet/diag.c
-@@ -83,7 +83,7 @@ static int pdiag_put_ring(struct packet_ring_buffer *ring, int ver, int nl_type,
- 	pdr.pdr_frame_nr = ring->frame_max + 1;
- 
- 	if (ver > TPACKET_V2) {
--		pdr.pdr_retire_tmo = ring->prb_bdqc.retire_blk_tov;
-+		pdr.pdr_retire_tmo = ktime_to_ms(ring->prb_bdqc.interval_ktime);
- 		pdr.pdr_sizeof_priv = ring->prb_bdqc.blk_sizeof_priv;
- 		pdr.pdr_features = ring->prb_bdqc.feature_req_word;
- 	} else {
-diff --git a/net/packet/internal.h b/net/packet/internal.h
-index 1e743d031..19d4f0b73 100644
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -45,12 +45,11 @@ struct tpacket_kbdq_core {
- 	/* Default is set to 8ms */
- #define DEFAULT_PRB_RETIRE_TOV	(8)
- 
--	unsigned short  retire_blk_tov;
-+	ktime_t		interval_ktime;
- 	unsigned short  version;
--	unsigned long	tov_in_jiffies;
- 
- 	/* timer to retire an outstanding block */
--	struct timer_list retire_blk_timer;
-+	struct hrtimer  retire_blk_timer;
- };
- 
- struct pgv {
--- 
-2.34.1
-
+PiA+ID4gPiANCj4gPiA+ID4gIHZvaWQgc2d4X2RlY191c2FnZV9jb3VudCh2b2lkKQ0KPiA+ID4g
+PiAgew0KPiA+ID4gPiAtCXJldHVybjsNCj4gPiA+ID4gKwlzZ3hfdXNhZ2VfY291bnQtLTsNCj4g
+PiA+ID4gIH0NCj4gPiA+IA0KPiA+ID4gSG93IGlzIGEgcGxhaW4gaW50LS0gc2FmZT8NCj4gPiA+
+IA0KPiA+ID4gV2hlcmUncyB0aGUgbG9ja2luZz8NCj4gPiANCj4gPiBTb3JyeSBJIG1pc3NlZCB0
+aGlzIGR1cmluZyByZXZpZXcgdG9vLg0KPiANCj4gTXkgbGluZSBvZiB0aGlua2luZyB3ZW50IHRo
+YXQgd2UgZG9uJ3QgYWN0dWFsbHkNCj4gY2FyZSBvciBhY3Qgb24gZGVjcmVtZW50IChpdCBpcyBu
+b3QgYSB0cnVlIHJlZiBjb3VudGVyKQ0KPiBhbmQgdGhlcmVmb3JlLCByYWNlcyBoZXJlIGFyZSBv
+ay4gV2hhdCBJIGZvcmdvdCBpcyB0aGF0DQo+IHdlIGxvb3NlIGJhc2ljIGF0b21pY2l0eSBhbHNv
+IHdpdGggcGxhaW4gaW50ICgoDQo+IA0KPiBJIHdvdWxkIHBlcnNvbmFsbHkgbGlrZSB0byBnbyBi
+YWNrIHRvIGF0b21pYyAodGhpcyBpcw0KPiB3aGF0IGl0IGlzIGV4YWN0bHkgZm9yKSwgYnV0IEkg
+Y2FuIGFsc28ganVzdCBhZGQgYW5vdGhlcg0KPiBtdXRleCBoZXJlLiBQcmVmZXJlbmNlcz8gDQoN
+CllvdSBkb24ndCBuZWVkIGFub3RoZXIgbXV0ZXggQUZBSUNULCBqdXN0IHVzZSB0aGUgb25lIHlv
+dSBhbHJlYWR5IGhhdmUuDQoNClRoZSBwcm9ibGVtIG9mIHRoZSByYXcgJ2NvdW50LS0nIGlzIGl0
+IGlzIG5vdCBtdWx0aXBsZSB0aHJlYWRzIHNhZmUsIGUuZy4sDQpJSVVDLCB5b3UgY291bGQgZWZm
+ZWN0aXZlbHkgbG9zZSBvbmUgb3IgbW9yZSBzdWJ0cmFjdGlvbnMgaGVyZSwgbGVhZGluZyB0bw0K
+Y291bnRlciBuZXZlciByZWFjaGluZyB0byAwLg0KDQpGcm9tIHRoZSBwZXJzcGVjdGl2ZSBvZiBm
+dW5jdGlvbmFsaXR5LCB0byBtZSB0aGVyZSdzIG5vIGRpZmZlcmVuY2UgYmV0d2Vlbg0KbXV0ZXgg
+dnMgYXRvbWljX3QsIHNvIGVpdGhlciB3b3VsZCBiZSBmaW5lLiAgQnV0IGFzIHNob3duIGluIHlv
+dXIgdjcgWypdLA0KaXQgYXBwZWFycyBhdG9taWNfdCB2ZXJzaW9uIGlzIHN0aWxsIHNsaWdodGx5
+IG1vcmUgY29tcGxpY2F0ZWQgdGhhbiB0aGUNCm11dGV4Lg0KDQpTbyBzaW5jZSB3ZSBhcmUgYWxy
+ZWFkeSBoZXJlLCBJIHdvdWxkIHNheSBqdXN0IHVzZSB0aGUgbXV0ZXg6DQoNCnZvaWQgc2d4X2Rl
+Y191c2FnZV9jb3VudCh2b2lkKQ0Kew0KCWd1YXJkKG11dGV4KSgmc2d4X3N2bl9sb2NrKTsNCglz
+Z3hfdXNhZ2VfY291bnQtLTsNCn0NCg0KQW0gSSBtaXNzaW5nIGFueXRoaW5nPw0KDQpbKl0NCmh0
+dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXNneC8yMDI1MDcxMTE2NTIxMi4xMzU0OTQzLTEt
+ZWxlbmEucmVzaGV0b3ZhQGludGVsLmNvbS9ULyNtZTNkOWNhOTQyMzMwMDM5YTU5ZTJkZDZlMWQx
+NGI4MWM2NjcwZjg3YQ0K
 
