@@ -1,175 +1,167 @@
-Return-Path: <linux-kernel+bounces-774509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0F9B2B359
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:28:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB03B2B388
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 23:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A280B683465
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:28:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52B73B36A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 21:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14CA272E6E;
-	Mon, 18 Aug 2025 21:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E9A21576E;
+	Mon, 18 Aug 2025 21:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VJxWWGVP"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="semXjYdN"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CF7212B31
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3616204583
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 21:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755552511; cv=none; b=SDGlxmtDJSGqaerhyMx+HbVxLzSEangmHxdCmftsQncw6w0/Ogc9RYD52oSwMPuZ+9L+ojz2AMrL2i6g0axMOvL7wGw6myaP4JovgKdyiOcmnp5KeWGouoNTXMwe54S17jXLgWWYQPpkv6kb2nTatc4ATW+Pf5dioZDdo9OVuUY=
+	t=1755553086; cv=none; b=ODMO2t3jox45wGAH2+AIYaugPVNLIbXfcOaxCXp3GNJdDv6meFGZAxOfnsMYCb4j3iRPnH3Wh5VIg8FDttz5jjaMh/b9mC9zzsx7e27vMqDVjNReHjFFBdF0PDKRqsh20IPOLKShYnAmj0QxehNLZpEeJtTR9i2o+qwVBQR9r+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755552511; c=relaxed/simple;
-	bh=hs8qkxTA5j59P2IY9eFZnFm4hPrDXvyb5CjssRh6h/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CONz9kXPuZd/XX6ayGfSG8qUB2vJK954sozpgH00/ht0yUD44dl2yFjaEodu+qxGUniRmakzvZ9oC+Fe9qCrCwElDNtaMllKCNi6K55uWeuRVM6WA/nN6ZC3/QO8axoIQOq7NdFRqXO4SMDw6mB6vzHhmoFLSG9i5is9KGwkik4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VJxWWGVP; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-242d1e9c6b4so70865ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755552509; x=1756157309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tljew/FvMM+Bvz1Y1NbElAWGsKzuwgsJhb63T1N15jw=;
-        b=VJxWWGVPtoM+CFtWmmWRrhBw0i6NJivRRw7UvBbjY/Vj5LcVuKQ+2yhi63/sK/arhO
-         GHY1YcGCcefmp42AQpekbfcIAyBwrjIbWoGBoCm1LC9wTBpfDP8OzJ0YIA+m45vbqReq
-         0gyQBbdVJENGFb9piuOTgDLwm35KdlXkVZhHkhizEiok87jcyYqow39GUfryTjr44mV+
-         8jM4ZSupy+p3SR5Iies1QxURvxLlC18NWswSLTYjdoiuicoyVMGqBnwXBDAp87wiphSb
-         zebtb2f1d+S/0VccEuty68BBJPFv31QEVmTA5WPqoW5Fo6Ox+Fuewol5PGKr89iSWi5k
-         eYrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755552509; x=1756157309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tljew/FvMM+Bvz1Y1NbElAWGsKzuwgsJhb63T1N15jw=;
-        b=ZKr5P9B2DhqGLhkbsOuqPEtjx9WAROFuy6fCOF4XYUlsAVuqzXr6Z6CmRmUkJ1BD+n
-         IM/G5WGCJChvri3fd7Rjrc+7rJZ/4rZIpjZBEL1UYq2lIBnT0Vfmf1qzvhNXUONCVBNd
-         yuGOgWUwJQdkG/Q5DLbo/2pa2ONIQOXhzX2anKP006seefCyRZm0BZPyQIl1f2NqUPE2
-         ems+dvb2+LI534gIqdCDwnyZiaHAR2Yh9VrRT2k6mfz1tuYsTlbdiXYFsWXowGzqYSOz
-         iEFqf49IQnWE0eHe1s/d/2PVthfyCD3OyUOm5iyuf4m0aocjaxKVgjhToY+yhLoC8BJl
-         u88A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/XG8lMtjaFCU1sExVcFK1EXTQHH9cS3u0SHV10O0WyLt5LKz1mlyMkS4UyY4NCINydjDAQHViaQidqms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytIbLnK7+WbKeqpykE3QgWJcjuKaZiD+XPQQLDUdYlfGKBRSun
-	3WCd71Hci/Gm94XHWAfyUlHDt17SvvRwkOkxWQqQ3d3YR9gz8/+w5RIdTU785Kx2Xz/XAK4yx9q
-	5J80mraqUmEXVUh+kiDTpLC2EHpBDDwOCcdDUmoVP
-X-Gm-Gg: ASbGncuh9Ttyc/m/Rc5gwtotrCtAu8RSEBh9n9GfxskObTrIHkrp0/kyIOOejTM+PFP
-	9dQ8sGI6QmOSKmuIcI1hx4Zb5wpjpIITL8jzHMom0ubGGIrXPlrQgC4byhVogi/uG9Key31Vzsg
-	T78xqMAUHZr1g96RqDlbATi+uf+dbHn6rJiWsq1jgYdH3dZYuFbgYS5NmPe4hEGPeedaEGXFokc
-	skAtky34HhWKzoxkd14ApWrnMtfAQ0YXGv5Q2c2I3w=
-X-Google-Smtp-Source: AGHT+IEvmUsh0EpgL+byQO090hesxv5R/PZ+PvBmMG6FWHL72z8WO6btZxW4XOLbjFUvk3h4fDS79aSXDTFeQqfIIKs=
-X-Received: by 2002:a17:903:230a:b0:240:2bd5:7c98 with SMTP id
- d9443c01a7336-245e0635939mr233215ad.11.1755552508729; Mon, 18 Aug 2025
- 14:28:28 -0700 (PDT)
+	s=arc-20240116; t=1755553086; c=relaxed/simple;
+	bh=itBg6a1+lwB6xWkmI9LKzXQ3w1s8hkfw/strQXLc620=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WiABVBPBWU15xZlieno8XjJOGljE2UFGvZH7LBuvCoVJ0QUt5fjBQujKlY0TcYesl0t7iYCcLO4iQVdJEKIeuHH1pZO7ndR5W1G+1fBWBkLd17oV+Of8qFuSM/V7rgVZ2bZzoNSUGUy+mFUCobXkQuXk+JXMs3GC6NWOUrXcsPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=semXjYdN; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1755552582;
+	bh=itBg6a1+lwB6xWkmI9LKzXQ3w1s8hkfw/strQXLc620=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=semXjYdN1tl7rgBJVU7oyfKLIdhCMs1plWPYgJgv71HO7pbbBYS71lKHMmdjPISYP
+	 3FjMiJkOk3YVARbfQ5dALu1BJ3QcSHvRx6WULB2vqfvsYsQrgCSI5ZktBhN2Rj5xze
+	 p2pb4kW2LJxBx0bb1D7CTwzz+vvrKXogex3nh9X0Ui0EEIHRJCAlE+ESoLrYQyNnQW
+	 +nn4mODeN+QbHs0wffFEppOhKd++kNJUkw2tJNfHFYtY02I2xDJ+ptbSjsBSbEc5mx
+	 bI4I2aDz33qe2ukbDN4PSHxJn4pTm5xKoEGJQ9wjZod/BuhbMyNc6ZngulhZ0TD3lj
+	 Tk4ATmsyHvQPg==
+Received: from [172.16.0.63] (192-222-132-26.qc.cable.ebox.net [192.222.132.26])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4c5QpZ0JBTz1R0;
+	Mon, 18 Aug 2025 17:29:42 -0400 (EDT)
+Message-ID: <f5f862e2-5ce9-4d49-970f-b480cb3e7ba2@efficios.com>
+Date: Mon, 18 Aug 2025 17:29:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815072008.20214-1-zhaoguohan@kylinos.cn>
-In-Reply-To: <20250815072008.20214-1-zhaoguohan@kylinos.cn>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 18 Aug 2025 14:28:17 -0700
-X-Gm-Features: Ac12FXyQ4iMHhiz0Lurau_F_zl9zOidUM5BUNSOH5PJ0ctLCgEkqCUqrqRbV9ro
-Message-ID: <CAP-5=fUWP46kdXY4xaA6QzqG+Lj+b4ZGQmjrMKzXZpwSg60idQ@mail.gmail.com>
-Subject: Re: [PATCH v2] perf parse-events: Prevent null pointer dereference in __add_event()
-To: zhaoguohan@kylinos.cn
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	thomas.falcon@intel.com, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Linux)
+Subject: Re: [patch 00/11] rseq: Optimize exit to user space
+To: Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Wei Liu <wei.liu@kernel.org>
+References: <20250813155941.014821755@linutronix.de>
+ <12342355-b3fb-4e78-ad5b-dcfff1366ccf@kernel.dk> <87bjoi7vqx.ffs@tglx>
+ <6b428c1f-4118-4ede-8674-eceee96036c1@kernel.dk> <877bz67u3j.ffs@tglx>
+ <87y0rh63t0.ffs@tglx> <e6906764-66bb-437d-8082-b1d6a48ffa55@efficios.com>
+ <87a53wxtx5.ffs@tglx>
+From: Michael Jeanson <mjeanson@efficios.com>
+Content-Language: fr
+Autocrypt: addr=mjeanson@efficios.com; keydata=
+ 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 IZHa
+In-Reply-To: <87a53wxtx5.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 12:20=E2=80=AFAM <zhaoguohan@kylinos.cn> wrote:
->
-> From: GuoHan Zhao <zhaoguohan@kylinos.cn>
->
-> In the error handling path of __add_event(), if evsel__new_idx() fails
-> and returns NULL, the subsequent calls to zfree(&evsel->name) and
-> zfree(&evsel->metric_id) will cause null pointer dereference.
->
-> Extend the goto chain to properly handle the case where evsel allocation
-> fails, avoiding unnecessary cleanup operations on a NULL pointer.
->
-> Fixes: cd63c2216825 ("perf parse-events: Minor __add_event refactoring")
-> Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
+On 2025-08-18 16:21, Thomas Gleixner wrote:
+> That looks about right. Can you reset the branch to
+> 
+>       commit 85b61b265635 ("rseq: Expose stats")
+> 
+> which is just adding primitive stats on top of the current mainline
+> code, and provide numbers for that too?
+> 
+> That gives you 'notify: , cpuid:, fixup:' numbers, which are not 1:1
+> mappable to the final ones, but that should give some interesting
+> insight.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+For amd64 kernel and userspace.
 
-> Changes in V2:
-> - Extended the goto chain with separate error handling labels instead of =
-using null pointer check
-> - Reordered jump targets to avoid accessing NULL evsel members
-> - Added Fixes tag
-> - Updated commit subject to use "Prevent" instead of "Fix"
-> ---
->  tools/perf/util/parse-events.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
-s.c
-> index 8282ddf68b98..8a1fc5d024bf 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -277,18 +277,18 @@ __add_event(struct list_head *list, int *idx,
->
->         evsel =3D evsel__new_idx(attr, *idx);
->         if (!evsel)
-> -               goto out_err;
-> +               goto out_free_cpus;
+Before:
 
-nit: can we call this out_put_cpus rather than free?
+notify:             12467
+fixup:              12467
+cpuid:              12467
 
-Thanks,
-Ian
 
->
->         if (name) {
->                 evsel->name =3D strdup(name);
->                 if (!evsel->name)
-> -                       goto out_err;
-> +                       goto out_free_evsel;
->         }
->
->         if (metric_id) {
->                 evsel->metric_id =3D strdup(metric_id);
->                 if (!evsel->metric_id)
-> -                       goto out_err;
-> +                       goto out_free_evsel;
->         }
->
->         (*idx)++;
-> @@ -310,12 +310,15 @@ __add_event(struct list_head *list, int *idx,
->                 evsel__warn_user_requested_cpus(evsel, user_cpus);
->
->         return evsel;
-> -out_err:
-> -       perf_cpu_map__put(cpus);
-> -       perf_cpu_map__put(pmu_cpus);
-> +
-> +out_free_evsel:
->         zfree(&evsel->name);
->         zfree(&evsel->metric_id);
->         free(evsel);
-> +out_free_cpus:
-> +       perf_cpu_map__put(cpus);
-> +       perf_cpu_map__put(pmu_cpus);
-> +
->         return NULL;
->  }
->
-> --
-> 2.43.0
->
+After:
+
+notify:         123669528
+fixup:          123669528
+cpuid:          123669528
+
+
+For amd64 kernel, i386 userspace.
+
+Before:
+
+notify:             12857
+fixup:              12857
+cpuid:              12857
+
+
+After:
+
+notify:         120621210
+fixup:          120621210
+cpuid:          120621210
+
+
+> Might be useful to put such instructions into README.md, no?
+
+Will do.
+
+Regards,
+
+Michael
 
