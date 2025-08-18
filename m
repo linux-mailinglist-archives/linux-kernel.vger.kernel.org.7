@@ -1,207 +1,143 @@
-Return-Path: <linux-kernel+bounces-773635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F538B2A2EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:04:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3686B2A374
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25A57B2707
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:02:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C91B62484E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA3531E0FD;
-	Mon, 18 Aug 2025 13:03:36 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E190231E116;
+	Mon, 18 Aug 2025 13:03:53 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C3C31E0E5
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96DE31CA48;
+	Mon, 18 Aug 2025 13:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522215; cv=none; b=Mxq/fWNc5tXcOGil5Z1Q6Azu9wcWVxhaX7dFwPu6Kpq2Xm5iblGZrldIoLKzxknHwAP4INTUNq3zFetmRsqlCTzirSAf+Kkb90IUeHawzpLwZe7kpl6wBfTDmmkA15WA93JJFSwtXwRodhqvbMs0zIPK2P9wgpMd+9GGRS/RAAw=
+	t=1755522233; cv=none; b=DvVSTE/fNPvAgj1eRbD2AKxVDcKV+aUwO8zeqWuoyMQVpV6D32kRMEXLlnISWEK0QnqhXkB0cbL98keNlVLzQjW+cLeXWDVY7wjCum2EkNU3tX42J5nrkoB5hkHZ0cWsa/SgwuCo4bhKWQDDMSQO4R3br2AK8adI//BysZ8kvro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522215; c=relaxed/simple;
-	bh=VWQDe+tdPUG9+IU46gdoK6WXGm8lfqys7RG0ouhkjNk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EW6Wg1MzqU0DwiP/xDPEkdmYiRzrMwj+v2iMNAzKbLirCFcNS6qLnrxKdccgxmtXZLn8zzniwCqwHwPmL6joBPzPmXv1WjxjIQHNkzdzSNIvJgT8Fe40A3WGiZcR0EI1QGF5aVGm9wJSwzDiX87gEH5qpuiT+zqIgBvJswF+YRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-88432e140b8so471676039f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:03:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755522213; x=1756127013;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J6D/MLSyEOvx+mf01Y+3hlSzu1UvpzFqY9eDSOwkeYQ=;
-        b=KEI0YlUk4drrDAxtebcL9r78I89lVe7x/OGjGJVq/SEdkhdIlp3nMlf+jqPKHmM4aW
-         pd1B5zx6BFex02GKzOJl/1fMM1e2PCAYeuPVvQZxHBvpFLtvfVknXQQtFx3AXAG3hVw6
-         NY9VOzpI+IB6HYsmizwjHT5AXjrLSyiD9LS5qdu99B/AEQVmX+7km8LObBngcejIiD7t
-         EcSel3XtveWsHQTrbShi2k8BSsXlRYlXKLCw1q5UnQ3ojuhSZAPmd6uRmILzCnK7qj2O
-         4oIPwRm1U+kjK5lPXHuctYOqnuc0D8x3U+cEORVU544GHMIiTk1CT19XMiYY/pcsW8pd
-         afFw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2RjxAL5rOLZb2Qw4thnVDgBstXVn3+96jBuI8r45onEOVJZyj6qnX165GmyNIIAliiT/SGnHsSIOiOKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt9ZVWLmHQnzDNP+dOBOXsUPWh5E+T3Q0QFLxx78UAhX4ShsCS
-	Q4+M8ZBRgtktb4B+yCNIV4kigqZ3xM/po0N8zfiL4d7YPJnRfV0n8c5Vr9q4r618a/YPTsMKwKh
-	jeuWMp0htInU0IaGyy40BnV9O7sMR92keilgwb7VdDRfRjfv280VIxm1urPs=
-X-Google-Smtp-Source: AGHT+IGjcDaJWe46xzthBaKdKkQgFfnYtUt9n3274K0vkPhMdTkgnX2cWwcPvLSiwFEJ/BcNafUkJRyQBJL0w96L+uBEZP5YpK8M
+	s=arc-20240116; t=1755522233; c=relaxed/simple;
+	bh=3eSzentkqOibXZaENmGblqSTCJYk6IoR9S8VOJLZgsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R8ToxDeH4+q+YBw3iI2E61Gh1q0d6pRPhtyCMjdOd6gaxnEIO3PI899aT7+nZSr7rO/n3IjYKGFgFlD3kNWsLJS/ceSnhepyBIMXEk8P5S1jvf6e6lGkYXI/YF4gL8h3a+5XccongXHgjDgUFbTkvSqDlbk0zAkycIOT9u5RdnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c5CZr3RglzKHMVL;
+	Mon, 18 Aug 2025 21:03:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D97FB1A0875;
+	Mon, 18 Aug 2025 21:03:47 +0800 (CST)
+Received: from [10.174.178.209] (unknown [10.174.178.209])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjxCwJKNoY2JrEA--.45177S3;
+	Mon, 18 Aug 2025 21:03:46 +0800 (CST)
+Message-ID: <89a2023c-e383-4780-83e3-ba8f9e44c015@huaweicloud.com>
+Date: Mon, 18 Aug 2025 21:03:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ea:b0:3e5:5466:1aa2 with SMTP id
- e9e14a558f8ab-3e57e7fd2b0mr214245375ab.10.1755522212847; Mon, 18 Aug 2025
- 06:03:32 -0700 (PDT)
-Date: Mon, 18 Aug 2025 06:03:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a324a4.050a0220.e29e5.00a8.GAE@google.com>
-Subject: [syzbot] [bpf?] INFO: rcu detected stall in task_work_add
-From: syzbot <syzbot+f2cf09711ff194bc2c22@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    3b5ca25ecfa8 Merge branch 'net-don-t-use-pk-through-printk..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=104365a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ae1da3a7f4a6ba4
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2cf09711ff194bc2c22
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140b0da2580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3a41dee6422d/disk-3b5ca25e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/37991dc02c89/vmlinux-3b5ca25e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/48eac1c2fff5/bzImage-3b5ca25e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f2cf09711ff194bc2c22@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P6488/1:b..l
-rcu: 	(detected by 1, t=10502 jiffies, g=19581, q=865 ncpus=2)
-task:syz.6.33        state:R  running task     stack:25096 pid:6488  tgid:6488  ppid:6264   task_flags:0x400040 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7288
- irqentry_exit+0x6f/0x90 kernel/entry/common.c:197
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5872
-Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 eb 93 02 11 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-RSP: 0018:ffffc900047776f0 EFLAGS: 00000206
-RAX: c2093f235efbe900 RBX: 0000000000000000 RCX: c2093f235efbe900
-RDX: 0000000000000001 RSI: ffffffff8dba39e3 RDI: ffffffff8be32680
-RBP: ffffffff81cea1f6 R08: 0000000000000000 R09: ffffffff81cea1f6
-R10: ffffc90004777878 R11: ffffffff81ac3890 R12: 0000000000000002
-R13: ffffffff8e139ee0 R14: 0000000000000000 R15: 0000000000000246
- rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- rcu_read_lock include/linux/rcupdate.h:841 [inline]
- is_bpf_text_address+0x47/0x2b0 kernel/bpf/core.c:776
- kernel_text_address+0xa5/0xe0 kernel/extable.c:125
- __kernel_text_address+0xd/0x40 kernel/extable.c:79
- unwind_get_return_address+0x4d/0x90 arch/x86/kernel/unwind_orc.c:369
- arch_stack_walk+0xfc/0x150 arch/x86/kernel/stacktrace.c:26
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
- task_work_add+0xb1/0x420 kernel/task_work.c:65
- __fput_deferred+0x154/0x390 fs/file_table.c:529
- fput_close+0x119/0x200 fs/file_table.c:585
- filp_close+0x27/0x40 fs/open.c:1561
- __range_close fs/file.c:767 [inline]
- __do_sys_close_range fs/file.c:826 [inline]
- __se_sys_close_range+0x359/0x650 fs/file.c:790
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fed93f8ebe9
-RSP: 002b:00007ffcb5611318 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: ffffffffffffffda RBX: 00007fed941b7da0 RCX: 00007fed93f8ebe9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007fed941b7da0 R08: 0000000000000000 R09: 00000006b561160f
-R10: 00007fed941b7cb0 R11: 0000000000000246 R12: 0000000000057219
-R13: 00007fed941b6090 R14: ffffffffffffffff R15: 0000000000000003
- </TASK>
-rcu: rcu_preempt kthread starved for 1596 jiffies! g19581 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:27160 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 1 UID: 0 PID: 6401 Comm: napi/wg0-0 Not tainted 6.16.0-syzkaller-12122-g3b5ca25ecfa8 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:finish_task_switch+0x26b/0x950 kernel/sched/core.c:5225
-Code: 0f 84 3c 01 00 00 48 85 db 0f 85 63 01 00 00 0f 1f 44 00 00 4c 8b 75 d0 4c 89 e7 e8 cf 37 ea 09 e8 5a 3f 36 00 fb 4c 8b 65 c0 <49> 8d bc 24 18 16 00 00 48 89 f8 48 c1 e8 03 42 0f b6 04 28 84 c0
-RSP: 0018:ffffc9000458fa78 EFLAGS: 00000286
-RAX: e330458c080e4500 RBX: 0000000000000000 RCX: e330458c080e4500
-RDX: 0000000000000000 RSI: ffffffff8d9b49fa RDI: ffffffff8be32680
-RBP: ffffc9000458fad0 R08: ffffffff8fa34737 R09: 1ffffffff1f468e6
-R10: dffffc0000000000 R11: fffffbfff1f468e7 R12: ffff8880252d0000
-R13: dffffc0000000000 R14: ffff8880256a3c00 R15: ffff8880b873ab58
-FS:  0000000000000000(0000) GS:ffff888125d21000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055ea52750000 CR3: 0000000077f62000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5360 [inline]
- __schedule+0x17a0/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- napi_thread_wait net/core/dev.c:7583 [inline]
- napi_threaded_poll+0xfa/0x2b0 net/core/dev.c:7634
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] smb: client: Fix NULL vs ERR_PTR() returns in
+ cifs_get_tcon_super()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aKL5dUyf7UWcQNvW@stanley.mountain>
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+In-Reply-To: <aKL5dUyf7UWcQNvW@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDHjxCwJKNoY2JrEA--.45177S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1kXF1fJryxXr43WF4Uurg_yoW8tr4UpF
+	4Yk34UCFs8J3yDXw4xZFn5C3WF9w1DCFyDCrn5C3Wvvw45ZrWjqFyUK34jvF1SyrWUW348
+	WFsFyasIv3y8ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> The cifs_get_tcon_super() function returns NULL on error but the caller
+> expect it to return error pointers instead.  Change it to return error
+> pointers.  Otherwise it results in a NULL pointer dereference.
+> 
+> Fixes: 0938b093b1ae ("smb: client: Fix mount deadlock by avoiding super block iteration in DFS reconnect")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Hi Dan,
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thank you for your patch and for taking the time to address this issue.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+I would like to mention that I have recently sent out the V4 version of
+the patch series, which addresses the issues related to `cifs_get_tcon_super()`.
+In the latest version, the issue of NULL pointer dereference has already
+been resolved.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+https://lore.kernel.org/all/CAH2r5msLMNdqdo6EBuTvrQ0hwrqSRC-LSZuN2WpwV+PkDwsCOw@mail.gmail.com/
 
-If you want to undo deduplication, reply with:
-#syz undup
+I avoid null pointer dereferencing by performing a null pointer check on
+the return value of cifs_get_dfs_tcon_super().
+
+
+> ---
+>   fs/smb/client/misc.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+> index 3b6920a52daa..d73c36862e97 100644
+> --- a/fs/smb/client/misc.c
+> +++ b/fs/smb/client/misc.c
+> @@ -1116,7 +1116,7 @@ static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
+>   	struct cifs_sb_info *cifs_sb;
+>   
+>   	if (!tcon)
+> -		return NULL;
+> +		return ERR_PTR(-EINVAL);
+>   
+>   	spin_lock(&tcon->sb_list_lock);
+>   	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
+> @@ -1141,7 +1141,7 @@ static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
+>   	}
+>   	spin_unlock(&tcon->sb_list_lock);
+>   
+> -	return NULL;
+> +	return ERR_PTR(-ENOENT);
+>   }
+>   
+>   struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
+
+Additionally, I think it somewhat peculiar that in the current
+implementation, cifs_get_tcon_super() returns -EINVAL.
+
+I would greatly appreciate it if you could review my latest patch series to
+confirm if it resolves the concerns. If there are any additional improvements, I
+would be happy to collaborate further to ensure the best possible solution.
+
+Best regards,
+Wang Zhaolong
+
 
