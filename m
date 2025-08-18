@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-773554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EB8B2A188
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50031B2A1CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F133B23D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30AE6188AAD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 12:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08463203A4;
-	Mon, 18 Aug 2025 12:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A62F3203B0;
+	Mon, 18 Aug 2025 12:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WIMQIsKp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qfg+Y+8R";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="45pmVMIE";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qfg+Y+8R";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="45pmVMIE"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D7932038A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABEE2877CA
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520057; cv=none; b=unW8+OZ5yGo4G9qIUCx+HYKzu15unbFnov0AdK1vXAGgrObZgGRW82KKrTLXCY3vIOE+Z7teCi286Oio+SbfiTHyEQSNiDlhULSU/IJkC0Ds3pCFP0P/OLDkAkW629dLW37wTmYlm77t3wRraO4c2nYMzJ+ArAdjVECUhTLRVbY=
+	t=1755520064; cv=none; b=FmrzfuG3jIFNdCXWWJNYqXrOlv7uVGfg6xE0OFoe9lTd7ZpwlPbSUvtkE/8nWHkIhBr2m+4mhxDjzqZaND9xwqbw+dZUw0P57YbHj+WsxMxEOMP8N+49H7qX+HiNO46pm0j3SJoHag6HoWHhX1YUqbhJqdFFx69mNwUQtZK+tCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520057; c=relaxed/simple;
-	bh=nvR7xcOajIqcXGDD5teNd3zXhGzUeZ4squpuA/i5ois=;
+	s=arc-20240116; t=1755520064; c=relaxed/simple;
+	bh=5Bx57I5MZG/apa8alUsu4ulLZP1lIdz0QkCKRnmHix4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W4VO5BOBo5R8e939pJ1W63HI5ll9l9sRmPlbEKhDQiyVvJpLi4B/bIHEB9SguA4P8jYirjTkUpzwStIA1kIcNJfWjVo1tvaY/NNhCIcuX33asJqNeCwVfM0gCVtiH6mb8DGPaMUoXDUoPo9BXbRtNStEfLfN5zXti+uFapnEsaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WIMQIsKp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I89WY1007304
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:27:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jMPy8yrkDmCb5asvMqXUa+Y8wrsQZ53xq8R+umEMsHo=; b=WIMQIsKpv9GfAm5I
-	ev3oeWosKVrnDa/6A03vLd/3mYs37tOJjR5sXHXUhq2MR/IvotYdBIzmOGHIWV1P
-	RG2HOLA4QJCxKrCZEeVY0IlYl1Ii+wAIVevPA+u9b8AKHKaraIBDY03+Kn4eCjYg
-	dqwh34Qdjb+U0rBywOm6aAnQmzT5v3S2OF81VSIiHthtXgK6xhEZjsGwv4O65sPS
-	KUucP+XimOiXo+cYkbGStcdQiSub2Ug4sb0oy8C2Toug9wu3OBhV4Jcag8UXnTJq
-	qYA45M/YQak4Dv+c5ga56fRQec/DQ9dAGLG9bMMY5RUIddqxfjjlPrqwKvjaQS6c
-	85PxfA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jgxtcsyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 12:27:34 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a9f57ef93so88210556d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 05:27:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755520053; x=1756124853;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMPy8yrkDmCb5asvMqXUa+Y8wrsQZ53xq8R+umEMsHo=;
-        b=VNTnhkQzDs5Gub+Nlva7eZBc+6P8y8rjzh1EiZDBpb74fadAgW65RMb2GVh5t253qT
-         u062nVRdh87N3smBp7iuaaVr/qi7fE06+aumb8OgSJe9/LwhLPcViXCZBfzUFJmSaOBX
-         W/tuX+P7hCNWm8gw1H9Fc+nhQ6dqtGuUvK7vMNx4Tcsc5kJ7tUMBWkmemBBav6+zPwOA
-         3wrT0QnRgi8qZLW21DPdsJhVQz/N0SAybioEkyJpw8eS7HET8KaDEJXGzH21oArycESR
-         MM7L4kPzxZ/9LU0Yef6w00EPvwQ1WfBlY/5fqC04yYp7Fc2Inv/NgPMfL1lvdBMJ2ZtM
-         87wA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeyhLLDZ/A6G4HUaX/MuImmYGZF22jku0c8LJCSSC+UXtsltxbCYmeZe59W8ghQDgMLpRRpVU2mEr5Gms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRJeaqCTUGML1126LG2p7AqhQ8j7o2dJRN2IwRAMY+XUOa3HpH
-	cj4yoCdt5CJlD7lO7d85/2cu9TzFNoKJLqMturzWFcE3OQFg64qou5uAY3VoNjHZTHsacgkSZAw
-	MgqbuQCAu1RMgDgbsSOo9SVmjrfEzqudz4oJUPlOs08332RV4iUjQMgdTiCyiDtoXC2I=
-X-Gm-Gg: ASbGnct9f5AQTORL9SB7qvgVCobEghEs4J6hJC153/OMo3Sjqx/IAGcxFvGV9Qa7IIn
-	4f4/2ZhiMrlzS5JDW3h0z+I03WvvfLR0qZVkHA0YHTLk7JCBvzbtV6C0PgIa4zcSm6OvH+nWihB
-	v0LABgyV0xfpD7l1zZCrCaf/rQNKOwPHJ7f9gfvKBgPyumikPgy/Ek0jggU+yv9sa7fKG4zWawC
-	p3odq2CFKfNA9Fs5AmtI3xU7ylUEYsdMTEp3H1y4RjuNfnxhJseHQAs863IIp7RdFMImDXLpEBp
-	9pmzYs31uMBu1Tl2VxCRyKR6kCBskMyYc80jlgrYacpc6dbg1n5q3mcRKpHlkK9EEpc=
-X-Received: by 2002:a05:6214:226d:b0:709:e54b:2633 with SMTP id 6a1803df08f44-70ba7cc55d1mr157153266d6.50.1755520053553;
-        Mon, 18 Aug 2025 05:27:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyU7b2CpB2bLhXFIhOwMNDjmxVMc3MEJKn8wBDlF5tVrAmW41yFTSrE4nmNJj6aGmyyhUfOg==
-X-Received: by 2002:a05:6214:226d:b0:709:e54b:2633 with SMTP id 6a1803df08f44-70ba7cc55d1mr157153026d6.50.1755520053055;
-        Mon, 18 Aug 2025 05:27:33 -0700 (PDT)
-Received: from [192.168.68.118] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45a1c6be103sm180437045e9.2.2025.08.18.05.27.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 05:27:32 -0700 (PDT)
-Message-ID: <7e26efeb-d499-4f58-b42c-dd37c2f680a8@oss.qualcomm.com>
-Date: Mon, 18 Aug 2025 13:27:31 +0100
+	 In-Reply-To:Content-Type; b=SByGYhdBGNCOP2Bb94vGxto3T65X/und4QI0kQgiEMgg4L5wUk8SDzMkRr6Lb92YtEOhLRZbZ/+oIsuib1PPr7BruxgB5UE41UZkiUYy4LPmmy4afHkAySGfEUBmdxyGAtmucD2xfTbvXyyTDU0qlAnnqIiWjkh/5527JuHCNsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qfg+Y+8R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=45pmVMIE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qfg+Y+8R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=45pmVMIE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 936561F78B;
+	Mon, 18 Aug 2025 12:27:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755520060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
+	b=Qfg+Y+8RKzth05LU/7tTDvYvVPSPhvvMbHNOJFimrgad23OTpo7yTqLrolBXD9udPjQtUL
+	ShE9ch6gcRb246g647QZQh0w3yE/LB+c5nw7p++Jvr6nQdlcSOyDmOXE9V9TU2Shc2Byoj
+	t0cXBWAHpF/clzpmrm8Pr0aw6yCt8H8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755520060;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
+	b=45pmVMIEkaNUyNG8/+qQFAOmTAd3aI6rwyIy4pvyCQItouuojd2GhIJepBa2hLagh1BOIK
+	gELV0x0637yjVDCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Qfg+Y+8R;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=45pmVMIE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755520060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
+	b=Qfg+Y+8RKzth05LU/7tTDvYvVPSPhvvMbHNOJFimrgad23OTpo7yTqLrolBXD9udPjQtUL
+	ShE9ch6gcRb246g647QZQh0w3yE/LB+c5nw7p++Jvr6nQdlcSOyDmOXE9V9TU2Shc2Byoj
+	t0cXBWAHpF/clzpmrm8Pr0aw6yCt8H8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755520060;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VQbk0vdexWNweBQ3SWu3fIpvJr70rdFQjIBiRoqduho=;
+	b=45pmVMIEkaNUyNG8/+qQFAOmTAd3aI6rwyIy4pvyCQItouuojd2GhIJepBa2hLagh1BOIK
+	gELV0x0637yjVDCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FB6A13686;
+	Mon, 18 Aug 2025 12:27:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PLA2Cjwco2gtdAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 18 Aug 2025 12:27:40 +0000
+Message-ID: <e3e73378-b9d8-4bf4-838c-66794dc1fad4@suse.de>
+Date: Mon, 18 Aug 2025 14:27:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,72 +97,458 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] ASoC: qcom: audioreach: fix typos in I2S_INTF_TYPE
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, lgirdwood@gmail.com,
-        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250818122240.1223535-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250818122240.1223535-5-srinivas.kandagatla@oss.qualcomm.com>
- <6e0d3bbc-bc30-4ae0-8258-8dd19f7f29d4@linaro.org>
+Subject: Re: [PATCH v2] drm/gud: Replace simple display pipe with DRM atomic
+ helpers
+To: Ruben Wauters <rubenru09@aol.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jani Nikula <jani.nikula@intel.com>,
+ Jocelyn Falempe <jfalempe@redhat.com>
+Cc: dri-devel@lists.fredesktop.org, linux-kernel@vger.kernel.org
+References: <20250816100223.5588-1-rubenru09.ref@aol.com>
+ <20250816100223.5588-1-rubenru09@aol.com>
 Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <6e0d3bbc-bc30-4ae0-8258-8dd19f7f29d4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: ORoA9AcKXlpS4KNk11VvzXODCqQXstTo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyMCBTYWx0ZWRfX7ZRKB85KFAga
- 1IXu81cJh/yyQQ/dmdyVdgWcqpWRRW8G10nrEct3XuHIjkRG7XH8J71hcnUQ0ZYBqOxaAHsMx85
- 4FgszZaQ8cI9OCQHYS9UrEzNCG0apjAM/RsE/FVjy/sBJTAI7JNXvnZc5bCygmQ0tBllYSyaQ/n
- qWF4Lazi+cS8eQM5JhJkbtVK0WVfaVsHS4JhhIQeQUG8S+AYQzumzcO0njPFpoNZSDDekxX9nN5
- SkufjREIkToThpUJi4HyfHw2ZVxRJTEg0pNfr44+gMjC4XlDghwb1lVpsGufbpa5BM4/E4lNw1G
- AuATmnXlXkfZStDcD5kKZiX5nlGG7kRfxEd5qSdv4dIfw/egNR3IPazRQlRP00LZmS0gMfY7MgW
- qX0zKheI
-X-Proofpoint-GUID: ORoA9AcKXlpS4KNk11VvzXODCqQXstTo
-X-Authority-Analysis: v=2.4 cv=V7B90fni c=1 sm=1 tr=0 ts=68a31c37 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=GFBRK3qK-iERJEzU3l4A:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 malwarescore=0 adultscore=0 clxscore=1015
- suspectscore=0 impostorscore=0 bulkscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508160020
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250816100223.5588-1-rubenru09@aol.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
+	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,intel.com,redhat.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 936561F78B
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On 8/18/25 1:25 PM, Krzysztof Kozlowski wrote:
-> On 18/08/2025 14:22, srinivas.kandagatla@oss.qualcomm.com wrote:
->> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>
->> Fix spelling mistakes in I2S_INTF_TYPE defines.
->>
->> Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->> ---
->>  sound/soc/qcom/qdsp6/audioreach.h | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
->> index 617bda051cf8..512886042224 100644
->> --- a/sound/soc/qcom/qdsp6/audioreach.h
->> +++ b/sound/soc/qcom/qdsp6/audioreach.h
->> @@ -27,6 +27,7 @@ struct q6apm_graph;
->>  #define MODULE_ID_DATA_LOGGING		0x0700101A
->>  #define MODULE_ID_AAC_DEC		0x0700101F
->>  #define MODULE_ID_FLAC_DEC		0x0700102F
->> +#define MODULE_ID_SMECNS_V2		0x07001031
-> 
-> 
-> I think two patches got inter-mixed.
-Ouch... that is true
+Hi
 
---srini
+Am 16.08.25 um 11:57 schrieb Ruben Wauters:
+> The simple display pipe is obsolete and the atomic helpers allow for
+> more control over the rendering process. As such, this patch replaces
+> the old simple display pipe system with the newer atomic helpers.
+>
+> As the code is mainly the same, merely replaced with the new atomic
+> system, there should be no change in functionality.
+>
+> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> ---
+> I have been able to test this now, having obtained the hardware, and it
+> works fine, though some other unrelated issues have popped up, which I
+> shall try and debug and address in other patches.
 
-> 
-> Best regards,
-> Krzysztof
+Thanks for the update. Great to hear that it works. What's that other 
+problem? Maybe it's a known issue with a known workaround.
+
+I left additional comments below.
+
+
+>
+> v2 changes:
+> - address review comments by reorganising gud_probe()
+> ---
+>   drivers/gpu/drm/gud/gud_connector.c | 24 +++++-----
+>   drivers/gpu/drm/gud/gud_drv.c       | 52 +++++++++++++++++-----
+>   drivers/gpu/drm/gud/gud_internal.h  | 13 +++---
+>   drivers/gpu/drm/gud/gud_pipe.c      | 69 ++++++++++++++++++++---------
+>   4 files changed, 108 insertions(+), 50 deletions(-)
+
+AFAICT you should be able to un-include <drm/drm_simple_kms_helper.h> 
+from the various files within the driver.
+
+
+>
+> diff --git a/drivers/gpu/drm/gud/gud_connector.c b/drivers/gpu/drm/gud/gud_connector.c
+> index 0f07d77c5d52..75f404ec08b4 100644
+> --- a/drivers/gpu/drm/gud/gud_connector.c
+> +++ b/drivers/gpu/drm/gud/gud_connector.c
+> @@ -607,13 +607,16 @@ int gud_connector_fill_properties(struct drm_connector_state *connector_state,
+>   	return gconn->num_properties;
+>   }
+>   
+> +static const struct drm_encoder_funcs gud_drm_simple_encoder_funcs_cleanup = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+>   static int gud_connector_create(struct gud_device *gdrm, unsigned int index,
+>   				struct gud_connector_descriptor_req *desc)
+>   {
+>   	struct drm_device *drm = &gdrm->drm;
+>   	struct gud_connector *gconn;
+>   	struct drm_connector *connector;
+> -	struct drm_encoder *encoder;
+>   	int ret, connector_type;
+>   	u32 flags;
+>   
+> @@ -681,20 +684,13 @@ static int gud_connector_create(struct gud_device *gdrm, unsigned int index,
+>   		return ret;
+>   	}
+>   
+> -	/* The first connector is attached to the existing simple pipe encoder */
+> -	if (!connector->index) {
+> -		encoder = &gdrm->pipe.encoder;
+> -	} else {
+> -		encoder = &gconn->encoder;
+> -
+> -		ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_NONE);
+> -		if (ret)
+> -			return ret;
+> -
+> -		encoder->possible_crtcs = 1;
+> -	}
+> +	gdrm->encoder.possible_crtcs = drm_crtc_mask(&gdrm->crtc);
+> +	ret = drm_encoder_init(drm, &gdrm->encoder, &gud_drm_simple_encoder_funcs_cleanup,
+> +			       DRM_MODE_ENCODER_NONE, NULL);
+
+The display pipeline sends pixels from plane to CRTC to a number of 
+encoder/connector pairs. Hence you have to initialize the encoder at 
+gconn->encoder. The encoder in gud_device should  be removed.
+
+
+> +	if (ret)
+> +		return ret;
+>   
+> -	return drm_connector_attach_encoder(connector, encoder);
+> +	return drm_connector_attach_encoder(connector, &gdrm->encoder);
+>   }
+>   
+>   int gud_get_connectors(struct gud_device *gdrm)
+> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
+> index 5385a2126e45..65c3a83c4037 100644
+> --- a/drivers/gpu/drm/gud/gud_drv.c
+> +++ b/drivers/gpu/drm/gud/gud_drv.c
+> @@ -16,6 +16,7 @@
+>   #include <drm/clients/drm_client_setup.h>
+>   #include <drm/drm_atomic_helper.h>
+>   #include <drm/drm_blend.h>
+> +#include <drm/drm_crtc_helper.h>
+>   #include <drm/drm_damage_helper.h>
+>   #include <drm/drm_debugfs.h>
+>   #include <drm/drm_drv.h>
+> @@ -289,7 +290,7 @@ static int gud_get_properties(struct gud_device *gdrm)
+>   			 * but mask out any additions on future devices.
+>   			 */
+>   			val &= GUD_ROTATION_MASK;
+> -			ret = drm_plane_create_rotation_property(&gdrm->pipe.plane,
+> +			ret = drm_plane_create_rotation_property(&gdrm->plane,
+>   								 DRM_MODE_ROTATE_0, val);
+>   			break;
+>   		default:
+> @@ -338,10 +339,30 @@ static int gud_stats_debugfs(struct seq_file *m, void *data)
+>   	return 0;
+>   }
+>   
+> -static const struct drm_simple_display_pipe_funcs gud_pipe_funcs = {
+> -	.check      = gud_pipe_check,
+> -	.update	    = gud_pipe_update,
+> -	DRM_GEM_SIMPLE_DISPLAY_PIPE_SHADOW_PLANE_FUNCS
+> +static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs = {
+> +	.atomic_check = drm_crtc_helper_atomic_check
+> +};
+> +
+> +static const struct drm_crtc_funcs gud_crtc_funcs = {
+> +	.reset = drm_atomic_helper_crtc_reset,
+> +	.destroy = drm_crtc_cleanup,
+> +	.set_config = drm_atomic_helper_set_config,
+> +	.page_flip = drm_atomic_helper_page_flip,
+> +	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+> +};
+> +
+> +static const struct drm_plane_helper_funcs gud_plane_helper_funcs = {
+> +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+> +	.atomic_check = gud_plane_atomic_check,
+> +	.atomic_update = gud_plane_atomic_update,
+> +};
+> +
+> +static const struct drm_plane_funcs gud_plane_funcs = {
+> +	.update_plane = drm_atomic_helper_update_plane,
+> +	.disable_plane = drm_atomic_helper_disable_plane,
+> +	.destroy = drm_plane_cleanup,
+> +	DRM_GEM_SHADOW_PLANE_FUNCS,
+>   };
+>   
+>   static const struct drm_mode_config_funcs gud_mode_config_funcs = {
+> @@ -350,7 +371,7 @@ static const struct drm_mode_config_funcs gud_mode_config_funcs = {
+>   	.atomic_commit = drm_atomic_helper_commit,
+>   };
+>   
+> -static const u64 gud_pipe_modifiers[] = {
+> +static const u64 gud_plane_modifiers[] = {
+>   	DRM_FORMAT_MOD_LINEAR,
+>   	DRM_FORMAT_MOD_INVALID
+>   };
+> @@ -567,12 +588,17 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   			return -ENOMEM;
+>   	}
+>   
+> -	ret = drm_simple_display_pipe_init(drm, &gdrm->pipe, &gud_pipe_funcs,
+> -					   formats, num_formats,
+> -					   gud_pipe_modifiers, NULL);
+> +	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
+> +				       &gud_plane_funcs,
+> +				       formats, num_formats,
+> +				       gud_plane_modifiers,
+> +				       DRM_PLANE_TYPE_PRIMARY, NULL);
+>   	if (ret)
+>   		return ret;
+>   
+> +	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
+> +	drm_plane_enable_fb_damage_clips(&gdrm->plane);
+> +
+>   	devm_kfree(dev, formats);
+>   	devm_kfree(dev, formats_dev);
+>   
+> @@ -582,7 +608,13 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   		return ret;
+>   	}
+>   
+> -	drm_plane_enable_fb_damage_clips(&gdrm->pipe.plane);
+> +	ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
+> +					&gud_crtc_funcs, NULL);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
+>   
+>   	ret = gud_get_connectors(gdrm);
+>   	if (ret) {
+> diff --git a/drivers/gpu/drm/gud/gud_internal.h b/drivers/gpu/drm/gud/gud_internal.h
+> index d6fb25388722..6152a9b5da43 100644
+> --- a/drivers/gpu/drm/gud/gud_internal.h
+> +++ b/drivers/gpu/drm/gud/gud_internal.h
+> @@ -15,7 +15,9 @@
+>   
+>   struct gud_device {
+>   	struct drm_device drm;
+> -	struct drm_simple_display_pipe pipe;
+> +	struct drm_plane plane;
+> +	struct drm_crtc crtc;
+> +	struct drm_encoder encoder;
+
+As mentioned above, the encoder field should be removed.
+
+>   	struct work_struct work;
+>   	u32 flags;
+>   	const struct drm_format_info *xrgb8888_emulation_format;
+> @@ -62,11 +64,10 @@ int gud_usb_set_u8(struct gud_device *gdrm, u8 request, u8 val);
+>   
+>   void gud_clear_damage(struct gud_device *gdrm);
+>   void gud_flush_work(struct work_struct *work);
+> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+> -		   struct drm_plane_state *new_plane_state,
+> -		   struct drm_crtc_state *new_crtc_state);
+> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+> -		     struct drm_plane_state *old_state);
+> +int gud_plane_atomic_check(struct drm_plane *plane,
+> +			   struct drm_atomic_state *state);
+> +void gud_plane_atomic_update(struct drm_plane *plane,
+> +			     struct drm_atomic_state *atomic_state);
+>   int gud_connector_fill_properties(struct drm_connector_state *connector_state,
+>   				  struct gud_property_req *properties);
+>   int gud_get_connectors(struct gud_device *gdrm);
+> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
+> index 8d548d08f127..6a0e6234224a 100644
+> --- a/drivers/gpu/drm/gud/gud_pipe.c
+> +++ b/drivers/gpu/drm/gud/gud_pipe.c
+> @@ -451,14 +451,15 @@ static void gud_fb_handle_damage(struct gud_device *gdrm, struct drm_framebuffer
+>   	gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach, damage);
+>   }
+>   
+> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+> -		   struct drm_plane_state *new_plane_state,
+> -		   struct drm_crtc_state *new_crtc_state)
+> +int gud_plane_atomic_check(struct drm_plane *plane,
+> +			   struct drm_atomic_state *state)
+>   {
+> -	struct gud_device *gdrm = to_gud_device(pipe->crtc.dev);
+> -	struct drm_plane_state *old_plane_state = pipe->plane.state;
+> -	const struct drm_display_mode *mode = &new_crtc_state->mode;
+> -	struct drm_atomic_state *state = new_plane_state->state;
+> +	struct gud_device *gdrm = to_gud_device(plane->dev);
+> +	struct drm_plane_state *old_plane_state = drm_atomic_get_old_plane_state(state, plane);
+> +	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
+> +	struct drm_crtc *crtc = new_plane_state->crtc;
+> +	struct drm_crtc_state *crtc_state;
+> +	const struct drm_display_mode *mode;
+>   	struct drm_framebuffer *old_fb = old_plane_state->fb;
+>   	struct drm_connector_state *connector_state = NULL;
+>   	struct drm_framebuffer *fb = new_plane_state->fb;
+> @@ -472,17 +473,35 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+>   	if (WARN_ON_ONCE(!fb))
+>   		return -EINVAL;
+>   
+> +	if (WARN_ON_ONCE(!crtc))
+
+Please use drm_WARN_ON_ONCE() here.
+
+> +		return -EINVAL;
+> +
+> +	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
+> +
+> +	mode = &crtc_state->mode;
+> +
+> +	ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
+> +						  DRM_PLANE_NO_SCALING,
+> +						  DRM_PLANE_NO_SCALING,
+> +						  false, false);
+> +
+
+No empty line here and before similar "if (ret)" statements.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!new_plane_state->visible)
+> +		return 0;
+> +
+>   	if (old_plane_state->rotation != new_plane_state->rotation)
+> -		new_crtc_state->mode_changed = true;
+> +		crtc_state->mode_changed = true;
+>   
+>   	if (old_fb && old_fb->format != format)
+> -		new_crtc_state->mode_changed = true;
+> +		crtc_state->mode_changed = true;
+>   
+> -	if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+> +	if (!crtc_state->mode_changed && !crtc_state->connectors_changed)
+>   		return 0;
+>   
+>   	/* Only one connector is supported */
+> -	if (hweight32(new_crtc_state->connector_mask) != 1)
+> +	if (hweight32(crtc_state->connector_mask) != 1)
+>   		return -EINVAL;
+
+In case you're wondering: this is really a problem with user-space 
+programs. Most compositors (Xorg, Gnome, etc) don't support a single 
+display that is mirrored to multiple outputs. It's only found in low-end 
+hardware and complicated to get right; hence there's little incentive 
+for user space to fix the problem.
+
+
+>   
+>   	if (format->format == DRM_FORMAT_XRGB8888 && gdrm->xrgb8888_emulation_format)
+> @@ -500,7 +519,7 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+>   	if (!connector_state) {
+>   		struct drm_connector_list_iter conn_iter;
+>   
+> -		drm_connector_list_iter_begin(pipe->crtc.dev, &conn_iter);
+> +		drm_connector_list_iter_begin(plane->dev, &conn_iter);
+>   		drm_for_each_connector_iter(connector, &conn_iter) {
+>   			if (connector->state->crtc) {
+>   				connector_state = connector->state;
+> @@ -567,16 +586,19 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+>   	return ret;
+>   }
+>   
+> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+> -		     struct drm_plane_state *old_state)
+> +void gud_plane_atomic_update(struct drm_plane *plane,
+> +			     struct drm_atomic_state *atomic_state)
+>   {
+> -	struct drm_device *drm = pipe->crtc.dev;
+> +	struct drm_device *drm = plane->dev;
+>   	struct gud_device *gdrm = to_gud_device(drm);
+> -	struct drm_plane_state *state = pipe->plane.state;
+> -	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(state);
+> -	struct drm_framebuffer *fb = state->fb;
+> -	struct drm_crtc *crtc = &pipe->crtc;
+> +	struct drm_plane_state *old_state = drm_atomic_get_old_plane_state(atomic_state, plane);
+> +	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(atomic_state, plane);
+> +	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(new_state);
+> +	struct drm_framebuffer *fb = new_state->fb;
+> +	struct drm_crtc *crtc = new_state->crtc;
+>   	struct drm_rect damage;
+> +	struct drm_rect dst_clip;
+> +	struct drm_atomic_helper_damage_iter iter;
+>   	int ret, idx;
+>   
+>   	if (crtc->state->mode_changed || !crtc->state->enable) {
+> @@ -611,8 +633,15 @@ void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+>   	if (ret)
+>   		goto ctrl_disable;
+>   
+> -	if (drm_atomic_helper_damage_merged(old_state, state, &damage))
+> +	drm_atomic_helper_damage_iter_init(&iter, old_state, new_state);
+> +	drm_atomic_for_each_plane_damage(&iter, &damage) {
+> +		dst_clip = new_state->dst;
+> +
+> +		if (!drm_rect_intersect(&dst_clip, &damage))
+> +			continue;
+
+Where did you get this code snippet? This test should not be necessary 
+here and can even lead to incorrect display updates. Just call 
+gud_fb_handle_damage() with the damage area.
+
+Best regards
+Thomas
+
+> +
+>   		gud_fb_handle_damage(gdrm, fb, &shadow_plane_state->data[0], &damage);
+> +	}
+>   
+>   	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
+>   
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
