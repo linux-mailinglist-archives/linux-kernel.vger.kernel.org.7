@@ -1,386 +1,126 @@
-Return-Path: <linux-kernel+bounces-773160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C650AB29C21
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A86B29C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 10:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F57B3B5F9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C13C3B31AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 08:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C52F3002BA;
-	Mon, 18 Aug 2025 08:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C377E3009F0;
+	Mon, 18 Aug 2025 08:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFsv9ZC6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2x0TEBro"
+Received: from mail-lj1-f201.google.com (mail-lj1-f201.google.com [209.85.208.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB2F22F01;
-	Mon, 18 Aug 2025 08:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C05822F01
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 08:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755505604; cv=none; b=jy6hDaGgwuGBuCMZjfefYs4G4EJERIngIQ+CSD1oYUsndFy3mgfIx1V3CfrjQyXQahjE1s70PaErN65f1Uoh+ZBW0ju2AiJmnEW+VxOiezLFXHVwEmF7yz77qkl+zUdxwTf4YLuEYon4htQPUFyLGfQIkZnnso66IqI49J697bA=
+	t=1755505651; cv=none; b=dl9ISp5PtL5Y7YPhuMjRBVh7DYIxLu+wgExoHlBewwakWRFzsg43OHlblU2iLqKSsoE/Nr5dVwAxzU1kEwHLe8VrU37/+iybE9Rh4bDUaHXfJztOP4Iop4eZ+LALWt/HRMstSdDyRmhOZu/U2GdE84CNDkc+eINd2n6ZBWzYZ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755505604; c=relaxed/simple;
-	bh=Vm8cWvKgpjFAKW99yrjp0C+LOL3fJWGgMbbY76Ih1RY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oXrLZ5wf/x0eZ4MuF8LOpJdCTLsA2YbQC62R5fXnguH3th7+lG0p67v12LWOj518BQXcLI9lgsU5HYSx8laYoVyTo+m7vElxua0VPp5VsOGTk5rKLfdqNskLM1+yShHjv9eFgLbPBVlU9xZscx242DPzPlp036ww85RJwnLoWH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFsv9ZC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A772C4CEED;
-	Mon, 18 Aug 2025 08:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755505602;
-	bh=Vm8cWvKgpjFAKW99yrjp0C+LOL3fJWGgMbbY76Ih1RY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FFsv9ZC6MF/RWiBx47eLyFD9CBfESKS/m7zZ90r6SnLHCScdp3+iudxbEnezGPWBd
-	 AsXQVeOqpXCQ61elmgUi8/QCp8aRkXglnamVhsmqxty9ZFtWIZFlWckKle8rgMXcKL
-	 xc77cPQ6M5AwyqFnc+tjARmMhuMpVFHH7eRSBa16aE9IOI3lJWilOdksaoTCGMaQEk
-	 nFsiU0jWFZkgY0/MY73Gp0cplRLHmTl3FaCpBvKRaT9Ubjm2pZgY7MYBXSS/oe4JTa
-	 WdIMwgcflSTu1e+cMbze+VRaUA12e3AGoVmNothVIG6NUHfAwdZruIB39D4aCoLFwJ
-	 xr5R9VC6Y5i9A==
-Message-ID: <1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
-Date: Mon, 18 Aug 2025 10:26:34 +0200
+	s=arc-20240116; t=1755505651; c=relaxed/simple;
+	bh=Q2rUv28LZiksZj3z/7RVMGWGxPcbEI8ZlUPHEnN95NA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FCAZc9ZyjJkq8+uqBVB0BdD39yHIPBMromkGsJVQdE2nHB47NGqN0e7jnB9gJ338Wu392GkG67Mn+dFH/+FRD5oDVK1yp40Cr4D2dGWq+IDDDxRlBfveHYQ7cGNV5E6Mr3ni2P/JszxYz2sTS50hqyaWs/T3HdZP/z66u0Vp1Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2x0TEBro; arc=none smtp.client-ip=209.85.208.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
+Received: by mail-lj1-f201.google.com with SMTP id 38308e7fff4ca-333f8f1d00aso15493141fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 01:27:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755505648; x=1756110448; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=woHVZ9xaLvn0f5ipMTuZWdrUXSwzm8lint/HyOAjQ/U=;
+        b=2x0TEBroBrkyTZB6so7ZBaHEiA4KIVe57aqAvA2XJocsHOiMLenMwpTL/pz3RifiyB
+         JGUqQI98qzXGo4fZoyAiSu4NOYBByjbea4n+FQ6nvVmD5BOFeDdC7Atl5Bx/AgiAavOm
+         tsjbcaBLBm3pxbjr9/Z8MioijY6/8UjpPl3hLYAhYHJ0gokYWoNA/v/EnJEI1o3Di4Hh
+         CMqdQn54CQwzNt1djpTbPBK6sTKjq3viDsIuJd1+C4owi2vaxJWTOZqhuGx43PlCrAQ+
+         6TRnN+pIynRNO+v6ZdJBLqzZIbwg5f1aFNmHlnDkLzAb/tX3BVoeoi9MPoEHHVj9F4GL
+         wS+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755505648; x=1756110448;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=woHVZ9xaLvn0f5ipMTuZWdrUXSwzm8lint/HyOAjQ/U=;
+        b=u7sd/oZZaLu6JV0XbUDU0QfnlN5yYMLpLJJff/vb5HEX0jArR6S5BNdYGECoq4IdQR
+         bt7ZVvzKYhWR/D+Sesc05KEYmOXgmuCTuESX9EeMJ6zl6QATnEEkmay8ta3gbvImruae
+         Q8jWIFcrb+yCs7UR6EZmDSvhkuhG5AENzIEsWl7jZRpi+H1K9EK16tjj9+0a2DTIB4L4
+         5zeYP8w03NM4aCAxablTk50CuOuMNtpgw8ZulPGgtiGi9Lk7pn5SH9AOsLZr81FA8O8H
+         JBqK+krw+kiyGxyKsUA2zgG+oclQdoj+8aEDJ5UrpjQxb3qhVezh9hgj1rrVslnhDFGh
+         C2KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjHZxeuuh0BY8JtRsBNKV4SRFzAsNhhOr+1xyvgujVGQpMuVdwp92tOzWljzLKw4Qpp1MSEB9MinKLJ3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLP/l2wB4RSpj/AmM//pnIgIqtCF+4PBMkdZJlLIK/0RuBsqyD
+	6rjXFYc7fS+UypeW8v0UdpBgL5QnJJmATR54c+29P26Ayuw4BeAUv1GytiWmTbVnml4c7vqUPBL
+	omODTuQ==
+X-Google-Smtp-Source: AGHT+IGrqcNd0p4GZP+SI/t90GUT0YAuHX6l0SKKrbFiWaZXPaDZJSorGQPaPiCRKA/+pAm6tSd5JldymVo=
+X-Received: from ljdt15.prod.google.com ([2002:a05:651c:31cf:b0:334:474:b29c])
+ (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a2e:be28:0:b0:334:14f:e9c0
+ with SMTP id 38308e7fff4ca-33409953eb8mr30417611fa.32.1755505647563; Mon, 18
+ Aug 2025 01:27:27 -0700 (PDT)
+Date: Mon, 18 Aug 2025 16:27:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
-To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
- cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
- martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
- catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- ravi.patel@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
- festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
- <20250814140943.22531-5-inbaraj.e@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250814140943.22531-5-inbaraj.e@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+Message-ID: <20250818082722.2952867-1-khtsai@google.com>
+Subject: [PATCH] usb: udc: Add trace event for usb_gadget_set_state
+From: Kuen-Han Tsai <khtsai@google.com>
+To: gregkh@linuxfoundation.org, royluo@google.com, jkeeping@inmusicbrands.com, 
+	stern@rowland.harvard.edu
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kuen-Han Tsai <khtsai@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/08/2025 16:09, Inbaraj E wrote:
-> There is a csi dma and csis interface that bundles together to allow
+While the userspace program can be notified of gadget state changes,
+timing issue can lead to missed transitions when reading the state
+value.
 
-CSI DMA?
-What is CSIS?
+Introduce a trace event for usb_gadget_set_state to reliably track state
+transitions.
 
-> csi2 capture.
+Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+---
+ drivers/usb/gadget/udc/core.c  | 1 +
+ drivers/usb/gadget/udc/trace.h | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-CSI2?
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index d709e24c1fd4..e28fea614496 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -1125,6 +1125,7 @@ void usb_gadget_set_state(struct usb_gadget *gadget,
+ {
+ 	gadget->state = state;
+ 	schedule_work(&gadget->work);
++	trace_usb_gadget_set_state(gadget, 0);
+ }
+ EXPORT_SYMBOL_GPL(usb_gadget_set_state);
+ 
+diff --git a/drivers/usb/gadget/udc/trace.h b/drivers/usb/gadget/udc/trace.h
+index 4e334298b0e8..fa3e6ddf0a12 100644
+--- a/drivers/usb/gadget/udc/trace.h
++++ b/drivers/usb/gadget/udc/trace.h
+@@ -81,6 +81,11 @@ DECLARE_EVENT_CLASS(udc_log_gadget,
+ 		__entry->ret)
+ );
+ 
++DEFINE_EVENT(udc_log_gadget, usb_gadget_set_state,
++	TP_PROTO(struct usb_gadget *g, int ret),
++	TP_ARGS(g, ret)
++);
++
+ DEFINE_EVENT(udc_log_gadget, usb_gadget_frame_number,
+ 	TP_PROTO(struct usb_gadget *g, int ret),
+ 	TP_ARGS(g, ret)
+-- 
+2.51.0.rc1.163.g2494970778-goog
 
-> 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> ---
->  arch/arm64/boot/dts/tesla/fsd-evb.dts |  96 +++++
->  arch/arm64/boot/dts/tesla/fsd.dtsi    | 552 ++++++++++++++++++++++++++
->  2 files changed, 648 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> index 9ff22e1c8723..dcc9a138cdb9 100644
-> --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> @@ -130,3 +130,99 @@ &serial_0 {
->  &ufs {
->  	status = "okay";
->  };
-> +
-> +&mipicsis0 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis1 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis2 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis3 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis4 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis5 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis6 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis7 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis8 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis9 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis10 {
-> +	status = "okay";
-> +};
-> +
-> +&mipicsis11 {
-> +	status = "okay";
-> +};
-> +
-> +&csis0 {
-> +	status = "okay";
-> +};
-> +
-> +&csis1 {
-> +	status = "okay";
-> +};
-> +
-> +&csis2 {
-> +	status = "okay";
-> +};
-> +
-> +&csis3 {
-> +	status = "okay";
-> +};
-> +
-> +&csis4 {
-> +	status = "okay";
-> +};
-> +
-> +&csis5 {
-> +	status = "okay";
-> +};
-> +
-> +&csis6 {
-> +	status = "okay";
-> +};
-> +
-> +&csis7 {
-> +	status = "okay";
-> +};
-> +
-> +&csis8 {
-> +	status = "okay";
-> +};
-> +
-> +&csis9 {
-> +	status = "okay";
-> +};
-> +
-> +&csis10 {
-> +	status = "okay";
-> +};
-> +
-> +&csis11 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> index a5ebb3f9b18f..a83503e9c502 100644
-> --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-> +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> @@ -493,6 +493,558 @@ clock_mfc: clock-controller@12810000 {
->  			clock-names = "fin_pll";
->  		};
->  
-> +		mipicsis0: mipi-csis@12640000 {
-
-Messed ordering. See DTS coding style.
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-What is csis?
-
-> +			compatible = "tesla,fsd-mipi-csi2";
-> +			reg = <0x0 0x12640000 0x0 0x124>;
-> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock_csi CAM_CSI0_0_IPCLKPORT_I_ACLK>,
-> +				<&clock_csi CAM_CSI0_0_IPCLKPORT_I_PCLK>;
-> +			clock-names = "aclk", "pclk";
-> +			samsung,syscon-csis = <&sysreg_cam 0x40c>;
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					mipi_csis_0_out: endpoint {
-> +						remote-endpoint = <&csis_in_0>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		csis0: csis@12641000 {
-> +			compatible = "tesla,fsd-csis-media";
-> +			reg = <0x0 0x12641000 0x0 0x44c>;
-> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock_csi CAM_CSI0_0_IPCLKPORT_I_ACLK>,
-> +				<&clock_csi CAM_CSI0_0_IPCLKPORT_I_PCLK>,
-> +				<&clock_csi CAM_CSI_PLL>;
-> +			clock-names = "aclk", "pclk", "pll";
-> +			iommus = <&smmu_isp 0x0 0x0>;
-> +			status = "disabled";
-> +
-> +			port {
-> +				csis_in_0: endpoint {
-> +					remote-endpoint = <&mipi_csis_0_out>;
-> +				};
-> +			};
-> +		};
-> +
-> +		mipicsis1: mipi-csis@12650000 {
-> +			compatible = "tesla,fsd-mipi-csi2";
-> +			reg = <0x0 0x12650000 0x0 0x124>;
-> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock_csi CAM_CSI0_1_IPCLKPORT_I_ACLK>,
-> +				<&clock_csi CAM_CSI0_1_IPCLKPORT_I_PCLK>;
-> +			clock-names = "aclk", "pclk";
-> +			samsung,syscon-csis = <&sysreg_cam 0x40c>;
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					mipi_csis_1_out: endpoint {
-> +						remote-endpoint = <&csis_in_1>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		csis1: csis@12651000 {
-> +			compatible = "tesla,fsd-csis-media";
-> +			reg = <0x0 0x12651000 0x0 0x44c>;
-> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock_csi CAM_CSI0_1_IPCLKPORT_I_ACLK>,
-> +				<&clock_csi CAM_CSI0_1_IPCLKPORT_I_PCLK>,
-> +				<&clock_csi CAM_CSI_PLL>;
-> +			clock-names = "aclk", "pclk", "pll";
-> +			iommus = <&smmu_isp 0x0 0x0>;
-> +			status = "disabled";
-> +
-> +			port {
-> +				csis_in_1: endpoint {
-> +					remote-endpoint = <&mipi_csis_1_out>;
-> +				};
-> +			};
-> +		};
-> +
-> +		mipicsis2: mipi-csis@12660000 {
-> +			compatible = "tesla,fsd-mipi-csi2";
-> +			reg = <0x0 0x12660000 0x0 0x124>;
-> +			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock_csi CAM_CSI0_2_IPCLKPORT_I_ACLK>,
-> +				<&clock_csi CAM_CSI0_2_IPCLKPORT_I_PCLK>;
-> +			clock-names = "aclk", "pclk";
-> +			samsung,syscon-csis = <&sysreg_cam 0x40c>;
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					mipi_csis_2_out: endpoint {
-> +						remote-endpoint = <&csis_in_2>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		csis2: csis@12661000 {
-
-
-What is CSIS? Seems like copy paste from other Samsung code, but isn't
-this just CSI?
-
-What is the meaning of this CSIS acronym?
-
-
-Best regards,
-Krzysztof
 
