@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-773770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4032B2A975
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:20:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72104B2A91A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1AF81BA7DEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE87218A1CD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50A6321F5F;
-	Mon, 18 Aug 2025 13:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB7F14E2E2;
+	Mon, 18 Aug 2025 14:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HI9FsVDI"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kIqT3YN+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8061D321F43;
-	Mon, 18 Aug 2025 13:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633F7183CC3;
+	Mon, 18 Aug 2025 14:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755525518; cv=none; b=KoiHaehZ01XX+lOHQFPyJaMGqfunITrs+xeEaEUwXzGyj8A7c01znI81+PXTHMAVUXLKwFZy7ni+VbOh6O0+c0YVJDTNAJ0hbopzeTs3W/V9anb9vWQYrzNM4GJO4QPiQAlS756UreCXllO3GgbsqPF0+fJUs86UgoaiT9we6hM=
+	t=1755525625; cv=none; b=tmL8xPAThAXTYfu+cCG+AeyxMsng/ITSugXAFm7aKyc2//mtA+2rQxsAZc9hja43HPzXWkd7F3HWJu8EiW96UkureZHkvFQYHxuTZFOCLyIDWe9xgJZGqHhwVcMR1UCNoFnLDCD4GZUCH6cUZl+2JmXomxGT+YH1JBTdEyWzMIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755525518; c=relaxed/simple;
-	bh=udImFYEyvcy0P5Lzw36Tuio32ZiyjGbkEpFXoChFLk0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hYP3e5hWroFTYnen0WSA2nZcWingLkLbaEyQKHoKH3qkvV4Zkek+Amv1dQjqviZLU10rmYZdkMvwweVo4trpp9OS8BHDY0CZ/92AxO9WyXd4OenI4jK7p0RA1bpK2j/PXm/cpgl9FHhPRzeDGy+L5DqrpDHGG6Qnc7Lm0RbKqpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HI9FsVDI; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so33184155e9.2;
-        Mon, 18 Aug 2025 06:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755525515; x=1756130315; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4J2qOoplxm5/COGTn/SHR0+UbFimv4xPGKDMv/3jRlg=;
-        b=HI9FsVDIdABVPxgdQ9izfZn6O8uF9O5/MgoJyGpMIFE69h4uIJI5kNS8C1SW28PgKQ
-         4UqzUsp3Zu6JiJ8O/AKyuO3+fPhD4DkV94szlcJut5I4Wnl9tMyv/q9mw7hupZ/FDFwy
-         080gGBMEsKPWDbclkCltlD/kppkYG0myInL4nYL4fZxPCkHBMqOrVhNdR9Chd3iO7/fu
-         wcQKv9dH+/0xT7RPlSe3Qp0ERS/vK1sMBjO6mRScK9fAwCycP5ZmPfFfWKl0D80PdCps
-         bKsCLLIHUTTLe5AFe1itCQ1at2OSG7Lqyoo16RclBp+TMjARhxjvbdIpyDhnD6S6kXK9
-         ZGpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755525515; x=1756130315;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4J2qOoplxm5/COGTn/SHR0+UbFimv4xPGKDMv/3jRlg=;
-        b=ncWxNTRn0Yq4R7r0+za8/OT22IKpyoWH5zrZAedMSecQwUv+FhQmftVN14wLCqx8A0
-         JmMurDHOReio7sjY5mF03fgin/YMMKKFdR6VZatOhIhJS20nVl0WT1VcjspqfwCAy+M1
-         zqqxlUPG715YxSbVzPtyCTFlMhrEQtvBPkQBSCNMVVB/k0WEfXJKSRfR9P9dnwBto+Sh
-         BSXiQAW0QMAeGPbxk17XhuKoetz3B7/YAixNB+WGy7fNeu4wFCbwRCsLmXe9ZFlHhWWN
-         R5miNfDEYfKwPGoKJFn78f+87Vg0r2j+nlRI5c1C0smgn32GPHD5SIQq5HDM1sC3k+Ln
-         9lXA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ba5zX5ZFCabBrcZQlxDGzHyFDkBPJEqMAS/9CeAJeSz0tjEZxiJTPHKmFzK+0k0gb+xYMtUVWg==@vger.kernel.org, AJvYcCW1qwTlMZnDMKFemOrq2o0RrVDh4eUndYGWtehzj5MB1jrDTWIzMoM4cYk07oG4QjtTkJHhY6CI@vger.kernel.org, AJvYcCXccQoXEs7t3/WjZSWEwyMb7ih207OooioFLxVFlm3U6K629OxnECNGzvlEMqqVb8AczPX5COrztJmad9QN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN9yDMAGx6UzCsj+6TmUFXHVSs9jxdzTqFwumHc4uVDxi1bde8
-	5VpOorDYjTIdGk0i7Z2LKnfFmyjrymqP4QnLJLjvc036w/cvi2mpC/ek
-X-Gm-Gg: ASbGncvBgsodfe7g4Kh9uN8QjYJGzo/h6WqBt9ezxPvI5bXP1vwqzkhkZhxTbmt1Hr2
-	ft7bRWRqy8RdhqbcPjoLu8zEXjjXJjfx0qyVGtTaZotBZDOJ/+RcI18nUNKeMJeqMv6cFCShA6U
-	d1KAkXJ8pMLDs+FgW4co8W7FBYD3GYP6eNF4eJEWpKRlxKmN0Z18JA4uCnIOjn5UGNSnOvx0Q7v
-	sbHOgW3QItQQ0gw/Mcnsi3+Ts62FLoCVJHB/IR3POtXo57wGH6+TP7YTG9ARKBSsE8pdcwJ3TD+
-	RSGmvV+Wj3oECfOm2gPXt/9mS79GeC0wuS0YsJJGjBFlCOIaUyFWRrjV08gd0LRBDkTaJif4QlA
-	lF9RRDXg8OSztt3bDAxuXTgLiD1rcdg==
-X-Google-Smtp-Source: AGHT+IF2nSSJ1vpyZ8Q4Drk6IzqIjIiKmjZ/df6jowsqi46vTHnishqb15aL/CEwNQNCubGU2CO5Ow==
-X-Received: by 2002:a5d:5f89:0:b0:3b7:78c8:9392 with SMTP id ffacd0b85a97d-3bb67007abbmr9891260f8f.19.1755525514523;
-        Mon, 18 Aug 2025 06:58:34 -0700 (PDT)
-Received: from [192.168.8.100] ([185.69.144.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a983f7sm1150745e9.24.2025.08.18.06.58.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 06:58:33 -0700 (PDT)
-Message-ID: <9b55ae03-01b3-4a49-8eb7-b1f24e9e1ce0@gmail.com>
-Date: Mon, 18 Aug 2025 14:59:46 +0100
+	s=arc-20240116; t=1755525625; c=relaxed/simple;
+	bh=ZTwwiQqg8YWCKAQ9AdBcal0Stvl+BcAR6E+dFv2obgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=clI04/WbyNWvOevCLtLewZC99WklVZWGse/cYg3AW4BWEBa2sgb4kY0/JQJ4Inq7SnPebU24jrBhVmC6Pn0mwZTVz/MQLH4z2+35s20xz08OsiaiuWm1PZuvZpogqAoqRZao/2BV3Q89pO0fUOmwP4LJf681ag/EBzm4gZuZUZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kIqT3YN+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755525613;
+	bh=v/QfW53mgXG7d/FIfMt0p3DdvVqhjKl/YihrBSThHuw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kIqT3YN+5EONoA/OJUICiMSOKvWHOGOyR486xdYR4aingE9cEvATYe5XkuYFeXZT/
+	 TxcHAij+nGkJyXKV4Y+ruypcFvcU6aqyaFcCK+E8OGl3Ujr65s5Madmpy0Y6rwPiHy
+	 He4h7yGJR035WuEweTwcCY6JXLhHJ3CJKi7M0FV66RzKqaQG/ZNVjVppQMdPlb2Cn/
+	 h3vUglk/42yhW04yxwHyb6JSa+pDFNNHavhlarwNi9zPbGt9zLPF51Nc+QQKRuprOZ
+	 WjHsNhTfbVz3SwsB1/bNugr2LOw5T0yRHpaGXFBgvbU6BTdrFV02BcdUIfHfqqONeJ
+	 cpWRqPSvf90LQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c5Dqw45Q9z4xjM;
+	Tue, 19 Aug 2025 00:00:12 +1000 (AEST)
+Date: Tue, 19 Aug 2025 00:00:07 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: please clean up the livepatching tree
+Message-ID: <20250819000007.7cf7b8d9@canb.auug.org.au>
+In-Reply-To: <aKMBV6LfqCYw1wQm@pathway.suse.cz>
+References: <20250818121456.378af88b@canb.auug.org.au>
+	<aKMBV6LfqCYw1wQm@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
- buffer providers
-To: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>, Willem de Bruijn
- <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
- andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
- sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <cover.1755499375.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1755499375.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/bJYWiQ8NhVFlcOj2aWj2BcN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 8/18/25 14:57, Pavel Begunkov wrote:
-> Pull request with netdev only patches that add support for per queue
-> configuration and large rx buffers for memory providers. The zcrx
-> patch using it is separately and can be found at [2].
+--Sig_/bJYWiQ8NhVFlcOj2aWj2BcN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm sending it out as a v6.17-rc2 based pull request since I'll also
-need it in another tree for zcrx. The patch number is over the limit,
-however most of them are just taken from Jakub's series, and it'll
-likely be esier this way for cross tree work. Please let me know if
-that's acceptable or whether I need to somehow split or trim it
-down.
+Hi Petr,
 
--- 
-Pavel Begunkov
+On Mon, 18 Aug 2025 12:32:55 +0200 Petr Mladek <pmladek@suse.com> wrote:
+>
+> Just to be sure. What is exactly the problem, the merge commits or
+> that it has not been updated since March, please?
 
+The merge commits.  Everyday linux-next contained those 70 merges that
+added nothing except to complicate the history.
+
+I don't start looking to drop branches from linux-next until they have
+not been updated for over a year.
+
+> I have just removed the merge commits.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bJYWiQ8NhVFlcOj2aWj2BcN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmijMegACgkQAVBC80lX
+0Gz0agf+LfdkbeO5396keublE255UtdHMQ7PVaGdQPAgfYrxH0hz8+t/ZdhheQth
+X/LQ5LxjDYE6KgJI7H2pWyKYB7u3czj1mUeH5IlcRaFN4okdQkCSo9ZBf6qArKbe
+lhJ5tcz2uqqEeckfaWtv04bHjJiV7K7lcYspC1bV+24xjBe6+uJNhd18olRV7XLL
+PuFonZegc1GQykqIOfpIeFv5RylNRH4qCin693AI4iBG0UQ9Opfa2ma3mW4QUbdc
+WtrwK3PP5EnSmbxNFYT71Pa9gpvw773YXYvKqUMjXCmOC2q97vASaGqleMSoaByk
+DiBNDebbDgjVga6v+3jn+EVjjSLRmA==
+=kZBZ
+-----END PGP SIGNATURE-----
+
+--Sig_/bJYWiQ8NhVFlcOj2aWj2BcN--
 
