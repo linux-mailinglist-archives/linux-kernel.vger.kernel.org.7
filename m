@@ -1,231 +1,160 @@
-Return-Path: <linux-kernel+bounces-774150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2C2B2AF1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53151B2AF22
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 19:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036C1581358
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB1A2A317C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAD6284894;
-	Mon, 18 Aug 2025 17:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7427F217F53;
+	Mon, 18 Aug 2025 17:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OfKgnjrT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6GycV2YI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1BB253F03;
-	Mon, 18 Aug 2025 17:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC1C32C315;
+	Mon, 18 Aug 2025 17:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755537253; cv=none; b=Sy8yIhrHrpRfNZRLvYBif4fQd9EgPHLh2xy5WrWR55sMoMYG6fH0PUtzoAwUSLoPvtS9jg2xh4jAGz6SUs75cyBhWqoXFzTqu3DoztpyTZCsmSrkuFACB/9/YDzWdQ1wLLrfJdsS0E6GGUZq2WDQVeitJ2P22S4b5b0RYsvaeAk=
+	t=1755537376; cv=none; b=g9ac7KH8aIgPd5QaDcc03PTzbadL5E+LL3ZmTlkq+8G1nIX+c/bGXEVhKYa1wwbcLgPxP1GiFBqm+a/jK5pdNxClQ/amWNpQZTBZl1fd8JaJB/6K4JB+n06/r8XvFTtj3F+VeX6weA2XuWqgBoOxkuUyn2PN9U3Bnmj2m+6pTt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755537253; c=relaxed/simple;
-	bh=Ao1u5mWLcffmdlkohbo84IUaqTvWkpqLbl0RYa+WiHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ikc92tOtRyDAsJcNYL/oVdTczW2z1q8gzQN3KE5dOoVRliPLXV8DuTXqp3YVVE6BkpG5q1psIgXUemLV6BuPbIfJUlnglImst/jECGd2lNd6uKrO7kYbwoOYsTYTLRvELpuZnk5urFGTQ/M22s596wMaYJ6f7PRKeL/oa2dCDB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OfKgnjrT; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755537252; x=1787073252;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ao1u5mWLcffmdlkohbo84IUaqTvWkpqLbl0RYa+WiHc=;
-  b=OfKgnjrTFIV9cgV/2vI0hUltF1bkN3EFnoHXuWYtAzcNN0nrQyNrEilD
-   uVPIDqFrOygdZ2VWU1xsgXc2uXBmmPjlZWx94fiy0TyoDB7A2Pba+kdYZ
-   CAuYPkbMaS0ndyPRrxKq2wzkamZ+LEIaRhDyqlRTymWjrfUP5Geh5SIBk
-   vqZMoheGPenm7R3APB9avGZ2Al3W9YjBGzNqXKIiul9FGQL2m3IJRCffh
-   fiE0wTUsrYgmq0/91hSacec0UrbkOA1egUjjPhbzGFUBkIRn2hyFfWyUe
-   XP6qdCuvRvvlgg/+KaHD4wCen0pjCWMt6scKTsWQqpxtgefQ/fGNP4m8/
-   w==;
-X-CSE-ConnectionGUID: M+GnqwjDQqCNkgFLXCcwKg==
-X-CSE-MsgGUID: yT/GCQ70STWosxEc2UvsRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="80350278"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="80350278"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 10:14:12 -0700
-X-CSE-ConnectionGUID: SEv656NRRASwgJI3Lj1gAQ==
-X-CSE-MsgGUID: qsC6eq+/RnukgGXF7wLICg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="167137052"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.125.108.14])
-  by fmviesa007.fm.intel.com with ESMTP; 18 Aug 2025 10:14:10 -0700
-From: Thomas Falcon <thomas.falcon@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	ak@linux.intel.com,
-	Thomas Falcon <thomas.falcon@intel.com>
-Subject: [PATCH v2 2/2] perf record: Add auto counter reload parse and regression tests
-Date: Mon, 18 Aug 2025 12:13:55 -0500
-Message-ID: <20250818171358.332331-3-thomas.falcon@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250818171358.332331-1-thomas.falcon@intel.com>
-References: <20250818171358.332331-1-thomas.falcon@intel.com>
+	s=arc-20240116; t=1755537376; c=relaxed/simple;
+	bh=yP4Yuj7Z+g7MYpEm26hzQQjwcI9DiuGCs0Bsz/vi958=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibVDr0z4RztfdBkKaMUeeGePqZwZTHgyJiS7Xo+N/vT2/6AYVPlPXcFzHbr8zuA99JFizEuXQuegKEuYAcdAdu9vQ0T+rdtV01LAXQFv69Q0/6U0EP2dN4KZg/1RpnBCy9AHIsag6CGz5UONz4fTz56aFVu8dSsBxvBZ6pxlxtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6GycV2YI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=LJN+kb/6ymN/RUd8A8NIlH7TTJTdlak3jUaitUEk39k=; b=6G
+	ycV2YIRV/Y1dZK5aflMoVTMOvSfW1VAlq52pDeWNK+4ScyLSUhec6EAtHGs3GTSCEB7sZZi6zSfkn
+	Ur0JFa9qTMa9ZR5gwd3LfqeZDpIF/dahmi07fLpEhApcVgGQWQC04j0KQRpB56nBhCOWjnT/BFUXk
+	c90qrJvao1mIIE4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uo3So-0055IU-J2; Mon, 18 Aug 2025 19:16:06 +0200
+Date: Mon, 18 Aug 2025 19:16:06 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yangfl <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next v4 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
+ YT921x switch support
+Message-ID: <a1474d9a-f12c-48cb-881d-bce5fe7c646f@lunn.ch>
+References: <20250818162445.1317670-1-mmyangfl@gmail.com>
+ <20250818162445.1317670-2-mmyangfl@gmail.com>
+ <7c4bc4cc-61d5-40ce-b0d5-c47072ee2f16@lunn.ch>
+ <CAAXyoMP9aoSbDkSJhSDJ68-F6qubeVmV08YgvQS1cTKJYS-spw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAXyoMP9aoSbDkSJhSDJ68-F6qubeVmV08YgvQS1cTKJYS-spw@mail.gmail.com>
 
-Include event parsing and regression tests for auto counter reload
-and ratio-to-prev event term.
+On Tue, Aug 19, 2025 at 01:06:00AM +0800, Yangfl wrote:
+> On Tue, Aug 19, 2025 at 12:55 AM Andrew Lunn <andrew@lunn.ch> wrote:
+> >
+> > > +  motorcomm,switch-id:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    description: |
+> > > +      Value selected by Pin SWITCH_ID_1 / SWITCH_ID_0.
+> > > +
+> > > +      Up to 4 chips can share the same MII port ('reg' in DT) by giving
+> > > +      different SWITCH_ID values. The default value should work if only one chip
+> > > +      is present.
+> > > +    enum: [0, 1, 2, 3]
+> > > +    default: 0
+> >
+> > It is like getting blood from a stone.
+> >
+> > So what you are saying is that you have:
+> >
+> >     mdio {
+> >         #address-cells = <1>;
+> >         #size-cells = <0>;
+> >
+> >         switch@1d {
+> >             compatible = "motorcomm,yt9215";
+> >             /* default 0x1d, alternate 0x0 */
+> >             reg = <0x1d>;
+> >             motorcomm,switch-id = <0>;
+> >             reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
+> > ...
+> >         }
+> >
+> >         switch@1d {
+> >             compatible = "motorcomm,yt9215";
+> >             reg = <0x1d>;
+> >             motorcomm,switch-id = <1>;
+> >             reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
+> > ...
+> >         }
+> >
+> >         switch@1d {
+> >             compatible = "motorcomm,yt9215";
+> >             reg = <0x1d>;
+> >             motorcomm,switch-id = <2>;
+> >             reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
+> > ...
+> >         }
+> >     }
+> >
+> > Have you tested this? My _guess_ is, it does not work.
+> >
+> > I'm not even sure DT allows you to have the same reg multiple times on
+> > one bus.
+> >
+> > I'm pretty sure the MDIO core does not allow multiple devices on one
+> > MDIO address. Each device is represented by a struct
+> > mdio_device. struct mii_bus has an array of 32 of these, one per
+> > address on the bus. You cannot have 4 of them for one address.
+> >
+> >     Andrew
+> >
+> > ---
+> > pw-bot: cr
+> 
+> Of course I cannot test this, since I only have a stock device, as
+> mentioned in patch 3.
 
-Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
----
- tools/perf/tests/parse-events.c  | 54 ++++++++++++++++++++++++++++++++
- tools/perf/tests/shell/record.sh | 40 +++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
+You could create such a DT and see if it compiles and passes the
+binding tests. You could boot such a DT. You should get -ENODEV for
+the other two devices. But if it crashes, that tells you
+something... Looking at the stack trace might confirm this is never
+going to work with the current MDIO core code.
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index bb8004397650..67550cc60555 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1736,6 +1736,53 @@ static int test__intel_pt(struct evlist *evlist)
- 	return TEST_OK;
- }
- 
-+static bool test__acr_valid(void)
-+{
-+	struct perf_pmu *pmu = NULL;
-+
-+	while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
-+		if (perf_pmu__has_format(pmu, "acr_mask"))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int test__ratio_to_prev(struct evlist *evlist)
-+{
-+	struct evsel *evsel;
-+	int ret;
-+
-+	TEST_ASSERT_VAL("wrong number of entries", 2 * perf_pmus__num_core_pmus() == evlist->core.nr_entries);
-+
-+	 evlist__for_each_entry(evlist, evsel) {
-+		if (!perf_pmu__has_format(evsel->pmu, "acr_mask"))
-+			return TEST_OK;
-+
-+		if (evsel == evlist__first(evlist)) {
-+			TEST_ASSERT_VAL("wrong config2", 0 == evsel->core.attr.config2);
-+			TEST_ASSERT_VAL("wrong leader", evsel__is_group_leader(evsel));
-+			TEST_ASSERT_VAL("wrong core.nr_members", evsel->core.nr_members == 2);
-+			TEST_ASSERT_VAL("wrong group_idx", evsel__group_idx(evsel) == 0);
-+			ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
-+		} else {
-+			TEST_ASSERT_VAL("wrong config2", 0 == evsel->core.attr.config2);
-+			TEST_ASSERT_VAL("wrong leader", !evsel__is_group_leader(evsel));
-+			TEST_ASSERT_VAL("wrong core.nr_members", evsel->core.nr_members == 0);
-+			TEST_ASSERT_VAL("wrong group_idx", evsel__group_idx(evsel) == 1);
-+			ret = assert_hw(&evsel->core, PERF_COUNT_HW_INSTRUCTIONS, "instructions");
-+		}
-+		if (ret)
-+			return ret;
-+		/*
-+		 * The period value gets configured within evlist__config,
-+		 * while this test executes only parse events method.
-+		 */
-+		TEST_ASSERT_VAL("wrong period", 0 == evsel->core.attr.sample_period);
-+	}
-+	return TEST_OK;
-+}
-+
- static int test__checkevent_complex_name(struct evlist *evlist)
- {
- 	struct evsel *evsel = evlist__first(evlist);
-@@ -2249,6 +2296,13 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_tracepoint,
- 		/* 4 */
- 	},
-+	{
-+		.name  = "{cycles,instructions/period=200000,ratio-to-prev=2.0/}",
-+		.valid = test__acr_valid,
-+		.check = test__ratio_to_prev,
-+		/* 5 */
-+	},
-+
- };
- 
- static const struct evlist_test test__events_pmu[] = {
-diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-index b1ad24fb3b33..0f5841c479e7 100755
---- a/tools/perf/tests/shell/record.sh
-+++ b/tools/perf/tests/shell/record.sh
-@@ -388,6 +388,45 @@ test_callgraph() {
-   echo "Callgraph test [Success]"
- }
- 
-+test_ratio_to_prev() {
-+  echo "ratio-to-prev test"
-+  if ! perf record -o /dev/null -e "{instructions, cycles/period=100000,ratio-to-prev=0.5/}" \
-+     true 2> /dev/null
-+  then
-+    echo "ratio-to-prev [Skipped not supported]"
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "instructions, cycles/period=100000,ratio-to-prev=0.5/" \
-+     true |& grep -q 'Invalid use of ratio-to-prev term without preceding element in group'
-+  then
-+    echo "ratio-to-prev test [Failed elements must be in same group]"
-+    err=1
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "{instructions,dummy,cycles/period=100000,ratio-to-prev=0.5/}" \
-+     true |& grep -q 'must have same PMU'
-+  then
-+    echo "ratio-to-prev test [Failed elements must have same PMU]"
-+    err=1
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "{instructions,cycles/ratio-to-prev=0.5/}" \
-+     true |& grep -q 'Event period term or count (-c) must be set when using ratio-to-prev term.'
-+  then
-+    echo "ratio-to-prev test [Failed period must be set]"
-+    err=1
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "{cycles/ratio-to-prev=0.5/}" \
-+     true |& grep -q 'Invalid use of ratio-to-prev term without preceding element in group'
-+  then
-+    echo "ratio-to-prev test [Failed need 2+ events]"
-+    err=1
-+    return
-+  fi
-+  echo "Basic ratio-to-prev record test [Success]"
-+}
-+
- # raise the limit of file descriptors to minimum
- if [[ $default_fd_limit -lt $min_fd_limit ]]; then
-        ulimit -Sn $min_fd_limit
-@@ -404,6 +443,7 @@ test_leader_sampling
- test_topdown_leader_sampling
- test_precise_max
- test_callgraph
-+test_ratio_to_prev
- 
- # restore the default value
- ulimit -Sn $default_fd_limit
--- 
-2.50.1
+> If this is not acceptable anyway, I might as well remove switch-id
+> completely since I doubt if anyone would concat more than one switch
+> together in real world.
 
+I have a board with 4 Marvell switches. It does happen, especially in
+industrial systems. But they have individual addresses on the MDIO
+bus. I also have a SOHO black box switch, using two qualcomm switches
+in order to support 16 ports.
+
+But i do agree you are unlikely to see a WiFi AP, or a cable modem use
+two switches.
+
+	Andrew
 
