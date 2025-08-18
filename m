@@ -1,123 +1,131 @@
-Return-Path: <linux-kernel+bounces-773835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C02B2AB59
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:46:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DC5B2AB81
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2C81BA4C7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B51D73A5B28
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 14:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AFD217722;
-	Mon, 18 Aug 2025 14:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5317F270EAB;
+	Mon, 18 Aug 2025 14:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="oLVCclbF"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X+/fQxfB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F012435A297
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3958A14E2E2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 14:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755527127; cv=none; b=QpttyV/wi3RZzbp8FPLCVNBTJ7I/uRHdaEm6QTKWsoWLv6LW57CbkJVr0WMyF/z5f3HgN8MwC0Pj+Kn1EIIN2QMYLzTbhmKibPFTGu1AUMojOSXU5wsRYqDhXh7YQdHRErt9QJks1fmJmks0hsMA81G1K89GtEE1c9OeCe7GVTo=
+	t=1755527242; cv=none; b=Dx8jfJ9xp3RojebaPnu77u2SL4hkQ/kfhIUxbmjOw+4XgYjfXLgpMadfC/yU9HXewKUMoKVeCdQ8xR202eodpreodF2CkWWhPPcH/7Xey4CoGzWHimDhQD6kTq5nCtOvvAkwKbOThiHqGkDjWGEL+lqUSAdAgGPe09uObGebnq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755527127; c=relaxed/simple;
-	bh=eAzCytEyJip7F9/ujfFz6fHx6PhzFC86Nee1Y1YCmFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggp8RuOkYmmVlq9db0c9rzttqJku03sEKyad9AYTdZhLKRv+I9pebL3akHvtP7BuhsNhsjaJbNunEuThjfsqrxw2RAPDuywIbWW/rUCr7KbkfhZqKxcnlVsII/midizdM8r/LGTXP8mgxA8gDSE6xxE0fJnAhKVBdaNCS8IEJYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=oLVCclbF; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-88432e1b264so27812439f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 07:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755527125; x=1756131925; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FyQYJ8E1IoELk0qTlvKHUstdV7nwQIqLjOnOuTovC8w=;
-        b=oLVCclbF8hbD2k8HOXgSdYpAVvUfX0vTHN35X5ws+CbWapXMfkP7hiVyGicGYERjvB
-         XZN5vG/F71xsO0ryhJRUx9WN4DDFDmXKkpdX6AzfnjiON89Zc1nCvZgg29Tv6M1ovz5u
-         iQMK2lLeN0zYXdRu/3LVG2Sew0f0oErCx6m93Jwz6HhBu0+QYv0NSSD0w/XoCHQ44u8i
-         NF0WSGQ1o/g3w6jD2tbL7SFHy95fAKCcgAVkvTS0zxkav16OP9jmDvE1opzBGlrRl+27
-         Xoq2KAfbaEtogLnPoX24HCN3D5+9jMrf0Ru9VAMmc+QjHIYKQvLP3pSwbKH/opG1ofXz
-         /FOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755527125; x=1756131925;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FyQYJ8E1IoELk0qTlvKHUstdV7nwQIqLjOnOuTovC8w=;
-        b=uWHe5FZMRDAk3Um5bqoVixZ4Ixee+aHvCrCTfK0O2NJ6dtBtwjsOczYHJTKI8CRsju
-         cFY34lBaGH+RTLPO3Xdzz7jdVPTfsTKx8zkp1zSSiudR7X0Ps9mWWsLjfxlnh0ye2o/Y
-         W5SLSEnTmqw6mWz+C7XVxS32CskqtVdtu2c+HkjD5x7v568bA8nCBHKMav5a/rGgU8WU
-         5AOeCZ43N4phWr9URAJMBbzcGJGk4c65IbIujJjUBw9LODY0QdgeFSYX6CCzzQpaesoF
-         QD2xmXnED19iEDm5+Pw20bdHgvwrWwf7fwL7nmGlhSpXyen0HR9VLf1TghxY7C9GgouP
-         NGFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaaan8QfqumB9yuHNzP5nEY1lrHfGsulGK2dtHX5EXZ/CObXsGTPlRFRxEfTmSB7T0rlrTsIvKhUbzIG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBpmWznICJh/lEOrsGFZ4sEah2hn58v7LoLRHYi4CKiGd3nuVD
-	ZO7FO1vy+GickqxiAciTHh/7t8+SKMTDLmQBXQFf7fU1A8UEIIi3aR2akz5Ckkhz684=
-X-Gm-Gg: ASbGncsgo5dmWoh0En4O59b6pVI62wUG0EVLZnI9JVbLB54rZziANWuELQ56CQd4FFd
-	O2L13yDTcPxtOnDiF9aWFqkTFQyisOi6CFkEMC+3kKddNhcNkKGurOBaPa8Kjruv6fE0Ndjl+7O
-	7CjQAjoqJdZ/gmBGI0iQPxFd3iL2KINrlDY9gRle9ew61N3tK5kKwogPFbnuCKHdHahbdbJ8Fad
-	y4bHvBZ/dBXoRryxYJCfHrmiFiW012/fLwxfCgFK3ZCBvjJjXVBnhCz125DnS645XPWNdPcwLPS
-	6LJ3E3CeeFUOZL8bJO6ivEseU7SZ2uX9mm+H6ZYE/lzAvr6ti9ktdIxq3YXJIgb09Gupf+XA7YM
-	S+QWAyU1eUtXJ1m8Tpsc0LgwJ
-X-Google-Smtp-Source: AGHT+IE64bGylTNTCod6VJPB6Kdqx/YvIcxD3l3x6WiSKJyPUG0tS+DbyXFafnmRow5N9BI1j9Ev6A==
-X-Received: by 2002:a05:6602:1687:b0:881:8a24:55c3 with SMTP id ca18e2360f4ac-8843e36de4bmr2011895139f.1.1755527124401;
-        Mon, 18 Aug 2025 07:25:24 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c94999fe0sm2564173173.57.2025.08.18.07.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 07:25:23 -0700 (PDT)
-Date: Mon, 18 Aug 2025 09:25:23 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: zhouquan@iscas.ac.cn
-Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-Subject: Re: [PATCH] RISC-V: KVM: Correct kvm_riscv_check_vcpu_requests()
- comment
-Message-ID: <20250818-3808a778aca8606ddd126ebf@orel>
-References: <49680363098c45516ec4b305283d662d26fa9386.1754326285.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1755527242; c=relaxed/simple;
+	bh=wUFfWZPQ6+Xi6xURR/rzIZhf9zbhow+p5bYXIdENaNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eynm/TbF/23gvCzp5WzfuVxMc6fol2HS+FgwneiQSIMS6aE2vT3f1c4hPQsxJNjEbMv+PPztXwfKB3juVZuBaJH+h4IiVz6gWmOxKONquH3+o6NVcaYtQDfH/so291dNjiXJ1/uPYU97v9MHbmmJV2plyK3MytT9yP30hc9Enuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X+/fQxfB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57I8UcmF014629;
+	Mon, 18 Aug 2025 14:26:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N9XTtPIlb1beSEhqR68lpF56qfXbGpzXDW+vo24hduY=; b=X+/fQxfBXTRDcjyI
+	AoxW4bMMKA7nuLTn3u2JeX/TnS6zpuU5c/HqlSPO1dtlXJsgQeNigRSd4AjRocfe
+	QVOjROlbMSbiGYjOjoyCzN2FYRGD7WybBPEuoIyd27BXS4xhRPKiZiuaPX0sd8xs
+	VU4/Ic8uBniVF2Ieaw9GsLX3smQhQ5TLXZjAUAUfqVVUSgfQ+1iTHNbqGlf3Ve3Z
+	TQwrxR4WgmB+59F7/q24mKCwpoMh9mpMXu99RbS4fmXhZKMgxzmyZnK/+/LQPdCc
+	9EYs9cLkvox+RDIRGuWWQ2hmxOR4LHe2hJLDPaqA+lzqye5xqOY4SgB87mnu2HW5
+	SwzXwg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jh075279-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 14:26:30 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57IEQTGY017650
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Aug 2025 14:26:29 GMT
+Received: from [10.218.24.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 18 Aug
+ 2025 07:26:23 -0700
+Message-ID: <ec37a541-0803-43b0-a0f6-aa3b632bcb97@quicinc.com>
+Date: Mon, 18 Aug 2025 19:56:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49680363098c45516ec4b305283d662d26fa9386.1754326285.git.zhouquan@iscas.ac.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/6] Remove XA_ZERO from error recovery of
+To: David Hildenbrand <david@redhat.com>,
+        "Liam R. Howlett"
+	<Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+CC: <maple-tree@lists.infradead.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Mike
+ Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Michal
+ Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn
+	<jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        <shikemeng@huaweicloud.com>, <kasong@tencent.com>, <nphamcs@gmail.com>,
+        <bhe@redhat.com>, <baohua@kernel.org>, <chrisl@kernel.org>,
+        Matthew Wilcox
+	<willy@infradead.org>
+References: <20250815191031.3769540-1-Liam.Howlett@oracle.com>
+ <3970cd97-2e9e-403f-867a-3addfbe399dc@redhat.com>
+Content-Language: en-US
+From: Charan Teja Kalla <quic_charante@quicinc.com>
+In-Reply-To: <3970cd97-2e9e-403f-867a-3addfbe399dc@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: CVnTXHqcMte60tk48I5qtYhtMN12fvDh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyMCBTYWx0ZWRfX0OUlx77pTTnV
+ S0l6UGnrZ2CvWTs2XqQAQXAdJbV+CMBi1dZFhXoV12MyVHj/E2vxcftwtOi6bdgKGNbYHG+wIkR
+ RqsOG7k3wdTXSq0kOEOHJUpnB2/mv/Tdu6J7OPW6VdM1R0XkXeD/vjJUnAPZj+7TuXQDloN7GgY
+ gg4Edm5ztuZApPxqtlMP1r4HFS6AYOSEAuynM0RBvJM3vFeOQDum36FdqK/+SZo0O2HKmBZQLUe
+ G8tYfL7jGHVURisq1rj5Qm/Di1cd3vL0jT1IXD02SGENOkEExqnGo+SvQUX2Y70qfFPDy6oHqHE
+ zYBxFKtbaagMDevKZUeJ/UoRPfgnmsXC0ZphvKt8bcLc9VnCxpY/j/IoMeLEBVJ1Ig5cnecBb4p
+ JBUB8Vcp
+X-Authority-Analysis: v=2.4 cv=a+Mw9VSF c=1 sm=1 tr=0 ts=68a33816 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=XXfpJIKeY94Gd0witf0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: CVnTXHqcMte60tk48I5qtYhtMN12fvDh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 suspectscore=0 impostorscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 clxscore=1011 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160020
 
-On Mon, Aug 11, 2025 at 10:18:29AM +0800, zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
-> 
-> Correct `check_vcpu_requests` to `kvm_riscv_check_vcpu_requests`.
-> 
-> Fixes: f55ffaf89636 ("RISC-V: KVM: Enable ring-based dirty memory tracking")
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> ---
->  arch/riscv/kvm/vcpu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index f001e56403f9..3ebcfffaa978 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -683,7 +683,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
->  }
->  
->  /**
-> - * check_vcpu_requests - check and handle pending vCPU requests
-> + * kvm_riscv_check_vcpu_requests - check and handle pending vCPU requests
->   * @vcpu:	the VCPU pointer
->   *
->   * Return: 1 if we should enter the guest
-> -- 
-> 2.34.1
->
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+On 8/18/2025 3:14 PM, David Hildenbrand wrote:
+>> Before you read on, please take a moment to acknowledge that David
+>> Hildenbrand asked for this, so I'm blaming mostly him 🙂
+> 
+
+Just curious If we can go by the suggestion of mm unstable check just
+for the 6.12, as it is LTS.  I can't see this issue on branches earlier
+to it. As well this patchset is not getting applied cleanly on 6.12.
+
+> 🙂
+
 
