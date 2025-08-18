@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-774236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47014B2B032
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:25:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC72B2B034
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 20:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4AF81B281F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:25:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8895188838F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD30320CBF;
-	Mon, 18 Aug 2025 18:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1209535083D;
+	Mon, 18 Aug 2025 18:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyAhz2Kf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMbzHIJs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914C2D24AC;
-	Mon, 18 Aug 2025 18:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F98D32C33C;
+	Mon, 18 Aug 2025 18:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541483; cv=none; b=EIrYvU6pUa5W68ZA2haeWnvhmLV09AH5vcUG1n6fwkZ4K5TLTCyGH+guCDIQcvo8/+SbBKmCCiDGSlyj9nqCckyUQ1Fnuo6BWaYpjNC9ZagxGRgZpywC+nGsPBVyyTy/+0sRzwK/e9elFQvN4ofRXV0bb+r0jAAEh4IsBuCxMlw=
+	t=1755541485; cv=none; b=c/IAwyu1Q8MtNezKXLNothDhvFJMe/hnlgnW4k62g+YUKchJcWXYeGs6S2oVRHN8ansOlr0f72j9F0gme2DQknu63A17PQeajtYuWDlTYx4+MHfIBCxW4AEfwRy55RN1Bvu4j5KycBBfCxJtq6NSrNxPI7HI2Zj97kdiJi7njrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541483; c=relaxed/simple;
-	bh=e0T6uswFPCYymAbe+gdn+JgFiwh+mCDg31acddcY9C8=;
+	s=arc-20240116; t=1755541485; c=relaxed/simple;
+	bh=4E7/tvM7UPMpgvdt/3bB3bqKVp91MTbvwZbxq37l81M=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=i2bb+PdhRSzbJ+ydrAiXFyvwgVJr0NjA+DVArVeX3jPecIaL39BBxuB0jID1JsFQF5qIUiqr/KZfjMbqe7pfb+B+z8Ol5dQbYTiD22hmGF1M6fy2JCEH69Vu9Meqm1tcBa2So2oPHA8lJEbE/KHkSJ7QkL2aEY02ayXT8jscK+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyAhz2Kf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DCB0C4CEED;
-	Mon, 18 Aug 2025 18:24:43 +0000 (UTC)
+	 Message-Id:Subject; b=ovVJaWEBm8pyj/dlg1UL1wcQZ5TZamltCvoeI5AeAlSpOuryJVcXK4DIpVVxGUdGkg2FRSyesALvlK/acONQ+zAziLDDl3p7Dv5NshsM77Te3ejhdc9GW06S6tiBEG7ZI1WQ5c3kzSMyFI/sHSWoekehfrElvRTZ/mLR3gU/N4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMbzHIJs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94013C4CEF1;
+	Mon, 18 Aug 2025 18:24:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755541483;
-	bh=e0T6uswFPCYymAbe+gdn+JgFiwh+mCDg31acddcY9C8=;
+	s=k20201202; t=1755541484;
+	bh=4E7/tvM7UPMpgvdt/3bB3bqKVp91MTbvwZbxq37l81M=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=YyAhz2KfF1h8FYPqMG/TZLyTRI42YbxfLuR/fd/nIXbkFzZwmge1E+g6l47gnf5sC
-	 +5lnHt2jA16KJ1RsY8noWIlQDkxDE1jFb13EvoapqzLdmJUiEUs1dlTUPf2owgimgN
-	 Fb6iYXKEkRq3clh8TDWaETgufk1gCFPwusdbpavmUhl5tiJCGDXeUWPIBoh0UYBaTp
-	 0zRwUdzdeRJqH5XfNwC1KJb0X/Ezm8lnFtR37qDVMosbeU2Le1+TJk0x6yvsi3prKQ
-	 viYSLwyNZd6wEAk30hPstCfGUbqmQq1B2a9i43jyS1QD/oqiwWRBnRdjH5byLWr71h
-	 i8NF8UVcg1yRw==
-Date: Mon, 18 Aug 2025 13:24:42 -0500
+	b=OMbzHIJsg1qjpEdG3Jr/e0aQcqLAvXk9Kn/YXnirekX8oFapce3DBgPubg0oyGz1W
+	 64PzfeT4765uZq2JLRp8vn3E6GXf7kfs+VvmVn/BWs8YAGt4jU/ODpFNVLfu7IkxDu
+	 noswaI4kYeV0gDWbQMBJugFJnpSjRJ4QpYCaxvIgFiCoPMtDIbEPP67uMe68cE1dMq
+	 LtLESV0Aq3YiepfA3R2DwpeKkiFLiqjO8Ef7ykulfMwEih773+mwO8nNBVVss5B33C
+	 MD7zH4OCsriwOlkqhr8LagHgA2JLc3IVqZpG7sm+HmWdnppJK++QX3A1uKV+2PAVOj
+	 N2gFaY+8s4aew==
+Date: Mon, 18 Aug 2025 13:24:43 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,96 +50,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: daniel.lezcano@linaro.org, krzk+dt@kernel.org, rafael@kernel.org, 
- geert+renesas@glider.be, linux-pm@vger.kernel.org, 
- biju.das.jz@bp.renesas.com, mturquette@baylibre.com, 
- linux-kernel@vger.kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
- sboyd@kernel.org, linux-renesas-soc@vger.kernel.org, conor+dt@kernel.org, 
- will@kernel.org, magnus.damm@gmail.com, john.madieu@gmail.com, 
- linux-arm-kernel@lists.infradead.org, p.zabel@pengutronix.de, 
- devicetree@vger.kernel.org, catalin.marinas@arm.com
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20250818162859.9661-1-john.madieu.xa@bp.renesas.com>
-References: <20250818162859.9661-1-john.madieu.xa@bp.renesas.com>
-Message-Id: <175554055722.1719725.13076334498195294379.robh@kernel.org>
-Subject: Re: [PATCH v7 0/6] thermal: renesas: Add support for RZ/G3E
+Cc: linux-kernel@vger.kernel.org, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Richard Zhu <hongxing.zhu@nxp.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Luke Wang <ziniu.wang_1@nxp.com>, 
+ linux-arm-kernel@lists.infradead.org, Fabio Estevam <festevam@gmail.com>, 
+ Joy Zou <joy.zou@nxp.com>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Frank Li <Frank.Li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <20250818-imx9-dts-v2-0-8ba787fb5280@nxp.com>
+References: <20250818-imx9-dts-v2-0-8ba787fb5280@nxp.com>
+Message-Id: <175554055785.1719742.4035330946121256179.robh@kernel.org>
+Subject: Re: [PATCH v2 00/11] arm64: dts: imx95: various updates
 
 
-On Mon, 18 Aug 2025 18:28:46 +0200, John Madieu wrote:
-> This series adds support for the temperature sensor unit (TSU) found on the
-> Renesas RZ/G3E SoC.
+On Mon, 18 Aug 2025 09:25:30 +0800, Peng Fan wrote:
+> This patchset is to upstream various downstream changes.
+> - Correct edma channel for lpuart7/8
+> - Add System Counter, SCMI LMM/CPU, V2X MU, coresight nodes
+> - Update alias
+> - Add pca9632, pf09/pf53 thermal and etc.
 > 
-> The series consists of 5 patches (one of which is not related to the thermal
-> framework) that progressively add TSU support as follows:
-> - patch 1/6:    adds syscon/regmap support for accessing system controller
->                 registers, enabling access to TSU calibration values
+> dtbs_check will report a few failures, such as linux,code, db suffix.
+> The failures are not related to this patchset.
 > 
-> - patch 2-6/6:  adds dt-bindings, actual driver, DT node, and config symbol.
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> Changes in v2:
+> - Drop patch 8 because dt-bindings not ready, and patch 12
+> - Per Frank's comments: Typo fixes, node name updates, sort properties
+> - Add R-b from Frank
+> - There is still dtbs_check error, but not related to this patchset, it
+> is because https://lore.kernel.org/imx/20250718094723.3680482-1-peng.fan@nxp.com/
+> not applied.
+> - Link to v1: https://lore.kernel.org/r/20250815-imx9-dts-v1-0-e609eb4e3105@nxp.com
 > 
-> Patch 1/6 has been duplicated at [1] in USB series. This series addresses comments
-> got from there.
+> ---
+> Joy Zou (1):
+>       arm64: dts: imx95: Correct the lpuart7 and lpuart8 srcid
 > 
-> Changes:
+> Luke Wang (1):
+>       arm64: dts: imx95-15x15-evk: Change pinctrl settings for usdhc2
 > 
-> v1 -> v2
->  * Fix yaml warnings from dt-binding
->  * Update IRQ names to reflect TSU expectations
+> Peng Fan (8):
+>       arm64: dts: imx95: Add System Counter node
+>       arm64: dts: imx95: Add LMM/CPU nodes
+>       arm64: dts: imx95: Add more V2X MUs
+>       arm64: dts: imx95: Add OCOTP node
+>       arm64: dts: imx95: Add coresight nodes
+>       arm64: dts: imx95-evk: Update alias
+>       arm64: dts: imx95-19x19-evk: Add pca9632 node
+>       arm64: dts: imx95-19x19-evk: Add pf09 and pf53 thermal zones
 > 
-> v2 -> v3
->  * Remove useless 'renesas,tsu-operating-mode' property
+> Richard Zhu (1):
+>       arm64: dts: imx95-19x19-evk: Add Tsettle delay in m2 regulator
 > 
-> v3 -> v4
->  * Improve commit messages
+>  arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts |  29 +++-
+>  arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts |  94 ++++++++++++
+>  arch/arm64/boot/dts/freescale/imx95.dtsi          | 165 +++++++++++++++++++++-
+>  3 files changed, 280 insertions(+), 8 deletions(-)
+> ---
+> base-commit: ff837884a4642382a24d10fd503acf2c3a472f10
+> change-id: 20250813-imx9-dts-664f7ba66ae7
 > 
-> v4 -> v5
->  * Remove useless curly braces on single line-protected scoped guards
-> 
-> v5 -> v6
->  * Minor typo fix
->  * Constify regmap config in patch 1/5
-> 
-> v6 -> v7
->  * Update DTS trim priperty name and specifier, updading the documentation
->  accordingly
->  * Refactor main driver: remove spinlock usage, using polling timeout as computed
->  from datasheet. Also use polling for get_temp() while using IRQ for trip-point
->  cross detection, and finally add both runtime and sleep PM support.
->  * Add new patch to update sys #address-cells as trim specifier now requires an
->  offet from sys base
-> 
-> Regards,
-> 
-> [1] https://lore.kernel.org/all/20250808061806.2729274-2-claudiu.beznea.uj@bp.renesas.com/
-> 
-> 
-> John Madieu (6):
->   soc: renesas: rz-sysc: Add syscon/regmap support
->   dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
->   thermal: renesas: rzg3e: Add thermal driver for the Renesas RZ/G3E SoC
->   arm64: dts: renesas: r9a09g047: Add #address-cells property in sys
->     node
->   arm64: dts: renesas: r9a09g047: Add TSU node
->   arm64: defconfig: Enable the Renesas RZ/G3E thermal driver
-> 
->  .../thermal/renesas,r9a09g047-tsu.yaml        |  87 +++
->  MAINTAINERS                                   |   7 +
->  arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  49 ++
->  arch/arm64/configs/defconfig                  |   1 +
->  drivers/soc/renesas/Kconfig                   |   1 +
->  drivers/soc/renesas/r9a08g045-sysc.c          |   1 +
->  drivers/soc/renesas/r9a09g047-sys.c           |   1 +
->  drivers/soc/renesas/r9a09g057-sys.c           |   1 +
->  drivers/soc/renesas/rz-sysc.c                 |  28 +-
->  drivers/soc/renesas/rz-sysc.h                 |   2 +
->  drivers/thermal/renesas/Kconfig               |   7 +
->  drivers/thermal/renesas/Makefile              |   1 +
->  drivers/thermal/renesas/rzg3e_thermal.c       | 575 ++++++++++++++++++
->  13 files changed, 760 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
->  create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
-> 
+> Best regards,
 > --
-> 2.25.1
+> Peng Fan <peng.fan@nxp.com>
 > 
 > 
 > 
@@ -160,16 +137,17 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
+ Base: base-commit ff837884a4642382a24d10fd503acf2c3a472f10 not known, ignoring
  Base: attempting to guess base-commit...
- Base: tags/v6.17-rc1-12-g0a0e0852f3f3 (best guess, 10/11 blobs matched)
+ Base: tags/next-20250818 (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250818162859.9661-1-john.madieu.xa@bp.renesas.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250818-imx9-dts-v2-0-8ba787fb5280@nxp.com:
 
-arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dtb: system-controller@10430000 (renesas,r9a09g047-sys): '#address-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/renesas/renesas,r9a09g057-sys.yaml#
+arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dtb: scmi (arm,scmi): Unevaluated properties are not allowed ('protocol@80', 'protocol@81', 'protocol@82', 'protocol@84' were unexpected)
+	from schema $id: http://devicetree.org/schemas/firmware/arm,scmi.yaml#
 
 
 
