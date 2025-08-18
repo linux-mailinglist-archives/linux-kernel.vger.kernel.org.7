@@ -1,105 +1,81 @@
-Return-Path: <linux-kernel+bounces-773958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33879B2ACDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:36:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBF7B2AD33
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 17:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351C718824ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B941B685B11
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AE425B305;
-	Mon, 18 Aug 2025 15:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0D1261595;
+	Mon, 18 Aug 2025 15:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4GwIKRv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="j9R64CuP"
+Received: from mail-244104.protonmail.ch (mail-244104.protonmail.ch [109.224.244.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723FB259CA3;
-	Mon, 18 Aug 2025 15:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6477F258CE1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 15:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755531146; cv=none; b=F5Mx5XWhFrNGGGFFSiF07krKLVsuF5FoZi12nBEDhXBE8eJycC9ZZuCAgK0sGgwPj1mZGPBql1l4OLX/fVKHmVGxtNIDneOppTUVCXXZrsoKWi3rgZX7jvSuSSv+o5RzwW14Un8cbVuzsxv+zOvrtSGuYovX+IArZNRUOZfEgGY=
+	t=1755531789; cv=none; b=EqVEelXfn2agtw0CYGJNNz5Fbf7mL5+aNjP7paUFPwI88L5+pKut9fmE0X3fJ/XeyzIY9+m+hWjNj1EzT89ssiB+t1tw8lrABykJYyyMq2v6bbynVuLcL3wNFd8Oh5hyhxNKIn4kzDXau08cMiDUzTLqWpczXN3uxiyWeEatH98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755531146; c=relaxed/simple;
-	bh=dKQCX01Dgpw9dc/KO/HCmSw5Ji9XL1b1m8P0ZMz1jPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=mZsXkwAOkDDEe+0LuklY46dEgr5+f2agJgG9eLnzFtz8fwXwX56zr0QqMft4v0as5pD0dwkTE5cC3GqrXJ4oKCOE6XeZ5SVrNYecI/6uONDg9mkvIDHPmXrX79x7o8nVrDCj+nPCV+FlUB1zuqGIGucmuxpUGAUXY6Zd8bQuSow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4GwIKRv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DF8C4CEEB;
-	Mon, 18 Aug 2025 15:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755531146;
-	bh=dKQCX01Dgpw9dc/KO/HCmSw5Ji9XL1b1m8P0ZMz1jPQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=i4GwIKRvXxjZa4rtVFv3GPe+eKTHZRFSrtqyusSq+MuQuHgUtaQV4CG8/ZLcGjfqe
-	 mbVBgHbeekUgLdChCoG7oxukfrmg/Qrpw+xXjBVXs2AkgoK9TShnzv35dbsP+DtOOz
-	 g1/wDkxxdtijZLbTyqZKZkpfth4XrAuP5v1sGPQwgNVm/dmQkJ0yLAjOXZLAjlCLmy
-	 J6o+FsD8UWqSTSRv3+4tZhDeDG80Vcmegt+cyDCx/w+q45AQxQdmUgZ1GLeFse1mwP
-	 WKaWpyqCTQNh5ukob9V5r0XJrPzz8lAe7bNQFb7o+odmrt7qYLqqMI55cifKWuG1Zu
-	 WfTl821z0bJiQ==
-Date: Mon, 18 Aug 2025 10:32:24 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: frank.li@nxp.com, jingoohan1@gmail.com, l.stach@pengutronix.de,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND v3 5/5] PCI: dwc: Don't return error when wait for link
- up
-Message-ID: <20250818153224.GA527775@bhelgaas>
+	s=arc-20240116; t=1755531789; c=relaxed/simple;
+	bh=mQ1gk1JZWV6GLcg3lVdYTkOrYqwl3jyZHswCmkDgmf8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ipI0t2yhZlGqrGo4bAMAWcRszcCu+ky31AuxIfCZB8l/jLm/6TrTZWe7dj7byzfcL5qJnkyNOfjxcijmAM9k4rqAqHLeBIifCFqw8x8c1gjVb9COF+mM9m6Wx96+DfjjVL8zDu533Nv2TCxY8gzQUj4yX+91DafK9I6UdigNYpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=j9R64CuP; arc=none smtp.client-ip=109.224.244.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1755531253; x=1755790453;
+	bh=mQ1gk1JZWV6GLcg3lVdYTkOrYqwl3jyZHswCmkDgmf8=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=j9R64CuPl1+esJKxxkdwintKKjPxAFCIXNqzwfFS7VZQiXUDm7n902G7RkxOIxp+P
+	 hyc/s71j8rqvHkO8Ik0luxz6FFrqvZZ4nI5wFTFFYdNRyRzy6YojEOxVitA1ANBUv7
+	 LXYeVCdMiwS6Ak5xDbdPA1Kg+UtpaHny24VWa+Lv3hoQ4+GcRUrQtjZJr4D071rzco
+	 8CbO7ohbABD8yCH7dn20E4XFp9yVJSiv46eCWLeuddA3MjxCk5aZDEXJQvB4jxa76r
+	 ivXfylcX0Mt4RbWkgCEzDiVLN1ot0alsbCFfpzqwYGK7wt46sV+iKHmuZazxP1mBn5
+	 y2ar4yTx5i+7w==
+Date: Mon, 18 Aug 2025 15:34:09 +0000
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
+Cc: "ceo@teo-en-ming-corp.com" <ceo@teo-en-ming-corp.com>
+Subject: Linux 6.17-rc2 Released With Performance Fixes & More
+Message-ID: <0RVaBu15UsbcEigNEJfEB1Wo9Fd5jbwvToVgdNw0rfQkjOLaLEZDVIbnNX8z7fd87MQ57j3K6AGhXgClvcKDImoChyrGitMB260-VAlSxR4=@protonmail.com>
+Feedback-ID: 39510961:user:proton
+X-Pm-Message-ID: ceb299e1d8122af46f4a0440476573074d6de206
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818073205.1412507-6-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 03:32:05PM +0800, Richard Zhu wrote:
-> When waiting for the PCIe link to come up, both link up and link down
-> are valid results depending on the device state. Do not return an error,
-> as the outcome has already been reported in dw_pcie_wait_for_link().
+Subject: Linux 6.17-rc2 Released With Performance Fixes & More
 
-The reporting in dw_pcie_wait_for_link() is only a note in dmesg (and
-the -EDTIMEDOUT return, which we're throwing away here).
+Good day from Singapore,
 
-We need an explanation here about why the caller of
-dw_pcie_resume_noirq() doesn't need to know whether the link came up.
-A short comment in the code would be useful as well.
+Here=E2=80=99s a news article I=E2=80=99d like to share.
 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 868e7db4e3381..e90fd34925702 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -1089,9 +1089,7 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
->  	if (ret)
->  		return ret;
->  
-> -	ret = dw_pcie_wait_for_link(pci);
-> -	if (ret)
-> -		return ret;
-> +	dw_pcie_wait_for_link(pci);
->  
->  	return ret;
+Article: Linux 6.17-rc2 Released With Performance Fixes & More
+Link: https://www.phoronix.com/news/Linux-6.17-rc2-Released
+Date of article: 17 Aug 2025
 
-This should be "return 0" because if "ret" was non-zero, we returned
-that earlier.
+Regards,
 
->  }
-> -- 
-> 2.37.1
-> 
+Mr. Turritopsis Dohrnii Teo En Ming
+Targeted Individuals in Singapore
+GIMP =3D Government-Induced Medical Problems
+18 August 2025 Monday
+
+
+
+
+
 
