@@ -1,108 +1,188 @@
-Return-Path: <linux-kernel+bounces-774046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F07BB2ADF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E5AB2ADFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9357B18A49A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:19:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0C41965D84
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3CC33EB19;
-	Mon, 18 Aug 2025 16:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF25340D8E;
+	Mon, 18 Aug 2025 16:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AlGKkveX"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcbrFitr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3366265609
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 16:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EE0229B2A;
+	Mon, 18 Aug 2025 16:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755533923; cv=none; b=VqCcZyd7R0SP46S2j5tCaVUsQPku7eg8jyneO8ZjemcfBEjWqNSz9bfDNYeLp4aG2t9Stv+neuqqGU5uFLaZwKE7COjLZxl6wB+TKWKIyjOCXaOMaxXnN+CtqLlcajVedoCxrB+o/QdwsEi5lgW7V01a3RB2nmu7sDmXX4rHxyo=
+	t=1755534066; cv=none; b=EppvBVvAxj2pa8wldeGmVtZ9eewF2Q+ZvV4QLDBSKg/Axd2fccbQnyKVKhxnpp7ifdX8rx7CSTqEqfPIRuMoQAWIAwP1dvqARPfsiJVKYlK/tfT6YOY3r7GZjd7P/eLBvV2MtWROVpRrNnVYugoMCyfYHLICgIlOCxnS5sM5csU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755533923; c=relaxed/simple;
-	bh=//aetfv37YKeJVqbXw3YpPmhG6DNYA5e4H+UE5ZUcL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PzoYhqqA3sCNTY/VFGUG9AkiKh/tzCs9Dva8cWaSbXecmxw2lcYfY/LgAUNr1Lti37QnrTa+/GBAO11dEfc/tFn2Pa0KcR4pGQmKN09moQfqy65BNBXsu2lTb4vBhwaHfqR/VKmhTLd3N01hyhNzcyY+Fnu9CNGcIBFV5qQG0bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AlGKkveX; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-74381ff87fdso2456712a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 09:18:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755533919; x=1756138719; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cT+WAuja39VMqOvtGfWBOHLuy+NZyDAiBTg1604nP00=;
-        b=AlGKkveX+R98nhjJcwiuRfRbR2KQs2ZOIYNwi/RjlN1GB8CGsYaV1bP2uGsmJIf+cF
-         0hCDs+nWJ1DYzcWqALjxXFR2BM+e9tl1Ho4LYeHgJ2F1T02wNCC35JfHHBiETsGi0Aiy
-         KzFsjFzTz253YSDRXnFfc7JQdv6RlNjN0quehfa139DY+ztmvcjcYOFR8R1+RAseB4/l
-         C71UmLeiy9f4llWYGCJ6Oq0/vziUZJBVeUrm5G23qHn7RL3jFzd59k18u71Ans0nYLJY
-         nvOKhNAcMNeOAoPBEqzWz9Kfo7s3U2WO0qfPuvBm7Es/uJb7R1eUfKjyq9isyxbFZPwV
-         +1TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755533919; x=1756138719;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cT+WAuja39VMqOvtGfWBOHLuy+NZyDAiBTg1604nP00=;
-        b=nv+oRv0VNeBu+5Ti+W6XXTMWTSUrlbzgZIEdlcsqsjcW8LKR+NFbEzhOWClyIS6hH6
-         9Zv0DllrUEBK0qgtmGRmxqmetST5GAuEUdSFny0Y9qYK1jaVZsY6ve5NDe91hB7v8K02
-         fKE10xTOQ9SAdNKihxcxuSvHTLupFRua7JqC1MTEIGjuTjtjMDX9xNzC/Ty0cnEqDWuQ
-         MPBrB8hwKrpV/UNXBo3wfsYJncKcmzYF9EHPwQgCHzYjaJOdwvpx87O28Pfy/JuRm9/j
-         T2dVNKDy/yXZ/HUlvA1KKcMhZu0beCgD50G5Uko8rpm+4tdoXTlOx2hS53MNo226bL5h
-         nSaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIqrd0LrViZjgEJfmcTdFM+n3/ChoCxtGidMwp78h7yM/SPFTabi9ZvNaq8svx3Q5iqPCRbhmQno0x+Rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL4tjCIeq3MXseCL4O59YYkS0HZP3oyI1+Go/O5TZ7uL5g8VnU
-	kuG/VHSFjG5SWAg2lwW3DoeNfhG5pV4CraOv+NRE4LubGMnioJEgc20VgksZYHGEzSqCQHu4f2X
-	UcBi4
-X-Gm-Gg: ASbGnctniaL7iOrWCbLPTLZQeOJ2L31lff32S1deD7fFmfwVrUWC9jRghHzI3fUAuDe
-	Jhi0K5m2nec4IpjvmNxRRvrU+wLv4GRnJi44XQIFTCL2DfAxrumNYbrJhME04BVLeIkQ1dvCtZ0
-	9yVNAxFeZ70VneB+Lnw1WGyQaZRJa6kpGjLmaNanAIkylVFzErQxWrNeW+td7ELJZaMM7yOy/Lf
-	bjqf93R6EOb3L+DnRmFJ9SDrANbir12YzEPFc6+F81DotDjRsc5lRRlgWpkn+U/01loIyz9uVzO
-	HDy66Jo6XaOyLMQ4IbO49Ql0gIHRE4PSIpZCRkLzvhD8OBodOz0ODTvubqlbwf9VN0MYCxezRdC
-	6Kg7mQgPYAOOzP9g9GtfXcFLFRnWMjg==
-X-Google-Smtp-Source: AGHT+IFuPGXBI7xR6Jyo6KTbZ4Vmpd5eT1fuogNq810C8ExVtbCRFbryYTNLHnDSuJGq05eb/xsFaw==
-X-Received: by 2002:a05:6830:64ca:b0:741:c51c:9e3 with SMTP id 46e09a7af769-7439248d317mr7976713a34.23.1755533918717;
-        Mon, 18 Aug 2025 09:18:38 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c947e387bsm2602740173.37.2025.08.18.09.18.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 09:18:38 -0700 (PDT)
-Message-ID: <7ed32e97-055a-408d-8c14-1c80c64bfb17@kernel.dk>
-Date: Mon, 18 Aug 2025 10:18:37 -0600
+	s=arc-20240116; t=1755534066; c=relaxed/simple;
+	bh=qUKrvyW0beuc+sw2BGlkXExMSVbJbG2RqtuPQDlzROo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NyRTbxYbWDhGHgillUqG8uqeeR8H82s2MRv5dk45oMPQevZmva1/ho9Y9EhCOCie0vElK39ILKwX1wrg7Nty75C8NOi0fXjqTH23rpGL92gUfWA/nJCXe6MHsE+0IbnToTZP8B13I52EhMr+hxgT1UvgFd4oyJ4D67nQMvhZ8Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcbrFitr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB2CC4AF09;
+	Mon, 18 Aug 2025 16:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755534066;
+	bh=qUKrvyW0beuc+sw2BGlkXExMSVbJbG2RqtuPQDlzROo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bcbrFitr9YGR3P5hWECUFThj39D+FjqmBUYx075ZcWu+LoPzLCULfB2Zgal8U5wzT
+	 NthJbQy8ldxPVI1K6cRfcddreox1mRDkpkgglflgjOOfkL9p8mGdOYEKHub/BYkHJr
+	 Pr0gG6hEtz2kBngwjBtG0Z1xSjBSBLj+q7F3KnY5TCdDO9L7QfXax3pkRr7hoNJ+Z3
+	 p9NxWR+hh09gLI0p1lOYDKNqJEN0cgzcifnJuTsJwoutwR6z2rFmNH7ik5RURafM4n
+	 Vf2J3yelpTjt5Y2Soe56HGbZVu4wXlrOGN+Kn+ZZGkn44SYfRjNCbXSsPlg7G32Qmn
+	 5kPUEiq8VQuJg==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61bd4e24ac7so1335608eaf.2;
+        Mon, 18 Aug 2025 09:21:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUx2+IAdDsgavhyJPdeydCKx4naQZTMdjFyEYY94tRbxSssmVTrvyIfUPL2llLyPWomxh5UeIXe13FmtgCU@vger.kernel.org, AJvYcCWY9zZsXrLVBVZ80qlnD2Bs9gCLlmlti9kTybM/wz/bvpLAguu7z4kNY7pHiUfegAhF5AtxTwR6S9LC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUQptqoTXm6sO2uw73HCZbPfNqcJi8iVJDmMw9ioEaLNrzyDS2
+	u/4LxO6mz2ZmPV7a48GkMQoEBY43QFaCA7m72AKIZ/siwqEHW0myUPC+i6egTYsmEkbuHXxSnIz
+	44N9NWb7gNQU/JsLP8vY7iAzUaojfivI=
+X-Google-Smtp-Source: AGHT+IE8+JuEsDQNcm0X/WVYZdNkKbvLVNjlUE8NpD1s8kswPVsJGRw/6WgSjumINfgbdXgeY+FpMZiezy30Pdm0kPM=
+X-Received: by 2002:a05:6820:1c88:b0:61c:a11:ce96 with SMTP id
+ 006d021491bc7-61c0a11ddc6mr3534246eaf.8.1755534065224; Mon, 18 Aug 2025
+ 09:21:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] loop: Rename and merge get_size/get_loop_size to
- lo_calculate_size
-To: Rajeev Mishra <rajeevm@hpe.com>, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250814191004.60340-1-rajeevm@hpe.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250814191004.60340-1-rajeevm@hpe.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250814051157.35867-2-u.kleine-koenig@baylibre.com>
+In-Reply-To: <20250814051157.35867-2-u.kleine-koenig@baylibre.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 18 Aug 2025 18:20:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hSoG8tTvY+im+h0ObUhM5_GDWbUa=6Doc1SRRNnuxfiw@mail.gmail.com>
+X-Gm-Features: Ac12FXwjxxmfI0rOk-5SHu5dRy9Ve7UNBCcDlleto6Zdv0AgFx7Sq90-BCd2Qck
+Message-ID: <CAJZ5v0hSoG8tTvY+im+h0ObUhM5_GDWbUa=6Doc1SRRNnuxfiw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: APEI: EINJ: Fix resource leak by remove callback in .exit.text
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ira Weiny <ira.weiny@intel.com>, 
+	Zaid Alali <zaidal@os.amperecomputing.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>, 
+	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sudeep.holla@arm.covm, Danilo Krummrich <dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/14/25 1:10 PM, Rajeev Mishra wrote:
-> - Renamed get_size to lo_calculate_size.
-> - Merged get_size and get_loop_size logic into lo_calculate_size.
-> - Updated all callers to use lo_calculate_size.
-> - Added header to lo_calculate_size.
+On Thu, Aug 14, 2025 at 7:12=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+>
+> The .remove() callback is also used during error handling in
+> faux_probe(). As einj_remove() was marked with __exit it's not linked
+> into the kernel if the driver is built-in, potentially resulting in
+> resource leaks.
+>
+> Also remove the comment justifying the __exit annotation which doesn't
+> apply any more since the driver was converted to the faux device
+> interface.
+>
+> Fixes: 6cb9441bfe8d ("ACPI: APEI: EINJ: Transition to the faux device int=
+erface")
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
 
-Please write a proper commit message, rather than these itemized
-lists. Goes for both patches.
+Until the faux device code is updated, this is needed, so applied as
+6.17-rc material.
 
--- 
-Jens Axboe
+Thanks!
 
+> ---
+> Hello,
+>
+> note that the intention seems to be that this construct is safe, see
+> commit c393befa14ab ("driver core: faux: Suppress bind attributes").
+> Note further that I don't have a machine to test that so this is only
+> based on code reading. An appropriate test might be:
+>
+> | diff --git a/drivers/base/faux.c b/drivers/base/faux.c
+> | index f5fbda0a9a44..decb15f1194a 100644
+> | --- a/drivers/base/faux.c
+> | +++ b/drivers/base/faux.c
+> | @@ -39,6 +39,8 @@ static int faux_match(struct device *dev, const struc=
+t device_driver *drv)
+> |       return 1;
+> |  }
+> |
+> | +static int once;
+> | +
+> |  static int faux_probe(struct device *dev)
+> |  {
+> |       struct faux_object *faux_obj =3D to_faux_object(dev);
+> | @@ -56,7 +58,11 @@ static int faux_probe(struct device *dev)
+> |        * Add groups after the probe succeeds to ensure resources are
+> |        * initialized correctly
+> |        */
+> | -     ret =3D device_add_groups(dev, faux_obj->groups);
+> | +
+> | +     if (once++)
+> | +             ret =3D -ENOMEM;
+> | +     else
+> | +             ret =3D device_add_groups(dev, faux_obj->groups);
+> |       if (ret && faux_ops && faux_ops->remove)
+> |               faux_ops->remove(faux_dev);
+>
+> (quoted to make sure that this hunk won't be used when the patch is
+> applied).
+>
+> Even if the faux device interface is fixed not to rely on .remove() the
+> comment in einj-core.c needs some love.
+>
+> Best regards
+> Uwe
+>
+>  drivers/acpi/apei/einj-core.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.=
+c
+> index bf8dc92a373a..1204fa3df285 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -1091,7 +1091,7 @@ static int __init einj_probe(struct faux_device *fd=
+ev)
+>         return rc;
+>  }
+>
+> -static void __exit einj_remove(struct faux_device *fdev)
+> +static void einj_remove(struct faux_device *fdev)
+>  {
+>         struct apei_exec_context ctx;
+>
+> @@ -1114,15 +1114,9 @@ static void __exit einj_remove(struct faux_device =
+*fdev)
+>  }
+>
+>  static struct faux_device *einj_dev;
+> -/*
+> - * einj_remove() lives in .exit.text. For drivers registered via
+> - * platform_driver_probe() this is ok because they cannot get unbound at
+> - * runtime. So mark the driver struct with __refdata to prevent modpost
+> - * triggering a section mismatch warning.
+> - */
+> -static struct faux_device_ops einj_device_ops __refdata =3D {
+> +static struct faux_device_ops einj_device_ops =3D {
+>         .probe =3D einj_probe,
+> -       .remove =3D __exit_p(einj_remove),
+> +       .remove =3D einj_remove,
+>  };
+>
+>  static int __init einj_init(void)
+>
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> --
+> 2.50.1
+>
+>
 
