@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-773638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-773641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CACBEB2A397
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:11:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BB6B2A3ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 15:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C3E1B60430
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497B917ACE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 13:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005CE31E0F1;
-	Mon, 18 Aug 2025 13:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1028031E0F9;
+	Mon, 18 Aug 2025 13:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="txS1dG3I"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LjBd65TU"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC703218D5
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0981530F7F8
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 13:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755522322; cv=none; b=rJrsDwVrpU8McUumfwzatz/JjFdAiBxX1x/X8xQ5YMeqyNDDP+3P1Gm1DCaRSgDcONK/sRe5RySxTEUipqDhwGs3P4bcU+8IZC81gIHFtVje9QUeqtgL5sumbG5ZGeJYvyOzN018Xl23maaZQvCgJlHUwaUCfmXJzEaOfQ8Er94=
+	t=1755522384; cv=none; b=rkjFSlPNwQkdVdyUnN5uNI5unHu1WopQ1ZVvp4KLMk6KxSOiMrsLEYIvcJAvpbgUeh/XBenCK7y2hgZNDx5xT39dXdCW4mnWML+TecZqo1heFPJqZ5fvc4+o7OyBvW/Wk9iYb4Ztem030qVbbJYEAyK5muaQPcIADM1ZvlBEVTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755522322; c=relaxed/simple;
-	bh=RpAhxP2uLqbqjInuTE70JRXrQca1fdqD+vDq2S1ckfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iM5w+ZLFa9i9drgT+OXuBlfAC2hnHd7sxMMXzvHFLODKLU2SD1sXEzHnLNXms/1Obki3tCjsOzx76j3FaejlVwSTZTgUBfPe+WUSQFj19nu3bqXTQounu5oeJ/XrdQaXPFbUypkm6vsGxHft78qytnIi24cekNgSSYC4ETWjS9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=txS1dG3I; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9e4193083so3891764f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 06:05:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755522319; x=1756127119; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=86BJmrJXeETeW2kp8meE7Uq7AvyYwzMOqYpCJJXyfLs=;
-        b=txS1dG3IyrSDBriMFeWWgHeQgrwquh8uAPpEcdMV0g79noALWuVRWDccj7GLJ7S74Y
-         xkcSjVV0TP3EUphTRiqj2wd00Nv2vZtKKlt1+cDQk7vHlDVDZWqNg6CFHB5jtR2pYed4
-         KYa/OM2BVxixE02a5tGd5K80r8nMYfogIWCMXiAMVqBbLFZxIJP4MTmZ/M/xq0ln6npN
-         bJFKbOMdXwvy5iqAHXiX3HMH8XHxU0VRsE89AMD/mE/GT0+6VlT+0LoB7/CsNA3TtOoN
-         0FmczBnNwrvZHas8ZQEyissCYVIzhwnGkBJyR0OlpcvH/LtbFw05tsOL04Z7JnJuRv7X
-         6fZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755522319; x=1756127119;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=86BJmrJXeETeW2kp8meE7Uq7AvyYwzMOqYpCJJXyfLs=;
-        b=Ec3hO6wXJH4fSnIofkTWDT/8BOOPERa5dPHcLaSnQRW/w4PozNIC6IxVbEGMfbMETX
-         dYSqIQDPxmTACmp187B20GJozXfpAuDCmej0VWPfwn+1hIIt3nPfo/WekSG+wnEVJead
-         ljOlNKIp7w7J4oNqk/GkScx2S9ktXkEe+3v/hdMSWDd9KipYFMf/pJocDRnF8pNroE01
-         Lx7DuwAgiT+xoyiegqalXN1SMGaMj6svgRQdLpVycdHtCEp3656ZaLeROUc3kUyAW8WF
-         m72o8q16A1nXDXjoxwOMBA8m/lnqcBB3xmT8zntuDyMHL3K42gXQwPx9bxQtEfMZ3ICn
-         Aa0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVk/SCaGkQ8eiJcI12Tz9TEauvRWy2gCrjdN32JVL6UF9x4RX+ffxzA1fslAnTdUf+nW+h/MGRDC1t33pw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9LNu2e1Fyp35WoG3/IhMYTPG9bt6qYRQjCpOK2210jQtilieR
-	Cg/HmTsNa8VTwPJ/1F0pxnPbCr56SW1yrRs2Zrkl0TmnNuhkpoYa9iD+UztXuP93oWk=
-X-Gm-Gg: ASbGncu3v78v8wcSUcao2NC4ty5MxjQS8rxRmJRSRFVRT5GFcrh93MXTVjyQ9juugAb
-	ZuuYI7ZCxEP0832vOLwm2bZnYSt5+NaGVzNcgo8CkjS+zJbGRdF1zyRk2EoVXlHHxQh3httv8lt
-	AQ1yfnU3d18XAgG2tQ9OIbYYVjsGqrpSOHmhxZsqeMo7lAZbjIjw24unW1j+yePqkZU2+wMDAw7
-	c6TC6Q2HO49q8x/+vm+tbqjkHrOKh4UMy2uFwuIZeHQ6gLlm4vCojFfoi8BfyaCEw3cl2RsU3cQ
-	9XrU8B3sx8qk07eK5EYN/8eSAg3o7jx7SDVFw8vidmjaGivKHNGcJT0psx1uLvxHIhcbm6X+H0f
-	HU8FhEWjTHhng9qOx1Zol2zgpuMIDks4dHQAytg==
-X-Google-Smtp-Source: AGHT+IHcwykrBK8tXrdhApeeaxgZhKOjTfFirzDPuKeFi7nfZYLL6OLNQGBRz5fJTm0ZvXzAmYWt9A==
-X-Received: by 2002:a05:6000:1788:b0:3b8:d493:31ed with SMTP id ffacd0b85a97d-3bb690d3800mr10683315f8f.47.1755522318746;
-        Mon, 18 Aug 2025 06:05:18 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3bb64758d1csm13236548f8f.8.2025.08.18.06.05.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 06:05:17 -0700 (PDT)
-Message-ID: <90d40899-c9b8-4628-a0b5-06ee0aa497be@linaro.org>
-Date: Mon, 18 Aug 2025 14:05:16 +0100
+	s=arc-20240116; t=1755522384; c=relaxed/simple;
+	bh=hJubqCza+faRhnm7uKGNg1RG6HMVPDkgGCJUFb/OCJE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=mF+Et54HiDbEUpbu8BrbT+Ny7+dzhkvpUhK9NUMMdh8S2g3HJMm3MMjY9Oxm79Ny8PUapsvTR9tJwaiRRLMwn2s4dsV3kD9TIbYqVDVOfoYyoq+ClsrFL+kZ1hUFMi1yymU+0OtC0OYTnSnqqmUscyBRcDZxNSAQV/UVZpeMXVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LjBd65TU; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57ID5ijE3083938;
+	Mon, 18 Aug 2025 08:05:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755522344;
+	bh=G/dZgny3HqdfA7AWtx2mQOrx+Lcbf5Q9l2n2ndqcyls=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=LjBd65TUWw6YkiXnw9PWg309LjELR9/eAq/AbIF96ljNNseRM6rufIXSQaBtj+Zg1
+	 qKYgqqqaIxddfBzwO19GBm1eYosKG8kXithItDoAiRFQSxzTfwEp5GAz44KX7OnFcf
+	 +YiL4rWbtH4vd7ttFCugDXfVS7d/pcJMeC38KgLE=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57ID5iF1528241
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 18 Aug 2025 08:05:44 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 18
+ Aug 2025 08:05:43 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 18 Aug 2025 08:05:43 -0500
+Received: from [172.24.233.62] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.233.62])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57ID5eEf1056903;
+	Mon, 18 Aug 2025 08:05:41 -0500
+Message-ID: <b0f176de-3476-4e66-ade3-0df39578c3ac@ti.com>
+Date: Mon, 18 Aug 2025 18:35:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,101 +64,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/13] spi: spi-fsl-lpspi: Set correct chip-select
- polarity bit
-To: Frank Li <Frank.li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Clark Wang <xiaoning.wang@nxp.com>,
- Fugang Duan <B38611@freescale.com>, Gao Pan <pandy.gao@nxp.com>,
- Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Larisa Grigore <larisa.grigore@oss.nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
- Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
- linux-spi@vger.kernel.org, imx@lists.linux.dev,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
- <20250814-james-nxp-lpspi-v1-2-9586d7815d14@linaro.org>
- <aJ4TkKdkIPiJhhF4@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH 0/2] phy: cdns-dphy: hs-clk improvement and a cleanup
+From: Devarsh Thakkar <devarsht@ti.com>
+To: Vinod Koul <vkoul@kernel.org>,
+        Tomi Valkeinen
+	<tomi.valkeinen@ideasonboard.com>, <kishon@kernel.org>
+CC: <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Parth
+ Pancholi <parth.pancholi@toradex.com>,
+        Francesco Dolcini
+	<francesco@dolcini.it>,
+        Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+        Jayesh
+ Choudhary <j-choudhary@ti.com>
+References: <20250723-cdns-dphy-hs-clk-rate-fix-v1-0-d4539d44cbe7@ideasonboard.com>
+ <cc0e4cf5-1bd9-4ae3-a130-0483dbfc6335@ideasonboard.com>
+ <aJM0WPVDUkte9E_D@vaman> <cac3d853-11aa-481b-90bb-aeb2cd4608f8@ti.com>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <aJ4TkKdkIPiJhhF4@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <cac3d853-11aa-481b-90bb-aeb2cd4608f8@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Gentle reminder.
 
+Hi Vinod,
 
-On 14/08/2025 5:49 pm, Frank Li wrote:
-> On Thu, Aug 14, 2025 at 05:06:42PM +0100, James Clark wrote:
->> From: Larisa Grigore <larisa.grigore@nxp.com>
->>
->> The driver currently supports multiple chip-selects, but only sets the
->> polarity for the first one (CS 0). Fix it by setting the PCSPOL bit for
->> the desired chip-select.
->>
->> Fixes: 5314987de5e5 ("spi: imx: add lpspi bus driver")
->> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   drivers/spi/spi-fsl-lpspi.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
->> index d44a23f7d6c1..c65eb6d31ee7 100644
->> --- a/drivers/spi/spi-fsl-lpspi.c
->> +++ b/drivers/spi/spi-fsl-lpspi.c
->> @@ -70,7 +70,7 @@
->>   #define DER_TDDE	BIT(0)
->>   #define CFGR1_PCSCFG	BIT(27)
->>   #define CFGR1_PINCFG	(BIT(24)|BIT(25))
->> -#define CFGR1_PCSPOL	BIT(8)
->> +#define CFGR1_PCSPOL_MASK	GENMASK(11, 8)
->>   #define CFGR1_NOSTALL	BIT(3)
->>   #define CFGR1_HOST	BIT(0)
->>   #define FSR_TXCOUNT	(0xFF)
->> @@ -425,7 +425,9 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
->>   	else
->>   		temp = CFGR1_PINCFG;
->>   	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
->> -		temp |= CFGR1_PCSPOL;
->> +		temp |= FIELD_PREP(CFGR1_PCSPOL_MASK,
->> +				   BIT(fsl_lpspi->config.chip_select));
->> +
+On 12/08/25 11:32, devarsh wrote:
+> Hi Vinod, Kishon,
 > 
-> Feel like FILED_PREP(..., BIT()) is stranged.
-> 
-> I suggest #define CFGR1_PCSPOL(x) BIT((x) + 8)
-> 
-> Frank
-
-It's using an existing macro that everyone knows though and I found 65 
-instances of exactly this. It can be read as "set bit X and put it into 
-the PCSPOL field without any further investigation.
-
-If we make a new macro, first the reader will have to jump to it, then 
-it still doesn't immediately explain what the "+ 8" part is. Using 
-FIELD_PREP() also has the potential to use autogenerated field masks 
-from a machine readable version of the reference manual. You can't 
-statically check your macro to see if + 8 is correct or not, and it also 
-doesn't catch overflow errors like FIELD_PREP() does.
-
-There might be an argument to add a new global macro like 
-FIELD_BIT(mask, bit). But it's not very flexible (can't set multiple 
-bits) and you can already accomplish the same thing by adding BIT() to 
-the existing one.
-
-Thanks
-James
-
-> 
->>   	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
+> On 06/08/25 16:24, Vinod Koul wrote:
+>> On 05-08-25, 15:03, Tomi Valkeinen wrote:
+>>> Hi Vinod, Kishon,
+>>>
+>>> On 23/07/2025 13:01, Tomi Valkeinen wrote:
+>>>> A cdns-dphy improvement to return the actual hs clock rate, and a
+>>>> cleanup to remove leftover code.
+>>>>
+>>>> These were part of a Cadence DSI series:
+>>>>
+>>>> https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02%40ideasonboard.com/
+>>>>
+>>>> but are now separately here for easier merging.
+>>>>
+>>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>>> ---
+>>>> Tomi Valkeinen (2):
+>>>>        phy: cdns-dphy: Store hs_clk_rate and return it
+>>>>        phy: cdns-dphy: Remove leftover code
+>>>>
+>>>>   drivers/phy/cadence/cdns-dphy.c | 24 +++++++++---------------
+>>>>   1 file changed, 9 insertions(+), 15 deletions(-)
+>>>> ---
+>>>> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+>>>> change-id: 20250723-cdns-dphy-hs-clk-rate-fix-a8857a5789dd
+>>>
+>>> Is this good to merge, and if so, do you have any estimate when? While
+>>> this is independent from the DSI series, I'd rather push the DSI series
+>>> into drm-misc about the same time, so both would appear in linux-next
+>>> relatively together.
 >>
->>   	temp = readl(fsl_lpspi->base + IMX7ULP_CR);
->>
->> --
->> 2.34.1
->>
+>> I will start taking patches after merge window closes next monday, so
+>> next week should be a good estimate
+> 
+> On top of this series [1], we have the cadence DPHY fixes for fixing PLL
+> lockup timeout [2] and one more patch which enables lower resolutions
+> [3], both have been reviewed and tested too.
+> 
+> Would it be possible for you too merge all 3 together in below order ?
+> 
+> [1]:
+> https://lore.kernel.org/all/cc0e4cf5-1bd9-4ae3-a130-0483dbfc6335@ideasonboard.com/
+> [2]: https://lore.kernel.org/all/20250704125915.1224738-1-devarsht@ti.com/
+> [3]: https://lore.kernel.org/all/20250807052002.717807-1-h-shenoy@ti.com/
+>
+
+As I understand we see [1] got merged to linux-next but [2] and [3] are 
+still pending. Could you please let us know if anything further required 
+on our side for these two i.e. [2] and [3] ?
+
+Regards
+Devarsh
+
+> Kindly let us know if anything required from our side.
+> 
+> Regards
+> Devarsh
+> 
 
 
