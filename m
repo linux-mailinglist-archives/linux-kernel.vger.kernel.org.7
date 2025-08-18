@@ -1,188 +1,124 @@
-Return-Path: <linux-kernel+bounces-774047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E5AB2ADFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05AEB2ADFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 18:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0C41965D84
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A887B3D89
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 16:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF25340D8E;
-	Mon, 18 Aug 2025 16:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5860D340DA5;
+	Mon, 18 Aug 2025 16:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcbrFitr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdil02pz"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EE0229B2A;
-	Mon, 18 Aug 2025 16:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B62E322DB1;
+	Mon, 18 Aug 2025 16:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755534066; cv=none; b=EppvBVvAxj2pa8wldeGmVtZ9eewF2Q+ZvV4QLDBSKg/Axd2fccbQnyKVKhxnpp7ifdX8rx7CSTqEqfPIRuMoQAWIAwP1dvqARPfsiJVKYlK/tfT6YOY3r7GZjd7P/eLBvV2MtWROVpRrNnVYugoMCyfYHLICgIlOCxnS5sM5csU=
+	t=1755534128; cv=none; b=uNbv1HRjzzJxgJxbliR2uXz7B31G9He4yFjrszbQzywr5KOvIxhiPk1RdjL6FxYiPBi6uswnd9wf+AXRywwfxvBCbhHfhpF8b1HGD4AVTW+TeBc0+ZWrkfltVHtvwCh+qCU/4YX2pwmq5DSXhpUoai+gCGzMWBz1mskUkL9Jhyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755534066; c=relaxed/simple;
-	bh=qUKrvyW0beuc+sw2BGlkXExMSVbJbG2RqtuPQDlzROo=;
+	s=arc-20240116; t=1755534128; c=relaxed/simple;
+	bh=Qfj7pMI5nMca/IztHecfq2L2z9ctOJVAhHH/VFFcIq8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NyRTbxYbWDhGHgillUqG8uqeeR8H82s2MRv5dk45oMPQevZmva1/ho9Y9EhCOCie0vElK39ILKwX1wrg7Nty75C8NOi0fXjqTH23rpGL92gUfWA/nJCXe6MHsE+0IbnToTZP8B13I52EhMr+hxgT1UvgFd4oyJ4D67nQMvhZ8Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcbrFitr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB2CC4AF09;
-	Mon, 18 Aug 2025 16:21:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755534066;
-	bh=qUKrvyW0beuc+sw2BGlkXExMSVbJbG2RqtuPQDlzROo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bcbrFitr9YGR3P5hWECUFThj39D+FjqmBUYx075ZcWu+LoPzLCULfB2Zgal8U5wzT
-	 NthJbQy8ldxPVI1K6cRfcddreox1mRDkpkgglflgjOOfkL9p8mGdOYEKHub/BYkHJr
-	 Pr0gG6hEtz2kBngwjBtG0Z1xSjBSBLj+q7F3KnY5TCdDO9L7QfXax3pkRr7hoNJ+Z3
-	 p9NxWR+hh09gLI0p1lOYDKNqJEN0cgzcifnJuTsJwoutwR6z2rFmNH7ik5RURafM4n
-	 Vf2J3yelpTjt5Y2Soe56HGbZVu4wXlrOGN+Kn+ZZGkn44SYfRjNCbXSsPlg7G32Qmn
-	 5kPUEiq8VQuJg==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61bd4e24ac7so1335608eaf.2;
-        Mon, 18 Aug 2025 09:21:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUx2+IAdDsgavhyJPdeydCKx4naQZTMdjFyEYY94tRbxSssmVTrvyIfUPL2llLyPWomxh5UeIXe13FmtgCU@vger.kernel.org, AJvYcCWY9zZsXrLVBVZ80qlnD2Bs9gCLlmlti9kTybM/wz/bvpLAguu7z4kNY7pHiUfegAhF5AtxTwR6S9LC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUQptqoTXm6sO2uw73HCZbPfNqcJi8iVJDmMw9ioEaLNrzyDS2
-	u/4LxO6mz2ZmPV7a48GkMQoEBY43QFaCA7m72AKIZ/siwqEHW0myUPC+i6egTYsmEkbuHXxSnIz
-	44N9NWb7gNQU/JsLP8vY7iAzUaojfivI=
-X-Google-Smtp-Source: AGHT+IE8+JuEsDQNcm0X/WVYZdNkKbvLVNjlUE8NpD1s8kswPVsJGRw/6WgSjumINfgbdXgeY+FpMZiezy30Pdm0kPM=
-X-Received: by 2002:a05:6820:1c88:b0:61c:a11:ce96 with SMTP id
- 006d021491bc7-61c0a11ddc6mr3534246eaf.8.1755534065224; Mon, 18 Aug 2025
- 09:21:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=hpQgJZtEmYdirgMcA63ENzyY9Fc4yMVaoZAiJBiZRmGV/ATBgqtnxDXPyWpYis9eG9y3turRDWByICLdvnHJptl1vwMPfC6KuKOA85flwXrk8FPOS9sJE9Qm/OTCqdaehk2DWotfDkopon3nrxVAip2ZRM4dT6tJIcjwZspF4M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdil02pz; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9dc5c2f0eso2880297f8f.1;
+        Mon, 18 Aug 2025 09:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755534125; x=1756138925; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qfj7pMI5nMca/IztHecfq2L2z9ctOJVAhHH/VFFcIq8=;
+        b=bdil02pzmMYgQLib8kv7PrNfWjTae3sbg8KRi5+V6HimzRDRjtBU6WyOYytYZRXG+k
+         OGryJ7Fz/356fYe35r7LQhOt665sscvmK3KtaMF0TniIe0S+echZYEcKkeeT2Wcek9Oy
+         0+dtO7KbOcED+Q/auc/vm3cV1zyZwk0NPAMWLJMpJSXWmpGa3UcmBYhDRy/SWFaxR6tR
+         NLobr8Dc61XYd5gwjgEM74lcBwmJzmj3PR1Gqiw4KYr5wetFELmDwO6TiNqpNCkcklo8
+         OzGNk4VTAAN44L6LJ7r5X7ikB4gMKfz4I9LcDBF1vYCi/77AucUp+3QBwkj5iluqCT2E
+         AInQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755534125; x=1756138925;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qfj7pMI5nMca/IztHecfq2L2z9ctOJVAhHH/VFFcIq8=;
+        b=WglqjYNaNLRU8piyS9pZfsvZEJ/8Eoh6RDkhRvKAoYbOY8U1l1trBqr1zYr3M+rwic
+         BIo7PrSVxTN/RnmEKM8Js9MXq5blQrp6M85k703XO0MuhA/Gj0BCnM2humIbI+XG0/Z7
+         AxqJNVQvMl8QtjMhHYHxfbzF+hhT0RQNodneFl/I8eaqyrJSz+7vDzzDpnM9mhFnCgri
+         n9FnmjQ2QPpwzmIY5+licjV4u3Rla6fBZhTyxG+7vgMwW0RO3EFF9XBejyPpkQIQNLDS
+         fMD7hOdU6rMwvGkmcm3n4RFLyuHYr9YFG+1PfviuR7EVYzRAIjxappIsR/L3k9FozQNr
+         0vFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYT0JBtnnaNeSolaLAkg7sO0FBTmYcl0ARvl601Gf3RROaDcOQY1VktskfCkPgYe6xp6zA6T5Dgp99wJw=@vger.kernel.org, AJvYcCV3cjOIcotxrGKbSXQleHTR3vEZLg6bgtJWIKbcXaAYZo7X8qBoH0+H1GZMf9KPFDXxsmEe8Dg73nfh1yFco6qKN8Y=@vger.kernel.org, AJvYcCXKmJQpAJLj3n/Ms9oYlV5MKzn4u+u72FOmOSQ3wwa7jV53NHC7EbTusObd100eub5qIFBS5mdr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzByZ8ErA7/4zbLg/f0N6v/2MzdboIxpHLzLmoGJlrXfc0/8B2B
+	W1TqIZM40CVsGl6Mfy3vcHr1dr/BjMUT2kiq/f/zud5bCoyrsE/FWmK5qefK3Mo/G5LolEZYrHy
+	NL9A4tvNi5EHkaMXB/igzJBxFRspRw1s=
+X-Gm-Gg: ASbGncsj9PdjwtUWHFeaMb1I8PvRIcyDXn2XBzs1O/t/WwuhrlJzm7wpahvImTahda0
+	gPJsMK8GVsYaRWv/9/STQxMuC0qAchbBb0tOZUJk/yFbL6Ko//6qzU3M+rTfNemaTlWWyoggCWM
+	RdieNqO5UJw9iXcoJgNFYHa/vXNVHlqueuP2aFqYmUs3LgublxXo5sWte9wWwJPjRVCTm/68Vz8
+	L6Q9Yapr6quUrJTwjQ=
+X-Google-Smtp-Source: AGHT+IEbGGnQPMWCIXAvL8L/280oabkOTCvuCKOcom0cP0aggBgCZfl5KWPrE4xRC8bDhh/xPsTfXReBOIP5EAo/xvg=
+X-Received: by 2002:a05:6000:2008:b0:3b7:970d:a565 with SMTP id
+ ffacd0b85a97d-3bc6aa27b1cmr6648147f8f.46.1755534125386; Mon, 18 Aug 2025
+ 09:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814051157.35867-2-u.kleine-koenig@baylibre.com>
-In-Reply-To: <20250814051157.35867-2-u.kleine-koenig@baylibre.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 18 Aug 2025 18:20:48 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hSoG8tTvY+im+h0ObUhM5_GDWbUa=6Doc1SRRNnuxfiw@mail.gmail.com>
-X-Gm-Features: Ac12FXwjxxmfI0rOk-5SHu5dRy9Ve7UNBCcDlleto6Zdv0AgFx7Sq90-BCd2Qck
-Message-ID: <CAJZ5v0hSoG8tTvY+im+h0ObUhM5_GDWbUa=6Doc1SRRNnuxfiw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: APEI: EINJ: Fix resource leak by remove callback in .exit.text
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ira Weiny <ira.weiny@intel.com>, 
-	Zaid Alali <zaidal@os.amperecomputing.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>, 
-	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sudeep.holla@arm.covm, Danilo Krummrich <dakr@kernel.org>
+References: <20250818150757.3977908-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <d33d201d-7777-4ed6-b50c-7429c54a2533@lunn.ch>
+In-Reply-To: <d33d201d-7777-4ed6-b50c-7429c54a2533@lunn.ch>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 18 Aug 2025 17:21:38 +0100
+X-Gm-Features: Ac12FXzeNb6IleaROwMEVtexu0XsPJ7th3VmpiAvAFefIU4smznv10ITNB_ba98
+Message-ID: <CA+V-a8v+b3qHL=64xnVPoG8M+7drieanw5wWRPZFSZe-XqOigw@mail.gmail.com>
+Subject: Re: [PATCH] net: pcs-rzn1-miic: Correct MODCTRL register offset
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 7:12=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
->
-> The .remove() callback is also used during error handling in
-> faux_probe(). As einj_remove() was marked with __exit it's not linked
-> into the kernel if the driver is built-in, potentially resulting in
-> resource leaks.
->
-> Also remove the comment justifying the __exit annotation which doesn't
-> apply any more since the driver was converted to the faux device
-> interface.
->
-> Fixes: 6cb9441bfe8d ("ACPI: APEI: EINJ: Transition to the faux device int=
-erface")
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+Hi Andrew,
 
-Until the faux device code is updated, this is needed, so applied as
-6.17-rc material.
+Thank you for the feedback.
 
-Thanks!
+On Mon, Aug 18, 2025 at 4:12=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Aug 18, 2025 at 04:07:57PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+>
+> Please set the Subject: correctly.
+>
+My bad, I'll take care of this in the next version.
 
-> ---
-> Hello,
+> > Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
+> > According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
+> > [0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offse=
+t
+> > 0x8, not 0x20 as previously defined.
 >
-> note that the intention seems to be that this construct is safe, see
-> commit c393befa14ab ("driver core: faux: Suppress bind attributes").
-> Note further that I don't have a machine to test that so this is only
-> based on code reading. An appropriate test might be:
+> What effect does this have? How would i notice it is broken?
 >
-> | diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-> | index f5fbda0a9a44..decb15f1194a 100644
-> | --- a/drivers/base/faux.c
-> | +++ b/drivers/base/faux.c
-> | @@ -39,6 +39,8 @@ static int faux_match(struct device *dev, const struc=
-t device_driver *drv)
-> |       return 1;
-> |  }
-> |
-> | +static int once;
-> | +
-> |  static int faux_probe(struct device *dev)
-> |  {
-> |       struct faux_object *faux_obj =3D to_faux_object(dev);
-> | @@ -56,7 +58,11 @@ static int faux_probe(struct device *dev)
-> |        * Add groups after the probe succeeds to ensure resources are
-> |        * initialized correctly
-> |        */
-> | -     ret =3D device_add_groups(dev, faux_obj->groups);
-> | +
-> | +     if (once++)
-> | +             ret =3D -ENOMEM;
-> | +     else
-> | +             ret =3D device_add_groups(dev, faux_obj->groups);
-> |       if (ret && faux_ops && faux_ops->remove)
-> |               faux_ops->remove(faux_dev);
->
-> (quoted to make sure that this hunk won't be used when the patch is
-> applied).
->
-> Even if the faux device interface is fixed not to rely on .remove() the
-> comment in einj-core.c needs some love.
->
-> Best regards
-> Uwe
->
->  drivers/acpi/apei/einj-core.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.=
-c
-> index bf8dc92a373a..1204fa3df285 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -1091,7 +1091,7 @@ static int __init einj_probe(struct faux_device *fd=
-ev)
->         return rc;
->  }
->
-> -static void __exit einj_remove(struct faux_device *fdev)
-> +static void einj_remove(struct faux_device *fdev)
->  {
->         struct apei_exec_context ctx;
->
-> @@ -1114,15 +1114,9 @@ static void __exit einj_remove(struct faux_device =
-*fdev)
->  }
->
->  static struct faux_device *einj_dev;
-> -/*
-> - * einj_remove() lives in .exit.text. For drivers registered via
-> - * platform_driver_probe() this is ok because they cannot get unbound at
-> - * runtime. So mark the driver struct with __refdata to prevent modpost
-> - * triggering a section mismatch warning.
-> - */
-> -static struct faux_device_ops einj_device_ops __refdata =3D {
-> +static struct faux_device_ops einj_device_ops =3D {
->         .probe =3D einj_probe,
-> -       .remove =3D __exit_p(einj_remove),
-> +       .remove =3D einj_remove,
->  };
->
->  static int __init einj_init(void)
->
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> --
-> 2.50.1
->
->
+I will update the commit description.
+
+Cheers,
+Prabhakar
 
