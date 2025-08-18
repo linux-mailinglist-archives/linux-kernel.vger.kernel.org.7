@@ -1,103 +1,139 @@
-Return-Path: <linux-kernel+bounces-772759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A3DB2972D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:59:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB28B29735
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 05:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3F55179CA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 02:59:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8C04E462B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 03:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CC025A2A7;
-	Mon, 18 Aug 2025 02:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8BF25CC69;
+	Mon, 18 Aug 2025 03:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ABn4IF1X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ugfqU9y4"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209941B4247
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 02:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886338632B;
+	Mon, 18 Aug 2025 03:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755485987; cv=none; b=k0YsLUqLOYk4A9khIQVRkkGzmJCZiktOTP6lKyxMM5jFKPT6SpbRn4uz72w/iPQZ5yMMLSqism0ugOzhKFeEUqdMju/1lLOAM5D+ap6Wld01xN8kKRNSoMjXP1GCZTsEnOL90TGpICzn4ERurMtjfWGlfnbFafztoNE/DlS9Z1s=
+	t=1755486301; cv=none; b=JTJwSmNiU2BV5gg5I1aSQ9Il44rd0d3r7mIYVtYqDoaIMDCsjppIhEiWtlBJeXkqMdrwUR1Yg7GUIJ6yuvTupIGZxr3SU2YmXjRPrKwKG5+4C9wuFM9lglOYKdg0KGxDoT+t0Nxu1PlxjI2MoqCVuoyayHNxVYAGRzxQq6yLfCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755485987; c=relaxed/simple;
-	bh=l0oGxhr69i2XgfLSJ6MBoDCtiIgjNb43saiOXd3ydlM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qjMfD4D+Z57FvK0IOfyJVQ29I5EA/BkWT9yOyssNJvMk26TjvXZZIpcas+bOqW2Ja2ZnJret6DNCFawQI0zSJc+H1qzOH62zRJfY+/3lGvjjeFkr1vt0SsIeCKYA8VeGGEq+YsBISDM3e+m0BvFS/skPEMO5G7/QJwnkyiQm7ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ABn4IF1X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A9CCC4CEEB;
-	Mon, 18 Aug 2025 02:59:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755485986;
-	bh=l0oGxhr69i2XgfLSJ6MBoDCtiIgjNb43saiOXd3ydlM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ABn4IF1Xfv/Bl3lM5awifjZEWeaotFjkCQOtrQ9nSX/EcHBkka5rpkEVUwg38r8lv
-	 ApR+y/Y9WX772rsaTYotCGMTZAzTftMF66j2/GnTlhD4KBbFC8yJ8WcCavRVhLaOpd
-	 EaChv3LieC1YJB8Ufznte7IOpzjPeS6ta9Eq9Xrw=
-Date: Sun, 17 Aug 2025 19:59:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: jane.chu@oracle.com
-Cc: lirongqing <lirongqing@baidu.com>, muchun.song@linux.dev,
- osalvador@suse.de, david@redhat.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][v2] mm/hugetlb: early exit from
- hugetlb_pages_alloc_boot() when max_huge_pages=0
-Message-Id: <20250817195945.a845d2f5c045e4f60b07469f@linux-foundation.org>
-In-Reply-To: <08cc4405-948a-446e-b198-5745c32f9ee1@oracle.com>
-References: <20250814102333.4428-1-lirongqing@baidu.com>
-	<08cc4405-948a-446e-b198-5745c32f9ee1@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755486301; c=relaxed/simple;
+	bh=xdRMAMoq82aAoif+H8/uL/q+IfDYG2rUsVWlxkx6Nc8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mqg609WEkuP0xhGguXxd08FKVUuSqbcLUN/dXBlHdSPnpL3XzfhRebXoWy/seWTBIcHfz3VtWJJVZopbkG2WJh1hZ9PMTTkMnM/+94el0nXrBjPBBvruDgG+NLv570q+2KfTrihf+v4yX6NdLl5Ynl7JbJS189fE/eTPo/wzOFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ugfqU9y4; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755486288; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Mr+DysRN3u5GqzLBeBZ3tOHHcVWUSvBBgIRpmmSePag=;
+	b=ugfqU9y4O4sp4ZGkR6du+XU+koRcdVXHkwZQOpSL7D+qQVRamE/QdV/L1kxSShy4z3GJofH00sbRp2uL4IfpyEEjGHbz2Lg0fHALIEp5awfPod1le5xXXGddJOIgwXZ3lM75oXwKOIvJV4DKk4dQFFk+8HZLWS64zzwfyKMhjaY=
+Received: from 30.221.128.156(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0Wlv1kXR_1755486287 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 18 Aug 2025 11:04:47 +0800
+Message-ID: <c00a30af-89b2-400c-8026-8a987be3e3dd@linux.alibaba.com>
+Date: Mon, 18 Aug 2025 11:04:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jakub Kicinski <kuba@kernel.org>, richardcochran@gmail.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, xuanzhuo@linux.alibaba.com, dust.li@linux.alibaba.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, David Woodhouse <dwmw2@infradead.org>
+References: <20250812115321.9179-1-guwen@linux.alibaba.com>
+ <20250815113814.5e135318@kernel.org>
+ <2a98165b-a353-405d-83e0-ffbca1d41340@linux.alibaba.com>
+ <729dee1e-3c8c-40c5-b705-01691e3d85d7@lunn.ch>
+ <6a467d85-b524-4962-a3f4-bb2dab157ed7@linux.alibaba.com>
+ <616e3d48-b449-401c-8c8b-501fce66c59d@lunn.ch>
+From: Wen Gu <guwen@linux.alibaba.com>
+In-Reply-To: <616e3d48-b449-401c-8c8b-501fce66c59d@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sun, 17 Aug 2025 19:21:54 -0700 jane.chu@oracle.com wrote:
+
+
+On 2025/8/17 23:56, Andrew Lunn wrote:
+> On Sun, Aug 17, 2025 at 11:01:23AM +0800, Wen Gu wrote:
+>>
+>>
+>> On 2025/8/16 23:37, Andrew Lunn wrote:
+>>>> These sysfs are intended to provide diagnostics and informations.
+>>>
+>>> Maybe they should be in debugfs if they are just diagnostics? You then
+>>> don't need to document them, because they are not ABI.
+>>>
+>>> 	Andrew
+>>
+>> Hi Andrew,
+>>
+>> Thank you for the suggestion.
+>>
+>> But these sysfs aren't only for developer debugging, some cloud components
+>> rely on the statistics to assess the health of PTP clocks or to perform
+>> corresponding actions based on the reg values. So I prefer to use the stable
+>> sysfs.
+> 
+> Doesn't this somewhat contradict what you said earlier:
+> 
+>     These sysfs are intended to provide diagnostics and informations.
+>     For users, interacting with this PTP clock works the same way as with other
+>     PTP clock, through the exposed chardev.
+> 
+> So users don't use just the standard chardev, they additionally need
+> sysfs.
+
+No, they are not contradictory.
+
+For cloud users, they only need to use standard ptp chardev exposed to do time
+operations. This is no different from using any other PTP clock.
+
+The sysfs are used by Alibaba cloud's components that monitor the health and behavior
+of the underlay device to ensure SLAs.
 
 > 
-> On 8/14/2025 3:23 AM, lirongqing wrote:
-> > From: Li RongQing <lirongqing@baidu.com>
-> > 
-> > Optimize hugetlb_pages_alloc_boot() to return immediately when
-> > max_huge_pages is 0, avoiding unnecessary CPU cycles and the below
-> > log message when hugepages aren't configured in the kernel command
-> > line.
-> > [    3.702280] HugeTLB: allocation took 0ms with hugepage_allocation_threads=32
-> > 
-> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> > ---
-> > diff with v1: adding the reduced log messages in commit header
-> > 
-> >   mm/hugetlb.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > index 753f99b..514fab5 100644
-> > --- a/mm/hugetlb.c
-> > +++ b/mm/hugetlb.c
-> > @@ -3654,6 +3654,9 @@ static void __init hugetlb_hstate_alloc_pages(struct hstate *h)
-> >   		return;
-> >   	}
-> >   
-> > +	if (!h->max_huge_pages)
-> > +		return;
-> > +
-> >   	/* do node specific alloc */
-> >   	if (hugetlb_hstate_alloc_pages_specific_nodes(h))
-> >   		return;
+> Maybe take a step back. Do what Jakub suggested:
 > 
-> Looks good.  Could you add stable: ?
+>     Maybe it's just me, but in general I really wish someone stepped up
+>     and created a separate subsystem for all these cloud / vm clocks.
+>     They have nothing to do with PTP. In my mind PTP clocks are simple
+>     HW tickers on which we build all the time related stuff. While this
+>     driver reports the base year for the epoch and leap second status
+>     via sysfs.
+> 
+> Talk with the other cloud vendors and define a common set of
+> properties, rather than each vendor having their own incompatible set.
+> 
+> OS 101: the OS is supposed to abstract over the hardware to make
+> different hardware all look the same.
 
-Sure, I did that.
+IMHO, the abstraction has been done by PTP layer, e.g. struct ptp_clock_info,
+struct ptp_clock and ptp_clock_{un}register(). For users, the PTP clock provide by
+any vendors should be same in terms of usage, Alibaba Cloud is no exception.
 
-A Fixes: would be nice, to tell the -stable maintainers how far back in
-time we need this, but the target sommit isn't obvious.
+But the specific implementation of underlay varies from ventor to ventor. Some depends
+on ptp4l and NIC with IEEE 1588, some offload 1588 work to underlay infra and get
+timestamps directly. I think it is difficult to require all vendors to provide the same
+underlying attributes. Besides, Even the underlying implementation and properties are
+different, it does not affect the user's use of them and the abstraction as PTP clocks.
+
+Thanks!
+
+> 
+> 	Andrew
 
 
