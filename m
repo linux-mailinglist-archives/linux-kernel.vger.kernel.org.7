@@ -1,136 +1,209 @@
-Return-Path: <linux-kernel+bounces-775802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CACBDB2C531
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78006B2C538
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A143188BC13
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939A6188ADF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF4715442C;
-	Tue, 19 Aug 2025 13:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="VvS4YukK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O0kPoH7D"
-Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B50C38F9C;
-	Tue, 19 Aug 2025 13:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D834340D8C;
+	Tue, 19 Aug 2025 13:16:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD3A2C11EC;
+	Tue, 19 Aug 2025 13:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609326; cv=none; b=cDl850o7z9K/LMgh9UfRyhPmDk1/9rQVDWLINygiJ+czy0Ey9uPSvhGjLsDiQRfDq0P6VedBAGs1WHSHPOPWyI6bpvzwan/SfUXUpqWsXYJr1kHw2OvwSUf0rLgj1T3t5JrbCbaKivLancSk7bpOfnuYj0Nd+rpCgnhCRAV65+w=
+	t=1755609359; cv=none; b=mTbA7A4lvZXsFQVGRW5MLZreoRnaJtnQg+nXx//GA6IhyCnevxcYJL3bwj0sZ1DyoAlw7aPGqhD4BoNrijxyIqtgSUuPzBOkORlHWdzaksI1sQBlT3lo33fMT4cJkG5sPv0gLhGi/DjG/z49hkfUQlRr7WKmMu2mwtwY3OutH1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755609326; c=relaxed/simple;
-	bh=pRUD+z3Dg/Y+TYQjbh09xIKPaVeXQ5sSKNu7b/ZFK+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBX4sV2RoigKFmM3/F7IcEOhMn9oHfECplcxdC1ASfCEvAJERABaRTfj3+1ad5K3S//MI/+vuvPEvOOzADApFESIL9WCCXZvNBtkpvQW+SOma4T6Bd/OIQ3zKrj8j9SOXexe98c7cutuA099fLmDyVIOHnHWf68X9rTwUHulGFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=VvS4YukK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O0kPoH7D; arc=none smtp.client-ip=202.12.124.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id 1E3741300BBE;
-	Tue, 19 Aug 2025 09:15:23 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 19 Aug 2025 09:15:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1755609322; x=1755616522; bh=r4GlBd/XIg
-	WVfoO1w0sqiwXzx+ia4mrInLsy+TcTWQw=; b=VvS4YukKQYMH/apUX9we3gFDei
-	4s0vaH1zyjZ2gTgEX0aNLFZ5zAH/yJQdkRP9JqZf/C5/8yvkCgyXcewYqGvqVh1k
-	t8ghXmsmdm4nG9EKR23e6T5FKKlGgfv82q4dvAh4aSfx7kpB3d+2yYptSCM3Cirp
-	FZXdyzDSlxW7PF+3oqaOfOZL5osz+HKj5QTo9Dhe50mYJiJqDpeK7JSxZNLrDzHb
-	0D3UB2ErQEJmgS5D2UwVaiBHKTAH8OFirYDTauw6mANf8iElvinXZloF51YIKla6
-	6ylueSzpQC0AEt7S2hxe37JgH5TwcfqMdbLiG2kZ8fT+zzvcRwtn+n7DduPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755609322; x=1755616522; bh=r4GlBd/XIgWVfoO1w0sqiwXzx+ia4mrInLs
-	y+TcTWQw=; b=O0kPoH7DYLugERKZTUOaLyT5PkCatuc23MpbL/OGI6Ah8Slh6bk
-	+A7QVJ+A9m1BREMeLGrYLxx/V9uF9YqqtDN8LyxZRVHmDFUeakG3hhDhM0ddo7Ym
-	SPKbjH0KdAhCHswH4a1I2ILkbzva1UhjMWUXIMplFRtz6tdQY/FovLy89DHqAmru
-	3qSsPUv+ar9W0FUdz8Tk6W0ir+zEuutbLhQk4+0klO8vVZHX8oK2H7yT1yI9n4ZC
-	j1fTcSm04DGtc5Vt0i34kcpavMm6lhHREOUzMFcB8vGruYY+tNCFEYuCMeLzwlVz
-	BJRkQsXVV/oEMdC2eP8gDsga6T9sMOR0Wig==
-X-ME-Sender: <xms:6XikaCMDmqUs282iAXgUcaeJzI5pq11MHvZJkliABpkPBE0yKns7zg>
-    <xme:6XikaHQLZ_T34kYWzQtyUOzpszOvy_BWdj7udoJm4XrF_riRjP83d_2TAHLNZE3RN
-    -P4IiRzEkq0VxsOhL8>
-X-ME-Received: <xmr:6XikaF9vUuFjDX_zC1pPX6yyx36NYC-3e2UaJh1UC3qa2traPIGEpKD_DWQQReIlOlijQdDaK7byjO8Iw0lw3OPgYHFIFUKJ56s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheehheelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
-    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvd
-    ffveelgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruh
-    drnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehfnhhklhdrkhgvrhhnvghlsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhgvvg
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgtrghllhhighgvrhhoshelleesghhm
-    rghilhdrtghomhdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghpthhtohepnhgvrghl
-    sehgohhmphgrrdguvghvpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhn
-    ohhrodgutheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6XikaBU-dAXIl6uuV44Gyb6UVvUAq_L4Mr6v_8LbiK65G-sOpNkHSQ>
-    <xmx:6XikaDNUakmE8TkZ-wvqycdSV4I_NvnLyc9a41Hocc29bjf9LO89Uw>
-    <xmx:6XikaBeRsQm8kB79Qp-yCO6U_tpxxGsbdxJB_N0L35GG_FozvguRxg>
-    <xmx:6XikaKwXOyJ-sNXnGEV1Dmjuofdkh5YvIBRIFQYmok41ObktspQHQA>
-    <xmx:6nikaL39rxNFN4E9UD0BxjWzewn--tY-WSa4Ru3fH5zn6un6axbaLyMr>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 19 Aug 2025 09:15:21 -0400 (EDT)
-Date: Tue, 19 Aug 2025 15:15:19 +0200
-From: Janne Grunau <j@jannau.net>
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, James Calligeros <jcalligeros99@gmail.com>,
-	Sven Peter <sven@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-	Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH 5/8] input: macsmc-hid: New driver to handle the Apple
- Mac SMC buttons/lid
-Message-ID: <20250819131519.GB1270980@robin.jannau.net>
-References: <20250819-macsmc-subdevs-v1-0-57df6c3e5f19@gmail.com>
- <20250819-macsmc-subdevs-v1-5-57df6c3e5f19@gmail.com>
- <20250819123505.GC7508@google.com>
- <CAMT+MTQvMnv4Zj3A8hskU1JW3zys0diKxWUzK5ScerxeSmgPjw@mail.gmail.com>
+	s=arc-20240116; t=1755609359; c=relaxed/simple;
+	bh=TZO/KLYTk3liX98Qqbq7mizNVHvRrDmh1OUM8O5QVDg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Vzhilxi40RdHl/if59Z3tD68btiKi8WcLsyIO85rhK8rRKxCPHZ8EpCoVK6e/DZk1Tgx2sEjAB02wfFhCWSfleC3khXdPT/ppeLXkQ3sXQSfCt0BUTJtNqhAurWF5pgRbNPXo3gMc/YgI2zDUm0ozoUC6Y7iHR7ntcoQ5M1vsBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0830C16A3;
+	Tue, 19 Aug 2025 06:15:48 -0700 (PDT)
+Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 078263F58B;
+	Tue, 19 Aug 2025 06:15:51 -0700 (PDT)
+Message-ID: <67a0d778-6e2c-4955-a7ce-56a10043ae8d@arm.com>
+Date: Tue, 19 Aug 2025 14:15:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMT+MTQvMnv4Zj3A8hskU1JW3zys0diKxWUzK5ScerxeSmgPjw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/19] perf: Introduce positive capability for raw events
+From: Robin Murphy <robin.murphy@arm.com>
+To: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+ mark.rutland@arm.com, acme@kernel.org, namhyung@kernel.org,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
+ linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
+ iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
+ linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <cover.1755096883.git.robin.murphy@arm.com>
+ <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 19, 2025 at 02:49:49PM +0200, Sasha Finkelstein wrote:
-> On Tue, 19 Aug 2025 at 14:39, Lee Jones <lee@kernel.org> wrote:
-> > Separate patch please.
-> >
+On 13/08/2025 6:01 pm, Robin Murphy wrote:
+> Only a handful of CPU PMUs accept PERF_TYPE_{RAW,HARDWARE,HW_CACHE}
+> events without registering themselves as PERF_TYPE_RAW in the first
+> place. Add an explicit opt-in for these special cases, so that we can
+> make life easier for every other driver (and probably also speed up the
+> slow-path search) by having perf_try_init_event() do the basic type
+> checking to cover the majority of cases.
 > 
-> Per the discussion in the thread linked from the cover letter, the dt
-> maintainers have requested the bindings for all subdevices to be added
-> together. Do you want a separate series with just the dt bindings and dts
-> changes and the actual drivers in separate series or how do you prefer it?
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+> 
+> A further possibility is to automatically add the cap to PERF_TYPE_RAW
+> PMUs in perf_pmu_register() to have a single point-of-use condition; I'm
+> undecided...
+> ---
+>   arch/s390/kernel/perf_cpum_cf.c    |  1 +
+>   arch/s390/kernel/perf_pai_crypto.c |  2 +-
+>   arch/s390/kernel/perf_pai_ext.c    |  2 +-
+>   arch/x86/events/core.c             |  2 +-
+>   drivers/perf/arm_pmu.c             |  1 +
+>   include/linux/perf_event.h         |  1 +
+>   kernel/events/core.c               | 15 +++++++++++++++
+>   7 files changed, 21 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+> index 1a94e0944bc5..782ab755ddd4 100644
+> --- a/arch/s390/kernel/perf_cpum_cf.c
+> +++ b/arch/s390/kernel/perf_cpum_cf.c
+> @@ -1054,6 +1054,7 @@ static void cpumf_pmu_del(struct perf_event *event, int flags)
+>   /* Performance monitoring unit for s390x */
+>   static struct pmu cpumf_pmu = {
+>   	.task_ctx_nr  = perf_sw_context,
+> +	.capabilities = PERF_PMU_CAP_RAW_EVENTS,
+>   	.pmu_enable   = cpumf_pmu_enable,
+>   	.pmu_disable  = cpumf_pmu_disable,
+>   	.event_init   = cpumf_pmu_event_init,
+> diff --git a/arch/s390/kernel/perf_pai_crypto.c b/arch/s390/kernel/perf_pai_crypto.c
+> index a64b6b056a21..b5b6d8b5d943 100644
+> --- a/arch/s390/kernel/perf_pai_crypto.c
+> +++ b/arch/s390/kernel/perf_pai_crypto.c
+> @@ -569,7 +569,7 @@ static const struct attribute_group *paicrypt_attr_groups[] = {
+>   /* Performance monitoring unit for mapped counters */
+>   static struct pmu paicrypt = {
+>   	.task_ctx_nr  = perf_hw_context,
+> -	.capabilities = PERF_PMU_CAP_SAMPLING,
+> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>   	.event_init   = paicrypt_event_init,
+>   	.add	      = paicrypt_add,
+>   	.del	      = paicrypt_del,
+> diff --git a/arch/s390/kernel/perf_pai_ext.c b/arch/s390/kernel/perf_pai_ext.c
+> index 1261f80c6d52..bcd28c38da70 100644
+> --- a/arch/s390/kernel/perf_pai_ext.c
+> +++ b/arch/s390/kernel/perf_pai_ext.c
+> @@ -595,7 +595,7 @@ static const struct attribute_group *paiext_attr_groups[] = {
+>   /* Performance monitoring unit for mapped counters */
+>   static struct pmu paiext = {
+>   	.task_ctx_nr  = perf_hw_context,
+> -	.capabilities = PERF_PMU_CAP_SAMPLING,
+> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>   	.event_init   = paiext_event_init,
+>   	.add	      = paiext_add,
+>   	.del	      = paiext_del,
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index 789dfca2fa67..764728bb80ae 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -2697,7 +2697,7 @@ static bool x86_pmu_filter(struct pmu *pmu, int cpu)
+>   }
+>   
+>   static struct pmu pmu = {
+> -	.capabilities		= PERF_PMU_CAP_SAMPLING,
+> +	.capabilities		= PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>   
+>   	.pmu_enable		= x86_pmu_enable,
+>   	.pmu_disable		= x86_pmu_disable,
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index 72d8f38d0aa5..bc772a3bf411 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -877,6 +877,7 @@ struct arm_pmu *armpmu_alloc(void)
+>   		 * specific PMU.
+>   		 */
+>   		.capabilities	= PERF_PMU_CAP_SAMPLING |
+> +				  PERF_PMU_CAP_RAW_EVENTS |
+>   				  PERF_PMU_CAP_EXTENDED_REGS |
+>   				  PERF_PMU_CAP_EXTENDED_HW_TYPE,
+>   	};
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 183b7c48b329..c6ad036c0037 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -305,6 +305,7 @@ struct perf_event_pmu_context;
+>   #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
+>   #define PERF_PMU_CAP_AUX_PAUSE		0x0200
+>   #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
+> +#define PERF_PMU_CAP_RAW_EVENTS		0x0800
+>   
+>   /**
+>    * pmu::scope
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 71b2a6730705..2ecee76d2ae2 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12556,11 +12556,26 @@ static inline bool has_extended_regs(struct perf_event *event)
+>   	       (event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK);
+>   }
+>   
+> +static bool is_raw_pmu(const struct pmu *pmu)
+> +{
+> +	return pmu->type == PERF_TYPE_RAW ||
+> +	       pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
+> +}
+> +
+>   static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+>   {
+>   	struct perf_event_context *ctx = NULL;
+>   	int ret;
+>   
+> +	/*
+> +	 * Before touching anything, we can safely skip:
+> +	 * - any event for a specific PMU which is not this one
+> +	 * - any common event if this PMU doesn't support them
+> +	 */
+> +	if (event->attr.type != pmu->type &&
+> +	    (event->attr.type >= PERF_TYPE_MAX || is_raw_pmu(pmu)))
 
-I think it's asking for patches with the drivera and then separate
-single line patches to wire up the drivers in drivers/mfd/macsmc.c
+Ah, that should be "!is_raw_pmu(pmu)" there (although it's not entirely 
+the cause of the LKP report on the final patch.)
 
-Janne
+Thanks,
+Robin.
+
+> +		return -ENOENT;
+> +
+>   	if (!try_module_get(pmu->module))
+>   		return -ENODEV;
+>   
+
 
