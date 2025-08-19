@@ -1,204 +1,168 @@
-Return-Path: <linux-kernel+bounces-776662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666B6B2D00F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 561D8B2D010
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C26D1C273E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:36:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474DF1C279B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDE426D4E2;
-	Tue, 19 Aug 2025 23:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9813B270553;
+	Tue, 19 Aug 2025 23:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4F9h0DFa"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrixnQh9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF39335337A
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD37735337A;
+	Tue, 19 Aug 2025 23:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755646553; cv=none; b=DyzSw2VPCZoPft4zzjJKl8oEP/Zimi7P/RSxr+aN/hKXmmhGhLqbypGogKkbsU2TweGtD1t4ckM4yQRw0nmKIahR7kjUMYldIXnbYd7pH/eaKW848wj613rFkePfYstzCLaOafBsCiuPsc5tbAd7rDAhv2gjErE8aRgC8JBTshQ=
+	t=1755646578; cv=none; b=oiHegR6HhrS65dhkXmiT6sQyMOb2VfyQQnQQ5KRLRcVTA1HwvqfPx/AabABHAbGiUJVxhdSm3yFljmE/n2MKc68x7qOTS/Gj+gz2u9XczA/yy9uSWehltLBsUB5/A7/fcR9jy6yKTkmXeSxKJDSgldFnanuurZGc7jfHYi0Ucvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755646553; c=relaxed/simple;
-	bh=pGNoCw5RliMR1hc2G8FGCbiY6EkVS7thZ2xnU1DivA8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=p4hOgp84dh6COTrnRgXpsWGc6XSIe75qb9nfr6bLGA2TNw80N98Q2fwFzjU0854KxqRJ/9JXETlxIVxRT0TWUaQHDETSWZjcnEI3njjO82u6qkDAAr5Ed/vqhWZ96gw1KXWpSvhd7M0Xy7JauU9CRRbOOqmaZ2td0hN+SNRSdRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4F9h0DFa; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e1ff27cfaso392317b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755646551; x=1756251351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fFgj43Bl6pF7x625ndmXUSvzXKMpEIMY0lc+Fsn4QXM=;
-        b=4F9h0DFaky5l+auWDdXEreHCSJ+YEaiL06P9Kyn0FQkktiWWg2gY7YIkN7rAXrsxlJ
-         /c0OiZ8+SkpCLMOS7xHvC7lutC5/Zwe8JmzP4bI073rKplFHV+N1yFHHdwjCSFTId1Z4
-         sKgraamAhR8u5/M9aZlZu1ZcsJDWPth/H0gmxYTrbuKWs3qZs+h/4PgGpZ9toBCssyyi
-         TRWNtDshe2JLQQj4plg7YAE0OnEymrVdh+TtOb42yrYzcUIjEnFULQeP0x1IykpMBO+l
-         ygUUGgWxFF/JUjLr66GCrAkdWXz9MttZEQ7555R0TgyqT6wst1+aA/TPnyphVhR8KWT5
-         JEig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755646551; x=1756251351;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fFgj43Bl6pF7x625ndmXUSvzXKMpEIMY0lc+Fsn4QXM=;
-        b=Dmfg6XqWxYcmr8/Srjm0Y9oEgeE06KRkSJWz2yawP7eEEsrzugThtXtlXnMn8sABK3
-         3/lVhNLl+Mivp/3dSnJ7Sfij6qgfwnHDFLmn8wqPfGzgLuyJp5kYNEh0zGvqcM7msxtU
-         Pwr4AgeGcYGNiAX1m02ciFiPjwD9ANw8ikHiqq3UVVYBEdrq0CixAzo0dzbO/j7UeLXy
-         XhiLk/oNJYmtEVLDN/oFckgybo9DV2evonYT/Ememg4RP3efZ2HUgLKOxVkRaXD34r4G
-         H8PH/b3bPlvYgmO9KOsUTqI7FpRlNwHfD6WUorQk/jtTUED8rn9E43D9LCpM1elmkieA
-         lHMg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2cDp2teAdsW7U+WlxDKFlyGMnGryWW22xZzemyKjr+f39tjk0nmdKrFJDV9DCPJ0FdqQjkXsKVdY8j9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS2EzZwaBfOgYRN0Ykpbx2mytDNjd1XBIvPjpDjXv9Rp+E5vEO
-	PjVyAxp4DYXMBnnVHTJkOsiNGyHdpG2u1M6ZL/WGkNFa2OQO0np3oNlRDMmTmLwH95eAFn3Moz5
-	eBA8Gwg==
-X-Google-Smtp-Source: AGHT+IH3D25e+3vUdFm0XxyCHr/yIlxg3402tHO1ZlCDyh7A1HQY9j4X69+ePOM9vGTg1vVEx2W74S7b0J8=
-X-Received: from pjg11.prod.google.com ([2002:a17:90b:3f4b:b0:31f:f3:f8c3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:4322:b0:220:898b:2ca1
- with SMTP id adf61e73a8af0-2431b961256mr1437836637.21.1755646551214; Tue, 19
- Aug 2025 16:35:51 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:35:49 -0700
-In-Reply-To: <fb858e9d16762fbc9c44ef357c670c475f559709.camel@intel.com>
+	s=arc-20240116; t=1755646578; c=relaxed/simple;
+	bh=OUiImZ/OymQmu2CCcYUgaGwLWJ5r4RdCQDFeCi6weYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tVxJlyHaQxNFv3oGkoeDeK985IFUc1wA5TAcuqQZIRjjLbLvdKg79t98r9DuaJ4/iEnQMZq5e81pJ1EZ43keBSsiQtIoauUeAwI9g9+ypFUxNPWQbQkanzeHU36yR5NZh8g2G5TmggmnDzk2keqyKLgXuqD0pT5v0icFEP68xck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrixnQh9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E2CC4CEF1;
+	Tue, 19 Aug 2025 23:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755646577;
+	bh=OUiImZ/OymQmu2CCcYUgaGwLWJ5r4RdCQDFeCi6weYA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VrixnQh9594Z7RH6439sNQIWdZdIU00qc0OaUNkjIcyqP6trzqwtQVt6EobTTxyaE
+	 3bpl/pniyJrmm5NBnukzjrgxWpdJCES+qMrAmfmetRKMKnrr73G9FxFrg28BbK464K
+	 hGGgKGTObXEyt6vNmoIl2CpZQu9QEu+LVrqIS9La6rRKFJ+v4NXKcSykYD4MGd6BXl
+	 71FnPAhBFyBrOQPlgIwu4x4lU0aTpdeRrYFyTBFmDIvnf3n65abApMxJ1Nlhwffg3R
+	 zrW8SO0INsR+5r25/9+PGcTps5xkWF+DqX75Vs900riF7ILGKzAttE/zRIvVbmeReR
+	 bmQhAEROCcOZA==
+Date: Tue, 19 Aug 2025 19:36:16 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, axboe@kernel.dk, dw@davidwei.uk,
+	brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com,
+	djwong@kernel.org, linux-xfs@vger.kernel.org,
+	viro@zeniv.linux.org.uk, Keith Busch <kbusch@kernel.org>,
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+Message-ID: <aKUKcCIGDc79ulZ_@kernel.org>
+References: <20250819164922.640964-1-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250816144436.83718-1-adrian.hunter@intel.com>
- <20250816144436.83718-2-adrian.hunter@intel.com> <aKMzEYR4t4Btd7kC@google.com>
- <136ab62e9f403ad50a7c2cb4f9196153a0a2ef7c.camel@intel.com>
- <968d2750-cbd6-47cb-b2fc-d0894662dafc@intel.com> <fb858e9d16762fbc9c44ef357c670c475f559709.camel@intel.com>
-Message-ID: <aKUKVdonFGwUZI_k@google.com>
-Subject: Re: [PATCH RFC 1/2] KVM: TDX: Disable general support for MWAIT in guest
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Len Brown <len.brown@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, 
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, 
-	"tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819164922.640964-1-kbusch@meta.com>
 
-On Tue, Aug 19, 2025, Rick P Edgecombe wrote:
-> On Tue, 2025-08-19 at 10:38 +0300, Adrian Hunter wrote:
-> > On 18/08/2025 21:49, Edgecombe, Rick P wrote:
-> > > Attn: Binbin, Xiaoyao
-> > >=20
-> > > On Mon, 2025-08-18 at 07:05 -0700, Sean Christopherson wrote:
-> > > > NAK.
-> > > >=20
-> > > > Fix the guest, or wherever else in the pile there are issues.=C2=A0=
- KVM is NOT carrying
-> > > > hack-a-fixes to workaround buggy software/firmware.=C2=A0 Been ther=
-e, done that.
-> > >=20
-> > > Yes, I would have thought we should have at least had a TDX module ch=
-ange option
-> > > for this.
-> >=20
-> > That would not help with existing TDX Modules, and would possibly requi=
-re
-> > a guest opt-in, which would not help with existing guests.  Hence, to s=
-tart
-> > with disabling the feature first, and look for another solution second.
->=20
-> I think you have the priorities wrong. There are only so many kludges we =
-can ask
-> KVM to take. Across all the changes people want for TDX, do you think not=
- having
-> to update the TDX module, backport a guest fix or even just adjust qemu a=
-rgs is
-> more important the other stuff?
+On Tue, Aug 19, 2025 at 09:49:14AM -0700, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> Previous version:
+> 
+>   https://lore.kernel.org/linux-block/20250805141123.332298-1-kbusch@meta.com/
+> 
+> This series removes the direct io requirement that io vector lengths
+> align to the logical block size.
+> 
+> I tested this on a few raw block device types including nvme,
+> virtio-blk, ahci, and loop. NVMe is the only one I tested with 4k
+> logical sectors; everything else was 512.
+> 
+> On each of those, I tested several iomap filesystems: xfs, ext4, and
+> btrfs. I found it interesting that each behave a little
+> differently with handling invalid vector alignments:
+> 
+>   - XFS is the most straight forward and reports failures on invalid
+>     vector conditions, same as raw blocks devices.
+> 
+>   - EXT4 falls back to buffered io for writes but not for reads.
+> 
+>   - BTRFS doesn't even try direct io for any unusual alignments; it
+>     chooses buffered io from the start.
+> 
+> So it has been a little slow going figuring out which results to expect
+> from various tests, but I think I've got all the corner cases covered. I
+> can submit the tests cases to blktests and fstests for consideration
+> separately, too.
+> 
+> I'm not 100% sure where we're at with the last patch. I think Mike
+> initially indicated this was okay to remove, but I could swear I read
+> something saying that might not be the case anymore. I just can't find
+> the message now. Mike?
 
-I'm especially sensitive to fudging around _bugs_ in other pieces of the st=
-ack.
-KVM has been burned badly, multiple times, by hacking around issues elsewhe=
-re.
-There are inevitably cases where throwing something into KVM is the least a=
-wful
-choice (usually because it's the only feasible choise), but this ain't one =
-of
-those cases.
+Hey,
 
-> TDX support is still very early. We need to think about long term sustain=
-able
-> solutions. So a fix that doesn't support existing TDX modules or guests (=
-the
-> intel_idle fix is also in this category anyway) should absolutely be on t=
-he
-> table.
->=20
-> >=20
-> > In the MWAIT case, Sean has rejected supporting MSR_PKG_CST_CONFIG_CONT=
-ROL
-> > even for VMX, because it is an optional MSR, so altering intel_idle is
-> > being proposed.
+Yes, I don't have pointers immediately available but I did mention it
+and cc'd you.  I have found that my work relative to NFS and NFSD does
+still need to use iov_iter_aligned_bvec -- otherwise misaligned DIO
+can get issued to the underlying filesystem.
 
-No, I rejected support MSR_PKG_CST_CONFIG_CONTROL _in KVM_ because I don't =
-see
-any reason to shove information into KVM.  AFAICT, it's not an "architectur=
-al"
-MSR, and all of KVM's existing handling of truly uarch/model-specific MSRs =
-is
-painful and ugly.
+I did try to push all the relevant checking down to NFS/NFSD code that
+assembles their respective bvec into an iov_iter, like you suggested,
+but came up short after my first attempt.
 
-And userspace (e.g. QEMU) could support emulate MSR_PKG_CST_CONFIG_CONTROL =
-(and
-any other MSRs of that nature) via MSR filters.  I doubt the MSR is accesse=
-d
-outside of boot paths, so the cost of a userspace exit should be a non-issu=
-e.
-Of course, QEMU probably can't provide useful/accurate information.
+I don't want to speak for the NFS or NFSD miantainers, but I'm
+personally still OK with the broader iov_iter_is_aligned() interface
+and even iov_iter_aligned_bvec() going away (and NFS/NFSD carrying
+their own until I can circle back to hopefully eliminating the need).
 
-One option if there is a super strong need to do so would be to add a "disa=
-ble
-exits" capability to let the guest read package c-state MSRs, but that has
-obvious downsides and would still just be fudging around a flawed driver.
+Either that, or we remove all but iov_iter_aligned_bvec() and export
+it so that NFS/NFSD can use it, _and_  tweak it so that it offers more
+coarse-grained length checking, like so:
+https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
+(this is probably the best intermediate solution actually, though it'd
+force my NFS and NFSD changes to be dependent on your series landing
+-- which is probably a perfectly appropriate constraint)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 8dbf19aa66ef..c254aa26ff22 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -4120,6 +4120,15 @@ void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu=
-)
-                vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C6_RESIDENCY, =
-MSR_TYPE_R);
-                vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C7_RESIDENCY, =
-MSR_TYPE_R);
-        }
-+       if (kvm_package_cstate_in_guest(vcpu->kvm)) {
-+               vmx_disable_intercept_for_msr(vcpu, MSR_PKG_CST_CONFIG_CONT=
-ROL, MSR_TYPE_R);
-+               vmx_disable_intercept_for_msr(vcpu, MSR_PKG_C2_RESIDENCY, M=
-SR_TYPE_R);
-+               vmx_disable_intercept_for_msr(vcpu, MSR_PKG_C3_RESIDENCY, M=
-SR_TYPE_R);
-+               vmx_disable_intercept_for_msr(vcpu, MSR_PKG_C6_RESIDENCY, M=
-SR_TYPE_R);
-+               vmx_disable_intercept_for_msr(vcpu, MSR_PKG_C8_RESIDENCY, M=
-SR_TYPE_R);
-+               vmx_disable_intercept_for_msr(vcpu, MSR_PKG_C9_RESIDENCY, M=
-SR_TYPE_R);
-+               vmx_disable_intercept_for_msr(vcpu, MSR_PKG_C10_RESIDENCY, =
-MSR_TYPE_R);
-+       }
-        if (kvm_aperfmperf_in_guest(vcpu->kvm)) {
-                vmx_disable_intercept_for_msr(vcpu, MSR_IA32_APERF, MSR_TYP=
-E_R);
-                vmx_disable_intercept_for_msr(vcpu, MSR_IA32_MPERF, MSR_TYP=
-E_R);
+Thanks,
+Mike
+
+
+> 
+> Changes from v2:
+> 
+>   Include vector lengths when validating a split. The length check is
+>   only valid for r/w commands, and skipped for passthrough
+>   DRV_IN/DRV_OUT commands.
+> 
+>   Introduce a prep patch having bio_iov_iter_get_pages() take the
+>   caller's desired length alignment.
+> 
+>   Additional code comments explaing less obvious error conditions.
+> 
+>   Added reviews on the patches that haven't changed.
+> 
+> Keith Busch (8):
+>   block: check for valid bio while splitting
+>   block: add size alignment to bio_iov_iter_get_pages
+>   block: align the bio after building it
+>   block: simplify direct io validity check
+>   iomap: simplify direct io validity check
+>   block: remove bdev_iter_is_aligned
+>   blk-integrity: use simpler alignment check
+>   iov_iter: remove iov_iter_is_aligned
+> 
+>  block/bio-integrity.c  |  4 +-
+>  block/bio.c            | 64 ++++++++++++++++++----------
+>  block/blk-map.c        |  2 +-
+>  block/blk-merge.c      | 20 +++++++--
+>  block/fops.c           | 13 +++---
+>  fs/iomap/direct-io.c   |  6 +--
+>  include/linux/bio.h    | 13 ++++--
+>  include/linux/blkdev.h | 20 +++++----
+>  include/linux/uio.h    |  2 -
+>  lib/iov_iter.c         | 95 ------------------------------------------
+>  10 files changed, 94 insertions(+), 145 deletions(-)
+> 
+> -- 
+> 2.47.3
+> 
 
