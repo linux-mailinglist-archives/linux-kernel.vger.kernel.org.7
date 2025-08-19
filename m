@@ -1,372 +1,475 @@
-Return-Path: <linux-kernel+bounces-775229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D88AB2BCE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:18:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFF1B2BCD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59FE91892C9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3533C3A4698
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C76331AF1C;
-	Tue, 19 Aug 2025 09:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C3B31A04C;
+	Tue, 19 Aug 2025 09:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="f6ozXzfX"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E8F27381C;
-	Tue, 19 Aug 2025 09:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755594932; cv=none; b=teNhWaGoL4CPqxCSA/23p2otKEHi6OIhM7D1N9goX1YnjSF2XC42eYRU2jMgLaJfYrqIwONMg64kkXxdzhfXfDgdvadD3Jw0QyMST9pKtq+9l1mNCDiAFA85waQZAsO57OJTSs8Xez6VWNqCDKzEPs1HDUeIu6mzPUnbUoh9QMs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755594932; c=relaxed/simple;
-	bh=fuDsEZdYYWMO0gLy8ADlzKJR0Fu7k/Qes6KJGvRpzbs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GVX+dMPaa77qD8hOJCfEuLjeHqqfX30ZwuEVGQDJk66CdHpNINXNJNaysL4VPp5swLR9KMLh5FveLrC3ql6H4TUryNSH9v4KGQ341257su7Uv+XMp6QhGQJgcugUJ9LCDSau3y67QA/hKDoozT5HuleyFmJuE+lm6D0lIKd8+fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=f6ozXzfX; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=U4
-	YKafDGPKZZijrXk2BMchml0ZaeijNOpt6ErqRiOWg=; b=f6ozXzfX22v1jGC3oz
-	eYli8IPHGvzy/CWFjd0YxHR/HXNyy9u1RCRl4h05dev9dahwuMgqhLbiVaoRqEE1
-	bE67ce8pQKl4CBSU9/BWbE/G7rsSq9iRGz/QvV1L71lrleSB3m5dJP0QeJE0QyNO
-	pfc1yKPWfXs8Yw2+Tq1ckybV8=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wCnzlKIQKRo8rsaDA--.48811S2;
-	Tue, 19 Aug 2025 17:14:49 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH net-next v5] net: af_packet: Use hrtimer to do the retire operation
-Date: Tue, 19 Aug 2025 17:14:47 +0800
-Message-Id: <20250819091447.1199980-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K5KWSMKo"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D011A08BC;
+	Tue, 19 Aug 2025 09:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755594922; cv=fail; b=BuzPKtw71eBqTd0SPXGw4jmLKrWwOzTnDD49abHwUT+D3+hnAvdeRbggxb2ahg4rtfOVp+C1ofwqLCRJ/EEj4DhPNT8/0rQD790T8RHVt4msUToKAIP0wp3/4W2NHK0GkEn4zirEpRX1qdseiA0frktFUt+LVk5WsuR69QXWs2w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755594922; c=relaxed/simple;
+	bh=srGz1eZn6Wi+X7prgTqRVI8vYBqWPVcHsFWen2CHa4E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=AlmzgA1ancBY2JVkZYItolTgr4obJarINqK3OkEFif8IaVV6Yz2s5hQoAsjUKVdJaTA1VxP40BXnJuszv+eIjJWYOQIl+TQSJN4y9EKTck8x/YNMOrHGYk/vK4D9VppbMbB8Zuf+HODOrFfJhlT4NQxvrdE9gflxkwFU5+Ue6sI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K5KWSMKo; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nPoxR/iAvKC6A356YnPOWJr+hxDKRzGH2Gk/dlu4a9dlVJks3nEsodPuWo2JrnC+q36IZbxFmo5SeRF2J5XZg3ITQpIiQzyLCtGgig2bdvDMVCU+aRSfyB0Ss87yebeqMDtUuXznjaoM645MjQWHHoUOgyi5UM/l0Wq1F8FdHJoYyaEU4uSLh+p3i5HXKeDrzsGyprq3lnZwn5MdOOBtV2DwmcqKZyLhtjVoMZeSb2DUYQ0+n7kFlcFL4MB9CWO6SVDXxQpaJOwD99CQ84DkAn0452+ILnIo2t+PVb8AEUh6d1jaAh2l2PgsFeAS5IEOe+ZqoM+6sIJW2JtyLrTviQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cxgu4VMMvXFy9zjrzTJjug+s8V3eVJXWeMJ732Qz5CM=;
+ b=GU+L/jvLv4yiIQtNFz4+m3/1Yhcs4R2CO9QXa5z5bhiegJ3GDwAwvZCY1GPRPjxulGli4St5jMgb/TsCxXhoaNAOUo4Z0Vq8w+7d4XW8VJAuilWxpZ0wZspCpc5w/PxcJP9Qc1E7Md9DwBhZQyyURYgpp5qkyjUY8/JQ8EIo3Xx6X7BuWsiR4dUDf//11ixQtsItj7fvD3CNMCxqA3cP/OCy4t964mEv2c0lU/FioANmlIhxy56Af/y9KYgBETG9b1A7nVD2Gs+OZK7lvWVwJyeDAGkxEXbggnFNhgJ0ARTli1Zd4yOtcVRVHfxxm5w7rKOhYBhdIIgB5DNw9rap+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cxgu4VMMvXFy9zjrzTJjug+s8V3eVJXWeMJ732Qz5CM=;
+ b=K5KWSMKoi8yypdvx+hRpXlGWtyYUIWsK+35KI/ubKHSCPRGM2WFeVcUelcJdBESk/H6NLL/lpBJQjudLtnYFN6bpvToC6a4S+2MQwPpiUOZdS5rX2jtpatRxXmF2gb3wiiFrAQNszwe64YNLc2djDLS85LWNq2Jn8lGCsk6wwFE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by IA0PPFAF883AE17.namprd12.prod.outlook.com (2603:10b6:20f:fc04::be1) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 09:15:18 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 09:15:17 +0000
+Message-ID: <94132288-a3a5-49e7-8f3b-2f7983f3bc51@amd.com>
+Date: Tue, 19 Aug 2025 11:15:08 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] dma-buf/fence-chain: Speed up processing of rearmed
+ callbacks
+To: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ Chris Wilson <chris.p.wilson@linux.intel.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org
+References: <20250814094824.217142-6-janusz.krzysztofik@linux.intel.com>
+ <2443311.NG923GbCHz@jkrzyszt-mobl2.ger.corp.intel.com>
+ <c4bac4d8-9c5b-446c-b9a1-1bc7ac6b38ff@amd.com>
+ <2067093.PIDvDuAF1L@jkrzyszt-mobl2.ger.corp.intel.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <2067093.PIDvDuAF1L@jkrzyszt-mobl2.ger.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL1PR13CA0189.namprd13.prod.outlook.com
+ (2603:10b6:208:2be::14) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnzlKIQKRo8rsaDA--.48811S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3Cr4kGF4xWryrWrWxury3Jwb_yoW8JrWUXo
-	Z3XrZ8Cr4kAF1xZ3ykCF10kFy3W3yqqF15XrsY9ryku3ZIvw15Ww17Aay3Zayfuw1Skws7
-	AF1Igw17XF1DGr15n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTR73k_UUUUU
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiowSuCmikO86UYwAAsN
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|IA0PPFAF883AE17:EE_
+X-MS-Office365-Filtering-Correlation-Id: 629249c9-a483-4424-613a-08dddf00e9ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SXNkdUdUUTZWNUNzanh6b2ZqU0JWdHh6dDRtZ2JyY2hhM0ZtdXI2T0NYcDIr?=
+ =?utf-8?B?bEhwUy9WeWNINDNBYUhkUlZPSmYyUXh6S0JLcy9yTlphUDN0bEVtRWVLSnEz?=
+ =?utf-8?B?TWx3Vms3ckFmRWhyS2lmT2FVVUl6YVRaVTZpWkt6RlJpUkZiYm4wd0VUajV0?=
+ =?utf-8?B?cGpBOVZ1eTBGdEdGa29VdC9qNVpaVmxGVUdMT1E4eVRMMHEvdzU5L3k4QmM2?=
+ =?utf-8?B?NWpGa0FPVGlmSmpNV3lRUGlvVENMSmlPUkxyeGNVa0lhNUt3ajh4WUZjVEpD?=
+ =?utf-8?B?NkVrQXJFYVR4SHFQanVHUkgwQTRMT2NIYUhyTkJXYko2U0FTUENSbndraC9S?=
+ =?utf-8?B?Qmp2NW5FREJsRFhtUUtGTlBuTmJ6Rk00SDVXQmxlVnZySTJKQkRWaTMvRzRX?=
+ =?utf-8?B?cUZLZ1dlc2hVMjltNlgyVzdYK0FpNjRhQ1FrT1dIVWp6ZzEvaXZoOC9TdkFv?=
+ =?utf-8?B?Rks0NmxQUWtLTDVaQ1JLbFJuNXhvWXBLWXpGbWVyUWVaSUtQcXZjL2JXUHlX?=
+ =?utf-8?B?MlJlZTlrNi80dEN2MmNsaFpMbkdqdDVTUVFaaExPTjJGQXR1TlNGMlVXWEpk?=
+ =?utf-8?B?cG41SC9nUHN0ZSttWlpmM3U2ZDJmQVZJNytLZ0RvejBJRGdLT1IvVzFldGZn?=
+ =?utf-8?B?ZlR2bjhwKzQyUG1NWmxJbktMMWtiL1dVY0x2bnhDWW5vRkJxWWc1TFVjQ3gx?=
+ =?utf-8?B?bmoxWmJCQWh6OXdVVVR2Vy9UUHJsUTdaRXhKd05LYWVEY0U0dk1YblhPTWZk?=
+ =?utf-8?B?SFBoYitoN0NKSnArUG94QmxKeW9PeDR1S0RCQ05Ia1U1STI0eDkvYnJkQS9o?=
+ =?utf-8?B?Z1JRemFsaE1PTklPN0tHR2RFcDRzbDA0VWlrN2pOdUx4d0dkRmJES3g5eC9G?=
+ =?utf-8?B?a2ZtSm1mb2RvZVpzNWF2NFhsaDFwYXRySm0zOXBXbGFKM08vZDI0aERsSk10?=
+ =?utf-8?B?bUZqZS8vMUxKZ2RFcWM1T29SaGRwM2pTSmgwQ0RCZjRFOXdWWjM5TkdkOGEv?=
+ =?utf-8?B?RnAwSDkyaFUvbVdEUFZKeXFaMTNGcnRLV3hQY2hFdW9HTGtRSnhKazZKYzZG?=
+ =?utf-8?B?eENDbHlJck5JbUsvS05IbXFsQmxMeHpISUhBUEIva2pELzRLbFRoNHptdXdx?=
+ =?utf-8?B?TUlBTzBXL3JKWHRvYWJiNXBWV21kRjBZMUhNbktZcnJ5aEtraTA2SjkzbFpn?=
+ =?utf-8?B?TkUzaExyaVZPOWtjaE5oSXNQL1lVRWNFME5tMldsVzZGc2dmSE9ZTkhMREpU?=
+ =?utf-8?B?aUhSVWxZdnYzdFU2QS9mRGF5WmFzN04wajJKUUJ5b1NpZFhGc0pvZngrb3l5?=
+ =?utf-8?B?a0hrZUM1cHN4TXlkSE4xSmsrYVlOeGdTem1WQ1FKVmtmTEhsb212cjh6VHRt?=
+ =?utf-8?B?VHY5VVhYR05qT3lwU2RScC8xTERYTDVKTlRqZXU3cUtEK1RKVkRuUXFLQkxN?=
+ =?utf-8?B?bVNTMityNjI3NVYrbENaWWlsT0lkYWxYRExKRHN6eU1Yc21hekJHakNEVE9U?=
+ =?utf-8?B?bHZQZ2I0NVhYdzlWRmlBK0lJSVUzZnJ4bnMxVUc2SzJadzErSVd4cGtFR1dN?=
+ =?utf-8?B?ei9DVERvT3dleUVsV3RvbmxpTE44MzVPY25pMm9GQnYzUm5NMiszV0laaUQ0?=
+ =?utf-8?B?YTZ5QnVCalNHS0kxa0Y2dXpqcHl0NXFKdXF5Q0MzRVBxWDM2SEJFOXVxd2lo?=
+ =?utf-8?B?YWpheHFQQzFzTVhXWW0wRFZTYWkzLzNReDZVWTV5enZEelF1K1dieTR0MEk5?=
+ =?utf-8?B?TE5jTUsyUVcrWDVtRFV0N0VIVTdpcVR3WUVOK1VkVHhQUXVtZ2ZzYmdmT2pQ?=
+ =?utf-8?Q?Q7U1jBWNxmeOmtVP7sXgxvXq4w3XXZkNQ8x38=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UDB4ZnJWbTNSZDdoZFFVR1p1dzB5YXdaeThFUmVDaFpvZjFjaEFBa3V5N2hh?=
+ =?utf-8?B?YTl3Y2RDc0YyUGR2WlduZkhnMFlocWljYzZMc2lUNEFoYlVaMU96VGplTCs1?=
+ =?utf-8?B?bldLcW5xcFRES1lRZS9xbExmckVVRmFJLzhBWlpZZ3ByeDlBVkxDZHFJM0Vp?=
+ =?utf-8?B?WVdGcm1LamltdXpER01wMTZHOW42Mm4wRWRMamZZZkZTL2hONnREK3RlcFEx?=
+ =?utf-8?B?UXQ0dXlpS2JVZ29TUjVQRzhzYmZzKzVzQ1RPbUxkVFpLVU1vU0VCaUFWam54?=
+ =?utf-8?B?OWJwcnJuSHdSTjJ5anM5bnZ1dS95cjFMQ3JXakNmTVFmSWNpYkFMOW1HWk5T?=
+ =?utf-8?B?VTg2SFJuUkRtSk1MS1FqdXE4Ris5eHJkSzFiK2pzNnZZWjJGOUlWZi9obVBT?=
+ =?utf-8?B?alhIdjFVWjdoaVRlNXk5c2RXZzRXOGZzelkvNlhLRkJJVndGdFgrTGtNaXFt?=
+ =?utf-8?B?cGxJaDZNWWZOZ1NURm0yb1U2cEo3RDExYzJ4N1M5c2VLR09tREsvZnZRN3Yv?=
+ =?utf-8?B?eG85aTU0ZEJCNy9uU1ByZC96WlJoL1gxRXRVeEJDekxDRHREYnhkOHE4Mkd3?=
+ =?utf-8?B?RFI1Wnk0dkhnci9PbWgydzlqdmVxbEFNaHpYZjVOaEs1Y1AveTQ1S2pKYU1t?=
+ =?utf-8?B?UFB3NDZzYk5mblJrc3lJcnJrSUdoWEZmUXVLaTJIRFI1S2F3Qm5sYmVGTkNw?=
+ =?utf-8?B?OGw1YldnSVlEYnlsUEw0TWZDcjByRUdiVDk5SFJnbmZ1UUhPdGFSK0JUMFBX?=
+ =?utf-8?B?eUtZQmQvK25tU2U0ZldSKzZhNXpGL3ZJSTlLSVIwWElRQnE0blRMdmhZaUV1?=
+ =?utf-8?B?MDVkWjIwbE9UZGFKQ2ptVnpEcHYwZGV4S1JJYU42L3haMWNtMStBT2FXUlgv?=
+ =?utf-8?B?bGQyUE9taXhyallnOWtWT0JnbDVnQkZUbEZuV1lpankraTBOWmk4UzFXcURp?=
+ =?utf-8?B?YmhONVpGN1J5NC8zMklxRHAwTWhNSlpMVTVhWkVHWVY1TU96MlU3UkUrWVhv?=
+ =?utf-8?B?aGQvSC96RWpXZThQeEgycVhEVzVKTHV0WFlGTm93RTRnWEVvR2krcHBkWG9w?=
+ =?utf-8?B?ODR3QXlIUzJ6eGFteVFnWTQrT09PWE42Q3hoOVEwMUFySWRaVi9IdzNNTHh6?=
+ =?utf-8?B?UEx5bEE5SStLTytsRzR2M3BrVEpnaTVYL2dpVG11UExGSGJEcVNMVFBIOXNk?=
+ =?utf-8?B?Ym94NU1xSmhyY0R5MTFFRVRUZ0s2bmVPajY3TjF1M2ZDd1JheTJFdUN0WXpi?=
+ =?utf-8?B?bnhRRGJXS1lMUUU0dUlhRHZaZklmdkM3ZWN2ZHRGOU9MWjNjNHBOV1oyaTFu?=
+ =?utf-8?B?YzBpTEtlZ2FIcElYVlgvM1I4bGpzcUhraDRBU1ZhLytWZzJEamtPY3FFMzJh?=
+ =?utf-8?B?cVlRa2RrS0RwQVpFbHJBaTcxdlFxalBpa3ZsS0paM01pdnUvYnJkWDdmZkY4?=
+ =?utf-8?B?VzhmWU5RaUg3V3V5MlJoQXNTMXlpYmdWZzJMVy9FbzR4TTV3MDdiUUNlOGhE?=
+ =?utf-8?B?SzlQVnJEQkIvcllJaXg3bXFiQ0s5Rk0rVThKNnU5MWJkYzVQbEtWSis4Y3hy?=
+ =?utf-8?B?UlFjamJYVjV0MVpzWmNHNzU2cTcvUHlZVG9kcnNQdGZ2UWhKWjB6STFUTzdZ?=
+ =?utf-8?B?dXBiWTdSMG92b24yT0FQUXFIU0I5NUFVclJDNWUwR2xMSVNkZ3JEdStXaFhl?=
+ =?utf-8?B?QXhVb09CUmM1TXg2OEhoWTBjWHBkbGdzQU56ck9qZ3ZDc2xhdVNpcFJNSkRj?=
+ =?utf-8?B?TFhsdU0rZWpEaDEvcjRSUjZoaWxzSmpoUXpaQWJaR3dXUjQ4bW5sNk0yZFhk?=
+ =?utf-8?B?MEgxTGIxNis1SUNNZjI1ZzFHS3dGdEZ4UFEvUVFRV0xoaE8vaXlsd2FSTVJH?=
+ =?utf-8?B?K0FhNjlmSXRKcHlDckpRN1FPZ0drZDZmb2RwWDJPa25pQVRqVC9RR3JpYkM4?=
+ =?utf-8?B?M2VHajNYdEc1dUVkcVVHeFBRQ3dGY0ZNaHk0Wk80dFM1amNmNmlSMWNyNGZx?=
+ =?utf-8?B?MHZKK1JsNVM3TlpodUVCOW12TTR0U28ycytMTFdCTHE4VElzeEJWK3RqRGFP?=
+ =?utf-8?B?OXpXUUhpWmR3cU1vTTJhZTQ2dWI3bWRJZXJ6OTJXL1d5V2NDU0FXVlRlQjIv?=
+ =?utf-8?Q?cFFudgN0KJZi/ZFaMEtl7kmo2?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 629249c9-a483-4424-613a-08dddf00e9ba
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 09:15:17.2145
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jBwO3nLxPdWo18zkLCDEoPSk4avbeFwAvaP5WfufQkYU8V8w0eGGGlsUgGgSx3FA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPFAF883AE17
 
-In a system with high real-time requirements, the timeout mechanism of
-ordinary timers with jiffies granularity is insufficient to meet the
-demands for real-time performance. Meanwhile, the optimization of CPU
-usage with af_packet is quite significant. Use hrtimer instead of timer
-to help compensate for the shortcomings in real-time performance.
-In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-This is unacceptable in some high real-time systems that require timely
-processing of network packets. By replacing it with hrtimer, if a timeout
-of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-3 ms.
+On 19.08.25 11:04, Janusz Krzysztofik wrote:
+> On Monday, 18 August 2025 16:42:56 CEST Christian König wrote:
+>> On 18.08.25 16:30, Janusz Krzysztofik wrote:
+>>> Hi Christian,
+>>>
+>>> On Thursday, 14 August 2025 14:24:29 CEST Christian König wrote:
+>>>>
+>>>> On 14.08.25 10:16, Janusz Krzysztofik wrote:
+>>>>> When first user starts waiting on a not yet signaled fence of a chain
+>>>>> link, a dma_fence_chain callback is added to a user fence of that link.
+>>>>> When the user fence of that chain link is then signaled, the chain is
+>>>>> traversed in search for a first not signaled link and the callback is
+>>>>> rearmed on a user fence of that link.
+>>>>>
+>>>>> Since chain fences may be exposed to user space, e.g. over drm_syncobj
+>>>>> IOCTLs, users may start waiting on any link of the chain, then many links
+>>>>> of a chain may have signaling enabled and their callbacks added to their
+>>>>> user fences.  Once an arbitrary user fence is signaled, all
+>>>>> dma_fence_chain callbacks added to it so far must be rearmed to another
+>>>>> user fence of the chain.  In extreme scenarios, when all N links of a
+>>>>> chain are awaited and then signaled in reverse order, the dma_fence_chain
+>>>>> callback may be called up to N * (N + 1) / 2 times (an arithmetic series).
+>>>>>
+>>>>> To avoid that potential excessive accumulation of dma_fence_chain
+>>>>> callbacks, rearm a trimmed-down, signal only callback version to the base
+>>>>> fence of a previous link, if not yet signaled, otherwise just signal the
+>>>>> base fence of the current link instead of traversing the chain in search
+>>>>> for a first not signaled link and moving all callbacks collected so far to
+>>>>> a user fence of that link.
+>>>>
+>>>> Well clear NAK to that! You can easily overflow the kernel stack with that!
+>>>
+>>> I'll be happy to propose a better solution, but for that I need to understand 
+>>> better your message.  Could you please point out an exact piece of the 
+>>> proposed code and/or describe a scenario where you can see the risk of stack 
+>>> overflow?
+>>
+>> The sentence "rearm .. to the base fence of a previous link" sounds like you are trying to install a callback on the signaling to the previous chain element.
+>>
+>> That is exactly what I pointed out previously where you need to be super careful because when this chain signals the callbacks will execute recursively which means that you can trivially overflow the kernel stack if you have more than a handful of chain elements.
+>>
+>> In other words A waits for B, B waits for C, C waits for D etc.... when D finally signals it will call C which in turn calls B which in turn calls A.
+> 
+> OK, maybe my commit description was not precise enough, however, I didn't 
+> describe implementation details (how) intentionally.
+> When D signals then it doesn't call C directly, only it submits an irq work 
+> that calls C.  Then C doesn't just call B, only it submits another irq work 
+> that calls B, and so on.
+> Doesn't that code pattern effectively break the recursion loop into separate 
+> work items, each with its own separate stack?
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+No, it's architecture dependent if the irq_work executes on a separate stack or not.
 
----
-Changes in v5:
-- Remove the unnecessary comments at the top of the _prb_refresh_rx_retire_blk_timer,
-  branch is self-explanatory enough
-  as suggested by Willem de Bruijn;
-- Indentation of _prb_refresh_rx_retire_blk_timer, align with first argument on
-  previous line
-  as suggested by Willem de Bruijn;
-- Do not call hrtimer_start within the hrtimer callback
-  as suggested by Willem de Bruijn
-  So add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer to indicate
-  whether it is within the callback function. Use hrtimer_forward_now instead of
-  hrtimer_start when it is in the callback function and is doing prb_open_block.
+You would need a work_struct to really separate the two and I would reject that because it adds additional latency to the signaling path.
 
-Changes in v4:
-- Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
-  is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
-  (re)start the hrtimer; otherwise, use hrtimer_forward_now to set the expiration
-  time as it is more commonly used compared to hrtimer_set_expires.
-  as suggested by Willem de Bruijn;
-- Delete the comments to explain why hrtimer_set_expires(not hrtimer_forward_now)
-  is used, as we do not use hrtimer_set_expires any more;
-- Link to v4: https://lore.kernel.org/all/20250818050233.155344-1-jackzxcui1989@163.com/
+>>
+>> Even if the chain is a recursive data structure you absolutely can't use recursion for the handling of it.
+>>
+>> Maybe I misunderstood your textual description but reading a sentence like this rings all alarm bells here. Otherwise I can't see what the patch is supposed to be optimizing.
+> 
+> OK, maybe I should start my commit description of this patch with a copy of 
+> the first sentence from cover letter and also from patch 1/4 description that 
+> informs about the problem as reported by CI.  Maybe I should also provide a 
+> comparison of measured signaling times from trybot executions [1][2][3].  
+> Here are example numbers from CI machine fi-bsw-n3050:
 
-Changes in v3:
-- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
-  as suggested by Willem de Bruijn;
-- Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
-  as suggested by Willem de Bruijn;
-- Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
-  _prb_refresh_rx_retire_blk_timer
-  as suggested by Willem de Bruijn;
-- Link to v3: https://lore.kernel.org/all/20250816170130.3969354-1-jackzxcui1989@163.com/
+Yeah and I've pointed out before that this is irrelevant.
 
-Changes in v2:
-- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
-  as suggested by Willem de Bruijn;
-- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
+The problem is *not* the dma_fence_chain implementation, that one is doing exactly what is expected to do.
 
-Changes in v1:
-- Do not add another config for the current changes
-  as suggested by Eric Dumazet;
-- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
-  as suggested by Eric Dumazet;
-- Add some performance details to the changelog
-  as suggested by Ferenc Fejes;
-- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
-  as suggested by Willem de Bruijn;
-- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
-  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
-- Just return HRTIMER_RESTART directly as all cases return the same value
-  as suggested by Willem de Bruijn;
-- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
-- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
----
- net/packet/af_packet.c | 65 ++++++++++++++++++++++++------------------
- net/packet/diag.c      |  2 +-
- net/packet/internal.h  |  5 ++--
- 3 files changed, 41 insertions(+), 31 deletions(-)
+The problem is that the test case is nonsense. I've pointed that out numerous times now!
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index a7017d7f0..81bd3f1d3 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -197,14 +197,15 @@ static void *packet_previous_frame(struct packet_sock *po,
- static void packet_increment_head(struct packet_ring_buffer *buff);
- static int prb_curr_blk_in_use(struct tpacket_block_desc *);
- static void *prb_dispatch_next_block(struct tpacket_kbdq_core *,
--			struct packet_sock *);
-+			struct packet_sock *, bool);
- static void prb_retire_current_block(struct tpacket_kbdq_core *,
- 		struct packet_sock *, unsigned int status);
- static int prb_queue_frozen(struct tpacket_kbdq_core *);
- static void prb_open_block(struct tpacket_kbdq_core *,
--		struct tpacket_block_desc *);
--static void prb_retire_rx_blk_timer_expired(struct timer_list *);
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
-+		struct tpacket_block_desc *, bool);
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
-+static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *,
-+					     bool, bool);
- static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
- static void prb_clear_rxhash(struct tpacket_kbdq_core *,
- 		struct tpacket3_hdr *);
-@@ -581,7 +582,7 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
- 
- static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
- {
--	timer_delete_sync(&pkc->retire_blk_timer);
-+	hrtimer_cancel(&pkc->retire_blk_timer);
- }
- 
- static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
-@@ -603,9 +604,8 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
- 	struct tpacket_kbdq_core *pkc;
- 
- 	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
--	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
--		    0);
--	pkc->retire_blk_timer.expires = jiffies;
-+	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-+		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
- }
- 
- static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-@@ -672,27 +672,34 @@ static void init_prb_bdqc(struct packet_sock *po,
- 	p1->last_kactive_blk_num = 0;
- 	po->stats.stats3.tp_freeze_q_cnt = 0;
- 	if (req_u->req3.tp_retire_blk_tov)
--		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-+		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
- 	else
--		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
--						req_u->req3.tp_block_size);
--	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-+		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-+						req_u->req3.tp_block_size));
- 	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
- 	rwlock_init(&p1->blk_fill_in_prog_lock);
- 
- 	p1->max_frame_len = p1->kblk_size - BLK_PLUS_PRIV(p1->blk_sizeof_priv);
- 	prb_init_ft_ops(p1, req_u);
- 	prb_setup_retire_blk_timer(po);
--	prb_open_block(p1, pbd);
-+	prb_open_block(p1, pbd, false);
- }
- 
- /*  Do NOT update the last_blk_num first.
-  *  Assumes sk_buff_head lock is held.
-  */
--static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-+static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
-+					     bool start, bool callback)
- {
--	mod_timer(&pkc->retire_blk_timer,
--			jiffies + pkc->tov_in_jiffies);
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	if (start && !callback)
-+		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
-+			      HRTIMER_MODE_REL_SOFT);
-+	else
-+		hrtimer_forward_now(&pkc->retire_blk_timer, pkc->interval_ktime);
-+	local_irq_restore(flags);
- 	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
- }
- 
-@@ -719,8 +726,9 @@ static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-  * prb_calc_retire_blk_tmo() calculates the tmo.
-  *
-  */
--static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-+static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
- {
-+	enum hrtimer_restart ret = HRTIMER_RESTART;
- 	struct packet_sock *po =
- 		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
- 	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-@@ -732,8 +740,10 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 	frozen = prb_queue_frozen(pkc);
- 	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
- 
--	if (unlikely(pkc->delete_blk_timer))
-+	if (unlikely(pkc->delete_blk_timer)) {
-+		ret = HRTIMER_NORESTART;
- 		goto out;
-+	}
- 
- 	/* We only need to plug the race when the block is partially filled.
- 	 * tpacket_rcv:
-@@ -757,7 +767,7 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 				goto refresh_timer;
- 			}
- 			prb_retire_current_block(pkc, po, TP_STATUS_BLK_TMO);
--			if (!prb_dispatch_next_block(pkc, po))
-+			if (!prb_dispatch_next_block(pkc, po, true))
- 				goto refresh_timer;
- 			else
- 				goto out;
-@@ -779,17 +789,18 @@ static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
- 				* opening a block thaws the queue,restarts timer
- 				* Thawing/timer-refresh is a side effect.
- 				*/
--				prb_open_block(pkc, pbd);
-+				prb_open_block(pkc, pbd, true);
- 				goto out;
- 			}
- 		}
- 	}
- 
- refresh_timer:
--	_prb_refresh_rx_retire_blk_timer(pkc);
-+	_prb_refresh_rx_retire_blk_timer(pkc, false, true);
- 
- out:
- 	spin_unlock(&po->sk.sk_receive_queue.lock);
-+	return ret;
- }
- 
- static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-@@ -890,7 +901,7 @@ static void prb_thaw_queue(struct tpacket_kbdq_core *pkc)
-  *
-  */
- static void prb_open_block(struct tpacket_kbdq_core *pkc1,
--	struct tpacket_block_desc *pbd1)
-+	struct tpacket_block_desc *pbd1, bool callback)
- {
- 	struct timespec64 ts;
- 	struct tpacket_hdr_v1 *h1 = &pbd1->hdr.bh1;
-@@ -921,7 +932,7 @@ static void prb_open_block(struct tpacket_kbdq_core *pkc1,
- 	pkc1->pkblk_end = pkc1->pkblk_start + pkc1->kblk_size;
- 
- 	prb_thaw_queue(pkc1);
--	_prb_refresh_rx_retire_blk_timer(pkc1);
-+	_prb_refresh_rx_retire_blk_timer(pkc1, true, callback);
- 
- 	smp_wmb();
- }
-@@ -965,7 +976,7 @@ static void prb_freeze_queue(struct tpacket_kbdq_core *pkc,
-  * So, caller must check the return value.
-  */
- static void *prb_dispatch_next_block(struct tpacket_kbdq_core *pkc,
--		struct packet_sock *po)
-+		struct packet_sock *po, bool callback)
- {
- 	struct tpacket_block_desc *pbd;
- 
-@@ -985,7 +996,7 @@ static void *prb_dispatch_next_block(struct tpacket_kbdq_core *pkc,
- 	 * open this block and return the offset where the first packet
- 	 * needs to get stored.
- 	 */
--	prb_open_block(pkc, pbd);
-+	prb_open_block(pkc, pbd, callback);
- 	return (void *)pkc->nxt_offset;
- }
- 
-@@ -1124,7 +1135,7 @@ static void *__packet_lookup_frame_in_block(struct packet_sock *po,
- 			 * opening a block also thaws the queue.
- 			 * Thawing is a side effect.
- 			 */
--			prb_open_block(pkc, pbd);
-+			prb_open_block(pkc, pbd, false);
- 		}
- 	}
- 
-@@ -1143,7 +1154,7 @@ static void *__packet_lookup_frame_in_block(struct packet_sock *po,
- 	prb_retire_current_block(pkc, po, 0);
- 
- 	/* Now, try to dispatch the next block */
--	curr = (char *)prb_dispatch_next_block(pkc, po);
-+	curr = (char *)prb_dispatch_next_block(pkc, po, false);
- 	if (curr) {
- 		pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
- 		prb_fill_curr_block(curr, pkc, pbd, len);
-diff --git a/net/packet/diag.c b/net/packet/diag.c
-index 6ce1dcc28..c8f43e0c1 100644
---- a/net/packet/diag.c
-+++ b/net/packet/diag.c
-@@ -83,7 +83,7 @@ static int pdiag_put_ring(struct packet_ring_buffer *ring, int ver, int nl_type,
- 	pdr.pdr_frame_nr = ring->frame_max + 1;
- 
- 	if (ver > TPACKET_V2) {
--		pdr.pdr_retire_tmo = ring->prb_bdqc.retire_blk_tov;
-+		pdr.pdr_retire_tmo = ktime_to_ms(ring->prb_bdqc.interval_ktime);
- 		pdr.pdr_sizeof_priv = ring->prb_bdqc.blk_sizeof_priv;
- 		pdr.pdr_features = ring->prb_bdqc.feature_req_word;
- 	} else {
-diff --git a/net/packet/internal.h b/net/packet/internal.h
-index 1e743d031..19d4f0b73 100644
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -45,12 +45,11 @@ struct tpacket_kbdq_core {
- 	/* Default is set to 8ms */
- #define DEFAULT_PRB_RETIRE_TOV	(8)
- 
--	unsigned short  retire_blk_tov;
-+	ktime_t		interval_ktime;
- 	unsigned short  version;
--	unsigned long	tov_in_jiffies;
- 
- 	/* timer to retire an outstanding block */
--	struct timer_list retire_blk_timer;
-+	struct hrtimer  retire_blk_timer;
- };
- 
- struct pgv {
--- 
-2.34.1
+Regards,
+Christian.
+
+> 
+> With signaling time reports only added to selftests (patch 1 of 4):
+> <6> [777.914451] dma-buf: Running dma_fence_chain/wait_forward
+> <6> [778.123516] wait_forward: 4096 signals in 21373487 ns
+> <6> [778.335709] dma-buf: Running dma_fence_chain/wait_backward
+> <6> [795.791546] wait_backward: 4096 signals in 17249051192 ns
+> <6> [795.859699] dma-buf: Running dma_fence_chain/wait_random
+> <6> [796.161375] wait_random: 4096 signals in 97386256 ns
+> 
+> With dma_fence_enable_signaling() replaced in selftests with dma_fence_wait() 
+> (patches 1-3 of 4):
+> <6> [782.505692] dma-buf: Running dma_fence_chain/wait_forward
+> <6> [784.609213] wait_forward: 4096 signals in 36513103 ns
+> <3> [784.837226] Reported -4 for kthread_stop_put(0)!
+> <6> [785.147643] dma-buf: Running dma_fence_chain/wait_backward
+> <6> [806.367763] wait_backward: 4096 signals in 18428009499 ns
+> <6> [807.175325] dma-buf: Running dma_fence_chain/wait_random
+> <6> [809.453942] wait_random: 4096 signals in 119761950 ns
+> 
+> With the fix (patches 1-4 of 4):
+> <6> [731.519020] dma-buf: Running dma_fence_chain/wait_forward
+> <6> [733.623375] wait_forward: 4096 signals in 31890220 ns
+> <6> [734.258972] dma-buf: Running dma_fence_chain/wait_backward
+> <6> [736.267325] wait_backward: 4096 signals in 39007955 ns
+> <6> [736.700221] dma-buf: Running dma_fence_chain/wait_random
+> <6> [739.346706] wait_random: 4096 signals in 48384865 ns
+> 
+> Signaling time in wait_backward selftest has been reduced from 17s to 39ms.
+> 
+> [1] https://intel-gfx-ci.01.org/tree/drm-tip/Trybot_152785v1/index.html?
+> [2] https://intel-gfx-ci.01.org/tree/drm-tip/Trybot_152828v2/index.html?
+> [3] https://intel-gfx-ci.01.org/tree/drm-tip/Trybot_152830v2/index.html?
+> 
+>>
+>>>>
+>>>> Additional to this messing with the fence ops outside of the dma_fence code is an absolute no-go.
+>>>
+>>> Could you please explain what piece of code you are referring to when you say 
+>>> "messing with the fence ops outside the dma_fence code"?  If not this patch 
+>>> then which particular one of this series did you mean?  I'm assuming you 
+>>> didn't mean drm_syncobj code that I mentioned in my commit descriptions.
+>>
+>> See below.
+>>
+>>>
+>>> Thanks,
+>>> Janusz
+>>>
+>>>>
+>>>> Regards,
+>>>> Christian.
+>>>>
+>>>>>
+>>>>> Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12904
+>>>>> Suggested-by: Chris Wilson <chris.p.wilson@linux.intel.com>
+>>>>> Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+>>>>> ---
+>>>>>  drivers/dma-buf/dma-fence-chain.c | 101 +++++++++++++++++++++++++-----
+>>>>>  1 file changed, 84 insertions(+), 17 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/dma-buf/dma-fence-chain.c b/drivers/dma-buf/dma-fence-chain.c
+>>>>> index a8a90acf4f34d..90eff264ee05c 100644
+>>>>> --- a/drivers/dma-buf/dma-fence-chain.c
+>>>>> +++ b/drivers/dma-buf/dma-fence-chain.c
+>>>>> @@ -119,46 +119,113 @@ static const char *dma_fence_chain_get_timeline_name(struct dma_fence *fence)
+>>>>>          return "unbound";
+>>>>>  }
+>>>>>  
+>>>>> -static void dma_fence_chain_irq_work(struct irq_work *work)
+>>>>> +static void signal_irq_work(struct irq_work *work)
+>>>>>  {
+>>>>>  	struct dma_fence_chain *chain;
+>>>>>  
+>>>>>  	chain = container_of(work, typeof(*chain), work);
+>>>>>  
+>>>>> -	/* Try to rearm the callback */
+>>>>> -	if (!dma_fence_chain_enable_signaling(&chain->base))
+>>>>> -		/* Ok, we are done. No more unsignaled fences left */
+>>>>> -		dma_fence_signal(&chain->base);
+>>>>> +	dma_fence_signal(&chain->base);
+>>>>>  	dma_fence_put(&chain->base);
+>>>>>  }
+>>>>>  
+>>>>> -static void dma_fence_chain_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+>>>>> +static void signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+>>>>> +{
+>>>>> +	struct dma_fence_chain *chain;
+>>>>> +
+>>>>> +	chain = container_of(cb, typeof(*chain), cb);
+>>>>> +	init_irq_work(&chain->work, signal_irq_work);
+>>>>> +	irq_work_queue(&chain->work);
+>>>>> +}
+>>>>> +
+>>>>> +static void rearm_irq_work(struct irq_work *work)
+>>>>> +{
+>>>>> +	struct dma_fence_chain *chain;
+>>>>> +	struct dma_fence *prev;
+>>>>> +
+>>>>> +	chain = container_of(work, typeof(*chain), work);
+>>>>> +
+>>>>> +	rcu_read_lock();
+>>>>> +	prev = rcu_dereference(chain->prev);
+>>>>> +	if (prev && dma_fence_add_callback(prev, &chain->cb, signal_cb))
+>>>>> +		prev = NULL;
+>>>>> +	rcu_read_unlock();
+>>>>> +	if (prev)
+>>>>> +		return;
+>>>>> +
+>>>>> +	/* Ok, we are done. No more unsignaled fences left */
+>>>>> +	signal_irq_work(work);
+>>>>> +}
+>>>>> +
+>>>>> +static inline bool fence_is_signaled__nested(struct dma_fence *fence)
+>>>>> +{
+>>>>> +	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+>>>>> +		return true;
+>>>>> +
+>>
+>>>>> +	if (fence->ops->signaled && fence->ops->signaled(fence)) {
+>>
+>> Calling this outside of dma-fence.[ch] is a clear no-go.
+> 
+> But this patch applies only to drivers/dma-buf/dma-fence-chain.c, not 
+> outside of it.
+> 
+> Thanks,
+> Janusz
+> 
+>>
+>> Regards,
+>> Christian.
+>>
+>>>>> +		unsigned long flags;
+>>>>> +
+>>>>> +		spin_lock_irqsave_nested(fence->lock, flags, SINGLE_DEPTH_NESTING);
+>>>>> +		dma_fence_signal_locked(fence);
+>>>>> +		spin_unlock_irqrestore(fence->lock, flags);
+>>>>> +
+>>>>> +		return true;
+>>>>> +	}
+>>>>> +
+>>>>> +	return false;
+>>>>> +}
+>>>>> +
+>>>>> +static bool prev_is_signaled(struct dma_fence_chain *chain)
+>>>>> +{
+>>>>> +	struct dma_fence *prev;
+>>>>> +	bool result;
+>>>>> +
+>>>>> +	rcu_read_lock();
+>>>>> +	prev = rcu_dereference(chain->prev);
+>>>>> +	result = !prev || fence_is_signaled__nested(prev);
+>>>>> +	rcu_read_unlock();
+>>>>> +
+>>>>> +	return result;
+>>>>> +}
+>>>>> +
+>>>>> +static void rearm_or_signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+>>>>>  {
+>>>>>  	struct dma_fence_chain *chain;
+>>>>>  
+>>>>>  	chain = container_of(cb, typeof(*chain), cb);
+>>>>> -	init_irq_work(&chain->work, dma_fence_chain_irq_work);
+>>>>> +	if (prev_is_signaled(chain)) {
+>>>>> +		/* Ok, we are done. No more unsignaled fences left */
+>>>>> +		init_irq_work(&chain->work, signal_irq_work);
+>>>>> +	} else {
+>>>>> +		/* Try to rearm the callback */
+>>>>> +		init_irq_work(&chain->work, rearm_irq_work);
+>>>>> +	}
+>>>>> +
+>>>>>  	irq_work_queue(&chain->work);
+>>>>> -	dma_fence_put(f);
+>>>>>  }
+>>>>>  
+>>>>>  static bool dma_fence_chain_enable_signaling(struct dma_fence *fence)
+>>>>>  {
+>>>>>  	struct dma_fence_chain *head = to_dma_fence_chain(fence);
+>>>>> +	int err = -ENOENT;
+>>>>>  
+>>>>> -	dma_fence_get(&head->base);
+>>>>> -	dma_fence_chain_for_each(fence, &head->base) {
+>>>>> -		struct dma_fence *f = dma_fence_chain_contained(fence);
+>>>>> +	if (WARN_ON(!head))
+>>>>> +		return false;
+>>>>>  
+>>>>> -		dma_fence_get(f);
+>>>>> -		if (!dma_fence_add_callback(f, &head->cb, dma_fence_chain_cb)) {
+>>>>> +	dma_fence_get(fence);
+>>>>> +	if (head->fence)
+>>>>> +		err = dma_fence_add_callback(head->fence, &head->cb, rearm_or_signal_cb);
+>>>>> +	if (err) {
+>>>>> +		if (prev_is_signaled(head)) {
+>>>>>  			dma_fence_put(fence);
+>>>>> -			return true;
+>>>>> +		} else {
+>>>>> +			init_irq_work(&head->work, rearm_irq_work);
+>>>>> +			irq_work_queue(&head->work);
+>>>>> +			err = 0;
+>>>>>  		}
+>>>>> -		dma_fence_put(f);
+>>>>>  	}
+>>>>> -	dma_fence_put(&head->base);
+>>>>> -	return false;
+>>>>> +
+>>>>> +	return !err;
+>>>>>  }
+>>>>>  
+>>>>>  static bool dma_fence_chain_signaled(struct dma_fence *fence)
+>>>>
+>>>>
+>>>
+>>>
+>>>
+>>>
+>>
+>>
+> 
+> 
+> 
+> 
 
 
