@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-776243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A377B2CA80
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18428B2CA76
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05DD75A7490
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A71A1C2612B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FFC302CCF;
-	Tue, 19 Aug 2025 17:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762A4301499;
+	Tue, 19 Aug 2025 17:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="R99CMyST"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJmwzm8J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB36301499;
-	Tue, 19 Aug 2025 17:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755624194; cv=pass; b=kTFTObLiZCQ3ooG+EN3D+VF8sQq7fLu1S1+KH5R7ctqm66FlIzhjq8Nh7hSZkjOwu+iZw0Xjb2GABiRLB1I0g/N+isgyBh3DHWXqiSlWHJ2ibD6ONzIdP0rRPdoRj2k0rA4J9GcHTOqIZCaLWnzDsU0QgdqNUQHXXjXMMdldwb0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755624194; c=relaxed/simple;
-	bh=CnOw8YxNadoZJ5HjZs0vKB0Rw/Cr6t8fF/7WPy3K+/k=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=N7SFiVEDdQd83tkqEBxgsYQ8oM2KZb9UeH4L6hpqVDK7GVjtYeFdAh+geH3wJyhI0Tt9WNeawvCWhzG8UJhK1HF6R3shkOIDKmaUu1OIpfnVDm7MCP//V8udSAMeH2MqQs5h2BNGjRDC2X4IXagjaq149hg6gOKxL9IjITQkN28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=R99CMyST; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755624170; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dB17iMupUftJlAcD6wb2PYq6XfkpeMPwyMGY1qBl7HKmzi6bPP4WdbqZdDrdUqiNBPlnFm9Pl4Bx6hpzVYPSjmQJcadJsyuCBF43wmhPveoypjdIHSdU24NIxdcxf+U6JgVDIh0H+rI+5oeoSSlzoBFb6pc7CJlRIzYaoY9sTPU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755624170; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=IEcw8YukMBSRSfgVR4aQ1OUUrw+SZjoWnTgXZ8LvAnk=; 
-	b=YF6Bk7Mt0+IE4c/6EOfrbjtV9WoESHNBs6d/lcbYDKg/5tCV3GN5oTTcLE7nLh1wtfXxYJkIK9aJa3Rck2u/0SktWBY375oS6HlFjYiXtYnRXVI+K7XzBkQnPUi+e5czCsUOYQEr40gOMgOIKQ6Ajb/Xuru6ko3O7ongv5Fpbjg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755624170;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=IEcw8YukMBSRSfgVR4aQ1OUUrw+SZjoWnTgXZ8LvAnk=;
-	b=R99CMySTuMb2AjbZ8UU/ldDlpGDB519kO1Tx6MgrQf2pZ6ewYD8pepJvEypBDOaC
-	I5piGs1GE+5VAntotzPQdWYwNnbpiGjtMBKyLiakrpgMwfbaaD5OEKsBfZnp74OJkIv
-	QPFbDqVLh/ZsRmcNYtTAgJd1LZWO2suYfpdJBe+M=
-Received: by mx.zohomail.com with SMTPS id 1755624168270959.8687296541492;
-	Tue, 19 Aug 2025 10:22:48 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79FE3009ED;
+	Tue, 19 Aug 2025 17:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755624160; cv=none; b=uRjThf4yO5k1n7fUWq371sXTTlQdyEiBh5YCLQQuTX2Rs4yDfAs9O17YieIw8ZRB9em06aCvIzTDC9QktoD1vZZj8QDeEJoD3YzymRerb5+DFFZlnQAWsyBrff22l1FBIVr14SelctEA/Rp5AlucP3eRH4bO0849YlG+xfYZjes=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755624160; c=relaxed/simple;
+	bh=Hqw9eNwEyOyjAddQiU40tZUpBUM4UVro4mYONtNAhdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c83aHYS+qL+rzU4b3r0gegFa7LXl9XMkjUTRBPgTsm76H9J2BO2jwoWcrlk55vpkvm/3KmvOgU9U1P0MZKJl/P8Xpk++fjZB2HiQHlb2Ltwlg3ewyzhZMASZ311x3utcoZVhhcS2baNUpFjsQ9qrnDTC+ks9ZJBEiA2OmEwkn1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJmwzm8J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194B5C4CEF1;
+	Tue, 19 Aug 2025 17:22:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755624160;
+	bh=Hqw9eNwEyOyjAddQiU40tZUpBUM4UVro4mYONtNAhdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EJmwzm8JVvkGwG9V+/odTUt0NyAxYoUrIXbQNniA3nwUn548XT34GYo23hN0RP86F
+	 ltQXVE/9Sl8T0Z7GnwDxTiMTdLU5NhX4dIzgiuGAQLZs2uG115vn9li+4xgY1ORdtd
+	 cAqo83b1PiMbpr/N6IjhyFE/CLL+6ZeDXjzWuP2LOvNDlPwCHEBWxVirr8w1MuyZ/i
+	 DQjF5/36k6DShHkW7JLCLcq22uz/M+8OX05N896ZsfrO5ZzQ11AW2W+2MGl4EyZeO5
+	 MhZqRpPQo3A3jPTCOvmVflCws3MFnYPDtWQx5uYNWsOX+TvEcJrjrs7RukCneYbyzI
+	 I0jR45Bz9LJRQ==
+Date: Tue, 19 Aug 2025 18:22:34 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>, Robert Foss <rfoss@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI TMDS181
+ and SN65DP159 bindings
+Message-ID: <20250819-impeach-prognosis-247bec1a809b@spud>
+References: <20250812145256.135645-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.3b7d4319-e208-470d-9ada-585343a64822@emailsignatures365.codetwo.com>
+ <20250812145256.135645-2-mike.looijmans@topic.nl>
+ <20250812-designing-tyke-db85527b373d@spud>
+ <f4ec7690-322e-493a-b346-7b9560ac0616@topic.nl>
+ <9fba4917-a24f-4fee-8f1a-7509a0bc542e@kernel.org>
+ <2d694c9c-704e-4353-8b57-de83eb5a7f96@topic.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 3/5] rust: maple_tree: add MapleTree::lock() and load()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <38B2DEA2-774D-45B5-8923-C5330B975FB9@collabora.com>
-Date: Tue, 19 Aug 2025 14:22:31 -0300
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Andrew Ballance <andrewjballance@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- maple-tree@lists.infradead.org,
- rust-for-linux@vger.kernel.org,
- linux-mm@kvack.org
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="66JlIddYdkNBaUXn"
+Content-Disposition: inline
+In-Reply-To: <2d694c9c-704e-4353-8b57-de83eb5a7f96@topic.nl>
+
+
+--66JlIddYdkNBaUXn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <2E3FBB87-EFCE-425E-8ED8-6EE0EF19C6F2@collabora.com>
-References: <20250819-maple-tree-v2-0-229b48657bab@google.com>
- <20250819-maple-tree-v2-3-229b48657bab@google.com>
- <38B2DEA2-774D-45B5-8923-C5330B975FB9@collabora.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
 
-Ah, something else,
+On Tue, Aug 19, 2025 at 10:26:15AM +0200, Mike Looijmans wrote:
+> On 19-08-2025 09:51, Krzysztof Kozlowski wrote:
+> > On 19/08/2025 09:46, Mike Looijmans wrote:
+> > > > > +
+> > > > > +properties:
+> > > > > +  compatible:
+> > > > > +    enum:
+> > > > > +      - ti,tmds181
+> > > > > +      - ti,sn65dp159
+> > > > The driver contains:
+> > > > +	{ .compatible =3D "ti,tmds181", },
+> > > > +	{ .compatible =3D "ti,sn65dp159", },
+> > > > +	{}
+> > > > so why is a fallback compatible not suitable here?
+> > > I don't understand the question. The two are slightly different chips,
+> > Your driver says they are compatible. No one said the same, but compati=
+ble.
+> >=20
+> > > so it makes sense to describe that in the DT.
+> > Compatible devices should use fallback. There is plenty of examples (90%
+> > of all binding files?) including example-schema describing this.
+>=20
+> Please help me out here, I'm happy to oblige, but I don't understand what
+> you're asking.
+>=20
+> To the best of my knowledge "fallback" compatible is when you write
+> something like this in the device-tree:
+> =A0=A0 compatible =3D "st,m25p80", "jedec,spi-nor";
+> Which means that we can use the "jedec,spi-nor" driver if there's no
+> specific match for "st,m25p80", correct?
+>=20
+> I don't understand how that relates to your request, this is the first ti=
+me
+> I ever got this particular feedback. Looking at say the ti,sn65dsi83 driv=
+er,
+> it does the same thing (supports the ti,sn65dsi83 and ti,sn65dsi84).
+>=20
+> Please explain or point me somewhere where I can find this?
 
-[=E2=80=A6]
+Devices that are supersets of, or functionally identical to, others should
+use fallback compatibles. The driver treats these devices as functionally
+identical to one another when it comes to match data (as there is none)
+so you need to either use a fallback compatible or explain in your
+commit message why one is not suitable here.
 
->> +    /// Load the value at the given index.
->> +    ///
->> +    /// # Examples
->> +    ///
->> +    /// Read the value while holding the spinlock.
->> +    ///
->> +    /// ```
->> +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
->> +    ///
->> +    /// let tree =3D KBox::pin_init(MapleTree::<KBox<i32>>::new(), =
-GFP_KERNEL)?;
->> +    ///
->> +    /// let ten =3D KBox::new(10, GFP_KERNEL)?;
->> +    /// let twenty =3D KBox::new(20, GFP_KERNEL)?;
->> +    /// tree.insert(100, ten, GFP_KERNEL)?;
->> +    /// tree.insert(200, twenty, GFP_KERNEL)?;
->> +    ///
->> +    /// let mut lock =3D tree.lock();
->> +    /// assert_eq!(lock.load(100), Some(&mut 10));
->> +    /// assert_eq!(lock.load(200), Some(&mut 20));
->> +    /// assert_eq!(lock.load(300), None);
->> +    /// # Ok::<_, Error>(())
->> +    /// ```
->> +    ///
->> +    /// Increment refcount while holding spinlock and read =
-afterwards.
+--66JlIddYdkNBaUXn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This sentence can be improved.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKSy2gAKCRB4tDGHoIJi
+0jMkAP9NUxCGEjZ63zCEHXPLBh1Zxa6yjFr146a0y81NFbwSjAD/YzkXycwf8ncA
+kcfhNlkqACOs8kQMNQf0M5TaGq44NAc=
+=o59W
+-----END PGP SIGNATURE-----
+
+--66JlIddYdkNBaUXn--
 
