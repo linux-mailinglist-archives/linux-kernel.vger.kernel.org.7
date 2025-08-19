@@ -1,155 +1,134 @@
-Return-Path: <linux-kernel+bounces-776011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF30B2C76B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAC5B2C775
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9C46827CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:46:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A8B3A7C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7714D279351;
-	Tue, 19 Aug 2025 14:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015E62869E;
+	Tue, 19 Aug 2025 14:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VJxWovZZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Xvn2E8EJ"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2B72869E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C527E060;
+	Tue, 19 Aug 2025 14:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614799; cv=none; b=UBxbjHcOeGEoPhBwiwkvZ+tjhE6hnukwQlGei3l/NmgluzG7R3b6slZdFknFJEKrVlk+QacpNgJRR+WG7WpY+BBSCXhNZ/nhtACJssdqHknAAuCjBcr8HVZ3/P0xX2FdX+8T6Fto4IIsmrP0zzg4OQrRGAyD9uye8aqEd0AKj3Q=
+	t=1755614808; cv=none; b=GYMgVi0Ru4zVtz9ehbhEDwJRU1nrE1RVAnfTpwfgeDpjnvN1Yvo/0t271uzQCWeNQJKSmeKU5GxS1IY7rsEaQzMmUNPNhPmC67JNGf1CuSMC1AIrteNg0WT93mZ9EIxfpP5z2aQ6n1GABmmDyK+bUaSDUgITdQalXWrLzjGGMkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614799; c=relaxed/simple;
-	bh=A/bQ8BPM18M5+5I1jcYBoAmnIskDpPsMSohOCfrxtUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hJSJ58GRnBax8RwQr1uh9bkxtfXsGX1qaEKljuvoVzoig3hs8DQq/GUFeCrKG6VOzXlzWwz9rmL7MMf4DwWmRktu7RFxsxbxAI5ryrTaGB199xFnCJDXQXmlxewcSnyncFaPAuc462OMISAj8E8OfX+8OaobP+Diheb++GLvl4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VJxWovZZ; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755614798; x=1787150798;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=A/bQ8BPM18M5+5I1jcYBoAmnIskDpPsMSohOCfrxtUQ=;
-  b=VJxWovZZx9+NZpP3EXVBXeFocQHvOgcEes+Rd0G/KP/EwgFM0E5RsfSl
-   hzja+oY+CZazyZG+DWbYAZUn9K1KQsNt+SzN1DA2wy+dBizXznEAtqHmT
-   XQFco+0kQRrcPKPdriLu5QytesmTlM3qAPBKMgPYf12gbeZgwZqr5KTf3
-   9T+t5pmd3hqVKYmdpAPdhJnd4XZOEz+oNNsLV/LOGDaJQvCpFAYXfAz9N
-   NL9IrJ3CiOplmaVaGkEsrh897NkAKxC725B6D6iar5blzp81n+X/HAnUb
-   0HhQ+tPk2D6DS+U/CWVomIVZNH4hDD/EGP7NDCwZ9xlAWEBKb46qEK8Z2
-   g==;
-X-CSE-ConnectionGUID: hB37mNPjQDSKOqAdPnXEtA==
-X-CSE-MsgGUID: GXU9fHZrSdSeTPoFS1Lblg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58008788"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="58008788"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 07:46:36 -0700
-X-CSE-ConnectionGUID: qSZVDYmfSbyaaJds6uCM7w==
-X-CSE-MsgGUID: 2IRox55MRfCJB6XnDqr+2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="198878619"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.41]) ([10.125.108.41])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 07:46:36 -0700
-Message-ID: <95833405-18aa-48ad-a5d6-4f659dfbf08a@intel.com>
-Date: Tue, 19 Aug 2025 07:46:35 -0700
+	s=arc-20240116; t=1755614808; c=relaxed/simple;
+	bh=lIQwI5HsEj/MNS6ooAEjHaJqIuOIhzaddWDiwenv7EA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Riz1tnXmYWYZYDmmcPeD0/OjzeVOKEkZaD0qUZPyJ0EU2aN2Clsz+kRDKlvHiV6O+0FJqoZ9q3AacZPOusAweRX1UdTVeQcQs3N/wa/JOqXRLORaJdW92GLrdohemDHMW6mG5N9M0Hg17y5a8aOWyW3iRVCn6+6GdS5hjAKHWS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Xvn2E8EJ; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D0DE31F47A;
+	Tue, 19 Aug 2025 14:46:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755614801;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Nc/LQSMQfGgp1YRf3tUnRSaCb+wuSL3TiqDWsh2u7Q=;
+	b=Xvn2E8EJKnK2mFkg85Mx73CYet081ujXFBzOiakOaRo2V2LGzVAvgvmw2dyNP6RODq8dzG
+	ER8M0Hk40YfSelzHZBRU9PK/jvELYGwnT8ZtQnSuZXIlN+qK2b3DhAB0gw/cNq1x7+zhLI
+	4oYIcL3wTQOxxNaIVXd2zOnyQCGwKODvImC2rdRuNXTcc9QJl0pbZvosjV3NLOg96UAONK
+	NqPqI9ynkKqn/sFG3t4VSQF0cmy3hJF8BYkmMiTkleLZG6f/A1KRKhp5d529/OwuUJlGv5
+	LxiedjIRiRYDouo1J7nL/jGRLhgKtHu7Z8+B5uyPwqFqORjgp+iRh3hX+Wnc2Q==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
+ Xichao Zhao <zhao.xichao@vivo.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Xichao Zhao <zhao.xichao@vivo.com>
+Subject: Re: [PATCH] usb: typec: mux: Remove the use of dev_err_probe()
+Date: Tue, 19 Aug 2025 16:46:39 +0200
+Message-ID: <6186026.lOV4Wx5bFT@fw-rgant>
+In-Reply-To: <20250819112451.587817-1-zhao.xichao@vivo.com>
+References: <20250819112451.587817-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [x86?] BUG: soft lockup in xfrm_timer_handler
-To: syzbot <syzbot+b6ae1c4eede4e0ea287f@syzkaller.appspotmail.com>,
- ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, jgross@suse.com,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
- virtualization@lists.linux.dev, x86@kernel.org,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-References: <68a2dd64.050a0220.e29e5.0096.GAE@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <68a2dd64.050a0220.e29e5.0096.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart5034698.31r3eYUQgx";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheehjeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeekffdvuefgkeejgeefhfdvteeuhfdtleeiudehieeludelvdetleeggfffffenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehhvghikhhkihdrkhhrohhgvghruhhssehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepiihhrghordigihgthhgrohesvhhivhhordgtohhmpdhrtghpthhtoheplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ ehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On 8/18/25 00:59, syzbot wrote:
-> Call Trace:
->  <IRQ>
-...
->  spin_lock include/linux/spinlock.h:351 [inline]
->  __xfrm_state_delete+0xba/0xca0 net/xfrm/xfrm_state.c:818
->  xfrm_timer_handler+0x18f/0xa00 net/xfrm/xfrm_state.c:716
->  __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
->  __hrtimer_run_queues+0x52c/0xc60 kernel/time/hrtimer.c:1825
->  hrtimer_run_softirq+0x187/0x2b0 kernel/time/hrtimer.c:1842
->  handle_softirqs+0x283/0x870 kernel/softirq.c:579
->  __do_softirq kernel/softirq.c:613 [inline]
->  invoke_softirq kernel/softirq.c:453 [inline]
->  __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
->  irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
->  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
+--nextPart5034698.31r3eYUQgx
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Tue, 19 Aug 2025 16:46:39 +0200
+Message-ID: <6186026.lOV4Wx5bFT@fw-rgant>
+In-Reply-To: <20250819112451.587817-1-zhao.xichao@vivo.com>
+References: <20250819112451.587817-1-zhao.xichao@vivo.com>
+MIME-Version: 1.0
 
-From that call trace, I'd suspect a deadlock from the xfrm code not
-releasing the lock somewhere, not x86 code.
+On Tuesday, 19 August 2025 13:24:51 CEST Xichao Zhao wrote:
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> Therefore, remove the useless call to dev_err_probe(), and just
+> return the value instead.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/usb/typec/mux/tusb1046.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/mux/tusb1046.c
+> b/drivers/usb/typec/mux/tusb1046.c index b4f45c217b59..3c1a4551c2fb 100644
+> --- a/drivers/usb/typec/mux/tusb1046.c
+> +++ b/drivers/usb/typec/mux/tusb1046.c
+> @@ -129,7 +129,7 @@ static int tusb1046_i2c_probe(struct i2c_client *client)
+> 
+>  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>  	if (!priv)
+> -		return dev_err_probe(dev, -ENOMEM, "failed to allocate driver 
+data\n");
+> +		return -ENOMEM;
+> 
+>  	priv->client = client;
 
-One thing that stands out is that of the ~20 or so uses of
-'->xfrm.xfrm_state_lock', the call site in the trace is the only one
-that uses spin_lock() instead of spin_lock_bh(). I didn't look at it for
-long, so maybe there's a good reason for it. But it did catch my eye.
+Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+
+
+
+--nextPart5034698.31r3eYUQgx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmikjk8ACgkQKCYAIARz
+eA41AQ//QR8aTYlAaJQzQ4KHzYrI7WpumkxyF8uxkVvPMiCJHCsbpySePEn/sIGe
+tY42RUyYkQ2P5+eWqjJwy5qwFTl3neTxjFzWoJqEwpUBOCzSkKsHfEDoT5MWW7wc
+NUYKbxi73nvVawpfi5N762GxmWxBLgHxmmF0LnBVnldC16xcWCKB5F+PPOzgujk/
+peymHaShLBh+p1R9vXP2a19+wXyoP1DxNb05pfmVUAKTbu4cjExUOpXRdc0Jwfd7
+ZRXDJXyIN8Ahl9UI3alyia0nZkbUvpBpyWC0jpvsVDA7NljmUlGRfmtpQSwgFoR6
+e7ojvmRDU7oJuV002s8T9DSTdMA6HPZofKXDr4jRx/MQeV3p7tfECI5PTqxSuwfC
+kaJXU6b7H20GyIy5GV0J+WZb1cCMZrIVy6RJFUNWSAAb7G6EiIx1yz0H/dYKRAUJ
+Ul59se2GbwBIEauOiuzrHDBzJzUCRSHAevz6jsaiJmMTJQ7BGd01HRO007oHSq5y
+h7bX6ZBF5PHjW6vUWLS120UO4U6O9PAnNr5wF6MASMTU7SZrR0Z92MIblSBg7SyC
+aGd7X74WRQHhy21ufnO2/8xYOi9MqwDb/ig01FKDfAG7iiBUlk9yhSgdP42luczD
+bYWlXT02PR6u2TPeOzSbideSIy2zbdIOLDOVrYP5EkuIGRWUtq8=
+=GBSg
+-----END PGP SIGNATURE-----
+
+--nextPart5034698.31r3eYUQgx--
+
+
+
 
