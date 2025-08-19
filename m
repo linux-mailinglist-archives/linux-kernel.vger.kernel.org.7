@@ -1,137 +1,167 @@
-Return-Path: <linux-kernel+bounces-776619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8553BB2CF9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:05:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F0DB2CF9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404303BE73E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:05:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA797B530B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6524248F51;
-	Tue, 19 Aug 2025 23:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EFB253B4C;
+	Tue, 19 Aug 2025 23:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="an/4N+CC"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS1mNJkK"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E83246332
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB6C2512DE;
+	Tue, 19 Aug 2025 23:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755644713; cv=none; b=c8qXmhATBdokF/qw05UfeMYA6++MnvwpUuCVHdrIg5WXq1iyhjreCru0eFWPfBB+6WSo9Tq2mxTawovxyB+TaqKhLO92eifyqiRi3U9bkr3sRShXLnFBMaAa5GhmddhzjhKB4JoDn4Oa1BFvE6sjIZpTVC7miaiThYvBNmrf+PQ=
+	t=1755644861; cv=none; b=PAcEyvSi7uB6XrwmZF2khLOsc0OU9CqlbVst0KE/Nu1HYW59qs7+m+143DOlxubSOhiYAnuE792oUaE3OZgPX4moN8JMEor8oMnR7VxWyGKBw2BulDtOXir3bnC2qXYjmws/1b6P2x7eOHY3SpFucGrQGDxuIfp1wADWNCNDJSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755644713; c=relaxed/simple;
-	bh=s57YALn7gVQdX0MKPvHRRNAjkYPbaKEVpBGjPx0awnc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ba54mNesMK7VV4eEY0+4tY2V1XSNJCcyT2jMx7s6Lkvw/YR5XUBVSMaYHF8W/dH75JohhWGq8XQ4J1AOt6jUub36vCRai3QVpsQKwnOVDVE3S6vZTaEryiJSj2HM+EoTVVBcvSmssBvFq3GOzbhnylV/Fe9KUctH45fX5qgZVeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=an/4N+CC; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32326bf571bso10527530a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:05:11 -0700 (PDT)
+	s=arc-20240116; t=1755644861; c=relaxed/simple;
+	bh=kP5KICDjVGFTguWffLhUXR9fkMg2CHShAjqdqroa9jQ=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qjelY/ad8zSL1dN3NzOjrr6DeWzX+vQfQmqrA6PyZwHgq1i/ihC379z0nQPNZJrDwiYTEHOWw6vUjzYMzKewelfNXzhrZN1AIp0V0r4NhLeFnCfh7KeXpqbhQKvYO7AhPWBZq/XHZmcGCPZ3XkZ2+zHvdT28q5UlHhZTBbrXd/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fS1mNJkK; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2430c5b1b32so2579685ad.1;
+        Tue, 19 Aug 2025 16:07:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755644711; x=1756249511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:user-agent
-         :references:mime-version:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s57YALn7gVQdX0MKPvHRRNAjkYPbaKEVpBGjPx0awnc=;
-        b=an/4N+CCDc0jKsyqFzPoCPTD7TmK5g9pAFTlVwppUp64ZTDY6+dIamscGEaamI7lkX
-         Fr6m9YXMUm3YHZxbMIfJpYd8noKAkuVtOwO2CnCRxAdDO0lpPf8nNNcsxWjpolUuUjpC
-         J6TKiJxPxrQzoS+bVm+x1O0ZhlgGg6JPOebKxgy697iw/gbevcOYVx9nOM2Im4uxN3ey
-         E+hfou0sKLJduqw7Xhv8M85Nsvio3DapcKFdAcYC25aohtTLruURkGY62xT1ZRJ5R9hR
-         uBv+qwPnZlW6l3I9gILHX/9KXEiu5Rv1My8/BOfHA+jJIbwppV9/uDDQrDx/teEc8+vO
-         UpCQ==
+        d=gmail.com; s=20230601; t=1755644858; x=1756249658; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GYVG8v8pdpVSBv9zxjqFObiIPrbN0RlS5lG6lYDp9ig=;
+        b=fS1mNJkKXbb9w2nS+NgxRVlwae1C5YPenSqzaSw51ESirrRjGQW8Vlra/XcWx7nSDN
+         EoY6q7oDNK9W52qrr0x11m4rDFRl8tqVqu7kg08+WHEM7GgYdSYKcxHE3UKCtuk+w3f0
+         47vFHcTCJieon3dLe3o3oEPFINj4Q16PEyW5qPPs07mwy/hBqhx3WHaYW+7jwdZlHu+h
+         Boc8LC80E6samNBnVVyVKvGr03WV5qDU7XCzthrT3b5jdl/KEQrb6GcCd2ZPwb5Msn39
+         b7042xOlK5Wjvuap5nMJUFJJtxoN9HI5Ojhf4U2KNp+ugL9TtlMxZGxIQlyfl3Rwvytd
+         eGNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755644711; x=1756249511;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:user-agent
-         :references:mime-version:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s57YALn7gVQdX0MKPvHRRNAjkYPbaKEVpBGjPx0awnc=;
-        b=mYz9s+ZU3BzX7ZeEYbe1w+IpAJSefevRPmsFSxwlxwbvEiYDyzkYhaYmAVQXzZWYUE
-         tkRQBZ8VPqcP30uX/qJfU4+eIs2K6+CsziizJaovtbY1z8OSbKgFr6LCOQvG6qkOACA0
-         A8dFUVPJbMXy2heqhlOHxz+Q/ZK4rcvoD/ONkK7ix8SGBdKxlnRRgKtadXo0X7s6tZ6+
-         wGjDy+H3zA/18kE2U2JJ6vWs6Gsx9W1IWHLqP+alCk4BiPwrDZdBzulIVleIhyKoe8bZ
-         40B4UImZKoE9Hv36rR7OYuO6mCUwsqPzzcfcqyXdnkDbjPvvuOPZGwJxzHlC5gCStep5
-         /Iew==
-X-Gm-Message-State: AOJu0YxPqikK1iNt6y/tIg3zz5iqnV8UxOC45j6w4/1vfa0BvrBsLoZO
-	iMq55Z9f0eOFTlKsucuj7UpWkunUB59tcI+EzjS7EIxzpOo6hrsev3vadJlcMp/SVQBoNy+Zr1S
-	dyZc0VTFP+Q==
-X-Google-Smtp-Source: AGHT+IHqM06mS21QPq1I85PoYm4HgMV/ruKHvkhc5ta3MWpAbBvms4h38a9xCaOs0YWBBkFUxXap50j2LlK9
-X-Received: from pjyp12.prod.google.com ([2002:a17:90a:e70c:b0:31e:a094:a39])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5623:b0:31f:210d:2e56
- with SMTP id 98e67ed59e1d1-324e140bf9amr1034862a91.28.1755644711105; Tue, 19
- Aug 2025 16:05:11 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:05:09 -0700
-In-Reply-To: <ftydqeu3zxmgdvkz6f4jrf4qyrs72ar7jc4j3khlkyi4mditfe@g62znohovca7>
- ("Michal =?utf-8?Q?Koutn=C3=BD=22's?= message of "Thu, 14 Aug 2025 18:18:47 +0200")
+        d=1e100.net; s=20230601; t=1755644858; x=1756249658;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GYVG8v8pdpVSBv9zxjqFObiIPrbN0RlS5lG6lYDp9ig=;
+        b=MVYJCvhphqQZokirImqX+xcrXwYzzpzFlcgeLNI0LvDVVEdkcLXAN8LK0Al9i77KNg
+         1KnUBNYt4uQ3HS1CQo98a01JYPFa4OIN68HWBNb+PX0ZxslTNDoJyXwQzO/iZwmRtvcF
+         uFeTiZp91oT7xKy3Uog5rrU6wTnOr5zEWUb7IvnoI+1drGaRM/DoaL5ge0yVhvuS1WLo
+         OK8+gIRcPcvKqMRcaWnMyCxKSnMUw5We0b7AGgvkHH+vgq7z7mUexTgh579wBe8LU3Ij
+         sJejFQl5Ut5BojI053lZfILj0aOu2BF5lqaGmJISz3Qp+2W9z/Uo/YDjThR6Nzqo7mIq
+         RHTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQJKUyem3MlKC6oXsf5JVxrIndUdRwOmvC+q6YvIEKIHFeZkVPX8botw3vFY1cHrEjnovr22Hr8Z2TOik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0yPC+ep3Vvic0hm6Q4rQLZk97RlFIalqL2Z2hEhNRVSQ/+S2+
+	Ughco1JYfmhO2tc9tiyI9N/heEXXRljUexjDaBzAtbQkbuh3lNPSZtuV
+X-Gm-Gg: ASbGncsapKpUFBzB5wQdgxU5iExhET8Ak0sbAYt6WLGzgzh1YilalgffB6cqaNu0yzJ
+	T8wMK4qN+RfdwC7CPKzuCjw1cT7QfYLcUb18ZA6KLSH63NBop0SbR0VGCSGCfPXFct0EOHF/BjB
+	RxbyV2zqE8ohvUsqts9dd3gf2HvQn1qDv+2qCyseEPHGvN+4WzVVaCN27jZOU/FB/sGI32T0Wqm
+	hKe8x9amQdbl73UGks1nhFB7fueJWgU3mFZG2Us9d/2H0uiHGESHig6MAJ8LfIR30qg0b0TCnM5
+	407t6wxOcfqOgzEayIAMgeycvMeHlf9GY54dupNptSBTbwhn/jkmdCcXoE862yy21kMA2fq/Emr
+	G/ytR6MHnsrg33hdZ9a8X9FqwuODttkw1xGkHsmBZQX42fgT3grR+C73MN7U2M8Squc3vA1IaYo
+	kY
+X-Google-Smtp-Source: AGHT+IHKPAN+5QZ7+r8J44EHgjvyKpIvsgvKxfwIW7WnWeJZXqrUiD+Qt2lLAzbIqo7kjb4T6teTcA==
+X-Received: by 2002:a17:903:38c5:b0:242:5f6c:6b4e with SMTP id d9443c01a7336-245ee00e635mr12745435ad.7.1755644858260;
+        Tue, 19 Aug 2025 16:07:38 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed375db3sm8080465ad.59.2025.08.19.16.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 16:07:37 -0700 (PDT)
+Date: Wed, 20 Aug 2025 08:07:21 +0900 (JST)
+Message-Id: <20250820.080721.742789396303033039.fujita.tomonori@gmail.com>
+To: lyude@redhat.com
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, a.hindborg@kernel.org, fujita.tomonori@gmail.com,
+ boqun.feng@gmail.com, frederic@kernel.org, anna-maria@linutronix.de,
+ jstultz@google.com, sboyd@kernel.org, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ lossin@kernel.org, aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org
+Subject: Re: [PATCH v8 6/7] rust: time: Add Instant::from_ktime()
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <20250819201334.545001-7-lyude@redhat.com>
+References: <20250819201334.545001-1-lyude@redhat.com>
+	<20250819201334.545001-7-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250805032940.3587891-4-ynaffit@google.com> <20250805032940.3587891-6-ynaffit@google.com>
- <ftydqeu3zxmgdvkz6f4jrf4qyrs72ar7jc4j3khlkyi4mditfe@g62znohovca7>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Message-ID: <dbx81pp6syje.fsf@ynaffit-andsys.c.googlers.com>
-Subject: Re: [RFC PATCH v3 2/2] cgroup: selftests: Add tests for freezer time
-From: Tiffany Yang <ynaffit@google.com>
-To: "Michal =?utf-8?Q?Koutn=C3=BD?=" <mkoutny@suse.com>
-Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, 
-	kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-	cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-TWljaGFsIEtvdXRuw70gPG1rb3V0bnlAc3VzZS5jb20+IHdyaXRlczoNCi4uLg0KDQoNCj4gCWlm
-IChjdXJyIDwgMCkgew0KPiAJCXJldCA9IEtTRlRfU0tJUDsNCj4gCQlnb3RvIGNsZWFudXA7DQo+
-IAl9DQo+IAlpZiAoY3VyciA+IDApIHsNCj4gCQlkZWJ1ZygiRXhwZWN0IHRpbWUgKCVsZCkgdG8g
-YmUgMFxuIiwgY3Vycik7DQo+IAkJZ290byBjbGVhbnVwOw0KPiAJfQ0KDQo+IEkgbWlnaHQgbGlr
-ZSB0aGUgdmVyc2lvbiB3aXRoIGxlc3MgaW5kZW50YXRpb24gYW5kIGV4cGxpY2l0IGd1YXJkcy4g
-SXQncw0KPiBvbmx5IG1pbm9yIHN0eWxpc3RpYyBpc3N1ZS4NCg0KDQpOb3RlZCEgV2lsbCBiZSBm
-aXhlZCBpbiB2NC4NCg0KPj4gKw0KPj4gKwkvKg0KPj4gKwkgKiAyKSBGcmVlemUgdGhlIGNncm91
-cC4gQ2hlY2sgdGhhdCBpdHMgZnJlZXplIHRpbWUgaXMNCj4+ICsJICogICAgbGFyZ2VyIHRoYW4g
-MC4NCj4+ICsJICovDQo+PiArCWlmIChjZ19mcmVlemVfbm93YWl0KGNncm91cCwgdHJ1ZSkpDQo+
-PiArCQlnb3RvIGNsZWFudXA7DQo+PiArCXByZXYgPSBjdXJyOw0KPj4gKwljdXJyID0gY2dfY2hl
-Y2tfZnJlZXpldGltZShjZ3JvdXApOw0KPj4gKwlpZiAoY3VyciA8PSBwcmV2KSB7DQoNCj4gSGVy
-ZSBhbmQuLi4NCj4+ICsJCWRlYnVnKCJFeHBlY3QgdGltZSAoJWxkKSA+IDBcbiIsIGN1cnIpOw0K
-Pj4gKwkJZ290byBjbGVhbnVwOw0KPj4gKwl9DQo+PiArDQo+PiArCS8qDQo+PiArCSAqIDMpIFNs
-ZWVwIGZvciAxMDAgdXMuIENoZWNrIHRoYXQgdGhlIGZyZWV6ZSB0aW1lIGlzIGF0DQo+PiArCSAq
-ICAgIGxlYXN0IDEwMCB1cyBsYXJnZXIgdGhhbiBpdCB3YXMgYXQgMikuDQo+PiArCSAqLw0KPj4g
-Kwl1c2xlZXAoMTAwKTsNCj4+ICsJcHJldiA9IGN1cnI7DQo+PiArCWN1cnIgPSBjZ19jaGVja19m
-cmVlemV0aW1lKGNncm91cCk7DQo+PiArCWlmICgoY3VyciAtIHByZXYpIDwgMTAwKSB7DQoNCj4g
-Li4uaGVyZQ0KPiBJJ20gc2xpZ2h0bHkgd29ycmllZCBpdCBtYXkgY2F1c2UgdGVzdCBmbGFraW5l
-c3Mgb24gc3lzdGVtcyB3aXRoIHRvbw0KPiBjb2Fyc2UgY2xvY2sgZ3JhbnVsYXJpdHkuDQoNCj4g
-SXMgdGhlIGZpcnN0IGNoZWNrIGFueWhvdyBtZWFuaW5nZnVsPyAoSSB0aGluayBpdCdzIG9ubHkg
-YXMgc3Ryb25nIGFzDQo+IGNoZWNraW5nIHJldHVybiB2YWx1ZSBvZiB0aGUgcHJlY2VkaW5nIHdy
-aXRlKDIpIHRvIGNncm91cC5mcmVlemUuKQ0KDQoNCkhtbSBJIGhhZCBvcmlnaW5hbGx5IHB1dCB0
-aGUgY2hlY2sgYXQgMikgaW4gdG8gbWFrZSBzdXJlIHRoYXQgdGhlIHZhbHVlDQppbmNyZWFzZXMg
-YXMgZXhwZWN0ZWQgZm9yIGFuIGVtcHR5IGNncm91cCAodGhlIHNpbXBsZXN0IGNhc2UpLCBidXQg
-SQ0KdGhpbmsgdGhlIGNoZWNrIGF0IDMpIChhbmQgbW9zdCBvdGhlciBjaGVja3MgaW4gdGhlc2Ug
-dGVzdCBjYXNlcykNCmVzdGFibGlzaCB0aGUgc2FtZSB0aGluZy4NCg0KVGhlIG90aGVyIHB1cnBv
-c2UgaXQgc2VydmVzIGlzIHRvIGFjdCBhcyBraW5kIG9mIGEgYnVmZmVyIGZvciB0aGUgdGltZQ0K
-aXQgdGFrZXMgdG8gZnJlZXplIHRoZSBjZ3JvdXAgKHRfMSAtPiB0XzIpIHRvIGVuc3VyZSB0aGF0
-IHRoZSBjZ3JvdXANCndvdWxkIGJlIGZyb3plbiBmb3IgdGhlIGVudGlyZXR5IG9mIHRoZSBzbGVl
-cC4gSS5lLiwgcHJldmVudGluZyB0aGUgY2FzZQ0Kd2hlcmUgd2UgZmFpbCB0aGUgY2hlY2sgYmVj
-YXVzZSB0aGUgdGltZSBtZWFzdXJlZCBhdCB0XzMgZW5kcyB1cCBiZWluZw0KKDEwMCAtIHRoZSB0
-aW1lIGl0IHRvb2sgdG8gZnJlZXplKS4NCg0KVGhhdCBzYWlkLCB0aGUgdGltZSBiZXR3ZWVuIHdy
-aXRpbmcgdG8gYW4gZW1wdHkgY2dyb3VwJ3MgY2dyb3VwLmZyZWV6ZQ0KYW5kIGl0IGJlZ2lubmlu
-ZyB0byBmcmVlemUgaXMgYmFzaWNhbGx5IG5lZ2xpZ2libGUgcmVsYXRpdmUgdG8gdGhlIHRpbWUN
-CnNjYWxlcyBpbiB0aGlzIHRlc3QsIHNvIEknbSBoYXBweSB0byB0YWtlIGl0IG91dCENCg0KKElm
-IHdoYXQgSSd2ZSB3cml0dGVuIGFib3ZlIGlzIHdvcmRlZCB0b28gY29uZnVzaW5nbHksIGlnbm9y
-ZSBpdC4NClRMO0RSOiB3ZSBkb24ndCBuZWVkIHRoaXMgY2hlY2shIEknbSB0YWtpbmcgaXQgb3V0
-ISkNCg0KPiBXb3VsZCBpdCBjb21wcm9taXNlIHlvdXIgdXNlIGNhc2UgaWYgdGhlIGxhdHRlciBj
-aGVjayB3YXMgYXQgbGVhc3QNCj4gMTAwMMKgzrxzIChiYXNlZCBvbiBvdGhlciB1c2xlZXBzIGlu
-IGNncm91cCBzZWxmdGVzdHMpPyAoRGl0dG8gZm9yIG90aGVyDQo+IDEwMCDOvHMgY2hlY2tzLikN
-Cg0KTm90IGF0IGFsbCEgSSdsbCBtYWtlIHRoaXMgY2hhbmdlIGZvciB2NC4NCg0KVGhhbmtzLA0K
-LS0gDQpUaWZmYW55IFkuIFlhbmcNCg==
+On Tue, 19 Aug 2025 16:05:57 -0400
+Lyude Paul <lyude@redhat.com> wrote:
+
+> For implementing Rust bindings which can return a point in time.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> 
+> ---
+> V4:
+> * Turn from_nanos() into an unsafe function in order to ensure that we
+>   uphold the invariants of Instant
+> V5:
+> * Add debug_assert!() to from_nanos
+> V8:
+> * Change name of function from Instant::from_nanos() to
+>   Instant::from_ktime()
+> 
+>  rust/kernel/time.rs | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+
+Thanks!
+
+
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 64c8dcf548d63..5c40ebe096357 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -200,6 +200,29 @@ pub fn elapsed(&self) -> Delta {
+>      pub(crate) fn as_nanos(&self) -> i64 {
+>          self.inner
+>      }
+> +
+> +    /// Create an [`Instant`] from a `ktime_t` without checking if it is non-negative.
+> +    ///
+> +    /// # Panics
+> +    ///
+> +    /// On debug builds, this function will panic if `nanos` is not in the range from 0 to
+> +    /// `KTIME_MAX`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller promises that `nanos` is in the range from 0 to `KTIME_MAX`.
+
+The comment looks outdated. 'ktime'?
+
+
+> +    #[expect(unused)]
+> +    #[inline]
+> +    pub(crate) unsafe fn from_ktime(ktime: bindings::ktime_t) -> Self {
+> +        debug_assert!(ktime >= 0);
+> +
+> +        // INVARIANT: Our safety contract ensures that `nanos` is in the range from 0 to
+
+Ditto.
+
+> +        // `KTIME_MAX`.
+> +        Self {
+> +            inner: ktime,
+> +            _c: PhantomData,
+> +        }
+> +    }
+>  }
+>  
+>  impl<C: ClockSource> core::ops::Sub for Instant<C> {
+> -- 
+> 2.50.0
+> 
+> 
 
