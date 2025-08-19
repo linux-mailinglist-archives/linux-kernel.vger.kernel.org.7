@@ -1,157 +1,130 @@
-Return-Path: <linux-kernel+bounces-775130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E025B2BBB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:23:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43242B2BBB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B1D1170E07
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11CBD1889161
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE849310645;
-	Tue, 19 Aug 2025 08:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2981626B2AE;
+	Tue, 19 Aug 2025 08:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="E3TQQHMD"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHXOGQD/"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5327B1FC0E2
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BF925F984
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755591777; cv=none; b=mwQjTZUE11rBMn2YyuIJaoZp4RQipvo31k9OVsaiaagZqF4F3mqGDYfZgA81/oXWFux8M3Q1JF0rdfGoCrug5QNGTzeY6EK8KhjX1ljiHjS3Xtl/peb5kT8EuSqlYVmoSI/zlx1u+db8xhKqBIrMmEnkiPBO8RHQX12wtfS+IGo=
+	t=1755591790; cv=none; b=SBKGll6GKTkNsAgsqmflly7q52OSDrDJx/XXla9UvvUED1lYf0xpULzsIvgbLBPz4Wu/EpatonqKSV5a4rI5IoHZ9N5wzWZf7gaToufizETIXiRZk9nCvUm+1CHr4sCmFCzpaEZGl3fPlThtBwO3kygIsDb+gFKw10RWGOvlG2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755591777; c=relaxed/simple;
-	bh=m7Qft2exuOUoR0wMKCXPDgPvneFrO1oxaOH/gu7phBE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=RG1pftTfVWdroVhoD19CeRP54cFCrCLrHPvXRM6x+fnzn4V75odOA5ssUMGHRwOt+l2RB3/ASjDGTpkDlkmesCAyWVx0aYgzrrmcMy6QfpTgihWKWrGsoJERLxAlUAINbddGyAz9lHyn8+zqTd7ExOpPiaiGaNL5VWPVdvZh4ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=E3TQQHMD; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb78ead12so707868766b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:22:53 -0700 (PDT)
+	s=arc-20240116; t=1755591790; c=relaxed/simple;
+	bh=3GltQsZsTJB2ktXRLHZv7Us6GHmE2woUtqvFijXVQHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pVrm46aGAwGzkprf2cOjmfeKvjFPKTiu6e5XZ1khrC85NYCU6wwD2rm54VizyUpOD4Sbpf/4IiLyrInSFYNWaI+cNC5bDL0G0CNAZIZU0B+3E0VlP4Mcfq1V0QJOqKXD9NKoj8WMbXEzb+t7zHRiNWlM/PSo1Qcd4dkVGre0l94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MHXOGQD/; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b004a31so35085435e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:23:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755591772; x=1756196572; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1Njkru38l0QOoJlAufglEomIeGj1U8B+0WCyzenuAc=;
-        b=E3TQQHMD1Xh9mQGwkCZhSk/Q3AF1flCcNIb7dc/5XKBhyH+wF59p+rf96GdTMEX59g
-         qUxxJBO2AHhXCkMK1k3iaroRVt+fgNDAKZp3Mq5H7vBijt+tswOEPluxeAWxdO+sOkZC
-         fo9XBca32zDxfjopOtE1XGK8yzxuKyyyQDDy7mV/mgkXwtqAK8MjghyZKHtxVLP56yvC
-         L85Ivr9wgvSZvZ+XSrlyvGdRIRRjSh08yzejn0AOmmAECUQxzWUujVqHpxkWkV91Pdwb
-         EIP3M179brlFObMlb7w7msfJDs7Rf2T/tpyVqSnWvRbs150IC2JnF9MDo3+/s3GnIJ3d
-         g2Qw==
+        d=linaro.org; s=google; t=1755591787; x=1756196587; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gk3UUuT0kF+OIQoIGwD56lsNrHwvbK9Pa+dkiVqzMsY=;
+        b=MHXOGQD/XFQ+w6bG0xUTbtduZh22pYUKS9KR0dFe/zs2ax63ICbotJgsH0NS8MS61J
+         n3Pd09UQxOH78z6oE2kIxESXMgujRJkTV6ui4zgb6jCsOrKsq5u65U6UIifC0QrnlzWM
+         hj0fniwgb5gMm/f2ZaCaylvOy1rKJ8n1rl74SNOM82DJN+2YSs9Hiu2FhI0VshbvD6A+
+         IeHj8oAvN2wwmuj5OOuienSTivM30EL32KdB+UTwYi4grOEqJH+NVq+l4e8kOOCnEnnN
+         MZWqLlJAwruqa4zaJ/RX30etsbGM75y3GDsCGlQ14SxHB/FpZ6K5VJ1XtGJyyt4gb7sH
+         rhWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755591772; x=1756196572;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L1Njkru38l0QOoJlAufglEomIeGj1U8B+0WCyzenuAc=;
-        b=BjzdhCz9Ixwa/v06h0u/Qo1Ttyg4SVflv/1k9fvwbAzGHrI8jjWoZQ0Vzt9HOGw3mF
-         vONiuS5ef4RhLNRyUjM+5kg8yDrxjKD9QTuNIUvSZ5PS8N+ot89dNk8Nmk1me9Z/Zyio
-         LshlN92KzTre9f7lu2JxpXrK0GnsM0sJa28ffrnVUscIFwh5C5IN6uh+0V0LkWMqmYIF
-         AtGpi5H453DPPTMKEN6uZbRRR+2W3xyUBoIDRGDvNXn3CAhIygh62UGSJ/e48WqizeMa
-         wIAWJuFdvci5NymwFgB5FaPRWPCD6R88KDYA0UJckYBjtm5WkfToGBxNy48EFSstnLUD
-         npag==
-X-Forwarded-Encrypted: i=1; AJvYcCWkRFy826tMaNT3XANqfud0veoD36ivGHiPG3oafy/0MBV++3mL13bCRfDel1z9BOgBV/AG6iVHppDozJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFdYmw8UVG54g4oQTYwxm3kRQ47maZ1bzgsiHH5MG8pJsVU3YX
-	13SwZP2YdXi+1Z/Fum2LoJSfC2/cv/QMYcf8Hk5+/KmyMzzGAhyvCsYEk0jGtl3IwMQ=
-X-Gm-Gg: ASbGncss3D7sItWndxK9504Nciw8l2Mn5Wdh/yJQQpigVyY29FoV+YKSwe+o8Rhkl1z
-	vEPr9F3sRBaHGZ4BRiu75/IU1lRPnYu6gNRg6je7cyzZOYKOxELNh5lae5aH2GWMsqEZZq+G1da
-	SUwuNXCPFNEGVSCYQIXiMoRJxZeEECFlzx6Q3mjXwcmJMuMBtxuLOcAJRiVmRWrKybFnf0udHJ+
-	DI4Ey0vvhUnaGPPKOTYq0e84/pxRpmx3lN8eqCWRkmoZni2SNAIOrrdlgsuUq8r7ZCh6Kdz4Uqj
-	ZgOY0JlkAUysQ0onf8uT5StsxV3FkxXiamWsAQQC8QMxSUF1eWTwGG3BCW52Lmavp3PcR72OO0H
-	42IRvqsEIyZ7nX2Z/gpLakC3l
-X-Google-Smtp-Source: AGHT+IHQ6IdI5sz4L18Yu1QZQTvncbAaZVp3nVGEwQGE+IqJb6cAlIJuAKwGy+/BUZFGq/kMFQJjyg==
-X-Received: by 2002:a17:906:2a99:b0:af9:885e:d36c with SMTP id a640c23a62f3a-afddd200cefmr130153366b.51.1755591771920;
-        Tue, 19 Aug 2025 01:22:51 -0700 (PDT)
-Received: from localhost ([195.52.61.108])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-afcdd018a78sm952328866b.94.2025.08.19.01.22.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 01:22:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755591787; x=1756196587;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gk3UUuT0kF+OIQoIGwD56lsNrHwvbK9Pa+dkiVqzMsY=;
+        b=JBiUT5LY5RoIYxsLFDMhsG4bpDA2wkfUu3PbcHq3TNGkui8oYntx2yvtAjQ/sk3dzN
+         +KyqYgZYrQg6TtIlszjrs8HWpg9KG7JbQVeSs9/pe0Bw3bz8THmz2bugScX/fmFi0WRN
+         CPGtHj9MIq49k1hiG3fiy9FpiLCt3xaXVPXxyywJQw+Nw9yn+yICLLvo0Y5tTDbXIqmd
+         3JvOmujTS2r2aGMz84Ezefdh2U/PWuWTAyFSYkVFTcy/+sZeR6y+1NbgD2dPxasCBFli
+         0FTCEWXl/2jv60iFH0GnxvUu058gAHGvxj4IxboFesFM83xPSsXzx21sCT2ZyrA2tdUV
+         kr1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1JI3V2sdIrt+GJ/wuweZ14uXaKdOvZaQhyV36N5bnGp6zRVx+6nCIz7XObI2sjQH6odDwEektUS55k+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMJFcafBvTwvItrRYWSU/7hpDk9SKRpxevPPaifcdMPEvrMI3I
+	jfUV28LiGfVWvcHj17i1s1jn6Ib0txMnCRBse8W56EY3BygtUhZVXnM9s6BC3kBko2Y=
+X-Gm-Gg: ASbGncsTRixaFRR6dF4826V20HlTPQPliXw0IWsYUGMLMO2wmDFIu9licJzPN9dP1i2
+	QBxzDHJDZ4MsUsa4++PuBNJLI+r4R6Ydf1CFPBPxjjFhbmhexPK319pNkLEylfIpUyGwHyHi+jt
+	bAvCrQ2UlEjX4/aaOwcG3FpDGRZgnP8PRM7PWq7g7pQHTIlugUOfibc8acTZl7UMAXBtgG0/vXa
+	ioTMX7gDghYDhdIq6UpgeA7qlQreJdn3vKGpdgOgsOZ4JKgjjqV0wfcHB3CGkNY0/NqV+gMsQBv
+	+TAPq/FvvQTY32UyzuOs7SsRx1jJFWqQww5YgVeuDTou/gBAGjYra/4LZ+SpZERmvjskiFO5xC/
+	tqlPCw/+H3WDwznMy/paclDAzLcoqFoNML2v1Xw==
+X-Google-Smtp-Source: AGHT+IFDBrqa6UO2Yq2aEToJiMTjs1+Jp6h8jHSwfsl8qYZjSrSubOzy3gKS/Bv9eTIZLkdGhNbxVA==
+X-Received: by 2002:a05:600c:4446:b0:459:e048:af42 with SMTP id 5b1f17b1804b1-45b43e0d613mr12404945e9.24.1755591787335;
+        Tue, 19 Aug 2025 01:23:07 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a8debbsm30166165e9.17.2025.08.19.01.23.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 01:23:06 -0700 (PDT)
+Message-ID: <5f3fa6be-3727-4536-b769-c0a3d1646c3d@linaro.org>
+Date: Tue, 19 Aug 2025 09:23:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=b503e628a8fe4bcc91b58492e55f6736818a0e22ecd6078894dcbad57484;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 19 Aug 2025 10:22:45 +0200
-Message-Id: <DC69CAZD1X5T.XGQPHLBKGPTP@baylibre.com>
-Subject: Re: [PATCH 1/7] can: m_can: m_can_plat_remove(): add missing
- pm_runtime_disable()
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
- <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>,
- "Patrik Flykt" <patrik.flykt@linux.intel.com>, "Dong Aisheng"
- <b29396@freescale.com>, "Fengguang Wu" <fengguang.wu@intel.com>, "Varka
- Bhadram" <varkabhadram@gmail.com>, "Wu Bo" <wubo.oduw@gmail.com>, "Philipp
- Zabel" <p.zabel@pengutronix.de>
-Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel@pengutronix.de>
-X-Mailer: aerc 0.20.1
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de> <20250812-m_can-fix-state-handling-v1-1-b739e06c0a3b@pengutronix.de>
-In-Reply-To: <20250812-m_can-fix-state-handling-v1-1-b739e06c0a3b@pengutronix.de>
-
---b503e628a8fe4bcc91b58492e55f6736818a0e22ecd6078894dcbad57484
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-On Tue Aug 12, 2025 at 7:36 PM CEST, Marc Kleine-Budde wrote:
-> Commit 227619c3ff7c ("can: m_can: move runtime PM enable/disable to
-> m_can_platform") moved the PM runtime enable from the m_can core
-> driver into the m_can_platform.
->
-> That patch forgot to move the pm_runtime_disable() to
-> m_can_plat_remove(), so that unloading the m_can_platform driver
-> causes an "Unbalanced pm_runtime_enable!" error message.
->
-> Add the missing pm_runtime_disable() to m_can_plat_remove() to fix the
-> problem.
->
-> Cc: Patrik Flykt <patrik.flykt@linux.intel.com>
-> Fixes: 227619c3ff7c ("can: m_can: move runtime PM enable/disable to m_can=
-_platform")
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-
-Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
-
-> ---
->  drivers/net/can/m_can/m_can_platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/can/m_can/m_can_platform.c b/drivers/net/can/m_c=
-an/m_can_platform.c
-> index b832566efda0..057eaa7b8b4b 100644
-> --- a/drivers/net/can/m_can/m_can_platform.c
-> +++ b/drivers/net/can/m_can/m_can_platform.c
-> @@ -180,7 +180,7 @@ static void m_can_plat_remove(struct platform_device =
-*pdev)
->  	struct m_can_classdev *mcan_class =3D &priv->cdev;
-> =20
->  	m_can_class_unregister(mcan_class);
-> -
-> +	pm_runtime_disable(mcan_class->dev);
->  	m_can_class_free_dev(mcan_class->net);
->  }
-> =20
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/13] spi: spi-fsl-lpspi: Add compatible for S32G
+To: Mark Brown <broonie@kernel.org>
+Cc: Frank Li <Frank.li@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+ Fugang Duan <B38611@freescale.com>, Gao Pan <pandy.gao@nxp.com>,
+ Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Larisa Grigore <larisa.grigore@oss.nxp.com>,
+ Larisa Grigore <larisa.grigore@nxp.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+ Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
+ <20250814-james-nxp-lpspi-v1-10-9586d7815d14@linaro.org>
+ <aJ4qNVIp788gc2ZU@lizhi-Precision-Tower-5810>
+ <1f3b68d4-e0cc-4952-a695-322ed9756b95@linaro.org>
+ <35f6a3be-d924-403d-b60b-d4c78d833a60@sirena.org.uk>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <35f6a3be-d924-403d-b60b-d4c78d833a60@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---b503e628a8fe4bcc91b58492e55f6736818a0e22ecd6078894dcbad57484
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+On 18/08/2025 4:18 pm, Mark Brown wrote:
+> On Mon, Aug 18, 2025 at 03:31:08PM +0100, James Clark wrote:
+>> On 14/08/2025 7:25 pm, Frank Li wrote:
+> 
+>>> binding doc should first patch. Create new patch serial for add S32G
+>>> support only.
+> 
+>> I'm not sure putting the binding doc commit first would be right? That would
+>> imply it was a valid binding before it really was because the code change
+>> hasn't been made yet. Practically both are required so it doesn't really
+>> matter which way around they are.
+> 
+> It's the general practice everyone has adopted (though in this case the
+> bugfix bits might want to go before the bindings, possibly it's also a
+> bit unusual to do that).  An unused binding is more acceptable than an
+> undocumented one.
 
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaKQ0VRsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlNm
-MQD/ehJlyjV9qxlZOvdKCqkSom2T+5Mpi2A2cSo+AdV7WcYA/1oPIUAvbvp1Wnd9
-cDdrbLzXQ+tlisjks+4a/+Lj/fEF
-=BpmN
------END PGP SIGNATURE-----
+Fair enough. I can flip them in the next version.
 
---b503e628a8fe4bcc91b58492e55f6736818a0e22ecd6078894dcbad57484--
 
