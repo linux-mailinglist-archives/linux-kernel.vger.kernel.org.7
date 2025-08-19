@@ -1,187 +1,221 @@
-Return-Path: <linux-kernel+bounces-775263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB58B2BD38
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:26:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7B6B2BD23
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A87843BA799
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:25:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CDE57B49CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF69A32274B;
-	Tue, 19 Aug 2025 09:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C7D31E112;
+	Tue, 19 Aug 2025 09:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="F7nP+KC5"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013058.outbound.protection.outlook.com [52.101.127.58])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="msrFK4Ro"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E683218D3;
-	Tue, 19 Aug 2025 09:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755595322; cv=fail; b=aZKwgS2/gRvfyx1gnhqrPub55LBlmf5OEgNvH1H/6wP7MSIJlbouDZ3MkZbzIzVRBECd9ivqJLpoMR5ZJUMYvVVTvGbHVJsDaRKuMg5JQCNB7+OjLZyEV+gPjbRRUGEE7tYhgTMTgeNUhbAzHDNfYgOtYpylkw9WYI97f7gTSYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755595322; c=relaxed/simple;
-	bh=SnmcTZzhjRkH3wk511e2cbo7nD1JBytQef+iGEAaSjI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tasiYuhAqHfIwperkzE23+Uv+nuzQkRW1GE3sY+3O5Yvuj2O7NTj7iiaV2QYdxwOw6AR9gVGbkiHzwpvZWSOuX/qiFQBExKDaCDlyBJzM4jR4hI3i6wIZRPp6WwKsJ+XNtBaBT9d1wihbGp9hkPeVfpOqDP3Q6T/+EGWwyrH09c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=F7nP+KC5; arc=fail smtp.client-ip=52.101.127.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cXf5MXZZo+D5BsN+G1Wi6OrZRbXleJQWedl5lDsMbZ8fz7GxxR9HH7Y9Tv4ePDhj/bQvQmo5qt9zyOb3GOpNOJRSReXc1iN0HW9brFs28dEvK8Fa1/vA4kMqFfkX1FZFFypjeM+69/Qhnfd5yOi6T9eJ9KYFr/uJffgQN1MR+/Nfgw09y+Ok72OJpvl0Hieuh+/PJXiXKJxnsQ9c6vzfBBrg4M5C2tSkP6KRxXboXFNsFu/vUTq1EYHj8erzpYsuTc/xSxH65mlUuUugxXNbEc+zAsvqDNz9ti7rvr6tBqXsEB90AIRycGoc5EKG8bquHGfy2byIx5auYuyW/Gc+3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qwlHh0HNKyu/59eFD9lsrMnnR8EWmFnhvD+zHwNgOIk=;
- b=Kfp/UerlgXzzIdkrI2+cfTkKqGGOtXR7TfjuFBzZwDhA4VAnNEyPz15+3P1jMxXjbP4CeUlpABuzy3nvAIvTbz+x6rLz1s8FXidUauTjOZAsvPqbUp/T5z0IDIcKJjP6N6qgorgw/og21Udn1fKzvERHnnc4wPkrJFf/Ja1/ti1UZTSWojtPLO/iBr820C89Y6CHxty0icfU/1hrWu5PckuitzRdpc7tZcAjhnEE2yKvnJOkd4rdWbszvjufx01bHo2pxH1LO25FJEi1f0alUAh1U9lMTAdDbUxAJe/d+nb3M160RuOlACsh2VkifYGAVlPSa0a4fDSsKuvf081FLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qwlHh0HNKyu/59eFD9lsrMnnR8EWmFnhvD+zHwNgOIk=;
- b=F7nP+KC5Y0YaO9s30OJLsZjSyXFrqjnLz274q6bST1gjlkDGGBLBRZEpNOKZkX0GsGZ7v+QHMox9CNstOYFbUrBVjZr+kUjzjecDEq6z/pulw6Ips8oc0Mvbn2ozOEtlQxmGJOJbDkfFP5rVi6mBRah0Jbp8nmbTEBFfOsaZOqNjZxOrtct2u+unwv6DwBTJfmZ8lKT7TyNaYxUwIv3fqNp1dt1mcqMIpnvIuzD8SzXvp+S/suA5EvnQ0qf/oFJrqlWJG9tjfE0806sGaNYx+BLc/NVZt20qrA7l4ZnoXGE9oFIg1uFl2wR7fTx7Ro4vdWtKmRC0em5BGH93i6Lb8g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by TYZPR06MB6657.apcprd06.prod.outlook.com (2603:1096:400:451::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 09:21:57 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
- 09:21:57 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-spi@vger.kernel.org (open list:SAMSUNG SPI DRIVERS),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG SPI DRIVERS),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH v1 6/6] spi: s3c64xx: Remove the use of dev_err_probe()
-Date: Tue, 19 Aug 2025 17:20:43 +0800
-Message-Id: <20250819092044.549464-7-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250819092044.549464-1-zhao.xichao@vivo.com>
-References: <20250819092044.549464-1-zhao.xichao@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0038.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::7)
- To KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C8A31AF0A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755595288; cv=none; b=f5OP7JXjC3BX6kExvpDVmRjh36RNzd1vgNpdYI9rt5CFeLjLCLH1ux2IL8Qo18CEfhxmFQkj3jnmiP/3+hu8L29gJ/tMQ2QMpC2jX4sk8V2JRwMFpGv/HamAPQQJzlFn7Ygf2PJ+8GUo9Hp5RkJVoOofD2KJdjMBMWN8EwPr8kM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755595288; c=relaxed/simple;
+	bh=0jmiH6kpZzOWCrEpa3YgJuDHODp5nvFroYBZh4Xq3Rw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q6PYMbJAtGqhnK59HGD3ZMu27wNa8Mlm9RQS+4vVr0OZvmcr1DfkC8OYSM0Yw//oxZOszwQh08hdvAadgK7mcxVvHiWgq0xatAwrjNL/Tb1vMLeVXopW6FBRyfxvoZ7uNb2rJDOxecqJHJgVI72A+TUm/O/RGecvVm5VPr9jeZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=msrFK4Ro; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90Yek017995
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:21:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KlJCbxiJKbGRGD1t4zE54FkwtVH9D8pRHGO5Xqy7uKM=; b=msrFK4RoFCZod9t3
+	7BGSr8S3M5EYZoy33HZijMuv3jk15iuK6j6J/tL9GqczAX+mrNMPU3HNjo82QkVA
+	5kb5QEKBktH+MEhc/YO3x7olZsRLoXTKpn7GVeJjyU3GQgFtln0Zd/I87sEZaW+n
+	PetaRMHpwiniWjZiqiz2VHKpx7y7mtbPnBOtjifrAZUdiS1JdoS/837hMtX/LL7t
+	EBDYCHyGx3K9dSpESgUbZpZnMPVeMZ+CF9/VSk2v52Ti5Qm3eNCd0071ujoENKwv
+	zgCzimPJVHQtqfrk1LQtNYZLPrPtX7nUiBDtpluZLPvHkQub1iPSrnnnkSF6+7rg
+	+jMZMQ==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jhagywb1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:21:25 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4716fa1e59so4311596a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:21:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755595284; x=1756200084;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KlJCbxiJKbGRGD1t4zE54FkwtVH9D8pRHGO5Xqy7uKM=;
+        b=f4rDf5vSQWuhAybalzeraswijMLr4Jm0X/fthdlQ7QO96gk+H/gpjAZ9ybNaKfvhkT
+         eHD4pAsC12ceNN6puPkHrHf1pKhJ4D0aEtfyOiLxzAWMhxSt6TlkERKrZVD0ZW3DNWXV
+         1h3tl8cEQtz9ng/4w0TYy5toJr88a+XBDo2Zsv3bTi+os6BDKsvjQiIwrRxc5uP2PCPg
+         XrjDg2sDu2qmu5NbQ8t8ZGxNzdBXsuQtGB2bmLt5D1avGzchJdqAl1lYP7JRUaBiB0nZ
+         DK+MjsTQKcj1duiFRb3yLTw3sqGHma4gR+FMOpHcGlw8xzhU13AhU+t9BJW0mt9nq6Sd
+         59uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXM+A/UcMlWyLcivikQMbAUO3uDaDdgNnt8SgvyXCNzrneXk7EjbONRzR7YC0r7PD8NQOaP2Jy14AAwu8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKyBYHDk+z5Bjt8vLslhwD9rq6xwI0pJFP48ac7h/nhpEt63G2
+	OuFDSSLA6+zCMAjEPLCpaKY2Gz6GMXMCXTW+CIxB0JrY9p8PSABeiXdLq8ncMBdiQczGWmOKI8R
+	rN7VCcM+hyNsyaZm23EzIwSS/jowANNLOQTmqWdcg+KjsT0bBXDXsbcD4QsXoOoeS8tc=
+X-Gm-Gg: ASbGnctyjLmitkIxjlFdF+4ygxy80Q6cq8syH0KWQAFJ8tcUXrCRam/zDyjWoc18awc
+	CtUT6XetlQhilEPrFvHP7CJ8TPdufixn9lpIvfvIY96eFHiONfPNCCiRa1Hd3yCC0TlpnP5NQ6l
+	wX9SIl9JOFRUsExbEwqQwwDIvbOQs5KccKc8WkcscZKkUcDu392I397N2D2wRbAPj8i+wAG2cI3
+	09n4UEgQ2rD8Y3/x19lwZ5hrPCc/qdukeRGwA3bU08kLkrEwt0n+fgmv7u89e/hP28cpVL+Xc62
+	jXfzfJ/csFJi72Aq0lImPOlgPm4a2qHp735fGGG6El4pxZQyVjlDpBHVarbkRr37aMmCh7+YS4f
+	eOxyJKJebwtYd
+X-Received: by 2002:a17:903:4b47:b0:243:3fe:4294 with SMTP id d9443c01a7336-245e02d5107mr24136905ad.12.1755595284572;
+        Tue, 19 Aug 2025 02:21:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3mirU7iAl50GXTUGoqZomYHrb0Rj52+kFhbDwTJbx+QjqCieMTG//px0XqTrubDvgQSl5UQ==
+X-Received: by 2002:a17:903:4b47:b0:243:3fe:4294 with SMTP id d9443c01a7336-245e02d5107mr24136525ad.12.1755595284039;
+        Tue, 19 Aug 2025 02:21:24 -0700 (PDT)
+Received: from [192.168.225.142] ([157.49.241.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cadf96fsm103719455ad.41.2025.08.19.02.21.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 02:21:22 -0700 (PDT)
+Message-ID: <0bd40ba8-5082-68f5-f458-b1417e0498c5@oss.qualcomm.com>
+Date: Tue, 19 Aug 2025 14:51:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|TYZPR06MB6657:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89065d31-7a6d-4d1d-1b55-08dddf01d827
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sYMp6eMXdiMXnaCAvQP+m95IRao7jw0qtPHhuG0S+KjvYsDqMGLqaCoDtbTI?=
- =?us-ascii?Q?TIa6upd+30aJr5u3OSFOLUqJYqcTOH/NZ2G5yCA3x2p58AnsEyIbi4KVXoMD?=
- =?us-ascii?Q?zn9sFDbb6s+SwPveGw5zOCTTmnnVPxOL4d9YdwXIduOvuV6P6ucTU/5cfHPn?=
- =?us-ascii?Q?uzsMvLiOnK0HqB5ZR+jScAAXb+e9PX4waL8DK4+oF4Q7hDKAGC1MKR+j87Vs?=
- =?us-ascii?Q?AqydH7aE4qWaqEY1YXfhkt6tZNm0AhpfIY3sfBmo0QwGw4s1hPfy5KA40SvO?=
- =?us-ascii?Q?HdsDsF2VPYsU2HIsO99waikrh+gVO69Qo/lrZJxoAAXzPvhC7FMiMwKh41O6?=
- =?us-ascii?Q?7twT4EeY3Ff9GlNimz8rWiusXFpW/NZWxDoZo4IaZ1VAY8+N1PfkLvmDhQsn?=
- =?us-ascii?Q?hCdPsNymFPZ6+vQf7vv+elbINPijSgRR184DX5awjnZNwhCksl14z6UXilAb?=
- =?us-ascii?Q?HYwGg/Yrzvwxdyr6ZlqZzklAZVMC68D4xhr8ckqPkTrOUVZxNFHX7ZHHzX8s?=
- =?us-ascii?Q?Xdhsj97E3phDFIld5dcDjZTbtIcDnJkRk7bAx/1Vjf36kN/BlKOQWiqfZbwg?=
- =?us-ascii?Q?E+dZ13o8Tm1BotYPB8CFo8NzoRhtKtrf6/U5gU4x169vQQP9GOyNAQ6fkxvz?=
- =?us-ascii?Q?Wc3eZR6dUiLjACcdKr4bxuTd/qvx9x6ZRfNrcfdYhgKzJ1Qx5tydiPsPhcCa?=
- =?us-ascii?Q?Kd0vRKHG2bxa/HZbDRArc51sXDu+9/ac+rFnjNqetLyaoARgLBDFeE9LZmPf?=
- =?us-ascii?Q?b2ZiDZ3KMIDGQJKANO+xVZarXRoCyjOz7DK2QYt11vObYUNlz7IJUXDetOSd?=
- =?us-ascii?Q?2VvIz9T6Usb0xHc3Kb97h3oNlDh0HVPdoKKfSC0KHKBTHXx4hhGYEJ594Cme?=
- =?us-ascii?Q?oTxI8Y1IS0EZK+I+783ijEfqZWdJkooXxeRB/dnuOj6X59YFeQ5rx0yR26Gt?=
- =?us-ascii?Q?+NGt9sq5ZetQdR7UhPic6DIdUNc7JEkPBMr5OR3W0H8MDPyo2kq3pu6BTR7x?=
- =?us-ascii?Q?cz8CpEbttWCK5x5O3lXjcMwXpbbWEEnSwRWoEQqnOCQKmylR6ShtPp+eosu+?=
- =?us-ascii?Q?DCbgkq0gwzLJ72g34BXfdRbzSppmKJD0+IICELX4TV8O4IvpHruSMFAK4qzA?=
- =?us-ascii?Q?DMgwIeeg/RC1FHJO3CG5APh9N1/9sCoRG5iKYN7k1x/lByabZHI3WMLw5LJ1?=
- =?us-ascii?Q?cuIWx8tBafu5EbVKxuC/y5uMq84Epoc95VQQh7K95xqna+xBCup7tSyr/QDg?=
- =?us-ascii?Q?do8u2jfd6qMZWP4tUZrvDiUm5hZyy0MwyJH3uyfz/ipvmOTWciMS6xp+0FTB?=
- =?us-ascii?Q?VrfbSLpUGar2pwqtnNVAGPUDyH/0F/RT0Lmdqwzy3BmSfDwXTEdCUWyNzwWK?=
- =?us-ascii?Q?CGydfgThZ0OoHWVNyN1oGb3YL6hP5N28JymYN6nNH+HPriW4oqVR+7b9AtU3?=
- =?us-ascii?Q?uK88B1iT/5rTiH/cqQB+fMomC/7BMekzdQl+gTySxTpb7O40ENRaMcW7/wNe?=
- =?us-ascii?Q?EaAmPOWYhtfIfxE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?N06PmPeCvo87TVEEsdPemKK4kOjrLfg5qodDrP7vQM0ggG6DMixvJDcV1d2L?=
- =?us-ascii?Q?FaU3MJvzchrGwOTae7T14gyp8yN4AuDoIiYZ/JYqNJ7f1XPB579/bIpJoiIv?=
- =?us-ascii?Q?F1u7V0TPE+l07BOrXUsO+IeTs8Cu5dJmX9RLQzgRVaANcfD4UdtzkpQMfYBo?=
- =?us-ascii?Q?hdvV3iPoSYBGt+y4zk+w7aq6Phn1YCaf0FTpxnunSw5nq/tvDsWbUwN1n2Ml?=
- =?us-ascii?Q?iyh8i2PQO1EFTnd6DaVt5mt74iinkKVdRWhvWuo+/ZypVBw+Wdpam0pZp5QI?=
- =?us-ascii?Q?F/oRrKe8kxai1TTcTJA0v2+oSORIs8q6qJgMPM2jBZr4dt2bh0L0Mh0fTc6K?=
- =?us-ascii?Q?/OVcr9tRUxuYTQQ8aiYVurXAiIt4X4A1lRBS7SQ16nyFa6ZZqOiFmCqJr37n?=
- =?us-ascii?Q?RWs9oC9k62FquHmHRa3es82t1UIN21/gz9LoymMIGjkuxQQDGFJ6nKtfsJlF?=
- =?us-ascii?Q?uVaLiQ6UPPBjJgOPQazKcyPxSkINTnVCl0/jHsP2F1Od3nO7xQgMD+ndEgTi?=
- =?us-ascii?Q?MdqX44/vRSHHLWdfjRpqvOjGgNPiBWthnqSI2NuWWhc8nD2NgJPM8mCZ7zCc?=
- =?us-ascii?Q?klCvkZeqj5unyb6k0UtIVqD2AJI4QQ7Ngvdy8YnR77zOpeG9l0UGeD08uwOz?=
- =?us-ascii?Q?XmGDVuVQo+Gw3lpf2ZvV0uDVQQ9aUw8o0qUiM8190ZyIcRglRcJb+nxYTfJz?=
- =?us-ascii?Q?MGJDPZWNS60B+cyCFTimOjMMNom9fNbunT7iDj1fJ0gJs3drX53oxFPjHInB?=
- =?us-ascii?Q?a0PUsewiZ0KZWVNPl+7olImgRDJhmgIsgMl8qUeN8WprEmybIBzjF7xAuW5Y?=
- =?us-ascii?Q?aOiQW2kd0FHNHRBSp7HyJx/HZYcILQxKqxoHzIlbjOxYA9HkFLj1cl1O+lYA?=
- =?us-ascii?Q?mgal9iygHebSJtNz27P6k/YM7xK3boRn3Ui1RQ7viZDV8cevTv0zLFi7XGQu?=
- =?us-ascii?Q?IVwq0Lnz1Jn3Zf7ewq6RyDPDKV50ZXyGBslLP57L3ZjTlERG6nN6qKV5aqR/?=
- =?us-ascii?Q?6D8jVQ33TiTEvIl4Vq5kojVtm5LJbT45eznSgSGmDKMC/gn79khYA0nVbVsY?=
- =?us-ascii?Q?xK2651Dc1KAzRB+oAJhLD78z7FOoz/6fFpiCRd3pnnmOQ5b604UYCHVQwPxY?=
- =?us-ascii?Q?p0ipac8UmwJG3jxtTLUZYkAfI0lsuBuWb4c1Kn9ntbFKZSr04/El3OxII4sd?=
- =?us-ascii?Q?eRZyVlt9QeMSuHO+nFCiX7RIKxaD1Tk5d3pz77FoINvIzA+DQ24E0naSxwBX?=
- =?us-ascii?Q?RyhqsARwmNqgwIdtpMfrHNQRAv2ObyCdHaEn7zEobiTdiFhe2dm4EQtNWxPT?=
- =?us-ascii?Q?bFJwewGgCTeB3gGlW+UMCVvKU+FMZs3Dt67BiSsoYS1QXXdDOyli/wUhv5SM?=
- =?us-ascii?Q?q3EbtG2c+qXiLVTchN9t3anxL4Gq2AT0PPhJdqln7x24Ga8p3B6xraEENDdh?=
- =?us-ascii?Q?/ZenU+VMZsHF//2Yy2TbxNiAw/PtU6GeLrha4YtH1PeitJJ6kBkk1VieTCQ6?=
- =?us-ascii?Q?XlsJpB6j3t7Ri9dYaOTLpmq5EgJnLEY8bZt2y6xHNoeKVudgNHkpMe8uY+7Z?=
- =?us-ascii?Q?GeKDAjQkKBROAP6b2TCQdWibXBZQn2j9HK7tCuEG?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89065d31-7a6d-4d1d-1b55-08dddf01d827
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 09:21:57.3058
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hFtcR7oWFSD1kmZwnF6mqeTRYE5t677IehEBg+/GqULNoxOjbwcJKwbSWWRyAsP9J2rzWR/kQGk30Rbxime4Wg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6657
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: ath12k: REO status on PPC does not work
+Content-Language: en-US
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+        Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Cc: Jeff Johnson <jjohnson@kernel.org>, ath12k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <aJ7sDOoWmf4jLpjo@FUE-ALEWI-WINX>
+ <d6f0b64f-1764-41cd-a7c5-fb34d034ace2@oss.qualcomm.com>
+ <aKQg5vLUplzMUMlU@FUE-ALEWI-WINX>
+ <ff8287fc-7122-42e7-b6ab-550576b5d599@oss.qualcomm.com>
+ <aKQxcfbDYOWTa36J@FUE-ALEWI-WINX>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <aKQxcfbDYOWTa36J@FUE-ALEWI-WINX>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=D9xHKuRj c=1 sm=1 tr=0 ts=68a44215 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=Rf9vIqvc/XsATUXPJpzL2g==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=PnzfZYhc_8HIFXI2AzwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-ORIG-GUID: ZDm5Zd5ool5AvAlVaN4eQfpRJXMH6FfF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyNCBTYWx0ZWRfX5L0qZz+ES9Yt
+ PlbWNucfNpurYmXhtTgqQ8mO3wSRpmb7pEB+W1RvkdnDz74AYy9rvkjaa0UV03cPqNhZ7xf2Aoa
+ 1L6RN5V6yXcGHmmGVtRkMnlYYQ72nrw7Q9Rlz+9aYovHfDilmXq5Nrufu3jdPgpmuJ8UlnflmGg
+ k1DlMabLccEtBF/heZ757L6nrVqqMa7fSPkQbFa4Kb5tDJMeFr5JeUHcMkek/NpEwumjnIYDxGa
+ jd+cJXJOjw9aDkU6iRZTJdXi59u2OOr674tU4y77Mu0kEZQIJmJKP/kLimJSqhnNKA+sj2lsxsM
+ WYJYM/ShqF2gO1X+3YnWG9cCVq1MmUmftcq6jOiqA5iYKa1c6Natwd9dBI2ntXMBV0hUO/KXbZT
+ cTdKSfHZ
+X-Proofpoint-GUID: ZDm5Zd5ool5AvAlVaN4eQfpRJXMH6FfF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160024
 
-The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
-remove the useless call to dev_err_probe(), and just return the value instead.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/spi/spi-s3c64xx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index b1567243ae19..3a00f9e480c5 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1268,8 +1268,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 
- 	host = devm_spi_alloc_host(&pdev->dev, sizeof(*sdd));
- 	if (!host)
--		return dev_err_probe(&pdev->dev, -ENOMEM,
--				     "Unable to allocate SPI Host\n");
-+		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, host);
- 
--- 
-2.34.1
+On 8/19/2025 1:40 PM, Alexander Wilhelm wrote:
+> Am Tue, Aug 19, 2025 at 03:26:34PM +0800 schrieb Baochen Qiang:
+>>
+>>
+>> On 8/19/2025 2:59 PM, Alexander Wilhelm wrote:
+>>> Am Tue, Aug 19, 2025 at 02:38:38PM +0800 schrieb Baochen Qiang:
+>>>>
+>>>>
+>>>> On 8/15/2025 4:13 PM, Alexander Wilhelm wrote:
+>>>>> Hello devs,
+>>>>>
+>>>>> I'm currently working on getting the 'ath12k' driver running on a big endian
+>>>>> PowerPC platform and have encountered the following issue.
+>>>>>
+>>>>> In the function 'ath12k_dp_rx_process_reo_status', the REO status is determined
+>>>>> by inspecting memory that the hardware has previously written via DMA.
+>>>>> Specifically, during the call to 'ath12k_hal_srng_access_begin', the driver
+>>>>> reads the value of 'hp_addr' for the destination ring (in my case, always with
+>>>>> ID 21). On the big endian platform, this value is consistently 0, which prevents
+>>>>> the REO status from being updated.
+>>>>
+>>>> This does not seem an endian issue to me, because either of them we should get a value
+>>>> other than 0.
+>>>
+>>> Really? I always assumed the value remains 0 until the firmware writes something
+>>> to memory and moves the head pointer of the SRNG ring buffer. By the way, I've
+>>
+>> correct!
+>>
+>>> already implemented the missing endianness conversions for reading from and
+>>> writing to ring buffer pointers like this one:
+>>>
+>>>      hp = le32_to_cpu(*srng->u.dst_ring.hp_addr);
+>>
+>> I was actually meaning that, when hp get updated by firmware, either with or without
+>> le32_to_cpu conversion, we should get a value other than 0.
+>>
+>> So in your cause I am suspecting that hardware/firmware has never sent any REO status to
+>> host.
+> 
+> Yes, I see it the same way.
+> 
+>>>>> Interestingly, DMA read/write accesses work fine for other rings, just not for
+>>>>> this one. What makes the REO status ring so special? I couldn’t find anything in
+>>>>> the initialization routine that would explain the difference.
+>>>>>
+>>>>> Could anyone give me a hint on what I should be looking for?
+>>>>>
+>>>>>
+>>>> What hardware are you using? WCN7850 or QCN9274?
+>>>
+>>> I'm using QCN9274-based dualmac modules.
+>>
+>> sure
+>>
+>>>>
+>>> Best regards
+>>> Alexander Wilhelm
+>>
+>> so did you see any obvious issue?
+> 
+> For example, in the function 'ath12k_dp_rx_peer_tid_delete', the function
+> 'ath12k_dp_reo_cmd_send' is called, which in turn registers the function
+> 'ath12k_dp_rx_tid_del_func' as a callback. On PowerPC, this callback function is
+> never invoked, which eventually leads to the following error:
+> 
+>      ath12k_pci 0002:01:00.0: failed to send HAL_REO_CMD_UPDATE_RX_QUEUE cmd, tid 15 (-105)
+>      ath12k_pci 0002:01:00.0: failed to update rx tid queue, tid 0 (-105)
+>      ath12k_pci 0002:01:00.0: failed to update reo for rx tid 0
+>      ath12k_pci 0002:01:00.0: failed to setup rx tid -105
+>      ath12k_pci 0002:01:00.0: pdev idx 0 unable to perform ampdu action 0 ret -105
+> 
+> My investigations have shown that a cache flush is supposed to happen at some
+> point, e.g. after a timeout or when a threshold of 64 is reached. Since this
+> does not happen, I encounter errors after the 127th 'cmd_num'. This callback
+> function should actually be called from the 'reo_cmd_list' within the function
+> 'ath12k_dp_rx_process_reo_status'. However, this does not happen because the
+> pointer is always 0.
+> 
+> I hope I was able to explain clearly what I was able to trace. Please correct me
+> if any of my assumptions are wrong.
 
+Your understanding is mostly correct. it is also possible that there may be something
+missing in REO_CMD ring (setup and cmd_send) which shows symptom like this in
+REO_STATUS ring processing. If other src and dst rings are working fine,
+REO_CMD/STATUS rings also are expected to work. Pls check src and dst ring
+setup path once again.
+
+Vasanth
 
