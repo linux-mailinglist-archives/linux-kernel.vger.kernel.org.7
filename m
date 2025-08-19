@@ -1,217 +1,399 @@
-Return-Path: <linux-kernel+bounces-775053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70FFB2BACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:32:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6FCB2BAC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763431B63261
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA986260FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD962BD030;
-	Tue, 19 Aug 2025 07:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kontron.de header.i=@kontron.de header.b="qxFesbXn"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11023098.outbound.protection.outlook.com [40.107.162.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57902848BE;
+	Tue, 19 Aug 2025 07:31:31 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B943451B8;
-	Tue, 19 Aug 2025 07:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755588609; cv=fail; b=UNLRyAoawXAIPvqfznwr/kgFBrOM4FrbJAr/rsvcxWc5dqzCPF9uV6MbEOSiRJXGh+EGwPo2phsHZW1E1uSngKrGe5pkils9hgrSmIkp3taZWxHKQzRMT6KtF+8EX3yRNFOW2bl6NF6qb2SHrw9DzfSUtKY5TSDb+y5SujBVlu4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755588609; c=relaxed/simple;
-	bh=iigVlsRbHCdPjSWPfEah72ofOOg53DjsJ76tyvxO7OE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QjxhacMzOVf7JZGkvFb1knpQGyhna0mNdeRLGHGkczPyWRadF2fnsUxDVVt5GeyWUNpH1AQisV4zu+Ub1KrDzVXFaXsQsBOME/8DSiHMp7+QXF/bGex3+07IYcFJS0w7DVT26K/YjNudN6PmpH9OuLir5GeYsUdjmwWbcIBY4ig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (2048-bit key) header.d=kontron.de header.i=@kontron.de header.b=qxFesbXn; arc=fail smtp.client-ip=40.107.162.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uLDYVylmfLKQ4TkXeavMVAVjiLQMTl1MBg5BZQJRGh891uIytcF9f9msL6s9jH0N2DeXtK40s0+CfIGKzh6bGqbKHVx1BXM0+cNHyBwJ9MNMId+iK787T1j4YZfc5L4xUgnebEZH2SNVbwE6TPr9G9SsmRz/L68vaa/KxsaiiJK/eF+NGbuOPnXqHr+tzazkrVwIW9w3QsVL/WqlHHluGNIKmuIefl8Le67OCn8sMIUA7EKhi+AcpDP7YLKl888+gHuDxDz9UCuScoS3kDb/zNeyXhBmQN58Do/ygSCnGB87k2/uGh/0K7vpdjatLtE+SlMewWmD6V62iJfaiYxtUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vSMX6DUhcQHxSYoG5YYTozDNiyT5dXUhhRfZfUMr8PY=;
- b=l4dPv8seubY9eWs9lZDyIqyu0Hh2G1oDRdX750gyRaN2bFW2ZtGEnwA4OPPjCHIUMeCfl1bHpXYXhssR391Ve48E+V3dZECIITHERoPNHSjT35O6w4PmSh+WxQQ3vV9rKKx9PLWeDt2US5Pv2iFDJPwzdMH+7CH6fKhvGulG+4Ojko74LyRKdBP5XGAHJTHJK7nwHyRT7ZzZn5Z7XZNB22h5OVF4SYprW1LBK5XNnHApvILmWWDxTdEnElzEnw/NkIWf4UqnDWMRAgbFHSb8mYDP35I13S2kfpxoqqT0fqOUbmfFcudpcCZAsdhXFd3rh+MUnP4hYb0hj0rIZO8AHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kontron.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vSMX6DUhcQHxSYoG5YYTozDNiyT5dXUhhRfZfUMr8PY=;
- b=qxFesbXn5OI94SUyP/v0BoH3eYSCXJLASHNzhwjoBq2T2ufcG1LGJNNQU3ojz2UJ4Qmysm1b9nPAJu/8OqAm0bshyEsa4VIs/Q07lvRN+kv5KWuT0NQLwdCpCEy6WYFl5pg1m/x/IuHqmLri6qKZ5vC40UA78/9vGakIKQSWJN6627LjvyWuER0+pwNuzYTEWOqRNDGMrGYc6IGdA/96689VOuG8PQnQplQPd9nOcGcWoaFT5xE9gIFsce9066kbnJwajwtxP06/zCXjZczGkFb0zYdaK8sMV2ow6fXrPUSLVX7A+MEFViXVYOh8dEK4BJMQjFJNA3O5a/CjkFICeQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by GV2PR10MB7582.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:be::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 07:30:03 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19%4]) with mapi id 15.20.9031.018; Tue, 19 Aug 2025
- 07:30:03 +0000
-Message-ID: <8d6b7043-54f0-4184-ad29-3ef3ef4f7b05@kontron.de>
-Date: Tue, 19 Aug 2025 09:30:02 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: dsa: microchip: Fix KSZ9477 HSR port setup issue
-To: Tristram.Ha@microchip.com, Woojung Huh <woojung.huh@microchip.com>,
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>
-Cc: =?UTF-8?Q?=C5=81ukasz_Majewski?= <lukma@nabladev.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250819010457.563286-1-Tristram.Ha@microchip.com>
-Content-Language: en-US, de-DE
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <20250819010457.563286-1-Tristram.Ha@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0334.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ea::10) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B383451B8
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755588690; cv=none; b=Fk11cYQx2gAHySfqptE3O4fB+rbVTyFEcxSO0vVTEUhR0qM2En70luxQP5dyixdyH09VxF7bCOX8aK6wO/DLxZCEMOuQbUC3YOmQtBJcg/GRPi6u8H4N1Ug+ifxsYsj7UTnUBYLka+o4Aq7TTbmfJHHCpT2Krw89l68Et5DJA18=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755588690; c=relaxed/simple;
+	bh=B70aBMUtleNecaYVXkg05y/gH5K+DSKf0G4e8zh0iaM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=amg6KjanZ98PkM0j1psQ6momn/qNi/ZdOwsUSaF1CFklPedGE8cG6J5ADffVICtrenxvJBbbHFZxB3IQHIvqsvMoLGvH6XtmbXfz4oZwxjIx+YSWwI42v+c6kvH5ayO+peQ+sSnx2tBE/3D1WgCaLlvULZahjqPbsNUVYXblLkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e5d398a961so73685625ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:31:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755588688; x=1756193488;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifEgrnMlkqdeaeEbssFQNl8g8qwuviTV5kz15d+HguQ=;
+        b=N5A/rb30XFVkcLU0ScJywAQ+GZEyEezKn1DTaEO0OLcab2XT8FGTKtCAD2wPKeG5IO
+         KgufcVC6ltO9MbJmUXZc19Og/feCLhmxQw/Kdjk6t0tsO55Tk7ai4UVH0wkMyZTD/WOX
+         rw4XwPpuye5ZO5tngI4bHdvRY0o02vtxpIGlg3pekLKlpEssvhkOcfSkrtU+Pc3tugj6
+         P4TgbwfeG+AsnWj7jJwL3VHv4gDAUxUySiz2dP9TZUEJ/mR2AKxeUfdEPvROloIKkLhV
+         TcAwvFykzlfJI6jv3+z7g1YAZ/kAww324XJWg49zdkYWB47Sd2U3FCYW9MAg5ZOYoOYh
+         r6QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfNepcCzz7EtfHCOy7ycqX4O7d8gE6vEvtYftfpMjHFhu84da3BNK5XEYtfw3jIEGUe89wLZ9BfQfo5n8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznqYUk2A5EYwHB+R5ttmV3qG4LxvJWPmbKyjJ11ey99NNAKNJA
+	6eRZpq8YbNFXBjyTRbjnzu4OI1pFYiE1EmOUOnAMbFHuU16EYif+uxy5GsaBClu6YuDGeneIdwM
+	fNHRw0AN4l7/Y9ah61y/OSGwBWo0qgOu9LZW5fxiUQ3M6unFgobr8uDSdhuA=
+X-Google-Smtp-Source: AGHT+IGCQsNzROSL+3amVSR5XuUvi1SYguUakVyZz4bF2HV94HJ5mmXtFjPLaTkSfEzpbsLHGi7AAu9gdfyAQBugLQh5+nKSFHFR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|GV2PR10MB7582:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d46bff3-e963-4fb2-61f5-08dddef23671
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d3YvQXJrSnd0MkxPM21zN0MxQmJFRERxNFdqTVF0eS9qM25XUUtjV3JDL2wr?=
- =?utf-8?B?L2FQalVSUW5EU25wNmRwK2p1Rk5oR1VYSmM4YkdJc0Jqemp1UzFGOC94KzQ4?=
- =?utf-8?B?dnNZVGpXYjMydTg0bkorNDhIeWpxb0pVMGtVelp4cEVDeXBCdlAzTVF2UU81?=
- =?utf-8?B?byt1NWJSNHpaNGViaktEVWdxZVhSUUgzQnZpTCtSbnNJcExrem9kS0xmNE5Y?=
- =?utf-8?B?RVh4aUdIblB6VS9yR3VRd0JtNnY3amJXaEtnbE9Gb3AwcFpBQ09uOVVwTGJl?=
- =?utf-8?B?aVVGbmE0ZUR5V0tQZEY5NEQ3YjZCWlptU3VQVlc4SUhuejJkNWwreE9nQ3c5?=
- =?utf-8?B?ZnFnRzFSaUVJU3Q0bWg1RUpuWnoxVXkyeWZDNEJWZE0zZ3NvL3Y0bVlPVnRn?=
- =?utf-8?B?MVBVZVJHR2RuT0piNmdNdEVGa2FpcUFEb2xVc09jeE5XNTI0R3FQaDh3cmIz?=
- =?utf-8?B?VHIweUV0Y01LS0RCK0txRzIrcStuVktMeVFCdlExQ0Y2NU0vck1XSmY3b3Ft?=
- =?utf-8?B?Y3AxcUFxOEhRNHIzUm5DYmVXSHhiQnNqaElxMWlodDYvZFBBTk5pNThJTURE?=
- =?utf-8?B?TmpCRHZ6OHdSZXkyTitVRFRvSHJWN2dxQ0xMaE1oaEE4Y253Vy9BMForT0Fk?=
- =?utf-8?B?TnNadXlhd3pscTFQcmdXQ3dKU3gyaUxDYzZ5ZnJpUnFsUzZGRUFRQUJseXZw?=
- =?utf-8?B?VjJPTjdub25OcmtOaGd5ZEdwZ2FkeERiVmlVaHdvdzc5RWJya3A2alFBbk11?=
- =?utf-8?B?VkhjYkRqYUR1RFhvOGJnY2NEbU9JU0dzQ1BRMldOenlrTG1NdlJPMzNBbUtQ?=
- =?utf-8?B?MzRGNFVjOHF2UmlRdjByZ29OUE93S21pemgzUHgzWHNyTGR6UHphMlA2ZTNL?=
- =?utf-8?B?ajMrOWpNMk5mRnArWXN6SXVDMDN5dnZzdmQ0eDZDQ2JuTjdJa2lzYVdWUDkv?=
- =?utf-8?B?czBnRTM3SGFtUzcvenUvbVRESHFtdkZtUkgvRTQ1YXRRMEplVjJoYWlQczAr?=
- =?utf-8?B?SndtNVIxSlpUY0k4VDl1MHowZDJJY2pFUWVvSlo3RDI4RFpKdmI3UUkvc2lr?=
- =?utf-8?B?cDdpUk5Tc2VwRmpjQkNvVVU2M3VDVkpQV1V5TlAxN2Rvb2ZGd0x1WkFtUmNO?=
- =?utf-8?B?Z3J6NG4zY0FPYWpGeUl0cTNobVhGWWhxUzEwM05TUVFWMnd0RVFEM3kvQlhY?=
- =?utf-8?B?YTVvTkVzZTBmNFgyUGU2aTU5aWxscHgxU0g5UEtGeGVnb0ZubzF0ejNUWUk4?=
- =?utf-8?B?T2NmRzFNa2N0QlU4MUlpNGZkcnVnbmloYnkydFRMUVNLNEVTYi83Tzc4c2pG?=
- =?utf-8?B?NnNkMnI0aXpqMzc3M05IeGh1QXFnUVpYeHpzMlBWdlYzQXFzMFlzaDBqeFBu?=
- =?utf-8?B?WmRDcHh2Q2tiUG1JSHkycDVoa2NzL0FFMW5XL1NxM01sa2M3cFU3Z0FtLzFs?=
- =?utf-8?B?UUU2aElVdjdlOEM2SGxnTUl2bXlpeS9VSXBFb2prTmFJc0xETm5KREZ3Rito?=
- =?utf-8?B?dUxxOFplcXFmUGM1cjcya3N2alpnTUg5WlZtSS9nNFZkcHVjZlRjd2hnK1Bj?=
- =?utf-8?B?RVlXMHRMQWxFck16ZzM3MXA4S0JPNUZnZ3VFZy9seHVIb0sveVNzdVlZbkRK?=
- =?utf-8?B?Yms1Y0lkeXk5NHlHZmlFMXBwZm9kOG5lMXNGYkJZZjUxWU1LVnFJSEdOQ0hm?=
- =?utf-8?B?L2I2WUFRT2tacFp3Q29sSVFPWTBOOUhCbm0rWTNwS0VDbWhMQXcyK1o4T0c0?=
- =?utf-8?B?MEdXTDNGSTVrZmtkbGV2MzRrQllacTFIZkN3aXkwYjVDYk5QdjQ0WG5uRkgy?=
- =?utf-8?B?UFcrU0hwOWdDVHR2TURobVlxMHlLZ0oyMkpLeW9uejI2ZG5CcFdRajJHZk5K?=
- =?utf-8?B?dTM4MWYrL1dTNEtGWTNQRU8xWU9tdWFSU1lIV3c2VitLYlpxb0lXRzg0VXNW?=
- =?utf-8?Q?J7ZQPBXjeoM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NnVxaXpxT2JIcThMNjIwWFRYek5NcXo5aEhUZjNsRm0vekdscnpUaHNjUmdv?=
- =?utf-8?B?a0JCdWE2dkV0eW1Lc2lhMTUyM2VqUHNjbTMybnQ1QmFmYXJiOU81MVdjS3ht?=
- =?utf-8?B?bFZEdTVVWGRhSGlZditNeEUySmlnVVlsZ2JhODVRa1pERng5WmltZys0YWho?=
- =?utf-8?B?VDMyd2dsUnFCRmlkVDEzaVZtWjJudTdrSDZuL1B1Q0ZacjFpT0lDWEZMWmE1?=
- =?utf-8?B?R1FIUjhmamdhRWplN2lWVFRQZ1MwWHVQZXZQaHNzcFJsZFp6YWhneGt1RVhK?=
- =?utf-8?B?YjE4Ny9LSE1OaUZIZUEzZ0FISjg1NWtvYkdHcFpCdXVZZndVNDg5d0tHTU5p?=
- =?utf-8?B?QlM4VFJ5RTJXT0VPNjBXTE9COXRveE9BUWhBNUVWVE94alBFakRaZVJZZXE4?=
- =?utf-8?B?T1FWVEx3T3I0MWh2dUlLS0pUN3lFWTJDZE9jNkhmck9aWEYrdnlHK1EyWCt5?=
- =?utf-8?B?V3BPSVlnSWM3amdBczA4NUIreWpOOExLL0ZSREhxS1dubU9SOHBGcGxCSmg4?=
- =?utf-8?B?YXFEcGdrS1NidlFnUEVHZWlveDhycEpSdHA4S2IzL2QxV2d6VisvT0ZIU2Jt?=
- =?utf-8?B?bXFJMER2UE9oelRUY1IyNjlta0pYamw0WEZZLzVuVitaZnVvUHZuYVJ4WEhX?=
- =?utf-8?B?YWRCTmdaTjVCOUZTakx4N1FySElveGdXU3ptM09jaGQvdUZBNXV3RHc4aC9K?=
- =?utf-8?B?WEVBZU5aSXZacW8wdWRtWktSZy8zajBSVGUrcjVkMEhEbFlDbyt2aHliWVky?=
- =?utf-8?B?WHozSWt6bkZuN3c0Nm1BSVArdk0rbncxUlovZWJmQ0Y4bU9mWmMyZklpMWp6?=
- =?utf-8?B?bUsvdDVEcDVvMm81VGhNeDF0TTgydXN1THhEa1pzemJqYzNMS1BhTXI4ektk?=
- =?utf-8?B?SnJRcXRiR1UwdkZzVWhzQ2Vkb2gyWlZCSmV1em03R3NsZG1NMFNWYlZQWXFp?=
- =?utf-8?B?MUNzVjE4NXF0UTRYWVRpbHBQVnVIbFhCVHFiWkljaEZneGV6OW5JVWpnVHNN?=
- =?utf-8?B?d3puWXlqYjdDSXBYOE5sQk5Qa1JKbHY5dlYxMVV6eCtKd3FWTWM0VWl5L3A5?=
- =?utf-8?B?MC80dzFZc2dqcWZTaWNrNHJKTTdKemg1MU5yTWZWR1RXUHQ0c0ZEcXRCM1Jq?=
- =?utf-8?B?TjdhMHNEWTFyWVlIUzIzSzN5V24rWkN4Q3N0WFNRd1dYZzdBYzRoOFZWa0Qz?=
- =?utf-8?B?b05XVTBkOWZhclAzTEN5NHBQR2RDa3RoTDIwZlltVUhyc0gxcnRKRGNBUG9z?=
- =?utf-8?B?M1lvaHYzZGo0L2dVYXh4dUxkaVdRSURWOWV2OU5tOGxsSDBNc0JsMXRORkt4?=
- =?utf-8?B?TzVuZHEybTlPYmw3WTNmVlZIVGN0U1dRNUoyQlZ5MXNNUnhCV2VRdkNjckNL?=
- =?utf-8?B?UFdJRTRFTnpyUzZOakd2OW54VlZkL2U5RjJ1bzBJVUFuRStxeHIwM3B1aDJr?=
- =?utf-8?B?UGRWelRUNlVibFVIZWdMeFFyeXRCUlY4Y1Eyd3RaQWlRczRCQzNqZzlYSE9j?=
- =?utf-8?B?VlN4U2d2bUVIUDBqbE9kN09uVjh5NEQ4dDhsa3VyZGY3VkUrb0ZGQnhEeGtV?=
- =?utf-8?B?TWl4Q001T0FVV2dyTFR5UEdqSXNBbU1NeWh3cWhkWjQzbDc4TnoyNGxSNlF2?=
- =?utf-8?B?bUJYam5wYlhMdzZZNUpjaE45VW82WW1kRmx5Y3lpWXgxOTNaUWhqQ0gwV3lj?=
- =?utf-8?B?S0lPV0FTQmIzTmRlZDU0Zm1GVWI0SGE4amx3bGNNL25PVGFOakVveTk5TlBP?=
- =?utf-8?B?VVNZdnRCd2ZMN2YvYjMxam9hNStKUW00bnBwemZOQXFtNVhDSXRzOHA1M2Rv?=
- =?utf-8?B?TW1JOWhxTVBCUjZnZHgxRUxKV0lwVE5RZnk3d05FRFNnRWhlcEpHNzdscGQ0?=
- =?utf-8?B?TlM1cVBERE9YeElZOVM3dFlnV0RvZzk1bTF1QzdIcHFuYXV3MjdOdHZ1dTV0?=
- =?utf-8?B?WTBKKzVIWTdEdThDSVZoMW9qSSt3VWRXSWJoeWdiejQxOFphQWRmWXBpTmxT?=
- =?utf-8?B?UFVZdC9URlV0S2k1SlFSeVJaaEZ0YjVQc1p3S1lNcVk1Z1k5UWxUaUJQRGdQ?=
- =?utf-8?B?N2xQYjdPbDh6NjdrTHh6T3V2RitkTy9XZmZ1dWhpZVk5eTdHRUpIUGNxQys3?=
- =?utf-8?B?dHpiK3V2SFlvbkRIdnlndU0rOFg2S1grT1hiRkUvSEVsb0hRWU1LK1kzektE?=
- =?utf-8?B?UWc9PQ==?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d46bff3-e963-4fb2-61f5-08dddef23671
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 07:30:03.4901
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t+BQ74q8wfWLjcGWQLe1ktqnWFLXcEhuRCZtr5sqlI1kPWn4wHgLnKzcWmYqzBti2me61M3Fkq6To6HkmY1o5FCGtV2V7qcHbx9RrCV8M6M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB7582
+X-Received: by 2002:a05:6e02:2192:b0:3e6:6487:9a9f with SMTP id
+ e9e14a558f8ab-3e6765cddf6mr28458025ab.5.1755588687829; Tue, 19 Aug 2025
+ 00:31:27 -0700 (PDT)
+Date: Tue, 19 Aug 2025 00:31:27 -0700
+In-Reply-To: <687cfe02.a70a0220.693ce.00c7.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a4284f.050a0220.e29e5.00c0.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_extend_allocation
+From: syzbot <syzbot+2c472ed017e03a3e8bda@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am 19.08.25 um 03:04 schrieb Tristram.Ha@microchip.com:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> ksz9477_hsr_join() is called once to setup the HSR port membership, but
-> the port can be enabled later, or disabled and enabled back and the port
-> membership is not set correctly inside ksz_update_port_member().  The
-> added code always use the correct HSR port membership for HSR port that
-> is enabled.
-> 
-> Fixes: 2d61298fdd7b ("net: dsa: microchip: Enable HSR offloading for KSZ9477")
-> Reported-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+syzbot has found a reproducer for the following issue on:
 
-Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1437c6f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+dashboard link: https://syzkaller.appspot.com/bug?extid=2c472ed017e03a3e8bda
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237c6f0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104b5ba2580000
 
-> ---
->  drivers/net/dsa/microchip/ksz_common.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-> index 4cb14288ff0f..9568cc391fe3 100644
-> --- a/drivers/net/dsa/microchip/ksz_common.c
-> +++ b/drivers/net/dsa/microchip/ksz_common.c
-> @@ -2457,6 +2457,12 @@ static void ksz_update_port_member(struct ksz_device *dev, int port)
->  		dev->dev_ops->cfg_port_member(dev, i, val | cpu_port);
->  	}
->  
-> +	/* HSR ports are setup once so need to use the assigned membership
-> +	 * when the port is enabled.
-> +	 */
-> +	if (!port_member && p->stp_state == BR_STATE_FORWARDING &&
-> +	    (dev->hsr_ports & BIT(port)))
-> +		port_member = dev->hsr_ports;
->  	dev->dev_ops->cfg_port_member(dev, port, port_member | cpu_port);
->  }
->  
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/97c3dc76fbdd/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=178b5ba2580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/0eab8e48ed5e/mount_1.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=1037c6f0580000)
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2c472ed017e03a3e8bda@syzkaller.appspotmail.com
+
+(syz.3.28,6801,1):ocfs2_block_check_validate:402 ERROR: CRC32 failed: stored: 0xb3775c19, computed 0x2dd1c265. Applying ECC.
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,3) on (node local, slot 0) with ordered data mode.
+(syz.3.28,6801,1):ocfs2_block_check_validate:402 ERROR: CRC32 failed: stored: 0x98842a5e, computed 0xe74db1cd. Applying ECC.
+======================================================
+WARNING: possible circular locking dependency detected
+6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 Not tainted
+------------------------------------------------------
+syz.3.28/6801 is trying to acquire lock:
+ffff0000cc700618 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_extend_allocation+0x5d4/0x14cc fs/ocfs2/file.c:597
+
+but task is already holding lock:
+ffff0000f6f05100 (&ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ffff0000f6f05100 (&ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]){+.+.}-{4:4}, at: ocfs2_reserve_suballoc_bits+0x12c/0x3b9c fs/ocfs2/suballoc.c:788
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #7 (&ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]){+.+.}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1590
+       inode_lock include/linux/fs.h:869 [inline]
+       ocfs2_reserve_suballoc_bits+0x12c/0x3b9c fs/ocfs2/suballoc.c:788
+       ocfs2_reserve_cluster_bitmap_bits fs/ocfs2/suballoc.c:1134 [inline]
+       ocfs2_reserve_clusters_with_limit+0x290/0x9e0 fs/ocfs2/suballoc.c:1179
+       ocfs2_reserve_clusters fs/ocfs2/suballoc.c:1229 [inline]
+       ocfs2_lock_allocators+0x27c/0x518 fs/ocfs2/suballoc.c:2772
+       ocfs2_extend_allocation+0x328/0x14cc fs/ocfs2/file.c:589
+       ocfs2_extend_no_holes+0x1a8/0x424 fs/ocfs2/file.c:1027
+       ocfs2_acquire_dquot+0x530/0xa10 fs/ocfs2/quota_global.c:853
+       dqget+0x654/0xccc fs/quota/dquot.c:977
+       ocfs2_setattr+0xb30/0x17a0 fs/ocfs2/file.c:1233
+       notify_change+0x9a4/0xc50 fs/attr.c:552
+       chown_common+0x374/0x4dc fs/open.c:791
+       vfs_fchown fs/open.c:859 [inline]
+       ksys_fchown+0xe0/0x158 fs/open.c:871
+       __do_sys_fchown fs/open.c:876 [inline]
+       __se_sys_fchown fs/open.c:874 [inline]
+       __arm64_sys_fchown+0x7c/0x94 fs/open.c:874
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #6 (&ocfs2_quota_ip_alloc_sem_key){++++}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1590
+       ocfs2_lock_global_qf+0x1a8/0x22c fs/ocfs2/quota_global.c:314
+       ocfs2_acquire_dquot+0x258/0xa10 fs/ocfs2/quota_global.c:828
+       dqget+0x654/0xccc fs/quota/dquot.c:977
+       ocfs2_setattr+0xb30/0x17a0 fs/ocfs2/file.c:1233
+       notify_change+0x9a4/0xc50 fs/attr.c:552
+       chown_common+0x374/0x4dc fs/open.c:791
+       vfs_fchown fs/open.c:859 [inline]
+       ksys_fchown+0xe0/0x158 fs/open.c:871
+       __do_sys_fchown fs/open.c:876 [inline]
+       __se_sys_fchown fs/open.c:874 [inline]
+       __arm64_sys_fchown+0x7c/0x94 fs/open.c:874
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #5 (&ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]){+.+.}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1590
+       inode_lock include/linux/fs.h:869 [inline]
+       ocfs2_lock_global_qf+0x18c/0x22c fs/ocfs2/quota_global.c:313
+       ocfs2_acquire_dquot+0x258/0xa10 fs/ocfs2/quota_global.c:828
+       dqget+0x654/0xccc fs/quota/dquot.c:977
+       ocfs2_setattr+0xb30/0x17a0 fs/ocfs2/file.c:1233
+       notify_change+0x9a4/0xc50 fs/attr.c:552
+       chown_common+0x374/0x4dc fs/open.c:791
+       vfs_fchown fs/open.c:859 [inline]
+       ksys_fchown+0xe0/0x158 fs/open.c:871
+       __do_sys_fchown fs/open.c:876 [inline]
+       __se_sys_fchown fs/open.c:874 [inline]
+       __arm64_sys_fchown+0x7c/0x94 fs/open.c:874
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #4 (&dquot->dq_lock){+.+.}-{4:4}:
+       __mutex_lock_common+0x1d0/0x24ac kernel/locking/mutex.c:598
+       __mutex_lock kernel/locking/mutex.c:760 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
+       wait_on_dquot fs/quota/dquot.c:354 [inline]
+       dqget+0x5e4/0xccc fs/quota/dquot.c:972
+       dquot_transfer+0x238/0x560 fs/quota/dquot.c:2140
+       ext4_setattr+0x738/0x1810 fs/ext4/inode.c:5902
+       notify_change+0x9a4/0xc50 fs/attr.c:552
+       chown_common+0x374/0x4dc fs/open.c:791
+       vfs_fchown fs/open.c:859 [inline]
+       ksys_fchown+0xe0/0x158 fs/open.c:871
+       __do_sys_fchown fs/open.c:876 [inline]
+       __se_sys_fchown fs/open.c:874 [inline]
+       __arm64_sys_fchown+0x7c/0x94 fs/open.c:874
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #3 (&ei->xattr_sem){++++}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1590
+       ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
+       ext4_xattr_set_handle+0x11c/0x1260 fs/ext4/xattr.c:2362
+       ext4_initxattrs+0xa4/0x11c fs/ext4/xattr_security.c:44
+       security_inode_init_security+0x6dc/0x7f4 security/security.c:1852
+       ext4_init_security+0x44/0x58 fs/ext4/xattr_security.c:58
+       __ext4_new_inode+0x27f4/0x3190 fs/ext4/ialloc.c:1325
+       ext4_create+0x1f8/0x3fc fs/ext4/namei.c:2822
+       lookup_open fs/namei.c:3708 [inline]
+       open_last_lookups fs/namei.c:3807 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4043
+       do_filp_open+0x18c/0x36c fs/namei.c:4073
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+       do_sys_open fs/open.c:1450 [inline]
+       __do_sys_openat fs/open.c:1466 [inline]
+       __se_sys_openat fs/open.c:1461 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #2 (jbd2_handle){++++}-{0:0}:
+       start_this_handle+0xe74/0x10dc fs/jbd2/transaction.c:444
+       jbd2__journal_start+0x288/0x51c fs/jbd2/transaction.c:501
+       jbd2_journal_start+0x3c/0x4c fs/jbd2/transaction.c:540
+       ocfs2_start_trans+0x368/0x6b0 fs/ocfs2/journal.c:374
+       ocfs2_modify_bh+0xe4/0x43c fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0x104c/0x1364 fs/ocfs2/quota_local.c:767
+       dquot_load_quota_sb+0x6bc/0xa90 fs/quota/dquot.c:2459
+       dquot_load_quota_inode+0x274/0x4e4 fs/quota/dquot.c:2496
+       ocfs2_enable_quotas+0x17c/0x3b4 fs/ocfs2/super.c:930
+       ocfs2_fill_super+0x4004/0x532c fs/ocfs2/super.c:1140
+       get_tree_bdev_flags+0x360/0x414 fs/super.c:1692
+       get_tree_bdev+0x2c/0x3c fs/super.c:1715
+       ocfs2_get_tree+0x28/0x38 fs/ocfs2/super.c:1184
+       vfs_get_tree+0x90/0x28c fs/super.c:1815
+       do_new_mount+0x278/0x7f4 fs/namespace.c:3805
+       path_mount+0x5b4/0xde0 fs/namespace.c:4120
+       do_mount fs/namespace.c:4133 [inline]
+       __do_sys_mount fs/namespace.c:4344 [inline]
+       __se_sys_mount fs/namespace.c:4321 [inline]
+       __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4321
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #1 (&journal->j_trans_barrier){.+.+}-{4:4}:
+       down_read+0x58/0x2f8 kernel/locking/rwsem.c:1537
+       ocfs2_start_trans+0x35c/0x6b0 fs/ocfs2/journal.c:372
+       ocfs2_modify_bh+0xe4/0x43c fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0x104c/0x1364 fs/ocfs2/quota_local.c:767
+       dquot_load_quota_sb+0x6bc/0xa90 fs/quota/dquot.c:2459
+       dquot_load_quota_inode+0x274/0x4e4 fs/quota/dquot.c:2496
+       ocfs2_enable_quotas+0x17c/0x3b4 fs/ocfs2/super.c:930
+       ocfs2_fill_super+0x4004/0x532c fs/ocfs2/super.c:1140
+       get_tree_bdev_flags+0x360/0x414 fs/super.c:1692
+       get_tree_bdev+0x2c/0x3c fs/super.c:1715
+       ocfs2_get_tree+0x28/0x38 fs/ocfs2/super.c:1184
+       vfs_get_tree+0x90/0x28c fs/super.c:1815
+       do_new_mount+0x278/0x7f4 fs/namespace.c:3805
+       path_mount+0x5b4/0xde0 fs/namespace.c:4120
+       do_mount fs/namespace.c:4133 [inline]
+       __do_sys_mount fs/namespace.c:4344 [inline]
+       __se_sys_mount fs/namespace.c:4321 [inline]
+       __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4321
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #0 (sb_internal#2){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
+       lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
+       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+       __sb_start_write include/linux/fs.h:1798 [inline]
+       sb_start_intwrite include/linux/fs.h:1981 [inline]
+       ocfs2_start_trans+0x1f4/0x6b0 fs/ocfs2/journal.c:370
+       ocfs2_extend_allocation+0x5d4/0x14cc fs/ocfs2/file.c:597
+       ocfs2_extend_no_holes+0x1a8/0x424 fs/ocfs2/file.c:1027
+       ocfs2_acquire_dquot+0x530/0xa10 fs/ocfs2/quota_global.c:853
+       dqget+0x654/0xccc fs/quota/dquot.c:977
+       ocfs2_setattr+0xb30/0x17a0 fs/ocfs2/file.c:1233
+       notify_change+0x9a4/0xc50 fs/attr.c:552
+       chown_common+0x374/0x4dc fs/open.c:791
+       vfs_fchown fs/open.c:859 [inline]
+       ksys_fchown+0xe0/0x158 fs/open.c:871
+       __do_sys_fchown fs/open.c:876 [inline]
+       __se_sys_fchown fs/open.c:874 [inline]
+       __arm64_sys_fchown+0x7c/0x94 fs/open.c:874
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+other info that might help us debug this:
+
+Chain exists of:
+  sb_internal#2 --> &ocfs2_quota_ip_alloc_sem_key --> &ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]);
+                               lock(&ocfs2_quota_ip_alloc_sem_key);
+                               lock(&ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]);
+  rlock(sb_internal#2);
+
+ *** DEADLOCK ***
+
+6 locks held by syz.3.28/6801:
+ #0: ffff0000cc700428 (sb_writers#11){.+.+}-{0:0}, at: mnt_want_write_file+0x64/0x1e8 fs/namespace.c:601
+ #1: ffff0000f6f009c0 (&type->i_mutex_dir_key#8){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
+ #1: ffff0000f6f009c0 (&type->i_mutex_dir_key#8){+.+.}-{4:4}, at: chown_common+0x290/0x4dc fs/open.c:779
+ #2: ffff0000e2d2a0a8 (&dquot->dq_lock){+.+.}-{4:4}, at: ocfs2_acquire_dquot+0x24c/0xa10 fs/ocfs2/quota_global.c:823
+ #3: ffff0000f6f05f40 (&ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #3: ffff0000f6f05f40 (&ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]){+.+.}-{4:4}, at: ocfs2_lock_global_qf+0x18c/0x22c fs/ocfs2/quota_global.c:313
+ #4: ffff0000f6f05be0 (&ocfs2_quota_ip_alloc_sem_key){++++}-{4:4}, at: ocfs2_lock_global_qf+0x1a8/0x22c fs/ocfs2/quota_global.c:314
+ #5: ffff0000f6f05100 (&ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #5: ffff0000f6f05100 (&ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]){+.+.}-{4:4}, at: ocfs2_reserve_suballoc_bits+0x12c/0x3b9c fs/ocfs2/suballoc.c:788
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6801 Comm: syz.3.28 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
+ __dump_stack+0x30/0x40 lib/dump_stack.c:94
+ dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_circular_bug+0x324/0x32c kernel/locking/lockdep.c:2043
+ check_noncircular+0x154/0x174 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
+ lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
+ percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+ percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+ __sb_start_write include/linux/fs.h:1798 [inline]
+ sb_start_intwrite include/linux/fs.h:1981 [inline]
+ ocfs2_start_trans+0x1f4/0x6b0 fs/ocfs2/journal.c:370
+ ocfs2_extend_allocation+0x5d4/0x14cc fs/ocfs2/file.c:597
+ ocfs2_extend_no_holes+0x1a8/0x424 fs/ocfs2/file.c:1027
+ ocfs2_acquire_dquot+0x530/0xa10 fs/ocfs2/quota_global.c:853
+ dqget+0x654/0xccc fs/quota/dquot.c:977
+ ocfs2_setattr+0xb30/0x17a0 fs/ocfs2/file.c:1233
+ notify_change+0x9a4/0xc50 fs/attr.c:552
+ chown_common+0x374/0x4dc fs/open.c:791
+ vfs_fchown fs/open.c:859 [inline]
+ ksys_fchown+0xe0/0x158 fs/open.c:871
+ __do_sys_fchown fs/open.c:876 [inline]
+ __se_sys_fchown fs/open.c:874 [inline]
+ __arm64_sys_fchown+0x7c/0x94 fs/open.c:874
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+(syz.3.28,6801,1):ocfs2_block_check_validate:402 ERROR: CRC32 failed: stored: 0xdf8356d3, computed 0xb8c23ae4. Applying ECC.
+(syz.3.28,6801,1):ocfs2_block_check_validate:416 ERROR: Fixed CRC32 failed: stored: 0xdf8356d3, computed 0x2acb7e3c
+(syz.3.28,6801,1):ocfs2_read_quota_phys_block:160 ERROR: status = -5
+(syz.3.28,6801,1):ocfs2_quota_read:201 ERROR: status = -5
+Quota error (device loop3): qtree_write_dquot: Error -5 occurred while creating quota
+(syz.3.28,6801,1):ocfs2_acquire_dquot:890 ERROR: status = -5
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
