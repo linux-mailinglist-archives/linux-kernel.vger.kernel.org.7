@@ -1,103 +1,95 @@
-Return-Path: <linux-kernel+bounces-775862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1BBB2C5EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 695F5B2C5E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B27F170E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F96F583E34
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0874B340DB8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13528340DBA;
 	Tue, 19 Aug 2025 13:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhPDByNm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="COYgvlki"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B60033CE88;
-	Tue, 19 Aug 2025 13:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B58D33CE84;
+	Tue, 19 Aug 2025 13:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610534; cv=none; b=kWxeS4gzQmQeWxgqa4KBz7z3X9ctmQvihERs2Fxu9ir/xr4atDSFobLIbq1pyipPQcfAN8/XihBb7JZpxCANPCv2sQkL9m6negtVne4IOm5Z5mfURnQ7wasgw8ndXTp7jJYyfmGD2wAlXcK27E7mVlHEU3oCDmqfneFrSCvMD1o=
+	t=1755610534; cv=none; b=Lmn2ex8XjemZVo6JVKJKolMIjhFDe6QrtBokDqIaC1cO6bcOXf84PHT8ydOeZ3Uhk/iMb+X4dXOXJtkNqZL37OC35IiFHtQCbYIV8FR4DmZWsjVqM2WWprt6VX4dQTHTfOGo+nq0nfGRmBuACpmDStoS3ig87DpQ9G+v/4bRWpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755610534; c=relaxed/simple;
-	bh=R9Sy8VQpNOrJ8/sl1lL2re/tMQ75cIWyis0ycpDudBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B/yqyV7GfdOKsPTE/ZjownQRPYHJzJTDVMeaL+R+O/G9uqA0BuKuu3nJ5F5BjP8YDVaNLuUYDhe3l0K3i85OINh+K1kfhQggdJXpNSgioG1jGCrUSGAyIG3tx6j5Jp1O7WagXEoNuMeOU7WLFx40fueJTcXgQyWAVDpgAM8bWpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhPDByNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE93C116B1;
-	Tue, 19 Aug 2025 13:35:33 +0000 (UTC)
+	bh=21MYMk6EDbZshX4F6YaaOm3J6l+vP3iaeBbvkcl1Nrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5g/YFwnplynbcIiRyD3engkiGhJRTCNX7tTjdNtOD26Zzf1yqYKtyQK0HcFBs13G+mTA0QYIqfx+ZCdWrLwkXWzqOqqggG0Vl8igaTUxG/+mEo1aKzgdhb0KqVXac18Nn/SXQts2k+eoLKOBBn1gJ3YXLnIt1GFBKSha6Ynp6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=COYgvlki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F45C113CF;
+	Tue, 19 Aug 2025 13:35:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755610533;
-	bh=R9Sy8VQpNOrJ8/sl1lL2re/tMQ75cIWyis0ycpDudBY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DhPDByNmUaahaYOad5JwcHU8LV9bkjrUAKT+ZpSbsJaT+bqrd5FpB1d3jATBRnXyo
-	 2IOTmdXHj+ZR+KKJrwGUBclOfPdhdrhX1kyHmsSom3W/2g3vG1hk2G2DQFpRdcd9z8
-	 X4e7qvYm2zPIqzuulrpny+TEkXNXzB6EI0X0j11UtgRrB6bKgpi52eQ9nzTpQTwe65
-	 JTQ1o8fo7Mv+p443UYTy5Vc3YMiWCu3k+TiwGPhv9ftfAwTGrk46jTHljjo4M9j9Ye
-	 CUYETsku00O4m91oMpTNaCUeGTknhuZ7m3QGIsPprFo4jDIzni2J3pwuEKLxc+6q7U
-	 ++7TAWQ+8ydRw==
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7a3ee3cso817685066b.2;
-        Tue, 19 Aug 2025 06:35:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6UYM0+6Iy0aOFP9/oNIk3zpUwJbdd4EfL+ym242C7L9ZZqL0D4FEkt7aPHkucy13PeJAB6jiDTpPPtZz4@vger.kernel.org, AJvYcCUtwCGp0cCWo6L8RVr5Re/xNboM+1gLSI5aBlDNg7vVg8lwBpluGZMjqa93g25qf/dGPWpqtiQA2UP9U1j0cA==@vger.kernel.org, AJvYcCV2x4WYg1Qdc3sP5v02H3u+hXpWy3GuWzAcbS+2/MMT+qApSf8eAIPe0evqKXlnS+GwUGQA760vmZsq@vger.kernel.org, AJvYcCXk4x18D/UwqcqAfKU2H7ucVk4QS5x9mpX3ZrL3xIv2zPqPgrmplkm5warL6z1o3z+NQk+8GFYVS+Ibivs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4MNa2QXLST5gde706xsNsNheAe0qT29LR/Z2V/lpitd7uWEPB
-	/zBbOB03xcxIswRwxpxOAuouS+Z8XPhGqrg+mnRzrGdCum8Cbxe5ZYBmsJPavuAx97BC1u9Vx8Y
-	r3MkKY0exlNXEjtt9K0moUDpt0DhnhA==
-X-Google-Smtp-Source: AGHT+IH2MkYx7kpJ+xN9k3+oODecUEIgiLoLvMLtyUB1pi/Kr5EqVSB7WGUHwSSty8Ksq7ALpKgNCHIiH3bxADNv84A=
-X-Received: by 2002:a17:907:d8e:b0:afd:bd24:4de1 with SMTP id
- a640c23a62f3a-afddd0cf7efmr261603866b.33.1755610532515; Tue, 19 Aug 2025
- 06:35:32 -0700 (PDT)
+	bh=21MYMk6EDbZshX4F6YaaOm3J6l+vP3iaeBbvkcl1Nrw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=COYgvlkit94FrgDuTAFmmLQmf3vJNoWGB6yyEQVhfXnQi8TgdfL2BMeJuGsokhMLV
+	 IGcsDG1Ctr3uBZIcioDK/zBbEbZxGjAEydyFdkr7ZhtmfTvKyible4jevW86vnAXRR
+	 NmOtrfJAwLiHXD9Bw3WYTD0QVJW2rrFZB2n/DS4l5TLIvU3FqI0tpxN7YbPmYDn2o+
+	 IWkAJn1+hlHmsyOJwOOFton7IDr7oLvL1ycRUzKCP2wc90rBY61Hl8La+v6C/UU+8E
+	 o1lGQ3L4wDgBGxuq8C2vEHsTWdJ6mV8TSgr4P3oP0pGaq4tpQ8Ebw9QLIWUUEjP1yk
+	 tbmKzAw6bYu3w==
+Date: Tue, 19 Aug 2025 14:35:27 +0100
+From: Lee Jones <lee@kernel.org>
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: James Calligeros <jcalligeros99@gmail.com>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH 5/8] input: macsmc-hid: New driver to handle the Apple
+ Mac SMC buttons/lid
+Message-ID: <20250819133527.GH7508@google.com>
+References: <20250819-macsmc-subdevs-v1-0-57df6c3e5f19@gmail.com>
+ <20250819-macsmc-subdevs-v1-5-57df6c3e5f19@gmail.com>
+ <20250819123505.GC7508@google.com>
+ <CAMT+MTQvMnv4Zj3A8hskU1JW3zys0diKxWUzK5ScerxeSmgPjw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 19 Aug 2025 08:35:20 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwlOsoI_6EYLq8GGEsTwxxs1hQzLvyShUqH2EB_7YD-9IGjwYC8P64fEO4
-Message-ID: <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
-Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
-To: srinivas.kandagatla@oss.qualcomm.com
-Cc: srini@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMT+MTQvMnv4Zj3A8hskU1JW3zys0diKxWUzK5ScerxeSmgPjw@mail.gmail.com>
 
-On Thu, Jul 24, 2025 at 8:28=E2=80=AFAM <srinivas.kandagatla@oss.qualcomm.c=
-om> wrote:
->
-> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->
-> Qcom Slimbus controller driver is totally unused and dead code, there is
-> no point in keeping this driver in the kernel without users.
->
-> This patch removes the driver along with device tree bindings.
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-> ---
->  .../bindings/slimbus/qcom,slim.yaml           |  86 --
->  drivers/slimbus/Kconfig                       |   7 -
->  drivers/slimbus/Makefile                      |   3 -
->  drivers/slimbus/qcom-ctrl.c                   | 735 ------------------
->  4 files changed, 831 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/slimbus/qcom,slim.y=
-aml
->  delete mode 100644 drivers/slimbus/qcom-ctrl.c
+On Tue, 19 Aug 2025, Sasha Finkelstein wrote:
 
-This adds warnings to dt_binding_check:
+> On Tue, 19 Aug 2025 at 14:39, Lee Jones <lee@kernel.org> wrote:
+> > Separate patch please.
+> >
+> 
+> Per the discussion in the thread linked from the cover letter, the dt
+> maintainers have requested the bindings for all subdevices to be added
+> together. Do you want a separate series with just the dt bindings and dts
+> changes and the actual drivers in separate series or how do you prefer it?
 
-Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-/example-0/soc/slim@28080000: failed to match any schema with
-compatible: ['qcom,apq8064-slim', 'qcom,slim']
-Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-/example-0/soc/slim@28080000: failed to match any schema with
-compatible: ['qcom,apq8064-slim', 'qcom,slim']
+I'm only concerned with the part I highlighted:
+
+>  drivers/mfd/macsmc.c            |   1 +
+
+-- 
+Lee Jones [李琼斯]
 
