@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-776623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C246B2CFA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:13:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B25B2CFA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45315564D99
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:13:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F1A37B77E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCFC26F2A9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFDF25D1E6;
 	Tue, 19 Aug 2025 23:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eO4WyzMA"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cRTT6gW+"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533A7258EE9
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D0925A2C8
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755645165; cv=none; b=CvHBS9wyJqU22XM2agCcPCWBjVUSneIoP6jHui5447lfysVFdwx8XUgqM/SB3i3iJXTAIG0j9Wi1K4+6PslI5/I1ZrOEHk6nPTmIbWsiR7ZBy5qqMXl54X5VJJb3SxTgULo7fTJ30yHt4x2FkatEz3KfgFVX8AHb5xWW2wUGiu0=
+	t=1755645165; cv=none; b=Yn7BdGdK3wCfyNnAHol3itQMcLcHD48/FADgzEdWMtObCdyh/Q0oHAsdW4qUtk1vpgMUuen/K1EQUQGmgccny7Ne4Vqck/UmqP0+2Qro+oyOT3tpprBY7DXCwdS8Br5EBTn3t7R/ANlqmisuIr/gTg9Fm4o1YujYksNH8IrpBPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755645165; c=relaxed/simple;
-	bh=/sQtIBYFoOnpF5rNBeNufGj8k1f/8wsUIbzjXDdvRH4=;
+	bh=MK+CFrhUyNJzS9n9i1//mC2FfKjvYu/cdIN68bBfHas=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=W4OogKcmnBBZmeQuqS7Ai/uzABCXlMG3h+3/KBsmhHFg2Dua9jNaTccNj0lBZ0jaHajdHn71RUmKGAZqii/P4/cbb1gtp8fGI1aQtFUCDaxcnsRx09v2oaYkHB4a29CkX83b2tXkkF42OVLJD0CT9ikNwBlJ6XLATThYKs1YpUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eO4WyzMA; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=nAcZiO+yIf/nPkd//Lg5VNIzZ4+j9OJ3kJs05+0d9b3D2mQDbpPgGOXgMJkakOigG48VjfLPQAKMaJrrCZYJtd52G7eZIrcqvFN3gKFmcrMTgkeEZrwiJoFAwZ1F5qeayYIVnl4ID9ynLnHT8TRnOnHSm/sO+5OPUXj+2kwJEo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cRTT6gW+; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-324e318d628so62302a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:12:42 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47475cf8edso4668588a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755645161; x=1756249961; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755645163; x=1756249963; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYRu41w7P7laHNqkDjkFmEfy6zg8q08IlScnpwVSpE8=;
-        b=eO4WyzMAWB7i5Xf8SGTwBo8mwGdG/ldrVqp/X5tqJe/zWqc55LVb1334zopivk5yCr
-         9q8+cWdK+ObZbyjCRrhwaPxBcK6eCFhMQfhcmvJ0COo78vNeMf1/ns82SIv50167t0OU
-         d7OFXf4gKJP/A/bKvLj22Hd2uiJntzBr9Emzfx84R2x8Jsi+e1+Ky80qgeRcPdUOwacz
-         5+CGR8xGDC3Oah8I7GG2xV+1roGaof+ilyl//jTkI24K32VY4T5hEfBnVXfJPCW4gwhk
-         JaRWe5PxGSqa72v/rncDQw47GJc0hwu3aM6Pp5c9ieRfKn4QZMS3mdthZIEUcQktSUGb
-         MlUw==
+        bh=hHMlB52tKy5txnPfyZnTWQg3P+VU/haMAkZgOov9NAw=;
+        b=cRTT6gW+9UlWBxJBxZawdvh9OMzNOzKPvGnaV2yIWJQiUAt0F4QlC8Mmj2XXDDZ+2K
+         he3G1Ppv+SbVOTcds9jmEeMiynIS6nELpkEb5NUwnWeMol0NDHeIrpVOC2+s8kZkOlPI
+         VC02ratczA4MUTC+oCRH3xdLpT3+nlApEd7bysEEhw56pXcgxIQfF2FS8mp1ha3E6D8d
+         3hYG+uGsOXcj+JugfP+XEGZL6N6h7MP669J2PPLqZuL/dKGOjJZo+hEHo0NNghtHOtTg
+         N/+Y+mV5tdSEQjO5n9kosfp0WbgwTzHBJGDBC0PsBUgeBfRLS7nPhCtIfybteCkfm4W2
+         HgHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755645161; x=1756249961;
+        d=1e100.net; s=20230601; t=1755645163; x=1756249963;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYRu41w7P7laHNqkDjkFmEfy6zg8q08IlScnpwVSpE8=;
-        b=lr/qZICqL/j3vFLAn6XBD2LH5RdWq3sr/9Nl2kx19IH0TAt+MHjAw6rXnlkQplybQK
-         Y/YBt9brsnjS5mwNQv+VqGltpfiiw9+BcIb7pUDUczvsqA6e/Alu0bRr8RfbUSHLng3c
-         aY+LL+UdEbj6F11jxl1+F5Go4f8ELLmrlzAQQDkc+5R2k9fySzJYThBIrG8FCgJsKsuy
-         HILP0sf8YrliNrRsi7PIDZi8mF5Qz2f7uMKA0y+3VjF5xcauc8jkXQdPySZMg5w4RSm8
-         j9Si7mjANSFQLQfLgttN4EGNixPYzmxuK1fK9zfyBY0wj7LqZlq/ABh1tfWb5DTCl3TQ
-         6ApQ==
-X-Gm-Message-State: AOJu0Yxa8kTDGn8SERlQ8OrGjrZbAloUqLp+hJrsqey55h4BWzYvuMzq
-	92IqYt70dVM3noyeggSr40ymjtlDQf4X8Iz0mbLkT+eQbGBqyPVAc7yV8XCpHjwe0VSTfE38X+0
-	f3aHq1IUS4Q==
-X-Google-Smtp-Source: AGHT+IH1pH191A63Rhbgyri0LWOTl9R3+yumdoXIlkp89Db8xkaKvpm7+k+4T2kqoW/nSRXKvxKrM/RTk/bE
-X-Received: from pjx7.prod.google.com ([2002:a17:90b:5687:b0:311:ef56:7694])
- (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5405:b0:312:e8ed:758
- with SMTP id 98e67ed59e1d1-324e12d6bffmr1005537a91.13.1755645161597; Tue, 19
- Aug 2025 16:12:41 -0700 (PDT)
-Date: Tue, 19 Aug 2025 23:12:32 +0000
+        bh=hHMlB52tKy5txnPfyZnTWQg3P+VU/haMAkZgOov9NAw=;
+        b=Pj4MnLSJSMDuC/x2+BzIiXLRyn8nkbJpQIrwTtDVRPtvf47aj0525v2vlJxoKoWFwz
+         GB/dx+pKpWoPHZFWloFN72VhGGNLN9uCjOPIreNH2sYm5YtewHsmpIQwS+t0HxtZhadY
+         IFTlJGu5a/MUQxOrk6mKt/r+vyaZuJi1RAo/pWZZFGEtYMK8dd19P+yqqMJmA98DPnXW
+         K3QcsyAt8sgwXnP7MJxLuoPne6/omwujhXw1gL4NFGVekcr9Kz8nFE45Plx5NSydRU1G
+         8s5rnBqYfsrj4q/0LqDPD+ukI4+i40Jm/6Y/8kyw7Yw9Mkrh7N3eCfo8A88/mXs87WBd
+         gwMw==
+X-Gm-Message-State: AOJu0Yy+1ebtdnmhV8vbB4CWobedXGOZ80IuiAx/Zk5dUxRxRwrXLsoS
+	c7etptDRmtY3o1DmjX81bmPkWAkpJ5V4CJe4Pl5kPT49/A114MshqIGnjeWT6dnsOtgiqvYD0y8
+	od+SdWiIO1w==
+X-Google-Smtp-Source: AGHT+IGljhGaaBmTXA9ds9DxZW5g3Hdu+KLWpqsGxk1nBHpO2lp4ODa1o+toSPw8/ghi+xSTINaDMK4MjqIu
+X-Received: from plei3.prod.google.com ([2002:a17:902:e483:b0:242:ff4d:cf0e])
+ (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db0a:b0:240:4faa:75cd
+ with SMTP id d9443c01a7336-245ef25d0c8mr7666675ad.48.1755645163409; Tue, 19
+ Aug 2025 16:12:43 -0700 (PDT)
+Date: Tue, 19 Aug 2025 23:12:33 +0000
 In-Reply-To: <20250819-qcom-socinfo-v1-0-e8d32cc81270@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,13 +72,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250819-qcom-socinfo-v1-0-e8d32cc81270@google.com>
 X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755645158; l=6997;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755645158; l=8189;
  i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
- bh=/sQtIBYFoOnpF5rNBeNufGj8k1f/8wsUIbzjXDdvRH4=; b=KBVrJ6ZJZK5H5PxPRzqmcbVwzyAJFZliSRPMJb0XsfWslq30dvXv5hue0VyqxvXmgtqKhB8iY
- AEK0KdQs6uGBQyy9BH/Qm/dZI8q1zF7kOkHXyECwGNf9Utmj2U3QMMg
+ bh=MK+CFrhUyNJzS9n9i1//mC2FfKjvYu/cdIN68bBfHas=; b=T0GHlwI64Oy4ipH8A1aPl0owk3J6flK/NHfBWuUMt4U7YFBSHdgvy3sravqp5Msaa2n0foXiB
+ VSSA4vcidBSAcmfwsK+b8QIq+WGhhP2x7j2UTGS3OdDJ4novCPTfwHW
 X-Mailer: b4 0.14.2
-Message-ID: <20250819-qcom-socinfo-v1-1-e8d32cc81270@google.com>
-Subject: [PATCH WIP 1/5] rust: Add soc_device support
+Message-ID: <20250819-qcom-socinfo-v1-2-e8d32cc81270@google.com>
+Subject: [PATCH WIP 2/5] rust: transmute: Cleanup + Fixes
 From: Matthew Maurer <mmaurer@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -92,199 +92,205 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Matthew Maurer <mmaurer@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-Adds the ability to register SoC devices.
-
-(This will be sent upstream in a separate request, it's uploaded now as
-a dependency of the example driver.)
+This change is not intended to go upstream as-is, the original
+`FromBytes`/`AsBytes` is being litigated on the list. This just fixes it
+up so that I can use it for this example.
 
 Signed-off-by: Matthew Maurer <mmaurer@google.com>
 ---
- MAINTAINERS                     |   1 +
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/lib.rs              |   2 +
- rust/kernel/soc.rs              | 137 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 141 insertions(+)
+ rust/kernel/lib.rs       |   1 +
+ rust/kernel/transmute.rs | 126 ++++++++++++++++++++++++++++-------------------
+ 2 files changed, 77 insertions(+), 50 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2cbe890085dbb6a652623b38dd0eadeeaa127a94..e0ff2731f1c2ae4bb01d361e99c1f4517fbd45d5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7481,6 +7481,7 @@ F:	rust/kernel/devres.rs
- F:	rust/kernel/driver.rs
- F:	rust/kernel/faux.rs
- F:	rust/kernel/platform.rs
-+F:	rust/kernel/soc.rs
- F:	samples/rust/rust_debugfs.rs
- F:	samples/rust/rust_scoped_debugfs.rs
- F:	samples/rust/rust_driver_platform.rs
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index e847820dc807fdda2d682d496a3c6361bb944c10..140e2f4e60c0b745ac5d5c7456d60af28e21f55a 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -72,6 +72,7 @@
- #include <linux/sched.h>
- #include <linux/security.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- #include <linux/tracepoint.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
 diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 828620c8441566a638f31d03633fc1bf4c1bda85..045f1088938cf646519edea2102439402fb27660 100644
+index 045f1088938cf646519edea2102439402fb27660..0461f25cb5aee797d25153a2004d63b6b41f4ae3 100644
 --- a/rust/kernel/lib.rs
 +++ b/rust/kernel/lib.rs
-@@ -117,6 +117,8 @@
- pub mod security;
- pub mod seq_file;
- pub mod sizes;
-+#[cfg(CONFIG_SOC_BUS)]
-+pub mod soc;
- mod static_assert;
- #[doc(hidden)]
- pub mod std_vendor;
-diff --git a/rust/kernel/soc.rs b/rust/kernel/soc.rs
-new file mode 100644
-index 0000000000000000000000000000000000000000..b8412751a5ca8839e588cf5bd52f2e6a7f33d457
---- /dev/null
-+++ b/rust/kernel/soc.rs
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Google LLC.
-+
-+//! SoC Driver Abstraction
-+//!
-+//! C header: [`include/linux/sys_soc.h`](srctree/include/linux/sys_soc.h)
-+
-+use crate::bindings;
-+use crate::error;
-+use crate::prelude::*;
-+use crate::str::CString;
-+use core::marker::PhantomPinned;
-+use core::ptr::addr_of;
-+
-+/// Attributes for a SoC device
-+pub struct DeviceAttribute {
-+    /// Machine
-+    pub machine: Option<CString>,
-+    /// Family
-+    pub family: Option<CString>,
-+    /// Revision
-+    pub revision: Option<CString>,
-+    /// Serial Number
-+    pub serial_number: Option<CString>,
-+    /// SoC ID
-+    pub soc_id: Option<CString>,
+@@ -18,6 +18,7 @@
+ //
+ // Stable since Rust 1.79.0.
+ #![feature(inline_const)]
++#![feature(pointer_is_aligned)]
+ //
+ // Stable since Rust 1.81.0.
+ #![feature(lint_reasons)]
+diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+index ba21fe49e4f07808c0a43f16461b535fadc033f1..452b1cfb1dbecfdddec7bb59204f7290ae5040af 100644
+--- a/rust/kernel/transmute.rs
++++ b/rust/kernel/transmute.rs
+@@ -46,63 +46,71 @@ fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+         Self: AsBytes;
+ }
+ 
+-/// Provide an auto-implementation of FromBytes's methods for all
+-/// sized types, if you need an implementation for your type use this instead.
+-///
+-/// # Safety
+-///
+-/// All bit-patterns must be valid for this type. This type must not have interior mutability.
+-pub unsafe trait FromBytesSized: Sized {}
++/// Helper for implementing `from_bytes` for sized types.
++pub fn sized_from_bytes<T: FromBytes>(bytes: &[u8]) -> Option<&T> {
++    if bytes.len() == core::mem::size_of::<T>() {
++        let slice_ptr = bytes.as_ptr().cast::<T>();
++        if !slice_ptr.is_aligned() {
++            None
++        } else {
++            // SAFETY:
++            // * T is FromBytes, so anything in the bytes array is a valid bit pattern
++            // * The pointer is aligned
++            // * The pointer points to a region of the appropriate size
++            unsafe { Some(&*slice_ptr) }
++        }
++    } else {
++        None
++    }
 +}
-+
-+// SAFETY: We provide no operations through `&BuiltDeviceAttribute`
-+unsafe impl Sync for BuiltDeviceAttribute {}
-+
-+// SAFETY: All pointers are normal allocations, not thread-specific
-+unsafe impl Send for BuiltDeviceAttribute {}
-+
-+#[pin_data]
-+struct BuiltDeviceAttribute {
-+    #[pin]
-+    backing: DeviceAttribute,
-+    inner: bindings::soc_device_attribute,
-+    // Since `inner` has pointers to `backing`, we are !Unpin
-+    #[pin]
-+    _pin: PhantomPinned,
-+}
-+
-+fn cstring_to_c(mcs: &Option<CString>) -> *const kernel::ffi::c_char {
-+    mcs.as_ref()
-+        .map(|cs| cs.as_char_ptr())
-+        .unwrap_or(core::ptr::null())
-+}
-+
-+impl BuiltDeviceAttribute {
-+    fn as_mut_ptr(&self) -> *mut bindings::soc_device_attribute {
-+        core::ptr::from_ref(&self.inner).cast_mut()
+ 
+-macro_rules! impl_frombytessized {
++/// Helper for implementing `from_bytes_mut` for sized types.
++pub fn sized_from_bytes_mut<T: FromBytes + AsBytes>(bytes: &mut [u8]) -> Option<&mut T> {
++    if bytes.len() == core::mem::size_of::<T>() {
++        let slice_ptr = bytes.as_mut_ptr().cast::<T>();
++        if !slice_ptr.is_aligned() {
++            None
++        } else {
++            // SAFETY:
++            // * T is FromBytes, so anything in the bytes array is a valid bit pattern
++            // * T is AsBytes, so mutating T will not expose padding to the byte array
++            // * The pointer is aligned
++            // * The pointer points to a region of the appropriate size
++            unsafe { Some(&mut *slice_ptr) }
++        }
++    } else {
++        None
 +    }
 +}
 +
-+impl DeviceAttribute {
-+    fn build(self) -> impl PinInit<BuiltDeviceAttribute> {
-+        pin_init!(BuiltDeviceAttribute {
-+            inner: bindings::soc_device_attribute {
-+                machine: cstring_to_c(&self.machine),
-+                family: cstring_to_c(&self.family),
-+                revision: cstring_to_c(&self.revision),
-+                serial_number: cstring_to_c(&self.serial_number),
-+                soc_id: cstring_to_c(&self.soc_id),
-+                data: core::ptr::null(),
-+                custom_attr_group: core::ptr::null(),
-+            },
-+            backing: self,
-+            _pin: PhantomPinned,
-+        })
++macro_rules! impl_from_bytes{
+     ($($({$($generics:tt)*})? $t:ty, )*) => {
+         // SAFETY: Safety comments written in the macro invocation.
+-        $(unsafe impl$($($generics)*)? FromBytesSized for $t {})*
++        $(unsafe impl$($($generics)*)? FromBytes for $t {
++            fn from_bytes(bytes: &[u8]) -> Option<&$t> {
++                sized_from_bytes(bytes)
++            }
++
++            fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut $t>
++            where
++            Self: AsBytes,
++            {
++                sized_from_bytes_mut(bytes)
++            }
++        })*
+     };
+ }
+ 
+-impl_frombytessized! {
++impl_from_bytes! {
+     // SAFETY: All bit patterns are acceptable values of the types below.
++    // Checking the pointer size makes this operation safe and it's necessary
++    // to dereference to get the value and return it as a reference to `Self`.
+     u8, u16, u32, u64, usize,
+     i8, i16, i32, i64, isize,
+ 
+     // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
+     // patterns are also acceptable for arrays of that type.
+-    {<T: FromBytesSized, const N: usize>} [T; N],
+-}
+-
+-// SAFETY: The `FromBytesSized` implementation guarantees that all bit
+-// patterns are acceptable values of the types and in array case if
+-// all bit patterns are acceptable for individual values in an array,
+-// then all bit patterns are also acceptable for arrays of that type.
+-unsafe impl<T> FromBytes for T
+-where
+-    T: FromBytesSized,
+-{
+-    fn from_bytes(bytes: &[u8]) -> Option<&Self> {
+-        let slice_ptr = bytes.as_ptr().cast::<T>();
+-        let size = ::core::mem::size_of::<T>();
+-        if bytes.len() == size && slice_ptr.is_aligned() {
+-            // SAFETY: Since the code checks the size and alignment, the slice is valid.
+-            unsafe { Some(&*slice_ptr) }
+-        } else {
+-            None
+-        }
+-    }
+-
+-    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+-    where
+-        Self: AsBytes,
+-    {
+-        let slice_ptr = bytes.as_mut_ptr().cast::<T>();
+-        let size = ::core::mem::size_of::<T>();
+-        if bytes.len() == size && slice_ptr.is_aligned() {
+-            // SAFETY: Since the code checks the size and alignment, the slice is valid.
+-            unsafe { Some(&mut *slice_ptr) }
+-        } else {
+-            None
+-        }
+-    }
++    {<T: FromBytes, const N: usize>} [T; N],
+ }
+ 
+ // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
+@@ -110,7 +118,7 @@ fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+ unsafe impl<T: FromBytes> FromBytes for [T] {
+     fn from_bytes(bytes: &[u8]) -> Option<&Self> {
+         let size = ::core::mem::size_of::<T>();
+-        build_assert!(size == 0, "Can't create a slice with zero elements");
++        build_assert!(size != 0, "Can't create a slice with zero-sized elements");
+         let slice_ptr = bytes.as_ptr().cast::<T>();
+         if bytes.len() % size == 0 && slice_ptr.is_aligned() {
+             // SAFETY: Since the number of elements is different from
+@@ -126,7 +134,7 @@ fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+         Self: AsBytes,
+     {
+         let size = ::core::mem::size_of::<T>();
+-        build_assert!(size == 0, "Can't create a slice with zero elements");
++        build_assert!(size != 0, "Can't create a slice with zero-sized elements");
+         let slice_ptr = bytes.as_mut_ptr().cast::<T>();
+         if bytes.len() % size == 0 && slice_ptr.is_aligned() {
+             // SAFETY: Since the number of elements is different from
+@@ -158,16 +166,34 @@ fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+ ///
+ /// Values of this type may not contain any uninitialized bytes. This type must not have interior
+ /// mutability.
+-pub unsafe trait AsBytes {}
++pub unsafe trait AsBytes {
++    /// View data structure as a buffer
++    fn as_bytes(&self) -> &[u8] {
++        let len = core::mem::size_of_val(self);
++        // SAFETY: By unsafe trait impl precondition, there's no interior mutability and no
++        // uninitialized bytes.
++        unsafe { core::slice::from_raw_parts(core::ptr::from_ref(self).cast::<u8>(), len) }
++    }
++    /// View data structure as a mutable buffer
++    fn as_mut_bytes(&mut self) -> &mut [u8]
++    where
++        Self: FromBytes,
++    {
++        let len = core::mem::size_of_val(self);
++        // SAFETY: By unsafe trait impl precondition, there's no interior mutability, and no
++        // unititialized bytes. By FromBytes trait impl precondition, all bit patterns are valid.
++        unsafe { core::slice::from_raw_parts_mut(core::ptr::from_mut(self).cast::<u8>(), len) }
 +    }
 +}
-+
-+// SAFETY: We provide no operations through &Device
-+unsafe impl Sync for Device {}
-+
-+// SAFETY: Device holds a pointer to a `soc_device`, which may be sent to any thread.
-+unsafe impl Send for Device {}
-+
-+/// A registered soc device
-+#[repr(transparent)]
-+pub struct Device(*mut bindings::soc_device);
-+
-+impl Device {
-+    /// # Safety
-+    /// * `attr` must be pinned
-+    /// * `attr` must be valid for reads during the function call
-+    /// * If a device is returned (e.g. no error), `attr` must remain valid for reads until the
-+    ///   returned `Device` is dropped.
-+    unsafe fn register(attr: *const BuiltDeviceAttribute) -> Result<Device> {
-+        let raw_soc =
-+            // SAFETY: The struct provided through attr is backed by pinned data next to it, so as
-+            // long as attr lives, the strings pointed to by the struct will too. By caller
-+            // invariant, `attr` is pinned, so the pinned data won't move. By caller invariant,
-+            // `attr` is valid during this call. If it returns a device, and so others may try to
-+            // read this data, by caller invariant, `attr` won't be released until the device is.
-+            error::from_err_ptr(unsafe { bindings::soc_device_register((*attr).as_mut_ptr()) })?;
-+        Ok(Device(raw_soc))
-+    }
-+}
-+
-+#[pin_data(PinnedDrop)]
-+/// Registration handle for your soc_dev. If you let it go out of scope, your soc_dev will be
-+/// unregistered.
-+pub struct DeviceRegistration {
-+    #[pin]
-+    attr: BuiltDeviceAttribute,
-+    soc_dev: Device,
-+    // Since Device transitively points to the contents of attr, we are !Unpin
-+    #[pin]
-+    _pin: PhantomPinned,
-+}
-+
-+#[pinned_drop]
-+impl PinnedDrop for DeviceRegistration {
-+    fn drop(self: Pin<&mut Self>) {
-+        // SAFETY: Device always contains a live pointer to a soc_device that can be unregistered
-+        unsafe { bindings::soc_device_unregister(self.soc_dev.0) }
-+    }
-+}
-+
-+impl DeviceRegistration {
-+    /// Register a new SoC device
-+    pub fn register(attr: DeviceAttribute) -> impl PinInit<Self, Error> {
-+        try_pin_init!(&this in Self {
-+                    attr <- attr.build(),
-+                    // SAFETY: We have already initialized attr, and we are inside PinInit and Self
-+                    // is !Unpin, so attr won't be moved and is valid. If it returns success, attr
-+                    // will not be dropped until after our `PinnedDrop` implementation runs, so the
-+                    // device will be unregistered first.
-+                    soc_dev: unsafe { Device::register(addr_of!((*this.as_ptr()).attr))? },
-+                    _pin: PhantomPinned,
-+        }? Error)
-+    }
-+}
+ 
+-macro_rules! impl_asbytes {
++macro_rules! impl_as_bytes {
+     ($($({$($generics:tt)*})? $t:ty, )*) => {
+         // SAFETY: Safety comments written in the macro invocation.
+         $(unsafe impl$($($generics)*)? AsBytes for $t {})*
+     };
+ }
+ 
+-impl_asbytes! {
++impl_as_bytes! {
+     // SAFETY: Instances of the following types have no uninitialized portions.
+     u8, u16, u32, u64, usize,
+     i8, i16, i32, i64, isize,
 
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
