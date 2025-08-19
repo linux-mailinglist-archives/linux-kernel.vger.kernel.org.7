@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-775832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B401B2C545
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878DBB2C589
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9FEA7AB4AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34531962836
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89C433EAED;
-	Tue, 19 Aug 2025 13:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD57434573B;
+	Tue, 19 Aug 2025 13:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Ms7U26Tv"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="OF47WIY9"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B7442A8C;
-	Tue, 19 Aug 2025 13:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A12EB870
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609620; cv=none; b=mARX7sorNbbQaFOdsu0zmWQPbNPDlHsFSxkRQJwyBuxVx/OhgBcEDAYh2SAZdxIW17UPxIJJzYXt8E5+r7Uc1hZrvnMDCKMKLDNa/YyePsB+mcMH7+T8s1V1NGxUw0LXzJIHVanRiCvtxkP8jw/ttWBlPqqG/jmqXvem4qvM2B4=
+	t=1755609627; cv=none; b=H7IGJQaafoIvG25Ae3j2t/KaYs/67UQWTTR2qBTH4Bw4bLJpV/ZgrSYSJkmyof2hWtm23GSBVQnViAkXRd6Geh8laYUPn66FfhXBqrkEtxzqrxEH9QGm4GCLQrbiQXEo+f+Pbze6e1Lko9rSiO5F5RW565rAioJHlWNWiRAL2hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755609620; c=relaxed/simple;
-	bh=XU7co7/IhKC1SFIOJ2ctmYNnp6ZOEwiQt191KNHFDnQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XY9KLjHKAe6lRAtA0lS77eapJKIhh/W25N8MKQ3cg2xhx+v0zlQw0hz5YvYwZb4lizNfu5N9GNfiCIkxlvmsByYJ0dfiOXA2Gfwi2qWba3OHQZh7hfZ1vS9uAqUAtpbT7AqDXSD6GFZta/VE48j/dHqdxwrFWryDP93AvIiLizg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Ms7U26Tv; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1313E40AB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755609617; bh=efICgIMOiqQPSZSk5RbTaKUwai8LvnXvLst5MTuVWT4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Ms7U26TvAhh2tBh57lX4Hwcs1DeYm4zZ9Ok8oKOzX9+lHT/N2Cf8fPUigYJMpjKMW
-	 GCSbXfwA2rbT7t9vNB4l1m94LO1PcF68hze9LUujTS/Um/WRAWShgel8VAm90JKlZh
-	 Kt98LYj63moZuo5wJQ8GTJizaSTGuz+EJPjQBd4p3cb384RK48dq+5XQD+Tm1SOAa+
-	 qLno0sJwUQ+CwA5IsrDQQrMGxCfytIsRHGe7yg5ZLZcGkSRp2Lv+GveV4D4gZnrMyn
-	 aDaOVfbxq3WK2+JGe++3abZvnlfZlXTzplXtltMTsW6srlieGYrgA7vUMrMct5bfsq
-	 2PdvkL/14WGIg==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 1313E40AB4;
-	Tue, 19 Aug 2025 13:20:17 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev, Boqun Feng <boqun.feng@gmail.com>, Clark
- Williams <clrkwllms@kernel.org>, Frederic Weisbecker
- <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, John Ogness
- <john.ogness@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Steven
- Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>, Waiman Long
- <longman@redhat.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2 3/3] Documentation: Add real-time to core-api
-In-Reply-To: <20250819080358.H9R_64I7@linutronix.de>
-References: <20250815093858.930751-1-bigeasy@linutronix.de>
- <20250815093858.930751-4-bigeasy@linutronix.de>
- <87seho8v12.fsf@trenco.lwn.net> <20250819080358.H9R_64I7@linutronix.de>
-Date: Tue, 19 Aug 2025 07:20:16 -0600
-Message-ID: <87ldnfv46n.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755609627; c=relaxed/simple;
+	bh=iK+PjU319NF3+63SA/e/ZLM4YA51y7lBBdjgoAhh/gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIz3C8P3ChnfQwkMjI5bOVVMhJ6Z38WA6exItor2sLWB4b2Ion5QHk1xC/Iu08PUCypTNWdSUkWeJR9BDfTK1iNElFldugp2i4y6TmD9j1qhG1lia9NAHR1H38r1mnScomsEvNdBysXPgGv0pzAaX+C2gpRn+9w0UrbeHl6HUNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=OF47WIY9; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1b00a65fso27316425e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755609623; x=1756214423; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iK+PjU319NF3+63SA/e/ZLM4YA51y7lBBdjgoAhh/gc=;
+        b=OF47WIY95Bd3rodEReMTosRNnvV5dmAPo1yOi0C9zAja0OXcgWKoerWwDHT2D/PfXh
+         9Smu8yE/8hTyC4edlb4xHAXyfARpr4BV/VW3qq8uELNKVyPOXa+FqSscNkDNDP2rzlL7
+         w7sH6CNtSzCI7Fw0YSSPK4jLYGxpWz/GIc3o3+GH12VLGPV+icNuSH5npnr+E7z7A9nL
+         0A0k/YW09o0njEAXbqRL8RtKOdR31dkuzuTWByu/VAMu5Jh4j8BA4NCkKHm57ZFL4R4V
+         xrQTrN9odW9wINLlkVUR+Edle44pi3W+06edLBqTOUyc26syZLHSXBRcAyBtq7lxjLt5
+         jx3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755609623; x=1756214423;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iK+PjU319NF3+63SA/e/ZLM4YA51y7lBBdjgoAhh/gc=;
+        b=XSn0FjELM1V8fO8rU4ikFmB76h9aScZW8zUS7z5bBIQcHIEzuL7k+wIeOBFZCrsc/C
+         YdUuTodpmIoWzIcII0luo4Wbd59U+B8IQplcixl9fbsc6KzytTI1ve2ivnO6Mr7IUR+c
+         GCcdXqDXM6Ls6uhhv0L5l4GiggfQvNfNz7VpOJCH4qzk0IpCNJHUJJOQS2Pt5v3izpGb
+         xXv1c9LUxxMkU9hoqfBR1MFEU/CZK2SE4tW1j8JohYYjjyRJ/u1nVvygZNTcdXLN5tsC
+         5tfwC7Ye/yKBT0w1mHZrrUHcaGaUsrdeO5Pl5eVWt2AbjmD86Tcng1/mxw8/Z0ZiM64R
+         fA5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUTGyRRiyAArnO7zDsxsSja8hWjKRGvJGH16PFhmR1AYlPVces3Jtu1/IGE8Nibl5P7sJ5mGrpAD1fA1Kk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWh7C46BkmuaJGvMA6qXQ7YfBXBmMPZxX5Yhs1w3ef6qu13nSQ
+	vKB/pQEJPRa0HbivHAC49z3xtDob2Zv5MmhwgP3cyTfd2coOukmyWOFYTGASjKi05wo=
+X-Gm-Gg: ASbGncvjZfbUo2cntPnqMLTvyH9q4R8p2KFM/5MtvQZxnU5Abwf343c66ZdUY9GYAk1
+	cKj4VBvkKVAHqltXFgYsba0UJmqvokA3sZsxeolJAnixvPVcvzCkCGuH108P0Yc0ZBrnRYzgx2S
+	iZixvo8556RGbAWAyeBD8XbkfP6SqrvcW/QeuyWqOmj2lAusY31/N4hbiXloJjvfE0RZ8xD6lle
+	wUylicSaV7dkpg4rDqqAGpm+MN+7+ABG0xpD/Em0uLW2gcJpSF2fueBILPn27tU07GljgYEEFiI
+	TqyNm3x1e/pyexVYyEhXklv1r9JqdK4PPvV31+ZA6sXkxFvYgmDokdbBHF7Rb1wW8rBEH/ibLMd
+	0AExwqYviuWxWcHLq+f0F8Oh7hVbnJC8RcNpekhmt/n2VLtHsxYdztTPW9xM6yoM1e0wGSqXAUR
+	oNFgDkmA==
+X-Google-Smtp-Source: AGHT+IFAFNd/RoQaRD/TbbBTaHuoGyv0Q+NnN05rjh0d94CuTJBBUxpriDjYGFCYgFp1Qcx/lqW/Hw==
+X-Received: by 2002:a05:6000:2204:b0:3c0:4f30:acde with SMTP id ffacd0b85a97d-3c0ed6c4504mr1917448f8f.55.1755609623300;
+        Tue, 19 Aug 2025 06:20:23 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c1636sm3673176f8f.43.2025.08.19.06.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 06:20:22 -0700 (PDT)
+Date: Tue, 19 Aug 2025 14:20:20 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backlight: led_bl: Use devm_kcalloc() for array space
+ allocation
+Message-ID: <aKR6FAYDrNDhY6Af@aspen.lan>
+References: <20250819035804.433615-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819035804.433615-1-rongqianfeng@vivo.com>
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+On Tue, Aug 19, 2025 at 11:58:03AM +0800, Qianfeng Rong wrote:
+> Replace calls of devm_kzalloc() with devm_kcalloc() in led_bl_get_leds()
+> and led_bl_parse_levels() for safer memory allocation with built-in
+> overflow protection.
 
-> On 2025-08-18 10:16:41 [-0600], Jonathan Corbet wrote:
->> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
->> 
->> One nit:
->> 
->> > diff --git a/Documentation/core-api/real-time/differences.rst b/Documentation/core-api/real-time/differences.rst
->> > new file mode 100644
->> > index 0000000000000..50d994a31e11c
->> > --- /dev/null
->> > +++ b/Documentation/core-api/real-time/differences.rst
->> > @@ -0,0 +1,242 @@
->> > +.. SPDX-License-Identifier: GPL-2.0
->> > +
->> > +========================
->> > +Significant differences
->> > +========================
->> 
->> That heading text will appear in various places, including in the
->> rendering of your new index.rst file.  In such a setting, "significant
->> differences" doesn't give a lot of information.  Something like "How
->> realtime kernels differ" would be better, IMO.
->> 
->> Otherwise, this all looks good to me.  Did you want me to pick it up, or
->> did you have another path in mind for this work?
 >
-> Right now this is it. Do you update the text above as suggested or do
-> you want me to resend it?
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
 
-I can apply it and make that tweak if you like, yes, no need to resend
-for that.
+I assume you scanned drivers/video/backlight to look for similar code
+patterns in other backlight drivers? If you did it would have been
+really helpful to say so in this part of the patch (because in it's
+absence I had to do that myself).
 
-Thanks,
+However, the code changes are fine:
+Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
 
-jon
+
+Daniel.
 
