@@ -1,323 +1,151 @@
-Return-Path: <linux-kernel+bounces-776199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8952B2C9D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:37:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB1DB2C9ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A6E1BC5D72
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:37:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E6A562961
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9070525C6EC;
-	Tue, 19 Aug 2025 16:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EF927F728;
+	Tue, 19 Aug 2025 16:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcTg8QKU"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdAGqD37"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D82571D4;
-	Tue, 19 Aug 2025 16:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BE3239E97;
+	Tue, 19 Aug 2025 16:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755621446; cv=none; b=G6MJJy6APLpKx+gDNdQlv5EpjgHvjJxq9f7/Cf/V4X7acgzj+pQleTbSxZKXxUbx5c+aM8HQapA6rFTvaWBKs9FpKeFgnaCvtxUHl0U8tHZ3ZvoVokERcRuOxqFAmBZteAHjTM+l+1TTy9BwWFiB5PKNulNCS5UWpV6P/cxtoqE=
+	t=1755621719; cv=none; b=M06m4USYphvDFEufKAzaas0aWF+Uu7kSM8IpUR0eOgdNmAqhfusZ3yfCJneqrZu1SCtKqOKdr2R5+f3LMrtumcn3JLP1TDyItixJChlxo/L8ITGs+Lr8A96LRxTn+MElM02aRY/lxpTQobx/1JWuEz8Lbl56Roo12iBjpdmz9jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755621446; c=relaxed/simple;
-	bh=scbaPHNUfafnIekgS1W/IcAwZjeclgXRiBG9pKjzDeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnDSWZKWhcUM8RdV7P1JYQbdf85cIG//w/0xLhzvsXViOt3fG6KEmyXguEpC+S3lxN7T5+Q5Ox4gBtkvDFzJ7E8+hOFHTFhZePJoW1GrStZUOSQNOves4Z2SUYX0YG9i9cT16Oolox1e7ldDJwfHzE9m5ap8P1SVKFigO1wo7jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcTg8QKU; arc=none smtp.client-ip=209.85.215.178
+	s=arc-20240116; t=1755621719; c=relaxed/simple;
+	bh=L7ugk3c1F3aDLxjFmQfYDrLIX5ahouOMrY9nZZ75gTY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=kiEzz1wDSxBnvdWXLRSHYPJyZ6QDsW4fFnC0Mx2b//UIRB55gBG1r6/YbrDfvj9nIi2vRA/z9HLEH83WfPFP8hJu+iM2H3JbIS+noltIZJM6E0NFOtwGg4vmz5BX9duEOp6/x77yJtyhl0zuUeWX8fJV+naO/LnzBoFTCV8iNQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PdAGqD37; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b472fd93ad1so2705992a12.0;
-        Tue, 19 Aug 2025 09:37:25 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b0b2d21so28162015e9.2;
+        Tue, 19 Aug 2025 09:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755621444; x=1756226244; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pN3oR61/c0uiXLRfyBJRzpXCbawo5PgtjuwTdlJFdps=;
-        b=TcTg8QKUYDfNfgOU3AzLK+ESSm5T5l4xp/2rCM22knueb9UxX4yc2qskqfIr9q8NlG
-         2ie3cNncD9BloeOjZJYDdyP5ymDNbzyVALwBL47oIXae0wwwlAoCxo5aUvgvp4e8CMnU
-         A+rrsFndKjCqp4ja14mLZ71uXb1vQFwz8M6kapEU+eS9awLd0it0rlzs7FxPKJAor20k
-         SGa+gKt1goaRJVRSCeaXKxG7NDONWh49JYfganmeaIBTg51XtlYgJuur5jye1AiNw5gg
-         y57nUPbl9pebFSwa02eW+CQbvVeh54LfoXXny+cZqMDr50jRvcfGZQqnG9Y+xwfJKeMZ
-         LzoA==
+        d=gmail.com; s=20230601; t=1755621716; x=1756226516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZw1E4DMHu+wuT12JHvmjEskbRTAPP0SSVwBlWFdfHo=;
+        b=PdAGqD37wTuiGoAl5ikZF0epI4R/kx2M/Fz0SpcrWZRtX4fhm7/oDgGzvCcNKqLxlx
+         KCMgO2HpbbIkw6stO9u4Ghs4vqGk7F4UnrYb3XuF17ABnbMM7/flFWV6g5dBu/+3Kbu7
+         lcqREM9Oqkbg8pqePCW5HIyJoWefChb8lqteki9dQ7s8vvsh6QmCkr27TQpdiERUW8s/
+         l6C/G4W4ZfR1ECBfFUckeT9oQVKxnUVIaiD0NgFGD/hCIy2YTxOvWGcGK5nc6CQDog9f
+         5ldy/QsXd9owDarEczS9U89BZf+3IkjYOO848xkg8cq9q0kASH9ox1HxzpclQ9XKoWp3
+         GrUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755621444; x=1756226244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pN3oR61/c0uiXLRfyBJRzpXCbawo5PgtjuwTdlJFdps=;
-        b=WzGJTIJysr0cHrQQLd1xRE6wS0cpbA8IlYeXAp7oKA9QbKIa1rDkgX687Gh2tNBMlu
-         pRLuNFef424ybRrFNBUSpHU4QX2T6G+A5Nb6huxv3vVxJjh7KgDXt0Hh7tHBu3kVHv+a
-         hJj8p2L9b9nK7KKN/ST5JHCODs5HDDe1HxWTZOzQdcUqqTkRT4BMg51XrPGhpTNhfppm
-         K69MlERNtXh0hf8z5YU+kmrId4kEvfgQ5Vu0AdaREV84QgmOtqeRDXWzl9WuOJzmz89O
-         XFwg3Ni9TvDh463W2eVqpboCwoePKFa1+ZmIpZu8FCHsy3cKTl8Uqj9ffm5sM4omuH1Z
-         sD3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFOrU7GD0zNEUC61KD9H6sij0mqMIEBIUlpcYmEcowCztjlS3rUVkjQBQi5vrsyxb9Ll7M0Qt+qH94vvk=@vger.kernel.org, AJvYcCWdoqNnnPEC9/Qgc7GLLtc/iYJKo9h0egUhmN9nrQiWVGR3/Pe7KNNc4kH5fW5du1oNamP0cDfDoVUYXamrzMZ1hHUQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbkdM8tOC7bcwLzmTaQXvJgCarFirsZWnqvY6I5byEx3DL72rw
-	dzjq+auLZqr+tgLxUwhsuV8Pr8+ToZVUYa8C9I6cpsMkLabSbv+N04Gp
-X-Gm-Gg: ASbGncvI1ePcAKIFYUxUJfn5rKApGyP2fygk+BaZElH1gFLivyn9xHRqYNeKSa3U77G
-	fBFRhEjLnACCLnRy8CAhhkrb6A4/EU719LRdIkTTl1JajyraKyf94os6L8/J0zIPA4E3Z/2cB3l
-	I/doNCOshtQF6KLHV6EXG9H1V7jWi5BqUP1y2QoQGzSWf/z37fx6na+RlOwwoN3pV9ZLw0n23BL
-	xcwzDIGhGFHz5ZjSw/ItAx1wEFxO1CSyaNx742QJGEpWglQoTlfgBCTiAjn/S34iTTDXVbx6uiH
-	wn5T+khx0rPHiF+z7HVr88OE33uFY82HZQ9kzFUuZbcNnpX20g4AEI7kPpsdAHmQY7llW+VPNfE
-	kGpfZxtg8
-X-Google-Smtp-Source: AGHT+IElLHXy5Z0g7yBhgA4isDUqzATIIqXde4d2BmuwggJSAMpaov5koyT/PbDQ1G2u3jDfv9QvHg==
-X-Received: by 2002:a17:902:d48f:b0:242:a0b0:3c1f with SMTP id d9443c01a7336-245e02cfc12mr45322725ad.7.1755621444380;
-        Tue, 19 Aug 2025 09:37:24 -0700 (PDT)
-Received: from gmail.com ([2406:5900:2:f21::2a1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed51c0aasm1428815ad.144.2025.08.19.09.37.21
+        d=1e100.net; s=20230601; t=1755621716; x=1756226516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZw1E4DMHu+wuT12JHvmjEskbRTAPP0SSVwBlWFdfHo=;
+        b=YArsNu/T5nc0tj1AHx5y6KOWcuJwc6BIVZB0i6m8eRgTlSEe8KcgsJ9yyuP2d49s/i
+         n7OZMC80B1WYmAJ4cF+BwdhDhzjTt5VAJODus5zK1R/m3P4FxVeidd6GmjYwsxVfHra2
+         bVAbmklSFrD6SL0rpeljNFO96a034ZOzPC4/R2jIZLit338mvaU/6RltLzWbOTdXgnTw
+         eUvuJ/BOUgs6wkr8sBJuICBUIyZcVZ4Jjt4PajwtleDBsEhBuKWk4miEpcRx2wRTYJUT
+         1ODlVCsrjFh4/7ExNY+E61QXHxHXQHU2UY+snztoxm6d1jBVQV+P67y7A9uEzwFIfjV6
+         kUXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV44vZ2Hoirp1viDZEpRVkjAg+5TkM+06Rjuzd87XZ9gpFVSuUG1LWxWhFoALEmkcSUVBRs9mt0jMGbrus=@vger.kernel.org, AJvYcCXNCR+1NLMLBatmIje3fMmYDenOA+z9qjDstR0eWckO77H5uyBsZOgClVqFvzrInbcjfbVaLvcT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlxYINgCKHOYx7Ztu8g8YMNvm8RhSpfAxtIL62t0EH2P4Bcb5z
+	8mcyt8OqZxM9FQ6UldmmjXEVtqywG4PlGLhvqiczpIsNm9OOrIqIH/q7
+X-Gm-Gg: ASbGnctK/+f/jAQBZwWoGlbXEiWP2VG91Fs0KfM3pqXGpNCYxSba9KTw+RzbcLdyxjR
+	o0FVAKcSJ6xAfsgVT6kVpoZ/PC8MYal9de6WosGeLxEW8SIKiwLqBqq9p6p8FkjGiij656peZVS
+	OKtFc5wckICkqPw1xRKFYYNUGOoE+4mGaq2ku4zF2YxA51LgRNSk1qnq6fswx/4uM+kEgr+cZy4
+	g5r3ATAuGzPlfH5MJzvkCQ0u1DznxhhQC9UPlH6xpH/H6CF6IhgYAvQ6iE+y7EcG81nuzZgEDF1
+	wyuVCCjHSAZ+KMOZHcm1pnp6wqUfqWzkXxxVjawLtQnBUem/gCPNAsK48ayrxMUONgunnKPlY7S
+	5quianSaFhJDqmjEgB3cwegehuk+rzt2yUhgeRNGjqE3WnFq/BVCp9WgxEIVpEWHSqGpzN2JSOK
+	3Y
+X-Google-Smtp-Source: AGHT+IHATRzTh5hpiVP2m8ujpz9WjIuf/HH/J5JNRybLTBTI3JYmuRDomRjMwNN6zxOOvHHnnNM+UQ==
+X-Received: by 2002:a05:600c:4e86:b0:458:ba04:fe6d with SMTP id 5b1f17b1804b1-45b43dc105bmr24505065e9.14.1755621715304;
+        Tue, 19 Aug 2025 09:41:55 -0700 (PDT)
+Received: from Ansuel-XPS24.lan (host-95-251-209-58.retail.telecomitalia.it. [95.251.209.58])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b42a8f972sm51494015e9.20.2025.08.19.09.41.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 09:37:23 -0700 (PDT)
-Date: Wed, 20 Aug 2025 01:37:18 +0900
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, mathieu.desnoyer@efficios.com,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] trace/trace_fprobe.c: TODO: handle filter, nofilter or
- symbol list
-Message-ID: <aKSoPiEeixEtcxys@gmail.com>
-References: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
- <20250814121504.2784e740a4e6fd4e0dd563d6@kernel.org>
+        Tue, 19 Aug 2025 09:41:54 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [net-next PATCH 1/2] net: phy: introduce phy_id_compare_vendor() PHY ID helper
+Date: Tue, 19 Aug 2025 18:41:40 +0200
+Message-ID: <20250819164146.1675395-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814121504.2784e740a4e6fd4e0dd563d6@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 12:15:04PM +0900, Masami Hiramatsu wrote:
-> Hi Ryan,
-> 
-> On Wed, 13 Aug 2025 01:21:01 +0900
-> Ryan Chung <seokwoo.chung130@gmail.com> wrote:
-> 
-> > Resolve TODO in `__register_trace_fprobe()`: 
-> > parse `tf->symbol` robustly (support `sym!filter` and comma-separated lists), trim tokens, ignore empties, deduplicate symbols, use bulk registration for lists, return `-EEXIST` if already registered, and preserve lockdown/tracepoint deferral semantics.
-> 
-> Thanks for the improvement!
-> And could you add the new syntax in the document too ?
-> 
+Introduce phy_id_compare_vendor() PHY ID helper to compare a PHY ID with
+the PHY ID Vendor using the generic PHY ID Vendor mask.
 
-Yes. I will add the syntax in the document.
-To clarify, by document, you mean
-Documentation/trace/fprobetrace.rst?
+While at it also rework the PHY_ID_MATCH macro and move the mask to
+dedicated define so that PHY driver can make use of the mask if needed.
 
-> > 
-> > Please note that this was my personal interpretation of what TODO
-> > required here. Welcoming any feedback. 
-> > 
-> > Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> > ---
-> >  kernel/trace/trace_fprobe.c | 102 +++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 100 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-> > index b40fa59159ac..37d4260b9012 100644
-> > --- a/kernel/trace/trace_fprobe.c
-> > +++ b/kernel/trace/trace_fprobe.c
-> > @@ -12,6 +12,8 @@
-> >  #include <linux/security.h>
-> >  #include <linux/tracepoint.h>
-> >  #include <linux/uaccess.h>
-> > +#include <linux/string.h>
-> > +#include <linux/slab.h>
-> 
-> Headers should be sorted alphabetically.
-> 
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ include/linux/phy.h | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-I will fix this in v2.
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 74c1bcf64b3c..173567b86617 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -1260,9 +1260,13 @@ struct phy_driver {
+ #define to_phy_driver(d) container_of_const(to_mdio_common_driver(d),		\
+ 				      struct phy_driver, mdiodrv)
+ 
+-#define PHY_ID_MATCH_EXACT(id) .phy_id = (id), .phy_id_mask = GENMASK(31, 0)
+-#define PHY_ID_MATCH_MODEL(id) .phy_id = (id), .phy_id_mask = GENMASK(31, 4)
+-#define PHY_ID_MATCH_VENDOR(id) .phy_id = (id), .phy_id_mask = GENMASK(31, 10)
++#define PHY_ID_MATCH_EXTACT_MASK GENMASK(31, 0)
++#define PHY_ID_MATCH_MODEL_MASK GENMASK(31, 4)
++#define PHY_ID_MATCH_VENDOR_MASK GENMASK(31, 10)
++
++#define PHY_ID_MATCH_EXACT(id) .phy_id = (id), .phy_id_mask = PHY_ID_MATCH_EXTACT_MASK
++#define PHY_ID_MATCH_MODEL(id) .phy_id = (id), .phy_id_mask = PHY_ID_MATCH_MODEL_MASK
++#define PHY_ID_MATCH_VENDOR(id) .phy_id = (id), .phy_id_mask = PHY_ID_MATCH_VENDOR_MASK
+ 
+ /**
+  * phy_id_compare - compare @id1 with @id2 taking account of @mask
+@@ -1278,6 +1282,19 @@ static inline bool phy_id_compare(u32 id1, u32 id2, u32 mask)
+ 	return !((id1 ^ id2) & mask);
+ }
+ 
++/**
++ * phy_id_compare_vendor - compare @id with @vendor mask
++ * @id: PHY ID
++ * @vendor: PHY Vendor mask
++ *
++ * Return true if the bits from @id match @vendor using the
++ * generic PHY Vendor mask.
++ */
++static inline bool phy_id_compare_vendor(u32 id, u32 vendor_mask)
++{
++	return phy_id_compare(id, vendor_mask, PHY_ID_MATCH_VENDOR_MASK);
++}
++
+ /**
+  * phydev_id_compare - compare @id with the PHY's Clause 22 ID
+  * @phydev: the PHY device
+-- 
+2.50.0
 
-> >  
-> >  #include "trace_dynevent.h"
-> >  #include "trace_probe.h"
-> > @@ -762,8 +764,104 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
-> >  		return __regsiter_tracepoint_fprobe(tf);
-> >  	}
-> >  
-> > -	/* TODO: handle filter, nofilter or symbol list */
-> > -	return register_fprobe(&tf->fp, tf->symbol, NULL);
-> > +    /* Parse tf->symbol */
-> 
-> Please make this parse and check as a sub-function instead of new
-> scope. Also, it should be done in parse_symbol_and_return(), so that
-> we can handle wrong syntax when parsing it.
-> 
-
-I will move the parsing into parse_symbol_and_return()
-so syntax errors are detected at parse time.
-
-> > +    {
-> > +        char *spec, *bang, *p;
-> > +        int n = 0, w = 0, j, rc;
-> > +        char **syms = NULL;
-> > +
-> > +        spec = kstrdup(tf->symbol, GFP_KERNEL);
-> > +        if (!spec)
-> > +            return -ENOMEM;
-> > +
-> > +        /* If a '!' exists, treat it as single symbol + filter */
-> > +        bang = strchr(spec, '!');
-> > +        if (bang) {
-> > +            char *sym, *flt;
-> > +
-> > +            *bang = '\0';
-> > +            sym = strim(spec);
-> > +            flt = strim(bang + 1);
-> 
-> You don't need to do strim, since if there is a space, it
-> should be parsed already. New syntax must be ',' separated.
-> My basic syntax for this probe event is;
-> 
-> WORD WORD WORD[:OPTWORD] SUBWORD[,SUBWORD]
-> 
-> OPTWORD is qualifying the previous WORD, SUBWORDs are not
-> quarifying, but the same-level words. (Currently using "%return"
-> for the return of the function, that is a special case.)
-> 
-
-Understood. I will drop strim() and treat tokens as you mentioned.
-I will leave return behavior unchanged.
-
-> > +
-> > +            if (!*sym || !*flt) {
-> > +                kfree(spec);
-> 
-> Please use __free(kfree) instead of repeating kfree().
-> 
-
-I will also include this in v2.
-
-> > +                return -EINVAL; /* reject empty symbol/filter */
-> 
-> Also, before returning an error, use trace_probe_log_err() to
-> notice the reason and the place of the error to user.
-> 
-
-I will log parse failiures with trace_probe_log_err().
-
-> > +            }
-> > +
-> > +            rc = register_fprobe(&tf->fp, sym, flt);
-> > +            kfree(spec);
-> > +            return rc;
-> > +        }
-> > +
-> > +        /* Comma list (or single symbol without '!') */
-> > +        /* First pass: count non-empty tokens */
-> > +        p = spec;
-> > +        while (p) {
-> > +            char *tok = strsep(&p, ",");
-> > +            if (tok && *strim(tok))
-> > +                n++;
-> > +        }
-> > +
-> > +        if (n == 0){
-> > +            kfree(spec);
-> > +            return -EINVAL;
-> > +        }
-> > +
-> > +        /* Allocate array for pointers into spec (callee copies/consumes) */
-> > +        syms = kcalloc(n, sizeof(*syms), GFP_KERNEL);
-> > +        if (!syms) {
-> > +            kfree(spec);
-> > +            return -ENOMEM;
-> > +        }
-> > +
-> > +        /* Second pass: fill, skipping empties */
-> 
-> Again, symbol should not have a space.
-> 
-
-Understood. I will also fix this in v2.
-
-> > +        p = spec;
-> > +        while (p) {
-> > +            char *tok = strsep(&p, ",");
-> > +            char *s;
-> > +
-> > +            if (!tok)
-> > +                break;
-> > +            s = strim(tok);
-> > +            if (!*s)
-> > +                continue;
-> > +            syms[w++] = s; 
-> > +        }
-> > +        
-> > +        /* Dedup in-place */
-> > +        for (i = 0; i < w; i++){
-> > +            if (!syms[i])
-> > +                continue;
-> > +            for (j = i + 1; j < w; j++) {
-> > +                if (syms[j] && !strcmp(syms[i], syms[j]))
-> > +                    syms[j] = NULL;
-> > +            }
-> 
-> I think dedup will be done in ftrace, so we don't need to do this
-> costly operation.
-> 
-
-I see. I will remove the dedup here.
-
-> > +        }
-> > +
-> > +        /* Compact */
-> > +        for (i = 0, j = 0; i < w; i++) {
-> > +            if (syms[i])
-> > +                syms[j++] = syms[i];
-> > +        }
-> > +        w = j;
-> > +
-> > +        /* After dedup, ensure we still have at least one symbol */
-> > +        if (w == 0){
-> > +            kfree(syms);
-> > +            kfree(spec);
-> > +            return -EINVAL;
-> > +        }
-> > +
-> > +        /* Register list or single symbol, using the existing bulk API */
-> > +        if (w == 1)
-> > +            rc = register_fprobe(&tf->fp, syms[0], NULL);
-> 
-> Hmm, you might misunderstand this. What you need to do is to classify
-> the list of symbols with '!' as nofilter, and others as "filter",
-> and pass those as "register_fprobe(&tf->fp, filter, nofilter)".
-> 
-
-Thank you for the clarification.
-I will change as followed:
-- tokens prefixed with '!' go to the nofileter list
-- all other tokens go to filter list
-- pass both to register_fprobe(&tf->fp, filter, nofilter)
-
-> Thank you,
-> 
-> > +        else
-> > +            rc = register_fprobe_syms(&tf->fp, (const char **)syms, w);
-> > +
-> > +        kfree(syms);
-> > +        kfree(spec);
-> > +        return rc;
-> > +    }
-> >  }
-> >  
-> >  /* Internal unregister function - just handle fprobe and flags */
-> > -- 
-> > 2.43.0
-> > 
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you. Please let me know if you have any questions or concerns.
-
-Best regards,
-Ryan Chung
 
