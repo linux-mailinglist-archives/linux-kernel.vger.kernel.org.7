@@ -1,138 +1,196 @@
-Return-Path: <linux-kernel+bounces-775116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF33B2BB74
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5E9B2BB7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0527F1B65AC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:12:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9971D566CCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DF53101D5;
-	Tue, 19 Aug 2025 08:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE303101D5;
+	Tue, 19 Aug 2025 08:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t/0nro3v";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FaxGUqJh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oh1vjBjX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5073B2B9B9
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075B010957;
+	Tue, 19 Aug 2025 08:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755591132; cv=none; b=SgCcbFWxUl8KpF1DwBZD/dAKCFEuSd0dDXcHemq9U5/G5C3PSFas2KFvS4WXqcSqJpHfhvIba0bHcy+o3+/W/wWNx0fn6N+6FpZ/+FgqP4U/ED0E+ZsmIWVpupWcv06ACZ5th/Nvc7ORwjHw1IJopR2qu83UtoTZqYBFZDOdgKk=
+	t=1755591144; cv=none; b=dJh/89rltKYd0ra23WoB6mFyiSnnZ62jJ1BecLTsXEv6jzk454jHZutXIszH5N2UL6S6z6+x1w95u7V8/yYZYyYsWHQqzR3Z1fKF2RPLSHjacyU1auh/S/1Jcs31V/GmXhsISr/v8w+XPVt2IvP5cOF1fuxDrPq4c+SLJwOwnXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755591132; c=relaxed/simple;
-	bh=EneyqHGYpOuLy6/ReqhfuuzSEBr8vux4tStVrB53oB8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ebexBN02yFLObpOrHdb9IFM2ry76D81v//EBVg8U+z8B1kYMV5tpdn6i5gXJUp5Jl4CezdgJWzXUIrfOb/9Q5fzgkjIpiwxjPLdXYQErUhIDQo3aDgEup0mK20lBxbWCM99GvPT8KeIw6kZ2fdZVJ4GwSbty5g7WP5enixqNBQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t/0nro3v; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FaxGUqJh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755591129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6yNyCn0GM5JSpUyAEcFzk3JIR+XLzqb8e9tzT4MhOaw=;
-	b=t/0nro3vHnOlHfDMHBtmd5H0qppkssuI5P9lRdYgO9yod1G8qHr6DyEaRjTkuUYCSWnog8
-	hqERnNqrUmgpNte8aq8UgAMiF88awRKbCla2f+SNrPvusAo9zEi95SmYwq+UvPfU4N7vpo
-	91sLiF0Sg+0xUodHvYbTzi43d7UmIIUxZTRlxprBN8OK00qQ01RnFbGU4CCdgPG4bGllDT
-	dXnhHnv41L/o6qv1LA34/BMmaffIZ14ebwh3B350+4CzmP+v6hNzj6L6kZwECZM5Yl5EPj
-	HDot01mniqojLp/a+l6Z/YtoRovpEkt3zIX3pqAJ3By+4qZfLci4WZAiOCEmFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755591129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6yNyCn0GM5JSpUyAEcFzk3JIR+XLzqb8e9tzT4MhOaw=;
-	b=FaxGUqJh9x7KZEqwoiUMAscwkU+oMpVhNSodnTyrDZf5P/o/gi3pzFCTAyfiUyv8mtiR3h
-	ti2FSIoSkyn7u9Bw==
-To: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>, "rostedt@goodmis.org"
- <rostedt@goodmis.org>, "mathieu.desnoyers@efficios.com"
- <mathieu.desnoyers@efficios.com>, "kprateek.nayak@amd.com"
- <kprateek.nayak@amd.com>, "vineethr@linux.ibm.com"
- <vineethr@linux.ibm.com>
-Subject: Re: [PATCH V7 02/11] sched: Indicate if thread got rescheduled
-In-Reply-To: <20250818131655.1FybFuR4@linutronix.de>
-References: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
- <20250724161625.2360309-3-prakash.sangappa@oracle.com>
- <87a54bcmd7.ffs@tglx> <BF199244-10DF-4B84-99AF-DDA125F775E4@oracle.com>
- <87o6smb3a0.ffs@tglx> <20250813161927.CFYHxNIv@linutronix.de>
- <87jz376tzj.ffs@tglx> <20250818131655.1FybFuR4@linutronix.de>
-Date: Tue, 19 Aug 2025 10:12:08 +0200
-Message-ID: <87zfbvwx0n.ffs@tglx>
+	s=arc-20240116; t=1755591144; c=relaxed/simple;
+	bh=/dfQAZayWIHQFfzoYaLoa9ZkINRtrj3kEglQs3WnKZM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BXelelz46Dr1MUAGNqbrfBqFz7y5cMnms5T5H5pjYLKX8AZhQDPBnF1OuUzFqjR4sIN2bp6BzjxSFk7eRkhOhSi1d/biT+y/PzTr6oVNsry1qseDmd1f5lmN4qKupGdYEhuvVhj/jS9I9airD5sI06dTeJN7myHt/cLgBUv1emY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oh1vjBjX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CD04C4CEF1;
+	Tue, 19 Aug 2025 08:12:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755591143;
+	bh=/dfQAZayWIHQFfzoYaLoa9ZkINRtrj3kEglQs3WnKZM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Oh1vjBjXaqQbcJHw3DjqK6XlLzbF/z1jr+sMGRuWk+icJ8e1Uo5CFIT+NTudIih/e
+	 2nstt53rKHr03zEdKBOezlJQCXYYBeeRyta5adtumTVNKP54qnB38VNmu/joFhnSF0
+	 0Aqy0S+Uol1BCfeVQkIQUd48uY8T276Py30Pa8f35g+Mr920cqdQX+WWAI/T2JvEXb
+	 7nWBifR+388oDoXODW/RogsRMVbqFOt/w3jYDXht1kY7V/vFi8D5xLdhF0GySzs+Wd
+	 /LfM7ComIUQIQyg+97rkSvZaZyDzT5hElHtYy1sWSviQibf6nptwi+ITnNlWLqUD+3
+	 EvTGlH/zW0f1w==
+Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uoHS9-008szj-4s;
+	Tue, 19 Aug 2025 09:12:21 +0100
+Date: Tue, 19 Aug 2025 09:12:17 +0100
+Message-ID: <87v7mjk9we.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] arm64/sysreg: Replace TCR_EL1 field macros
+In-Reply-To: <b63b6344-ab7c-43d8-b418-e030344dfd7c@arm.com>
+References: <20250818045759.672408-1-anshuman.khandual@arm.com>
+	<20250818045759.672408-3-anshuman.khandual@arm.com>
+	<87jz30my30.wl-maz@kernel.org>
+	<b63b6344-ab7c-43d8-b418-e030344dfd7c@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 86.149.246.145
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, broonie@kernel.org, ryan.roberts@arm.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Aug 18 2025 at 15:16, bigeasy@linutronix.de wrote:
-> On 2025-08-13 18:56:16 [+0200], Thomas Gleixner wrote:
->> On Wed, Aug 13 2025 at 18:19, bigeasy@linutronix.de wrote:
->> > I spent some time on the review. I tried to test it but for some reason
->> > userland always segfaults. This is not subject to your changes because
->> > param_test (from tools/testing/selftests/rseq) also segfaults. Also on a
->> > Debian v6.12. So this must be something else and maybe glibc related.
->> 
->> Hrm. I did not run the rseq tests. I only used the test I wrote, but
->> that works and the underlying glibc uses rseq too, but I might have
->> screwed up there. As I said it's POC. I'm about to send out the polished
->> version, which survive the selftests nicely :)
->
-> It was not your code. Everything exploded here. Am right to assume that
-> you had a recent/ current Debian Trixie environment testing? My guess is
-> that glibc or gcc got out of sync.
+On Tue, 19 Aug 2025 07:46:50 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> 
+> 
+> On 18/08/25 9:16 PM, Marc Zyngier wrote:
+> > On Mon, 18 Aug 2025 05:57:57 +0100,
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> >>
+> >> This just replaces all used TCR_EL1 field macros with tools sysreg variant
+> >> based fields and subsequently drops them from the header (pgtable-hwdef.h).
+> >> While here, also drop all the unused TCR_XXX macros from the header.
+> >>
+> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >> Cc: Will Deacon <will@kernel.org>
+> >> Cc: Marc Zyngier <maz@kernel.org>
+> >> Cc: Mark Brown <broonie@kernel.org>
+> >> Cc: kvmarm@lists.linux.dev
+> >> Cc: linux-arm-kernel@lists.infradead.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >> ---
+> >>  arch/arm64/include/asm/assembler.h         |   6 +-
+> >>  arch/arm64/include/asm/cputype.h           |   2 +-
+> >>  arch/arm64/include/asm/kvm_arm.h           |  28 +++---
+> >>  arch/arm64/include/asm/kvm_nested.h        |   6 +-
+> >>  arch/arm64/include/asm/mmu_context.h       |   4 +-
+> >>  arch/arm64/include/asm/pgtable-hwdef.h     | 107 +++------------------
+> >>  arch/arm64/include/asm/pgtable-prot.h      |   2 +-
+> >>  arch/arm64/kernel/cpufeature.c             |   4 +-
+> >>  arch/arm64/kernel/pi/map_kernel.c          |   8 +-
+> >>  arch/arm64/kernel/vmcore_info.c            |   2 +-
+> >>  arch/arm64/kvm/arm.c                       |   6 +-
+> >>  arch/arm64/kvm/at.c                        |  48 ++++-----
+> >>  arch/arm64/kvm/hyp/include/hyp/switch.h    |   2 +-
+> >>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h |   2 +-
+> >>  arch/arm64/kvm/hyp/nvhe/switch.c           |   2 +-
+> >>  arch/arm64/kvm/hyp/nvhe/tlb.c              |   2 +-
+> >>  arch/arm64/kvm/hyp/vhe/tlb.c               |   2 +-
+> >>  arch/arm64/kvm/nested.c                    |   8 +-
+> >>  arch/arm64/kvm/pauth.c                     |  12 +--
+> >>  arch/arm64/mm/proc.S                       |  29 +++---
+> >>  tools/arch/arm64/include/asm/cputype.h     |   2 +-
+> >>  21 files changed, 101 insertions(+), 183 deletions(-)
+> > 
+> > [...]
+> > 
+> >> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> >> index 888f7c7abf54..b47d6d530e57 100644
+> >> --- a/arch/arm64/kvm/arm.c
+> >> +++ b/arch/arm64/kvm/arm.c
+> >> @@ -2000,10 +2000,10 @@ static void __init cpu_prepare_hyp_mode(int cpu, u32 hyp_va_bits)
+> >>  
+> >>  	tcr = read_sysreg(tcr_el1);
+> >>  	if (cpus_have_final_cap(ARM64_KVM_HVHE)) {
+> >> -		tcr &= ~(TCR_HD | TCR_HA | TCR_A1 | TCR_T0SZ_MASK);
+> >> -		tcr |= TCR_EPD1_MASK;
+> >> +		tcr &= ~(TCR_EL1_HD | TCR_EL1_HA | TCR_EL1_A1 | TCR_EL1_T0SZ_MASK);
+> >> +		tcr |= TCR_EL1_EPD1_MASK;
+> > 
+> > Except that none of that code is about EL1. At all.
+> > 
+> >>  	} else {
+> >> -		unsigned long ips = FIELD_GET(TCR_IPS_MASK, tcr);
+> >> +		unsigned long ips = FIELD_GET(TCR_EL1_IPS_MASK, tcr);
+> >>  
+> >>  		tcr &= TCR_EL2_MASK;
+> >>  		tcr |= TCR_EL2_RES1 | FIELD_PREP(TCR_EL2_PS_MASK, ips);
+> >> diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
+> >> index 0e5610533949..5f0f10ef38f0 100644
+> >> --- a/arch/arm64/kvm/at.c
+> >> +++ b/arch/arm64/kvm/at.c
+> >> @@ -134,8 +134,8 @@ static int setup_s1_walk(struct kvm_vcpu *vcpu, struct s1_walk_info *wi,
+> >>  	tbi = (wi->regime == TR_EL2 ?
+> >>  	       FIELD_GET(TCR_EL2_TBI, tcr) :
+> >>  	       (va55 ?
+> >> -		FIELD_GET(TCR_TBI1, tcr) :
+> >> -		FIELD_GET(TCR_TBI0, tcr)));
+> >> +		FIELD_GET(TCR_EL1_TBI1, tcr) :
+> >> +		FIELD_GET(TCR_EL1_TBI0, tcr)));
+> > 
+> > This is the reason number one why I dislike this patch.
+> > 
+> > Here, we deal with both the EL1&0 *and* the EL2&0 translation
+> > regimes. And I left the original definition *on purpose* so that
+> > nobody would read this code as being EL1-only. Now, you will glance
+> > over it with warm fuzzy feeling that you know what this is about --
+> > purely EL1. And that's what bugs are made of.
+> > 
+> > Of course, nothing changed functionally. But is it better? No.
+> 
+> Just wondering - will it be better to use TCR_EL1/TCR_EL2 definitions
+> conditionally for EL1&0 and EL2&0 translation regimes as applicable
+> ?
 
-  https://lore.kernel.org/lkml/aKODByTQMYFs3WVN@google.com
+Write the code, look at the result, realise this is totally
+useless. Because TCR_EL1 and TCR_EL2 *WHEN E2H==1* are designed to
+have the same layout.
 
-:)
+> Could there any other better method here ? Because the current
+> situation where there are some custom TCR macros, some tools sysreg
+> generated macros, and then those macros getting used in an adhoc
+> manner in different places, is not very consistent either.
 
->> > gcc has __atomic_fetch_and() and __atomic_fetch_or() provided as
->> > built-ins.
->> > There is atomic_fetch_and_explicit() and atomic_fetch_or_explicit()
->> > provided by <stdatomic.h>. Mostly the same magic.
->> >
->> > If you use this like
->> > |  static inline int test_and_clear_bit(unsigned long *ptr, unsigned int bit)
->> > |  {
->> > |          return __atomic_fetch_and(ptr, ~(1 << bit), __ATOMIC_RELAXED) & (1 << bit);
->> > |  }
->> >
->> > the gcc will emit btr. Sadly the lock prefix will be there, too. On the
->> > plus side you would have logic for every architecture.
->> 
->> I know, but the whole point is to avoid the LOCK prefix because it's not
->> necessary in this context and slows things down. The only requirement is
->> CPU local atomicity vs. an interrupt/exception/NMI or whatever the CPU
->> uses to mess things up. You need LOCK if you have cross CPU concurrency,
->> which is not the case here. The LOCK is very measurable when you use
->> this pattern with a high frequency and that's what the people who long
->> for this do :)
->
-> Sure. You can keep it on x86 and use the generic one in the else case
-> rather than abort with an error.
-> Looking at arch___test_and_clear_bit() in the kernel, there is x86 with
-> its custom implementation. s390 points to generic___test_and_clear_bit()
-> which is a surprise. alpha's and sh's isn't atomic so this does not look
-> right. hexagon and m68k might okay and a candidate.
+The better way is to leave this stuff alone. Honestly, I don't see any
+improvement in repainting the KVM code to make it less readable.
 
-Right, I'll look into that after I sorted out the underlying rseq
-mess. See the context of the link above. That solved will make the
-integration of this timeslice muck way simpler (famous last words).
+If anything, define the old macros in terms of the new ones, and move
+them to be KVM-private.
 
-Thanks,
+	M.
 
-        tglx
-
-
+-- 
+Jazz isn't dead. It just smells funny.
 
