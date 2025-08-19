@@ -1,112 +1,203 @@
-Return-Path: <linux-kernel+bounces-776479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDA6B2CDC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7351AB2CDD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4727F3BF245
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B5E3BDD4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED5C340D85;
-	Tue, 19 Aug 2025 20:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AE931E113;
+	Tue, 19 Aug 2025 20:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmCFTRj3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A280hM+/"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C5226CE1A;
-	Tue, 19 Aug 2025 20:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC843169
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 20:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755635243; cv=none; b=XAXy5/KFU8KFOmiZryy8sqwdYLpWYFRO2RHatOAyJsOBIzE84mdP72d/Rn3lkJ5b9gPhK7M1QdY69ZCq+nd3mQG7LPvxVXZAdcpixoDaqBQ57qvd8mRsVuMWg5OyrCFCw/uo8/mcnt53YcgHa2Y6sf7aSVVpwelXQWERvCeX6xc=
+	t=1755635328; cv=none; b=QyiCUHf4cbNDPHp+YIWzNYB9gy24uj7s8KYxLb89hVnhqHYH8d8gM0Aimd74MPF+aTGJs4Gd+z0ZVE3SaASrMoSXbRcTQBjv6aXNjNnz7c5TtMG/TiQPg6mBoRqrvHCLhml0ziAZ2o077uu1b8d4wCYxM8/Jx1wO6U0lRlZ2VTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755635243; c=relaxed/simple;
-	bh=oIDpHueO9zGTm/sfs/uw7A7+IqTRVGpRNQrkAMXBRsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AR2DTilx6iR8VPyXBeXnMdu6ETFPgV/AmBcsHwV7E1DgLaV/ozbMuk3yDigY6fXhlX6IPOny90ibNbDJqFZ3MyxY7bf2hIYHOK2oXCIe4CMVkxSHT4tG5xEIACxMBNKffa/X6foZd/mPOngYHcWPooyDvTQhQYYPbX1mXKMOREM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmCFTRj3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 166F6C4CEF1;
-	Tue, 19 Aug 2025 20:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755635243;
-	bh=oIDpHueO9zGTm/sfs/uw7A7+IqTRVGpRNQrkAMXBRsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pmCFTRj3iZCCkzA57BGea3AnymZmNXaIgJtP0674gt4uZi6udBFgB8yVncHIR7+Ke
-	 pIgNDFO1IJi9rf3m2tnECTQ6YY2zQBPPLeKDGzBAnqTKtRxfCMB8cpEVItQLdjo8SH
-	 wHONffK+o4aqaRMEUXiGaFgeuLHVWfxOD2GoakCdmi06QMXdGE6K5KF6iIMz97nC1G
-	 jnBGlEfBr49Ae10eKlKgXjHv6E1xEcvq18BPlIpq7yfp5uM+HvUYy36KbwBP3kf7Mr
-	 DJMx/i+tW6w0FNinu33Pdly+YTqdhMtGe9/A11KzN2Kgv2lHIlAalqpLRg2ygW6JVZ
-	 6ApwOp+YhQLAA==
-Date: Tue, 19 Aug 2025 15:27:22 -0500
-From: Rob Herring <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v1 04/19] dt-bindings: display: tegra: document Tegra30
- VIP
-Message-ID: <20250819202722.GA1264491-robh@kernel.org>
-References: <20250819121631.84280-1-clamor95@gmail.com>
- <20250819121631.84280-5-clamor95@gmail.com>
+	s=arc-20240116; t=1755635328; c=relaxed/simple;
+	bh=wK3YhY4+3lTHh98GdBMxUr3XfTkaNOpQWVSlY78eT9c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sQhgZ+QMXZ0x6XdbYIQ+G9ICdI+YyPL4MRBxgcXLPQNmiyJdi561P11+900w4xQfu53yWruRMXXz2w1wFJXde9HaxIDFjGrbMYllcEiY30f9cp3FFoak5IvT+N/lCwc4v5p6ivYBl9bNHTI8aHTH+6GtBPxGK1VleikMO3+GUis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A280hM+/; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755635321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MAopiF8dZ3zuj1vhkZjH8oqB8pGFDZFe8uogKHTUOSA=;
+	b=A280hM+/+Cp5IvWAcBP03DyjcxMnbwLk/dosmmaVKAzGKWQw3VIfAiDwFrHyaZRqkFdMDi
+	buMBmtbkF2TzTr5bAJUuuGfKGlVhbnoRobmHoUI+sb2RSKmu0to8P1klPJKkRrb2EW8TYO
+	zTcPtGpx3eTw0hDcSoKFH9pOHbgjuaQ=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Johannes Weiner
+ <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David Rientjes
+ <rientjes@google.com>,  Matt Bobrowski <mattbobrowski@google.com>,  Song
+ Liu <song@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+  Alexei Starovoitov <ast@kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 11/14] sched: psi: refactor psi_trigger_create()
+In-Reply-To: <CAJuCfpH5cSDGmwBfEmiXkShxxdTEuoRXrTKndNwTMMDUzX8f3A@mail.gmail.com>
+	(Suren Baghdasaryan's message of "Mon, 18 Aug 2025 21:09:51 -0700")
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	<20250818170136.209169-12-roman.gushchin@linux.dev>
+	<CAJuCfpH5cSDGmwBfEmiXkShxxdTEuoRXrTKndNwTMMDUzX8f3A@mail.gmail.com>
+Date: Tue, 19 Aug 2025 13:28:31 -0700
+Message-ID: <87ikijys28.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819121631.84280-5-clamor95@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 19, 2025 at 03:16:16PM +0300, Svyatoslav Ryhel wrote:
-> Parallel VI interface found in Tegra30 is exactly the same as Tegra20 has.
+Suren Baghdasaryan <surenb@google.com> writes:
 
-That's not what the compatible schema says. 'exactly the same' implies a 
-fallback to whatever it is exactly the same as.
+> On Mon, Aug 18, 2025 at 10:02=E2=80=AFAM Roman Gushchin
+> <roman.gushchin@linux.dev> wrote:
+>>
+>> Currently psi_trigger_create() does a lot of things:
+>> parses the user text input, allocates and initializes
+>> the psi_trigger structure and turns on the trigger.
+>> It does it slightly different for two existing types
+>> of psi_triggers: system-wide and cgroup-wide.
+>>
+>> In order to support a new type of psi triggers, which
+>> will be owned by a bpf program and won't have a user's
+>> text description, let's refactor psi_trigger_create().
+>>
+>> 1. Introduce psi_trigger_type enum:
+>>    currently PSI_SYSTEM and PSI_CGROUP are valid values.
+>> 2. Introduce psi_trigger_params structure to avoid passing
+>>    a large number of parameters to psi_trigger_create().
+>> 3. Move out the user's input parsing into the new
+>>    psi_trigger_parse() helper.
+>> 4. Move out the capabilities check into the new
+>>    psi_file_privileged() helper.
+>> 5. Stop relying on t->of for detecting trigger type.
+>
+> It's worth noting that this is a pure core refactoring without any
+> functional change (hopefully :))
 
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml    | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-> index 14294edb8d8c..39e9b3297dbd 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-> @@ -13,6 +13,7 @@ properties:
->    compatible:
->      enum:
->        - nvidia,tegra20-vip
-> +      - nvidia,tegra30-vip
->  
->    ports:
->      $ref: /schemas/graph.yaml#/properties/ports
-> -- 
-> 2.48.1
-> 
+Added this to the commit log.
+
+>
+>>
+>> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+>> ---
+>>  include/linux/psi.h       | 15 +++++--
+>>  include/linux/psi_types.h | 33 ++++++++++++++-
+>>  kernel/cgroup/cgroup.c    | 14 ++++++-
+>>  kernel/sched/psi.c        | 87 +++++++++++++++++++++++++--------------
+>>  4 files changed, 112 insertions(+), 37 deletions(-)
+>>
+>> diff --git a/include/linux/psi.h b/include/linux/psi.h
+>> index e0745873e3f2..8178e998d94b 100644
+>> --- a/include/linux/psi.h
+>> +++ b/include/linux/psi.h
+>> @@ -23,14 +23,23 @@ void psi_memstall_enter(unsigned long *flags);
+>>  void psi_memstall_leave(unsigned long *flags);
+>>
+>>  int psi_show(struct seq_file *s, struct psi_group *group, enum psi_res =
+res);
+>> -struct psi_trigger *psi_trigger_create(struct psi_group *group, char *b=
+uf,
+>> -                                      enum psi_res res, struct file *fi=
+le,
+>> -                                      struct kernfs_open_file *of);
+>> +int psi_trigger_parse(struct psi_trigger_params *params, const char *bu=
+f);
+>> +struct psi_trigger *psi_trigger_create(struct psi_group *group,
+>> +                               const struct psi_trigger_params *param);
+>>  void psi_trigger_destroy(struct psi_trigger *t);
+>>
+>>  __poll_t psi_trigger_poll(void **trigger_ptr, struct file *file,
+>>                         poll_table *wait);
+>>
+>> +static inline bool psi_file_privileged(struct file *file)
+>> +{
+>> +       /*
+>> +        * Checking the privilege here on file->f_cred implies that a pr=
+ivileged user
+>> +        * could open the file and delegate the write to an unprivileged=
+ one.
+>> +        */
+>> +       return cap_raised(file->f_cred->cap_effective, CAP_SYS_RESOURCE);
+>> +}
+>> +
+>>  #ifdef CONFIG_CGROUPS
+>>  static inline struct psi_group *cgroup_psi(struct cgroup *cgrp)
+>>  {
+>> diff --git a/include/linux/psi_types.h b/include/linux/psi_types.h
+>> index f1fd3a8044e0..cea54121d9b9 100644
+>> --- a/include/linux/psi_types.h
+>> +++ b/include/linux/psi_types.h
+>> @@ -121,7 +121,38 @@ struct psi_window {
+>>         u64 prev_growth;
+>>  };
+>>
+>> +enum psi_trigger_type {
+>> +       PSI_SYSTEM,
+>> +       PSI_CGROUP,
+>> +};
+>> +
+>> +struct psi_trigger_params {
+>> +       /* Trigger type */
+>> +       enum psi_trigger_type type;
+>> +
+>> +       /* Resources that workloads could be stalled on */
+>
+> I would describe this as "Resource to be monitored"
+
+Fixed.
+
+>
+>> +       enum psi_res res;
+>> +
+>> +       /* True if all threads should be stalled to trigger */
+>> +       bool full;
+>> +
+>> +       /* Threshold in us */
+>> +       u32 threshold_us;
+>> +
+>> +       /* Window in us */
+>> +       u32 window_us;
+>> +
+>> +       /* Privileged triggers are treated differently */
+>> +       bool privileged;
+>> +
+>> +       /* Link to kernfs open file, only for PSI_CGROUP */
+>> +       struct kernfs_open_file *of;
+...
+>>         t->event =3D 0;
+>>         t->last_event_time =3D 0;
+>> -       t->of =3D of;
+>> -       if (!of)
+>> +
+>> +       switch (params->type) {
+>> +       case PSI_SYSTEM:
+>>                 init_waitqueue_head(&t->event_wait);
+>
+> I think t->of will be left uninitialized here. Let's set it to NULL
+> please.
+
+Ack.
+
+Thanks!
 
