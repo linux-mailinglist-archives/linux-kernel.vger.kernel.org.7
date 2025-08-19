@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-776403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975C5B2CCEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:23:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46F7B2CCEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79B224E2D4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F721C20111
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B8632C300;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E9433EB02;
 	Tue, 19 Aug 2025 19:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="b8JPz8uS"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="arrhL3HY"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E926326D5E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22025326D45
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755631343; cv=fail; b=BwnA2oeoSaTZd4q7de3bZ9sKafRl/EA044Q4XyfNAFU2I1+cv1wX2SMoXkdQ0bb62tPQNKmlmRs8kqhKIvlqFqfaHhR3+d6VmAbHdBaB30cKvWUG6pXEfaLCHCzGf5+RsN6OQ9WSL+mxVOno3QJqazzL46mGz3dcYBbYRgWxcPc=
+	t=1755631342; cv=fail; b=QDtYNmPXDrSMY4fGQdUDxUkW3bGZ/K/kDY0KQ51PfcNaSuS96b0dz7FYMIMM6OrpTdRKpg1oovDIFz5Ymybfl0H/0hTgKlDOygjs8OaQ70BQJrYE9w/maRc8bHejn7ofOTxG3v9rAj/nNin/LYlD6SSjwx0y9GXjkKO3Jna5XC8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755631343; c=relaxed/simple;
-	bh=nNEzNgX88p6/MaVISM3+4s4fB6qVdzVP9GWauEGT5JY=;
+	s=arc-20240116; t=1755631342; c=relaxed/simple;
+	bh=MSRM/NMfE2zCgjF4Ju8RUvg60FQ6Vp1Q2EU6tE9H2XQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cXj2CwFugIJbJrXqYYCFrDABbp5nTPhpYwJl89WYQaijemgTxF8kTGA4AcZDR0zhgcIPikvKo6WNniOpnSBdesDkcHo7jCdMkKN+dpvR96QIVPHpI7TcztOFfRIg4okp/uk7vi/sewglgA9nIHhCKN9lJIBTpf1/O8cByBc55p8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=b8JPz8uS; arc=fail smtp.client-ip=40.107.93.43
+	 MIME-Version:Content-Type; b=JmpGP6cBUJdaYcXeKxhIrNm267yHxt12b5aDkHg1Xt+C4PP/nzBh4aLwm7Jde1qaV+H4wNM+jO74UwWUpTEFqyLkXGM6EQTAw7yGd78DfVlZZOB1S7KfSPa8G5mYbn6m0+fUlOXpiKkQ6zjhEe4jlaVxGth4dFZJaXxS2UlIPRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=arrhL3HY; arc=fail smtp.client-ip=40.107.93.86
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yi6kxkKKWl+4EqxOFI3Hj/YZrD7MWyYcMO8QGnjVxrQsjmfBUvNVMOi/7rSI41D1T3kVbgfviz2XZoWiMgRzYrRgEdKQwLuuJ+LrxoWZCebgL3NvGP5A7zBmHFNspE5D3Q4sIRYiUV3Ht3mUkIWO080I4sp6RfGdaXHs5TfaKMCERtfOBcoSOGBD7skFTi/0WMDKGFIjJqN4P0QMg77oxPAoF+ZTwMfCEQglMdh4CgAEVuiHNWCPNh9lhAHlBhxnkZRgAwNpuvFWSZ/rq7/R/OaWE6W5OI/iDSnHpby6jf3nyk9GZ/sGVMRRTxBkjr/zUW8PT/7S9fWjxIaj1biRWA==
+ b=JAbAKAEk5h0y/Y6E5mNUsFL4K+1ZB6dqA0tAiLVwbelreLC/txw26OZxenmsWIxlGe+l4xfzliSI7eSkTVua4IsiCwIrb9vSU1ewqssYhuizjFp1ZZBZ2Pyz0p61+LJV41gvKgRxWsXh+J+7aqKRtfSAvBJzXW66KAw1amC/honUoScB3uSyeomySNrJhmkUFDN26xHfZNwDrpZufHaNs+kNxDNJxE15jhlwgqbwjGsKigA7Q4jom3DQ6gKvaFuGggbnWPoPXIiI5ZHT8YyTSoyJo7xbpMTJKb16UNB0mPsxW7ozEAyBG4ZX3uQYtnMW/fL1hOx1imGTQbBqZHf+hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BgLtTOw6hfabSZrjSJ0dpOoM80bj7DbqYwLaabnR4jM=;
- b=baPeGR1CU6wyCs/qikoWws0TUnNo14GOMVW4FMp6fukeFMM6rJFw2TPMuG50R2Vf3YDO0xXPTi/8qRm0vaEL+rR4oE3UnSICYnPa5HpSyNX54g8qI/KkYvh1RKQMnnZoIRA1GSC8YyJ88SUIKEMcrv3H2gbZhY55ANyu/1XOGvggM/nJ6KZZ/aWI3bArTrGjHUnkGBNrh0HxnfstyhKc4p+bdq3UdTdmBg46T9gF+dj7HBqxl342fUl1c16qof+3D43sTqllnevKwZR54qW/D10KdVfvUEbYIsrHYqWV0otxhfq2JiorNEcGXc578WMXHn+MTPeM7Zop0s0n7NlNDA==
+ bh=AhsC68SjhgtzdcTQ9GJ7YQG0w0C+dgKkJrVj8848EE4=;
+ b=In8WvPKkBSP7yVlhSkyAkuhT/BNqZdOWpiAzd2QrzfEU0Mto/zSTwWz3JoL7p4azsvxAwkmgY2g1Fb5hTLM1Y9V3RlGN39zCI37Xlo0z4ESPLoc2VCw2i68OuHzsUOlVPeDd0N/NK7GWd7uuNTUK8ZtHIPfmxRMFIhMtUSaltfAPp5MOAPOSHlBBNGr0NO/IeUK7OlRm758a6DzkCNB1pvbuXX37Un1eza0tRYriZ+RszGzv4JPAFv9mNXI2WTv/M4hKrcKl1BXbsdguWG8bOwdSn9qThdKQLAzbH1naUu8qxs6ExSiwV0hekzc2t4Uz207zqC5TZFHFGQzSQYVP3Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BgLtTOw6hfabSZrjSJ0dpOoM80bj7DbqYwLaabnR4jM=;
- b=b8JPz8uSXGx5wymD85yki5t1qAj3YrUDN7NkBglzvsAfGmvoEFfgFy8NAXavcjO6rp/Iz81r5LGW0NrHmvNh/egtiTYD6vNXDvguVZ5jELTsRg789ltbjeOd1eosl2TjUs4vX0XIZzg4DzZkrRr5XXU0LOCxS1HqwFvyP2dXVSU=
-Received: from BYAPR07CA0099.namprd07.prod.outlook.com (2603:10b6:a03:12b::40)
- by MN2PR12MB4205.namprd12.prod.outlook.com (2603:10b6:208:198::10) with
+ bh=AhsC68SjhgtzdcTQ9GJ7YQG0w0C+dgKkJrVj8848EE4=;
+ b=arrhL3HYH9jKxaZVU1ENPon7nQBwqkbjsclYVegluEz5edtOm1CnjFZMvm+WrnoA1ol8CTGKSjY/VBpToUvGO1n/XTq7pnHZzoGmOYhKEelGFr+czLlgs5bDO3+riht/ZyjMuRt7Qk1za0Ekwy2/GrvhgcpTw6nLVGj5t12tFMI=
+Received: from MW4PR04CA0251.namprd04.prod.outlook.com (2603:10b6:303:88::16)
+ by MW6PR12MB9020.namprd12.prod.outlook.com (2603:10b6:303:240::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Tue, 19 Aug
  2025 19:22:18 +0000
-Received: from MWH0EPF000A6731.namprd04.prod.outlook.com
- (2603:10b6:a03:12b:cafe::ac) by BYAPR07CA0099.outlook.office365.com
- (2603:10b6:a03:12b::40) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.24 via Frontend Transport; Tue,
+Received: from MWH0EPF000A672E.namprd04.prod.outlook.com
+ (2603:10b6:303:88:cafe::fa) by MW4PR04CA0251.outlook.office365.com
+ (2603:10b6:303:88::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.13 via Frontend Transport; Tue,
  19 Aug 2025 19:22:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000A6731.mail.protection.outlook.com (10.167.249.23) with Microsoft
+ MWH0EPF000A672E.mail.protection.outlook.com (10.167.249.20) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Tue, 19 Aug 2025 19:22:17 +0000
+ 15.20.9052.8 via Frontend Transport; Tue, 19 Aug 2025 19:22:18 +0000
 Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 19 Aug
- 2025 14:22:15 -0500
+ 2025 14:22:16 -0500
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/5] x86/bugs: Use early_param for spectre_v2_user
-Date: Tue, 19 Aug 2025 14:21:56 -0500
-Message-ID: <20250819192200.2003074-2-david.kaplan@amd.com>
+Subject: [PATCH v2 2/5] x86/bugs: Use early_param for spectre_v2
+Date: Tue, 19 Aug 2025 14:21:57 -0500
+Message-ID: <20250819192200.2003074-3-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250819192200.2003074-1-david.kaplan@amd.com>
 References: <20250819192200.2003074-1-david.kaplan@amd.com>
@@ -94,169 +94,287 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6731:EE_|MN2PR12MB4205:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b5cfff8-48e1-4bf7-c73f-08dddf55b658
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A672E:EE_|MW6PR12MB9020:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c2adf0f-97af-41a8-6178-08dddf55b68f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
+	BCL:0;ARA:13230040|7416014|82310400026|1800799024|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PPK8Od4Atnyw5T5OzTHAoFBtE46nDeCANASX6FG2GytQKuu72/XbaDKfCwoe?=
- =?us-ascii?Q?DBGkeGPNjGHx573lvELV+hhMEeRgIio5VHbFH7lZMvqeNlIWeOl5HFV5iK7O?=
- =?us-ascii?Q?WsF/VpoXmUj5pkmSY1yfTC/Kba5DCnp0ZD5VmHumBzFuDhieEBGwSzWmY06w?=
- =?us-ascii?Q?vELNO9tzMu2WtwkqipAAj9lOceD03buLWhv+UnFTyQP3B31GuTyNlbXI8+80?=
- =?us-ascii?Q?VTvsgkDMvTkKOyXa8FlaFHM/jXYkZCXRPVPPb0P8EUhThLSwGSaxgYyGf3X8?=
- =?us-ascii?Q?UabbT+IjwcKWpy9vFCgYHsufSjwgJZwQQLvSpfktJQaDJKvrSjg5UVvwWfhT?=
- =?us-ascii?Q?XKsbSx6bKFKONGMbZjWbZ70bgbL3txrsE7lSCASlcoH+g1TEL5ICvxj+iMcb?=
- =?us-ascii?Q?6ZcEAnve1cT7hv7CMaRY/ydPVv9pZ7Zc+q4XoVmVNwclHTx8Nir2MRWVFcvA?=
- =?us-ascii?Q?mDdnqkcpFVBLUwu0dbQygJFVP/JZMYbAiD1Kq2BZw4nkalj8A7xz5PCeU5NP?=
- =?us-ascii?Q?fbjcNydKqVdkpLHO1GrXacybRuKwzEu7mJ99rKYkYQyTDwA6YYCKQatxOmqA?=
- =?us-ascii?Q?BBVbCN5QId4urE0WvxtYn428WEkKl220FuFD+w+0ngtRrfPGMNfKcLHRIADA?=
- =?us-ascii?Q?5oA1a2fB7KiWEJpiGoKkkqntM5GlE78e7T8v+k7/SiO480guGI1O/vOzDEQW?=
- =?us-ascii?Q?j1ozKlkuGTlPWy7/mFjZBEQPCv+ArJ8QxPXEYpcCtvLey5yEEiHNvB8K1+m/?=
- =?us-ascii?Q?K6mYs7Nbb5ybarQna2+/XxmOVne//VolLi0C8Ylll6MCtrKxU9Fl8wFXMgTo?=
- =?us-ascii?Q?XZymEA8nP/lvQTMMMUSe4uiHq4LrOVYODzTQvP6egrqvcHsA1iHl6GcEqQfy?=
- =?us-ascii?Q?rxwlcigcdUfXEG8EfjK1wChA/WyAyB5CjI1qCuZ/w3Yvwko8wJLzr41gJpUb?=
- =?us-ascii?Q?o7qgDLgOKXoJcSOdlV8Vao77ndLyF7JOeuQykNITlBgHoEl15upIN5XOVQxN?=
- =?us-ascii?Q?QgK3drHc8BIMSWKawnsesy7QYgRyB6v3EQ4MVMIz1iYwgWIHSHFSelNueLcm?=
- =?us-ascii?Q?cmvLEg1uWy1HY4T2RFPLl7734srWsr3gTHy0fhBgD+atUSmapnrNYToDiluO?=
- =?us-ascii?Q?WW0ULSJk+15QTbYsqakfZLhvAV7N1L3e5z9V9jjwZDuyVbMaG8cNOyWtpstF?=
- =?us-ascii?Q?CiiL6PwBCNY412JLov4mW6W7e4DgxxZtDRZYzCNJIwNBvP4Ln7e394dPEjax?=
- =?us-ascii?Q?A1L+b1J+JYe4FAwJLv6cEGQT0mKxtGJ/XckJNShOzK/RHUcXSfXOpxnZzGFR?=
- =?us-ascii?Q?YwKMjMdujjyi0xVgCN26lRYhzSvN6eHoe/Skx8UYlreffttdW1WdYlTTbFld?=
- =?us-ascii?Q?scnHfA+klM094chPF2k0YT4rEd4Qw7F1TEHpPys3rzBE6bvPhlA22/3xkKFs?=
- =?us-ascii?Q?BXU5y7VrcXCH7lPYFFDVuMa3giGBVLec2hQJVzNtP8BoQbw4xGyLu6ozAqrd?=
- =?us-ascii?Q?FzGdpplF6RFj7TNHNEnMF9L6qIgY8y9Yy/K/?=
+	=?us-ascii?Q?Z7W0zNl33Yy1LHtTn8l9Tq9lfdhkLTT9KWrclNjDrlLPnV9qIPHilp01iLeD?=
+ =?us-ascii?Q?kf8FH/qP11+CfwIOuP81Z2bcAse9AxT2i9s0/VqkBV6dgy0xWiXtCUz1d5va?=
+ =?us-ascii?Q?2eAChNtbwc5DqfxlQuIZSFGXKt7XQ7UzWetc9AeuROJ1ezOcyDvjBrWl2m2j?=
+ =?us-ascii?Q?vqa7JG4w7vtfL3q06hE0WXCAKh5Khbi8vBGWnzxvMuTCu7BEZBjtIzna1ocv?=
+ =?us-ascii?Q?eu+ndgW95Y4clFBB/5wiQEecItT1wEqnTs6SiQHFKfF4Pvu8HPP95rsPDDFs?=
+ =?us-ascii?Q?dU3asq4Z9YIGB8R1NNRw6PWtEz1RmjprBT4VqM9x2ZO1C9gLpPyWfMhbRCke?=
+ =?us-ascii?Q?paymi0G9oNYnct5gVE/SMuFmO2FnbwAY4MFcS5SNu+jOmNSBvccstEN4KSn0?=
+ =?us-ascii?Q?g/0E2lAJxauTakVLr9DDYMmTnj6LZUBB5X45DCdCCVcpJFtpcu8HYrl2Qq9i?=
+ =?us-ascii?Q?A/VlGTxvC05hV7JBDeWA0h0+tW0FSs6bU+pBVZM45l8631aSUFRhbYCaM0Sb?=
+ =?us-ascii?Q?8BHMD2enSqzdtgoQIe4nsiRYVglWWFl0HG5e7KxjuJ1KPjfCoSdYBNLvlUbp?=
+ =?us-ascii?Q?gKVREJ0VTbiTPWaL3VMKtZdiKjpv93IjJi/JbNa/ABIMdcYq/bW/Y5xl8BKC?=
+ =?us-ascii?Q?maclykfSWc33JORqgJllP3OramECLU5wU6Q9GICaC97AUn5MW6S12+cczeB2?=
+ =?us-ascii?Q?MIzwqGDvualZlf3DclIzbP7uQKfz15TLRI/pfSJ+8nY1C+Ny2/w5PdM/t8go?=
+ =?us-ascii?Q?uKSoZ49/EWt2CKIhmeMhDAfmz502IUA2aWVPEoFt8FR+kJYyp6lTBK9Cd1hS?=
+ =?us-ascii?Q?6YjO1hQaEddmmb451tqSbqjbitYz79wKfJvVFwSVdbz0JMSY6VbOOJjnCYH+?=
+ =?us-ascii?Q?1VEjpjq6KOiAeE81wn/ydnhSZP6nFrf5WHWOgptDkzT77Lw081JZc2cN/M+i?=
+ =?us-ascii?Q?1TxMbOmzJ1MsRbuzGH5BagQMJ37GY1aBhF1cnCBuAGTdUqBpIm1bQct8Xm1x?=
+ =?us-ascii?Q?vEH1KQHtk5qSX1AuurczHK9z2n6+KVGVf2qmLybn2aXrXS2OVhskDC92f1SO?=
+ =?us-ascii?Q?h+Z3eJ2gMJAXmHAjrJBIU0f7jObiHhU+qmMUy9ZpnxdHv3rwMxR2Uts0vxRt?=
+ =?us-ascii?Q?naGS+pJRgDpt8kqhZBFr9wx0pF8CpQE9TXEKQSdjkYNSw9Ix3MlhW26iaHDH?=
+ =?us-ascii?Q?VrHLBM142lTZEm5sAHQHCqh3SH38Z8Qmt7YFTswzbZhmvDdIm+e2D+3yvGRK?=
+ =?us-ascii?Q?6nThCQzQ4k/V8GtO9KUNO2nRyb7cqfT3ZRl9ZQy+H7vfBVsvdX73kPEhfx3O?=
+ =?us-ascii?Q?ycwJ5zK4cI3iQeoQ1ogK3mFenkLV4ZSePh+iqmrckhjc+QbMnvjhd272vMOT?=
+ =?us-ascii?Q?npSl4AC5gpVH2EXTV+OG6JfG73NngfveS39sEnn08b+yF+YPhurbeVHQM8bk?=
+ =?us-ascii?Q?exK9QUuE+pOKCRXAbpLSyuo9EE5u0H9rVSzszu9B4f0Sq//bPFJVkVACn3fo?=
+ =?us-ascii?Q?N8imcK1sdR7L4N+czG0YzQ0AZ1bBHEGNRn6h?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 19:22:17.9612
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 19:22:18.3112
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b5cfff8-48e1-4bf7-c73f-08dddf55b658
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c2adf0f-97af-41a8-6178-08dddf55b68f
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6731.namprd04.prod.outlook.com
+	MWH0EPF000A672E.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4205
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB9020
 
-Most of the mitigations in bugs.c use early_param to parse their command
-line options.  Modify spectre_v2_user to use early_param for consistency.
+Most of the mitigations in bugs.c use early_param for command line parsing.
+Rework the spectre_v2 and nospectre_v2 command line options to be
+consistent with the others.
 
-Remove spec_v2_user_print_cond() because informing a user about their
-cmdline choice isn't very interesting and the chosen mitigation is already
-printed in spectre_v2_user_update_mitigation().
+Remove spec_v2_print_cond() as informing the user of the their cmdline
+choice isn't interesting.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 65 +++++++++++++++-----------------------
- 1 file changed, 26 insertions(+), 39 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 186 +++++++++++++++++--------------------
+ 1 file changed, 87 insertions(+), 99 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 49ef1b832c1a..de78b76ae851 100644
+index de78b76ae851..44e0315b58a5 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1826,7 +1826,7 @@ enum spectre_v2_mitigation_cmd {
- 
- static enum spectre_v2_mitigation_cmd spectre_v2_cmd __ro_after_init = SPECTRE_V2_CMD_AUTO;
- 
--enum spectre_v2_user_cmd {
-+enum spectre_v2_user_mitigation_cmd {
- 	SPECTRE_V2_USER_CMD_NONE,
- 	SPECTRE_V2_USER_CMD_AUTO,
- 	SPECTRE_V2_USER_CMD_FORCE,
-@@ -1836,6 +1836,9 @@ enum spectre_v2_user_cmd {
- 	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,
+@@ -1824,7 +1824,8 @@ enum spectre_v2_mitigation_cmd {
+ 	SPECTRE_V2_CMD_IBRS,
  };
  
-+static enum spectre_v2_user_mitigation_cmd spectre_v2_user_cmd __ro_after_init =
-+	SPECTRE_V2_USER_CMD_AUTO;
-+
- static const char * const spectre_v2_user_strings[] = {
- 	[SPECTRE_V2_USER_NONE]			= "User space: Vulnerable",
- 	[SPECTRE_V2_USER_STRICT]		= "User space: Mitigation: STIBP protection",
-@@ -1844,50 +1847,34 @@ static const char * const spectre_v2_user_strings[] = {
- 	[SPECTRE_V2_USER_SECCOMP]		= "User space: Mitigation: STIBP via seccomp and prctl",
+-static enum spectre_v2_mitigation_cmd spectre_v2_cmd __ro_after_init = SPECTRE_V2_CMD_AUTO;
++static enum spectre_v2_mitigation_cmd spectre_v2_cmd __ro_after_init =
++	IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ? SPECTRE_V2_CMD_AUTO : SPECTRE_V2_CMD_NONE;
+ 
+ enum spectre_v2_user_mitigation_cmd {
+ 	SPECTRE_V2_USER_CMD_NONE,
+@@ -2021,112 +2022,51 @@ static const char * const spectre_v2_strings[] = {
+ 	[SPECTRE_V2_IBRS]			= "Mitigation: IBRS",
  };
  
 -static const struct {
--	const char			*option;
--	enum spectre_v2_user_cmd	cmd;
--	bool				secure;
--} v2_user_options[] __initconst = {
--	{ "auto",		SPECTRE_V2_USER_CMD_AUTO,		false },
--	{ "off",		SPECTRE_V2_USER_CMD_NONE,		false },
--	{ "on",			SPECTRE_V2_USER_CMD_FORCE,		true  },
--	{ "prctl",		SPECTRE_V2_USER_CMD_PRCTL,		false },
--	{ "prctl,ibpb",		SPECTRE_V2_USER_CMD_PRCTL_IBPB,		false },
--	{ "seccomp",		SPECTRE_V2_USER_CMD_SECCOMP,		false },
--	{ "seccomp,ibpb",	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,	false },
+-	const char *option;
+-	enum spectre_v2_mitigation_cmd cmd;
+-	bool secure;
+-} mitigation_options[] __initconst = {
+-	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
+-	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
+-	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
+-	{ "retpoline,amd",	SPECTRE_V2_CMD_RETPOLINE_LFENCE,  false },
+-	{ "retpoline,lfence",	SPECTRE_V2_CMD_RETPOLINE_LFENCE,  false },
+-	{ "retpoline,generic",	SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
+-	{ "eibrs",		SPECTRE_V2_CMD_EIBRS,		  false },
+-	{ "eibrs,lfence",	SPECTRE_V2_CMD_EIBRS_LFENCE,	  false },
+-	{ "eibrs,retpoline",	SPECTRE_V2_CMD_EIBRS_RETPOLINE,	  false },
+-	{ "auto",		SPECTRE_V2_CMD_AUTO,		  false },
+-	{ "ibrs",		SPECTRE_V2_CMD_IBRS,              false },
 -};
--
--static void __init spec_v2_user_print_cond(const char *reason, bool secure)
--{
--	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
--		pr_info("spectre_v2_user=%s forced on command line.\n", reason);
--}
--
--static enum spectre_v2_user_cmd __init spectre_v2_parse_user_cmdline(void)
-+static int __init spectre_v2_parse_user_cmdline(char *str)
++static bool nospectre_v2 __ro_after_init;
+ 
+-static void __init spec_v2_print_cond(const char *reason, bool secure)
++static int __init nospectre_v2_parse_cmdline(char *str)
  {
+-	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
+-		pr_info("%s selected on command line.\n", reason);
++	nospectre_v2 = true;
++	spectre_v2_cmd = SPECTRE_V2_CMD_NONE;
++	return 0;
+ }
++early_param("nospectre_v2", nospectre_v2_parse_cmdline);
+ 
+-static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
++static int __init spectre_v2_parse_cmdline(char *str)
+ {
+-	enum spectre_v2_mitigation_cmd cmd;
 -	char arg[20];
 -	int ret, i;
+-
+-	cmd = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?  SPECTRE_V2_CMD_AUTO : SPECTRE_V2_CMD_NONE;
+-	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
+-		return SPECTRE_V2_CMD_NONE;
+-
+-	ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
+-	if (ret < 0)
+-		return cmd;
+-
+-	for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
+-		if (!match_option(arg, ret, mitigation_options[i].option))
+-			continue;
+-		cmd = mitigation_options[i].cmd;
+-		break;
+-	}
+-
+-	if (i >= ARRAY_SIZE(mitigation_options)) {
+-		pr_err("unknown option (%s). Switching to default mode\n", arg);
+-		return cmd;
+-	}
+-
+-	if ((cmd == SPECTRE_V2_CMD_RETPOLINE ||
+-	     cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
+-	     cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC ||
+-	     cmd == SPECTRE_V2_CMD_EIBRS_LFENCE ||
+-	     cmd == SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
+-	    !IS_ENABLED(CONFIG_MITIGATION_RETPOLINE)) {
+-		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
+-		return SPECTRE_V2_CMD_AUTO;
+-	}
+-
+-	if ((cmd == SPECTRE_V2_CMD_EIBRS ||
+-	     cmd == SPECTRE_V2_CMD_EIBRS_LFENCE ||
+-	     cmd == SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
+-	    !boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
+-		pr_err("%s selected but CPU doesn't have Enhanced or Automatic IBRS. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
+-		return SPECTRE_V2_CMD_AUTO;
+-	}
+-
+-	if ((cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
+-	     cmd == SPECTRE_V2_CMD_EIBRS_LFENCE) &&
+-	    !boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
+-		pr_err("%s selected, but CPU doesn't have a serializing LFENCE. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
+-		return SPECTRE_V2_CMD_AUTO;
+-	}
+-
+-	if (cmd == SPECTRE_V2_CMD_IBRS && !IS_ENABLED(CONFIG_MITIGATION_IBRS_ENTRY)) {
+-		pr_err("%s selected but not compiled in. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
+-		return SPECTRE_V2_CMD_AUTO;
+-	}
+-
+-	if (cmd == SPECTRE_V2_CMD_IBRS && boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
+-		pr_err("%s selected but not Intel CPU. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
+-		return SPECTRE_V2_CMD_AUTO;
+-	}
 +	if (!str)
 +		return -EINVAL;
  
- 	if (!IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2))
- 		return SPECTRE_V2_USER_CMD_NONE;
- 
--	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
--				  arg, sizeof(arg));
--	if (ret < 0)
--		return SPECTRE_V2_USER_CMD_AUTO;
--
--	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
--		if (match_option(arg, ret, v2_user_options[i].option)) {
--			spec_v2_user_print_cond(v2_user_options[i].option,
--						v2_user_options[i].secure);
--			return v2_user_options[i].cmd;
--		}
+-	if (cmd == SPECTRE_V2_CMD_IBRS && !boot_cpu_has(X86_FEATURE_IBRS)) {
+-		pr_err("%s selected but CPU doesn't have IBRS. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
+-		return SPECTRE_V2_CMD_AUTO;
 -	}
-+	if (!strcmp(str, "auto"))
-+		spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_AUTO;
-+	else if (!strcmp(str, "off"))
-+		spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_NONE;
-+	else if (!strcmp(str, "on"))
-+		spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_FORCE;
-+	else if (!strcmp(str, "prctl"))
-+		spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_PRCTL;
-+	else if (!strcmp(str, "prctl,ibpb"))
-+		spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_PRCTL_IBPB;
-+	else if (!strcmp(str, "seccomp"))
-+		spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_SECCOMP;
-+	else if (!strcmp(str, "seccomp,ibpb"))
-+		spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_SECCOMP_IBPB;
-+	else
-+		pr_err("Ignoring unknown spectre_v2_user option (%s).", str);
++	if (nospectre_v2)
++		return 0;
  
--	pr_err("Unknown user space protection option (%s). Switching to default\n", arg);
--	return SPECTRE_V2_USER_CMD_AUTO;
+-	if (cmd == SPECTRE_V2_CMD_IBRS && cpu_feature_enabled(X86_FEATURE_XENPV)) {
+-		pr_err("%s selected but running as XenPV guest. Switching to AUTO select\n",
+-		       mitigation_options[i].option);
+-		return SPECTRE_V2_CMD_AUTO;
+-	}
++	if (!strcmp(str, "off"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_NONE;
++	else if (!strcmp(str, "on"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_FORCE;
++	else if (!strcmp(str, "retpoline"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_RETPOLINE;
++	else if (!strcmp(str, "retpoline,amd") ||
++		 !strcmp(str, "retpoline,lfence"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_RETPOLINE_LFENCE;
++	else if (!strcmp(str, "retpoline,generic"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_RETPOLINE_GENERIC;
++	else if (!strcmp(str, "eibrs"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_EIBRS;
++	else if (!strcmp(str, "eibrs,lfence"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_EIBRS_LFENCE;
++	else if (!strcmp(str, "eibrs,retpoline"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_EIBRS_RETPOLINE;
++	else if (!strcmp(str, "auto"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	else if (!strcmp(str, "ibrs"))
++		spectre_v2_cmd = SPECTRE_V2_CMD_IBRS;
++	else
++		pr_err("Ignoring unknown spectre_v2 option (%s).", str);
+ 
+-	spec_v2_print_cond(mitigation_options[i].option,
+-			   mitigation_options[i].secure);
+-	return cmd;
 +	return 0;
  }
-+early_param("spectre_v2_user", spectre_v2_parse_user_cmdline);
++early_param("spectre_v2", spectre_v2_parse_cmdline);
  
- static inline bool spectre_v2_in_ibrs_mode(enum spectre_v2_mitigation mode)
+ static enum spectre_v2_mitigation __init spectre_v2_select_retpoline(void)
  {
-@@ -1899,7 +1886,7 @@ static void __init spectre_v2_user_select_mitigation(void)
- 	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
- 		return;
+@@ -2312,9 +2252,57 @@ static void __init bhi_apply_mitigation(void)
+ 	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_VMEXIT);
+ }
  
--	switch (spectre_v2_parse_user_cmdline()) {
-+	switch (spectre_v2_user_cmd) {
- 	case SPECTRE_V2_USER_CMD_NONE:
- 		return;
- 	case SPECTRE_V2_USER_CMD_FORCE:
++static void __init spectre_v2_check_cmd(void)
++{
++	if ((spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE ||
++	     spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
++	     spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE_GENERIC ||
++	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_LFENCE ||
++	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
++	    !IS_ENABLED(CONFIG_MITIGATION_RETPOLINE)) {
++		pr_err("RETPOLINE selected but not compiled in. Switching to AUTO select\n");
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	}
++
++	if ((spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS ||
++	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_LFENCE ||
++	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
++	    !boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
++		pr_err("EIBRS selected but CPU doesn't have Enhanced or Automatic IBRS. Switching to AUTO select\n");
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	}
++
++	if ((spectre_v2_cmd == SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
++	     spectre_v2_cmd == SPECTRE_V2_CMD_EIBRS_LFENCE) &&
++	    !boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
++		pr_err("LFENCE selected, but CPU doesn't have a serializing LFENCE. Switching to AUTO select\n");
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	}
++
++	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && !IS_ENABLED(CONFIG_MITIGATION_IBRS_ENTRY)) {
++		pr_err("IBRS selected but not compiled in. Switching to AUTO select\n");
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	}
++
++	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
++		pr_err("IBRS selected but not Intel CPU. Switching to AUTO select\n");
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	}
++
++	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && !boot_cpu_has(X86_FEATURE_IBRS)) {
++		pr_err("IBRS selected but CPU doesn't have IBRS. Switching to AUTO select\n");
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	}
++
++	if (spectre_v2_cmd == SPECTRE_V2_CMD_IBRS && cpu_feature_enabled(X86_FEATURE_XENPV)) {
++		pr_err("IBRS selected but running as XenPV guest. Switching to AUTO select\n");
++		spectre_v2_cmd = SPECTRE_V2_CMD_AUTO;
++	}
++}
++
+ static void __init spectre_v2_select_mitigation(void)
+ {
+-	spectre_v2_cmd = spectre_v2_parse_cmdline();
++	spectre_v2_check_cmd();
+ 
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2) &&
+ 	    (spectre_v2_cmd == SPECTRE_V2_CMD_NONE || spectre_v2_cmd == SPECTRE_V2_CMD_AUTO))
 -- 
 2.34.1
 
