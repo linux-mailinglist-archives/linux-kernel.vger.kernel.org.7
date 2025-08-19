@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-775479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF440B2BFAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05D1B2BFB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC40620EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8147F1BC4F0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DB7322DD6;
-	Tue, 19 Aug 2025 11:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E3D322C71;
+	Tue, 19 Aug 2025 11:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOMpDl6w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxI4Cm12"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1C4322DB1;
-	Tue, 19 Aug 2025 11:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0CA326D6D;
+	Tue, 19 Aug 2025 11:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601275; cv=none; b=iV8oso7CQAdtd3LASe3EQ5licaYQ40UWSseJg9PhwFIpG7ANx63OzKBw+ak+U8rq1OQRrvGNzBrDXxihqR0tMszt8lcUNFOkkTGy+O6RQQKbTJEI8Vp4KjlrwbqNW6f0MLhxcmi2WKqrIjgQAZj3nEU7mv/SsxKsTqVFkboevp4=
+	t=1755601279; cv=none; b=foE6zHhzark9rtA1H2lcIZLiXSOb6l+BgkXKYE7N5ewOCLvUWRQiTxtNLV5PYy70y0JflzMe8P0XLfeSsB6fOnMjpicUkQ++iMzFOtwMPVnrKBRG0I6+loD0aXFtYLoxuvKaW98GKoHoKwZfowb+UrwFinsK8EL2YSkBRRGUNz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755601275; c=relaxed/simple;
-	bh=55YCx4Ic6F/7q7AGUwl1QnZj0i5Qlknaw7+fctybJW8=;
+	s=arc-20240116; t=1755601279; c=relaxed/simple;
+	bh=aMp+SGnYO85K6FjMx+CQJAXcKtAWqNORTzvGcYqTZv0=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=eIxgKxT1oPNveXA/0VNzLfvGhKnjUM9IPqS+5+EHFB0rpEaP8IsSnri8isA/YbjmoLlx6D0/IGeKkGGWQUaJNlfGRgdPEp+qjgU7DA6ZExJxW/qzXdXW8XCaSQhPZSSsT1U9z0TbafRyY6MVqJqQZus0kR64JamhTUspkX7TgDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOMpDl6w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30151C113D0;
-	Tue, 19 Aug 2025 11:01:15 +0000 (UTC)
+	 Message-Id:Subject; b=pTN0/4HY9oa6AeHDgchLK56bDaBWTJ7eN1eUXPK6pFKPxWC9skdpP/fu0qIKFlOMKS40busXfORDrjlIBTpEICB8asAQZxtusJJzeAQn/595MfI0a+K7hPeBE/4Ywxi2MAMrexN/iBi0PBTzd8lddSztXUVbWzT9Q++tONqwoQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxI4Cm12; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A46EC4CEF1;
+	Tue, 19 Aug 2025 11:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755601275;
-	bh=55YCx4Ic6F/7q7AGUwl1QnZj0i5Qlknaw7+fctybJW8=;
+	s=k20201202; t=1755601277;
+	bh=aMp+SGnYO85K6FjMx+CQJAXcKtAWqNORTzvGcYqTZv0=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=kOMpDl6wCZPTcqSUklmDaJ1BkUfkAvN2tKsQdQR4oU41qK+KQpMOdlJ2OQYhm8nb1
-	 BsT0nmWHccyekHWl2ub35xav2wocw59ywWzobyn8fLPymrJXcECAVw5W82UBA/QZJw
-	 Q3dzKgFPd3YbTxHOg1xlYMYqgXL/OZkTz0mlVy8mNNTELLdQMpoEtkoAHYyOrGR6iQ
-	 hd7Ba4gVDAY3K0UeeDezdNSQ/7oqVe27QhLNy3510uPHaaOWDOsDZj2wpVZ5CQks/7
-	 0aWa+vQu5C3s6GGoepUowNeyC81ZtJkzpSLNID1sL63iG9n01W7jw7zAgv2mRtoyZ8
-	 TpYRkZSQX9tOA==
-Date: Tue, 19 Aug 2025 06:01:14 -0500
+	b=TxI4Cm12r6LHZn1X7XIONjiP0+HkBOSQaHIHeYMTLIHVe1/O+pu24I0gP8W5cMF30
+	 4hHIQo3amR+gOHAvy+uuYdYtQ7y6akc8AU8imjjOKhXKv1x66qzwP1s7qefiQRlHMt
+	 zxe7x6qjOU3EbBEIGuz5BRiIw0d9KwteFDFIkLTBTIH7re+eZiEpYA14rA0msm2gzW
+	 XwX1ipERphXZ2UgTYEZVLuGFJsb+/kJn5UM2wiNI6fOMYBIgEopoZ5flBNYHfcy3GQ
+	 sAzbgXKzy4r0SWnAMNhTR/UKorelZLeadipr/UYNjaosZ6GNjyeg11L98kJLWdxSDN
+	 1NQxvuZPwyXsA==
+Date: Tue, 19 Aug 2025 06:01:15 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,44 +50,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
  Christophe Roullier <christophe.roullier@foss.st.com>, 
- Will Deacon <will@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org, 
  Philippe Cornu <philippe.cornu@foss.st.com>, 
- linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, Simona Vetter <simona@ffwll.ch>, 
  Maxime Ripard <mripard@kernel.org>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  Yannick Fertre <yannick.fertre@foss.st.com>, 
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, devicetree@vger.kernel.org, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>
 To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <20250819-drm-misc-next-v3-2-04153978ebdb@foss.st.com>
+In-Reply-To: <20250819-drm-misc-next-v3-3-04153978ebdb@foss.st.com>
 References: <20250819-drm-misc-next-v3-0-04153978ebdb@foss.st.com>
- <20250819-drm-misc-next-v3-2-04153978ebdb@foss.st.com>
-Message-Id: <175560127097.3969141.6615836877357567088.robh@kernel.org>
-Subject: Re: [PATCH v3 02/13] dt-bindings: display: st,stm32-ltdc: add
- access-controllers property
+ <20250819-drm-misc-next-v3-3-04153978ebdb@foss.st.com>
+Message-Id: <175560127150.3969165.11609028288443229720.robh@kernel.org>
+Subject: Re: [PATCH v3 03/13] dt-bindings: display: st: add new compatible
+ to LVDS device
 
 
-On Tue, 19 Aug 2025 11:15:55 +0200, Raphael Gallais-Pou wrote:
-> access-controllers is an optional property that allows a peripheral to
-> refer to one or more domain access controller(s).
+On Tue, 19 Aug 2025 11:15:56 +0200, Raphael Gallais-Pou wrote:
+> Update the compatible to accept both "st,stm32mp255-lvds" and
+> st,stm32mp25-lvds" respectively.  Default will fall back to
+> "st,stm32mp25-lvds".
 > 
-> This property is added when the peripheral is under the STM32 firewall
-> controller.  It allows an accurate representation of the hardware, where
-> the peripheral is connected to a firewall bus.  The firewall can then check
-> the peripheral accesses before allowing its device to probe.
-> 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 > ---
->  Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -99,7 +95,7 @@ dtschema/dtc warnings/errors:
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819-drm-misc-next-v3-2-04153978ebdb@foss.st.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819-drm-misc-next-v3-3-04153978ebdb@foss.st.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
