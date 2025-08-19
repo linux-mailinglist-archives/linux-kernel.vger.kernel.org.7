@@ -1,213 +1,96 @@
-Return-Path: <linux-kernel+bounces-775580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6C1B2C0C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:45:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AAAFB2C0CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F6858442C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6280B1BC4B0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073A932BF58;
-	Tue, 19 Aug 2025 11:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CD632C307;
+	Tue, 19 Aug 2025 11:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="hDhu1/au"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BC632BF39
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=whu.edu.cn header.i=@whu.edu.cn header.b="kpH/i8+U"
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03686267F59;
+	Tue, 19 Aug 2025 11:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603790; cv=none; b=W+iHTzFOoIkStdDZPI/g2Uh8/FVPaM1YZk7hQrdmJubVCM/cBdsQu86NggCFKmJtWIz03l3DxxZT8Gy8CKa3TlTwQpABZsOtS+elFDyEau1ZQtdTghxs3shk8O4kEk89lBX9HqyjxlJ2/Q8OFMHBSZLvb7dBDa+xV5RdlpgM29g=
+	t=1755603803; cv=none; b=HPEcohL/PYUBHwKI+Dcqx086rIvLYEqNup8OVC1v9HUT5MVADl+BsCJo32mHLmrinyrHLFQfbfrCZDf7sigIQH7KsTHnrg4eukF7qtNv1DLau7X+LTHbcYIy+HmpuWvLbGs47i+EZPjWKtxEAhuIDM6iIB/hrbuboDuqaV4fWT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603790; c=relaxed/simple;
-	bh=BEkXZbKZI8TKL4ijyPDPqNlemvC4CN/UmF+QlhyIGA8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=on+ueIJmKG01VJngf2F8pm+jv9pe4rCFBPoZB/pjl3Z12290kkCdIyVZClCC/N+7lVBCotjGPZ7jfLZ4s3nzja0CtxlsFtPK2r79jtoWd/Bs2z6g91aUV0uIN9QlOsIZLL8PtFkB98l/rH9Ip0PYYR6cszfSofVLGKotrOFzARA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=hDhu1/au; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9e410dbe2so536610f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:43:08 -0700 (PDT)
+	s=arc-20240116; t=1755603803; c=relaxed/simple;
+	bh=JiaX+chiYZeepIBBGjvMW+7ODLMHhs8b6gcQLfgqphc=;
+	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=YgIScCiysrqa7+iaKso1au+BUTijpzh8GeSYkqj8UBm16rZXxCFbgOwrjH7maFU8CvC15ufVmMHR913hj5us3/SR3wU7OpbIoe9W/FMsx039cdtDiDq+ptx7Gb5yLh0ENDLX/2hPudz9gz7wnGQXmTHhiJ5Z3nNLkRTa4WcF3E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=whu.edu.cn; spf=pass smtp.mailfrom=whu.edu.cn; dkim=fail (0-bit key) header.d=whu.edu.cn header.i=@whu.edu.cn header.b=kpH/i8+U reason="key not found in DNS"; arc=none smtp.client-ip=4.193.249.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=whu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whu.edu.cn
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755603787; x=1756208587; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J/0raNw155Q0fcr5A7DH7DOXoru7hdxKmPbmEOTm5zY=;
-        b=hDhu1/auM9LL++8WDau9ZMs3myAyYC0n7Ijf3nCG4Dw25+iRmsLsICFLGNeaYnvd+6
-         tjeLJrfkzmrrHfuIgfKqzGlMPKIudgo/WWCvr/cAMtbE0WUMGT7Aoa3kF0XADBuPv7DM
-         i8+hxV6aLDZpr/hEJiTpyktWafEqYInWqNSV9PXMPkjLv8WSk3mj55W/jewaSPRzf69U
-         omnZNTwe/vQlk2uBcNU2CQ2TyblVJ4UqABcSra9qIlj/SKaM1+K/uVgOw1MsDhjJhTrX
-         T5XUwt3TM4RWiLOx7jbGaMD3TFseL+YTMFxqgFNbRN1M1woDdrlgyZO7tF1ImaVJXD4d
-         2H0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755603787; x=1756208587;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=J/0raNw155Q0fcr5A7DH7DOXoru7hdxKmPbmEOTm5zY=;
-        b=UbeDVArCt1Gp6KA/4BkyjL/7uRNjerwcli7Rw1+LDv+47G20efLccA/Wh3Fz2woiuG
-         DlHgsYPh2bnphPYcp4mIOF5fOw3O5zAu6/MyVL7efsDKf9B1GSlFfblE39FbIwDTSukv
-         C+2uAuqM2bqZ0zGrCins5kU6oDidgGU7dCbk9sbBnldPn5xZZmq4O4jftEWn5Ezmyekb
-         KyVuRpiewyuwGrkbY7/zYQsb1lQCnR1AMTHaqnsRz6GbKQzFTXIOOmbdULp8xAccviX0
-         ZPgr2IQozwBnMpFu3gj6OVJmuDM1OjWCqFJ6dlqaY2P7zMRYml0jqc7M5kMuyHkYrqmd
-         GFOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVki8ng+UFLEqX9EODW35i+RhCprTFZDK7QaW/weWthAsdIfqt8PST1pgPZ/YPMh+gXnGu/LZAMhPAqW54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytK1knrcuZ4cM7DjQN2UuhW42uoooFjl1fH51aND4MVAJoXdCI
-	qXNFYiDSNT/O0k0hNyDUBxrNEaSLmsoUUEMIlCV8fehV7TCrBROOkpGk3ZUafL0qtgM=
-X-Gm-Gg: ASbGnctbu+zHYD8zmo5NpQXx2sLjvlXRPGWCEtFASdHZaJXeJXuFMzAhZFelxXMeLkr
-	2agq1wMuom15Dm4kPa6HK2fGNDy9V4pYcw8TUaRmyVfsUN+K+b/aJ8Dt0mP57mpvYZ8BE0lJPV1
-	6ZVvUkBCve4dPi5zFONQP1hhMiDTJcl0p/LMe5NHOQ84a6GI99Lokfv0RyyrpgKUQKbw5iAk7up
-	z//1K7xyHqTnAN4wqsbBenjzwzTjmS+EcVJdw7HywoanpuxAPyMZgvggdvLnDd3Obw6e9hGmKkj
-	lXV8Fy45b833ZK9dbzsdARbl/JvuR4B4gZ6S2vUd8dnH4aXupHkz4J8iekOSGsambe5jprgUr85
-	AmTWJp4Oj1GB3A831aXnmUvZzQ+2Ehg==
-X-Google-Smtp-Source: AGHT+IE0FoFnrqv/364y0JxojzjSjgxBxkWPcaMoaWDVaVYQ/OrVds62/XTIFpn7j8AxOXLMQWkHNw==
-X-Received: by 2002:a05:600c:c169:b0:459:d7c4:9e14 with SMTP id 5b1f17b1804b1-45b43e85f3bmr9440455e9.0.1755603786493;
-        Tue, 19 Aug 2025 04:43:06 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:e7d6:daad:8c97:a08e])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1cda0021sm207509385e9.13.2025.08.19.04.43.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 04:43:06 -0700 (PDT)
+	d=whu.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID;
+	bh=Fbxx8rZphRZwJMtsXDignq/U2qpn/MwMmrlwN1c0DPo=; b=kpH/i8+UrfUMB
+	ZzxvyMD7QajhfAFMU3xAt5yNEizgFB9rGqNh4aIr+pSb37CLrVGGKJBnfrF5/tIF
+	LJnyiSwoi95AeciG/33J7jRNqWMh5l+14Xpnz2fRxd+wJ2OKlW6xInpNmbevvokM
+	C9Wva0h0zi5JIomui0RSYGQQJ/zWdw=
+Received: from 2023302111378$whu.edu.cn ( [111.48.77.137] ) by
+ ajax-webmail-app2 (Coremail) ; Tue, 19 Aug 2025 19:43:06 +0800 (GMT+08:00)
+Date: Tue, 19 Aug 2025 19:43:06 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?54mb5rW356iL?= <2023302111378@whu.edu.cn>
+To: minchan@kernel.org
+Cc: ngupta@vflare.org, sergey.senozhatsky.work@gmail.com, axboe@kernel.dk,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH/RFC] Zram: Improved Compression with PID/VMA-aware Grouping
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.1-cmXT6 build
+ 20240807(4bc564b9) Copyright (c) 2002-2025 www.mailtech.cn whu
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 19 Aug 2025 13:43:05 +0200
-Message-Id: <DC6DLP13J0LA.XW9J3XFBCM1Y@ventanamicro.com>
-Subject: Re: [PATCH 0/6] ONE_REG interface for SBI FWFT extension
-Cc: "Atish Patra" <atish.patra@linux.dev>, "Palmer Dabbelt"
- <palmer@dabbelt.com>, "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Alexandre Ghiti" <alex@ghiti.fr>, "Andrew Jones"
- <ajones@ventanamicro.com>, "Anup Patel" <anup@brainfault.org>, "Paolo
- Bonzini" <pbonzini@redhat.com>, "Shuah Khan" <shuah@kernel.org>,
- <kvm@vger.kernel.org>, <kvm-riscv@lists.infradead.org>,
- <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, "linux-riscv"
- <linux-riscv-bounces@lists.infradead.org>
-To: "Anup Patel" <apatel@ventanamicro.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250814155548.457172-1-apatel@ventanamicro.com>
- <DC5HEJRMZ84K.34OPU922A7XBE@ventanamicro.com>
- <CAK9=C2X8-DBi7qQ87kMA0AiVdiFH0_4L4mzzZzbeCg2eiNm8Qg@mail.gmail.com>
-In-Reply-To: <CAK9=C2X8-DBi7qQ87kMA0AiVdiFH0_4L4mzzZzbeCg2eiNm8Qg@mail.gmail.com>
+MIME-Version: 1.0
+Message-ID: <1709a150.2340.198c223db7a.Coremail.2023302111378@whu.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:Bw4BCgAHYbVLY6RoeOYWAA--.4981W
+X-CM-SenderInfo: ysqsjjyqsriiqtxyq4lkxovvfxof0/1tbiAQcTBWijTF4oAgAAsj
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-2025-08-19T12:00:43+05:30, Anup Patel <apatel@ventanamicro.com>:
-> On Mon, Aug 18, 2025 at 3:59=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrc=
-mar@ventanamicro.com> wrote:
->>
->> 2025-08-14T21:25:42+05:30, Anup Patel <apatel@ventanamicro.com>:
->> > This series adds ONE_REG interface for SBI FWFT extension implemented
->> > by KVM RISC-V.
->>
->> I think it would be better to ONE_REG the CSRs (medeleg/menvcfg), or at
->> least expose their CSR fields (each sensible medeleg bit, PMM, ...)
->> through kvm_riscv_config, than to couple this with SBI/FWFT.
->>
->> The controlled behavior is defined by the ISA, and userspace might want
->> to configure the S-mode execution environment even when SBI/FWFT is not
->> present, which is not possible with the current design.
->>
->> Is there a benefit in expressing the ISA model through SBI/FWFT?
->>
->
-> Exposing medeleg/menvcfg is not the right approach because a
-> Guest/VM does not have M-mode hence it is not appropriate to
-> expose m<xyz> CSRs via ONE_REG interface. This also aligns
-> with H-extension architecture which does not virtualize M-mode.
-
-We already have mvendorid, marchid, and mipid in kvm_riscv_config.
-
-The virtualized M-mode is userspace+KVM.  (KVM doesn't allow userspace
-to configure most things now, but I think we'll have to change that when
-getting ready for production.)
-
-> We already had discussions about this in the past.
->
-> As such, we have two options. One option is to expose
-> hedeleg/henvcfg via kvm_riscv_config and another option
-> is to have a separate ONE_REG for each FWFT feature.
->
-> Separate ONE_REG registers for each FWFT feature is better
-> than directly exposing hedeleg/henvcfg via ONE_REG because:
->
-> 1) Once nested virtualization lands, we will be having separate
-> hedeleg/henvcfg as part of nested virtualization state of Guest
-> which is trap-n-emulated by KVM. The existence of hedeleg/henvcfg
-> in kvm_riscv_config and nested virtualization state will only create
-> more confusion.
-
-Right, the userspace registers for this can't be called h*.
-
-> 2) Not all bits in hedeleg/henvcfg are used for FWFT since quite
-> a few bits are programmed with fixed value based on KVM
-> implementation choices (which may change in future).
-
-Yes, we'll want to expose some to userspace.
-
->                                                      Also,
-> things like set_debug_ioctl() change hedeleg at runtime
-> which allow KVM user space to decide who takes breakpoint
-> traps from Guest/VM.
-
-This is still doable.  The clear hedeleg bit does not have to change the
-virtualized behavior -- if the guest is expecting to see breakpoint
-traps, then even if userspace+KVM configure the architecture to direct
-the traps to the hypervisor, they must then forward the breakpoints that
-were supposed to be delivered to the guest.
-
->                      This means value saved/restored
-> through hedeleg/henvcfg in kvm_riscv_config becomes
-> specific to the kernel version and specific to host ISA features.
-
-Hedeleg/henvcfg bits do not have to be the same as userspace interface
-bits -- KVM always has to distinguish what the userspace wants to
-virtualize, and what the KVM changed for its own reasons.
-
-> 3) We anyway need to provide ONE_REG interface to
-> save/restore FWFT feature flags so it's better to keep the
-> FWFT feature value as part of the same ONE_REG interface.
-
-I think we want to have SBI in userspace (especially for single-shot
-ecalls like FWFT).  The userspace implementation will want an interface
-to set the ISA bits, and it's very awkward with the proposed design.
-
-Flags can to stay, in case the userpace wants to accelerate FWFT.
-
-> 4) The availability of quite a few FWFT features is dependent
-> on corresponding ISA extensions so having separate ONE_REG
-> registers of each FWFT feature allows get_reg_list_ioctl() to
-> provide KVM user-space only available FWFT feature registers.
-
-Yes, but similarly the userspace would be forbidden from setting bits
-that cannot be expressed in henvcfg/hededeg.
-
-There are also behaviors we want to configure that do not have a FWFT
-toggle.  e.g. the recent patches for delegation of illegal-instruction
-exceptions that changed the guest behavior -- someone might want to
-keep incrementing the SBI PMU counter, and someone will want to forward
-them to be implemented in userspace (when developing a new extension,
-because most of the existing ISA can still be accelerated by KVM).
-
-For general virtualization, we want to be able to configure the
-following behavior for each exception that would go to the virtualized
-M-mode:
-  0) delegated to the guest
-  1) implemented by userspace
-  2-N) implementations by KVM (ideally zero or one)
-
-We can have medeleg, and another method to decide how to handle trapped
-exceptions, but it probably makes more sense to have a per-exception
-ONE_REG that sets how each exception behaves.
-
-The FWFT value could be a part of a more general interface.
-
-Thanks.
+RGVhciBMaW51eCBLZXJuZWwgWnJhbSBNYWludGFpbmVycywKCkkgYW0gYW4gb3Blbi1zb3VyY2Ug
+ZGV2ZWxvcGVyIGFuZCBoYXZlIGJlZW4gd29ya2luZyBvbiBzb21lIHBvdGVudGlhbCBpbXByb3Zl
+bWVudHMgdG8gdGhlIFpyYW0gbW9kdWxlLCBmb2N1c2luZyBvbiBvcHRpbWl6aW5nIGNvbXByZXNz
+aW9uIHJhdGVzLk15IHdvcmsgaXMgYmFzZWQgb24gdGhlIExpbnV4IGtlcm5lbCB2ZXJzaW9uIDUu
+MTAuMjQwLgoKTXkgcmVjZW50IHdvcmsgaW50cm9kdWNlcyB0aGUgZm9sbG93aW5nIGNoYW5nZXM6
+CgoxLlBJRCBhbmQgVmlydHVhbCBBZGRyZXNzIFRyYWNraW5nOiBEdXJpbmcgcGFnZSBzd2FwLWlu
+IG9wZXJhdGlvbnMgYXQgdGhlIHN3YXAgbGF5ZXIsIEkndmUgaW1wbGVtZW50ZWQgYSBtZWNoYW5p
+c20gdG8gcmVjb3JkIHRoZSBQcm9jZXNzIElEIChQSUQpIGFuZCB0aGUgY29ycmVzcG9uZGluZyB2
+aXJ0dWFsIGFkZHJlc3Mgb2YgdGhlIHBhZ2UuCjIuUElELWF3YXJlIEdyb3VwaW5nIGFuZCBWTUEg
+TWVyZ2luZyBpbiBacmFtOiBXaXRoaW4gdGhlIFpyYW0gbGF5ZXIsIHBhZ2VzIGFyZSBub3cgZ3Jv
+dXBlZCBiYXNlZCBvbiB0aGVpciByZWNvcmRlZCBQSURzLiBGb2xsb3dpbmcgdGhpcyBncm91cGlu
+ZywgcGFnZXMgd2l0aCBzaW1pbGFyIG9yIGNvbnRpZ3VvdXMgdmlydHVhbCBhZGRyZXNzZXMgd2l0
+aGluIGVhY2ggUElEIGdyb3VwIGFyZSBtZXJnZWQgYmVmb3JlIGNvbXByZXNzaW9uLiBUaGUgcmF0
+aW9uYWxlIGJlaGluZCB0aGlzIGlzIHRoYXQgcGFnZXMgYmVsb25naW5nIHRvIHRoZSBzYW1lIHBy
+b2Nlc3MgYW5kIGxvY2F0ZWQgYWRqYWNlbnRseSBpbiB2aXJ0dWFsIG1lbW9yeSBhcmUgbGlrZWx5
+IHRvIGNvbnRhaW4gcmVsYXRlZCBkYXRhLCB3aGljaCBjb3VsZCBsZWFkIHRvIGJldHRlciBjb21w
+cmVzc2lvbiByYXRpb3Mgd2hlbiBwcm9jZXNzZWQgdG9nZXRoZXIuCgpQcmVsaW1pbmFyeSBleHBl
+cmltZW50cyB1c2luZyB0aGlzIGFwcHJvYWNoIGhhdmUgc2hvd24gcHJvbWlzaW5nIHJlc3VsdHM6
+CgpXaXRoIHRoZSBMWjQgY29tcHJlc3Npb24gYWxnb3JpdGhtLCB3ZSBvYnNlcnZlZCBhbiBhcHBy
+b3hpbWF0ZSAzJSBpbmNyZWFzZSBpbiB0aGUgb3ZlcmFsbCBjb21wcmVzc2lvbiByYXRlLgpXaXRo
+IHRoZSBaU1REIGNvbXByZXNzaW9uIGFsZ29yaXRobSwgdGhlIGltcHJvdmVtZW50IHdhcyBldmVu
+IG1vcmUgc2lnbmlmaWNhbnQsIHJlYWNoaW5nIGFuIGFwcHJveGltYXRlIDQlIGluY3JlYXNlIGlu
+IHRoZSBvdmVyYWxsIGNvbXByZXNzaW9uIHJhdGUuCgpJIGFtIHdyaXRpbmcgdG8gaW5xdWlyZSBp
+ZiB5b3UgYmVsaWV2ZSB0aGlzIGFwcHJvYWNoIGFuZCBpdHMgb2JzZXJ2ZWQgYmVuZWZpdHMgYXJl
+IHNpZ25pZmljYW50IGVub3VnaCB0byB3YXJyYW50IGZ1cnRoZXIgY29uc2lkZXJhdGlvbiBmb3Ig
+dXBzdHJlYW1pbmcgaW50byB0aGUgbWFpbiBMaW51eCBrZXJuZWwuIEkgd291bGQgZ3JlYXRseSBh
+cHByZWNpYXRlIHlvdXIgdGhvdWdodHMgb24gdGhlIHV0aWxpdHkgYW5kIHBvdGVudGlhbCBpbXBs
+aWNhdGlvbnMgb2YgdGhlc2UgY2hhbmdlcywgYXMgd2VsbCBhcyBhbnkgZ3VpZGFuY2Ugb24gaG93
+IHRvIHByb2NlZWQgd2l0aCBmdXJ0aGVyIGRldmVsb3BtZW50IG9yIGZvcm1hbCBzdWJtaXNzaW9u
+LgoKVGhhbmsgeW91IGZvciB5b3VyIHRpbWUgYW5kIGNvbnNpZGVyYXRpb24uCkJlc3QgcmVnYXJk
+cywKSGFpY2hlbmcgTml1
 
