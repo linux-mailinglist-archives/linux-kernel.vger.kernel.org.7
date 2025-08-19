@@ -1,249 +1,180 @@
-Return-Path: <linux-kernel+bounces-774995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DC5B2BA23
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:05:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0601CB2BA16
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3AA3A4B2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:02:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3F085679AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E1626F443;
-	Tue, 19 Aug 2025 07:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3C8257431;
+	Tue, 19 Aug 2025 07:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JI+vYmjZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="HnWNbU8N"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013050.outbound.protection.outlook.com [40.107.44.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B23A23D298;
-	Tue, 19 Aug 2025 07:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755586939; cv=none; b=FRS0TyGpEgisJzoNa6cx4+qssdsANJ1sYIQHiu2btxdNzsMRre5+8700RfbAMbSoAsPv6u3TDfVB3iwz2JrjJJPfCcYIAlPSzgwHoZ0fJPETGg8N75sDdaJRDzRfMAliRYoyS/33e0lIfVXDp6lSUs7ZP393/8WCvR7InyNkWDk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755586939; c=relaxed/simple;
-	bh=L3/Jsto8SKgbARYjbaV5YJtQ3TvA6hXl2fH2c004Bac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qz8dF2/4tHDo6Dw7JYIiOlv7C5msTypfwI4A+Xv7D1J0TK5xxibk52t/vk+a8gmt22m4cysweman28fXDS+u0+yw/ytQDNbWJNqiA/vhJIzzvrUN81m/Gt7SMQjJoJFNC9JvdCEMZqCgSRwN1LborjHjkpYmy05FD9dbTHfxod4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JI+vYmjZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-52-92.net.vodafone.it [5.90.52.92])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A57A82A6E;
-	Tue, 19 Aug 2025 09:01:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755586876;
-	bh=L3/Jsto8SKgbARYjbaV5YJtQ3TvA6hXl2fH2c004Bac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JI+vYmjZb4lbwLchQgXdhzf/IMELxZ4JWE/pVjEmndhC+AcWa2KZJ6ei3GruZDrGZ
-	 orxryxkYAHWRzVtPzPew4ZPiibE+XQriXHtpAhW13iKFbHGKKT11HXhlgPQzJQlyDZ
-	 4s7rPakildkXuLeiYjY1lilvJJ4c9SYGXBq+FSuI=
-Date: Tue, 19 Aug 2025 09:02:10 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil+cisco@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] media: ivtv: Fix invalid access to file *
-Message-ID: <db7ynwwwwi6lja7l4itpdkbnbzyg7sqa32mhm3xfcjrhb67hij@dcfs3m6w73il>
-References: <20250818-cx18-v4l2-fh-v3-0-5e2f08f3cadc@ideasonboard.com>
- <20250818-cx18-v4l2-fh-v3-2-5e2f08f3cadc@ideasonboard.com>
- <20250818235906.GC10308@pendragon.ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419D923D298
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755586952; cv=fail; b=UZSkmYFp+O4DrD9c0cQcMh0YZjaTRaZxwZQ1tDeZ28B8GTJRK7Uq8DyFPLLVugouvPPSpiW9YZ3H4TbxpXmC3LQsFGbfKeTHwM22bJoAwuUI7dJKp3H9XA33Hk2S0ODlcturX1LbcRq4VKUM/72Oc2z9UQ97Qo+BAmf9sN8h8W0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755586952; c=relaxed/simple;
+	bh=+FHpT9WXf4AS2GQS1Cq6Y8pDYsMeyfVzpEGKfNp3ZXI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=s+m5dt0IxFcgK07PPYUrZuGt4Zy/Ihm+dNI1wiiHY0zfhtfyCp0LXOSRMchtlQ3VniAM3ZvGJujcDEmY2V8OCkB3GJUT7KArgDez2gfYgKDceqqmqdrMQ1chFA0TPANys7x7z+26pOC+otFxP7Va7wZdPgWYFeQypVFYdhT7yTQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=HnWNbU8N; arc=fail smtp.client-ip=40.107.44.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hC6basXWzZDp1xcAISdUVFOk+Y7ddVU8TISS778GX8nckNff0UMb6qMNjQ/BfPSM95zfGYt4dvzZ+2wBNcwAooOZ22woW/bXStz3RY3jbk++vH/8Z45bkZyo2/DR2NRxGhlYavHdiWpjDJtjZ1Fy3d+5SaO72h6mMCPG1eEiczl4bPV0u0xV3H8z+RDx0irgYfFMvQSWNtomQGHPa1g7Xp+7ZVUJBDG/lxLQzCDCq5omRWETl7O5WGonVYXNgEnRQp1SiLEhvMdHWNOcYoNgIn8qtKvZ8ap97loXFsbQTWdy2WTk+aRh38tOKFy3RnRNCwxQW2MqdrwI+VuTNp2nKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a4lGp+aHzcSRDjH5z3oHVD9cwAcurxVvXxvC9tIQm3M=;
+ b=qYHGSIVK1dKcCXaNYrePuzEWDC28ATt4Oe644WUTIJQm7pMX0p87VVNs83g/+SYmqEoscWxKgHBOv3i9sFTcaDgmQPGvD289k3V34ru3jRcwvjSd26TsoN7vJhktyDcRASYM58Y5SBDASyv7doSGlu6r6/vV9rld3EFwfpFm4b8JwW4ayWLPR0OTY/A0451fOws1cejL63cVXNDRjmiMkxtZt6ij/zUO154GaTnGDCs+jqJzSjkDzWydvB9bBo4wv/TzkKKkaOHAJTAsxoOsiWY5ZZ7+STztto8/e6d1O15MERRxYQ3T+zo7PrSwea66Dyfd1GqtNdTVwRAZxoi7mg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a4lGp+aHzcSRDjH5z3oHVD9cwAcurxVvXxvC9tIQm3M=;
+ b=HnWNbU8NrI4FUqYb7plifJnsQEzWpAMlGc6uECWWByQBtv6pSfTE7YXYY0Gc3nLfF20IwS5xO2Cf/qa7N8pFvvLmKvIEyMmEXaDiNMZZ2cbgbdDgimZKUk5iAzLVpT8Qu4vrOn9lrSUsI1HMFgh9IEqvmlL8NvJNaOsQ1JibGlQybbGHE8t6BcKUY1ehXRVm+Aiwj8xmxSVXRmO3qGunCd8qBUk58B+cw+1pScem6FB+uNil7POV5s8CpBvKe3ajIupB0Awgo8THdVza3DtVHfccuG0balfdP2GUFFq2GFTMYCe9WTiILhm+QB2EuQhc6wpHLN4jGC7h+/Hn3l2eXg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by TYZPR06MB6094.apcprd06.prod.outlook.com (2603:1096:400:33c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Tue, 19 Aug
+ 2025 07:02:24 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 07:02:24 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: anna-maria@linutronix.de,
+	frederic@kernel.org,
+	tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] timers/migration: drop redundant conversion to bool
+Date: Tue, 19 Aug 2025 15:02:14 +0800
+Message-Id: <20250819070214.485381-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0367.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:79::14) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250818235906.GC10308@pendragon.ideasonboard.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|TYZPR06MB6094:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e2d0bae-7480-41c4-4488-08dddeee5956
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VlZNoR9L+0kfeHc+WgdK60silZj1vRdI2LiEMm17NvS+PqK6rrb9D1ezucKJ?=
+ =?us-ascii?Q?iEWPB1REmk+l6SwVijHP5CV/zrDlUP3FXrOQgCRfaKA/zjEtUqPCtrFqd9uf?=
+ =?us-ascii?Q?m7Al/YnuqVCvkATKt0CR1c8EfP05rHH5tYBTEV5rTdX3KsEZm5O27oi46A2H?=
+ =?us-ascii?Q?0d/kEqDcpsLfFf5/A77UAfdruoamHU8UCytcns45O98nF9ymlOyA/COiHQxx?=
+ =?us-ascii?Q?7ahSWZfRVxxuxSvQC2N/HqDPAAYH4VGh5eyEQRECULKQ3FtsvZRaa1d1I9Dk?=
+ =?us-ascii?Q?gkIF6KmbmCtls7O4gMaGVamJuuB8LwNZy53Cc59QDSBly8qyxGqvvkJJAkPw?=
+ =?us-ascii?Q?TDLXps4ixoewGYtlicJPMqLHL6cW9KnUKSsQbsd3hVh2Xj8dvBZewE5DeaMK?=
+ =?us-ascii?Q?4Ip8heX2/A+Mmn1bhpCBqfDwFWCdUICN9w01/Mou7Q2MK039Yz65kebx46fU?=
+ =?us-ascii?Q?Vxl9A6ksmx38ywthaBGbvi3zrMh1HjP60BFxDBsIW3NzEz1dSk7BjVl3MRLW?=
+ =?us-ascii?Q?STRY8y/Y8EwrxZ+Zn3KYzOmJV4FTVktxruqzDuTXw575WLF3PEN/BZFsap8I?=
+ =?us-ascii?Q?zCRKH3boxXHV9kt3kPFyNMYbX1MYNcLwA1Kj4BCKymKyQ5e/BLI3eVo2WexA?=
+ =?us-ascii?Q?0soETbuGnPKu8Pks2fMQBmwMeeHH2YyHW4tpM2jiNAdd2DaO+0NVN2tpRSVO?=
+ =?us-ascii?Q?OUJKozGO6D20QDhACiEpTCEQKzpmI+Wxa8J/8DXDMD6L3JGEZRdUrSdpGEuQ?=
+ =?us-ascii?Q?cuZClbKHpoZodpaGtYbv23LZWy2JsARl7xb5Hr1fe2FtSsQeFMDozh6wlYyB?=
+ =?us-ascii?Q?WgxUwonv3Yf22OTo3OV9CNLp7wTQeBYi6p3BaJMMVwJshzJ186hSDXIfuQ3W?=
+ =?us-ascii?Q?BDdtWBueeUoPREgjajriRHaWNqTX+b0ZkfKptsdnyDtDNgiKjuuOUzHYYLlX?=
+ =?us-ascii?Q?ce472oUEkovW7XhBC1+wF5542ynVV53B4GIL41LQ/aVFrJk3UJAL/TngKsJ6?=
+ =?us-ascii?Q?2sH1Nmzu1qNLO5i30WBkoCK0wTWIRx8gl7XMDRwjs/zUYKzieSpFaarI0gWO?=
+ =?us-ascii?Q?6tfCtlmBXF4iL4KfCl39+Be6szWPZoRslWyg/VCU3ez0hilmwctTpUAcyFbh?=
+ =?us-ascii?Q?V0MXjN37nW41DiljdgyE9ygGHYWbo2nc/3rbtkx7Sl9FdY7NEtAv0OQ4Gecz?=
+ =?us-ascii?Q?5aJRja+dTFe67gzt9Iryxoi/HJmL4owwfdrYlqSok7S7OPVr3KEkG+Y/sHnO?=
+ =?us-ascii?Q?5kn8NAB+P/FbbTr1QH/qpNV1qwImKaATRADbTX93+xNYhgSvYPcvuyCAW1DG?=
+ =?us-ascii?Q?dAEeijWt/fTxiY0MUSan5nHQRJIOQih8fnjco9sj+KHCA+zRXkq5qlSvwGOl?=
+ =?us-ascii?Q?0m6Otk3zGw81KWQaC8JNXe8H5I0zANAU86/YON7Lk9uEjvTosI4qqtS/FOYg?=
+ =?us-ascii?Q?MpBEoMbxvYStZSK/vSoAoJJ5xpe3KwKsv3cxt8dv5xFndtPFEMH4TA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7GnDQ9MjowS12S22ls8o20f8y0UYWQ3ta7wB5U/12JxKD4fhvD/Gg968WCpR?=
+ =?us-ascii?Q?wORGHBuKLdcedJOafpqa1oHeADvG8fdzZ12nIO5YFNau0p9TRU8G/EbWYE5N?=
+ =?us-ascii?Q?pFsNax52GB77ZTWRoqeSB0039i0W72q9DIMzD2RcJa8yF2IYOX+YFLCMzZlA?=
+ =?us-ascii?Q?2dl6ADOSbT1pdITB2SLVwr+4vskRlTHOQDoMuqNpozzjKzmqbGZ3/otQmuAb?=
+ =?us-ascii?Q?kRzhg4LBUzOXu5nG6dV+nNbrtfh5hjiUuucZyCoVb5/PiKyOf9EXb2WcG0Bg?=
+ =?us-ascii?Q?61DANceSOLdseB8SQ63fPs3xuO72/OYa3DsZhwmZ2SV0tYoLnTERiGmYcR9f?=
+ =?us-ascii?Q?jU+KAdlu7ThXjBxIup1GV3fskHA2gaEGBfX+HBAMS0ARU0EbP6Gg0i9OtumL?=
+ =?us-ascii?Q?Al+V7ABYRodMP3CKo1Hk50PNDwnsqda6rEg++I94Gft+ZKdGIyozRxnkICYn?=
+ =?us-ascii?Q?9rjHv3zWg39f2hOk+KyJC99C8u+wri+sCq5HSX70+gawDrjAfF0iCz9DkcJK?=
+ =?us-ascii?Q?cO7vdKEpKY/CV0myORVqxNSWTQyH9otwpWPyqg5I2FgQauUccjnt5HREdT7j?=
+ =?us-ascii?Q?iclonFDsKt+g3yfyC2PRj3AhkYpgEFXucfqt/5osOfiIqrwruv9rVwhtig1c?=
+ =?us-ascii?Q?dRISSPitKFrK8DWCegODXT9+X1Xxj2eCyIZtOzQFWByFRBUSkm/HoeHScEwq?=
+ =?us-ascii?Q?bJAp+fjJv/kpRV0TS9OdyxxF5sPVRIuhrbBWFMeWRy2C2KKRVYeROAGsIAYZ?=
+ =?us-ascii?Q?+fDxm44zEvLPlwLvexgxD33ZumjuGNrttG/r8vI7fhTdY59c3NKbUalrqcDy?=
+ =?us-ascii?Q?tR4Pr/Bf8UheMGgA0F5fpABLN5k/qU0GYYFYJbMWpE3hRns31Nt3rhYHSA2m?=
+ =?us-ascii?Q?/eSyEyA7oOB5Bmhw56BS1nHXTGA0AuN+u2HMeUAz0XOQFHKKHDQh/dqnwXz9?=
+ =?us-ascii?Q?eBlNPSeyR1ptRxjS3bdidDIyZkAupv6MiQVf7Hb0aLnq4fSz6RWzZbMKu8aD?=
+ =?us-ascii?Q?yhELiChqZU03LkUGkPloKTKkHrXeva+47MJNXD2iWZB2731rvKnFQEpOf3cA?=
+ =?us-ascii?Q?uaYnMEEyqqZq5bupmIoeIzOqVkXBlCGqv8SIwddwJWQjpdyIvDuFoM0+qSgP?=
+ =?us-ascii?Q?6/yW0wFlxVR5UjFI24gVIwhtV9X8cClzNF3ZPDWyuUfV27wEUyVZ/4irdd/l?=
+ =?us-ascii?Q?P15Cc6vCgmkLzWPkH2Dm0Q1HNpmg2mgh64BYbQn2oOFUoZNEnUPaz34xm5Vi?=
+ =?us-ascii?Q?3weuT8PSbl9FpMzVMKonAJoeHW1HdavWX+gYjxPahdHYMN0Iyzur8ElN5a0i?=
+ =?us-ascii?Q?+kscxzXxTUoRWfQu70XaQyUs3MZc4Ewx42yWbX+pTSC4aaBdouqzqLTDzmao?=
+ =?us-ascii?Q?V94zIRa8HeUPMSzflpvNwAM5cX5aDBo1OI7htfl/r9j0FWPNbhif3+d7Yl5M?=
+ =?us-ascii?Q?BTPrVYn9cz9S2VIIDDN343EBGGN1D3qoWOhmZ1Q6PHl/B5jp2J4qKeED4xSl?=
+ =?us-ascii?Q?wQ3232wsxSG/1Pj6Cuzu+Ghmbq8pPjZ6hEpMDsCv4Bv8Wn35OUsR9joIktgp?=
+ =?us-ascii?Q?ir3iJrNWlyA/zXyFLyHrLE+BJ4WTGZD3wyDYkSLC?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e2d0bae-7480-41c4-4488-08dddeee5956
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 07:02:24.2026
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O14Yb826dH3Y4SebA04U+I8gHLTB8rnm3GepvCPzhPydZjSp/Z5l2UZkfYVp1SYqzF4N4mWx13yMNtELMtMISQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6094
 
-On Tue, Aug 19, 2025 at 02:59:06AM +0300, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Mon, Aug 18, 2025 at 10:39:37PM +0200, Jacopo Mondi wrote:
-> > Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-> > all ioctl handlers have been ported to operate on the file * first
-> > function argument.
-> >
-> > The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
-> > needs to start streaming. This function calls the s_input() and
-> > s_frequency() ioctl handlers directly, but being called from the driver
-> > context, it doesn't have a valid file * to pass them. This causes the
-> > ioctl handlers to deference an invalid pointer.
-> >
-> > Fix this by wrapping the ioctl handlers implementation in helper
-> > functions.
->
-> You may want to reword this in a similar way as proposed in 1/2.
->
-> >
-> > The ivtv_do_s_input() helper accepts a struct ivtv * as first argument,
-> > which is easily accessible from the DVB layer as well as from the file *
-> > argument of the ioctl handler.
-> >
-> > The ivtv_s_frequency() takes an ivtv_stream * instead. The stream * can
-> > safely be accessed from the DVB layer which hard-codes it to the
-> > IVTV_ENC_STREAM_TYPE_MPG stream type, as well as from the ioctl handler
-> > a valid stream type is associated to each open file handle depending on
-> > which video device node has been opened in the ivtv_open() file
-> > operation.
-> >
-> > The bug has been reported by Smatch.
-> >
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
-> > Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > ---
-> >  drivers/media/pci/ivtv/ivtv-driver.c | 11 ++++-------
-> >  drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
-> >  drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
-> >  3 files changed, 25 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
-> > index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..7e2fb98cfccf02f701ceb4484dd1d330dd1dc867 100644
-> > --- a/drivers/media/pci/ivtv/ivtv-driver.c
-> > +++ b/drivers/media/pci/ivtv/ivtv-driver.c
-> > @@ -1260,15 +1260,12 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
-> >
-> >  int ivtv_init_on_first_open(struct ivtv *itv)
-> >  {
-> > -	struct v4l2_frequency vf;
-> >  	/* Needed to call ioctls later */
->
-> I'd drop the comment.
+The result of integer comparison already evaluates to bool. No need for
+explicit conversion.
 
-it was there already and it's not misleading
+No functional impact.
 
->
-> > -	struct ivtv_open_id fh;
-> > +	struct ivtv_stream *s = &itv->streams[IVTV_ENC_STREAM_TYPE_MPG];
-> > +	struct v4l2_frequency vf;
-> >  	int fw_retry_count = 3;
-> >  	int video_input;
-> >
-> > -	fh.itv = itv;
-> > -	fh.type = IVTV_ENC_STREAM_TYPE_MPG;
-> > -
-> >  	if (test_bit(IVTV_F_I_FAILED, &itv->i_flags))
-> >  		return -ENXIO;
-> >
-> > @@ -1310,13 +1307,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
-> >
-> >  	video_input = itv->active_input;
-> >  	itv->active_input++;	/* Force update of input */
-> > -	ivtv_s_input(NULL, &fh, video_input);
-> > +	ivtv_do_s_input(itv, video_input);
-> >
-> >  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
-> >  	   in one place. */
-> >  	itv->std++;		/* Force full standard initialization */
-> >  	itv->std_out = itv->std;
-> > -	ivtv_s_frequency(NULL, &fh, &vf);
-> > +	ivtv_do_s_frequency(s, &vf);
->
-> 	ivtv_do_s_frequency(&itv->streams[IVTV_ENC_STREAM_TYPE_MPG], &vf);
->
-> would work too. Up to you.
->
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+---
+ kernel/time/timer_migration.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I know, but I prefer the way I have here
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index c0c54dc5314c..b869b244025f 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -751,7 +751,7 @@ bool tmigr_update_events(struct tmigr_group *group, struct tmigr_group *child,
+ 		 * be scheduled. If the activate wins, the event is properly
+ 		 * ignored.
+ 		 */
+-		ignore = (nextexp == KTIME_MAX) ? true : false;
++		ignore = (nextexp == KTIME_MAX);
+ 		WRITE_ONCE(evt->ignore, ignore);
+ 	} else {
+ 		nextexp = data->nextexp;
+-- 
+2.34.1
 
-> >
-> >  	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
-> >  		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
-> > diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
-> > index 8077a71d4850ec773caa20c3fca08f92f3117d69..dfbc842b22453868a2075935a81db7ae313ee46c 100644
-> > --- a/drivers/media/pci/ivtv/ivtv-ioctl.c
-> > +++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
-> > @@ -974,9 +974,8 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
-> >  	return 0;
-> >  }
-> >
-> > -int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-> > +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp)
-> >  {
-> > -	struct ivtv *itv = file2id(file)->itv;
-> >  	v4l2_std_id std;
-> >  	int i;
-> >
-> > @@ -1017,6 +1016,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-> >  	return 0;
-> >  }
-> >
-> > +static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-> > +{
-> > +	return ivtv_do_s_input(file2id(file)->itv, inp);
-> > +}
-> > +
-> >  static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
-> >  {
-> >  	struct ivtv *itv = file2id(file)->itv;
-> > @@ -1065,10 +1069,9 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
-> >  	return 0;
-> >  }
-> >
-> > -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
-> > +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf)
-> >  {
-> > -	struct ivtv *itv = file2id(file)->itv;
-> > -	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
-> > +	struct ivtv *itv = s->itv;
-> >
-> >  	if (s->vdev.vfl_dir)
-> >  		return -ENOTTY;
-> > @@ -1082,6 +1085,15 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
-> >  	return 0;
-> >  }
-> >
-> > +static int ivtv_s_frequency(struct file *file, void *fh,
-> > +			    const struct v4l2_frequency *vf)
-> > +{
-> > +	struct ivtv_open_id *id = file2id(file);
-> > +	struct ivtv *itv = id->itv;
-> > +
-> > +	return ivtv_do_s_frequency(&itv->streams[id->type], vf);
-> > +}
-> > +
-> >  static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
-> >  {
-> >  	struct ivtv *itv = file2id(file)->itv;
-> > diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
-> > index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..dd713a6b095e5ebca45a234dd6c9a90df0928596 100644
-> > --- a/drivers/media/pci/ivtv/ivtv-ioctl.h
-> > +++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
-> > @@ -17,7 +17,9 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
-> >  void ivtv_set_funcs(struct video_device *vdev);
-> >  void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
-> >  void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
-> > -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
-> > -int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
-> > +
-> > +struct ivtv;
->
-> I'd drop this, as the structure is already used above.
-
-So it works by chance. I'll move the forward declaration up.
-
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> > +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf);
-> > +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp);
-> >
-> >  #endif
-> >
->
-> --
-> Regards,
->
-> Laurent Pinchart
 
