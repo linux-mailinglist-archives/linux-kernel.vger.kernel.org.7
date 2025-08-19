@@ -1,122 +1,318 @@
-Return-Path: <linux-kernel+bounces-776314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A140EB2CBB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:13:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5079B2CBB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4E81BC842C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:14:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CD347A8031
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445A730F524;
-	Tue, 19 Aug 2025 18:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C87230F522;
+	Tue, 19 Aug 2025 18:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bU/kEK1K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h5JpsDYB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F684EEDE;
-	Tue, 19 Aug 2025 18:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755627220; cv=none; b=QLBDpqq3RgfaI6eDxFS+htZhBPEJn+nKc6DQFn4pIME920DpBItD1Y9s1lhIasSpO+2SxPoiAv8rqtzq933ei/hI8i5q0a+fWNGmghjGqUNbl3k8FsVDLxs1LpY+/Ga/8YhmwMPrXQcEXsRJaSwalDUDtea5rgaIWzsfsogxOO4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755627220; c=relaxed/simple;
-	bh=KpvPL2aa1SINbF9+aQNQrZ61uMnyrWTf51xfQ5aKQRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8LPUACgtQBSf4gQ+t1QA7yEMIaQyLrKcrqAyVa0kSmx4EOzwN/9AMQxR3bakvYZ0HPQFHIfueHOeZqrjqqxkwAIdstE5fOX5qNeOGtbA6ybe6GA1Vkzb7g/yjiK3lFHmRKDczSb60VO1BqVEf1LHxSHDsZRYSeGksqU4R8I7tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bU/kEK1K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C64EC16AAE;
-	Tue, 19 Aug 2025 18:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755627220;
-	bh=KpvPL2aa1SINbF9+aQNQrZ61uMnyrWTf51xfQ5aKQRg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bU/kEK1KAuwIyAzv3AUR7Zqhso85eaRZLKIgaj2rVHGE6tFvTO/ViepXxzzQDnqOX
-	 jEPgFw3N2mtxEwVlFLGMv3HjfATY6f85xggSTgLuDslh8Jg+qmSAFnWosmxmp433Y3
-	 OkBa/aYHSBE3gtdDWSk0emTgJ2THXPc2WeQ5pyRBpj/m5JcsZzfFAjXK6b4gk1nRor
-	 Jj/7rUMrDYKmJL509RfvCKXbPrA+Ln/UNdzd6QKLEp3GaG4z88tdj8x2nLFwAOyGeX
-	 obsQ3ryuo79NPNLm01A1HwIw1uomZkJWfgDCXc3ZIqJMCgWH5a0uiFsWonkqeMnHT/
-	 j14dae9pUEQgA==
-Date: Tue, 19 Aug 2025 19:13:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: E Shattow <e@freeshell.de>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2] riscv: dts: starfive: jh7110-common: drop no-sdio
- property from mmc1
-Message-ID: <20250819-sushi-change-1254c2d2a08d@spud>
-References: <20250729141142.13907-1-e@freeshell.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837E730EF90;
+	Tue, 19 Aug 2025 18:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755627273; cv=fail; b=pECjn0jXeRDdnKyph1zuT6g88Vz4DrNfI2ApzuHDQ69Iw1hlVnHQ6prdq5GDY4P0PyIcYjkU62NzzGv19Sh9oy40m6YRYqJfTXyy/Zyj+GrAAZe+dh8GAFGXKiEmPEN1hNk3TVeEb7yU87sPevIOCO16ObPZfXEJRuaf9HdX9FY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755627273; c=relaxed/simple;
+	bh=O3kTDCQ9T+faAyQjF4Clo9PrqoPtnwVEyMmxRYOw0hI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TR9Oh7sUs519cb34XTAy+BLsbPmzu1o5SLxjJlQzm3nVkr4RAReYHQ82P0QwK0mAeEeGWRcYJAp6Lp8YccWyQXayNb7m59wuUvBAVeaFXTXaQGh+XKtJyHukbppviu3PSGk8wNtXcWYoDTgIp12oCJvh6ESBduq8TQS/qe3DIyw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h5JpsDYB; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755627272; x=1787163272;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=O3kTDCQ9T+faAyQjF4Clo9PrqoPtnwVEyMmxRYOw0hI=;
+  b=h5JpsDYB3Zb4wy3WU9E33FAOkVUad0Eo/jnTVMoWYhDmhqsD1jUvsI16
+   /RegP+Rl4zLSi9Fz4gWwq3EHYcxy6G9UIq0BT59LNGIYMeR5YjNXG/ce1
+   MnyggmkVZGrj2TbIiKKynW8yJoCKnAEX+U2nWCgMS5e9nOnfucttJ8h9o
+   SDGOe3fU00zpDrvAsvkKR6jX+EqHHmMRqS5tiPTwz4tMkuRZDepUSlY69
+   znArV767vCXDAmcjmeBbpS8HCDJhQB/e/ab4QJlchw8h2rwl1hQ19b+mc
+   c/mtcwV6YSJbc6A4O6zGFtdUvXMccCIHwH3EY8XCCJ07VwyqajYA+KMxf
+   w==;
+X-CSE-ConnectionGUID: 49zmegzETPWFhr1Ik8bijQ==
+X-CSE-MsgGUID: oZxa9Ay0RTOmcmBFMhCEbg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61517475"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="61517475"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 11:14:31 -0700
+X-CSE-ConnectionGUID: hwQdQQFcQr6o5mb5IizbEg==
+X-CSE-MsgGUID: 1O7Mw64xT7e6G9eJnqWcNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="167829941"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 11:14:31 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 19 Aug 2025 11:14:30 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 19 Aug 2025 11:14:30 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.76) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 19 Aug 2025 11:14:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jVcs5ckWXB8fx/ACJz+ZZyqE6KtOv6tITXk84dKzTfIDiaAf6m4EIzDheBXWQ3O9Q8O7Am1lARM4g9degf0Qpejdh7CdvQ+3uTqF1YXocnDFP0CNBmAPOrn9/wgFtI1M52Xzh7Bcfx3tKGWO6ct38CCh8OPHSZ4RvXcyYAh222TqM+Y2kdQ/Yb/dXkSw65xkzJkEaklZfaPMHuAXGIhT42fq9z+9WvJCZckFPsi2NGKrbgSsqbY3Po6u9SFky54KLNBeF1oNpSHEeLGZO6vQ6oQLaFqqsV8uW6YOwWFb2ia905FwMzafOFXR0zGqn2/WGucLAXr77ZYQLVUhgDF3pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xKTAqbh/ZFp3glJ8t+2fMuNFrXfmYty6OxEjaj+dZKg=;
+ b=iylmK1fQUdjuKbYG6m6gM4qwMgDFiPXxxjyKcG7VoR2z0FtffwAXhFGK1PgYaV04PmGRQM8xTJoACN+YsrUGEQHqyKNdmYQgi4Fe2M+KM5Gw50NmdYd50FEBFjty5trXvsW2zGOV1aRUCCCYtumzV975mMSdwreMLGq6hhAa3bHfDpf3sxF7tuKE8n5OtNlPr9KgG4mZckPfT53EoUcgXVAZE7SdGb3qkG4JIYQFl7WOmRE0ni9h2QoS5veA32ElRnv2Y4zz/LiJEllxFD/5xOHBBSyGw0XZXX13jWMR61KYyrRXXYcTrd/xRVmcF2f72p1/Y76qfVXUEyzd/0J5sg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by CY8PR11MB6913.namprd11.prod.outlook.com
+ (2603:10b6:930:5b::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 18:14:28 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa%7]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 18:14:28 +0000
+Date: Tue, 19 Aug 2025 13:16:11 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>, <linux-cxl@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<gost.dev@samsung.com>
+CC: <a.manzanares@samsung.com>, <vishak.g@samsung.com>,
+	<neeraj.kernel@gmail.com>, Neeraj Kumar <s.neeraj@samsung.com>
+Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
+ routine
+Message-ID: <68a4bf6b747e2_27db9529461@iweiny-mobl.notmuch>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+ <CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
+ <20250730121209.303202-6-s.neeraj@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250730121209.303202-6-s.neeraj@samsung.com>
+X-ClientProxiedBy: MW4PR03CA0174.namprd03.prod.outlook.com
+ (2603:10b6:303:8d::29) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+sm/HGNSxtTF3UeQ"
-Content-Disposition: inline
-In-Reply-To: <20250729141142.13907-1-e@freeshell.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|CY8PR11MB6913:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31a290b8-9e24-420c-2fa6-08dddf4c3c94
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?xKw0WhDKzSq8AtMYf7aXYTmo2OycGEb2W0AzcL8gAsKEdPa80Zcd16xG8ypt?=
+ =?us-ascii?Q?T7heS+tkrfujn9qNXxldgx2G/sTw17lPZJfhe5oUmpIVZL9WubNsI75qzvhG?=
+ =?us-ascii?Q?p+fARvqnZ6+/VIb5gXPGS1M5MvHXia4uQ8mVU+tOu5r4VuqNrSvcQsu4MP3z?=
+ =?us-ascii?Q?oI14wmWIGQOeGjXfDCXZy+9z+QFA3D+EoNBAmGrUh2ir6UrdCXATxNxY+obD?=
+ =?us-ascii?Q?Ztn4xkVgOQpYPxLX9izYIn0RDAGWq+V5Sn4Lgfa0kCRYt37DobWd3Y5/FYu1?=
+ =?us-ascii?Q?IOe+3jkNN4sEmgbpwNpVmuWhVHK0QJ4HQHuQ+HZLUHMMC3+qitqGSLav22BT?=
+ =?us-ascii?Q?0XFyjSRlOjwJlzx4slILbkNJo8atF5PAhtR2ZHxxaQNm11xs0jIdY3NC7gtU?=
+ =?us-ascii?Q?7fsEWFoiJbF8eWb2Oci14kcaEiPWMkdERT9g2mHXLJguDBMgOf250z9RhVW/?=
+ =?us-ascii?Q?4GabQf13OA/3MtgQMENcR3UseuAvhq8flr/fzK8CKT59Ypwj2fJcTJ08WfYc?=
+ =?us-ascii?Q?TtyV9uQrMznkhAY1NS8GS5ivijtNm8CNm6/QXrjFXeTZNG5hhkm6758n46LE?=
+ =?us-ascii?Q?YhqZZ2TdfEJ7jWGmeE3q4xBQr++TbB3X75VU5Br0Au9eCJfkv4MR4iLZNecp?=
+ =?us-ascii?Q?pNXtyQZ8KEW2IQ+T2Yjubs53CZh2CluWus7KpWjvHdMCb5OV+pbGxMGcZFbq?=
+ =?us-ascii?Q?ZQ/Ch3qZj7o/1QiaaomrSZeBfqOrwz75St3x+LuA6EV8n4mFpUHXSwNVxQlM?=
+ =?us-ascii?Q?7WIVcgJyu9fcutDqc/zyq92yKE13K+6GNHOQ0ZJR/DL5KVQHZRLlANe6uXSS?=
+ =?us-ascii?Q?AGol9zlBHKiC+Sp15NH2U7troOQtEHv8yKQGThqDz0BhbFAvWz0frgQ6Wemm?=
+ =?us-ascii?Q?UWIW4/q2D5CZ8BIXcqhp/aB4S2EedLIg32KrWakkyO15Sl/1jRBpOlftTVHt?=
+ =?us-ascii?Q?QplXXPc6GA9xfK/nSKBYjdZuxHr3piizz8eqQzOquLvb0kXVfI52iyoWlyvv?=
+ =?us-ascii?Q?Ce5mBUT5/Guy3AplOkEpHtfi36DK7Jw3AKGil3rVt1hBB5ERNuDhY+fzOux3?=
+ =?us-ascii?Q?6dOi9EwfYg8kXsFQdDNJll/7Zq1rmf8ejUz3eKr1xd/CBQRwppg+ib0WIA/m?=
+ =?us-ascii?Q?OIdf5psAr7WiF1gU2Y+tJ0eJLIlZQfbWc68944VK8lBAVwqzwwilMJVUgLmk?=
+ =?us-ascii?Q?HMtOZvn6AaOgShDeZoxJMjRO3l4NtcZU9p+DAwX1LskgtpJqiqhWiAmmg2PF?=
+ =?us-ascii?Q?WnfMWOYeGc0Y1+QOaEB3lZkGiYFqI52WJeqTR/He7cdzmtLeDLabwSoCrDb0?=
+ =?us-ascii?Q?BZG8XFSyB3oVtZ3rIg84UxUKUSMo2Sd3A9wXXst2JY+u4KOFnXNl1qfYEd+c?=
+ =?us-ascii?Q?UiKATqJRpEMMxYMPy+5QRBeJkLqXU4brOXUlJcx5oN1l6mlOZh5I1LzIG0mv?=
+ =?us-ascii?Q?RtzXEcizAQM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rnCyMcD6OGTJ9jEzwU+72/gl+Pt4Jzf7C6SOARaZu9iZDIpeI6nGDx8RNx1D?=
+ =?us-ascii?Q?lu0xSU5aJVXCAtQjOphdEE+SOE9s/F4fuR6hSrS1Z7l8TvRW0qL2n75fV/Ch?=
+ =?us-ascii?Q?UgC0C7pTGG5iy5oNqWf6tsmhk2UCuhlKa9wUQWLQbhEdaj9uz8NCJUvA5ytc?=
+ =?us-ascii?Q?LimAHo+Sl1b6xkdntk1uyK2nl6AGmVRWEoBf3uOIy63hpRvpIsejuBKkCsAQ?=
+ =?us-ascii?Q?9UyYdfQjX2dJQYPNMIBbK/mjBaThjCE2vYZx2YEkNp4HfSRkZxuP0JN69K51?=
+ =?us-ascii?Q?g69Q4irFzXkGxLs73F0vAnxsuuD2uYL7MoH3Qf1AxNdyG1sXlBqOJx2vYPjP?=
+ =?us-ascii?Q?uECV6gxsn78ipgDsV39xgPfPE2RWvUIYAU8BqoWxWiA1OYcKX2c8xHwdW0h7?=
+ =?us-ascii?Q?1IRrvhtkA2BT83Bi8yFP554hdgKT74hgScGxLsr2H3pYZkZFChTcqxGHC+lp?=
+ =?us-ascii?Q?Mp/ZmmDC/ntNKgFm7g8qZpYAAWtKT0LoUl3x3iy34LcCHAQXPICFXNXuJfnA?=
+ =?us-ascii?Q?3XzsrOlTiSTm1tUV6anaBr5cdckTJhAayklcIQVMLftNtX5zTo1v8mIiyIsH?=
+ =?us-ascii?Q?elyY0HLAIWtUuiP8i5d18/KO+F/Bqzfv2mcmaM3ShzbOLZ0Xm1Eq8sjfqBm1?=
+ =?us-ascii?Q?S9SR79zfUH9eYMapXBMNglCChjC0169wEnyp+QFwRIn2KsxSxGhEF7LCDBc/?=
+ =?us-ascii?Q?TH+eXdmb/irF8i+XjRD8eqoadodOYvl5C37kVFIsDWRjJmyMJ3Y/9M8B8O9s?=
+ =?us-ascii?Q?Qvl5xKRRrQl4/VfZdW34P6KFMotDqBsefvaxIFRGZkXBYqP8eJ/29G4YRukP?=
+ =?us-ascii?Q?9j6iIbfoE4LakNIyr0gK/0/oaWAyueLaYbcNm7wuyafjT4PnH+wAUBWw5SKq?=
+ =?us-ascii?Q?anqbwT/LBQ6GSDGl8fStOBItlmME5ZOdSaQpkJ/uAr2FXJ2Ewnf1c+LislcR?=
+ =?us-ascii?Q?Zz4rZDnXPobmZdEh85Xkostd3XwP93xNZbh7I3G5aZLUwyng10qkVGD9bnvI?=
+ =?us-ascii?Q?Nx6JB/aFX6P7w4g/ql4eZkNbqn9NUr/zIJrxjFsuGI1FtCcka4NYNcE+dn1c?=
+ =?us-ascii?Q?U7IQ+WGv9W9md85rOif1HgApELfuAHwC31RBoK3GkmZeWdCD4VbCx8BAOAJx?=
+ =?us-ascii?Q?Im56Nn4A5bYN9njGbIVRNAyKgt7JxwYItZmSRJJIhFr4pS9Pgxa9OD1UE9zc?=
+ =?us-ascii?Q?HD98DT+Cq9RGONzSKw2255m9KQrUI4ryiMxRWpQezLzQF9y5+m1a/OdHG5TV?=
+ =?us-ascii?Q?d/wiEpGwvpcn6F+SkkRVl968SOJ+OQCVwZDllVhBJcv1z4IeLVhaIc6Z5LQi?=
+ =?us-ascii?Q?6PybjyLdBoxga7iovR/lMXG+UNuvWCLLr6X10jgUoIQP5TfDE4Uvh3eP/mOW?=
+ =?us-ascii?Q?Va6vNgia+mftSxfDlsDREXp3tT2VpyolH1N/xszJ/NzoVhq5F/oa2xDwgrd4?=
+ =?us-ascii?Q?ugEmBbuj5hms9c6zOj9Yz89auOCd/cCSBRruQyAA0Ue79EnubTGv5mhSBWug?=
+ =?us-ascii?Q?OBNCMa4rRWbZEc7mciZ+2f4uJJ/EFKN+++Qf3ESbXvvBoOd+eXFsnmlube2y?=
+ =?us-ascii?Q?IadsunnjYMSEcT3afB4ySbsjuYrFH+CRe8oq6UEY?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31a290b8-9e24-420c-2fa6-08dddf4c3c94
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 18:14:28.5063
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IIF9XQS/4dweWadU8ocCv+AJBn1NGOqp5Nw7ssfQZXZ6t1AjP93goe9kC6HUP6HE/ur0lnC27JDMz4V4UcUprA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB6913
+X-OriginatorOrg: intel.com
 
+RE Subject: [PATCH V2 05/20] nvdimm/region_label: Add region label updation routine
+                                                                   ^^^^^^^
+								   update
 
---+sm/HGNSxtTF3UeQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Neeraj Kumar wrote:
+> Added __pmem_region_label_update region label update routine to update
+  ^^^
+  Add
 
-On Tue, Jul 29, 2025 at 07:11:35AM -0700, E Shattow wrote:
-> Relax no-sdio restriction on mmc1 for jh7110 boards. Property was
-> introduced for StarFive VisionFive2 dts to configure mmc1 for SD Card
-> but this is not necessary, the restriction is only needed to block use of
-> commands that would cause a device to malfunction.
->=20
-> Signed-off-by: E Shattow <e@freeshell.de>
+> region label.
 
-I'm going to apply this one to for-next, to give it more of a chance to
-soak.
+How about:
 
-> ---
->  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv=
-/boot/dts/starfive/jh7110-common.dtsi
-> index 4baeb981d4df..b156f8703016 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> @@ -290,7 +290,6 @@ &mmc1 {
->  	assigned-clock-rates =3D <50000000>;
->  	bus-width =3D <4>;
->  	bootph-pre-ram;
-> -	no-sdio;
->  	no-mmc;
->  	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
->  	disable-wp;
->=20
-> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> --=20
-> 2.50.0
->=20
+Add __pmem_region_label_update to update region labels.  ???
 
---+sm/HGNSxtTF3UeQ
-Content-Type: application/pgp-signature; name="signature.asc"
+But is that really what this patch is doing?  And why do we need such a
+function?
 
------BEGIN PGP SIGNATURE-----
+Why is __pmem_label_update changing?
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKS+zgAKCRB4tDGHoIJi
-0h8zAPsEZlSydbDhSSY6HK5fbO8Q2t/BWSTx9sJrPaJSoqzKxwD/cZmCHPLsQpJ1
-LjxgMVRbqLLWQ0fpBuU/6TlManpKJQI=
-=orR2
------END PGP SIGNATURE-----
+> 
+> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
+> mutex_unlock()
 
---+sm/HGNSxtTF3UeQ--
+Why?
+
+I'm not full out naking the patch but I think its purpose needs to be
+clear.
+
+More below...
+
+[snip]
+
+>  static bool slot_valid(struct nvdimm_drvdata *ndd,
+>  		struct nd_lsa_label *lsa_label, u32 slot)
+>  {
+> @@ -960,7 +970,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  		return rc;
+>  
+>  	/* Garbage collect the previous label */
+> -	mutex_lock(&nd_mapping->lock);
+> +	guard(mutex)(&nd_mapping->lock);
+
+This, and the following hunks, looks like a completely separate change and
+should be in it's own pre-patch with a justification of the change.
+
+>  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+>  		if (!label_ent->label)
+>  			continue;
+> @@ -972,20 +982,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  	/* update index */
+>  	rc = nd_label_write_index(ndd, ndd->ns_next,
+>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+> -	if (rc == 0) {
+> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> -			if (!label_ent->label) {
+> -				label_ent->label = lsa_label;
+> -				lsa_label = NULL;
+> -				break;
+> -			}
+> -		dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
+> -				"failed to track label: %d\n",
+> -				to_slot(ndd, lsa_label));
+> -		if (lsa_label)
+> -			rc = -ENXIO;
+> -	}
+> -	mutex_unlock(&nd_mapping->lock);
+> +	if (rc)
+> +		return rc;
+> +
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> +		if (!label_ent->label) {
+> +			label_ent->label = lsa_label;
+> +			lsa_label = NULL;
+> +			break;
+> +		}
+> +	dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
+> +			"failed to track label: %d\n",
+> +			to_slot(ndd, lsa_label));
+> +	if (lsa_label)
+> +		rc = -ENXIO;
+>  
+>  	return rc;
+>  }
+> @@ -1127,6 +1137,137 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  	return 0;
+>  }
+>  
+
+[snip]
+
+> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
+> index 4883b3a1320f..0f428695017d 100644
+> --- a/drivers/nvdimm/label.h
+> +++ b/drivers/nvdimm/label.h
+> @@ -190,6 +190,7 @@ struct nd_namespace_label {
+>  struct nd_lsa_label {
+>  	union {
+>  		struct nd_namespace_label ns_label;
+> +		struct cxl_region_label rg_label;
+
+Why can't struct cxl_region_label be it's own structure?  Or just be part
+of the nd_namespace_label union?
+
+>  	};
+>  };
+>  
+> @@ -233,4 +234,5 @@ struct nd_region;
+>  struct nd_namespace_pmem;
+>  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  		struct nd_namespace_pmem *nspm, resource_size_t size);
+> +int nd_pmem_region_label_update(struct nd_region *nd_region);
+>  #endif /* __LABEL_H__ */
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index 5b73119dc8fd..02ae8162566c 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -232,6 +232,18 @@ static ssize_t __alt_name_store(struct device *dev, const char *buf,
+>  	return rc;
+>  }
+>  
+> +int nd_region_label_update(struct nd_region *nd_region)
+
+Is this called in a later patch?
+
+Ira
+
+[snip]
 
