@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-774861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196C5B2B87C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:07:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED045B2B87E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C496A196667A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2C097AB039
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2CA30F54D;
-	Tue, 19 Aug 2025 05:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B6030DEBB;
+	Tue, 19 Aug 2025 05:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="SoXSkFxL"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOVzgR6P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BC621FF45
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EA91A294;
+	Tue, 19 Aug 2025 05:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755580043; cv=none; b=ggC620a0LLq5IV7DQcBMARPbbbygQBZoKKZLFVWoXi9nhpH1aQWWkxs+mjOD6bOX7BoShd5lK0owjaTVXLoUqUbtd60p3PqY4UoWtpsqDtCNs97ct4M1GwWBd1GvAp7vEr+/nU0FiFiaTqVPu6FJFD/0PsL1kdsNn/krtvqiKEo=
+	t=1755580093; cv=none; b=dk4q+ojKi6Nl1xXkM+fqtsAwSgWaggz1Dk8pDFsfeD0t/Fln46VdzSOLMWQrdcn2THBw40jtGxkCKq25YWi1Yloz14ZjqMBz6zlXEeqZT1aeWirqLRDZMJxiNY8eE3LqBK+6yAdME21snZJ67LXAFCOS4ZmI4CedqHWJxCfOBVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755580043; c=relaxed/simple;
-	bh=ltXNHRhOhUUl4xR8T4+Ojndq1rFeuYUH2BMxeu0RtmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cZaZpD4H+BptctMe0o0CgeHm1t67f2jqp3Yg6NzzGLYmKA/kETl/u0UMpG8+qihE/n4srMbkIfo3dRiXi0RtSKa760ebp019C/Wi0/gA8bVos0Ue+thwLCVkOs31hHx1b2YTJFjYJmeWqvXJZ66zaaqbi2p8eggi+qGV1iqFIe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=SoXSkFxL; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so24397785e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 22:07:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1755580039; x=1756184839; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fga+lbodUmPAZazOf43yy1bTgzdU2LByeFqojuOQ83w=;
-        b=SoXSkFxLAXwWKCM+ck4BQyG3Kz10Cs5HOEmcjcltNTbDIwHOC2NcX6ZR2ICOcmUNST
-         7xGqEImExFpdAq/UFWqdegH0yflXjYvP+BgczT6shJ+am5rgG2vEtDimk9T+y46sqCWA
-         tQwnxvxw63Mz37Pi2WtjyNSLe0Glwo6y1SsQtbA7Nns9qM9RfzYEy/Ghsca28B3oeTxi
-         /CCHU6aHXS6A11DwC1s47+bAYeQKTTJ3f4tffSwJnt0ADdABgAum5xOjTSqo9pLf0G8l
-         /DfrLBj/wSiVcgHPHfX2ZVnlwGdGeOp3mHl+cT4L28njTrhX95MSNL+G6N057lcG17yT
-         MOGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755580039; x=1756184839;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fga+lbodUmPAZazOf43yy1bTgzdU2LByeFqojuOQ83w=;
-        b=XesxWFd91mBP9A43RFQDwD1VTjjmMNJ1z79GcfTyg2hLottOJ+SaMoBZcZCICBQxlI
-         L1oQP66Pu2aqN02vIjNke2n2U50r+SlY7TPCX9DzohJB6lBC34XXCL3CB9Zi9M45EkTB
-         7nZTItXp1J8NdwWcvdRLwCQ/Yfs/CfRsPkphsz0cAcMmJ3oBMnPG4wnr8zrlNPOG643x
-         ojtVi305Rc+Hrn7PQVHlJvoq/tM9JmAUIvRiPTbeplFMUERloE3V5iccuP2CU1ak2EtC
-         cPhqFDifvCEEN/2nNlWJbO0Kt+l7rGbkgzlccSanSbLggc0M6gPe7T/lgKBuGBP8Ndeq
-         LM6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWH6jsOpcWiYkA8OyqKl6gpDHtBwNcHtb5/xdw92e+wa7fun7QJekmALhJIrPSnTdXZrxAQJyt4df1ZA4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDNjIggiYAlFVjm0G9ykdh790jCNsz0BRA2bbCnqC1SQI+M2xR
-	5seP3NHsuaVCx7K1JL6dK5mhYejb5Encyl7x2XmUbeLhqdf6oUAc12VyuOdZTy5G0iI=
-X-Gm-Gg: ASbGncuDyM7iO52iKM/tgWUfA2dcH2QaTszWLOe3PdbRMCdJLVe7BMBgPuP5PqgWmR1
-	QjE+VlWfZySVsZkuwClxBHcW39m1+ii9hEfOupGWF8ns6ELFU9iNMrps7s51JtOiAPognTFtc/K
-	WKmb+U53kcOow9ND0QfGTiBwfiZ/X97cMJPntM8/z6ARtfkUxiF67t9yrcaOsOmVh8heTSWmIq/
-	rsCKgerfJwQ14IrZlD02jGfcgkCabE+4y/gcz5lQ6Esi0qhIswXGlsczMYggKB+bXoGthg12ZFv
-	OOehC0i5bHoeAUPG7sGT9nYIc+qMuNxdd5EEwAXqNCJU/Y7YZETXuNEufmHtPPfDalw1wcmelSC
-	gKNW9PfBpvzuoublszZn9UzYl+BR1dV8vM/MV0sgUyfw7azus4Vbj9bxGr/WW9vgf8gcJyef86b
-	s5Pg==
-X-Google-Smtp-Source: AGHT+IEGAIFSV01YojFxZG6ti+gZSOdnTisUwlACnGc8HPzYTSLd/Yrx6ey+bzDVw52KF6DYn9VA+A==
-X-Received: by 2002:a05:6000:2485:b0:3aa:34f4:d437 with SMTP id ffacd0b85a97d-3c0ecc31e8fmr784959f8f.37.1755580039233;
-        Mon, 18 Aug 2025 22:07:19 -0700 (PDT)
-Received: from ?IPV6:2a02:2f04:620a:8b00:4343:2ee6:dba1:7917? ([2a02:2f04:620a:8b00:4343:2ee6:dba1:7917])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074879fe5sm2018512f8f.2.2025.08.18.22.07.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 22:07:18 -0700 (PDT)
-Message-ID: <d00ce701-2ddd-485e-8bfd-12cddec62fef@tuxon.dev>
-Date: Tue, 19 Aug 2025 08:07:16 +0300
+	s=arc-20240116; t=1755580093; c=relaxed/simple;
+	bh=v8ckINysU01zdhrDxYflMq4LyhKbfk5+seby+1Vuep0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWwKnADYZk5dAAhVTHQK4CKm1qpPkccmgHgHQP362zHhYGSHubJ/fHTD4u9ZbpUE7xjPcNncKTuB/6We63Cw9PWf+PMLjSp4dVR1DrMAOcMra8ohILQvFEhHJBLfYP9XnKctQjlMpIOuGvwrvwPFhSanCrDPq3UrLe7RX0+o1iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOVzgR6P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C7FC4CEF4;
+	Tue, 19 Aug 2025 05:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755580092;
+	bh=v8ckINysU01zdhrDxYflMq4LyhKbfk5+seby+1Vuep0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EOVzgR6P8ZuYW6G/v1G9RUH3Fa2+XpSzz1TkLHsRKDbq2Vn1K6UFEC33TOxUAcruN
+	 tLTUz1siRWJn7b+cUwdprNOyjDYufOZcmLEru8HCNrUgtRDFPyjW4YfIbsyuzdU3vW
+	 5jGw/AAfC124CDX+foVBZCj8qKkXWY8DcjNKQv3xt/upGLJdKSdwaqt0/KqsoMo1B+
+	 KRPUVuVPg/4xU5qzKD+jRnZzC1jEy4jXL0oPGws8Jn5yTdzxK1GG1iD1lyZyOoXFXA
+	 Ff8t622Tq1tq40otnIZjiD1tXp3624zVnExt04b7X0uKGGRBxbnw9VFnSXjak5kctL
+	 KR+I+/zzoJb6A==
+Date: Tue, 19 Aug 2025 10:38:08 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Joris Verhaegen <verhaegen@google.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Miller Liang <millerliang@google.com>
+Subject: Re: [PATCH v4 2/3] ALSA: compress_offload: Add
+ SNDRV_COMPRESS_TSTAMP64 ioctl
+Message-ID: <aKQGuPgwXE-Unzeq@vaman>
+References: <20250801092720.1845282-1-verhaegen@google.com>
+ <20250801092720.1845282-3-verhaegen@google.com>
+ <aJGM2zXS6hOLDFm1@vaman>
+ <87h5ym1f75.wl-tiwai@suse.de>
+ <aKMzGRzeRqkOwTNS@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/6] soc: renesas: rz-sysc: Add syscon/regmap support
-To: John Madieu <john.madieu.xa@bp.renesas.com>, geert+renesas@glider.be,
- magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
- rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, catalin.marinas@arm.com,
- will@kernel.org
-Cc: john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, biju.das.jz@bp.renesas.com,
- linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250818162859.9661-1-john.madieu.xa@bp.renesas.com>
- <20250818162859.9661-2-john.madieu.xa@bp.renesas.com>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20250818162859.9661-2-john.madieu.xa@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKMzGRzeRqkOwTNS@opensource.cirrus.com>
 
+On 18-08-25, 15:05, Charles Keepax wrote:
+> On Tue, Aug 05, 2025 at 07:59:42AM +0200, Takashi Iwai wrote:
+> > On Tue, 05 Aug 2025 06:47:59 +0200,
+> > Vinod Koul wrote:
+> > > On 01-08-25, 10:27, Joris Verhaegen wrote:
+> > > >  	ret = snd_compr_update_tstamp(stream, &tstamp64);
+> > > >  	if (ret == 0) {
+> > > > -		snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
+> > > > -		ret = copy_to_user((struct snd_compr_tstamp __user *)arg,
+> > > > -				   &tstamp32, sizeof(tstamp32)) ?
+> > > > +		if (is_32bit) {
+> > > > +			snd_compr_tstamp32_from_64(&tstamp32, &tstamp64);
+> > > > +			copy_from = &tstamp32;
+> > > > +			copy_size = sizeof(tstamp32);
+> > > > +		}
+> > > 
+> > > Most of the applications and people would be 32bit right now and we
+> > > expect this to progressively change, but then this imposes a penalty as
+> > > default path is 64 bit, since we expect this ioctl to be called very
+> > > frequently, should we do this optimization for 64bit here?
+> > 
+> > Through a quick glance over the patch, I don't think you'll hit the
+> > significant performance loss.  It's merely a few bytes of extra copies
+> > before copy_to_user(), after all.  But, of course, it'd be more
+> > convincing if anyone can test and give the actual numbers.
 
+That would be better
 
-On 8/18/25 19:28, John Madieu wrote:
-> The RZ/G3E system controller has various registers that control or report
-> some properties specific to individual IPs. The regmap is registered as a
-> syscon device to allow these IP drivers to access the registers through the
-> regmap API.
-> 
-> As other RZ SoCs might have custom read/write callbacks or max-offsets,
-> register a custom regmap configuration.
-> 
-> Signed-off-by: John Madieu<john.madieu.xa@bp.renesas.com>
-> [claudiu.beznea:
->   - do not check the match->data validity in rz_sysc_probe() as it is
->     always valid
->   - dinamically allocate regmap_cfg]
-> Signed-off-by: Claudiu Beznea<claudiu.beznea.uj@bp.renesas.com>
+> I am inclined to agree the impact should be very minimal and the
+> only alternative is a more complex implementation. I would vote
+> for leaving this as is.
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
+But yes, we can for now, go ahead. It is internal kernel flow can be
+adapted anytime :-)
 
+-- 
+~Vinod
 
