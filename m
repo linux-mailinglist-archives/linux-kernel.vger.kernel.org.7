@@ -1,173 +1,339 @@
-Return-Path: <linux-kernel+bounces-775865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F51B2C5EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:43:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CD2B2C5C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0D816A34C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:37:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6166F7AA044
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5EB340D97;
-	Tue, 19 Aug 2025 13:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c3bSKufj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13483340DB8;
+	Tue, 19 Aug 2025 13:37:07 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565CB3375CF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC410340D9A;
+	Tue, 19 Aug 2025 13:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610620; cv=none; b=jNVKozty4nGo988XNubfmSEuoqhj8n04Lbsq8NS7yTl7sDBVfA4XwDRCH9hJDjBpGoiKIyefWybaZIM5wvi8BxkLMl8HJr0TDmbtVtau8nJQyZ8jL78Ka2calu8m7vHq2xxYJUcFAqG/c3KY8qlHNv3mrzkakr/ermhlx+PCJO8=
+	t=1755610626; cv=none; b=KSSETXQ8kUjyommGRnNB4IPazwK98Yk+OWNunsUy+7ODeMFxJlLXgGosk5QeqqSSrJsjJ4pG8p/HPqYvCnShsMYigImE5X5B3nJxFBGFCjkUTg+yZEwgsBCPw+zJVFCM9qDvusxJMBmAM8x6LMJjiAqQ1lbtoiRU1sfmu4nm4Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610620; c=relaxed/simple;
-	bh=ses7cvDAgeLlulpRb7LhAvFTG6yY721+EVGzVkEhouY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HyZlk8Nu0cchENyc362obW4XVl6cvGZBlJMzfWNpai5EVFaG1M3jLUjoZWDUyuAxDO00jyuVW7KKJ1bNPzg+3m4mXWcbBVZa/qEWKU8QoFO9iY9gc8fbs0/9tRl62tTN4YnSFPu2iUH3zPsjpA5i1/2PYUVnhwkNehAEs4RLH0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c3bSKufj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755610617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ug3+QB1kigmLvHdV+5tcNTutNLJ6/dvktxgLZPmeoKI=;
-	b=c3bSKufjSRc1cMnsFl56PP7QYLyAcDxMBWbIzGk8QY2gpfg6FJUy7RNYsu8KUpn4g/de5W
-	VFliPg739lOMhOx+rtw3zzdmcpgkCcQK8PxVcCPKBelRI6czzlHfP1AeqSEzK5PjocYSav
-	mVFvTamLlCV14n+yOjFX/RAzUHfRrHw=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-55-QZcw92qfMISn1CD6xDdx6g-1; Tue, 19 Aug 2025 09:36:55 -0400
-X-MC-Unique: QZcw92qfMISn1CD6xDdx6g-1
-X-Mimecast-MFC-AGG-ID: QZcw92qfMISn1CD6xDdx6g_1755610615
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109ab1e1dso273959801cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:36:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755610615; x=1756215415;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ug3+QB1kigmLvHdV+5tcNTutNLJ6/dvktxgLZPmeoKI=;
-        b=Pp9p432ypqIsc+KEVOATSpXEk/KwHlt/lBFHZOEUX3GeQrRrDY6hGJRtQ3b4pDiJ+f
-         ykwd0/wwc1MVGHaJ2av8DxXJWiV3dPmr3z9lyElQJv1qQNZU+Fibs4Txlf4Vxxo2kd3c
-         r0SV2ft9qZfeDWnoWbc130Y0D7c9C+ahSq+l0Gox/VaKla5wKlGIjtqnMju8Tjm/YOlC
-         8G4ZS/gudn49DTnaxoMhIJ0eqqATnAGIExvQmQKUyX6uPqJ2yGWphB0z103hebCJ4/3h
-         +c8bhhsuKLUohty0kejMJ36Hbz0xn8eahlFbbnZFt+7gCMct5zzZPqJMBRIkyqTle+N5
-         3DaA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9k60Qm4i10BB/+5duRiLzYcBKFKsbKrC1RBob5SYirsgvP83uLlRyzJH+ScTdgNTNYrDzTjra4Ty9wM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1yDF1bXMA4gfqGpuhixOYyitwesFmBq+v2usR3XVC/aUN0VH5
-	qQvG/RWE4RKYrhRuvgG4g2rAsCKPIM1zrq1cmKJ13ItoLDp74xlVJEmb7HuLKLFNct81orC3sxd
-	YhiQ8JRIisZAqKDo5rCp8ihGEA1N0E/jcOx5Va6gDxWHppUTcJuRdaMVqwWj7gFRRZQ==
-X-Gm-Gg: ASbGncsC2nytTxO+EUbQDbMsBeksrnr0/WQTq7sSjR1DJIUrJy3QfHNEYthD60p1V2o
-	TUNauY6/RU8okrJ1yb4k7wLQTUi7W37brNFUFnDsktP2+PIXLtYBtj0EyHxjN+8NUjHRbrCFk/E
-	fbfzy/h7uAXS/c8G1YLiwVya+xdnrXTf0cOaxo52FWZAy2a6Q7L3eUfgw7UCopIsH33TsQMxqmE
-	wUcM0bBgGINGPkRApmwAFiGnbVEA20wFZF3FXyUKXAQX8o35ZId31OvaWL7WiJHKFoPbelV7DJk
-	0UvokNgRYGaMcWN038HvhF7ObIR9G4VZicFJYzcerYDifY7tv8d/53pAAxR0c1IJaslR207t/JN
-	DdJ8AQUsyEYE=
-X-Received: by 2002:a05:622a:4116:b0:4b0:75ed:bbf9 with SMTP id d75a77b69052e-4b286e18a44mr29730591cf.33.1755610614740;
-        Tue, 19 Aug 2025 06:36:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcuikD+z1aBhWawTZB4Y8+HlULz2fYWJ/MqafPQ1f5iBf4eDR77H0oczmovLBnl4sHDv/v/Q==
-X-Received: by 2002:a05:622a:4116:b0:4b0:75ed:bbf9 with SMTP id d75a77b69052e-4b286e18a44mr29730101cf.33.1755610614332;
-        Tue, 19 Aug 2025 06:36:54 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11de50e05sm66687671cf.53.2025.08.19.06.36.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 06:36:53 -0700 (PDT)
-Message-ID: <37c9e5fe-e4c4-45f5-aae9-e949cfdc8902@redhat.com>
-Date: Tue, 19 Aug 2025 15:36:48 +0200
+	s=arc-20240116; t=1755610626; c=relaxed/simple;
+	bh=UXtEVc56OuhXFuSxXMf+eKV6B1c2HY0ChAi1tMRN8Mg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MbWfvbAHFd5xerVvuWR/9JQWGYTSY/sVdwY5HgTDndd3OcL8J7SJi4NPCSQOzvoD+dy4JaxsjqC5CkNR/xhJjwQpeRee+ngor2mG8G/v7gJr2lkcOX88INOpWTVTuYYZT3/4ddng2t9XguEAERNs8qc72mWfFDrSLHjsLP1Gcy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.122])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id B56D234227A;
+	Tue, 19 Aug 2025 13:37:02 +0000 (UTC)
+Date: Tue, 19 Aug 2025 21:36:50 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Lee Jones <lee@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/3] regulator: axp20x: add support for the AXP318W
+Message-ID: <20250819133650-GYA1055626@gentoo>
+References: <20250813235330.24263-1-andre.przywara@arm.com>
+ <20250813235330.24263-4-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v13 6/8] hinic3: Mailbox framework
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <helgaas@kernel.org>,
- luosifu <luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>,
- Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Fu Guiming <fuguiming@h-partners.com>,
- Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>,
- Lee Trager <lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman Ghosh
- <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Joe Damato <jdamato@fastly.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1755176101.git.zhuyikai1@h-partners.com>
- <0b7c811da62813e757ac5261c336a9b7980c53a6.1755176101.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <0b7c811da62813e757ac5261c336a9b7980c53a6.1755176101.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813235330.24263-4-andre.przywara@arm.com>
 
-On 8/15/25 3:02 AM, Fan Gong wrote:
-> +int hinic3_init_mbox(struct hinic3_hwdev *hwdev)
-> +{
-> +	struct hinic3_mbox *mbox;
-> +	int err;
-> +
-> +	mbox = kzalloc(sizeof(*mbox), GFP_KERNEL);
-> +	if (!mbox)
-> +		return -ENOMEM;
-> +
-> +	err = hinic3_mbox_pre_init(hwdev, mbox);
-> +	if (err)
-> +		return err;
+Hi Andre,
 
-Given that all the other error paths resort to the usual goto statement,
-this error handling is confusing (even there are no leak as
-hinic3_mbox_pre_init() frees 'mbox' on error). Please use 'goto
-err_kfree' here...
+On 00:53 Thu 14 Aug     , Andre Przywara wrote:
+> The X-Powers AXP318W is a typical PMIC from X-Powers, featuring nine
+> DC/DC converters and 28 LDOs, on the regulator side.
+> 
+> Describe the chip's voltage settings and switch registers, how the
+> voltages are encoded, and connect this to the MFD device via its
+> regulator ID.
+> We use just "318" for the internal identifiers, for easier typing and
+> less churn. If something else other than the "AXP318W" shows up, that's
+> an easy change, externally visible strings carry the additional letter
+> already.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  drivers/regulator/axp20x-regulator.c | 159 +++++++++++++++++++++++++++
+>  include/linux/mfd/axp20x.h           |  41 +++++++
+>  2 files changed, 200 insertions(+)
+> 
+> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+> index da891415efc0b..eb2c45b5b9eb0 100644
+> --- a/drivers/regulator/axp20x-regulator.c
+> +++ b/drivers/regulator/axp20x-regulator.c
+> @@ -138,6 +138,15 @@
+>  #define AXP313A_DCDC_V_OUT_MASK		GENMASK(6, 0)
+>  #define AXP313A_LDO_V_OUT_MASK		GENMASK(4, 0)
+>  
+> +#define AXP318_DCDC1_V_OUT_MASK		GENMASK(4, 0)
+> +#define AXP318_DCDC2_V_OUT_MASK		GENMASK(6, 0)
+> +#define AXP318_LDO_V_OUT_MASK		GENMASK(4, 0)
+> +#define AXP318_ELDO_V_OUT_MASK		GENMASK(5, 0)
+> +#define AXP318_DCDC2_NUM_VOLTAGES	88
+> +#define AXP318_DCDC6_NUM_VOLTAGES	128
+> +#define AXP318_DCDC7_NUM_VOLTAGES	103
+> +#define AXP318_DCDC8_NUM_VOLTAGES	119
+> +
+>  #define AXP717_DCDC1_NUM_VOLTAGES	88
+>  #define AXP717_DCDC2_NUM_VOLTAGES	107
+>  #define AXP717_DCDC3_NUM_VOLTAGES	103
+> @@ -765,6 +774,151 @@ static const struct regulator_desc axp313a_regulators[] = {
+>  	AXP_DESC_FIXED(AXP313A, RTC_LDO, "rtc-ldo", "vin1", 1800),
+>  };
+>  
+> +static const struct linear_range axp318_dcdc2_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(500000,   0, 70, 10000),
+> +	REGULATOR_LINEAR_RANGE(1220000, 71, 87, 20000),
+> +};
+> +
+> +static const struct linear_range axp318_dcdc6_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(500000,    0,  70,  10000),
+> +	REGULATOR_LINEAR_RANGE(1220000,  71,  87,  20000),
+> +	REGULATOR_LINEAR_RANGE(1800000,  88, 118,  20000),
+> +	REGULATOR_LINEAR_RANGE(2440000, 119, 127,  40000),
+> +};
+> +
+> +static const struct linear_range axp318_dcdc7_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(500000,   0,  70, 10000),
+> +	REGULATOR_LINEAR_RANGE(1220000, 71, 102, 20000),
+> +};
+> +
+> +static const struct linear_range axp318_dcdc8_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(500000,    0,  70,  10000),
+> +	REGULATOR_LINEAR_RANGE(1220000,  71, 102,  20000),
+> +	REGULATOR_LINEAR_RANGE(1900000, 103, 118, 100000),
+> +};
+> +
+> +static const struct regulator_desc axp318_regulators[] = {
+> +	AXP_DESC(AXP318, DCDC1, "dcdc1", "vin1", 1000, 3400, 100,
+> +		 AXP318_DCDC1_CONTROL, AXP318_DCDC1_V_OUT_MASK,
+> +		 AXP318_DCDC_OUTPUT_CONTROL1, BIT(0)),
+> +	AXP_DESC_RANGES(AXP318, DCDC2, "dcdc2", "vin2",
+> +			axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
+> +			AXP318_DCDC2_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL1, BIT(1)),
+> +	AXP_DESC_RANGES(AXP318, DCDC3, "dcdc3", "vin3",
+> +			axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
+> +			AXP318_DCDC3_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL1, BIT(2)),
+> +	AXP_DESC_RANGES(AXP318, DCDC4, "dcdc4", "vin4",
+> +			axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
+> +			AXP318_DCDC4_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL1, BIT(3)),
+> +	AXP_DESC_RANGES(AXP318, DCDC5, "dcdc5", "vin5",
+> +			axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
+> +			AXP318_DCDC5_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL1, BIT(4)),
+> +	AXP_DESC_RANGES(AXP318, DCDC6, "dcdc6", "vin6",
+> +			axp318_dcdc6_ranges, AXP318_DCDC6_NUM_VOLTAGES,
+> +			AXP318_DCDC6_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL1, BIT(5)),
+> +	AXP_DESC_RANGES(AXP318, DCDC7, "dcdc7", "vin7",
+> +			axp318_dcdc7_ranges, AXP318_DCDC7_NUM_VOLTAGES,
+> +			AXP318_DCDC7_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL1, BIT(6)),
+> +	AXP_DESC_RANGES(AXP318, DCDC8, "dcdc8", "vin8",
+> +			axp318_dcdc8_ranges, AXP318_DCDC8_NUM_VOLTAGES,
+> +			AXP318_DCDC8_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL1, BIT(7)),
+> +	AXP_DESC_RANGES(AXP318, DCDC9, "dcdc9", "vin9",
+> +			axp318_dcdc8_ranges, AXP318_DCDC8_NUM_VOLTAGES,
+> +			AXP318_DCDC9_CONTROL, AXP318_DCDC2_V_OUT_MASK,
+> +			AXP318_DCDC_OUTPUT_CONTROL2, BIT(0)),
+I think there are two switches missing (which is SWOUT1/2 in datsheet)
+it's BIT(3), BIT(4) of AXP318_DCDC_OUTPUT_CONTROL2
 
-> +
-> +	err = init_mgmt_msg_channel(mbox);
-> +	if (err)
-> +		goto err_destroy_workqueue;
-> +
-> +	err = hinic3_init_func_mbox_msg_channel(hwdev);
-> +	if (err)
-> +		goto err_uninit_mgmt_msg_ch;
-> +
-> +	err = alloc_mbox_wb_status(mbox);
-> +	if (err) {
-> +		dev_err(hwdev->dev, "Failed to alloc mbox write back status\n");
-> +		goto err_uninit_func_mbox_msg_ch;
-> +	}
-> +
-> +	prepare_send_mbox(mbox);
-> +
-> +	return 0;
-> +
-> +err_uninit_func_mbox_msg_ch:
-> +	hinic3_uninit_func_mbox_msg_channel(hwdev);
-> +
-> +err_uninit_mgmt_msg_ch:
-> +	uninit_mgmt_msg_channel(mbox);
-> +
-> +err_destroy_workqueue:
-> +	destroy_workqueue(mbox->workq);
+btw, I don't understand what's the meaning of BIT(1) BIT(2) - DCDC_EN1/2
+or if they has any connection with those two switches..
 
-err_kfree:
-> +	kfree(mbox);
+> +	AXP_DESC(AXP318, ALDO1, "aldo1", "aldo156in", 500, 3400, 100,
+> +		 AXP318_ALDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(0)),
+> +	AXP_DESC(AXP318, ALDO2, "aldo2", "aldo234in", 500, 3400, 100,
+> +		 AXP318_ALDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(1)),
+> +	AXP_DESC(AXP318, ALDO3, "aldo3", "aldo234in", 500, 3400, 100,
+> +		 AXP318_ALDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(2)),
+> +	AXP_DESC(AXP318, ALDO4, "aldo4", "aldo234in", 500, 3400, 100,
+> +		 AXP318_ALDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(3)),
+> +	AXP_DESC(AXP318, ALDO5, "aldo5", "aldo156in", 500, 3400, 100,
+> +		 AXP318_ALDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(4)),
+> +	AXP_DESC(AXP318, ALDO6, "aldo6", "aldo156in", 500, 3400, 100,
+> +		 AXP318_ALDO6_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(5)),
+> +	AXP_DESC(AXP318, BLDO1, "bldo1", "bldoin", 500, 3400, 100,
+> +		 AXP318_BLDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(6)),
+> +	AXP_DESC(AXP318, BLDO2, "bldo2", "bldoin", 500, 3400, 100,
+> +		 AXP318_BLDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL1, BIT(7)),
+> +	AXP_DESC(AXP318, BLDO3, "bldo3", "bldoin", 500, 3400, 100,
+> +		 AXP318_BLDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(0)),
+> +	AXP_DESC(AXP318, BLDO4, "bldo4", "bldoin", 500, 3400, 100,
+> +		 AXP318_BLDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(1)),
+> +	AXP_DESC(AXP318, BLDO5, "bldo5", "bldoin", 500, 3400, 100,
+> +		 AXP318_BLDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(2)),
+> +	AXP_DESC(AXP318, CLDO1, "cldo1", "cldoin", 500, 3400, 100,
+> +		 AXP318_CLDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(3)),
+> +	AXP_DESC(AXP318, CLDO2, "cldo2", "cldoin", 500, 3400, 100,
+> +		 AXP318_CLDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(4)),
+> +	AXP_DESC(AXP318, CLDO3, "cldo3", "cldoin", 500, 3400, 100,
+> +		 AXP318_CLDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(5)),
+> +	AXP_DESC(AXP318, CLDO4, "cldo4", "cldoin", 500, 3400, 100,
+> +		 AXP318_CLDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(6)),
+> +	AXP_DESC(AXP318, CLDO5, "cldo5", "cldoin", 500, 3400, 100,
+> +		 AXP318_CLDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL2, BIT(7)),
+> +	AXP_DESC(AXP318, DLDO1, "dldo1", "dldoin", 500, 3400, 100,
+> +		 AXP318_DLDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(0)),
+> +	AXP_DESC(AXP318, DLDO2, "dldo2", "dldoin", 500, 3400, 100,
+> +		 AXP318_DLDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(1)),
+> +	AXP_DESC(AXP318, DLDO3, "dldo3", "dldoin", 500, 3400, 100,
+> +		 AXP318_DLDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(2)),
+> +	AXP_DESC(AXP318, DLDO4, "dldo4", "dldoin", 500, 3400, 100,
+> +		 AXP318_DLDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(3)),
+> +	AXP_DESC(AXP318, DLDO5, "dldo5", "dldoin", 500, 3400, 100,
+> +		 AXP318_DLDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(4)),
+> +	AXP_DESC(AXP318, DLDO6, "dldo6", "dldoin", 500, 3400, 100,
+> +		 AXP318_DLDO6_CONTROL, AXP318_LDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(5)),
+> +	AXP_DESC(AXP318, ELDO1, "eldo1", "eldoin", 500, 1500, 25,
+> +		 AXP318_ELDO1_CONTROL, AXP318_ELDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(6)),
+> +	AXP_DESC(AXP318, ELDO2, "eldo2", "eldoin", 500, 1500, 25,
+> +		 AXP318_ELDO2_CONTROL, AXP318_ELDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL3, BIT(7)),
+> +	AXP_DESC(AXP318, ELDO3, "eldo3", "eldoin", 500, 1500, 25,
+> +		 AXP318_ELDO3_CONTROL, AXP318_ELDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL4, BIT(0)),
+> +	AXP_DESC(AXP318, ELDO4, "eldo4", "eldoin", 500, 1500, 25,
+> +		 AXP318_ELDO4_CONTROL, AXP318_ELDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL4, BIT(1)),
+> +	AXP_DESC(AXP318, ELDO5, "eldo5", "eldoin", 500, 1500, 25,
+> +		 AXP318_ELDO5_CONTROL, AXP318_ELDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL4, BIT(2)),
+> +	AXP_DESC(AXP318, ELDO6, "eldo6", "eldoin", 500, 1500, 25,
+> +		 AXP318_ELDO6_CONTROL, AXP318_ELDO_V_OUT_MASK,
+> +		 AXP318_LDO_OUTPUT_CONTROL4, BIT(3)),
+> +};
 > +
-> +	return err;
-> +}
+>  static const struct linear_range axp717_dcdc1_ranges[] = {
+>  	REGULATOR_LINEAR_RANGE(500000,   0, 70, 10000),
+>  	REGULATOR_LINEAR_RANGE(1220000, 71, 87, 20000),
+> @@ -1347,6 +1501,7 @@ static int axp20x_set_dcdc_freq(struct platform_device *pdev, u32 dcdcfreq)
+>  		step = 150;
+>  		break;
+>  	case AXP313A_ID:
+> +	case AXP318_ID:
+>  	case AXP323_ID:
+>  	case AXP717_ID:
+>  	case AXP15060_ID:
+> @@ -1585,6 +1740,10 @@ static int axp20x_regulator_probe(struct platform_device *pdev)
+>  		regulators = axp313a_regulators;
+>  		nregulators = AXP313A_REG_ID_MAX;
+>  		break;
+> +	case AXP318_ID:
+> +		regulators = axp318_regulators;
+> +		nregulators = AXP318_REG_ID_MAX;
+> +		break;
+>  	case AXP717_ID:
+>  		regulators = axp717_regulators;
+>  		nregulators = AXP717_REG_ID_MAX;
+> diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
+> index a871789f6cfa9..f4217c4763669 100644
+> --- a/include/linux/mfd/axp20x.h
+> +++ b/include/linux/mfd/axp20x.h
+> @@ -559,6 +559,47 @@ enum {
+>  	AXP313A_REG_ID_MAX,
+>  };
+>  
+> +enum {
+> +	AXP318_DCDC1 = 0,
+> +	AXP318_DCDC2,
+> +	AXP318_DCDC3,
+> +	AXP318_DCDC4,
+> +	AXP318_DCDC5,
+> +	AXP318_DCDC6,
+> +	AXP318_DCDC7,
+> +	AXP318_DCDC8,
+> +	AXP318_DCDC9,
+> +	AXP318_ALDO1,
+> +	AXP318_ALDO2,
+> +	AXP318_ALDO3,
+> +	AXP318_ALDO4,
+> +	AXP318_ALDO5,
+> +	AXP318_ALDO6,
+> +	AXP318_BLDO1,
+> +	AXP318_BLDO2,
+> +	AXP318_BLDO3,
+> +	AXP318_BLDO4,
+> +	AXP318_BLDO5,
+> +	AXP318_CLDO1,
+> +	AXP318_CLDO2,
+> +	AXP318_CLDO3,
+> +	AXP318_CLDO4,
+> +	AXP318_CLDO5,
+> +	AXP318_DLDO1,
+> +	AXP318_DLDO2,
+> +	AXP318_DLDO3,
+> +	AXP318_DLDO4,
+> +	AXP318_DLDO5,
+> +	AXP318_DLDO6,
+> +	AXP318_ELDO1,
+> +	AXP318_ELDO2,
+> +	AXP318_ELDO3,
+> +	AXP318_ELDO4,
+> +	AXP318_ELDO5,
+> +	AXP318_ELDO6,
+> +	AXP318_REG_ID_MAX,
+> +};
+> +
+>  enum {
+>  	AXP717_DCDC1 = 0,
+>  	AXP717_DCDC2,
+> -- 
+> 2.46.3
+> 
 
-And you can remove the kfree call from hinic3_mbox_pre_init().
-
-/P
-
+-- 
+Yixun Lan (dlan)
 
