@@ -1,53 +1,75 @@
-Return-Path: <linux-kernel+bounces-775855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756D6B2C5CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:39:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BB7B2C5FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A186D6878B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98772521A0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DEE32275C;
-	Tue, 19 Aug 2025 13:32:42 +0000 (UTC)
-Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5766433CE88;
+	Tue, 19 Aug 2025 13:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cva4UsLS"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCAF3043D1;
-	Tue, 19 Aug 2025 13:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FEC23AE9A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610361; cv=none; b=bXZfJYcz9jqh3mn01u6eGOh13AKY2wTZWAsS9cy0rXrT/tos8CYSaruBrOsz1kuu0qYJPbeBnVPhvig7fsb5Rlh+ZtL9az6TK2Eu4LBw7eoxQcAIm3Kj9h3qh0cZWsDw+ZMb7JOOyw1DIYqhq5k7JUTOok9aujBNG8oQ3ZVNRYU=
+	t=1755610881; cv=none; b=iZsdC024LEdxxKh+4wcp7LphjTyAAF3nKeNdaGI7NktQ4U9MLbIRQM2o0XZ0KmLcZBNglNk98ZOymKrWRXjohppL4xU/MI4SZoSWnFpAsWaEntiDhvrpdY+twSbaP1HcV/7WHSMVIpMpQtQyAqhkaoqs0bxRHAdLQAaKdJlMR2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610361; c=relaxed/simple;
-	bh=5FmImHnUOWdxWyAPXcYAKJD4BB8uHyMkPtJdygLfggM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dq9lP7vOa/WwBI4Bh694wW60KJ817B/dAj3gPDLRdsxEn52DAP0+1VMUM/I+pZZFCjlgys060HGtLH5VNlPdCQamuY+AYZWfQVI5KfHIaPHosJRrf018lmIOzzuEIYPTpl++XMiPOFVszUZCXcy7rxQt9aI/se48K+PMqPC35jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
-Received: from MUA
-	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <mhej@vps-ovh.mhejs.net>)
-	id 1uoMS0-00000001OeZ-2yPQ;
-	Tue, 19 Aug 2025 15:32:32 +0200
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: Maxim Levitsky <mlevitsk@redhat.com>,
-	Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] KVM: selftests: Test TPR / CR8 sync and interrupt masking
-Date: Tue, 19 Aug 2025 15:32:15 +0200
-Message-ID: <e20b63358d64325ac782ed1c2de0258efcf54d4c.1755609446.git.maciej.szmigiero@oracle.com>
+	s=arc-20240116; t=1755610881; c=relaxed/simple;
+	bh=QyzjF/0AaOroCSH9RzV1rO0zR6QeIeCkyR33hpWQa4c=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ttcv3CUlsGrhq8yRLNuqxn5FM+kpzxX5wVIfyktSdqvMthRwng5VzjzSUQgcrZz1+453ALuGMws5rruxd3MDBwM/44BKBrw9lZ61XVEC6fLiFFiL+a4R1mvQaKfifv+5RVAVPDGTbItOZj8147NWVyUyBQk7E7X51NUWoMoSj9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cva4UsLS; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1755610868; bh=vz/aLcAyIdl0LH4vvwbsWgUHYbgEUH4l4+X75EZNmNk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=cva4UsLS1UmSzEZ+RBsA56/eePd+hXp4YIoVsC7td7jXIPn1zgO9Y0p1mJ4Mun9u4
+	 ZJMpgUfSWofIl0uezV3pArLQHUi8Wb9yYrs6Xe9t6do2jLj6FTrpRAYi6D+aRQjVGn
+	 SuqGLDpNVD06tknueVVo5jXUSBKtVOKVOm2SxaVA=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 83037A32; Tue, 19 Aug 2025 21:32:48 +0800
+X-QQ-mid: xmsmtpt1755610368tgabz2ymh
+Message-ID: <tencent_5E787A6C242FE96CC89454E856EC52CEC40A@qq.com>
+X-QQ-XMAILINFO: MIAHdi1iQo+zIrDfBBjifQF3t9+JGdjLtdlyu1RdcFzik61Q3xQsm7gkw07w0x
+	 M43FICJTS7Z4NJENS/AP3tnUP0c5pNwO+p6K7JiGKwm+Gg71++H7ErGKGCSQ97Kd8ljJ+Ybr+dCi
+	 GQq2UOpeVzzGMpuf9FaafqefcDWr3LXrDZW/Q4CRqdHrrnsgXOkzQJ/rJmZGqMSn4wBO9Wl9rc/x
+	 YvxWbd9SxOJWpi5tUewNJnHilZb70p8Z4wqe8bZYkyTK10Rp7swrOscDlKrVetwo9TeUkYyPlGts
+	 X0KZyq78OonSD3KKOKMj3UeBoo3Qo//4KI13BrtJPXvYf5RS3onuI6HltbuMUcHVMAaVIUPL6Fyo
+	 7V8g1vbQCektp6gB/06xGqJKiDoleEvyIpYLaqKeYxSzqx1SE3m+Mpl7wxSyQLkCqOOD5GCMw7dd
+	 CXwX5I13P4TgtjOkbMJC3snmRaSjFWPnDY6+172xyc0QsSQWrigwF56XFL8h4+LgdQ7XPD2K/I4/
+	 yZDyDcaroOIaAXcC4l3cK+nIXON1B7+VU8iUjjtFztHoR3bT8rTSEZBsSfCB6B6ULRYcX+f+h9Ef
+	 Rg3PglsNuiwhzIlv48i2zNC3vzaCfQ8GbYxCggleCiOVfPOIPCo7xKzSrYRnmoHEGGueoLut99aP
+	 1HQDQoHJorY6U1omofNBvQwIsKlmsBMDWKsEhK6MTcSooKeGWkJm7wRpm9Q5Fe1T+1/pA4xEL/Ew
+	 SIQZ+1EL2K7nLIK1s0Ls2iIXg3xXtRDKAzlnRqQDKVf2v2pR6GaGcrWjZBD8Q+YcJqYooifcfD88
+	 4sn7do+jtPoRNRo3xqWtrmT849+b+BpLJdImTFntRq0yHuKu/1OvIx78CTpfTsajn4nuuygiSzr7
+	 t3rnB1klUqiCnVfX8nBh2+NGr8+/5fq+rQ48IqCpbBa36cXUJy0sfIXQC5NXQxvOYYWhjnpevvBs
+	 jspE95jvnrXWOYm6ZPKNFnQ5hBWSbKUEWnF9/EwLAul17bc7Aa7A==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
+Cc: jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	linux-kernel@vger.kernel.org,
+	mark@fasheh.com,
+	ocfs2-devel@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] ocfs2: prevent release journal inode after journal shutdown
+Date: Tue, 19 Aug 2025 21:32:48 +0800
+X-OQ-MSGID: <20250819133247.1261704-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1755609446.git.maciej.szmigiero@oracle.com>
-References: <cover.1755609446.git.maciej.szmigiero@oracle.com>
+In-Reply-To: <68a46146.050a0220.e29e5.00c2.GAE@google.com>
+References: <68a46146.050a0220.e29e5.00c2.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,366 +77,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: mhej@vps-ovh.mhejs.net
 
-From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+Before calling ocfs2_delete_osb(), ocfs2_journal_shutdown() has already
+been executed in ocfs2_dismount_volume(), so osb->journal must be NULL.
+Therefore, the following calltrace will inevitably fail when it reaches
+jbd2_journal_release_jbd_inode().
 
-Add a few extra TPR / CR8 tests to x86's xapic_state_test to see if:
-* TPR is 0 on reset,
-* TPR, PPR and CR8 are equal inside the guest,
-* TPR and CR8 read equal by the host after a VMExit
-* TPR borderline values set by the host correctly mask interrupts in the
-guest.
+ocfs2_dismount_volume()->
+  ocfs2_delete_osb()->
+    ocfs2_free_slot_info()->
+      __ocfs2_free_slot_info()->
+        evict()->
+          ocfs2_evict_inode()->
+            ocfs2_clear_inode()->
+	      jbd2_journal_release_jbd_inode(osb->journal->j_journal,
 
-These hopefully will catch the most obvious cases of improper TPR sync or
-interrupt masking.
+Adding osb->journal checks will prevent UAF during the above execution path.
 
-Do these tests both in x2APIC and xAPIC modes.
-The x2APIC mode uses SELF_IPI register to trigger interrupts to give it a
-bit of exercise too.
-
-Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+Reported-by: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
+Closest: https://syzkaller.appspot.com/bug?extid=47d8cb2f2cc1517e515a
+Tested-by: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- .../testing/selftests/kvm/include/x86/apic.h  |   5 +
- .../selftests/kvm/x86/xapic_state_test.c      | 265 +++++++++++++++++-
- 2 files changed, 267 insertions(+), 3 deletions(-)
+ fs/ocfs2/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/include/x86/apic.h b/tools/testing/selftests/kvm/include/x86/apic.h
-index 80fe9f69b38d..67285e533e14 100644
---- a/tools/testing/selftests/kvm/include/x86/apic.h
-+++ b/tools/testing/selftests/kvm/include/x86/apic.h
-@@ -27,7 +27,11 @@
- #define	APIC_LVR	0x30
- #define		GET_APIC_ID_FIELD(x)	(((x) >> 24) & 0xFF)
- #define	APIC_TASKPRI	0x80
-+#define		APIC_TASKPRI_TP_SHIFT	4
-+#define		APIC_TASKPRI_TP_MASK	GENMASK(7, 4)
- #define	APIC_PROCPRI	0xA0
-+#define		APIC_PROCPRI_PP_SHIFT	4
-+#define		APIC_PROCPRI_PP_MASK	GENMASK(7, 4)
- #define	APIC_EOI	0xB0
- #define	APIC_SPIV	0xF0
- #define		APIC_SPIV_FOCUS_DISABLED	(1 << 9)
-@@ -67,6 +71,7 @@
- #define	APIC_TMICT	0x380
- #define	APIC_TMCCT	0x390
- #define	APIC_TDCR	0x3E0
-+#define	APIC_SELF_IPI	0x3F0
- 
- void apic_disable(void);
- void xapic_enable(void);
-diff --git a/tools/testing/selftests/kvm/x86/xapic_state_test.c b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-index fdebff1165c7..968e5e539a1a 100644
---- a/tools/testing/selftests/kvm/x86/xapic_state_test.c
-+++ b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-@@ -1,9 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0-only
- #include <fcntl.h>
-+#include <stdatomic.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <sys/ioctl.h>
-+#include <unistd.h>
- 
- #include "apic.h"
- #include "kvm_util.h"
-@@ -16,6 +18,245 @@ struct xapic_vcpu {
- 	bool has_xavic_errata;
- };
- 
-+#define IRQ_VECTOR 0x20
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 14bf440ea4df..6c4f78f473fb 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1281,6 +1281,9 @@ static void ocfs2_clear_inode(struct inode *inode)
+ 	 * the journal is flushed before journal shutdown. Thus it is safe to
+ 	 * have inodes get cleaned up after journal shutdown.
+ 	 */
++	if (!osb->journal)
++		return;
 +
-+/* See also the comment at similar assertion in memslot_perf_test.c */
-+static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic int is not lockless");
-+
-+static atomic_uint tpr_guest_irq_sync_val;
-+
-+static void tpr_guest_irq_sync_flag_reset(void)
-+{
-+	atomic_store_explicit(&tpr_guest_irq_sync_val, 0,
-+			      memory_order_release);
-+}
-+
-+static unsigned int tpr_guest_irq_sync_val_get(void)
-+{
-+	return atomic_load_explicit(&tpr_guest_irq_sync_val,
-+				    memory_order_acquire);
-+}
-+
-+static void tpr_guest_irq_sync_val_inc(void)
-+{
-+	atomic_fetch_add_explicit(&tpr_guest_irq_sync_val, 1,
-+				  memory_order_acq_rel);
-+}
-+
-+static void tpr_guest_irq_handler_xapic(struct ex_regs *regs)
-+{
-+	tpr_guest_irq_sync_val_inc();
-+
-+	xapic_write_reg(APIC_EOI, 0);
-+}
-+
-+static void tpr_guest_irq_handler_x2apic(struct ex_regs *regs)
-+{
-+	tpr_guest_irq_sync_val_inc();
-+
-+	x2apic_write_reg(APIC_EOI, 0);
-+}
-+
-+static void tpr_guest_irq_queue(bool x2apic)
-+{
-+	if (x2apic) {
-+		x2apic_write_reg(APIC_SELF_IPI, IRQ_VECTOR);
-+	} else {
-+		uint32_t icr, icr2;
-+
-+		icr = APIC_DEST_SELF | APIC_DEST_PHYSICAL | APIC_DM_FIXED |
-+			IRQ_VECTOR;
-+		icr2 = 0;
-+
-+		xapic_write_reg(APIC_ICR2, icr2);
-+		xapic_write_reg(APIC_ICR, icr);
-+	}
-+}
-+
-+static uint8_t tpr_guest_tpr_get(bool x2apic)
-+{
-+	uint32_t taskpri;
-+
-+	if (x2apic)
-+		taskpri = x2apic_read_reg(APIC_TASKPRI);
-+	else
-+		taskpri = xapic_read_reg(APIC_TASKPRI);
-+
-+	return (taskpri & APIC_TASKPRI_TP_MASK) >> APIC_TASKPRI_TP_SHIFT;
-+}
-+
-+static uint8_t tpr_guest_ppr_get(bool x2apic)
-+{
-+	uint32_t procpri;
-+
-+	if (x2apic)
-+		procpri = x2apic_read_reg(APIC_PROCPRI);
-+	else
-+		procpri = xapic_read_reg(APIC_PROCPRI);
-+
-+	return (procpri & APIC_PROCPRI_PP_MASK) >> APIC_PROCPRI_PP_SHIFT;
-+}
-+
-+static uint8_t tpr_guest_cr8_get(void)
-+{
-+	uint64_t cr8;
-+
-+	asm volatile ("mov %%cr8, %[cr8]\n\t" : [cr8] "=r"(cr8));
-+
-+	return cr8 & GENMASK(3, 0);
-+}
-+
-+static void tpr_guest_check_tpr_ppr_cr8_equal(bool x2apic)
-+{
-+	uint8_t tpr;
-+
-+	tpr = tpr_guest_tpr_get(x2apic);
-+
-+	GUEST_ASSERT_EQ(tpr_guest_ppr_get(x2apic), tpr);
-+	GUEST_ASSERT_EQ(tpr_guest_cr8_get(), tpr);
-+}
-+
-+static void tpr_guest_code(uint64_t x2apic)
-+{
-+	cli();
-+
-+	if (x2apic)
-+		x2apic_enable();
-+	else
-+		xapic_enable();
-+
-+	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-+
-+	tpr_guest_irq_queue(x2apic);
-+
-+	/* TPR = 0 but IRQ masked by IF=0, should not fire */
-+	udelay(1000);
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 0);
-+
-+	sti();
-+
-+	/* IF=1 now, IRQ should fire */
-+	while (tpr_guest_irq_sync_val_get() == 0)
-+		cpu_relax();
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
-+
-+	GUEST_SYNC(0);
-+	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-+
-+	tpr_guest_irq_queue(x2apic);
-+
-+	/* IRQ masked by barely high enough TPR now, should not fire */
-+	udelay(1000);
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
-+
-+	GUEST_SYNC(1);
-+	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-+
-+	/* TPR barely low enough now to unmask IRQ, should fire */
-+	while (tpr_guest_irq_sync_val_get() == 1)
-+		cpu_relax();
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 2);
-+
-+	GUEST_DONE();
-+}
-+
-+static uint8_t lapic_tpr_get(struct kvm_lapic_state *xapic)
-+{
-+	return (*((u32 *)&xapic->regs[APIC_TASKPRI]) & APIC_TASKPRI_TP_MASK) >>
-+		APIC_TASKPRI_TP_SHIFT;
-+}
-+
-+static void lapic_tpr_set(struct kvm_lapic_state *xapic, uint8_t val)
-+{
-+	*((u32 *)&xapic->regs[APIC_TASKPRI]) &= ~APIC_TASKPRI_TP_MASK;
-+	*((u32 *)&xapic->regs[APIC_TASKPRI]) |= val << APIC_TASKPRI_TP_SHIFT;
-+}
-+
-+static uint8_t sregs_tpr(struct kvm_sregs *sregs)
-+{
-+	return sregs->cr8 & GENMASK(3, 0);
-+}
-+
-+static void test_tpr_check_tpr_zero(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_lapic_state xapic;
-+
-+	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-+
-+	TEST_ASSERT_EQ(lapic_tpr_get(&xapic), 0);
-+}
-+
-+static void test_tpr_check_tpr_cr8_equal(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_sregs sregs;
-+	struct kvm_lapic_state xapic;
-+
-+	vcpu_sregs_get(vcpu, &sregs);
-+	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-+
-+	TEST_ASSERT_EQ(sregs_tpr(&sregs), lapic_tpr_get(&xapic));
-+}
-+
-+static void test_tpr_mask_irq(struct kvm_vcpu *vcpu, bool mask)
-+{
-+	struct kvm_lapic_state xapic;
-+	uint8_t tpr;
-+
-+	static_assert(IRQ_VECTOR >= 16, "invalid IRQ vector number");
-+	tpr = IRQ_VECTOR / 16;
-+	if (!mask)
-+		tpr--;
-+
-+	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-+	lapic_tpr_set(&xapic, tpr);
-+	vcpu_ioctl(vcpu, KVM_SET_LAPIC, &xapic);
-+}
-+
-+static void test_tpr(struct kvm_vcpu *vcpu, bool x2apic)
-+{
-+	bool run_guest = true;
-+
-+	vcpu_args_set(vcpu, 1, (uint64_t)x2apic);
-+
-+	/* According to the SDM/APM the TPR value at reset is 0 */
-+	test_tpr_check_tpr_zero(vcpu);
-+	test_tpr_check_tpr_cr8_equal(vcpu);
-+
-+	tpr_guest_irq_sync_flag_reset();
-+
-+	while (run_guest) {
-+		struct ucall uc;
-+
-+		alarm(2);
-+		vcpu_run(vcpu);
-+		alarm(0);
-+
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_ABORT:
-+			REPORT_GUEST_ASSERT(uc);
-+			break;
-+		case UCALL_DONE:
-+			test_tpr_check_tpr_cr8_equal(vcpu);
-+
-+			run_guest = false;
-+			break;
-+		case UCALL_SYNC:
-+			test_tpr_check_tpr_cr8_equal(vcpu);
-+
-+			if (uc.args[1] == 0)
-+				test_tpr_mask_irq(vcpu, true);
-+			else if (uc.args[1] == 1)
-+				test_tpr_mask_irq(vcpu, false);
-+			else
-+				TEST_FAIL("Unknown SYNC %lu", uc.args[1]);
-+			break;
-+		default:
-+			TEST_FAIL("Unknown ucall result 0x%lx", uc.cmd);
-+			break;
-+		}
-+	}
-+}
-+
- static void xapic_guest_code(void)
- {
- 	cli();
-@@ -195,6 +436,12 @@ static void test_apic_id(void)
- 	kvm_vm_free(vm);
+ 	jbd2_journal_release_jbd_inode(osb->journal->j_journal,
+ 				       &oi->ip_jinode);
  }
- 
-+static void clear_x2apic_cap_map_apic(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
-+{
-+	vcpu_clear_cpuid_feature(vcpu, X86_FEATURE_X2APIC);
-+	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
-+}
-+
- static void test_x2apic_id(void)
- {
- 	struct kvm_lapic_state lapic = {};
-@@ -230,10 +477,17 @@ int main(int argc, char *argv[])
- 	};
- 	struct kvm_vm *vm;
- 
-+	/* x2APIC tests */
-+
- 	vm = vm_create_with_one_vcpu(&x.vcpu, x2apic_guest_code);
- 	test_icr(&x);
- 	kvm_vm_free(vm);
- 
-+	vm = vm_create_with_one_vcpu(&x.vcpu, tpr_guest_code);
-+	vm_install_exception_handler(vm, IRQ_VECTOR, tpr_guest_irq_handler_x2apic);
-+	test_tpr(x.vcpu, true);
-+	kvm_vm_free(vm);
-+
- 	/*
- 	 * Use a second VM for the xAPIC test so that x2APIC can be hidden from
- 	 * the guest in order to test AVIC.  KVM disallows changing CPUID after
-@@ -251,12 +505,17 @@ int main(int argc, char *argv[])
- 	x.has_xavic_errata = host_cpu_is_amd &&
- 			     get_kvm_amd_param_bool("avic");
- 
--	vcpu_clear_cpuid_feature(x.vcpu, X86_FEATURE_X2APIC);
--
--	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
-+	clear_x2apic_cap_map_apic(vm, x.vcpu);
- 	test_icr(&x);
- 	kvm_vm_free(vm);
- 
-+	/* Also do a TPR non-x2APIC test */
-+	vm = vm_create_with_one_vcpu(&x.vcpu, tpr_guest_code);
-+	clear_x2apic_cap_map_apic(vm, x.vcpu);
-+	vm_install_exception_handler(vm, IRQ_VECTOR, tpr_guest_irq_handler_xapic);
-+	test_tpr(x.vcpu, false);
-+	kvm_vm_free(vm);
-+
- 	test_apic_id();
- 	test_x2apic_id();
- }
+-- 
+2.43.0
+
 
