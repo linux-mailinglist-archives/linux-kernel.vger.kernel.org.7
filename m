@@ -1,77 +1,106 @@
-Return-Path: <linux-kernel+bounces-775893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EDFB2C610
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:49:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75508B2C601
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738F07BA603
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0EF620D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF8B341AB3;
-	Tue, 19 Aug 2025 13:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8C615442C;
+	Tue, 19 Aug 2025 13:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jecbLfCs"
-Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AlFPI9qx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4DC340DAB
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364761D514E
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611235; cv=none; b=r9BOzTurmdLF8KCwZfu7mtCzLEif5NAHJzsPnQAVOo6AYIawYyrRnqE6819GnmpBK/ldkGMOTVht72/lEe7mpO4RPSDF2AIt4mUatSfBj+RNaA30lfgrWV85oXIc0VWVJYFRaxozcYjtu0uKhBbnGmmIKg9BqO/r+SlQ3JFkJr4=
+	t=1755610985; cv=none; b=cyp0oJq9Z2LOyqVr0w+6Z135gLoIf1+Apf3AHrl1wAKfotcAGs7decSBCrZYEldp+zxA10Z4jntJ4KZMrVMe/46cYBcdCH0kORumoDmegS34SrwB8CTNkjMiWooyGsTMEZGO/+Koe8YW84KKktp03lomQ6ss1QkFEUsHUJf9PuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611235; c=relaxed/simple;
-	bh=Ybm10wiHr5ulrJ9Frxyd1d5WckN8g1UtM/uNWu5yBvc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=TPNz2tQWToGGhJNqP1+quLu06XCAzfBX/qbV4qU8xSrunwYq9hqLpPBO2yDjpHTsmJYmXztddCle6i55iNkeTU0e5zzMEgvSG5FZYx1QJKWpZN0LXZG3uLzasD6R9oiGvOYmRIaFGJQKIiXvMH8jRJY0elFQmOVpiIYWHy68o6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jecbLfCs; arc=none smtp.client-ip=203.205.221.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755611229; bh=OlS3uc13OkAKUWAvQfgzjGpAgOq2p9mUY7KcYX8F/Dc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jecbLfCshlk5Tc/9PU9Uaabc5tVXwhVji0jT9/wJiZ0B7c1tIiqS/lgt3YdcZlHRq
-	 MIyWzaq5AcLE8VLkv07vN4M0r9Kgenn2A3RZ1N6fXdv0gON6NZ1mgVj2I4RadCTZ82
-	 kWJRQ4TOt/X/hnL5nMzhgJ1znrfaYUZlmnmKeYnk=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id A4125023; Tue, 19 Aug 2025 21:41:01 +0800
-X-QQ-mid: xmsmtpt1755610861tgji6fijw
-Message-ID: <tencent_357489BEAEE4AED74CBD67D246DBD2C4C606@qq.com>
-X-QQ-XMAILINFO: NafziRg7Bx69icZz1+1/hg2anVwN2QhvGYv5r2pepvoqBBCN9avGN9TkyFaypI
-	 vqJpVlyz8Yxpck5Acd/0lWobT0QLdjmhWL1t2NjoCPoz7+GAngRuQCnidCX8HJoV0TaOTwZoComE
-	 FSM7zbTCqE5TRl1CgC94WU2AfzqDFA7ydhBR1Cyf6bHLTb/DEYFefrWbOHa45cxDWr8IbLPplJcg
-	 dCM1BqcIBNDKry8uu59aIWz9m00B+M3NxvVMQZ2Uj4HPHwN3WtSs6xqhk8DaqWUMGeW0cflEfQtU
-	 RmZ7dEhaihzZT1GuREwC4guz7xdWBQpr5IgPrVE/vEBXQGotSjjeANFR8BUChtVO1A4va0uM1zvE
-	 6HkWD+2+pieqrlFIwIv/vWOi05pk/VH6xZjiEvMcklfKukXJDqhbIGQfI3wynMO6MnpVhubpE6l8
-	 NLo8xEFAu/RipUYyp9Vx6JeMUF2XLsWuBr+IQ8yEM9NACj2l1gFdSuue8y/MPlwnvjE8ZE59sNhl
-	 vTSRIegk1NjhapaZdN3bAqlCHDH8biROvkYNzp9SCZKwqMeSzz6OGFBrPtHSVELcwij58DVDPVQA
-	 31E7ZAzxJrIwXLbgQ2AMlnVyBuL9hJqPCdCPl/E0L36R9wQGjr8p8etjKlpIvjK8GKYupYRNNiRE
-	 5WlE5O0XE8qeBl8StePDqOm9FFk5UAZ8957+E73Wl65D5pWyFmQY/ZwaVRJOKLR+zI1WThKWm4ZW
-	 Oeu6hozxj/FmrubAzTaSv0D79tSqQhRNKCO4jFuspd2Bvxnz/zhbJ9Zjcul+TPIQIdgLozAineh3
-	 ab5/G62fjbAXiSAzqtqcWvqaLfytGWRSbo2YMbQZVd0bOwxpBGVsHYh2DCZd5teebL5z4kcqLig5
-	 tJ4cLxsKrOOjK6zykbbv1zv/+3FxY9ePp/3mxMTfddzm30OqzFwt95fBVYEKojqWRdo1/ZZ8TxKk
-	 N2XQTUN7tVSiotz4KpmdiRiGklHDpu8PKRhgcIld4ZAjz25QVVZ8du4FRepfo1oogT4ko7+lGROB
-	 IpieKRnjRkHNmdqCGygtBzwEJANlBRP6n8JfA1Ffos3jhlWrRNiaxzktsUc6mgMvCW1KA/6w==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: eadavis@qq.com
-Cc: jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
+	s=arc-20240116; t=1755610985; c=relaxed/simple;
+	bh=FOWwu2o9Xgb4kRq+IFztU+5yUHImrnuQ7hF5c+HQqsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tzgdOxopir7wKNqX10mCPqkJaHfBzKWA/bEW+1lti8uR0s+EVqaMAgzdRvUMEKS6jalZl+mO1ShGl4bik/yatOsDLVPnkxITD+eD5D6NFYwBlJv8/N968KvS53qOAm1mO+aQyr+xHXI/Tp19HZZFdX/bDJ+zqsfvfr9RcvqJREI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AlFPI9qx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755610982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FJ3ypUlMzXz2IhKZB9gKLujpc2LItSundB12cO28tq8=;
+	b=AlFPI9qxAaCiWAY3xjJP1w9rnQERpsW+bgWVtue9cIhDsDLgrohNH/RhZTFkNYScN2cWJe
+	sedcaZjnjw3kpHiwLhyFY8iWsr4oy10LqswBECxCRwTB6WOsR+bQyYrLppoZ19PkPENSfQ
+	tRV/1IJCYu5beKWaZCTTi9EPKJcPx4w=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-232-C-RlPLunMhS_zJhtzEPiHg-1; Tue,
+ 19 Aug 2025 09:42:57 -0400
+X-MC-Unique: C-RlPLunMhS_zJhtzEPiHg-1
+X-Mimecast-MFC-AGG-ID: C-RlPLunMhS_zJhtzEPiHg_1755610973
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 930E81955BE4;
+	Tue, 19 Aug 2025 13:42:51 +0000 (UTC)
+Received: from h1.redhat.com (unknown [10.22.64.137])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B62319560AB;
+	Tue, 19 Aug 2025 13:42:30 +0000 (UTC)
+From: Nico Pache <npache@redhat.com>
+To: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	mark@fasheh.com,
-	ocfs2-devel@lists.linux.dev,
-	syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] ocfs2: prevent release journal inode after journal shutdown
-Date: Tue, 19 Aug 2025 21:41:02 +0800
-X-OQ-MSGID: <20250819134101.1271797-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <tencent_5E787A6C242FE96CC89454E856EC52CEC40A@qq.com>
-References: <tencent_5E787A6C242FE96CC89454E856EC52CEC40A@qq.com>
+	linux-trace-kernel@vger.kernel.org
+Cc: david@redhat.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	corbet@lwn.net,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	akpm@linux-foundation.org,
+	baohua@kernel.org,
+	willy@infradead.org,
+	peterx@redhat.com,
+	wangkefeng.wang@huawei.com,
+	usamaarif642@gmail.com,
+	sunnanyong@huawei.com,
+	vishal.moola@gmail.com,
+	thomas.hellstrom@linux.intel.com,
+	yang@os.amperecomputing.com,
+	kirill.shutemov@linux.intel.com,
+	aarcange@redhat.com,
+	raquini@redhat.com,
+	anshuman.khandual@arm.com,
+	catalin.marinas@arm.com,
+	tiwai@suse.de,
+	will@kernel.org,
+	dave.hansen@linux.intel.com,
+	jack@suse.cz,
+	cl@gentwo.org,
+	jglisse@google.com,
+	surenb@google.com,
+	zokeefe@google.com,
+	hannes@cmpxchg.org,
+	rientjes@google.com,
+	mhocko@suse.com,
+	rdunlap@infradead.org,
+	hughd@google.com
+Subject: [PATCH v10 00/13] khugepaged: mTHP support
+Date: Tue, 19 Aug 2025 07:41:52 -0600
+Message-ID: <20250819134205.622806-1-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,49 +108,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Before calling ocfs2_delete_osb(), ocfs2_journal_shutdown() has already
-been executed in ocfs2_dismount_volume(), so osb->journal must be NULL.
-Therefore, the following calltrace will inevitably fail when it reaches
-jbd2_journal_release_jbd_inode().
+The following series provides khugepaged with the capability to collapse
+anonymous memory regions to mTHPs.
 
-ocfs2_dismount_volume()->
-  ocfs2_delete_osb()->
-    ocfs2_free_slot_info()->
-      __ocfs2_free_slot_info()->
-        evict()->
-          ocfs2_evict_inode()->
-            ocfs2_clear_inode()->
-	      jbd2_journal_release_jbd_inode(osb->journal->j_journal,
+To achieve this we generalize the khugepaged functions to no longer depend
+on PMD_ORDER. Then during the PMD scan, we use a bitmap to track chunks of
+pages (defined by KHUGEPAGED_MTHP_MIN_ORDER) that are utilized. After the
+PMD scan is done, we do binary recursion on the bitmap to find the optimal
+mTHP sizes for the PMD range. The restriction on max_ptes_none is removed
+during the scan, to make sure we account for the whole PMD range. When no
+mTHP size is enabled, the legacy behavior of khugepaged is maintained.
+max_ptes_none will be scaled by the attempted collapse order to determine
+how full a mTHP must be to be eligible for the collapse to occur. If a
+mTHP collapse is attempted, but contains swapped out, or shared pages, we
+don't perform the collapse. It is now also possible to collapse to mTHPs
+without requiring the PMD THP size to be enabled.
 
-Adding osb->journal checks will prevent null-ptr-deref during the above
-execution path.
+With the default max_ptes_none=511, the code should keep its most of its
+original behavior. When enabling multiple adjacent (m)THP sizes we need to
+set max_ptes_none<=255. With max_ptes_none > HPAGE_PMD_NR/2 you will
+experience collapse "creep" and constantly promote mTHPs to the next
+available size. This is due the fact that a collapse will introduce at
+least 2x the number of pages, and on a future scan will satisfy the
+promotion condition once again.
 
-Reported-by: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=47d8cb2f2cc1517e515a
-Tested-by: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: Corrected typos and comments.
+Patch 1:     Refactor/rename hpage_collapse
+Patch 2:     Some refactoring to combine madvise_collapse and khugepaged
+Patch 3-5:   Generalize khugepaged functions for arbitrary orders
+Patch 6-8:   The mTHP patches
+Patch 9-10:  Allow khugepaged to operate without PMD enabled
+Patch 11-12: Tracing/stats
+Patch 13:    Documentation
 
- fs/ocfs2/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
+---------
+ Testing
+---------
+- Built for x86_64, aarch64, ppc64le, and s390x
+- selftests mm
+- I created a test script that I used to push khugepaged to its limits
+   while monitoring a number of stats and tracepoints. The code is
+   available here[1] (Run in legacy mode for these changes and set mthp
+   sizes to inherit)
+   The summary from my testings was that there was no significant
+   regression noticed through this test. In some cases my changes had
+   better collapse latencies, and was able to scan more pages in the same
+   amount of time/work, but for the most part the results were consistent.
+- redis testing. I tested these changes along with my defer changes
+  (see followup [4] post for more details). We've decided to get the mTHP
+  changes merged first before attempting the defer series.
+- some basic testing on 64k page size.
+- lots of general use.
 
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 14bf440ea4df..6c4f78f473fb 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1281,6 +1281,9 @@ static void ocfs2_clear_inode(struct inode *inode)
- 	 * the journal is flushed before journal shutdown. Thus it is safe to
- 	 * have inodes get cleaned up after journal shutdown.
- 	 */
-+	if (!osb->journal)
-+		return;
-+
- 	jbd2_journal_release_jbd_inode(osb->journal->j_journal,
- 				       &oi->ip_jinode);
- }
+V10 Changes:
+- Fixed bug where bitmap tracking was off by one leading to weird behavior
+  in some test cases.
+- Track mTHP stats for PMD order too (Baolin)
+- indentation cleanup (David)
+- add review/ack tags
+- Improve the control flow, readability, and result handling in
+  collapse_scan_bitmap (Baolin)
+- Indentation nits/cleanup (David)
+- Converted u8 orders to unsigned int to be consistent with other folio
+  callers (David)
+- Handled conflicts with Devs work on pte batching
+- Changed SWAP/SHARED restriction comments to a TODO comment (David)
+- Squashed main mTHP patch and the introduce bitmap patch (David)
+- Other small nits
+
+V9 Changes: [3]
+- Drop madvise_collapse support [2]. Further discussion needed.
+- Add documentation entries for new stats (Baolin)
+- Fix missing stat update (MTHP_STAT_COLLAPSE_EXCEED_SWAP) that was
+  accidentally dropped in v7 (Baolin)
+- Fix mishandled conflict noted in v8 (merged into wrong commit)
+- change rename from khugepaged to collapse (Dev)
+
+V8 Changes:
+- Fix mishandled conflict with shmem config changes (Baolin)
+- Add Baolin's patches for allowing collapse without PMD enabled
+- Add additional patch for allowing madvise_collapse without PMD enabled
+- Documentations nits (Randy)
+- Simplify SCAN_ANY_PROCESS lock jumbling (Liam)
+- Add a BUG_ON to the mTHP collapse similar to PMD (Dev)
+- Remove doc comment about khugepaged PMD only limitation (Dev)
+- Change revalidation function to accept multiple orders
+- Handled conflicts introduced by Lorenzo's madvise changes
+
+V7 (RESEND)
+
+V6 Changes:
+- Dont release the anon_vma_lock early (like in the PMD case), as not all
+  pages are isolated.
+- Define the PTE as null to avoid a uninitilized condition
+- minor nits and newline cleanup
+- make sure to unmap and unlock the pte for the swapin case
+- change the revalidation to always check the PMD order (as this will make
+  sure that no other VMA spans it)
+
+V5 Changes:
+- switched the order of patches 1 and 2
+- fixed some edge cases on the unified madvise_collapse and khugepaged
+- Explained the "creep" some more in the docs
+- fix EXCEED_SHARED vs EXCEED_SWAP accounting issue
+- fix potential highmem issue caused by a early unmap of the PTE
+
+V4 Changes:
+- Rebased onto mm-unstable
+- small changes to Documentation
+
+V3 Changes:
+- corrected legacy behavior for khugepaged and madvise_collapse
+- added proper mTHP stat tracking
+- Minor changes to prevent a nested lock on non-split-lock arches
+- Took Devs version of alloc_charge_folio as it has the proper stats
+- Skip cases were trying to collapse to a lower order would still fail
+- Fixed cases were the bitmap was not being updated properly
+- Moved Documentation update to this series instead of the defer set
+- Minor bugs discovered during testing and review
+- Minor "nit" cleanup
+
+V2 Changes:
+- Minor bug fixes discovered during review and testing
+- removed dynamic allocations for bitmaps, and made them stack based
+- Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
+- Updated trace events to include collapsing order info.
+- Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
+- No longer require a chunk to be fully utilized before setting the bit.
+   Use the same max_ptes_none scaling principle to achieve this.
+- Skip mTHP collapse that requires swapin or shared handling. This helps
+   prevent some of the "creep" that was discovered in v1.
+
+A big thanks to everyone that has reviewed, tested, and participated in
+the development process. Its been a great experience working with all of
+you on this long endeavour.
+
+[1] - https://gitlab.com/npache/khugepaged_mthp_test
+[2] - https://lore.kernel.org/all/23b8ad10-cd1f-45df-a25c-78d01c8af44f@redhat.com/
+[3] - https://lore.kernel.org/lkml/20250714003207.113275-1-npache@redhat.com/
+[4] - https://lore.kernel.org/lkml/20250515033857.132535-1-npache@redhat.com/
+
+Baolin Wang (2):
+  khugepaged: enable collapsing mTHPs even when PMD THPs are disabled
+  khugepaged: kick khugepaged for enabling none-PMD-sized mTHPs
+
+Dev Jain (1):
+  khugepaged: generalize alloc_charge_folio()
+
+Nico Pache (10):
+  khugepaged: rename hpage_collapse_* to collapse_*
+  introduce collapse_single_pmd to unify khugepaged and madvise_collapse
+  khugepaged: generalize hugepage_vma_revalidate for mTHP support
+  khugepaged: generalize __collapse_huge_page_* for mTHP support
+  khugepaged: add mTHP support
+  khugepaged: skip collapsing mTHP to smaller orders
+  khugepaged: avoid unnecessary mTHP collapse attempts
+  khugepaged: improve tracepoints for mTHP orders
+  khugepaged: add per-order mTHP khugepaged stats
+  Documentation: mm: update the admin guide for mTHP collapse
+
+ Documentation/admin-guide/mm/transhuge.rst |  44 +-
+ include/linux/huge_mm.h                    |   5 +
+ include/linux/khugepaged.h                 |   4 +
+ include/trace/events/huge_memory.h         |  34 +-
+ mm/huge_memory.c                           |  11 +
+ mm/khugepaged.c                            | 552 +++++++++++++++------
+ 6 files changed, 468 insertions(+), 182 deletions(-)
+
 -- 
-2.43.0
+2.50.1
 
 
