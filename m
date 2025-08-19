@@ -1,292 +1,142 @@
-Return-Path: <linux-kernel+bounces-774746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA80DB2B6B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:11:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F94EB2B6E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498273ACB7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5581642E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19466287266;
-	Tue, 19 Aug 2025 02:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66D228750B;
+	Tue, 19 Aug 2025 02:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frs/NxNN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2o4F2W7"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C252F852;
-	Tue, 19 Aug 2025 02:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7471DF75D;
+	Tue, 19 Aug 2025 02:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755569476; cv=none; b=daeILF3s7e+FYB+YCK8iOkkGj0KDnX6Kaa36d79p+8RTiqmrev6fl5dqN+B37p7BesOAwrPD2umy4DUxnfX4syqqGsFUPC4JliDCpn6K3VOw3HvdY1s7o/k2LO22q9tXCrwBm75TR/Q3VfPYX+gNxBKu02HHDd0zUcvDaNFlUk4=
+	t=1755569859; cv=none; b=kHNMfyAq1GQf978fiWjV5xDB9CnhiFPkI7HLkLKF+OZM7iljvfk2FYYb4/rTCG4YdJ2F/Sj0qDPzCR8jnC3OEnc6KkqL3pzEZ2SvTnEcyLQGzZIvFd6gwYJPoT6dBLZ9VzJTfDRHq2NI7+W1HpB5gcZrdbvodS8COWiRmgleRLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755569476; c=relaxed/simple;
-	bh=lt435QE/FFmHEwI82/HenA85O+4hQRrgiYwR7cJaXjc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Eu83lEh49vDLoy1sYMwg2WyTrwZeQqoYa1rX25vkbydcUw0pWtLGs/tiTgTXEJ+XyIuthdiaj+10VvgdWf2saRNPi0mUZij57WAx1sVFl3Qn1elX3UTu6dBl8LP+AqRkT5po45Z8ntUQxWfY4SZxW3KRGlMKpgtq7ScGQrM8/pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frs/NxNN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 624A7C4CEEB;
-	Tue, 19 Aug 2025 02:11:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755569474;
-	bh=lt435QE/FFmHEwI82/HenA85O+4hQRrgiYwR7cJaXjc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=frs/NxNNh+9SqAyvlUDxM95mjp6PLBbjYjZbwvNJJZ1VJVDNhUts3ySWN+y2bMGQn
-	 dk7KAIPfYbnV1qpUghAKm1kSbFm2TOXzIDOVLsarI4yBxaDXVNIMCHLVaUmkSwosOX
-	 DgQsmFUBQJ/Eln3rpzEwSZ8dMcDcHjKOFOKjeBcVexqjANYUooFtj8Vg7ddX329xYX
-	 +tZCiiubrToQlMVW0vvIA3zClAyiD/Eb13mS14wxTY0yuF/a8pEbpCiHZ/kOAyD5P5
-	 5oMjCLEHdCOuq+APJLIMwI/EFBta/EKGz/iGVo2VnYG5OyDxV7irh+wANx7JrvAPqT
-	 ohVFnFYhyYzOQ==
-Date: Tue, 19 Aug 2025 11:11:11 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, mhiramat@kernel.org,
- rostedt@goodmis.org, mathieu.desnoyers@efficios.com, hca@linux.ibm.com,
- revest@chromium.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next v5 1/4] fprobe: use rhltable for
- fprobe_ip_table
-Message-Id: <20250819111111.40f443fd7faae8e92f93beaf@kernel.org>
-In-Reply-To: <aKMuENl9omxi6OwJ@krava>
-References: <20250817024607.296117-1-dongml2@chinatelecom.cn>
-	<20250817024607.296117-2-dongml2@chinatelecom.cn>
-	<aKMuENl9omxi6OwJ@krava>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755569859; c=relaxed/simple;
+	bh=O9RNrF8SEJm4ca/Z01lu9b8tdh7d+MfsU4Kts0wpoRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lyiH4sj8/xAHbz8ih8phd2zU6T80rGB9xerGeFuQtqTBYdthU57QHRksDUjAq7mpYdsn/W7uru26RhyUe2Fz2mr1t4rAG7PIgckZ4jYWKBTlcmE5E9ZmSbacDudy+QNcQZ/BcmxGIGD/vlMBLPkEmpfN7rSmQdulyJqIJ+L1EAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2o4F2W7; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32326789e06so3879815a91.1;
+        Mon, 18 Aug 2025 19:17:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755569857; x=1756174657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QW0+zmgokdGMJQrw7uqaJY0AJyJi8JzEFzanmMPUYX0=;
+        b=D2o4F2W7EbPj5v1/APaFW7GAjEf/jCYjMvJwC36ocOobR30DeMB9L464Z6kNIHzCl3
+         8/kMXPz9rANkgPhR48LMOAyantPg6nV6TYu8Vo/aufMhct/ufyjds2ERJpcPsxOVHgom
+         6s4oQTdKP62AAVhggz+j+DQ/nocLu7BXbpaWBQ3n+gs7vF6N4uSN5WYG6JiZKgJhr9xH
+         fTCBGbTwPO3FUClDbp4HTzK/1hvboQhuc6goKoi7ZnCf6XOUuViSwlbV4kKgvcpVMl4b
+         hyUUffJ3p7l0gDbkJEs9N1dBbcOymCYQbJcXWM5OUqfDHQb78Xikv+nWzEOAV17izC4n
+         JlUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755569857; x=1756174657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QW0+zmgokdGMJQrw7uqaJY0AJyJi8JzEFzanmMPUYX0=;
+        b=mX0G/rHrrvldjsf4Xki0z84XMA7ChXKL3zY/Sxb+hubBOgjdA96k1rvSr3FONru6F5
+         VObQGJUwwWVkN9IReUNqvHQVJb1LnzL7Y984SyZdFINGzygd/6vXUs4cMvYEd7dZP5Hj
+         VMzjvXyxJ/pVQnElgZogzu173oQxo2OIO0bXTWNw/MZ89C6Cz8rHmyCOJXhu6nmKLWUW
+         7nhB3fixEIoov0mM8BGkU1IZ4gwoiTCMU+ZcoRF4oosd3FBnjvk3AoiWB9HGcmA1bA3C
+         wa9WKcpWi+9w8WmqfVaqxNYasJCLTkTn2bUQrdQsAk+5N1Wl305ZK9qbLigrbqrywiht
+         xyxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWL2hVOSi9QIWJohG2614MjgoUVCfVW6TJ4sbcfNUS+6DR7mCL4UsOsdbdd02bUKRIoR1hOmImnBkg1wqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgt44Rn0k1kMfh7qif6Rb9wZuJX1J5Ss9Tbqa6gUv9g3UfsRK4
+	sV62hMuPzbbc0EO1txqkA2S4/iWgQkexagkWMqZHPKo8H2iYzWG1kEWE
+X-Gm-Gg: ASbGnctoGjF61CCj2Biq9rAd/H/IegGFDL0pIMP0mBb9L+wGnL/tEWEjwmBtKpywa4N
+	OBZ/fv0fx4ecx7BtY3hQt+My7LnjWKSE4jEZ/buwsIWOIEDwPdOe7tYKgF0rxhhY6dERUhY7O38
+	w/mP2sspofpxLL3/YZ6J7cjiTUtzSL423NFq8+uGsZERXBZrDn5M0cLcPvhStOWCJKqwkon4l/P
+	i9jKTVYnImaikmtLcB5Lw5Clob5CEbmhOiSGooMxfCJl5UakQhHAnCtun0p0TwYLEt0KnqMRkFs
+	97x0PalKr9vRVOnFMlHV3WXRZEYHHKyU3wIdppF0v29jfRZvnNZ/xFxSpc3sJj3SG2kIXsfBlfP
+	z08mqRrSB7J5ZCda/jDE65ibpWDD0GVTRo7ue/Wc=
+X-Google-Smtp-Source: AGHT+IG0SJ7/3cQs4jx0w3qEcg0f3kr4Mp5Ya9KE1ew3HqPQ+GDnQVf6KtK0iW4s3a4fMUIKRO9WDA==
+X-Received: by 2002:a17:90b:57cf:b0:312:e6f1:c05d with SMTP id 98e67ed59e1d1-3245e568141mr1234288a91.2.1755569856981;
+        Mon, 18 Aug 2025 19:17:36 -0700 (PDT)
+Received: from C11-068.mioffice.cn ([43.224.245.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3237e3ed89fsm1265485a91.17.2025.08.18.19.17.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 19:17:36 -0700 (PDT)
+From: Pengtao He <hept.hept.hept@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Michal Luczaj <mhal@rbox.co>,
+	Eric Biggers <ebiggers@google.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengtao He <hept.hept.hept@gmail.com>
+Subject: [PATCH net-next v5] net: avoid one loop iteration in __skb_splice_bits
+Date: Tue, 19 Aug 2025 10:15:51 +0800
+Message-ID: <20250819021551.8361-1-hept.hept.hept@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 18 Aug 2025 15:43:44 +0200
-Jiri Olsa <olsajiri@gmail.com> wrote:
+If *len is equal to 0 at the beginning of __splice_segment
+it returns true directly. But when decreasing *len from
+a positive number to 0 in __splice_segment, it returns false.
+The __skb_splice_bits needs to call __splice_segment again.
 
-> On Sun, Aug 17, 2025 at 10:46:02AM +0800, Menglong Dong wrote:
-> 
-> SNIP
-> 
-> > +/* Node insertion and deletion requires the fprobe_mutex */
-> > +static int insert_fprobe_node(struct fprobe_hlist_node *node)
-> > +{
-> >  	lockdep_assert_held(&fprobe_mutex);
-> >  
-> > -	next = find_first_fprobe_node(ip);
-> > -	if (next) {
-> > -		hlist_add_before_rcu(&node->hlist, &next->hlist);
-> > -		return;
-> > -	}
-> > -	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
-> > -	hlist_add_head_rcu(&node->hlist, head);
-> > +	return rhltable_insert(&fprobe_ip_table, &node->hlist, fprobe_rht_params);
-> >  }
-> >  
-> >  /* Return true if there are synonims */
-> > @@ -92,9 +92,11 @@ static bool delete_fprobe_node(struct fprobe_hlist_node *node)
-> >  	/* Avoid double deleting */
-> >  	if (READ_ONCE(node->fp) != NULL) {
-> >  		WRITE_ONCE(node->fp, NULL);
-> > -		hlist_del_rcu(&node->hlist);
-> > +		rhltable_remove(&fprobe_ip_table, &node->hlist,
-> > +				fprobe_rht_params);
-> >  	}
-> > -	return !!find_first_fprobe_node(node->addr);
-> > +	return !!rhltable_lookup(&fprobe_ip_table, &node->addr,
-> > +				 fprobe_rht_params);
-> 
-> I think rhltable_lookup needs rcu lock
+Recheck *len if it changes, return true in time.
+Reduce unnecessary calls to __splice_segment.
 
-Good catch! Hmm, previously we guaranteed that the find_first_fprobe_node()
-must be called under rcu read locked or fprobe_mutex locked, so that the
-node list should not be changed. But according to the comment of
-rhltable_lookup(), we need to lock the rcu_read_lock() around that.
+Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
+---
+v5:
+Correct the summary phrase.
+v4:
+Correct the commit message.
+v3:
+Reduce once condition evaluation.
+v2:
+Correct the commit message and target tree.
+v1:
+https://lore.kernel.org/netdev/20250723063119.24059-1-hept.hept.hept@gmail.com/
+---
+ net/core/skbuff.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> 
-> >  }
-> >  
-> >  /* Check existence of the fprobe */
-> > @@ -249,9 +251,10 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
-> >  static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> >  			struct ftrace_regs *fregs)
-> >  {
-> > -	struct fprobe_hlist_node *node, *first;
-> >  	unsigned long *fgraph_data = NULL;
-> >  	unsigned long func = trace->func;
-> > +	struct fprobe_hlist_node *node;
-> > +	struct rhlist_head *head, *pos;
-> >  	unsigned long ret_ip;
-> >  	int reserved_words;
-> >  	struct fprobe *fp;
-> > @@ -260,14 +263,11 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> >  	if (WARN_ON_ONCE(!fregs))
-> >  		return 0;
-> >  
-> > -	first = node = find_first_fprobe_node(func);
-> > -	if (unlikely(!first))
-> > -		return 0;
-> > -
-> > +	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-> 
-> ditto
-
-So this was pointed in the previous thread. In fprobe_entry(), the
-preempt is disabled already. Thus we don't need locking rcu.
-
-Thank you,
-
-> 
-> jirka
-> 
-> 
-> >  	reserved_words = 0;
-> > -	hlist_for_each_entry_from_rcu(node, hlist) {
-> > +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
-> >  		if (node->addr != func)
-> > -			break;
-> > +			continue;
-> >  		fp = READ_ONCE(node->fp);
-> >  		if (!fp || !fp->exit_handler)
-> >  			continue;
-> > @@ -278,13 +278,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> >  		reserved_words +=
-> >  			FPROBE_HEADER_SIZE_IN_LONG + SIZE_IN_LONG(fp->entry_data_size);
-> >  	}
-> > -	node = first;
-> >  	if (reserved_words) {
-> >  		fgraph_data = fgraph_reserve_data(gops->idx, reserved_words * sizeof(long));
-> >  		if (unlikely(!fgraph_data)) {
-> > -			hlist_for_each_entry_from_rcu(node, hlist) {
-> > +			rhl_for_each_entry_rcu(node, pos, head, hlist) {
-> >  				if (node->addr != func)
-> > -					break;
-> > +					continue;
-> >  				fp = READ_ONCE(node->fp);
-> >  				if (fp && !fprobe_disabled(fp))
-> >  					fp->nmissed++;
-> > @@ -299,12 +298,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> >  	 */
-> >  	ret_ip = ftrace_regs_get_return_address(fregs);
-> >  	used = 0;
-> > -	hlist_for_each_entry_from_rcu(node, hlist) {
-> > +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
-> >  		int data_size;
-> >  		void *data;
-> >  
-> >  		if (node->addr != func)
-> > -			break;
-> > +			continue;
-> >  		fp = READ_ONCE(node->fp);
-> >  		if (!fp || fprobe_disabled(fp))
-> >  			continue;
-> > @@ -448,25 +447,21 @@ static int fprobe_addr_list_add(struct fprobe_addr_list *alist, unsigned long ad
-> >  	return 0;
-> >  }
-> >  
-> > -static void fprobe_remove_node_in_module(struct module *mod, struct hlist_head *head,
-> > -					struct fprobe_addr_list *alist)
-> > +static void fprobe_remove_node_in_module(struct module *mod, struct fprobe_hlist_node *node,
-> > +					 struct fprobe_addr_list *alist)
-> >  {
-> > -	struct fprobe_hlist_node *node;
-> >  	int ret = 0;
-> >  
-> > -	hlist_for_each_entry_rcu(node, head, hlist,
-> > -				 lockdep_is_held(&fprobe_mutex)) {
-> > -		if (!within_module(node->addr, mod))
-> > -			continue;
-> > -		if (delete_fprobe_node(node))
-> > -			continue;
-> > -		/*
-> > -		 * If failed to update alist, just continue to update hlist.
-> > -		 * Therefore, at list user handler will not hit anymore.
-> > -		 */
-> > -		if (!ret)
-> > -			ret = fprobe_addr_list_add(alist, node->addr);
-> > -	}
-> > +	if (!within_module(node->addr, mod))
-> > +		return;
-> > +	if (delete_fprobe_node(node))
-> > +		return;
-> > +	/*
-> > +	 * If failed to update alist, just continue to update hlist.
-> > +	 * Therefore, at list user handler will not hit anymore.
-> > +	 */
-> > +	if (!ret)
-> > +		ret = fprobe_addr_list_add(alist, node->addr);
-> >  }
-> >  
-> >  /* Handle module unloading to manage fprobe_ip_table. */
-> > @@ -474,8 +469,9 @@ static int fprobe_module_callback(struct notifier_block *nb,
-> >  				  unsigned long val, void *data)
-> >  {
-> >  	struct fprobe_addr_list alist = {.size = FPROBE_IPS_BATCH_INIT};
-> > +	struct fprobe_hlist_node *node;
-> > +	struct rhashtable_iter iter;
-> >  	struct module *mod = data;
-> > -	int i;
-> >  
-> >  	if (val != MODULE_STATE_GOING)
-> >  		return NOTIFY_DONE;
-> > @@ -486,8 +482,16 @@ static int fprobe_module_callback(struct notifier_block *nb,
-> >  		return NOTIFY_DONE;
-> >  
-> >  	mutex_lock(&fprobe_mutex);
-> > -	for (i = 0; i < FPROBE_IP_TABLE_SIZE; i++)
-> > -		fprobe_remove_node_in_module(mod, &fprobe_ip_table[i], &alist);
-> > +	rhltable_walk_enter(&fprobe_ip_table, &iter);
-> > +	do {
-> > +		rhashtable_walk_start(&iter);
-> > +
-> > +		while ((node = rhashtable_walk_next(&iter)) && !IS_ERR(node))
-> > +			fprobe_remove_node_in_module(mod, node, &alist);
-> > +
-> > +		rhashtable_walk_stop(&iter);
-> > +	} while (node == ERR_PTR(-EAGAIN));
-> > +	rhashtable_walk_exit(&iter);
-> >  
-> >  	if (alist.index < alist.size && alist.index > 0)
-> >  		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-> > @@ -727,8 +731,16 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
-> >  	ret = fprobe_graph_add_ips(addrs, num);
-> >  	if (!ret) {
-> >  		add_fprobe_hash(fp);
-> > -		for (i = 0; i < hlist_array->size; i++)
-> > -			insert_fprobe_node(&hlist_array->array[i]);
-> > +		for (i = 0; i < hlist_array->size; i++) {
-> > +			ret = insert_fprobe_node(&hlist_array->array[i]);
-> > +			if (ret)
-> > +				break;
-> > +		}
-> > +		/* fallback on insert error */
-> > +		if (ret) {
-> > +			for (i--; i >= 0; i--)
-> > +				delete_fprobe_node(&hlist_array->array[i]);
-> > +		}
-> >  	}
-> >  	mutex_unlock(&fprobe_mutex);
-> >  
-> > @@ -824,3 +836,10 @@ int unregister_fprobe(struct fprobe *fp)
-> >  	return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(unregister_fprobe);
-> > +
-> > +static int __init fprobe_initcall(void)
-> > +{
-> > +	rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
-> > +	return 0;
-> > +}
-> > +late_initcall(fprobe_initcall);
-> > -- 
-> > 2.50.1
-> > 
-> > 
-
-
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index ee0274417948..23b776cd9879 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3112,7 +3112,9 @@ static bool __splice_segment(struct page *page, unsigned int poff,
+ 		poff += flen;
+ 		plen -= flen;
+ 		*len -= flen;
+-	} while (*len && plen);
++		if (!*len)
++			return true;
++	} while (plen);
+ 
+ 	return false;
+ }
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.49.0
+
 
