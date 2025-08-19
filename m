@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-776436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B370DB2CD3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A528B2CD4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85C2F4E0EC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCDAA681A87
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC1F342CAE;
-	Tue, 19 Aug 2025 19:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB9A342C8A;
+	Tue, 19 Aug 2025 19:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="skQp/BYn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OUgPkTLU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CAA342C8A;
-	Tue, 19 Aug 2025 19:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5178246761;
+	Tue, 19 Aug 2025 19:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755632825; cv=none; b=dIXu/AbATERC+unkPsaZrO0iftRM82x5cAY7o6ZlKIKrw1TQNJ5uC+ZzCswcRjBCDasJru4xQfsvHtJUpefwjxD+KmDuovzgX+3nW3V256wVcU4pk62y2ZOireXnvCeQY3myxUIUzDLBnHvkpqpre+p51NNjk4dzdM0Cd7tMDpM=
+	t=1755632837; cv=none; b=gNVBbwpwDwB0MaJT7u9ju9AqlMJpSkNc6wlxza9mb5mGIzkHMmNSdwKQxA7uXUOaw1JVfKby2lqbGG9q5TvQSt0EAHSTadpiLivajVgPzejIq80CRzArGvlQ3u3/EMeCqSmSd4QuICFkMFC2t7p7XGxzCNfLp3WyGE7Vq1kX5zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755632825; c=relaxed/simple;
-	bh=GBfKF09b+2epbMEdIrT2YbBaZkiaw3OQUA9l38qNwao=;
+	s=arc-20240116; t=1755632837; c=relaxed/simple;
+	bh=RiZoOTbNQTvUEdVGRrPrO9QAwy/KWTo+SLu1NdYq5AM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=j7ysj1X1iBzRAr23W1pgXFftZpQ1AhdEciiPfmumHxbpiwKsFX+YJ6mfoRD02t8QmN6xiGn0jseP5EbuatEyUJrIxmIqGP992m8xDG9vW2Y6ONntMSoJINwINsE6JE46zxJLzAJBxUegJB18p9nTc425DVgdjovc+41jsCgnK0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=skQp/BYn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9553AC4CEF1;
-	Tue, 19 Aug 2025 19:47:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=NoHJSkUEyqqrXGLBV5qlmHVeoPQ45sTBq3kAF0sGOi5d0na1wP8xH5uUgqO69Lpi2togaShe9+b8v6WIJ4LgUqie3GabttwqAnSPCMHQHJG1nSxlzwbtMXciAoTi+R9AOIjo1JC1+kmeHqmcW/SRw1gzl70+TW5v//oyJJK2PM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OUgPkTLU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F601C4CEF1;
+	Tue, 19 Aug 2025 19:47:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755632825;
-	bh=GBfKF09b+2epbMEdIrT2YbBaZkiaw3OQUA9l38qNwao=;
+	s=k20201202; t=1755632835;
+	bh=RiZoOTbNQTvUEdVGRrPrO9QAwy/KWTo+SLu1NdYq5AM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=skQp/BYnFUDamCUbt3/js9qmrDslC4xa42rmqRSumsDLhIlG9ndB/iarWNXhW+hb3
-	 0il1DgD+1XfXDL208xqAt0Oa6WeK0zEwTw/kKaA7hZTFeLTnQfz/PcSMIDqP/H7cwI
-	 b+wn67xRHPVGuqo9aOKBEKXEjD1U0ZmfJks/LfabnuozCNYjvqRDmhmnOwc3PeGRIk
-	 8NIgik49beEH2vmTfBehrvXCbVCoFjt4nUX+0cEqsNFzhxajg2MiuwtRCgYiqj1/l+
-	 5N8oo9HGLd2h9Hygs9Hrzf6fbVqmIFN/pVEaS3LBiIWtqF9YWX/N3tcGvsSVJnIcPD
-	 yUEWp9lAJPeNw==
+	b=OUgPkTLUY8vxNNnfV7bBrenBJdVINXUkY5iZzsdvpBpE+/xI6Ml9/Sfghyi6Yi729
+	 APqToy0ysfMFFGYIHUybGVDgjQUvEU4pXWDxHGX4kXBFAQ9FTCiPTzRAXoEaOZXg7g
+	 TqaAWkXDBsJEdWUxQjIkVnPu5PlptgjAy6BWKAGLz9UENNt8rH6X9eFjLvyHpqLqjg
+	 Cy23EAvB+fc/DpA1joZXyn21Bg+5iYE7/bC022/wc/9tNo8wnmgPRsmi1fkkDb91+w
+	 uDV4s9gjwsBG3r8OPEhqZQdfbNvB3FplmpyXPzPjRghsp4Xx/xl/2Bu1Vm6KDbeB4b
+	 NiXJZ2gMsZpGg==
 From: Mark Brown <broonie@kernel.org>
-To: srinivas.kandagatla@oss.qualcomm.com
-Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, lgirdwood@gmail.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, krzysztof.kozlowski@linaro.org
-In-Reply-To: <20250819100151.1294047-1-srinivas.kandagatla@oss.qualcomm.com>
-References: <20250819100151.1294047-1-srinivas.kandagatla@oss.qualcomm.com>
-Subject: Re: [RESEND PATCH v4 0/6] ASoC: qcom: audioreach: cleanup and
- calibration
-Message-Id: <175563282335.270039.7788680159319198523.b4-ty@kernel.org>
-Date: Tue, 19 Aug 2025 20:47:03 +0100
+To: Jeff Chang <jeff_chang@richtek.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <aJ7YivhlWlE6ifw1@stanley.mountain>
+References: <aJ7YivhlWlE6ifw1@stanley.mountain>
+Subject: Re: [PATCH next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
+ rt5133_validate_vendor_info()
+Message-Id: <175563283433.270234.3651916456363956419.b4-ty@kernel.org>
+Date: Tue, 19 Aug 2025 20:47:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,36 +61,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Tue, 19 Aug 2025 11:01:45 +0100, srinivas.kandagatla@oss.qualcomm.com wrote:
-> Sorry to resend this series once again, as some of the patches seems
-> to be dropped/rejected by email client from previous send.
+On Fri, 15 Aug 2025 09:49:46 +0300, Dan Carpenter wrote:
+> The "priv->cdata" pointer isn't an error pointer, it should be a NULL
+> check instead.  Otherwise it leads to a NULL pointer dereference in the
+> caller, rt5133_probe().
 > 
-> This patchset:
->  - cleans up some of the audioreach tokens which are unused
->  - adds missing documentation
->  - add support for static calibration support which is required for ECNS
->    an speaker protection support.
 > 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/6] ASoC: qcom: audioreach: deprecate AR_TKN_U32_MODULE_[IN/OUT]_PORTS
-      commit: 12cc0ff3cdd95f2bc0ffdc63bcd9da231eb33199
-[2/6] ASoC: qcom: audioreach: add documentation for i2s interface type
-      commit: f07b81b573b28e5cae5c1482001ad0d6c0b7c051
-[3/6] ASoC: qcom: audioreach: add support for static calibration
-      commit: c7ed4c2debfd192f6071f4ab33c092d419abb941
-[4/6] ASoC: qcom: audioreach: fix typos in I2S_INTF_TYPE
-      commit: 0f5787df78799c7c8a7dbd2de5ff15250d8d3a4e
-[5/6] ASoC: qcom: audioreach: sort modules based on hex ids
-      commit: 97a719fe7d7001d361490b44985f8b4c7ea6ef98
-[6/6] ASoC: qcom: audioreach: add support for SMECNS module
-      commit: da9881d00153cc6d3917f6b74144b1d41b58338c
+[1/1] regulator: rt5133: Fix IS_ERR() vs NULL bug in rt5133_validate_vendor_info()
+      commit: f7f804633c91f0fbf03eefbae39eec2205191a82
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
