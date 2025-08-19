@@ -1,325 +1,335 @@
-Return-Path: <linux-kernel+bounces-776390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A8CB2CCD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C68B2CCCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A907F562817
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468C11BC6DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AB925A2B4;
-	Tue, 19 Aug 2025 19:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4578D308F16;
+	Tue, 19 Aug 2025 19:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Jk0fRNJz";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pEfh7L2c"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2DvkIXI"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C457228C01E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755630900; cv=fail; b=e084NsILGkeDikZ4zg5JVjpiXuUprZSBLsBqr2Up3G92EI/Br0vAnkvoC/NobbTuvb9sB6W7rbJGU4sdfMvT4SHDvtF/c+qx57ZvNVdS0xbG/E0lCZurc4Hgan6PkpRX+Mo8xywm+g5vm9RYurVXROYZ//H99crVhyqs+oU76cY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755630900; c=relaxed/simple;
-	bh=sxzFIA9QhzTPu6CoZT1xrGaJgGqLNDq1KufwKIJ4AkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=J54sIijplfrnHZJVv2tOe+TWq0CyC9oRqa++/Zmqk5/c0+zpWNoCUfnXIzySXUMoMKNvWr40y53SZLa8+nR0fVgYIfwVE1hZgieKovXeDBpkJVElOOHeqopRYu6FZV2KsKP4AM+/p5sAgAiZh9lAfaMhXIxcUmDrpgXiJV081DA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Jk0fRNJz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pEfh7L2c; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57JIC6tt018360;
-	Tue, 19 Aug 2025 19:14:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=a6FXS19PollwiQ5JBt
-	Zm4Vis+Ohtij0EvIj2pYv/N7Y=; b=Jk0fRNJzm8Yc7WV9wTG0pjOCJttKNb4mdR
-	JwVeKlAGylOe9mTI2UmP59CvdU97JTIFaE+GfwC9dcMNgv4lbK4h44Ct5wPaWOdp
-	vGFQR/Pe/j39pmrInSYp6ZhODPpn1o1NzWQWJHbxUuKUpSH/xcsujuNHEPWzPLwV
-	+fOBRWfdTrFozBMBCAmWtMZfKhuzPrR77ECRBGBK5TWynEe38OAk0Ug/cOkrnJk6
-	OcsnkU9OFoG4I7ySaZfnE6UZh/r9ITRWGxJEskH5ckxwFAgLPpnu4K3IwDNmFZJB
-	2vDlrSVeIdksYtv1WldsdNUt83o21Tass7jF2vIof1cZahcsLXCw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48jhkux1d3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Aug 2025 19:14:15 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57JJ4GM3030250;
-	Tue, 19 Aug 2025 19:14:14 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48my3t0b74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Aug 2025 19:14:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Af3Yyikww0bdg/N9jxQbD5e/irUAT7qAmtDA5ZLUwEg7KTi6FEhLZh+6j2l3y3ZIesTvz7lZVi7WYXH8FmBv89fS+uBkNqe3xWriu7D8HbJ1/7PtHOoRo2bGIi/MekxHMTc14Tax6rMVxxdTrx5PhjVuSpfDZz2+muWRtYSwxNpLWVK2t7gMn+ov74VLgYfaojiFwia7PAtH5KfDEWLiGOu4ye2w+cTynpndCWjY8rJ3ywrZSUcVvLLSAJUu22xNLOpwFKGgTtzQ+Up5yHc7TZ5fB2JuVrYrQUzZ7UPH23HykF0P4JtJZqF2AVqDLntbbmOPLAG9KuhSXC87Fin2Uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a6FXS19PollwiQ5JBtZm4Vis+Ohtij0EvIj2pYv/N7Y=;
- b=GeeacFu3unnCewWkmZ4zktKX7RaY06MKN8rRGIRAYwZ2NrZdY1qpc7NAtKhVNdf8H0VuujoPNhuXz9P/sZnTlDkfnB3IjXqcoYmxC2Udub/FhkLy/Q5bM5DvOAVGUA7Ekb3YB5E9Uju5u/iNkBsHWFuqqFfr8H/TYB5eVsKLwqCsMU30402mXtSDMWvRbXdQwkg0qMqTySdnWpcvFKRhhj+j8Age9lq7mrM3VFKHYVR+25qylkqpUcCSz06YY9aDPzAuRJfvXadmIYUESW0ku6+01cA/rNlv9joiqSj5X9F9MUyXMsvyoGWbrdXJVQYdrFgpeMrq8dIULqUBoC2RKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD62B267B92;
+	Tue, 19 Aug 2025 19:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755630846; cv=none; b=UShRKBg1wmVEq3afUME8RZ3YibKQ7PUY/gEhRGRHJkuNGzGicNQJ5rNBSknfszfuZDzRznieGBAKKvYftrxRDCq46Mf40WHK9OOZba0ZpLh7qiesrfzhkAKuqIAP6/GGkUwC2jFh5607GCwMONu8yMlAK5YpDTJxogqiLYCIfN4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755630846; c=relaxed/simple;
+	bh=QBZBFA8qX0CEUGaG7Ekodl0NUlye9JPmtd+b5ybqcNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLuDxsKLOg99bKPI4HqBmepF6fHeIysi9cQ8GaBjfjFjvoK/RzSfat9eX31FnwnRYsJyDGavcYjvvY3Bkgn3bzez2lMvy14RMkeJ+skN/bZzLLq1DUR3Cd5nXI/3BnddUN/mk4Rp6UOPJUSX+h+zb4iffNtVwSwsd0uNmht4hfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2DvkIXI; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso2046594b3a.1;
+        Tue, 19 Aug 2025 12:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a6FXS19PollwiQ5JBtZm4Vis+Ohtij0EvIj2pYv/N7Y=;
- b=pEfh7L2c3bc1fHpbFOTwIp0LpQ4UzBDHzK1LWnQGDSExjI41ZQcPFFw7aR/3i3qJSr3Fg/O24O1F85SFQAjZDlBzpen3+bGaWqw96i/EScNZ10tnaz9WueGxA8l1JSTugimAbVl0Z/8BAgxJRZ7mbXYRuSosTOo+able4vIv0eg=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB6945.namprd10.prod.outlook.com (2603:10b6:8:143::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.21; Tue, 19 Aug
- 2025 19:14:11 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.024; Tue, 19 Aug 2025
- 19:14:11 +0000
-Date: Tue, 19 Aug 2025 20:14:08 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-        Charan Teja Kalla <quic_charante@quicinc.com>,
-        shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
-        bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH 4/6] mm/memory: Add tree limit to free_pgtables()
-Message-ID: <39c46a52-f63a-4f3d-a276-6f59c55680ba@lucifer.local>
-References: <20250815191031.3769540-1-Liam.Howlett@oracle.com>
- <20250815191031.3769540-5-Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815191031.3769540-5-Liam.Howlett@oracle.com>
-X-ClientProxiedBy: GVX0EPF00014AFB.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:158:401::30d) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1755630844; x=1756235644; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uSoFs1dPwZPLyXDgW16htuCQo6gneHJl/XJEcVM4CC0=;
+        b=V2DvkIXIIBQP0mX+tkigIdZFJZ226e9ilS7tOPv26dzBEY+WH4GlQ19bXy/qfvgdLT
+         MFZe2SoQtJPgcjICHIKfwe3tbF+Bq55+cGVym4WQB5uKZHBir0JtJvT1dCUE+o/RJDwi
+         oHIDB+JtZDvj5j6PMlUm/DuYwzL1VJZljX4PqDWp7hFmiWUG5xJ9N/DR+KYVHn8i9b/b
+         g6zkZkmULe/is8JFAXulYtYeQf8wCQCQ9ixQvukDWcYzggJK9WuPzTlf1KKfYE7WL/0w
+         GQzhneGhkHNhqn5RjL/l4tCkMKM54spf9WecTLGIFQH42Dp4ZFRaY3Lp6DFT4aClJ+jU
+         /iCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755630844; x=1756235644;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uSoFs1dPwZPLyXDgW16htuCQo6gneHJl/XJEcVM4CC0=;
+        b=Yl1GOCWuxKgVbxll4gFc2AWgGm1Mjc59qt/hJuMPNalDzV7snyhQXUXGHAHFYUh5te
+         HmZ35KeOUWSnt74S50fAAZljvWnBJP8I/qsTZdi00YoKoaY/183OKSEaMUTZlAywv/7e
+         FYQ7C3siWsJ3kZWZuVvHwRY0uzGqe4yla5onvVqhWxeCIeSc8gpsYL1yelMa6eFjqhRx
+         Vyk18vp96qTPMmhTr0aWwaX1OumWm7P72fbNPy66A2egpPRRSNaks+hFnWnVlau4njUm
+         aEakg8pYd1oqizY+rCdNUP+l3cjHQLkAoH4/GHda0Tvey/Eo0HkSEi1XPT+fnrUpEdQ+
+         PQrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcQJyLWHnltc6vASxgbevUpK49/RPJBwq8j2PrQ67ItkQdM93TuMNXp4Nle2mbd5pXjVFBN08heAM9@vger.kernel.org, AJvYcCXQx+dUNEcCYF2KTTmo8M87ZsNkpKNnyd9cpvVc2MzJi9CL5mMSqTr+B4ZI+8ZsPBsoKAb/48ziqk9jnduW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqw2Wwj98sT6P+q1rv0a9GyRHOfCoXBmRedwUwHUIAJjAWLGNu
+	kaSo1vHzLWePZc46JzJNNtg4CWuVD/YE7JFfijwRRwJfb9Ac1eASmNO7
+X-Gm-Gg: ASbGncuN8fWpoMUntYjZPe5TDsk9+hmdpVJtyTFVI+zjEfx7QxOMD3l+tGGlETyETWU
+	FdAPCPip0U/kh4Bp1+HcVcUFXm+Lh/dzT+kFOfpsmgCIc72Z5SjfpNfz9EUyAMdZPmmtiX/x5lH
+	2XyVRvzSmE0+kuGwKJ3Ut/R1TWIhqJXe7HVv9KFf0SRvM7yxc7qg5mRus+CAxRSNUEkAbD2uRCE
+	YS3KEka7YzI9q/F8FKPMfRoKmtPDe6drU1WP/jP0eQTw8qu2SK5znsfCkldopnVU3mOinLIgf0O
+	+uYeb8BqPiE01MSATTI70d565k+LQ1sGDvvbcvc9zDMPXzQxCVc2C1nav/jLD8oFuaNbIBGWgOF
+	2x2lafczvp2Tk6QupAfVDBCba33Vj4mMkHJBW0xqorw==
+X-Google-Smtp-Source: AGHT+IEfPjCc/ljnWC4zpCiipCHTl8WeltuyKwOT/Jqk648q/rc8KulyEUXYKf/xSJhnTCuf1lFDmA==
+X-Received: by 2002:a05:6a00:190e:b0:76b:d363:4a3f with SMTP id d2e1a72fcca58-76e8db9bedamr369223b3a.3.1755630844184;
+        Tue, 19 Aug 2025 12:14:04 -0700 (PDT)
+Received: from localhost ([2804:30c:2767:3c00:70b9:40f2:fa7f:19cd])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76e7d5246e2sm3223800b3a.82.2025.08.19.12.14.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 12:14:03 -0700 (PDT)
+Date: Tue, 19 Aug 2025 16:14:24 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Michael.Hennerich@analog.com,
+	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jonath4nns@gmail.com
+Subject: Re: [PATCH 4/4] iio: adc: ad7768-1: add support for ADAQ776x-1 ADC
+ Family
+Message-ID: <aKTNEP7pNY9ZbrPe@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1754617360.git.Jonathan.Santos@analog.com>
+ <f0c1cbc9c2994a90113788cad57df1f32f9db45e.1754617360.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB6945:EE_
-X-MS-Office365-Filtering-Correlation-Id: eff32565-6c93-4039-dc13-08dddf549453
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CoflwyZcT96FrlPNkHmZvkFn+dsGvsglvgsc61g9I4P5nIoHg5ukc/tYpQki?=
- =?us-ascii?Q?WL443+VMHK0vbYJ+ugOr/Dl1vQjfCqFqm11sIZ+rRpQaBNQMndX0rTMdhgI2?=
- =?us-ascii?Q?1L6dYS10cp3+r2zLQmcLS90liyB6aivHGA/+oNj+xTFyY7gZTc6SX54HrA+1?=
- =?us-ascii?Q?RiqLA2iQ93d9IzKF/nOTJ1qrFe+TxhS5vjdYAuce1DyA8KeDB+yX/tzXoNrM?=
- =?us-ascii?Q?eeiBJ0UKLMuvOD3ps4tciEAqxTpkeAcbLWcgNPZ7gBQBTv2eQpgqZeU6RcQa?=
- =?us-ascii?Q?YPHlruRDBeEZE55G0kIdPsocokzR2tJfTb+0mjHPq+6yCyUp8Wl0ifERWuXP?=
- =?us-ascii?Q?hxEF9IvtC68C+n8erQNMyie9BRdMn4nsgNb7qhN4vuuspY2lp8ImS9Ir1oPg?=
- =?us-ascii?Q?CGTLVFxMUHXHqlQp0g4XsmAJMRtjXaxV/rxTVz8TfyPGCa5gTyyFCWR3MYKZ?=
- =?us-ascii?Q?s88Y4MsNFuSyE5zInFka1gqaqzPqUhO/M1tfJ//xUjK/LSao7FuIZ63dbpN0?=
- =?us-ascii?Q?dB5orsgPKYdeuCc95lMMWlta2e8FQFw5HcOGXb1Qw9Bfa8F+oXPsg4RR0OLO?=
- =?us-ascii?Q?DKnHX6UT65ejqmr94Ihnazw27NkCUn+f+Yy1iFA07Z01kfoNtnWkDfLpvsYp?=
- =?us-ascii?Q?8jBPyI2QlcegnHMzqTl76qdhrVJ3IuVL1rGd3eMvIq0ARpDfsC7XilmuMgoM?=
- =?us-ascii?Q?bnQ0n9+a1EMMcIp2HNZBZjP3eO3DdsA5L/nehpA4tgUrRJqsThKa1VhPgNF6?=
- =?us-ascii?Q?FWYQIey/XDZtazg7mNPgHTaqGxYi6ipSbXtdY0LfXZBgxWwrEEnp74MT3MGC?=
- =?us-ascii?Q?2PZtmFg8jQYiRiNxtcXLzrRMn9mepejVTAnOT4XDCAjGBGMCcvBKVy8JZCP9?=
- =?us-ascii?Q?UooGHOVFH4afFh/G0nQsjdsNoMpAoDkPJqIsXxfkUtflLW10y5lLp77PmDo0?=
- =?us-ascii?Q?YwtU6BBCAgXxtqOUH+HMyYvAlxRAaciNfbFDCqVpne0MmqNkVDFMC1WmOQGh?=
- =?us-ascii?Q?Q+z48j8/VyLH8R+NDRBJbuhY41SlFc8+FmwGZMopGD7/BVfwpOsT22N1ZXag?=
- =?us-ascii?Q?HJGGGZHd2rFyFaVUN1mRSdwZDQTLu/DqYFshzQFbWMMMfoDEfnSGeT+bIqYb?=
- =?us-ascii?Q?AwIjCM1doCkzC0nHWfMmoFj1ru2qvKSg1QmKz1+TAPm4OZi5txD5fgIJbFyG?=
- =?us-ascii?Q?n0pTxKfDThskhqM/PZATB6RWltmbFFLTqI8ZCcmKLtvL7d0Q9vl7Kxm3cUXK?=
- =?us-ascii?Q?mpgfCA+EaD8oCq0lCVFu4LVth54nHcLcICfqFqyx4OeeYr2IWH/QVfL2Tdxe?=
- =?us-ascii?Q?ap8g4CSlk/uQITyTJg4roaWa3HKb7fjD64reus9cjscwS82aUT39/ojiHRfq?=
- =?us-ascii?Q?C6xAmi7vEcQ8KuM2dVdWAter62k3vzSC5u0crGj5xdHnutTtwkxDwxHgTUlU?=
- =?us-ascii?Q?qfft1aUaM80=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QZxiOmmxwaicHJbhW2Ql6PQfOt7WG4UTxg7kLO6BhIp9F0TRW02dzXpCPv4D?=
- =?us-ascii?Q?74RHsQwUPDiB4br45HaMkrphmQPYv11PTHrEMOb5uW99QPwj7yFK2ZYSwVIJ?=
- =?us-ascii?Q?dcKdTc6x/BLDHs3eXlE2TGcUAICu3V/h80/UkSgx+/sF2KDgIER01bmMfUlS?=
- =?us-ascii?Q?v/BENuLKyKe1dL2eY9rvvKyVKuUc6Yk/K0PyrDBFqtjFsn9BJjtCGVZGBt+y?=
- =?us-ascii?Q?YjW0c+O7KrBsEgHsrbOlL002U6Nf8OTjTpPL7VGUoR+79x2vfQAgxaZ14le5?=
- =?us-ascii?Q?X/0LWKiXXqfx+q6Ui9zixbGLosoFLCNgLRJAf0AgFZj3uCW28SvDAbc4An68?=
- =?us-ascii?Q?DR1Q2nlNZx+H7xq5lMOJq5sto41JURd3JxMzQMqZL9/F8I3tyKIyW4mEdBxO?=
- =?us-ascii?Q?cbjF5AjtOCycDvAl+UG8CZiYFmip5W3FUWzcsEpL0v0qIkSADuR4+lWp8L8y?=
- =?us-ascii?Q?7raOZlLHLLkZw6h5Y8H2L1wYfcfLpFHkRk8XYRO4MQIOhn/PK4zCuH4uoL0Y?=
- =?us-ascii?Q?5Wa0Tx9Fm12OeV8xTkIFrmn/qLbrNq1iJKjmb8rgKJt8/rPc9lwJW/9bBfrw?=
- =?us-ascii?Q?SmqVK/WTkUzMMzujQuRNrJ49zGLrIOH6+uKef7HcY6EcYsupJHQiMjhiOYDz?=
- =?us-ascii?Q?28zYkd60T8EeJNxu6LikhSOzHfOv43mqMIHIwdmjutfIFeTuaE8/rzy8jXXH?=
- =?us-ascii?Q?jWddcEfN+n2JPv4bcd0VPGBaaQGPGwdgg+Sln9783KX6M+LdCVw3SOcgYM45?=
- =?us-ascii?Q?19TTq9VNultV4cQvnlKqK4VjaKYomlyeR4LrOc11LTrYryRxrpa5VdC4/i+r?=
- =?us-ascii?Q?cG165B6J8C5GO30Oeti1bShV5c2P7r5RMTp+ZjaMFkwhBXCky19cjFbaOQvw?=
- =?us-ascii?Q?gGRqoawUQAkyFlaGLgwJfb6Hvzs9D+AX/lREDDpP1TlLWiMSSdEIw8IP5ERD?=
- =?us-ascii?Q?9K/fnOvHtEGyzlqCzqVTtF+uwJxYicZXRPWH/bUYhEMCQcq/CzLwOQeZR0Cf?=
- =?us-ascii?Q?gjcHdXAh/znZSpKag3sI5vXyvnQRKDwa3dX0v/7EDAyI9IB2YXny2j6+txau?=
- =?us-ascii?Q?iXKQevY1HocVY1VVznKnUwnGMFn+cb3jdetni8kBpUqbg0bLLsaME5fGKrIF?=
- =?us-ascii?Q?kGcFB+HB5n5njJUgLCLXlRmnOFFp9VcoI2lsjvmlctoKIWN9gbRMIxzJP4Z/?=
- =?us-ascii?Q?vWmT84zBDs1cOONzNzfNi0vFYc1ZSl36Mv0kOELO4FgrD35UAXGT9LA7c+3D?=
- =?us-ascii?Q?XUpnwZBhz6wS4OWy/NJ3JGAJaLeECV4Mw5Ypmc3ZS0TN5avzvhtHT7IK2QGd?=
- =?us-ascii?Q?wLh/lTE2l3msoACtG4wokDLCLRWvlY3z7MJuzJLtR4GXKArT7Vo39HeXYTw0?=
- =?us-ascii?Q?VRQfp9MO1rV0PPVOSiskOb+LZZ4U8MQN5K+mn7MNWUi7OCGrIe8RM6nWfBcp?=
- =?us-ascii?Q?OTDVcv6S0Z+CekNHtCl9Z6KwLbONhapXcbXZAwt24O/W+kXv/kaC2ujMHVjS?=
- =?us-ascii?Q?EXgY1nGilJXADvOhBjuwygOEPwD7O9LXjWyAj1zzylc9MAg2T8iLYUuHYH9x?=
- =?us-ascii?Q?lQ6ZEMFbXDeJewQDpFZDpI2N0pP4ZUcVy4K/JeO5/TtTh36Kw2TEli9K2AU/?=
- =?us-ascii?Q?7g=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	GVBGzBPJVLjJ5Sbp+PMjLucLvvu5OP3PA90tJaxunj/kIe+iE2sJBPz8xRSXaetsFT+AYun6o+KpR5Bg315A+TLoCdTxn3XDW4pmoMEEU91yQTi0Fsp331sGhUxlI7lh0mxbjtT+2QrD6PIe3kxEMXa5fC+QRPNXGh0vnJ8Uhg9prvv/Nftpl5HwF1OH2+/Y+LmivEI+3+oB9GEV4ysh2wYKZefh7jHQYTxlj2eJSG/Ksq/sV1dEsql9QCUYYP6cwAcfQ7V6+i8TeCQC2eBk8EQhi64G0/ZbsuaJQCeZzh7V1Uu/nZDws8T2PiI5Q5KRtqXfXFhDN5c1onn584jQwor8ZwG9poOXKpvsPivS5Ov6QNpj2LP6gCGhl3GQU6axQrKCkn/fOV7QdTfP7L31lgAJIxjwhkeXwoCTk9VRaYsJrGk0yM9WIkeAvSvm8vbc5u3SXvZY4pSrK4nusmf4Rxcb4giTLTM3nEBiNyOQJ20KGLzIqHnhwKqEtXnx6mkxMzaFAXUXaYZh93rLxYaAiZMSZyw0Ttr+Zutc8tMu/d6jSodESVjX/5HCt8pYEV2MXx4+dT1fd5vFy//w03G6bHlmgnOMGiotvuPd0WHB/ow=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eff32565-6c93-4039-dc13-08dddf549453
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 19:14:11.7578
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: feFsKGxXsL4kfgNrVZdaGMFsxFgnT2VXZ6rFXTt9pOHwB4Ud9wfKSjNBGhQNKr8I6Qn7yyc0mj/N2ew/qpaHZ/BDJ7iY6Ec8BC06bIJwpSM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6945
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 phishscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508190178
-X-Proofpoint-GUID: dYil9GbWCyfL5kFtdGXLQ8p6Rb8M7rYK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE3NyBTYWx0ZWRfXw234QgZ5QIK4
- wBD9F7ITMW3ULr2mOq8mhW1HWelW3eQuAueieeW7LUYmTvs0tOIZIGspidqVVK+bw7Wx6AXdLmQ
- vBsn1M2u8Rhlcpi1CvPVzIoUoyuXDLmyUsw3P0dV/8KiDRW5uBtcUsZBKDVFlmEUM9aXkGt8wW7
- cPBxvUjI8KIdr41Q/iesBr0bXh74Q3W53Z6PgLgauEL8oynRLipNqeGxaTlgVslq2P2qj/HkWSH
- GX9KIo5xYQQOuk01u56m9iQLErTavPW7FNGeEhttURwZcDr1fqBK3Ok3eB5upgNkaoP2og5KPh8
- 27JJOC5YZvJbG+mzyF6Ws4w37CIWhAImqZWA0y9SbdnI/qXn+3gtA4tyN5hTSyN0fKQ3xUu25Ji
- JFn3158fG04Swg3zIph0z6pHe1LWxAEEANX5XDeNx8PVAWgTVW0VKRkCUlYySNrRYCBnW+Ns
-X-Proofpoint-ORIG-GUID: dYil9GbWCyfL5kFtdGXLQ8p6Rb8M7rYK
-X-Authority-Analysis: v=2.4 cv=HKzDFptv c=1 sm=1 tr=0 ts=68a4cd07 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=RNcwn5mOwBLemk0BSRYA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:13600
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f0c1cbc9c2994a90113788cad57df1f32f9db45e.1754617360.git.Jonathan.Santos@analog.com>
 
-On Fri, Aug 15, 2025 at 03:10:29PM -0400, Liam R. Howlett wrote:
-> The ceiling and tree search limit need to be different arguments for the
-> future change in the failed fork attempt.
->
-> No functional changes intended.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+Hi Jonathan,
 
-(Obv. in addition to comment about broken VMA tests :P)
+A few thoughts from me.
 
-I guess intent is that if we discover any page tables beyond tree_max then
-we ought to just wipe them all out so, in effect, we don't consider
-mappings at or past tree_max to be valid?
+On 08/12, Jonathan Santos wrote:
+> Add support for ADAQ7767/68/69-1 series, which includes PGIA and
+> Anti-aliasing filter (AAF) gains.
+> 
+> The PGA gain is configured in run-time through the scale attribute,
+> if supported by the device. The scale options are updated according
+> to the output data width.
+This could provide more information/context. How the PGA is controlled/configured?
 
-I feel like we need a comment to this effect as this is confusing as it is.
+> 
+> The AAF gain is configured in the devicetree and it should correspond to
+> the AAF channel selected in hardware.
+Would this be more clear if stated the other way around? 
 
-Could we add a kerneldoc comment for free_pgtables() spelling this out?
+The AAF gain is defined by hardware connections and thus is specified in device tree. ?
 
+> 
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
 > ---
->  mm/internal.h | 4 +++-
->  mm/memory.c   | 7 ++++---
->  mm/mmap.c     | 2 +-
->  mm/vma.c      | 3 ++-
->  4 files changed, 10 insertions(+), 6 deletions(-)
->
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 45b725c3dc030..f9a278ac76d83 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -444,7 +444,9 @@ void folio_activate(struct folio *folio);
->
->  void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
->  		   struct vm_area_struct *start_vma, unsigned long floor,
-> -		   unsigned long ceiling, bool mm_wr_locked);
-> +		   unsigned long ceiling, unsigned long tree_max,
-> +		   bool mm_wr_locked);
+>  drivers/iio/adc/ad7768-1.c | 286 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 279 insertions(+), 7 deletions(-)
+> 
+...
+>  
+> +static void ad7768_fill_scale_tbl(struct iio_dev *dev)
+> +{
+> +	struct ad7768_state *st = iio_priv(dev);
+> +	const struct iio_scan_type *scan_type;
+> +	int val, val2, tmp0, tmp1, i;
+> +	unsigned long denominator, numerator;
+> +	u64 tmp2;
 > +
->  void pmd_install(struct mm_struct *mm, pmd_t *pmd, pgtable_t *pte);
->
->  struct zap_details;
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 0ba4f6b718471..3346514562bba 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -371,7 +371,8 @@ void free_pgd_range(struct mmu_gather *tlb,
->
->  void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
->  		   struct vm_area_struct *vma, unsigned long floor,
-> -		   unsigned long ceiling, bool mm_wr_locked)
-> +		   unsigned long ceiling, unsigned long tree_max,
-> +		   bool mm_wr_locked)
->  {
->  	struct unlink_vma_file_batch vb;
->
-> @@ -385,7 +386,7 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
->  		 * Note: USER_PGTABLES_CEILING may be passed as ceiling and may
->  		 * be 0.  This will underflow and is okay.
->  		 */
-> -		next = mas_find(mas, ceiling - 1);
-> +		next = mas_find(mas, tree_max - 1);
+> +	scan_type = iio_get_current_scan_type(dev, &dev->channels[0]);
+> +	if (scan_type->sign == 's')
+> +		val2 = scan_type->realbits - 1;
+> +	else
+> +		val2 = scan_type->realbits;
+> +
+> +	for (i = 0; i < st->chip->num_pga_modes; i++) {
+> +		/* Convert gain to a fraction format */
+> +		numerator = st->chip->pga_gains[i];
+> +		denominator = MILLI;
+> +		if (st->chip->has_variable_aaf) {
+> +			numerator *= ad7768_aaf_gains[st->aaf_gain];
+> +			denominator *= MILLI;
+> +		}
+> +
+> +		rational_best_approximation(numerator, denominator, __INT_MAX__, __INT_MAX__,
+> +					    &numerator, &denominator);
+> +
+> +		val = st->vref_uv / 1000;
+What about keeping the reference in µV (not dividing by MILLI)?
 
-Do we need to put some sort of sanity checks in to make sure tree_max <= ceiling
-(though this 0 case is a pain... so I guess tree_max - 1 <= ceiling - 1?)
+> +		/* Multiply by MILLI here to avoid losing precision */
+> +		val = mult_frac(val, denominator * MILLI, numerator);
+then this can be just 
+		val = mult_frac(val, denominator, numerator);
 
->  		if (unlikely(xa_is_zero(next)))
->  			next = NULL;
->
-> @@ -405,7 +406,7 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
->  		 */
->  		while (next && next->vm_start <= vma->vm_end + PMD_SIZE) {
->  			vma = next;
-> -			next = mas_find(mas, ceiling - 1);
-> +			next = mas_find(mas, tree_max - 1);
->  			if (unlikely(xa_is_zero(next)))
->  				next = NULL;
->  			if (mm_wr_locked)
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 0995a48b46d59..eba2bc81bc749 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1311,7 +1311,7 @@ void exit_mmap(struct mm_struct *mm)
->  	mt_clear_in_rcu(&mm->mm_mt);
->  	vma_iter_set(&vmi, vma->vm_end);
->  	free_pgtables(&tlb, &vmi.mas, vma, FIRST_USER_ADDRESS,
-> -		      USER_PGTABLES_CEILING, true);
-> +		      USER_PGTABLES_CEILING, USER_PGTABLES_CEILING, true);
->  	tlb_finish_mmu(&tlb);
->
->  	/*
-> diff --git a/mm/vma.c b/mm/vma.c
-> index fd270345c25d3..aa75ca8618609 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -486,6 +486,7 @@ void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
->  		   /* mm_wr_locked = */ true);
->  	mas_set(mas, vma->vm_end);
->  	free_pgtables(&tlb, mas, vma, prev ? prev->vm_end : FIRST_USER_ADDRESS,
-> +		      next ? next->vm_start : USER_PGTABLES_CEILING,
->  		      next ? next->vm_start : USER_PGTABLES_CEILING,
->  		      /* mm_wr_locked = */ true);
->  	tlb_finish_mmu(&tlb);
-> @@ -1232,7 +1233,7 @@ static inline void vms_clear_ptes(struct vma_munmap_struct *vms,
->  	mas_set(mas_detach, 1);
->  	/* start and end may be different if there is no prev or next vma. */
->  	free_pgtables(&tlb, mas_detach, vms->vma, vms->unmap_start,
-> -		      vms->unmap_end, mm_wr_locked);
-> +		      vms->unmap_end, vms->unmap_end, mm_wr_locked);
->  	tlb_finish_mmu(&tlb);
->  	vms->clear_ptes = false;
+> +		/* Would multiply by NANO here but we already multiplied by MILLI */
+> +		tmp2 = shift_right((u64)val * MICRO, val2);
+> +		tmp0 = (int)div_s64_rem(tmp2, NANO, &tmp1);
+val is never negative here so can use div_u64_rem() or maybe do_div().
+
+> +		st->scale_tbl[i][0] = tmp0; /* Integer part */
+> +		st->scale_tbl[i][1] = abs(tmp1); /* Fractional part */
+> +	}
+> +}
+> +
+...
+>  
+> +static int ad7768_calc_pga_gain(struct ad7768_state *st, int gain_int,
+> +				int gain_fract, int precision)
+> +{
+> +	u64 gain_nano, tmp;
+> +	int gain_idx;
+> +
+> +	precision--;
+This is odd out of context.
+Also, it only applies to ADCs that provide output codes in two's complement
+format. See comment below.
+
+
+> +	gain_nano = gain_int * NANO + gain_fract;
+> +	if (gain_nano < 0 || gain_nano > ADAQ776X_GAIN_MAX_NANO)
+I've seen some build tools complain about comparisons like gain_nano < 0 with
+gain_nano being u64. Since that's unsigned, it can never be < 0. And in the
+context of gain/attenuation, we know gain_nano shall never be negative.
+Would just drop the gain_nano < 0 comparison. Or maybe clamp() the value?
+
+> +		return -EINVAL;
+> +
+> +	tmp = DIV_ROUND_CLOSEST_ULL(gain_nano << precision, NANO);
+> +	gain_nano = DIV_ROUND_CLOSEST_ULL(st->vref_uv, tmp);
+> +	if (st->chip->has_variable_aaf)
+> +		/* remove the AAF gain from the overall gain */
+> +		gain_nano = DIV_ROUND_CLOSEST_ULL(gain_nano *  MILLI,
+> +						  ad7768_aaf_gains[st->aaf_gain]);
+> +	tmp = st->chip->num_pga_modes;
+> +	gain_idx = find_closest(gain_nano, st->chip->pga_gains, tmp);
+> +
+> +	return gain_idx;
+> +}
+> +
+...
+> +
+> +	/* Write the respective gain values to GPIOs 0, 1, 2 */
+> +	ret = regmap_write(st->regmap, AD7768_REG_GPIO_WRITE,
+> +			   AD7768_GPIO_WRITE(pgia_pins_value));
+> +	if (ret < 0)
+I think regmap_write() doesn't return positive values so we can have 'if (ret)' here.
+
+> +		return ret;
+> +
+> +	st->pga_gain_mode = gain_mode;
+> +
+> +	return 0;
+> +}
+> +
+...
+>  	case IIO_CHAN_INFO_SCALE:
+> -		scale_uv = st->vref_uv;
+> -		if (scale_uv < 0)
+> -			return scale_uv;
+> -
+> -		*val = (scale_uv * 2) / 1000;
+> -		*val2 = scan_type->realbits;
+> +		if (st->chip->has_pga) {
+> +			*val = st->scale_tbl[st->pga_gain_mode][0];
+> +			*val2 = st->scale_tbl[st->pga_gain_mode][1];
+> +			return IIO_VAL_INT_PLUS_NANO;
+> +		}
+> +		*val = st->vref_uv / 1000;
+> +		if (st->chip->has_variable_aaf)
+> +			*val = (*val * MILLI) / ad7768_aaf_gains[st->aaf_gain];
+Similar thing here. Would it make sense to use st->vref_uv without dividing it
+by MILLI?
+
+> +		/*
+> +		 * ADC output code is two's complement so only (realbits - 1)
+> +		 * bits express voltage magnitude.
+> +		 */
+> +		*val2 = scan_type->realbits - 1;
+I see the rationally for this. Instead of doing 'scale_uv * 2' to account for
+the range of negative values, this is now using one less precision bit which
+shall lead to the same result after going through IIO_VAL_FRACTIONAL_LOG2
+handling. I personally prefer the realbits - 1 logic, but others may prefer
+to avoid this change since it was already working with 'scale_uv * 2'.
+
+>  
+>  		return IIO_VAL_FRACTIONAL_LOG2;
+>  
+> @@ -869,18 +1035,42 @@ static int ad7768_read_avail(struct iio_dev *indio_dev,
+>  		*length = st->samp_freq_avail_len;
+>  		*type = IIO_VAL_INT;
+>  		return IIO_AVAIL_LIST;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*vals = (int *)st->scale_tbl;
+> +		*length = st->chip->num_pga_modes * 2;
+> +		*type = IIO_VAL_INT_PLUS_NANO;
+> +		return IIO_AVAIL_LIST;
+>  	default:
+>  		return -EINVAL;
+>  	}
 >  }
-> --
-> 2.47.2
->
+>  
+...
+> @@ -892,6 +1082,13 @@ static int __ad7768_write_raw(struct iio_dev *indio_dev,
+>  
+>  		/* Update sampling frequency */
+>  		return ad7768_set_freq(st, st->samp_freq);
+> +	case IIO_CHAN_INFO_SCALE:
+> +		if (!st->chip->has_pga)
+> +			return -EOPNOTSUPP;
+> +
+> +		gain_mode = ad7768_calc_pga_gain(st, val, val2,
+> +						 scan_type->realbits);
+Check scan_type.sign and pass scan_type->realbits - 1 to ad7768_calc_pga_gain()
+if the ADC output codes are in two's complement format.
+
+> +		return ad7768_set_pga_gain(st, gain_mode);
+>  	default:
+>  		return -EINVAL;
+>  	}
+...
+> +static const struct ad7768_chip_info adaq7767_chip_info = {
+> +	.name = "adaq7767-1",
+> +	.channel_spec = ad7768_channels,
+> +	.num_channels = ARRAY_SIZE(ad7768_channels),
+> +	.available_masks = ad7768_channel_masks,
+> +	.has_pga = false,
+I think these flag initialization can be omitted when they are false.
+
+> +	.has_variable_aaf = true
+> +};
+> +
+> +static const struct ad7768_chip_info adaq7768_chip_info = {
+> +	.name = "adaq7768-1",
+> +	.channel_spec = adaq776x_channels,
+> +	.num_channels = ARRAY_SIZE(adaq776x_channels),
+> +	.available_masks = ad7768_channel_masks,
+> +	.pga_gains = adaq7768_gains,
+> +	.default_pga_mode = AD7768_PGA_GAIN_2,
+> +	.num_pga_modes = ARRAY_SIZE(adaq7768_gains),
+> +	.pgia_mode2pin_offset = 6,
+> +	.has_pga = true,
+> +	.has_variable_aaf = false
+Same here.
+
+> +};
+> +
+...
+> @@ -1418,6 +1652,35 @@ static int ad7768_probe(struct spi_device *spi)
+>  	if (ret)
+>  		return ret;
+>  
+> +	st->aaf_gain = AD7768_AAF_IN1;
+> +	ret = device_property_read_u32(&spi->dev, "adi,aaf-gain", &val);
+> +	if (ret) {
+> +		/* AAF gain required, but not specified */
+> +		if (st->chip->has_variable_aaf)
+> +			return dev_err_probe(&spi->dev, -EINVAL, "AAF gain not specified\n");
+> +
+> +	} else if (!st->chip->has_variable_aaf) {
+> +		/* AAF gain provided, but not supported */
+> +		return dev_err_probe(&spi->dev, -EINVAL, "AAF gain not supported for %s\n",
+> +				     st->chip->name);
+Not really sure what to do in these cases. Can't we just ignore or warn on
+properties for unsupported features?
+
+
+Best regards,
+Marcelo
 
