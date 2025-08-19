@@ -1,126 +1,87 @@
-Return-Path: <linux-kernel+bounces-774752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C29DB2B6F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:28:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1C7B2B6F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 018301B65819
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:28:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067A352054B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE112882DC;
-	Tue, 19 Aug 2025 02:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98731288529;
+	Tue, 19 Aug 2025 02:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJCbDcVy"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C246118E3F;
-	Tue, 19 Aug 2025 02:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mtq4aona"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5885287255;
+	Tue, 19 Aug 2025 02:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755570487; cv=none; b=sVXGG9uHU578C+sl7VfZRGrZrrpsZC47LMvgp9rJ4Pkjo4dZUizLbVNkJSyunzZbcsaxtLaaE7j3l6/aIiaLXXEvUTVvOMu6Y2n2lCkHioJ0dz3mw1EnLV5b6peXpnvu1ZB4fCRrfdDISc1ou3ndZMtyCWxH+72CFv0mSdEbX3Q=
+	t=1755570509; cv=none; b=vDZoQMlDMyviolA1+W58KiXr3UxxDHXk70R3iAzlE4gJKfSQ1JWPzY+HYAaaDqNnYwN77gDhhCYHGDwQwDa74WEKQa+yy64mYFUAc4ToYy1RhYZSRtAWPoa1VTbWOrOsMM4m4uri5yqeBwT8gJ2KrmNoETnNBJDRdh1/M9o3LBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755570487; c=relaxed/simple;
-	bh=pMZLh0ErO9L7/l2fEtxtjWSNmkkb0U3sFRWnIMzmtoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IfOUbxKK9l+5IYYecy9qQjaTs2lHTSMC7qblEiylJF0HwSsL2jaBw9EJz22AIwui+WYSzrEahW8fhO6Hs/hg95uU8wipCIX7SrgwxLXXwQKT536cVkAUQRr4QYZuB190OnQr00oCTw0R3FYMYyxerxYn3WcfozNDiZdX1xGX7Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJCbDcVy; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-50f8bd5ea75so1438970137.3;
-        Mon, 18 Aug 2025 19:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755570485; x=1756175285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xBu8fyb/ZfQIoFDSaiBFKOpNGRZh+wdN+S+969V7hR0=;
-        b=JJCbDcVyySjT1NP5cTqnV1clO4/RSsqa8l+sZ09eJ8me4TROlnH20FIttdnzgCH0lS
-         1qPf3EQFUUmZW5OhAJel8xriN39hfq61O/VqU0mbnG892fXieiprZ1WaBbwPG/ZGxtC8
-         Y0bNeh6EoLwAvMkfTc1zNzH0WqTYxB1Hck81YI5Zab+mSMKY3MqHdzMMwicxXOWq7DsY
-         LiE/ukeWi6u9TpIpzeEz8+6u3ep/VAGy/SPpGMsSuw3g/kuTs0XuHynXGaDbBVK7tCXt
-         hYCPyWKHZltAclFjRVyXpBzBWBjlEQDxVpXB4Bbr7GtpkHxRvjZouKW6xwLc542evQ4Z
-         AFoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755570485; x=1756175285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xBu8fyb/ZfQIoFDSaiBFKOpNGRZh+wdN+S+969V7hR0=;
-        b=ljfaR8c4xkJuliITCptlKnFNa5e+wJUX0qLHJ8XTb7vhQCenj3ehFmCcphaMFs/R5V
-         oDr31OEnQvlrkdmLB956lEBwZtDLhTIc+XyzM0bHyaL73ajeukkEdhWpbc6dwMYszBjn
-         riKCvA72u4PeI/TPnK9Uek8Kdz/HM5m3BVQ+SH6cxoSL/x+SSgg4KiCAT4RmVMwzhTsg
-         BcQ5bLVREFDzsKRF5D824QzJNJcrvH0lZiFCWMRUrYguaF+mZmt60WxDVyrhFYL5FCtj
-         DPlqj+PN6roHNTuCP3qSyLhQyAz2jKCQLytSp4WRZ9xk5SLXM41c+3qY1ZK9XjPQ7TPp
-         zi0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUt1Skd+VCQr5ZisUGWzRD+AxKGlzfQYGGGpPjAkz+7ww4MOtQsj7Y0fL7WWnJpZUbuI7fWyPN5@vger.kernel.org, AJvYcCUxretbnl+pNOyqqXoFwR5C78SvSwd637N8LbmxXj1jo2zmJNh8PuMDpzE6IFjXBfOdKZFxkLgdSC2mRbA=@vger.kernel.org, AJvYcCVPR6OtSIlPTB1i/KgtRTYX+jFKLS5wPk9ILJ4Uw33ZZ2iKN/KjsqrKojbUeNc6Rc3ipgOu8B4K1U9kUtg+wfVC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDPqLA2u9As1MsuYy/cjkYUNlWgKMZbPUSRdqj9JXYiGEV8lrA
-	goOa4f73tSrDJ4NX5dllyUCpn23p8ZWAYJFH56OtDEHUhAOisTQCbVcWfwSOUxndz/k9ZP+yej+
-	dlN/VuwfCiMjMOzaM2ekl3IklK2lWgi4=
-X-Gm-Gg: ASbGnct+8usHQWkNOPDvgD+URj3AEPZcLYmI5YO2FXXJDKdY23bVfuOvr5ezD/gU4A7
-	tCVL+Ra52PrzhFX480nLT8DGnBBSdzzZXcFnmM3fiAMYXPsNHMC90dTMeyifnis5Z21vrrT+06d
-	qd+z8Ko+YYk8i0oFDosVjPbJmMuxqdRT0YG553zRN2ppTUn28Xb1doDdJyQwTkf++EZnXLvcIJK
-	H6IBXY=
-X-Google-Smtp-Source: AGHT+IEuY7si+OaA9HP1T5nqxoaTaLB1ycm2StZKBXsp+IF9nZCgP1Gvy65TIuwaicovOIeD39ip7MgYYVP7JasLc2I=
-X-Received: by 2002:a05:6102:2ad5:b0:4e9:b0ec:9682 with SMTP id
- ada2fe7eead31-51923e3253bmr266375137.24.1755570484648; Mon, 18 Aug 2025
- 19:28:04 -0700 (PDT)
+	s=arc-20240116; t=1755570509; c=relaxed/simple;
+	bh=b1qUQAM60cMYPl7V0ScUvR9LA9K1JoHvN22P5gTDwR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZM/DijsaDThcA7dc+W5X8R5Kya6nYJpS6rJfIpRNH5Vv7uD1NQjnbZJ3EJskqvgw6ff6I/duv2yoKnwDmgwv0BTqJahdAboPaMEYHi8yHjc/GDYFTMv+0qvWlg45ouOiOqtqfc4liTf8EUvi7SbZX7BKnLqHTMkgIb3hqm2lgHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mtq4aona; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Ev
+	Tdpk/C0SrAV2N3VjzKTmAB7DE/+/AoiCYzOgohIRY=; b=mtq4aonaq+oxJVo6vM
+	rQo9+7Fkns6hTmltFs55bjpZaAtw1S9romu0+UjryOcgTPPLcBpm1pmAG2Dn32ZY
+	3m0iFERr8GjHrG24TXY1kStmikJ3SKiWbD0iT5ytoxGplix3ri5QomYtJy71gzfI
+	tangbZ0tPm3DzPN9Ukqwboo/U=
+Received: from neo-TianYi510Pro-15ICK.. (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgC3wvc94aNoBOexAg--.10428S2;
+	Tue, 19 Aug 2025 10:28:16 +0800 (CST)
+From: liuqiangneo@163.com
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liuqiang@kylinos.cn
+Subject: [PATCH] scsi: aic94xx: remove self-assigned redundant code
+Date: Tue, 19 Aug 2025 10:28:10 +0800
+Message-ID: <20250819022811.14925-1-liuqiangneo@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815060631.144471-1-alex.t.tran@gmail.com> <20250818173515.1845a785@kernel.org>
-In-Reply-To: <20250818173515.1845a785@kernel.org>
-From: Alex Tran <alex.t.tran@gmail.com>
-Date: Mon, 18 Aug 2025 19:27:53 -0700
-X-Gm-Features: Ac12FXyqU6njDi1XsjYtUzR2J0O2588L-ybyjXnwfH1CZceoloiBKKGe_ADRI-o
-Message-ID: <CA+hkOd4T1rNymXV1C+kf78_Z+Bie59q_uMsMt_bOrvsPn3EqZQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests net/socket.c: removed warnings from unused returns
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	horms@kernel.org, shuah@kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgC3wvc94aNoBOexAg--.10428S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtryxGF4xtw4UCF48Ww4xtFb_yoWfGrc_Wr
+	Wjvan7WryUJrs7Kw15Aa45Jr9Yva1xW3y8u3s0vr93A3WSvFW5Zw1DAF9rAw4kG3yYyFy7
+	JrW8WF1Fkr1ktjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1oGQPUUUUU==
+X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/xtbBNQquYWij31I52QAAsW
 
-Thanks for the review! I'll send the patch v2 with the adjustments shortly.
+From: Qiang Liu <liuqiang@kylinos.cn>
 
-On Mon, Aug 18, 2025 at 5:35=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Thu, 14 Aug 2025 23:06:31 -0700 Alex Tran wrote:
-> > +     char *err_message1;
-> > +     char *err_message2;
->
-> nit, how about:
->
->         const char *msg1, *msg2;
->
-> ? And then please wrap the lines at 80 chars.
->
-> >       int i, err;
-> >
-> >       err =3D 0;
-> > @@ -56,13 +58,13 @@ static int run_tests(void)
-> >                           errno =3D=3D -s->expect)
-> >                               continue;
-> >
-> > -                     strerror_r(-s->expect, err_string1, ERR_STRING_SZ=
-);
-> > -                     strerror_r(errno, err_string2, ERR_STRING_SZ);
-> > +                     err_message1 =3D strerror_r(-s->expect, err_strin=
-g1, ERR_STRING_SZ);
-> > +                     err_message2 =3D strerror_r(errno, err_string2, E=
-RR_STRING_SZ);
+Assigning ssp_task.retry_count to itself has no effect
 
+Signed-off-by: Qiang Liu <liuqiang@kylinos.cn>
+---
+ drivers/scsi/aic94xx/aic94xx_task.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/scsi/aic94xx/aic94xx_task.c b/drivers/scsi/aic94xx/aic94xx_task.c
+index 4bfd03724ad6..b26a468ddc98 100644
+--- a/drivers/scsi/aic94xx/aic94xx_task.c
++++ b/drivers/scsi/aic94xx/aic94xx_task.c
+@@ -488,7 +488,6 @@ static int asd_build_ssp_ascb(struct asd_ascb *ascb, struct sas_task *task,
+ 	scb->ssp_task.conn_handle = cpu_to_le16(
+ 		(u16)(unsigned long)dev->lldd_dev);
+ 	scb->ssp_task.data_dir = data_dir_flags[task->data_dir];
+-	scb->ssp_task.retry_count = scb->ssp_task.retry_count;
+ 
+ 	ascb->tasklet_complete = asd_task_tasklet_complete;
+ 
+-- 
+2.43.0
 
---=20
-Alex Tran
-alex.t.tran@gmail.com | 408-406-2417
 
