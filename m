@@ -1,282 +1,426 @@
-Return-Path: <linux-kernel+bounces-775274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E03B2BD5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:30:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D52AB2BD82
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582C73AE0C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3F41B63C64
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B407531CA53;
-	Tue, 19 Aug 2025 09:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16A8275863;
+	Tue, 19 Aug 2025 09:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FMRA8hat"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C7A311584;
-	Tue, 19 Aug 2025 09:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b="jt9G8Zo+"
+Received: from mx10.didiglobal.com (mx10.didiglobal.com [111.202.70.125])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id A395AD2FF;
+	Tue, 19 Aug 2025 09:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755595620; cv=none; b=JwAlvOvvbxZ41rYp/d2hGXrjfI+0qW+eEV0vwfj6KbGDy7KmjAvoyo8Y2CHItY87JO5lViG7LqDp3A2PrDo4JtYFJxYba7hTO4NKr1NGGj1pffgafkotojSrYDJTx9PQj0cVDg3lqxw//x6ifvLjE0zrdc7v3hXzXll9bL04SEw=
+	t=1755595881; cv=none; b=so3Y++5/41KmM/Rt6l0c428AdS5Q7qA/WQRV9yqUA/Wocg/+vp3vIKtYzsQkAoekSkZb1DxS/iZ6dapInyDso8ppTrSy14gWgTkg/SZRiw8EjEv19bUcEQqSxxcJmY3uMw8nzOt+Of4bc87/OkJ4XoOc6iyH3oa4uMBQ8SD8GU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755595620; c=relaxed/simple;
-	bh=U8DmyOBMiH/TPUekD8zVfK/dWQN0kajcnpXGLIP/6qs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dw5SIj+9gFOLo5882UMP1n5y/y3FGuFIAWMrBy71k/PGp8nxy5zEYHITGVQ7Ey0SLk8KoS50h09S6iml8uKIQKs8dP/Y6si/b5gMoNmeyjjfliTRfQUhY3NoeloKWIabTpP+l9znXVO5aTCeF/oEMsLZ81pdHZjsjInmVqLGz5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FMRA8hat; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755595619; x=1787131619;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=U8DmyOBMiH/TPUekD8zVfK/dWQN0kajcnpXGLIP/6qs=;
-  b=FMRA8hat2mMKnB8eoYrawUzAgwdkqiB4dM780Gfu2KYhgyxetkesBOHX
-   NoBYL9QjQWSbWVb6X4dWJn48fqsYSFIP5KzihWip7ouwu9wRCmImXr63L
-   hmhQGx2hI/sf7MlmYsKkd89LaK4mcXQT7gCR/Gn6xfAQPO6TlrPkqV35k
-   VNUTqC1wxd0+6hDg58+nxAAqlZlA4Go4IjR6xel28Bf9v2Xf/SfBjuuGR
-   RIq+/3cLxUMPmiEk7KnBGFiRCVPqcZnzppoB1Wxp5UM8pV+kkxMFUwuxx
-   8it6JmTCscjnSJCI34mWBjyuaM3yBJk28T52/lAIg3rie2Mp48MCK3ynT
-   g==;
-X-CSE-ConnectionGUID: 1TEyxSdRSHOUPO/9uwXmcw==
-X-CSE-MsgGUID: CtmF3PSDR56ZsQALCGlcmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="45406966"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="45406966"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:26:58 -0700
-X-CSE-ConnectionGUID: uNy7zEt4QD+kf/ElVlRpSg==
-X-CSE-MsgGUID: 3KCZXN55S9Kkp+9ZAesGVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="168046932"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.36]) ([10.124.240.36])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:26:54 -0700
-Message-ID: <40af9ef5-26f5-4796-8cd1-b9da882d2e7e@linux.intel.com>
-Date: Tue, 19 Aug 2025 17:26:51 +0800
+	s=arc-20240116; t=1755595881; c=relaxed/simple;
+	bh=UqeIA/NkP5K5JWZ2Fz3bp+2FTTmeiRE61bZX0rcCweI=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VabfmruSLKep8Qovz3tv3SNeJ/vvhDD5QV78CbZdLzPhulXlJY4g24qI0+gDLuY3OOz80hLGmu7kKYLwOAeWciA7+5w5ZSz245f6qqMGrqOyV+ktha7OXSKlYtrdduTzI9Df8KtqUWxw22VIn94V6WiBxPEZ1YPnwLOo+RtMEeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b=jt9G8Zo+; arc=none smtp.client-ip=111.202.70.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
+Received: from mail.didiglobal.com (unknown [10.79.65.19])
+	by mx10.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 7F4EC184369EF4;
+	Tue, 19 Aug 2025 17:26:56 +0800 (CST)
+Received: from didi-ThinkCentre-M930t-N000 (10.79.71.102) by
+ BJ02-ACTMBX-01.didichuxing.com (10.79.65.19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.10; Tue, 19 Aug 2025 17:27:47 +0800
+Date: Tue, 19 Aug 2025 17:27:39 +0800
+X-MD-Sfrom: tiozhang@didiglobal.com
+X-MD-SrcIP: 10.79.65.19
+From: Tio Zhang <tiozhang@didiglobal.com>
+To: <akpm@linux-foundation.org>, <wang.yaxin@zte.com.cn>,
+	<fan.yu9@zte.com.cn>, <corbet@lwn.net>, <bsingharora@gmail.com>,
+	<yang.yang29@zte.com.cn>
+CC: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<vschneid@redhat.com>, <jiang.kun2@zte.com.cn>, <xu.xin16@zte.com.cn>,
+	<wang.yong12@zte.com.cn>, <tiozhang@didiglobal.com>, <zyhtheonly@gmail.com>,
+	<zyhtheonly@yeah.net>
+Subject: [PATCH] delayacct/sched: add SOFTIRQ delay
+Message-ID: <20250819092739.GA31177@didi-ThinkCentre-M930t-N000>
+Mail-Followup-To: akpm@linux-foundation.org, wang.yaxin@zte.com.cn,
+	fan.yu9@zte.com.cn, corbet@lwn.net, bsingharora@gmail.com,
+	yang.yang29@zte.com.cn, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, jiang.kun2@zte.com.cn,
+	xu.xin16@zte.com.cn, wang.yong12@zte.com.cn, zyhtheonly@gmail.com,
+	zyhtheonly@yeah.net
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 3/6] perf/x86: Check if cpuc->events[*] pointer exists
- before accessing it
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
- kernel test robot <oliver.sang@intel.com>
-References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
- <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
- <20250819084542.GG3245006@noisy.programming.kicks-ass.net>
- <efa3039a-0d79-4e8a-bb97-647c625197b5@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <efa3039a-0d79-4e8a-bb97-647c625197b5@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: BJ03-PUBMBX-01.didichuxing.com (10.79.71.11) To
+ BJ02-ACTMBX-01.didichuxing.com (10.79.65.19)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=didiglobal.com;
+	s=2025; t=1755595632;
+	bh=mkLiziTKzDwwd5S2w8sWaVjZqvj6fJDpgoTMcEXlfI8=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type;
+	b=jt9G8Zo+Nvg/H+Vxaj+nj5skj9X00wKw2oAIPBgUP00jNhTILZ877yLX0i0yIC3rN
+	 TU4HI3ZwRnZRnVIlZkAjm0TGbiE2mxCMr5Kyzpwb147SfokHlKThYUBim4dU75mWTU
+	 VliKlRu5gO5qe2r1df7689OF/B+pGs8x948UgiQ8=
 
+Intro SOFTIRQ delay, so we can separate softirq as SOFTIRQ delay
+and hardirq as {IRQ - SOFTIRQ} delay.
 
-On 8/19/2025 5:21 PM, Mi, Dapeng wrote:
-> On 8/19/2025 4:45 PM, Peter Zijlstra wrote:
->> On Mon, Aug 11, 2025 at 05:00:31PM +0800, Dapeng Mi wrote:
->>> The PMI handler could disable some events as the interrupt throttling
->>> and clear the corresponding items in cpuc->events[] array.
->>>
->>> perf_event_overflow()
->>>   -> __perf_event_overflow()
->>>     ->__perf_event_account_interrupt()
->>>       -> perf_event_throttle_group()
->>>         -> perf_event_throttle()
->>>           -> event->pmu->stop()
->>>             -> x86_pmu_stop()
->>>
->>> Moreover PMI is NMI on x86 platform and it could interrupt other perf
->>> code like setup_pebs_adaptive_sample_data(). 
->> Uhh, how? AFAICT we only do drain_pebs() from the PMI itself, or disable
->> the PMU first by clearing GLOBAL_CTRL.
->>
->>> So once PMI handling
->>> finishes and returns into setup_pebs_adaptive_sample_data() and it could
->>> find the cpuc->events[*] becomes NULL and accessing this NULL pointer
->>> triggers an invalid memory access and leads to kernel crashes eventually.
->>>
->>> Thus add NULL check before accessing cpuc->events[*] pointer.
->> This doesn't seem fully thought through.
->>
->> If we do this NULL check, then the active_mask bittest is completely
->> superfluous and can be removed, no?
->>
->> Also, what about this race:
->>
->> 	event = cpuc->events[idx]; // !NULL;
->> 	<PMI>
->> 		x86_pmu_stop()
->> 		  cpuc->events[idx] = NULL;
->> 	</PMI>
->> 	... uses event
->>
->> Worse, since it is a 'normal' load, it is permitted for the compiler to
->> re-issue the load, at which point it will still explode. IOW, it should
->> be READ_ONCE(), *if* we can live with the above race at all. Can we?
->>
->> First though, you need to explain how we get here. Because drain_pebs()
->> nesting would be *BAD*.
-> I suppose I made a mistake on explaining why the issue happens. Since I
-> can't reproduce this issue locally (Synced with Oliver and the issue seems
-> can be produced on a specific SPR model), I can only guess the root case. I
-> originally thought drain_pebs() helper could be interrupted by PMI and then
-> cause the issue, but as Kan said, it's not true as PMU is always disabled
-> before draining PEBS buffer.
->
-> So after thinking twice,  I suppose the reason should be
->
->     When intel_pmu_drain_pebs_icl() is called to drain PEBS records, the
->     perf_event_overflow() could be called to process the last PEBS record.
->
->     While perf_event_overflow() could trigger the interrupt throttle and
->     stop all events of the group, like what the below call-chain shows.
->
->     perf_event_overflow()
->       -> __perf_event_overflow()
->         ->__perf_event_account_interrupt()
->           -> perf_event_throttle_group()
->             -> perf_event_throttle()
->               -> event->pmu->stop()
->                 -> x86_pmu_stop()
->
->     The side effect of stopping the events is that all corresponding event
->     pointers in cpuc->events[] array are cleared to NULL.
->
->     Assume there are two PEBS events (event a and event b) in a group. When
->     intel_pmu_drain_pebs_icl() calls perf_event_overflow() to process the
->     last PEBS record of PEBS event a, interrupt throttle is triggered and
->     all pointers of event a and event b are cleared to NULL. Then
->     intel_pmu_drain_pebs_icl() tries to process the last PEBS record of
->     event b and encounters NULL pointer access.
->
-> I would cook a v3 patch to update the commit message and code. Thanks.
+A typical scenario is when tasks delayed by network,
+if they delayed by rx net packets, i.e, net_rx_action(),
+SOFTIRQ delay is almost same as IRQ delay;
+if they delayed by, e.g, bad driver or broken hardware,
+SOFTIRQ delay is almost 0 while IRQ delay remains big.
 
-Forgot to say, for this scenario, suppose we can directly skip to process
-the last PEBS record if the event pointer is NULL since the last PEBS
-record has been processed when stopping the event previously.
+Examples tool usage could be found in
+Documentation/accounting/delay-accounting.rst
 
+Signed-off-by: Tio Zhang <tiozhang@didiglobal.com>
+---
+ Documentation/accounting/delay-accounting.rst |  5 ++++-
+ include/linux/delayacct.h                     | 18 ++++++++++------
+ include/uapi/linux/taskstats.h                |  9 +++++++-
+ kernel/delayacct.c                            |  9 +++++++-
+ kernel/sched/core.c                           | 14 +++++++++----
+ kernel/sched/cputime.c                        | 21 ++++++++++++++-----
+ kernel/sched/sched.h                          |  6 +++++-
+ tools/accounting/getdelays.c                  |  7 +++++++
+ 8 files changed, 70 insertions(+), 19 deletions(-)
 
->
->
->>> Reported-by: kernel test robot <oliver.sang@intel.com>
->>> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
->>> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
->>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->>> Tested-by: kernel test robot <oliver.sang@intel.com>
->>> ---
->>>  arch/x86/events/core.c       |  3 +++
->>>  arch/x86/events/intel/core.c |  6 +++++-
->>>  arch/x86/events/intel/ds.c   | 13 ++++++-------
->>>  3 files changed, 14 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
->>> index 7610f26dfbd9..f0a3bc57157d 100644
->>> --- a/arch/x86/events/core.c
->>> +++ b/arch/x86/events/core.c
->>> @@ -1711,6 +1711,9 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
->>>  			continue;
->>>  
->>>  		event = cpuc->events[idx];
->>> +		if (!event)
->>> +			continue;
->>> +
->>>  		last_period = event->hw.last_period;
->>>  
->>>  		val = static_call(x86_pmu_update)(event);
->>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->>> index 15da60cf69f2..386717b75a09 100644
->>> --- a/arch/x86/events/intel/core.c
->>> +++ b/arch/x86/events/intel/core.c
->>> @@ -2718,6 +2718,8 @@ static void update_saved_topdown_regs(struct perf_event *event, u64 slots,
->>>  		if (!is_topdown_idx(idx))
->>>  			continue;
->>>  		other = cpuc->events[idx];
->>> +		if (!other)
->>> +			continue;
->>>  		other->hw.saved_slots = slots;
->>>  		other->hw.saved_metric = metrics;
->>>  	}
->>> @@ -2761,6 +2763,8 @@ static u64 intel_update_topdown_event(struct perf_event *event, int metric_end,
->>>  		if (!is_topdown_idx(idx))
->>>  			continue;
->>>  		other = cpuc->events[idx];
->>> +		if (!other)
->>> +			continue;
->>>  		__icl_update_topdown_event(other, slots, metrics,
->>>  					   event ? event->hw.saved_slots : 0,
->>>  					   event ? event->hw.saved_metric : 0);
->>> @@ -3138,7 +3142,7 @@ static void x86_pmu_handle_guest_pebs(struct pt_regs *regs,
->>>  
->>>  	for_each_set_bit(bit, (unsigned long *)&guest_pebs_idxs, X86_PMC_IDX_MAX) {
->>>  		event = cpuc->events[bit];
->>> -		if (!event->attr.precise_ip)
->>> +		if (!event || !event->attr.precise_ip)
->>>  			continue;
->>>  
->>>  		perf_sample_data_init(data, 0, event->hw.last_period);
->>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->>> index c0b7ac1c7594..b23c49e2e06f 100644
->>> --- a/arch/x86/events/intel/ds.c
->>> +++ b/arch/x86/events/intel/ds.c
->>> @@ -2480,6 +2480,8 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64
->>>  	 */
->>>  	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
->>>  		event = cpuc->events[bit];
->>> +		if (!event)
->>> +			continue;
->>>  		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
->>>  			intel_pmu_save_and_restart_reload(event, 0);
->>>  	}
->>> @@ -2579,10 +2581,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
->>>  			continue;
->>>  
->>>  		event = cpuc->events[bit];
->>> -		if (WARN_ON_ONCE(!event))
->>> -			continue;
->>> -
->>> -		if (WARN_ON_ONCE(!event->attr.precise_ip))
->>> +		if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->>>  			continue;
->>>  
->>>  		/* log dropped samples number */
->>> @@ -2645,9 +2644,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->>>  		pebs_status = basic->applicable_counters & cpuc->pebs_enabled & mask;
->>>  		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
->>>  			event = cpuc->events[bit];
->>> -
->>> -			if (WARN_ON_ONCE(!event) ||
->>> -			    WARN_ON_ONCE(!event->attr.precise_ip))
->>> +			if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->>>  				continue;
->>>  
->>>  			if (counts[bit]++) {
->>> @@ -2663,6 +2660,8 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->>>  			continue;
->>>  
->>>  		event = cpuc->events[bit];
->>> +		if (!event)
->>> +			continue;
->>>  
->>>  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
->>>  					    counts[bit], setup_pebs_adaptive_sample_data);
->>> -- 
->>> 2.34.1
->>>
+diff --git a/Documentation/accounting/delay-accounting.rst b/Documentation/accounting/delay-accounting.rst
+index 8ccc5af5ea1e..b6453723fbac 100644
+--- a/Documentation/accounting/delay-accounting.rst
++++ b/Documentation/accounting/delay-accounting.rst
+@@ -17,6 +17,7 @@ e) thrashing
+ f) direct compact
+ g) write-protect copy
+ h) IRQ/SOFTIRQ
++i) SOFTIRQ
+ 
+ and makes these statistics available to userspace through
+ the taskstats interface.
+@@ -50,7 +51,7 @@ this structure. See
+ for a description of the fields pertaining to delay accounting.
+ It will generally be in the form of counters returning the cumulative
+ delay seen for cpu, sync block I/O, swapin, memory reclaim, thrash page
+-cache, direct compact, write-protect copy, IRQ/SOFTIRQ etc.
++cache, direct compact, write-protect copy, IRQ/SOFTIRQ, SOFTIRQ etc.
+ 
+ Taking the difference of two successive readings of a given
+ counter (say cpu_delay_total) for a task will give the delay
+@@ -123,6 +124,8 @@ Get sum and peak of delays, since system boot, for all pids with tgid 242::
+ 	              156       11215873          0.072ms     0.207403ms     0.033913ms
+ 	IRQ         count    delay total  delay average      delay max      delay min
+ 	                0              0          0.000ms     0.000000ms     0.000000ms
++	SOFTIRQ     count    delay total  delay average      delay max      delay min
++	                0              0          0.000ms     0.000000ms     0.000000ms
+ 
+ Get IO accounting for pid 1, it works only with -p::
+ 
+diff --git a/include/linux/delayacct.h b/include/linux/delayacct.h
+index 800dcc360db2..b73d777d7a96 100644
+--- a/include/linux/delayacct.h
++++ b/include/linux/delayacct.h
+@@ -62,13 +62,18 @@ struct task_delay_info {
+ 
+ 	u64 irq_delay_max;
+ 	u64 irq_delay_min;
+-	u64 irq_delay;	/* wait for IRQ/SOFTIRQ */
++	u64 irq_delay;		/* wait for IRQ/SOFTIRQ */
++
++	u64 soft_delay_max;
++	u64 soft_delay_min;
++	u64 soft_delay;		/* wait for SOFTIRQ */
+ 
+ 	u32 freepages_count;	/* total count of memory reclaim */
+ 	u32 thrashing_count;	/* total count of thrash waits */
+ 	u32 compact_count;	/* total count of memory compact */
+ 	u32 wpcopy_count;	/* total count of write-protect copy */
+-	u32 irq_count;	/* total count of IRQ/SOFTIRQ */
++	u32 irq_count;		/* total count of IRQ/SOFTIRQ */
++	u32 soft_count;		/* total count of SOFTIRQ */
+ };
+ #endif
+ 
+@@ -98,7 +103,7 @@ extern void __delayacct_compact_start(void);
+ extern void __delayacct_compact_end(void);
+ extern void __delayacct_wpcopy_start(void);
+ extern void __delayacct_wpcopy_end(void);
+-extern void __delayacct_irq(struct task_struct *task, u32 delta);
++extern void __delayacct_irq(struct task_struct *task, u32 delta, u32 delta_soft);
+ 
+ static inline void delayacct_tsk_init(struct task_struct *tsk)
+ {
+@@ -233,13 +238,14 @@ static inline void delayacct_wpcopy_end(void)
+ 		__delayacct_wpcopy_end();
+ }
+ 
+-static inline void delayacct_irq(struct task_struct *task, u32 delta)
++static inline void delayacct_irq(struct task_struct *task, u32 delta,
++					u32 delta_soft)
+ {
+ 	if (!static_branch_unlikely(&delayacct_key))
+ 		return;
+ 
+ 	if (task->delays)
+-		__delayacct_irq(task, delta);
++		__delayacct_irq(task, delta, delta_soft);
+ }
+ 
+ #else
+@@ -280,7 +286,7 @@ static inline void delayacct_wpcopy_start(void)
+ {}
+ static inline void delayacct_wpcopy_end(void)
+ {}
+-static inline void delayacct_irq(struct task_struct *task, u32 delta)
++static inline void delayacct_irq(struct task_struct *task, u32 delta, u32 delta_soft)
+ {}
+ 
+ #endif /* CONFIG_TASK_DELAY_ACCT */
+diff --git a/include/uapi/linux/taskstats.h b/include/uapi/linux/taskstats.h
+index 5929030d4e8b..23307f88e255 100644
+--- a/include/uapi/linux/taskstats.h
++++ b/include/uapi/linux/taskstats.h
+@@ -34,7 +34,7 @@
+  */
+ 
+ 
+-#define TASKSTATS_VERSION	16
++#define TASKSTATS_VERSION	17
+ #define TS_COMM_LEN		32	/* should be >= TASK_COMM_LEN
+ 					 * in linux/sched.h */
+ 
+@@ -230,6 +230,13 @@ struct taskstats {
+ 
+ 	__u64	irq_delay_max;
+ 	__u64	irq_delay_min;
++
++	/* v17: Delay waiting for SOFTIRQ */
++	__u64	soft_count;
++	__u64	soft_delay_total;
++
++	__u64	soft_delay_max;
++	__u64	soft_delay_min;
+ };
+ 
+ 
+diff --git a/kernel/delayacct.c b/kernel/delayacct.c
+index 30e7912ebb0d..15f88ca0c0e6 100644
+--- a/kernel/delayacct.c
++++ b/kernel/delayacct.c
+@@ -189,6 +189,7 @@ int delayacct_add_tsk(struct taskstats *d, struct task_struct *tsk)
+ 	UPDATE_DELAY(compact);
+ 	UPDATE_DELAY(wpcopy);
+ 	UPDATE_DELAY(irq);
++	UPDATE_DELAY(soft);
+ 	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
+ 
+ 	return 0;
+@@ -289,7 +290,7 @@ void __delayacct_wpcopy_end(void)
+ 		      &current->delays->wpcopy_delay_min);
+ }
+ 
+-void __delayacct_irq(struct task_struct *task, u32 delta)
++void __delayacct_irq(struct task_struct *task, u32 delta, u32 delta_soft)
+ {
+ 	unsigned long flags;
+ 
+@@ -300,6 +301,12 @@ void __delayacct_irq(struct task_struct *task, u32 delta)
+ 		task->delays->irq_delay_max = delta;
+ 	if (delta && (!task->delays->irq_delay_min || delta < task->delays->irq_delay_min))
+ 		task->delays->irq_delay_min = delta;
++	task->delays->soft_delay += delta_soft;
++	task->delays->soft_count++;
++	if (delta_soft > task->delays->soft_delay_max)
++		task->delays->soft_delay_max = delta_soft;
++	if (delta_soft && (!task->delays->soft_delay_min || delta_soft < task->delays->soft_delay_min))
++		task->delays->soft_delay_min = delta_soft;
+ 	raw_spin_unlock_irqrestore(&task->delays->lock, flags);
+ }
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index be00629f0ba4..30ba2e312356 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -773,11 +773,12 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+  * In theory, the compile should just see 0 here, and optimize out the call
+  * to sched_rt_avg_update. But I don't trust it...
+  */
+-	s64 __maybe_unused steal = 0, irq_delta = 0;
++	s64 __maybe_unused steal = 0, irq_delta = 0, soft_delta = 0;
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+ 	if (irqtime_enabled()) {
+-		irq_delta = irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
++		irq_delta = irq_time_read(cpu_of(rq), &soft_delta) - rq->prev_irq_time;
++		soft_delta -= rq->prev_soft_time;
+ 
+ 		/*
+ 		 * Since irq_time is only updated on {soft,}irq_exit, we might run into
+@@ -794,12 +795,17 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+ 		 * the current rq->clock timestamp, except that would require using
+ 		 * atomic ops.
+ 		 */
+-		if (irq_delta > delta)
++		if (soft_delta > delta) {  /* IRQ includes SOFTIRQ */
++			soft_delta = delta;
+ 			irq_delta = delta;
++		} else if (irq_delta > delta) {
++			irq_delta = delta;
++		}
+ 
+ 		rq->prev_irq_time += irq_delta;
++		rq->prev_soft_time += soft_delta;
+ 		delta -= irq_delta;
+-		delayacct_irq(rq->curr, irq_delta);
++		delayacct_irq(rq->curr, irq_delta, soft_delta);
+ 	}
+ #endif
+ #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 7097de2c8cda..17467f1f3e72 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -38,13 +38,14 @@ void disable_sched_clock_irqtime(void)
+ }
+ 
+ static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
+-				  enum cpu_usage_stat idx)
++				  u64 delta_soft, enum cpu_usage_stat idx)
+ {
+ 	u64 *cpustat = kcpustat_this_cpu->cpustat;
+ 
+ 	u64_stats_update_begin(&irqtime->sync);
+ 	cpustat[idx] += delta;
+ 	irqtime->total += delta;
++	irqtime->total_soft += delta_soft;
+ 	irqtime->tick_delta += delta;
+ 	u64_stats_update_end(&irqtime->sync);
+ }
+@@ -57,17 +58,27 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+ {
+ 	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+ 	unsigned int pc;
+-	s64 delta;
++	s64 delta, delta_soft = 0, cpu_clock;
+ 	int cpu;
+ 
+ 	if (!irqtime_enabled())
+ 		return;
+ 
+ 	cpu = smp_processor_id();
+-	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
++	cpu_clock = sched_clock_cpu(cpu);
++	delta = cpu_clock - irqtime->irq_start_time;
+ 	irqtime->irq_start_time += delta;
+ 	pc = irq_count() - offset;
+ 
++	/*
++	 * We only account softirq time when we are called by
++	 * account_softirq_enter{,exit}
++	 */
++	if ((offset & SOFTIRQ_OFFSET) || (pc & SOFTIRQ_OFFSET)) {
++		delta_soft = cpu_clock - irqtime->soft_start_time;
++		irqtime->soft_start_time += delta_soft;
++	}
++
+ 	/*
+ 	 * We do not account for softirq time from ksoftirqd here.
+ 	 * We want to continue accounting softirq time to ksoftirqd thread
+@@ -75,9 +86,9 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+ 	 * that do not consume any time, but still wants to run.
+ 	 */
+ 	if (pc & HARDIRQ_MASK)
+-		irqtime_account_delta(irqtime, delta, CPUTIME_IRQ);
++		irqtime_account_delta(irqtime, delta, delta_soft, CPUTIME_IRQ);
+ 	else if ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
+-		irqtime_account_delta(irqtime, delta, CPUTIME_SOFTIRQ);
++		irqtime_account_delta(irqtime, delta, delta_soft, CPUTIME_SOFTIRQ);
+ }
+ 
+ static u64 irqtime_tick_accounted(u64 maxtime)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index be9745d104f7..b263cb046cfa 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1219,6 +1219,7 @@ struct rq {
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+ 	u64			prev_irq_time;
++	u64			prev_soft_time;
+ 	u64			psi_irq_time;
+ #endif
+ #ifdef CONFIG_PARAVIRT
+@@ -3135,8 +3136,10 @@ static inline void sched_core_tick(struct rq *rq) { }
+ 
+ struct irqtime {
+ 	u64			total;
++	u64			total_soft;
+ 	u64			tick_delta;
+ 	u64			irq_start_time;
++	u64			soft_start_time;
+ 	struct u64_stats_sync	sync;
+ };
+ 
+@@ -3153,7 +3156,7 @@ static inline int irqtime_enabled(void)
+  * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
+  * and never move forward.
+  */
+-static inline u64 irq_time_read(int cpu)
++static inline u64 irq_time_read(int cpu, u64 *total_soft)
+ {
+ 	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
+ 	unsigned int seq;
+@@ -3162,6 +3165,7 @@ static inline u64 irq_time_read(int cpu)
+ 	do {
+ 		seq = __u64_stats_fetch_begin(&irqtime->sync);
+ 		total = irqtime->total;
++		*total_soft = irqtime->total_soft;
+ 	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
+ 
+ 	return total;
+diff --git a/tools/accounting/getdelays.c b/tools/accounting/getdelays.c
+index 21cb3c3d1331..7299cb60aa33 100644
+--- a/tools/accounting/getdelays.c
++++ b/tools/accounting/getdelays.c
+@@ -205,6 +205,7 @@ static int get_family_id(int sd)
+  * version >= 13  - supports WPCOPY statistics
+  * version >= 14  - supports IRQ statistics
+  * version >= 16  - supports *_max and *_min delay statistics
++ * version >= 17  - supports SOFTIRQ statistics
+  *
+  * Always verify version before accessing version-dependent fields
+  * to maintain backward compatibility.
+@@ -296,6 +297,12 @@ static void print_delayacct(struct taskstats *t)
+ 			irq_count, irq_delay_total,
+ 			irq_delay_max, irq_delay_min);
+ 	}
++
++	if (t->version >= 17) {
++		PRINT_FILED_DELAY("SOFTIRQ", t->version, t,
++			soft_count, soft_delay_total,
++			soft_delay_max, soft_delay_min);
++	}
+ }
+ 
+ static void task_context_switch_counts(struct taskstats *t)
+-- 
+2.39.3 (Apple Git-145)
+
 
