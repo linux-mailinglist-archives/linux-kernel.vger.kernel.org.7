@@ -1,155 +1,97 @@
-Return-Path: <linux-kernel+bounces-775579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E07B2C0CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4830CB2C288
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4E61BA6313
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:43:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451B81884917
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F5E32BF59;
-	Tue, 19 Aug 2025 11:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E245532C33B;
+	Tue, 19 Aug 2025 11:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ibu7j1Hy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2XdRGUK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD62267F59
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CD3212B2B;
+	Tue, 19 Aug 2025 11:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603754; cv=none; b=gw5yAgTDT1h9lYiXrqwfc1r85LB2R16EEvpMnvE8kTvI06BS72sjKu0eyihhgftymer2Hn+7ypoh5HIjQLdP/vTF+sXc8KZJlMG6wetkrvKvvzH6YYGfoWMR0Y3SH2dPyPVIJfK6+XXEFtDCfuVsWTbwTa3pK7447LfYvdDiCFc=
+	t=1755604778; cv=none; b=g0XpWA7JMQMdANle+O1ZyqYG1RCi5Usof3I6bXmuJX1KAQOBRdXZt1XEfoFCQEvNY7lniaJmx4mQt+huxJYI/UTXlEmCYjOc5RhdraW+AB+Bwx9ZDWnCHI5ZYfWWPK38a9T4comkwZmbE/ySJvfQD+f+zCFYXGzPKBEPuV9H4c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603754; c=relaxed/simple;
-	bh=i6/FFx4o9rXet7U52TFbFcsr48kAqmv5yfVusV6aOYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmnwMg30WiT5RnV5a4VSB9ktzni5501gC9n09Io8TKTLvxULUilonCJM9Jc9lYLXJkZJ0x/WAQFZhhRC+5knpgwAJLwg7J4+LBZ8JXgJv6CA5RJmg1lVhhzl8ZwpSrqgDyu7RVPgMSvQiKXnyYpwoWX1E6H+g5vW9+5EQ6OnPPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ibu7j1Hy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755603752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/CDY/siFmYcwlrdkt8B8vowtvoh8A+BRqaxiLLG+Hp8=;
-	b=Ibu7j1HygIFCLFNgKCQa9+phfTOkB0xMQjQ1yyJ4bt3rGr/bmIRPhVbsnb47DUNavUiAjq
-	JJter4MinK3kDVxVirly4nv9yHiNhUqs+26dIko2TH4Wem/uAgDIGHvJV8ZGVdgt9Tsn9Y
-	CnkxoopGXFxPETeJE2AKyN8zT3sZQDg=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-651-8WdoaadNMFm6nstW1JaUIw-1; Tue,
- 19 Aug 2025 07:42:28 -0400
-X-MC-Unique: 8WdoaadNMFm6nstW1JaUIw-1
-X-Mimecast-MFC-AGG-ID: 8WdoaadNMFm6nstW1JaUIw_1755603746
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87FE81954B1C;
-	Tue, 19 Aug 2025 11:42:26 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.68])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0BE1D19560AB;
-	Tue, 19 Aug 2025 11:42:24 +0000 (UTC)
-Date: Tue, 19 Aug 2025 07:42:23 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Hillf Danton <hdanton@sina.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: Re: [PATCH 0/2] Fix vsock error-handling regression introduced in
- v6.17-rc1
-Message-ID: <20250819114223.GA37216@fedora>
-References: <20250818180355.29275-1-will@kernel.org>
+	s=arc-20240116; t=1755604778; c=relaxed/simple;
+	bh=0v9lG0844Hqm5JldEE8GkjmMjZaUc7QoWpGSORsbXCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ciJO3PovEsEde4zn/h6uhRT63SLBkqtYiJ0FSkkb54dT/+8HNbZ7PeuKB+tHq4yb8BXyxhphX19EOu5UltMKCsQo1OF+991CFR/uO8YHWz/XyQ2aVEtlAFKITji6MH3eyCuNhpnB+hdonNxWXGq6vSLGgNuWntkcv8hikt/gn5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2XdRGUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C52C8C4CEF1;
+	Tue, 19 Aug 2025 11:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755604776;
+	bh=0v9lG0844Hqm5JldEE8GkjmMjZaUc7QoWpGSORsbXCI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e2XdRGUK/NKN3Qt47/MnnaYiLHtu089s13F9av5LZMJbPZ0JGeuquoodZEIEfL2Se
+	 KPgrfcvozNdjDkOwgbYdRoskmkMBY9g0PRkki1SLdf2Q6V/w1PfOhrANdzp1aIP3kA
+	 RmyRxvkN1fFs6UMxcuPEIfnTE1cLZnuyjTHpWHPzPvQ5Xd7a52765auzi6lFM31SYn
+	 HP6eN86QA1eN5FpixXJS5s8KLFqx/k0NG0aYH1vJVmk2vDBvN1kZW8uo0y5aaxYhjB
+	 d6NTb7DUg4KIdCO0AIzFgmVZ1MKgdwMsoQMQob61iSukMjqZ8XFMynrNS7Wl8HSiJ1
+	 3kaw3TAbMvksA==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] pwm: berlin: Fix wrong register in suspend/resume
+Date: Tue, 19 Aug 2025 19:42:24 +0800
+Message-ID: <20250819114224.31825-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EiAQxVZfWL66lhJ5"
-Content-Disposition: inline
-In-Reply-To: <20250818180355.29275-1-will@kernel.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
+The 'enable' register should be BERLIN_PWM_EN rather than
+BERLIN_PWM_ENABLE, otherwise, the driver accesses wrong address, there
+will be cpu exception then kernel panic during suspend/resume.
 
---EiAQxVZfWL66lhJ5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: bbf0722c1c66 ("pwm: berlin: Add suspend/resume support")
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+---
+since v1:
+ - update commit log to mention cpu exception then kernel panic w/o
+   the patch
 
-On Mon, Aug 18, 2025 at 07:03:53PM +0100, Will Deacon wrote:
-> Hi all,
->=20
-> Here are a couple of patches fixing the vsock error-handling regression
-> found by syzbot [1] that I introduced during the recent merge window.
->=20
-> Cheers,
->=20
-> Will
->=20
-> [1] https://lore.kernel.org/all/689a3d92.050a0220.7f033.00ff.GAE@google.c=
-om/
->=20
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Hillf Danton <hdanton@sina.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Jason Wang <jasowang@redhat.com>
-> Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Stefan Hajnoczi <stefanha@redhat.com>
-> Cc: Stefano Garzarella <sgarzare@redhat.com>
->=20
-> --->8
->=20
-> Will Deacon (2):
->   net: Introduce skb_copy_datagram_from_iter_full()
->   vsock/virtio: Fix message iterator handling on transmit path
->=20
->  include/linux/skbuff.h                  |  2 ++
->  net/core/datagram.c                     | 14 ++++++++++++++
->  net/vmw_vsock/virtio_transport_common.c |  8 +++++---
->  3 files changed, 21 insertions(+), 3 deletions(-)
->=20
-> --=20
-> 2.51.0.rc1.167.g924127e9c0-goog
->=20
+ drivers/pwm/pwm-berlin.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Stefano Garzarella is offline at the moment and may not get a chance to
-review this for another week. In the meantime I have reviewed this patch
-series:
-
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---EiAQxVZfWL66lhJ5
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmikYx8ACgkQnKSrs4Gr
-c8g6vwgAk0tzl/aU8i9ne8GgOXpF111xADxfNnaedXr6oUD9ZxeTTq5yUesC8mN7
-/DWT6dh3PuEb6bJLOGVHW8Nu57WjYfr7fIso5L3BnXvB3bZm7Ft98dESLl7RIF+7
-M7gy+28m7+jjgkbJ0u4EuQovGWRG6geEjqeHmo8XHefVlqaFl8YXnMwu8a4Q08xk
-ud9GQ7fcQGnJF2Gd7N37jGVZVN59XfBdwYyzCh6lWvHyj/U3CDDa5kqfeGWqXCyd
-AdPFM2DmWaO1U0IaKoHNa0v2F7oEYgouf/dkvsR6QfBxSWtNdysJ8AL8prYjarLU
-xR+U5eqHwm7YoUVh9ODH1RxZ4N3jHQ==
-=6Pi0
------END PGP SIGNATURE-----
-
---EiAQxVZfWL66lhJ5--
+diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
+index 831aed228caf..858d36991374 100644
+--- a/drivers/pwm/pwm-berlin.c
++++ b/drivers/pwm/pwm-berlin.c
+@@ -234,7 +234,7 @@ static int berlin_pwm_suspend(struct device *dev)
+ 	for (i = 0; i < chip->npwm; i++) {
+ 		struct berlin_pwm_channel *channel = &bpc->channel[i];
+ 
+-		channel->enable = berlin_pwm_readl(bpc, i, BERLIN_PWM_ENABLE);
++		channel->enable = berlin_pwm_readl(bpc, i, BERLIN_PWM_EN);
+ 		channel->ctrl = berlin_pwm_readl(bpc, i, BERLIN_PWM_CONTROL);
+ 		channel->duty = berlin_pwm_readl(bpc, i, BERLIN_PWM_DUTY);
+ 		channel->tcnt = berlin_pwm_readl(bpc, i, BERLIN_PWM_TCNT);
+@@ -262,7 +262,7 @@ static int berlin_pwm_resume(struct device *dev)
+ 		berlin_pwm_writel(bpc, i, channel->ctrl, BERLIN_PWM_CONTROL);
+ 		berlin_pwm_writel(bpc, i, channel->duty, BERLIN_PWM_DUTY);
+ 		berlin_pwm_writel(bpc, i, channel->tcnt, BERLIN_PWM_TCNT);
+-		berlin_pwm_writel(bpc, i, channel->enable, BERLIN_PWM_ENABLE);
++		berlin_pwm_writel(bpc, i, channel->enable, BERLIN_PWM_EN);
+ 	}
+ 
+ 	return 0;
+-- 
+2.50.0
 
 
