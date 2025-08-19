@@ -1,38 +1,37 @@
-Return-Path: <linux-kernel+bounces-776675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5442B2D051
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:45:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF160B2D060
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D41C652577D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:45:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5F21C44A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349A12773CC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A122773CE;
 	Tue, 19 Aug 2025 23:45:15 +0000 (UTC)
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6D52750E6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED52F21B905
 	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755647114; cv=none; b=IF9XCEMwUefOA2MZbZaJPFt9QI+HICykoL1B/cdDJWfCuyAfHzm3uf5j/JPOt/AIMornfmnB0av8mZYLCWwkl+lgAex9nCQFhuRBJmA+Pxd94lVAMeu8FAizBGPhaeX3qnUYnl1zcPhqifYXluPFKQ9vCR9qBk95w0nKyzNhoBA=
+	t=1755647114; cv=none; b=KtLTMUVl9vdc30TMj9SHXtTPAS68Zk1QRwYJp3KtPA/T2Bo4A3HLowGv+s7E5RamGa+0rAsvskxeV0jlTuq+ejZLEBYLhuOanJ7sc1yako6sm4IPt1nvI6F4Ojdo8+qy0HZSeZy6hvjUGG0JOfEmFBzAbc5MbPXa1a2TznL2XSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755647114; c=relaxed/simple;
-	bh=v9mlK2izNZVJnjELzkwjrvq91qRZmOG413Q6HNcCJf4=;
+	bh=nvLqjWQwY8QSiOonkVpqEzMu32gB6qRxTS2O5Qs1LT8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r3c+HesQvDqRlHZbnQATUGqD1vO8nWUvRMHIm+8cpaKY7llTPg1zb+JWgpDfUDWN98OD/IIS9xZ1C4DVVsyLJGEfZ+AUzhxQa+rWpQvamy9zD0F0n1LKk69Xlx7M6UZ30fqJDB+G7fNyuUnTyIoVj9HECYKLFsicK05J0w6n/zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=watter.com; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.181
+	 In-Reply-To:To:Cc; b=YfAdsNV+8feZfqwJdYKbfid8JJDFvyU9yYyn09vQlglBNFhIAK55UiElKDJW/IbEIBYxtcYy7hhqGZg3S3j5sKIacGhaBAAa64/FnaGqTNXUGroaUpaoGIHQkYBDmYja4U/5KtSIAlfIC2kjHm3fDk2H+Up42r2B8nKZ5NDuBa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=watter.com; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=watter.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Ben Collins <bcollins@watter.com>
-Date: Tue, 19 Aug 2025 19:44:43 -0400
-Subject: [PATCH v7 2/5] dt-bindings: iio: mcp9600: Add microchip,mcp9601
- and add constraints
+Date: Tue, 19 Aug 2025 19:44:44 -0400
+Subject: [PATCH v7 3/5] iio: mcp9600: White space and fixed width cleanup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-upstream-changes-v7-2-88a33aa78f6a@watter.com>
+Message-Id: <20250819-upstream-changes-v7-3-88a33aa78f6a@watter.com>
 References: <20250819-upstream-changes-v7-0-88a33aa78f6a@watter.com>
 In-Reply-To: <20250819-upstream-changes-v7-0-88a33aa78f6a@watter.com>
 To: Jonathan Cameron <jic23@kernel.org>, 
@@ -54,120 +53,52 @@ Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Ben Collins <bcollins@watter.com>
 X-Migadu-Flow: FLOW_OUT
 
-Add microchip,mcp9601 compatible in addition to the original
-microchip,mcp9600 to designate support between these two chips.
-
-The current dt-binding has open-circuit and short-circuit as interrupt
-names, but these are only supported in mcp9601.
-
-The OC and SC detection requires that mcp9601 VSENSE be wired up, which
-not only enables the OC SC interrupts, but also the OC and SC status
-register bits.
-
-Add a microchip,vsense boolean to show the chip is wired for this
-support.
-
-Add constraints so this feature only applies if the mcp9601 compatible
-is selected.
+Make tabs consistent for register definitions and also fix width
+to byte size.
 
 Signed-off-by: Ben Collins <bcollins@watter.com>
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 ---
- .../iio/temperature/microchip,mcp9600.yaml         | 58 ++++++++++++++++++++--
- 1 file changed, 55 insertions(+), 3 deletions(-)
+ drivers/iio/temperature/mcp9600.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-index 57b387a1accc..6506ae429d16 100644
---- a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-+++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9600.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
+index 6e9108d5cf75..40906bb200ec 100644
+--- a/drivers/iio/temperature/mcp9600.c
++++ b/drivers/iio/temperature/mcp9600.c
+@@ -23,25 +23,25 @@
+ #include <linux/iio/iio.h>
  
--title: Microchip MCP9600 thermocouple EMF converter
-+title: Microchip MCP9600 and similar thermocouple EMF converters
+ /* MCP9600 registers */
+-#define MCP9600_HOT_JUNCTION 0x0
+-#define MCP9600_COLD_JUNCTION 0x2
+-#define MCP9600_STATUS			0x4
++#define MCP9600_HOT_JUNCTION		0x00
++#define MCP9600_COLD_JUNCTION		0x02
++#define MCP9600_STATUS			0x04
+ #define MCP9600_STATUS_ALERT(x)		BIT(x)
+-#define MCP9600_ALERT_CFG1		0x8
++#define MCP9600_ALERT_CFG1		0x08
+ #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
+ #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
+ #define MCP9600_ALERT_CFG_ACTIVE_HIGH	BIT(2)
+ #define MCP9600_ALERT_CFG_FALLING	BIT(3)
+ #define MCP9600_ALERT_CFG_COLD_JUNCTION	BIT(4)
+-#define MCP9600_ALERT_HYSTERESIS1	0xc
++#define MCP9600_ALERT_HYSTERESIS1	0x0c
+ #define MCP9600_ALERT_HYSTERESIS(x)	(MCP9600_ALERT_HYSTERESIS1 + (x - 1))
+ #define MCP9600_ALERT_LIMIT1		0x10
+ #define MCP9600_ALERT_LIMIT(x)		(MCP9600_ALERT_LIMIT1 + (x - 1))
+ #define MCP9600_ALERT_LIMIT_MASK	GENMASK(15, 2)
+-#define MCP9600_DEVICE_ID 0x20
++#define MCP9600_DEVICE_ID		0x20
  
- maintainers:
-   - Andrew Hepp <andrew.hepp@ahepp.dev>
-@@ -14,7 +14,11 @@ description:
+ /* MCP9600 device id value */
+-#define MCP9600_DEVICE_ID_MCP9600 0x40
++#define MCP9600_DEVICE_ID_MCP9600	0x40
  
- properties:
-   compatible:
--    const: microchip,mcp9600
-+    oneOf:
-+      - const: microchip,mcp9600
-+      - items:
-+          - const: microchip,mcp9601
-+          - const: microchip,mcp9600
+ #define MCP9600_ALERT_COUNT		4
  
-   reg:
-     maxItems: 1
-@@ -43,8 +47,37 @@ properties:
-       Use defines in dt-bindings/iio/temperature/thermocouple.h.
-       Supported types are B, E, J, K, N, R, S, T.
- 
-+  microchip,vsense:
-+    type: boolean
-+    description:
-+      This flag indicates that the chip has been wired with VSENSE to
-+      enable open and short circuit detect.
-+
-   vdd-supply: true
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          not:
-+            contains:
-+              const: microchip,mcp9601
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 1
-+          maxItems: 4
-+        interrupt-names:
-+          minItems: 1
-+          maxItems: 4
-+          items:
-+            enum:
-+              - alert1
-+              - alert2
-+              - alert3
-+              - alert4
-+        microchip,vsense: false
-+
- required:
-   - compatible
-   - reg
-@@ -64,8 +97,27 @@ examples:
-             reg = <0x60>;
-             interrupt-parent = <&gpio>;
-             interrupts = <25 IRQ_TYPE_EDGE_RISING>;
--            interrupt-names = "open-circuit";
-+            interrupt-names = "alert1";
-             thermocouple-type = <THERMOCOUPLE_TYPE_K>;
-             vdd-supply = <&vdd>;
-         };
-     };
-+  - |
-+    #include <dt-bindings/iio/temperature/thermocouple.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        temperature-sensor@62 {
-+            compatible = "microchip,mcp9601",
-+                         "microchip,mcp9600";
-+            microchip,vsense;
-+            reg = <0x62>;
-+            interrupt-parent = <&gpio>;
-+            interrupts = <22 IRQ_TYPE_EDGE_RISING
-+                          23 IRQ_TYPE_EDGE_RISING>;
-+            interrupt-names = "open-circuit", "short-circuit";
-+            vdd-supply = <&vdd>;
-+        };
-+    };
 
 -- 
 2.39.5
