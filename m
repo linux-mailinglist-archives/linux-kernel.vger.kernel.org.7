@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-775215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FE9B2BCAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:11:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C57FB2BCAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4C917B7262
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:09:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FD9F7B782B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3E231A077;
-	Tue, 19 Aug 2025 09:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095FA31AF33;
+	Tue, 19 Aug 2025 09:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eq0cgxKm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TRCq3NN5"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89651F37D3;
-	Tue, 19 Aug 2025 09:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B299C315777
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755594595; cv=none; b=P6uHtmi0+j+1j3a7W0HvKgKpe8zjR5bnDS7U+dww7zg+Ck5TSuZ9aYfYuUZE1eHl5fGf0y3CMnFn8GVGcqu8IF1ZevVb23kTsh8gf8hd4zHosWG3a6K+/4VOiSNb1U7kzZQeP7KDPYYj8Cr4sJpugGs3Ewvib2wQli7AuFGkcfs=
+	t=1755594614; cv=none; b=LnZMhX/iulj0rnaqKFA4qK+9U+dB2q/P7ZJLk4wagPqIZo2Bo2cYqnLo39NCpBhWy/yiTokmoT9N99rtPAJDaPAUlEnktNDnNZwaBsIgn2nRo5/5cWZMG1qG5Z4DGijhBHlfv/F3R4zFIuzBrqUawZ2NGcbfvG9D2Ri8cFWwAGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755594595; c=relaxed/simple;
-	bh=9853QO76uaASuzg+F7gdYIngtiCcvywWCkxZZ5hHy5s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=MtJXqdO6QTOzvYHAbLWbqgNZMsBHPfM5iy9dnDMCuJmx/vrcFTDQIBvV51eGU2+eKnc3KckckgyqppTH/hi7oJKJm3MW9iUUlAMprskuj3rkGmeUe3M6JEz5Gv+YhpEpW14kI9+dZYX7Bip6hpuh0mDSN8vK4TdMEN1CPpfhOGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eq0cgxKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B9E9C4CEF1;
-	Tue, 19 Aug 2025 09:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755594595;
-	bh=9853QO76uaASuzg+F7gdYIngtiCcvywWCkxZZ5hHy5s=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=eq0cgxKmFllHAfPDiZzSWkhYsa3v+v7zkifOqP2C+Feb8fxbpJj6777Rg5L3NQltl
-	 s0tNhzDRlV2sxHqzDHaiZqazQvVKH6t0c2ThzMJkIIFz0K3t+Xd9RVRIC7br9EkBKJ
-	 OspYUlIoSR5ogKfINRIqgxrwWBBwkp2Ta3OaZfPe1AA/JZxQ1MJDszihtFELrvcft6
-	 JfdbvBYaDmjzr3q2+XlO0t1rxUU4HCuIhg3NkKV+tZFO8smjj/6YWMAU7fc3qX0KAT
-	 aYNziVrM3mgG9j7PdwQ0mnMdo05wM79ZQQjZVAo8kVrsRY/1/QcHDcDiFvE+HfpAd4
-	 ZuWRAL3yoBdwA==
+	s=arc-20240116; t=1755594614; c=relaxed/simple;
+	bh=7ek/XcSlPOTA9wFSe80Ag3IAFpD2dLzpSLsq/5EQJl8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yg7aZHOYeLuSAZcuX6A8hN4669y0od52UG+RlAMzM0Aj0s16boC9VO0wMUsOytFOAYzcdK7CVhdm7iF9nyeknAfoX3oWaw/ohP6A47SdOYO8i65jxBj+vt5tkeSuh7EuhQZO6MSwqXSrbWxTVWgl2AcR1CdaWlEiqhJeEXVZS2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TRCq3NN5; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e415a68fso4545636f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:10:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755594611; x=1756199411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c9/jnxBS7I1AR5e/02apEhjBpEazFeyENxAvH1Nm6yo=;
+        b=TRCq3NN5tnBIwhZrMkR+sJlPFKenz+qWGBX+bl3NfNUEhlJP/8C1VNTmGhGVhVeA/2
+         Ibf21hcyYiiBYi4Yfsj5r8XJ6gkAs0x8/1Fa3doALXvDAeFhqPJbJvzTJCNzihPd5qEL
+         Phcp8MvkANhjtIs+jVTQwaNzNs/IKUJAVG+tci5FNioLwcLwTJi5zOkSp4bgo4Fh3970
+         KxLIb361iAAj8wmtWzgmy3Xe9FPy82nG0+v641XeWtZahD0bKLMgWhbd3BbKVzj+eLZ9
+         bx2kevEpJa+XSar4/pWQGYvmu3ZpqA3fRCp1K6vb4Ikj4NjBLtvKNhvU9SrF2NB9kF+j
+         P14g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755594611; x=1756199411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c9/jnxBS7I1AR5e/02apEhjBpEazFeyENxAvH1Nm6yo=;
+        b=DdFTkn+D/qfiZY3Mm1x6Fy6pryLZvA5WYL8GOeFFo/24foxfL5xP6BS5B88PVugKYz
+         N5UPAsU0p6IeNASTNrBLdQ/3jmLeQHqlK5y28DAZSxWGil+CwTjqZ1T+iJ5WNd7w4SHU
+         fBC9/UN/QpFYgdqNRuppDxj5dtfcLowfHOyEbo3ZK79vtN0kXshJf8aCJTg7suv0iDTn
+         4tHAasv9w2qTH7rHEBeWDId5RNtJ/0brNNaqLLFS52ICOOSOlB+c2NhIe5osUiNTxxM+
+         AyaxgTZ2TGDisdWqd0Rqi3DzuDXVMuEH8pdltjUK8i+7cNByGikf0TDI+JbRwTfZJcKv
+         cIQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnJ0iHa0D88/3aqKttpj2Yksoo6xHa/GT1JxD9sYmPfmnFNqaWumyZ61Oynq+/IAUeHp3wzkdZuz4/btw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW8J19Xdu5h2MoLguJf7DuLqspdypMsZJV3GUxvLLJ7kWV4YH4
+	3Vx6m4SPkIAOA8ZS+QWWgyEtEcq1/O75MVwnCuuaqiNU2qCUbpEypsEQXZYeM15n3GI+/H/Q2lF
+	G4K4WnEy0YED5GaJfBbK/v+MTkH7O0rjNVfZiDGIm
+X-Gm-Gg: ASbGncsrOkshqxqs9qbzUT4gjtzwGyZpXYsr2HmKknmJUH3k5/lYTyYNxSgm/SvT2Rv
+	cpsripC4kOg7CLYg+Q6QYHUAJ/NYg7FL5cwoN/+rEbIY9CdZGkO6zPC20EzL3HpNNU0ZhHEswvJ
+	/5TlKUoaBMHP3OK/TRsm043KtZAVEfOyz1wBIhBjIQgdWpQ8gx6k1oIRzFdzGS7WTfAh4/66bpy
+	Pt/wLe40JPqGdmqslvTwEY5XcRKijvdy4e5pYij50BQv05+6yM2D3M=
+X-Google-Smtp-Source: AGHT+IHVUVNrk5qRTajk434+TVEPOUXm04X7Uh+fxd2pvvGn/JXpX/RvG9pR2tzt3ATebxLW997HovRzB564pm6TmpA=
+X-Received: by 2002:a05:6000:1ac5:b0:3b8:fe01:cc29 with SMTP id
+ ffacd0b85a97d-3c0ec476b13mr1451794f8f.45.1755594610630; Tue, 19 Aug 2025
+ 02:10:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-1-27a3da7cb8e5@google.com> <20250726164527.6133cff6.gary@garyguo.net>
+In-Reply-To: <20250726164527.6133cff6.gary@garyguo.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 19 Aug 2025 11:09:58 +0200
+X-Gm-Features: Ac12FXzIjOR60cK89wW_NrK29HmSiiv16L1E4oN_6vVa5petNytsfqPo9w5zs2E
+Message-ID: <CAH5fLgg=_rfx9mBn6GbF9S0+thO5kGZOvOFT77XKJiGG1iozfg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rust: maple_tree: add MapleTree
+To: Gary Guo <gary@garyguo.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 19 Aug 2025 11:09:49 +0200
-Message-Id: <DC6ACCFEBPYR.1R4LQL7EGKM5F@kernel.org>
-Subject: Re: [PATCH v3 1/3] rust: pci: provide access to PCI Class,
- subclass, implementation values
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
-To: "John Hubbard" <jhubbard@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250819031117.560568-1-jhubbard@nvidia.com>
- <20250819031117.560568-2-jhubbard@nvidia.com>
-In-Reply-To: <20250819031117.560568-2-jhubbard@nvidia.com>
 
-On Tue Aug 19, 2025 at 5:11 AM CEST, John Hubbard wrote:
-> +/// PCI device class codes. Each entry contains the full 24-bit PCI
-> +/// class code (base class in bits 23-16, subclass in bits 15-8,
-> +/// programming interface in bits 7-0).
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// # use kernel::{device::Core, pci::{self, Class}, prelude::*};
-> +/// fn probe_device(pdev: &pci::Device<Core>) -> Result<()> {
-> +///     // Get the PCI class for this device
-> +///     let pci_class =3D pdev.pci_class();
-> +///     dev_info!(
-> +///         pdev.as_ref(),
-> +///         "Detected PCI class: (0x{:06x})\n",
-> +///         pci_class.as_u32()
-> +///     );
+On Sat, Jul 26, 2025 at 5:45=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Sat, 26 Jul 2025 13:23:22 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>
+> > The maple tree will be used in the Tyr driver to allocate and keep trac=
+k
+> > of GPU allocations created internally (i.e. not by userspace). It will
+> > likely also be used in the Nova driver eventually.
+> >
+> > This adds the simplest methods for additional and removal that do not
+> > require any special care with respect to concurrency.
+> >
+> > This implementation is based on the RFC by Andrew but with significant
+> > changes to simplify the implementation.
+> >
+> > Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> Overall looks good to me, some nits and thoughts about the error type
+> below.
+>
+> Best,
+> GAry
+>
+> > +/// Error type for failure to insert a new value.
+> > +pub struct InsertError<T> {
+> > +    /// The value that could not be inserted.
+> > +    pub value: T,
+> > +    /// The reason for the failure to insert.
+> > +    pub cause: InsertErrorKind,
+> > +}
+>
+> Hmm, we've already have quite a few errors that look like this, e.g.
+> `StoreError`. I wonder if we should just have a generic
+>
+>     struct ErrroWithData<T, E> {
+>        pub value: T,
+>        pub cause: E,
+>     }
 
-Maybe a bit cleaner to implement Display for pci::Class?
+I don't think we have any existing errors that look like this?
 
-> +///     Ok(())
-> +/// }
-> +/// ```
-> +#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-> +#[repr(transparent)]
-> +pub struct Class(u32);
+> > +
+> > +/// The reason for the failure to insert.
+> > +#[derive(PartialEq, Eq, Copy, Clone)]
+> > +pub enum InsertErrorKind {
+> > +    /// There is already a value in the requested range.
+> > +    Occupied,
+> > +    /// Failure to allocate memory.
+> > +    Nomem,
+>
+> Given that we already have an error type for allocation failure, how
+> about
+>
+>     AllocError(crate::alloc::AllocError)
+>
+> ? I know we're getting ENOMEM from C, but this would match what the
+> error type would be if it were from pure Rust code.
 
-[ Class impl and lots of pci class ids... ]
+I don't think it makes a big difference, but ok.
 
-I think we should move all this to a new Rust module (rust/kernel/pci/class=
-.rs)
-to keep this file reasonably small.
-
-You can add
-
-	use self::class::Class;
-	use self::class::ClassMask;
-
-in this file to make it appear as e.g. kernel::pci::Class.
-
-Sorry I didn't mention this in the previous version.
-
->  /// An adapter for the registration of PCI drivers.
->  pub struct Adapter<T: Driver>(T);
-> =20
-> @@ -157,6 +355,23 @@ pub const fn from_class(class: u32, class_mask: u32)=
- -> Self {
->              override_only: 0,
->          })
->      }
-> +
-> +    /// Create a new `pci::DeviceId` from a class number, mask, and spec=
-ific vendor.
-> +    ///
-> +    /// This is more targeted than [`DeviceId::from_class`]: in addition=
- to matching by Vendor, it
-> +    /// also matches the PCI Class (up to the entire 24 bits, depending =
-on the mask).
-> +    pub const fn from_class_and_vendor(class: Class, class_mask: u32, ve=
-ndor: u32) -> Self {
-
-I think it would be good if class_mask would be a new type ClassMask that o=
-nly
-has the constants that are applicable for this field, i.e. MASK_FULL and
-MASK_CLASS_SUBCLASS.
-
-> +        Self(bindings::pci_device_id {
-> +            vendor,
-> +            device: DeviceId::PCI_ANY_ID,
-> +            subvendor: DeviceId::PCI_ANY_ID,
-> +            subdevice: DeviceId::PCI_ANY_ID,
-> +            class: class.as_u32(),
-> +            class_mask,
-> +            driver_data: 0,
-> +            override_only: 0,
-> +        })
-> +    }
->  }
-> =20
->  // SAFETY: `DeviceId` is a `#[repr(transparent)]` wrapper of `pci_device=
-_id` and does not add
-> @@ -410,6 +625,18 @@ pub fn resource_len(&self, bar: u32) -> Result<bindi=
-ngs::resource_size_t> {
->          // - by its type invariant `self.as_raw` is always a valid point=
-er to a `struct pci_dev`.
->          Ok(unsafe { bindings::pci_resource_len(self.as_raw(), bar.try_in=
-to()?) })
->      }
-> +
-> +    /// Returns the full 24-bit PCI class code as stored in hardware.
-> +    /// This includes base class, subclass, and programming interface.
-> +    pub fn pci_class_code_raw(&self) -> u32 {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev=
-`.
-> +        unsafe { (*self.as_raw()).class }
-> +    }
-
-Do we need this method? I think drivers can just call pdev.pci_class().as_u=
-32()
-instead (which we could also name as_raw()).
-
-> +    /// Returns the PCI class as a `Class` struct.
-> +    pub fn pci_class(&self) -> Class {
-> +        Class(self.pci_class_code_raw())
-> +    }
-
-This is good! At a first glance the name looks a bit odd or redundant, but
-people would clearly expect something different when this is called as
-pdev.class() (i.e. a struct class representation).
+Alice
 
