@@ -1,193 +1,163 @@
-Return-Path: <linux-kernel+bounces-776148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299AFB2C928
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:11:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22043B2C934
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D497C720DA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497291C22D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231F72C11D8;
-	Tue, 19 Aug 2025 16:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA86D2C11CA;
+	Tue, 19 Aug 2025 16:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBzY06zM"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpu2VOfu"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EDA2BE7BB;
-	Tue, 19 Aug 2025 16:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C612E2BEFFE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755619862; cv=none; b=qvVgG3uUSTaWVoqF4CxFYkJ3/FKl6/+tkm7CxQRGjBW6Xrs43yli0cvqgelPu54p5b/wQIydT/fzIra2gkGMjxBjPeySsksZAFWPieExWyGDcIvqbDcuedhbk3hdvDM4412TepoAPIpKIRoh7CV5TarDxXbHRDJINO0zi8z39Rg=
+	t=1755619898; cv=none; b=cYgJ6jNVLQdHaNaksl60T4tMXuW3Ai/5KjFwLqbQJVTexFCICxn5gKcR3noeONs9x5TKE//8cm98NZNLiEDYXwrmC/n2K6yXjQ1vILNZN1Yww660Lm1zm9MdBvkhd1pMJav2vqDRKZWlLFU/5IzLvTTX/RuvaCNaIbcj2UkEPKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755619862; c=relaxed/simple;
-	bh=CqGfthUvazDGvJM0QQ3QsOvZ2cEZy3rEvEPEj5jjdF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4S6Rs2tWH4HimWzzeJJlVwfaZwSJqVIwyUXpEkDj1lzp4AgzjL+pdzrxi2v8w3R9UvAqHvtlqIV2d850HNajT2kCY0jsK4rl/B5syZLcVoWBEi9nD8fN95wvTZUsEVo/qaD1In5pKznc2WifBPccWVqb99nSO59SDRuJf4hPAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBzY06zM; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3136225b3a.0;
-        Tue, 19 Aug 2025 09:11:00 -0700 (PDT)
+	s=arc-20240116; t=1755619898; c=relaxed/simple;
+	bh=K00k9jP1rmkhFnerXyuXTP85GYilasWn6Y+lLUScbk4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tu2Ci90yKnIywpFuAxJoEYnUZTOztkKUCq4rTlATmzggGue08PXI02UJwKtJbHxinwvHKnsY3kLyXPsE2gLoJx4Ui5jIBhNwo0LJG9Gyeh9xNnBguDLgMERLLyafy2fz7sxZaDAXj1xu1AM0coh+bQGwPYkl83dU+Gl+/s6t+iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vpu2VOfu; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32326e017efso5610155a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:11:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755619860; x=1756224660; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=wy+8e3/s8uRVjBJ5NxneJJqen7m853rG6XspvVnExYQ=;
-        b=hBzY06zMA+Z0RjIE+68JnJHXAx27kQcZAB6d0e0y7/ivyIBiP1MZdzZcG8K/79f8F6
-         cswF5xkPZHwFy3j9WkOEDIPNWVNdnxfkNXwEy3xRWccKIWJ1cqGGIEw3lsNpBqxtZwQ0
-         q9s+TOd6LoQqWOkPX52PNgzLa9zgMpQZ0OA0vkiYltU5YDTrzViBOyUnWfMhVWaGkfqJ
-         WelQg5iTrtiDmydVGMjyF6NjosEh8v50/E4MmwQoEbH7TMr6ofurx7aAuKuKdm972jwV
-         XAwoa/AaO9iOajRuWKUAZs9VnNrL6t8camIa/BBzk+xH/jeBqd23xWUgcBjSydhP7gmN
-         WBnw==
+        d=google.com; s=20230601; t=1755619896; x=1756224696; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yoRaD8Gomv9clJ6mv1ZK4ODoSCNwAZH3p37Fh5RxQUI=;
+        b=vpu2VOfuRvl/1xJd+L4ITn4yKqX1Ob5BMfRh17H9tjlnoDT6NlR26ejQ48p1HE8Ne7
+         Szhk0+8xdGsJ5eKHOYais/O8ASPC2+YyhASwRc31MWXKVRswABQCtGCx9QYxpajCchcr
+         gMqoTaN4ko4KhiWtnQiHYkZcGoRSqd+ZuNFv5VPcEjgLT3ELaP69rMMcsAltQjTDusLR
+         bvTySR+i/dUHDeJFXnXUv9T1aB+Kb7IZAdN7UZOxyBAcekaCgLy4LljMm7BeEeTXcRep
+         NSsiid1crvZjMwD8N8SRyOZSKUWpcJrRL/Uv/czIHi/2X+9iTOkLde6dWexNLc0hszAB
+         3xXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755619860; x=1756224660;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wy+8e3/s8uRVjBJ5NxneJJqen7m853rG6XspvVnExYQ=;
-        b=UZPhJzaNJD4D/oGwV8udjFbnkRq7Hc4jXI1Pu95K7ilUhNXD9a3buy2ujEnsk8t5QX
-         905IKqU7n9xPdDNm97WDqI0ocfFxxmQtlQLwbyzIT0HboCmIMZw0n72zugnjGeJJNbPr
-         RWfN0myns929ouRofuwt9Zi0gKO3/xxuScWY+xPghLCzqP8KUa5WyfqJ9SAboAnZkcfw
-         93dHNzKdGuLBBmTZTGFsukirgZZGOaxv3FjT0IID4oPG7bCQmaoEFnfuL+vmCuxYl3AH
-         NpzecagZOI/V3w/B+gFI9qHsQOexwOBPESxD+5QLA9jw0ps4Lqaq7LH6B8LHQcYLX4gT
-         L9bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYC+vrYhRctFBIKeqN5negKn28Z/O2d/Yoo+lcNGRyTEIKazREudm/gVZGk4x2P+PbakM190unFwliLw==@vger.kernel.org, AJvYcCVffzkn6BE47JiUeslctRg99WP+BXTICtT5m7qW2vNiCg1fF6JIVq4HKSZA5XXIuXoNX4Pr0zE+9L1V@vger.kernel.org, AJvYcCX1Rn11gcbNSSYXwVGtWf0nfQ1PYGkKPy55NtWzu9v53vwRxMTFfjRAbkF21T5LcNl9n1XTXIkTPmnI@vger.kernel.org, AJvYcCXPl3Be1JT+pN5jezwswami4BtXhYwGI808NWMavHxYBq8c93eKg9gbrd12aGFW5j7QKc8Q29OOadYUVLjb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxVPcz7naAS3Qhofirp0LxY9g01NNxg+SOhnlkJjs3qJWfHIqO
-	cxgwdoIcriIiGTQvX/p1P9x9jzQFU5261f8YZ4Ko7IW5QbmkBJny4zmI
-X-Gm-Gg: ASbGncuwwR2dEX2MGvDEpnwATXWgI5ieJ6Vc818Q6QCYSiNlQxNCLWifTQtCFsZKkPK
-	WMLzwMtIVqKBHhjIeTs2JHewGaNq/leAapvZWJTN5HUnJV9OCNqn+koALzy93mk8ZIxe27d3omy
-	iP3Jh1hqMQyfSFYhN540i304ozkm0uOawWg1XXJYVzlr2CqmZYrtft6+97F2U4iAK3L5S43838G
-	83BFG0GlGg6NDZcX2srHUvh5jzDIzxS6Tl2+OdEJZFSarfr6Az97pSfV/YNkeAJFIgkd9kU1eSS
-	byKArY2WzwojkzHLUmN6WEHhvqvRnuMJQ3XVKd6zMyp9BCpyWVrtihLKNQ+guLC+PA1z1ePcfp8
-	AWm/YWrphsmc45lsunsOq3X21CUhyaHVvGUIhm0EIW3UY2cTtTggYv1Q1h9OG7kS9x11A3YA=
-X-Google-Smtp-Source: AGHT+IF4z6T99xulfCUoGk3BATm3lx9gvGpPoi9uymmz3g3yXwfvdvOPtjqVJktf4fwD6912dJ+E/w==
-X-Received: by 2002:a17:902:f606:b0:240:3915:99ba with SMTP id d9443c01a7336-245e02d501emr42394335ad.5.1755619860014;
-        Tue, 19 Aug 2025 09:11:00 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed51aa14sm998065ad.145.2025.08.19.09.10.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 09:10:59 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5f456224-d26f-4cca-a2f2-31418da287c2@roeck-us.net>
-Date: Tue, 19 Aug 2025 09:10:57 -0700
+        d=1e100.net; s=20230601; t=1755619896; x=1756224696;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yoRaD8Gomv9clJ6mv1ZK4ODoSCNwAZH3p37Fh5RxQUI=;
+        b=n251AFW8Bp5F57gCAMIfLqOb2oT3UA8VWG9SX5COsfcfXGNxBeX+iAcClSkvOqk7/I
+         uF0HM/EPbg+jvCRdNqAbP2ewn5zumpw7qYjdzy2dG4MV3dArqx5YA9HnYeQc5c9w9TAK
+         HH1niNuT+mFCXXbNPoN7mjAt//m/LkrPesYX5FxhXiLtX70X4ouruzbmnnHeTFqr2dDL
+         xq7vRBTCipfV8wetwQCrgx8yJIlEv4YiFU4w2G85WFEIGKXTzOKWaDUoMb8Q6ruNayaz
+         hubV6yJDfWLOeitDy3YfCTF+ZH5L7GOSDOsIDyCFhD1ESTsHRs1whItXTLXEP3VkpLZh
+         YEmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyTMCTb/Tm4nTRt+fD21JEmtGQ8u5gHR6B/wayJQkIVqpw4ZYZ8dxDO6HgO0fVIptUde77uX+QzmtJ1t0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBAq4mpUQhvf8KppB14OQDK8HMSDAU5Znx1iScrdArJQyBAEZw
+	25ehXVFnZ9KQxcGQtsvVB6JsOLF7L0Xxfaaz46dM+yBLwHZvMB9ozlYxk9tQ6xHgPUgU4cgAtyb
+	31svP+Q==
+X-Google-Smtp-Source: AGHT+IGRQCHPlseQFQy2RQEQqc/RDi+2d8w5n9q/GaOtDKBfpp3/RQxvTpdDXLYJw8zgg4ryEqD6oKRdH+c=
+X-Received: from pjwx11.prod.google.com ([2002:a17:90a:c2cb:b0:31e:998f:7b79])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5346:b0:321:8a3b:93c
+ with SMTP id 98e67ed59e1d1-3249711e758mr4315963a91.33.1755619895992; Tue, 19
+ Aug 2025 09:11:35 -0700 (PDT)
+Date: Tue, 19 Aug 2025 09:11:34 -0700
+In-Reply-To: <20250812025606.74625-18-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] mfd: Add support for the LTC4283 Hot Swap Controller
-To: Linus Walleij <linus.walleij@linaro.org>, nuno.sa@analog.com,
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <brgl@bgdev.pl>
-References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
- <CACRpkdYWNgU8PxVaxDe3F6Cbb15J5cgEV1-kgDooOHdBoXXs3g@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <CACRpkdYWNgU8PxVaxDe3F6Cbb15J5cgEV1-kgDooOHdBoXXs3g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250812025606.74625-1-chao.gao@intel.com> <20250812025606.74625-18-chao.gao@intel.com>
+Message-ID: <aKSiNh43UCosGIVh@google.com>
+Subject: Re: [PATCH v12 17/24] KVM: VMX: Set up interception for CET MSRs
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mlevitsk@redhat.com, 
+	rick.p.edgecombe@intel.com, weijiang.yang@intel.com, xin@zytor.com, 
+	Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/19/25 05:36, Linus Walleij wrote:
-> On Thu, Aug 14, 2025 at 12:52 PM Nuno Sá via B4 Relay
-> <devnull+nuno.sa.analog.com@kernel.org> wrote:
+On Mon, Aug 11, 2025, Chao Gao wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
 > 
->> The LTC4283 device features programmable current limit with foldback and
->> independently adjustable inrush current to optimize the MOSFET safe
->> operating area (SOA). The SOA timer limits MOSFET temperature rise for
->> reliable protection against overstresses.
->>
->> An I2C interface and onboard ADC allow monitoring of board current, voltage,
->> power, energy, and fault status.
->>
->> It also features 8 pins that can be configured as GPIO devices. But since
->> the main usage for this device is monitoring, the GPIO part is optional
->> while the HWMON is being made as required.
+> Enable/disable CET MSRs interception per associated feature configuration.
 > 
-> This main device just screams Industrial I/O, IIO.
-> 
+> Shadow Stack feature requires all CET MSRs passed through to guest to make
+> it supported in user and supervisor mode 
 
-Really ? I would have assumed that the sensors on a chip like this are supposed
-to be used for hardware monitoring, and that IIO is supposed to be used in cases
-where the data itself is the relevant information. What exactly makes a hot swap
-controller screaming IIO ? Am I missing something here ?
+I doubt that SS _requires_ CET MSRs to be passed through.  IIRC, the actual
+reason for passing through most of the MSRs is that they are managed via XSAVE,
+i.e. _can't_ be intercepted without also intercepting XRSTOR.
 
-I am not going to argue about this if IIO wants to extend into hardware monitoring,
-I just wonder about the rationale behind it.
+> while IBT feature only depends on
+> MSR_IA32_{U,S}_CETS_CET to enable user and supervisor IBT.
+> 
+> Note, this MSR design introduced an architectural limitation of SHSTK and
+> IBT control for guest, i.e., when SHSTK is exposed, IBT is also available
+> to guest from architectural perspective since IBT relies on subset of SHSTK
+> relevant MSRs.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index bd572c8c7bc3..130ffbe7dc1a 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4088,6 +4088,8 @@ void pt_update_intercept_for_msr(struct kvm_vcpu *vcpu)
+>  
+>  void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+>  {
+> +	bool set;
 
-Thanks,
-Guenter
+s/set/intercept
 
-> (I think it's fine to use an MFD core and split off GPIO to a
-> separate driver, and I suggest maybe you merge MFD and
-> GPIO ahead of the main driver.)
-> 
-> Jonathan (Cameron) will have the last word on it but IMO this firmly
-> belongs below drivers/iio.
-> 
-> Perhaps not in one of the existing subdirs there but then it is time to
-> be brave and create a new one.
-> 
-> It will take some time and consideration, but I think it would be better
-> for everyone.
-> 
-> Yours,
-> Linus Walleij
-> 
+> +
+>  	if (!cpu_has_vmx_msr_bitmap())
+>  		return;
+>  
+> @@ -4133,6 +4135,24 @@ void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+>  		vmx_set_intercept_for_msr(vcpu, MSR_IA32_FLUSH_CMD, MSR_TYPE_W,
+>  					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
+>  
+> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
+> +		set = !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
+> +
+> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, set);
+> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL1_SSP, MSR_TYPE_RW, set);
+> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL2_SSP, MSR_TYPE_RW, set);
+> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL3_SSP, MSR_TYPE_RW, set);
+> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW, set);
 
+MSR_IA32_INT_SSP_TAB isn't managed via XSAVE, so why is it being passed through?
+
+> +	}
+> +
+> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK) || kvm_cpu_cap_has(X86_FEATURE_IBT)) {
+> +		set = !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) &&
+> +		      !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
+> +
+> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_U_CET, MSR_TYPE_RW, set);
+> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_S_CET, MSR_TYPE_RW, set);
+> +	}
+> +
+>  	/*
+>  	 * x2APIC and LBR MSR intercepts are modified on-demand and cannot be
+>  	 * filtered by userspace.
+> -- 
+> 2.47.1
+> 
 
