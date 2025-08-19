@@ -1,83 +1,170 @@
-Return-Path: <linux-kernel+bounces-774773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91649B2B74D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:49:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98814B2B756
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB4A5E8460
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2799177C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B4929BDA3;
-	Tue, 19 Aug 2025 02:49:34 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEE72BCF45;
+	Tue, 19 Aug 2025 02:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5TRrMf0"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25C528BAAC;
-	Tue, 19 Aug 2025 02:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDF413FEE;
+	Tue, 19 Aug 2025 02:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755571774; cv=none; b=DDgyD0LuGHJ0Ar3RXqdHa6xBOFsmy/rqUC0P9ASWSgFC5tqJ8FKuYhmgzJXNYMFTsUYQ4Xick9FZOILqNrDmYArCktsJvYRLwg9zt1ep5jRI6phaV3KTYPpIyEOTH/qiioDpVXPKlNN8D1/zyxqee9hSPi+HBFhJEn1MeZ6nK2k=
+	t=1755571993; cv=none; b=UieSiEa56T3TwkeEZNJMoXe6ZPNGhewyp4huILJC2qo4nTQh4QGivsplc+VEuW9yM4u18mEpze8V4a8r7a/4zrMbvZQjVOIoPU6fVpOpjC2+8YCLBWf3jB4ES7+hyIgH1dFh2BLbwLJkpmOSxRAEYUrGbjwKtTDgPWHx9HP3XDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755571774; c=relaxed/simple;
-	bh=0IMok+uap6k4TA4hL/jsNVKrf7AhzoFb/agBeC2ZSxI=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=SIDkNhBs+hMZjuAWZmw+smjXrRcBERJl5g2viMqyToBXjE37jrgRCE60k74eRQafsVaMpaOhE0nesyyA/ry6ZTYAEuyR68pGP8tfC+3gj82XlZxF+WOMrNKIOT16Yh9BelO3J3gXV3jhGMz5VeCcOVB/QRAxLlQ4I+gzBNKxDRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4c5YvS2gXYz4xNtc;
-	Tue, 19 Aug 2025 10:49:24 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 57J2muRc086754;
-	Tue, 19 Aug 2025 10:48:56 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 19 Aug 2025 10:48:57 +0800 (CST)
-Date: Tue, 19 Aug 2025 10:48:57 +0800 (CST)
-X-Zmail-TransId: 2afa68a3e6194fb-6f108
-X-Mailer: Zmail v1.0
-Message-ID: <20250819104857534LiqtVKwdKo9YvtrWNyVx3@zte.com.cn>
-In-Reply-To: <20250801184542180vULzMsTl45L6TbNV9yato@zte.com.cn>
-References: 202507281628341752gMXCMN7S-Vz_LHYHum9r@zte.com.cn,20250801184542180vULzMsTl45L6TbNV9yato@zte.com.cn
+	s=arc-20240116; t=1755571993; c=relaxed/simple;
+	bh=tgyV1NW2HQLsXKIqLKYV0MnhSgElJ5Wcg/cUrYXpdpA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Gt8NY74ZSd89BWjq7i4hoXOnuZQ1qKSBxGL8PBL/OwglWUBkO54okkcVPUM/l9LEeFs8BRmzaWtZl8N6pA6F227BHaKNxnvhjnITEmC8rwLzmqyO+B7lCjT+Elg1a2TCkRm28KNUKExXyPAnpUl60OdykY1AzDwqZ4wbVQylQ88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5TRrMf0; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24457f47492so31730405ad.0;
+        Mon, 18 Aug 2025 19:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755571991; x=1756176791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oA/KhYaORoAFTQRuhWqe4L9HbtjGll8ZMWl29a9ElnI=;
+        b=h5TRrMf0zm1UYDD1WfVt4ael1WpBORDdyZdX0nHxoA3DGWX7MJPnr4ti6v1W4e5QXj
+         Y5j7WCg0zNNGp+SfVCSwY/nAxQDYk9hZrps6l29TYa6Mv9RQNqTPguUUG0eDU4XOT5LN
+         vhAJeMiugEyX2tv3idLpSjvf7rDN8sGHHsaYyqAu/M3EPOoH2KgmY3qNHC5UbchqLi46
+         IsDcL5lc5mS+MqB6hVM5NTIhi5wfZOAsBXzLRve5h1KVI6fI48/7xsnq+5XoOy6fbWLf
+         nGnWlsdqVS8z9+ConLOx/Nx2FZqk4lrSykoCIC+/iGwAeRGXc1ZgInOR1UKqLtXVBh5h
+         tyhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755571991; x=1756176791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oA/KhYaORoAFTQRuhWqe4L9HbtjGll8ZMWl29a9ElnI=;
+        b=Y1Sfbu/wehgK9JKw2Fmr+woqG7uCrlXvSsbM3O4FbQ6rKXxwZSAOzK2hl2nkV1qJOm
+         wbEerE8XVDCpDWfYqc5gs8d2I7QkEkv3xeZgKLLcHuK7HL6sDhD1RFQtFejwDP8hyoKf
+         GIK8ZQGbJSmw2186XEqevg/HR7cg2ke42GMP94FjcNjNcYqvwQdNFYJtBMhbNja2U1Yg
+         I4dZJQA1qyF5VMzTTg5YapZ9D8/Xu4euDLjUErCa3a5qS5/q2wyVAAiljoVAAWXjLg+u
+         V4RwR5uBNEhhhcxVqQY8JaQ4EF2NLj9GqZq57CRveXqiBiyj9+V4AcAhhgeLTTVTyVnU
+         6xQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsYUfieqXtmvZDhhoYelcNsDiOqmxnqdEKLZveTrXz8aOR5mMsNYTs4on1OThljNumWFs1lCj8@vger.kernel.org, AJvYcCVzVoFB1UFYKq595PqwXTgz18gCYskqG9PQfoMQGBnWJ1BRF1OkG89SSqOpO2liNd1CEvDVdTPQ9tPZ+uAu81gg@vger.kernel.org, AJvYcCXotXopwgiXjTrkGg53U9sF9A6GZO0P7Yv9jEqRIHYVFTCUBYmls93MLLB/8QKGNZ73fwZeK9ZIpTrJLq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0YQnp4wEloSkv4ElPzISkZqiFn2KGpCalMLQa+JxWBei70p0w
+	OrKJnnFKq+1GmB7GaJE6rmAMvWTMeM7mIruF4P4hcSbWj/Ioi6XLC8TI
+X-Gm-Gg: ASbGnctCitRFoSF4Au+ppi+0eqLycKafRVXC3QaAkNLiRR5NdqsFWdzA5GdlJzvKDyr
+	6ziFM6ZsyLJcfLHJ/FgxKxSMlgyVuN+pBMUqmZKS6+IYb+etNqvdHGCoeXBZuH+Suuftvj7znxn
+	SCf0YvmirrmDBx2eymaQfRy+0Jpvn0g1CIQWyf5H1pUAHuQOZBghYjdI/2RK+CtFBcGH3k88AuI
+	yKxXPz0W76CzIVDHRDQ3kaB7Sf4jDMhLPNsLRfRDzSGglsVwkOgfji4KyagTUrVPFUc6dwTlCGD
+	mvVrIMfoYNOpO5fj5HsG1Fz5zK0WUpqZ66hKZY2BPAlgK1QDfm3HPq6Vn2MiqX/z9YwJZvZ1c0+
+	b8iZRLOqZ+L0IDVAGZqUNRNo=
+X-Google-Smtp-Source: AGHT+IE/j+uhqG62YzWvU8u3LYd1nHSZLD7+y2KQPDZzMO4q9otsTVqRa/LftUPDL7SnzYjB/VuSLw==
+X-Received: by 2002:a17:902:d481:b0:240:3c64:8626 with SMTP id d9443c01a7336-245e02bad1bmr11804885ad.5.1755571991264;
+        Mon, 18 Aug 2025 19:53:11 -0700 (PDT)
+Received: from pop-os.. ([172.59.160.70])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f581sm93954895ad.83.2025.08.18.19.53.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 19:53:10 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: horms@kernel.org,
+	shuah@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v2] selftests/net/socket.c: removed warnings from unused returns
+Date: Mon, 18 Aug 2025 19:52:27 -0700
+Message-Id: <20250819025227.239885-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <yang.yang29@zte.com.cn>
-Cc: <wang.yaxin@zte.com.cn>, <akpm@linux-foundation.org>, <corbet@lwn.net>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eC1uZXh0XSBkZWxheXRvcDogRW5oYW5jZSBlcnJvciBsb2dnaW5nIGFuZCBhZGQgUFNJIGZlYXR1cmUgZGVzY3JpcHRpb24=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 57J2muRc086754
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Tue, 19 Aug 2025 10:49:24 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68A3E634.002/4c5YvS2gXYz4xNtc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> Looking forward for this:
-> Another suggestion, we can provide a new command to control
-> the display of either the total memory delay for tasks or detailed
-> memory delays. This approach offers two benefits: first, it better
-> aligns with PSI results; second, it offers choices for users with
-> different interests (e.g., some users may not have enabled or
-> are not concerned about swap delay).
+socket.c: In function ‘run_tests’:
+socket.c:59:25: warning: ignoring return value of ‘strerror_r’ \
+declared with attribute ‘warn_unused_result’ [-Wunused-result]
+59 | strerror_r(-s->expect, err_string1, ERR_STRING_SZ);
+| ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Agreed. I’ll implement this as a new interactive usage with on-screen keybindings
-to toggle between a summarized total memory delay and the full breakdown.
+socket.c:60:25: warning: ignoring return value of ‘strerror_r’ \
+declared with attribute ‘warn_unused_result’ [-Wunused-result]
+60 | strerror_r(errno, err_string2, ERR_STRING_SZ);
+| ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+socket.c:73:33: warning: ignoring return value of ‘strerror_r’ \
+declared with attribute ‘warn_unused_result’ [-Wunused-result]
+73 | strerror_r(errno, err_string1, ERR_STRING_SZ);
+| ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+changelog:
+v2 
+- const char* messages and fixed patch warnings of max 75 chars 
+  per line
+
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+ tools/testing/selftests/net/socket.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/net/socket.c b/tools/testing/selftests/net/socket.c
+index db1aeb8c5d1e..be1080003c61 100644
+--- a/tools/testing/selftests/net/socket.c
++++ b/tools/testing/selftests/net/socket.c
+@@ -39,6 +39,7 @@ static int run_tests(void)
+ {
+ 	char err_string1[ERR_STRING_SZ];
+ 	char err_string2[ERR_STRING_SZ];
++	const char *msg1, *msg2;
+ 	int i, err;
+ 
+ 	err = 0;
+@@ -56,13 +57,13 @@ static int run_tests(void)
+ 			    errno == -s->expect)
+ 				continue;
+ 
+-			strerror_r(-s->expect, err_string1, ERR_STRING_SZ);
+-			strerror_r(errno, err_string2, ERR_STRING_SZ);
++			msg1 = strerror_r(-s->expect, err_string1, ERR_STRING_SZ);
++			msg2 = strerror_r(errno, err_string2, ERR_STRING_SZ);
+ 
+ 			fprintf(stderr, "socket(%d, %d, %d) expected "
+ 				"err (%s) got (%s)\n",
+ 				s->domain, s->type, s->protocol,
+-				err_string1, err_string2);
++				msg1, msg2);
+ 
+ 			err = -1;
+ 			break;
+@@ -70,12 +71,12 @@ static int run_tests(void)
+ 			close(fd);
+ 
+ 			if (s->expect < 0) {
+-				strerror_r(errno, err_string1, ERR_STRING_SZ);
++				msg1 = strerror_r(errno, err_string1, ERR_STRING_SZ);
+ 
+ 				fprintf(stderr, "socket(%d, %d, %d) expected "
+ 					"success got err (%s)\n",
+ 					s->domain, s->type, s->protocol,
+-					err_string1);
++					msg1);
+ 
+ 				err = -1;
+ 				break;
+-- 
+2.34.1
+
 
