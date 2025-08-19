@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-775376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B07B2BE74
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:07:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5C5B2BE81
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 176875A2EEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:04:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1606D7203B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5229253F03;
-	Tue, 19 Aug 2025 10:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="RIEa/OVG"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E869F31CA74;
+	Tue, 19 Aug 2025 10:04:39 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75E13D8B1
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C4613D8B1;
+	Tue, 19 Aug 2025 10:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597863; cv=none; b=GoEc20UimsZg4yLUCGLWmRjEnq6Iq0mC11VPLfhFqfsvVN4n06pzmEBAcpJRtxrzH3LbnXbpWVp6wupGCzzhm2ZtysO61GZWkDv8Wa6UtsLMe+G6SPMn9wETEtMyc4DmUGxYpm/U6ZtzqNiw6x1ob3TsBRAyj3I3HjuHrrauUXo=
+	t=1755597879; cv=none; b=koUPFS5+SOFzKYyhKJgAtJKRmS3YjxkcKepN8b4KPVveHJElbN6l+BxLL8aj61ZRnCTiHcdqvp1Lzi6MCUy/Zy2o6X7+Eauv/53trlw++xoBFamm1TFgPzl8L3H19yYaSIYPwEfoAFgqeQj2A61w1WZDYWgAJCYyxMgwkxiYGtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597863; c=relaxed/simple;
-	bh=hlJs2knitb1lARST0gkSxsBtUoXWm4wfC8UP8JL7gsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=odieynQKrkU7+ui98yFqsFe11yn4eL2P6MAZnH+O4xQfbJo0EE9Hg5PCDSJOL2hPv+wc44sGD4kYbFNv2smYt+lhxNUpJx4UhR/EW3T9Klh2BfZtE3Ae+GdFEUu6Yi7up0AB9WueNVAVrtMul+87d5H9I0vrfBALDrjLX5Chy14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=RIEa/OVG; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
-	by cmsmtp with ESMTPS
-	id o6CQuDQ7UJLhFoJCQuu5qM; Tue, 19 Aug 2025 10:04:14 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id oJCMusWcjQb4IoJCNuoQpU; Tue, 19 Aug 2025 10:04:11 +0000
-X-Authority-Analysis: v=2.4 cv=GcEXnRXL c=1 sm=1 tr=0 ts=68a44c1d
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Zx/jWLPsUjbk4SBooCzjauSYqfhONLohftEAL4RH0So=; b=RIEa/OVGX3YEwQhQ6D3CfSivHt
-	pDUeKibg3N9gVpPdaYM/4Eju1KYB6VgXnWzbGxUwucKrOcccuEJNfySR7atHoUTMyZWYWf1jSiqg/
-	S1idIOpSsRjQiygS/V3mWUsavxYe5nERf38TLuiW6lP9yRv5kuUInjldkrVud5r97tCzr3nSLWz4R
-	nn744gG30mhz2q4IJdhmbo2N54V/gpj98MDVQFgQL/tTIMJ7dPIf53Sf75R/lXfz3k2GMdpK/SAzu
-	ap4g7H8bRZWGBmZwdCkrVHAMq2ex4H/qreguWRuy8RHtfHA1fZbmtoWUSFNq5u9rA4gKzxOO3/hfE
-	92pxYGZg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33660 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uoJCL-00000001zF3-2rZe;
-	Tue, 19 Aug 2025 04:04:09 -0600
-Message-ID: <c3dcd0ff-beac-45f6-919c-9f58a7d65d7b@w6rz.net>
-Date: Tue, 19 Aug 2025 03:04:07 -0700
+	s=arc-20240116; t=1755597879; c=relaxed/simple;
+	bh=nhMJ3waYvDL0W5VCB0R54bNkmZTRzkLn66dCP2aOzzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KMHppAv27zH/riFAGoQyNnF4CMcuK8lIAGY7vLav+kWrlFbm33lXfOKrYuX2oXlmkMFlF8lGd7dGn7sp8nQ/UyIF05wLNup0+gttAiF0AuOr6otd3PKjHzO4VdCWNveftzdProibkpNPkHsEdxtcoL3emV8L+z0poJ+tCIKHsu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-53b17193865so1499829e0c.0;
+        Tue, 19 Aug 2025 03:04:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755597876; x=1756202676;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lJlWkFNwc4UI7xTpJnUAjxLWy6ein9QK+nD83rWRU2U=;
+        b=YqaF9osGW3iNiJkRxN3/qxyEf1R4IKFqM0xgrQcSjHHpJa0ALnekyo0APHnCpx0Dug
+         clGDEJM7YoltbZzf3y4ssXlpMDWdX0FfWaZizy12l8BVFxMTZNB4dct+R9Os5aZH7KCb
+         sp7LV3VlpKLn3WYf+9FajGU36EdIR79U7H1OnFbCrG4lZXpEubFpFNw9cCdmjyQL9DQn
+         XvTLyit/xt/92BGogzCw4ne//k70gX6i/4awmxKbCEw9gLGnH7/RpeDjxttNqf/B+DSJ
+         dtQEQdUjS6LPxa0WDqJNZKFkb5d2h5gwIt6AXV8aB0JMMznddW/WFglHHrmYHLNGKZtI
+         xBFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5kE11fKeCK9sTvtLlhcuNQPXvWYgxZ/ftinxOkOO7VZwhZHyduGViIQ3OeN1XzqDfTAPG7f+EbqyEt/9gVTYUGF4=@vger.kernel.org, AJvYcCVnarQCFdaVXMcgcOYLznLPykqE8OkyjEwXmRKf1axRh7C0N2z6PXjHgG56Z0/xtnejFv0syJDupL8HeCap@vger.kernel.org, AJvYcCWTHWoSUWtoB1OaNNASTdRAogNzclsyx5iudTn9a/VNPSFdwYWJHVFRddXZ9QPRBu4aPkhga2sF9Vda@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMkdjphZawMf1I1yPd0IHYOsdCQ5mdkamKY7iCeqWbbzVpwxph
+	FDRpQ75T+fW1HXVbK/5J2w7mLgjwDGlZoZ8gA04SMl8QJ8fBBTTRPESt/ooK1kyE
+X-Gm-Gg: ASbGncujAqlFYBSruAmrDNzpQHvI1hkAVRlgLi3I4nMAhtMYFaUPExhhlySsQFR/S93
+	kEtTNvdFQeMBf+EiLe/ZcTKAUBd8Z2gRQHjKayuVy+lZQ2ld9x1orJw3eO0qjA+meY8FyXQxjDV
+	reO9V5Z0VGNQS16Kt5ph6znPwMWnJU/a8JUZc2wM1m3GoNgO94Bh+3cNGbTcepC4DdwD/2AetPB
+	x/3+rkJZu7mFIMcUBoBZSBwwW90f/WLVLc+3tU0xcze/sm3l9lqHZQ00SIMPzKUymx36FUkRyO7
+	zexIbEna8I7kDNGa3NjV57AADkh+6dTEvzolYu5CgENRkWC4Ufz7VTzJs+nfHIbLnzsq46jd//A
+	/mE9EZn8mtv0U0saaW5+dZBAc2OJdryKsKm/Twv85d/BfyLB7+V4PTsI4SmvX
+X-Google-Smtp-Source: AGHT+IHlSsALr/U+WvxQxhrBN9xWARlUTqCQquT6G67WYhUL4OSDCuXol06J4f6PMyNSYIsYBcyfBw==
+X-Received: by 2002:a05:6102:3706:b0:4fd:3b3:d4b0 with SMTP id ada2fe7eead31-51923d37e34mr535532137.20.1755597876013;
+        Tue, 19 Aug 2025 03:04:36 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8902780d0easm2354869241.11.2025.08.19.03.04.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 03:04:35 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-50f863d662eso1396476137.0;
+        Tue, 19 Aug 2025 03:04:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUobAYZVW0jV4hviHWwVI/R1hO3zxBs8Okla8Sp54/k75hgsOPF/nbVjlL8q1rwDNYNXA9kKW3Fensjra3NDbOzoY4=@vger.kernel.org, AJvYcCW5MrJngfJQlaVKj+eIXcxxRLYGokyWysaAckalx7/2/LY/qhlnrhCrcmwPAsrEFslKT9uuN2LgKcb2@vger.kernel.org, AJvYcCXvrSQv5AG0przTOwdpme07qxPRfAQMonz3uxzvs249mWW/VoWbFvsO9amtjB0/4NHADgY2QPcVPHDJ0EGJ@vger.kernel.org
+X-Received: by 2002:a05:6102:3e89:b0:4f9:d929:8558 with SMTP id
+ ada2fe7eead31-51921bf488dmr645140137.10.1755597875622; Tue, 19 Aug 2025
+ 03:04:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250818124505.781598737@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1uoJCL-00000001zF3-2rZe
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:33660
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 17
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfD1DT2iIfjqxzJnGxqFQaUs9rrrbjjKr3ssux+XxLzyVjBn4TeiOyUek0pGmgtMeyt4FOJQQnawGGFBFCjwIGOA/d7PCpq3s6mtEVfC/P926Aog0pf1U
- IhnqkjXRCq7F0oBdv/4lWfNYD9w2lwrkRw7XmHmuxDyTYEp65vlkUAaoPcUu8xHIcK9ibIJt5PxnjMb5yh1hSeD50J4vF0Phog4=
+References: <20250727235905.290427-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250727235905.290427-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Aug 2025 12:04:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVuMQ8gk7BfqS3_ckNvWuB2ofyWmSuW9xcscDFmKxGrhQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzpimHfkylZhKiWWGzMW_6TYqgkeSKP6CpQ8wJpP5FhlHv8WCtrU9fD57U
+Message-ID: <CAMuHMdVuMQ8gk7BfqS3_ckNvWuB2ofyWmSuW9xcscDFmKxGrhQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a779g3: Invert microSD voltage
+ selector on Retronix R-Car V4H Sparrow Hawk EVTB1
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/18/25 05:39, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.2 release.
-> There are 570 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, 28 Jul 2025 at 01:59, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Invert the polarity of microSD voltage selector on Retronix R-Car V4H
+> Sparrow Hawk board. The voltage selector was not populated on prototype
+> EVTA1 boards, and is implemented slightly different on EVTB1 boards. As
+> the EVTA1 boards are from a limited run and generally not available,
+> update the DT to make it compatible with EVTB1 microSD voltage selector.
 >
-> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Fixes: a719915e76f2 ("arm64: dts: renesas: r8a779g3: Add Retronix R-Car V4H Sparrow Hawk board support")
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.18.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
