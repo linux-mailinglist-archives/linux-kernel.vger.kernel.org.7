@@ -1,193 +1,228 @@
-Return-Path: <linux-kernel+bounces-775049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F9CB2BAB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:28:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E9CB2BAB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406731886C95
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272F23AB1B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DD12773C0;
-	Tue, 19 Aug 2025 07:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E9F27FB2A;
+	Tue, 19 Aug 2025 07:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gmw9HCgB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qzjFMNPw"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE681E98EF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF01204C1A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755588509; cv=none; b=EhRnehHB/wd8PkmmKBHHESqdQdP0wlKzdrxgasJkd8lrpDyqke45NruTIzCV1/vok4fa6GxoD6X+wUQHLccna24yePrZdBv5pzGvv/BTBTGwrG0eJB5P2Jn9hUWoyhjRTXgaGyqXZSo3VpPH4nnzsI56iH9JXsLK7BLrkoJ8tP8=
+	t=1755588558; cv=none; b=NetgvYmGwNHh1PS0eOT46AnLVK7IiSorr2++qu59TSaINF2fHbg5+DLWybV5S0RgmXyhG4aLTNGfQKEq++lAaH8OQyzWv3ZQaOuH8mA95lzwfWQUsM8XIbxiEhjntu7Yify91oA+WzUII8rrBgxL/tqNrVZ6DXnVtnA7xCDDzKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755588509; c=relaxed/simple;
-	bh=cT4WYpP8Qioy7fE042CTr3k6lWVzIvtbP3YdH+eh4Aw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZNgM7oq5C6eEY0W5zE82Vt7LcUXze28MKDZdYFN+H9WEKHfy3eI/4SFq/9nHuxM0NbiE1WO29Gi3PoXHvyLmF/YJLwJ4MHcOOtb9p/pXRZpjvg9zpoJ4gw3koq9N3ys1YTMFEFcKlRpaYXEDpJDzov0AvVuJxOVa62cECoIpsK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gmw9HCgB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755588507;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=C67CXYyWZPL0PYQM1CJnzY816eVbPhG0ubvsjsSE9lw=;
-	b=gmw9HCgBihkdRlU5fpFebSn3u616/b+C/3/4HN/u95qlXuJ+cs7pvf5GOoWhXhciR86LCZ
-	kqFYEcDe3co60tBJO22LX0SNka+WpBj+LSZj34RZOV76Qjv2NJH5ixl+IIsb4D/WXAOWUX
-	3ehIUbJ4odTCzuPYjdEFWPCguJpQ/CY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-428-fcNwhcu0NRe0PffZXZU5Hw-1; Tue, 19 Aug 2025 03:28:24 -0400
-X-MC-Unique: fcNwhcu0NRe0PffZXZU5Hw-1
-X-Mimecast-MFC-AGG-ID: fcNwhcu0NRe0PffZXZU5Hw_1755588503
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b05d251so28043355e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:28:24 -0700 (PDT)
+	s=arc-20240116; t=1755588558; c=relaxed/simple;
+	bh=m1aYf3xZAZVvz4CxnxX2rny5oQi/QetklYuiYkrwR7I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=SzdVRSH98YH5dmFGlXqTP7mPIbIvtHl2BvzAtTUt7+MW43uJM8u/CWSBj9oyLv+QX+GBk5JX+Xue0qg5rbLU+WDhh35LXEEEKxXTF1cVjcaXk8zsBKtahWsMPoOLVrfnRnkfWWt8fC/sHcWzOBNRkEisULcqqZwiGh/7vTS25jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qzjFMNPw; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b793d21so7517681a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755588555; x=1756193355; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O9ZFTd8tc9t9Q9OjuU9qYv3SoRwzk7BH/sXXxyKX4kU=;
+        b=qzjFMNPwXMk3Baem+MODxVSu5zgC9JTBI95bCL8lP6qv53TemneQBGUzYw/+Pg+irv
+         css65pnCr77eZwVQ0FLq7bT67GgNsoBKdj3GwReLKFUpHcntBOhXQRcaYY3f0zZwXqUn
+         cGzWv4NXaakj6dAGkMauEINTs8hO7W8iw0uo3csRXd3sfSXcIISELbj7fd554hH4oU+X
+         aHnq4Q3rGhXH9kdZAudwKSFXqC7DBSBivP2BkFjqNjn7wXTKKCmFXHLP/xwb8RgzQRMM
+         56Z8Loizxbt+SDHMjdX7+ZpGCwnDNwXQcfPRi+xItqKI3HQ4i8lkS9xLwkKNvIfqQvTo
+         UTSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755588503; x=1756193303;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755588555; x=1756193355;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C67CXYyWZPL0PYQM1CJnzY816eVbPhG0ubvsjsSE9lw=;
-        b=liuQz9V3ts0V6q+hmVhaxHag6/2Wr2AO65HbrOFllgXXdq4XWXJkgtEYrfLG1dUnRG
-         B5P6bNN4wcMxu4f6u1XnIAOLVX4UkNcZNe4++aLdrbmBXIRJGU5dv5l6aMJn9QyL/hlu
-         OFH3NQMWcuaedJEcnA0fpGmxc2ihXuWCxCcSVhymzJN9itkt5fzUrNTifeuO3Ouz7IPu
-         0kpG3lwAqbLVmF+YXPGHd+oq5XTwFEUAfPuXWM5mZo+QZBxCj73+8WHOh/zD/wZZLMUx
-         nt7I5sxH1drUF+Z3El1bMB9wWMBRz/SjlkJesyeZb2pvAU6K8d2LTTboHVMyf9nMqhrJ
-         408w==
-X-Forwarded-Encrypted: i=1; AJvYcCXH1/R4mrBtjbV+/Ylz9fv5MupXfZXj3UGl7ACIeW01K0taCSbusXdNXMdS7qBrppubElrtivtrIf9i8l4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx+sd4XyiHR9poBsomJqIZz0tD+x8MtvRDhFfyoUgAGf9u09WP
-	KGOSmqh7xEX7gN+yv1CVts0Tag25tGC4CDVNlhMAlk3fLl9DKQKWVdFXTxdIbbijJLhGIYMqwom
-	k5/+E8IPCsO/7LOLJFT4FsrTKNGah7PCQnjmKOSJO0nFHRTb4MdRiG8LvqaHVznWMvA==
-X-Gm-Gg: ASbGncsMw0Tyna4Xp8EWEA+DzFlN6hNQ9a3YFWsVNVcxz104tA1VWyqYcgUEzZdyaPB
-	YPI78Vk1dbN8N7SwzTm4dnYnxMSh7Gek20UbGd/JpG3POEnL34OxTdJ42alWriqfuBBMdf3IEg4
-	KtHN7Bh8k5QazG7Kz7Xmo+2Z9jWmtzzdquuIBwGOkdqGzmH2ILytFimHeJL1EG6rRGuSG5HXHOA
-	1anozO3tO9s4tJ8i0cHz8HtPOC+k+dJRoCD24FnjZJPIMCm8iAzzOhQl9mzHbjOQ+q+2bZBvmqG
-	K+EUpX8f6dFp82fD9O+kUHj3TxttKoxt8L8spuV4aCXeFucISIQcWO5j1bO9bQNFb4s0kySNkXr
-	YP9GRiwrglqFfN1w/FGX/fTfPAjS3cRA0GMrhuDA48AIaCnVgYGOTzrqzCBO8F5vkpIk=
-X-Received: by 2002:a05:6000:4304:b0:3c0:7e02:67b5 with SMTP id ffacd0b85a97d-3c0ed6c3818mr1051975f8f.61.1755588503164;
-        Tue, 19 Aug 2025 00:28:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGj/WjMJBeZuYEAK7dIsLoScszwyn3R+S0rUMZyxDPtfbSfFcyjc5kvMjglgW5na3LwlXjxrA==
-X-Received: by 2002:a05:6000:4304:b0:3c0:7e02:67b5 with SMTP id ffacd0b85a97d-3c0ed6c3818mr1051947f8f.61.1755588502732;
-        Tue, 19 Aug 2025 00:28:22 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f07:8700:71be:5385:87b8:5a98? (p200300d82f07870071be538587b85a98.dip0.t-ipconnect.de. [2003:d8:2f07:8700:71be:5385:87b8:5a98])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c16fasm2472720f8f.35.2025.08.19.00.28.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 00:28:22 -0700 (PDT)
-Message-ID: <38734ae6-012d-4630-8bf3-efefb65f0d23@redhat.com>
-Date: Tue, 19 Aug 2025 09:28:20 +0200
+        bh=O9ZFTd8tc9t9Q9OjuU9qYv3SoRwzk7BH/sXXxyKX4kU=;
+        b=s5ZKItZ+zSn2o7t+lITFAM/AGEUS11OEOPqJISwgpLk3to3TImso4eRCxSqpIeZrrl
+         zBqGz3sbY0/xIKULy9rJXhjFUk/TVMJZ9TIvjmzfcPV+eEYd+C3EMPraSLyM8nI7EOYY
+         0k+Iyuwb2pwaAqMaBkVnP4SwU01jaXqyjqSPvr9wa2Uliz5cT15gCRRsBtxiZyUheeRV
+         pibzdKk2/L+k4WRt2tk9iPA/S5aae+L0cuIA3IamSxDMq6U7IMUwKt66hqyj3ODH2hn2
+         MjbFy+eMhFCQFdiPACGRXLQSU334xPm3LPAsAO4qg4LyXHpIZzYxQrPP0b+OEliOLFdw
+         0QMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRxpHf5dik0LxEOxsPt7vSQPG33zwq8y2riB/ilzO2wiZ7UA6aZBaRyYQ9HSwxZZXeUjlwoeAkvouU3Cg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0WEJ4AXfq/Nv8bgWr9L8MiCdkok3dz3rTJw7hBlbdWZWALIbd
+	aTTcGx//FwvJVposyzTy8mL69wJjhnjzcJTqLrzZwvmOlg9v4bUhWz/GuNeTsEdcNh0=
+X-Gm-Gg: ASbGncvCT8ZoGLjII93z0iU22xN79L0h/YhZe48BXPPzufOuBsRqUk8BOAMszwHdOyJ
+	Sv1MogO1wrlwwyt68mcpPWej7U/o1a/u3tYMlLJsfeyYus1+CBhBuHd7z3AXBiVuIPe7ppMlZ+b
+	HRkqBGCnCe6eut9o6Tv32jb/vSbOaGr0a2QydvPnA6U8V+NeHHQTxfrou1R6dp5mwAXo6nBYNs+
+	9+dsSjkFJ4PxIwajNjyrMvrrY8s0sOwYoghPCBEUDFOGvx+z3/1yls2N7wlfJV2VEk08CW4GTqm
+	lt1/OJo2JWPNjNkl94iXvfdHJQ5AOzPa+WltyPWF/WD91rpoQdl6yGHPFc7Wq8egRcbW4IpWdWe
+	XunkA2qvLrLDTaA==
+X-Google-Smtp-Source: AGHT+IE9wLYwAW2XtUVFFG4Q3+Y1T5+7hm1Q9Ud5QfsQac1N+Q9TsAULmLjg/st6avEy4koFeXHX4A==
+X-Received: by 2002:a05:6402:440a:b0:608:f493:871c with SMTP id 4fb4d7f45d1cf-61a7e6e082fmr1337394a12.14.1755588554037;
+        Tue, 19 Aug 2025 00:29:14 -0700 (PDT)
+Received: from localhost ([195.52.61.108])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-61a755d9d26sm1201899a12.10.2025.08.19.00.29.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 00:29:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Fixup PATCH] mm/selftests: Fix formattig in split_huge_page_test
-From: David Hildenbrand <david@redhat.com>
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, shuah@kernel.org,
- pfalcato@suse.de, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
- baohua@kernel.org, richard.weiyang@gmail.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- donettom@linux.ibm.com, ritesh.list@gmail.com
-References: <20250816040113.760010-5-aboorvad@linux.ibm.com>
- <20250819041239.167537-1-aboorvad@linux.ibm.com>
- <8142d36d-2a0e-476c-8250-1a69c1f92913@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <8142d36d-2a0e-476c-8250-1a69c1f92913@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=e73662955d5075bedea110cf04232664a8d147c373d1a0aa2f0fc2ec91d6;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Tue, 19 Aug 2025 09:29:02 +0200
+Message-Id: <DC6876NJBA2V.3OEXXYEA6Z9TK@baylibre.com>
+Subject: Re: [PATCH v8 1/4] dt-bindings: can: m_can: Add wakeup properties
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Markus Schneider-Pargmann" <msp@baylibre.com>, "Marc Kleine-Budde"
+ <mkl@pengutronix.de>
+Cc: "Chandrasekar Ramakrishnan" <rcsekar@samsung.com>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Vishal Mahaveer" <vishalm@ti.com>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>, "Sebin
+ Francis" <sebin.francis@ti.com>, "Kendall Willis" <k-willis@ti.com>,
+ "Akashdeep Kaur" <a-kaur@ti.com>, "Simon Horman" <horms@kernel.org>,
+ "Vincent MAILHOL" <mailhol.vincent@wanadoo.fr>,
+ <linux-can@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250812-topic-mcan-wakeup-source-v6-12-v8-0-6972a810d63b@baylibre.com> <20250812-topic-mcan-wakeup-source-v6-12-v8-1-6972a810d63b@baylibre.com> <20250813-energetic-hare-of-pizza-6ad6df-mkl@pengutronix.de> <DC680MA7LMN0.33Q95D1CT5TVK@baylibre.com>
+In-Reply-To: <DC680MA7LMN0.33Q95D1CT5TVK@baylibre.com>
 
-On 19.08.25 09:25, David Hildenbrand wrote:
-> On 19.08.25 06:12, Aboorva Devarajan wrote:
->> Removed an extra space in split_huge_page_test that was introduced
->> by commit 4b76e221794b ("mm/selftests: fix split_huge_page_test
->> failure on systems with 64KB page size").
+--e73662955d5075bedea110cf04232664a8d147c373d1a0aa2f0fc2ec91d6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+
+On Tue Aug 19, 2025 at 9:20 AM CEST, Markus Schneider-Pargmann wrote:
+> Hi,
+>
+> On Wed Aug 13, 2025 at 9:23 AM CEST, Marc Kleine-Budde wrote:
+>> On 12.08.2025 11:10:22, Markus Schneider-Pargmann wrote:
+>>> The pins associated with m_can have to have a special configuration to
+>>> be able to wakeup the SoC from some system states. This configuration i=
+s
+>>> described in the wakeup pinctrl state while the default state describes
+>>> the default configuration.
+>>>=20
+>>> Also m_can can be a wakeup-source if capable of wakeup.
+>>>=20
+>>> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+>>> ---
+>>>  .../devicetree/bindings/net/can/bosch,m_can.yaml   | 22 ++++++++++++++=
+++++++++
+>>>  1 file changed, 22 insertions(+)
+>>>=20
+>>> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml=
+ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+>>> index c4887522e8fe97c3947357b4dbd4ecf20ee8100a..ecba8783198fc1658fcc236=
+d8aa3c89d8c90abbd 100644
+>>> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+>>> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+>>> @@ -106,6 +106,22 @@ properties:
+>>>          maximum: 32
+>>>      minItems: 1
+>>> =20
+>>> +  pinctrl-0:
+>>> +    description: Default pinctrl state
+>>> +
+>>> +  pinctrl-1:
+>>> +    description: Wakeup pinctrl state
+>>> +
+>>> +  pinctrl-names:
+>>> +    description:
+>>> +      When present should contain at least "default" describing the de=
+fault pin
+>>> +      states. The second state called "wakeup" describes the pins in t=
+heir
+>>> +      wakeup configuration required to exit sleep states.
+>>> +    minItems: 1
+>>> +    items:
+>>> +      - const: default
+>>> +      - const: wakeup
+>>> +
 >>
->> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->> ---
->>    tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
->>    1 file changed, 1 insertion(+), 1 deletion(-)
+>> This breaks at least the stm32mp15 SoCs that define a sleep state:
 >>
->> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
->> index 54e86f00aabc..faf7e1f88743 100644
->> --- a/tools/testing/selftests/mm/split_huge_page_test.c
->> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
->> @@ -544,7 +544,7 @@ int main(int argc, char **argv)
->>    		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
->>    
->>    	nr_pages = pmd_pagesize / pagesize;
->> -	max_order =  sz2ord(pmd_pagesize, pagesize);
->> +	max_order = sz2ord(pmd_pagesize, pagesize);
->>    	tests = 2 + (max_order - 1) + (2 * max_order) + (max_order - 1) * 4 + 2;
->>    	ksft_set_plan(tests);
->>    
-> 
-> Please just comment next time one the respective patch as review comment.
-> 
+>> &m_can1 {
+>> 	resets =3D <&rcc FDCAN_R>;
+>> 	pinctrl-names =3D "default", "sleep";
+>> 	pinctrl-0 =3D <&m_can1_pins_b>;
+>> 	pinctrl-1 =3D <&m_can1_sleep_pins_b>;
+>> 	status =3D "okay";
+>> };
+>
+> I am struggling to find binding documentation that explicitly lists
+> this sleep pinctrl state. So what is the intended purpose here? Also the
+> driver does nothing with this at the moment right?
+>
+> I mean I can also add a sleep state to the binding or just leave the
+> binding empty so it can be anything, but that feels wrong.
 
-To clarify what I mean is something like this:
+Sorry, I missed the sleep use in the driver, will add it to the binding. I =
+am
+wondering why it wasn't in the binding before.
 
-https://lkml.kernel.org/r/3dca2de4-9a6a-4efe-a86c-83f9509831fc@gmail.com
+Thanks!
 
-Gives more context when the subject directly highlights to which patch 
-you are replying.
+Best
+Markus
 
--- 
-Cheers
+>
+> Best
+> Markus
+>
+>>
+>>>    power-domains:
+>>>      description:
+>>>        Power domain provider node and an args specifier containing
+>>> @@ -122,6 +138,12 @@ properties:
+>>>      minItems: 1
+>>>      maxItems: 2
+>>> =20
+>>> +  wakeup-source:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description:
+>>> +      List of phandles to system idle states in which mcan can wakeup =
+the system.
+>>> +
+>>> +
+>>
+>> One newline should be enough.
+>>
+>>>  required:
+>>>    - compatible
+>>>    - reg
+>>>=20
+>>> --=20
+>>> 2.50.1
+>>>=20
+>>>=20
+>>>=20
+>>
+>> Marc
 
-David / dhildenb
 
+--e73662955d5075bedea110cf04232664a8d147c373d1a0aa2f0fc2ec91d6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaKQnvxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlPP
+rAEAix0I/gCgDfYKzMJnmHATT2WVT1En56x9X5XEKWTKVuEBAMYebehnEGgV7WUd
+4T8g6EWORqZoNeTDer5yG3A2eCEI
+=Ol5u
+-----END PGP SIGNATURE-----
+
+--e73662955d5075bedea110cf04232664a8d147c373d1a0aa2f0fc2ec91d6--
 
