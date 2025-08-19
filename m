@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-775949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB517B2C6BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:17:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8799CB2C6AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9C6525285
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD301BC5461
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AF3223324;
-	Tue, 19 Aug 2025 14:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4188122B5A3;
+	Tue, 19 Aug 2025 14:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Kn33S7ms"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="TFfy3k/r"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFBB22173D;
-	Tue, 19 Aug 2025 14:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DDF2253A1
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755612734; cv=none; b=WSE1UQcLuBShRIeJtMNk3GiprngQarPIehUatHjHEWSMHB9JcWZHaF5DrMauZgVP+UUu576U4QeEhESegijHNStc7Mt52cFakMKDPULEw/BWpnwJRILqfJNxrY4U0wM/qHtIykFTSDGp+f+IohJ2Q832Yl8c17iN4Oe8Z2Jtvlw=
+	t=1755612758; cv=none; b=uYBKr4mMmcCHu52GT6065j02jYdYG9h59cu1P6hCTe/ha3aOFy7Y/P942Aigl/EEw358cRp3WjEq2CVg73LsGwfxh7PCIsLXBa/GrWUOKm7h8FVpJqPU9Fq95lAeMcJCF6M+BwL25M9Tmru8iem4UfeGpKgP0kCcuova9udHufg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755612734; c=relaxed/simple;
-	bh=ge2meW4wDhR3pK7MFHommUvVtySG9dJaaFNMBxeqzrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oSo8sWnGDWIbuhS25NWAatMr56ZmgTfoUaJXsDEH0cVTsmAmu5b+eTdUlo7Z6hzzmcv7ijQDE3rDoVr7adRN6+94xzYxb6tiKU2k9gDgoEOzZmYYnyfDkBtRV3dhrNkdjHqy4Au4uhKRhjumz/mvAJ2i370y9IVuQtZEtJxJaWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Kn33S7ms; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9ba300cb9so3358508f8f.1;
-        Tue, 19 Aug 2025 07:12:12 -0700 (PDT)
+	s=arc-20240116; t=1755612758; c=relaxed/simple;
+	bh=gt4mRYfjODV9zhqfPjnfdU89Lq3jwQVRdixAwLEWLSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HA6HH+4oy801cV49DlLMi09vHt6TjiOHhG2mTsDOa68fmfyK9SWX6YvNsYAP6pKfxAgCgsrK+iA+SV1hy8hCXfu0h8FDAID112VI52tWra4iWttE4PTBBboh1/dbQ6XwyjAAbCjnoFIiP8KhtP7FfGLVb9CyWBdrivUXzN3Hmyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=TFfy3k/r; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e870666dd4so626980985a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1755612731; x=1756217531; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1HHpf1YrkxxnOj4AkD8QjsFlDWSc1jFIYwktamOS/So=;
-        b=Kn33S7msj/8NPHkDUOaOS1Bm+mDWLyKrHE1LzsTwOlhBoKaQlhNZIW84e0QPVfvXx1
-         X2fJ60qghoc6pm74udaiYUfsNprvM4gxjQLQNywXNcR/aozP7HZp5slemeemUoR/vsPr
-         /0PSnnrUrMhg8YLeD3zzRa+Hh4BoLztNx37vf4Sz0uer1G53GwdUusVAzyq8Gy3LgWIB
-         T3X0bX16XYnOG4q6V6IQX2rHjB/zojsnVzmssX8wZWw4B8gEE1W7c5kOY+LMABBm/wyQ
-         sfi/joP/LqGXlUFVP0QDlstO1aTrB7torwNidBrAgs6js2A1K7PtGD3MByxg6xwPbojz
-         ttAA==
+        d=rowland.harvard.edu; s=google; t=1755612756; x=1756217556; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDLwUY8c5UikKYG43v+aAUoS5K12CXkZu1S6tpWU6eg=;
+        b=TFfy3k/rnhuwPkiNn4niFNUXwgmnpl7DS6gFMh18k8UWlbgbmf52NdHiFYbB1xjydb
+         wCJ8p3YuHFEkvLlTWoju5a+eHqH9DGz3Hbiif4xV9o9NRpsNjOArzd4M9YvD8VP75ZJX
+         pkDOzeFkrTfwpYv+dwmZ45w6j0PVnOoFVlUotxpoU5EiXMIQkDlxBuFLS/CODJVeQqVl
+         k2B0iiPHVSDMd355ILgBmMiJ2OxKEf95gtQPrCvxudYLMzuAgQiqJgejHHcARvVrKaGA
+         TBtvv0JrFfzEQD9NazxIe/YBHGEyTcHnvSc2Nw8HDkbzcJ2GJdX/JDfZf0O4a5rGMrxI
+         pooA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755612731; x=1756217531;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1HHpf1YrkxxnOj4AkD8QjsFlDWSc1jFIYwktamOS/So=;
-        b=nAB5dzuqaJhJ0uvl5FWG/+14w/c0U7LvQIJdAgmF4njVmikCxOQ4A3SpCN3W4gzh9o
-         FGAYR7ZahE/7D91w/fAOVX/6hN61nrgnRV/GbXAAayQEB2o8W9oefpWdBmeCoLFNsbin
-         VrpjQU6lkD203lKniT8Z6L8kx7vSXu7+S2ZsGxQey/Kvrxsy8s/80STxar6aGjMMh9OM
-         FXY4VgC4nqbQJpGY6hio7RHEPr4/L8jMxinSglscoWfZut9596Gg1jTp+v1MfBr0/jAZ
-         fSKFT4WV5il5iSW/QeVJJZh3KnlInQo1Xo0VHA7SWJotz6Nsy+HsLPSXRz3kbLT53py1
-         f3ww==
-X-Forwarded-Encrypted: i=1; AJvYcCX72Z5/PQs+qn7kgyvxdflmbhnMNknwPWRVoYv9DRhCDxr0AsgqEcjikh4+k49gSGZ4+qrGwWMJ@vger.kernel.org, AJvYcCXdbxgJTr408vpF7nAuxAtEKkQ5E87yqIVuw2+4AVIA97sfG4GWiQeQCyxp0gUlig/ziJnIJ9bUpJgs+8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyKaGCqoOG5onq3GUqXLavivEvRcgx88/BkkWt3pTRruO9R2D2
-	XB8e9XbVJIsMPutawrrbHPyyj+lA/nUVnOPDSInx/fTyaTuq03TXR0A=
-X-Gm-Gg: ASbGncuEu3Wu5urH59g1e//4oRpSdVYXe7XzZVEKwoekOIr16GAug3rdo0Nd+QLdtFt
-	owtXfUuHZaYlHO/7T83WDj+2JB42eNTekO6EFOyGDnRYzwsamgyu3mZsgWx4+kfUPAT6KXW8gt9
-	fy7pDdWe+Fw+/2gv4017d9HqiqcdANiVCc7H5SEUdljn1pf7dbs7/9tnM0MHeULshEj6sQtSo7a
-	mkFJ4n5KyMT9opvk8OYHGYs7sx5LS1wfMzOaN8qj5KakYBq8RAMZGB16P4xMrUuFEO+3J85yIdI
-	QmJ/g4Ghu4G8wLvpM6VTMJ5kx6SrlFAVudfIgfcLQomnYXTEPJhk8BIWG7lo6moSSFMoe8FObNa
-	h3AeznLq07T18ppeGRd/+rKVV+8wGhhU4wS7LERB0ie7X1VR+sVvPr7l4Gts1IId6x/W6s+9Lvb
-	pLxxldGXkSYFo=
-X-Google-Smtp-Source: AGHT+IHVnzaJyzc7gseopxzW2ojb/NLDXOuX/N0VMrXnz0K0HgHowbTGDkJTK+MscfsYOvOaBEEy/g==
-X-Received: by 2002:a05:6000:200d:b0:3b9:6:8970 with SMTP id ffacd0b85a97d-3c133798ce2mr2215959f8f.23.1755612730513;
-        Tue, 19 Aug 2025 07:12:10 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac4f3.dip0.t-ipconnect.de. [91.42.196.243])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077c5731dsm3864846f8f.59.2025.08.19.07.12.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 07:12:10 -0700 (PDT)
-Message-ID: <e3d22025-03a5-446e-97e7-4a06db968e7f@googlemail.com>
-Date: Tue, 19 Aug 2025 16:12:09 +0200
+        d=1e100.net; s=20230601; t=1755612756; x=1756217556;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bDLwUY8c5UikKYG43v+aAUoS5K12CXkZu1S6tpWU6eg=;
+        b=ngm1B9v9AUElz+NvJKPiy2kWOlBz3O+TmHVSS16OUW6cGys+hEXxVoVyQXjImONet3
+         WjwuYeOOkXH96nmRHhR0wqtQd4Dk2QvMLfpFCjegTJQOPrt/NIpm9qGpZcXJg+/MZp0k
+         baPbptl4aq28G3tqEISiSUzpT3oWopjUvm+AQdNxIe3MAof1wzStkmoaQCCwjE6i7ZPb
+         9T0e29Zf8GMgGaxr8fSK0T6l0WEI7xoKUqXLR5Pim+w0YwCChGD0JH9DXvym2E56+SQZ
+         M4Vft46IXTxet9/7lGOleZ6MjchJJLMnvuXfkBAB6P+2VDserjceeEoXQQrYatEbvaSQ
+         sl6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXl/Mji44aLV16Xvv+uDdo4raH5jZqsumPNtqVMHuOGnqRsu+shc36g2wUW9/Y0uHr7aNKGIhjW+B1nY0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZBZjF7jbd8HfxTCp/GWXrH08cC1znroRyyP9fCqEjTov4072W
+	lm4t3co66yeHrks5OOY7oq+0rroiUu0nRKw6gG8cr98+kzBDaJOxHAWDxIBBHKEREw==
+X-Gm-Gg: ASbGncusOzVnRPHL3A5a3y6oNvIX3oh5273/FgE4K6MHkip6ZAPsceEn0etERT9cAWz
+	r5Fv1C8V2qTPUgiYr5ypgolhaGWwX5nnrwAPBJBodTT/u+VJPf/JmRL1yqGEwwXyB33d21uc1tF
+	64ZgkyYAWyKJf3K2ay1wPGM1wrewaGTWKRnZatmhtqktzbDzBpj3j8IbnjHWII4RHWiC06nv2BO
+	f/M2oRu7MkTjkYgQ5kscu9Owe4HTKG/+UHPN/A77Zpvy0AoQ4fOQuEIAIte6/MLhBVTgqUfwKjw
+	doA65Qkb2eQe5A9zSe2xl5Ua7KJ/5Wm4WIZ0tuQWAjqe18NeQz5ToHB3EBI/TgjEmDdnEYa7pMP
+	+TV1lef7Za6xYKjhBevHbAM09mzc=
+X-Google-Smtp-Source: AGHT+IHQg04DWf8DLLAvL7X03CUOIZTn7DoQBqcIlAoSiqB7A22l6EHFGlPS13+38MuE7eItCA2s6w==
+X-Received: by 2002:a05:620a:1a1f:b0:7e9:f17f:65b8 with SMTP id af79cd13be357-7e9f3361b7amr352563585a.39.1755612755346;
+        Tue, 19 Aug 2025 07:12:35 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::fa48])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e066da8sm771292885a.25.2025.08.19.07.12.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 07:12:34 -0700 (PDT)
+Date: Tue, 19 Aug 2025 10:12:31 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Yunseong Kim <ysk@kzalloc.com>, linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
+ in vhci_urb_enqueue on PREEMPT_RT
+Message-ID: <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
+References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
+ <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
+ <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
+ <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
+ <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
+ <20250819110457.I46wiKTe@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.15 000/509] 6.15.11-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250819122834.836683687@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250819122834.836683687@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819110457.I46wiKTe@linutronix.de>
 
-Am 19.08.2025 um 14:31 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.15.11 release.
-> There are 509 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Aug 19, 2025 at 01:04:57PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-08-17 10:27:11 [-0400], Alan Stern wrote:
+> > On Sat, Aug 16, 2025 at 10:16:34AM -0400, Alan Stern wrote:
+> > > So it looks like we should be using a different function instead of 
+> > > local_irq_disable().  We need something which in a non-RT build will 
+> > > disable interrupts on the local CPU, but in an RT build will merely 
+> > > disable preemption.  (In fact, every occurrence of local_irq_disable() 
+> > > in the USB subsystem probably should be changed in this way.)
+> > 
+> > Or maybe what we need is something that in a non-RT build will disable 
+> > local interrupts and in an RT build will do nothing.  (I suspect that RT 
+> > kernels won't like it if we call spin_lock() while preemption is 
+> > disabled.)
+> 
+> This is the local_irq_disable() in vhci_urb_enqueue() before
+> usb_hcd_giveback_urb() is invoked. It was added in 9e8586827a706
+> ("usbip: vhci_hcd: fix calling usb_hcd_giveback_urb() with irqs
+> enabled").
+> The warning that fixed back then was 
+> |         if (WARN_ON(in_task() && kcov_mode_enabled(mode))) {
+> which was kernel/kcov.c:834 as of v5.9-rc8 (as of report the mentioned
+> in the commit).
+> local_irq_disable() does not change the preemption counter so I am a bit
+> puzzled why this did shut the warning.
+> 
+> > > Is there such a function?
+> 
+> We could use some API that accidentally does what you ask for. There
+> would be local_lock_t where local_lock_irq() does that.
+> What about moving the completion callback to softirq by setting HCD_BH?
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+You're missing the point.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+There are several places in the USB stack that disable local interrupts.  
+The idea was that -- on a non-RT system, which was all we had at the 
+time -- spin_lock_irqsave() is logically equivalent to a combination of 
+local_irq_save() and spin_lock().  Similarly, spin_lock_irq() is 
+logically equivalent to local_irq_disable() plus spin_lock().
 
+So code was written which, for various reasons, used local_irq_save() 
+(or local_irq_disable()) and spin_lock() instead of spin_lock_irqsave() 
+(or spin_lock_irq()).  But now we see that in RT builds, this 
+equivalency is not valid.  Instead, spin_lock_irqsave(flags) is 
+logically equivalent to "flags = 0" plus spin_lock() (and 
+spin_lock_irq() is logically equivalent to a nop plus spin_lock()).  At 
+least, that's how the material quoted earlier by Yunseong defines it.
 
-Beste Grüße,
-Peter Schneider
+Therefore, throughout the USB stack, we should replace calls to 
+local_irq_save() and local_irq_disable() with functions that behave like 
+the original in non-RT builds but do nothing in RT builds.  We shouldn't 
+just worry about this one spot.
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+I would expect that RT already defines functions which do this, but I 
+don't know their names.
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Alan Stern
 
