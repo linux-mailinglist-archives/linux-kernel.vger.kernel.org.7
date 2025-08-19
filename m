@@ -1,101 +1,164 @@
-Return-Path: <linux-kernel+bounces-775152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEEFB2BBF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A48B2BBF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B305188BAB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC421896822
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE35A3115B1;
-	Tue, 19 Aug 2025 08:34:37 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.205.26])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E981A2765D4;
-	Tue, 19 Aug 2025 08:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.205.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A59D311592;
+	Tue, 19 Aug 2025 08:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiTz9mr9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C4626D4CF;
+	Tue, 19 Aug 2025 08:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755592477; cv=none; b=bNmAmJXSkXFUUXKH4YNahmb+mEiSs5bEAUSh3BonNle61uTubPt8X06K4GJpYKcbeu1gytNtrGAwp1H/UhUAYY+I1lZb8EhmsAvIvKVG3ziPzJwKoLLmFiPJ+DHdQ9q4wlzvVPac4yAK0ZakeZ3appFRGvND2CNjKjAcMPHNlSE=
+	t=1755592514; cv=none; b=ZKg9CH5JufqBqnBOsuG9sI/2vMUFsPJifQBFbRG23phnhe+5YEzyYFhrcWzVfx6KP2tUua3Gt6+rGuyXJDXOGXZhyv2414FX1UGJk2Cjj6LQVM6O5CMPX/b8pjJLWdgT7AoPSLWIaPN4OvtICo30j+vSIB+LinNC7SPHzI66Hio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755592477; c=relaxed/simple;
-	bh=AGQ4RfZQGSB5r6QgZFK8YYksCXzcan9R+m3zGTw78pI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Nc5XFGMXFXhSZsdUqFvIANIURtYx2B82WgkSwU26Jg9iFBmC8n9MtDK9bqgR9n0yzgAMgZu4a9nrmb9a++EOYI09yS7HBXY9HwkWW8K4SZB7TWky464ZRPrRmtrNhg7IgI6JLrOqo1KWBYcngc/cCqs6WqwR2O1HPuIKYCkGihA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.229.205.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 19 Aug 2025 16:34:18 +0800 (GMT+08:00)
-Date: Tue, 19 Aug 2025 16:34:18 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?6JGj57uq5rSL?= <dongxuyang@eswincomputing.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, linux-riscv@lists.infradead.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v4 3/3] riscv: dts: eswin: Add clock driver support
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <0ef61f03-0346-491d-ad2a-293e24cbc4a8@kernel.org>
-References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
- <20250815093754.1143-1-dongxuyang@eswincomputing.com>
- <0ef61f03-0346-491d-ad2a-293e24cbc4a8@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1755592514; c=relaxed/simple;
+	bh=EGFYn9S9X5jab97X6MPlmhaU5A2DD/JytViFQMo3Yuc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DQ9KkkWYOcHL0RZMdnlQT8vYV/6qUNmm9RP8YdeBB1uxe/iceL+vH8B30xJ4hyiVy5Kn1iIQDWkzWW80Q4Y36Cy7+iIOVqeoltECneHSSyBVC2cllLIi1M1jyOFkEg0asQAmn7Sm93uV16fybjJKAOMOMrp9NF33+7XTcdqmUUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiTz9mr9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460EDC4CEF1;
+	Tue, 19 Aug 2025 08:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755592514;
+	bh=EGFYn9S9X5jab97X6MPlmhaU5A2DD/JytViFQMo3Yuc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FiTz9mr9lu+tPaJqN1PK8f3hv1IHwQ0TXG3HfeoAszxK49VtEVJU+Wp7p8emNpYz2
+	 T3IgG3WTo0tobbNFt5Qxqk0zYzDACtP3W03oQj1wIzVMWt/uRxSRwV6Xy2cy8Ovow/
+	 kQTT3z8rhJS1GuuHwywz1HFIJCgTAq8NBs/IV4ywVf5064Z97qY+772oOeKMg3soYK
+	 XX8VxH4mtBU5jz6+XN45tMIezcmBumcPY2z9yoo/X2QKEfd+hQbs1iRSmayMSEVNJI
+	 XirSg2SCrsBGiuUt8fWbELHouDortubfS/ngfCnjO838uWg50nATPu/XGHasvtblVv
+	 V93VIOObmV9PQ==
+Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uoHoB-008tOd-1V;
+	Tue, 19 Aug 2025 09:35:07 +0100
+Date: Tue, 19 Aug 2025 09:35:06 +0100
+Message-ID: <87sehnk8ud.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64/sysreg: Add VTCR_EL2 register
+In-Reply-To: <bf78530c-e3e7-42b1-be7c-409d6427afda@arm.com>
+References: <20250818045759.672408-1-anshuman.khandual@arm.com>
+	<20250818045759.672408-5-anshuman.khandual@arm.com>
+	<aKLw1jvwOo4wG64n@J2N7QTR9R3>
+	<bf78530c-e3e7-42b1-be7c-409d6427afda@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <3fa3950e.371.198c1770125.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgDHZpUKN6Ro+YvAAA--.22666W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgETAmijVc8e3
-	wABsD
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 86.149.246.145
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, broonie@kernel.org, ryan.roberts@arm.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-SGkgS3J6eXN6dG9mLAoKVGhhbmsgeW91IHZlcnkgbXVjaCBmb3IgeW91ciBjb25zdHJ1Y3RpdmUg
-c3VnZ2VzdGlvbnMuCgo+ID4gCj4gPiBBZGQgY2xvY2sgZGV2aWNlIHRyZWUgc3VwcG9ydCBmb3Ig
-ZWljNzcwMCBTb0MuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IFlpZmVuZyBIdWFuZyA8aHVhbmd5
-aWZlbmdAZXN3aW5jb21wdXRpbmcuY29tPgo+ID4gU2lnbmVkLW9mZi1ieTogWHV5YW5nIERvbmcg
-PGRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tPgo+ID4gLS0tCj4gPiAgYXJjaC9yaXNjdi9i
-b290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nrcy5kdHNpIHwgMjI4MyArKysrKysrKysrKysrKysr
-Kwo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyMjgzIGluc2VydGlvbnMoKykKPiA+ICBjcmVhdGUgbW9k
-ZSAxMDA2NDQgYXJjaC9yaXNjdi9ib290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nrcy5kdHNpCj4g
-PiAKPiA+IGRpZmYgLS1naXQgYS9hcmNoL3Jpc2N2L2Jvb3QvZHRzL2Vzd2luL2VpYzc3MDAtY2xv
-Y2tzLmR0c2kgYi9hcmNoL3Jpc2N2L2Jvb3QvZHRzL2Vzd2luL2VpYzc3MDAtY2xvY2tzLmR0c2kK
-PiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLjQwNWQwNmY5
-MTkwZQo+ID4gLS0tIC9kZXYvbnVsbAo+ID4gKysrIGIvYXJjaC9yaXNjdi9ib290L2R0cy9lc3dp
-bi9laWM3NzAwLWNsb2Nrcy5kdHNpCj4gPiBAQCAtMCwwICsxLDIyODMgQEAKPiA+ICsvLyBTUERY
-LUxpY2Vuc2UtSWRlbnRpZmllcjogKEdQTC0yLjAgT1IgTUlUKQo+ID4gKy8qCj4gPiArICogQ29w
-eXJpZ2h0IChjKSAyMDI1LCBCZWlqaW5nIEVTV0lOIENvbXB1dGluZyBUZWNobm9sb2d5IENvLiwg
-THRkLgo+ID4gKyAqLwo+ID4gKwo+ID4gKy8gewo+ID4gKwljbG9jay1jb250cm9sbGVyQDUxODI4
-MDAwIHsKPiA+ICsJCWNvbXBhdGlibGUgPSAiZXN3aW4sZWljNzcwMC1jbG9jayI7Cj4gPiArCQly
-ZWcgPSA8MHgwMDAwMDAgMHg1MTgyODAwMCAweDAwMDAwMCAweDgwMDAwPjsKPiA+ICsJCSNjbG9j
-ay1jZWxscyA9IDwwPjsKPiA+ICsJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ID4gKwkJI3NpemUt
-Y2VsbHMgPSA8MD47Cj4gPiArCj4gPiArCQkvKiBmaXhlZCBjbG9jayAqLwo+ID4gKwkJZml4ZWRf
-cmF0ZV9jbGtfYXBsbF9mb3V0MjogZml4ZWQtcmF0ZS1hcGxsLWZvdXQyIHsKPiAKPiBTdWNoIHBh
-dHRlcm4gd2FzIHllYXJzIGFnbyBOQUtlZC4KPiAKPiBObywgZG9uJ3QgZXZlciBicmluZyBub2Rl
-cyBwZXIgY2xvY2suCj4gCldlIGhhdmUgZGVmaW5lZCBhIGxhcmdlIG51bWJlciBvZiBjbG9jayBk
-ZXZpY2VzLsKgClRoZSBjb21tZW50IG9mIHYzIGlzICJEcml2ZXIgaXMgYWxzbyB3YXkgdG9vIGJp
-ZyBmb3Igc2ltcGxlIGNsb2NrIGRyaXZlciBhbmQgScKgCmFtIHN1cnByaXNlZCB0byBzZWUgc28g
-bWFueSByZWR1bmRhbmNpZXMuIi4gVGhlcmVmb3JlLCB3ZSBtb2RpZmllZCB0aGUgY2xvY2vCoApk
-cml2ZXIgY29kZSBhbmQgbW92ZWQgdGhlIGRlc2NyaXB0aW9uIG9mIGNsb2NrIGRldmljZSBmcm9t
-IHRoZSBkcml2ZXIgdG8gdGhlIERUUy4KCkJ1dCwgdGhpcyBjb21tZW50IGlzIHRoYXQgZG9uJ3Qg
-ZXZlciBicmluZyBub2RlcyBwZXIgY2xvY2suIFdl4oCZdmUgcnVuIGludG8gc29tZQp0cm91Ymxl
-IGFuZCBhcmVu4oCZdCBzdXJlIHdoaWNoIGFwcHJvYWNoIGFsaWducyBiZXR0ZXIgd2l0aCBjb21t
-dW5pdHkgZ3VpZGVsaW5lcy7CoApDb3VsZCB5b3Ugc2hhcmUgeW91ciBhZHZpY2Ugb3Igc3VnZ2Vz
-dGlvbnMgb24gdGhlIGJlc3Qgd2F5IGZvcndhcmQ/CgpJIHdvdWxkIGJlIGdyYXRlZnVsIGZvciB5
-b3VyIHJlcGx5LgoKUmVnYXJkcywKWHV5YW5nIERvbmcK
+On Tue, 19 Aug 2025 05:24:29 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> 
+> 
+> On 18/08/25 2:52 PM, Mark Rutland wrote:
+> > On Mon, Aug 18, 2025 at 10:27:59AM +0530, Anshuman Khandual wrote:
+> >> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+> >> index d2b40105eb41..f5a0a304f844 100644
+> >> --- a/arch/arm64/tools/sysreg
+> >> +++ b/arch/arm64/tools/sysreg
+> >> @@ -4910,6 +4910,63 @@ Field	1	PIE
+> >>  Field	0	PnCH
+> >>  EndSysreg
+> >>  
+> >> +Sysreg	VTCR_EL2	3	4	2	1	2
+> >> +Res0	63:46
+> >> +Field	45	HDBSS
+> >> +Field	44	HAFT
+> >> +Res0	43:42
+> >> +Field	41	TL0
+> >> +Field	40	GCSH
+> >> +Res0	39
+> >> +Field	38	D128
+> >> +Field	37	S2POE
+> >> +Field	36	S2PIE
+> >> +Field	35	TL1
+> >> +Field	34	AssuredOnly
+> >> +Field	33	SL2
+> >> +Field	32	DS
+> >> +Res1	31
+> >> +Field	30	NSA
+> >> +Field	29	NSW
+> >> +Field	28	HWU62
+> >> +Field	27	HWU61
+> >> +Field	26	HWU60
+> >> +Field	25	HWU59
+> >> +Res0	24:23
+> >> +Field	22	HD
+> >> +Field	21	HA
+> >> +Res0	20
+> >> +UnsignedEnum	19	VS
+> >> +	0b0	8BIT
+> >> +	0b1	16BIT
+> >> +EndEnum
+> > 
+> > You left TCR_EL1.AS as a single-bit 'Field', so please do the same here
+> > for consistency. I don't think there's much gained by making this any
+> > sort of enum.
+> 
+> But actually there is an use case in kvm_get_vtcr().
+> 
+>         /* Set the vmid bits */
+>         vtcr |= (get_vmid_bits(mmfr1) == 16) ?
+>                 SYS_FIELD_PREP_ENUM(VTCR_EL2, VS, 16BIT) :
+>                 SYS_FIELD_PREP_ENUM(VTCR_EL2, VS, 8BIT);
+>
+
+Here you go (untested):
+
+diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+index c351b4abd5db..49266efc8bab 100644
+--- a/arch/arm64/kvm/hyp/pgtable.c
++++ b/arch/arm64/kvm/hyp/pgtable.c
+@@ -623,10 +623,7 @@ u64 kvm_get_vtcr(u64 mmfr0, u64 mmfr1, u32 phys_shift)
+ 	if (kvm_lpa2_is_enabled())
+ 		vtcr |= VTCR_EL2_DS;
+ 
+-	/* Set the vmid bits */
+-	vtcr |= (get_vmid_bits(mmfr1) == 16) ?
+-		VTCR_EL2_VS_16BIT :
+-		VTCR_EL2_VS_8BIT;
++	vtcr |= FIELD_PREP(BIT(VTCR_EL2_VS_SHIFT), (get_vmid_bits(mmfr1) == 16));
+ 
+ 	return vtcr;
+ }
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
