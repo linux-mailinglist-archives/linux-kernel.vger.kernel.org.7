@@ -1,136 +1,210 @@
-Return-Path: <linux-kernel+bounces-776168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15919B2C98B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:26:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C522B2C970
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BF15E201A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130FC1C22D07
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B47254877;
-	Tue, 19 Aug 2025 16:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B0B256C91;
+	Tue, 19 Aug 2025 16:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="TsioKAtq"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z49I23YB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B32A253951
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53EE244661;
+	Tue, 19 Aug 2025 16:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755620562; cv=none; b=uX3iSvgj89INWM+F/tTWj4/kriE+uwPR3OGXtanj+uC5yf0OlpNq0rA2M8Yo7Il7bK3MgNC5vNpMZsK1fCa8JA+esPZyD1b3+Xz9lKKbP3yIWeqOd/PdKFXiBviExat61oG99pW1tDGp1lSLbRU+8yFeqYcHZzrODZCVYcrJLbY=
+	t=1755620600; cv=none; b=bNNv7YfBZNtpDG2k7b1mvxqCsYTl/S0LzbszOd2I7436JrkawtQw4sl9RBIDiW9gH77Tjoy+Xr5E1BeTv/T6zvq0l9C3syC8L5sCi0BvpYRscXQetScY6i8LIkDFPhCuDTNvrbzoNBgv77QXMhWUETpnVzJTpXm+0ev2N7msaqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755620562; c=relaxed/simple;
-	bh=3PqWY3JM4TexPZHQ/zTUCSIoCVYTLd+w0kuE6RM4q38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kOtqxp5LeMWxwyZqe+q6PPd9Q1Nv6eUQCqEwdqWkLf86Y1JEmjey6acD8ePaW7ZCcSEVfkMR6XJoXAPWaU68WL3WKoew7IHoFN+mocNtrevSGlecEvT7n+7wEX/iVcr6Ly+y/6eR9Fz8QDFqIB6fANntKBmC78L8oZWSJY1O57k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=TsioKAtq; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e934c8f9754so2558577276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=criticallink.com; s=google; t=1755620559; x=1756225359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8uX7ecTc4H8lkiWTvCLVy7qyorEzP8ZhS/5YwBDze8=;
-        b=TsioKAtqsOW7xWHMyZrnK3tvMgoAvgiLifdji2ngn1dbCsjUI9fnxHXvsAoHBiUuBN
-         Y9X+vaw1m8nKk6CYBkby1O7uEF3DWIbGuivQiP8y1Txzf9z8BjLBuwjebocIehO02zkP
-         fIafIsuqAnIcuZ3E9TW2R06wo/QrSaR+RiK4Yb/SLmAD/AMbWs+bOT0Nd9a/kFp2zqmJ
-         9no7eBiPj6kDSHEgqonOpm50kCwBbYTfjypE7GGcOFCjxwHpW0QTLJ1nVbtDD8iwnmQU
-         3A+5Zpvxxn4JImu4nXV0ugikz1VUopfqmurA+AHDT5dC0OpHr6EhBNx0renHvPjZp/E3
-         T/0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755620559; x=1756225359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S8uX7ecTc4H8lkiWTvCLVy7qyorEzP8ZhS/5YwBDze8=;
-        b=UwD36TCCTzJtxl08XgdNuu7z9yGZbRGO7+TTAFm4XmZ+rfDdr5+b7HWIt0uQD4H8S+
-         hvrFDYX3cWntLORPNzVjQ5ku/5zym3JNau2BJ8PzuBgg6LbhF/QbWo/donoiMSHH+09X
-         vZ3DGTUA41QQpBTbMMACgHso9dKzB+FzO0S+rrHLOuDLwHGf/8FJWOWLgt6DCUsNOmgW
-         LM7fjrNFBgIi9w2Zr7YYIngX0TP4SMJCPMvETTeGTB4OIfTJ58j7SFw8beKhnOlW6oyK
-         sfs5JPosxIDm+Vaqim9BV61VRXG/p8HNDyYp7DOLvxTJqb91NSfj8VFNiatWzS62/ukz
-         guVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDNhtB5tL6tut36PTeLXNz5hRqGQdxhgpjScrH3yhWJ6GiOzDLB98S7St0FYpVA8j624SVf+lzbzrz+DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN1w8DRB5TKlA0lfxN05XL7lRilYDVUjYxKT8KcTFGxohENTMj
-	HL25XFaS3T4eRXdBkZKMh7k3s7i2ozi8v2Cv1gwB6KXdmO+bp1WwqkK41zswzn8dGXZrlXf9erI
-	sSpzNJL0EZFsZlA2/W3T+6HLoBy5Oym/BkIZ5xqpUUkmqzfeNgpWcRA==
-X-Gm-Gg: ASbGncs7M74wXj3IgKr4+Efj2OCH1ccC8pSYs/BC7nJGei79F1QuXG6OH6uplBJYpjV
-	m5/y++CZ5fS4OJ2PP1Yox67GtPCDrKeHeHH5m+jVJChg6LWL59cVhzBBoGLazgJdPiZ2MrJnMPU
-	w8FOnYeSPygbKioMvWQUaRcX0hnSKv/WgWW/++6eC5I0w1GPwEd+VWw+K9EJLnKccTwyWo++fdP
-	YBVV3hxRzNLZCMS
-X-Google-Smtp-Source: AGHT+IHAbgCmisgA8W85dRst53S4trRP2Tj2MSg8YDm0HI7X9Bx/bnhVBpTLBnfB9kCmzLTF2uWkoYVrZwQ5t7+gtq4=
-X-Received: by 2002:a05:6902:6286:b0:e93:4d9d:4010 with SMTP id
- 3f1490d57ef6-e94e61bc1c8mr2964138276.16.1755620559370; Tue, 19 Aug 2025
- 09:22:39 -0700 (PDT)
+	s=arc-20240116; t=1755620600; c=relaxed/simple;
+	bh=TG5mF2gjBHDGc+RyikyQdTbwl4JX+eFWd/654sv2CnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDvuc5W0PExYmo09QL5yvkI603rnXvaYThHM28HQi20gwmmi6UL17UB4HJK/mo1901L8BDTtZfTp4VpjRyWLlN75RM0mUiLHf70ilWDb67f1YTCnsEhhgdf4vcYfzNvfWWpENuaV/b4WHly+PtxX8CgNZvwrGerpDxKYN2N/EKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z49I23YB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B6DC4CEF1;
+	Tue, 19 Aug 2025 16:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755620600;
+	bh=TG5mF2gjBHDGc+RyikyQdTbwl4JX+eFWd/654sv2CnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z49I23YBEcE6OODH3koS1wODoZghGgpRhOfO6tYy5rGLdr/3RC82LDPQVokBwBnWp
+	 ggAntLrGmehOlk7JiHw7h6X8HN0ecTeXZoWVdBgzLHgLP94n6w7QgAyXemsS9LTbWk
+	 lJ1q+3qNOFtmpN8HegpxeG7oX6SC9k3wAPllJqoj1CxtsD4C810YWlfKXEHJnS2pY8
+	 UtBaXvUfQ4j4I2KSYXF/mkXl7vYXpXkeN/Qzw5Hkvp7S1eMzp4/DOWZ1BeJFaD7mxG
+	 Lc5Nvw5qtNM1+HgGhDsTBnoAayiZu6RyksBiSwm7d+tT1zoymTfZA6bQD/syxPJK6/
+	 DuPSl0cyo7Chg==
+Date: Tue, 19 Aug 2025 21:53:11 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] PCI: brcmstb: Add panic/die handler to driver
+Message-ID: <on7eajzjb7bb5ut4jiwxgi4gckhspar4eztmvzfslemoohr6kr@ccffktlzlpcn>
+References: <20250807221513.1439407-1-james.quinlan@broadcom.com>
+ <20250807221513.1439407-3-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520-linux-stable-tps6594-pwrbutton-v1-0-0cc5c6e0415c@criticallink.com>
- <DC6D9ESWXGKO.1NS287IU5YJSZ@kernel.org> <DC6DBZ4HHGOF.11HI37DX56PH0@kernel.org>
-In-Reply-To: <DC6DBZ4HHGOF.11HI37DX56PH0@kernel.org>
-From: Jon Cormier <jcormier@criticallink.com>
-Date: Tue, 19 Aug 2025 12:22:27 -0400
-X-Gm-Features: Ac12FXyCrcVI5pAcKrqvEQ_WmuIEzaUhsOqC2zEtK7b_1oJoCpdciQcQ0tp88JQ
-Message-ID: <CADL8D3Y0hRgJ6P59YvUKYzYBADjCXr7kevHNUDoqZXT41Ka2Yw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Powerbutton driver and powerdown request for TPS65224 PMIC
-To: Michael Walle <mwalle@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Julien Panis <jpanis@baylibre.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250807221513.1439407-3-james.quinlan@broadcom.com>
 
-On Tue, Aug 19, 2025 at 7:30=E2=80=AFAM Michael Walle <mwalle@kernel.org> w=
-rote:
->
-> On Tue Aug 19, 2025 at 1:27 PM CEST, Michael Walle wrote:
-> > Hi Job,
-> >
-> > > The following patches were created to get the tps65224 PMIC
-> > > powerbutton driver and power off request working on the
-> > > MitySOM-AM62PX. The patches are as follows:
-> >
-> > Are there any news on this series? Do you plan to post a new
-> > version soon, or do you want me to take over? I'd like to get
-> > support for this into the kernel :)
->
-> FWIW, jsava@criticallink.com is bouncing.
-Yeah sorry, Job has gone back to school, he was on an internship.
+On Thu, Aug 07, 2025 at 06:15:13PM GMT, Jim Quinlan wrote:
+> Whereas most PCIe HW returns 0xffffffff on illegal accesses and the like,
+> by default Broadcom's STB PCIe controller effects an abort.  Some SoCs --
+> 7216 and its descendants -- have new HW that identifies error details.
+> 
+> This simple handler determines if the PCIe controller was the cause of the
+> abort and if so, prints out diagnostic info.  Unfortunately, an abort still
+> occurs.
+> 
+> Care is taken to read the error registers only when the PCIe bridge is
+> active and the PCIe registers are acceptable.  Otherwise, a "die" event
+> caused by something other than the PCIe could cause an abort if the PCIe
+> "die" handler tried to access registers when the bridge is off.
+> 
+> Example error output:
+>   brcm-pcie 8b20000.pcie: Error: Mem Acc: 32bit, Read, @0x38000000
+>   brcm-pcie 8b20000.pcie:  Type: TO=0 Abt=0 UnspReq=1 AccDsble=0 BadAddr=0
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 155 +++++++++++++++++++++++++-
+>  1 file changed, 154 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index ceb431a252b7..43c4ada3de07 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -14,15 +14,18 @@
+>  #include <linux/irqchip/chained_irq.h>
+>  #include <linux/irqchip/irq-msi-lib.h>
+>  #include <linux/irqdomain.h>
+> +#include <linux/kdebug.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+>  #include <linux/log2.h>
+>  #include <linux/module.h>
+>  #include <linux/msi.h>
+> +#include <linux/notifier.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/of_pci.h>
+>  #include <linux/of_platform.h>
+> +#include <linux/panic_notifier.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-ecam.h>
+>  #include <linux/printk.h>
+> @@ -156,6 +159,39 @@
+>  #define  MSI_INT_MASK_SET		0x10
+>  #define  MSI_INT_MASK_CLR		0x14
+>  
+> +/* Error report registers */
+> +#define PCIE_OUTB_ERR_TREAT				0x6000
+> +#define  PCIE_OUTB_ERR_TREAT_CONFIG_MASK		0x1
+> +#define  PCIE_OUTB_ERR_TREAT_MEM_MASK			0x2
+> +#define PCIE_OUTB_ERR_VALID				0x6004
+> +#define PCIE_OUTB_ERR_CLEAR				0x6008
+> +#define PCIE_OUTB_ERR_ACC_INFO				0x600c
+> +#define  PCIE_OUTB_ERR_ACC_INFO_CFG_ERR_MASK		0x01
+> +#define  PCIE_OUTB_ERR_ACC_INFO_MEM_ERR_MASK		0x02
+> +#define  PCIE_OUTB_ERR_ACC_INFO_TYPE_64_MASK		0x04
+> +#define  PCIE_OUTB_ERR_ACC_INFO_DIR_WRITE_MASK		0x10
+> +#define  PCIE_OUTB_ERR_ACC_INFO_BYTE_LANES_MASK		0xff00
+> +#define PCIE_OUTB_ERR_ACC_ADDR				0x6010
+> +#define PCIE_OUTB_ERR_ACC_ADDR_BUS_MASK			0xff00000
+> +#define PCIE_OUTB_ERR_ACC_ADDR_DEV_MASK			0xf8000
+> +#define PCIE_OUTB_ERR_ACC_ADDR_FUNC_MASK		0x7000
+> +#define PCIE_OUTB_ERR_ACC_ADDR_REG_MASK			0xfff
+> +#define PCIE_OUTB_ERR_CFG_CAUSE				0x6014
+> +#define  PCIE_OUTB_ERR_CFG_CAUSE_TIMEOUT_MASK		0x40
+> +#define  PCIE_OUTB_ERR_CFG_CAUSE_ABORT_MASK		0x20
+> +#define  PCIE_OUTB_ERR_CFG_CAUSE_UNSUPP_REQ_MASK	0x10
+> +#define  PCIE_OUTB_ERR_CFG_CAUSE_ACC_TIMEOUT_MASK	0x4
+> +#define  PCIE_OUTB_ERR_CFG_CAUSE_ACC_DISABLED_MASK	0x2
+> +#define  PCIE_OUTB_ERR_CFG_CAUSE_ACC_64BIT__MASK	0x1
+> +#define PCIE_OUTB_ERR_MEM_ADDR_LO			0x6018
+> +#define PCIE_OUTB_ERR_MEM_ADDR_HI			0x601c
+> +#define PCIE_OUTB_ERR_MEM_CAUSE				0x6020
+> +#define  PCIE_OUTB_ERR_MEM_CAUSE_TIMEOUT_MASK		0x40
+> +#define  PCIE_OUTB_ERR_MEM_CAUSE_ABORT_MASK		0x20
+> +#define  PCIE_OUTB_ERR_MEM_CAUSE_UNSUPP_REQ_MASK	0x10
+> +#define  PCIE_OUTB_ERR_MEM_CAUSE_ACC_DISABLED_MASK	0x2
+> +#define  PCIE_OUTB_ERR_MEM_CAUSE_BAD_ADDR_MASK		0x1
+> +
+>  #define  PCIE_RGR1_SW_INIT_1_PERST_MASK			0x1
+>  #define  PCIE_RGR1_SW_INIT_1_PERST_SHIFT		0x0
+>  
+> @@ -305,6 +341,8 @@ struct brcm_pcie {
+>  	struct subdev_regulators *sr;
+>  	bool			ep_wakeup_capable;
+>  	const struct pcie_cfg_data	*cfg;
+> +	struct notifier_block	die_notifier;
+> +	struct notifier_block	panic_notifier;
+>  	bool			bridge_on;
+>  	spinlock_t		bridge_lock;
+>  };
+> @@ -1730,6 +1768,115 @@ static int brcm_pcie_resume_noirq(struct device *dev)
+>  	return ret;
+>  }
+>  
+> +/* Dump out PCIe errors on die or panic */
+> +static int _brcm_pcie_dump_err(struct brcm_pcie *pcie,
+> +			       const char *type)
+> +{
+> +	void __iomem *base = pcie->base;
+> +	int i, is_cfg_err, is_mem_err, lanes;
+> +	char *width_str, *direction_str, lanes_str[9];
+> +	u32 info, cfg_addr, cfg_cause, mem_cause, lo, hi;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&pcie->bridge_lock, flags);
+> +	/* Don't access registers when the bridge is off */
+> +	if (!pcie->bridge_on || readl(base + PCIE_OUTB_ERR_VALID) == 0) {
+> +		spin_unlock_irqrestore(&pcie->bridge_lock, flags);
+> +		return NOTIFY_DONE;
+> +	}
+> +
+> +	/* Read all necessary registers so we can release the spinlock ASAP */
+> +	info = readl(base + PCIE_OUTB_ERR_ACC_INFO);
+> +	is_cfg_err = !!(info & PCIE_OUTB_ERR_ACC_INFO_CFG_ERR_MASK);
+> +	is_mem_err = !!(info & PCIE_OUTB_ERR_ACC_INFO_MEM_ERR_MASK);
+> +	if (is_cfg_err) {
+> +		cfg_addr = readl(base + PCIE_OUTB_ERR_ACC_ADDR);
+> +		cfg_cause = readl(base + PCIE_OUTB_ERR_CFG_CAUSE);
+> +	}
+> +	if (is_mem_err) {
+> +		mem_cause = readl(base + PCIE_OUTB_ERR_MEM_CAUSE);
+> +		lo = readl(base + PCIE_OUTB_ERR_MEM_ADDR_LO);
+> +		hi = readl(base + PCIE_OUTB_ERR_MEM_ADDR_HI);
+> +	}
+> +	/* We've got all of the info, clear the error */
+> +	writel(1, base + PCIE_OUTB_ERR_CLEAR);
+> +	spin_unlock_irqrestore(&pcie->bridge_lock, flags);
+> +
+> +	dev_err(pcie->dev, "handling %s error notification\n", type);
 
-I'm not entirely sure how best to move forward with this change.
-There have been several suggestions thrown out and I'm a little lost
-on what's best/easiest.
+You are not *handling* the error, but just dumping the registers due to the
+error. So this error message is misleading.
 
-If you want to take over and add us as co authors that would be
-greatly appreciated.  I can get his personal email if that makes
-sense.  I'm not sure how the kernel normally deals with short term
-emails (interns).
+- Mani
 
-Note we are currently using the driver as is, on an Android prototype
-and for some reason Android isn't able to detect the power button
-hold, and open the power menu. Single push works fine to turn off the
-screen.  I haven't looked into it yet, to see if this is an Android
-issue or if we are using the POWER key events wrong. Just thought I'd
-mention it.
-
-
---=20
-Jonathan Cormier
-Senior Software Engineer
-
-Voice:  315.425.4045 x222
-
-http://www.CriticalLink.com
-6712 Brooklawn Parkway, Syracuse, NY 13211
+-- 
+மணிவண்ணன் சதாசிவம்
 
