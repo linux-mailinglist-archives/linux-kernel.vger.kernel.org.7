@@ -1,176 +1,123 @@
-Return-Path: <linux-kernel+bounces-776517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C6EB2CE63
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C30B2CE5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7E7B5C090C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B1F1C206BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86B5343D84;
-	Tue, 19 Aug 2025 21:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822A931079C;
+	Tue, 19 Aug 2025 21:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kV6AT49z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thCYtja2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715483101AA;
-	Tue, 19 Aug 2025 21:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D719A3101AA;
+	Tue, 19 Aug 2025 21:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755637810; cv=none; b=c6wdSXdcLfZloqk58jQX/JWkz1NYkVfSMOgazQ20qjNr2yg1kq3+LRd08gzSDUzKKS423ysi1ijORrYwLBq2ho45ilVulq95kkrv1a0ngiteGB3jy8SOGo8Ewh57L0G1kdRqn5f/gv4jOu9JHo4xRanlHCRKSne8msVMBTMI++g=
+	t=1755637801; cv=none; b=uttpgFX8TwCNHUOVujq3DkxUaC26AvbHOCOJf5arDsnDL6E9lmmk7Qv8PSeoRoF1OaHcUit39Vs6xB+kmuFElibByug68fZmHN8sDQJ2gZ1plenVnzGoUxHGw5VcDQC071LKFtxU7kVx/nu7yrgOMeGCOQiMeo9CZOR5bsQeS/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755637810; c=relaxed/simple;
-	bh=lAs7kHreBtRFM5BmhN+uVj7cvYVrE9W4cw3bVA+6RCw=;
+	s=arc-20240116; t=1755637801; c=relaxed/simple;
+	bh=V4rSZobOG7FpaYQDoGuuNjzv1YSuHyGLCK7LLSVzUOc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HbjDhQjlYikbh3kCyr4YgRbw2mvU7HudbXkk616tBLLgN1+mLWFle8YHSupe4lIk937fH9D1Mjb7TrgMFy9jfN3fheR+paFzRWNpJIMDEtjbYHTMUNnufprD7c7E8nZkwYcChtycbLmAhcPMo26uiEJolMjen6+JksLMdVBT5l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kV6AT49z; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755637809; x=1787173809;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lAs7kHreBtRFM5BmhN+uVj7cvYVrE9W4cw3bVA+6RCw=;
-  b=kV6AT49zh8Ga4td68vmfVc6MLXTSojIvyD1YeCthtqCze69n0Tl/5w74
-   vIqMV/H2Yg36Et/7dTglt5WxXmKPqicWvEFOFvRzfHw9A5lTNJpWESyMX
-   qLsLzMN8GRbFTfS9uQY5dnDrY3jAh69S4B63Z8U1qqmVGGT/zP6CDzpQK
-   yFaUSbLrO2bkrqw2SXAo6Aj9hyuCSIcYEJ9nVixTWcVv0o+O6f/8DGD4X
-   nP44Q79GWGHYFCBs9I+ogs1fUiHQST4nRMEshPlF9+MwasaERFFanwlX5
-   E18kHexkliWPg489v4NJgYzvsZA2/1ghCWsVC82EZn5wo4adhKtvRY/PL
-   A==;
-X-CSE-ConnectionGUID: bUXcFjrWSuGFPqwD9rzM+Q==
-X-CSE-MsgGUID: sDQHuh75THGSNfn+ASX2Tg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61728038"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="61728038"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 14:10:08 -0700
-X-CSE-ConnectionGUID: OjuMbXC3RGq+9bUgCgDQ/g==
-X-CSE-MsgGUID: q7vuU89HTWytl+PGKm8Z7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="173315511"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 19 Aug 2025 14:10:04 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uoTai-000HVT-2v;
-	Tue, 19 Aug 2025 21:10:00 +0000
-Date: Wed, 20 Aug 2025 05:09:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Artur Rojek <contact@artur-rojek.eu>, Rob Landley <rob@landley.net>,
-	Jeff Dionne <jeff@coresemi.io>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Artur Rojek <contact@artur-rojek.eu>
-Subject: Re: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-Message-ID: <202508200456.GIhKD5qv-lkp@intel.com>
-References: <20250815194806.1202589-4-contact@artur-rojek.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yon35YH/Qw9fEyYFQ2DE1q7e/XpMsXyu6z5RNNhXbilLJxZIdp3Iq3X9bLFUBAsotgqwFYlfE4R/aY37W5K4233gSFTKZEOUUhmpudDSI4NOktWZ/MMsVm7UnJspzDC6v137IW/3+gjwkJk9cFKxLeNFYWGHBJ06cApn61O5uZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thCYtja2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D18C4CEF1;
+	Tue, 19 Aug 2025 21:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755637801;
+	bh=V4rSZobOG7FpaYQDoGuuNjzv1YSuHyGLCK7LLSVzUOc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=thCYtja21lUCQto/XtSxT9corknakG5qz6lpKP/K4wUjJs3/kMDqfxL2Tl21gWLKy
+	 wtRmbwonV+WsfBYpt1o6aPIkq3OpZqDaqtDL0srux6zKqCGNgMCuY+ULNgE2uUPM/g
+	 OJl81QrxCpvL6rbm+VbahV0kte3eP8S/Ir9aUn52s/ERLlJ/vNDewrVvbeshxnxxjm
+	 MxeAHfpPkmQtNs2duT2AKbodr6IOX0sV9tynWgmLBr37v0VCb4qZfK874Mj7iHVDKp
+	 Q27kYIZ8xQc/fdVpXf/YtDOpu7Qae9xHz1CKBZJfZFH2nreVNcp6HlQHEOfGChL5dZ
+	 /LkdzawHJlhbA==
+Date: Tue, 19 Aug 2025 20:09:48 -0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Leilk Liu <leilk.liu@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Qii Wang <qii.wang@mediatek.com>, Wolfram Sang <wsa@kernel.org>, 
+	Liguo Zhang <liguo.zhang@mediatek.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH] i2c: mediatek: fix potential incorrect use of
+ I2C_MASTER_WRRD
+Message-ID: <cf5wxalhd2536cxnj7zn2jngly5dmvoknjnb2gbq6mzqff4tgp@4syhblgi35yu>
+References: <20250816075434.31780-1-leilk.liu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250815194806.1202589-4-contact@artur-rojek.eu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250816075434.31780-1-leilk.liu@mediatek.com>
 
-Hi Artur,
+Hi Leilk,
 
-kernel test robot noticed the following build errors:
+On Sat, Aug 16, 2025 at 03:53:54PM +0800, Leilk Liu wrote:
+> From: "Leilk.Liu" <leilk.liu@mediatek.com>
+> 
+> The old IC does not support the I2C_MASTER_WRRD (write-then-read)
+> function, but the current code’s handling of i2c->auto_restart may
+> potentially lead to entering the I2C_MASTER_WRRD software flow,
+> resulting in unexpected bugs.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.17-rc2 next-20250819]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+do you mean unexpected behaviour?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Artur-Rojek/dt-bindings-vendor-prefixes-Document-J-Core/20250816-042354
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250815194806.1202589-4-contact%40artur-rojek.eu
-patch subject: [PATCH 3/3] net: j2: Introduce J-Core EMAC
-config: m68k-randconfig-r113-20250819 (https://download.01.org/0day-ci/archive/20250820/202508200456.GIhKD5qv-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 8.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250820/202508200456.GIhKD5qv-lkp@intel.com/reproduce)
+> Instead of repurposing the auto_restart flag, add a separate flag
+> to signal I2C_MASTER_WRRD operations.
+> 
+> Also fix handling of msgs. If the operation (i2c->op) is
+> I2C_MASTER_WRRD, then the msgs pointer is incremented by 2.
+> For all other operations, msgs is simply incremented by 1.
+> 
+> Fixes: 173b77e8d8fe ("i2c: mediatek: add i2c first write then read optimization")
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508200456.GIhKD5qv-lkp@intel.com/
+No need for blank line here. BTW, this doesn't look the commit
+that is introducing the issue.
 
-All errors (new ones prefixed by >>):
+> Signed-off-by: Leilk.Liu <leilk.liu@mediatek.com>
+> ---
+>  drivers/i2c/busses/i2c-mt65xx.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
+> index ab456c3717db..dee40704825c 100644
+> --- a/drivers/i2c/busses/i2c-mt65xx.c
+> +++ b/drivers/i2c/busses/i2c-mt65xx.c
+> @@ -1243,6 +1243,7 @@ static int mtk_i2c_transfer(struct i2c_adapter *adap,
+>  {
+>  	int ret;
+>  	int left_num = num;
+> +	bool write_then_read_en = false;
+>  	struct mtk_i2c *i2c = i2c_get_adapdata(adap);
+>  
+>  	ret = clk_bulk_enable(I2C_MT65XX_CLK_MAX, i2c->clocks);
+> @@ -1256,6 +1257,7 @@ static int mtk_i2c_transfer(struct i2c_adapter *adap,
+>  		if (!(msgs[0].flags & I2C_M_RD) && (msgs[1].flags & I2C_M_RD) &&
+>  		    msgs[0].addr == msgs[1].addr) {
+>  			i2c->auto_restart = 0;
+> +			write_then_read_en = true;
 
-   drivers/net/ethernet/jcore_emac.c: In function 'jcore_emac_set_rx_mode':
->> drivers/net/ethernet/jcore_emac.c:230:1: error: label at end of compound statement
-    next_ha:
-    ^~~~~~~
+why don't we set "i2c->op = I2C_MASTER_WRRD" here and avoid an
+extra flag?
 
+Thanks,
+Andi
 
-vim +230 drivers/net/ethernet/jcore_emac.c
-
-   192	
-   193	static void jcore_emac_set_rx_mode(struct net_device *ndev)
-   194	{
-   195		struct jcore_emac *priv = netdev_priv(ndev);
-   196		struct netdev_hw_addr *ha;
-   197		unsigned int reg, i, idx = 0, set_mask = 0, clear_mask = 0, addr = 0;
-   198	
-   199		if (ndev->flags & IFF_PROMISC)
-   200			set_mask |= JCORE_EMAC_PROMISC;
-   201		else
-   202			clear_mask |= JCORE_EMAC_PROMISC;
-   203	
-   204		if (ndev->flags & IFF_ALLMULTI)
-   205			set_mask |= JCORE_EMAC_MCAST;
-   206		else
-   207			clear_mask |= JCORE_EMAC_MCAST;
-   208	
-   209		regmap_update_bits(priv->map, JCORE_EMAC_CONTROL, set_mask | clear_mask,
-   210				   set_mask);
-   211	
-   212		if (!(ndev->flags & IFF_MULTICAST))
-   213			return;
-   214	
-   215		netdev_for_each_mc_addr(ha, ndev) {
-   216			/* Only the first 3 octets are used in a hardware mcast mask. */
-   217			memcpy(&addr, ha->addr, 3);
-   218	
-   219			for (i = 0; i < idx; i++) {
-   220				regmap_read(priv->map, JCORE_EMAC_MCAST_MASK(i), &reg);
-   221				if (reg == addr)
-   222					goto next_ha;
-   223			}
-   224	
-   225			regmap_write(priv->map, JCORE_EMAC_MCAST_MASK(idx), addr);
-   226			if (++idx >= JCORE_EMAC_MCAST_ADDRS) {
-   227				netdev_warn(ndev, "Multicast list limit reached\n");
-   228				break;
-   229			}
- > 230	next_ha:
-   231		}
-   232	
-   233		/* Clear the remaining mask entries. */
-   234		for (i = idx; i < JCORE_EMAC_MCAST_ADDRS; i++)
-   235			regmap_write(priv->map, JCORE_EMAC_MCAST_MASK(i), 0);
-   236	}
-   237	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  		}
+>  	}
+>  
 
