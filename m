@@ -1,219 +1,229 @@
-Return-Path: <linux-kernel+bounces-775348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF855B2BE3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C891B2BE41
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2551218965C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C84A0164941
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD92238C0F;
-	Tue, 19 Aug 2025 09:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00AC3112B0;
+	Tue, 19 Aug 2025 09:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Wv6vqF3+"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2078.outbound.protection.outlook.com [40.107.243.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmlCtNop"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF06311962
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597347; cv=fail; b=O1/oT1kL2r7YRbnpZ7s1xOBLTzVH1zCYwGVJysuWdqiv4iD++EDJna6lI/J3hHc5Fmnu/+ED+EYVo8Es/edgyaB2BperP3ev9CUHfetr1hRX7UiG96pEt++fP904jRv9tkByfFb2Bd3qWV0GWHyU0LtNXYe8VGchnC0813Rt3cQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597347; c=relaxed/simple;
-	bh=BPY05jQPEBiLJ0bGpqimUoeRXTGyYgZyHkLZQHps2F4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kALZ5VfI/5JCVGGhDeIddq/dgAaWk3WR7lnURS9UL1EARQGkw41AqyaxXkSjLATPfAhrGGKQuR6sdjyYgI0Gq5Aoxgmwv4kPrOgSOwdTDCHFk9+0Acxk9Q9r/kLmX447aPFlNi68FSRPcV6SesYBXBuu7nOgWyWyW7Y1+xUkTSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Wv6vqF3+; arc=fail smtp.client-ip=40.107.243.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qg2UqUoOq47gRhDyI8FlXbPcw9YCJJ1NiluDhjbvTF0HBJHJs2VXj/2hJs0Qt9wk8zvSBK6TKgP1McJfHhHbLMxNVBJwW2zcbo7yKVCSS7eRZ0uenDplYNZYSUPbnmldbiBq6IytwfAhSv+KtWWIUXUKZk19GP6a43nD5PveXukSceH2FKMflJsyy/xOzhKe23tLqECLgh9SW2H2qqdYa6lHS5QjxMEEh70BLxQawc9HIGGigCm0RG2E3vxS9uDwfoHdm+gD+bLViOXPUW4ufLPMRbER7nTaZfYLLxbR8kfwWe26cSCW/zGAsOxaX1NPXRiBETreDF/IVFB1iJN+VA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nAHgzqJsB8zqAoS5we1uOaCG9WI4RTtOircvBVOb7P8=;
- b=idSPsRfDn0E4aO+/A1hrRNTkDK9+db2m1aPTQ+0psatZuVqgzbN8SeCLfCCoF8EJRWgecfW4cCIZmpxqjrqD7JnddGQ843fkfDypZ4bsUpdEU7ZL2hGAVLrk8x+nxYdSk/skNkLOt/soyQUor62TtIwcMpVSHB9MzK6fpbXgwpx9ylx0Y2OmO3ty27aouDeVoYZU4s314F6r9m0IE75lHNjVfHQbQe9Ik0+QvT0ztz1iMk628zF62XKXMeBszMDkWGPHDCw1vzjrHeB4cm4GJcGUpbmFioF/g9cs+CDrIKhowq2gjEtCB/avLlEDfkenbj+Qt0e9mQpjBG05XuupBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nAHgzqJsB8zqAoS5we1uOaCG9WI4RTtOircvBVOb7P8=;
- b=Wv6vqF3+kV2FrMWBHIGWjxCuDe4HwT1Qe4pGM37ysmveN8DLI51TTW/VuLiErYx3omDaBtqPUE9+fdcKMyjwwrHlVt32VqgPqqCv3zm1DIpj1/b5/Glf05wmGjJYN5KGGYbRKwHCZZOXUdVLlAmH4PsnHsbEUAHf8CwBnwL/TIuG32CWU8tSnY6PxABfSVgxHh+grR5rMqBFjv22ua9uTLTTv/ckh08lFMu/J0b17rOH0K9mD6Za2sFxrrY5WI5ymk7LGH+w2O3Nk43P2s1kkc9yVpLDHVwwgIaY0G/6hHZdBB1kqUe9UnZCMMeo2c5Zr3RBY5MouB5SpfBI5znXKA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
- by DS7PR12MB6141.namprd12.prod.outlook.com (2603:10b6:8:9b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 09:55:43 +0000
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6]) by CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6%7]) with mapi id 15.20.9009.017; Tue, 19 Aug 2025
- 09:55:43 +0000
-Date: Tue, 19 Aug 2025 19:55:39 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Matthew Brost <matthew.brost@intel.com>, 
-	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, intel-xe@lists.freedesktop.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	Dave Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [RFC PATCH 1/6] mm/mmu_notifier: Allow multiple struct
- mmu_interval_notifier passes
-Message-ID: <4lsv2lcd7lssyvcjvkqe4t2foubxbhuxrt2ptzee3csymz5gg3@jwrg3xow72lm>
-References: <20250809135137.259427-1-thomas.hellstrom@linux.intel.com>
- <20250809135137.259427-2-thomas.hellstrom@linux.intel.com>
- <20250818160726.GH599331@ziepe.ca>
- <aKNT8GUu0r3i4Ikq@lstrano-desk.jf.intel.com>
- <20250818163617.GI599331@ziepe.ca>
- <aKNYUaPS0PiRk/yj@lstrano-desk.jf.intel.com>
- <20250818164655.GJ599331@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250818164655.GJ599331@ziepe.ca>
-X-ClientProxiedBy: SY5PR01CA0055.ausprd01.prod.outlook.com
- (2603:10c6:10:1fc::15) To CY8PR12MB7705.namprd12.prod.outlook.com
- (2603:10b6:930:84::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3908B1E5207;
+	Tue, 19 Aug 2025 09:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755597415; cv=none; b=p1H0lgNUL1obwWHdrHHYqz1KktIlQovPzn7frIKjTnoG63bo91qsdW6Bl6h4v7v9pr7ggbpZyKQxwSLfsM60w+n7uVBGiRNX4pCVZOfY7oZOp2cHS52SRyLaaxeLTQlIGXASMC/1ka2+e5GXjfURCyZRmswZCr1e4k0zwQhtesU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755597415; c=relaxed/simple;
+	bh=0zy3VasTvDkGYKh2MdkeeuI2WFPOfWq4rFwh0kf6R20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Exy1n4XF0I45wNPpl2Y91uYZFysFBp+bnaopvv34V/tH2+AocKH/W1fRzOfXHrXiCxFdikA6uF0Aekxcc40hlXqgVLGonLa/vLzEeCh6APj7tundDhxYhaizVa1WTLZ+L6sPAiMSOsR7L21zP8IMy1srAYdGQsR/94QvrbA3Njk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmlCtNop; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb78da8a7so829274666b.1;
+        Tue, 19 Aug 2025 02:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755597412; x=1756202212; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g0bVAF8WDQqarUcJ5Cxhh/tMUtZzqgjbTmQW+l2gxzk=;
+        b=jmlCtNop8rM18KIAQqLxFBu/Oh1zJR1TSfJNeLabLdcv6PyPJvgEi2mfpq7aRuf/ql
+         NFDwujxtukOO8bXjtECb8BRMTBIqtUI0GJes5eQFJsp+S/9WDGIC87sWdn2yaG2wdH9g
+         E42hamsabVBIvYyCSGVqrMkRtIgV7+2eWFg6xbJWUAwS/JYBIDdbULSmz8SJWwxJgX/1
+         nGhh/qFb8ew3pikC21AcrKoJU9zw1Imq0qmr0yulFPtGqhCZMJYRFqKvce8MBnV5oe00
+         GEOR1mPSYhJQLARBQ+Kxye7CdnLt8oEciewW5HzUMRW3tpvUodswcZuYcA1a8feCoF4k
+         aeZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755597412; x=1756202212;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g0bVAF8WDQqarUcJ5Cxhh/tMUtZzqgjbTmQW+l2gxzk=;
+        b=udk0yrzvjt0banuwD/cIoyugD6E2gItvJGvYUeqgFeabYoFAVo92FH/IridpMe3XgQ
+         k2FxMFWMfqVqJQGpk6igkdM6+i6TZsg00cHvb1iK7Anbqzg6yUMxCXwqdhA4Oa67vtPO
+         CfGyWybAeo2dagKWGPN2lu15UCHkPG6mmoIOaUjNC0YkWDrOT2s1rgKJllg3+cXbLt1a
+         ZB4kbGZfGvjWJ2GLHu8E5KTLtAO4ArGcMbOrdQOgVH48nAuyWXqZi0NczOTq01zqj3oh
+         WWdhrA+dMkUlsApR/GAEAGlUCPbP2t0pt9dUPGwfWinYeVaobS8FxT2P4kyf3xe+EivL
+         yL+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXXhoqTpY+jlz30JXR0bzAEnI4n8/MBHSvWKajEHjYVFqJynh+gcMYglDLRyw19TfWusQhqD3ea0I/a6fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSxnY8Klrd4sGuTG08H5esEcpSoRVqYon7NhAfHpvZgbdX7G0C
+	BVfvol3EOPLlbY3Wi6hcDxXChQ254JncAzYL0CsxsVACbhursZN3QBXyCeKjiw==
+X-Gm-Gg: ASbGncvdHnAgCTdqwv7EQs45X4skYhiP7BAB6OWi6tuUANoAXb142/lwNiQimT/EQIW
+	1bj3ap1fWse8HeP3zoyW2vd1ixNMzhKMNfQikjOC+9yivwFR/2D7nRg+cK+JgeDexbuhaFG6Pco
+	vX9XUW2hyz5fTRn2Io7G8k41t4JSHuEfqlqyW/miruuDbTa0Rg7/y5ehSGs5I+Js3NTSzNg5UsB
+	KgVF3x8wX2ycepgKPL05WWLO7ahEz9DrlpsP0HbVM9Ozb9bL4Sfhz4pDQ3Z3NkSClAonUAvBrmO
+	bXZQq77V1Iu/0+CHGTKwHcmH/YXIzyMmr8ftgV9z7Ny0oY1SmaMpNMGuP3X0Bajk8gmJZH+Fh2I
+	QwCyHXnbs6+M1+x5yFYvCMt+9pSSA+/ee/5OD5Q2M+kpI5J0n06h7C/jFBURD1lVecMKKnLg/Vq
+	zEaiw7
+X-Google-Smtp-Source: AGHT+IEcppJNVG91ZVqZDy4Z08DCNt+xy4s8G+9ZqhzqBRbSTCDZF6ZxqhVeNiqJS850WRXpPuZhVQ==
+X-Received: by 2002:a17:906:c103:b0:ae0:e065:ddfb with SMTP id a640c23a62f3a-afddcb8a329mr192086366b.18.1755597412348;
+        Tue, 19 Aug 2025 02:56:52 -0700 (PDT)
+Received: from ?IPV6:2a02:2f0e:c207:b600:978:f6fa:583e:b091? ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd04e0c5sm973562966b.117.2025.08.19.02.56.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 02:56:51 -0700 (PDT)
+Message-ID: <e40d056b-731d-4e33-9347-20c0a7665ede@gmail.com>
+Date: Tue, 19 Aug 2025 12:56:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|DS7PR12MB6141:EE_
-X-MS-Office365-Filtering-Correlation-Id: caac88eb-e507-4a12-31cc-08dddf068fd8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZWlWRVBMRk4reGx2TjA4cjNDRmF1QVp4L2ZFbDlGdVlSNTh6T0pyOC9zQitS?=
- =?utf-8?B?Rm9LL0lqcDBPL3JpdXZxdlVMUlo5UkVRUjZaR1JkT08xN3lRcVlYVGN5MXht?=
- =?utf-8?B?ZGdjcHJMK2pWOTNrWFZ5Tlo0cHUyT0txb0Y1bFNpWVZjbFBuL29PQ1pNWjFn?=
- =?utf-8?B?T3FzemgvbUJOTU4xTkdyNjBibXRhdEc3b09oQjlyTkZtVWkzQjNESGpwZmZk?=
- =?utf-8?B?dFhxcjBwRWl5OWhGSks2Q3U2bVRQMk41cTVFQ0g2YWR2UUdxUSs4VXJydmVK?=
- =?utf-8?B?NklGbXVRSXEyNitNMXNXdmxBY1RKODNPRzJZYVZwSGdRYmkxQUNCVUEzL2tH?=
- =?utf-8?B?RkJONU0wV2VVWE5KWnQxT244UWJ4dEJ2MFkwZ1BqQzZrMjhJREpVUmQ0SHZR?=
- =?utf-8?B?L3E5Mm5ZV0NLMW9zK1ZEZzRGUEJrSkRGK1VhTTYyTmprYzdlUUo4RitTdjJl?=
- =?utf-8?B?OGN3ZkJkOG1WcFFVQjVDNG5acGNlU3gvbS9DMjdTSmNCdEdsS2dwWFBncGpq?=
- =?utf-8?B?aVhFRlV0L1VWR2d1bHFIcWxLSlNnNzdzYTVqNlI2R0JXZHhhRWpmNURRSDVy?=
- =?utf-8?B?TXJ2R21OWnZUNjUrUFZlRXR2d0s0RkRmcU9MZ0FlSUNFQ2pkcEJHa3FCblVn?=
- =?utf-8?B?b2o4U041Z1VES1k1eUk0RVM5UERmSGRieTNKZTBvRkhPd0p2ZVI4VlBxaUVW?=
- =?utf-8?B?QXRyL2VWSHpuWndxa01OaHlqc0RDTFJQNGxVd3ZUV2ZNY1EyMlYza2xSRHUx?=
- =?utf-8?B?S3NVdkJwOFJHdzVYcUM1bUh2aVRUTUVxeitNMWhiTWwxeC9MT0krYXdFeVFV?=
- =?utf-8?B?RGNOYWVxeTFKVFdIZXFldlhlYlRXS0NtK2hKdlZqWjZuWGVINllDUHJIbFZR?=
- =?utf-8?B?RFhBWFp1MWVDMXVlRXhtZ0xSTFhXODJUTm9MS09idkhIWmdYMkNkNzl2aTFJ?=
- =?utf-8?B?OERyTENjU0VrZ2FydGJSTzBXTmVEVnhYcFk2dFFXNUhqZDBLc2FHUDZldUpl?=
- =?utf-8?B?MGVNbi81V25mSlY2eHZ2Yk9DRitDRmE3NnJmSVVlMzNkWktwZXRFYWdlUnc2?=
- =?utf-8?B?djFKU2wxTThZelVGSjRYOE9TTXRpcXZPWDhXRjJXVUJqN250dVBOYjR5SXln?=
- =?utf-8?B?SjgzRllmV3E3TE1VUGVwNnM4QUUwcTNvNmVYZzdQaXlzbHhuREFKMXV1VWZG?=
- =?utf-8?B?TlgyRFlTdG5UYTdlTGMvZzZjRVZOVUtHWFU3d3lsK3V0SXEyOEJRekhNTFJU?=
- =?utf-8?B?RzBPTlRma2t0T1pLZlFSMSs4T3hxQndaR01LL2tEVURiQmtrdlNwLytORUtE?=
- =?utf-8?B?Yzl0QnRoazllL0I3Ny9adzhSMWZVRVJ5UG41VFRDZXpLTktJYzdMZzNjT1NV?=
- =?utf-8?B?T2VzbmdveWRvMHA2MktOeEgwQzVnOW1wTWZ6SDVKSmw1cXlPN0M4UTJXbXRo?=
- =?utf-8?B?aGpocGxlOFZBSnBaWmNrS29oTWJ4dGNVNGJjQ3Vrd0VMYkVGREFJOTgydnoy?=
- =?utf-8?B?VjRJdFJlYTV0YjAwVzlHdCt3U1JYMDZ5SXQ2WS92QmJWanpMNk1LeDNJcVp0?=
- =?utf-8?B?MjNIdE9lOVUvY0VWUnU2MFRRNm8zRW5FN2d3SWtuc0RaK1J4dVRrMktxbHhP?=
- =?utf-8?B?SXNqazMzMVZYZVhTNTgzdnNPNnZlTjBxR09LZUtiVzFkakxndmNBUlljNWZC?=
- =?utf-8?B?V2k4bHNycFFWb3Vxb1ZPS1U1SnhlSExXeS9oSkd1YlU5RVJaY0swc1k4c0Ru?=
- =?utf-8?B?dFBjMjJxc0ZhMUEwZmgvNndVdXZGUFJidGpuZjVXbjlRMU5ha1BrSUhtc3A4?=
- =?utf-8?B?OXpKVlVKbklxZlZ1bFYzNG9pd1NVT1lvZVNQL3ZLcENPdG1pTjlzVFAzc01U?=
- =?utf-8?B?a2cwTFpSVEVGR1FwYlBjcnhlMWtQaHNDblQ3blk5aUtTbDhSNmxhK21iWVBY?=
- =?utf-8?Q?JxdZM+HAojk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dHpLK1pzVjlVRUpOQ2xyQ1VSUGpVcG80S3B6RXIwV28wTzBRRkoyQTErb09J?=
- =?utf-8?B?UVZoeDNSbTNvOW9SNkVFaVpwZ3o2c2ptOW9BaUdBOWh6YzFlQ0pqaVBrSCtF?=
- =?utf-8?B?MW00NEFudkpGMXpuTXEyV2x5ZlRFR05QZXVsMEwwdGlVekZXT1VRZXFmZ0xq?=
- =?utf-8?B?djAzS3Y5ZmtCUmVGME5sR0JtQzlCMEJMMFVMeXZ6bjc1R3duaGtIblkxYVRp?=
- =?utf-8?B?N2tNN3hWeE9HTzdxcC81c1E2UzMyT3Zlakw4RkVpc3Rkem5CaTFLTGs0VE4w?=
- =?utf-8?B?Z3Q5VndzdzlVUTdzVUk1QzhrL2g0TjZManRMQ0ordlBIRWt0amMzaGZhM1dY?=
- =?utf-8?B?NUcwSHRkNVNhWmp2bU9ZK1Q0TnFzNWczZkpOZzU4UWdiSjkvVzlLTUt5eTdH?=
- =?utf-8?B?aWg3ZGd5VjdzalRHL21WTE0rTkJjVGZJakxSSndjc1J5KzBVTDhiYXBqbUVz?=
- =?utf-8?B?ZjFhYlNBYWdhT2l6THpIOFM0MFY3a2RLcm55VnpMb1I3eW1CQmRDYTRVRVlY?=
- =?utf-8?B?dGlBckNPb3NXUk5tbnBIMFl0MW00T2xzaFNUZUxoV0xQUDJ3TWRUbXZXeVFR?=
- =?utf-8?B?RGdqU2xNOUlMT1dBMzdNV2h4eENMZFhPM3pFTGlZcGZxSUtEOFBQWElObkU3?=
- =?utf-8?B?ZUhkMkNQUlJiWDJtazZOSDQvdktXOUE1VSs4OHo1QmpYdHZITCs5U1ZuVEh6?=
- =?utf-8?B?ZFpmU2V6dlFZbG1ac2tzQlBjR216ZEpGMTI1eWR0MGlEUnpRSDZCZVFhcHp2?=
- =?utf-8?B?dCtpY2g3a1pYNFJDRXdrUkhPR1JtNGxkbFdsYjd1QWQzL0lNV1ZqSVhNdkF2?=
- =?utf-8?B?NXVzWHZqdlJ0OXlpTHV0ZDl0WVNHRHhGWmVGaVcrQUd3UGFicmJxaVBJbEZR?=
- =?utf-8?B?STk2TTFtR1p1VE9KVmxkWVlnTFUybzAzeGR6OWE2bVZkWjBOczVwN0N1VnFw?=
- =?utf-8?B?Z3UyNzRmd2loYzlDNUxxR0dNMVlKNFRyWmp3eTV2U0lITXRZeGtuQ0dvZzJI?=
- =?utf-8?B?UkhxYXNqSEtOY1NRSk0wTHBoeVJTNzdWYjVicnZZMjJwUHdYbjBjdHUvMFIx?=
- =?utf-8?B?Ylh2QWRPVUVOSjZLaFZWRGpESld2WUNwN05NcldybnNLeTJ0V2tyZ3ZxakdI?=
- =?utf-8?B?NUhsampPaXhaekZIdkplN1Z6MTZjYVlGZnhUMjZ0VWlxd0VEZHJ5TzVPM052?=
- =?utf-8?B?MlhFcWlBMkxoNXNKMExmT1dscHlQdVYybVE1YlRNTmVwSWozZ0FsMThBVzZQ?=
- =?utf-8?B?N0g3cGVPY0RGWDJDbmd2UGxDakhPeHdBQ3NkTG9mT3pGcHNJNWZTMmlrd3do?=
- =?utf-8?B?UHhsM2xLaFdwTThjemlWQ3NCL3hHMjlOYW5zazRFK0RHbzJtSzYxcVdqNnZR?=
- =?utf-8?B?M1k0cktVUkxRTDVxOG5jZ1NGOUYydjM0ZXJXSm1MY0I2dUdkRUMvNlNUcEVv?=
- =?utf-8?B?R0crUDZRSVU3Ulh5TXUxV1JMTDltQ1BDamJoeEV4Wm5XNE0yWmJXNnpSdG10?=
- =?utf-8?B?WW9YOFBWazZxeWd3eHArZHgzNW9NUmk5UmVMYWgzZVZIMW9ycllXbEJ6YXJp?=
- =?utf-8?B?YmVCWGlpZHBZQTlrQWowZ1VCLy9KWXpDenFGNkJrSlJVRVZTN3BIYzcvb1hC?=
- =?utf-8?B?YzJ5QTI4MmVlSVZKZHRLbFE2U2Y3WWJSR2ZFbmhtVDFISTB4VElGYnZNN2J6?=
- =?utf-8?B?dFNjTVAyYTloZ2JqZ1gvUHFtMHI1TnZxQjFLbWtvenZPVlJTVm5VbW5VeTVW?=
- =?utf-8?B?QjZ1V2tjcUNHcUpaMjFZdmp6a0lvMFFwY01Lc1ZxYjBHdHpjUEZiWGZqd3E5?=
- =?utf-8?B?MGNsSjBQY2lnNWk5N2RObWVuTHpqY1Y1eSticXlIYmYyU0MvbXE3cVdzWlRr?=
- =?utf-8?B?TUJ0dEdDYitsL2xlZ0dHcXhhTlVkc3ltOVBoSERzUGg2a3FnMzRWdCtsckRD?=
- =?utf-8?B?ODBUdWs2UldCNHBudFhMd3RRV1dhd2JuWEUrSW95WUVobm9uUzU5TDIxdDlo?=
- =?utf-8?B?UnlzMGIyNlQrZXZWR0xjNUlrak45azlSNFJvSDlQamsvUWpBRFZNcmppN0FV?=
- =?utf-8?B?cmlKNkZlcFAvb1VoUmcvMk54b05QblA2d2o3b2JLLytyTk5iMVFCZzNWVUs1?=
- =?utf-8?Q?wUCaB7IVfjt1qLXS00RCNJdyQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: caac88eb-e507-4a12-31cc-08dddf068fd8
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 09:55:43.4263
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uOPhQFlWMa1dxMETtwtgtkZuwp/d2OR87ls/o8Decw0E05DvJV/9rDETrYAKB+clPu8i+iiNgsBssagwVL8kLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6141
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] crypto: ti: Add driver for DTHE V2 AES Engine
+ (ECB, CBC)
+To: T Pratham <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S . Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ Kamlesh Gurudasani <kamlesh@ti.com>, Manorit Chawdhry <m-chawdhry@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+ Vishal Mahaveer <vishalm@ti.com>, Kavitha Malarvizhi <k-malarvizhi@ti.com>
+References: <20250819065844.3337101-1-t-pratham@ti.com>
+ <20250819065844.3337101-3-t-pratham@ti.com>
+Content-Language: en-US
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+In-Reply-To: <20250819065844.3337101-3-t-pratham@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 01:46:55PM -0300, Jason Gunthorpe wrote:
-> On Mon, Aug 18, 2025 at 09:44:01AM -0700, Matthew Brost wrote:
-> > On Mon, Aug 18, 2025 at 01:36:17PM -0300, Jason Gunthorpe wrote:
-> > > On Mon, Aug 18, 2025 at 09:25:20AM -0700, Matthew Brost wrote:
-> > > > I think this choice makes sense: it allows embedding the wait state from
-> > > > the initial notifier call into the pass structure. Patch [6] shows this
-> > > > by attaching the issued TLB invalidation fences to the pass. Since a
-> > > > single notifier may be invoked multiple times with different ranges but
-> > > > the same seqno,
-> > > 
-> > > That should be explained, but also seems to be a bit of a different
-> > > issue..
-> > > 
-> > > If the design is really to only have two passes and this linked list
-> > > is about retaining state then there should not be so much freedom to
-> > > have more passes.
-> > 
-> > I’ll let Thomas weigh in on whether we really need more than two passes;
-> > my feeling is that two passes are likely sufficient. It’s also worth
-> > noting that the linked list has an added benefit: the notifier tree only
-> > needs to be walked once (a small time-complexity win).
+Hi,
+
+On 8/19/25 9:12 AM, T Pratham wrote:
+> Add support for ECB and CBC modes in the AES Engine of the DTHE V2
+> hardware cryptography engine.
 > 
-> You may end up keeping the linked list just with no way to add a third
-> pass.
+> Signed-off-by: T Pratham <t-pratham@ti.com>
+> ---
+>  MAINTAINERS                       |   1 +
+>  drivers/crypto/Kconfig            |   1 +
+>  drivers/crypto/Makefile           |   1 +
+>  drivers/crypto/ti/Kconfig         |  14 +
+>  drivers/crypto/ti/Makefile        |   3 +
+>  drivers/crypto/ti/dthev2-aes.c    | 411 ++++++++++++++++++++++++++++++
+>  drivers/crypto/ti/dthev2-common.c | 220 ++++++++++++++++
+>  drivers/crypto/ti/dthev2-common.h | 101 ++++++++
+>  8 files changed, 752 insertions(+)
+>  create mode 100644 drivers/crypto/ti/Kconfig
+>  create mode 100644 drivers/crypto/ti/Makefile
+>  create mode 100644 drivers/crypto/ti/dthev2-aes.c
+>  create mode 100644 drivers/crypto/ti/dthev2-common.c
+>  create mode 100644 drivers/crypto/ti/dthev2-common.h
+>
 
-It seems to me though that linked list still adds unnecessary complexity. I
-think this would all be much easier to follow if we just added two new callbacks
-- invalidate_start() and invalidate_end() say.
+[...]
 
-Admitedly that would still require the linked list (or something similar) to
-retain the ability to hold/pass a context between the start and end callbacks.
-Which is bit annoying, it's a pity we need to allocate memory in a performance
-sensitive path to effectively pass (at least in this case) a single pointer. I
-can't think of any obvious solutions to that though.
+> +static int dthe_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct dthe_data *dev_data;
+> +	int ret;
+> +
+> +	dev_data = devm_kzalloc(dev, sizeof(*dev_data), GFP_KERNEL);
+> +	if (!dev_data)
+> +		return -ENOMEM;
+> +
+> +	dev_data->dev = dev;
+> +	dev_data->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(dev_data->regs))
+> +		return PTR_ERR(dev_data->regs);
+> +
+> +	platform_set_drvdata(pdev, dev_data);
+> +
+> +	spin_lock(&dthe_dev_list.lock);
+> +	list_add(&dev_data->list, &dthe_dev_list.dev_list);
+> +	spin_unlock(&dthe_dev_list.lock);
+> +
+> +	ret = dthe_dma_init(dev_data);
+> +	if (ret)
+> +		goto probe_dma_err;
+> +
+> +	dev_data->engine = crypto_engine_alloc_init(dev, 1);
+> +	if (!dev_data->engine) {
+> +		ret = -ENOMEM;
+> +		goto probe_engine_err;
+> +	}
+> +
+> +	ret = crypto_engine_start(dev_data->engine);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to start crypto engine\n");
+> +		goto probe_engine_start_err;
+> +	}
+> +
+> +	ret = dthe_register_algs();
+> +	if (ret) {
+> +		dev_err(dev, "Failed to register algs\n");
+> +		goto probe_reg_err;
+> +	}
+> +
+> +	return 0;
+> +
+> +probe_reg_err:
+> +	crypto_engine_stop(dev_data->engine);
+> +probe_engine_start_err:
+> +	crypto_engine_exit(dev_data->engine);
 
-> Jason
-> 
+crypto_engine_exit() calls crypto_engine_stop() internally, so there is
+no need to call both functions here. Just use crypto_engine_exit().
+
+/**
+ * crypto_engine_exit - free the resources of hardware engine when exit
+ * @engine: the hardware engine need to be freed
+ */
+void crypto_engine_exit(struct crypto_engine *engine)
+{
+	int ret;
+
+	ret = crypto_engine_stop(engine);
+	if (ret)
+		return;
+
+	kthread_destroy_worker(engine->kworker);
+}
+
+> +probe_engine_err:
+> +	dma_release_channel(dev_data->dma_aes_rx);
+> +	dma_release_channel(dev_data->dma_aes_tx);
+> +	dma_release_channel(dev_data->dma_sha_tx);
+> +probe_dma_err:
+> +	spin_lock(&dthe_dev_list.lock);
+> +	list_del(&dev_data->list);
+> +	spin_unlock(&dthe_dev_list.lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static void dthe_remove(struct platform_device *pdev)
+> +{
+> +	struct dthe_data *dev_data = platform_get_drvdata(pdev);
+> +
+> +	spin_lock(&dthe_dev_list.lock);
+> +	list_del(&dev_data->list);
+> +	spin_unlock(&dthe_dev_list.lock);
+> +
+> +	dthe_unregister_algs();
+> +
+> +	crypto_engine_stop(dev_data->engine);
+> +	crypto_engine_exit(dev_data->engine);
+> +
+
+Same here.
+
+> +	dma_release_channel(dev_data->dma_aes_rx);
+> +	dma_release_channel(dev_data->dma_aes_tx);
+> +	dma_release_channel(dev_data->dma_sha_tx);
+> +}
+
+Ovidiu
 
