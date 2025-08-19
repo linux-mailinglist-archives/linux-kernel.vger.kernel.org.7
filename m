@@ -1,95 +1,97 @@
-Return-Path: <linux-kernel+bounces-775990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1426B2C728
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:36:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F00B2C736
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88475E299E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965AB1BC5C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511492765EA;
-	Tue, 19 Aug 2025 14:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4A027780D;
+	Tue, 19 Aug 2025 14:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaO+KUqT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okteRz2z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0271F9F70;
-	Tue, 19 Aug 2025 14:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCFD27602E;
+	Tue, 19 Aug 2025 14:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614161; cv=none; b=YkJSCZd1T091M0uxsnI2IQtEwoptPly/6DLHBmjpS67Uje8oO2sTawN7TDOLt2cKfwcQQ5/xzIiE+v8/ZQDXqssQEfWkZa8qRrX3F1uzPfyt/Amau5hqsgNJ+eVEsE9RHFrmcuun7o5Ly6k0g7Y60ImUb0Fgn4zfz0m49OJnC3U=
+	t=1755614216; cv=none; b=hIzP39SHTdx2xrqCPzQbKDOqd14d1//B6hmcuT1kPwKORMUvk/gBrkrBxfY73l3BJLXopRTDMVviQ7gRJyHTG9MG1DNMFFtbLRg37zRT9iZGWnEW/OaOlsnYMFjpYiYacGq+KMPTWxjs7iBcqKnJmgpooAzhRv7+yRqBC018k6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614161; c=relaxed/simple;
-	bh=BiHe/FguZmNKLQFvQErwkmhZShCmEsuov9mR9CCAK10=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l16Q36AN1KQQrT47OoydlgncS0V1QhWuia+ki0jCPs11YpO2wq88qnLJJO1jh3m/VIGpb2R/XtI63hV1XV2lDDeI5qtfxXwjFJ308LzVZo8Um7loTsxD2wk0MKo2PWo9lMaP2gr3Af1QDckEqoaEyQHGJfDhDQjgzTYc2ZQxETY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaO+KUqT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBAAFC4CEF1;
-	Tue, 19 Aug 2025 14:35:59 +0000 (UTC)
+	s=arc-20240116; t=1755614216; c=relaxed/simple;
+	bh=SXLS7/VM3g85Cc5fAbqS3ubAzBGw+wA8lmhQV7doCHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwtWbmIDsUrjkl46JcpeIm/vLNT4EAQ24SIsfP+LeReWo+2O9dGXmkyEtu8nf0w6yLls8Hr3F/KBgJhbNSPtCjw8JXmg0JliuBfvSuBsTA+xqb3xcF2goIEuSbP6LNEjy6p3uj44yrlGxQ5qtbcse0TmADFgUOMYjELWL+k4eZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okteRz2z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4177AC4CEF1;
+	Tue, 19 Aug 2025 14:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755614161;
-	bh=BiHe/FguZmNKLQFvQErwkmhZShCmEsuov9mR9CCAK10=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TaO+KUqTMSIodh39ZJ/nPQgGEHgwsyFzbEZITzVRRHFdJkJK4wIirxXwoU5f/8FQv
-	 d8Y3m/ELPmUqtK4bLDl+zd56vViPX8vjh1VTrX5aJz4/G8pIZ3tVEU7eMS1PHiTBJG
-	 exWybiL3Eh9a1r3RSw6SLJoOlFWlnT4AwvgYWibYapB0qPiaS3L1kJQb6/6NHjT2e0
-	 nz5kWH0P8sLmQrwe8zFJASoFkeNpVKcr9BduukCOTNWYgKL49J1xuwIKHSd/OiNVGe
-	 ntHEdK6OnQ4AvIbZF8fGt6SWosAGX4WIkxpQ64bc+7gRCD7ZplQ82Nd85ofT02gzPP
-	 dRF1C0SzgUveA==
-Date: Tue, 19 Aug 2025 07:35:58 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Meghana Malladi <m-malladi@ti.com>
-Cc: <namcao@linutronix.de>, <jacob.e.keller@intel.com>,
- <christian.koenig@amd.com>, <sumit.semwal@linaro.org>, <sdf@fomichev.me>,
- <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
- <ast@kernel.org>, <pabeni@redhat.com>, <edumazet@google.com>,
- <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
- <linaro-mm-sig@lists.linaro.org>, <dri-devel@lists.freedesktop.org>,
- <linux-media@vger.kernel.org>, <bpf@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: Re: [PATCH net-next 5/6] net: ti: icssg-prueth: Add AF_XDP zero
- copy for RX
-Message-ID: <20250819073558.2c996b6d@kernel.org>
-In-Reply-To: <20250818112424.3068643-6-m-malladi@ti.com>
-References: <20250818112424.3068643-1-m-malladi@ti.com>
-	<20250818112424.3068643-6-m-malladi@ti.com>
+	s=k20201202; t=1755614215;
+	bh=SXLS7/VM3g85Cc5fAbqS3ubAzBGw+wA8lmhQV7doCHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=okteRz2zcdDimeS21ApNqq6v+CS/6RMwuhZXKKWR1yuTYcIWMj+qA+H6AwkhhlgqT
+	 9kYUVSg+NVWsVfyKKdnQL59/ROppZkfDljgWRv/W2CEePS4A8vAnoqayNz7NdHtDVo
+	 D+FQQt0zigCRATb+yXcBKnurX6uJhLUZANrEqP12q6kaluBaylRKGvJFm88p59jd86
+	 V8HdL0G69vl+/iyp5TDuDV90jND0y4GyudFOV3hcGuzSgn/HmWGu2Oh6UMNRsThdTo
+	 zQbX0fHErNuLswwR/yD+wMiyY1Y6LJQubS1/mD5nKUAr9Sz/nqaexQOOipk3rU70HI
+	 +tI2LzmtW9fUw==
+Date: Tue, 19 Aug 2025 20:06:45 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	jianjun.wang@mediatek.com, ryder.lee@mediatek.com, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, manivannan.sadhasivam@linaro.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 2/3] dt-bindings: PCI: mediatek-gen3: Add support for
+ MT6991/MT8196
+Message-ID: <6q3gp2hyg3bzogpg3igjkqzkcnfxvzf5zpid2sssi2nu6mc5er@yi7ewqi2h33i>
+References: <20250703120847.121826-1-angelogioacchino.delregno@collabora.com>
+ <20250703120847.121826-3-angelogioacchino.delregno@collabora.com>
+ <20250707-large-nocturnal-dormouse-c93deb@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250707-large-nocturnal-dormouse-c93deb@krzk-bin>
 
-On Mon, 18 Aug 2025 16:54:23 +0530 Meghana Malladi wrote:
-> @@ -1332,6 +1350,13 @@ static int prueth_xsk_wakeup(struct net_device *ndev, u32 qid, u32 flags)
->  		}
->  	}
->  
-> +	if (flags & XDP_WAKEUP_RX) {
-> +		if (!napi_if_scheduled_mark_missed(&emac->napi_rx)) {
-> +			if (likely(napi_schedule_prep(&emac->napi_rx)))
-> +				__napi_schedule(&emac->napi_rx);
-> +		}
-> +	}
-> +
->  	return 0;
+On Mon, Jul 07, 2025 at 08:46:16AM GMT, Krzysztof Kozlowski wrote:
+> On Thu, Jul 03, 2025 at 02:08:46PM +0200, AngeloGioacchino Del Regno wrote:
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 6
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: pl_250m
+> > +            - const: tl_26m
+> > +            - const: bus
+> > +            - const: low_power
+> > +            - const: peri_26m
+> > +            - const: peri_mem
+> > +
+> > +        resets:
+> 
+> minItems: 2 is needed (that's a change since some time, comparing to
+> what was year or earlier)
+> 
 
-I suspect this series is generated against old source or there's
-another conflicting series in flight, because git ends up applying
-this chunk to prueth_xsk_pool_disable() :S
+Will do 's/maxItems/minItems' while applying.
 
-Before you proceed with AF_XDP could you make this driver build under
-COMPILE_TEST on x86? This is very easy to miss, luckily we got an off
-list report but its pure luck. And obviously much more effort for the
-maintainers to investigate than if it was caught by the CI.
+- Mani
+
 -- 
-pw-bot: cr
+மணிவண்ணன் சதாசிவம்
 
