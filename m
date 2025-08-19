@@ -1,168 +1,115 @@
-Return-Path: <linux-kernel+bounces-775177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5B3B2BC38
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:52:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B00DB2BC3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A462B62291B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:51:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D9F188DFE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76821315763;
-	Tue, 19 Aug 2025 08:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBD311C3D;
+	Tue, 19 Aug 2025 08:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XwXKZ2P/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Owd2CS/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4F0311C07
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A852C1DC9B1;
+	Tue, 19 Aug 2025 08:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755593513; cv=none; b=ep3db0t8p2purr6Wo5NsHu1M9lqHO2OJwluII0bF2KEPkvmJf49jvIHvRbP2wr7fupKDe8qHnOgodMtAQKZaOAsSrem9Ub3VZ36KDe9k9j598CfHth7i0fyeBZ9IO/Nl6VSaYFuuVY4qnD5ivxV9uo7ZmsUtym+nh1nv+1ze44o=
+	t=1755593540; cv=none; b=s6sYOdxruOd7AQlPIUyD3QR1up9caAzMPH9jXUg1NWaCJdIP7DRgm7SQxFJWq8ZtZAZIoqW+1s3ExPL8UBaDKAxLv/Wlsfd/OhEb5Ir3C9CwUhjWQpsFKI1NPFvLxOOb81TcxiDTgnsaAlXZxgJIW4uh0VeIZ+oW/ixrSFEE7Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755593513; c=relaxed/simple;
-	bh=ANiqYqygBuucw6l4Je6RvILHlMLysiymX6SU3Gu1VAk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pFV68JsJSplZMF8bTKHzC1X81ae/Gk3z3GedlGgYcTOUKiqShA+lGpK3OKB5848o0nWBDoKdCXZA22s+fbm70Z69ybw1bdSrtXsW5zA0Orla7Ra0wBvbuFQArw8fjzePt/UAMEk7hJ/8k97cyuopeoFXnozmxIWq0yvlwOEes4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XwXKZ2P/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J8pHCA011662
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:51:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=UtaQEPA70JUUBbPFESCLHu
-	D85Yw6S51mJSYTTPArkpI=; b=XwXKZ2P/CQ8X/woT44z55uo7ncMfCqf2oMNicb
-	EIlmgCa5BazWIOtuRQjBP2ybBV6VjXZ2bm4hQj/PliTrp9Eya9SlDUeXvXVViSGa
-	4xrJ5b+ATMif8ea6AzUP/p4acmCXpY4hXDZlTKSyjcnZJ+/BKlVE6OBqxGczSx5g
-	Th1nvl1EFT5u2eraU8PwDcL5m/d1Ubgq5AQLOw5ZpmRpDYunhqvlCGyULIFcnsfU
-	YpdtP3he/SLz2IQPxYhS/PagCtMmZqDLOoxSE8BYvKkZeLJoWc7qZPcSifWEue9a
-	fsO3+DYxjnZD1E18GfXO5ZdTWqOOlplU02NHsv9OlAxuBdTg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj2ufx70-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:51:50 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2445806dc88so128412055ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:51:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755593509; x=1756198309;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UtaQEPA70JUUBbPFESCLHuD85Yw6S51mJSYTTPArkpI=;
-        b=lcU2uIzfAnkaBDZ6irhPpIZzq+pRwHk6nUIa3JE43Z4ZIUdsjdp1dpR7Uo+wdBbOyf
-         AeQ41m+Pzd1+GZy4dIzUpL411/8MZ/Z1SnlkldS4uLeZKndda32JZozk4Q7PKevCBeXC
-         yS4ic4uGwQStngopLgJ19aHXUNuInZ9zVFR9Q70bE9Mz/tzKiJC1AAcm6CBcAehduVSQ
-         1h2bJg6cowegGdviBdKzJwi1EX8oUzB5v44w4DF5U84gl/QNY9Yj//Y8gjEJvz9DLDBQ
-         5c9UfQqTEcQlRoJbsGu/T03Kx6RLltC8elEASL+ItEobe6CyPtvGfTmrPl8IGrsovapl
-         jUtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlMeWN/BRI1e4fpy+zm6Lf8yqFusYQb/Lm5wgwsSsL8e1NtCcaS9OGejvYXRuumwB06Ow3gwssT3q1mnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJDXJsfhQwQT0GURUIXTHsRID12Ggc8eeqoXYAaSmE5JtFJ40M
-	a3NtbcSOAGt1LSqPIx415TqPkSg6jcIwfiAV0siqE4h9kuDqkaGcIkvhDatsSX1T8QP8ynSQ+h7
-	qP4RtmqBzatQvCgmRHpgiSWXjjYP/hy+cDjjy7+sFIdH6KSsmZPabsWU1pE2TgG4eLcW7fzL8yU
-	4=
-X-Gm-Gg: ASbGncuPUhhgGs3S9I7GzeoESzO9YYWb3vpL103hDvwL8cLCkjOQ3tIFdVw1J/EXlg6
-	5sErs++jNdqbe+x8OROdYrAIF9pDvcokMhrnVcisDN6YtFE5IlKreId32JIV0bQ4gIcByI1pG9f
-	eILeB4R00KBp+ta4gZItZyvEF3N/3b4Vk6O++R0gmH/3d7PG7FaulGPgBtrDPpXWDuFbG6kShkX
-	W9QhcLiF02zgRJyi6sIXLdi7mR75Gahw27bPtAfTMoqh1KpQWPjVew3H1/K8CQWmFP2fGpo24OU
-	V/3zcJV+a4SPGE5eJFuU8A/7T21F655J8ZGb2ndhqlI=
-X-Received: by 2002:a17:903:2f8e:b0:240:469d:beb0 with SMTP id d9443c01a7336-245e0494544mr22476155ad.31.1755593509517;
-        Tue, 19 Aug 2025 01:51:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFX8G+XdS44NqcCcHy4azwS1a/5x7lnx2W3dbU327cwfzsZzMnxPMyAw6Lxry5dSu3VZ2nS8Q==
-X-Received: by 2002:a17:903:2f8e:b0:240:469d:beb0 with SMTP id d9443c01a7336-245e0494544mr22475855ad.31.1755593509062;
-        Tue, 19 Aug 2025 01:51:49 -0700 (PDT)
-Received: from hu-pbrahma-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d56b44fsm102344815ad.146.2025.08.19.01.51.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 01:51:48 -0700 (PDT)
-From: pratyush.brahma@oss.qualcomm.com
-X-Google-Original-From: Pratyush
-Date: Tue, 19 Aug 2025 14:21:44 +0530
-Subject: [PATCH] mm/numa_memblks: Use SZ_1M macro to denote bytes to MB
- conversion
+	s=arc-20240116; t=1755593540; c=relaxed/simple;
+	bh=yzUkQzaP8F8D4nlS0lE6qnZ/t2S0zQtHX8F4G8zhxvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jrc3JSwMMtGvb6oXX6om5I0v/NLX0UwlA1ULncjucg2m8YgyNjTVK9u20fhpD1mOhxFpHSAncrY9KMh9zn+JRf5vf1s0mA4DlKgMFtsb4v0uVIMh0idS8qUuKtnlWuenpjQayTrijdPS4zVP86O7FAMvx6aCI//Z+/UdOz6PgRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Owd2CS/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD24C4CEF1;
+	Tue, 19 Aug 2025 08:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755593540;
+	bh=yzUkQzaP8F8D4nlS0lE6qnZ/t2S0zQtHX8F4G8zhxvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Owd2CS/tHxduX/DRfTXQQ6NLQfGPqcoWJ0ErrWILlOh6P2+vTaCCEvr9K4XA7Tl8R
+	 JS87cjbZFpr1Xk5rneTmVQ/jXCmFghpCuNzmBHKs4aXWBLKkhav2REL5xQ7Gv0knS2
+	 PWe6iZFPj/yUDzPLcBDVp0MR7IbpcVzq2uAV3WxgP1P3A56FQsTUAmeJdF/CNe/NEa
+	 dJdSoH2g2dN+p6eFqDgfpkunRVS7Vb5Wn8vT0i27mG7nNFaldi9J5Q9MT4lhQ0Hv7+
+	 ud8eJVzDjQi5yuFCcFwyI6oGy2J5unLCnZJEo4XDDWibZxNRBUgkxcnSC4XmxDJHn8
+	 ofODF2P7as1/g==
+Date: Tue, 19 Aug 2025 14:22:09 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] PCI: imx6: Enable the vaux regulator when fetch it
+Message-ID: <kvvluy56sdg6khv33cowseog4ujuebxzotlxm3hvm35slbenc5@rf3wttsd2niz>
+References: <20250819071630.1813134-1-hongxing.zhu@nxp.com>
+ <20250819071630.1813134-3-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-numa-memblks-refac-v1-1-936b4fd35000@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAB87pGgC/x2MQQqAIBAAvxJ7bkEjyfpKdNDaaiktlCKQ/p50n
- IGZBJECU4SuSBDo5siHzyDLAsbV+IWQp8xQiUoJLVv0lzPoyNl9ixhoNiM2trZKyMaqVkMOz6z
- 5+af98L4fumtcnmQAAAA=
-X-Change-ID: 20250819-numa-memblks-refac-7b4b5017b598
-To: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755593506; l=1272;
- i=pratyush.brahma@oss.qualcomm.com; s=20250808; h=from:subject:message-id;
- bh=1n/B6T+EBi4imcFDM5sARQMMhhJ8zd0wI5Z3/7GqQeU=;
- b=tqgIYcTpIp0/mL5rik9Uq5MvBl0gulCrHw9T2BhpCZe7GI73Yn8M1gHSiPq5LAVA8DveZexKu
- 3QktpIJNyjLB+jX2lpO05uH+A8sb2fDqDSJPSwAMSuY6rWjTVpgr35v
-X-Developer-Key: i=pratyush.brahma@oss.qualcomm.com; a=ed25519;
- pk=ZeXF1N8hxU6j3G/ajMI+du/TVXMZQaXDwnJyznB69ms=
-X-Authority-Analysis: v=2.4 cv=MJ9gmNZl c=1 sm=1 tr=0 ts=68a43b26 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=dRzHXBjQmnXEPONtsPAA:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: pSxYRHhgVtsVJp8ObyJe-zLn258eiuBi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMSBTYWx0ZWRfX6tx+0JTbOBBZ
- JvCIqmcXY6s5S8YQMv5Jz17HJCPwHhB3TXNjk0EkRwxm7OD9Vryq+FSdiJbMooQczDeHrr8bUP5
- +SZyo70EDBS6KUnB+GNSYPtEI204BAnPARj4Dv+yUBWNYGUBXwwPG9y8mZn1j4mxZMcWctQZtCr
- nfQBhNuSEfzbj5p787V+oC2uaZSczX12AapFLhuI4YO87LhaGwW2DQwPc1re5/3cLlvccvRE8qD
- fmrvd/IyVJvfDpNB1txXvvW7Lveqd+CkgEKyzVfHn4nXeXkMQVEjoa30SMi0Bfk2XLZEji66Yzx
- aRpmrRo2ObyRJuMNAMoRWC8qu42tSgEjDqG9kLD1w1JMBCFRXVgHAlInI3mSt+x5ywTPHgSEbi5
- 9VY1BOOs
-X-Proofpoint-GUID: pSxYRHhgVtsVJp8ObyJe-zLn258eiuBi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160031
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250819071630.1813134-3-hongxing.zhu@nxp.com>
 
-From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+On Tue, Aug 19, 2025 at 03:16:30PM GMT, Richard Zhu wrote:
+> Enable the vaux regulator at probe time and keep it enabled for the
+> entire PCIe controller lifecycle. This ensures support for outbound
+> wake-up mechanism such as WAKE# signaling.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 5a38cfaf989b1..1c1dce2d87e44 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -159,6 +159,7 @@ struct imx_pcie {
+>  	u32			tx_deemph_gen2_6db;
+>  	u32			tx_swing_full;
+>  	u32			tx_swing_low;
+> +	struct regulator	*vaux;
+>  	struct regulator	*vpcie;
+>  	struct regulator	*vph;
+>  	void __iomem		*phy_base;
+> @@ -1739,6 +1740,20 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  	pci->max_link_speed = 1;
+>  	of_property_read_u32(node, "fsl,max-link-speed", &pci->max_link_speed);
+>  
+> +	/*
+> +	 * Refer to PCIe CEM r6.0, sec 2.3 WAKE# Signal, WAKE# signal is only
+> +	 * asserted by the Add-in Card when all its functions are in D3Cold
+> +	 * state and at least one of its functions is enabled for wakeup
+> +	 * generation. The 3.3V auxiliary power (+3.3Vaux) must be present and
+> +	 * used for wakeup process. Since the main power supply would be gated
+> +	 * off to let Add-in Card to be in D3Cold, get the vaux and keep it
+> +	 * enabled to power up WAKE# circuit for the entire PCIe controller
+> +	 * lifecycle when WAKE# is supported.
+> +	 */
 
-Replace the manual bitwise conversion of bytes to MB with
-SZ_1M macro, a standard macro used within the mm subsystem,
-to improve readability.
+This comment implies that the presence of Vaux is dependent on WAKE#. But there
+is no such check present in the code. Maybe you are referring to the fact that
+the platform will only supply Vaux if it intends to support WAKE#?
 
-Signed-off-by: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
----
- mm/numa_memblks.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+But I guess you can just drop the comment altogether and move it to patch
+description.
 
-diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-index 541a99c4071a67e5b0ef66f4136dee268a880003..a47aa262a33366337c38ccc7c7064da818523dd2 100644
---- a/mm/numa_memblks.c
-+++ b/mm/numa_memblks.c
-@@ -427,9 +427,9 @@ static int __init numa_register_meminfo(struct numa_meminfo *mi)
- 		unsigned long pfn_align = node_map_pfn_alignment();
- 
- 		if (pfn_align && pfn_align < PAGES_PER_SECTION) {
--			unsigned long node_align_mb = PFN_PHYS(pfn_align) >> 20;
-+			unsigned long node_align_mb = PFN_PHYS(pfn_align) / SZ_1M;
- 
--			unsigned long sect_align_mb = PFN_PHYS(PAGES_PER_SECTION) >> 20;
-+			unsigned long sect_align_mb = PFN_PHYS(PAGES_PER_SECTION) / SZ_1M;
- 
- 			pr_warn("Node alignment %luMB < min %luMB, rejecting NUMA config\n",
- 				node_align_mb, sect_align_mb);
+- Mani
 
----
-base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-change-id: 20250819-numa-memblks-refac-7b4b5017b598
-
-Best regards,
 -- 
-Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-
+மணிவண்ணன் சதாசிவம்
 
