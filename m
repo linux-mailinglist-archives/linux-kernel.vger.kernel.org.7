@@ -1,194 +1,110 @@
-Return-Path: <linux-kernel+bounces-776411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3CDB2CCFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:29:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AA1B2CD02
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72165684C67
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:28:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86EC3684BE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA8C326D5A;
-	Tue, 19 Aug 2025 19:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DF03376A7;
+	Tue, 19 Aug 2025 19:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d09VmNxn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dSJaK/XL"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895CE258ECE;
-	Tue, 19 Aug 2025 19:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C97D2773C1
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755631720; cv=none; b=Htt444pKb7x43hVgLAZk3vlCWkfcERFM92sXEXoUgAXy4JTEjKKprq0TUZtzZ/zqTOSEzrnm2YQqH4w+dBrN4Pl8MSd76Ze7SEv2uiLJ+91Ljba+vQwlcZx1zRjkz6fWIklLvAouRXeCMpLsbIk6Xxv8Wg8Goyir4c4WOAc5l5Y=
+	t=1755631987; cv=none; b=aIQGTinTI8oxMvBW925CnJeXVaQHuc9FuIRR4sIM0osjuAb2oZcX/X2opgYhOi7+z0ATB1D2xpoBjpL07/c9TGXbpMt6DTb/O4I/Q3HM0YmEnUeKHOpag0Bml4QAe557yXYSPy7sDK9g08s9da3iFplK1BYl/T4+llkyZ/p21QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755631720; c=relaxed/simple;
-	bh=qIY9X5+FcNSBcRXsswBUCWwRon9tdY925kQ+7aOF53E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=npHihT3rhZxG50ETrDV5o4eX+428ONsshmJsLngpI0e1RNX7WGOZ7kmh7yib9F3vW5gShkjZecfLwh2Om6yguMFWZnBNordJwqQrn0tOKgAO715EPwVQ02feMddRVz5XSQS0oFGD+D6p3Rtn2Lzz+cvJBgCR0GBmdW5XF6onZU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d09VmNxn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99BAC113D0;
-	Tue, 19 Aug 2025 19:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755631720;
-	bh=qIY9X5+FcNSBcRXsswBUCWwRon9tdY925kQ+7aOF53E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=d09VmNxnHQsrp01pzJ2k0NQXUM52ufcrA/bx2D1gwV3NlFYWtTmOpBnbdUAnzYgBV
-	 uGreB32dj6zGdGdlm8cfZ95goFqQsSPsfRqdcEVFCS3oGFlNX4yZFNPgW55pDwVkz9
-	 x8wBl2sKFXPIbZBcgczoY+tlH+V5UP10pw03Qb/l/jk6QZzU5tpkkVr1VLhD58s+Xg
-	 /1mji4MytITb/G54D7eladJ3VaBQJYxpjqlfhRqsdEgaqUUbsyeyUC0rhWQDpzXZqK
-	 5CAcY5Tq0G1uSpAcmiwoToBpde3z6A6fGyjqqMWdhKL+hixW+/TQtuMJqq+KBDr0hy
-	 INwIYTu8XkN0g==
-Date: Tue, 19 Aug 2025 14:28:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: frank.li@nxp.com, jingoohan1@gmail.com, l.stach@pengutronix.de,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND v3 1/5] PCI: dwc: Don't poll L2 if QUIRK_NOL2POLL_IN_PM
- is existing in suspend
-Message-ID: <20250819192838.GA526045@bhelgaas>
+	s=arc-20240116; t=1755631987; c=relaxed/simple;
+	bh=Dlc+gv/phCrMNJTD7pA0SvuOLHUdk1RTYlblxps6Ixw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NO+Hg6XGS/549qz2xwIdVisEBWgomOqRBzFgpdFgEMVq3xlbuRdiTQP0RtQEPp6S8JMu5Rou/2l9Pya6mRkAYzYEQE3+ctfqRc1bpwGkh9OAW5pIy8TDtQ6BmLGlEJXhV1FoMyGlLfbENHsnQdNT/ByAfF1oqLIKnKrGnDCs+cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dSJaK/XL; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b12b123e48so57241cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:33:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755631984; x=1756236784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dlc+gv/phCrMNJTD7pA0SvuOLHUdk1RTYlblxps6Ixw=;
+        b=dSJaK/XLjjdkIlg8JnQYSU9gcXJdZATsA4dCEIJI3vfWY3BEVYPbTkQ90ZISFuEcGd
+         TFgmrIYvuRRxusOa/Lh8s71TXhh65PXjFplPRipgty51jJW9zpN+Be+ze1RyixXxmOwl
+         XKYbNfdySb1fP9vkrpKXdQpzZTUdULgGoR2ujho/yeKflkiOFcse7K6md9jryOc3iWCr
+         ZeYFETYhXbq02CtDiwDFLRdbsXsztQsnp1WhNZplvp5tis3szI7yTBrRhp1IzsOfYfBA
+         EzrD1xP/zvZ5KQWlxqyi6uHr6K2jNd0/dkgEBmQRl8K0DxZu3s8G2BSSpCv3DWTbth+g
+         b3Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755631984; x=1756236784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dlc+gv/phCrMNJTD7pA0SvuOLHUdk1RTYlblxps6Ixw=;
+        b=n/Fcy6NnM7pdXax/GM+BcGtnEPdCJSH0XCgTJwtMdV2HsdVMXEZ1DFwEmOk/sU5bHt
+         cGlJegXP7LJLhHCL+MFD7XfSftx4DM+j0FidoDL5bhyfWX9CnVTTqSFleYbS00aeiUXR
+         TuWbc3xs8vMS3Qs4ByL6yEJeAoSSHwdqPrVjw+Fn2zmHfTynMobn+vU7Fxlz9rWCCoXH
+         8M4FKJr3Uta4AUVEr2NfgCZQ86wMmN6yUqtMLnuxig2PGesHTdcKhb4qK3WZUL3QXCGS
+         qzI4JSLAaM4K5pVK2baqkWCr8+UDkR8SYnOzuuXqYywS+/TWVBx/FwVXtA1DEjQm2e6S
+         VkDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFdjMzPutqbYfge0NZ4xH52MmNHBtchRffNCo9IvngdEsxtQ+/eCeVPcUyWGLF6XIV9eNUqr0f7pf9ou4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSLWuz2C0kY1MIQJprsWZbM1QqXEMW1PxvPqj7Pdmf/RAIrMO+
+	B+pKxivQuuRT/DtNfk02ZoxSIKszi8N9VdPKmPtr4dGjIKFYnkbLuTxLKZTr6fgjG1/KE1Ev9Ts
+	WUW8N9L9i2JKHZvdlSIjwFVmSkcw7spI775oF6Z9I
+X-Gm-Gg: ASbGncvp/LRc1B4BLYngROLf9GFOc3ba5bylDTTRsXPbymAf9YSgYsa24d4oj8+6eXp
+	xYdln48RhyjhmOuGoq6gQP0pywpxyRm3SJSNeYG/5MDeIMJP/SPmxKG+WaNBLVd9iAsOkaGsNrt
+	nKst89qtulA+4pOWdHJDoH/xyQvB27mmamYVnEifjUoCOqCIYB88DEuOGBH0n9mqPXNWGtZ9j6V
+	u9YOBxGOOPBQkRdfHaK7loObxUBO+REoHdHUPAs96OO+8WatceMGF0=
+X-Google-Smtp-Source: AGHT+IFZOUs4HvSAXDicI6HRK+xenYcqiZRbzTDhlDFCbIHyzB/2YxgCL8t0otnlqVer1xfFluhajR27sxVEpthm9Bo=
+X-Received: by 2002:ac8:5949:0:b0:4a7:e3b:50be with SMTP id
+ d75a77b69052e-4b29190f742mr958271cf.16.1755631983445; Tue, 19 Aug 2025
+ 12:33:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818073205.1412507-2-hongxing.zhu@nxp.com>
+References: <cover.1755499375.git.asml.silence@gmail.com> <fab9f52289a416f823d2eac6544e01cb7040eee9.1755499376.git.asml.silence@gmail.com>
+In-Reply-To: <fab9f52289a416f823d2eac6544e01cb7040eee9.1755499376.git.asml.silence@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 19 Aug 2025 12:32:46 -0700
+X-Gm-Features: Ac12FXyzzAHQkZQwTmfShgjuBIC83fo8ZLZc42_ORo6YGwvB1xgCyklsv26SR98
+Message-ID: <CAHS8izMPCOp8QeC9zZddBYaGSNd-9+CtV7XbKOn43pHb03vi0w@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 06/23] net: add rx_buf_len to netdev config
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
+	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
+	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 03:32:01PM +0800, Richard Zhu wrote:
-> Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management State Flow
-> Diagram. Both L0 and L2/L3 Ready can be transferred to LDn directly.
-> 
-> It's harmless to let dw_pcie_suspend_noirq() proceed suspend after the
-> PME_Turn_Off is sent out, whatever the LTSSM state is in L2 or L3 after
-> a recommended 10ms max wait refer to PCIe r6.0, sec 5.3.3.2.1 PME
-> Synchronization.
-> 
-> The LTSSM states are inaccessible on i.MX6QP and i.MX7D after the
-> PME_Turn_Off is sent out.
-> 
-> To support this case, don't poll L2 state and apply a simple delay of
-> PCIE_PME_TO_L2_TIMEOUT_US(10ms) if the QUIRK_NOL2POLL_IN_PM flag is set
-> in suspend.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../pci/controller/dwc/pcie-designware-host.c | 31 +++++++++++++------
->  drivers/pci/controller/dwc/pcie-designware.h  |  4 +++
->  2 files changed, 25 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 952f8594b5012..20a7f827babbf 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -1007,7 +1007,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
->  {
->  	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
->  	u32 val;
-> -	int ret;
-> +	int ret = 0;
+On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> From: Jakub Kicinski <kuba@kernel.org>
+>
+> Add rx_buf_len to configuration maintained by the core.
+> Use "three-state" semantics where 0 means "driver default".
+>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-I think it's pointless to initialize "ret" because in every case where
-ret is set, we return it immediately if it is non-zero.  We should
-just return 0 explicitly at the end of the function and skip this
-initialization.
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
->       /*
->        * If L1SS is supported, then do not put the link into L2 as some
-> @@ -1024,15 +1024,26 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
->  			return ret;
->  	}
->  
-> -	ret = read_poll_timeout(dw_pcie_get_ltssm, val,
-> -				val == DW_PCIE_LTSSM_L2_IDLE ||
-> -				val <= DW_PCIE_LTSSM_DETECT_WAIT,
-> -				PCIE_PME_TO_L2_TIMEOUT_US/10,
-> -				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
-> -	if (ret) {
-> -		/* Only log message when LTSSM isn't in DETECT or POLL */
-> -		dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
-> -		return ret;
-> +	if (dwc_quirk(pci, QUIRK_NOL2POLL_IN_PM)) {
-> +		/*
-> +		 * Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management
-> +		 * State Flow Diagram. Both L0 and L2/L3 Ready can be
-> +		 * transferred to LDn directly. On the LTSSM states poll broken
-> +		 * platforms, add a max 10ms delay refer to PCIe r6.0,
-> +		 * sec 5.3.3.2.1 PME Synchronization.
-
-IIUC, the read_poll_timeout() below is waiting for the PME_TO_Ack
-responses to the PME_Turn_Off message.
-
-The Link state transition to L2/L3 Ready (or the subsequent L2, L3, or
-LDn states) is the indication that the downstream components have
-"performed any necessary local conditioning in preparation for power
-removal" and then responded with PME_TO_Ack.
-
-And the PCIE_PME_TO_L2_TIMEOUT_US timeout is the deadlock avoidance
-delay for cases where "one or more devices do not respond with a
-PME_TO_Ack".
-
-In the QUIRK_NOL2POLL_IN_PM case, I think the problem is that we can't
-*read* the LTSSM state to learn whether the Link transitioned to L2/L3
-Ready, L2, L3, or LDn.  That wouldn't be surprising because per sec
-5.2, "the LTSSM is typically powered by main power (not Vaux), so
-LTSSM will not be powered in either the L2 or the L3 state."
-
-I don't know what's different about i.MX6QP and i.MX7D.  Maybe on most
-DWC platforms the LTSSM *is* powered in L2/L3/LDn, but on i.MX6QP and
-i.MX7D, it *isn't* powered in those states?
-
-If that's the case, we should say that somewhere here.  And we should
-say what happens when we try to read the LTSSM when it's not powered.
-Does the read hang or cause some kind of error?
-
-> +		 */
-> +		mdelay(PCIE_PME_TO_L2_TIMEOUT_US/1000);
-> +	} else {
-> +		ret = read_poll_timeout(dw_pcie_get_ltssm, val,
-> +					val == DW_PCIE_LTSSM_L2_IDLE ||
-> +					val <= DW_PCIE_LTSSM_DETECT_WAIT,
-> +					PCIE_PME_TO_L2_TIMEOUT_US/10,
-> +					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
-> +		if (ret) {
-> +			/* Only log message when LTSSM isn't in DETECT or POLL */
-> +			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
-> +			return ret;
-> +		}
->  	}
->  
->  	/*
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 00f52d472dcdd..4e5bf6cb6ce80 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -295,6 +295,9 @@
->  /* Default eDMA LLP memory size */
->  #define DMA_LLP_MEM_SIZE		PAGE_SIZE
->  
-> +#define QUIRK_NOL2POLL_IN_PM		BIT(0)
-> +#define dwc_quirk(pci, val)		(pci->quirk_flag & val)
-> +
->  struct dw_pcie;
->  struct dw_pcie_rp;
->  struct dw_pcie_ep;
-> @@ -504,6 +507,7 @@ struct dw_pcie {
->  	const struct dw_pcie_ops *ops;
->  	u32			version;
->  	u32			type;
-> +	u32			quirk_flag;
->  	unsigned long		caps;
->  	int			num_lanes;
->  	int			max_link_speed;
-> -- 
-> 2.37.1
-> 
+--=20
+Thanks,
+Mina
 
