@@ -1,109 +1,168 @@
-Return-Path: <linux-kernel+bounces-776309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4011B2CBA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 261E4B2CBAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D931BC804A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:06:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EB931BC73D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A3530EF9B;
-	Tue, 19 Aug 2025 18:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A6B30EF90;
+	Tue, 19 Aug 2025 18:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agkZ4HtD"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oWJPyUzO"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E024F30DEC5;
-	Tue, 19 Aug 2025 18:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E2B13D51E
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 18:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755626787; cv=none; b=XDd/K7ypZDzyHU7yetDmsDy3k34vx5bJP04ToZqyWKADO4gjR33tFx9neH+gy3FWYTA2cc6KAl/nkYR1pyXtmKhwgLWGDhbkUce5TBCjQe6klmvuKt9d7+fgEEk0B117R0choYt1pmsyQ7IO26r+/oVog1GkNEqEUv7YPP0nqhw=
+	t=1755627023; cv=none; b=fh+X+RDp5R4GWGUwXrwnhKdwur5sXCJ7k6UzvH5VnAIqzdMfhu24PFtxxJXi1rJHiOnEaLecoBiiNRWLZXRCzWmRPaJbbeRs+t9PMTn9CGGJ4yqYnZq93eXnIYO6kVaaxXUVjqx6uWsv67Qjcj2NcOHz8gNTkqgJiy8saCpgX2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755626787; c=relaxed/simple;
-	bh=WIRstsSxpm2MbT9lu4EaWW8EubQ97pqUS0J8zPc8Qq8=;
+	s=arc-20240116; t=1755627023; c=relaxed/simple;
+	bh=kuNJRvnuN/bVFQuEWuPFIuTLDNlARqPrsmYpt8pxIJ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckQokgdY4nd6WHSRgT5Wc5248EdirwjivocF9XAvKAs3hR36wX9xIGW7qy2mlvjSWALRiAv4K3mwhN8Sb06kJVzMoY1V1pjXwbg47vhlosFnM6kc5ZYfG7MOpfLsxoJKtjILThkqzP7LCuD1slWkyCbABjXS4U+kRrolarAbBm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=agkZ4HtD; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-244581c3b43so49543815ad.2;
-        Tue, 19 Aug 2025 11:06:25 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4R+IxqxyZXY69gdZ4LtGuo8DPNPoKzThxvbeJx3RXnv8dJ/unOczNypau7c6CtKSWoo40/2xe70JiwpmhBryRA40l68U+nt6uQ9/8BbeGl/DJ0X7UfpEw7Yy05qUvKzzt+gxsj79i4/3N+rhr84YhjB0tTkQO01Ko37faUj4gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oWJPyUzO; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so34776385e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755626785; x=1756231585; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECxKHBfMHQMVPtUnV2mXt74Z7LQY9m64sURj9vYrUE8=;
-        b=agkZ4HtDgJy0fSgUDRRYrS971JNpUPffwM+sah6uuT+YY0pyPBONaXpUTIY4Z2rNVQ
-         qFq/0/GOzSRdIWaA72uhnqMm4EyIkp6ONPA4VmGGXDgKSesFL7s3lfOcjagIPOayeMsj
-         yadhDj39XMBGV+UfJf8sC4HFs0gsuJ+4UfBwjT2A2TG4mpyVv+PdQks5LSMZoA+9KwVG
-         am3uVjb84ED46ECuDO9Gkh/Mq3iLWThvEQvwAOnr2WiEHfCCVTHDX2sxAbkte9PEg9tK
-         4K+FnSbtV7I+d7ZMaPDpsMSFNY4/Zue1bFUp/xTPfm5x/O65zriRaUbdrgszbHHwK4QH
-         jvfA==
+        d=linaro.org; s=google; t=1755627020; x=1756231820; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VJE8lHJlZMiSJCzhASu/N+ZwF8MaTnDzUgcRp3P7wNk=;
+        b=oWJPyUzOlN4HAeOwmaqkJbQbwd1cG8EUf7RdN+LXwvwxGXpUUtANQTlPglqvScBSYW
+         liRUXJRRLFQJ+iLmrPhUQTRw3IxcWzRJqa4zs+FvrkPTyXp+/DXY765tQJlJEk6n7ILA
+         wBxouiTbwjY0z8t4N4iWYt0fM+bxrXZEEnL6By1BkbV3PmWmsOBil66k9QHI82QyYDTh
+         NnxUf64xxam79FXXyg2JMpzcisgAfxVPAA/c+Yyvgeh3DXjEDa44pfyI4Ma825tVgHY0
+         PI8liOB1rmGqlzh40Oq0+WLtLPjBrLk/pEWmFTwacmps/ohxLNnK6L0f8XfVy4BKapaF
+         RA7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755626785; x=1756231585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ECxKHBfMHQMVPtUnV2mXt74Z7LQY9m64sURj9vYrUE8=;
-        b=KggAIq4R3CiZhEjkpBSnpKCsoNWDG6VC8kPJXiTarF/XOquZN8Xt1rASqTHXtuocQZ
-         6wg8WjeS8cmN601d6zzEWxv6Omvsq30yuaZwahaaTKmJrVRb+11VUzWnmIAIRDLKyKZJ
-         zYsnIv1kE6xeNnTs2/tzQEtgVGrwEvnjIy1ShspN50VGl+MzvtQqaNWIJ1Ph3Fny1w3i
-         Xu/XTeRmGB2TW1I2NsHfFFAZD2dfk3BFrmKjU63x7nM9m8EqDj4D7n0KWVJ1is6AksOZ
-         Vg1XFbWK7ImCn4Mk3lho6xU8uUIO7lRjyAl3mOORtAH9SPfVhmoX4MPv7HLW+MBrFrQE
-         jm9A==
-X-Forwarded-Encrypted: i=1; AJvYcCV7tqacNyKnPKrLVE4Vhu0vfOj4m1Aw289OnG9Xc5xU5E/CvqN+HhiSf+GT0oAP4MCfrHcXsZK+FUqc@vger.kernel.org, AJvYcCXzSQ32DxfnrSu8uoS9EL0qHyWajyA4zUnTKwAT4QtLNqRdtTkmYqlj/pKs1wC7hXrt+vHuJC+BTPaLgWS/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbj4lBTZavaKByxVBkgvYyYGseOrirROfqgRf++E2fB9pnkrBN
-	jUvLD/FNEwPm6cSCkbdopFvYHBLT8ehQeXG0lMleAsh5lSA454XZacfm
-X-Gm-Gg: ASbGncsqkhQbIK5ByVf2c5WMK6L7tTWcB+nSHvUs4PKj2r81vLMOWiE7Tq8uED0aarr
-	nFI8kuqoo6+tXjYlpV5jczkNAmtatSUyo7yKeLXK9hCx9Y3DpeYDd+Aae1ToF7ehiNrTY6HR9XY
-	HJFniRuX24CSGMAkNDexQjXq6Q3c4mWsJsTYzH4AG7xGeao7goQtPCT4yFEKlnn2shKuEY75UPm
-	GWoBsuybAtelAwdKHXy1Jm1lGDmNRAulNADwKpjmOi2u1sw1VSyRzskOY+F2ljBMjq08fpbYK9+
-	heDo+87j03nkY6D9JmZ+m9R+8RLv4zek+CE73/SUzCqedSvHKyD5EMrajTaEf0xcXVei/FYIl84
-	b6XLSoiSI+ouPHOUaOxok43f4htadOq4=
-X-Google-Smtp-Source: AGHT+IFy60UZbrVGD1Jhxweii9JhT3RAYDxGSzZd6faYcE8ea186XcaTrq5UPFL/565plxBib0YYCQ==
-X-Received: by 2002:a17:902:e849:b0:240:7235:6292 with SMTP id d9443c01a7336-245e04ac7admr63995635ad.39.1755626785160;
-        Tue, 19 Aug 2025 11:06:25 -0700 (PDT)
-Received: from localhost ([2804:30c:2767:3c00:70b9:40f2:fa7f:19cd])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-245ed358c86sm3533245ad.36.2025.08.19.11.06.23
+        d=1e100.net; s=20230601; t=1755627020; x=1756231820;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VJE8lHJlZMiSJCzhASu/N+ZwF8MaTnDzUgcRp3P7wNk=;
+        b=A1RAwq0roi29NQIemhnIUKOeqC1OKcATBYry0UVQTumr/iZNIKZ+j7cPKj18CCY//2
+         4plxobFcnWewbfDmpie88tnsMrcoflC6vV1BDcLebNxpY+qDqO1tXV6jwosypSkzD0qR
+         WV5tKp4ZpHmWYWwnM31GfVi66bmEi1EXfCAf1hzg4buGf2eClhO5WqLkxbQAyqQFdl0e
+         RubwFynlsySN3uyy+D/rI9RCx5rqIP8NWE3nQjvqyqu+Hi86uk5BhdhiHNhZe4cUI8FF
+         hP6kLhOABoUrKOnRMz3ooSLX427d1sySGNBwmmvcoZ6evkP1XFJhuD0tY9GcMZHylWs0
+         HMOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW8KXzwJLQCPFi+R2oIRULienIz4C126tsusBTOhJKYi0oTT9+LZwC0YmtDzXT0KKJ9DC1lD3N+xfWTmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj3lX12/Q22W1TLs8R4gSMx1tZYqvbeZrR3eGN/iyrEV8DYPgK
+	9zsz5iGu8t9g1GtUcWbYhfunrkq/pdZVruO1orjXhJdQ/ezdMYq3Y/GGs4rZQsuyJNYybCoofBz
+	GbcN/
+X-Gm-Gg: ASbGncsKuywXmD1p7u46UNc8Mb0sQRz2ykMdEXeltDQRrUfwhrgjb/LoKjFKCJVLENZ
+	eeVp5EhMKVVwPN+Ua9W8dElcFKecwyIcXbW7UObA2S/TtTjeZ1HaAgKW8dqDV2AE4t2qHn8w9JC
+	qJrX5CkpUn0QY+SXMB9tgpsB59ZoKFh/8KFFoR2GXmoAt9xIzKypu8v4LRS2oO9iXq8Biv5pMj3
+	UdZXM9GLzzG72NAruStqEgTRmIZFDehEemEgQ0cnT6/KA8m6o4nK5gm7AdH1edHqJqbj3kG32RF
+	plYGSSDqwuejxNnztpYMLHjPVimEuds3PA9mzj2uE9p5ZIjKhqxPTThMxWvDOH4g6Y7ejriYNzw
+	7em/roFQiIXBruANZSy0U3snG6xXqjj9XWhToSg==
+X-Google-Smtp-Source: AGHT+IFyHk8mmEI+TpEqA6cIWlRXNslVPoQY2NmHYpNY6v+LH4dZYi3eOnQH9PMTCE1vn0vVN+xiVA==
+X-Received: by 2002:a05:600c:468d:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-45b43e0bbbdmr32598415e9.29.1755627019687;
+        Tue, 19 Aug 2025 11:10:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b42a771d1sm47286665e9.7.2025.08.19.11.10.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 11:06:24 -0700 (PDT)
-Date: Tue, 19 Aug 2025 15:06:46 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Michael.Hennerich@analog.com,
-	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, jonath4nns@gmail.com
-Subject: Re: [PATCH 3/4] iio: adc: ad7768-1: use
- devm_regulator_get_enable_read_voltage
-Message-ID: <aKS9NmXgD1Sm7OC-@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1754617360.git.Jonathan.Santos@analog.com>
- <3b9f5a9f188af8b1df947806e1049269f3a0dfa3.1754617360.git.Jonathan.Santos@analog.com>
+        Tue, 19 Aug 2025 11:10:19 -0700 (PDT)
+Date: Tue, 19 Aug 2025 21:10:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: =?utf-8?B?xaBlcmlm?= Rami <ramiserifpersia@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	"open list:SOUND" <linux-sound@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] ALSA: usb-audio: us144mkii: Fix null-deref in
+ tascam_midi_in_urb_complete()
+Message-ID: <aKS-B6O8ZEAN_X7x@stanley.mountain>
+References: <20250819173831.30818-1-ramiserifpersia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3b9f5a9f188af8b1df947806e1049269f3a0dfa3.1754617360.git.Jonathan.Santos@analog.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250819173831.30818-1-ramiserifpersia@gmail.com>
 
-On 08/12, Jonathan Santos wrote:
-> Use devm_regulator_get_enable_read_voltage function as a standard and
-> concise way of reading the voltage from the regulator and keep the
-> regulator enabled. Replace the regulator descriptor with the direct
-> voltage value in the device struct.
+On Tue, Aug 19, 2025 at 07:38:30PM +0200, Šerif Rami wrote:
+> The smatch tool reported a potential null pointer dereference in
+> tascam_midi_in_urb_complete(). The 'tascam' variable, derived from
+> 'urb->context', was checked for nullity in one place, but dereferenced
+> without a check in several other places.
 > 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> This patch fixes the issue by adding a null check at the beginning of
+> the function. If 'tascam' is null, the function now safely exits.
+> This prevents any potential crashes from null pointer dereferences.
+> 
+> It also fixes a latent bug where 'usb_put_urb()' could
+> be called twice for the same URB on submission failure, which would
+> lead to a use-after-free error.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202508192109.lcMrINK1-lkp@intel.com/
+> Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
 > ---
+>  sound/usb/usx2y/us144mkii_midi.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/usb/usx2y/us144mkii_midi.c b/sound/usb/usx2y/us144mkii_midi.c
+> index 5759f6010..1aca38f38 100644
+> --- a/sound/usb/usx2y/us144mkii_midi.c
+> +++ b/sound/usb/usx2y/us144mkii_midi.c
+> @@ -41,6 +41,9 @@ void tascam_midi_in_urb_complete(struct urb *urb)
+>  	struct tascam_card *tascam = urb->context;
+>  	int ret;
+>  
+> +	if (!tascam)
+> +		goto out;
+> +
+>  	if (urb->status) {
+>  		if (urb->status != -ENOENT && urb->status != -ECONNRESET &&
+>  		    urb->status != -ESHUTDOWN && urb->status != -EPROTO) {
+> @@ -51,7 +54,7 @@ void tascam_midi_in_urb_complete(struct urb *urb)
+>  		goto out;
+>  	}
+>  
+> -	if (tascam && atomic_read(&tascam->midi_in_active) &&
+> +	if (atomic_read(&tascam->midi_in_active) &&
+>  	    urb->actual_length > 0) {
+>  		kfifo_in_spinlocked(&tascam->midi_in_fifo, urb->transfer_buffer,
+>  				    urb->actual_length, &tascam->midi_in_lock);
+> @@ -66,11 +69,14 @@ void tascam_midi_in_urb_complete(struct urb *urb)
+>  			"Failed to resubmit MIDI IN URB: error %d\n", ret);
+>  		usb_unanchor_urb(urb);
+>  		usb_put_urb(urb);
 
-With David's and Andy's comments addressed:
+usb_put_urb() is still called twice, though?
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +		goto out;
+>  	}
+> +
+>  out:
+>  	usb_put_urb(urb);
+>  }
+>  
+> +
+
+You accidentally added a double blank line here.
+
+>  /**
+>   * tascam_midi_in_open() - Opens the MIDI input substream.
+>   * @substream: The ALSA rawmidi substream to open.
+
+regards,
+dan carpenter
 
