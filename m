@@ -1,262 +1,265 @@
-Return-Path: <linux-kernel+bounces-774993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85993B2BA0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:00:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A22B2BA0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B5D523DD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:00:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 508137A35C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4A6283FC3;
-	Tue, 19 Aug 2025 07:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257E426E14D;
+	Tue, 19 Aug 2025 07:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=westermo.com header.i=@westermo.com header.b="zUwleBu7";
-	dkim=pass (1024-bit key) header.d=beijerelectronicsab.onmicrosoft.com header.i=@beijerelectronicsab.onmicrosoft.com header.b="fEyloNat"
-Received: from mx07-0057a101.pphosted.com (mx07-0057a101.pphosted.com [205.220.184.10])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lpX8t8gy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CAD2EAE3;
-	Tue, 19 Aug 2025 07:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.184.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755586829; cv=fail; b=IFeBw/4Mp6QRZc5ptnAfPgu2XAjfopaYFsAQbknmXM2clQOuur8z+BUJD3/PEj2ZWFB3XKbbw/SxXrOYMui5KbVPNJIrjY3ga8q+JRYH2DovjXG8L2VEpbCe01cUkBvucNGcmV8TbgwHfHlCtPR1v7bx3L1s6c3Wq1PZ9cgJIcE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755586829; c=relaxed/simple;
-	bh=KD70I7wQfWwiI25K8cInGkmFOR45RlNGupSFTf+vC6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ko/HYT8eCev8Xq8WYwzQRWp3/0T90lRr/QgQi5MifSzfGnc82xCA1BxF1hHfD3esAGXjqHp5FUvEHMMycM1Gao6YVz/3VMnLBz6a91uPO/g4Ue+W9JJxVM02b/HOeUdaeOCHFU3FipVsyDVv/ifZ8UZL3H63NAk412bjLjEPPbU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=westermo.com; spf=pass smtp.mailfrom=westermo.com; dkim=pass (2048-bit key) header.d=westermo.com header.i=@westermo.com header.b=zUwleBu7; dkim=pass (1024-bit key) header.d=beijerelectronicsab.onmicrosoft.com header.i=@beijerelectronicsab.onmicrosoft.com header.b=fEyloNat; arc=fail smtp.client-ip=205.220.184.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=westermo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westermo.com
-Received: from pps.filterd (m0214197.ppops.net [127.0.0.1])
-	by mx07-0057a101.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57J5pZsI3554255;
-	Tue, 19 Aug 2025 08:59:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=westermo.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=270620241; bh=
-	3ToobNk5nIAXS1H7qinxVjABqgQzhej39WGFdACjESw=; b=zUwleBu7ITrFvVYz
-	5zEV+VtgEJSE/kHNc31Y09SmZ8DX4+ZDqp4ZrGiT7VhFjcBOHCGmAZMQf3YFoSrW
-	9GbEXvnnwXP1TGmW+L4drj7KiqHeu1lfezUPKSj9XUkmSfitaRoeV6hel+SCaSPI
-	pHpS4eySZO/I8aOTRo3UNGAi6OqdM5sNzO0nVo0gMEp0ohT6HaqcQSJzyH+vjzqZ
-	ck2TYilBo1EdxVXIg/kB74FYasI0v+DktC6udNXjN6M33GKReM6gMEu+74HwGIaJ
-	4uKYZlhKqBnYLvr3bQpUxxW5Td6om0GPGq1ODXxA4z+BVlfab5iKeBP9vpEov5UC
-	uIes6w==
-Received: from eur05-am6-obe.outbound.protection.outlook.com (mail-am6eur05on2127.outbound.protection.outlook.com [40.107.22.127])
-	by mx07-0057a101.pphosted.com (PPS) with ESMTPS id 48jffgas2k-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 08:59:58 +0200 (MEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aAe6aarMZlwz5TPbQC59Xx9JW6ne90xLuU0FWJbS+tr7/18oJABuYwjmKueedzojoW1OMDtx7iDvSIPeW/o+vlULyzRi8pVRnFYG4Pd61d1ijP74tabxhTE1wdF53nHdoAlqQ/WTm6EjOdDnSxah/RL3B4c+GzeRA0TVf9aPi5dSUkxzudyPCddm6XodLxjSq9OoePsKFJLKvQOVUDdAOxXucKC4vRLteP2yX1tKSP1VnMz4hnIFOlWYkGJQKKX7r/lMiS1AA3beyj23Di5DJdkmujEZTHdIambd9Bwe+nADqwKs8ZreAeRGawxKiXHpet4lYgNLryj0wCmxASAaOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3ToobNk5nIAXS1H7qinxVjABqgQzhej39WGFdACjESw=;
- b=EWVuRcenqhKm87H6U2UBD7T/8B0SQfSup5N+93Nwqtcogzpgt9oLhvaPtPfl9BOMeJZmDasHsIph+ZqsjfdCQVTVUXMFhDFOrOXGHglIgCcR31JV+1r3xs8oNNSSqHbRVwQ7XrKS739GpKv8dgCfR5ltbmcGuVXrf6i/KL/6CragIdf7RMeuBJdRxchWt1YsEjHPpBG6xsTuKWuDpFkuP9LNtIcmVR9vsv9Ud+R3bLlZdQPSjiZRFapAwi8qzMMXnrSy+2zI3NckmidHTpX2Y924nuEsyv0Qe7ev81qWuEiBo29XR/TbH0+v7mzJO0OKBG2xKYRFjaiTvZSFhna5aQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=westermo.com; dmarc=pass action=none header.from=westermo.com;
- dkim=pass header.d=westermo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=beijerelectronicsab.onmicrosoft.com;
- s=selector1-beijerelectronicsab-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3ToobNk5nIAXS1H7qinxVjABqgQzhej39WGFdACjESw=;
- b=fEyloNatsTAfMYqVjOF3jfcsDSpLt+z1WX1C+gNNo6ot26KEa25Xzok0T2hzFETzPEUODABiLum/nZtf2y0DHHTZXbrlkBe7HLeCqpWVCO72B9cuEuIKbdHFBwzlyHUa/miy9UkoCXjm/+i30HQChiKdt7xTlwF5evjwQB1NoU0=
-Received: from FRWP192MB2997.EURP192.PROD.OUTLOOK.COM (2603:10a6:d10:17c::10)
- by AM7P192MB0578.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:177::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 19 Aug
- 2025 06:59:56 +0000
-Received: from FRWP192MB2997.EURP192.PROD.OUTLOOK.COM
- ([fe80::8e66:c97e:57a6:c2b0]) by FRWP192MB2997.EURP192.PROD.OUTLOOK.COM
- ([fe80::8e66:c97e:57a6:c2b0%5]) with mapi id 15.20.9031.014; Tue, 19 Aug 2025
- 06:59:56 +0000
-Date: Tue, 19 Aug 2025 08:59:50 +0200
-From: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Cc: Jeff Johnson <jjohnson@kernel.org>, ath12k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ath12k: REO status on PPC does not work
-Message-ID: <aKQg5vLUplzMUMlU@FUE-ALEWI-WINX>
-References: <aJ7sDOoWmf4jLpjo@FUE-ALEWI-WINX>
- <d6f0b64f-1764-41cd-a7c5-fb34d034ace2@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d6f0b64f-1764-41cd-a7c5-fb34d034ace2@oss.qualcomm.com>
-User-Agent: Mutt/2.1.4 (2021-12-11)
-X-ClientProxiedBy: GV2PEPF00007572.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:158:401::3eb) To FRWP192MB2997.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:d10:17c::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80DD25BEFE;
+	Tue, 19 Aug 2025 07:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755586820; cv=none; b=Ogqi7XITP1UC53pgUkxjjIaKZF+rrvZhmvZkHuF35j5he519N5YM8ytfeuLyQOjNQ0fpmXijn/lKhzHWOAMLi87usCLdm05ETb/Tc5YLKbd42PF6A5v1QTD2qUyaDpg57hMxODhyHWyp0ExweW5TMe4OObnk864maRcwh4ocRwg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755586820; c=relaxed/simple;
+	bh=E4+6SQn+0H0871MDRGuNeoo2nkDKzjeLbYdG/k+vKZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aojlnaJ+jxNSDHo2tFjBZ1+WiDT85TRWD9YzkcQlEVhjUxeIKMLr/1thz2bvel8O+uF0g8Tey6y3/u596rzD3jJJo2gpR8N8lMZ6UUHW1ysK2pKU/Wduz2dQRiyYFCdGYi7WxDlAfoXv22U63ZZ+o7jSrq8TCZzgRCBWQ6MNDG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lpX8t8gy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-52-92.net.vodafone.it [5.90.52.92])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5E2F0596;
+	Tue, 19 Aug 2025 08:59:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755586758;
+	bh=E4+6SQn+0H0871MDRGuNeoo2nkDKzjeLbYdG/k+vKZk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lpX8t8gyaI0KZ6MwBblwSiECgnXoEY0HTkt4EUFWvNwgnz3GBb1KO0u2esLlcIDrF
+	 hhiNk5KP4lNa5KO8xj2m06ByaanV1VP13cgEopf7inmLYKty7L2XqNYlF51SyEzEzn
+	 GVh9sfN8YmoQsHhkxgQcDZcjldLsQkuHd0OJg/nY=
+Date: Tue, 19 Aug 2025 09:00:11 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil+cisco@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] media: cx18: Fix invalid access to file *
+Message-ID: <3h5oa7ziojahyq4uxlpfdkqqqz2h2fakahjmtyv5un5yhxhat4@gborrcjbwme5>
+References: <20250818-cx18-v4l2-fh-v3-0-5e2f08f3cadc@ideasonboard.com>
+ <20250818-cx18-v4l2-fh-v3-1-5e2f08f3cadc@ideasonboard.com>
+ <20250818235632.GB10308@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: FRWP192MB2997:EE_|AM7P192MB0578:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03810c6f-619a-49f0-c64f-08dddeee0187
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NXp4MHBEd1hVRlpUdVZmRFgxWVhjQmZQeUp5OGd2V2hTOWd2aElmcGtwS0Z6?=
- =?utf-8?B?TzFLb21hNzhhcXM5bGVodTJ6U3J0Qm9QancwRDA2eHhNYmZJSTZ5cjM2UzVZ?=
- =?utf-8?B?L20xYzREc0t0dGV5VUtHL05VQk80MDFwelFPUTdwdkhYd2JJdkpaNmlXREFw?=
- =?utf-8?B?RkN2YTNSckRxYXZGMkRYZW11dXpzZ3RpVG1rdnVWd2RIOFUvc3U5cDRiQnZ3?=
- =?utf-8?B?RFFXMzA2QWRtakhISElpYWx5R2RpR0VZYXhkT0x6cTltdWpsR2xwaW5XT0lv?=
- =?utf-8?B?OURuQjhKa2s4cTZtK3NwejM5Z2Vab2xiNHZIVThFQ1l0UnpyMkJ6UWpSbnAy?=
- =?utf-8?B?OVVrS2UxUnlmZS9Ga2ZXV2J3WHpMNEsvTGxLNTNkekMrK3lxOW9NZXQ0aUxS?=
- =?utf-8?B?cURZZXdWT0RFTUp2Z2t3NnM2NW5qWDBubFRRdTVxZUpzRjUxREtQVW9tMG5B?=
- =?utf-8?B?QWdHcU80TVlQMUlrU2RscVpnam5zZUxPN0FYUXBWTjdDaHZSMkJqendjUjEr?=
- =?utf-8?B?RnBXWU1WNnV5YjFrc2FQT0R4R2RqdzFsUHBQY0J4dENOcm52LzFtLzZKTUNy?=
- =?utf-8?B?eEcrTlBYc3YwUnZnWXErRDFyNERqblNnY0w5TGdabFBFbGdCdUZCSVFPTUZG?=
- =?utf-8?B?MVVjMldUczFMU3Z6ai9Eak90VFZLUmEwZ1ZTRWVtcnRIeEYwNVpYc3h2TUk0?=
- =?utf-8?B?ZjQ4WGhpeVpQeElQT0h3enFqcUlCSk5UMENEZ3d4cWFkNzlIWG9sOGtRN2pr?=
- =?utf-8?B?bHRNV3VWV3VSZnMxbEJsbGdMcWc0dGhqRE8wU21WZ3ROVXpRd3dYVVVXTjha?=
- =?utf-8?B?dk4vQnVwUkFqR256S0hRd3lCLzFyeXA4RkdwU3Vrb3RZZy90UEpFSWwreERK?=
- =?utf-8?B?SjdsZjErdUg3cXJOVGlUemYvWHJQYmFoN1pQRy94bkFqSzF2STluSzVWSWcx?=
- =?utf-8?B?cGxZdXRiZVdIamdrV0V5ZUpsTDdHLzB3anBWMUlrVFVxL0lXdnJ2SEtFQlpp?=
- =?utf-8?B?MW9SUlJqb0g3U2hvbjRsV09hMlFJM0dNZVM4aTFnd0J1MzJwRWxtUUJyK2to?=
- =?utf-8?B?QWEwZVBaeE1jNTVKTW5wdmpDUDRDR0J0ZVFSZ3VDT0d5VSs4OUttRlIrN3Zv?=
- =?utf-8?B?eFk1dkI4bWdsZnNCclBUQmZHdEVjd3l5enFYK3RqUmpUdFRlSW44d3JWQXhj?=
- =?utf-8?B?OUxxdExjbzBRZjAzK0xrWGRQcURSdEYzLzdodWFwRFVPVy9KZlFOdjF2dk8r?=
- =?utf-8?B?Z2pWcXdnZmg0SDBhUXg2aGV4YXp0aWVETFJUbXFDdDVjcTR1cnZ4QWx6dHdx?=
- =?utf-8?B?WGZkQWhXYlNCdWRwdjI2WnNsRkV5YWRrYW1RU09LMTlqYmxkcGNaaFFzcFYz?=
- =?utf-8?B?S1pBZnN1c2ZONzB4ZVJrdlE1eC9GWW5kQzlMYS9ZSndReGYwWmpzVStwaUZz?=
- =?utf-8?B?RnZwYnNKbDUyakM4VUc1QUJZSllSODRuMkZUWk1OeTU4L1Q3L2Rnc2c5eEZD?=
- =?utf-8?B?N3NSV0VaT1hqTlZTL002NExTKzkvb1pZR0p2OEl1VEp3Rlg4dzdrMldaeGps?=
- =?utf-8?B?OUppRDF2NGNudFNtWGE5OTgzb2VIayt6blZrOTFNdGVPT1YvV3E4THl1NWxN?=
- =?utf-8?B?K3FkdUw0YjBwYzVoRmpHUmI1emMwTFlWNUdzMjduZTdnc2ZmMVJtQkJQYTZO?=
- =?utf-8?B?K1hIR2lzaUNsd3pUcGRwbWRFWE5JMEtMWWpVN1BjVzdKRFFFaWE5aWgxZ3hq?=
- =?utf-8?B?V0hCM3M1NkhjNGkvZzR4b2Irc0FOZkNVSGNFWm5hc09wcXRsZ1Y2MTE5TnM3?=
- =?utf-8?B?NmlZMFJuTHJVRHRvRFc5NVhTeFNuOHlaZkRNQVN4YmJTWkFOR01FMTIzdHN1?=
- =?utf-8?B?YTlmV3pNTDlEbHpKNSs5SWxUQmx6RCtIY3diSW5ubWFXM3VFaXg2VzBUczZ4?=
- =?utf-8?Q?iEOmWr6A6HE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FRWP192MB2997.EURP192.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d0xqRm1HcUxlRzNnYVB2M1laSndVMXJJbThSZGl0aHNuZEhGeTl6SzlGRU05?=
- =?utf-8?B?TmIxL3NYUnZvSUg5dVpQL3hIbFE4SmcyWE05Q3JpUmNNT1AvYlVKRitpM24w?=
- =?utf-8?B?bDcwaGZRTVhYN1AvOHRPQ0NGZGQvMXhQVmZQN09rWitVWnVrd1JkcXhlZGZj?=
- =?utf-8?B?VmhKVCtPdTQxK1ZqSWtmaVVwbnJtNHpwZGJQdXRQd1NxaUYxNnF0eWFGRUtr?=
- =?utf-8?B?NjFGWU5iOEN6bWY2bGRaanZtOXBaT2ZsOWx0TCtLd0JNM3hPMVVkMDdPSkl3?=
- =?utf-8?B?cE9xblNPTG4vSnBPbXlRbWxPYmg3aS9JcFBuRFdQUFFXM240bFY1SUNhZWJH?=
- =?utf-8?B?Sm5YVWFOejFWTk5WZEFsb1JqUjZqTTFnNUluMXFPSEpOU0NuVXRxL0J3Y2cw?=
- =?utf-8?B?dnRIbXk4QldOZWwyLzBPQUl6SFc2amZwMnJmZk9HS3J5bjg0S05YZzlxcmdj?=
- =?utf-8?B?Qk9PTlN3eHFVUGNCQlJEcW9TeS90TW5EZkhMemdWM3ZhMEdiVXVLZzNjSFRI?=
- =?utf-8?B?bE9mRk44ZThrVyttcElpcGRoUGRWT2wxS0JCN0VqcEo0WTZZRi9SM3dJTTdh?=
- =?utf-8?B?L1JCaldjMFZhQ0F3eGNOOVpsb09qK2M0dklIWmVQVGdvTGo2TGh1SFJtUXdH?=
- =?utf-8?B?NlViWCswZFM3bjlNSTVRYzdlcHJBZWJ1SEQ0a2RqcWpzdlFEeTFOeEZFSVFL?=
- =?utf-8?B?MXJ0T1U2cGNKUkc5c2lDVmxJSlZKNTljUHVPL216VmJUT2dOTE93U244N0Rh?=
- =?utf-8?B?TEZTRlg0Wlkwc3dpYlhRVmFGaTZtZ3pKcmgxVTlRTndwNjg2eW1iRTdORnJa?=
- =?utf-8?B?L2RSWjZGVGxrcTc1NXpFMjZKRzY3OVNFK3FpbkQyWEpKczdrdmxhQVMya2I4?=
- =?utf-8?B?Q01QZnlMUTd3WHc0T2g0M1dwOTFFNUNTelduQjMzRDR6Z2tVRlpTOVhrK3la?=
- =?utf-8?B?OExQdEhnVkVtclUxQnJhNGJWSEtnM2pDUHVvbnEzN1gvY0hwbjcvUHhYUHJF?=
- =?utf-8?B?NWJNMnZhUlNmaEd3ZG43T25DQnpUcCs3VGR3T3BKU2VqQ2hOUDFOVzJoSUpZ?=
- =?utf-8?B?MEJKZ3pNaXdzVHM5RGhqaDl4eS9rY2V4YUFaZkZsS3NMUGQ3L2NiQ3N2ZDVK?=
- =?utf-8?B?cThTRThFY1MwdnhnUDNBcjA2d3QvM3MzS2c1am5QbmJBTStnNjQxckU4eDhp?=
- =?utf-8?B?dzlJeWpqM1hjTGNOeVk0ODZ4czY3bTR4V050ejNHRmQ1QUx2bDEvMXQ0UVB6?=
- =?utf-8?B?cnkrckhEdUhydjN1bGRFZ2tUeE9vVGdBMUo1U2JrU21JaE1teVdkU0VMNHJC?=
- =?utf-8?B?T3hiUndBTWJWbVRJOEl0cXBLUnhacStXeXIrOVVreGpNeHdLQzQ0bU80NVFt?=
- =?utf-8?B?QlFBbjRsUEQ5UURpNWt0VHRCckdQU1o2NDA3VzREZlRyVEpMaS9BbHNhaTM4?=
- =?utf-8?B?dWFxdXVzcFZMQ1Ruc1paS3FlSFI5V3RzZGF5ejFEaDJ6NVFKWWg0aUNjMmQ1?=
- =?utf-8?B?NXVsKzBHSS9CN3lJK1NUeFFERE85K1ZHT01iK1U1Z1ErSHFUZVE3QXBGWElD?=
- =?utf-8?B?WWRaa254eVB1c0IvN0dmWGlIUFdoRjkyN05lek53VDBjZGZ5MUp4VCs5S2JG?=
- =?utf-8?B?bnNHUnA5WEMwa1BVaExZVk9ma0xBemcvdGtFTTBKMUUyVHgwUS9ZM3dJNmp4?=
- =?utf-8?B?OFJlMkpkVXZaRnlTWEVCK2FpUTNYd2VUcWQyWXZtWE1EQTMxR29xckxNcjha?=
- =?utf-8?B?L0JaYTVWcFN2ZnNZZlR3WnFUOG5kekxmZGQ5clptc0JpWXRUWHNEYTExWHdG?=
- =?utf-8?B?dGU1N0FOWCtsZFI2L0ZHOGtnVldvcHpOL3hxOTNrenA0L2FBOXpXRGVmTlVR?=
- =?utf-8?B?OGNSOHRLZENHUFVFTUpYRnZ0dWFiTitwNktqa3EzSVVlMEs2N1NjL29rK2Iw?=
- =?utf-8?B?M0p0d3NJTGg5bnlVZmRkS0dzVVZTMU5ybzYxaE1KRE5tNHpuLzBiaHI1Njcz?=
- =?utf-8?B?VGZBQm56MHU2TTI3dUNtb3d1OWxjNVRSMVdIUzhIRHYyMVlJSmlIelhIc0lT?=
- =?utf-8?B?Lzl3dmx0YzRvNnR5Ty9hYnpxckplY1F6TDRaZ3NXSGpRT29CdGk4RVVrb05K?=
- =?utf-8?Q?O2ZLgqrJSY9JdoUNylIwtlccW?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	vngVo/Y0BNR0gnlcXyblXccaBfzzkxuNuCTvJxrKLKcvfdAdvn4v3N7oChWKegkUATbeutvF/0J/lisCIbKfK/2XWmkZxyau6W0lUEwDk+zbhD9gi17KKfmSrAPqNekEbpv9cBrodyB+FZOOmuyBreQFVp9KW9zxbEEHiZmP4EP/x0RzK4VLj9aht07gptSCCVRb9B3b2ZhT7otJqbQuN9J7RUIPEbR9FnOBF5V9Hv/7YiX2BlfsuIN2hd+IrAFQbePv/NUOrt9fPIQ2KUhinAquDXYUfQGlVDuJnYKvUpchNCMxEq0kcZUOr5RYQb8RBT9jfIaa59o+wL5JmC5hFkB0fBGif6NiVcVtLFOcYtQDAsBKP+iLrlZkJOM3R8MVq3dd0X3iqkNubOpR5q1JJZhNxwf5m6tk8ghenYWKGYycfDhSv+f66V8PnProoykK0DhiSzg941/7MNi44tMC9tZ/fHNVneyPvB0/q8o62qt0Br5s8I93yTA3eBQJUdW8V3bfI0QoSJYaWK5kg+24l2izlIWnDhZyl9m3v+QcQhbejC2oZrOgN+VYVjgjfm9I10xGpVO59HiIGgV8ojTFSFOfKQfqgfa8aosE5UU2vtPiIIJIZrTEaTv+GhdTtBgD
-X-OriginatorOrg: westermo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03810c6f-619a-49f0-c64f-08dddeee0187
-X-MS-Exchange-CrossTenant-AuthSource: FRWP192MB2997.EURP192.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 06:59:56.6337
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4b2e9b91-de77-4ca7-8130-c80faee67059
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k5Nr7y2A/Kik7+QfWUu+8lzk9lsX+1zvcxrPuRORLoZc+BxvjUBMZ3nVA0WCw3iW2HYEqY5CXXBVKhluYt658w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7P192MB0578
-X-MS-Exchange-CrossPremises-AuthSource: FRWP192MB2997.EURP192.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossPremises-AuthAs: Internal
-X-MS-Exchange-CrossPremises-AuthMechanism: 14
-X-MS-Exchange-CrossPremises-Mapi-Admin-Submission:
-X-MS-Exchange-CrossPremises-MessageSource: StoreDriver
-X-MS-Exchange-CrossPremises-BCC:
-X-MS-Exchange-CrossPremises-OriginalClientIPAddress: 104.151.95.196
-X-MS-Exchange-CrossPremises-TransportTrafficType: Email
-X-MS-Exchange-CrossPremises-Antispam-ScanContext:
-	DIR:Originating;SFV:NSPM;SKIP:0;
-X-MS-Exchange-CrossPremises-SCL: 1
-X-MS-Exchange-CrossPremises-Processed-By-Journaling: Journal Agent
-X-OrganizationHeadersPreserved: AM7P192MB0578.EURP192.PROD.OUTLOOK.COM
-X-Proofpoint-GUID: sqMzz6jJIky1tPEk3Jo8ddCLB8GqT0q1
-X-Proofpoint-ORIG-GUID: sqMzz6jJIky1tPEk3Jo8ddCLB8GqT0q1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDA2NSBTYWx0ZWRfX8Sq0lr+yBbCG
- pF4xa5QMt0XPDdLvrbVzyaPGf11ee0BU09qaAm7owZ72sq2hOVxKpN2G7xQzgwJh/1e0O8+m52E
- 3Mg+R1kcHUSECSxfOFYRb3Rtx3Fh7ab5+DOT9pyGoskpLvDp4nOUJCBo2bOk7pq4vAsekKp6Ivb
- QOYM8qyan+WL4dTUmCX6SA/crpja31BFU8fmwPf0dlDzUg25aZ+vTIUQEao5E5QtdnKDAdPZz8n
- 4T/0YtqEmsyVGnBynzFjNpghmHXTU8s0w+2xiyhyYBsw9lhMyZXNWsvKaK3LVAyllHGKTgYtz84
- mnt/plvtaOV7mzcePtYlyZTDPGBntuF0/ZvGv9q8CK9tKPyjuqZ3z0Dr55/rEGPaQ/qCFJJzH2E
- UvoJVBDJHnq6Im9aRTawL1A5pJhi3w==
-X-Authority-Analysis: v=2.4 cv=K6B73yWI c=1 sm=1 tr=0 ts=68a420ee cx=c_pps
- a=7npOGqyay3yyVygbfyT32Q==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=8gLI3H-aZtYA:10
- a=P3XI3Sk0-mpVhaV6S1kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250818235632.GB10308@pendragon.ideasonboard.com>
 
-Am Tue, Aug 19, 2025 at 02:38:38PM +0800 schrieb Baochen Qiang:
-> 
-> 
-> On 8/15/2025 4:13 PM, Alexander Wilhelm wrote:
-> > Hello devs,
-> > 
-> > I'm currently working on getting the 'ath12k' driver running on a big endian
-> > PowerPC platform and have encountered the following issue.
-> > 
-> > In the function 'ath12k_dp_rx_process_reo_status', the REO status is determined
-> > by inspecting memory that the hardware has previously written via DMA.
-> > Specifically, during the call to 'ath12k_hal_srng_access_begin', the driver
-> > reads the value of 'hp_addr' for the destination ring (in my case, always with
-> > ID 21). On the big endian platform, this value is consistently 0, which prevents
-> > the REO status from being updated.
-> 
-> This does not seem an endian issue to me, because either of them we should get a value
-> other than 0.
+Hi Laurent
 
-Really? I always assumed the value remains 0 until the firmware writes something
-to memory and moves the head pointer of the SRNG ring buffer. By the way, I've
-already implemented the missing endianness conversions for reading from and
-writing to ring buffer pointers like this one:
+On Tue, Aug 19, 2025 at 02:56:32AM +0300, Laurent Pinchart wrote:
+> On Mon, Aug 18, 2025 at 10:39:36PM +0200, Jacopo Mondi wrote:
+> > Sice commit 7b9eb53e8591 ("media: cx18: Access v4l2_fh from file")
+>
+> s/Sice/Since/
+>
+> > all ioctl handlers have been ported to operate on the file * first
+> > function argument.
+> >
+> > The cx18 DVB layer calls cx18_init_on_first_open() when the driver needs
+> > to start streaming. This function calls the s_input(), s_std() and
+> > s_frequency() ioctl handlers directly, but being called from the driver
+> > context, it doesn't have a valid file * to pass them. This causes
+> > the ioctl handlers to deference an invalid pointer.
+> >
+> > Fix this by wrapping the ioctl handlers implementation in helper
+> > functions which accepts a cx18 pointer as first argument
+> > and make the cx18_init_on_first_open() function call the helpers
+> > without going through the ioctl handlers.
+>
+> It's the other way around, the ioctl handlers are not wrapper. I'd write
 
-    hp = le32_to_cpu(*srng->u.dst_ring.hp_addr);
+in facts
 
-> > Interestingly, DMA read/write accesses work fine for other rings, just not for
-> > this one. What makes the REO status ring so special? I couldn’t find anything in
-> > the initialization routine that would explain the difference.
-> > 
-> > Could anyone give me a hint on what I should be looking for?
-> > 
-> > 
-> What hardware are you using? WCN7850 or QCN9274?
+"wrapping the ioctl handlers implementation in helpers functions"
 
-I'm using QCN9274-based dualmac modules.
+to me means wrapping the actual implementation in helpers
 
+>
+> Fix this by moving the implementation of those ioctls to functions that
 
-Best regards
-Alexander Wilhelm
+ah I should have used "moving" instead of "wrapping"
+
+> take a cx18 pointer instead of a file pointer, and turn the V4L2 ioctl
+> handlers into wrappers that get the cx18 from the file. When calling
+> from cx18_init_on_first_open(), pass the cx18 pointer directly. This
+> allows removing the fake fh in cx18_init_on_first_open().
+>
+
+ok, if it's -that- different... thankfully we nowadays have b4 that
+makes sending new version easier
+
+> >
+> > The bug has been reported by Smatch:
+> >
+> > --> 1223         cx18_s_input(NULL, &fh, video_input);
+> > The patch adds a new dereference of "file" but some of the callers pass a
+> > NULL pointer.
+> >
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
+> > Fixes: 7b9eb53e8591 ("media: cx18: Access v4l2_fh from file")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> > ---
+> >  drivers/media/pci/cx18/cx18-driver.c |  9 +++------
+> >  drivers/media/pci/cx18/cx18-ioctl.c  | 30 +++++++++++++++++++-----------
+> >  drivers/media/pci/cx18/cx18-ioctl.h  |  8 +++++---
+> >  3 files changed, 27 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+> > index 743fcc9613744bfc1edeffc51e908fe88520405a..cd84dfcefcf971a7adb9aac2bafb9089dbe0f33f 100644
+> > --- a/drivers/media/pci/cx18/cx18-driver.c
+> > +++ b/drivers/media/pci/cx18/cx18-driver.c
+> > @@ -1136,11 +1136,8 @@ int cx18_init_on_first_open(struct cx18 *cx)
+> >  	int video_input;
+> >  	int fw_retry_count = 3;
+> >  	struct v4l2_frequency vf;
+> > -	struct cx18_open_id fh;
+> >  	v4l2_std_id std;
+> >
+> > -	fh.cx = cx;
+> > -
+> >  	if (test_bit(CX18_F_I_FAILED, &cx->i_flags))
+> >  		return -ENXIO;
+> >
+> > @@ -1220,14 +1217,14 @@ int cx18_init_on_first_open(struct cx18 *cx)
+> >
+> >  	video_input = cx->active_input;
+> >  	cx->active_input++;	/* Force update of input */
+> > -	cx18_s_input(NULL, &fh, video_input);
+> > +	cx18_do_s_input(cx, video_input);
+> >
+> >  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
+> >  	   in one place. */
+> >  	cx->std++;		/* Force full standard initialization */
+> >  	std = (cx->tuner_std == V4L2_STD_ALL) ? V4L2_STD_NTSC_M : cx->tuner_std;
+> > -	cx18_s_std(NULL, &fh, std);
+> > -	cx18_s_frequency(NULL, &fh, &vf);
+> > +	cx18_do_s_std(cx, std);
+> > +	cx18_do_s_frequency(cx, &vf);
+> >  	return 0;
+> >  }
+> >
+> > diff --git a/drivers/media/pci/cx18/cx18-ioctl.c b/drivers/media/pci/cx18/cx18-ioctl.c
+> > index bf16d36448f888d9326b5f4a8f9c8f0e13d0c3a1..6e869c43cbd520feb720a71d8eb2dd60c05b0ae9 100644
+> > --- a/drivers/media/pci/cx18/cx18-ioctl.c
+> > +++ b/drivers/media/pci/cx18/cx18-ioctl.c
+> > @@ -521,10 +521,8 @@ static int cx18_g_input(struct file *file, void *fh, unsigned int *i)
+> >  	return 0;
+> >  }
+> >
+> > -int cx18_s_input(struct file *file, void *fh, unsigned int inp)
+> > +int cx18_do_s_input(struct cx18 *cx, unsigned int inp)
+> >  {
+> > -	struct cx18_open_id *id = file2id(file);
+> > -	struct cx18 *cx = id->cx;
+> >  	v4l2_std_id std = V4L2_STD_ALL;
+> >  	const struct cx18_card_video_input *card_input =
+> >  				cx->card->video_inputs + inp;
+> > @@ -558,6 +556,11 @@ int cx18_s_input(struct file *file, void *fh, unsigned int inp)
+> >  	return 0;
+> >  }
+> >
+> > +static int cx18_s_input(struct file *file, void *fh, unsigned int inp)
+> > +{
+> > +	return cx18_do_s_input(file2id(file)->cx, inp);
+> > +}
+> > +
+> >  static int cx18_g_frequency(struct file *file, void *fh,
+> >  				struct v4l2_frequency *vf)
+> >  {
+> > @@ -570,11 +573,8 @@ static int cx18_g_frequency(struct file *file, void *fh,
+> >  	return 0;
+> >  }
+> >
+> > -int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
+> > +int cx18_do_s_frequency(struct cx18 *cx, const struct v4l2_frequency *vf)
+> >  {
+> > -	struct cx18_open_id *id = file2id(file);
+> > -	struct cx18 *cx = id->cx;
+> > -
+> >  	if (vf->tuner != 0)
+> >  		return -EINVAL;
+> >
+> > @@ -585,6 +585,12 @@ int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
+> >  	return 0;
+> >  }
+> >
+> > +static int cx18_s_frequency(struct file *file, void *fh,
+> > +			    const struct v4l2_frequency *vf)
+> > +{
+> > +	return cx18_do_s_frequency(file2id(file)->cx, vf);
+> > +}
+> > +
+> >  static int cx18_g_std(struct file *file, void *fh, v4l2_std_id *std)
+> >  {
+> >  	struct cx18 *cx = file2id(file)->cx;
+> > @@ -593,11 +599,8 @@ static int cx18_g_std(struct file *file, void *fh, v4l2_std_id *std)
+> >  	return 0;
+> >  }
+> >
+> > -int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
+> > +int cx18_do_s_std(struct cx18 *cx, v4l2_std_id std)
+> >  {
+> > -	struct cx18_open_id *id = file2id(file);
+> > -	struct cx18 *cx = id->cx;
+> > -
+> >  	if ((std & V4L2_STD_ALL) == 0)
+> >  		return -EINVAL;
+> >
+> > @@ -642,6 +645,11 @@ int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
+> >  	return 0;
+> >  }
+> >
+> > +static int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
+> > +{
+> > +	return cx18_do_s_std(file2id(file)->cx, std);
+> > +}
+> > +
+> >  static int cx18_s_tuner(struct file *file, void *fh, const struct v4l2_tuner *vt)
+> >  {
+> >  	struct cx18_open_id *id = file2id(file);
+> > diff --git a/drivers/media/pci/cx18/cx18-ioctl.h b/drivers/media/pci/cx18/cx18-ioctl.h
+> > index 221e2400fb3e2d817eaff7515fa89eb94f2d7f8a..7a42ac99312ab6502e1abe4f3d5c88c9c7f144f3 100644
+> > --- a/drivers/media/pci/cx18/cx18-ioctl.h
+> > +++ b/drivers/media/pci/cx18/cx18-ioctl.h
+> > @@ -12,6 +12,8 @@ u16 cx18_service2vbi(int type);
+> >  void cx18_expand_service_set(struct v4l2_sliced_vbi_format *fmt, int is_pal);
+> >  u16 cx18_get_service_set(struct v4l2_sliced_vbi_format *fmt);
+> >  void cx18_set_funcs(struct video_device *vdev);
+> > -int cx18_s_std(struct file *file, void *fh, v4l2_std_id std);
+> > -int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
+> > -int cx18_s_input(struct file *file, void *fh, unsigned int inp);
+> > +
+> > +struct cx18;
+> > +int cx18_do_s_std(struct cx18 *cx, v4l2_std_id std);
+> > +int cx18_do_s_frequency(struct cx18 *cx, const struct v4l2_frequency *vf);
+> > +int cx18_do_s_input(struct cx18 *cx, unsigned int inp);
+> >
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
