@@ -1,98 +1,102 @@
-Return-Path: <linux-kernel+bounces-775503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E01FB2BFEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:12:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BEEB2BFF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CFF71B6715C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67AB5167960
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D67322777;
-	Tue, 19 Aug 2025 11:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="SHymUxFo"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA61B322C65;
+	Tue, 19 Aug 2025 11:11:45 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6442C322DB7
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A034322DD7;
+	Tue, 19 Aug 2025 11:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601866; cv=none; b=GEfMD8aJirslV5L/w9PPEbqthZxYo8CRQfSlU/QsvnqnsSiDcAMX44Xgd4NCvFNHTBNiNwDjOsdQBHqkTW1T7bvFSfNK6xiP3xdaTRM3sG1dZRwF9b/8Rp74NNzI25ocz7RUeRSQTyIor/umJDYNFit2QRopzlxBXyJtV094Q5k=
+	t=1755601905; cv=none; b=FVriPEGGVLx8XT5JstmCefBZJFmZxRF9F58407A8YljWdRuiO7fzS0vJcCmT3wSd59sCgS6rJ4gaFy1w98HF4SNJLWMhkNDxXVc6HPBWM2e5DM5h5kd4cAwbbr/tabbp7Zy7t3RD0+Nq77yHBXfBrPowwoqdQLSJBQCtOzumq/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755601866; c=relaxed/simple;
-	bh=C46cxh37otbWjRDqzJcdqyTBwXuLy7xE3pNBZX+LYbY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VvR7eWG2clbJPfM6ee7+ldmyfWzJVeEcQWZcgOWaSwY0Qlf0O609fTzFlKxEJ2sPgUpUwGdb7lfppyPALLNubekaEhp3MRoAF/T0Zh/LwQ9ZQ9mXDh32hHfCBJb+zGDQnh6AgvdlhA8RlTr1F8U855aAzx4i9DmibZowOpeEnMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=SHymUxFo; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=cSeEG+pd+PLbzzq4w2+Bc4gPYVktvWRvTyXPr57+HcE=; b=SHymUxFoyd+h1Ap+7NtNiaY+JD
-	LajxIG2Q/Nne0sm7/gcBRvNsYewuqirlGvs/Ie5RkCJaKXtVPf/P7Ayza8InKAfalczX1hnUuE73Y
-	ToBe/M8OflwQwk6zaa4vk2/f23oqBafhkYLO909Spnje/wdGDIelBsOdMysBYSylfxN5N/JGUPTg9
-	zW16Zb10BO/TjhyU69HK+E25gwkW1pgBpavr7X6GUwItFitV5qVPn9OQTdHuavTjw8j278WLysVwq
-	yXlggaEM2H/XNoZTL6md3PRV8jJB70xaj7p4swZl7L+Z6Xvn3jEl3rO7IgaeGzFYSFE2KQU3dXDcJ
-	Dwef5PuQ==;
-Received: from i53875a31.versanet.de ([83.135.90.49] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uoKF1-0000g2-O7; Tue, 19 Aug 2025 13:10:59 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: srini@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	heiko@sntech.de,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] nvmem: qnap-mcu-eeprom: swap header order to fix missing type definitions
-Date: Tue, 19 Aug 2025 13:10:44 +0200
-Message-ID: <20250819111044.2714855-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1755601905; c=relaxed/simple;
+	bh=mpxUDVz18ynBNqabvz14g/eRXszloXEeVdJLwZhxGa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0ErWoAPrk3FZKu1sdB+gX4DCh8+NtP3GQfLXLw14cDkO8qxwoMgHSts4IA2ucKnd1ZJMNygLUTuhTt+dRURTojleLcymiEa+lETeVSzASww/zzSNb883NKLtEsO8soaoih7dYNucv3d7JpCgt+nQyQKNAXzMNI3bdEYw1PMzMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uoKFV-000000002YS-2Tuw;
+	Tue, 19 Aug 2025 11:11:29 +0000
+Date: Tue, 19 Aug 2025 12:11:25 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v2 3/8] net: dsa: lantiq_gswip: move definitions
+ to header
+Message-ID: <aKRb3R1l9XLr3DHw@pidgin.makrotopia.org>
+References: <cover.1755564606.git.daniel@makrotopia.org>
+ <cover.1755564606.git.daniel@makrotopia.org>
+ <a6dd825d9e3eefa175a578a43e302b6eaae2b9dd.1755564606.git.daniel@makrotopia.org>
+ <a6dd825d9e3eefa175a578a43e302b6eaae2b9dd.1755564606.git.daniel@makrotopia.org>
+ <20250819105055.tuig57u66sit2mlu@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819105055.tuig57u66sit2mlu@skbuf>
 
-The main header for the qnap-mcu uses types without (at the moment)
-including the necessary types.h header.
+On Tue, Aug 19, 2025 at 01:50:55PM +0300, Vladimir Oltean wrote:
+> On Tue, Aug 19, 2025 at 02:33:02AM +0100, Daniel Golle wrote:
+> > +#define GSWIP_TABLE_ACTIVE_VLAN		0x01
+> > +#define GSWIP_TABLE_VLAN_MAPPING	0x02
+> > +#define GSWIP_TABLE_MAC_BRIDGE		0x0b
+> > +#define  GSWIP_TABLE_MAC_BRIDGE_KEY3_FID	GENMASK(5, 0)	/* Filtering identifier */
+> > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL0_PORT	GENMASK(7, 4)	/* Port on learned entries */
+> > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC	BIT(0)		/* Static, non-aging entry */
+> > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID	BIT(1)		/* Valid bit */
+> 
+> The VAL1_VALID bit definition sneaked in, there was no such thing in the
+> code being moved.
+> 
+> I'm willing to let this pass (I don't think I have other review comments
+> that would justify a resend), but it's not a good practice to introduce
+> changes in large quantities of code as you're moving them around.
 
-While there is patch pending to fix that for every use:
-  https://lore.kernel.org/all/20250804130726.3180806-2-heiko@sntech.de/
-this does not help the nvmem driver right now.
+I agree that this is bad and shouldn't have happened when moving the code.
+Already this makes git blame more difficult, so it should be as clean as
+possible, source and destination should match byte-by-byte.
+It happened because I had the fix for the gswip_port_fdb() (for which Vladimir
+is working on a better solution) sitting below the series and that added this
+bit.
 
-Swapping the order of module.h and qnap-mcu.h headers does fix the
-problem locally until the main change gets merged though.
-
-Fixes: 117c3f3014a9 ("nvmem: add driver for the eeprom in qnap-mcu controllers")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202508191205.ROvIX7IA-lkp@intel.com/
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/nvmem/qnap-mcu-eeprom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nvmem/qnap-mcu-eeprom.c b/drivers/nvmem/qnap-mcu-eeprom.c
-index fea1e7b91764..e18e9ff4cfce 100644
---- a/drivers/nvmem/qnap-mcu-eeprom.c
-+++ b/drivers/nvmem/qnap-mcu-eeprom.c
-@@ -9,8 +9,8 @@
-  * Copyright (C) 2008 Wolfram Sang, Pengutronix
-  */
- 
--#include <linux/mfd/qnap-mcu.h>
- #include <linux/module.h>
-+#include <linux/mfd/qnap-mcu.h>
- #include <linux/nvmem-provider.h>
- #include <linux/platform_device.h>
- 
--- 
-2.47.2
+I can resend just this single patch another time without the rest of the
+series, or send it all again. Let me know your preference.
 
 
