@@ -1,175 +1,194 @@
-Return-Path: <linux-kernel+bounces-776412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BF9B2CCFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:29:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3CDB2CCFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7A164E4A4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72165684C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98777326D66;
-	Tue, 19 Aug 2025 19:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA8C326D5A;
+	Tue, 19 Aug 2025 19:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="khSyx8R2"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d09VmNxn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963FC322C82;
-	Tue, 19 Aug 2025 19:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895CE258ECE;
+	Tue, 19 Aug 2025 19:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755631744; cv=none; b=PBtY9kTfwDvzL5eCz+4GSDe2YaFWdZMTT1FkyKg8JM2d1VJx8rDLgqr0uhFWEIjGZjcg2xsBLVTAPaSo30ppTCHYGX4v5NHz9mkZnMRHC1HM7uAQGAzM/Vuvz43m/I0ApE+60NQgwcyfjR3nqCErI+d1/r2iowlIrQFTmLD0ZtA=
+	t=1755631720; cv=none; b=Htt444pKb7x43hVgLAZk3vlCWkfcERFM92sXEXoUgAXy4JTEjKKprq0TUZtzZ/zqTOSEzrnm2YQqH4w+dBrN4Pl8MSd76Ze7SEv2uiLJ+91Ljba+vQwlcZx1zRjkz6fWIklLvAouRXeCMpLsbIk6Xxv8Wg8Goyir4c4WOAc5l5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755631744; c=relaxed/simple;
-	bh=KCcclhS7M7Ppsuz47p4LBEib816ICcU5xamy6lRtODk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+STBym/Bzq/fjpLgpJItyRcXYun6nTc2YK4+SeLo3fUhyq4TgIylVO1zbEOuSdaFz5z0R4/1EF53T+gjLek2aRI6xPdCIFUzXFy5QU6wB3isUZTfCvo6bGEMdk43n3dxFx/vMW/Unukoeylvhr7SnO/TPZEsi4doxiNAjdBtz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=khSyx8R2; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CA75240E0194;
-	Tue, 19 Aug 2025 19:28:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id kRss8kZpu-Vf; Tue, 19 Aug 2025 19:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755631732; bh=pFKYBFysi0D/h33TNA0NMCZJ3QXsXWW3B+PXOFIgWuk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=khSyx8R25lIkOrcJpw/1kKrg4RYFZnlq9wYxCyMgabZgnaL8Y4mt8jamtlNFGWKZ0
-	 /rOXZR5dhCEn0Civr73Y1DvVkDtg2uakPUDxv8TIVs88M8jkkKZO20RD0uElPhNZL0
-	 FcieW0eLb5YqWLDGD7S3b7trpfPIJenu0Q+F/iLJz4T/MYRAZcCh4RsRjvVmufa7l9
-	 hAnXmKlFRQWlhtgUbZg7/6hvUfX/M+HYRR/dnPXEG83zGyeqJVKmHt0bkFoOm24RNI
-	 LdNZsCfhkUKrPEcNnandRmGQz2dnij9A1iMxhwjmxS91Wk/wq4Mog6ugON6njmLewN
-	 4msdmObyFpIieffYL4zCfq8VNhk20s64dG8ho8iVWZuwCzFcCjxHcNVLr863UIj45j
-	 6EqKucr4JOfUoAjR6haFgPByGT2JZzJV8ctPsNNi8EBsmhIEMRcZ5oOYgJ8+vtO+w8
-	 Q8AnobCKFmKkiImjeLQjKjNsqoP+AtqNsGmV2Zzt8Eq+gkNB9DPbXZt/7rJFRRqWHs
-	 a0FVuLYZ2BGjLXKXLxXtCuev+tckF1//nVM2dAJYyAiVVS51Zj4gEOxQPfBvlDiTdO
-	 Q6l9YmqHqjwiUo1RLdywUuYJGFQAfxpYAOjutR3ACglv2ieaL3jW/amRjpApfv+ivP
-	 zXyTy0xo3a75+jc/AJQawuyY=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2BC1840E023B;
-	Tue, 19 Aug 2025 19:28:29 +0000 (UTC)
-Date: Tue, 19 Aug 2025 21:28:23 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kai Huang <kai.huang@intel.com>
-Cc: dave.hansen@intel.com, tglx@linutronix.de, peterz@infradead.org,
-	mingo@redhat.com, hpa@zytor.com, thomas.lendacky@amd.com,
-	x86@kernel.org, kas@kernel.org, rick.p.edgecombe@intel.com,
-	dwmw@amazon.co.uk, linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
-	reinette.chatre@intel.com, isaku.yamahata@intel.com,
-	dan.j.williams@intel.com, ashish.kalra@amd.com,
-	nik.borisov@suse.com, chao.gao@intel.com, sagis@google.com,
-	farrah.chen@intel.com
-Subject: Re: [PATCH v6 2/7] x86/sme: Use percpu boolean to control WBINVD
- during kexec
-Message-ID: <20250819192823.GLaKTQVxIV4n7p60hU@fat_crate.local>
-References: <cover.1755126788.git.kai.huang@intel.com>
- <c09d17677fa127a7b23b24b6c225f7dc5b68fd98.1755126788.git.kai.huang@intel.com>
+	s=arc-20240116; t=1755631720; c=relaxed/simple;
+	bh=qIY9X5+FcNSBcRXsswBUCWwRon9tdY925kQ+7aOF53E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=npHihT3rhZxG50ETrDV5o4eX+428ONsshmJsLngpI0e1RNX7WGOZ7kmh7yib9F3vW5gShkjZecfLwh2Om6yguMFWZnBNordJwqQrn0tOKgAO715EPwVQ02feMddRVz5XSQS0oFGD+D6p3Rtn2Lzz+cvJBgCR0GBmdW5XF6onZU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d09VmNxn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99BAC113D0;
+	Tue, 19 Aug 2025 19:28:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755631720;
+	bh=qIY9X5+FcNSBcRXsswBUCWwRon9tdY925kQ+7aOF53E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=d09VmNxnHQsrp01pzJ2k0NQXUM52ufcrA/bx2D1gwV3NlFYWtTmOpBnbdUAnzYgBV
+	 uGreB32dj6zGdGdlm8cfZ95goFqQsSPsfRqdcEVFCS3oGFlNX4yZFNPgW55pDwVkz9
+	 x8wBl2sKFXPIbZBcgczoY+tlH+V5UP10pw03Qb/l/jk6QZzU5tpkkVr1VLhD58s+Xg
+	 /1mji4MytITb/G54D7eladJ3VaBQJYxpjqlfhRqsdEgaqUUbsyeyUC0rhWQDpzXZqK
+	 5CAcY5Tq0G1uSpAcmiwoToBpde3z6A6fGyjqqMWdhKL+hixW+/TQtuMJqq+KBDr0hy
+	 INwIYTu8XkN0g==
+Date: Tue, 19 Aug 2025 14:28:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, jingoohan1@gmail.com, l.stach@pengutronix.de,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND v3 1/5] PCI: dwc: Don't poll L2 if QUIRK_NOL2POLL_IN_PM
+ is existing in suspend
+Message-ID: <20250819192838.GA526045@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c09d17677fa127a7b23b24b6c225f7dc5b68fd98.1755126788.git.kai.huang@intel.com>
+In-Reply-To: <20250818073205.1412507-2-hongxing.zhu@nxp.com>
 
-On Thu, Aug 14, 2025 at 11:59:02AM +1200, Kai Huang wrote:
-> TL;DR:
+On Mon, Aug 18, 2025 at 03:32:01PM +0800, Richard Zhu wrote:
+> Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management State Flow
+> Diagram. Both L0 and L2/L3 Ready can be transferred to LDn directly.
 > 
-> Prepare to unify how TDX and SME do cache flushing during kexec by
-> making a percpu boolean control whether to do the WBINVD.
+> It's harmless to let dw_pcie_suspend_noirq() proceed suspend after the
+> PME_Turn_Off is sent out, whatever the LTSSM state is in L2 or L3 after
+> a recommended 10ms max wait refer to PCIe r6.0, sec 5.3.3.2.1 PME
+> Synchronization.
 > 
-> -- Background --
+> The LTSSM states are inaccessible on i.MX6QP and i.MX7D after the
+> PME_Turn_Off is sent out.
 > 
-> On SME platforms, dirty cacheline aliases with and without encryption
-> bit can coexist, and the CPU can flush them back to memory in random
-> order.  During kexec, the caches must be flushed before jumping to the
-> new kernel otherwise the dirty cachelines could silently corrupt the
-> memory used by the new kernel due to different encryption property.
+> To support this case, don't poll L2 state and apply a simple delay of
+> PCIE_PME_TO_L2_TIMEOUT_US(10ms) if the QUIRK_NOL2POLL_IN_PM flag is set
+> in suspend.
 > 
-> TDX also needs a cache flush during kexec for the same reason.  It would
-> be good to have a generic way to flush the cache instead of scattering
-> checks for each feature all around.
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../pci/controller/dwc/pcie-designware-host.c | 31 +++++++++++++------
+>  drivers/pci/controller/dwc/pcie-designware.h  |  4 +++
+>  2 files changed, 25 insertions(+), 10 deletions(-)
 > 
-> When SME is enabled, the kernel basically encrypts all memory including
-> the kernel itself and a simple memory write from the kernel could dirty
-> cachelines.  Currently, the kernel uses WBINVD to flush the cache for
-> SME during kexec in two places:
-> 
-> 1) the one in stop_this_cpu() for all remote CPUs when the kexec-ing CPU
->    stops them;
-> 2) the one in the relocate_kernel() where the kexec-ing CPU jumps to the
->    new kernel.
-> 
-> -- Solution --
-> 
-> Unlike SME, TDX can only dirty cachelines when it is used (i.e., when
-> SEAMCALLs are performed).  Since there are no more SEAMCALLs after the
-> aforementioned WBINVDs, leverage this for TDX.
-> 
-> To unify the approach for SME and TDX, use a percpu boolean to indicate
-> the cache may be in an incoherent state and needs flushing during kexec,
-> and set the boolean for SME.  TDX can then leverage it.
-> 
-> While SME could use a global flag (since it's enabled at early boot and
-> enabled on all CPUs), the percpu flag fits TDX better:
-> 
-> The percpu flag can be set when a CPU makes a SEAMCALL, and cleared when
-> another WBINVD on the CPU obviates the need for a kexec-time WBINVD.
-> Saving kexec-time WBINVD is valuable, because there is an existing
-> race[*] where kexec could proceed while another CPU is active.  WBINVD
-> could make this race worse, so it's worth skipping it when possible.
-> 
-> -- Side effect to SME --
-> 
-> Today the first WBINVD in the stop_this_cpu() is performed when SME is
-> *supported* by the platform, and the second WBINVD is done in
-> relocate_kernel() when SME is *activated* by the kernel.  Make things
-> simple by changing to do the second WBINVD when the platform supports
-> SME.  This allows the kernel to simply turn on this percpu boolean when
-> bringing up a CPU by checking whether the platform supports SME.
-> 
-> No other functional change intended.
-> 
-> [*] The aforementioned race:
-> 
-> During kexec native_stop_other_cpus() is called to stop all remote CPUs
-> before jumping to the new kernel.  native_stop_other_cpus() firstly
-> sends normal REBOOT vector IPIs to stop remote CPUs and waits them to
-> stop.  If that times out, it sends NMI to stop the CPUs that are still
-> alive.  The race happens when native_stop_other_cpus() has to send NMIs
-> and could potentially result in the system hang (for more information
-> please see [1]).
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 952f8594b5012..20a7f827babbf 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -1007,7 +1007,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  {
+>  	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>  	u32 val;
+> -	int ret;
+> +	int ret = 0;
 
-This text is meandering a bit too much across a bunch of things and could be
-made tighter... Just a nitpick anyway...
+I think it's pointless to initialize "ret" because in every case where
+ret is set, we return it immediately if it is non-zero.  We should
+just return 0 explicitly at the end of the function and skip this
+initialization.
 
->  arch/x86/include/asm/kexec.h         |  4 ++--
->  arch/x86/include/asm/processor.h     |  2 ++
->  arch/x86/kernel/cpu/amd.c            | 17 +++++++++++++++++
->  arch/x86/kernel/machine_kexec_64.c   | 14 ++++++++++----
->  arch/x86/kernel/process.c            | 24 +++++++++++-------------
->  arch/x86/kernel/relocate_kernel_64.S | 13 ++++++++++---
->  6 files changed, 52 insertions(+), 22 deletions(-)
+>       /*
+>        * If L1SS is supported, then do not put the link into L2 as some
+> @@ -1024,15 +1024,26 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  			return ret;
+>  	}
+>  
+> -	ret = read_poll_timeout(dw_pcie_get_ltssm, val,
+> -				val == DW_PCIE_LTSSM_L2_IDLE ||
+> -				val <= DW_PCIE_LTSSM_DETECT_WAIT,
+> -				PCIE_PME_TO_L2_TIMEOUT_US/10,
+> -				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> -	if (ret) {
+> -		/* Only log message when LTSSM isn't in DETECT or POLL */
+> -		dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> -		return ret;
+> +	if (dwc_quirk(pci, QUIRK_NOL2POLL_IN_PM)) {
+> +		/*
+> +		 * Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management
+> +		 * State Flow Diagram. Both L0 and L2/L3 Ready can be
+> +		 * transferred to LDn directly. On the LTSSM states poll broken
+> +		 * platforms, add a max 10ms delay refer to PCIe r6.0,
+> +		 * sec 5.3.3.2.1 PME Synchronization.
 
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+IIUC, the read_poll_timeout() below is waiting for the PME_TO_Ack
+responses to the PME_Turn_Off message.
 
--- 
-Regards/Gruss,
-    Boris.
+The Link state transition to L2/L3 Ready (or the subsequent L2, L3, or
+LDn states) is the indication that the downstream components have
+"performed any necessary local conditioning in preparation for power
+removal" and then responded with PME_TO_Ack.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+And the PCIE_PME_TO_L2_TIMEOUT_US timeout is the deadlock avoidance
+delay for cases where "one or more devices do not respond with a
+PME_TO_Ack".
+
+In the QUIRK_NOL2POLL_IN_PM case, I think the problem is that we can't
+*read* the LTSSM state to learn whether the Link transitioned to L2/L3
+Ready, L2, L3, or LDn.  That wouldn't be surprising because per sec
+5.2, "the LTSSM is typically powered by main power (not Vaux), so
+LTSSM will not be powered in either the L2 or the L3 state."
+
+I don't know what's different about i.MX6QP and i.MX7D.  Maybe on most
+DWC platforms the LTSSM *is* powered in L2/L3/LDn, but on i.MX6QP and
+i.MX7D, it *isn't* powered in those states?
+
+If that's the case, we should say that somewhere here.  And we should
+say what happens when we try to read the LTSSM when it's not powered.
+Does the read hang or cause some kind of error?
+
+> +		 */
+> +		mdelay(PCIE_PME_TO_L2_TIMEOUT_US/1000);
+> +	} else {
+> +		ret = read_poll_timeout(dw_pcie_get_ltssm, val,
+> +					val == DW_PCIE_LTSSM_L2_IDLE ||
+> +					val <= DW_PCIE_LTSSM_DETECT_WAIT,
+> +					PCIE_PME_TO_L2_TIMEOUT_US/10,
+> +					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> +		if (ret) {
+> +			/* Only log message when LTSSM isn't in DETECT or POLL */
+> +			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	/*
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 00f52d472dcdd..4e5bf6cb6ce80 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -295,6 +295,9 @@
+>  /* Default eDMA LLP memory size */
+>  #define DMA_LLP_MEM_SIZE		PAGE_SIZE
+>  
+> +#define QUIRK_NOL2POLL_IN_PM		BIT(0)
+> +#define dwc_quirk(pci, val)		(pci->quirk_flag & val)
+> +
+>  struct dw_pcie;
+>  struct dw_pcie_rp;
+>  struct dw_pcie_ep;
+> @@ -504,6 +507,7 @@ struct dw_pcie {
+>  	const struct dw_pcie_ops *ops;
+>  	u32			version;
+>  	u32			type;
+> +	u32			quirk_flag;
+>  	unsigned long		caps;
+>  	int			num_lanes;
+>  	int			max_link_speed;
+> -- 
+> 2.37.1
+> 
 
