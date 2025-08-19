@@ -1,86 +1,94 @@
-Return-Path: <linux-kernel+bounces-775939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B0CB2C69B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:10:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1935DB2C69C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B76F3ADD23
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F1E1BC53EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BB4215F7D;
-	Tue, 19 Aug 2025 14:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE717218ACC;
+	Tue, 19 Aug 2025 14:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="twNnSjrf"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="J0LjJdue"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E602EB850
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DDB2110
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755612425; cv=none; b=l40fPQt6B0daQuDLfksAItmLPJIGBhn/D/YcBw2mE4c+lUElX7xmEo+f8AtRZvSK8RSQos8mnfk1nqW0GeHLNDunvj9zc2pJK6ewkNsGVvh2tJwecbZFo7qJ5cRsyfabM8YULhonWv9PvmKnzlRfFM45wE2pDov7epn2moRe0rM=
+	t=1755612454; cv=none; b=gbU8qqzQKoZYl/T18M9KQ5rjKrCJe74Tv19NV8/Eytt+2H/AHwI2XxAeC3jSv384xTNoPcB8lbHMRBVALqJMN9Gj2ilfoBr8YIZYqq68NisY0hfa8txrM+OGlSuOWytyW52JYhEU5YKHt7uy7sPZuFlkPFadhDoZo7whD+lKIiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755612425; c=relaxed/simple;
-	bh=RBc+Mfrd5JZ5Shxaf+WcXhRVeM6ZXhVokwNykvbyHqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmA0RS0oR2V6qGU/0bBOhE467uqtk3fWCoZmVuG+XlEDVxUNxLPpzR5oj9HtGo3sIsr9k0WQxKFJKhL+LI6GuqNo2NqbAZa7grR4vfTYluR8ZAuy4Q8WMTUief2+LgRc3rEbhUvm2LshGT3jVst/a9Dt30R386J+GMkfXWpnlSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=twNnSjrf; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1755612421;
-	bh=RBc+Mfrd5JZ5Shxaf+WcXhRVeM6ZXhVokwNykvbyHqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=twNnSjrfWq17jU6NnXmyUMffT6kGI2LHzFUy+Au1sVsd2GaS0Qi1WcXk/2dW548Oc
-	 Onhq0TRPVrJnTaeVALtneZZZAI4T+5g9qBV+N7NYm1xY+pGs8d5yGss1AbZlRDiYWC
-	 jS3xXVLtogW1/YcE7WB27b5sO7CRJ52gi1vosgHc=
-Date: Tue, 19 Aug 2025 16:07:01 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] sysfs: attribute_group: enable const variants of
- is_visible()
-Message-ID: <faf11932-3a09-4c26-b83e-fbe7bd5838f2@t-8ch.de>
-References: <20250811-sysfs-const-attr-prep-v3-0-0d973ff46afc@weissschuh.net>
- <20250811-sysfs-const-attr-prep-v3-4-0d973ff46afc@weissschuh.net>
- <2025081957-promotion-shrivel-32cc@gregkh>
+	s=arc-20240116; t=1755612454; c=relaxed/simple;
+	bh=I/r7XFfAmZT7gE1c9PozZ4C2qUQHNUKLRFQPvVIdUC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hdgEHIqLaAWI6XU/vGdV+iqWZiXYkGyEXYjQiiL5n87YVYESQH3T0srxKMuIK81VzhL3KuDevkO+azu7l2+wzm7Nf8w7xfAUDid/LsIscYq6Pt7OwvXc8+aigy7utc2a+m8i/5Jd3lIN5YK90Job+Ewgt6w6qOdIC5JMumsPL9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=J0LjJdue; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b134a5b217so27644231cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1755612451; x=1756217251; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I/r7XFfAmZT7gE1c9PozZ4C2qUQHNUKLRFQPvVIdUC8=;
+        b=J0LjJdue71a+qYjzMx+CQjn73jm0Od0nLJupjShdsW5TAaD31FADG4T9WR/Aad4bze
+         AlJerWoK1jvfGIwMRp4AyM7PRC8mMwW1Wy6Hjnmrx2kw7KcBvUg1767NRI6Z2DtGqZxk
+         n/z3ztMa8vs1BeCeoMKAvxtjcY5HCCbn9Hk9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755612451; x=1756217251;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I/r7XFfAmZT7gE1c9PozZ4C2qUQHNUKLRFQPvVIdUC8=;
+        b=PQIui5nSGDa4sRJaTvNpFeWLmUTeQIMJxvixo8RCoIqPlCitCsVlP7HzA4fKbmLSKo
+         5+iuHk1PpH9vGd2snEFj7kLBqvEEVAtBUSCUYf+qTd78DY1+Oy++lPG5ywH/rGoL5fQH
+         VD2zEzsQFdrv8AcAcJ450iVu/VAGJNghs2y3EWo8zvxTALJ6nH+6CgCF7YhrY5fgcC1v
+         Si7K1LnxFIlPIkCvzkbYtKvssT8PjxhrosmrQaYLM4CG/ULBcDas/10h5mxDC/CikMrN
+         y+3b0gdj6VUN4957hbTz7Yt7taWStEJfGIfGJwTT98Q1ByoWSCWHapEwe4tqsbEJn+qo
+         Nd1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUeWz2d/70oW0UvMhlJKpfI8KpN6QXOfFZrl2xjV0l/+TaVXQTCDY9kX7uG/l43wZkz3JHPopVZzve1sp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynczYXUS/PBpUpynBxfk4MfVn+kzL21edyAVXX1y4Pg2PkmNvi
+	8lEcwojgY5ClSPKMZoEUTsHFgA0Yf7exzxm63tD3jJsCU6T3GSN9MC0kfhFutJn8kWGYHpu3rtU
+	X6XUEewkfIXNwnySWyZpC+SMXEIJWb1i9ueHeklUxkA==
+X-Gm-Gg: ASbGnct26A9Uxy/sBWHcEIh4YlDFZqMVhK/661A7JPFhCtNrb0dq16TSKvPzUOMTuK/
+	fNc0lveAE8oDCSAzkI/3L1y8asGvLU4Ad5vmeMOKweGDsdwUqKiFYvGstf8Wt2FBfHyqWq4YD6I
+	r6NK39Je3eOYORMVU29CGx4RyzbGknk5Lb872Z0788EV8CVbAbbksNj+FKrA4i3E0m0yf0Dr+pZ
+	PlfYRCMBQ==
+X-Google-Smtp-Source: AGHT+IEm+RDY4x+KUMjDy2xSe/+nwcq7x6ypDW5zM5ME3kChnUS0sUlVc9tK6EdPKsiQBcM6wp5ioyyEcctMgWEXnIE=
+X-Received: by 2002:a05:622a:1801:b0:4b2:8ac4:f083 with SMTP id
+ d75a77b69052e-4b28ac4fe9amr13087951cf.65.1755612450990; Tue, 19 Aug 2025
+ 07:07:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025081957-promotion-shrivel-32cc@gregkh>
+References: <20250818132905.323-1-luochunsheng@ustc.edu>
+In-Reply-To: <20250818132905.323-1-luochunsheng@ustc.edu>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 19 Aug 2025 16:07:19 +0200
+X-Gm-Features: Ac12FXyDNAF4QEKI6FENCC8ukwJbwkgNXuP0OKFGWgQOjTPz6NfZYwdmQefpnMI
+Message-ID: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: clarify extending writes handling
+To: Chunsheng Luo <luochunsheng@ustc.edu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-08-19 13:28:40+0200, Greg Kroah-Hartman wrote:
-> On Mon, Aug 11, 2025 at 11:14:30AM +0200, Thomas Weißschuh wrote:
-> > When constifying instances of struct attribute, for consistency the
-> > corresponding .is_visible() callback should be adapted, too.
-> > Introduce a temporary transition mechanism until all callbacks are
-> > converted.
-> 
-> I count about 600+ users of is_visible() now, how is that going to be
-> converted?  It feels like a lot of churn/work, what's the plan here?
+On Mon, 18 Aug 2025 at 15:29, Chunsheng Luo <luochunsheng@ustc.edu> wrote:
+>
+> Only flush extending writes (up to LLONG_MAX) for files with upcoming
+> write operations, and Fix confusing 'end' parameter usage.
 
-The idea was to convert one driver at a time to the const variants.
-Adapting is_visible(), read(), write() and the group structs
-together. And then submit these batched per subsystem.
-It's not a purely mechanical change as the users may modify their
-attributes.
+Patch looks correct, but it changes behavior on input file of
+copy_file_range(), which is not explained here.
 
-It will be a lot of churn. is_visible() is not even the big one.
-
-> These changes seem a lot more intrusive than the bin_attr ones :(
-
-Indeed :-/
-
-
-Thomas
+Thanks,
+Miklos
 
