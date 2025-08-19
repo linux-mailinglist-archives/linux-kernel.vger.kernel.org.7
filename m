@@ -1,192 +1,161 @@
-Return-Path: <linux-kernel+bounces-775448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69564B2BF44
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:46:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A706B2BF4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9C41BA3906
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33B203B1964
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E623322DA4;
-	Tue, 19 Aug 2025 10:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566CC326D45;
+	Tue, 19 Aug 2025 10:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEMPtvzG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UZURFB6e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F3C31E0F7;
-	Tue, 19 Aug 2025 10:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0901F322C8A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755600377; cv=none; b=rQq43AdNAzZfjToXtcktCYsARNK34Ly3sRl4+CphQd2gBVBRTOagQl2B+GE8zpU1LLqW5G+OBk8x/58u/8XG698Cfhv4omkwBoqhABkXwqaI97vnnKYIGTDk+0LnT3cT+YYbUhxbVdzF8Y/jHvhabuVbwo3WWDgnOU4n8eqXebU=
+	t=1755600411; cv=none; b=BtFIdXo+HxInWeK0O1bAZYo49Vz49OyLABXWekQISE1HVgtEPWmzn/63Zk54ADdnh7Qdn/ORJPQvnANroJTPIJtJB6LQD07zXaW82h7uy6oyvZav2dtsNcMrPmDXU3W5a8Lbk4xfe1cE9R6k8r/ExJaJZulUPVM/IgAZU9VUvD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755600377; c=relaxed/simple;
-	bh=JfTBbv8jpNK14cUe0jQzor4Nu6VNU6jXNCwErFbJEAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGdnxBc9OeYzueu/zvS1zalGNu+D/D6GPwAD3TVxbFr6TrzpHBERJooT+buZblEyFMYJZsq5GahMK7EQgU57CNwkUWfL4u39RyLaD3wpumYNXAJ2/D3Rq3TpcJQd2N8bafAYkvZo/iyK7n/eIb5Nc6888zyR0LDhyD41k1Id0Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEMPtvzG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD96C4CEF1;
-	Tue, 19 Aug 2025 10:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755600375;
-	bh=JfTBbv8jpNK14cUe0jQzor4Nu6VNU6jXNCwErFbJEAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FEMPtvzGqBTk2bcuops306HDF1FUx7bqXIVqJgVtzhxivOnvZxP1I3a3hdf7Vxo57
-	 3Y5J72y0V4eMio1aoZyMXqMSnvRAqjb3xBhxL7gEOBJlXhwrzpN4wPKFs2L3VeLKB/
-	 lM3YRFSn9KfHzQ2cS8YuhGtWM4H7UDGRtockprpgOLvd9KIOxJeJ9SDTzFq+aE6ISe
-	 o5i84yhscZG1eOIVOlnGsbpfekv5hIaWdL0NQEiuSVy3SvF2CoUESvXsot7uSQg77q
-	 NMGExXcaJmdO7jasmxBayCvYicRC2Z7nu0CiA332ydy55BkVUUc0PBNAIp1hKEWqM/
-	 rVo11aaOtmz4A==
-Date: Tue, 19 Aug 2025 11:46:08 +0100
-From: Will Deacon <will@kernel.org>
-To: perlarsen@google.com
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ahomescu@google.com,
-	armellel@google.com, arve@android.com, ayrton@google.com,
-	qperret@google.com, sebastianene@google.com, qwandor@google.com
-Subject: Re: [PATCH v10 2/6] KVM: arm64: Use SMCCC 1.2 for FF-A
- initialization and in host handler
-Message-ID: <aKRV8FEuO5ZOcEfn@willie-the-truck>
-References: <20250809-virtio-msg-ffa-v10-0-189eeecf8ae8@google.com>
- <20250809-virtio-msg-ffa-v10-2-189eeecf8ae8@google.com>
+	s=arc-20240116; t=1755600411; c=relaxed/simple;
+	bh=mN4W5lU/nYDZ1u4qGcbGFkkHXrasqWu0B4ILcHlhbEQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PDPrfIa8VylGCOZyyHjX3fmFR68NGE+uBRiDVa5RqrthrVTvaYrE6nMOOo4ua6+naqH0KTkMEGrz2GZVjKKhC552ES8YfbHGD+a/t1XDJwf8ukTmBxXfJyQ9aRLB2pN8g9YgNFmTXdf7mJxNrtDb19ngxifHdg0QM3zGtQR+b7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UZURFB6e; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755600408;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ya9rYpVnEq1bqrzAsmHksoTnC8P3FflAlqr+wlwGFI4=;
+	b=UZURFB6eJmpS3uYEPCMajmFYz26zvS+e57ApZnRY0cso7nhX0Yc5/om8245dzKA5MKljsx
+	MIQkNG+aR6VUHAdKJFY2ouHsjaCSbxvj/EMMDJGkXfW8lU5JUz++dSYiaAfvz+RyU9KrSB
+	xn0jDshyy/qGjJ+8p4nWkmhYAWaPcTM=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-153-THRUVvdsN8anxBa8iUl-rQ-1; Tue, 19 Aug 2025 06:46:45 -0400
+X-MC-Unique: THRUVvdsN8anxBa8iUl-rQ-1
+X-Mimecast-MFC-AGG-ID: THRUVvdsN8anxBa8iUl-rQ_1755600405
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e870662c1dso1428982585a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:46:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755600405; x=1756205205;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ya9rYpVnEq1bqrzAsmHksoTnC8P3FflAlqr+wlwGFI4=;
+        b=ofnqvhd2+H0UQCIKkd2718ssEOBvmZ3pTfbatlUThn7aWOtvclUsX8pct5xY3E01rq
+         bvdxv2qv8HM/gzLlUN6qEMSUKelBRsmytLqvh+gV2SGqCIxKAjfwAsQkz6QEXwTbclNk
+         JVhTxw2zRfj0FU3J3GGsk0+IGjCwzZwo91loDiOc2rb8ftZG9kA+aIZAJ/sChxGSa7WD
+         VHUZmbu5fQ3mktfwB3tU4VfgA6gQtWchuEgcL4OfPi/xH8c8wvneKq4ukUmkpXRU0NXU
+         cGy5UprcOp83J/31iMG/5EylnxMzFtZkeTiZMFjn+9YxI9tnSLHGzGC4I6fMprLNKRFG
+         fWKw==
+X-Gm-Message-State: AOJu0YweuEHoY62Uxm31fcblrjwaHQukVONg4TBranEq6VIvWxclVz6e
+	CQlOs7gnq6K7tqsxOL0w5XfyVlNfGSsHujoxYmE4UjgtO7KjjfN+4hsNQwiGAZSR/U2kfT9H1D/
+	0D2biFd1vYziDXcnEi8sEm/bG4vOrBze+LeEBOHgQPh9Og8Sx5QV8BvEcjhdL2KsKzzbRCZviB2
+	R1
+X-Gm-Gg: ASbGncvsiJjv292MdpxhDhHkc9naE6TRIB9FH9oDeqzx0H9SnpmVlotNQQWJPSJ/ZO0
+	ALq5Ot8gcOUh2e+za8ANlTWXuKcyJeey4g3WNeSulFXmHcsUjboi8lxqD9tp6QI3FsOhC/pm5es
+	gXXe3NfuuRbORrBwmBxQcULkiPwGiJ/wQz8TYSR3zm6yXbYJA3sNohmrR1gr4HdIa1CsGfuuFZD
+	fnAWLqSAk7OLTvROga0TD5D9q7SOjk/yRAVqpcHPrN9aQauisieqWg8G3RZC0cATqEZJLlzyirR
+	qR2OA/A0yISOXviRiP4aJqAysizJQ/+B85g64WI2UUvvflFZvbrVB+FjyVVqNqsZ6w==
+X-Received: by 2002:a05:620a:17a3:b0:7e8:34b0:6e07 with SMTP id af79cd13be357-7e9f330d21emr238065785a.7.1755600404711;
+        Tue, 19 Aug 2025 03:46:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGePi7pyFUeDcLopu06z03bZieJKd0N149MulemJ5fyts6v+HbKw6uGpTSN7vDff4vEX0HHQw==
+X-Received: by 2002:a05:620a:17a3:b0:7e8:34b0:6e07 with SMTP id af79cd13be357-7e9f330d21emr238063685a.7.1755600404307;
+        Tue, 19 Aug 2025 03:46:44 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba95cd49asm66838496d6.76.2025.08.19.03.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 03:46:44 -0700 (PDT)
+Message-ID: <2e4ee3715146262df549b177ed6534129b827f09.camel@redhat.com>
+Subject: Re: [RFC PATCH 11/17] Documentation/rv: Add documentation about
+ hybrid automata
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+ Jonathan Corbet	 <corbet@lwn.net>, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org,  Nam Cao <namcao@linutronix.de>, Tomas Glozar
+ <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,  Clark Williams
+ <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Tue, 19 Aug 2025 12:46:40 +0200
+In-Reply-To: <aKRAeOakjiwmgML_@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+	 <20250814150809.140739-12-gmonaco@redhat.com>
+	 <aKQ7iaSb9GGUtuCZ@jlelli-thinkpadt14gen4.remote.csb>
+	 <aKRAeOakjiwmgML_@jlelli-thinkpadt14gen4.remote.csb>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250809-virtio-msg-ffa-v10-2-189eeecf8ae8@google.com>
 
-On Sat, Aug 09, 2025 at 02:33:20AM +0000, Per Larsen via B4 Relay wrote:
-> From: Per Larsen <perlarsen@google.com>
-> 
-> SMCCC 1.1 and prior allows four registers to be sent back as a result
-> of an FF-A interface. SMCCC 1.2 increases the number of results that can
-> be sent back to 8 and 16 for 32-bit and 64-bit SMC/HVCs respectively.
-> 
-> FF-A 1.0 references SMCCC 1.2 (reference [4] on page xi) and FF-A 1.2
-> explicitly requires SMCCC 1.2 so it should be safe to use this version
-> unconditionally. Moreover, it is simpler to implement FF-A features
-> without having to worry about compatibility with SMCCC 1.1 and older.
-> 
-> SMCCC 1.2 requires that SMC32/HVC32 from aarch64 mode preserves x8-x30
-> but given that there is no reliable way to distinguish 32-bit/64-bit
-> calls, we assume SMC64 unconditionally. This has the benefit of being
-> consistent with the handling of calls that are passed through, i.e., not
-> proxied. (A cleaner solution will become available in FF-A 1.3.)
-> 
-> Update the FF-A initialization and host handler code to use SMCCC 1.2.
-> 
-> Signed-off-by: Per Larsen <perlarsen@google.com>
-> ---
->  arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
->  arch/arm64/kvm/hyp/nvhe/ffa.c    | 188 +++++++++++++++++++++++++--------------
->  2 files changed, 120 insertions(+), 69 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
-> index 0b0a68b663d4bd202a7036384bf8a1748cc97ca5..a244ec25f8c5bd0a744f7791102265323ecc681c 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/Makefile
-> +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
-> @@ -27,6 +27,7 @@ hyp-obj-y := timer-sr.o sysreg-sr.o debug-sr.o switch.o tlb.o hyp-init.o host.o
->  	 cache.o setup.o mm.o mem_protect.o sys_regs.o pkvm.o stacktrace.o ffa.o
->  hyp-obj-y += ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../entry.o \
->  	 ../fpsimd.o ../hyp-entry.o ../exception.o ../pgtable.o
-> +hyp-obj-y += ../../../kernel/smccc-call.o
->  hyp-obj-$(CONFIG_LIST_HARDENED) += list_debug.o
->  hyp-obj-y += $(lib-objs)
->  
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 2c199d40811efb5bfae199c4a67d8ae3d9307357..19239f133a1cfb86db1b85251035709481cdef5b 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -71,36 +71,63 @@ static u32 hyp_ffa_version;
->  static bool has_version_negotiated;
->  static hyp_spinlock_t version_lock;
->  
-> -static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
-> +static void ffa_to_smccc_error(struct arm_smccc_1_2_regs *res, u64 ffa_errno)
->  {
-> -	*res = (struct arm_smccc_res) {
-> +	*res = (struct arm_smccc_1_2_regs) {
->  		.a0	= FFA_ERROR,
->  		.a2	= ffa_errno,
->  	};
->  }
->  
-> -static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
-> +static void ffa_to_smccc_res_prop(struct arm_smccc_1_2_regs *res, int ret, u64 prop)
->  {
->  	if (ret == FFA_RET_SUCCESS) {
-> -		*res = (struct arm_smccc_res) { .a0 = FFA_SUCCESS,
-> -						.a2 = prop };
-> +		*res = (struct arm_smccc_1_2_regs) { .a0 = FFA_SUCCESS,
-> +						      .a2 = prop };
->  	} else {
->  		ffa_to_smccc_error(res, ret);
->  	}
->  }
->  
-> -static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
-> +static void ffa_to_smccc_res(struct arm_smccc_1_2_regs *res, int ret)
->  {
->  	ffa_to_smccc_res_prop(res, ret, 0);
->  }
->  
->  static void ffa_set_retval(struct kvm_cpu_context *ctxt,
-> -			   struct arm_smccc_res *res)
-> +			   struct arm_smccc_1_2_regs *res)
->  {
->  	cpu_reg(ctxt, 0) = res->a0;
->  	cpu_reg(ctxt, 1) = res->a1;
->  	cpu_reg(ctxt, 2) = res->a2;
->  	cpu_reg(ctxt, 3) = res->a3;
-> +	cpu_reg(ctxt, 4) = res->a4;
-> +	cpu_reg(ctxt, 5) = res->a5;
-> +	cpu_reg(ctxt, 6) = res->a6;
-> +	cpu_reg(ctxt, 7) = res->a7;
-> +
-> +	/*
-> +	 * DEN0028C 2.6: SMC32/HVC32 call from aarch64 must preserve x8-x30.
-> +	 *
-> +	 * In FF-A 1.2, we cannot rely on the function ID sent by the caller to
-> +	 * deteect 32-bit calls as there are cases where a 32-bit interface can
 
-typo: deteect
 
-> +	 * have a 64-bit response 1.2 (e.g. FFA_MSG_WAIT or FFA_RUN). This will
-> +	 * be addressed in FF-A 1.3. We also cannot rely on function IDs in the
-> +	 * response.
+On Tue, 2025-08-19 at 11:14 +0200, Juri Lelli wrote:
+> On 19/08/25 10:53, Juri Lelli wrote:
+> > Hi!
+> >=20
+> > On 14/08/25 17:08, Gabriele Monaco wrote:
+>=20
+> ...
+>=20
+> > > +=C2=A0 static bool verify_constraint(enum states curr_state, enum
+> > > events event,
+> > > +				 enum states next_state)
+> > > +=C2=A0 {
+> > > +	bool res =3D true;
+> > > +
+> > > +	/* Validate guards as part of f */
+> > > +	if (curr_state =3D=3D enqueued && event =3D=3D sched_switch_in)
+> > > +		res =3D get_env(clk) < threshold;
+> > > +	else if (curr_state =3D=3D dequeued && event =3D=3D
+> > > sched_wakeup)
+> > > +		reset_env(clk);
+> > > +
+> > > +	/* Validate invariants in i */
+> > > +	if (next_state =3D=3D curr_state)
+> > > +		return res;
+> > > +	if (next_state =3D=3D enqueued && res)
+> > > +		start_timer(clk, threshold);
+> >=20
+> > So, then the timer callback checks the invariant and possibly
+> > reports failure?
+>=20
+> Ah, OK. The 'standard' ha_monitor_timer_callback just reports failure
+> (react) in case the timer fires. Which makes sense as at that point
+> the invariant is broken. Maybe add some wording to highlight this?
 
-Do you know what the FF-A 1.3 update is likely to say? It would be nice
-to get an idea of what the code might need to do in future in case this
-approach is going in a completely different direction.
+Yeah indeed. That isn't even the 'standard' one as it isn't explicitly
+configurable, but yes, at the expiration the invariant is already false
+(I currently don't support AND/OR conditions in there).
 
-> @@ -666,17 +703,21 @@ static bool do_ffa_features(struct arm_smccc_res *res,
->  static int hyp_ffa_post_init(void)
->  {
->  	size_t min_rxtx_sz;
-> -	struct arm_smccc_res res;
-> +	struct arm_smccc_1_2_regs res;
->  
-> -	arm_smccc_1_1_smc(FFA_ID_GET, 0, 0, 0, 0, 0, 0, 0, &res);
-> +	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs){
-> +		.a0 = FFA_ID_GET,
-> +	}, &res);
+I should make all this process clear, especially that those state
+constraints are the only ones arming a timer and leaving the state
+after that expiration (if the callback didn't run) or going through the
+expiration itself implies a failure.
 
-Regardless of the problems with the spec, it's really nice to get rid
-of all those zero arguments that come with the arm_smccc_1_1_smc()
-macro.
+Thanks for pointing it out!
+Gabriele
 
-Will
 
