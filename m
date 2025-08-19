@@ -1,361 +1,144 @@
-Return-Path: <linux-kernel+bounces-774721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E54EB2B672
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:46:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE7FB2B671
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789B11899A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:46:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2CC7B0DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964BD2820A4;
-	Tue, 19 Aug 2025 01:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB73285419;
+	Tue, 19 Aug 2025 01:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcDBWQmH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IokYRN4M"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B043B27FD64;
-	Tue, 19 Aug 2025 01:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D9285077
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755567935; cv=none; b=p7vI4VYkzc/ue8jYEzNrdo/6A3x3GJ7QxTTnHL6mJKziXv2JcxN0ypyxqWLTGZduSOmod/rgF+6Z9sC7ekUSCjIY12EzjbMLKOsdjonqBfPx+sVpAAKNH+zbKKv1S1FIihcE8sxQSObFt8am9W9y/cJ6sVLWiOUhg2QjxToiahA=
+	t=1755568002; cv=none; b=JYjozWJtNN0gtB7ClBYEcVKckdVBy8PoNECY1ra7a0eoX2s538SNZS5lxobAbmSOYeN/UoZ4RqKZ/sgDpXNJVbN/ill5yfP8IypYGKysgVI3a3PewwwUcgTnrY+34yRHFaS01gp8Q8gyzyCzB1QmcwqXFCRp9uXDOdCb+Hu7phw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755567935; c=relaxed/simple;
-	bh=1KsVypTLDNM1qpD4WGU8wxo7f40aOCtqdSmuoshZXrM=;
+	s=arc-20240116; t=1755568002; c=relaxed/simple;
+	bh=tEGknVAKb+PN/lYStQKRG0VhNOO+rKcQSO2jl7NQgp8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f8VBApUjC/3w3CVSPrSfms11I3INJw39FCkvF476aiBu5jzxkxjJObW7DOG5MmQbJMO7035po1joFgDvVOm3Vn1eNZ1h1P6jht2vUgmsbIIwkC4EPa+7itiZim8W6ATpccPGCoLDxKQ9b1doViM9Z0xZCI86QYfakuO3iQuAGW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcDBWQmH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44705C4CEEB;
-	Tue, 19 Aug 2025 01:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755567935;
-	bh=1KsVypTLDNM1qpD4WGU8wxo7f40aOCtqdSmuoshZXrM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RcDBWQmHkk/mILCZsOCiFYBd1Mro7OA1SMQAyO3XuRdHWLB9f427IRXZA8pOnj3+f
-	 tWnHZcjUvgBUBfmMH9fS8rhyNnEwkWqIUomYgBCorQEQfBrM/6c/nvWvDVf4UBiPuR
-	 lX+emADvCohwiKZ/tf/hTyM0HLtxGPJmlI9KEMQGoZlJEwNov/iOsTqVJwz/iQTwAi
-	 cu3MRioL5gqHc6uENbHE1YN5E/vQw+DGHbO71P967c7jAQM1gyvzQBH5cwKg6QvYr7
-	 igytf8ef3o0C0ZELExrNeF6Fy0ubub+1GqpYrjO3ycVjmrXmLZCrficw+O7reLeQse
-	 Rneudqz5lhhYw==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a2a5b0689so3663092a12.1;
-        Mon, 18 Aug 2025 18:45:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUva03fuPhXwqZFfYkpnI6hi+iCswY3a8H8xvuyhJ06qG97/cErNQnJ9Kffn8g3JWMZSnyBZZ+JBHIBs/7x@vger.kernel.org, AJvYcCXw2Gi4aUKOW3AakulyArXCedSpK1t3Krzx7Ol/zsACCf8uCzHfcz17jxB0G0SsqLyPKRIwFSQTpAjv8s4H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuIXcOKQm0mNIVRThAc9YwaiEC+D4j3woBWw3DO7n8pz5Facwc
-	WZTZxdyD/K+uuNZ9kx/ZQTaG+KemUBlDD+gnZ5BnEwxHOaXva/B4lU6UpNMkgKxMVSaYe3Pdcsj
-	Cfy/1i4xrM9kaSkk/henFp60lubCVzVM=
-X-Google-Smtp-Source: AGHT+IEjooJwD1L8N4595UKPwoGnCdDVKf7n1R9E5Sju52DByr3+JHOUp/9rkO353ornS2qWB4Nq0MSTvnD7Jtc8Rws=
-X-Received: by 2002:a17:906:6a1f:b0:afd:d62f:939 with SMTP id
- a640c23a62f3a-afddcfb4b68mr67048366b.36.1755567933831; Mon, 18 Aug 2025
- 18:45:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=cZeJce6/DWN8cmA1ODVHO2/xWELmYp5CWAHcyJcb05I3Fz+Ju//A1Mo2WPEhPAECf8bgDWL/qg6Hqqmc7BPil0B++tiaBVBnI44+dash3txJbiLVP0ygABvVG+O8LqG/KZHr/+8tYyg0fncOzfNvo7xoK5MP1/H331tSUO/dppI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IokYRN4M; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55df3796649so4645e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:46:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755567997; x=1756172797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tEGknVAKb+PN/lYStQKRG0VhNOO+rKcQSO2jl7NQgp8=;
+        b=IokYRN4M43p2bMRqsHErNjuCfRonPyDYs0/z/4/QCe2o/E73wCHKqUlM5yxowQJUnc
+         ik5DDsyjaF1790X/dzdS1Ap4t0BgN009H2yg4YjW682QyQOskarPQ149oKa4YVHWdEzc
+         FosV+35D4DOoEMINeXE1pWUaqXZxZjOabuLBRjJYU098lhpBQBHnmH8E1GPAoGcyPEAI
+         CVSf5AI9V6kUlRWOcllnbS3uMt6+OyiSbrD8jIwQtiBsUzqmr2HB28ixuQc0OMSV/YBt
+         FrSr8l5jDqVwAv1HJucWyy1esItrmXIAn9n9ILCtb911EJjBLoLoOOF4QNRA9tqa7MAL
+         0gHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755567997; x=1756172797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tEGknVAKb+PN/lYStQKRG0VhNOO+rKcQSO2jl7NQgp8=;
+        b=cAGs3FybaT/ZQEM2cHae2ar7n1XpbORE46tsX4a1j/NaRM3yGotVD0oBgCRrVLNT5p
+         azBlIREZgJdaOBLgBYEp6JdW4Ajjh47OgfA2Y1x9tmcC1CbS5Ei+dY+EvE27Ey7pfbJe
+         p6GB1FFoUx3dRNY6dUnWlIcKjmhhqIo86eVwJudPaYGx5HkPwPWE6pPygSXoOcuzLvV7
+         ww5EGqdJDoAyG+8fd6DBiQzzS6+7Qdpb4MT5mrYovrfvcm04N/9bX+u737TDFRLu19um
+         1Oc6FVgcKNfvSaa9JzoUzV46t0DFV4Le91GsCYeOY3JKV70JA4gZO2P+qLRHnLx6R2BB
+         Iw2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWbuCA2BdMTR2ePOgZ5CEbB20/qEn45YVHDaZolnjbwvv2fsCralR8bgRiRCMUyABUmwrpa0nB/SC/Smkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH8hOSt7EtI0L1g7HyAjSmiA8Icdqx5Jtjxg0UfGgjIvI8/f2a
+	JMgIfPj1ltaoFdaYMOea46vxJW5nbJo9u5w0sSYAacmsx/aRxtEDBNs2o7U9rq6swg2AfWx1P9d
+	6Xh/pxgDkesoojaKoihmfB0cJg0EoDYIjeuBGFRIz
+X-Gm-Gg: ASbGncvuBh6OrCePZvS4q7BF+al/B2GhJx4Eqym1ljqXrEoSJ8vPK6pAlX1nktVbMZZ
+	SRXeGHir4/GF1pFNCL0TnL46jQL14EoOjoQZSDSZ1m82i+g4CgobzAOn+GjXfStZYxdozcz6XdZ
+	ZLXVrdSWHn3f6GGSHrpEehAPPal2fdMoMFeN/zTp8yyIEGQ+SiyJXQ4I8NN95FRD9q/b+YHca9K
+	JaL3pvDgr1o+NE=
+X-Google-Smtp-Source: AGHT+IFMUp3WY4nxgsRLh9qsELNl/XFP9KJPv82ZlJwh8Of7VRvx5KMBcmdg5ew6Blf3tzjdDHHPFM335ASvYbURfxM=
+X-Received: by 2002:a05:6512:e86:b0:55d:9f5:8846 with SMTP id
+ 2adb3069b0e04-55e008bca39mr113505e87.0.1755567997069; Mon, 18 Aug 2025
+ 18:46:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817003046.313497-1-ethan.ferguson@zetier.com> <20250817003046.313497-2-ethan.ferguson@zetier.com>
-In-Reply-To: <20250817003046.313497-2-ethan.ferguson@zetier.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 19 Aug 2025 10:45:22 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-o3TpAaBS65cZFzchCfPdJ8YrN9HHEn_ttr69QB+BFew@mail.gmail.com>
-X-Gm-Features: Ac12FXwNO0EDZHtNFqgVSnbzoE7pt1b9tiI0Hg9HdgDzUH6GHa_W6Br6F8kon_8
-Message-ID: <CAKYAXd-o3TpAaBS65cZFzchCfPdJ8YrN9HHEn_ttr69QB+BFew@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-To: Ethan Ferguson <ethan.ferguson@zetier.com>
-Cc: sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1755499375.git.asml.silence@gmail.com> <8669b80579316a12d5b1eb652edb475db2f535e7.1755499376.git.asml.silence@gmail.com>
+In-Reply-To: <8669b80579316a12d5b1eb652edb475db2f535e7.1755499376.git.asml.silence@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 18 Aug 2025 18:46:24 -0700
+X-Gm-Features: Ac12FXz-VQtX5NnWQl1oIQj3f2utu39W7Ga73n3qvm15FFIanSkTTYHkB_pEaFw
+Message-ID: <CAHS8izMO=6oHN4w9XiL0yw7x86LF8iw-LhMA4qZe2rXOu0Cmbg@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 05/23] net: clarify the meaning of
+ netdev_config members
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
+	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
+	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 17, 2025 at 9:31=E2=80=AFAM Ethan Ferguson
-<ethan.ferguson@zetier.com> wrote:
+On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
 >
-> Add support for reading / writing to the exfat volume label from the
-> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+> From: Jakub Kicinski <kuba@kernel.org>
 >
-> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+> hds_thresh and hds_config are both inside struct netdev_config
+> but have quite different semantics. hds_config is the user config
+> with ternary semantics (on/off/unset). hds_thresh is a straight
+> up value, populated by the driver at init and only modified by
+> user space. We don't expect the drivers to have to pick a special
+> hds_thresh value based on other configuration.
 >
-> ---
->  fs/exfat/exfat_fs.h  |  2 +
->  fs/exfat/exfat_raw.h |  6 +++
->  fs/exfat/file.c      | 56 +++++++++++++++++++++++++
->  fs/exfat/super.c     | 99 ++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 163 insertions(+)
+> The two approaches have different advantages and downsides.
+> hds_thresh ("direct value") gives core easy access to current
+> device settings, but there's no way to express whether the value
+> comes from the user. It also requires the initialization by
+> the driver.
 >
-> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-> index f8ead4d47ef0..a764e6362172 100644
-> --- a/fs/exfat/exfat_fs.h
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -267,6 +267,7 @@ struct exfat_sb_info {
->         struct buffer_head **vol_amap; /* allocation bitmap */
+> hds_config ("user config values") tells us what user wanted, but
+> doesn't give us the current value in the core.
 >
->         unsigned short *vol_utbl; /* upcase table */
-> +       unsigned short volume_label[EXFAT_VOLUME_LABEL_LEN]; /* volume na=
-me */
-There's no reason to have this in sbi. I think it's better to read the
-volume name in ioctl fslabel and return it.
+> Try to explain this a bit in the comments, so at we make a conscious
+> choice for new values which semantics we expect.
+>
+> Move the init inside ethtool_ringparam_get_cfg() to reflect the semantics=
+.
+> Commit 216a61d33c07 ("net: ethtool: fix ethtool_ringparam_get_cfg()
+> returns a hds_thresh value always as 0.") added the setting for the
+> benefit of netdevsim which doesn't touch the value at all on get.
+> Again, this is just to clarify the intention, shouldn't cause any
+> functional change.
+>
 
->
->         unsigned int clu_srch_ptr; /* cluster search pointer */
->         unsigned int used_clusters; /* number of used clusters */
-> @@ -431,6 +432,7 @@ static inline loff_t exfat_ondisk_size(const struct i=
-node *inode)
->  /* super.c */
->  int exfat_set_volume_dirty(struct super_block *sb);
->  int exfat_clear_volume_dirty(struct super_block *sb);
-> +int exfat_write_volume_label(struct super_block *sb);
->
->  /* fatent.c */
->  #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu=
-)
-> diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-> index 971a1ccd0e89..af04cef81c0c 100644
-> --- a/fs/exfat/exfat_raw.h
-> +++ b/fs/exfat/exfat_raw.h
-> @@ -80,6 +80,7 @@
->  #define BOOTSEC_OLDBPB_LEN             53
->
->  #define EXFAT_FILE_NAME_LEN            15
-> +#define EXFAT_VOLUME_LABEL_LEN         11
->
->  #define EXFAT_MIN_SECT_SIZE_BITS               9
->  #define EXFAT_MAX_SECT_SIZE_BITS               12
-> @@ -159,6 +160,11 @@ struct exfat_dentry {
->                         __le32 start_clu;
->                         __le64 size;
->                 } __packed upcase; /* up-case table directory entry */
-> +               struct {
-> +                       __u8 char_count;
-> +                       __le16 volume_label[EXFAT_VOLUME_LABEL_LEN];
-> +                       __u8 reserved[8];
-> +               } __packed volume_label;
->                 struct {
->                         __u8 flags;
->                         __u8 vendor_guid[16];
-> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> index 538d2b6ac2ec..c57d266aae3d 100644
-> --- a/fs/exfat/file.c
-> +++ b/fs/exfat/file.c
-> @@ -12,6 +12,7 @@
->  #include <linux/security.h>
->  #include <linux/msdos_fs.h>
->  #include <linux/writeback.h>
-> +#include "../nls/nls_ucs2_utils.h"
->
->  #include "exfat_raw.h"
->  #include "exfat_fs.h"
-> @@ -486,6 +487,57 @@ static int exfat_ioctl_shutdown(struct super_block *=
-sb, unsigned long arg)
->         return exfat_force_shutdown(sb, flags);
->  }
->
-> +static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned=
- long arg)
-> +{
-> +       int ret;
-> +       char utf8[FSLABEL_MAX] =3D {0};
-> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> +       size_t len =3D UniStrnlen(sbi->volume_label, EXFAT_VOLUME_LABEL_L=
-EN);
-> +
-> +       mutex_lock(&sbi->s_lock);
-> +       ret =3D utf16s_to_utf8s(sbi->volume_label, len,
-> +                               UTF16_HOST_ENDIAN, utf8, FSLABEL_MAX);
-> +       mutex_unlock(&sbi->s_lock);
-> +
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX))
-> +               return -EFAULT;
-> +
-> +       return 0;
-> +}
-> +
-> +static int exfat_ioctl_set_volume_label(struct super_block *sb, unsigned=
- long arg)
-> +{
-> +       int ret =3D 0;
-> +       char utf8[FSLABEL_MAX];
-> +       size_t len;
-> +       unsigned short utf16[EXFAT_VOLUME_LABEL_LEN] =3D {0};
-> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> +
-> +       if (!capable(CAP_SYS_ADMIN))
-> +               return -EPERM;
-> +
-> +       if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX))
-> +               return -EFAULT;
-> +
-> +       len =3D strnlen(utf8, FSLABEL_MAX);
-> +       if (len > EXFAT_VOLUME_LABEL_LEN)
-Is FSLABEL_MAX in bytes or the number of characters ?
+TBH I can't say that moving the init to before
+dev->ethtool_ops->get_ringparam(dev, param, kparam, extack) made me
+understand semantics better. If you do a respin, maybe a comment above
+the kparam->hds_thresh to say what you mean would help the next reader
+understand.
 
-> +               exfat_info(sb, "Volume label length too long, truncating"=
-);
-> +
-> +       mutex_lock(&sbi->s_lock);
-> +       ret =3D utf8s_to_utf16s(utf8, len, UTF16_HOST_ENDIAN, utf16, EXFA=
-T_VOLUME_LABEL_LEN);
-> +       mutex_unlock(&sbi->s_lock);
-> +
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       memcpy(sbi->volume_label, utf16, sizeof(sbi->volume_label));
-> +
-> +       return exfat_write_volume_label(sb);
-> +}
-> +
->  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->         struct inode *inode =3D file_inode(filp);
-> @@ -500,6 +552,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd=
-, unsigned long arg)
->                 return exfat_ioctl_shutdown(inode->i_sb, arg);
->         case FITRIM:
->                 return exfat_ioctl_fitrim(inode, arg);
-> +       case FS_IOC_GETFSLABEL:
-> +               return exfat_ioctl_get_volume_label(inode->i_sb, arg);
-> +       case FS_IOC_SETFSLABEL:
-> +               return exfat_ioctl_set_volume_label(inode->i_sb, arg);
->         default:
->                 return -ENOTTY;
->         }
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> index 8926e63f5bb7..96cd4bb7cb19 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -18,6 +18,7 @@
->  #include <linux/nls.h>
->  #include <linux/buffer_head.h>
->  #include <linux/magic.h>
-> +#include "../nls/nls_ucs2_utils.h"
->
->  #include "exfat_raw.h"
->  #include "exfat_fs.h"
-> @@ -573,6 +574,98 @@ static int exfat_verify_boot_region(struct super_blo=
-ck *sb)
->         return 0;
->  }
->
-> +static int exfat_get_volume_label_ptrs(struct super_block *sb,
-> +                                      struct buffer_head **out_bh,
-> +                                      struct exfat_dentry **out_dentry)
-> +{
-> +       int i;
-> +       unsigned int type;
-> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> +       struct exfat_chain clu;
-> +       struct exfat_dentry *ep;
-> +       struct buffer_head *bh;
-> +
-> +       clu.dir =3D sbi->root_dir;
-> +       clu.flags =3D ALLOC_FAT_CHAIN;
-> +
-> +       while (clu.dir !=3D EXFAT_EOF_CLUSTER) {
-> +               for (i =3D 0; i < sbi->dentries_per_clu; i++) {
-> +                       ep =3D exfat_get_dentry(sb, &clu, i, &bh);
-> +
-> +                       if (!ep)
-> +                               return -EIO;
-> +
-> +                       type =3D exfat_get_entry_type(ep);
-> +                       if (type =3D=3D TYPE_UNUSED) {
-> +                               brelse(bh);
-> +                               return -EIO;
-> +                       }
-> +
-> +                       if (type =3D=3D TYPE_VOLUME) {
-> +                               *out_bh =3D bh;
-> +                               *out_dentry =3D ep;
-> +                               return 0;
-> +                       }
-> +
-> +                       brelse(bh);
-> +               }
-> +
-> +               if (exfat_get_next_cluster(sb, &(clu.dir)))
-> +                       return -EIO;
-> +       }
-> +
-> +       return -EIO;
-> +}
-> +
-> +static int exfat_read_volume_label(struct super_block *sb)
-> +{
-> +       int ret, i;
-> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> +       struct buffer_head *bh;
-> +       struct exfat_dentry *ep;
-> +
-> +       ret =3D exfat_get_volume_label_ptrs(sb, &bh, &ep);
-> +       if (ret < 0)
-> +               goto cleanup;
-> +
-> +       for (i =3D 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-> +               sbi->volume_label[i] =3D le16_to_cpu(ep->dentry.volume_la=
-bel.volume_label[i]);
-> +
-> +cleanup:
-> +       if (bh)
-> +               brelse(bh);
-> +
-> +       return ret;
-> +}
-> +
-> +int exfat_write_volume_label(struct super_block *sb)
-> +{
-> +       int ret, i;
-> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> +       struct buffer_head *bh;
-> +       struct exfat_dentry *ep;
-> +
-> +       ret =3D exfat_get_volume_label_ptrs(sb, &bh, &ep);
-> +       if (ret < 0)
-> +               goto cleanup;
-> +
-> +       mutex_lock(&sbi->s_lock);
-> +       for (i =3D 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-> +               ep->dentry.volume_label.volume_label[i] =3D cpu_to_le16(s=
-bi->volume_label[i]);
-> +
-> +       ep->dentry.volume_label.char_count =3D
-> +               UniStrnlen(sbi->volume_label, EXFAT_VOLUME_LABEL_LEN);
-> +       mutex_unlock(&sbi->s_lock);
-> +
-> +cleanup:
-> +       if (bh) {
-> +               exfat_update_bh(bh, true);
-> +               brelse(bh);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
->  /* mount the file system volume */
->  static int __exfat_fill_super(struct super_block *sb,
->                 struct exfat_chain *root_clu)
-> @@ -616,6 +709,12 @@ static int __exfat_fill_super(struct super_block *sb=
-,
->                 goto free_bh;
->         }
->
-> +       ret =3D exfat_read_volume_label(sb);
-It will affect mount time if volume label entry is located at the end.
-So, we can read it in ioctl fslabel as I said above.
-> +       if (ret) {
-> +               exfat_err(sb, "failed to read volume label");
-> +               goto free_bh;
-> +       }
-> +
->         ret =3D exfat_count_used_clusters(sb, &sbi->used_clusters);
->         if (ret) {
->                 exfat_err(sb, "failed to scan clusters");
-> --
-> 2.50.1
->
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> [pavel: applied clarification on relationship b/w HDS thresh and config]
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+
+Reviewed-by: Mina Almasry <almasrymina@google.com>
+
+
+--=20
+Thanks,
+Mina
 
