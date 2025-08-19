@@ -1,201 +1,168 @@
-Return-Path: <linux-kernel+bounces-776475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5EC3B2CDB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:21:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB0AB2CDBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2A4520063
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:21:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668FC1BC6669
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3380E3112AF;
-	Tue, 19 Aug 2025 20:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BFE3112AF;
+	Tue, 19 Aug 2025 20:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="YnL3c4Lw"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXym7sMQ"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30102848B7
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 20:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88878273D6D;
+	Tue, 19 Aug 2025 20:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755634900; cv=none; b=pPlepKJSXHGp92/wecqNmi+XzZD2trHfXUXb0L9+EenFrc1vubjJqhsEHq0mw9MTaOeIfkabcrAm8y2MjMW1DqOtuL1+NYceS4VLG+Ve2OI8Prswmel6MBMgJd6VgQiIERFi3s1Q9lkyXp4hHQcZfZJWV6JaGwsifbSxkM6nDyw=
+	t=1755634907; cv=none; b=akrT0hFIHY5Hu2D5nFCo1cM86L2SJRnd5nKNpYpD78PcnzSbYmnKZaiCoVRBhExlCEDh3lfqJLHxPYZXIC/d0pZPjZjl2jfbENOONz/+jpovsNiA683mnT+hHn9nxSG/RhqNOPXbzxpdKb4NY1NyLIyeXIaA7Kn2GYEwBgFfKqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755634900; c=relaxed/simple;
-	bh=t6V2ad1OwdulENyOC9PYXyXtBqYf+EzAG72UncH2CTU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EMkBSOReEORpWOCOQbaYQj1qAx+PdrywOIQgnmFh9uXvgKdMR9NGP571AvusgdGw3RmQGarVnGOhGbpynmLTEUPYwfoIoR0gI2VCrXqyA5p/zm2pRmV4NT0uyKIv4BXUHx0WSlzThOviMHyfd6yhH7meU87/KKfuKyTLvOHfim0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=YnL3c4Lw; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e418ba08so3158181f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:21:35 -0700 (PDT)
+	s=arc-20240116; t=1755634907; c=relaxed/simple;
+	bh=JmwDj0yM2hIxDCp945snAW1tIJFxf+MqSewCaUoodss=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=p1SEXsCM1JCs4/aiugOT8P0ZGi24Y1+0qGN1wopIeIwLaWnEDAMvS6YoaUhgBkHRQR5Gqbg3HIP/HSW3D4Bg/DYuoi8jzIb1xbq+lhCZRBD9De27tG5KPlVRrLVfN9uRHwh0oLkCfWo5XlTYHkAv14k6zJlLNEt4cgPP0hCquAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXym7sMQ; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-50f8ac28305so1634685137.2;
+        Tue, 19 Aug 2025 13:21:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1755634894; x=1756239694; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=t6V2ad1OwdulENyOC9PYXyXtBqYf+EzAG72UncH2CTU=;
-        b=YnL3c4LwxyCz5z/9LB9Dr7cunitlmtUdPatOSfbzaK1xBojisVPGBK0PR125eWfa9X
-         TLlBKMkor2h+z1GTVGk4POE2R/4RbnjfHv5H+G21b0znubY3u/QtCaBMwbLjGlxy865B
-         loJ2d44acGOqwjyGyGhHcA/Xmn2Lelz1brAlc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755634894; x=1756239694;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755634904; x=1756239704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t6V2ad1OwdulENyOC9PYXyXtBqYf+EzAG72UncH2CTU=;
-        b=TXVy2w156MxXATBSXI4et582ng65oQr01aD9MPthblUHhVQFv+ja3EVTbW1HR+EJF5
-         0KN9OdWbOcXRNgOg/Pp3oZ5bUSmiyHBiEYjrPhLSuj6XRYOL/14FKkYQ0fbbVaC9L8qV
-         jqLtpN2fMrF3BRLdpfdhm145rM+WlDz4cCfILAItNWjIDlV45GmSP5hLMBrqXi8hvGpA
-         Et4uW0Jj30xn+K5ba0tdpeMgs9PmHSmpEXD3q8juuQrJxkvzZpqlfUX/q+Xkgki81c8t
-         JAYBwAK5j1Eqg9lq5/+laWRHAuDLwXH8RRiTwphreyG9UoVHBx3xjjb7T4R5dAxOyuAb
-         5e/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVlbW1dov9tuKDcWV/HIRmPYLQ9pgaHrcyEYzhqM1n/Y3L+SYvk5fspP2KUyZH3gZTdPbP2JsO9jzbe5n8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaJw2Xr2z5kS0cBLe0A2kWnwQpQJTQkEpFlLQS9ZUF8VEuFf0k
-	02yi8XCsBLjnPHSrfThxtO8zkj+dHwKekRQHQEKoeBYri73fxrxhQ9k0ZLaJH+PCPPs=
-X-Gm-Gg: ASbGncu19cmtcWMJ9sXjiTpC+mlXkEDMeFFzD0JAgTJMbQr/CSyRqx3vzp+I+Yfau3q
-	ZEpbVv0I4Sj3/0Etk4n8twqWEuXcugtPEXN7KggLH35KK3gc2jahG/OdVjL5Vnm0OKi/Gc43Gm9
-	uZLYAJThcnsVrILRVoESvgEnaPRHWm1KnwYdFLxQRlnxGbssGha+zJOdgmkoZhG6WyMus8YP6EZ
-	hY6wOLqFUogyjKFJ9aaJLYDvHOjoG2Hx3MfG+E161+KHHug8SqD4RKeROsHA8BH8BtNBu5JUij9
-	1vYzcA/Vo5p7TQ1TzDFMupb1TdMS3AXQXxw1F4v27b4XPNaKL0BCYJ6j5uig4mYdfFkWoDLxSWt
-	LO5YuAZjL2s26lB+0kFW0NkdwPBBhARiPjQ4SS0bjlk1VDQcxUUhP3H275bBXfZ0BBAlA
-X-Google-Smtp-Source: AGHT+IF2FtVTrCPiEaIKkK14KA0vjqZ4roQRU0CBjEoNAnKzPXmUbCZeC5iP86PcIZTHWiLThpQtHQ==
-X-Received: by 2002:a05:6000:1a8c:b0:3b9:148b:e78 with SMTP id ffacd0b85a97d-3c32e413fd0mr225384f8f.53.1755634893962;
-        Tue, 19 Aug 2025 13:21:33 -0700 (PDT)
-Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0777892f8sm4816194f8f.53.2025.08.19.13.21.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 13:21:33 -0700 (PDT)
-Message-ID: <71430bdc-6ea5-43cc-a231-e72aeec43866@citrix.com>
-Date: Tue, 19 Aug 2025 21:21:32 +0100
+        bh=ErXHqYgIOywZbhEmGRe/ErbrEiUlQahOfnrKJ/dVBS8=;
+        b=kXym7sMQWH8RB444zFBgw+QATLySe6glH/b5qxhUK0pzAKhL1/plvjVqNE2j97sRl5
+         6QwMygP+aXbpThTsD7vNWQe//e4IcJViCMSyADCbcxaNCsF0b0dSA+dTabQawrOcE97t
+         Be2F3C4HHMpqcXGM5O8Pf3WudDDW2M6Kd2tjJvU+A0iX6bO/XrVAMccjPJHWqBhE3cmi
+         Nak/2PAxwUNL70GyiK4nkDVs3GWGEKUFZMUZHRIeqDhJt1OLzFkutbR45puyEKbCvKn4
+         jqHuYPEd49m3tQs/7uv7pxfalmXDlT81TgD9A0/mCWxv14bqWwTiOZ29a+nJ3bLbxKIk
+         QB+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755634904; x=1756239704;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ErXHqYgIOywZbhEmGRe/ErbrEiUlQahOfnrKJ/dVBS8=;
+        b=f9MycN94hZ253CUYyXA+DRmwdbddJ+RCVCPdNuGOkv37sDnRn2CSmnFLextR1B2o0o
+         RajSJVPGSDvFaBPpYf2q8iboiskB98B+GwNm5Gbjc02LQlXh4iF68D4BovG7T16lGaIq
+         R9D2vzMLP9f+WbMCyIR9XFhmMS2iVDp5eqjHFPmpC7PHHvqk4sbCcW1pugvnMQVvoFYQ
+         QHNdwlxf87dVF1LeMaUWTXzRoL0K2CEqLRxU0nyRyXMiguI7QT1sNT4wwa6ge0MVv0U8
+         UCsr9/BBSh1pWuDqXcDtYDzRdOBietnvnpFiWi355tXJIrAN1c2vtrkowf5NPR620b6h
+         Mf7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVdOTXAI+XtkWabZJeU1smwJfyienfH4jUI94Gugngkqc2k3JkCO5TaVufaGryaK3/yoi2YuszKZHHgq8M=@vger.kernel.org, AJvYcCWM39exxLFueXZaeg6Q5YunqiSsed8sUOe4B375polTa9Y4GKjdvVGRWU254upiMfnTwlIMNHBc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSd1lpgLkZ50Ovn50oZ/4IPlAzM69QIXJFrBSEKrj2TE/9xKMG
+	w0qYLrA29ULoOQmooWeKeLf4dVbmo1WOtSxCZYCUwljLoh+BroTpOFL9
+X-Gm-Gg: ASbGncsiIoIwSJipUPey4YlSa9/lZDDlL7gSl737AlKoFJ3lSANiLRWXc9jj/QgsL7z
+	tDCqQAWDEMmtS88e99OIKCWZtgS9o3UkHp3J4dk4U1DJEPvLWKbcy+12G+x3q0Z2PSAHtVekHS4
+	l6muw3+e4izLgw1xKfBMoG8Vpswnm5xRXdurEyUR1E+1hGwyf7lOKCMiwJbi4BL+EZJ+X/55zc5
+	D6ehmdbjFbqTYYG+q1tmA0PeWxxTbPb1URsRXDtVdIdzEAhhehVrFA7WEe7+ucX/uCSEXGX5J0W
+	qDly+BqDcxd/sT1evSHsj0rWygY/ATgxTlIlW4xj7qu+oKn9SOlISbYMQ00yFWhGkCpWbK63anG
+	33DnxNbt9FUKoRO1MmKlEXggrGScdKvzSQuHYmE7uNjQR0rURizGWjUxw9jKG8puy+wzMvA==
+X-Google-Smtp-Source: AGHT+IFq5Fb+q6BwoXTONR8NfLqJRLAaqNnVbQWhZLboOUU4G8eeT+JswvN12+19Oc8bDG+85E18Yw==
+X-Received: by 2002:a05:6102:5128:b0:4fb:f2ff:dd16 with SMTP id ada2fe7eead31-51a51ebe471mr181179137.17.1755634904269;
+        Tue, 19 Aug 2025 13:21:44 -0700 (PDT)
+Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
+        by smtp.gmail.com with UTF8SMTPSA id ada2fe7eead31-5127f80546fsm3109808137.14.2025.08.19.13.21.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 13:21:43 -0700 (PDT)
+Date: Tue, 19 Aug 2025 16:21:43 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Xin Zhao <jackzxcui1989@163.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ edumazet@google.com, 
+ ferenc@fejes.dev
+Cc: davem@davemloft.net, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Xin Zhao <jackzxcui1989@163.com>
+Message-ID: <willemdebruijn.kernel.85f8d3f87b8b@gmail.com>
+In-Reply-To: <willemdebruijn.kernel.1a86f7d92a05a@gmail.com>
+References: <20250819091447.1199980-1-jackzxcui1989@163.com>
+ <willemdebruijn.kernel.1a86f7d92a05a@gmail.com>
+Subject: Re: [PATCH net-next v5] net: af_packet: Use hrtimer to do the retire
+ operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/microcode/intel: Refresh the revisions that
- determine old_microcode
-To: Dave Hansen <dave.hansen@intel.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Nikolay Borisov <nik.borisov@suse.com>,
- Alex Murray <alex.murray@canonical.com>, linux-kernel@vger.kernel.org,
- stable@kernel.org
-References: <20250818190137.3525414-1-sohil.mehta@intel.com>
- <20250818190137.3525414-2-sohil.mehta@intel.com>
- <20250819051940.sqdjdvwupvocuf7w@desk>
- <0bfc7329-e13b-4781-a331-9f8898110b5f@citrix.com>
- <20250819182840.ajjl5txvooe47un7@desk>
- <f47826f2-9cb2-421e-91b8-fd5a435dd531@intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <f47826f2-9cb2-421e-91b8-fd5a435dd531@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On 19/08/2025 8:07 pm, Dave Hansen wrote:
-> On 8/19/25 11:28, Pawan Gupta wrote:
->>> Alas, these deletions are documented as well as everything else is in
->>> the changelog...
->> Should this file reflect those deletions as well? As an example, if an
->> ancient part gets removed from the microcode repo, it may still be worth
->> for Linux to keep the record of its last microcode version.
-> <sigh>
->
-> There's even a "Removed Platforms" section in the microcode repo
-> changelogs that gets copied and pasted for each release. But it's not
-> consistently updated as platforms are removed.
->
-> But, thanks to the magic of git, we can just look for the removed files:
->
-> 06-55-06
+Willem de Bruijn wrote:
+> Xin Zhao wrote:
+> > In a system with high real-time requirements, the timeout mechanism of
+> > ordinary timers with jiffies granularity is insufficient to meet the
+> > demands for real-time performance. Meanwhile, the optimization of CPU
+> > usage with af_packet is quite significant. Use hrtimer instead of timer
+> > to help compensate for the shortcomings in real-time performance.
+> > In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
+> > enough, with fluctuations reaching over 8ms (on a system with HZ=250).
+> > This is unacceptable in some high real-time systems that require timely
+> > processing of network packets. By replacing it with hrtimer, if a timeout
+> > of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
+> > 3 ms.
+> > 
+> > Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+> 
+> > -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+> > +static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
+> > +					     bool start, bool callback)
+> >  {
+> > -	mod_timer(&pkc->retire_blk_timer,
+> > -			jiffies + pkc->tov_in_jiffies);
+> > +	unsigned long flags;
+> > +
+> > +	local_irq_save(flags);
+> 
+> The two environments that can race are the timer callback running in
+> softirq context or the open_block from tpacket_rcv in process context.
 
-CLX B0 stepping, notably gaining MSR_TSX_FORCE_ABORT rather than
-MSR_TSX_CTRL.  It was a giant muddle for mitigations.
+I meant prb_open_block
 
-> 06-cf-01
+tpacket_rcv runs in softirq context (from __netif_receive_skb_core)
+or with bottom halves disabled (from __dev_queue_xmit, or if rx uses
+napi_threaded).
 
-EMR.  Stepping 2 still available.
+That is likely why the spin_lock_bh variant is not explicitly needed.
 
-> 06-8f-04
-> 06-8f-05
-> 06-8f-06
+> So worst case the process context path needs to disable bh?
+> 
+> As you pointed out, the accesses to the hrtimer fields are already
+> protected, by the caller holding sk.sk_receive_queue.lock.
+> 
+> So it should be sufficient to just test hrtimer_is_queued inside that
+> critical section before calling hrtimer_start?
+> 
+> Side-note: tpacket_rcv calls spin_lock, not spin_lock_bh. But if the
+> same lock can also be taken in softirq context, the process context
+> caller should use the _bh variant. This is not new with your patch.
+> Classical timers also run in softirq context. I may be overlooking
+> something, will need to take a closer look at that.
+> 
+> In any case, I don't think local_irq_save is needed. 
+> 
+> > +	if (start && !callback)
+> > +		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
+> > +			      HRTIMER_MODE_REL_SOFT);
+> > +	else
+> > +		hrtimer_forward_now(&pkc->retire_blk_timer, pkc->interval_ktime);
+> > +	local_irq_restore(flags);
+> >  	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
+> >  }
 
-SPR.  Steppings 7 and 8 still available.
 
-These are weird.  06-8f-08 has two blobs in it with disjoint platform
-flags (this is fine).
-
-However, all 3 blobs between -07 and -08 all have sigtables covering
-everything back to stepping 4.
-
-Arguably that's a bug for the intel form of the microcode (which is
-indexed on stepping), but it's just some extraneous metadata.  The rest
-of it is suggesting that SPR steppings 4-8 had compatible-enough
-microcode for them all to be patched by the same blob.
-
-> 06-ba-08
-
-RPL. The repo has steppings 2 and 3, so I wonder what RPL stepping 8 is.
-
-> 06-86-04
-> 06-86-05
-
-SNR.  All steppings dropped, although it's apparently a mobile
-basestation only, so I guess it's not running Linux.
-
-~Andrew
 
