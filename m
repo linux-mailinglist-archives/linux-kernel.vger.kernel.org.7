@@ -1,58 +1,86 @@
-Return-Path: <linux-kernel+bounces-776141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B39B2C907
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F312BB2C90F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA49E1C27134
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B86E7235F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A2D2C3276;
-	Tue, 19 Aug 2025 16:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6842C236B;
+	Tue, 19 Aug 2025 16:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kGPqj6NC"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ByKqp2Fi"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79632BE634;
-	Tue, 19 Aug 2025 16:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE75239E62
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755619446; cv=none; b=JstfVktj3zNeVm2xzbWxwpg1jsTpBnao+FApG0claON6jPFYCuM+PTFPIzjHM5M8ShXcCfp/gPekVKmbJKNUUGbJWRNNT+B9M2c08RZfo3KVSZ5mHgilc6DT7RGsBFVG68A/+i+N087lQEg2D1gQyuJt5qtvTwn3iWRj4eIbmt8=
+	t=1755619438; cv=none; b=WvK5jAnIKMqWV071B8N/ZZTE1JSEvHMPNurvABi+d3cojb1BYtkfF9/Fa9KuekBeXYGIUOQme7vY77Uho8UwUiRE9CTcdVDJhdsmhdcrIevP4USIHMs8UwpmbdqlFwmMZ8HYp2SirlS/5KPpKD1YihStO7OfdQfUig6+qs93D6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755619446; c=relaxed/simple;
-	bh=wLvfu74oK9PGxpv8iFgmi36eU1aC/XOa2NPyXzmd7YE=;
+	s=arc-20240116; t=1755619438; c=relaxed/simple;
+	bh=ElsK78evf/jSWVT/An81m0pfn9gX4XVTLMYXztIt85c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEsNpKPz0WCoueOllhINl9rmtH5uepzFNAFMtfEG0quSGPjwuQnQrMgitKGAT84vhp+Ekj1oZglZafi285+6B5+cOdj3QrlvvLHvLyQP8PmzWWxB8z2LOFWe5LfLyO1teoaBtShZrO9Ne4y3outgJJvA7S9Lrbolca2pXZbmp6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kGPqj6NC; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=N+7flFK2RUnxDqXCVUqXaa0V2OFkhUFUQMezuL5yE6g=; b=kGPqj6NClAqPHS8M/uA71K3oTt
-	5MMCYBEUXDle2yjsuFbQEh7VjoHgYOYDaXwJePFOVYZZXqpTboYge93ACdlVVY491QRd5gB5rXo+M
-	z+BLiNLxqgQmBq81fCsuRTOKUnm3EgA0wJQidIcDFfGfc/zg5NzLewgbUfN28Dv94Dsg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uoOoN-005D7L-1y; Tue, 19 Aug 2025 18:03:47 +0200
-Date: Tue, 19 Aug 2025 18:03:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dongjin Kim <tobetter@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Change ethernet TXD timing delay
- value
-Message-ID: <4d25c642-d457-4cb7-8bc1-587edd4f1d75@lunn.ch>
-References: <20250819045018.2094282-1-tobetter@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWsb9r5RkzUKRf0WBteQo+L6rIupiK6VtvKWhVLqyRUc2J7Y3OXQxkd0fAfT9ZI3eQtHx4kBGtN2qWYxrS42ZFzdKLDJ08O50SW5H+Xrh0jntcnrxLgAtA3UH1wvi71mjm0PJQXvGo0eqS9BR+tOCO4Oz6YeQWgl/AIEvhrw348=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ByKqp2Fi; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-435de5ccff6so2708888b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:03:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755619434; x=1756224234; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yC88mGoSbqZk1f9KFdafn4QiNyHx2q3f5J/pFIXzL8g=;
+        b=ByKqp2Fi4w4PPaHkLxoaPjtNm3qQV2I1jvR9DsgVqEZoI+hZJx4uCvmh7HVTq4bm+O
+         dgnku9e/iLylYxHg4m4M3GtlbuUpZ4c6jbLkBYuNmaJ9Dskqe7EMEFs1XcPace7jaOkT
+         MY4X7Dn1vcirCgaQk4JFcE28d9yTwaPfxXja9sx/6Wz7CED40zYZzihKEtkWvqj7JkE1
+         Lznb0++JfOJcasQUkUQN/Lm+N9WWo8kKydHPItDh8s1qDC0RrIy6fNV5Fixd7D6zVd9M
+         NWIycDmA6asXjvw1/XVsM6qa4PN8DoB/RdrE1csoDMMdQ6l0ww/fiR9J+83gXmJNvCGf
+         ybqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755619434; x=1756224234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yC88mGoSbqZk1f9KFdafn4QiNyHx2q3f5J/pFIXzL8g=;
+        b=DhHXjxwE3DvRB/rSVL2eggC7utA4krMjH8qw+UfiB+zMnkhlusxKQ+hkrQ7vcWkhYu
+         66DzTGPdmUpsAihV9crh8xKXbfscdOq2DcXKPPYNWk0sRULvUD1W1U9bgEbCqdAFM1Ax
+         b96BjKpzWkhu+YWfOQiYlO6we1Rl0VoacJAZpO22+3t3fPbPbv0qO6hm9hQ16ZRB8fz/
+         mUhHPkkon84gyyqo5jSIesBDG1XLeHBPr5+XcAHwUx+NS+FQHGktvA5AZZtgzt4m9bvz
+         eDTcjswmthMpzR75tKF7hbaU6tg7L7Q6tO1Z1LTgMJuA8+oLZHBrO42vxoBclK8DmKSH
+         S2EA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVmc90nUNvmZPMzAKsrOQpE9qybUdTuvy8q4xHx0Et07x9szz7x0z6yidTWuFyJclOPhhQRHeBBBMsgW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi32XlM9mhnIYU7xtyYEgnVmpvdHlW0yuR0+JnPfuvv5x4ptO+
+	8DD4XgkxhYWvidRqGIyhDBHL/qOz99pc4etZZ8pWB7uExZrO53mteD3jVCZIBGyPvOA=
+X-Gm-Gg: ASbGnctfo2ymeKJDlkfO4u7ixJEJBiSRfOJhdel+TMSyhoxUDRkDr+gjCbZ8RneEIMa
+	KsiAG1b52BW6RoiXSTFBiXneqNga+1l8HVjwdZIpxeT6sc85Sf3r/0gLbNYJ0R7OUUv9EOV3wwG
+	zj0ucvbCLaE6LgI+FDvlofgKxo2ggtDzTilmuNkOCuC5/GIYLGGEl1HSCklNOP3hSsJmwltaACI
+	2TQCEMkSjx79Nh+q8IeuyZ340US0rdNrvuiqGMBkVBKufbkWQL+l6S1nz4E0M5d0wgCraxK6m7n
+	RmPsjXKXNgE6FZI0tPTgkCxHXG9zp+l3wpRnB6JoQL8JPGWdsx7OIdKrIO2FdAWowjZ4eZn/qCZ
+	Y67ShfqRiZKEr8ypyiXkNHt8ZWJpfTGMOulU=
+X-Google-Smtp-Source: AGHT+IG/y8PrsSJqgoq3CvRF+MG0X5iWsQigK66jrK0xGiIjJMRnFVwGXiYkN7AL+ccvUXU/i/hDzw==
+X-Received: by 2002:a05:6808:1b0e:b0:435:744c:9297 with SMTP id 5614622812f47-436cdca93famr1950579b6e.16.1755619434540;
+        Tue, 19 Aug 2025 09:03:54 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c949f75d1sm3510509173.79.2025.08.19.09.03.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 09:03:54 -0700 (PDT)
+Date: Tue, 19 Aug 2025 11:03:53 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Jinyu Tang <tjytimi@163.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atish.patra@linux.dev>, 
+	Conor Dooley <conor.dooley@microchip.com>, Yong-Xuan Wang <yongxuan.wang@sifive.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: skip csr restore if vcpu preempted reload
+Message-ID: <20250819-62ec62e0ef8ed3d928f56ddc@orel>
+References: <20250807114220.559098-1-tjytimi@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,37 +89,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819045018.2094282-1-tobetter@gmail.com>
+In-Reply-To: <20250807114220.559098-1-tjytimi@163.com>
 
-On Tue, Aug 19, 2025 at 01:50:17PM +0900, Dongjin Kim wrote:
-> Very poor network performance is observed on the ODROID-M1 Board
-> (REV 1.0 20220613) when running iperf3 (under 200Mbits/sec), and
-> this problem can be resolved after changing the value of TXD
-> timing to 0x35 from 0x4f.
+On Thu, Aug 07, 2025 at 07:42:20PM +0800, Jinyu Tang wrote:
+> The kvm_arch_vcpu_load() function is called in two cases for riscv:
+> 1. When entering KVM_RUN from userspace ioctl.
+> 2. When a preempted VCPU is scheduled back.
+> 
+> In the second case, if no other KVM VCPU has run on this CPU since the
+> current VCPU was preempted, the guest CSR values are still valid in
+> the hardware and do not need to be restored.
+> 
+> This patch is to skip the CSR write path when:
+> 1. The VCPU was previously preempted
+> (vcpu->scheduled_out == 1).
+> 2. It is being reloaded on the same physical CPU
+> (vcpu->arch.last_exit_cpu == cpu).
+> 3. No other KVM VCPU has used this CPU in the meantime
+> (vcpu == __this_cpu_read(kvm_former_vcpu)).
+> 
+> This reduces many CSR writes with frequent preemption on the same CPU.
+> 
+> Signed-off-by: Jinyu Tang <tjytimi@163.com>
+> ---
+>  arch/riscv/kvm/vcpu.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index f001e5640..1c6c55ee1 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -25,6 +25,8 @@
+>  #define CREATE_TRACE_POINTS
+>  #include "trace.h"
+>  
+> +static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_former_vcpu);
+> +
+>  const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
+>  	KVM_GENERIC_VCPU_STATS(),
+>  	STATS_DESC_COUNTER(VCPU, ecall_exit_stat),
+> @@ -581,6 +583,10 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+>  	struct kvm_vcpu_config *cfg = &vcpu->arch.cfg;
+>  
+> +	if (vcpu->scheduled_out && vcpu == __this_cpu_read(kvm_former_vcpu) &&
+> +		vcpu->arch.last_exit_cpu == cpu)
+> +		goto csr_restore_done;
+> +
+>  	if (kvm_riscv_nacl_sync_csr_available()) {
+>  		nsh = nacl_shmem();
+>  		nacl_csr_write(nsh, CSR_VSSTATUS, csr->vsstatus);
+> @@ -624,6 +630,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  
+>  	kvm_riscv_mmu_update_hgatp(vcpu);
+>  
+> +csr_restore_done:
+>  	kvm_riscv_vcpu_timer_restore(vcpu);
+>  
+>  	kvm_riscv_vcpu_host_fp_save(&vcpu->arch.host_context);
+> @@ -645,6 +652,8 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>  	void *nsh;
+>  	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+>  
+> +	__this_cpu_write(kvm_former_vcpu, vcpu);
+> +
+>  	vcpu->cpu = -1;
+>  
+>  	kvm_riscv_vcpu_aia_put(vcpu);
+> -- 
+> 2.43.0
+>
 
-How did you decide on 0x35?
+This looks like a good idea, but can't we also apply it to
+kvm_riscv_vcpu_aia_load()? And, if we could track whether or
+not the kernel uses FP and/or vector then we could also avoid
+restoring those registers when they haven't been used.
 
-~/linux/arch/arm64$ grep -hr "tx_delay = " | sort | uniq -c
-      4 	tx_delay = <0x10>;
-      1 	tx_delay = <0x1a>;
-      1 	tx_delay = <0x21>;
-      2 	tx_delay = <0x22>;
-      4 	tx_delay = <0x24>;
-      2 	tx_delay = <0x26>;
-     14 	tx_delay = <0x28>;
-      1 	tx_delay = <0x2a>;
-      6 	tx_delay = <0x30>;
-      1 	tx_delay = <0x3a>;
-      3 	tx_delay = <0x3c>;
-      2 	tx_delay = <0x42>;
-      5 	tx_delay = <0x43>;
-      2 	tx_delay = <0x44>;
-      1 	tx_delay = <0x46>;
-      6 	tx_delay = <0x4f>;
-
-The numbers are all over the place, but it is clear that 0x28 is the
-most popular for some reason. But since this delay values are magic,
-i've no idea why.
-
-     Andrew
+Thanks,
+drew
 
