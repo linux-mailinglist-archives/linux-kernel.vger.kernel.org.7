@@ -1,106 +1,112 @@
-Return-Path: <linux-kernel+bounces-776318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEBFB2CBC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:21:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E618B2CBC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50E767AB0C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:19:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3FDC5A2D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E3230F523;
-	Tue, 19 Aug 2025 18:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE7B30F54E;
+	Tue, 19 Aug 2025 18:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7D1lgO2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alN6/hwH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E8322157F;
-	Tue, 19 Aug 2025 18:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DDD255F5E;
+	Tue, 19 Aug 2025 18:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755627655; cv=none; b=cta6WN8C3JKW+eG/4AdLelwwUg7rnKgtN6sZ/MadhrgNlkPeaVImPgogXkDDoNqPZ/wTg4poDUSJ6o9UEgCAzDI8kk364beHwmusBSghsgFHIjI4eOGxsaDuOpeu3SH5mIvEAB0wreYlAFokydXNcOvCPVTbr1XWpM7rJsnxqMs=
+	t=1755627754; cv=none; b=mKEb10QoJgKDwo9OFOO6NxQRkr4SkeSg/CRF0D0WLLOuiBPCPhrzTBWTKiBs1dW6YH72RTb6CNwkZjGlCYUp7XABSrYpDpnuSavTOPgimEhDjRvxNVD04ko0bgyiwsWPZ2I2+dX/70wVxJD2zr7Pz31s1BRDasE4ly2ZX3b1tkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755627655; c=relaxed/simple;
-	bh=2cSizdNtjP8nEgtp+IapxXa32stuAUieeQxXIGSwPUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kXkDnKhOoa50zijiOBh+rtNbouP/hzxrR2lT7Q3htB6B8iW/aUKwixA17N9APjqSQ7b9OV6uho4eVaL3/Pu3/CImPIZapZFV2eixLRd7ESHm1VHVmwphq45cUWAjO5fU42yThcrVXczf2iLyKkDnyXZIdKGBeBMbIy7RUH8yv38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7D1lgO2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7900DC4CEF1;
-	Tue, 19 Aug 2025 18:20:50 +0000 (UTC)
+	s=arc-20240116; t=1755627754; c=relaxed/simple;
+	bh=VSqn6WSqLVd/XpfzgudXSJRo0uPOQ5wyv2bWmCBBnJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=brClJXw8q8QjdkdLUKH8H4UL3KgzpQnkw460zPL5CUbUoAYViG0BvizVlms6EdhXWKShQju/oLOPPhihMkzhQCMFtS+jGVfi17MXyZEb55jDhLiWnjEMUjamSqYORypxRVoV3evglw6woX+jm39Pwzq8ULfObO5GuiT8JVqut4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alN6/hwH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8557CC4CEF1;
+	Tue, 19 Aug 2025 18:22:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755627654;
-	bh=2cSizdNtjP8nEgtp+IapxXa32stuAUieeQxXIGSwPUU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=G7D1lgO2eg4XrgnMtog+GfhMNIpn9vKbsx3UMCOH8azpQShGLofbiy+EtVcU2jLFr
-	 LGWGDd4l2kjIfh+YtTGQj9BujZrpssd14QkF9tySCaxpuxZGIY+ZxNnxTBRzYK0PCj
-	 e/TJIJVI43hF0VdTuRBVNjOv/AxIwgrxEuXym1ixXTmkZ5BU6HzVyV4XnICfbq+sms
-	 pIm2JrnrUG9snmjoKK+u8CVxSVU8HDmNzbypEzBv6pmC19ry4fXpgwtf+UfExhZRrv
-	 8fySciPmKyFrIEzPNFKJSv2vuvwICnnDyBFpSVZoU9MF0I1nHgSI2ZF2+r8MLW5ZK4
-	 51nll0JknadmA==
-Date: Tue, 19 Aug 2025 19:20:44 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Salah Triki <salah.triki@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: iio: adc: ad7816: Drop unnecessary
- dev_set_drvdata() call
-Message-ID: <20250819192044.5637c96b@jic23-huawei>
-In-Reply-To: <f7815955-7e8a-4f67-b699-8b19cb38683a@baylibre.com>
-References: <aKSRpTuwA0P-ZaUS@pc>
-	<f7815955-7e8a-4f67-b699-8b19cb38683a@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1755627754;
+	bh=VSqn6WSqLVd/XpfzgudXSJRo0uPOQ5wyv2bWmCBBnJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=alN6/hwHpvzthoP/KrllDuyPfF9f8yAYQER8+ba4p7ZAaMRpwoXt8rvK6QE3L0ekl
+	 bNm+CTndacGb+nR2BKXPNUnvE9okK+nJN6vWKLBypTEbMKpjdWZnobeyYbTdlJBwG3
+	 eQhAlRfAJUiGmqIDHRjbObolLDa17Te4yFQpGASd/eKfIFxPevya5z3Kg7b9O2j2pW
+	 xGJZckYIQxAQDMxUtnVFWJEEUia3gPTM6PRono+D9/zC602CQuuuu0N45uS/29jmmO
+	 kxle5BpRno+jkLFSoQGxLhrpEA9gCkuIidPS0ZJ3bdNRJ1LR7RUOVZQkLijjuMZ2fZ
+	 kFmTbvgXjx5hQ==
+Date: Tue, 19 Aug 2025 12:22:30 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-nvme@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 11/16] dma-mapping: export new dma_*map_phys()
+ interface
+Message-ID: <aKTA5i1IZquRBolf@kbusch-mbp>
+References: <cover.1755624249.git.leon@kernel.org>
+ <bb979e4620b3bdf2878e29b998d982185beefee0.1755624249.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb979e4620b3bdf2878e29b998d982185beefee0.1755624249.git.leon@kernel.org>
 
-On Tue, 19 Aug 2025 10:05:09 -0500
-David Lechner <dlechner@baylibre.com> wrote:
-
-> On 8/19/25 10:00 AM, Salah Triki wrote:
-> > Remove the call to `dev_set_drvdata()` and the associated comment
-> > since private data is never read.
-> > 
-> > Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> > ---
-> > Changes in v2 :  
+On Tue, Aug 19, 2025 at 08:36:55PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> Introduce new DMA mapping functions dma_map_phys() and dma_unmap_phys()
+> that operate directly on physical addresses instead of page+offset
+> parameters. This provides a more efficient interface for drivers that
+> already have physical addresses available.
+> 
+> The new functions are implemented as the primary mapping layer, with
+> the existing dma_map_page_attrs()/dma_map_resource() and
+> dma_unmap_page_attrs()/dma_unmap_resource() functions converted to simple
+> wrappers around the phys-based implementations.
+> 
+> In case dma_map_page_attrs(), the struct page is converted to physical
+> address with help of page_to_phys() function and dma_map_resource()
+> provides physical address as is together with addition of DMA_ATTR_MMIO
+> attribute.
+> 
+> The old page-based API is preserved in mapping.c to ensure that existing
+> code won't be affected by changing EXPORT_SYMBOL to EXPORT_SYMBOL_GPL
+> variant for dma_*map_phys().
 
-Applied, thanks!
+Looks good.
 
-This motivated to do my periodic can I drop this driver yet check
-against my usual rule of once it's obsolete from the supplier and
-no significant work on the driver (staging only I'm less keen to remove
-drives in good condition!)
-Unfortunately 7817 which it supports is still in production :(
-I then checked the other drivers still there and they all cover production
-parts as well.
-
-This is a pretty simple device and probably a good target for someone
-who wants to try their first driver. It would be a near rewrite as this
-code is miles off ABI wise.
-
-Doesn't look like there is a currently available dev board, but it's
-available in a TSSOP and will run on wide range of voltages so not
-a challenge for someone to give a go on a break out board.
-
-Just thought I'd mention that and see if anyone jumped on it ;)
-
-Jonathan
-
-p.s. One day I'll just decide to delete all the remaining staging drivers.
-     Analog folk, they are all yours!  I can't blame any of you though
-     as I think the first stuff from Michael was the following year.
-  
+Reviewed-by: Keith Busch <kbusch@kernel.org>
 
