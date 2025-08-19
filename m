@@ -1,156 +1,126 @@
-Return-Path: <linux-kernel+bounces-775026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7216BB2BA7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:20:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339FDB2BA87
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BEE1196427C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F161BC021F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125E23101CD;
-	Tue, 19 Aug 2025 07:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F345831A06A;
+	Tue, 19 Aug 2025 07:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SmRyhrOv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4SIdO0ix";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DRaL44o4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88222D24B5;
-	Tue, 19 Aug 2025 07:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85A83101D8;
+	Tue, 19 Aug 2025 07:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755587832; cv=none; b=M2/ReAaZF7Dt5aTfNjTrZndq4jgTEQL8GThmumh3kGV/1jgkemX1DzN8vAJYO8PoezOdPfHqzFVAeDtoIC0GqPhcEi/ZUbJUmZKy0UwvMsrcszlNbiREySTnv2x79mPlJm7OgrD6ZgN8uqrrUAgWSyszcXcBRenJEOc5ltitMow=
+	t=1755587855; cv=none; b=ftQJ/IegaM/brkNhHAUKCK3RaNg+VkkInp2bWwbyeJLG3fbFPRJYYMimGzZuH1e1NlWaWWUKCdNsxEYrfiQTt5hnG4SgxnO0mNMevkafT3CNHtxFvffJC2LEOdQAyFy2+5m9Ml2GLEg4JyGMEl7zc37N4TUVv+8Gw3DYcWZrzvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755587832; c=relaxed/simple;
-	bh=AO3Svb7amvH3U1MStab6ii4uX+OvYJMu0QBbS3RBxrg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HEUBQ+viDTckrzvKRcjhSBHHfV9KE6p2tfV+OhALtqtzsCyhTt9gNKYXgeGbP8kXXmdBvtvgxklQ1Pul3KG0opJyvQIMTe8Or4T4GDGuGIftpbp9/JVgU0QE2DNL3++GMEPRZicb8BxB3tiX6U060WF1q92MDltYkiH37UHTbe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SmRyhrOv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J2XO6m025437;
-	Tue, 19 Aug 2025 07:17:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=//1D9BhlkxD
-	UMN81wQ6h1zTzvFR0McEnfmR7capf9gc=; b=SmRyhrOvszwe47aF9PWdIeM817U
-	RV8N+lpbKiWQItHBsB3DkJYhuxa9MC2VA92JwVhcO2oN0lCrlJKFpMY7hw3PW6bB
-	ZoQ4egD/zLXK4EyA7BNV2EWOZDnHWF1laRIs2xrQjC/a3822beMUwthbjvVklfMc
-	8AYRhiv36hm1g/fkWSBwcAZYw3lRgU4D8jYemxhFDPqMhuyOTdiATzFk3AZIkv67
-	CePIai1UMbpAVasKBWiWXvB6Jl5E3Lh4gqK9PaTmx965shYBS7pTgQvHPA04GpNx
-	33Hnfja/G7Tmc2aHUxZgmLYJYFQEpZg6nCmviWz5lwGtohYB1DU9QUZ3EXQ==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48m71cja5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:17:00 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57J7GvVq023673;
-	Tue, 19 Aug 2025 07:16:57 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 48jk2m3aeq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:16:57 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57J7GvxR023663;
-	Tue, 19 Aug 2025 07:16:57 GMT
-Received: from ziyuzhan-gv.ap.qualcomm.com (ziyuzhan-gv.qualcomm.com [10.64.66.102])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 57J7Gu9N023660
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:16:57 +0000
-Received: by ziyuzhan-gv.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 32A4F522; Tue, 19 Aug 2025 15:16:55 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v5 3/3] arm64: dts: qcom: lemans: Add PCIe lane equalization preset properties
-Date: Tue, 19 Aug 2025 15:16:48 +0800
-Message-ID: <20250819071649.1531437-4-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250819071649.1531437-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250819071649.1531437-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1755587855; c=relaxed/simple;
+	bh=46javDyCPiYE8fwnUArx2IU1gLYMrydW+58QuTTqi+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kxuyKTYzdf48j1fubFEPyt4sLUVO4/6l6yX1mFxA+VaLHRiDJdNRRPaXMibIbiAXcpy7REqvZaOA/PJJt2i3M0COBK5S3e8CLX22m6+1tmcTQwwOVDJOsL2pYxYaIGsilc5q51fl+RHvdOSSZ1BjVcrdizDXpVzx150pm1T1NLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4SIdO0ix; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DRaL44o4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755587851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=urZnAmr6IKj07Yy0t81dLgcsPTGgOlUWfOlJKuAdu6I=;
+	b=4SIdO0ix4Eqmxu019l8HT/y7agDTYOFfDq7oNx3aqbdBQSSNZ/bQ9PKxDYS4uJBt/p0dNt
+	bL4kIELkYpX48Cax6SaG+h607JSRBs+VJ+PgjT7rrN39Jg8Y93TjWA+h5wr/IJ3hHuKdAC
+	YRFxXGdiCv2elE/Mx+RUM2motFedzKhQbLtR7KhaY8CAN7w0MNWYbAaG8ROPCk/sJF65U+
+	QmZju3HKI4sWHrC15btncerZG+SoEUxuLAqSn5Wzp9CrpRegVpoJIol/GJCYbSQtunss1V
+	rLvn3AMpdkDmbpI93XjS6KoFnOmoQaoleU1aL7byAJqVdG/SIGCNLUNpgWbuig==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755587851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=urZnAmr6IKj07Yy0t81dLgcsPTGgOlUWfOlJKuAdu6I=;
+	b=DRaL44o45U237C9WA6+pMZkVcPx/y4o806CXcGee55mHukk276Y9ahXk7Xc+c2qEm6eS1o
+	zinqxsAmvTKTC1CA==
+To: linux-kernel@vger.kernel.org,
+	linux-man@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v5 0/3] Add documentation for PR_FUTEX_HASH
+Date: Tue, 19 Aug 2025 09:17:25 +0200
+Message-ID: <20250819071728.1431543-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1XUpdL3SLKl8GS8WupVk43IarHkXwmFV
-X-Proofpoint-GUID: 1XUpdL3SLKl8GS8WupVk43IarHkXwmFV
-X-Authority-Analysis: v=2.4 cv=IvQecK/g c=1 sm=1 tr=0 ts=68a424ec cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=XhQEiPrLEPsAcZFVs94A:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDE0NyBTYWx0ZWRfXwZ7aui0N68zB
- M/WTTO1Lh1dk9FuGsk8h9YMoOv3WrUDJOkITulpmuTvouw1llIzSDjeQ5b7kt3wYfmXzbZuGaFl
- s+ak6hPAhR/M4o4Uj8xYypV/K4YClJNoKM8PSYCfZpq2MXXgIUOfEV5jqMpVwTYsKlO1an+Kh4q
- GcZZJGgkLLXjQEnBLhdVPbMkv+Vin/G/Ud9fdRH2J1LAEly+NkYpDsBxEvsckPbQIeaesPVEkz+
- JHdixMCwHAmB0kfGAM9dFWKxLSfwOTzAgIi6gs5o9UGBUxMZEW6kYshDUAv4HF2Z5QJX932ARvX
- HNmVrCq02rVNSl629e4hGV628yt9sErrWHASzlhYjrxNbw+ff3wssroCUNmtFo2zxFaS7K54iT4
- 1aLool1l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
- phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508180147
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add PCIe lane equalization preset properties with all values set to 5 for
-8.0 GT/s and 16.0 GT/s data rates to enhance link stability.
+Add some documentation of the prctl(PR_FUTEX_HASH, =E2=80=A6) interface.
+The PR_FUTEX_HASH interface has been disabled for the final v6.16
+release and enabled again for v6.17.
 
-Co-developed-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Acked-by: Manivannan Sadhasivam <mani@kernel.org>
----
- arch/arm64/boot/dts/qcom/lemans.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+This series updates the merged PR_FUTEX_HASH page and adds
+PR_FUTEX_HASH_SET_SLOTS and PR_FUTEX_HASH_GET_SLOTS.
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-index 64f5378c6a47..c7a09c3605a7 100644
---- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-@@ -7657,6 +7657,10 @@ pcie0: pcie@1c00000 {
- 		phys = <&pcie0_phy>;
- 		phy-names = "pciephy";
- 
-+		eq-presets-8gts = /bits/ 16 <0x5555 0x5555>;
-+		eq-presets-16gts = /bits/ 8 <0x55 0x55>;
-+
-+
- 		status = "disabled";
- 
- 		pcieport0: pcie@0 {
-@@ -7827,6 +7831,9 @@ pcie1: pcie@1c10000 {
- 		phys = <&pcie1_phy>;
- 		phy-names = "pciephy";
- 
-+		eq-presets-8gts = /bits/ 16 <0x5555 0x5555 0x5555 0x5555>;
-+		eq-presets-16gts = /bits/ 8 <0x55 0x55 0x55 0x55>;
-+
- 		status = "disabled";
- 
- 		pcie@0 {
--- 
-2.43.0
+v4=E2=80=A6v5: https://lore.kernel.org/all/20250602140104.2769223-1-bigeasy=
+@linutronix.de/
+  - Update merged PR_FUTEX_HASH
+  - Drop PR_FUTEX_HASH_GET_IMMUTABLE, functionality has been removed.
+  - Update SET_SLOTS/ GET_SLOTS based on review.
+
+v3=E2=80=A6v4: https://lore.kernel.org/all/20250526155523.1382465-1-bigeasy=
+@linutronix.de/
+  - Make FH_FLAG_IMMUTABLE and CONFIG_PROVE_LOCKING bold.
+  - Drop one too many "Relative inset"
+  - Reword return value for "GET_IMMUTABLE"
+  - Reword the description of "unrelated futexes" in PR_FUTEX_HASH
+
+v2=E2=80=A6v3: https://lore.kernel.org/all/20250520104247.S-gVcgxM@linutron=
+ix.de/
+  - Split the individual PR_FUTEX_HASH ops into their own man page.
+  - Reword a sentence referring to uaddr in order to link to futex(2).
+  - Address remaining review feedback such the semantic new line.
+
+v1=E2=80=A6v2: https://lore.kernel.org/all/20250516161422.BqmdlxlF@linutron=
+ix.de/
+  - Partly reword
+  - Use "semantic newlines"
+
+Sebastian Andrzej Siewior (3):
+  man/man2const/PR_FUTEX_HASH.2const: Update as of Linux v6.17-rc2
+  man/man2/prctl.2, PR_FUTEX_HASH_SET_SLOTS.2const: Document
+    PR_FUTEX_HASH_SET_SLOTS
+  man/man2/prctl.2, PR_FUTEX_HASH_GET_SLOTS.2const: Document
+    PR_FUTEX_HASH_GET_SLOTS
+
+ man/man2const/PR_FUTEX_HASH.2const           |  7 +-
+ man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const | 35 ++++++++++
+ man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const | 67 ++++++++++++++++++++
+ 3 files changed, 104 insertions(+), 5 deletions(-)
+ create mode 100644 man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const
+ create mode 100644 man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const
+
+--=20
+2.50.1
 
 
