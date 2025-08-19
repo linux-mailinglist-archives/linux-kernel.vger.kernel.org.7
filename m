@@ -1,164 +1,183 @@
-Return-Path: <linux-kernel+bounces-775159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABDDB2BC14
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28481B2BC0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 967801B61F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD3B25E4460
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881353115BD;
-	Tue, 19 Aug 2025 08:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23953115AE;
+	Tue, 19 Aug 2025 08:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RS0bKH9J"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QAKGwxPr"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8303115B1
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101DE21ABBB
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755592843; cv=none; b=Mhh5k1c4y/ztVGDisJVUvvZdo9b69vKOwPYKB0pfXfsJJcQYxHT4bq+r3f5M/eCpfJPGGSjhQGafm8zZbIgaBA2Gw5P45d3nNOxWtvdAIkhdE7QRFYFf03y7nSKX4dCs8P0oGSMdnhfZsA2D8PwPwYfUiILonfYWMpHrjwjC9zM=
+	t=1755592876; cv=none; b=kGZHJtARmdjd9heraJVjVm8F5WU4q0WQULFxuVtBeNZXOwza8+3lV6nAiE08zEoHG7OGlLvJ6KZienBVb8vJnQzod6tZudgGqu6A5htUobzV/c3nL+dDJgq8XVi2BTQgQ1puOmk8oQmP25yJ7QlVHfSZSN9on+7W5BSvRxItTeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755592843; c=relaxed/simple;
-	bh=s4rCdNrJl4PbZFUL3SQdLxne9G64dePB0cGlGicB9/0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=GJZwUvr5U/abF7WeLj4GmQNRTXaWVi3JjZ+CWJwNb+RGjygzBAnriC0YIdUbd0WxeLGpyGjVwPeF44uffoY0CaWilQgUWpMFH993p65XUOsvfzraWQr/KMwdtrCehjgWvbUnhqzoUn3DFoXN5JtDNjm078yURFM7UqP4iRfJdGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RS0bKH9J; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b475dfb4f42so104077a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:40:41 -0700 (PDT)
+	s=arc-20240116; t=1755592876; c=relaxed/simple;
+	bh=WjaINafF+OcxAtX1ABFT0e5/k1BKm/WdryDJzQE7Vfo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LMxCwDmBpiIObI1gQyGl1jSKvHHDPWOaY+5W1T/QeY+Pb4dkpeCjU4499cwIXKa4Ivkk8Y+7WT/D6UYgFdghB4rf29hR/5qqE2dopBGXUvjmj/BLZLptJAFdPHs7cSzdhipN8pZX7ARKV6qLVPrlJOMS8bA9+qBFiEeYAXqaa98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QAKGwxPr; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55ce5090b1cso4852583e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:41:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755592840; x=1756197640; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fOvEbU0Cnc0FjNAEZg7vmgeVRfzmShXkhUtYM2eUAbM=;
-        b=RS0bKH9JwTp4NOYDbvLcuQAXEuro4ovoSLC0dfi/6W2kyEufHBw1EFh83wvL0PAXTS
-         tt8KUdOhe6G09a/F+EBJ40jx22AiMiDn14nUmebvCSDugwk1xNlgwFER/gaGJ6E5JgKZ
-         WIL2E/4hFeICmZqBx6H4I+0d1NNbd1yarUof7T/Z/9/qo9VIqaoIjlycw1BJ24oDcHzF
-         eZ4gOHfyQW6Cs7QJuuDC5TG6YcpWeOCLCaJLEgJQm6q83VFrXm+v+plD1e9QwPen4SV1
-         mPLy7kbAIzxqqjJiEC1MLycIY/mjdU/QvyJ4/tAysXwXxJRYH3vhsIwmMtY3u/41kZ4/
-         WOsA==
+        d=suse.com; s=google; t=1755592872; x=1756197672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wbWN2yv3QB0geFKiGe15DOvOVXWq4mLKTk3ZUDvNTUw=;
+        b=QAKGwxPrqmou+upugQfEb9SbPSSroEsppytNf8q5oqmRDB0yxvVaTThDDQhsvw9bVj
+         1U393Xy8gvoL4kMDi2S2cb3CDLri8fetQT8C/ZVqVLLg33s2i8CVif6D2Te1u4Wzzsdj
+         6TSS49NYEOCkjFuxCl28jVKbye9DOEXqQ58wMVRU4ntS4iVHkgPhntiQuukk158kwsR4
+         08U+FF71ssdgjmqGSaI/G1DkeDSVimhaW0WknzPvTIl6bknOo5HFRT5pmuz5C3M+zB+I
+         JlBOpaVEUYyAPuZRdq9RaxKAaOsCyrqlM5yeScui8pQEymUiyyJdhdSYmVhZ2oMeYVEw
+         UFUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755592840; x=1756197640;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fOvEbU0Cnc0FjNAEZg7vmgeVRfzmShXkhUtYM2eUAbM=;
-        b=vNOlnqXYb//d8rP5QMhmhaLd1SNRBi+WOrlGy8QycfwTHptJCnj+CFiMCixmzeDZdK
-         oMcYLE0MetDGOcUNPhyJoi6IOfOfUGksvraUGcnuUklmGPeFtGm8b/HV61+Y3DJbkz1O
-         uycJ0N95+nWijl1DRYrsZL/Qm2AFO7rDip9GmBw4dKnABN7lnhUqPd+slJbk/VT1nchr
-         ug6nna2aTKYJlt8jC3+94fOF1Nl8Atb+NWaasYyRsoIl30VE0n39+0vXU7vWeztY12hl
-         dA4T1mkqPVXR2Ax5zWqDD88CwikhrXwYEHTDfL4+TgOkjfQnfPRiR2IGXYTr3c12/Woo
-         7MVQ==
-X-Gm-Message-State: AOJu0YwnZc/DQ6IPkFjfvvdP7uwyIrhLHRKPh4NbIdtUJI8mthn+Zo0z
-	1+dAMkVIwjETRZPjf3aTGysGRc/wEQhLjdPOEse/OS4KO9gYOCeAg6Lx1P1hKENyW64cMEKSubd
-	fPVDLVM1W2SfqKYj0YK7wgNWqoMECDqEsh4lw2qsnnOq46Ew74VGQSyk=
-X-Gm-Gg: ASbGnctH/ceySQlIYyWmGZ7pleELYGDrandPQURcVqaL1z3yErRo7sOoOCIEnXo0Xin
-	2LRIgDe9yosMTCzirCNsg/YsFD+Gm5WNfwMLtwqPxHxnq/2jbHbKhfpA1gGQCmmcDW+g1QNDlvL
-	rCxH8LeIm9KlqaN5DT9LxOJHK6EymrzpKhoMKWaPjikLAxcCCdqN0BYmgoX1Kx515K7NJsdEuPO
-	VMBz7eyej34ZbLvn2wXuFvR5SK84Z4D62dM9nMUpMst6LKQ6Q==
-X-Google-Smtp-Source: AGHT+IEGGBLrKnJA5rKPO3tG/2IpmKWfgJNSJRlHDGAPjusotj2Hf8o9mNnZTQtC90ugTktRZGVV8VN9rh1Puc8/i0A=
-X-Received: by 2002:a17:903:1ce:b0:23f:cd6e:8d0f with SMTP id
- d9443c01a7336-245e02d83f7mr22374655ad.13.1755592839617; Tue, 19 Aug 2025
- 01:40:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755592872; x=1756197672;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wbWN2yv3QB0geFKiGe15DOvOVXWq4mLKTk3ZUDvNTUw=;
+        b=sQH73/2H1cithVmgg2fD1GfNnt0WGqwWyz7FNrHr4ZWMPiGc+lelETEfdcWlTmBXff
+         LadAD20soiFcg59vJ77MZx9Q4FommsPaBHQOOy8k6RHiv1pZNps3VbSP79J/mpBdFH3H
+         ZuBCQezj8UBLUSqitgHiP8Wx0e91zVWDCfDuzgckZP/eGWbRmW3ZnFNTbCBo4xZDNLUk
+         VwEJRZt/kQO/o5zTAmGscATj+6XTJk8pWEnBO4ZgKIGTmT2MKUhwjEHP+BfpzKqGKeTa
+         rTP0iMb06nRD7GCLzxFWuNLgwMT3I4BQADlvyr5bNKBe/3/nkHIOjZF06bOUoNRa4HY1
+         Ybng==
+X-Gm-Message-State: AOJu0YwbmrK7Mx2o+IRYq6zheEdfm3C8ndjTswPiUk4jOzLxRJ0Eziuw
+	DTbgeNno4rXY0Q170BP+2NTKAKiKTrZKjPHudzNA6p+FSkTULKkgG40FDd+d9lLcYI/HGk+raq4
+	my12Wegbo4vlvHS583j+XkQMkUZkPgXbagQgmiZADcHrYR9mg9Hq3r5w=
+X-Gm-Gg: ASbGncsMg2D0QTFmpALZ3C4u/moNvCLE2Z9Kzhi6wyx/mp73h81jEpdPSDP2RrhlJIz
+	0m9E3k5qx2X4jcZsVHf212ukTocVLuUGU0K7n439/8KjhB7m0WIK0wAPt+YqWqdY4WRkJJCJ4fW
+	4gz913qRZzMNr9oI2Jk64a3QJnrdDMQTnJtc4gKClHGkRV7YSlIvPcjJjFwA1YPV8ev6UIqsLsR
+	5muuW2zUWScZToJ4rrfAmWd3HTk7cMM88sBxkbw
+X-Google-Smtp-Source: AGHT+IH0poxiLK3siHVR22yn/Bw1cABhXbu4vNfAcfuV7JFvA3aK/yomTojlN8zeHwpVItdu3Y88ERBJmusJ+Rondx8=
+X-Received: by 2002:a05:6512:3353:b0:55b:842d:5828 with SMTP id
+ 2adb3069b0e04-55e007a6db6mr479466e87.36.1755592872008; Tue, 19 Aug 2025
+ 01:41:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 19 Aug 2025 14:10:27 +0530
-X-Gm-Features: Ac12FXwQ9ahb2ew69m1KVEd7V2w8TSXSPCLlnKGNCFNH7jf-h193q59E6JrscyY
-Message-ID: <CA+G9fYv+gELzgcL4y8rOQbTxv2Y2JQTFhNkgUcLbzPJ_yDTziA@mail.gmail.com>
-Subject: next-20250818: rust: `ARCH_KMALLOC_MINALIGN` is defined multiple times
-To: open list <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, rust-for-linux@vger.kernel.org, 
-	clang-built-linux <llvm@lists.linux.dev>
-Cc: Miguel Ojeda <ojeda@kernel.org>, wedsonaf@gmail.com, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
+References: <20250815094510.52360-1-marco.crivellari@suse.com> <aJ92vqBchsh-h-0z@slm.duckdns.org>
+In-Reply-To: <aJ92vqBchsh-h-0z@slm.duckdns.org>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 19 Aug 2025 10:41:01 +0200
+X-Gm-Features: Ac12FXzp1WDhM_E6ymADxKaKfEaeFSdTESI3_ANZqUrLCayDwGtYPzxe3oB8dQ8
+Message-ID: <CAAofZF5KtD3zdrNcGekt4=sZCAAG6_a3Pz99NzfhX3iMkqLdyw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Workqueue: replace system wq and change
+ alloc_workqueue callers
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Build regressions were detected on multiple architectures (arm, arm64,
-riscv) with the Linux next-20250818 tag when building with Rust-enabled
-configurations (rust-gcc and rust-clang) from selftests/rust/config.
+Hello Tejun,
 
-Duplicate definition of ARCH_KMALLOC_MINALIGN in Rust bindings is
-causing build failures across affected toolchains.
+Thanks for your reply.
 
-First seen on next-20250818
-Good: next-20250815
-Bad: next-20250818 and next-20250819
+I'm not sure I have clearly understood what you mean here:
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+> e.g. Network flows through the same tree but different
+> filesystems often have their own trees.
 
-* arm, build
-  - rustclang-lkftconfig-kselftest
-  - rustgcc-lkftconfig-kselftest
+With this, you mean also distinguish between e.g.  fs/ext4/  fs/etx2/
+and fs/btrfs/ etc?
+So if it is the case, in the example above, it means 3 different series.
+Prefixed like this, I imagine: "workqueue: btrfs: ....".
 
-* arm64, build
-  - rustclang-lkftconfig-kselftest
-  - rustgcc-lkftconfig-kselftest
+And I guess it would be the same for drivers, eg drivers/net/
 
-* riscv, build
-  - rustclang-nightly-lkftconfig-kselftest
+Please correct me if I am wrong.
 
-Boot regression: next-20250818 arm arm64 riscv rust
-`ARCH_KMALLOC_MINALIGN` is defined multiple times
+> As the base patch is already in the master
+> branch, you can ask each tree to take the patches.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Ok, I will.
 
-## Build log
-error[E0428]: the name `ARCH_KMALLOC_MINALIGN` is defined multiple times
-      --> /home/tuxbuild/.cache/tuxmake/builds/1/build/rust/bindings/bindings_generated.rs:125708:1
-       |
-5305   | pub const ARCH_KMALLOC_MINALIGN: u32 = 8;
-       | ----------------------------------------- previous definition
-of the value `ARCH_KMALLOC_MINALIGN` here
-...
-125708 | pub const ARCH_KMALLOC_MINALIGN: usize = 8;
-       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-`ARCH_KMALLOC_MINALIGN` redefined here
-       |
-       = note: `ARCH_KMALLOC_MINALIGN` must be defined only once in
-the value namespace of this module
+Thanks in advance and sorry for the trouble.
 
-error: aborting due to 1 previous error
+Marco
 
-Please refer the full build log information in the below links.
+On Fri, Aug 15, 2025 at 8:04=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello, Marco.
+>
+> On Fri, Aug 15, 2025 at 11:45:06AM +0200, Marco Crivellari wrote:
+> > =3D=3D=3D Introduced Changes by this series =3D=3D=3D
+> >
+> > 1) [P 1-2] Replace use of system_wq and system_unbound_wq
+> >
+> >               system_wq is a per-CPU workqueue, but his name is not cle=
+ar.
+> >               system_unbound_wq is to be used when locality is not requ=
+ired.
+> >
+> >               Because of that, system_wq has been renamed in system_per=
+cpu_wq, and
+> >               system_unbound_wq has been renamed in system_dfl_wq.
+> >
+> > 2) [P 3] add WQ_PERCPU to remaining alloc_workqueue() users
+> >
+> >               Every alloc_workqueue() caller should use one among WQ_PE=
+RCPU or
+> >               WQ_UNBOUND. This is actually enforced warning if both or =
+none of them
+> >               are present at the same time.
+> >
+> >               WQ_UNBOUND will be removed in a next release cycle.
+> >
+> > 3) [P 4] upgraded WQ_UNBOUND documentation
+> >
+> >               Added a note about the WQ_UNBOUND flag removal in a next =
+release cycle.
+> >
+> >
+> > Per-subsystem changes will be submitted in different series inolving al=
+so
+> > maintainers.
+>
+> I'm afraid these are a bit intrusive for me to apply directly. Can you
+> please split the patches in this and related serieses on subsystem tree
+> boundaries? e.g. Network flows through the same tree but different
+> filesystems often have their own trees. Please prefix the patch title wit=
+h
+> the respective subsystem's name. As the base patch is already in the mast=
+er
+> branch, you can ask each tree to take the patches. For trees that don't
+> respond after a couple pings, we can route them through wq tree.
+>
+> Thanks.
+>
+> --
+> tejun
 
-## Source
-* Kernel version: 6.17.0-rc2
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: next-20250818
-* Git commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
-* Architectures: arm arm64 riscv
-* Toolchains: rust-gcc-13, rust-clang-20
-* Kconfigs: defconfig+rust
 
-## Build
-* Build log: https://qa-reports.linaro.org/api/testruns/29578517/log_file/
-* Build details 1:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250818/build/rustgcc-lkftconfig-kselftest/
-* Build details 2:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250818/build/rustclang-lkftconfig-kselftest/
-* Build details 3:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250818/build/rustclang-nightly-lkftconfig-kselftest/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31RcUoS2AqZLljDCs480MNNEyxJ
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31RcUoS2AqZLljDCs480MNNEyxJ/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/31RcUoS2AqZLljDCs480MNNEyxJ/config
 
---
-Linaro LKFT
-https://lkft.linaro.org
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
+
+
+
+
+marco.crivellari@suse.com
 
