@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-775861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC558B2C5D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:40:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1BBB2C5EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68821188F419
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B27F170E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A948C338F29;
-	Tue, 19 Aug 2025 13:35:33 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0874B340DB8;
+	Tue, 19 Aug 2025 13:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhPDByNm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC1C1DE89B;
-	Tue, 19 Aug 2025 13:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B60033CE88;
+	Tue, 19 Aug 2025 13:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610533; cv=none; b=Y/ms27VDMfK6RKrXm0k2Uyk6dcfqwdoR5KBoEwOKOCrpSrCcoMuWQ/p6ORTw6fSanDNxQ+LaKd61DosatCG+l8dgjYaDzMDDFOVKgrKCNpeaHgHHaVbEpEbDzYiYvsmclG/qfMF/dUz87hbk4XYzNCxyTlxzBp2TRRwUYrGhjfw=
+	t=1755610534; cv=none; b=kWxeS4gzQmQeWxgqa4KBz7z3X9ctmQvihERs2Fxu9ir/xr4atDSFobLIbq1pyipPQcfAN8/XihBb7JZpxCANPCv2sQkL9m6negtVne4IOm5Z5mfURnQ7wasgw8ndXTp7jJYyfmGD2wAlXcK27E7mVlHEU3oCDmqfneFrSCvMD1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610533; c=relaxed/simple;
-	bh=Tyi+9xAvn7s603CkCspL7WeonMXBBF4+oUpFz03xEFY=;
+	s=arc-20240116; t=1755610534; c=relaxed/simple;
+	bh=R9Sy8VQpNOrJ8/sl1lL2re/tMQ75cIWyis0ycpDudBY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bxqfJ7ktglPe4E3VfMEtbK16zDf4weAE64mOga2Vjb/D4/i2cybaVzruT+GpZqpWQhWTkh2DuYLR8ivQS0Vwgk/4+E502g3/u5AbjY9w6nAITvDy1HguijPsoGs7JALZDJVWLj6+eWvNXIQD4cnrOWiKN/upw9iHkJpiUXtQhW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-53b1737b9c8so1872137e0c.1;
-        Tue, 19 Aug 2025 06:35:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755610530; x=1756215330;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D1ytin5hrxcri6pw5X6iglo9ZKpWYXx35SDdHDKMJW4=;
-        b=UDcFMOML/nkvusHy0InbVlQAw9Q+ytTiIT/eAMtXancxSC97NxW7QnLSRd2xhTK8zv
-         KpCaBOJKwwqbTnbaONF7Y6+o1FDiZUwSIm01zN8tvaYGdfJGyQi7xQDaGoNOZk3/kIwC
-         4JUVZlGFKJ3pQUXFlv57fhtckdLndFzMwBzSZ82fQIeq9PqD0WAh/rxNkCiDYbYOb4KF
-         xV9i8beDZcpn9F64sJUVXh2rCcka9RsYQkWkXbq20NB1mEd4Yl2F1XkW37o/aEA2C1f5
-         HBeDj8P5beHNY+WUFHvyyf4+zwsDVkmibSZhSEWFR2JXfH3N6U6ht0cW0WFnAp2Qp3ld
-         LVAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAWq4x5FFcdM8xgNM7tSIXFDK/mBXwL5MX7TJhssqRjGqc+zjLRJ+KePB51PB+huPIKRlZvKlJ8Q3/@vger.kernel.org, AJvYcCVstBluuM4RRz57LolJNIwQPOCNUMfAmbWijjuRZbwSk5C9ObXuxZvgYnD47ghqGE2C2o8MGNODXwuODFz1wFvDLDc=@vger.kernel.org, AJvYcCXyMTjLEVViYMLCBUt2TZk8ju/QxgCpkPY3V3Qw4XHNLqlho9Pv/Spd+b3ZWuO3qU+T9vdgKS4Fk0EMWby0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz63zyENIMpT90vvgbidE6WaLj9JWG2wEVpkDqnyxFRVyXDD7aC
-	/YN4joIi/FhMp2ML0lCdSSe7xFu0Rjz/4PtSUDV0KDkd7gA88KxUDkFvaSY97JG5
-X-Gm-Gg: ASbGnctSxqRzyM5+C2BC7AU6U2IigDi/iPzqemo0ZOoFjAyTHIY28WkDBbye4pT1cJ0
-	vqsz9ZnSoWW/hVqKrObnfe8Pi3XQ/9oPHOnoD8LSp9nTnLa0MVTj+FNzkIfNn/4ZRzEfN1z/tRx
-	C3nJHbt1r4NZSc12aJDIBTGk4UvZMi2ncPkNJJh37XP3ECfxEQIudX59bARDnru+q1PVy2Ddqw8
-	F3v802BDOZm+J5unz4+ebXsPER61p6d4qAlBrRB8J0owIDzSd6+7Nn7UGwYnWOy/wRw0FU9opOX
-	DI+6EZVt+lH7cNopPisBFDX+S1l1hXaW2QJo7NADDIsY1kB6ou1/PYnlBy70pnoF2jQQ0mp1yN+
-	go2UIkh2LbzJL0zuP0GGRcJ9yUFl6Z+2EQ2EebrKqJdARANBHNVT/FgP8ecAeMb2di+2unCk=
-X-Google-Smtp-Source: AGHT+IGWyfDwQ+96wKxTQr9utqVdQCN2iJmx1eYyW3YRbf5uvslyHGw9mu0DlKyDe4q1YfryX8LCNw==
-X-Received: by 2002:a05:6122:90f:b0:531:3af8:b177 with SMTP id 71dfb90a1353d-53b5d48183cmr998129e0c.11.1755610530362;
-        Tue, 19 Aug 2025 06:35:30 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bd5514csm2558205e0c.6.2025.08.19.06.35.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 06:35:29 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-890190c6165so1634883241.2;
-        Tue, 19 Aug 2025 06:35:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUD2Uw05Icnkc7StcQuffuYw4a+Wqccx34yquxcdaLrxc2u3M8e/EuzYAOI/QdeKSxd6xUBpp2Nn2po05qUavipdJA=@vger.kernel.org, AJvYcCVReUkRZFNndwXRcNSIX8REDiPBDk0pv9ZSrodgdcrSnkgv45rQFiC27ZYMUpTbJnG2r9gFwLiqxD26JNKB@vger.kernel.org, AJvYcCWHo7kJ03EizdMKNuNLCf918wg1+c1gkadOQ6eSVnu3b0NSjdjE07dQ4A9CuXmiitjjSL2SVZEeF5CC@vger.kernel.org
-X-Received: by 2002:a05:6102:1449:10b0:51a:44a:95c4 with SMTP id
- ada2fe7eead31-51a045a26admr93014137.21.1755610529255; Tue, 19 Aug 2025
- 06:35:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=B/yqyV7GfdOKsPTE/ZjownQRPYHJzJTDVMeaL+R+O/G9uqA0BuKuu3nJ5F5BjP8YDVaNLuUYDhe3l0K3i85OINh+K1kfhQggdJXpNSgioG1jGCrUSGAyIG3tx6j5Jp1O7WagXEoNuMeOU7WLFx40fueJTcXgQyWAVDpgAM8bWpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhPDByNm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE93C116B1;
+	Tue, 19 Aug 2025 13:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755610533;
+	bh=R9Sy8VQpNOrJ8/sl1lL2re/tMQ75cIWyis0ycpDudBY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DhPDByNmUaahaYOad5JwcHU8LV9bkjrUAKT+ZpSbsJaT+bqrd5FpB1d3jATBRnXyo
+	 2IOTmdXHj+ZR+KKJrwGUBclOfPdhdrhX1kyHmsSom3W/2g3vG1hk2G2DQFpRdcd9z8
+	 X4e7qvYm2zPIqzuulrpny+TEkXNXzB6EI0X0j11UtgRrB6bKgpi52eQ9nzTpQTwe65
+	 JTQ1o8fo7Mv+p443UYTy5Vc3YMiWCu3k+TiwGPhv9ftfAwTGrk46jTHljjo4M9j9Ye
+	 CUYETsku00O4m91oMpTNaCUeGTknhuZ7m3QGIsPprFo4jDIzni2J3pwuEKLxc+6q7U
+	 ++7TAWQ+8ydRw==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7a3ee3cso817685066b.2;
+        Tue, 19 Aug 2025 06:35:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6UYM0+6Iy0aOFP9/oNIk3zpUwJbdd4EfL+ym242C7L9ZZqL0D4FEkt7aPHkucy13PeJAB6jiDTpPPtZz4@vger.kernel.org, AJvYcCUtwCGp0cCWo6L8RVr5Re/xNboM+1gLSI5aBlDNg7vVg8lwBpluGZMjqa93g25qf/dGPWpqtiQA2UP9U1j0cA==@vger.kernel.org, AJvYcCV2x4WYg1Qdc3sP5v02H3u+hXpWy3GuWzAcbS+2/MMT+qApSf8eAIPe0evqKXlnS+GwUGQA760vmZsq@vger.kernel.org, AJvYcCXk4x18D/UwqcqAfKU2H7ucVk4QS5x9mpX3ZrL3xIv2zPqPgrmplkm5warL6z1o3z+NQk+8GFYVS+Ibivs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4MNa2QXLST5gde706xsNsNheAe0qT29LR/Z2V/lpitd7uWEPB
+	/zBbOB03xcxIswRwxpxOAuouS+Z8XPhGqrg+mnRzrGdCum8Cbxe5ZYBmsJPavuAx97BC1u9Vx8Y
+	r3MkKY0exlNXEjtt9K0moUDpt0DhnhA==
+X-Google-Smtp-Source: AGHT+IH2MkYx7kpJ+xN9k3+oODecUEIgiLoLvMLtyUB1pi/Kr5EqVSB7WGUHwSSty8Ksq7ALpKgNCHIiH3bxADNv84A=
+X-Received: by 2002:a17:907:d8e:b0:afd:bd24:4de1 with SMTP id
+ a640c23a62f3a-afddd0cf7efmr261603866b.33.1755610532515; Tue, 19 Aug 2025
+ 06:35:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819131619.86396-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250819131619.86396-2-krzysztof.kozlowski@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Aug 2025 15:35:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXNig2sVKQ5SdLMDjtog-PxUh+tscMqOF_K-iNSgoWgOg@mail.gmail.com>
-X-Gm-Features: Ac12FXx9MbvFi1UoawwCV3F-hJ1gP4_2ncCWbFcegaVoU6xZisrREmDwKB6IPGo
-Message-ID: <CAMuHMdXNig2sVKQ5SdLMDjtog-PxUh+tscMqOF_K-iNSgoWgOg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: Minor whitespace cleanup
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 19 Aug 2025 08:35:20 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
+X-Gm-Features: Ac12FXwlOsoI_6EYLq8GGEsTwxxs1hQzLvyShUqH2EB_7YD-9IGjwYC8P64fEO4
+Message-ID: <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
+Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
+To: srinivas.kandagatla@oss.qualcomm.com
+Cc: srini@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 19 Aug 2025 at 15:16, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> The DTS code coding style expects exactly one space around '='
-> character.
+On Thu, Jul 24, 2025 at 8:28=E2=80=AFAM <srinivas.kandagatla@oss.qualcomm.c=
+om> wrote:
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+>
+> Qcom Slimbus controller driver is totally unused and dead code, there is
+> no point in keeping this driver in the kernel without users.
+>
+> This patch removes the driver along with device tree bindings.
+>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> ---
+>  .../bindings/slimbus/qcom,slim.yaml           |  86 --
+>  drivers/slimbus/Kconfig                       |   7 -
+>  drivers/slimbus/Makefile                      |   3 -
+>  drivers/slimbus/qcom-ctrl.c                   | 735 ------------------
+>  4 files changed, 831 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/slimbus/qcom,slim.y=
+aml
+>  delete mode 100644 drivers/slimbus/qcom-ctrl.c
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.18.
+This adds warnings to dt_binding_check:
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+/example-0/soc/slim@28080000: failed to match any schema with
+compatible: ['qcom,apq8064-slim', 'qcom,slim']
+Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+/example-0/soc/slim@28080000: failed to match any schema with
+compatible: ['qcom,apq8064-slim', 'qcom,slim']
 
