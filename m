@@ -1,356 +1,306 @@
-Return-Path: <linux-kernel+bounces-775588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2513DB2C0F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:49:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CD1B2C10C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32273A2D1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C025861DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8635B334719;
-	Tue, 19 Aug 2025 11:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2591E32A3E2;
+	Tue, 19 Aug 2025 11:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SeRhq6hD"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTxGDyR7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B33332C334
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0BD1E4AB
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603959; cv=none; b=kGxb6OTbKAgL3YZXDE6SPxgbCXju+2cFCg91aOB//jLr+2TFY3rTbhrhOIY2g9jejnIpfu7ujmAqVBOe6RNGKiv7fHJmUqOfXtR9Notjl5Gqesztmakv+/2Qa6t5GEKm0AJyfCV/v5FeZFlVOvHfQZOqEFRLRscuQuwlH8fim9Y=
+	t=1755604024; cv=none; b=SmmSW1t/W1GCg3HaWIhZD9V65QasrUedNjki+nGbCSsynkyO+yKcslzbgClVAzhRQf2VR1Tr4oUj4+T7PClwdhqYnf6GAgXZMVf/LZUGucHN5WRjf72nbdO1X5m+naIGQaLDHGtB7Pfjp1cc7CJzMQjdqmAhLoDL5BW9ySYHr5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603959; c=relaxed/simple;
-	bh=8q8yoH0OH0fUK6u5BVFDQi4Ifhan8hzBsvGgsfXDGMU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SRWtBv22U1nTISESado/QPOVvj0vIfU3ukfEyFvalb3MiH+LQ9HoEjDMXaF5Z7mA6g01ESUmaBQHkXbhIEcv+rvyxzmDrdeQnA08i3QVW1OtNNr6VjJyEKaW1vXs5wrXIBIuYUTgwQ2ZSAPB6W8f8jU/ZzxDZCOQOrWCmQbB4XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SeRhq6hD; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9dc52c430so2564048f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755603956; x=1756208756; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5BohF4EtiUuYNnWKjjEQo5YJp9OK645hWvc5QEpxWs4=;
-        b=SeRhq6hD7E2tTZIYzwMLUV2V1MA/pCRLEubtcBvigZ49wOyS4cBFyx9Ro1Er8UjSxs
-         /M5MorfDMxWiUBeK5jzbU5/Nm+Fg57pbGBvYDqPJjpQrrbpBHtsZ8fo5pWSDWXuQcAop
-         e52IvjJFMp6veNMjdkj0nDj/TKN2DZLM6D6wgF2CwA58IJVt3xFGHy7aDIZCsjzBo+CF
-         rhWJIsfn3QgZeLPsOho46ASJWEXV69G12xgIzm3P+ryXxKfDKZF8H3ERg/WHDJ1yn9tN
-         rSDY8wBxO4x471zfg5KHwoTfRY0ExoAfgCAne/ykFvbE02kGsBYGzRov5wxelKKPL74l
-         Esfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755603956; x=1756208756;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5BohF4EtiUuYNnWKjjEQo5YJp9OK645hWvc5QEpxWs4=;
-        b=N7NTPMQKSWghkMlCKqJM5zETd/Be0/01GDLzbRWAtp00SI9Ni8u0Q9xNHBlv/T7+pP
-         Sx7XHc8wovPVnWxMd6Wle0wt9MtUg+OJlhxcNbWG79d+dFE+ZzBBVGZ3jZcOpfOTfojx
-         Xhe3eS9e52EIbsPf3UYmMNbUhESUuYIHcBsv2IQuE5BpMy6wXVAm4SNUjSDPdU++djej
-         RBS9mUwcKRBpUSUmjw6s6hQXX/p6vdYAGQ5AZCn6ooTD0PdZ39uAzTKsP98HIgLF3orp
-         ZOdTHPU2Vr1/4AFREe7qEOGv7avsJmM7M+nHSu1Cjn0DMbu1u4/aKI0cqj+O+f9S6FI3
-         FbAQ==
-X-Gm-Message-State: AOJu0YzB4xCrRB075j0txj11aw33sxcKPFK9G7ZlqB3QWvpHyED8ql5J
-	rfxzT5L90ZXA14flHbGsnkC5iz48q5Oup+z5deM246sFZt3rMc+lwvTQpY3LMhbD9Ik=
-X-Gm-Gg: ASbGncuYQaWo+vgXuX94hSLwvm8P5NqBxZAiQKymr+RY7wRmFsiIwXZ/LYEaL3LZ64L
-	XpSeGL6jd25iYaZ98oy7MH+Sa3tNIWnlbvIawox+6XxH5TqZZWHY+V9mkzjOsKYsPRuoEHeqCAl
-	q5pfyzSetpr3pac7vr4qY5ilxEnf5yBNZt1NnhLYEiNhkdi4P/HCebUN6i2F/l3jTeGtcAzJ1d8
-	iE0WqjTixHtNv2NZwFK4JiKdPiR0/K5u9W8wZ9xM4yU03wJJqV5U/uNtVbOl9VNqdkO6Y7jWnF9
-	g+MOW2+tVOpT+6pRmR9TGA+D7kjw9gCvACK5ajQa2ezTwOBwcP7bN1XPM/AfUOHeHyEGzbPyNI9
-	Uop9uVMsjtzxY2dSPCiOUR+Vdv9uLH+hQx9ciCzGrEl4lVUVWd/HAFPPKpnHHaZD2Wz9w2/FzMi
-	VufITwRhApBh2j
-X-Google-Smtp-Source: AGHT+IHiPrZjgMCEzLKrHz6FpbpVq1VUkxFTXmy6o02XM5DHXgqXcijADKLMgzV7WnkvIgeHncjraQ==
-X-Received: by 2002:a05:6000:2004:b0:3a5:2d42:aa25 with SMTP id ffacd0b85a97d-3c0ed1f348bmr1564826f8f.50.1755603955683;
-        Tue, 19 Aug 2025 04:45:55 -0700 (PDT)
-Received: from ta2.c.googlers.com (245.92.187.35.bc.googleusercontent.com. [35.187.92.245])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077788df7sm3430817f8f.48.2025.08.19.04.45.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 04:45:55 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 19 Aug 2025 11:45:38 +0000
-Subject: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
+	s=arc-20240116; t=1755604024; c=relaxed/simple;
+	bh=6U2Rg5LmJXqhRnNkGxZf+eWaD5s7DR7T3ETF0Ln/Vek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kiS27a6tYvXWgpuWO3csL/lbTsHwC079UMpJmRqoO9sLYWS5Hg/K1GXGEYr7GlBLA1de4COcTNYcRWufU3yXMbzuhFNErC6QdY0Bj/rDTyvnwwQfDBBv53ywz5FQge2hEwAlstnd9B1m9BnsU3OKbL1RLOh+MlMCEddmlOFqSLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTxGDyR7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD37C116B1;
+	Tue, 19 Aug 2025 11:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755604023;
+	bh=6U2Rg5LmJXqhRnNkGxZf+eWaD5s7DR7T3ETF0Ln/Vek=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NTxGDyR7ATSUXnStkc/urLe3P/1HoC/9YG0XL78Fe7tdZVWD5ra/Dp9B5qOmo4IPr
+	 qzSSLR3CFLJs0CMdyRMwo/2rTQQYfo3IOpogYxtWbPdnVxiw91QSOTP/6Wxy071khl
+	 /gjfE+ayLnLPPvkpS9raDf+Rr77F0ZyTV+zr1wnu8mBHjFh1GvOzjvy9hCJT09fAmU
+	 tz2k85wXcmhOG+AB/43LHB6na2n+KeSygOrsLe1aBI1u/LzkQWcRAK8+RBFNR1z7jD
+	 wJ6zNbeS5N/ACxY8RIC9baXzH8iGv1m54j8635m/nHANem1QuRVs2p/ZwSKhTeGbja
+	 oqnd3RhgKxDRA==
+Message-ID: <28867f10-aa68-449e-bd1c-2e69a26b5f96@kernel.org>
+Date: Tue, 19 Aug 2025 12:47:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] nvmem: s32g-ocotp: Add driver for S32G OCOTP
+To: Ciprian Costea <dan.carpenter@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: linaro-s32@linaro.org, NXP S32 Linux Team <s32@nxp.com>,
+ linux-kernel@vger.kernel.org
+References: <cover.1755341000.git.dan.carpenter@linaro.org>
+ <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
-References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
-In-Reply-To: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755603952; l=7617;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=8q8yoH0OH0fUK6u5BVFDQi4Ifhan8hzBsvGgsfXDGMU=;
- b=jxt0eQAwhd6DT9TsOur1oHjS9c7qn2o8JHVXwh1iXrKemD+TMGRIF/c1A3mQ6S8uUBRB/Gj+w
- JSq9nsCgOR8C9NcNGgFYfkyO5z5ydEhAoZC8DCIZ2Wuhdkgo3JIYJTs
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Add the Exynos ACPM clock driver. It provides support for clocks that
-are controlled by firmware that implements the ACPM interface.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/clk/samsung/Kconfig    |  10 +++
- drivers/clk/samsung/Makefile   |   1 +
- drivers/clk/samsung/clk-acpm.c | 192 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 203 insertions(+)
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 76a494e95027af26272e30876a87ac293bd56dfa..fe05212d7dd882adde9cd5c656cd0d58d501c42f 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
- 	  status of the certains clocks from SoC, but it could also be tied to
- 	  other devices as an input clock.
- 
-+config EXYNOS_ACPM_CLK
-+	tristate "Clock driver controlled via ACPM interface"
-+	depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
-+	help
-+	  This driver provides support for clocks that are controlled by
-+	  firmware that implements the ACPM interface.
-+
-+	  This driver uses the ACPM interface to interact with the firmware
-+	  providing all the clock controlls.
-+
- config TESLA_FSD_COMMON_CLK
- 	bool "Tesla FSD clock controller support" if COMPILE_TEST
- 	depends on COMMON_CLK_SAMSUNG
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index b77fe288e4bb484c68d1ff497acc0b83d132ea03..04b63436b12f6f5169575d74f54b105e97bbb052 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos990.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov9.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov920.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-gs101.o
-+obj-$(CONFIG_EXYNOS_ACPM_CLK)		+= clk-acpm.o
- obj-$(CONFIG_S3C64XX_COMMON_CLK)	+= clk-s3c64xx.o
- obj-$(CONFIG_S5PV210_COMMON_CLK)	+= clk-s5pv210.o clk-s5pv210-audss.o
- obj-$(CONFIG_TESLA_FSD_COMMON_CLK)	+= clk-fsd.o
-diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..e3e648331ad54072876f52a63b11fe259a0b9be2
---- /dev/null
-+++ b/drivers/clk/samsung/clk-acpm.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Samsung Exynos ACPM protocol based clock driver.
-+ *
-+ * Copyright 2025 Linaro Ltd.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/firmware/samsung/exynos-acpm-protocol.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+
-+#include <dt-bindings/clock/google,gs101.h>
-+
-+struct acpm_clk {
-+	u32 id;
-+	struct clk_hw hw;
-+	unsigned int acpm_chan_id;
-+	const struct acpm_handle *handle;
-+};
-+
-+#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
-+
-+struct acpm_clk_variant {
-+	unsigned int id;
-+	const char *name;
-+};
-+
-+struct acpm_clk_match_data {
-+	const struct acpm_clk_variant *clks;
-+	unsigned int nr_clks;
-+	unsigned int acpm_chan_id;
-+};
-+
-+static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct acpm_clk *clk = to_acpm_clk(hw);
-+
-+	return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
-+					clk->acpm_chan_id, clk->id, 0);
-+}
-+
-+static long acpm_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	/*
-+	 * We can't figure out what rate it will be, so just return the
-+	 * rate back to the caller. acpm_clk_recalc_rate() will be called
-+	 * after the rate is set and we'll know what rate the clock is
-+	 * running at then.
-+	 */
-+	return rate;
-+}
-+
-+static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct acpm_clk *clk = to_acpm_clk(hw);
-+
-+	return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
-+					clk->acpm_chan_id, clk->id, rate);
-+}
-+
-+static const struct clk_ops acpm_clk_ops = {
-+	.recalc_rate = acpm_clk_recalc_rate,
-+	.round_rate = acpm_clk_round_rate,
-+	.set_rate = acpm_clk_set_rate,
-+};
-+
-+static int __init acpm_clk_ops_init(struct device *dev, struct acpm_clk *aclk,
-+				    const char *name)
-+{
-+	struct clk_init_data init = {};
-+
-+	init.name = name;
-+	init.ops = &acpm_clk_ops;
-+	aclk->hw.init = &init;
-+
-+	return devm_clk_hw_register(dev, &aclk->hw);
-+}
-+
-+static int __init acpm_clk_probe(struct platform_device *pdev)
-+{
-+	const struct acpm_clk_match_data *match_data;
-+	const struct acpm_handle *acpm_handle;
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_hw **hws;
-+	struct device *dev = &pdev->dev;
-+	struct acpm_clk *aclks;
-+	unsigned int acpm_chan_id;
-+	int i, err, count;
-+
-+	acpm_handle = devm_acpm_get_by_node(dev, dev->parent->of_node);
-+	if (IS_ERR(acpm_handle))
-+		return dev_err_probe(dev, PTR_ERR(acpm_handle),
-+				     "Failed to get acpm handle.\n");
-+
-+	match_data = of_device_get_match_data(dev);
-+	if (!match_data)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Failed to get match data.\n");
-+
-+	count = match_data->nr_clks;
-+	acpm_chan_id = match_data->acpm_chan_id;
-+
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = count;
-+	hws = clk_data->hws;
-+
-+	aclks = devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
-+	if (!aclks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < count; i++) {
-+		const struct acpm_clk_variant *variant = &match_data->clks[i];
-+		struct acpm_clk *aclk = &aclks[i];
-+
-+		hws[i] = &aclk->hw;
-+
-+		aclk->id = variant->id;
-+		aclk->handle = acpm_handle;
-+		aclk->acpm_chan_id = acpm_chan_id;
-+
-+		err = acpm_clk_ops_init(dev, aclk, variant->name);
-+		if (err)
-+			return dev_err_probe(dev, err,
-+					     "Failed to register clock.\n");
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clk_data);
-+}
-+
-+#define ACPM_CLK(_id, cname)					\
-+	{							\
-+		.id		= _id,				\
-+		.name		= cname,			\
-+	}
-+
-+static const struct acpm_clk_variant gs101_acpm_clks[] __initconst = {
-+	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
-+	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
-+	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
-+	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
-+	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
-+	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
-+	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
-+	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
-+	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
-+	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
-+	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
-+	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
-+	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
-+	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
-+};
-+
-+static const struct acpm_clk_match_data acpm_clk_gs101 __initconst = {
-+	.clks = gs101_acpm_clks,
-+	.nr_clks = ARRAY_SIZE(gs101_acpm_clks),
-+	.acpm_chan_id = 0,
-+};
-+
-+static const struct of_device_id acpm_clk_ids[] __initconst = {
-+	{
-+		.compatible = "google,gs101-acpm-dvfs-clocks",
-+		.data =  &acpm_clk_gs101,
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, acpm_clk_ids);
-+
-+static struct platform_driver acpm_clk_driver __refdata = {
-+	.driver	= {
-+		.name = "acpm-clocks",
-+		.of_match_table = acpm_clk_ids,
-+	},
-+	.probe = acpm_clk_probe,
-+};
-+module_platform_driver(acpm_clk_driver);
-+
-+MODULE_AUTHOR("Tudor Ambarus <tudor.ambarus@linaro.org>");
-+MODULE_DESCRIPTION("Samsung Exynos ACPM clock driver");
-+MODULE_LICENSE("GPL");
+On 8/16/25 11:47 AM, Ciprian Costea wrote:
+> Provide access to the On Chip One-Time Programmable Controller (OCOTP)
+> pages on the NXP S32G platform.
+> 
+> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/nvmem/Kconfig            |  10 ++
+>  drivers/nvmem/Makefile           |   2 +
+>  drivers/nvmem/s32g-ocotp-nvmem.c | 171 +++++++++++++++++++++++++++++++
+>  3 files changed, 183 insertions(+)
+>  create mode 100644 drivers/nvmem/s32g-ocotp-nvmem.c
+> 
+> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+> index edd811444ce5..6a1cafa74e36 100644
+> --- a/drivers/nvmem/Kconfig
+> +++ b/drivers/nvmem/Kconfig
+> @@ -314,6 +314,16 @@ config NVMEM_ROCKCHIP_OTP
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called nvmem_rockchip_otp.
+>  
+> +config NVMEM_S32G_OCOTP
+> +	tristate "S32G SoC OCOTP support"
+> +	depends on ARCH_S32
+> +	help
+> +	  This is a driver for the On Chip One-Time Programmable controller
+> +	  (OCOTP) available on S32G platforms.
+> +
+> +	  If you say Y here, you will get support for the One Time
+> +	  Programmable memory pages.
+> +
+>  config NVMEM_SC27XX_EFUSE
+>  	tristate "Spreadtrum SC27XX eFuse Support"
+>  	depends on MFD_SC27XX_PMIC || COMPILE_TEST
+> diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
+> index 2021d59688db..b7bfa78af8f3 100644
+> --- a/drivers/nvmem/Makefile
+> +++ b/drivers/nvmem/Makefile
+> @@ -64,6 +64,8 @@ obj-$(CONFIG_NVMEM_ROCKCHIP_EFUSE)	+= nvmem_rockchip_efuse.o
+>  nvmem_rockchip_efuse-y			:= rockchip-efuse.o
+>  obj-$(CONFIG_NVMEM_ROCKCHIP_OTP)	+= nvmem-rockchip-otp.o
+>  nvmem-rockchip-otp-y			:= rockchip-otp.o
+> +obj-$(CONFIG_NVMEM_S32G_OCOTP)		+= nvmem-s32g-ocotp-nvmem.o
+> +nvmem-s32g-ocotp-nvmem-y		:= s32g-ocotp-nvmem.o
+>  obj-$(CONFIG_NVMEM_SC27XX_EFUSE)	+= nvmem-sc27xx-efuse.o
+>  nvmem-sc27xx-efuse-y			:= sc27xx-efuse.o
+>  obj-$(CONFIG_NVMEM_SNVS_LPGPR)		+= nvmem_snvs_lpgpr.o
+> diff --git a/drivers/nvmem/s32g-ocotp-nvmem.c b/drivers/nvmem/s32g-ocotp-nvmem.c
+> new file mode 100644
+> index 000000000000..37355bd83b17
+> --- /dev/null
+> +++ b/drivers/nvmem/s32g-ocotp-nvmem.c
+> @@ -0,0 +1,171 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2023-2025 NXP
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define S32G_OCOTP_BANK_OFFSET	512u
+> +#define S32G_OCOTP_BANK_SIZE	32u
+> +#define S32G_OCOTP_WORD_SIZE	4u
+> +
+> +struct s32g_fuse {
+> +	u8 bank;
+> +	u8 words_mask;
+> +};
+> +
+> +struct s32g_fuse_map {
+> +	const struct s32g_fuse *map;
+> +	size_t n_entries;
+> +};
+> +
+> +struct s32g_ocotp_priv {
+> +	struct device *dev;
+> +	void __iomem *base;
+> +	const struct s32g_fuse_map *fuse;
+> +};
+> +
+> +static const struct s32g_fuse s32g_map[] = {
+> +	{ .bank = 0,  .words_mask = GENMASK(6, 2) },
+> +	{ .bank = 1,  .words_mask = GENMASK(7, 5) },
+> +	{ .bank = 2,  .words_mask = GENMASK(1, 0) },
+> +	{ .bank = 2,  .words_mask = GENMASK(4, 2) },
+> +	{ .bank = 4,  .words_mask = BIT(6) },
+> +	{ .bank = 5,  .words_mask = BIT(1) },
+> +	{ .bank = 5,  .words_mask = BIT(2) },
+> +	{ .bank = 6,  .words_mask = BIT(7) },
+> +	{ .bank = 7,  .words_mask = GENMASK(1, 0) },
+> +	{ .bank = 11, .words_mask = GENMASK(5, 0) },
+> +	{ .bank = 11, .words_mask = GENMASK(7, 6) },
+> +	{ .bank = 12, .words_mask = GENMASK(2, 0) },
+> +	{ .bank = 12, .words_mask = BIT(7) },
+> +	{ .bank = 13, .words_mask = GENMASK(4, 2) },
+> +	{ .bank = 14, .words_mask = BIT(1) | BIT(4) | BIT(5) },
+> +	{ .bank = 15, .words_mask = GENMASK(7, 5) },
+> +};
+> +
+> +static const struct s32g_fuse_map s32g_fuse_map = {
+> +	.map = s32g_map,
+> +	.n_entries = ARRAY_SIZE(s32g_map),
+> +};
+> +
+> +static const struct of_device_id ocotp_of_match[] = {
+> +	{ .compatible = "nxp,s32g2-ocotp", .data = &s32g_fuse_map},
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static u32 get_bank_index(unsigned int offset)
+> +{
+> +	return (offset - S32G_OCOTP_BANK_OFFSET) / S32G_OCOTP_BANK_SIZE;
+> +}
+> +
+> +static u32 get_word_index(unsigned int offset)
+> +{
+> +	return offset % S32G_OCOTP_BANK_SIZE / S32G_OCOTP_WORD_SIZE;
+> +}
+> +
+> +static bool is_valid_word(struct s32g_ocotp_priv *s32g_data,
+> +			  unsigned int offset, int bytes)
+> +{
+> +	const struct s32g_fuse_map *fuse = s32g_data->fuse;
+> +	u32 bank, word;
+> +	size_t i;
+> +
+> +	if (offset < S32G_OCOTP_BANK_OFFSET)
+> +		return false;
+If you do not want to allow reading below S32G_OCOTP_BANK_OFFSET, Please
+take a look at keepouts for such things.
 
--- 
-2.51.0.rc1.167.g924127e9c0-goog
+> +
+> +	if (bytes != S32G_OCOTP_WORD_SIZE)
+> +		return false;
+> +
+Why one word at a time? reading for sysfs will not guarantee that it
+will be S32G_OCOTP_WORD_SIZE.
+
+> +	bank = get_bank_index(offset);
+> +	word = get_word_index(offset);
+> +	if (bank >= fuse->n_entries)
+> +		return false;
+> +
+> +	for (i = 0; i < fuse->n_entries; i++) {
+> +		if (fuse->map[i].bank == bank &&
+> +		    fuse->map[i].words_mask & BIT(word))
+> +			return true;
+
+May be we can do something in keepout areas?
+
+--srini
+> +	}
+
+> +	return false;
+> +}
+> +
+> +static int s32g_ocotp_read(void *context, unsigned int offset,
+> +			    void *val, size_t bytes)
+> +{
+> +	struct s32g_ocotp_priv *s32g_data = context;
+> +
+> +	if (!is_valid_word(s32g_data, offset, bytes))
+> +		return -EINVAL;
+
+> +
+> +	/* Read from Fuse OCOTP Shadow registers */
+> +	*(u32 *)val = ioread32(s32g_data->base + offset);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct nvmem_config s32g_ocotp_nvmem_config = {
+> +	.name = "s32g-ocotp",
+> +	.add_legacy_fixed_of_cells = true,
+> +	.read_only = true,
+> +	.word_size = S32G_OCOTP_WORD_SIZE,
+> +	.reg_read = s32g_ocotp_read,
+> +};
+> +
+> +static int s32g_ocotp_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *of_matched_dt_id;
+> +	struct s32g_ocotp_priv *s32g_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct nvmem_device *nvmem;
+> +	struct resource *res;
+> +
+> +	of_matched_dt_id = of_match_device(ocotp_of_match, dev);
+> +	if (!of_matched_dt_id) {
+> +		dev_err(dev, "Unable to find driver data.\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	s32g_data = devm_kzalloc(dev, sizeof(*s32g_data), GFP_KERNEL);
+> +	if (!s32g_data)
+> +		return -ENOMEM;
+> +
+> +	s32g_data->fuse = of_device_get_match_data(dev);
+> +	if (!s32g_data->fuse) {
+> +		dev_err(dev, "Cannot find platform device data.\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	s32g_data->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+> +	if (IS_ERR(s32g_data->base)) {
+> +		dev_err(dev, "Cannot map OCOTP device.\n");
+> +		return PTR_ERR(s32g_data->base);
+> +	}
+> +
+> +	s32g_data->dev = dev;
+> +	s32g_ocotp_nvmem_config.dev = dev;
+> +	s32g_ocotp_nvmem_config.priv = s32g_data;
+> +	s32g_ocotp_nvmem_config.size = resource_size(res);
+> +
+> +	nvmem = devm_nvmem_register(dev, &s32g_ocotp_nvmem_config);
+> +
+> +	return PTR_ERR_OR_ZERO(nvmem);
+> +}
+> +
+> +static struct platform_driver s32g_ocotp_driver = {
+> +	.probe = s32g_ocotp_probe,
+> +	.driver = {
+> +		.name = "s32g-ocotp",
+> +		.of_match_table = ocotp_of_match,
+> +	},
+> +};
+> +module_platform_driver(s32g_ocotp_driver);
+> +MODULE_AUTHOR("NXP");
+> +MODULE_DESCRIPTION("S32G OCOTP driver");
+> +MODULE_LICENSE("GPL");
 
 
