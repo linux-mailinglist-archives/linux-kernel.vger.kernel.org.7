@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-776233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A82B2CA58
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:17:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32699B2CA5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B11F85656F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64381BC8623
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3948B2F39DC;
-	Tue, 19 Aug 2025 17:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614022F0680;
+	Tue, 19 Aug 2025 17:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="KPPJJpOm"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YDpVHwao"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967902FF163
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDFB28504F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755623769; cv=none; b=LS+Fn11EGSYobEjwOZSvwTwAGf6Xt/De4n/xA5MYwmDesFXRl+tEF3Nd3HyV9B1lXobNW4IBVSCQvxce3Ohf3qpAHg6PNoOVsoimVtdw/Nu6JIVfpr4q5uA9spi9nqqIXVnc5FkZ3rbex7xwbs7mftfeeBNUJSajh9ai94hTaEY=
+	t=1755623876; cv=none; b=n5mTLSwKqm0+xQtEzdzrlaqEsy9HQJSHkwUklWi7CkmAMDfEwNkupOLzUWXndjeXX/YxV/xLWWzPwofUq3HWM9xGtTD4iOPj4Myl7W7KbY7Twslwr9C9IFP8aK/LLvwMptcb2UhRa4YqnzWu1/xmChgl9AY43HP9KHYxGm/rXqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755623769; c=relaxed/simple;
-	bh=BZYDiTLstuZSLyabvvl+4QvFKJf5yMcRB/VfZpDWAm4=;
+	s=arc-20240116; t=1755623876; c=relaxed/simple;
+	bh=nvWzzpqNpT6eJfaRE4PBD9zQF//aAwvkd8/k/iioYeQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tey3V32SBBnj2RO0rEU3gz2kEM5UuYD7FVjNfBcs2lfwz8bTefIUj4DBG+xcGHfCk5h1W+6iRpZQZErgDUs6j/3v4jaLKcU0rxYdit5HeTFhSD11eNuV6d2Co66xuyKHbSyOK+Mu1MwZMhsTV4gYHjUVdJ85rxx/LCBflu81Mpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=KPPJJpOm; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-74381ffff9fso2382053a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:16:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755623763; x=1756228563; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TuuWIhz3gxthyB2SlN/OhakmBPvUO7DWnkD44CfcuTk=;
-        b=KPPJJpOm+sIx0cBCE43jrOkAjOy1Z9k7A38ZtyzKilXpnJPE4PVhrh3/h0tfftH7VM
-         UAKOM5Xaq0/C5ulyRGZaZEYWwls2mzkueYFXfyoOll4lxni/jjJHyuiteWeWJ4Uj4uT+
-         ZAm1ktsG2eUXuGr94OmBNiVAIp/mezXEYIqU0bSuTnzJf7M9uH0E2uTNDqeJp7zs+DwL
-         P0QOoY6fQJB3vqxbif7oLi0Jn3yXppuY74OSUb9fDtT6Y94gL/1s5BK/JHXmKWj8cWyC
-         j98LQWgZg1SJaYyRXpDjg0rhBkq6q8xnz6jr2DGnXh4pIGb0M98Q+N1sBmwLSy48BsT6
-         H0JQ==
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfbWwjsBQ4I+oEfv63CNWkdnWLOdVAh6G/S+TuWgmbmRvl+Z6BH2auvIWp5dH+vWoUZhkjaGGz7rxa22Ow945fyzhqKe3917Po5vGDm+tdiEtyhe+W42xmUT9qilsXxGDsiV7ITZis1H42haQbNGUYpsxWMfwh4ipy5nPj4ju4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YDpVHwao; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90Yi0000864
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:17:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=jcJugMEmP+bjapXf/nEWeVTp
+	niYytQQ7IyAUbp7KDGw=; b=YDpVHwaoiNDYc1EstbKRajG+5Bss+xcUqnjV8xew
+	SHQq9vWf0M/krUsz0Oo02Wb4CR9CUL1wVSp3tFWLgLHDX8bpXVtDsQ/cKXYQxEfK
+	ctDGkTLXNxOfhz3ggJEFFO8rXi27DGzstYB2dgbzC4XGnRTwtDkOy4NHFIxSmlLS
+	CofzYV6sCtFJsOR/ZkP+xTKOz63pQjsEGo3bv2N2zDzBMBIilL8JJ4+Mf+uQWueK
+	LWP2GAB1EJ7QnWaYl3AHuzqBqdtKHtRE19G73O68BmwHF/SRQPez54S9msIUEUsr
+	NcnuZsLbN3Q86pLKMGUcRPobdK+HYTbZ+2WX8TVzDnAT7A==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jh079bgc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:17:53 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b474d5ff588so1521507a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:17:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755623763; x=1756228563;
+        d=1e100.net; s=20230601; t=1755623872; x=1756228672;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TuuWIhz3gxthyB2SlN/OhakmBPvUO7DWnkD44CfcuTk=;
-        b=Ve1AhCU+1B5zCY6FIzNXr2Q3XpGBlntZLgcFepBZBJLMpllYAxNCkzHcE45FAs8DuM
-         l8MxBPS0xmMwhnpcnP3pxV48UV81T+po9NO4VO2AdyEnI4/nqkJ073NUgqIcZ5D6ANH/
-         EWoMa2hss+FKpJ9jKLsfz0uj7LEEyMHoPyD0e89Kff3c9FCc94evpwQ5/cG99IUwLT+V
-         j4TWA3npn4Unxyik5M4z7n/98J1i2KHaWG84mityBfwR3v/3vr9RCnZFpCFBYMRk6kLN
-         2Oj0mRYgWcQuYtFiDA2yAHX/XFgcM3/BlqRYDt+NhF41qOYPghZkPGldD6eM7oNaZe55
-         ftnw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1l8U2/wAdqkHymERm57SzQDFDh8X9EU+ZNAP5PDe8VwRoNJZN0JNlotC+cy9eNgkdRMLXycBs85U1uXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyio9yDLkAwPqbC8EvWfJZk6HYDZlPt8a2ooXN8O/lMlHZ/nRpz
-	5wJvBvCwiquIFLaBrVXTndOFX808ozgCy/uf5RW+M6nMqBSz0pjg69657Fa1nn6kYKY=
-X-Gm-Gg: ASbGncuYjTcAMTAnllIA/SLNe8tm7C5ThCGSTIMWGx/KyqZ3+7eWLuTq4Q8Y6V0nSiy
-	xI8/IWk6nbWljTpcBO+p5xsxDa8E8sjX258Fg/FHKH/a3ptL0T5hQGDBBiI9vkBYX6FGGbmgkWK
-	3kxVATrS6+2x2f+RIJoHtP6w79ag9yenIPeXsSP1AExhLx1jRM3TOeaHgca9/SgNkjtKdRJk7i7
-	od56cUdns5tPWpTA+2UbB8cdPoCdXE6XyRtg553+Op4nJZNX5vt5merT/ow+2cncVkGEl9VWc16
-	zjZ8elipP3B22H8cfthVR4EwRX7xKPG6YC12+bc4JUdqnRiUDNf1GTm4bv31M+mtZc3HEiyslfZ
-	FU+r/twYfwq50pWa4CE2qRhI3
-X-Google-Smtp-Source: AGHT+IEqY5Sa4EeVRE3eUDIyfaGN2w8S8iuJbWvQsBaTQLn0TEBfS1W/KcbAkXvUZpOTzEaoHDtOXQ==
-X-Received: by 2002:a05:6830:3917:b0:743:152a:114c with SMTP id 46e09a7af769-744e0a9716bmr1907472a34.13.1755623763402;
-        Tue, 19 Aug 2025 10:16:03 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c947b49cesm3570660173.33.2025.08.19.10.16.02
+        bh=jcJugMEmP+bjapXf/nEWeVTpniYytQQ7IyAUbp7KDGw=;
+        b=UeWsZO3KOoSdA2AalJOK4NNFU+LXIZtiQRHsZJyxnVSY90BOnnX96GC6E7i9TPOiuj
+         GM3Kj1PbNy2Y7ED30mn5HCJbNAx3XJ2I/7uJLaYiXlvrxhO8v8m9qDqGsf+u7wmE5u3R
+         JzCfwJCO6ShaKsfRut8Od+DypVa4EuCI5seCApYhX9hNLtkHCpd/m9XjtzY3CK4HAwHM
+         oCgP1H9IyWKPSEptQnzCsB/u7sk5qujw74RQ5O4yEVpKVQR+8ygydzV5fqbw4f5yS3Zn
+         vxeUAz3nm51Ax7wSoCoi5aUDd7Zz9MuIMBBV/HZXvw39gV2SaZJ2BR+DQ6wmWzgs8uWB
+         J45A==
+X-Forwarded-Encrypted: i=1; AJvYcCVjSU0hKBgDWTnGKIXmFTNolTCioDPQ1VvmChU3Y1qAoXqUt1T2oja0IUrCs08p3+Hb+QPjHBHopeEE30o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymfydToNLb9MJYFJ9mVHRCytvPzyQnbDYKvPZichR5HmNyk2M8
+	Hr4MO2fCMoGWziX3dpgx07QmyxKc3Jgucn15+rUGp0Q+qRgVCElQQO36SsvDukCJ4bA7EYSQqtl
+	WqjlupVpItIZZt7NO/ed/PVKaTB/G5sxvRwX+T1JnOHMucfLoEQA4MHj+L00dCnPORpA=
+X-Gm-Gg: ASbGncuvMcFIMQ+worMhZmUPyi68DDfp5v8O3GH5BEixUzQFWJMIXiLUlfUr6SA417Y
+	Dzj9CYfeq0aoZkEIb7XUhg1LQ6vf1xVzY1oL3EWyFXX1KZMpi6ZwrOdmQAbyJLwBJTGZeifXd+t
+	kbpCGkU05duUb2/879YvNPb5ORxz0INE/M6BHN2nCVqgOBi0mRelqAAk+VRB3W0sbgbBPq8bMkt
+	5k+Je6uQOaPdgJenR9wogvGM+YQ+OJOkydw8lae2lq1NKx1k82lBM7UNIPyoQUOuvrNL6VBogfj
+	RmRwfgln+ncWJgccgliy6GjJoKRaOaNPer0Uy1Q9Bqqazuma8KGafSqyxQN1sbgwOqNGG7kWAw=
+	=
+X-Received: by 2002:a05:6a20:7d86:b0:243:78a:82b9 with SMTP id adf61e73a8af0-2431b980068mr162621637.51.1755623872482;
+        Tue, 19 Aug 2025 10:17:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFN9cn2Ql/5avNFjiCvAWCZGwnNNwM92fq94h29uNQopaI93fMSoUy7tmgOUYUQhdeGK5VXtQ==
+X-Received: by 2002:a05:6a20:7d86:b0:243:78a:82b9 with SMTP id adf61e73a8af0-2431b980068mr162576637.51.1755623872003;
+        Tue, 19 Aug 2025 10:17:52 -0700 (PDT)
+Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640b2d37sm198078a12.46.2025.08.19.10.17.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 10:16:02 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:16:02 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Drew Fustini <fustini@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Samuel Holland <samuel.holland@sifive.com>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Andy Chiu <andybnac@gmail.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Darius Rad <darius@bluespec.com>, Vivian Wang <wangruikang@iscas.ac.cn>, 
-	Florian Weimer <fweimer@redhat.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Drew Fustini <dfustini@tenstorrent.com>
-Subject: Re: [PATCH v3] riscv: Add sysctl to control discard of vstate on
- syscall entry
-Message-ID: <20250819-bb1be8c05ebdf7ea751323aa@orel>
-References: <20250819-riscv_v_vstate_discard-v3-1-0af577dafdc2@kernel.org>
+        Tue, 19 Aug 2025 10:17:51 -0700 (PDT)
+Date: Tue, 19 Aug 2025 22:47:45 +0530
+From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 01/11] firmware: qcom_scm: Introduce PAS context
+ initialization helper
+Message-ID: <3b74157a-3f2a-4533-acf6-7cab8154709c@quicinc.com>
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,248 +105,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819-riscv_v_vstate_discard-v3-1-0af577dafdc2@kernel.org>
+In-Reply-To: <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: FmuL__gitjHGRJ949OWeqhx3Ut6upqH2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyMCBTYWx0ZWRfX6RZzMdfniiPD
+ o9oCMrOBckeXGiB0XrdDvKfgaJDmsPxQCFes11nQeBGRuvZ3v0BmN7BXd8LtSkUIKALGQ+9QWk1
+ 4tVimQ1Bq0khIMKBee17SZ8OiA0rcMpLphhNQHNhBpJvczPtIPnKjLHKmStqtZZdFYteDvn4HSw
+ oI3W6YozGiZ8ok0e4qgfZRZ4QDq58zU/K32fA3E89jAaTxnqO/pHzaZxLtAzZ0aHAaoRoBdBKYI
+ cPPfJXsK6Aoq0G0GTjy7PUJm1KmEm/GQmwUQZeNkdaVTDIv2ZomZdGqI+jFxBKsYNMzDJL/jzdz
+ cDPPxJC73Zz+Eo9WFCrL84BLrxBl19ZRgH3Tks7tMgbp4rPWsQkCWL4ogEIoa2IURMQn2st1pSW
+ SLvCk3Jl
+X-Authority-Analysis: v=2.4 cv=a+Mw9VSF c=1 sm=1 tr=0 ts=68a4b1c1 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=1sDHh0GgXtZW7FQMFNoA:9
+ a=CjuIK1q_8ugA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: FmuL__gitjHGRJ949OWeqhx3Ut6upqH2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 suspectscore=0 impostorscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160020
 
-On Tue, Aug 19, 2025 at 02:40:21AM -0700, Drew Fustini wrote:
-> From: Drew Fustini <dfustini@tenstorrent.com>
+On Tue, Aug 19, 2025 at 10:24:36PM +0530, Mukesh Ojha wrote:
+> Currently, remoteproc and non-remoteproc subsystems use different
+> variants of the MDT loader helper API, primarily due to the handling of
+> the metadata context. Remoteproc subsystems retain this context until
+> authentication and reset, while non-remoteproc subsystems (e.g., video,
+> graphics) do not require it.
 > 
-> Vector registers are always clobbered in the syscall entry path to
-> enforce the documented ABI that vector state is not preserved across
-> syscalls. However, this operation can be slow on some RISC-V cores.
-> To mitigate this performance impact, add a sysctl knob to control
-> whether vector state is discarded in the syscall entry path:
+> Unify the metadata loading process for both remoteproc and
+> non-remoteproc subsystems by introducing a dedicated PAS context
+> initialization function.
 > 
-> /proc/sys/abi/riscv_v_vstate_discard
+> By introducing qcom_scm_pas_ctx_init(), we can standardize the API usage
+> across subsystems and reduce the number of parameters passed to MDT
+> loader functions, improving code clarity and maintainability.
 > 
-> Valid values are:
-> 
-> 0: Vector state is not intentionally clobbered when entering a syscall
-> 1: Vector state is always clobbered when entering a syscall
-> 
-> The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
-
-I'm in favor of the clobbering being off by default and creating a knob
-to enable it for debug purposes, but I'm not sure we need the config. I
-think it's reasonable for systems that need the discard behavior to add
-a sysctl toggle to their early init. The config may complicate the
-documentation needed for user recommendations and potentially generate
-confusion when moving from one system to another since defaults could
-be flipped.
-
-Thanks,
-drew
-
-> 
-> Fixes: 9657e9b7d253 ("riscv: Discard vector state on syscalls")
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > ---
-> Changes in v3:
->  - Reword the Kconfig description to clarify that the sysctl can still
->    be changed during runtime regardless of the initial value chosen
->  - Improve the description of vstate clobbering and the sysctl in
->    section 3 of vector.rst
->  - v2: https://lore.kernel.org/linux-riscv/20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org/
+>  drivers/firmware/qcom/qcom_scm.c       | 26 ++++++++++++++++++++++++++
+>  include/linux/firmware/qcom/qcom_scm.h | 11 +++++++++++
+>  2 files changed, 37 insertions(+)
 > 
-> Changes in v2:
->  - Reword the description of the abi.riscv_v_vstate_discard sysctl to
->    clarify that option '0' does not preserve the vector state - it just
->    means that vector state will not always be clobbered in the syscall
->    path.
->  - Add clarification suggested by Palmer in v1 to the "Vector Register
->    State Across System Calls" documentation section.
->  - v1: https://lore.kernel.org/linux-riscv/20250719033912.1313955-1-fustini@kernel.org/
-> 
-> Test results:
-> I've tested the impact of riscv_v_vstate_discard() on the SiFive X280
-> cores [1] in the Tenstorrent Blackhole SoC [2]. The results from the
-> Blackhole P100 [3] card show that discarding the vector registers
-> increases null syscall latency by 25%.
-> 
-> The null syscall program [4] executes vsetvli and then calls getppid()
-> in a loop. The average duration of getppid() is 198 ns when registers
-> are clobbered in riscv_v_vstate_discard(). The average duration drops
-> to 149 ns when riscv_v_vstate_discard() skips clobbering the registers
-> because riscv_v_vstate_discard is set to 0.
-> 
-> $ sudo sysctl abi.riscv_v_vstate_discard=1
-> abi.riscv_v_vstate_discard = 1
-> 
-> $ ./null_syscall --vsetvli
-> vsetvli complete
->  iterations: 1000000000
->    duration: 198 seconds
-> avg latency: 198.73 ns
-> 
-> $ sudo sysctl abi.riscv_v_vstate_discard=0
-> abi.riscv_v_vstate_discard = 0
-> 
-> $ ./null_syscall --vsetvli
-> vsetvli complete
->  iterations: 1000000000
->    duration: 149 seconds
-> avg latency: 149.89 ns
-> 
-> I'm testing on the tt-blackhole-v6.16-rc1_vstate_discard [5] branch that
-> has 13 patches, including this one, on top of v6.16-rc1. Most are simple
-> yaml patches for dt bindings along with dts files and a bespoke network
-> driver. I don't think the other patches are relevant to this discussion.
-> 
-> This patch applies clean on its own mainline and riscv/for-next.
-> 
-> [1] https://www.sifive.com/cores/intelligence-x200-series
-> [2] https://tenstorrent.com/en/hardware/blackhole
-> [3] https://github.com/tenstorrent/tt-bh-linux
-> [4] https://gist.github.com/tt-fustini/ab9b217756912ce75522b3cce11d0d58
-> [5] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1_vstate_discard
-> 
-> Signed-off-by: Drew Fustini <fustini@kernel.org>
-> ---
->  Documentation/arch/riscv/vector.rst | 27 +++++++++++++++++++++++++--
->  arch/riscv/Kconfig                  | 20 ++++++++++++++++++++
->  arch/riscv/include/asm/vector.h     |  4 ++++
->  arch/riscv/kernel/vector.c          | 16 +++++++++++++++-
->  4 files changed, 64 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
-> index 3987f5f76a9deb0824e53a72df4c3bf90ac2bee1..2a6b52990ee75a60d8ebd1b4b1292838358bc9f2 100644
-> --- a/Documentation/arch/riscv/vector.rst
-> +++ b/Documentation/arch/riscv/vector.rst
-> @@ -134,7 +134,30 @@ processes in form of sysctl knob:
->  3.  Vector Register State Across System Calls
->  ---------------------------------------------
->  
-> -As indicated by version 1.0 of the V extension [1], vector registers are
-> -clobbered by system calls.
-> +Linux adopts the syscall ABI proposed by version 1.0 of the V extension [1],
-> +where vector registers are clobbered by system calls. Specifically:
-> +
-> +    Executing a system call causes all caller-saved vector registers
-> +    (v0-v31, vl, vtype) and vstart to become unspecified.
-> +
-> +Linux clobbers the vector registers (e.g. discards vector state) on the syscall
-> +entry path. This is done to identify userspace programs that mistakenly expect
-> +vector registers to be preserved across syscalls. This can be helpful for
-> +debugging and testing. However, clobbering vector state can negatively impact
-> +performance on some RISC-V implementations, and is not strictly necessary.
-> +
-> +To mitigate this performance impact, a sysctl knob is provided that controls
-> +whether vector state is always clobbered on syscall entry:
-> +
-> +* /proc/sys/abi/riscv_v_vstate_discard
-> +
-> +    Valid values are:
-> +
-> +    * 0: Vector state is not always clobbered in all syscalls
-> +    * 1: Mandatory clobbering of vector state in all syscalls
-> +
-> +    Reading this file returns the current discard behavior. Write to '0' or '1'
-> +    to file to change the current behavior. The initial state is controlled by
-> +    CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
->  
->  1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 451eb23d86c96307422d95e233e35b97569e9816..c0c64d1a4dfe2b0058e3265082b6e3c5207755c7 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -654,6 +654,26 @@ config RISCV_ISA_V_DEFAULT_ENABLE
->  
->  	  If you don't know what to do here, say Y.
->  
-> +config RISCV_ISA_V_VSTATE_DISCARD
-> +	bool "Enable Vector state discard by default"
-> +	depends on RISCV_ISA_V
-> +	default n
-> +	help
-> +	  Discarding vector state (also known as clobbering) on syscall entry
-> +	  can help identify userspace programs that are mistakenly relying on
-> +	  vector registers being preserved across syscalls. This can be useful
-> +	  for debugging and testing. However, this behavior can negatively
-> +	  impact performance on some RISC-V implementations and is not strictly
-> +	  necessary.
-> +
-> +	  Select Y here if you want mandatory clobbering of vector state even
-> +	  though it can increase the duration of syscalls on some RISC-V cores.
-> +	  If you don't know what to do, then select N.
-> +
-> +	  This choice sets the initial value of the abi.riscv_v_vstate_discard
-> +	  sysctl. Regardless of whether you choose Y or N, the sysctl can still
-> +	  be changed by the user while the system is running.
-> +
->  config RISCV_ISA_V_UCOPY_THRESHOLD
->  	int "Threshold size for vectorized user copies"
->  	depends on RISCV_ISA_V
-> diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
-> index b61786d43c2054f71727356fa9718b91ec97a38b..9d236e456d608fe363cd566a526e07fea970818e 100644
-> --- a/arch/riscv/include/asm/vector.h
-> +++ b/arch/riscv/include/asm/vector.h
-> @@ -40,6 +40,7 @@
->  	_res;								\
->  })
->  
-> +extern bool riscv_v_vstate_discard_ctl;
->  extern unsigned long riscv_v_vsize;
->  int riscv_v_setup_vsize(void);
->  bool insn_is_vector(u32 insn_buf);
-> @@ -270,6 +271,9 @@ static inline void __riscv_v_vstate_discard(void)
->  {
->  	unsigned long vl, vtype_inval = 1UL << (BITS_PER_LONG - 1);
->  
-> +	if (READ_ONCE(riscv_v_vstate_discard_ctl) == 0)
-> +		return;
-> +
->  	riscv_v_enable();
->  	if (has_xtheadvector())
->  		asm volatile (THEAD_VSETVLI_T4X0E8M8D1 : : : "t4");
-> diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-> index 184f780c932d443d81eecac7a6fb8070ee7a5824..7a4c209ad337efd7a3995cfc7cf1700c03e55b40 100644
-> --- a/arch/riscv/kernel/vector.c
-> +++ b/arch/riscv/kernel/vector.c
-> @@ -26,6 +26,7 @@ static struct kmem_cache *riscv_v_user_cachep;
->  static struct kmem_cache *riscv_v_kernel_cachep;
->  #endif
->  
-> +bool riscv_v_vstate_discard_ctl = IS_ENABLED(CONFIG_RISCV_ISA_V_VSTATE_DISCARD);
->  unsigned long riscv_v_vsize __read_mostly;
->  EXPORT_SYMBOL_GPL(riscv_v_vsize);
->  
-> @@ -307,11 +308,24 @@ static const struct ctl_table riscv_v_default_vstate_table[] = {
->  	},
->  };
->  
-> +static const struct ctl_table riscv_v_vstate_discard_table[] = {
-> +	{
-> +		.procname       = "riscv_v_vstate_discard",
-> +		.data           = &riscv_v_vstate_discard_ctl,
-> +		.maxlen         = sizeof(riscv_v_vstate_discard_ctl),
-> +		.mode           = 0644,
-> +		.proc_handler   = proc_dobool,
-> +	},
-> +};
-> +
->  static int __init riscv_v_sysctl_init(void)
->  {
-> -	if (has_vector() || has_xtheadvector())
-> +	if (has_vector() || has_xtheadvector()) {
->  		if (!register_sysctl("abi", riscv_v_default_vstate_table))
->  			return -EINVAL;
-> +		if (!register_sysctl("abi", riscv_v_vstate_discard_table))
-> +			return -EINVAL;
-> +	}
->  	return 0;
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 96d5cf40a74c..33187d4f4aef 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -558,6 +558,32 @@ static void qcom_scm_set_download_mode(u32 dload_mode)
+>  		dev_err(__scm->dev, "failed to set download mode: %d\n", ret);
 >  }
 >  
-> 
-> ---
-> base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
-> change-id: 20250818-riscv_v_vstate_discard-e89b3181e0ac
-> 
-> Best regards,
-> -- 
-> Drew Fustini <fustini@kernel.org>
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> +void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
+> +			    size_t mem_size, bool save_mdt_ctx)
+
+Since we export this for other drivers/module, consider adding kerneldoc
+comments.
+
+> +{
+> +	struct qcom_scm_pas_ctx *ctx;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return NULL;
+> +
+> +	ctx->dev = dev;
+> +	ctx->peripheral = peripheral;
+> +	ctx->mem_phys = mem_phys;
+> +	ctx->mem_size = mem_size;
+> +	ctx->save_mdt_ctx = save_mdt_ctx;
+> +	ctx->metadata = NULL;
+
+This seems unnecessary.
+
+> +
+> +	if (save_mdt_ctx) {
+> +		ctx->metadata = devm_kzalloc(dev, sizeof(*ctx->metadata), GFP_KERNEL);
+> +		if (!ctx->metadata)
+> +			return NULL;
+
+Do we really need to pass this burden to the caller to pass save_mdt_ctx
+as true/false? What happens if we always keep metadata in qcom_scm_pas_ctx struct
+and let clients use it if needed.
+
+> +	}
+> +
+> +	return ctx;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_scm_pas_ctx_init);
+
+Is there an equivalant ctx_destroy() function? It would be confusing for
+drivers to call this in their probe and not doing anything upon error or
+in their bus::remove callbacks. I don't know if we really want to
+convert the whole function under devres or just provide a destroy
+callback.
+
+> +
+>  /**
+>   * qcom_scm_pas_init_image() - Initialize peripheral authentication service
+>   *			       state machine for a given peripheral, using the
+> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> index a55ca771286b..b7eb206561a9 100644
+> --- a/include/linux/firmware/qcom/qcom_scm.h
+> +++ b/include/linux/firmware/qcom/qcom_scm.h
+> @@ -72,6 +72,17 @@ struct qcom_scm_pas_metadata {
+>  	ssize_t size;
+>  };
+>  
+> +struct qcom_scm_pas_ctx {
+> +	struct device *dev;
+> +	u32 peripheral;
+> +	phys_addr_t mem_phys;
+> +	size_t mem_size;
+> +	struct qcom_scm_pas_metadata *metadata;
+> +	bool save_mdt_ctx;
+
+As mentioned above, can we just include qcom_scm_pas_metadata struct all
+the time?
+
+Thanks,
+Pavan
 
