@@ -1,223 +1,197 @@
-Return-Path: <linux-kernel+bounces-776107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A79DB2C8AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:42:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A08FB2C8B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067751C205B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 103C5564112
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1D5286425;
-	Tue, 19 Aug 2025 15:42:35 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF678286D5C;
+	Tue, 19 Aug 2025 15:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="OYZJmkin"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376BC246782
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F54B26F285
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755618155; cv=none; b=Ig9Z2yBJ09Zi7bYSDAJrsSWzwAzH7BThxaG9mobDz5jPZO98LylgkJIfYzE8CKqtenfdmGW6fAGOQW/G5ycQzemz9QdPcK8Y2pnsSvEoeIQyQrwdBUiws9GXVcCJyeFALa6eaM+YzOAC8W7/4HqQe0o2vgR8odkwptwoLcjbnzA=
+	t=1755618300; cv=none; b=pJsJU1CiLDnjxmS2bVGrBIr6i49PeVn7f/2ecFuhFFegjZUsejo1Gt9wBFsgU4XgBV6w1kSE55aU++2TLO9dXAJWqdC+3hhER7FuMX58vhumdDKghuV0gunMprXaikL0OHa2J++USmHMSgDUZLZyBLdyJvYZqVyUUkRIg1tuFFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755618155; c=relaxed/simple;
-	bh=YzTF1QFMS76frYrgJNGJST/Qy2p5LYZttj4rMAqCyiE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=enyZ2ClOumReyVL0OWCbQJmhOGTtah79JdQ6XSqK6vwG4MPlJULIy3MUevUy9dbzNq3GOXy5TO3EwdVdQkgY3RZdwvNL2Ba8QFva3oJHDGh9NCteogIq327z+/Sz04LWV3UBo9P1GCqondBV5HA8+PSxCdTL9fhY9f9tKpjlIxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e5d398a912so39491155ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:42:33 -0700 (PDT)
+	s=arc-20240116; t=1755618300; c=relaxed/simple;
+	bh=pRJj1H5tO7XMkVZRCLKY+sRfLzGpi20O91KKFr0QgRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOrLqzBngxTJKIdH3eMWhA6YJUAaAZ8QXyZb9SG6TnUKkmas/GVb9+U955DYnh6eHi1CRlS55WbiY1BjH/YDpjLUQ8t9QYI3D+ExJ5Iwl37PfNCqz0/q8F3jvnt2EVe0V2PGeXPV9aIX/AK2Mg+hE2kjYXKzAcqysxnAobYOP14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=OYZJmkin; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-70ba7aa136fso32121466d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1755618297; x=1756223097; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3KlMvHTnEPY7TidCf7GXQGzitb9p96DYnk2H6Hb9KLY=;
+        b=OYZJmkini68JWEd+aizXrWYd9UbtL4fX0SK9HLZpAb4nJvdcK4zb/7U8zS7JCAZFky
+         mjwRhgVwLvMRelgaEzmuFXsHgtuovpSlDKFP2bjb0XpjS5c4R8Ti6/0ZFxPkN4ZMAvq0
+         GZaBLwlNPchRlMb/+XTcSGvnh6zY0nmE6qGhr85T7G3SDnuEEuhWyCgXByNYxKEQYLuX
+         jwpmkzW4/AvvmeVwI8dzX7nZCafA1nrCq1adcOnktHz6o7JrwJ4M32MeSQ0jkEYihZEV
+         VT8b42Dx1NbbrB3Zgxj3pqVlYE3sJWeH1cYGd2e3ac+agh85kbnx+dyCB40VlDsJmpiW
+         q4Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755618152; x=1756222952;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TK/EKS4eetX6yWIzFURmsvpvay0L/jjfJICuasx8m/w=;
-        b=du6n6CVfhogjVXDD3nMvw09jo4SrWRDVK2hMQgO0vfd4PFttzHlt+jrIHKL5cStqgp
-         a/14Tsn12cdQB0X8fOzm4+aEEgJ0G2el+tnPipiqhuw1tPJbcF0r14rCwc+iUqH0GNAb
-         n4lkHibsK0SdKTHh0gJyMEFAE2dqFpoVPZfaugHRFPRn+7ogX/4z+ySWH2o9oiGqIsAu
-         HSkNDvntmXr4JFEN2Z78SlT+6z2vrTZpfg6NYvhBptvxsXWkWV4MdFVTRJsxw3vgzm/b
-         0AKZ9VG5p8DBBVfdtF52QrL/hsJHTETze4CuNXmvEP3GbI9UcB/D0ySHPhECt2GFz5Ks
-         +TlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZyTDj/Sp3WtwLKY6h7nRlu6N8vV14A4nttZ8PxcCyKSWVw01y0LlPEeRJM7ZrapnD0hxisT2xKrDyJBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQY8sNxfFpv5H8SDpJhiUFG21/ch8itoeJQIhzSxsipgLo4YL2
-	xCPP8XI5rI58y9VT92Hiu8hyw00MAW7WtlM8/mCMEeBjd59LQ+ec1WvdBrUTXDOleE00FRTt3xy
-	XvihDQPymIY5KzYRO273gljwm3bK9gPtvWcG4reK1aW+BMz/TOsIKtEpdeEQ=
-X-Google-Smtp-Source: AGHT+IG+tROFW0E1dZyO6C+QKpjUNes+pj0QDAa/psex7DDHuBGxS4hRm8Ylrb+BrYUcIoIO8WOTSFjT6ruU99cVNGd+04dB9D/X
+        d=1e100.net; s=20230601; t=1755618297; x=1756223097;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3KlMvHTnEPY7TidCf7GXQGzitb9p96DYnk2H6Hb9KLY=;
+        b=vl+0e0JoFE0CgSTgXHfRWOSPSPcBneSay/OI5RHszNJpwf8W8q2hKdTxA1v49VKlVr
+         AquG7Ah/e1Fm4r6meGQfSZtxxKXVJTT53kJ8TW+u9PS0WGlguSpxi+xF6DaoPr0xPQaR
+         ErqpTc2zyyKCO7mF+eKnI/1+U1KsNM6r+TZd5s/kFrq6qIM2g6AQ3PjtRGSFWlCJnJF4
+         UMQwdAsv0aIGJiJS5ecwOX0ksexlbZLqR0jdKbH8TD0DNuYRBocLTxYitTRNUaorzJ5D
+         dUiF6E/lAY0LYfLYanQaDO36YovndPyGvFYNk3JIWdgihKf/R3Mkd7tq17oPAwpBsvKx
+         dtQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/FSNTIj1YUEnMR1QCU0dgwZzTJFuip8J+gICF1kwxO5GEtshI3xiFkkgqz9VL4Ko7CFCz9t+uXuU+UdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw29AA5gDJGQo7DozIQ1mhFRoYZ6FIAA3g3mdOTH+xWwe73J0JH
+	7nCPv8mhI/5uXl6U5cInvNbjsfTtM+SQazXJKOORNAOPk5PX6Br1RiR78lrFVHuagg==
+X-Gm-Gg: ASbGncsAws4VIq/LGoCClLklXfKLD1dHjdh+EC8aMVJJ3wnLrR40Be2pA1Xi9WwvzYc
+	VYevfmDKuuFKaI+6aRJMmi+nm0zS78cn9RNRlYFkzcVwWGk+J3t1QLA7IQ6BZ7ze0gcgPsqxnQR
+	caQH7MeT/NX3L4SZrwucvsw2tcaN52tJANiKtl7FvhtFPzilY30j1dWFJc3CV46hpd7buJilOIz
+	LHZZhpjer6i05r5yZPJcKCmN6Z2NZy3yzOrgq+goxJQG2lPpZKuhuV8uv4RiF5qx76/2SFR0d+W
+	nHntRF6vZypOpcYKjZvR5jlggMAU6AUi7WkVtjN/Go03kKsSbEtWTJYNxnjWJDV+eswW2zm1y1b
+	4RIV+oX3v+HLmahqTWH9ZcGpTCnI=
+X-Google-Smtp-Source: AGHT+IHsJOHr6hojE7rqYrX+qOfnG5f94QM0U9BbVYttqZiqetVC0hqJlHsw3PTuBRo8TpfE2D4Y4w==
+X-Received: by 2002:a05:6214:2b0f:b0:709:b691:c9b3 with SMTP id 6a1803df08f44-70c35ba7757mr35172326d6.21.1755618297027;
+        Tue, 19 Aug 2025 08:44:57 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::fa48])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba902f4edsm71527736d6.14.2025.08.19.08.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 08:44:56 -0700 (PDT)
+Date: Tue, 19 Aug 2025 11:44:52 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Yunseong Kim <ysk@kzalloc.com>, linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
+ in vhci_urb_enqueue on PREEMPT_RT
+Message-ID: <bb7e34b7-c06b-4153-ba6c-009b9f1b34d0@rowland.harvard.edu>
+References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
+ <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
+ <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
+ <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
+ <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
+ <20250819110457.I46wiKTe@linutronix.de>
+ <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
+ <20250819145700.sIWRW7Oe@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a63:b0:3e5:7dac:d696 with SMTP id
- e9e14a558f8ab-3e676668a28mr55937245ab.19.1755618152193; Tue, 19 Aug 2025
- 08:42:32 -0700 (PDT)
-Date: Tue, 19 Aug 2025 08:42:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a49b68.050a0220.e29e5.00c9.GAE@google.com>
-Subject: [syzbot] [fbdev?] KASAN: slab-out-of-bounds Read in
- fb_pad_aligned_buffer (2)
-From: syzbot <syzbot+ef4f385c7132a39eabb2@syzkaller.appspotmail.com>
-To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819145700.sIWRW7Oe@linutronix.de>
 
-Hello,
+On Tue, Aug 19, 2025 at 04:57:00PM +0200, Sebastian Andrzej Siewior wrote:
+> > There are several places in the USB stack that disable local interrupts.  
+> 
+> But *why*? You need locking due to SMP. So it should be simply to avoid
+> irqrestore()/ irqsave() during unlock/lock or to avoid deadlocks if a
+> callback is invoked from IRQ and process context and the callback
+> handler does simply spin_lock() (without the _irq suffix).
+> The latter shouldn't be problem due to commit
+> 	ed194d1367698 ("usb: core: remove local_irq_save() around ->complete() handler")
+> 
+> So if completing the URB tasklet/ softirq context works for ehci/ xhci
+> without creating any warning, it should also work for vhci, dummy_hcd.
 
-syzbot found the following issue on:
+dummy-hcd is different from the others; its use of local_irq_save() is 
+in the gadget giveback path, not the host giveback path.  We would need 
+another audit similar to the one you did for ed194d136769, but this 
+time checking gadget completion handlers.
 
-HEAD commit:    2674d1eadaa2 Add linux-next specific files for 20250812
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c12af0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=712e4169f26d539a
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef4f385c7132a39eabb2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> Only RH code completes directly, everything else is shifted to softirq
+> context (for ehci/HCD_BH).
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Correct (except that RH code always uses softirq context; it never 
+completes directly -- the kerneldoc is wrong and Greg just accepted a 
+patch to change it).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d6fec408ef67/disk-2674d1ea.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/27b3f312fa12/vmlinux-2674d1ea.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/56e7b0c45a7e/bzImage-2674d1ea.xz
+There are other places that disable local interrupts.  ehci-brcm.c does 
+it in order to meet a timing constraint.  ohci-omap.c and ohci-s3c2410.c 
+do it for reasons I'm not aware of (no comment about it in the source).  
+gadget/legacy/inode.c does it in ep_aio_cancel() -- I can only guess 
+that this is somehow related to aio and not to anything in USB.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ef4f385c7132a39eabb2@syzkaller.appspotmail.com
+> | git grep -E 'local_irq_save|local_irq_disable' drivers/usb/ | wc -l
+> | 21
+> of which 10 are in pxa udc. The only one I am a bit concerned about is
+> the one in usb_hcd_pci_remove() and I think we had reports and patches
+> but somehow nothing did happen and I obviously forgot.
+> 
+> > I would expect that RT already defines functions which do this, but I 
+> > don't know their names.
+> 
+> We don't have anything where
+> 	local_irq_disable()
+> 	spin_lock()
+> 
+> can be mapped to something equivalent other than
+> 	spin_lock_irq()
+> 
+> I was running around and kept changing code so that we don't end up in
+> this scenario where we need to disable interrupts for some reason but on
+> RT we don't.
+> 
+> The closest thing we have is local_lock_irq() which maps to
+> local_irq_disable() on !PREEMPT_RT systems. But I would prefer to avoid
+> it because it serves a different purpose.
+> What works is something like
+> 	spin_lock_irqsave();
+> 	spin_unlock();
+> 	$SOMETHING
+> 	spin_lock();
+> 	spin_unlock_irqestore().
 
-overlayfs: conflicting options: nfs_export=on,metacopy=on
-==================================================================
-BUG: KASAN: slab-out-of-bounds in __fb_pad_aligned_buffer include/linux/fb.h:641 [inline]
-BUG: KASAN: slab-out-of-bounds in fb_pad_aligned_buffer+0x57e/0x5f0 drivers/video/fbdev/core/fbmem.c:96
-Read of size 1 at addr ffff8880593d7a10 by task syz.6.4465/21843
+That's just silly.  We should have something like this:
 
-CPU: 1 UID: 0 PID: 21843 Comm: syz.6.4465 Not tainted 6.17.0-rc1-next-20250812-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- __fb_pad_aligned_buffer include/linux/fb.h:641 [inline]
- fb_pad_aligned_buffer+0x57e/0x5f0 drivers/video/fbdev/core/fbmem.c:96
- bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:98 [inline]
- bit_putcs+0x1648/0x1a50 drivers/video/fbdev/core/bitblit.c:184
- fbcon_putcs+0x3e5/0x5f0 drivers/video/fbdev/core/fbcon.c:1327
- do_update_region+0x21c/0x440 drivers/tty/vt/vt.c:617
- update_region+0x1ce/0x490 drivers/tty/vt/vt.c:641
- vcs_write+0xd65/0x1260 drivers/tty/vt/vc_screen.c:698
- do_loop_readv_writev fs/read_write.c:850 [inline]
- vfs_writev+0x4b6/0x960 fs/read_write.c:1059
- do_writev+0x14d/0x2d0 fs/read_write.c:1103
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f68db78ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f68dc5ed038 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00007f68db9b5fa0 RCX: 00007f68db78ebe9
-RDX: 000000000000000e RSI: 0000200000000c40 RDI: 0000000000000004
-RBP: 00007f68db811e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f68db9b6038 R14: 00007f68db9b5fa0 R15: 00007fff61c4c208
- </TASK>
+#ifdef CONFIG_PREEMPT_RT
+static inline void local_irqsave_nonrt(unsigned long flags) {}
+static inline void local_irqrestore_nonrt(unsigned long flags) {}
+static inline void local_irq_disable_nonrt() {}
+static inline void local_irq_enable_nonrt() {}
+#else
+#define local_irqsave_nonrt	local_irqsave
+#define local_irqrestore_nonrt	local_irqrestore
+#define local_irq_disable_nonrt	local_irq_disable
+#define local_irq_enable_nonrt	local_irq_enable
+#endif
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880593d7a80 pfn:0x593d4
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f8(unknown)
-raw: 00fff00000000040 0000000000000000 dead000000000122 0000000000000000
-raw: ffff8880593d7a80 0000000000000000 00000000f8000000 0000000000000000
-head: 00fff00000000040 0000000000000000 dead000000000122 0000000000000000
-head: ffff8880593d7a80 0000000000000000 00000000f8000000 0000000000000000
-head: 00fff00000000002 ffffea000164f501 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000004
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0x140cc0(GFP_USER|__GFP_COMP), pid 19098, tgid 19083 (syz.1.3690), ts 809460860721, free_ts 809191260089
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- ___kmalloc_large_node+0x5f/0x1b0 mm/slub.c:4306
- __kmalloc_large_node_noprof+0x18/0x90 mm/slub.c:4337
- __do_kmalloc_node mm/slub.c:4353 [inline]
- __kmalloc_noprof+0x36f/0x4f0 mm/slub.c:4377
- kmalloc_noprof include/linux/slab.h:909 [inline]
- fbcon_set_font+0x519/0xe90 drivers/video/fbdev/core/fbcon.c:2536
- con_font_set drivers/tty/vt/vt.c:4887 [inline]
- con_font_op+0xcac/0x1070 drivers/tty/vt/vt.c:4934
- vt_k_ioctl drivers/tty/vt/vt_ioctl.c:474 [inline]
- vt_ioctl+0x1a8a/0x1f00 drivers/tty/vt/vt_ioctl.c:751
- tty_ioctl+0x926/0xde0 drivers/tty/tty_io.c:2792
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 19061 tgid 19060 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
- discard_slab mm/slub.c:2753 [inline]
- __put_partials+0x156/0x1a0 mm/slub.c:3218
- put_cpu_partial+0x17c/0x250 mm/slub.c:3293
- __slab_free+0x2d5/0x3c0 mm/slub.c:4550
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x97/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4180 [inline]
- slab_alloc_node mm/slub.c:4229 [inline]
- __do_kmalloc_node mm/slub.c:4364 [inline]
- __kmalloc_noprof+0x224/0x4f0 mm/slub.c:4377
- kmalloc_noprof include/linux/slab.h:909 [inline]
- tomoyo_realpath_from_path+0xe3/0x5d0 security/tomoyo/realpath.c:251
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_path_number_perm+0x1e8/0x5a0 security/tomoyo/file.c:723
- security_file_ioctl+0xcb/0x2d0 security/security.c:2982
- __do_sys_ioctl fs/ioctl.c:592 [inline]
- __se_sys_ioctl+0x47/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> The question is why should $SOMETHING be invoked with disabled
+> interrupts if the function was called from process context.
 
-Memory state around the buggy address:
- ffff8880593d7900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff8880593d7980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff8880593d7a00: 00 00 fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-                         ^
- ffff8880593d7a80: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
- ffff8880593d7b00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-==================================================================
+More to the point, out of all the possible reasons why $SOMETHING might 
+be invoked with disabled interrupts, which of these reasons remain valid 
+in RT builds and which don't?
 
+> If your concern is a missing _irqsave() in the callback then this
+> shouldn't be an issue. If it is the wrong context from kcov's point of
+> view then making the driver complete in tasklet should fix it since it
+> would match what ehci/ xhci does. 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+No, I'm not concerned about that.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Alan Stern
 
