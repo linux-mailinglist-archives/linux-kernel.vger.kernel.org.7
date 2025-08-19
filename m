@@ -1,162 +1,113 @@
-Return-Path: <linux-kernel+bounces-775250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D37CB2BD2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:25:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73215B2BD2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C818D3B92BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE3315A04AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E7831AF36;
-	Tue, 19 Aug 2025 09:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2333631CA51;
+	Tue, 19 Aug 2025 09:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RylIOr5N"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CaIQuc3a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8288B31AF21
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7573526D4EF;
+	Tue, 19 Aug 2025 09:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755595150; cv=none; b=BM03yfWrcQiZGrJtrXAXN1cD6PbwnHB470yp21jED6+2leFxmfsXdQeTB8m4m7AiKK8FxpPcAkZYPxUKUObQEt5AGKXXVbC1GxysBB4AJVK7QWS6jqlTDLdSPdgoDDEkqIAXAGe6VCXR4wSWMMdyHmtQc52qulovIfxYaIyQMXA=
+	t=1755595218; cv=none; b=COo79K43lHfQ6kIuYPf6fq8RsPi6oECLQ4LkWHa5g9tznUFb921aqGOKx3ekN4r+NHW4f5Viz86m1L9x0VlrEyloKGdLVfFsSh0Xq4WJx/hWonD+P3dLI7R7xdN+Kll2xg+YTcGWocVxvt4BzY6CUM4cEvLbR3pt6BOufIWqfq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755595150; c=relaxed/simple;
-	bh=PNZgkcdq9TZXxOPe5bvlFXYs2HJi7i9omPoA3uoJNAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCh0PYcSchBwFPVKdwZLl+AslFQ+tKz6YFUofA6cUKJtCg4il1zG7QuvJDn07Kz9gvonKUoGMQ4GaTzJddhK0CJ1PjJUxIFBhUl+PnWmiuJJyb5ETsGl+14x/K2j4X6W5LY6+9c9yT2RR05QhFxbr1L19RLryb94K+iFV9On5As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RylIOr5N; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755595147;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xWT0mARngxGoK+lyzVNdKRI0J9MEuocADrq+/ReVQnI=;
-	b=RylIOr5NYIs8Ze77+Ebw67UiAfTWPCHHXsyBgHDaScOmWWc3S5vtnnlq7Q3dsMrrOsy4hT
-	pb1TjL18Cyyqs09Ek8Ajw5+JSZhsRHoYcroEheoX1SUOy396lLYT9qU3J1neBayPgd0J5d
-	K0htRD7O2B9xN3tCCQNYNJdXdMyiwGk=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-427-ZW2bOVWNP7u8LTHOSGhdcg-1; Tue, 19 Aug 2025 05:19:05 -0400
-X-MC-Unique: ZW2bOVWNP7u8LTHOSGhdcg-1
-X-Mimecast-MFC-AGG-ID: ZW2bOVWNP7u8LTHOSGhdcg_1755595145
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109c5457cso145402031cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:19:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755595145; x=1756199945;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xWT0mARngxGoK+lyzVNdKRI0J9MEuocADrq+/ReVQnI=;
-        b=rSqxmn25EEZuxT0FgkFyBGitiR50CRbP1G/+0cVQteE4F1xOIAC1Lmmh5iyNM+oAUM
-         pumTYj1cJs9JkEQ4XXf6Z/EPIj0J1QdAHC/VuBNZtEHMXgSzsFvbroO64Q0ENjz3/WM/
-         fRH1U7sTeRa3KQN8t/tfTOzA4cGxEYyv+gvy0XPHwjbqIfrzPjP+h2swDU4AAnSkX9qI
-         Ex3PYMVMeHA/z5N9LDJaA3zBxpXrEGg+TGV1jYZr9w2tMhNdZTmQlgHRZwc+U1mApmMW
-         CwXAryGOR/8vnbHpwO1KuvyccKW+ZRUCQBbUg/JEwzEuX2VFLDqXhr53IMH4P0ZP76Pb
-         dNaQ==
-X-Gm-Message-State: AOJu0YxCRWegNlrQsVpL2hYrvAmb9Z8nZGniq9biahtG39mbXZpeN9ta
-	Ms5T/539oVV+8TjEfKvk4oZSygmB+rbwc+zKRlbI+o4gLwVWV7pKDhISQYWy0nDKJ8FD9RBxf/i
-	07fwinKHvdxUF6kl/jvUfnDsqeZamwewmp2uudBF1dq5mrHIBsUPesSnKZuebFRHkzg==
-X-Gm-Gg: ASbGncsGRvuoWlENXoZGC6taW+y2rIDLGyyfmkFNy531uZdT+fnZnDiI7Tx6POyS21p
-	U5c9lbi1yDhJjr+2uCa0NBK2V+CDzw834RBpGSXF1y4jrZwE6dy891Tdm6Q9kvSXptr0GelCj68
-	+x5RhZszF0EjIBoAg71BRZBhZPTZbpjKaEmq4UZ9U/dkyLUKuhX7d0uGjyUyksSbwtPcWVNX2Ea
-	WAS7N90CoDkwoETK3gF/gvx30zqTYhtuTQ3Lq6aFlalQJWywYmE+pGQVG/ZdErPiUyfsotA6Isk
-	bq9EaiimZAm+7if9IYLEQWpSVDeZUZnjNuR6+aPqZppPNWqQThFJW8TXJKJ/aAuWh+LG
-X-Received: by 2002:a05:622a:4089:b0:4b1:2457:54a3 with SMTP id d75a77b69052e-4b286d64745mr20784721cf.42.1755595145232;
-        Tue, 19 Aug 2025 02:19:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQlOoIPQxOJBoquQk0HObEu1BaMNH7ziz2yiaTpabR+DwR8fBQONFU8dJTuvHDGGTrWZ0nhw==
-X-Received: by 2002:a05:622a:4089:b0:4b1:2457:54a3 with SMTP id d75a77b69052e-4b286d64745mr20784551cf.42.1755595144850;
-        Tue, 19 Aug 2025 02:19:04 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.81.70])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dddb2d1sm63571441cf.28.2025.08.19.02.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:19:04 -0700 (PDT)
-Date: Tue, 19 Aug 2025 11:18:59 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 08/17] rv: Add Hybrid Automata monitor type
-Message-ID: <aKRBg-KhyCqgFEg3@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-9-gmonaco@redhat.com>
+	s=arc-20240116; t=1755595218; c=relaxed/simple;
+	bh=qXsXnOFhzvM0ZB2TgHO+7IHEuqwUzXUo5OdIf1l/A3c=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gdq0lvIf9sbHKAlT4RaZaRzoNtBb9dtxUIp/dFicPu3OzJoPmyKE4hg1ORylUFP9F0BEYGWXRRjWZnaIbxGcsx80zZYaMiIBmuIG0CZM6LdQYi1FQV3Uk6M+BLhkWTFX5x/6lZHeF3t43PEpxmOj1cEqxQIMtjNlmoWOXE26uGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CaIQuc3a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46DD2C4CEF1;
+	Tue, 19 Aug 2025 09:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755595218;
+	bh=qXsXnOFhzvM0ZB2TgHO+7IHEuqwUzXUo5OdIf1l/A3c=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=CaIQuc3aEctHOeJCJblK7CwcvE3Id/wRCen/tIC1PJTgrNm5bH6vK0AmHxa1vfKmw
+	 cgEZClWdPlWqZorfgtg0L8+yu9dQpBkI4MlH1ewfEVicoNn7/V3LBN2LVep6kG/njq
+	 VBrD24gywWOocHPDMsdvz3TjmWMEKIoitpSh0/wS5AJamAhiB2QEopUtI63AOpzI8b
+	 mnZLkFdi1GlrAj0+rDrCSl9POI/jUDqKuxakZDnt7TF/R+Qc/Dkc0rOxiE40TSc8bj
+	 YJcOAz6k6hs7oHgA3VRwDvTDpr1W9orWSM7FPmY1kT7hz6hb5qYmV7ZbDzii4b7ATj
+	 ppKaY/D7sDzSw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DE2383BF58;
+	Tue, 19 Aug 2025 09:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814150809.140739-9-gmonaco@redhat.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next V4 0/9] eth: fbnic: Add XDP support for fbnic
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175559522825.3461363.17326947395428104813.git-patchwork-notify@kernel.org>
+Date: Tue, 19 Aug 2025 09:20:28 +0000
+References: <20250813221319.3367670-1-mohsin.bashr@gmail.com>
+In-Reply-To: <20250813221319.3367670-1-mohsin.bashr@gmail.com>
+To: Mohsin Bashir <mohsin.bashr@gmail.com>
+Cc: netdev@vger.kernel.org, aleksander.lobakin@intel.com,
+ alexanderduyck@fb.com, andrew+netdev@lunn.ch, ast@kernel.org,
+ bpf@vger.kernel.org, corbet@lwn.net, daniel@iogearbox.net,
+ davem@davemloft.net, edumazet@google.com, hawk@kernel.org, horms@kernel.org,
+ john.fastabend@gmail.com, kernel-team@meta.com, kuba@kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com,
+ sdf@fomichev.me, vadim.fedorenko@linux.dev
 
-Hi!
+Hello:
 
-On 14/08/25 17:08, Gabriele Monaco wrote:
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-...
+On Wed, 13 Aug 2025 15:13:10 -0700 you wrote:
+> This patch series introduces basic XDP support for fbnic. To enable this,
+> it also includes preparatory changes such as making the HDS threshold
+> configurable via ethtool, updating headroom for fbnic, tracking
+> frag state in shinfo, and prefetching the first cacheline of data.
+> 
+> ---
+> Changelog:
+> V4: Update P7 and P8 to address cocci complains about PTR_ERR
+> 
+> [...]
 
-> +/*
-> + * ha_monitor_init_env - setup timer and reset all environment
-> + *
-> + * Called from a hook in the DA start functions, it supplies the da_mon
-> + * corresponding to the current ha_mon.
-> + * Not all hybrid automata require the timer, still set it for simplicity.
-> + */
-> +static inline void ha_monitor_init_env(struct da_monitor *da_mon)
-> +{
-> +	struct ha_monitor *ha_mon = to_ha_monitor(da_mon);
-> +
-> +	ha_monitor_reset_all_stored(ha_mon);
-> +	if (unlikely(!ha_mon->timer.base))
-> +		hrtimer_setup(&ha_mon->timer, ha_monitor_timer_callback,
-> +			      CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> +}
+Here is the summary with links:
+  - [net-next,V4,1/9] eth: fbnic: Add support for HDS configuration
+    https://git.kernel.org/netdev/net-next/c/2b30fc01a6c7
+  - [net-next,V4,2/9] eth: fbnic: Update Headroom
+    https://git.kernel.org/netdev/net-next/c/0cf5a39720d0
+  - [net-next,V4,3/9] eth: fbnic: Use shinfo to track frags state on Rx
+    https://git.kernel.org/netdev/net-next/c/61f9a066c309
+  - [net-next,V4,4/9] eth: fbnic: Prefetch packet headers on Rx
+    https://git.kernel.org/netdev/net-next/c/9064ab485f04
+  - [net-next,V4,5/9] eth: fbnic: Add XDP pass, drop, abort support
+    https://git.kernel.org/netdev/net-next/c/1b0a3950dbd4
+  - [net-next,V4,6/9] eth: fbnic: Add support for XDP queues
+    https://git.kernel.org/netdev/net-next/c/cf4facfb132a
+  - [net-next,V4,7/9] eth: fbnic: Add support for XDP_TX action
+    https://git.kernel.org/netdev/net-next/c/168deb7b31b2
+  - [net-next,V4,8/9] eth: fbnic: Collect packet statistics for XDP
+    https://git.kernel.org/netdev/net-next/c/5213ff086344
+  - [net-next,V4,9/9] eth: fbnic: Report XDP stats via ethtool
+    https://git.kernel.org/netdev/net-next/c/7fedb8f2677e
 
-...
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> +/*
-> + * Helper functions to handle the monitor timer.
-> + * Not all monitors require a timer, in such case the timer will be set up but
-> + * never armed.
-> + * Timers start since the last reset of the supplied env or from now if env is
-> + * not an environment variable. If env was not initialised no timer starts.
-> + * Timers can expire on any CPU unless the monitor is per-cpu,
-> + * where we assume every event occurs on the local CPU.
-> + */
-> +static inline void ha_start_timer_ns(struct ha_monitor *ha_mon, enum envs env,
-> +				     u64 expire)
-> +{
-> +	int mode = HRTIMER_MODE_REL;
-> +	u64 passed = 0;
-> +
-> +	if (env >= 0 && env < ENV_MAX_STORED) {
-> +		if (ha_monitor_env_invalid(ha_mon, env))
-> +			return;
-> +		passed = ha_get_env(ha_mon, env);
-> +	}
-> +	if (RV_MON_TYPE == RV_MON_PER_CPU)
-> +		mode |= HRTIMER_MODE_PINNED;
-> +	hrtimer_start(&ha_mon->timer, ns_to_ktime(expire - passed), mode);
-> +}
-
-Does this also need to be _HARD on RT for the monitor to work?
-
-Also, my only concern with the usage of per-task timers is that
-reprogramming add overhead, so I wonder if this gets noticeable when
-running some kind of performance sensitive workload in production (as it
-was reported for dl-server). Did you test such a case?
-
-Thanks!
-Juri
 
 
