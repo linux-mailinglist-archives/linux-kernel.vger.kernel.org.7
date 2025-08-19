@@ -1,96 +1,98 @@
-Return-Path: <linux-kernel+bounces-776644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E7EB2CFCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:22:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3E6B2CFC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 700281C445D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:19:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDEC1799C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D438425DD07;
-	Tue, 19 Aug 2025 23:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D22426B742;
+	Tue, 19 Aug 2025 23:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t4sisD16"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LUWBSJ1S"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BE9212F98
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C8522FDE6
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755645494; cv=none; b=OJlCTr6YbyCwbfYJ1NQ4ImxtJ5nliwuvloE76myVsufADKfPLkEd7qBUEA6MrYiarA8iWnnmAfDXeRT/vZOWC5FoBz/oGMLgJ1rSGRSHo0K8Ruf+xXQ2Y4x2YVn9oBpq8RPQbRoT+oyNRti3Hy5GAWh+3hvksr4ztpsdfPc6ikg=
+	t=1755645502; cv=none; b=Sta2OiRJXggd1ShDQhBiANRNcGHnRkv3zhoknCqcAoS2RA938/v6m1krTBXy3FhaPgQSmbyKoUaNyyULfBbXkSG8aeq25HVYyvciEKw50BaGGFn8mxteuOYw4pWib/LFkJnhJyLCNYGjdbLzdyWvyu/7XMiEHqBUkU8lEz0DJFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755645494; c=relaxed/simple;
-	bh=GxQ3bI32BWUEQbQQr2ztR7iscpZBTjInSD7DrhOawt8=;
+	s=arc-20240116; t=1755645502; c=relaxed/simple;
+	bh=lVXQBqnqbxpFe1IjAlD49yL+k/R3myhx9rjbCNek3Y0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=C1Gkygz7vljugxGB90tZGFJtmqM8E3aQaeQ9SQbY+8x1I42C7RIGtPH2zKo6VBWtpOZcuFuQETydJo8h0P1OrXXqwC5Z1xCCPPL7Mnl3Y7TvJdFJedmDpHksA6Tzrii4XsjYTtNezb7z5Cigdg51uAKisRXi00fZ2R4c8d7vHlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t4sisD16; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=NvZz4rEBoMyACGOmj127D8My+ZqBbqDi0xSgGrkJbj9bkOiqCzhwMFhtYeDbZaZK9qTwHzZrQmwfkGl8u7qG01a7USD1XqRZ4S7gy9jAv9k3zOPJ0UvjPy24XZL8cGKxNrEhCnux1IFt3Pa/kwCkaiZ6XkNJAMF+MGmZwQJ/kIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LUWBSJ1S; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2430c37d06aso2698165ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:18:12 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2445823bc21so145687955ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:18:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755645492; x=1756250292; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sDr1ilphEHq13aUEE3jJLkUxtKv+xNh38Lb2+aXAA/4=;
-        b=t4sisD16gaali2sNlbBAi4+C5KLrXRwK0f/1ot3beW7O7GnjsTWwzROTnEbbCoNtcM
-         v3YY9CFuZsUQhIy7g+0nsm2x1fs5KcAuKjqQBZ3iSkUjg3zGQEBNVm+eHGvjSB10bSnI
-         dWVM5601koxGhBeWhT8Z4YBfOVBvzMAxjl0jIcQd5gZH8HkqYXgAfZh6plZ+Susk0uNs
-         +OHjfCZfIuEWfXgAdujFa8AJzqa5nSYXXuGH4Ba4KC5Bc6BjDqzV94cblW+OZEOaGhMX
-         d7aMfk8Regk1DMIjkhQ4yyp0BhcUByMZlXQoFts/FMOJhuR7otuhwEP1D7jE3lm7WnEl
-         4Z9g==
+        d=google.com; s=20230601; t=1755645501; x=1756250301; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rONFSpHM+4UT9RUEpdOXX+LBPAp0V3YjAVNh2Y6TMoA=;
+        b=LUWBSJ1SCYZwp5KvnodCzvgtixetO/uNManEEbvcOged4m1cs5wEi0l5oZTFEJOMha
+         s1CZKDlvFVFk5LfI6Tn0d0KSaYJQMHu2sMBE0IODBOugz70fdAbIIPEnFn+CUrQviU/b
+         vzbOfsqcDwNcrY6dmR7v0k/2WXSxvO1QcqSiDpYVFNbe1bTMydv1qL9prWdagRe8W+83
+         0UA8gd/WN/imPYZTCxEuuXinlf8RzN2MLbqjey3Ehu0St6PyYTZ+0eZAD7ZHYTWnPLP1
+         CvRSCCG6N80uCoodfsRc9kRJbX0Ks5xn9oJ/IfITjnamJDjQT+m1IJeOUagRvdJHtvGY
+         Cchw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755645492; x=1756250292;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sDr1ilphEHq13aUEE3jJLkUxtKv+xNh38Lb2+aXAA/4=;
-        b=c/diVWQB2d9BuvBmAwXXH+4KzN+WlesYxhkxY6B/wRC8t8/f/SuleQ7bVSSJxONPsQ
-         xfjpCzY3kd30ifFLCv7Lve/63X7SwdflLdWKt8NsuN8tSj57npWPmhA7i+b5CHOY47Ft
-         /UuTl/2TcJCSN1+VL+f5EMfhnwTQN6uXFxH8mtq/xOS4S51zsLbZSVzirZEIteQHPZuJ
-         hMv2yzkvEO3QLFYqpEm8MR80raY/4mY8o6V82Jvwmv2WeeSWeNZCLKCPqFlqUTgiBALJ
-         +gIwEOdkIs/rHDwhw5jnQiJqnkVzQC47irmX0eTNWdJFHaisJUqC4amkYaBSUyThUKvY
-         OjMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw4Cq/CVjq+3n9bJ0XaLJ1UA5C8DVR++yTMHdlvDRpvuHM8RaKQKljdc7rYRtrYKX8l5ARGFj0JUFJRSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9cRzMfvp45FA3NfPVM9u/69YdTD0dVSlrsQDEM9fU3mwNDiRU
-	IxR8Zmc0tAtpZ4ywmUFCaq5wtHdShdJxZOhPNIe4mJtX8DJYMg518QLTwXHNuvT6wS35BKcitaC
-	9ecJZ0A==
-X-Google-Smtp-Source: AGHT+IFDxnpwzMVt1NN+yUWtyyyahHTDf5WVJVXVoBbADQGx4NrJypC4B971/ZM/ZXkrYBiA56ui6MOkVfI=
-X-Received: from plpc14.prod.google.com ([2002:a17:903:1b4e:b0:242:fe10:6c5f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1aad:b0:231:d0da:5e1f
- with SMTP id d9443c01a7336-245ee14e028mr11522745ad.21.1755645492331; Tue, 19
- Aug 2025 16:18:12 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:12:19 -0700
-In-Reply-To: <20250808074532.215098-1-rongqianfeng@vivo.com>
+        d=1e100.net; s=20230601; t=1755645501; x=1756250301;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rONFSpHM+4UT9RUEpdOXX+LBPAp0V3YjAVNh2Y6TMoA=;
+        b=V8xZT0wunjtZLbsL9Y3qOgRrmD9ws/++Knb3ZNmhyArUIR8irB4ccUg6mEsXWeTTA7
+         bNAXjIFlKdcoVWUpzN9GVi+OOe585cEQb+vurHbbDvSaJ8cWxT9js47XP3LW/nn6sXpi
+         3hXlN+JNFYNGcgit+E+NN5TO9DzcQyP1xIiBI+5mqGOwrM33Cd6F65Qp5bmTJyjPa5/Z
+         rfFjlIxWLXl/UFysw3S7Mp3mlBpjlFTwPVVgMYFbh6Y9CU/146ZGwCD0BDy3a3kwjS1w
+         YRFYXptlhmKK+hI4Zbe89ysIfnl5+Tisl7rF8+O4TTxHTDtVEucjfnmVIIUsHm4S7pZR
+         Ldaw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4ujscnZMnrijO1Q2ZtvUH5+dRh6E2gQUow13lfSruqPyrsyMwJBB4kyTiifbHHWNUbvVJDEGywMCQmc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/znoNSzLAyqvFPey0wjj7aCPKDonRRabqT3jzaWVpXP5mITb+
+	uL7tYdJxPIEC7jDon1aNgYdwElG4euG3sRvhK5qDZu/op6vuN3zFcx5Z9dI0KE1cwsjVeaQ75Qz
+	6lpoRrw==
+X-Google-Smtp-Source: AGHT+IHqe32KfT6dho6aCFJ3G/d8VrXeyydbRiGHvGnmJfWMRn3n7mFQuRV7TKc7F+1F+ayU2D2GFF3pcFw=
+X-Received: from pjxx12.prod.google.com ([2002:a17:90b:58cc:b0:31f:4e21:7021])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2ec7:b0:240:1bca:54
+ with SMTP id d9443c01a7336-245ef1e87f3mr7883665ad.35.1755645501030; Tue, 19
+ Aug 2025 16:18:21 -0700 (PDT)
+Date: Tue, 19 Aug 2025 16:12:21 -0700
+In-Reply-To: <20250626171601.2293914-1-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250808074532.215098-1-rongqianfeng@vivo.com>
+References: <20250626171601.2293914-1-xin@zytor.com>
 X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-Message-ID: <175564424895.3062965.10260628110611509312.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: TDX: Remove redundant __GFP_ZERO
+Message-ID: <175564427331.3063305.13126467496293838105.b4-ty@google.com>
+Subject: Re: [PATCH v1 1/1] KVM: VMX: Add host MSR read/write helpers to
+ consolidate preemption handling
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Qianfeng Rong <rongqianfeng@vivo.com>
+To: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	"Xin Li (Intel)" <xin@zytor.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	chao.gao@intel.com
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, 08 Aug 2025 15:45:32 +0800, Qianfeng Rong wrote:
-> Remove the redundant __GFP_ZERO flag from kcalloc() since kcalloc()
-> inherently zeroes memory.
+On Thu, 26 Jun 2025 10:16:01 -0700, Xin Li (Intel) wrote:
+> Add host MSR read/write helpers to consolidate preemption handling to
+> prepare for adding FRED RSP0 access functions without duplicating the
+> preemption handling code.
 
 Applied to kvm-x86 vmx, thanks!
 
-[1/1] KVM: TDX: Remove redundant __GFP_ZERO
-      https://github.com/kvm-x86/linux/commit/7cbb14d361bd
+[1/1] KVM: VMX: Add host MSR read/write helpers to consolidate preemption handling
+      https://github.com/kvm-x86/linux/commit/65391feb042b
 
 --
 https://github.com/kvm-x86/linux/tree/next
