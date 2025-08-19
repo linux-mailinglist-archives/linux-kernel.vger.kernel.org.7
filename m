@@ -1,112 +1,105 @@
-Return-Path: <linux-kernel+bounces-774651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCC6B2B58C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:50:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8669CB2B59A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92861626328
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:50:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B6727A5D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691CB19DF62;
-	Tue, 19 Aug 2025 00:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C48F194C86;
+	Tue, 19 Aug 2025 00:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjP8roxh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf9fcNQg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A710B13D51E;
-	Tue, 19 Aug 2025 00:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83532176ADB;
+	Tue, 19 Aug 2025 00:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755564605; cv=none; b=BO42qCoAoHBiYkQSNc6ENvPmsIjz6K9R/QvbkXWcAGg8useyJKc9Rym374cHQY9rdd8d8yb0KdzrfGfb56zjwpOfS1lgZa9bSEw6PnftHVZ3/sCXk6MSW6bBNzgy71mdzfyEpsxtVRjLn/valQ2XmD4olPEVaQhGT/a0MFBQCyA=
+	t=1755564929; cv=none; b=PpaXyeNQspHVWTIckK9mcmJgXrYx0FlRNu8zuMXmWZD7iLOeHwNWrtBxBjXP6vJiU2q7lnKBBNZvwSVMbTpg/XFV1Y7EcZAXgJzU8hJ+mDG0s1YNY8wlOzzIu24ueRazIM9mlkfwnqDuoYBLbdMGwfhM/+/I38r82SPP4iSlO5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755564605; c=relaxed/simple;
-	bh=tTKzEG7zl836WnweAKXGMrMXHoRDuAgoB+5V9lt1V5s=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=LvmT++V+yJbscXfPddR5iCNl+ZcB59cdy1f8oO+2rdfaXvqcSv340Dq0dHxG1sxNh1woglr30LIbk2eRSYsiNUTkVjLcFpAKDz2JEEmbeHOFtp6MR3vk4oD95Q1+3v6mFHuXCwwsfP5ClxA4NKM0lmE7oSg4S+y3ikCwYbtAS9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjP8roxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33CFEC4CEEB;
-	Tue, 19 Aug 2025 00:50:05 +0000 (UTC)
+	s=arc-20240116; t=1755564929; c=relaxed/simple;
+	bh=RHDDgdI1KU5gTd6q3RZ5KjPYkSkpxLcDr1NCuu19268=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vrwp53Vxoa7wFDp4GkErXUTYyCVjL2F9uslq8ztOhl4p4crO8Z+iTw35Qk+o/AguRF6Q/9mom4vIuusk/E2H1chA/ps9syrMPB9R6Yo26oNE/KrnswQna5mWSkMsvN1nkfbe726k+pIptuvkVCyjXJm6/KuI5iX1bO+02ULCssg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf9fcNQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A33C4CEEB;
+	Tue, 19 Aug 2025 00:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755564605;
-	bh=tTKzEG7zl836WnweAKXGMrMXHoRDuAgoB+5V9lt1V5s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CjP8roxhSRFFleZTXw0+0Rz4hU5ly8A8OmNCRxXUSKihGqVXpCbmbEopnF2vLXd9E
-	 9p9LFtYYkhBd2E+74Gb4yVLiZrfd4OJy/Ih4uM08zsokdGBsqGefyYYceNxdFZmkm5
-	 /leufJ/utKPYV+XNqJFzYj6TbEHF25ad4IgPcyDGE6IesI56AkZgv1LtkVpXp76MKt
-	 PKCO6aVv+/roD+njL3BTUvxOebaz9INeC3G5prE5LtxKBUokLg4LP/6Pg1WhfGd4h+
-	 vgWWFsaoq0InRPiHChBAqhsEZg64BKU9fCxPH/S6xvUXLJ/V7Ah45OxJOTltdr9p5D
-	 XqX2EX01VxIgw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E25383BF4E;
-	Tue, 19 Aug 2025 00:50:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1755564929;
+	bh=RHDDgdI1KU5gTd6q3RZ5KjPYkSkpxLcDr1NCuu19268=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xf9fcNQgSU+Jeg+ZP/DY9xu+7OEGwXkut8IrHzRW8NQLSJst0aTV0vjj7mBLD2TMC
+	 w5Fy48Sn79iupubE3YtfbIfAZusLxLPs26rf7V0ryA7My7a+9RNPJSdkDFA+bypbef
+	 SxGw74sKCkXQJfaZC+ps0lk9znD9XBmUnvgdm6lcfG4Dymf7j7PwKOAneQrOIzbUez
+	 vCSoiI+k4kes3saiX75j3h1XiAq43lBTMSMpkalNwUodG0ItYSp05wxSQjcjHYl4v/
+	 z2RjuW+7g/v5dY5viRILFm+jyrKcdgAUsnv3ksqOxqwz7dYrU5SvTErUHtrouytaWZ
+	 aW3FdXzlx4+Dw==
+Date: Mon, 18 Aug 2025 17:55:28 -0700
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, patches@lists.linux.dev,
+	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org, Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, Alexander Potapenko <glider@google.com>
+Subject: Re: [PATCH 00/10] Bump minimum supported version of LLVM for
+ building the kernel to 15.0.0
+Message-ID: <202508181753.7204670E@keescook>
+References: <20250818-bump-min-llvm-ver-15-v1-0-c8b1d0f955e0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/8] mptcp: misc fixes for v6.17-rc
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175556461525.2964462.14246574540734347809.git-patchwork-notify@kernel.org>
-Date: Tue, 19 Aug 2025 00:50:15 +0000
-References: 
- <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
-In-Reply-To: 
- <20250815-net-mptcp-misc-fixes-6-17-rc2-v1-0-521fe9957892@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, wujianguo@chinatelecom.cn, shuah@kernel.org,
- corbet@lwn.net, pizhenwei@bytedance.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-doc@vger.kernel.org, cpaasch@openai.com, stable@vger.kernel.org,
- dreibh@simula.no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818-bump-min-llvm-ver-15-v1-0-c8b1d0f955e0@kernel.org>
 
-Hello:
+On Mon, Aug 18, 2025 at 11:57:16AM -0700, Nathan Chancellor wrote:
+> s390 and x86 have required LLVM 15 since
+>
+>   30d17fac6aae ("scripts/min-tool-version.sh: raise minimum clang version to 15.0.0 for s390")
+>   7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0")
+>
+> respectively. This series bumps the rest of the kernel to 15.0.0 to
+> match, which allows for a decent number of clean ups.
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Looks good to me!
 
-On Fri, 15 Aug 2025 19:28:18 +0200 you wrote:
-> Here are various fixes:
-> 
-> - Patch 1: Better handling SKB extension allocation failures. A fix for
->   v5.7.
-> 
-> - Patches 2, 3: Avoid resetting MPTCP limits when flushing MPTCP
->   endpoints. With a validation in the selftests. Fixes for v5.7.
-> 
-> [...]
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-Here is the summary with links:
-  - [net,1/8] mptcp: drop skb if MPTCP skb extension allocation fails
-    https://git.kernel.org/netdev/net/c/ccab04469798
-  - [net,2/8] mptcp: pm: kernel: flush: do not reset ADD_ADDR limit
-    https://git.kernel.org/netdev/net/c/68fc0f4b0d25
-  - [net,3/8] selftests: mptcp: pm: check flush doesn't reset limits
-    https://git.kernel.org/netdev/net/c/452690be7de2
-  - [net,4/8] mptcp: remove duplicate sk_reset_timer call
-    https://git.kernel.org/netdev/net/c/5d13349472ac
-  - [net,5/8] mptcp: disable add_addr retransmission when timeout is 0
-    https://git.kernel.org/netdev/net/c/f5ce0714623c
-  - [net,6/8] selftests: mptcp: disable add_addr retrans in endpoint_tests
-    https://git.kernel.org/netdev/net/c/f92199f551e6
-  - [net,7/8] selftests: mptcp: connect: fix C23 extension warning
-    https://git.kernel.org/netdev/net/c/2eefbed30d46
-  - [net,8/8] selftests: mptcp: sockopt: fix C23 extension warning
-    https://git.kernel.org/netdev/net/c/3259889fd3c0
+> I think it makes sense for either Andrew to carry this via -mm on a
+> nonmm branch or me to carry this via the Kbuild tree, with the
+> appropriate acks.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+I vote you carry it with Kbuild. :)
 
-
+--
+Kees Cook
 
