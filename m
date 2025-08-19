@@ -1,145 +1,172 @@
-Return-Path: <linux-kernel+bounces-774846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C6FB2B84C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75702B2B84E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14D05E5BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F015E5EB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED01C229B38;
-	Tue, 19 Aug 2025 04:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4A30F7F2;
+	Tue, 19 Aug 2025 04:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CZJuOyNl"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="JsD7IzuZ"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8B021E0BB;
-	Tue, 19 Aug 2025 04:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6D32877CB;
+	Tue, 19 Aug 2025 04:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755576795; cv=none; b=kM8rFRcpAxvwgk4xZRLlzuJ9S+nl/VlmifZ+61oGMCk2oaHc+eMoG/ICaSuyjh017mVt2+xMKLWpDHk/VYN5YqV+/k2FlzkV1d5oMKdmgnpa688oeQtm5Kxcnk08BBu3Xj/1+DEGciX4h+HVlojN/GPjXx9Jxi6u/gigYJtGQ54=
+	t=1755576822; cv=none; b=U1XFeAhNhWH/piiPm8GYTVuRmHlJFjivBQaVC37hDXjQWCkavqqGDGgFp0EsbAS0Pl4dmRIH3oEDXyfdcp++VNfjzrUT8RV4plugPx6BwOP1tPlqgm4/aW1Vfr/KRlyEKoPTCvJmo93kjyCyF+9+xAdp1VNrBBqvvNmWYK4YFDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755576795; c=relaxed/simple;
-	bh=S/XeDBXYDwq3p3qukbHZCju54+owXP+zRjuDBF6bmWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DyasTkkMn+Z80q+rT6Gt7HerYeVzzXMGzB5iqyaezF+DNrYwv5PDVfp1m9vHIVg54kNtPifyystzd6hbQQCWn/E9atQ+a6PkAoKUij0FNSYSChf26c+vobORjy3eWn2hR4V58CMEotKwRKq0Nbj4sFZOzqm4bOkncYymKDgZBUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CZJuOyNl; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IJR3nC018787;
-	Tue, 19 Aug 2025 04:12:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=ZFlr9XZgtlNb+evn5
-	eEZ1lChPKLSA2WkgbkwzuLvENE=; b=CZJuOyNlIKOZy0rlXXgcLwa6do0EIfp8b
-	4WR8qFQJGjIlXpt2SxTRaBj6ZcjIYSmYLXLzGKZ+ytm2k8KTuwjMsS00v39XZFBf
-	etVnja4oBxP5deSrkMGpCxtB1lY/lN6Y8yk8K9hSOtT1VVqPasL9Hl87Emgc+U/9
-	mcXBjHrKWyn91HZBNnpOcS90+P1tD04ofe8/vabgO2AWNxcnVfr/I7y2dn8+evZb
-	uUWtZm3SgmKKOBm0mcZCRwAcYkGzRglSdObF0rw2cgKZa7u8Sy0ltrk1Sx+u3Vkm
-	Uocklo8Zu6ztQiz0TW/bU2bMPJ1aMjUo3tKbbbAEQ4zxD9Y+H7TGQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jhn3vbs4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 04:12:58 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57J4CvRG000433;
-	Tue, 19 Aug 2025 04:12:57 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jhn3vbs0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 04:12:57 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57INkjlm028695;
-	Tue, 19 Aug 2025 04:12:56 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48k5apgncw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 04:12:56 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57J4CqYb42140152
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Aug 2025 04:12:52 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C470020049;
-	Tue, 19 Aug 2025 04:12:52 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BF9C120040;
-	Tue, 19 Aug 2025 04:12:42 +0000 (GMT)
-Received: from aboo.ibm.com.com (unknown [9.150.8.12])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 19 Aug 2025 04:12:42 +0000 (GMT)
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, shuah@kernel.org,
-        pfalcato@suse.de, david@redhat.com, ziy@nvidia.com,
-        baolin.wang@linux.alibaba.com, npache@redhat.com, ryan.roberts@arm.com,
-        dev.jain@arm.com, baohua@kernel.org, richard.weiyang@gmail.com,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, donettom@linux.ibm.com,
-        ritesh.list@gmail.com, aboorvad@linux.ibm.com
-Subject: [Fixup PATCH] mm/selftests: Fix formattig in split_huge_page_test
-Date: Tue, 19 Aug 2025 09:42:39 +0530
-Message-ID: <20250819041239.167537-1-aboorvad@linux.ibm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250816040113.760010-5-aboorvad@linux.ibm.com>
-References: <20250816040113.760010-5-aboorvad@linux.ibm.com>
+	s=arc-20240116; t=1755576822; c=relaxed/simple;
+	bh=DhIsH4a4nwX9+RwiotdBhF0SwVQjZJAUqYd/yZv69vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4jVFs6ueDo+r0qCc5mdFXemhnQZNk/0V9o3NqmdoenyArPA/CgKGXcZF5Y1RbcR7DbUXvFIXt5YCR6/joj/uI1YbPNat62wOGD6QodygmiB1mRR4kaL9fsBnIX+Mkm/H4MQRdXgpzL+9EiUHSJLqq41ZCn8e3IL9XUUy3Z2KAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=JsD7IzuZ; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id D078020231;
+	Tue, 19 Aug 2025 06:13:38 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id eSk0OFjhhhF4; Tue, 19 Aug 2025 06:13:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755576817; bh=DhIsH4a4nwX9+RwiotdBhF0SwVQjZJAUqYd/yZv69vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JsD7IzuZeXU2/yFlG8pvtEdg+GtGdWqUU7nxLoo7TjykKicbf4mp6zk/KXK75jnTC
+	 nO+8sglKM2rGWBWpT9ZO0H4p1mqYacMreelmx7fHdYEPn1xTHuBDQXD2znGXYd1utI
+	 yyxh+SwtjDbRZHeyZAUCtRUghd8WbUdAEfUuzow9qpN1b8NeH/nQP66x9LwhSTk7jf
+	 8ogvZnxdnhWn8gt1bXkthvdzkdQjeMs/rhPzRWWwJgWrlRpKr2J0eUk3VrahJIRNGo
+	 /XT5I7XnKGzNFYSGRy6R3GfIqxmJZtCUOi6GUZ+UNgB3M6M54n2ET/Xa081Td3mAcy
+	 kboUcTnk31PeQ==
+Date: Tue, 19 Aug 2025 04:13:27 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Ghiti <alex@ghiti.fr>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atish.patra@linux.dev>, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Will Deacon <will@kernel.org>, Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH v2 2/2] RISC-V: Add common csr_read_num() and
+ csr_write_num() functions
+Message-ID: <aKP553e1S5RCYNhU@pie>
+References: <20250818143600.894385-1-apatel@ventanamicro.com>
+ <20250818143600.894385-3-apatel@ventanamicro.com>
+ <aKPu2g1MOZBBzQbV@pie>
+ <CAK9=C2XmDGOz9_euC4vtchOxr+8f+m+9zZYVewCc2s7GZhd4Pw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qMWmbQ09cn0A6Ai_j_mOSLJ5h7QLc1sg
-X-Authority-Analysis: v=2.4 cv=L6wdQ/T8 c=1 sm=1 tr=0 ts=68a3f9ca cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=QMRzLW034-kUWS3sVu0A:9
-X-Proofpoint-GUID: LlP27Rf4mfaXWxbFPVAWuPF00on4V6Bf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyNyBTYWx0ZWRfX+xUG2hwsfxGw
- ops6hgBiWNDUJyuuhWaWgIV2pryAekhcuDSZGQYnxMlCQL73osbzyasdZHPxdtTdbhxJ7mKmyVe
- O8s+ITkYUL1zI6T/+P2ckIt2Ln6o9beDTMXF8kBoCU2zeS3RSCcnUijFubMeU3YsOMveoP0Hpcs
- sP9XZRHcIva7G30tVSgWh9KDwPQ9QDmSLp1aC+zWNgLRnV67Os3MJFeEpZbjfITk+UkTJyaDQgu
- +6KyRK2jdQfsuur++ikjTZYQfMe06lQ+DyDqRKF/eV8sFc6lY4aFqdOl9qnnW6rNhSWwI4HEqaj
- roKv6FecKkjY2Ld1V2Gfx1L8q5XlSidSKXmd3/E2gDgZWenyXrlKnN8QxEeiSF3JgzODQsE2MpN
- mdAB1nbO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 clxscore=1015 phishscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160027
+In-Reply-To: <CAK9=C2XmDGOz9_euC4vtchOxr+8f+m+9zZYVewCc2s7GZhd4Pw@mail.gmail.com>
 
-Removed an extra space in split_huge_page_test that was introduced
-by commit 4b76e221794b ("mm/selftests: fix split_huge_page_test
-failure on systems with 64KB page size").
+On Tue, Aug 19, 2025 at 09:00:03AM +0530, Anup Patel wrote:
+> On Tue, Aug 19, 2025 at 8:56 AM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > On Mon, Aug 18, 2025 at 08:06:00PM +0530, Anup Patel wrote:
+> > > In RISC-V, there is no CSR read/write instruction which takes CSR
+> > > number via register so add common csr_read_num() and csr_write_num()
+> > > functions which allow accessing certain CSRs by passing CSR number
+> > > as parameter. These common functions will be first used by the
+> > > ACPI CPPC driver and RISC-V PMU driver.
+> > >
+> > > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> > > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
+> > > ---
+> > >  arch/riscv/include/asm/csr.h |   3 +
+> > >  arch/riscv/kernel/Makefile   |   1 +
+> > >  arch/riscv/kernel/csr.c      | 165 +++++++++++++++++++++++++++++++++++
+> > >  drivers/acpi/riscv/cppc.c    |  17 ++--
+> > >  drivers/perf/riscv_pmu.c     |  54 ++----------
+> > >  5 files changed, 184 insertions(+), 56 deletions(-)
+> > >  create mode 100644 arch/riscv/kernel/csr.c
+> > >
+> > > diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> > > index 6fed42e37705..1540626b3540 100644
+> > > --- a/arch/riscv/include/asm/csr.h
+> > > +++ b/arch/riscv/include/asm/csr.h
+> > > @@ -575,6 +575,9 @@
+> > >                             : "memory");                      \
+> > >  })
+> > >
+> > > +extern unsigned long csr_read_num(unsigned long csr_num, int *out_err);
+> > > +extern void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err);
+> >
+> > I think it's more consistent to directly return the error code, and for
+> > csr_read_num, we could pass out the read value by a pointer. e.g.
+> >
+> >         int csr_read_num(unsigned long csr_num, unsigned long *val);
+> >         int csr_write_num(unsigned long csr_num, unsigned long val);
+> >
+> > This allows the caller to eliminate a variable for temporarily storing
+> > the error code if they use it just after the invokation, and fits the
+> > common convention of Linux better.
+> 
+> Drew had similar comments so see my response in the previous
+> patch revision. (Refer, https://www.spinics.net/lists/kernel/msg5808113.html)
 
-Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
----
- tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the reference.
 
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index 54e86f00aabc..faf7e1f88743 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -544,7 +544,7 @@ int main(int argc, char **argv)
- 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
- 
- 	nr_pages = pmd_pagesize / pagesize;
--	max_order =  sz2ord(pmd_pagesize, pagesize);
-+	max_order = sz2ord(pmd_pagesize, pagesize);
- 	tests = 2 + (max_order - 1) + (2 * max_order) + (max_order - 1) * 4 + 2;
- 	ksft_set_plan(tests);
- 
--- 
-2.47.1
+> I had considered this but the problem with this approach is that
+> individual switch cases in csr_read_num() become roughly 4
+> instructions because value read from CSR has to written to a memory
+> location.
 
+You could return a structure smaller than or equal to 2 * XLEN from
+csr_read_num(), according to the ABI it could be passed in a0 and a1 and
+thus should require no memory operation.
+
+Let's assume we have
+
+	struct __csr_read_ret {
+		long error;
+		unsigned long value;
+	};
+
+	struct __csr_read_ret __csr_read_num(unsigned long csr_num);
+
+Then a wrapper like
+
+	/* piece of untested code */
+	static inline int csr_read_num(unsigned long csr_num,
+				       unsigned long *val)
+	{
+		struct __csr_read_ret ret = __csr_read_num(csr_num);
+		*val = ret.value;
+		return ret.error;
+	}
+
+could provide an interface that I've talked about earlier, and it
+follows the kernel's convention.
+
+> The current approach results in just 2 instructions for each
+> switch-case. Additionally, the current prototypes of csr_read_num()
+> and csr_write_num() are closer to csr_read() and csr_write()
+> respectively.
+
+But csr_read() and csr_write() never directly raise errors that is
+expected to be handled by the caller. I don't think it's a fair
+comparison.
+
+> Regards,
+> Anup
+
+Best regards,
+Yao Zi
 
