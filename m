@@ -1,125 +1,190 @@
-Return-Path: <linux-kernel+bounces-776532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2DB8B2CE94
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:33:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B735FB2CE96
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEF397B03F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:31:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B374B7B0A61
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73038319874;
-	Tue, 19 Aug 2025 21:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AC9346A03;
+	Tue, 19 Aug 2025 21:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Bpa6EGt8"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="et868i9o"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F40284896;
-	Tue, 19 Aug 2025 21:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4350C3469FD;
+	Tue, 19 Aug 2025 21:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755639202; cv=none; b=BkI6oIevk7Y/ROEijp46HVPQGp5EJgudO0R94Klt9/VIQdgrZlaR6tE73hn79nRr3ZeBwyiKYMRNXCVPBA/75QT98pgfB5ePzwaQOyJZUnAPgN0XpsKFCWcgDNHAsyZkBUXwSOEMJW7KjrwOIvWLCz72Yh0Jx34EqKs6n1zmudY=
+	t=1755639208; cv=none; b=X3M5HAm4o8nN/O8mYQl8U/FQQTnQKpTUcpK+yWzjQrgYHSbAaxNSNrR7GJOcIrXLWt+USdT6iikobpTotrhUOwXySUbQv+K+udnk661iMNKQpXcknweUZQFpI7plOYEDMNrX3gn5nbu3NYKy6Z6QhzAZe7za0egQIlyyGcWeE4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755639202; c=relaxed/simple;
-	bh=5GKkr71Vqh1UydfQJdAoG61RmWXd5ZaX8ORcmo57KgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gph9AL1dlgXSI/DJypn/AayMkfExfuYxfDVT7O3KfA906Rfz/JOs8jweAdQV4bpWcN19MD8Q6VogRGhlfrhKpOj2jzZtf3hwfv6CNukK+q+wwfNn9xA7QlubHzM4G4gWTezdZ4dhMi1P5JiQenuH8EKbPyR7fWpfC7lQVCZ1bVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Bpa6EGt8; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D710440E0286;
-	Tue, 19 Aug 2025 21:33:18 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Dn354hQKDEPk; Tue, 19 Aug 2025 21:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755639193; bh=nAbSgNtJTr5mL95vcDKXETLp7bDfTbShwe9wYBDiXM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bpa6EGt8Dok47Rvv/1Xfd+kfcvv92lcJUrYu6nHS1Uwf72u6ewozutEtaf/axqjFK
-	 EKZygJ/vVrc8JcFWBiFJeF9np7oo2lGvuv8m8SIR+9ssFZncu4iJ4/PqLqq7hZEjFB
-	 UaOSPu5evIpO2hfZH0pWgo2EWkH0PJNrkJ6upFwyA+qag4sint05grYbdfFy4v5Ycr
-	 BCFhh9JMdaEyA0fu6aQyc6SZ/ksTzhLpxB6YWZihahjbrBb3Lunpm6rcjLM/IklKFK
-	 xuLHCtPb1rj+HKSKMmeJ+HNiVgG++DFYsV4S4IOgmhIiqpZd/g+VMDj3d1kaLQLWUP
-	 DzOFxCh0sxMXDgtzBXaLOmxxt1EzSdSDxriE5wmgaic4TXIRy6etT1dpK8WfCi/lip
-	 BQQLaFN2FxmV7tmlpehffFJ5jY9eFeLVJagd5q1crD+/wJg+xCPbCICcUWl0iyDjJC
-	 UyV31WmY5smUHbKiO6jyfGdXiJ0PMPz9RMTIhETv8UNQv+1/BHfLearhZmSVBhovLu
-	 r81HUIYroyYX7/ckAVFkhdfRrjmIOJqsfZxJ/EryU2se4uQgLQ/+D6xlH+sNVYrHsb
-	 YCv+fT6L87XJiRx/30PbmZ80T6lZP94Pp7WdUXvEVL8PBLFokYD/cHQ88cxznZBQWX
-	 Prxgk3zaim22t6freZJ8jsgA=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6AAFD40E023B;
-	Tue, 19 Aug 2025 21:32:48 +0000 (UTC)
-Date: Tue, 19 Aug 2025 23:32:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com,
-	seanjc@google.com, vannapurve@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com, kai.huang@intel.com,
-	reinette.chatre@intel.com, xiaoyao.li@intel.com,
-	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com,
-	Fan Du <fan.du@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
-	yan.y.zhao@intel.com, chao.gao@intel.com
-Subject: Re: [PATCH RESEND V2 1/2] x86/mce: Fix missing address mask in
- recovery for errors in TDX/SEAM non-root mode
-Message-ID: <20250819213247.GJaKTtf1er-Ced_mzP@fat_crate.local>
-References: <20250819162436.137625-1-adrian.hunter@intel.com>
- <20250819162436.137625-2-adrian.hunter@intel.com>
+	s=arc-20240116; t=1755639208; c=relaxed/simple;
+	bh=GU354q1ZBG72+J0Uii5taNooUFiqttuME/2kNXHqznI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oDjACkDwBy2yURLSoikw5EBt6DDSXkz4qPR4XeXYuM4vYKX2uZo9VqqwClwT0u5FIz36AfwOVwTovA0C0neUve2npPnnJ4Ns0jJI+zPAUXub9RV50P76rwo9ib8BDJDSXiZkrjP47p2cjpNkxjO/cPJgjzIOLT1VNjqQDW5c6kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=et868i9o; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b001f55so27346415e9.0;
+        Tue, 19 Aug 2025 14:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755639204; x=1756244004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=80crH1qcBdVhpG4y3gBnYxFazFUWcOiHS8/MQf37Hrs=;
+        b=et868i9oCjQvPkbIzOPo0+JhZD+OitLMgXs+3WoJMzKhxFkB/279xv1uyL/0XdG9nU
+         rSFhLnF9/Wx5R3XRvxk26vf8uiM5+glbZI7KzuHDWeogiP3vN+s3HiKJ3GRQnIp8yKpp
+         f2XFhTY+uQF07YrCzo1FaQJRWwxPL+rgxZ2q0znUHHPKIJmPS47TjTlgKr9GqpR8A7ys
+         LRrjSvvbiBESojw2ZfZzMFWUG9/j1lBFeDJGdC3ee9PGm/GpTcVIF7CCDXz5oe/EoYUT
+         me9MlPu8QPF3pl0C8sW+rAoQLMYXKTvIewaQfhLI8Kcer5EW4PTon19rboVepW59SFkc
+         gkLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755639205; x=1756244005;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=80crH1qcBdVhpG4y3gBnYxFazFUWcOiHS8/MQf37Hrs=;
+        b=lsibUeavS6u9WR0rnjlqVX9dib5M0BQfSg8MiGSRbbXdl90lrSVR6fkMU2X/AvvGHn
+         Un1Y0ZqUauLOcrjEKFcb0fYd2kjisf8dAvSJ5uZ1HOCSJci6THami7qYa4mqVaSVfBQr
+         gU+lrpgSGcEfbwIqSNd6jYczYm+08gn++8cLXxv7SWBfKI7/NNayMGP31Blxmji9A7lj
+         WGzWlQeMTxFXyyE51WHZqtO7QLrn52H/xEHMqEx5YlGPSOeigT8jypDZGG88eQp6Gh8f
+         VcLZvgAZoFFfsa14+ibdRr7p9eaKdZ1cweiK54CinfquLgv4ZcTd2Ie51Wk9a6ha/aMY
+         vRJA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4G4hAKMY3X16nlz92iRAav9B4OdD47tig45nsMyy20Tvu0+OJv50wFIoOvMbytXlRZaVEbiLDzFqms+MX@vger.kernel.org, AJvYcCX058BGfBRoXH2AiOML7kzKYc93cxgu+2F65e6GdEHNoTtfVfiuuRZUtMtTAS/068rqeKQfalWjUjrCLWg3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKi0k1w2K+IIRaWvvP1RCsfRGOdzv9EI+73VUFUWu7n6bi9Ot1
+	Ei63OQkWf3LNazCJnnl9CinZ6altr5sh0x9ky3ayQA4yl75ry7TkpCVLL4PSwA==
+X-Gm-Gg: ASbGncvNMECG+cY0vpGrNuBMw/IdH0Pmi5r18844kHTMdZV3pQFZOFs54Ci7NEeM4pJ
+	AxvFONSBnppgO4VPGp04Tcbh35f+TiFSg11vjjW7VjhIlosVIpDGzSWeiQvxaTs8/Z233U1ej04
+	R7QD1/k6e1WGSI9HWZ+PO+6wvgp4ffJUno5IwpmDYaYNq/9apHF6IAb9KRzdzm2DVjy4WJ7PMJz
+	1bhr4sXuDk3UyFlJ8iJ0COVSqInOCR05T+BXqlhP+EaX4F/syw6pM8IwKlTdQ+UAewdjNf7qZD4
+	GpXbhriScpGPIikoG5LnMhdUJgagfI+m3VwIB4WiyAWA3360vNlsubaQmWXAOy7g9aoKiDEI5Ct
+	4RFTExR2OZOkIO21EJQEuINk5WbZqAErAOGTsJeH7e8UTVhLxqhxfbuFoUzga
+X-Google-Smtp-Source: AGHT+IE9kfEXkxy3UApT6dr6qaBy55BbmWLGiqW9bfYWYRifG1Jor2p3xApDPaln/O7Q9ZwACtOmAg==
+X-Received: by 2002:a05:600c:4f8c:b0:458:a7b6:c683 with SMTP id 5b1f17b1804b1-45b479a5eb1mr2433455e9.1.1755639204291;
+        Tue, 19 Aug 2025 14:33:24 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b43e13eafsm19770115e9.9.2025.08.19.14.33.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 14:33:23 -0700 (PDT)
+Date: Tue, 19 Aug 2025 22:33:20 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
+ <linux-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
+ access
+Message-ID: <20250819223320.5ea67bea@pumpkin>
+In-Reply-To: <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
+References: <20250813150610.521355442@linutronix.de>
+	<20250817144943.76b9ee62@pumpkin>
+	<20250818222106.714629ee@pumpkin>
+	<CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250819162436.137625-2-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 19, 2025 at 07:24:34PM +0300, Adrian Hunter wrote:
-> Commit 8a01ec97dc066 ("x86/mce: Mask out non-address bits from machine
-> check bank") introduced a new #define MCI_ADDR_PHYSADDR for the mask of
-> valid physical address bits within the machine check bank address register.
+On Mon, 18 Aug 2025 14:36:31 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Mon, 18 Aug 2025 at 14:21, David Laight <david.laight.linux@gmail.com> wrote:
+> >
+> > Would something like this work (to avoid the hidden update)?  
 > 
-> This is particularly needed in the case of errors in TDX/SEAM non-root mode
-> because the reported address contains the TDX KeyID.  Refer to TDX and
-> TME-MK documentation for more information about KeyIDs.
+> It would certainly work, but I despise code inside macro arguments
+> even more than I dislike the hidden update.
 > 
-> Commit 7911f145de5fe ("x86/mce: Implement recovery for errors in TDX/SEAM
-> non-root mode") uses the address to mark the affected page as poisoned, but
-> omits to use the aforementioned mask.
+> If we want something like this, we should just make that last argument
+> be a label, the same way unsafe_{get,put}_user() already works.
+
+A 'goto label' is probably a bit more readable that just 'label'.
+But there will be similar code in the same function.
+But it can't use the same label - one needs the 'user_access_end()'.
+
+I wanted to allow an immediate 'return -EFAULT' as well as a goto.
+But not really expect anything more than 'rval = -EFAULT; goto label'.
+
+I do agree than some of the 'condvar wait' macros are a PITA when
+a chunk of code is executed repeatedly in a loop.
+There are also the iover iter ones, did they get better?
+
+> That would not only match existing user access exception handling, it
+> might allow for architecture-specific asm code that uses synchronous
+> trap instructions (ie the label might turn into an exception entry)
+
+Unlikely to be a trap in this case, but I guess you might want jump
+directly from asm.
+OTOH the real aim of this code has to be for all architectures to
+have a guard/invalid page that kernel addresses get converted to.
+So eventually the conditional jump disappears.
+
 > 
-> Investigation of user space expectations has concluded it would be more
-> correct for the address to contain only address bits in the first place.
-> Refer https://lore.kernel.org/r/807ff02d-7af0-419d-8d14-a4d6c5d5420d@intel.com
+> It's basically "manual exception handling", whether it then uses
+> actual exceptions (like user accesses do) or ends up being some
+> software implementation with just a "goto label" for the error case.
 > 
-> Mask the address when it is read from the machine check bank address
-> register.  Do not use MCI_ADDR_PHYSADDR because that will be removed in a
-> later patch.
+> I realize some people have grown up being told that "goto is bad". Or
+> have been told that exception handling should be baked into the
+> language and be asynchronous. Both of those ideas are complete and
+> utter garbage, and the result of minds that cannot comprehend reality.
 
-Why is this patch talking about TDX-something but doing "global" changes to
-mce.addr?
+Test: which language has a 'whenever' statement?
+IIRC the use is (effectively) 'whenever variable == value goto label'.
+(I hope my brain does remember that correctly, the implementation of
+that language I used didn't support it.)
 
-Why don't you simply do a TDX-specific masking out when you're running on
-in TDX env and leave the rest as is?
+> Asynchronous exceptions are horrific and tend to cause huge
+> performance problems (think setjmp()).
 
--- 
-Regards/Gruss,
-    Boris.
+The original setjmp was trivial, no callee saved registers,
+so just saved the program counter and stack pointer.
+The original SYSV kernel used setjmp/longjmp to exit the kernel
+on error (after writing the errno value to u.u_error).
 
-https://people.kernel.org/tglx/notes-about-netiquette
+The real killer is having to follow the stack to execute all the
+destructors.
+
+> The Linux kernel exception
+> model with explicit exception points is not only "that's how you have
+> to do it in C", it's also technically superior.
+
+Indeed.
+
+I've seen C++ code that did 'new buffer', called into some deep code
+that would normally save the pointer, but had a try/catch block that
+always freed it.
+The code had no way of knowing whether the exception happened before
+or after the pointer was saved.
+And it is pretty impossible to check all the places that might 'throw'.
+
+> 
+> And "goto" is fine, as long as you have legible syntax and don't use
+> it to generate spaghetti code. Being able to write bad code with goto
+> doesn't make 'goto' bad - you can write bad code with *anything*.
+
+I fixed some 'dayjob' code that tried not to use goto, break or return.
+The error paths were just all wrong.
+
+	David
+
+> 
+>             Linus
+
 
