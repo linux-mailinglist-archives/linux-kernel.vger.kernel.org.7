@@ -1,71 +1,132 @@
-Return-Path: <linux-kernel+bounces-774653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE73B2B5A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:59:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3B2B2B5A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A2E18A4FE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:59:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E98C75228C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8104719AD48;
-	Tue, 19 Aug 2025 00:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3265C19ABC6;
+	Tue, 19 Aug 2025 00:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXUpGYPD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjiAxZ4Q"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7B03451D0;
-	Tue, 19 Aug 2025 00:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C4E3451D0;
+	Tue, 19 Aug 2025 00:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755565142; cv=none; b=HKz4Fzo2ANKnHo94ltHL3UJ50oOQBBrt4Vo/8oV4Ybts8iBdzyc41GnQzxd9neY0VMLEpr5nOHWhDT9kVTySbHp/CoMrZDU74PBP/LlC+zFI8ShNqcik+wGESADBx8G8+crhvV8ISG0hMoSonStquuB5ywqCkmKDoZtkwefFks4=
+	t=1755565174; cv=none; b=Dr1Ig/stpnERCZxKkmLW6gETtyYRzVVxyKw2wEJJiE230e4nHoxCrg89L6o4ngS0MLIbZME9Mf2QVF0unNmx2nOoAjqD5OJcjLFvh67ctGkEHS21xYe0LO91MbVQWtl0DUpBG/sxXnvw0InLPfLsrXAoksLMQNVevUU1DQc6wOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755565142; c=relaxed/simple;
-	bh=9T0dOVwu+vVQ2RIasShYoplaSomai6cPaXmNmicLnmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RNj5yMeQN3caLPImIuAkcwo78IPX9Iozae5cVRHL7Tq0Qm17t8YyQJmdxWZFX3XAf4xhZhtCYLe/6RuFB6QvOTr6EJ/DW4rkXC0SK6J9uBpe8oXNt4m6g2hI1oZiQylDUI+tUlpBgMhqlhLad2CcZvcQFu2pZuM7Mo2Tz2+NPOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXUpGYPD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2DB6C113D0;
-	Tue, 19 Aug 2025 00:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755565142;
-	bh=9T0dOVwu+vVQ2RIasShYoplaSomai6cPaXmNmicLnmw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OXUpGYPD2EptVvhF6t0cFflJxmpkK0zTxgqQLggSfl1DMWH5GOH3oAUugVeOaa9mw
-	 Gc+Eil68ZGUMn4UyuHScv0HHGAScdC2bsht1MHE44yTWE49KYfwymM9nBDdM6TOath
-	 df1bPZBcDCDuX01vOgqmuv4iXD/8yjU8TQKL1fULsZoYsmlMlg9/z7wg4iFeHEx8iS
-	 nnlTNs3TySJBLzsMvGP+zFT18PRX4V2SN/ifowGYgTqZ23yZ0nEdGJNP8aICBiSQ38
-	 wWlbHF1HRZeTlyhNxyc7Aza+hEAr0CYK5CZYpEei9JqzLYpyVP6glT3Zdh3v/V/tro
-	 99HxochJ5yhtg==
-Date: Mon, 18 Aug 2025 17:59:01 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Osama Albahrani <osalbahr@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
- <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: Fix broken link to cubic-paper.pdf
-Message-ID: <20250818175901.5b499b8c@kernel.org>
-In-Reply-To: <20250817133945.13728-1-osalbahr@gmail.com>
-References: <20250817133945.13728-1-osalbahr@gmail.com>
+	s=arc-20240116; t=1755565174; c=relaxed/simple;
+	bh=c/LV6noORB0D4Md1eWRVuiELmQhn6kk9mea6ppRZJmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gp0TsQS9E58zDVNT3TCFV5PrQkpmUT4rqQ5mwM/ihZB/Tkywe8piwTprbFegfBFH9M5iriS/VcMWURvYLGGO3b3SwBQPRTercI5YorSvMH3aGiJ+QGcOg4J+yNXlsMu2eF+4FpQVAXiJOW1zBWrA6FWtBLuNNzoRwjj6UX0ugr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjiAxZ4Q; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-30cce908e12so3771455fac.1;
+        Mon, 18 Aug 2025 17:59:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755565172; x=1756169972; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KN4G0efAeREUbgmBD71EDAUq17QjYOcLNOKyuUkZomk=;
+        b=TjiAxZ4QSkYw7saqjektxlQ0Ld83xnl4GeFLj9bE0MQ80tVvJgW3TPMjvbfG4EC1N5
+         K/HMstzwn8T/n/Yq3b6zJdcFkzHrV1EOwL1vyW4GYWmukJ9K02O9Oc2diRWSQRrAgE73
+         DzCUdlJHg/hXGZBmzRm+71Y4FSyein7ELVD25YRSp6cYj8q4AFIM5uU4xG8goByGovF7
+         jpwvYBZp3I9rnoQOik1D/M7oVjwerkBGveNnZ4+B05K9gFUzJnRdawaAZkWAvwGqGTrQ
+         3yMKuIIbSADrn7BMGKTEYO87LoS7kBvGV2PCWlj4TpWVI1O+QYuTugVxFLGglzAWdsIb
+         L6HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755565172; x=1756169972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KN4G0efAeREUbgmBD71EDAUq17QjYOcLNOKyuUkZomk=;
+        b=kncYTp969NNB7Crtd9dghuA/qq+HQMVC4OzhLAW7W7UMZzgA+759lZdxqoY8w+CHrL
+         IWhDI5jD74RofiaVNBkOlVE6OLxoLd8D91VFY6+eMC9tbKkjFWiDqT0h+8etuqHQaVrl
+         Nsa6QUP3oip2RzPZviJJ9u6r8srlQOLm3Pu9w1AZSu/C7F7BZ0F46kdMC3kK8hUKPQxK
+         sJyFpCIxhw8miFNl3v6e3abLbECAbXuvc12J5IMf2OQP2RA+zLBgEx6PyT8z5TAvOCG4
+         HVOfdPenzJBKPCPIi3/YOVQmaRp3p78By2psjPtUF92QDu3l40JXoY5Viw4UWSGXSGkB
+         0nVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfeLO30TuSRzP23yhGWGKy5j45yzXati3dDyNs17YXDDeWeJzRPsvn8RdoBo6ciiz/GOMc60XsmicUs2U=@vger.kernel.org, AJvYcCWD5w/c2vRbxzzd610m+uyggFHpM52C89Z6HhWtIZokignRQrnkS8Wiy32v1yfmomeMJkJBks2hcCidcw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywuums57bFbnM2sY96bdCv+VFiTt/WxAVuBAqB7J1UfAowfqOMS
+	fQQcHNPxWpyd6CHUEY91FOaWjZNBm5q1AM0gf/RHDJutXacvwRD+OXGvaDzp6wAeRsv9X2B3EdV
+	cThJVMmhLwaP67vehnrJnlmssJSoWydm7KnVkGfI=
+X-Gm-Gg: ASbGnct0ByrlDhMk/wd/E97rE4wsr2Hh3E/BgEC1PHMoED4F2x4KDnkdcMtPAW3RlEK
+	PG4e3SXDJJzSkYgnOyxYo5OeoSuAZN3XeIhAF7dO5AKMM+Dk4eZu/wop6WFZ5K8WkZv1MARNQC0
+	wxXsfmk0zX3Iovvxf+b0gjsXLF7wOje5Q40LPYvGUFJ6F6YOemhcYF7QdUqPe0mvK5wejnJfZ4d
+	BzQ
+X-Google-Smtp-Source: AGHT+IGhPkuM0TXmeygd9dHMKoeZWTn4iUAid26HIVKmVzpEq10sP58J1WO7ncm/ah6zHg4yWJAjqR+q59sN/fzCaW8=
+X-Received: by 2002:a05:6870:cc81:b0:310:b613:5fd5 with SMTP id
+ 586e51a60fabf-3110c150890mr717921fac.10.1755565171753; Mon, 18 Aug 2025
+ 17:59:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250819072328.509608a3@canb.auug.org.au>
+In-Reply-To: <20250819072328.509608a3@canb.auug.org.au>
+From: Sang-Heon Jeon <ekffu200098@gmail.com>
+Date: Tue, 19 Aug 2025 09:59:20 +0900
+X-Gm-Features: Ac12FXzq-f6sXHurGUd-fbqj9GS6KTV9ARYEAaSkO9z0AHsk_0R8LrOU5Kmm_6I
+Message-ID: <CABFDxMHSkmH3LLmZYZN6-Ymj+yRNoaA3=9zg=4P7ZrOxrBs8bg@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the mm-unstable tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, SeongJae Park <sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 17 Aug 2025 16:39:45 +0300 Osama Albahrani wrote:
-> Use first Wayback Machine snapshot
+Hello, Stephen
 
-Maybe replace it with a title + author?
-The links keep getting stale, and for academic papers the reference
-should be pretty unambiguous.
--- 
-pw-bot: cr
+On Tue, Aug 19, 2025 at 6:24=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> In commit
+>
+>   1ce24beaff3f ("selftests/damon: change wrong json.dump usage to json.du=
+mps")
+>
+> Fixes tag
+>
+>   Fixes: 441f487d6ebf ("selftests/damon: test no-op commit broke DAMON st=
+atus")
+>
+> has these problem(s):
+>
+>   - Target SHA1 does not exist
+>
+> Maybe you meant
+>
+> Fixes: a0b60d083fb6 ("selftests/damon: test no-op commit broke DAMON stat=
+us")
+
+You're right. I think it might be changed at the point rc1 -> rc2 on
+the mm tree.
+Is there anything I can do? Or maybe Andrew can help?
+
+I didn't mean to bother you guys.  Also, original patch is from here [1]
+
+[1] https://lore.kernel.org/all/20250816014033.190451-1-ekffu200098@gmail.c=
+om/
+
+> --
+> Cheers,
+> Stephen Rothwell
+
+Best Regards
+Sang-Heon Jeon
 
