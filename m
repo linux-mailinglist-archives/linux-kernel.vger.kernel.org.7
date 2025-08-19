@@ -1,209 +1,136 @@
-Return-Path: <linux-kernel+bounces-775803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78006B2C538
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:21:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E81B2C503
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939A6188ADF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:16:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C03967B480E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D834340D8C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907BA340D96;
 	Tue, 19 Aug 2025 13:16:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD3A2C11EC;
-	Tue, 19 Aug 2025 13:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJ5OpBRH"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4801F4CB5
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609359; cv=none; b=mTbA7A4lvZXsFQVGRW5MLZreoRnaJtnQg+nXx//GA6IhyCnevxcYJL3bwj0sZ1DyoAlw7aPGqhD4BoNrijxyIqtgSUuPzBOkORlHWdzaksI1sQBlT3lo33fMT4cJkG5sPv0gLhGi/DjG/z49hkfUQlRr7WKmMu2mwtwY3OutH1c=
+	t=1755609359; cv=none; b=YNPiozk9Xp7vA2NMBzBcu9jGdKp6diEzcL3UES5a/OXjCLbRS+KdQXC702uh0TKb8mLmfp6Rq1Wu5kSElg5NmmYOjy7xs1jpRBDna+Dc7/u2po7bI+6xvX7yZPD9z+GtJ5rbh0SwmDWC8E5LwGWNRGLbq8R6YiW2NJAtwBGUyzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755609359; c=relaxed/simple;
-	bh=TZO/KLYTk3liX98Qqbq7mizNVHvRrDmh1OUM8O5QVDg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Vzhilxi40RdHl/if59Z3tD68btiKi8WcLsyIO85rhK8rRKxCPHZ8EpCoVK6e/DZk1Tgx2sEjAB02wfFhCWSfleC3khXdPT/ppeLXkQ3sXQSfCt0BUTJtNqhAurWF5pgRbNPXo3gMc/YgI2zDUm0ozoUC6Y7iHR7ntcoQ5M1vsBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0830C16A3;
-	Tue, 19 Aug 2025 06:15:48 -0700 (PDT)
-Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 078263F58B;
-	Tue, 19 Aug 2025 06:15:51 -0700 (PDT)
-Message-ID: <67a0d778-6e2c-4955-a7ce-56a10043ae8d@arm.com>
-Date: Tue, 19 Aug 2025 14:15:50 +0100
+	bh=hcciJ3JEjRJw2/6qsmBCQwKrAUZmXoESCyk80czkwi0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JNLtzLI0ilRzmogPqzsQvuHkHmG5XRMxl78vs6YnTw4CJeQ3CL503M0QDedSo5UUoeUhfNOcauNofeEJvI77t/lCC/LULDSlklt7kbfFrUaRcLIZsyGDwnBUxrlYQcjTCgcxDW2RRKvEvsZ3Ci67vZI4MVBeR63N8JYzhFhABl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EJ5OpBRH; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7322aa0so75565766b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:15:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755609356; x=1756214156; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OE5+Il4drYFb68+K9H3WTtaiI5C7tn33MG/1x7pFl90=;
+        b=EJ5OpBRHRd5vZZDH2kp0mP272oDRB3gNWwvoge+dSzudHc7sBONPTirAHTE40s4jx5
+         r/wbquSwBMwcn+bo7dw6KKupM0lcS8gxh6BkgX3yDJBERPBon6tHrhJno1ET48pPOKGt
+         GjYv47dvQnF+IFBRJ+XsBB8aWWyo2dH3mzyDrgHGjMjpna24guS1Z7Yjzv21SrqgxZZW
+         UA4hWT67Ysov1Gspgl4me/83jvjadT5S1SWxSqf0kHItEJDCzKZc+yTEtl/8R7oLI5Rd
+         0sCwPsdcb0cFj3Etn900swvFZj3wqBMjLgmlqWD0L3gl2A8H+c8t+eBE9eM+cuNifS6Y
+         ekmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755609356; x=1756214156;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OE5+Il4drYFb68+K9H3WTtaiI5C7tn33MG/1x7pFl90=;
+        b=FLWKWmJUz8NKWEayLL+eLrUZrqtpJewJoW9OvVfmctd2J+VbUPxwVRdzkkLm2wjiTx
+         X5xb5LK5+lyKlQOhFfpBadHUJ+8R79kABp+R1YI9YZi6NsvavvCMSuivtlkJYtPHU6OK
+         PgwxeQSkguU3LJrtm2cuCv7whleTFkG5nFjy53h/mWh5yen27cjNE/PQxe+keBZleW3W
+         P5LJPWK6pqsuc2T8y8OY9KmKJNDseXqGyijeitqt9IT1a7A6FM99tVyloz8JHt7HzeJT
+         PxKpx9JXPUIYOv0GO/pStE7IowmzT8zHzo0MHg025Epke9Frj9rSrj5DiFjWbUrgl43/
+         U3uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo35o37OWRCwOt4bGgPLyq/MzPAoBfxPAsZaz1C2/vrh6bSm9KxT2C1xXyK/AOJdP/fm3/FaioAAXv6d4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7t43dO+fGXf8xqq5gv57KaVVQJc9sJwQxQeYymaw00HGCs3PC
+	+Qt/GyeFai6SI+4s5pSTz+PhEX/xsdW5/8kV94vltDiYDGs+gVhCKfou1BniR3b1c/U=
+X-Gm-Gg: ASbGncs7XCDKihSisL6qJ/SAtW5nnE0TK3kxht+0TyeBEDexWIDfr+yof1HjBRV56id
+	TkMwW1rX/0qDXiK2L0jB7kJoGcBZd3WYElqUxioBXX3fdeUDikE2VnKLgAMh8gcDY86fAAHvFrb
+	QQpepwdi1fkf0EZIvPsUe4puw4Q1oAGNPuLHuD6W2EDtJLSzAuRmKHeqJ5jOxUBr+XVwUSZrPMm
+	RBlyI4FC2oxhNIJ4SzhRr+1AOcwNJXfY5S4Ekb/aTxgHHS2odTHUOFeSfHrw6cosKagw5nxsCc/
+	JB70tMoHfP+mq5xJ4ax77UHIDCfEVCMlhlfq0P9hXDQDia9/uG14WmB8sQSywYRuIIT0b9ZrZau
+	uXiz4JliN5ZGxsk2W9lFYeMYoz0dV7OW7ug==
+X-Google-Smtp-Source: AGHT+IG4KTbZO8LcfQ30OvU9YlImtjjMx+/FQDo5HoX0RNFAy7RBraEUBzYhhrqCR+YvCl3Qva33qA==
+X-Received: by 2002:a17:906:d54f:b0:afc:d540:add4 with SMTP id a640c23a62f3a-afddd241018mr115990366b.8.1755609356407;
+        Tue, 19 Aug 2025 06:15:56 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a755f8a61sm1771773a12.14.2025.08.19.06.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 06:15:55 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] riscv: dts: microchip: Minor whitespace cleanup
+Date: Tue, 19 Aug 2025 15:15:50 +0200
+Message-ID: <20250819131549.86279-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/19] perf: Introduce positive capability for raw events
-From: Robin Murphy <robin.murphy@arm.com>
-To: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
- mark.rutland@arm.com, acme@kernel.org, namhyung@kernel.org,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
- linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
- iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <cover.1755096883.git.robin.murphy@arm.com>
- <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=951; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=hcciJ3JEjRJw2/6qsmBCQwKrAUZmXoESCyk80czkwi0=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBopHkFB6KWZYNHKcB/PWHff8odXyHWo1X4hTKT+
+ 9yX28P0HP6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKR5BQAKCRDBN2bmhouD
+ 1w0ZD/0ZhRotOVRHIIlha+Ddf7VVmjL9AqsBqtw35BBCtjM/J1lBtJbZov664WjaD89YEJAqIm7
+ 1nDJAcrW8zyKPuGFZPkhgk7fS1W+e1lQys7mCiUHbT9gZaoEhhZ8QlRQTPEzmAOqjIZyRMqJKZj
+ zJUKN69xKV5plTt0PSYoXZI5YXg6enLdYWu4WvAyMS4iCPw+zZQpbs47FE2iDS7i1GvfZVMb7iy
+ 1tFoY5YP76Z9gMnO6LnvES1ZXStyK3brSgpkaxwO/SxP2IrqHcV6yaOSh436BnnMAORn7YlRIMo
+ Ooqq5rbcO8usuNli+NgYBu3Zn3Fmz5GlqQUPUG2ejNWG54mqlP8/GVW8zTb29LKa3uZtXOf2xlt
+ 3EmbX+6XTCeZNL4zvsMM915xv1yhREHodM1i8ibl+l/t9LOi71YIUIZ2zIxwOrkc0ak/4r+kiJo
+ zQRRK03U9PBEGv/HGZeI+7AFB5A1DdLlU2MXm9EwJVvJ/JrtEdM/H+ngytiWEIDHe6/rP40QCzF
+ v3lv+9QXttsQQlvkorfdMiX0KU2E8rlVufMAnnogVPd3T8ejG6jeEg/dhVJ+f8dYwvyq7eAcjvI
+ 8cFyAivH7Il/3SZGHOjGoJcRUnx+ByqzqHPIe3PI83XPdO7jKLerwGME6rnkniKa0oeUL8inC6Z Jjnz9NU7AfP7VyA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On 13/08/2025 6:01 pm, Robin Murphy wrote:
-> Only a handful of CPU PMUs accept PERF_TYPE_{RAW,HARDWARE,HW_CACHE}
-> events without registering themselves as PERF_TYPE_RAW in the first
-> place. Add an explicit opt-in for these special cases, so that we can
-> make life easier for every other driver (and probably also speed up the
-> slow-path search) by having perf_try_init_event() do the basic type
-> checking to cover the majority of cases.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
-> 
-> A further possibility is to automatically add the cap to PERF_TYPE_RAW
-> PMUs in perf_pmu_register() to have a single point-of-use condition; I'm
-> undecided...
-> ---
->   arch/s390/kernel/perf_cpum_cf.c    |  1 +
->   arch/s390/kernel/perf_pai_crypto.c |  2 +-
->   arch/s390/kernel/perf_pai_ext.c    |  2 +-
->   arch/x86/events/core.c             |  2 +-
->   drivers/perf/arm_pmu.c             |  1 +
->   include/linux/perf_event.h         |  1 +
->   kernel/events/core.c               | 15 +++++++++++++++
->   7 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-> index 1a94e0944bc5..782ab755ddd4 100644
-> --- a/arch/s390/kernel/perf_cpum_cf.c
-> +++ b/arch/s390/kernel/perf_cpum_cf.c
-> @@ -1054,6 +1054,7 @@ static void cpumf_pmu_del(struct perf_event *event, int flags)
->   /* Performance monitoring unit for s390x */
->   static struct pmu cpumf_pmu = {
->   	.task_ctx_nr  = perf_sw_context,
-> +	.capabilities = PERF_PMU_CAP_RAW_EVENTS,
->   	.pmu_enable   = cpumf_pmu_enable,
->   	.pmu_disable  = cpumf_pmu_disable,
->   	.event_init   = cpumf_pmu_event_init,
-> diff --git a/arch/s390/kernel/perf_pai_crypto.c b/arch/s390/kernel/perf_pai_crypto.c
-> index a64b6b056a21..b5b6d8b5d943 100644
-> --- a/arch/s390/kernel/perf_pai_crypto.c
-> +++ b/arch/s390/kernel/perf_pai_crypto.c
-> @@ -569,7 +569,7 @@ static const struct attribute_group *paicrypt_attr_groups[] = {
->   /* Performance monitoring unit for mapped counters */
->   static struct pmu paicrypt = {
->   	.task_ctx_nr  = perf_hw_context,
-> -	.capabilities = PERF_PMU_CAP_SAMPLING,
-> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
->   	.event_init   = paicrypt_event_init,
->   	.add	      = paicrypt_add,
->   	.del	      = paicrypt_del,
-> diff --git a/arch/s390/kernel/perf_pai_ext.c b/arch/s390/kernel/perf_pai_ext.c
-> index 1261f80c6d52..bcd28c38da70 100644
-> --- a/arch/s390/kernel/perf_pai_ext.c
-> +++ b/arch/s390/kernel/perf_pai_ext.c
-> @@ -595,7 +595,7 @@ static const struct attribute_group *paiext_attr_groups[] = {
->   /* Performance monitoring unit for mapped counters */
->   static struct pmu paiext = {
->   	.task_ctx_nr  = perf_hw_context,
-> -	.capabilities = PERF_PMU_CAP_SAMPLING,
-> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
->   	.event_init   = paiext_event_init,
->   	.add	      = paiext_add,
->   	.del	      = paiext_del,
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 789dfca2fa67..764728bb80ae 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -2697,7 +2697,7 @@ static bool x86_pmu_filter(struct pmu *pmu, int cpu)
->   }
->   
->   static struct pmu pmu = {
-> -	.capabilities		= PERF_PMU_CAP_SAMPLING,
-> +	.capabilities		= PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
->   
->   	.pmu_enable		= x86_pmu_enable,
->   	.pmu_disable		= x86_pmu_disable,
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index 72d8f38d0aa5..bc772a3bf411 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -877,6 +877,7 @@ struct arm_pmu *armpmu_alloc(void)
->   		 * specific PMU.
->   		 */
->   		.capabilities	= PERF_PMU_CAP_SAMPLING |
-> +				  PERF_PMU_CAP_RAW_EVENTS |
->   				  PERF_PMU_CAP_EXTENDED_REGS |
->   				  PERF_PMU_CAP_EXTENDED_HW_TYPE,
->   	};
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 183b7c48b329..c6ad036c0037 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -305,6 +305,7 @@ struct perf_event_pmu_context;
->   #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
->   #define PERF_PMU_CAP_AUX_PAUSE		0x0200
->   #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
-> +#define PERF_PMU_CAP_RAW_EVENTS		0x0800
->   
->   /**
->    * pmu::scope
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 71b2a6730705..2ecee76d2ae2 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -12556,11 +12556,26 @@ static inline bool has_extended_regs(struct perf_event *event)
->   	       (event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK);
->   }
->   
-> +static bool is_raw_pmu(const struct pmu *pmu)
-> +{
-> +	return pmu->type == PERF_TYPE_RAW ||
-> +	       pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
-> +}
-> +
->   static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
->   {
->   	struct perf_event_context *ctx = NULL;
->   	int ret;
->   
-> +	/*
-> +	 * Before touching anything, we can safely skip:
-> +	 * - any event for a specific PMU which is not this one
-> +	 * - any common event if this PMU doesn't support them
-> +	 */
-> +	if (event->attr.type != pmu->type &&
-> +	    (event->attr.type >= PERF_TYPE_MAX || is_raw_pmu(pmu)))
+The DTS code coding style expects exactly one space around '='
+character.
 
-Ah, that should be "!is_raw_pmu(pmu)" there (although it's not entirely 
-the cause of the LKP report on the final patch.)
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Robin.
-
-> +		return -ENOENT;
-> +
->   	if (!try_module_get(pmu->module))
->   		return -ENODEV;
->   
+diff --git a/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts b/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts
+index 47cf693beb68..55e30f3636df 100644
+--- a/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts
++++ b/arch/riscv/boot/dts/microchip/mpfs-beaglev-fire.dts
+@@ -88,7 +88,7 @@ &gpio2 {
+ 		     <53>, <53>, <53>, <53>,
+ 		     <53>, <53>, <53>, <53>,
+ 		     <53>, <53>, <53>, <53>;
+-	ngpios=<32>;
++	ngpios = <32>;
+ 	gpio-line-names = "P8_PIN3_USER_LED_0", "P8_PIN4_USER_LED_1", "P8_PIN5_USER_LED_2",
+ 			  "P8_PIN6_USER_LED_3", "P8_PIN7_USER_LED_4", "P8_PIN8_USER_LED_5",
+ 			  "P8_PIN9_USER_LED_6", "P8_PIN10_USER_LED_7", "P8_PIN11_USER_LED_8",
+-- 
+2.48.1
 
 
