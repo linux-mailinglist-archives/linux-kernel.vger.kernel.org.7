@@ -1,112 +1,126 @@
-Return-Path: <linux-kernel+bounces-774975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77647B2B9DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:51:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E302B2B9DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3347D7B450C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783715209F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C39226FA76;
-	Tue, 19 Aug 2025 06:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFC426FA76;
+	Tue, 19 Aug 2025 06:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ayO2QXmV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOuMG7AV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97CC1E5215
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C4E1A9B58;
+	Tue, 19 Aug 2025 06:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755586276; cv=none; b=EHGZilyi+FIka8d38Ic6iBnnAzSaEnZUrFS86eYvTcZhMiq1VfGVSOckSo/j3cxLF8dFPLhQ3ub0p//gcdFMADeddUuQx+EqrLpdXyo68xgFUV3KkMJIKKA95h1jShn4QdUpKNmglDpkA6lmgKIvS+yBuqR2axLAK/FPcBDu52k=
+	t=1755586246; cv=none; b=JysNoR6xGGBEA490PW/ZslqflNQXlOItXJ68rsvl8sUWQr9ZEDMW6v96xOD/VD8ROtIHQosfyvqHj0g0TzP9dPqzztZ9sF0kmsnPk4hrnGmi6VnbCqh7mpatxjk603S6ccxBa52laZjA527sDNKjFfFUnspbVU+d6/m90m5uyE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755586276; c=relaxed/simple;
-	bh=Voljyj+cKS12WOKZRGoakYRM7MKNI5hAU6q7+aZKORU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=MVzhFyGW38U25nvxfpGPz/69n+kkWH0J/5RvDuW6+t4pqkx65phFEwRTu1deTvCmwUlMIfjPYcTtQ3ADcdA+US9mYjCPLQ+bZAQt6eHmizcjJKx12VT+cfR29H5fvryrFqcCL4HC3ouLxFFzoBdMr2b2mPLGwX9mcFQ+bBDoDJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ayO2QXmV; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755586275; x=1787122275;
-  h=date:from:to:cc:subject:message-id;
-  bh=Voljyj+cKS12WOKZRGoakYRM7MKNI5hAU6q7+aZKORU=;
-  b=ayO2QXmV42BopDSUgBOg/DMI+0EPTat7upd6qYIu8KvgFfwTuNnD6bkK
-   GJzl+sBD5EJ8pwyM0+FZ9k2Tqs2sg73h5Aku33oJB1v8Bn+B+LuK+YddC
-   C+ev3+Twq6U2F/fLRlBNzi56MhZlIAx2QfP1oZRrF7vQmJBY8KFGb0PUO
-   GbRJN9+waXXiWt7v4FGaTP4oqKB019grlyL6k55Ie2OFUB5+eejJt1mfh
-   2nuLAB3nzMe4E9GrH1LXKQym8g8NZFz82aqSCaYrQTe6Yh6+kaAtZ5Pju
-   cc6D34frbJJQ0a0qyJfuhKukDrawQweyFcytJIIkS9qTsEArS+baFYOfi
-   A==;
-X-CSE-ConnectionGUID: gBsK5zKmTaSXRacXhavgrw==
-X-CSE-MsgGUID: Uq6Dy45QTe6ag4xUX6yV8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="83249105"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="83249105"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 23:51:14 -0700
-X-CSE-ConnectionGUID: BGDZlDgFSiyIOjGomA7g4w==
-X-CSE-MsgGUID: yjxbPnHeT/e5NUQtCbtldg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="173126197"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 18 Aug 2025 23:51:14 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uoGBb-000Gah-0r;
-	Tue, 19 Aug 2025 06:51:11 +0000
-Date: Tue, 19 Aug 2025 14:50:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- e9576e078220c50ace9e9087355423de23e25fa5
-Message-ID: <202508191427.APSE5arH-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1755586246; c=relaxed/simple;
+	bh=5LX4MjHPti9Y/a5w1WqE/dutfRYGLgXP5r5MCac7GZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M3Yc+Cep/Qny6lp1PsNia9s6DbME04nP3RgHIugs6zHpdnlk+K6wz+mv4Zeg/x3w21wK3YsNLHsX1swDzd+YXCuAWgvk0oMAxt4pe+8Ihh/Xg8Md4E2e1VlbCBgIiMn9r+bQtYWHe+4wlNhvjT8w+6dmSqVREe2sVHqPHJzqTSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOuMG7AV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 785E5C4CEF1;
+	Tue, 19 Aug 2025 06:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755586246;
+	bh=5LX4MjHPti9Y/a5w1WqE/dutfRYGLgXP5r5MCac7GZ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KOuMG7AV+y/CU8NY70Aj4BdD2gpM9erxGEodjG/BjMjlFwpJCeSogGifAv1yeiEn0
+	 18198o2NUbRskge+7Yk11rd9VLtUcVahojC0wjTEte5/jtZfne4Gr/Q+96Ohl+oFh3
+	 u0CF0YAjZcCYqHMvtxqsvOAfiBhJIU0vUNqKnG87Pq89HcM1KCbewitPYVWHqnImGK
+	 H/qqhsweitN+AD0PrfjkHzs5IOgrq807n1nM5uYoeqpVPkGuIwVpRirhYUU9rqPKRG
+	 RB+xlY8vUZ+Sm9YJs8SyfLDVoW3tgruPW78kc09RYqfMkmwOkJNkaKDI1KVd4N9k7p
+	 xqYDAiAUZ1ffQ==
+Message-ID: <2ebd588a-cdc2-4734-8b3f-734a1125e726@kernel.org>
+Date: Tue, 19 Aug 2025 08:50:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] Add GCE driver for 8189
+To: Xiandong Wang <xiandong.wang@mediatek.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Yongqiang Niu <yongqiang.niu@mediatek.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ sirius.wang@mediatek.com, vince-wl.liu@mediatek.com, jh.hsu@mediatek.com,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250819033746.16405-1-xiandong.wang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250819033746.16405-1-xiandong.wang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: e9576e078220c50ace9e9087355423de23e25fa5  x86/CPU/AMD: Ignore invalid reset reason value
+On 19/08/2025 05:36, Xiandong Wang wrote:
+> This serides patches dependent on:[1]https://lore.kernel.org/all/20250601173355.1731140-8-jason-jh.lin@mediatek.com/
+> 
+> Xiandong Wang (4):
+>  [v3,01/04] dt-bindings: mailbox: add cmdq yaml for MT8189
+>  [v3,02/04] arm64: dts: mediatek: Add GCE header for mt8189
+>  [v3,03/04] mailbox: mtk-cmdq: Add cmdq driver for mt8189
+>  [v3,04/04] mailbox: mtk-cmdq: modify clk api for suspend/resume
 
-elapsed time: 963m
+No changelog, multiple versions the same day (wait 24h!).
 
-configs tested: 20
-configs skipped: 119
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250819    gcc-12
-i386    buildonly-randconfig-002-20250819    clang-20
-i386    buildonly-randconfig-003-20250819    clang-20
-i386    buildonly-randconfig-004-20250819    clang-20
-i386    buildonly-randconfig-005-20250819    clang-20
-i386    buildonly-randconfig-006-20250819    clang-20
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250819    clang-20
-x86_64  buildonly-randconfig-002-20250819    clang-20
-x86_64  buildonly-randconfig-003-20250819    clang-20
-x86_64  buildonly-randconfig-004-20250819    clang-20
-x86_64  buildonly-randconfig-005-20250819    clang-20
-x86_64  buildonly-randconfig-006-20250819    clang-20
-x86_64                          defconfig    gcc-11
-x86_64                      rhel-9.4-rust    clang-20
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
 
