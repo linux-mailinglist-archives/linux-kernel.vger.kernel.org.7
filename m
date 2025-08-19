@@ -1,104 +1,183 @@
-Return-Path: <linux-kernel+bounces-775603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D622B2C246
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:54:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFD0B2C281
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CEB188CACC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:53:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AF6A4E434E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408B032C32C;
-	Tue, 19 Aug 2025 11:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE62F338F45;
+	Tue, 19 Aug 2025 11:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u1jUQrQB"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmmIcCtS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2612932A3DE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D92027A451;
+	Tue, 19 Aug 2025 11:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755604397; cv=none; b=aefmqpLQSjSd8Q5+CKt0iQT7CoOTr7ZzTLqwUjFFTrBCy5W7lyPGKrHT+Jx7bzKY+Q29O9GIYuVXXLpduiUyzxyCB2W5ZRC/sBgcv8bGBNBVY1+vlHiF6qSAzIACWX9PrgMXFYTT3ag3gihwS4O6tIvy83piXJZ+LjOIy+HCEWc=
+	t=1755604623; cv=none; b=YujVoyoraboutrySXg8zOfugWt5a5KErxiUrB/3yQ3UFkNfwUyexHtnoQxyrFlKPv4PzlLQzTb/A9qk6iVypnV5qK4W6bCux8G+QT1EJhdzcoSme+f7Iz6vLbU99QWP7rf/gT6ZiUXmND8DAqsFyCxNNfzLowJjUB7yd4Hp/NeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755604397; c=relaxed/simple;
-	bh=I9kaocHcpdjExnXypb8WpQ01pHs47QTzq4hV59I9qmE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gYy/bUKl7F+qdv/E6Vx6lnZy7WwFHPCJ0R45djMBokfyhaMBb4RZSFwp9/BaalX2fVvn5guboZubUmCtAvKWSPUfn+mcKL/ydZANkI0a77HGGDY/K9mwlwczGZ5uCpVnlQjZEbpxEgeSsdcEePNBf4zHnw0sndrF1ws+/aKoDoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u1jUQrQB; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b9edf80ddcso2753976f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755604393; x=1756209193; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/n/RzlOnOSbc3ctN8YNH+OqdETSM7TkL7IcD9MY3wg=;
-        b=u1jUQrQBDTl0D2ti/e69cdqFDgCQrnV8s4xt0IBGovtlx+1gwMxOK760V7EkQGu4Af
-         jEbZ5Q6x3/pn86zcckZzvGH6WXPJylCkhbnlic4JVrK8+b7f3BDEl6aZN0426OpK3aZG
-         vFlXqOEE2qTjDcGRJlFq5uWIKourXDjrPv98757bRv7WnNec2LyAe00I4l7jvmuwxJRE
-         gqOZ+sJBQt270OALtzv8Yrgdb5xMI9R5m+vbflc2P5poyMs3M6ITxbjW6dlxc6Oy82kz
-         w24iGE/2la22bLrJwLGANwV9LTNre1Xk4CxOzbFV055RFF+/vYY59OyzfXio7GVlqONo
-         XjJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755604393; x=1756209193;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/n/RzlOnOSbc3ctN8YNH+OqdETSM7TkL7IcD9MY3wg=;
-        b=LX/hijwxpAKXzB6xiT/sIOwykcnbdKn8Gm45lL0KjRFGowtVNt85n0hZx2yo2QxeEq
-         4t9McEppcdFRECxKyQ5cGjal93FQfT0LAt9r0EAlnpeUpmx3vAeStaYh9W4YwtbqBqWm
-         wTatYKuAMF5qZKJwV/rv+3GYfGca6gBSfctJLRyq14Zq0THGdeveEujkf/qI9p8N2Rlz
-         haCqRQSp4iRHsd++cQW0RrSIF5Z2k0NMo/6aHSEIonX8zqm/ZD9I4w2iGM5aXQAl1BWz
-         zgKLAT1AyjAWS34i+xIUdgKg6mRBwphwO88nhpXGprhUlFeSdpJl+0u1O4RhmQmzAqi+
-         IL8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWd8cCXsGVNakh104Ew3ef/8iXEbcDGrbhaxqOHetT25Za4O+Zzfwkx9/9+JsIAI/oVStCiCd8O8BtHZKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkBLvVofuQn1h9hvix/BjO3h9bifVitKPP4I4HlyrqdYuhNM9A
-	t/2qzk5dWf0fDrcYe3NYjTk+VLAg98s1pkxykjKhYdK95mtUrqDVLlrK7qiK1g++mkXdSbvSVJP
-	iFmgpr5Ey6Mgp2kPx6g==
-X-Google-Smtp-Source: AGHT+IE7f2O72gPFvlZmpRhidugQTwHJ1mrZUd7dkrJhh6U3uYwMjLdOZbZZsES/4VMDcuQwJoHeY0AKWrYXu7U=
-X-Received: from wrph13.prod.google.com ([2002:adf:f4cd:0:b0:3b7:7461:467d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2909:b0:3b9:16a3:cf9b with SMTP id ffacd0b85a97d-3c0e00a2289mr1865237f8f.5.1755604393422;
- Tue, 19 Aug 2025 04:53:13 -0700 (PDT)
-Date: Tue, 19 Aug 2025 11:53:12 +0000
-In-Reply-To: <20250818132806.134248-1-shankari.ak0208@gmail.com>
+	s=arc-20240116; t=1755604623; c=relaxed/simple;
+	bh=fhR9sbVwW3bOwxbPQt0UV+PievZMI3zWcq5ZJwZ4MOw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HSjA01g9pukVB9bHjYos0uc9Jl9QUX0VgkzR3LBvxHbdQ/mU2xJDhc0ev3AyCjJwLLm41EIouI2SP8WgGiG/A/3WUG/J3kaOw07CO73Gd3bBTEDIUNBSJRH3OmcpMZN62PaJebYdGKa9AFuwVcoXVGU/BMkoAAblkbbxlavQ9Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmmIcCtS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFB4C4AF09;
+	Tue, 19 Aug 2025 11:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755604622;
+	bh=fhR9sbVwW3bOwxbPQt0UV+PievZMI3zWcq5ZJwZ4MOw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jmmIcCtSCRaSWk4xc2FzjWTLHp2YiSAfXNrWVYjNL9tIRJl4CN9w/ufARVbKV2Csc
+	 gcEC1IT846+dapPjZWAYRigEPYSrLjhd6mT4TEdXYnVxIwTFgFYbynGfEqu8E0n/Gy
+	 u6EJmjSPUWxMqCGjMG+//zDWtAfkqMuXWmPsRbYL6oHDRc+f0UpjkMhkDJcSfjQTcJ
+	 qyppDr2zNzoRcGPG4itCz857x4FMiC0Vz8s39vWXsvV0DIgK6EvJtw6C9caPQWi2d8
+	 iOZxqXsqlIZK30WfPqZu6wkheuaLwCo+COQrLkhzmm1zFbMpgcbOkPfa/VKStO6/bl
+	 eym8xekMZg63A==
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-74381efd643so1145235a34.1;
+        Tue, 19 Aug 2025 04:57:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU923IDXyglcxUlCLGoWAb7Ey1OpCrGJ/j3sJ6JfkDzEAzkBRgsye04qcBUPmhs13jj3Nv+VWf3xMpGpX0=@vger.kernel.org, AJvYcCXGuvKt+vybbOptQzcxRHgNaJwWlmNS0GTCIaxPIvHo60WyZso3IiU8GEG+sc0JjQ54F2YpBpcVc74=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO4LH3PCd6eOTrV6+db2xZy/xpIpK5yACdXsWXUJpQQ0OSMdNq
+	ZYR3HBQcshGB3Q4/WtV8e5NV0dfHWmPnPlOlvrG/fvmEzzEOp7MJK+eNeJDTVl+tZtS83pFnMJx
+	zeZDXnu5pauCGegvH7Z0xRMrijHszgog=
+X-Google-Smtp-Source: AGHT+IFDlwYdPggXeHiN1f2P4TFhkB9XkvB/EeonKfBQu3iR1bUJH9YdqCajNweQ91VkJKSW1Xyf5srSwfaWKDqiWXQ=
+X-Received: by 2002:a05:6830:3509:b0:73e:bb60:2d0c with SMTP id
+ 46e09a7af769-744e0ac7b6dmr1461088a34.23.1755604621916; Tue, 19 Aug 2025
+ 04:57:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250818132806.134248-1-shankari.ak0208@gmail.com>
-Message-ID: <aKRlqA_Xa3S4_P1a@google.com>
-Subject: Re: [PATCH] rust: miscdevice: update ARef import to sync::aref
-From: Alice Ryhl <aliceryhl@google.com>
-To: Shankari Anand <shankari.ak0208@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <2244365.irdbgypaU6@rafael.j.wysocki>
+ <9104c434-9025-4365-8127-28014ddddc8d@arm.com> <CAJZ5v0iTaa62WGXCLcgiRyzcj2GBXmYcvLa8AtQZD5bQcxTw5g@mail.gmail.com>
+ <3fa10040-7e48-4100-9d70-cbbac406abde@arm.com>
+In-Reply-To: <3fa10040-7e48-4100-9d70-cbbac406abde@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 19 Aug 2025 13:56:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h1iT5XpeTUqfM2MSbZR_wMv7VaVxmEa4jEjtx+FH-XaA@mail.gmail.com>
+X-Gm-Features: Ac12FXx9O3eQ9klZMDQ-s7qeat7CVAoh2gFEca7fJvIQn3VLs0VBNSAESeHHS7g
+Message-ID: <CAJZ5v0h1iT5XpeTUqfM2MSbZR_wMv7VaVxmEa4jEjtx+FH-XaA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] cpuidle: governors: menu: Special-case nohz_full CPUs
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 06:58:06PM +0530, Shankari Anand wrote:
-> Update the import of `ARef` in misc_device sample to use
-> `sync::aref` instead of `types`.
-> 
-> This is part of the ongoing effort to move `ARef` and
-> `AlwaysRefCounted` to the `sync` module for better modularity
-> and type organization.
-> 
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+On Tue, Aug 19, 2025 at 11:10=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 8/18/25 18:41, Rafael J. Wysocki wrote:
+> > On Thu, Aug 14, 2025 at 4:09=E2=80=AFPM Christian Loehle
+> > <christian.loehle@arm.com> wrote:
+> >>
+> >> On 8/13/25 11:29, Rafael J. Wysocki wrote:
+> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>
+> >>> When the menu governor runs on a nohz_full CPU and there are no user
+> >>> space timers in the workload on that CPU, it ends up selecting idle
+> >>> states with target residency values above TICK_NSEC all the time due =
+to
+> >>> a tick_nohz_tick_stopped() check designed for a different use case.
+> >>> Namely, on nohz_full CPUs the fact that the tick has been stopped doe=
+s
+> >>> not actually mean anything in particular, whereas in the other case i=
+t
+> >>> indicates that previously the CPU was expected to be idle sufficientl=
+y
+> >>> long for the tick to be stopped, so it is not unreasonable to expect
+> >>> it to be idle beyond the tick period length again.
+> >>>
+> >>> In some cases, this behavior causes latency in the workload to grow
+> >>> undesirably.  It may also cause the workload to consume more energy
+> >>> than necessary if the CPU does not spend enough time in the selected
+> >>> deep idle states.
+> >>>
+> >>> Address this by amending the tick_nohz_tick_stopped() check in questi=
+on
+> >>> with a tick_nohz_full_cpu() one to avoid using the time till the next
+> >>> timer event as the predicted_ns value all the time on nohz_full CPUs.
+> >>>
+> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>> ---
+> >>>  drivers/cpuidle/governors/menu.c |   12 +++++++++++-
+> >>>  1 file changed, 11 insertions(+), 1 deletion(-)
+> >>>
+> >>> --- a/drivers/cpuidle/governors/menu.c
+> >>> +++ b/drivers/cpuidle/governors/menu.c
+> >>> @@ -293,8 +293,18 @@
+> >>>        * in a shallow idle state for a long time as a result of it.  =
+In that
+> >>>        * case, say we might mispredict and use the known time till th=
+e closest
+> >>>        * timer event for the idle state selection.
+> >>> +      *
+> >>> +      * However, on nohz_full CPUs the tick does not run as a rule a=
+nd the
+> >>> +      * time till the closest timer event may always be effectively =
+infinite,
+> >>> +      * so using it as a replacement for the predicted idle duration=
+ would
+> >>> +      * effectively always cause the prediction results to be discar=
+ded and
+> >>> +      * deep idle states to be selected all the time.  That might in=
+troduce
+> >>> +      * unwanted latency into the workload and cause more energy tha=
+n
+> >>> +      * necessary to be consumed if the discarded prediction results=
+ are
+> >>> +      * actually accurate, so skip nohz_full CPUs here.
+> >>>        */
+> >>> -     if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
+> >>> +     if (tick_nohz_tick_stopped() && !tick_nohz_full_cpu(dev->cpu) &=
+&
+> >>> +         predicted_ns < TICK_NSEC)
+> >>>               predicted_ns =3D data->next_timer_ns;
+> >>>
+> >>>       /*
+> >>>
+> >>>
+> >>>
+> >>
+> >> OTOH the behaviour with $SUBJECT possibly means that we use predicted_=
+ns from
+> >> get_typical_interval() (which may suggest picking a shallow state base=
+d on
+> >> previous wakeup patterns) only then to never wake up again?
+> >
+> > Yes, there is this risk, but the current behavior is more damaging IMV
+> > because it (potentially) hurts both energy efficiency and performance.
+> >
+> > It is also arguably easier for the user to remedy getting stuck in a
+> > shallow idle state than to change governor's behavior (PM QoS is a bit
+> > too blunt for this).
+> >
+> > Moreover, configuring CPUs as nohz_full and leaving them in long idle
+> > may not be the most efficient use of them.
+>
+> True, on the other hand the setup cost for nohz_full is so high, you'd ex=
+pect
+> the additional idle states disabling depending on the workload isn't too =
+much
+> to ask for...
 
-Greg, I believe this should go through miscdevice. It's not going
-through a shared tree.
+Apparently, there are cases in which there is enough idle time to ask
+for a deep idle state often enough, but as a rule the idle periods are
+relatively short.  In those cases, one would need to change the QoS
+limit back and forth in anticipation of the "busier" and "calmer"
+periods in the workload, which would be kind of equivalent to
+implementing an idle governor in user space.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Anyway feel free to go ahead.
+
+Thank you!
 
