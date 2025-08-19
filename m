@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-774980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9743B2B9E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:54:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12296B2B9EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C67B566A08
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A71C1799B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699E02765CC;
-	Tue, 19 Aug 2025 06:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5560426D4CF;
+	Tue, 19 Aug 2025 06:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gm/NP2yj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+yf1Rrj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B124381732;
-	Tue, 19 Aug 2025 06:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F90188734;
+	Tue, 19 Aug 2025 06:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755586413; cv=none; b=jyp6d8yhdpYNI7vCH2K0j0zqNHR/sreF9NMu27JK92TiAZlm4ogECqdB5HBAaJlOjhozACj2Xp6cHzQvbEBnA9FdJq5brM+jWAjwFBLvVAov7eiEeRssQM1EGK+kj3WPjxhAcV+m7iU3K0WlP7jtRbuuT/mblW9/uHeNiYQ72bI=
+	t=1755586449; cv=none; b=YlB4Qtw+klEHyUSAAiM5Kv9znsBZLinwPzi/4+oTzM+USMvAS8M+sLCpEsGDQSJtAR5MUSjthD1Nbc9yZ5jwnaRWOP8pDandDJogBYl5XiZ1z9fDFTsicUGiabxcrIoq0To6DDf7i7lOlA9CAmuQRYGV7zbgMqSER+yG1V5dx6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755586413; c=relaxed/simple;
-	bh=nNvGWM3qoMMBsmuPBwr8C4k91K4xoltnrESSR01Kk0Y=;
+	s=arc-20240116; t=1755586449; c=relaxed/simple;
+	bh=feh+bB+oKCXKvy0izipdcz6u3FuJbXfTYdSDXsfu7Cc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oMXfz2yDdTGAZ1VZidi3ekFGRJcb3guYpSgDhXXjS4jTOmAmuEY8E8WVrG9gaKlDemBtr7KknY4huE8NXeChXMFvByO3Wa4g1eog5svn+I4YsXT/AdCRvrvk8/edjQ3Kska0wB5mEbXL3FD/2/xf5ia19IxGOpy72433jVXiSy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gm/NP2yj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B86C4CEF1;
-	Tue, 19 Aug 2025 06:53:30 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=CorLNxsu+FEGibMe8D5e1TOVR+1OyL6uEt2/hLn9WVmMApo0JrWGm/e/2bZ9pIECtglw+rhPQP+Nc/YoETILnOhKu/P2tdDM4XzGst6TYOTyZgpPCJ/ePZAQVsokuXFnphUPwWeMhsOGRRmYsg7tSgU2Fedzf1xRpMcdhGKFGsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+yf1Rrj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C283C4CEF1;
+	Tue, 19 Aug 2025 06:54:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755586413;
-	bh=nNvGWM3qoMMBsmuPBwr8C4k91K4xoltnrESSR01Kk0Y=;
+	s=k20201202; t=1755586449;
+	bh=feh+bB+oKCXKvy0izipdcz6u3FuJbXfTYdSDXsfu7Cc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gm/NP2yj9NkbeGNfmFMAGOYY9+FuGOmMOEw9ynWVlWiMzaztkUqofaaVuxA5eRbM0
-	 tPalajFPxSPXwiLHXlGUVsnx7RMYFmjzic0KDEGr0uxlXjI0hJTWEEsxNMyQ3Zfw3V
-	 Yjt5/hcv1yEjIuv6LcGwBPHzaBm6FkCShc9SSlkx39IX53vucTgJ/3cDKp4OpSeGCs
-	 +lSN+yeMF5mshxwKMRh68F1GEDzK1td2SpbEeA7tzSnJ2xsIUWE6oYnkV7Ovscp3xy
-	 FXub+s/U/OpNxdtFB6DXj90Fj/+OUl9Hejtd+NV9CmBOqpwDVChNYT06bK3WcPvZ+r
-	 QqhQjuTJTTyww==
-Message-ID: <70a41e23-18ce-434e-adca-a44e1d6a90d4@kernel.org>
-Date: Tue, 19 Aug 2025 08:53:28 +0200
+	b=K+yf1Rrj4In2YzuhTYVn3T0fB7nsaXVwVPTC0i3BLniY/HeVgZBmg28UpVHK2YkSh
+	 rItBKxdaO47bXRz3q4vneogIHCTrBZeh58NfCI4GFFJW/UV+c7dtWKn7esCmJsCQl3
+	 tjZvEYXKf82do+2EZ3OUEdczX6H+gp3cEGvW+z/fd+CFgD+DtHftLpYcvdEbXllYMo
+	 wAKR+W/7uDkmLRv3FYd60M1pzYfJGkkDrpzSyscYdCbFz3aegerygax6go5aPEVFDU
+	 IGrRJm/Pgxb1NGCPRzQ2okxBjqVzMM8kgs73+sryfcyMSrf1Fu3wB2zsQB8CXcb0Md
+	 y/mh2moudGX0g==
+Message-ID: <6e78051b-ec79-4b6d-a59e-6745f6caaf37@kernel.org>
+Date: Tue, 19 Aug 2025 08:54:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arch: dts: mediatek: mt8370: add Grinn GenioSBC-510
+Subject: Re: [PATCH 4/4] dt-bindings: arm: mediatek: Add grinn,genio-510-sbc
+ as a valid platform
 To: Mateusz Koza <mateusz.koza@grinn-global.com>,
  angelogioacchino.delregno@collabora.com, robh@kernel.org
 Cc: krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
@@ -57,7 +58,7 @@ Cc: krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
  linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
  marcin.czarnecki@grinn-global.com, b.bilas@grinn-global.com
 References: <20250815160837.371592-1-mateusz.koza@grinn-global.com>
- <20250815160837.371592-4-mateusz.koza@grinn-global.com>
+ <20250815160837.371592-5-mateusz.koza@grinn-global.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,21 +104,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250815160837.371592-4-mateusz.koza@grinn-global.com>
+In-Reply-To: <20250815160837.371592-5-mateusz.koza@grinn-global.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/08/2025 18:08, Mateusz Koza wrote:
-> From: Bartosz Bilas <b.bilas@grinn-global.com>
+> Add device tree bindings support for the Grinn GenioSBC-510, a
+> single-board computer based on the MediaTek Genio 510 SoC.
 > 
-> Add support for Grinn GenioSBC-510. Based on the commit introducing
-> support for the Grinn GenioSBC-700, this change adds support for the
-> Grinn Genio SBC-510, a single-board computer based on the MediaTek Genio
-> 510 SoC.
-> 
-> The GenioSBC-510 uses the same SoM and SBC base .dtsi files as the
-> GenioSBC-700, enabling reuse of the common hardware definitions while
-> providing a dedicated DTS for the Genio 510 variant.
+> The new compatible string "grinn,genio-510-sbc" identifies this board in
+> the device tree bindings, enabling future board-specific adjustments if
+> required.
+
+Drop, completely redundant statement. Do not explain to us how DT works
+- we all know. Same for all other commits.
+
 > 
 > More details about the hardware:
 > - https://grinn-global.com/products/grinn-geniosom-510
@@ -125,36 +126,19 @@ On 15/08/2025 18:08, Mateusz Koza wrote:
 > 
 > Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
 > ---
->  arch/arm64/boot/dts/mediatek/Makefile         |  1 +
->  .../mediatek/mt8370-grinn-genio-510-sbc.dts   | 19 +++++++++++++++++++
->  2 files changed, 20 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
+>  Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index 7383d75d8041..729d786b1236 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -102,6 +102,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8365-evk.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8365-evk-eth.dtbo
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8365-evk-hdmi.dtbo
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8370-genio-510-evk.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8370-grinn-genio-510-sbc.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8395-genio-1200-evk.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8390-genio-700-evk.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8390-grinn-genio-700-sbc.dtb
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts b/arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
-> new file mode 100644
-> index 000000000000..632e2b35443a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
-> @@ -0,0 +1,19 @@
-> +/*
-
-We do not take closed source code.
-
-> + * Copyright (C) 2025 Grinn sp. z o.o.
-> + * Author: Bartosz Bilas <bartosz.bilas@grinn-global.com>
-
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> index ad7fb85e3559..92ecc689430f 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> @@ -426,6 +426,7 @@ properties:
+>        - items:
+>            - enum:
+>                - mediatek,mt8370-evk
+> +              - grinn,genio-510-sbc
+Also wrong order.
 
 Best regards,
 Krzysztof
