@@ -1,110 +1,142 @@
-Return-Path: <linux-kernel+bounces-776305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35595B2CB97
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:03:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6550B2CB99
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3B0D1BC7206
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C2AD5E3AC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCAF30EF99;
-	Tue, 19 Aug 2025 18:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DF330E0C7;
+	Tue, 19 Aug 2025 18:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EalDzgoN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yf6aUXUa"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C15130E0F4;
-	Tue, 19 Aug 2025 18:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297CF30EF74
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 18:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755626583; cv=none; b=qCfFObCiNTqsudI1X2VkevdR6r2hx34P5WIJkxH1au+kcZ58o5wa/6l3Yq0JnKWQmswZdaosDwaayK5ppU83jAJm8ALwpt8TiGs+dGRTKeqT1sRb4n+SYL2kr/m9Mg3iXTzV5cGNgQ8TBeSulwf3Brcc1JxGM4TcyxBlDeFpCo8=
+	t=1755626610; cv=none; b=mRJOHfzudGoo/qzWRXWsReq7ZZyT990AZL1S1jZhHfXUsmP4dlklgNeCB94/q6mY80ImNdJeUgbPxwbA5QQ9kwtt9bwq/gmCgn+buoI69gejU0XMM6Y5++K1WYJBkHbWoFYB3kkxGJ+oe2YgL+yVv4dsyPAKBQE+8uh3dzY+ixs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755626583; c=relaxed/simple;
-	bh=RlZTJUqIlimT1tWCSSY0h8X/eWmkIxu4Et0KQlg5A2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UyxK+h0Ip/RoRa5zw8+sWY5xDwAZWjqNFaixKcYTDqKG945TCWKhxOHGduJv0CsOFAWeyxf8lnluU1uaCTRnqGYHk88l+qF4lvqwyOmQnTTa3TUQ0i73vUIcpO2Y+tUKFdUg7jS+6ZoZZ9zOOR3B/0XstiGgn0ooODmfykuDXsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EalDzgoN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE235C4CEF1;
-	Tue, 19 Aug 2025 18:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755626583;
-	bh=RlZTJUqIlimT1tWCSSY0h8X/eWmkIxu4Et0KQlg5A2c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EalDzgoN/7Y3KAbfB4cazq6wZtBpmRvual893K1SJmmx/DuhYsrrSTe53FFGHmBfL
-	 tTbyh7LaaK15dJga2iRCqqP/cUkNp0FsKPFAaesZFufl8QUG2q657Gl64iRM6B6nDP
-	 rhKDoQil9Fm00Wn0UseOwl1yllT8NTIVUZFp8VFWOxWJdO/deOAo8jFjFKPHYYLv97
-	 enC2fFWmd8TKrbJU3HZHStalauGg1/kCCH1/G9umbauTRb/lCst9NCMod2cGMkkQMR
-	 dLSUbvodpJ2gGgGiK3PJSFA6FuE3sgpHo8Py25nojEndpSK+7qkFDQAX71+MKlULbO
-	 LbnZhJafrZ8wA==
-Message-ID: <36974682-c8f1-4bcd-91f3-255c6332c0fe@kernel.org>
-Date: Tue, 19 Aug 2025 21:02:57 +0300
+	s=arc-20240116; t=1755626610; c=relaxed/simple;
+	bh=fqsRSQcivlb7hrKxPJRqT/o81Pngr06pv+ixisBGnlE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YCNvf3G7Vto5oIQLuvzAZoAMAYj7mcldVPfFtqJFdlQ30Jsc541CHaRoknCoEdOPVxaTYjbmtBPyCbbghz2L+LmjiSM19HLgjRVDLx7PKsM8pcT1nqsL/wjpTPEjvBQLZfEFZ/CCByOMcossUfH2UxZEeJ/0Ksw/PNBaOPVsBnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yf6aUXUa; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b0071c1so20708165e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755626607; x=1756231407; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KF6Ep2y33XCgTx+h8iRawRIyytqbsVvE9Zs0AVU//wM=;
+        b=yf6aUXUaKeSzIfEvUrnnmZxRZ8JOmnQpEUU7+4/eGu3SrIPJiDBIJQmSWskhZF0LBl
+         Qhug6deinwQgXJM4c4a+aDcUWmN8UxruZZrdA+Pcw0opYBcIxUEVd5clu8z6w+Ot9GmJ
+         W/LTDaaEclCvQexR2zgAb7SCXTOiOcuAOX6EYhvDUngeh6rh7hqyWS7Do5KiEQ5xOBYR
+         E0qHFt+BYYG4M/T0preTyq0x5/KZlOLi9CDFTcAHG0R9ZzcPshG0dFZUOiSMJpNWwoIk
+         0b2YWdPPPT7KVEICE93ZJ5o680YNDyzl+MDROvvwSgpDvyO+0PhaWaRkK1w2qUe1naa4
+         M67Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755626607; x=1756231407;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KF6Ep2y33XCgTx+h8iRawRIyytqbsVvE9Zs0AVU//wM=;
+        b=DCHqG+njlm72PEttS/g1caW9M9F3mNruXScSKdm79pfNWzySn/Xh1bqAw4QnC03/vL
+         atTUS8jCNmLApAF2Kb6C45gu5IoHUg9uR+1y2ttycwtmOetQ3c/0mKgTq7gdfQBcO5Cv
+         4mbrPItM0+MOnPQQm2Cwfnz1C5ad20MQ+NAyF2lfDsZaRnHo2ZKRyx4FlWFPR84B5GnX
+         MHtYT5lXW0c9VEY4ETggsRjjNngfd7khfFpzbdNDyJQAPX1l14aDQsD91qGvRYWYdPPE
+         Y7xtLmAt9HD2pzpD9BGI3CdUHr0+16VZ8EWjQfDU0SDeewzmJUsnpqtb8S/nXqY0i1kz
+         1Z2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXJGxoHs2h6h+DPoBHsnMyNHwaYkDr8TzL3BWM+QBGxHzbzcO6kf3aL0r1ceEGBsiV4LbtoxgTXdUeeko4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAt/sEO1pKps3g50PfNwpgnHN7HZwO8/bWrZYS2Zrn+QjAI43e
+	fmzJOj3j1JEd8qsAIBR6ORXbgJj80VKjGZN/MjuuScZY25c19LYp3pRbsL+R6r6AK9t3aMtpoG/
+	mQKZmr4y2lZBm0g==
+X-Google-Smtp-Source: AGHT+IGAP/5kOUw2xl88tGIMUg+2rJWqwENGYoQPUjN+xF7n1jDCKhH55XKAw9uS4xoVCgiwisZ9ko0ZaQaaQg==
+X-Received: from wmqa17.prod.google.com ([2002:a05:600c:3491:b0:459:7c15:15b9])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:474e:b0:453:5a04:b60e with SMTP id 5b1f17b1804b1-45b43e0eed4mr28241025e9.26.1755626607329;
+ Tue, 19 Aug 2025 11:03:27 -0700 (PDT)
+Date: Tue, 19 Aug 2025 18:03:26 +0000
+In-Reply-To: <20250812173109.295750-1-jackmanb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: interconnect: document the RPMh
- Network-On-Chip interconnect in Glymur SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Mike Tipton <mike.tipton@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
-References: <20250814-glymur-icc-v2-0-596cca6b6015@oss.qualcomm.com>
- <20250814-glymur-icc-v2-1-596cca6b6015@oss.qualcomm.com>
- <CAL_JsqL+C1VueQjrKra8fNTd-2k=gkoy-jA9uuQOhuyRMbQroQ@mail.gmail.com>
- <363db534-92a2-4108-8a41-8e07ec22513d@kernel.org>
- <09247b50-05c4-40ff-9d9e-51e36846996d@kernel.org>
-Content-Language: en-US
-From: Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <09247b50-05c4-40ff-9d9e-51e36846996d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250812173109.295750-1-jackmanb@google.com>
+X-Mailer: aerc 0.20.1
+Message-ID: <DC6LOWXFIPGQ.1RKZL23ZW0J73@google.com>
+Subject: Re: [Discuss] First steps for ASI (ASI is fast again)
+From: Brendan Jackman <jackmanb@google.com>
+To: Brendan Jackman <jackmanb@google.com>, <peterz@infradead.org>, <bp@alien8.de>, 
+	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>
+Cc: <akpm@linux-foundation.org>, <david@redhat.com>, <derkling@google.com>, 
+	<junaids@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
+	<reijiw@google.com>, <rientjes@google.com>, <rppt@kernel.org>, 
+	<vbabka@suse.cz>, <x86@kernel.org>, <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/19/25 7:03 PM, Krzysztof Kozlowski wrote:
-> On 19/08/2025 15:46, Georgi Djakov wrote:
->> On 8/19/25 4:31 PM, Rob Herring wrote:
->>> On Thu, Aug 14, 2025 at 9:54 AM Raviteja Laggyshetty
->>> <raviteja.laggyshetty@oss.qualcomm.com> wrote:
->>>>
->>>> Document the RPMh Network-On-Chip Interconnect in Glymur platform.
->>>>
->>>> Co-developed-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
->>>> Signed-off-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
->>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->>>> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
->>>> ---
->>>>    .../bindings/interconnect/qcom,glymur-rpmh.yaml    | 172 +++++++++++++++++
->>>>    .../dt-bindings/interconnect/qcom,glymur-rpmh.h    | 205 +++++++++++++++++++++
->>>>    2 files changed, 377 insertions(+)
->>>
->>> This is breaking linux-next "make dt_binding_check". Looks like the
->>> clock header dependency in the example is not applied. Please drop
->>> this until the dependency is there.
->>
->> Thanks! And now i see why my script didn't catch this... now fixed and
->> patch dropped.
-> 
-> What are you using to apply patches? Because b4 would pull all
-> dependencies, which would brake your branch as well, but at least you
-> would see something odd happening here.
+On Tue Aug 12, 2025 at 5:31 PM UTC, Brendan Jackman wrote:
+> .:: Performance
 
-I am using b4, but in cherry-pick mode, so i just pipe the current email to
-it. And i also noticed the prerequisite-change-id lines and the dependency
-on gcc, but my local scripts (that do all kinds of checks) passed, because
-of a bug that didn't properly log the dt_binding_check error, so i thought
-the dependency is there. I recently modified it to run with not just the
-DT_SCHEMA_FILES="Documentation/devicetree/bindings/interconnect/" but with
-a few more schemas and very likely i introduced the logging bug at that time.
+> Native FIO randread IOPS on tmpfs (this is where the 70% perf degradation was):
+> +---------+---------+-----------+---------+-----------+---------------+
+> | variant | samples |      mean |     min |       max | delta mean    |
+> +---------+---------+-----------+---------+-----------+---------------+
+> | asi-off |      10 | 1,003,102 | 981,813 | 1,036,142 |               |
+> | asi-on  |      10 |   871,928 | 848,362 |   885,622 | -13.1%        |
+> +---------+---------+-----------+---------+-----------+---------------+
+>
+> Native kernel compilation time:
+> +---------+---------+--------+--------+--------+-------------+
+> | variant | samples |   mean |    min |    max | delta mean  |
+> +---------+---------+--------+--------+--------+-------------+
+> | asi-off |       3 | 34.84s | 34.42s | 35.31s |             |
+> | asi-on  |       3 | 37.50s | 37.39s | 37.58s | 7.6%        |
+> +---------+---------+--------+--------+--------+-------------+
+>
+> Kernel compilation in a guest VM:
+> +---------+---------+--------+--------+--------+-------------+
+> | variant | samples |   mean |    min |    max | delta mean  |
+> +---------+---------+--------+--------+--------+-------------+
+> | asi-off |       3 | 52.73s | 52.41s | 53.15s |             |
+> | asi-on  |       3 | 55.80s | 55.51s | 56.06s | 5.8%        |
+> +---------+---------+--------+--------+--------+-------------+
+>
+> Despite my title these numbers are kinda disappointing to be honest, it's not
+> where I wanted to be by now, but it's still an order-of-magnitude better than
+> where we were for native FIO a few months ago. 
 
-Thanks,
-Georgi
+Some people have pointed out that I'm treating ASI pretty harshly, I'm
+comparing mitigations=off vs ASI, while the "real" alternative to ASI is
+whatever the kernel would do by default if we knew about the vulns on
+this CPU.
+
+We don't know about that so I can't do the exact comparison, but I can
+at least repeat my compilation experiment on Skylake, without ASI,
+comparing mitigations=off vs the default:
+
++-----------------+---------+--------+--------+--------+------------+
+| variant         | samples |   mean |    min |    max | delta mean |
++-----------------+---------+--------+--------+--------+------------+
+| baseline        |       6 | 54.15s | 53.94s | 54.36s |            |
+| mitigations-off |       6 | 46.53s | 46.37s | 46.71s | -14.2%     |
++-----------------+---------+--------+--------+--------+------------+
+
+So that's pretty comparable to my ASI results above.
+
+(I'd love to just run ASI on Skylake and show you those numbers and go
+"look, it's faster than the default", but the implementation I've posted
+doesn't actually secure a Skylake box, we'll need to add more flushes
+and stuff. So that would be unfair in the other direction).
+
+Anyway, I'm gonna crack on with preparing a [PATCH] series now...
 
