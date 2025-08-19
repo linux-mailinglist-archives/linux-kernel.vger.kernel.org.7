@@ -1,166 +1,177 @@
-Return-Path: <linux-kernel+bounces-774806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D798DB2B7BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:38:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F65B2B7C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A48E6561995
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45E91BA1E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C015D2F39AD;
-	Tue, 19 Aug 2025 03:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09F12D8391;
+	Tue, 19 Aug 2025 03:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="k47Ps8Sb"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="P2NG14oY"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazolkn19013087.outbound.protection.outlook.com [52.103.43.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190212E22AA;
-	Tue, 19 Aug 2025 03:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755574697; cv=none; b=ekdC6gXed/t68J91ElmueV2/MITLSM5zb7cxJhCUi8ypaRU80xiDa/xNrw9Ty32QBuUnjUvguVNOQmHuQWBDGrFGS96N1OrqT90Tp5+JPylPbKf70AIYEyzElHIkVdSCwq8z1TQzlY3FDt0611N/2GeJGY7xTEpXlDXy2bEQGQU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755574697; c=relaxed/simple;
-	bh=qSFieO8Cel9KlPL3NAoUBzU1UL6uW8E4kaBvUL8HCj8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CMuefbHN8J6pJi+ImeGWmDNAEq0YxZKGUImmk0cup+YhDm45XBrFI14T+h31inXP+jjTKRtA4KQ3+MPIU1w8nOe6s7PQP8u8zfN1CZaBuBX657BWDngrWTq4GP/BGcjifDSaKi9wIFCiS5iwgYSQvcGonTuL3xa3Sn5BwgQe8bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=k47Ps8Sb; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ecdc21e47cad11f0b33aeb1e7f16c2b6-20250819
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=zTwFQbiahKuVur4FiMdEux7IBBiZSXrfDzUUPEN8Sro=;
-	b=k47Ps8SbUks5DoAPr8uKzLlgk6o5y9UPXyIZsz1TxOd03whVaI083XK/mPS3r3n+GTSvsxV5yf6AStr8XWRwzmvm5aUKIEp9eBn+6kdOSf8MFSfMhEXJItVNok6aTjOSCUYo5zxc7/AS/k1DemWdHbsWzNPtsxZ9/pXVYqfVqI4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:8b122c16-2f83-4427-a8b6-0b86b33a4200,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:b49f5c6d-c2f4-47a6-876f-59a53e9ecc6e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: ecdc21e47cad11f0b33aeb1e7f16c2b6-20250819
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <xiandong.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1680763906; Tue, 19 Aug 2025 11:38:09 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 19 Aug 2025 11:38:07 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 19 Aug 2025 11:38:06 +0800
-From: Xiandong Wang <xiandong.wang@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Yongqiang Niu
-	<yongqiang.niu@mediatek.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<sirius.wang@mediatek.com>, <vince-wl.liu@mediatek.com>,
-	<jh.hsu@mediatek.com>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Xiandong Wang <xiandong.wang@mediatek.com>
-Subject: [PATCH v3 4/4] mailbox: mtk-cmdq: modify clk api for suspend/resume
-Date: Tue, 19 Aug 2025 11:36:11 +0800
-Message-ID: <20250819033746.16405-5-xiandong.wang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250819033746.16405-1-xiandong.wang@mediatek.com>
-References: <20250819033746.16405-1-xiandong.wang@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D9F2D24B9;
+	Tue, 19 Aug 2025 03:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755574721; cv=fail; b=N7V1Kb7RONE57/nvcOvGm0GhoSaRNbStmsDN+5cKBZnVucx43vahIVbG/1YGVG3UbkfYzc3XorTrNz+fWcYwMn9uPQQScFw+YhTPXtjU3L26khMxHzl4aTF7xsJinObibh9WJdK8ZhERGYikshcHq4BK4Qxfb/dXueFZ7PpChLQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755574721; c=relaxed/simple;
+	bh=Yx8arCtpA0Va7M4N/EAGi/qxbyvqBBc/C8ElYM6CTN8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pXF6gL09vg60kdWyYhc2xWZx/O84eJD97LrOumgATx9O6RnaRNledPXPxBDG/GGzLh6kfLzaUsCZVkZVkO0KRjJzH+2zN/zdNbXN3cdgT1J9hSaqoXCvtfzJtgIBJTs+YfNUK7+EdJFroFuHs48ceP2k0H4xAONrDHje3CZ5D7I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=P2NG14oY; arc=fail smtp.client-ip=52.103.43.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U8DBD6URuxSBf30C4WkEWTqA5Fg3Zl6u71gxm5M+bWtMa1ZT9C18hHIETUekegpDZYOTXx/CtSqmxsFLW/DsTdGOgQHsIqEjO5B6eKxvuLaaTiW9sPJ1L+ZjRwZhTsuwF6jet/CvO2rIgXskFV/Hj9wUpx7Bo4kzbYxArnZR1bhncP/6vrpvsc0Jf4bAWj/D4MbTyUqFAGPwwDGospms0zTfx3GSszTVeqxQmn9gV9L7XrlWQqkHUHa67nCeSoee+lV8Ju3eMwRqylyaQmit8xQVk4zVM0LrZviuP6Lxp22T4Wf+JFDxFgLqQjRgKv4KemIw3hZQrwAot0LTCSzkow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b9CpfC7avC0VuOlOB5eG1FDtQIX9MZggvNiH6X7jgWk=;
+ b=K5sYR3XRZa2PUT90ZTksTD+lx+7riQJOokISEUHH2CWfeAFZYBgdhzvu9YxyVsi2jVhPwWqr2xpiG1eQ1xe14W5LCqKUHw6EdM0eJOyfuomHUD+1sRhlX40YnCsQvP3p0JGTv31+lyCoWIISja+2pOSY6rpGZthLOdZXQAry8g6nbC+TZuacNJNk7+gy7L9nTHdSoWAC7VhMYf+/bX6XLkv7RmNMIRK9GuCmL291easXo+WDiohDUnjlk4p+FZ1skHn8IXY/JR25PR65p5N/xXHyqWnnf/JcSKLzPrA3XYvpi43t3e70OMRvgsxZu81qdguVyspVxTUDYNV9gmhg3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b9CpfC7avC0VuOlOB5eG1FDtQIX9MZggvNiH6X7jgWk=;
+ b=P2NG14oYnBPO/Hkoxz1UDkRJcl29OZZKM1xuSmY6aTdcJIhAwczVt3jBWGyN2Fiu1JrFA+SPww1cLy51OZLuZFbtle3rcTUQsBwfVdhwF11c2hd8brG5xWEfqo7zV8hrFE3RGx7xvYCB47czvGEZ2g0O1RQ3KvSxbPGEXyD35zh/ax0riXKQpphhquGgIa2ZvdpVAFd9rwS9IyopsDLKdJiFELCRM5/h/OksagOERB0RGZRGhOh3tKeXCV2+Kp2FNXXkhWL19a9ZY8ttRGpYtf80Kr7PNjKW+rZXmLU9/I+JCkJqiWCMBX0tw0QejXNONBbA10z1n0bt3ri9T00qPA==
+Received: from TY1PPFCDFFFA68A.apcprd02.prod.outlook.com (2603:1096:408::966)
+ by TYSPR02MB7782.apcprd02.prod.outlook.com (2603:1096:405:57::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 03:38:34 +0000
+Received: from TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+ ([fe80::209a:b4cd:540:c5da]) by TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+ ([fe80::209a:b4cd:540:c5da%6]) with mapi id 15.20.9031.018; Tue, 19 Aug 2025
+ 03:38:34 +0000
+Message-ID:
+ <TY1PPFCDFFFA68AAE9F8D45142C373728EDF330A@TY1PPFCDFFFA68A.apcprd02.prod.outlook.com>
+Date: Tue, 19 Aug 2025 11:38:29 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] RISC-V: KVM: Change zicbom/zicboz block size to
+ depend on the host isa
+To: zhouquan@iscas.ac.cn, anup@brainfault.org, ajones@ventanamicro.com,
+ atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
+References: <cover.1754646071.git.zhouquan@iscas.ac.cn>
+ <fef5907425455ecd41b224e0093f1b6bc4067138.1754646071.git.zhouquan@iscas.ac.cn>
+Content-Language: en-US
+From: "Nutty.Liu" <nutty.liu@hotmail.com>
+In-Reply-To: <fef5907425455ecd41b224e0093f1b6bc4067138.1754646071.git.zhouquan@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYCP286CA0239.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c7::17) To TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+ (2603:1096:408::966)
+X-Microsoft-Original-Message-ID:
+ <34b16c0b-74b9-4c53-a79f-f7eb260ec5df@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY1PPFCDFFFA68A:EE_|TYSPR02MB7782:EE_
+X-MS-Office365-Filtering-Correlation-Id: 767bf47e-6616-4943-e872-08ddded1df9a
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799015|36102599003|19110799012|5072599009|461199028|6090799003|15080799012|23021999003|440099028|3412199025|40105399003|51005399003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L0dNdGhQYVU1Qm1sRDE1U0VnR0FEMFJvWm9DVVdYMGRIczJ1YU9oRDFINGxm?=
+ =?utf-8?B?U01uTEMzd3ZtZVd5c3hXanlqK0drOFhkSWNoVHE2RlJtU3R4RHpzQ0ZvOC9q?=
+ =?utf-8?B?TXJZOWpmK1VjUmtkZWsvK3Q1YnNmRFdYc2hwS0VsdWVJcTQ3S2FqQUpSVGZF?=
+ =?utf-8?B?NXJXc0swZ1ZiUnFheVR1NHMvREh1dzlXeklEMWIzL1RtanphZUV6dzhyeE05?=
+ =?utf-8?B?cW5LblBmT0NKWlR2NmExd0lSUENaN05IWXRuRWtZRkNHRDZOM0FUUkduVHRH?=
+ =?utf-8?B?dS84T2x4UEhRQnFveDMxUFJwU0VVVmxvSEFBbzllczR2QUV1TlNkbmZyRG9v?=
+ =?utf-8?B?RjFQQVh1bitmWFJJaUJXdHc0ZHZUeFlmcXc2eU5hTFZ6SzBISW9IUVBYdTdM?=
+ =?utf-8?B?ZFd6WjQrdjhOTGdxaWg1SW1rc3k2OUdlWG9ZOTRXN1BFcm9VQWdQTitiWEEx?=
+ =?utf-8?B?M2dCTm8vYUFWbUtyNkZudDdLU0xERXZuZUF2ZmxITEgydFhGckt4emplSkJM?=
+ =?utf-8?B?TDdYQXlncmZlcWx0WnJORFArZ25QbEpoVXdlVXFQQlJtQncxeW5hODlEQ0Z6?=
+ =?utf-8?B?OTVnRW82T3ppQzBhb3llazhOSkJsbHNLM2ZoQWFsYnhXMnNDMkpXbzU1OGl3?=
+ =?utf-8?B?cDdid1hmelo3aVlBdWVwOWJMU25WS0IvaUdWSmxqWDgxT1JBTDVZcGFDaEls?=
+ =?utf-8?B?YWpGcUREdERwdlBXTW5VeCthL2N2NEE0RzdNcDdQUENBaGxLUy80RUw1My84?=
+ =?utf-8?B?SlkrSmQ4bWNzemRtb1lkKzRTeGJYUENJWFlvOTcxSDI2NW5mNTNQQ2dHWFpy?=
+ =?utf-8?B?K2xsV1EvL3p5U0k2bUNiZEZ1cCtrQTViQU5HUEFDZTU0eDFxeitSQnFIU0NK?=
+ =?utf-8?B?VXk0WXNIU2tkVWIzc2JHZGRuR1RrUmxQL1NUS0RIcjRCNG5jMXZXN1YrYlN5?=
+ =?utf-8?B?VGlNSTZXdEFNeHkxQnpKOXBMcWV0WitWdFpLQ1Y0eUJBZUwzNlBkK2FDa1JE?=
+ =?utf-8?B?c00rU3pxOXBhVHdTK0VJNmhWNER5bHE0UFpnRSs4UHN2TFlaSkF5Z21yb3JG?=
+ =?utf-8?B?b0YrWExHMnlGYzh6UVlPdjNGeTRCS2VUK0NpUjhOSk9JcEdzNWZPYW9QejZk?=
+ =?utf-8?B?aTRWRXlmRmE2b3p4c0xkSVNOdnowYmx4MG5xMEJnZ2NNaGs0a1RzZVFSQXA0?=
+ =?utf-8?B?N1BYZ3h6YkpIUHg2NXFuTjM4Q1pPd2NRelNCeWtuLzhKblpiYW45ei9wMTlY?=
+ =?utf-8?B?QmlpdVZMTjlTamFmazNCWFh3NkdtaEFVNVlqSkx6NHdGU1BuVWRxSHJHajY2?=
+ =?utf-8?B?OGNXdlA2bWZnenV6N0JRRC9ycEZSRkhQdDByUHNGcGFIY0NIYllERFpmeVpr?=
+ =?utf-8?B?YjU5bkU0bzZhV3d2VS85SXVXNGt1Y0lLZjAvejVLT1dqN1NnREE2Mm9CNm9s?=
+ =?utf-8?B?T3AyaExCSGJyT3lRSWdSWGZteFpkN0VTVFdNRzFtdFV3ZU00TGRJZ0RkSktL?=
+ =?utf-8?B?U3d6OWlOY2RRdGxhWG9VbWMvOHhqQ0NpVmtjK3dOUXdrL2l1YTJxRVB6SzFS?=
+ =?utf-8?B?ejRrVC9VY24rUFVFd1BMZ2g0cWExMGRKWk05TmpiSUkybU9CQTc2d09kTjFF?=
+ =?utf-8?Q?Y1UYdtPGV8/LIWMKmXJn6QqWEVH607uTXjnzxKQApluA=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?LzJ6bGhGSmRWTmNUdHRsVGR5cERjanRPSVlMRXIyT2RYTjlPa1pVbDBIRVlC?=
+ =?utf-8?B?b2VsNzNmQTdqeFZJUWxLS0RaeUdUOTBHcnQvbWdwV0p4NEFINVlNRy94M3VD?=
+ =?utf-8?B?ajdKbTZkbXFIU0l0TXRpd25QaTRaR1hWQkVsNkp3UEtZZ2E0d2o3Uk9YMWxl?=
+ =?utf-8?B?K0RaWHNRVTErOVF3eWVleiswNjlseSt1aVpVRTZRY1pOYzYveGhTbTZRZW0z?=
+ =?utf-8?B?SkovbS9LOXFXT1M4akN0V1R1VDBjR0c0emdNaUc5VHA1ZUc4d3hJSUQ0NzQ0?=
+ =?utf-8?B?V2ZnZWlrWjQ4VVRxUnVnYURvRVpGbkZsaWx2R1pKN1JCK1VydXY3amVkMFVa?=
+ =?utf-8?B?WisrUXRwWXNWazFjUzhtS3FtMXloUWFpemRIdmFIbUFmeVN4a0VzeXhyc0JC?=
+ =?utf-8?B?Q2EwcVA5aE1lR3JwM2w0VnNxQmVnRG5CQWxJTDFORjJQaDM5ZWpCZGxkSW5a?=
+ =?utf-8?B?cnZETk5RRVlRLzliQm12OXM4U0NWNEJsOHVoeDE3cTg0Wk9VNGx0bUxmZWdv?=
+ =?utf-8?B?bjNTZmRtWnJib3oyYXFBd3NlZGduYkdYckVjNytiemlRdmp0M01EZGx3Q3My?=
+ =?utf-8?B?dXYwQ2VkNUltc0hjaUFNK3Z0V2R4REFaRGczU2lpaTRud0ZKeXE0a1Y5NFov?=
+ =?utf-8?B?WGtoaG5GcEQvemR2c25RdG9kK3JNZUM5UWhBWG9qRm84K01xM0dOZGc0WWJQ?=
+ =?utf-8?B?NWFkOUcxTGdJSDFqa1d6RGsyRlF6N05vamM3TWkxSGZEWUJudzU4QThJbGhE?=
+ =?utf-8?B?VklSc0hWVGlJZmpvb3dNYURkalA1NG5ubnU5S0tmYWZjWjZPK3h6c0U0SGFh?=
+ =?utf-8?B?ZHJuanpjYWlVTXRBNWdpWWs2VXp6cDkxcmVUc2xyU295WS9ieWZTS2NwOCtw?=
+ =?utf-8?B?Ykpqb25XRWk4dlgyb0tVUHVaTWpzY0FiUkVFQlJnQmFFakVJRExDUHU3RTNF?=
+ =?utf-8?B?Q05OOC9ybmVua3pYaUZkOVU5LzQvMzJGNCtOcUMxVHV4N1gyWWJCMlFIMk9L?=
+ =?utf-8?B?eVpOQ3Y5UnhIUkE2MTJGMVNIUm81V1Z3V2Jpck9mWTFmVHphRmNCVStSMVcy?=
+ =?utf-8?B?RkpZdEhCcWNpTjNxSjRpOENUMVJqb3BkN1BkWVRrd3NqaUpSNUF3SndmYjdn?=
+ =?utf-8?B?b05ZaHk0R1RWNXlSTlR6N3Rodm1TeEI3NFAvZWViSGJSaDIwQWpwL28xbUh2?=
+ =?utf-8?B?a2E1dGhXRHdXRUg1ZWxUNEtyTXI3ZlJDVXBYblpKRU1VM3dzazB5dXI2OWFK?=
+ =?utf-8?B?dWxnN0tudzdSc2YyZjNkQk9JbFhLM3hqcWlHV2dPV3FEbnFMc1NHODhXcEk0?=
+ =?utf-8?B?aWlHSG1BYmlqZW1aSXNwK0t0MWs5ZTZWd0dkMlozNTd4dVVidXZRa1JvUHRZ?=
+ =?utf-8?B?RGVsV1NmZ2xIWFcwTk12V0x4RVJUL0JSN2R1S3pqVDFndnhzYWt1bnlRc3l1?=
+ =?utf-8?B?UHhNNXF5VHJGRGRFSE9MdnpxY1dmejNBdnZmQjJ6aThSMWdCdU9qVlByYmNM?=
+ =?utf-8?B?MGpHbXBGL3E4Zm9FNTlBN0dTSktXQ2tFckkwcG55UkYyZWZuS0FRY1dhS09O?=
+ =?utf-8?B?alNURFNjdU55YSsycnpoUzVpQmRQbmt6VnM2WFM4cWJMTGhjUTNVSVc5ZCtW?=
+ =?utf-8?B?bmZZQm5GQVZoV0NRN0FqVnZNeGdJWlNpcEg1cHZZVVdJR2lsY2lvbEdtN0M4?=
+ =?utf-8?Q?DCXwJCCuX2Bn44ALnUw/?=
+X-OriginatorOrg: sct-15-20-8534-15-msonline-outlook-c9a3c.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 767bf47e-6616-4943-e872-08ddded1df9a
+X-MS-Exchange-CrossTenant-AuthSource: TY1PPFCDFFFA68A.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 03:38:34.3513
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR02MB7782
 
-Since it is necessary to use clk_bulk_prepare_enable
-and clk_bulk_disable_unprepare instead of clk_bulk
-enable and clk_bulk_disable because, on 8189, the
-gce clk is mounted on the mminfra clk. When disabling
-and enabling, the parent clk must be enabled and
-disabled first to correctly switch the clk for gce usage.
-Modify the clk api for suspend and resume, modify the api for
-suspend and resume to disable/enable clk, so it can disable/enable
-module clk and parent clk successfully.
 
-Signed-off-by: Xiandong Wang <xiandong.wang@mediatek.com>
----
- drivers/mailbox/mtk-cmdq-mailbox.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+On 8/8/2025 6:18 PM, zhouquan@iscas.ac.cn wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+>
+> The zicbom/zicboz block size registers should depend on the host's isa,
+> the reason is that we otherwise create an ioctl order dependency on the VMM.
+>
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> ---
+>   arch/riscv/kvm/vcpu_onereg.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 543cd86b5bb0..590f0f6e51b0 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -161,14 +161,14 @@ static void cmdq_init(struct cmdq *cmdq)
- {
- 	int i;
- 
--	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
-+	WARN_ON(clk_bulk_prepare_enable(cmdq->pdata->gce_num, cmdq->clocks));
- 
- 	cmdq_gctl_value_toggle(cmdq, true);
- 
- 	writel(CMDQ_THR_ACTIVE_SLOT_CYCLES, cmdq->base + CMDQ_THR_SLOT_CYCLES);
- 	for (i = 0; i <= CMDQ_MAX_EVENT; i++)
- 		writel(i, cmdq->base + CMDQ_SYNC_TOKEN_UPDATE);
--	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
-+	clk_bulk_disable_unprepare(cmdq->pdata->gce_num, cmdq->clocks);
- }
- 
- static int cmdq_thread_reset(struct cmdq *cmdq, struct cmdq_thread *thread)
-@@ -332,7 +332,7 @@ static int cmdq_runtime_resume(struct device *dev)
- 	struct cmdq *cmdq = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
-+	ret = clk_bulk_prepare_enable(cmdq->pdata->gce_num, cmdq->clocks);
- 	if (ret)
- 		return ret;
- 
-@@ -345,7 +345,7 @@ static int cmdq_runtime_suspend(struct device *dev)
- 	struct cmdq *cmdq = dev_get_drvdata(dev);
- 
- 	cmdq_gctl_value_toggle(cmdq, false);
--	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
-+	clk_bulk_disable_unprepare(cmdq->pdata->gce_num, cmdq->clocks);
- 	return 0;
- }
- 
-@@ -384,12 +384,8 @@ static int cmdq_resume(struct device *dev)
- 
- static void cmdq_remove(struct platform_device *pdev)
- {
--	struct cmdq *cmdq = platform_get_drvdata(pdev);
--
- 	if (!IS_ENABLED(CONFIG_PM))
- 		cmdq_runtime_suspend(&pdev->dev);
--
--	clk_bulk_unprepare(cmdq->pdata->gce_num, cmdq->clocks);
- }
- 
- static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
-@@ -708,8 +704,6 @@ static int cmdq_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, cmdq);
- 
--	WARN_ON(clk_bulk_prepare(cmdq->pdata->gce_num, cmdq->clocks));
--
- 	cmdq_init(cmdq);
- 
- 	err = devm_request_irq(dev, cmdq->irq, cmdq_irq_handler, IRQF_SHARED,
--- 
-2.46.0
-
+Thanks,
+Nutty
 
