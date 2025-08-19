@@ -1,116 +1,186 @@
-Return-Path: <linux-kernel+bounces-775046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C069B2BAAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7407EB2BAAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125095256B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:26:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14003561CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447A6264FB5;
-	Tue, 19 Aug 2025 07:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E0128BABE;
+	Tue, 19 Aug 2025 07:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HWMi/5jt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7pV7SV7Z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0sX1IJae"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D9920B80D
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B62D28489C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755588397; cv=none; b=XMVBbAAu8/yhu7kseWqP9+KEb0vo6z65l4HgvyXLWIQ247tG5ueBdR9WHwAJNKRTVQMfi8qEffuLd7Zp6kS3i+hYi8wW1XOErrWNIV3aHi+91ox9N5Mvi1mvWf4oCkuGfkowtP3LjYrPF51muPrnOUfLETfvcbM4XvcPj7a+mrA=
+	t=1755588405; cv=none; b=F3YzJPAEAzuubthlN2o3xt4tQzoRRuUaHNAYviegkR9blXErUS93UGrSK0huDi4XE1YEd6WyKl/j5TurL77VFyaEmRM77agA+W2cCnnEzI/ygLFUoWoy2Nhjy80ySI/ibbLstzYbvCFdnKjy4Dq8JGocRvJj6CNSdPBjuqIxLFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755588397; c=relaxed/simple;
-	bh=8DogFpm/7UItthaAKtL7JHhg0evTH9gBU7V2H5qf+ko=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PHBXaWsc73TASxgc0VOJGyGKiejZM9qxJTVXFdoLzSvIDGx+Qw6C+jPrdmDRZ/JZFROWhpQtfxjbNX97YX4GodSUXItGV9WgbegjLF2iE3AkmrVEWBVHU5k7AO8J130oOq+H5SvQ4g7MOa5oD285c8oMZhSHFooK/ALrkkhPlwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HWMi/5jt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7pV7SV7Z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755588394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LCb/OtwNsCJ1AhM4OPv8lAr8Kr8EX0ivkGLFWUE9/KQ=;
-	b=HWMi/5jt+SV/tiNbEraktGy6cpvKI5aF4tUODzlFvxmONYQdwA2Iv37BqJRk7hhoImjq2f
-	WtLCafzefQ8Mc+wNzT2TwYqe1D+2Ibr9K5K9EUWZD7qydOA96q1uDdbW/7yk/cVnhzbVtJ
-	7l9LcExUJTKh82atJH2oasMA1VJ/D5sK6z4eU1ly0j1kzzXYyhbz6+E6c1eAUhV5UJ1qaS
-	Ekpmc/ZtCiJ9ZFrQbCiq4pB3/VudQ4PozBoImY+Fxqcj2bNW0Ov8143ADfRCMuAYJVWVSe
-	g9Jx332coggfcFq/5UdnmaW6Pwx0E3VDbK5CT9Jhz+c+7m69LuFNwk2al9a1Mg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755588394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LCb/OtwNsCJ1AhM4OPv8lAr8Kr8EX0ivkGLFWUE9/KQ=;
-	b=7pV7SV7ZvGl7P796Mla2CBYUS3CsE6IeX7tCDEj+vjNPZZCNLNRUTHRzAyiF5vjqYqjT4E
-	hRhHbdbQS8WYRFDw==
-Date: Tue, 19 Aug 2025 09:26:19 +0200
-Subject: [PATCH] tools/nolibc: avoid error in dup2() if old fd equals new
- fd
+	s=arc-20240116; t=1755588405; c=relaxed/simple;
+	bh=JHrwiE0qeKjiu2JTqZWpkY8QsgsyYxZEYwptk+ODRos=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=e+KdVXBEc8EkwQN+yFF8veUS/rrA5eRBcHh3FGLxr4HV2nieodI45C/34ik5TofNTGVeruq7suNrzZBQ5HxzU3WpB0/kLWwIPeVXMxBCoCisb5qHvDNmKX9bWl7GA8kkmF4VmvBYb9LRUV9pGhmn3GlW8RURzDjS8lFaVnQRNi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0sX1IJae; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afca41c7d7fso1013943366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:26:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755588400; x=1756193200; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qH1AR6Cc4z3ibmbjdOCcxU3yVHntaGlUKsN2PMUKW3E=;
+        b=0sX1IJaehOG5+QkNnxq1Me8QoimnNa6YsXKYWyahdM3UrB747AzMGKwXf5gPZDELls
+         CXCGWAZFO0IBOqhpfS1bdpPC7IifyUWDevkLXB7D8/ysP0m5kSXHcBaysQUzvuB6g/Qu
+         v38x76vgWFkXqDzWiHoDCYPBPwLZTGO0qOU8VZSl0xnmumeZS0zo9MN0vSbiUZkdKs1x
+         y98v0pFr0hhBPYfpUW9gXEJ/qItwK5yQqRGqT5lc9j0C2taKiPD5Q73MEendDPh9miEF
+         GMUaUhcjUiIjOZA4hKlVRu9+HeqIYh6+4iANBYdoEL2sKo5C6m7tcgdjfCOFkdtCyCP+
+         iQ3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755588400; x=1756193200;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qH1AR6Cc4z3ibmbjdOCcxU3yVHntaGlUKsN2PMUKW3E=;
+        b=dvHhpy/GwDO2gz8ZYEDjndPEWJWnctYDyXgEcGoOEztZPt4xjfsMBeRmsboccCLe5B
+         A9N5gytcnryvqmCLVySCZ8PWNx+YJMzs7rhH+Pd4oA/ScNO2EfjcSHLbEP4kKzQFdY8O
+         eG6/7TC2HkUazQhYT5ky55bV7QhBzOIlNzwYn8xTPJA3R/PvudASUS0zSngQApni5mxz
+         nqTOqTaAm9x9Xt+J5VHGqLwib0Ef463LlV0f/olNS0nqiQ8oOGx312ANDCGjaP6xFM0y
+         vjMpibceAut/z6tdM5w9JqXKday1hOg9NLZ8QifHrrjjUNlaYc4Znhqz4Jwx4ezt7uRD
+         +lNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB1VpVdaoE3r6H8EsalCgO0dnvjWm5/tcI+nUMOvejmlPJGY7QdrP3sc7ejfwMLk1cdz88suuQl6PFScA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUNB3EezUYMMlPnyUX70kDqS0tEUqe8Yoedw9KSpZHonkEzgy+
+	LVKGNG2ywguKbcuetk0xYNOqNMO05EchmZhZkU2rHEqgiJGIdQi0yTuAFx0jBclzaIE=
+X-Gm-Gg: ASbGnctfpdbN6F11cf8xXBsAvaasmiSVXKJyiDc+gIGTX5hJKSLrxK54QajBxMNA/2h
+	LdAqej18dczaDHV0P4yjgsTkI+vDmXVIXIfBgVfW0cmutvndsI2hLxsyNHR4Uhx67iAgp2QU3v+
+	gMlrcB+au1BTSbz/MFHDGAC8nSuq+Wsyc0BuVAlYa7nOpm8h/vwhT28+RCtwBiOVF3182+b1oX6
+	Dq+ej3pX3epPUzrrJiVj7GTBpXIh3f2/vEKBVSLn6+ZKYk37K9CDoSV+8qY6pBLsbqsU65KK03/
+	lfI7M4jKKUrj3xO7Ja+wmIX26CSp1/p4kPcG8uv5YLv70vfp4kjmhtRGLTOi3GuKn8TUrZ7fPqB
+	X0Pdur6IC0ZXemw==
+X-Google-Smtp-Source: AGHT+IEQJduAXZs3aZtQP/SFinImSgPrv/BzlpYBHdqvnijb/cm07H1gezCvMXC8chwaaMWD+ODVHw==
+X-Received: by 2002:a17:907:ec07:b0:ae0:e1ed:d1a0 with SMTP id a640c23a62f3a-afddf06d549mr129832166b.8.1755588400285;
+        Tue, 19 Aug 2025 00:26:40 -0700 (PDT)
+Received: from localhost ([195.52.61.108])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-afcdd018b54sm945228866b.104.2025.08.19.00.26.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 00:26:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250819-nolibc-dup2-einval-v1-1-d6c8308cdc50@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIABonpGgC/x3MQQqAIBBA0avIrBsoQbSuEi0sxxoICyUJxLsnL
- d/i/wKJIlOCSRSIlDnxFRqGTsB22LATsmsG2UvVm2HEcJ28buieWyJxyPZEI9XqndaOtIUW3pE
- 8v/90Xmr9AFMYrHNkAAAA
-X-Change-ID: 20250819-nolibc-dup2-einval-825bfd77de7a
-To: Willy Tarreau <w@1wt.eu>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755588391; l=1199;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=8DogFpm/7UItthaAKtL7JHhg0evTH9gBU7V2H5qf+ko=;
- b=PhKUg9UigkTEdBeqcNyStnbF/pWriylKt088MDH7E3DhHSOQrdNSjJn7Ju6P7dBMOis+EzAV1
- IKtSrnyORhSCVkEocYtz/HSrlIQy3Xpdf1e6RRURqac5kyDl0PxcW/g
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=1b96d25f8de31cf85e8d6d9d187dcf0b57a5a7b73e0ea3b79f1679872045;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Tue, 19 Aug 2025 09:26:32 +0200
+Message-Id: <DC6859ROON75.1JHG3611O74Q5@baylibre.com>
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Marc Kleine-Budde" <mkl@pengutronix.de>
+Cc: "Chandrasekar Ramakrishnan" <rcsekar@samsung.com>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Vishal Mahaveer" <vishalm@ti.com>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>, "Sebin
+ Francis" <sebin.francis@ti.com>, "Kendall Willis" <k-willis@ti.com>,
+ "Akashdeep Kaur" <a-kaur@ti.com>, "Simon Horman" <horms@kernel.org>,
+ "Vincent MAILHOL" <mailhol.vincent@wanadoo.fr>,
+ <linux-can@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 1/4] dt-bindings: can: m_can: Add wakeup properties
+X-Mailer: aerc 0.20.1
+References: <20250812-topic-mcan-wakeup-source-v6-12-v8-0-6972a810d63b@baylibre.com> <20250812-topic-mcan-wakeup-source-v6-12-v8-1-6972a810d63b@baylibre.com> <20250813-shaggy-notorious-octopus-718ca6-mkl@pengutronix.de>
+In-Reply-To: <20250813-shaggy-notorious-octopus-718ca6-mkl@pengutronix.de>
 
-dup2() allows both 'old' and 'new' to have the same value, which dup3()
-does not. If libc dup2() is implemented through the dup3() system call,
-then it would incorrectly fail in this case.
+--1b96d25f8de31cf85e8d6d9d187dcf0b57a5a7b73e0ea3b79f1679872045
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Avoid the error by handling old == new inside nolibc itself.
+On Wed Aug 13, 2025 at 9:37 AM CEST, Marc Kleine-Budde wrote:
+> On 12.08.2025 11:10:22, Markus Schneider-Pargmann wrote:
+>> The pins associated with m_can have to have a special configuration to
+>> be able to wakeup the SoC from some system states. This configuration is
+>> described in the wakeup pinctrl state while the default state describes
+>> the default configuration.
+>>=20
+>> Also m_can can be a wakeup-source if capable of wakeup.
+>>=20
+>> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+>> ---
+>>  .../devicetree/bindings/net/can/bosch,m_can.yaml   | 22 +++++++++++++++=
++++++++
+>>  1 file changed, 22 insertions(+)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml =
+b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+>> index c4887522e8fe97c3947357b4dbd4ecf20ee8100a..ecba8783198fc1658fcc236d=
+8aa3c89d8c90abbd 100644
+>> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+>> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+>> @@ -106,6 +106,22 @@ properties:
+>>          maximum: 32
+>>      minItems: 1
+>> =20
+>> +  pinctrl-0:
+>> +    description: Default pinctrl state
+>> +
+>> +  pinctrl-1:
+>> +    description: Wakeup pinctrl state
+>> +
+>> +  pinctrl-names:
+>> +    description:
+>> +      When present should contain at least "default" describing the def=
+ault pin
+>> +      states. The second state called "wakeup" describes the pins in th=
+eir
+>> +      wakeup configuration required to exit sleep states.
+>> +    minItems: 1
+>> +    items:
+>> +      - const: default
+>> +      - const: wakeup
+>> +
+>>    power-domains:
+>>      description:
+>>        Power domain provider node and an args specifier containing
+>> @@ -122,6 +138,12 @@ properties:
+>>      minItems: 1
+>>      maxItems: 2
+>> =20
+>> +  wakeup-source:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    description:
+>> +      List of phandles to system idle states in which mcan can wakeup t=
+he system.
+>
+> What non TI SoCs that don't have partial IO and want regular Wake-On-CAN
+> and don't define system idle states?
 
-Fixes: 30ca20517ac1 ("tools headers: Move the nolibc header from rcutorture to tools/include/nolibc/")
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/include/nolibc/sys.h | 2 ++
- 1 file changed, 2 insertions(+)
+You could simply add system idle states for the state that mcan should
+be a wakeup source for. The system idle state could be anything like
+standby or mem for example, depending on your SoC and in which staste
+Wake-On-CAN is working. Or if this doesn't fit, the binding could later
+be extended to accept wakeup-source as a boolean property.
 
-diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
-index 295e71d34abadb7f9c7ca995012b4395b6830975..22a2e834861e618451ec678bd11101147dfa3a7d 100644
---- a/tools/include/nolibc/sys.h
-+++ b/tools/include/nolibc/sys.h
-@@ -238,6 +238,8 @@ static __attribute__((unused))
- int sys_dup2(int old, int new)
- {
- #if defined(__NR_dup3)
-+	if (old == new)
-+		return old;
- 	return my_syscall3(__NR_dup3, old, new, 0);
- #elif defined(__NR_dup2)
- 	return my_syscall2(__NR_dup2, old, new);
+Best
+Markus
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250819-nolibc-dup2-einval-825bfd77de7a
+--1b96d25f8de31cf85e8d6d9d187dcf0b57a5a7b73e0ea3b79f1679872045
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+-----BEGIN PGP SIGNATURE-----
 
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaKQnKBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlOJ
+SAEAqTh7PBDFQHAV2tsURRJ3/ADQBvwM+ffUyTHK9EefkkABANg9QIdqvoBvrN+n
+tGDan+26ATTU1XNF1ZwYaMB2fIsI
+=BSDj
+-----END PGP SIGNATURE-----
+
+--1b96d25f8de31cf85e8d6d9d187dcf0b57a5a7b73e0ea3b79f1679872045--
 
