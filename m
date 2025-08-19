@@ -1,201 +1,106 @@
-Return-Path: <linux-kernel+bounces-775565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37366B2C0A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:39:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CB1B2C0A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3EA3B65D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:35:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F573164459
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633A932BF59;
-	Tue, 19 Aug 2025 11:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF65732BF36;
+	Tue, 19 Aug 2025 11:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lAeSY4ZM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rIMvk/d3"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7FC30F813;
-	Tue, 19 Aug 2025 11:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB5C30F813
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603325; cv=none; b=eRZ2pvPDPfjLjvd2R5o1VCqybOt35iQrnxAxPTsKPrOHyFoQCf2MFpmxT7f3ar3owj1zTHesxKwL6pEYS4/xoV0mSmPnBbha49If2/VzDqiT63w7pTjixXKWkya3FiQVYWKec+vKGoQsxqbhZMz/DsoCQd4/LZARlhboa20UCoY=
+	t=1755603319; cv=none; b=lQxBkHSuKqEMAAW7SqwtBtpiP0zS9ChImxTS1xnhVwLnDoinjkpsDMXe/z+TCWK4kIuIxifWXgX4aHNmy3VlH6p6Q4jNZSKI5pjtMUiCgEDhKNA+3W2o/LLHvtr1P9hvmvc1qKXkj1ewkl7U91Kvq5l09WEKdlgd3b32AdNrFYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603325; c=relaxed/simple;
-	bh=WV1rxNjB+TYqIAQsI+V7tfqrGc3WfHnR+6UzQJkULEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQdDrjIVlJHeJek99B8g7mp1h/1SRaWzoRU+bww3WDDSUaPmYLj2q1WvxqpRiLHUTkgS+2u1+st71aFqGzeGl9xVg87j/qhNQRbi8UTuGiMmm/iA5gOd0bZBFSltiK35U7h3MgY9+w/IQJdKVIb9aktq0+w8U+gVpnO0QGa1ZuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lAeSY4ZM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7B59540E0232;
-	Tue, 19 Aug 2025 11:35:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aLRSC9M65czv; Tue, 19 Aug 2025 11:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755603314; bh=g/G+pgACZoF3hG1rLn4uE9m9WQvLEWOUUt+4q8jMk+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lAeSY4ZM2pw8IFmOlaS3AA7YC0WWO8kVSib0isnJ8MRUkSjuLstJyZqTzuRP8le9q
-	 CSNI7jaT/Lf5fG3tJyzKxBvuhs730KAvfOomyiuBWOIUgrlJv/F6rYw8Fk/yKCha+2
-	 3tZOnENDz3MTygaarLvMsyKcB+fY1RAx26rN81IhxOWSECHxXNVf2HplYbBFKPnbhv
-	 mr6A3xWbDhSinS0oFJgDwowtf3MYi65+a9pILK9HsmGZW9T9bRqfxZWwAW2Is6IenL
-	 K9lI1diW6dLFi6tCsmycgF2yLc4Ae3Ewav2kqmmLWYAZkn+OH0CGmZ+3VJWt5NaLlK
-	 le2zqk8WD8JwanqHAzd4O6RR3aeLoUbTzvFU4w1zdvJdpCLwFOT/csJ4lE7Wd7hQKW
-	 qp2jg1oaty6mizUrCYZ13ItdfTlk7bHo79g4v2FQDKh3YhrC+tcVjDalthNvYfVy9L
-	 gyBpsgCzj8gWW4gG/bh+b7nSQG7EE5pmlGbWequqkNjScRosvyMLD4UR6ZVtrloQz3
-	 Z73WYBQy2+mRobPzbi4xKJhqN7B+C+4oT0Ne+S0+f/WbShBLN+rXNuLtY7HIQo/ENC
-	 K4xQmKQXGQcXNYrtzevlnHZybRXnaQ6AabWK/hwM/5oer7TJYMOeVAkIIv1c2dg6z6
-	 AW5XntmANeHujyHURoDkG7Cc=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0DF5140E0194;
-	Tue, 19 Aug 2025 11:34:54 +0000 (UTC)
-Date: Tue, 19 Aug 2025 13:34:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-	Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	"Xin Li (Intel)" <xin@zytor.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v3 0/4] x86/cpu/topology: Work around the nuances of
- virtualization on AMD/Hygon
-Message-ID: <20250819113447.GJaKRhVx6lBPUc6NMz@fat_crate.local>
-References: <20250818060435.2452-1-kprateek.nayak@amd.com>
+	s=arc-20240116; t=1755603319; c=relaxed/simple;
+	bh=x6Jrsf9+q5rYQBpSDpt1N60Ro1EhLpzMzILFRSEyHgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r3UdCb0vWC/2bKhqMdOc+KU3kluMaC3R+wrMOcH+6WT6W2ZCi+Rggb4Tpz/j2aItBfjPIRvz1BFgJ20kHO+4tU178VBJAYxPSChqhIuztfYbvh86wq+fdv6MI5wfg+b7QLph8dLG32AbMa1Oto7sHZjZf7uce6eg74kmeEUh8no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rIMvk/d3; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-333f92d682bso43704711fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755603316; x=1756208116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x6Jrsf9+q5rYQBpSDpt1N60Ro1EhLpzMzILFRSEyHgI=;
+        b=rIMvk/d3Z7w10Ph/ruGOnhQl0bngfmNlIZsP2dzmYSmI+4fSDb/bNvb47nInv/KHn7
+         uTocUYMDQfEUTDTfx5doR18zz1P7IAV4nOxc08EKRkVX6DiKkabelnrdB8uiKnkr3N8+
+         yVkxjEBEWIu/Lo2PMphLnJWAojWRvUQ3HiJffUNFUknCeIcWGzfPpCpTCNg5DdR6UzFX
+         JirBqAKVXF22nL0+ejjpgTUIJxo8ptwUAQ4OHJCs0CbI49VaWgZwqQcR633BuR4/GGbb
+         rzGSqNuoEqBNGPSSvQr0+nUMOk71RWtMw5thEia+GUOGimV9f8L+yIfin6hqjhIyPBm9
+         RgzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755603316; x=1756208116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x6Jrsf9+q5rYQBpSDpt1N60Ro1EhLpzMzILFRSEyHgI=;
+        b=BZ7A2fQXTXoHHvQTTA7r/8eq6rnmah5LMkV9yTFF0OySuAzzd3TaGXLqMOdOA53HCE
+         e+73hBqBCtYBR2kVaScMWYs2OawcxOfOqYXR6EchNUkhD9IRXznw27FRLiUc/gyigPGx
+         VLTImke2GklRYluA/avCOqrnElX7KpemSUUZ2C8JJ/7X4B5fxje/i4LU5CvBkqI2kXuz
+         L7Pd5uBtotJwzemQWSXYTwYdUL9KflgB4Kl6eEgeJv1FC5y8EosLM+qhoYH9BYZc2IzH
+         ONQ3ePZFVEq4bLUqrR0LcrqSUY7kTb71CVrUL2Pk7Y2gCBDHBZVpvmYPnMRMV357G1Ck
+         HnrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxe03/1GRNBWG2RxIeDcRAPY+FmUAtlvK7VHnV/Os/XSz7C0MYLIZa/GbKClkN0MSOpZRhg5M2tg9wEZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFiohHOV8d2NLREsip5f+MT+8Zzgi7uJ4/eQle6U/9DnOLLwcg
+	RwLb5gOJodHgbiaaEg6e51HGjq6ARSb56PWLa3ZF8eFt0EmqEaJEYjE5m/UhcJQW6oQF8rBuZPL
+	FtBNnhB1TEEnZAMaomcGxgqu6l3bsks0/VYx+lWO2JQ==
+X-Gm-Gg: ASbGncuyIgCRb2PG2x+3LQfRbdj3c092CWyTnptV480XOiTwSbXMhIAbcnfiVe4GwtZ
+	P91cja5wI7+J+Wrim0aEspH40t/5FnQ6w7L49nUL69EBK7TzMytP7ZleGGP90Xdv7YJDTHpnc72
+	HTMzSVjoBL0bO3vJUqobhxQKMxWKHzZzGv/XkRa632Gb8v42//qdPaV1DkH/78hpDUosOuecU7Y
+	MkwAUg=
+X-Google-Smtp-Source: AGHT+IEZTV/s8J2pVdq3YESVoxrcWbR+ohgYDCXFmZOb9NPVw7MTXHU1w/mPN8qEod6szabX8V8QzaN66b7gZmSscvg=
+X-Received: by 2002:a2e:ae0a:0:20b0:32b:6cd3:3938 with SMTP id
+ 38308e7fff4ca-335304f74e8mr4244821fa.13.1755603315716; Tue, 19 Aug 2025
+ 04:35:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250818060435.2452-1-kprateek.nayak@amd.com>
+References: <b52lpk2vqr4asp5iaqwcvcac3b6gen52rbu4cwy5kcnxszc3fj@6i77jr53kzje>
+In-Reply-To: <b52lpk2vqr4asp5iaqwcvcac3b6gen52rbu4cwy5kcnxszc3fj@6i77jr53kzje>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 19 Aug 2025 13:35:04 +0200
+X-Gm-Features: Ac12FXx_8ewgPVQIBBva4gODOmrkgRz74tVeKqNVrWYGb85XhlqlAO3_JUxTU64
+Message-ID: <CACRpkdZAjnzv8RCe6tD5Eeko6SNBGC7jJV6KHLBa-mFrajLH_A@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: gpio: add documentation about using
+ software nodes
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@kernel.org>, 
+	Hans de Goede <hansg@kernel.org>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Lemme try to make some sense of this because the wild use of names and things
-is making my head spin...
+On Mon, Aug 11, 2025 at 11:30=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-On Mon, Aug 18, 2025 at 06:04:31AM +0000, K Prateek Nayak wrote:
-> When running an AMD guest on QEMU with > 255 cores, the following FW_BUG
-> was noticed with recent kernels:
-> 
->     [Firmware Bug]: CPU 512: APIC ID mismatch. CPUID: 0x0000 APIC: 0x0200
-> 
-> Naveen, Sairaj debugged the cause to commit c749ce393b8f ("x86/cpu: Use
-> common topology code for AMD") where, after the rework, the initial
-> APICID was set using the CPUID leaf 0x8000001e EAX[31:0] as opposed to
+> Introduce documentation regarding use of software nodes to describe
+> GPIOs on legacy boards that have not been converted to device tree.
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-That's
+Thanks for doing this!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-CPUID_Fn8000001E_ECX [Node Identifiers] (Core::X86::Cpuid::NodeId)
-
-> the value from CPUID leaf 0xb EDX[31:0] previously.
-
-That's
-
-CPUID_Fn0000000B_EDX [Extended Topology Enumeration]
-(Core::X86::Cpuid::ExtTopEnumEdx)
-
-> This led us down a rabbit hole of XTOPOEXT vs TOPOEXT support, preferred
-
-What is XTOPOEXT? 
-
-CPUID_Fn0000000B_EDX?
-
-Please define all your things properly so that we can have common base when
-reading this text.
-
-TOPOEXT is, I presume:
-
-#define X86_FEATURE_TOPOEXT		( 6*32+22) /* "topoext" Topology extensions CPUID leafs */
-
-Our PPR says:
-
-CPUID_Fn80000001_ECX [Feature Identifiers] (Core::X86::Cpuid::FeatureExtIdEcx)
-
-"22 TopologyExtensions: topology extensions support. Read-only. Reset:
-Fixed,1. 1=Indicates support for Core::X86::Cpuid::CachePropEax0 and
-Core::X86::Cpuid::ExtApicId."
-
-Those leafs are:
-
-CPUID_Fn8000001D_EAX_x00 [Cache Properties (DC)] (Core::X86::Cpuid::CachePropEax0)
-
-DC topology info. Probably not important for this here.
-
-and
-
-CPUID_Fn8000001E_EAX [Extended APIC ID] (Core::X86::Cpuid::ExtApicId)
-
-the extended APIC ID is there.
-
-How is this APIC ID different from the extended APIC ID in
-
-CPUID_Fn0000000B_EDX [Extended Topology Enumeration] (Core::X86::Cpuid::ExtTopEnumEdx)
-
-?
-
-> order of their parsing, and QEMU nuances like [1] where QEMU 0's out the
-> CPUID leaf 0x8000001e on CPUs where Core ID crosses 255 fearing a
-> Core ID collision in the 8 bit field which leads to the reported FW_BUG.
-
-Is that what the hw does though?
-
-Has this been verified instead of willy nilly clearing CPUID leafs in qemu?
-
-> Following were major observations during the debug which the two
-> patches address respectively:
-> 
-> 1. The support for CPUID leaf 0xb is independent of the TOPOEXT feature
-
-Yes, PPR says so.
-
->    and is rather linked to the x2APIC enablement.
-
-Because the SDM says:
-
-"Bits 31-00: x2APIC ID of the current logical processor."
-
-?
-
-Is our version not containing the x2APIC ID?
-
-> On baremetal, this has
->    not been a problem since TOPOEXT support (Fam 0x15 and above)
->    predates the support for CPUID leaf 0xb (Fam 0x17[Zen2] and above)
->    however, in virtualized environment, the support for x2APIC can be
->    enabled independent of topoext where QEMU expects the guest to parse
->    the topology and the APICID from CPUID leaf 0xb.
-
-So we're fixing a qemu bug?
-
-Why isn't qemu force-enabling TOPOEXT support when one requests x2APIC?
-
-My initial reaction: fix qemu.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Yours,
+Linus Walleij
 
