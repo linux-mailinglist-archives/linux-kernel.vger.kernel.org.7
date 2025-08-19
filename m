@@ -1,207 +1,206 @@
-Return-Path: <linux-kernel+bounces-776688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2652B2D07F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8D7B2D080
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD211C456A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5B31895C48
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36A311974;
-	Tue, 19 Aug 2025 23:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3055926A1C9;
+	Tue, 19 Aug 2025 23:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o5cr8Y8a"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSKmX+V/"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C6F30F521
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09E722D4DD
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755647335; cv=none; b=Rp2s06pwAD1wC/5lavcpfJmn3xj77GYqYR84zUY/2RjtMmvP7zd8kpVgTwivXnyeyafUTyoecLO3w4texRm0Oo605dfrTgWVrQIPss+kcXohiDC+558bjkGtBPUscTTFy5tD4ljAYzGrpBFW6hms7ulqOxO73d2oLNpKtQZnIOs=
+	t=1755647524; cv=none; b=s8gBPmZOKOk80kNlrtk1OoYZTT5khFuHxAtfeYB+9S842UvtPyEwx7acXBo0z3oL4cFMRZCy8SRhkVaVSOxSpoB+FHwKU3D5KUXhBxq25xeO04a8laD0jInzwGSdXmqD35Pzp5EYmUI99nNnkSUrhIxv86hTg+vTzZeYzzZDgZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755647335; c=relaxed/simple;
-	bh=twOwK2WrMvvYRZdg1YXAvXtBMzKrKLhmH7ohC2epAFE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nqYIM4aF74oypSnQhbDyc51/02P9JKN9sVwYw1gbkNxfyB2LVP7LT99zkoOD7nQvj6ZAb4GS7VibzpGSGCHazeTDSWB7GDEf3PpZXNL93HhEeQftttC6nlszldubRVaOxxbj2wh9KdeJhzCLdHhdtrTWfSKz7dObag5rx0J8bYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o5cr8Y8a; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32326789e09so11338723a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:48:54 -0700 (PDT)
+	s=arc-20240116; t=1755647524; c=relaxed/simple;
+	bh=tCbjBamqBRJAyRNUkdkIturfGMlxJnS5+BZA+9SZi04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=invR2ef5e8Xt6A1Em1PCRJlE4/VUK3h3aJeFglEctD944Z9cQCTRuZMe49IT925avWU1oe2cULcG78Z9Ouhk1PqKXmybHCRJj3VwToKY1xqlcwQ/1P8sX8JrNa7786jm8Y9dL6YPBtDLis+DTI+m8jsYL9qRiNx2P+5bZcl7Blw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSKmX+V/; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6188b5f620dso6566506a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755647333; x=1756252133; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ij5DACOGoAwmy0AYvRq4D0pO+0Fvo5ANXQA3bigBH6g=;
-        b=o5cr8Y8acbh+aXc8piT6Gj4A7WQPm1rKd0akPfqo+DTqlxeS+4fytVW93TstwZ32tG
-         RudCXiJWjUOhbGLdmqw6MLsSDxhOF55EdnfBv8TykyAk0JZe2tC6X6p8bgQsbnXCLuyk
-         nvJg7m84gXTQMaxbNGZyOYvNqGyWOxVmtwJlGwmkebq7+4q+mG5jDF09YssdBx41kHyf
-         JKVeXODIIhhGA0LpjQ+5U2sPjK530svTaBt+luQcWhGL4YXfvoTcrhu0Feh7izV+PXIv
-         1oZR0NW2+d2wnWIIoZ30R9CDeQr2Y9b2BACx/MLDIf6e4073x/rPOEljrm1/rV2Ddmwz
-         8x3A==
+        d=gmail.com; s=20230601; t=1755647521; x=1756252321; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hwii5vDRk2HqFHoEzFvdXjLh8+HDGIvx8Kia2Hy7yd4=;
+        b=OSKmX+V/jDvVkI+5wPNDqRdhWzKtnpKVz6PmhnWJpnUn1RKU12VtKPeiK/mYamZ3gY
+         teX6GTcE+ajONqXjPkUmHVmx8OPy+s0ySihXJuLVsdPrR0vv19y/kFxUzpjNpk5sE+D1
+         rKRSzWOmSKr7nH14phYbo1WiRuuNQiEoZQ10p4RevbGuElsxUy0qBh7GGekDMFpIFrhc
+         FwiLKJOA6Uabd3ov+OdekO0zE6tTNKC1K/XVbThd9CjHDf7RfxeE19xVhTik9wmjOIjX
+         7l3oIQKRxNtKndvxhC+EXFAd3CKP6cBR+NMRU6UNd0Ev/760db5doh+mJl8ycL8xsNGK
+         IjaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755647333; x=1756252133;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ij5DACOGoAwmy0AYvRq4D0pO+0Fvo5ANXQA3bigBH6g=;
-        b=M9PjCEGTp9KZ0KRBr1RLrgfFjLVJ/YuS2FqsShtr/M+NFDLwg7nKoY9b5ROrtLKyxl
-         uFWe/tI2hv0GYALb4gY3Yfp4Zc9wzRnw1hH1VnqSMwgFEppKC4ZKQy2IarRZljDH03ab
-         R8QF+oibKg5a8U1uuPif8fMyWkuzHOs0PmrBZiZB6BIpcfQHfJKVHLV9cfDt+C2GZZ0O
-         QyRlSkilyR9t6wcG+PZz/H6iGQtQAtUX0GTLqJsTvZL4/1YP3knGgviJKRP3QFps6xGk
-         jDexKkoYGpyAel2JN8huXc1Yq9jxtQVardiEl2vr7MChzRGC8YqwZkl33vul1pRQ+kQ+
-         kixQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL/iSJez2cPd/N7bQ5UCDkuO33z18++jjUFsQqRY3I3XieRWFBTFO4PQvA4Df1AOiJ61ZA9KjEM8DJJE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznsi9ompsyB0BppMtCRYiSqXtVEyfoixDwgz6V5UfaOO7rFhdk
-	ZHnVc4aZAy7Oo6cjU2kmGXNDp0uvkb7UKyNreTaKRQ1l8W0QMXYQGOgxMqoONWHuhSjMZ+DY8Rp
-	6WS7lmA==
-X-Google-Smtp-Source: AGHT+IHA4xx30YG+v08EWU8ccyD5t2BPTbFqLPfGoQIR6NxJO+YK9vs+uA2AKxNs93apEGIUcNMDkCqZGzA=
-X-Received: from pjbta11.prod.google.com ([2002:a17:90b:4ecb:b0:31f:a0:fad4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e710:b0:321:87fa:e1ec
- with SMTP id 98e67ed59e1d1-324e1488418mr1044517a91.34.1755647333624; Tue, 19
- Aug 2025 16:48:53 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 19 Aug 2025 16:48:33 -0700
-In-Reply-To: <20250819234833.3080255-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1755647521; x=1756252321;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hwii5vDRk2HqFHoEzFvdXjLh8+HDGIvx8Kia2Hy7yd4=;
+        b=iuaw9FoUzC0OLxjVMX8A06T7SE8YrBDJcP/NiIK2qG4vM8p6RDF4OOquflCQG6f5dj
+         qRsWC8ptJOVP+ZPOpGIm4gy1YI+CC6A3LT5QQGUNJBbJSheGkhe7gdt5pZfESs8TlFQZ
+         sIbqYfY3/ZQhMm5KTlHvb6OHGHCpE9ujWWFDyT36JIcIG+nn7yEHpjjalcBmtmC79vG+
+         pIgaBrZf1yrRsq58SYTv7OrzdA7fKQH6SRICxPt//LFpCLdVX0As47GVE0pJqwXTJhMD
+         kCGeZ3Yw1jDp6zEOuJJL++qUFgw9eNGcKxcka3dPEbuXgBpchcEc4kir7q8NE1ZHWfu8
+         YpOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOa29DfwdifcxWkF2JXAKmpNSBhlAm9nXf60enP5ebfwH4xNFWbO4rPpFxtUDWsvkiclf00hZAi0VJ3Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJOeCL30uD+Rd1OLzWgwuPgl9nFT5cNlhZZgigz2eRJTvo3OzW
+	9CveXWbvq+7XSiMjrPiaPQGMEBm8F+j+rlfyZfXq+AZYe+jXWUMEs6vV
+X-Gm-Gg: ASbGncuAe5jKUdOVV1U1BtsJb0gsaLKkr1qfP/qw1JZiuNub3omF0RFqzxON09FvH5/
+	NWLnD7aWH/xUK73WBOxLRCsnWnCFbwSKWl1lGe9SHBFRWdwvnTW7Kn8qg5Eu6Gj5J/xzIio6VbG
+	f5Pu59DF5rAszucsK6t2RFaF7SafxTkMuD8s7pgruhUEQJHkBvjoqmRcYLplISH+p/VpkpCbq0w
+	IzOiW5k4P0HhbAxJ7lNfhV4E8YJPTBiQiXkAc+7Iuyv2YJV2ES9ca0ZD2wmYcfg8/RA1yPaaebL
+	bDtZtb6hDx3XFZOke5bYbxEbrSpayVcbOR3FvL3CQGsZBi5XHdpjtDCBZy9O6ERkk0mBjjfIDS2
+	4LbJYPxssSRVUfpCF2R7+hg==
+X-Google-Smtp-Source: AGHT+IHTWjAGjinh9nzHsJKsD5xLXBZISMysB5cDMytuX+CmFt7hFCd0FeBDXqTTZwWuSeECM1i6ww==
+X-Received: by 2002:a05:6402:51d4:b0:61a:9385:c781 with SMTP id 4fb4d7f45d1cf-61a975e5b9bmr669786a12.38.1755647520722;
+        Tue, 19 Aug 2025 16:52:00 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a758c062bsm2574102a12.55.2025.08.19.16.51.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Aug 2025 16:51:59 -0700 (PDT)
+Date: Tue, 19 Aug 2025 23:51:58 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bill Wendling <morbo@google.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 1/4] mm/mm_init: use deferred_init_memmap_chunk() in
+ deferred_grow_zone()
+Message-ID: <20250819235158.mgei7l4yraheech4@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250818064615.505641-1-rppt@kernel.org>
+ <20250818064615.505641-2-rppt@kernel.org>
+ <20250819095223.ckjdsii4gc6u4nec@master>
+ <aKRX9iIe8h9fFi9v@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819234833.3080255-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-Message-ID: <20250819234833.3080255-9-seanjc@google.com>
-Subject: [PATCH v11 8/8] KVM: SVM: Enable Secure TSC for SNP guests
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, 
-	Nikunj A Dadhania <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>, 
-	Vaishali Thakkar <vaishali.thakkar@suse.com>, Ketan Chaturvedi <Ketan.Chaturvedi@amd.com>, 
-	Kai Huang <kai.huang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKRX9iIe8h9fFi9v@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-From: Nikunj A Dadhania <nikunj@amd.com>
+On Tue, Aug 19, 2025 at 01:54:46PM +0300, Mike Rapoport wrote:
+>On Tue, Aug 19, 2025 at 09:52:23AM +0000, Wei Yang wrote:
+>> Hi, Mike
+>> 
+>> After going through the code again, I have some trivial thoughts to discuss
+>> with you. If not right, please let me know.
+>> 
+>> On Mon, Aug 18, 2025 at 09:46:12AM +0300, Mike Rapoport wrote:
+>> [...]
+>> > bool __init deferred_grow_zone(struct zone *zone, unsigned int order)
+>> > {
+>> >-	unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
+>> >+	unsigned long nr_pages_needed = SECTION_ALIGN_UP(1 << order);
+>> > 	pg_data_t *pgdat = zone->zone_pgdat;
+>> > 	unsigned long first_deferred_pfn = pgdat->first_deferred_pfn;
+>> > 	unsigned long spfn, epfn, flags;
+>> > 	unsigned long nr_pages = 0;
+>> >-	u64 i = 0;
+>> > 
+>> > 	/* Only the last zone may have deferred pages */
+>> > 	if (zone_end_pfn(zone) != pgdat_end_pfn(pgdat))
+>> >@@ -2262,37 +2272,26 @@ bool __init deferred_grow_zone(struct zone *zone, unsigned int order)
+>> > 		return true;
+>> > 	}
+>> 
+>> In the file above this line, there is a compare between first_deferred_pfn and
+>> its original value after grab pgdat_resize_lock.
+>
+>Do you mean this one:
+>
+>	if (first_deferred_pfn != pgdat->first_deferred_pfn) {
+>		pgdat_resize_unlock(pgdat, &flags);
+>		return true;
+>	}
+> 
 
-Add support for Secure TSC, allowing userspace to configure the Secure TSC
-feature for SNP guests. Use the SNP specification's desired TSC frequency
-parameter during the SNP_LAUNCH_START command to set the mean TSC
-frequency in KHz for Secure TSC enabled guests.
+Yes.
 
-Always use kvm->arch.arch.default_tsc_khz as the TSC frequency that is
-passed to SNP guests in the SNP_LAUNCH_START command.  The default value
-is the host TSC frequency.  The userspace can optionally change the TSC
-frequency via the KVM_SET_TSC_KHZ ioctl before calling the
-SNP_LAUNCH_START ioctl.
+I am thinking something like this:
 
-Introduce the read-only MSR GUEST_TSC_FREQ (0xc0010134) that returns
-guest's effective frequency in MHZ when Secure TSC is enabled for SNP
-guests. Disable interception of this MSR when Secure TSC is enabled. Note
-that GUEST_TSC_FREQ MSR is accessible only to the guest and not from the
-hypervisor context.
+ 	if (first_deferred_pfn != pgdat->first_deferred_pfn || 
+	    first_deferred_pfn == ULONG_MAX)
 
-Co-developed-by: Ketan Chaturvedi <Ketan.Chaturvedi@amd.com>
-Signed-off-by: Ketan Chaturvedi <Ketan.Chaturvedi@amd.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-[sean: contain Secure TSC to sev.c]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/svm.h |  1 +
- arch/x86/kvm/svm/sev.c     | 26 ++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+This means
 
-diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
-index ffc27f676243..17f6c3fedeee 100644
---- a/arch/x86/include/asm/svm.h
-+++ b/arch/x86/include/asm/svm.h
-@@ -299,6 +299,7 @@ static_assert((X2AVIC_MAX_PHYSICAL_ID & AVIC_PHYSICAL_MAX_INDEX_MASK) == X2AVIC_
- #define SVM_SEV_FEAT_RESTRICTED_INJECTION		BIT(3)
- #define SVM_SEV_FEAT_ALTERNATE_INJECTION		BIT(4)
- #define SVM_SEV_FEAT_DEBUG_SWAP				BIT(5)
-+#define SVM_SEV_FEAT_SECURE_TSC				BIT(9)
- 
- #define VMCB_ALLOWED_SEV_FEATURES_VALID			BIT_ULL(63)
- 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 7d1d34e45310..fb45a96e0159 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -146,6 +146,14 @@ static bool sev_vcpu_has_debug_swap(struct vcpu_svm *svm)
- 	return sev->vmsa_features & SVM_SEV_FEAT_DEBUG_SWAP;
- }
- 
-+static bool snp_is_secure_tsc_enabled(struct kvm *kvm)
-+{
-+	struct kvm_sev_info *sev = to_kvm_sev_info(kvm);
-+
-+	return (sev->vmsa_features & SVM_SEV_FEAT_SECURE_TSC) &&
-+	       !WARN_ON_ONCE(!sev_snp_guest(kvm));
-+}
-+
- /* Must be called with the sev_bitmap_lock held */
- static bool __sev_recycle_asids(unsigned int min_asid, unsigned int max_asid)
- {
-@@ -415,6 +423,9 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
- 	if (data->flags)
- 		return -EINVAL;
- 
-+	if (!snp_active)
-+		valid_vmsa_features &= ~SVM_SEV_FEAT_SECURE_TSC;
-+
- 	if (data->vmsa_features & ~valid_vmsa_features)
- 		return -EINVAL;
- 
-@@ -2195,6 +2206,12 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 
- 	start.gctx_paddr = __psp_pa(sev->snp_context);
- 	start.policy = params.policy;
-+
-+	if (snp_is_secure_tsc_enabled(kvm)) {
-+		WARN_ON_ONCE(!kvm->arch.default_tsc_khz);
-+		start.desired_tsc_khz = kvm->arch.default_tsc_khz;
-+	}
-+
- 	memcpy(start.gosvw, params.gosvw, sizeof(params.gosvw));
- 	rc = __sev_issue_cmd(argp->sev_fd, SEV_CMD_SNP_LAUNCH_START, &start, &argp->error);
- 	if (rc) {
-@@ -3085,6 +3102,9 @@ void __init sev_hardware_setup(void)
- 	sev_supported_vmsa_features = 0;
- 	if (sev_es_debug_swap_enabled)
- 		sev_supported_vmsa_features |= SVM_SEV_FEAT_DEBUG_SWAP;
-+
-+	if (sev_snp_enabled && tsc_khz && cpu_feature_enabled(X86_FEATURE_SNP_SECURE_TSC))
-+		sev_supported_vmsa_features |= SVM_SEV_FEAT_SECURE_TSC;
- }
- 
- void sev_hardware_unsetup(void)
-@@ -4452,6 +4472,9 @@ void sev_es_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
- 					  !guest_cpu_cap_has(vcpu, X86_FEATURE_RDTSCP) &&
- 					  !guest_cpu_cap_has(vcpu, X86_FEATURE_RDPID));
- 
-+	svm_set_intercept_for_msr(vcpu, MSR_AMD64_GUEST_TSC_FREQ, MSR_TYPE_R,
-+				  !snp_is_secure_tsc_enabled(vcpu->kvm));
-+
- 	/*
- 	 * For SEV-ES, accesses to MSR_IA32_XSS should not be intercepted if
- 	 * the host/guest supports its use.
-@@ -4591,6 +4614,9 @@ int sev_vcpu_create(struct kvm_vcpu *vcpu)
- 		return -ENOMEM;
- 
- 	svm->sev_es.vmsa = page_address(vmsa_page);
-+
-+	vcpu->arch.guest_tsc_protected = snp_is_secure_tsc_enabled(vcpu->kvm);
-+
- 	return 0;
- }
- 
+  * someone else has grow zone before we grab the lock
+  * or the whole zone has already been initialized
+
+>> I am thinking to compare first_deferred_pfn with ULONG_MAX, as it compared in
+>> deferred_init_memmap(). This indicate this zone has already been initialized
+>> totally.
+>
+>It may be another CPU ran deferred_grow_zone() and won the race for resize
+>lock. Then pgdat->first_deferred_pfn will be larger than
+>first_deferred_pfn, but still not entire zone would be initialized.
+> 
+>> Current code guard this by spfn < zone_end_pfn(zone). Maybe a check ahead
+>> would be more clear?
+>
+>Not sure I follow you here. The check that we don't pass zone_end_pfn is
+>inside the loop for every section we initialize.
+> 
+
+In case the zone has been initialized totally, first_deferred_pfn = ULONG_MAX.
+
+Then we come to the loop with initial state:
+
+    spfn = ULONG_MAX
+    epfn = 0 (which is wrap around)
+
+And loop condition check (spfn < zone_end_pfn(zone)) is false, so the loop is
+skipped. This is how we handle a fully initialized zone now.
+
+Would this be a little un-common?
+
+>> > 
+>> >-	/* If the zone is empty somebody else may have cleared out the zone */
+>> >-	if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
+>> >-						 first_deferred_pfn)) {
+>> >-		pgdat->first_deferred_pfn = ULONG_MAX;
+>> >-		pgdat_resize_unlock(pgdat, &flags);
+>> >-		/* Retry only once. */
+>> >-		return first_deferred_pfn != ULONG_MAX;
+>> >+	/*
+>> >+	 * Initialize at least nr_pages_needed in section chunks.
+>> >+	 * If a section has less free memory than nr_pages_needed, the next
+>> >+	 * section will be also initalized.
+
+Nit, one typo here. s/initalized/initialized/
+
+>> >+	 * Note, that it still does not guarantee that allocation of order can
+>> >+	 * be satisfied if the sections are fragmented because of memblock
+>> >+	 * allocations.
+>> >+	 */
+>> >+	for (spfn = first_deferred_pfn, epfn = SECTION_ALIGN_UP(spfn + 1);
+
 -- 
-2.51.0.rc1.167.g924127e9c0-goog
-
+Wei Yang
+Help you, Help me
 
