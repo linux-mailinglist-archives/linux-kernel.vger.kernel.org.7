@@ -1,219 +1,200 @@
-Return-Path: <linux-kernel+bounces-775561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F2BB2C09E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:37:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC101B2C0A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD4F18949AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:34:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519833ADFC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D278E32BF2C;
-	Tue, 19 Aug 2025 11:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="kgtDK34S"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012018.outbound.protection.outlook.com [52.101.126.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6664032BF26;
+	Tue, 19 Aug 2025 11:34:34 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358F930F813
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603255; cv=fail; b=O3H3zjzIUlHZ3rzUzw2JiODFFp/eHieUs3Re/ZwiL9rWi23A/Lmu8PMBjuj2sp9L7uoyoY1NJz2dPWosKLOHYGbEJL250Uw+LC3ppfEt27k9idDHo4f3e1A1wCe4YSyML+UVHk3J5ZpAj325lGAD+/XrXUSparJaxmUqJqOqByQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603255; c=relaxed/simple;
-	bh=2DiisYdrkV+D67WrmDy+1MIXV+7pLbmIc7d1juIP+Ks=;
-	h=Message-ID:Date:Subject:To:References:From:Cc:In-Reply-To:
-	 Content-Type:MIME-Version; b=eTxH7tFhC9dPxggpJ+KYUJZhjp8x2MR5GJ7Q7Z1gCPIjX7wW/vNoL00sipozSFeUvawO5AIlDEcDaeBCkpjy7RbYNOZQ3V40sgQymEtNII5R3JGm1GT34o+YPP3Oor0/wPgdzfx2jv5dkm4G1HAJMulcCalDye/7Swv2pubHK4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=kgtDK34S; arc=fail smtp.client-ip=52.101.126.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uPHZ8R6O2eVhuCE8CgbHgcuzotBMtseyh8QNQ6CoQzUWQ3/DvnvUH5Iz+La79g0iedEIgyEUmn51DcDqPzRNfkD3og6XdpUDWIqPVqPq/d6N8fKjp7HAnPzw7/ZnXwxYgbcXvyd/GcwzPqa8n15TbfbpP3VkCdhAvTAVlaX3/WwSAq8aLlyAj9jsIyzeMnvLOSsc3rdtdXbz2I9V1D3sYWC4qWasulKgEZic3Hm1P/9K7dFNwJBo63YdWxkPbnV8Rt2QFg3r1nSbNNZ+XkhZe0NJutYSuh623CBJN5iQLW8DpqJa5klIDsaFN7ZVAnp6FEy6ypa+vL7hgJxykbDoIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=arF6adx1L7z6SEIoBwblCJnfgK/aPpfhMaXNn5vX5d0=;
- b=P5lOWPhCVmUhkKvMrvCR5kU12O7q4GCPlZaUB0aYe6pL2GTjaj6esprkHzfxORKAYrVQSPzOqspfmz0aSnz815DI40BUMRHXW9lx9o/jQ5KK6XTW14povau42ULslY+CKutAkEbf1HeRsRnxdlEGkFfTPlaIKzYwkhXG09PpTWeFEuf6gDe9sMBHXCFifqYmTU5wnXr559DRyH3TBlgQ8QINqFlWHwu0t1mhlRv53bG+nHtpg9VivDHigK2gCjl/vIOIaBfEF6qR8X18e3Bbm10kWB5UvwfrjPenlXy98XOlzkDUd/lTW6ks5Tu98z6vVII+Lk7xU9c6kN0v40lUCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=arF6adx1L7z6SEIoBwblCJnfgK/aPpfhMaXNn5vX5d0=;
- b=kgtDK34SHQ3i6UmzL5fm5JyLiTYpxVtTneUun85zKuSRRsLGNXEjkGGPf+7UAwa84+p1rOnN5XAhlLUVsLZmexwl7U50fhas2Cyn7rck4bGqWwZERATNCU/3DevQBOvj89VFF+/AhyGB8g/tag+m2wW5/xfwsdK+c5tqxZb+yxhyJY0y/IDgDUY56QtubYiEj5bWE3QeYr934yHxFZyKpvV4fUiV3EocwyklvorT9+aCc2eOAXVhqju//v0ORNuhnTX7adWBxfVjeHeXCrqX+KscO1fvk1qFXG5n+r9LHl38ICbmWWecWRhprIX9QUXB5lGNVSzRx4mqzGc8kWrBQA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by KL1PR06MB6710.apcprd06.prod.outlook.com (2603:1096:820:fe::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 11:34:10 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
- 11:34:09 +0000
-Message-ID: <2c2b72c7-a3e1-4578-bd8e-872b20b7aa80@vivo.com>
-Date: Tue, 19 Aug 2025 19:34:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu/fence: Remove redundant 0 value initialization
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-References: <20250819082524.526572-1-liaoyuanhong@vivo.com>
- <00e7ce33-cc0a-4249-ac18-081ab9ead243@amd.com>
-Content-Language: en-US
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
- Lijo Lazar <lijo.lazar@amd.com>,
- "open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>
-In-Reply-To: <00e7ce33-cc0a-4249-ac18-081ab9ead243@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCPR01CA0005.jpnprd01.prod.outlook.com (2603:1096:405::17)
- To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C6930F813
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755603273; cv=none; b=Xt9UOBu4PLOBcKfb5f4FfB4QssRWmut+avIl1co19a2xvsCZ1bOrjqVXJFlNJ1osBII1jzELJMKJYboBIpovuOKid3HPuMMoNuV8JXtu0is6LOcrp1ytVdpLCuTueMPsccXobdSXV4ty/uChFoOzEm9Qb+y3YO/7WJ1QmJ4KrU8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755603273; c=relaxed/simple;
+	bh=s2MBFJzpPhvlRnGvA/BJet4bPRd6NHDODBxjbCduCVM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WNWWxoRHVDMzLQclnu1IxfQoABQ4mCdVibv3bl4DPA+IvP6K4UMxpwUYUD7CHEMjnQPJHbpuT3FV6tWsPdvPoX6ILxL/zy1kISuiNpGHeBHqgUSKySNfeRAo5dBuyNTxpDTc9plICvyzoWgjdSOvHgG352x3ksLMjHX5po3YuNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e56feb2b0dso152727175ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:34:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755603271; x=1756208071;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sQqhnYu4An1mbjMr1NPuYBDEzbsYRF7mrQm9T/V8e68=;
+        b=QXQ5AH/MxrzkSi33Z5thyEMksWzy+j83bfFHhEUsVFLldjpf0iy2/zv93H45OBk54X
+         AxMXJobJYSQciGmBk23wPrlaP7t+pV3EqmFOdQR72KcBtzJ4GXPbQGC7X94HsCX3URzz
+         2igY1Qy1LrPtcan3+r3BZH0Kix6NlZD79ioUsfB09qV7XKQwYb2SNDWzyaqakxyNCNAB
+         +5YrZW8tEQjWZdQUudd9tbIdKR6/+O/PfW/j6D/RscH8UQEdysNT6Y0oXKiZpMFqcFAM
+         KE1Ije7kudIpYxNJ/kk6LE60lItU4U/WYxJB04tlQj80Fi2GNVrO4Kjvpxov1f8tzhVd
+         LKrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYwx6iahftP3SmtO55qn7hpPmsRsBh0x9QVW2qWcEq+PxAR4pu3vkq8A8onk1AflskTCnZtIWrrtycPp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP/AQf8lkh1elwhLgFxOp+aM0+RHG9hMXQT7xh7i57f5CAKDNx
+	qzwk21M4ybMA8THgIKYsv/IepiZHJfH5AEHE4umT5qH28l00KK9Q3+2fmBPIyxVe2yRVRRUAqf7
+	wfirHJzkvfzaaidSYfdRY5DXJanZAlUngpVM83Zw59Woy4ryYTMlJbkF1cmo=
+X-Google-Smtp-Source: AGHT+IFPZ9s4QE212qqOfj7ksFDTbRLNt9k7+5JQw4p8beDhrYDS9jqz8nTNe1rJI1pO22462JGDpV/sqS5DSVKS/Ehrj6JVQWx8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|KL1PR06MB6710:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15007fdb-6a93-4dd0-4034-08dddf145027
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UVlyc1JCalEwUGRzZXg1L2NnYnBuNnJpZzRVanFQNjFsSUltTWZjcUsxUzYv?=
- =?utf-8?B?eGczemFVbDdwS3YzSlBTS1NJMVdFN0hJR3drTHEvemFKVTFWUzhBbytDVFVO?=
- =?utf-8?B?V0RyWmVKZ0x2bDNGanNjckZ6Ti9HYW1vNGRJMncxeHkxcUVrOHRRRkIyVlBM?=
- =?utf-8?B?d1ZMODI4R0RoN2NLNXhjU1Zid0t3L3lpSjdXdHY4ODFpZkovZENXWW0zeFhB?=
- =?utf-8?B?bUpoMCt2RlZZVEZmSVljRGFNYk9GSjdZVy9DYzc1NWlublNOdnBFN3djZUpz?=
- =?utf-8?B?RWMzRThobzVxc21kOUZSUDFZc3NZdWZLUm43SS9lc3dTL09lQ0gzU0J0bEJJ?=
- =?utf-8?B?NlQzdzdYTTJaemx6eUJaT0FUOFZ5YmxmcFRYQytTTEZBT1Z1MHFRNjFBU01V?=
- =?utf-8?B?RmNUa0xoU1QrSlg0eGlCb1p1S0cwdWMxZDZHdWQ4U1B6UXJ0blVxMTB0aGZH?=
- =?utf-8?B?Tkx5UDRmSjVmNC8xVUVoVDVXUndOQXUvUmZhZm10Ync4TGI1QkplRnc0dlMz?=
- =?utf-8?B?amxKVmtSZEl6L1JxZGF6bXRGNllaU3UvMjN0d044cElHYnUyNHJjM3M3Q2hw?=
- =?utf-8?B?S1lYclpEam9PR2J6SVpRelFieW83Z0FrTFhScWc3QzQwV3NKUlVTY29LckxE?=
- =?utf-8?B?VUZVeGtlVTViNWdxQWdZeWJjSzBzOTZzaFJqK05FZ2tvZFdxd3NOYmhHVVFJ?=
- =?utf-8?B?anQ3L1NJTWZCSWxBa2VCOXBEVEtBMGN4cXVmbjNRdjdSVHpmdUNLT0hlSDlh?=
- =?utf-8?B?clR2cDFLZHhEMWxMalRIN3VWdWhxL0JmcC9sdUdTQ3p5ZjBWSURvaDFyVVRF?=
- =?utf-8?B?VjQ4ZjFqWHk5NjhRbFRidVkvcnh2RUVlZDdDeWJ2bmVtTkZCTUc0TFBNc29u?=
- =?utf-8?B?UDBLZEpZZTEzdFhXTWdic0l1QlcreEdFcU03bmZscTVBWXRlSzBIQWtNRXpQ?=
- =?utf-8?B?aFVQZWZUZlF6NkV5a0daeVFXKzR3bmNMR25aaU1wTDRidnhVd0NvVFhVUHpL?=
- =?utf-8?B?Q0N5QnBPeitZN0Jwd2krWm1kYUkyOVhJcEFxeWJKSElvenJWMkM3M1JxcElt?=
- =?utf-8?B?NnY5dGdsNFVselNTU0IwYk92UEp4VmU4S3NqTFRTU2dIdXRxeXo5V3NUR1FF?=
- =?utf-8?B?SWYyamV5eitjanNCT3FBcHJ1U3BLeXUzMGlmcDl6c01kTVJ5UEc5WElyVDds?=
- =?utf-8?B?NkhKc1hBL2RYTHdGbVFUTjZySWNoUUwxbjFzNmZNZmlJalNSZHN0SkF4SWxD?=
- =?utf-8?B?aUM1K2VraWkxY0V0UTVWQWhVUjkvQTNUTkFBc2xPWXRZanE5ZWFLbzI5eERE?=
- =?utf-8?B?L0FnM2QrZEtqWlB0cng5ZDZFeHFJcXBkOEg0aG54YXNTdjVHWWtqdDVLYnJH?=
- =?utf-8?B?VjA3OEZWQUUvL0xDeERaK2tVYiswNWh3VFQ1c1grNkFXV25JbGYxT3JHd1JE?=
- =?utf-8?B?NE8vc1pxeFNSWVc2V1dSa0wvci9pd28vTmQrMDFjb3RPZDMydXVQQkx5a0Q1?=
- =?utf-8?B?L0hIWk9YYTVvb2w2LzVqaWpRSnZWVDdTWGRkNW1QMHVvNXp1RzZTZGtrQXVX?=
- =?utf-8?B?WU9VZWlsSWRGa2s2Y1JkdzJ6K2lOZkNPY3B3ZDNqNEVPMEx5dEY5ajUzVklh?=
- =?utf-8?B?NC93OGM2cXBUZjgvTCtNMlYvcXNKRFpWSjBuRllUVVFEUzJIZmtjd3RydUJp?=
- =?utf-8?B?ekJ3SDMzL2JXYmtKTE9LYVlJZHo5NjhZVmlQeTVqMDZMaHNuLzNrRVpuSGVY?=
- =?utf-8?B?NVdjcDhxaGFzcyt3eE55aVhhZkhnelJTRFdzMVpnQ0hFMWlUNTNhdk5Famx1?=
- =?utf-8?B?T2xEM1FsQnRMOTkyZ1c2T3pyTExrRElpNkVtWVVoc3BwMWNhYTZBV1VmelJw?=
- =?utf-8?B?VmRqbEVLdzVUUDM3VTBaMlEzd1NHVThDVEdhc1JYSTAzRThxQThRa1J5bGZa?=
- =?utf-8?Q?lP8uPLGggOc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eXlEbjBYVHc1T01tMUZySENuR3pYVm93OGhNNWxQTEh1U2JuU3NWTFdSNjlt?=
- =?utf-8?B?OEM0VU1oNEs0Zll2YzFnSGlDSXhCbHU4N2hOazR4anpsaUxEdEcycnlCaGZQ?=
- =?utf-8?B?L05EZGNnaGY1c3JvTXVFV2xtZ0JYU2ltdGZzUUVMNzRON3hNbVkrOWhzdU1a?=
- =?utf-8?B?WXl4MkFNRld1UjNLUHFEOFBaZGp0cUxKWDlCSVdQbUtxRG9tRlRDWFl6Ymdh?=
- =?utf-8?B?ZW1zL1l1Mit3UHFkaThYSG83YmRtRFY1TFVnSUdpQjZDd3JsaHVBeWp6c0ln?=
- =?utf-8?B?VGp3dkFZRldSSUZNNHpMck1DeWNEOGtZU2Q2Q1pjZEI5Tm1nN3VRUGNFL2lw?=
- =?utf-8?B?aUpyaTZTcWNPcUc0WTc5TGxaSTE0L0xKT3hqYk8wTGhhSno0dFhNOTRpbkg4?=
- =?utf-8?B?c3VQdzV0QzZNam9OQW9vNkdjYjNWY2NxUkVLMkVTZkZPcjBPTmZpeDR4NUh0?=
- =?utf-8?B?aGRzNFpibHFRY1BKM2h0RnZXYlhEaGcxRGFRcDFydS82NU1yU2pnclcrMWZa?=
- =?utf-8?B?TmZMajZHMm0zUEY2MDhVRDFmaEdVdnVwdUNINXdCbzZCY2Fnd1RTcU4rbTdK?=
- =?utf-8?B?bFBQT2YrWjlYdDQrZEZwM0tVZ1ZPVDZyeEE0NytoTFlKZWRYWkVzeE1hL0pN?=
- =?utf-8?B?ZEdVckdsd1lTYnI3ZkhWdHpldFJrTGx5UVVoaEMrWE9Ba08wREo1Z3VRTVpu?=
- =?utf-8?B?SGZ0dTRacW94VEdoSXMvNE5ONFlxTHd4aHdXK0RWK1FDOTZ2d1YvODBRVkxO?=
- =?utf-8?B?WHExM2tVVzgrZHpIcEdzS2FMUVFobWpra05NczN5NDExUEVUMmFadngvN2F5?=
- =?utf-8?B?MHJrQ20vRWxRTzQwWmc0bVE1b2g0L0I3RHhOa1IxQzUyL1dUOVl3SWJqUkFh?=
- =?utf-8?B?ejhRYVlrLzVxWVY4ZnNkMWJkeG9kOWl3NFFwWFV2Q1dKVGNoV0YxcFdCTHh3?=
- =?utf-8?B?cmE3SHZDbmtTRm9iUEVzSGRqYmhXNDYrOGtUUGY2QUhZUisrMlE2dWJuaUVS?=
- =?utf-8?B?bkFQcThzc2NndS8vVTdnaXhxMHFSdVlObXZRSkxTTzNBOWh2RzZCN1lXVVVk?=
- =?utf-8?B?UTNZMzQ3SlRQakZjaG5LdDA0ekRlWW9McnpGdjNScHI5M3FRNm4rRjY5NGpL?=
- =?utf-8?B?c2J3Y3JodWxVNWJmZ2ZtajAzdHFSTDNoSFZxN0FiY0xEV2pleGJXQ1lUSXlS?=
- =?utf-8?B?aGVSeHA1NXFMRGdLSU1DcWVuNEFMNnVodGtPQ0RZOFEwT2NmYVpucGpvemd2?=
- =?utf-8?B?UjRtVnZBYkdEYWt3VlZESGhvdDZCa3BVUUk1N1JvV1czazNnaHRVTE1Td0kz?=
- =?utf-8?B?elQvaWFyOVNabThKWkppV0N0bEQvbUEwUzV2UWw2RE43RkVPNzlYdXU5TEpu?=
- =?utf-8?B?YmtpT1ZYRVhrWk05bVNkc0RBYitqSGFldGZQNVBDYnBtNTBqQnBUdEtiQ1ZN?=
- =?utf-8?B?R29zdzQvNEdGTGpJRVpnOVl1WnVsVE9JTWMrL0R0NGVzOGhYTDNaTytwWnNT?=
- =?utf-8?B?aVBMTXZDNWkvVW42Z3M2UExLQzNTcVRBZjNMbW9vZGhPS0VrVlZKV1VBYjEy?=
- =?utf-8?B?ZHBpeXVoaWxobUdMNnAyOWl0eVpJeXdKVDFuWDd1czhCYThnZ2FiUW5abDZv?=
- =?utf-8?B?VWF2dkk2bnl6alpHcHdjbWoyakNLUEJ2QkNVcEs0bmJWbjdadllaZmdNT0Nm?=
- =?utf-8?B?eEV1OE1RL0NEY0hrVGhDb2ZuWDdYU09hVWNrL095K0xQczdCM2F1WFppWlpi?=
- =?utf-8?B?aVNOT2JEWlptcFE2dUUyaW1jaEc5ZzJKZlVzQTVoWENOaFhDN1prS0V1OUx4?=
- =?utf-8?B?c1BrMnMxVzR6SXZYZG9xbTFJM1FZalZpR3dVenFMUll4ZEJCSUI4YnRIbEpD?=
- =?utf-8?B?Y00vK1hXRmY3czhJdlpuQVNDWDZ4cWdkeUl0c3NPWkgxMkNlTXo2cHQxS0Fn?=
- =?utf-8?B?QWlRcjh2MUFSVmFIbkhKcW1rK0crQ3BINDZrV0RhZWNCZDYyUCtUaUpnUTJl?=
- =?utf-8?B?YUM0aUh3Wk13V3F2UjdzRlBGb3o4ZkxVRHB5SXBoMkNxeVJZQXNQSWZhR3Ba?=
- =?utf-8?B?aCt1N3V4Sk0xNHJ3allhem9tR3Jhc0h4QnpTTmpWTC9HQ3AxV3E5NThUYTVt?=
- =?utf-8?Q?KK1+KcK3QtP2h4aPRbKc/rdOE?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15007fdb-6a93-4dd0-4034-08dddf145027
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 11:34:09.5770
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z9jOKhHeF569DNz5SRYk0unef1X6Q82ztO3nkvS/ZZBXXc6JePX1Ba65yeWItspdACjLKbSSOPamz23M7Q3rQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6710
+X-Received: by 2002:a92:ca0b:0:b0:3e5:4bc5:539a with SMTP id
+ e9e14a558f8ab-3e676661f94mr39481215ab.19.1755603270912; Tue, 19 Aug 2025
+ 04:34:30 -0700 (PDT)
+Date: Tue, 19 Aug 2025 04:34:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a46146.050a0220.e29e5.00c2.GAE@google.com>
+Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_evict_inode (2)
+From: syzbot <syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    99bade344cfa Merge tag 'rust-fixes-6.17' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10197af0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3f81850843b877ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=47d8cb2f2cc1517e515a
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a3c442580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167c2ba2580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-99bade34.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/01ac0e47f59c/vmlinux-99bade34.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/000350d2833d/bzImage-99bade34.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/eefdb34f2c0f/mount_2.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=15a3c442580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
+
+ocfs2: Unmounting device (7,0) on (node local)
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 0 UID: 0 PID: 5449 Comm: syz-executor Not tainted 6.17.0-rc1-syzkaller-00214-g99bade344cfa #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_clear_inode fs/ocfs2/inode.c:1284 [inline]
+RIP: 0010:ocfs2_evict_inode+0x2d05/0x40e0 fs/ocfs2/inode.c:1296
+Code: 02 00 00 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 dc db 83 fe 4d 01 f4 48 8b 1b 48 83 c3 08 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 bc db 83 fe 48 8b 3b 49 81 c7 88
+RSP: 0018:ffffc90002a6f340 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000008 RCX: ffff8880006e2440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002a6fa70 R08: ffff8880438230b7 R09: 1ffff11008704616
+R10: dffffc0000000000 R11: ffffed1008704617 R12: fffff5200054de78
+R13: ffff888043823360 R14: dffffc0000000000 R15: ffff888043823338
+FS:  000055556e79a500(0000) GS:ffff88808d210000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7ac55909c0 CR3: 0000000042abb000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ evict+0x501/0x9c0 fs/inode.c:810
+ __ocfs2_free_slot_info fs/ocfs2/slot_map.c:307 [inline]
+ ocfs2_free_slot_info+0x79/0x260 fs/ocfs2/slot_map.c:443
+ ocfs2_delete_osb+0x58/0x170 fs/ocfs2/super.c:2450
+ ocfs2_dismount_volume+0x57a/0x8d0 fs/ocfs2/super.c:1884
+ generic_shutdown_super+0x132/0x2c0 fs/super.c:643
+ kill_block_super+0x44/0x90 fs/super.c:1766
+ deactivate_locked_super+0xbc/0x130 fs/super.c:474
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1378
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4544b8ff17
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffc0cacaac8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f4544c11c05 RCX: 00007f4544b8ff17
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc0cacab80
+RBP: 00007ffc0cacab80 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffc0cacbc10
+R13: 00007f4544c11c05 R14: 0000000000013b93 R15: 00007ffc0cacbc50
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_clear_inode fs/ocfs2/inode.c:1284 [inline]
+RIP: 0010:ocfs2_evict_inode+0x2d05/0x40e0 fs/ocfs2/inode.c:1296
+Code: 02 00 00 48 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 dc db 83 fe 4d 01 f4 48 8b 1b 48 83 c3 08 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 bc db 83 fe 48 8b 3b 49 81 c7 88
+RSP: 0018:ffffc90002a6f340 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000008 RCX: ffff8880006e2440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002a6fa70 R08: ffff8880438230b7 R09: 1ffff11008704616
+R10: dffffc0000000000 R11: ffffed1008704617 R12: fffff5200054de78
+R13: ffff888043823360 R14: dffffc0000000000 R15: ffff888043823338
+FS:  000055556e79a500(0000) GS:ffff88808d210000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7ac5c9f000 CR3: 0000000042abb000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess):
+   0:	02 00                	add    (%rax),%al
+   2:	00 48 89             	add    %cl,-0x77(%rax)
+   5:	d8 48 c1             	fmuls  -0x3f(%rax)
+   8:	e8 03 42 80 3c       	call   0x3c804210
+   d:	30 00                	xor    %al,(%rax)
+   f:	74 08                	je     0x19
+  11:	48 89 df             	mov    %rbx,%rdi
+  14:	e8 dc db 83 fe       	call   0xfe83dbf5
+  19:	4d 01 f4             	add    %r14,%r12
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 08          	add    $0x8,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 bc db 83 fe       	call   0xfe83dbf5
+  39:	48 8b 3b             	mov    (%rbx),%rdi
+  3c:	49                   	rex.WB
+  3d:	81                   	.byte 0x81
+  3e:	c7                   	(bad)
+  3f:	88                   	.byte 0x88
 
 
-On 8/19/2025 4:41 PM, Christian König wrote:
-> On 19.08.25 10:25, Liao Yuanhong wrote:
->> The amdgpu_fence struct is already zeroed by kzalloc(). It's redundant to
->> initialize am_fence->context to 0.
->>
->> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> Reviewed-by: Christian König <christian.koenig@amd.com>
->
-> If you want a challenge what we would really use is a scan of all the structures defined in drivers/gpu/drm/amd/amdgpu/*.[ch] for unused fields.
->
-> The UAPI and BIOS/HW header files are full of padding fields, but there shouldn't be any in the driver core defines and we sometimes forget to remove fields from structures when they are not used any more.
->
-> Regards,
-> Christian.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Thank you for your suggestion! I will try to find it.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Regards,
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Liao
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->> ---
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
->> index bcb74286a78a..fd8cca241da6 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
->> @@ -120,7 +120,6 @@ int amdgpu_fence_emit(struct amdgpu_ring *ring, struct dma_fence **f,
->>   		am_fence = kzalloc(sizeof(*am_fence), GFP_KERNEL);
->>   		if (!am_fence)
->>   			return -ENOMEM;
->> -		am_fence->context = 0;
->>   	} else {
->>   		am_fence = af;
->>   	}
+If you want to undo deduplication, reply with:
+#syz undup
 
