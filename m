@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-776037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64A2B2C7C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:00:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598E1B2C80C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ECF016E54D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:57:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C67C7B5528
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F86285CA7;
-	Tue, 19 Aug 2025 14:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E7B27FB25;
+	Tue, 19 Aug 2025 14:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qIzZreWj"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gC+iDL6s"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E6F27F19F;
-	Tue, 19 Aug 2025 14:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9147327F747
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615311; cv=none; b=VqrMdGRRk3lRAhEZIf7Z7lmgIuytima5kiTTWABETlpDwkXKrNf3iAwnjLwHLOtgOcY3VwK9NKH5g2ai24Jhqv0Qvfx6HM4opR42Zd3nSyseMVI+GDSSobMIt5JCEregQI5gPbLwvSWAfQ//jO6dCQVgmYrIYSAc9f4ARitQYvA=
+	t=1755615318; cv=none; b=IqkrpZB+T+hC1JK8/WuD3ltnypj+fKNjubHwcSLsx/jr9EXhf5HgU/tG/LMdy07sGlGCWqEpcAc+xzu92DrM0Tn4HV6ma42TaMm0CtshXhGamqauJHFMzFWMjMnzO0Ta6duv4GwvFsFpCQXk0dnOyH13g/WKXuo0f2Hj/KkCQkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615311; c=relaxed/simple;
-	bh=iH2fNzQ3ZFHpzPlJuJdqflptF90hlToFOvzIGy7xjpo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M2amj+hYNITERau8rlNolaEHOjHyS15xTiZo3pZJMAUDYmN0AZjXPUVSkQELWgY+yX9u/B/NEjs449gjSX3TrhZSSpwmvn4s2g0lDBsZOvFxdCa7QsRC/E78lsxlkGH90CbPSo/agpxr0FVeJeJRjqwhS2lzmO0FdesXP3VFfP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qIzZreWj; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.106] (mob-5-90-52-92.net.vodafone.it [5.90.52.92])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 156FD2F8A;
-	Tue, 19 Aug 2025 16:54:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755615250;
-	bh=iH2fNzQ3ZFHpzPlJuJdqflptF90hlToFOvzIGy7xjpo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qIzZreWj1upqtNMA5gqVxqS0/JDbIE2EUrjY5Oe8RU/npsWqm1kYciR7qXcRq3Z9n
-	 qbK4fhp/gWwo21lhKk9cKMwL2/nedmbZXbx0bYm9XDZqpt8aUTKEnoKAgCnUZm3Mu9
-	 tAYLO7J0Wsce1FHHskSWy/QOTyAuRms/wgZ7cBHc=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Tue, 19 Aug 2025 16:54:49 +0200
-Subject: [PATCH v3 8/8] media: Documentation: kapi: Add v4l2 extensible
- parameters
+	s=arc-20240116; t=1755615318; c=relaxed/simple;
+	bh=JSgFReGmJrpsECohN/zB+vEQB99t0iIxycbYjj3gxhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pdik8dO30qA6XGBw8k83Dr/QqibwRXR3ngaxE7WnGPR5EaH7NveeC8XHrU2i9x9CJ0HF7KQw0vsy3mZbve42QvvZmiC/2Yj7V+M1fG/Wuf+sqeAXNerDm0wO+JvlqjZeSDWUF6Gtgl3aCIsbiquKklr2szOgjL05iP3TsEFJLbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gC+iDL6s; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so6151901a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755615314; x=1756220114; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6q1VFKJc6RwiYJWPiwiME4ulyKyXCWSmhPscu25fEio=;
+        b=gC+iDL6sQDl/2TwG5l13sEF1ye2gBaOnguKNDAFMonmSlsmmIXevZ2Vq0m0lkUpdA/
+         fRQfz3VnrVn7U6h5jHiwNsOQQYY3DSYGUgwEitimagb9sXNmzENeYGeWseltorBm/r2B
+         Roqm7XgGp0EVZpBawzAEQl1+4Nqa/4IEKSgB2qDIiUccRx0weG8YVLsQd7xJAu/cbnYn
+         qxNfQFKSoomNKQLlyJA5hHasQO2+JbhSWUhlVQFE6GdHZa2eC33qgs+sIWd3tXwbdAvf
+         BXPqmkQtl+/G/RO0MDT64CubwVuWUDkbWyJ5F9LSowvCJHTugMI0gBqsjGTW6bOEEluK
+         fIcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755615314; x=1756220114;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6q1VFKJc6RwiYJWPiwiME4ulyKyXCWSmhPscu25fEio=;
+        b=Bxxo7VnQHQ75T/subGgKmt19EhItAtvOlkMT7b1+d1aH2Yvlrh+JrWkJloNx8v7jWq
+         OVFyjiA9WcNJlNQc/5OBfPyIbG1941GBa1KQBsWn9xQc5taVzpxlp9MYA/gjrEyGoPt9
+         U8IM14F11H0PkLRuA8Bt98h1sxRHkEVORmkzb/vmSLN9AzBRrRX72fj9h2GhkF6LRPbr
+         Vy07kz251OCf9AZQ/0tpH5gjLu1BUv2juAKmn1mp+RPSM3Ynqtg1+7Ag1/bRd/wiBnUr
+         KKHVxAne8/VNV8pEIiBQykgaa7kKpRY59NYOQtF47/ujM9Qfi+aC+GJM4x2C0894IO/r
+         zRkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVWuMngl6sFtiQfyqzZvLpZzgxG1Vt5trw+2xAZI3myNfPTUyR0+MNv1lrmKQuOp4vw7N9Ks71XgyPgP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzVlY1M1jgXPTCNGK4ELZZ3vwH/D5sFtxaA9F6WQqpW6y+DH2j
+	GG4ZDxPLpDfoft7jIs7p+dZbnaO6Dd/QUXkFb15APuyHjfK4bYblBECrfAdJ79PlpPc=
+X-Gm-Gg: ASbGnctVfpEZApi4OfxRl/9HH7hrdOoDvBQ3gOm0MbjekkV8Qf8NNj2uP8zPtwFa07T
+	bgqQhs4SZibPPk5PJq5f9bg9arDYYC42MPEHQXvyetlvj0GFK97mo6M+7Qw9swIy20lz2uCfjQF
+	g5i3zyfPAre52ondzDSoMko2N/DKoAz5hn65TKKk8RHoFbohtcunlrKxnv7v7VVa1kuDaSgPrCX
+	ERrZZsAOKYrqdtSk0XPczVoy4sPipyrkGuylMRaYmcl5hlQSVGVnOn6nswXdyrsu7jKtoAf+P+F
+	yNBmDEuVznEg9HFialvU9hW1xjXGBB4sCyL685O7IbRJPALKkeEOigtCtYt6ocO/ucfsmXhB0IN
+	4NirzEYmvAHbWcrJ3OozxkgzvANnZcXAi6IQ=
+X-Google-Smtp-Source: AGHT+IHNXoZ8D6hcxitye6J8bRF474YdeJVlKpCXwByDHr/6U1kxp1SPdwBXlJC/jHhgrW329Z5ICQ==
+X-Received: by 2002:a17:907:9486:b0:af9:8c20:145b with SMTP id a640c23a62f3a-afddc96119cmr295145666b.10.1755615313778;
+        Tue, 19 Aug 2025 07:55:13 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:3ab9:939f:d84a:b5f0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce54021sm1009078766b.10.2025.08.19.07.55.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 07:55:13 -0700 (PDT)
+Date: Tue, 19 Aug 2025 16:55:09 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH 1/3] remoteproc: qcom_q6v5: Avoid disabling handover IRQ
+ twice
+Message-ID: <aKSQTc5u5AePWVwj@linaro.org>
+References: <20250819-rproc-qcom-q6v5-fixes-v1-0-de92198f23c7@linaro.org>
+ <20250819-rproc-qcom-q6v5-fixes-v1-1-de92198f23c7@linaro.org>
+ <czaabkgp3aerp7fntqnpwgilipnum5vmdwwrkem5mugcs7vvd3@q2mwq6ijfbmt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-extensible-parameters-validation-v3-8-9dc008348b30@ideasonboard.com>
-References: <20250819-extensible-parameters-validation-v3-0-9dc008348b30@ideasonboard.com>
-In-Reply-To: <20250819-extensible-parameters-validation-v3-0-9dc008348b30@ideasonboard.com>
-To: Dafna Hirschfeld <dafna@fastmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1847;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=iH2fNzQ3ZFHpzPlJuJdqflptF90hlToFOvzIGy7xjpo=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBopJA7HthrV9FPEEFq/WvUsDHkN4su5F2GbYayv
- j9u4Yj779WJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaKSQOwAKCRByNAaPFqFW
- PIuRD/487NVywsuiC6cSTeBHNzqeEUPM+lYOX8MgCgjtfucq2L3g15QL1HJgXiRneteFi5eU2Sm
- A0lquhYAxjdMy544gjfSGXbzc2piZWmMzl47uOmHwJh8skaHGlw+Uh73b+IdA0u9FVxSC4sSW2o
- XTRdwaSYpCRMlTTmuGsF/HTh1MfbYo8+3Pu546pv5Rds2aXhREnl4NZMkHuYcwTso1x/JsqUaZs
- 5mz9PnaJZrGrZ/8wY9tvGE+4/A1mj/PPAgk470q7s7LwcxLwPWazePCJ3SIHM8l18Z1UMD+ZiKM
- 6WOdHuLt9x87UKKoINV8KWRipsoKnmlz12Z0IXrbmhdtnMTQ8EtkxUsAkAsYbXPjcFA2YVJ1CfN
- SsQg7p6I76QR0b6flmy6KYMtKoenrTt0789k+pP3isypXSgsntrLH5flFDQyxOCwM4MDRUne1vX
- maMdoawEPlPSZrcELgVChZIMjW1rBVWoglGnvSYwqaAscMYMA/p3sLDsgaDoEmQ89QQjJ9EqVLX
- WBmxhx/Fqr7dX279CKu9Tp2eYsWjnfos9WxZd5ZtrwP5knMM85fmih0TZ0r485cRR42ko6a1WsT
- 3s1ToeCvR+6TduLerJCCMwhPta68UsCqtZnHC9uYnUOH2X8E99zKBrSe+uRTbo19443GK8/Tc+E
- 2gh5gh/Ri4Rn/1A==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <czaabkgp3aerp7fntqnpwgilipnum5vmdwwrkem5mugcs7vvd3@q2mwq6ijfbmt>
 
-Add to the driver-api documentation the v4l2-params.h types and
-helpers documentation.
+On Tue, Aug 19, 2025 at 02:44:26PM +0300, Dmitry Baryshkov wrote:
+> On Tue, Aug 19, 2025 at 01:08:02PM +0200, Stephan Gerhold wrote:
+> > enable_irq() and disable_irq() are reference counted, so we must make sure
+> > that each enable_irq() is always paired with a single disable_irq(). If we
+> > call disable_irq() twice followed by just a single enable_irq(), the IRQ
+> > will remain disabled forever.
+> > 
+> > For the error handling path in qcom_q6v5_wait_for_start(), disable_irq()
+> > will end up being called twice, because disable_irq() also happens in
+> > qcom_q6v5_unprepare() when rolling back the call to qcom_q6v5_prepare().
+> > 
+> > Fix this by dropping disable_irq() in qcom_q6v5_wait_for_start(). Since
+> > qcom_q6v5_prepare() is the function that calls enable_irq(), it makes more
+> > sense to have the rollback handled always by qcom_q6v5_unprepare().
+> > 
+> > Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource handling")
+> 
+> Didn't earlier versions also have the same behaviour?
+> 
 
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- Documentation/driver-api/media/v4l2-core.rst   | 1 +
- Documentation/driver-api/media/v4l2-params.rst | 5 +++++
- MAINTAINERS                                    | 1 +
- 3 files changed, 7 insertions(+)
+I don't think so. The "extracted common resource handling" came from
+qcom_q6v5_pil.c, but q6v5_start() just had most of this code inline in a
+single function [1]. The handling of enable_irq()/disable_irq() through
+the goto labels looks correct there.
 
-diff --git a/Documentation/driver-api/media/v4l2-core.rst b/Documentation/driver-api/media/v4l2-core.rst
-index ad987c34ad2a8460bb95e97adc4d850d624e0b81..2d7793298c6a2046bdd59b185a411e092b659d52 100644
---- a/Documentation/driver-api/media/v4l2-core.rst
-+++ b/Documentation/driver-api/media/v4l2-core.rst
-@@ -27,3 +27,4 @@ Video4Linux devices
-     v4l2-common
-     v4l2-tveeprom
-     v4l2-jpeg
-+    v4l2-params
-diff --git a/Documentation/driver-api/media/v4l2-params.rst b/Documentation/driver-api/media/v4l2-params.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..8d2a5f004d21dfc3a81255cabbc6b7cce588db71
---- /dev/null
-+++ b/Documentation/driver-api/media/v4l2-params.rst
-@@ -0,0 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+V4L2 extensible parameters kAPI
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+.. kernel-doc:: include/media/v4l2-params.h
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 008f984c0769691f6ddec8d8f0f461fde056ddb3..44598a823f084e98a9b2d2e21881665d1ab64908 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26384,6 +26384,7 @@ V4L2 EXTENSIBLE PARAMETERS FORMAT
- M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+F:	Documentation/driver-api/media/v4l2-params.rst
- F:	Documentation/userspace-api/media/v4l/extensible-parameters.rst
- F:	drivers/media/v4l2-core/v4l2-params.c
- F:	include/media/v4l2-params.h
+Thanks,
+Stephan
 
--- 
-2.50.1
-
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/qcom_q6v5_pil.c?id=0e622e80191e75c99b6ecc265c140a37d81e7a63#n795
 
