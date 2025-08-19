@@ -1,140 +1,151 @@
-Return-Path: <linux-kernel+bounces-775814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA61B2C540
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601D9B2C55D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C05E3B1D8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0A7A00341
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3417B343D85;
-	Tue, 19 Aug 2025 13:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8F4350834;
+	Tue, 19 Aug 2025 13:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LSPYjr1x"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aewAol5l"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7897343206
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A023342CB9
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609427; cv=none; b=elB7xo1J/xnW+RYVqOFrmSWWRJJEpATVb8SG1a9e2KpFPhzC7S/m5GNbB2ccO1PIAJE18M7c1CJ/oKF+hsE+f3By6+lEK0HDancY2h1x//RtruyRwbWesuf9Cf/4KnHWWH3+7TSKHPXnP+ceFI68TSDSjK0VHXVcSt5bpr/P16g=
+	t=1755609462; cv=none; b=bUJyA1yOk9zgxV432qkzEfAG2aUrfT/Ha+t8uyrBzB7Ik2cnpMotUhUCwlWIOEm2dmaXhc9jPSgU8K8mmFLXuzqr9S9pzf5ME4sCEz4HZNiZUE0eR/wN5mU7dzu0F3f01zpVYSACV7Kq/4P+JtuRnJ0yun8goHjibne1IX/7xsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755609427; c=relaxed/simple;
-	bh=ORjrWSJV9aCCGAusfNEVPPkAuUkckxWAi/ugZ/Z4HPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EepIdr8fYuFZ3X5GHU811b49fipVmqjo0ae0Q8ARabDAsCrF6k9OOzPUTFxS+b4jp3X0MvAKmETQJ9C756FuwXCxHHhgUe+LTJfyGdrTrolzClSCtPvgk/wwsUZ5O5vs/CY1Hqnz0wxRCseNokY3MHvSLe7qinoMGMaKio4Cl2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LSPYjr1x; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7ab87ffso83184866b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755609424; x=1756214224; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ul4oZAmMUIisCohsZ+bnfu1tIYQt4ZmQITM62Hcbbp0=;
-        b=LSPYjr1xfIF8lJhSpH5hP6W1Utkt/cf3/0A2opTlqKTmmoIiG8uoTPBLgGljuNc5Xe
-         7isJg7ZxMoVLT/jnhcVx5381AiVbtCurg4eglwrI23t8kgmvjTX3f/4xLSExounzufeM
-         sVv8cWqNl1PK1wgTh2xLknR+ouQh5b7t2GsLrGTFmZ28oK9JEUDknz21MZtz9iFTqHgK
-         p+V3+Uq/e+NXJbMwtIOEUygNQaFFtMa060HTl4m8+UpTp86BYA6IvmgRuEj2EGQMLWrD
-         wqbY7cjsEsOJ2hFjiud8MwZcT86aMgUxOYo94tVYvlZ0P5ecSti1VvQDGWGr5OA92kg8
-         2xdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755609424; x=1756214224;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ul4oZAmMUIisCohsZ+bnfu1tIYQt4ZmQITM62Hcbbp0=;
-        b=dLlwT54fNFM3dP/N/YzPthbZN+RQNQZ0cTgSZ94fZ0lJk76TqkqqJCvmJufQYjsU4Y
-         mBQlSloGg/Qgo07j53glswc17tJn7FX+i4WulfBT0TJlw/x4fTXCed7g/svFSoeGTBaO
-         BPhaJsAYGMK8XtxYPKUxxgSUdGOohTcyXKdJFY0dt++8VrqHlHizlihhTTqtQfyqtBG0
-         vgICs++RWVwxLrs4kYfs+bePpcNzLimr1CPoEq9JeaMZ0dFTGN2QyFupY/miZSQHp3RA
-         kUhZPsIl0qR0hkPvf0puGs3/MO8+a3euGt4SgXp9onw8KLZhdRMYcvv7Kf7jog6HO+q+
-         KVQA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3nKmWaoiJUZSHRd98QNgA2U9TztNmWZwCHFkNzwj+dDQNmUEA/L5+SPFTnvZiRYXVlBt5D8VmtjAUa+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzI4H2Mq9LRhW9CtMVMoQDRN+R0etvU7zPEBMGAQOX6/5vdEkV
-	KgNfzWuwp9g2TdFf3fkNucRjKu/kFVs50UsHfGiW7Jp51016HygXgPYLLqlfrLL8KLY=
-X-Gm-Gg: ASbGncuqZqottD7+RIQRfJDfgdfJNqy6quhFh4UOIFi5C5aruMvybK/QG6R7jyA/bZL
-	MKGDchDD3wbNokYtuuLSPlEdVtwU/L2JpkxN2q/Hn19vVpP6QwHlHI+xFNBCwtM2uA5IeSRixjX
-	AkOk5f3q1kaAKvmMrtQ6Hdhcl++8IVb9oN3bJljcGRYx7Acamq7QkD1UEJShCVvRnnmFvnrpoZ3
-	e1aN2GXGTcIWTKwiMZQ+sKFzfmLUcQPndtMfo9+RRTbIjKZnen83AoNutGhkXJ3cGBVXXswbY2S
-	EDk3XDBNhID76vmubwSYlPdxREf6rSaBQVl6aLc+qTmwwoUk2rGhVOhE9QQ1YFRZhtI6Lw30m2s
-	STyg2XKynW1EEzH43/ZSjDAZNpD3FX5SWrG+420FikY77
-X-Google-Smtp-Source: AGHT+IHIEZ0cqAuQ9z2NxnVy2zmkSoGqZVpGMt4PSnkN+/AzbQ7kBspgtZUPvFrM+aYznnjNvgIxIQ==
-X-Received: by 2002:a17:907:3d03:b0:ae3:617a:c52 with SMTP id a640c23a62f3a-afddcb63ca0mr100010466b.2.1755609423877;
-        Tue, 19 Aug 2025 06:17:03 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdcfccea7sm1005948066b.67.2025.08.19.06.17.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 06:17:03 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Tony Lindgren <tony@atomide.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 4/4] arm64: dts: ti: k3-am6548: Minor whitespace cleanup
-Date: Tue, 19 Aug 2025 15:16:55 +0200
-Message-ID: <20250819131651.86569-8-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250819131651.86569-5-krzysztof.kozlowski@linaro.org>
-References: <20250819131651.86569-5-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1755609462; c=relaxed/simple;
+	bh=nG0shwu5Af2IAtJwhIwSsyeYiHqDtWvmiFEdtbQHXRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=tKveeic4FdwnyDPB1WxNAWSbhD5ZLlXOP0DdLxRxXtAX+rhYKF6WREbE0Pjyc48i0+h6iwy78d0YDBL962PwCy4Gr3qoxZgkc0o2yej4tcRPPd0QnTwCZtcPIetu5frPy+UMWiY+oRMsPXiXBhBa3Bi2Kz4745UhUbsC8d/1Ugs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aewAol5l; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250819131732euoutp013d3f9fcc00465009bdfd53167b4ba310~dLX7cBMXa2073320733euoutp01m
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:17:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250819131732euoutp013d3f9fcc00465009bdfd53167b4ba310~dLX7cBMXa2073320733euoutp01m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755609452;
+	bh=CCrSI/5l0BXky7ygaJO0nnEAoj1y+QoRh+iorwK/S9g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aewAol5lYAJ8eG7/zvbkSEFrBbSbgMx3xnQ335/aTnRditX8ZZA+zrbCF6hOnorT8
+	 a8LcF/h45ia6VDAlz6KOQDCrhJwuj8hSUUqrM0otLdAppM7fTV6fS6mx9V45NS2JKV
+	 +UdoCaiT0ncEBjgP1L5Pt/BMC4SKD9sbGLodbF74=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250819131732eucas1p26bd491e9b6b747a4857905bfd50420a9~dLX63YhkO2802028020eucas1p2H;
+	Tue, 19 Aug 2025 13:17:32 +0000 (GMT)
+Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250819131730eusmtip128fc54e219f6ff267b532cbfe63a317a~dLX5zXH3-0466004660eusmtip1F;
+	Tue, 19 Aug 2025 13:17:30 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: linux.amoon@gmail.com
+Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
+	justinstitt@google.com, krzk@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	llvm@lists.linux.dev, lukasz.luba@arm.com, m.majewski2@samsung.com,
+	morbo@google.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
+	rafael@kernel.org, rui.zhang@intel.com
+Subject: Re: [PATCH v7 6/7] thermal/drivers/exynos: Handle temperature
+ threshold IRQs with SoC-specific mapping
+Date: Tue, 19 Aug 2025 15:17:04 +0200
+Message-ID: <20250819131704.19780-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250813131007.343402-7-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=741; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=ORjrWSJV9aCCGAusfNEVPPkAuUkckxWAi/ugZ/Z4HPI=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBopHlGHslltHets9pe9QRd/Nka4ehFvGyWO1fzw
- 3Crv5EMFQmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKR5RgAKCRDBN2bmhouD
- 1xnzEACSo5uaWhdcpZ3vxl4F+ufrZhnxwghg1RpSkqDbNjA14v/O14NJ0BplGA1kN9H6teg0/tD
- 45eZc5/jrsjOU2ePK4/mzmrVErEppjEpBNeiWcPc67j5nPnt2RZOeJEDoFNq+/QPZB56FRbVooT
- 8jVo6FZiqWhTRQDrDBasWAvXwW2J+vY3KmturJdMyvmaTUlvE3jS+vS36IqXmXbH/ZJ3wvmMK9m
- No3A9cORAdHIkilGC/8fh5lo2Ss2IUPbhGOQptgHDdGUimDF9S4piGtE3ZUCGX1RA8LzSD+wE5K
- rsc+TbXc1scsxMYLhEgb/cKHNLWKg6eIFZcCcp7HSEHLPBBf26kFQAryE1O8xglgrC0TkY08dHS
- csk8/K3o2iOkIA+nEF3ynmMLPTYj9a917Qvtfoq0XbVZMzQ50wDpj7EdWcded7k97bPrb5iQw/j
- mL8M20Cs795m35cCeBdFKtBwgeqPVs/HTfUgN8LAQYbPFOtzb0ixnuJppGmzeKobrUT/tFIeCQA
- IxdroEfyAMgsQyru3AGY20HMh4Okr9J43LRAYPrHMChOJ/TssH5/shCRQxX9ZV3wc9M88LQvZbv
- uWW8cDEiUGIJx7MhidAnsqA/6WAKyXN39bFNt62VNYMVWZxHmwVbf+nYllcHCN6pjShEEVuPnzN Mcg5heNDUIFaX8A==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250819131732eucas1p26bd491e9b6b747a4857905bfd50420a9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250819131732eucas1p26bd491e9b6b747a4857905bfd50420a9
+X-EPHeader: CA
+X-CMS-RootMailID: 20250819131732eucas1p26bd491e9b6b747a4857905bfd50420a9
+References: <20250813131007.343402-7-linux.amoon@gmail.com>
+	<CGME20250819131732eucas1p26bd491e9b6b747a4857905bfd50420a9@eucas1p2.samsung.com>
 
-The DTS code coding style expects exactly one space around '='
-character.
+Hello :)
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-sm.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +/* Map Rise and Falling edges for IRQ Clean */
+> +struct tmu_irq_map {
+> +	u32 fall[3];
+> +	u32 rise[3];
+> +};
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-sm.dts b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-sm.dts
-index b829f4bcab69..adf4da7dfa2d 100644
---- a/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-sm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-sm.dts
-@@ -145,7 +145,7 @@ &main_spi0 {
- 	pinctrl-0 = <&main_spi0_pins>;
- 
- 	#address-cells = <1>;
--	#size-cells= <0>;
-+	#size-cells = <0>;
- };
- 
- &mcu_spi0 {
--- 
-2.48.1
+Hmm, we can probably get away with less interrupts. We actually only
+enable one fall interrupt in tmu_set_low_temp and one rise interrupt in
+tmu_set_high_temp.
 
+Regarding tmu_set_crit_temp, on SoCs that have hardware thermal tripping
+there is nothing to clear. On others we will reboot immediately anyway,
+though maybe there is nothing wrong with clearing the interrupt
+beforehand? Regardless of this, there is only a rise critical
+temperature interrupt, we never set a matching fall interrupt.
+
+Maybe it would also be good to add a bool to this struct containing
+information about whether a fall interrupt is in use, and reuse
+the same logic for 4210?
+
+(Nitpick: I am not a native speaker of English, but I think "clean" and
+"clear" have slightly different meanings, and the rest of the code
+consistently uses "clear", so it would be worthwhile to also use "clear"
+here.)
+
+> +	/* Set SoC-specific interrupt bit mappings */
+> +	switch (data->soc) {
+> +	case SOC_ARCH_EXYNOS3250:
+> +	case SOC_ARCH_EXYNOS4412:
+> +	case SOC_ARCH_EXYNOS5250:
+> +	case SOC_ARCH_EXYNOS5260:
+> +		irq_map.fall[2] = BIT(20);
+> +		irq_map.fall[1] = BIT(16);
+> +		irq_map.fall[0] = BIT(12);
+> +		irq_map.rise[2] = BIT(8);
+> +		irq_map.rise[1] = BIT(4);
+> +		irq_map.rise[0] = BIT(0);
+> +		break;
+> +	case SOC_ARCH_EXYNOS5420:
+> +	case SOC_ARCH_EXYNOS5420_TRIMINFO:
+> +		irq_map.fall[2] = BIT(24);
+> +		irq_map.fall[1] = BIT(20);
+> +		irq_map.fall[0] = BIT(16);
+> +		irq_map.rise[2] = BIT(8);
+> +		irq_map.rise[1] = BIT(4);
+> +		irq_map.rise[0] = BIT(0);
+> +		break;
+> +	case SOC_ARCH_EXYNOS5433:
+> +	case SOC_ARCH_EXYNOS7:
+> +		irq_map.fall[2] = BIT(23);
+> +		irq_map.fall[1] = BIT(17);
+> +		irq_map.fall[0] = BIT(16);
+> +		irq_map.rise[2] = BIT(7);
+> +		irq_map.rise[1] = BIT(1);
+> +		irq_map.rise[0] = BIT(0);
+> +		break;
+> +	default:
+> +		pr_warn("exynos-tmu: Unknown SoC type %d, using fallback IRQ mapping\n", soc);
+> +		break;
+
+Maybe put irq_map inside exynos_tmu_data? exynos_map_dt_data has a
+switch block that is quite similar, in that it also matches on the SoC
+type. This way also there is no need to have a fallback.
+
+Kind regards,
+Mateusz Majewski
 
