@@ -1,311 +1,317 @@
-Return-Path: <linux-kernel+bounces-774669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7ABAB2B5D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:19:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F188B2B5D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E03E1962BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:19:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78DF94E1D54
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DA813B280;
-	Tue, 19 Aug 2025 01:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FD31E1DF2;
+	Tue, 19 Aug 2025 01:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kIPLp4rq"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010015.outbound.protection.outlook.com [52.101.69.15])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f/kzRCcO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FF62110;
-	Tue, 19 Aug 2025 01:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755566362; cv=fail; b=AyJAGpl01Qwo61EvuFNqtTq4PDCJc5xKLoknojqerqp4ucVs+jtRmUI9O4hKM6FgA48T/3yCGA6VZ1A3WLwpXlQN+TAxpuDhWgVMygf/x0JTZ4PQ/wq3j7SwYsrbsx+3h8emBimGZ+1D/QAugF1V92aGrgtPx1VaBJk3n2VXvrA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755566362; c=relaxed/simple;
-	bh=qL55Zh7nJi/IFjkXXcUaApui3a8wFTJJctppqvtuGNA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=e6CTtEDyfz6+cWX2eWwHKtrRgeXt5UL7P9hD9IZW5y/ZgkH2PLyQSdDlLFoqD3nCdYNF0oOwb/3KzEE3WKMjd9xWwaUqgRnSGI4ObmJkysC6aOgM3r6AkY6T/ReU6z+OAgbZrvaaFnoCvbU1CHBZYqodtx3GsqunBTjRZOy5Ch0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kIPLp4rq; arc=fail smtp.client-ip=52.101.69.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OhNA//yO4YvEby/njML7FS4/5bCnmoyVfubXSczSGn3zfAy3+gIf9pj/UYTI1zKAq0nznajTZ8qq1w1cELmvYy32PtEj1c/RV8va6zhdzJ94wHXDCQW0LOjgKMvVeyI9pHhIzRHa20owvjkrSF33hprl/DlH+l6t41WdncrjsJKqktDY91VmkjbMaHz4U/mz264KBSd02aL7sCRM30SGLp5XQlRj8mMPK/R2T7GhyrDlQTanT4FKoToOZ0cOSn5qWYpAmdO+2lmP48rV/P58nowi13Ts/5xBN/S2V5QaJ4NFFUZr4/2Ph4eKf8eQfG4yEpZsLvgbXKdxXAa81y+qmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cljtIQe/Xd/aKrTek2PcjTLp5wJt21Oraw4C7KX8T+I=;
- b=B2ImnivNU4NUQ67vHWSoc+6WwlP95M0Cvi79xs9um5fl109XtDw3sSF4lr9MGWgysKJDvmSYg6qoMXUBwKEObyxfU74RPK+bN/Cq/3EU7DMQPKMmB7tEZ2z62v2qZLJeiIh7snWjkJuDKbW7Pb5HTzw9or987ygwE0udY2K+OOLJwM1s7sngoZxc4klak6RsHUJFxUeJAExlsbs7CcRSH2Ht0UfiPf0bDs8yKuZa18M5Jc9VIlUwVTRAYAM1SQKvJkvSk5sDdVPInhZ/cScXnkWhkK2gb3zSORsaqoF9oi74XTmnCmcU15IFiFBTxa0Btlb5qPopNCWZghumK+ecqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cljtIQe/Xd/aKrTek2PcjTLp5wJt21Oraw4C7KX8T+I=;
- b=kIPLp4rqqxtAFOZiWGl71rnrI6e7ZxgA1lKeCEKtF5u7jdXLbd2nBTjKRZUVpWu/qCkNIu/Tb54bB5+2ZH6hm+ciHhnti+avgYLtxygqQ8Fvh5sAA8LYfok0qDMIwfeBe5R9eOBqVtRasXtWT2WU/+gOAzLI6IyYYD7xJbFUGJp31KK20ZnOB3LOCzFdIemzuCbl1z5iv54ISQYZmM7SRdGx/iECPtkFf7d8cTp8K8aNUhC+3Lpb9PF2vHvMq5ReoIcEZxdNe2AApIOSICkGWcWYCnvEJwPRkCGzvAy4RGl6IlJ93xqfdh0SWbOdNvfSyyK1PNqE9/6A6/vmDLfH1Q==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DU4PR04MB10550.eurprd04.prod.outlook.com (2603:10a6:10:586::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Tue, 19 Aug
- 2025 01:19:15 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9052.011; Tue, 19 Aug 2025
- 01:19:15 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Hongxing Zhu <hongxing.zhu@nxp.com>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Luke
- Wang <ziniu.wang_1@nxp.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Fabio Estevam <festevam@gmail.com>,
-	Joy Zou <joy.zou@nxp.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Frank Li <frank.li@nxp.com>
-Subject: RE: [PATCH v2 00/11] arm64: dts: imx95: various updates
-Thread-Topic: [PATCH v2 00/11] arm64: dts: imx95: various updates
-Thread-Index: AQHcD98H/RVvj3k3dkG98qh30tWXibRouv6AgABzJ7A=
-Date: Tue, 19 Aug 2025 01:19:14 +0000
-Message-ID:
- <PAXPR04MB845987CC13AFC435D4D620648830A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20250818-imx9-dts-v2-0-8ba787fb5280@nxp.com>
- <175554055785.1719742.4035330946121256179.robh@kernel.org>
-In-Reply-To: <175554055785.1719742.4035330946121256179.robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|DU4PR04MB10550:EE_
-x-ms-office365-filtering-correlation-id: 0cac14a2-69bd-4c4e-3ff0-08dddebe6969
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|19092799006|7416014|13003099007|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?dKBQVJ/flKz1y/TcUlq9vNyDfHoeNZ+ddob3sjFMbjxNLFI9K7KYZJOatpqG?=
- =?us-ascii?Q?QhmFBK53kI2WGuk6gw2EK/Z3P5zWoEfXOpQtDfP/sW/+olaY0bbn47qeJDYc?=
- =?us-ascii?Q?h6V4qnquafDJXXIKglRZZJnx7IFfzANPm11G89bFoqcbDH7roQyaFP1aiIbn?=
- =?us-ascii?Q?7XrJBjy5BmjQhndqfuFFgNfVnRS22Nm9SubGCo6+cU3tr/uocxw0dkN8ywET?=
- =?us-ascii?Q?2gG8DKDFauq1FKhYk7onPeijWAyt8T2I9FmIw79LpLlSsQUPTEuhv1FqM3cW?=
- =?us-ascii?Q?4JNt1G2YxqVTcR1BVPFatq15LFhdKWxanEo6oY7ahCTNMwJhgwnGUWTzUmrP?=
- =?us-ascii?Q?Qu6R9RE6mgEn2owVn5vlNWGf4QcYnSO6xQ7Ca1o5O5XjbuTT+7xWrArolv0q?=
- =?us-ascii?Q?bEhynl/kBYw6KaHelDvc64O4yQHhst/lFtl0qszCyQHfwoGi3JDkGTya+RSk?=
- =?us-ascii?Q?S6AqpglYKBxaSWMVlm1drk9BN3QAVyrQCF+8TlyjSH+liJLW0NAHKYusclnw?=
- =?us-ascii?Q?sT/e0xVCCvaJu5iWYhuzYf7Hl1q0r5WM4lmpI/QOxJglIV80rtYftToFxzfz?=
- =?us-ascii?Q?FmDiuzLxpiZpBgvn4vzrGlaOUcoMm8xuJW1ImemSbi28Of4BJNJrrW6W123R?=
- =?us-ascii?Q?2RMUvrbhi0uB7IJpfdUVtob6LOwA0ZHwdCYj8lmGznnMl3EEEC8mDdXjC5n6?=
- =?us-ascii?Q?qWO/FBlyMLAKn5RZ5o4bsoiEiSLsYsIYy+wHbVhciwcz6Vnu2YBlvM+il8TR?=
- =?us-ascii?Q?bJ6KHUZZfEFtgqPxmYgzMmZFboFiDlkOzktAwALU1Ha1M7Z/pIIWHFJ6QqZC?=
- =?us-ascii?Q?Q3hHjq7Xyooe/tctjx2Ifz1YKQncSNqZAblBwhAwiPR1cz3O/uxe5TU7FQwY?=
- =?us-ascii?Q?L+GU46C0Y6ljsBjNtiePQCk0dcZ7zZx7LdsuGBH0aMu23SXJbUP5IGuN4cyV?=
- =?us-ascii?Q?7CNWhkxnMoY1InKZoa85PZpnwsq4i2cKs0Bjs2ZJOYNu68LYYZPel/MCA+Ew?=
- =?us-ascii?Q?X29kW6pijoo3uw7DLhymHvJwi7gWzZaE9CwULffss4aR/PY/MoU1pA4oIrTV?=
- =?us-ascii?Q?JBtmxDgbPaw4bXBXryxPV2pl5gdKejaF54wOVo2Vzwv805x/l2pKsUj2S9uq?=
- =?us-ascii?Q?F7eq4XF/NrkIkPktLDeEUfbwWXrCDqxnTCkruH/LyCp8FpXyFxyinEOvZC5P?=
- =?us-ascii?Q?ec/wqLsHjHrg9PShvf4B1PtQep33D2j7/s2CEISVFwLbRH43Y9nz7yDMNm31?=
- =?us-ascii?Q?/70ZLO9VLCb+mDz3sTEnka2EXB64csMPq3PLwy8PmD9/jFnNZd7fSzhjdd9O?=
- =?us-ascii?Q?9bpMbO2S+Dl0xmPVj1jfaJ647FWKrecQqHOUgecbF27v1/piuShO0U9dc2eF?=
- =?us-ascii?Q?tgL1yXNRQ2vA87isyPMYzeNZ1AFqknQ1IQQRYTm41CTtz9tGetPIUunSEaQY?=
- =?us-ascii?Q?edxmZfovsgc=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(19092799006)(7416014)(13003099007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?YDIl3eG7a4+GFUSi1JEKHSG3WeUz0j6EhT/VDVRkKehijzdU3WIQNuXgKgSb?=
- =?us-ascii?Q?RmCYOWQd4WSs3CRyIDWROCGv56QZburRFW6sReMAgatbD/5fwwyFpyk+bxwB?=
- =?us-ascii?Q?SdPgEGDWNeQX4aidoF+UnaBlBkkfBZqikIex5zEcVbdPgO2YF5Frfq49Atva?=
- =?us-ascii?Q?pHMtG1Ygb1cfzLOvGQpVLtGvQZdOH7HOw5F0GsPNN6kASYxVzQVnbe3PYYz6?=
- =?us-ascii?Q?XAEji9rMN/OEwipTSseaDfzRkbrUjkrqvTMjbjPJBmqENB1KThbJcOcTa8ru?=
- =?us-ascii?Q?HaX9gAPdkGmr+Nfv27/89pZHEmbZRxHPCvdF0vCbnz57nO4nOAJW4D48+X1A?=
- =?us-ascii?Q?mJ7vzdc22576reyUOftNjIc+zfYVHX06cbSO1EIgLgJX8Oq2S9mnswKRPvE5?=
- =?us-ascii?Q?A0SU0q/rrk39uidzzhsJpw9H/5Yua2vzwenv3/HBNaEeWJgRuAZK4g0qjvj5?=
- =?us-ascii?Q?WQ5VNUnwTaXygPzi5oP3YDEZIWZbND4f7CTSU14BdqW1FSVYlCiicezpL7UV?=
- =?us-ascii?Q?sVnRAE2VyOEkdT582lnBYMc9n1zCuOoNSeF8aFSe0JQR+adwfo/M3/mmqHBh?=
- =?us-ascii?Q?wqYS9eDL7k91m2FA4OKha2ZVIK1g3cCZWWbxXeel0pstjwqGoHeaSDl2frTA?=
- =?us-ascii?Q?fCLHb1JY/Nvnm+ahTA11D6C3DpSPO9IiEAKJP7y4gwWqyDDluLKTVWB6qFRt?=
- =?us-ascii?Q?A/mEQTHG5KcpolRlmWvv7TQarr9lMiRHWSLIZlGHeoElW8VCiXBS7oW2Ipui?=
- =?us-ascii?Q?jm6DMs+L/KBMkMhQNmyxLd3kxvOiMuz7JzesyUUOSXbbD//7ZNX/CbU5B9Jp?=
- =?us-ascii?Q?mD7DAY/5bBX4hNJ3Jqr1Aif2bO3lE1k7wTfD5/bywXU5kdkfMglpjoPLFii1?=
- =?us-ascii?Q?8LFe2xnDpyt/+8CAG4wMQsa1hjVY7q6OM2dyXMYPTKeQ3lzBoh0xtRiFFKLs?=
- =?us-ascii?Q?aiURtuSNnavx5eJYDcKzVrpWM0W8HhRydJvSlIsshjVqadmSbp9SuzMROZsL?=
- =?us-ascii?Q?jVTJRTvnZC3f4sNhAqGUZvCOUz8zUXTA32+7fA8sBGiFJc2ty9IBG49eUu8e?=
- =?us-ascii?Q?Z0Un7MR/6EY6VrjyglgN6P6UAskjQ14bYpqs6x33IFrPPzx70ZiCUjHXAw5N?=
- =?us-ascii?Q?2SNW/9R1yPQZBA7GjtApOqmHnLtDrMy/tenIBsvXIYnZ+FZst3jP85XSm382?=
- =?us-ascii?Q?kDPgV0kgRyg4ezoYIgKjYBJ1SdSmoZxnOI9BrNTPS4oteuuv6wdJ/GI4KaLc?=
- =?us-ascii?Q?pmEdxHNAygc6z83XaDW/vwiI08eCDV2ai6ylivqbc1JPsz74VA+iveCHf52w?=
- =?us-ascii?Q?A6NbN8S+8GycqovMIGyB5O4l/J+eaWSfufDaIkLQXslBubRuQGE1EtmErxUb?=
- =?us-ascii?Q?NIaex1GQQza3cRyYFa3MUuzc26OklLK7WxDlLnwBnE9N92HE94LveTPaAtuo?=
- =?us-ascii?Q?LhOz3lLYVWAg4ZqtdFmgNIGKFGUtRb6nACOI2OrgxIepTqfcaR6BfLO06czE?=
- =?us-ascii?Q?G0RPgh0VMU4zvo1mncn0ncalEW0/Clgm/NA29kEaI9eJfv48Fnk9uT1VwiIs?=
- =?us-ascii?Q?/ttbyfC3zhmB/V2xPZs=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9611CDFD5
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755566376; cv=none; b=IqR+dLUteNDUpjqUnMHuYrAudzMYWZr/e1WN41y04X4YjWgKyzi7Nmkbn7xIxXFR3G3gGrhMWJ6ubkXn9T282Kg6VOOW1xMAZHccsbFNXPW+YoAga46x/aPOZ6KjyZqfKfNVSplfpdkFpfdUPiFcXNvSEBjgYdxpAYmtO0JjTAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755566376; c=relaxed/simple;
+	bh=NBytuubMRavFq19j6Sgfa8bLezDVfsuuXGUGKG2QImc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uyDHLcNjLAG95v0TmHvBupXdM591OpmHM5XRj05QK0HWn8bFrEerhn2FAhCFTt41w4p+Muurm54S/C8ld/5k+dXCXuJ6OV6izi3qStqM65utsZy9ozUj5+Z0s6nN2wiNUDEd5qSZSG2JmfcZT8bYhBUyZC8CVIJnyeesBBWxxcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f/kzRCcO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IFf3sp025497
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:19:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=9mo6S+W1ZbtzbUVLiNIvtrNN
+	MJa5g0uTnYQexkAo7Ho=; b=f/kzRCcO75xWfeaFiRPlRWmfQUAEpJIVw086Y3CC
+	W2x41lmFSZB7dyP2CW7DD1IjEsVmoMNGBY9bSoFvpqVT0axSVOmqhyRzpm+BwE2G
+	Y+dR6o5NsjWD39atESlkKLLQffT4W+g8HUESUBiiBrsr2WDH7D2TqQJWV+hnSHvJ
+	+S31EW6xBQHs41GHzRSleNPIDWZVqizjFfynMvuoYk1G6s9DDOmt0em2W0dqI1+F
+	/b9Kx3QH7uX8PlM1CUzWGr3RicoMMQLOtx7MMs5hQgPP4QM8Hq0raX+WbIrWMtun
+	AiwjA+1KOs1ymZ/Jh59YgGfq6AH/bfSPa8gbn1GfE58cRw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48m71chdt3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:19:33 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70a9289280dso103934516d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:19:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755566372; x=1756171172;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9mo6S+W1ZbtzbUVLiNIvtrNNMJa5g0uTnYQexkAo7Ho=;
+        b=gyyHWB11BShdhJt/XDdhTfENG2WQwPseXeiZNsf7MQM4MlES/Z04XQSPeh9JBUxxCI
+         gIQdy2OaSnmm7Xo/Ipj5xgPXdCNFdVJFunnz0qMsGCIh1GvIioR+Paa56vW+NwQQRff4
+         xdqcb28/Yh0wpytkBTaH7YHqzIgA7f2qOP8w7aQZd0oehL09FkZJGnxf+6pOUuyA832X
+         nx42SRliQTDaxbbChXu7cNqPwEzTJRy0ElwLaBH5HjyVKJbrbScBJIXguWQXbjeayh2T
+         Y3ChpbbBgVIkefxgGS3fkWRPccRcYnxG4WWjdma7TaTtQnnJ4XGR2Oc11Gvg5XZcm2IQ
+         JEbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhAmLaD2djaCZoBkyVc4B0xW3ePFwqg+2TQ0LV+lWxasbGSPbFi++Q8dR1WrryScVK3/J0GjEmHxua9PE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMrX37YhzFc0R7gGeDx3pVm/bOVpJImhaLYYi86U+S2jwEvPDQ
+	3u/fxqE9fAuwPU1rTQHBygDORgFuIYH/ZKvWHrRPxLcoxdW8zgcDp4lFtHdZ/m2QpHfjvNy0FyX
+	VlmBwvf0jonvKMaimDX35J64KsJzXL0TSXa0UPiVbVbnJwkRemLTUQixnOiwCX9+J7UA=
+X-Gm-Gg: ASbGncsYaiR6/t/9kFrLG1Ug73qzEcCx3DjwP4vhDUkHTMYs7/rXMwBfPXbURjS4iH0
+	o7ILhfb0uwN/QoaJJtxgjp/F5dDCPp3u4O9MEO6acRhB75QOFm+9h8UUFmA1IoDXNbaxev8EQvA
+	xg7t+3K2/SkooAPZXPh3M+Z/iuqOe/liefnXwP+s4g58qcbWkFTEXpAjeuMKna89vBm3mb+VoNY
+	Gae+vJT1bHKZvFRUOLXQtisi6zkn6fFldPiKXfIdwkaolM5DUkJBxGcc/V1nuFbue14a4aWlZkw
+	jRQfYsBQk77M6FEH2XhVQhlj/kVATUurA83aJ6OF+v+5P28Kx7o9ECoCcM0WMhyRV0PhT43ER3m
+	coLwADVQNlKp/tRVdyq9GW2IMBubBpKX3jsXiocQH6/Rd6bL6ZcwX
+X-Received: by 2002:a05:6214:c64:b0:709:d658:3bd2 with SMTP id 6a1803df08f44-70c2b6d83f1mr9351496d6.1.1755566371918;
+        Mon, 18 Aug 2025 18:19:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbgcwzWN6MTXGrEh49U1TwD4iYqGH6iadaRLAjgRiH23RqYLnMlR6OKsQkMmX/hukB/vnG5A==
+X-Received: by 2002:a05:6214:c64:b0:709:d658:3bd2 with SMTP id 6a1803df08f44-70c2b6d83f1mr9351146d6.1.1755566371309;
+        Mon, 18 Aug 2025 18:19:31 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3340a6045dcsm20887861fa.44.2025.08.18.18.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 18:19:29 -0700 (PDT)
+Date: Tue, 19 Aug 2025 04:19:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Danilo Krummrich <dakr@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>, Michael Walle <mwalle@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 0/2] driver core: platform: / drm/msm: dp: Delay applying
+ clock defaults
+Message-ID: <2hzzc3fd52kb54s2pr6fxfnd4svi7x3zt7dyvenja3suhieidb@hrlggbqocqa7>
+References: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
+ <flybqtcacqa3mtvav4ba7qcqtn6b7ocziweydeuo4v2iosqdqe@4oj7z4ps7d2c>
+ <aJ3Y1XhvTPB7J6az@linaro.org>
+ <ddp77rvwe6brwyvkzbkouguigd5tjg2qqfxomlhd2hb2x7w7uf@2uyl2q47bpei>
+ <aKL1NPuZWWxsAavx@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cac14a2-69bd-4c4e-3ff0-08dddebe6969
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2025 01:19:14.9922
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: P5/0zqMf1eRbx+dB7fIb/FoM8SYneW8rBL/j2VtOMwZI6CJRIqp20O+67LLSTxh744SIZ6i8xPoC9Pv3lO60Pw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10550
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKL1NPuZWWxsAavx@linaro.org>
+X-Proofpoint-ORIG-GUID: zKfzmuVPIjafmccf4np8aX6r5wb0JX8A
+X-Proofpoint-GUID: zKfzmuVPIjafmccf4np8aX6r5wb0JX8A
+X-Authority-Analysis: v=2.4 cv=IvQecK/g c=1 sm=1 tr=0 ts=68a3d125 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=zG9IxgxdLrqNAntcejEA:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDE0NyBTYWx0ZWRfX4Py+wmkeXJfi
+ l/wIhcQd2rJWUg+kL5Kzv02S905ncSRYSCmnevqDdd4NVggRIVSmJ6a4qSLV22vIOMc0f5jiNUr
+ jiY/POKqxcMlXEAFMLnnsFupdkf0UHkKWzv0l5om3xW7PCCpEOID3lvyj5zt/kPN8mZvIt/yocq
+ S20wVzvJx/NGNB86QV7RCWvV2NL/QbbQWK+7zag2TDt+pvDIRllMB1jvNgpUVrIhr0PS+sxOdX9
+ z2i4L8IthJ+qxIIr/nR1cWQFe2z9WJDIZUD+5vOcW+6wVkBSSLrK6vFG+MW0GEjG7/al6Pc+l5h
+ NZF3Q8vwmplUA4cSu5WnCdrxg2lm+qq2fZrh/xnky1xryNk5bzweE2XLOfnrNe8JwUS/3bAqf0s
+ t2T/1VwI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
+ phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508180147
 
-> Subject: Re: [PATCH v2 00/11] arm64: dts: imx95: various updates
->=20
->=20
-> On Mon, 18 Aug 2025 09:25:30 +0800, Peng Fan wrote:
-> > This patchset is to upstream various downstream changes.
-> > - Correct edma channel for lpuart7/8
-> > - Add System Counter, SCMI LMM/CPU, V2X MU, coresight nodes
-> > - Update alias
-> > - Add pca9632, pf09/pf53 thermal and etc.
-> >
-> > dtbs_check will report a few failures, such as linux,code, db suffix.
-> > The failures are not related to this patchset.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > Changes in v2:
-> > - Drop patch 8 because dt-bindings not ready, and patch 12
-> > - Per Frank's comments: Typo fixes, node name updates, sort
-> properties
-> > - Add R-b from Frank
-> > - There is still dtbs_check error, but not related to this patchset,
-> > it is because
-> >
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
-> lore
-> > .kernel.org%2Fimx%2F20250718094723.3680482-1-
-> peng.fan%40nxp.com%2F&dat
-> >
-> a=3D05%7C02%7Cpeng.fan%40nxp.com%7Cdc5a5e6a80884995523d08d
-> dde8482f9%7C68
-> >
-> 6ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63891138289855
-> 9682%7CUnknown%
-> >
-> 7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMC
-> IsIlAiOiJXaW4z
-> >
-> MiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DUf
-> %2Fftx%2Fo1D
-> > 9K5ev%2F57Q2ib5k1eCXbw2bJv7CoF2fNNM%3D&reserved=3D0
-> > not applied.
-> > - Link to v1:
-> >
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
-> lore
-> > .kernel.org%2Fr%2F20250815-imx9-dts-v1-0-
-> e609eb4e3105%40nxp.com&data=3D0
-> >
-> 5%7C02%7Cpeng.fan%40nxp.com%7Cdc5a5e6a80884995523d08ddde
-> 8482f9%7C686ea
-> >
-> 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63891138289859878
-> 0%7CUnknown%7CT
-> >
-> WFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIl
-> AiOiJXaW4zMiI
-> >
-> sIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DlKYrW
-> kLP9HAcsuBgT
-> > NZr24y51QJKZe6Z5HyTvw6d1pI%3D&reserved=3D0
-> >
-> > ---
-> > Joy Zou (1):
-> >       arm64: dts: imx95: Correct the lpuart7 and lpuart8 srcid
-> >
-> > Luke Wang (1):
-> >       arm64: dts: imx95-15x15-evk: Change pinctrl settings for usdhc2
-> >
-> > Peng Fan (8):
-> >       arm64: dts: imx95: Add System Counter node
-> >       arm64: dts: imx95: Add LMM/CPU nodes
-> >       arm64: dts: imx95: Add more V2X MUs
-> >       arm64: dts: imx95: Add OCOTP node
-> >       arm64: dts: imx95: Add coresight nodes
-> >       arm64: dts: imx95-evk: Update alias
-> >       arm64: dts: imx95-19x19-evk: Add pca9632 node
-> >       arm64: dts: imx95-19x19-evk: Add pf09 and pf53 thermal zones
-> >
-> > Richard Zhu (1):
-> >       arm64: dts: imx95-19x19-evk: Add Tsettle delay in m2 regulator
-> >
-> >  arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts |  29 +++-
-> > arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts |  94
-> ++++++++++++
-> >  arch/arm64/boot/dts/freescale/imx95.dtsi          | 165
-> +++++++++++++++++++++-
-> >  3 files changed, 280 insertions(+), 8 deletions(-)
-> > ---
-> > base-commit: ff837884a4642382a24d10fd503acf2c3a472f10
-> > change-id: 20250813-imx9-dts-664f7ba66ae7
-> >
-> > Best regards,
-> > --
-> > Peng Fan <peng.fan@nxp.com>
-> >
-> >
-> >
->=20
->=20
-> My bot found new DTB warnings on the .dts files added or changed in
-> this series.
->=20
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the
-> warnings are fixed by another series. Ultimately, it is up to the platfor=
-m
-> maintainer whether these warnings are acceptable or not. No need to
-> reply unless the platform maintainer has comments.
->=20
-> If you already ran DT checks and didn't see these error(s), then make
-> sure dt-schema is up to date:
->=20
->   pip3 install dtschema --upgrade
->=20
->=20
-> This patch series was applied (using b4) to base:
->  Base: base-commit ff837884a4642382a24d10fd503acf2c3a472f10
-> not known, ignoring
->  Base: attempting to guess base-commit...
->  Base: tags/next-20250818 (exact match)
->=20
-> If this is not the correct base, please add 'base-commit' tag (or use b4
-> which does this automatically)
->=20
-> New warnings running 'make CHECK_DTBS=3Dy for
-> arch/arm64/boot/dts/freescale/' for 20250818-imx9-dts-v2-0-
-> 8ba787fb5280@nxp.com:
->=20
-> arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dtb:
-> scmi (arm,scmi): Unevaluated properties are not allowed
-> ('protocol@80', 'protocol@81', 'protocol@82', 'protocol@84' were
-> unexpected)
-> 	from schema $id:
+On Mon, Aug 18, 2025 at 11:41:16AM +0200, Stephan Gerhold wrote:
+> On Sat, Aug 16, 2025 at 04:55:00PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, Aug 14, 2025 at 02:38:45PM +0200, Stephan Gerhold wrote:
+> > > On Thu, Aug 14, 2025 at 02:55:44PM +0300, Dmitry Baryshkov wrote:
+> > > > On Thu, Aug 14, 2025 at 11:18:05AM +0200, Stephan Gerhold wrote:
+> > > > > Currently, the platform driver core always calls of_clk_set_defaults()
+> > > > > before calling the driver probe() function. This will apply any
+> > > > > "assigned-clock-parents" and "assigned-clock-rates" specified in the device
+> > > > > tree. However, in some situations, these defaults cannot be safely applied
+> > > > > before the driver has performed some early initialization. Otherwise, the
+> > > > > clock operations might fail or the device could malfunction.
+> > > > > 
+> > > > > This is the case for the DP/DSI controller on some Qualcomm platforms. We
+> > > > > use assigned-clock-parents there to bind the DP/DSI link clocks to the PHY,
+> > > > > but this fails if the PHY is not already powered on. We often bypass this
+> > > > > problem because the boot firmware already sets up the correct clock parent,
+> > > > > but this is not always the case.
+> > > > 
+> > > > So, the issue is that our abstraction is loose and we register a clock
+> > > > before it becomes usable. Would it be better to delay registering a
+> > > > clock until it's actually useable? (and then maybe to unregister on the
+> > > > link shutdown)
+> > > > 
+> > > > > 
+> > > > > Michael had a somewhat related problem in the PVR driver recently [1],
+> > > > > where of_clk_set_defaults() needs to be called a second time from the PVR
+> > > > > driver (after the GPU has been powered on) to make the assigned-clock-rates
+> > > > > work correctly.
+> > > > > 
+> > > > > I propose adding a simple flag to the platform_driver struct that skips the
+> > > > > call to of_clk_set_defaults(). The platform driver can then call it later
+> > > > > after the necessary initialization was performed (in my case: after the PHY
+> > > > > was fully enabled for the first time).
+> > > > > 
+> > > > > There are also alternative solutions that I considered, but so far
+> > > > > I discarded them in favor of this simple one:
+> > > > > 
+> > > > >  - Avoid use of assigned-clock-parents: We could move the clocks from
+> > > > >    "assigned-clock-parents" to "clocks" and call clk_set_parent() manually
+> > > > >    from the driver. This is what we did for DSI on SM8750 (see commit
+> > > > >    80dd5911cbfd ("drm/msm/dsi: Add support for SM8750")).
+> > > > > 
+> > > > >    This is the most realistic alternative, but it has a few disadvantages:
+> > > > > 
+> > > > >     - We need additional boilerplate in the driver to assign all the clock
+> > > > >       parents, that would be normally hidden by of_clk_set_defaults().
+> > > > > 
+> > > > >     - We need to change the existing DT bindings for a number of platforms
+> > > > >       just to workaround this limitation in the Linux driver stack. The DT
+> > > > >       does not specify when to apply the assigned-clock-parents, so there
+> > > > >       is nothing wrong with the current hardware description.
+> > > > > 
+> > > > >  - Use clock subsystem CLK_OPS_PARENT_ENABLE flag: In theory, this would
+> > > > >    enable the new parent before we try to reparent to it. It does not work
+> > > > >    in this situation, because the clock subsystem does not have enough
+> > > > >    information to power on the PHY. Only the DP/DSI driver has.
+> > > > > 
+> > > > Another possible option would be to introduce the 'not useable' state /
+> > > > flag to the CCF, pointing out that the clock is registered, but should
+> > > > not be considered for parenting operations.
+> > > > 
+> > > > >  - Cache the new parent in the clock driver: We could try to workaround
+> > > > >    this problem in the clock driver, by delaying application of the new
+> > > > >    clock parent until the parent actually gets enabled. From the
+> > > > >    perspective of the clock subsystem, the clock would be already
+> > > > >    reparented. This would create an inconsistent state: What if the clock
+> > > > >    is already running off some other parent and we get a clk_set_rate()
+> > > > >    before the parent clock gets enabled? It would operate on the new
+> > > > >    parent, but the actual rate is still being derived from the old parent.
+> > > > > 
+> > > > 
+> > > > But... Generally it feels that we should be able to bring up the clocks
+> > > > in some 'safe' configuration, so that the set_parent / set_rate calls
+> > > > can succeed. E.g. DISP_CC_MDSS_DPTX0_LINK_CLK_SRC can be clocked from XO
+> > > > until we actually need to switch it to a proper rate. I see that
+> > > > e.g. dispcc-sm8550.c sets 'CLK_SET_RATE_PARENT' on some of DP clock
+> > > > sources for no reason (PHY clock rates can not be set through CCF, they
+> > > > are controlled through PHY ops).
+> > > > 
+> > > 
+> > > I don't think there is any problem with the 'safe' configuration you
+> > > mention. I have not tried, but we should be able to use that. However,
+> > > my understanding is that reparenting does not fail because the clock
+> > > itself is in an "unusable" state, but because the new parent is in an
+> > > "unusable" state. We can run the clock from XO, but that wouldn't solve
+> > > the problem of reparenting to the PHY (until the PHY is fully
+> > > configured).
+> > 
+> > 
+> > How would the CCF react if we return -ENA from the enable() method of
+> > the PHY clock if it's not available yet?
+> > 
+> 
+> With the current setup it wouldn't change anything, because the failing
+> operation is just the clk_set_parent() that happens from the driver core
+> before the clock will be enabled. It wouldn't reach the enable() method.
+> 
+> With CLK_OPS_PARENT_ENABLE, I would expect clk_set_parent() to fail,
+> which also doesn't get us any further. :-)
 
-This is not introduced by this patchset as written in cover-letter.
+Ack
 
-The error will disappear after https://lore.kernel.org/imx/20250718094723.3=
-680482-1-peng.fan@nxp.com/   being accepted.
+> 
+> > > 
+> > > (It would help a lot if you can find someone from the hardware team at
+> > >  Qualcomm to confirm that. Everything I write is just based on
+> > >  experiments I have done.)
+> > > 
+> > > So, assume that DISP_CC_MDSS_DPTX0_LINK_CLK_SRC is already running from
+> > > XO, but the PHY is powered off. Now of_clk_set_defaults() gets called
+> > > and we get the call to clk_set_parent() while the PHY is off. How do we
+> > > deal with that? Returning 0 without actually changing the parent would
+> > > result in inconsistent state, as I described above. clk_get_parent()
+> > > would return the new parent, but actually it's still running from XO.
+> > 
+> > For RCG2 we already have a lot of tricks like that.
+> > 
+> 
+> That is true, although e.g. the clk_rcg2_shared_ops apply the tricks
+> (the caching of clock ops) only while the clock is off. When the clock
+> is off, it doesn't matter what we return about the freq/parents from the
+> clk ops. The problematic case I mentioned above would occur if the clock
+> is (for whatever reason) already running sourced from XO during boot.
+> 
+> In other words, I could imagine that implementing something like the
+> clk_rcg2_shared_ops for the DP clocks could fix the error I'm trying to
+> solve in this patch series. However, it would only work if the clock is
+> really off during boot and not already running sourced from XO.
 
-Thanks,
-Peng
->=20
->=20
->=20
->=20
+link_clk_src clocks are clk_byte2_ops, so they don't have separate
+enable/disable ops. You might implement something close to
+clk_regmap_phy_mux_ops: turn XO parent into "disabled" state.
 
+> 
+> > > 
+> > > With my changes in this series the clock state is always consistent with
+> > > the state returned by the clk APIs. We just delay the call to
+> > > clk_set_parent() until we know that it can succeed.
+> > 
+> > I know. But what happens when we power down the PHY? The clock is
+> > assumed to have the PHY clock as a parent, but it's supposedly not
+> > clocking.
+> > 
+> 
+> I don't think this is a big problem in practice, given that these clocks
+> are only consumed by a single driver that manages both PHY and clocks
+> anyway. The clock should always get disabled before the PHY is powered
+> down.
+> 
+> > Another option would be to introduce a safe config for the PHYs and make
+> > sure that the PHY is brought up every time we need it to be up (e.g. via
+> > pm_runtime).
+> 
+> I considered that as well, but what exactly would I use as "safe"
+> configuration? There are lots of PHY configuration registers that are
+> set based on the rate or other parameters of the panel/display
+> connected.
+> 
+> Implementing something like clk_rcg2_shared_ops could presumably work,
+> with the limitation that it will only work if the clock is really off
+> during boot and not already running from XO. Otherwise, I think the
+> simple approach of delaying the clk_set_parent() implemented in this
+> series is still the most straightforward way to solve this issue.
+
+I know that it works, but it feels a bit clumsy to me.
+
+> 
+> Thanks,
+> Stephan
+
+-- 
+With best wishes
+Dmitry
 
