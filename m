@@ -1,186 +1,200 @@
-Return-Path: <linux-kernel+bounces-775968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6A5B2C6E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:25:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D387CB2C6EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E183BFFA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2003E1BC3676
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710AA25D21A;
-	Tue, 19 Aug 2025 14:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E745025F973;
+	Tue, 19 Aug 2025 14:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GO5lo9RH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="LtiuodL3"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012043.outbound.protection.outlook.com [40.107.75.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323992EB85C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755613499; cv=none; b=mHTRoExKK8MgEsjgJQoSYd5L20I6zeUKFhDuUvpEjYaHlTDH2/wqYIoIsAfXLb3uRP6218OAokw91tF5ia2wF3T/n1Bk/sUSU+JI/lWB6kzogpCbhRPzjRRohGtBTRQRYb11zd2UNBpXtA6njo0P6Tro9ivWRnARB3sw/MiIgU4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755613499; c=relaxed/simple;
-	bh=0ewSci4kwM8psxpmJDgOyj1lMoJLg+oHg22M0eYrYNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LXmYiUeJqyc383UEye0PYeD0v96NfUlEgOyV20zeN7SO3S1sIuc+TWNu7WiZ9H2dYvIamHmtGaDEX3c73Up0PA7adrA0lQ4/0j1JwZ8oIHZ6yZpjKpx8njrE6vJvKJne8UpZWiS74P9mFxjlOuA4T2Oud9aFyhzKKv+uEaQNSNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GO5lo9RH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755613497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+6rtgrIobcRQVsNX25xQXMRbcgLTca8mFUg3pNO2o0=;
-	b=GO5lo9RHF8c99I70sI0pKLdBGUFR639I9EF4bAl+Gb89YHmEbZQMG0+OcW/jdBz7SldjRt
-	2xn+tO27syNmtKq7+tWa93WW/fjGHmTM4NOdaiy0w6a9vDOyD6O2xdaE13jE7A/6yQwVdU
-	pv4h9Z03dKGyZrOaXsCV1NF/rforQCI=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-580-stlBmczsODm9WUGa3K-6hQ-1; Tue, 19 Aug 2025 10:24:56 -0400
-X-MC-Unique: stlBmczsODm9WUGa3K-6hQ-1
-X-Mimecast-MFC-AGG-ID: stlBmczsODm9WUGa3K-6hQ_1755613495
-Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e934da9eb25so3752391276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:24:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755613495; x=1756218295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f+6rtgrIobcRQVsNX25xQXMRbcgLTca8mFUg3pNO2o0=;
-        b=tOeEcOybxQ1z6T112mC8d8IpQoIyX93yT7rK5Yd5Yk4pHDe1TDF8YmB/PV6Qw8a20Q
-         9iDlvHICNWbAmxjk5Rn9JAhcJxpeD5N52SusF106Z3Exig24cbUIbghWquFgHJ+toRhS
-         PYFg8L1mNQgBPNDQYO5rHKsEfxItlATSNA0zCSaFFKJ0Wgwqb/3J/NP2xz1+aKchg7/S
-         dBHVxNmYV5hxfRozpMwUkx9c8/m6MTGioPuCwgC645EfforBpC5daYIG3o86POz8jfdL
-         HzlNRokeL3BinDe/toxrg/FpNJF51g4vsfoHex4FFvzaftP2rstRtIUGMpQZRpuY+KAV
-         Ynnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuZNAjgSFjKVNg+sS4OurnAWiDvzEQE1UWYlxiClpIqT+rpLtPh0igzCYQK5yHECuAbuK36ckJDdNl9Gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPanLl6ImZBVi10uOYEe73KtW/Ro8ZoTjzYSALOG1F/H39SajH
-	1KBNxn4FDTd6x/NRIhVS4YylHSf0Ta6Nk+bGTL5lWOrC0zZ31uRngRcLjn8zDn20wS8l91/ibDm
-	rjB+M9vR6C2ESiThILyCMr9S7R0D4tk2vqyrPB6IkeppLGpvKrSXYpr/BX5otendk8Pez0yvJB4
-	a4zLhJ7nSq4GxWp7rTqmyWn8PzQp9FU7J92ewOApXm
-X-Gm-Gg: ASbGncsjli5wyeAEGfXgCz3S1xwpuROBsU5XI9JCJTGOgdTJjeka3jgCZVEyWXvjjTV
-	mlAzPVpTuf7QMzGja40DEMvgXM7ZTTLVvLnif/0/Z4PIz//Kk1t2HWv9fhQMg4nj4d8dBZ0IidN
-	Vp9z6BM5kCW9XVD/AwpXS/c+w=
-X-Received: by 2002:a05:6902:124d:b0:e90:6b79:23b5 with SMTP id 3f1490d57ef6-e94e6175edamr2941272276.11.1755613495472;
-        Tue, 19 Aug 2025 07:24:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGF0NyUe7/RofjcC4QixzaRFRmVdElcMtMYnzi+jpWMgZd139uXmHSJYXx/CbZFkRV3womoYTYYBMDs+rGHGVg=
-X-Received: by 2002:a05:6902:124d:b0:e90:6b79:23b5 with SMTP id
- 3f1490d57ef6-e94e6175edamr2941207276.11.1755613494924; Tue, 19 Aug 2025
- 07:24:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A026B2CE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755613516; cv=fail; b=QRno6iF25xIo9SNKJBWrYtMT8u9gl6f8UwwbLzaD2lzEB6qe4cRmMtTwJaJSsUYr19CDCa9R0ABaX8YtIVjxfLelX7Ph/vDsLaMeA7yPgmfqIEmVb4gqQ6vZtVuVBMMYXasbz1/efQII8YrOtxsPZfSpuZaYX3P07pWNjcnPKew=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755613516; c=relaxed/simple;
+	bh=MH9U3Zkm0+ndeefT4GQb3eHhBpzoAXqozm84jaofaus=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UNg7dQRQvF+jPu1FrOGjneHl4P/CUM4DOJPPyc3y/B3e/mKt81DLU+WYEaltQrdiIGHZZRmbGfiftfeWZBs5qMT8prayW69pvA1ysJbRlxA8XkjyX1TtvfD8J7ooAXDPaiYzeMzXrENCVp9Az3uRyEHQjwv4gbzzzFg7xDpi+dI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=LtiuodL3; arc=fail smtp.client-ip=40.107.75.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T8dgq78JZ1+Njv0wZbqZ4pF+VaOCEZV9KiE/13VHLHb0XdRJWJmLs6yeZ4t9jRZHV3m3v/RQMiQhUtCtRkUBNuV6xomtwPAeqscMai6fzCZGLsGZIjN6PnuTqlYQRAmH+gZ0wkIksACRfc/DoUfMdKxgu1ubJQxGbQd2LDOaW4XLc8znqwlOFY1bT9P8089X52oS08/VvKeqMpwzxyR6LL0CuhXtKiUsOdu4fAL/cz3W0b+zQPjlBLOqG8qguVVeJZxwCt/7k/xPOnfS6NvjJLWkfiA9uRgXHo9Jh3OzltcnyVhChpWZyYTND9s1fuA7yEIe7i/GDBn8xhbVmCzgLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6fkRtyeKvLtdj29WpA6YQCR/8SUChRk6XAilaTQtLVE=;
+ b=gkHdytl6Xwk8XFMRDcee0bzGv5WHoPFxf3UKbGCKnMqkUsQIDycYfFcpU+sMQ8DF5Kay5Lcz8aEEqe9U3sgplgjC8qnR0rpwHELwJnKLGF6L8nKFP5LOshbo/osWhPLLcCLD1Y1N6F7+iVeGlYq7hvRggYv75GkaOjROIUIYi646s4YATudf+k+rlKimVcphk8JKo+VLkkrjN84FswF8aIXiUW9luxfQ+H3qquuKiEa1EAYn2FLvip45aZQdg8r3quAsRR8WN2kKaiJwZf7xmKlo9K7yos/qvCQYIgh0GntcV9copHic3Y8r7QZUXF+2lhYFgQHFbip7rkqGXqW8YA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6fkRtyeKvLtdj29WpA6YQCR/8SUChRk6XAilaTQtLVE=;
+ b=LtiuodL3kuR7EYY1o7h4ztrKjIvzBy+doq5vKQ2RaEtkLfI+KfZ/agoYb4OknNrKLsj8KBehflKmF+VpMpNKBJ3ABw0eglMCCIOjsuT7O4SrchbU4oC8iZSaGliB86TO9SZthah+jxjjNaqhT+cGLs77kH7ueqL+Bxut1PFQ2joKhUmrPaoRDhcW1qrdBFyQFF7GABDOhRb+0tQ64lGI0L+uO7YCqI1O5tcwCp/K11wbwugQ0x+mKf/7jQUWU+cueMdB1CsBsVwT18KAwRFS2U0Yt0v4nR0knHBO2/SE9iph7GP0lqO9R+I+MRGqnbJZkxsCd84AdX6wVMtsDN9usQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Tue, 19 Aug
+ 2025 14:25:07 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 14:25:07 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Alex Hung <alex.hung@amd.com>,
+	Aric Cyr <aric.cyr@amd.com>,
+	Taimur Hassan <Syed.Hassan@amd.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Dillon Varone <dillon.varone@amd.com>,
+	Yihan Zhu <Yihan.Zhu@amd.com>,
+	Muhammad Ahmed <Muhammad.Ahmed@amd.com>,
+	George Shen <george.shen@amd.com>,
+	Reza Amini <reza.amini@amd.com>,
+	Cruise Hung <Cruise.Hung@amd.com>,
+	amd-gfx@lists.freedesktop.org (open list:AMD DISPLAY CORE),
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] drm/amd/display: Remove redundant header files
+Date: Tue, 19 Aug 2025 22:24:50 +0800
+Message-Id: <20250819142453.368440-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0040.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::7) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819134824.623535-1-npache@redhat.com> <20250819134824.623535-2-npache@redhat.com>
-In-Reply-To: <20250819134824.623535-2-npache@redhat.com>
-From: Nico Pache <npache@redhat.com>
-Date: Tue, 19 Aug 2025 08:24:28 -0600
-X-Gm-Features: Ac12FXyGOl9R8GM6piGm3MATFXxEB46AmdLRhkeJHEPEb8_8zxs7ckcl8qzqEps
-Message-ID: <CAA1CXcCBu290fywdxqCY=05ejSLL0P4z5KWRrMf2LRxz1VzYGg@mail.gmail.com>
-Subject: Re: [PATCH v10 13/13] Documentation: mm: update the admin guide for
- mTHP collapse
-To: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Cc: david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com, 
-	dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
-	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
-	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
-	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
-	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
-	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
-	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com, 
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEYPR06MB5134:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1b521a8-a0b1-4dea-d4f8-08dddf2c3281
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Qxp8yEhVU3UXQf2XRhwMC7It15TpxFM796UKp3xtbwe2d+rz0D99oBy+VHAo?=
+ =?us-ascii?Q?ZXZreja4jwmkXscTfQK3FMbHzFW4p97FCj52GMmqAByHwyUs+UmjgVwsCMiI?=
+ =?us-ascii?Q?24vB77+hFaZBxz3fGv++Ec4zbm+qikh2W/gshXo1cUm9Sqxpc+kLvmxnuZIp?=
+ =?us-ascii?Q?uIf8FaV9oStgbSRYQGAhkilArPm5tZJCnh5Oh+/TkK/mSNDRUWuB+qE7NIPA?=
+ =?us-ascii?Q?3zHSf8ZcIcY4KllKFzpyBGqiD1MNjIk+cQJa1JFVWHLkhjiJzlYz+j/PBpz5?=
+ =?us-ascii?Q?r2KNHGAaohehyLBqMS6EFR2HN1T5RhvvF7WgQBE2O9gzEVgS64v3ocq0TBZ0?=
+ =?us-ascii?Q?pkW0AGSoY+gCyhMQjIAPr4O+4Md9le8PEE5zCYHneI9JTqlLNqZ7YSLrRnEe?=
+ =?us-ascii?Q?wFpgoCJjREWvrxuKb09w4NDExaTOP6+/Qch+aKhS40U6jvANURuvehLa1XRg?=
+ =?us-ascii?Q?lm7ribi0VbjTGcKJOpAVDNtPYag9pXD2q8NjHFC+fXtEAbnLSyLzosXGVDx6?=
+ =?us-ascii?Q?A9SiG7nrQtv4dhWDR4qlo3YBWHHb7DuZP4dM6JcQFcR5aJjokbyrP/7eySZc?=
+ =?us-ascii?Q?SofGTVJh3KvC0eDPusqSUbZBoSowv2X9hNXEinqSNlo4Enpss/tg/WSdZI2y?=
+ =?us-ascii?Q?bnhijC5E2UtAaXb9f+zsUpo2D/bsRkPUwoyiRSzBao4B922wDbofDK0rWy+0?=
+ =?us-ascii?Q?RvZkacnQl4+rerM2z+RsafA9er3vUlUPLDCBMFldo4zIoFudqEQj/PhE/iqC?=
+ =?us-ascii?Q?oRsgwSpVdYAECFj6JMKyrxBZeKB5dvjp1YdGB26HMZgX25FPCmzYsIlt5gWL?=
+ =?us-ascii?Q?VJkUfi4xbPaQXxsLMIZ1VPsGkD4lUUaivZuKyGLt4bbG2vwsfytWSDEGdd32?=
+ =?us-ascii?Q?7bPRdnWiZiB/0JMb7ZduyFIkXnaGKkKtWsxrGIaDDGqEWR2RTUOqobDDvsIF?=
+ =?us-ascii?Q?2pmpIz4ihxJMHv3FphGdGEupYSqR0xCPSHZBHTYvHKHko15Hz64usrgszPkN?=
+ =?us-ascii?Q?Vedcfi8fpMIO0M+XZWUDbVrUTrxavf51TCg5U0NFAkPTdaORKKVJ4RiBuDbf?=
+ =?us-ascii?Q?r/krd9XG+0oADZUKoMdsMgkrOGmc0+SwIsxwsXJbK3j9AomHXY1cwyqGmOMi?=
+ =?us-ascii?Q?ILgQPmRMe9PNjlPN2Q7J1+vmrdRUfb0rHJIY4vapWe3qpmlCdn6jQJ4xBYqc?=
+ =?us-ascii?Q?dRt/0IWxIaRv1Dnb6PrG4LMRLFbzFu5cR1UrtDmqhhDUUTJo/6FD825LJsWi?=
+ =?us-ascii?Q?9KTBWjZ/lE/+togXpa788Y+cRGjAIjlKbMmwoqWRFIm1I6fm6KRzu4ZsUzUm?=
+ =?us-ascii?Q?VHTV5STnuqx5Qlf7hCw0NStEpFqcHUQn9/+R5OdGqrOCuiW6TzA9V2tU213H?=
+ =?us-ascii?Q?5W8uDpLZ1ApJdx8Yyyvt8SvdIzjW10UDHVAIQUJaK5g3BkRhvvnZsQpBNAsM?=
+ =?us-ascii?Q?o2eanUHkKmQd0j+4B3MauVOPr65pwhTxEtQOkU3H1JsaJTMWuXxRgbmQM9vW?=
+ =?us-ascii?Q?uUjj/G1DseVHuYE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?l/c50hCEIBP5iYRVHGLm/qU+dOWhi4F7OXdrE1OwSrZieU2ahRTY8thX4F45?=
+ =?us-ascii?Q?WsxDd7bbxmFZZLVv75g+CqcOnv7OsP9dOyr8N3zWCvYsS4Dck4MIi7qiPoQI?=
+ =?us-ascii?Q?60AbHJXVjgU267fG1QriDkBh4yN1BkpwahAzeg5oOdZzhp8t3uDDsdosjHCr?=
+ =?us-ascii?Q?SpZsZkN/2g6U1vqq00H4AsidmR3c016SzEi413LXBYobFi/EzYCFJXdRf+x/?=
+ =?us-ascii?Q?hpe/6YPEJYuXUyysGzdMiQfrvLIkVNTP9sAOvXMDV8UMoVcWcjgYjIhr1TEq?=
+ =?us-ascii?Q?tzmYSfX7gDTpB8jbwx9/wNUxAw0MuPaJHi8d31eScyKd/XlJxfEUdDYzzODP?=
+ =?us-ascii?Q?LfcP7sVpjjSQojXpMy1+l5Ds8pY8zi0FsAva5D7db5aza9lHftoJSqaoNyDs?=
+ =?us-ascii?Q?N/QQ2RHhf7fMCZQTFjdnUBOhu2cV2pDRba5yimS124qwo7+mp8bnhP3j0wyF?=
+ =?us-ascii?Q?hFBUgd3fWe1hJCBS3gIBDEAPFvE15nGDtTIDZev6zLEe0xof0EvK6REZI72e?=
+ =?us-ascii?Q?uCfGl+ZMPGmf9Qi2ubiBA4o2R7eMXHvIZ5vJ8UKhZnGw36oZ2Ro6XBiK9fqU?=
+ =?us-ascii?Q?eP0BU77Gfkh5QMRXBAjiOjvBuAXXFdNgKLxl457iXKTMBnsyd+eUwkPWASZm?=
+ =?us-ascii?Q?9+iBGPNr1dA7lsmvJxbc3l3i9YFfvmn9boH/KigaapfoySGS2ijvV3h3xPnv?=
+ =?us-ascii?Q?/dUEqJBHRZ2gWOigxKgE1m16h2KMumUiM+zpV/Qm/zOPoKbpGNWAszs7wDK7?=
+ =?us-ascii?Q?Cv90Ia+jnpvszZSsocXQQ4McNmRBvFKuxYEvLGytAkqvtnNa1RlZUp14BskG?=
+ =?us-ascii?Q?ntrGaG2HWczRtl6K6IKSIxxZj3pxbezU8QCnCcrI1OsPuUKpsyG6meL0Gtdg?=
+ =?us-ascii?Q?8Fz/FwiCCEX+aSxb1LnEVHDAQaWXdk7/InUJHSDK2rG7BisCGwd1NbSmBjoS?=
+ =?us-ascii?Q?nSEo09GaK1eKfxgsW/lHe57pGuIlXdFTCC9jWciJUNTE0LfijTcmlkTjKbPu?=
+ =?us-ascii?Q?p5AVhq9MjM/aFT4Y0k+CuOPfWqkrNxP/g/UU4XJzVlTIZAinlKDrCimHknCO?=
+ =?us-ascii?Q?z4N4+vK3i9APB25WhopifFUQTc1DY7qGCFzItNFWRS+JmdnWMZKReTJdOya0?=
+ =?us-ascii?Q?6YF3hDCgqIrY33Ai29Kju3lU1+OusquKs9cREQSMowWO/omqAhUjjlPtrMYN?=
+ =?us-ascii?Q?aefiZ30z70g0THJ/aUBU0TRKJhQCZrAWTZjg0C74B76IsFGASPNkjl5xTbZN?=
+ =?us-ascii?Q?QriTtsve/PLloqJi8EH/lTMAAsI/OPK5LJtDlHC/Iea+e9AiPFINP0/YCm+r?=
+ =?us-ascii?Q?88XdnodfF5UGa/kBevQKLYCflNCPbdIl9FPvRIT7+jP0Av4xZ6mHEx5cLM4x?=
+ =?us-ascii?Q?FeuNl3/T+5to6A3sKJo+WpnnEw/FHP3l/jX9hu1Cp6Y2Nt7+EroLb514yTEw?=
+ =?us-ascii?Q?tCMpGYpOFSHBzADXoEmw4ZXARUztwAjBKeL9nk6DsWoNwZJIMc5rNIcbjRRg?=
+ =?us-ascii?Q?TQ19Yjl6LIbrlg7ZCsn3o9QqSsqxNinOWcHLodSOTbOoZV2VnIT0dm/T5XOu?=
+ =?us-ascii?Q?ihT7Yd6mCYjhLL1N7GUvALisxlw3urniwR3iELsy?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1b521a8-a0b1-4dea-d4f8-08dddf2c3281
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 14:25:07.7691
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8QsK+AXmtffduzGnsvtVmCl1El6wAjlPIwPWGyYGjU3cLWQFJwlugd2/3s8O7JOaBPDDEEnZEvD7evUDlSKiHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5134
 
-On Tue, Aug 19, 2025 at 7:49=E2=80=AFAM Nico Pache <npache@redhat.com> wrot=
-e:
->
-> Now that we can collapse to mTHPs lets update the admin guide to
-> reflect these changes and provide proper guidence on how to utilize it.
->
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
-I had git send email error and had to resend this patch (13), but i
-forgot the in-reply-to
-please ignore this one and reply to correct version
+The header file "dc_stream.h" is already included on line 1507. Remove the
+redundant include.
 
-https://lore.kernel.org/lkml/20250819141742.626517-1-npache@redhat.com/
---in-reply-to=3D20250819141742.626517-1-npache@redhat.com
+This is because the header file was initially included towards the latter
+part of the code. Subsequent commits had to include the header file again
+earlier in the code. In my opinion, this doesn't count as a fix; it just
+requires removing the redundant header inclusion.
 
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/gpu/drm/amd/display/dc/dc.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-
--- Nico
-> ---
->  Documentation/admin-guide/mm/transhuge.rst | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
-dmin-guide/mm/transhuge.rst
-> index b85547ac4fe9..1f9e6a32052c 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -63,7 +63,7 @@ often.
->  THP can be enabled system wide or restricted to certain tasks or even
->  memory ranges inside task's address space. Unless THP is completely
->  disabled, there is ``khugepaged`` daemon that scans memory and
-> -collapses sequences of basic pages into PMD-sized huge pages.
-> +collapses sequences of basic pages into huge pages.
->
->  The THP behaviour is controlled via :ref:`sysfs <thp_sysfs>`
->  interface and using madvise(2) and prctl(2) system calls.
-> @@ -149,6 +149,18 @@ hugepage sizes have enabled=3D"never". If enabling m=
-ultiple hugepage
->  sizes, the kernel will select the most appropriate enabled size for a
->  given allocation.
->
-> +khugepaged uses max_ptes_none scaled to the order of the enabled mTHP si=
-ze
-> +to determine collapses. When using mTHPs it's recommended to set
-> +max_ptes_none low-- ideally less than HPAGE_PMD_NR / 2 (255 on 4k page
-> +size). This will prevent undesired "creep" behavior that leads to
-> +continuously collapsing to the largest mTHP size; when we collapse, we a=
-re
-> +bringing in new non-zero pages that will, on a subsequent scan, cause th=
-e
-> +max_ptes_none check of the +1 order to always be satisfied. By limiting
-> +this to less than half the current order, we make sure we don't cause th=
-is
-> +feedback loop. max_ptes_shared and max_ptes_swap have no effect when
-> +collapsing to a mTHP, and mTHP collapse will fail on shared or swapped o=
-ut
-> +pages.
-> +
->  It's also possible to limit defrag efforts in the VM to generate
->  anonymous hugepages in case they're not immediately free to madvise
->  regions or to never try to defrag memory and simply fallback to regular
-> @@ -264,11 +276,6 @@ support the following arguments::
->  Khugepaged controls
->  -------------------
->
-> -.. note::
-> -   khugepaged currently only searches for opportunities to collapse to
-> -   PMD-sized THP and no attempt is made to collapse to other THP
-> -   sizes.
-> -
->  khugepaged runs usually at low frequency so while one may not want to
->  invoke defrag algorithms synchronously during the page faults, it
->  should be worth invoking defrag at least in khugepaged. However it's
-> --
-> 2.50.1
->
+diff --git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd/display/dc/dc.h
+index 1ab05eabbddb..2ceaf861edb9 100644
+--- a/drivers/gpu/drm/amd/display/dc/dc.h
++++ b/drivers/gpu/drm/amd/display/dc/dc.h
+@@ -1854,8 +1854,6 @@ void dc_3dlut_func_retain(struct dc_3dlut *lut);
+ void dc_post_update_surfaces_to_stream(
+ 		struct dc *dc);
+ 
+-#include "dc_stream.h"
+-
+ /**
+  * struct dc_validation_set - Struct to store surface/stream associations for validation
+  */
+-- 
+2.34.1
 
 
