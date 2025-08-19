@@ -1,149 +1,119 @@
-Return-Path: <linux-kernel+bounces-775305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A957B2BDA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:41:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C45C8B2BDAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D09837B9538
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45632684ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3A931A046;
-	Tue, 19 Aug 2025 09:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38FB31AF0A;
+	Tue, 19 Aug 2025 09:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU211ju7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vECM7eRe"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EFA311C3B;
-	Tue, 19 Aug 2025 09:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD9926C39B
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596457; cv=none; b=D0wYtGVbTdZXqyFnyjX567NaZIGwkthv7tDvd+xVz/34FjdBjF8nGuryX8r3/UfRMTwSga6Tr6TAecUc3dtAG6nGkiafF2kL7kn5jR55lkhtq2Iv2KjmddRo1ORYxypywbNnwIF1lUaUIgD+eVg5AMxaJFclMmOO0XTfGSwsb2E=
+	t=1755596482; cv=none; b=HGpZnSvmRQyX52iG2IT1I1Gc+wYIpExaAkzTd3MApGfTNTRMu9mYNxetVneQskENyW6PvxOLZ7hWxgFe+JYrBmiAWeL6sJi4yrXrysRACMGyxE5XA0QcqBLiLz/wCe3HjBccs5a5Nch4LSYPRVOZF4dbgaIfXQoAEQM1EYn+QXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596457; c=relaxed/simple;
-	bh=AOLogqr0wKrEfO1K04Ni8A5Y5inphvb/Mm2QnYgDZBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d6Qw/UbwpZX/CrSF6i8C8eE/GmTOXuBSon+pMxn8sgG+SKDMaVQ9RPYmPe6D1Up6ylzU97mojRM+bGGsA6frstIZ6pZF5Js/Vn5/NAhyriKKCXiwN8cxXrOgieP+6cBLxGxF/iOh69bvdlhk1kqpkMJGonU+FqdeabYO+845bVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU211ju7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 882B5C4CEF1;
-	Tue, 19 Aug 2025 09:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755596457;
-	bh=AOLogqr0wKrEfO1K04Ni8A5Y5inphvb/Mm2QnYgDZBc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tU211ju70zBtNfn24KpkXYGPBqgDiWuujqSuklWHGdjZHd5gMXojh31W0QbJqrxbm
-	 i4+U9Iiuc+0N1DPiw4VJidwkzY46IceIVdFV1NlBZI6qgvzSm+tV9hfaOpFvOcjNEq
-	 JXqDWr/HcWbZFxCCCOGNbE6Kp1Jp5HBsQEY26WDQ7DZwDqWcdn71YCAuFKkr1K/qZN
-	 pU73js0hqKVs58CkuOdxJ7tWZWt0xQbZZNaYEiSB0Xrio/dlIvUVw+T3LkPJcL9Rgl
-	 M9uQ8j+OW5NzbToI9vt59q9UyLcGjYVwSbUqj/RKQ94VXscfSCrxFI/0NJrIjEsdv7
-	 AcdjSoCJzYfig==
-Message-ID: <764f68bc-ba87-4a7e-a150-49d7fdab2ed3@kernel.org>
-Date: Tue, 19 Aug 2025 11:40:54 +0200
+	s=arc-20240116; t=1755596482; c=relaxed/simple;
+	bh=8OzrB53Bn5TxGHC664tdW+P0TA2+NR/DwiZkzjNkzZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BI8KeM61nRCqqAE53piPGbeKsg9QDdk9mHOFLDZ0LJl6vqV7PuzmEyBQdixb7m0oLvcJo4P6s7KarrdLAmb+7Gb3eWxkTudlFK0oIMFSbMiGWHbmDYrOcKAfdBPA5mKe7X+hwO7nI+tDiiubRgKOMglp3aJpkbTVftjL2e8bkHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vECM7eRe; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9edf504e6so2415963f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755596479; x=1756201279; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
+        b=vECM7eRed+zPnhTQQ6tRAwVWn5fTpl368Jau591Wr2fZij3Yr7XyNaVxSrPIjzKD5w
+         U16QCwvxBZNdS3ZsHQ6cgPoyv9Bmlr3Ub4+W5BRNpGxEzumyL3Uj2nkzD51YcDGg0Lb7
+         FK3qHQLqJ7VyCygn+ttLObvv+YOmIls+svsyHnG0bvIaNds/2ezTKyvyu8HOeG2Zi60U
+         fuqEX/vstVyYMt+Qf0AfuqdeqwH7lyRoHhaZu3xtOiG0iVHqec9plpW5BLTs1IX3wXOD
+         NK8c7/I/WvA9O0TvVPR//s1nf4R8Mv1FkLHOF4deJ6PHn6Xf+w37CJR6hGO+Wiwb3frb
+         PJnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755596479; x=1756201279;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
+        b=YtmMrEO1YMLxIuTp7/1TvfK7w2rjnFmQA460nsWsNLv/xJ9tIXGFoAgyBlRRsomgbw
+         UqVq+0AJPvPKIJte5NJvED7/ecBzJzETl9+Tqh2svTqQQ2gMhmP7vyMC+bSuquIvYUxl
+         Sw9klsWi5fm9q67ih/SdLvOduS7epjioyFmUtls4KD9h/dvY7CcHPifTJAbZK9s0E1iz
+         1K6sDJM3XT1pvAKM10CnRV2jSG6O/LdDk7dksk6UIqTaBsFHZa03dkLS3G5RyTjBh6tb
+         Uwi1k9ZIIFZHRhDV6OP1oisG1rQvJHPHaPsB7gOxBy9KCUaKUZWu8v/7DcEwpCKPe2CX
+         PGrg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6F+Jq3fJwYSly6xT0z1xCrKqUk3pOiVCuWGuejUyi4msMFlFrcloSzjfyKmTXT9E6+qnUbQRbkMNguFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyprQmfJIcPCaNpoVwBOUFjujgfTBI0CqkbiKXpkfg1GW6NKsg9
+	93LbapZ3XvH9SmrrQqY7ruj/txV60AWeDJ00aTxZd3cag4o/EBirXt1/hNfH6iCTDP4=
+X-Gm-Gg: ASbGnctUSBKVFofoPDItz3loVt89dSDek5RvOLDmcfYRuJHP9lzv8RlY9l7cxcR3rpb
+	CxgqEqYsOPjIZ8OhOG0/1JMiOf5x68BU2IC5Fpj+NtqWH+X1PwwNtkcXWO/q6rVo8WDdlDnbKGE
+	jq1WGfOjKoZ+n0Ch62ngh74FQKr5ZJjWKiv7yMrBtG9uSVwDuP1KPzRRj/Sg/YFY7Neb8fnAvW2
+	hsaxhtEAf9FeKeW0KjPKVwBBtHw/RgmLEbzfSNLAIltks42eBcELhXLzh3hnZ/pZit32TXfIrM4
+	SSgMVPQIoikJFFQYu9pvVsnxwO7gCHI0O9V7RsWpu5DLncQqzqmqO5rohmhAbEjTyRK8anZzNPL
+	l6lew31ofVsR+vqS+WWRR4amktPI=
+X-Google-Smtp-Source: AGHT+IFPnGBxUMbzp7/ciRb/4QDD/AoPuRkeVnisBhwmTgmtd+TF2XWKrPM0uJzG+Ht4NJS9oAj7Vw==
+X-Received: by 2002:a05:6000:178b:b0:3b8:12a6:36b8 with SMTP id ffacd0b85a97d-3c0ec195bb7mr1400850f8f.46.1755596478926;
+        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b42a97c02sm35092625e9.23.2025.08.19.02.41.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:41:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] coredump: Fix return value in coredump_parse()
+Message-ID: <aKRGu14w5vPSZLgv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: serial: Remove the use of dev_err_probe()
-To: Xichao Zhao <zhao.xichao@vivo.com>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250819092437.550759-1-zhao.xichao@vivo.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250819092437.550759-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 19. 08. 25, 11:24, Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
-> remove the useless call to dev_err_probe(), and just return the value instead.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->   drivers/tty/serial/max3100.c | 2 +-
->   drivers/tty/serial/max310x.c | 3 +--
->   2 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
-> index 67d80f8f801e..552b808a1bb2 100644
-> --- a/drivers/tty/serial/max3100.c
-> +++ b/drivers/tty/serial/max3100.c
-> @@ -705,7 +705,7 @@ static int max3100_probe(struct spi_device *spi)
->   			break;
->   	if (i == MAX_MAX3100) {
->   		mutex_unlock(&max3100s_lock);
-> -		return dev_err_probe(dev, -ENOMEM, "too many MAX3100 chips\n");
+The coredump_parse() function is bool type.  It should return true on
+success and false on failure.  The cn_printf() returns zero on success
+or negative error codes.  This mismatch means that when "return err;"
+here, it is treated as success instead of failure.  Change it to return
+false instead.
 
-This one should be turned into ENOSPC instead.
+Fixes: a5715af549b2 ("coredump: make coredump_parse() return bool")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/coredump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +		return -ENOMEM;
->   	}
->   
->   	max3100s[i] = kzalloc(sizeof(struct max3100_port), GFP_KERNEL);
-> diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-> index 541c790c0109..79bec9509154 100644
-> --- a/drivers/tty/serial/max310x.c
-> +++ b/drivers/tty/serial/max310x.c
-> @@ -1269,8 +1269,7 @@ static int max310x_probe(struct device *dev, const struct max310x_devtype *devty
->   	/* Alloc port structure */
->   	s = devm_kzalloc(dev, struct_size(s, p, devtype->nr), GFP_KERNEL);
->   	if (!s)
-> -		return dev_err_probe(dev, -ENOMEM,
-> -				     "Error allocating port structure\n");
-> +		return -ENOMEM;
->   
->   	/* Always ask for fixed clock rate from a property. */
->   	device_property_read_u32(dev, "clock-frequency", &uartclk);
-
-
+diff --git a/fs/coredump.c b/fs/coredump.c
+index e5d9d6276990..f9d82ffc4b88 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -345,7 +345,7 @@ static bool coredump_parse(struct core_name *cn, struct coredump_params *cprm,
+ 				was_space = false;
+ 				err = cn_printf(cn, "%c", '\0');
+ 				if (err)
+-					return err;
++					return false;
+ 				(*argv)[(*argc)++] = cn->used;
+ 			}
+ 		}
 -- 
-js
-suse labs
+2.47.2
+
 
