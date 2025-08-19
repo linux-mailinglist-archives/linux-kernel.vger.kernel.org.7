@@ -1,154 +1,119 @@
-Return-Path: <linux-kernel+bounces-775720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18DEB2C406
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:44:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C45B2C402
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86672176BB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6AF5188ABB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047DB30F813;
-	Tue, 19 Aug 2025 12:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220163101BB;
+	Tue, 19 Aug 2025 12:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="A4VcPE+Y"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zesjhzVD"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116B12C11F9;
-	Tue, 19 Aug 2025 12:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6123043A7
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607269; cv=none; b=WjRIiLmR9YubfsrVt2EDV0hnl9SdNdJz8PCGJ0srBy7hgmb4GOeQ23K4aFBnw7PaX7Zkdhlv92YNtj9g82vsvhwO+9Xa9IlODhAIiHqC3YxJk3/9eYGJaacL+JxqesA5X8zZOcebD4wCYJlxZivX6fEuO/ZJ8+dS+GqjWvMCq9k=
+	t=1755607316; cv=none; b=BnFzMFIQ6dD60BjX2Y7+Rkp9XOxBCL0xzdaUIx88gnq/CA1oK/RluNnDCCTGMpj0OK9ZxXf5AbDyjByqz04q7OlXm/WzHPGNk14MeRwCdlniawpLtMll+6Wej0JevH7aOjaaZyqjoYYMU5d9rgKHl2BB10lvFnLWzB/SDUsDUcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607269; c=relaxed/simple;
-	bh=hh0hq8bl+6A83FbnX3IgduD0wlBkscDYAAwjB9LkfIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=At61NfF+uY6nK3w00MRKnsRMulQTDFkZzZuQ51531TqgzLXBrPilVId1ImwhKxszAvTKEXySzVpmAEnqzru9qiJ2Sw8JzQVpUCA9nZatmnmWI/B8PUmrJlU81r4AwmZslgszy9R9ItVZYwoXrMHSiOefgWGnuNsQ5iOH00A5OYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=A4VcPE+Y; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 283F7207A3;
-	Tue, 19 Aug 2025 14:41:04 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id GITvgjRrHzIi; Tue, 19 Aug 2025 14:41:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755607263; bh=hh0hq8bl+6A83FbnX3IgduD0wlBkscDYAAwjB9LkfIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=A4VcPE+YbdV/CT7PaNypqPsnuGdUcCBS7wgcpvtw336QmE2Ou2imom4xRufhUC0Os
-	 WqaGobxZ+5IN2cuyhbfC5eaEr1AWTiBFeoKB4gYM4U973psh0pDp25rT7ZUdhc4JpV
-	 MJT3wMKlJh0T/jWQUuwRls5mr0n34CLwQquUd9BzMULi+pCs4BHEBsUkflITJJCpOR
-	 CyaGZRanarTubzks3SDZWBM+o89VI35LXtvtwwLZkgGwdl1lOYocJlVoL2zs9ur1Sn
-	 Yq2eVrejKEuOFtAb7BRIqeOxIVAna95GYPOVN3fK9TZVSmzXcK0LapcoQssiP2YfK7
-	 GJw2uV+uKaDoQ==
-Date: Tue, 19 Aug 2025 12:40:54 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [PATCH 2/3] pinctrl: ls2k0300: Support Loongson 2K0300 SoC
-Message-ID: <aKRw1pEUUwd4cQoW@pie>
-References: <20250811163749.47028-2-ziyao@disroot.org>
- <20250811163749.47028-4-ziyao@disroot.org>
- <CACRpkdZp8FLrxgkeZ=xzSPgny51iDZ3KRCrxpoSdgF8_=df=KQ@mail.gmail.com>
+	s=arc-20240116; t=1755607316; c=relaxed/simple;
+	bh=2oNXOoxywYfVBFFbPZ7hZAbK09R5OqnjTJGfv1ceELQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qal5rrp8zUtWSthQ5lzTaxZt1hKMXGKPHaqkhj2oN1MU5Ify4WYnj9cpi/tpV+svcNt04o732+zJ9tjWk10f2cv1DtQLpHFVsBc+FSjkY+rqfMZ6M6MhMe+TmFbMe/8xVA3kr0vf4lV+SrI0dY9IWUMkrdEUDGF5OyE7jZ62ySQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zesjhzVD; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b9e4166a7bso2641196f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755607313; x=1756212113; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jZPu71v4iJrj40UYhCf2EubxUaw6sgyARKI4hkp1H/4=;
+        b=zesjhzVDWBfqUr6mtGxBhk2nDVrSj3y/LqNH5RHdUiuqLyUvCKA0PMn7muc+v4K+/0
+         rV69pTnM7S5jWJPcBGQSk/I/kGgR0WYlulhCZ/Fo8kMem+Fv16wyVB428XHJBwbzwpR7
+         Uo3a3mqU2PiNJ/BuN41m6QT/xatJ8aDr8OL8553m5L8NiBOVT+fQrOsc6CQaf55RjKG2
+         938p2eRN9Ay4u7AbpH6ce2RUHjojXrPVxD38arADQWPC//WGGbqqdopASNvvj1ZG4mDA
+         GS1FsV5btfjI6ba9YZOuNZyKlqKT+GZGBUg/WbdmF06wyNcYmPgWGzhK5v0Oc8+XZxBM
+         7Yfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755607313; x=1756212113;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jZPu71v4iJrj40UYhCf2EubxUaw6sgyARKI4hkp1H/4=;
+        b=uC1bwKO3KRTLc4F527wz7avpHYoY75v7jcOSi3ISpTJhGeUoMAwDHoMz48BwLnKeZ1
+         it5FbojGbMYW0w/JZ2iOXNembL8jXPt3olVpYAxaALa8MUqJWrDnRAab4N3hwzqXDDTF
+         TlahF/H93yaFn5B4oELUP3pRnwyLRXLBxE8oxTN3mjXG+pZPqNgE30TFQLI7UMlX054O
+         F6ILMvUl3uaaHT1xAfwAefF6sY/L9PeTy9OAYO8jgSrjXmyF9Kz5qqYB0xOmOdWr8ihp
+         h8TT2u1v7LV4S1pJY/M2SlPBcAabwdcx2YVe5bC/c27iKksWVeFpNjZXjhUlIVMfzViq
+         9GSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKrc+TIkqIp2i6d6VlooG2Ry7xss/3psaRW1gXdX3EIUggY5eRW2Wg3AllclFLcXEeudErgu8fyXTR4BM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwVX7e8XX6IVIhLl9Fj2DOcVmGlE1tj0y4k83al3qmPxu676LF
+	l/MJYwo3/MCjEqCOxOpspHXMYOJasT4DA68e6X8mN7l72ZWd2y+xHHj/VC8e8Uhgr1ulMDswBhV
+	Fz91RuHmfMaDO4FMTEg==
+X-Google-Smtp-Source: AGHT+IG4HvCG6xMAP0kc+KeWFDcdVkf0VrlLc9RsRO55bsIjMgWKuo8r9NDS3JOpE0Jihm8a/GII747UxtSnXhc=
+X-Received: from wrbee4.prod.google.com ([2002:a05:6000:2104:b0:3b8:e8d5:b8d4])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2d08:b0:3b9:14f2:7eed with SMTP id ffacd0b85a97d-3c0ecc315fbmr1499787f8f.56.1755607313087;
+ Tue, 19 Aug 2025 05:41:53 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:41:52 +0000
+In-Reply-To: <20250819-maple-tree-v2-1-229b48657bab@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZp8FLrxgkeZ=xzSPgny51iDZ3KRCrxpoSdgF8_=df=KQ@mail.gmail.com>
+Mime-Version: 1.0
+References: <20250819-maple-tree-v2-0-229b48657bab@google.com> <20250819-maple-tree-v2-1-229b48657bab@google.com>
+Message-ID: <aKRxEEy5ln8qcGGI@google.com>
+Subject: Re: [PATCH v2 1/5] maple_tree: remove lockdep_map_p typedef
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Aug 19, 2025 at 12:02:23PM +0200, Linus Walleij wrote:
-> On Mon, Aug 11, 2025 at 6:39 PM Yao Zi <ziyao@disroot.org> wrote:
+On Tue, Aug 19, 2025 at 10:34:42AM +0000, Alice Ryhl wrote:
+> Having the ma_external_lock field exist when CONFIG_LOCKDEP=n isn't used
+> anywhere, so just get rid of it. This also avoids generating a typedef
+> called lockdep_map_p that could overlap with typedefs in other header
+> files.
 > 
-> > Support pin multiplexing and drive-strength setting for Loongson 2K0300
-> > SoC. Pin multiplexing could be done separately for each pin, while
-> > drive-strength could be only configured on function basis. This differs
-> > a lot from the driver for previous generation of Loongson SoC, where
-> > pinmux setting is based on group.
-> >
-> > Pins are represented with pinmux properties in devicetrees, and we use
-> > the generic pinmux API for parsing. The common pinconf interface isn't
-> > used for drive-strength setting, since it handles pinconf settings at a
-> > unit of pin groups or smaller.
-> >
-> > Instead, the driver configures drive-strength settings just after
-> > parsing the devicetree. The devicetree's structure ensures no conflicts
-> > could happen in drive-strength settings.
-> >
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> With this change, bindgen will generate better definitions for this
+> union, which makes it nicer to use from Rust. This avoids a cast in the
+> Rust abstractions for the maple tree, ensuring that Rust's type checker
+> will notice at build-time if ma_lock is changed from spinlock_t to
+> something else.
 > 
-> Overall the driver looks very good, well done!
-> 
-> Look into Rob's comment on the bindings to use a single node
-> for mux and config.
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-I've raised several questions about the binding and will change the
-binding and code according to Rob's answer.
+Ah ... this didn't work. There's still a configuration where I get the
+error:
 
-> I saw that you want to make the pin controller strict, if you also have
-> some pins with "GPIO mode" that will serve as back-end for a
-> GPIO driver (and I saw you posted a GPIO driver series as well)
-> then have a look at Bartosz recent patches to add infrastructure
-> for pinctrl to know about what a GPIO pin is:
-> https://lore.kernel.org/linux-gpio/20250815-pinctrl-gpio-pinfuncs-v5-0-955de9fd91db@linaro.org/T/
+ERROR:root:error[E0308]: mismatched types
+   --> ../rust/kernel/maple_tree.rs:256:18
+    |
+254 |     fn ma_lock(&self) -> *mut bindings::spinlock_t {
+    |                          ------------------------- expected `*mut bindings::spinlock` because of return type
+255 |         // SAFETY: This pointer offset operation stays in-bounds.
+256 |         unsafe { &raw mut (*self.tree.get()).__bindgen_anon_1.ma_lock }
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*mut spinlock`, found `*mut __BindgenUnionField<spinlock>`
+    |                                                                               
+    = note: expected raw pointer `*mut bindings::spinlock`
+               found raw pointer `*mut bindings::__BindgenUnionField<bindings::spinlock>`
 
-Thanks for the link! Actually according to the manual, all the 106 on
-2K0300 pins could be multiplexed as GPIO. But the pinctrl cannot set up
-any pin config for pins in GPIO mode.
-
-> The current driver does not seem to know about any of these
-> pins being usable as GPIO and does not implement those:
-> 
->         int (*gpio_request_enable) (struct pinctrl_dev *pctldev,
->                                     struct pinctrl_gpio_range *range,
->                                     unsigned int offset);
->         void (*gpio_disable_free) (struct pinctrl_dev *pctldev,
->                                    struct pinctrl_gpio_range *range,
->                                    unsigned int offset);
->         int (*gpio_set_direction) (struct pinctrl_dev *pctldev,
->                                    struct pinctrl_gpio_range *range,
->                                    unsigned int offset,
->                                    bool input);
->         bool strict;
-> 
-> Which is fine if the pins actually cannot be used for GPIO, but if they
-> can, and this is just implicit for unconfigured pins ... then add
-> functions and groups for GPIO.
-
-For 2K0300, we want these pins to be able to multiplexed as GPIOs, but
-since this pinctrl driver could configure nothing for GPIO mode pins, I
-think it's enough to implement only the gpio_request_enable() callback
-and do the multiplexing work here, is this correct?
-
-I originally thought it's okay to multiplex pins as GPIO with an usual
-pinctrl configuration, and didn't realize that it causes conflicts on
-strict controllers since the pin will be claimed by both pincontroller
-and GPIO controller. Thanks for the reminder.
-
-> The other driver using pinconf_generic_parse_dt_pinmux()
-> drivers/pinctrl/meson/pinctrl-amlogic-a4.c has GPIO awareness.
-> 
-> Yours,
-> Linus Walleij
-> 
-
-Much thanks for the detailed guidance!
-
-Best regards,
-Yao Zi
+Alice
 
