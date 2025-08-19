@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-774753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1C7B2B6F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:28:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5033CB2B6FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067A352054B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC444521755
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98731288529;
-	Tue, 19 Aug 2025 02:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7590287519;
+	Tue, 19 Aug 2025 02:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mtq4aona"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5885287255;
-	Tue, 19 Aug 2025 02:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XgrnGfXI"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72421DF24F;
+	Tue, 19 Aug 2025 02:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755570509; cv=none; b=vDZoQMlDMyviolA1+W58KiXr3UxxDHXk70R3iAzlE4gJKfSQ1JWPzY+HYAaaDqNnYwN77gDhhCYHGDwQwDa74WEKQa+yy64mYFUAc4ToYy1RhYZSRtAWPoa1VTbWOrOsMM4m4uri5yqeBwT8gJ2KrmNoETnNBJDRdh1/M9o3LBk=
+	t=1755570615; cv=none; b=VxNO+X5W/GD1E1rUBnZ8Y15/xjGSFC3HtKFw+dRJHrwbFqPUPE6k4wErEYfmOHbURk76Pw34XjgBis3h3ZCOofLW5VZpeHj9ti5eXqM7s57J9/1vnB4l61fv6NjhWTBveh1Fy4l+6IrmHl0DE6cQ98EQRAzAWd4lt1IhbhWnkf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755570509; c=relaxed/simple;
+	s=arc-20240116; t=1755570615; c=relaxed/simple;
 	bh=b1qUQAM60cMYPl7V0ScUvR9LA9K1JoHvN22P5gTDwR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZM/DijsaDThcA7dc+W5X8R5Kya6nYJpS6rJfIpRNH5Vv7uD1NQjnbZJ3EJskqvgw6ff6I/duv2yoKnwDmgwv0BTqJahdAboPaMEYHi8yHjc/GDYFTMv+0qvWlg45ouOiOqtqfc4liTf8EUvi7SbZX7BKnLqHTMkgIb3hqm2lgHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mtq4aona; arc=none smtp.client-ip=220.197.31.5
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RcmEhXPUtVRVaJPo59iQN0SXRZUO4kwQr0WK6DpVawGcFiEDpu+LzYtzjqdAJlWkz6KYPqB7PymZQo7isWHnwpeBxB8oacOZWJo5qi2QbDIWM0osMYathNZzy/gSxEndTZXiZqD0oZBGJ37/H0Aruppv+yDP7BxB44AU3jHB+C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XgrnGfXI; arc=none smtp.client-ip=117.135.210.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Ev
-	Tdpk/C0SrAV2N3VjzKTmAB7DE/+/AoiCYzOgohIRY=; b=mtq4aonaq+oxJVo6vM
-	rQo9+7Fkns6hTmltFs55bjpZaAtw1S9romu0+UjryOcgTPPLcBpm1pmAG2Dn32ZY
-	3m0iFERr8GjHrG24TXY1kStmikJ3SKiWbD0iT5ytoxGplix3ri5QomYtJy71gzfI
-	tangbZ0tPm3DzPN9Ukqwboo/U=
+	Tdpk/C0SrAV2N3VjzKTmAB7DE/+/AoiCYzOgohIRY=; b=XgrnGfXIEkOpNK4r2a
+	fMb5ixskQnmFJNuEENZkGhK7RqdUtaP6H3ce0mqsKsfGmW8c+EDn0otcWpsbYlLU
+	J8kHeiNHOA1F12fS5ynh3C+sLEFW3m9WO/ljxWpYbpUxNJqH+L8LbtELBxjgQLiB
+	5+lv2cLJrEjziwWcpK8QDrnqQ=
 Received: from neo-TianYi510Pro-15ICK.. (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgC3wvc94aNoBOexAg--.10428S2;
-	Tue, 19 Aug 2025 10:28:16 +0800 (CST)
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDnr_ij4aNoMJCaCQ--.50904S2;
+	Tue, 19 Aug 2025 10:29:56 +0800 (CST)
 From: liuqiangneo@163.com
 To: James.Bottomley@HansenPartnership.com,
 	martin.petersen@oracle.com
@@ -43,8 +43,8 @@ Cc: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	liuqiang@kylinos.cn
 Subject: [PATCH] scsi: aic94xx: remove self-assigned redundant code
-Date: Tue, 19 Aug 2025 10:28:10 +0800
-Message-ID: <20250819022811.14925-1-liuqiangneo@163.com>
+Date: Tue, 19 Aug 2025 10:29:35 +0800
+Message-ID: <20250819022935.15164-1-liuqiangneo@163.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,12 +53,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgC3wvc94aNoBOexAg--.10428S2
+X-CM-TRANSID:_____wDnr_ij4aNoMJCaCQ--.50904S2
 X-Coremail-Antispam: 1Uf129KBjvdXoWrtryxGF4xtw4UCF48Ww4xtFb_yoWfGrc_Wr
 	Wjvan7WryUJrs7Kw15Aa45Jr9Yva1xW3y8u3s0vr93A3WSvFW5Zw1DAF9rAw4kG3yYyFy7
 	JrW8WF1Fkr1ktjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1oGQPUUUUU==
-X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/xtbBNQquYWij31I52QAAsW
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1eOJ7UUUUU==
+X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/1tbishWuYWij20-IywAAs0
 
 From: Qiang Liu <liuqiang@kylinos.cn>
 
