@@ -1,146 +1,168 @@
-Return-Path: <linux-kernel+bounces-774921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BF4B2B939
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FDCB2B93A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B0052869B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:15:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8DA5286E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C0A2676E6;
-	Tue, 19 Aug 2025 06:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164301E5705;
+	Tue, 19 Aug 2025 06:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ibAhJEFU"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="aRzNuSld"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943E2265606
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C83A25DB1C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755584095; cv=none; b=MDlgq/VozAv8GJ/ZLLONN+KT31J8Pa2G1neaLE295vH1gufG2Khs+eBF0skGz8BwwKQv94OkOPwsQpMgYafc82oUfq8aVqdfZdyNuqYxIIVVSWsMAj4EFbCSl/AQ3V4qmN7r8FqTNVqAggVELCJEOWx4ikkjH+mbBXCSubyNnQY=
+	t=1755584105; cv=none; b=mcId4puygXNrTsuAU32RORGvwCuUWW3+RjkDdq7CRBEhikWPoDTs+41uDO4NhTnsTl8sA6m1Wr56hjLsP9Fc2scE0A4Pc2PTmC84kWTlJeepe6Zf6o25oMSR4X/06pAAUk/KG50KAWvKLV1hDa1jrM3Kg7VRFkJyHdy/QUIKkdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755584095; c=relaxed/simple;
-	bh=2YJR7pEFPy7xq1orNpVNhiTcdNQif4qFtdmH0fu7uU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SpnavGWBtbFJGbsUWx5FJSz6PHq4D3b1WVtPDNf8e3r4GlPLJDgojrRq3hNKWx/9F69wa/SUtkXKLbVucT5T374E26JOzjlyyNoYE/wNMNG9YeomlE2QiBlu015D+IhGlOnFnXyNY2sSe1O6ELR6LjWrlExannjENDwgBeaPLIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ibAhJEFU; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9dc52c430so2375124f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:14:53 -0700 (PDT)
+	s=arc-20240116; t=1755584105; c=relaxed/simple;
+	bh=Vsvobzyd+pWIGRqDH6FmhjP2NbQY9Nu/5YdKYy+n1fE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=RdZdBu+TAj0VmiNujCtSFOM+S/bGLXgYE+Uj3MdzepNWjS5et0nZqShehnv5PGgrG5yH3Mmtidlo+H7h8N8IziMif0IjsE+Xv8AE57O9res36cNymL/1OlvVAu8KQaRxBPR2lzjzy2p9EktQru2GTfHBRrjprS0qtAxTn1Vqbzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=aRzNuSld; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a54560c1fso198173a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:15:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755584092; x=1756188892; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cfC6tmyznTQhu0WfGzgV8ZZbOGfzSI/Lw/Z1TOmfLRk=;
-        b=ibAhJEFUO+vTpE3pCQcYDTbQCLdspElFpc5VKzca0gq8l5CsysS8U/avlwCT3tYhxv
-         WStZb/+53HEANlYP5qSgfpBMT5Z56yNK4j2r37i0x7n4GsMDgE4UQ26g4ZwxnSBauBEj
-         OqpB9DvcBSSIpt/705aPhux5DXhQi2aJjobyQ8nymEtpKxLbwYoHrTjstzi0SKUfefq1
-         md9d300NgHcvbKKWumyooFsauU16I3KjsyNQLu0poMC7k5ORhbAC+uUvEIOjZjwstAKN
-         7Cn+sJoSSSddJpdE59XFv3rtCa/yzOfhT5vxIAgH89hfpekDS10ZyPM3QehmN8/flfwm
-         vQHw==
+        d=ionos.com; s=google; t=1755584102; x=1756188902; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Vsvobzyd+pWIGRqDH6FmhjP2NbQY9Nu/5YdKYy+n1fE=;
+        b=aRzNuSld1sdQXu/TnnDu7Q/xO2hUhS52ZtD8ripb2VB0q8XZfOKfFXdYwgyn8xRmbu
+         IuY2wEOWK4PbRwRscBDPlUTOmuCj14wMmtyrJiqUGlpkR5RTghjD3YGg5TXo6XnFLv97
+         ZkHmEF/Utqai4POYrcQM5lnhKOEzEZDNRbyequ9bve0al7yER1wUdX0NMueNArYsziT0
+         zR76z2sA/SMrF5d5RIdlbA5H7wB9r9dus6IxWvB/bNVs/NfxtSozLFc+1o21qrGHtS9z
+         RkISXC2SRvdRGWv+htWvW09G1xsKpXabEEAbzVp5ATgz2oyTNvVlhKMcyiTu8J6RXD6/
+         7K4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755584092; x=1756188892;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cfC6tmyznTQhu0WfGzgV8ZZbOGfzSI/Lw/Z1TOmfLRk=;
-        b=uC+l+QQb6tEIK7aogSIG32b2vGOTwfFypexskbbDPAYzj7CuerEQC3fOg7prsyE4aN
-         0fJIkwePALVVIAX5WN0jWeXGk+mWnrRiKgz1SCA3b4B+3Z3ZREBQSisoLCKa7VmBSEbD
-         ZfIYODvHzrAbpBVx5CpLXB2NY1k6B+dX88ltDqqRM8OE3OUAYLh1s8ENpx7s0U9s+sJa
-         sXQaG2MeyutMrOvSNFBHVKg/DeDw2sarqoX9B9HKwHAOngih8vQFoEsc5QJ+cgWKaHYq
-         cyiNStrlC96vhHqwiFBuYpN6ITvlWWxjmJHalMGydXuC7OANzTPKCeeorO/UUPPqhqb9
-         DKCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjFP2JkbLFcRYNPzwTv2v+R1VvnkJJpKlg+4afP38vAnaQevP1ZvojHzRynJXLoOFaHYgcFUDaDOJM4OA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr0W40JbqyIJ0exaqrRuV1QTKd9/xlAbfR9XDutj3eTVgAyUHt
-	8JLmFPLhbB7XlsdSsNZ0blQvWsPKmu2KhXb/7CKeuERAEe5rAlEukPSEr6Nrg2Ut1mM=
-X-Gm-Gg: ASbGncsRM8vaKSrPaohq3j6eurgbSf/QzMwc2LiK2LW2PoyaMP/5sj6yTlVPAGwnkwv
-	H8HGF0Vut3ptxfupBW9brgiA517SAuOM4IIIrCN+hH8jL9gvyMeP/nS+JQooDFlgrUEnFJrDaqL
-	C3h0Q5kXU/3DH8YcEWILZX3JLMbxRK1XaAwisf8Zuz64XTEfikypVhK0aF5NDMRJcJlXHZTktXP
-	N2CTzZt9YQsPF6P7lE1S0cOKeoMj2J6Gzp8YDU20L2fRNXC8NUdhM+sY+kExa/FiFB46mNq8EtW
-	3gRyAazHH+3u3qBndQwco5pyfRV1Rv7vcHRd4AXJ4euxWYe7t+8rPB8vs+uGRRJH9ETEAxJagxF
-	nqtZ6yvhj8hP6amPDjBlc9Ha9ObpCwxmrxxsgHA==
-X-Google-Smtp-Source: AGHT+IGGFEZgyeEaX2pBRfjbPpLg1ixzuD1sw99+W5A5gTT8EacRooGmmANMREXLdZz4noMb1+AVvg==
-X-Received: by 2002:a05:6000:4014:b0:3b9:148b:e66 with SMTP id ffacd0b85a97d-3c0ed2e8f63mr910658f8f.54.1755584091917;
-        Mon, 18 Aug 2025 23:14:51 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c0754f3b7esm2146290f8f.30.2025.08.18.23.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 23:14:51 -0700 (PDT)
-Date: Tue, 19 Aug 2025 09:14:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Andreas Kemnade <andreas@kemnade.info>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Andreas Kemnade <andreas@kemnade.info>
-Subject: Re: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
-Message-ID: <202508191303.UzPStkjj-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1755584102; x=1756188902;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vsvobzyd+pWIGRqDH6FmhjP2NbQY9Nu/5YdKYy+n1fE=;
+        b=ICnRG3VGGnk8NXa9t90WIhkl947rITHZ4O8J6bwn+lezLM00u4vWrxNlf/j77Xb8T7
+         jnrsQjRYRkvISSrf5ig+c61X/h5h741P5Iazc5e4EGJWyMsdjgaMCA9PkAvBjFsBIVHe
+         HikMWFHwzr53rKIvx52nPH+4V3QBEWnwTKXCxao3Rr5uR7MIO+MpYqJsS/6aqHFR4Dem
+         cJloCrvwTGZ6j4qM2s7u2vxxdlf5Gal6Ncj9/M9fB39QTUtKxJ0ixtx9Qtu5KpMwsTSl
+         9PNi78e24/Bj2HKWNfncndQ93V+vxNhWvEhTXNcqNfsqCMic19j/F2CK5fFva5lLDJ7T
+         Jabw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHWlRXjXKaeTgDRyoFRTqJyxIDpoCJXupVlDjSIos8FFkkbrqh3ugKZxoa7+zloenPDTxRZ4PgrpNsS20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU+IH1gHwVmTOTuE/T2r2MOSm5s5LEZWgpZBEx0/idpgKm26lj
+	EnbR8OT5x5W30FfheHiQcZqswdt22j6CxCaJ/EqqUcd7YUIwLJ6wfxlQn/i4wUGa2ZSE9D1VFw8
+	Td8O+HM4I2erRlDgDrUFhf5nYEzaGx5aNpHbR97b6yQ==
+X-Gm-Gg: ASbGnctSD4FkJe1K1wsTlwPRp0oZgipUsqgd9CM4c4KjNWB2f7cbBd5npKS0TCSkfqp
+	POPh7gvbVe2ov6C90W0owowWAKU0BUskq40LRhwKtEF6yiLrH1naQOwJKHP+nPkyBMapEfKYYvx
+	etuRUp32NDscHLms3wx0z9VXWD+V+gLPPs0+nF+FnJdn2LmuaGBEMOodBpqaoPNLjw68E0j9l9O
+	4DGYiin/i4Z/bRqsLt4t81/Gu2LWqq6UefjvweL
+X-Google-Smtp-Source: AGHT+IF60qmQBNGeuGMzeBotisgEDbW7PjNxj5396q9ryZKwWzXVpap9pJfjv+PyBl7UsTNLGVMAKw9ukmWer7/vSv4=
+X-Received: by 2002:a05:6402:4407:b0:615:d492:5bf3 with SMTP id
+ 4fb4d7f45d1cf-61a7e754f7emr553281a12.6.1755584101577; Mon, 18 Aug 2025
+ 23:15:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
+From: Jinpu Wang <jinpu.wang@ionos.com>
+Date: Tue, 19 Aug 2025 08:14:50 +0200
+X-Gm-Features: Ac12FXw85l4E2Qzdz4eZU-25DlZgTxIbtrb7-5QJx5Gc3_Ih2bUSGVXILRmFHlg
+Message-ID: <CAMGffEmFm8wvgiw+s0ZpOhRxBLOz3dQiS=sQCkgJLD6qC3VwJg@mail.gmail.com>
+Subject: [BUG] amd-ucode 20250808: "No sha256 digest for patch ID: 0xa0011de"
+ on Linux 6.12.37
+To: x86@kernel.org, Borislav Petkov <bp@alien8.de>
+Cc: linux-firmware@kernel.org, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andreas,
+Hi,
 
-kernel test robot noticed the following build warnings:
+I am currently testing the latest `amd-ucode` from `linux-firmware
+20250808` and encountering an early microcode load error on Linux
+6.12.37. The CPU is an AMD EPYC 7713P 64-Core Processor (Milan, Zen
+3).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andreas-Kemnade/mfd-bd71828-bd71815-prepare-for-power-supply-support/20250817-032146
-base:   8f5ae30d69d7543eee0d70083daf4de8fe15d585
-patch link:    https://lore.kernel.org/r/20250816-bd71828-charger-v1-2-71b11bde5c73%40kemnade.info
-patch subject: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
-config: loongarch-randconfig-r073-20250818 (https://download.01.org/0day-ci/archive/20250819/202508191303.UzPStkjj-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 15.1.0
+Upon boot, the following error is reported in dmesg:
+`microcode: No sha256 digest for patch ID: 0xa0011de found`
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202508191303.UzPStkjj-lkp@intel.com/
+When I use the kernel parameter `microcode.amd_sha_check=off`, I
+receive the following errors:
 
-smatch warnings:
-drivers/power/supply/bd71828-power.c:298 bd71828_get_temp() error: uninitialized symbol 't'.
-drivers/power/supply/bd71828-power.c:559 bd71828_battery_get_property() error: uninitialized symbol 'tmp'.
+```
+jwang@ps406a-1.stg2:~$ dmesg | grep micro
+[ 0.000000] microcode: It is a very very bad idea to disable the blobs
+SHA check\!
+[ 0.000000] unchecked MSR access error: WRMSR to 0xc0010020 (tried to
+write 0xffff888034ce5fd2) at rIP: 0xffffffff90064eeb
+(__apply_microcode_amd+0x3b/0x90)
+[ 0.000000] Command line:
+BOOT_IMAGE=(http)/live-images/liveboot-k6.12-test-2025.450/vmlinuz
+BOOTIF=58:a2:e1:b1:82:60 boot=live
+fetch=http://mgmt/live-images/liveboot-k6.12-test-2025.450/root.squashfs
+consoleblank=0 PHASE=Testing crashkernel=512M quiet
+salt-master=stg-salt2.stg.profitbricks.net saltenv=base pillarenv=base
+microcode.amd_sha_check=off liveboot.roce retbleed=off amd_iommu=off
+intel_iommu=off iommu=soft
+[ 0.018728] Kernel command line:
+BOOT_IMAGE=(http)/live-images/liveboot-k6.12-test-2025.450/vmlinuz
+BOOTIF=58:a2:e1:b1:82:60 boot=live
+fetch=http://mgmt/live-images/liveboot-k6.12-test-2025.450/root.squashfs
+consoleblank=0 PHASE=Testing crashkernel=512M quiet
+salt-master=stg-salt2.stg.profitbricks.net saltenv=base pillarenv=base
+microcode.amd_sha_check=off liveboot.roce retbleed=off amd_iommu=off
+intel_iommu=off iommu=soft
+[ 0.143803] Transient Scheduler Attacks: Vulnerable: Clear CPU buffers
+attempted, no microcode
+[ 0.014489] microcode: CPU1: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU2: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU3: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU4: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU5: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU6: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU7: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU8: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU9: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU10: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU11: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU12: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU13: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU14: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU15: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU16: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU17: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU18: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU19: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU20: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU21: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU22: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU23: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU24: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU25: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU26: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU27: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU28: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU29: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU30: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU31: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU32: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU33: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU34: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU35: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU36: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU37: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU38: update failed for patch_level=0x0a0011de
+[ 0.014489] microcode: CPU39: update failed for patch_level=0x0a0011de
+[ 0.01
+```
+Seems we have to patch arch/x86/kernel/cpu/microcode/amd_shas.c for
+the new patch 0x0a0011de?
 
-vim +/t +298 drivers/power/supply/bd71828-power.c
-
-c57d31029550a0 Andreas Kemnade 2025-08-16  286  static int bd71828_get_temp(struct bd71828_power *pwr, int *temp)
-c57d31029550a0 Andreas Kemnade 2025-08-16  287  {
-c57d31029550a0 Andreas Kemnade 2025-08-16  288  	uint16_t t;
-c57d31029550a0 Andreas Kemnade 2025-08-16  289  	int ret;
-c57d31029550a0 Andreas Kemnade 2025-08-16  290  	int tmp = 200 * 10000;
-c57d31029550a0 Andreas Kemnade 2025-08-16  291  
-c57d31029550a0 Andreas Kemnade 2025-08-16  292  	ret = bd7182x_read16_himask(pwr, pwr->regs->btemp_vth,
-c57d31029550a0 Andreas Kemnade 2025-08-16  293  				    BD71828_MASK_VM_BTMP_U, &t);
-c57d31029550a0 Andreas Kemnade 2025-08-16  294  	if (ret || t > 3200)
-c57d31029550a0 Andreas Kemnade 2025-08-16  295  		dev_err(pwr->dev,
-c57d31029550a0 Andreas Kemnade 2025-08-16  296  			"Failed to read system min average voltage\n");
-
-We should return the error here.
-
-c57d31029550a0 Andreas Kemnade 2025-08-16  297  
-c57d31029550a0 Andreas Kemnade 2025-08-16 @298  	tmp -= 625ULL * (unsigned int)t;
-
-If bd7182x_read16_himask() fails then t is uninitialized or invalid.
-
-c57d31029550a0 Andreas Kemnade 2025-08-16  299  	*temp = tmp / 1000;
-c57d31029550a0 Andreas Kemnade 2025-08-16  300  
-c57d31029550a0 Andreas Kemnade 2025-08-16  301  	return ret;
-c57d31029550a0 Andreas Kemnade 2025-08-16  302  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Thx!
+Jinpu Wang
 
