@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-775326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90931B2BE09
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE22B2BDF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10E2196219D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:50:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49AF5273C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BE831CA58;
-	Tue, 19 Aug 2025 09:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC32B31AF39;
+	Tue, 19 Aug 2025 09:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="YTOVqOfZ"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OX3AhFBl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EE331B13C;
-	Tue, 19 Aug 2025 09:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDF931A050;
+	Tue, 19 Aug 2025 09:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596989; cv=none; b=AzAf8KQ/oHN8qGxO1WbHi8ruUsvfgWUEt46LBc2ptsQhDYzj3LtQIG4YhUuZrdI4RzfbaF4jKNcNOUCj+otz0kikNLo/zjS2khFjgoWI8LCuzHWK+HDraL/QTVRkN8A1VXPlOSWW9sCiIOvo2q9NbHoUZqyxROpHaq/kt+gi/T4=
+	t=1755596985; cv=none; b=gZ8oiSym8y5wajuybvG+7VfSOc+JNHIDy0wQPX6qKOUf+hY9X2+ykqLg4maqbqPzMphq+IDpi932houkICbpc2L0IhHN7vD5cYoXWzGtVEdPDfRxutQd6a/ZDaOhFTT4f0V46DI3RtSEJTSad1kEEEbk++jnJxXwAS55esXtEbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596989; c=relaxed/simple;
-	bh=NgjT3AXJmNHpYMtXwReAJY+YxZrl6WWlSuco2/rbpJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fxrG5hb/m7JT7mzFoUp2UuYuMZHf/sKPcI8tTa5a2+YZOMqSilCOL7v3UMZRZ5ASbSFHT88tgKM1e62GfeQOfhLENQmDdPAeJY2F3PGgA15XE696LqRyRX9YJKGlLYB98EjewEQzvOM5as9XPsVXiMMJJsTbjLPlGQuif9KbSE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=YTOVqOfZ; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4F8811038C11E;
-	Tue, 19 Aug 2025 11:49:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1755596984; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=v00EVxp2f9cvCwEcte1cbk+FFRccPtGzRkdO+es/Ltg=;
-	b=YTOVqOfZtK3/0JLLGrEtAiBWEzfvym6j+klakS5Mzysv2lNZpS/OGnD1SFXJZqiUwr1X3y
-	v5sP8pAKiILCATI3vA5UhMY+uKTStZCRRHbWqHR991MfuDexXCJPuP5RrHUw3rFMSuQF/L
-	4aAjWDgJDQkfewUccc5Xd4HwtL5ORCtYQfoLxq2qbMsFlDvhozG3J1WDUr/FwZ78Zi5BDu
-	Zym1ppfGU+a0yI9KKaSncyseEw95DrPlmpVUplv4Wo8PO5RS5j0sBYOkC4NKV87lfCGMZ+
-	HrwM4797Osw4t3Rg3iMlQ2ktfy9dqdolHn3wg8wbBzy7DeS5RunKx1kCp5jp+Q==
-Date: Tue, 19 Aug 2025 11:49:38 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
-Message-ID: <aKRIsm1+w5DJqebA@duo.ucw.cz>
-References: <20250818124505.781598737@linuxfoundation.org>
+	s=arc-20240116; t=1755596985; c=relaxed/simple;
+	bh=IlqIpp8MpUu0vYy8DXHMU1oG1mnGHnpG0dLeYYfYdGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jjnZsJig18e04LT8C8CsV1LVRshfldZQcCCPtxUrj3zG0mJTlT2Ys05zsd03p4kpBaOeE1BbbEDFbQwTRXnGCZ+S4+zwlm+wTwOKmVk1+NFBwj9OTSuy8I+BLEd80c0VWv74zrNQdl9OxNGmU4BZ+VTBRr0SWO2A4fNCv9JCDpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OX3AhFBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5EFC4CEF1;
+	Tue, 19 Aug 2025 09:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755596984;
+	bh=IlqIpp8MpUu0vYy8DXHMU1oG1mnGHnpG0dLeYYfYdGE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OX3AhFBlkS+2yzlToaBiERG4qTUH64LNT7IIb0kZbMBBew5dijFKFKDVJXukUHfaX
+	 L3gKKSADvu3NrGYNsFQzggx2lEGezl6zkHLj/mkOthwXJYJXCfoZn+SFgnEanfZg1T
+	 rkIiijCqPgGuHmay68CQwPVpNUeH2kSoJRJM1XHajBfq2cp2NKMvt8H5fhDOxs+ail
+	 n7hOIZryUFW3Y4u9ZY9QIzwHuRpuSmcezUSvke6LyTDvENrlmr6FDhJTsjIZZaDGjI
+	 7VCZFzONlAdJxWdPRQ9Jb/DkCcrMcOzs6gPcFyR/019tscaerLpIK4R7ghQLYQxt9E
+	 pkJlBnLoWMwaQ==
+Message-ID: <a327ff52-c37d-4f51-8d19-d6b1cc858d79@kernel.org>
+Date: Tue, 19 Aug 2025 11:49:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4O2b2Ns1yAeYfOm5"
-Content-Disposition: inline
-In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/2] rust: transmute: add `as_bytes(_mut)` methods for
+ `AsBytes` trait
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Robin Murphy <robin.murphy@arm.com>, Andreas Hindborg
+ <a.hindborg@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ "Christian S. Lima" <christiansantoslima21@gmail.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250801-as_bytes-v5-0-975f87d5dc85@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250801-as_bytes-v5-0-975f87d5dc85@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 8/1/25 3:24 PM, Alexandre Courbot wrote:
+> This is the sister patch of [1], providing an `as_bytes` method for
+> `AsBytes`, and an `as_bytes_mut` accessor for types also implementing
+> `FromBytes`.
+> 
+> It is going to be used in Nova, but should also be universally useful -
+> if anything, it felt a bit strange that `AsBytes` did not provide this
+> so far.
 
---4O2b2Ns1yAeYfOm5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> This is the start of the stable review cycle for the 6.16.2 release.
-> There are 570 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.16.y
-
-6.15 passes our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.15.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---4O2b2Ns1yAeYfOm5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaKRIsgAKCRAw5/Bqldv6
-8lLDAKCv5kwy81x5drhS6S4eac+kSohwCQCfZzZ53klyVulWsJCYW4ufPe/8vbg=
-=vkPc
------END PGP SIGNATURE-----
-
---4O2b2Ns1yAeYfOm5--
+Miguel, any concerns taking this through the nova tree?
 
