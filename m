@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-776472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3A8B2CDB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:19:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3860FB2CDAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1A01C273AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53563BBA4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E3D322C9A;
-	Tue, 19 Aug 2025 20:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jc6p9mvm"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E46A3101DA;
+	Tue, 19 Aug 2025 20:17:23 +0000 (UTC)
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D338B315774
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 20:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5F72571DD
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 20:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755634614; cv=none; b=LIWUNAeYNJOCudzrhM3xDVgo1aLVfTOihSoFDestn2fzkBs8Zt4VzmN7HFQWna5CSctXJAaaKDk73/uGKmOtjxHaXWVmLQ8XMzOVtVkfaWc3fofUcKVZdPL0PpEgwIdDesnvJ9WlWBA9R8mWMDDeMDKgSBao5J/RasFQrjQ5rwA=
+	t=1755634643; cv=none; b=ZVZQNK+Uvfj+T04mXtwalQxuoBtnbs8i6+XPS05GfXSQy+v77e4SgerFCBsBSBUJo+vjLc8LEISnZzxQZXInDjPiSQFk63byGn+IjmWIKFE6aNpt8FLNA9AA87HWeGnJRKE2XbTPrsT9SpgY6BgFvXIkFVjTmZ3HH3GiyueYfL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755634614; c=relaxed/simple;
-	bh=udgocsjJD41ItoihgnArmiVjyb7mSZD6JjIAaDNQ6Lg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cq1g5rdFcsuYXItH/Pscr5RwOAmToRmhN1GoEAbJGlgEG1KyC01o5HL/aP9TK32Bmkf4Yi6ydOJiI17QXRtazqFvsgx+ibEcOb/k8xdGGlPI9jHfzvsb1LPDi6PDnyzPEwq3suphSwpGcB9Kmvcspvfk1ILqMbUW+O01RIwwEZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jc6p9mvm; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755634601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JqbB3H+IOvqAzvYEg/c7+VdVr8vD6PumH4PG2on0onk=;
-	b=jc6p9mvmzAAxtUOk1Rl3nqhHXLTv28gZeOudhcu3Cs/7o0QHDQm830galIumRVJf11TdYU
-	MpQhTSYtWIW+fwvpqjeo2YRTOsNkduSprMPk+w3CEXSIF5COP9hRD5+OmtHii7bR32eviT
-	BwLcrgjM/id8VJCcmz0+hNbNwbK51GY=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Johannes Weiner
- <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David Rientjes
- <rientjes@google.com>,  Matt Bobrowski <mattbobrowski@google.com>,  Song
- Liu <song@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-  Alexei Starovoitov <ast@kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 06/14] mm: introduce bpf_out_of_memory() bpf kfunc
-In-Reply-To: <CAJuCfpHTtLQR0NpsbFytaOdEc0KqNv6PxVpxNetYD6Ce4sY9UQ@mail.gmail.com>
-	(Suren Baghdasaryan's message of "Mon, 18 Aug 2025 21:09:24 -0700")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-7-roman.gushchin@linux.dev>
-	<CAJuCfpHTtLQR0NpsbFytaOdEc0KqNv6PxVpxNetYD6Ce4sY9UQ@mail.gmail.com>
-Date: Tue, 19 Aug 2025 13:16:30 -0700
-Message-ID: <87wm6zysm9.fsf@linux.dev>
+	s=arc-20240116; t=1755634643; c=relaxed/simple;
+	bh=DH6TL9lt+jX3riwfvSg80uM4qQZNxeVyTXmjA4pV13s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AgLB9NiqNJmjRYKIKytB8Uu6/E8Y0uIrMB3DYfUQOm/KmsNa8CCP9oN2j1FBV7elnw1zGOsC9bGp/BCmY2om8KFDxYh+0w2q79F5uzxGi4hZDk3OSuzc9Phg8oEY3uW0MSPjP9M6xYz0e4SGTBvZfpIrbyI1zV3Z31x+waElyOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 50369449EF;
+	Tue, 19 Aug 2025 20:17:08 +0000 (UTC)
+Message-ID: <bc3bc5ca-4000-43d6-9019-bae03c65d43c@ghiti.fr>
+Date: Tue, 19 Aug 2025 22:17:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] riscv: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ header files
+To: Thomas Huth <thuth@redhat.com>, Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, atish.patra@linux.dev,
+ anup@brainfault.org, linux-kernel@vger.kernel.org
+References: <20250606070952.498274-1-thuth@redhat.com>
+ <175450055499.2863135.2738368758577957268.git-patchwork-notify@kernel.org>
+ <d1fe7fdf-b3da-4c53-8a5a-a87acd38d525@redhat.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <d1fe7fdf-b3da-4c53-8a5a-a87acd38d525@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheeigedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejieeuudejieekveeutdeguefhkeduledugeevhefffeejudeggedufffgleeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtgeemtggvtgdtmeduvdduugemfhdvfedvmegvfeefmegtfeeitgemvgeisgelmeeiheegugenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtgeemtggvtgdtmeduvdduugemfhdvfedvmegvfeefmegtfeeitgemvgeisgelmeeiheegugdphhgvlhhopeglkffrggeimedvrgdtgeemtggvtgdtmeduvdduugemfhdvfedvmegvfeefmegtfeeitgemvgeisgelmeeiheeguggnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepledprhgtphhtthhopehthhhuthhhsehrvgguhhgrthdrtghomhdprhgtphhtthhopegrlhgvgihghhhithhisehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehlihhnuhigq
+ dhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegrthhishhhrdhprghtrhgrsehlihhnuhigrdguvghvpdhrtghpthhtoheprghnuhhpsegsrhgrihhnfhgruhhlthdrohhrgh
 
-Suren Baghdasaryan <surenb@google.com> writes:
+Hi Thomas,
 
-> On Mon, Aug 18, 2025 at 10:02=E2=80=AFAM Roman Gushchin
-> <roman.gushchin@linux.dev> wrote:
+On 8/18/25 08:08, Thomas Huth wrote:
+> On 06/08/2025 19.15, patchwork-bot+linux-riscv@kernel.org wrote:
+>> Hello:
 >>
->> Introduce bpf_out_of_memory() bpf kfunc, which allows to declare
->> an out of memory events and trigger the corresponding kernel OOM
->> handling mechanism.
->>
->> It takes a trusted memcg pointer (or NULL for system-wide OOMs)
->> as an argument, as well as the page order.
->>
->> If the wait_on_oom_lock argument is not set, only one OOM can be
->> declared and handled in the system at once, so if the function is
->> called in parallel to another OOM handling, it bails out with -EBUSY.
->> This mode is suited for global OOM's: any concurrent OOMs will likely
->> do the job and release some memory. In a blocking mode (which is
->> suited for memcg OOMs) the execution will wait on the oom_lock mutex.
->>
->> The function is declared as sleepable. It guarantees that it won't
->> be called from an atomic context. It's required by the OOM handling
->> code, which is not guaranteed to work in a non-blocking context.
->>
->> Handling of a memcg OOM almost always requires taking of the
->> css_set_lock spinlock. The fact that bpf_out_of_memory() is sleepable
->> also guarantees that it can't be called with acquired css_set_lock,
->> so the kernel can't deadlock on it.
->>
->> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
->> ---
->>  mm/oom_kill.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>
->> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
->> index 25fc5e744e27..df409f0fac45 100644
->> --- a/mm/oom_kill.c
->> +++ b/mm/oom_kill.c
->> @@ -1324,10 +1324,55 @@ __bpf_kfunc int bpf_oom_kill_process(struct oom_=
-control *oc,
->>         return 0;
->>  }
->>
->> +/**
->> + * bpf_out_of_memory - declare Out Of Memory state and invoke OOM killer
->> + * @memcg__nullable: memcg or NULL for system-wide OOMs
->> + * @order: order of page which wasn't allocated
->> + * @wait_on_oom_lock: if true, block on oom_lock
->> + * @constraint_text__nullable: custom constraint description for the OO=
-M report
->> + *
->> + * Declares the Out Of Memory state and invokes the OOM killer.
->> + *
->> + * OOM handlers are synchronized using the oom_lock mutex. If wait_on_o=
-om_lock
->> + * is true, the function will wait on it. Otherwise it bails out with -=
-EBUSY
->> + * if oom_lock is contended.
->> + *
->> + * Generally it's advised to pass wait_on_oom_lock=3Dtrue for global OO=
-Ms
->> + * and wait_on_oom_lock=3Dfalse for memcg-scoped OOMs.
+>> This series was applied to riscv/linux.git (for-next)
+>> by Alexandre Ghiti <alexghiti@rivosinc.com>:
 >
-> From the changelog description I was under impression that it's vice
-> versa, for global OOMs you would not block (wait_on_oom_lock=3Dfalse),
-> for memcg ones you would (wait_on_oom_lock=3Dtrue).
+>  Hi Alexandre,
+>
+> I can't see the patches in the for-next branch ... have they been 
+> dropped again? Was there an issue with the patches?
 
-Good catch, fixed.
+
+No issues with the patches, Linus rejected the riscv PR. I'll send them 
+again for 6.18.
+
+Sorry about that,
+
+Alex
+
 
 >
->> + *
->> + * Returns 1 if the forward progress was achieved and some memory was f=
-reed.
->> + * Returns a negative value if an error has been occurred.
+>  Thanks,
+>   Thomas
 >
-> s/has been occurred/has occurred or occured
-
-Same here.
-
-Thanks!
+>
+>> On Fri,  6 Jun 2025 09:09:50 +0200 you wrote:
+>>> The kernel Makefiles define the __ASSEMBLY__ macro to provide
+>>> a way to use headers in both, assembly and C source code.
+>>> However, all the supported versions of the GCC and Clang compilers
+>>> also define the macro __ASSEMBLER__ automatically already when 
+>>> compiling
+>>> assembly code, so some kernel headers are using __ASSEMBLER__ instead.
+>>> With regards to userspace code, this seems also to be constant source
+>>> of confusion, see for example these links here:
+>>>
+>>> [...]
+>>
+>> Here is the summary with links:
+>>    - [v2,1/2] riscv: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi 
+>> headers
+>>      https://git.kernel.org/riscv/c/c47963980ba6
+>>    - [v2,2/2] riscv: Replace __ASSEMBLY__ with __ASSEMBLER__ in 
+>> non-uapi headers
+>>      https://git.kernel.org/riscv/c/b5eb1f12a416
+>>
+>> You are awesome, thank you!
+>
 
