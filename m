@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-776635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14554B2CFB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:18:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23961B2CFB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17A7C58041B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E99F6287CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31B4275AF8;
-	Tue, 19 Aug 2025 23:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94801236451;
+	Tue, 19 Aug 2025 23:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OQvoB0z3"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="exVTj5Fe"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092B1272E51
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCCD146593
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755645307; cv=none; b=lprzUN6nVRFnRMdnd0mqEIWKQti4Jze8T228VRJwEb58w6LN4vuBaYxD+Mf1POp8X7dv6fsmyXl3eQjBL8AYIYZnXjWlWmHAz5s+Re5PoKVC1uHHqFxLKPNtyKSuk/XH6TGZA9pVevxqc1KXBSE/7cllcxlUt36Nh0Bm0qRYzGk=
+	t=1755645314; cv=none; b=I3LUSNSYAeZ1QHsk9EbYT9wuMXQSpcZWB2TXFmKH8l2Ra3sDOTxHgbGr02irtuIc4Vikc4IcUrwghLAjG3HGSk6xTexZnAJi/mfj01YDLOVLi9lZRHDSCYcVOiiKgjmgFdr4jLzCZ3OBeeSjPh6Z7nfKlk88vAZKCJffbr3lmvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755645307; c=relaxed/simple;
-	bh=yEriFb67RK9r5RACn+K+jkmiLEx3PeKZ2YlQS7CNoQQ=;
+	s=arc-20240116; t=1755645314; c=relaxed/simple;
+	bh=nOMn3UK9M0LNY0lp+AvhBVBBoJ2rN7sijra+TzeBYK8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hM/AJD+KisguDi+zYZV14C5DvR//k7OIZJhZfknYpYfD7k1y6XVnOqr5UxQ5w92REzCLb7d713QK609La9MdlcdhRZsDjqC7aa+EVAaYwKZ/X467qvWeALX3wv3s9/FNyk3RZHNNP9+tl+yLTM2MWtfgfDb6Zv9L8DfVL39hiPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OQvoB0z3; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=fvaO/CgkU6KX7ISaYu2SX5AQqDtiLZn/oZR8rBnu1cmB7Ay2JqzeLa61G8SIUZmrbtyYqmkgi/hdIwTm6hdDx46pVnu2N42YuRPU9rw2K8McJij23rgHsFMBnenf+FAPUWYXgRPhFxddElq1uKJcwwaM37KLBwBp8Dtr+mLx+N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=exVTj5Fe; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-323266a1e87so6098752a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:15:05 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32326e017efso5924993a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755645305; x=1756250105; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755645312; x=1756250112; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1xnFFqxZL2dKWyQPAP8LNzyOxlbZOPfUkGBwwG1dl4E=;
-        b=OQvoB0z37qCtxdys9S9lf1yaCo/iPiuAbNXBbV+0itLlCZElPlIcpuZj68oYiIc/jd
-         xDMJpxeeqntT6gbCRoFtO0WgLDdIgOglX0sqhbZAWCj2GWIsH0Otakw689TnF9f0LRrD
-         0HatjGAyFs60PQi1/B8x2lxP9mpsl1u4bvjcuUtt/cFtSQrPCsOgLCxMAv3EsV2WEDNH
-         FgX7jQGo5cebTzseg1aQF2SDEgHA/HstfknD1LrE5FIBRWP3pRkHcxkBY5TtAUh9BqDi
-         H2lc/+5w9LsXj7WNpt0hpGfbLRa/L2sf01jyzcwSr7mTybhpxv+iEohIw0uqf+IXETU0
-         dM2g==
+        bh=oZuxG4DJdEct4WQLV7ObKo6lalKw4LY4e5KHgHD7dtY=;
+        b=exVTj5FeLfBjbU0Y/7QpqnClkQRgnRgHuGXuwP18lRprEeL3IFBQY/dyD5VUcPk7hC
+         znfdw178jFmfqY8K2+51l+KgVUDXCuh55k6PLSkpp2WzGW1MJG4iXFkizWWixshpZPy6
+         6W+vuib7sMaqygTsHAIDjbLwmHKSeAd0sC76sOW+dmnBDxxa3AoHKfU2rvbWMGzkrOjf
+         k4q/MQLJ2ndP7N3hVuxf3LhupUNfKWfJdU8S9I1smMcRdtHKb0Fxm5wxDMcxZsls/9gp
+         PZCg+V1WmXKtvBQLhMqVi76zLgOFJ6+K4ih+gcvEjCmxrwFGUZecAaW6oLTAknsFiWkF
+         l9fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755645305; x=1756250105;
+        d=1e100.net; s=20230601; t=1755645312; x=1756250112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1xnFFqxZL2dKWyQPAP8LNzyOxlbZOPfUkGBwwG1dl4E=;
-        b=Gs5My1jxrSqzJRKBGQrztvHdjowtscSkZoDXSV9Ds5HbPRA8uryLa7YYbyQeA0iPu4
-         CdpvT3lHyBdPu1xwkzBkVU4jYJisN2GjZFfQlQ6AIESj7eq3OFYXIHZLX5JuRx9KT0hI
-         KBGZJpa6Q3YKZyDEhMy2a8gncMDEuDNTRf5LKS1mbJnhZTSnT992wXS1nh53j8r+IQG4
-         CfznRzwnBXhjn6IilPxsJdn/3knpdFe2Atb3T3ILYGrSiSa7zGPwvbQcX639k7fq8gbL
-         9gwlvVdemQGR4/56lWNUM8tR1yvzxSXQyYrqrFn/LU8ZYRIIfjALPwAWj/sCOp64bALO
-         mJiA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8fK2y9//pTxkJCDJqoD1LLEUtLmvnYJ4q+beSY8TPhsAl8+PoxGcuiWyvhxhJkdai81yKRR9Rb+oZLV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEdQ+Z8rBtCdZZut2LR/lt4ALOdI245tC9bCKh24hd4q61K4gn
-	B7EE07ASw1hd68T7YggEXcB/AAwFHd4mJovmwT9a+Nf7O9QlyayEPZ4J968nXufkdfZMo0Y0X82
-	p9ErQSA==
-X-Google-Smtp-Source: AGHT+IHv1eDV44dDXpdL3YKaUXVosgCxmndbwnWK4FetmEDu1I4NxJDYRxi+ZCLgPhhGzqJMjLWITh1N5u0=
-X-Received: from pjbta11.prod.google.com ([2002:a17:90b:4ecb:b0:31f:a0:fad4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1810:b0:312:f2ee:a895
- with SMTP id 98e67ed59e1d1-324e140c437mr909249a91.31.1755645305447; Tue, 19
- Aug 2025 16:15:05 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:12:01 -0700
-In-Reply-To: <20250711172746.1579423-1-seanjc@google.com>
+        bh=oZuxG4DJdEct4WQLV7ObKo6lalKw4LY4e5KHgHD7dtY=;
+        b=TIKcl5QrINn4S7S+JJwn8JNdzjW7atJqMGbux1lInn9nILM98W7ZIIqUdrMkiS8Aa8
+         crOvofXYv1x5ANbP/JeHA/uYYalgQEvrxck0qpQmA8Z130lKjos9ClhkqD4Njr3zoMJn
+         cbsq5CFhqoXPa7z7DcNhrrilHBBa4FDoms7akhclGpTsECyU9TVcq8viaf7zAv8shtBQ
+         /XrOdhdemEhCkQHcBknOHkcYm5NFMjjbYiXMwPzdMOVdrWdZ1JNr9bOqhoq8aM74ruAb
+         TT+zswycvJIDPO5pypc5Muj2aMKuyMwx9hmhJ+LUeKCsuxcdAM3Z3la74NBnn9rl+fX7
+         S84g==
+X-Forwarded-Encrypted: i=1; AJvYcCUZWEu2JI+T1g5re2NHYz+JKe6+85izuiQp2+WXxvYF/w3nInTZimNQt8NQd3/d95JEeq2Sr5B8HlB+69o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSh+UuDokvysua6gM4h8BgYWPS14Hd/JuWud0ciUKZwTDOz2Vd
+	TqeoEouvTKNC/YLKN4u6zUz5ePoWH9m3oR4kWFHTLzYdtOOxgEn7isKLrzCTCNtZlmOg/aFJ5EP
+	l0BOD/A==
+X-Google-Smtp-Source: AGHT+IGQCij7rWwNKcQP/HiTVw3X7iIXS8GUGBk/Sevxvmhufe/DeKIjqMZyXjohikyJOBeXtB+0QqAuH4I=
+X-Received: from pjbmf12.prod.google.com ([2002:a17:90b:184c:b0:2fb:fa85:1678])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:558c:b0:321:cfd5:3f95
+ with SMTP id 98e67ed59e1d1-324e1425be1mr1116881a91.35.1755645312293; Tue, 19
+ Aug 2025 16:15:12 -0700 (PDT)
+Date: Tue, 19 Aug 2025 16:12:03 -0700
+In-Reply-To: <20250715190638.1899116-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250711172746.1579423-1-seanjc@google.com>
+References: <20250715190638.1899116-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-Message-ID: <175564468839.3066340.1363280133168167552.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: SVM: Emulate PERF_CNTR_GLOBAL_STATUS_SET for PerfMonV2
+Message-ID: <175564471845.3066581.8347761517352370906.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: x86: Don't (re)check L1 intercepts when completing
+ userspace I/O
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sandipan Das <sandipan.das@amd.com>
+	Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, 11 Jul 2025 10:27:46 -0700, Sean Christopherson wrote:
-> Emulate PERF_CNTR_GLOBAL_STATUS_SET when PerfMonV2 is enumerated to the
-> guest, as the MSR is supposed to exist in all AMD v2 PMUs.
+On Tue, 15 Jul 2025 12:06:38 -0700, Sean Christopherson wrote:
+> When completing emulation of instruction that generated a userspace exit
+> for I/O, don't recheck L1 intercepts as KVM has already finished that
+> phase of instruction execution, i.e. has already committed to allowing L2
+> to perform I/O.  If L1 (or host userspace) modifies the I/O permission
+> bitmaps during the exit to userspace,  KVM will treat the access as being
+> intercepted despite already having emulated the I/O access.
+> 
+> [...]
 
-Applied to kvm-x86 misc.  I put this in "misc" instead of "fixes" as I want to
-get a full cycle of more soak time before sending this to LTS kernels.
+Applied to kvm-x86 misc, thanks!
 
-[1/1] KVM: SVM: Emulate PERF_CNTR_GLOBAL_STATUS_SET for PerfMonV2
-      https://github.com/kvm-x86/linux/commit/68e61f6fd656
+[1/1] KVM: x86: Don't (re)check L1 intercepts when completing userspace I/O
+      https://github.com/kvm-x86/linux/commit/e750f8539128
 
 --
 https://github.com/kvm-x86/linux/tree/next
