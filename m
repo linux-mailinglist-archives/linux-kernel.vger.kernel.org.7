@@ -1,101 +1,223 @@
-Return-Path: <linux-kernel+bounces-776608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334F3B2CF8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F83B2CF8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BC9D4E07E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB2B1C20429
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F64623C507;
-	Tue, 19 Aug 2025 22:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6827E238C1E;
+	Tue, 19 Aug 2025 22:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VRxHnEG0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MA5amxrz"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D29E236451;
-	Tue, 19 Aug 2025 22:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E22F236451
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755643946; cv=none; b=O+UHysLTbc/CharAK/lOjEPMRAeUxg6gz5BkMflyIyr9PCd0sXUzoMPhlmgpBnGiGSXF6i2uY1/Zkro3QRyzm+wDHxLQ2Vt3O18TQNJ82vGpLrsJUS0W+evYr/lblJn1hIzghrnBxk1aA3ToFPc/U1MSrPOv4fYpngtqqbowcVg=
+	t=1755644026; cv=none; b=DvZbVmRZbsdcqo9kGK3NzF3yZ3LE8vRhq8vUC4Eweq7Nmqyo+dYj2pyaHmYLwvGttNcf8hSCgx2/12ImJeqLmnKcrFPjSMCNpo5jELDftDHGsU92Zqb47PoAYrUX5pfwHyx8NZARTgYzlMwJ28eDt6vgg18ltET18tLn+GwEqF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755643946; c=relaxed/simple;
-	bh=VHQSLjKvrE7HNYDGcF9hXuERvtRcIH2r8IoBLnp3tGI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=X30n97edG0zn2Ya8JS+CWuRzlwMcv8Lw1kgEemXo5UluXA8MO17bLcqq47lboz5XKMNRI9UD5GsYkGqgBbmCCojvb9+PWG6RLsftCVo/KjEFjMhAJqy75j5T4s9ASMy54BcesRF1NNiG0e4r/Aal/KMhBDKRJvbBzT4q7EC5jS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VRxHnEG0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F330CC4CEF1;
-	Tue, 19 Aug 2025 22:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755643945;
-	bh=VHQSLjKvrE7HNYDGcF9hXuERvtRcIH2r8IoBLnp3tGI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VRxHnEG0v+ow/6aDnDx9elsJSvUiowJJ8lN6T/rQnlpoiVhnpwkQciMdIi1zv7RGi
-	 JjRDJ+b5lNRiClIOfVFV9zJEGb4tyLGmOugHSddO5s/H/Xv/WdbI/U9GjhEUmqdAYU
-	 IYxp75U+ahWCvfr+9L94JLCV8JuGzpMCyjjDGXrA=
-Date: Tue, 19 Aug 2025 15:52:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, David Hildenbrand
- <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jason Gunthorpe
- <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu
- <peterx@redhat.com>, Leon Romanovsky <leon@kernel.org>, Zi Yan
- <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain
- <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, Shuah Khan
- <shuah@kernel.org>, kernel@collabora.com
-Subject: Re: [PATCH v2 4/8] selftests/mm: Add -Wunused family of flags
-Message-Id: <20250819155224.23fe3d79896e269bd9e27d04@linux-foundation.org>
-In-Reply-To: <57c816d6-a9ba-47c9-8f40-3978580b7f67@arm.com>
-References: <20250731160132.1795351-1-usama.anjum@collabora.com>
-	<20250731160132.1795351-5-usama.anjum@collabora.com>
-	<57c816d6-a9ba-47c9-8f40-3978580b7f67@arm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755644026; c=relaxed/simple;
+	bh=lX444EIDCnnA8D2jKhc4Rwvq8m9EnnJBzSijBAgJZwk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SB4MNTBmuQ+B3+grZLZ0vn5rzoVXfNl2uK0YTvsoaQAQve1exChToEvZc7HyGOGbvhEK+YBh9QwEb1Ga7AbEa+bZVANlF6kYo8WNShx9iO4jZNgXBwk4lq9IyHUo7z72IB6EL8d8ogdesBYn6EjXJ0mr/ls7CxE3lGHgjeU5a5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MA5amxrz; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-244581950a1so66723225ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755644024; x=1756248824; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lYEVB3pRXH6lT21Cyl3SADOl1TwGJtAaTRsYJ3uoDn0=;
+        b=MA5amxrzupYCbJIpwjqvq9Gl4BxNmjgG8fpUENmYnXeSFjH/m5rHO87Zy33CqENfyT
+         B5c0LUbmaUpa5oDb+M72JVst+HZbmSTIOEk3caXV4eLiqJzk4O/+md19PITLxSO2BEtp
+         7I47FLj6Ug7NnkCsvQ+fK8jEdt5y09gbNzjFqtAZ8cmpBA9onczyI9dDYVEGeWg3I0pp
+         cfa0ac0p7bMLSqV98MLWzlnXbsxkIJtt9SXqhtBkrUcOXxI1bhH26rrhE2+9nlLUpdMx
+         +ujKpKcxTX00F2pKOKfeu1qiVD/UlhDlWJ8OwHiijBChWiDOWQlXD88Ktv//c89tyUKY
+         hpBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755644024; x=1756248824;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lYEVB3pRXH6lT21Cyl3SADOl1TwGJtAaTRsYJ3uoDn0=;
+        b=q23mZma2GDLpo4Z5szyFIA2F6yjuwjD1TxrI1pbBro+2rCsvFOXbsGuLM89xbM7P56
+         jgHzAKAgEj6oXo+4/Jgtz/f46UlMTF91FTcwiRCG5QSOweybY6koNmw2quIOhqbMYzyp
+         IcOuJ2Bs9pXUtSnAcY9c4WiSpB8N0n7DyP7UBqAiVFh6PBNbEF/pI09koGyMfHuVEUGC
+         qbHVT0SD0nzNr80X8KMlm96E69n+OUMjg1TDTefMWhRKB5sFaaUvxJANU9lEJ+Ui5j/u
+         Z5SI2KHPnham0fJJbp0YsobYLGYxrxp+2RRSx+gHi6NbL6WMv0QyatD4VRix9E4GLsVR
+         lRQg==
+X-Gm-Message-State: AOJu0Yxak5KfNE0T82cgUCWZhs5minWq7d0ckMFi5bL+cwMdKSv7zwvt
+	025VgYC2DvjtRxpnca/pcyo+PiYJ86VBodd1bVHBDfOJCk6OtY1Y4xKFP1McpCF3yabW3GfJsSU
+	KBn5i1VizJw==
+X-Google-Smtp-Source: AGHT+IEiuVRDjMMsXYqUGudDnn8pYnCV6/bvlO922pBB7z+GLfN0XMDV/qP933U1d62ffFRdxsdwMyywD0BY
+X-Received: from plbmq6.prod.google.com ([2002:a17:902:fd46:b0:23f:e9a5:d20a])
+ (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2350:b0:23f:aec2:c880
+ with SMTP id d9443c01a7336-245ef1388b6mr7633835ad.19.1755644024291; Tue, 19
+ Aug 2025 15:53:44 -0700 (PDT)
+Date: Tue, 19 Aug 2025 22:53:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG8ApWgC/2XSwW7DIAwG4FepOI8KTMDQ095j2gGIkyKty5ak0
+ aaq7z7SamoKRwzfb8n4wiYaE03ssLuwkZY0peEzH6R42bF49J898dTmAgMBWjRgeUvh3HcTH8/
+ TzFVsdXRIAVvJMvkaqUs/t7y393w+pmkext9b/CLX6n+Qew5aJBfcBEMYAzpw3Ws/DP0H7eNwY
+ mvSAhutRKEhayDbKme1lRAqrR5aC1lolbXVwhrX+WAQKt1sNRS6yRqt9S6aCIRYab3VutA6a0V
+ ORcIQ0FClzUMbWYx/MWtviJ5AyiCVqjRuNDSFxqxdtFZpjx5EPXO71Vhom3U0Ggw1UrWNqLR7a BTlf7u1NwRHPmjvtHzS1/sqjfR9zhs53/eJBT8Rz/enNB92i9lL5GOE/Pr6Bze1FxjHAgAA
+X-Change-Id: 20250428-debugfs-rust-3cd5c97eb7d1
+X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755644022; l=5583;
+ i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
+ bh=lX444EIDCnnA8D2jKhc4Rwvq8m9EnnJBzSijBAgJZwk=; b=nc1nPF8V0i/bJOhVzuronl2caaCuoX/nms4qiJAAdX2CoBI79of8Gr40jsNNzOKdfBHVrXKoc
+ 1qDjHSSpCsHBwm9oDPg9oJ2nRJnVixmCv5K8CXgAWSLnsbS888p+xy1
+X-Mailer: b4 0.14.2
+Message-ID: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
+Subject: [PATCH v10 0/7] rust: DebugFS Bindings
+From: Matthew Maurer <mmaurer@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>, 
+	Dirk Beheme <dirk.behme@de.bosch.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 18 Aug 2025 10:16:35 +0200 Kevin Brodsky <kevin.brodsky@arm.com> wrote:
+This series provides safe DebugFS bindings for Rust, with sample
+modules using them.
 
-> >  # Avoid accidental wrong builds, due to built-in rules working just a little
-> >  # bit too well--but not quite as well as required for our situation here.
-> >  #
-> > @@ -35,6 +34,7 @@ MAKEFLAGS += --no-builtin-rules
-> >  
-> >  CFLAGS = -Wall -O2 -I $(top_srcdir) $(EXTRA_CFLAGS) $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
-> >  CFLAGS += -Wunreachable-code
-> > +CFLAGS += -Wunused  -Wunused-parameter -Wunused-function -Wunused-label -Wunused-variable -Wunused-value
-> 
-> -Wall implies all of these except -Wunused-parameter (at least according
-> to gcc(1)).
-> 
-> As to -Wunused-parameter I am frankly not convinced it's worth the
-> hassle. We're getting 90 lines changed in patch 6-8 just to mark
-> parameters as unused, in other words noise to keep the compiler happy.
-> It is not enabled by default in the kernel proper precisely because it
-> is so noisy when callbacks are involved.
+Shortly after this is sent, you will see a real driver WIP using this
+implenting the qcom socinfo driver.
 
-Yeah, we rely upon unused parameters in a million places:
+Signed-off-by: Matthew Maurer <mmaurer@google.com>
+---
+Changes in v10:
+- Introduced Scoped to show how either a File or Dir can be bound to
+  data
+- Remove use of `use<>` for MSRV compatibility
+- Added Write support
+- Added more complex sample driver using scoped interface
+- Updated original sample driver to use writes to drive mutation
+- Added `FileOps<T>` (only for DebugFS, not a kernel-wide abstraction)
+  to decrease needed `unsafe` for keeping vtables paired to types.
+- Centralized `dentry` lifecycle management to `entry.rs`.
+- Link to v9: https://lore.kernel.org/r/20250709-debugfs-rust-v9-0-92b9eab5a951@google.com
 
-#else
-static inline void some_stub_function(type1 arg2, type2 arg2)
-{
-}
-#endif
+Changes in v9:
+- Switched to `PinInit` backing instead of `ForeignOwnable`
+- Changed sample to be a platform driver
+- Exported a static property
+- Demonstrated runtime mutation in platform driver (`inc_counter`)
+- Demonstrated how driver code would interact with data structures
+  exported through DebugFS (`Wrapper`)
+- Link to v8: https://lore.kernel.org/r/20250627-debugfs-rust-v8-0-c6526e413d40@google.com
+
+Changes in v8:
+- Switched from casts to `core::from_{ref, mut}` in type change
+- Link to v7: https://lore.kernel.org/r/20250624-debugfs-rust-v7-0-9c8835a7a20f@google.com
+
+Changes in v7:
+- Rewrote `entry::Entry` -> `Entry`
+- Use `c_int` and `c_void` from kernel prelude rather than core
+- Removed unnecessary `display_open` cast
+- Switched from `Deref` + an explicit box to `ForeignOwnable` for
+  attaching owned data.
+- Made `&'static` and `&'static mut` implement `ForeignOwnable`
+- Swapped "driver" to "module" in sample code
+- Link to v6: https://lore.kernel.org/r/20250618-debugfs-rust-v6-0-72cae211b133@google.com
+
+Changes in v6:
+- Replaced explicit lifetimes with children keeping their parents alive.
+- Added support for attaching owned data.
+- Removed recomendation to only keep root handles and handles you want
+  to delete around.
+- Refactored some code into separate files to improve clarity.
+- Link to v5: https://lore.kernel.org/r/20250505-debugfs-rust-v5-0-3e93ce7bb76e@google.com
+
+Changes in v5:
+- Made Dir + File wrappers around Entry
+- All functions return owning handles. To discard without drop, use
+  `forget`. To keep a handle without drop, use `ManuallyDrop`.
+- Fixed bugs around `not(CONFIG_DEBUG_FS)`
+- Removed unnecessary `addr_of!`
+- Link to v4: https://lore.kernel.org/r/20250502-debugfs-rust-v4-0-788a9c6c2e77@google.com
+
+Changes in v4:
+- Remove SubDir, replace with type-level constant.
+- Add lifetime to Dir to prevent subdirectories and files from outliving
+  their parents and triggering an Oops when accessed.
+- Split unsafe blocks with two calls into two blocks
+- Access `private` field through direct pointer dereference, avoiding
+  creation of a reference to it.
+- Notably not changed - owning/non-owning handle defaults. The best read
+  I had from the thread was to continue with this mode, but I'm willing
+  to change if need be.
+- Comment changes
+  - More comment markdown
+  - Remove scopes from examples
+  - Put `as_ptr` properties into a `# Guarantees` section.
+- Link to v3: https://lore.kernel.org/r/20250501-debugfs-rust-v3-0-850869fab672@google.com
+
+Changes in v3:
+- Split `Dir` into `Dir`/`SubDir`/`File` to improve API.
+- Add "." to end of all comments.
+- Convert INVARIANT to # Invariants on types.
+- Add backticks everywhere I found variables/types in my comments.
+- Promoted invariant comment to doc comment.
+- Extended sample commenting to make it clearer what is happening.
+- Link to v2: https://lore.kernel.org/r/20250430-debugfs-rust-v2-0-2e8d3985812b@google.com
+
+Changes in v2:
+- Drop support for builder / pinned bindings in initial series
+- Remove `ARef` usage to abstract the dentry nature of handles
+- Remove error handling to discourage users from caring whether DebugFS
+  is enabled.
+- Support CONFIG_DEBUG_FS=n while leaving the API available
+- Fixed mistaken decimal/octal mixup
+- Doc/comment cleanup
+- Link to v1: https://lore.kernel.org/r/20250429-debugfs-rust-v1-0-6b6e7cb7929f@google.com
+
+---
+Matthew Maurer (7):
+      rust: debugfs: Add initial support for directories
+      rust: debugfs: Add support for read-only files
+      rust: debugfs: Add support for writable files
+      rust: debugfs: Add support for callback-based files
+      samples: rust: Add debugfs sample driver
+      rust: debugfs: Add support for scoped directories
+      samples: rust: Add scoped debugfs sample driver
+
+ MAINTAINERS                              |   4 +
+ rust/bindings/bindings_helper.h          |   1 +
+ rust/kernel/debugfs.rs                   | 613 +++++++++++++++++++++++++++++++
+ rust/kernel/debugfs/callback_adapters.rs | 122 ++++++
+ rust/kernel/debugfs/entry.rs             | 164 +++++++++
+ rust/kernel/debugfs/file_ops.rs          | 246 +++++++++++++
+ rust/kernel/debugfs/traits.rs            |  97 +++++
+ rust/kernel/lib.rs                       |   1 +
+ samples/rust/Kconfig                     |  22 ++
+ samples/rust/Makefile                    |   2 +
+ samples/rust/rust_debugfs.rs             | 151 ++++++++
+ samples/rust/rust_scoped_debugfs.rs      | 134 +++++++
+ 12 files changed, 1557 insertions(+)
+---
+base-commit: f3c5631f70e434e318c44001e2417d4770f06cd0
+change-id: 20250428-debugfs-rust-3cd5c97eb7d1
+
+Best regards,
+-- 
+Matthew Maurer <mmaurer@google.com>
+
 
