@@ -1,186 +1,163 @@
-Return-Path: <linux-kernel+bounces-776078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB50B2C852
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:21:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7502AB2C84D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0855672BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1571C23CC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022922848BA;
-	Tue, 19 Aug 2025 15:18:48 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3CD2857C2;
+	Tue, 19 Aug 2025 15:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMvI2GDy"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F65728466F
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60093285412
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755616727; cv=none; b=knbx9nXql5Wim9z3ozzQM/T6mOAw6Lzpj1vwoxLlZSPSIATGSBu1YgSZsJpkCnmIt+zZk18aZKhVBzJ5IwsDVXIPowRR6w+jNXL/5w+1ASXb3G3oIx9HoqCJuorvqs453Ckq1FjtUpYnqWNPjHJTDCV0Fy3AMPo95R5PQHlqhYM=
+	t=1755616731; cv=none; b=jv65o4Frn6ZJuwb8smGL4+bFngm0oSXC7aFL5YCM3wVlYAkOylbw/Ubub5zfQs8nLoYvfdawmKD+K1DUB/qmxkh1eW28SvXn/EfaKyTA+RVC5ZizfcI0qnwYMOt3eTM6Io3KT8iXqpfQGNrPPFDsrRnIYM35Lgj0hKn+31jHc4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755616727; c=relaxed/simple;
-	bh=2hwehRl4m0bP09+TjQDntl69EqVhTE7Aaa1gfgbBp3Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UkGu+ux6PwH6cfXuWaNygg/9jrmfXefoZopyWFqAKbaR3+L9Lv5s7XzS3U6yIQZssvEwbyodjgOOpyBUyPjBYR/AbCif7PyKMN9/ZQ7zwhcRL5aePAcqcjLkfhIxCnsDKlOU++/jX99AefYZ02bBKpr6He/B/+2DeiTTBWwmHGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4c5tWm0mcszYlXBY;
-	Tue, 19 Aug 2025 23:18:28 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Aug
- 2025 23:18:39 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Aug
- 2025 23:18:38 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <lorenzo.stoakes@oracle.com>
-CC: <akpm@linux-foundation.org>, <andrealmeid@igalia.com>,
-	<dave@stgolabs.net>, <dvhart@infradead.org>, <feng.han@honor.com>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <liulu.liu@honor.com>, <mhocko@suse.com>,
-	<mingo@redhat.com>, <npache@redhat.com>, <peterz@infradead.org>,
-	<rientjes@google.com>, <shakeel.butt@linux.dev>, <tglx@linutronix.de>,
-	<zhongjinji@honor.com>
-Subject: Re: [PATCH v4 3/3] mm/oom_kill: Have the OOM reaper and exit_mmap() traverse the maple tree in opposite orders
-Date: Tue, 19 Aug 2025 23:18:34 +0800
-Message-ID: <20250819151834.20414-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <8e20a389-9733-4882-85a0-b244046b8b51@lucifer.local>
-References: <8e20a389-9733-4882-85a0-b244046b8b51@lucifer.local>
+	s=arc-20240116; t=1755616731; c=relaxed/simple;
+	bh=x0RB2SJPG3/KlKIdY7RY0hyzNHN6WdZY6BM3nHzM8zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D9La7s5U/09XxRsiIGn/INcis3wQsIT+9hZ7k4sXjqvgkbQGt6Mpy41+Pe+INXjSuJlO74rzH8vKd3jSnD5Gc8sH60hr4PfGgEm1Qc48BnKXJi6XJBEzP8G4fmCC+m5oXsKfuzIfGNVWp12cQzEZrELKvk50YuGbTDwONsjfAYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMvI2GDy; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d71bcac45so36314527b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755616729; x=1756221529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FRUc9LqkxwQZjbHD55dqvmWmLwFK/B3FIfNgwPcTxZ0=;
+        b=mMvI2GDyCPyVf19VNQRm6vZ3eT4LBOQ0O2WPHpNEQfv8G/o1avo3wJMGZAjoa4WIym
+         ecMUwHCf52tN1ivhzJjepJOo+xVX5JNlhrFwrpfLyJumZUF6P/wpjAclzXneSxI8caD5
+         baB/Hi62YIGbMLSR/lIOYHmr0MQpv1ER1HDZAektKdzDefdSXuQJE04iNg7RTbKDHwPv
+         FZUsc7DdC+oBEiClcbI9aTKvNrLaRfX0gc01vUHA5vOBcML3vOEoomB59a+cfx0GCMUB
+         BuilLdSGB2bAA+KO+0wHOL/QXE4WKiKgRSQAiLGrVtUgJDRPutkYVN+DA3yDckecYeRe
+         kZ+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755616729; x=1756221529;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FRUc9LqkxwQZjbHD55dqvmWmLwFK/B3FIfNgwPcTxZ0=;
+        b=JYJ82NUhb/PpWJhRL9wWnv833e76w+GYskRKp7PdFvM18s16xATmqWWPMm3zLLnHUg
+         CpJRNO//dbtDtpXxe9zb1XEWdYPtFbXOYEE4cAKdA1q2T/pifC6qqumyZsoAUk8RTXwv
+         IT+AKIgWn+K9h7W5C2p2d+o1qMIOWD/M8Z4kO3s381L7lRgf+biQ5mXq4qOJRgxEh0Nw
+         Tw2mIZpxRCjHSVCP6J5mMMPFvC1f/C167RQGK+loRqd33TwK0G7uWUei+BOIN1ckWkM8
+         EPZ5n0hYgeqJcMD0vrNTtxMfmvIvsiDjo2SQRAMVk6y1EW6VfCPYn9sDYXY0X5G5czGS
+         t0Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8J+j0TftAo9+R/YlwzoCWUxI6UopJ0r7xXZ7+HLC7onbtbwf6r0ei0uaUPljShWiOEICmQkUHqN8uKWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvj6SR9CMRMNYMUFrY1HusXgBpCI62225nh3YsSCcAP5M0TU8G
+	toVTuM4V1UHTMRT8BE99wOhfVgScop+4tggyg737gL//0flLMkEjBjqk
+X-Gm-Gg: ASbGnctjaOjMTPzFWsqiao0RpQZndTE0+TAVvmTCURPVI6p0a4/5KFnCmNeebtDnu0R
+	XK213O9P52HZxqwPWUDghGdfbA8+o3vq+T5lVCGt8PFKbW8TW52+WPZX3CPtLX8CZZJ5/EeFmya
+	VdCB1Ga1Bx5ptGbC+AGw16cVUr82faaFyjXb+qSYaBubn/YAaVOrHEhBa5RZCCdhe8D9w/xW2rB
+	sICbUTx7/7JOUJdSeEGDCTGuiIPDuu/sDIfywEkQeIPcwGwB/f6zMnPPItlXEgZwrbQLKd/hn3H
+	V2jQAElK7QS2afyVYhPWAW2H0nsVImwox+d1cXisTLtdMTr0QNUasvoIhpVUXUwpyV0tr+tB0Wi
+	5PXF0b/vQX35p6OErwBSULg==
+X-Google-Smtp-Source: AGHT+IEAYZG8JniwtwZmiJmxa46+aZaPP8w2nEYVSmlPFm/lWVH6z5++okUzfhixnHaV5qO9RKd7HQ==
+X-Received: by 2002:a05:690c:7489:b0:719:fafe:e822 with SMTP id 00721157ae682-71f9d61cc08mr32926187b3.21.1755616728908;
+        Tue, 19 Aug 2025 08:18:48 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:5a::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71f96ec62cfsm7947127b3.22.2025.08.19.08.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 08:18:48 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Chris Mason <clm@fb.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@gogle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in batch freeing
+Date: Tue, 19 Aug 2025 08:18:45 -0700
+Message-ID: <20250819151846.2000539-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250818171340.2f4ce3356f1cda59acecab57@linux-foundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a018.hihonor.com
- (10.68.17.250)
+Content-Transfer-Encoding: 8bit
 
-> On Thu, Aug 14, 2025 at 09:55:55PM +0800, zhongjinji@honor.com wrote:
-> > From: zhongjinji <zhongjinji@honor.com>
-> >
-> > When a process is OOM killed, if the OOM reaper and the thread running
-> > exit_mmap() execute at the same time, both will traverse the vma's maple
-> > tree along the same path. They may easily unmap the same vma, causing them
-> > to compete for the pte spinlock. This increases unnecessary load, causing
-> > the execution time of the OOM reaper and the thread running exit_mmap() to
-> > increase.
+On Mon, 18 Aug 2025 17:13:40 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+
+Hello Andrew,
+
+Thank you for your time & feedback, as always!
+
+> On Mon, 18 Aug 2025 11:58:03 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 > 
-> You're not giving any numbers, and this seems pretty niche, you really
-> exiting that many processes with the reaper running at the exact same time
-> that this is an issue? Waiting on a spinlock also?
+> > While testing workloads with high sustained memory pressure on large machines
+> > (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
+> > Further investigation showed that the lock in free_pcppages_bulk was being held
+> > for a long time, even being held while 2k+ pages were being freed.
+> > 
+> > Instead of holding the lock for the entirety of the freeing, check to see if
+> > the zone lock is contended every pcp->batch pages. If there is contention,
+> > relinquish the lock so that other processors have a change to grab the lock
+> > and perform critical work.
+> > 
+> > In our fleet,
 > 
-> This commit message is very unconvincing.
+> who is "our"?
 
-This is the perf data: the first one is without this patch applied, and the
-second one is with this patch applied.  It is obvious that without this patch,
-the lock contention on the pte spinlock will be very intense.
+Sorry for the ambiguity -- I work for Meta, so I was referring to their
+machines. I'll make this clearer in the next version.
 
-|--99.74%-- oom_reaper
-|    |--76.67%-- unmap_page_range
-|    |    |--33.70%-- __pte_offset_map_lock
-|    |    |    |--98.46%-- _raw_spin_lock
-|    |    |--27.61%-- free_swap_and_cache_nr
-|    |    |--16.40%-- folio_remove_rmap_ptes
-|    |    |--12.25%-- tlb_flush_mmu
-|    |--12.61%-- tlb_finish_mmu
-
-
-|--98.84%-- oom_reaper
-|    |--53.45%-- unmap_page_range
-|    |    |--24.29%-- [hit in function]
-|    |    |--48.06%-- folio_remove_rmap_ptes
-|    |    |--17.99%-- tlb_flush_mmu
-|    |    |--1.72%-- __pte_offset_map_lock
-|    |
-|    |--30.43%-- tlb_finish_mmu
-
-> >
-> > When a process exits, exit_mmap() traverses the vma's maple tree from low to high
-> > address. To reduce the chance of unmapping the same vma simultaneously,
-> > the OOM reaper should traverse vma's tree from high to low address. This reduces
-> > lock contention when unmapping the same vma.
-> 
-> Are they going to run through and do their work in exactly the same time,
-> or might one 'run past' the other and you still have an issue?
-> 
-> Seems very vague and timing dependent and again, not convincing.
-> 
-> >
-> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
-> > ---
-> >  include/linux/mm.h | 3 +++
-> >  mm/oom_kill.c      | 9 +++++++--
-> >  2 files changed, 10 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 0c44bb8ce544..b665ea3c30eb 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -923,6 +923,9 @@ static inline void vma_iter_set(struct vma_iterator *vmi, unsigned long addr)
-> >  #define for_each_vma_range(__vmi, __vma, __end)				\
-> >  	while (((__vma) = vma_find(&(__vmi), (__end))) != NULL)
-> >
-> > +#define for_each_vma_reverse(__vmi, __vma)					\
-> > +	while (((__vma) = vma_prev(&(__vmi))) != NULL)
-> 
-> Please don't casually add an undocumented public VMA iterator hidden in a
-> patch doing something else :)
-> 
-> Won't this skip the first VMA? Not sure this is really worth having as a
-> general thing anyway, it's not many people who want to do this in reverse.
-
-I got it. mas_find_rev() should be used instead of vma_prev().
-
+> > @@ -1267,12 +1270,22 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> >  
+> >  			/* must delete to avoid corrupting pcp list */
+> >  			list_del(&page->pcp_list);
+> > +			batch -= nr_pages;
+> >  			count -= nr_pages;
+> >  			pcp->count -= nr_pages;
+> >  
+> >  			__free_one_page(page, pfn, zone, order, mt, FPI_NONE);
+> >  			trace_mm_page_pcpu_drain(page, order, mt);
+> > -		} while (count > 0 && !list_empty(list));
+> > +		} while (batch > 0 && !list_empty(list));
 > > +
-> >  #ifdef CONFIG_SHMEM
-> >  /*
-> >   * The vma_is_shmem is not inline because it is used only by slow
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index 7ae4001e47c1..602d6836098a 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -517,7 +517,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
-> >  {
-> >  	struct vm_area_struct *vma;
-> >  	bool ret = true;
-> > -	VMA_ITERATOR(vmi, mm, 0);
-> > +	VMA_ITERATOR(vmi, mm, ULONG_MAX);
-> >
-> >  	/*
-> >  	 * Tell all users of get_user/copy_from_user etc... that the content
-> > @@ -527,7 +527,12 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
-> >  	 */
-> >  	set_bit(MMF_UNSTABLE, &mm->flags);
-> >
-> > -	for_each_vma(vmi, vma) {
-> > +	/*
-> > +	 * When two tasks unmap the same vma at the same time, they may contend for the
-> > +	 * pte spinlock. To avoid traversing the same vma as exit_mmap unmap, traverse
-> > +	 * the vma maple tree in reverse order.
-> > +	 */
+> > +		/*
+> > +		 * Prevent starving the lock for other users; every pcp->batch
+> > +		 * pages freed, relinquish the zone lock if it is contended.
+> > +		 */
+> > +		if (count && spin_is_contended(&zone->lock)) {
+> > +			spin_unlock_irqrestore(&zone->lock, flags);
+> > +			spin_lock_irqsave(&zone->lock, flags);
+> > +		}
+> >  	}
 > 
-> Except you won't necessarily avoid anything, as if one walker is faster
-> than the other they'll run ahead, plus of course they'll have a cross-over
-> where they share the same PTE anyway.
+> Pretty this isn't.
 > 
-> I feel like maybe you've got a fairly specific situation that indicates an
-> issue elsewhere and you're maybe solving the wrong problem here?
+> Sigh, we do so much stuff here and in __free_one_page().
 > 
-> > +	for_each_vma_reverse(vmi, vma) {
-> >  		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
-> >  			continue;
-> >
-> > --
-> > 2.17.1
-> >
-> >
+> What sort of guarantee do we have that the contending task will be able
+> to get in and grab the spinlock in that tiny time window?
+
+Thank you for pointing this out -- I don't think there is any guarantee.
+Kiryl suggested that I put a cond_resched() here, in order to guarantee that
+the contending tasks will be able to grab the spinlock. I think that's a great
+idea -- I'll make this change in v2.
+
+Thank you for your feedback, have a great day!
+Joshua
 
