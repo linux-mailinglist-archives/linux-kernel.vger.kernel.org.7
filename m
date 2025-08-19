@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-775327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A717AB2BDFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:50:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90931B2BE09
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F2F5E248E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10E2196219D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A528731B108;
-	Tue, 19 Aug 2025 09:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BE831CA58;
+	Tue, 19 Aug 2025 09:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xUGfaqai"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="YTOVqOfZ"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905B131E0E9
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EE331B13C;
+	Tue, 19 Aug 2025 09:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596995; cv=none; b=m0rZ13UwBhK7FP7kHQmzXTHxQ8ic2c/ta68X18yfbUzx6FJlSSW3G0MmAhVAApQVXFmVK+USpmtWQB1I9yMgkYbYTqa1AwtsSkW8awniZ64pJeRk5pQlIzjMgWaH2oafSOISxd/Ak9TZAyAPC58Ly11EFJ9iBsZPsAVerWMLFp4=
+	t=1755596989; cv=none; b=AzAf8KQ/oHN8qGxO1WbHi8ruUsvfgWUEt46LBc2ptsQhDYzj3LtQIG4YhUuZrdI4RzfbaF4jKNcNOUCj+otz0kikNLo/zjS2khFjgoWI8LCuzHWK+HDraL/QTVRkN8A1VXPlOSWW9sCiIOvo2q9NbHoUZqyxROpHaq/kt+gi/T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596995; c=relaxed/simple;
-	bh=tV6Flkuo2P/+55L7Kh0T7daOZ9uv2yK47XAxZBt9LOQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RYE0m/SCRKUaFxGPYIB7Y1NgJDQMLAsQPyQmVbpt3b0pWmWH8JTiB+RDq3wZScOI3/fsWPRrv0msPJZYvOumy7LX9dOkM8HdIKndUhtUUZ9iRzcdUQTKianr5DpASn23LtYeJvulj+aZZJ82dplbm7tEx4ccUvYeBAGW20lUpj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xUGfaqai; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55ce510b4ceso5792342e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596990; x=1756201790; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tV6Flkuo2P/+55L7Kh0T7daOZ9uv2yK47XAxZBt9LOQ=;
-        b=xUGfaqailfILgnn9twlZVvknsFLdaaDvd0vqvVv3J2OlV1wmvU4DB0M/sM11KDa2xe
-         i8YagmU7rgfupxhwmH+NBPI4s9Vy/uFYXiXNocNTdb+er7NFgOK8bIpnx0DGn9jhhYV+
-         iqoLOLHkNqu/hMI2X+KiHL/6IJ7eTiJR3DmkRidipAG7dnS3oyjcpyF6/rW3du8ZMFKR
-         dhCSQYm1/LFv+CMJiBBA6OFpM3NfciPZPNmd8f0/u0Qs2dh+1GajWVxUMdsl3UQAcjeN
-         G2699YMNi3HziBPSD/pLEVDhCNo0nEaddDRxLpkI2T5pa4zsATVAXEzgm7aNhn1uAL4h
-         yJiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596990; x=1756201790;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tV6Flkuo2P/+55L7Kh0T7daOZ9uv2yK47XAxZBt9LOQ=;
-        b=OyrLoAeMJgomvJQ1OGqEkWddhw4e7Uyw0OAvl5wjrjgKRvdlK//cvaRX+3jviqfj6e
-         X+jPDcf3HR5RmXHo5gVHtwJtdaf6qImr6rFIltBrp67sumcRgz29RXWRozkTtq0ZTKiO
-         lsTM5qjAbPu1hjjzK2wkwLfSerfiWrSy25Ymg+w7CpD0P7VRh1G/+ed0BmiWq/+uLsa+
-         PcqEIqvNae+6103xzQgv7auWxWQwW9hixD8Rl/PpUZeHOlLSDhpxIgAvSq6imumz0KW2
-         15fL/WZPUmWPz4tnyPm+f3lyFRkvh+Ft/BA+h3sl20TH9rEIGX1GfJtBfLLGYN3EkwIp
-         Utnw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/jUPByL1WyBrfaMpIMor7N+AIUoj4fcBcUAgG/MxMXkLmtEiauQhBmYKrpxq+R971fQ3UqZwp3ZxWiR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQkptd32SORXhRkDJX4FqQpVqN1Zhb+zHuW/rIrYcnZ/aYzzIq
-	pphtAWpfQ+pF0upknqwj/+0uZB0TGzAheW7ntnZWhMU7CldWfCWo11kSvje8ST1hSZ8QXqTvqbp
-	wk7eXZ4DS9+Gm6hzmxMe5YQt4YDz6d0qodPiu9L/qjA==
-X-Gm-Gg: ASbGncvnvApxx/w6zSgjeFaf5+eF6Xx6kkHlzO1b6B9QGZfeDQyzND5M1rkwQse6/gx
-	UtXjUvlw9cokkllJ3J7/wdr/QrtFIbce8kDAZei/HgRuhdYY4z9611dKZ5IUQ1kdfpLSnj9LigR
-	mgRJY7IsY8+d/fOZ0APxNFS7gwwN6hN0UCdkH3xia+84KFZgp34zlPim2CshmBYjCU7bJia0SBj
-	tfA7dT/nqxm
-X-Google-Smtp-Source: AGHT+IEt8RlqWWvwC2uqrmb7EU75OBtpQ0q0kJ1zr3PFW1jsKW7QqgA/pBKXOLyxKfth/q0XXJuPhRlLhC58Y7ZaIjE=
-X-Received: by 2002:a05:6512:ac9:b0:553:51a2:4405 with SMTP id
- 2adb3069b0e04-55e00850835mr590681e87.45.1755596989499; Tue, 19 Aug 2025
- 02:49:49 -0700 (PDT)
+	s=arc-20240116; t=1755596989; c=relaxed/simple;
+	bh=NgjT3AXJmNHpYMtXwReAJY+YxZrl6WWlSuco2/rbpJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxrG5hb/m7JT7mzFoUp2UuYuMZHf/sKPcI8tTa5a2+YZOMqSilCOL7v3UMZRZ5ASbSFHT88tgKM1e62GfeQOfhLENQmDdPAeJY2F3PGgA15XE696LqRyRX9YJKGlLYB98EjewEQzvOM5as9XPsVXiMMJJsTbjLPlGQuif9KbSE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=YTOVqOfZ; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4F8811038C11E;
+	Tue, 19 Aug 2025 11:49:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1755596984; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=v00EVxp2f9cvCwEcte1cbk+FFRccPtGzRkdO+es/Ltg=;
+	b=YTOVqOfZtK3/0JLLGrEtAiBWEzfvym6j+klakS5Mzysv2lNZpS/OGnD1SFXJZqiUwr1X3y
+	v5sP8pAKiILCATI3vA5UhMY+uKTStZCRRHbWqHR991MfuDexXCJPuP5RrHUw3rFMSuQF/L
+	4aAjWDgJDQkfewUccc5Xd4HwtL5ORCtYQfoLxq2qbMsFlDvhozG3J1WDUr/FwZ78Zi5BDu
+	Zym1ppfGU+a0yI9KKaSncyseEw95DrPlmpVUplv4Wo8PO5RS5j0sBYOkC4NKV87lfCGMZ+
+	HrwM4797Osw4t3Rg3iMlQ2ktfy9dqdolHn3wg8wbBzy7DeS5RunKx1kCp5jp+Q==
+Date: Tue, 19 Aug 2025 11:49:38 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
+Message-ID: <aKRIsm1+w5DJqebA@duo.ucw.cz>
+References: <20250818124505.781598737@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-109-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-109-b3bf97b038dc@redhat.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 11:49:38 +0200
-X-Gm-Features: Ac12FXyEOw7KCbkbFT2OqCP4TngpQPKLbvy9M6n90z-zmlM7tVP9PQNq8vVGJnI
-Message-ID: <CACRpkdaW=f7xm+rsD8XUUx-qhuh8sk1mCU-erve-_9S4uUpHbA@mail.gmail.com>
-Subject: Re: [PATCH 109/114] clk: versatile: vexpress-osc: convert from
- round_rate() to determine_rate()
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
-	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Andrea della Porta <andrea.porta@suse.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Alex Helms <alexander.helms.jy@renesas.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4O2b2Ns1yAeYfOm5"
+Content-Disposition: inline
+In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--4O2b2Ns1yAeYfOm5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 5:21=E2=80=AFPM Brian Masney via B4 Relay
-<devnull+bmasney.redhat.com@kernel.org> wrote:
+Hi!
 
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> This is the start of the stable review cycle for the 6.16.2 release.
+> There are 570 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+CIP testing did not find any problems here:
 
-Yours,
-Linus Walleij
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.16.y
+
+6.15 passes our testing, too:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.15.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--4O2b2Ns1yAeYfOm5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaKRIsgAKCRAw5/Bqldv6
+8lLDAKCv5kwy81x5drhS6S4eac+kSohwCQCfZzZ53klyVulWsJCYW4ufPe/8vbg=
+=vkPc
+-----END PGP SIGNATURE-----
+
+--4O2b2Ns1yAeYfOm5--
 
