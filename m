@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-774757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5033CB2B6FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:30:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CFEB2B6F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC444521755
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252875E6E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7590287519;
-	Tue, 19 Aug 2025 02:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C751F2882CF;
+	Tue, 19 Aug 2025 02:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XgrnGfXI"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72421DF24F;
-	Tue, 19 Aug 2025 02:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="sCAjS4Bg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A57313A265;
+	Tue, 19 Aug 2025 02:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755570615; cv=none; b=VxNO+X5W/GD1E1rUBnZ8Y15/xjGSFC3HtKFw+dRJHrwbFqPUPE6k4wErEYfmOHbURk76Pw34XjgBis3h3ZCOofLW5VZpeHj9ti5eXqM7s57J9/1vnB4l61fv6NjhWTBveh1Fy4l+6IrmHl0DE6cQ98EQRAzAWd4lt1IhbhWnkf0=
+	t=1755570583; cv=none; b=hFWtb/cRXOKySM6rgxtXu4GEXk5nVAMh50DACF1MtKwKOB0wBJsg/ASKPS/oVbZyWcrQ3zaZDpwiPqAcV1OaIoEoZgnuyhyhiFZKRZQ0wIxtQ6+9tFUnbfSVlnwNYqVNZ6GyYuzXU67VcIQVKrGk8OEoNA5I1E5KonLAyGY3JgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755570615; c=relaxed/simple;
-	bh=b1qUQAM60cMYPl7V0ScUvR9LA9K1JoHvN22P5gTDwR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RcmEhXPUtVRVaJPo59iQN0SXRZUO4kwQr0WK6DpVawGcFiEDpu+LzYtzjqdAJlWkz6KYPqB7PymZQo7isWHnwpeBxB8oacOZWJo5qi2QbDIWM0osMYathNZzy/gSxEndTZXiZqD0oZBGJ37/H0Aruppv+yDP7BxB44AU3jHB+C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XgrnGfXI; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Ev
-	Tdpk/C0SrAV2N3VjzKTmAB7DE/+/AoiCYzOgohIRY=; b=XgrnGfXIEkOpNK4r2a
-	fMb5ixskQnmFJNuEENZkGhK7RqdUtaP6H3ce0mqsKsfGmW8c+EDn0otcWpsbYlLU
-	J8kHeiNHOA1F12fS5ynh3C+sLEFW3m9WO/ljxWpYbpUxNJqH+L8LbtELBxjgQLiB
-	5+lv2cLJrEjziwWcpK8QDrnqQ=
-Received: from neo-TianYi510Pro-15ICK.. (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDnr_ij4aNoMJCaCQ--.50904S2;
-	Tue, 19 Aug 2025 10:29:56 +0800 (CST)
-From: liuqiangneo@163.com
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liuqiang@kylinos.cn
-Subject: [PATCH] scsi: aic94xx: remove self-assigned redundant code
-Date: Tue, 19 Aug 2025 10:29:35 +0800
-Message-ID: <20250819022935.15164-1-liuqiangneo@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755570583; c=relaxed/simple;
+	bh=dxQFtiQqBfgcZW7jYK5rAIvwpnQhF5wbmU8vX/hiHkY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FRrMQmA85oila80beRhCN8Bv8Y48MseeoamSk6Ng6mrHygRgv45zNhgwXhgcoEOVPJPyqozdppKuRfob/cn6k2Xog9okysNi18EVhnLz/772xs/Qu7elihvEgIWBEdzk36PNA9W8Vtc8ekkKo4F/oyKz9YD5jtQJqqPiDXqW8Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=sCAjS4Bg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D036C4CEEB;
+	Tue, 19 Aug 2025 02:29:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755570582;
+	bh=dxQFtiQqBfgcZW7jYK5rAIvwpnQhF5wbmU8vX/hiHkY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sCAjS4Bgjt5fjnskES8nB6XtFvx2P1Na1sz0CzgGO0DXgbwbYHrRAbKeHInwBh0P8
+	 FmcJvh9dDGm2dOV+R+BZMf8on9dzq/GTistX95T0nS6E9WbIwOB9zbwOqDY+J6Cz2b
+	 Q+K3IqMiaYCkbVq11pjfVHANP3mzO9kuzG4sS/k0=
+Date: Mon, 18 Aug 2025 19:29:41 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: Re: linux-next: manual merge of the bcachefs tree with the
+ mm-unstable tree
+Message-Id: <20250818192941.94fa175267dd4e334ca529ad@linux-foundation.org>
+In-Reply-To: <20250819111228.6c6209eb@canb.auug.org.au>
+References: <20250819111228.6c6209eb@canb.auug.org.au>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnr_ij4aNoMJCaCQ--.50904S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtryxGF4xtw4UCF48Ww4xtFb_yoWfGrc_Wr
-	Wjvan7WryUJrs7Kw15Aa45Jr9Yva1xW3y8u3s0vr93A3WSvFW5Zw1DAF9rAw4kG3yYyFy7
-	JrW8WF1Fkr1ktjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1eOJ7UUUUU==
-X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/1tbishWuYWij20-IywAAs0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Qiang Liu <liuqiang@kylinos.cn>
+On Tue, 19 Aug 2025 11:12:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Assigning ssp_task.retry_count to itself has no effect
+> Hi all,
+> 
+> Today's linux-next merge of the bcachefs tree got a conflict in:
+> 
+>   fs/bcachefs/darray.c
+> 
+> between commit:
+> 
+>   97b75b7e275a ("mm/slub: allow to set node and align in k[v]realloc")
+> 
+> from the mm-unstable tree and commit:
+> 
+>   808708fe9da0 ("bcachefs: darray_make_room_rcu()")
+> 
+> from the bcachefs tree.
+> 
+> ...
+>
+> --- a/fs/bcachefs/darray.c
+> +++ b/fs/bcachefs/darray.c
+> @@@ -20,10 -22,11 +22,11 @@@ int __bch2_darray_resize_noprof(darray_
+>   		if (unlikely(check_mul_overflow(new_size, element_size, &bytes)))
+>   			return -ENOMEM;
+>   
+> - 		void *data = likely(bytes < INT_MAX)
+> + 		void *old = d->data;
+> + 		void *new = likely(bytes < INT_MAX)
+>  -			? kvmalloc_noprof(bytes, gfp)
+>  +			? kvmalloc_node_align_noprof(bytes, 1, gfp, NUMA_NO_NODE)
+>   			: vmalloc_noprof(bytes);
+> - 		if (!data)
+> + 		if (!new)
+>   			return -ENOMEM;
 
-Signed-off-by: Qiang Liu <liuqiang@kylinos.cn>
----
- drivers/scsi/aic94xx/aic94xx_task.c | 1 -
- 1 file changed, 1 deletion(-)
+uh, OK, I guess a 2GB allocation is reasonable on a 16TB machine.
 
-diff --git a/drivers/scsi/aic94xx/aic94xx_task.c b/drivers/scsi/aic94xx/aic94xx_task.c
-index 4bfd03724ad6..b26a468ddc98 100644
---- a/drivers/scsi/aic94xx/aic94xx_task.c
-+++ b/drivers/scsi/aic94xx/aic94xx_task.c
-@@ -488,7 +488,6 @@ static int asd_build_ssp_ascb(struct asd_ascb *ascb, struct sas_task *task,
- 	scb->ssp_task.conn_handle = cpu_to_le16(
- 		(u16)(unsigned long)dev->lldd_dev);
- 	scb->ssp_task.data_dir = data_dir_flags[task->data_dir];
--	scb->ssp_task.retry_count = scb->ssp_task.retry_count;
- 
- 	ascb->tasklet_complete = asd_task_tasklet_complete;
- 
--- 
-2.43.0
-
+But why does bcachefs find it necessary to bypass allocation profiling?
 
