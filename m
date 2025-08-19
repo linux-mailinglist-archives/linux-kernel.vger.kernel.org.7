@@ -1,194 +1,224 @@
-Return-Path: <linux-kernel+bounces-775052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29757B2BABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51116B2BAB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D94443B9B01
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8413B1BB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F49B2D24A0;
-	Tue, 19 Aug 2025 07:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kI2AwKQd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF9E27B353;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF912641FC;
 	Tue, 19 Aug 2025 07:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NQ3JndSi"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D746122D9F7;
+	Tue, 19 Aug 2025 07:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755588567; cv=none; b=RlDm6MhiIFeavbHe519BV6ankIxMzbp+oSYsGRF/umlhsZMt9EAEMnQDwG4t+E5nrOzUzOFpL5KGNekKmDsVXNewUQjAzCKensMq74nZPY3Ux9mtG7AjceOM2msNEwqI478PVr0ZjMDueFuA2CMVBHEyTIBwm3siOxDE4ZOLGhM=
+	t=1755588564; cv=none; b=IR48N+XVBwG/2UykBV3k3Rwz0uoY83rxydDXhlC2i4w2ndOmUhsk4p3v2ZPrGRj0sI/J5Aueut+5NOlrg6CIzxTxNYGKXNiw4VnAHkTjqvNwBxqPaQJN/FHOoKOj7wOp/Kw9DRFqNZs5OJ/CbUG/BeMwE9O1IIrZbpFKnW1dGJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755588567; c=relaxed/simple;
-	bh=sWXNXrmpZM/zIPEpHXEp/nNdNOPPPh3S0g1xhyrueSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pX9pE6BjUvst2ZigPPKpkobbhg/j6XPxxyRg87PZCjxaPu984xpkB6K5QTp/+t7imYiCKJTTZ7LTi/Ix58WmpPMmdY87fqQ0w/KIwXHELoDTRPrmWWW98heXjqhQe4rSzVFgetQfmgBgrJaAH/Y5EATkM9b9jqaMbDG9i8HXIHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kI2AwKQd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J3FJ24026231;
-	Tue, 19 Aug 2025 07:29:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YllUjDGa6oXUBXmA1B/7KGfSPr3rEXGRBzTtV3TN4K8=; b=kI2AwKQdTLnTvuHw
-	Yv10bX/n1gt9Oku/rJB7VfDrzwGxr2nNW9cLfpCNDCVop2H404eQcofETJdSnxg7
-	JD5VfjxikZQ5FKzTRJ5+P+6KOwgBbLcBU5Ls9yEQPQH1GuRIbfQbCRpLcZseTo+I
-	00VCQV33ECxoqhFNwfmhS617hn2TViUipWHsxI0acQ3K1qZa/X3cnanIH+mdFCYz
-	c6u2rn3/kjRaslFWVQhG6qMAvxdLDd9hxQOfVeG/AieOBzLeAbaVohNHLHiSkBvx
-	08R92Of6G5ECP9M5xHx9V6PY+otxyAVf+eI0barST5f3ur9csLmLdRexrG0cjTub
-	m0eVUw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jhagyk1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:29:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57J7TJd8005232
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:29:19 GMT
-Received: from [10.50.26.158] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 19 Aug
- 2025 00:29:15 -0700
-Message-ID: <6f46f608-61a2-77d8-6a78-84fcf160865b@quicinc.com>
-Date: Tue, 19 Aug 2025 12:59:12 +0530
+	s=arc-20240116; t=1755588564; c=relaxed/simple;
+	bh=zmJ4oEkg/wsHorsGWyyTdx9Ow5bGQ0WGNug4IrVA5ZA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=cDp7SU3LLScyObBLay3DyqbvyGlckEy5YEdZ4rdQOE6An6gX2bonUl6j8VMmVLVWoqy5Ll4Bkg8T2fPpnzcbNMVJ36vASBEUsDYv2WhNKpwJSzxHEpV5L/cGfqlSateNjsVz47gA/3C/CXIuqL9X8OzF0bMIMyFxEOx7yVySMoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NQ3JndSi; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1032)
+	id 597D92113369; Tue, 19 Aug 2025 00:29:22 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 597D92113369
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755588562;
+	bh=tUxdMWnI67dhYQwXGjOBEKVZI8EfEtyZKrA8xyUFX7M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NQ3JndSidFl3XzfsFMOggAl8X/S92o6u9CxcAmGbifX1dWrdNU1HiBTxqByV6Xf7Y
+	 d/uU+96PAChnhvcY1DNVPgq8W3ekFPcn/NwaCY9g7dgStVDRDkj/1G+q5P/Iysfe6R
+	 lN4Fre8WrXbU9m7Fcx0yOlZvvxx3L5pUENRVGlk4=
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	mhklinux@outlook.com,
+	decui@microsoft.com,
+	arnd@arndb.de,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Subject: [PATCH] mshv: Add support for a new parent partition configuration
+Date: Tue, 19 Aug 2025 00:29:19 -0700
+Message-Id: <1755588559-29629-1-git-send-email-nunodasneves@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 08/24] media: iris: Allow stop on firmware only if
- start was issued.
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Mauro
- Carvalho Chehab" <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        Vedang Nagar
-	<quic_vnagar@quicinc.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
- <20250813-iris-video-encoder-v2-8-c725ff673078@quicinc.com>
- <4fe5d966-f788-4fd7-9e74-6d63ecc8dcb3@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <4fe5d966-f788-4fd7-9e74-6d63ecc8dcb3@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=D9xHKuRj c=1 sm=1 tr=0 ts=68a427d0 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=DPfoDAcuhgr0HiD5mycA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: c3GoDR1MgUynSv-XnAgBBn3CREAOobh7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyNCBTYWx0ZWRfX7xeYKbhKozTk
- MxmiE8q/ndagpXy07CHR0kr0HMRM0ALl/re6aU5ZcwrPvaE8omixsfcV1GTRfwZrrvtrxBfYxeH
- imwNkdypGOZuwARcVRuz9AEz+Mi8kUeUMgb5f6Io9E4Mv91V4TJxVX7AtQ+nxyl7TrH0NWqRzTS
- Bie5gJsIqed/bDc7RnXVebtNCZ5nWW6npWrcPelcnybtfWUcQUavPfyker7n1hvnrqnIcI6p5CK
- ziBuAReb3ywQKDnjN/4Wfj/LNYEQbt/1eu2NpJI6JNCd82Rertqpa1B5npr6BJBj8Dnum91vecq
- 9Uq3T9JZ90TlHWWTiWStq6MVXCkOtxHxDHVgfQtqIw2hou8yMRMChjuUbqRF4lzMagSAxlQVnPR
- 57LePZVy
-X-Proofpoint-GUID: c3GoDR1MgUynSv-XnAgBBn3CREAOobh7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160024
 
+Detect booting as an "L1VH" partition. This is a new scenario very
+similar to root partition where the mshv_root driver can be used to
+create and manage guest partitions.
 
+It mostly works the same as root partition, but there are some
+differences in how various features are handled. hv_l1vh_partition()
+is introduced to handle these cases. Add hv_parent_partition()
+which returns true for either case, replacing some hv_root_partition()
+checks.
 
-On 8/16/2025 4:37 PM, Bryan O'Donoghue wrote:
-> On 13/08/2025 10:37, Dikshita Agarwal wrote:
->> For HFI Gen1, the instances substate is changed to LOAD_RESOURCES only
->> when a START command is issues to the firmware. If STOP is called
->> without a prior START, the firmware may reject the command and throw
->> some erros.
->> Handle this by adding a substate check before issuing STOP command to
->> the firmware.
->>
->> Fixes: 11712ce70f8e ("media: iris: implement vb2 streaming ops")
->> Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>   drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> index
->> 5fc30d54af4dc34616cfd08813940aa0b7044a20..5f1748ab80f88393215fc2d82c5c6b4af1266090 100644
->> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> @@ -184,11 +184,12 @@ static int iris_hfi_gen1_session_stop(struct
->> iris_inst *inst, u32 plane)
->>       u32 flush_type = 0;
->>       int ret = 0;
->>   -    if ((V4L2_TYPE_IS_OUTPUT(plane) &&
->> -         inst->state == IRIS_INST_INPUT_STREAMING) ||
->> +    if (((V4L2_TYPE_IS_OUTPUT(plane) &&
->> +          inst->state == IRIS_INST_INPUT_STREAMING) ||
-> 
-> this is becoming a highly complex clause
-> 
->         if (((V4L2_TYPE_IS_OUTPUT(plane) &&
->               inst->state == IRIS_INST_INPUT_STREAMING) ||
->             (V4L2_TYPE_IS_CAPTURE(plane) &&
->              inst->state == IRIS_INST_OUTPUT_STREAMING) ||
->             inst->state == IRIS_INST_ERROR) &&
->                 inst->sub_state & IRIS_INST_SUB_LOAD_RESOURCES) {
-> 
-> can we not reduce down the number of conjunctions and dis-junctions here ?
-> 
-> Its getting hard to follow.
-> 
-> For example pivot on if (inst->sub_state & IRIS_INST_SUB_LOAD_RESOURCES)
-> 
-> or make it into a switch for inst->state... no that wouldn't work
-> 
-> Either way the complexity of this clause is indicating to me we need to do
-> some decomposition.
-> 
-> Please consider if you can rationalise the logic here and make the code
-> more readable.
+Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+---
+ drivers/hv/hv_common.c         | 20 ++++++++++++--------
+ drivers/hv/mshv_root_main.c    | 22 ++++++++++++++--------
+ include/asm-generic/mshyperv.h | 11 +++++++++++
+ 3 files changed, 37 insertions(+), 16 deletions(-)
 
-Sure, I will see if some of these conditions can be absorbed in caller or
-if handled by vb2 framework itself.
+diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+index cbe4a954ad46..a6839593ca31 100644
+--- a/drivers/hv/hv_common.c
++++ b/drivers/hv/hv_common.c
+@@ -357,7 +357,7 @@ int __init hv_common_init(void)
+ 	hyperv_pcpu_arg = alloc_percpu(void  *);
+ 	BUG_ON(!hyperv_pcpu_arg);
+ 
+-	if (hv_root_partition()) {
++	if (hv_parent_partition()) {
+ 		hv_synic_eventring_tail = alloc_percpu(u8 *);
+ 		BUG_ON(!hv_synic_eventring_tail);
+ 	}
+@@ -506,7 +506,7 @@ int hv_common_cpu_init(unsigned int cpu)
+ 	if (msr_vp_index > hv_max_vp_index)
+ 		hv_max_vp_index = msr_vp_index;
+ 
+-	if (hv_root_partition()) {
++	if (hv_parent_partition()) {
+ 		synic_eventring_tail = (u8 **)this_cpu_ptr(hv_synic_eventring_tail);
+ 		*synic_eventring_tail = kcalloc(HV_SYNIC_SINT_COUNT,
+ 						sizeof(u8), flags);
+@@ -532,7 +532,7 @@ int hv_common_cpu_die(unsigned int cpu)
+ 	 * originally allocated memory is reused in hv_common_cpu_init().
+ 	 */
+ 
+-	if (hv_root_partition()) {
++	if (hv_parent_partition()) {
+ 		synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
+ 		kfree(*synic_eventring_tail);
+ 		*synic_eventring_tail = NULL;
+@@ -703,13 +703,17 @@ void hv_identify_partition_type(void)
+ 	 * the root partition setting if also a Confidential VM.
+ 	 */
+ 	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
+-	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
+ 	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
+-		pr_info("Hyper-V: running as root partition\n");
+-		if (IS_ENABLED(CONFIG_MSHV_ROOT))
+-			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
+-		else
++
++		if (!IS_ENABLED(CONFIG_MSHV_ROOT)) {
+ 			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
++		} else if (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) {
++			pr_info("Hyper-V: running as root partition\n");
++			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
++		} else {
++			pr_info("Hyper-V: running as L1VH partition\n");
++			hv_curr_partition_type = HV_PARTITION_TYPE_L1VH;
++		}
+ 	}
+ }
+ 
+diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+index aca3331ad516..7c710703cd96 100644
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -37,12 +37,6 @@ MODULE_AUTHOR("Microsoft");
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Microsoft Hyper-V root partition VMM interface /dev/mshv");
+ 
+-/* TODO move this to mshyperv.h when needed outside driver */
+-static inline bool hv_parent_partition(void)
+-{
+-	return hv_root_partition();
+-}
+-
+ /* TODO move this to another file when debugfs code is added */
+ enum hv_stats_vp_counters {			/* HV_THREAD_COUNTER */
+ #if defined(CONFIG_X86)
+@@ -2190,6 +2184,15 @@ struct notifier_block mshv_reboot_nb = {
+ 	.notifier_call = mshv_reboot_notify,
+ };
+ 
++static int __init mshv_l1vh_partition_init(struct device *dev)
++{
++	hv_scheduler_type = HV_SCHEDULER_TYPE_CORE_SMT;
++	dev_info(dev, "Hypervisor using %s\n",
++		 scheduler_type_to_string(hv_scheduler_type));
++
++	return 0;
++}
++
+ static void mshv_root_partition_exit(void)
+ {
+ 	unregister_reboot_notifier(&mshv_reboot_nb);
+@@ -2224,7 +2227,7 @@ static int __init mshv_parent_partition_init(void)
+ 	struct device *dev;
+ 	union hv_hypervisor_version_info version_info;
+ 
+-	if (!hv_root_partition() || is_kdump_kernel())
++	if (!hv_parent_partition() || is_kdump_kernel())
+ 		return -ENODEV;
+ 
+ 	if (hv_get_hypervisor_version(&version_info))
+@@ -2261,7 +2264,10 @@ static int __init mshv_parent_partition_init(void)
+ 
+ 	mshv_cpuhp_online = ret;
+ 
+-	ret = mshv_root_partition_init(dev);
++	if (hv_root_partition())
++		ret = mshv_root_partition_init(dev);
++	else
++		ret = mshv_l1vh_partition_init(dev);
+ 	if (ret)
+ 		goto remove_cpu_state;
+ 
+diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+index dbbacd47ca35..f0f0eacb2eef 100644
+--- a/include/asm-generic/mshyperv.h
++++ b/include/asm-generic/mshyperv.h
+@@ -31,6 +31,7 @@
+ enum hv_partition_type {
+ 	HV_PARTITION_TYPE_GUEST,
+ 	HV_PARTITION_TYPE_ROOT,
++	HV_PARTITION_TYPE_L1VH,
+ };
+ 
+ struct ms_hyperv_info {
+@@ -457,12 +458,22 @@ static inline bool hv_root_partition(void)
+ {
+ 	return hv_curr_partition_type == HV_PARTITION_TYPE_ROOT;
+ }
++static inline bool hv_l1vh_partition(void)
++{
++	return hv_curr_partition_type == HV_PARTITION_TYPE_L1VH;
++}
++static inline bool hv_parent_partition(void)
++{
++	return hv_root_partition() || hv_l1vh_partition();
++}
+ int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages);
+ int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
+ int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags);
+ 
+ #else /* CONFIG_MSHV_ROOT */
+ static inline bool hv_root_partition(void) { return false; }
++static inline bool hv_l1vh_partition(void) { return false; }
++static inline bool hv_parent_partition(void) { return false; }
+ static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
+ {
+ 	return -EOPNOTSUPP;
+-- 
+2.34.1
 
-Thanks,
-Dikshita
->>           (V4L2_TYPE_IS_CAPTURE(plane) &&
->>            inst->state == IRIS_INST_OUTPUT_STREAMING) ||
->> -        inst->state == IRIS_INST_ERROR) {
->> +        inst->state == IRIS_INST_ERROR) &&
->> +        inst->sub_state & IRIS_INST_SUB_LOAD_RESOURCES) {
->>           reinit_completion(&inst->completion);
->>           iris_hfi_gen1_packet_session_cmd(inst, &pkt,
->> HFI_CMD_SESSION_STOP);
->>           ret = iris_hfi_queue_cmd_write(core, &pkt, pkt.shdr.hdr.size);
->>
-> 
-> ---
-> bod
 
