@@ -1,188 +1,291 @@
-Return-Path: <linux-kernel+bounces-775993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4831AB2C73A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E961CB2C73E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0BF84E2E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB28D3A8C75
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03168275B1A;
-	Tue, 19 Aug 2025 14:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA0B279351;
+	Tue, 19 Aug 2025 14:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BjKVYhxP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IVOs2Hpu"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013053.outbound.protection.outlook.com [40.107.162.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9672920299B
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614324; cv=none; b=K22K1hBQHL34WokFSU01YeGRWMqkvc3/1m/nwDBjDwuMHRWOkzwWGJrOEnnhr2ZT1IODe1rAXzC7OrBzj2FsN68O/cFhdLyoqgUa7/PxRvEXp1gVIATqIq7jtMWvd7rKd56lSh5g3cj9sB4A/Hee9Ovxync/OHZCiTgg/g+NkTc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614324; c=relaxed/simple;
-	bh=cg2kXjVsoV0pRM1swFf/4CYooxQWUROeNNhtPwxIdF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VoCOtSXPCcSgek7CsQmpIZHf6SyXRnBA2/N3nc9YBg8NTspvyYCPvdlgEboKTZXb6+cZ2gXHeRdZ607jEhmsYUoLKUqKhMaoTO76D0gMTlMlZ4vcQkkqFY+xRERcfjkOjET8k6cWWTpILm3PeVMN42DsC5D/PMD6ahFc8SvfTK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BjKVYhxP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755614320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lPO4BKtyeVC6K3B9qpVkrs0JgUOPn4bkW5RMZGLRlx8=;
-	b=BjKVYhxPsKQQS/6xFRMr1Vi2VAPJYb52A9ewCGmuTvDlHBniQmaEmsh+Xl3L1Vpr+h8bGB
-	ekaEqQyXFVwQJ/Y29qWVBc1R78yvX85EeXo9mDKWf3+FhmooRjyQ7U9AZJZ/o/zhP3M0Lz
-	tnTJovwEbtjxJZdo7twU5HAS7h3qJNI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-aCx41otDN--vxRg96zsBRQ-1; Tue,
- 19 Aug 2025 10:38:36 -0400
-X-MC-Unique: aCx41otDN--vxRg96zsBRQ-1
-X-Mimecast-MFC-AGG-ID: aCx41otDN--vxRg96zsBRQ_1755614313
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 854EB1800366;
-	Tue, 19 Aug 2025 14:38:33 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.44.34.10])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C8451800280;
-	Tue, 19 Aug 2025 14:38:27 +0000 (UTC)
-Date: Tue, 19 Aug 2025 10:38:23 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, linux-trace-kernel@vger.kernel.org,
-	Nam Cao <namcao@linutronix.de>, Tomas Glozar <tglozar@redhat.com>,
-	Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 14/17] sched: Add deadline tracepoints
-Message-ID: <20250819143823.GB282929@pauld.westford.csb>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-15-gmonaco@redhat.com>
- <aKRKaTJBxD3kdt_G@jlelli-thinkpadt14gen4.remote.csb>
- <20250819101244.GF4067720@noisy.programming.kicks-ass.net>
- <711ff45f008bb4943418c40eba604e83858767ff.camel@redhat.com>
- <aKSD3Pm_9qqmEaNv@jlelli-thinkpadt14gen4.remote.csb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6352765E4;
+	Tue, 19 Aug 2025 14:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755614347; cv=fail; b=XPKJB7RBVOD1RGz3Ya3Fa8TuRdSy7jELjTF172INAW3N9UtSDR5ILEm6tx09WaFry0tJYqtljqMaBkdlsP8CEvuAAIooUgWcU5Dfd45/lTwWgPXdCzGcERfN7yRHX29+Hsl0PHY0GpPPh/zp7R+KegLFFbNx56ugcvQcl++2X4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755614347; c=relaxed/simple;
+	bh=TgOnYKBAFVj9V1dWbJmkCmXNZJXCdgGF0l1Ziosnblw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=q2qLhzVC6VQRLl0bDzg+YScePje/xEkaWMMOfndZh9hstG2YFrofnpUFBi/s+zVXJzGhVVhtcvjxr1aiUUXcfbkVOOYcrnlaTvw8h3n1yVzrIN2SxIiYW+BzwmyHJpeAgNczrj7NOs8/LGmo2478LrJiXnIaQaxcmGzXMFr1c5U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IVOs2Hpu; arc=fail smtp.client-ip=40.107.162.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RyaDAZFzvCjInWEdZsX0bDRfw6Unmh+QpDGEE772QsnKMn1fWnoqu/1nMfbWuHKETe05RNo/1ia1J/kwHTVFoMIfosoNPL4/JN5w0LGryEzt2Miz7EuVBgrtGFcYzL61CEKJPmcSfXnBaoJ1cKNU3knf5mVdDi5SnW9Hh+YxS6GemcYeES6u7/NIoPzhIS0DaVfnHwXy46tNB8IYrs14V8qXC+uz363weokv9Gtmuf+pB2J2fKiV0n8S6VZlEGOTlwGdfVPWptEdLOLSEt3HhsryNTVkKGlfQrPjBly+9QF92qHuu82FkkAz49qUpLNW/di/c36MNJsTHczc4gSxwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OIFJSwDoLjgtxRyLdNHKvSv7eca3nLUeyNXRENhjEKg=;
+ b=BnJDPuYLwdErVRDzTwPPRrTCvnKZsOVQCPDcsOs/sykYXz+iyWMv8Wffnjwbx9RUgNvAJ6K58tId0GnP0jgdZoZ8EHQRCMQB2xQg10aoLAMjySp/g0xgYjEng60SFWPsJotsxbz0e0567QdnRXij4UaOIagFXnE2RBLxC+lBCTWmD+xh90OuPdC3D+CLR4nTDEsItmsszyUcte53eZWmPB3YeqNBscsue/stIaoxjjz0JiO6z0OFap8xyNJzPoPRlviGyb/+Wq8oluNX9m7NcOmWs6CZ3XKTLAr6iGnCRVhAOfY/E4LTtQybi71GujeIy1Mv/QMVUiK2JT58/ElXmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OIFJSwDoLjgtxRyLdNHKvSv7eca3nLUeyNXRENhjEKg=;
+ b=IVOs2HpuEOhCdHVA2Phj6wwsEgfKcgyazdihjy8/0sPbcTjxO90uIs9RC3zJmwzj5VQHDGvXKlJivng3SaSOSVii1KBWiSzQGRszBhpv7nj+CnJeYdkXZgXe1MatVpVNb8djDthOiCnVTqQKR1EpZadX5pn88BAppvdvoFBPASgYu6ddJEwPCku/ZFD6Fli2jyMhY+nS4s2opWtRRrdWF+uNF5BFfLYsLxlc6o5VbHgjWWZ4pfEeo+1uFUsnhpxEDWa6RO+JOZk7fzQnN5xK9E9AJMCD1sTz9aKj8HosyUF79YKf7pqF/NJ7ybWBgVER3SyI87XFC45LrR9eziL6DQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GV1PR04MB10752.eurprd04.prod.outlook.com (2603:10a6:150:203::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Tue, 19 Aug
+ 2025 14:39:00 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9052.011; Tue, 19 Aug 2025
+ 14:39:00 +0000
+Date: Tue, 19 Aug 2025 10:38:48 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	richardcochran@gmail.com, claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+	fushi.peng@nxp.com, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH v4 net-next 01/15] dt-bindings: ptp: add NETC Timer PTP
+ clock
+Message-ID: <aKSMeI/mBmRxxDZt@lizhi-Precision-Tower-5810>
+References: <20250819123620.916637-1-wei.fang@nxp.com>
+ <20250819123620.916637-2-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819123620.916637-2-wei.fang@nxp.com>
+X-ClientProxiedBy: SJ0PR05CA0182.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aKSD3Pm_9qqmEaNv@jlelli-thinkpadt14gen4.remote.csb>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10752:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd3a625f-3665-40d9-2f5a-08dddf2e22e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|52116014|19092799006|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?p+FnQgRpd3qkycT1N0Rnj1SGFkZ5zIY8nqJEBn1Q63SzzMMu6XEivv+tQOCo?=
+ =?us-ascii?Q?n7qcQrLHWniNaXoYuJeHHo2t3hX/VcJjk8X7opNccyS0Rtj4FWnzf3gR/RvU?=
+ =?us-ascii?Q?WKNeQ34IYQFHywgTdOyem+LNfC+61EOYZxYHwIJqEk4alXd1qDBJIlpowMlg?=
+ =?us-ascii?Q?q8e86jphdxgHXZEnOaK5NBGIS20rcKoEQqQXAa04oqOb82ynnfMDLXN/PKGw?=
+ =?us-ascii?Q?8qzqsqTo17DPS+bhFfSyn90cIzo8p65TxBLps433bwMqj0C7gLnorFxX0MUi?=
+ =?us-ascii?Q?vpFEXxK85FVX4VsdBC3d+ynZ1Vla7fdur18bn9VvF6pPm3RNeC9TixUu0G/+?=
+ =?us-ascii?Q?Um114a3Z37NzOp3QvZ80H5oEZHZScI5gn0cJAq3oPcaR50F1qLmrh7faQXaA?=
+ =?us-ascii?Q?g+uc43WkvCjpPhn39Ea2DQFUKaF7D5L0QDm6GrRluAC+Mgcgmqi2Y8XNLFdR?=
+ =?us-ascii?Q?8SbE6QgTJdgYUxKmjn+Bn/JpW4uY3J+n372csr3Pb8Eif+qRGIk5acm5kQex?=
+ =?us-ascii?Q?fZK5s6bNt/Y6qv02yL2dwgCHeGRaTX7tEY6ncTj3rRI7MWuZ2D075g2vQQaw?=
+ =?us-ascii?Q?ea9n5D7BiEifRXNviZz88zsv77fTLtpvpGb/Y6aNwYymNARNX3Ka3n1Yyy6m?=
+ =?us-ascii?Q?cBotZWPsrGI14uBBdMR/rdbAqHBN1CbxBF72AewQCr/Xf7PdqT8FVNDmnsb0?=
+ =?us-ascii?Q?g0ud5rwqWU0UbeMAwUhFCRyt1B8xIjDtRPl5JeSpaikQlgo1rriDlLJQTIbT?=
+ =?us-ascii?Q?7R20VemP+arsONzoG439rZ+/IaDDNbV0kSKNMq3b91QPFyRnOl7E8dgwUhUw?=
+ =?us-ascii?Q?2g89N71DFJSuYJCMjIPJVujceT+bqkP9b7Wqn4+c5DnppAZZLZq/HhhgVPH1?=
+ =?us-ascii?Q?roGVufBF1MgoF1/KcvktcTm5IrnxDzblS7StdcNiO5/ZS0BX23GWVnaRkLLL?=
+ =?us-ascii?Q?jbA+Sci3rmSGHRw3zb+lKg3/ptXCWsNh+koSlBu2ofkLTY4w9d09Xxvkx1Tr?=
+ =?us-ascii?Q?hSaDETs13gPluPJ/5OnibqJyGSgXiWHRSbqHzzucgSXkUPZWtR7wI3XrDqJy?=
+ =?us-ascii?Q?AcTz5FjVEc+/VDwg0/Q9Gkz7RzepoXwTkz4YntaUGdbIB4mZ0/BN4oyCisPS?=
+ =?us-ascii?Q?eYsA0EGxkGNC9qVW4lRdFMnzrW5Fjw0mWuWYFQvEYUiYMPbLrhNLyhdwsM6e?=
+ =?us-ascii?Q?Jv9fvXbUYdJTv54ogpD1Kg3UAdruQIFCPa3SBNHn6IZ3QldvpnA9C99AXAJ9?=
+ =?us-ascii?Q?4zIf2Zm8ME6iW3qBaaSoFbhdoeegqa8Jfm1oFG3jl4+4tvxG/Br0/xroFq3D?=
+ =?us-ascii?Q?hrHJFit5zYzWJgPK15sUwemH5GbJDq2JVVOXnY5AzcuYDH3JbRMcvmWruvvH?=
+ =?us-ascii?Q?oqvGavhF65CRGntSbd2tOjTyKBdgLcDm3xDu87RyZclsHlHTOnn/kNId+9FP?=
+ =?us-ascii?Q?P2m/2vvRFqs5NASMJx4NvKPLgLSSP1XI?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(52116014)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WlzcvFzOT/98nE9gy59e5bRfgD++Rr8V1vrLDSqv8lYRytK6D64CIUVlPktH?=
+ =?us-ascii?Q?HgImlP6822Qoh6DiU9Y6Inbi03cF7stLjTmrtVStrusl4rPeFEIn8R/L4io1?=
+ =?us-ascii?Q?AuXu+JEBL4avcTWJuyf9rOswOPtwojYQDw2t0mdB55RYaBnsmWG2sODDlOUg?=
+ =?us-ascii?Q?5bjLR5psgYoIVXK+y8MHkmDBQGX9PSBkszrV61ocNNCxeL0jOs/g6Rm3cbJ1?=
+ =?us-ascii?Q?Oa3R1EgkHpTgNn8govs46J5u/th1SwQPDk4Wk6jT1UZ3WWtWDd5w6I9xKkDl?=
+ =?us-ascii?Q?TmeL6NHX1B9y1aFDrd0RZOdFAlzRnruxmjpnPpKEFdKXKYSMP5RI+SeklKvC?=
+ =?us-ascii?Q?1xInzSkSM+qzfTGly6Ok1qykXz8S8ViQxUtYYtDx8JjVLFni/FwXHmOTJ5fG?=
+ =?us-ascii?Q?AlrxfXi8rzC7mfGrmn3e+WrmmkIXe2rdEQUXCcsolCrwAejdTUUQlG7i/jJC?=
+ =?us-ascii?Q?ecmcjC9mX3PG89Z6KcUi9WsgPiE5BKeY4RW5nTtpr6xSF6WOq/w4oM87Nybz?=
+ =?us-ascii?Q?SUvxsjQ9gcI52ryiAOUmkbFqWJ0/ht8M6J6YQpOsJ1qVzhx792SHm5k5a2R5?=
+ =?us-ascii?Q?Y22tjWjri03OZVwDqLxzIzUp1tzoOHLvN7NBH+kLa+50/Adp4yjz99nnkVIN?=
+ =?us-ascii?Q?pdaxaCqqHgR2XSUsOhcrqH2qVpP1Nz69ooh73p/Qsd3K/FmgMJaeaHpdV8kv?=
+ =?us-ascii?Q?FLufS18SEGRNfQdSnJvGhe4LGnCRtohbHmR/t+2GNKSiIX1s+h5yy2n2mx4e?=
+ =?us-ascii?Q?3DIBOqNzJyKJyPClDyNUaB4LyHpZmNJ1Q1X3iw0D7lDu9VQ5Eu4ViF5P/Yma?=
+ =?us-ascii?Q?cDAhG+cL7cLdGuPl+l/Mmb7xYmdTxUuRtyRkO6E6IizDmUH7SyJBkXeIILvA?=
+ =?us-ascii?Q?PVpbA8UULGPVyKNgZMhaQJ0MBQzUijOYQvTnDFoovL7kfue2rm98fs/GwnRt?=
+ =?us-ascii?Q?QHUsZPEpqsyKe1eRadsxCP6GpIEmoSL8uYzzTrrnEorBLNKJmVO6PuXFxIUu?=
+ =?us-ascii?Q?W+tQ3m1WWja7IKViv6iL9lWHi8K8HMoOUE/Zfapku60OObGig3o7mzSkeqjw?=
+ =?us-ascii?Q?OUUycfEvBGS/8tEF/iqjivSb0lTyrM22zFCJnBzRNZ04I6MGMdcmFNvIUIZe?=
+ =?us-ascii?Q?dbNimcf9R/In5TR+/yGATmZywEz4KsB60F2/fMwMVkRK09JWK7euvMGZ/isg?=
+ =?us-ascii?Q?Gf7lvFA3XD0AgR98XyjhyEGP9blRWPSlMcFIPPpsz+Kzt5X5+rXRXC86ZfQK?=
+ =?us-ascii?Q?ZRiHugjuwaf4hFmBUeVP6RLymV4gT8JJsD178F+afyRo14G4Ibb7+MCQ8Rw6?=
+ =?us-ascii?Q?h18h9ISnhoUaX1loBTxAVAfMeAg99HbnH3rKOEym4m1c/sBvLbpHXcUERqYC?=
+ =?us-ascii?Q?P+SDRFKRFrD5kMHIA/3ymL+51qsMmmJXL/ZNeiBCMPLpX/Xa3RlAVqzk/fnG?=
+ =?us-ascii?Q?e0eLEbFH06Cekr+y6Zjaj/uunR8D0IUhX4OY6e5fox32moRz7vvqvzOMPkli?=
+ =?us-ascii?Q?1S+UJ4+5a0aCvVWIHAgln6KH7vSsopznlNzGTbvxJ1z2LCMa+eHrG39128GJ?=
+ =?us-ascii?Q?6+l32x0G+h+9XwkJx1yRijYE1nBKKFGk2YfBvlMa?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd3a625f-3665-40d9-2f5a-08dddf2e22e9
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 14:39:00.5025
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3d5mh0aTt+CekJnUglTp4p794VEsx4A/GB3Xiy/NhUGAhoh1sLBvkHvzwvcKFp3RWQIeDLo5ZLvazy5RzSqiPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10752
 
+On Tue, Aug 19, 2025 at 08:36:06PM +0800, Wei Fang wrote:
+> NXP NETC (Ethernet Controller) is a multi-function PCIe Root Complex
+> Integrated Endpoint (RCiEP), the Timer is one of its functions which
+> provides current time with nanosecond resolution, precise periodic
+> pulse, pulse on timeout (alarm), and time capture on external pulse
+> support. And also supports time synchronization as required for IEEE
+> 1588 and IEEE 802.1AS-2020. So add device tree binding doc for the PTP
+> clock based on NETC Timer.
+>
+> It is worth mentioning that the reference clock of NETC Timer has three
+> clock sources, but the clock mux is inside the NETC Timer. Therefore, the
+> driver will parse the clock name to select the desired clock source. If
+> the clocks property is not present, the NETC Timer will use the system
+> clock of NETC IP as its reference clock. Because the Timer is a PCIe
+> function of NETC IP, the system clock of NETC is always available to the
+> Timer.
+>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+>
+> ---
+> v2 changes:
+> 1. Refine the subject and the commit message
+> 2. Remove "nxp,pps-channel"
+> 3. Add description to "clocks" and "clock-names"
+> v3 changes:
+> 1. Remove the "system" clock from clock-names
+> v4 changes:
+> 1. Add the description of reference clock in the commit message
+> 2. Improve the description of clocks property
+> 3. Remove the description of clock-names because we have described it in
+>    clocks property
+> 4. Change the node name from ethernet to ptp-timer
+> ---
+>  .../devicetree/bindings/ptp/nxp,ptp-netc.yaml | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml b/Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml
+> new file mode 100644
+> index 000000000000..f3871c6b6afd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/ptp/nxp,ptp-netc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP NETC V4 Timer PTP clock
+> +
+> +description:
+> +  NETC V4 Timer provides current time with nanosecond resolution, precise
+> +  periodic pulse, pulse on timeout (alarm), and time capture on external
+> +  pulse support. And it supports time synchronization as required for
+> +  IEEE 1588 and IEEE 802.1AS-2020.
+> +
+> +maintainers:
+> +  - Wei Fang <wei.fang@nxp.com>
+> +  - Clark Wang <xiaoning.wang@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - pci1131,ee02
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      The reference clock of NETC Timer, can be selected between 3 different
+> +      clock sources using an integrated hardware mux TMR_CTRL[CK_SEL].
+> +      The "ccm_timer" means the reference clock comes from CCM of SoC.
+> +      The "ext_1588" means the reference clock comes from external IO pins.
+> +      If not present, indicates that the system clock of NETC IP is selected
+> +      as the reference clock.
 
-Hi Juri,
+	NETC timer reference clock have 3 clock inputs, sys: from RCiEP,
+	ccm: from CCM of Soc, ext: from external IO pins. Internal have
+	clock mux, only one of three need be provided. Default it is from
+	RCiEP system clock.
 
-On Tue, Aug 19, 2025 at 04:02:04PM +0200 Juri Lelli wrote:
-> On 19/08/25 12:34, Gabriele Monaco wrote:
-> > 
-> > 
-> > On Tue, 2025-08-19 at 12:12 +0200, Peter Zijlstra wrote:
-> > > On Tue, Aug 19, 2025 at 11:56:57AM +0200, Juri Lelli wrote:
-> > > > Hi!
-> > > > 
-> > > > On 14/08/25 17:08, Gabriele Monaco wrote:
-> 
-> ...
-> 
-> > > > > @@ -1482,6 +1486,7 @@ static void update_curr_dl_se(struct rq
-> > > > > *rq, struct sched_dl_entity *dl_se, s64
-> > > > >  
-> > > > >  throttle:
-> > > > >  	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
-> > > > > +		trace_sched_dl_throttle_tp(dl_se);
-> > > > >  		dl_se->dl_throttled = 1;
-> > > > 
-> > > > I believe we also need to trace the dl_check_constrained_dl()
-> > > > throttle, please take a look.
-> > 
-> > Probably yes, strangely I couldn't see failures without it, but it may
-> > be down to my test setup. I'm going to have a look.
-> 
-> Not sure if you tested with constrained (deadline != period) tasks.
-> 
-> > > > Also - we discussed this point a little already offline - but I
-> > > > still wonder if we have to do anything special for dl-server defer.
-> > > > Those entities are started as throttled until 0-lag, so maybe we
-> > > > should still trace them explicitly as so?
-> > 
-> > The naming might need a bit of a consistency check here, but for the
-> > monitor, the server is running, armed or preempted. Before the 0-lag,
-> > it will never be running, so it will stay as armed (fair tasks running)
-> > or preempted (rt tasks running).
-> > 
-> > armed and preempted have the _throttled version just to indicate an
-> > explicit throttle event occurred.
-> > 
-> > We might want to start it in the armed_throttled if we are really
-> > guaranteed not to see a throttle event, but I think that would
-> > complicate the model considerably.
-> > 
-> > We could instead validate the 0-lag concept in a separate, server-
-> > specific model.
-> > 
-> > Does this initial model feel particularly wrong for the server case?
-> 
-> No it doesn't atm. :-) Thanks for the additional information.
-> 
-> > > > In addition, since it's related, maybe we should do something about
-> > > > sched_switch event, that is currently not aware of deadlines,
-> > > > runtimes, etc.
-> > 
-> > I'm not sure I follow you here, what relation with switch and
-> > runtime/deadline should we enforce?
-> > 
-> > We don't really force the switch to occur timely after throttling, is
-> > that what you mean?
-> > Or a switch must occur again timely after replenishing?
-> 
-> Hummm, yeah I was wondering if we need something along these lines, but
-> we can also maybe leave it for the future.
-> 
-> > > As per the whole _tp() thing, you can attach to the actual
-> > > sched_switch tracepoint with a module and read whatever you want.
-> > 
-> > Yeah I believe Juri referred to model constraints on the already
-> > existing events rather than new tracepoints here.
-> 
-> Separately from this series, maybe we should put such a module/bpf thing
-> somewhere shared, so it's easier to use it when needed.
-> 
-> 
+> +
+> +  clock-names:
+> +    enum:
+> +      - ccm_timer
 
-A few of us use: https://github.com/qais-yousef/sched_tp.git
+look like just ccm is enough.
 
-This has all the current scheduler raw tps exposed, I believe, but would
-need updates for these new ones, of course. 
+> +      - ext_1588
 
-I have a gitlab fork with our perf team uses to get at the ones they use
-(mostly the nr_running ones to make their heat maps).
+Missed kk's comments at v3.
 
-Fwiw...
+"This should be just "ext"? We probably talked about this, but this feels
+like you describe one input in different ways."
 
+it should be "ext"!
 
+Frank
 
-Cheers,
-Phil
-
--- 
-
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-device.yaml
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    pcie {
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +
+> +        ptp-timer@18,0 {
+> +            compatible = "pci1131,ee02";
+> +            reg = <0x00c000 0 0 0 0>;
+> +            clocks = <&scmi_clk 18>;
+> +            clock-names = "ccm_timer";
+> +        };
+> +    };
+> --
+> 2.34.1
+>
 
