@@ -1,108 +1,89 @@
-Return-Path: <linux-kernel+bounces-775144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C5CB2BBE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:30:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD03B2BBE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04E041884B5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBC117CBDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4A33101C4;
-	Tue, 19 Aug 2025 08:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJnBqq+B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05992310650;
+	Tue, 19 Aug 2025 08:30:49 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD2D18BC3D;
-	Tue, 19 Aug 2025 08:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB1C2765D4;
+	Tue, 19 Aug 2025 08:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755592215; cv=none; b=oamwFjXi+eEiH4YsgNErke30PZFyi19NluaGrbkUR9NPGkbsQLUgoPJ7iB90or3vMDduaOpbTTfw/IEnKKq9Btei1fUhqR3cU76HPQ49pihs1Woq2FGJy473dLgdu+440Bunj3JC15UrUHcVFD3QiKBLk+PDP+UOK/kMj5IwXQo=
+	t=1755592248; cv=none; b=YJ/nHu8h0WBhXHJE8bte37jGCnTzh+iOaX3MWJmGaq+7fVm4NWfsLNzDuxJp8SSBpcRZ5IP+tWGCETPDzUh0vxvIiolx+YbUbnzoHhd+oSd/4V/eskJB5GX3nLaQuszp/yi7amv7nM7aY66dFqAHOqkNeIvdD2uNAVm0+XyfBVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755592215; c=relaxed/simple;
-	bh=Te4KR24g5JjkMDypQM9+bPiHN5Txeoy3EKnAS8A9PSg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=H7rsdjc9ZmuuezNLdrz8cdtd+85mEqZLE+qgmEnLusAzDhvS8ffskO6k/VrDq9lGbeUv5XvzY99LH0WxSLPg5Ak9gppfxBqIi63rCufR+ADA5Nup3ycLTGgB97nQ7ZeEn6++z9/1ud+I1MvFZwukrhATEOETMpqivDOl5ZLysO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJnBqq+B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F558C4CEF1;
-	Tue, 19 Aug 2025 08:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755592215;
-	bh=Te4KR24g5JjkMDypQM9+bPiHN5Txeoy3EKnAS8A9PSg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=nJnBqq+B/PdXH9viS/GMk4WqVJqq9qFcvHBiU9+51wPiv7pVivxoDS1sz8OpK5Dmf
-	 zVLVrO+IskEs/LCan2a+U3wm5yzRFPhoE/4twSKu6Ftt2nTQ9HelxEceH5Wride50M
-	 1izQC9ofV/Q0M21R74s2F2u/evVE3EYMbNNPvS5vO7WDpB633TXxr1kJYBWx8Fox87
-	 jWEK3QgZJNJS1FhWkluwIwVq8QayJ/UCmrhyr0eqO7TKhO3b7O3cTRt1QW8kMczExL
-	 20w/HDS1u8z6EmAk1yVqvPNBxbVIptaW+Pod3U6hNkSipPTP4iFwLUbFtMk56nO60b
-	 QKAOKCCwAjHrQ==
-Date: Tue, 19 Aug 2025 03:30:14 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1755592248; c=relaxed/simple;
+	bh=gB7I83ABsjDdTgfsajyNi5zZJUiLR96qIk2L/9GIJT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=swbxx96Px28+xF2y09KIAkXqeSd5CeRPvqDiRPWB1Wjh0DR1pfiMgCR/PjxEZSuCSHyuwOzPS+ZVTx4Haxt8LrLTIRTmKTUyS+jni+8JQB2MfGgV11QZ58trpjj0kDJa7k6Q+akk5pxveHKPJauqJEK1o5SDrA9HHuUbIhqJTaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7DA59227A88; Tue, 19 Aug 2025 10:30:39 +0200 (CEST)
+Date: Tue, 19 Aug 2025 10:30:38 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hector Martin <marcan@marcan.st>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v2 7/9] nvme: apple: Add Apple A11 support
+Message-ID: <20250819083038.GA1901@lst.de>
+References: <20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com> <20250818-t8015-nvme-v2-7-65648cd189e0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: festevam@gmail.com, linux-pci@vger.kernel.org, 
- devicetree@vger.kernel.org, krzk+dt@kernel.org, s.hauer@pengutronix.de, 
- lpieralisi@kernel.org, shawnguo@kernel.org, frank.li@nxp.com, 
- l.stach@pengutronix.de, bhelgaas@google.com, mani@kernel.org, 
- conor+dt@kernel.org, kernel@pengutronix.de, kwilczynski@kernel.org, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org
-To: Richard Zhu <hongxing.zhu@nxp.com>
-In-Reply-To: <20250819071630.1813134-2-hongxing.zhu@nxp.com>
-References: <20250819071630.1813134-1-hongxing.zhu@nxp.com>
- <20250819071630.1813134-2-hongxing.zhu@nxp.com>
-Message-Id: <175559221431.3513325.13023489258693158920.robh@kernel.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: PCI: dwc: Add vaux regulator
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818-t8015-nvme-v2-7-65648cd189e0@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
+On Mon, Aug 18, 2025 at 04:43:00PM +0800, Nick Chan wrote:
+>  };
+>  
+> +struct apple_nvme_hw {
+> +	bool has_lsq_nvmmu;
+> +	u32 max_queue_depth;
+> +	void (*submit_cmd)(struct apple_nvme_queue *q, struct nvme_command *cmd);
 
-On Tue, 19 Aug 2025 15:16:29 +0800, Richard Zhu wrote:
-> Refer to PCIe CEM r6.0, sec 2.3 WAKE# Signal, WAKE# signal is only
-> asserted by the Add-in Card when all its functions are in D3Cold state
-> and at least one of its functions is enabled for wakeup generation.
-> 
-> The 3.3V auxiliary power (+3.3Vaux) must be present and used for wakeup
-> process. Since the main power supply would be gated off to let Add-in
-> Card to be in D3Cold, add the vaux and keep it enabled to power up WAKE#
-> circuit for the entire PCIe controller lifecycle when WAKE# is supported.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  .../devicetree/bindings/pci/snps,dw-pcie-common.yaml        | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+Please stick to 80 character lines for the NVMe code.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Also I don't think an indirect call here is a good idea.  This is right
+in the command submission fast path.  A simple branch will be a lot
+faster.
 
-yamllint warnings/errors:
+> +
+> +	if (q->is_adminq)
+> +		memcpy(&q->sqes[tag], cmd, sizeof(*cmd));
+> +	else
+> +		memcpy((void *)q->sqes + (tag << APPLE_NVME_IOSQES), cmd, sizeof(*cmd));
 
-dtschema/dtc warnings/errors:
+This could use a helper and / or comment to make the calculation
+more obvious.
 
+> +	anv->hw = (const struct apple_nvme_hw *)of_device_get_match_data(&pdev->dev);
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819071630.1813134-2-hongxing.zhu@nxp.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Do we even need this cast?
 
