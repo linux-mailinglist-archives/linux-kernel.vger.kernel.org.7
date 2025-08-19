@@ -1,169 +1,95 @@
-Return-Path: <linux-kernel+bounces-775543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D66B2C051
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:27:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B361BB2C079
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B43F87ACCB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:26:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43683ACDB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20A6326D72;
-	Tue, 19 Aug 2025 11:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BT9BmTkP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504E132A3D2;
+	Tue, 19 Aug 2025 11:28:21 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB5130F813
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E7932255E;
+	Tue, 19 Aug 2025 11:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755602844; cv=none; b=HXt1lJBvw3enyuQTJdTyOSbFfo5V+3mK/lTVo+KyQdYBpQ6k1zYR3FBYhxOvjVjybIeu4pRHNI/gDmB7MQ5tgB8eiG3els4DM7agwpuL5Uzj5e9mzqkBSic2da2iiWGIAXt02c3A/3ISPo1Ov4hNyMX159JeObG311tMjMrC4bY=
+	t=1755602900; cv=none; b=AvF2zNR8iL7MNaPZQZfiM3K64nMUYDWKdcNQnDlAeob0+LjCataTC0PniC4cCFPB4uU8J604XTNs1HXUHfTodZrbK3/iADasalqADxIJA13QHWbkbVLjyHO63EoIZ59VMzP5pRNvI6qJBngzhUI3Mcr08P4k6UehXh8FnAOe0R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755602844; c=relaxed/simple;
-	bh=5sIe0DDvbDhL3Vz6/3qTnXE3GbYfD8GB9O32jPTVG0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHP9NWX/3SDMD9uZFvJRCzdxaCddebQkj+K6UerPLSaZGry85pUyGI+qvCfb4iO90lmQ5i00m/Lpsm1Lr/+nBLxnG4v+BLi0OCd6MlqEve9U0h1TOWjZE8hyNsAy+syhsnhTMKLLChYXNGwRlex71BRWwCDSDbGJ49hFIAKmMcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BT9BmTkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E14FC116B1;
-	Tue, 19 Aug 2025 11:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755602843;
-	bh=5sIe0DDvbDhL3Vz6/3qTnXE3GbYfD8GB9O32jPTVG0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BT9BmTkPDO+4lcDxUy46J8iwBTB2tWR1+IeUbciGv8j2d9Yo+W4Mo5BT8y1duFhaG
-	 MDBm+RnEe82p/x/QAwY9MFvEaBBzmrazZ4WgJa2FnvFdhWfeMObp65XUR2syWKYT2Z
-	 stQPdmWYMJxxSQ4BfOUSpmLUFUaaGXHlW5oXLQmc=
-Date: Tue, 19 Aug 2025 13:27:20 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] samples/kobject: constify 'struct foo_attribute'
-Message-ID: <2025081941-thirstily-comfy-05b1@gregkh>
-References: <20250811-sysfs-const-attr-prep-v3-0-0d973ff46afc@weissschuh.net>
- <20250811-sysfs-const-attr-prep-v3-6-0d973ff46afc@weissschuh.net>
+	s=arc-20240116; t=1755602900; c=relaxed/simple;
+	bh=tQPDpEhl7zy9pGngPafFjhLpKYU6065+GnNw3KMFusI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r4/1K0O/iScLr2PqzszwjiPa/Q2G6jn2RpuO93qAihSiHEPedjO0Hdb5bJ2JYd8xvraGmM+P3ehMkkZc4wN1CiJipcDqOxPER6usTV+6gfvxTI/qxBvhNpUkkFWRB6pFmi8ztV0cPGdYGwkeKFUE5RMgh7r+Hrwyxwo9GKIYQYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c5nMg1cSVz6GFtT;
+	Tue, 19 Aug 2025 19:26:07 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2A8D21400DC;
+	Tue, 19 Aug 2025 19:28:13 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 19 Aug
+ 2025 13:28:12 +0200
+Date: Tue, 19 Aug 2025 12:28:10 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Moktar SELLAMI <smokthar925@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, Dave Jiang <dave.jiang@intel.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>, Gregory Price
+	<gourry@gourry.net>, Alok Tiwari <alok.a.tiwari@oracle.com>,
+	<linux-kernel-mentees@lists.linuxfoundation.org>, <skhan@linuxfoundation.org>
+Subject: Re: [PATCH] Documentation/driver-api: Fix typo error in cxl
+Message-ID: <20250819122810.00006ca3@huawei.com>
+In-Reply-To: <20250819084116.13108-1-smokthar925@gmail.com>
+References: <20250819084116.13108-1-smokthar925@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811-sysfs-const-attr-prep-v3-6-0d973ff46afc@weissschuh.net>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Aug 11, 2025 at 11:14:32AM +0200, Thomas Weiﬂschuh wrote:
-> Showcase and test the new 'struct attribute' constification facilities.
+On Tue, 19 Aug 2025 09:41:16 +0100
+Moktar SELLAMI <smokthar925@gmail.com> wrote:
+
+> Fixed Typo in the driver-api/cxl/devices/devices.rst
 > 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> functionalty -> functionality
+> 
+> Signed-off-by: Moktar SELLAMI <smokthar925@gmail.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
 > ---
->  samples/kobject/kset-example.c | 33 +++++++++++++++++----------------
->  1 file changed, 17 insertions(+), 16 deletions(-)
+>  Documentation/driver-api/cxl/devices/device-types.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/samples/kobject/kset-example.c b/samples/kobject/kset-example.c
-> index 1aac595ed9498b30448485a60d9376cb5b5ea1d3..98aac6940f51f3312b44083a9d4ffe7afed1dba7 100644
-> --- a/samples/kobject/kset-example.c
-> +++ b/samples/kobject/kset-example.c
-> @@ -37,10 +37,11 @@ struct foo_obj {
->  /* a custom attribute that works just for a struct foo_obj. */
->  struct foo_attribute {
->  	struct attribute attr;
-> -	ssize_t (*show)(struct foo_obj *foo, struct foo_attribute *attr, char *buf);
-> -	ssize_t (*store)(struct foo_obj *foo, struct foo_attribute *attr, const char *buf, size_t count);
-> +	ssize_t (*show)(struct foo_obj *foo, const struct foo_attribute *attr, char *buf);
-> +	ssize_t (*store)(struct foo_obj *foo, const struct foo_attribute *attr,
-> +			 const char *buf, size_t count);
->  };
-> -#define to_foo_attr(x) container_of(x, struct foo_attribute, attr)
-> +#define to_foo_attr(x) container_of_const(x, struct foo_attribute, attr)
+> diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
+> index 923f5d89bc04..7f69dfa4509b 100644
+> --- a/Documentation/driver-api/cxl/devices/device-types.rst
+> +++ b/Documentation/driver-api/cxl/devices/device-types.rst
+> @@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
+>  Typically used for initialization, configuration, and I/O access for anything
+>  other than memory (CXL.mem) or cache (CXL.cache) operations.
 >  
->  /*
->   * The default show function that must be passed to sysfs.  This will be
-> @@ -53,7 +54,7 @@ static ssize_t foo_attr_show(struct kobject *kobj,
->  			     struct attribute *attr,
->  			     char *buf)
->  {
-> -	struct foo_attribute *attribute;
-> +	const struct foo_attribute *attribute;
->  	struct foo_obj *foo;
+> -The Linux CXL driver exposes access to .io functionalty via the various sysfs
+> +The Linux CXL driver exposes access to .io functionality via the various sysfs
+>  interfaces and /dev/cxl/ devices (which exposes direct access to device
+>  mailboxes).
 >  
->  	attribute = to_foo_attr(attr);
-> @@ -73,7 +74,7 @@ static ssize_t foo_attr_store(struct kobject *kobj,
->  			      struct attribute *attr,
->  			      const char *buf, size_t len)
->  {
-> -	struct foo_attribute *attribute;
-> +	const struct foo_attribute *attribute;
->  	struct foo_obj *foo;
->  
->  	attribute = to_foo_attr(attr);
-> @@ -109,13 +110,13 @@ static void foo_release(struct kobject *kobj)
->  /*
->   * The "foo" file where the .foo variable is read from and written to.
->   */
-> -static ssize_t foo_show(struct foo_obj *foo_obj, struct foo_attribute *attr,
-> +static ssize_t foo_show(struct foo_obj *foo_obj, const struct foo_attribute *attr,
->  			char *buf)
->  {
->  	return sysfs_emit(buf, "%d\n", foo_obj->foo);
->  }
->  
-> -static ssize_t foo_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
-> +static ssize_t foo_store(struct foo_obj *foo_obj, const struct foo_attribute *attr,
->  			 const char *buf, size_t count)
->  {
->  	int ret;
-> @@ -128,14 +129,14 @@ static ssize_t foo_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
->  }
->  
->  /* Sysfs attributes cannot be world-writable. */
-> -static struct foo_attribute foo_attribute =
-> +static const struct foo_attribute foo_attribute =
->  	__ATTR(foo, 0664, foo_show, foo_store);
->  
->  /*
->   * More complex function where we determine which variable is being accessed by
->   * looking at the attribute for the "baz" and "bar" files.
->   */
-> -static ssize_t b_show(struct foo_obj *foo_obj, struct foo_attribute *attr,
-> +static ssize_t b_show(struct foo_obj *foo_obj, const struct foo_attribute *attr,
->  		      char *buf)
->  {
->  	int var;
-> @@ -147,7 +148,7 @@ static ssize_t b_show(struct foo_obj *foo_obj, struct foo_attribute *attr,
->  	return sysfs_emit(buf, "%d\n", var);
->  }
->  
-> -static ssize_t b_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
-> +static ssize_t b_store(struct foo_obj *foo_obj, const struct foo_attribute *attr,
->  		       const char *buf, size_t count)
->  {
->  	int var, ret;
-> @@ -163,16 +164,16 @@ static ssize_t b_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
->  	return count;
->  }
->  
-> -static struct foo_attribute baz_attribute =
-> +static const struct foo_attribute baz_attribute =
->  	__ATTR(baz, 0664, b_show, b_store);
 
-We really should make this ATTR_RW() one of these days.
-
-> -static struct foo_attribute bar_attribute =
-> +static const struct foo_attribute bar_attribute =
->  	__ATTR(bar, 0664, b_show, b_store);
-
-This one too.
-
-Actually almost all existing users of __ATTR() should be fixed up so we
-can just remove that (special modes can use the __ATTR_*_MODE() macro)
-
-But that's separate from this series, sorry for the noise.
-
-greg k-h
 
