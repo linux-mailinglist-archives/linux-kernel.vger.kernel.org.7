@@ -1,161 +1,171 @@
-Return-Path: <linux-kernel+bounces-775216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C57FB2BCAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:11:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13754B2BCB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FD9F7B782B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C8F189BBDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095FA31AF33;
-	Tue, 19 Aug 2025 09:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8784E31B126;
+	Tue, 19 Aug 2025 09:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TRCq3NN5"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpWA2o8o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B299C315777
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA45B31197F;
+	Tue, 19 Aug 2025 09:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755594614; cv=none; b=LnZMhX/iulj0rnaqKFA4qK+9U+dB2q/P7ZJLk4wagPqIZo2Bo2cYqnLo39NCpBhWy/yiTokmoT9N99rtPAJDaPAUlEnktNDnNZwaBsIgn2nRo5/5cWZMG1qG5Z4DGijhBHlfv/F3R4zFIuzBrqUawZ2NGcbfvG9D2Ri8cFWwAGw=
+	t=1755594633; cv=none; b=rlGaZF4LUyzqhZaXvgPENTKj2MMbnIqV7kya9PdRtvgDjb0gWJfQlwH+dr6DZd30qi2deiVxCYi1hI0hmm4BMeK70ee47w7gGSX2IGj+uwajDM9/n3MUJmLVPcBbKj4XCN/BgEHsR9UfpPvBnT7V1SBsTmXN9bEiE7AB2EK8Afk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755594614; c=relaxed/simple;
-	bh=7ek/XcSlPOTA9wFSe80Ag3IAFpD2dLzpSLsq/5EQJl8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yg7aZHOYeLuSAZcuX6A8hN4669y0od52UG+RlAMzM0Aj0s16boC9VO0wMUsOytFOAYzcdK7CVhdm7iF9nyeknAfoX3oWaw/ohP6A47SdOYO8i65jxBj+vt5tkeSuh7EuhQZO6MSwqXSrbWxTVWgl2AcR1CdaWlEiqhJeEXVZS2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TRCq3NN5; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e415a68fso4545636f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:10:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755594611; x=1756199411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c9/jnxBS7I1AR5e/02apEhjBpEazFeyENxAvH1Nm6yo=;
-        b=TRCq3NN5tnBIwhZrMkR+sJlPFKenz+qWGBX+bl3NfNUEhlJP/8C1VNTmGhGVhVeA/2
-         Ibf21hcyYiiBYi4Yfsj5r8XJ6gkAs0x8/1Fa3doALXvDAeFhqPJbJvzTJCNzihPd5qEL
-         Phcp8MvkANhjtIs+jVTQwaNzNs/IKUJAVG+tci5FNioLwcLwTJi5zOkSp4bgo4Fh3970
-         KxLIb361iAAj8wmtWzgmy3Xe9FPy82nG0+v641XeWtZahD0bKLMgWhbd3BbKVzj+eLZ9
-         bx2kevEpJa+XSar4/pWQGYvmu3ZpqA3fRCp1K6vb4Ikj4NjBLtvKNhvU9SrF2NB9kF+j
-         P14g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755594611; x=1756199411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c9/jnxBS7I1AR5e/02apEhjBpEazFeyENxAvH1Nm6yo=;
-        b=DdFTkn+D/qfiZY3Mm1x6Fy6pryLZvA5WYL8GOeFFo/24foxfL5xP6BS5B88PVugKYz
-         N5UPAsU0p6IeNASTNrBLdQ/3jmLeQHqlK5y28DAZSxWGil+CwTjqZ1T+iJ5WNd7w4SHU
-         fBC9/UN/QpFYgdqNRuppDxj5dtfcLowfHOyEbo3ZK79vtN0kXshJf8aCJTg7suv0iDTn
-         4tHAasv9w2qTH7rHEBeWDId5RNtJ/0brNNaqLLFS52ICOOSOlB+c2NhIe5osUiNTxxM+
-         AyaxgTZ2TGDisdWqd0Rqi3DzuDXVMuEH8pdltjUK8i+7cNByGikf0TDI+JbRwTfZJcKv
-         cIQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnJ0iHa0D88/3aqKttpj2Yksoo6xHa/GT1JxD9sYmPfmnFNqaWumyZ61Oynq+/IAUeHp3wzkdZuz4/btw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW8J19Xdu5h2MoLguJf7DuLqspdypMsZJV3GUxvLLJ7kWV4YH4
-	3Vx6m4SPkIAOA8ZS+QWWgyEtEcq1/O75MVwnCuuaqiNU2qCUbpEypsEQXZYeM15n3GI+/H/Q2lF
-	G4K4WnEy0YED5GaJfBbK/v+MTkH7O0rjNVfZiDGIm
-X-Gm-Gg: ASbGncsrOkshqxqs9qbzUT4gjtzwGyZpXYsr2HmKknmJUH3k5/lYTyYNxSgm/SvT2Rv
-	cpsripC4kOg7CLYg+Q6QYHUAJ/NYg7FL5cwoN/+rEbIY9CdZGkO6zPC20EzL3HpNNU0ZhHEswvJ
-	/5TlKUoaBMHP3OK/TRsm043KtZAVEfOyz1wBIhBjIQgdWpQ8gx6k1oIRzFdzGS7WTfAh4/66bpy
-	Pt/wLe40JPqGdmqslvTwEY5XcRKijvdy4e5pYij50BQv05+6yM2D3M=
-X-Google-Smtp-Source: AGHT+IHVUVNrk5qRTajk434+TVEPOUXm04X7Uh+fxd2pvvGn/JXpX/RvG9pR2tzt3ATebxLW997HovRzB564pm6TmpA=
-X-Received: by 2002:a05:6000:1ac5:b0:3b8:fe01:cc29 with SMTP id
- ffacd0b85a97d-3c0ec476b13mr1451794f8f.45.1755594610630; Tue, 19 Aug 2025
- 02:10:10 -0700 (PDT)
+	s=arc-20240116; t=1755594633; c=relaxed/simple;
+	bh=1SSq/D6eu62T9bEwfEUnKWuT8GJ3sZYRtk3+0ypHiO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tP0WAF4dqIQk0D/Fp1aGGhBmDqc3TLN9CdwE9K9VkXi14YX7vvSSeFJ+jTDvRb/523HVlbZC044ZrPAApVfEZNyR/7GK+niZ3ysAU7j0ludWg0aJIIxo5Z5YdnAmpK9ZP7dLQpVMUNPJhq3Hhczqs2SOhOF2wJRgYEBtvltnI3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpWA2o8o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1689C113D0;
+	Tue, 19 Aug 2025 09:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755594633;
+	bh=1SSq/D6eu62T9bEwfEUnKWuT8GJ3sZYRtk3+0ypHiO8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dpWA2o8o62EMJn53RjU4ScLXk7JM7wTmqEeQjhWKianQBl/rqaFNZD3r0S3Xma184
+	 v6FVm34S8QvvQ7VhIIrYqjfS63GLvHOco/6UC1x/jDA+dG4yoYf0KOLzuqXrKKDDd6
+	 kVQbb24xFIRfoGcFU/ru9mVz54XGIQGfnf1V416goKXbz8+wnVOhWGLpSMYPMDD/sj
+	 CHFqdjiQMNuBbIOn+KSIMSenwomibyee/XqNcriqihBdnbUYC5JubKajKbMD8UrDdq
+	 i1aOios9lF94JuyheDaP5yrqSE66p34pLD75/MoDjCjCtn3DPCSgRI6s4byMfWo+Zt
+	 S3kHFp4yRA+aA==
+Message-ID: <bfa23779-9861-4ae4-9ced-9f347394f033@kernel.org>
+Date: Tue, 19 Aug 2025 11:10:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
- <20250726-maple-tree-v1-1-27a3da7cb8e5@google.com> <20250726164527.6133cff6.gary@garyguo.net>
-In-Reply-To: <20250726164527.6133cff6.gary@garyguo.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 19 Aug 2025 11:09:58 +0200
-X-Gm-Features: Ac12FXzIjOR60cK89wW_NrK29HmSiiv16L1E4oN_6vVa5petNytsfqPo9w5zs2E
-Message-ID: <CAH5fLgg=_rfx9mBn6GbF9S0+thO5kGZOvOFT77XKJiGG1iozfg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] rust: maple_tree: add MapleTree
-To: Gary Guo <gary@garyguo.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andrew Ballance <andrewjballance@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] riscv: dts: eswin: Add clock driver support
+To: =?UTF-8?B?6JGj57uq5rSL?= <dongxuyang@eswincomputing.com>,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, linux-riscv@lists.infradead.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
+ <20250815093754.1143-1-dongxuyang@eswincomputing.com>
+ <0ef61f03-0346-491d-ad2a-293e24cbc4a8@kernel.org>
+ <3fa3950e.371.198c1770125.Coremail.dongxuyang@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3fa3950e.371.198c1770125.Coremail.dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 26, 2025 at 5:45=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
->
-> On Sat, 26 Jul 2025 13:23:22 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
->
-> > The maple tree will be used in the Tyr driver to allocate and keep trac=
-k
-> > of GPU allocations created internally (i.e. not by userspace). It will
-> > likely also be used in the Nova driver eventually.
-> >
-> > This adds the simplest methods for additional and removal that do not
-> > require any special care with respect to concurrency.
-> >
-> > This implementation is based on the RFC by Andrew but with significant
-> > changes to simplify the implementation.
-> >
-> > Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
-> > Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> Overall looks good to me, some nits and thoughts about the error type
-> below.
->
-> Best,
-> GAry
->
-> > +/// Error type for failure to insert a new value.
-> > +pub struct InsertError<T> {
-> > +    /// The value that could not be inserted.
-> > +    pub value: T,
-> > +    /// The reason for the failure to insert.
-> > +    pub cause: InsertErrorKind,
-> > +}
->
-> Hmm, we've already have quite a few errors that look like this, e.g.
-> `StoreError`. I wonder if we should just have a generic
->
->     struct ErrroWithData<T, E> {
->        pub value: T,
->        pub cause: E,
->     }
+On 19/08/2025 10:34, 董绪洋 wrote:
+> Hi Krzysztof,
+> 
+> Thank you very much for your constructive suggestions.
+> 
+>>>
+>>> Add clock device tree support for eic7700 SoC.
+>>>
+>>> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+>>> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+>>> ---
+>>>  arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi | 2283 +++++++++++++++++
+>>>  1 file changed, 2283 insertions(+)
+>>>  create mode 100644 arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+>>>
+>>> diff --git a/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+>>> new file mode 100644
+>>> index 000000000000..405d06f9190e
+>>> --- /dev/null
+>>> +++ b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+>>> @@ -0,0 +1,2283 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+>>> +/*
+>>> + * Copyright (c) 2025, Beijing ESWIN Computing Technology Co., Ltd.
+>>> + */
+>>> +
+>>> +/ {
+>>> +	clock-controller@51828000 {
+>>> +		compatible = "eswin,eic7700-clock";
+>>> +		reg = <0x000000 0x51828000 0x000000 0x80000>;
+>>> +		#clock-cells = <0>;
+>>> +		#address-cells = <1>;
+>>> +		#size-cells = <0>;
+>>> +
+>>> +		/* fixed clock */
+>>> +		fixed_rate_clk_apll_fout2: fixed-rate-apll-fout2 {
+>>
+>> Such pattern was years ago NAKed.
+>>
+>> No, don't ever bring nodes per clock.
+>>
+> We have defined a large number of clock devices. 
+> The comment of v3 is "Driver is also way too big for simple clock driver and I 
+> am surprised to see so many redundancies.". Therefore, we modified the clock 
+> driver code and moved the description of clock device from the driver to the DTS.
+> 
+> But, this comment is that don't ever bring nodes per clock. We’ve run into some
 
-I don't think we have any existing errors that look like this?
+And? What is unclear in that comment?
 
-> > +
-> > +/// The reason for the failure to insert.
-> > +#[derive(PartialEq, Eq, Copy, Clone)]
-> > +pub enum InsertErrorKind {
-> > +    /// There is already a value in the requested range.
-> > +    Occupied,
-> > +    /// Failure to allocate memory.
-> > +    Nomem,
->
-> Given that we already have an error type for allocation failure, how
-> about
->
->     AllocError(crate::alloc::AllocError)
->
-> ? I know we're getting ENOMEM from C, but this would match what the
-> error type would be if it were from pure Rust code.
+> trouble and aren’t sure which approach aligns better with community guidelines. 
+> Could you share your advice or suggestions on the best way forward?
 
-I don't think it makes a big difference, but ok.
+Look at any other recent clock drivers.
 
-Alice
+Best regards,
+Krzysztof
 
