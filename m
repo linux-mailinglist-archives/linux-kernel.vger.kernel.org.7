@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-775256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6000B2BD30
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:25:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97010B2BD49
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4831D4E5FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC9418858BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355FD3203A9;
-	Tue, 19 Aug 2025 09:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFC9320CCB;
+	Tue, 19 Aug 2025 09:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dVq0ZZhM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zw3Kwzcf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E605F320397
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9193203B5;
+	Tue, 19 Aug 2025 09:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755595309; cv=none; b=BqqjQ2b8+qjEAvtqe9RRK8YmSF3vrRSqQo1MdxTaGyr9eDGffFjBieup22q42YurTZQCquac9h62Ff0Z/NKIiDaQLrM/x1Qz9UbF8vx3OoluB7+WI2kPPtc5z+oQquDtkxyE2nEcv/JGbWxWEkFejO7r2k5tVjL3hs4bN1K7mgs=
+	t=1755595313; cv=none; b=FkZmmMqub3Deu/u/sThRDpJ+WpMgo2mKo37maJyyAYa14L/5XpNcOrZgQBgyZZ5+7nEZEK2gF04Bz7T2hUYK0/oJA+g/72hN/kBMf2HYFHIBLg7eS2iJcsPoAJx/tz9D/OTD8CbMU80QWvCfNkRjSYbog8V26noBfUf10XLulhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755595309; c=relaxed/simple;
-	bh=MaJ5CtbzYcmSzaHub09dWgREZi9K9yHAnOoD4ZSx1/Y=;
+	s=arc-20240116; t=1755595313; c=relaxed/simple;
+	bh=1Dmp1A3einWwGG54iLXqYUSf6TWee9iGRmmvrTx8owU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JeIBvhjTr1djRc/2Dpl97JW2ytT/X/SnZLPiWk6jVMWWCki1Ue3T1uksMn19fKpyzs1/qEpCi3J/ysWTj4BXMXsMuxvw0LVZiuqxGAkEcNbwitaBNO+oDZW3f/4OIGHquM4juXO216SMmrlp2/Vep57mFNC9gYOQSX9nOWC0Mek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dVq0ZZhM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90gBN030574
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:21:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XeLoNElQRYDHRk++SgBPgdfN1LI9ODXyEKJtgngTUGA=; b=dVq0ZZhMETwhqEnt
-	s9EfemQb6XzcugD0fg40sr83pH+2k2K+UZgvgtAqw3++2bTs7uSCmU71SU/ZjD0B
-	AfsOk8hvc8Q7Kr81MndamSUWR2bF7md+pIjAgPxSGlFjYjbfFSsrlTJT7NXtddY+
-	rnMEi8lGjgX8pt4zPAnjAZ1fTfPV29jlnqbA2zrbTwLMrtYmAQxQFTsTNV4fehh7
-	nNOJVdCMl5T2Rcq6ZyCN407NxCXsuYu4QK37AVfeLuyZNIoxOvTb3xO98iOGtoLv
-	DzynLzO1RjTNZMNMCSZhfThoyRcF0sJJh2RxMM0amncpykOcsHo0PJqKMTtdaD6H
-	pJ5tAQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48kyunv6jd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:21:46 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2445806dc88so128975115ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:21:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755595306; x=1756200106;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XeLoNElQRYDHRk++SgBPgdfN1LI9ODXyEKJtgngTUGA=;
-        b=bX9H0Y+E+LswwWZyBJTLzXQsIxb6u6cql1/QuT/oQTkwfgFOGt1GW+Deq4P1TsDpSh
-         83pxiAbk+hpm25/Io0cBtnIJFNo3wSyCdYstxetObeNOw9rxYsU2vdQUJu3tmD+lJb0V
-         Gn2JCSt+0T2spr9ZONA5VecX6K3K4TSf7NfE2efqnLdWrUpK9XzPRBudIzPPzutsTW7T
-         RlFbg1Ru7lQdVsOIG3dWPtnna3PFgP5ye43uFV6lr0+9hi39TNruqZkE1ubjc5kOOxOa
-         wGpACPHIalBuSqAFipwKQyhqCKT/FKccVuOUQLEvXkibL1PH4I6jJmdAVq0/h2XAwmZX
-         lgaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMTEt2Og8w4HjcQdtPG4dAbmkmOnjdfyDDV64p0N72u4ImjrlQMVMB+o0UoJyEcDfSFVBdQctLka/A5BM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCbLnPdsv3sf2YTk599kN3PGvpbanofEeIX/rp0lCjLHyHRmWZ
-	WZ2SzDW3pq5tTqB1BnAeoCMEezAuMgQZlK2ZDYacYerxiNDofofE44TJqH+nh96xo2I83y9lubL
-	iKJ9zxizpDobIgtYjOcaJq8lcgBZ7Ou4y9rKyBIpEAWtcQTcxP/iZTKF39yuXzPiAMgc=
-X-Gm-Gg: ASbGncudyzCSuWhOnkntnac1mg0TZGNMCiPVGx56EEnkdK319F6XNr7qZHiWurQGCgF
-	COYRcbk7dWRhdzEUW2adtu2stl2Ukx77c7ZYBKpp4Q9X7QjBJcPjcewnhMbHH5pnSAmmL6P9lQu
-	/iW5i+WKEMJconUSgP0lQLz4RkUD44bh5W/wwXCJIuRztuMgqEKTPKlha13VTm4jINL3Zgu1stG
-	vTNG171VCc3l7ucG6Q3ckV6PoaJT2MN/YgUU5oxdltmhEox/sUENg75NJmzhWST5YXfZSPlT1w9
-	zL9lX2atberDlYEWNpWvRt2URtxIBBHWPc2tjX1c03+o9D7XTrJxV+BlNWU7jZpCu+iH4h26+6h
-	qbBzbUGhYm//xABAtbZxsQhnsssYBAg==
-X-Received: by 2002:a17:903:37ce:b0:240:4b3b:334f with SMTP id d9443c01a7336-245e04926b5mr26682965ad.34.1755595305601;
-        Tue, 19 Aug 2025 02:21:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpiiFaPA8kQRfNSDplxINgiGA8HlGb5Wu8T7SwEDTnoUTiI6Noo4c+zpUmfz128LX8UgJLAw==
-X-Received: by 2002:a17:903:37ce:b0:240:4b3b:334f with SMTP id d9443c01a7336-245e04926b5mr26682375ad.34.1755595305122;
-        Tue, 19 Aug 2025 02:21:45 -0700 (PDT)
-Received: from [10.133.33.87] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446caa3806sm103046795ad.28.2025.08.19.02.21.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 02:21:44 -0700 (PDT)
-Message-ID: <76ff9434-eeaf-4ee0-a8fa-aec566c46c2a@oss.qualcomm.com>
-Date: Tue, 19 Aug 2025 17:21:36 +0800
+	 In-Reply-To:Content-Type; b=H2yX6UQx5dFn7YTbguQZqkffJ5vjBcO7e1Y1wc6RS3phEsNzFaw++BoeN3wU15v6Y/rEwYmHMe5xXHqK8BVtKHNdE4+RIz108ub/REutNDNx0+SdFq/0dQKrlCxhvELfYyVdImDeUmkBq0MyFHPGa8sAyFgxSo/YdVjUyv8dc6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zw3Kwzcf; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755595311; x=1787131311;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1Dmp1A3einWwGG54iLXqYUSf6TWee9iGRmmvrTx8owU=;
+  b=Zw3KwzcfQfOFEVsjJhWf1OYyITZ8aWZNPSCFctrJYnYlV/f4WkVOHbOM
+   ed1IV4BgO/FS+AkSazjEDiUrch/45IyW/KO3R40+hcKJHHcnuxJMbcBFw
+   ic57fimjsRxKYbm5VtRODVQW041KPn0AcYFQ7WL1gInkhA5MIE+huBbVL
+   7LPVeqAg7gWq7aQbVmtDmoDU3RzcgJMZm6ehrNjctJxjDQfnoYU78Gg/4
+   2AVoQtIamrm0EgGrGuEOwmEnKh8o+aQBT4KyFjjI7BQf+IXspRx/fFM/s
+   CoqTKVbbvN8xj3WtGR5UWP1tgh0l5eaoDmtqzSDEn5+8iZvseRfj2Sgky
+   Q==;
+X-CSE-ConnectionGUID: yQgOu6KrQFmymsxTMRKbHQ==
+X-CSE-MsgGUID: vzWBNH6cRWqbNnjLrUUSlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="60456153"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="60456153"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:21:50 -0700
+X-CSE-ConnectionGUID: phcTomYWRfS/PbNwqNpjMQ==
+X-CSE-MsgGUID: R/yQMG1vRZuwSTEA+X48sQ==
+X-ExtLoop1: 1
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.36]) ([10.124.240.36])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:21:47 -0700
+Message-ID: <efa3039a-0d79-4e8a-bb97-647c625197b5@linux.intel.com>
+Date: Tue, 19 Aug 2025 17:21:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,103 +64,211 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/6] dt-bindings: display/msm: dp-controller: document
- QCS8300 compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250819-qcs8300_mdss-v7-0-49775ef134f4@oss.qualcomm.com>
- <20250819-qcs8300_mdss-v7-2-49775ef134f4@oss.qualcomm.com>
- <20250819-ant-of-ultimate-genius-fbfa1a@kuoka>
+Subject: Re: [Patch v2 3/6] perf/x86: Check if cpuc->events[*] pointer exists
+ before accessing it
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+ kernel test robot <oliver.sang@intel.com>
+References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
+ <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
+ <20250819084542.GG3245006@noisy.programming.kicks-ass.net>
 Content-Language: en-US
-From: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-In-Reply-To: <20250819-ant-of-ultimate-genius-fbfa1a@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: EmAeLOrBdSgop8_w7gdTvMPfuegQ_yBI
-X-Authority-Analysis: v=2.4 cv=N6UpF39B c=1 sm=1 tr=0 ts=68a4422a cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=b6vJvH-rrpbGiSTQa0AA:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDA3MSBTYWx0ZWRfX2NK/zKSjy8cd
- 1zAU3I8CpTfjmEY6oh/ZtmGf7aUUzeShfkXv0AJ31yHpJNYZOMnv8snazyV514nbN65rvrVDMxc
- MAXb74V+geBtfI78AMCdWWf5qv3X3r8idwox53vwJ8z5Th/8JfcvTQ26Ucf1HavYjtiRYgB8DhU
- gTd6m2ZjO5eMhbm74ePe5/vD+ZL/6YmCXl8B5WhkHg0NguCX7IV8A3BZjvJCg+6+tRF3QTTFL9j
- KZVOZ5g7QBZeyV5o3XRv9bwBwk/VxcBk6/dYMQF6MONBg6VVP84JFiEfFQ+m7cxvPaaZhtZev6r
- HKryj/j8n19kloI8dBMbNPV1EmGtp9yBNl3ZMhVj/8/Nu31brXs+Hi+FzB4OzRVnahl1Poaw7n9
- N4bELZk3
-X-Proofpoint-ORIG-GUID: EmAeLOrBdSgop8_w7gdTvMPfuegQ_yBI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508180071
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250819084542.GG3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-
-On 2025/8/19 15:58, Krzysztof Kozlowski wrote:
-> On Tue, Aug 19, 2025 at 11:33:29AM +0800, Yongxing Mou wrote:
->> Add compatible string for the DisplayPort controller found on the
->> Qualcomm QCS8300 SoC.
+On 8/19/2025 4:45 PM, Peter Zijlstra wrote:
+> On Mon, Aug 11, 2025 at 05:00:31PM +0800, Dapeng Mi wrote:
+>> The PMI handler could disable some events as the interrupt throttling
+>> and clear the corresponding items in cpuc->events[] array.
 >>
->> The Qualcomm QCS8300 platform comes with one DisplayPort controller
->> with same base offset as SM8650. But it requires new compatible string
->> because QCS8300 controller supports 4 MST streams. 4 MST streams will
->> be enabled as part of MST feature support. Currently, using SM8650 as
->> fallback to enable SST on QCS8300.
-> 
-> I don't think last sentence is true. Where in current code SM8650 is
-> used as fallback?
-> 
-Sorry, this more like a description error. As Dmitry pointed out, we are 
-not using SM8650 as a fallback; we are only using SM8650's data 
-structure in the driver. I will correct the commit message in the next 
-version. Thanks.
+>> perf_event_overflow()
+>>   -> __perf_event_overflow()
+>>     ->__perf_event_account_interrupt()
+>>       -> perf_event_throttle_group()
+>>         -> perf_event_throttle()
+>>           -> event->pmu->stop()
+>>             -> x86_pmu_stop()
 >>
->> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+>> Moreover PMI is NMI on x86 platform and it could interrupt other perf
+>> code like setup_pebs_adaptive_sample_data(). 
+> Uhh, how? AFAICT we only do drain_pebs() from the PMI itself, or disable
+> the PMU first by clearing GLOBAL_CTRL.
+>
+>> So once PMI handling
+>> finishes and returns into setup_pebs_adaptive_sample_data() and it could
+>> find the cpuc->events[*] becomes NULL and accessing this NULL pointer
+>> triggers an invalid memory access and leads to kernel crashes eventually.
+>>
+>> Thus add NULL check before accessing cpuc->events[*] pointer.
+> This doesn't seem fully thought through.
+>
+> If we do this NULL check, then the active_mask bittest is completely
+> superfluous and can be removed, no?
+>
+> Also, what about this race:
+>
+> 	event = cpuc->events[idx]; // !NULL;
+> 	<PMI>
+> 		x86_pmu_stop()
+> 		  cpuc->events[idx] = NULL;
+> 	</PMI>
+> 	... uses event
+>
+> Worse, since it is a 'normal' load, it is permitted for the compiler to
+> re-issue the load, at which point it will still explode. IOW, it should
+> be READ_ONCE(), *if* we can live with the above race at all. Can we?
+>
+> First though, you need to explain how we get here. Because drain_pebs()
+> nesting would be *BAD*.
+
+I suppose I made a mistake on explaining why the issue happens. Since I
+can't reproduce this issue locally (Synced with Oliver and the issue seems
+can be produced on a specific SPR model), I can only guess the root case. I
+originally thought drain_pebs() helper could be interrupted by PMI and then
+cause the issue, but as Kan said, it's not true as PMU is always disabled
+before draining PEBS buffer.
+
+So after thinking twice,  I suppose the reason should be
+
+    When intel_pmu_drain_pebs_icl() is called to drain PEBS records, the
+    perf_event_overflow() could be called to process the last PEBS record.
+
+    While perf_event_overflow() could trigger the interrupt throttle and
+    stop all events of the group, like what the below call-chain shows.
+
+    perf_event_overflow()
+      -> __perf_event_overflow()
+        ->__perf_event_account_interrupt()
+          -> perf_event_throttle_group()
+            -> perf_event_throttle()
+              -> event->pmu->stop()
+                -> x86_pmu_stop()
+
+    The side effect of stopping the events is that all corresponding event
+    pointers in cpuc->events[] array are cleared to NULL.
+
+    Assume there are two PEBS events (event a and event b) in a group. When
+    intel_pmu_drain_pebs_icl() calls perf_event_overflow() to process the
+    last PEBS record of PEBS event a, interrupt throttle is triggered and
+    all pointers of event a and event b are cleared to NULL. Then
+    intel_pmu_drain_pebs_icl() tries to process the last PEBS record of
+    event b and encounters NULL pointer access.
+
+I would cook a v3 patch to update the commit message and code. Thanks.
+
+
+>
+>> Reported-by: kernel test robot <oliver.sang@intel.com>
+>> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
+>> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Tested-by: kernel test robot <oliver.sang@intel.com>
 >> ---
->>   Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>  arch/x86/events/core.c       |  3 +++
+>>  arch/x86/events/intel/core.c |  6 +++++-
+>>  arch/x86/events/intel/ds.c   | 13 ++++++-------
+>>  3 files changed, 14 insertions(+), 8 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->> index 68a6fd27506fda004e53174db5bcc88a29e8d2a6..ac44abfdd2853393ae199387c9ae2c37e1c48f52 100644
->> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->> @@ -18,6 +18,7 @@ properties:
->>     compatible:
->>       oneOf:
->>         - enum:
->> +          - qcom,qcs8300-dp
-> 
-> ...here not.
-> Emm, if we need new compatable, can we add qcom,qcs8300-dp here? 
->>             - qcom,sa8775p-dp
->>             - qcom,sc7180-dp
->>             - qcom,sc7280-dp
-> 
-> Best regards,
-> Krzysztof
-> 
-
+>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+>> index 7610f26dfbd9..f0a3bc57157d 100644
+>> --- a/arch/x86/events/core.c
+>> +++ b/arch/x86/events/core.c
+>> @@ -1711,6 +1711,9 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
+>>  			continue;
+>>  
+>>  		event = cpuc->events[idx];
+>> +		if (!event)
+>> +			continue;
+>> +
+>>  		last_period = event->hw.last_period;
+>>  
+>>  		val = static_call(x86_pmu_update)(event);
+>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>> index 15da60cf69f2..386717b75a09 100644
+>> --- a/arch/x86/events/intel/core.c
+>> +++ b/arch/x86/events/intel/core.c
+>> @@ -2718,6 +2718,8 @@ static void update_saved_topdown_regs(struct perf_event *event, u64 slots,
+>>  		if (!is_topdown_idx(idx))
+>>  			continue;
+>>  		other = cpuc->events[idx];
+>> +		if (!other)
+>> +			continue;
+>>  		other->hw.saved_slots = slots;
+>>  		other->hw.saved_metric = metrics;
+>>  	}
+>> @@ -2761,6 +2763,8 @@ static u64 intel_update_topdown_event(struct perf_event *event, int metric_end,
+>>  		if (!is_topdown_idx(idx))
+>>  			continue;
+>>  		other = cpuc->events[idx];
+>> +		if (!other)
+>> +			continue;
+>>  		__icl_update_topdown_event(other, slots, metrics,
+>>  					   event ? event->hw.saved_slots : 0,
+>>  					   event ? event->hw.saved_metric : 0);
+>> @@ -3138,7 +3142,7 @@ static void x86_pmu_handle_guest_pebs(struct pt_regs *regs,
+>>  
+>>  	for_each_set_bit(bit, (unsigned long *)&guest_pebs_idxs, X86_PMC_IDX_MAX) {
+>>  		event = cpuc->events[bit];
+>> -		if (!event->attr.precise_ip)
+>> +		if (!event || !event->attr.precise_ip)
+>>  			continue;
+>>  
+>>  		perf_sample_data_init(data, 0, event->hw.last_period);
+>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+>> index c0b7ac1c7594..b23c49e2e06f 100644
+>> --- a/arch/x86/events/intel/ds.c
+>> +++ b/arch/x86/events/intel/ds.c
+>> @@ -2480,6 +2480,8 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64
+>>  	 */
+>>  	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
+>>  		event = cpuc->events[bit];
+>> +		if (!event)
+>> +			continue;
+>>  		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
+>>  			intel_pmu_save_and_restart_reload(event, 0);
+>>  	}
+>> @@ -2579,10 +2581,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+>>  			continue;
+>>  
+>>  		event = cpuc->events[bit];
+>> -		if (WARN_ON_ONCE(!event))
+>> -			continue;
+>> -
+>> -		if (WARN_ON_ONCE(!event->attr.precise_ip))
+>> +		if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
+>>  			continue;
+>>  
+>>  		/* log dropped samples number */
+>> @@ -2645,9 +2644,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+>>  		pebs_status = basic->applicable_counters & cpuc->pebs_enabled & mask;
+>>  		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
+>>  			event = cpuc->events[bit];
+>> -
+>> -			if (WARN_ON_ONCE(!event) ||
+>> -			    WARN_ON_ONCE(!event->attr.precise_ip))
+>> +			if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
+>>  				continue;
+>>  
+>>  			if (counts[bit]++) {
+>> @@ -2663,6 +2660,8 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+>>  			continue;
+>>  
+>>  		event = cpuc->events[bit];
+>> +		if (!event)
+>> +			continue;
+>>  
+>>  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
+>>  					    counts[bit], setup_pebs_adaptive_sample_data);
+>> -- 
+>> 2.34.1
+>>
 
