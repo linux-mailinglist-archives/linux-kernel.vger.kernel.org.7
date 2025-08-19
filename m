@@ -1,88 +1,92 @@
-Return-Path: <linux-kernel+bounces-775299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E15FB2BD98
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:39:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14486B2BDA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F580684D89
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B783B18973BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC9031AF01;
-	Tue, 19 Aug 2025 09:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201C031AF36;
+	Tue, 19 Aug 2025 09:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0oQIC7t"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ERSuohNr"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F42731A06C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B8B3115A1
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596313; cv=none; b=JGEsuW3ZN2UL//rll/4eGX5gz9VwMxGy5VdtQgAgXL8lC/TwlNjVdDKZKN31YE8FpwQxORbd+cKdFkkZaa2SY/mKtJGI9aKAXFa27dP5zOJnMcOe2nJtwhLMjarKvs4Ng9ZruaHLHWWBqELgQEh6xZpQtBbhW6wvDTCPDzG0rts=
+	t=1755596322; cv=none; b=FwLJSZb61XCgbKR3Uwr6Xac41rLusy8oMYLj5uZVQqxFinfMIqqkHuhFWWo1BuRwa/DnweThxCotd8AIzbDRl0zOVDx4aM8+Q/pk5EWrtXeTYiBqINkHibnfg2Boajmdl6kt6GuF3A8knZs0WbHeU89nH7Tvb6lwVBsNvCVxT6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596313; c=relaxed/simple;
-	bh=cr7dDOeFq2kJNvj9k8XgGLyCpYIUvYq5oqsrHpO80iI=;
+	s=arc-20240116; t=1755596322; c=relaxed/simple;
+	bh=BNBYTrkKh+r61QPjXesr09akZIgnL2UxuB3fmlO0oaA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHOjsec3TL9w9p9Rn5z+5e6CnXrguSoLcPuchfXHxCQRGsaLxIsNoIT1mLzDJpSWRik+h1Zv9fCczIRnCQBofbemqr6yI03JyVuAThJSy8VjndIojZjyo3xnSIMNSdomvIQsXx8IqwbbG4zw98d5Nu3K5RfJW3UjEOYNM7n92To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0oQIC7t; arc=none smtp.client-ip=209.85.221.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNPOQXS/DS1Asngq8FDJo7HjLJdl3hegLBZ8/yKKHiAU0NKA1+7vymgwPHVgZGLMPYx8/kyBqpiGL40VoPR0P97arKH1eJ0CoJe7zK2h04lA4J91VL5c7E4A5a6XayRflKL1aWkxeUcTw/+M08biw9AijQVYZtjkKwSpbKNN9sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ERSuohNr; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9d41c1963so2517955f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:38:31 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9d41c1964so3402588f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:38:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596310; x=1756201110; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755596319; x=1756201119; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sz9qrbHKfImiU0wIEPpwysb9Rj1rHIdlAeMbcs31ric=;
-        b=q0oQIC7tzXawjoPIW1K6vsfBLOonVbV+K3zOQ5kNpgyzfFOvcZ788TwXbQ3c9byuXD
-         DrMVPjkzIFChP9dhTAlXi8RlMUmFSoN+ejeaNxDQhYYTrbKMro0GSsqkTk/5IrBuadTp
-         MZIgPv3imA4F9oOwWVy/K8n7uRQGUL4de6CEpEY9aT2iWS2dgWaiJejkMkD9iD9KwRIN
-         gBXg5z+84uvjLbJhlmwVOy/xQ52Fs2jEqF9/ltG4/eW6XzHi3NMW47u+nr+uaYOTUAGR
-         8lczCNP8oC0N6qDUmUNEGcSMyL9qmy+l7hqBOVbkipC1JZbXc22X+2wu+by7Tro+SbNr
-         exWg==
+        bh=at/5eKe3PrrAbraNpLb6KoExLUDoe69Dgy/Mvb40QeY=;
+        b=ERSuohNrCDyjY/Je7UnqxtAnuR1lFeZpQi8z0aeOCFe+Ws1MYxELdwSYR8XWcW9Hcq
+         yc9wg/MCc9pb+7Pulg6fn15ye5xk7M2YfRlpDuFKM5YEPjA2mPwbKCOEdgF8MH5a3McL
+         PYNbAMKXOwVa9St479M9Ot1MbeZ40ahlLkmJZc6qMyD+mvrFLL6vDOFt6KCg3uDrF/xB
+         IWkHQi5bQtk8s3wxo7RZX9nz/ZJzvCCtQo5nC50z7agNynHKtOsJL7sD4EqkJq+Cy57U
+         +Ouphy1Y98+T9ZUQJnsySdSNEhrM7b3VhtcLSMeNUyrvlo6BGfWqlvfi9i6ho0QUbCnX
+         3ZIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596310; x=1756201110;
+        d=1e100.net; s=20230601; t=1755596319; x=1756201119;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sz9qrbHKfImiU0wIEPpwysb9Rj1rHIdlAeMbcs31ric=;
-        b=WApfRuwmGtK05XvhytJ5x4FJrGo9C4hNIKmvsaJUsnUNJihxwdvPfIsquQHtzQqqCG
-         NuLofdwJDspYYVTSV8QZD4R96vykpxWHgR4RGXHtEqWBEVRx5fxWWlRt+Wk7eeDLlyVG
-         H6unIZrkF+/ramnl4bXv8tP+pJNipuvI68cJbktjg0PZRBJ5+HCy66h16+RCiteg6nWI
-         /tFtAEXQWdN41Q8P4Ujc6ef0/jU0UggGbznOGHkikN8wA2OEWLAmY/JthDlCOcXn7KHU
-         EY6JBhTxk3jsksAy50hQMVJEVuMjH7497MzILycrErtJiLhW9NMiCMdg6BUBN0kbypWU
-         ouIw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2MAA3GNQNsmav8wE5oh0MCbjutMSVZJD1ez00+t8/p+cl6yXS/VNFbUijEsOGpJEUTCN7MS7989cnNak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzalw/Ec3ESNvV3hA04QT5tQALoX0N0DyThuaHDiWGH+1zwgVXb
-	+Rl91ekDFiUohQgJYwIJ66lQhtY2BRCSQTylY8UfAjlGY9vqHwPVgQBzYhTjrGtj740=
-X-Gm-Gg: ASbGncuPyNPLbM8t95z2SeMMuxc8zFfOD1loQCORP7QFaEKfPItHQ7qvmdsLigc5o4d
-	DW4YQwykfnRp9Ca72w3Jp+Ru0Hg/rxGdQBam2kMZ0YxmS7bIt7f9Tf80JeC0AIcjqUK/CCNlVN3
-	oAvZILiMOGuZUqFDhOjcP+CtkewDOXOHXVn4w2v94B/VCaZogukMwzCEPufEkHJ9wz7vRE0Htoo
-	B8GIawzhChD4BTQ8NEqK8tihLrB1P4jKs1s96thBU4ZCVRP5YcwjTLWoWnU2b8CouFQu7WlwKlw
-	17S+x2sW7YPzAOXP2LL6YH0vcn45qPUCLy/j6q+PC5T181/t+uN3tfB/z+RxJ/YfhRHMPZXO95q
-	XV3sVEfQRuCcyrg9BUkDm/Y3KMRw=
-X-Google-Smtp-Source: AGHT+IHlXFQlXQqNpNupwtpvRJnPuKsXYXg5yse55qc7nSnLb1u0RqJ4oB2cIQ0DRGelvNX7cDhImw==
-X-Received: by 2002:a5d:64e8:0:b0:3b8:dabe:bd78 with SMTP id ffacd0b85a97d-3c0ed1f32ffmr1300950f8f.54.1755596309645;
-        Tue, 19 Aug 2025 02:38:29 -0700 (PDT)
+        bh=at/5eKe3PrrAbraNpLb6KoExLUDoe69Dgy/Mvb40QeY=;
+        b=EDMor1C6NfF94hlbw02RSk2pZpmt5fyWsX/K+/kophT7LIg7MYg5cTBeRLdbki1tCF
+         evA3tGUbM+3Q5Tt0qLMYS1OPOvgLTk4LBfVwRJqkLCF/e/U8jDH24aZfF5tA6zUzL4Cx
+         O1kt2Ej+aNXahyTmKajPIk3FNS0YPMNgaWxw+fPys3Anzoqx++AXhvJYPl697kpktsmD
+         m/M3/oc6eqE70YR93fWWW0isLGh+VaztHMRdv/GCfYFn3oSP2iyEA8mxcJn2C4VFKIhM
+         TH8rsqHYkNixAwhCdjkOm+t7I/GX4Mtc1RtzU9WCuyPcWc/PwI3h6XaRLaevdOoWQpvN
+         b7Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUd19w1uCMhezkuLvG2BmqqGuw/pMmHz1f2YEOhN3wGF7I3HdsxMdUCbWEZIgi4rB85IIU2Ll/SDwIk+q4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNsjMlSVg/vG4xysZELHRGgh74GxkUMboocoG0jUK7t9nbOcnD
+	AxBc6JUQ8N6ma2M9N1WkvEVBiEfWEpMUu+49mif9+2OzLaVQT5uaei3L1Dg67tguIf0=
+X-Gm-Gg: ASbGncumNkBBv87IKz0ji7p/hwtnF2MDkAA0M3HrIcwaiwzGTSNhszi3yqx3Q8JABHv
+	7IKyjwOFOjyJtPTZqhfVIFDqfV1BmgYFusYJbzzPKT5UNtH4eW5sBsQag8beRLarSi27ek0Ipql
+	JBBA6wm1DcGK1AiencU3BgSmAW7K8Qc6SxptkAu64qwOPZmmRAVqzamJTjwIEUai9GVyVP1QyCN
+	uFPokT7uVZxD+vHH0lDj151yH44AmLoxWjAZn+cB7EoB0D1vZPRoSzJFaHylM3b071YHASvP/v9
+	rRcX1YM7hjIC7sf/BSabAW3hvSUOmmmCJ/vjPxKzBK/0FgG0mPaP8Lnr0jT7WCjUwKXFnJcs9f7
+	YyN2P3IjW4gk51ApKOrZVDgnB404=
+X-Google-Smtp-Source: AGHT+IFkB5hfOSqRO9ucIKbwVALsj+nCtLLW02xqPar2YbcIy4HqcpvqEUmAihdf079LhDp9jt6P0g==
+X-Received: by 2002:a05:6000:4028:b0:3b7:7749:aa92 with SMTP id ffacd0b85a97d-3c0ed6c4b1cmr1345276f8f.58.1755596319074;
+        Tue, 19 Aug 2025 02:38:39 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c077789c92sm2905553f8f.52.2025.08.19.02.38.28
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c6bd172sm220059075e9.6.2025.08.19.02.38.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:38:29 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:38:26 +0300
+        Tue, 19 Aug 2025 02:38:38 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:38:35 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zack Rusin <zack.rusin@broadcom.com>
+To: Arun R Murthy <arun.r.murthy@intel.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Javier Martinez Canillas <javierm@redhat.com>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Suraj Kandpal <suraj.kandpal@intel.com>,
+	Xaver Hugl <xaver.hugl@kde.org>,
+	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] drm/plane: Fix IS_ERR() vs NULL checks in
- drm_plane_create_hotspot_properties()
-Message-ID: <638f3e0c648c3f7c1e3b61dd180d10dc102f52dd.1755591666.git.dan.carpenter@linaro.org>
+Subject: [PATCH 3/3] drm/plane: Fix IS_ERR() vs NULL bugs in
+ __drm_universal_plane_init()
+Message-ID: <6f9fc3889e0c79d7ac2833f3a2a6ff8b047c2b11.1755591666.git.dan.carpenter@linaro.org>
 References: <cover.1755591666.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -94,42 +98,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1755591666.git.dan.carpenter@linaro.org>
 
-The drm_property_create_signed_range() function returns NULL on error.  It
-doesn't return error pointers.  Fix the check to match.
+The create_in_format_blob() function returns NULL on error.  It never
+returns error pointers.  Update the check to match.
 
-Fixes: 8f7179a1027d ("drm/atomic: Add support for mouse hotspots")
+Fixes: 0d6dcd741c26 ("drm/plane: modify create_in_formats to acommodate async")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Zack Rusin <zack.rusin@broadcom.com>
 ---
-This is a resend of a patch I sent a year ago.
-https://lore.kernel.org/all/CABQX2QOoq3H=eHdM83_k5vgHiaMu9Zsto=H7S95QHxT-s16jEQ@mail.gmail.com/
----
- drivers/gpu/drm/drm_plane.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_plane.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
-index ad21fc855aea..beef2a06bc75 100644
+index beef2a06bc75..2f5a95bc0528 100644
 --- a/drivers/gpu/drm/drm_plane.c
 +++ b/drivers/gpu/drm/drm_plane.c
-@@ -338,14 +338,14 @@ static int drm_plane_create_hotspot_properties(struct drm_plane *plane)
- 
- 	prop_x = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_X",
- 						  INT_MIN, INT_MAX);
--	if (IS_ERR(prop_x))
--		return PTR_ERR(prop_x);
-+	if (!prop_x)
-+		return -ENOMEM;
- 
- 	prop_y = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_Y",
- 						  INT_MIN, INT_MAX);
--	if (IS_ERR(prop_y)) {
-+	if (!prop_y) {
- 		drm_property_destroy(plane->dev, prop_x);
--		return PTR_ERR(prop_y);
-+		return -ENOMEM;
- 	}
- 
- 	drm_object_attach_property(&plane->base, prop_x, 0);
+@@ -483,7 +483,7 @@ static int __drm_universal_plane_init(struct drm_device *dev,
+ 	if (format_modifier_count) {
+ 		blob = create_in_format_blob(dev, plane,
+ 					     plane->funcs->format_mod_supported);
+-		if (!IS_ERR(blob))
++		if (blob)
+ 			drm_object_attach_property(&plane->base,
+ 						   config->modifiers_property,
+ 						   blob->base.id);
+@@ -492,7 +492,7 @@ static int __drm_universal_plane_init(struct drm_device *dev,
+ 	if (plane->funcs->format_mod_supported_async) {
+ 		blob = create_in_format_blob(dev, plane,
+ 					     plane->funcs->format_mod_supported_async);
+-		if (!IS_ERR(blob))
++		if (blob)
+ 			drm_object_attach_property(&plane->base,
+ 						   config->async_modifiers_property,
+ 						   blob->base.id);
 -- 
 2.47.2
 
