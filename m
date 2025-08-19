@@ -1,165 +1,152 @@
-Return-Path: <linux-kernel+bounces-776455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17D0B2CD87
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7AFB2CD8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23C21C203E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA081C200DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDE6303C8E;
-	Tue, 19 Aug 2025 20:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B4830FF36;
+	Tue, 19 Aug 2025 20:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nMfKOzE1"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKcN2giu"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCE230C35E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 20:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3066426A0AD;
+	Tue, 19 Aug 2025 20:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755634252; cv=none; b=XduFVXqd/jc58q3hLRchRWovTPd1iPhCzo1KQjlwDTtlsQcsiTomCrqcP9Ltep6F0moHU0jw9s7mbB7O4t00NyJ6PeU4HCmNScEO0/Mw26ux3vXY7o40lBQDqDC57fNXBcK4cJrN0vXP/+xB7pmS5ji9zBQ0mn4y5qOD8SQrDco=
+	t=1755634401; cv=none; b=NC7CkppNs1LkOycNkwDlUITmc3sIS0kbUwHkefFHizvKeAyjWL3hWWX/iNtLy6A/157Pxav2nUCeTZd98Hov8HngNysk8/Gdz5iDy3l+zO/n0dsnJzwhH/z6yah/wBkzL4ds4PDzUjiRoiB3g1iRP3ljmKQGQbA9CaArz65kGT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755634252; c=relaxed/simple;
-	bh=rMZHiApmfTWJvbl/Y3ClCgmKNQgGqWhcylhTmw6krww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RnKp5A8Vb6munmBv94LiuKw9D0M3NY1TkZrumEo1245HzBSp0aLrvXosc3DzCekkrssHsxaenFMHXpzHtmpxBTxcZeuCXAfFxPGESv2RrAqx45p3dcrR7+mW8nclLj1S1xiG7JFBmLAu+0UPpbLb1xKbsMaFRl8b2L0aE/Dszic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nMfKOzE1; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55cef2f624fso1685e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:10:50 -0700 (PDT)
+	s=arc-20240116; t=1755634401; c=relaxed/simple;
+	bh=9X/2VGNApmcQ7rOcJ+VUgDeSKoF3XoYcobAsc+OKa3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OfXISz5s/TGIAVXTOwGq/PLc+2J4HoUtcZaAUcu6i0AOwoenwyMUPwVLWMQy1FnUrCYPL925avR8k1HVtwO2fYaTXowbIIVg6mNSWEnQmJSdIyGI4T6+5fgE3M1mJRf8MlruG31dYh8bcmqch6qOZS3uZ1dhqGIsBa0Wybtj6WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKcN2giu; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9e41669d6so4366115f8f.2;
+        Tue, 19 Aug 2025 13:13:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755634248; x=1756239048; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8g1GABB4c6Nl3AjAt7p2WENAvE9Whp18TcJMWTNN3Ps=;
-        b=nMfKOzE1RvZGO5un+ur721jj0LLTEWXJA5ELmzCZnyMUumoJqWCfGEio6kc8jKJ1RD
-         CTjl7kL/8VUlPcLqZHssYstP6Mjf0EVtZETipHmawHuvTgmHrNyweO0tR/2HB6OH4J9X
-         ob+uM1n7CA7y2DGycN1J+4IXEwT510rJXQPS7cMt6aX6MuPBd2PiEI1Pz0OXujAeruvD
-         igTdFO2gnxPnJFGfmLUWqJbP4ZQYRGu+qLRF/sIhWsiRNGpVg1Z+TCDhoYVm37UljAzq
-         qMYYiwSukI0P+M0RZVCe/XZTaENTsHjbvWVNcngXhiWEQi43ErNabC6hZJDB4bd2g4T+
-         TkcQ==
+        d=gmail.com; s=20230601; t=1755634398; x=1756239198; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hv4875C2PzimpafByJlP6Vqr30Mci0sbeGJ0/jFTW9U=;
+        b=CKcN2giuhGRIKqi5TSNs4bD/UYxJQXZqTaQzK9MJdimrT2rY9prJa2ZnzNfmOZ/e+c
+         nKHiqPuaOntvcsVoYjfI78yNvsxMhwPSzmOaUDDZXQzrYXbsPnF8ivGBkMvRvBwSd5UW
+         0skZYv4vE+VKSDmk2mpJTp9pzdA6XzZbKi+OXgBV3Td9lkA3oPJfYXk+bpj/bBGENX0X
+         EXdkHBsaDTqlELS5DQrTglcLpDTT11FNJfmLMsXokzMq12+TZVKQA9d9TMlzIJDxU5bz
+         ufEIZ9mGK0mrAKxEqoeKZ1WQkOZ02TXeyPlnIz0+gtf05QuPy8BbTtQZ1isHZDgcZjEB
+         rI9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755634248; x=1756239048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8g1GABB4c6Nl3AjAt7p2WENAvE9Whp18TcJMWTNN3Ps=;
-        b=S7yGEmGLj5YTz/kNMZMluT4vlyIqOpRxIPVUhaUJa16G/vp292o+E83cZ5FbjkY/Qi
-         qde3QVf1VwkzSAkEjJu9YJFB1pasDer01+Dwn/OC0qn/RiQZdznvU5Kj2k52xUiPIQQN
-         +7/fMhE+ZBSbmwPBrHC70SCskaG/Mh6gSKkG3cnzuuF/QlsCJErz+AiKh8KqpdXfgVTd
-         EYDMTsraeP69B6T4uTjwZ8/4FXTImSe6XSqpAotCHgxUDLsZVmT8QLEl2O7aTVr0Ay+u
-         Fu973/3t9XBEVLk029GAvhTKncQKMjBr7rmIAvkaP5Y7Llzr18agXpVbPWiluNyw5fDJ
-         lJhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJJqrUuOcu7ypgTj4X63/ZgnlWdT+Gmcl/8bU9eJK74gVS/CERJUylmLf9g7h92ExXtTfCGSN3o09tBcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVMFRzevpCw65bTSsuQFQocdkHMVQDiVrdmXHqd7kGlOiS1SDr
-	5obVnEbEf0mj+KhhLOxwqq/41DwF5gDtPLmLzvzYeXyZGKtYl7R0qTRxmmLBIIDH6gKek3lWxbs
-	1CdCKv76DO2FZ7g126T3u9Dn5D5tuO8pK6NOiGAki
-X-Gm-Gg: ASbGncu0c+ZDysS5IwsDTbELmVezay5TQwW5FTazltq7ZH1VpLTDRn5V69vKxH25kXp
-	yVL4g8C+E29pLMp/FWER2s9jybj/0Il3z8FylEbZ6rD/SE9McWmMdjEk++8h3PMLXBVPuZU8+Jk
-	ksRnMUnNGZdwmt0zR7yNB1n2hy4OI27osqsoOMfD+vKwB5nVVVWCk8QIShQr+4VBhI5voBjnbgL
-	9y4wOE2G51yG/G6CgycsIVZ7JWafYnf3KXtcYBOYCkGoCZNgHbh2cc=
-X-Google-Smtp-Source: AGHT+IGWDEKpjkL8gMoTg11knrM+LgDSoCdoqV7uPa5wnI+Ffp6uCHV6PExiTkcQlwYReNDLYuv3IY9Lga3x2m1O1Dc=
-X-Received: by 2002:a05:6512:1412:b0:55b:528c:6616 with SMTP id
- 2adb3069b0e04-55e067e2d86mr59539e87.6.1755634248138; Tue, 19 Aug 2025
- 13:10:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755634398; x=1756239198;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hv4875C2PzimpafByJlP6Vqr30Mci0sbeGJ0/jFTW9U=;
+        b=Mhep7upHIoMTmsbzudMe6sSvbYD+ht2oo0j+LbQy77t3MYaXHlcto+uh4wipO94/ww
+         3YSAF/l/XpJWa35qj2jVfU4O+r6BH/L+Hn2SgsNrfFi+w6oYQDinsor/CA8kA6oZskY7
+         y8hQcdTbJVC0iI3TvFFwjsjIRCxG4Gn0tyw2LsYF0nDeBhwOCJjua1/2o+6YUl5m4ifS
+         xMfVFtZ5yGjr/7UcQ0LKhzUXMMz3oKnZj8m2JwDPYvGtGjpakxXTkztnjiB0UNgWiYSt
+         rznIK8CDIdN+eDsqILh4IYBWUMpl5Wjml1jJZl9v+VpgfTsQD3DI0/CsHdRN7Ro9g45x
+         gBvw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2yX9D8hRSAzF5ru57yWvaEmQwhflDhBvPo95bMxVipiX0OYoK/Z50oZjHDVgsX9CDRTCz7AjvieXo67x2@vger.kernel.org, AJvYcCWK64RrtYL3zap35TtXP7bU8bM52VO/xb7lsfBK3tENL/iGDF79C22c9gpEnObpmlZs0MluqVkYVbjr/lg=@vger.kernel.org, AJvYcCWZmlCHIC+0UeshINumPvgeGr7t7l1RIOXuPAVpUkSCPEgFN1Nd0ZpnedL+4X0k7/aQKQyc/KxPYibA@vger.kernel.org, AJvYcCWeYhDyOnET7yIB6MWhnibaLGVLa3N2VqGVoO6AGkWK+ktEiGsDeqGb/N+aQyNGOPJSXXf4Q2L/hKdL3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNNS5MkDor0ZxZZdVoto0TlZI0OHs3BziNpbAzapEHuHxJyLqo
+	ChqdHnbYO2Xgpfpeuq4yYwdktvzuaviyg8Fwfd3BoCb8jOo4ayyD+ZwQO4Ew
+X-Gm-Gg: ASbGnctottXRUWsS6AoWKa9wPjmbP0byIQAis6j79ubWz5557Zrrc5sO2e0IQw1Jz5X
+	Ks1HLJreRL5VmczOdaFaNjxTmtnbdB16+938tPlkfmyutaPySbEDuex8d0AgXgFHemYsGEp8seK
+	zH0IYEnIumImdSFp9ewh2P5ohnu6HXRmjnIrgacPBHYilytFSB5z5HKg1CuM0PQP1Uy1tf6qfIc
+	9uKLa8FPMhK/k4BN2vWXRCuqh0QGVN6DUJUH+TGVs+0MOCBNsa3/3cMAAeMa+sfYB8PgChnJ+KN
+	yg0Vua6sEA7smhbrjD5URctJRjN6TftY2Psfx+1DcZnjwqPgoCTG/iYry07+5vV+ZMyDM/XFL+X
+	9qt/iC+SEOLoq0hwIUPLbLlLmZqygeTMld6xTiQlSdCQ3aQY=
+X-Google-Smtp-Source: AGHT+IE39W/od8Q6Lv4eHcOg3CqK1TKtJR1QdKfM982lU9SVEinsuN6XuD5Bxq2jv1S2etdEW7jtjA==
+X-Received: by 2002:a5d:64ca:0:b0:3b9:2989:b859 with SMTP id ffacd0b85a97d-3c32dd5e02fmr196354f8f.14.1755634398149;
+        Tue, 19 Aug 2025 13:13:18 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:216f:2f7a:74c6:177a:3b99:868c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077c57d32sm4939887f8f.64.2025.08.19.13.13.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 13:13:17 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: broonie@kernel.org,
+	lgirdwood@gmail.com,
+	robh@kernel.org
+Cc: peter.ujfalusi@gmail.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH v4 0/2] ASoC: dt-bindings: Convert TI TWL4030 sound bindings to schema
+Date: Tue, 19 Aug 2025 22:13:00 +0200
+Message-Id: <20250819201302.80712-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755499375.git.asml.silence@gmail.com> <155130382a12b1386540b51a4ca561f61e81177d.1755499376.git.asml.silence@gmail.com>
-In-Reply-To: <155130382a12b1386540b51a4ca561f61e81177d.1755499376.git.asml.silence@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 19 Aug 2025 13:10:35 -0700
-X-Gm-Features: Ac12FXxdfokg6kaVI87OSUtFCT6WqV-aHwt747JMGypTZ0xJY1GsNjRibf_11Lk
-Message-ID: <CAHS8izOgxGNsYgc3OOkzn8L5P-BRUni4N0rxEJ-s9HLcmjKg9A@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 09/23] eth: bnxt: support setting size of agg
- buffers via ethtool
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
-	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
-	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> From: Jakub Kicinski <kuba@kernel.org>
->
-> bnxt seems to be able to aggregate data up to 32kB without any issue.
-> The driver is already capable of doing this for systems with higher
-> order pages. While for systems with 4k pages we historically preferred
-> to stick to small buffers because they are easier to allocate, the
-> zero-copy APIs remove the allocation problem. The ZC mem is
-> pre-allocated and fixed size.
->
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  3 ++-
->  .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 21 ++++++++++++++++++-
->  2 files changed, 22 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethe=
-rnet/broadcom/bnxt/bnxt.h
-> index ac841d02d7ad..56aafae568f8 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> @@ -758,7 +758,8 @@ struct nqe_cn {
->  #define BNXT_RX_PAGE_SHIFT PAGE_SHIFT
->  #endif
->
-> -#define BNXT_RX_PAGE_SIZE (1 << BNXT_RX_PAGE_SHIFT)
-> +#define BNXT_MAX_RX_PAGE_SIZE  (1 << 15)
-> +#define BNXT_RX_PAGE_SIZE      (1 << BNXT_RX_PAGE_SHIFT)
->
->  #define BNXT_MAX_MTU           9500
->
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/=
-net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> index 1b37612b1c01..2e130eeeabe5 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> @@ -835,6 +835,8 @@ static void bnxt_get_ringparam(struct net_device *dev=
-,
->         ering->rx_jumbo_pending =3D bp->rx_agg_ring_size;
->         ering->tx_pending =3D bp->tx_ring_size;
->
-> +       kernel_ering->rx_buf_len_max =3D BNXT_MAX_RX_PAGE_SIZE;
-> +       kernel_ering->rx_buf_len =3D bp->rx_page_size;
->         kernel_ering->hds_thresh_max =3D BNXT_HDS_THRESHOLD_MAX;
->  }
->
-> @@ -862,6 +864,21 @@ static int bnxt_set_ringparam(struct net_device *dev=
-,
->                 return -EINVAL;
->         }
->
-> +       if (!kernel_ering->rx_buf_len)  /* Zero means restore default */
-> +               kernel_ering->rx_buf_len =3D BNXT_RX_PAGE_SIZE;
-> +
+Hello,
 
-I wonder if things should be refactored a bit such that not every
-driver needs to do this 0 special handling, and core does it instead.
-I notice patch 4 does the same thing for otx2. But this is fine too.
+This series converts the legacy TXT bindings for the TI TWL4030
+sound-related modules to the modern YAML DT schema format.
 
-hns3 changes are missing, but assuming Jakub knows what he's doing
-with hns3, the changes here look good to me.
+This work was previously part of a larger series but is now being sent
+as a focused submission for the ASoC subsystem.
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
+Link to v3 discussion:
+https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
 
---=20
-Thanks,
-Mina
+Thank you,
+Jihed
+
+---
+Changes in v4:
+
+  - Resending as a separate, focused series per maintainer feedback.
+    v3 link:
+      https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+  - (1/2) ti,twl4030-audio: No change to binding content, only
+          updating commit message format.
+  - (2/2) ti,omap-twl4030.yaml: Deleted redundant pins list.
+
+Changes in v3:
+
+  - Updated commit message format for omap-twl4030.yaml (PATCH v2 7/9).
+
+Changes in v2:
+
+  - (1/9) ti,twl4030-audio: Moved binding to sound/, added enum for
+    ti,enable-vibra, and simplified the example.
+  - (7/9) omap-twl4030: Minor cosmetic fixes, retaining Acked-by Mark Brown.
+
+The following two patches are included in this series:
+
+Jihed Chaibi (2):
+  ASoC: dt-bindings: ti,twl4030-audio: convert to DT schema
+  ASoC: dt-bindings: omap-twl4030: convert to DT schema
+
+ .../devicetree/bindings/mfd/twl4030-audio.txt | 46 ---------
+ .../bindings/sound/omap-twl4030.txt           | 62 ------------
+ .../bindings/sound/ti,omap-twl4030.yaml       | 98 +++++++++++++++++++
+ .../bindings/sound/ti,twl4030-audio.yaml      | 90 +++++++++++++++++
+ 4 files changed, 188 insertions(+), 108 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-audio.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/omap-twl4030.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/ti,omap-twl4030.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/ti,twl4030-audio.yaml
+
+-- 
+2.39.5
+
 
