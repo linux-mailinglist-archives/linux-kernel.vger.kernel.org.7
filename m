@@ -1,137 +1,168 @@
-Return-Path: <linux-kernel+bounces-775075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80579B2BAFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:44:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC89B2BB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C264F5E72E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1008E3B31E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB873101C7;
-	Tue, 19 Aug 2025 07:44:28 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956C93101AD;
+	Tue, 19 Aug 2025 08:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J9sgQ4/P"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6C220B80D;
-	Tue, 19 Aug 2025 07:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26B821D3EE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755589467; cv=none; b=tGTsU9jKnsJcJ+7yGe1MHOa0skVJsorrgPQLgh/+tErRxVYMhCyuXAx2UOkw0N7QA+uDLlwnXDDGmU+tUOjfqSp4XIFjxS2FDdFc3aIgVfdlgHw0eFZipGVxm1Ck5rf6Ncm54uNeHxA/PNC38DVo6WHBpzeN4ErP+QqE/FmhAoo=
+	t=1755591204; cv=none; b=O0uzUvumGdk/l9mK02U5Gu7UXle1e7cmAx0ukolAWkBvKXCR1UXpjQcaw7hGVBQhd1cE/JV2EcntX+hg7WVHwEjl2nVMI8fsngAd69mQnPOHJrL2e6MYCzettjH4ha1BLoCOROxIlXB4O+ZTRBS/F0+Fe5N0zZDJA5V6k3NZLjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755589467; c=relaxed/simple;
-	bh=hwDi8sI4pb6ewHpH/UxAP+aBsRc4EAsj/SVHWYMpqcc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BPClGOpBNFErDM1LBfFSWAkU0RAZgX3l74aRNBnJatJ2WrukoZyn+9HpmrhKBfUIrnliGkmlK3WOZHWvKoJ7aNCl8MeDlaoKNb3wWqoEYecKlDNOWwwSXIdlQBpOKvpG9pkH4mBiDrk9jSpTHPvlHg6EgQIAdptA9liinMVYrQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-53b1737b9c8so1762740e0c.1;
-        Tue, 19 Aug 2025 00:44:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755589464; x=1756194264;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5gxhxdF3vQ/iqynK82+PoG7FIJTLcJKLDWKPn4QyzC8=;
-        b=HqTj2lVzt+HrDAhFmzUz6BaCbqRP63mI/neMkKDZ4FcVjrElXHSSHOIMx4GqweceTd
-         Ubvuiqyo86lLp3l5WDe8xfB7A4yJIwk9SZrG4hQu4Ym9SrNjunBoNngwm+QK4qycSIUi
-         Da4hHLrQJcErm/5gOEcTI82iQ4UbIWo6UOZE460Y7uwz0O5vSPxSn95Bp0c5DFV2DFW+
-         JITGMabkPK37xnhE3bCIj1Ntl+b5NKigrAKkbartAAsmdzlN3zsg7Kh/iLERGGR1IJfY
-         zOrhtjowgfFpYuLsaK7atQbD90taToeSP1SqaP0S5/aB3XpSVcwAi4lD2YjWO2Oebn75
-         98LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmlH4h6Qhc9h5jSuv4OJ38MQub0TGMAS+Q178AetiKqDF7amjT9x89koMa8TzOFAXlyuSuuoSWyvo=@vger.kernel.org, AJvYcCVG42JPFJYVTfNajLGOEZbn+u2nqHjOsnFvCtsVSDhmpUbk9uwe2DrhoKj9sS5os4khf1L+hmK23NnqmxbjjQT1VlM=@vger.kernel.org, AJvYcCVwC6lzgtruvivjB/9dBx8IDIIpf+zjZz67izbTMx51aJ67jb0yl1biFgbM3NG+komlPw/VA23LIvl+C1+A@vger.kernel.org, AJvYcCWv+e8O+j4r557EbiC9g2JoKJuQtFGqVHxjIvYtpRCfLZLNzSmSOaYNUzBk8f8Qxi2heuXqGhVyn9Ek@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7tbrSauhYeJcdwSWp8hSRqUV7weoUE78O+YdwDuSjQUi3uPzi
-	WKTkDAnasXoWYj1JrUfjt3ZHpi52+CA8uPCTxuBhgJO4yt+Zdx6b/tpd/lQ34df9
-X-Gm-Gg: ASbGncuRvTQnsJslOz83FmH2g0b2Y1E1uVKMAsp64O4KB/ptEdY2WKo3X6WTcySawts
-	GBY0NqM9yPZmp99jp+oaGQI0DDG/wnyyi9N1THA/a0ym4dgqFGR2HX3kEei8xyUpNidatIS2zNT
-	qJ0OMJ9oWnmkn7/eZUw6dJzXtoSDQQuIyjdhKcefpdKf9jz/OeD7o4Umbchz0/++dHlkf6CoEiR
-	VENhqIOHfYrPqeIwqbMEa3kg3QsZoLsafFjRs7EB6T9Bvlkk2wPYSOnKCinVWkA/On7GBH0YgSK
-	B1F+0aoAncR2Vv6hvtkvGsCeA7KqhPXNQN3ybc6mYNZ+cnGEoPgkIQ4n8zuInwhoDPnT/XmL/wd
-	smizZnB/9mJfaUO6gxiNUAVmTy8BqyLlpI+Zvw8xDvdKjosnZGd9ulsqUKGjOqmy3d5fsGyInUl
-	U=
-X-Google-Smtp-Source: AGHT+IGOVZ0Ffu4V1wu6gVhB4jpb0NsPaRBrR6jp7IM6Q+jX0jvdVMk5x0Zt6h35uHF3tonowGaRNQ==
-X-Received: by 2002:a05:6102:4425:b0:4e5:9426:f9e6 with SMTP id ada2fe7eead31-51923d38b59mr452656137.23.1755589463775;
-        Tue, 19 Aug 2025 00:44:23 -0700 (PDT)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bd552c1sm2431853e0c.3.2025.08.19.00.44.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 00:44:23 -0700 (PDT)
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-53b1737b9c8so1762737e0c.1;
-        Tue, 19 Aug 2025 00:44:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV01zDgHHKSEou+tqqsuaUQrdr3zxMNs5hUVpoASLfq7HzsF2JC3LkuqhnZ9i6a7DAXt2aVE2FY6tk=@vger.kernel.org, AJvYcCVZTWjk7WPproEy21NKNvxgfVb2dPORaGrEdhpu6U629iMLRRXE1DTq3Rl/zqsgLNzpNYuYfVSMrYwE/lgR@vger.kernel.org, AJvYcCVt4Wqh4UhI+sSToV2aZYyH2sCCbvzyV0Qp1RZ30kgVUpmN7iEqjTi/jrKfmNdDxto7Rl6E5ZGhnPiY@vger.kernel.org, AJvYcCWS1iorb+1J8GEMi6Vv11sk6eIeoareeDPkHSsNXcBjKU0/nRMvBXXMtjhmC0CgPyfco+zKvPiZ3B1h3Be3A67wnQI=@vger.kernel.org
-X-Received: by 2002:a05:6102:1608:b0:4e6:edce:4b55 with SMTP id
- ada2fe7eead31-519b27c870emr28164137.4.1755589462392; Tue, 19 Aug 2025
- 00:44:22 -0700 (PDT)
+	s=arc-20240116; t=1755591204; c=relaxed/simple;
+	bh=Eb14cc9b2DuxsAVuh6Qvm88DBxeEZIs+c7FsZ6LZmSI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=uaCS7gGpdTvlEphrDNllzZk7LIpH+Q6J11OxWHbt4xg3pQauYjHb946Y8dEPAnDfmotzl8mbrf7MNjsM+Ose7uqE9mGamJpHgECoabQmd/ydOjz6lTEkW0mTvd1QHHMFXdZ5P0FHg1MHpiVAXucS3LQ+qUzI7v/ZNAJrtHQySRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J9sgQ4/P; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250819081319epoutp025dedd4a4197a33b3769e8460310ec792~dHOUL70jo0601806018epoutp02b
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:13:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250819081319epoutp025dedd4a4197a33b3769e8460310ec792~dHOUL70jo0601806018epoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755591199;
+	bh=UxiKAyBziT9e+nTMG+2xkk2xG/b2nNG83CX/r2e5bz4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=J9sgQ4/PiSeAhGcrXAvZsGIjGReblZLfUSDGsK1e6qMBwvd2scEn0tQZJvrcqR4Pc
+	 gzyGg8xtJ4+8UI+QbYoEDNGlKkHxYUeNO4920fxFDZltSMKXWGS2kYlP3fC4/Jd/7/
+	 pG+r/qPZLOy3wprc9/ydkrxShIImsWLcwOdC3Qrk=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250819081318epcas5p3324c7219edd64e8c1fc1e87d1abc60a7~dHOS4TnRk1172211722epcas5p30;
+	Tue, 19 Aug 2025 08:13:18 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c5j594yK1z3hhT8; Tue, 19 Aug
+	2025 08:13:17 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250819074434epcas5p3aba12adc12ef9a64dceff0ba5ec62e4d~dG1Ng9NQA3036730367epcas5p3E;
+	Tue, 19 Aug 2025 07:44:34 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250819074431epsmtip15ad820317f1a1565de1ff3da8c977d8a~dG1KpWY5o2126621266epsmtip1k;
+	Tue, 19 Aug 2025 07:44:31 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Vinod Koul'" <vkoul@kernel.org>
+Cc: <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <aKQfsgRXL-Nj8CkC@vaman>
+Subject: RE: [PATCH v5 6/6] phy: exynos5-usbdrd: support SS combo phy for
+ ExynosAutov920
+Date: Tue, 19 Aug 2025 13:14:30 +0530
+Message-ID: <003401dc10dd$1b39c560$51ad5020$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818162859.9661-1-john.madieu.xa@bp.renesas.com> <20250818162859.9661-5-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20250818162859.9661-5-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Aug 2025 09:44:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVV3tH-Mnkb4z=_3Fu9_zaB+ysuFQYni-ss+Sm_JmZFng@mail.gmail.com>
-X-Gm-Features: Ac12FXxuuCpFvi4bwIVSlqKVwnnWvAMNW-GEJwHYH1WcsCL9Lbq44q3fnYgjfHs
-Message-ID: <CAMuHMdVV3tH-Mnkb4z=_3Fu9_zaB+ysuFQYni-ss+Sm_JmZFng@mail.gmail.com>
-Subject: Re: [PATCH v7 4/6] arm64: dts: renesas: r9a09g047: Add #address-cells
- property in sys node
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	p.zabel@pengutronix.de, catalin.marinas@arm.com, will@kernel.org, 
-	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, biju.das.jz@bp.renesas.com, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ+ZgWj3OwstM5ZbwFL0KmcSzrOlQGuc5yxAsdJ9S8B+nVVqAJlMeHKAknGxWeyy/PDQA==
+Content-Language: en-in
+X-CMS-MailID: 20250819074434epcas5p3aba12adc12ef9a64dceff0ba5ec62e4d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805114323epcas5p39bf73c5e0a9382ff54b1832724804cc9
+References: <20250805115216.3798121-1-pritam.sutar@samsung.com>
+	<CGME20250805114323epcas5p39bf73c5e0a9382ff54b1832724804cc9@epcas5p3.samsung.com>
+	<20250805115216.3798121-7-pritam.sutar@samsung.com> <aJtN7uVUV3YhfY5-@vaman>
+	<038a01dc1013$900a2800$b01e7800$@samsung.com> <aKQfsgRXL-Nj8CkC@vaman>
 
-Hi John,
+Hi Vinod, 
 
-On Mon, 18 Aug 2025 at 18:29, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> A couple of registers of the system controller (sys) are shared with the TSU
-> device. Add #address-cells property to sys node to allow proper parsing a
-> access to these registers from the TSU driver.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> -----Original Message-----
+> From: Vinod Koul <vkoul@kernel.org>
+> Sent: 19 August 2025 12:25 PM
+> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Cc: kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
+> peter.griffin@linaro.org; kauschluss@disroot.org;
+> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
+> m.szyprowski@samsung.com; s.nawrocki@samsung.com; linux-
+> phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+linux-samsung-
+> soc@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
+> faraz.ata@samsung.com; muhammed.ali@samsung.com;
+> selvarasu.g@samsung.com
+> Subject: Re: [PATCH v5 6/6] phy: exynos5-usbdrd: support SS combo phy for
+> ExynosAutov920
+> 
+> On 18-08-25, 13:11, Pritam Manohar Sutar wrote:
+> 
+> > > > +	/* check cr_para_ack*/
+> > > > +	cnt = 0;
+> > > > +	do {
+> > > > +		/*
+> > > > +		 * data symbols are captured by phy on rising edge
+of the
+> > > > +		 * tx_clk when tx data enabled.
+> > > > +		 * completion of the write cycle is acknowledged by
+> > assertion
+> > > > +		 * of the cr_para_ack.
+> > > > +		 */
+> > > > +		exynosautov920_usb31drd_cr_clk(phy_drd, true);
+> > > > +		reg = readl(reg_phy +
+> > > EXYNOSAUTOV920_USB31DRD_PHY_CR_PARA_CON0);
+> > > > +		if ((reg & PHY_CR_PARA_CON0_PHY0_CR_PARA_ACK))
+> > > > +			break;
+> > > > +
+> > > > +		exynosautov920_usb31drd_cr_clk(phy_drd, false);
+> > > > +
+> > > > +		/*
+> > > > +		 * wait for minimum of 10 cr_para_clk cycles after
+phy reset
+> > > > +		 * is negated, before accessing control regs to
+allow for
+> > > > +		 * internal resets.
+> > > > +		 */
+> > > > +		cnt++;
+> > > > +	} while (cnt < 10);
+> > > > +
+> > > > +	if (cnt == 10)
+> > > > +		dev_dbg(dev, "CR write failed to 0x%04x\n", addr);
+> > >
+> > > Not error?
+> >
+> > This is only for debugging purpose. It is not considered as error.
+> 
+> Write failed is not an error? If this code is only for debug, pls drop it.
 
-Thanks for your patch!
+Sure. will drop it. 
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> @@ -278,6 +278,7 @@ sys: system-controller@10430000 {
->                         reg = <0 0x10430000 0 0x10000>;
->                         clocks = <&cpg CPG_CORE R9A09G047_SYS_0_PCLK>;
->                         resets = <&cpg 0x30>;
-> +                       #address-cells = <1>;
+> 
+> --
+> ~Vinod
 
-Iff you need this, you need to update the DT bindings first, as reported
-by Rob's bot.
+Regards,
+Pritam
 
-However, looking at Claudiu's USB series [1], I think you can do
-without, by calling of_parse_phandle_with_fixed_args() instead of
-of_parse_phandle_with_args() in the driver.
-
->                 };
->
->                 xspi: spi@11030000 {
-
-[1] "[PATCH v5 0/7] Add initial USB support for the Renesas RZ/G3S SoC"
-    https://lore.kernel.org/20250819054212.486426-1-claudiu.beznea.uj@bp.renesas.com
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
