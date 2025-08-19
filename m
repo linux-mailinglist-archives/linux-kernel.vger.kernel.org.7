@@ -1,123 +1,130 @@
-Return-Path: <linux-kernel+bounces-775388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56226B2BE9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:14:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6D0B2BE9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F35D3A8DD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C295832D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C1032038D;
-	Tue, 19 Aug 2025 10:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0DD322526;
+	Tue, 19 Aug 2025 10:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N70PXs3T"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="He23El2/"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1F231A05E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6662B320CA8
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598324; cv=none; b=Rz82Sf/pscYJBOL0l/ZjNEEf8wGklZ3c8o6PWF5Mt1HQfOgFTlvlZMOyBpAVkPxGQNYolPyIdFef6MkxCLq2JHX5BLaUO4lQaErk8xChTrPT/qmfCunfkr20lnMrBVQ7EY05ac1+cqVS+3lCqJTWko4LJQueIjk9It3vXT4J7Yk=
+	t=1755598400; cv=none; b=Rey3gEwOTXEL2ny/SdGxrT0P245YPM2zoYTbmt2q4O6mJuiSBCM51FNC6+ODqqR4jiD0lNT78mIQb8gfIhTkAk6qCz0IL12FX44WFDOyKO71irWEZugX1fjETE8YUJCVAixtyIMG1rIbF1+G5NqCh7y9QoRiv0i76Jb12Wwphr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598324; c=relaxed/simple;
-	bh=Z8YihQoUMUnaN9eAL22PA1tfYOLUO3Jii/5tTLrDjf8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KlFdvphypMY2zheN5ZoQKp1SuI5BUM0qbGY3Eo0E56YIYY5bCnxCym6riAt0oiqxQnRKcYQOYMv0lBloBkUbVSxkXV9dzLFFiv/rjUI47GKpdH3U0w/F+9pCr9X4ZCdUxy2d/3/5j0Q2pkwyrdQPHAfnFyKu9b5WVR8vt78A5iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N70PXs3T; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57JABgZl2931017;
-	Tue, 19 Aug 2025 05:11:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755598302;
-	bh=GBseufnTrkiprToC1hEN+V9bNDsJi2enuQf3IdAPE+Q=;
-	h=From:To:CC:Subject:Date;
-	b=N70PXs3TIPiz+Cb3ic2Ofohfyxe7TrSOO3rI3pMSoGN1HQ59QNMLn7ehsOCgI41Hc
-	 oLY3GcDN5soDs8EsZFjywg7du8tlqGmFHaZuFXw2xJG3h/NGBemRyORlMuA13SdjnH
-	 rZSWx+6YFndODx4zt3w1+7VGB3ZU/h1i/kdsswzM=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57JABfsK1207830
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 19 Aug 2025 05:11:41 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 19
- Aug 2025 05:11:41 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 19 Aug 2025 05:11:41 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57JABbiw2552213;
-	Tue, 19 Aug 2025 05:11:38 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <linux@armlinux.org.uk>, <arnd@arndb.de>
-CC: <krzk@kernel.org>, <afd@ti.com>, <u-kumar1@ti.com>, <praneeth@ti.com>,
-        <b-padhi@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] arm: multi_v7_defconfig: Enable more OMAP related configs
-Date: Tue, 19 Aug 2025 15:41:37 +0530
-Message-ID: <20250819101137.2878336-1-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755598400; c=relaxed/simple;
+	bh=qGOeN9G0GOVrGg/LZcsAF/tb0ZSoRNGCrLQuN4OaQ5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pIxGPCtAuftJdC64lDMWT0cCKrldrrlgwf3y9uT8qF5+lr6/wVsF9AEV7oVEqL5zJYXw386qsuslKbRyUWJ54VK2NEI2at+qDbN9B+6eG3UAfqflxgSrUDKUn20SxuVxcej0ExDGL1NeU0gVqsP9t4ZqPJ1Nq+TjR57Ip50WNCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=He23El2/; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
+	by cmsmtp with ESMTPS
+	id oGwvuBHMf1NggoJJeuw0Dm; Tue, 19 Aug 2025 10:11:42 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id oJJduE4BkRdF3oJJduXFl0; Tue, 19 Aug 2025 10:11:42 +0000
+X-Authority-Analysis: v=2.4 cv=SPdCVPvH c=1 sm=1 tr=0 ts=68a44dde
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zkcltEHC+5PUp5pdWSPG1bQNOG7bmN5S7wIPvuz9Rs0=; b=He23El2/cA5tokK12YA8w3E2qC
+	mqwOs6/URs1tavdxypbINjCtTUbr5ADhhg1iJISfyX2fKmwBbQplwBDxVtVT4wlF62iLRoHlKxm1/
+	sRyC5Nh9lS6xRyX3N/ERgogjUJS6dcb/pMNRtpV+T1A5CWegsKdzXEPxDthMky+TdoOdzB0bncV8i
+	AaQTpay+5OLlqZydsiu7zIx0Re2/LrZ+0BPiZBu/P47WYphU37xrAs7zAY1ati9On/0z0QXj9taWS
+	Ba4eT5/MOl8mXqOQFzd3HTy8eC0ueL/JL7b/Ghkz/y+N2TMPD4Twv5lPpAwGX671ANvk1Gg0E9eLn
+	1PgxGfpg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59336 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uoJJc-000000022WE-2M3v;
+	Tue, 19 Aug 2025 04:11:40 -0600
+Message-ID: <0982571c-d1c6-4475-a0b1-dd045db2b96f@w6rz.net>
+Date: Tue, 19 Aug 2025 03:11:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.15 000/515] 6.15.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250818124458.334548733@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250818124458.334548733@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uoJJc-000000022WE-2M3v
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:59336
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 37
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfK/LhVbB5l1cs3XarIsGQ39W6LAIcq9xM1541t3HbdgZMcigOA0+JxpFgI6npxx4+iZ915mPwcQZqq6crl+Ee1ReKt2mRdWmzrSBqhMkMpftREQ5D2EE
+ TUU/ffqVVXZ1KarnInTxXzQj+2dLltsQuqEAraX5bXiaPJX9siRZV1IQ0Perdi5I+JHLa+PtH1ZaJUW5DTNwfu41gQ37y3QxQQM=
 
-This allows us to enable various peripherals in the TI OMAP family
-platforms like AM571X-IDK, AM572X-IDK, AM574X-IDK, AM57XX-BEAGLE-X15,
-AM57XX-EVM using the multi_v7_defconfig, instead of only with the
-OMAP specific defconfigs.
+On 8/18/25 05:39, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.11 release.
+> There are 515 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-DRM_PANEL_OSD_OSD101T2587_53TS:
-Enables OSD LCD panel support used in AM57XX evaluation modules.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-SPI_TI_QSPI:
-Enables TI's QSPI master controller driver for accessing flash devices
-on OMAP5 platforms.
-
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
-v2: Changelog:
-1. Enabled only OMAP related configs as modules.
-Dropped userspace distribution related configs and other generic ones.
-
-Link to v1:
-https://lore.kernel.org/all/20250806141808.4013462-1-b-padhi@ti.com/
-
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f2822eeefb95..2b226b0ecaa2 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -453,6 +453,7 @@ CONFIG_SPI_GXP=m
- CONFIG_SPI_GPIO=m
- CONFIG_SPI_FSL_DSPI=m
- CONFIG_SPI_OMAP24XX=y
-+CONFIG_SPI_TI_QSPI=m
- CONFIG_SPI_ORION=y
- CONFIG_SPI_PL022=y
- CONFIG_SPI_ROCKCHIP=m
-@@ -747,6 +748,7 @@ CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
- CONFIG_DRM_PANEL_ORISETECH_OTM8009A=m
-+CONFIG_DRM_PANEL_OSD_OSD101T2587_53TS=m
- CONFIG_DRM_PANEL_RAYDIUM_RM68200=m
- CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03=m
- CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
--- 
-2.34.1
+Tested-by: Ron Economos <re@w6rz.net>
 
 
