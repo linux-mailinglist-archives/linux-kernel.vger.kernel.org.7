@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-776575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA501B2CF08
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:04:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17450B2CF0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9CB1C41D90
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:01:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2EA61C42B6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729F23277A8;
-	Tue, 19 Aug 2025 21:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BA931B124;
+	Tue, 19 Aug 2025 21:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n/KduMwC"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BjbrlEAT"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEB4327792
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 21:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B99353376;
+	Tue, 19 Aug 2025 21:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755640677; cv=none; b=uzzhxjroFlgZ/RUMK4OFT5gUcAyub3adiDmNr6POj/zyZCvnxpBqvsUIOBWIar2KHYxr+I0PQHwpkgdfb0c4D8H3gfDrVGXKQdsTRQPxHFpYd9thz9rkUmHYDtVB5rxRUY6Yw6BGiMmn3u9N1odUzeJmSoWOJ6VB0f3RTPw8bes=
+	t=1755640777; cv=none; b=d8WxAZlEGvekLC1U3qtSzQeF0Bbmws/MehRLMvqYhWjYY3lHMte5WfAbomN6dCEPpcyowsLZton9m5gP/y2Q+Wgkri4yrMp9zNrjF+58LROfotBFSwUlB2v/+IL2X/IYxgf6Wnm/GeV8xLoVHqvSeDDaLO0I6dKDqFVVqHl0ll0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755640677; c=relaxed/simple;
-	bh=CvJtxLbc27on48vID65kXKtMHxJ5HMnLMk4STwfZJ9A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ho2taeCmpzeIE+5DN1WcnRWloq/1NqPv+joia5psmounSYvTIeMZiHM4uxsKdHgSPMA5cSWfuBBo0WWgcSlXUaPhFuG2YtHDKWJXMWkUK7gDipA8P+S7dCRYWdB+UzD/vL6aaeT6TD1M52dpd23ZuczyPjaThumm3QNAI45cI5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n/KduMwC; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55df3796649so2939e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:57:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755640674; x=1756245474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CvJtxLbc27on48vID65kXKtMHxJ5HMnLMk4STwfZJ9A=;
-        b=n/KduMwCc9rjzThjM4rt7oiPlGe25BI86/yktxRQuzW19y5MEbUQsBwjTAckCACiGP
-         UbrMx1DPZsDwWWmbMoJUwWLnjlGp2Td5gU3gTiCncXOx0ddTZ1Eb54BmhuPCmCIZkcDA
-         QIUP3WgNJY9y2taXuQmQyd3wcQp9UDI/2dRu3h1qdCqgPqWvZmp+pqh+0IfXKL9XU6at
-         pBBv3KEqEtflpsB5CzHbRnLF6vcF7M0oJJ9Qm8wWXcQ2TIAm/LPq1EMCbZZ6Q6nVCM2g
-         58eCD3PSxSluZFV8EEEMoSk3zfNtckJiTFlO0fj9xRW5fHs6eIlNOhfzBz5bq8RyEn3D
-         NTHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755640674; x=1756245474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CvJtxLbc27on48vID65kXKtMHxJ5HMnLMk4STwfZJ9A=;
-        b=dKbT9nqJOLnjBktx5aGBXG2VGwalaKSySXOktpUswfgLOFlZHYUYbv9HNRYSLaFWR4
-         jyalenph+5KDQ3Cc5E/1xVGOh34/pUF0U52ruFk+4XF7qgbkDCDVWGM+f/uAb7XPgODV
-         uH14TiyfFpu+ih4QxgAr5+RV5gUzT6ErSdVX+HaTkwnvdloFN9I7TKDV81eGgcChr/bV
-         BShQzCaUGaQSXR/U7KOxFAyFyTlmB1cPVjFIrq727TIfpKtnGTMYCvX/dr+HR1aTbEiZ
-         8+7kh0DSd9WnucB0RZ+juDHVZpZWsAJujRYKX9Nzs5sdHMZpUkG6RwG8Sw2hsW3Wxg4G
-         DqpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXORZ6G8hb83JZLkbXOX+ZB/WQDXHNgC1HkM2qzVy/iNj9LN1ZQZMoEL7mMlhxeOK7SWYfox922XswLVng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ/cKC0izTcAHhwWNTZsfhxLIHQMyTvmlBnSN+kcmQSUd+nl5K
-	ymCsYUwLz+S3Mkt7IjJMGm3azaCwbg+YIe1nZsk0SLjD5i8uu7d5ZqijwudCwC+2WBHVdGvUMBa
-	n8faXmIUcOFR+9mPNBPjQOeaKSmAy4B4nIMiB7qqj
-X-Gm-Gg: ASbGnctLUGTQricj44MYLoFE0SnoncJPYBDhUK9qr2uXljxSdJNfOO9yhXBJxT1kFUh
-	pD9x9IZ7HGb2wrlWhWHKz3H80hQ4mOTCJjGYNBkdkNTkBQLf2c+rnVcW+E9KlkhI4NtFu2a8Tmz
-	hOXRbn/v7p2qshnu1zwI64d4UkJLm/dJaDpTrWYKCe5TPq0kOc8EKYoUUGr5N3xw4MhIHCB7jAc
-	RJzgUFJ4aLRuZm/Tmagubv1Qur5xoQ/YpGxkM4LSrwotj2EHeL+Gg8=
-X-Google-Smtp-Source: AGHT+IFjnm783G9/tzKiECTrCe8fFRAJeZ3G/drDLRd9Ku7K+BYBH4Eh6bxrOn+3eJeQcD9yP73r6e7X+DEQbcuDRLk=
-X-Received: by 2002:ac2:5e36:0:b0:55b:7c73:c5f0 with SMTP id
- 2adb3069b0e04-55e06752de0mr73920e87.2.1755640674063; Tue, 19 Aug 2025
- 14:57:54 -0700 (PDT)
+	s=arc-20240116; t=1755640777; c=relaxed/simple;
+	bh=qWEusKPlhURpLJlcPDTFMVxbwMtLHKYR/6o1EkX3He4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFOn+NJ2bGDgmW7BVQm3Rx5sngQ8TIclJ2fArZgeeomXWzpCfXV8Tjmr45GFOGnNdaoXYlrRQvVRZ+BeteibDoNc90fH/ZRS8TyYQCBuzTbUHcGF4LAvNxcm3J+V1jDhGV5BpdXdAPRnfcnG7+musCdJVDzYWUOi4RmTMMkd+H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BjbrlEAT; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1ED6F40E0286;
+	Tue, 19 Aug 2025 21:59:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5RLjIa4A2rMa; Tue, 19 Aug 2025 21:59:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755640769; bh=lfxFdlVZ2oTJXHiaVZ26hnYSTaWkglVmw0qhMgLkBW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BjbrlEAT3rp9XrVk48VrpjKUMt3hXFDUB0v7Y8oBkd+mMai4XCPylMw0gKd1iW5qr
+	 //Ncgi1FddbPqF6iZL5lwAInrMNt7OW+fDArj/U/1fqtriIa75wVU+oFIfLIDWfkg0
+	 DtZKtQFjsmL1bIaJg9260gh+cDkjoJJpUclElv9UOEPQBwz3sEwD3qS/dfHywLu217
+	 JNMFEeUzIMmJMQJK6fyadYteHmtSTcGvD8Pjq+AY91ajIxUgXQsxTicibhstrX6afq
+	 G4W2Ps3dcFLdR0BaiQuZseNY9mLLKDXhQtsBxnaHNW1a6ZYSyEXpDD9O5rqi8jKbQM
+	 zljdaYCoSzStB3Lc4xiaMxnKXdT1RVkao2cBma38CgARkS9pu/c4mcUdeYe9fJM8F2
+	 9Y11G0CK0qEeJ0kHSZA3P6MO07GaoYFy77h0K1rvEXSyCinGfxOBgiSVoYCvKuASPU
+	 4MW1T3t4MZC/+nDMCK11GtRLSSA97CkuBxKFwafXtINed0nrNMwCTT00hRRHnAotw3
+	 c16mfl1BKk5CIfDIzmCpTAMrwkiWINGnIx1PLEGoqOcQt7J/NvzyjYdPPON5Qm/EIo
+	 DKVH5j04a/k0/IIIpctptmb9AectsHulsGqoUWqskVW35io7a3VFHV8KvkBbintva9
+	 Tpa8rfy4+WvbvrEppCPPd1h8=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8B88140E023B;
+	Tue, 19 Aug 2025 21:59:07 +0000 (UTC)
+Date: Tue, 19 Aug 2025 23:59:06 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+	naveen.rao@amd.com, francescolavra.fl@gmail.com,
+	tiala@microsoft.com
+Subject: Re: [PATCH v9 05/18] x86/apic: Add update_vector() callback for apic
+ drivers
+Message-ID: <20250819215906.GNaKTzqvk5u0x7O3jw@fat_crate.local>
+References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
+ <20250811094444.203161-6-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755499375.git.asml.silence@gmail.com> <63cfaa6b723410ec24c1f7b865ca66fc94fe9cce.1755499376.git.asml.silence@gmail.com>
-In-Reply-To: <63cfaa6b723410ec24c1f7b865ca66fc94fe9cce.1755499376.git.asml.silence@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 19 Aug 2025 14:57:42 -0700
-X-Gm-Features: Ac12FXwUdfa4vW85A0T9LBksUrTPzJOsMtQHo15Ay6MIOEBEQOu6vZwDcE8HLDY
-Message-ID: <CAHS8izPM4QdvdQurnO1RYaHcW8Xq5yK21c0g4uuqbLJPdjTpNg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 15/23] eth: bnxt: always set the queue mgmt ops
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
-	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
-	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250811094444.203161-6-Neeraj.Upadhyay@amd.com>
 
-On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> From: Jakub Kicinski <kuba@kernel.org>
->
-> Core provides a centralized callback for validating per-queue settings
-> but the callback is part of the queue management ops. Having the ops
-> conditionally set complicates the parts of the driver which could
-> otherwise lean on the core to feed it the correct settings.
->
+On Mon, Aug 11, 2025 at 03:14:31PM +0530, Neeraj Upadhyay wrote:
+> +static void apic_chipd_update_vector(struct irq_data *irqd, unsigned int newvec,
 
-On first look, tbh doing this feels like adding boiler plate code
-where core could treat !dev->queue_mgmt_ops as the same thing as
-(dev->queue_mgmt_ops &&
-!dev->queue_mgmt_ops->ndo_queue_config_validate).
+What is "chipd" supposed to denote?
 
-But if this is direction you want to go, patch itself looks fine to me:
+> +				     unsigned int newcpu)
+>  {
+>  	struct apic_chip_data *apicd = apic_chip_data(irqd);
+>  	struct irq_desc *desc = irq_data_to_desc(irqd);
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
+-- 
+Regards/Gruss,
+    Boris.
 
---=20
-Thanks,
-Mina
+https://people.kernel.org/tglx/notes-about-netiquette
 
