@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-776060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84368B2C7F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D274AB2C80E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 074C7B60E01
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:01:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0909116BFD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B5427B32C;
-	Tue, 19 Aug 2025 15:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D31C27B32C;
+	Tue, 19 Aug 2025 15:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lM46UYUv"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="b5VQ9xd6"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A848820D51C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F79253B43;
+	Tue, 19 Aug 2025 15:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615781; cv=none; b=b2RZQ7Vf7qi48e5Ir1YH+n7+toj6nsDEG9mo31MTA81IJUHJHsiKVManVs9mOhvPvnxbQRQdbN7VR7AFQKRxgWovx6KXRbhoQN1xFmvZ4mL3nqIy8oQPJzquugEfGDF93zF8TAtKFMRGbRF6TAlt0OeC8EHpVQTHkTaEbXEb49A=
+	t=1755615896; cv=none; b=f6kfMfpdbdIMeNAxW5wCaqvA4eJOrxfOfdl+0z+r4FbANoaX0Qlj32ysSvIDuhTguXUs3GVRcLExQZxfWCRid3ogctmd0yQZ7keh5lV3IWNGCZKnr+MaUPnp/0ChSZdDi191ZNHYssi9CqWdwoha5MqhyP+OSAgWpyi8ea2c4mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615781; c=relaxed/simple;
-	bh=nDsBN31ZPTJxWv5+xI/XKIMoevKJa238JoEMH3TkX7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nePLFm5dGiG9ecg4pvK7o//1ukZZmcRfbxcxfSSIpRAaFnz0fS5CHh+lVqClOQX5YCVQDLsbIV1HsCz9StxlyzS3vWFuJfRQVFg2unyQqTDdxEVSqiI2oHejaBOddExp85X0o0K5XPyCs02iyCUXQmSNQDWZz/lDhMZsV9pHEHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lM46UYUv; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9e414252dso2616741f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755615777; x=1756220577; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k7444yQJ0rbL29maRl29fRLR2UuJK6Q0bhtUk89IdD0=;
-        b=lM46UYUvzuwBGRf6sqgIXwzjuOMkbQsnmFtz2+R8hLhfxzivfroRVDUEcjweD5prk8
-         bRg1SE5HuXpjI9KO2/heIhzQ0cFW4ERxBT+XWl5NnmvXQMf6mXfdQVDHh53JBAInmrsU
-         l8+jGse2VJZgbvo3TKpl9Tm+VBwzDf/T6vZgFh8tp/J1nSwEsvU+BmESCJtvoObHa6Ne
-         RLXel9FqWM4NdtD55ZPEzxNPnbzvuNZizhIV3oXGcKtrEpP/Twlas1K+63+HVF/4Gtpw
-         hCq1nrkIso071vnzo6LU1BuVtwcBZpkUv7sFskQpq/HJeVTUETNYiqcsoxs9d29PVSyf
-         9bOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755615777; x=1756220577;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7444yQJ0rbL29maRl29fRLR2UuJK6Q0bhtUk89IdD0=;
-        b=dEB2ZYBJ+XSAsAchkj1hoX1Swvvm++7IG27bIemP1xkdO4jXBpA8pS/F2InUSNkset
-         nwpnPK1MMzaqnAncWbYcGpbJqx1AKpEYMmzWTZcHWqX0S2ibj7GG6quB+hOukdqBXJeA
-         KOpEZba4rMLMFQzxB4ixCbwCfWmIZ2R8VRNxMzo4e9AnTIPSTAQhkNJJPi4PJJnEPQx3
-         sjxkjWHjMO0UekVQEZtDmKTaZKjN2vGWj/KRomTevyf/tyNXNs7US9A5ToRUNzqgmzFS
-         Wk7lay5AjblfHiK5GFgSSQgNWxb7lCN1N3sWu0cONx28ioMqy6X2ckXPxm2k7WoGOjle
-         MUUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWl+jSgqRtb3df+j4udPrp+H1O4rD6HwC0PtnzVpZAHcOVXLvZA8b4UGS2q/ALNJz962P8A2VLv9m0+TT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgz0vq4G3FN1kbuazCmiWbNP1D4z7AA8EO8K8VNzcqHGxKV0q8
-	NPcW8HrHY7vZJSexnjKGhCy/zHdcNVpSv5yXwqnGzimXSW6UPnFVO8IqhW9O8Pe+8h8=
-X-Gm-Gg: ASbGnctzuAx/WenaE/y6A5/tPurIuWFzvi/VVfLDzIdg206xa8TwuQd/eoB+CuQzIyE
-	l/1tnvyiGhCaL1LL5hXcWc8NVn/Tm1hL4VsH8x6A1Gdgn0LCtBkccO7OgLTMcJbWle1f2Bld4S1
-	2v3vQTJCqY1iULYb8/uOuEHxul7MYYnBlx+O0KykTGZYZSy/TYTepKfShodkbR3edK4mFGl5EXg
-	FPcLxip3swE0Njbb68DLues0QwZUHL8XtR3UjbSmEOv09AhZLeBt2gaA/lLKa/iRp3mIBsGAunH
-	bY08Tc9Pi9UNdMHgrSIhk4ric725A08/pLgKa+qjZcDnNzBifDPvbfjUFNjrAo8+7AR1VCWPB0q
-	4o51YSgKqVNNYj/3aTxM6SwJIl0GgyQFdiQsANg==
-X-Google-Smtp-Source: AGHT+IFWnJ6Oo82ofz39gNSEwN0Z3yDLui3rTcpuA0COSeut86mLsEFA0jwdaleJOlWjIR41+mglKw==
-X-Received: by 2002:a05:6000:2404:b0:3b7:9d99:c0cc with SMTP id ffacd0b85a97d-3c0ed6c38ecmr2311284f8f.51.1755615776853;
-        Tue, 19 Aug 2025 08:02:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c074879864sm4134355f8f.13.2025.08.19.08.02.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 08:02:56 -0700 (PDT)
-Date: Tue, 19 Aug 2025 18:02:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Waqar Hameed <waqar.hameed@axis.com>
-Cc: Song Qiang <songqiang1304521@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 next] iio: proximity: vl53l0x-i2c: Fix error code in
- probe()
-Message-ID: <aKSSHTdJf5QoYiRx@stanley.mountain>
+	s=arc-20240116; t=1755615896; c=relaxed/simple;
+	bh=ILPotQqZ85MxrbibnWJjp1VU8yBCgoUBh7O0xDtRAQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OKbLMpQZC8cI5uwEuAsme+bcfFfBFwg3JlExfcIna0HaEZ0vfbm935BafjfgVKZ5Yk7AMw1+pd8hMtZFLDNiDfKZrvgNFRsffpM69FcYc7N/pPQYLW35SppTfbtrES6sT4p/QviWNDhfcb2onsIQQYW+wjm3pqptvH08peA5xP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=b5VQ9xd6; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57JDiwT3029537;
+	Tue, 19 Aug 2025 15:04:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=6lO4ci5ORzCJ3X9hQWjZfIn59t+ff
+	am7eIKMx47CEIQ=; b=b5VQ9xd6XBlvQWU7eejWavd0SKtcvr/+59b2HtFDf2Sva
+	Gl+oykszGorzP8OjsP2/IvPfVL0s/dAAGOMyeRcAAlOXg9NKrBraPu3angC/hnvQ
+	ReGBjInNGJC6yHOCB4jds6eBjrCZgJRQsxiBYJSYSFMdG2vDkCOGaIC4NXanGijb
+	ynpyIck4BDDNDG4crX6TxISpg+QjzKlG0VpsUH87Fxj0TCrgYa3vh/WGRnNtexp/
+	wx5qgWkAfzgAGThUCNczaJ6Ujyc5TIc+H1Zlp5/TGipgsVudwxXQHM2PA7pU6fYr
+	5d4RkBgSI5TzCzvrsitmDGcH0Hz/p2QNZrDIKUKYw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48jjhwwj13-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Aug 2025 15:04:44 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57JEYnx6037155;
+	Tue, 19 Aug 2025 15:04:43 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48jgeb2cha-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Aug 2025 15:04:43 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57JF4g23006487;
+	Tue, 19 Aug 2025 15:04:43 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48jgeb2cgj-1;
+	Tue, 19 Aug 2025 15:04:42 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: thierry.reding@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        mani@kernel.org, robh@kernel.org, bhelgaas@google.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: tegra: fix devm_kcalloc argument order for port->phys allocation
+Date: Tue, 19 Aug 2025 08:04:08 -0700
+Message-ID: <20250819150436.3105973-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2507300000
+ definitions=main-2508190140
+X-Proofpoint-GUID: viilppAg9P98f_t09kS6ZO04SU-0_wrc
+X-Proofpoint-ORIG-GUID: viilppAg9P98f_t09kS6ZO04SU-0_wrc
+X-Authority-Analysis: v=2.4 cv=G4wcE8k5 c=1 sm=1 tr=0 ts=68a4928c b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=2OwXVqhp2XgA:10 a=yPCof4ZbAAAA:8 a=Rk0mUcj0OZC_4IGjiYgA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE0MCBTYWx0ZWRfX9crAVmjNTpx+
+ xMg2tSaHiVCM95yUklPxOgZMs72pTkf2vogjSKgb0C7cm6DnFZsj4cSvuCw2LH8Kyvx/yyk6dMg
+ OTFgkYodsNUjQYdGJaKgqDObPHGINQCU1ASI8Rqsl1XTLDpB5YAcMPQV5ULVRfcm4G2fYzrn5fQ
+ Y1Jz6x7jOqoUHcnOP++Uw06tEfIoGoYlF7g0Yv+9kK/a2/27y0Ik8u1SZqH2mCEjAD3DjhF1yv+
+ PNXdOvtp98I41BQOYrjxQYzVyuR5BH7yGAyA5QDXBXUjE6u2MJdbIYNWOiZAWRP2bfQq8ti2n6q
+ iSYcTVy1zuAmL3WRxToMnDiDnMtl0RoKEVBQPSy6HLTnm+jS/k/9i5SjvqAQ7OhkVS752iD671s
+ 717vT3IaINjuADIs3gguIEpor3YuaKpiZP95v1Fz01IQWexL9x2MQAeUX9lKpN8P+LG0dXAR
 
-Commit 65e8202f0322 ("iio: Remove error prints for
-devm_add_action_or_reset()") accidentally introduced a bug where we
-returned "ret" but the error code was stored in "error" if
-devm_add_action_or_reset() failed.  Using two variables to store error
-codes is unnecessary and confusing.  Delete the "error" variable and use
-"ret" everywhere instead.
+Fix incorrect argument order in devm_kcalloc() when allocating
+port->phys, The original call used sizeof(phy) as the number of
+elements and port->lanes as the element size, which is reversed.
+While this happens to produce the correct total allocation size with
+current pointer size and lane counts, the argument order is wrong.
 
-Fixes: 65e8202f0322 ("iio: Remove error prints for devm_add_action_or_reset()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
 ---
-v2: Fix typos.  Add Andy's r-b tag.
+ drivers/pci/controller/pci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/iio/proximity/vl53l0x-i2c.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-index 696340ec027a..ad3e46d47fa8 100644
---- a/drivers/iio/proximity/vl53l0x-i2c.c
-+++ b/drivers/iio/proximity/vl53l0x-i2c.c
-@@ -311,7 +311,6 @@ static int vl53l0x_probe(struct i2c_client *client)
- {
- 	struct vl53l0x_data *data;
- 	struct iio_dev *indio_dev;
--	int error;
- 	int ret;
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 467ddc701adc..bb88767a3797 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -1344,7 +1344,7 @@ static int tegra_pcie_port_get_phys(struct tegra_pcie_port *port)
+ 	unsigned int i;
+ 	int err;
  
- 	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-@@ -344,13 +343,13 @@ static int vl53l0x_probe(struct i2c_client *client)
- 		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
- 				     "Cannot get reset GPIO\n");
+-	port->phys = devm_kcalloc(dev, sizeof(phy), port->lanes, GFP_KERNEL);
++	port->phys = devm_kcalloc(dev, port->lanes, sizeof(phy), GFP_KERNEL);
+ 	if (!port->phys)
+ 		return -ENOMEM;
  
--	error = vl53l0x_power_on(data);
--	if (error)
--		return dev_err_probe(&client->dev, error,
-+	ret = vl53l0x_power_on(data);
-+	if (ret)
-+		return dev_err_probe(&client->dev, ret,
- 				     "Failed to power on the chip\n");
- 
--	error = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
--	if (error)
-+	ret = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
-+	if (ret)
- 		return ret;
- 
- 	indio_dev->name = "vl53l0x";
 -- 
-2.47.2
+2.50.1
 
 
