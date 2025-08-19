@@ -1,165 +1,114 @@
-Return-Path: <linux-kernel+bounces-776043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0846CB2C7CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:01:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79471B2C7DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F9272500E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F8C5C3ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8A283FFB;
-	Tue, 19 Aug 2025 14:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3298029CB24;
+	Tue, 19 Aug 2025 14:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XBPDLe0f";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pS+8WlJ5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="P+UGCskE"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5A5283CAF;
-	Tue, 19 Aug 2025 14:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0286A2868AD
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615426; cv=none; b=tGFC2W284dw+Pe9df+CXvzXCA77spL3BZe2JGNz2jQAyHHAQyJx7teaVbFoh0bEsnT/ZnYAsNoly2CTw/lfh3A+KP76Oxqe9hBbjPhsycdr1OEwptTVrZ0DQOATHSJmlBu0HwhIBkuhtKWG/01P9VX4AeHAHUgLdWslcZUfI+6c=
+	t=1755615449; cv=none; b=EL+8kIDtblPOmnmLTa8OjNDBTx8+AoeM9Fi4/nzoERXRopY+CIwNPhZLXfmxBiqnGyXPUdpPFEQko/TTtRczMKRD8lUZWEuv1038qmiEpb/1N10ZWY3e3JwUaXM4QzglYDLphghTtKokxkh/90jB6jdCdaTKDKt5HJjGwdVR1Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615426; c=relaxed/simple;
-	bh=jTRC/CHJntYVtBQIVMAGSv4VOFd+4rvA3L2Yn4gMfMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zhfw5flNhsITXMwhr1EiW1HoUSAYnIXULRZSrsu10bg5Zw/T3dxShnA0YaNljDABu6SkKD4nPyrty8VJU0FX+1TtUA2f5CjC5XSjDO6HFIjxIylHeyLSnxwjGZqc2hHdMX+0uii3aY+XjZPrTOfOyZHMgRiZG2tquVKYmXLP/Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XBPDLe0f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pS+8WlJ5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 16:57:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755615423;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7fcGAbJPPdGZvSLVrtBanIpB5dI4uHVka3XSy/P+gA8=;
-	b=XBPDLe0fihzaCCfT5pSO53u96LHBo7uzmoa5bB9bv22RWOZ0eVnRBOIoXe98ff/e8PT0wI
-	mhthpjVcYpV90s/o5QvxRvtGnTJcN2H7jwDKz2ezq1IC6DYosgszQSOj8AZR6rCLGl3f7S
-	wDAi9K2a/WgdD+YmtNkgL4C9d1KESvtWt5Tv/TqmGtMCasIyY0iaH6bx1Nnhg0n+XPHQIN
-	AbItO/ZONX4jDmIskQjHDgGlM8Xwz50tYndwI7c6STP2TxlgdefXTdhlV4CCjQdPawL534
-	FqEl7d3x2aGNJchINbfzx4Edsvx8Pm1Hs7UPmG4TF0fZELygfr1SvARXl4KdZg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755615423;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7fcGAbJPPdGZvSLVrtBanIpB5dI4uHVka3XSy/P+gA8=;
-	b=pS+8WlJ5up5SYgONcsS9fwRHHqpFdrbk9QbJm/n8kzF1IRzAe5hMxbfHUKOgN9Zw3Nl5Tn
-	AGGboCVmDy/vYiAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Yunseong Kim <ysk@kzalloc.com>, linux-usb@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
- in vhci_urb_enqueue on PREEMPT_RT
-Message-ID: <20250819145700.sIWRW7Oe@linutronix.de>
-References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
- <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
- <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
- <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
- <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
- <20250819110457.I46wiKTe@linutronix.de>
- <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
+	s=arc-20240116; t=1755615449; c=relaxed/simple;
+	bh=7EZJU8EieTZCa/QAirNvhaC/lS67AJjOcGCkNE4mpJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qROqqHalOgN9+2HalB71VpCtED2FfEs+vVzdUrQXnIBv9pwdXu0N8sEDcIlsK4Cj6Fd1X0ZAswD/G0ipEZZeBcdsZn7qO9PAwPcI3VDpqUHzyyHY09QBJdcv22sqq3H4kW34Xj1stWmED/SqXd+SJQEhH08tirmKtzO4HqLGc9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=P+UGCskE; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-743749537caso5459219a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755615447; x=1756220247; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j33DSRA1EWH9BS/A4h9RpWvd4kG0MI4exSJuHlC5IE8=;
+        b=P+UGCskE1WjuiKE0pLB5MUSoaUAj6INjm0wy4K99rcn303ZEA0wnl/TubSUJq/uiPf
+         IeSMXmyUtSkOHAItbuHnoFOkzaQnbvf0pSp5JRdJ9d60plMYMp7B+iqg7HEcl/OvMNpo
+         k0jUgJQT3T7Dz4Uo0BhQvXd4Gg3aj9s7IfvdMkAIiynn7+GLiM+OBwNAtN+5kdFRY6Ca
+         nWUf7yrVnD2OEjGt51nnb2F0QQQ1eSH3Kjs4RhxyDh1AO5LidmcYJF3LjdWQmh8iTHCs
+         vNPLu8s3tdjtyGhf2BSE0IWAchQHzT7Pmufpb+LUY5g3vq6UZxSG+hqOJxEI7jk1lAF5
+         2/dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755615447; x=1756220247;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j33DSRA1EWH9BS/A4h9RpWvd4kG0MI4exSJuHlC5IE8=;
+        b=Y4EHJG/3B9KNFU7WumD8PPg175zuGI7/46JRdYd6ZjqYQBCORj3f9SzBRGGZlpFnIo
+         AtVP05VoSYboO0hdXervHVmjTGiGNfxL6YJOA1wKepXlCCDXCWXZlNQt8t6h5jGR0SU/
+         QBBveOTl9Mzghe28vsb1u5hp/y8KAj1Qhdpjrd28UQwGyfANxTWI1hgY5y0dCN1MbzA6
+         It7FzYpw8wCRqppVEEZ+rO1XT7pFTHNyrFK0n6uaOrfdR1yIk7fOmhZyUtpkTaZNJQkS
+         DO76BGHLYlHWrwR6+PJ7sakSr/PBY7BkRfhlpRb3RCBjgWHUydbbwWTEe7ItZ/55H4RL
+         PoVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuyhROJpZBE0OAUPY7ee7tJuHTd+tPOIoyzsqXpwB/VnPz/iNaLH6d7L3Vd8cDAct1f39Zx6rVGlRBggw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCUbGwusVgnXPwnaW8TAMz+rhoEYNYpbLuh7QXQhfhV5M6pKAg
+	5C6mDFxRrK5S81V1Jvb099bGlSi2S1SWgGz/reqvVFqbwedCeHq46Y7NE7EktdoIQgY=
+X-Gm-Gg: ASbGncvgA38vH1vRsY9OtBsuKJ/DI7ZmZfmp+mejTBaqq9ReqB7Pue4MQpUrCPU1rlh
+	CW9fY/oJCyyJXepFd4Vu416O2gKTqlO9dfnk5JPfm8tOdcsoZMth/72f6foK7Th7CurwL7NFG0f
+	MkUpD/Re3s1R7q9yJs5V0LTFL08OSM2pODsKLeoO9VSRJ223s1sU25BVMudYWikJsthRbaeXSC4
+	Ja8YjT8vamB1Vwqlb9MN3A03srGawk2mjHXF2h54clB7gLi85LVjgFJEGpAdtU6cOTbPsJhr2oL
+	7qvOwtWfvK7jpW0ODHzZSXTs8m1jXHMxZ5gWf8cIefk/LDS7Gt6egUCd/17ibvxO6uOiS0bkMAI
+	CbAJ+MDPuGQwNESgqvpETheGZUMpP6bjjYu7fSaDSGhx8ejESdyaWN+upHrxVWfhdnBBWE5HEdg
+	g=
+X-Google-Smtp-Source: AGHT+IHPlSLH6hZeAeLnJjJgwE76N7/FQQiTxPqI0a0U3Io0rzBzG0AsFNUvGq8BqYM0uzYltC2DgQ==
+X-Received: by 2002:a05:6808:1191:b0:434:8e2:33c1 with SMTP id 5614622812f47-43738c2d23cmr1484476b6e.10.1755615446945;
+        Tue, 19 Aug 2025 07:57:26 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:990c:4d50:9c6c:f367? ([2600:8803:e7e4:1d00:990c:4d50:9c6c:f367])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ed205941sm2284247b6e.32.2025.08.19.07.57.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 07:57:26 -0700 (PDT)
+Message-ID: <a9724713-6787-45e4-95e9-f020e5e510e7@baylibre.com>
+Date: Tue, 19 Aug 2025 09:57:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] iio: mcp9600: Recognize chip id for mcp9601
+To: Ben Collins <bcollins@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: Ben Collins <bcollins@watter.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250818183214.380847-1-bcollins@kernel.org>
+ <20250818183214.380847-5-bcollins@kernel.org>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250818183214.380847-5-bcollins@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-08-19 10:12:31 [-0400], Alan Stern wrote:
-> > We could use some API that accidentally does what you ask for. There
-> > would be local_lock_t where local_lock_irq() does that.
-> > What about moving the completion callback to softirq by setting HCD_BH?
+On 8/18/25 1:32 PM, Ben Collins wrote:
+> From: Ben Collins <bcollins@watter.com>
 > 
-> You're missing the point.
+> The current driver works with mcp9601, but emits a warning because it
+> does not recognize the chip id.
 > 
-> There are several places in the USB stack that disable local interrupts.  
-
-But *why*? You need locking due to SMP. So it should be simply to avoid
-irqrestore()/ irqsave() during unlock/lock or to avoid deadlocks if a
-callback is invoked from IRQ and process context and the callback
-handler does simply spin_lock() (without the _irq suffix).
-The latter shouldn't be problem due to commit
-	ed194d1367698 ("usb: core: remove local_irq_save() around ->complete() handler")
-
-So if completing the URB tasklet/ softirq context works for ehci/ xhci
-without creating any warning, it should also work for vhci, dummy_hcd.
-Only RH code completes directly, everything else is shifted to softirq
-context (for ehci/HCD_BH).
-
-> The idea was that -- on a non-RT system, which was all we had at the 
-> time -- spin_lock_irqsave() is logically equivalent to a combination of 
-> local_irq_save() and spin_lock().  Similarly, spin_lock_irq() is 
-> logically equivalent to local_irq_disable() plus spin_lock().
+> MCP9601 is a superset of MCP9600. The drivers works without changes
+> on this chipset.
 > 
-> So code was written which, for various reasons, used local_irq_save() 
-> (or local_irq_disable()) and spin_lock() instead of spin_lock_irqsave() 
-> (or spin_lock_irq()).  But now we see that in RT builds, this 
-> equivalency is not valid.  Instead, spin_lock_irqsave(flags) is 
-> logically equivalent to "flags = 0" plus spin_lock() (and 
-> spin_lock_irq() is logically equivalent to a nop plus spin_lock()).  At 
-> least, that's how the material quoted earlier by Yunseong defines it.
+> However, the 9601 chip supports open/closed-circuit detection if wired
+> properly, so we'll need to be able to differentiate between them.
 > 
-> Therefore, throughout the USB stack, we should replace calls to 
-> local_irq_save() and local_irq_disable() with functions that behave like 
-> the original in non-RT builds but do nothing in RT builds.  We shouldn't 
-> just worry about this one spot.
-
-| git grep -E 'local_irq_save|local_irq_disable' drivers/usb/ | wc -l
-| 21
-of which 10 are in pxa udc. The only one I am a bit concerned about is
-the one in usb_hcd_pci_remove() and I think we had reports and patches
-but somehow nothing did happen and I obviously forgot.
-
-> I would expect that RT already defines functions which do this, but I 
-> don't know their names.
-
-We don't have anything where
-	local_irq_disable()
-	spin_lock()
-
-can be mapped to something equivalent other than
-	spin_lock_irq()
-
-I was running around and kept changing code so that we don't end up in
-this scenario where we need to disable interrupts for some reason but on
-RT we don't.
-
-The closest thing we have is local_lock_irq() which maps to
-local_irq_disable() on !PREEMPT_RT systems. But I would prefer to avoid
-it because it serves a different purpose.
-What works is something like
-	spin_lock_irqsave();
-	spin_unlock();
-	$SOMETHING
-	spin_lock();
-	spin_unlock_irqestore().
-
-The question is why should $SOMETHING be invoked with disabled
-interrupts if the function was called from process context.
-
-If your concern is a missing _irqsave() in the callback then this
-shouldn't be an issue. If it is the wrong context from kcov's point of
-view then making the driver complete in tasklet should fix it since it
-would match what ehci/ xhci does. 
-
-> Alan Stern
-
-Sebastian
+> Signed-off-by: Ben Collins <bcollins@watter.com>
+> ---
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
