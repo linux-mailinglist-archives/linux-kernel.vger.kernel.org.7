@@ -1,156 +1,120 @@
-Return-Path: <linux-kernel+bounces-775573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F8CB2C0BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:43:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E8AB2C0B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D391886CEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F2B563811
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C332326D45;
-	Tue, 19 Aug 2025 11:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF5F32C313;
+	Tue, 19 Aug 2025 11:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZVvYutnR"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIbgWpOC"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E50A32BF22
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7537332BF22;
+	Tue, 19 Aug 2025 11:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603585; cv=none; b=aWnV0rB52DvbyHWSm3w8q2wshf4pWo9dXnVNTqUQyiafq/2DdQjUBsWNoFmldr++tDBfMqf+bNQs5IjvVgFGH9bgY6W5/cZPAyn8kKQl5p8OSO/pDiC6pRhNJ3OPnpKbA6eGggXlZyfNr0SXw93c2SoyxuNTew2KVnl5JIk257Y=
+	t=1755603593; cv=none; b=RHmUy0J7FEn0zDlugrwdMxm/iEGuUm1352S1LJlX1oNUg/8M5pUIR58jZ18jIsJOdYRpQiX2BujjiBynVFsqrQyCshV4KjbAdX0WMEyttodYDEc9iUbPj36434ClnLVLgUdOG3UEPX4hkKjrKYhwnfbfRwV4bq2WmNiyEcGFTKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603585; c=relaxed/simple;
-	bh=SBFzXTu/TE3Y27yTuml5s/ls/Z8dlIb7BbI3Fl++GYo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=dQpcUV1SodiJPl0YX/0kFShwA09O2EZVwhvQStI15jQIP3VdghKGWc3voe0icQbngoxaxrtdJKKl6qb5f9B8PwhMS28ox5dJupgzzQ1yGWJ+OSh9jZPUt2DprquDGAeKrWKH45+o/56EvzixQJw7XMMNaQQYN5YDjzCNzK4Eif8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZVvYutnR; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250819113941epoutp048fc488d01ea13301f19fa8e8803bf532~dKCfpX7L71586015860epoutp04k
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:39:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250819113941epoutp048fc488d01ea13301f19fa8e8803bf532~dKCfpX7L71586015860epoutp04k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755603581;
-	bh=1P2Rps+nWLL6vuu8v5AZ6QLluRY8gS5KDMDYoN14d3E=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=ZVvYutnRrj1vsaoIzlGc1d/RjPE60V5uAz1QTRDCZxI81j7cue1sfgSA7oaKZO8YW
-	 2qVnzb45IaXeEFXrgbk+ARvR9GiIrmLx90CgXtFOidCb4d1xvFEEGV8mqz30CiOzoN
-	 ZcxgykS5DuOVlEM5wzk/ytKYpW7LZdaE9Lb5rgp8=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250819113940epcas5p44becd1ec50dff43ea959114a166fe0dd~dKCeeitQH2997129971epcas5p49;
-	Tue, 19 Aug 2025 11:39:40 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c5ngH2cfwz3hhT3; Tue, 19 Aug
-	2025 11:39:39 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250819113938epcas5p3cac2467171b234b921448bf9b537cce2~dKCdAIEYh2225622256epcas5p3a;
-	Tue, 19 Aug 2025 11:39:38 +0000 (GMT)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250819113935epsmtip16d1c515c409672f87d62e0dbcafa0d4d~dKCaJwZgR0293302933epsmtip1n;
-	Tue, 19 Aug 2025 11:39:35 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Bjorn Helgaas'" <helgaas@kernel.org>, "'Krzysztof Kozlowski'"
-	<krzysztof.kozlowski@linaro.org>
-Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-	<mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
-	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <20250818182544.GA534647@bhelgaas>
-Subject: RE: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
-Date: Tue, 19 Aug 2025 17:09:34 +0530
-Message-ID: <00b501dc10fd$f1fecc10$d5fc6430$@samsung.com>
+	s=arc-20240116; t=1755603593; c=relaxed/simple;
+	bh=yzPa+ozyXmPnfMnBDHe6hjrPY3CWOPGU3bBJlC3RrTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jDQTt+316cHfC32ih9i1gk8OhVt0B5ZP9xzFRuckKgjcw7CzxKYC6RCIVfsS29QNS1yiE9bV0xDNaySUoYLl+irpRvfzlakDWQy+2nni7hBa3lwl4/5izqoz8zDJVGZpW1YUrps5+5FXMNffHlh96Xru6zzB6/aJfZwZKvSZnHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIbgWpOC; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b0c52f3so25438825e9.3;
+        Tue, 19 Aug 2025 04:39:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755603590; x=1756208390; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1/YHiMiSEXGJ+Otn/lJFKDk3uocdFFMzq2l/EhCHt+4=;
+        b=EIbgWpOCNg+sbU70pwJjQkbMrj0+VW04SUsCcdlcryzaW4u+fhXQcZN530Gu6frpXC
+         2ZsknRYNmjtrgxDtXXPwaRiCwLWuCaNmETQxw+i6im9PjJDHrE0IEwGH+3b7wPrvsTzy
+         FdNEcq0V9J7ziSIGDrcAFQ1dCMK7HF3C5Sx7aNc/tEPHpsrwpCg9GzUOhfBBm22ZJmVW
+         bHok+/40J640r3r+tfRIQDPSVpJxm902Hv8FdiItJu3nLz8ahAHHZo8bMV29a3+5SVYc
+         P+A0/7LwCq3VOSkY+QNhwcNR1C1lUs9DdiqlKFMxxnNc78qXXZ0r/VPLa/ghT2EoCRFv
+         Vf6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755603590; x=1756208390;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1/YHiMiSEXGJ+Otn/lJFKDk3uocdFFMzq2l/EhCHt+4=;
+        b=HIBqssHgSPk0QBxgKi48E3vhCiaD3R4GxKwwreiM4Evm5/3m0emT1XguCLAkF5rjLp
+         sh+exDqxlCRNm1mAmZxpHSAoFuSQcqWOtIhuyuiRC6KI5e2kt4O0yff3URSLDru8EP2E
+         nZLYbq6yp26G0tBjd173qI80gXKH+1GmthMOakfuzyQiGoVnK7gXLUKI5JKIdR7vJYZU
+         2KifD6gsWpSlQwVk9GLPNIswj6qc6XqinwSYPd7kXNbn1jW4J6IBor+QoE3yfpl9bcL2
+         UENgO1RS2CJJCtwICTnQgNaL3i6pL443loFKkSup5nLE2pwsYZnPyowI3RXUlQbjZbld
+         aR7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8XBdmnn6bt6G8e2YScXP32G+19hoINsXnnxHx3k0JsRNqhKr3ouUpNtN/RwFISm5z8KEbnO91X+7Qwr5i@vger.kernel.org, AJvYcCV/I2z92feNqtL2HIWWriBHTX7Ny8t5h0rFAf5+CNINlEORBa6fyBBNdmyglOniOtWheVabqnsbwhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIu28D1zHoVVAQAWypx9I1fSL8Wcxc2iY5tKNbK+qa8ykf9lp/
+	VOhWsbuDbUmAqfQH0UkN68Q+tlwYEN+1ulQDkhzN97Yjlvwp6cM6QmJX
+X-Gm-Gg: ASbGncuN98/CEqY+GmPqyx6mHG++r9aH/FP4Lrjnmrev0erjarFDQqB8BYjx7trVIBi
+	i4xaEqRkTpSq8YjIV27AVWPqhddEe9Mlud1bZq6uP6GrEqDaCmFMVW0+FiNvYX8eLVGnphht/67
+	NQYc+fIB4FiY9mHdF+DfoQMG+y8z0GKSd/kFxltM9A2Cx3AvrLAztPjpW2iJqrgtPeZFapG2Bq1
+	qzu7Fw+rDLzA6FxPpPxiiDzQE9JdehAaFYmM5kBL+fUbadzdOFfF6csIA17Pd1hSd2QLiQjrV/+
+	M8BH5QW6VdRN7YTd1s2NlVupmkmNP3GWzhYlwMZIUjrKMUVbBacvEekFX0Mu9u7ecLH+WA6BR0e
+	Lr9NAs4CJ
+X-Google-Smtp-Source: AGHT+IEEyAKmkNJbiKHBYaP4BljEbzWdPCRpfKg9xhckNfhaurnODS7Zuy7nPkGxLEza4L1RzbfFVA==
+X-Received: by 2002:a05:600c:46cb:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-45b43e12419mr14734595e9.23.1755603589519;
+        Tue, 19 Aug 2025 04:39:49 -0700 (PDT)
+Received: from pc ([165.51.6.90])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c19fbsm3425900f8f.41.2025.08.19.04.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 04:39:48 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:39:45 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH] staging: iio: adc: ad7816: Use spi_set_drvdata() for clarity
+Message-ID: <aKRigf3TtH-x-i1C@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFRpmM4OvQHoLmp1/7yOMMM/WjwMQMTDUGCtWYRPHA=
-Content-Language: en-in
-X-CMS-MailID: 20250819113938epcas5p3cac2467171b234b921448bf9b537cce2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250818182551epcas5p33fbe099df79778031b489f0902cceed3
-References: <CGME20250818182551epcas5p33fbe099df79778031b489f0902cceed3@epcas5p3.samsung.com>
-	<20250818182544.GA534647@bhelgaas>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > > > +static irqreturn_t fsd_pcie_irq_handler(int irq, void *arg)
-> > > > +{
-> > > > +	u32 val;
-> > > > +	struct exynos_pcie *ep = arg;
-> > > > +	struct dw_pcie *pci = &ep->pci;
-> > > > +	struct dw_pcie_rp *pp = &pci->pp;
-> > > > +
-> > > > +	val = readl(ep->elbi_base + FSD_IRQ2_STS);
-> > > > +	if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
-> > > > +		val &= FSD_IRQ_MSI_ENABLE;
-> > > > +		writel(val, ep->elbi_base + FSD_IRQ2_STS);
-> > >
-> > > This looks weird because FSD_IRQ_MSI_ENABLE sounds like an *enable*
-> > > bit, but here you're treating it as a *status* bit.
-> > >
-> > > As far as I can tell, you set FSD_IRQ_MSI_ENABLE once at probe-time in
-> > > fsd_pcie_msi_init(), then you clear it here in an IRQ handler, and it
-> > > will never be set again.  That seems wrong; am I missing something?
-> >
-> > Actually the status IRQ and enable IRQ registers are different offsets
-> > but the bit position for MSI remains same in both cases so I just reused
-> > the macro.
-> 
-> Ah, that's what I missed, thanks!  At probe-time, fsd_pcie_msi_init()
-> enables it in FSD_IRQ2_EN.  Here you clear it in FSD_IRQ2_STS.
-> 
-> > But I understand that it's confusing so I will add another
-> > macro for FSD_IRQ_MSI_STATUS or just rename the macro to
-> > FSD_IRQ_MSI to re-use.
-> 
-> Using the same name just because a similar bit happens to be at the
-> same position in two different registers is definitely confusing.  I
-> think it will be better to have two macros, one for FSD_IRQ2_STS and
-> another for FSD_IRQ2_EN, e.g.,
-> 
->   #define FSD_IRQ2_STS                         0x008
->   #define   FSD_IRQ2_STS_MSI                   BIT(17)
->   #define FSD_IRQ2_EN                          0x018
->   #define   FSD_IRQ2_EN_MSI                    BIT(17)
-> 
-> Another question about the test:
-> 
->   if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
-> 
-> This assumes there are no other bits in FSD_IRQ2_STS that could be
-> set.  I would have expected a test like this:
-> 
->   if (val & FSD_IRQ_MSI_ENABLE) {
-> 
+Replace the use of `dev_set_drvdata()` with the `spi_set_drvdata()`
+helper. This is functionally identical, but improves readability.
 
-Thanks for pointing this out. FSD_IRQ_MSI_ENABLE is a single-bit, so there
-is no functional difference in the two statements. I didn't have a specific
-reason for using "== FSD_IRQ_MSI_ENABLE".
-But I see that "val & FSD_IRQ_MSI_ENABLE" would have been the more
-standard way to write this. I will update this for clarity.
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+---
+ drivers/staging/iio/adc/ad7816.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Is there a reason to restrict it to the case when *only*
-> FSD_IRQ_MSI_ENABLE is set?
-> 
-> Bjorn
+diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+index 4774df778de9..599f75103cb0 100644
+--- a/drivers/staging/iio/adc/ad7816.c
++++ b/drivers/staging/iio/adc/ad7816.c
+@@ -360,7 +360,7 @@ static int ad7816_probe(struct spi_device *spi_dev)
+ 		return -ENOMEM;
+ 	chip = iio_priv(indio_dev);
+ 	/* this is only used for device removal purposes */
+-	dev_set_drvdata(&spi_dev->dev, indio_dev);
++	spi_set_drvdata(spi_dev, indio_dev);
+ 
+ 	chip->spi_dev = spi_dev;
+ 	for (i = 0; i <= AD7816_CS_MAX; i++)
+-- 
+2.43.0
 
 
