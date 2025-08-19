@@ -1,322 +1,150 @@
-Return-Path: <linux-kernel+bounces-776007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4C2B2C76E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DB1B2C76C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3718F1B66CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:46:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4117F5C1320
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E272F27E7DD;
-	Tue, 19 Aug 2025 14:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="A0rCJxQq"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013029.outbound.protection.outlook.com [40.107.159.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F9127AC21;
+	Tue, 19 Aug 2025 14:45:36 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04DC1FF7D7;
-	Tue, 19 Aug 2025 14:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614744; cv=fail; b=R9CxzkXTY+mmq/nPzex6BBNEXl3kZoc+0a031tK8UAaasNgilBE6Pby1oB8beWMV+HjUf1mQFa0LMk3/xnyTRx7+gsFGFam9D+Yylt+8C+BbM+fafSyPGM8tz41HeTah7BYad4/FMf+UbokdRapj43r15opARoYnsCG0BDmbHk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614744; c=relaxed/simple;
-	bh=6hgBJQ1O/l9aH6iu4x+aMRx8uf2Pmx50IdHp2upALl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UsKZCLLS/ZSKf5UPdiUa+vJBjRp1qJKsEtS61yXhLsRYR+RpZoaqaInoi5jSW1mejvp0ghCAS1R65YHfjLf+fmF3ODzqkoUIvkR7D3UR48fl9rcPVOw9AC5qnUqgmgFJi4SRAsdNpmXKi7KOD2wrrfa6QmVfdh1rjsmAad52Ie4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=A0rCJxQq; arc=fail smtp.client-ip=40.107.159.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rHD5mV7rvE2nuaqs0hZoFaPvC4/1q/FiF1MGeix9ikb9DmC4RJ2iblVcQQOLhGbF8MHxdwQK8l283PDq55g84IlD5OUjbjVVunsyRD+cpPr6cHmLUdiE7hlp+AApvD+4xS88DbkwK++IRBlszhkdOJVWy67rUQCO6V9afRPXANYIVvfJ958LJnp8/J/9EaTfwq6qd5quMA58sGBOoamZ/P5L6JU+EFGj+4Ux3jaoNSGK91tNtNi37MImfy/V4K9OAou2CHddWut+VJ7DupPuVpV87EMLrJ/n1pqUkACVj0CqLjxOHydvkYDtVDObW7QWfBVoIGCaZ+ElRzE5C5r/3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ErG5qomNHRmXr0XCtdbWeCf7IhIbpSmClDtG8hSPH4Y=;
- b=wWjQHCWMKy87ZV8YNrGE4j7lzzOV3WbO1/Y5pEXmD7xUMtsQt0GY4byAJhE+SKpgWoLXu0/hkw3TCPpQv+XekAwPyM8PJ5emorUCnhWALL30sHJH5jnvSNniqtxvDIz1IYIaeF4WsMAGP5LcRKRQwsehuF/JJTSKkchYdgdqgIYoozHbUpiKJ+qL4z0fSAYp+rGUjwRMd/9cgvz44nRLILSvwEirLaQcbhAkL1N2+o1mISKZ4rGu/E5N89O5L1TJdzuRIGYiW9uauy9fp3dMr3Z0XKVJyVeO0TR+ZyQlanw7C6qRtZjSpuBvQh4gWIJOybzQMa65CKDbgZbH9pebTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ErG5qomNHRmXr0XCtdbWeCf7IhIbpSmClDtG8hSPH4Y=;
- b=A0rCJxQqxUjTYaJziuO8lzxsrwpgKAn5uNDYigHuqd7OkMJ3r7KCXuAAi1BDE3nzU3zqQsMv8pFlERoZtNPl7qhl2/nx31/JYyrtTZr12MnoW3UdHsa04+9CRWNYNFGhiisH+Yhdp7mwp8v7YvFhaZvqt7w3aZIOEC846sgwHuG8yknmNu4SvnAPvju4WGwGEG4eEHXngXqXbxWm7tWdMPKWikZU7satuKPLURWPeZLZBTO8OY4JHOfdDw6qVD2WTZKtRpV/LtSIYdY73TUJaXhCkhaQitqLRDZO7OfTMC7wXM1BTeJfFBfbGmISeHUWpHODb1BUXlYLlrOcXPeINQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI1PR04MB6896.eurprd04.prod.outlook.com (2603:10a6:803:12e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Tue, 19 Aug
- 2025 14:45:39 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9052.011; Tue, 19 Aug 2025
- 14:45:39 +0000
-Date: Tue, 19 Aug 2025 10:45:29 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	fushi.peng@nxp.com, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v4 net-next 03/15] ptp: add helpers to get the phc_index
- by of_node or dev
-Message-ID: <aKSOCbuKcwRkBe82@lizhi-Precision-Tower-5810>
-References: <20250819123620.916637-1-wei.fang@nxp.com>
- <20250819123620.916637-4-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819123620.916637-4-wei.fang@nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0042.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FAD1FF7D7
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755614736; cv=none; b=g26KJCU5pX8p/ysVVtYc51PKQ++diLMQkG6Ki7Ue+Ib2+x9zsva+8rlurRczHm2re/h4N37ccbTurFafEjTnpjBnbcIvbJz18t9BZsGlJT8qbK3qVArdFCNjBsPcFlhDazLklmra2yfI1Jw9J87M8H3OXsbIWwy1Rceg3oTSco0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755614736; c=relaxed/simple;
+	bh=h4MqFhhQZUKLgMyezjo+bdiJd4cAsN9Pod0SVIHFdrI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=J0ReiKLfPND0Uf6WyF4J+HYfrlV55lmfgOZR59m1Fg8j3XEhI4RmFJI6AcJi0ewOOX3tWXykMVERlesM4CUoQ5Sn4dZSqitWxrqghDPx1gt+cPVJFnSQfVnCLem2A7//NESyLvrd4EBe3YdFPmE7qBeoDyN+PnJoxEQnVSjjSSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-88432cebd70so1390747839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:45:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755614733; x=1756219533;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gSWcuKd0wU9job7na3f+ExlNImfUm9ntr2EO+b33F0=;
+        b=EbjOebt2U2YdRgX7dFdZZFdq3AjPjLm/PQaKOw3S5TOjpEwjMZFEcdpiCiuAVpRBQV
+         iC0PvA1ZK2ChBdq2qnPhkMV0YQqkecI1c0RPSrwaXwQfOkaObtGs5jodxgcRafuipe02
+         p8m3RmBbxnk03yws5DMmteWtRpdShJnKcF3NabGdRqVea4HyYO7i4b5GCBYp0vU1Md1x
+         n9/BYSDATo0fHXf43Xt8+PU6tVgfxvSRbcAHBVMfo+Ej8wLKG8T55vKu8l+6b9XbT1WA
+         aQhVxcsWd1sWu+fwKpXuVVwwjG0Enu52M4CPk7cFi6VezB2xF2faNKQYsAvST8okGB8s
+         JddQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/McQFqABKQ8niMZ2zaFH5EbyoDjRuD95PoqUs4eglfziSGsx4k0wFQGwIXmQW74pCRArrg+IKl4YUQDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqSaq2dx83BO2L8GkSx1vpS2fgrmzEmKl7GPi8XDx0x81kcHuu
+	X1k1XRp+LkvgCpsVgT/uK/j6lbvl+t2RZeOfY40ez4cX4ZZcF3HS/sfP9CBA66SSmMfeGopUm90
+	qKrO7faKhYRr0dXMirSW1/Fg0HbZQU41nJ1aT6cHEBng3mZHzR4kkL+tjIZE=
+X-Google-Smtp-Source: AGHT+IHOAYQxCWVcuuhK6rTr3fCVucH64A72KBcVKxz26yW9h7hf3hjUhPdz6KOUFEV8iD3iZmTLNpyS0nqK6zLqK97aBfgRNWkg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB6896:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8d9ee84-7264-4778-23cf-08dddf2f10de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Uu9D1hwOIlGlE0FywX316JcUY6+rW9xEjOqaG1T8IQsq2cH6Wke6joxjbAp1?=
- =?us-ascii?Q?1s6MQ94X7z+wabX89UDvKpciKOvdIWoKM0NNe8kRhrqaHNgxVJ6UfUqFjhOn?=
- =?us-ascii?Q?j+gZ16OCRvD9f1IgUDie1pCgW/B1GXbQywI7dqe3xQGA5RNWq+29lcUae+Lr?=
- =?us-ascii?Q?/9JNPNSnwBrAo1qY10K9T6s7JfZcUPkyihzRkv++PFH3MJPhxNFOYSCZGbDq?=
- =?us-ascii?Q?b1XnaKoiRNTLOk2GG7ImFzhLTILepNte7k8OJFYgRH/h7it8wY05WeXEXjDn?=
- =?us-ascii?Q?tUX9s0xBO/6bwjgl9mwdRo6jZD+owhyjBzEp7YyV5rk1f+WfvFUlXbkjO5h8?=
- =?us-ascii?Q?gqSVjgTOY0zXra6rMTrBcQPIEfYdN7L2+F91z0QyuLY3+s7VHs3hXMqkWkxb?=
- =?us-ascii?Q?ifeBvU3oUyAub9hYVn9leMmubG9RPHGGSkmJW2lztFfv9xAjqH3JKP7W++OG?=
- =?us-ascii?Q?2ql/Is+lDfE8RdbJMe+j9ugJTHi0EdiURy7pmMKIKtuscNOVkDc0XPagCMsA?=
- =?us-ascii?Q?rywI0b3hjqkJUMopudGst6zme+SNXMK+iX1K2ZH+B2xBLyrv8/hXukL30d7+?=
- =?us-ascii?Q?5jLT3SB8phYMELX9ioEdyR0XJCRcyOGH5dgP02kQmg5muGGqoSmDiNQ5iKm9?=
- =?us-ascii?Q?egM7Ivb1uU49Ool4RFjNbHDbkKrCSBM9Z/fxzO6JwnY21cthqc3N1foCZVR/?=
- =?us-ascii?Q?DC1rpnZS1qGN7BH0ybj4TdaC8wymZFZfK9M9cA/v9+axoNncePNJacliQBeX?=
- =?us-ascii?Q?Kpf4T/tIdLnUAzqMwFFz+jTUPuuVTY4pdAH4k5PvrL/lxstXv5hOAVR/igCx?=
- =?us-ascii?Q?8sJJYJK9Z+Ifa7Jn1pLvpqJjhD7VtIqbwUOhBED9vNgUgu2/IJiESq5lTA9f?=
- =?us-ascii?Q?Wlkk5uQ7G4yrBHNYkjxp+lz8x8ezzW9lQGr3/QovABNfgOIPWh7Ry3EUpcYR?=
- =?us-ascii?Q?dmYMn0wzfK7bNIcRC4DpbV+S7QiPYxkDgHTSott5gfpa/GCv+CU2l4vEgMQ0?=
- =?us-ascii?Q?K/TSw2ptCQJ3ztDClfDva2k8iE9ujYv1HCzephxcVswFo/z4V6HMTNP8RrjT?=
- =?us-ascii?Q?G/efwU7+JGI2h6b4CoaJ+i/zd1dDx+uCLHOq+z6yQRM+SwkarR/qIkO9uoNJ?=
- =?us-ascii?Q?powQtYKj5kKeFKoazD7YYykIzBJRRDPaipbwKpmhNcYBQowp45Ie+WhqpM24?=
- =?us-ascii?Q?zzO7BPoK1hEZXlgcZ6ddPa/AQrOoBFbrATu+d+g+bnXqavbGtKArWxZVhl+Q?=
- =?us-ascii?Q?KB6M1NZkA9uzR6/H7725fSph0kVlFbjfhSvztq2BsgD8SM7CrXM+5la+2idv?=
- =?us-ascii?Q?H8M2+CUqh44B+qP+PXliD/34i2iCrlF5VCTa5dt1o9z5g1KuvsDfX0WYI+7W?=
- =?us-ascii?Q?xJ2L1F0AB9EhhR52ANAfT1Ht/M5979l0tfkwTu67UmfY63E4Jgk52gcnaSl9?=
- =?us-ascii?Q?4tuljK5vtPGUPR/ksmQ6/HkiB+VaGpRQHlWtotoJ/XDC4uXlK6yrRg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7T5dpFE6QbCFoJVgUwfRXSP2QlkBBYIuRZGSpTxYadjm0xHwBar+4A7bKzbV?=
- =?us-ascii?Q?qkXF9pfPA9fnsfM5gpToereCvNXfVsawgwTDvn0DvCvm1HTsjouASY7yjRXa?=
- =?us-ascii?Q?5+IbWR7UuPIgUJN9T+n0cFyTE70weJDyB3xe+iP3PARiwUc7LLvtEJ4hm9lK?=
- =?us-ascii?Q?xreQ63v4yz3toWwwY3T9EC9+f9U0t2vjwMxJ2drzeHGeqoMHhX7kdffmJLwU?=
- =?us-ascii?Q?Ufav28PaymymcI9l4opJ5k3Ekk/eZRsd5aMY7Dh9mscGORTLMJ6+ZFr6bMKX?=
- =?us-ascii?Q?tmYX293EU0uiIIXnRx7N9xvZnEL3ZrZNaZ3xDUPD4+KAL3mSRaFvCYBP0gHg?=
- =?us-ascii?Q?BB3z8g1jdXrLzXy6Z+/8MKXQYjdRBR0KUDLFutE/a5l/5IPZ2O4XboQrMfRd?=
- =?us-ascii?Q?EtXt2W8q2NcHAU0s7TGFTN+KCbSpb4k9ggXMS9/OucohWM4wyfXBaatSWbH6?=
- =?us-ascii?Q?uuyiAXorTfvXfJVXmrAZtjVG6kxv9Rrti6kutXAMdO8erZvagOT8IRZwc4mF?=
- =?us-ascii?Q?IBKJ/74RNL9ojqacODw65BHreR7ql4lTCsWXt0/7AxuFQ/+rEYMJzlNPQ5M5?=
- =?us-ascii?Q?bWUwZwLFd0QVSFHE+54o3HSF0mr6QPF1RhBlP4f6FCCSk/WM+DseqC5u6ZX8?=
- =?us-ascii?Q?51q/FCvXinaG6Gk5h46GWOeUlYzmsJgr/kwFMGb3LiCYhL1HJgh+N9q7cWy5?=
- =?us-ascii?Q?0xHIxNK0WNyjju0QKBO0325cznpvA/aLkYCe8KF9I1NtCqKzPsSmCeq6dFkK?=
- =?us-ascii?Q?yW6DPQJJ+YFvqrTrKxS+zDh5ceMbf9slkQRnARI1Z+k922uyzO9MS99WO77T?=
- =?us-ascii?Q?AL2sTXkzdobgJmvV1uCjKIa2SM9AY5+MZs5KfQROrg1QfslXuOpJT+TDDX2h?=
- =?us-ascii?Q?etXaalFK12Tqd64+Yjrek3XHJqnh0QZViFNPElwyY4N/EoSk/auQ2w4Lwn1R?=
- =?us-ascii?Q?uMRkJzgY8STKiPlxExiqqjUzlQ59mfsrMZxXLOq2MmD+vpZxu7pNqeyQ2Jnv?=
- =?us-ascii?Q?p4YZfE8n1ktSCSwqiwPyUW2+MuGmN0xkgHn1rp9OjmBur6eUtyW/A6I2eNq7?=
- =?us-ascii?Q?gZopP/9KzE8diTVghDaTigW0glhrkvhP9/k20Z/PyBYH2bwxSoasGKFDd6pF?=
- =?us-ascii?Q?j7CkwLBQ8sYripyRctmY0yniQuFAKcdVEnsylRuK5JE8yPoLOZUPdLBKrTv1?=
- =?us-ascii?Q?3f9NbnSF1tXhCVAx7RIGdty+At7vnqiggZnnL1JGtIkztoKxi0pAYW1TLbSz?=
- =?us-ascii?Q?jFRRwY5RpUpAMZL1UozHEJwUoHtFbw8IfBpCAaMPyISKdQKWYIhtI2GNao1u?=
- =?us-ascii?Q?zG0Y28GedWfQ7IT1HeeigwFfSGuPMFPQ3R3XCVteeJyDHO9RkYwtWSfEszqI?=
- =?us-ascii?Q?zsYgT2EM+gIZsQPSQVx3DMvXceyEv7jZt4ELbCg+sK+YjHadmNr8pq+toBPb?=
- =?us-ascii?Q?wTa2I+1pfLRLC6bWEsptuX1lvTYx8y3sOMBkY8K1/iggx/n7+MLB1OUthhk3?=
- =?us-ascii?Q?EFQ+2gySxhihD1opo1aIcMzlzQBalhEgMH09C1ub83lBUur34qGhsA3mrevo?=
- =?us-ascii?Q?E1zppfrAdRZtJiArM1gBE2XYDPjMPCNCM44G9gbl?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8d9ee84-7264-4778-23cf-08dddf2f10de
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 14:45:39.7214
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SeKoURgesONv0LP5naynDczA3hWjYbkX0uSZYi7X+DJne6L6/eRAa5/8UhqKiY5H98OhaQyHXNayrJsWCWODuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6896
+X-Received: by 2002:a05:6602:1d88:b0:87c:49fe:cafe with SMTP id
+ ca18e2360f4ac-88467f37802mr435941139f.11.1755614733624; Tue, 19 Aug 2025
+ 07:45:33 -0700 (PDT)
+Date: Tue, 19 Aug 2025 07:45:33 -0700
+In-Reply-To: <20250819090853.3988626-1-keirf@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a48e0d.050a0220.e29e5.00c7.GAE@google.com>
+Subject: [syzbot ci] Re: KVM: Speed up MMIO registrations
+From: syzbot ci <syzbot+cidf4b445961d44cba@syzkaller.appspotmail.com>
+To: eric.auger@redhat.com, keirf@google.com, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	maz@kernel.org, oliver.upton@linux.dev, pbonzini@redhat.com, 
+	seanjc@google.com, will@kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 19, 2025 at 08:36:08PM +0800, Wei Fang wrote:
-> Some Ethernet controllers do not have an integrated PTP timer function.
-> Instead, the PTP timer is a separated device and provides PTP hardware
-> clock to the Ethernet controller to use. Therefore, the Ethernet
-> controller driver needs to obtain the PTP clock's phc_index in its
-> ethtool_ops::get_ts_info(). Currently, most drivers implement this in
-> the following ways.
->
-> 1. The PTP device driver adds a custom API and exports it to the Ethernet
-> controller driver.
-> 2. The PTP device driver adds private data to its device structure. So
-> the private data structure needs to be exposed to the Ethernet controller
-> driver.
->
-> When registering the ptp clock, ptp_clock_register() always saves the
-> ptp_clock pointer to the private data of ptp_clock::dev. Therefore, as
-> long as ptp_clock::dev is obtained, the phc_index can be obtained. So
-> the following generic APIs can be added to the ptp driver to obtain the
-> phc_index.
->
-> 1. ptp_clock_index_by_dev(): Obtain the phc_index by the device pointer
-> of the PTP device.
-> 2.ptp_clock_index_by_of_node(): Obtain the phc_index by the of_node
-> pointer of the PTP device.
->
-> Also, we can add another API like ptp_clock_index_by_fwnode() to get the
-> phc_index by fwnode of PTP device. However, this API is not used in this
-> patch set, so it is better to add it when needed.
+syzbot ci has tested the following series
 
-Needn't this paragraph.
+[v3] KVM: Speed up MMIO registrations
+https://lore.kernel.org/all/20250819090853.3988626-1-keirf@google.com
+* [PATCH v3 1/4] KVM: arm64: vgic-init: Remove vgic_ready() macro
+* [PATCH v3 2/4] KVM: arm64: vgic: Explicitly implement vgic_dist::ready ordering
+* [PATCH v3 3/4] KVM: Implement barriers before accessing kvm->buses[] on SRCU read paths
+* [PATCH v3 4/4] KVM: Avoid synchronize_srcu() in kvm_io_bus_register_dev()
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+and found the following issue:
+WARNING in kvm_put_kvm
 
->
-> Suggested-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
->
-> ---
-> v4 changes:
-> New patch
-> ---
->  drivers/ptp/ptp_clock.c          | 53 ++++++++++++++++++++++++++++++++
->  include/linux/ptp_clock_kernel.h | 22 +++++++++++++
->  2 files changed, 75 insertions(+)
->
-> diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-> index 1cc06b7cb17e..2b0fd62a17ef 100644
-> --- a/drivers/ptp/ptp_clock.c
-> +++ b/drivers/ptp/ptp_clock.c
-> @@ -11,6 +11,7 @@
->  #include <linux/module.h>
->  #include <linux/posix-clock.h>
->  #include <linux/pps_kernel.h>
-> +#include <linux/property.h>
->  #include <linux/slab.h>
->  #include <linux/syscalls.h>
->  #include <linux/uaccess.h>
-> @@ -477,6 +478,58 @@ int ptp_clock_index(struct ptp_clock *ptp)
->  }
->  EXPORT_SYMBOL(ptp_clock_index);
->
-> +static int ptp_clock_of_node_match(struct device *dev, const void *data)
-> +{
-> +	const struct device_node *parent_np = data;
-> +
-> +	return (dev->parent && dev_of_node(dev->parent) == parent_np);
-> +}
-> +
-> +int ptp_clock_index_by_of_node(struct device_node *np)
-> +{
-> +	struct ptp_clock *ptp;
-> +	struct device *dev;
-> +	int phc_index;
-> +
-> +	dev = class_find_device(&ptp_class, NULL, np,
-> +				ptp_clock_of_node_match);
-> +	if (!dev)
-> +		return -1;
-> +
-> +	ptp = dev_get_drvdata(dev);
-> +	phc_index = ptp_clock_index(ptp);
-> +	put_device(dev);
-> +
-> +	return phc_index;
-> +}
-> +EXPORT_SYMBOL_GPL(ptp_clock_index_by_of_node);
-> +
-> +static int ptp_clock_dev_match(struct device *dev, const void *data)
-> +{
-> +	const struct device *parent = data;
-> +
-> +	return dev->parent == parent;
-> +}
-> +
-> +int ptp_clock_index_by_dev(struct device *parent)
-> +{
-> +	struct ptp_clock *ptp;
-> +	struct device *dev;
-> +	int phc_index;
-> +
-> +	dev = class_find_device(&ptp_class, NULL, parent,
-> +				ptp_clock_dev_match);
-> +	if (!dev)
-> +		return -1;
-> +
-> +	ptp = dev_get_drvdata(dev);
-> +	phc_index = ptp_clock_index(ptp);
-> +	put_device(dev);
-> +
-> +	return phc_index;
-> +}
-> +EXPORT_SYMBOL_GPL(ptp_clock_index_by_dev);
-> +
->  int ptp_find_pin(struct ptp_clock *ptp,
->  		 enum ptp_pin_function func, unsigned int chan)
->  {
-> diff --git a/include/linux/ptp_clock_kernel.h b/include/linux/ptp_clock_kernel.h
-> index 3d089bd4d5e9..7dd7951b23d5 100644
-> --- a/include/linux/ptp_clock_kernel.h
-> +++ b/include/linux/ptp_clock_kernel.h
-> @@ -360,6 +360,24 @@ extern void ptp_clock_event(struct ptp_clock *ptp,
->
->  extern int ptp_clock_index(struct ptp_clock *ptp);
->
-> +/**
-> + * ptp_clock_index_by_of_node() - obtain the device index of
-> + * a PTP clock based on the PTP device of_node
-> + *
-> + * @np:    The device of_node pointer of the PTP device.
-> + * Return: The PHC index on success or -1 on failure.
-> + */
-> +int ptp_clock_index_by_of_node(struct device_node *np);
-> +
-> +/**
-> + * ptp_clock_index_by_dev() - obtain the device index of
-> + * a PTP clock based on the PTP device.
-> + *
-> + * @parent:    The parent device (PTP device) pointer of the PTP clock.
-> + * Return: The PHC index on success or -1 on failure.
-> + */
-> +int ptp_clock_index_by_dev(struct device *parent);
-> +
->  /**
->   * ptp_find_pin() - obtain the pin index of a given auxiliary function
->   *
-> @@ -425,6 +443,10 @@ static inline void ptp_clock_event(struct ptp_clock *ptp,
->  { }
->  static inline int ptp_clock_index(struct ptp_clock *ptp)
->  { return -1; }
-> +static inline int ptp_clock_index_by_of_node(struct device_node *np)
-> +{ return -1; }
-> +static inline int ptp_clock_index_by_dev(struct device *parent)
-> +{ return -1; }
->  static inline int ptp_find_pin(struct ptp_clock *ptp,
->  			       enum ptp_pin_function func, unsigned int chan)
->  { return -1; }
-> --
-> 2.34.1
->
+Full report is available here:
+https://ci.syzbot.org/series/3dc60813-f155-4817-8552-1f86bd35f4e4
+
+***
+
+WARNING in kvm_put_kvm
+
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      dfc0f6373094dd88e1eaf76c44f2ff01b65db851
+arch:      amd64
+compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+config:    https://ci.syzbot.org/builds/a80ce1fb-9721-4229-8c84-f01975da18a2/config
+C repro:   https://ci.syzbot.org/findings/c7213edd-3666-4fca-886f-07477eb19900/c_repro
+syz repro: https://ci.syzbot.org/findings/c7213edd-3666-4fca-886f-07477eb19900/syz_repro
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6003 at kernel/rcu/srcutree.c:697 cleanup_srcu_struct+0x4ea/0x5f0 kernel/rcu/srcutree.c:697
+Modules linked in:
+CPU: 0 UID: 0 PID: 6003 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:cleanup_srcu_struct+0x4ea/0x5f0 kernel/rcu/srcutree.c:697
+Code: 8b 5c 24 08 74 08 48 89 df e8 e2 30 7d 00 48 c7 03 00 00 00 00 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc 90 <0f> 0b 90 eb e6 90 0f 0b 90 eb e0 90 0f 0b 90 eb 14 90 0f 0b 90 eb
+RSP: 0018:ffffc90003b0fc78 EFLAGS: 00010202
+RAX: 1ffffd1fe28c5059 RBX: 1ffff1102341db2b RCX: b3fdaa5e0844b500
+RDX: 0000000000000000 RSI: ffffffff8dba5bb5 RDI: ffff888022170000
+RBP: ffffe8ff146282c8 R08: ffffe8ff14628367 R09: 1ffffd1fe28c506c
+R10: dffffc0000000000 R11: fffff91fe28c506d R12: ffff88811a0ed958
+R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffffffff1b7be74
+FS:  000055557858e500(0000) GS:ffff8880b861c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c002fcff88 CR3: 000000003a46e000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ kvm_destroy_vm virt/kvm/kvm_main.c:1324 [inline]
+ kvm_put_kvm+0x8ca/0xa70 virt/kvm/kvm_main.c:1353
+ kvm_vm_release+0x43/0x50 virt/kvm/kvm_main.c:1376
+ __fput+0x44c/0xa70 fs/file_table.c:468
+ task_work_run+0x1d1/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f975198ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffbfd6bfd8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 000000000000ed88 RCX: 00007f975198ebe9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000001 R09: 00000003bfd6c2cf
+R10: 0000001b2fa20000 R11: 0000000000000246 R12: 00007f9751bb5fac
+R13: 00007f9751bb5fa0 R14: ffffffffffffffff R15: 0000000000000003
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
