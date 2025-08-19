@@ -1,229 +1,144 @@
-Return-Path: <linux-kernel+bounces-775892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAF5B2C61E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:50:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69062B2C637
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655051C23045
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BB95171931
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B4D33EAFA;
-	Tue, 19 Aug 2025 13:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPgZ2hNm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189C032A3D5;
-	Tue, 19 Aug 2025 13:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18DF33CE8A;
+	Tue, 19 Aug 2025 13:47:54 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D178A15442C;
+	Tue, 19 Aug 2025 13:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611229; cv=none; b=Nm7XJuV2rLHfxhpaiwA2vbQexyPsr9Lr7Z+5iu5gpzXTWu5n1KTVz4R1nbH/zreQMNVQAa6o+h6/tPCDMnncrCY7ZcMxx9m41f1CiH0HQTm2LqPwDAGhNa/TsqMyv1tV+TDg6E/CXKkzRO3hj3frKaAlLrB2+Ep8cLYsr6Rofwc=
+	t=1755611274; cv=none; b=tYWUmsfIze9hnLccgH2Q20uW0D+dZfMzyeqvd2fXyvuAKsduw6+Lfcs56A0ETBopGN/YGKKc44dW7YqTcacW8wAROUMuN4gFCxUx75mvuyf0Gsx34SCXH9MRBuIxAgh1+v3mmPKNVkHRTjWurmeAMKeaaen3beVQ+DpRu5eHI/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611229; c=relaxed/simple;
-	bh=0LlM/TmY7kun3N086n8nz+vfKY+G/rfvAUc/zm69FRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5tmAecWz6jKvcYzTaDA8w614pYzVqTZmyTjeW4bYSoQUyH7aqhiLwT3mMHpOWnat88cCOSoAJ6syPYFGOjPjyzBOWOstQtqLKETjWsfS/zIzTDeUezCbhsztb3bYproeY9CASwmvx368Tj5OQ0azG58NuU6kutvrMg5BEaVa4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPgZ2hNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B93C4CEF1;
-	Tue, 19 Aug 2025 13:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755611228;
-	bh=0LlM/TmY7kun3N086n8nz+vfKY+G/rfvAUc/zm69FRc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dPgZ2hNmMIAmn8WEoRRyYSL0sWizL9k1mu/g9r/NnRoHOSPlpeiJ3o3whMNP9Lc2/
-	 8QZmljYITrfXGaoXap3f7VE/lFEkXmTAhrrbeprQHzqjIjmrA65rUnQh9hAF0Ls71/
-	 uZfIytlhFXGqDFbt5++c3lol+M7XjdZuWDReMqlVUXSYKupFNZPjibjLg1VS6LeBsk
-	 naSvLVDju+/AD7mHNscAMZfjdMmGCUV6RHuOLOuf+OxOUiodI0CdAgVXev6GdtyQMG
-	 kr4ygb90tdI0nQM/k1q12LAKuCRLdTTM4m5F8oJspYlDovBPR6pWYlHZ1jKvQwicnp
-	 GkP6m5LDerV7g==
-Date: Tue, 19 Aug 2025 15:47:06 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 3/9] drm/bridge: add
- drm_for_each_bridge_in_chain_scoped()
-Message-ID: <7gpqrxlxxuarbp5b7bycukbbjdcuonlhn4zm6xinnrlqzrbeu7@rrpcwxnxxrag>
-References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
- <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-3-edb6ee81edf1@bootlin.com>
+	s=arc-20240116; t=1755611274; c=relaxed/simple;
+	bh=7OErGkHrL5Gjjdrfh0ZS4BJc3dz5o2tElYf6eNQynrI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qyjd3uNDifanmxj7/yYyK3Mvvv8ysXZ+wEs/q2W88P7NWrJWb3cfu/o9mCFWv4myDEMEyCqKCk8JEWgxc56eICMJ+VcEtotwwmUSD/hsWWWRL8qFEJOZyyMLrgFCKiZTmba1/sDdOrZ9w6yd5BU7UpglW1EUDgk4Xpu6q5tMKvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app1 (Coremail) with SMTP id TAJkCgDX+xFugKRoCa7AAA--.21178S2;
+	Tue, 19 Aug 2025 21:47:28 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	linux-phy@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	zhengyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	luyulin <luyulin@eswincomputing.com>
+Subject: [PATCH v2 0/3] ESWIN EIC7700 sata phy driver and yaml,
+Date: Tue, 19 Aug 2025 21:47:22 +0800
+Message-Id: <20250819134722.220-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="htlwy25bloclwdxh"
-Content-Disposition: inline
-In-Reply-To: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-3-edb6ee81edf1@bootlin.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgDX+xFugKRoCa7AAA--.21178S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1UWr4DCrWDCF43ZF4kXrb_yoW5XFyDpa
+	1kCF9IyrsYqryxX3Z7Ja10kFy3J3Z3GrWakrZrJw15Zw4Y934Fqw43t3Z0vFy2yw18XryY
+	qFn0ga4akFyUArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
+From: luyulin <luyulin@eswincomputing.com>
 
---htlwy25bloclwdxh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/9] drm/bridge: add
- drm_for_each_bridge_in_chain_scoped()
-MIME-Version: 1.0
+  Implements support for the Eswin EIC7700 SoC sata phy.
+  Implements the calling sequence to interface with dwc-ahci,
+  ensuring correct hardware execution order.
+  Integration with the Linux phy subsystem for consistency and
+  scalability.
+  Add documentation for ahci and sata phy on the ESWIN EIC7700
+  SoC platform.
 
-On Fri, Aug 08, 2025 at 04:49:10PM +0200, Luca Ceresoli wrote:
-> drm_for_each_bridge_in_chain() iterates ofer the bridges in an encoder
-> chain without protecting the lifetime of the bridges using
-> drm_bridge_get/put(). This creates a risk window where the bridge could be
-> freed while iterating on it. Users of drm_for_each_bridge_in_chain() cann=
-ot
-> solve this reliably.
->=20
-> Add variant of drm_for_each_bridge_in_chain() that gets/puts the bridge
-> reference at the beginning/end of each iteration, and puts it if breaking
-> ot of the loop.
->=20
-> Note that this requires adding a new drm_bridge_get_next_bridge_and_put()
-> function because, unlike similar functions as __of_get_next_child(),
-> drm_bridge_get_next_bridge() gets the "next" pointer but does not put the
-> "prev" pointer. Unfortunately drm_bridge_get_next_bridge() cannot be
-> modified to put the "prev" pointer because some of its users rely on
-> this, such as drm_atomic_bridge_propagate_bus_flags().
->=20
-> Also deprecate drm_for_each_bridge_in_chain(), in preparation for removing
-> it after converting all users to the scoped version.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->=20
-> ---
->=20
-> Changes in v2:
-> - clarified commit message and mention an example where the current
->   behaviour of drm_bridge_get_next_bridge() is wanted
->=20
-> Note 1: drm_for_each_bridge_in_chain_scoped() could be renamed removing t=
-he
->         _scoped suffix after removing all the users of the current macro
->         and eventually the current macro itself. Even though this series =
-is
->         converting all users, I'd at least wait one kernel release before
->         renaming, to minimize issues with existing patches which would fa=
-il
->         building.
->=20
-> Note 2: Yes, the drm_bridge_get_next_bridge_and_put() name is ugly, but we
->         do need a "next_bridge" function that does not put the "prev"
->         bridge and one that does. Any proposal for a better name or a
->         different implementation is welcome.
-> ---
->  .clang-format            |  1 +
->  include/drm/drm_bridge.h | 41 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 42 insertions(+)
->=20
-> diff --git a/.clang-format b/.clang-format
-> index 48405c54ef271e9546da08893d200a4cf48f3a55..1cac7d4976644c8f083f801e9=
-8f619782c2e23cc 100644
-> --- a/.clang-format
-> +++ b/.clang-format
-> @@ -168,6 +168,7 @@ ForEachMacros:
->    - 'drm_exec_for_each_locked_object'
->    - 'drm_exec_for_each_locked_object_reverse'
->    - 'drm_for_each_bridge_in_chain'
-> +  - 'drm_for_each_bridge_in_chain_scoped'
->    - 'drm_for_each_connector_iter'
->    - 'drm_for_each_crtc'
->    - 'drm_for_each_crtc_reverse'
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 620e119cc24c3491c2be5f08efaf51dfa8f708b3..a8e2f599aea764c705da3582d=
-f0ca428bb32f19c 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -1365,10 +1365,51 @@ drm_bridge_chain_get_first_bridge(struct drm_enco=
-der *encoder)
->   *	    iteration
->   *
->   * Iterate over all bridges present in the bridge chain attached to @enc=
-oder.
-> + *
-> + * This is deprecated, do not use!
-> + * New drivers shall use drm_for_each_bridge_in_chain_scoped().
->   */
->  #define drm_for_each_bridge_in_chain(encoder, bridge)			\
->  	list_for_each_entry(bridge, &(encoder)->bridge_chain, chain_node)
-> =20
-> +/**
-> + * drm_bridge_get_next_bridge_and_put - Get the next bridge in the chain
-> + *                                      and put the previous
-> + * @bridge: bridge object
-> + *
-> + * Same as drm_bridge_get_next_bridge() but additionally puts the @bridg=
-e.
-> + *
-> + * RETURNS:
-> + * the next bridge in the chain after @bridge, or NULL if @bridge is the=
- last.
-> + */
-> +static inline struct drm_bridge *
-> +drm_bridge_get_next_bridge_and_put(struct drm_bridge *bridge)
-> +{
-> +	struct drm_bridge *next =3D drm_bridge_get_next_bridge(bridge);
-> +
-> +	drm_bridge_put(bridge);
-> +
-> +	return next;
-> +}
-> +
-> +/**
-> + * drm_for_each_bridge_in_chain_scoped - iterate over all bridges attach=
-ed
-> + *                                       to an encoder
-> + * @encoder: the encoder to iterate bridges on
-> + * @bridge: a bridge pointer updated to point to the current bridge at e=
-ach
-> + *	    iteration
-> + *
-> + * Iterate over all bridges present in the bridge chain attached to @enc=
-oder.
-> + *
-> + * Automatically gets/puts the bridge reference while iterating, and puts
-> + * the reference even if returning or breaking in the middle of the loop.
-> + */
-> +#define drm_for_each_bridge_in_chain_scoped(encoder, bridge)		\
-> +	for (struct drm_bridge *bridge __free(drm_bridge_put) =3D		\
-> +	     drm_bridge_chain_get_first_bridge(encoder);		\
+  Supported chips:
+    Eswin EIC7700 SoC.
 
-So my understanding is that the initial value of bridge would be cleaned
-up with drm_bridge_put...
+  Test:
+    Tested this patch on the Sifive HiFive Premier P550 (which uses
+    the EIC7700 SoC). Based on this driver, the SATA device read/write
+    operations are functioning normally, supporting SATA 1.5 Gb/s,
+    3.0 Gb/s, and 6.0 Gb/s speeds, so this verifies that this sata
+    driver patch is working properly.
 
-> +	     bridge;							\
-> +	     bridge =3D drm_bridge_get_next_bridge_and_put(bridge))
+  This series depends on the vendor prefix patch [1] and config option patch [2].
+  [1] https://lore.kernel.org/all/20250616112316.3833343-4-pinkesh.vaghela@einfochips.com/
+  [2] https://lore.kernel.org/all/20250616112316.3833343-3-pinkesh.vaghela@einfochips.com/
 
-=2E.. but also when iterating?
+Updates:
 
-So if we have more than 0 values, we put two references?
+  Changes since V1:
+    - Delete the original controller driver and use ahci_dwc.c instead.
+    - Add eswin,eic7700-ahci.yaml
+      - Correct the descriptions of reset, interrupt and other
+        hardware resources for the sata controller on EIC7700 SoC.
+      - The clocks for both sata controller and sata PHY are controlled
+        via a register bit in the HSP bus and are not registered in the
+        clock tree. Clock are managed within the PHY driver, therefore
+        it is not described in this document.
+      - Add $ref: snps,dwc-ahci-common.yaml#.
+    - Add eswin,eic7700-sata-phy.yaml
+      - Add this file to include the description of the PHY on EIC7700 SoC.
+    - Add an eswin directory under the PHY driver path, and include the SATA
+      PHY driver code for EIC7700 SoC.
+    - Link to v1: https://lore.kernel.org/all/20250515085114.1692-1-hehuan1@eswincomputing.com/
 
-Maxime
+luyulin (3):
+  dt-bindings: ata: eswin: Document for EIC7700 SoC ahci
+  dt-bindings: phy: eswin: Document for EIC7700 SoC SATA
+  phy: eswin: Create eswin directory and add EIC7700 SATA PHY driver
 
---htlwy25bloclwdxh
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../bindings/ata/eswin,eic7700-ahci.yaml      |  92 ++++++++
+ .../bindings/phy/eswin,eic7700-sata-phy.yaml  |  36 ++++
+ drivers/phy/Kconfig                           |   1 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/eswin/Kconfig                     |  14 ++
+ drivers/phy/eswin/Makefile                    |   2 +
+ drivers/phy/eswin/phy-eic7700-sata.c          | 197 ++++++++++++++++++
+ 7 files changed, 343 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
+ create mode 100644 drivers/phy/eswin/Kconfig
+ create mode 100644 drivers/phy/eswin/Makefile
+ create mode 100644 drivers/phy/eswin/phy-eic7700-sata.c
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.25.1
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKSAWQAKCRAnX84Zoj2+
-dhA2AYDTGUPXjz2H7WiASyErvNCLeuaxLXCa7Wx66jEggdCDb0pq2kPxc01R6yvv
-0YVIvSoBf3X67fAaK0eiAfBdd+jIsdplBNF+HcOHZp8Rq6mmtG7WTHeIIVqcRbK8
-mLJO7cSOdA==
-=eq2b
------END PGP SIGNATURE-----
-
---htlwy25bloclwdxh--
 
