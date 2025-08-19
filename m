@@ -1,193 +1,346 @@
-Return-Path: <linux-kernel+bounces-775187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E282CB2BC4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:56:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAB9B2BC52
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA97188CB22
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:57:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 705717B3AFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE02311591;
-	Tue, 19 Aug 2025 08:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C03318126;
+	Tue, 19 Aug 2025 08:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/EBz61F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cz5tXPVT"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD34286422
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E0F26C39B;
+	Tue, 19 Aug 2025 08:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755593799; cv=none; b=RwNeZCmhq3oaq2VWQl07OzzRKiTqDDsOtZY4Gh+sigwOUf6+TeWbDPKuSqLNdyPzOkt/mdC7ItvCUBD/9Vg0hnFBpEPLCpK15vviE/sqZZOj7ZDX02BU37/bKL/Q4pMdDPf3n9M+Lvt7BzhjkuTjvh/z0v40sazZKt0O/K1THuU=
+	t=1755593960; cv=none; b=LQTS54KhjX8F6jzHkrlMxnPPp7gxrjhu3CasY7jgyAu44rkVoWq6xlzBHNhIr8O41AehLLSH3bOpEOkUbPFZ2jQ/DdxYEVkhf80TfWC/rT1qA5W0efdkzoQcnfzBe1PbMt7C3teA2CcyVngfG9dyEL9jeVs2ByfxzTrbPHMyLDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755593799; c=relaxed/simple;
-	bh=+9+nYZEEg+Neh/L38A5bN1p9F4RyH1s/bG69HtLDK6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWrsB4X3w+thnm4eQc9rASEla1NjK4SpaTDVMjuGlHgYmRjOGGYqKlObW2TRNukcAbVWhCda/pPV1goF3jh2wpPPg26B0Krs5dxpnog0GSMeyK+7Cvr9HHPtDzneDL6/RO0BTtjPU5a5us1stedEPWnGQOYNdQEo/yb9XzC30VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/EBz61F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755593797;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ibUK4q/Rvy3c7fBEbcTRGpKubTCINpqdPqllT/qlSY=;
-	b=J/EBz61FtuILNCyjEQcdn+qDf9tj+MJNqPa6XkymZetA4m61FWYTC0OtYsfXJhMIawful5
-	29DeiPaOJzThHwm4gTMCLHuSnynzrTDvXHTBZjPazxNGoe2scMN26FxkC5V7YbG9pG+eLT
-	Fb6DDwHQVVCz8IYLumZbKMZ+yC/Eejo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-1ws7qeZ_Mk-k-aFR6OJIpA-1; Tue,
- 19 Aug 2025 04:56:33 -0400
-X-MC-Unique: 1ws7qeZ_Mk-k-aFR6OJIpA-1
-X-Mimecast-MFC-AGG-ID: 1ws7qeZ_Mk-k-aFR6OJIpA_1755593791
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB162180048E;
-	Tue, 19 Aug 2025 08:56:31 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.239])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C2291800280;
-	Tue, 19 Aug 2025 08:56:29 +0000 (UTC)
-Date: Tue, 19 Aug 2025 16:56:25 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/8] mm/vmalloc: Defer freeing partly initialized
- vm_struct
-Message-ID: <aKQ8OY04a0ACqZ2O@MiWiFi-R3L-srv>
-References: <20250807075810.358714-1-urezki@gmail.com>
- <20250807075810.358714-7-urezki@gmail.com>
- <aKKqOzepmIkOJi3i@MiWiFi-R3L-srv>
- <aKMkgbZqOqyGVF1C@pc636>
+	s=arc-20240116; t=1755593960; c=relaxed/simple;
+	bh=chAu0GrhkcxCxA1sjWn/UMxVrM7ztLgeRUboRQUR8tA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QAAHu3moappjOwkxSRxchLfTFP246/7x2w/H2jZjGQO86z+9kC26F3G6YS7eMvIe/r3WQzOzzjUkCjTEVlnlRKmkWpoCDcugC6lEieuiKzo8VeN6P8ALe6MrCJaxLqClFMNa9qpjPd+PEGz8990WSTGHNdHFYGdA2OgbmzCoRLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cz5tXPVT; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b0c52f3so24506185e9.3;
+        Tue, 19 Aug 2025 01:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755593956; x=1756198756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXjafq9CYDnqKVKuVRURPdCwd6IUn/LDjZM2NDTFeLo=;
+        b=Cz5tXPVTW0mrTb1gQXRJkTZYzQBUFTfb/ZP2i56INBtTigKxfFLKheFZ6oPtaYC3wu
+         dijNPobhnZx2dyq0tpbLUjF0UQNEG3W4wYduoryfoUgqz8NtxGOuTz774lyYJU842WkF
+         SolHOt1cusxgfHBDF3Ku1J26JJiZxvmoQmtF674XJEBGxCnR1yAhqqBM0f46aTA+cPz4
+         rx/gBnt3tolR1WFXQaPCMls3SMj9Cz6bGK12lKnT98RLCRml6PEMIHaDt9XfcKcVscvX
+         qiitIHuT4KjG19V9I0Dd7joAx56HXqBw1n/gtpcOoj0H9LqploG0xfsqG8bC4oMlMw8G
+         m7zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755593956; x=1756198756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gXjafq9CYDnqKVKuVRURPdCwd6IUn/LDjZM2NDTFeLo=;
+        b=qiXF7Nn+mblMTNi6nmFnZLon98phG68PzrDntmxurjZZ6/1PCEfUrJ3aT2IrcfdBoD
+         A2Bw060ZOLfYgFwJnDBorxpSutZSo4WXsJim8brnm6ErVVzubG6gatntp0UIFEM6qbX7
+         Z4wfsf/70NkA6nL+KuIjnV7PRIrAQi8QV1hZKWeDyuh5yrxbhXAeKzdxBPcWOmoyRmN0
+         wRJme8RIARM05wIaPCR5pRhZ2i4N6Ui4g/rN7bW0k4lST+fLiJ4tof/SqXiYqhmZ/Blp
+         oJzEipCJD6mB4+paOCXpJy8KFXXGzD+3JKp3YDqQAHtoB4ErJ8yYcYavey7wTDsU7w3V
+         wy2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVITXlAyYsAzJHoz07A00euzfh14nSiGmyzXlK6ACpfDxys6QYVL8ZVO5Iq5v4mMHYaKPlJb4jAUIIU6ag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsFD+ZKpZlqSA5gVfjrTwSYtes9sLkFMXUgrYMQL60vwQ/pUIS
+	SOPua3XKZO6GyaEyQ3JpTX4SIm3+ul+3pZDmHFeHmNUJSefA3bhnKBYeu8GCXA==
+X-Gm-Gg: ASbGnctk4oMnaqa+oJFMF+qIes6Y/PBqjCjhywQZ7X9snVdU4fn01o0GtAeGo0OY/nZ
+	OfWG/8SsyxvYXdvSJyAcBpTO5BHEwqSc05YOBh6MPMvAdXyUX9cAO8A0MTchXnpnnJ7/xZK+Xvy
+	yx6oaOk5A+BleLqaXZIwF/M5BcOiBkWSv7O+PmZOviNwy3Gfliv4QX6x/nCGEWhEMsT+P9AQdWq
+	BZQRfmprqI7dziOgVYglrKgVq1HTmR0jYb8EW7u/GE9VzUNzcwRCY5+RCDXN/B3trrkXYBAUiCt
+	h/zI5irNWLdpjITz+D6p7lqagARzlhRU94UWmBPDHaQD5ZeqT6NNy5mPy8a9OtktBtyHpa6WzVO
+	HlD5TXraAAMh+9I5mRi4alg==
+X-Google-Smtp-Source: AGHT+IE4KHn9EHm3mjx//o39RtWN+GC7s80yVecrd+nrZ/3d1NrIMw+5D4d+Rsz69I4lFrFa1/fPOA==
+X-Received: by 2002:a05:6000:178b:b0:3b7:6804:9362 with SMTP id ffacd0b85a97d-3c0ea0e9b45mr1265963f8f.26.1755593955715;
+        Tue, 19 Aug 2025 01:59:15 -0700 (PDT)
+Received: from fedora ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c166bsm2819758f8f.33.2025.08.19.01.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 01:59:15 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-crypto@vger.kernel.org,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH 1/4] crypto:x86 - Remove CONFIG_AS_GFNI
+Date: Tue, 19 Aug 2025 10:57:49 +0200
+Message-ID: <20250819085855.333380-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKMkgbZqOqyGVF1C@pc636>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-On 08/18/25 at 03:02pm, Uladzislau Rezki wrote:
-> On Mon, Aug 18, 2025 at 12:21:15PM +0800, Baoquan He wrote:
-> > On 08/07/25 at 09:58am, Uladzislau Rezki (Sony) wrote:
-> > > __vmalloc_area_node() may call free_vmap_area() or vfree() on
-> > > error paths, both of which can sleep. This becomes problematic
-> > > if the function is invoked from an atomic context, such as when
-> > > GFP_ATOMIC or GFP_NOWAIT is passed via gfp_mask.
-> > > 
-> > > To fix this, unify error paths and defer the cleanup of partly
-> > > initialized vm_struct objects to a workqueue. This ensures that
-> > > freeing happens in a process context and avoids invalid sleeps
-> > > in atomic regions.
-> > > 
-> > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > ---
-> > >  include/linux/vmalloc.h |  6 +++++-
-> > >  mm/vmalloc.c            | 34 +++++++++++++++++++++++++++++++---
-> > >  2 files changed, 36 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-> > > index fdc9aeb74a44..b1425fae8cbf 100644
-> > > --- a/include/linux/vmalloc.h
-> > > +++ b/include/linux/vmalloc.h
-> > > @@ -50,7 +50,11 @@ struct iov_iter;		/* in uio.h */
-> > >  #endif
-> > >  
-> > >  struct vm_struct {
-> > > -	struct vm_struct	*next;
-> > > +	union {
-> > > +		struct vm_struct *next;	  /* Early registration of vm_areas. */
-> > > +		struct llist_node llnode; /* Asynchronous freeing on error paths. */
-> > > +	};
-> > > +
-> > >  	void			*addr;
-> > >  	unsigned long		size;
-> > >  	unsigned long		flags;
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index 7f48a54ec108..2424f80d524a 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -3680,6 +3680,35 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
-> > >  	return nr_allocated;
-> > >  }
-> > >  
-> > > +static LLIST_HEAD(pending_vm_area_cleanup);
-> > > +static void cleanup_vm_area_work(struct work_struct *work)
-> > > +{
-> > > +	struct vm_struct *area, *tmp;
-> > > +	struct llist_node *head;
-> > > +
-> > > +	head = llist_del_all(&pending_vm_area_cleanup);
-> > > +	if (!head)
-> > > +		return;
-> > > +
-> > > +	llist_for_each_entry_safe(area, tmp, head, llnode) {
-> > > +		if (!area->pages)
-> > > +			free_vm_area(area);
-> > > +		else
-> > > +			vfree(area->addr);
-> > > +	}
-> > > +}
-> > > +
-> > > +/*
-> > > + * Helper for __vmalloc_area_node() to defer cleanup
-> > > + * of partially initialized vm_struct in error paths.
-> > > + */
-> > > +static DECLARE_WORK(cleanup_vm_area, cleanup_vm_area_work);
-> > > +static void defer_vm_area_cleanup(struct vm_struct *area)
-> > > +{
-> > > +	if (llist_add(&area->llnode, &pending_vm_area_cleanup))
-> > > +		schedule_work(&cleanup_vm_area);
-> > > +}
-> > 
-> > Wondering why here we need call schudule_work() when
-> > pending_vm_area_cleanup was empty before adding new entry. Shouldn't
-> > it be as below to schedule the job? Not sure if I miss anything.
-> > 
-> > 	if (!llist_add(&area->llnode, &pending_vm_area_cleanup))
-> > 		schedule_work(&cleanup_vm_area);
-> > 
-> > =====
-> > /**
-> >  * llist_add - add a new entry
-> >  * @new:        new entry to be added
-> >  * @head:       the head for your lock-less list
-> >  *
-> >  * Returns true if the list was empty prior to adding this entry.
-> >  */
-> > static inline bool llist_add(struct llist_node *new, struct llist_head *head)
-> > {
-> >         return llist_add_batch(new, new, head);
-> > }
-> > =====
-> > 
-> But then you will not schedule. If the list is empty, we add one element
-> llist_add() returns 1, but your condition expects 0.
-> 
-> How it works:
-> 
-> If someone keeps adding to the llist and it is not empty we should not
-> trigger a new work, because a current work is in flight(it will cover new comers),
-> i.e. it has been scheduled but it has not yet completed llist_del_all() on
-> the head.
-> 
-> Once it is done, a new comer will trigger a work again only if it sees NULL,
-> i.e. when the list is empty.
+Current minimum required version of binutils is 2.30,
+which supports GFNI instruction mnemonics.
 
-Fair enough. I thought it's a deferring work, in fact it's aiming to put the
-error handling in a workqueue, but not the current atomic context.
-Thanks for the explanation.
+Remove check for assembler support of GFNI instructions
+and all relevant macros for conditional compilation.
+
+No functional change intended.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/Kconfig.assembler               |  5 -----
+ arch/x86/crypto/Kconfig                  |  2 +-
+ arch/x86/crypto/aria-aesni-avx-asm_64.S  | 10 ----------
+ arch/x86/crypto/aria-aesni-avx2-asm_64.S | 10 +---------
+ arch/x86/crypto/aria_aesni_avx2_glue.c   |  4 +---
+ arch/x86/crypto/aria_aesni_avx_glue.c    |  4 +---
+ 6 files changed, 4 insertions(+), 31 deletions(-)
+
+diff --git a/arch/x86/Kconfig.assembler b/arch/x86/Kconfig.assembler
+index c827f694fb72..6b95be002465 100644
+--- a/arch/x86/Kconfig.assembler
++++ b/arch/x86/Kconfig.assembler
+@@ -6,11 +6,6 @@ config AS_AVX512
+ 	help
+ 	  Supported by binutils >= 2.25 and LLVM integrated assembler
+ 
+-config AS_GFNI
+-	def_bool $(as-instr,vgf2p8mulb %xmm0$(comma)%xmm1$(comma)%xmm2)
+-	help
+-	  Supported by binutils >= 2.30 and LLVM integrated assembler
+-
+ config AS_VAES
+ 	def_bool $(as-instr,vaesenc %ymm0$(comma)%ymm1$(comma)%ymm2)
+ 	help
+diff --git a/arch/x86/crypto/Kconfig b/arch/x86/crypto/Kconfig
+index 56cfdc79e2c6..e35f4cd7071d 100644
+--- a/arch/x86/crypto/Kconfig
++++ b/arch/x86/crypto/Kconfig
+@@ -319,7 +319,7 @@ config CRYPTO_ARIA_AESNI_AVX2_X86_64
+ 
+ config CRYPTO_ARIA_GFNI_AVX512_X86_64
+ 	tristate "Ciphers: ARIA with modes: ECB, CTR (AVX512/GFNI)"
+-	depends on 64BIT && AS_GFNI
++	depends on 64BIT
+ 	select CRYPTO_SKCIPHER
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_ARIA
+diff --git a/arch/x86/crypto/aria-aesni-avx-asm_64.S b/arch/x86/crypto/aria-aesni-avx-asm_64.S
+index 9556dacd9841..932fb17308e7 100644
+--- a/arch/x86/crypto/aria-aesni-avx-asm_64.S
++++ b/arch/x86/crypto/aria-aesni-avx-asm_64.S
+@@ -295,7 +295,6 @@
+ 	vpshufb t1, t0, t2;				\
+ 	vpxor t2, x7, x7;
+ 
+-#ifdef CONFIG_AS_GFNI
+ #define aria_sbox_8way_gfni(x0, x1, x2, x3,		\
+ 			    x4, x5, x6, x7,		\
+ 			    t0, t1, t2, t3,		\
+@@ -318,8 +317,6 @@
+ 	vgf2p8affineinvqb $0, t2, x3, x3;		\
+ 	vgf2p8affineinvqb $0, t2, x7, x7
+ 
+-#endif /* CONFIG_AS_GFNI */
+-
+ #define aria_sbox_8way(x0, x1, x2, x3,            	\
+ 		       x4, x5, x6, x7,			\
+ 		       t0, t1, t2, t3,			\
+@@ -561,7 +558,6 @@
+ 			     y4, y5, y6, y7,		\
+ 			     mem_tmp, 8);
+ 
+-#ifdef CONFIG_AS_GFNI
+ #define aria_fe_gfni(x0, x1, x2, x3,			\
+ 		     x4, x5, x6, x7,			\
+ 		     y0, y1, y2, y3,			\
+@@ -719,8 +715,6 @@
+ 			     y4, y5, y6, y7,		\
+ 			     mem_tmp, 8);
+ 
+-#endif /* CONFIG_AS_GFNI */
+-
+ /* NB: section is mergeable, all elements must be aligned 16-byte blocks */
+ .section	.rodata.cst16, "aM", @progbits, 16
+ .align 16
+@@ -772,7 +766,6 @@
+ .Ltf_hi__x2__and__fwd_aff:
+ 	.octa 0x3F893781E95FE1576CDA64D2BA0CB204
+ 
+-#ifdef CONFIG_AS_GFNI
+ /* AES affine: */
+ #define tf_aff_const BV8(1, 1, 0, 0, 0, 1, 1, 0)
+ .Ltf_aff_bitmatrix:
+@@ -871,7 +864,6 @@
+ 		    BV8(0, 0, 0, 0, 0, 1, 0, 0),
+ 		    BV8(0, 0, 0, 0, 0, 0, 1, 0),
+ 		    BV8(0, 0, 0, 0, 0, 0, 0, 1))
+-#endif /* CONFIG_AS_GFNI */
+ 
+ /* 4-bit mask */
+ .section	.rodata.cst4.L0f0f0f0f, "aM", @progbits, 4
+@@ -1140,7 +1132,6 @@ SYM_TYPED_FUNC_START(aria_aesni_avx_ctr_crypt_16way)
+ 	RET;
+ SYM_FUNC_END(aria_aesni_avx_ctr_crypt_16way)
+ 
+-#ifdef CONFIG_AS_GFNI
+ SYM_FUNC_START_LOCAL(__aria_aesni_avx_gfni_crypt_16way)
+ 	/* input:
+ 	*      %r9: rk
+@@ -1359,4 +1350,3 @@ SYM_TYPED_FUNC_START(aria_aesni_avx_gfni_ctr_crypt_16way)
+ 	FRAME_END
+ 	RET;
+ SYM_FUNC_END(aria_aesni_avx_gfni_ctr_crypt_16way)
+-#endif /* CONFIG_AS_GFNI */
+diff --git a/arch/x86/crypto/aria-aesni-avx2-asm_64.S b/arch/x86/crypto/aria-aesni-avx2-asm_64.S
+index c60fa2980630..ed53d4f46bd7 100644
+--- a/arch/x86/crypto/aria-aesni-avx2-asm_64.S
++++ b/arch/x86/crypto/aria-aesni-avx2-asm_64.S
+@@ -302,7 +302,6 @@
+ 	vpbroadcastb ((round * 16) + idx + 4)(rk), t0;	\
+ 	vpxor t0, x7, x7;
+ 
+-#ifdef CONFIG_AS_GFNI
+ #define aria_sbox_8way_gfni(x0, x1, x2, x3,		\
+ 			    x4, x5, x6, x7,		\
+ 			    t0, t1, t2, t3,		\
+@@ -325,7 +324,6 @@
+ 	vgf2p8affineinvqb $0, t2, x3, x3;		\
+ 	vgf2p8affineinvqb $0, t2, x7, x7
+ 
+-#endif /* CONFIG_AS_GFNI */
+ #define aria_sbox_8way(x0, x1, x2, x3,			\
+ 		       x4, x5, x6, x7,			\
+ 		       t0, t1, t2, t3,			\
+@@ -598,7 +596,7 @@
+ 	aria_load_state_8way(y0, y1, y2, y3,		\
+ 			     y4, y5, y6, y7,		\
+ 			     mem_tmp, 8);
+-#ifdef CONFIG_AS_GFNI
++
+ #define aria_fe_gfni(x0, x1, x2, x3,			\
+ 		     x4, x5, x6, x7,			\
+ 		     y0, y1, y2, y3,			\
+@@ -752,7 +750,6 @@
+ 	aria_load_state_8way(y0, y1, y2, y3,		\
+ 			     y4, y5, y6, y7,		\
+ 			     mem_tmp, 8);
+-#endif /* CONFIG_AS_GFNI */
+ 
+ .section        .rodata.cst32.shufb_16x16b, "aM", @progbits, 32
+ .align 32
+@@ -806,7 +803,6 @@
+ .Ltf_hi__x2__and__fwd_aff:
+ 	.octa 0x3F893781E95FE1576CDA64D2BA0CB204
+ 
+-#ifdef CONFIG_AS_GFNI
+ .section	.rodata.cst8, "aM", @progbits, 8
+ .align 8
+ /* AES affine: */
+@@ -868,8 +864,6 @@
+ 		    BV8(0, 0, 0, 0, 0, 0, 1, 0),
+ 		    BV8(0, 0, 0, 0, 0, 0, 0, 1))
+ 
+-#endif /* CONFIG_AS_GFNI */
+-
+ /* 4-bit mask */
+ .section	.rodata.cst4.L0f0f0f0f, "aM", @progbits, 4
+ .align 4
+@@ -1219,7 +1213,6 @@ SYM_TYPED_FUNC_START(aria_aesni_avx2_ctr_crypt_32way)
+ 	RET;
+ SYM_FUNC_END(aria_aesni_avx2_ctr_crypt_32way)
+ 
+-#ifdef CONFIG_AS_GFNI
+ SYM_FUNC_START_LOCAL(__aria_aesni_avx2_gfni_crypt_32way)
+ 	/* input:
+ 	 *      %r9: rk
+@@ -1438,4 +1431,3 @@ SYM_TYPED_FUNC_START(aria_aesni_avx2_gfni_ctr_crypt_32way)
+ 	FRAME_END
+ 	RET;
+ SYM_FUNC_END(aria_aesni_avx2_gfni_ctr_crypt_32way)
+-#endif /* CONFIG_AS_GFNI */
+diff --git a/arch/x86/crypto/aria_aesni_avx2_glue.c b/arch/x86/crypto/aria_aesni_avx2_glue.c
+index 007b250f774c..1487a49bfbac 100644
+--- a/arch/x86/crypto/aria_aesni_avx2_glue.c
++++ b/arch/x86/crypto/aria_aesni_avx2_glue.c
+@@ -26,7 +26,6 @@ asmlinkage void aria_aesni_avx2_ctr_crypt_32way(const void *ctx, u8 *dst,
+ 						const u8 *src,
+ 						u8 *keystream, u8 *iv);
+ EXPORT_SYMBOL_GPL(aria_aesni_avx2_ctr_crypt_32way);
+-#ifdef CONFIG_AS_GFNI
+ asmlinkage void aria_aesni_avx2_gfni_encrypt_32way(const void *ctx, u8 *dst,
+ 						   const u8 *src);
+ EXPORT_SYMBOL_GPL(aria_aesni_avx2_gfni_encrypt_32way);
+@@ -37,7 +36,6 @@ asmlinkage void aria_aesni_avx2_gfni_ctr_crypt_32way(const void *ctx, u8 *dst,
+ 						     const u8 *src,
+ 						     u8 *keystream, u8 *iv);
+ EXPORT_SYMBOL_GPL(aria_aesni_avx2_gfni_ctr_crypt_32way);
+-#endif /* CONFIG_AS_GFNI */
+ 
+ static struct aria_avx_ops aria_ops;
+ 
+@@ -213,7 +211,7 @@ static int __init aria_avx2_init(void)
+ 		return -ENODEV;
+ 	}
+ 
+-	if (boot_cpu_has(X86_FEATURE_GFNI) && IS_ENABLED(CONFIG_AS_GFNI)) {
++	if (boot_cpu_has(X86_FEATURE_GFNI)) {
+ 		aria_ops.aria_encrypt_16way = aria_aesni_avx_gfni_encrypt_16way;
+ 		aria_ops.aria_decrypt_16way = aria_aesni_avx_gfni_decrypt_16way;
+ 		aria_ops.aria_ctr_crypt_16way = aria_aesni_avx_gfni_ctr_crypt_16way;
+diff --git a/arch/x86/crypto/aria_aesni_avx_glue.c b/arch/x86/crypto/aria_aesni_avx_glue.c
+index 4c88ef4eba82..e4e3d78915a5 100644
+--- a/arch/x86/crypto/aria_aesni_avx_glue.c
++++ b/arch/x86/crypto/aria_aesni_avx_glue.c
+@@ -26,7 +26,6 @@ asmlinkage void aria_aesni_avx_ctr_crypt_16way(const void *ctx, u8 *dst,
+ 					       const u8 *src,
+ 					       u8 *keystream, u8 *iv);
+ EXPORT_SYMBOL_GPL(aria_aesni_avx_ctr_crypt_16way);
+-#ifdef CONFIG_AS_GFNI
+ asmlinkage void aria_aesni_avx_gfni_encrypt_16way(const void *ctx, u8 *dst,
+ 						  const u8 *src);
+ EXPORT_SYMBOL_GPL(aria_aesni_avx_gfni_encrypt_16way);
+@@ -37,7 +36,6 @@ asmlinkage void aria_aesni_avx_gfni_ctr_crypt_16way(const void *ctx, u8 *dst,
+ 						    const u8 *src,
+ 						    u8 *keystream, u8 *iv);
+ EXPORT_SYMBOL_GPL(aria_aesni_avx_gfni_ctr_crypt_16way);
+-#endif /* CONFIG_AS_GFNI */
+ 
+ static struct aria_avx_ops aria_ops;
+ 
+@@ -199,7 +197,7 @@ static int __init aria_avx_init(void)
+ 		return -ENODEV;
+ 	}
+ 
+-	if (boot_cpu_has(X86_FEATURE_GFNI) && IS_ENABLED(CONFIG_AS_GFNI)) {
++	if (boot_cpu_has(X86_FEATURE_GFNI)) {
+ 		aria_ops.aria_encrypt_16way = aria_aesni_avx_gfni_encrypt_16way;
+ 		aria_ops.aria_decrypt_16way = aria_aesni_avx_gfni_decrypt_16way;
+ 		aria_ops.aria_ctr_crypt_16way = aria_aesni_avx_gfni_ctr_crypt_16way;
+-- 
+2.50.1
 
 
