@@ -1,127 +1,157 @@
-Return-Path: <linux-kernel+bounces-776084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF9CB2C856
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:21:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0519B2C85F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF60C722EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB73168862
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6522BD01B;
-	Tue, 19 Aug 2025 15:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DCA285058;
+	Tue, 19 Aug 2025 15:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="OHOjyYnP"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ju0NDliL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01158284883
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340A5255F5E;
+	Tue, 19 Aug 2025 15:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755616849; cv=none; b=uyIMzT1mpnEeqqomOOxAStrtsiKYeJeWGqDBhcdL5aZvLoz/UHX0aHLlCVN9ihOxS4mdE/uRkzJcLZboXr8XgE/5p4p54RfajedahjTIaaLaWsOPrVEyVkQHiHVyOcdJ1dOfezY+vTtM/QlIBkRzKE6hOwd8GyIJneoHyWlhuxU=
+	t=1755616945; cv=none; b=vD25yHz7Dv+CIkZhnX+iWg9RGg08kpz8m1tlcxITrk1WqGHoaTL5ULaNlwzH6ZiqVVSbp+kr2Aa03INfgy2Xprk0PtQ7wRHUapJbMFAexblNcoGWge4LLTegFAArvI79RTgMzi+pz0cd76sdgbpu7jkAwxbZV8uJPVgqve2/aOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755616849; c=relaxed/simple;
-	bh=HomK9oR9q6PgZ6KTjkrL0ZAF4ixtQM3rr4sUa8Fd5OA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nn2RB8aisErmO5Tf7rvfKk3VYMlF0uGltJioWWUbeednmFsf3USSd643Suq5/0w/0xuHG8bru2CEHbuz4YXXkzJkHD3iABPdjCJGjxMLyvWbzbLaUIrh2b0Vkj4bYYHJzAPCu/pTOnWE8nRHkZL+9vRHZy2i42GB+iETw+3mKig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=OHOjyYnP; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32326793a85so4223607a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:20:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1755616847; x=1756221647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A/CvHxpYU6aT1JADHVD5nQ98mr1UgBNDG9QHGX5cLNQ=;
-        b=OHOjyYnP7YYoC+synqXCNnGbymEKbqsj2St7ImKmsPYoJLWXpioWCZPU0nsBhQB9Wr
-         Q5uRk2Wgq/Oht8CWltecQ6B7dbd0LWa3LKdqvYOlNfW7jRbsxnflhKFeN/wQqVV9cfBf
-         Y0RBPo1siNrOtV8dFlG29tbWiDbn2xorHBy53mrRYyufvlfWJV2UZvcxOeMWWGXSBdGc
-         1ao0bYK1I2ZvB+Juh2SWujynTmwWxqakfKEvxGQRuV+jnwsQIK5+zWZBXtcxiZHJRFBq
-         QLAY6o1oVbzEZofvTnlVBIw0TP4IAL2FpG7uAbR8ZUxT1tdwR2Zldl39hqpLGoLiz+qQ
-         j45g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755616847; x=1756221647;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A/CvHxpYU6aT1JADHVD5nQ98mr1UgBNDG9QHGX5cLNQ=;
-        b=fkbD8a62W7mIaUqgOONy20Kelgu17UfSuZ9qyw3IXDaMp4XZm2KAQt1iZMwH6PqRo+
-         plD7wW+YFqOguLZyjpLOPgyEN1WVf42ARsR9wjY0/sXfKdAQON0YBBscTUW7VHdtgJo4
-         bvJ+aejJ/j2LjLATVVySfzehKTa2lr6MMXG5xavHyd3JU1BVBzoWGUJydmMSMlU+PtZo
-         uvk5oVT4ADu5RlhLCKIr2b0tNGUmgfrIlZNMnAi9RaMSHTMyxsdLBJHZCUhQabOeqIWQ
-         e2Qdqlc8xsFWDsrX3cmnqgeInA9hC1rBLpcpynRtZsyAKOifMBGzeeO2W9AzkopbXQzF
-         uSkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPs1Nc8oUA499hvKQ/+V7qEIUCqKhYXKAjsGk7sP2aLen6vGxeBwP7Z6sYRch6XhgpjnLCXI8MFxtVW8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1PvOjiGIVfBukUoTMTieks+8P5KEM850NKZBqPybtEAaUgf4r
-	9wsOy2safn0TGBFOenESgBVZDtiZE0W3qKve9JpSC3rWnF86hgH65ABLoRJQQ3yv014=
-X-Gm-Gg: ASbGncsQIw7ITCV1hxBCimMO3zSS1azck68kpPp/69Dmo2AG1ZRbZkfFaHm4/KSgEZ2
-	BvZxVlCl6OXlS2oWOxzHO8rhEV8VRlXMgZbvj8rfcPeQCmOgCj6OQSDQwiZKW9MEdXarGa5fLYS
-	kvV65arsoKYCRhfbhUuAtnzhPOTAMJRKtTod/cz20F2sEYJbwdJhCu1Vx1f55eUVAwB4RNGmVYt
-	Okv73QNo96Gl2harJ8kfzgoD0qmD0HMISjBpk02kSmjh+WTf5GG/H4mKVY5MAh6QwcHA/JvCMaV
-	kXfX4whb9DdxWjVc1BoOFMy7iG5OIadL2I8Tnk2F5qadmw+QuStvaEK0n4aXEkpEb8Ud0NTaNKG
-	UEQQLHjF3vrrGJzxOI8qYuEgYtEO2lpjtFfO7u/5xhn47eCwW
-X-Google-Smtp-Source: AGHT+IENiUhPFrfHidhITb1KfiGNdBaldsZlAkjMOx4cUC6/Qm5aq9ey8Ddfx+brVMdYtBBvx3KQXg==
-X-Received: by 2002:a17:90b:2fc7:b0:31c:3651:2d18 with SMTP id 98e67ed59e1d1-32476a9509dmr4224591a91.16.1755616846994;
-        Tue, 19 Aug 2025 08:20:46 -0700 (PDT)
-Received: from localhost.localdomain ([193.246.161.124])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d546ce3sm2771227b3a.103.2025.08.19.08.20.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 08:20:46 -0700 (PDT)
-From: Lei Chen <lei.chen@smartx.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] KVM: x86: remove comment about ntp correction sync for
-Date: Tue, 19 Aug 2025 23:20:27 +0800
-Message-ID: <20250819152027.1687487-4-lei.chen@smartx.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20250819152027.1687487-1-lei.chen@smartx.com>
-References: <20250819152027.1687487-1-lei.chen@smartx.com>
+	s=arc-20240116; t=1755616945; c=relaxed/simple;
+	bh=Rz8fa5qMLAhdiq+ZkBx9/eGxPhzWcb2M5/+N2MOWSAs=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=GqIzogvTlczFwENPkT+Sidnp9S46ZX9/puWlS3qbJ2Fe1a7UA95Nf8bo7/DxT44PXsx16jFBYDJ4WD8OvE0HHNTum511W1jGtXxC1wOPYVTSZ5K5ytzAP63fYkFJuPH6pqp4jsETTUb/hLZeG2UlPiOGZprfRbPAYOxWZtZNh94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ju0NDliL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901CEC4CEF1;
+	Tue, 19 Aug 2025 15:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755616944;
+	bh=Rz8fa5qMLAhdiq+ZkBx9/eGxPhzWcb2M5/+N2MOWSAs=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ju0NDliLS0nWdi/es0O77LLC44TZ9ZJKgJqV+IOpgC7jMTUdAt1Qt5Q7/ZUu8P/1s
+	 tE8cGEe5EeDiWx/C+2ndbQUqqezSUHqIylbLiMlUWH6IA2XZhIHQuOWHDOwGkSm0Q3
+	 iOSC/pcNasGRoV4NoCIkymxX0AYjCqJtIrLcmIR1WHel2L177AJsM68+8pnFOHwJBz
+	 KF7JI4mfd7e9kxeL7QcAdkkXrDPFeTJ9sGlO0eQGSnMYVs4siWDPHAPP/NHXkwR9bB
+	 s//05ZNWpo04Fw5K9j9KS+J/SaD+Tb5MMUG1oqj9tKMwjFI9xaDVPrkMdxVTgwFsp8
+	 7r7eqxhvz32AA==
+Date: Tue, 19 Aug 2025 10:22:23 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Will Deacon <will@kernel.org>, 
+ kernel-team@android.com, Catalin Marinas <catalin.marinas@arm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, 
+ willmcvicker@google.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Peter Griffin <peter.griffin@linaro.org>, linux-kernel@vger.kernel.org
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
+References: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
+Message-Id: <175561687189.581847.11419028447160198230.robh@kernel.org>
+Subject: Re: [PATCH 0/3] arm64: dts: exynos: gs101: add cpufreq support
 
-Since vcpu local clock is no longer affected by ntp,
-remove comment about ntp correction sync for function
-kvm_gen_kvmclock_update.
 
-Signed-off-by: Lei Chen <lei.chen@smartx.com>
----
- arch/x86/kvm/x86.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On Tue, 19 Aug 2025 12:10:19 +0000, Tudor Ambarus wrote:
+> Define the CPU clocks and OPPs.
+> 
+> Bindings for the "google,gs101-acpm-dvfs-clocks" compatible are sent at:
+> https://lore.kernel.org/linux-samsung-soc/20250819-acpm-clk-v1-0-6bbd97474671@linaro.org/T/#me3cbe2a97485d19eaf505ad23202f20a21305dd8
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+> Tudor Ambarus (3):
+>       arm64: dts: exynos: gs101: add google,gs101-acpm-dvfs-clocks
+>       arm64: dts: exynos: gs101: add CPU clocks
+>       arm64: dts: exynos: gs101: add OPPs
+> 
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 288 +++++++++++++++++++++++++++
+>  1 file changed, 288 insertions(+)
+> ---
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> change-id: 20250819-acpm-dvfs-dt-06bc794bdccd
+> 
+> Best regards,
+> --
+> Tudor Ambarus <tudor.ambarus@linaro.org>
+> 
+> 
+> 
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d526e9e285f1..f85611f59218 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -3399,9 +3399,7 @@ uint64_t kvm_get_wall_clock_epoch(struct kvm *kvm)
- /*
-  * kvmclock updates which are isolated to a given vcpu, such as
-  * vcpu->cpu migration, should not allow system_timestamp from
-- * the rest of the vcpus to remain static. Otherwise ntp frequency
-- * correction applies to one vcpu's system_timestamp but not
-- * the others.
-+ * the rest of the vcpus to remain static.
-  *
-  * So in those cases, request a kvmclock update for all vcpus.
-  * The worst case for a remote vcpu to update its kvmclock
--- 
-2.44.0
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org:
+
+Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.32-33 Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.32-33 syntax errorsyntax error
+FATAL ERROR: FATAL ERROR: Unable to parse input tree
+Unable to parse input tree
+make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-raven.dtb] Error 1
+make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb] Error 1
+make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
+make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
+make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
+make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-raven.dtb] Error 2
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-oriole.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos2200-g0s.dtb' not remade because of errors.
+make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-on7xelte.dtb' not remade because of errors.
+make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-a2corelte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-j6lte.dtb' not remade because of errors.
+
+
+
+
 
 
