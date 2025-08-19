@@ -1,120 +1,91 @@
-Return-Path: <linux-kernel+bounces-775923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A7DB2C675
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:03:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E81B2C66A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC09724086
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:59:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E19667AF19F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B911342CA6;
-	Tue, 19 Aug 2025 13:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1262343208;
+	Tue, 19 Aug 2025 13:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="H2RtdW4G"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ar+pJ5rp"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770E257AC7
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C5B32A3F4
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611949; cv=none; b=Od8uIMKRHJiDE4+QA0cWGdIpYKEU1b+6iryqALoFqm4UqMjzYnIoR2mZKNrzgfNhnmnAXmJAaxUztXa1iMPchLfaDxpbKA3yENg0ofiAjMKHKYKDQKqptmvIPRJzL+j+NrHiqHiaBJwnahS+1fgpzjvgQa/g/5Mfp64psz7yVGw=
+	t=1755611959; cv=none; b=CNEQ44FIWQ2eXkxZ4b10g9iRaU+KHGwa/c/sYjeUW1JqOzS2t7eyFT3yIVOPDUwlUGJ4j7cedVU51PlSkOMzIxM3+cMod+WU8gOZq0TrHqsUhDZmyy6WYQB4t1hMKxqHtPa4XSpAd2AnjnS0eqbSYcSYUoAB7HsaNLAd9+OdvjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611949; c=relaxed/simple;
-	bh=e7m49b60v1bM9iFQgpANqdyWxfp5USjhGn0iqaiCmwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J/EKIs3Vr7a0sry5uQdGU/XzEnOl87BSNN6JWwn1bE1ZJ3HIP4TGJ/fK3H25NdTDR6GYyIjxrek3Rd7dPGRSOv8K7WKs/WWrTa08IJFqL95Ki9W05oeZflTSs/Mk1GAyZKDYZlN5PRf/u4eyUhdr4j0pvSFnsVmq5wQgqDd4lyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=H2RtdW4G; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1755611945;
-	bh=e7m49b60v1bM9iFQgpANqdyWxfp5USjhGn0iqaiCmwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H2RtdW4G4WD3MDUsmCfSe/j60L1G952CpSrJUxnfPnJfr2CIAmPPtZUAM+J8MPhdU
-	 8v+XXtKuR+RkQCK0ch077KfPGymu/uCDvTN/Xuy/HDuXY0YalwiKloCY+g+DDRBza9
-	 Ej3cIembtvU4o1wHy326TSALutCvpr92InoulRW8=
-Date: Tue, 19 Aug 2025 15:59:04 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] sysfs: attribute_group: allow registration of
- const attribute
-Message-ID: <daafd875-d3bc-4df7-a035-5a7dccdaaafb@t-8ch.de>
-References: <20250811-sysfs-const-attr-prep-v3-0-0d973ff46afc@weissschuh.net>
- <20250811-sysfs-const-attr-prep-v3-1-0d973ff46afc@weissschuh.net>
- <2025081957-refueling-anteater-4720@gregkh>
+	s=arc-20240116; t=1755611959; c=relaxed/simple;
+	bh=Szn3Y6AMPK50aULs7Wlbsj0z61OPOFi2aKHKUZhTJtI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jxm9MceRuCdkIdvRE2S6uYIbvKtVmfj3gspRH6Vgy/7tkRkv5KK9xPAaPgHH4LympPqnlGUgaQomzUgdWvhe5kihDq+1jTG+8M3S81+4LJqASokXh2ozC2PW3qJtleAqxO/RB5uuat43nx0Me3EGBVdVeGnFtL58wmLG71gb0do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ar+pJ5rp; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d4a84d76-8982-4a9d-a383-2e2d4d66550a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755611955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CeRHv9dJ0yAy5sI3HR6ZowOM/hpbkUM1vk+TTh1pOvk=;
+	b=ar+pJ5rpIlmZzzG/tk8atTNL52LbMuto6tyXaRDSIM1DF0dpkCH90AfIsAh1kgnQ+9lulm
+	qHL/Gda2Pxt/fYM7jE0TmGGIB9wH0Ds3Zdm0hnxn9sFdjmbqgFDEHGwQNVj1rhmo3/LPWN
+	7BpPySIVwhXqh39sgmH2qtLmCpoHTlQ=
+Date: Tue, 19 Aug 2025 14:59:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025081957-refueling-anteater-4720@gregkh>
+Subject: Re: [PATCH v5 2/5] net: rnpgbe: Add n500/n210 chip support
+To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+ gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+ Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+ alexanderduyck@fb.com, richardcochran@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-3-dong100@mucse.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250818112856.1446278-3-dong100@mucse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-08-19 13:22:55+0200, Greg Kroah-Hartman wrote:
-> On Mon, Aug 11, 2025 at 11:14:27AM +0200, Thomas Weißschuh wrote:
-> > To be able to constify instances of struct attribute it has to be
-> > possible to add them to struct attribute_group.
-> > The current type of the attrs member however is not compatible with that.
-> > Introduce a union that allows registration of both const and non-const
-> > attributes to enable a piecewise transition.
-> > As both union member types are compatible no logic needs to be adapted.
-> > 
-> > Technically it is now possible register a const struct
-> > attribute and receive it as mutable pointer in the callbacks.
-> > This is a soundness issue.
-> > But this same soundness issue already exists today in
-> > sysfs_create_file().
-> > Also the struct definition and callback implementation are always
-> > closely linked and are meant to be moved to const in lockstep.
-> > 
-> > Similar to commit 906c508afdca ("sysfs: attribute_group: allow registration of const bin_attribute")
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >  include/linux/sysfs.h | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-> > index f418aae4f1134f8126783d9e8eb575ba4278e927..a47092e837d9eb014894d1f7e49f0fd0f9a2e350 100644
-> > --- a/include/linux/sysfs.h
-> > +++ b/include/linux/sysfs.h
-> > @@ -105,7 +105,10 @@ struct attribute_group {
-> >  	size_t			(*bin_size)(struct kobject *,
-> >  					    const struct bin_attribute *,
-> >  					    int);
-> > -	struct attribute	**attrs;
-> > +	union {
-> > +		struct attribute	**attrs;
-> > +		const struct attribute	*const *attrs_new;
+On 18/08/2025 12:28, Dong Yibo wrote:
+> Initialize n500/n210 chip bar resource map and
+> dma, eth, mbx ... info for future use.
 > 
-> I know you will drop the "_new" prefix after a while, but "new" is
-> relative, and not very descriptive.
+[...]
 
-That is somewhat intentional to express that it is a transitional thing.
+> +struct mucse_hw {
+> +	void __iomem *hw_addr;
+> +	void __iomem *ring_msix_base;
+> +	struct pci_dev *pdev;
+> +	enum rnpgbe_hw_type hw_type;
+> +	struct mucse_dma_info dma;
+> +	struct mucse_eth_info eth;
+> +	struct mucse_mac_info mac;
+> +	struct mucse_mbx_info mbx;
+> +	u32 usecstocount;
 
-> How about "_const"?
-
-At some point the regular variant will be const too, so "_const" would
-be a bit weird.
-
-> > +	};
-> >  	union {
-> >  		const struct bin_attribute	*const *bin_attrs;
-> >  		const struct bin_attribute	*const *bin_attrs_new;
-> 
-> There is no bin_attrs_new anymore.  Finally.  sorry about that...
-
-Thanks! No worries.
-
-
-Thomas
+What is this field for? You don't use it anywhere in the patchset apart
+from initialization. Maybe it's better to introduce it once it's used?
+Together with the defines of values for this field...
 
