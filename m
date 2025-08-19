@@ -1,221 +1,118 @@
-Return-Path: <linux-kernel+bounces-775312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70598B2BDC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0728B2BDC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA3D188BBC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:44:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736FD18842C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE92731AF37;
-	Tue, 19 Aug 2025 09:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EBA311C3B;
+	Tue, 19 Aug 2025 09:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SWB82A4P"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mFCVi/vu"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A635F3112B0
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9761A3A80
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596610; cv=none; b=LRMENu89XzZOanBQcS5pEH21qqSrs//leF9Cop6lWNHeLcWXc5v+/4agVwJwkKIAjOr512YUqSTiN8yUyFG1h3dqhz+1Kt6GruCB+t7vjOnDuvRzSqRoA9O/QOcNtW0GsYKJE2YtqYiBN/CjmLaSGdGbRCuPxgwW4LT/5OY0aM0=
+	t=1755596652; cv=none; b=S1uQSHHNeU5JXXBf1FCF5/bQYxZF7Ut+0xMn5bB1pZEmOq1bNJVhw0z7+7F5E3JWDG//dxZEZAuwpanKhECExMAj4paqd6cPhZ5mRDRlG1PF4BBxN9IagEk+HOdgdDgjmbkK7cKlaFfjGTPyzSI1sP3VTBw+5KHVQWVdamOMO4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596610; c=relaxed/simple;
-	bh=g0ZQSSDWjXeANXVszXFg5R1z+7y+0W+C8DYO/dgRiQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JZL+iNSL34FXqGlMDP2JRV1qAP1rawdRgHPO/HScqGMMQZkMXkpDFCTfQV9tWBargWl8QeOiPiHOpYrzTSTPxJOXO8Coh63F881bQ+sSPMtZJMZ5ZiShdHAEFY6E03CYvxSzQ1+LdMv00mrilFK8IeMw1A6hndfpWmCTj4hE66w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SWB82A4P; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1755596652; c=relaxed/simple;
+	bh=OOZDAaZrI66ydwRO+2rFbEiHfOOLnYyWJFOFD28ZEkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rasd2u6laVnTdNd/f0SzOmlWUm+eMdZzYdAmLWqOeJ9/7MaseqB4IzBX3uEJe1LDch20MSE2cjQ42+uhSrqjQhQbQgxbSWXpsSGGI42NSL6DQuOplrhAjN66x8c/yWCV1o8J/nyi/iaoxmrdrxVCP9KN1tSuL5tZSwXc1ZUBF2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mFCVi/vu; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9e4147690so3361264f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:43:28 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce4b9c904so5729716e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:44:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596607; x=1756201407; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rRnvcJ2f2fPQ8sZ2OC8GktyRnLPTrLj3Sq7t/FTrOnE=;
-        b=SWB82A4PajiefsD9Tx7lUW/xs2sUP7FUOQ7J+U+tcUhGFjiFwQlOZcYyQ4DLoIEQnt
-         2HnLu2rrBz9Iw0sWU+ZIc/yKQ4qjlTNHNWBlUbegbBLoAez758xoH0JhCao7MTZ9S21E
-         VcLUlhAu/6CjZ7OOz4Zahu9rRhSY7vsLDyOrEf1eK/oQj6tYLp1mU0cNwIQav3XN8lyW
-         CocfNDauboAKkfWFAhS2fQ1fyQSmuaDNmdN9Ip2Rn0uak2rwb2kvl/22YUJ7bB4+QDoG
-         8wKSl8nLG8COKaUzdcLsjmPfVumsLQWMt1M3Ryhg6JbEXUwnrZ+7wdwIVuKORGs2DcoN
-         VcbQ==
+        d=linaro.org; s=google; t=1755596649; x=1756201449; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OOZDAaZrI66ydwRO+2rFbEiHfOOLnYyWJFOFD28ZEkM=;
+        b=mFCVi/vuIFYlZZ1cLIFUqyzkYGLhxDoRqcDy9cD0TsD8OZXniljtD66sn7Qc3sFS98
+         wP80kxA9himGXp9qKdYudJPJflEzZA+H/uiWdcaeatgTAdhNFOY2xfZlRNYeIbJ1WQPB
+         snMDHcqbzTiMd4lRk04WsqVS1nFYK5baWaD9frHez0OFiFJb2Am5fpdq6AKFA2WejnCa
+         8B72mPzTmEmgummURROiVbgzmOaFk/LU4Ybr0m7QtNQZ+kIgU/bvlDzqdyq3CmYnzPiP
+         jLrGk1lh++gxG0FQ+6R2DElxtJkxSwGf4vg4U+MXSMLKYhUPhYoVl2mPZG1cTAk61aQv
+         lMLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596607; x=1756201407;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rRnvcJ2f2fPQ8sZ2OC8GktyRnLPTrLj3Sq7t/FTrOnE=;
-        b=om6XBZzCiNYFRmmFPVM3suuyjZ3NRZXB50SH7fxz2Wffe8+SGFuhsRFBp9IB8rGiiH
-         nYgNgRHQI6PUJrKZJ0jJNEun+vqvDrTi39xnP/7DgaMOvWIYddMwFYoAWavnQh7EZep/
-         yzhY8f2DxpPRmw4jOVJ4LZgJgpqfL+sb5zYMBpWlXLHL94uHILmzKAKX6ycwhrFwdL1I
-         KrByPmobwrJyZ02ISQ6cqkyT5vKL8f0//dPDKNMPukE81jQid5/b+dQARalnzQsZVr7T
-         CAzgpdHDtGzuKK7ejdQycabhlQshoqfndBuRBXb9H5I1RWw7dtnmaOD36J27juPQeHxR
-         h5Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYvPBpxkLQc+tZCvBTPnbMmkc6MLChcWF+rTiIk8KOu8SrlUmxsHMeM6LayieA8cQ5+Qv+gBbJrLOE5bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6qbTNwquKmWIqsanjl3qCMlW7g/6F0mpLuyY9AsAf5bUbvKTB
-	9oTyiRBuprc8WST7Fw9zLHoXo/uE2tS7WFlgn31K12+lxl708WFmG/Uv8is8zc7KaUk=
-X-Gm-Gg: ASbGncugfcJP4tWcDTBmyogVv2AhV4lZitDMevAanQ1gmuLEVHd+0qUTjXJtK7nB4xE
-	lGQLlhCjYn7OX9dbYDVWlR/mbgtPL1FimQX60qCBnEa1o7NOsA1j8JGUDLBL9Lqimmvt2qLg59D
-	5mDw1fhzPulktT/FHxpdJsD3xL+qyGIWnSIVU0zENpArxqRooOvaoL7df1r1cNlWM/UZAT0b/NU
-	EDWYb/CQzkjymTCUcBnVAeIUzcAwgoWFm8yptl6IknkWNLJWT1P773wZADToz3YZm0ROMB+sDm+
-	6avlDn5c4U/tFZRHXZrwzJYB30xKMOYjzo/kz9q0ixm+e2I/CwWFz6SMb7TwQIS71Gc+Gkn2S4r
-	mYE8blQYu+Oq7PnY87Z5J2rjIf9zcfffPk4CQuY0IKQ+zIaEKPmRUOYa6i6BnjFr2IAmvCTK+7l
-	ra6fs2/7M=
-X-Google-Smtp-Source: AGHT+IHJcbfoHziYmKYumTTSzX3HBo05hfHJRAHATRASlvGKTD+Scv9wCOw89lV3HUAzWsOF4xrNaw==
-X-Received: by 2002:a05:6000:2909:b0:3b7:92ca:2831 with SMTP id ffacd0b85a97d-3c0e028d43amr1435457f8f.12.1755596606910;
-        Tue, 19 Aug 2025 02:43:26 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:e7a:79e6:53ed:ce35? ([2a01:e0a:3d9:2080:e7a:79e6:53ed:ce35])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b437862afsm11782925e9.2.2025.08.19.02.43.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 02:43:26 -0700 (PDT)
-Message-ID: <2d576dac-0f9d-4f04-8aef-b3df5f88c926@linaro.org>
-Date: Tue, 19 Aug 2025 11:43:24 +0200
+        d=1e100.net; s=20230601; t=1755596649; x=1756201449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OOZDAaZrI66ydwRO+2rFbEiHfOOLnYyWJFOFD28ZEkM=;
+        b=p+fSBLTZih2lsLEPNhWqjSM1qCg2v/vOfgsyx4isu73ctju+4gKnvCwXpBj2H+HnnQ
+         dJo6lpCwE8VHWD0s/LrZAqClLk1ExGHfxBFjaZzag08QDF/rhuk+4qAAx+FC/BV4k2ao
+         X+l5h5CVmdtKV53INPEuxdsl7yO1eT3GWZ+eiu0Gs1jvNhnA1F1l9cbjnj9dvw1fBbi/
+         EE0C/18uniW7Pv7f6PJpmMF7oi48zKKdBFVsNd04T+wIaSW16CJ/l5SzPvrLrIlV368M
+         IIwnSvpEI6hl7LCgXJMbWftsXAzOvUeQPoU2DeFcNn0FFvZ3ynti6zn/ZCgKShcdDql5
+         jv+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXDP0spitKljeUQCIqN0pWaqFUZM1Uu+1M3PuaQDiAO8tU+DUhiKf1BJRGWzyLVtyErwhKpsQMHSCmabuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylsmG1Uvl01jM0p96nHRNV6uTZuZgBPwChyDRzi03KXAsmaEw3
+	zKGsY2zg3t6hHRuhoask+8wAe0/JhY0Fh8/rnrQpeYgxEXQueJ43zM3OWrMJYkv6kHauS7tpKwF
+	uvLZlsqvi8IsUU3Fj1P/l+yaM5DrsUvDqQ9nUQXPsyg==
+X-Gm-Gg: ASbGncsHA0c44chur0KzfLLXjzgzdjXBD9m9HUkq8EzvTgTJB1+pg+F19G3YoPkS6jf
+	HNtD6aySsqUOrBV3hwrx/hIwMrvzkaL+X+nxlVaUOVo8U7WWNgutXpyWPClJzRfQvFLB7JDuKNJ
+	HYHAoOIGpldWZhcnd49AsOBJrKppXj0f9PET0rxrGEUjD7vKxTVqdMUA7ZVlVcRbhdnLtcN3Pw0
+	Z1pTIDsf5DV
+X-Google-Smtp-Source: AGHT+IEb5axoDvieP94ahUcvQF4Cdj/DI1kgL87CBZO05dhRfNXWtWdEPdVzxE8EKpKiDOV7nU9/phOY4imeW35mO0s=
+X-Received: by 2002:a05:6512:3984:b0:55b:79e8:bf83 with SMTP id
+ 2adb3069b0e04-55e00e3ab16mr476219e87.14.1755596649121; Tue, 19 Aug 2025
+ 02:44:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v5 15/15] pinctrl: qcom: make the pinmuxing strict
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Linus Walleij <linus.walleij@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Alexey Klimov <alexey.klimov@linaro.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
- Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- NXP S32 Linux Team <s32@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Tony Lindgren <tony@atomide.com>, Haojian Zhuang
- <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250815-pinctrl-gpio-pinfuncs-v5-0-955de9fd91db@linaro.org>
- <20250815-pinctrl-gpio-pinfuncs-v5-15-955de9fd91db@linaro.org>
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250815-pinctrl-gpio-pinfuncs-v5-15-955de9fd91db@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250811-gpio-mmio-pinctrl-conv-v1-0-a84c5da2be20@linaro.org>
+In-Reply-To: <20250811-gpio-mmio-pinctrl-conv-v1-0-a84c5da2be20@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 19 Aug 2025 11:43:58 +0200
+X-Gm-Features: Ac12FXxWHK9Y341YvKoMtvojeGQDJurTuXUIgTK46n0rp4Sv0-QLWOBJFmGfpkc
+Message-ID: <CACRpkdYungF_01g0XO=u7meo7pq+9y2YHP5XCBDtKHByee8yPA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] pinctrl: replace legacy bgpio_init() with its
+ modernized alternative
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
+	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/08/2025 11:09, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> The strict flag in struct pinmux_ops disallows the usage of the same pin
-> as a GPIO and for another function. Without it, a rouge user-space
-> process with enough privileges (or even a buggy driver) can request a
-> used pin as GPIO and drive it, potentially confusing devices or even
-> crashing the system. Set it globally for all pinctrl-msm users.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/pinctrl/qcom/pinctrl-msm.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index a5f69464827119dfe2a7781b558094b283fca215..1751d838ce95d6138c824b90098f74891dec7656 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -268,6 +268,7 @@ static const struct pinmux_ops msm_pinmux_ops = {
->   	.function_is_gpio	= pinmux_generic_function_is_gpio,
->   	.gpio_request_enable	= msm_pinmux_request_gpio,
->   	.set_mux		= msm_pinmux_set_mux,
-> +	.strict			= true,
->   };
->   
->   static int msm_config_reg(struct msm_pinctrl *pctrl,
-> 
+On Mon, Aug 11, 2025 at 5:02=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-I tested the patchset on CI, and I got the following errors:
+> We are in the process of modernizing the gpio-mmio interface. This
+> series converts all pinctrl drivers calling bgpio_init() to using the
+> new variant from linux/gpio/generic.h.
+>
+> Linus: Please create an immutable branch containing these commits once
+> queued as I'll have some more changes comming on top of them - most
+> importantly: removing the old interface. I will need them in my tree.
 
-db410c:
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/253304#L537
-[    4.056081] msm8916-pinctrl 1000000.pinctrl: pin GPIO_38 already requested by 1000000.pinctrl:550; cannot claim for 7864900.mmc
-[    4.061402] msm8916-pinctrl 1000000.pinctrl: error -EINVAL: pin-38 (7864900.mmc)
-[    4.077245] msm8916-pinctrl 1000000.pinctrl: error -EINVAL: could not request pin 38 (GPIO_38) from group gpio38 on device 1000000.pinctrl
-[    4.088430] sdhci_msm 7864900.mmc: Error applying setting, reverse things back
-[    4.100751] msm8916-pinctrl 1000000.pinctrl: pin GPIO_38 already requested by 1000000.pinctrl:550; cannot claim for 7864900.mmc
-[    4.107960] msm8916-pinctrl 1000000.pinctrl: error -EINVAL: pin-38 (7864900.mmc)
-[    4.107970] msm8916-pinctrl 1000000.pinctrl: error -EINVAL: could not request pin 38 (GPIO_38) from group gpio38 on device 1000000.pinctrl
-[    4.126971] sdhci_msm 7864900.mmc: Error applying setting, reverse things back
-[    4.139203] sdhci_msm 7864900.mmc: failed to activate pinctrl state sleep
+All patches applied to this immutable branch based on v6.17-rc1:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/lo=
+g/?h=3Dib-gpio_generic_chip_init
 
-rb3gen2:
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/253305#L1120
-[    4.155880] sc7280-pinctrl f100000.pinctrl: pin GPIO_91 already requested by f100000.pinctrl:638; cannot claim for 8804000.mmc
-[    4.167636] sc7280-pinctrl f100000.pinctrl: error -EINVAL: pin-91 (8804000.mmc)
-[    4.179817] sc7280-pinctrl f100000.pinctrl: error -EINVAL: could not request pin 91 (GPIO_91) from group gpio91 on device f100000.pinctrl
-[    4.196265] sdhci_msm 8804000.mmc: Error applying setting, reverse things back
-[    4.196293] sc7280-pinctrl f100000.pinctrl: pin GPIO_91 already requested by f100000.pinctrl:638; cannot claim for 8804000.mmc
-[    4.203735] sc7280-pinctrl f100000.pinctrl: error -EINVAL: pin-91 (8804000.mmc)
-[    4.203743] sc7280-pinctrl f100000.pinctrl: error -EINVAL: could not request pin 91 (GPIO_91) from group gpio91 on device f100000.pinctrl
-[    4.235716] sdhci_msm 8804000.mmc: Error applying setting, reverse things back
-[    4.235722] sdhci_msm 8804000.mmc: failed to activate pinctrl state sleep
+Then I have merged this to my devel branch.
 
-x1-qcp:
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/253310#L1776
-[    5.881549] mmc0: SDHCI controller on 8804000.mmc [8804000.mmc] using ADMA 64-bit
-[    5.889494] x1e80100-tlmm f100000.pinctrl: pin GPIO_71 already requested by f100000.pinctrl:665; cannot claim for 8804000.mmc
-[    5.901103] x1e80100-tlmm f100000.pinctrl: error -EINVAL: pin-71 (8804000.mmc)
-[    5.913184] x1e80100-tlmm f100000.pinctrl: error -EINVAL: could not request pin 71 (GPIO_71) from group gpio71 on device f100000.pinctrl
-[    5.913186] sdhci_msm 8804000.mmc: Error applying setting, reverse things back
-[    5.913188] x1e80100-tlmm f100000.pinctrl: pin GPIO_71 already requested by f100000.pinctrl:665; cannot claim for 8804000.mmc
-[    5.929538] x1e80100-tlmm f100000.pinctrl: error -EINVAL: pin-71 (8804000.mmc)
-[    5.948557] x1e80100-tlmm f100000.pinctrl: error -EINVAL: could not request pin 71 (GPIO_71) from group gpio71 on device f100000.pinctrl
-[    5.955983] sdhci_msm 8804000.mmc: Error applying setting, reverse things back
-[    5.975984] sdhci_msm 8804000.mmc: failed to activate pinctrl state sleep
-
-Neil
+Yours,
+Linus Walleij
 
