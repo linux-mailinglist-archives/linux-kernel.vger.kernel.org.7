@@ -1,142 +1,135 @@
-Return-Path: <linux-kernel+bounces-776299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70FDCB2CB7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:54:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77FEB2CB82
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C16C1C202A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205BB5C27EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F2A30DEC6;
-	Tue, 19 Aug 2025 17:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B80530DEAA;
+	Tue, 19 Aug 2025 17:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="gcjA76+M"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBr2viVC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0812550CA;
-	Tue, 19 Aug 2025 17:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37182550CA;
+	Tue, 19 Aug 2025 17:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755626054; cv=none; b=gbSb7nV44QpF++nuEns1740lTddW34oPh8zQmgeWODRRTiCjDngxn0Y//NncKaPtzJg1WwcdRcqZELdvhCxFSpsK/E1GUyuVp9sXwFO3U1r3pTUcr7VDuQz7CGlLXGNF3tTEZ8UxAivKC6avVT5fpmOsSrvNfUjopGnOpBkQk6g=
+	t=1755626029; cv=none; b=WW0PmUaRRmExu8WOo05Urxj+B9+0iKMA1m9ypoxiiTFM4HUPdROF1dCSlPfijUIp14xZtQBZciG+55QL8Sj0somM8nF4hjUj7O+85ATKt2Z8o82OFQbgkxi4iOuzR9z7r04uzRzqwbnUSsLWoKHSOSpYQPggv1dIhB9CVU5dmNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755626054; c=relaxed/simple;
-	bh=4J1bjXbT5ammo3TwOOtd1UIg3jLW9cn6POgEJUnjFXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sN3aNA3X/G4HrS+s6LOLYvnKPVGb/CocGLc8jTPqGkO7hW2gqdkoxtjq93//V8YPLKAV9S8PX8IskyrBxKPjN6grsbjp/wbq7JcEXmcdM6WYSaZBpeRNKRw6/UIVpAdgKw9kampPSGuGpR8YCQDfU+xTd4PRwBFJNpEdTti0PJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=gcjA76+M; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57JHrS5M2742817
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 19 Aug 2025 10:53:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57JHrS5M2742817
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755626017;
-	bh=aB04BRRbyT2lWMhMsx+xff17/ihdjQGqjAFAwjLk104=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gcjA76+M+R9oatXRnLMbvZFA80vUOj4zPOI3zMe4SJnkju1ez8+dqmz/x1iS0t5RR
-	 /GEnZM3rrJ3uAii4CNI/BGeI2KQFOlr6QzaZ6V+P897dY9yeL0lmLyx3fGGIPF0If8
-	 SZWa6WQDS1MHKzWr7OP1J6a03rbNBwWQ9oIOMBLBj/mw4wo5Zd8JLRn9Zsa87gbmXc
-	 cZ756Pq/StiXBnphJQWAXJtjnSBd5wZWGNIyIoz4xpOKD1h+o4ztdrz25SjusagiS1
-	 kURzc03y/itjN4u2opykUPKUgkUcT6AFnEe8JCBHtDTpn60asUpK7eBmnn8GsX6U47
-	 CDHYeOuHLKKMQ==
-Message-ID: <915d0ca8-05c5-42c1-90fe-b214904b23bc@zytor.com>
-Date: Tue, 19 Aug 2025 10:53:27 -0700
+	s=arc-20240116; t=1755626029; c=relaxed/simple;
+	bh=+xxXPwLoU0wjEb+mW+JP5nJ7ehtG5WJJ5v83QIHPAO4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=V462D7OF+an8Bh2fphhrItrpaIz2MfpxyxQMFQvHdqPL6g391v51lEh4AO472VVDHMoFBahJFzVFROMf6zE3E0AeeqsdKiq0lCyg3CZ5lpAxAvZB51dabz8Ns9T9n+LBkpB38Q3E2IPqzPkNcWKWaIyLE9ImsiAZ9He9LRJsqK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBr2viVC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E635EC4CEF1;
+	Tue, 19 Aug 2025 17:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755626028;
+	bh=+xxXPwLoU0wjEb+mW+JP5nJ7ehtG5WJJ5v83QIHPAO4=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=bBr2viVC5Frwot+fUtbob4OA2U2Aso9ZG8T/EcSpgnZY7VzFOm3a3Op1M+G1KyN8S
+	 Qv6BturvImnj+cFCyEY6ZGp26VHFlVXVehSK1o6b99R1SGjncIjrwZIffIS/IVWgwi
+	 cHe9kWI6WMQHZE7DSpoJlRB3qUYV+Jc+xjucuRuL3fPPtcCbatAQAuTPCQ54FuBtWg
+	 leAPoS9xbbob+n4lhn6RxRfFn8KSIWwd9ipS4TV8S1ATe6oi3GAKuUAgTlA/bPNNjy
+	 ZNliXflbwJimCpVjXSw/FPAIiibCkdjhcDbbWiXhve2i7QJv6Cu1p4VN8jDny+LuaK
+	 SHrE4VDN3VPMg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 15/24] KVM: VMX: Emulate read and write to CET MSRs
-To: Sean Christopherson <seanjc@google.com>, Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mlevitsk@redhat.com,
-        rick.p.edgecombe@intel.com, weijiang.yang@intel.com,
-        Mathias Krause <minipli@grsecurity.net>,
-        John Allen <john.allen@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-References: <20250812025606.74625-1-chao.gao@intel.com>
- <20250812025606.74625-16-chao.gao@intel.com> <aKShs0btGwLtYlVc@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <aKShs0btGwLtYlVc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 19 Aug 2025 19:53:44 +0200
+Message-Id: <DC6LHHC2RQAE.1D7LOPCF3IZNB@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Andrew
+ Ballance" <andrewjballance@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-mm@kvack.org>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 5/5] rust: maple_tree: add MAINTAINERS entry
+References: <20250819-maple-tree-v2-0-229b48657bab@google.com>
+ <20250819-maple-tree-v2-5-229b48657bab@google.com>
+ <DC6DQKE6LVNQ.3BBD8WF8XGROO@kernel.org>
+ <5ssx3vakl3enjeaygpxfqtb26ufehwfjvcwqfna4xbhc645xpj@lzuvaf3my3f6>
+In-Reply-To: <5ssx3vakl3enjeaygpxfqtb26ufehwfjvcwqfna4xbhc645xpj@lzuvaf3my3f6>
 
-On 8/19/2025 9:09 AM, Sean Christopherson wrote:
->> +	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
->> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
->> +			return KVM_MSR_RET_UNSUPPORTED;
->> +		if (is_noncanonical_msr_address(data, vcpu))
-> This emulation is wrong (in no small part because the architecture sucks).  From
-> the SDM:
-> 
->    If the processor does not support Intel 64 architecture, these fields have only
->    32 bits; bits 63:32 of the MSRs are reserved.
-> 
->    On processors that support Intel 64 architecture this value cannot represent a
->    non-canonical address.
-> 
->    In protected mode, only 31:0 are loaded.
-> 
-> That means KVM needs to drop bits 63:32 if the vCPU doesn't have LM or if the vCPU
-> isn't in 64-bit mode.  The last one is especially frustrating, because software
-> can still get a 64-bit value into the MSRs while running in protected, e.g. by
-> switching to 64-bit mode, doing WRMSRs, then switching back to 32-bit mode.
-> 
-> But, there's probably no point in actually trying to correctly emulate/virtualize
-> the Protected Mode behavior, because the MSRs can be written via XRSTOR, and to
-> close that hole KVM would need to trap-and-emulate XRSTOR.  No thanks.
-> 
-> Unless someone has a better idea, I'm inclined to take an erratum for this, i.e.
-> just sweep it under the rug.
+On Tue Aug 19, 2025 at 3:36 PM CEST, Liam R. Howlett wrote:
+> * Danilo Krummrich <dakr@kernel.org> [250819 07:49]:
+>> On Tue Aug 19, 2025 at 12:34 PM CEST, Alice Ryhl wrote:
+>> > Similar to and just below the existing MAPLE TREE entry.
+>> >
+>> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>> > ---
+>> > Liam: I'm not sure what you prefer for the MAINTAINERS entry, so let m=
+e
+>> > know if you want anything changed. There are also a few other options,
+>> > for example, I could just add the files under the existing MAPLE TREE
+>> > entry? The get_maintainers script should still send any relevant patch=
+es
+>> > my way because they also match the RUST entry that has a wildcard on t=
+he
+>> > rust/ directory.
+>>=20
+>> From v1 [1]:
+>>=20
+>> 	>> We should have another section for the maple tree, since it's not ju=
+st
+>> 	>> used for mm.  Your stated plan is to use it for GPU allocations and =
+the
+>> 	>> code doesn't live in mm/, wdyt?
+>> =09
+>> 	> Sure, I can add a new section if you prefer that.
+>>=20
+>> Maple tree is already used outside of mm, e.g. for regmap stuff and I al=
+so use
+>> it in nouveau. Hence, I read this as moving maple tree to e.g. lib/ adju=
+sting
+>> the existing entry.
+>>=20
+>> I personally think that - of course unless the affected people prefer ot=
+herwise
+>> - it is usually best to keep a single maintainers entry for the C and th=
+e Rust
+>> code. Maybe Alice can simply be added to the existing maintainers entry?
+>>=20
+>> What do you think?
+>
+> I'm not sure what you mean by lib/ since the lib files are spread into
+> other entries by the looks of it?
 
-Since WRMSR (WRMSRNS) and XRSTORS are the two instructions that write to
-MSRs in CPL0, Why KVM doesn't use the XSS-exiting bitmap?
+I think I misunderstood your comment from [1] above, and, despite knowing
+better, mistakenly assumed otherwise -- just ignore this comment.
 
+> I'm okay with the entry below or adjusting the existing one.
 
+If you're both fine with either, I suggest to keep a single entry for both.
+
+In general I think it's better if we try to avoid to differentiate between =
+Rust
+and C code of a single subsystem (or component) maintenance wise unless the=
+re
+are specific reasons.
+
+Even though sometimes it's just a formality, I think it can help to bring p=
+eople
+together and learn from each other. There more good examples we can set up =
+for
+this, the better. :)
+
+>> [1] https://lore.kernel.org/all/aJW3L3SEVUl_AVvN@google.com/
 
