@@ -1,218 +1,133 @@
-Return-Path: <linux-kernel+bounces-775972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A892B2C6F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:27:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0913B2C70C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989721BC352E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 985265A1BD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021A2261573;
-	Tue, 19 Aug 2025 14:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EC22641FC;
+	Tue, 19 Aug 2025 14:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBm8ZKNK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OIWsH0mU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC3E2110;
-	Tue, 19 Aug 2025 14:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEBB25C816
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755613568; cv=none; b=gFC5MSKpjw6TY+KYTIlpQejmFqhchgK7q2eKon758XT7Ah2LXD1HJ6MqVeuf6PMiVYgukNDQnXgSEffha4ynunHj1qaglyJfzo0byuyLchPaobbjCm664ofFROJkJfKMugSQ6UCMQ1UPs5IO25G5+6lCTLObVnqG7R64oNmwYEM=
+	t=1755613650; cv=none; b=dZDCiceEQQC1KZITWbxstc38quHkJzFhCWcpyLrBsa6Gtm3dCoEYZevTOWkCw8vsSjddHAAJVzWCMEGIdKxFZcLHLeAEsoF+P5imQT3xCzjtydwYUedBQ5yFCYS0muPK3l4AGQySdDj4Z/1Drf1cyJT6t+4plzUqPnw0pzYZ4Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755613568; c=relaxed/simple;
-	bh=n/xilA7irRmAj0LB/NL12l12Niea8lTQx06zLoALehk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ecojp4Z1cICqgI02LUp1WWN6LSjrSLw+T8STWX8/peq+LJZ33F8saUqW9Vm72xKdwtOxh4xCttKD6Db8ZAo6RXXtB77JQd8+pjritwmxXEYyqhpvMh0SnG35mxim7Vhi29X2jLVAOuQjUJAkvz8KWoiN9m+zskXy2A9PatRrWKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBm8ZKNK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD9FC116B1;
-	Tue, 19 Aug 2025 14:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755613567;
-	bh=n/xilA7irRmAj0LB/NL12l12Niea8lTQx06zLoALehk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BBm8ZKNKlDkFdQPkA+WEx73uciE6BHOFFgg8ty2gJXd/3fAnCf3K4t1CIYT4S2OWD
-	 jqI2PeEJbujfyWE/QuTtbPluHTiXg1FNa0jUvVmCVfe2BVxD4fSb9grqIQTRYiYchO
-	 ab1rVfQkHdIAIk6Gmd9Dw/KlUV/V7+TeJcT9iAPqbP9gZT1ntX4PgPVxGnH9QOhlu2
-	 eOaSO4RItkOmP99s7ei9/vy33vYBaWZ/5TQLOUyLud5Pe77aCPfQTtbcKmzEaPN5Iz
-	 pPUgL/7yLc20F1n9TQT29eGDhMLXDRsKAbkv4e41nm6rgXWoi3jMuH3zrEb5KFT631
-	 Oc1UBE60xeiSQ==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afca3e71009so938438566b.0;
-        Tue, 19 Aug 2025 07:26:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUg0L6UxT0PbTOc9NAiNlNlafFM5XFZFtJ9Kl3X4PgDJvGNGi/py9yrM7cS4ZgOV0jUDj0BRhUicYuT@vger.kernel.org, AJvYcCUroA8CsgEMxsTd4+kCC1+zDjUOWWsbn2w1HxetSqvyPrCaJ3ZmBOPF5pkPwzwW0CBXWkXVl6TEz+JX@vger.kernel.org, AJvYcCXBVdRh/aseRk7xEdsP/vRQkJKdT6GV85wyT3iUUONQ7FXfkeBkOQiLvx5Y745bXn8yJptosCzvJUDDFmM/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwneXjhyKnlVyP2Gl0wOigjO/LAl0g9t2YViqAQnQIsy4CXyR/K
-	nP+COUdi3JCaYDbqi1G8xxOqhzg16q3iHuD3WpQRozDSQLPESMH0xGSUxL3w9B2RMBTG+u7CEIO
-	4nwC1eKB2QAr6q+aHwi66+Fvz5w+Zmw==
-X-Google-Smtp-Source: AGHT+IFbhb8/3xhszilypE8VV8iG3CCjPu6s9e1Ni+rGTB0XK1fMseFlxRxtSaS/E+ZfV0jZAYRmMAo6DV+EOi1g4Jo=
-X-Received: by 2002:a17:906:4794:b0:ad8:91e4:a931 with SMTP id
- a640c23a62f3a-afddf1588aemr240209866b.26.1755613566418; Tue, 19 Aug 2025
- 07:26:06 -0700 (PDT)
+	s=arc-20240116; t=1755613650; c=relaxed/simple;
+	bh=OQd6WyJiBXivtkbcozQYOMBkQHzyHn3BeH0okt4mHFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9fSmjDDkUw4hMvJ5rplm0u3kO1j2W21TQC8OG0szj9jdLRDuZGbLTub0dOK4fyNj6MhEIrGR5Z0hjlGwRYLxjD6bwVY8VfUGFXgBBiYx5Yra3paCq373AoDb+SNO7YciyC9ziK3sHqHEGQH5QxcUWJD4gJf/8DIsEBVxYiq1As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OIWsH0mU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755613648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kBL4QIUEuCXE0TXbnT7c7x6cfNngTzRNwvM7EKSyCmw=;
+	b=OIWsH0mUwR2EZfTzr4qTcpsXVnGM0weweDmMDocXSQIOWTA3gD8zLJxnSWwBBH34Qqevev
+	Yd7WmiMILBxpfx6xbqss4v9FbhE0NCJKPS9CV7s4NuTW65ulRlWRCiqYeIcPx/xRc9SXsw
+	9Vm0v0PJqdkFC27m4i8afTmP+kfOlZc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-rcGsyx_uOJu8BGHY0iISAw-1; Tue,
+ 19 Aug 2025 10:27:23 -0400
+X-MC-Unique: rcGsyx_uOJu8BGHY0iISAw-1
+X-Mimecast-MFC-AGG-ID: rcGsyx_uOJu8BGHY0iISAw_1755613642
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C43A1195608A;
+	Tue, 19 Aug 2025 14:27:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.95])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1B54019A4CA1;
+	Tue, 19 Aug 2025 14:27:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 19 Aug 2025 16:26:03 +0200 (CEST)
+Date: Tue, 19 Aug 2025 16:25:58 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Xiang Gao <gxxa03070307@gmail.com>, joel.granados@kernel.org,
+	lorenzo.stoakes@oracle.com, linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>, mjguzik@gmail.com,
+	Liam.Howlett@Oracle.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+Message-ID: <20250819142557.GA11345@redhat.com>
+References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
+ <20250819-anbeginn-hinsehen-5cf59e5096d4@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819134722.220-1-luyulin@eswincomputing.com> <20250819135413.386-1-luyulin@eswincomputing.com>
-In-Reply-To: <20250819135413.386-1-luyulin@eswincomputing.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 19 Aug 2025 09:25:55 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKFotNLZZXwiy7S6K8qXLdGRAnsa-1zvZRDQBE39Gf5kg@mail.gmail.com>
-X-Gm-Features: Ac12FXy4XMOevgyZ0XGLHWuNSqRe6qDPuZvb9j13TrODo_kPF8kWFFTSIKPCPH8
-Message-ID: <CAL_JsqKFotNLZZXwiy7S6K8qXLdGRAnsa-1zvZRDQBE39Gf5kg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: ata: eswin: Document for EIC7700 SoC ahci
-To: Yulin Lu <luyulin@eswincomputing.com>
-Cc: dlemoal@kernel.org, cassel@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-ide@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, vkoul@kernel.org, kishon@kernel.org, 
-	linux-phy@lists.infradead.org, ningyu@eswincomputing.com, 
-	zhengyu@eswincomputing.com, linmin@eswincomputing.com, 
-	huangyifeng@eswincomputing.com, fenglin@eswincomputing.com, 
-	lianghujun@eswincomputing.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819-anbeginn-hinsehen-5cf59e5096d4@brauner>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Aug 19, 2025 at 8:54=E2=80=AFAM Yulin Lu <luyulin@eswincomputing.co=
-m> wrote:
+On 08/19, Christian Brauner wrote:
 >
-> From: luyulin <luyulin@eswincomputing.com>
-
-Please fix your name.
-
+> On Sat, 02 Aug 2025 10:21:23 +0800, Xiang Gao wrote:
+> > __task_pid_nr_ns
+> >         ns = task_active_pid_ns(current);
+> >         pid_nr_ns(rcu_dereference(*task_pid_ptr(task, type)), ns);
+> >                 if (pid && ns->level <= pid->level) {
+> >
+> > Sometimes null is returned for task_active_pid_ns. Then it will trigger kernel panic in pid_nr_ns.
+> >
+> > [...]
 >
-> Add document for the SATA AHCI controller on the EIC7700 SoC platform,
-> including descriptions of its hardware configurations.
+> Applied to the vfs-6.18.pidfs branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.18.pidfs branch should appear in linux-next soon.
 >
-> Signed-off-by: luyulin <luyulin@eswincomputing.com>
-
-And here.
-
-> ---
->  .../bindings/ata/eswin,eic7700-ahci.yaml      | 92 +++++++++++++++++++
->  1 file changed, 92 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-a=
-hci.yaml
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
 >
-> diff --git a/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yam=
-l b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
-> new file mode 100644
-> index 000000000000..9ef58c9c2f28
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
-> @@ -0,0 +1,92 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/ata/eswin,eic7700-ahci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Eswin EIC7700 SoC SATA Controller
-> +
-> +maintainers:
-> +  - Yulin Lu <luyulin@eswincomputing.com>
-> +  - Huan He <hehuan1@eswincomputing.com>
-> +
-> +description:
-> +  This document defines device tree bindings for the Synopsys DWC
-> +  implementation of the AHCI SATA controller found in Eswin's
-> +  Eic7700 SoC platform.
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      const: eswin,eic7700-ahci
-> +  required:
-> +    - compatible
-> +
-> +allOf:
-> +  - $ref: snps,dwc-ahci-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: eswin,eic7700-ahci
-> +      - const: snps,dwc-ahci
-> +
-> +  reg:
-> +    maxItems: 1
-
-Drop. snps,dwc-ahci-common.yaml already defines this.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-
-Drop. snps,dwc-ahci-common.yaml already defines this.
-
-> +
-> +  ports-implemented:
-> +    const: 1
-
-Really, your firmware should initialize the DWC specific register that
-sets this and is discoverable via a standard AHCI register.
-
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pclk
-> +      - const: aclk
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: arst
-> +
-> +  phys:
-> +    maxItems: 1
-
-Drop. ahci-common.yaml already defines this.
-
-> +
-> +  phy-names:
-> +    const: sata-phy
-
-Drop. ahci-common.yaml already defines this.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - phys
-> +  - phy-names
-> +  - ports-implemented
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    sata@50420000 {
-> +        compatible =3D "eswin,eic7700-ahci", "snps,dwc-ahci";
-> +        reg =3D <0x50420000 0x10000>;
-> +        interrupt-parent =3D <&plic>;
-> +        interrupts =3D <58>;
-> +        ports-implemented =3D <0x1>;
-> +        clocks =3D <&gate_clk_hsp_cfgclk>, <&gate_clk_hsp_aclk>;
-> +        clock-names =3D "pclk", "aclk";
-> +        resets =3D <&reset 96>;
-> +        reset-names =3D "arst";
-> +        phys =3D <&sata_phy>;
-> +        phy-names =3D "sata-phy";
-> +    };
-> --
-> 2.25.1
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
 >
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
 >
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs-6.18.pidfs
+>
+> [1/1] pid: Add a judgment for ns null in pid_nr_ns
+>       https://git.kernel.org/vfs/vfs/c/006568ab4c5c
+> [1/4] pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
+>       https://git.kernel.org/vfs/vfs/c/abdfd4948e45
+> [3/4] pid: change bacct_add_tsk() to use task_ppid_nr_ns()
+>       https://git.kernel.org/vfs/vfs/c/b1afcaddd6c8
+> [4/4] pid: change task_state() to use task_ppid_nr_ns()
+>       https://git.kernel.org/vfs/vfs/c/d00f5232851c
+
+Hmm. The 1st patch adds the ns != NULL check into pid_nr_ns().
+
+This means that "[1/4] pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers"
+(commit  abdfd4948e45c51b19 in vfs-6.18.pidfs) is not needed.
+
+OTOH... You didn't take
+
+	[PATCH 2/4] pid: introduce task_ppid_vnr()
+	https://lore.kernel.org/all/20250810173610.GA19995@redhat.com/
+
+currently in -mm tree. It is purely cosmetic, but imo makes sense.
+
+Oleg.
+
 
