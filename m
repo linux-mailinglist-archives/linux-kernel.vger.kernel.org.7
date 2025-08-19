@@ -1,98 +1,138 @@
-Return-Path: <linux-kernel+bounces-776632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08087B2CFAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:15:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F691B2CFBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC10627FDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:15:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5008D1C44B1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BD827510E;
-	Tue, 19 Aug 2025 23:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D2727A133;
+	Tue, 19 Aug 2025 23:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hS/8rA0e"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rt+oUgFt"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F0A253F39
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862A4274B42
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755645242; cv=none; b=fjMoXF5hYnYluHdbae8fgEN9ARVJLvekpj7EThDDW2SDLC6w/BuYUqUG4N00sejy7As2e7CPhe6tAAAbhy0e8opAxfzxqGTOG5ugcpE5I9ysfeJuqKdQawXHfbUFsExMqsJGoEsrpxgJWWNbBn6bqud1oxIaS8+v8BHBg74nNYw=
+	t=1755645251; cv=none; b=EczN7eIxWqF42H0lig5Mfw6nZ/CACJFRPWYxVcQGMw80FMR3Cs5s+5kLhOh22TVJ0qZvDHZCraLX7H9E4tdB+oL7y6HU+3s2mNheWK3HVv5O6mGCHxDNiOxRluJPDFlCT9l/vjRoup9lhsTcWgXoAw68QQXJZZ25vsqKSH6iJ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755645242; c=relaxed/simple;
-	bh=BscqRSuqlz6evC0gBvdrI40lPlwU7QYtRZGh/zKJNk4=;
+	s=arc-20240116; t=1755645251; c=relaxed/simple;
+	bh=r1bT3KQpL5rlUPzGIefr+G7x3Fyb5KoPkPiPBLvdfDw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nqPICBolpKFFBUp5dPRE9tW0N+Q445mjPdZaYZBcvUAomDg8YElUCZ9GtyboWjpCz4vbD2f0O9K5j4Ah6ee6ufTU3QdsOCtokFUsnKWd2L2oqwXyU5hNSWlh1hLBeVf+Bm8CkmHC3jasFg0W/Lj7vIu+WIgMiGlEhOvP5K8XGzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hS/8rA0e; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=a5W4KV9d6IBlQLpQo512bnCnv7l1UqVZAG/l/UhQVnSlxBu0jAGF1LXgzRhoBTt/VOrhHrUk9j4k+D3MZy/2ELUoVBJ3BctzJHZWzmOXfbUNmjV5wPfFI+iBHBL5uUwaScnrLGCPaMdaJt3TTd0pwooEPhG57JLVXSolKbSv2GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rt+oUgFt; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-323266a1e87so6097979a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:14:01 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b471a0e5a33so10713713a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:14:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755645241; x=1756250041; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755645249; x=1756250049; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z68cqsmoG9AHIoM+FC5zPMssxNvG4vU5VkPcD/bxa6Q=;
-        b=hS/8rA0eQA5eUMhlNsC//Q8ogWsgU32FGFRp4tA7crXO93ToZbf/Jer7Tlg3RyStlG
-         qcmkBzbtKrlpq80ZXXeNY3UXe2ZwjPfLJQm2EWadpt45Ue+td3vwv2ET7rwM8HTx5zdK
-         +Xm2UI/pnqg37bbPPKYE7j4vGh+sSaRKpgjE2U0iRtYxiK4dFIHGmgFrpb/QMu8SsPwP
-         XW6OuaiKzJBqPnCO4b4DuZF3k4t/jToRZlBE6E3y7jseVTMeixpRuhU3dpHhcxYNN4xU
-         5iStPsdvP81wu0MoR0BPEOlGYCXz5VXaHxUgkt6A7E0J0um1bEyU4OrNJ4UbiOPyfuXk
-         c/4Q==
+        bh=JBfhOd1/j1SijzHioK0Kidj1qJEFw7epUtuJ7lG3GoU=;
+        b=Rt+oUgFtPNj6lzY3U3cP9oOPE48SNsnihPfQPCiFsv2vKMLfPdO++q8/f6xWVRBWh+
+         gERmFbCDd+BG9oyUMnV4IJX2LkbOoRqVCu09McrcIeK3vlrNMKL2v1pD07yjpgNXMmPY
+         LZkNjRs1V7NeDK7IFxBmE0HRwHKCHYReR7roGltchjt/EaAYxd3flQabSA0xgDy6G8x8
+         CeMnNRTIF/HrrDY7FOs4lqSZAExyuB9Tul0y5qmoLp1uKwU2asM9/b/FqxwFazChc5px
+         jA6eqn21eEQR3gTAqHnu6mTHz0HLwUJf1DXuolQcjuBQfnk7fkc2idxNDkgFOdZsHMv7
+         M2Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755645241; x=1756250041;
+        d=1e100.net; s=20230601; t=1755645249; x=1756250049;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z68cqsmoG9AHIoM+FC5zPMssxNvG4vU5VkPcD/bxa6Q=;
-        b=HjY3AdvPhCoUoGKTOgo/sWzFzdptc9+3tEslVFcrLkU5fx0QuLVONA0ieE7wVUHLK6
-         JqkrDoiKOwOSTgEGtuC5TlfL0pX1V8NsvBY+fyqVuvaPA9mfCNprb4IcB2srySCOmuxk
-         9Wysc9K2C4c5YwOhBOqJNgojpsuGH9Ij2jwyZTklaF1AG1+hTWzjVgKTilynSoQdqx2T
-         jeKrne9PC/VznDaiMVrKlZ8rVI4wTlLSrk5dRYjdLf/GzizwjGyOT5ihUk87OAzJFQMH
-         deDqI3AohnDZ9Z6yKUcA/ziFs3aNkfD2DLVqP2ult/oOvKGiPfpAglibp2mfDArR5kot
-         J5DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1R65n/xhpcX9C6jRUA2bF5Z5CWKVpWHALZlNyYQTkDWd8YErc19Trmze7dJcV0SwCsvXdzNRRlq9/o1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH8VLyNpqaobh+ohhpi48ldUe/5o+ah08y0CficLaqdhgtkwLa
-	zpO8xh8w+7g2/QDzvUOMHZDsvMJAvwyAHscSHHr5TEZ9wjL0cVEL8ARRib2KJ0+MXMVg5gz+KRW
-	nQqa32A==
-X-Google-Smtp-Source: AGHT+IEqNJsIq5Liw9qDu5WPmlcYNAlr/ODudB/x5SzADoBq9u4dVRGhcr3oNvyWVNra2lcBkBBfuevz/eA=
-X-Received: from pjc14.prod.google.com ([2002:a17:90b:2f4e:b0:31e:d9dc:605f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5748:b0:324:df5d:e694
- with SMTP id 98e67ed59e1d1-324e12e28bamr1044307a91.11.1755645240913; Tue, 19
- Aug 2025 16:14:00 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:11:57 -0700
-In-Reply-To: <20250818083034.93935-1-ewanhai-oc@zhaoxin.com>
+        bh=JBfhOd1/j1SijzHioK0Kidj1qJEFw7epUtuJ7lG3GoU=;
+        b=TCl0zRhHafRkVQBMhcxwphXP4G38aCx+7EwRZXiaNB7GrM42ulgw6MnHaR9VEbOfIb
+         9XmhSsUeFj4jQrRv/msQ7QsEGRZy+VUuVpz250GL5DcLUnRtczeHOfDfXifORcM0aKTe
+         BXVXlAkQ5Km6tyehicflaiqx4AWfnpGf7Xo1si2JYTrH8fZlTQu69zV2YDkv5fEijwIP
+         eMIPfHWfiF+m3MOb11RRTguApZPegDgk/z0joheKiMOdYPHqzcg0q2lNu56HURbtKl2p
+         P7fAIwNkCH2ps0uvtmnMMZ07X3F2tqMsywel59HokJuWIjc/F6hbwC+v2i/xP+db5aLc
+         Pr1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWF2C4OoZdAda3gSqhu2/Lwp8BcnM+EFnvQACwSQvkVmx9w9PQqORLGXOktq2XR9QEjv7s8AytnOoWYx60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKAX5fVDYAHb7mZ8JPdaT0FAvbVPAj8zsIjlDn82qgZ2fWqAQ9
+	7Kpm2Iv6zpn5/QlQq3q6G+K7P1L+1MEwWI5S/qXOzQHiRckGuVeoqGAoJkp8S5P4AmiE9GJQsqC
+	HwW1zIA==
+X-Google-Smtp-Source: AGHT+IEKCoRqAMc/f4iB5AJQOguXNLumRWLvD7jp4GBK6HZKhyz1B49plLp8M59RK1CG0fCbxXOCOG75XdQ=
+X-Received: from pgbfq28.prod.google.com ([2002:a05:6a02:299c:b0:b47:3914:9769])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:32a0:b0:1f5:72eb:8b62
+ with SMTP id adf61e73a8af0-2431b7bb318mr1490210637.20.1755645248846; Tue, 19
+ Aug 2025 16:14:08 -0700 (PDT)
+Date: Tue, 19 Aug 2025 16:11:59 -0700
+In-Reply-To: <20250805190526.1453366-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250818083034.93935-1-ewanhai-oc@zhaoxin.com>
+References: <20250805190526.1453366-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-Message-ID: <175564446520.3064288.7316885414458356151.b4-ty@google.com>
-Subject: Re: [PATCH v2] KVM: x86: allow CPUID 0xC000_0000 to proceed on
- Zhaoxin CPUs
+Message-ID: <175564464232.3065542.6062884759434886265.b4-ty@google.com>
+Subject: Re: [PATCH 00/18] KVM: x86: Fastpath cleanups and PMU prep work
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	Ewan Hai <ewanhai-oc@zhaoxin.com>
-Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ewanhai@zhaoxin.com, cobechen@zhaoxin.com, leoliu@zhaoxin.com, 
-	lyleli@zhaoxin.com
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Sandipan Das <sandipan.das@amd.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Mon, 18 Aug 2025 04:30:34 -0400, Ewan Hai wrote:
-> Bypass the Centaur-only filter for the CPUID signature leaf so that
-> processing continues when the CPU vendor is Zhaoxin.
+On Tue, 05 Aug 2025 12:05:08 -0700, Sean Christopherson wrote:
+> This is a prep series for the mediated PMU, and for Xin's series to add
+> support for the immediate forms of RDMSR and WRMSRNS (I'll post a v3 of
+> that series on top of this).
+> 
+> The first half cleans up a variety of warts and flaws in the VM-Exit fastpath
+> handlers.  The second half cleans up the PMU code related to "triggering"
+> instruction retired and branches retired events.  The end goal of the two
+> halves (other than general cleanup) is to be able bail from the fastpath when
+> using the mediated PMU and the guest is counting instructions retired, with
+> minimal overhead, e.g. without having to acquire SRCU.
+> 
+> [...]
 
 Applied to kvm-x86 misc, thanks!
 
-[1/1] KVM: x86: allow CPUID 0xC000_0000 to proceed on Zhaoxin CPUs
-      https://github.com/kvm-x86/linux/commit/1f0654dc75b8
+[01/18] KVM: SVM: Skip fastpath emulation on VM-Exit if next RIP isn't valid
+        https://github.com/kvm-x86/linux/commit/0910dd7c9ad4
+[02/18] KVM: x86: Add kvm_icr_to_lapic_irq() helper to allow for fastpath IPIs
+        https://github.com/kvm-x86/linux/commit/15daa58e78ce
+[03/18] KVM: x86: Only allow "fast" IPIs in fastpath WRMSR(X2APIC_ICR) handler
+        https://github.com/kvm-x86/linux/commit/777414340085
+[04/18] KVM: x86: Drop semi-arbitrary restrictions on IPI type in fastpath
+        https://github.com/kvm-x86/linux/commit/aeeb4c7fff52
+[05/18] KVM: x86: Unconditionally handle MSR_IA32_TSC_DEADLINE in fastpath exits
+        https://github.com/kvm-x86/linux/commit/0a94b2042419
+[06/18] KVM: x86: Acquire SRCU in WRMSR fastpath iff instruction needs to be skipped
+        https://github.com/kvm-x86/linux/commit/aebcbb609773
+[07/18] KVM: x86: Unconditionally grab data from EDX:EAX in WRMSR fastpath
+        https://github.com/kvm-x86/linux/commit/aa2e4f029341
+[08/18] KVM: x86: Fold WRMSR fastpath helpers into the main handler
+        https://github.com/kvm-x86/linux/commit/d618fb4e43a0
+[09/18] KVM: x86/pmu: Move kvm_init_pmu_capability() to pmu.c
+        https://github.com/kvm-x86/linux/commit/a3e80bf73ee1
+[10/18] KVM: x86/pmu: Add wrappers for counting emulated instructions/branches
+        https://github.com/kvm-x86/linux/commit/43f5bea2639c
+[11/18] KVM: x86/pmu: Calculate set of to-be-emulated PMCs at time of WRMSRs
+        https://github.com/kvm-x86/linux/commit/5dfd498bad5f
+[12/18] KVM: x86/pmu: Rename pmc_speculative_in_use() to pmc_is_locally_enabled()
+        https://github.com/kvm-x86/linux/commit/6b6f1adc4332
+[13/18] KVM: x86/pmu: Open code pmc_event_is_allowed() in its callers
+        https://github.com/kvm-x86/linux/commit/e630bb52d27f
+[14/18] KVM: x86/pmu: Drop redundant check on PMC being globally enabled for emulation
+        https://github.com/kvm-x86/linux/commit/58baa649ea09
+[15/18] KVM: x86/pmu: Drop redundant check on PMC being locally enabled for emulation
+        https://github.com/kvm-x86/linux/commit/8709656514c1
+[16/18] KVM: x86/pmu: Rename check_pmu_event_filter() to pmc_is_event_allowed()
+        https://github.com/kvm-x86/linux/commit/3eced8b07bb9
+[17/18] KVM: x86: Push acquisition of SRCU in fastpath into kvm_pmu_trigger_event()
+        https://github.com/kvm-x86/linux/commit/8bb8b60c95c5
+[18/18] KVM: x86: Add a fastpath handler for INVD
+        https://github.com/kvm-x86/linux/commit/6c3d4b917995
 
 --
 https://github.com/kvm-x86/linux/tree/next
