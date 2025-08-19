@@ -1,98 +1,132 @@
-Return-Path: <linux-kernel+bounces-776114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11C9B2C8BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91275B2C8C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 809B618889C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F4F189EF87
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C01528750D;
-	Tue, 19 Aug 2025 15:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6212877F1;
+	Tue, 19 Aug 2025 15:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nC1swosM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFxeBDue"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B0026E707
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377DD26E707;
+	Tue, 19 Aug 2025 15:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755618657; cv=none; b=XeFVKV13q0+UNf9dfm8TX+USiD4kzAXnSlcLC8hjNzyPb5XR1heX61wXk1LoCqvmy+KDcjv/6ff2cexaedcAUFkKyjmyL5TNPtU1KzyWLgMn5UHr0yuq6GKY/av4iS/2Pvgj/Rd/2MwtplWf6UtKy8FEzW1ayd117TmE0XvpgCw=
+	t=1755618668; cv=none; b=Fh9MsmIq6gGCECBGcQ/3eaQdjwU9FwNBZD/9XbZ+MixB5vmwdLVKZQTFW+4BHyE0hJzeY/pG6sdff3YrE/nBWk5vLnHIID8kftC9EONrWovH5BH4mlm6afUBldAHn0URFWFzYzIU82vSY/8kZ/kLa9TFDoNkhDO18v7IwtXcmQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755618657; c=relaxed/simple;
-	bh=8oW4UFQtycNaw9lp8sdZpMFAIc8C4ZLfUw6PhINERRA=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Fi9rShofsLzGKVdgcO+BUiZCrTekU3Y3Gosrmu3ZIarqNyIa1Uyk3cLqdAgnvD/2ePGzJVXKwue/mM1dy4oETrav9J0gTZBjySOHUSy/mQuVgDuACAo6mwUDu/LFNnul6v20hukbv2lIFgav0Hscs5bLWVn4sbtWXhElTLy+Wyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nC1swosM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AEB2C4CEF1;
-	Tue, 19 Aug 2025 15:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755618657;
-	bh=8oW4UFQtycNaw9lp8sdZpMFAIc8C4ZLfUw6PhINERRA=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=nC1swosMJfFQ8jo7qXKeUaZtGg7ZDGv8nMFaB9NIrfBAev1FrfX/bIQaqbFPhvj09
-	 akxc5Slge6WM9xtWAdD/jMpsZlto8+FbcwHgRZ17m47nJLw1DOO69AgclIi0R9YJaG
-	 pDg6hEZC5iEVvr1GXgc34A6f4DjUs4XdZEDE6ebshVBxkNOD1UEL+APgPCN15B2PnA
-	 TV9oNEVD/4OXXRb8YxCTcxBa+kX76tdd7V3w+dFGiot1kIyEQSplZz0gxVKD3/MTbe
-	 LqxzTchvkBk+jrk6tW387ykD8eRe+pTSlWbQ5Pa2xhnByec+ku9qhdxjocWmKXFyGG
-	 2hho47qJMl3Hw==
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
- Qianfeng Rong <rongqianfeng@vivo.com>
-In-Reply-To: <20250817142327.174531-1-rongqianfeng@vivo.com>
-References: <20250817142327.174531-1-rongqianfeng@vivo.com>
-Subject: Re: [PATCH] regulator: bd718x7: Use kcalloc() instead of kzalloc()
-Message-Id: <175561865630.183354.7456857095894517337.b4-ty@kernel.org>
-Date: Tue, 19 Aug 2025 16:50:56 +0100
+	s=arc-20240116; t=1755618668; c=relaxed/simple;
+	bh=a6ZGqGqQriw5wtcTQnJQ+E8H9T2G8nhUgo1qAhPQw6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LCpjpxuoBuNN+XazdxsMCrQvMR7RdUDWd83CIurHo7cee9VkMwXr2a4E1+ym3zQVZZe9NywPEdzHLGpMqSn9gvY8X3gDSF4JsPEcPK0gipTl4lWZUzRDUaFT0YdaHc3VZfkbGQom/Rjm10cWl9N5BI7c3b1oqb2sir5mPqEVa5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFxeBDue; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9edf0e4efso3692994f8f.2;
+        Tue, 19 Aug 2025 08:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755618666; x=1756223466; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=As+W4X5MBTwXfXiBGJpiHyliRWQospCn+A6ubJW8Mxo=;
+        b=FFxeBDueSuMEs4mytFc9DXiSgvyTu0KGuJnsRgLhHZlI2IYpLRnoiMJx8IQ1yznnji
+         Wr1swvjj5A0vMylcoL53GQXFQ1HAHI3nWocr58L/IluYHWkSXfHxRoZ3OAbQ1tDO7otL
+         p2WZeS1o7alpNK/3ornZCQW01GEThLdUj4ZBNb7PrSBCaRsBiV0FenLcfjdeX+/dGU4I
+         Oq7dQKD1ficuPjde2Frc0QG7Cxlc5grwXy0YOT4Ay7elRELutR2A8sv923IfQSvXtybl
+         +5zl8+Zkxhn6ERJEc3Cv6HrfcJNB+Dw77GPowq5+XxNFpNwer6R90smYY5EzvVC3uWcg
+         2Cxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755618666; x=1756223466;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=As+W4X5MBTwXfXiBGJpiHyliRWQospCn+A6ubJW8Mxo=;
+        b=n0qUhHKPHNF79v0Ijzi4+eYTRbmE+lDaroeTCOlKHrRG88h6yOWwgctg0kM/dN3Iwi
+         UaB5Kj9mPoboZ2Kp2EsH1eAE78W98dOir47W90fFfqo8lF/0JNxU7/3Or1ZwW1U1u+9+
+         +NCPyxPOzbX1yMr09syirSShYkQb7ctga0SM4HW4jOquM7RcJAGs8k8vQfMBPgYWTNrE
+         ciRVJ/RsFo6MOsk/t084Hg29OVYI4CabMdS46WXbdQdCdaWBgBNdlBeuA+nqbDD9NdYI
+         sp2SkDZjXdp19FnyHLyJfCldcmQbtO838ArhW+axv8KsY66fjlWoSf5AgNiXOdXlkE2Z
+         l5tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoXdQEjV+yN+oByangEJx8gF9qrI0vnvr8nEJuM+KBFqQLrwjSlrF+R+01KQTZes8JQKHF+Iuf@vger.kernel.org, AJvYcCX577BlDHnN/gUbSaWC3mJunIBV5Ugm9sX8Kd8SvUZ912nyTOTkhAi+zNm6q971Et0LbAFSpTwcnA==@vger.kernel.org, AJvYcCXzy6/SMFAZIMe0Dk1Qkn0ti1g6OMxULUVFRdFvZvhGT0nwUYfDQY9i8tKAUGZaSyMOMpK00M3rte+fbkxf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+hP+oangx+1svzCfdO3lzODz25Np7vq0GdbGUQHDYbhz681Y0
+	+Qee5XbRXVL2S9vZPRYID5geBAXxjgNCZ1JYfwbp9LwDg5iXd1lpsk09
+X-Gm-Gg: ASbGnctiToQVtJ2jKyzwkwGUSkINSynJx7maqFCT4wB+HkwArvTPKhocUm6VxePrOdI
+	yxuwgLpgGsu+tT0nmqPGrQU7uOVPOu0kwk4e+bYZzyMdj7QN6eqTVsgpZ5cGjFdnttgvls5sL28
+	Y3L3kudXTUeA4nzjCkujwRtKSa4KIeKoJycepqVxIlO1itvcVDnX69+zth/7GytKDrhhyZx2Hzy
+	qd9LMblzYTIfMVkMgUKEbHRegP0FD8sTBlaWm6Z2DpVXMdvCABuuZHp5AM2exRLhyN/SNc7zklO
+	PpN8OgeoV/TupwTjPfabp7lTjhuO71QU7vK3wZ6WU88ZwE7n/OBCGbryKQkcf/BmC5beygTZ5di
+	zajN6OveFn9u39PS8e5zPlpzZqubAbA==
+X-Google-Smtp-Source: AGHT+IFa2tWwTkP68HwXkeiF+gbI3rKcWiSfezlHfbTT5pMSW84KwuEvkwpHueKL3GIcKmlRBv5Gew==
+X-Received: by 2002:a5d:64ef:0:b0:3b7:9c28:f846 with SMTP id ffacd0b85a97d-3c0ed1f3372mr2637658f8f.44.1755618665366;
+        Tue, 19 Aug 2025 08:51:05 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077c5776fsm4132783f8f.61.2025.08.19.08.51.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 08:51:04 -0700 (PDT)
+Message-ID: <ab60ab17-c398-492b-beb7-0635de4be8e6@gmail.com>
+Date: Tue, 19 Aug 2025 16:52:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 04/23] net: use zero value to restore
+ rx_buf_len to default
+To: Mina Almasry <almasrymina@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
+ davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
+ michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <cover.1755499375.git.asml.silence@gmail.com>
+ <d36305d654e82045aff0547cb94521211245ed2c.1755499376.git.asml.silence@gmail.com>
+ <CAHS8izO_ivHDO_i9oxKZh672i6GSWeDOjB=wzGGa00HjA7Zt7Q@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izO_ivHDO_i9oxKZh672i6GSWeDOjB=wzGGa00HjA7Zt7Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 17 Aug 2025 22:23:27 +0800, Qianfeng Rong wrote:
-> Replace calls of 'devm_kzalloc(dev, count * sizeof([type]), flags)'
-> with 'devm_kcalloc(dev, count, sizeof([type]), flags)' in
-> setup_feedback_loop() for safer memory allocation with built-in
-> overflow protection.
+On 8/19/25 01:07, Mina Almasry wrote:
+> On Mon, Aug 18, 2025 at 6:56 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> From: Jakub Kicinski <kuba@kernel.org>
+>>
+>> Distinguish between rx_buf_len being driver default vs user config.
+>> Use 0 as a special value meaning "unset" or "restore driver default".
+>> This will be necessary later on to configure it per-queue, but
+>> the ability to restore defaults may be useful in itself.
+>>
+>> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > 
+> I wonder if it should be extended to the other driver using
+> rx_buf_len, hns3. For that, I think the default buf size would be
+> HNS3_DEFAULT_RX_BUF_LEN.
+
+I'd rather avoid growing the series even more, let's follow up on
+that in a separate patch on top, that should be just fine. And
+thanks for the review
+
+> Other than that, seems fine to me,
 > 
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-Applied to
+With the said above, do you want me to retain the review tag?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: bd718x7: Use kcalloc() instead of kzalloc()
-      commit: 550bc517e59347b3b1af7d290eac4fb1411a3d4e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+Pavel Begunkov
 
 
