@@ -1,169 +1,99 @@
-Return-Path: <linux-kernel+bounces-775851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6826EB2C5AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE086B2C5B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5592918985CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9731B19656E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A172EB85B;
-	Tue, 19 Aug 2025 13:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3999A340DA5;
+	Tue, 19 Aug 2025 13:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DiKGvReV"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nK/g15QG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8542EB853
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8359E33EB0D;
+	Tue, 19 Aug 2025 13:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610319; cv=none; b=ju6iP4xKJinhnRGGNaVDyhArnOqE8AFci/c9XH6pZukRlqVY2rX+odHYJgZBTVnpcTnicZx7KymNXoAuFqB6TllM4SOeZfgvsHFTf90DlfUOxeDVoIuDmgMKzWsJ3gYnvb8z4dLzBopD1phhqJr5CvwqTNk7DLj8ZaLGCYc3b8g=
+	t=1755610327; cv=none; b=afA8TFs6WbYnJepXeI2xOGZYyn0tknrQaH4FIQaYV3bTv9D2oAvZaGHN6/IuU2MZMxOPEtoibjgsAu/CI3n3ZZOBqjy4mpR1vbUSBhjxtaQUsDhh8HAHqJr7F+GyZ+3V6bpP5mifsIQWxjaBRO7w64XgfEQcWsvO0jE3roLRyTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610319; c=relaxed/simple;
-	bh=YOWuOvXp8Yh+4tpnkb1YtqwLLeaFoLleda5Z+WQNqx0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=opWaUjmgQeA3EuBCwkgnJEV3u55kkr8QrA9+VufmPhuMUtX4Zm17BqS6FKGrloQQb2q+GF0XO9BZSNCqnRo8O02dBoAFJ157Jo7CsTf1rEt1egvMP9ZAPgN9z052ks14Ip8+RaNUYVUOcIzIhyvudpH1aePUSBHerLlrlvOKXlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DiKGvReV; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e2eb6d07bso4463758b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755610316; x=1756215116; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vRmcafjLK/bUe3QVBcZSTxEMW/hT2fpAZCLoRLeyHpQ=;
-        b=DiKGvReVj/YURqKMTB1DSMDutJhfJkGKUeVFvN1MkeWLDG1suUZC0Z8WM144IRAuAu
-         CQm11fTmgfpXcHxdS1pRTtCD31pA1SqAc4+sHo1EP0664KLF3J/94nsTgt2tDbeZStp/
-         PetN1oE6rhXjRtedtSU3lEcjP1nQ8Ozqske8sry7MWe0C8WxNT6ToJs59I99WVwg0yT8
-         JY1NDSar3UmjFDEOOAxljeQsYaWOxJMeLX8/1YJEXBWC61V4d+Jxbpp/KQ4xR3azfknY
-         h/TSdEG3QCYnYh2LpdW0YVhH/e7n+SBEmmd3MapiKtE3GNrOc0zZ3k24H4iygza/9qGm
-         iSSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755610316; x=1756215116;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vRmcafjLK/bUe3QVBcZSTxEMW/hT2fpAZCLoRLeyHpQ=;
-        b=jDiVE9e7QvL1Y6wc98WckxHuVHr0I9BsC6ehJ2uUX39HPTFMliey2nteHwJcbY/pY/
-         +tcPE21l0/VYX0hxQ6cNxkSiZYaVspv0Xf/xurQqWai144T+oN5yQuUUEVEfV71sHUmW
-         KLhyfA0Vv8g5ctipCXj2ltH+z+ScQaZFdGgFBRrPqZld6BQGdnIuT+hsbbB33+7cELG2
-         8jdn0FXqgPwfGIT+mbE1XfbDTfT7kKHi2rL6Uu4kV/LHamWoZohYbRdjK4XLoPVydHES
-         ohfbT+MG+Z2yWE9VMY5DeP4Rg0SdHn1lGYB2wCza9F7HW8cWHsWBeKVWMh0lJYCtw3l2
-         GUdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXo6m3m7yNGiQNBwhdNnl1bgta/iYKs7oC5XnXdYLNg2IyacrrX/QYQiEG/Dy1eEWXxuvpOQO5u7oThotg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK7IyLog/VpnXxe+xZBAR/A6CzGEaSKh3Z9dzqKn3f+63vGZtD
-	+e6QqnQ4OlcNJ+3PcHnVqScDQhhiuNDwpPNa37iP9A4MKkvgjCP9mYhB
-X-Gm-Gg: ASbGncvcllFutksEA0TCGBmvlyTLYCt+5UbC3Hdxc19EW566mY4woa28BztBz/lN4SO
-	PoYBVA+aWZlvFyvYhgiaR7A+7ODmZ7ZeQgIZ4ShNKeWuQF2K28w4gxOHxnf5d7eg1k4UhprOlag
-	JZjJXKLFZfJN1HBS02p8lHCVr5xP3JUKJWZHfI+8eaaZVYgaOeWHrtRmtE3mrLtrHRDOSHPmglr
-	xAjE8yH8puX0P0jq1+M9gqItR3Yi4X25vFwAOJOJXtAj3Iz1wpBOWm/hYz/3uvUWprzNP8Sssm6
-	f7wjLungolI20jIpXmOr02lHSVcthEOrTc4YZM2PJD37Je0XHJ5M7kJpaJUH94+bDkrcCDzZUja
-	6ehoe/U59CpvijD2zevJpAnXVPRVh0GcF2JcvtsABSxZO37Maab8YspybsjdF9Z3cwbc=
-X-Google-Smtp-Source: AGHT+IGHwMFf1Q2ZU3OCGcqXj35XfKNBWk9FMiaKSJAbgclkE6zyl5GtbMaE1KB/or/Tiwr5taj28A==
-X-Received: by 2002:a05:6a21:3298:b0:243:78a:8299 with SMTP id adf61e73a8af0-2430d49d8d5mr3621641637.50.1755610315907;
-        Tue, 19 Aug 2025 06:31:55 -0700 (PDT)
-Received: from fedora.. (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4f7cdfsm2517490b3a.63.2025.08.19.06.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 06:31:55 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: cuiguoqi@kylinos.cn
-Cc: akpm@linux-foundation.org,
-	bigeasy@linutronix.de,
-	catalin.marinas@arm.com,
-	clrkwllms@kernel.org,
-	farbere@amazon.com,
-	feng.tang@linux.alibaba.com,
-	guoqi0226@163.com,
-	joel.granados@kernel.org,
-	john.ogness@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	namcao@linutronix.de,
-	pmladek@suse.com,
-	rostedt@goodmis.org,
-	sravankumarlpu@gmail.com,
-	takakura@valinux.co.jp,
-	tglx@linutronix.de,
-	will@kernel.org
-Subject: Re: [PATCH] printk: Fix panic log flush to serial console during kdump in PREEMPT_RT kernels
-Date: Tue, 19 Aug 2025 13:31:49 +0000
-Message-ID: <20250819133149.7452-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250807112247.170127-1-cuiguoqi@kylinos.cn>
-References: <20250807112247.170127-1-cuiguoqi@kylinos.cn>
+	s=arc-20240116; t=1755610327; c=relaxed/simple;
+	bh=RePw/qN/r8iFmlUKhdNcuusjorcaH7BDzwljb0R672g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PGV5kYdNlK06Ap2RR2HwiQPCkzVRKPSlspEU35km66m/9jVg9GhnDgoBcVcWzrwrVLtmO8NYlix5fGFy54E3ZQR7YYmrC2vJ6ABpPn7l9hPA/uDEUDiU/uJ8e79SRJAU4p+SUn72z5YQEb4WugCli7of5DJNGnP8BvRTdeRN+jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nK/g15QG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FA8C113D0;
+	Tue, 19 Aug 2025 13:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755610326;
+	bh=RePw/qN/r8iFmlUKhdNcuusjorcaH7BDzwljb0R672g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nK/g15QGjqargMMW7pQ66890hApkyy9hXyKHZ9Cg52oUi04dvT7KAW8rJgFXJd9BG
+	 g7VfXVoJLowIrw9KXnB93vr/XByweloc3thrvk7hERlNII8l1j15ZDdD5qBxHlCAnS
+	 vpPA5Vhcvv7IWFeND02BBcagEHa0u1dzosBIknBE7fLMvJJj6e8h39hKOFJVnzYwTX
+	 8ZDwMGguCQx97dLYSQGIIi+9ZKpH175hDsPIbk7uSixbT2CRWZfs87MvWE95PusWKJ
+	 tvo0Vr7xO3U37pIXTfYbbp9tTwyG2HwtvqwQI+0Mmw8lIaEH4DoEqSIi/gUWK8P+Ub
+	 hcBlb6oFPgNbg==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afca41c7d7fso1071405966b.1;
+        Tue, 19 Aug 2025 06:32:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWRfXpFKPnWrqpAyTxW6X0AzRkE7slNq3EYjWQ8epHxqxbD1qwZHTVUls8HBa5X40+hmHHFFj+JkR+C7tm@vger.kernel.org, AJvYcCUtCL9m73SuoQ8eK6i627akdRhYEjKUCsTXRFxQhMf0c2+wuNdA75JKqdHuM81+XBckSR2mP2iaV+ab@vger.kernel.org, AJvYcCWXyDHptwJWFhOmBGfrmlKeg3hyblecmaYv5CYKVk0E09M+wy7+9BaOWYJh1uK9X03sMrQqCSLKWwQ=@vger.kernel.org, AJvYcCWjJuQJsdYpTgLFetRou+CpPTHg0bxEBzINLoYIocO8WW5gd1tOp5kg2RkJ3N9AcMIzHXh9qRFeqdZgAPaiNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd78ljIn8SfvzWGaKQacDWKE5lOqsTN2wQy+pZV4wU96wnlJUd
+	pb7/bbaNzJSh10wTyYYz+0gLCyy+pSxOx2/UXlSVcmPmJ8PWNhn9C8U77lQD+7hXe0bdlbMZ6FT
+	fDzAJ+RaBjx3kvlI/UMA47JNpJVczhA==
+X-Google-Smtp-Source: AGHT+IH7Xlxz6mfCkPT5meOPBk+lpt++QuBnzbYmHx95kt43nBgRPDjtSqtV4+eqSIu0C0Vj32Von41lElLYRUtx6d8=
+X-Received: by 2002:a17:907:86a0:b0:af7:fd29:c5e4 with SMTP id
+ a640c23a62f3a-afddebca776mr278602866b.2.1755610324732; Tue, 19 Aug 2025
+ 06:32:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250814-glymur-icc-v2-0-596cca6b6015@oss.qualcomm.com> <20250814-glymur-icc-v2-1-596cca6b6015@oss.qualcomm.com>
+In-Reply-To: <20250814-glymur-icc-v2-1-596cca6b6015@oss.qualcomm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 19 Aug 2025 08:31:53 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL+C1VueQjrKra8fNTd-2k=gkoy-jA9uuQOhuyRMbQroQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwcbhYarWG96-RFlBPTciYD1YIKgoRxrJwgNxPiK-pCah48gmfFg2yv4u4
+Message-ID: <CAL_JsqL+C1VueQjrKra8fNTd-2k=gkoy-jA9uuQOhuyRMbQroQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Glymur SoC
+To: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>, 
+	Georgi Djakov <djakov@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mike Tipton <mike.tipton@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi cuiguoqi!
-
-I'm not an expert on the subject, but hope this helps.
-
-On Thu,  7 Aug 2025 19:22:47 +0800, cuiguoqi wrote:
->When a system running a real-time (PREEMPT_RT) kernel panics and triggers kdump,
->the critical log messages (e.g., panic reason, stack traces) may fail to appear
->on the serial console.
+On Thu, Aug 14, 2025 at 9:54=E2=80=AFAM Raviteja Laggyshetty
+<raviteja.laggyshetty@oss.qualcomm.com> wrote:
 >
->When kdump cannot be used properly, serial console logs are crucial,
->whether for diagnosing kdump issues or troubleshooting the underlying problem.
-
-The console not being flushed in the case of kexec should be expected
-as described [0]. Its about prioritizing kexec over serial output.
-
->This issue arises due to synchronization or deferred flushing of the printk buffer
->in real-time contexts, where preemptible console locks or delayed workqueues prevent
->timely log output before kexec transitions to the crash kernel.
+> Document the RPMh Network-On-Chip Interconnect in Glymur platform.
 >
-> /**
->  * kexec_image_info - For debugging output.
->@@ -176,6 +177,9 @@ void machine_kexec(struct kimage *kimage)
-> 
-> 	pr_info("Bye!\n");
-> 
->+	if (IS_ENABLED(CONFIG_PREEMPT_RT) && in_kexec_crash)
->+		console_flush_on_panic(CONSOLE_FLUSH_PENDING);
->+
+> Co-developed-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+> Signed-off-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.co=
+m>
+> ---
+>  .../bindings/interconnect/qcom,glymur-rpmh.yaml    | 172 +++++++++++++++=
+++
+>  .../dt-bindings/interconnect/qcom,glymur-rpmh.h    | 205 +++++++++++++++=
+++++++
+>  2 files changed, 377 insertions(+)
 
-Calling console_flush_on_panic() while trying to kexec will
-reduce its chance of success.
+This is breaking linux-next "make dt_binding_check". Looks like the
+clock header dependency in the example is not applied. Please drop
+this until the dependency is there.
 
->diff --git a/kernel/panic.c b/kernel/panic.c
->index 72fcbb5..e0ad0df 100644
->--- a/kernel/panic.c
->+++ b/kernel/panic.c
->@@ -437,6 +437,8 @@ void vpanic(const char *fmt, va_list args)
-> 	 */
-> 	kgdb_panic(buf);
-> 
->+	printk_legacy_allow_panic_sync();
->+
-> 	/*
-> 	 * If we have crashed and we have a crash kernel loaded let it handle
-> 	 * everything else.
->@@ -450,8 +452,6 @@ void vpanic(const char *fmt, va_list args)
-> 
-> 	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> 
->-	printk_legacy_allow_panic_sync();
->-
-
-The ordering here should be kept where we don't want CPUs other than
-the one panicked flushing legacy consoles.
-
-Sincerely,
-Ryo Takakura
-
-[0] https://lore.kernel.org/lkml/847cagmjsx.fsf@jogness.linutronix.de/
+Rob
 
