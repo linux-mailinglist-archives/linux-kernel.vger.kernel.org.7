@@ -1,120 +1,240 @@
-Return-Path: <linux-kernel+bounces-774867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542C6B2B88B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E78B2B891
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22817AEA5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2CD628041
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D9530F80D;
-	Tue, 19 Aug 2025 05:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDF130F816;
+	Tue, 19 Aug 2025 05:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VSG+NWNF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="b3yN+1pW"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B78B27A465
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6372FE06D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755580790; cv=none; b=uNvDaAUeegdgNXGiUYP2oeqTw77uj0mrJu/vCvmb9zN2KKyMW/HID8kHanulD7lyauEyd+Czgjf30XuwJkrUBs8ZxkaxU5uuVTBu5KNFssEYLm4urnKH9t2GnmbIfK7qD68XwAwmCvX8rBTDqq0DpTnbh2Eof8UwJl5yVLs4s1U=
+	t=1755580880; cv=none; b=XWpOk9U4/870szVb+YIaFQMKsRBiAtWUsQm167ey4/Rn8xTNvpro2RebxCgNp7djN5HlvOSWQQU1zLKjeP2xZlfAvLv4iWKB0mt8h9O4xubJ64RA+13dyA2fAgFGQVQLNXOIj00RPSUX3VqHkzOcjkqwAbHSoeI71lqx3P7zjFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755580790; c=relaxed/simple;
-	bh=5TLxPZKaXRaifI6U2Yo9cENlJpk2idfrF9DH3jqIU1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+5On2fvjRcOrMwdSyTf4jbhP3YsC0L6EtrKkSEZuS2whIX0+bYep5ckwKPipr0fLLWESnt3cr8CBboW860quVLi07cIhik2EG1YgpbVfaZ3UPDQ1D53HdwoduGa5xWCCfy19YXvnYynSYJqak0g+bB92Pf97Kcsj5LyFuD9fVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VSG+NWNF; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755580789; x=1787116789;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5TLxPZKaXRaifI6U2Yo9cENlJpk2idfrF9DH3jqIU1g=;
-  b=VSG+NWNF7bsvoOxYTsvhfVhqIx8FbDCO3/WVWQNIwbGTbl9tWhfxZWfV
-   l4X1qd8tw8TW2GOcz6ESw0cszMKIcG+Vvruk1ui8iGNur++yKCWBuINPH
-   rHqEpiTvRtB5a5YSBT6lBiQJInza4vzugu2vyvdG38pA2ziy8Z/8vPYYC
-   HzUMMrKQ6NLINmVy6QvK9IjYHcTrQEozBDY0lynlO5A7/bx/u5R7R+zpw
-   MovPBxgRLRaImHKNBh1p0uGn5xUCSE5W+J8apRqR7t5J1wstHeR1O/X4s
-   3wShqvI4NhYPCikREiwkAr/2FJU03nc+RdzpPw+Dl0iRDIoSSi6txYXRO
-   Q==;
-X-CSE-ConnectionGUID: vJQvEg1uTha+nh//+X1HAQ==
-X-CSE-MsgGUID: 6FPsKd/iTiaG2xCMSw5rFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57885706"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="57885706"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 22:19:48 -0700
-X-CSE-ConnectionGUID: tCNjSBpcTZ+VtNPESf49Zw==
-X-CSE-MsgGUID: RAnOOFDETx6y6Q6iCeu9gQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="168119124"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO desk) ([10.124.220.33])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 22:19:47 -0700
-Date: Mon, 18 Aug 2025 22:19:40 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Alex Murray <alex.murray@canonical.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	linux-kernel@vger.kernel.org, stable@kernel.org
-Subject: Re: [PATCH 1/2] x86/microcode/intel: Refresh the revisions that
- determine old_microcode
-Message-ID: <20250819051940.sqdjdvwupvocuf7w@desk>
-References: <20250818190137.3525414-1-sohil.mehta@intel.com>
- <20250818190137.3525414-2-sohil.mehta@intel.com>
+	s=arc-20240116; t=1755580880; c=relaxed/simple;
+	bh=PgvQFu3lh9/SIXVDJ5Lm+vEL+WGlLSbSCW8w78xleqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XoOR6/oxc9NAnWBMiX76P2U2csLPyheqMKQgKoq2yAGinYSONqyGQF7RGkkXKMbmF6OxczqQ7KA1wJR407E5koeB0sFT8jh4foWtpshDaokqfmeh54mqT1mHPM/JF8FhXUizdQ0w6URljLyr6ZjbrgMeHUxtwrgQPiseN1NhaZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=b3yN+1pW; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61868d83059so9469320a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 22:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1755580877; x=1756185677; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dEbBJBOCsv8FoKMcsZux3iuZl2krc57rvNsAxShKVFs=;
+        b=b3yN+1pW+O9gP/jkNC2oIlTIhbqGVfeEU0YkdeFX0oMf/d4/sfFIdNfP+orjPm1yzE
+         krYH2mgTPCKHVoXIGz7Yh48XTcRsSICmPO5buEc/UWyc1WLbmvyWMPzb3Pxc/d5ENZ6l
+         bwzq1QB9yKT6Sq3uJY8NG8ffMxgUIB+aB/WdSJY55qzeN8ZVqpYZQ9V01hmCCrajngRA
+         4ZFAc1sZqfkpsFfNYNYQ6i803b01fj4eDY/HfnYoRjiGYlFQ1gj8xHmCefHTucRIvWHb
+         to9LLzuPOcuI/egqSVe0+kLWLuBd8MA/HGe68V3qLhjNQc8SQw8CjdzV/VeTXIWG2yVm
+         YEHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755580877; x=1756185677;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dEbBJBOCsv8FoKMcsZux3iuZl2krc57rvNsAxShKVFs=;
+        b=s4J4TlclwzfhICGzW7a4S+h3BMYxYUZKBydq4knzXR1ffOCgfZs+zAFVRjpYewyOhe
+         Fm6nCg/oL0MxRgzmbsDi9UocWOTkeiSdUMSN6GZXYpXxluQ1gk34vvu27BJxQQ3tqfce
+         VaM9GtmsuBa4JCoGL1Vmfx6TgjXCJ5o8Wj+Qox103FgpNkio37pjTgyCiFu+i/M0o+gh
+         awh5zVPSb6wtzsd5tQFhnT2i93lYhwfPyR69HVU0YkHsG4IzNnpQfDTix/nxwEyPW+b9
+         p9WvN+B0FiDde9C5k3GOGfmOuzR0FIBE5m8Ssrd/iYfkRPxz75YPwXcDLnhJQWdYRMqO
+         RmZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpLmE7LaUj01rjsy0r6FFO5768rOmsdy0q3Qq/0zaQ/jZt7vXAsO3D+VbwoyKKc7aD6YJKnts95qgRzv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwguD5YJQ8P9W+iqQ6exhjkYi31ZFjDy4qGZXjJtiyVsC+3iK4e
+	TjtkbxOPLzry04zmpHWurSNvs8awhqNmOR9nrj1Fk/fzvSlXuX5ZyDJjp1ogvuJYTRs=
+X-Gm-Gg: ASbGncv7wy6BOiWKe+QQDBuwNkE3qefZMKhix5oo0cVDEKNJcrjT5AmIG0vPhWwSjF8
+	acfZ2pWDnIEiEdOn7fnrC9pob/E7E2OmtrTi/9XtCj5OXbnR6ZtMFv2Kom4sonTu5CYpgDp2eZu
+	NnEdOHmnr5g1l06F4LSKvgPhL+o2x/JHdXq+8R6oQp4KIw6Fc3FBCgx6IQOO/SQaQ7tMYzCuIkq
+	vMcbkkYDmZvRN8LjYiEWKuMpW1sae/Cdw5C/O2oSJ0C1XLT6I1Z/KOc7v4cZXvLnmThboOJi7ax
+	92Nxwu5n5BwF7vn4emZCyPPmIBN8s/1P1C2ltJFyUZldxxNfvN2hHcnNmeqRKeA1ZQNr48ezeBV
+	McYSWk3s0r3px2hl6pajoQOI4zUmvoybEGpOrrlpVEDaXM2TtE/XXKt3TllHyY71yrCwQn71kN6
+	nBRw==
+X-Google-Smtp-Source: AGHT+IEsAxLjtuxFrd5xwHWqn7m4ZVS5u3/PVQsGkPC7Jx1JsTOvbmLGxcEv8DcPfcOnvXJsChzMvA==
+X-Received: by 2002:a17:906:6a1d:b0:ae3:ee3a:56ee with SMTP id a640c23a62f3a-afddf019718mr100922166b.3.1755580877167;
+        Mon, 18 Aug 2025 22:21:17 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:620a:8b00:4343:2ee6:dba1:7917? ([2a02:2f04:620a:8b00:4343:2ee6:dba1:7917])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd0107ecsm915013566b.86.2025.08.18.22.21.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 22:21:16 -0700 (PDT)
+Message-ID: <f71ba698-6c8e-42c7-ac04-3b67cd774784@tuxon.dev>
+Date: Tue, 19 Aug 2025 08:21:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818190137.3525414-2-sohil.mehta@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/8] dt-bindings: reset: renesas,rzg2l-usbphy-ctrl:
+ Document RZ/G3S support
+To: Rob Herring <robh@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250808061806.2729274-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250808061806.2729274-5-claudiu.beznea.uj@bp.renesas.com>
+ <20250813232100.GA950521-robh@kernel.org>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20250813232100.GA950521-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 12:01:36PM -0700, Sohil Mehta wrote:
-> Update the minimum expected revisions of Intel microcode based on the
-> microcode-20250512 (May 2025) release.
+Hi, Rob,
+
+On 8/14/25 02:21, Rob Herring wrote:
+> On Fri, Aug 08, 2025 at 09:18:02AM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The Renesas USB PHY hardware block needs to have the PWRRDY bit in the
+>> system controller set before applying any other settings. The PWRRDY bit
+>> must be controlled during power-on, power-off, and system suspend/resume
+>> sequences as follows:
+>> - during power-on/resume, it must be set to zero before enabling clocks and
+>>    modules
+>> - during power-off/suspend, it must be set to one after disabling clocks
+>>    and modules
+>>
+>> Add the renesas,sysc-pwrrdy device tree property, which allows the
+>> reset-rzg2l-usbphy-ctrl driver to parse, map, and control the system
+>> controller PWRRDY bit at the appropriate time. Along with it add a new
+>> compatible for the RZ/G3S SoC.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v4:
+>> - dropped blank line from compatible section
+>> - s/renesas,sysc-signals/renesas,sysc-pwrrdy/g
+>> - dropped description from renesas,sysc-pwrrdy
+>> - updated description of renesas,sysc-pwrrdy items
+>> - updated patch description
+>>
+>> Changes in v3:
+>> - none; this patch is new
+>>
+>>   .../reset/renesas,rzg2l-usbphy-ctrl.yaml      | 40 ++++++++++++++++---
+>>   1 file changed, 34 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+>> index b0b20af15313..c1d5f3228aa9 100644
+>> --- a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+>> +++ b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+>> @@ -15,12 +15,14 @@ description:
+>>   
+>>   properties:
+>>     compatible:
+>> -    items:
+>> -      - enum:
+>> -          - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL and RZ/Five
+>> -          - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
+>> -          - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
+>> -      - const: renesas,rzg2l-usbphy-ctrl
+>> +    oneOf:
+>> +      - items:
+>> +          - enum:
+>> +              - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL and RZ/Five
+>> +              - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
+>> +              - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
+>> +          - const: renesas,rzg2l-usbphy-ctrl
+>> +      - const: renesas,r9a08g045-usbphy-ctrl # RZ/G3S
+>>   
+>>     reg:
+>>       maxItems: 1
+>> @@ -48,6 +50,19 @@ properties:
+>>       $ref: /schemas/regulator/regulator.yaml#
+>>       unevaluatedProperties: false
+>>   
+>> +  renesas,sysc-pwrrdy:
+>> +    description: The system controller PWRRDY indicates to the USB PHY if the
+>> +                 power supply is ready. PWRRDY needs to be set during power-on
+>> +                 before applying any other settings. It also needs to
+>> +                 be set before powering off the USB.
 > 
-> Cc: <stable@kernel.org> # v6.15+
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-> ---
->  .../kernel/cpu/microcode/intel-ucode-defs.h   | 86 +++++++++++--------
->  1 file changed, 48 insertions(+), 38 deletions(-)
+> Where did this odd formatting come from?
+
+I formatted it like this by mistake.
+
+> If copied from somewhere else,
+> patches reformatting them welcome.
 > 
-> diff --git a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h b/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
-> index cb6e601701ab..2d48e6593540 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
-> +++ b/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
-> @@ -67,9 +67,8 @@
->  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0008, .driver_data = 0x1000191 },
->  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0010, .driver_data = 0x2007006 },
->  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0020, .driver_data = 0x3000010 },
-> -{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0040, .driver_data = 0x4003605 },
+>      description:
+>        The system controller PWRRDY indicates to the USB PHY if the power
+>        supply is ready. PWRRDY needs to be set during power-on before applying
+>        any other settings. It also needs to be set before powering off the USB.
 
-".model = 0x55, .steppings = 0x0040" is being removed? Total number of
-entries in the table are being reduced by ~10.
+OK
 
-> -{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0080, .driver_data = 0x5003707 },
-> -{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0800, .driver_data = 0x7002904 },
-> +{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0080, .driver_data = 0x5003901 },
-> +{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0800, .driver_data = 0x7002b01 },
->  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x56, .steppings = 0x0004, .driver_data = 0x1c },
->  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x56, .steppings = 0x0008, .driver_data = 0x700001c },
->  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x56, .steppings = 0x0010, .driver_data = 0xf00001a },
-> @@ -81,51 +80,62 @@
+> 
+> 
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    items:
+>> +      - items:
+>> +          - description: System controller phandle required by USB PHY CTRL
+>> +                         driver to set PWRRDY
+> 
+> Indent by 2 more than 'description'
+
+OK
+
+
+Thank you,
+Claudiu
+
+> 
+> With that,
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> 
+>> +          - description: Register offset associated with PWRRDY
+>> +          - description: Register bitmask associated with PWRRDY
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+>> @@ -57,6 +72,19 @@ required:
+>>     - '#reset-cells'
+>>     - regulator-vbus
+>>   
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: renesas,r9a08g045-usbphy-ctrl
+>> +    then:
+>> +      required:
+>> +        - renesas,sysc-pwrrdy
+>> +    else:
+>> +      properties:
+>> +        renesas,sysc-pwrrdy: false
+>> +
+>>   additionalProperties: false
+>>   
+>>   examples:
+>> -- 
+>> 2.43.0
+>>
+
 
