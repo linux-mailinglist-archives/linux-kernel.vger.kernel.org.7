@@ -1,94 +1,108 @@
-Return-Path: <linux-kernel+bounces-775419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283C2B2BEEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:30:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4247BB2BEF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C238C4E2801
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:30:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB7F37A7BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B9D32274E;
-	Tue, 19 Aug 2025 10:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A71322A35;
+	Tue, 19 Aug 2025 10:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujulMw9a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLcE0AYN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D6322547;
-	Tue, 19 Aug 2025 10:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6B02AE66;
+	Tue, 19 Aug 2025 10:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755599396; cv=none; b=G6RHfeowsokb/8XJJPA1Ea7Uy9ugqPQjiBC0LeBqM1H1JRJzj2ZdWGtVrDaPM7fIRdC3d24veNLuSv4QPwMW7QzeThmxZAgCdFaNUptG4cuOo50O1CNfUo9QeQkX2TYqwrOCYwVUi5FNqQ5cxHdWOiNZcrgtakjykvnwrTNKhMY=
+	t=1755599452; cv=none; b=jgc21oPzhC87gVFieI3Y4uT0fGUR7RynVIef0Vgaj4FvWtr8YioCCHWnPQHFb6Ba83YRq55UoCM5RlOjeTq6eLpnsDfNOBpjQDu8rojSygIDRczwUJErS598oxndjzOa1ErllS8Hkc5hj18R1MuISdgIRqDQgur1lh5M0pqiws0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755599396; c=relaxed/simple;
-	bh=chtVlqNA4W8+qeCTam+hfj759O2lJY4TyQIcnPBGzm4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=M0X7KvNbPEEWEORUDPAELpis1BVYgt9xWp7hna0mXe32jh8nFZYHoHN0Ux2nCkjLAT6ZGeD9iHZqUSZKUAvq8Rcw3rAoeU5yUOtFZso5q2Z+rk/GtWpaxAlSFc0mU7PrOPl2hgDXDuRf+pnXvSNQH0o8pHgF+N+IlzzgpiKohmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujulMw9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF81BC4CEF1;
-	Tue, 19 Aug 2025 10:29:55 +0000 (UTC)
+	s=arc-20240116; t=1755599452; c=relaxed/simple;
+	bh=IcyFASKIRonI5f/iTr13fAvpBsYPA0sslsL+pYsDvmk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Ropm4KUHPdjetrbEibVIZDFcye8s4lzNtz2acR45XuMG6cokOd81uFfgklwUQKjspUR2ZTOja/MPOM/dFUdkXMvWZNKq1ShGvj5tOtttcXNNVHEPQk4XwJyHyqZwTtpN3vx3U3v/0j6mjuMSLF6twabKFTi7vUmj+p2fe7P59zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLcE0AYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58094C4CEF1;
+	Tue, 19 Aug 2025 10:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755599395;
-	bh=chtVlqNA4W8+qeCTam+hfj759O2lJY4TyQIcnPBGzm4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ujulMw9aIo6V05WVmJvWf4Y7efZVrsOouPH9VFwvuSlPtOPNfJzDrUgyFoPCGb9Q6
-	 2kdzAUiJspHn8dGtGgzMgBLaPiNLZwMR+zeKFODSKEoteuBHJVFr4ZfsWtpQR4/uFA
-	 qPYlFVUkC2+QdMPCot6cmDpmPvLxwlHAkAqBpGKc6Rm96B43puFmB2SddyG9iV6PCp
-	 Y37kCGXFlOEFZzOPYpqDAE5FjOtZhFG/G5Oxihz5WIXU9mJ1YnevaZBRDL7vzfzlNt
-	 w393AYHzcs2mSvJcbNQjOz3l2SfA8ANnI+qPgRLMBf4jXUz4Ei+4HzWJYz+/aF1QV+
-	 zUpt73nFMj7Nw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD53383BF58;
-	Tue, 19 Aug 2025 10:30:06 +0000 (UTC)
+	s=k20201202; t=1755599451;
+	bh=IcyFASKIRonI5f/iTr13fAvpBsYPA0sslsL+pYsDvmk=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=NLcE0AYNFByESJ6pprQ6ZWUrrlu8KuzChAopnEm33HaC/9cNsEfihVIrKxp48WZYZ
+	 XVHGhDDHPIJ6qoS2SoHUdv4ipdzR2CBuSv7vzF9E33H+6efC7yyg1yQsu/u9cxVOpJ
+	 JAj39/w6fhTov0srHTSgc4mWatndteIZ7aDRYxpfnpbJKE+TBR8K3yxaqOmjoPu8NA
+	 YY0pM96fDKrj2GAkZKLNgN2HEXUWvJi6L5c9tzFS9hjM76uRS9ALhHbK03kaJq8Tu1
+	 HdUuSQcNqjVwjp7oxXt8GreyQR3aZCSkejbTAIG7zB5HIBzxvBql0qtiFgc9t1RlNe
+	 7rcRHMZXBZYNg==
+Date: Tue, 19 Aug 2025 05:30:50 -0500
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix HSR and switch offload
- Enablement during firwmare reload.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175559940576.3486708.2946674599045363041.git-patchwork-notify@kernel.org>
-Date: Tue, 19 Aug 2025 10:30:05 +0000
-References: <20250814105106.1491871-1-danishanwar@ti.com>
-In-Reply-To: <20250814105106.1491871-1-danishanwar@ti.com>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, m-malladi@ti.com,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, srk@ti.com, vigneshr@ti.com, rogerq@kernel.org
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org, 
+ Magnus Damm <magnus.damm@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+To: Biju <biju.das.au@gmail.com>
+In-Reply-To: <20250819074849.18696-1-biju.das.jz@bp.renesas.com>
+References: <20250819074849.18696-1-biju.das.jz@bp.renesas.com>
+Message-Id: <175559945053.3807930.4480265788068260274.robh@kernel.org>
+Subject: Re: [PATCH v2] media: dt-bindings: renesas,rzg2l-cru: Improve
+ documentation
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu, 14 Aug 2025 16:21:06 +0530 you wrote:
-> To enable HSR / Switch offload, certain configurations are needed.
-> Currently they are done inside icssg_change_mode(). This function only
-> gets called if we move from one mode to another without bringing the
-> links up / down.
+On Tue, 19 Aug 2025 08:48:42 +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 > 
-> Once in HSR / Switch mode, if we bring the links down and bring it back
-> up again. The callback sequence is,
+> Drop CRU prefix from clocks and interrupts description.
 > 
-> [...]
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> Ref: https://lore.kernel.org/all/20240909143358.GA2013-robh@kernel.org/
+> v1->v2:
+>  * Updated commit description
+>  * Dropped CRU prefixes from clocks and interrupts description.
+> ---
+>  .../bindings/media/renesas,rzg2l-cru.yaml     | 22 +++++++++----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
 
-Here is the summary with links:
-  - [net] net: ti: icssg-prueth: Fix HSR and switch offload Enablement during firwmare reload.
-    https://git.kernel.org/netdev/net/c/01792bc3e5bd
+My bot found errors running 'make dt_binding_check' on your patch:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819074849.18696-1-biju.das.jz@bp.renesas.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
