@@ -1,159 +1,323 @@
-Return-Path: <linux-kernel+bounces-776198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E058DB2C9DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:39:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8952B2C9D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660F516D9A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A6E1BC5D72
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F302325DCEC;
-	Tue, 19 Aug 2025 16:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9070525C6EC;
+	Tue, 19 Aug 2025 16:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="l2k9aXPk"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcTg8QKU"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003F225229C;
-	Tue, 19 Aug 2025 16:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D82571D4;
+	Tue, 19 Aug 2025 16:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755621347; cv=none; b=VPv1DJ5X36pMJYIdgnSF/QJD1mZTaT7c5kE8vE6cKSKShLkapg3PdFC/aGrji+FBxHjFOzo6OyBRKCyreUGitaqQTson7ADhC2Zz/VwLPoG6yHGNNFA0rl+NBSF4Rc9pcPPcAKd2MozRmwicacBit5yH2OkdfGvywg7FxbXLgHo=
+	t=1755621446; cv=none; b=G6MJJy6APLpKx+gDNdQlv5EpjgHvjJxq9f7/Cf/V4X7acgzj+pQleTbSxZKXxUbx5c+aM8HQapA6rFTvaWBKs9FpKeFgnaCvtxUHl0U8tHZ3ZvoVokERcRuOxqFAmBZteAHjTM+l+1TTy9BwWFiB5PKNulNCS5UWpV6P/cxtoqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755621347; c=relaxed/simple;
-	bh=uysln2twkxjwyTabZ9B7JuHAbGVUHD3aOdLHQEg9RSs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=GQ1VQJrJjUxaLCfUdrF647+TLdFs0rLYdjUvkGyr3IJP/vG8Lj0BiNRs6jSngoPNqXiyb9sdtuuCk7dTPK9vouM9X8j91sn0m2apU33Lo4Xyq5itKgSK2INb5BB7fhIMdXfCGph0/cLgPI4M+vNWjXiQZJnRHHryqRIdjhs3KYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=l2k9aXPk; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755621331; x=1756226131; i=markus.elfring@web.de;
-	bh=uysln2twkxjwyTabZ9B7JuHAbGVUHD3aOdLHQEg9RSs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=l2k9aXPkzV8NAENmQPAXi+lwB5Hu/gJQ5t16RQRwWPQ6B1CEGfLHHmzwcPlhOsl0
-	 X1XhMrkBirMmyfba5bEfFGyHiNEKH2xMdQEZm1rG7i5EGHrAoaUhsyoM4RafaU4EM
-	 5/GlSvpBOAoIe1jbBoAbSsGxjL/BCl2Y5i825s241N+RpLdv4PAtna0akkpJmSYfW
-	 gXzUwPdZnH+xWO6UsnbiWRmh/GulXWYCEPAps4ulEip6gNawZ9MhmC0IMSdd8D9Mp
-	 4Fjl9EQy5f+OqxzWbFpnyK8bM4UPU0We0+q7cEd6absUZGJmKgTmiqbM7MQR3AlWZ
-	 7r/CDT/qeD80zPM0UQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8kEP-1ut68I2N3B-002hLC; Tue, 19
- Aug 2025 18:35:31 +0200
-Message-ID: <ddc9ecc1-ed1c-4416-ad5f-5f5c4cb72564@web.de>
-Date: Tue, 19 Aug 2025 18:35:28 +0200
+	s=arc-20240116; t=1755621446; c=relaxed/simple;
+	bh=scbaPHNUfafnIekgS1W/IcAwZjeclgXRiBG9pKjzDeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnDSWZKWhcUM8RdV7P1JYQbdf85cIG//w/0xLhzvsXViOt3fG6KEmyXguEpC+S3lxN7T5+Q5Ox4gBtkvDFzJ7E8+hOFHTFhZePJoW1GrStZUOSQNOves4Z2SUYX0YG9i9cT16Oolox1e7ldDJwfHzE9m5ap8P1SVKFigO1wo7jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcTg8QKU; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b472fd93ad1so2705992a12.0;
+        Tue, 19 Aug 2025 09:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755621444; x=1756226244; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pN3oR61/c0uiXLRfyBJRzpXCbawo5PgtjuwTdlJFdps=;
+        b=TcTg8QKUYDfNfgOU3AzLK+ESSm5T5l4xp/2rCM22knueb9UxX4yc2qskqfIr9q8NlG
+         2ie3cNncD9BloeOjZJYDdyP5ymDNbzyVALwBL47oIXae0wwwlAoCxo5aUvgvp4e8CMnU
+         A+rrsFndKjCqp4ja14mLZ71uXb1vQFwz8M6kapEU+eS9awLd0it0rlzs7FxPKJAor20k
+         SGa+gKt1goaRJVRSCeaXKxG7NDONWh49JYfganmeaIBTg51XtlYgJuur5jye1AiNw5gg
+         y57nUPbl9pebFSwa02eW+CQbvVeh54LfoXXny+cZqMDr50jRvcfGZQqnG9Y+xwfJKeMZ
+         LzoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755621444; x=1756226244;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pN3oR61/c0uiXLRfyBJRzpXCbawo5PgtjuwTdlJFdps=;
+        b=WzGJTIJysr0cHrQQLd1xRE6wS0cpbA8IlYeXAp7oKA9QbKIa1rDkgX687Gh2tNBMlu
+         pRLuNFef424ybRrFNBUSpHU4QX2T6G+A5Nb6huxv3vVxJjh7KgDXt0Hh7tHBu3kVHv+a
+         hJj8p2L9b9nK7KKN/ST5JHCODs5HDDe1HxWTZOzQdcUqqTkRT4BMg51XrPGhpTNhfppm
+         K69MlERNtXh0hf8z5YU+kmrId4kEvfgQ5Vu0AdaREV84QgmOtqeRDXWzl9WuOJzmz89O
+         XFwg3Ni9TvDh463W2eVqpboCwoePKFa1+ZmIpZu8FCHsy3cKTl8Uqj9ffm5sM4omuH1Z
+         sD3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFOrU7GD0zNEUC61KD9H6sij0mqMIEBIUlpcYmEcowCztjlS3rUVkjQBQi5vrsyxb9Ll7M0Qt+qH94vvk=@vger.kernel.org, AJvYcCWdoqNnnPEC9/Qgc7GLLtc/iYJKo9h0egUhmN9nrQiWVGR3/Pe7KNNc4kH5fW5du1oNamP0cDfDoVUYXamrzMZ1hHUQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbkdM8tOC7bcwLzmTaQXvJgCarFirsZWnqvY6I5byEx3DL72rw
+	dzjq+auLZqr+tgLxUwhsuV8Pr8+ToZVUYa8C9I6cpsMkLabSbv+N04Gp
+X-Gm-Gg: ASbGncvI1ePcAKIFYUxUJfn5rKApGyP2fygk+BaZElH1gFLivyn9xHRqYNeKSa3U77G
+	fBFRhEjLnACCLnRy8CAhhkrb6A4/EU719LRdIkTTl1JajyraKyf94os6L8/J0zIPA4E3Z/2cB3l
+	I/doNCOshtQF6KLHV6EXG9H1V7jWi5BqUP1y2QoQGzSWf/z37fx6na+RlOwwoN3pV9ZLw0n23BL
+	xcwzDIGhGFHz5ZjSw/ItAx1wEFxO1CSyaNx742QJGEpWglQoTlfgBCTiAjn/S34iTTDXVbx6uiH
+	wn5T+khx0rPHiF+z7HVr88OE33uFY82HZQ9kzFUuZbcNnpX20g4AEI7kPpsdAHmQY7llW+VPNfE
+	kGpfZxtg8
+X-Google-Smtp-Source: AGHT+IElLHXy5Z0g7yBhgA4isDUqzATIIqXde4d2BmuwggJSAMpaov5koyT/PbDQ1G2u3jDfv9QvHg==
+X-Received: by 2002:a17:902:d48f:b0:242:a0b0:3c1f with SMTP id d9443c01a7336-245e02cfc12mr45322725ad.7.1755621444380;
+        Tue, 19 Aug 2025 09:37:24 -0700 (PDT)
+Received: from gmail.com ([2406:5900:2:f21::2a1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed51c0aasm1428815ad.144.2025.08.19.09.37.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 09:37:23 -0700 (PDT)
+Date: Wed, 20 Aug 2025 01:37:18 +0900
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: rostedt@goodmis.org, mathieu.desnoyer@efficios.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] trace/trace_fprobe.c: TODO: handle filter, nofilter or
+ symbol list
+Message-ID: <aKSoPiEeixEtcxys@gmail.com>
+References: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
+ <20250814121504.2784e740a4e6fd4e0dd563d6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, linux-wireless@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
- Gregory Greenman <gregory.greenman@intel.com>,
- Johannes Berg <johannes.berg@intel.com>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
- Rotem Kerem <rotem.kerem@intel.com>,
- Somashekhar Puttagangaiah <somashekhar.puttagangaiah@intel.com>,
- Yedidya Benshimol <yedidya.ben.shimol@intel.com>
-References: <20250819121201.608770-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH 0/2] wifi: iwlwifi: Remove redundant header files to clean
- code
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250819121201.608770-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:1Jgv37srZjxGapamfKdetXLYMYymgfEHArR8vecWbe2GP2JfUkv
- Ep15pTpfWs0nDpzPyqCrnnVxt7BlHHygpDlFsEbL9/+0MYWdDqp5rY9M2ioFGc7Z0e9UMN1
- AVJxe3Wbbv9QZdDc+O6bc2AJdsfU/HqK5xApLvRKsGPJGheRJSy89JnwrFPrkKbNph0ih8H
- zUH7/P+B7oFetO7aSLVLA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GBd1cWIr8go=;kxCQATS1eZ1AP5+OBgkNh23dvyJ
- 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
- lZpnRcDm7bwi6WNmjxE77AZp+OhI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814121504.2784e740a4e6fd4e0dd563d6@kernel.org>
 
-> There are two files with duplicate header files inclusions. Remove these
-> unnecessary header files to clean up the code.
+On Thu, Aug 14, 2025 at 12:15:04PM +0900, Masami Hiramatsu wrote:
+> Hi Ryan,
+> 
+> On Wed, 13 Aug 2025 01:21:01 +0900
+> Ryan Chung <seokwoo.chung130@gmail.com> wrote:
+> 
+> > Resolve TODO in `__register_trace_fprobe()`: 
+> > parse `tf->symbol` robustly (support `sym!filter` and comma-separated lists), trim tokens, ignore empties, deduplicate symbols, use bulk registration for lists, return `-EEXIST` if already registered, and preserve lockdown/tracepoint deferral semantics.
+> 
+> Thanks for the improvement!
+> And could you add the new syntax in the document too ?
+> 
 
-You would like to omit duplicate #include directives, don't you?
-Will corresponding refinements become helpful for summary phrases
-and change descriptions?
+Yes. I will add the syntax in the document.
+To clarify, by document, you mean
+Documentation/trace/fprobetrace.rst?
 
-Regards,
-Markus
+> > 
+> > Please note that this was my personal interpretation of what TODO
+> > required here. Welcoming any feedback. 
+> > 
+> > Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+> > ---
+> >  kernel/trace/trace_fprobe.c | 102 +++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 100 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+> > index b40fa59159ac..37d4260b9012 100644
+> > --- a/kernel/trace/trace_fprobe.c
+> > +++ b/kernel/trace/trace_fprobe.c
+> > @@ -12,6 +12,8 @@
+> >  #include <linux/security.h>
+> >  #include <linux/tracepoint.h>
+> >  #include <linux/uaccess.h>
+> > +#include <linux/string.h>
+> > +#include <linux/slab.h>
+> 
+> Headers should be sorted alphabetically.
+> 
+
+I will fix this in v2.
+
+> >  
+> >  #include "trace_dynevent.h"
+> >  #include "trace_probe.h"
+> > @@ -762,8 +764,104 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
+> >  		return __regsiter_tracepoint_fprobe(tf);
+> >  	}
+> >  
+> > -	/* TODO: handle filter, nofilter or symbol list */
+> > -	return register_fprobe(&tf->fp, tf->symbol, NULL);
+> > +    /* Parse tf->symbol */
+> 
+> Please make this parse and check as a sub-function instead of new
+> scope. Also, it should be done in parse_symbol_and_return(), so that
+> we can handle wrong syntax when parsing it.
+> 
+
+I will move the parsing into parse_symbol_and_return()
+so syntax errors are detected at parse time.
+
+> > +    {
+> > +        char *spec, *bang, *p;
+> > +        int n = 0, w = 0, j, rc;
+> > +        char **syms = NULL;
+> > +
+> > +        spec = kstrdup(tf->symbol, GFP_KERNEL);
+> > +        if (!spec)
+> > +            return -ENOMEM;
+> > +
+> > +        /* If a '!' exists, treat it as single symbol + filter */
+> > +        bang = strchr(spec, '!');
+> > +        if (bang) {
+> > +            char *sym, *flt;
+> > +
+> > +            *bang = '\0';
+> > +            sym = strim(spec);
+> > +            flt = strim(bang + 1);
+> 
+> You don't need to do strim, since if there is a space, it
+> should be parsed already. New syntax must be ',' separated.
+> My basic syntax for this probe event is;
+> 
+> WORD WORD WORD[:OPTWORD] SUBWORD[,SUBWORD]
+> 
+> OPTWORD is qualifying the previous WORD, SUBWORDs are not
+> quarifying, but the same-level words. (Currently using "%return"
+> for the return of the function, that is a special case.)
+> 
+
+Understood. I will drop strim() and treat tokens as you mentioned.
+I will leave return behavior unchanged.
+
+> > +
+> > +            if (!*sym || !*flt) {
+> > +                kfree(spec);
+> 
+> Please use __free(kfree) instead of repeating kfree().
+> 
+
+I will also include this in v2.
+
+> > +                return -EINVAL; /* reject empty symbol/filter */
+> 
+> Also, before returning an error, use trace_probe_log_err() to
+> notice the reason and the place of the error to user.
+> 
+
+I will log parse failiures with trace_probe_log_err().
+
+> > +            }
+> > +
+> > +            rc = register_fprobe(&tf->fp, sym, flt);
+> > +            kfree(spec);
+> > +            return rc;
+> > +        }
+> > +
+> > +        /* Comma list (or single symbol without '!') */
+> > +        /* First pass: count non-empty tokens */
+> > +        p = spec;
+> > +        while (p) {
+> > +            char *tok = strsep(&p, ",");
+> > +            if (tok && *strim(tok))
+> > +                n++;
+> > +        }
+> > +
+> > +        if (n == 0){
+> > +            kfree(spec);
+> > +            return -EINVAL;
+> > +        }
+> > +
+> > +        /* Allocate array for pointers into spec (callee copies/consumes) */
+> > +        syms = kcalloc(n, sizeof(*syms), GFP_KERNEL);
+> > +        if (!syms) {
+> > +            kfree(spec);
+> > +            return -ENOMEM;
+> > +        }
+> > +
+> > +        /* Second pass: fill, skipping empties */
+> 
+> Again, symbol should not have a space.
+> 
+
+Understood. I will also fix this in v2.
+
+> > +        p = spec;
+> > +        while (p) {
+> > +            char *tok = strsep(&p, ",");
+> > +            char *s;
+> > +
+> > +            if (!tok)
+> > +                break;
+> > +            s = strim(tok);
+> > +            if (!*s)
+> > +                continue;
+> > +            syms[w++] = s; 
+> > +        }
+> > +        
+> > +        /* Dedup in-place */
+> > +        for (i = 0; i < w; i++){
+> > +            if (!syms[i])
+> > +                continue;
+> > +            for (j = i + 1; j < w; j++) {
+> > +                if (syms[j] && !strcmp(syms[i], syms[j]))
+> > +                    syms[j] = NULL;
+> > +            }
+> 
+> I think dedup will be done in ftrace, so we don't need to do this
+> costly operation.
+> 
+
+I see. I will remove the dedup here.
+
+> > +        }
+> > +
+> > +        /* Compact */
+> > +        for (i = 0, j = 0; i < w; i++) {
+> > +            if (syms[i])
+> > +                syms[j++] = syms[i];
+> > +        }
+> > +        w = j;
+> > +
+> > +        /* After dedup, ensure we still have at least one symbol */
+> > +        if (w == 0){
+> > +            kfree(syms);
+> > +            kfree(spec);
+> > +            return -EINVAL;
+> > +        }
+> > +
+> > +        /* Register list or single symbol, using the existing bulk API */
+> > +        if (w == 1)
+> > +            rc = register_fprobe(&tf->fp, syms[0], NULL);
+> 
+> Hmm, you might misunderstand this. What you need to do is to classify
+> the list of symbols with '!' as nofilter, and others as "filter",
+> and pass those as "register_fprobe(&tf->fp, filter, nofilter)".
+> 
+
+Thank you for the clarification.
+I will change as followed:
+- tokens prefixed with '!' go to the nofileter list
+- all other tokens go to filter list
+- pass both to register_fprobe(&tf->fp, filter, nofilter)
+
+> Thank you,
+> 
+> > +        else
+> > +            rc = register_fprobe_syms(&tf->fp, (const char **)syms, w);
+> > +
+> > +        kfree(syms);
+> > +        kfree(spec);
+> > +        return rc;
+> > +    }
+> >  }
+> >  
+> >  /* Internal unregister function - just handle fprobe and flags */
+> > -- 
+> > 2.43.0
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you. Please let me know if you have any questions or concerns.
+
+Best regards,
+Ryan Chung
 
