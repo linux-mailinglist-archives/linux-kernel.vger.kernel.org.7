@@ -1,90 +1,74 @@
-Return-Path: <linux-kernel+bounces-776596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23420B2CF59
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A11B2CF56
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2C31C28523
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890515649A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF3831DD9C;
-	Tue, 19 Aug 2025 22:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BF530EF8F;
+	Tue, 19 Aug 2025 22:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqtGIAX8"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c9uELJrL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0376C30DD09;
-	Tue, 19 Aug 2025 22:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C16353365;
+	Tue, 19 Aug 2025 22:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755642533; cv=none; b=InomGPfB7E/Z+cMzB3IkSPuC2d06YkCw8VYjPR2X/CgLxogyP8Mxc6EBfKd0ncWQ+oJtpIjEzAMWU1ArhT2zOfCJLrggMXlP0P6TtDfPuoaI4TMXEVD6xeT0+cp+BnE9GyBJL0T7qgaxC1za7zvKPPvDqG+j3/3BlA/H6JlWnig=
+	t=1755642531; cv=none; b=CMcTTQifg9ZxT8lgnAu/xK9nkUdhfvCsFQuq8OkTLk5EO607VQcWq1M3fN1m3F96G1nWz8YuWnWKl+wJhTgH4f0R0AnZ2Yh6xUPvjMw2IjrLNT2/K4N/e+m7KKxwm2hYCmvgGkqQ7HgrnZoalTIu6TK7VR0k0Iz3tuY/evPYIa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755642533; c=relaxed/simple;
-	bh=0+8XVoBAD/tPExRqsH1rlyeLVpU7k7+Wq25d9Q2DBX0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VHfljjUsENPUIBJkjxiWM7UI9aJg9++N6E4TF7arW7MC6nhWxeNnWVyXSWv8DxDg/jQ95gkb4NTkEJTl/pSyg09viN6RJu3acLUP8Jw9xZdKkgx3KRAvL2lAR+H6p7G/tWNqm4H+s1ZHVsyr1QyK9WJRvZkQ4IrCzVXJuYgFJ44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqtGIAX8; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b066b5eso30537085e9.1;
-        Tue, 19 Aug 2025 15:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755642530; x=1756247330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nxRrcohdrp6hc8dJuUXjhJQdfVF4Q8UIJXDooLC5mqs=;
-        b=AqtGIAX8JnVng8Y4yvZxVhuM6ZWijpWoPDpZRtp3VfUCvjv/VL8zNj2wVcP0LGNHcX
-         iwwazT63j8jtwCYs4BkLi59LEAEwt5ZRlpNxPnCV8oXl4vS568sdTXbiWQ5WXBpa67gS
-         2HjkJMCLfKLLzelu8uJb4Prl1yfCh+Yh2kTWzUWseCvdlq3Ou4df7cv06kBAD7+4mm//
-         j8/WRaQd5KI9hr5y5Wr0E2VbUwAP2oHMbTFGS/f+hvgjwTQPrLi4pzQpMu8SnARFZ8ZX
-         JKiBj1bC6hPHvP/5ETw3Sv1xFaCJyBKMh/bCT+X1IaoDz0Xh+weN65vGQ8JMhsIvduxQ
-         /MYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755642530; x=1756247330;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nxRrcohdrp6hc8dJuUXjhJQdfVF4Q8UIJXDooLC5mqs=;
-        b=amO0fD8cgLuuPhOvLGudor4pTMiV/uWNH/wV/ZurOigZRUKXrOiw6VCJy575mrytLQ
-         hqba+Rtj1GEoFzE7oDPwdUmj8MpnEd1WzW8sYSTPTSIKOlK8mqSGebwJ/YK8j4JQZKFi
-         60i40JYJiA+3lv2y4Dl5TlNDVWImOuYq/5Lud7koKciwlGqeeTxqXLvJxYRuBjWXGjOv
-         QvV7it1f2hE6WU/O5bzRLUUEWvvRrgbSQjFKa7KKrNp9kBSNLvf2QVLxOFDSl95Bh+rg
-         lNOO4Yt1nKMYfFCLA2Q3g9Mi9Sg3mKgkNY7BoueApU5bv9U5c7WI/DGOkTDYGUOFAa7X
-         h0aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXo3KD21KIrHalx7ufl19e3ZpiKpkp7SRe/A+XP8NPrHIaMKDBPcmK6+9I4VU6rz0jWrwcEBue6bXO@vger.kernel.org, AJvYcCVgTBG/7pTvspkAH2MNFltO6Kev9VvYR5bVVh4bqkLrnFip7xrqlg++QRypZR0rcx6DA23HvhEUB3ZZIxfe@vger.kernel.org, AJvYcCXujx3hlaWBptMmDEdxlKW2aNp77yhJ2WmSUsS5LjlRl589EOSoTVDx0ISwVIiZfdvizRnmJR95t01xhCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV2xY9QiFXhxbc7c5J+0iQPPWdSgT6F3Ey3pJgx1zaxOrF3W3V
-	KjgsHBSBnc7+F0V/gL0IyWwNA2cuqS1p1WKsLq2ef0oQ8Wmf92G3BjQ=
-X-Gm-Gg: ASbGncsMgDep/7rLsbJbFGhxK1SjZ2Wglh4r0qNe1DZrABsDgQjFTuZhLdFl5SDXPzp
-	cJzGopYsbhgGOOimLckpCtDqkf//1zwwSYqeoisKB13WLrGdCVwReBytZJDZ2hnQoJyOnYWGaTd
-	lQH8WnRwWQWENs6nTd0Kvpso5yyVrmEih9CR8EG/NRTZRaGHoNw1y8hWF14bGHcRNjkQt/78gFL
-	WrYGrluQN+++EPm/jwp1LLn4xsC9CFfxXhPNzu5x5N1NSX+eR40DQJ0mBrFp7dh0A4DkZB0Fjya
-	DZZbtzjooLn9cFUUtsbrcioFoXUPP4vwpOxG9oBBtj4HjEU/5XsP8jYPgUmzGf5gUIcqPitLTNi
-	SgBlNcX6Ni3/kFFYW+O2q7dCl+xB8smD76DhVPjOfNqFxoOg=
-X-Google-Smtp-Source: AGHT+IG54zislyWvKb2CD8selDQMJvVHtYy8eN/d91/ywTICdUU8HuG4oNZmw4oxm8cQlV0WtiWfjw==
-X-Received: by 2002:a05:600c:524e:b0:45b:43cc:e557 with SMTP id 5b1f17b1804b1-45b47a1a101mr3752005e9.34.1755642530044;
-        Tue, 19 Aug 2025 15:28:50 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:216f:2f7a:74c6:177a:3b99:868c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c30dc1sm4394875e9.6.2025.08.19.15.28.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 15:28:48 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: dmitry.torokhov@gmail.com
-Cc: krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	peter.ujfalusi@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com
-Subject: [PATCH v4] input: dt-bindings: ti,twl4030-keypad: convert to DT schema
-Date: Wed, 20 Aug 2025 00:28:23 +0200
-Message-Id: <20250819222823.157943-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1755642531; c=relaxed/simple;
+	bh=KnBTOmzJGddu+v13liGbOzbBjr0xZ2JkSUFDjoE9WTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TX6f+DHm4lsh2YuMvbF4KyOhL4SyiRSYxvhKvBpIwOJiYjvvBEgqGzEYn/WBCu5PCzr2NoH4l/t8b9ZWj2z68XdBSIk3LTedqCu5QJTFniv8C0+ETwp+krOYe3zU3ZXWjvfui6GLMeb/S6CgVj9mVEAiQ81MMUXfH65UT4+KeEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c9uELJrL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57JL10eb030658;
+	Tue, 19 Aug 2025 22:28:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=RPIphcJuk+0nZHZvCIxkLXOCLy6PFMiBqUN
+	1q118Plo=; b=c9uELJrLlXfP/VGWP6xvjjzAvCHg5TUQ6+VPqBafZ0+4dEhS09r
+	pTQ+Sls+2pyQ8WIbN3G6SfW8pktt2yMVv0GPSqjdYTw2/ZUjnpG11DnVCrR/tdLN
+	BS0G9CNhRE/fjfTzEYy+je4KssW7jr/KO2x4UvNVrKVbKK4s28HCI9wpuDNnX2wz
+	QlZD/EukfF5a1Svvl5hJeqt9PE8ICOjdhLXqlSrUmHTS3ybO3wFZrNH3PxD+7Hz2
+	nfrxE08zLZRbOjhrk2+s+VubKSX26w9OLi8KUuNizHtQappvggKty0SEqAtney21
+	fpbt3iAyCn/QK/HADXfdjfwD+m25kD3KDaA==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n0tdr51m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 22:28:39 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57JMSYCb008387;
+	Tue, 19 Aug 2025 22:28:34 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 48jk2krc2d-1;
+	Tue, 19 Aug 2025 22:28:34 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57JMSYeO008382;
+	Tue, 19 Aug 2025 22:28:34 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 57JMSY9G008381;
+	Tue, 19 Aug 2025 22:28:34 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id 87FCC57363A; Wed, 20 Aug 2025 03:58:33 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, mani@kernel.org,
+        dmitry.baryshkov@oss.qualcomm.com, andersson@kernel.org,
+        konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: [PATCH V3 0/2] Add regulator load support for QMP UFS PHY
+Date: Wed, 20 Aug 2025 03:58:24 +0530
+Message-ID: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,132 +76,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=a4RpNUSF c=1 sm=1 tr=0 ts=68a4fa97 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=2OwXVqhp2XgA:10 a=zxPLyqCQwrrZPiHgX0UA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: Pg2w-0O8izTAGeHJeNWsZKA-95B4k48D
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NiBTYWx0ZWRfXxeJFn5d+SUoE
+ 08C0X84dpYtmQcyCQ1LTOwmK21CRFiIF1WIevMNn9tu8Wdln40EGgP1lwNhptgk4Wihs51t6ya3
+ RS7VjWRuZttCRCnsysIN+9MCdyFbxU+5qr2WzUtwK5kYM7u1482TjYOJhQipEaiO4eSgTfBvGIy
+ Wi5xAs4KTKpcju1cSfxi7EtbbjXKI8wsNMnWTVbO+0eUnUU+ZdhpG2Vsz+IkvTibloXUTIrJVpT
+ yRFz1dSikVzsYGoz3ift/sz+dvLbF13srieIqFpLEDEzuJDsD8Wz0YP7kzdw/Pg1j+jRJjtNbVD
+ IT+kkPuSTEgsWTPrvN5fnNzmqMtV08nA6PHJrNqJGfP6iSotD66g5gixgz92y4n2gB1BuItJQHJ
+ Bi71wVbmvtJv0GNtaMn6w9jdYkvINw==
+X-Proofpoint-GUID: Pg2w-0O8izTAGeHJeNWsZKA-95B4k48D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_03,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 impostorscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
+ definitions=main-2508190196
 
-Convert the legacy TXT binding for the TWL4030 keypad module
-to the modern YAML DT schema format. This adds formal validation
-and improves documentation by inheriting from the matrix-keymap schema.
+The series improves regulator handling in the QMP UFS PHY driver and
+adds load configuration support for SM8650 and SM8750 platforms.
 
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+On some SoCs, regulators are shared between the UFS PHY and other IP
+blocks. To maintain stability and power efficiency, the regulator
+framework needs to know the UFS PHY's peak load, as it determines the
+regulator's operating mode.
 
----
-Changes in v4:
- - No changes.
- - This patch is split from larger series per maintainer feedback.
- - v3 link:
-    https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+The first update replaces devm_regulator_bulk_get() with
+devm_regulator_bulk_get_const(), converts the regulator name array to
+a bulk data structure, and uses the init_load_uA field to automatically
+apply regulator_set_load() before the first enable.
 
-Changes in v3:
- - Made 'linux,keymap' a required property as suggested by the reviewer.
+The second update adds platform-specific load settings for SM8650 and
+SM8750 to ensure proper power management where regulators are shared.
 
-Changes in v2:
- - Simplified the description field by removing redundant '|'
- as it does not affect formatting in this context.
----
- .../bindings/input/ti,twl4030-keypad.yaml     | 59 +++++++++++++++++++
- .../bindings/input/twl4030-keypad.txt         | 27 ---------
- 2 files changed, 59 insertions(+), 27 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/input/ti,twl4030-keypad.yaml
- delete mode 100644 Documentation/devicetree/bindings/input/twl4030-keypad.txt
+Changes from v2:
+1. Addressed Dmitry's comment to replace devm_regulator_bulk_get() with
+   devm_regulator_bulk_get_const.
+2. inline the qmp_ufs_vreg_init() function
 
-diff --git a/Documentation/devicetree/bindings/input/ti,twl4030-keypad.yaml b/Documentation/devicetree/bindings/input/ti,twl4030-keypad.yaml
-new file mode 100644
-index 000000000..c69aa7f5c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/ti,twl4030-keypad.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/ti,twl4030-keypad.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments TWL4030-family Keypad Controller
-+
-+maintainers:
-+  - Peter Ujfalusi <peter.ujfalusi@gmail.com>
-+
-+description:
-+  TWL4030's Keypad controller is used to interface a SoC with a matrix-type
-+  keypad device. The keypad controller supports multiple row and column lines.
-+  A key can be placed at each intersection of a unique row and a unique column.
-+  The keypad controller can sense a key-press and key-release and report the
-+  event using a interrupt to the cpu.
-+
-+allOf:
-+  - $ref: matrix-keymap.yaml#
-+
-+properties:
-+  compatible:
-+    const: ti,twl4030-keypad
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - interrupts
-+  - keypad,num-rows
-+  - keypad,num-columns
-+  - linux,keymap
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/input/input.h>
-+
-+    keypad {
-+        compatible = "ti,twl4030-keypad";
-+        interrupts = <1>;
-+        keypad,num-rows = <8>;
-+        keypad,num-columns = <8>;
-+        linux,keymap = <
-+            /* row 0 */
-+            MATRIX_KEY(0, 0, KEY_1)
-+            MATRIX_KEY(0, 1, KEY_2)
-+            MATRIX_KEY(0, 2, KEY_3)
-+
-+            /* ...and so on for a full 8x8 matrix... */
-+
-+            /* row 7 */
-+            MATRIX_KEY(7, 6, KEY_Y)
-+            MATRIX_KEY(7, 7, KEY_Z)
-+        >;
-+    };
-diff --git a/Documentation/devicetree/bindings/input/twl4030-keypad.txt b/Documentation/devicetree/bindings/input/twl4030-keypad.txt
-deleted file mode 100644
-index e4be2f76a..000000000
---- a/Documentation/devicetree/bindings/input/twl4030-keypad.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* TWL4030's Keypad Controller device tree bindings
--
--TWL4030's Keypad controller is used to interface a SoC with a matrix-type
--keypad device. The keypad controller supports multiple row and column lines.
--A key can be placed at each intersection of a unique row and a unique column.
--The keypad controller can sense a key-press and key-release and report the
--event using a interrupt to the cpu.
--
--This binding is based on the matrix-keymap binding with the following
--changes:
--
-- * keypad,num-rows and keypad,num-columns are required.
--
--Required SoC Specific Properties:
--- compatible: should be one of the following
--   - "ti,twl4030-keypad": For controllers compatible with twl4030 keypad
--      controller.
--- interrupt: should be one of the following
--   - <1>: For controllers compatible with twl4030 keypad controller.
--
--Example:
--	twl_keypad: keypad {
--		compatible = "ti,twl4030-keypad";
--		interrupts = <1>;
--		keypad,num-rows = <8>;
--		keypad,num-columns = <8>;
--	};
--- 
-2.39.5
+Changes from v1:
+1. Addressed comments to move load configuration from device tree to
+   hardcoded, per-compatible data within the driver.
+2. Accordingly updated commit text to reflect the same.
+3. Addressed Manivannan's comment to avoid initialization of load.
+
+Nitin Rawat (2):
+  phy: qcom-qmp-ufs: Add regulator load voting for UFS QMP PHY
+  phy: qcom-qmp-ufs: Add regulator loads for SM8650 and SM8750
+
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 48 ++++++++++++-------------
+ 1 file changed, 23 insertions(+), 25 deletions(-)
+
+--
+2.48.1
 
 
