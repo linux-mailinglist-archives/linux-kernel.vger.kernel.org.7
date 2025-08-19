@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-775309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34795B2BDB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:42:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADBAB2BE0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FEB3ABB8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54E721B65969
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D546231A057;
-	Tue, 19 Aug 2025 09:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A27731AF34;
+	Tue, 19 Aug 2025 09:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jy/ruT42"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z/Q3idA+"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0D41E5B60
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA0F31A050
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596518; cv=none; b=n9DzivNftq4xsiMtS4Dz0Jq/YROW835PEqJUn3EzEVKpr12ThcONaNwX0wPK1EbJG+nyJ7+jPQCHLzVsM4FZQ+goDlyovn6TyTN0JIrgRqsRAdHPxJ5npD269cju1RwCHoJQaRxSsTduGV5nrUjaRjBLmivCAovo7CDCGAVaCwo=
+	t=1755597035; cv=none; b=gL9bdoJ5iIKiHZi+Jnlx2VYr/Vc9KONOWmnBAO/UyiSJcrLct4UUjnfoo7CpGYBOsOeKSo7vHywqUDNmi8wgSnI/xc8Ze+GersrPGstBeynKIrBOpkDbEy+0L0CPgbQ2MGDcJ7YpaVVQH9v40IJg+p/nwVXlMUvE1H8THIYdaro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596518; c=relaxed/simple;
-	bh=Rn+8s1z9P5Tpkw9T71JqBJFM5aF2BjvuA2JqLXFJzxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lWyJWyZO1qj6xG1MREhNUjMbXPxTPK8ejIgg2C0ZdYqrYl0FLDe2BMEZ9HDNrUVcq8aPpW0LpGHa1/TXAF9LtUfdabHmKekRSpqZgL5qMFRNFe8+exKlfv2n/0P6XA2Gz4o7UhWa+GMg1MAdc5NLgMJp56PcqXOqI3sPprZB3og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jy/ruT42; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9d41bea3cso5400754f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596515; x=1756201315; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uVLLl9OqNk7Zu3EPzfXMDRVe4XrWiVodoUaeSDsMNj8=;
-        b=jy/ruT42PnzyoSFxgOw03yjg6ghYeio7M8XRTStzj/dvvrpYZB2rmga03gce07gSTm
-         QBnrvZfpmKbkTvCcNtMrUo9X9/Ly/D4HvmmKgz700NVxAtqFsKcJ3JCOdaIS2yBVMmsF
-         xRbOQX2yxJ/9g/kj4THfDBPPYFS56kpwmra2+T3iUUt6+Mc26OvC0e3kL/xrWN7cffWA
-         BHyK49iKUYokEuqlMj1bELhhiggvkmhtgN0dHEogI1GaYOUa3I/ZAbCNbdvMT6K4mMgb
-         EeskYcvFHx5L1beMfzED8Z1H6PwPDsJmy4yCEc9mrfqs4dvOfoPe4Oz+5l72+8vrbPBy
-         ot6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596515; x=1756201315;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uVLLl9OqNk7Zu3EPzfXMDRVe4XrWiVodoUaeSDsMNj8=;
-        b=oUQrh8gYIQW9FViHlg0n3mXJ0eDlpgfdzxIPqJes8L9YhqE79oWdANNg2QpWhyDAVp
-         JQ/W1hctNDLI8A6/NR289KCb3t7pfQxaDse3kR35eT0ZJVQ5V/84V91cWrLJJnnC0rdv
-         hbVOLecII/WgkMc0ksQMfIEYeY6D+BYneHTCM6lUTGBPJPY5zAu0fVgQ8tAXpu56lMYg
-         48tGROUxTxh4Koj/e6092Deyqb1Y8cH8yc4tfXWPjUs/aZ2wzx2SGy+SHSWcuRvSJY5n
-         +nA+0IlGWShYYuFjDiJxJrYyP8WZIxOpTrRvTOIUJHH+Y8zUAXketaIl++PYQL7oAhDG
-         W3fA==
-X-Forwarded-Encrypted: i=1; AJvYcCWL67M/d/jizzzG3tTB2sW0M56YHED2cBTyFekQAM6uRZF1nBN3iQTaCCIi0et+zxkdjsdA7hUTpOZqkrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx35lEtzBZrd8XpwyJBjWYFTlGo0YHpIDmbkn7QpKMpkGUdpeJX
-	hsSC8+k5QMOi/Atq7lOmhDmAh7uKqK1ceX2RIbV2wPnqBu6CBy2P91k/fwFuCLbUR7Y=
-X-Gm-Gg: ASbGncstRShkYOjiet6EK49SDljBAZn1IgzRPcjPH9f0y8YYErOEgv3XUEhYT9edQuT
-	0otBWJ/jomKcwqydUpQs2kNTRaO6lxtiXyT0fDdNjGrvbser3z0YOuzzektlDh60deU74Z9yzJd
-	clTrq9XvwCvr7lpczKn2/VD5ozK/WFs5VrRsDfuMZwR3Qr4c65BT5X3sOQlQe7JiQcJ4EW5HDnt
-	z9roblJEwSEL/N9jnru26/eNYrf8oAmRtlPEUw6346pUmHs2XfFSrRYmRstNDhc5qhRJ/jdhZT5
-	XFVw+xJuUUSZspan5yxXH8mY6Ybr1t8k2obqTz3fk8LHGVoYcy3jmTj55ZqBmM8lXuS7PATLxsf
-	pkTGuYh07hUtiIlNzeFitALK5F1TLs4hiHL8oBMkvWc6EUoZNygmy7w==
-X-Google-Smtp-Source: AGHT+IFmUB9GNTXpWwyDrW0I7+LgcmGoPg5Mmao/+q2ZsLIelBxWWUigl7kupDpLBula5DDMuHfjng==
-X-Received: by 2002:a5d:5d0f:0:b0:3b7:8832:fdcc with SMTP id ffacd0b85a97d-3c0ecc3219emr1522505f8f.38.1755596514815;
-        Tue, 19 Aug 2025 02:41:54 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c077c5776fsm2929467f8f.61.2025.08.19.02.41.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:41:54 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:41:51 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ocfs2: remove unnecessary NULL check in ocfs2_grab_folios()
-Message-ID: <aKRG39hyvDJcN2G7@stanley.mountain>
+	s=arc-20240116; t=1755597035; c=relaxed/simple;
+	bh=9G1tptpmOKeOINbkab/YaZY3bVkbVQrpj6bIL5Zp/4g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hYaxE7/MdP28QUUBF8bHRu5CH2wT/VEwYP5s1wmaksL3pdU4xl/8HS0dYoLjISsAWFNe9CXrUYQ5U5UKSSuKjnAkonGHg4j6x9nl6uX01wgzHKko6Tpw5WIc6aP6gI4TDFPON6v3UUCQsu/0pgXwEY62HUtghe7w6XzSV7ZnWCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z/Q3idA+; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6B75EC6B390;
+	Tue, 19 Aug 2025 09:42:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D94DC60697;
+	Tue, 19 Aug 2025 09:42:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 34A3B1C22CE69;
+	Tue, 19 Aug 2025 11:42:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1755596553; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=hBqpzbi2Hbxep2bpOtuW7wxw+5uHsx1EqMbGij/dqlY=;
+	b=Z/Q3idA+5YgF8Yk+dEOhSqk2M7AgHRazWxtmeOgN0JOjGzjp08Y4spxeBbmPR4zfDuZ6Ix
+	xnPnafOMv1Kyop1KlWumZQoku9SeU4p/WnryCJEBDuSjthjXd6K2MSwj1baIf6W4+0+tvv
+	D+2QdLlalG+Dr0lYoyevO/AtJoX+zKDvazv9YmHTB/Xzcbznizew8Oph/NO5G0WN3iXkXt
+	P9gynn/rBiZZsGrG0QDUiSYK1dhffzOjxYXGHlOgFoV2ceIGlsTxsPq8W0jojtqJQevtr2
+	cq1x6ps4DP4TRmCrDHUFksUFCPMqNWgUjQL2Ct0MuSBJRZujUHwGSwbivIDbgQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v7 0/3] drm/bridge: debugfs: show refcount and list removed
+ bridges
+Date: Tue, 19 Aug 2025 11:42:09 +0200
+Message-Id: <20250819-drm-bridge-debugfs-removed-v7-0-970702579978@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPFGpGgC/1WOS4rDMBBEr2K0HoG+luOrhBBarZYjiCNHss1Ay
+ N1H+Wxm+argVT1YpZKosrF7sEJ7qinfGrifjuEFbhPxFBozJZQVRgw8lJn7kkJrAvltipUXmvN
+ OgSvrDnE4KDJesyZYCsX0+5YfTx8udN/axvoJmYdKHPM8p3XscEACo50kSwhaYICh7wWA91o7Z
+ 1wAj1aGl/p9x8l/d+B6zcgnWpdt5TGXMwFezt8ySiOBpPO9hXFX7PR8/gFee77X/AAAAA==
+X-Change-ID: 20250408-drm-bridge-debugfs-removed-2579f892e4b3
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Smatch complains that checking "folios" for NULL doesn't make sense
-because it has already been dereferenced at this point.  Really passing a
-NULL "folios" pointer to ocfs2_grab_folios() doesn't make sense, and
-fortunately none of the callers do that.  Delete the unnecessary NULL
-check.
+This series shows removed bridges to the global <debugfs>/dri/bridges file,
+and shows the bridge refcount.  Removed bridges are bridges after
+drm_bridges_remove() but before they are eventually freed on the last
+drm_bridge_put().
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+This is part of the work towards removal of bridges from a still existing
+DRM pipeline without use-after-free. The grand plan was discussed in [1].
+Here's the work breakdown (➜ marks the current series):
+
+ 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
+    (based on devm_drm_bridge_alloc() [0])
+    A. ✔ add new alloc API and refcounting (v6.16)
+    B. ✔ convert all bridge drivers to new API (v6.17-rc1)
+    C. ✔ kunit tests (v6.17-rc1)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (v6.17-rc1)
+    E. … add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
+            (drm-misc-next)
+       2. ✔ drm_bridge_get_prev_bridge() (drm-misc-next)
+       3. … drm_bridge_get_next_bridge()
+       4. … drm_for_each_bridge_in_chain()
+       5. drm_bridge_connector_init
+       6. of_drm_find_bridge
+       7. drm_of_find_panel_or_bridge, *_of_get_bridge
+    F. ➜ debugfs improvements
+       1. ✔ add top-level 'bridges' file (v6.16)
+       2. ➜ show refcount and list removed bridges
+ 2. … handle gracefully atomic updates during bridge removal
+ 3. … DSI host-device driver interaction
+ 4. finish the hotplug bridge work, removing the "always-disconnected"
+    connector, moving code to the core and potentially removing the
+    hotplug-bridge itself (this needs to be clarified as points 1-3 are
+    developed)
+
+To show the removed bridges we need to keep track of them, thus add a new
+global list to store them between drm_bridge_remove() and the eventual
+free. This is bit tricky in case a bridge is removed and then re-added
+before being freed. This is handled in patch 2.
+
+This series  depends on one other series:
+ * [PATCH v2 0/9] drm/bridge: get/put the bridge when looping over the encoder chain
+   Link: https://lore.kernel.org/r/20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com
+   Reason: it uses drm_for_each_bridge_in_chain_scoped()
+
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
+[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- fs/ocfs2/alloc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This series was initially part of v6 of this other series:
+- Link to v6: https://lore.kernel.org/dri-devel/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 821cb7874685..162711cc5b20 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -6928,8 +6928,7 @@ static int ocfs2_grab_folios(struct inode *inode, loff_t start, loff_t end,
- 
- out:
- 	if (ret != 0) {
--		if (folios)
--			ocfs2_unlock_and_free_folios(folios, numfolios);
-+		ocfs2_unlock_and_free_folios(folios, numfolios);
- 		numfolios = 0;
- 	}
- 
+---
+Luca Ceresoli (3):
+      drm/debugfs: bridges_show: show refcount
+      drm/bridge: add list of removed refcounted bridges
+      drm/debugfs: show removed bridges
+
+ drivers/gpu/drm/drm_bridge.c | 47 +++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 40 insertions(+), 7 deletions(-)
+---
+base-commit: c8cea4371e5eca30cda8660aabb337747dabc51d
+change-id: 20250408-drm-bridge-debugfs-removed-2579f892e4b3
+
+Best regards,
 -- 
-2.47.2
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
