@@ -1,126 +1,100 @@
-Return-Path: <linux-kernel+bounces-776055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FDDB2C7F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE83FB2C7F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C0F3A3417
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10733A548D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E742281376;
-	Tue, 19 Aug 2025 15:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3139283141;
+	Tue, 19 Aug 2025 15:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFbsku04"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kzapx1AA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RhmkHGfQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C802A280033;
-	Tue, 19 Aug 2025 15:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906552820CE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615662; cv=none; b=ob6hAzUxbMjWO4/DS9LVySA4E2A8w3/EKCUgon0IS486ywI679jVT+kxIMSgtqHnlLzeMQu3XYnL7vpKMJDWZU4eJwjx+8yFpHnsu1wLhkbzXWyHnDt0/cRx3/bt3WVCyC5yb3pVIn5R1GS4UH93skjylpDZsHuCw+zzEMuf45Y=
+	t=1755615670; cv=none; b=RV7Xr2gxr6DtUTURhrThCyi7Wr3gOKfvbKIzdAU6ZTeBDebROdB4nOs9t+4Hp9WXL3IbeSqNlZtmWrHbbXqXLPZOfKbdV9unjE4lCy/oM332VIufkcNgDbjdCPcfIyKCzMicJ3/hjMt8EQUf7MxackPxcX+xnzmSEycUMqpivsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615662; c=relaxed/simple;
-	bh=5RpsWVB0n0bphyQyLM5I1WxpQHwU0IHdjHBWA35pyWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rR6xtZTqtVKxJk5xbSir8xWIMPfm+a/djZhqelZZY+RPDtKfDf6KB/lBMGWTvYdXoioLNMXqZyCCkkSqQm19Hfs8xxmgpQN4aroI7AXHHHWgdvIoA/ekzaEVdyOZUgFu1EY5jMkTt/WG7Jd4Hc8bfLjroupEIzJemKiHqcoRrVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFbsku04; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9df0bffc3so3631778f8f.1;
-        Tue, 19 Aug 2025 08:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755615659; x=1756220459; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h8WEap3IwD1NSco90tPoqFQ0hlFvq3zg4DyIPbT8+y8=;
-        b=FFbsku04HfrW1rWt5DU81M+ieG/yVxXe16MaSbCjYUqLZXFb6OeTeMnjrFaTOw2Ypw
-         3B/XbOtHd2zov9Yh6SPWOKCKyGgpuGsCK/tTTjlZ8rd+lW9xoJRR+u/990XiDpdz5L4m
-         Z01W6QGrEY+KheBl9RaahhzUvVJGVVEQKJs2yc+XotDNhKfPpr5TghIegx3yje/kk7je
-         5iiNtQmwcodO1TIoWFbQsu5CdC6y5JbnaOiIYdQiBAQ3U1UWwT/jpRPeJEGMHTXFTF69
-         xt+vPK88DOaOAxdclCa5qVm41UW094OMpxaoKp5k/F0F8tZN+eWa+ltvKetKRG69br6B
-         Mppg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755615659; x=1756220459;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h8WEap3IwD1NSco90tPoqFQ0hlFvq3zg4DyIPbT8+y8=;
-        b=UKitDVc+QIWhE+t+5A1/zW8eB/+q4bgmHL+HaSeIt3E/15b0Td/S4V4O5HmTctiDTZ
-         jMEvoOZSUfyl4Dp48J19jbRJvjuzX12rkUzJdLi0xEeBEIqJ3CIUiiRVU8L5yRoDlptB
-         9qVnWmm8+upDeBqArk8Wv+PGinZ+EDpv7VHlg/6L078qUaiMe6ur5EeolEFUaqifHKrs
-         1zhXVHJKiIhSHIaIwnkUxaiWXfdXoSG/E+9t2jMlWAS2+W+Jcl+VN762cP97epKu6RfV
-         yrIUrCClrJbP9w5WqoFjNcQTNTjHtJhph/tHP91SN7sQNx9RgGz7g67Xu/mcdNjRf9ny
-         6rwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaSdkcfVZ3zc0luFCxhrE/eTnkv4doxhJ/BK2N0vOsD+16ijouwi065sZ+LuPuvvTcHcRND1UGO4M=@vger.kernel.org, AJvYcCVpT/mJWdYkRy/066cQtRZaEI0XLl2LBzrDXRIiBQac486IPvCvXQMJL8xK4bQ9H13hmiX4XrgGG1vTVi8v@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz81Xw1nLxEUQexiIvdn2vz4H0WqWAPSpFabL/X4QRyL6jO+9pv
-	dPPZRHla8AXErztLzT7itPUT6h9Obofcnj/JwrSSTszA7wVDi1Mxz7cF
-X-Gm-Gg: ASbGncsmbSIwzKI+shkHllczRh9VOv/yKuK9xd4QtdfefQahwKQxajP08re+VP+ClRI
-	7xN5wZr8A1WZ13iUfNQ4Pnj+XIgRThN3PEyRyKFAip+x+FUDZtF4g4UhkFdiqB/VOuhbVt03+gC
-	KkAGcJ+jPJG3/LaEzjrfpZQO4ZVGIuxmEZlYbtYtJrdwnhMJgMn+30wfqp4HX7ozERqBFObWkLe
-	MCUARkBJQ0sfKygSlppGkUQaQ7NwuXP4kkmPszM7vq/2fO5on3r4jLP1U9tDSApSxPDY0ylpaXg
-	z+wNH97fQkSsK2sjvryD8azVpe2OUsvygt9GcIW8lDc8GlZmxSQuNLoYoZFJqLxbrGZz5+QvDMo
-	vg+5gHt+PZ2vN+nz+tRw=
-X-Google-Smtp-Source: AGHT+IFQ/Wz9NMqV3EvDIM7pmIbPfTuCUm8GbWIbDx6xEi3yYqIM6OxDad3PmKCCQKJ6HgsFaVlGQg==
-X-Received: by 2002:a5d:588d:0:b0:3b8:d360:337f with SMTP id ffacd0b85a97d-3c0ec756374mr2234545f8f.51.1755615658550;
-        Tue, 19 Aug 2025 08:00:58 -0700 (PDT)
-Received: from pc ([165.51.6.90])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c1715sm4344520f8f.36.2025.08.19.08.00.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 08:00:57 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:00:53 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH v2] staging: iio: adc: ad7816: Drop unnecessary
- dev_set_drvdata() call
-Message-ID: <aKSRpTuwA0P-ZaUS@pc>
+	s=arc-20240116; t=1755615670; c=relaxed/simple;
+	bh=jGEY3EnOBXun4SQ0ll/o32z1qo0qZY8iGqdHqyf5ANY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RrfunUcnwEWcBMkpdOSnJA13WNFuQEMDv+tzAaimWV/9aKkXZcPVjnOVU7tlBbtBKy7EtX5Un8kb3+lHvtBmiGdddhOJAve05//iwfRCsTcQOXMRZuCiXbX5YMx7s1NKL1w+FPSEAgxUJteGBD+eisBj+Z6KOFJnHg3PHeudi8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kzapx1AA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RhmkHGfQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 19 Aug 2025 17:01:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755615666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7hYf3QFb0JiRzAbtPuQzxzkHoV2M9phfTa2ZdhDggos=;
+	b=kzapx1AAcR/HPJ39aWX+tVOWN6MnRU0okwgYpB21DR6ZE9pZORJX/aiCWQrvv4VhCzVp0c
+	3wbDbXBpUw6Nj/OcMHieNLshKeiaUV2F17tgJVdO4RoC9vce/OU+0bOMo/Z5t6XLx8BUTQ
+	J0mnP/7PIeLrOxRjmnnsJv9FcHQ8g7pkFa+8+2hGuX8+D4ZHAuYYomfsKyzxac1RDqX9t9
+	bfMarcltQ3kIlkC+miaJdHR+ji2UAG3YX4MBrDB2bA/VVIqgo6kfJk7tF5yI6Pg+mCmuU3
+	Hvb+Mmg5XgE4YrI7WfdQaYdSzG5jPa4jlK5IM3jMWbLnW+KaorYsazSYpgG+hA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755615666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7hYf3QFb0JiRzAbtPuQzxzkHoV2M9phfTa2ZdhDggos=;
+	b=RhmkHGfQPxVDamkMwkJHH0HrCo+psPt8q1j0uMKOI1dI9VD8Zd4Q/nIw7QkPv33s6jb1f5
+	yoCt6ux+PFvZ6oDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
+ polling on PREEMPT_RT
+Message-ID: <20250819150105.DYeV89fa@linutronix.de>
+References: <20250812143930.22RBn5BW@linutronix.de>
+ <20250812145359.QMcaYh9g@linutronix.de>
+ <aJuYStGVBjyfVmZM@slm.duckdns.org>
+ <20250813063311.33m0TDKl@linutronix.de>
+ <aJzT7rqwkRQrLGqo@slm.duckdns.org>
+ <20250818125242.vJ4wGk20@linutronix.de>
+ <aKNlshZmWsHVXBo0@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <aKNlshZmWsHVXBo0@slm.duckdns.org>
 
-Remove the call to `dev_set_drvdata()` and the associated comment
-since private data is never read.
+On 2025-08-18 07:41:06 [-1000], Tejun Heo wrote:
+> Hello,
+Hi Tejun,
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
-Changes in v2 :
-   - Remove spi_set_drvdata() and outdated comment as suggested by David
-     Lechner
-   - Update commit title and message
+> I see. Can I backtrack? If it doesn't require too invasive changes, let's
+> just keep the two in sync. I'll get back to conversions so that we can
+> actually achieve the goal eventually and it'll probably be more confusing if
+> we revert that and try to redo it later.
 
- drivers/staging/iio/adc/ad7816.c | 2 --
- 1 file changed, 2 deletions(-)
+Okay. Then let me repost the tasklet patch and make one for workqueue to
+stay in sync.
+I do hope that we end up with a requirement that any kind of teardown
+does not happen from an atomic context ;)
 
-diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
-index 4774df778de9..172acf135f3b 100644
---- a/drivers/staging/iio/adc/ad7816.c
-+++ b/drivers/staging/iio/adc/ad7816.c
-@@ -359,8 +359,6 @@ static int ad7816_probe(struct spi_device *spi_dev)
- 	if (!indio_dev)
- 		return -ENOMEM;
- 	chip = iio_priv(indio_dev);
--	/* this is only used for device removal purposes */
--	dev_set_drvdata(&spi_dev->dev, indio_dev);
- 
- 	chip->spi_dev = spi_dev;
- 	for (i = 0; i <= AD7816_CS_MAX; i++)
--- 
-2.43.0
+> Thanks.
+> 
 
+Sebastian
 
