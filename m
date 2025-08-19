@@ -1,132 +1,102 @@
-Return-Path: <linux-kernel+bounces-776115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91275B2C8C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:51:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 373A5B2C8C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F4F189EF87
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D7462515A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6212877F1;
-	Tue, 19 Aug 2025 15:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E7B28BAB1;
+	Tue, 19 Aug 2025 15:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFxeBDue"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcF5YZUc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377DD26E707;
-	Tue, 19 Aug 2025 15:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F349326E707;
+	Tue, 19 Aug 2025 15:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755618668; cv=none; b=Fh9MsmIq6gGCECBGcQ/3eaQdjwU9FwNBZD/9XbZ+MixB5vmwdLVKZQTFW+4BHyE0hJzeY/pG6sdff3YrE/nBWk5vLnHIID8kftC9EONrWovH5BH4mlm6afUBldAHn0URFWFzYzIU82vSY/8kZ/kLa9TFDoNkhDO18v7IwtXcmQg=
+	t=1755618750; cv=none; b=LDF4un55lcvStQJnq0u+kT1MEwzBacx9TAvpIh4xfkDFPqAmvYhn2WVN4h3cU80Z4wRG8QsxogJBJFaOipkKWOpjExLFYOZJIk32bV6wCA2Z4jBB8THSeKplI57blI9qbpsXZWW5QksAn4ODv1I7v2NA00RVowCqpO8ifhLq9Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755618668; c=relaxed/simple;
-	bh=a6ZGqGqQriw5wtcTQnJQ+E8H9T2G8nhUgo1qAhPQw6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCpjpxuoBuNN+XazdxsMCrQvMR7RdUDWd83CIurHo7cee9VkMwXr2a4E1+ym3zQVZZe9NywPEdzHLGpMqSn9gvY8X3gDSF4JsPEcPK0gipTl4lWZUzRDUaFT0YdaHc3VZfkbGQom/Rjm10cWl9N5BI7c3b1oqb2sir5mPqEVa5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFxeBDue; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9edf0e4efso3692994f8f.2;
-        Tue, 19 Aug 2025 08:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755618666; x=1756223466; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=As+W4X5MBTwXfXiBGJpiHyliRWQospCn+A6ubJW8Mxo=;
-        b=FFxeBDueSuMEs4mytFc9DXiSgvyTu0KGuJnsRgLhHZlI2IYpLRnoiMJx8IQ1yznnji
-         Wr1swvjj5A0vMylcoL53GQXFQ1HAHI3nWocr58L/IluYHWkSXfHxRoZ3OAbQ1tDO7otL
-         p2WZeS1o7alpNK/3ornZCQW01GEThLdUj4ZBNb7PrSBCaRsBiV0FenLcfjdeX+/dGU4I
-         Oq7dQKD1ficuPjde2Frc0QG7Cxlc5grwXy0YOT4Ay7elRELutR2A8sv923IfQSvXtybl
-         +5zl8+Zkxhn6ERJEc3Cv6HrfcJNB+Dw77GPowq5+XxNFpNwer6R90smYY5EzvVC3uWcg
-         2Cxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755618666; x=1756223466;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=As+W4X5MBTwXfXiBGJpiHyliRWQospCn+A6ubJW8Mxo=;
-        b=n0qUhHKPHNF79v0Ijzi4+eYTRbmE+lDaroeTCOlKHrRG88h6yOWwgctg0kM/dN3Iwi
-         UaB5Kj9mPoboZ2Kp2EsH1eAE78W98dOir47W90fFfqo8lF/0JNxU7/3Or1ZwW1U1u+9+
-         +NCPyxPOzbX1yMr09syirSShYkQb7ctga0SM4HW4jOquM7RcJAGs8k8vQfMBPgYWTNrE
-         ciRVJ/RsFo6MOsk/t084Hg29OVYI4CabMdS46WXbdQdCdaWBgBNdlBeuA+nqbDD9NdYI
-         sp2SkDZjXdp19FnyHLyJfCldcmQbtO838ArhW+axv8KsY66fjlWoSf5AgNiXOdXlkE2Z
-         l5tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoXdQEjV+yN+oByangEJx8gF9qrI0vnvr8nEJuM+KBFqQLrwjSlrF+R+01KQTZes8JQKHF+Iuf@vger.kernel.org, AJvYcCX577BlDHnN/gUbSaWC3mJunIBV5Ugm9sX8Kd8SvUZ912nyTOTkhAi+zNm6q971Et0LbAFSpTwcnA==@vger.kernel.org, AJvYcCXzy6/SMFAZIMe0Dk1Qkn0ti1g6OMxULUVFRdFvZvhGT0nwUYfDQY9i8tKAUGZaSyMOMpK00M3rte+fbkxf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+hP+oangx+1svzCfdO3lzODz25Np7vq0GdbGUQHDYbhz681Y0
-	+Qee5XbRXVL2S9vZPRYID5geBAXxjgNCZ1JYfwbp9LwDg5iXd1lpsk09
-X-Gm-Gg: ASbGnctiToQVtJ2jKyzwkwGUSkINSynJx7maqFCT4wB+HkwArvTPKhocUm6VxePrOdI
-	yxuwgLpgGsu+tT0nmqPGrQU7uOVPOu0kwk4e+bYZzyMdj7QN6eqTVsgpZ5cGjFdnttgvls5sL28
-	Y3L3kudXTUeA4nzjCkujwRtKSa4KIeKoJycepqVxIlO1itvcVDnX69+zth/7GytKDrhhyZx2Hzy
-	qd9LMblzYTIfMVkMgUKEbHRegP0FD8sTBlaWm6Z2DpVXMdvCABuuZHp5AM2exRLhyN/SNc7zklO
-	PpN8OgeoV/TupwTjPfabp7lTjhuO71QU7vK3wZ6WU88ZwE7n/OBCGbryKQkcf/BmC5beygTZ5di
-	zajN6OveFn9u39PS8e5zPlpzZqubAbA==
-X-Google-Smtp-Source: AGHT+IFa2tWwTkP68HwXkeiF+gbI3rKcWiSfezlHfbTT5pMSW84KwuEvkwpHueKL3GIcKmlRBv5Gew==
-X-Received: by 2002:a5d:64ef:0:b0:3b7:9c28:f846 with SMTP id ffacd0b85a97d-3c0ed1f3372mr2637658f8f.44.1755618665366;
-        Tue, 19 Aug 2025 08:51:05 -0700 (PDT)
-Received: from [192.168.8.100] ([185.69.144.43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077c5776fsm4132783f8f.61.2025.08.19.08.51.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 08:51:04 -0700 (PDT)
-Message-ID: <ab60ab17-c398-492b-beb7-0635de4be8e6@gmail.com>
-Date: Tue, 19 Aug 2025 16:52:16 +0100
+	s=arc-20240116; t=1755618750; c=relaxed/simple;
+	bh=nWqXp6oa3FLvahScFL6QJegYp1I3PkobBsHWH7UZ4kk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U6nHECJWrVWsaheMkZDDsFxiVSoJlxGcTYfUCyEo+JWtdyR73IBDnY11PJJxqsgL/x82nlizIAuUcbY9Pea1u8mHf/HiIueeHEWwZ2dICt3sEi999y8KPwruvpMXo/jeNPNHM5vGsNaDef9gwzNBR4SV0vlm3W3kt30lE4lu3lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcF5YZUc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21106C4CEF1;
+	Tue, 19 Aug 2025 15:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755618749;
+	bh=nWqXp6oa3FLvahScFL6QJegYp1I3PkobBsHWH7UZ4kk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YcF5YZUc9+IwR/H3j5Dzp5wvNPbunFWNkKo1wT3ClzD7Ha6J7oqHPRU9JykGgVZWK
+	 /rUH+RJqYatnbQc9TcT5fO7+fUK/8nKJOFnSLJ34NnVjw+IMqsW4uYCEdaj3PMsV5c
+	 0HOGyoZdniWDaDSACOQz3tinYdEQcUi432vCOmfzj+6dtnigiEFCEbuXKjiraycTzc
+	 Nk8UBEAWHz5sycCacN012hL0cM31QXfZr4XusS7PNLZX8cLc9rcFG6Vb3jA7W64rDK
+	 z3h2O3fkIuG3yCkqBikFCgeFup4BZsNaSb9pnFlTAV+lV0bg9fhGtD/ZOCW3Rarp2T
+	 Rys0Et4Oq0pxg==
+Date: Tue, 19 Aug 2025 16:52:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] regulator: consumer.rst: document bulk operations
+Message-ID: <dc1107f3-098d-4952-8133-9bd6068d1100@sirena.org.uk>
+References: <20250819-reg_consumer_doc-v1-1-b631fc0d35a3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 04/23] net: use zero value to restore
- rx_buf_len to default
-To: Mina Almasry <almasrymina@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
- Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
- davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <cover.1755499375.git.asml.silence@gmail.com>
- <d36305d654e82045aff0547cb94521211245ed2c.1755499376.git.asml.silence@gmail.com>
- <CAHS8izO_ivHDO_i9oxKZh672i6GSWeDOjB=wzGGa00HjA7Zt7Q@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izO_ivHDO_i9oxKZh672i6GSWeDOjB=wzGGa00HjA7Zt7Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kRgJzFxM/46Kf58w"
+Content-Disposition: inline
+In-Reply-To: <20250819-reg_consumer_doc-v1-1-b631fc0d35a3@gmail.com>
+X-Cookie: One Bell System - it works.
 
-On 8/19/25 01:07, Mina Almasry wrote:
-> On Mon, Aug 18, 2025 at 6:56 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> From: Jakub Kicinski <kuba@kernel.org>
->>
->> Distinguish between rx_buf_len being driver default vs user config.
->> Use 0 as a special value meaning "unset" or "restore driver default".
->> This will be necessary later on to configure it per-queue, but
->> the ability to restore defaults may be useful in itself.
->>
->> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> I wonder if it should be extended to the other driver using
-> rx_buf_len, hns3. For that, I think the default buf size would be
-> HNS3_DEFAULT_RX_BUF_LEN.
 
-I'd rather avoid growing the series even more, let's follow up on
-that in a separate patch on top, that should be just fine. And
-thanks for the review
+--kRgJzFxM/46Kf58w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Other than that, seems fine to me,
-> 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
+On Tue, Aug 19, 2025 at 12:25:43PM +0800, Javier Carrasco wrote:
+> The current consumer documentation does not include bulk operations,
+> providing an example of how to acquire multiple regulators by calling
+> regulator_get() multiple times. That solution is valid and slightly
+> simpler for a small amount of regulators, but it does not scale well.
+>=20
+> Document the bulk operations to get, enable and disable regulators.
+>=20
+> ---
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
 
-With the said above, do you want me to retain the review tag?
+You need to put the signoff before the ---, anything after the --- will
+get deleted when applying.
 
--- 
-Pavel Begunkov
+--kRgJzFxM/46Kf58w
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiknbgACgkQJNaLcl1U
+h9DxLAf/dCH36jJZSJVXTkcqbwdf/AfKiFuFyvwS80Zvztai69HQAIjw3HKXaG3c
+mpD58johHUz+KRFoGHjuyBosAyNKIqrtNTbFFdG6d3fJcFKJamTCHW7wh1KI2lfw
+Msz7r4XaP790RjA86FykNOIz3ay9DB8WtsD0S+UuALGlDsiR5sMRWk2I+ijr4Q1V
+MpgzupPbJGvVCgVay7UTjeFevBr+yu/8X8cSJ6LCqjROo09yC7ypr5b2YnL2DGY7
+Ynl1PF0KGXIooU8PO0Y02pBnMFgt9Inx7pRZT2bhl7wk2qg8lYGdhOzhPYA4THwS
+UFKhrNB3DLJgcKRn56xZFeo/JVx2hQ==
+=Jqhz
+-----END PGP SIGNATURE-----
+
+--kRgJzFxM/46Kf58w--
 
