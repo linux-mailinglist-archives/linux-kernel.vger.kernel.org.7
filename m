@@ -1,460 +1,189 @@
-Return-Path: <linux-kernel+bounces-776590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57F0B2CF4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5391DB2CF4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7142E58743A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6EA687DCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AE43054D2;
-	Tue, 19 Aug 2025 22:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O5ZAZaY4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A863054CC;
+	Tue, 19 Aug 2025 22:21:41 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B6827E1AC;
-	Tue, 19 Aug 2025 22:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A1335336D;
+	Tue, 19 Aug 2025 22:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755642055; cv=none; b=OhaMQkQF71vaQWCMUFLPZOVVVO88e60fMiQesWhU7gDpNgfHOYlzbKZyfABRfpsmGc3bLKhwVbdP4E+ggGUUnjcVaCUSbUBjVl5VuESgHBxuKUiRj8rRDCPTcUVn6gnbXP0BUuTJLoktji+DV3UtySgW9gBTjzVzA7ev3Mewo2w=
+	t=1755642100; cv=none; b=r2Zbjwwy7HITc/dyOosTpX+YqVB0dmF8YGJENe+ADxRFNjXaX+sl1usQmSXAM6BLZtLztFy8eWeiXjY9f54X+wvvNiHf2pgXrWU1ZmJXnhEXN+A3xVgkQ8Jmf22LdZpZ2sjgTrdnxAUYtI1IEDVUfDxuclcsX8abWUtl1j6Gvfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755642055; c=relaxed/simple;
-	bh=0uo3k1XYjiEJ4XvxcQ7Gf0m/s5nmNqT8/MeqEb8lcYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxEqNJNlkQGCxmrw8r9s+IqIz2CO8fOkv4d1ZWJL4TFgdNavm/jsc6F+Nvk1UtDee8UXpK1+LKYb/UUG4ORI3rThpi2gJ0gTyCa84yi0r2LKMyiA27Ljx/vAo0xmWSd8zcTb0HAquWNk7cBP0gjDYzs8rVR6oYud+OOhs0bK5NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O5ZAZaY4; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755642054; x=1787178054;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0uo3k1XYjiEJ4XvxcQ7Gf0m/s5nmNqT8/MeqEb8lcYs=;
-  b=O5ZAZaY4Z6JRPraB3ppdb+GjeZSKYifzQXJBT3irofURT+Dss7w3pHLm
-   RRITfxrikJ/oNl495w3SebnNNIDnt8yS6AHZkk07FPVWNikx/WQUCu8O9
-   9lx7UeClezfrs1LO63tMXZXl76pUsJqlHnhAV2eMRNvZ+Ql4mSMa8BoJw
-   mSw9BEAKSmIUX7Ipfrg1s5WyfMvgSZL843b0XGr+kpHaPmsAcjmY5F91n
-   D2IMnCsd5vT2lEjX201ZkF0h8RBqZYzhU+goT7JXGJstTFCR+D0pfTlLO
-   lTFXai5KeRu+89rCIgphg+cxLe5khv9hUwDkL2iUrdRGGH+VS2q9dstxE
-   Q==;
-X-CSE-ConnectionGUID: 8npvvx+7QzWBwKBaEjzb9A==
-X-CSE-MsgGUID: EKHkbFXmTfuMdZeu1F6slw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57829660"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="57829660"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 15:20:52 -0700
-X-CSE-ConnectionGUID: gDNrxXQXSNSnVg6S4V2Hww==
-X-CSE-MsgGUID: J0+NOCL9SY6QLtIxaoL5cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="168378063"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.235])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 15:20:49 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 4C39D11F8D4;
-	Wed, 20 Aug 2025 01:20:47 +0300 (EEST)
-Date: Wed, 20 Aug 2025 01:20:47 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Keke Li <keke.li@amlogic.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Dan Scally <dan.scally@ideasonboard.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 5/8] media: v4l2-common: Introduce v4l2-params.c
-Message-ID: <aKT4vz-XeTgSo125@kekkonen.localdomain>
-References: <20250819-extensible-parameters-validation-v3-0-9dc008348b30@ideasonboard.com>
- <20250819-extensible-parameters-validation-v3-5-9dc008348b30@ideasonboard.com>
+	s=arc-20240116; t=1755642100; c=relaxed/simple;
+	bh=OaHqnK4SM+62NqJObhRTVXyn+tku4vkJG7T/kN0YkBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O4xJM+ucVtdmKXf+In9oC3G8R1lr+3vRFPfLkrZO1L/70Jc9LqP3Wzl/hDnHf/ULuQW7NoYpoZkBqoqFVm0FNmy9HWUyLJT/kzUucgZDrTtWRQ4BULRZE7X4ZX4/JJfUThkzj+KIBO+l12nV42PJHOIDe+aACgdP8DnFb4XvFrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 625BB1A028A;
+	Tue, 19 Aug 2025 22:21:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 5FDC020027;
+	Tue, 19 Aug 2025 22:21:30 +0000 (UTC)
+Date: Tue, 19 Aug 2025 18:21:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Sven Schnelle
+ <svens@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
+ <guoren@kernel.org>, Donglin Peng <dolinux.peng@gmail.com>, Zheng Yejian
+ <zhengyejian@huaweicloud.com>
+Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
+ graph tracer
+Message-ID: <20250819182130.75542133@gandalf.local.home>
+In-Reply-To: <aJ4XX4qvHUZRAFxF@lappy>
+References: <20250227185804.639525399@goodmis.org>
+	<20250227185822.810321199@goodmis.org>
+	<aJaxRVKverIjF4a6@lappy>
+	<20250813195317.508a29aa@batman.local.home>
+	<aJ4XX4qvHUZRAFxF@lappy>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-extensible-parameters-validation-v3-5-9dc008348b30@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Stat-Signature: rm9m5eaexz9psrnybmuf4giddgf68yoh
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 5FDC020027
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18UWLhG6lR5gnGcqtpRxu3dqcuTBJ3MHmc=
+X-HE-Tag: 1755642090-461516
+X-HE-Meta: U2FsdGVkX1+1IQY6vNHRd8PBIspV1OX3DKLcWXU9YRxobNXQZrad95sUTl0f6PhjDzNXpvYPSdLKFnSRi7ore8tp92lDK5ojzcHsXhf21nmO+dIb9tx0bnIdWRmY+z+WSoLKGMgo/4w/eY92LAp+04ftbmVfKGirDVUnEwYou5eiuNFhs5JKmGwuT4rHmefXZVaGMAFqKjgKMiHhorqR0xBihewp4Mhl5nqfr1+1c874VMT7VzXO4AePpjNub8WDRf4uAaso+wvwNrFMhuqmP12eKkD1AnQjNnk9FC1GbbERFfgKR4tr7dRaEsMK952ujY7QI/ew84Q9R174Hcx8Q/s/KAT5tgLA
 
-Hi Jacopo,
+On Thu, 14 Aug 2025 13:05:35 -0400
+Sasha Levin <sashal@kernel.org> wrote:
 
-In the subject:
+> On Wed,=20
+> Got a small build error:
+>=20
+> kernel/trace/trace_functions_graph.c: In function =E2=80=98get_return_for=
+_leaf=E2=80=99:
+> ./include/linux/stddef.h:16:33: error: =E2=80=98struct fgraph_retaddr_ent=
+_entry=E2=80=99 has no member named =E2=80=98args=E2=80=99
+>     16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+>        |                                 ^~~~~~~~~~~~~~~~~~
+> kernel/trace/trace_functions_graph.c:640:40: note: in expansion of macro =
+=E2=80=98offsetof=E2=80=99
+>    640 |                                 size =3D offsetof(struct fgraph_=
+retaddr_ent_entry, args);
+>        |                                        ^~~~~~~~
+>=20
+> Does this look right on top of your patch:
 
-s/common/params/
+Bah, it was on the todo list to add args to retaddr. But it never was done.
 
-On Tue, Aug 19, 2025 at 04:54:46PM +0200, Jacopo Mondi wrote:
-> Add to the v4l2 framework an helper function to support drivers
-> when validating a buffer of extensible parameters.
-> 
-> Introduce new types in include/media/v4l2-params.h that drivers shall
-> use in order to comply with the v4l2-params validation procedure, and
-> add a helper functions to v4l2-params.c to perform block and buffer
-> validation.
-> 
-> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  MAINTAINERS                           |   2 +
->  drivers/media/v4l2-core/Makefile      |   3 +-
->  drivers/media/v4l2-core/v4l2-params.c | 123 +++++++++++++++++++++++++
->  include/media/v4l2-params.h           | 165 ++++++++++++++++++++++++++++++++++
->  4 files changed, 292 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 91df04e5d9022ccf2aea4445247369a8b86a4264..008f984c0769691f6ddec8d8f0f461fde056ddb3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -26385,6 +26385,8 @@ M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/userspace-api/media/v4l/extensible-parameters.rst
-> +F:	drivers/media/v4l2-core/v4l2-params.c
-> +F:	include/media/v4l2-params.h
->  F:	include/uapi/linux/media/v4l2-extensible-params.h
->  
->  VF610 NAND DRIVER
-> diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
-> index 2177b9d63a8ffc1127c5a70118249a2ff63cd759..323330dd359f95c1ae3d0c35bd6fcb8291a33a07 100644
-> --- a/drivers/media/v4l2-core/Makefile
-> +++ b/drivers/media/v4l2-core/Makefile
-> @@ -11,7 +11,8 @@ tuner-objs	:=	tuner-core.o
->  videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
->  			v4l2-event.o v4l2-subdev.o v4l2-common.o \
->  			v4l2-ctrls-core.o v4l2-ctrls-api.o \
-> -			v4l2-ctrls-request.o v4l2-ctrls-defs.o
-> +			v4l2-ctrls-request.o v4l2-ctrls-defs.o \
-> +			v4l2-params.o
->  
->  # Please keep it alphabetically sorted by Kconfig name
->  # (e. g. LC_ALL=C sort Makefile)
-> diff --git a/drivers/media/v4l2-core/v4l2-params.c b/drivers/media/v4l2-core/v4l2-params.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8eeb12414c0981c13725a59d1668c5798b9fcf50
-> --- /dev/null
-> +++ b/drivers/media/v4l2-core/v4l2-params.c
-> @@ -0,0 +1,123 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Video4Linux2 extensible parameters helpers
-> + *
-> + * Copyright (C) 2025 Ideas On Board Oy
-> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> + */
-> +
-> +#include <media/v4l2-params.h>
-> +
-> +int v4l2_params_buffer_validate(struct device *dev, struct vb2_buffer *vb,
-> +				size_t max_size,
-> +				v4l2_params_validate_buffer buffer_validate)
-> +{
-> +	size_t header_size = offsetof(struct v4l2_params_buffer, data);
-> +	struct v4l2_params_buffer *buffer = vb2_plane_vaddr(vb, 0);
-> +	size_t payload_size = vb2_get_plane_payload(vb, 0);
-> +	size_t buffer_size;
-> +	int ret;
-> +
-> +	/* Payload size can't be greater than the destination buffer size */
-> +	if (payload_size > max_size) {
-> +		dev_dbg(dev, "Payload size is too large: %zu\n", payload_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Payload size can't be smaller than the header size */
-> +	if (payload_size < header_size) {
-> +		dev_dbg(dev, "Payload size is too small: %zu\n", payload_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Validate the size reported in the parameter buffer header */
-> +	buffer_size = header_size + buffer->data_size;
-> +	if (buffer_size != payload_size) {
-> +		dev_dbg(dev, "Data size %zu and payload size %zu are different\n",
-> +			buffer_size, payload_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Driver-specific buffer validation. */
-> +	if (buffer_validate) {
-> +		ret = buffer_validate(dev, buffer);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_params_buffer_validate);
-> +
-> +int v4l2_params_blocks_validate(struct device *dev,
-> +				const struct v4l2_params_buffer *buffer,
-> +				const struct v4l2_params_handler *handlers,
-> +				size_t num_handlers,
-> +				v4l2_params_validate_block block_validate)
-> +{
-> +	size_t block_offset = 0;
-> +	size_t buffer_size;
-> +	int ret;
-> +
-> +	/* Walk the list of parameter blocks and validate them. */
-> +	buffer_size = buffer->data_size;
-> +	while (buffer_size >= sizeof(struct v4l2_params_block_header)) {
-> +		const struct v4l2_params_handler *handler;
-> +		const struct v4l2_params_block_header *block;
-> +
-> +		/* Validate block sizes and types against the handlers. */
-> +		block = (const struct v4l2_params_block_header *)
-> +			(buffer->data + block_offset);
-> +
-> +		if (block->type >= num_handlers) {
-> +			dev_dbg(dev, "Invalid parameters block type\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (block->size > buffer_size) {
-> +			dev_dbg(dev, "Premature end of parameters data\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* It's invalid to specify both ENABLE and DISABLE. */
-> +		if ((block->flags & (V4L2_PARAMS_FL_BLOCK_ENABLE |
-> +				     V4L2_PARAMS_FL_BLOCK_DISABLE)) ==
-> +		     (V4L2_PARAMS_FL_BLOCK_ENABLE |
-> +		     V4L2_PARAMS_FL_BLOCK_DISABLE)) {
-> +			dev_dbg(dev, "Invalid parameters block flags\n");
+>=20
+> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_fu=
+nctions_graph.c
+> index 25ea71edb8da..f0f37356ef29 100644
+> --- a/kernel/trace/trace_functions_graph.c
+> +++ b/kernel/trace/trace_functions_graph.c
+> @@ -637,20 +637,21 @@ get_return_for_leaf(struct trace_iterator *iter,
+>                           */
+>                          if (unlikely(curr->ent.type =3D=3D TRACE_GRAPH_R=
+ETADDR_ENT)) {
+>                                  data->ent.rent =3D *(struct fgraph_retad=
+dr_ent_entry *)curr;
+> -                               size =3D offsetof(struct fgraph_retaddr_e=
+nt_entry, args);
+> +                               /* fgraph_retaddr_ent_entry doesn't have =
+args field */
 
-There's also hweight*(); up to you.
+"doesn't have args field" yet!
 
-> +			return -EINVAL;
-> +		}
+> +                               size =3D sizeof(struct fgraph_retaddr_ent=
+_entry);
+> +                               args_size =3D 0;
+>                          } else {
+>                                  data->ent.ent =3D *curr;
+>                                  size =3D offsetof(struct ftrace_graph_en=
+t_entry, args);
+> +                               /* If this has args, then append them to =
+after the ent. */
+> +                               args_size =3D iter->ent_size - size;
+> +                               if (args_size > sizeof(long) * FTRACE_REG=
+S_MAX_ARGS)
+> +                                       args_size =3D sizeof(long) * FTRA=
+CE_REGS_MAX_ARGS;
 > +
-> +		/*
-> +		 * Match the block reported size against the handler's expected
-> +		 * one, but allow the block to only contain the header in
-> +		 * case it is going to be disabled.
-> +		 */
-> +		handler = &handlers[block->type];
-> +		if (block->size != handler->size) {
-> +			if (!(block->flags & V4L2_PARAMS_FL_BLOCK_DISABLE) ||
-> +			      block->size != sizeof(*block)) {
+> +                               if (args_size >=3D sizeof(long))
+> +                                       memcpy((void *)&data->ent.ent + s=
+ize,
+> +                                              (void*)curr + size, args_s=
+ize);
+>                          }
 
-You could merge the two conditions.
+Here's a different update:
 
-> +				dev_dbg(dev, "Invalid parameters block size\n");
-> +				return -EINVAL;
-> +			}
-> +		}
-> +
-> +		/* Driver-specific per-block validation. */
-> +		if (block_validate) {
-> +			ret = block_validate(dev, block);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		block_offset += block->size;
-> +		buffer_size -= block->size;
-> +	}
-> +
-> +	if (buffer_size) {
-> +		dev_dbg(dev, "Unexpected data after the parameters buffer end\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_params_blocks_validate);
-> diff --git a/include/media/v4l2-params.h b/include/media/v4l2-params.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a8a4cc721bc4a51d8a6f9c7c009b34dfa3579229
-> --- /dev/null
-> +++ b/include/media/v4l2-params.h
-> @@ -0,0 +1,165 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Video4Linux2 extensible parameters helpers
-> + *
-> + * Copyright (C) 2025 Ideas On Board Oy
-> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> + */
-> +
-> +#ifndef V4L2_PARAMS_H_
-> +#define V4L2_PARAMS_H_
-> +
-> +#include <linux/media/v4l2-extensible-params.h>
-> +
-> +#include <linux/device.h>
+-- Steve
 
-Alphabetic order?
 
-> +
-> +#include <media/videobuf2-core.h>
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_func=
+tions_graph.c
+index 66e1a527cf1a..a7f4b9a47a71 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -27,14 +27,21 @@ struct fgraph_cpu_data {
+ 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
+ };
+=20
++struct fgraph_ent_args {
++	struct ftrace_graph_ent_entry	ent;
++	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
++	unsigned long			args[FTRACE_REGS_MAX_ARGS];
++};
++
+ struct fgraph_data {
+ 	struct fgraph_cpu_data __percpu *cpu_data;
+=20
+ 	/* Place to preserve last processed entry. */
+ 	union {
+-		struct ftrace_graph_ent_entry	ent;
++		struct fgraph_ent_args		ent;
++		/* TODO allow retaddr to have args */
+ 		struct fgraph_retaddr_ent_entry	rent;
+-	} ent;
++	};
+ 	struct ftrace_graph_ret_entry	ret;
+ 	int				failed;
+ 	int				cpu;
+@@ -627,10 +634,13 @@ get_return_for_leaf(struct trace_iterator *iter,
+ 			 * Save current and next entries for later reference
+ 			 * if the output fails.
+ 			 */
+-			if (unlikely(curr->ent.type =3D=3D TRACE_GRAPH_RETADDR_ENT))
+-				data->ent.rent =3D *(struct fgraph_retaddr_ent_entry *)curr;
+-			else
+-				data->ent.ent =3D *curr;
++			if (unlikely(curr->ent.type =3D=3D TRACE_GRAPH_RETADDR_ENT)) {
++				data->rent =3D *(struct fgraph_retaddr_ent_entry *)curr;
++			} else {
++				int size =3D min((int)sizeof(data->ent), (int)iter->ent_size);
++
++				memcpy(&data->ent, curr, size);
++			}
+ 			/*
+ 			 * If the next event is not a return type, then
+ 			 * we only care about what type it is. Otherwise we can
 
-Please use forward declarations instead of including the entire header
-here.
-
-> +
-> +/**
-> + * typedef v4l2_params_block_handler - V4L2 extensible format block handler
-> + * @arg: pointer the driver-specific argument
-> + * @block: the ISP configuration block to handle
-> + *
-> + * Defines the function signature of the functions that handle an ISP block
-> + * configuration.
-> + */
-> +typedef void (*v4l2_params_block_handler)(void *arg,
-> +					  const struct v4l2_params_block_header *block);
-> +
-> +/**
-> + * struct v4l2_params_handler - V4L2 extensible format handler
-> + * @size: the block expected size
-> + * @handler: the block handler function
-> + * @group: the device-specific group id the block belongs to (optional)
-> + * @features: the device-specific features flags (optional)
-> + *
-> + * The v4l2_params_handler defines the type that driver making use of the
-> + * V4L2 extensible parameters shall use to define their own ISP block
-> + * handlers.
-> + *
-> + * Drivers shall prepare a list of handlers, one for each supported ISP block
-> + * and correctly populate the structure's field with the expected block @size
-> + * (used for validation), a pointer to each block @handler function and an
-> + * optional @group and @feature flags, the driver can use to differentiate which
-> + * ISP blocks are present on the ISP implementation.
-> + *
-> + * The @group field is intended to be used as a bitmask of driver-specific
-> + * flags to allow the driver to setup certain blocks at different times. As an
-> + * example an ISP driver can divide its block handlers in "pre-configure" blocks
-> + * and "run-time" blocks and use the @group bitmask to identify the ISP blocks
-> + * that have to be pre-configured from the ones that only have to be handled at
-> + * run-time. The usage and definition of the @group field is totally
-> + * driver-specific.
-> + *
-> + * The @features flag can instead be used to differentiate between blocks
-> + * implemented in different revisions of the ISP design. In example some ISP
-> + * blocks might be present on more recent revision than others. Populating the
-> + * @features bitmask with the ISP/SoC machine identifier allows the driver to
-> + * correctly ignore the blocks not supported on the ISP revision it is running
-> + * on. As per the @group bitmask, the usage and definition of the @features
-> + * field is totally driver-specific.
-> + */
-> +struct v4l2_params_handler {
-> +	size_t size;
-> +	v4l2_params_block_handler handler;
-> +	unsigned int group;
-> +	unsigned int features;
-> +};
-> +
-> +/**
-> + * typedef v4l2_params_validate_buffer - V4L2 extensible parameters buffer
-> + *					 validation callback
-> + * @dev: the driver's device pointer (as passed by the driver to
-> + *	 v4l2_params_buffer_validate())
-> + * @buffer: the extensible parameters buffer
-> + *
-> + * Defines the function prototype for the driver's callback to perform
-> + * driver-specific validation on the extensible parameters buffer
-> + */
-> +typedef int (*v4l2_params_validate_buffer)(struct device *dev,
-> +					   const struct v4l2_params_buffer *buffer);
-> +
-> +/**
-> + * v4l2_params_buffer_validate - Validate a V4L2 extensible parameters buffer
-> + * @dev: the driver's device pointer
-> + * @vb: the videobuf2 buffer
-> + * @max_size: the maximum allowed buffer size
-> + * @buffer_validate: callback to the driver-specific buffer validation
-> + *
-> + * Helper function that performs validation of an extensible parameters buffer.
-> + *
-> + * The helper is meant to be used by drivers to perform validation of the
-> + * extensible parameters buffer size correctness.
-> + *
-> + * The @vb buffer as received from the vb2 .buf_prepare() operation is checked
-> + * against @max_size and its validated to be large enough to accommodate at
-> + * least one ISP configuration block. The effective buffer size is compared
-> + * with the reported data size to make sure they match.
-> + *
-> + * If provided, the @buffer_validate callback function is invoked to allow
-> + * drivers to perform driver-specific validation (such as checking that the
-> + * buffer version is supported).
-> + *
-> + * Drivers should use this function to validate the buffer size correctness
-> + * before performing a copy of the user-provided videobuf2 buffer content into a
-> + * kernel-only memory buffer to prevent userspace from modifying the buffer
-> + * content after it has been submitted to the driver.
-> + *.
-> + * Examples of users of this function can be found in
-> + * rkisp1_params_prepare_ext_params() and in c3_isp_params_vb2_buf_prepare().
-> + */
-> +int v4l2_params_buffer_validate(struct device *dev, struct vb2_buffer *vb,
-> +				size_t max_size,
-> +				v4l2_params_validate_buffer buffer_validate);
-> +
-> +/**
-> + * typedef v4l2_params_validate_block - V4L2 extensible parameters block
-> + *					validation callback
-> + * @dev: the driver's device pointer (as passed by the driver to
-> + *	 v4l2_params_validate())
-> + * @block: the ISP configuration block to validate
-> + *
-> + * Defines the function prototype for the driver's callback to perform
-> + * driver-specific validation on each ISP block.
-> + */
-> +typedef int (*v4l2_params_validate_block)(struct device *dev,
-> +					  const struct v4l2_params_block_header *block);
-> +
-> +/**
-> + * v4l2_params_blocks_validate - Validate V4L2 extensible parameters ISP
-> + *				 configuration blocks
-> + * @dev: the driver's device pointer
-> + * @buffer: the extensible parameters configuration buffer
-> + * @handlers: the list of block handlers
-> + * @num_handlers: the number of block handlers
-> + * @block_validate: callback to the driver-specific per-block validation
-> + *		    function
-> + *
-> + * Helper function that performs validation of the ISP configuration blocks in
-> + * an extensible parameters buffer.
-> + *
-> + * The helper is meant to be used by drivers to perform validation of the
-> + * ISP configuration data blocks. For each block in the extensible parameters
-> + * buffer, its size and correctness are validated against its associated handler
-> + * in the @handlers list. Additionally, if provided, the @block_validate
-> + * callback is invoked on each block to allow drivers to perform driver-specific
-> + * validation.
-> + *
-> + * Drivers should use this function to validate the ISP configuration blocks
-> + * after having validated the correctness of the vb2 buffer sizes by using the
-> + * v4l2_params_buffer_validate() helper first. Once the buffer size has been
-> + * validated, drivers should perform a copy of the user-provided buffer into a
-> + * kernel-only memory buffer to prevent userspace from modifying the buffer
-> + * content after it has been submitted to the driver, and then call this
-> + * function to perform per-block validation.
-> + *
-> + * Examples of users of this function can be found in
-> + * rkisp1_params_prepare_ext_params() and in c3_isp_params_vb2_buf_prepare().
-> + */
-> +int v4l2_params_blocks_validate(struct device *dev,
-> +				const struct v4l2_params_buffer *buffer,
-> +				const struct v4l2_params_handler *handlers,
-> +				size_t num_handlers,
-> +				v4l2_params_validate_block block_validate);
-> +
-> +#endif /* V4L2_PARAMS_H_ */
-> 
-
--- 
-Regards,
-
-Sakari Ailus
 
