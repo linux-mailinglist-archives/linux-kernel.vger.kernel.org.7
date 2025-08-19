@@ -1,224 +1,128 @@
-Return-Path: <linux-kernel+bounces-775051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51116B2BAB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93478B2BACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8413B1BB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266661BA84BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF912641FC;
-	Tue, 19 Aug 2025 07:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NQ3JndSi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D746122D9F7;
-	Tue, 19 Aug 2025 07:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221413101AF;
+	Tue, 19 Aug 2025 07:30:12 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F466254AEB;
+	Tue, 19 Aug 2025 07:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755588564; cv=none; b=IR48N+XVBwG/2UykBV3k3Rwz0uoY83rxydDXhlC2i4w2ndOmUhsk4p3v2ZPrGRj0sI/J5Aueut+5NOlrg6CIzxTxNYGKXNiw4VnAHkTjqvNwBxqPaQJN/FHOoKOj7wOp/Kw9DRFqNZs5OJ/CbUG/BeMwE9O1IIrZbpFKnW1dGJM=
+	t=1755588611; cv=none; b=aIfmDNVaC2aVLm1r52/likAMNwYkzq3PMUtI5bhb77QRdWlGWuuvbDWVQZspO1BhGrgKRToAXyzbAckT3gSd/MAq+2hzrL2sRAwuOHzhMt5Oq9lZEGrM+C+/2vLge6B0pxHdjsnJcbmu7Z7oN2DBsVDCcP5Fww13i7EV1llwYC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755588564; c=relaxed/simple;
-	bh=zmJ4oEkg/wsHorsGWyyTdx9Ow5bGQ0WGNug4IrVA5ZA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=cDp7SU3LLScyObBLay3DyqbvyGlckEy5YEdZ4rdQOE6An6gX2bonUl6j8VMmVLVWoqy5Ll4Bkg8T2fPpnzcbNMVJ36vASBEUsDYv2WhNKpwJSzxHEpV5L/cGfqlSateNjsVz47gA/3C/CXIuqL9X8OzF0bMIMyFxEOx7yVySMoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NQ3JndSi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1032)
-	id 597D92113369; Tue, 19 Aug 2025 00:29:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 597D92113369
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1755588562;
-	bh=tUxdMWnI67dhYQwXGjOBEKVZI8EfEtyZKrA8xyUFX7M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NQ3JndSidFl3XzfsFMOggAl8X/S92o6u9CxcAmGbifX1dWrdNU1HiBTxqByV6Xf7Y
-	 d/uU+96PAChnhvcY1DNVPgq8W3ekFPcn/NwaCY9g7dgStVDRDkj/1G+q5P/Iysfe6R
-	 lN4Fre8WrXbU9m7Fcx0yOlZvvxx3L5pUENRVGlk4=
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	mhklinux@outlook.com,
-	decui@microsoft.com,
-	arnd@arndb.de,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Subject: [PATCH] mshv: Add support for a new parent partition configuration
-Date: Tue, 19 Aug 2025 00:29:19 -0700
-Message-Id: <1755588559-29629-1-git-send-email-nunodasneves@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1755588611; c=relaxed/simple;
+	bh=HTb73vp+W4b4DaRPuSsYKm2LCbmToo9jG749eszIuzY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P5BkKkT2jmEPSTIIYxJVp/BRZLDynRtUTBSUbuMZ26pWkvLYmaNiXC1LB4sTs6hBU4NB7aDper/CVs5r6G+kom5nFuxEvSpqZhppbZcCwfm5hVKPWF80Q8Q+sorw43A8MGozgvI/taAUOf1BUQR4lKlLu7QAomT3eVOlgQjaZWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c5h403KFbz2Dc35;
+	Tue, 19 Aug 2025 15:27:12 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id AFD1C180042;
+	Tue, 19 Aug 2025 15:29:59 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 19 Aug 2025 15:29:58 +0800
+From: Lifeng Zheng <zhenglifeng1@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <beata.michalska@arm.com>, <sudeep.holla@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <vincent.guittot@linaro.org>,
+	<yangyicong@hisilicon.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
+	<yubowen8@huawei.com>, <zhangpengjie2@huawei.com>,
+	<linhongye@h-partners.com>, <zhenglifeng1@huawei.com>
+Subject: [PATCH v5 0/3] arm64: topology: Setup AMU FIE for online CPUs only
+Date: Tue, 19 Aug 2025 15:29:28 +0800
+Message-ID: <20250819072931.1647431-1-zhenglifeng1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-Detect booting as an "L1VH" partition. This is a new scenario very
-similar to root partition where the mshv_root driver can be used to
-create and manage guest partitions.
+Solve a problem that causes CPUs Setup AMU FIE failed in a corner case,
+even though they're eligible.
 
-It mostly works the same as root partition, but there are some
-differences in how various features are handled. hv_l1vh_partition()
-is introduced to handle these cases. Add hv_parent_partition()
-which returns true for either case, replacing some hv_root_partition()
-checks.
+Changelog:
 
-Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+v5:
+
+ - add a default implementation for cpufreq_cpu_policy() when
+   CONFIG_CPU_FREQ is not defined
+
+v4:
+
+ - change the function's name in patch 2 from
+   'cpufreq_cpu_get_raw_no_check' to 'cpufreq_cpu_policy'
+ - use only one line in the function body of cpufreq_cpu_policy()
+ - use cpus mask instead of related_cpus when calling arch_set_freq_scale()
+   in cpufreq.c
+ - add a warning when the freq_counters_valid() check fails in
+   cpuhp_topology_online()
+
+v3:
+
+ - add a patch to optimize amu_fie_setup()
+ - add a patch to add a function to get cpufreq policy without checking if
+   the CPU is online
+ - discard the reuse of amu_fie_setup() in cpuhp_topology_online() and keep
+   all the new logic in cpuhp_topology_online()
+ - test only the CPU which is going online in cpuhp_topology_online()
+ - when the freq_counters_valid() check fails, not only clear the scale
+   freq source but also clear all the related CPUs from amu_fie_cpus mask
+ - add some comments
+
+v2:
+
+ - keep init_amu_fie_notifier for setting up AMU FIE when the cpufreq
+   policy is being created
+ - set up AMU FIE only for online CPUs instead of related_cpus in
+   init_amu_fie_callback()
+ - check and set all the online CPUs in the same policy when hotplug one
+ - clear scale freq source for all the online CPUs in the same policy to
+   avoid using different source of the freq scale
+
 ---
- drivers/hv/hv_common.c         | 20 ++++++++++++--------
- drivers/hv/mshv_root_main.c    | 22 ++++++++++++++--------
- include/asm-generic/mshyperv.h | 11 +++++++++++
- 3 files changed, 37 insertions(+), 16 deletions(-)
+Discussions of previous version:
+v1: https://lore.kernel.org/all/20250607094533.416368-1-zhenglifeng1@huawei.com/
+v2: https://lore.kernel.org/all/20250725102813.1404322-1-zhenglifeng1@huawei.com/
+v3: https://lore.kernel.org/all/20250805093330.3715444-1-zhenglifeng1@huawei.com/
+v4: https://lore.kernel.org/all/20250814072853.3426386-1-zhenglifeng1@huawei.com/
 
-diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-index cbe4a954ad46..a6839593ca31 100644
---- a/drivers/hv/hv_common.c
-+++ b/drivers/hv/hv_common.c
-@@ -357,7 +357,7 @@ int __init hv_common_init(void)
- 	hyperv_pcpu_arg = alloc_percpu(void  *);
- 	BUG_ON(!hyperv_pcpu_arg);
- 
--	if (hv_root_partition()) {
-+	if (hv_parent_partition()) {
- 		hv_synic_eventring_tail = alloc_percpu(u8 *);
- 		BUG_ON(!hv_synic_eventring_tail);
- 	}
-@@ -506,7 +506,7 @@ int hv_common_cpu_init(unsigned int cpu)
- 	if (msr_vp_index > hv_max_vp_index)
- 		hv_max_vp_index = msr_vp_index;
- 
--	if (hv_root_partition()) {
-+	if (hv_parent_partition()) {
- 		synic_eventring_tail = (u8 **)this_cpu_ptr(hv_synic_eventring_tail);
- 		*synic_eventring_tail = kcalloc(HV_SYNIC_SINT_COUNT,
- 						sizeof(u8), flags);
-@@ -532,7 +532,7 @@ int hv_common_cpu_die(unsigned int cpu)
- 	 * originally allocated memory is reused in hv_common_cpu_init().
- 	 */
- 
--	if (hv_root_partition()) {
-+	if (hv_parent_partition()) {
- 		synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
- 		kfree(*synic_eventring_tail);
- 		*synic_eventring_tail = NULL;
-@@ -703,13 +703,17 @@ void hv_identify_partition_type(void)
- 	 * the root partition setting if also a Confidential VM.
- 	 */
- 	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
--	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
- 	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
--		pr_info("Hyper-V: running as root partition\n");
--		if (IS_ENABLED(CONFIG_MSHV_ROOT))
--			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
--		else
-+
-+		if (!IS_ENABLED(CONFIG_MSHV_ROOT)) {
- 			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
-+		} else if (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) {
-+			pr_info("Hyper-V: running as root partition\n");
-+			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
-+		} else {
-+			pr_info("Hyper-V: running as L1VH partition\n");
-+			hv_curr_partition_type = HV_PARTITION_TYPE_L1VH;
-+		}
- 	}
- }
- 
-diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-index aca3331ad516..7c710703cd96 100644
---- a/drivers/hv/mshv_root_main.c
-+++ b/drivers/hv/mshv_root_main.c
-@@ -37,12 +37,6 @@ MODULE_AUTHOR("Microsoft");
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Microsoft Hyper-V root partition VMM interface /dev/mshv");
- 
--/* TODO move this to mshyperv.h when needed outside driver */
--static inline bool hv_parent_partition(void)
--{
--	return hv_root_partition();
--}
--
- /* TODO move this to another file when debugfs code is added */
- enum hv_stats_vp_counters {			/* HV_THREAD_COUNTER */
- #if defined(CONFIG_X86)
-@@ -2190,6 +2184,15 @@ struct notifier_block mshv_reboot_nb = {
- 	.notifier_call = mshv_reboot_notify,
- };
- 
-+static int __init mshv_l1vh_partition_init(struct device *dev)
-+{
-+	hv_scheduler_type = HV_SCHEDULER_TYPE_CORE_SMT;
-+	dev_info(dev, "Hypervisor using %s\n",
-+		 scheduler_type_to_string(hv_scheduler_type));
-+
-+	return 0;
-+}
-+
- static void mshv_root_partition_exit(void)
- {
- 	unregister_reboot_notifier(&mshv_reboot_nb);
-@@ -2224,7 +2227,7 @@ static int __init mshv_parent_partition_init(void)
- 	struct device *dev;
- 	union hv_hypervisor_version_info version_info;
- 
--	if (!hv_root_partition() || is_kdump_kernel())
-+	if (!hv_parent_partition() || is_kdump_kernel())
- 		return -ENODEV;
- 
- 	if (hv_get_hypervisor_version(&version_info))
-@@ -2261,7 +2264,10 @@ static int __init mshv_parent_partition_init(void)
- 
- 	mshv_cpuhp_online = ret;
- 
--	ret = mshv_root_partition_init(dev);
-+	if (hv_root_partition())
-+		ret = mshv_root_partition_init(dev);
-+	else
-+		ret = mshv_l1vh_partition_init(dev);
- 	if (ret)
- 		goto remove_cpu_state;
- 
-diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-index dbbacd47ca35..f0f0eacb2eef 100644
---- a/include/asm-generic/mshyperv.h
-+++ b/include/asm-generic/mshyperv.h
-@@ -31,6 +31,7 @@
- enum hv_partition_type {
- 	HV_PARTITION_TYPE_GUEST,
- 	HV_PARTITION_TYPE_ROOT,
-+	HV_PARTITION_TYPE_L1VH,
- };
- 
- struct ms_hyperv_info {
-@@ -457,12 +458,22 @@ static inline bool hv_root_partition(void)
- {
- 	return hv_curr_partition_type == HV_PARTITION_TYPE_ROOT;
- }
-+static inline bool hv_l1vh_partition(void)
-+{
-+	return hv_curr_partition_type == HV_PARTITION_TYPE_L1VH;
-+}
-+static inline bool hv_parent_partition(void)
-+{
-+	return hv_root_partition() || hv_l1vh_partition();
-+}
- int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages);
- int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
- int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags);
- 
- #else /* CONFIG_MSHV_ROOT */
- static inline bool hv_root_partition(void) { return false; }
-+static inline bool hv_l1vh_partition(void) { return false; }
-+static inline bool hv_parent_partition(void) { return false; }
- static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
- {
- 	return -EOPNOTSUPP;
+Lifeng Zheng (3):
+  arm64: topology: Set scale freq source only for the CPUs that have not
+    been set before
+  cpufreq: Add a new function to get cpufreq policy without checking if
+    the CPU is online
+  arm64: topology: Setup AMU FIE for online CPUs only
+
+ arch/arm64/kernel/topology.c | 56 ++++++++++++++++++++++++++++++++++--
+ drivers/cpufreq/cpufreq.c    | 10 +++++--
+ include/linux/cpufreq.h      |  5 ++++
+ 3 files changed, 66 insertions(+), 5 deletions(-)
+
 -- 
-2.34.1
+2.33.0
 
 
