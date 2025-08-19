@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-776283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954A3B2CB42
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:45:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E9AB2CB51
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E5AE1BC44EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2D83A9DAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A7C30DEDB;
-	Tue, 19 Aug 2025 17:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A4830C359;
+	Tue, 19 Aug 2025 17:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUvwplA0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHKIV8jU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F3530DD0E;
-	Tue, 19 Aug 2025 17:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31D82E22A0;
+	Tue, 19 Aug 2025 17:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755625528; cv=none; b=RjypAGWKxby95MLAbpHHZBbK5ZNjvtBKuxpV3Knoey3Rk3jVqure7wdsOfwW3z9lbVoortykiva+p1mz7uK5AmMbdiE7ZC4UsoOEq4iGN+EgLu2CedJllXaHig02uUPi9yG81Y5CXH3fD3gn8PVBc2pI0ISCvV8pe3SctSshbdY=
+	t=1755625577; cv=none; b=fXg7Nno5Y8snUmmO4U3L2d3eEIaO4ZB0kBgOqd/Hdu+HxBxreN9Ad07/PSgvXXyxvJtpGAFvUEgt295AO6xAbkEQL2/ofm2HO1RJUrnoQ9IuvnwAim/XDwl73SSU9qRVs8tfos5wmtUcI6Dns933DPc+vkGxRqzSzaYfG9dGes0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755625528; c=relaxed/simple;
-	bh=GhoFcWSAfEWXe+zmBVWlWzG+be0qGZvHWZmBDx2NPmQ=;
+	s=arc-20240116; t=1755625577; c=relaxed/simple;
+	bh=ImNqnzWW+9w9BxQLnC3ZvD82tjRDoNDHtSzzNgeOCzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z3o1o26qTM7wRUou3rNKZg1TdB7sSWmJ+ovum9U+aCwTr7coz07+1MfLv7BidwW3wrprBKwqwkMcOHWBfytvZAYNrTUuu9xV1WuFjA49kAi81EZiaZ6Sa1yAxekj8gqZpUjngAI746OXFHLscwMzGuEM4tStdlraylTLDXgXyCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUvwplA0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BD2C4CEF4;
-	Tue, 19 Aug 2025 17:45:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKCM0Kf8GTOM2/xQJA0wSJL2gZHDVXo+r4tzoFsi1o9ZPo6jvssOXoLaDmiLerFPZBWrF1Azm3hS+pXGq37jWQiFgj0/UpXPF5+K2eePAve+esqmdVw7/SBEo9acKOdOgwacEczmLiLjB2t3MwVGKiaa3zkwa6J7mEH2+dXmhvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHKIV8jU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFD3C4CEF4;
+	Tue, 19 Aug 2025 17:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755625528;
-	bh=GhoFcWSAfEWXe+zmBVWlWzG+be0qGZvHWZmBDx2NPmQ=;
+	s=k20201202; t=1755625577;
+	bh=ImNqnzWW+9w9BxQLnC3ZvD82tjRDoNDHtSzzNgeOCzI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jUvwplA003ggxcV26cp57WubG6Sb2qbAbUn0W6w4yPXXxyOJ2JhJ/4p7lTnrkuCbt
-	 erWlxgGT4oiJ+cERpacd6oerDZ22az2mBqtTOyhA7+c2MSEhflsCxp3ZFiLjI4rIA4
-	 iF70rwxtVFQtP9JqfQM+p7j+LIJEz4aFolH32nHy9h9jwXDfuZc7s3rF16Xch3fBkc
-	 1gbl79x1mWfU9onbK0ho1BWhm2vg0ZjirO7vyBmQ6ItBbomjaupafZ51iI0XmSMNcX
-	 w8wGVHDBapMpu64sAMjMMMnI7WkOjE/aHNPaq6fepdDCgVVYAlQkukC/Ct7oijhONZ
-	 Uzr/Mh75Kjhow==
-Date: Tue, 19 Aug 2025 18:45:23 +0100
+	b=BHKIV8jUMwsAWVEyTRPQYe2JrqREOYrKKGYGK1/hucnGGtvuwJFic4n/fuu0J7AKa
+	 eRY0GzENfilScdchr8j631HB0bsTdrctytdU00q3UeS6HnbKby0bPGc6DUk7apJ6EA
+	 kOA1E5dnsPpejkY1sexURA1vT2GGaKtHZwXjDSYqCEGGT+m1N5v6CJIhgvDKtKt1mQ
+	 hIskctxhLynmpvXLKhwjlRTD1CLFXetAO9BC6vSYd3tyRdLQM9gY3ESSF94qIZwcU6
+	 QmMXOvrb79Nl8fcAamVHVobj3pZFgv/UcI4nVD1AfwhYpIpk6RzThVQRD9P2DPe+Y/
+	 pwKtAUWZrlYhA==
+Date: Tue, 19 Aug 2025 18:46:12 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: vd55g1: Add vd65g4 compatible
-Message-ID: <20250819-dimmed-contempt-83594845dbd9@spud>
-References: <20250819-vd55g1_add_vd65g4-v2-0-500547ac4051@foss.st.com>
- <20250819-vd55g1_add_vd65g4-v2-1-500547ac4051@foss.st.com>
+To: Mateusz Koza <mateusz.koza@grinn-global.com>
+Cc: angelogioacchino.delregno@collabora.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	marcin.czarnecki@grinn-global.com, b.bilas@grinn-global.com
+Subject: Re: [PATCH v2 2/4] dt-bindings: arm: mediatek: Add
+ grinn,genio-700-sbc
+Message-ID: <20250819-lash-overbid-dd5d5c365811@spud>
+References: <20250819130231.181571-1-mateusz.koza@grinn-global.com>
+ <20250819130231.181571-3-mateusz.koza@grinn-global.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,12 +60,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="slx1kuYihoEwwV1O"
+	protocol="application/pgp-signature"; boundary="jirkf6aWu6p0wybH"
 Content-Disposition: inline
-In-Reply-To: <20250819-vd55g1_add_vd65g4-v2-1-500547ac4051@foss.st.com>
+In-Reply-To: <20250819130231.181571-3-mateusz.koza@grinn-global.com>
 
 
---slx1kuYihoEwwV1O
+--jirkf6aWu6p0wybH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -74,16 +73,16 @@ Content-Disposition: inline
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---slx1kuYihoEwwV1O
+--jirkf6aWu6p0wybH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKS4MwAKCRB4tDGHoIJi
-0oVKAQCiMvF0vjIxCf2CqOWrzV14eYZ4dNvsAyDkInuEoQBRkgEAn1SG8rVhXaSv
-Bu+KdPltKVgv7d6MQtiDi15NqPLODwQ=
-=pqDv
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKS4ZAAKCRB4tDGHoIJi
+0mcPAQD9P5ITPsJbve0AaJea1vqiyF4opZjUDdaHv6LL4uGiOwD/YhOB8NAiCzSo
+meW2/u8QMm0VL0EhdPfA8ww9sfRNsQo=
+=15MS
 -----END PGP SIGNATURE-----
 
---slx1kuYihoEwwV1O--
+--jirkf6aWu6p0wybH--
 
