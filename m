@@ -1,461 +1,205 @@
-Return-Path: <linux-kernel+bounces-775639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4EA5B2C2C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:11:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96598B2C2CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34596217BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC6B3527F27
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE7C33A01B;
-	Tue, 19 Aug 2025 12:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9124233470A;
+	Tue, 19 Aug 2025 12:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WQj44Mu4"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="FULystRt"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013071.outbound.protection.outlook.com [40.107.44.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0943375AE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755605436; cv=none; b=gEKuMf0AEHwHRfiyQBVEUPYI+3uhmkaptMBXSVMZmDnImNmAKe23219WYmd9Uv2VrKamEEPs59gcSuLhUHC3BOVl4plDgbprd3hKdSSnH7odpqCqPC5wEOT6yenv8DKeL0AZ5T6+2BDudCBYnfbPWAS+dJFCdwuKspSAKZl1EXc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755605436; c=relaxed/simple;
-	bh=a6PZI+tjZrmUg6w8G2uTeLCpE/pt0ZaCvCKU3fNi5Gw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DDUyL3D1wW9V9ShPGYCjNECTTBG2nHH6pcWb3TA0G97jsVD/eYzkUPvCzIIoU1UK9XVHX/psYBKWzBTR4UnBGIlFbhcVx8vCmvRQWykX8kNMB64eKbU/lA9i26j+XIHLN+SqmdrvGY/jfVeAxXPHJGqz/Y2N66cGfJ3qqYnnFkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WQj44Mu4; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b9e41101d4so2763335f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755605432; x=1756210232; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fo5OW2N+fFWT46bTnXRh3LxSjEG1Sg+/vJAfEv3O438=;
-        b=WQj44Mu4V1M0ZYr2IUJ7BA4FcRTh3nQZF0qVox9+egzrbuOPzx/+bg64N8k37wzme+
-         /4sny1q7cF64w3Tn8hkU20TxJWr++DlDENi24lkOJG2J2o/tISXvKJwSbzG4cv44zFiq
-         iP6waOeOsZl26YCo7/gKNPqEnJ4cwH0OFyzEv/Rh8AvtkK733miUZPHgrzeHTOk4LmR4
-         X/Gntu3XAAlN3wOvFEohK0j0/78Z2+n3vBnY1rL3TtK3uzCoxLgBYPm/EA1n1sZ+1rc6
-         LzNh0hWWp7rEenJ8sMq59KruCr3tVgOhOU9uF7mr7ete3OcYF9pqO8hdxkH1jJTVOkgZ
-         klTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755605432; x=1756210232;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fo5OW2N+fFWT46bTnXRh3LxSjEG1Sg+/vJAfEv3O438=;
-        b=sRlz7IMOGSmmgdJkTVIsNWDBb/7lzCX/5w4ijEpduGBgQT9//x75z1FUz00yiSN69E
-         95wNikg0DZavF5GIPTTlbKUrEExg98Ud1ZFdQXL2l+BonwXdDj9xygBINfV2w3MQy6F1
-         NwBkWId7DWNWwbTe1bg69oBGDnJbNeMTMwfdKf8kotbhdxl5xRzS0KU1cYCmqhQamNds
-         wC25dAzio+AqqZ+OfDS/53EAYz0IJJyAPOvXimlQmpNW+4JT8SYR4f+dWLwoa+WgVbs0
-         /MewwZ6KvyYWx8/5X3hsgJT8z/JP/3AtlB+M0F8tVUBN7c/P8//3sIcUdO9C7Osg3G/D
-         Zs/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUb0FMPwMZZcAM2VgX7NnAceN+0VfYwE4FnJV2gUMkEkVIDHOYiAkg083boCk0xgBPDsKFzvWwfbxwEeTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/hObAPd01ogbezCVtLFQqgeE8205dc8K7U0aNgpyVuUAJ+9Rh
-	ncWcgE/HEYQT08wK/G5P3Ul4R7wyt/tSpgfzr/i10ud7idp5c5gMx2s+oIhNlMJL1xk=
-X-Gm-Gg: ASbGncvRekRYmM3AJ25nHRsttKEkdsU3Z5089hwkw0gpZBzNW4mPek8xhuU9pH5G1Km
-	b0gKussftoiGXABs4zAAF0DHqNU1RHNGoPscEK+eCJT0EDS0HPeZW4eZyPqh7FYOgpFdn7ZWzF5
-	RiiX3EEuA/2CuTYF6rf515+bNya0EHXGqw1xuvCSSRtwVky71nEcMWKvjz+/LO3JlGuPDB0VBuK
-	24lvnc9kMVgLeVN1Uhyxz8Eb9S2rUH9opkggdBGtZuOQim9H4Brc1GuXf/nASycIYiX8VZjF5nQ
-	nZrq6SXgXRZJ1TWihCKFZB7nqmmhW7aryPVV3DOWcMrbtszlJRfvGoWui/Bb4rvq++3epcshvUw
-	ORUrKGkmOKzFqlP542a/G+QtPNccUEKY07HJwKq2qGqASZZiIiYcJ9LnI/dDWtBi1Ji+Urs149a
-	ywHQ==
-X-Google-Smtp-Source: AGHT+IE+TigsoESUPEvEdx0SMj9TNE4WhIFMdtlTxF/XQWw9NIeo2Xu1D9pgQ3QTkx9YGaISinGf5g==
-X-Received: by 2002:a05:6000:2212:b0:3b7:889e:2b2b with SMTP id ffacd0b85a97d-3c0ed1f2fbbmr2090455f8f.47.1755605432231;
-        Tue, 19 Aug 2025 05:10:32 -0700 (PDT)
-Received: from ta2.c.googlers.com (245.92.187.35.bc.googleusercontent.com. [35.187.92.245])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074d43b9asm3464410f8f.24.2025.08.19.05.10.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 05:10:31 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 19 Aug 2025 12:10:22 +0000
-Subject: [PATCH 3/3] arm64: dts: exynos: gs101: add OPPs
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002FD338F47
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755605438; cv=fail; b=Yyv/rWF+7VnCZKrQEDa7M8l3yPWN0o7ZqIzgL+kL0eZF+l5IUzYY5ITCyubE/x9+CFQcMCZA2T1m+ee9iizmcCPch37RhvHKKEsiANdaE6U7sTLoQnWVPAX2XjDHX8+Qyq+a6+B7A13WrbDWsMS6Kh11kljomZcq+Fp3dhELO10=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755605438; c=relaxed/simple;
+	bh=hwqNmDGtjxR0fNM4LJFALwjqPGALLsvXrrJYLM1Wp3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mXSJ2T7PpR5ofoMkPpzNwCdtvcqzoAK3poyv3brV6Jj6+xb+/tZat3dqBJQy7citfgO2WjF3FauuKgE4XxzmL0VIqzxTk6gyQaOe7woA3dyJYSYc40Q8mWabllXB4ZpEzoEVPwP2CKHEbwWGhAXoaELLyemXYJslkb/+aV+8g6c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=FULystRt; arc=fail smtp.client-ip=40.107.44.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lVPfcHgeJexGeYH4urACyeqcMBW5Cr3WMtK0v5zAnq1BSU0PNmfePXYoCakbwCWYAfnjH1iaCtOjXx8ujFv8BZFEWtbT0Uh9GVkcbf0GVT6TT8p3gOdEf5mDeYZt1Obvxjq4d7tB/ky0soW8lg2S7pB9VH76W6CE88rQ3DWxH5gEQiiMPPiOTXpBNuac5PJ+YHkJ1NhbPocNMGwVwfOZR3ZWosFI8nBa3vMVG8cG7yZh2zfJ/7f/tn4ZEUEZPf79FIthUCUFfKsBF1jsaQUu9YONB+nz4Z8IVY9TuOjxKcz76ptXxSzZpCyt4TNGSTsoDFhBAeAqKoYYEuHJs7Tixw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kMPBPEAAPYZzUtaISIqA1EjqBiUFg0mdLTpobHxLZ8M=;
+ b=wzgIS1e7Q9UPqYYPuWFeL8D/nsCEtgo+Xt59oh6WSWe87u2N4LcSJwz8u+z+Do4Fah/6HCIATtu1d9RPD0VszGnUkumxrrOd/tZzs2yGpQTAYDzm4FzVyL/TqoGggo0x73XDZDN/6cnwEXo5ID1NGEAII5+UK0VvZuSogpbVvBGk9e5av0POFQGDgBkw7Q7dk6uC6lny6WgJ6K9sqxF8Ji+gaCbzXpp3uDB1jsYEIRKXZ5a5z02BI86b4gwBxJF36ZmzM/qvt7mErvBd/2UTMiwTOnvqHv6A2V4PvaCVJsRf2W8p9FQLdXrAZey2FeRuhRHfMS/CBrH/YmQdn6H4kQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kMPBPEAAPYZzUtaISIqA1EjqBiUFg0mdLTpobHxLZ8M=;
+ b=FULystRtWlideqsb5shdDPz92lnYQ0FBrlEKZmlGJ4fTYlQCNMMoe1Gys8Gv7l09IAMK63CEJf0c1u0HqmlVe9KvYUCApRQX4j/pNxQocjVTsNwmSppfz7fgN01nq4bCnvVIABS2gbfCtcW+39sEjCiVLUqGrHHRSCvMU/rUDNpfL9uki6F3ag8b1wSFSyOL5XtWTcC62i0u9q90sSBJEc8p0mmuk6BwwxC7beUcgPjkMJZSZ5N/tHgUDPQt046Jd1XXroBV67h09PIXtqW/PnSBwyuIQOMgLblv5NzsNAJhYsfljtamTy01ib5MWZ58pWtJJp3BPnMZcGm3gHs+OQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by SG2PR06MB5381.apcprd06.prod.outlook.com (2603:1096:4:1d0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 12:10:34 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9052.012; Tue, 19 Aug 2025
+ 12:10:34 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: nm@ti.com,
+	ssantosh@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] soc: ti: Remove the use of  dev_err_probe()
+Date: Tue, 19 Aug 2025 20:10:23 +0800
+Message-Id: <20250819121023.608298-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY4P301CA0025.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:2b1::7) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-acpm-dvfs-dt-v1-3-4e38b95408c4@linaro.org>
-References: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
-In-Reply-To: <20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- willmcvicker@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755605429; l=8502;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=a6PZI+tjZrmUg6w8G2uTeLCpE/pt0ZaCvCKU3fNi5Gw=;
- b=VHVnXzOLTTEgHy3PRapQ2DpiSk2f3PV2HmXhzrM77UxMkHCaAnS1joG5fcZS2vcpK5NnKpJ08
- YAM+PFCydyaBXyqSkyULZ629pZxk+fLLr7xvwiO6rmdO0pwi4Kg5QOM
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SG2PR06MB5381:EE_
+X-MS-Office365-Filtering-Correlation-Id: c79865dd-3b27-4467-ce5d-08dddf196679
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kupfEt2gubbb3Gla8aYhHMgfjPlUYnqXcoRCGZlQRr5Ge3aDxOJUs+/jvB7a?=
+ =?us-ascii?Q?k9RMdGybD0wqC5xZw2e++FdSqi9uc1eO2Jhj0BtYT9mGPmqONOdsWHmP6IzC?=
+ =?us-ascii?Q?GjaXGkXjsHdInVW/UF0dJTxeLM1OcqgLR11WoscZEYmRy2/6mRGrgUxO8d8j?=
+ =?us-ascii?Q?3/KNlNDzHC5toiZ8lbbRv23YNX/Q1jUE29oedVbFoIdBSipPIo/tBTcI1g2V?=
+ =?us-ascii?Q?nNqLn82BMzlrwqFFpsoGDav5WrZwO6iGhSRfWooRkhfEXKP+X/+Fh9wNblq7?=
+ =?us-ascii?Q?ARkNoXBtG8D53Eh+AJLRcGRq6gYp8WvguUusTtqq4w+uBO3tWIlA2+LjFc7n?=
+ =?us-ascii?Q?KA10opAZvVnQn5Rj6RriCgG/mZUwJig/woX9KnzQdEGEYWbX/d2VVT2+JH+l?=
+ =?us-ascii?Q?KI8bbqgDSL/ZHbXewf7m80vWLkab9qZLZlrFoyCPa28kS+D45pQLLIr9u1qR?=
+ =?us-ascii?Q?LLDZwMVKJ4apmaJZXps6HG5UckZUCNxCr/YnGFnpsTrcCRr+MCdWHgwLGESG?=
+ =?us-ascii?Q?WCrtUCKs0Yyo2GwmZ9ZZhbNp74QxRKLPj3ijsz5xZNbbixoWm9y+Gz7X/UoU?=
+ =?us-ascii?Q?fVfroC+LVfJmE4AaaeXvWH7aAKkvHUejnAXCQKo5JjHsNvQ7lYqmjZTAlYh7?=
+ =?us-ascii?Q?xENVlhE1PlDeebFnSUSi0RhhIx6c4+KtWpEiP8WyKZknYY5F7PR2IShDO+pg?=
+ =?us-ascii?Q?3SyNBb1Pyljg8t/V+VnMCQMsHtWTgUfjUpmOftdIwTw9boZ4IkMEb/g8FfBL?=
+ =?us-ascii?Q?6ORPworxy/Fl0gr1ddvIr7WrbMRVd10jktGKrueuq0y7CZlLnsVirDr1MmjB?=
+ =?us-ascii?Q?kV695u03EcsPNZBxmiT28ZENRLWkRPXuKlR9DiYsH8kawNlcTqUg50E4tOAi?=
+ =?us-ascii?Q?0tOrkBkWKfMhW6IYVCbnoWd+nHfM8EnT8YAD8bmqH9+TWkWGOccutvuAxRJI?=
+ =?us-ascii?Q?F1J6MFdPR8sTV/bjDSD2B2rbO7fG/29WjT+ok8XtsFtLtwOFuMiEBi2mNTWY?=
+ =?us-ascii?Q?AXzCGPMvbPF2eJEG9rOY17i5KVAp5cL6AFMHMCjZ+9EK9hXnAbKNQSZ2zAR7?=
+ =?us-ascii?Q?ixWqvqjREWcucF2DVT7tAlabau/uVBNLCCGkPk5jhBYt6iWaa5BVxltaGgjI?=
+ =?us-ascii?Q?CQxsEDrV/VSq66xImEwXqYjbo+yf79OrGgccr7WMKyyZa3Je0INz3TaOwLyD?=
+ =?us-ascii?Q?PY3r/LoZ030ecgwbI1UxcUI3nkY5HnbXaVg0aX2Wg/es3L1V7QRtirrgvAfT?=
+ =?us-ascii?Q?BTJCisD7CHuZwW0D1EpLCuSdSHhAp1HhobvLbGiTaz/aBIk2runmEFKGywsE?=
+ =?us-ascii?Q?OgFBXvqb8ikGHGXBYxFcwGMB5NUB9GrLWP1ysgryqM2AjDfeJOlfPqFDuR+7?=
+ =?us-ascii?Q?GpyYS/Hv/wcJa7yDVl5yzXmTHlkDqk2ZH6D+a3yQaiPpgUWiNe/ltwByIXHs?=
+ =?us-ascii?Q?roPKeghwAfkTvufrokncyn3MRohDz26+EibCtOu+DUeYSIDoc00Blw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PrlU7xOPxVqYrFqsECGc9LbxO5rvzUTIT9sMnzldePJIv4IWuM8YkvXZpF6H?=
+ =?us-ascii?Q?PJfqv9AIsobAPLwKi7jPTs6S7aaGiOuhIo5akXIISUyHJcUTMo5LzP/LLShd?=
+ =?us-ascii?Q?3PeDZHvDU60seS+L9BSDQuBHpaw+jFQe1Floecg7YhlYnS9rV3AJlwY/pnlC?=
+ =?us-ascii?Q?oR1TRdBNjDkJdjViL8gS3STVkDjfnzIFx0chwMAsd6q6Z9KG9wRqGxnu4KUL?=
+ =?us-ascii?Q?kVCFBo5gOBRWpyeW0k+ijwrj0+/IYFu+FYJiTrovElxgX8DNkElAb9h7Z0Py?=
+ =?us-ascii?Q?onK8B0EUmIeaC2nuRuHJMMVlFA/o9zidihvq3HBB6Ciypl3U7zmlwAkXye8g?=
+ =?us-ascii?Q?FOiCorAZ+neJ7DnV9kaQ27q0xovrZ2rY2XvIqTC7PJPbwL6kXvGqxcCM0HOO?=
+ =?us-ascii?Q?tc6HIS5h9oatqyIOEmiMCqj4QUfYmgOu4FH2/a+TcyQYXqHtMEVbsYGcyjfZ?=
+ =?us-ascii?Q?9k2eE2T0oM92M2zR7crn+p0e/gTFjMAZTnQ5m+uP3kBK/W6fB86hH+wI6ZI6?=
+ =?us-ascii?Q?R5MhrBc5cp/DFLxN4WhuyRcQVVwk71imGp5lRhUcz7S7vGuPZ18REev3Bipz?=
+ =?us-ascii?Q?emi0f9C543x5oCc0j5g2GVgy8yd6Nwq64o/SJuhK+Dq+I42YRuHPuyaEPnJe?=
+ =?us-ascii?Q?S8Pfsl+7P08LVE2OLwnbTrAjzLUK63197e3WqAhte0NZox8XHyXKSEQVRJGE?=
+ =?us-ascii?Q?i6+hunMi+ljCYit12uJNdvfg2QToj1JLD6LCyRAefUXPxKmM/2ApV13WI9WH?=
+ =?us-ascii?Q?nW1NJ+IpeozCFkut2rNampJCLS22Ky7rNADGPwGba9fZESzrG69cpTHDFyL/?=
+ =?us-ascii?Q?aRj4t6sS9gYhaof0Ds1A42TwOlN4Cz1bk0D/PvVQ+130an/nVBECAkYaK2da?=
+ =?us-ascii?Q?aWFPWiCw6qM+NNj0NkZbU/fb+REObKXDS7Bqj0bN/UZ+ydJ65AGWmmqIA+Uk?=
+ =?us-ascii?Q?GkhmQmgmnFUjfzfoj/izx70LhyaKO75TeXE9Yiwpoez6hRjcnkR1MR/+KVov?=
+ =?us-ascii?Q?b6+ItdEPaXBImIHw7fxRIjvtT0xKN4oumOj7JePEaLqBbgoWotJSrgFe8pS4?=
+ =?us-ascii?Q?9NL2cndxIEkiSKTEvAP7bdtWtdgNyirXgOH3Aq4IX/rwOwMfNnalsHsYMMPV?=
+ =?us-ascii?Q?cXfNjR8/ChlvV1etLAUQFpv0/TzD/mYsjCUo6pphvpquyHFjVewUvkQ3yHJs?=
+ =?us-ascii?Q?QW4Sjfb6aC4Nxg0L6Ej3xVhY2dskncyi1fe+ylF4uFdR0+C3q5pFN8mpqh8i?=
+ =?us-ascii?Q?5dyYr3LLlhZFOtoXW3eunQPf6V+PMDN5bd43tB7agO607l9EuVAm+unpzyx2?=
+ =?us-ascii?Q?LGtMsmoKl+H71QHIXQRJsssucyfaYFvUD9z74szaPR0PICBH18WfkRp9l5Am?=
+ =?us-ascii?Q?bmsI92dN85SBE9PLWyfpj5+3MQ046QskJDhDfxsMKDTET9aD/P4NW83JdBz5?=
+ =?us-ascii?Q?bnRoKqZMZXNCr03NHQCBlRuDLRWZN8g3Q/FMYZIySx7Tj3oc15TmPkU//3w8?=
+ =?us-ascii?Q?sLdGmh2AoGVTN3dRIkGkZMwVrV9cwWxBfvXIU8RaoNBdDTZhf9JpMrD3ZZ/B?=
+ =?us-ascii?Q?8YWiV5hqwG1UIPbIqC9pGCCCEEJqOECez952r4gO?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c79865dd-3b27-4467-ce5d-08dddf196679
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 12:10:34.4075
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h0OZ8mvYP752KFpRUsQFKGi/GihpSLZs2jywn+Yy4ZWymS/ifrIVDRzHumKQG85IORziN3MccI08hM9ZDoRFxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5381
 
-Add operating performance points (OPPs).
+The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+Therefore, remove the useless call to dev_err_probe(), and just
+return the value instead.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 ---
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 275 +++++++++++++++++++++++++++
- 1 file changed, 275 insertions(+)
+ drivers/soc/ti/pm33xx.c | 7 ++-----
+ drivers/soc/ti/pruss.c  | 5 ++---
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 42926f8bde8889ec99ecf9fc551629a0453e788f..b2303b3a3d176ef9b825d24bbe0bb0d51ef81246 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -77,6 +77,7 @@ cpu0: cpu@0 {
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
-+			operating-points-v2 = <&cpucl0_opp_table>;
- 		};
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index dc52a2197d24..24f8df1c8ebd 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -408,16 +408,13 @@ static int am33xx_pm_alloc_sram(void)
  
- 		cpu1: cpu@100 {
-@@ -88,6 +89,7 @@ cpu1: cpu@100 {
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
-+			operating-points-v2 = <&cpucl0_opp_table>;
- 		};
+ 	ocmcram_location = gen_pool_alloc(sram_pool, *pm_sram->do_wfi_sz);
+ 	if (!ocmcram_location)
+-		return dev_err_probe(pm33xx_dev, -ENOMEM,
+-				     "PM: %s: Unable to allocate memory from ocmcram\n",
+-				     __func__);
++		return -ENOMEM;
  
- 		cpu2: cpu@200 {
-@@ -99,6 +101,7 @@ cpu2: cpu@200 {
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
-+			operating-points-v2 = <&cpucl0_opp_table>;
- 		};
+ 	ocmcram_location_data = gen_pool_alloc(sram_pool_data,
+ 					       sizeof(struct emif_regs_amx3));
+ 	if (!ocmcram_location_data) {
+ 		gen_pool_free(sram_pool, ocmcram_location, *pm_sram->do_wfi_sz);
+-		return dev_err_probe(pm33xx_dev, -ENOMEM,
+-				     "PM: Unable to allocate memory from ocmcram\n");
++		return -ENOMEM;
+ 	}
  
- 		cpu3: cpu@300 {
-@@ -110,6 +113,7 @@ cpu3: cpu@300 {
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
- 			dynamic-power-coefficient = <70>;
-+			operating-points-v2 = <&cpucl0_opp_table>;
- 		};
+ 	return 0;
+diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+index d7634bf5413a..8bd1dbc84fcb 100644
+--- a/drivers/soc/ti/pruss.c
++++ b/drivers/soc/ti/pruss.c
+@@ -443,9 +443,8 @@ static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
+ 		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
+ 							resource_size(&res));
+ 		if (!pruss->mem_regions[i].va)
+-			return dev_err_probe(dev, -ENOMEM,
+-					     "failed to parse and map memory resource %d %s\n",
+-					     i, mem_names[i]);
++			return -ENOMEM;
++
+ 		pruss->mem_regions[i].pa = res.start;
+ 		pruss->mem_regions[i].size = resource_size(&res);
  
- 		cpu4: cpu@400 {
-@@ -121,6 +125,7 @@ cpu4: cpu@400 {
- 			cpu-idle-states = <&enyo_cpu_sleep>;
- 			capacity-dmips-mhz = <620>;
- 			dynamic-power-coefficient = <284>;
-+			operating-points-v2 = <&cpucl1_opp_table>;
- 		};
- 
- 		cpu5: cpu@500 {
-@@ -132,6 +137,7 @@ cpu5: cpu@500 {
- 			cpu-idle-states = <&enyo_cpu_sleep>;
- 			capacity-dmips-mhz = <620>;
- 			dynamic-power-coefficient = <284>;
-+			operating-points-v2 = <&cpucl1_opp_table>;
- 		};
- 
- 		cpu6: cpu@600 {
-@@ -143,6 +149,7 @@ cpu6: cpu@600 {
- 			cpu-idle-states = <&hera_cpu_sleep>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <650>;
-+			operating-points-v2 = <&cpucl2_opp_table>;
- 		};
- 
- 		cpu7: cpu@700 {
-@@ -154,6 +161,7 @@ cpu7: cpu@700 {
- 			cpu-idle-states = <&hera_cpu_sleep>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <650>;
-+			operating-points-v2 = <&cpucl2_opp_table>;
- 		};
- 
- 		idle-states {
-@@ -191,6 +199,273 @@ hera_cpu_sleep: cpu-hera-sleep {
- 		};
- 	};
- 
-+	cpucl0_opp_table: opp-table-0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-300000000 {
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-microvolt = <537500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-574000000 {
-+			opp-hz = /bits/ 64 <574000000>;
-+			opp-microvolt = <600000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-738000000 {
-+			opp-hz = /bits/ 64 <738000000>;
-+			opp-microvolt = <618750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-930000000 {
-+			opp-hz = /bits/ 64 <930000000>;
-+			opp-microvolt = <668750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1098000000 {
-+			opp-hz = /bits/ 64 <1098000000>;
-+			opp-microvolt = <712500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1197000000 {
-+			opp-hz = /bits/ 64 <1197000000>;
-+			opp-microvolt = <731250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1328000000 {
-+			opp-hz = /bits/ 64 <1328000000>;
-+			opp-microvolt = <762500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1401000000 {
-+			opp-hz = /bits/ 64 <1401000000>;
-+			opp-microvolt = <781250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1598000000 {
-+			opp-hz = /bits/ 64 <1598000000>;
-+			opp-microvolt = <831250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1704000000 {
-+			opp-hz = /bits/ 64 <1704000000>;
-+			opp-microvolt = <862500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1803000000 {
-+			opp-hz = /bits/ 64 <1803000000>;
-+			opp-microvolt = <906250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+	};
-+
-+	cpucl1_opp_table: opp-table-1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <506250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-553000000 {
-+			opp-hz = /bits/ 64 <553000000>;
-+			opp-microvolt = <537500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-696000000 {
-+			opp-hz = /bits/ 64 <696000000>;
-+			opp-microvolt = <562500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-799000000 {
-+			opp-hz = /bits/ 64 <799000000>;
-+			opp-microvolt = <581250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-910000000 {
-+			opp-hz = /bits/ 64 <910000000>;
-+			opp-microvolt = <606250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1024000000 {
-+			opp-hz = /bits/ 64 <1024000000>;
-+			opp-microvolt = <625000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1197000000 {
-+			opp-hz = /bits/ 64 <1197000000>;
-+			opp-microvolt = <662500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1328000000 {
-+			opp-hz = /bits/ 64 <1328000000>;
-+			opp-microvolt = <687500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1491000000 {
-+			opp-hz = /bits/ 64 <1491000000>;
-+			opp-microvolt = <731250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1663000000 {
-+			opp-hz = /bits/ 64 <1663000000>;
-+			opp-microvolt = <775000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1836000000 {
-+			opp-hz = /bits/ 64 <1836000000>;
-+			opp-microvolt = <818750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1999000000 {
-+			opp-hz = /bits/ 64 <1999000000>;
-+			opp-microvolt = <868750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2130000000 {
-+			opp-hz = /bits/ 64 <2130000000>;
-+			opp-microvolt = <918750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2253000000 {
-+			opp-hz = /bits/ 64 <2253000000>;
-+			opp-microvolt = <968750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+	};
-+
-+	cpucl2_opp_table: opp-table-2 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <500000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-851000000 {
-+			opp-hz = /bits/ 64 <851000000>;
-+			opp-microvolt = <556250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-984000000 {
-+			opp-hz = /bits/ 64 <984000000>;
-+			opp-microvolt = <575000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1106000000 {
-+			opp-hz = /bits/ 64 <1106000000>;
-+			opp-microvolt = <606250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1277000000 {
-+			opp-hz = /bits/ 64 <1277000000>;
-+			opp-microvolt = <631250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1426000000 {
-+			opp-hz = /bits/ 64 <1426000000>;
-+			opp-microvolt = <662500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1582000000 {
-+			opp-hz = /bits/ 64 <1582000000>;
-+			opp-microvolt = <693750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1745000000 {
-+			opp-hz = /bits/ 64 <1745000000>;
-+			opp-microvolt = <731250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-1826000000 {
-+			opp-hz = /bits/ 64 <1826000000>;
-+			opp-microvolt = <750000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2048000000 {
-+			opp-hz = /bits/ 64 <2048000000>;
-+			opp-microvolt = <793750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2188000000 {
-+			opp-hz = /bits/ 64 <2188000000>;
-+			opp-microvolt = <831250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2252000000 {
-+			opp-hz = /bits/ 64 <2252000000>;
-+			opp-microvolt = <850000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2401000000 {
-+			opp-hz = /bits/ 64 <2401000000>;
-+			opp-microvolt = <887500>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2507000000 {
-+			opp-hz = /bits/ 64 <2507000000>;
-+			opp-microvolt = <925000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2630000000 {
-+			opp-hz = /bits/ 64 <2630000000>;
-+			opp-microvolt = <968750>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2704000000 {
-+			opp-hz = /bits/ 64 <2704000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <5000000>;
-+		};
-+
-+		opp-2802000000 {
-+			opp-hz = /bits/ 64 <2802000000>;
-+			opp-microvolt = <1056250>;
-+			clock-latency-ns = <5000000>;
-+		};
-+	};
-+
- 	/* ect node is required to be present by bootloader */
- 	ect {
- 	};
-
 -- 
-2.51.0.rc1.167.g924127e9c0-goog
+2.34.1
 
 
