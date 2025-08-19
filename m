@@ -1,102 +1,98 @@
-Return-Path: <linux-kernel+bounces-775504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BEEB2BFF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:14:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58498B2BFFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67AB5167960
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6020A17D69D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA61B322C65;
-	Tue, 19 Aug 2025 11:11:45 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C4E322C9B;
+	Tue, 19 Aug 2025 11:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJJzaIiu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A034322DD7;
-	Tue, 19 Aug 2025 11:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C07C284887;
+	Tue, 19 Aug 2025 11:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601905; cv=none; b=FVriPEGGVLx8XT5JstmCefBZJFmZxRF9F58407A8YljWdRuiO7fzS0vJcCmT3wSd59sCgS6rJ4gaFy1w98HF4SNJLWMhkNDxXVc6HPBWM2e5DM5h5kd4cAwbbr/tabbp7Zy7t3RD0+Nq77yHBXfBrPowwoqdQLSJBQCtOzumq/8=
+	t=1755601933; cv=none; b=mV0LxkwL2sIE+6Tih5OYZu77xyQ0YCf4okzGWngIGA/0kiDoDESbIfPgyCZly/5EZEbp5t3ej6rnlkyV9ghZA4NhBbd1BkUblJfQZP5avCm3UMLZOaDk4A2nEL06uliAvj5Dm9hgtQxtGFB/B2oAeO6lUGhMO1uttXBOCGCQN8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755601905; c=relaxed/simple;
-	bh=mpxUDVz18ynBNqabvz14g/eRXszloXEeVdJLwZhxGa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0ErWoAPrk3FZKu1sdB+gX4DCh8+NtP3GQfLXLw14cDkO8qxwoMgHSts4IA2ucKnd1ZJMNygLUTuhTt+dRURTojleLcymiEa+lETeVSzASww/zzSNb883NKLtEsO8soaoih7dYNucv3d7JpCgt+nQyQKNAXzMNI3bdEYw1PMzMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1uoKFV-000000002YS-2Tuw;
-	Tue, 19 Aug 2025 11:11:29 +0000
-Date: Tue, 19 Aug 2025 12:11:25 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v2 3/8] net: dsa: lantiq_gswip: move definitions
- to header
-Message-ID: <aKRb3R1l9XLr3DHw@pidgin.makrotopia.org>
-References: <cover.1755564606.git.daniel@makrotopia.org>
- <cover.1755564606.git.daniel@makrotopia.org>
- <a6dd825d9e3eefa175a578a43e302b6eaae2b9dd.1755564606.git.daniel@makrotopia.org>
- <a6dd825d9e3eefa175a578a43e302b6eaae2b9dd.1755564606.git.daniel@makrotopia.org>
- <20250819105055.tuig57u66sit2mlu@skbuf>
+	s=arc-20240116; t=1755601933; c=relaxed/simple;
+	bh=1rgDR65KuPRTY0P6UJTUUd10kaG6YRghNT0SkPCCCdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dmV/C6Kdo9rwIpJI4LjTXLUpJhSXkr1V9IOPcjca34XJTYD8hMk1tk+KTICMaKkL/8POVhN41hKyK1zfgQLEJ+FPf611Rx0R0ncy6iFsBIlgzrbObkjVwUi14rfnM8FVhzEDb5t09+qsnCj+Gakf/rsFBKYhiGqFjHYwM47qnXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJJzaIiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8BEC4CEF1;
+	Tue, 19 Aug 2025 11:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755601933;
+	bh=1rgDR65KuPRTY0P6UJTUUd10kaG6YRghNT0SkPCCCdo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tJJzaIiuaKGH9NIZDKgXuAU2NFX57JEQV36t9DdANRHEnRtieeTs3b2FQ0glF4q2w
+	 cfmVtEcSZN3G06XyOznkkiz2jcQzs48I5AnpHnuLqJ/JreO45ABZYUlDmMDKL8h7bJ
+	 A+QIpfeMywf91ckqUXxGUrN7efZyHlg575T+a1PFvnASPZM1tJYg5akTq9h6B05u+X
+	 6eJdyAcd6Tfjq8XAAsoRsQlDldyPWdHHxM1ZFemxbcyozgP75ZOnySfOeaIPDRkzEB
+	 7pCWbYrgA7coCW7xbjbyUxP9ATMsj1Gb+hTN5jZf2MldtC2xnKATzZxZSVLOgM+f4F
+	 +arCxYiLx3y2A==
+From: Christian Brauner <brauner@kernel.org>
+To: Charalampos Mitrodimas <charmitro@posteo.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [PATCH v3] debugfs: fix mount options not being applied
+Date: Tue, 19 Aug 2025 13:11:58 +0200
+Message-ID: <20250819-hotel-talent-c8de78760a68@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250816-debugfs-mount-opts-v3-1-d271dad57b5b@posteo.net>
+References: <20250816-debugfs-mount-opts-v3-1-d271dad57b5b@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819105055.tuig57u66sit2mlu@skbuf>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1212; i=brauner@kernel.org; h=from:subject:message-id; bh=1rgDR65KuPRTY0P6UJTUUd10kaG6YRghNT0SkPCCCdo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsiWF7ElcSNOvD6dQbqWtXTFjhNUHe/JpLdXuW8OFf1 +5cn945s6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi/BsYfrPoGDc3M+VqL/xS cfO8iAXPOYZkYa3775d++b15Q1LGnJcM/6N6GC8bRC/tdvtSb50sezRjxWwOgdDl3I/5xYLXfpd 8yA8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 01:50:55PM +0300, Vladimir Oltean wrote:
-> On Tue, Aug 19, 2025 at 02:33:02AM +0100, Daniel Golle wrote:
-> > +#define GSWIP_TABLE_ACTIVE_VLAN		0x01
-> > +#define GSWIP_TABLE_VLAN_MAPPING	0x02
-> > +#define GSWIP_TABLE_MAC_BRIDGE		0x0b
-> > +#define  GSWIP_TABLE_MAC_BRIDGE_KEY3_FID	GENMASK(5, 0)	/* Filtering identifier */
-> > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL0_PORT	GENMASK(7, 4)	/* Port on learned entries */
-> > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC	BIT(0)		/* Static, non-aging entry */
-> > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID	BIT(1)		/* Valid bit */
+On Sat, 16 Aug 2025 14:14:37 +0000, Charalampos Mitrodimas wrote:
+> Mount options (uid, gid, mode) are silently ignored when debugfs is
+> mounted. This is a regression introduced during the conversion to the
+> new mount API.
 > 
-> The VAL1_VALID bit definition sneaked in, there was no such thing in the
-> code being moved.
+> When the mount API conversion was done, the parsed options were never
+> applied to the superblock when it was reused. As a result, the mount
+> options were ignored when debugfs was mounted.
 > 
-> I'm willing to let this pass (I don't think I have other review comments
-> that would justify a resend), but it's not a good practice to introduce
-> changes in large quantities of code as you're moving them around.
+> [...]
 
-I agree that this is bad and shouldn't have happened when moving the code.
-Already this makes git blame more difficult, so it should be as clean as
-possible, source and destination should match byte-by-byte.
-It happened because I had the fix for the gswip_port_fdb() (for which Vladimir
-is working on a better solution) sitting below the series and that added this
-bit.
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-I can resend just this single patch another time without the rest of the
-series, or send it all again. Let me know your preference.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] debugfs: fix mount options not being applied
+      https://git.kernel.org/vfs/vfs/c/8e7e265d558e
 
