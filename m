@@ -1,249 +1,297 @@
-Return-Path: <linux-kernel+bounces-774953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C3CB2B990
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:36:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C45B2B999
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB101885891
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2477256297F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FBE26D4C0;
-	Tue, 19 Aug 2025 06:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D20242AA9;
+	Tue, 19 Aug 2025 06:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="L5VAa+iG"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010058.outbound.protection.outlook.com [52.101.229.58])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fK9VZziO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042A2269B1C;
-	Tue, 19 Aug 2025 06:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755585261; cv=fail; b=SgkxCv6SKt77J9R5aDrdkNXPaCP19Bp2QDyU5n8J2+St3f09u48xb7kYfpSaJxU/l4bSszaQ6MMm8NmyC2h+BKjdAwtsxdmDv9oPU7Np4sj2H+mIF865ihyJDGQs1J9EeWcx4wDsGcFhDFtSLIxe1EVtq9ye8P5n8omOS2i2llI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755585261; c=relaxed/simple;
-	bh=oELUR1AyKg9zdv/k0+HcFos1MAwrIAy5dSQAlAs+9Xw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DdEZrxiOWH6mMEmOYBa0VQHUu11PjGnW6nMA7LvB8bnqE52+SaRWC23nijtbR5eTufQuekf9KN8IpeYK9QLOnqbD9/QiwmSOSn71wx61Cdc1LT9v8WePecIL2R66tx2HobXojkdKkopz8mbjn2uTNF9KgCyKUqFU6evThX+k+Yo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=L5VAa+iG; arc=fail smtp.client-ip=52.101.229.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Swkn5WCZ6NQJD5suNXc8NTLFx/fdL+KVVpyaxHXPvGe+WT5uUzAwdEVdYaxqssWbbYvYw+MCMP/caMc0mC7enFkwFj25hoTwBo7KWqwUZwGMsDZUrk6jzPKj4XlA8ty4dIUPXAzQZJA1AshcfqFgIwibfpKc8YtdiWOPbaVf09Tm3N8hGaja1o+q8GFn2I8I8ll67s7uH43Ck6TMS3JW7Mg4V4TUvsiubBxqxPmel5bNSq4HBuf1Ou5aEmr/Dv8OKp5xJhgLxkEcVTG8clzR/+eM3x+WoxrpXqxbK9KYjVnDH4cNJT57CwboPxkmddWJUemqosmLjs5oyMRoDeMadQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oELUR1AyKg9zdv/k0+HcFos1MAwrIAy5dSQAlAs+9Xw=;
- b=mNyOyjL6V1vGMDl/7GcWc4v94Owf53XV9FwO74PK1lOGUX5OMVQl+bfLYAM2IEsf+gN0VCodl9MMHH/dge4FKwq4ZWzjmpuiKaCzrPME/nVvUJT9PKlmgrr4zDNmBR/XzAwGlFX7cWLFiekSJOL7BfWlvRV4liVOEB+BcAmrc47zg3W4hdLKWv9H5bn9U3204hTNLdsbYWd4pvLR7jpmj58791njJj+oYvPg3OchiEoN3NLlRw7IJa1tCjl/uwLC+DcMbQguLSowQEt/oB2v6bR8DB7gD3hMCppRPLvSwPF4AXhP3CwfaAQfJymuTGsvlUcd4NXdmCBuQzJqqALSuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oELUR1AyKg9zdv/k0+HcFos1MAwrIAy5dSQAlAs+9Xw=;
- b=L5VAa+iGzyqc0SCM02pnDVmRiWecSV3C7Glkctum23rdMvs+rwdI9DhO74gGeAd0GWZC7A9E0t28ixh2hHTJGZsifnAgU/X+/NcY7if6mdWklxFYe9GqMbJg8jY/EJF7wHITcnnwHckhbUHtknasczwsH2MRfsr0QmJ7qSONYfk=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYYPR01MB7973.jpnprd01.prod.outlook.com (2603:1096:400:112::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 06:34:12 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%7]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
- 06:34:12 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "vkoul@kernel.org"
-	<vkoul@kernel.org>, "kishon@kernel.org" <kishon@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "geert+renesas@glider.be"
-	<geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>, Yoshihiro
- Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC: "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v5 2/7] phy: renesas: rcar-gen3-usb2: Fix an error
- handling path in rcar_gen3_phy_usb2_probe()
-Thread-Topic: [PATCH v5 2/7] phy: renesas: rcar-gen3-usb2: Fix an error
- handling path in rcar_gen3_phy_usb2_probe()
-Thread-Index: AQHcEMwKkF0KDbGXOUaBwniJyvjIFbRpd2yAgAAEWQCAAAhKQA==
-Date: Tue, 19 Aug 2025 06:34:12 +0000
-Message-ID:
- <TY3PR01MB11346CA32F5E4B4329C46112D8630A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250819054212.486426-1-claudiu.beznea.uj@bp.renesas.com>
- <20250819054212.486426-3-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB1134647BC6436CA61E0A200F98630A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <bc053bca-8dd9-4a50-a352-290b38a329b0@tuxon.dev>
-In-Reply-To: <bc053bca-8dd9-4a50-a352-290b38a329b0@tuxon.dev>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB7973:EE_
-x-ms-office365-filtering-correlation-id: 1e5943b5-4c21-4bb5-15ba-08dddeea6930
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bTZwMWkyTU9oOUJmL3N4cHdhQmN2a3NYTHU1dXplT2QxbmdpVnlLMHRYcmh5?=
- =?utf-8?B?NmZwYjRFM1JRcjNYbnkzbExIb0s4ZWtSd2RWQjNVV25lRXFXZzI4NVpVbURo?=
- =?utf-8?B?empUZVYyTklYOFQ1MGVBZjMySmJHdGFwZEZsVW1VcnpCbW8rWkpSaE9sbHJP?=
- =?utf-8?B?OUVoRXdNczByY2RPRDNyRVNlaWhpS1E0cGdWZ1pQbHZTRE5jMzVacHVEdy9J?=
- =?utf-8?B?MDY0blJwS2dnaW1rM0tQTHAyYXVUNE1oSnBuVW5acXRNQjVTbFJDa1QwVHVv?=
- =?utf-8?B?OWJKVVVsSnRZSnYyME5rblVQTitLVUhmWDJRV3YyZldWbEErSnBEOWRHQ2E3?=
- =?utf-8?B?K3JxZnJtOHIyMjNaV3pSeDQvd2Z0RzhIdmJPTkVoUGF0MlNjaG5Ya0JkcTl1?=
- =?utf-8?B?dzIxVXBuZ1ovOUZJWTN5UUVSQm5vUmQ0MDFvekZkMTRZZmlqVkFmTExydnda?=
- =?utf-8?B?WVFLN3gwNklleW04Q0lDZWhnTzFlbFgvZ2MyYUVzSDJCMUVwSkg1S2ZmUCtQ?=
- =?utf-8?B?U00yemJCaEhKZk4yOXBCWDB1TkpzeXlSNzdPb1pvYUZOeHBqVUVBV2R3NXBl?=
- =?utf-8?B?TzVWRFZhelYxQ2xrM1IzdktuTHhuQ0IxT0FCaU5ZSFJNa2ZBKzl5TTVYRXNz?=
- =?utf-8?B?Y3RvY2V6L2VGY2dMTFoxbXJzY1dvT1F4UkFTdjJhbityK09JR0VESnUvVUUx?=
- =?utf-8?B?M2xha0h4eG5uSXlqczlCd00yRENmZFR4KzB5RVE5RGg5eDhiMHBBRHZxeWdy?=
- =?utf-8?B?UFNMTTlWTHlWcmlKS1AwMUwwM0RJTEhvRFRzd1N1d3J2L2VCUWNFWHR6ZEZG?=
- =?utf-8?B?U0oyODRKMUtRWHQ1RWFrNmNtUUNNVUtrdXZpUW5vZFVpSDNFTmNXTmtPOGNJ?=
- =?utf-8?B?S2w4cUJxWVZvUkhIMjhOMzhnbzNpV0tIbUxPY1hRSEY3YjhPdVZ5c1hZY3dY?=
- =?utf-8?B?d1l3QVQwZW9QdnZWcjN1UWt0SzB3TzIxd2dycGNzSTZIVkNFNGFlMXhBWUx5?=
- =?utf-8?B?ZVA4MThmZG91V1NqWDMzM3U2NnRwdGlqSytnejB4STM1bFZLQWUxandEb0s4?=
- =?utf-8?B?WVJRRjB4aUNUN2hxK3MrbDg4Z3o1dCtWN0E1RTJUOEllbXdNY2FnSm9mZkFZ?=
- =?utf-8?B?M0JLaitCeHRiRDNlRnNQVGtVQUFrbnV5N1I4MDF1NE1nWU02L3g3MHVyaFFJ?=
- =?utf-8?B?aG5mbjlPSEJZV3Q0c2w2eVQvK1hMVlN2eG16YXoxTGFqRGloSlpWVVN4WVM3?=
- =?utf-8?B?eFFTdkgyblg3RDgwRkd2Zjdkb2NpeStMMUtydDdYalBRRVlKWFBtbWxRMXpE?=
- =?utf-8?B?dDhVN21QeGdLcllNazZlQmR4UktjTGhPWG9yVG5nWEtoN3dSaXJUOGVpK2kz?=
- =?utf-8?B?LzlWaFJLVEVBZmdrY0VUYXd2TDhuUVhLaXhuV2tJcHBiV0x2NmRFUGo4N0gy?=
- =?utf-8?B?N1Q4blMwTlc3QkNEKy96QlBYdmYwMHo1dkJ0eEdYbmhlMGMzZ2VydjFOZnNh?=
- =?utf-8?B?OXVSdDl3ditabCtnYjFyeU1MbU94Z2N1SUVwUE1nVVYreEs3dkpKcGZLVGRX?=
- =?utf-8?B?ajBvMUNoMWhvN01TbmRHWGtKTkxCZmRGSTFFZ3JsajJMYnF6Q0sxSlNOdEp1?=
- =?utf-8?B?VVdnQjY2bFBDZEEzTHIwSCsrS0JmYmZYWFhibW13TWNleXR6ZVBBeGh0WTJK?=
- =?utf-8?B?cFlvYjVZemVwSHpza2ZLUFFqZjd2RVdnaG8yeVZXYVYwWUpEcFdQREVlS2po?=
- =?utf-8?B?TDBFL2Y5OHJjY05nTitRTVVwSXhjL24zeVJXdnhsQll5NnNranNPc1NqZ2E5?=
- =?utf-8?B?RkxSZUgvUDBHYUdZeWFtMlhqV1lzNkd4d2VHWk9aTHlDWCthNjAvcWRYUUJy?=
- =?utf-8?B?eVdaUXY3VForTk9NQzRwNzg1T21abG5JSmxKVVJ3cjdGU0RtY0lQSzlaODRP?=
- =?utf-8?Q?esQea4BJxoU3G/ljjKTOGDjF/pezTdHc?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YUJQOEpSNW5BNkxMUWpCTUVvRzR6Y3FyZUhHYlM4MmhDQkxZRXhYbE9VTXZJ?=
- =?utf-8?B?T2tkZm1PZnpKVGExbE0xZ1ZsNFpYMGVsNU1TUFI2VlAwK0ZTZ2gxb0RLRDk2?=
- =?utf-8?B?SEp3anJxSzd1TG1sR2ZKVzhTRnZjRlNqbWorUGpGdXYvZkdsaENUdit4bFJr?=
- =?utf-8?B?S2UrWjFuMTM0ZEc5VFoyWDU4S291S3pKdzVHMTdMQTNSWld3QVlyTndvSlpI?=
- =?utf-8?B?VEEySmRpZGpoSmZ1NlArUzk1ZUZCVWp5QU5uV25lMzMxdkJhRDNLczNoUGFl?=
- =?utf-8?B?dmpjTDhxVkFOblZhdkVFWHpuRmw0aDZaMjZBTmoxWlFSYzZxQy9YMnZNSXY5?=
- =?utf-8?B?eXZ5QXFxZTMxb2pka1N0YVZXcC9OZjdQUmxEOFdjVjlnOWlsTE56SUVEeTlS?=
- =?utf-8?B?azFWTW5QUmJDNytHYTU3a2xxMlhLZjJTUWJJbzlNU01GbzdIMGRnZW5pZG8z?=
- =?utf-8?B?OEZEeCtLY2lRa3dZN2pLOVZWaGdubVpSbnY2T2UvU2d5OE9uWmVWMXFJV0Vv?=
- =?utf-8?B?K1RnMEh4RzAyMFRaaG83K092QXgxNERiZmgxM2RZQWVSNWFRSFBBeW5SMGdy?=
- =?utf-8?B?VzdudlpJbzI1bFFldnV6Wmk3K3Vpd29PWWp3Z0FnREVyYlZYREdwMDZRVnZS?=
- =?utf-8?B?Z0VHdnl3ekY1ZnEvQm1weHlNcVZZTWM4YlpUMzZFbWRmYXFxUXgyYWFqTzNo?=
- =?utf-8?B?NXZUdjgweHQ3WU5nd3BmWFlBZWZ3cHpnQnRLdXVqc2JvS0FhQ2lsTi9VMStp?=
- =?utf-8?B?SVdxTlNXT1YzNTlkTUNmQ0duZjhqejN5ZFdoMk51elpVTDROa1dFQkRNVjVs?=
- =?utf-8?B?UmpaYnIvZmVkUGU3NTRhdnJkeUNlS3FLUEFlcEJJMnNKQ2lUc3VCL0JvWGxE?=
- =?utf-8?B?VFBPeldTQjZQYWIyTFdvR1JZb1ZnZFZDZ2YvdXF3N1N6aXR5NTdHQ2lSUDRT?=
- =?utf-8?B?cFJtcFlGRVcxS0lHUXFPWUFBQTdreGJ6UTYrdThlT0l6UnpkZVczcyswS2J5?=
- =?utf-8?B?OUtMaTU0ZlJwOGJ3emFYNDF2bGxyRDkyM3hONzhSZVo3a0RyODdXUjg5NWJJ?=
- =?utf-8?B?NWxzamdYZlljbWJCeUV3aW5FMWRpQlo1ckJ1MTk0c2lCalVmdENpQ0dwUnhk?=
- =?utf-8?B?L1N0NHltbU53aW9PUUJGbTUvNDQzRU1oWDNaV2QyamVHSGFpNFE3NkoxZmR4?=
- =?utf-8?B?WHBSRkVaQkIxamFHWXIxVWdOSEtuY0NKeGNaWVFnRGYvZzdUbkJBbndiSm1V?=
- =?utf-8?B?Nm5IZm4vYmRHaDhUUTBuM3RXQkFHc0txdFpiNmNoRWZEbDlYcHA4eG53K0tz?=
- =?utf-8?B?M2svTEsxSG9JMkcxSFhqbU1SSllwVzQzaFZCRncrNlVPb295KzV6OS9aQS9J?=
- =?utf-8?B?aTF4ZEFsMjEzR3N5dm9EQjdZVnRPZGFKdm9LQUNWSlFkKzBEZVl5Wm0xbU5Y?=
- =?utf-8?B?QXpqa3UrVGNPRzFZVXBlcE53RW9acTFvN0VSR2ZlU1J3ZEpVdkZYeXZ4L0Yr?=
- =?utf-8?B?aDIyRy96NW1lYmdjd0pWeGJkTkQxRmhVaWlVTXhNY3FBZnNDSk9qOXlST25D?=
- =?utf-8?B?ZSswTVZHVE85b3VZZVhmbldyOTZTSGRDZlJmb3VJTFJsdThJRi9sVTI3dUoy?=
- =?utf-8?B?WkhValBiVk5Vc2RVeThTOUdaUFZXS1NIRzJZRXlHMlNoMXByTG9qRHJWay9m?=
- =?utf-8?B?Q3dZTWliN29RamZtZzQ1WGdpOVA3WDlkMFc1YXFraWR4VS9vYW9LL0xiWUw5?=
- =?utf-8?B?MmYrWlJzWFE2OFF4RVVOa294L3FBVWNCNkNZclRkbXdHRVBsZkR4aWduUHNm?=
- =?utf-8?B?RmJxME43Z1E4cENZUTFrK01rVmxYQlRINTNxZzlNaFN2dDdEOFV5Y2VLeVhD?=
- =?utf-8?B?Y2VyblBYSmRBTUc0TVViNm9RelpiSG1QOHBrMlc4cEZRcHhaa1RsSzU2Wjkw?=
- =?utf-8?B?eGtJL25qbXREaTgrY29nVkhqMnpxTFVxbHhCYjV1eUNLY3FkQ3dSTDJEZ1Bp?=
- =?utf-8?B?aUU1bm0yTTNWYTBtMWRBa1RuS2RBRUZqTjRzMTNIQ0RLbXRpZnlmcndhWVlM?=
- =?utf-8?B?YnQ4M1VkTndGb2pLam5ySlVTdGVTSlJsS0lEbW5rMTVsNU9rb0lWWUZiaitS?=
- =?utf-8?B?ZmJoZmlhT256eldSWjNjNDVscUdESUpNT2xYK01xMjRKSnovTGhDSlNGRG9p?=
- =?utf-8?B?amc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D783FE7;
+	Tue, 19 Aug 2025 06:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755585335; cv=none; b=RIKfgGuj81g9U0+EgRUFMwMJPnH02UKhtlQtm/nHKu+NqjPfc2uP1+uFStuNPa1VZGdF2Y2nfsKuDBQwF5dCTE6YaMRDaQ6cMIZlJC3kOTFtiMbCd8NBzgYq2Nx3xXWVmaNfR+fy4CGL7Cfw0EajB/ueuMbVBo12BZ1ZAJG07zY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755585335; c=relaxed/simple;
+	bh=HRj4l2EGfZhLBAunGlrrUthdaret96N7ZU072++bGlw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pBChVrbquTKa+HcGz4Cb5FuF4JzurfcmefIZvmjOB2CoY9DlPkfAPCFu+zqgcMLmgSfrtxARZgOtn90sBC5NzlGGACcAiPJFWF3vAhFWj9F7TppgvSW+r4ROoM2LUwyY112Y4erXaOnUsFfxHNwGJj5D7hROEleG5T9D27hYHdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qti.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fK9VZziO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qti.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57INxuI3002398;
+	Tue, 19 Aug 2025 06:35:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nSPgEhJuoihhpFA0l0O974
+	0kOLrXBNfXEzcayACwKZs=; b=fK9VZziOfJfkVeIjJ43UIVHb1JbZ3PrwGVjYJJ
+	/De9CUIU+dPY2rNYkkUvY1MtGA40W9AnR9UL9tRHMiZ4URQRQ9BqzcN42pvOgDGW
+	GV76xadZTadFfL2xh/qsCSBtP+qgEsrpYmKt34FIMNvFqNLxF+InFYQ+TJIgTZyO
+	a5EptAojgCZctLrvJosKdiurw3CnF3c6w4itSNP5t+S4CqyeJdoUHoespBgrtHV9
+	q112JHaY0SA6v7JhyJEPAghJQPjN5KE0+cLsw5Lzd4oWLmmZsMCMumoiXVR+2yYV
+	vkBMu+bZRFxwx8vFvIgzIlFXKrS8tDLl6STM4OMdP0n8tuXw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48m62vjdxg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 06:35:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57J6ZKfc031272
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 06:35:20 GMT
+Received: from hu-panfan-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 18 Aug 2025 23:35:20 -0700
+From: panfan <panfan@qti.qualcomm.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <rostedt@goodmis.org>,
+        <mhiramat@kernel.org>, <mark.rutland@arm.com>,
+        <panfan@qti.qualcomm.com>, <samitolvanen@google.com>,
+        <song@kernel.org>, <ardb@kernel.org>, <dylanbhatch@google.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>, <kdong@qti.qualcomm.com>
+Subject: [PATCH v1] arm64: ftrace: fix unreachable PLT for ftrace_caller in init_module with CONFIG_DYNAMIC_FTRACE
+Date: Mon, 18 Aug 2025 23:34:18 -0700
+Message-ID: <20250819063418.1263119-1-panfan@qti.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e5943b5-4c21-4bb5-15ba-08dddeea6930
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2025 06:34:12.4853
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qgm8xh5T43/PG3plnRx6Ygoj2MtBP7mi/qxaB1FlgXAhKDAO7W7aOpaSqw75/NZ3bvukvxOXXjQLLfX844F5/UhFEMKDePfOGVYZPi9cGnA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB7973
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDEzOSBTYWx0ZWRfX5/2ISPEnklR0
+ 2IjzffwxTkU1ld6bIYIRWETjc4Si69TnLkkzuM+lUnND6SLLCOGiMn7eZHuIsx21dVZuioTNY3P
+ JyEqOFycw0qE6YghY9NlgNwnj5NWkKesvNN/H7FC2PyX0RXx7/6/TuKHYybfyMQclADB4P//CaO
+ GD1ZrszSktSSmhkJEjWG4KPWFSbEcHhC39JePfElC8n4b/uzmaXKkLjrcy3Vh6giBXTQFtmTw8L
+ 7jIqBGEw5YvUnhHexw8KAUJZN3WZkDSXY5YPwZtdCexRhncaY/kCvtzXKnOH+OrCBXsGJ/84cE5
+ hCYiahO05xW53VC26Aaf9JBbkfAqGSAxUAFTGI9jlAhCwZ8UoQOrZTo8+0UA5QPaEBUM+0KnK0q
+ FqZnuOhW
+X-Proofpoint-GUID: TJJOlxOm8QA_FaMQVnevoIeX8EEgYKu8
+X-Authority-Analysis: v=2.4 cv=A4tsP7WG c=1 sm=1 tr=0 ts=68a41b29 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8
+ a=rSl61HDpvd9wl2GIgggA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: TJJOlxOm8QA_FaMQVnevoIeX8EEgYKu8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 impostorscore=0 priorityscore=1501 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508180139
 
-SGkgQ2xhdWRpdSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBjbGF1
-ZGl1IGJlem5lYSA8Y2xhdWRpdS5iZXpuZWFAdHV4b24uZGV2Pg0KPiBTZW50OiAxOSBBdWd1c3Qg
-MjAyNSAwNzowMQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1IDIvN10gcGh5OiByZW5lc2FzOiBy
-Y2FyLWdlbjMtdXNiMjogRml4IGFuIGVycm9yIGhhbmRsaW5nIHBhdGggaW4NCj4gcmNhcl9nZW4z
-X3BoeV91c2IyX3Byb2JlKCkNCj4gDQo+IEhpLCBCaWp1LA0KPiANCj4gT24gOC8xOS8yNSAwODo0
-OSwgQmlqdSBEYXMgd3JvdGU6DQo+ID4gSGkgQ2xhdWRpdSwgQ2hyaXN0b3BoZSwNCj4gPg0KPiA+
-IFRoYW5rcyBmb3IgdGhlIHBhdGNoLg0KPiA+DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
-LS0tDQo+ID4+IEZyb206IENsYXVkaXUgPGNsYXVkaXUuYmV6bmVhQHR1eG9uLmRldj4NCj4gPj4g
-U2VudDogMTkgQXVndXN0IDIwMjUgMDY6NDINCj4gPj4gU3ViamVjdDogW1BBVENIIHY1IDIvN10g
-cGh5OiByZW5lc2FzOiByY2FyLWdlbjMtdXNiMjogRml4IGFuIGVycm9yDQo+ID4+IGhhbmRsaW5n
-IHBhdGggaW4NCj4gPj4gcmNhcl9nZW4zX3BoeV91c2IyX3Byb2JlKCkNCj4gPj4NCj4gPj4gRnJv
-bTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRvby5mcj4NCj4g
-Pj4NCj4gPj4gSWYgYW4gZXJyb3Igb2NjdXJzIGFmdGVyIHRoZSByZXNldF9jb250cm9sX2RlYXNz
-ZXJ0KCksDQo+ID4+IHJlc2V0X2NvbnRyb2xfYXNzZXJ0KCkgbXVzdCBiZSBjYWxsZWQsIGFzIGFs
-cmVhZHkgZG9uZSBpbiB0aGUgcmVtb3ZlIGZ1bmN0aW9uLg0KPiA+Pg0KPiA+PiBVc2UgZGV2bV9h
-ZGRfYWN0aW9uX29yX3Jlc2V0KCkgdG8gYWRkIHRoZSBtaXNzaW5nIGNhbGwgYW5kIHNpbXBsaWZ5
-DQo+ID4+IHRoZQ0KPiA+PiAucmVtb3ZlKCkgZnVuY3Rpb24gYWNjb3JkaW5nbHkuDQo+ID4+DQo+
-ID4+IEZpeGVzOiA0ZWFlMTYzNzUzNTcgKCJwaHk6IHJlbmVzYXM6IHJjYXItZ2VuMy11c2IyOiBB
-ZGQgc3VwcG9ydCB0bw0KPiA+PiBpbml0aWFsaXplIHRoZSBidXMiKQ0KPiA+PiBTaWduZWQtb2Zm
-LWJ5OiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZyPg0K
-PiA+PiBSZXZpZXdlZC1ieTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0K
-PiA+PiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRl
-ci5iZT4NCj4gPj4gW2NsYXVkaXUuYmV6bmVhOiByZW1vdmVkICJzdHJ1Y3QgcmVzZXRfY29udHJv
-bCAqcnN0YyA9IGRhdGE7IiBmcm9tDQo+ID4+IHJjYXJfZ2VuM19yZXNldF9hc3NlcnQoKV0NCj4g
-Pj4gU2lnbmVkLW9mZi1ieTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhLnVqQGJwLnJl
-bmVzYXMuY29tPg0KPiA+PiAtLS0NCj4gPj4NCj4gPj4gQ2hhbmdlcyBpbiB2NToNCj4gPj4gLSBu
-b25lDQo+ID4+DQo+ID4+IENoYW5nZXMgaW4gdjQ6DQo+ID4+IC0gbm9uZQ0KPiA+Pg0KPiA+PiBD
-aGFuZ2VzIGluIHYzOg0KPiA+PiAtIGNvbGxlY3RlZCB0YWdzDQo+ID4+DQo+ID4+IENoYW5nZXMg
-aW4gdjI6DQo+ID4+IC0gbm9uZTsgdGhpcyBwYXRjaCBpcyBuZXc7IHJlLXNwaW5uZWQgdGhlIENo
-cmlzdG9waGUncyB3b3JrIGF0DQo+ID4+DQo+ID4+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2Fs
-bC9UWUNQUjAxTUIxMTMzMjk5MzBCQTVFMjE0OUM5QkUyQTE5ODY2NzJAVA0KPiA+PiBZQ1BSMDFN
-QjExMzMyLmpwbnByZDAxLnByb2Qub3V0bG9vDQo+ID4+IGsuY29tLw0KPiA+Pg0KPiA+Pg0KPiA+
-PiAgIGRyaXZlcnMvcGh5L3JlbmVzYXMvcGh5LXJjYXItZ2VuMy11c2IyLmMgfCAxMSArKysrKysr
-KysrLQ0KPiA+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9u
-KC0pDQo+ID4+DQo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2Fy
-LWdlbjMtdXNiMi5jDQo+ID4+IGIvZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVz
-YjIuYw0KPiA+PiBpbmRleCA0N2JlYjk0Y2Q0MjQuLmQ2MWMxNzFkNDU0ZiAxMDA2NDQNCj4gPj4g
-LS0tIGEvZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVzYjIuYw0KPiA+PiArKysg
-Yi9kcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNiMi5jDQo+ID4+IEBAIC02OTks
-NiArNjk5LDExIEBAIHN0YXRpYyBlbnVtIHVzYl9kcl9tb2RlIHJjYXJfZ2VuM19nZXRfZHJfbW9k
-ZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQ0KPiA+PiAgIAlyZXR1cm4gY2FuZGlkYXRlOw0KPiA+
-PiAgIH0NCj4gPj4NCj4gPj4gK3N0YXRpYyB2b2lkIHJjYXJfZ2VuM19yZXNldF9hc3NlcnQodm9p
-ZCAqZGF0YSkgew0KPiA+PiArCXJlc2V0X2NvbnRyb2xfYXNzZXJ0KGRhdGEpOw0KPiA+PiArfQ0K
-PiA+PiArDQo+ID4+ICAgc3RhdGljIGludCByY2FyX2dlbjNfcGh5X3VzYjJfaW5pdF9idXMoc3Ry
-dWN0IHJjYXJfZ2VuM19jaGFuICpjaGFubmVsKSAgew0KPiA+PiAgIAlzdHJ1Y3QgZGV2aWNlICpk
-ZXYgPSBjaGFubmVsLT5kZXY7IEBAIC03MTcsNiArNzIyLDExIEBAIHN0YXRpYyBpbnQNCj4gPj4g
-cmNhcl9nZW4zX3BoeV91c2IyX2luaXRfYnVzKHN0cnVjdCByY2FyX2dlbjNfY2hhbiAqY2hhbm5l
-bCkNCj4gPj4gICAJaWYgKHJldCkNCj4gPj4gICAJCWdvdG8gcnBtX3B1dDsNCj4gPj4NCj4gPj4g
-KwlyZXQgPSBkZXZtX2FkZF9hY3Rpb25fb3JfcmVzZXQoZGV2LCByY2FyX2dlbjNfcmVzZXRfYXNz
-ZXJ0LA0KPiA+PiArCQkJCSAgICAgICBjaGFubmVsLT5yc3RjKTsNCj4gPg0KPiA+IE5vdyAncnN0
-YycgY2FuIGJlIHJlbW92ZWQgZnJvbSBzdHJ1Y3QgcmNhcl9nZW4zX2NoYW4gYW5kIHVzZSB0aGUg
-bG9jYWwNCj4gPiByc3RjIHBvaW50ZXIgYXMgY29udGV4dCB2YXJpYWJsZSBoZXJlLg0KPiANCj4g
-SSBjYW4gZHJvcCBpdCBub3cgYnV0IGl0IHdpbGwgYmUgYWRkZWQgbGF0ZXIgKGFmdGVyIHRoaXMg
-c2VyaWVzKSBhbG9uZyB3aXRoIHN1c3BlbmQgdG8gUkFNIHN1cHBvcnQuDQo+IFRoYXQgaXMgdGhl
-IHJlYXNvbiBJIHByZWZlcnJlZCB0byBzdGlsbCBrZWVwIGl0Lg0KDQpUaGVyZSBpcyBhIGZpeGVz
-IHRhZyB3aGljaCB3aWxsIGJlIHByb3BhZ2F0ZWQgdG8gc3RhYmxlIGtlcm5lbC4gDQpJZiB5b3Ug
-ZG9uJ3QgaGF2ZSBhbnkgcGxhbiB0byBzZW5kIG5ldyBzZXJpZXMsIHRoZW4gaXQgaXMgT0sgSSBn
-dWVzcz8/DQoNCkNoZWVycywNCkJpanUNCg==
+with the previous patch [PATCH v3 6/6] arm64: module: rework module VA
+range selection, the module region can use a full 2GB for large modules.
+
+On arm64 with CONFIG_DYNAMIC_FTRACE, due to the ±128 MB range limit of
+the `BL` instruction, ftrace uses a PLT entry to branch indirectly to
+ftrace_caller when modules may be placed far away.
+
+Currently, this PLT(.text.ftrace_trampoline) resides in MOD_TEXT,
+so call sites in .init.text cannot reach it by `BL` if .init.text
+and .text are allocated in different 128 MB regions.
+
+For example, init_moudle in tz_log_dlkm.ko can not reach PLT or
+ftrace_caller by `BL`:
+
+module_direct_base = 0xFFFFFFC07B270000   128M
+module_plt_base = 0xFFFFFFC003270000  2G
+
+mod = 0xFFFFFFC07FF65880 -> (
+    state = MODULE_STATE_COMING,
+    name = "tz_log_dlkm",
+    init = 0xFFFFFFC00370F01C,
+
+    mem = (
+      (base = 0xFFFFFFC07E7E8000, size = 12288,  // MOD_TEXT -- direct
+      (base = 0xFFFFFFC07FF65000, size = 12288,  // MOD_DATA
+      (base = 0xFFFFFFC07FFFB000, size = 12288,  // MOD_RODATA
+      (base = 0xFFFFFFC07DDA9000, size = 4096,   // MOD_RO_AFTER_INIT
+      (base = 0xFFFFFFC00370F000, size = 4096,   // MOD_INIT_TEXT -- plt
+      (base = 0xFFFFFFC003711000, size = 12288,  // MOD_INIT_DATA
+
+    arch = (
+      core = (plt_shndx = 8, plt_num_entries = 0, plt_max_entries = 35),
+      init = (plt_shndx = 9, plt_num_entries = 1, plt_max_entries = 1),
+      ftrace_trampolines = 0xFFFFFFC07E7EA730 -> (   //
+.text.ftrace_trampoline in MOD_TEXT
+
+PLT in .text.ftrace_trampoline:
+0xFFFFFFC07E7EA730            adrp    x16,0xFFFFFFC080014000
+0xFFFFFFC07E7EA734            add     x16,x16,#0xF64   ; x16,x16,#3940
+0xFFFFFFC07E7EA738            br      x16; ftrace_caller
+
+Here, init_module() in MOD_INIT_TEXT cannot branch to the PLT in MOD_TEXT
+because the offset exceeds 128 MB. As a result,
+ftrace fails to update `nop` to `BL` and inserts `brk #0x100` instead:
+
+0xFFFFFFC00370F01C  init_module:    mov     x9,x30
+0xFFFFFFC00370F020                  brk     #0x100           ; #256
+
+[   36.290790][  T835] label_imm_common: offset out of range
+
+[   36.333765][  T835] Kernel text patching generated an invalid instruct
+ion at init_module+0x4/0xfe4 [tz_log_dlkm]!
+
+[   36.335728][  T835] Call trace:
+[   36.335735][  T835]  init_module+0x4/0xfe4 [tz_log_dlkm]
+[   36.335750][  T835]  do_init_module+0x60/0x2cc
+[   36.335761][  T835]  load_module+0x10e0/0x12ac
+[   36.335771][  T835]  __arm64_sys_finit_module+0x240/0x348
+[   36.335780][  T835]  invoke_syscall+0x60/0x11c
+[   36.335791][  T835]  el0_svc_common+0xb4/0xf0
+[   36.335801][  T835]  do_el0_svc+0x24/0x30
+[   36.335810][  T835]  el0_svc+0x3c/0x74
+[   36.335821][  T835]  el0t_64_sync_handler+0x68/0xbc
+[   36.335831][  T835]  el0t_64_sync+0x1a8/0x1ac
+
+To fix this, introduce an additional `.init.text.ftrace_trampoline`
+section for .init.text. This provides a PLT within MOD_INIT_TEXT, ensuring
+that init functions can branch within range using `BL`. This section
+is freed after do_one_initcall, so there is no persistent cost.
+The core text continues to use the existing PLT in MOD_TEXT.
+
+Signed-off-by: panfan <panfan@qti.qualcomm.com>
+---
+ arch/arm64/include/asm/module.h     |  1 +
+ arch/arm64/include/asm/module.lds.h |  1 +
+ arch/arm64/kernel/ftrace.c          | 11 ++++++++---
+ arch/arm64/kernel/module-plts.c     | 12 +++++++++++-
+ arch/arm64/kernel/module.c          | 11 +++++++++++
+ 5 files changed, 32 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
+index 79550b22ba19..fb9b88eebeb1 100644
+--- a/arch/arm64/include/asm/module.h
++++ b/arch/arm64/include/asm/module.h
+@@ -19,6 +19,7 @@ struct mod_arch_specific {
+ 
+ 	/* for CONFIG_DYNAMIC_FTRACE */
+ 	struct plt_entry	*ftrace_trampolines;
++	struct plt_entry	*init_ftrace_trampolines;
+ };
+ 
+ u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
+diff --git a/arch/arm64/include/asm/module.lds.h b/arch/arm64/include/asm/module.lds.h
+index b9ae8349e35d..fb944b46846d 100644
+--- a/arch/arm64/include/asm/module.lds.h
++++ b/arch/arm64/include/asm/module.lds.h
+@@ -2,6 +2,7 @@ SECTIONS {
+ 	.plt 0 : { BYTE(0) }
+ 	.init.plt 0 : { BYTE(0) }
+ 	.text.ftrace_trampoline 0 : { BYTE(0) }
++	.init.text.ftrace_trampoline 0 : { BYTE(0) }
+ 
+ #ifdef CONFIG_KASAN_SW_TAGS
+ 	/*
+diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
+index 5a890714ee2e..bf2d08d8c547 100644
+--- a/arch/arm64/kernel/ftrace.c
++++ b/arch/arm64/kernel/ftrace.c
+@@ -258,10 +258,15 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
+ 	return ftrace_modify_code(pc, 0, new, false);
+ }
+ 
+-static struct plt_entry *get_ftrace_plt(struct module *mod)
++static struct plt_entry *get_ftrace_plt(struct module *mod, unsigned long addr)
+ {
+ #ifdef CONFIG_MODULES
+-	struct plt_entry *plt = mod->arch.ftrace_trampolines;
++	struct plt_entry *plt = NULL;
++
++	if (within_module_mem_type(addr, mod, MOD_INIT_TEXT))
++		plt = mod->arch.init_ftrace_trampolines;
++	else
++		plt = mod->arch.ftrace_trampolines;
+ 
+ 	return &plt[FTRACE_PLT_IDX];
+ #else
+@@ -332,7 +337,7 @@ static bool ftrace_find_callable_addr(struct dyn_ftrace *rec,
+ 	if (WARN_ON(!mod))
+ 		return false;
+ 
+-	plt = get_ftrace_plt(mod);
++	plt = get_ftrace_plt(mod, pc);
+ 	if (!plt) {
+ 		pr_err("ftrace: no module PLT for %ps\n", (void *)*addr);
+ 		return false;
+diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+index bde32979c06a..7afd370da9f4 100644
+--- a/arch/arm64/kernel/module-plts.c
++++ b/arch/arm64/kernel/module-plts.c
+@@ -283,7 +283,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 	unsigned long core_plts = 0;
+ 	unsigned long init_plts = 0;
+ 	Elf64_Sym *syms = NULL;
+-	Elf_Shdr *pltsec, *tramp = NULL;
++	Elf_Shdr *pltsec, *tramp = NULL, *init_tramp = NULL;
+ 	int i;
+ 
+ 	/*
+@@ -298,6 +298,9 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 		else if (!strcmp(secstrings + sechdrs[i].sh_name,
+ 				 ".text.ftrace_trampoline"))
+ 			tramp = sechdrs + i;
++		else if (!strcmp(secstrings + sechdrs[i].sh_name,
++				 ".init.text.ftrace_trampoline"))
++			init_tramp = sechdrs + i;
+ 		else if (sechdrs[i].sh_type == SHT_SYMTAB)
+ 			syms = (Elf64_Sym *)sechdrs[i].sh_addr;
+ 	}
+@@ -363,5 +366,12 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 		tramp->sh_size = NR_FTRACE_PLTS * sizeof(struct plt_entry);
+ 	}
+ 
++	if (init_tramp) {
++		init_tramp->sh_type = SHT_NOBITS;
++		init_tramp->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
++		init_tramp->sh_addralign = __alignof__(struct plt_entry);
++		init_tramp->sh_size = NR_FTRACE_PLTS * sizeof(struct plt_entry);
++	}
++
+ 	return 0;
+ }
+diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+index 40148d2725ce..d6d443c4a01a 100644
+--- a/arch/arm64/kernel/module.c
++++ b/arch/arm64/kernel/module.c
+@@ -466,6 +466,17 @@ static int module_init_ftrace_plt(const Elf_Ehdr *hdr,
+ 	__init_plt(&plts[FTRACE_PLT_IDX], FTRACE_ADDR);
+ 
+ 	mod->arch.ftrace_trampolines = plts;
++
++	s = find_section(hdr, sechdrs, ".init.text.ftrace_trampoline");
++	if (!s)
++		return -ENOEXEC;
++
++	plts = (void *)s->sh_addr;
++
++	__init_plt(&plts[FTRACE_PLT_IDX], FTRACE_ADDR);
++
++	mod->arch.init_ftrace_trampolines = plts;
++
+ #endif
+ 	return 0;
+ }
+-- 
+2.34.1
+
 
