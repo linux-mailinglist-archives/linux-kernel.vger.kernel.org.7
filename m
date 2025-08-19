@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-776344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82ACEB2CC37
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:38:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F22E9B2CC3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533E75A4065
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72D221C2541D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA69530F7F7;
-	Tue, 19 Aug 2025 18:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptTTBUzf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAD62E2295;
+	Tue, 19 Aug 2025 18:39:22 +0000 (UTC)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F21223815D;
-	Tue, 19 Aug 2025 18:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B2123815D;
+	Tue, 19 Aug 2025 18:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755628725; cv=none; b=ocgpzgJEYzJSzrI6pL31b422Wbo0OCOrAFHDbLHFVtgtFQHgfDL4J03kxN6tuvuT4UyCAau8Zk33a9oQGv7QQgBKoN45587ZeWZV0QS0WqkVJ4AFdSjoBQ8/VmK/bmBCxzmH7Vxp8UdSobuC90J2XCzfq38CSQJ5EtiaknC1Olk=
+	t=1755628761; cv=none; b=dkhDpf3aQlNZqPpHPKGWgvtGIWfVLV1M5hBt26UxW/TE/Gs4cS5HQgcJwJt9jqc6PRD9JBUqxM0YXob9zCtHFjd1vBfSaDY+s3jf3VjPvuTkE09nha64qWHNrfpFo/eyn8Ke5Al5LUUIgD09E4RUOqtjRKaGQpVpHKLdxCsCjL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755628725; c=relaxed/simple;
-	bh=r9r74rYDKb/k5NeaowDPVZjkF277X7pfXU1FQaxK2rA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a9P8/Ilb70eCcc4JYDRIEOoIeXdO49txxtEi2EnF1BKh9yyKrShsUCjIClza9ZxCVqRYaVTiQYZWT+onW8UC0KrcDnlcUXGDoJ8D8Z7YmDizkvZpzOsS8PIxwSSOIBiKpyRpO3kmCmDPLOVO6NCloOpki3nlT5fye+JyvhvyhWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptTTBUzf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25CE9C4CEF1;
-	Tue, 19 Aug 2025 18:38:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755628724;
-	bh=r9r74rYDKb/k5NeaowDPVZjkF277X7pfXU1FQaxK2rA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ptTTBUzf71ONReD3pPET5JB9whY8rR6PTAzm2EY6PVFfxnX6wPBPpFGQzHmWVsxbG
-	 LgfI2yV2uwYX0dBXTLNZgmgZWvriwmB5YQZU4ziIqmQZSbt6qxrvDWRK+of5M0/Hqo
-	 swg4bvIpplr0NVKTNJTXHglMGmWHSJ814FQlcfjNfW15SKDV15J3LQJo0iMI40q15V
-	 UQCe9Wm5PobZwuH9plgrVEi9kJEH7Tgj13Ool5quzZV5GWfiMFyE0nwtcxcKth+y4J
-	 M9WOsgJbKZWYBDXnEolc0tNIF3GpaW7reMoAWAGk6ce/UEYW3KxCfRnyvbkr8juPmV
-	 bOMteiwmde5fQ==
-Date: Tue, 19 Aug 2025 19:38:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ben Collins <bcollins@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] iio: mcp9600: Add support for IIR filter
-Message-ID: <20250819193837.74c762c4@jic23-huawei>
-In-Reply-To: <20250819192851.6179e598@jic23-huawei>
-References: <20250818035953.35216-1-bcollins@kernel.org>
-	<20250818035953.35216-6-bcollins@kernel.org>
-	<20250818191539.69e1882a@jic23-huawei>
-	<2025081814-grumpy-prawn-ef1a0e@boujee-and-buff>
-	<20250818201035.7a107dec@jic23-huawei>
-	<2025081815-encouraging-swift-df1d16@boujee-and-buff>
-	<20250819192851.6179e598@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755628761; c=relaxed/simple;
+	bh=PXzBRIfXwKHZi+PVe3ictws1msxyerhHK53wBLauIiw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A3bSmniT/CxV+pYRdo7lurj36XfBt4TXvOgfrdpN0HaWMdE8FJ/jXOXHEcZzGaaFZI3MKliN4tbfpG4F2MMxgJqnjWBuQjysrlHCNpzCnnzk3Zf5frNNqId3N9jgcoA/tlzwJt302rJI+xTWZBsTPdS29zsIvUxs4thKLx+Zgqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61a8b640e34so1329094a12.1;
+        Tue, 19 Aug 2025 11:39:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755628757; x=1756233557;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ik2CZRraiL4wjLDuUaIjOn1b1SNp0YAfTL1m5BkDZ58=;
+        b=kekCatojg+xcsGwyBUKBbo1soZYMJlA/bgmFcK7WoBxrmW9E/LdRNIASuaKT6m2N2W
+         zwNDi4Glzb3MmIgYF7eV7E4KPCH1HQTcDSv+i2xpUCYjyNpLhJ6kpG+lnez2hXG1rkw6
+         LBy/tRocb5ajajYotI/txFK9a77YWKMlhUPtFcIZoEeCc2M5DOPXkPKeDWUJKh2Aau4f
+         9COxRMwQ0yd8mubmdpxsn847tYEjnUKofDWwx4N+WlM2L0ARx2eypoEaoef2zIOKOJAT
+         +5yqJs1APwCeLurRmVv55TVu34JX8z6/0Fob16g0u9M7xYu4RcfKW4pteE5aAelXZxqL
+         s2Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUR3Ed7hJCsPyAuH4TPk5q9xydaIEG1x/5xSwKXhiWroPKcyD73s/2ychD4rxTjbw0GbGoW9wLw+NqI@vger.kernel.org, AJvYcCVCTWZB1UQiVAnnNFW87yRr2dUDS43qRq7TJ0g93nqIjYXNJ2wYw+r9cEAuZUNxOb8Fdzlbx3sde55zqDMd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoVXuelbSlOfWs1b9R4j1aADrg1sUiNQoUMfreSM0XVsmvlsWK
+	Mk1K2f5cbOfhJ/iOgUYjauNnJoRSdog3EyVMOOdYzTs3wJXrhp0EcoBK0vDa469VUs8=
+X-Gm-Gg: ASbGncsqwMsIZpiQKPrQFRCUizMqAJimuOJUCqW7QDPFGwhAiv84YwVug+vHIJ8BTBp
+	eE+EFLGVrK967kdbHqPNO2Z7K14Oq3CoGD/JYxE+N8cqZ6nkK94xbhk13WvJDsTFkb4FU2dVGkc
+	R4Gnc4YQVk8thwmZgZyaYt20jA/SSQspcy+Sbx3bStqB1bHvfJq76rdGH5chGDY8noFBBonyhly
+	AK8900BbQNUAJD5yWFzz3DL647miwtXg785cTtyiSNIIWFn2vEcy7gso+685V82/JRrJd1CpnB/
+	1X/CmEKGGdl1f8KlCFDx74mr0e+3kJAWZTpBtMAN5VAVa9snK0T3nQd4flLzkl0DM5G3If7M5sW
+	EePFmxNvptCLx2yLzZL5xdx2PWZnmcWTzfuSuWU9zC015B/8kCNtINO3wKvgEMcM=
+X-Google-Smtp-Source: AGHT+IF7AFy6FSUPPsyHhy9n7/V01gRT7a23dcLZNXBOQiiyt098/G3dDt3bs6lWCTEsckZHEmzYlA==
+X-Received: by 2002:a05:6402:4407:b0:615:8bee:56b6 with SMTP id 4fb4d7f45d1cf-61a978522c0mr284057a12.34.1755628757067;
+        Tue, 19 Aug 2025 11:39:17 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a755d9cfasm2186284a12.9.2025.08.19.11.39.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 11:39:16 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6188b5b113eso7930826a12.0;
+        Tue, 19 Aug 2025 11:39:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPAmP/1OB8cRjPe2bRIyZrN2Z79lxrXnOF3Tk7vT/SbvEimDnjPcpIy+5NoxQrj2AMXHQhHsUNRNrvaRX4@vger.kernel.org, AJvYcCWrPlnuTE0HDJ7DiqhSmTIhVn2298g2CM13NbrSUmX7cuVsYHJ50MbalqRM9Pugy+vChwEm+JYKKzN/@vger.kernel.org
+X-Received: by 2002:a05:6402:354a:b0:618:272a:6dc0 with SMTP id
+ 4fb4d7f45d1cf-61a97825978mr311982a12.27.1755628756633; Tue, 19 Aug 2025
+ 11:39:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250813-apple-dt-sync-6-17-v1-0-209f15d10aa0@jannau.net>
+In-Reply-To: <20250813-apple-dt-sync-6-17-v1-0-209f15d10aa0@jannau.net>
+From: Neal Gompa <neal@gompa.dev>
+Date: Tue, 19 Aug 2025 14:38:39 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je-uMD4xPcmfcoxzdmo_wfHdiUvw=EByY+zG1c5UQ0=EfQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwXcPnRZb3XHtBRKxe3pDOsXrkoCrBveLOoTcxv7QMCxYMri1d_dXh5Bt8
+Message-ID: <CAEg-Je-uMD4xPcmfcoxzdmo_wfHdiUvw=EByY+zG1c5UQ0=EfQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Apple device tree sync from downstream kernel
+To: j@jannau.net
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mark Kettenis <kettenis@openbsd.org>, Hector Martin <marcan@marcan.st>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 19 Aug 2025 19:28:51 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+On Wed, Aug 13, 2025 at 5:53=E2=80=AFAM Janne Grunau via B4 Relay
+<devnull+j.jannau.net@kernel.org> wrote:
+>
+> This series pulls changes from the downstream device trees which are
+> supported in upstream kernel.
+> Most importantly it fixes the PCIe description for a specific iMac model
+> (iMac M1, 2 USB-C ports, 2021). This is worked around in the downstream
+> kernel by not disabling the port. In preparation for submitting M2
+> Pro/Max/Ultra devices trees I investigated the issue on the similarly
+> affected M2 Pro Mac mini and fixed it this way.
+> It completes the Wlan/BT device nodes for t600x based devices and adds
+> the missing 15-inch Macbook Air (M2, 2023).
+>
+> Checkpatch emits following warnings:
+>
+> WARNING: DT compatible string vendor "pci14e4" appears un-documented --
+> check ./Documentation/devicetree/bindings/vendor-prefixes.yaml
+>
+> Which I chose to ignore. `vendor-prefixes.yaml` prefixes contains no
+> other mapping for PCI vendor code and the list of ignored prefixes
+> forbids extending it. Both options feel wrong though. "pci${vendor}" is
+> clearly a vendor prefix but duplicating the PCI vendor data base feels
+> wrong. `vendor-prefixes.yaml` currently does not contain and PCI vendor
+> aliases.
+>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+> Hector Martin (2):
+>       arm64: dts: apple: t600x: Comple WiFi properties
+>       arm64: dts: apple: t600x: Add bluetooth device nodes
+>
+> Janne Grunau (3):
+>       arm64: dts: apple: t8103-j457: Fix PCIe ethernet iommu-map
+>       dt-bindings: arm: apple: Add t8112 j415 compatible
+>       arm64: dts: apple: Add devicetreee for t8112-j415
+>
+>  Documentation/devicetree/bindings/arm/apple.yaml |  2 +
+>  arch/arm64/boot/dts/apple/Makefile               |  1 +
+>  arch/arm64/boot/dts/apple/t6000-j314s.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6000-j316s.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6001-j314c.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6001-j316c.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6001-j375c.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6002-j375d.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi   | 10 +++
+>  arch/arm64/boot/dts/apple/t600x-j375.dtsi        | 10 +++
+>  arch/arm64/boot/dts/apple/t8103-j457.dts         | 12 +++-
+>  arch/arm64/boot/dts/apple/t8112-j415.dts         | 80 ++++++++++++++++++=
+++++++
+>  12 files changed, 161 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250813-apple-dt-sync-6-17-d1fc1c89f7ca
+>
 
-> On Mon, 18 Aug 2025 16:00:20 -0400
-> Ben Collins <bcollins@kernel.org> wrote:
-> 
-> > On Mon, Aug 18, 2025 at 08:10:35PM -0500, Jonathan Cameron wrote:  
-> > >     
-> > > > > >  	case IIO_CHAN_INFO_SCALE:
-> > > > > >  		*val = 62;
-> > > > > >  		*val2 = 500000;
-> > > > > >  		return IIO_VAL_INT_PLUS_MICRO;
-> > > > > > +      
-> > > > > If you want the extra space put it in previous patch.
-> > > > >       
-> > > > > >  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-> > > > > >  		*val = mcp9600_tc_types[data->thermocouple_type];
-> > > > > >  		return IIO_VAL_CHAR;
-> > > > > > +
-> > > > > > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> > > > > > +		if (data->filter_level == 0)      
-> > > > > 
-> > > > > Return the current requested value. An error is just going to confuse
-> > > > > someone who tried to write this before enabling the filter and then
-> > > > > checked to see if the write was successful.      
-> > > > 
-> > > > I could not get a concensus on this. On the one hand, if a user sets a
-> > > > value here, would they not assume that the filter was enabled? What
-> > > > about cases where a filter_type can be more than one valid type with
-> > > > different available coefficients for each? What should it show then?    
-> > > 
-> > > So I was thinking of this like other things with 'enables' such as events.
-> > > For those you always set the value first.  They don't really have a type
-> > > field though (well they do but the ABI allows multiple at once unlike filters
-> > > so we end up with a quite different looking ABI).
-> > > 
-> > > Agreed it gets challenging with multiple filter types. If it weren't for
-> > > advertising the range I'd suggest just stashing whatever was written and
-> > > then mapping it to nearest possible when the filter type is set.
-> > > That's what the ad7124 does for changing between filters anyway
-> > > though oddly it doesn't seem to have a control for filter type.
-> > > 
-> > > This is a good argument against the whole 'none' value for filter type
-> > > - that's not much used so we could deprecate it for new drivers.
-> > > 
-> > > I'm not particularly keen on filter_enable but seems we are coming back
-> > > around to that option to avoid this corner case.  Alternative being what
-> > > you have here which isn't great for ease of use.    
-> > 
-> > I'm somewhat wondering if the filter frequency and frequency_available
-> > attributes should not even show in sysfs unless the filter_type was
-> > something other than "none".
-> >   
-> I'm not keen on that and trying to bolt is_visible into the mess of how
-> we generate attributes would be hard and actual add and remove of attributes
-> is horrible for races with userspace.
-> 
-> > > So for next version let's go for that. Make sure to include Documentation
-> > > in a separate patch though so it's easy to see an poke holes in.    
-> > 
-> > Just to make sure I understand, you'd like to see a filter_enable
-> > attribute and filter_type would not contain "none", then frequency and
-> > frequency_available would always show something for whatever was in
-> > filter_type?  
-> 
-> Yes.  I think that is best way forwards.  If we want to retrofit the one
-> user of none to support the new ABI as well it should be easy to do.
-> 
+Series LGTM.
 
-Ignore that. David convinced me otherwise.  Lets take this a bit slow
-and discuss it fully in other branch of this thread.
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
-J
-
-> >   
-> > > ABI design is a pain sometimes.    
-> > 
-> > The epitome of being able to paint yourself into a corner.
-> >   
-> Yup.
-> 
-> J
-> 
-
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
