@@ -1,89 +1,130 @@
-Return-Path: <linux-kernel+bounces-775646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D92B2C2DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E661DB2C2E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BB4A5A638A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A501966C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8193375A9;
-	Tue, 19 Aug 2025 12:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AD0335BDE;
+	Tue, 19 Aug 2025 12:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CzMgeixh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WluzMahH"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2511FC0ED;
-	Tue, 19 Aug 2025 12:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18061217733
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755605605; cv=none; b=iqiWVdfX5gHItbo8AbMkPN1jpH5uIYpEMOPSOCgfjKVn427e0o21/pSFOy+p+QIizhkJ2SYDhjpVh61SrAc/PDlHREYBzGbEql+Kb8ZG9u89TSKQmgJXN8zuG62YPGdZNWxnx0rKZ99GtOFoEJxnd+k2iuzKx29izo5/IGmMpr8=
+	t=1755605699; cv=none; b=Zt7DpmU/5WXAw5cDJ0mMnYGZ9Eu2VCB4RhqzL+d+Jbmk91pzOBLrDUrP8bFpUIFvr5m5eem8zqfANsPjGDu+a07OG4aSzbuUbNvu2tlODbC7WeTvqxAPkAOH42tioxPYZftACeUW/JdTfG3pux4zgoFS/2rYEqiT1AFCFgL5nLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755605605; c=relaxed/simple;
-	bh=bfDp6DDwN4oC84InlHWHPzRfbM00dU9tDtuPm6ARsyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pqop/GV4oHOuateBHScvLwmV/gy7BriXf5Xl5Yarrf6ZEEpbekAny3QiObF79qxUY3JqGTx1c+PIicajRTFG3VPwMKj+y6RIdlWGjJ8MyiUJoSvw8SVqN+PI/pPXgfzDb4jppB7g/Qfzwe1Sf1ndTfXpZ++ydpdXQGrCJ4gmOYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CzMgeixh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D05C4CEF1;
-	Tue, 19 Aug 2025 12:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755605604;
-	bh=bfDp6DDwN4oC84InlHWHPzRfbM00dU9tDtuPm6ARsyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CzMgeixhYPgaUygiMLZJJmEWPg5hFHXeWanI6rFuTS7WIwI2n3E7FAA8VLFLZcM33
-	 P9DEKqp0CcqCG5ePu+GeUxQpHRl0fhaeVf4v7UNV42I43RBCIZXUpc/ILio2JuUsUW
-	 GLaBpGF2FtdUcKnE84xv6sDrJb/yukXKRQ8VEACg=
-Date: Tue, 19 Aug 2025 14:13:21 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Shankari Anand <shankari.ak0208@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	s=arc-20240116; t=1755605699; c=relaxed/simple;
+	bh=r3n24YkeAiFzv8X5Ud5TZiphJux1PzHKFS6EknRtIUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fWNXjX3IXS1QflVf3T14KeP5lqfq3RlS7FyM8vXDi+tbdaJCj9DRRxUzGr/6Vlr+64tL/159EamuDeMGVtbosL9lzYoCY388lzaQ4JqArPeJYWf234hiEXpnLuE1uOfwPKC1T8dPOcPdXbB/sQfXNRZ1oXbqG2doggpG050vdXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WluzMahH; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso4755596f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755605695; x=1756210495; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cv3UADiqbQ2TvjUbAoLCvVlixqzyy4Oo4r3fQdXVk88=;
+        b=WluzMahHAg6v8rZhjrgVgRXGDut0Fj9sZXuQqXrVlYqFusJe0Rtg+02pdvE6U9ff2I
+         crrPYwDbnRU8LX1X/LLmYYDybXZaziu7PQ45SV8RI8xcvzsfU7hUpdQUwQ+3ZjKTjWGl
+         3DU0ye0EJ6VY7b40e5svQp0fZKtH1V6UW6mCYJRfi89Gw5d+6Fr+K4bL/qbQ+HRVe3oo
+         rUYjYqujOmlz7rig3GosAP98A9u82WTPUAQTXYB/C+SbiOkLXdiJtFLDpLN/mEkTn1A6
+         ptH+A5fx34sDciNelG0nwjTA8apZN/rCuzmbe7nM4EHez5ageAZywaVVz7JgpydAdywi
+         GqqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755605695; x=1756210495;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cv3UADiqbQ2TvjUbAoLCvVlixqzyy4Oo4r3fQdXVk88=;
+        b=mOS6Y0GvwLM4YnGNx/aQqo7RcQX62pcV1mvd7JM8hy1i7SoSVlFLSRlsGbedAwZJ3P
+         E2g+xh0BwZre4Jw1Ws8aoUHtBiY/p3myuWN/zw1go2fKDATvGGnhwUomA9RnOCESvxoM
+         N+8alwm+QLDcnG1Bjwa05ukYWicK1SauTAW0OltXJ+pwENRhbiggMF33NyzqmdI19S/b
+         psAZTOq/cBptnlQsRmNb7SiHBFrAicAp3RFhU8o4t5h3mfagLiWSE9I/ZYDAcHprN3jQ
+         t4ItR8fb9wCZSCvcI6hRppxIGYEm1qidzjJ6FzhdGgbYidR7Fj45fBtkusXn8Xp2mA64
+         +mGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuZEiXp64rzHqjYcJL4nrLTNxuiBzP+qvMsH015MHEbrcdctwMAAEky/UwwvRituN5pjo5RiKtDpfHxK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1q0bHISSb/zj7KfX8NMWvW5W+bXAHLNPFnc0s87JiW9mCA2qm
+	/iBURGPytQJJPSs0nd6KTK6o/rnqOGGlncxD5h4OxETXSrj4yuPz/zgNH0unfGXiIyw=
+X-Gm-Gg: ASbGncuoRpPpIst79I9lUGPDsOB6ZIC9OJJEtwYLyESMh0wCeNQOL2j1hgA2D7706aL
+	5gQOl1V5f4PK3p6qnleumVC8of6N+P1B1B920VeE3yAm4ehli+SH90ldRzkQSMDhagJGlFL7ETD
+	3GvtgIJqJl9SRfpqKop6RKub93mkt5Xe/pikAT/jyBmCSehqoSGU7fqwuMnici6J6a7dJQQkrXx
+	RDYVTrXaElENWtK1CRmaeGonD73oQIxL18QPhKb46AecJCvXy0PtZa+AKEfPVeVTJ16ht2zhO68
+	Urn42v+65lyhDWW9wQUtCR1x9X8lFLVtfNn7CcrkziLvlVxU19X63pjhG8kdXnpfnNdZmJGGHiD
+	3rQY9Vph229oJT6f0AVsk+tfgSs8oZusTzJPDJWY=
+X-Google-Smtp-Source: AGHT+IE/kD7//F1ivwBIkItT7/N13kE12xwZismDvDilF7dG6FebLdN4vgvroAj3YGiVbETZjeg3Ug==
+X-Received: by 2002:a05:6000:26cc:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3c0e2c89f54mr1719672f8f.17.1755605694332;
+        Tue, 19 Aug 2025 05:14:54 -0700 (PDT)
+Received: from zovi.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446cb0735csm107977765ad.57.2025.08.19.05.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 05:14:53 -0700 (PDT)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>
+Cc: linux-modules@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: miscdevice: update ARef import to sync::aref
-Message-ID: <2025081911-shudder-overlabor-6e92@gregkh>
-References: <20250818132806.134248-1-shankari.ak0208@gmail.com>
- <aKRlqA_Xa3S4_P1a@google.com>
+Subject: [PATCH] module: Remove unused __INIT*_OR_MODULE macros
+Date: Tue, 19 Aug 2025 14:13:37 +0200
+Message-ID: <20250819121423.460156-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKRlqA_Xa3S4_P1a@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 11:53:12AM +0000, Alice Ryhl wrote:
-> On Mon, Aug 18, 2025 at 06:58:06PM +0530, Shankari Anand wrote:
-> > Update the import of `ARef` in misc_device sample to use
-> > `sync::aref` instead of `types`.
-> > 
-> > This is part of the ongoing effort to move `ARef` and
-> > `AlwaysRefCounted` to the `sync` module for better modularity
-> > and type organization.
-> > 
-> > Suggested-by: Benno Lossin <lossin@kernel.org>
-> > Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> > Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-> 
-> Greg, I believe this should go through miscdevice. It's not going
-> through a shared tree.
-> 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> 
+Remove the __INIT_OR_MODULE, __INITDATA_OR_MODULE and
+__INITRODATA_OR_MODULE macros. These were introduced in commit 8b5a10fc6fd0
+("x86: properly annotate alternatives.c"). Only __INITRODATA_OR_MODULE was
+ever used, in arch/x86/kernel/alternative.c. In 2011, commit dc326fca2b64
+("x86, cpu: Clean up and unify the NOP selection infrastructure") removed
+this usage.
 
-It's already queued up in my char-misc tree, thanks :)
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+---
+ include/linux/module.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-greg k-h
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 3319a5269d28..e9e6eeb042aa 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -151,16 +151,10 @@ extern void cleanup_module(void);
+ #define __init_or_module
+ #define __initdata_or_module
+ #define __initconst_or_module
+-#define __INIT_OR_MODULE	.text
+-#define __INITDATA_OR_MODULE	.data
+-#define __INITRODATA_OR_MODULE	.section ".rodata","a",%progbits
+ #else
+ #define __init_or_module __init
+ #define __initdata_or_module __initdata
+ #define __initconst_or_module __initconst
+-#define __INIT_OR_MODULE __INIT
+-#define __INITDATA_OR_MODULE __INITDATA
+-#define __INITRODATA_OR_MODULE __INITRODATA
+ #endif /*CONFIG_MODULES*/
+ 
+ struct module_kobject *lookup_or_create_module_kobject(const char *name);
+
+base-commit: be48bcf004f9d0c9207ff21d0edb3b42f253829e
+-- 
+2.50.1
+
 
