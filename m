@@ -1,163 +1,335 @@
-Return-Path: <linux-kernel+bounces-776523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB04B2CE73
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A19B2CE72
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882081BA5BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:21:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83EE51BA5CCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF03315761;
-	Tue, 19 Aug 2025 21:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2EE27FD40;
+	Tue, 19 Aug 2025 21:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJKGi5OI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="C2oTnsXz"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0B2310629;
-	Tue, 19 Aug 2025 21:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D76142065
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 21:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755638463; cv=none; b=dDNDBg82ijFXJZBQZTAjiwkQTl0zv4kzWT+5cCM8PyhacxvWNoyPK2Gr79fPrChLbVxf3TfZkoOQgPAD2+/rQ5qzmqO8b0KBxiSj2j3DKRqg83IIIURSBtgK7D7CfDjjoT+JAdf7p5u5Yj1sItGyt7w6yHmNeNCJePLiNsgpxNI=
+	t=1755638451; cv=none; b=AAiZmrH8J4e1814C3+U3rNJx0379uw1ygYRDMr8+s3uJGgSVUBNOZHKKTu5xXgc2nl2E9YarYBDaHi/OGVMRkZkA1HrloY9qXH6sfhMs8q4D0bKivDIvC9G3TWjgZS4T8+xHbZE53rBO1bH3KugmFv5mw3rQZwiyZKPIlq+QC3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755638463; c=relaxed/simple;
-	bh=OTAiCO+1+V1cK52vHjg/Yjxwnw5E+FVXq4uuanHeXNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcwyS+JEB8HQBOgE/FhlRvurCtfa4zWQbZ1quLz7sLoz3ZRyb/bdnOlyxW9MFAxBbCkbi+k9iYfxHh/1wEvhTE58zt0Vyly/TmjecRCWg0mX51F07r/mDVFjo4P3Cx8kYgbzB1SCvmwIUT+Zyk3NHFDAWpSb/78zSVKKFqV8ivM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJKGi5OI; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755638463; x=1787174463;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OTAiCO+1+V1cK52vHjg/Yjxwnw5E+FVXq4uuanHeXNM=;
-  b=LJKGi5OIJQJhkQK8qcN8V61lyu5rtjKAeZiRBZgDSrcatIhr/AnbqtH5
-   u4O2P4NpPORoTW97tjhVOFfDvTlaMTOJQRRB/sZm6/Muy2OFLej3+AQ3k
-   vn3Z1v/MreoRkzfecifRYLL1tIKbPkzl3F9E54Tgco9q9Qk3w3LmyZSOu
-   D533QxEw6Y4VEoMkAmGfsZ6pU8ViAERH4IEQOWVie3iSz43OiDKOvD+by
-   uNi22WIS0wp/Gs2Rz95wwnDr1jY6x2/cONT5xd8Wsl3uNCk+u0Se1dID8
-   C2JLL9JUZbfm5wN3pjZdnAfmT6vAmyjU0toZ6qVGB3nNzvHxw//2Kp0uF
-   A==;
-X-CSE-ConnectionGUID: fUojxQEOS6S1qXEXZz0HhQ==
-X-CSE-MsgGUID: TyJBQufvRy231iy2Suci1A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="60526038"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="60526038"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 14:21:01 -0700
-X-CSE-ConnectionGUID: F4R76j82SPWrpGrJY2M/Ng==
-X-CSE-MsgGUID: hrc6g9O2RhW+tNcxgz+mxg==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 19 Aug 2025 14:20:58 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uoTky-000HWN-2G;
-	Tue, 19 Aug 2025 21:20:39 +0000
-Date: Wed, 20 Aug 2025 05:19:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, linux-hyperv@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Tianyu Lan <tiala@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, Li Tian <litian@redhat.com>,
-	Philipp Rudo <prudo@redhat.com>
-Subject: Re: [PATCH v2] x86/hyperv: Fix kdump on Azure CVMs
-Message-ID: <202508200507.78h11riS-lkp@intel.com>
-References: <20250818095400.1610209-1-vkuznets@redhat.com>
+	s=arc-20240116; t=1755638451; c=relaxed/simple;
+	bh=IWcz0ydMjyEdBub64TYja7PDnt0WzVGt0kTZt4QhU3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=SGb7TgGzfKGWhIFOsWNRO3gaHdSoOnSlUJkBW6i8Z53jLS4kPwqlNLtFQcVdFqiG+z7/c/rSkHLN7vIvM2/MoAifs06Bxc3dmU+YoUJGnfd2YrT/j8puPcOZ5MSJxY/Yj+sTX5zEZrAmNO9fgElBLK4HZu3ncdbq61KFhezFclo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=C2oTnsXz; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250819212047euoutp0253a0c08ad08a675fcd1ce5dae76157d5~dR92_uwax1442614426euoutp02F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 21:20:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250819212047euoutp0253a0c08ad08a675fcd1ce5dae76157d5~dR92_uwax1442614426euoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755638447;
+	bh=Rw3wVMolVT3ui9ni2jKtmMC3tGVqAxf5rPHe/2TBJ48=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=C2oTnsXz3NNtg4L83Neo5ItQvYtcYZbfHWTjnOUOxEtQxVnGmnqkzCecAPocD9K+n
+	 OE8yoPaBy+RJxeAOlJqPYl/wDa+8UFtSjz/UIcVPA4MXpGUp6UY569T+uj2+msxTeo
+	 HqybRnpz6tLeHrOR6ieeM2yvY01Uj+X2ZOZeiRw8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250819212046eucas1p1ebb750b120bc1374625b1d6265312380~dR92bX_yG3208332083eucas1p1m;
+	Tue, 19 Aug 2025 21:20:46 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250819212042eusmtip29da91ca4dc6562decd39eb09a7ac7296~dR9y0yEjY1577615776eusmtip2c;
+	Tue, 19 Aug 2025 21:20:42 +0000 (GMT)
+Message-ID: <f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
+Date: Tue, 19 Aug 2025 23:20:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818095400.1610209-1-vkuznets@redhat.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250819212046eucas1p1ebb750b120bc1374625b1d6265312380
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+X-EPHeader: CA
+X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+	<20250814104753.195255-1-damon.ding@rock-chips.com>
+	<a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+	<7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
+	<1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
 
-Hi Vitaly,
+On 15.08.2025 04:59, Damon Ding wrote:
+> On 2025/8/15 5:16, Marek Szyprowski wrote:
+>> On 14.08.2025 16:33, Marek Szyprowski wrote:
+>>> On 14.08.2025 12:47, Damon Ding wrote:
+>>>> PATCH 1 is a small format optimization for struct analogid_dp_device.
+>>>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>>>> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
+>>>> PATCH 7 is to apply the drm_bridge_connector helper.
+>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix side.
+>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
+>>>> PATCH 13 is to apply the panel_bridge helper.
+>>>
+>>> This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's Kconfig,
+>>> so it causes build break:
+>>>
+>>> drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to
+>>> `drm_bridge_connector_init'
+>>> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+>>>
+>>> After adding this dependency, the Exynos DP driver stops working. On
+>>> Samsung Snow Chromebook I observed following issue:
+>>>
+>>> [    4.534220] exynos-dp 145b0000.dp-controller: failed to attach
+>>> following panel or bridge (-16)
+>>> [    4.543428] exynos-drm exynos-drm: failed to bind
+>>> 145b0000.dp-controller (ops exynos_dp_ops): -16
+>>> [    4.551775] exynos-drm exynos-drm: adev bind failed: -16
+>>> [    4.556559] exynos-dp 145b0000.dp-controller: probe with driver
+>>> exynos-dp failed with error -16
+>>>
+>>> I will investigate details later in the evening.
+>>
+>> The failure is caused by trying to add plat_data->next_bridge twice
+>> (from exynos_dp's .attach callback, and from analogix' ->bind callback).
+>>
+>>
+>> Best regards
+>
+> I see. The bridge attachment for the next bridge was not well thought 
+> out. It may be better to move panel_bridge addition a little forward 
+> and remove next_bridge attachment on the Analogix side. Then, the 
+> Rockchip side and Exynos side can do their own next_bridge attachment 
+> in &analogix_dp_plat_data.attach() as they want.
+>
+> Could you please help test the following modifications(they have been 
+> tested on my RK3588S EVB1 Board) on the Samsung Snow Chromebook? ;-)
 
-kernel test robot noticed the following build warnings:
+Assuming that I properly applied the malformed diff, it doesn't solve 
+all the issues. There are no errors reported though, but the display 
+chain doesn't work and no valid mode is reported:
 
-[auto build test WARNING on tip/x86/core]
-[also build test WARNING on arm64/for-next/core tip/master linus/master v6.17-rc2]
-[cannot apply to tip/auto-latest next-20250819]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+# dmesg | grep drm
+[    3.384992] [drm] Initialized panfrost 1.4.0 for 11800000.gpu on minor 0
+[    4.487739] [drm] Exynos DRM: using 14400000.fimd device for DMA 
+mapping operations
+[    4.494202] exynos-drm exynos-drm: bound 14400000.fimd (ops 
+fimd_component_ops)
+[    4.502374] exynos-drm exynos-drm: bound 14450000.mixer (ops 
+mixer_component_ops)
+[    4.511930] exynos-drm exynos-drm: bound 145b0000.dp-controller (ops 
+exynos_dp_ops)
+[    4.518411] exynos-drm exynos-drm: bound 14530000.hdmi (ops 
+hdmi_component_ops)
+[    4.529628] [drm] Initialized exynos 1.1.0 for exynos-drm on minor 1
+[    4.657434] exynos-drm exynos-drm: [drm] Cannot find any crtc or sizes
+[    4.925023] exynos-drm exynos-drm: [drm] Cannot find any crtc or sizes
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vitaly-Kuznetsov/x86-hyperv-Fix-kdump-on-Azure-CVMs/20250818-175830
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20250818095400.1610209-1-vkuznets%40redhat.com
-patch subject: [PATCH v2] x86/hyperv: Fix kdump on Azure CVMs
-config: x86_64-randconfig-101-20250819 (https://download.01.org/0day-ci/archive/20250820/202508200507.78h11riS-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+# ./modetest -c -Mexynos
+Connectors:
+id      encoder status          name            size (mm)       modes 
+   encoders
+69      0       disconnected    LVDS-1          0x0             0       68
+  props:
+        1 EDID:
+                flags: immutable blob
+                blobs:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508200507.78h11riS-lkp@intel.com/
+                value:
+        2 DPMS:
+                flags: enum
+                enums: On=0 Standby=1 Suspend=2 Off=3
+                value: 0
+        5 link-status:
+                flags: enum
+                enums: Good=0 Bad=1
+                value: 0
+        6 non-desktop:
+                flags: immutable range
+                values: 0 1
+                value: 0
+        4 TILE:
+                flags: immutable blob
+                blobs:
 
-cocci warnings: (new ones prefixed by >>)
->> arch/x86/hyperv/ivm.c:601:2-3: Unneeded semicolon
-   arch/x86/hyperv/ivm.c:504:3-4: Unneeded semicolon
-   arch/x86/hyperv/ivm.c:561:3-4: Unneeded semicolon
+                value:
+71      0       disconnected    HDMI-A-1        0x0             0       70
+  props:
+        1 EDID:
+                flags: immutable blob
+                blobs:
 
-vim +601 arch/x86/hyperv/ivm.c
+                value:
+        2 DPMS:
+                flags: enum
+                enums: On=0 Standby=1 Suspend=2 Off=3
+                value: 0
+        5 link-status:
+                flags: enum
+                enums: Good=0 Bad=1
+                value: 0
+        6 non-desktop:
+                flags: immutable range
+                values: 0 1
+                value: 0
+        4 TILE:
+                flags: immutable blob
+                blobs:
 
-   565	
-   566	void hv_ivm_clear_host_access(void)
-   567	{
-   568		struct hv_gpa_range_for_visibility *input;
-   569		struct hv_enc_pfn_region *ent;
-   570		unsigned long flags;
-   571		u64 hv_status;
-   572		int cur, i;
-   573	
-   574		if (!hv_is_isolation_supported())
-   575			return;
-   576	
-   577		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
-   578	
-   579		input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-   580		if (!input)
-   581			goto unlock;
-   582	
-   583		list_for_each_entry(ent, &hv_list_enc, list) {
-   584			for (i = 0, cur = 0; i < ent->count; i++) {
-   585				input->gpa_page_list[cur] = ent->pfn + i;
-   586				cur++;
-   587	
-   588				if (cur == HV_MAX_MODIFY_GPA_REP_COUNT || i == ent->count - 1) {
-   589					input->partition_id = HV_PARTITION_ID_SELF;
-   590					input->host_visibility = VMBUS_PAGE_NOT_VISIBLE;
-   591					input->reserved0 = 0;
-   592					input->reserved1 = 0;
-   593					hv_status = hv_do_rep_hypercall(
-   594						HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY,
-   595						cur, 0, input, NULL);
-   596					WARN_ON_ONCE(!hv_result_success(hv_status));
-   597					cur = 0;
-   598				}
-   599			}
-   600	
- > 601		};
-   602	
-   603	unlock:
-   604		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
-   605	}
-   606	EXPORT_SYMBOL_GPL(hv_ivm_clear_host_access);
-   607	
+                value:
 
+
+I will investigate details later this week.
+
+
+>
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
+> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index 0529bfb02884..8a9ce1f31678 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -1573,6 +1573,15 @@ int analogix_dp_bind(struct analogix_dp_device 
+> *dp, struct drm_device *drm_dev)
+>                 return ret;
+>         }
+>
+> +       if (dp->plat_data->panel) {
+> +               dp->plat_data->next_bridge = 
+> devm_drm_panel_bridge_add(dp->dev,
+> + dp->plat_data->panel);
+> +               if (IS_ERR(dp->plat_data->next_bridge)) {
+> +                       ret = PTR_ERR(bridge);
+> +                       goto err_unregister_aux;
+> +               }
+> +       }
+> +
+>         bridge->ops = DRM_BRIDGE_OP_DETECT |
+>                       DRM_BRIDGE_OP_EDID |
+>                       DRM_BRIDGE_OP_MODES;
+> @@ -1588,22 +1597,6 @@ int analogix_dp_bind(struct analogix_dp_device 
+> *dp, struct drm_device *drm_dev)
+>                 goto err_unregister_aux;
+>         }
+>
+> -       if (dp->plat_data->panel) {
+> -               dp->plat_data->next_bridge = 
+> devm_drm_panel_bridge_add(dp->dev,
+> - dp->plat_data->panel);
+> -               if (IS_ERR(dp->plat_data->next_bridge)) {
+> -                       ret = PTR_ERR(bridge);
+> -                       goto err_unregister_aux;
+> -               }
+> -       }
+> -
+> -       ret = drm_bridge_attach(dp->encoder, 
+> dp->plat_data->next_bridge, bridge,
+> -                               DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> -       if (ret) {
+> -               dev_err(dp->dev, "failed to attach following panel or 
+> bridge (%d)\n", ret);
+> -               goto err_unregister_aux;
+> -       }
+> -
+>         return 0;
+>
+>  err_unregister_aux:
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c 
+> b/drivers/gpu/drm/exynos/exynos_dp.c
+> index 80ba700d2964..d0422f940249 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+> @@ -104,7 +104,7 @@ static int exynos_dp_bridge_attach(struct 
+> analogix_dp_plat_data *plat_data,
+>         /* Pre-empt DP connector creation if there's a bridge */
+>         if (plat_data->next_bridge) {
+>                 ret = drm_bridge_attach(&dp->encoder, 
+> plat_data->next_bridge, bridge,
+> -                                       0);
+> + DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>                 if (ret)
+>                         return ret;
+>         }
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c 
+> b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index 0862b09a8be2..dfd32a79b94f 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -164,6 +164,24 @@ static int rockchip_dp_powerdown(struct 
+> analogix_dp_plat_data *plat_data)
+>         return 0;
+>  }
+>
+> +static int rockchip_dp_attach(struct analogix_dp_plat_data *plat_data,
+> +                                    struct drm_bridge *bridge)
+> +{
+> +       struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
+> +       int ret;
+> +
+> +       if (plat_data->next_bridge) {
+> +               ret = drm_bridge_attach(&dp->encoder.encoder, 
+> plat_data->next_bridge, bridge,
+> + DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> +               if (ret) {
+> +                       dev_err(dp->dev, "failed to attach following 
+> panel or bridge (%d)\n", ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int rockchip_dp_get_modes(struct analogix_dp_plat_data 
+> *plat_data,
+>                                  struct drm_connector *connector)
+>  {
+> @@ -478,6 +496,7 @@ static int rockchip_dp_probe(struct 
+> platform_device *pdev)
+>         dp->plat_data.dev_type = dp->data->chip_type;
+>         dp->plat_data.power_on = rockchip_dp_poweron;
+>         dp->plat_data.power_off = rockchip_dp_powerdown;
+> +       dp->plat_data.attach = rockchip_dp_attach;
+>         dp->plat_data.get_modes = rockchip_dp_get_modes;
+>         dp->plat_data.ops = &rockchip_dp_component_ops;
+>
+>
+> Best regards,
+> Damon
+>
+>
+Best regards
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
