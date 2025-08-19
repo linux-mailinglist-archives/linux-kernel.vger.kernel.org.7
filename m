@@ -1,98 +1,74 @@
-Return-Path: <linux-kernel+bounces-775505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58498B2BFFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:15:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A9EB2BFF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6020A17D69D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BC867B0CDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C4E322C9B;
-	Tue, 19 Aug 2025 11:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1908C24E4C6;
+	Tue, 19 Aug 2025 11:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJJzaIiu"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EU/dnjV+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C07C284887;
-	Tue, 19 Aug 2025 11:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7389131CA57
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601933; cv=none; b=mV0LxkwL2sIE+6Tih5OYZu77xyQ0YCf4okzGWngIGA/0kiDoDESbIfPgyCZly/5EZEbp5t3ej6rnlkyV9ghZA4NhBbd1BkUblJfQZP5avCm3UMLZOaDk4A2nEL06uliAvj5Dm9hgtQxtGFB/B2oAeO6lUGhMO1uttXBOCGCQN8E=
+	t=1755601970; cv=none; b=npJAVwqdwOrVZvGpqAqU5E28nwPYjwEm376QYwATZTaFU3xdg37FtHlNrsf4ARWTZoX0etwVfX+CAG+7YfGz0WUu7s3MjGv7qdwyK4x9TyjgIfjSmDOKHHXnKnObVKW6/iK1eofANXWDDgnbpYp3NVB+3JErZ5AAFz+Z15I0Muw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755601933; c=relaxed/simple;
-	bh=1rgDR65KuPRTY0P6UJTUUd10kaG6YRghNT0SkPCCCdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dmV/C6Kdo9rwIpJI4LjTXLUpJhSXkr1V9IOPcjca34XJTYD8hMk1tk+KTICMaKkL/8POVhN41hKyK1zfgQLEJ+FPf611Rx0R0ncy6iFsBIlgzrbObkjVwUi14rfnM8FVhzEDb5t09+qsnCj+Gakf/rsFBKYhiGqFjHYwM47qnXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJJzaIiu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8BEC4CEF1;
-	Tue, 19 Aug 2025 11:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755601933;
-	bh=1rgDR65KuPRTY0P6UJTUUd10kaG6YRghNT0SkPCCCdo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tJJzaIiuaKGH9NIZDKgXuAU2NFX57JEQV36t9DdANRHEnRtieeTs3b2FQ0glF4q2w
-	 cfmVtEcSZN3G06XyOznkkiz2jcQzs48I5AnpHnuLqJ/JreO45ABZYUlDmMDKL8h7bJ
-	 A+QIpfeMywf91ckqUXxGUrN7efZyHlg575T+a1PFvnASPZM1tJYg5akTq9h6B05u+X
-	 6eJdyAcd6Tfjq8XAAsoRsQlDldyPWdHHxM1ZFemxbcyozgP75ZOnySfOeaIPDRkzEB
-	 7pCWbYrgA7coCW7xbjbyUxP9ATMsj1Gb+hTN5jZf2MldtC2xnKATzZxZSVLOgM+f4F
-	 +arCxYiLx3y2A==
-From: Christian Brauner <brauner@kernel.org>
-To: Charalampos Mitrodimas <charmitro@posteo.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [PATCH v3] debugfs: fix mount options not being applied
-Date: Tue, 19 Aug 2025 13:11:58 +0200
-Message-ID: <20250819-hotel-talent-c8de78760a68@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250816-debugfs-mount-opts-v3-1-d271dad57b5b@posteo.net>
-References: <20250816-debugfs-mount-opts-v3-1-d271dad57b5b@posteo.net>
+	s=arc-20240116; t=1755601970; c=relaxed/simple;
+	bh=gYwPljPGMmj28uRMgGu3PnFO1RAp6ZlpkME6j129F8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q2H2zzec5WnHlzPkKS4RUMa+dh/eU39hPZJzEauuiHBIW426qQm+dXPrjQs7T+w/WFAY6NRRQUOgOHnoX0mM3FNX8dU19xT0cvSo0OinL560eGpDvJvRjNBslCCZeOWIbTSxiKtypWaXbfvuwrr5gCd6fLUFftaP17Z+KkOVSX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EU/dnjV+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D143C4CEF1;
+	Tue, 19 Aug 2025 11:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755601969;
+	bh=gYwPljPGMmj28uRMgGu3PnFO1RAp6ZlpkME6j129F8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EU/dnjV+gZfrkjoyKV44CIFN5qGYeJJBLfNa3fyL15Or8HC6Lq13ssw49PKqbrFvk
+	 cozaBwc2d+A6V/Oo23Or1uk5w9I30OG1IHzGdrgXQOmXICx5HFEVUyEhMRToz1z2Rn
+	 wxhYWCBIFoj+/jxkZti3wzmURzyB8LCO+TseLQQE=
+Date: Tue, 19 Aug 2025 13:12:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] sysfs: finalize the constification of 'struct
+ bin_attribute'
+Message-ID: <2025081934-math-lavish-c7ec@gregkh>
+References: <20250811-sysfs-const-bin_attr-final-v4-0-7b6053fd58bb@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1212; i=brauner@kernel.org; h=from:subject:message-id; bh=1rgDR65KuPRTY0P6UJTUUd10kaG6YRghNT0SkPCCCdo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsiWF7ElcSNOvD6dQbqWtXTFjhNUHe/JpLdXuW8OFf1 +5cn945s6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi/BsYfrPoGDc3M+VqL/xS cfO8iAXPOYZkYa3775d++b15Q1LGnJcM/6N6GC8bRC/tdvtSb50sezRjxWwOgdDl3I/5xYLXfpd 8yA8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811-sysfs-const-bin_attr-final-v4-0-7b6053fd58bb@weissschuh.net>
 
-On Sat, 16 Aug 2025 14:14:37 +0000, Charalampos Mitrodimas wrote:
-> Mount options (uid, gid, mode) are silently ignored when debugfs is
-> mounted. This is a regression introduced during the conversion to the
-> new mount API.
+On Mon, Aug 11, 2025 at 11:13:34AM +0200, Thomas Weißschuh wrote:
+> All users have been migrated to the new const types and variables.
+> Get rid of the transition machinery.
 > 
-> When the mount API conversion was done, the parsed options were never
-> applied to the superblock when it was reused. As a result, the mount
-> options were ignored when debugfs was mounted.
-> 
-> [...]
+> After applying, make sure no leftovers are left:
+> $ git grep bin_attrs_new
+> $ git grep read_new ':!drivers/block/swim_asm.S'
+> $ git grep write_new ':!drivers/cpufreq/powernow-k8.c' ':!drivers/s390/char/monwriter.c'
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+Looks good, thanks!
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Finally queued up, sorry for the delay.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] debugfs: fix mount options not being applied
-      https://git.kernel.org/vfs/vfs/c/8e7e265d558e
+greg k-h
 
