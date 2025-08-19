@@ -1,121 +1,128 @@
-Return-Path: <linux-kernel+bounces-776329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FDBB2CC07
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDEDFB2CC05
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34EE17282CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0252B7258B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7925E3101B7;
-	Tue, 19 Aug 2025 18:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7372230F540;
+	Tue, 19 Aug 2025 18:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UID72hXj"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h6ClDDzJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5135130F54B;
-	Tue, 19 Aug 2025 18:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490E7285419
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 18:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755628132; cv=none; b=bUTNsBzFjQhigzdi3tpCsh5J+FsoVEh548yVB4DWrSIu/yiY6GokGlc7cr2/COo0P/NPi334jkkz+AYUNuHDC2KWHUiX5GA21QpjZmSbgdQz2HwxGFHKAtiMCgU/FoAd4DIoF7/4gWgWMHlyZhGxMDzB2B+lckAiPyHQpttEWgY=
+	t=1755628129; cv=none; b=XTGQa1ROWD2E6aebC8gv348I617/dh/jLXLKqtqV9mlVEcmPtoP/aeEKngDBkAtSkTHd8OnzWo7GJSMh/dXroCQ6cILyuh0kncGGFy9y2xOg4Qij/+YMqAsCfR8Lu6FLavDnXdjvuycF+/eLfzQoaLEnHQ/kPr+JT/yKCMCqe7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755628132; c=relaxed/simple;
-	bh=Lup7pLJ0rHa83q3S/pYxZQ7O2fwQ3EsCk5nx5UrX/tI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NhtjYLGqbFcdYJqXBlheKomzxYoFlFBuvD42SjPbXcp+I7fDGgVbyezkmnnTg9o5VVEoVkNfgacZLg90d8+tfM/d3gWU0RsON0ti02Hz/UbXghnx2guZzFKKOBKsVYf3FbMxvlIYr93697SbdJsLRaSWwyHwL1suz86IYzltEdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UID72hXj; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7ae31caso1010906566b.3;
-        Tue, 19 Aug 2025 11:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755628130; x=1756232930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mi3M08Gy0PoAc8Y6YQtFVDIBLGpr8qeW8qRK7d3r3kA=;
-        b=UID72hXjZWV9G+f2SIiro6s5LVesXwu52njOMUCjP7BZd88pxy+ysxeDCB4qedXdfX
-         ++pDAoaoaJX+Hw6NaGPk4suTHJYI0df42M8twwmTYyxy+rtLbbOtCRdh12iHMWiO4lnX
-         cA7Wq4nMKWR7+6J/pTwCp0wVm+fOEPgYw3eajw4OJGkqup6OkW3Y3IGn+T4/bg12urs+
-         MbNBvjmTJq+Gh8UAK/wy4QuUwqvvM6B4heHeT7HzV1hH6LmLf+GzF4g7Mt70+s2lKxRB
-         kOaME9/dgFBKJqxOUqMcJDVmFgdDPfAvh/zRHZtPGj8PyiL6QXlWGs1ukAFVcx64w82g
-         Pvpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755628130; x=1756232930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mi3M08Gy0PoAc8Y6YQtFVDIBLGpr8qeW8qRK7d3r3kA=;
-        b=FZpknfr5TkLZ4Jxic8k/2X9z8yWZg3lGcquELHsXumNXdooQMB8nd0mw5Z3YtkWHxa
-         L/oHAay3yXZMsCYB9Be28kejtMbxFjYwY/e0Cft8hNRCtepvatxhftZqvYE1F2/459B4
-         5Iw3UYUqrcmmI2zTNyd/kI0cYurz9WABVGabsEzo7aJJA74tcQIXS2Lg1UHizETgFkhR
-         RhX/scbNlx7lRNA2vy9PHH24Qrm8I4yB3mdbAb7coZLlo7q9wLYFqfFLiLuMKetNXlGn
-         BEjxdxEC7SYEBQJgFRcgAnTm6ufUy0UbHUrfD8vogY7zw+BdiTbGr+LqJX6jjW3h5upG
-         c0EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcPxnWtYSBJKPU/Uqr5YwHX2sdpcXXnXNS2eQkJpMZfP36zGG+IGT8aGFZr4kIp1D8atToGtAjTMF2qUuV@vger.kernel.org, AJvYcCUdWJQv83ahmPNsSJeiCJ7+dyuJrisjUBO4AmvMIwYV7HIQNT33sMDttrfggTaco5ECIOiW9FFUJzLp@vger.kernel.org, AJvYcCXCRf5CyWSYzJ8hpCMtEaPUcd04mBRfjm6Rf2Mo+gudpMSLphd4H+h9TVevPHCpjUBNyuAoJfkJXTPr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnsfs5NGN7GGV+XFG3rqJDGgZF4Jm2qsP1SVxuPkxUZAurn6K1
-	2r5Yj51Mz4e7R2KMkY/DalIB/sv8e4Xv9IVJUrdea2EN194Gog/zDr/RPxpcwHZf9aJO4jD1ZGd
-	8VFFCbaLeECTbBMAKVmFMCG3uzxKXl/s=
-X-Gm-Gg: ASbGncttTC0HrJrDO4hFuYJsIYnmsiU6Z437KblC70NEysE08mm/eWmwFHsAT5rvLZc
-	Asfqowv3v7ovMoAMkKSS25vryxq1HI5gmZYSgQ/Z0/iCsd2NQcGM5eqI8T959cqFCZjFevnyYPn
-	J/DDH+ATq20GgQlqOTdm2WInvwqmFPPmHgqjCAm76BqJZlyfhcibHX8RfwC3gKsbDgBYLNGh9a2
-	93ic9NPshJBoC9H+g==
-X-Google-Smtp-Source: AGHT+IEeGP1LFIY3EXRErHwtTbv4M2rk6nG5tRrYGtcmXGZOPqtXI9ACwjR9P80bcK39Tu/AL10NJ9kb41SRcmv8mC0=
-X-Received: by 2002:a17:907:2d10:b0:ae3:6ff6:1aad with SMTP id
- a640c23a62f3a-afddcbb6b4cmr359441366b.14.1755628129253; Tue, 19 Aug 2025
- 11:28:49 -0700 (PDT)
+	s=arc-20240116; t=1755628129; c=relaxed/simple;
+	bh=KMAaZ1OJ+2EhEuS50VubP+cAL7KAyGYL1b/olCcUkAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGGN1NIf774ngarhoMcgobYn08iPSJK4vZjPcqyFu0Di92XSM4z1kPNTsEzYgr5N0ri7fBsvOIgVHF4EY+sZjWed01jg8LAf5PyZGopkH7KGbEsRP/YzVUxC5z1QMnmHR0BJctDfPu6knTL5cl7Yc5H7Y0gkwl9nXQK/op7swhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h6ClDDzJ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755628128; x=1787164128;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KMAaZ1OJ+2EhEuS50VubP+cAL7KAyGYL1b/olCcUkAs=;
+  b=h6ClDDzJtVCdq3Gv+f45fS7pb5I24JnKD6Hws3dKPsKDhuvtLaVf3xpF
+   PIlKeZJcSDuprFSPGfMkLDUsXHNdL1F+4ZsIlT4sBDlRRp5lKcMhgKNRL
+   8ggUcyo5tPamHlLo9sfg/V4O0XkVvUJ4GUP8wRPiq2X/xd1nOFKXOGLn6
+   5sDVm6n62Crb9EGGUTT//ORHiiyDvgmJOvvGQp75bTu4x1YaUERxzVtqj
+   6Ez1dkWLLUFNwxUYklUoxtZInekFS9veBxfEbqK7581KN3QImI6m3ou7y
+   1neunEJ0P9v1zOr/T1oAap5N/qsn2SCeHE0D6mj3kpjffmsp5c015nprV
+   g==;
+X-CSE-ConnectionGUID: CH6vbV0KQiOKn9CjE+oZAQ==
+X-CSE-MsgGUID: sT2uy3F1QmCq9fonJS2izA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="80478078"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="80478078"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 11:28:47 -0700
+X-CSE-ConnectionGUID: 4av2dQ5gTQqukCQs9dCO5Q==
+X-CSE-MsgGUID: LadjlClORqGCxVFweLSHuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="198781354"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO desk) ([10.124.220.165])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 11:28:47 -0700
+Date: Tue, 19 Aug 2025 11:28:40 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Alex Murray <alex.murray@canonical.com>,
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH 1/2] x86/microcode/intel: Refresh the revisions that
+ determine old_microcode
+Message-ID: <20250819182840.ajjl5txvooe47un7@desk>
+References: <20250818190137.3525414-1-sohil.mehta@intel.com>
+ <20250818190137.3525414-2-sohil.mehta@intel.com>
+ <20250819051940.sqdjdvwupvocuf7w@desk>
+ <0bfc7329-e13b-4781-a331-9f8898110b5f@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819150448.1979170-1-salih.erim@amd.com> <BY5PR12MB4212A540F9799D6F326003388B30A@BY5PR12MB4212.namprd12.prod.outlook.com>
- <20250819184442.25f6904e@jic23-huawei>
-In-Reply-To: <20250819184442.25f6904e@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 19 Aug 2025 21:28:12 +0300
-X-Gm-Features: Ac12FXyqadw1CvxKvYip12xTlF6JPr577hQM-tFyzXAossPM7HYZ5j8d-rvSi58
-Message-ID: <CAHp75Vf-daUx1H7+PgeLsvpQsEJTV_9AVdkudCab=KVUw2grVg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update xilinx-ams driver maintainers
-To: Jonathan Cameron <jic23@kernel.org>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: "O'Griofa, Conall" <conall.ogriofa@amd.com>, "Erim, Salih" <Salih.Erim@amd.com>, 
-	"dlechner@baylibre.com" <dlechner@baylibre.com>, "nuno.sa@analog.com" <nuno.sa@analog.com>, 
-	"andy@kernel.org" <andy@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0bfc7329-e13b-4781-a331-9f8898110b5f@citrix.com>
 
-On Tue, Aug 19, 2025 at 8:45=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
-> On Tue, 19 Aug 2025 15:10:15 +0000
-> "O'Griofa, Conall" <conall.ogriofa@amd.com> wrote:
->
-> > Acked-by: O'Griofa, Conall <conall.ogriofa@amd.com>
->
-> I'm not entirely sure why but b4 only picked up:
->
-> [PATCH] MAINTAINERS: Update xilinx-ams driver maintainers
->     + Acked-by: Michal Simek <michal.simek@amd.com>
->     + Acked-by:
+On Tue, Aug 19, 2025 at 12:18:45PM +0100, Andrew Cooper wrote:
+> On 19/08/2025 6:19 am, Pawan Gupta wrote:
+> > On Mon, Aug 18, 2025 at 12:01:36PM -0700, Sohil Mehta wrote:
+> >> Update the minimum expected revisions of Intel microcode based on the
+> >> microcode-20250512 (May 2025) release.
+> >>
+> >> Cc: <stable@kernel.org> # v6.15+
+> >> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> >> ---
+> >>  .../kernel/cpu/microcode/intel-ucode-defs.h   | 86 +++++++++++--------
+> >>  1 file changed, 48 insertions(+), 38 deletions(-)
+> >>
+> >> diff --git a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h b/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
+> >> index cb6e601701ab..2d48e6593540 100644
+> >> --- a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
+> >> +++ b/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
+> >> @@ -67,9 +67,8 @@
+> >>  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0008, .driver_data = 0x1000191 },
+> >>  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0010, .driver_data = 0x2007006 },
+> >>  { .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0020, .driver_data = 0x3000010 },
+> >> -{ .flags = X86_CPU_ID_FLAG_ENTRY_VALID, .vendor = X86_VENDOR_INTEL, .family = 0x6,  .model = 0x55, .steppings = 0x0040, .driver_data = 0x4003605 },
+> > ".model = 0x55, .steppings = 0x0040" is being removed? Total number of
+> > entries in the table are being reduced by ~10.
+> 
+> That's because early in a CPUs lifecycle, microcode for the late
+> pre-production steppings are still included in the public repo, but
+> eventually dropped.
 
-Due to an unquoted comma, I believe.
-+Konstantin
+Sometimes Linux care about the pre-production steppings, other times we
+don't.
 
->     + Link: https://patch.msgid.link/20250819150448.1979170-1-salih.erim@=
-amd.com
->
-> Anyhow I fixed it up to include Connal's ack whilst applying.
+> Alas, these deletions are documented as well as everything else is in
+> the changelog...
 
-
---=20
-With Best Regards,
-Andy Shevchenko
+Should this file reflect those deletions as well? As an example, if an
+ancient part gets removed from the microcode repo, it may still be worth
+for Linux to keep the record of its last microcode version.
 
