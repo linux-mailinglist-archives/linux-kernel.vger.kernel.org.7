@@ -1,139 +1,169 @@
-Return-Path: <linux-kernel+bounces-776047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704E4B2C7E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:03:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B15B2C7DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6437116B934
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7AC72349B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C572868AD;
-	Tue, 19 Aug 2025 14:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574BD2765E8;
+	Tue, 19 Aug 2025 15:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNXMDa6r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B623279DAE;
-	Tue, 19 Aug 2025 14:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S6N69x24"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C296283FE5;
+	Tue, 19 Aug 2025 14:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615474; cv=none; b=beD7jP48FoJBxVO+wrtc2fM/nJMQa5wITOJfQQ8zBPyCNhRXzSPFCW7RDAcrfzXpcyN0kF83PXZEALGlR9vHD7GeRpIfW5vlZKBANSjv9Eq6ZlkAZ05V8RrUHlxaYMUtj3I6gAvUtktuv5r1pHn3NdG1yX1rP5nihtWUN9tVKXY=
+	t=1755615603; cv=none; b=bTJvVKDX8lo6OEoi49tSuQa4Yrj1n0Wx3NFKwlAzuTyi+wngaXl9R02t639AqL2e9w/YV/HsF2b5gVnhVtjzhVM93zt6V4plcS52yOiDJ30WZRUiSmWzVN2Iv/nLo9G4XnT5rearRPRDSP8ZO7QrADXK41G+8AK1XQlzp9LNQPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615474; c=relaxed/simple;
-	bh=ZIhqK2oLghpkzhJHGJUJuX8CRKAF2F//o9f3wstjuUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pfj7Zuj5YmOrL4ZAWETvsPYVKoXUGHUTRk8H4cPEgi5S0h2JCtAafG5r4l8ihmq9mHxzZ9vihLas0d6R24r5Un7qD2eCAAvgVDFx9h8CQpdMSnXgTieLQ1hzAtnrzVtjveaUTaWtYbqkjVi041llMjvtyRYyMttYybOKd5mNUkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNXMDa6r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82535C4CEF1;
-	Tue, 19 Aug 2025 14:57:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755615473;
-	bh=ZIhqK2oLghpkzhJHGJUJuX8CRKAF2F//o9f3wstjuUc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=pNXMDa6r3QTouasN/+4waq+wuc1kimFkgP8G16BAVtugwQAfreIzgVHKjGnJ/Q/O4
-	 i7Dtl/n5j4/Rwwtn/c24y7oVpZg0QFHIMXsG3CxGOSed1QC+2b2Shcb1qUNRnAFqkp
-	 NaEoHPYsPrfRv/7y/PcAhJbv4K6LGMQzeJYWd0ioHixZ0ihiHaP5KItOc87n3nNlIQ
-	 +n3gfkte2s2KPAkPSb5sr83w7Lv7PF8QYe4J9LUbyQ4k1fFMqqNYiBpF8ly1QxV50t
-	 HWCTtK09Li6lovZlKPrnqkp1VjGsFTQt1h+L8tqtEhJMOa8wf3hJuvr2TNqTl1lo0b
-	 L0OjEmsGrIsZg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2C2F6CE0853; Tue, 19 Aug 2025 07:57:53 -0700 (PDT)
-Date: Tue, 19 Aug 2025 07:57:53 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: ast@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, boqun.feng@gmail.com,
-	urezki@gmail.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, daniel@iogearbox.net,
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 1/7] rcu: add rcu_read_lock_dont_migrate()
-Message-ID: <38a57013-6c0d-4a98-a887-54ff2133817d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250819093424.1011645-1-dongml2@chinatelecom.cn>
- <20250819093424.1011645-2-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1755615603; c=relaxed/simple;
+	bh=Yilw6ElsTDFQFS4yTwUVO0/7TFBEDVN4P9FjnT8mZzw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VCxRjps0CPcDWWY7/raDZOhFxWqG8jFI13h9j74NgXYsb/XaYW5R+zXMc9UhaKkeTJi1C8GvkoET3iHmmwkN/8rRvdF7sN99ldWAn+Uhbvg5cW0uG4C4AfViaWlruF+igioINPD2D14jjhE9QS6myFZKT+xHcJzp7uu6sQSe9xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S6N69x24; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=gg
+	anK5XliHOL41hQafEOQM8fWffCn/9NgkkF0q9Hvcc=; b=S6N69x24wdJFm26087
+	aJ5Vb7hF7UILjl9b634kjHPAInPIl09wsmIHnPqCYHrO8bnyPx2M4R6+ZiIXZjSS
+	vF74REBj/weynrm/wvKC3dmvVd45TVUwk0LBeNKi9jt88Z/eCask6wlhpNrfcDC9
+	OiTfwCKcwZKiBO2jLscCnQcao=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD31+UVkaRoey7yCw--.24652S2;
+	Tue, 19 Aug 2025 22:58:30 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	helgaas@kernel.org,
+	jingoohan1@gmail.com,
+	mani@kernel.org
+Cc: robh@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v2] PCI: endpoint: Implement capability search using PCI core APIs
+Date: Tue, 19 Aug 2025 22:58:28 +0800
+Message-Id: <20250819145828.438541-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819093424.1011645-2-dongml2@chinatelecom.cn>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD31+UVkaRoey7yCw--.24652S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr4ftw1fZw48uw45ArW5ZFb_yoW5urWrpa
+	yrXFyakr4UtF1Yq3ZIvan8Ary5XFn8AFy5C39xG3WSvF17ZrWUW348CFW5try7Kr4jgryr
+	Kr42qFZ5Wr13Ga7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piAR67UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgGuo2ikjXoP8wABsw
 
-On Tue, Aug 19, 2025 at 05:34:18PM +0800, Menglong Dong wrote:
-> migrate_disable() is called to disable migration in the kernel, and it is
-> often used together with rcu_read_lock().
-> 
-> However, with PREEMPT_RCU disabled, it's unnecessary, as rcu_read_lock()
-> will always disable preemption, which will also disable migration.
-> 
-> Introduce rcu_read_lock_dont_migrate() and rcu_read_unlock_migrate(),
-> which will do the migration enable and disable only when !PREEMPT_RCU.
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+The PCI core now provides generic PCI_FIND_NEXT_CAP() macros to search
+for PCI capabilities, using config accessors we supply.
 
-This works, but could be made much more compact with no performance
-degradation.  Please see below.
+Use them in the DWC EP driver to implement dw_pcie_ep_find_capability()
+instead of duplicating the algorithm.
 
-						Thanx, Paul
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+Changes for v2:
+https://patchwork.kernel.org/project/linux-pci/patch/20250616152515.966480-1-18255117159@163.com/
+- Rebase to v6.17-rc1.
 
-> ---
-> v2:
-> - introduce rcu_read_lock_dont_migrate() instead of rcu_migrate_disable()
-> ---
->  include/linux/rcupdate.h | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> index 120536f4c6eb..8918b911911f 100644
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -962,6 +962,30 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
->  	preempt_enable_notrace();
->  }
->  
-> +#ifdef CONFIG_PREEMPT_RCU
-> +static __always_inline void rcu_read_lock_dont_migrate(void)
-> +{
+- Based on the following branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=capability-search
+---
+ .../pci/controller/dwc/pcie-designware-ep.c   | 31 ++-----------------
+ drivers/pci/controller/dwc/pcie-designware.h  | 21 +++++++++++++
+ 2 files changed, 23 insertions(+), 29 deletions(-)
 
-Why not use IS_ENABLED(CONFIG_PREEMPT_RCU) to collapse the two sets of
-definitions together?
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 0ae54a94809b..7f2112c2fb21 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -69,37 +69,10 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+ }
+ EXPORT_SYMBOL_GPL(dw_pcie_ep_reset_bar);
+ 
+-static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, u8 func_no,
+-				     u8 cap_ptr, u8 cap)
+-{
+-	u8 cap_id, next_cap_ptr;
+-	u16 reg;
+-
+-	if (!cap_ptr)
+-		return 0;
+-
+-	reg = dw_pcie_ep_readw_dbi(ep, func_no, cap_ptr);
+-	cap_id = (reg & 0x00ff);
+-
+-	if (cap_id > PCI_CAP_ID_MAX)
+-		return 0;
+-
+-	if (cap_id == cap)
+-		return cap_ptr;
+-
+-	next_cap_ptr = (reg & 0xff00) >> 8;
+-	return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
+-}
+-
+ static u8 dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, u8 func_no, u8 cap)
+ {
+-	u8 next_cap_ptr;
+-	u16 reg;
+-
+-	reg = dw_pcie_ep_readw_dbi(ep, func_no, PCI_CAPABILITY_LIST);
+-	next_cap_ptr = (reg & 0x00ff);
+-
+-	return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
++	return PCI_FIND_NEXT_CAP(dw_pcie_ep_read_cfg, PCI_CAPABILITY_LIST,
++				 cap, ep, func_no);
+ }
+ 
+ /**
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index b5e7e18138a6..a44f2113925d 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -695,6 +695,27 @@ static inline u8 dw_pcie_ep_readb_dbi(struct dw_pcie_ep *ep, u8 func_no,
+ 	return dw_pcie_ep_read_dbi(ep, func_no, reg, 0x1);
+ }
+ 
++static inline int dw_pcie_ep_read_cfg_byte(struct dw_pcie_ep *ep, u8 func_no,
++					   int where, u8 *val)
++{
++	*val = dw_pcie_ep_readb_dbi(ep, func_no, where);
++	return PCIBIOS_SUCCESSFUL;
++}
++
++static inline int dw_pcie_ep_read_cfg_word(struct dw_pcie_ep *ep, u8 func_no,
++					   int where, u16 *val)
++{
++	*val = dw_pcie_ep_readw_dbi(ep, func_no, where);
++	return PCIBIOS_SUCCESSFUL;
++}
++
++static inline int dw_pcie_ep_read_cfg_dword(struct dw_pcie_ep *ep, u8 func_no,
++					    int where, u32 *val)
++{
++	*val = dw_pcie_ep_readl_dbi(ep, func_no, where);
++	return PCIBIOS_SUCCESSFUL;
++}
++
+ static inline unsigned int dw_pcie_ep_get_dbi2_offset(struct dw_pcie_ep *ep,
+ 						      u8 func_no)
+ {
 
-> +	migrate_disable();
-> +	rcu_read_lock();
-> +}
-> +
-> +static inline void rcu_read_unlock_migrate(void)
-> +{
-> +	rcu_read_unlock();
-> +	migrate_enable();
-> +}
-> +#else
-> +static __always_inline void rcu_read_lock_dont_migrate(void)
-> +{
-> +	rcu_read_lock();
-> +}
-> +
-> +static inline void rcu_read_unlock_migrate(void)
-> +{
-> +	rcu_read_unlock();
-> +}
-> +#endif
-> +
->  /**
->   * RCU_INIT_POINTER() - initialize an RCU protected pointer
->   * @p: The pointer to be initialized.
-> -- 
-> 2.50.1
-> 
+base-commit: 8742b2d8935f476449ef37e263bc4da3295c7b58
+-- 
+2.25.1
+
 
