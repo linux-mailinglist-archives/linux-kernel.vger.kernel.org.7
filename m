@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-775731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877AFB2C421
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193C6B2C430
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2C5189F8F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:49:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA0D3BBCD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5C83314D2;
-	Tue, 19 Aug 2025 12:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909E23043C7;
+	Tue, 19 Aug 2025 12:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EP98dYxp"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhclXTXB"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E3A2773FA
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5848F218EB1;
+	Tue, 19 Aug 2025 12:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607720; cv=none; b=Mjo/zqKDrTXHFlSTas3V/6GxEQ+ZbXMWerxbUwacOmwuBGMeBvX1MJLYnJ8c5sHXC19rSbYltzmuvdTtSWM/Ut8Kq0AF3yaSPvD3R+j7BC4EDRJROdqVyRobXzhKRF6SQfAzPflVWbQLmcR5qteBWaJOCJDM0QQZoIT6e7taG7M=
+	t=1755607770; cv=none; b=mEsPur+CgIbvXKqvz55sfyikzwfgcm+Dtvobd8tnsaDitoLzHxwy9FQAYdt/MEGkDryTh4WaV1lm+kLnmVzkRyvM2TfRUYDS9hBsoOAuKywYhAMVJzsUdh+2c3p2QR5h0ChbSMGrXBnUHf5peEFWbTStEKFxWwyTRqAEMS6Tokw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607720; c=relaxed/simple;
-	bh=+6Vhrw93VOWzQ8j3tGD9sppz9syXEpi1MpSMIFUFmk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QEKrwZYhRswadObkM4ErwrwP2bnnI05VbC1V7liSGTaZvZ+9xmTrc6FSAkLfOyPtH/K3w6GDooq4+rYWVLO/PFeoBrtjh+rtv8qGJLji12/qFgvg+odz3R/JNR40HyqZ6EBtwK/Md/D/yWg2TOMSJ2MCXD9xZK82vkTTvd3sc8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EP98dYxp; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55ce521e3f4so5655687e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:48:38 -0700 (PDT)
+	s=arc-20240116; t=1755607770; c=relaxed/simple;
+	bh=qhVpFzoBqfd+RgjOal3oIe+9WXyASUdDms79CPbr8Rg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZp1roGQZqU0hLCmSpfibRaVslPg9vXZskPrLsnfCJuBQJgjN2P4URvko6XdLutLGMxlQKZLySfe3tbqHc1eHLU3LJ4rBSigepoJKSc+f0YxI+Ve2i4D5uUIkYhR9bLOH6XHBp11W8rnpLTEccpSO2v3gTFEwO7Wx43xJKun8Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhclXTXB; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce5284d63so4706901e87.0;
+        Tue, 19 Aug 2025 05:49:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755607717; x=1756212517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+6Vhrw93VOWzQ8j3tGD9sppz9syXEpi1MpSMIFUFmk0=;
-        b=EP98dYxpzmtibQs+zlFeXRRt9o9ZWSVuZOJOAODtuPZERH7IuxPw8roLklRHqr5zCj
-         FioHFrhu/t3/A8ARxXBYmoR3qY+RBcd3l+C/w//iIxTcmqGgoeT8ltMllTACcyhM9USX
-         wuZP0DFYz6iNz67kCXEd9d0MAqZ6BOBHTQXUqa38v4uzc6/+NApXBt9hh/forDaYfkmg
-         m8Sfll6sSzC73ynooVGZaV2mGlzfMmllrjW9W1oHy4Bjcw4AAQ1ZeFEyxwyIlsXu4O/B
-         ltqzGRFM4jNTzUXqy0GV0YkHFm2KYNHw+gxE5eMyt5/2wHm0AW5RZIWd4HUjXZR3z1Jw
-         GfJg==
+        d=gmail.com; s=20230601; t=1755607766; x=1756212566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XyjnKLZ5WWpemxO8ebds83k13DRtYec6BqZXeYTy3EQ=;
+        b=RhclXTXBIvEfZSBIHFbN6UOjexRV1OBEyd2eceR/wRAqWngVtgMVH6xs4PnGB94eQH
+         jInsIyvzcf677l6ZAAKyM/XX7qFQvf3nPxWQYLUhcWxN7niNhCI9J0O7lP6PLedB/tGa
+         g2rIUah7OJQLUzIgbbIhWQOQDH4UrNvkD54DqKQbEyLtH2uC4TUSnmDOUSrSdI3I6noi
+         Cyr7WQoU3hb/JIyEb1UA85X7yE2Clk00kTCZ1aLEB41RoYTKzZk+5h9X9TYdPdrrU9u6
+         LeBmHFhvLdrwhv0TE7V/XngeddTG166ybSeOj8axLEeXVaiHxyPDQsnrFAWsu4DRnhgr
+         Tgcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755607717; x=1756212517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+6Vhrw93VOWzQ8j3tGD9sppz9syXEpi1MpSMIFUFmk0=;
-        b=HCHlGNF8soPvxIS1MnoHZeSEDcPD4XJIdUwgSsBxcJozzlSNB0zset+3mYpKvoR0me
-         Jc/bOFGkwdo5+iE25fsnoYt84TlI/RaF+vdzYsh0L0pc3O0QmR6q5QMCs0SWe2zDwrDE
-         w+iFxzz9aACYP8iRNuz9CqMx6tB4m8fzWKAQTao8v6UWU0yMh9Ma0y7hJuQJqIFr4E/B
-         0JPlJ+bsbtSd0ex4LZY1BrIzs89JX6/DaxTLqWpLm045xiBRXOjRGNXilnPRQD43svgL
-         x6lVG+OoapA8aP/FCIojcGRUXFfjGrU8gqkNlwYAFsZ0BKkOWbVvFJvzS6WoHuw2Uqwt
-         3M9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPT3dm2WmXxzmlul6auRkJh+OF1qPJWXpEaPBXnj47bIJjlgabgSZTlJkMFlP1HLAuogQVHRK8YrphjzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPXa4s5lGVld+MKLFDy7UyhzKoVnbNPhIqYJ40HBmkUlN768y0
-	GcNMj2MTj2K91TO2HO5xoJlXhEz/tfmx/mviWvEXbAMq/6NFkr+gf3GGkmZ35WmmIGSgsK0O/Yl
-	YPe89zPhkbwj2Xwo3szSGudxrOhSZe9SM7C02THEE9w==
-X-Gm-Gg: ASbGncszaQ26wxTQvLx2U9yUWGPN9YBIHX29s+BoDb8PQXGuuzSTK6mwaSuKx7pkIA4
-	O8qImebNrMxiJq7FunA9DGPer09ic7cJjtTPUCI1A09EtKiLBaGQOj5qQeJvgo9GK5MV+lYlmZZ
-	ACtggGbXZSlEVBRxRvSiCW89oOw7CX6AXqvUhOQtDx15RifTJ7CbBK4HWSwZ8YoRm0Twy6O4NY9
-	VBOx7iGB5Ff
-X-Google-Smtp-Source: AGHT+IEO5Q5KeoskGlIms3cL1kgpuG3Tin4R0ZiCNdWP8xfdXObPNVgZbMj7ADZ7hK5rm1fZ0JhXKv53ilShdHoEsxc=
-X-Received: by 2002:a05:6512:108e:b0:55c:c98b:39c7 with SMTP id
- 2adb3069b0e04-55e007fa342mr682379e87.55.1755607716665; Tue, 19 Aug 2025
- 05:48:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755607766; x=1756212566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XyjnKLZ5WWpemxO8ebds83k13DRtYec6BqZXeYTy3EQ=;
+        b=Wlc/O/Wt7bxbFhgR0ZHvPYS9BOwILm6rWHtK8Y+H5IzmTVfyXLt7EvXN9TRCmoc+YL
+         n/ELhAekPXzaK9wIM6gIUE2sQkpVHGbpQ5iZ9aUIF+0OZ9Mlyd6AdqRYDX4CUN0KL4Uj
+         9W05zuu9U6D5XjwUZPYZyTUJ44DoQAKgO91YxqWJlPfYPAPu9ZdEVB9f4bTlECFquB0d
+         VS9aScZbmCFW4Is3cdIc/6T2DqvJTf3iCMXJhtmizqbYlUNTu2LYjelRWEoA1iN6x7RM
+         MWygu7eJSSxnIQI0kBwymBAPFH9LHzHgNABZXhlf3jfBJV5Fcno6g0RWfVqmcMLIXIKW
+         wowg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi5piZ6LH7C9IQb2VGavMhEFrUv4T4s7apMYEjwMUiIE725zEOPKYJBdIkVsaIdBzGARxj4j75TkmaoX77+TS5@vger.kernel.org, AJvYcCXfMEgntJdRxLFkm0d9VMpqIW3weOnMQ0VNapfNj3wy3BHj0mDKKFokTE2evqpFO4bff6TnDEoAP9/BeuLN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiEeBchcR1VK3NsP83nOnO3YeOI+j1R7cWmECtYyjAata+6bgn
+	ZFiFCoAHP4G1QGPxaGpgZkuEurdDH7IRxJwgyX2gi1HVHFgco9TKE9q0
+X-Gm-Gg: ASbGncvrurls+4JumlTI+Xj5Eqpl0Xc6hkEbNcBT071HCbhK+/vRnJxt5PuPz3JJcHZ
+	s5oJzBgmxO1oF8uf0qpBeVkgVXNZq4RtoAJSja2rc6atSQTx88SABUMW1Dq39Jy58pbew5eG/vP
+	kTitOs1Ff1ej+R6W6tasNxEzI1k8Q2nwhwpISWt1h2HdyEYsEv59gnfc7FkwXuvPgtE22otZ5Nt
+	MIEaaUNM6SpsY6gxx5MKSkFvmVgsNKbmpu+/PaHq7cGaCl6axbWxVP7hlyPxAIuEYb5WF95lMwQ
+	UH9mV4g91/3HXX8KkqCau0CLhPacrxGBBAxA9j+SNAJ37dKxvzqfvIbyGVRYKIO2nxy2GrAvnL5
+	ImAjKGAzYqc4STpY75OcSbpDOd03MtBqzPbkJZpGr1bmKebe0DbdjGhcS42ktEVNZ9n67BTNUIw
+	BUD8/kvjYPNUzjj6yIfsEVzHJGPFwafnubi6Iv/q+AoaUOO4aVbqZY4A==
+X-Google-Smtp-Source: AGHT+IF/ijueuST2FzGRO5KJQvLOr6+fvvF8eW23F6aUlibk+kIAn4JNAVQY5TPYyrPNiWB6hR5YOg==
+X-Received: by 2002:ac2:4f07:0:b0:55b:8285:3f31 with SMTP id 2adb3069b0e04-55e00e87612mr708782e87.24.1755607766277;
+        Tue, 19 Aug 2025 05:49:26 -0700 (PDT)
+Received: from ip-172-31-45-110.eu-north-1.compute.internal (ec2-16-170-211-41.eu-north-1.compute.amazonaws.com. [16.170.211.41])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55df8db7463sm742057e87.166.2025.08.19.05.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 05:49:25 -0700 (PDT)
+From: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+To: shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+Subject: [PATCH] proc: /proc filesystem check error message
+Date: Tue, 19 Aug 2025 12:49:23 +0000
+Message-ID: <20250819124923.9094-1-mallikarjunst09@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815111733.79283-1-brgl@bgdev.pl>
-In-Reply-To: <20250815111733.79283-1-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 14:48:25 +0200
-X-Gm-Features: Ac12FXwdf0zGZXcVDNksVHGwqoT6ebJ9_yJJqxs4KUELxDvFXNTsRgKWa3ehq1A
-Message-ID: <CACRpkdbzu9fvfvCV2BqhN7goUm6KLHbP1NCjQiFj8sqqNxxVxA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sim: don't use GPIO base in debugfs output
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 15, 2025 at 1:17=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+Improve /proc filesystem check error message when filesystem type
+is unexpected
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> We're in the process of removing unneeded references to the global GPIO
-> base number treewide. Use the HW offset instead of the base number.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
+---
+ tools/testing/selftests/proc/read.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/tools/testing/selftests/proc/read.c b/tools/testing/selftests/proc/read.c
+index 35ee78dff144..c0f44ee71e79 100644
+--- a/tools/testing/selftests/proc/read.c
++++ b/tools/testing/selftests/proc/read.c
+@@ -138,7 +138,7 @@ int main(void)
+ 		return 1;
+ 	}
+ 	if (sfs.f_type != 0x9fa0) {
+-		fprintf(stderr, "error: unexpected f_type %lx\n", (long)sfs.f_type);
++		fprintf(stderr, "error: /proc is not procfs (f_type = %lx)\n", (long)sfs.f_type);
+ 		return 2;
+ 	}
+ 
+-- 
+2.43.0
 
-Yours,
-Linus Walleij
 
