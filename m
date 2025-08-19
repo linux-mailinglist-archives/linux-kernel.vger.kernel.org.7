@@ -1,108 +1,292 @@
-Return-Path: <linux-kernel+bounces-774747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC018B2B6BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:12:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA80DB2B6B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52D3C1B23F57
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498273ACB7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC80287514;
-	Tue, 19 Aug 2025 02:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19466287266;
+	Tue, 19 Aug 2025 02:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IxW9xmaS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frs/NxNN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456072F852;
-	Tue, 19 Aug 2025 02:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C252F852;
+	Tue, 19 Aug 2025 02:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755569530; cv=none; b=WLG/mpeBKsDpfG6N0xDqI6a4H/DisYyNEY4RjBbSwbZxxRGdgXHQqKOB8EVJsIoxHKSr2uR3Ag5Xg9cwvI+zQTjxgGtHT9mf4eH4/A1Kf4NKbX9KUPnVgGaNlause2XkBmpmULkfqrJX9r+0OkzitK4Mv8F0U9CWGhYqeTiNOIc=
+	t=1755569476; cv=none; b=daeILF3s7e+FYB+YCK8iOkkGj0KDnX6Kaa36d79p+8RTiqmrev6fl5dqN+B37p7BesOAwrPD2umy4DUxnfX4syqqGsFUPC4JliDCpn6K3VOw3HvdY1s7o/k2LO22q9tXCrwBm75TR/Q3VfPYX+gNxBKu02HHDd0zUcvDaNFlUk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755569530; c=relaxed/simple;
-	bh=CtWl+kAaj28FCmgEJf0e3j5MDGUJeH2tJY2k2qK3kWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y1dMgzsdrb+gJT5nWFBGl5q9eqDmkkdogp/8S3Z8lMAElXK2kv6X3mhccqy9lyIA2Y9WaVVsE85/SSYDG7/2HwzO8KW8Gujt+ZV1LXeq9psJuQr+jVc0+oMb9dfFIWUo/5AxtzRJ6DYlPJOW7woV6A2yXoQ4AMMIVBHQEuuDWT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IxW9xmaS; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755569530; x=1787105530;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CtWl+kAaj28FCmgEJf0e3j5MDGUJeH2tJY2k2qK3kWg=;
-  b=IxW9xmaSePXg34ehqcLg4bmj4xvZmW2TAbbaxfsoqqocHJdRWc1vJzaP
-   ZendHHAjdY2BLv6H7ivWHDSwuXFTlG89D9371syIPY89795VgO8sO+v03
-   zcfSZxGrrWMs4bHgKzFEC4dHyCPomfLtyFIP/rZL54Qh+yACq2bMdPy0V
-   jIBMeu5C2VtSmIeZsOH30AAJDtGUGIGAyGlfL6o280Rq8YZHCmR6xARq7
-   uW2aYMnVBpKkFa5EE83eYs3hyEm9i1UZm8CeCeP6UZGP+XavaD7PRbxk9
-   89Ac5kz3h5rDdXhBRIS4Ym2yHCR57QNe3p4dmqWLzcvCpvtyXUbTeRk4a
-   Q==;
-X-CSE-ConnectionGUID: Ax1yNJlISfONsBEtzCRTOA==
-X-CSE-MsgGUID: 1nAANhPuR5ePb7LO7kqmJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="61637217"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="61637217"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 19:12:09 -0700
-X-CSE-ConnectionGUID: BCj/97QQTnKrxK+MekdAiQ==
-X-CSE-MsgGUID: TE75bEPQTWKJ1Q+sONEmGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="171944207"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 19:12:03 -0700
-Message-ID: <ba8c8e60-5907-49d2-88ff-b9c6ab994d2f@linux.intel.com>
-Date: Tue, 19 Aug 2025 10:09:49 +0800
+	s=arc-20240116; t=1755569476; c=relaxed/simple;
+	bh=lt435QE/FFmHEwI82/HenA85O+4hQRrgiYwR7cJaXjc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Eu83lEh49vDLoy1sYMwg2WyTrwZeQqoYa1rX25vkbydcUw0pWtLGs/tiTgTXEJ+XyIuthdiaj+10VvgdWf2saRNPi0mUZij57WAx1sVFl3Qn1elX3UTu6dBl8LP+AqRkT5po45Z8ntUQxWfY4SZxW3KRGlMKpgtq7ScGQrM8/pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frs/NxNN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 624A7C4CEEB;
+	Tue, 19 Aug 2025 02:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755569474;
+	bh=lt435QE/FFmHEwI82/HenA85O+4hQRrgiYwR7cJaXjc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=frs/NxNNh+9SqAyvlUDxM95mjp6PLBbjYjZbwvNJJZ1VJVDNhUts3ySWN+y2bMGQn
+	 dk7KAIPfYbnV1qpUghAKm1kSbFm2TOXzIDOVLsarI4yBxaDXVNIMCHLVaUmkSwosOX
+	 DgQsmFUBQJ/Eln3rpzEwSZ8dMcDcHjKOFOKjeBcVexqjANYUooFtj8Vg7ddX329xYX
+	 +tZCiiubrToQlMVW0vvIA3zClAyiD/Eb13mS14wxTY0yuF/a8pEbpCiHZ/kOAyD5P5
+	 5oMjCLEHdCOuq+APJLIMwI/EFBta/EKGz/iGVo2VnYG5OyDxV7irh+wANx7JrvAPqT
+	 ohVFnFYhyYzOQ==
+Date: Tue, 19 Aug 2025 11:11:11 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, mhiramat@kernel.org,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com, hca@linux.ibm.com,
+ revest@chromium.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 1/4] fprobe: use rhltable for
+ fprobe_ip_table
+Message-Id: <20250819111111.40f443fd7faae8e92f93beaf@kernel.org>
+In-Reply-To: <aKMuENl9omxi6OwJ@krava>
+References: <20250817024607.296117-1-dongml2@chinatelecom.cn>
+	<20250817024607.296117-2-dongml2@chinatelecom.cn>
+	<aKMuENl9omxi6OwJ@krava>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
- helper
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, robin.murphy@arm.com,
- joro@8bytes.org, bhelgaas@google.com, will@kernel.org,
- robin.clark@oss.qualcomm.com, yong.wu@mediatek.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, thierry.reding@gmail.com,
- vdumpa@nvidia.com, jonathanh@nvidia.com, rafael@kernel.org, lenb@kernel.org,
- kevin.tian@intel.com, yi.l.liu@intel.com,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
- patches@lists.linux.dev, pjaroszynski@nvidia.com, vsethi@nvidia.com,
- helgaas@kernel.org, etzhao1900@gmail.com
-References: <cover.1754952762.git.nicolinc@nvidia.com>
- <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
- <aeb04f91-ffce-4092-8dbc-17d116cd7c7e@linux.intel.com>
- <20250818144051.GP802098@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250818144051.GP802098@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/18/25 22:40, Jason Gunthorpe wrote:
-> On Fri, Aug 15, 2025 at 01:28:02PM +0800, Baolu Lu wrote:
+On Mon, 18 Aug 2025 15:43:44 +0200
+Jiri Olsa <olsajiri@gmail.com> wrote:
+
+> On Sun, Aug 17, 2025 at 10:46:02AM +0800, Menglong Dong wrote:
 > 
->> Given that iommu_group->mutex is transparent to the iommu driver, how
->> about
-> It is not actually transparent, alot of drivers are implicitly
-> assuming that the core single threads their struct device for alot of
-> the ops callbacks and we exposed the lockdep test to the drivers to
-> help the document this.
+> SNIP
+> 
+> > +/* Node insertion and deletion requires the fprobe_mutex */
+> > +static int insert_fprobe_node(struct fprobe_hlist_node *node)
+> > +{
+> >  	lockdep_assert_held(&fprobe_mutex);
+> >  
+> > -	next = find_first_fprobe_node(ip);
+> > -	if (next) {
+> > -		hlist_add_before_rcu(&node->hlist, &next->hlist);
+> > -		return;
+> > -	}
+> > -	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
+> > -	hlist_add_head_rcu(&node->hlist, head);
+> > +	return rhltable_insert(&fprobe_ip_table, &node->hlist, fprobe_rht_params);
+> >  }
+> >  
+> >  /* Return true if there are synonims */
+> > @@ -92,9 +92,11 @@ static bool delete_fprobe_node(struct fprobe_hlist_node *node)
+> >  	/* Avoid double deleting */
+> >  	if (READ_ONCE(node->fp) != NULL) {
+> >  		WRITE_ONCE(node->fp, NULL);
+> > -		hlist_del_rcu(&node->hlist);
+> > +		rhltable_remove(&fprobe_ip_table, &node->hlist,
+> > +				fprobe_rht_params);
+> >  	}
+> > -	return !!find_first_fprobe_node(node->addr);
+> > +	return !!rhltable_lookup(&fprobe_ip_table, &node->addr,
+> > +				 fprobe_rht_params);
+> 
+> I think rhltable_lookup needs rcu lock
 
-Fair enough. It's the role of iommu_group_mutex_assert().
+Good catch! Hmm, previously we guaranteed that the find_first_fprobe_node()
+must be called under rcu read locked or fprobe_mutex locked, so that the
+node list should not be changed. But according to the comment of
+rhltable_lookup(), we need to lock the rcu_read_lock() around that.
 
-Thanks,
-baolu
+> 
+> >  }
+> >  
+> >  /* Check existence of the fprobe */
+> > @@ -249,9 +251,10 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
+> >  static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> >  			struct ftrace_regs *fregs)
+> >  {
+> > -	struct fprobe_hlist_node *node, *first;
+> >  	unsigned long *fgraph_data = NULL;
+> >  	unsigned long func = trace->func;
+> > +	struct fprobe_hlist_node *node;
+> > +	struct rhlist_head *head, *pos;
+> >  	unsigned long ret_ip;
+> >  	int reserved_words;
+> >  	struct fprobe *fp;
+> > @@ -260,14 +263,11 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> >  	if (WARN_ON_ONCE(!fregs))
+> >  		return 0;
+> >  
+> > -	first = node = find_first_fprobe_node(func);
+> > -	if (unlikely(!first))
+> > -		return 0;
+> > -
+> > +	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+> 
+> ditto
+
+So this was pointed in the previous thread. In fprobe_entry(), the
+preempt is disabled already. Thus we don't need locking rcu.
+
+Thank you,
+
+> 
+> jirka
+> 
+> 
+> >  	reserved_words = 0;
+> > -	hlist_for_each_entry_from_rcu(node, hlist) {
+> > +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> >  		if (node->addr != func)
+> > -			break;
+> > +			continue;
+> >  		fp = READ_ONCE(node->fp);
+> >  		if (!fp || !fp->exit_handler)
+> >  			continue;
+> > @@ -278,13 +278,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> >  		reserved_words +=
+> >  			FPROBE_HEADER_SIZE_IN_LONG + SIZE_IN_LONG(fp->entry_data_size);
+> >  	}
+> > -	node = first;
+> >  	if (reserved_words) {
+> >  		fgraph_data = fgraph_reserve_data(gops->idx, reserved_words * sizeof(long));
+> >  		if (unlikely(!fgraph_data)) {
+> > -			hlist_for_each_entry_from_rcu(node, hlist) {
+> > +			rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> >  				if (node->addr != func)
+> > -					break;
+> > +					continue;
+> >  				fp = READ_ONCE(node->fp);
+> >  				if (fp && !fprobe_disabled(fp))
+> >  					fp->nmissed++;
+> > @@ -299,12 +298,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> >  	 */
+> >  	ret_ip = ftrace_regs_get_return_address(fregs);
+> >  	used = 0;
+> > -	hlist_for_each_entry_from_rcu(node, hlist) {
+> > +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> >  		int data_size;
+> >  		void *data;
+> >  
+> >  		if (node->addr != func)
+> > -			break;
+> > +			continue;
+> >  		fp = READ_ONCE(node->fp);
+> >  		if (!fp || fprobe_disabled(fp))
+> >  			continue;
+> > @@ -448,25 +447,21 @@ static int fprobe_addr_list_add(struct fprobe_addr_list *alist, unsigned long ad
+> >  	return 0;
+> >  }
+> >  
+> > -static void fprobe_remove_node_in_module(struct module *mod, struct hlist_head *head,
+> > -					struct fprobe_addr_list *alist)
+> > +static void fprobe_remove_node_in_module(struct module *mod, struct fprobe_hlist_node *node,
+> > +					 struct fprobe_addr_list *alist)
+> >  {
+> > -	struct fprobe_hlist_node *node;
+> >  	int ret = 0;
+> >  
+> > -	hlist_for_each_entry_rcu(node, head, hlist,
+> > -				 lockdep_is_held(&fprobe_mutex)) {
+> > -		if (!within_module(node->addr, mod))
+> > -			continue;
+> > -		if (delete_fprobe_node(node))
+> > -			continue;
+> > -		/*
+> > -		 * If failed to update alist, just continue to update hlist.
+> > -		 * Therefore, at list user handler will not hit anymore.
+> > -		 */
+> > -		if (!ret)
+> > -			ret = fprobe_addr_list_add(alist, node->addr);
+> > -	}
+> > +	if (!within_module(node->addr, mod))
+> > +		return;
+> > +	if (delete_fprobe_node(node))
+> > +		return;
+> > +	/*
+> > +	 * If failed to update alist, just continue to update hlist.
+> > +	 * Therefore, at list user handler will not hit anymore.
+> > +	 */
+> > +	if (!ret)
+> > +		ret = fprobe_addr_list_add(alist, node->addr);
+> >  }
+> >  
+> >  /* Handle module unloading to manage fprobe_ip_table. */
+> > @@ -474,8 +469,9 @@ static int fprobe_module_callback(struct notifier_block *nb,
+> >  				  unsigned long val, void *data)
+> >  {
+> >  	struct fprobe_addr_list alist = {.size = FPROBE_IPS_BATCH_INIT};
+> > +	struct fprobe_hlist_node *node;
+> > +	struct rhashtable_iter iter;
+> >  	struct module *mod = data;
+> > -	int i;
+> >  
+> >  	if (val != MODULE_STATE_GOING)
+> >  		return NOTIFY_DONE;
+> > @@ -486,8 +482,16 @@ static int fprobe_module_callback(struct notifier_block *nb,
+> >  		return NOTIFY_DONE;
+> >  
+> >  	mutex_lock(&fprobe_mutex);
+> > -	for (i = 0; i < FPROBE_IP_TABLE_SIZE; i++)
+> > -		fprobe_remove_node_in_module(mod, &fprobe_ip_table[i], &alist);
+> > +	rhltable_walk_enter(&fprobe_ip_table, &iter);
+> > +	do {
+> > +		rhashtable_walk_start(&iter);
+> > +
+> > +		while ((node = rhashtable_walk_next(&iter)) && !IS_ERR(node))
+> > +			fprobe_remove_node_in_module(mod, node, &alist);
+> > +
+> > +		rhashtable_walk_stop(&iter);
+> > +	} while (node == ERR_PTR(-EAGAIN));
+> > +	rhashtable_walk_exit(&iter);
+> >  
+> >  	if (alist.index < alist.size && alist.index > 0)
+> >  		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
+> > @@ -727,8 +731,16 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
+> >  	ret = fprobe_graph_add_ips(addrs, num);
+> >  	if (!ret) {
+> >  		add_fprobe_hash(fp);
+> > -		for (i = 0; i < hlist_array->size; i++)
+> > -			insert_fprobe_node(&hlist_array->array[i]);
+> > +		for (i = 0; i < hlist_array->size; i++) {
+> > +			ret = insert_fprobe_node(&hlist_array->array[i]);
+> > +			if (ret)
+> > +				break;
+> > +		}
+> > +		/* fallback on insert error */
+> > +		if (ret) {
+> > +			for (i--; i >= 0; i--)
+> > +				delete_fprobe_node(&hlist_array->array[i]);
+> > +		}
+> >  	}
+> >  	mutex_unlock(&fprobe_mutex);
+> >  
+> > @@ -824,3 +836,10 @@ int unregister_fprobe(struct fprobe *fp)
+> >  	return ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(unregister_fprobe);
+> > +
+> > +static int __init fprobe_initcall(void)
+> > +{
+> > +	rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
+> > +	return 0;
+> > +}
+> > +late_initcall(fprobe_initcall);
+> > -- 
+> > 2.50.1
+> > 
+> > 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
