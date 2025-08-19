@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-775510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CBFB2C008
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:16:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42684B2BFFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89AF1638B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:14:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D8977AB3F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1744326D52;
-	Tue, 19 Aug 2025 11:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E59326D56;
+	Tue, 19 Aug 2025 11:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tLgQYOyH"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="xRgxQKl9"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B9E259C93
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5D7259C93;
+	Tue, 19 Aug 2025 11:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755602086; cv=none; b=H4NkgfuqLUtSwgEHrjtkf19ydcyzjBM+OxZgUQpXe+tODC44iFePL7grZ9DeghX6JBIADCat7TeX7r8nusGWeHq14MWctqtPNajD5ODdD8qloubEuIUh9kyzezYueWgP+wtjb1Uj4CqUODF3vPVXqCiT7T2xBDNc5z7r8X2P0zw=
+	t=1755602100; cv=none; b=mWuFClDiXFOM0+v9G2ZXSYLftMGbGlmUNBuoQiLqxUBe29wURIh3g1Fqlq4BpSC8mkXfuchZg4NsZ0pP+36RC8+F07UFtW1ZwOgnFNbZNFaeWeb/wH3eP5zU5UtPQG5ZCJ3MH4BS4HjSV2k9NCaJekU1Zl7GIIZnV/nHrr6NE8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755602086; c=relaxed/simple;
-	bh=XiCiLZMTMIGVYEEPZg0XLJLdgFbKzAwyMzXWKKNIwBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WuXvhtwHbgYYBLqGYHnSA3qk/nOUpThLh0vH/+H3tOEj889PTXcRCrO4Fx5dCvBWj+XNr/XhEB01Y0e9YOfPrakfZE3ljm4/WJmT0EBf35t29CdmhWBrIJhRq3MIbFqDZIUwjfe9S/Idp0Fe10cA4eKTHd4mwmoTMSPQuUT4lug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tLgQYOyH; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce510f4f6so5479522e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:14:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755602083; x=1756206883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XiCiLZMTMIGVYEEPZg0XLJLdgFbKzAwyMzXWKKNIwBw=;
-        b=tLgQYOyHxVg9gCeL5SAJBVCYbsiQosbF5VhZ74DaomUHactUDQ1RpHDXpQ3xFS0MN2
-         coRAW1ZGbRZd4k0sIBjqd3WZIhQXD2NXv7U3Ai+V8Fu4Qf3atrq1RVoA0ynReq9b+gcH
-         HeLQX3VqUiIfjegDnzjBu2J/rzjJ1g0ZvH8FZOIKDeqz3ntwL9zxxiLYzRuZSsaDcQx8
-         meJ7wryAFew9Qdut4FRNo/MtmpZC5O5cAI7uuelxD4wXKMD89OKC0+IMiEEP9Brxu8XF
-         JUdPdUGFR9R7MvqmLH/+6KmUdx17JqmUXD2urrt5dN+WRA4+CCSzGhLDlnQt31YTyH4q
-         I9Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755602083; x=1756206883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XiCiLZMTMIGVYEEPZg0XLJLdgFbKzAwyMzXWKKNIwBw=;
-        b=jl9ODiqAW6yfH1JNvPMrLQ/APyg1ac7V734H9QyrwFsFX5x2wOYDAUZjJBite0YaNa
-         g7EDxg7pPuJnJEBsR8rv2rQxK7p/XVUqe3Au85zswK8Qjq0Q8ddqI/etJR/U215w4mz5
-         LZ5qBQngQ6US1mqYBOn0ekKySIgREv40P2/tfFqU1uRSG4Q8uj+M545RHdwSkMr27TU2
-         MErQnFqSsgmD30f3q9B5k+UN9wa4wogr27U/KZ/sTT4ADF1nOOdJlT9BoP/q3795ds6A
-         bphU1QyovwVzGHlFHEWyWXrUw7o1GKvxBuaFdkRlAwSjB2sbL+HZS8uGEK3k2qNzYArg
-         rLuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXytahoPY/mZFdGlb5/SaxQuHiFHWFB0rXu0KOpDNkYb5NIUt6A7X7s/OfZC/YMLqVxTVF91Ti3TTZh6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYDRNktpyHb+Dh0WsjMml9o1fECymhePy6xFAw7GjXAdTt25Oi
-	DfftcroQULyDmnvpwmkR5y1VnP7NOKgmX+RKCuqchdDWPXfdYYKB2XHUsAt2whtxo/too3fipGK
-	IkwQemclEnO7TYfjaoWUXxitEmdNSgoQOKF5/gzuTFg==
-X-Gm-Gg: ASbGncuK3EgLMGE7HTz+QAn99PQeQ8rYsZtVD2qE+JRUI15WplTBAY3bl/tBqJJUc8P
-	OOqGciyWrQVkR+fEyO9l/+0heiEw/6TeehlAJQDROqEOepIrEUddtMM4qUU2cIXxrjr5xzVThWq
-	AXGKLdyIajDMDM4rfCgk/eQQabsis3hJMWNX7V88pFDkA+jkSKk7fCxCynrftEiUoWgkxBg8CQY
-	BBsJEI=
-X-Google-Smtp-Source: AGHT+IEcNJsAoRLGIYk1O31Tn3tYAXlZSESSNuq0103JoREB2oE7y0pJlyv9CebmjIKG2ZunE2wkC6ewDUMk7VOPWhw=
-X-Received: by 2002:a05:6512:2289:b0:553:a4a8:b860 with SMTP id
- 2adb3069b0e04-55e006d9a7amr646510e87.0.1755602082715; Tue, 19 Aug 2025
- 04:14:42 -0700 (PDT)
+	s=arc-20240116; t=1755602100; c=relaxed/simple;
+	bh=NtQbc6M2cF4Rg9a0xQ64jC8pHoG96RP3RVeWlDWY6iM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kf+G4toL3CDiez1M9WMA5/T2hJcI92zfFVn8L/IphT9EAJ5V4zwjJYDU1PIIaA2WNlhZm/rRNCo98ScgBa5Sw50Ml10lAeEFFue8mlSClR/rZ1h8tSKNMnlC5P1QRWAElSN2NAPQOLTLUdf9TyimqE2Sr9JQZL1eiQX4sdA1tJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=xRgxQKl9; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=LdNw7Ohad+Bc0HlH4Ewlwsx3p9Fbf3FPJqvxMM34Z2Q=; b=xRgxQKl9GQHuGyshX6e0PzLAu7
+	R8Mo18ksZC6ekSzfls++DurXkY4I8FaZ6dkPhi9Vv0oJksI8oNEXs7j03TIBueCwGAEPJsv6diKgU
+	4cN4RmrW/TJk/KAZXYMWTLT2JXwSLXxDkn4IFYsTLf2sqq+eCdGYcIelbyyhTTH8W9njbovY1dLPy
+	lGwo+VA79KuRFUa+3idCr5gCsdUqKEGgyLPadvDiyQHOyTwfhzJ5/iZDrDzvNh5e+fe+AVIpra/BP
+	fRAVYl1Ki9RE8T710kM7cETQnK5km+5LkKO8ESXdAir3WQUoPoEeobu020gmT5wG7H6u2XcaM4ezs
+	qwbvKxBA==;
+Received: from i53875a31.versanet.de ([83.135.90.49] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uoKIn-0000ht-Ia; Tue, 19 Aug 2025 13:14:53 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Srinivas Kandagatla <srini@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the nvmem tree
+Date: Tue, 19 Aug 2025 13:14:52 +0200
+Message-ID: <3861530.VQhiAETyHQ@diego>
+In-Reply-To: <20250819134039.5742c60e@canb.auug.org.au>
+References: <20250819134039.5742c60e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812092618.14270-1-andrea.porta@suse.com>
-In-Reply-To: <20250812092618.14270-1-andrea.porta@suse.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 13:14:31 +0200
-X-Gm-Features: Ac12FXxil8YtjsTlhDzMgU8jUOtSCxu9rddHrXDKIc4MXQ04x78-F2JvPaqcPxY
-Message-ID: <CACRpkdY4ReSDB6p3a1yQSAsEX60tt41+syyXEQrs2SLkKMcV-A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rp1: Add regmap ranges to RP1 gpio controller
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Phil Elwell <phil@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>, iivanov@suse.de, 
-	svarbanov@suse.de
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Aug 12, 2025 at 11:24=E2=80=AFAM Andrea della Porta
-<andrea.porta@suse.com> wrote:
+Hi,
 
-> The current gpio driver for RP1 shows only the very first register
-> from sysfs, e.g.:
->
-> $ cat /sys/kernel/debug/regmap/1f000d0000.gpio-rp1-pinctrl/registers
-> 0: 0abe0000
->
-> Add the correct ranges to the regmap configuration.
->
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Am Dienstag, 19. August 2025, 05:40:39 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Stephen Rothwell:
+> After merging the nvmem tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> In file included from drivers/nvmem/qnap-mcu-eeprom.c:12:
+> include/linux/mfd/qnap-mcu.h:13:9: error: unknown type name 'u32'
+>    13 |         u32 baud_rate;
+>       |         ^~~
 
-Patch applied.
+[...]
 
-Yours,
-Linus Walleij
+>=20
+> Caused by commit
+>=20
+>   117c3f3014a9 ("nvmem: add driver for the eeprom in qnap-mcu controllers=
+")
+>=20
+> I have used the nvmem tree from next-20250818 for today.
+
+bah, sorry about messing this up.
+
+While I encountered this, and fixed that with the pending
+  https://lore.kernel.org/all/20250804130726.3180806-2-heiko@sntech.de/
+
+I completely missed that the nvmem driver applied alone would break
+without that change :-( .
+
+I've send
+  https://lore.kernel.org/all/20250819111044.2714855-1-heiko@sntech.de/
+
+as a fix that removes the issue for the nvmem driver.
+
+
+Heiko
+
+
 
