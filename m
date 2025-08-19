@@ -1,116 +1,162 @@
-Return-Path: <linux-kernel+bounces-774667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E269AB2B5CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:17:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F10FB2B5CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DF9B52687F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:17:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C37074E85FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143031922FD;
-	Tue, 19 Aug 2025 01:17:10 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B71B1DF246;
+	Tue, 19 Aug 2025 01:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="fBdEdbfE"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1AF154425
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C0C2110;
+	Tue, 19 Aug 2025 01:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755566229; cv=none; b=OOfYprwqHR6tXpb0htk02TvK7VUkwvUwFHr63AGVHG/jl4eoxsR4VQuPgTqHC9WxTFzCS1m60l8glQGg8LpR61qBT/YQMiOBnepJA3kM/lY7fjPJe8zyn7yxSpkMYxKLgjYugVIkZQu7t6SLCy5L393VYqdDdoGsENAsc47DcuI=
+	t=1755566348; cv=none; b=H3bYQ9gOJjwbdTyWp72PdLIpuF2sNosI7GAiwstqP/YFs4lnf08GRFRV6JqO9ITbSzM1fstwvMD/Iz3B6Xmy7ykNtPaF9pSNiiIapjmgLdIcyPUgeiFexjhmmI5ZD85XLGkZ+mWuq78FtFqKIXEV6qrhf5K8vYns53qreGLISj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755566229; c=relaxed/simple;
-	bh=jn8R404uzuZB3JKWoRV1cmOoXRvbVqAaf4NRbctYFdI=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CMiCgps76dxje7kGZ1+uhdqyN/vQW9judZzJx+TQ9qm++hC4H7d6gsB7CKZxlanmkXqO6gDerQGN/rIj8aQ7ho2uhnQEbjMjo0elAvcDGtNzqsXii5EGV4c29cszY3uxr1d/8UKMUWfkFTydZCPObpkbhFpv7/9QxUAXAWZFtV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c5Wlc4hBVzPqRD;
-	Tue, 19 Aug 2025 09:12:28 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7428B1402C4;
-	Tue, 19 Aug 2025 09:17:04 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 19 Aug 2025 09:17:03 +0800
-Subject: Re: [PATCH] ubifs: vmalloc(array_size()) -> vmalloc_array()
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Richard Weinberger
-	<richard@nod.at>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250817081238.44785-1-rongqianfeng@vivo.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <c46d7739-592e-b8c4-7a7e-6b39015156d7@huawei.com>
-Date: Tue, 19 Aug 2025 09:17:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1755566348; c=relaxed/simple;
+	bh=K8h4fsLkwXBoz8bbfEBr50T/b5QSv3uCbvnx5Vw+K6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HoBtRoLWRU9PQ7qCGKmUi9SAlMD1N5eivX5MDvDZqqrtPbyhFvLHVXJ4VSQOmukxwW3TjoUpDNsB0v5fgRcqAxWlucl1Tp7rjBX367CeZ0srNqcaycYDWr5s8lvIVhkDJzxPeTOilK0m7oeanTVRPIQyBA4BamVkALDJqltIec0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=fBdEdbfE; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1755566270;
+	bh=g6JjCoyupLN35z2qvVI8PUyBR1aUVsz84r9rhHKnBG8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=fBdEdbfEtSE3GETmB1e3uL6fxPX8AdUXXyzEFslWrIE5xOZSmIqzUSEEaIdoDCsJu
+	 bNRzR5ogWHWYPrrRnMw4IBX0DLWPgv94P/V64TFmA8/sXkKJd9zzGkqRzrRLtHJG+Y
+	 3sscIuOVfSW0DKRV2ad2Ayq5HLp7PlhXT9+7deoM=
+X-QQ-mid: esmtpgz12t1755566262td4c8f477
+X-QQ-Originating-IP: 9iDyEPMT2fIW1OmOGvQwzxzUT/TRlHh13QLu2xmmxSI=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 19 Aug 2025 09:17:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15089458960345209029
+EX-QQ-RecipientCnt: 11
+Date: Tue, 19 Aug 2025 09:17:40 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: zhouquan@iscas.ac.cn, anup@brainfault.org, ajones@ventanamicro.com,
+	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH v2 1/6] RISC-V: KVM: Change zicbom/zicboz block size to
+ depend on the host isa
+Message-ID: <A0B6F37B4275250B+aKPQtDahHgv7Gq6-@LT-Guozexi>
+References: <cover.1754646071.git.zhouquan@iscas.ac.cn>
+ <fef5907425455ecd41b224e0093f1b6bc4067138.1754646071.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250817081238.44785-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fef5907425455ecd41b224e0093f1b6bc4067138.1754646071.git.zhouquan@iscas.ac.cn>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NI6mNDRHoM9V6UIO0PANqbhBtmIzyi4VxG6uMub6K4uOxD+OaXdF6e+B
+	9vdJ7VKtMnuyImz1jxJ6MOydSP6mXnrxf3H4Vm3yR/+FJiwvBM8pbjdW+Wo3pYZg7R+SoCm
+	q3Wu93qEbUXAeamdfbJyaDUvvayU/dCz9BFfVYuh+x2YvoiWrDBMU9AWNbhbMIL7HBP4a9u
+	ZYA1QJ87l6g82ay2HrJXxO4jtZB6Kw/dzQ8SU2S0gELoocuodX9hQ9KxOFD/mq9wcaX7eNe
+	YRaRDHTFJ9E/JG1+XZumDmGPKt0O0vGMIbFk6Fr0DxiD81SX3IvZiwOGx9+ApNQYhQMAEDr
+	j9jBMO5N9lS61PH1aWhTj7JECUDy+pszHDPB1t3hSfro8MckFJMh2yXo7vfVxKrm25V6Itq
+	dZp1Ckd6vxyhVK7fBL4EzR+iBeJivThc/X7NGkUwmC/rN/OkUkYXDFJkLIuZBMl9MPcGxjX
+	bWBxNcduBW+rePJRv8oSYG1nTvTgelS0mFs63Efkq7Y0SZWN0vJc4AKrbPKPK25Q2BPk+B4
+	Fm2B6iTsbSL9cfSFLaHTGha8lXt+mVp+3udorSnmo54espk6KXe7azqkJDKOBbiOIublfEi
+	kXkwCWMpMAR1JDow2Cx/sELL1K/Wjjaq4dx7qdLGuAEclTisAwYIfuYRCUHScaI//9gHhRA
+	6svuHzrvBWJvnDiTMEwEuzwnNQDnvZYz4OhqQWl5x35PVqra9AixV89WH+jxbQasYrmu3Bx
+	o9IjTadJbWZXiOx45H/g+Jc2lsdil3WfbhaVVZuKFXROJPflTAjP0NyPuju5AyIaFt18t/U
+	4eS9bv7WLM3jEBsKBU5jkTzBnyJq04PDTXLX20fr8AZXmnqBLamCFJaR0X6KfDAvHejCL/E
+	Ccu760ETi54XeGDNmaqdP5/G6vf8FmLNwyJKTkZclaAaOfccrkR7rqsqX1CZRHYyWXZFi57
+	RASEr2GK28SVsWiC1qSPl1IY5Mseb2KUJtYCnlmOypVPCtz/YasFmGRGaR9aQUWGUMoSyFT
+	OM9fTDvFYwjVIes/TLRo+5aVdzsRxYApGzZi2tzFFBhSEtqUHq
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-ÔÚ 2025/8/17 16:12, Qianfeng Rong Ð´µÀ:
-> Remove array_size() calls and replace vmalloc() with vmalloc_array() in
-> ubifs_create_dflt_lpt()/lpt_init_rd()/lpt_init_wr(). vmalloc_array() is
-> optimized better, resulting in less instructions being used [1].
+On Fri, Aug 08, 2025 at 06:18:21PM +0800, zhouquan@iscas.ac.cn wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
 > 
-> [1]: https://lore.kernel.org/lkml/abc66ec5-85a4-47e1-9759-2f60ab111971@vivo.com/
+> The zicbom/zicboz block size registers should depend on the host's isa,
+> the reason is that we otherwise create an ioctl order dependency on the VMM.
 > 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
 > ---
->   fs/ubifs/lpt.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
+>  arch/riscv/kvm/vcpu_onereg.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+Reviwed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+Best regards,
+Troy
 > 
-> diff --git a/fs/ubifs/lpt.c b/fs/ubifs/lpt.c
-> index 441d0beca4cf..dde0aa3287f4 100644
-> --- a/fs/ubifs/lpt.c
-> +++ b/fs/ubifs/lpt.c
-> @@ -628,8 +628,8 @@ int ubifs_create_dflt_lpt(struct ubifs_info *c, int *main_lebs, int lpt_first,
->   	pnode = kzalloc(sizeof(struct ubifs_pnode), GFP_KERNEL);
->   	nnode = kzalloc(sizeof(struct ubifs_nnode), GFP_KERNEL);
->   	buf = vmalloc(c->leb_size);
-> -	ltab = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
-> -				  c->lpt_lebs));
-> +	ltab = vmalloc_array(c->lpt_lebs,
-> +			     sizeof(struct ubifs_lpt_lprops));
->   	if (!pnode || !nnode || !buf || !ltab || !lsave) {
->   		err = -ENOMEM;
->   		goto out;
-> @@ -1777,8 +1777,8 @@ static int lpt_init_rd(struct ubifs_info *c)
->   {
->   	int err, i;
->   
-> -	c->ltab = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
-> -				     c->lpt_lebs));
-> +	c->ltab = vmalloc_array(c->lpt_lebs,
-> +				sizeof(struct ubifs_lpt_lprops));
->   	if (!c->ltab)
->   		return -ENOMEM;
->   
-> @@ -1846,8 +1846,8 @@ static int lpt_init_wr(struct ubifs_info *c)
->   {
->   	int err, i;
->   
-> -	c->ltab_cmt = vmalloc(array_size(sizeof(struct ubifs_lpt_lprops),
-> -					 c->lpt_lebs));
-> +	c->ltab_cmt = vmalloc_array(c->lpt_lebs,
-> +				    sizeof(struct ubifs_lpt_lprops));
->   	if (!c->ltab_cmt)
->   		return -ENOMEM;
->   
+> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
+> index cce6a38ea54f..6bd64ae17b80 100644
+> --- a/arch/riscv/kvm/vcpu_onereg.c
+> +++ b/arch/riscv/kvm/vcpu_onereg.c
+> @@ -277,12 +277,12 @@ static int kvm_riscv_vcpu_get_reg_config(struct kvm_vcpu *vcpu,
+>  		reg_val = vcpu->arch.isa[0] & KVM_RISCV_BASE_ISA_MASK;
+>  		break;
+>  	case KVM_REG_RISCV_CONFIG_REG(zicbom_block_size):
+> -		if (!riscv_isa_extension_available(vcpu->arch.isa, ZICBOM))
+> +		if (!riscv_isa_extension_available(NULL, ZICBOM))
+>  			return -ENOENT;
+>  		reg_val = riscv_cbom_block_size;
+>  		break;
+>  	case KVM_REG_RISCV_CONFIG_REG(zicboz_block_size):
+> -		if (!riscv_isa_extension_available(vcpu->arch.isa, ZICBOZ))
+> +		if (!riscv_isa_extension_available(NULL, ZICBOZ))
+>  			return -ENOENT;
+>  		reg_val = riscv_cboz_block_size;
+>  		break;
+> @@ -366,13 +366,13 @@ static int kvm_riscv_vcpu_set_reg_config(struct kvm_vcpu *vcpu,
+>  		}
+>  		break;
+>  	case KVM_REG_RISCV_CONFIG_REG(zicbom_block_size):
+> -		if (!riscv_isa_extension_available(vcpu->arch.isa, ZICBOM))
+> +		if (!riscv_isa_extension_available(NULL, ZICBOM))
+>  			return -ENOENT;
+>  		if (reg_val != riscv_cbom_block_size)
+>  			return -EINVAL;
+>  		break;
+>  	case KVM_REG_RISCV_CONFIG_REG(zicboz_block_size):
+> -		if (!riscv_isa_extension_available(vcpu->arch.isa, ZICBOZ))
+> +		if (!riscv_isa_extension_available(NULL, ZICBOZ))
+>  			return -ENOENT;
+>  		if (reg_val != riscv_cboz_block_size)
+>  			return -EINVAL;
+> @@ -817,10 +817,10 @@ static int copy_config_reg_indices(const struct kvm_vcpu *vcpu,
+>  		 * was not available.
+>  		 */
+>  		if (i == KVM_REG_RISCV_CONFIG_REG(zicbom_block_size) &&
+> -			!riscv_isa_extension_available(vcpu->arch.isa, ZICBOM))
+> +			!riscv_isa_extension_available(NULL, ZICBOM))
+>  			continue;
+>  		else if (i == KVM_REG_RISCV_CONFIG_REG(zicboz_block_size) &&
+> -			!riscv_isa_extension_available(vcpu->arch.isa, ZICBOZ))
+> +			!riscv_isa_extension_available(NULL, ZICBOZ))
+>  			continue;
+>  
+>  		size = IS_ENABLED(CONFIG_32BIT) ? KVM_REG_SIZE_U32 : KVM_REG_SIZE_U64;
+> -- 
+> 2.34.1
 > 
-
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
