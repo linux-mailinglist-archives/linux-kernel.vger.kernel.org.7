@@ -1,272 +1,263 @@
-Return-Path: <linux-kernel+bounces-774898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFA8B2B8F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:49:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876CBB2B8F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B6E34E7879
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059CC189DC25
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE8522A4D5;
-	Tue, 19 Aug 2025 05:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4745221FA0;
+	Tue, 19 Aug 2025 05:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Kg12po8/"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011041.outbound.protection.outlook.com [40.107.74.41])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="N3HE1RoS"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010037.outbound.protection.outlook.com [52.101.69.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4286F19F135;
-	Tue, 19 Aug 2025 05:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEC1225390;
+	Tue, 19 Aug 2025 05:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.37
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755582579; cv=fail; b=fPA7YBiPAwqCPu/5MWPBXOk8wtm4ClHo43/hQC3r1A33LWkIddiWKO+QN2ENGHzA0mxl9sBnGKSw1h96oJLx727I3pLjLDhPBa89E6q/L14rUFz8ti8LVZdk6C9RdVF6qU4CpZlZxGfKO4bv4XDOQR3ydPEv3lNzmsLGg/MSMME=
+	t=1755582763; cv=fail; b=Dqa7jdN6HMNwTZIaj0X4rpkG4wTMJ5zdwGpgk32d/FS7dYwzA8oD1bFhdKmHPqlWsROzkx4v7OCgR5XPZQKTp+0sPPlPUdb8aQ5flPNoGZJ06nQyYKcW4X0V7ZV0EOkjpyYuef/j3kUHqcmyxex5BKy6LQ/h+pnAOEuFjdW5pvg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755582579; c=relaxed/simple;
-	bh=E+xA1JivWGO1GLdRQ4aA7NZKfRGfECs0C44lVU4VVJI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XAYUOT3MERKBZrKQAa9wpryf+i9gFKEyEAdsH7vOc86mknXq9/GMBQHiMQFTvN8hk1NEA2bLJ520G8Ob1rtCemqJW83CWX84RXOTc3Hvd8d3NHZM2E+kmjtkd8OyE7Drnp0L9bGedqgQLaY2Rcdtzjy70r8SIJ2tpKRRPrSWqlw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Kg12po8/; arc=fail smtp.client-ip=40.107.74.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1755582763; c=relaxed/simple;
+	bh=VapXdJBYEyAcMKDIjks0vKNNNWEMjHVPGGMzfeYb7n4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NPQrXPNGEGtzaGsbD3nehP9GtU6F5eFjgoGwUh/e1ejkJPrbTHWWEy3Y3RMFrrunmQAP5W35X41oW6CbP3EhaxDLndoUQpLuD9bf0kVY1rz6VqFfJO5g9WvVn+EixtwAsRympHfvw1G61eMQlNhFICMLjhm4lJjrd8jGYa1fJmk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=N3HE1RoS; arc=fail smtp.client-ip=52.101.69.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BdRVGvCfChiuenOF2ahiRu4k4w0EprbWSEdl//758qRCa4e5EdKvdZL3vgOTg93NmhFrsiCZaknT1oJgDZ/a9o8HnWsJvKkTB2XRRGuTb6sHy9DFk0UWaFB/Rk0hj0aPcJBkeWK1ETg7UNqBu917HRAgvAFo2mRF3QJERD9aFNzMQG47wCypY6zbNy7g3Wors+oMm/GA/USRoboNzAKxWogCvOY147aHGM2tLQUtJoq2FeMHYPD4KRETW1NQE2QKYr1kMJr1B5sOU7WPar+XlzanAckNOrzdxbh7w5QQbpjel5G/+mCGTVs472SFU5+dbTE8pyCPzHN6fxppzJpUpA==
+ b=PIeyEoJsdjpo7VrpyTEwzQ/VDeFFBLamktXhHLeon6gSZDMMD3MDScxdxHFbYXsdpukMqP0YW3VLc//zkmPFfDnV+vx2rv+D5fqJZRZP81ZtCNdYkMUEa+EbT/ZrMHF3kFQy550KSHOVlAPV0keJxs64L2wujwbOszrTo7/WF5z8+v0ZYY4vp9sJNC9gTWVAbHAEV72j3at5K87nPbKO28wwYQTulNOIDv4iuJoAQuMiTYZJBxPv1I/VTNczgWzSIdm2Bz/dhtZxAmsla4zf0gqIsxGJcrQHpkRjcCCSqgV0NcmebBdnkLMU61GYtB/JeHf0KcAkmQnn+FmC1ZHXdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wFq6pkG4sSCcUvxmY8yVUQW6i7Yu13Cn7sHjv2k1vgQ=;
- b=N/7bmu1uk3z32q8TIB0ExJIwSO+lJ8BJFPIDviNGgMKKmYhoL4dBDfB2BDCsCtBUKfZHzpKYLedlzm6QNvGxyOUlY3EOap6P4zcbXXZuHtlHow98Vnz1Aj2wug47PP+x6+UT9qeTOfKnFXVrbY3rmQis4fzOn9GgYXzTQOYOYWrDUxMpiHlPMMN683Gnd1ccC3hWFnokMzYS42efI4GLEKmrW597EmhdTgPduuHH4IMjwT2lD2M/TGBO5w38uTgLUdJZgX0AVyDLyCV4AGrnwZuT8xOp6EMVzGhTqZsHh8Dgq8gv7yQZHhnJoZ8Nw8jPmCtcvt4SX7w/Nya7PrVW4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ bh=NHpUSsTnHqAict/pKHkctdMw8++RG7fIDARYo5lFmdw=;
+ b=VmTQDliXBFAzZFsd9NwF07MdFmj97L/JJm92/ozVCvCTFakSCNtmAUJYMZOWo405pPjR5pgDCCiYS+/88up+kQoKrCeQB5avd3ixcBrm8PM+RqlW9fkwe824zycbePO5KcokrzLcVFgYVC37KQ54tNMwnTtDdlsXnUo+fW2wyVch9J0ETszsJrk1Cai3h5KsKLrZCZLtTZMQ+kUiXliMiGAV7Lyd0gpkOc44zYXndjb9IOjXdvAEGE/IkU99Ob/sGAHdG78pWK+Y2bFyfmMaCIBpixjAjYdfxch9FpxE2hhaVqVHdD6OQay0Y/jrkKZnzTyz3zOIcMyq1L2zH7Kfwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.206) smtp.rcpttodomain=google.com smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wFq6pkG4sSCcUvxmY8yVUQW6i7Yu13Cn7sHjv2k1vgQ=;
- b=Kg12po8/0EGlnqemPP0lLgdwuHC+amznIUO5mZ1bwCVbWQDhpLCeB38JjEubv1UNesr28/WXprTd3uau/Wj0hDZdpkU3ue1FlIi3Ak8DnSdOoF6C5KMAw72p0Bi7HZJwoPzQwa84nvXLQVL+QALgaeD01PpI36+pJng0Uf+tYdM=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSCPR01MB14998.jpnprd01.prod.outlook.com (2603:1096:604:3ac::10) with
+ bh=NHpUSsTnHqAict/pKHkctdMw8++RG7fIDARYo5lFmdw=;
+ b=N3HE1RoSINTKVHbljNFCcIRV/MGHhnYYAd/ezU3iIfe8Tt5MZTWlrxMLuBK5Z0EkgkYlbi6sD/zhI4rS03NU2C3EeIwi0Xrd+XBjo1Rivl0c/CCv+MGVFU22wJR+6topnbxDAQ/eBWkB7JsOsLz4gOERHpZ4TwiWSkZ+zUuhMeSXvtqbkS5labjxwMRO7lYfvt6eHKH9cLtNFimEM1vO3MhL3NaZ4DgqWQC92jp9EAsosumgMxaWizjmmwRY5puapB5SH0io8DnaodkedN+1ciiZ1HAxs3RJvuOkDfpAjbODFlyNa61MWF4kiy742O5OycVFLpdDwqipHR1YSRc0/A==
+Received: from DB7PR05CA0043.eurprd05.prod.outlook.com (2603:10a6:10:2e::20)
+ by AM7PR10MB3875.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:17b::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 05:49:32 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%7]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
- 05:49:32 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "vkoul@kernel.org"
-	<vkoul@kernel.org>, "kishon@kernel.org" <kishon@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "geert+renesas@glider.be"
-	<geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>, Yoshihiro
- Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC: "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v5 2/7] phy: renesas: rcar-gen3-usb2: Fix an error
- handling path in rcar_gen3_phy_usb2_probe()
-Thread-Topic: [PATCH v5 2/7] phy: renesas: rcar-gen3-usb2: Fix an error
- handling path in rcar_gen3_phy_usb2_probe()
-Thread-Index: AQHcEMwKkF0KDbGXOUaBwniJyvjIFbRpd2yA
-Date: Tue, 19 Aug 2025 05:49:32 +0000
-Message-ID:
- <TY3PR01MB1134647BC6436CA61E0A200F98630A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250819054212.486426-1-claudiu.beznea.uj@bp.renesas.com>
- <20250819054212.486426-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250819054212.486426-3-claudiu.beznea.uj@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB14998:EE_
-x-ms-office365-filtering-correlation-id: 77016d4a-df36-4d00-6b28-08dddee42bb3
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?pbN3bEDcEFGNqSscneYdHWVvDER9OYjJcO41YPyNYRklqtZZD00g+Bpbj1Wn?=
- =?us-ascii?Q?OKLpCn3dA04NUjCnT8MOBp27RyOZt02rV8/14jKsU63rhC3WRRDr/w2e9SPO?=
- =?us-ascii?Q?P/bHFl06S5nsvdm3x10m6pdRjkNcdFytE+hB60RGLEzsCZ97d4EX0R30P0R9?=
- =?us-ascii?Q?lA/U8IPstywThycfEUpbOQDuDgX6QqlAs9gnu54cdpoUYbF7gr+vnmyLDrfq?=
- =?us-ascii?Q?d6v43pUMSrfbbVDJ9RP3619aChB3gCmdEuOhx+dhuTFEflqXbr3c0CjT+LTO?=
- =?us-ascii?Q?Z5tvuSZ+SXr/spk8pnQ6RchSxYGwbgy5448E5sIZyKf8O8nj5d70LPObg2fg?=
- =?us-ascii?Q?cBujCs0aWqO4NChS/Z9a0rTPITcoF4k9ForrsO8130aN7W74l220L42XWM2z?=
- =?us-ascii?Q?Ho9SioCus6KRVDOi5tRj/09VXdMygv8SHLjXN+Bq4FAEhAFrxbsG99FrPgSb?=
- =?us-ascii?Q?n54ncXj2ILFl6T1odUvmuuNm24VLeAZFAwLRTXy2Gf8WE9FuMgDQn5wZA3g6?=
- =?us-ascii?Q?8t7Rw5/pvNOGsDMBrTcZ7jHfTgMLIQVYQyRdIrRiyuJt+7D/kjobpbLlh5b1?=
- =?us-ascii?Q?sIyN2ARqteSVi/CE5mEF8wE52I9kLyG4KCqhfwQwJ7dPwkTuRDz0SQD0LCbz?=
- =?us-ascii?Q?DUM5jddxKfDnp8ZkI3MqNFJVlGs7FSV+mAWT1jxwvDc2UKudxBp8eij7sSif?=
- =?us-ascii?Q?EYRR/uXmCZhboZmueNwBg7W89V/dtA9hqi4MXOygVlGUHg+AQUhNvWnwrBgv?=
- =?us-ascii?Q?PkjJAezg8dAehejgtWAxjO1keCnqF+3jXygjzYy6qZ71y2f9GluegoGxSXR3?=
- =?us-ascii?Q?BB2PAk4BlSKE+mXux8tB07m9xRsLo0tC2h34o9F01Ngy7FwkuOj3lvw2bW5g?=
- =?us-ascii?Q?ozJjxi3lbxpB1OEWVpRqxJi26d+gNOhE+6FqbnSWiROQpSa08xIlwHAekvDB?=
- =?us-ascii?Q?t74xDVUGqDA5ob1bgdbOl2neqhKH+rMeQk2DtTUhfDhWeTmQYwVk4oyW+F8g?=
- =?us-ascii?Q?AL8ZEwg/fV7emW2lOa0DasYy5gu0GaBs5dEBkk+TQ3s+1s7jUatPdKr+6Jn2?=
- =?us-ascii?Q?ZBaP7RufXlTzWGDo++HWjUUD4yZnkDS2LjVbOdEE9YyEfq25JOBpH+6HetKB?=
- =?us-ascii?Q?zNjUn2qCl1RWmLe4XJlV4UTVzDDom9n7OZ/zHU0sQsYn49GVJ7w8gu32/QEZ?=
- =?us-ascii?Q?ASu8DUd6qsBC+R8dvsJQ6O5Fit8ugtz4OWZ9Eg7RpB77daB/CymchPBEjzj3?=
- =?us-ascii?Q?hMEifeMzGEcNt4YzLl6rLgCz+ZVuZUaZ/fXn7OPmorXaCOTGX9BjdH8XGQ9g?=
- =?us-ascii?Q?ghis0W1boiQgqMenRw+4FFluFpu8EMOi1sat9uWH8PZKGrkzGAjHKLe3IMto?=
- =?us-ascii?Q?2IsC0HNqqXZ6CS+FQAAT6rUeZKXnzjyuZkLkRVxCxS7F4wISWXJ9pPG4hY1O?=
- =?us-ascii?Q?FNsZGMldtUHFtCg1dZvOzUaj/9J9pTx1?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ayIjYjS8zgF6t0Xbo55+IXtBsP7uTRyUTfiviFUr3e9qB+KXBUkr+7DNGff4?=
- =?us-ascii?Q?gBHKMshGxZC6joL2B7fziuvaWUDwj9PtiI0kuohbMcPJXMSp9mkpgfWxz2vS?=
- =?us-ascii?Q?dsgPg+y5HkSnm6vK9CY91UB5x+6Hhg8kNSKR/Iyh7Oe/7rT8blv//AoEy3GD?=
- =?us-ascii?Q?iU0WWT8wnV4k4VvjzSniJN0hIr927sMT7ucXIsTw/xdI+V8j8mi5M7Gvq/zf?=
- =?us-ascii?Q?wVn6KH9DzfXR5JLcaYzhHXjyFa2bFW3M8srI725zqejvbj2r9/lZJB6et8W9?=
- =?us-ascii?Q?PAYjXmwDTjwnfJKkZkIRDS/NYC1a1H/lP7q96axgRljv0fW1gf0TzWGDyKSM?=
- =?us-ascii?Q?70cnq1kkOSrRi+5+CuZW/2G2sS2smrpGHG4BJSO6gZHo3zIQvHTlGoQGwZN0?=
- =?us-ascii?Q?nUVqXbJlQ6G+R7O/zlMUEaZAX04PKwSUbD5y63PZfVznhNrGQir1HDDKd7GX?=
- =?us-ascii?Q?nqTTSdlNdOcOz9I2Woc9C3Lqg22RSSGp5H7iQm8leTHONqjkWtyzdYTyOsUz?=
- =?us-ascii?Q?lcy/hMLOKQg4j5rUXcYCz79nbu7nahB4lkvjGHjGXloagIZ0jJw6td/PCqsg?=
- =?us-ascii?Q?2DjvU9M1FR9xeytyGDAPrcbn92mkPjAI7MfDzlMUBbXdQwOddn6W/DFuXuEI?=
- =?us-ascii?Q?x71dNn39GEFpOXTsZwkk7E/TeKcuQXNc5Qz/Dj43oIo975jjQd+70YRxwuFs?=
- =?us-ascii?Q?CIx5zfVEmtcrbEjLfETJdTTR+xPTQeKR/0PdIkCTpCgC2CDMEUN6IXu6XMyV?=
- =?us-ascii?Q?YMRJx+0gEdRCFHKSsb+Vt2DdnoYgjqVnbuhLibWiPCuwapF2W5CKkTJGFSxN?=
- =?us-ascii?Q?lY4+ma1REMqb92a8AUcHJrfrjv8tkrE3JFDJqnnGlTETeJgBYoTXFRtC2TOf?=
- =?us-ascii?Q?yXvpvoSJ4LTZeWbaQlUtVl3KQm9f0Feno7l/21XhM4Ky4WhLScNBwUzVTr0k?=
- =?us-ascii?Q?luKQcyCjqYcyBnCNGifhg/YMlUJc9DiXGqWPWx3zpSaJOFq/KsdZ8wcV4tyy?=
- =?us-ascii?Q?U9oPE/CYAB2/gVxD9YzG90N/Pa0ZMey47g6QnDvK3WbPMoL8aSZT82JIhRHQ?=
- =?us-ascii?Q?uGWpCDmDCv5IkxA258iFbT25u5ahWknqx4IV4An8LX/tIxITsEmYKv41xP7r?=
- =?us-ascii?Q?wJ9H36lUCt/1OBU6ORZw93nhyZOkrbCiUs8x6DrIHzDcoGXKhgPOj5l1tWf0?=
- =?us-ascii?Q?/K6HJCjLnPQAb3pPE3z05P3Z+Hr/3DNPVNsQ18iDTJhzyjP1tyNydcduEOV2?=
- =?us-ascii?Q?Br42ZyUS5TgFNgYkMlWqLXxU3LIKjfDOs+PQCvLKuYaCorHpzEt4w3kj2G2Y?=
- =?us-ascii?Q?qiFp+m09d6AdW+awe+XHJdGLv4QbKPUgql5X4/5DIy8JpfRLQTQPClMSpo8A?=
- =?us-ascii?Q?UJLJ62gieMZx2MhmaMP3SJEwj1EdXxJ+rDZiV091EoCxgJZCRCdDOtQpXgRK?=
- =?us-ascii?Q?I9R5bvp8VJRHrwSj+jseGusHCdToThmUUso5plS0A21tLdHWNpp9Tf4wfO3T?=
- =?us-ascii?Q?RS3jS295qEsFir79DmVg6ohFb6PBfwZ6ulb0lmmktTxfyskjJzrztrFaUSSP?=
- =?us-ascii?Q?JDg9j3468XXCPAdKuuO8bZ7wFKYlmHYrl5DZHWBOuqQhfv0McgMKw0VxHs1T?=
- =?us-ascii?Q?jg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Tue, 19 Aug
+ 2025 05:51:44 +0000
+Received: from DB1PEPF000509EE.eurprd03.prod.outlook.com
+ (2603:10a6:10:2e:cafe::f0) by DB7PR05CA0043.outlook.office365.com
+ (2603:10a6:10:2e::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.22 via Frontend Transport; Tue,
+ 19 Aug 2025 05:51:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.206) by
+ DB1PEPF000509EE.mail.protection.outlook.com (10.167.242.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.8 via Frontend Transport; Tue, 19 Aug 2025 05:51:44 +0000
+Received: from SI-EXCAS2001.de.bosch.com (10.139.217.202) by eop.bosch-org.com
+ (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Tue, 19 Aug
+ 2025 07:51:43 +0200
+Received: from RNGMBX3003.de.bosch.com (10.124.11.208) by
+ SI-EXCAS2001.de.bosch.com (10.139.217.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.58; Tue, 19 Aug 2025 07:51:43 +0200
+Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
+ (10.124.11.208) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 19 Aug
+ 2025 07:51:42 +0200
+Message-ID: <2a0f2965-af37-4ffe-8806-3bb469361b1d@de.bosch.com>
+Date: Tue, 19 Aug 2025 07:51:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77016d4a-df36-4d00-6b28-08dddee42bb3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2025 05:49:32.3525
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v9 3/5] rust: debugfs: Support `PinInit` backing for
+ `File`s.
+To: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+	<gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+	<bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "Danilo
+ Krummrich" <dakr@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Sami
+ Tolvanen" <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, "Benno
+ Lossin" <lossin@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
+ <20250709-debugfs-rust-v9-3-92b9eab5a951@google.com>
+Content-Language: en-GB
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <20250709-debugfs-rust-v9-3-92b9eab5a951@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509EE:EE_|AM7PR10MB3875:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f484411-1836-46ed-706e-08dddee47a88
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|1800799024|376014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RWZGV0l4aEJaalAybjJTQlQvOXZOQUJNbVZtc01xeVEvMnRpMmkyUG5EbzRy?=
+ =?utf-8?B?Ujg0ZXRaYXY5RzFRSFdCZG5mVVh2WTk5UDlmNGJnK1dVMkJ1a2s3OVVreUd6?=
+ =?utf-8?B?aGJOaEViWFdaMjVIaldKb0tHTTdMeEZNSER3U05LajVkMXliM2lkTFloaHpp?=
+ =?utf-8?B?WVlOaVJKcDY0ODlBUnZPZy9Uam1ScWpUY2lnNU84T0dFcFlQU2JxTE9zOEhi?=
+ =?utf-8?B?UDFPY3RkV2tMWElHczRwWGw0QnBFamJoTnhMQXhyTlZSV041bE1RczRndTNF?=
+ =?utf-8?B?S3ZQb21ETzFFMjhUTCtRV04yN0oyN2Ywa1NoeUNqdU12NmxCSFpHSXoxNFlp?=
+ =?utf-8?B?R2QvSlpqMXhPQVBSWjdwTlhIRFZXNEJiMGplWE51aHdkN2hoSjlrc3hQZUdV?=
+ =?utf-8?B?eU54aXJPN2pOVGkzU2VubHIzVG1TOGNGTy9IZis5NUVvZldlaWg0RmZ1cVUr?=
+ =?utf-8?B?TkRxMTJ1YVFlM0gwYjhobUI1bnlKTXVqai9ubGpSRGNNZFJhMVQySytpN2x0?=
+ =?utf-8?B?WXBvc3R2Ny9QUlBYMGJlVFlLdks3a2twa214UzlMMFd1dmVUOWNSR1ZGOVho?=
+ =?utf-8?B?a0g5ejEzb3J6aXR0TEZGU1AzeXcvcjRmYTl5SUtHbEJvcUc0QXhqS3Fhb1lr?=
+ =?utf-8?B?NEFCWExjSGJ2ZTd0dC9GVzV4d2NLUUVsbFhDMjRoeGhYOURsYXFibkhKTk41?=
+ =?utf-8?B?U0xjaktSSnlpdkZDZXZ1bTFCZUgyeHlnbTRJeGtzd1JWaGFtRXhTYWdicEFQ?=
+ =?utf-8?B?eW14L2ZtY1VNYjZqVVRiaGFOSFAwRFRucmErN3VhQ29tTzRONDZtMHZNQ3VP?=
+ =?utf-8?B?enE3YklLcTVuclJBQ2w1MUxXb2FMLzMzRVlIM0EzRElJYWt3bjdJcFFTSEV3?=
+ =?utf-8?B?dElqZnFYQ0ZjNEI2dWJTa3NUdE5kNGhEd3ZRRy9hM3ZERmxtV1RTTG9XT1Z3?=
+ =?utf-8?B?VTEyallEK2creFMwUFl4OXpBN1dTemcvZUEzUUdNd3p3OGpGb3pJY200dnZS?=
+ =?utf-8?B?MnpMN0J0eUFWK1NVYm4zQ1pjWjhFbVh0SXA1VnV3QnVMZXY4MXRjT084TXlv?=
+ =?utf-8?B?c3VrMmNLUWs5aDBwQ1BaWXdyZThDd003VklFY0J3MmhaYVBVemhuTkg1dklQ?=
+ =?utf-8?B?dHYrUEZtWFYwQmh5MjJnam9iSGh2VDFvUEdid2tBcEhCOWFxeC9QY3BUd1Fw?=
+ =?utf-8?B?RlQzSW8zTUNMcFIzRW1kaTdpN280ZUhralFvU3VFZmhYc2F0M2hJVnRHclp5?=
+ =?utf-8?B?S0lLUnZRTFhNd2pWRkRsNHdQTTNnWks2Yk05eEUzK3NDM01xVjRuNUNURFFW?=
+ =?utf-8?B?WXFqQ082TUlicFVJYWMxdjRxcmVDR2dWWkxEWlZLRnZITGt4Mytva3BBVGcv?=
+ =?utf-8?B?TTQ5am9QRk1DNFRBY0ZvSzhJQncyMWg3VUFOMGE5RmlKL0dTdlRPRTlvY3lq?=
+ =?utf-8?B?S2kzR1BnRnlwNnBqOXBxTUQrT0NMaERMTitLbEdjZVN2YXIveFNlYTF3Y2VP?=
+ =?utf-8?B?R1B1UnF4bnF0NFZNVzdscjNIbmZFSTJXaTFVOWx2U0JGOUxSU3gycHN4Z1o2?=
+ =?utf-8?B?Z2dsbzVpSlFlc3NSVGFtM1IzVHhmL1MwbURjZFdoUUtyVlZvbFVvVS9Hb2cx?=
+ =?utf-8?B?M2JmSXl3SHZXV21oSTdJM0J5YlNKODVyR0lRM1p2aVltdlA4VzN4YWZGb0dN?=
+ =?utf-8?B?dnZDZ2QvZGVsRkY1Y1Z5cjk5Y1NZNEwxTzg2eHAzeE8vd1FVVG4wREd6Zm1Y?=
+ =?utf-8?B?ZEZqd2xWbjczVEFiTytMU0JRNXppMCtVUlQvQnNoREF3UDlyZmE1QjZEUXZs?=
+ =?utf-8?B?K0ZOTVloeWxWY1R6UnQvSUFtaUc1akZpMFhYVVI4ZzZKZGhGc24vS3VPbWFy?=
+ =?utf-8?B?ZGg4cUloNm5ybUpIckdSOGNndVZ6U3Z5K2MyUi9qeko4K2ZxbkgxdTNLWHVh?=
+ =?utf-8?B?R3BZN3hHbHVxWUdjRkUrRzNzVGN6Q1QzZkFIbWR4ek9FY3BOUFdzc1ZRZ0h0?=
+ =?utf-8?Q?InsnJlofzSf9fD8T01rCzMWrdcx2dQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(1800799024)(376014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 05:51:44.5091
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DvHvthHK5pYqqfGLe+HQJDeJe77mdhq6zjGzDLD22fAr0ePmJqYl107LOxPrnqZz85n5Hg67mXSr3STJyH/so+4Gaix+Ksynn3j+tB7e1Zw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14998
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f484411-1836-46ed-706e-08dddee47a88
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509EE.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3875
 
-Hi Claudiu, Christophe,
+Hi Matthew,
 
-Thanks for the patch.
-
-> -----Original Message-----
-> From: Claudiu <claudiu.beznea@tuxon.dev>
-> Sent: 19 August 2025 06:42
-> Subject: [PATCH v5 2/7] phy: renesas: rcar-gen3-usb2: Fix an error handli=
-ng path in
-> rcar_gen3_phy_usb2_probe()
->=20
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->=20
-> If an error occurs after the reset_control_deassert(),
-> reset_control_assert() must be called, as already done in the remove func=
-tion.
->=20
-> Use devm_add_action_or_reset() to add the missing call and simplify the
-> .remove() function accordingly.
->=20
-> Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initia=
-lize the bus")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> [claudiu.beznea: removed "struct reset_control *rstc =3D data;" from  rca=
-r_gen3_reset_assert()]
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 09/07/2025 21:09, Matthew Maurer wrote:
+> This allows `File`s to own their data, allowing DebugFS files to be
+> managed in sync with the data that backs them. Because DebugFS files are
+> intended to actually own data and provide access, `File`s still maintain
+> the same lifecycle for provided data when `CONFIG_DEBUG_FS` is disabled.
+> 
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
 > ---
->=20
-> Changes in v5:
-> - none
->=20
-> Changes in v4:
-> - none
->=20
-> Changes in v3:
-> - collected tags
->=20
-> Changes in v2:
-> - none; this patch is new; re-spinned the Christophe's work at
->=20
-> https://lore.kernel.org/all/TYCPR01MB113329930BA5E2149C9BE2A1986672@TYCPR=
-01MB11332.jpnprd01.prod.outloo
-> k.com/
->=20
->=20
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
-as/phy-rcar-gen3-usb2.c
-> index 47beb94cd424..d61c171d454f 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -699,6 +699,11 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct=
- device_node *np)
->  	return candidate;
->  }
->=20
-> +static void rcar_gen3_reset_assert(void *data) {
-> +	reset_control_assert(data);
-> +}
-> +
->  static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)  =
-{
->  	struct device *dev =3D channel->dev;
-> @@ -717,6 +722,11 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_g=
-en3_chan *channel)
->  	if (ret)
->  		goto rpm_put;
->=20
-> +	ret =3D devm_add_action_or_reset(dev, rcar_gen3_reset_assert,
-> +				       channel->rstc);
+>  rust/kernel/debugfs.rs | 149 ++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 117 insertions(+), 32 deletions(-)
+> 
+> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
+> index e5b6497d1deb67671d22ffd90cd5baa855bb9257..a1a84dd309216f455ae8fe3d3c0fd00f957f82a9 100644
+> --- a/rust/kernel/debugfs.rs
+> +++ b/rust/kernel/debugfs.rs
+> @@ -5,12 +5,13 @@
+>  //!
+>  //! C header: [`include/linux/debugfs.h`](srctree/include/linux/debugfs.h)
+>  
+> -#[cfg(CONFIG_DEBUG_FS)]
+> -use crate::prelude::GFP_KERNEL;
+> +use crate::prelude::*;
+>  use crate::str::CStr;
+>  #[cfg(CONFIG_DEBUG_FS)]
+>  use crate::sync::Arc;
+>  use core::fmt::Display;
+> +use core::marker::PhantomPinned;
+> +use core::ops::Deref;
+>  
+>  #[cfg(CONFIG_DEBUG_FS)]
+>  mod display_file;
+> @@ -63,40 +64,78 @@ fn create(_name: &CStr, _parent: Option<&Dir>) -> Self {
+>      }
+>  
+>      #[cfg(CONFIG_DEBUG_FS)]
+> -    fn create_file<T: Display + Sized + Sync>(&self, name: &CStr, data: &'static T) -> File {
+> -        let Some(parent) = &self.0 else {
+> -            return File {
+> +    /// Creates a DebugFS file which will own the data produced by the initializer provided in
+> +    /// `data`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The provided vtable must be appropriate for implementing a seq_file if provided
+> +    /// with a private data pointer which provides shared access to a `T`.
+> +    unsafe fn create_file<'a, T: Sync, E, TI: PinInit<T, E>>(
+> +        &self,
+> +        name: &'a CStr,
+> +        data: TI,
+> +        vtable: &'static bindings::file_operations,
+> +    ) -> impl PinInit<File<T>, E> + use<'_, 'a, T, E, TI> {
 
-Now 'rstc' can be removed from struct rcar_gen3_chan and use the local rstc=
- pointer
-as context variable here.
+Rebasing my test code from an older version of this series to this v9
+(this is the most recent one?) here in rust/kernel/debugfs.rs and in
+samples/rust/rust_debugfs.rs I get errors for each place where
+'use<...>' is used:
 
-Cheers,
-Biju
+error[E0658]: precise captures on `impl Trait` are experimental
+  --> rust/kernel/debugfs.rs:81:37
+   |
+81 |     ) -> impl PinInit<File<T>, E> + use<'_, 'a, T, E, TI> {
+   |                                     ^^^
+   |
+   = note: see issue #123432
+<https://github.com/rust-lang/rust/issues/123432> for more information
+   = help: add `#![feature(precise_capturing)]` to the crate attributes
+to enable
+   = note: this compiler was built on 2024-09-04; consider upgrading it
+if it is out of date
 
-> +	if (ret)
-> +		goto rpm_put;
-> +
->  	val =3D readl(channel->base + USB2_AHB_BUS_CTR);
->  	val &=3D ~USB2_AHB_BUS_CTR_MBL_MASK;
->  	val |=3D USB2_AHB_BUS_CTR_MBL_INCR4;
-> @@ -860,7 +870,6 @@ static void rcar_gen3_phy_usb2_remove(struct platform=
-_device *pdev)
->  	if (channel->is_otg_channel)
->  		device_remove_file(&pdev->dev, &dev_attr_role);
->=20
-> -	reset_control_assert(channel->rstc);
->  	pm_runtime_disable(&pdev->dev);
->  };
->=20
-> --
-> 2.43.0
+rustc is
+
+rustc 1.81.0 (eeb90cda1 2024-09-04)
+
+I tried to work around this by adding
+
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -36,6 +36,9 @@
+ //
+ // To be determined.
+ #![feature(used_with_arg)]
++
++#![feature(precise_capturing)]
++
+
+This seems to help for rust/kernel/debugfs.rs but not for
+samples/rust/rust_debugfs.rs.
+
+Any hint?
+
+Best regards
+
+Dirk
 
 
