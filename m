@@ -1,150 +1,132 @@
-Return-Path: <linux-kernel+bounces-776378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2FCB2CCB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357ACB2CCBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A192B72033C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D47281BC5531
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F01322A3D;
-	Tue, 19 Aug 2025 18:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D316526A09F;
+	Tue, 19 Aug 2025 19:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E8v2S9Rl"
-Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MjlNt0fb"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B19024A069
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 18:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08F92032D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755629981; cv=none; b=SIQHL3KN6fHxv40+Cz7lMEKJYVkkAUAeXvarl3h9ohMSVVpgWicZCdYGYp0Z6MYstQaEh5EYZwQUzqEUxB7eStqEnbtdfv4eQo44MH8PyuGdOR0CFApSlMPLlL0BiMGbFsC8xIc4cXefciGxOOY43pykKxiWuTOs7yQE4bn8sUM=
+	t=1755630099; cv=none; b=Q7Cy34zQ+cA4ajVPu2jXWQglWNiJkJDUfOmr4HGfBU4okRtjSHMrkaoDKD3gC+ROxxFrOKqwAMQs8Bufn77YDIwXdtphbs/QWlQPQpq5CzNoaM+nxjy4zMkNxvNKwOfn7+VOhaa/97WiISvUutI7Z91WbLlXAIxEWLbKvrZoY+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755629981; c=relaxed/simple;
-	bh=GuFz78XnzwEhW/V7fBTyTrGnww3kA2QEKMPSAbrajM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZIF/2FXtlQeKDwr6W4FytwDOiRXuBGYIsCeL0V9fk/vIyRI7gg/3Np+8v+cSv7q9CVxVub2wF5BpNH4Cv3hmPTf9XQQfRLz58GrzofNS2ilBmF+Tykd2ITDnBmbxYpZrjsK0qE5bx4lZzXlHg+3DSjqtF642pLZNxcc6PwefHhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E8v2S9Rl; arc=none smtp.client-ip=80.12.242.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id oRXOup0HXu5eaoRXOuIxVH; Tue, 19 Aug 2025 20:58:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1755629907;
-	bh=jQMm5lX79hpkXoospWDhgP5wKUoifkftmnOqTB8QKSw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=E8v2S9RlavQgFVTDluft7ElzXpaJLSdbQmjCyOskKSmu9tuBLwTd1U2mUlBQyH3+K
-	 UvdfJ7QHLVHtwAV1byud5TOS7grfbTEUQjqN576OAAb4T/qps24LjFb//q5KUjxwX3
-	 LmCxRY6+Z+P30TOWabzRHGYnIlqY4Bu9SuTO2C1OQFd/HyNdOIX7RvowT6251FLmVq
-	 wlVDbKouBL2ueXBoG62+8d0hwcG6IkgW8lYduB7bIWGtXZou6p49guUOdHWPgwR5Qf
-	 ANYuLkV/8duukmgzl48XBpLThKEZKtz7pWf6uRGg1dCIA18xNMaL5dsEPXp8krZZEp
-	 Xp5CUMqPFI2fg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Aug 2025 20:58:27 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] uio: Constify struct pci_device_id
-Date: Tue, 19 Aug 2025 20:58:17 +0200
-Message-ID: <114791f85f0f81531ca2169721eac4911dbe0865.1755629302.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755630099; c=relaxed/simple;
+	bh=4uWhrX/2mNAcS/gMBK/6vJDEGnvfAe/pLU7PZA5FgBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MQuE7b6T7MAOvVNPxrvHIa2n1Edk1Hq+VhwjksVzq31MKjPMAso/Rrp2pQupQmgIIrCpZcV9qx94T8cqVvzl3Plp2lV9k8TmVPCaZfQSmdy+X2oR7aKljVmluMqPWNIah1PJkUjslgpM4xydCRMyO7IuS/i25DbQuCi/nUGH8GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MjlNt0fb; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b471738daabso5182202a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755630095; x=1756234895; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qvuArYaZMFJV1RHzhtqqlTOKt/BCHit5YfuHRk9sg0=;
+        b=MjlNt0fbUvuhz2Ygws2evfcA+L458A8/0Cpk6w9ZMa52adsSC0TdwxlPVNcrSkbp6U
+         VZqKaCHruJSd8msKcMIBRnznkW91bbzHNLTJvOhvaqLBsyZOfYAMcmn9/BLqbWFnv5q/
+         zV/PJGR+GqrlYoKwhO8bkJl0zAkG8FV5UDSjrCShvINmBoj4OK+yWEYFWy1Mbl5Wnb3x
+         rm+4+WdaQu4/woy5SdOsxruYHypXd4p8ZK/sCzP0l0sm5bVFmja4BwaMSr3EwnT5KAeL
+         aA5po0NmIH9VwMqwxlYiecITI2EGaS6zBtd3Ka94ybzSPcTlDf+MyP701+dCFfiqYeVY
+         44jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755630095; x=1756234895;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8qvuArYaZMFJV1RHzhtqqlTOKt/BCHit5YfuHRk9sg0=;
+        b=gd+r/k3EpSXKnbO+z/iRZ7ADkypvH+Q7vkt6kF+H3tctk/h/i7t7ODMMRlIlKIT9x7
+         w+rs6FM+YZz/3Ht3fNxEHDh7d2m2lVH9cF3aBT9KGSNPr82a3/k7DIAUSydGVeswsti4
+         nAs8JQJPLQYlaGP7UCLLgkrx6Ce9f8dtLCpF2Gdgs9nxJRHjHrZXW3a+eSIHLI+gCWFn
+         9kN5huJcEH7oRPZKQ31he9Z4JjOvITZn1wcEL2YuMLgDzrOrij89lRmyLWRSPQ5jLrjD
+         +IS9ib1HRHCp33zj5+LTnfQjDZT8kcia/EA0qeRR5+Iq4+W5aqVI2psZHjAlACu4UTEl
+         pzAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQwjPIeRYBksP9qwEewZYQM3mycp2sUrkH0FhryE0ZR838G4Rmb+FVZvlreeE76SaWlFzV1t1bgzZKwMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWvYxW9Ckv4qRDIdsBKZ4HaG0fr1GQrv99R3mx+qG0veCDCx9e
+	4OuQuiOWkRTRBLOvZ6L73emliXvHRXWnmh1a8PMKE7oorEui+n3Jx9nYLDYxtxBlL4JW7Q54RdS
+	0Dxjbz6jmFEiR+vX4e87w5r8HeESwOyyi3G/RXXn6YTKn3plZAhY0j723
+X-Gm-Gg: ASbGnctoHsNSgaYSJbrLGSj3qDPaCQBZViK3NCkdGiwKvd8IHHJ/kUigEfXSUKDzMKN
+	g8b9Ik+68c3gjAgXWdqUlejquEY1ZzmU3zzdvubg7nR20slD6HdZ48GxdSIVpzTfjt36cIDeXcA
+	FHyGxceHSW/Jo+8ONCuurI7L3jyHFiajJt9qAGkkeiLsXzvxNHdg03KRv3GO/INyAMZ2T5ocX53
+	aIg47RRsSCLSyutl8RJjYe6s7CP7lsXlgZNj3tdMNPx
+X-Google-Smtp-Source: AGHT+IE/w9Ed+cmdAkyXk323HUtGTRtDIoia0hEETGRFT1hPBd7ibD+QoVmW4KplXUj3MKNL/ms1zGGJh8UY8mXETjM=
+X-Received: by 2002:a17:902:ce01:b0:235:f078:4746 with SMTP id
+ d9443c01a7336-245ef25bb33mr618995ad.42.1755630094952; Tue, 19 Aug 2025
+ 12:01:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250815213742.321911-3-thorsten.blum@linux.dev>
+In-Reply-To: <20250815213742.321911-3-thorsten.blum@linux.dev>
+From: Marco Elver <elver@google.com>
+Date: Tue, 19 Aug 2025 21:00:58 +0200
+X-Gm-Features: Ac12FXwZea5-tAvhMnunHuHJNaxPoH5DoA6U1F3MtQeyJo61FGS19PYEFJ-wqmY
+Message-ID: <CANpmjNOLKQsVTvqV+OdMrNOaHoWnUq1TU-nTRBKGCzY87E7xUw@mail.gmail.com>
+Subject: Re: [PATCH] kcsan: test: Replace deprecated strcpy() with strscpy()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Dmitry Vyukov <dvyukov@google.com>, linux-hardening@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-'struct pci_device_id' is not modified in these drivers.
+On Fri, 15 Aug 2025 at 23:38, Thorsten Blum <thorsten.blum@linux.dev> wrote:
+>
+> strcpy() is deprecated; use strscpy() instead.
+>
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security.
+Reviewed-by: Marco Elver <elver@google.com>
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   4073	   1336	      0	   5409	   1521	drivers/uio/uio_cif.o
+Taking this into the -kcsan tree, but might be a while until it hits mainline.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   4233	   1176	      0	   5409	   1521	drivers/uio/uio_cif.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
-
-checkpatch generates some errors, but checkpatch is wrong. It does not
-have enough context to see that the arrays do have a sentinel.
----
- drivers/uio/uio_aec.c     | 2 +-
- drivers/uio/uio_cif.c     | 2 +-
- drivers/uio/uio_netx.c    | 2 +-
- drivers/uio/uio_sercos3.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/uio/uio_aec.c b/drivers/uio/uio_aec.c
-index 8c164e51ff9e..dafcc5f44f24 100644
---- a/drivers/uio/uio_aec.c
-+++ b/drivers/uio/uio_aec.c
-@@ -33,7 +33,7 @@
- 
- #define MAILBOX			0x0F
- 
--static struct pci_device_id ids[] = {
-+static const struct pci_device_id ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AEC, PCI_DEVICE_ID_AEC_VITCLTC), },
- 	{ 0, }
- };
-diff --git a/drivers/uio/uio_cif.c b/drivers/uio/uio_cif.c
-index 1cc3b8b5a345..4e4b589ddef1 100644
---- a/drivers/uio/uio_cif.c
-+++ b/drivers/uio/uio_cif.c
-@@ -105,7 +105,7 @@ static void hilscher_pci_remove(struct pci_dev *dev)
- 	iounmap(info->mem[0].internal_addr);
- }
- 
--static struct pci_device_id hilscher_pci_ids[] = {
-+static const struct pci_device_id hilscher_pci_ids[] = {
- 	{
- 		.vendor =	PCI_VENDOR_ID_PLX,
- 		.device =	PCI_DEVICE_ID_PLX_9030,
-diff --git a/drivers/uio/uio_netx.c b/drivers/uio/uio_netx.c
-index a1a58802c793..18917b2ac04c 100644
---- a/drivers/uio/uio_netx.c
-+++ b/drivers/uio/uio_netx.c
-@@ -127,7 +127,7 @@ static void netx_pci_remove(struct pci_dev *dev)
- 	iounmap(info->mem[0].internal_addr);
- }
- 
--static struct pci_device_id netx_pci_ids[] = {
-+static const struct pci_device_id netx_pci_ids[] = {
- 	{
- 		.vendor =	PCI_VENDOR_ID_HILSCHER,
- 		.device =	PCI_DEVICE_ID_HILSCHER_NETX,
-diff --git a/drivers/uio/uio_sercos3.c b/drivers/uio/uio_sercos3.c
-index b93a5f8f4cba..12afc2fa1a0b 100644
---- a/drivers/uio/uio_sercos3.c
-+++ b/drivers/uio/uio_sercos3.c
-@@ -191,7 +191,7 @@ static void sercos3_pci_remove(struct pci_dev *dev)
- 	}
- }
- 
--static struct pci_device_id sercos3_pci_ids[] = {
-+static const struct pci_device_id sercos3_pci_ids[] = {
- 	{
- 		.vendor =       PCI_VENDOR_ID_PLX,
- 		.device =       PCI_DEVICE_ID_PLX_9030,
--- 
-2.50.1
-
+> ---
+>  kernel/kcsan/kcsan_test.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
+> index 49ab81faaed9..ea1cb4c8a894 100644
+> --- a/kernel/kcsan/kcsan_test.c
+> +++ b/kernel/kcsan/kcsan_test.c
+> @@ -125,7 +125,7 @@ static void probe_console(void *ignore, const char *buf, size_t len)
+>                                 goto out;
+>
+>                         /* No second line of interest. */
+> -                       strcpy(observed.lines[nlines++], "<none>");
+> +                       strscpy(observed.lines[nlines++], "<none>");
+>                 }
+>         }
+>
+> @@ -231,7 +231,7 @@ static bool __report_matches(const struct expect_report *r)
+>
+>                         if (!r->access[1].fn) {
+>                                 /* Dummy string if no second access is available. */
+> -                               strcpy(cur, "<none>");
+> +                               strscpy(expect[2], "<none>");
+>                                 break;
+>                         }
+>                 }
+> --
+> 2.50.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/kasan-dev/20250815213742.321911-3-thorsten.blum%40linux.dev.
 
