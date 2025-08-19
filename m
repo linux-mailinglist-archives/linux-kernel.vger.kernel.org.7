@@ -1,152 +1,95 @@
-Return-Path: <linux-kernel+bounces-776483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19E7B2CDE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:32:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4786AB2CDB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B0458236E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C37723789
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EBD3112DE;
-	Tue, 19 Aug 2025 20:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A0E273D6D;
+	Tue, 19 Aug 2025 20:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="BrDRvXpZ"
-Received: from smtpout3.mo534.mail-out.ovh.net (smtpout3.mo534.mail-out.ovh.net [51.210.94.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRp7A+/w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE7C246BB3;
-	Tue, 19 Aug 2025 20:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.210.94.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8725742065;
+	Tue, 19 Aug 2025 20:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755635566; cv=none; b=FFOqr9rshuTy6R1IV6MZBNspNzM7f3UyJFVjKe6KhdsyJMokFsJTAtLKpvmpsIjoKRvERQdDppQRsJCDP1D7gQZWgOE2YgFaLRQVwXaK9VIY3aoTQLOTTwyn2ezUUOgx6dgTo1YaCZ6HYhfWGvqmzU76yPNVkNGHU/sJWmYjW7c=
+	t=1755634653; cv=none; b=gzUc39m8CI4KCOPWUKwIhVOz+16ycg1fBchE9acqn9GvNXLX1j77Gq18Ibk3KuIryZFDew3NYOLt6odxrY1NeETZOuwe+BTZSj298OmSbl3UcTpIkxANjrsjrgFrUUVkJG5QCsNQZWXAZGgWvXBGLpFIXLVPDgOmYn4lLS/gthM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755635566; c=relaxed/simple;
-	bh=d9z9KPgWc/RebMQ/NN6LPYWSBcq8hxVBEnz1IjAr8MY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mCi7hrUEURhsYskLYrW8IGW2Oq1KpwtmiR+NCXnleyw69igRmWRXxsde/raSLJFNmfjo/u2nC9wlnbF/iKv6jVU+GeyXz8b5fC46vLhd4WbUfb3qseNNlvKIwb/eI0P+T2FlndRW4aMG1FgTKk1urTLmpR4zzvF9czDW7pn5Ho0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=BrDRvXpZ; arc=none smtp.client-ip=51.210.94.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c618V0t2Dz6QPH;
-	Tue, 19 Aug 2025 20:17:14 +0000 (UTC)
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
-        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Tue, 19 Aug 2025 20:17:13 +0000 (UTC)
-Received: from mta7.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.109.231.30])
-	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c618T5HwXz5wGd;
-	Tue, 19 Aug 2025 20:17:13 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.5])
-	by mta7.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id B4A10B832B5;
-	Tue, 19 Aug 2025 20:17:12 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-110S004bc066b2d-e836-4dd3-aaaa-7501c6da0428,
-                    AA15BFB272E6A7B741EAAF10D6CC71057D8BF2C0) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <a36a853d-5f32-409e-8add-c60b7f5d2fa9@orca.pet>
-Date: Tue, 19 Aug 2025 22:17:14 +0200
+	s=arc-20240116; t=1755634653; c=relaxed/simple;
+	bh=U3q6ToLedU70bZtEW12+5dJwu9UAwqYJ/UGCU6LWzSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ke0jy8abry7xMVaZh1JY8pKelD/21zoFBShJYMH7eRCujo0lJHex7qG7WWVmWwlAyB2n33NOvQaHwcugrxj3EBFaVY6MGajI+nqgF/jypI67LKsD8Qp9JrfTHJOsETxsmers6/NZJynCwQl9C2yG6VaXM/JcP+QSL+ZKof0pjjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRp7A+/w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE99C4CEF1;
+	Tue, 19 Aug 2025 20:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755634652;
+	bh=U3q6ToLedU70bZtEW12+5dJwu9UAwqYJ/UGCU6LWzSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LRp7A+/wRv7ggXzPyAsPMR83RBwwR2BGDqN+WXMkAITJvfTJ3lku62QcIAgoib+/N
+	 PeylRYfP1DU2pi5hCGbkzN4M101W6GHSVsNWX5MXUIySBw0Yjeeb9PpUE6Q7YRwaXb
+	 5/wgn6b9aBFaYNiqXrQCVqtyI7291RqbqEwKYPMffM0kBSHsvE2enA+VIrTHv5CbzX
+	 /sX5xEZHMM9znosbNs6s8uw/AJ0IH3syrY1v9xM2dmCUY3oDplXgtCNn8GOcXhX+gm
+	 e+XaOPjPLBiuzPwG84m8tt5beyZxjiN+tJV/j9ZaFXUSD85xIikBHV8iH0sVDLzBSx
+	 r5T2UwPckIltw==
+Date: Tue, 19 Aug 2025 15:17:31 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, asahi@lists.linux.dev,
+	Lee Jones <lee@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>, Janne Grunau <j@jannau.net>,
+	linux-input@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sven Peter <sven@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, linux-rtc@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH 1/8] dt-bindings: rtc: Add Apple SMC RTC
+Message-ID: <175563462607.1254097.12905994195694572424.robh@kernel.org>
+References: <20250819-macsmc-subdevs-v1-0-57df6c3e5f19@gmail.com>
+ <20250819-macsmc-subdevs-v1-1-57df6c3e5f19@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] gpio: vortex: add new GPIO device driver
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: William Breathitt Gray <wbg@kernel.org>, linux-kernel@vger.kernel.org,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-References: <20250709091542.968968-1-marcos@orca.pet>
- <aHD40TD8MLug0C6b@black.fi.intel.com>
- <99b67e0f-783a-4ac0-971f-07cf1544a651@orca.pet>
- <aHElavFTptu0q4Kj@smile.fi.intel.com>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <aHElavFTptu0q4Kj@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 15837189567057254107
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheeigedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpeejvdfggfdujeekgfdvtddulefgtedutedvheegteffkeevveekvefgleehjefhudenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduvdejrddtrddtrddupdejledruddujedrvddvrddutdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehmrghrtghoshesohhrtggrrdhpvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtohepfigsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
- hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehfeegmgdpmhhouggvpehsmhhtphhouhht
-DKIM-Signature: a=rsa-sha256; bh=jR4BO9CuWigXCVC/KmXkfiep9EZS605uICVWzBc1qQU=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755634634;
- v=1;
- b=BrDRvXpZpGl76V+XoBDwALFMQpJ7wUa3eepn0YZOL36rW3BaEs8HMJQrH6ECN0sYNBCR9uwp
- 8g/9nI2MdTi59wNU6XvpZPf7I29U9rx93lF92NruFQJiUnZkvSp8/7dpE0Zf1BBhXOxnUfpEcUd
- j/uHhYWKOLAU4SMFfMQUGTPNlz0af+c+OPOStbMY9hlyNdUQ/i4+WFdiRNNSg/Zf8xyzgEXB9wh
- gIPUXQtJarTjup5oAOItA+jpTdWnOLZlrMCMOWo1vH7izAPeEHW1euDX7PrF0dV6JRt7hhrlFrm
- srp+rYy+zI20SngolX8bYyM+OwdOev6YdJEWL1+HAtWww==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819-macsmc-subdevs-v1-1-57df6c3e5f19@gmail.com>
 
-El 11/07/2025 a las 16:53, Andy Shevchenko escribió:
->> Again, I am not an expert on the Linux kernel, but I did not see any code
->> or examples using neither gpio-mmio nor gpio-regmap for I/O-mapped registers.
+
+On Tue, 19 Aug 2025 21:47:53 +1000, James Calligeros wrote:
+> From: Sven Peter <sven@kernel.org>
 > 
-> $ git grep -lw '\.io_port[[:space:]]\+= true,'
-> drivers/counter/104-quad-8.c
-> drivers/gpio/gpio-104-dio-48e.c
-> drivers/gpio/gpio-104-idi-48.c
-> drivers/gpio/gpio-104-idio-16.c
-> drivers/gpio/gpio-exar.c
-> drivers/gpio/gpio-gpio-mm.c
-> drivers/gpio/gpio-pci-idio-16.c
-> drivers/gpio/gpio-pcie-idio-24.c
-> drivers/gpio/gpio-ws16c48.c
-> drivers/iio/addac/stx104.c
-> drivers/iio/dac/cio-dac.c
+> Apple Silicon Macs (M1, etc.) have an RTC that is part of the PMU IC,
+> but most of the PMU functionality is abstracted out by the SMC.
+> An additional RTC offset stored inside NVMEM is required to compute
+> the current date/time.
 > 
-> Take a look.
+> Reviewed-by: Mark Kettenis <kettenis@openbsd.org>
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+> ---
+>  .../bindings/mfd/apple,smc.yaml          |  9 +++++++
+>  .../bindings/rtc/apple,smc-rtc.yaml      | 35 +++++++++++++++++++++++++
+>  MAINTAINERS                              |  1 +
+>  3 files changed, 45 insertions(+)
+> 
 
-I've already made a third version of the patch, using gpio-regmap this time.
-This time I'm also using a Southbridge driver that pulls it as a platform
-device, much like the rdc321x-southbridge.c does. It's not yet ready for
-merging, but it's available for now at
-https://github.com/socram8888/linux/tree/vortex-gpio
-
-I have found a small issue though regarding gpio-regmap, and before making
-a third version of the patch, I'd prefer to know the way to approach it.
-
-The Vortex86 SoCs require the direction of the GPIO pin to be set before
-writing the pin's value. Otherwise, writes to the data ports are ignored.
-
-Currently gpio-regmap does it in the opposite order:
-
-> static int gpio_regmap_direction_output(struct gpio_chip *chip,
-> 					unsigned int offset, int value)
-> {
->	gpio_regmap_set(chip, offset, value);
->
-> 	return gpio_regmap_set_direction(chip, offset, true);
-> }
-
-(I have also noticed that it does not properly check the return value of
-gpio_regmap_set, but that's another thing)
-
-So there are IMO three different approaches:
-
-1. Add a boolean flag that allows changing the behaviour. If set, invert
-the order of operations. Else do as before.
-2. Same, but with a "flags" bitfield, in case more flags need to be added
-in the future.
-3. Do an additional "gpio_regmap_set" after setting the direction. This
-means no new fields need to be added to the structures but causes an extra
-write that may not be needed on other drivers.
-
->> IRQ is only available for the first two ports out of the five available.
-> Would  it be a problem to support them?
-
-I cannot test that on my platform: as mentioned before, only ports 0 and 1
-have IRQs, and in my mini PC I only have two pins available, and they're
-both on port 4. 
-
-Any code I'd write would be completely untested and IMHO sounds like a
-terrible idea to have such code merged.
-
-Thanks,
-Marcos
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
