@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-775684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38EEB2C398
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:32:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335FBB2C387
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F925A01585
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:25:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDE8188E528
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654642C11EA;
-	Tue, 19 Aug 2025 12:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C4230504E;
+	Tue, 19 Aug 2025 12:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="G/lUupuO"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB9F305078;
-	Tue, 19 Aug 2025 12:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fM8ixJ6R"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CD3305043
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755606219; cv=none; b=J7y0KYb7jDxQVZZpCad3HL6kof+AwZoHo7Fq4doFaIcurWQyn4+YAGzkAqVd0von9IuL8xw7Afc+zKkK6/lYyk7GhfJw/+fvfjSeYGyuOU+45HxrkDK1FeuFVyxN6hsY1hMp2bs0Un76As8eps1af0Sw5DbZwRl1EjwOtw/7MAI=
+	t=1755606177; cv=none; b=H28M+J+xw+iVl+Z95HwijkdScUWNAvmOhNSGxm7sj+j3QRUsR7Jsexc3+1+PfUn0Tl8rMawa3qUv0mIZNx2VRokcJP41SslNHZysLEO1ha0Urhh0ZqocuUd+8Rr4njuByjU0mnaxhhEhw2WxAGd0CdRMTA2m/KBnFRAjaHi+afY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755606219; c=relaxed/simple;
-	bh=1VdulYw8sjVrTvFb45ts8Jy3oKZXFvjBD18XLKm9r1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rxy21DuwrpnG8FvUsgh6BR9NNJm4tLD3M0QKDgaawB9tbtj2waG5dlXr3YLUntaJrdyi8aPHw9NzPzTRLPw3vYpqkUOlr2Mah2W1Ex5gGwWW+q/IcQAgKGG1LUUUYG2Wve3H0H8kjtwKKpAiMaN3hWfwwpvQUr5rtg5DDYbc+EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=G/lUupuO; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=XML5m6XHKtdCDAlB9JUUL64oZubz2drUcUaH/mhajyY=;
-	b=G/lUupuOjYUya+gk2UT6VYOhHDLWY9lQWtoMPaL09/X+ucvel+ATwE2MzZRu94
-	DiPS/eomMWeBhfB8FVkv79u0B8PNRGtZi/EGmvH6JgQ09AiKmUIj9biZpndji1Ei
-	AzdCOGqWGa8NzR2jp6ztNHLm3PmuKT1K+VIYOM/hXisbs=
-Received: from [10.42.20.201] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3v_WSbKRofFI1DA--.58046S2;
-	Tue, 19 Aug 2025 20:22:43 +0800 (CST)
-Message-ID: <10485bcf-5ccf-4fec-b403-0d895236c131@163.com>
-Date: Tue, 19 Aug 2025 20:22:42 +0800
+	s=arc-20240116; t=1755606177; c=relaxed/simple;
+	bh=gw/jOwKQuYtz365HYvInA17YdqiK5qLhDO82IeRsFBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F4ArWZJZeyMUpVfqOPNwfLUlR4ey8xFezKr//b9+RBxnS5FyevWfKVPi8t6JZaSbwnkvxrVXbHcuICxjNsq+42Ze+36nqv0EUtHP++LOYR8JzY6/gRVaczEWzVQzRzGc3XQIxjzFTGTmJ2JARVnyzOkEwUqhq7/YaKmfQLu5xQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fM8ixJ6R; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-333f8f2d6c2so43144711fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755606174; x=1756210974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gw/jOwKQuYtz365HYvInA17YdqiK5qLhDO82IeRsFBE=;
+        b=fM8ixJ6RQo60D4JPEtBo6KumlRlXnEzNb0KqaHra06JgB1I1tUBAKnIs3Yov9i6BV4
+         Unh3rADN79v6mZXZq1OvojG8vsM2kYAVTIDsLwbZrwFatF1VtNJvlSToG1uSxrYElgJX
+         Jr0soMUn73gRjzRYbxgIPIkBrDTiqkJixCYFXNOSGFGVEtUq3F/CC4tvBaVV+kwJWsQk
+         VdJ+rqhn6tGoYASYmHucGq64+R7STHwLpwxcU4pzoRbCsWINp9gXB63IzQDuENLwFfA2
+         A8fF1p5IhA3+JOrBgwQGIqQUIluoKOtAmY2EcCsuX9psAbCyC0wICYp6wlkN9AWyn27Q
+         7+vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755606174; x=1756210974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gw/jOwKQuYtz365HYvInA17YdqiK5qLhDO82IeRsFBE=;
+        b=GaGeAtgygsbGj+xTY6JmaSkwd9twg9QuCdNF3/vGMPEhJiRm2ZFvx3S3QPqa71MN9z
+         oeegwsciAY2OyZYbPR87giuUGoKnh/lpPtxCeTnR6DhI6bq/fBMtpX1xpGteB4oILCkF
+         iTByxU8FDDuaMngThMdhMP88WEYb/No2EYko3KS9t5lmRPGYDeJoIpOBJeeLQm/vfC4H
+         cDtIdKOQTaqJuzBW2jbNNULzOdkkhQm2NJL9YeQCNgcwneWPgZMAtNzc5neJCRhIIFvW
+         I74dsuyhPjiTTYLdy+kByrrT95mEpkAdbDRq1o+mVNDWOfOeQPdauH37p6VYv3SIkygd
+         D7kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqJodA6nM+TMV2RSc403Q2MgM6pg5HPd6XxpgNWezikZaqCzCHgHzMCIDl9xIA8mVgKsS9R0Kk90AZMvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmT7jLcvLhw4K0uXFctVn47k7uIgChXMQfV1DmJRnSwsn9pNMB
+	SatEhMBlYvdUq5V+0kLPlSPvKTbcbeGiKa0JsaIaYyLIyay0la8O3cddzl/CCgck8Sn0w8KI4sh
+	Me9rbRwuBsdibmTDaMuX4XuP4M+jVp/nhKE2pL968bA==
+X-Gm-Gg: ASbGnctPtRdPqYIRfl7hwNBOcVaOwCjp9wP3tz//y4RU5TJqdtsETY90jn5IKo7SWmc
+	DkVbNbooR4TosnlZxYd36gFv9ytuI/RsgjNnZK9zu6es0H5y1qmpFdejnll6K6szB5aLmiu6Z9e
+	bRYmTCA0PDt1XyHItwM0zsjhhbn45H1HN1SEzUl9fYleX766dGaqhbC7sTlqg0jGvhlZ9H6Su/f
+	srje4vbEuaG
+X-Google-Smtp-Source: AGHT+IGNH/KGoaBSyDp4h02tKapeKQZmf3kymXUsGq0Isjr/TRxPuFwtsDzGDorqqxv6Gg/sQbzuFVjxKVKE2P9+7Vw=
+X-Received: by 2002:a2e:a98f:0:b0:32b:59d1:7ef3 with SMTP id
+ 38308e7fff4ca-33530737cadmr7048501fa.35.1755606173912; Tue, 19 Aug 2025
+ 05:22:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mpage: terminate read-ahead on read error
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>,
- Yuezhang Mo <yuezhang.mo@sony.com>, Chi Zhiling <chizhiling@kylinos.cn>
-References: <20250812072225.181798-1-chizhiling@163.com>
- <20250817194125.921dd351332677e516cc3b53@linux-foundation.org>
- <9b3116ba-0f68-44bb-9ec9-36871fe6096e@163.com>
- <aKM5sUFuOevaG4_i@casper.infradead.org>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <aKM5sUFuOevaG4_i@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3v_WSbKRofFI1DA--.58046S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKrykGFy3WFW8ZF45uF18Grg_yoW3ZFc_uF
-	sFkanrGw17Kr4xJanxuan0grn0kw4rWry5Gr48Wrn7t345Zr98Xa1Dur9agFZ8Jw42vrZa
-	kFs7WrW3G3sFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUU4SotUUUUU==
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBawSunWikZrC5bgAAsR
+References: <20250815082118.586422-1-rongqianfeng@vivo.com> <20250815082118.586422-4-rongqianfeng@vivo.com>
+In-Reply-To: <20250815082118.586422-4-rongqianfeng@vivo.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 19 Aug 2025 14:22:42 +0200
+X-Gm-Features: Ac12FXwCXMFv3UHJtH3jQfAak79Kdy3rWEOtMWOBnQNnjLpEps8EvhN2w2SpjZ4
+Message-ID: <CACRpkdbzQmhtpbYxnTtKBrxJk8d3-8U7rzkrncW-05-vKZTUaQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] spi: spl022: use min_t() to improve code
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	"moderated list:ARM PRIMECELL SSP PL022 SPI DRIVER" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/8/18 22:33, Matthew Wilcox wrote:
-> On Mon, Aug 18, 2025 at 06:04:23PM +0800, Chi Zhiling wrote:
->>> Also, boy this is old code.  Basically akpm code from pre-git times.
->>> It was quite innovative back then, but everybody who understood it has
->>> since moved on,  got senile or probably died.  Oh well.
->>
->> Actually, I think this patch is safe, but I'm not sure if we should fix this
->> issue. After all, this code has existed for a long time, and it's quite rare
->> to unplug the device during a copy operation :)
-> 
-> Converting exfat to use iomap would be a valuable piece of work ...
+On Fri, Aug 15, 2025 at 10:21=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.c=
+om> wrote:
 
-Yes, this is indeed worthwhile, and exFAT should also be restructured to 
-support extents rather than fetching entries one by one.
+> Use min_t() to reduce the code in setup_dma_scatter() and improve its
+> readability.
+>
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-I estimate this would bring significant performance improvements
+Clever!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-
-Thanks,
-Chi Zhiling
-
+Yours,
+Linus Walleij
 
