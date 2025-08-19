@@ -1,94 +1,76 @@
-Return-Path: <linux-kernel+bounces-775775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADAC8B2C4D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:12:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F307B2C4C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9C12433BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB75B24271A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB52343218;
-	Tue, 19 Aug 2025 13:04:04 +0000 (UTC)
-Received: from mail.grinn-global.com (mail.grinn-global.com [77.55.128.204])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09BD33A012;
+	Tue, 19 Aug 2025 13:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBE1vgAE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7F63431F3;
-	Tue, 19 Aug 2025 13:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.55.128.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55113224AF9;
+	Tue, 19 Aug 2025 13:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755608644; cv=none; b=MSxF9q85TkZS39qa9h4p45njsuujLVg5HCiYsGdZc/SrtrfN3IrcOMAKmPMrzl0tboXj55fPeca2oqpKZwZ04+e+AfcxlQbJRawx8PjcyHGWohiRSvTGhnIRNGWTU3vkjxr8LjbswGgnpkOod8TWVsTLdLdgNyJNLKBtr20IzS8=
+	t=1755608622; cv=none; b=StUzwHOEutivBVL5oXpfmfOOS9iDP9onBD/zeFf9+Y3Arr0KPthtXzMQLn1rfx0cKd16ZcAMf82PneCyV4zYH4RxTIaK8KNhKQrWICousXSjfTBl+aDEwP8sM1tzDB2z1eaX1hi5GS4zUifURCap9LboFGqiaRcqv+ix927F5yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755608644; c=relaxed/simple;
-	bh=dtMTaO7w59fetYrrtEPbnFEuQfCHrxx4NphI4gbVsrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BDhUTJh7F5hKHPhSV3EHeCECoydC035UcrQ379T/QHCBA8gWOZx3gIZLIF4jPusYhstkTuHFF7ayakdaAas5Dww5FmpeF1+B2nQc45ZJhX3CvR0cNatFSfc2qXUBeZET6CSW6zU6hYplcfXS59hk7ngBCQmFYWb79q+qGifVq18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com; spf=pass smtp.mailfrom=grinn-global.com; arc=none smtp.client-ip=77.55.128.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grinn-global.com
-X-Virus-Scanned: by amavisd-new using ClamAV (9)
-X-Spam-Flag: NO
-X-Spam-Score: -1
-X-Spam-Level: 
-Received: from mateusz.int.grinn-global.com (f90-187.icpnet.pl [46.228.90.187])
-	by server220076.nazwa.pl (Postfix) with ESMTP id 6D7DA1BE43A;
-	Tue, 19 Aug 2025 15:03:59 +0200 (CEST)
-From: Mateusz Koza <mateusz.koza@grinn-global.com>
-To: angelogioacchino.delregno@collabora.com,
-	robh@kernel.org
-Cc: krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	marcin.czarnecki@grinn-global.com,
-	b.bilas@grinn-global.com,
-	Mateusz Koza <mateusz.koza@grinn-global.com>
-Subject: [PATCH v2 4/4] dt-bindings: arm: mediatek: Add grinn,genio-510-sbc
-Date: Tue, 19 Aug 2025 15:02:31 +0200
-Message-ID: <20250819130231.181571-5-mateusz.koza@grinn-global.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250819130231.181571-1-mateusz.koza@grinn-global.com>
-References: <20250819130231.181571-1-mateusz.koza@grinn-global.com>
+	s=arc-20240116; t=1755608622; c=relaxed/simple;
+	bh=hplkDh1/2FSuApngWSdqjeR/23Vt5OkOSLfobeSPdFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DfJv+kjdTdyNkbrdCFrqvW17brlFSyvETi48n8Xn3oLLvBgdyR2vnoQi/Hqh3ky3h2JpfZSjSzz/XGtnQTsvQeYMqH7wbdmeRKGSDU/HcgTRzgw/xb2Qo5lRJN/N4mVxQ2PVFZbBkoc0H1Hef1xeM4OhrMkeRJsbLF0hc70xzEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBE1vgAE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 061E9C113CF;
+	Tue, 19 Aug 2025 13:03:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755608621;
+	bh=hplkDh1/2FSuApngWSdqjeR/23Vt5OkOSLfobeSPdFw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bBE1vgAEo4bbHJ7SIvzzOzhgWKHLFVlLWkSeakMoHYneWqwf/uNi1k+Ul9NbC+or8
+	 yQWoPs7oGsU4gn8rZQUbQuu8A8W5g3TMe0Gkm/SJBo36lPPD/qXH16eCWfYIhC66Ok
+	 BPzH0fwEtOVfDNHEfLk7MGBllFhYERHKc7cSX/wpWZHRLwrQrHNTIWIG4pVfXRVWXL
+	 IqfszaZ/F3IZNT4TdSEVNYOLs9kOowZ3vp+6fSR3LginfDarVrmRC1ecQKxd2O06oe
+	 Ak88WZKTrUfKPns6LH7nFHPK1mFyznjFabu3OIu60TvazW4YKEQaa0EjwvDDpHZUiZ
+	 s1DXoUdsRDrpQ==
+Date: Tue, 19 Aug 2025 06:03:39 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com, Vikas Gupta
+ <vikas.gupta@broadcom.com>, Rajashekar Hudumula
+ <rajashekar.hudumula@broadcom.com>
+Subject: Re: [v2, net-next 9/9] bng_en: Configure default VNIC
+Message-ID: <20250819060339.7b38ae1d@kernel.org>
+In-Reply-To: <20250818194716.15229-10-bhargava.marreddy@broadcom.com>
+References: <20250818194716.15229-1-bhargava.marreddy@broadcom.com>
+	<20250818194716.15229-10-bhargava.marreddy@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-NA-AI-Spam-Probability: 0.49
-X-NA-AI-Is-Spam: no
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add device tree bindings support for the Grinn GenioSBC-510, a
-single-board computer based on the MediaTek Genio 510 SoC.
+On Mon, 18 Aug 2025 19:47:16 +0000 Bhargava Marreddy wrote:
+> +struct bnge_l2_filter {
+> +	/* base filter must be the first member */
+> +	struct bnge_filter_base	base;
+> +	struct bnge_l2_key	l2_key;
+> +	atomic_t		refcnt;
 
-More details about the hardware:
-- https://grinn-global.com/products/grinn-geniosom-510
-- https://grinn-global.com/products/grinn-genioboard-edge-ai-sbc
-
-Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
----
- Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
-index 122af0bad141..468672b0296a 100644
---- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-+++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-@@ -425,6 +425,7 @@ properties:
-           - const: mediatek,mt8365
-       - items:
-           - enum:
-+              - grinn,genio-510-sbc
-               - mediatek,mt8370-evk
-           - const: mediatek,mt8370
-           - const: mediatek,mt8188
+please use refcount_t for refcounts.
 -- 
-2.43.0
-
+pw-bot: cr
 
