@@ -1,158 +1,150 @@
-Return-Path: <linux-kernel+bounces-775284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D78B2BD74
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCB2B2BD78
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9BBA620A47
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0ABD62562B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AFB6EB79;
-	Tue, 19 Aug 2025 09:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD35F315783;
+	Tue, 19 Aug 2025 09:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RhDrtTUS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ifq8Tc1l";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RhDrtTUS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ifq8Tc1l"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5h39Cs9"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2821494C2
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C983451B7;
+	Tue, 19 Aug 2025 09:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755595916; cv=none; b=bBPdKPqrk7nDoHmPaETARVc3OpRubJkemhNYIKci4oNmxsmU4yUk9yqZLOA6RneFq3gzlejHvXQpS3KSmZubkehsQTz7Roo4bEVwLJrLMNugV1lq5kGrs0M3PIqkA2WNzpMruzsUAXYa0niAq8NNia/v0t5LYlUQLH5YVpWvtpE=
+	t=1755596077; cv=none; b=KfeXN2tTGwKp7Q3gEQotc+N/P9Vig04TbC97aZ9Rd4G4wYsp935UriDDbrto9ba4Oc0cyZNCUSD3WzXEGeaU+JHgeblRTG8JShePnuvwnZJ6f8+aTuM/0qDcJy/FF6cnqp13s7gLymfqAN2AbByQatvq08NVHIS4glzaStaxviI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755595916; c=relaxed/simple;
-	bh=ntTUiuTFO9kzVzbgPWBohAMOJWAmigeURkZvbEcT4PQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ueiSvKZVMGteCtGB6XyRVDqnYtP0XjrHo9FfVDLYfmS6WFvJUUJ7on4NfI0YhQ6uHs+uEPwZ1HrIY9tZhLVzZh1j4culPP9WinC2Fs0x6qtxR82sHFuc9MwuMc7Fi2ZNBNnyJAqYZZXON2wg3eVgrBM0FrPMMnL916U5655q8yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RhDrtTUS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ifq8Tc1l; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RhDrtTUS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ifq8Tc1l; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CFF8C1F785;
-	Tue, 19 Aug 2025 09:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755595911; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzPfgd2lt4J7fPTHeWDtQnnzyX/xppMs0Znex3xXsXs=;
-	b=RhDrtTUSCvuT/Y00ht/Ag1K7fF2W1f4+bX/7uHp61qh+ni8oE6e6cMWka3pCUaPVCPUaU9
-	FvSd8wdRL3txQIPwsKJWOkDFbcYC0H/aNYaL4GDBliqvfL3V4SfjgFPrwFGyCH8Gu0v3k/
-	dV05xqpA5YYB2XWuapY4ftgNp8VkMZs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755595911;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzPfgd2lt4J7fPTHeWDtQnnzyX/xppMs0Znex3xXsXs=;
-	b=Ifq8Tc1lxFjxVvEWbIGd8LKBbH+VqjXsDz4Z3bNUM+gnp6WQjb/y3DM+NfjvTzqhJmW/Ix
-	Bm6m6NmvwP8Dm9Cw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755595911; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzPfgd2lt4J7fPTHeWDtQnnzyX/xppMs0Znex3xXsXs=;
-	b=RhDrtTUSCvuT/Y00ht/Ag1K7fF2W1f4+bX/7uHp61qh+ni8oE6e6cMWka3pCUaPVCPUaU9
-	FvSd8wdRL3txQIPwsKJWOkDFbcYC0H/aNYaL4GDBliqvfL3V4SfjgFPrwFGyCH8Gu0v3k/
-	dV05xqpA5YYB2XWuapY4ftgNp8VkMZs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755595911;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzPfgd2lt4J7fPTHeWDtQnnzyX/xppMs0Znex3xXsXs=;
-	b=Ifq8Tc1lxFjxVvEWbIGd8LKBbH+VqjXsDz4Z3bNUM+gnp6WQjb/y3DM+NfjvTzqhJmW/Ix
-	Bm6m6NmvwP8Dm9Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5EBA13686;
-	Tue, 19 Aug 2025 09:31:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UQ3gK4dEpGidRgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 19 Aug 2025 09:31:51 +0000
-Date: Tue, 19 Aug 2025 11:31:51 +0200
-Message-ID: <87h5y3verc.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1755596077; c=relaxed/simple;
+	bh=1o2I4/Wuhe1XU7UfkiFj8aTIHGpgQQgsuj8/ur9OlLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SvM3UnOc7etmmFH3CXY7w3n25RkbFiMEmcM7/tCSjDEkPW2g2p5arSylJyr6f3jqSUjtHTdIX6tDN80CRGX/foKTg2lL286wSk6+oVP0K3AjoHh/Ot23aoLxo3LObrENZLmJUF6vvz3uwQd/QRG63APXAz5p6Wa0oPtips84Tvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5h39Cs9; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-24458194d83so36428835ad.2;
+        Tue, 19 Aug 2025 02:34:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755596075; x=1756200875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8WkpEF0favtVMusKLPsWqFec66HjBIb7M3zCZDZ6nU=;
+        b=i5h39Cs9crfPLOPCgcjdTkilLmr0k5o9aZQXlEDf1GWadHhghzwc/A7y2eEK3DoDb7
+         U1Mj7LhpchvYG4pp33QECjK23yl8Qhzd9k3uJ+I7QqgASLv2TeHNQHOc4kx6q+tcff8W
+         as29LHB1TuIHKHiueHQ85+SYhRU6Uo4eH8ZutnYUNVf1MR62f/FcXLmq3lryWcpa521w
+         rTwhkLVrHtVnxAMR5YzRPTyZP1ySZTtcQOv7xytNP2o5G/5GDD170XZHwDszf/9bqDAB
+         aAsoIGs6nN284r91KrKLTmaynMUb0JhKIQZ4mjWUoFujlE79kYPlkbdw87zsMyVTM5Wo
+         T/Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755596075; x=1756200875;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w8WkpEF0favtVMusKLPsWqFec66HjBIb7M3zCZDZ6nU=;
+        b=YMHgPAVBZNePrqeVOQ4izo4LDKH1DvSdmO4M6gwt/2KoUoqehpDaJTk7u30QpWvvwo
+         ER/RCK37kv/xScWW2D18pYqsYIzFOjqda6sz0XwVM4PApLFYNWx3sckPozoF1cl7A29g
+         zFu0z8eTVgOp/zWNVPUuGgwEOtsK9JRkDaiFH+mkgnzwbRF42X1rSA/MGpj84aAWD7f+
+         FtziSwzBjkw3BPdL/1SIV3jXq3UzXoIFMJbdTx5MfsFh1u+GDTFx37Km4heWuV8yYrBU
+         KX485TMimjHnhpX834MoA3sgfaQQW6TlwSUPzmkN09APHO+Z59gSHyVC98+COPYmwCKU
+         q3YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE9Z0V40w8aEiQRTv9CbQfWFfmkQe86NsSwJ/1uB9zdZfGME7yMNezXrBYHBF4Wdta8yHg@vger.kernel.org, AJvYcCXO6aOZbcREfX8RVVxg7ikko1djJnDIbU3j/5sP1xlfE28loLGUhYy1enmIMS9gOBBNf4E=@vger.kernel.org, AJvYcCXXh+zkcZ5UEPYpkU0rPI3cgin4h7imhnJMMGZf9iCSUwL4PcuOBh9NAbspkRBsNu2ED7+Ep+G0Pk1LyG66@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxub0EyXNj6yL3sI5pMrB6l1mB2pbCNoORMOynsG5m4f97zdpt9
+	2GXUerOyIOqIKHbf5uVhDhoYhh2PArQMpJ4dPiJZQvVJy3p9UpEdlyXa
+X-Gm-Gg: ASbGncs9a1TsCwkzDh0NQD6FeF3Mulvt63oAgY7umBZugm1MGi+4Ry9nqYqiCF0JPy/
+	GNmReKDYSlEXYwrGIloCO4dndJ1/gGaksa9yLDiMIDLpnB+kHRrHXDsASu401lZN3O0aYQ2rtFo
+	p+A+2F7h3h/Cn6nz2nNp9HA8hBAkfLqUTBEtwxs022d+Rnd0RIcJq6HWR2PxfzxyvZ9FW2+q2ui
+	F2jmU47PRVqIuPpy9MgJP6S+sshOam/lpTAl+pfYVO3FkzzbmsksU9xmgEKBHq1u7wO84rXg6b4
+	afySO1okyvhk+rF3Tfjyrf3D256K0emuCSuoIBWNOGWIx6wiRBseIgtCoVYSWeZaL1G00TAUW0z
+	Rg9B6nSdGA0Ke5X59Ee4=
+X-Google-Smtp-Source: AGHT+IHQDaIzypbBtW89KAWZWC45E2khsB4Jv/SZyQ+9gu3U9GMlnwRQZ+iF36z+Vl33RKCevxyZRw==
+X-Received: by 2002:a17:903:2acb:b0:240:66ff:b276 with SMTP id d9443c01a7336-245e0540873mr25446435ad.31.1755596074956;
+        Tue, 19 Aug 2025 02:34:34 -0700 (PDT)
+Received: from 7940hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d1314a4sm1990945b3a.41.2025.08.19.02.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 02:34:34 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: ast@kernel.org,
+	paulmck@kernel.org
+Cc: frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com,
+	josh@joshtriplett.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	rcu@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] ALSA: usb-audio: us144mkii: Use le16_to_cpu() for product ID comparison
-In-Reply-To: <20250819075118.9221-1-ramiserifpersia@gmail.com>
-References: <20250819075118.9221-1-ramiserifpersia@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bpf@vger.kernel.org
+Subject: [PATCH bpf-next v2 0/7] bpf: introduce and use rcu_read_lock_dont_migrate
+Date: Tue, 19 Aug 2025 17:34:17 +0800
+Message-ID: <20250819093424.1011645-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
 
-On Tue, 19 Aug 2025 09:51:17 +0200,
-©erif Rami wrote:
-> 
-> The `us144mkii.c` driver was generating sparse warnings due to direct
-> comparisons of `dev->descriptor.idProduct` (a `__le16` type) with
-> integer constants. This commit resolves these warnings by explicitly
-> converting `idProduct` to a CPU-endian integer using `le16_to_cpu()`
-> before comparison.
-> 
-> This ensures correct handling of endianness and eliminates the sparse
-> warnings:
-> - `restricted __le16 degrades to integer`
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508190811.tjQJZI1X-lkp@intel.com/
-> Signed-off-by: ©erif Rami <ramiserifpersia@gmail.com>
+migrate_disable() and rcu_read_lock() are used to together in many case in
+bpf. However, when PREEMPT_RCU is not enabled, rcu_read_lock() will
+disable preemption, which indicate migrate_disable(), so we don't need to
+call it in this case.
 
-Thanks, I applied now with Fixes tag.
+In this series, we introduce rcu_read_lock_dont_migrate and
+rcu_read_unlock_migrate, which will call migrate_disable and
+migrate_enable only when PREEMPT_RCU enabled. And use
+rcu_read_lock_dont_migrate in bpf subsystem.
 
+Not sure if I should send the 1st patch to the RCU subsystem :/
 
-Takashi
+Changes since V1:
+* introduce rcu_read_lock_dont_migrate() instead of
+  rcu_migrate_disable() + rcu_read_lock()
+
+Menglong Dong (7):
+  rcu: add rcu_read_lock_dont_migrate()
+  bpf: use rcu_read_lock_dont_migrate() for bpf_cgrp_storage_free()
+  bpf: use rcu_read_lock_dont_migrate() for bpf_inode_storage_free()
+  bpf: use rcu_read_lock_dont_migrate() for bpf_iter_run_prog()
+  bpf: use rcu_read_lock_dont_migrate() for bpf_task_storage_free()
+  bpf: use rcu_read_lock_dont_migrate() for bpf_prog_run_array_cg()
+  bpf: use rcu_read_lock_dont_migrate() for trampoline.c
+
+ include/linux/rcupdate.h       | 24 ++++++++++++++++++++++++
+ kernel/bpf/bpf_cgrp_storage.c  |  6 ++----
+ kernel/bpf/bpf_inode_storage.c |  6 ++----
+ kernel/bpf/bpf_iter.c          |  6 ++----
+ kernel/bpf/bpf_task_storage.c  |  6 ++----
+ kernel/bpf/cgroup.c            |  6 ++----
+ kernel/bpf/trampoline.c        | 18 ++++++------------
+ 7 files changed, 40 insertions(+), 32 deletions(-)
+
+-- 
+2.50.1
+
 
