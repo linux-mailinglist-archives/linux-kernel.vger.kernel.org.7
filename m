@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-775526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B386EB2C028
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:23:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCE8B2C02F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C11886CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC543A8758
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C535932A3C8;
-	Tue, 19 Aug 2025 11:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2AE32A3C6;
+	Tue, 19 Aug 2025 11:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9lRxEtm"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WstJvNo4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B138527876E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2309A27876E;
+	Tue, 19 Aug 2025 11:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755602520; cv=none; b=aLq0k2sJmWaqhfixLfrCJeyfRcF7IymL88LMjKIWnPjnYa8cantJROTAqKGqlRirYh1Pks07Yg1cUfPqhNhdPUJNJ6xtfCzsj7OQM53xdppdx3JEmxvHWcHgonxJ2aJ3XCzJ8lqXIDocxHUvulkDh/5zffRLCSDVgJ4s1wOn7r0=
+	t=1755602527; cv=none; b=L+J13ijpZ0TYjSvLdJO/X+Tcvy8ptHyFmnLpjNyNvbyeKCgKYRmZCocE4jop7mUSAYEllQYyfZ+tUmbwJ5Ls1ydgQVH5qnjGIIIDQpVsvh5CwEDVoqc7skevVLWamwIS1ILiAZMzH0Vk6fgXjfNAW5BbR71dVgm3cPprdX+8P0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755602520; c=relaxed/simple;
-	bh=IM67WPQOHye2i+1z72epmy92Qmx4agSMBIMH1WeYbtQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D5aiyTgCT0zrX/inR6QtSlDTrjj1Tm+Z2VrOQYvQWkkUx34E1GStHduaR/g+ObavAmVxRKA+MqBMzjGYE4z3FO0J4XTrR1AxbkE5PPq0oxXFlDdtmKOlLr0JJU+G0emI4ZWNfMryfEhOVAa7EmDOWwAhAeMKiXcaS6nZywtmNGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9lRxEtm; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55ce509f80dso5092825e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755602517; x=1756207317; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IM67WPQOHye2i+1z72epmy92Qmx4agSMBIMH1WeYbtQ=;
-        b=S9lRxEtmzA7oK9h9THtttYlUjrd7ofW2ZMrJ9D7pMv1o1fj7mtqKB3E9469Qup5SIk
-         7K8HEqNinh7RKpi/f6utKGZmXFVw5jy6cAuQdhin1Fnb6BqyVD8WiAHmW1sTfnP8JjMP
-         IVWUspHWPgI6pKJN7PQ6X5Nnftlxg/DC+ON071kiEKByTO3O7YPBJqHYBdTBtYTMu3TY
-         X+T0HmuFznKbQc6fRKTpJCGOFQ1KxGEKsBAH5Vmra6jV2RIi67FSosGIbKGa/6L5N4Fz
-         HG5iV3N7pwTc3Gk9bZwTLTIvmXe8loJvrjZ8TzKVMQVxqdPG3Et8poiD0YveaARe5euZ
-         Escg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755602517; x=1756207317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IM67WPQOHye2i+1z72epmy92Qmx4agSMBIMH1WeYbtQ=;
-        b=HVN5zfgEaGEPBlIJU4kC9S06Q2Tg35A5DwQzCd7BHdEi1C51OxpmYwuHM6dvTAqs60
-         V9VX8lX049gHZIibXv2uLSxj5SMW/63iHVF3GYJOI63FS4qipqNo6X045rMix+Wv/zuG
-         SeaRufgs4sTbWP34tJSHUGXH9CSM29efGgSx8UUCNjZYGpXRuzBniGDA49sqlc7HH7vW
-         xkD5mWMAIP3trW+yCgFLJU4l/2zChV8z3VOr6zZ5xzZwZxxkXu2m61nkMBPgVJuiD0n7
-         nPKk1HGQ+Nann5oq/JaxTrg2cBSIOrIHOuqaRd77inuwgI0WS58ZxiGi/jn6vdb9XS8a
-         R4cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlZHm5afdoj//mAzJ2H53IjN+QLID+N2D0SbByb2u267BSESr2PZrH12qd1lNjb7RqVM1LultdP0tGrII=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd3X7fKw/L76waxXYMen392AQKO2XXOkYnRvhKUOy0e5wCqN3t
-	4wMzqmirPkix0wjpnVUqjAhJeOI3D7jPp75O6AcwLDjRBXhVnpMh78EBnNxlu6FVjfp5W9oDI/d
-	VW5ax1sjQTNZHzHPuqs3fthzgOR/NQiu17VSJDNVfQg==
-X-Gm-Gg: ASbGncvnkavmw4rme6ME7eSSMz48Kv3DYefbpyaz15A730yEBU6yiXDJhW2R3UCP4AR
-	0AUh+bwdgV4JifSnXlzq/CrxV4CWFowZ5mo1G2EMKN6V/m5/nwN2L9jUXGCvZwG+LS8ioSbwiR7
-	yTysktJa+BvnA3JLrwfdZLN3xendvDt7rrzVv09qzvXvCYDWXPdFfhowvY8xJ8ONmfVtPpgSZDT
-	p4k1LA=
-X-Google-Smtp-Source: AGHT+IHB9ZE3HHwBP8KRu0As5tM0j3eS8qOs+KX5e0XlvnFV/qrios6LpoJC/eBjHm40/aNMJAbseQeE3Ftd5lSOg8c=
-X-Received: by 2002:ac2:4c45:0:b0:55b:8698:6a1d with SMTP id
- 2adb3069b0e04-55e0079296fmr723607e87.3.1755602516865; Tue, 19 Aug 2025
- 04:21:56 -0700 (PDT)
+	s=arc-20240116; t=1755602527; c=relaxed/simple;
+	bh=XMExnmBFXcPk0dOstqKXSh1ltQZmTlVHsRz4D0fsUKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H9jA9h4TOHUm8djDpsKxPbXa1EXyKXx70KsZ6ZdsqwAw4sh2VffQOsL/rwLT9UkY9YKBrdZQtuRvHXwyci4deBjmDpHzwcwn/yrQd11zBjR8uQTlxN9R4HzzvLkTIJoE8vvTCPXhYABzJIW6t+snqbXKD6J7ctQIf3YejgGBNCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WstJvNo4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14644C4CEF1;
+	Tue, 19 Aug 2025 11:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755602527;
+	bh=XMExnmBFXcPk0dOstqKXSh1ltQZmTlVHsRz4D0fsUKs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WstJvNo4qGxW6wSZOMSm7zjXcOuIJpxUYj8mkMl1WLTpvtzIhmUZCwke9Cmo7hmw/
+	 HCSH2r65NAEem7/S5T/s2H5DLKM25b3n1SnkWo2ym/kFuyN8Vj+OtzCHLU0Etbvdiq
+	 GjaQYWZcXhhZOpvFJHRTMkLSCGgtGgeU+0ZiMzJoJrw03ULCiQUwndYcjG+SFk+5zl
+	 LMNxspv6SGGlEqadBoqQPSyf7KqIN1wm4/GQ5paZMOMWAjxA0A/iWCCc+Ex8zMBxdF
+	 bGzHEv1Dcl7usw0FPI1AtYuPr12ZSe+tkNGbCFfUUijws8lmhmj/AT4VGLPczLAAOW
+	 ghxHLstB3n1nQ==
+Message-ID: <5c527946-31c4-45a9-a804-f873ce0db4a4@kernel.org>
+Date: Tue, 19 Aug 2025 12:22:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812203348.733749-1-robh@kernel.org>
-In-Reply-To: <20250812203348.733749-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 13:21:44 +0200
-X-Gm-Features: Ac12FXwBOtQCyCuqh-xFzcRsUI8fbtRh0MGdvIn7jfDa7EoepbxRk616CgxWIGc
-Message-ID: <CACRpkdYxFj9ZCdpOpE7G2A8cNTRTWoJatDP7OmCkkH_4eApz6w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Convert brcm,iproc-gpio to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the nvmem tree
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250819134039.5742c60e@canb.auug.org.au>
+ <3861530.VQhiAETyHQ@diego>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <3861530.VQhiAETyHQ@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 10:33=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
 
-> Convert the Broadcom iProc/Cygnus GPIO/Pinconf binding to DT schema
-> format.
->
-> The child node structure is based on the example as there's not any
-> actual .dts files with child nodes.
->
-> The binding wasn't clear that "reg" can be 1 or 2 entries. The number of
-> "reg" entries doesn't appear to be based on compatible, so no per
-> compatible constraints for it
->
-> The "brcm,iproc-stingray-gpio" could possibly be dropped. There are no
-> .dts files using it, but the driver uses it.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 8/19/25 12:14 PM, Heiko Stübner wrote:
+> Hi,
+> 
+> Am Dienstag, 19. August 2025, 05:40:39 Mitteleuropäische Sommerzeit schrieb Stephen Rothwell:
+>> After merging the nvmem tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> In file included from drivers/nvmem/qnap-mcu-eeprom.c:12:
+>> include/linux/mfd/qnap-mcu.h:13:9: error: unknown type name 'u32'
+>>    13 |         u32 baud_rate;
+>>       |         ^~~
+> 
+> [...]
+> 
+>>
+>> Caused by commit
+>>
+>>   117c3f3014a9 ("nvmem: add driver for the eeprom in qnap-mcu controllers")
+>>
+>> I have used the nvmem tree from next-20250818 for today.
+> 
+> bah, sorry about messing this up.
+> 
+> While I encountered this, and fixed that with the pending
+>   https://lore.kernel.org/all/20250804130726.3180806-2-heiko@sntech.de/
+> 
+> I completely missed that the nvmem driver applied alone would break
+> without that change :-( .
 
-Yours,
-Linus Walleij
+I have now reverted this change, @Heiko Please let me know if you want
+to take this to mfd tree or vice-versa.
+
+--srini
+> 
+> I've send
+>   https://lore.kernel.org/all/20250819111044.2714855-1-heiko@sntech.de/
+> 
+> as a fix that removes the issue for the nvmem driver.
+> 
+> 
+> Heiko
+> 
+> 
+
 
