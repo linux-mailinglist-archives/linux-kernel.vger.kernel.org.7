@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-774641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D89AB2B575
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2948CB2B573
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8BD91B207F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D14616796B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB901B0413;
-	Tue, 19 Aug 2025 00:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61CC1DE3DF;
+	Tue, 19 Aug 2025 00:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBzpY4MH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fcl5vWTt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B200513FEE;
-	Tue, 19 Aug 2025 00:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA5B1C32FF;
+	Tue, 19 Aug 2025 00:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755563976; cv=none; b=T69QfULUyONSxfLCdMhmvNQNDYdyJT7pb7uBGirIk2F5sMj9oo1LfRL2C/RsrgPvvshZjwf7mQ1vKmqKsEyiS39frW96RQ558UV76Qpwa77Ci8egDY1N6O0B/Y+85a/6FPpk0EqXe3HYklujk2jPBSyhC6JMvPFUIpGa8rN0L5g=
+	t=1755563978; cv=none; b=GhuyBcO+aXJw4fROsSNKh9iu8z0RaR7cQCGF5x6AHMmQOHQHha3JYBjpoonwACqDAsSVeWCdQdGn6NbHzI2pQKFN6LqE+pVKctdKJDiQWpSgbryomWuhnKIZOoF3RFJN4PccO1YCWs6AvM7OLAa+vI8U8pKie2R5TI+vwzQEPdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755563976; c=relaxed/simple;
-	bh=C03dOmNnOqBE2+8uBcpUMnixcBGRIOifUTQNa6baHCY=;
+	s=arc-20240116; t=1755563978; c=relaxed/simple;
+	bh=0v49ZCs+KcrnAsogjZvRFHcVhQAaER7OfcCStKcAGiM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H21+K+uT8xYI6WjytYe1bKhHTD2r29cpxGlHQbo5agLRFtYvILYSBeASNZ13hCXMtmB3Z45+HwAPgc0umyPgJjJvSbD/PYsJ9ip0txROvI5Hoi6ddQPOffOMndiiGT2qHPvOIQ5U71RBKP5CSJ41fN5JaBihbHOfs7Z2h9VhRZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBzpY4MH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652D6C116C6;
-	Tue, 19 Aug 2025 00:39:31 +0000 (UTC)
+	 MIME-Version; b=QuPH+GxMHMd75puPZ+EEzLi/RD0IIsD7H6XYj5VLG1pXQ3tw+DYwMKccfalO37ugAE/16Tco75Zsw+n01s2HdiNtJ88zDhmSB3H14NeTx372cbAxQ8NDRlK63Q8xZ8hrI+Eg5WBAVbCZHKZ25wN8updFPao0guGuH9fx1/a/uZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fcl5vWTt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99CADC116B1;
+	Tue, 19 Aug 2025 00:39:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755563973;
-	bh=C03dOmNnOqBE2+8uBcpUMnixcBGRIOifUTQNa6baHCY=;
+	s=k20201202; t=1755563975;
+	bh=0v49ZCs+KcrnAsogjZvRFHcVhQAaER7OfcCStKcAGiM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JBzpY4MHrQlFe68cYlLf7omHHC16oQw0iHDVVWPlJBG1NQl0rtIuPbwtQwc16a5xo
-	 85AV4++AAJfo/pkyeWfZeH/wfFE+PkkE4iSjMEfuGAK3y2QkZgLj4cdQzu3rhcqP40
-	 7sGFGndkl9UIBBC+5iCUJX2dvelo1BzaGVfflZlwz29HBOFzI06YoZT8Va/mDtTEKX
-	 vrN2bdxQWwIDMF/JILXanEhlKvrBglhC77SpToFumYQPGQ0Yuw8Lzkqcr32gexxIBX
-	 5am0IeQJWv5fHfEY1NMY1I21LQ45/660yLjm0vVjzXD7BOhpc5oHHkr2OQnhTXW+LH
-	 xInER8ufkrx7Q==
+	b=Fcl5vWTtZFSObT8RS4N9BZ4tVkR0QfSV6hkX/b/Hvb6lgeu9Y6mfOGvo4oOG/tM/m
+	 i1DhyfrP0Ok+n0hyMGM3xAa2Nfbzc320m9jtNguq8Bt6tS5t2h11dUH5IbBwt5mLBz
+	 2pihHCB12pKgenRy5MSLP+lsqZ8M7kh+QQWifCOxwoMhPGZ8eA6pT3pbf9c6zbcuv7
+	 CbT0hMI4IKVUQ6F2uSvnZWCDLYhABTuXPLl/04pxVdkTjuneVj5iZfa1136LDS6qhR
+	 VwDwlI2LrYgHcd6hJ+JiRyEvrGHsS4CycybpIu73n0x4J7cZPcTivlG8dztaIC7V06
+	 x77yg1btvo4/g==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Richard Leitner <richard.leitner@linux.dev>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,9 +49,9 @@ To: Richard Leitner <richard.leitner@linux.dev>,
 Cc: linux-usb@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] dt-bindings: usb: usb251xb: make reg optional for no I2C ctrl use case
-Date: Tue, 19 Aug 2025 08:22:15 +0800
-Message-ID: <20250819002217.30249-2-jszhang@kernel.org>
+Subject: [PATCH v2 2/3] usb: usb251xb: use modern PM macros
+Date: Tue, 19 Aug 2025 08:22:16 +0800
+Message-ID: <20250819002217.30249-3-jszhang@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250819002217.30249-1-jszhang@kernel.org>
 References: <20250819002217.30249-1-jszhang@kernel.org>
@@ -63,26 +63,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make "reg" optional to allow the driver to be used to manage GPIO
-based control of the device.
+Use the modern PM macros for the suspend and resume functions to be
+automatically dropped by the compiler when CONFIG_PM or
+CONFIG_PM_SLEEP are disabled, without having to use __maybe_unused.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- Documentation/devicetree/bindings/usb/usb251xb.yaml | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/misc/usb251xb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/usb251xb.yaml b/Documentation/devicetree/bindings/usb/usb251xb.yaml
-index ac5b99710332..4b676c010f3e 100644
---- a/Documentation/devicetree/bindings/usb/usb251xb.yaml
-+++ b/Documentation/devicetree/bindings/usb/usb251xb.yaml
-@@ -240,7 +240,6 @@ additionalProperties: false
+diff --git a/drivers/usb/misc/usb251xb.c b/drivers/usb/misc/usb251xb.c
+index 4fb453ca5450..cb2f946de42c 100644
+--- a/drivers/usb/misc/usb251xb.c
++++ b/drivers/usb/misc/usb251xb.c
+@@ -698,7 +698,7 @@ static int usb251xb_i2c_probe(struct i2c_client *i2c)
+ 	return usb251xb_probe(hub);
+ }
  
- required:
-   - compatible
--  - reg
+-static int __maybe_unused usb251xb_suspend(struct device *dev)
++static int usb251xb_suspend(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct usb251xb *hub = i2c_get_clientdata(client);
+@@ -706,7 +706,7 @@ static int __maybe_unused usb251xb_suspend(struct device *dev)
+ 	return regulator_disable(hub->vdd);
+ }
  
- examples:
-   - |
+-static int __maybe_unused usb251xb_resume(struct device *dev)
++static int usb251xb_resume(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct usb251xb *hub = i2c_get_clientdata(client);
+@@ -719,7 +719,7 @@ static int __maybe_unused usb251xb_resume(struct device *dev)
+ 	return usb251xb_connect(hub);
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(usb251xb_pm_ops, usb251xb_suspend, usb251xb_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_pm_ops, usb251xb_suspend, usb251xb_resume);
+ 
+ static const struct i2c_device_id usb251xb_id[] = {
+ 	{ "usb2422" },
+@@ -739,7 +739,7 @@ static struct i2c_driver usb251xb_i2c_driver = {
+ 	.driver = {
+ 		.name = DRIVER_NAME,
+ 		.of_match_table = usb251xb_of_match,
+-		.pm = &usb251xb_pm_ops,
++		.pm = pm_sleep_ptr(&usb251xb_pm_ops),
+ 	},
+ 	.probe = usb251xb_i2c_probe,
+ 	.id_table = usb251xb_id,
 -- 
 2.50.0
 
