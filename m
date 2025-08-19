@@ -1,107 +1,136 @@
-Return-Path: <linux-kernel+bounces-774966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FBEB2B9BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:42:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304E7B2B9C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871133BA997
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5055E35BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2299C26B973;
-	Tue, 19 Aug 2025 06:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B06426F2AE;
+	Tue, 19 Aug 2025 06:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgWy9ue4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KnIxvl/g"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735AD2690C0;
-	Tue, 19 Aug 2025 06:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE22126B09F;
+	Tue, 19 Aug 2025 06:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755585599; cv=none; b=t8qA1ZdaKiaZIIBAEZux4wDZ9VhjGaYvhot3GvdriWX4CFzFoWaX/i2Ku2EQrH1a0ihIz6xWi4uYRbU3r1JbLpOkOydRzblVa3/tdicyhr52MTRO4QszCKWD9wlqWrVoDrKvf0BzpSQZDAn8i3RnOM0fEjBRUPH8+28wj/E6l6s=
+	t=1755585861; cv=none; b=ofZiY/ZDZ9/fM4GQe0alqSAaIB4dHZWPiq8R6lwjoTmmlf2EKQkPT5U+yV80EpUGcZP7lI/MEi+ah7DfYXpgzGqnXEhC7qKFThCJQNqjy7zskumJmLoD0PdvZWsj5IRxKtRxlj/eEG8cJ6eWjHV/hs0pZNMS+2ja4K9QOYMYAYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755585599; c=relaxed/simple;
-	bh=HoWbYmhsA8SL51aANKCLbtiNokkLG98QFcJSsUgJGr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gG12yTib02L4yPd0jAOrJKw0PgMLpDXXFUptrNb32+GIHNuyfYFg63Dyn4/PFckyC9b8KU2sPQQ+hYS4TJwy+aG/DMMFkDYGbAjKZwifGZthx5PIj7ERDLXzjumX4GcNYrxZwe2pES/1AbzJrlqoT8fsPLmF8YffyZ6/BJhNEs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgWy9ue4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2CCAC4CEF4;
-	Tue, 19 Aug 2025 06:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755585599;
-	bh=HoWbYmhsA8SL51aANKCLbtiNokkLG98QFcJSsUgJGr8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VgWy9ue4oVQqA5ZXVBseBthE4nnglgr43ZXl4X9E5o2Ay/SK4naLQc5zWOIsTceZu
-	 HYU1x5v7StG2UxeYvtCCwTNIy2gcWOgWjUw3uSBgOoZ0+INlxskI5dkmJrvZxVV8Dh
-	 g0K5cm2fI75meYpfhLVMySZ+DNrJnuAFC79DhotYXJfHguvhlzjpzk2ExUy5HfQwSD
-	 QauFX7ONxWXOAPJXpkPNt7OaI+G72mA9CTdS511Yy6NA5ZCKHEuWHeMcCXEQV+gIi0
-	 ejZ911WLs5Aocd9i0PH1y4FrYqsVb3t7z+sus4EfmxwO25EmUoa0GLzcvcPHVynkNA
-	 f8PLz6FE6fLYw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	linux-perf-users@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH] vhost: Fix ioctl # for VHOST_[GS]ET_FORK_FROM_OWNER
-Date: Mon, 18 Aug 2025 23:39:57 -0700
-Message-ID: <20250819063958.833770-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-In-Reply-To: <CACGkMEvm-wFV8TqX039CZU1JKnztft5Hp7kt6hqoqHCNyn3=jg@mail.gmail.com>
-References: <CACGkMEvm-wFV8TqX039CZU1JKnztft5Hp7kt6hqoqHCNyn3=jg@mail.gmail.com>
+	s=arc-20240116; t=1755585861; c=relaxed/simple;
+	bh=cP8PEXAXqfpf3w0B8Uk32xdrJvRk5JyP2bU5Je7lfgw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dvof6EtxGYnAv7UgZXaPHyHmdI78FGyUpWNlbp2SBXmQ5wfq9NRTVbPy5f0m1FmYNztA3Bn8h2GuS8JRSawOqvB0nyESYQ8wOpnRTiPg86HXB+O3TR6SS05PTuXFpg+BMrAKJiXdHsDotqOdjlzD7dRtPM1h6I4GtwGuMRfwTos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KnIxvl/g; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755585859; x=1787121859;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cP8PEXAXqfpf3w0B8Uk32xdrJvRk5JyP2bU5Je7lfgw=;
+  b=KnIxvl/g1vvaETx+pHrF5rb2dtXiCibb5hsBFA1k8CwWAU8AUgXuAd8z
+   +uWI6TI/p7Eh4bsr8CA/CTzosJilwQzLosGOIsIXi87rs7kjqcoT0J9DS
+   23J+C3E+0/egM6jDURX1S4IpDYyXTrK7vIMBRADYZB066QL5T1wk1t8Os
+   LHxwQVJ3NGwbd6q/MNi+4jmgbH6B5GqvvRZcNMD2x+rIZocYD06IfakQ+
+   gpPMLUfek3B3lWTqQeuX8rOebssu8QFRlxkr/au4PIQf3hZcBepkaNEGh
+   kEdC36/AiSwTmMoRBEK1+eoaMAGdVd2KnCUzYn16naGntkiY7eUkcLoM/
+   w==;
+X-CSE-ConnectionGUID: rZgPSQg4TSeIFZSdw/pssg==
+X-CSE-MsgGUID: 83i4szVxTfWacn9WsKvBBg==
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="212782844"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Aug 2025 23:44:12 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 18 Aug 2025 23:43:34 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 18 Aug 2025 23:43:34 -0700
+Date: Tue, 19 Aug 2025 08:40:11 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>,
+	<rmk+kernel@armlinux.org.uk>, <rosenp@gmail.com>,
+	<christophe.jaillet@wanadoo.fr>, <viro@zeniv.linux.org.uk>,
+	<quentin.schulz@bootlin.com>, <atenart@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v4] phy: mscc: Fix timestamping for vsc8584
+Message-ID: <20250819064011.zv3ybgvjx6cqkyhc@DEN-DL-M31836.microchip.com>
+References: <20250818081029.1300780-1-horatiu.vultur@microchip.com>
+ <20250818132141.ezxmflzzg6kj5t7k@skbuf>
+ <20250818135658.exs5mrtuio7rm3bf@DEN-DL-M31836.microchip.com>
+ <20250818141306.qlytyq3cjryhqkas@skbuf>
+ <20250818141925.l7rvjns26gda3bp7@DEN-DL-M31836.microchip.com>
+ <20250818143732.q5eymo65iywz44ci@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20250818143732.q5eymo65iywz44ci@skbuf>
 
-The VHOST_[GS]ET_FEATURES_ARRAY ioctl already took 0x83 and it would
-result in a build error when the vhost uapi header is used for perf tool
-build like below.
+The 08/18/2025 17:37, Vladimir Oltean wrote:
+> 
+> On Mon, Aug 18, 2025 at 04:19:25PM +0200, Horatiu Vultur wrote:
+> > Nothing prevents me for looking at this issue. I just need to alocate
+> > some time for this.
+> >
+> > > The two problems are introduced by the same commit, and fixes will be
+> > > backported to all the same stable kernels. I don't exactly understand
+> > > why you'd add some code to the PHY's remove() method, but not enough in
+> > > order for it to work.
+> >
+> > Yes, I understand that but the fix for ptp_clock_unregister will fix a
+> > different issue that this patch is trying to fix. That is the reason why
+> > I prefer not to add that fix now, just to make things more clear.
+> 
+> Not sure "clear" for whom. One of the rules from Documentation/process/stable-kernel-rules.rst
+> is "It must be obviously correct and tested.", which to me makes it confusing
+> why you wouldn't fix that issue first (within the same patch set), and then
+> test this patch during unbind/bind to confirm that it achieves what it intends.
 
-  In file included from trace/beauty/ioctl.c:93:
-  tools/perf/trace/beauty/generated/ioctl/vhost_virtio_ioctl_array.c: In function ‘ioctl__scnprintf_vhost_virtio_cmd’:
-  tools/perf/trace/beauty/generated/ioctl/vhost_virtio_ioctl_array.c:36:18: error: initialized field overwritten [-Werror=override-init]
-     36 |         [0x83] = "SET_FORK_FROM_OWNER",
-        |                  ^~~~~~~~~~~~~~~~~~~~~
-  tools/perf/trace/beauty/generated/ioctl/vhost_virtio_ioctl_array.c:36:18: note: (near initialization for ‘vhost_virtio_ioctl_cmds[131]’)
+I have tested the patch by inserting and removing the kernel module. And
+I have check that remove function was called and see that it tries to
+flush the queue.
 
-Fixes: 7d9896e9f6d02d8a ("vhost: Reintroduce kthread API and add mode selection")
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- include/uapi/linux/vhost.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> I think the current state of the art is that unbinding a PHY that the
+> MAC hasn't connected to will work, whereas unbinding a connected PHY,
+> where the state machine is running, will crash the kernel. To be
+> perfectly clear, the request is just for the case that is supposed to
+> work given current phylib implementation, aka with the MAC unconnected
+> (put administratively down or also unbound, depending on whether it
+> connects to the PHY at probe time or ndo_open() time).
+> 
+> I don't see where the reluctance comes from - is it that there are going
+> to be 2 patches instead of 1? My reluctance as a reviewer comes from the
+> fact that I'm analyzing the change in the larger context and not seeing
+> how the remove() method you introduced makes any practical difference.
+> Not sure what I'm supposed to say.
 
-diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-index 283348b64af9ac59..c57674a6aa0dbbea 100644
---- a/include/uapi/linux/vhost.h
-+++ b/include/uapi/linux/vhost.h
-@@ -260,7 +260,7 @@
-  * When fork_owner is set to VHOST_FORK_OWNER_KTHREAD:
-  *   - Vhost will create vhost workers as kernel threads.
-  */
--#define VHOST_SET_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
-+#define VHOST_SET_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x84, __u8)
- 
- /**
-  * VHOST_GET_FORK_OWNER - Get the current fork_owner flag for the vhost device.
-@@ -268,6 +268,6 @@
-  *
-  * @return: An 8-bit value indicating the current thread mode.
-  */
--#define VHOST_GET_FORK_FROM_OWNER _IOR(VHOST_VIRTIO, 0x84, __u8)
-+#define VHOST_GET_FORK_FROM_OWNER _IOR(VHOST_VIRTIO, 0x85, __u8)
- 
- #endif
+I don't have anything against it, like I said before I thought those are
+2 different issues. But if you think otherwise I can add a new patch in
+this series, no problem.
+
+Why do you say that the function remove() doesn't make any practical
+difference?
+
 -- 
-2.51.0.rc1.167.g924127e9c0-goog
-
+/Horatiu
 
