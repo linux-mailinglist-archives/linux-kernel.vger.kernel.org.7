@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-775557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4768AB2C093
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DE0B2C08E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8AD16A394
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B574E725ADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE1732C302;
-	Tue, 19 Aug 2025 11:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC522A4D5;
+	Tue, 19 Aug 2025 11:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="hBxzjsnW"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I9T4dDTq"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B9032BF46
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AE030F813
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603066; cv=none; b=dxjePmFb/xlRuNBzBIb3lRZuMd3YRB+qaj5kBELvsxxDcSFBzHgvqzxoBy9sgIfIdch8XtYWePWEGNH+gqG2MbfUJQ8jMUrw3nTK3NIp1FCjKY37rriSn9Co4SQ06j3LBlyGG80GMD/+r0JPhRaF0cO1K9EZ7kg3zjMuXDvuF5k=
+	t=1755603061; cv=none; b=KzwbHV+4ZaIp1Uoo4c0NUF9uR6chwvx749/KsonHWyOGf4ebFZR5yEoHAI4fj8qUmJ1vm2UC8HRhtubFQ9VrNHJCuw2mIKY9slb/9As0SND4UTplIYnNytCGquLnIdGPYz5HHOT82H2Tu6OwlqBg6iXhzJiHjIyPqMfNKic6EJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603066; c=relaxed/simple;
-	bh=bL79TkXLSKyvZYTAzeB0+GrBDYjaKkolrHs8/aZBgUA=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n57/Zm4v5m1Gk5ffJp6fvUzXZ1B8VpOXSENkb0hDpFNd620wdOLtqExlQZv5gJKndTJboa1Ue3p/IdHXQifmycfQ+PgWZts8e09jN8hHiLub5Kd6p5iUS1XtJpuDQjZ8nhpbxBe6LqWXbDTI5zJ6OFFIXjvUn1GxwpvbAaoeuXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=hBxzjsnW; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1755603052; x=1755862252;
-	bh=bL79TkXLSKyvZYTAzeB0+GrBDYjaKkolrHs8/aZBgUA=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=hBxzjsnWUS3NpHC8VouR5X3pqGh+BlxLlMONtDsdUbiZzCrL2vy1caN2C3jH2TxQi
-	 l+mB9q/6EucPTDDpggnyouqe7I7Cwd8qMWA/tncwaXhc5U28TPNnGWHKgt9+GxsOAU
-	 +DPIrFQrIxc0m1RaOBTQcQszUlh6871fetmxVG67ojNuncBVi8GJfue7Nmy/HlkLJD
-	 vUPhSrrrpe4yNFJ87w/H7biy0cdHNK29g7I3iPglTG9y6mCFSytTxeabCWgLQQYJo+
-	 YrFMBoKiZ8qc58a6J/iU/crhMd2L72SuIebHWc5aa2drtE9bsX4i9BuKSwSuII6DcZ
-	 vFjK3ufeRLtYA==
-Date: Tue, 19 Aug 2025 11:30:45 +0000
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
-Cc: "ceo@teo-en-ming-corp.com" <ceo@teo-en-ming-corp.com>
-Subject: [OFF-TOPIC] Are there any job opportunities in the Linux Kernel Mailing List (LKML)?
-Message-ID: <en2bwDPqFHMh8TrSLw_vEgsrP6O8e3grLVUflfFszWqVsEeeE-qlBD1MfIjd89pRZBDaSNYUAmCydYfqkUKC2v2bvSvnT8vf5U2Glr1GVR8=@protonmail.com>
-Feedback-ID: 39510961:user:proton
-X-Pm-Message-ID: 3ddf5fc5705b466dd027c6d09ea5f0f9ce1df51d
+	s=arc-20240116; t=1755603061; c=relaxed/simple;
+	bh=RS+DDBsenDMGRVRuo5OpJ0by6/pE8abc8eGvwv3Szfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XAlUoC8gOMqOkQwwmg/u0mdMvFMNi5sAzyWYd/MK5vkxPWOBROwoWhsZI5CURKgp9ux/NlABav+HrNfj4r4qXSjzLfE43XjQNex0iAurUMLdiv0NL1k03cdxH5tIXh4N+V1TtFxGAtwJMSg0hHGKLIzLhGL1/hmdoqY2tm5TUNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I9T4dDTq; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so689854266b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:30:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755603057; x=1756207857; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MlZSqNXnF5cFT3EKTsD5C3uA+ixCm4MLZap6H11YwJU=;
+        b=I9T4dDTqJjS4jq0QjdwoeWQRXmAWQvbPFYS0e2u8VTGBYdjWEzZ/5mLK0pq8JSOmzG
+         lXFYAAjqgvVOUUFneeHZQHh59gCz6bx4698RZzv8hIilHrQdFIVDIq+LWklvPojeneh/
+         TwXkl86vCC386iFAX5MRIBOWge8IF5SSdTWrtvVGmcbzn2u8jjG5OHetpuj6OR6y3MSW
+         op9kDqoS3OsCu0iHBQQkaXfVQI9DKBVfvlbUFu8v5SAQuikPE/V+/VZ+orSALcdatqPe
+         MpISU+2sKowBpbhlDX1wYbmrLMunlSudUJykGUdotRdFbm8q2IawSVyMEhTqags7Tyzg
+         Ocrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755603057; x=1756207857;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MlZSqNXnF5cFT3EKTsD5C3uA+ixCm4MLZap6H11YwJU=;
+        b=w3OK03dkEszUoBWL3+8MiZ7NdX28bsLK8zBJ9Nur6RKK8mvlyuGC8LrIziwOuEFg7J
+         vsnqAQ1b76SjnGI+t6iRaqpS5ge4L//ObZKkkS7zmLzuJU6ZayvfxpLk94m7uE4wLcsD
+         B+oAjYMPtzMYUa+09SEb1QabfWFEnTCYe0g9c497exskiIZuO8YcxtzJGU4jSIV4gjDD
+         MnDjb/iMF0jdQ4d2837PIbdxp9DpAqiuWKQkqZxUzqxTDPqDkRl2bfip8Ws9OnK7p0K+
+         clsgAYPtd+v58N1/QDAbDu51rxDLwEToawwUziHsYWKssK4oLxoafKeWGomWCQnYCf9M
+         hlfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX2AXcyzE+jAhkqwUDlyC+smBHedz+tVB8WUvYAWnhWflqqnJ9eOqDuoUSXzXgmp9CGcoyJYzhsrACkCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwqDmhR2MyDQiTJVOHcydG2C42ifj23T9p9E+KK0fGVQH4K80X
+	drTGDunxK+0sA9YMbQeP9HNonqIn4GniX7qx1kkOIiLtbB980X9YL8onpddbyq4MPevHl7SPNsN
+	6QZ5MCGBBUuw/iR9QosjYKI2rFZ14t/wzHRGAPHLV2Q==
+X-Gm-Gg: ASbGncvOuLd4j8HZmx9X5sEXmVJAGfIneiFioZtKiMGaBWAcccs0lfmIt2w+nYXyP0a
+	4sDtyR70IhHgg6wz1gKhA+1CMxZHoB/6AED+mR/3WxKWE2zQg5IJKrNbcT6wBdDf4FaxNFiDLi6
+	uXOrnwSBd1Z71Py6iJ60hlqpJ506UeSZDFn6zOt7uDiSfgY45WD5D4OPr3DoR2kQrBHg4BSCSTY
+	Y42
+X-Google-Smtp-Source: AGHT+IFc1qeOeB8SEpfLr5OOLAFUUqEj6GU45bLARYtHghlfX/crq9PpWhn+VH6PLkjxDEuyGteYvZKpflusqa5M/Ig=
+X-Received: by 2002:a17:906:c115:b0:af9:57ae:dbb3 with SMTP id
+ a640c23a62f3a-afddcb81908mr192322866b.22.1755603057341; Tue, 19 Aug 2025
+ 04:30:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250818124458.334548733@linuxfoundation.org> <CA+G9fYt5sknJ3jbebYZrqMRhbcLZKLCvTDHfg5feNnOpj-j9Wg@mail.gmail.com>
+ <CA+G9fYt6SAsPo6TvfgtnDWHPHO2q7xfppGbCaW0JxpL50zqWew@mail.gmail.com>
+In-Reply-To: <CA+G9fYt6SAsPo6TvfgtnDWHPHO2q7xfppGbCaW0JxpL50zqWew@mail.gmail.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Tue, 19 Aug 2025 13:30:46 +0200
+X-Gm-Features: Ac12FXyaJepFNIeos9w4tdtDWEq_utvLUQ4wMo0fo8sqlMNsdeJO5hMNv6oFTrY
+Message-ID: <CACMJSeu_DTVK=XtvaSD3Fj3aTXBJ5d-MpQMuysJYEFBNwznDqQ@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/515] 6.15.11-rc1 review
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, srinivas.kandagatla@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Subject: [OFF-TOPIC] Are there any job opportunities in the Linux Kernel Ma=
-iling List (LKML)?
+On Tue, 19 Aug 2025 at 12:02, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Tue, 19 Aug 2025 at 00:18, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> >
+> > Boot regression: stable-rc 6.15.11-rc1 arm64 Qualcomm Dragonboard 410c
+> > Unable to handle kernel NULL pointer dereference
+> > qcom_scm_shm_bridge_enable
+>
+> I have reverted the following patch and the regression got fixed.
+>
+> firmware: qcom: scm: initialize tzmem before marking SCM as available
+>     [ Upstream commit 87be3e7a2d0030cda6314d2ec96b37991f636ccd ]
+>
 
-Good day from Singapore,
+Hi! I'm on vacation, I will look into this next week. I expect there
+to be a fix on top of this commit.
 
-My name is Mr. Turritopsis Dohrnii Teo En Ming. I am a 47 year old Singapor=
-e Citizen. Below is a list of my academic achievements:
-
-Year 1994: GCE "O" Levels Top Student at Ahmad Ibrahim Secondary School in =
-Yishun, Singapore
-
-Year 1998: Diploma in Mechatronics Engineering with Merit from Singapore Po=
-lytechnic
-
-Year 2006: Bachelor's degree in Mechanical Engineering (Honours) from Natio=
-nal University of Singapore (NUS)
-
-Year 2017: Diploma (Conversion) in Computer Networking from Singapore Polyt=
-echnic (curriculum is based on CCNA Routing and Switching)
-
-Most of the companies in Singapore do not dare to hire me. Nobody in Singap=
-ore dares to give me a job.
-
-This is because I had accidentally offended the late Minister Mentor Lee Ku=
-an Yew 18 years ago in 2007. Lee Kuan Yew was the most powerful man in Sing=
-apore.
-
-I have been persecuted and blacklisted by the Singapore Government for the =
-past 18 years since 2007.
-
-I frequently get fired/terminated from jobs in Singapore for the past 18 ye=
-ars since 2007.
-
-The Singapore Government does not allow me to have a permanent and stable j=
-ob and does not allow me to earn a stable source of income/money.
-
-Since most of the tech companies here in LKML are in North America and Euro=
-pe, my opinion is that they would not be afraid to hire someone who is pers=
-ecuted by the Singapore Government.
-
-As such, I hope the tech companies here in LKML would be able to give me a =
-job as an IT support engineer.
-
-I am willing to travel out of Singapore to work in North America or Europe =
-as an IT support engineer. I am willing to relocate from Singapore.
-
-I am looking forward to your replies. My email is teo.en.ming.careers@gmail=
-.com
-
-This is a request for help and assistance (SOS).
-
-Thank you very much.
-
-Regards,
-
-Mr. Turritopsis Dohrnii Teo En Ming
-Targeted Individuals Singapore
-GIMP =3D Government-Induced Medical Problems
-19 August 2025 Tuesday 7.27 PM
-
-
-
-
-
-
+Bart
 
