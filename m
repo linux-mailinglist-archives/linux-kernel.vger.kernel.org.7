@@ -1,152 +1,159 @@
-Return-Path: <linux-kernel+bounces-775431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73159B2BF15
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:37:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F36FB2BF18
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54BB71BC383C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5578683B12
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B97F322A22;
-	Tue, 19 Aug 2025 10:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB31322C75;
+	Tue, 19 Aug 2025 10:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGGU74g+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zgau1pc1"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F47279DCE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E27D322A3F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755599760; cv=none; b=ue6I3Vw9ww1kfF8u4+fsg6AFaiwbEUMfR3RBoIgYMhP0ihwbMRG5oKwJJDhkexnqq/bEPMMt5dt2JaE9V9f9zbEtc4njeAx0/HSNccwmThrCM0xAVPHhbNIPF6iCldTiovUMjXNh6zECDSpFrt3gy8BqrTAj9UaICcw0ll3P5Tg=
+	t=1755599778; cv=none; b=WkPP1M2b5vuptHUxYJTLrvdymMd2BlzQTiKpQMaX+/2XYG8gS7gT30MGhmcaZdDuj4Z56RMtxqpEqitpW4mMbPbEQl+OU6PE0ZqQZhfSX49mZ09DBchMt8MiE9oPg3Y+g4HhcEv80lA2Q/16z3B/XQ1AmoDTfcN6ekw3BSd9SXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755599760; c=relaxed/simple;
-	bh=lEqqlSoiP/VHSItgElRylFsVcFhLCEIOadYg72sdtpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVolVD9QeE0VemCogzrgv3BTxaTx1ikTJgbg7p+ZpFC0MPibtGYaME4BUtmz4YfE3Umq/y4Vu1GmdyBS5VR+w+3cVNiPoHq21wKmvOjvaZQMVRC8y6RdtU1eHy70CBADKQtJUvFlA5OTyljWEpbRAnkNFSDsKpG97YGuTqGs/v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGGU74g+; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755599758; x=1787135758;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lEqqlSoiP/VHSItgElRylFsVcFhLCEIOadYg72sdtpg=;
-  b=RGGU74g+XiFPUPZkPN6+KLTkmE+0/EWUadngdpU5jse6Ng+6prccgtu2
-   50YqpE6sbUfqV8o72sxdNuSEHL8hb2jm1OYQNwnWRWW7ntMOs6fKExasI
-   fFrPUGjmCvWBkOWEwbph9eV0nInbrjo/lcEidVmUnXpq/eFjHsQq/qCtW
-   0ag5z5O1jPcomxIWo3MH9TG9uHh4ckDO9TxAXvPbu9yk7Lsd19K6a9HWT
-   B3tZa4YD1y0u3qaN06MUPgVh1/E0GK4z4sqaY585+mYr/b1/ADu2DsdV1
-   FlQJh6On//XG1+HjMeOje09msMDu/KNbCCId8HMVSD2HkGnVBopSMNldK
-   Q==;
-X-CSE-ConnectionGUID: WoT9UcaSRPK6eFqpyQcRcg==
-X-CSE-MsgGUID: Bz9tW3knRSqyLTrEA8GSjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="83264723"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="83264723"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 03:35:58 -0700
-X-CSE-ConnectionGUID: geLXWB/pRLuVa4XimsBReA==
-X-CSE-MsgGUID: 3wBDJ+lPRyWBQKn5uSYQUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="167320718"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 19 Aug 2025 03:35:55 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uoJh0-000Gkt-0k;
-	Tue, 19 Aug 2025 10:35:51 +0000
-Date: Tue, 19 Aug 2025 18:35:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	willy@infradead.org, sidhartha.kumar@oracle.com
-Subject: Re: [PATCH 1/6] drm: Convert aux_idr to XArray
-Message-ID: <202508191844.VZB7euYb-lkp@intel.com>
-References: <20250818190046.157962-2-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1755599778; c=relaxed/simple;
+	bh=f0QsgYzieVeY78Rm9/QS4ztp2XaR7DWI6fggUzgPROg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZBmDuraT67uUQaTU/jQwaVq0VOHc64RcPblRk64JcXvJ2wwiplPgiqaAB+TozxOEZ3UhDuhJ579DT5GDWRvX/OyF17tnztNlHppDaBDTPzal6Rd2Pzv4IrWeNJV8BrbNNB7BMNyJh22rg0YH/G4akXzD7aeYjY938qntL2EiSbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zgau1pc1; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71e6eb6494eso29516987b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:36:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755599774; x=1756204574; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2fN+Cw2GD8q7ciDJSfP7W+cnq2F/R7FubEkGbK5iPps=;
+        b=zgau1pc1vM/ONpX2QQ6/mgp5wudfRS0gd3fEaGd+1JjN5XS4zP5zjIoltt9GRQ1Kr3
+         y4L58SA3I8+R7s/4bWjOWQS1yZqWSlixSbcJj2FFxwapKWsxPOAdtjSn/jhbdjx/jF15
+         oLoicNFbUanwSvzodRlQFRDjgbpE3DdfYdBsTmyQcpWrTyd4PRtMtjAc9FAtiThhKmAb
+         tXB6OrQqZ+Fqyoa66+Jm7yvF9XklettyscOqZLhgTyZTkV8B1gTC3YimUzwHMQl1uDtR
+         +hi3ySM6i4ZajMoA7mAesUm5DkWk8Efb2fLj90PiWt9LAuK0yaSp1w5apcdJJ+Rpnpyl
+         hOTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755599774; x=1756204574;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2fN+Cw2GD8q7ciDJSfP7W+cnq2F/R7FubEkGbK5iPps=;
+        b=uLEktNUVGQu8/rKXRPTMUDQ+DePl08xJkhAcnZ4WILW+Q9+oZ47WwShr8gAWPvMmCe
+         h7zclw9z5R9sCgJJdtplhRI4Foj7ypyT/NyBXVSfu+6rcEzhb+JtWU3wWAwuJfDcc0Zi
+         xq0+546z0YjFP+sOA6AC61VOnoE5Yzi1WSsEHctY7WPzfOLrVd6jgVmvYQqjiSUijAcc
+         B1kToUaQKHN7Jo1eq+5Bh1IeM42Chq7EqioU+qVaO99+eporUt4DERFfkf9TbMfOI4LL
+         y6vtoSGBQGyTzgw6K6O6hFVIy5X8dhj5ZrmBON8Uz99LJyj4nUg2k0N2NpFghwAciqAM
+         YKNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUUJFT04Rpg0/RcbPCRwIeNFecDBM/ui8/keGama0NlvA2aViR7hT/A3bFT7Ke08b61aVX6Rr2Q/V91oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJDp/7IviAfoJeiXXN/FwUQxC4vDS5IhPRl3OPLNd+WenKgXnU
+	g4GEVZHr7xvbJmPLalw3sabzDO78w26omjLRSZgEWsM3krmCrcc3ZsOnKuya9Ec2ERNNFM1r3Xj
+	so0hKpV7DsoJi6Qf8R34f9jjo9Y+11mwAQIXmbrYz
+X-Gm-Gg: ASbGnct1vJLL6GIrs7X3ZMDFCx/RI+nD/g//2a6x9PNib2d+5t0PY8nhtb4MUxe2yYM
+	14MblTmyt4aqY0j9zR3nMvrTK/0NWr5yGSawsf/Nfk581ZxJjuDvttvDSPefDOKJhaGG1MSg9nj
+	hmq7+bLXZ9TlHEc5RzBKb83/+zLY87XV0s+juYMJsjXv2AjD94TpTJLWnDfiiD0JYjE+nhVzHtl
+	tiN2M+D8L8hR/pk9KyOSwYp+tNqGT2hXAMZGvJ/cDw/NoJ3cplVYFaX
+X-Google-Smtp-Source: AGHT+IEyQkk7FbmcgWE6e5Fltqxk8e2OmEel306FAGI6BUzZSbzI9juKCgBNuurFH75DIL/XFm7wd0hLUiRSVtYPoVQ=
+X-Received: by 2002:a05:690c:6c02:b0:71e:325e:5468 with SMTP id
+ 00721157ae682-71f9d494f58mr24000397b3.5.1755599774272; Tue, 19 Aug 2025
+ 03:36:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818190046.157962-2-sidhartha.kumar@oracle.com>
+References: <20250818-bump-min-llvm-ver-15-v1-0-c8b1d0f955e0@kernel.org> <20250818-bump-min-llvm-ver-15-v1-9-c8b1d0f955e0@kernel.org>
+In-Reply-To: <20250818-bump-min-llvm-ver-15-v1-9-c8b1d0f955e0@kernel.org>
+From: Marco Elver <elver@google.com>
+Date: Tue, 19 Aug 2025 12:35:37 +0200
+X-Gm-Features: Ac12FXy_pMfFpBqlyslz5YoDfRSNwKDNUf2Ii-KoSTGsRrmWmRwz_9vxZQpt2K4
+Message-ID: <CANpmjNN243_NoHOEdHvs0zDTzX5w4hjWoeo9TnQbwgfPzOWJAA@mail.gmail.com>
+Subject: Re: [PATCH 09/10] objtool: Drop noinstr hack for KCSAN_WEAK_MEMORY
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Kees Cook <kees@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, patches@lists.linux.dev, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sidhartha,
+On Mon, 18 Aug 2025 at 20:58, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> Now that the minimum supported version of LLVM for building the kernel
+> has been bumped to 15.0.0, __no_kcsan will always ensure that the thread
+> sanitizer functions are not generated, so remove the check for tsan
+> functions in is_profiling_func() and the always true depends and
+> unnecessary select lines in KCSAN_WEAK_MEMORY.
+>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-kernel test robot noticed the following build errors:
+Acked-by: Marco Elver <elver@google.com>
 
-[auto build test ERROR on v6.16]
-[also build test ERROR on next-20250819]
-[cannot apply to drm-exynos/exynos-drm-next linus/master v6.17-rc2 v6.17-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Good riddance.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sidhartha-Kumar/drm-Convert-aux_idr-to-XArray/20250819-031755
-base:   v6.16
-patch link:    https://lore.kernel.org/r/20250818190046.157962-2-sidhartha.kumar%40oracle.com
-patch subject: [PATCH 1/6] drm: Convert aux_idr to XArray
-config: x86_64-buildonly-randconfig-002-20250819 (https://download.01.org/0day-ci/archive/20250819/202508191844.VZB7euYb-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250819/202508191844.VZB7euYb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508191844.VZB7euYb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/drm/display/drm_dp_aux_dev.c:85:5: error: passing 'struct xa_limit' to parameter of incompatible type 'void *'
-      85 |                                 XA_LIMIT(0, DRM_AUX_MINORS - 1), aux_dev, GFP_KERNEL);
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/xarray.h:248:30: note: expanded from macro 'XA_LIMIT'
-     248 | #define XA_LIMIT(_min, _max) (struct xa_limit) { .min = _min, .max = _max }
-         |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/xarray.h:872:9: note: passing argument to parameter 'entry' here
-     872 |                 void *entry, struct xa_limit limit, gfp_t gfp)
-         |                       ^
-   1 error generated.
-
-
-vim +85 drivers/gpu/drm/display/drm_dp_aux_dev.c
-
-    71	
-    72	static struct drm_dp_aux_dev *alloc_drm_dp_aux_dev(struct drm_dp_aux *aux)
-    73	{
-    74		struct drm_dp_aux_dev *aux_dev;
-    75		int err;
-    76	
-    77		aux_dev = kzalloc(sizeof(*aux_dev), GFP_KERNEL);
-    78		if (!aux_dev)
-    79			return ERR_PTR(-ENOMEM);
-    80		aux_dev->aux = aux;
-    81		atomic_set(&aux_dev->usecount, 1);
-    82		kref_init(&aux_dev->refcount);
-    83	
-    84		err = xa_alloc(&aux_xa, &aux_dev->index,
-  > 85					XA_LIMIT(0, DRM_AUX_MINORS - 1), aux_dev, GFP_KERNEL);
-    86		if (err < 0) {
-    87			kfree(aux_dev);
-    88			return ERR_PTR(err);
-    89		}
-    90	
-    91		return aux_dev;
-    92	}
-    93	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Marco Elver <elver@google.com>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: kasan-dev@googlegroups.com
+> ---
+>  lib/Kconfig.kcsan     |  6 ------
+>  tools/objtool/check.c | 10 ----------
+>  2 files changed, 16 deletions(-)
+>
+> diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
+> index 609ddfc73de5..4ce4b0c0109c 100644
+> --- a/lib/Kconfig.kcsan
+> +++ b/lib/Kconfig.kcsan
+> @@ -185,12 +185,6 @@ config KCSAN_WEAK_MEMORY
+>         bool "Enable weak memory modeling to detect missing memory barriers"
+>         default y
+>         depends on KCSAN_STRICT
+> -       # We can either let objtool nop __tsan_func_{entry,exit}() and builtin
+> -       # atomics instrumentation in .noinstr.text, or use a compiler that can
+> -       # implement __no_kcsan to really remove all instrumentation.
+> -       depends on !ARCH_WANTS_NO_INSTR || HAVE_NOINSTR_HACK || \
+> -                  CC_IS_GCC || CLANG_VERSION >= 140000
+> -       select OBJTOOL if HAVE_NOINSTR_HACK
+>         help
+>           Enable support for modeling a subset of weak memory, which allows
+>           detecting a subset of data races due to missing memory barriers.
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index d14f20ef1db1..efa4c060ff4e 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2453,16 +2453,6 @@ static bool is_profiling_func(const char *name)
+>         if (!strncmp(name, "__sanitizer_cov_", 16))
+>                 return true;
+>
+> -       /*
+> -        * Some compilers currently do not remove __tsan_func_entry/exit nor
+> -        * __tsan_atomic_signal_fence (used for barrier instrumentation) with
+> -        * the __no_sanitize_thread attribute, remove them. Once the kernel's
+> -        * minimum Clang version is 14.0, this can be removed.
+> -        */
+> -       if (!strncmp(name, "__tsan_func_", 12) ||
+> -           !strcmp(name, "__tsan_atomic_signal_fence"))
+> -               return true;
+> -
+>         return false;
+>  }
+>
+>
+> --
+> 2.50.1
+>
 
