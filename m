@@ -1,137 +1,147 @@
-Return-Path: <linux-kernel+bounces-774926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D8EB2B950
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEFAB2B953
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56F815834CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B501BA2BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7B723D7D3;
-	Tue, 19 Aug 2025 06:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03820262FD1;
+	Tue, 19 Aug 2025 06:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yq/ughyr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VeZJCRE2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Gx1V0qt6";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VeZJCRE2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Gx1V0qt6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1A138B;
-	Tue, 19 Aug 2025 06:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DD722FE02
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755584396; cv=none; b=bkQvAY+V2BdYHbnFX7lvadz2X5Hg2KLY2m6GY0VhykbAgSutmDBbrsarO1iRFCpeUHttuuOE/Px4ZJpvKu2eSHZj/WJnqa9U3IV+rKBkGcdE0rm49dVYi4W+YReEAMXy7eY9XU4Npg1MzZ6WoyvpVsiJiLb5cONZv/Gl47i05BE=
+	t=1755584478; cv=none; b=Pa0e+TqiYxwCKDUIo/C6H95th72JLmgnuI4txnAAtgRlbvrOAJND3DXZSFTvxG6Jcopv/8MXrpZRF4zqTXP1W9NhgNkoo33a94F/YaQlj1s6kksl9WxHlTuEnseWP2f6BbsrgnzM/dOeHNLas+wFOfwCVO9oGiioThL45BLgHLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755584396; c=relaxed/simple;
-	bh=s5rBpCaCaXvNVfSMIqwRsPuPA1JvP0VWMtY/Ojlh4yg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EWukO4H3NwegXyrzyRRRu51M3VBJA1csjCsvGD7cAVohfowj5PxMJFaFh+Bs8kvGNgQkHbVQrKEeaX/u7XUlcGMdz+WbO7WUYcUiQ/MJHg7LUOJbGSgT48RnnPf2cB9FyFBoY8aMta4gZQhCaO2PY1HKDvAgnJd3GaaBksBKkKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yq/ughyr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB88DC4CEF4;
-	Tue, 19 Aug 2025 06:19:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755584396;
-	bh=s5rBpCaCaXvNVfSMIqwRsPuPA1JvP0VWMtY/Ojlh4yg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Yq/ughyr6tIXr2dcVNliYIQNkgvzfkzwCxxgvwkWaJ2SvqQ2WrXwNFUArlRQd9QLj
-	 N9Cp1e0ix+PyDfbD1RmowghW2mU3e1wpDFgwDrvjh1BdkIUFWHUN13symnQhwoQlDD
-	 FWWIkVvquapndDNi+337iI7sX/DLOoifCwcK6gWHol1bNjv9ZV8a/+Y4wRqF8QNaZf
-	 239tadlTXO4O7OqpGFtDXaxXSZf/7kEo9RTbuosIhMadm0N8TgTwlKVG7pqdYEMwtS
-	 f2q8eJ/FtsfCgYYcO5PhiYvqaULsUH0LfY57ZwljWw5wX5rjIZBFH4ajnKJXCzGCbZ
-	 mNvSOdgrL/UMg==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
+	s=arc-20240116; t=1755584478; c=relaxed/simple;
+	bh=z/CPWp1muVFYf6HRyrBefcBbKIWASaHHqaWKki4OVsc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hO8dvB7EFZI20FzGfNrb1sGBPnmR4CgonmhQ/Y4q7XS5XxU2oM67W48Z5WWkcyGBzydLCBS7OMwksloEz55UayYb+WqIXhS1/ZoF42VdNZxJY+HUBHyWYYFdjhN0GXdJSzMJp+97NYrt593JjJRufs/53eIOYpk7nVPyFx77IVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VeZJCRE2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Gx1V0qt6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VeZJCRE2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Gx1V0qt6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 881D02124F;
+	Tue, 19 Aug 2025 06:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755584449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q7hNNPDDobD+wmtNRnZsjqfi7VhWUP9I1VgOcjr0p4o=;
+	b=VeZJCRE2xewX/dVw7dwncZDWIzPnmRid36qey5yJ07LAwNzdG72tKDvjGxqfaJMaQgWkuY
+	GzLJiRTi4QoJ5Ce8UNnTHyJXe1ntbJNtdxf8wbZyEbdx6EmyS8wMNBjo5hdrvnLFkMfe9k
+	p7gWh+CHEpwDOeEZMzID2iMwTFhCnbA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755584449;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q7hNNPDDobD+wmtNRnZsjqfi7VhWUP9I1VgOcjr0p4o=;
+	b=Gx1V0qt6HoHUr8wW0eb5dEkh0Tm9qTTe5cvjKlFFJSnpxJYYKvW9Wpn/h7aGsbFScPLsK3
+	7KcwYyshNFhjx7Ag==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755584449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q7hNNPDDobD+wmtNRnZsjqfi7VhWUP9I1VgOcjr0p4o=;
+	b=VeZJCRE2xewX/dVw7dwncZDWIzPnmRid36qey5yJ07LAwNzdG72tKDvjGxqfaJMaQgWkuY
+	GzLJiRTi4QoJ5Ce8UNnTHyJXe1ntbJNtdxf8wbZyEbdx6EmyS8wMNBjo5hdrvnLFkMfe9k
+	p7gWh+CHEpwDOeEZMzID2iMwTFhCnbA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755584449;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q7hNNPDDobD+wmtNRnZsjqfi7VhWUP9I1VgOcjr0p4o=;
+	b=Gx1V0qt6HoHUr8wW0eb5dEkh0Tm9qTTe5cvjKlFFJSnpxJYYKvW9Wpn/h7aGsbFScPLsK3
+	7KcwYyshNFhjx7Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51E18139B3;
+	Tue, 19 Aug 2025 06:20:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JfJQEsEXpGhADwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 19 Aug 2025 06:20:49 +0000
+Date: Tue, 19 Aug 2025 08:20:48 +0200
+Message-ID: <87sehnvnlr.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Vasiliy Kovalev <kovalev@altlinux.org>
+Cc: Takashi Iwai <tiwai@suse.com>,
+	Kailang Yang <kailang@realtek.com>,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 04/16] mm/damon/paddr: support addr_unit for DAMOS_LRU_[DE]PRIO
-Date: Mon, 18 Aug 2025 23:19:52 -0700
-Message-Id: <20250819061952.39429-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250813050706.1564229-5-yanquanmin1@huawei.com>
-References: 
+	Stefan Binding <sbinding@opensource.cirrus.com>
+Subject: Re: [PATCH] ALSA: hda/realtek: Fix headset mic on ASUS Zenbook 14
+In-Reply-To: <20250818204243.247297-1-kovalev@altlinux.org>
+References: <20250818204243.247297-1-kovalev@altlinux.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-Hi Quanmin,
-
-On Wed, 13 Aug 2025 13:06:54 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-
-> From: SeongJae Park <sj@kernel.org>
+On Mon, 18 Aug 2025 22:42:43 +0200,
+Vasiliy Kovalev wrote:
 > 
-> Add support of addr_unit for DAMOS_LRU_PRIO and DAMOS_LRU_DEPRIO action
-> handling from the DAMOS operation implementation for the physical
-> address space.
+> Add a PCI quirk to enable microphone input on the headphone jack on
+> the ASUS Zenbook 14 UM3406HA laptop.
+> 
+> This model uses an ALC294 codec with CS35L41 amplifiers over I2C,
+> and the existing fixup for it did not enable the headset microphone.
+> A new fix is introduced to get the mic working while keeping the
+> amplifier settings correct.
+> 
+> Fixes: 61cbc08fdb04 ("ALSA: hda/realtek: Add quirks for ASUS 2024 Zenbooks")
+> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
 
-As I suggested on another reply[1], please squash attaching patch to this one
-when you post next version of this series.
-
-[1] https://lore.kernel.org/0001-mm-damon-paddr-set-DAMOS_PAGEOUT-stat-in-core-addres.patch
-
-[...]
+Thanks, applied now.
 
 
-Thanks,
-SJ
-
-==== Attachment 0 (0001-mm-damon-paddr-set-DAMOS_LRU_-DE-PRIO-stat-in-core-a.patch) ====
-From a05d13d152443f35b7a85e0bd5ccecf294b699c0 Mon Sep 17 00:00:00 2001
-From: SeongJae Park <sj@kernel.org>
-Date: Wed, 13 Aug 2025 21:26:48 -0700
-Subject: [PATCH] mm/damon/paddr: set DAMOS_LRU_[DE]PRIO stat in core address
- unit
-
-Operations layer should set DAMOS stat in core layer address unit, but
-paddr is returning that for LRU_[DE]PRIO in paddr address unit.  Fix it.
-
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/paddr.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index 6263dd58a2e7..ed71dd0bf80e 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -198,8 +198,7 @@ static inline unsigned long damon_pa_mark_accessed_or_deactivate(
- 		struct damos *s, bool mark_accessed,
- 		unsigned long *sz_filter_passed)
- {
--	phys_addr_t addr;
--	unsigned long applied = 0;
-+	phys_addr_t addr, applied = 0;
- 	struct folio *folio;
- 
- 	addr = damon_pa_phys_addr(r->ar.start, addr_unit);
-@@ -213,7 +212,7 @@ static inline unsigned long damon_pa_mark_accessed_or_deactivate(
- 		if (damos_pa_filter_out(s, folio))
- 			goto put_folio;
- 		else
--			*sz_filter_passed += folio_size(folio);
-+			*sz_filter_passed += folio_size(folio) / addr_unit;
- 
- 		if (mark_accessed)
- 			folio_mark_accessed(folio);
-@@ -225,7 +224,7 @@ static inline unsigned long damon_pa_mark_accessed_or_deactivate(
- 		folio_put(folio);
- 	}
- 	s->last_applied = folio;
--	return applied * PAGE_SIZE;
-+	return applied * PAGE_SIZE / addr_unit;
- }
- 
- static unsigned long damon_pa_mark_accessed(struct damon_region *r,
--- 
-2.39.5
-
+Takashi
 
