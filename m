@@ -1,128 +1,109 @@
-Return-Path: <linux-kernel+bounces-776038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598E1B2C80C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4F1B2C7D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C67C7B5528
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:56:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B29237B27A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E7B27FB25;
-	Tue, 19 Aug 2025 14:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26444280023;
+	Tue, 19 Aug 2025 14:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gC+iDL6s"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EexxtQRT"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9147327F747
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09EE27FD7C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615318; cv=none; b=IqkrpZB+T+hC1JK8/WuD3ltnypj+fKNjubHwcSLsx/jr9EXhf5HgU/tG/LMdy07sGlGCWqEpcAc+xzu92DrM0Tn4HV6ma42TaMm0CtshXhGamqauJHFMzFWMjMnzO0Ta6duv4GwvFsFpCQXk0dnOyH13g/WKXuo0f2Hj/KkCQkA=
+	t=1755615330; cv=none; b=YvCMgq2vdmDAshOw9xt1ZsIfaVbS0BPqfbmSA1EhzNdF2v85dr328ZDMcQ8TXW44VpWL/BuXiWbuQGIeAhlaQOjsMh4nF1fNb6owmYeXq1nW0QKD+bufqU5FeYIu3AHZ6dBlCUwlZgSSxL+D2a7ZvU5EegeUb8n0ImLWgnMYP9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615318; c=relaxed/simple;
-	bh=JSgFReGmJrpsECohN/zB+vEQB99t0iIxycbYjj3gxhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pdik8dO30qA6XGBw8k83Dr/QqibwRXR3ngaxE7WnGPR5EaH7NveeC8XHrU2i9x9CJ0HF7KQw0vsy3mZbve42QvvZmiC/2Yj7V+M1fG/Wuf+sqeAXNerDm0wO+JvlqjZeSDWUF6Gtgl3aCIsbiquKklr2szOgjL05iP3TsEFJLbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gC+iDL6s; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so6151901a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:55:15 -0700 (PDT)
+	s=arc-20240116; t=1755615330; c=relaxed/simple;
+	bh=rZi4e4mNoKCg92RzZ+sQYlS+mPo/zTE1yqe24FKrvK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sMmliK873e7hAHUe22fp7MhtRra/JKvmlXY/2kCWfHAYjalp6CG8zQ/KlLbkfsuXVdaHi+W9H95LsjpDoCWXBkehhdVK/5W9WFaTcxU70Wd7ipxR1Px/Y99s08pNQjs7ZcHDOFS13KiUENornqhJvLJx2lNBtwpxnsk27HgrQgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EexxtQRT; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-30ccea6239bso3772152fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:55:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755615314; x=1756220114; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6q1VFKJc6RwiYJWPiwiME4ulyKyXCWSmhPscu25fEio=;
-        b=gC+iDL6sQDl/2TwG5l13sEF1ye2gBaOnguKNDAFMonmSlsmmIXevZ2Vq0m0lkUpdA/
-         fRQfz3VnrVn7U6h5jHiwNsOQQYY3DSYGUgwEitimagb9sXNmzENeYGeWseltorBm/r2B
-         Roqm7XgGp0EVZpBawzAEQl1+4Nqa/4IEKSgB2qDIiUccRx0weG8YVLsQd7xJAu/cbnYn
-         qxNfQFKSoomNKQLlyJA5hHasQO2+JbhSWUhlVQFE6GdHZa2eC33qgs+sIWd3tXwbdAvf
-         BXPqmkQtl+/G/RO0MDT64CubwVuWUDkbWyJ5F9LSowvCJHTugMI0gBqsjGTW6bOEEluK
-         fIcg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755615327; x=1756220127; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nNYz6zBor3BO7K/f9oFMseiDraaZC+D39dcIGBw1HiY=;
+        b=EexxtQRTdRgOg7tJQj+7VVhGr09xhsXxjtDGqL+4Znk28dFR4nCCXAb+tWPbwK2hGf
+         2qs1WfJsCyQrwCel4MYdJO3m9db5VNijRUv8+pkUf11uxoE+HAdLjPlyC6JRXwN9JtG6
+         elzdDCC2q0NUyI+ogi/YuZTN6m8qnNC+GtfiDmOdN7JRlnfXFRWClkmt+9b5noNM03k6
+         6zq3yDbu8hnKoPRbW60ewEWNL0b3rLkF5OV1rRQpl6mcTwQsSZT4abPf7Rd0ZLIGzw36
+         MlD8610IuAK/BtoGFCFsvAmMZzMGI4aA7eygaqeIhZicEDxvQpbi+hUwC6uRN+YB/rbf
+         30CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755615314; x=1756220114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6q1VFKJc6RwiYJWPiwiME4ulyKyXCWSmhPscu25fEio=;
-        b=Bxxo7VnQHQ75T/subGgKmt19EhItAtvOlkMT7b1+d1aH2Yvlrh+JrWkJloNx8v7jWq
-         OVFyjiA9WcNJlNQc/5OBfPyIbG1941GBa1KQBsWn9xQc5taVzpxlp9MYA/gjrEyGoPt9
-         U8IM14F11H0PkLRuA8Bt98h1sxRHkEVORmkzb/vmSLN9AzBRrRX72fj9h2GhkF6LRPbr
-         Vy07kz251OCf9AZQ/0tpH5gjLu1BUv2juAKmn1mp+RPSM3Ynqtg1+7Ag1/bRd/wiBnUr
-         KKHVxAne8/VNV8pEIiBQykgaa7kKpRY59NYOQtF47/ujM9Qfi+aC+GJM4x2C0894IO/r
-         zRkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVWuMngl6sFtiQfyqzZvLpZzgxG1Vt5trw+2xAZI3myNfPTUyR0+MNv1lrmKQuOp4vw7N9Ks71XgyPgP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzVlY1M1jgXPTCNGK4ELZZ3vwH/D5sFtxaA9F6WQqpW6y+DH2j
-	GG4ZDxPLpDfoft7jIs7p+dZbnaO6Dd/QUXkFb15APuyHjfK4bYblBECrfAdJ79PlpPc=
-X-Gm-Gg: ASbGnctVfpEZApi4OfxRl/9HH7hrdOoDvBQ3gOm0MbjekkV8Qf8NNj2uP8zPtwFa07T
-	bgqQhs4SZibPPk5PJq5f9bg9arDYYC42MPEHQXvyetlvj0GFK97mo6M+7Qw9swIy20lz2uCfjQF
-	g5i3zyfPAre52ondzDSoMko2N/DKoAz5hn65TKKk8RHoFbohtcunlrKxnv7v7VVa1kuDaSgPrCX
-	ERrZZsAOKYrqdtSk0XPczVoy4sPipyrkGuylMRaYmcl5hlQSVGVnOn6nswXdyrsu7jKtoAf+P+F
-	yNBmDEuVznEg9HFialvU9hW1xjXGBB4sCyL685O7IbRJPALKkeEOigtCtYt6ocO/ucfsmXhB0IN
-	4NirzEYmvAHbWcrJ3OozxkgzvANnZcXAi6IQ=
-X-Google-Smtp-Source: AGHT+IHNXoZ8D6hcxitye6J8bRF474YdeJVlKpCXwByDHr/6U1kxp1SPdwBXlJC/jHhgrW329Z5ICQ==
-X-Received: by 2002:a17:907:9486:b0:af9:8c20:145b with SMTP id a640c23a62f3a-afddc96119cmr295145666b.10.1755615313778;
-        Tue, 19 Aug 2025 07:55:13 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:3ab9:939f:d84a:b5f0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce54021sm1009078766b.10.2025.08.19.07.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 07:55:13 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:55:09 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH 1/3] remoteproc: qcom_q6v5: Avoid disabling handover IRQ
- twice
-Message-ID: <aKSQTc5u5AePWVwj@linaro.org>
-References: <20250819-rproc-qcom-q6v5-fixes-v1-0-de92198f23c7@linaro.org>
- <20250819-rproc-qcom-q6v5-fixes-v1-1-de92198f23c7@linaro.org>
- <czaabkgp3aerp7fntqnpwgilipnum5vmdwwrkem5mugcs7vvd3@q2mwq6ijfbmt>
+        d=1e100.net; s=20230601; t=1755615327; x=1756220127;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNYz6zBor3BO7K/f9oFMseiDraaZC+D39dcIGBw1HiY=;
+        b=fA9ZmZJIwrZ9NmEwmrSL3VjG7XhnVcTCQUyhy13mhDUOoDj5N3jvv4foj2OzkqsLe1
+         aaL8n4ngu/cB6HqmPg7oWrO088AP2/PVUBkoibx+WKJabhaFlshezbNPhjWnhwLPXyWb
+         oHvlarSkExv5+AnFdW0Ly1nijSPVsAbdxSUtDCYwrA/59umTK2ZhrlCMJIgrS8wICZH7
+         SFbYdaudGpiZe0kVd/Hvj7rW6O7KA8ll6zEC3VG1A54+vpPDG5au/MQff8tMrXvSUBPf
+         iKpzO9XDPOg61jRsSKL3s9AX2AdMtSeDD9OGmzp9OxhfGRiVLqigoely1UyELc92vnOY
+         dGIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKa+dzr5voA1OYU3MpK/10hvNVKiiEtHGzWukwC0aUwJMOGvPEkB2+9gGh1T2p628SLfdKStS/M2UBqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyogNzIR/olQ2WlXIozhGOyIdOZoucytHmvCbwxfIaeNsB+5xX8
+	Rc1k3jMU7gDS2MpQg5G6tXc8BWyZ35VRwEXBqj9Zpjf6vrff5QdTyWEBd0NJuR11pkXctINOMrC
+	tAutW
+X-Gm-Gg: ASbGncv2BaTu9Vxbw4iUnpwM+1c2Cy7NDXgnZ5XXHOwBPneeo5AUq06SKD4ujP/3K/9
+	pstMBd0NhdURGHLEcf3mevCBJMmkTdzNgrz7GiexoUBvaeWBKHEMLyKz/PKo38hfsucVs49ePNQ
+	dYbEyQZLKZsly67pxHHnWFdoAk8xWDmMgdDwI+LsjQip8p2zpxuJIgJZ7w1juvXruunIXOmpsaL
+	ZrMXiXBywuV4XhRSg+U//fL7o/YLGWJ13Apr3WVNkaM39imreMOeoUdB7urIaRmdqyULmlTJDv6
+	I+qR0XaVHLn+XSoa6bdcNVL0cE/K9YxMaqcyal8+JUZlLeHmjOGZiapTXn71VcSeN5lT2UkBWoE
+	/f0yj5LEvnBoQ7ao7+ehfKn1EnZE7mZ4MdadEOyqIlw6+8yyZq9tMAW85oGgWswcYJ2DwOk21RB
+	w=
+X-Google-Smtp-Source: AGHT+IGJKUtR0KedPrLrV9OrX3clCWOEdUIRgfULW86bsxgtpHLFlVjx2/761XN0QdxXUzPLpNJfSA==
+X-Received: by 2002:a05:6870:709d:b0:307:b28:48e3 with SMTP id 586e51a60fabf-3110c3be255mr1744806fac.18.1755615326961;
+        Tue, 19 Aug 2025 07:55:26 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:990c:4d50:9c6c:f367? ([2600:8803:e7e4:1d00:990c:4d50:9c6c:f367])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-310abbf8442sm3444800fac.31.2025.08.19.07.55.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 07:55:26 -0700 (PDT)
+Message-ID: <01eebb48-17ba-467b-b227-96784917c50b@baylibre.com>
+Date: Tue, 19 Aug 2025 09:55:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <czaabkgp3aerp7fntqnpwgilipnum5vmdwwrkem5mugcs7vvd3@q2mwq6ijfbmt>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] iio: mcp9600: White space and fixed width cleanup
+To: Ben Collins <bcollins@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: Ben Collins <bcollins@watter.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250818183214.380847-1-bcollins@kernel.org>
+ <20250818183214.380847-4-bcollins@kernel.org>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250818183214.380847-4-bcollins@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 19, 2025 at 02:44:26PM +0300, Dmitry Baryshkov wrote:
-> On Tue, Aug 19, 2025 at 01:08:02PM +0200, Stephan Gerhold wrote:
-> > enable_irq() and disable_irq() are reference counted, so we must make sure
-> > that each enable_irq() is always paired with a single disable_irq(). If we
-> > call disable_irq() twice followed by just a single enable_irq(), the IRQ
-> > will remain disabled forever.
-> > 
-> > For the error handling path in qcom_q6v5_wait_for_start(), disable_irq()
-> > will end up being called twice, because disable_irq() also happens in
-> > qcom_q6v5_unprepare() when rolling back the call to qcom_q6v5_prepare().
-> > 
-> > Fix this by dropping disable_irq() in qcom_q6v5_wait_for_start(). Since
-> > qcom_q6v5_prepare() is the function that calls enable_irq(), it makes more
-> > sense to have the rollback handled always by qcom_q6v5_unprepare().
-> > 
-> > Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource handling")
+On 8/18/25 1:32 PM, Ben Collins wrote:
+> From: Ben Collins <bcollins@watter.com>
 > 
-> Didn't earlier versions also have the same behaviour?
+> Make tabs consistent for register definitions and also fix width
+> to byte size.
 > 
-
-I don't think so. The "extracted common resource handling" came from
-qcom_q6v5_pil.c, but q6v5_start() just had most of this code inline in a
-single function [1]. The handling of enable_irq()/disable_irq() through
-the goto labels looks correct there.
-
-Thanks,
-Stephan
-
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/qcom_q6v5_pil.c?id=0e622e80191e75c99b6ecc265c140a37d81e7a63#n795
+> Signed-off-by: Ben Collins <bcollins@watter.com>
+> ---
+Reviewed-by: David Lechner <dlechner@baylibrc.com>
 
