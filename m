@@ -1,64 +1,50 @@
-Return-Path: <linux-kernel+bounces-775435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F692B2BF1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:39:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D302B2BF1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F2C174786
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E293BB274
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE0C322C60;
-	Tue, 19 Aug 2025 10:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805DB322C84;
+	Tue, 19 Aug 2025 10:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7pHrA4j"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Lz96h+Mr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B462225BEF8;
-	Tue, 19 Aug 2025 10:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4167322C77
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755599964; cv=none; b=VX7R5aSQTlakfOLQYLpubtQcIM2RSGJ3oHlkytRjQHnKXqmUz44zpFPaRSroYBb6Ey2wEP2U+4R6gaJeOmdW286FcSPb+Y9DufqAeokKT6s6pJwIgCDHHyIO13hTz6FVMlH0Euyk0NAYDWgoEJXzwbu+VrXBD9Pc+YjQUf65TM8=
+	t=1755599966; cv=none; b=rXz9+m1MyG+jNVfZQ0ZT+XM/tQ0kBRPZYO8x6QyVcO/qKEUSHjbzpiVg4Ji05eDavt8JM30rSLU0US09zpg4CikKCDiY47AMuIFCQ+UD/hMf1DKQ3l2g+yKZgy0XTFsS9g5s9ha/pVtimiiW6GmMBQd3IPA2WzFXH/5g1005/Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755599964; c=relaxed/simple;
-	bh=C3p/9tmSjjIf5jIYjuZ3vrujwfpwDa8Gx8cZIkEqXH4=;
+	s=arc-20240116; t=1755599966; c=relaxed/simple;
+	bh=yFY9/FUAdVObVBIV/qsDTY57fWE84AIaJDWRAFMSWMY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpNkLeV81lNa4DTmEiUnixAHOD6U7p9bRdvV9M44udOECzwuQX1VtiCbyd0PGUZuacBKPzoUIrhOG7L9+EJpcqq32nImePGPWnJoZe8SodW2Qdeg2ROa0Aw0YqIEsb0cOpkXxmmE7AMCOul4sKKaxIaQmrTJobFYEN6/ncu6Zg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7pHrA4j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B851EC4CEF1;
-	Tue, 19 Aug 2025 10:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755599964;
-	bh=C3p/9tmSjjIf5jIYjuZ3vrujwfpwDa8Gx8cZIkEqXH4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzUjJAdf8qsouMBjOF0oY2VwNd4CEE+9SBzwJtz2yAmsYe+bRot8Z336qa5CYUzciL6VxtAxnJIf7AE+FVZL0ErdcMSobnMEtQxsBjp/bldo9xa4SFKlQLQmBatMC2Eq0MUL+S3D5bQy5qVIB1avkxXlFoWn7ZY1g/SK6YeH7Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Lz96h+Mr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A737EC116B1;
+	Tue, 19 Aug 2025 10:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755599966;
+	bh=yFY9/FUAdVObVBIV/qsDTY57fWE84AIaJDWRAFMSWMY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q7pHrA4jSdouObZRf5BBF4zPfFQZpkvTr3HvXjroPz2apoCJKu9JXovzqRcsFf2zN
-	 RxUoa8NbRRdr+TQxroiXzSSImFDGYRFd3fxbcgibPcZAOQIVuNyg8Qh4uyYi1dxYBz
-	 rvH9cUP3sb7qPSGDLzYXl9D42w/VOc/OEXmeItlziBzmo9eXB/mBjs+as+69qT+TvM
-	 PZ57tEyT75kHH2htMbXdQEBacH8gEEzvLTZBjZTHxE6rLef9y8O7V+klQjdwQ8j833
-	 ar1xQpPVlR9PmVzi5Z05JRXWCQyaAdvGXwOTjOpFCgZ/dZ8+r0XKu2dkuM9/2UWmbv
-	 InJbnYCAV2UUA==
-Date: Tue, 19 Aug 2025 13:39:15 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bill Wendling <morbo@google.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 3/4] mm/mm_init: drop deferred_init_maxorder()
-Message-ID: <aKRUUzq48xW5qPOp@kernel.org>
-References: <20250818064615.505641-1-rppt@kernel.org>
- <20250818064615.505641-4-rppt@kernel.org>
- <408d7eaa-5aea-4490-9fd0-978c4eb94d32@redhat.com>
- <20250819092254.cddlg6npwl75fvbn@master>
+	b=Lz96h+Mr22mP92Wz2lhXpLNdSzreGCMB8XD3b60wKkoOvfo4bpG6lNMu+shfTyCNC
+	 4HkSBIRPt/hQVZ5ydAS93G2YfuHVqld+LPqIaZailQ6SH+nnoVmi/IstsAqoWSLczc
+	 cCGAsXhLbx/788zHmquhRBKSxJnRTNbukVtdIDcE=
+Date: Tue, 19 Aug 2025 12:39:23 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Tian <27392025k@gmail.com>
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH misc v2] misc: cardreader: fix overwritten return value
+ in RTS5260 driver
+Message-ID: <2025081906-sandbar-shove-b79f@gregkh>
+References: <20250729013510.34358-1-27392025k@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,36 +53,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819092254.cddlg6npwl75fvbn@master>
+In-Reply-To: <20250729013510.34358-1-27392025k@gmail.com>
 
-On Tue, Aug 19, 2025 at 09:22:54AM +0000, Wei Yang wrote:
-> On Tue, Aug 19, 2025 at 09:54:22AM +0200, David Hildenbrand wrote:
-> >> -static unsigned long __init
-> >> -deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
-> >> -			   struct zone *zone)
-> >> -{
-> >> -	unsigned long nr_pages = 0;
-> >> -	unsigned long spfn, epfn;
-> >> -	u64 i = 0;
-> >> +		while (spfn < epfn) {
-> >> +			unsigned long mo_pfn = ALIGN(spfn + 1, MAX_ORDER_NR_PAGES);
-> >> +			unsigned long chunk_end = min(mo_pfn, epfn);
-> >> -	deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn, start_pfn);
-> >> +			nr_pages += deferred_init_pages(zone, spfn, chunk_end);
-> >> +			deferred_free_pages(spfn, chunk_end - spfn);
-> >
-> >
-> >I assume the expectation is that all PFNs in the start_pfn -> end_pfn range
-> >will go to this zone, correct?
+On Mon, Jul 28, 2025 at 06:35:10PM -0700, Tian wrote:
+> From: Tian Liu <27392025k@gmail.com>
 > 
-> I think so.
+> In both rts5260.c and rtsx_pcr.c, a return value is assigned and then
+> overwritten by a subsequent call, which causes the original result to be
+> lost. This may result in silently ignoring errors from the first write.
 > 
-> defer_init only apply to the highest zone in one node.
+> This patch uses `err |=` to preserve earlier failure status.
+> 
+> This is an untested cleanup inspired by commit c55c7a85e02a ("um: ubd: Preserve earlier error value in ubd_user") which fixed similar error-handling logic. While this change has not been functionally tested on hardware, it is a mechanical fix and aligns with expected error-handling style.
+> 
+> Fixes: bede03a579b3 ("misc: rtsx: Enable OCP for rts522a rts524a rts525a rts5260")
+> Fixes: c0e5f4e73a71 ("misc: rtsx: Add support for RTS5261")
+> 
+> Signed-off-by: Tian Liu <27392025k@gmail.com>
+> 
+> Changes in v2:
+> - Use full name in Signed-off-by and From
+> - Add Fixes: tag
+> - Clarify that patch is untested, but reasoned from upstream style
+> - Cc: appropriate public mailing list
+> 
+> ---
 
-Right, we defer initialization of last zone in every node and there is a
-thread per node that does the initialization.
+The "changes..." stuff goes below the --- line.
 
--- 
-Sincerely yours,
-Mike.
+Also, please wrap your changelog text at 72 columns.
+
+As you have not tested this, I don't think this should be taken, do you?
+
+>  drivers/misc/cardreader/rts5260.c  | 2 +-
+>  drivers/misc/cardreader/rtsx_pcr.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
+> index d2d3a6ccb8f7..ed8adaab54a8 100644
+> --- a/drivers/misc/cardreader/rts5260.c
+> +++ b/drivers/misc/cardreader/rts5260.c
+> @@ -269,7 +269,7 @@ static int rts5260_card_power_off(struct rtsx_pcr *pcr, int card)
+>  	rts5260_card_before_power_off(pcr);
+>  	err = rtsx_pci_write_register(pcr, LDO_VCC_CFG1,
+>  			 LDO_POW_SDVDD1_MASK, LDO_POW_SDVDD1_OFF);
+> -	err = rtsx_pci_write_register(pcr, LDO_CONFIG2,
+> +	err |= rtsx_pci_write_register(pcr, LDO_CONFIG2,
+>  			 DV331812_POWERON, DV331812_POWEROFF);
+
+How can this write fail?  And just | all errors together really doesn't
+do all that much, right?
+
+
+>  	if (pcr->option.ocp_en)
+>  		rtsx_pci_disable_ocp(pcr);
+> diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+> index a7b066c48740..9fb22f2cedbd 100644
+> --- a/drivers/misc/cardreader/rtsx_pcr.c
+> +++ b/drivers/misc/cardreader/rtsx_pcr.c
+> @@ -1196,7 +1196,7 @@ static int rtsx_pci_init_hw(struct rtsx_pcr *pcr)
+>  		/* Gating real mcu clock */
+>  		err = rtsx_pci_write_register(pcr, RTS5261_FW_CFG1,
+>  			RTS5261_MCU_CLOCK_GATING, 0);
+> -		err = rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
+> +		err |= rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
+>  			SSC_POWER_DOWN, 0);
+
+Same here, it feels odd to do that.
+
+thanks,
+
+greg k-h
 
