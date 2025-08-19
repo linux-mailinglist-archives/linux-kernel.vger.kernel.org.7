@@ -1,251 +1,155 @@
-Return-Path: <linux-kernel+bounces-776008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4EDB2C774
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:49:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF30B2C76B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59111752D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9C46827CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D2E27BF85;
-	Tue, 19 Aug 2025 14:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7714D279351;
+	Tue, 19 Aug 2025 14:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dS+1Tugx"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VJxWovZZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916171FF7D7;
-	Tue, 19 Aug 2025 14:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2B72869E
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614765; cv=none; b=P+rjtf9CUk3wnF/9wI8uBCisQrZWm7nvwjSfBbgPXjpf555Y1DrfSuEBnLTHgJzSN8eRYigMWJ8ffU4NzR4UwNYWbDWzIZDAG4zhwymgcKIhuerj4UnJarFVKwbTNYRM+QJKV2Y/+UVdzt7II5BJft2tfjIzqicCUfVr577EPls=
+	t=1755614799; cv=none; b=UBxbjHcOeGEoPhBwiwkvZ+tjhE6hnukwQlGei3l/NmgluzG7R3b6slZdFknFJEKrVlk+QacpNgJRR+WG7WpY+BBSCXhNZ/nhtACJssdqHknAAuCjBcr8HVZ3/P0xX2FdX+8T6Fto4IIsmrP0zzg4OQrRGAyD9uye8aqEd0AKj3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614765; c=relaxed/simple;
-	bh=DCZiF8kq04YIUMZs8I7NejSG0j963jBDxvlnKIltYV8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=Kcmpa3W14XqAR8k9d0/TEZOmvqi6Ks9j5jet9jkRCNTFW3TKxhp7aAb5yAUp0Qq4+wauvolagrdGny1pbQ9jQM5HjXk6/tB4919Al/zs51cJ4TZ1xq0OWsMxl0jSM8jg7hYUdd4wXnSOax+lhGfeLPvPo6+6ws9vLkbIwjox8pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dS+1Tugx; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b121dc259cso27553901cf.1;
-        Tue, 19 Aug 2025 07:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755614762; x=1756219562; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jBJBj4QZForHlCQsBm5N3P/Zz1khxIZow/yhMUT1I9Q=;
-        b=dS+1Tugx96WyNetZ6zVmAhYFCy4Oj0jh4KIi1zsyzd9I6NR1ErokH/+lApSlxNPECW
-         yWdHEJQSUMtyOexcvLbm8qcn5vadM/4vFZ4oUB9BrMmpkYjmc7W3lki2Dg0Jz5/shabT
-         xlV539s1WsyfnC3ivpcFYpOA1q8iZUhqNkFjKD4KF0ftOQtSjbT735IermK43LeKvorz
-         QcGygQNtfGaxsTIWEm+rAk9V5q16Yni8619p6leQx4P4QM19RTnGKDCQ988MbgNA/px9
-         jTCTztqlgOz7ot6PBiHghMjx4aDBSWwwSyoa1v5ou6aBRP0aTRGwPdV092ZF5w5oEwsl
-         5UAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755614762; x=1756219562;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jBJBj4QZForHlCQsBm5N3P/Zz1khxIZow/yhMUT1I9Q=;
-        b=kbx/++2G071ABdXnv/vF5xecS85D5kr65yesjmIR6pfq2uQzw+Hjy51m66xPqixAxN
-         OlhZMPHHi+priiJU+GeedWxsDiyfOwb6494WUAdgsnRbFEL52SlbhK0Z/a1erCIZeLrs
-         6Vhhg9c23ogpUB3D5Obxcz2fWU1J9f9RB8PNxTOhO7spS9/ls+KHZH+cYWvHr3MQE/0t
-         VZLODZWq5AWHKQasrdOy+5XAkv2+1tOLFKJSKQ+yvnnnHy1JPZy3ceqQX2e9Jto8YHTX
-         xNVqGbDxbdUuABWCxMXHtgHWtE5qU6mMTf65opDq5Kx+9cFeAVMPv4+BZvThlPOzb6uD
-         AXTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFq1YJpvstujWL4xGuAwuPgX5W/Awv66kSKPbyyeJE5zsE9cGyvyXoesBl7IKPSNjl9F6LzylU@vger.kernel.org, AJvYcCX87wF2E7P01RTtBkEDbbd90zn8MooL7zoHWlUdhXynwYtNdc4K4w+EtE3P377iFDlUDLE0CoxFn2TZNto=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9XeBQexrTBo9d+k/BJ3nDFd0axNbh1BzPh2qw9VrewQAwb16N
-	NcbM35pC+jRZFET/nQ1AtSIU9n/VHlCmZSPzrgYkyJqcsBUaxnsWj/0A
-X-Gm-Gg: ASbGncvDWyhHc5BrCopTuOiIm198wZFtBBUsYxzMw1ia2RBEfPpeXnBNynvY7BDw3qY
-	BwSVblcq5b+yFS8bugB9FQqaliHq2hSuQkxdpsf/EINbI0PnfqjZUAnXbzwZLj+/+M6Ab4eIvxM
-	9zINGCP7k2ONybt9ovqqx9umUjPz8/8owvPUq4LA02g0kRrHH/M52hKI5fATAtFoBX6cUrjmcph
-	c8/GZcH0Fpx4d7ZlXR53jc3PaJuaqFr6RiXBSgYX32ipPSXodEaCJNnbSE87Aq9emSJCwCvzHaN
-	l6XZL5o6Y3iPEFe/ccVu+FGw7YDAngGpxOA5MnrJIEo73ZgQO6GTYXVBTAULsX0P+kfeBqoZYTL
-	mIpM8M/QDR15teNXhRg+2gTAlBOqp2n+9Aq68FAwfSIhk8LdWDzCl4M9zFgeADCdCokldAg==
-X-Google-Smtp-Source: AGHT+IGc81qdxCSR+PaPZepmyKxyryjgwFGzxpyj5AsgK7mQfH+yLPXu4BapDT/RrPKygy62G8x3Jg==
-X-Received: by 2002:a05:622a:1493:b0:4b0:8ac3:a388 with SMTP id d75a77b69052e-4b286c6cb24mr29976311cf.19.1755614762234;
-        Tue, 19 Aug 2025 07:46:02 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e87dee34f8sm792390485a.0.2025.08.19.07.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 07:46:01 -0700 (PDT)
-Date: Tue, 19 Aug 2025 10:46:01 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Richard Gobert <richardbgobert@gmail.com>, 
- netdev@vger.kernel.org
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- corbet@lwn.net, 
- shenjian15@huawei.com, 
- salil.mehta@huawei.com, 
- shaojijie@huawei.com, 
- andrew+netdev@lunn.ch, 
- saeedm@nvidia.com, 
- tariqt@nvidia.com, 
- mbloch@nvidia.com, 
- leon@kernel.org, 
- ecree.xilinx@gmail.com, 
- dsahern@kernel.org, 
- ncardwell@google.com, 
- kuniyu@google.com, 
- shuah@kernel.org, 
- sdf@fomichev.me, 
- ahmed.zaki@intel.com, 
- aleksander.lobakin@intel.com, 
- florian.fainelli@broadcom.com, 
- willemdebruijn.kernel@gmail.com, 
- linux-kernel@vger.kernel.org, 
- linux-net-drivers@amd.com, 
- Richard Gobert <richardbgobert@gmail.com>
-Message-ID: <willemdebruijn.kernel.a8507becb441@gmail.com>
-In-Reply-To: <20250819063223.5239-3-richardbgobert@gmail.com>
-References: <20250819063223.5239-1-richardbgobert@gmail.com>
- <20250819063223.5239-3-richardbgobert@gmail.com>
-Subject: Re: [PATCH net-next v2 2/5] net: gro: only merge packets with
- incrementing or fixed outer ids
+	s=arc-20240116; t=1755614799; c=relaxed/simple;
+	bh=A/bQ8BPM18M5+5I1jcYBoAmnIskDpPsMSohOCfrxtUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hJSJ58GRnBax8RwQr1uh9bkxtfXsGX1qaEKljuvoVzoig3hs8DQq/GUFeCrKG6VOzXlzWwz9rmL7MMf4DwWmRktu7RFxsxbxAI5ryrTaGB199xFnCJDXQXmlxewcSnyncFaPAuc462OMISAj8E8OfX+8OaobP+Diheb++GLvl4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VJxWovZZ; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755614798; x=1787150798;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=A/bQ8BPM18M5+5I1jcYBoAmnIskDpPsMSohOCfrxtUQ=;
+  b=VJxWovZZx9+NZpP3EXVBXeFocQHvOgcEes+Rd0G/KP/EwgFM0E5RsfSl
+   hzja+oY+CZazyZG+DWbYAZUn9K1KQsNt+SzN1DA2wy+dBizXznEAtqHmT
+   XQFco+0kQRrcPKPdriLu5QytesmTlM3qAPBKMgPYf12gbeZgwZqr5KTf3
+   9T+t5pmd3hqVKYmdpAPdhJnd4XZOEz+oNNsLV/LOGDaJQvCpFAYXfAz9N
+   NL9IrJ3CiOplmaVaGkEsrh897NkAKxC725B6D6iar5blzp81n+X/HAnUb
+   0HhQ+tPk2D6DS+U/CWVomIVZNH4hDD/EGP7NDCwZ9xlAWEBKb46qEK8Z2
+   g==;
+X-CSE-ConnectionGUID: hB37mNPjQDSKOqAdPnXEtA==
+X-CSE-MsgGUID: GXU9fHZrSdSeTPoFS1Lblg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58008788"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="58008788"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 07:46:36 -0700
+X-CSE-ConnectionGUID: qSZVDYmfSbyaaJds6uCM7w==
+X-CSE-MsgGUID: 2IRox55MRfCJB6XnDqr+2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="198878619"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.41]) ([10.125.108.41])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 07:46:36 -0700
+Message-ID: <95833405-18aa-48ad-a5d6-4f659dfbf08a@intel.com>
+Date: Tue, 19 Aug 2025 07:46:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [x86?] BUG: soft lockup in xfrm_timer_handler
+To: syzbot <syzbot+b6ae1c4eede4e0ea287f@syzkaller.appspotmail.com>,
+ ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com,
+ bcm-kernel-feedback-list@broadcom.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, jgross@suse.com,
+ linux-kernel@vger.kernel.org, mingo@redhat.com,
+ syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+ virtualization@lists.linux.dev, x86@kernel.org,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>
+References: <68a2dd64.050a0220.e29e5.0096.GAE@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <68a2dd64.050a0220.e29e5.0096.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Richard Gobert wrote:
-> Only merge encapsulated packets if their outer IDs are either
-> incrementing or fixed, just like for inner IDs and IDs of non-encapsulated
-> packets.
-> 
-> Add another ip_fixedid bit for a total of two bits: one for outer IDs and
-> one for inner IDs.
-> 
-> This commit preserves the current behavior of GSO where only the IDs of the
-> inner-most headers are restored correctly.
-> 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
-> ---
->  include/net/gro.h      | 26 +++++++++++---------------
->  net/ipv4/tcp_offload.c |  4 +++-
->  2 files changed, 14 insertions(+), 16 deletions(-)
-> 
-> diff --git a/include/net/gro.h b/include/net/gro.h
-> index 87c68007f949..e7997a9fb30b 100644
-> --- a/include/net/gro.h
-> +++ b/include/net/gro.h
-> @@ -75,7 +75,7 @@ struct napi_gro_cb {
->  		u8	is_fou:1;
->  
->  		/* Used to determine if ipid_offset can be ignored */
-> -		u8	ip_fixedid:1;
-> +		u8	ip_fixedid:2;
->  
->  		/* Number of gro_receive callbacks this packet already went through */
->  		u8 recursion_counter:4;
-> @@ -442,29 +442,26 @@ static inline __wsum ip6_gro_compute_pseudo(const struct sk_buff *skb,
->  }
->  
->  static inline int inet_gro_flush(const struct iphdr *iph, const struct iphdr *iph2,
-> -				 struct sk_buff *p, bool outer)
-> +				 struct sk_buff *p, bool inner)
->  {
->  	const u32 id = ntohl(*(__be32 *)&iph->id);
->  	const u32 id2 = ntohl(*(__be32 *)&iph2->id);
->  	const u16 ipid_offset = (id >> 16) - (id2 >> 16);
->  	const u16 count = NAPI_GRO_CB(p)->count;
->  	const u32 df = id & IP_DF;
-> -	int flush;
->  
->  	/* All fields must match except length and checksum. */
-> -	flush = (iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF));
-> -
-> -	if (flush | (outer && df))
-> -		return flush;
-> +	if ((iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF)))
-> +		return true;
->  
->  	/* When we receive our second frame we can make a decision on if we
->  	 * continue this flow as an atomic flow with a fixed ID or if we use
->  	 * an incrementing ID.
->  	 */
->  	if (count == 1 && df && !ipid_offset)
-> -		NAPI_GRO_CB(p)->ip_fixedid = true;
-> +		NAPI_GRO_CB(p)->ip_fixedid |= 1 << inner;
->  
-> -	return ipid_offset ^ (count * !NAPI_GRO_CB(p)->ip_fixedid);
-> +	return ipid_offset ^ (count * !(NAPI_GRO_CB(p)->ip_fixedid & (1 << inner)));
->  }
->  
->  static inline int ipv6_gro_flush(const struct ipv6hdr *iph, const struct ipv6hdr *iph2)
-> @@ -479,7 +476,7 @@ static inline int ipv6_gro_flush(const struct ipv6hdr *iph, const struct ipv6hdr
->  
->  static inline int __gro_receive_network_flush(const void *th, const void *th2,
->  					      struct sk_buff *p, const u16 diff,
-> -					      bool outer)
-> +					      bool inner)
->  {
->  	const void *nh = th - diff;
->  	const void *nh2 = th2 - diff;
-> @@ -487,19 +484,18 @@ static inline int __gro_receive_network_flush(const void *th, const void *th2,
->  	if (((struct iphdr *)nh)->version == 6)
->  		return ipv6_gro_flush(nh, nh2);
->  	else
-> -		return inet_gro_flush(nh, nh2, p, outer);
-> +		return inet_gro_flush(nh, nh2, p, inner);
->  }
->  
->  static inline int gro_receive_network_flush(const void *th, const void *th2,
->  					    struct sk_buff *p)
->  {
-> -	const bool encap_mark = NAPI_GRO_CB(p)->encap_mark;
->  	int off = skb_transport_offset(p);
->  	int flush;
->  
-> -	flush = __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->network_offset, encap_mark);
-> -	if (encap_mark)
-> -		flush |= __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->inner_network_offset, false);
-> +	flush = __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->network_offset, false);
-> +	if (NAPI_GRO_CB(p)->encap_mark)
-> +		flush |= __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->inner_network_offset, true);
+On 8/18/25 00:59, syzbot wrote:
+> Call Trace:
+>  <IRQ>
+...
+>  spin_lock include/linux/spinlock.h:351 [inline]
+>  __xfrm_state_delete+0xba/0xca0 net/xfrm/xfrm_state.c:818
+>  xfrm_timer_handler+0x18f/0xa00 net/xfrm/xfrm_state.c:716
+>  __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
+>  __hrtimer_run_queues+0x52c/0xc60 kernel/time/hrtimer.c:1825
+>  hrtimer_run_softirq+0x187/0x2b0 kernel/time/hrtimer.c:1842
+>  handle_softirqs+0x283/0x870 kernel/softirq.c:579
+>  __do_softirq kernel/softirq.c:613 [inline]
+>  invoke_softirq kernel/softirq.c:453 [inline]
+>  __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+>  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
 
-It's a bit unclear what the meaning of inner and outer are in the
-unencapsulated (i.e., normal) case. In my intuition outer only exists
-if encapsulated, but it seems you reason the other way around: inner
-is absent unless encapsulated. I guess they're equivalent, but please
-explicitly comment this choice somewhere.
+From that call trace, I'd suspect a deadlock from the xfrm code not
+releasing the lock somewhere, not x86 code.
 
->  
->  	return flush;
->  }
-> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
-> index be5c2294610e..74f46663eeae 100644
-> --- a/net/ipv4/tcp_offload.c
-> +++ b/net/ipv4/tcp_offload.c
-> @@ -485,8 +485,10 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
->  	th->check = ~tcp_v4_check(skb->len - thoff, iph->saddr,
->  				  iph->daddr, 0);
->  
-> +	bool is_fixedid = (NAPI_GRO_CB(skb)->ip_fixedid >> skb->encapsulation) & 1;
-> +
-
-Variable definition at top of function (or basic block)
-
->  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4 |
-> -			(NAPI_GRO_CB(skb)->ip_fixedid * SKB_GSO_TCP_FIXEDID);
-> +			(is_fixedid * SKB_GSO_TCP_FIXEDID);
->  
->  	tcp_gro_complete(skb);
->  	return 0;
-> -- 
-> 2.36.1
-> 
-
-
+One thing that stands out is that of the ~20 or so uses of
+'->xfrm.xfrm_state_lock', the call site in the trace is the only one
+that uses spin_lock() instead of spin_lock_bh(). I didn't look at it for
+long, so maybe there's a good reason for it. But it did catch my eye.
 
