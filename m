@@ -1,209 +1,174 @@
-Return-Path: <linux-kernel+bounces-774704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9149EB2B64B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:37:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C0DB2B65F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BE177AC310
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:35:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08103A58C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BE323B61A;
-	Tue, 19 Aug 2025 01:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9CD258EE5;
+	Tue, 19 Aug 2025 01:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="EQ3at5az"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kSqKBiW4"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADAE230269;
-	Tue, 19 Aug 2025 01:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8365257427
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755567352; cv=none; b=oikRpdKA6gB/iDk26ZrY2LPs4yVdywp9mX+BNr2W8gK6i3mVp/AyA376HBM6edWfHlTLw4MWGgBzCnHBlnkLetcwmxBEOZXnoVNSX68JpEmVNpGQR1mqlrGLQw5+5ErtYqqFyF8v9JMVAnSguxXU2qD+8YhzWl7QDr18YSPK/Do=
+	t=1755567618; cv=none; b=FWbANeD7kA3S8+ELh8IEkmustTDw8M8fR+1PuCUN5lSjdtFXSkJ8aLJnKr2zBKo1JujjWyJbqyeDsUD5uoncV2vz8XmZDC0QEOkjrhItP2SroXoX65Nag9WdKppiCR/8fBQwpkmPkn5XMjZnHaI8gTCu+h2i2FePRDMEPyS50FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755567352; c=relaxed/simple;
-	bh=cbYO9pZP3k7Ta6Ig4gCsEs6GQb+qs2EuZyhEONUipoQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Kwm5vo283feQ5Rs3gLtFjCYkQkwKgdAm7BNbOvEwJFyCzOW4on1LMTOO00getsivH164wXlfxSfvWDNZFUGiRtdF84WE+x6OAXo6ZM+IXDP98CnY6i2LtPVTkuQUkxXuTookl3kvcwXZ/lACGBNaOYLjQsjs9nVI3DWIAmBhQdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=EQ3at5az; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755567329;
-	bh=uhl8/t0StcVqCaIWEKD+VuekI6N7mwpFLjkaIlWp5yw=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=EQ3at5azQ8aYnyLn82PEuvhoL6PapiDIcshDoSU2YbXiy5XoTlGSkS5dhMflNnDsT
-	 elZ14fBMyAXGGuJun5CwQ7ZkGB8MSuhbmttTyVqwmh0g/dl02u0edbJV43Asc0B5Jb
-	 nmejDhFlpkuQAYTlxSa70oKMyhKF0pTQqP13aqvU=
-X-QQ-mid: esmtpgz10t1755567327t312bb98c
-X-QQ-Originating-IP: iIZs0ikRtkS/JR0i6or1EkTqIWUaffHSmjp2ixQuz30=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 19 Aug 2025 09:35:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12480758067493020977
-EX-QQ-RecipientCnt: 16
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Tue, 19 Aug 2025 09:35:11 +0800
-Subject: [PATCH v4 3/3] clk: spacemit: fix i2s clock
+	s=arc-20240116; t=1755567618; c=relaxed/simple;
+	bh=egelazQYZ7onyUWC7gv9948fWZw37+Sw3rZW69y/sqo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=ZQGdOC3W4ytItTVG9+XCUrR/v6HxTPzrQuPDaLdDXVFTYVKI/2nNZ95XOTfZNqzFdzLU+0zUFGOnEF5jc416kBWovgTKJTw6Fl8bL1zRhlUBBcV5WZXfm6dYhWw9na3A6K6mNPy51CYwUUsjLN8Kj9U8ZMCuUgvYsV71uH6cfl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kSqKBiW4; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-323267b6c8eso10568637a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:40:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755567616; x=1756172416; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sTgK2PqFLn7B6BmEq5Hz23j01dxxBaIzoGkm9EZHT9I=;
+        b=kSqKBiW4Ukl4l/PuSyGlx6AsMFZSNQqKPArwFEEKf3Sb6NvaAQpESeTs9t5d+gs/w4
+         k/1VW2jEV0Iu5YTYomYRO+5g+uvQLCrqD7z4wHJrRCphAXEUh7Y/KQy0CJuzxuTjzgBj
+         UxHYjj4ijboUwM1/hO1EijSAZJG6cGSmeekF0hNDkzND+aGUhsWja0gzGGDe2TU2Ku07
+         eR3acGv7prg6tTR5tl4icjtxs3JIhiwph0kXT8GN0K47NLt4x5R1j3WpODHe3yyttWOI
+         73Bc5szfsedXbJhR8Y8Heghh0w9wqmjwI5x958B52MlRK7+so/d78ue3VNztuAE/0J7t
+         Wlgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755567616; x=1756172416;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sTgK2PqFLn7B6BmEq5Hz23j01dxxBaIzoGkm9EZHT9I=;
+        b=a90NU2jYGsQ+5+Rkg8knLE7dtUX2dZMobD7kG41HgbCOgqhTT8ejCAkJEU2/2XMI3q
+         rmtwmKLdAgPi+h4pjdmdMCZYbNzNT168X0vczntVAp2Yqwl/FYgvFFAZh4rC4EoN41eW
+         gF0hW627oVfnRbjnKeNc3ONbjud6TcEZbEHovBn2+rWi0cji2aHtcOnCMZwrFLOelq9f
+         gwI1hCLszYccDWsV+5XVlDfOyzLmPsMZ0Nvh19GQ5BkYut3CFq/qOG5a1GzEoYZfBhdF
+         cOJ8Cs5SwCJPsR5V1JJs7UmNWehoFqPs/mwvSGVIbgjXFkRRILzUwfowSIiA0MNAM2gA
+         aW8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXa9MQrDQHJyZvvzpFQrQ/OWfTKluEc+m3jauTDXlNgHN8y0B2OLD1pNH62WAE/ZsnlV7wTalF7IdRxF2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjiLX1BCzAvRoGchQ0qFT0D1AGvgwma5UHh0m2LxL65K6PDgDK
+	5XE+pxYpQelWkye7z5HAQ4eMSYTlk3UxONeHmP1oSf/cHGC8vozyzCNbiszzHmqA8d2ZKuBfhKP
+	aDFBe9VpJIA==
+X-Google-Smtp-Source: AGHT+IE2JGUHW6rEkST2x0EaO9vnngBeIaokxxp9JEuRLzo6SEYqK55eqZ1h4vhBfozgzW871Nidcvjmyv9b
+X-Received: from pjxx7.prod.google.com ([2002:a17:90b:58c7:b0:313:245:8921])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5388:b0:31f:b51:eef9
+ with SMTP id 98e67ed59e1d1-32476ad4524mr1326167a91.17.1755567616143; Mon, 18
+ Aug 2025 18:40:16 -0700 (PDT)
+Date: Mon, 18 Aug 2025 18:39:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-k1-clk-i2s-generation-v4-3-80174edd04eb@linux.spacemit.com>
-References: <20250819-k1-clk-i2s-generation-v4-0-80174edd04eb@linux.spacemit.com>
-In-Reply-To: <20250819-k1-clk-i2s-generation-v4-0-80174edd04eb@linux.spacemit.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
- Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755567313; l=4010;
- i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=cbYO9pZP3k7Ta6Ig4gCsEs6GQb+qs2EuZyhEONUipoQ=;
- b=t5XOT52tWGiOmBs4rOz5QVFCAK7ITGOYNwnrlciH8aM2d6IIZ2C8YkmqNKa9jpLE2wLrM/PuA
- doV1k5Qt+g7CfXA/hJHL/QNk7LDMqztlWm1EgWJHTb/4s4zYoLqlanY
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: Mjc5Shoq7MT/bc2/K5mBRkhYj7Dpkql/PbUeEAlc6F+C9pv9zBt8/vnA
-	MyCATrn47mcqpw3RCTCXJI2zrbnaiZJ7remXhQNyf95rLM75mFb2iZS8qRxmzkMyZBlPhC1
-	qjQ751tbj9jyljIojTWPSon1oyzymwkJTVqujMI+HsrmF80UtT8mR4y0yqGXHwQgfe7cnkp
-	FZJFKLXmUN4fBl9/5b/s6B+jMdzhQpFfC67FdaEFEUT7fIVV+kV8v8QA7ifrEMaJJvi0gMB
-	ezNzvlYfsXJNCROZrHTQ+w6tJX3E5SlwHphIFp12pqUyRsCeVNj+he6BTljwmKZD5k8Gbdp
-	gpW9wT1LJZWGWLq3TggZXxBeuct1bI74E/gjl/5ZMRglonAmi815YtLTI3a+AJ1HdZ55VDJ
-	sVN5YYQdI60FMvSo7TY2QeFPL/RXwSfWx0+Wcj7H22tOVjaoimFPv68+zXP79yNyVRVVfPO
-	+9TnVg6eGgtCjCeo3ZCVWrJkbp0j3NxxMnSgqf1GvKHnqot8WDmaoViDw9J/DuryXobHIQI
-	zVHLv6L5qcogkjxkHsLg/pjteW5y7bDDj+9B/xB4Zb6gZgNiE25PS+6FmdSZELtD737pqQD
-	lul1Trx2HkB5dRSSc0iMpRrpXZGoTLSu1RJ4glIx/pUASrvcmSrHJQSKUdsARfxunWk0FXj
-	nmYPsQI3WubUyOqmVMhWnJ0Cvlf+DJVLaebf2KTBz9De4VflFSNhBImsipTRcMhb7Qi07n8
-	pkHK0gMkZEtyT67chG+Lz3zErlkZ7Rr23vJWiAC9FsPsYV9byy22ramttqYn2KkW3xuIyP7
-	eo5tVBWwqAK4efsICGtHwpkv6E6X0yw/0md69OO3ssJMq7Esq/C+YuFv6ALHdDCr7zZLYkS
-	NZfUR0MWdzTAdWhfI/PRcUYOs9qLqPBeo7FW4JSVyHdiHIUlvZ7DX9Lc8A5io2QnaI1x55q
-	48kJXM4iyGGakEYuDZTiStcCXkNV13ClyHtzbeRncIrNDOhZEOd/iO98eys8Dswk4gk2hwD
-	OgUviuwqxI4QwgMpcyLsY7wIKlvAVY6Ho/TwwO1BqvA3XHkIUPJta1Rkj0eP0uEESyzlxxZ
-	wRoVewTUbkIUI/cA0/XbfysSfLD54GQgqLc57HC9qCX0Oek/GJx8RKEeEV/kFlFDlyRerjt
-	BEDU
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
+Message-ID: <20250819013941.209033-1-irogers@google.com>
+Subject: [PATCH v10 00/11] New perf ilist app
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Collin Funk <collin.funk1@gmail.com>, Howard Chu <howardchu95@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Defining i2s_bclk and i2s_sysclk as fixed-rate clocks is insufficient
-for real I2S use cases.
+This patch series adds a new ilist app written in python using textual
+[1] for the UI. The app presents perf PMUs and events, displays the
+event information as in `perf list` while at the bottom of the console
+showing recent activity of the event in total and across all CPUs. It
+also displays metrics, placed in a tree through their metric group,
+again with counts being displayed in the bottom panel.
 
-Moreover, the current I2S clock configuration does not work as expected
-due to missing parent clocks.
+To run it you need the updated perf.cpython.so in your PYTHONPATH and
+then execute the script. Expanding PMUs and then selecting events will
+cause event informatin to be displayed in the top-right and the
+counters values to be displayed as sparklines and counts in the bottom
+half of the screen.
 
-This patch adds the missing parent clocks, defines i2s_sysclk as
-a DDN clock, and i2s_bclk as a DIV clock.
+There's been feedback on how the app works, simplicity of
+implementation has been chosen as the first criteria as the app can be
+further refined from what is here. The choice of the name ilist rather
+than say istat was deliberate as I wanted the app to encourage PMU,
+event and metric discovery, as with perf list. The output counts and
+spark lines are just to give an indication of what the event
+gathers. ilist comes from interactive list, there's probably a better
+name.
 
-A special note for i2s_bclk:
+[1] https://textual.textualize.io/
 
-From the register definition, the i2s_bclk divider always implies
-an additional 1/2 factor.
+v10: Add Howard's reviewed-by and address documentation fix. Rebase
+     and drop build up patches merged in v6.17 by Namhyung.
 
-The following table shows the correspondence between index
-and frequency division coefficients:
+v9: sys metric support and pep8 clean up suggested by Xu Yang
+    <xu.yang_2@nxp.com>.
 
-| index |  div  |
-|-------|-------|
-|   0   |   2   |
-|   1   |   4   |
-|   2   |   6   |
-|   3   |   8   |
+v8: nit fixing of issues caught by Arnaldo and Namhyung. Add Arnaldo's
+    tested-by. Fail to repro issue reported by Thomas Falcon but
+    encounter textual rendering and DOM query race, add an exception
+    handling path to avoid the race being fatal. The change is minor
+    in patch 16, so Arnaldo's tested-by is kept.
 
-From a software perspective, introducing i2s_bclk_factor as the
-parent of i2s_bclk is sufficient to address the issue.
+v7: Better handle errors in the python code and ignore errors when
+    scanning PMU/events in ilist.py, improving the behavior when not
+    root. Add a tp_pmu/python clean up. Minor kernel coding style
+    clean up. Fix behavior of ilist if a search result isn't found but
+    then next is chosen.
 
-The I2S-related clock registers can be found here [1].
+v6: For metrics on hybrid systems don't purely match by name, also
+    match the CPU and thread so that if the same metric exists for
+    different PMUs the appropriate one is selected and counters may be
+    read. Likewise use evsel maps and not the evlists.
 
-Link:
-https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-[1]
+v5: Split the series in two. Add metric support. Various clean ups and
+    tweaks to the app in particular around the handling of searches.
 
-Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
-Suggested-by: Haylen Chu <heylenay@4d2.org>
-Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
- drivers/clk/spacemit/ccu-k1.c    | 28 ++++++++++++++++++++++++++--
- include/soc/spacemit/k1-syscon.h |  1 +
- 2 files changed, 27 insertions(+), 2 deletions(-)
+v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
+    displays as expected.
 
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index 7155824673fb450971439873b6b6163faf48c7e5..50b472a2721121414f33e9fac6370f544e6b8229 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -141,8 +141,28 @@ CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 2, 0);
- 
- CCU_GATE_DEFINE(wdt_clk, CCU_PARENT_HW(pll1_d96_25p6), MPMU_WDTPCR, BIT(1), 0);
- 
--CCU_FACTOR_GATE_DEFINE(i2s_sysclk, CCU_PARENT_HW(pll1_d16_153p6), MPMU_ISCCR, BIT(31), 50, 1);
--CCU_FACTOR_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_sysclk), MPMU_ISCCR, BIT(29), 1, 1);
-+CCU_FACTOR_DEFINE(i2s_153p6, CCU_PARENT_HW(pll1_d8_307p2), 2, 1);
-+
-+static const struct clk_parent_data i2s_153p6_base_parents[] = {
-+	CCU_PARENT_HW(i2s_153p6),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+};
-+CCU_MUX_DEFINE(i2s_153p6_base, i2s_153p6_base_parents, MPMU_FCCR, 29, 1, 0);
-+
-+static const struct clk_parent_data i2s_sysclk_src_parents[] = {
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(i2s_153p6_base)
-+};
-+CCU_MUX_GATE_DEFINE(i2s_sysclk_src, i2s_sysclk_src_parents, MPMU_ISCCR, 30, 1, BIT(31), 0);
-+
-+CCU_DDN_DEFINE(i2s_sysclk, i2s_sysclk_src, MPMU_ISCCR, 0, 15, 15, 12, 1, 0);
-+
-+CCU_FACTOR_DEFINE(i2s_bclk_factor, CCU_PARENT_HW(i2s_sysclk), 2, 1);
-+/*
-+ * Divider of i2s_bclk always implies a 1/2 factor, which is
-+ * described by i2s_bclk_factor.
-+ */
-+CCU_DIV_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_bclk_factor), MPMU_ISCCR, 27, 2, BIT(29), 0);
- 
- static const struct clk_parent_data apb_parents[] = {
- 	CCU_PARENT_HW(pll1_d96_25p6),
-@@ -756,6 +776,10 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
- 	[CLK_I2S_BCLK]		= &i2s_bclk.common.hw,
- 	[CLK_APB]		= &apb_clk.common.hw,
- 	[CLK_WDT_BUS]		= &wdt_bus_clk.common.hw,
-+	[CLK_I2S_153P6]		= &i2s_153p6.common.hw,
-+	[CLK_I2S_153P6_BASE]	= &i2s_153p6_base.common.hw,
-+	[CLK_I2S_SYSCLK_SRC]	= &i2s_sysclk_src.common.hw,
-+	[CLK_I2S_BCLK_FACTOR]	= &i2s_bclk_factor.common.hw,
- };
- 
- static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
-diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-index c59bd7a38e5b4219121341b9c0d9ffda13a9c3e2..354751562c55523ef8a22be931ddd8aca9651084 100644
---- a/include/soc/spacemit/k1-syscon.h
-+++ b/include/soc/spacemit/k1-syscon.h
-@@ -30,6 +30,7 @@ to_spacemit_ccu_adev(struct auxiliary_device *adev)
- 
- /* MPMU register offset */
- #define MPMU_POSR			0x0010
-+#define MPMU_FCCR			0x0008
- #define  POSR_PLL1_LOCK			BIT(27)
- #define  POSR_PLL2_LOCK			BIT(28)
- #define  POSR_PLL3_LOCK			BIT(29)
+v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
+    keys. No changes in the ground work first 14 patches.
+
+v2: In the jevents event description duplication, some minor changes
+    accidentally missed from v1 meaning that in v1 the descriptions
+    were still duplicated. Expand the cover letter with some thoughts
+    on the series.
+
+Ian Rogers (11):
+  perf python: Add more exceptions on error paths
+  perf python: Improve the tracepoint function if no libtraceevent
+  perf python: Add basic PMU abstraction and pmus sequence
+  perf python: Add function returning dictionary of all events on a PMU
+  perf ilist: Add new python ilist command
+  perf python: Add parse_metrics function
+  perf python: Add evlist metrics function
+  perf python: Add evlist compute_metric
+  perf python: Add metrics function
+  perf ilist: Add support for metrics
+  perf tp_pmu: Remove unnecessary check
+
+ tools/perf/python/ilist.py | 495 +++++++++++++++++++++++++++++++++++
+ tools/perf/util/python.c   | 522 ++++++++++++++++++++++++++++++++++++-
+ tools/perf/util/tp_pmu.c   |   2 -
+ 3 files changed, 1004 insertions(+), 15 deletions(-)
+ create mode 100755 tools/perf/python/ilist.py
 
 -- 
-2.50.1
+2.51.0.rc1.167.g924127e9c0-goog
 
 
