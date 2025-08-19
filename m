@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-776313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AB5B2CBAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:12:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A140EB2CBB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71040523599
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4E81BC842C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0324330F526;
-	Tue, 19 Aug 2025 18:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445A730F524;
+	Tue, 19 Aug 2025 18:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XY1Y0E6m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bU/kEK1K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0B030BF71;
-	Tue, 19 Aug 2025 18:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F684EEDE;
+	Tue, 19 Aug 2025 18:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755627135; cv=none; b=iTvj9NoAvhI3hkwE1vA4+EwwDTYLGLygwIXhV1/raSG8d8JjSGezUukrokB00SV5RSHqTjSmkYuhr3K1x0l8LSa1MqYXW9yv+KO1R/gkKDpqREF04EaxAdcvK2+nGYg2zOcGzqTFK7IIbzC6ARhVlXnIQymuOFNbN38fL/8X5Mk=
+	t=1755627220; cv=none; b=QLBDpqq3RgfaI6eDxFS+htZhBPEJn+nKc6DQFn4pIME920DpBItD1Y9s1lhIasSpO+2SxPoiAv8rqtzq933ei/hI8i5q0a+fWNGmghjGqUNbl3k8FsVDLxs1LpY+/Ga/8YhmwMPrXQcEXsRJaSwalDUDtea5rgaIWzsfsogxOO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755627135; c=relaxed/simple;
-	bh=AoERD4ZxArAr7g/5QIVH/HyMW+sbBV9YvBMb+yvH45c=;
+	s=arc-20240116; t=1755627220; c=relaxed/simple;
+	bh=KpvPL2aa1SINbF9+aQNQrZ61uMnyrWTf51xfQ5aKQRg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rvs3w+8xVIo8osUkZX+E6uDAYUVE7w2tO5tmCziXBHr6aIQhO7FUPA7m1+GtiGR1fUf6Cu/SA1f8P14ICgsT/aHcNgNASdJVKLJI4JsmmZtLTMfmNYNDcXVcuom5wC0lhQUzHj+zEXUXRXuKybAeE/CoUxk+tt9wQGI3WyOhZw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XY1Y0E6m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3101C4CEF1;
-	Tue, 19 Aug 2025 18:12:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=i8LPUACgtQBSf4gQ+t1QA7yEMIaQyLrKcrqAyVa0kSmx4EOzwN/9AMQxR3bakvYZ0HPQFHIfueHOeZqrjqqxkwAIdstE5fOX5qNeOGtbA6ybe6GA1Vkzb7g/yjiK3lFHmRKDczSb60VO1BqVEf1LHxSHDsZRYSeGksqU4R8I7tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bU/kEK1K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C64EC16AAE;
+	Tue, 19 Aug 2025 18:13:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755627135;
-	bh=AoERD4ZxArAr7g/5QIVH/HyMW+sbBV9YvBMb+yvH45c=;
+	s=k20201202; t=1755627220;
+	bh=KpvPL2aa1SINbF9+aQNQrZ61uMnyrWTf51xfQ5aKQRg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XY1Y0E6mcK8yirwz4G2g22An1eg++XdDljy1DWXBdiOITLzmfhRSBgzJLv+X4KNX5
-	 EH0ftdbNxhPaGfkpImnS4rAs2XTujpQ4OsefzkKrDyvVvF5RBRViBbeWwjiiyGEN+S
-	 tLoLg3BK9j/t3cQZDChuS8pkR78Wi01A3mD3CCCyEycYWJ/Zldb/5u0DVYJ8i0Eg+d
-	 Bw4UAT9ORugtcnoCu/ur0ICQHyiEoJA4vFC2Ms6KNbIn+AMqMUdIq1uqfQVxv68cel
-	 RDDE+BTY83I22XbDNBjg8VrSz12aug7YjUNEvUlFaj6ZOEy9vL/RRRVkynhAB6RfMc
-	 aeUdG7OmqLwng==
-Date: Tue, 19 Aug 2025 19:12:10 +0100
+	b=bU/kEK1KAuwIyAzv3AUR7Zqhso85eaRZLKIgaj2rVHGE6tFvTO/ViepXxzzQDnqOX
+	 jEPgFw3N2mtxEwVlFLGMv3HjfATY6f85xggSTgLuDslh8Jg+qmSAFnWosmxmp433Y3
+	 OkBa/aYHSBE3gtdDWSk0emTgJ2THXPc2WeQ5pyRBpj/m5JcsZzfFAjXK6b4gk1nRor
+	 Jj/7rUMrDYKmJL509RfvCKXbPrA+Ln/UNdzd6QKLEp3GaG4z88tdj8x2nLFwAOyGeX
+	 obsQ3ryuo79NPNLm01A1HwIw1uomZkJWfgDCXc3ZIqJMCgWH5a0uiFsWonkqeMnHT/
+	 j14dae9pUEQgA==
+Date: Tue, 19 Aug 2025 19:13:35 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+To: E Shattow <e@freeshell.de>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: iio: adc: max1238: Add
- #io-channel-cells property
-Message-ID: <20250819-astronomy-gladiator-21823768723a@spud>
-References: <20250818200014.3700738-1-Frank.Li@nxp.com>
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2] riscv: dts: starfive: jh7110-common: drop no-sdio
+ property from mmc1
+Message-ID: <20250819-sushi-change-1254c2d2a08d@spud>
+References: <20250729141142.13907-1-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,75 +63,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DSiCfLRmt6iyDHmw"
+	protocol="application/pgp-signature"; boundary="+sm/HGNSxtTF3UeQ"
 Content-Disposition: inline
-In-Reply-To: <20250818200014.3700738-1-Frank.Li@nxp.com>
+In-Reply-To: <20250729141142.13907-1-e@freeshell.de>
 
 
---DSiCfLRmt6iyDHmw
+--+sm/HGNSxtTF3UeQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 04:00:13PM -0400, Frank Li wrote:
-> Add #io-channel-cells property because it is multi-channel ADC.
-
-As far as I understand it, that's not a correct statement. A single
-channel ADC can have the property, but it would be set to 0 just as a
-single clock provider has #clock-cells of 0.
-
-I did check the devices and they do all appear to be multichannel (not
-just the 1238) so the change you're making here looks correct, unless
-some of them would actually require 2 cells for some reason - but you
-should really state that in your commit message when there's about 30
-compatibles so that I don't have to check them.
-
-With an accurate commit message,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Maybe Jonathan is willing to do that since it's just adding "of 1" to
-the first sentence.
-
+On Tue, Jul 29, 2025 at 07:11:35AM -0700, E Shattow wrote:
+> Relax no-sdio restriction on mmc1 for jh7110 boards. Property was
+> introduced for StarFive VisionFive2 dts to configure mmc1 for SD Card
+> but this is not necessary, the restriction is only needed to block use of
+> commands that would cause a device to malfunction.
 >=20
-> Fix below CHECK_DTBS warnings:
->   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: adc@35 (maxim,max1239): '#io-=
-channel-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
-> 	from schema $id: http://devicetree.org/schemas/iio/adc/maxim,max1238.yam=
-l#
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: E Shattow <e@freeshell.de>
+
+I'm going to apply this one to for-next, to give it more of a chance to
+soak.
+
 > ---
->  Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml=
- b/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml
-> index 60d7b34e3286f..ae3c89393f1a3 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/maxim,max1238.yaml
-> @@ -53,6 +53,9 @@ properties:
->    reg:
->      maxItems: 1
-> =20
-> +  "#io-channel-cells":
-> +    const: 1
-> +
->    vcc-supply: true
->    vref-supply:
->      description: Optional external reference.  If not supplied, internal
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv=
+/boot/dts/starfive/jh7110-common.dtsi
+> index 4baeb981d4df..b156f8703016 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> @@ -290,7 +290,6 @@ &mmc1 {
+>  	assigned-clock-rates =3D <50000000>;
+>  	bus-width =3D <4>;
+>  	bootph-pre-ram;
+> -	no-sdio;
+>  	no-mmc;
+>  	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+>  	disable-wp;
+>=20
+> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
 > --=20
-> 2.34.1
+> 2.50.0
 >=20
 
---DSiCfLRmt6iyDHmw
+--+sm/HGNSxtTF3UeQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKS+egAKCRB4tDGHoIJi
-0v0rAQDWxASg3MF9RgagWA6/SS2sG6+G/p2ZaZDXfUfFZBHZGQD/TumQX8AKKXig
-TxQ6zDvrGNl/fj0ym3fH/YYpBvWCmAg=
-=MVrX
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKS+zgAKCRB4tDGHoIJi
+0h8zAPsEZlSydbDhSSY6HK5fbO8Q2t/BWSTx9sJrPaJSoqzKxwD/cZmCHPLsQpJ1
+LjxgMVRbqLLWQ0fpBuU/6TlManpKJQI=
+=orR2
 -----END PGP SIGNATURE-----
 
---DSiCfLRmt6iyDHmw--
+--+sm/HGNSxtTF3UeQ--
 
