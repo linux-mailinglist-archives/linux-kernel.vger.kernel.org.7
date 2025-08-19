@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-775831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD76B2C582
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:27:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B401B2C545
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB1B245BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:22:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9FEA7AB4AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB1B343D66;
-	Tue, 19 Aug 2025 13:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89C433EAED;
+	Tue, 19 Aug 2025 13:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6jwNhRW"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Ms7U26Tv"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85453322741;
-	Tue, 19 Aug 2025 13:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B7442A8C;
+	Tue, 19 Aug 2025 13:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609571; cv=none; b=WOAKETY8XWfx6yGiEaw/4dQgbEW4KTC3YgXlTyFfxD0jKQPfgmHB+ztC9bC70gX2jq8NrTft3WDk/5QKCNzYtftSB2RNBJCJKEEGOnv/YnH1jxtWhNXyWWMC7m4s4Egjvv2xdvLWmNyskTWQYfXaqffTNjbLx9JYrcgGDCoBEFI=
+	t=1755609620; cv=none; b=mARX7sorNbbQaFOdsu0zmWQPbNPDlHsFSxkRQJwyBuxVx/OhgBcEDAYh2SAZdxIW17UPxIJJzYXt8E5+r7Uc1hZrvnMDCKMKLDNa/YyePsB+mcMH7+T8s1V1NGxUw0LXzJIHVanRiCvtxkP8jw/ttWBlPqqG/jmqXvem4qvM2B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755609571; c=relaxed/simple;
-	bh=r23hmMjYeFnmQbtG3d+3ohTMfPdmfJrL7/bunmfRuaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fVgB2dyYvXLu3BhgjRmiK4LZ9r7IlBfl5xNyo0UbtnhfC5qcZjIEFajd6FQolilyeGamphBYSFmXx4OsAaZBt+r0hAtmgewVlJZFVEGAmgCnyDRWCpVMMaHO3VdUNPWz7rsSYImz0xLWcg7dwFL+simGzp9Etj4bowmRdRtML74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6jwNhRW; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso3759195a91.1;
-        Tue, 19 Aug 2025 06:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755609570; x=1756214370; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r23hmMjYeFnmQbtG3d+3ohTMfPdmfJrL7/bunmfRuaM=;
-        b=G6jwNhRWzP7TnO5eRjxZTd4eUsxnVKXSCOmr4Y559//KHQ069d85tUZhkneio7Bm16
-         fBp37/P5E9835T7uB88VMbK5MJ+z1lZe1wOVzOY3YzUzg5EbA1JanESAoFzMN30LYKVz
-         oRAXZmWARqD7hzQGjrvOY7EQh4FMxz6cM3m8opY9UwxUqgfV8mBpwNId4EUhsVf1/WEc
-         FAgZZwfO9U98n7s7FGmHcNVkoU7YpOjMDWOeQK2Rk49NT8wRga0Pahzl7kIrB/IGuU4q
-         jVVteHQSbaPIIa9ucdbd9f1qg191ufas394P6z+6JgoRx07c+co+1MwDLf1VgJDYrlGh
-         s/5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755609570; x=1756214370;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r23hmMjYeFnmQbtG3d+3ohTMfPdmfJrL7/bunmfRuaM=;
-        b=gHvVNjZ6w+kHN5vJc/iegUM5uYlmsEAKn8PMV1KIbr+ttHBK62spP2QumJXQpea6JE
-         cZosAnR0iJiiKwMqr8J40H/VarjXPKD303uxBkNhbsa+EbjCxEDojGlnajhydvB4XIXr
-         Gl2aZZemsfxiR9g6H8Yj/rJrD0/qVymkYw86f4eJOPFzKhXSGlLENdYnGZCgOMgHZ/e/
-         gnRpbwEkrtGafPYw51QK1siH2YGgkCE/AbyAWP6DWnwBzmVTxHU1fyNw8mNRiqOqBRoV
-         QS8rl8UCzmDTOW9McN9JEDdDxPSe4ZLOP64uR3uK63G777SE/ejRRHk9P9ylMxf4qh0d
-         mVjw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8wg0oQHZcCYMRsqOc09jF9Q+tnuhlbg/KvmBL6uInY3tHmK0/w3Z/itZryRqU7b/GLS1u8rvi6twJ@vger.kernel.org, AJvYcCUQAAxjC1St7mtpnssd6bdnU6+7MqRD83XjrPxJE0rlInzL4pb6PjmAg8AXSkdMcygbxEmLCHcmvjt4ahE=@vger.kernel.org, AJvYcCWuJILw2JEGpZynnrvt6ckPTuqHbKeQmew1mglrkBhs1dJvdBxTPA7/QEAYyj8CMvN+piqAOmwfR05+RZU=@vger.kernel.org, AJvYcCWxWAC8SE7RP91Kzjw1xnYBc52EXoWpSaZo/8wPYW3DUF7rx3o8MLkN9udeDX4KyG6Pyn+BHlXLO4Mq@vger.kernel.org, AJvYcCXSkim3lErXp0t/B8PlqGVG3XImGHsCN6jo7Xmnfnwz3G5IFF3eAFLORHtZtE2hALbgekIJ4LZjU4df@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVXa3jCwAFI2Nb6/q+WGGTaPRTx3PIAMi31J8lD4Dh2X2ZuNwY
-	VYVpgnaAkPSi6aHLyMRJhwMw13kJuIfq64/sQjKQqb17dxwPFJ+qiChJmM9DKyn0AMMj5SqNJAl
-	Hel7WPYeaMKStziIEvxtSIO9YgRh79A==
-X-Gm-Gg: ASbGncs33BXRR6dF3WJtdVtLGok4Zsj2HaGAHP+zmzQ7ve4osmOsjL93TdkvGAKdcaL
-	VTT904g7JRbeepHeo4h5zKF/DSW8IC3so955j3lRwMBJtapHYFNlq1jnCAahgfblSITREKMYqZf
-	Q6/xoLuRXNk7AhViUSaBreYatwBSvRL9zYJQKa6H+dvVe5laNhh4aLGZ7sxuLpQp/arMBCDxWvc
-	iPc3jw=
-X-Google-Smtp-Source: AGHT+IEhhIygA1bnMp5OmuLfxqFMwh/55vlg61V7P62U8jCxjgB67lK8mBtooTUSQ4tyZ+w3P2ukeu2oqxwqtea8dJY=
-X-Received: by 2002:a17:90b:5103:b0:313:f6fa:5bca with SMTP id
- 98e67ed59e1d1-32476afbfbfmr3312885a91.22.1755609569563; Tue, 19 Aug 2025
- 06:19:29 -0700 (PDT)
+	s=arc-20240116; t=1755609620; c=relaxed/simple;
+	bh=XU7co7/IhKC1SFIOJ2ctmYNnp6ZOEwiQt191KNHFDnQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XY9KLjHKAe6lRAtA0lS77eapJKIhh/W25N8MKQ3cg2xhx+v0zlQw0hz5YvYwZb4lizNfu5N9GNfiCIkxlvmsByYJ0dfiOXA2Gfwi2qWba3OHQZh7hfZ1vS9uAqUAtpbT7AqDXSD6GFZta/VE48j/dHqdxwrFWryDP93AvIiLizg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Ms7U26Tv; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1313E40AB4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755609617; bh=efICgIMOiqQPSZSk5RbTaKUwai8LvnXvLst5MTuVWT4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Ms7U26TvAhh2tBh57lX4Hwcs1DeYm4zZ9Ok8oKOzX9+lHT/N2Cf8fPUigYJMpjKMW
+	 GCSbXfwA2rbT7t9vNB4l1m94LO1PcF68hze9LUujTS/Um/WRAWShgel8VAm90JKlZh
+	 Kt98LYj63moZuo5wJQ8GTJizaSTGuz+EJPjQBd4p3cb384RK48dq+5XQD+Tm1SOAa+
+	 qLno0sJwUQ+CwA5IsrDQQrMGxCfytIsRHGe7yg5ZLZcGkSRp2Lv+GveV4D4gZnrMyn
+	 aDaOVfbxq3WK2+JGe++3abZvnlfZlXTzplXtltMTsW6srlieGYrgA7vUMrMct5bfsq
+	 2PdvkL/14WGIg==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 1313E40AB4;
+	Tue, 19 Aug 2025 13:20:17 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, Boqun Feng <boqun.feng@gmail.com>, Clark
+ Williams <clrkwllms@kernel.org>, Frederic Weisbecker
+ <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, John Ogness
+ <john.ogness@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long
+ <longman@redhat.com>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2 3/3] Documentation: Add real-time to core-api
+In-Reply-To: <20250819080358.H9R_64I7@linutronix.de>
+References: <20250815093858.930751-1-bigeasy@linutronix.de>
+ <20250815093858.930751-4-bigeasy@linutronix.de>
+ <87seho8v12.fsf@trenco.lwn.net> <20250819080358.H9R_64I7@linutronix.de>
+Date: Tue, 19 Aug 2025 07:20:16 -0600
+Message-ID: <87ldnfv46n.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811224739.53869-1-jihed.chaibi.dev@gmail.com> <564lqfhskoiivxziptyhrkajpblrrnk7nmfe73fzsd6ov2vwlh@n6ydqbrxh2my>
-In-Reply-To: <564lqfhskoiivxziptyhrkajpblrrnk7nmfe73fzsd6ov2vwlh@n6ydqbrxh2my>
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Date: Tue, 19 Aug 2025 15:19:17 +0200
-X-Gm-Features: Ac12FXyaAV_fr68gP_yU1FNDg6itu2IlLFaD6Hyb0iuATvPfS4x6a8BXCW6M9uY
-Message-ID: <CANBuOYoJv5F=4H71fPoWx3MmzSQuKt_p5SPMJx1P=PGwDrEmPA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] dt-bindings: Convert TWL4030/6040 family binding to
- DT schema
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	peter.ujfalusi@gmail.com
-Cc: linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzk+dt@kernel.org, lgirdwood@gmail.com, tiwai@suse.com, conor+dt@kernel.org, 
-	lee@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-usb@vger.kernel.org, shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-> > The following eight patches are included in this series, covering the
-> > audio, keypad, power, PWM, and USB sub-modules.
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+
+> On 2025-08-18 10:16:41 [-0600], Jonathan Corbet wrote:
+>> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+>> 
+>> One nit:
+>> 
+>> > diff --git a/Documentation/core-api/real-time/differences.rst b/Documentation/core-api/real-time/differences.rst
+>> > new file mode 100644
+>> > index 0000000000000..50d994a31e11c
+>> > --- /dev/null
+>> > +++ b/Documentation/core-api/real-time/differences.rst
+>> > @@ -0,0 +1,242 @@
+>> > +.. SPDX-License-Identifier: GPL-2.0
+>> > +
+>> > +========================
+>> > +Significant differences
+>> > +========================
+>> 
+>> That heading text will appear in various places, including in the
+>> rendering of your new index.rst file.  In such a setting, "significant
+>> differences" doesn't give a lot of information.  Something like "How
+>> realtime kernels differ" would be better, IMO.
+>> 
+>> Otherwise, this all looks good to me.  Did you want me to pick it up, or
+>> did you have another path in mind for this work?
 >
-> Thanks for doing that.
->
-> I think the patches are all orthogonal and can/should be applied by the
-> respective subsystem maintainers once they are considered ready?
->
+> Right now this is it. Do you update the text above as suggested or do
+> you want me to resend it?
 
-Hello Uwe, Peter, and everyone,
+I can apply it and make that tweak if you like, yes, no need to resend
+for that.
 
-Thank you for the feedback, I am now working on a new v4 patch series
-for each subsystem with few improvements and will make sure of their
-orthogonality.
+Thanks,
 
-While working on this, I had a question about the 'maintainers:' property for
-the new YAML bindings. I see from the MAINTAINERS file that Peter Ujfalusi
-is the maintainer for the TWL4030 codec driver. I initially marked him as
-maintainer for every new twl4030 related binding.
-
-For those new YAML binding files I am creating, should I list only the driver
-maintainer (Peter, once he confirms this), or should I add myself as
-a co-maintainer since I am authoring these new binding files?
-
-Pinging Peter for his thoughts on this as well.
-
-Thanks again for your guidance.
-Jihed
+jon
 
