@@ -1,241 +1,115 @@
-Return-Path: <linux-kernel+bounces-775959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3446BB2C6D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:20:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4636DB2C6DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86703A80FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:17:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61285175F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AFE25393E;
-	Tue, 19 Aug 2025 14:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD4A253B40;
+	Tue, 19 Aug 2025 14:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFGehMZE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DS63xpEm"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33ED23FC54
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB1724E4BD
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755613027; cv=none; b=R5QqwCSsSIW0+CxlGE6aNS/NwI53YyUyhxOm3ne4RZGOQWBRC4QcA4XCLTlNoYEJuV7pUEDMB4gcq/8L+r0z5+wDhf0JURo5+XOS5rGkwlihtU15wW8yKOVCH1J7dgSVqSkSCV1kXEQZgccWPAoPZYUnvuuaQYPWfgcT4l/qhjI=
+	t=1755613039; cv=none; b=cghWupiNkC3stz3XTfD07wsZ5pakk4qnjnEm58AoIt6F0GuQfPNcRrzkkhbfZJ925EJPpmfvp5xaIhn6ECPhT7zP8j10jlOHBlo72knXGaxksa9IqBQ9LLmqcIncNNdmuFR9qlbHf0qqeauaTDTOouC4j8TLXhfbTm7xrUlBoXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755613027; c=relaxed/simple;
-	bh=fIvuRJk9m8C5l+h2MFh0h7kc9zU68Ycc+a0H4sEdmMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NUZFUgWqF9HM+gjpCH0W54Tlev9dytgj+8p1u3VbDnnFSd1D3HufEHGpHGoV5Yurtfe2W3LMd0KfTUIvPBqor7mQUM6gbkdaFVJGJ6H4S71U2GQKZALsJeHIRXyUo9Kw4ll/BkGLeUd6xCFp37Hpj+W9++6Ml6mbneq86vbuIA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFGehMZE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755613024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AyWTWLJP6DW1C6EfE8Dr/2WHmv98BO2UL0YW0p387dM=;
-	b=dFGehMZEqxVgCQDe5Vd93MNvYCH4+Z+nfW+jx/um9YKB2cZ7mRuBAwZ4YaqFxcAtS9/Bus
-	0ikW09dLG9egTs9hNF2FKYdNZk2n8tKRPoQheRZ14XupMnJgTTdOdf0xXGGK0PUAflABHp
-	s/JV99t7eliT5OMf+o+XGYaFFKqUSdo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-97-WICi4W53MiWUgZ8wwI-hHQ-1; Tue,
- 19 Aug 2025 10:17:00 -0400
-X-MC-Unique: WICi4W53MiWUgZ8wwI-hHQ-1
-X-Mimecast-MFC-AGG-ID: WICi4W53MiWUgZ8wwI-hHQ_1755613012
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9BCDA188280A;
-	Tue, 19 Aug 2025 14:16:50 +0000 (UTC)
-Received: from h1.redhat.com (unknown [10.22.64.137])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EBB019560BC;
-	Tue, 19 Aug 2025 14:16:28 +0000 (UTC)
-From: Nico Pache <npache@redhat.com>
-To: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: david@redhat.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	corbet@lwn.net,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	akpm@linux-foundation.org,
-	baohua@kernel.org,
-	willy@infradead.org,
-	peterx@redhat.com,
-	wangkefeng.wang@huawei.com,
-	usamaarif642@gmail.com,
-	sunnanyong@huawei.com,
-	vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com,
-	yang@os.amperecomputing.com,
-	kirill.shutemov@linux.intel.com,
-	aarcange@redhat.com,
-	raquini@redhat.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	tiwai@suse.de,
-	will@kernel.org,
-	dave.hansen@linux.intel.com,
-	jack@suse.cz,
-	cl@gentwo.org,
-	jglisse@google.com,
-	surenb@google.com,
-	zokeefe@google.com,
-	hannes@cmpxchg.org,
-	rientjes@google.com,
-	mhocko@suse.com,
-	rdunlap@infradead.org,
-	hughd@google.com
-Subject: [PATCH v10 12/13] khugepaged: add per-order mTHP khugepaged stats
-Date: Tue, 19 Aug 2025 08:16:10 -0600
-Message-ID: <20250819141610.626140-1-npache@redhat.com>
-In-Reply-To: <20250819134205.622806-1-npache@redhat.com>
-References: <20250819134205.622806-1-npache@redhat.com>
+	s=arc-20240116; t=1755613039; c=relaxed/simple;
+	bh=KZo6lFE+1XnNnQGXrhcQMuv8VUWLOdbzBDwzfflqaVs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PDF0ImpKbfOexrS7cX4QZr02Tihhq1u8R9MNLrT3lg0hYpg/6anAVd61NAPoSZpaUi1yl3IDB/ZGfxEvMQwhje0GvrmYMLWIKbe68qlLBkMjAQAGJDRYwZ1GPHhr9KU34dvgI1KG7St9x3wl7tb27H8MciAQxa0xYd7ULI4BmdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DS63xpEm; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32326e46a20so10159612a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755613038; x=1756217838; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tk8qLdHc0U05Dxo1Ab/dvD77IqT0ZtETlVr+X1bxo7E=;
+        b=DS63xpEmkBNKG8te3iQiBgidtvSeirR7Yf3PVaiC1vn5isI5KeNqBabxWCeG4h0cdJ
+         xYEzHQ1xJmNQAUflVl1WfxnCMS0YT3gS+SX5HapsSdhkXOpQWWTJpFKRP4Gs5D286Jd6
+         kqp8U14sToZ4oUeCHZpY70hbKvAs4MUtooh/KfWLStWmfvSK11+a0vtiWTOQkyYdy8vd
+         C/Iz/fK1znVGojIoLLWiRNHH8AnYR5m2iG0G+7GUhFoqnkAMljNoaloT0sZUoskSQQ4E
+         UEJ5d15aKtpsM1pynJoVGKYx5ZXTzsaEaGDQ8KR030y4PjGmMH2oOZQoxlkL4j1fctwd
+         hGLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755613038; x=1756217838;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tk8qLdHc0U05Dxo1Ab/dvD77IqT0ZtETlVr+X1bxo7E=;
+        b=FaY3/P5zgDnPEFu1XAwyiMi03uhuN/Fnq3UmGGt6asQPn1BNydiaMQgkNsOQjZ37FB
+         GU9K+l1m3HqOyLFeK0V4pjjBMMtRexXlfxilip1MDuP2an7+lMCoy2odyuOlnpytAz7E
+         in1d3IxJBy+dR7uwg17vmuB3ucuBS/rUD2TXjyj9Dynry9hCGdeBtLGSHyTTIa/PHQDN
+         hXPPoKF11Ia8g/i8tYo8cMTAvbVHhKgCMXCJpNDAcm8oKAyhCSm+eAqluXV2k/C5qPeq
+         hnmjekxRHicle1SNPE+bJeHlgi5NeAAbJMKCFnYlt/QELnJlch+lgAQLNlIwkZesNkQA
+         JM4A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4W3OVTS+gckXVMqA3+7I0S10A9/J1XCIZLLPImfCdcbpLXsEI4/Bib7j78FW2UrhuKN1mdjY0mqTOzIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk49AxxvBNZ4HtqnPCy8Z7Mnko62ir4UDQAvKQ989QVVmouMpX
+	zHrIhbtD9vZkUA8zTxaPxi2CORbG2RX2i2Z7c0/Q9edFVmkD3MsYNUVqLB3gRp7RDjWD5LAby3T
+	hainh5A==
+X-Google-Smtp-Source: AGHT+IG+R29IibUM+skEvVsfUw+0/0piaRJ4aJbmBSk01NC1yZeCdDU/KApLU4ScisyIbczr3lj7S9517lU=
+X-Received: from pjbpx1.prod.google.com ([2002:a17:90b:2701:b0:31e:d618:a29c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5202:b0:321:c85d:dd93
+ with SMTP id 98e67ed59e1d1-3245e562cedmr4184520a91.4.1755613037551; Tue, 19
+ Aug 2025 07:17:17 -0700 (PDT)
+Date: Tue, 19 Aug 2025 07:17:15 -0700
+In-Reply-To: <20250721134718.2499856-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Mime-Version: 1.0
+References: <20250721134718.2499856-1-colin.i.king@gmail.com>
+Message-ID: <aKSHa8QhidY0ZMAi@google.com>
+Subject: Re: [PATCH][next] KVM: x86: Remove space before \n newline
+From: Sean Christopherson <seanjc@google.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-With mTHP support inplace, let add the per-order mTHP stats for
-exceeding NONE, SWAP, and SHARED.
+On Mon, Jul 21, 2025, Colin Ian King wrote:
+> There is a extraneous space before a newline in a pr_debug_ratelimited
+> message. Remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index aa157fe5b7b3..e5358277d059 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -3142,7 +3142,7 @@ static void enter_lmode(struct kvm_vcpu *vcpu)
+>  
+>  	guest_tr_ar = vmcs_read32(GUEST_TR_AR_BYTES);
+>  	if ((guest_tr_ar & VMX_AR_TYPE_MASK) != VMX_AR_TYPE_BUSY_64_TSS) {
+> -		pr_debug_ratelimited("%s: tss fixup for long mode. \n",
+> +		pr_debug_ratelimited("%s: tss fixup for long mode.\n",
+>  				     __func__);
 
-Signed-off-by: Nico Pache <npache@redhat.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 17 +++++++++++++++++
- include/linux/huge_mm.h                    |  3 +++
- mm/huge_memory.c                           |  7 +++++++
- mm/khugepaged.c                            | 16 +++++++++++++---
- 4 files changed, 40 insertions(+), 3 deletions(-)
+I'm inclined to simply delete the pr_debug.  I can't imagine it's at all useful
+for anyone/anything.
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 7ccb93e22852..b85547ac4fe9 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -705,6 +705,23 @@ nr_anon_partially_mapped
-        an anonymous THP as "partially mapped" and count it here, even though it
-        is not actually partially mapped anymore.
- 
-+collapse_exceed_swap_pte
-+       The number of anonymous THP which contain at least one swap PTE.
-+       Currently khugepaged does not support collapsing mTHP regions that
-+       contain a swap PTE.
-+
-+collapse_exceed_none_pte
-+       The number of anonymous THP which have exceeded the none PTE threshold.
-+       With mTHP collapse, a bitmap is used to gather the state of a PMD region
-+       and is then recursively checked from largest to smallest order against
-+       the scaled max_ptes_none count. This counter indicates that the next
-+       enabled order will be checked.
-+
-+collapse_exceed_shared_pte
-+       The number of anonymous THP which contain at least one shared PTE.
-+       Currently khugepaged does not support collapsing mTHP regions that
-+       contain a shared PTE.
-+
- As the system ages, allocating huge pages may be expensive as the
- system uses memory compaction to copy data around memory to free a
- huge page for use. There are some counters in ``/proc/vmstat`` to help
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 4ada5d1f7297..6f1593d0b4b5 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -144,6 +144,9 @@ enum mthp_stat_item {
- 	MTHP_STAT_SPLIT_DEFERRED,
- 	MTHP_STAT_NR_ANON,
- 	MTHP_STAT_NR_ANON_PARTIALLY_MAPPED,
-+	MTHP_STAT_COLLAPSE_EXCEED_SWAP,
-+	MTHP_STAT_COLLAPSE_EXCEED_NONE,
-+	MTHP_STAT_COLLAPSE_EXCEED_SHARED,
- 	__MTHP_STAT_COUNT
- };
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 20d005c2c61f..9f0470c3e983 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -639,6 +639,10 @@ DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
- DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
- DEFINE_MTHP_STAT_ATTR(nr_anon, MTHP_STAT_NR_ANON);
- DEFINE_MTHP_STAT_ATTR(nr_anon_partially_mapped, MTHP_STAT_NR_ANON_PARTIALLY_MAPPED);
-+DEFINE_MTHP_STAT_ATTR(collapse_exceed_swap_pte, MTHP_STAT_COLLAPSE_EXCEED_SWAP);
-+DEFINE_MTHP_STAT_ATTR(collapse_exceed_none_pte, MTHP_STAT_COLLAPSE_EXCEED_NONE);
-+DEFINE_MTHP_STAT_ATTR(collapse_exceed_shared_pte, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
-+
- 
- static struct attribute *anon_stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
-@@ -655,6 +659,9 @@ static struct attribute *anon_stats_attrs[] = {
- 	&split_deferred_attr.attr,
- 	&nr_anon_attr.attr,
- 	&nr_anon_partially_mapped_attr.attr,
-+	&collapse_exceed_swap_pte_attr.attr,
-+	&collapse_exceed_none_pte_attr.attr,
-+	&collapse_exceed_shared_pte_attr.attr,
- 	NULL,
- };
- 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index c13bc583a368..5a3386043f39 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -594,7 +594,9 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 				continue;
- 			} else {
- 				result = SCAN_EXCEED_NONE_PTE;
--				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-+				if (order == HPAGE_PMD_ORDER)
-+					count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-+				count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_NONE);
- 				goto out;
- 			}
- 		}
-@@ -633,10 +635,17 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 			 * shared may cause a future higher order collapse on a
- 			 * rescan of the same range.
- 			 */
--			if (order != HPAGE_PMD_ORDER || (cc->is_khugepaged &&
--			    shared > khugepaged_max_ptes_shared)) {
-+			if (order != HPAGE_PMD_ORDER) {
-+				result = SCAN_EXCEED_SHARED_PTE;
-+				count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
-+				goto out;
-+			}
-+
-+			if (cc->is_khugepaged &&
-+			    shared > khugepaged_max_ptes_shared) {
- 				result = SCAN_EXCEED_SHARED_PTE;
- 				count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
-+				count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
- 				goto out;
- 			}
- 		}
-@@ -1084,6 +1093,7 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
- 		 * range.
- 		 */
- 		if (order != HPAGE_PMD_ORDER) {
-+			count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_SWAP);
- 			pte_unmap(pte);
- 			mmap_read_unlock(mm);
- 			result = SCAN_EXCEED_SWAP_PTE;
--- 
-2.50.1
-
+>  		vmcs_write32(GUEST_TR_AR_BYTES,
+>  			     (guest_tr_ar & ~VMX_AR_TYPE_MASK)
+> -- 
+> 2.50.0
+> 
 
