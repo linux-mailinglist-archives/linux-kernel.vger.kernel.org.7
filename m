@@ -1,168 +1,231 @@
-Return-Path: <linux-kernel+bounces-776476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB0AB2CDBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB20B2CDC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668FC1BC6669
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:22:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F7B1B64BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BFE3112AF;
-	Tue, 19 Aug 2025 20:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A98322DAA;
+	Tue, 19 Aug 2025 20:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXym7sMQ"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9mXTJyV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88878273D6D;
-	Tue, 19 Aug 2025 20:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0286337;
+	Tue, 19 Aug 2025 20:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755634907; cv=none; b=akrT0hFIHY5Hu2D5nFCo1cM86L2SJRnd5nKNpYpD78PcnzSbYmnKZaiCoVRBhExlCEDh3lfqJLHxPYZXIC/d0pZPjZjl2jfbENOONz/+jpovsNiA683mnT+hHn9nxSG/RhqNOPXbzxpdKb4NY1NyLIyeXIaA7Kn2GYEwBgFfKqo=
+	t=1755635144; cv=none; b=TsitFnJZAks8MSJNNBlHoQ8MGgz0DcikZ6rhhJ6UlWMX6568+vNvx1V8/383vddK8ozN0bbjwgccwd0BE+Q/EEKG16JApCbu3lTtsgM0MzvykFBpW4V4unXZMN6QLX2SrcnK8g0Qa9++UI1nUiGI7pPoGBdbaBmHkl22IwEC4so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755634907; c=relaxed/simple;
-	bh=JmwDj0yM2hIxDCp945snAW1tIJFxf+MqSewCaUoodss=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=p1SEXsCM1JCs4/aiugOT8P0ZGi24Y1+0qGN1wopIeIwLaWnEDAMvS6YoaUhgBkHRQR5Gqbg3HIP/HSW3D4Bg/DYuoi8jzIb1xbq+lhCZRBD9De27tG5KPlVRrLVfN9uRHwh0oLkCfWo5XlTYHkAv14k6zJlLNEt4cgPP0hCquAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXym7sMQ; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-50f8ac28305so1634685137.2;
-        Tue, 19 Aug 2025 13:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755634904; x=1756239704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ErXHqYgIOywZbhEmGRe/ErbrEiUlQahOfnrKJ/dVBS8=;
-        b=kXym7sMQWH8RB444zFBgw+QATLySe6glH/b5qxhUK0pzAKhL1/plvjVqNE2j97sRl5
-         6QwMygP+aXbpThTsD7vNWQe//e4IcJViCMSyADCbcxaNCsF0b0dSA+dTabQawrOcE97t
-         Be2F3C4HHMpqcXGM5O8Pf3WudDDW2M6Kd2tjJvU+A0iX6bO/XrVAMccjPJHWqBhE3cmi
-         Nak/2PAxwUNL70GyiK4nkDVs3GWGEKUFZMUZHRIeqDhJt1OLzFkutbR45puyEKbCvKn4
-         jqHuYPEd49m3tQs/7uv7pxfalmXDlT81TgD9A0/mCWxv14bqWwTiOZ29a+nJ3bLbxKIk
-         QB+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755634904; x=1756239704;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ErXHqYgIOywZbhEmGRe/ErbrEiUlQahOfnrKJ/dVBS8=;
-        b=f9MycN94hZ253CUYyXA+DRmwdbddJ+RCVCPdNuGOkv37sDnRn2CSmnFLextR1B2o0o
-         RajSJVPGSDvFaBPpYf2q8iboiskB98B+GwNm5Gbjc02LQlXh4iF68D4BovG7T16lGaIq
-         R9D2vzMLP9f+WbMCyIR9XFhmMS2iVDp5eqjHFPmpC7PHHvqk4sbCcW1pugvnMQVvoFYQ
-         QHNdwlxf87dVF1LeMaUWTXzRoL0K2CEqLRxU0nyRyXMiguI7QT1sNT4wwa6ge0MVv0U8
-         UCsr9/BBSh1pWuDqXcDtYDzRdOBietnvnpFiWi355tXJIrAN1c2vtrkowf5NPR620b6h
-         Mf7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdOTXAI+XtkWabZJeU1smwJfyienfH4jUI94Gugngkqc2k3JkCO5TaVufaGryaK3/yoi2YuszKZHHgq8M=@vger.kernel.org, AJvYcCWM39exxLFueXZaeg6Q5YunqiSsed8sUOe4B375polTa9Y4GKjdvVGRWU254upiMfnTwlIMNHBc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSd1lpgLkZ50Ovn50oZ/4IPlAzM69QIXJFrBSEKrj2TE/9xKMG
-	w0qYLrA29ULoOQmooWeKeLf4dVbmo1WOtSxCZYCUwljLoh+BroTpOFL9
-X-Gm-Gg: ASbGncsiIoIwSJipUPey4YlSa9/lZDDlL7gSl737AlKoFJ3lSANiLRWXc9jj/QgsL7z
-	tDCqQAWDEMmtS88e99OIKCWZtgS9o3UkHp3J4dk4U1DJEPvLWKbcy+12G+x3q0Z2PSAHtVekHS4
-	l6muw3+e4izLgw1xKfBMoG8Vpswnm5xRXdurEyUR1E+1hGwyf7lOKCMiwJbi4BL+EZJ+X/55zc5
-	D6ehmdbjFbqTYYG+q1tmA0PeWxxTbPb1URsRXDtVdIdzEAhhehVrFA7WEe7+ucX/uCSEXGX5J0W
-	qDly+BqDcxd/sT1evSHsj0rWygY/ATgxTlIlW4xj7qu+oKn9SOlISbYMQ00yFWhGkCpWbK63anG
-	33DnxNbt9FUKoRO1MmKlEXggrGScdKvzSQuHYmE7uNjQR0rURizGWjUxw9jKG8puy+wzMvA==
-X-Google-Smtp-Source: AGHT+IFq5Fb+q6BwoXTONR8NfLqJRLAaqNnVbQWhZLboOUU4G8eeT+JswvN12+19Oc8bDG+85E18Yw==
-X-Received: by 2002:a05:6102:5128:b0:4fb:f2ff:dd16 with SMTP id ada2fe7eead31-51a51ebe471mr181179137.17.1755634904269;
-        Tue, 19 Aug 2025 13:21:44 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id ada2fe7eead31-5127f80546fsm3109808137.14.2025.08.19.13.21.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 13:21:43 -0700 (PDT)
-Date: Tue, 19 Aug 2025 16:21:43 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Xin Zhao <jackzxcui1989@163.com>
-Message-ID: <willemdebruijn.kernel.85f8d3f87b8b@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.1a86f7d92a05a@gmail.com>
-References: <20250819091447.1199980-1-jackzxcui1989@163.com>
- <willemdebruijn.kernel.1a86f7d92a05a@gmail.com>
-Subject: Re: [PATCH net-next v5] net: af_packet: Use hrtimer to do the retire
- operation
+	s=arc-20240116; t=1755635144; c=relaxed/simple;
+	bh=LVUaZqCxEUn+s6SnkVv9nwjEjzbR7xwmGoy2kx670yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYukk/sMWM+e3ZxI9tssVQXfgvmIAMXVSbqoJOUDcytEcXurOKwpfvXA53kkakjkWZaP6Bk2xIMUOQqox25oWv75YE8A4B9vXFOfJ+VABpmJLdL6+THWGrabQCqC5z6ebMv+sJkNUZKI96BkgzL2oB3TwPLCl7e4eN7wpShMMkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9mXTJyV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41918C4CEF1;
+	Tue, 19 Aug 2025 20:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755635143;
+	bh=LVUaZqCxEUn+s6SnkVv9nwjEjzbR7xwmGoy2kx670yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p9mXTJyVtAJW6EU2VyTFiBiQN6eyYhf23nYEiCWf35QpyZuCUlWB+EyeJHl3M1kb8
+	 seC4nUGGiHl+4JyD96/K9Uf4yWMU1cIomeRG3sH48VdN3uL24KdhOFcuDyf/Cnqx1R
+	 FPXutLIvX0ziKX22QMYXDLlMHHg6e9jZrtKonJpTcBDBkPfaOpIj3zBX6h+cNoK5l4
+	 UGP0gJ6q9cJpP6+mhbXDT6WNyxW02cmhfSRGjBgdDpztw7mkM12gvFamCoDrR14qqZ
+	 ET4HKev0mPOoe40QcunVUs0+D3Eus0JAiQosqFS+2IcTdtE7eO8IcP0D5BK7XxEJEs
+	 o5WCLjUEBjx0A==
+Date: Tue, 19 Aug 2025 15:25:42 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: media: i2c: document Sony IMX111
+ CMOS sensor
+Message-ID: <20250819202542.GA1254999-robh@kernel.org>
+References: <20250819120428.83437-1-clamor95@gmail.com>
+ <20250819120428.83437-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819120428.83437-2-clamor95@gmail.com>
 
-Willem de Bruijn wrote:
-> Xin Zhao wrote:
-> > In a system with high real-time requirements, the timeout mechanism of
-> > ordinary timers with jiffies granularity is insufficient to meet the
-> > demands for real-time performance. Meanwhile, the optimization of CPU
-> > usage with af_packet is quite significant. Use hrtimer instead of timer
-> > to help compensate for the shortcomings in real-time performance.
-> > In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-> > enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-> > This is unacceptable in some high real-time systems that require timely
-> > processing of network packets. By replacing it with hrtimer, if a timeout
-> > of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> > 3 ms.
-> > 
-> > Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+On Tue, Aug 19, 2025 at 03:04:26PM +0300, Svyatoslav Ryhel wrote:
+> Add bindings for Sony IMX111 CMOS Digital Image Sensor found in LG
+> Optimus 4X (P880) and Optimus Vu (P895) smartphones.
 > 
-> > -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> > +static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
-> > +					     bool start, bool callback)
-> >  {
-> > -	mod_timer(&pkc->retire_blk_timer,
-> > -			jiffies + pkc->tov_in_jiffies);
-> > +	unsigned long flags;
-> > +
-> > +	local_irq_save(flags);
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../bindings/media/i2c/sony,imx111.yaml       | 126 ++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
 > 
-> The two environments that can race are the timer callback running in
-> softirq context or the open_block from tpacket_rcv in process context.
+> diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
+> new file mode 100644
+> index 000000000000..52d88f5d477e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
+> @@ -0,0 +1,126 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/sony,imx111.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sony IMX111 8MP CMOS Digital Image Sensor
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +
+> +description:
+> +  IMX111 sensor is a Sony CMOS active pixel digital image sensor with an active
+> +  array size of 2464H x 3280V. It is programmable through I2C interface. Image
+> +  data is sent through MIPI CSI-2, through 1 or 2 lanes.
+> +
+> +allOf:
+> +  - $ref: /schemas/media/video-interface-devices.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: sony,imx111
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description: EXTCLK with possible frequency from 6 to 54 MHz
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  iovdd-supply:
+> +    description: Digital IO power supply (1.8V)
+> +
+> +  dvdd-supply:
+> +    description: Digital power supply (1.2V)
+> +
+> +  avdd-supply:
+> +    description: Analog power supply (2.7V)
+> +
+> +  eeprom:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      A phandle to the node of the eeprom, that holds sensors configuration data.
 
-I meant prb_open_block
+This assumes the eeprom is dedicated to the sensor. What if it is just a 
+subset of some eeprom or other storage. Perhaps this should use nvmem 
+binding.
 
-tpacket_rcv runs in softirq context (from __netif_receive_skb_core)
-or with bottom halves disabled (from __dev_queue_xmit, or if rx uses
-napi_threaded).
+> +
+> +  flash-leds: true
+> +  lens-focus: true
+> +
+> +  orientation: true
+> +  rotation: true
 
-That is likely why the spin_lock_bh variant is not explicitly needed.
+Use 'unevaluatedProperties' instead and drop these.
 
-> So worst case the process context path needs to disable bh?
-> 
-> As you pointed out, the accesses to the hrtimer fields are already
-> protected, by the caller holding sk.sk_receive_queue.lock.
-> 
-> So it should be sufficient to just test hrtimer_is_queued inside that
-> critical section before calling hrtimer_start?
-> 
-> Side-note: tpacket_rcv calls spin_lock, not spin_lock_bh. But if the
-> same lock can also be taken in softirq context, the process context
-> caller should use the _bh variant. This is not new with your patch.
-> Classical timers also run in softirq context. I may be overlooking
-> something, will need to take a closer look at that.
-> 
-> In any case, I don't think local_irq_save is needed. 
-> 
-> > +	if (start && !callback)
-> > +		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
-> > +			      HRTIMER_MODE_REL_SOFT);
-> > +	else
-> > +		hrtimer_forward_now(&pkc->retire_blk_timer, pkc->interval_ktime);
-> > +	local_irq_restore(flags);
-> >  	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
-> >  }
+> +
+> +  assigned-clocks: true
+> +  assigned-clock-rates: true
+> +  assigned-clock-parents: true
 
+Always allowed on nodes with 'clocks', so drop.
 
+> +
+> +  port:
+> +    additionalProperties: false
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes: true
+> +          bus-type: true
+> +          link-frequencies: true
+> +
+> +        required:
+> +          - data-lanes
+> +          - bus-type
+> +          - link-frequencies
+> +
+> +    required:
+> +      - endpoint
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - port
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/media/video-interfaces.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        camera@10 {
+> +            compatible = "sony,imx111";
+> +            reg = <0x10>;
+> +
+> +            clocks = <&imx111_clk>;
+> +
+> +            iovdd-supply = <&camera_vddio_1v8>;
+> +            dvdd-supply = <&camera_vddd_1v2>;
+> +            avdd-supply = <&camera_vdda_2v7>;
+> +
+> +            orientation = <1>;
+> +            rotation = <90>;
+> +
+> +            eeprom = <&eeprom>;
+> +            flash-leds = <&led>;
+> +            lens-focus = <&vcm>;
+> +
+> +            reset-gpios = <&gpio 84 GPIO_ACTIVE_LOW>;
+> +
+> +            port {
+> +                imx111_output: endpoint {
+> +                    data-lanes = <1 2>;
+> +                    bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+> +                    link-frequencies = /bits/ 64 <271200000>;
+> +                    remote-endpoint = <&csi_input>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +...
+> -- 
+> 2.48.1
+> 
 
