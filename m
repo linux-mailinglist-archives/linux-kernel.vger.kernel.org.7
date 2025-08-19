@@ -1,83 +1,133 @@
-Return-Path: <linux-kernel+bounces-774664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4623BB2B5BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:14:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF07B2B5C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2C887A37CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B1816DF9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FDB1C860C;
-	Tue, 19 Aug 2025 01:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S1Fv/5sD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E18A188734;
+	Tue, 19 Aug 2025 01:16:05 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF75B676;
-	Tue, 19 Aug 2025 01:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF7333F3
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755566079; cv=none; b=rAfnlfDbpwrwcw7r17PdwxsqKZI/YQs/tVcXPpnALWS2PZYqiHIUpgg9bnfRpK0AUq8fShrVFq5fywD2UlDjMU2dADDL1OmEOiYdL1U3lli77dL65F2K+SDrn2h12YRu7R4aSlTRuMBEfD4Mo3d4qU56s5zl+Ln7RWszUgHnvfc=
+	t=1755566165; cv=none; b=YrOVIbD5KfcZ+ZmRMFSM860KdIg8GpoHH4XNlmvpn31tJDe8NdkgxCPgCXczm6COZkeoADuWvOpA42T8o+LqBH8xjj+oW4eQ6GlBP3eHGAlKk6p0BuBHvGhaZiHAzizgkFIWtbtraMkzI9AivPwtNa6vRMrqwDN+4njSvOGcyoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755566079; c=relaxed/simple;
-	bh=G2eQoDbmo7kXFMxyY8mLXlnH03V5sb0aREqtO5GZvvU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rQyHc9l4Jwx5wGB//5uSURbYexffAA4iTB97KanYGWC35r9HHGo27SCNhq7ATm+V6gcZFPn3S7yQOx9MzYoHj/FRZm9vobdUvyDX9A5HgdqHg6dZfi2qaXlXUTBgow0wkZNPZ+u4p+35r+wiEN/dpApuQ0PAdGLgi/EgCWJ7Cgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S1Fv/5sD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D5A3C4CEEB;
-	Tue, 19 Aug 2025 01:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755566078;
-	bh=G2eQoDbmo7kXFMxyY8mLXlnH03V5sb0aREqtO5GZvvU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S1Fv/5sDXlCdKZ4ZQ5KHV7QVA5RPn/OMhY+Cfl8WskwV0R8FxA0luOXNjp92PqXWO
-	 b09uepSXMUKpmv4rn9iMIAP6QR/nExvDPYKh2GzIbohe5el8Ep08akq32C5SYA9JRY
-	 MjoAlt6Asu0ycXV6AeAIEPYQ/9QAc+jNNBt2e1+4=
-Date: Mon, 18 Aug 2025 18:14:37 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, SeongJae Park <sj@kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the mm-unstable tree
-Message-Id: <20250818181437.318ed154f87f98946203a993@linux-foundation.org>
-In-Reply-To: <CABFDxMHSkmH3LLmZYZN6-Ymj+yRNoaA3=9zg=4P7ZrOxrBs8bg@mail.gmail.com>
-References: <20250819072328.509608a3@canb.auug.org.au>
-	<CABFDxMHSkmH3LLmZYZN6-Ymj+yRNoaA3=9zg=4P7ZrOxrBs8bg@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755566165; c=relaxed/simple;
+	bh=cI/2YLlXuBpoG7SrtlENoCld405FksSCRJovnoDVR0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c02+cRO7+3V/GiXTRB04E9YimGICX1/vHhkDINKq45zIObOgeCpHiVPsqT6Y8sRzOEkbrxyR7EzgLpv45VpUrcfHVJmMbEyF8KBwimjIjhRMfvJA0pEnfFyVLtimelOlwxWOcwgq8zQgtr5Qm1rB1BBsuT4xz8vbPqocTH8adaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c5WmS0sgdz2TT3C;
+	Tue, 19 Aug 2025 09:13:12 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7D1EA180042;
+	Tue, 19 Aug 2025 09:15:59 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 19 Aug 2025 09:15:58 +0800
+Message-ID: <88a96294-c2a2-477f-ac9b-5867e0b59883@huawei.com>
+Date: Tue, 19 Aug 2025 09:15:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] f2fs: fix to avoid NULL pointer dereference in
+ f2fs_check_quota_consistency()
+To: Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<syzbot+d371efea57d5aeab877b@syzkaller.appspotmail.com>
+References: <20250818020939.3529802-1-chao@kernel.org>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20250818020939.3529802-1-chao@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 
-On Tue, 19 Aug 2025 09:59:20 +0900 Sang-Heon Jeon <ekffu200098@gmail.com> wrote:
 
-> > has these problem(s):
-> >
-> >   - Target SHA1 does not exist
-> >
-> > Maybe you meant
-> >
-> > Fixes: a0b60d083fb6 ("selftests/damon: test no-op commit broke DAMON status")
-> 
-> You're right. I think it might be changed at the point rc1 -> rc2 on
-> the mm tree.
-> Is there anything I can do? Or maybe Andrew can help?
-> 
-> I didn't mean to bother you guys.  Also, original patch is from here [1]
-> 
-> [1] https://lore.kernel.org/all/20250816014033.190451-1-ekffu200098@gmail.com/
 
-I deleted the Fixes: tag.  The quilt filename
-selftests-damon-test-no-op-commit-broke-damon-status-fix.patch means
-"this will be folded into
-selftests-damon-test-no-op-commit-broke-damon-status.patch"
+On 2025/8/18 10:09, Chao Yu wrote:
+> syzbot reported a f2fs bug as below:
+> 
+> Oops: gen[  107.736417][ T5848] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 1 UID: 0 PID: 5848 Comm: syz-executor263 Tainted: G        W           6.17.0-rc1-syzkaller-00014-g0e39a731820a #0 PREEMPT_{RT,(full)}
+> RIP: 0010:strcmp+0x3c/0xc0 lib/string.c:284
+> Call Trace:
+>   <TASK>
+>   f2fs_check_quota_consistency fs/f2fs/super.c:1188 [inline]
+>   f2fs_check_opt_consistency+0x1378/0x2c10 fs/f2fs/super.c:1436
+>   __f2fs_remount fs/f2fs/super.c:2653 [inline]
+>   f2fs_reconfigure+0x482/0x1770 fs/f2fs/super.c:5297
+>   reconfigure_super+0x224/0x890 fs/super.c:1077
+>   do_remount fs/namespace.c:3314 [inline]
+>   path_mount+0xd18/0xfe0 fs/namespace.c:4112
+>   do_mount fs/namespace.c:4133 [inline]
+>   __do_sys_mount fs/namespace.c:4344 [inline]
+>   __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> The direct reason is f2fs_check_quota_consistency() may suffer null-ptr-deref
+> issue in strcmp().
+> 
+> The bug can be reproduced w/ below scripts:
+> mkfs.f2fs -f /dev/vdb
+> mount -t f2fs -o usrquota /dev/vdb /mnt/f2fs
+> quotacheck -uc /mnt/f2fs/
+> umount /mnt/f2fs
+> mount -t f2fs -o usrjquota=aquota.user,jqfmt=vfsold /dev/vdb /mnt/f2fs
+> mount -t f2fs -o remount,usrjquota=,jqfmt=vfsold /dev/vdb /mnt/f2fs
+> umount /mnt/f2fs
+> 
+> So, before old_qname and new_qname comparison, we need to check whether
+> they are all valid pointers, fix it.
+> 
+> Reported-by: syzbot+d371efea57d5aeab877b@syzkaller.appspotmail.com
+> Fixes: d18535132523 ("f2fs: separate the options parsing and options checking")
+> Closes: https://lore.kernel.org/linux-f2fs-devel/689ff889.050a0220.e29e5.0037.GAE@google.com
+> Cc: Hongbo Li <lihongbo22@huawei.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+
+Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+
+Thanks,
+Hongbo
+
+>   fs/f2fs/super.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 5aa9d650512d..465604fdc5dd 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1219,7 +1219,8 @@ static int f2fs_check_quota_consistency(struct fs_context *fc,
+>   				goto err_jquota_change;
+>   
+>   			if (old_qname) {
+> -				if (strcmp(old_qname, new_qname) == 0) {
+> +				if (new_qname &&
+> +					strcmp(old_qname, new_qname) == 0) {
+>   					ctx->qname_mask &= ~(1 << i);
+>   					continue;
+>   				}
 
