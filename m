@@ -1,149 +1,255 @@
-Return-Path: <linux-kernel+bounces-775373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E912CB2BE61
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:04:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5013B2BE64
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7680F7BD9E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:02:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCBC17B943D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349B131CA72;
-	Tue, 19 Aug 2025 10:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDA231E11D;
+	Tue, 19 Aug 2025 10:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e/dJJhRz"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vissM5ZP"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5FA311C16
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110F431CA7A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597758; cv=none; b=de3rzNN+vlrBeOUvaM5Tdw365pkZbEyxv2GV/bLuFVPGeV9LA6PrH9MSiSHyb/CkQRPC31G3jOXwV2zRsQpsnA6y1tAQBIM1WiCqsBVNqZTX8lm1s3xq/sczpLThhTf/WwgPa8VDZqPJ5/FeYTqMRPXVt3TiMsH9niyCNIg00Bg=
+	t=1755597777; cv=none; b=H4/E2UPL8XiVM3nHiRDYeESWrPAL2zkDtPY6ykX8VxQ3Q7pn81nfItTqxtDnMbdC7KagokVoeorv+ippK9xGKv6zLExk+ciVqchw5AfKegHLsK4yRC8scmuuspHGDj7gUg6k99Fkcpb9GCtPcocend1nRF8rIIMYnlRaCAFQEFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597758; c=relaxed/simple;
-	bh=2oRJmy6jdudOx3Q3CK1t3Tr8AwssA1mqdMSyvD/J694=;
+	s=arc-20240116; t=1755597777; c=relaxed/simple;
+	bh=fWvo5KjK2dJBbA14ZO9XS8ESyyjsJZdV9RN8NY+K3l0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o9VAk+s52hj+AcdaGifTrZ+Kp6vUuDa6CPpYZHTJRi4qE4dSKLIUDzJ5evBTb89d697bsj33gJKPTmP4rnu1+EV1mG9zunGT3avjRg/GWjdqGsAYDDxqTriQBFYbFEVjS1Wrhy9BKXywY22qFzBa0UJW9zp8VFV7+hhCQWCLMQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e/dJJhRz; arc=none smtp.client-ip=209.85.208.173
+	 To:Cc:Content-Type; b=BaBR528RJD1U4uDgOzq9GEYzGCLC/7PUV4D0idyrKuR3uIXkUPfnZBGYH7J2T3g53SLr84ANxwyVP0/TzRYvzIhOijzl+VUvHhiKXAxOFpUAWTN45t2Rr4iQuOGuO6KrWB1suYz4r5ppevznw8UFW0yFu+dC9IhhxKOCJ1MnmRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vissM5ZP; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-333f90376a3so35581301fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:02:36 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2445826fd9dso58836785ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:02:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755597755; x=1756202555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jEIclbjfDHmWiMYwu7S7lb6mGq8E/UEDhqSMVO/QBNA=;
-        b=e/dJJhRzz1jnTLk8ddHqa2XmLp+jJ+Df0foCAEM2JCLb6a61ooak+5fPVLmFDtkRIi
-         RYsasorV+IcV78wOZzGj3rj6PnToK/HwvJSvd+/o2szeFD3Fe6Q88p6Q8H9T7Bsdyg+O
-         HGrz3GlCbYe/Ia1lyT7JCKhvtlXA6F+PFAjxvUqwOHn2Fqadko+VXj5Wk1Afl5gg4xE7
-         99QIenlG7q6w5Ic0uRJrsrLEiTDENkRmAJDYACMf48CSAIAiOMfEO98leX8maFjseN5P
-         vw22O2vG7iXNsqwqPxaSKXTgONu+QqqtmwqOFJfQ2JooH9GduM7om55eytr/ZAS7yQrk
-         +xkA==
+        d=linaro.org; s=google; t=1755597775; x=1756202575; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Tie29oHnSkpqRj0PkQrVbAiuDpnacf08DzUmAHW7uY=;
+        b=vissM5ZPUHxWOYSkVYa8nT5m7B5MeTAaJzXQ4jG6421ZBpMuVrdiowyqV4M1AbHAon
+         Mpup+1nADEojtSWQt6eK9iho3NcYtt/9RxVLEdgdivfTqi5kFhQUXW3476XqumEeLvg+
+         VQBF+fwD/WIgbJ6qygVXLSWJtJjSQCjVt/XdFMqwmIMWFYs7p+JorK7mXv2+oH7Qw33U
+         mYdc7I2/IpEPkx8o1IWBraoTofP1bPQ3DYGkQ1U/Z+EH24tdKQmEFzb29pAcBnZ2IwG8
+         /aqM8XwWQGfhSUOB88NXFar1GzzB/gDgODRSuP7oHjunR1W/1EQBvs7v58NfqJFhQ5IM
+         fWLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755597755; x=1756202555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jEIclbjfDHmWiMYwu7S7lb6mGq8E/UEDhqSMVO/QBNA=;
-        b=nVkUBe4sbwJgWwLtX6Qmnmom+0Fm1VeJe+Z8z0XGxrzqn/0Hc00xJfLYls0nEA9QfC
-         X+Ml1x+RI2VsOHmW96gXyu4+TzeKhEyz8Q4KZMuIPo2CisNzyxzVqPa7QTQhhRzOdw3Z
-         ncHkvQ4Efel4ToCCdUqDS+Ndwgr4H06xZnqLRa6IGHrfn97Uat9SUFSPREx6WO9clkBS
-         PlhyXYI0BwOYfe+4JADp+tA87OkUv8m/23/OvmSPlxHXHsopuRqdDi4FccTCQmcKvwp7
-         eD4Ou9gGfAhgLsPzDakrThevO2hYSgB3aSrk+cOcq8WjT8fQ9HvCeGNybVbd3ReVmjmB
-         de0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW0rFImOJ1gdUcUJU3VM7/Ie0PrWPAYFCLvL6Q5NwvwUBGbZkjL9bMeWVX0k8d5fRVuvC34gYXpfHQBrtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqgGWxYEfhPpJYmxeoCIqzGuMMa6lqY7EFp0qOcvsYyl3aOa7V
-	6pjM7XCG0WOvSlxqUa5pvXKASigCwgt4U9ifkwHWeRbXNS54+mvhTqxmAt0ndK9M8o1Np5uz1rW
-	/aVDjkZ6Htl/GiIGHYWmuLsr6ZMqaqlym6f0VRl4Egg==
-X-Gm-Gg: ASbGnctem0UzKz4HTCFii5FsixO8jngi/LwqXx99RMT80Hbb9rsdTPuFsqj71fjkEtc
-	xtFE7HpX9m+rDK7qhQADxsPg7fSY45BKC1tXAMT8OjusHL0ujutoen7bc4KbdvcV+FjXT8CmOTT
-	snoN38l8wKZeKVxuTKjCbx/IHOuQjRN6/5bIS5SXK/HZqq1xdNdMWpcMkudqewB13KXlVWnz/AY
-	SO7yS7NHyja
-X-Google-Smtp-Source: AGHT+IH/19oUBfRxFr8epug82uJ7/HieWJyUVlBhoMvAFaMluZmkd3UN9bc0BKENYULFNtqg/fXi8MkFaQZgBnal9yQ=
-X-Received: by 2002:a05:651c:4199:b0:333:ac42:8d6a with SMTP id
- 38308e7fff4ca-335304ee6damr4961591fa.3.1755597754935; Tue, 19 Aug 2025
- 03:02:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755597775; x=1756202575;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Tie29oHnSkpqRj0PkQrVbAiuDpnacf08DzUmAHW7uY=;
+        b=uRv67e1d+UpYf+ybKTLwb8lzWWDeUrC5DzRDrcRO8HkfmJ4aoHeJMyDC8emYht+P5t
+         eihDAuO5HABOy9R+QLFNS+SioFomL4rHnSZdnggd08iKQfdc/W3+/AAxPt2BR8lJVoRP
+         rh9KFlh5ujuAAORaMYt5MK9jy8kjloQXL4fh2GYxHOZpYsGEAfN2rkD/eCJIg7MAu4/e
+         WL942NdbwS4BnWv6tyJEQldLqjIZ8TAgJaH3vyZBtxlA+7YhkV+v9ztSCrtLDn/kLUeE
+         tzW9hen/o6owPeheLJu2/G4n2ngl0dzjNvKtfckcM6Hi5Xo08KVCa76rw+m91siAlubu
+         Na3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWyUHFChidL5dwbop5DQWmxql47s4Cgg8aCy+Vz8VQAAnAUltaEakeQVV6/3l+nMyB2u22dJwIT5lVnIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznBLPcfSjRTw/HeVIs9QAQaOWj2emF60T4YK4MXwgn+LYI5muz
+	n/PyqEEKCG2933JhBmv5TQDQnZVmFFQUgohEKn4tDOYnq4eHgsYk79zlJQlB2G9NtTcgY50isOn
+	vkelQ3d6DKO8sFS6zQkOlrxuWHHdARIhB4HtpEwMsIw==
+X-Gm-Gg: ASbGncvoPirEgxbVYTxEI9jbB5b1cwvOHJN1qObCKyoH0IjrtghJHwpmEX07z1f8Yqc
+	z519scvx9393Ili9G/0OulVxwa/LUxP/B3yyWZCXy2PQtkv+h/+ipjV/WVhtysnLBefhOSSODZL
+	F08kigb8SlFAxy3VYGDqlosVBU/bSNJG1F+61uaP0G+nwJOYzbxIecWzuhZ7Nr/Uw8vrajOh5GV
+	Ldgub33JezwDRnA9jjvBNCa0tcstwpG9aJ59OZp
+X-Google-Smtp-Source: AGHT+IH1qxD/L9DxRM8R/fDvVjrbOUmUPO9iHU2aUwxAmMLh4FdPNuZ8L5bEMDEdaSHPM/UEntNsAe2gMB9oyWpHlZM=
+X-Received: by 2002:a17:903:37ce:b0:240:4b3b:334f with SMTP id
+ d9443c01a7336-245e04926b5mr28060595ad.34.1755597775110; Tue, 19 Aug 2025
+ 03:02:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811163749.47028-2-ziyao@disroot.org> <20250811163749.47028-4-ziyao@disroot.org>
-In-Reply-To: <20250811163749.47028-4-ziyao@disroot.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 12:02:23 +0200
-X-Gm-Features: Ac12FXx1atQmH6QeSnrDLNRud94fhJMECrA9TaInUV_M5vUWxhGJhif4Q5spxjg
-Message-ID: <CACRpkdZp8FLrxgkeZ=xzSPgny51iDZ3KRCrxpoSdgF8_=df=KQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: ls2k0300: Support Loongson 2K0300 SoC
-To: Yao Zi <ziyao@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+References: <20250818124458.334548733@linuxfoundation.org> <CA+G9fYt5sknJ3jbebYZrqMRhbcLZKLCvTDHfg5feNnOpj-j9Wg@mail.gmail.com>
+In-Reply-To: <CA+G9fYt5sknJ3jbebYZrqMRhbcLZKLCvTDHfg5feNnOpj-j9Wg@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 19 Aug 2025 15:32:42 +0530
+X-Gm-Features: Ac12FXz6P-B_kAS475NZwJ3Ob5a2gv9_oBn8wEtJFzyE39LwJZxKuVFTST5CNfg
+Message-ID: <CA+G9fYt6SAsPo6TvfgtnDWHPHO2q7xfppGbCaW0JxpL50zqWew@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/515] 6.15.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, srinivas.kandagatla@oss.qualcomm.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 6:39=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
-
-> Support pin multiplexing and drive-strength setting for Loongson 2K0300
-> SoC. Pin multiplexing could be done separately for each pin, while
-> drive-strength could be only configured on function basis. This differs
-> a lot from the driver for previous generation of Loongson SoC, where
-> pinmux setting is based on group.
+On Tue, 19 Aug 2025 at 00:18, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 >
-> Pins are represented with pinmux properties in devicetrees, and we use
-> the generic pinmux API for parsing. The common pinconf interface isn't
-> used for drive-strength setting, since it handles pinconf settings at a
-> unit of pin groups or smaller.
+> On Mon, 18 Aug 2025 at 18:45, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.15.11 release.
+> > There are 515 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.11-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 >
-> Instead, the driver configures drive-strength settings just after
-> parsing the devicetree. The devicetree's structure ensures no conflicts
-> could happen in drive-strength settings.
+> Boot regression occurs on the Qualcomm DragonBoard 410c (arm64) with
+> stable-rc 6.15.11-rc1. The kernel crashes during early boot with a
+> NULL pointer dereference in the Qualcomm SCM/TZMEM subsystem.
 >
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> The crash originates in qcom_scm_shm_bridge_enable()
+> (drivers/firmware/qcom/qcom_scm.c:1618) and is invoked by
+> qcom_tzmem_enable() (drivers/firmware/qcom/qcom_tzmem.c:97 and :474).
+> This happens while probing SCM during platform initialization, preventing
+> the board from reaching userspace due to kernel panic.
+>
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+>
+> Boot regression: stable-rc 6.15.11-rc1 arm64 Qualcomm Dragonboard 410c
+> Unable to handle kernel NULL pointer dereference
+> qcom_scm_shm_bridge_enable
 
-Overall the driver looks very good, well done!
+I have reverted the following patch and the regression got fixed.
 
-Look into Rob's comment on the bindings to use a single node
-for mux and config.
+firmware: qcom: scm: initialize tzmem before marking SCM as available
+    [ Upstream commit 87be3e7a2d0030cda6314d2ec96b37991f636ccd ]
 
-I saw that you want to make the pin controller strict, if you also have
-some pins with "GPIO mode" that will serve as back-end for a
-GPIO driver (and I saw you posted a GPIO driver series as well)
-then have a look at Bartosz recent patches to add infrastructure
-for pinctrl to know about what a GPIO pin is:
-https://lore.kernel.org/linux-gpio/20250815-pinctrl-gpio-pinfuncs-v5-0-955d=
-e9fd91db@linaro.org/T/
 
-The current driver does not seem to know about any of these
-pins being usable as GPIO and does not implement those:
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> ## Test log oom03
+> [    1.191790] scmi_core: SCMI protocol bus registered
+> [    1.194074] Unable to handle kernel NULL pointer dereference at
+> virtual address 0000000000000000
+> [    1.198306] Mem abort info:
+> [    1.207295]   ESR = 0x0000000096000004
+> [    1.209796]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    1.213635]   SET = 0, FnV = 0
+> [    1.219095]   EA = 0, S1PTW = 0
+> [    1.221945]   FSC = 0x04: level 0 translation fault
+> [    1.225004] Data abort info:
+> [    1.229874]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [    1.232977]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    1.238286]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    1.243409] [0000000000000000] user address but active_mm is swapper
+> [    1.248798] Internal error: Oops: 0000000096000004 [#1]  SMP
+> [    1.255110] Modules linked in:
+> [    1.260744] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+> 6.15.11-rc1 #1 PREEMPT
+> [    1.263622] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+> [    1.271517] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    1.278199] pc : qcom_scm_shm_bridge_enable
+> (drivers/firmware/qcom/qcom_scm.c:1618)
+> [    1.284878] lr : qcom_tzmem_enable
+> (drivers/firmware/qcom/qcom_tzmem.c:97
+> drivers/firmware/qcom/qcom_tzmem.c:474)
+> [    1.290085] sp : ffff80008002b720
+> [    1.294508] x29: ffff80008002b7b0 x28: 0000000000000000 x27: 0000000000000000
+> [    1.297819] x26: 0000000000000000 x25: 0000000000000000 x24: ffff00003faf6128
+> [    1.304937] x23: ffff00003fac6c68 x22: 0000000000000000 x21: ffff0000036ba410
+> [    1.312055] x20: ffff0000036ba400 x19: ffff8000831a4000 x18: 0000000000000352
+> [    1.319173] x17: 0000000000000000 x16: 0000000000000001 x15: 0000000000000002
+> [    1.326292] x14: ffffffffffffffff x13: 0000000000000000 x12: 0000000000000002
+> [    1.333410] x11: 0000000000000000 x10: 0000000000000019 x9 : ffff8000813e6d74
+> [    1.340527] x8 : 0000000000000000 x7 : 7f7f7f7f7f7f7f7f x6 : fefefeff35302f37
+> [    1.347645] x5 : 8080808000000000 x4 : 0000000000000020 x3 : 0000000000000010
+> [    1.354763] x2 : 000000000000001c x1 : 000000000000000c x0 : 0000000000000000
+> [    1.361882] Call trace:
+> [    1.368986] qcom_scm_shm_bridge_enable
+> (drivers/firmware/qcom/qcom_scm.c:1618) (P)
+> [    1.371251] qcom_tzmem_enable
+> (drivers/firmware/qcom/qcom_tzmem.c:97
+> drivers/firmware/qcom/qcom_tzmem.c:474)
+> [    1.376455] qcom_scm_probe (drivers/firmware/qcom/qcom_scm.c:2256)
+> [    1.380534] platform_probe (drivers/base/platform.c:1405)
+> [    1.384180] really_probe (drivers/base/dd.c:581)
+> [    1.387998] __driver_probe_device (drivers/base/dd.c:?)
+> [    1.391647] driver_probe_device (drivers/base/dd.c:829)
+> [    1.395987] __driver_attach (drivers/base/dd.c:1216)
+> [    1.399978] bus_for_each_dev (drivers/base/bus.c:369)
+> [    1.403798] driver_attach (drivers/base/dd.c:1233)
+> [    1.407965] bus_add_driver (drivers/base/bus.c:679)
+> [    1.411523] driver_register (drivers/base/driver.c:250)
+> [    1.415083] __platform_driver_register (drivers/base/platform.c:867)
+> [    1.418905] qcom_scm_init (drivers/firmware/qcom/qcom_scm.c:2362)
+> [    1.423763] do_one_initcall (init/main.c:1257)
+> [    1.427409] do_initcall_level (init/main.c:1318)
+> [    1.430969] do_initcalls (init/main.c:1332)
+> [    1.435134] do_basic_setup (init/main.c:1355)
+> [    1.438434] kernel_init_freeable (init/main.c:1571)
+> [    1.442254] kernel_init (init/main.c:1459)
+> [    1.446593] ret_from_fork (arch/arm64/kernel/entry.S:865)
+> [ 1.449810] Code: a905ffff a904ffff a903ffff f9001bff (f9400100)
+> All code
+> ========
+>    0: a905ffff stp xzr, xzr, [sp, #88]
+>    4: a904ffff stp xzr, xzr, [sp, #72]
+>    8: a903ffff stp xzr, xzr, [sp, #56]
+>    c: f9001bff str xzr, [sp, #48]
+>   10:* f9400100 ldr x0, [x8] <-- trapping instruction
+>
+> Code starting with the faulting instruction
+> ===========================================
+>    0: f9400100 ldr x0, [x8]
+> [    1.453637] ---[ end trace 0000000000000000 ]---
+> [    1.459661] Kernel panic - not syncing: Attempted to kill init!
+> exitcode=0x0000000b
+> [    1.464318] SMP: stopping secondary CPUs
+> [    1.471696] ---[ end Kernel panic - not syncing: Attempted to kill
+> init! exitcode=0x0000000b ]---
+>
+> Please refer full test log information in the below links.
+>
+> ## Source
+> * Kernel version: 6.15.11-rc1
+> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> * Git describe: v6.15.9-993-g1cf711608500
+> * Git commit: 1cf71160850064e9e506eda37e0386948bedd6b4
+> * Architectures: arm64 Dragonboard 410c
+> * Toolchains: gcc-13, clang-20
+> * Kconfigs: defconfig+lkft
+>
+> ## Test
+> * Boot log: https://qa-reports.linaro.org/api/testruns/29589408/log_file/
+> * Boot lava log: https://lkft.validation.linaro.org/scheduler/job/8407660#L2708
+> * Boot details:
+> https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.15.y/v6.15.9-993-g1cf711608500/log-parser-boot/panic-multiline-kernel-panic-not-syncing-attempted-to-kill-init-exitcode/
+> * Boot plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/31SjnwYvj7Mmcay6Qa54CFbNfP9
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31SjkxSlW3Ssjf1eGdFHJPPU4Yw/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/31SjkxSlW3Ssjf1eGdFHJPPU4Yw/config
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
-        int (*gpio_request_enable) (struct pinctrl_dev *pctldev,
-                                    struct pinctrl_gpio_range *range,
-                                    unsigned int offset);
-        void (*gpio_disable_free) (struct pinctrl_dev *pctldev,
-                                   struct pinctrl_gpio_range *range,
-                                   unsigned int offset);
-        int (*gpio_set_direction) (struct pinctrl_dev *pctldev,
-                                   struct pinctrl_gpio_range *range,
-                                   unsigned int offset,
-                                   bool input);
-        bool strict;
-
-Which is fine if the pins actually cannot be used for GPIO, but if they
-can, and this is just implicit for unconfigured pins ... then add
-functions and groups for GPIO.
-
-The other driver using pinconf_generic_parse_dt_pinmux()
-drivers/pinctrl/meson/pinctrl-amlogic-a4.c has GPIO awareness.
-
-Yours,
-Linus Walleij
+- Naresh
 
