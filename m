@@ -1,193 +1,117 @@
-Return-Path: <linux-kernel+bounces-776664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5436B2D024
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:38:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B62B2D048
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FDB8169844
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:38:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE1E37A23E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F9F2701CC;
-	Tue, 19 Aug 2025 23:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E621273D8F;
+	Tue, 19 Aug 2025 23:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DvzsoGvp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8iG7PUeS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gCSTcdm9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E43821883E;
-	Tue, 19 Aug 2025 23:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095DA217F27;
+	Tue, 19 Aug 2025 23:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755646727; cv=none; b=NX4ZsSLxfiqJ1ih6R9ma7Lr63v+zquy61RRWmq+hLrFnzan1foYiCOe+K6Zj+rc8ewPXxnojVs7DZhxteQizV1RYpzOpKjPHbqtCaAzE8XdnblaA5yfKpR6wBYwnpQrCdm+FG4cR/sPKOAhP9AJwsH0NbuvXzHXZMXPF89+dYQ0=
+	t=1755646974; cv=none; b=R7T4pX7W+Ct6x4AgJC92BNrEYHMIA2QZZbkglAjDf9XdwmSXuH5kipMv7qS9h1xs+EbynaKw3PLlyecjB70Jq9VqHakZeQmdnT1MKB0Mwz4FOATjxaQ6AGMFaaAmm2WFiFKf5KkgKtYkSVSmf0vKcEdnHBFImr/0h9U/tk6igqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755646727; c=relaxed/simple;
-	bh=aPnEXEI8TH0CQRjYSff/UVlM1XXewUGIM4xEOi9LAos=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=YWq5FVfzFExZsvy6VB3CFSWP+x5kZ85FC7wgjknBwWstmVqsjWNTGXqY1IzBHqabBtJGYrsGoy8LwwJ8oe46CFhc6AlMZhwThvfM5gF9t6PUP3CKk6JA1xS4/GjVvNTKt7tKPF/wHPfIJkxjZqQH/N/438t7wWWILNqkvmqsPgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DvzsoGvp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8iG7PUeS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 23:38:40 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755646723;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=aivyC6nV4X1QHy/avFC2CYmaso6VzIAOErqH6w8JsoU=;
-	b=DvzsoGvp46r8hvMHlJ2EjbuJUR3trxZGZVWCd6uq0XY48h8PXZleHkFOnmjjlfEaNFMaz2
-	o9Wlu4L93RuWao6ONYCwBwrhzxzxJyUW/rYP7CKMTzM9MiN3YhQAOGTZ6NOx58MzUS0Wvc
-	5saKGcpzvlWElZ/awyf2tvFnsN1quo/EDY9MZzrVhfE+sumZJHDqntXXsu8OQprUeNjQLU
-	ZPIVsaZ6VwL2Avgqhak8SNTzYoVw9KT4D5kxQMoynGn8NgRLV0iYgiWcA90dmOT2OC04PO
-	6WJRXy9b8YwDNy0GZW2vrdyQY6DZCXJuKKj1x4Si9j1eFFdjkLr0Jnsn16F50A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755646723;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=aivyC6nV4X1QHy/avFC2CYmaso6VzIAOErqH6w8JsoU=;
-	b=8iG7PUeSwwzRZbznZlfDvQCpfSe3x+IHO3EB3+0e8ZUF5YQLQTu4vciYLSoaAK2kLzCew6
-	Mbuse0jRf7Vv2kAw==
-From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/cpu: Rename and move CPU model entry for Diamond Rapids
-Cc: Peter Zijlstra <peterz@infradead.org>, Tony Luck <tony.luck@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1755646974; c=relaxed/simple;
+	bh=XQfJx3HU5HRjma084GkjHPhEPwwAj/UOfDzJM8XEuuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SqpI7q9wn2ZbGEvSpihLVnE4jPjFlrsoD8JmG+kFx1lknkoUiIAImMxro87k+IreCi1MdkM6ed0x6Moo/hZIAq60bj4nOhc8zS01xGwuXYW8ZX2bInkvFrWc6kgeSON1MMFqf/WLoiNqUR3fcW6asBUUw0V4/+u0c77nsmRRKBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gCSTcdm9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755646960;
+	bh=RwzrZPtnNpBkxo9pNOOeFKEasl6xXyZEsJp8YOffYBY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gCSTcdm9/ms2tHkEH7iMjnWkTsmPMJ5RzcujVs5Gu/b4+8I4yK2Aj1YVjVs0g/sdq
+	 E61SOXcPYX8/ML3yExrHM+XP35bIZRSpwieXUOGTQ8kDS3s4E6kXMOl0pi+qDjg6Ho
+	 mKVmqQVz465fFPJfZ32IGFC+F9t2QXtsQ8wDyhtzTTLIoLIzKTJPbFK1YPzgPlK+0C
+	 mXLCSz5VCsQuQuTWWarnCj1xFzLiTwGMarHDkHpMtCtkor/iO2g5Q/ls23LzlTjaJB
+	 TTOYs8kx0o2DCPYIbcFBPGuru6tTEwt3Rn3t4O+lrXiUXhoXY09D33x0g+5zfymz/C
+	 aaIOj8wbcdNOQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c65jX3B0Tz4w2R;
+	Wed, 20 Aug 2025 09:42:40 +1000 (AEST)
+Date: Wed, 20 Aug 2025 09:42:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <20250820094239.30dea649@canb.auug.org.au>
+In-Reply-To: <20250818090559.3643eabd@canb.auug.org.au>
+References: <20250818090559.3643eabd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175564672078.1420.16983385013215397877.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; boundary="Sig_/0Buwr2NOf1FH1QZFJuf81BV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/0Buwr2NOf1FH1QZFJuf81BV
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/cpu branch of tip:
+Hi all,
 
-Commit-ID:     6a42c31ef324476fb304e137fe71870fcc538c88
-Gitweb:        https://git.kernel.org/tip/6a42c31ef324476fb304e137fe71870fcc5=
-38c88
-Author:        Tony Luck <tony.luck@intel.com>
-AuthorDate:    Mon, 11 Aug 2025 14:33:45 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Tue, 19 Aug 2025 16:06:17 -07:00
+On Mon, 18 Aug 2025 09:05:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the vfs-brauner tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> fs/iomap/direct-io.c: In function 'iomap_dio_zero':
+> fs/iomap/direct-io.c:281:36: error: implicit declaration of function 'lar=
+gest_zero_folio'; did you mean 'is_zero_folio'? [-Wimplicit-function-declar=
+ation]
+>   281 |         struct folio *zero_folio =3D largest_zero_folio();
+>       |                                    ^~~~~~~~~~~~~~~~~~
+>       |                                    is_zero_folio
+>=20
+> Caused by commit
+>=20
+>   5589673e8d8d ("iomap: use largest_zero_folio() in iomap_dio_zero()")
+>=20
+> I have used the vfs-brauner tree from next-20250815 for today.
 
-x86/cpu: Rename and move CPU model entry for Diamond Rapids
+I am still getting this failure.
 
-This model was added as INTEL_PANTHERCOVE_X (based on the name of the
-core) with a comment that the platform name is Diamond Rapids. It was
-also placed at the end of the file in a new section for family 19
-processors.
+--=20
+Cheers,
+Stephen Rothwell
 
-This is different from previous naming. Andrew Cooper complained.
-PeterZ agreed and posted a patch[1] to fix the name and move it in
-sequence with other Xeon servers. But without a commit description or
-sign-off the patch wasn't ever applied.
+--Sig_/0Buwr2NOf1FH1QZFJuf81BV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Patch updated to cover one additional use of the #define by turbostat
-and to change the "Family 6" comment to also list 18 and 19 since new
-models in these families are mixed in with family 6.
+-----BEGIN PGP SIGNATURE-----
 
-Originally-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-Link: https://lore.kernel.org/all/20250214130205.GK14028@noisy.programming.ki=
-cks-ass.net/ # [1]
-Link: https://lore.kernel.org/all/20250811213345.7029-1-tony.luck%40intel.com
----
- arch/x86/include/asm/intel-family.h                         | 7 +++----
- drivers/platform/x86/intel/speed_select_if/isst_if_common.c | 2 +-
- drivers/platform/x86/intel/tpmi_power_domains.c             | 2 +-
- tools/power/x86/turbostat/turbostat.c                       | 2 +-
- 4 files changed, 6 insertions(+), 7 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmilC+8ACgkQAVBC80lX
+0Gxd/Af/XW/95q3kvzXYADX0pDLqz5dCgiy7hYNgaN/B4oif7hzvF1vWcxeQCkzw
+ku3n94VlotpRb+0f5gjtQYTnT9I7hkStu/xSkKBf62O0mTdmdwahYC0KOLUH/b6l
++Y3GhyG9HaaMMsGTmuaT31e2v5stHtTpOMwnFsH+zQMzHWP/Y5PHDzO/4No+5ImE
+Nym9SpmT4Z9xV7If7Nd72RuLBuf2MhRO7YuopCbmGx6/Lf8DrnbCWepJXHya/pxA
+o+gKhEIY+KTxOSzUdgxmaLiue9caTBgmCe500WRLCaCbdwz/SDefSmFyQs6Cki3E
+QxRNqxwRVA8kt3KjJHp7smcHnGfDHA==
+=nWNI
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel=
--family.h
-index e345dbd..f32a0ec 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -51,7 +51,7 @@
- #define INTEL_PENTIUM_MMX		IFM(5, 0x04) /* P55C */
- #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
-=20
--/* Family 6 */
-+/* Family 6, 18, 19 */
- #define INTEL_PENTIUM_PRO		IFM(6, 0x01)
- #define INTEL_PENTIUM_II_KLAMATH	IFM(6, 0x03)
- #define INTEL_PENTIUM_III_DESCHUTES	IFM(6, 0x05)
-@@ -126,6 +126,8 @@
- #define INTEL_GRANITERAPIDS_X		IFM(6, 0xAD) /* Redwood Cove */
- #define INTEL_GRANITERAPIDS_D		IFM(6, 0xAE)
-=20
-+#define INTEL_DIAMONDRAPIDS_X		IFM(19, 0x01) /* Panther Cove */
-+
- #define INTEL_BARTLETTLAKE		IFM(6, 0xD7) /* Raptor Cove */
-=20
- /* "Hybrid" Processors (P-Core/E-Core) */
-@@ -203,9 +205,6 @@
- #define INTEL_P4_PRESCOTT_2M		IFM(15, 0x04)
- #define INTEL_P4_CEDARMILL		IFM(15, 0x06) /* Also Xeon Dempsey */
-=20
--/* Family 19 */
--#define INTEL_PANTHERCOVE_X		IFM(19, 0x01) /* Diamond Rapids */
--
- /*
-  * Intel CPU core types
-  *
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c b/dr=
-ivers/platform/x86/intel/speed_select_if/isst_if_common.c
-index 71e104a..7449873 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-@@ -790,7 +790,7 @@ static const struct x86_cpu_id isst_cpu_ids[] =3D {
- 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X,	SST_HPM_SUPPORTED),
- 	X86_MATCH_VFM(INTEL_ICELAKE_D,		0),
- 	X86_MATCH_VFM(INTEL_ICELAKE_X,		0),
--	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	SST_HPM_SUPPORTED),
-+	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	SST_HPM_SUPPORTED),
- 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	0),
- 	X86_MATCH_VFM(INTEL_SKYLAKE_X,		SST_MBOX_SUPPORTED),
- 	{}
-diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platfo=
-rm/x86/intel/tpmi_power_domains.c
-index 9d8247b..e8d1037 100644
---- a/drivers/platform/x86/intel/tpmi_power_domains.c
-+++ b/drivers/platform/x86/intel/tpmi_power_domains.c
-@@ -85,7 +85,7 @@ static const struct x86_cpu_id tpmi_cpu_ids[] =3D {
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	NULL),
- 	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X,	NULL),
- 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_D,	NULL),
--	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	NULL),
-+	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	NULL),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, tpmi_cpu_ids);
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbosta=
-t/turbostat.c
-index 72a280e..47eb2d4 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -1195,7 +1195,7 @@ static const struct platform_data turbostat_pdata[] =3D=
- {
- 	{ INTEL_EMERALDRAPIDS_X, &spr_features },
- 	{ INTEL_GRANITERAPIDS_X, &spr_features },
- 	{ INTEL_GRANITERAPIDS_D, &spr_features },
--	{ INTEL_PANTHERCOVE_X, &dmr_features },
-+	{ INTEL_DIAMONDRAPIDS_X, &dmr_features },
- 	{ INTEL_LAKEFIELD, &cnl_features },
- 	{ INTEL_ALDERLAKE, &adl_features },
- 	{ INTEL_ALDERLAKE_L, &adl_features },
+--Sig_/0Buwr2NOf1FH1QZFJuf81BV--
 
