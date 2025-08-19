@@ -1,87 +1,96 @@
-Return-Path: <linux-kernel+bounces-775852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A144B2C5C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:38:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9E4B2C694
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84AFE17DE15
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:32:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C6F1C2378E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A84A338F5E;
-	Tue, 19 Aug 2025 13:32:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E192144C9;
+	Tue, 19 Aug 2025 14:04:06 +0000 (UTC)
+Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3DB2EB853
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0011FDA8E;
+	Tue, 19 Aug 2025 14:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610324; cv=none; b=mFlywKDbJCcMw34+sf3AxfNa9iDjm5PJ1ViFOqSWrxyGgGGKfJMETZC7tT8vWWXsYG5Cf6KAePjgnylPRzNVSJPGkrBD0vafd/lIlsNUy40OdS981OO3SgChQbL/AWQTLRKyJWqLAZ9jfvxcc3kOsjeXdSx73I0AW3mxx3Fo4No=
+	t=1755612246; cv=none; b=u9z8IDgnRTxo67JV9yUe+UE3lhnbe2q6diXD01BfbYOAngekrUNshBy+c3lKRbaf5LXj3pc8+R1z8AnToyslQePJ2dfbkq5tg9AcCRhUAAmXep27JEd6kwuzkk4UvXuNzcGq0VKT1uFGZL2RX4RUxNJ/oK4DIJnOYm1a2FocAf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610324; c=relaxed/simple;
-	bh=kXWBUkGtz59/tjkcV307Yl1L281mx/fY69nLbnQU19k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RRaMMcCB+nqujv2qff3NXJZkebk8q+5m01JzIJbdt4m+DXevpyFrNN/JKxgzItz4Fnm5lmJCXmkNFe2+zbLjtWOUB5ESPdNwEvsJKDjBbKrPKpEIGc3h6ZnkAF8mb1CaX3bvmcziLcGwHpW92wigLu/uawDulXimdLF3sP3W7Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e66d90917eso20607105ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:32:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755610322; x=1756215122;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f4UJsJ/WrnZ/p7psOZ9KjbOHkDwwJRK0bmHqErrjnCE=;
-        b=HS8XqlebQ3Yxx3JNIOqW04sUKMpp6ESkAwQPzKX8PlB61cGNLfvNoTA4ohOKr/tjzV
-         p7FR7Cw1xek0iEBZBNkr6QOWTcp+RRqTGGviZ6wrJV+38uEdWbDg6oQDGQrHFu3dZzly
-         Dn+SyauaTKbGrubSaXhBW/o5bKqa/IKOCVrpWzSutUdHHukAWKYKJLeDrN1QnRpPRDK9
-         eamsgdCY4JFqGeYYNv77BLyZ2dclQluvGnOHQScwEZJAtUL2+FnbGHLcuXLPK1TNrYHR
-         ZhqgQKSa1kjl4JubC3vbAaq816cluCwp3jTgVdr+UVuX9TTXmUvUvGUEsmQzVjSyRXvS
-         Ib1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpMk2ervJQQmuqKQ7EO02+W6y7fk9jUexVTLpYKij7BxpSJ3o1N/aEUTDUYDknS+HfG9l5a0RBUfK4bZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoNHJTOczS7VCkmrvcPXWppFZHbU4DJpMIjB64kNPJ3GaRhDMO
-	L4S8xdfcNIKLr13t3OX4/KmGi0dbNs4yRS0a9QiEKvGd/dd/TPk2o9OgO4RhKGxpgKvKBNu0NeG
-	SB8Xm5Xht2AWog2Hqseobk4K4oe1hzJ1Gu6OdCNc2pL0c4vtDRHmgzmW0K4g=
-X-Google-Smtp-Source: AGHT+IGWqthspiHt8qBXIxY9G2aPSF3WkcwGbiTU/L6lJzxXPyRNQAUaQDFZxcO4Hhh7vKik2c2vwAUJ5QHQDV/m4iCiWTNGewj2
+	s=arc-20240116; t=1755612246; c=relaxed/simple;
+	bh=72F2xWA+YdfB2QtAEk4aX3LIRSMBxtBbqBIGnK0sQWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jRrcRWZse5ve1ZXR/0BfS9XNyATOvYiyPDTa2gm0ClRdktv3Sc6pPFGLuDv7sBYRTvgIYQfDzhevo6UxJdazIspKCMQpGYaHJhOJZhN4t6M4TKCMj0TDB4vVmY69Q0KSMGxO1szPsfeyGucwvDx1X+HHd2SB8lw7h1wiGtpPmNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
+Received: from MUA
+	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <mhej@vps-ovh.mhejs.net>)
+	id 1uoMRq-00000001OeL-20zC;
+	Tue, 19 Aug 2025 15:32:22 +0200
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>,
+	Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] KVM: SVM: Fix missing LAPIC TPR sync into VMCB::V_TPR with AVIC on
+Date: Tue, 19 Aug 2025 15:32:13 +0200
+Message-ID: <cover.1755609446.git.maciej.szmigiero@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2511:b0:3e5:7f18:3e86 with SMTP id
- e9e14a558f8ab-3e6765cff36mr45245065ab.1.1755610322494; Tue, 19 Aug 2025
- 06:32:02 -0700 (PDT)
-Date: Tue, 19 Aug 2025 06:32:02 -0700
-In-Reply-To: <tencent_D3EE1B172523BACABBF633209E3D1BF84B08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a47cd2.050a0220.e29e5.00c6.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_evict_inode (2)
-From: syzbot <syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: mhej@vps-ovh.mhejs.net
 
-Hello,
+From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+When AVIC is enabled the normal pre-VMRUN LAPIC TPR to VMCB::V_TPR sync in
+sync_lapic_to_cr8() is inhibited so any changed TPR in the LAPIC state would
+*not* get copied into the V_TPR field of VMCB.
 
-Reported-by: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
-Tested-by: syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com
+AVIC does sync between these two fields, however it does so only on
+explicit guest writes to one of these fields, not on a bare VMRUN.
 
-Tested on:
+This is especially true when it is the userspace setting LAPIC state via
+KVM_SET_LAPIC ioctl() since userspace does not have access to the guest
+VMCB.
 
-commit:         be48bcf0 Merge tag 'for-6.17-rc2-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=141643bc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a7016efe6aaa498c
-dashboard link: https://syzkaller.appspot.com/bug?extid=47d8cb2f2cc1517e515a
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=170126f0580000
+Practice shows that it is the V_TPR that is actually used by the AVIC to
+decide whether to issue pending interrupts to the CPU (not TPR in TASKPRI),
+so any leftover value in V_TPR will cause serious interrupt delivery issues
+in the guest when AVIC is enabled.
 
-Note: testing is done by a robot and is best-effort only.
+Fix this issue by explicitly copying LAPIC TPR to VMCB::V_TPR in
+avic_apicv_post_state_restore(), which gets called from KVM_SET_LAPIC and
+similar code paths when AVIC is enabled.
+
+Add also a relevant set of tests to xapic_state_test so hopefully
+we'll be protected against getting such regressions in the future.
+
+
+Yes, this breaks real guests when AVIC is enabled.
+Specifically, the one OS that sometimes needs different handling and its
+name begins with letter 'W'.
+
+
+  KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR when setting LAPIC regs
+  KVM: selftests: Test TPR / CR8 sync and interrupt masking
+
+ arch/x86/kvm/svm/avic.c                       |  23 ++
+ .../testing/selftests/kvm/include/x86/apic.h  |   5 +
+ .../selftests/kvm/x86/xapic_state_test.c      | 265 +++++++++++++++++-
+ 3 files changed, 290 insertions(+), 3 deletions(-)
+
 
