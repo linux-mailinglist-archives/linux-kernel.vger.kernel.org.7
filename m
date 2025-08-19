@@ -1,98 +1,90 @@
-Return-Path: <linux-kernel+bounces-775120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B78B2BB80
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:14:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C654B2BB88
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565641890952
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC7D176333
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F5431159D;
-	Tue, 19 Aug 2025 08:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600C8286D45;
+	Tue, 19 Aug 2025 08:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIIFEWC3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xM/wFLEe"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8904721D3EE;
-	Tue, 19 Aug 2025 08:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEF43451D7;
+	Tue, 19 Aug 2025 08:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755591271; cv=none; b=pBmZNfzmULaZF1Q7UiGK8ee6Ol0f5bpLqfMtLYb9mhi1RJPDh8LJjdmgvDRTSXJz3kBHojCYHXwE/5dVGU5im+zjSnkFhmiUILBAXcZOgmQyPB6bt9cqTO8lNpoLCOmDc8YBy5emGooriEB2oM2o4r3ky65EtHUSm6gY4d+cZ8w=
+	t=1755591341; cv=none; b=o9lWIb9pj9eI/xYm1vHRriKtJVOntbRjFdtII2zjrmSHOv+TjHSc3GMhdCVyiBSynO+OjjRamWi9kPlfqi4SUFWOhFl1vw+PmdzK4lY7tYLd/6ZQr8CKHOvpsxjKyo5bbBBUXb+FGZ/ynvMP0iHWTtb0BsUFIlbRI99eJMaTNXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755591271; c=relaxed/simple;
-	bh=tqkaoqXSQS6r9ypIv8V3rL0fxCKcJQKIsmosOm7DlMk=;
+	s=arc-20240116; t=1755591341; c=relaxed/simple;
+	bh=k6y6AF54juU7kl6kbKvDXfrb4wSrYoD5+fTUFg6zBto=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AE80XgzRsE5zeykFbVLHBOiHDtVw7ylwTIIaOzOwJCn9sQbgqRc1zBTYAJ+yMybsXSoGASZRuG/XbnHXpv05srlv6JNzn9jR87L9bBINJzJdWYDA9lXdWQiFiRvFnI/ffneri/DmdDQX6OOyEkCY8n1Zd6elwcodBz7hMyRaP0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIIFEWC3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE84C4CEF1;
-	Tue, 19 Aug 2025 08:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755591271;
-	bh=tqkaoqXSQS6r9ypIv8V3rL0fxCKcJQKIsmosOm7DlMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oIIFEWC33UWR/fYKDep/YSOwfh14lGoNfqxqfR3SQO0wyFdk4lZV753tQFSCBsfJx
-	 EmJSjBaZbDwtgLF9PbPqrWiwxbXg0XZ5tmomzxJABsOfk+7sk7qPCgbyKGvpq/AGaH
-	 aSYG1wl/9e12ENEI0PxIUgwOixY2aeWFUU69VTqF+mitoi6IsCgm+30zY3IJsJqnef
-	 K/8rdUO141ef7PrryN7ZTqq3BAGSFlAA57lcJB4shf0azDPR6ecjx6lAKhs1GiKpBC
-	 M3vSfIFD0Rid6+hcnJwGXxX5BNzQeUrAMXRZOkK0ulomKt3kFfOLoUoHJO0s8yhq1L
-	 OgUOtLMZj8XfA==
-Date: Tue, 19 Aug 2025 10:14:28 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Cc: linux-kernel@vger.kernel.org, andreas@kemnade.info, 
-	peter.ujfalusi@gmail.com, dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	lgirdwood@gmail.com, tiwai@suse.com, conor+dt@kernel.org, lee@kernel.org, 
-	ukleinek@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org, 
-	linus.walleij@linaro.org, brgl@bgdev.pl, aaro.koskinen@iki.fi, khilman@baylibre.com, 
-	rogerq@kernel.org, tony@atomide.com, linux-gpio@vger.kernel.org, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, 
-	shuah@kernel.org
-Subject: Re: [PATCH v3 0/6] dt-bindings: Convert TWL4030/6040 family binding
- to DT schema
-Message-ID: <20250819-miniature-pug-of-whirlwind-acdfb6@kuoka>
-References: <20250816021523.167049-1-jihed.chaibi.dev@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUf3HTFqTTJJW13yLxHk6wRI7CkriWF0jOvnc8o4cq5jSZBBbG4USTrTnWEZ/+uAxjvxZAIP6IHYKcGbF2E59goAECSZppaaVuahZlMSf8MpG8IKRcknl+Me6hbROxwQNhoxFw9jA2EJSDbF169tK7YcjSl8dMKy2dpbdTLRRqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xM/wFLEe; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fRcvtU+W6HkjI1y5wLjk7QWRQYSRuxCjLLd23beixwY=; b=xM/wFLEeMOGcYpFv+dN0VueW/A
+	TAHSYW6NlFW/ySvzvulmO4zXxTC3hsKn2cWEMzJHIZeZHtfo16WoZ/fkFl/B6EnYl3U3RD5Q3s55S
+	Rnj0SFoFdtZrfncphbJ9d5Bz6JMvHdZuB2n+JSTth/njx+9ARiJtMY9g1rKZE2cXif8SBhgzh+mNF
+	7B7ROiBTMx5wK3RXf9VZpwKSkYH/ZiXdmj06DYuP3iGA0rEgUzmueUmUPy5LYU2iSU2Ob1f4kKD3a
+	yglYDgygL4zKj69GwJZ8cT94WCx0o4NI5AzrzX8YnP+mr0TjHpq0GD//sCFe/AYj+Wj30jBKMgWCK
+	tRjEZ8lg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uoHVM-00000009mHF-0bHD;
+	Tue, 19 Aug 2025 08:15:40 +0000
+Date: Tue, 19 Aug 2025 01:15:40 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ethan Ferguson <ethan.ferguson@zetier.com>
+Cc: hch@infradead.org, linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Subject: Re: [PATCH v2 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Message-ID: <aKQyrMX7xS5A8cv6@infradead.org>
+References: <aKK_qq9ySdYDjhAD@infradead.org>
+ <20250818174911.365889-1-ethan.ferguson@zetier.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250816021523.167049-1-jihed.chaibi.dev@gmail.com>
+In-Reply-To: <20250818174911.365889-1-ethan.ferguson@zetier.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, Aug 16, 2025 at 04:15:17AM +0200, Jihed Chaibi wrote:
-> Hello,
+On Mon, Aug 18, 2025 at 01:49:11PM -0400, Ethan Ferguson wrote:
+> That's fair. I took a look at how btrfs guards against this, it seems
+> as if they use mnt_want_write_file to guard against bad writes, and
+> only write to the in-memory superblock, and commit the transaction
+> afterwards. However, this (during my testing with
+> CONFIG_BLK_DEV_WRITE_MOUNTED both on and off) still results in an
+> immediate disk flush.
 > 
-> This series converts the remaining legacy TXT bindings for the Texas
-> Instruments TWL4030/6030 family to the DT schema format.
-> 
-> This v3 series addresses extensive feedback from v2. The main changes
-> include consolidating the simple power and PWM bindings directly into the
-> main ti,twl.yaml binding for a cleaner structure. It also adds a fix for
-> an incorrect schema $id in the ti,twl4030-gpio binding and corrects
-> various properties based on reviewer feedback.
-> 
-> This results in a cleaner, more accurate, and more consolidated set of
-> bindings for this TWL family.
-> 
-> As requested, the unrelated ti,twl6040 binding conversion has been dropped
-> from this series and will be sent separately.
-> 
-> Thank you,
-> Jihed
-> 
-> There is a typo in the subject, "TWL4030/6040" should be "TWL4030/6030".
+> My changes from this thread also seem to work with
+> CONFIG_BLK_DEV_WRITE_MOUNTED both disabled and enabled.
 
-Huh? Why are you sending patches with known (at the time of sending)
-issues? Fix the issue instead.
+What I meant to say is that we actually need your change to work with
+CONFIG_BLK_DEV_WRITE_MOUNTED, as the current way in tunefs is broken,
+even if that's something a few Linux file systems have historically
+done.
 
-Best regards,
-Krzysztof
+> Maybe an alternative would be to only write to sbi->volume_label (with
+> mutex guarding), and only flush to disk on exfat_put_super? And to use
+> mnt_want_write_file as well.
+
+I think your patch is fine as-is.  I've just been trying to give you
+additional ammunition.
 
 
