@@ -1,178 +1,210 @@
-Return-Path: <linux-kernel+bounces-774724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B109B2B676
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:49:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E02B2B677
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60333173812
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217C618999FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFE1286408;
-	Tue, 19 Aug 2025 01:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37654286412;
+	Tue, 19 Aug 2025 01:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWeyFbNZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M0qRF4pt"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F4021E0BE;
-	Tue, 19 Aug 2025 01:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD6C253F07;
+	Tue, 19 Aug 2025 01:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755568133; cv=none; b=l7iPGa15VyzJGiDUWCjrH86PUSlw919Sy9ZchBMeJ45pBlUE++qQXWBo5nDFnTdyoltn3HpXqw8FnApDmPr0ePHNeVfWgOcSkCNOo9xHYWwxjIq+WBk5wLhwNoHFzY7qxhbpMurZdVEt7EQOPMdTPnmc2/rt57J4O1bpFi6HOvs=
+	t=1755568169; cv=none; b=WHS6PebSNkPYlQZo8KrLwjN0nMnG3438uwOKfX5vTz8dydGUE3EYnsW9fD79H9ia0rUT8+MekauHv+V5EbF+EsSHIl0EuxRAOsjy9k56+BHwfW65lySeIyMQKvATriwAGdnxGKOTGD+KXXX9u/4GZELBlqvByNc9vJ0uJJqzK0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755568133; c=relaxed/simple;
-	bh=2sw21zVSwhEYRqGZ8q+Z8Q5Mnxv7CisFlVLCd5MLW2I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DlW5ljEv9BzSReN8M3tLb/Tx6LBZM/qd6UxdgPujb9ss687ETme4wdHmudZzydOawv8KfMzm2D28o27/1L38nDrudoMUjFKU37uX84Otx01D/E0Pc9O3mNEJzlK3mrrHyL7HjG6I8KXAT8G2G0D/2UxF3t4xeBV4PRXzXL3w6Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWeyFbNZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09A7C4CEEB;
-	Tue, 19 Aug 2025 01:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755568132;
-	bh=2sw21zVSwhEYRqGZ8q+Z8Q5Mnxv7CisFlVLCd5MLW2I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YWeyFbNZAO5N8CoZ1MxTh2MgzzfOIozoncaBhN8kdUfs+Tp8+lnotAZHqiwlaiHh9
-	 WOfxZ05kU9s/VPDzOy1bBbb+RjcnKaYHZ3molkpXYt1QVQPJw5NB0A8YEdjggCHD7r
-	 atQaVU7Sc1htlv22cmdN2fgdaMFYiPHpmG7czdYifDW4MJbtJcULKr1h1X3aNujlgw
-	 8FKoCgcYrytyq7wH1Ss+Wd4mig2H1Ysi90oQZJVyoru0rO4UMOFIqXNfLnrgfd/26K
-	 +G+YzInlTWD3ljxAR+fpaVy/71aAQsUhaMLgTmpzqnUuQgDUyzX93CQRXF78u+uFGU
-	 I6C+q2KiiWIOQ==
-Date: Tue, 19 Aug 2025 10:48:50 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com, hca@linux.ibm.com,
- revest@chromium.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next v5 0/4] fprobe: use rhashtable for
- fprobe_ip_table
-Message-Id: <20250819104850.1a903746f2eca854490e770b@kernel.org>
-In-Reply-To: <20250817024607.296117-1-dongml2@chinatelecom.cn>
-References: <20250817024607.296117-1-dongml2@chinatelecom.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755568169; c=relaxed/simple;
+	bh=mFSwuQq29eL5ikK1atvaaM8p+ErOLs3QagywIH+SJGg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UGjxzg0zT6shUo5qfkrlieqbh0xZtYrMG41+H5toWbvh6gRsxxMEXbsfkxW2bpG3TXsh+WAz3Q8QAa9rhwWxpptQcuI4d63266OnoMDw4AUulO3uglb3Sek6yH4+3B6qVxTZxuiHXg754b9UpcITj1VgvRTfwA54vo9592H5UUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M0qRF4pt; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J11Kdi008759;
+	Tue, 19 Aug 2025 01:49:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=mFSwuQ
+	q29eL5ikK1atvaaM8p+ErOLs3QagywIH+SJGg=; b=M0qRF4pt/gbcJ3OUhEMZWF
+	xAIg3zSAzWwLmksP0WYewuE2mmGWH+RHxRS9FO7RNyYdCEDn3QUUQQz76vKHqwMm
+	dSXeO+f5002/G4tN7TYmsQOpATD7YrNGG3oAiNzseXRnkYJT7vcMTwd3mUyTjOPx
+	qNxfdlJs+JaU3heFmQOkE+E4WhxrnwxN3E5yiOPyTYirkSbgoVhp+taR0Wjuj2aa
+	i0qQUXAdXqzbQd+1Giqz07Qk+aCnLGaEuRe8rDolK/cm2pk8650wF1iXUS+R5wl1
+	w8V+01pHh3Haa+421FdW0ymEFeIhO6oT7iCq0ZOGJiYpMwpVyr9h/o/mGrzxqjKg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jge3v2qc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 01:49:11 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57J1nAOs026453;
+	Tue, 19 Aug 2025 01:49:10 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jge3v2qa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 01:49:10 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57J10VRA002762;
+	Tue, 19 Aug 2025 01:49:09 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48k6hm82kq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 01:49:09 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57J1n7NJ21954836
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Aug 2025 01:49:08 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D88562004B;
+	Tue, 19 Aug 2025 01:49:07 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 06C2320040;
+	Tue, 19 Aug 2025 01:48:58 +0000 (GMT)
+Received: from aboo.ibm.com (unknown [9.150.8.12])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 19 Aug 2025 01:48:57 +0000 (GMT)
+Message-ID: <091c6181643ca4ce7c124fd2380934be6707cbbb.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 5/7] selftests/mm: fix child process exit codes in
+ ksm_functional_tests
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+        lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
+        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+        baohua@kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, donettom@linux.ibm.com,
+        ritesh.list@gmail.com
+Date: Tue, 19 Aug 2025 07:18:55 +0530
+In-Reply-To: <20250816144322.nh7qwwfiuhnjp76g@master>
+References: <20250816040113.760010-1-aboorvad@linux.ibm.com>
+		 <20250816040113.760010-6-aboorvad@linux.ibm.com>
+		 <20250816144322.nh7qwwfiuhnjp76g@master>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FcM3xI+6 c=1 sm=1 tr=0 ts=68a3d817 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8
+ a=pGLkceISAAAA:8 a=yAwLp-9Eto-ypyUmQMwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: yj57Oo9K3_U8fOGNUi5FqhSRHEcwChgs
+X-Proofpoint-ORIG-GUID: 8UwoA57xrsbN89v7L5QtWBCKV0vJwOi7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAxMSBTYWx0ZWRfXwLuo5gQIuJdF
+ wtIhmfJszCl1cj/LrNH7Xfqk6n5BGbxktCpnW7TRZ/sBm357uaqgneMHFa6lI30pyCwDbsufA5n
+ biTDFgNJPQEdseYwxrVJty+0pHQvY50bGoJXuxX/IuYQ3W95La7/+i1/FoXZ4KAokSskcIC1KSp
+ +YOBO0gdxmrQqB27gmWT1gsutnuwYArFX4zQ9b41/fumTveuUV3ZCwOz9CTmlcgDGSL+tMpNCAx
+ 91MNbY+Nl505ZocBVGw0garT3HrKhOcEc/JJvI58qQ45nMf6a+9fUFiEeD9wuNj7BirTprPe+pP
+ eSSwsWOSJ7FpnzYekQ+Wcq4bUGQoEWTeqcgy8bBKd18C+wxJKj8X2NISXrIZo7bkf4BbU8a22iw
+ nYxq/ZK3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ phishscore=0 clxscore=1015 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160011
 
-On Sun, 17 Aug 2025 10:46:01 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+On Sat, 2025-08-16 at 14:43 +0000, Wei Yang wrote:
 
-> For now, the budget of the hash table that is used for fprobe_ip_table is
-> fixed, which is 256, and can cause huge overhead when the hooked functions
-> is a huge quantity.
-> 
-> In this series, we use rhltable for fprobe_ip_table to reduce the
-> overhead.
-> 
-> Meanwhile, we also add the benchmark testcase "kprobe-multi-all" and, which
-> will hook all the kernel functions during the testing. Before this series,
-> the performance is:
->   usermode-count :  889.269 ± 0.053M/s
->   kernel-count   :  437.149 ± 0.501M/s
->   syscall-count  :   31.618 ± 0.725M/s
->   fentry         :  135.591 ± 0.129M/s
->   fexit          :   68.127 ± 0.062M/s
->   fmodret        :   71.764 ± 0.098M/s
->   rawtp          :  198.375 ± 0.190M/s
->   tp             :   79.770 ± 0.064M/s
->   kprobe         :   54.590 ± 0.021M/s
->   kprobe-multi   :   57.940 ± 0.044M/s
->   kprobe-multi-all:   12.151 ± 0.020M/s
->   kretprobe      :   21.945 ± 0.163M/s
->   kretprobe-multi:   28.199 ± 0.018M/s
->   kretprobe-multi-all:    9.667 ± 0.008M/s
-> 
-> With this series, the performance is:
->   usermode-count :  888.863 ± 0.378M/s
->   kernel-count   :  429.339 ± 0.136M/s
->   syscall-count  :   31.215 ± 0.019M/s
->   fentry         :  135.604 ± 0.118M/s
->   fexit          :   68.470 ± 0.074M/s
->   fmodret        :   70.957 ± 0.016M/s
->   rawtp          :  202.650 ± 0.304M/s
->   tp             :   80.428 ± 0.053M/s
->   kprobe         :   55.915 ± 0.074M/s
->   kprobe-multi   :   54.015 ± 0.039M/s
->   kprobe-multi-all:   46.381 ± 0.024M/s
->   kretprobe      :   22.234 ± 0.050M/s
->   kretprobe-multi:   27.946 ± 0.016M/s
->   kretprobe-multi-all:   24.439 ± 0.016M/s
-> 
-> The benchmark of "kprobe-multi-all" increase from 12.151M/s to 46.381M/s.
-> 
-> I don't know why, but the benchmark result for "kprobe-multi-all" is much
-> better in this version for the legacy case(without this series). In V2,
-> the benchmark increase from 6.283M/s to 54.487M/s, but it become
-> 12.151M/s to 46.381M/s in this version. Maybe it has some relation with
-> the compiler optimization :/
-> 
-> The result of this version should be more accurate, which is similar to
-> Jiri's result: from 3.565 ± 0.047M/s to 11.553 ± 0.458M/s.
+Hi Wei,
 
-Hi Menglong,
+> On Sat, Aug 16, 2025 at 09:31:11AM +0530, Aboorva Devarajan wrote:
+> > In ksm_functional_tests, test_child_ksm() returned negative values to
+> > indicate errors.=C2=A0 However, when passed to exit(), these were inter=
+preted
+> > as large unsigned values (e.g, -2 became 254), leading to incorrect
+> > handling in the parent process.=C2=A0 As a result, some tests appeared =
+to be
+> > skipped or silently failed.
+>=20
+> This is because "the least significant 8 bits" is returned to parent, rig=
+ht?
+>=20
+>=20
 
-BTW, fprobe itself is maintained in linux-trace tree, not bpf-next.
-This improvement can be tested via tracefs.
+Yes, that's right. As per the WEXITSTATUS(wstatus) manual:
 
-echo 'f:allfunc *' >> /sys/kernel/tracing/dynamic_events
+WEXITSTATUS: returns the exit status of the child. This consists of the
+least significant 8 bits of the status argument that the child
+specified in a call to exit(3) or _exit(2) or as the argument for a
+return statement in main(). This macro should only be employed if
+WIFEXITED returned true.
 
-So, can you split this series in fprobe performance improvement[1/4] for
-linux-trace and others ([2/4]-[4/4]) for bpf-next?
-
-I'll pick the first one.
-
-Thank you,
-
-> 
-> Changes since V4:
-> 
-> * remove unnecessary rcu_read_lock in fprobe_entry
-> 
-> Changes since V3:
-> 
-> * replace rhashtable_walk_enter with rhltable_walk_enter in the 1st patch
-> 
-> Changes since V2:
-> 
-> * some format optimization, and handle the error that returned from
->   rhltable_insert in insert_fprobe_node for the 1st patch
-> * add "kretprobe-multi-all" testcase to the 4th patch
-> * attach a empty kprobe-multi prog to the kernel functions, which don't
->   call incr_count(), to make the result more accurate in the 4th patch
-> 
-> Changes Since V1:
-> 
-> * use rhltable instead of rhashtable to handle the duplicate key.
-> 
-> Menglong Dong (4):
->   fprobe: use rhltable for fprobe_ip_table
->   selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
->   selftests/bpf: skip recursive functions for kprobe_multi
->   selftests/bpf: add benchmark testing for kprobe-multi-all
-> 
->  include/linux/fprobe.h                        |   3 +-
->  kernel/trace/fprobe.c                         | 151 +++++++-----
->  tools/testing/selftests/bpf/bench.c           |   4 +
->  .../selftests/bpf/benchs/bench_trigger.c      |  54 ++++
->  .../selftests/bpf/benchs/run_bench_trigger.sh |   4 +-
->  .../bpf/prog_tests/kprobe_multi_test.c        | 220 +----------------
->  .../selftests/bpf/progs/trigger_bench.c       |  12 +
->  tools/testing/selftests/bpf/trace_helpers.c   | 233 ++++++++++++++++++
->  tools/testing/selftests/bpf/trace_helpers.h   |   3 +
->  9 files changed, 398 insertions(+), 286 deletions(-)
-> 
-> -- 
-> 2.50.1
-> 
+Since only the least significant 8 bits are preserved, negative return
+values can appear as large unsigned codes, so using small positive exit
+codes ensures the parent interprets the error code correctly.
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > This patch changes test_child_ksm() to return positive error codes (1, =
+2,
+> > 3) and updates test_child_ksm_err() to interpret them correctly.
+> > Additionally, test_prctl_fork_exec() now uses exit(4) after a failed
+> > execv() to clearly signal exec failures.=C2=A0 This ensures the parent
+> > accurately detects and reports child process failures.
+> >=20
+> > --------------
+> > Before patch:
+> > --------------
+> > - [RUN] test_unmerge
+> > ok 1 Pages were unmerged
+> > ...
+> > - [RUN] test_prctl_fork
+> > - No pages got merged
+> > - [RUN] test_prctl_fork_exec
+> > ok 7 PR_SET_MEMORY_MERGE value is inherited
+> > ...
+> > Bail out! 1 out of 8 tests failed
+> > - Planned tests !=3D run tests (9 !=3D 8)
+> > - Totals: pass:7 fail:1 xfail:0 xpass:0 skip:0 error:0
+> >=20
+> > --------------
+> > After patch:
+> > --------------
+> > - [RUN] test_unmerge
+> > ok 1 Pages were unmerged
+> > ...
+> > - [RUN] test_prctl_fork
+> > - No pages got merged
+> > not ok 7 Merge in child failed
+> > - [RUN] test_prctl_fork_exec
+> > ok 8 PR_SET_MEMORY_MERGE value is inherited
+> > ...
+> > Bail out! 2 out of 9 tests failed
+> > - Totals: pass:7 fail:2 xfail:0 xpass:0 skip:0 error:0
+> >=20
+> > Fixes: 6c47de3be3a0 ("selftest/mm: ksm_functional_tests: extend test ca=
+se for ksm fork/exec")
+> > Co-developed-by: Donet Tom <donettom@linux.ibm.com>
+> > Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>=20
+> If so:
+>=20
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+>=20
+> Thanks, I am afraid to make the same mistake if you don't point out.
+
+Thanks,
+Aboorva
+=09
 
