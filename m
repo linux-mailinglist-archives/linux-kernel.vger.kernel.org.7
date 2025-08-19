@@ -1,102 +1,95 @@
-Return-Path: <linux-kernel+bounces-775386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2A1B2BE98
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7BDB2BE92
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322A14E09DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818941895439
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1758321431;
-	Tue, 19 Aug 2025 10:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF38320CC1;
+	Tue, 19 Aug 2025 10:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jvZw2pXH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qHGT7Lwf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWDEn94v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B5C311C1D;
-	Tue, 19 Aug 2025 10:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638331E5207;
+	Tue, 19 Aug 2025 10:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598208; cv=none; b=F10nr9FLCRTiI7ZdLSFK92VFj0Y0JIWImfUHMwiHYBKTyUZWCfnNOynYSNmAXtNFhjhJW9flcy5Y9vXcQWDfV2iygbv8FaObaD5Y+EfSfl68afEwwkuw2EP7e23VXOrg0aya6yRbaMc/wvbs1+FHZJXjGvydWxsNJbDAYdNPuOs=
+	t=1755598215; cv=none; b=dsEI12RHPe4Wa7WN8335tfMC3+Z/S9xVvFrANKDRWX++StbTnXulMhc+U5HpJDHNxizVyoX0YmNZ/whD4/VdRkqqmmGOwMIDnWmPfZUFV7c6C/kgxg5upnazJpApm6uvJ8URewXBrnlq0KebShrnfVVw9lFoHejjSp7Rkqgkcws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598208; c=relaxed/simple;
-	bh=b28O4cM8czlKLsEeTCDRHg2eOg7qxUCHyWCHVaA07c8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=etdscjhYgfR9RKeRmvhGRh+NCQyELT2EkWSa/lpg79ehBXrL2OHFpLzc5JDX+Gpr+HUXI1FGIBOu13pGBiRZygzbrP7VgjAHhjGsyIYolASgqbMp5w2HQCT19i8Is/xFN13MCJmZ5DW6OYLGy8zNkqYRmbPazAd4jtGhIyM6cOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jvZw2pXH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qHGT7Lwf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 12:10:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755598205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T2XqfuRHWWMDxLgluu3oBnEeC+aaLkkbJZTHhHnP40Q=;
-	b=jvZw2pXHJ8qbbxAVEQUJelrl5zQhbMflP+OEwJuWjxp8yBeh8wM+mwWLsJJzJizxlf7I2j
-	npMa+3/gZxvIwGD8ept2U3Pnj9KDdb2kVVxEgKAD4yGk0BZ2TgECCfT0htE37KSFw1SKpK
-	JRbyACqJ755uREnlIc0NdFMaqw1+2WTaUMSFwwC8YSA3hmdBCKH7b+7RT2kDrboWJ1efAO
-	FHp6QLTbhpkT6e/yu7CkEdOEVqIr6dJLD1lycSZkx0L0I1sEe93jXKFybF+cG5T5m0uSrd
-	s1zEQc0I0MZkslZK+ah/kK1tKbrlwVoUkzwzC+ER8d8qnpouCQlSiu6tknTCTQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755598205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T2XqfuRHWWMDxLgluu3oBnEeC+aaLkkbJZTHhHnP40Q=;
-	b=qHGT7Lwfz/qTnYrsiG4G4mur2On57CSaDx0bSVDlt6Z34zMPisRgQAE7UFJOvCJ2f1LRre
-	HhxZTP/75c0MfbAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Jiri Kosina <jkosina@suse.cz>,
-	Aaron Hill <aa1ronham@gmail.com>,
-	Lukas Redlinger <rel+kernel@agilox.net>,
-	Oleksii Shevchuk <alxchk@gmail.com>,
-	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	linux-wireless@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] mac80211: Potential sleep in atomic context in
- __ieee80211_wake_txqs
-Message-ID: <20250819101004.KB4KbEO-@linutronix.de>
-References: <c15a819a-51de-467c-93fd-c321dd2e8ec9@kzalloc.com>
+	s=arc-20240116; t=1755598215; c=relaxed/simple;
+	bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f04g9SN1s6iVX9JKl/F6dFYp0nC3mpHI/eGesegukd1hBxUwWrqp8fkRuxMTli6FbMglsqVeenFr9QZqFskAWtA+tay9eoTVurTwt5DJkGk0hCu+aXgW1sqHhcVqOyz7NmFIrsul5pshrKryXw0Ez1Uln8DvjSX5aOkIZnuRjy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWDEn94v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E919C4CEF1;
+	Tue, 19 Aug 2025 10:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755598214;
+	bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qWDEn94vaaKVggOeZwM2QSuAXcS8TzDp5OGpwkfbComxpu10jXwSrdSNYB55QUE5e
+	 sgHFMkpIzu2JxpN9k0QPxR7O9tfkw6LjqGUvathkz+ObfH37ErjhFeKFAZwrtkbMLU
+	 3ZacutnHIP5C73pXB2nf6XxPqrOBNDHpXPLY/Hbm1P/cDZxFNuWrRYvBw2xfEErPQ9
+	 StOegzuQvfSXQ1r4x1B1I+35TZ5jg+cHEKyLgPLddS2WaVtwcPo7qvR1NrDs5QuqCP
+	 Dp7kyTHC7z9Fp2I864ECd8Q22eOsjM/po6bx4Kxwm95A9T6ZXJuqFc8VR3jj0kKSGq
+	 QKoj+eghNYcog==
+From: Christian Brauner <brauner@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] coredump: Fix return value in coredump_parse()
+Date: Tue, 19 Aug 2025 12:10:09 +0200
+Message-ID: <20250819-vorweg-scherzen-e5449a0bb785@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <aKRGu14w5vPSZLgv@stanley.mountain>
+References: <aKRGu14w5vPSZLgv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c15a819a-51de-467c-93fd-c321dd2e8ec9@kzalloc.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1149; i=brauner@kernel.org; h=from:subject:message-id; bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQs8W1Ke5M3PekE84G7Bct5vk698rri7PEHJeynF62e9 2snr82ego5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJTNrFyHB7v96SJR2iJ27M /KC5eEro7l9f2TqXnGSryS6uE7y2640Hw/+8AyuDl562nxjLMaeYqyeilOGNoOlOk4oFpy+U5f8 ++Y0BAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-19 01:56:00 [+0900], Yunseong Kim wrote:
-> Hi,
-Hi,
-
-> I found a potential PREEMPT_RT issue I noticed in __ieee80211_wake_txqs()
+On Tue, 19 Aug 2025 12:41:15 +0300, Dan Carpenter wrote:
+> The coredump_parse() function is bool type.  It should return true on
+> success and false on failure.  The cn_printf() returns zero on success
+> or negative error codes.  This mismatch means that when "return err;"
+> here, it is treated as success instead of failure.  Change it to return
+> false instead.
 > 
->  static void __ieee80211_wake_txqs(struct ieee80211_sub_if_data *sdata, int ac)
->  {
->      ...
->      local_bh_disable();
->      spin_lock(&fq->lock);
->      ...
->  }
 > 
-> This sequence of local_bh_disable() followed by spin_lock(). On an 
+> [...]
 
-As explained in the previous mail regarding for
-inet_twsk_hashdance_schedule(), this is fine.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-> Best regards,
-> Yunseong Kim
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Sebastian
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] coredump: Fix return value in coredump_parse()
+      https://git.kernel.org/vfs/vfs/c/55f6e0b265d6
 
