@@ -1,210 +1,172 @@
-Return-Path: <linux-kernel+bounces-775693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C09BB2C3AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF46BB2C3BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5849188B543
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9974A04DB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F172C11DD;
-	Tue, 19 Aug 2025 12:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70C3305046;
+	Tue, 19 Aug 2025 12:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NPCCtEI6"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HK7Gjja/"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5E830507E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297B730504B
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755606478; cv=none; b=QdmDi+Jfpd0P+o3PH6eVBtTGIsuS5kd38DnivCg41bk+bjJp9TiCf+QJNBDnbDGTU5sJllm8/jhb0WZAFHXABB6Qu6vRJqnSULNnZbe3IETd9EuL8nOW4Z68YIrFsQw38ypOwTe9aeh76P1G5DYb7JdL/gnYEjuM3AW3EN6ieoA=
+	t=1755606507; cv=none; b=HFle6TCcTwDk3/APkIv8wzJ0bTC62bWuut0GD5/odtmYMvGLcJhUewz1HED8OtGlYQqhZ91yfQ42daxF1HwgPc1TRaRrHNQjRCR1kbaSQ1m6tiKad4jtwbgluq1EEJXGrEna94kAZyFSX4j1lpQyQfxsa5kcuOLaNStavDH1anY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755606478; c=relaxed/simple;
-	bh=ukBqOMPDevcZIl1hAa3643kHafqFVHmbGBDgRQC4Xdo=;
+	s=arc-20240116; t=1755606507; c=relaxed/simple;
+	bh=buGarXLbvc7EvsGi4DdEeHT+bY6nqBYxXRUrx3PSZKc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nwA9gViE8MKJgmnMwmfKPNz4496Cjw7MacS05XK4oe8k6EfEqkTdrZwyOlDRXaI5mk2wuwVYGAdDTrnFTyCbimCJrt69FC+LNy0khpc2hmn5H3ECUYCoLLYiE0uDMJOZLv2Z7n6vpALS1mp1oC184lp8dtAG13YexcsXnrjC/GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NPCCtEI6; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d60593000so39438457b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:27:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=Mt6QiLZisD7cmw+GXL7/O+tD65dsPLyCU8sbgdFzEtiTGbA99AckG94lUGu4cRrubDGGhU95TTBoRjL++IwPGkmZipqXwiRWFRxYp//uWaq85BESaXIzjiNNf6dotasMtHHejcRlEzEI7HHW8J+gZVJl4roSHwoOTb4zr23N+No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HK7Gjja/; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55ce522c7a3so4341475e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755606475; x=1756211275; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yZtv5kbth628kTnUK+fDvEY/2S0WoSxVvPU3B2+mRwI=;
-        b=NPCCtEI6XvAmFNb4DNx+ftibxkdy537vheCPjPP+k9zFKs3si/Pq3G5g9GDHXxFyfv
-         Xp2ExeJ5KvPwBvp67EspgPvEPBOOoNCLY/cUMoibir9/4RZA5Fa5h/xI63iKsEq7Fv4j
-         0izmiWBDGvMVGuw6Dg6R7fl1mhmCsMR6Onbj+tPJUuHSSB/nQIC4WTNujN+UeRd4AvRD
-         nbAP824DGcgoOkoShGpXNTRdZ2ut0o9AtYW5xEXTUEvc49KE4nZ7NUUYKPUn20m4ugBa
-         p4YJ5YKe4OumkfeMi6m1n6Vn4OJXEi9z+AEhrUmbpoNVAGRMQFTiR8PvrcP0LUSSuPkJ
-         QvCQ==
+        d=suse.com; s=google; t=1755606503; x=1756211303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vJQbWEgtxERuDWNRq8pog/2VqdvtISN3ib6sFHsfRPU=;
+        b=HK7Gjja/z1BgMakU5XEBbmXXynxAbIoftZhuRqaWKsfj+dIhCRJcHRs4FTpF87U7w9
+         zFK/JVfprTBtAylNN4Kq0LJhwWNkEUNMX5XWR7Gm5EC3R5iu18jZ5ZDhTxcGj55V/1hm
+         q4WJCBCDUxZBMVeT5CzkztLDJlXNqqsmpeMXdDDxCuKU4zlnD7/f3FE/yCPdg3DI+pn1
+         rliRVh3kjEnZCKhU+iGjPa6J21OT9LjxJek/7nz2chilemoqdhNxQOHVPujH20wU9Ycc
+         d7Rzv5sK+a/2KC2Pvc7crsRJ3/WgPWgbzvLj/Pe942eIZQeq7SppnjpZl6AG+MdS8wDw
+         JAZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755606475; x=1756211275;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yZtv5kbth628kTnUK+fDvEY/2S0WoSxVvPU3B2+mRwI=;
-        b=P8urMl9e+bc1f09ojRIuqV9LAzXD9XnVI4c49CNUnzBGubhjO3lMnsZJ40NUd0V8vP
-         dBKSl5+4swrEQ2/tvgHyuDPJgK3PxAtibuIWmBJEyuwpxX1BpKmZRgCeheDJT+33dOUI
-         ze/Pdx+DeK91ccnvOPDdx9QRnT3kqEMW0Zmcu/z8p+uBxwV6SUCsWTooZ0YQeVn7Jiw7
-         JwXybsx7YxXjEUKD14XhjX4tGvfl4wG++rvq6EqFN9rIdeOTpgnzSzsEIW4rfcIGVDnm
-         Pl15+V+RFwGTSiC+DrBOYcIlL5cOZAu95H8c/rBTYc9OryvMxR+n0Elpx2QGxMNayw/R
-         vzAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXk7nIVtqF3kshjS37vRDLBmJ6sbRRhNNjmdmeyz4drc2bq99Fy5VOSfan7gmlb0FixkW8Xx/rhwEyAV0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx18tlgorLZJy8ydKMHDZ0slrB/wsfAyMvy29kBHW88NAD0cLFf
-	dAGh5H3cjn48t1X62Aq9LTc40REoKv4Ig+mqVOqvRZ2H6dNvx3ZQUnuJrfaI20tFdqn7XdkxbPG
-	U/HADafgft3f1ipMLFcRkdES6wbq0HZDveRqRuYwS0w==
-X-Gm-Gg: ASbGncvEJIsF9Qwo8+caC740jID9+RKusiF4lcQFfaRwqSazov2bcIS2eqeUaBgnY4U
-	Ry+g9g9XG+egWAeOIZyechhJhxQsZA792k4pLOxVXJrcYumW0LiIYo9V2H4Z3Hn0o45cGmSNZFF
-	5sHVI/QmqKkLVt2N/EH8bCoQ11s3N/f2eFxY7nxEewm9pesZK7HiYXFhNTfRJ6mLuIB1kSptgax
-	J4o5qY=
-X-Google-Smtp-Source: AGHT+IGPSjRE772VSErcWH57I2UwSaBhGARpWSDSr8nygBbsS+Ayx0vpuG9nPJpw7rtBlA7oFHKd2+vlR9/sAMgL0DE=
-X-Received: by 2002:a05:690c:55c7:20b0:71f:a20b:6d39 with SMTP id
- 00721157ae682-71fa20b735bmr9906017b3.27.1755606475553; Tue, 19 Aug 2025
- 05:27:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755606503; x=1756211303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vJQbWEgtxERuDWNRq8pog/2VqdvtISN3ib6sFHsfRPU=;
+        b=U+zo109HKNigvamaP0ZQPVxqiFqPLAWwugmYfoKruZRw14EHgWxeQpIki+J3jO5Cjb
+         463liOSemvgdynHkfShgP+II8wawLIB6oAXhAJY1FJFBULsQOSlHVo/xeDzvDM3/D6qM
+         d11Uy4/WxY3p7QXaYkNBctW15U/ibR9MoIeCDSj7oEoxS4Hbm51ureISmiHz6iT7OG2w
+         A3CSYKaUu3AP+aurU4JzsfjprQf7LwB+7W7sr7Jp5r4uJm35NRA82G25X66qit6w8P5y
+         4hQV4fhTnAbnvTSCf1Oa6ZvThu06ygcZSWBMyQTqgUyR3Jmq9RRBKR+EwyzK0evyxGfe
+         bHGw==
+X-Gm-Message-State: AOJu0Yxij39fmgALOO6J+8z2kXBWvTnWowHK+fLVD/sSpuGEs2gCk+bJ
+	kuxsfKx7C8+kXfPntgy8En/EpGwUuWgK8WxG1EqqDRBf1pTgGyNvDOVph1Zn4EIUeg1hE6hZloH
+	3IkLQIMD1XfGXDfrex3oOiYn9niLoGzH2otzJHJRhIg==
+X-Gm-Gg: ASbGncvoGu0+LFCucPUFeEgePXLd4cdyRhNJXm5obWVd2hryexJfgjgE1eyWKuGcyNw
+	GTz0/l8KY36cGA1h2sCWWF71kF/vkRFQeQpxG138NvExHKZtfQCGEk1RYIWG/ylqzK6o/n6as/M
+	aPrgKREtBBQwJRIRz40EFyPJVs8uaAiGZB0tbH4obCXanpwf8S0NGrUsV1u2iX6ePshdlPJjTJU
+	42lex56h+LrolmOGdgE18wElVCWQWL2eTVa90KZPJUJesbUzi0=
+X-Google-Smtp-Source: AGHT+IEXbzyfXRoTyeioUeCb52ldZMnHgEO4zOYG+njI75/BqqE1v0njwQusRTbE55xh3/SiXhJNduE0VksPYXBg0GQ=
+X-Received: by 2002:a05:6512:2528:b0:55b:8277:22a2 with SMTP id
+ 2adb3069b0e04-55e007af663mr665215e87.21.1755606502882; Tue, 19 Aug 2025
+ 05:28:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 19 Aug 2025 14:27:19 +0200
-X-Gm-Features: Ac12FXzmR131GzmNGplYUoHaNI20Fn5hCBuzfHUqZVmIB9H896qML1tj6z64tsY
-Message-ID: <CAPDyKFoe9=4KgOsPUX6FOE+yPxdUqAxRec5yKY2h6uFOeUvvDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] pmdomain: Partial refactor, support modem and RTFF
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, y.oudjana@protonmail.com, 
-	fshao@chromium.org, wenst@chromium.org, lihongbo22@huawei.com, 
-	mandyjh.liu@mediatek.com, mbrugger@suse.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, kernel@collabora.com
+References: <20250815094510.52360-1-marco.crivellari@suse.com> <aJ92vqBchsh-h-0z@slm.duckdns.org>
+In-Reply-To: <aJ92vqBchsh-h-0z@slm.duckdns.org>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 19 Aug 2025 14:28:12 +0200
+X-Gm-Features: Ac12FXwmGEw5DI9K2XIdah8EaqW8uRUhGQ9QeUYrcEeNGzW_1qq8lGb5rb80WeQ
+Message-ID: <CAAofZF5U_fND+te4Sj_+TQPgZH_DDTneN2XLyY7a0niGBjGjaA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Workqueue: replace system wq and change
+ alloc_workqueue callers
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 5 Aug 2025 at 09:48, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Changes in v3:
->  - Dropped specified items for cells restriction as suggested by Rob
->  - Fixed an issue in patch 4 still referencing "mediatek,bus-protection"
->    as it is entirely replaced by "access-controllers"
->
-> Changes in v2:
->  - Added #access-controller-cells allowance for MT8188/95 infracfg_ao
->
-> This series is a subset of [1], leaving out the Hardware Voter specific
-> bits for MT8196 until the discussion around it reaches a conclusion.
->
-> Even though the proposed code was born as a preparation to support the
-> MT8196/MT6991 SoCs power domain controllers, it is a necessary cleanup
-> for all power domain controllers of all of the currently supported SoCs
-> from MediaTek.
->
-> You may also notice the addition of support for modem power sequences:
-> this was brought up 6 months ago (or more) by community contributors
-> (mainly Yassine Oudjana) that were trying to upstream the MediaTek
-> MT6735 Smartphone SoC and needed support to provide power to the MD
-> subsystem - so, even though in this specific series the code for the
-> modem power sequence is not yet triggered by any SoC, please please
-> please, let it in.
-> Besides, "a bunch" of upstream supported SoCs do have the MD power
-> domain even though it wasn't added to their drivers (because if there
-> was no support in the driver, it would just crash the system); the
-> addition is something that I plan to do at some point, but definitely
-> not now as I have no bandwidth for that (bar MT8196, which will have
-> this domain).
->
-> Compared to v1 in [1]:
->  - Changed mediatek,bus-protection to access-controllers
->    as suggested by Rob (thanks!)
->  - Added commits to document #access-controller-cells on all of
->    the access control providers
->
-> In the meanwhile.... relevant excerpt from the old series:
->
-> This series refactors the bus protection regmaps retrieval to avoid
-> searching in all power domain devicetree subnodes for vendor properties
-> to get syscons for different busses, and adds a new property which is
-> located in the power controller root node containing handles to the same.
->
-> Retrocompatibility is retained and was tested on multiple SoCs in the
-> Collabora lab - specifically, on Genio 350/510/700/1200, and manually
-> on MT6795 Helio (Xperia M5 Smartphone), MT8186, MT8192 and MT8195
-> Chromebooks.
->
-> This was tested *three times*:
->  - Before the per-SoC conversion in drivers/pmdomain/mediatek
->  - With per-SoC conversion code but with *legacy* devicetree
->  - With per-SoC conversion code and with *new* devicetree conversion
->
-> All of those tests were successful on all of the aforementioned SoCs.
->
-> This also adds support for:
->  - Modem power domain for both old and new MediaTek SoCs, useful for
->    bringing up the GSM/3G/4G/5G modem for both laptop and smartphone use
->  - RTFF MCU HW, as found in MT8196 Chromebooks and MT6991 Dimensity 9400
->
-> ...and prepares the pmdomain code to accomodate only the directly
-> controlled power domains for MT8196 (HW Voter support was left out).
->
-> [1] https://lore.kernel.org/all/20250623120154.109429-1-angelogioacchino.delregno@collabora.com
->
-> AngeloGioacchino Del Regno (10):
->   dt-bindings: memory: mtk-smi: Document #access-controller-cells
->   dt-bindings: clock: mediatek: Document #access-controller-cells
->   dt-bindings: power: mediatek: Document access-controllers property
->   pmdomain: mediatek: Refactor bus protection regmaps retrieval
->   pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
->   pmdomain: mediatek: Move ctl sequences out of power_on/off functions
->   pmdomain: mediatek: Add support for modem power sequences
->   pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
->   pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
->   arm64: dts: mediatek: Convert all SoCs to use access-controllers
->
->  .../bindings/clock/mediatek,infracfg.yaml     |   3 +
->  .../clock/mediatek,mt8186-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8188-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8192-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8195-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8365-sys-clock.yaml      |  15 +
->  .../mediatek,smi-common.yaml                  |  16 +
->  .../power/mediatek,power-controller.yaml      |  37 ++
->  arch/arm64/boot/dts/mediatek/mt6795.dtsi      |   5 +-
->  arch/arm64/boot/dts/mediatek/mt8167.dtsi      |   6 +-
->  arch/arm64/boot/dts/mediatek/mt8173.dtsi      |   4 +-
->  arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  17 +-
->  arch/arm64/boot/dts/mediatek/mt8186.dtsi      |  12 +-
->  arch/arm64/boot/dts/mediatek/mt8188.dtsi      |  23 +-
->  arch/arm64/boot/dts/mediatek/mt8192.dtsi      |  13 +-
->  arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  20 +-
->  arch/arm64/boot/dts/mediatek/mt8365.dtsi      |  16 +-
->  drivers/pmdomain/mediatek/mt6795-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8167-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8173-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8183-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8186-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8188-pm-domains.h |   6 +
->  drivers/pmdomain/mediatek/mt8192-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8195-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8365-pm-domains.h |  14 +-
->  drivers/pmdomain/mediatek/mtk-pm-domains.c    | 399 +++++++++++++++---
->  drivers/pmdomain/mediatek/mtk-pm-domains.h    |  74 +++-
->  28 files changed, 594 insertions(+), 181 deletions(-)
->
+Hello Tejun,
 
-Patch 3->9 applied for next, thanks!
+Sorry for another email.
 
-Note, patch 3 is also available on the immutable dt branch for SoC
-maintainers to pull in.
+Another question / observation: I guess maintainers can't just pull
+the changes and merge for the next release, if the workqueue changes
+(e.g. changes in queue_work() etc) are not also merged, right?
 
-Kind regards
-Uffe
+I received a reply here, in the meantime, in "Workqueue: fs: replace
+use of system_wq and add WQ_PERCPU to alloc_workqueue users"
+(https://www.spinics.net/lists/kernel/msg5811817.html).
+
+Thank you.
+
+Marco
+
+On Fri, Aug 15, 2025 at 8:04=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello, Marco.
+>
+> On Fri, Aug 15, 2025 at 11:45:06AM +0200, Marco Crivellari wrote:
+> > =3D=3D=3D Introduced Changes by this series =3D=3D=3D
+> >
+> > 1) [P 1-2] Replace use of system_wq and system_unbound_wq
+> >
+> >               system_wq is a per-CPU workqueue, but his name is not cle=
+ar.
+> >               system_unbound_wq is to be used when locality is not requ=
+ired.
+> >
+> >               Because of that, system_wq has been renamed in system_per=
+cpu_wq, and
+> >               system_unbound_wq has been renamed in system_dfl_wq.
+> >
+> > 2) [P 3] add WQ_PERCPU to remaining alloc_workqueue() users
+> >
+> >               Every alloc_workqueue() caller should use one among WQ_PE=
+RCPU or
+> >               WQ_UNBOUND. This is actually enforced warning if both or =
+none of them
+> >               are present at the same time.
+> >
+> >               WQ_UNBOUND will be removed in a next release cycle.
+> >
+> > 3) [P 4] upgraded WQ_UNBOUND documentation
+> >
+> >               Added a note about the WQ_UNBOUND flag removal in a next =
+release cycle.
+> >
+> >
+> > Per-subsystem changes will be submitted in different series inolving al=
+so
+> > maintainers.
+>
+> I'm afraid these are a bit intrusive for me to apply directly. Can you
+> please split the patches in this and related serieses on subsystem tree
+> boundaries? e.g. Network flows through the same tree but different
+> filesystems often have their own trees. Please prefix the patch title wit=
+h
+> the respective subsystem's name. As the base patch is already in the mast=
+er
+> branch, you can ask each tree to take the patches. For trees that don't
+> respond after a couple pings, we can route them through wq tree.
+>
+> Thanks.
+>
+> --
+> tejun
+
+
+
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
+
+
+
+
+marco.crivellari@suse.com
 
