@@ -1,67 +1,58 @@
-Return-Path: <linux-kernel+bounces-775537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D3FB2C058
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:28:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184B7B2C05E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E19F1793FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2BF725802
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634A332A3E9;
-	Tue, 19 Aug 2025 11:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3081B326D5A;
+	Tue, 19 Aug 2025 11:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOJZXM7Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzDdyRCA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE32B284887;
-	Tue, 19 Aug 2025 11:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4002264AD;
+	Tue, 19 Aug 2025 11:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755602733; cv=none; b=eKzeM3OsVCrIwPxXZpuWeJ8WTajudO4cRG7P+wNEAHbdlww4UqAp6rGmQQfAuzWi+qjKpwxmNZJsWRy6XpxvWIg/4PUkBphntPnOqPhUyTWS38nYMFNaKu8xemNKlRNz1DOaWUnMwaZFFGBBal52UNpCUiJ5msn9XeDt47KFp1c=
+	t=1755602778; cv=none; b=A5CxCzO9UtIl+tUbbbc1pEl67ndU9bhYBclcDt2d7xHlkehiQU6I+KvXiDM56S+zFonFLYFuaUfPyaA+sE+fIp/ZYrOWMATb4/9Cr7FWqCKHFl+Nb1ngQ4vLt8HbONk2BJMMTqelwue31K3/D4N+S4wsF36UQmIHrOmpGzJEKaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755602733; c=relaxed/simple;
-	bh=HIXNH+k5AYwL7MBbX/jTRB7KMiNH0ypU7X81zMRc7/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r0YUNXh14tpd/Co5/ecU/xs8Xibe5FjZdU3XQOP6h/4uJDvp/SQ/fy253Z+JeViFtQ4cAnlS0QtJy0OUTHGfZXqWxv8vLAODhyNBQPd6CqEWruelr1WSBUp+wo2VNSlR8RP9vRIx0LzArZxG3aMb3e7m+E0sa1V3LRKHhByEdnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOJZXM7Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9357C4CEF1;
-	Tue, 19 Aug 2025 11:25:29 +0000 (UTC)
+	s=arc-20240116; t=1755602778; c=relaxed/simple;
+	bh=2MQGGYY5C67KwZAA4lhJTPMgfCTIZdQ2xdG3lbQiqnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ief7KDhsv9dAW0x0QgUhZhHh7ICSWqpcfUg6jMxX19ixQzjGZCep9VG6nnDGYE58kBEpcxQO0nj6dDk0YMNPOCK3b4rPUc9CTsDpW4wP+Y5TdydJe6kZI8LjOQLttXS5i3PWxKjaZ71mEWnmX3e8087+E96g9weV1cr1TCijFjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzDdyRCA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642A5C116B1;
+	Tue, 19 Aug 2025 11:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755602733;
-	bh=HIXNH+k5AYwL7MBbX/jTRB7KMiNH0ypU7X81zMRc7/E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KOJZXM7QOyUckMMZmhpT7H577pr6tIlsT6NJwblLGkvhIxsGflcWGEtn1ChoCRiIK
-	 GuuK9Lr1DcjyAT840Lsg9QDcE+cI90V60ounOKRCfjcj3WHDmzNNdhVhIfSmPxn1hh
-	 9FhYEFOpEWnhEuj7XGto3aU3zRyqMMmh+a2sm7dKNDpeQuNguZVE4Y7t/UG+Jnyxza
-	 j3limtbV/E8fNTIiGtiL1vSIBts167rAw+hHPx0cfqsLwdzyKjNNXquxwnkGhSO4d3
-	 mwhlA0FiNSnG3XLKZVVJ3bbE37oGAAuih9BPNTwqWK7bQCPTc0jvijTbLyEUgL2MQW
-	 qwOetGRKhSGyQ==
+	s=k20201202; t=1755602777;
+	bh=2MQGGYY5C67KwZAA4lhJTPMgfCTIZdQ2xdG3lbQiqnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nzDdyRCAnBgyx1hoP4oS9SMtyZxZD9+7xgHfDPnka1TWWbz2DMFnQzXb9KghShB9n
+	 tOns3M9fEGUge7g87n7akAvhrEdpc67A/EueBUrV7e/smgzdwHwFVnaqW/zjDXruO8
+	 ueDjgnh4TjzdswidHOm72xS6viJoJQ3HlTAvbRCgYPRRbmOw2DiTDvePyAG9ewckue
+	 F26JB+G2cQ7vkpss6BMrlUT+lby6dnRnWEkevVss44P5vqbgWx+8jfTjS5Lt7tVLXL
+	 4NXwQQrx+kDGGFK4J5gHqvSs7ZiJu8Yh5QDiHNss/TDQv0o032hTMH51jzH1+GZ/bs
+	 /nP4Oum5sSIyQ==
+Date: Tue, 19 Aug 2025 13:26:11 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Shankari Anand <shankari.ak0208@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] rust: fs: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Tue, 19 Aug 2025 13:25:18 +0200
-Message-ID: <20250819-abgegangen-verfassen-0324c7d8909a@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250814100101.304408-1-shankari.ak0208@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH RESEND] rust: fs: update ARef and AlwaysRefCounted
+ imports from sync::aref
+Message-ID: <20250819-blinken-boykott-624b88ca7f02@brauner>
 References: <20250814100101.304408-1-shankari.ak0208@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,36 +60,56 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1084; i=brauner@kernel.org; h=from:subject:message-id; bh=HIXNH+k5AYwL7MBbX/jTRB7KMiNH0ypU7X81zMRc7/E=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsiVeLMPNXa1AQvnLBYtGnzMPxUyW9OZe8iC4xPPlmD 89hif1uHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPZOYHhf+63qVc8HyTfeGOu Yjvrt+8qsY5P81Ne3ntwQ/pSZNSqKW8ZGaa5+hXc3WUatuen765K3cwJz1aEpLyQDKs0dT8d3p3 0kAEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250814100101.304408-1-shankari.ak0208@gmail.com>
 
-On Thu, 14 Aug 2025 15:31:01 +0530, Shankari Anand wrote:
+On Thu, Aug 14, 2025 at 03:31:01PM +0530, Shankari Anand wrote:
 > Update call sites in the fs subsystem to import `ARef` and
 > `AlwaysRefCounted` from `sync::aref` instead of `types`.
 > 
 > This aligns with the ongoing effort to move `ARef` and
 > `AlwaysRefCounted` to sync.
 > 
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Acked-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+> ---
+> It part of a subsystem-wise split series, as suggested in:
+> https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+> This split series is intended to ease review and subsystem-level maintenance.
 > 
-> [...]
+> The original moving patch is here: (commit 07dad44aa9a93)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+> 
+> Gradually the re-export from types.rs will be eliminated in the
+> future cycle.
+> 
+> (Carry-forwarded acked-by tag and added Christian and Alexander as recipient)
+> ---
 
-Applied to the vfs-6.18.rust branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.rust branch should appear in linux-next soon.
+I think it would be nice if we could get all fs related patches sent to
+fsdevel so list-only subscribers get them. :)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.rust
-
-[1/1] rust: fs: update ARef and AlwaysRefCounted imports from sync::aref
-      https://git.kernel.org/vfs/vfs/c/eed8e4c07d85
+>  rust/kernel/fs/file.rs | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+> index 35fd5db35c46..18cf579d3312 100644
+> --- a/rust/kernel/fs/file.rs
+> +++ b/rust/kernel/fs/file.rs
+> @@ -11,7 +11,8 @@
+>      bindings,
+>      cred::Credential,
+>      error::{code::*, Error, Result},
+> -    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
+> +    sync::aref::{ARef, AlwaysRefCounted},
+> +    types::{NotThreadSafe, Opaque},
+>  };
+>  use core::ptr;
+>  
+> -- 
+> 2.34.1
+> 
 
