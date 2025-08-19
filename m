@@ -1,79 +1,41 @@
-Return-Path: <linux-kernel+bounces-775859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACECB2C5E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:41:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E5CB2C5CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207C1561A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80AD2188B16F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91F3310645;
-	Tue, 19 Aug 2025 13:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e09qY7GF"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB743375A9;
+	Tue, 19 Aug 2025 13:35:05 +0000 (UTC)
+Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB30322C62
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91F7305049;
+	Tue, 19 Aug 2025 13:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755610478; cv=none; b=bEqLUhNPYFSCEzdxT1P4SKEN70iVjQu3IBIZno97csw5lJ+WZGlqdBBFc+9ZPvyrXWyWTagXuWsKmXL3WBzPsKolQXDcBZwHNODfTYa+/blLGenwPY/K8SzDX3DTcBwc0qBaHC8hJC0Nm9cxNiulobPSwpj/RM2MJwuXM42wf6I=
+	t=1755610505; cv=none; b=Fy18/uTO8Z/GJX74I9G3osggGsI0JoYdekwSA2P239mq/thiVwEsZ3+kk72YoPfFiAVj3tzePNkwMLDIt7mJtzZVDufHGHVlZdBLx6NQVr6RKloy5VjOpWsi3qi7uK9yl8/BCDrmZnbNjb2VfPUHRzt16QtXbgKikJuVsrhiVsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755610478; c=relaxed/simple;
-	bh=wipzgxzu/rUCZ24ZntLQzz9oqTSOOsAe7X1A0+zrX08=;
+	s=arc-20240116; t=1755610505; c=relaxed/simple;
+	bh=wMsQp1X9ja9Cq7F1/2VTIGIn5RVWYokby0lQwsJsI58=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JpMzAoyPZLUXjVoPcqMMmzNQ5xPMIL4fKntAYnNcxH9hGBG3Jlvny7C3hxKfvtgaSvbGqF5tKLCuxlR6TdygTMA407byzL6/rzI9MbCvqztqX/3tlngCMDn0RskSI0RDtwEoez/Zk8M/2dTzQawj/LKqDBjNgOnE8Supt7qG6cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e09qY7GF; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1b00f23eso29662085e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755610475; x=1756215275; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a9ZFei03fy4ZPyixVVD0bhhT9fRXV0zABOzey2pvCiY=;
-        b=e09qY7GFqk2uaOkiQe3ID/b1q5kb8s1xn35ziiaUZ+1zHECeWonxQJoPp6Y9dSOglV
-         1oXZLKEbLZ+7dXCUFP9J7aXYENfzubh4muCxPj88BjjMLi/l6M4A3VNVxcHyFDcg3m/O
-         9oizJST5wMvxj/eGXMcvcNAdLmW6ahOs+asL2A5+gNUiBiTV92Y1mZG18G5Yml1CCW9j
-         YSpHjoL0w4c5uGtPtaDy5PwBKh0WeyuQkHwtTkayt3Mt9ohr5kQPI3VWrwpBNmOtHne6
-         z1nNYT/j92GR3VIvPBolgSgf3qy/sHn+9PEByLSN9w35yffeVqlGZAYlHTFZMhqAmCAj
-         juVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755610475; x=1756215275;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a9ZFei03fy4ZPyixVVD0bhhT9fRXV0zABOzey2pvCiY=;
-        b=LhaMoJRC7A3KSVRsXpzjiUh5j79JaSiWWvdTiKyVsAq4v+zJ+8jq0C9a6cYeODGsAG
-         QwvY5agafBzuweVI7ciQauWImL8cBo5ds+t5POsyRcpgv5WUvcVm/bzLr+2uk+29rRP0
-         FywW82bmnzKRp1wswFapENnk6EpmUuem38q3e3lKDLeVyUHY40vWLEANYV/heiSGC3uo
-         IpMZ//MYOc2cowFWPwxuECN2DdgstyGgUUh+Y4eaDkRIGamaUK5MxqxusdDsLiVcIkBc
-         0V8LZMvjTzRkQWTVlHQgHwzcYgemO4OS4CFHLiR0eck4zF1KPO/kqSDRcdZvyvOmVnd7
-         UZEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYNcVUC1kOCmZQXrZ+av4AzMgWKdhhj2uuPKo3EtI8JDyoMEjRYvLKGCDdAM7XzOAEv/jj12KuWcmvvMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDGgU24D4kp4B/S3mRtuoTzXtgTEX0GSYrjdON7x4u4TOCmTxi
-	mvlJCJP4gqa9lh5DKFf/E7VOnIoh2dlOAGKUSyfL+FL47rRZHqRt6housnE79u4n/l4=
-X-Gm-Gg: ASbGncsxZcwsT9D+bI4WBQ2lH0iHItOGMKnf+f3KZLbZyJG4rhFKAbwJv+mb6knACx/
-	FgbuntLbV+48PuO3noLsPb7e/cnpOvjvgVTAAavE23ocZC2s87Jr5r6zuC5ZPeq9f7G0AqFCsaq
-	icKzdqsjur/Oi4CCdDwrcB59ABVpPkJPXQqz/vetp1tEC9UtdrQLjwgNLT4ly7wH6aSp4xnWeg9
-	OK4Ateoy45IHSmuByXQDS3o9BBMSS0lmF58mr+Y9vc/KA/d+Hl5uAjiNLnM2f+qOvKCccbvP92a
-	0FbeQXwhO3nhNQvunq7kVSMb9r72xPMDWZBv5cZMCG0NZ98NS14J2jF67bobOPjFkyFxNY310kQ
-	ltI/KJRNBHyrfcXNx9/WsAVNInmBqXexfClsRNrnuK/6rFQAXA0E+gy4fLbpwzP8=
-X-Google-Smtp-Source: AGHT+IGA4uZOavHskRVazrBsrJEpwCCS9yNXa5Q7x4nDv12AaruKezbMFjMhYQNh3voiuKoxjMWquQ==
-X-Received: by 2002:a05:600c:46c6:b0:456:24aa:9586 with SMTP id 5b1f17b1804b1-45b43dfff1amr20520035e9.21.1755610474714;
-        Tue, 19 Aug 2025 06:34:34 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b42a7756asm40936015e9.11.2025.08.19.06.34.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 06:34:34 -0700 (PDT)
-Message-ID: <552c0e8d-f3ae-4c2e-ac8d-f43cde5c5ccb@linaro.org>
-Date: Tue, 19 Aug 2025 14:34:33 +0100
+	 In-Reply-To:Content-Type; b=WHS5/l0sPk4afjbjLjl+dYaiyA1WxmGfVHFPGm+7PsxaA03mY4egEU/TeBYkHP00oVwxQWT5z1fkK1NNSSeVxiYhi1QYkiI6mvSE41Jg3swAdz1PEcyzZxLr+GZdFsZxlcNqoR54Zg64wJ/3gP9ybdyxdYKHfayGNynJ3OtUk/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
+Received: from MUA
+	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <mhej@vps-ovh.mhejs.net>)
+	id 1uoMUN-00000001Off-2Mdz;
+	Tue, 19 Aug 2025 15:34:59 +0200
+Message-ID: <7cfe68c2-a84a-4416-a9ca-3bf5225190a1@maciej.szmigiero.name>
+Date: Tue, 19 Aug 2025 15:34:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,55 +43,173 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/24] media: iris: Fix port streaming handling
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Stefan Schmidt <stefan.schmidt@linaro.org>,
- Vedang Nagar <quic_vnagar@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Renjiang Han <quic_renjiang@quicinc.com>,
- Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
- <20250813-iris-video-encoder-v2-4-c725ff673078@quicinc.com>
- <40673a17-a19c-4722-ae5b-272082af917b@linaro.org>
- <8b9d5f6e-ee95-e4d1-3fac-fdcb277a7af3@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <8b9d5f6e-ee95-e4d1-3fac-fdcb277a7af3@quicinc.com>
+Subject: Re: [EARLY RFC] KVM: SVM: Enable AVIC by default from Zen 4
+To: Naveen N Rao <naveen@kernel.org>, Sean Christopherson <seanjc@google.com>
+Cc: mlevitsk@redhat.com, Paolo Bonzini <pbonzini@redhat.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vasant Hegde <vasant.hegde@amd.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+References: <20250626145122.2228258-1-naveen@kernel.org>
+ <66bab47847aa378216c39f46e072d1b2039c3e0e.camel@redhat.com>
+ <aF2VCQyeXULVEl7b@google.com>
+ <4ae9c25e0ef8ce3fdd993a9b396183f3953c3de7.camel@redhat.com>
+ <bp7gjrbq2xzgirehv6emtst2kywjgmcee5ktvpiooffhl36stx@bemru6qqrnsf>
+ <aGxWkVu5qnWkZxqz@google.com>
+ <3xpfs5m5q6o74z5lx3aujdqub6ref2yypwcbz55ec5iefyqoy7@42g5nbgom637>
+Content-Language: en-US, pl-PL
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
+ 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
+Disposition-Notification-To: "Maciej S. Szmigiero"
+ <mail@maciej.szmigiero.name>
+In-Reply-To: <3xpfs5m5q6o74z5lx3aujdqub6ref2yypwcbz55ec5iefyqoy7@42g5nbgom637>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Sender: mhej@vps-ovh.mhejs.net
 
-On 18/08/2025 10:45, Dikshita Agarwal wrote:
-> 
-> 
-> On 8/16/2025 4:10 PM, Bryan O'Donoghue wrote:
->> On 13/08/2025 10:37, Dikshita Agarwal wrote:
->>> +    if (!ret)
+On 18.07.2025 10:19, Naveen N Rao wrote:
+> On Mon, Jul 07, 2025 at 04:21:53PM -0700, Sean Christopherson wrote:
+>> On Fri, Jun 27, 2025, Naveen N Rao wrote:
+>>>> Back when I implemented this, I just wanted to be a bit safer, a bit more explicit that
+>>>> this uses an undocumented feature.
+>>>>
+>>>> It doesn't matter much though.
+>>>>
+>>>>>
+>>>>> I don't see any reason to do major surgery, just give "avic" auto -1/0/1 behavior:
+>>>
+>>> I am wary of breaking existing users/deployments on Zen4/Zen5 enabling
+>>> AVIC by specifying avic=on, or avic=true today. That's primarily the
+>>> reason I chose not to change 'avic' into an integer. Also, post module
+>>> load, sysfs reports the value for 'avic' as a 'Y' or 'N' today. So if
+>>> there are scripts relying on that, those will break if we change 'avic'
+>>> into an integer.
 >>
->> I think you should have a consistent error pattern
->>
->> if (ret)
->>      goto error;
->>
-> Its done to avoid duplication of code, otherwise it would look like
+>> That's easy enough to handle, e.g. see nx_huge_pages_ops for a very similar case
+>> where KVM has "auto" behavior (and a "never" case too), but otherwise treats the
+>> param like a bool.
 > 
-> if (inst->state == IRIS_INST_STREAMING)
-> 	ret = iris_queue_internal_deferred_buffers(inst, BUF_DPB);
-> 	if (ret)
-> 		goto error;
-> 	
-> 	ret = iris_queue_deferred_buffers(inst, buf_type);
-> 	if (ret)
-> 		goto error;
+> Nice! Looks like I can re-use existing callbacks for this too:
+>      static const struct kernel_param_ops avic_ops = {
+> 	    .flags = KERNEL_PARAM_OPS_FL_NOARG,
+> 	    .set = param_set_bint,
+> 	    .get = param_get_bool,
+>      };
 > 
-> and more duplication when encoder is added.
+>      /* enable/disable AVIC (-1 = auto) */
+>      int avic = -1;
+>      module_param_cb(avic, &avic_ops, &avic, 0444);
+>      __MODULE_PARM_TYPE(avic, "bool");
+> 
+>>
+>>> For Zen1/Zen2, as I mentioned, it is unlikely that anyone today is
+>>> enabling AVIC and expecting it to work since the workaround is only just
+>>> hitting upstream. So, I'm hoping requiring force_avic=1 should be ok
+>>> with the taint removed.
+>>
+>> But if that's the motivation, changing the semantics of force_avic doesn't make
+>> any sense.  Once the workaround lands, the only reason for force_avic to exist
+>> is to allow forcing KVM to enable AVIC even when it's not supported.
+> 
+> Indeed.
+> 
+>>
+>>> Longer term, once we get wider testing with the workaround on Zen1/Zen2,
+>>> we can consider relaxing the need for force_avic, at which point AVIC
+>>> can be default enabled
+>>
+>> I don't see why the default value for "avic" needs to be tied to force_avic.
+>> If we're not confident that AVIC is 100% functional and a net positive for the
+>> vast majority of setups/workloads on Zen1/Zen2, then simply leave "avic" off by
+>> default for those CPUs.  If we ever want to enable AVIC by default across the
+>> board, we can simply change the default value of "avic".
+>>
+>> But to be honest, I don't see any reason to bother trying to enable AVIC by default
+>> for Zen1/Zen2.  There's a very real risk that doing so would regress existing users
+>> that have been running setups for ~6 years, and we can't fudge around AVIC being
+>> hidden on Zen3 (and the IOMMU not supporting it at all), i.e. enabling AVIC by
+>> default only for Zen4+ provides a cleaner story for end users.
+> 
+> Works for me. I completely agree with that.
 
-Understood, IMO the pattern above is clearer and easier to read.
+Some Zen3 platforms (at least Ryzen SKUs) *do* enumerate AVIC in CPUID:
 
-Up to you if you want to change it though.
+> $ cat /proc/cpuinfo | grep -E '(model[[:space:]]{2,})|family|step' | head -n3
+> cpu family      : 25
+> model           : 33
+> stepping        : 2
+>> $   cat /proc/cpuinfo | grep avic | head -n1
+> flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov
+> pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb
+> rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid
+> aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe
+> popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy
+> abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core
+> perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs
+> ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a rdseed
+> adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves cqm_llc
+> cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk clzero irperf xsaveerptr
+> rdpru wbnoinvd arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid
+> decodeassists pausefilter pfthreshold               -> avic <-
+> v_vmsave_vmload vgif v_spec_ctrl umip pku ospke vaes vpclmulqdq rdpid overflow_recov
+> succor smca fsrm debug_swap
+>
+> $ cat /sys/module/kvm_amd/parameters/force_avic
+> N
+>
+> $ dmesg | grep AVIC
+> kvm_amd: AVIC enabled
 
----
-bod
+As you can see, currently AVIC works there even without force_avic=1 so why
+now hide it behind that parameter if errata #1235 is supposedly not present
+on Zen3?
+
+Also, this platform is apparently confident enough that the AVIC silicon is
+working correctly there to expose it in CPUID - maybe because that's CPU
+stepping 2 instead of the initial 0?
+> Thanks,
+> Naveen
+
+Thanks,
+Maciej
+
 
