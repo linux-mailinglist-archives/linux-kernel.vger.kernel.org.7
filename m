@@ -1,152 +1,132 @@
-Return-Path: <linux-kernel+bounces-775363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F44B2BE54
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:02:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21A1B2BE5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A61CE7A455D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:59:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A43624AF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D36930FF32;
-	Tue, 19 Aug 2025 10:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B01225784B;
+	Tue, 19 Aug 2025 10:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Lc3hCAm9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2brXP8Ck"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eHDzkgcc"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5889F3451D3;
-	Tue, 19 Aug 2025 10:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ABF3451D3
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597657; cv=none; b=oThOviToYrP9KFULC4vV15fKDU19XfaqjOXNX7+NIh7s44+0VTq05jbi+JWiMvJYnD1LWxrVEPElyLXbWPHGz2P8MaJaYj1KY/xY1CmU4bNJsJ2llel4FuNEf1ZqHmEIuiGNYRyZdBZZgg+TG01CbLsxDNCQobb263MU17b0mt4=
+	t=1755597713; cv=none; b=lmbweq1i5HyJq5Sh8tGKGVMIQvBrpw7yCZtetBb29q8Oy6gGxLCBwPFGQK4Sj4FHZ8/F500HxJAVjzfQd4ZbgBFfhdZfnmLFQjOcvU/l/OqcZNqNv212HZESw//ASPUAiCMAHZRk9zjyODDqcXLxn7x6i7K8vDeyZJotpY51rKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597657; c=relaxed/simple;
-	bh=tKG385zLApPrmYgg1y212g0XqqpZbgwznZlmTUIjBa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=un3g8WmezHjFZzv6fQKLMufXtZkRze1PsUErt+b0f4bOUqtoGMSqTqNZ/B5rMNqzWVO02jvHEfh8bUp817RjkNxIPOOY0MMeCWbudnbbbwOdc0NJgQVOJk8pZAEqpZ9Eu5J6KppXMXoCHFBKKkRourfDDkvqV0zLTEZ0GTZKatc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Lc3hCAm9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2brXP8Ck; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 12:00:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755597648;
+	s=arc-20240116; t=1755597713; c=relaxed/simple;
+	bh=6lrl+CrpiMNm7AidKMi7Yz+L8HFAbZ19UP7qvcWmmM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZfprbxhAdOnAr7hM3jQtHblB64WqDQFeLb04qU7Ub8tcR7zOYjYs9csvhUPZ2BDFTuiEYnT9OleJvybwL/mQr5UMCncHxfdNV08T6qLKyPNWYz12yIsbF6KaXwp4CHNCJSoE6uZXTAbFzjK/bOtWsMZZruEBTteiFlvFJDSfpoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eHDzkgcc; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 74D1D43192;
+	Tue, 19 Aug 2025 10:01:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755597702;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nJl/XWMsycTjvYGQzFnWsmROTTphBuImum1tAc0aB1k=;
-	b=Lc3hCAm9QqnZszBsyc+HllW9WeRXJc379CQY5oGagFF2UjqaipMjFDJVrQtKfh9+2YGb7Z
-	F8LNVOjResyLPlQy3oP00fajmsBIt0laBcPhQywELgUxi/ExW4aGLzuU1QmGcmE4QP0EFX
-	OPFsmEvt4snxihzsgUlredp6QoBwcgl8VD3/WGUHIDceMwbYsnu8ldyGQzrgulw4dEwuBI
-	JR4Xs78+DN0SLgqDBtTyB4ho9O5ytVBfA5HXIvFV4+7VWHkeGe+mVPiOMoD1RcV6EU6Qqr
-	zQawW4/DDYwPSrxjtArh6AnpbHf+QN/0G+B9hkCR8Yq/weZscC3sMbA/rnfTAQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755597648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nJl/XWMsycTjvYGQzFnWsmROTTphBuImum1tAc0aB1k=;
-	b=2brXP8Cknm/wTMNegAihVLlosxexHrtSPaxbeJlUrMga5JiAS/v1ERSmtE1vOYLJlp5OsZ
-	R1BRaBlpgfllzTAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Waiman Long <llong@redhat.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, Boqun Feng <boqun.feng@gmail.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2 2/3] Documentation: locking: Add
- local_lock_nested_bh() to locktypes
-Message-ID: <20250819100046.ymb_o7VA@linutronix.de>
-References: <20250815093858.930751-1-bigeasy@linutronix.de>
- <20250815093858.930751-3-bigeasy@linutronix.de>
- <db8defe4-14bf-4060-803f-e8b09a941d42@redhat.com>
+	bh=FFeOuo3C+LD3wY1Ey4Q0b2fLMCcGgtn4xZLXy86gnqE=;
+	b=eHDzkgccaumhYy47ovtESxgB1pkGVcF4qMMtRi0hQepRITouNAM6obLy/DYytNx0RdBQuL
+	w4DXMHxdszcKaxSSZ23XB9TvSBu9qwkuqegnVz/15+0+xVDPBQ9fKfVPR4c6udVwlHwZO9
+	0Du+GyB83MUoMvJ8y9rep3/uPNqcZwRMsn/5P9WDqZSuJHc28JdM98n8XOTUG7xYGTvsCh
+	V6gVfPmVwhIT2WPH8OKRQL/jR82iRlJl4xfigQlb7m16ann+TuvfUYyNBWY1ohiST1Qb5f
+	+yloICecyJBYi8kBpeQbrm9lrE24R42/3sp7y9g1mwSTgKVBTRWd0h+r8erOng==
+Date: Tue, 19 Aug 2025 12:01:38 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
+Message-ID: <20250819120138.6f656ae6@booty>
+In-Reply-To: <20250808152001.122f2da6@booty>
+References: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com>
+	<20250728-diligent-brainy-hyena-109dde@houat>
+	<20250728194430.082f9952@booty>
+	<20250731-tactful-jellyfish-of-perspective-cb0324@houat>
+	<20250808152001.122f2da6@booty>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <db8defe4-14bf-4060-803f-e8b09a941d42@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheehvddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeljeejuddvudetffdtudelfedugfduledtueffuedufefgudegkeegtdeihedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehinhhkihdruggrvgesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehjrghgrghnsegrmhgrrhhul
+ hgrshholhhuthhiohhnshdrtghomhdprhgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 2025-08-18 14:06:39 [-0400], Waiman Long wrote:
-> > index 80c914f6eae7a..37b6a5670c2fa 100644
-> > --- a/Documentation/locking/locktypes.rst
-> > +++ b/Documentation/locking/locktypes.rst
-> > @@ -204,6 +204,27 @@ per-CPU data structures on a non PREEMPT_RT kernel.
-> >   local_lock is not suitable to protect against preemption or interrupts on a
-> >   PREEMPT_RT kernel due to the PREEMPT_RT specific spinlock_t semantics.
-> > +CPU local scope and bottom-half
-> > +-------------------------------
-> > +
-> > +Per-CPU variables that are accessed only in softirq context should not rely on
-> > +the assumption that this context is implicitly protected due to being
-> > +non-preemptible. In a PREEMPT_RT kernel, softirq context is preemptible, and
-> > +synchronizing every bottom-half-disabled section via implicit context results
-> > +in an implicit per-CPU "big kernel lock."
-> > +
-> > +A local_lock_t together with local_lock_nested_bh() and
-> > +local_unlock_nested_bh() for locking operations help to identify the locking
-> > +scope.
-> > +
-> > +When lockdep is enabled, these functions verify that data structure access
-> > +occurs within softirq context.
-> > +Unlike local_lock(), local_unlock_nested_bh() does not disable preemption and
-> > +does not add overhead when used without lockdep.
-> 
-> Should it be local_lock_nested_bh()? It doesn't make sense to compare
-> local_unlock_nested_bh() against local_lock(). In a PREEMPT_RT kernel,
-> local_lock() disables migration but not preemption.
+Hi Maxime,
 
-Yes, it should have been the lock and not the unlock part. I mention
-just preemption part here because it focuses on the !RT part compared to
-local_lock() and that it adds no overhead.
-The PREEMPT_RT part below mentions that it behaves as a real lock so
-that should be enough (not to mention the migration part (technically
-migration must be already disabled so we could omit disabling migration
-here but it is just a counter increment/ decrement at this point so we
-don't win much by doing so)).
+On Fri, 8 Aug 2025 15:20:01 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-I made the following:
+> > > Some drawbacks of current code are because at every DSI attach/detach,
+> > > the samsung-dsim does drm_bridge_add/remove() itself:
+> > > 
+> > >  * To me this looks like a bad design, the samsung-dsim is always
+> > >    present and not hotpluggable, so why should it add/remove itself?
+> > > 
+> > >  * I have a debugfs patch to show in $BUDUGFS/dri/bridges_removed all
+> > >    the removes bridges: bridges after drm_bridge_remove() but not yet
+> > >    freed because refcount still > 0. But it causes crashes due to the
+> > >    samsung-dsim going backwards from "removed" to "added", and further
+> > >    hacks are needed to avoid this crash.
 
-@@ -219,11 +219,11 @@ scope.
- 
- When lockdep is enabled, these functions verify that data structure access
- occurs within softirq context.
--Unlike local_lock(), local_unlock_nested_bh() does not disable preemption and
-+Unlike local_lock(), local_lock_nested_bh() does not disable preemption and
- does not add overhead when used without lockdep.
- 
- On a PREEMPT_RT kernel, local_lock_t behaves as a real lock and
--local_unlock_nested_bh() serializes access to the data structure, which allows
-+local_lock_nested_bh() serializes access to the data structure, which allows
- removal of serialization via local_bh_disable().
- 
- raw_spinlock_t and spinlock_t
+I went back to my old debugfs series, updated it and sent a new
+iteration:
+https://lore.kernel.org/r/20250819-drm-bridge-debugfs-removed-v7-0-970702579978@bootlin.com
 
-Good?
+There you can see the lines added to drm_bridge_add() for handing
+"un-removed" bridges.
 
-> Cheers,
-> Longman
-> 
-> > +
-> > +On a PREEMPT_RT kernel, local_lock_t behaves as a real lock and
-> > +local_unlock_nested_bh() serializes access to the data structure, which allows
-> > +removal of serialization via local_bh_disable().
-> >   raw_spinlock_t and spinlock_t
-> >   =============================
+It's a few lines of code only, but I don't feel very happy with them. I
+look forward to knowing your opinion about those few lines.
 
-Sebastian
+So there were 3 issues I mentioned as reasons for this patch to
+samsung-dsim (only purely technical ones, not counting the "looks like
+a bad design" reason):
+
+ 1. debugfs needs special care for un-removed bridges: see this e-mail
+ 2. interferes with .gone flag: ruled out, N/A
+ 3. needs a horrible hack in hotplug-bridge
+
+No news about issue 3. I'm going to experiment with removing the
+hotplug-bridge but that will take time (as a prerequisite I most likely
+need to remove the "always connected" DSI connector first). Stay
+tuned...
+
+Best regards,
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
