@@ -1,59 +1,90 @@
-Return-Path: <linux-kernel+bounces-776232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C04B2CA56
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:16:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A82B2CA58
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E3B1770FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B11F85656F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7D22BDC19;
-	Tue, 19 Aug 2025 17:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3948B2F39DC;
+	Tue, 19 Aug 2025 17:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PM0s0ghi"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="KPPJJpOm"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C83524DFF3
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967902FF163
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755623751; cv=none; b=hj9vF5f4p4/PUgqcZSDJChERfkuKhnNT74Xukold0Bn6EQnGKnlslMbhSSVvandzFjoMp6CpSFNguPj6Q/SlyJzZdu/12nBRFOEGIlq6ZEM2VpeCpjfoJwrj9smlJZOUe8zO66kMsYSistSLM6WqUmh7WdjJrU6dydAgp0HY4lo=
+	t=1755623769; cv=none; b=LS+Fn11EGSYobEjwOZSvwTwAGf6Xt/De4n/xA5MYwmDesFXRl+tEF3Nd3HyV9B1lXobNW4IBVSCQvxce3Ohf3qpAHg6PNoOVsoimVtdw/Nu6JIVfpr4q5uA9spi9nqqIXVnc5FkZ3rbex7xwbs7mftfeeBNUJSajh9ai94hTaEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755623751; c=relaxed/simple;
-	bh=59OLgn+Wmey6vGPWX7fJHZWyFNGVdSSj6E7kpEluAdI=;
+	s=arc-20240116; t=1755623769; c=relaxed/simple;
+	bh=BZYDiTLstuZSLyabvvl+4QvFKJf5yMcRB/VfZpDWAm4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUdwLh22bLuxXeG/+VIp7L/khhau7smYOlnSgAScHyEvDx8VQocvfVGo6yk/rnZxVXQk+mOXefhq2TYNaoKog/Uqx4Mxf1pKqgeejzVJKbVRDuOnu3XtyWROpAtPm6N9ZPoPoLYjzSGOGPDnqtN9r4lilgW1fE14k1PcuyOJLdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PM0s0ghi; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 19 Aug 2025 10:15:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755623745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PiJkya2g4FSff5yfUkVXC41MIiQghloJYZcE1SJkKQ0=;
-	b=PM0s0ghiradGy03X4ixMIgB1feFBiOl0LfEPp8M3JIx3pNrtNS/5jHMuSo99IfK4CmL9rL
-	ksudLu01f1It0+rLdkLKcTRguI9GVKcf3BArCXnHtENWbUHVDqWhDiffebMOI53+S9fbn/
-	XRR8xy3T+P5gUIbforqLuYGimUzOt54=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@gogle.com>, Michal Hocko <mhocko@suse.com>, 
-	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in
- batch freeing
-Message-ID: <x3xp3cj6wpgxu5mjsd62fzvuzpn2mxpvlk6sau65si7bk6ncu5@dx6jbuacy42i>
-References: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
- <k6fpx5adh45t4jrxgiccq7acubwcgmi746crggxi6e4oihtvpt@thks5zrn53n3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tey3V32SBBnj2RO0rEU3gz2kEM5UuYD7FVjNfBcs2lfwz8bTefIUj4DBG+xcGHfCk5h1W+6iRpZQZErgDUs6j/3v4jaLKcU0rxYdit5HeTFhSD11eNuV6d2Co66xuyKHbSyOK+Mu1MwZMhsTV4gYHjUVdJ85rxx/LCBflu81Mpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=KPPJJpOm; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-74381ffff9fso2382053a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755623763; x=1756228563; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TuuWIhz3gxthyB2SlN/OhakmBPvUO7DWnkD44CfcuTk=;
+        b=KPPJJpOm+sIx0cBCE43jrOkAjOy1Z9k7A38ZtyzKilXpnJPE4PVhrh3/h0tfftH7VM
+         UAKOM5Xaq0/C5ulyRGZaZEYWwls2mzkueYFXfyoOll4lxni/jjJHyuiteWeWJ4Uj4uT+
+         ZAm1ktsG2eUXuGr94OmBNiVAIp/mezXEYIqU0bSuTnzJf7M9uH0E2uTNDqeJp7zs+DwL
+         P0QOoY6fQJB3vqxbif7oLi0Jn3yXppuY74OSUb9fDtT6Y94gL/1s5BK/JHXmKWj8cWyC
+         j98LQWgZg1SJaYyRXpDjg0rhBkq6q8xnz6jr2DGnXh4pIGb0M98Q+N1sBmwLSy48BsT6
+         H0JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755623763; x=1756228563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TuuWIhz3gxthyB2SlN/OhakmBPvUO7DWnkD44CfcuTk=;
+        b=Ve1AhCU+1B5zCY6FIzNXr2Q3XpGBlntZLgcFepBZBJLMpllYAxNCkzHcE45FAs8DuM
+         l8MxBPS0xmMwhnpcnP3pxV48UV81T+po9NO4VO2AdyEnI4/nqkJ073NUgqIcZ5D6ANH/
+         EWoMa2hss+FKpJ9jKLsfz0uj7LEEyMHoPyD0e89Kff3c9FCc94evpwQ5/cG99IUwLT+V
+         j4TWA3npn4Unxyik5M4z7n/98J1i2KHaWG84mityBfwR3v/3vr9RCnZFpCFBYMRk6kLN
+         2Oj0mRYgWcQuYtFiDA2yAHX/XFgcM3/BlqRYDt+NhF41qOYPghZkPGldD6eM7oNaZe55
+         ftnw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1l8U2/wAdqkHymERm57SzQDFDh8X9EU+ZNAP5PDe8VwRoNJZN0JNlotC+cy9eNgkdRMLXycBs85U1uXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyio9yDLkAwPqbC8EvWfJZk6HYDZlPt8a2ooXN8O/lMlHZ/nRpz
+	5wJvBvCwiquIFLaBrVXTndOFX808ozgCy/uf5RW+M6nMqBSz0pjg69657Fa1nn6kYKY=
+X-Gm-Gg: ASbGncuYjTcAMTAnllIA/SLNe8tm7C5ThCGSTIMWGx/KyqZ3+7eWLuTq4Q8Y6V0nSiy
+	xI8/IWk6nbWljTpcBO+p5xsxDa8E8sjX258Fg/FHKH/a3ptL0T5hQGDBBiI9vkBYX6FGGbmgkWK
+	3kxVATrS6+2x2f+RIJoHtP6w79ag9yenIPeXsSP1AExhLx1jRM3TOeaHgca9/SgNkjtKdRJk7i7
+	od56cUdns5tPWpTA+2UbB8cdPoCdXE6XyRtg553+Op4nJZNX5vt5merT/ow+2cncVkGEl9VWc16
+	zjZ8elipP3B22H8cfthVR4EwRX7xKPG6YC12+bc4JUdqnRiUDNf1GTm4bv31M+mtZc3HEiyslfZ
+	FU+r/twYfwq50pWa4CE2qRhI3
+X-Google-Smtp-Source: AGHT+IEqY5Sa4EeVRE3eUDIyfaGN2w8S8iuJbWvQsBaTQLn0TEBfS1W/KcbAkXvUZpOTzEaoHDtOXQ==
+X-Received: by 2002:a05:6830:3917:b0:743:152a:114c with SMTP id 46e09a7af769-744e0a9716bmr1907472a34.13.1755623763402;
+        Tue, 19 Aug 2025 10:16:03 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c947b49cesm3570660173.33.2025.08.19.10.16.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 10:16:02 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:16:02 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Samuel Holland <samuel.holland@sifive.com>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Andy Chiu <andybnac@gmail.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Darius Rad <darius@bluespec.com>, Vivian Wang <wangruikang@iscas.ac.cn>, 
+	Florian Weimer <fweimer@redhat.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Drew Fustini <dfustini@tenstorrent.com>
+Subject: Re: [PATCH v3] riscv: Add sysctl to control discard of vstate on
+ syscall entry
+Message-ID: <20250819-bb1be8c05ebdf7ea751323aa@orel>
+References: <20250819-riscv_v_vstate_discard-v3-1-0af577dafdc2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,140 +93,248 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <k6fpx5adh45t4jrxgiccq7acubwcgmi746crggxi6e4oihtvpt@thks5zrn53n3>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250819-riscv_v_vstate_discard-v3-1-0af577dafdc2@kernel.org>
 
-On Tue, Aug 19, 2025 at 10:15:13AM +0100, Kiryl Shutsemau wrote:
-> On Mon, Aug 18, 2025 at 11:58:03AM -0700, Joshua Hahn wrote:
-> > While testing workloads with high sustained memory pressure on large machines
-> > (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
-> > Further investigation showed that the lock in free_pcppages_bulk was being held
-> > for a long time, even being held while 2k+ pages were being freed.
-> > 
-> > Instead of holding the lock for the entirety of the freeing, check to see if
-> > the zone lock is contended every pcp->batch pages. If there is contention,
-> > relinquish the lock so that other processors have a change to grab the lock
-> > and perform critical work.
+On Tue, Aug 19, 2025 at 02:40:21AM -0700, Drew Fustini wrote:
+> From: Drew Fustini <dfustini@tenstorrent.com>
 > 
-> Hm. It doesn't necessary to be contention on the lock, but just that you
-> holding the lock for too long so the CPU is not available for the scheduler.
+> Vector registers are always clobbered in the syscall entry path to
+> enforce the documented ABI that vector state is not preserved across
+> syscalls. However, this operation can be slow on some RISC-V cores.
+> To mitigate this performance impact, add a sysctl knob to control
+> whether vector state is discarded in the syscall entry path:
 > 
-> > In our fleet, we have seen that performing batched lock freeing has led to
-> > significantly lower rates of softlockups, while incurring relatively small
-> > regressions (relative to the workload and relative to the variation).
-> > 
-> > The following are a few synthetic benchmarks:
-> > 
-> > Test 1: Small machine (30G RAM, 36 CPUs)
-> > 
-> > stress-ng --vm 30 --vm-bytes 1G -M -t 100
-> > +----------------------+---------------+-----------+
-> > |        Metric        | Variation (%) | Delta (%) |
-> > +----------------------+---------------+-----------+
-> > | bogo ops             |        0.0076 |   -0.0183 |
-> > | bogo ops/s (real)    |        0.0064 |   -0.0207 |
-> > | bogo ops/s (usr+sys) |        0.3151 |   +0.4141 |
-> > +----------------------+---------------+-----------+
-> > 
-> > stress-ng --vm 20 --vm-bytes 3G -M -t 100
-> > +----------------------+---------------+-----------+
-> > |        Metric        | Variation (%) | Delta (%) |
-> > +----------------------+---------------+-----------+
-> > | bogo ops             |        0.0295 |   -0.0078 |
-> > | bogo ops/s (real)    |        0.0267 |   -0.0177 |
-> > | bogo ops/s (usr+sys) |        1.7079 |   -0.0096 |
-> > +----------------------+---------------+-----------+
-> > 
-> > Test 2: Big machine (250G RAM, 176 CPUs)
-> > 
-> > stress-ng --vm 50 --vm-bytes 5G -M -t 100
-> > +----------------------+---------------+-----------+
-> > |        Metric        | Variation (%) | Delta (%) |
-> > +----------------------+---------------+-----------+
-> > | bogo ops             |        0.0362 |   -0.0187 |
-> > | bogo ops/s (real)    |        0.0391 |   -0.0220 |
-> > | bogo ops/s (usr+sys) |        2.9603 |   +1.3758 |
-> > +----------------------+---------------+-----------+
-> > 
-> > stress-ng --vm 10 --vm-bytes 30G -M -t 100
-> > +----------------------+---------------+-----------+
-> > |        Metric        | Variation (%) | Delta (%) |
-> > +----------------------+---------------+-----------+
-> > | bogo ops             |        2.3130 |   -0.0754 |
-> > | bogo ops/s (real)    |        3.3069 |   -0.8579 |
-> > | bogo ops/s (usr+sys) |        4.0369 |   -1.1985 |
-> > +----------------------+---------------+-----------+
-> > 
-> > Suggested-by: Chris Mason <clm@fb.com>
-> > Co-developed-by: Johannes Weiner <hannes@cmpxchg.org>
-> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> > 
-> > ---
-> >  mm/page_alloc.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index a8a84c3b5fe5..bd7a8da3e159 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -1238,6 +1238,8 @@ static void free_pcppages_bulk(struct zone *zone, int count,
-> >  	 * below while (list_empty(list)) loop.
-> >  	 */
-> >  	count = min(pcp->count, count);
-> > +	if (!count)
-> > +		return;
-> >  
-> >  	/* Ensure requested pindex is drained first. */
-> >  	pindex = pindex - 1;
-> > @@ -1247,6 +1249,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
-> >  	while (count > 0) {
-> >  		struct list_head *list;
-> >  		int nr_pages;
-> > +		int batch = min(count, pcp->batch);
-> >  
-> >  		/* Remove pages from lists in a round-robin fashion. */
-> >  		do {
-> > @@ -1267,12 +1270,22 @@ static void free_pcppages_bulk(struct zone *zone, int count,
-> >  
-> >  			/* must delete to avoid corrupting pcp list */
-> >  			list_del(&page->pcp_list);
-> > +			batch -= nr_pages;
-> >  			count -= nr_pages;
-> >  			pcp->count -= nr_pages;
-> >  
-> >  			__free_one_page(page, pfn, zone, order, mt, FPI_NONE);
-> >  			trace_mm_page_pcpu_drain(page, order, mt);
-> > -		} while (count > 0 && !list_empty(list));
-> > +		} while (batch > 0 && !list_empty(list));
-> > +
-> > +		/*
-> > +		 * Prevent starving the lock for other users; every pcp->batch
-> > +		 * pages freed, relinquish the zone lock if it is contended.
-> > +		 */
-> > +		if (count && spin_is_contended(&zone->lock)) {
+> /proc/sys/abi/riscv_v_vstate_discard
 > 
-> I would rather drop the count thing and do something like this:
+> Valid values are:
 > 
-> 		if (need_resched() || spin_needbreak(&zone->lock) {
-> 			spin_unlock_irqrestore(&zone->lock, flags);
-> 			cond_resched();
+> 0: Vector state is not intentionally clobbered when entering a syscall
+> 1: Vector state is always clobbered when entering a syscall
+> 
+> The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
 
-Can this function be called from non-sleepable context?
+I'm in favor of the clobbering being off by default and creating a knob
+to enable it for debug purposes, but I'm not sure we need the config. I
+think it's reasonable for systems that need the discard behavior to add
+a sysctl toggle to their early init. The config may complicate the
+documentation needed for user recommendations and potentially generate
+confusion when moving from one system to another since defaults could
+be flipped.
 
-> 			spin_lock_irqsave(&zone->lock, flags);
-> 		}
+Thanks,
+drew
+
 > 
-> > +			spin_unlock_irqrestore(&zone->lock, flags);
-> > +			spin_lock_irqsave(&zone->lock, flags);
-> > +		}
-> >  	}
-> >  
-> >  	spin_unlock_irqrestore(&zone->lock, flags);
-> > 
-> > base-commit: 137a6423b60fe0785aada403679d3b086bb83062
-> > -- 
-> > 2.47.3
+> Fixes: 9657e9b7d253 ("riscv: Discard vector state on syscalls")
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> ---
+> Changes in v3:
+>  - Reword the Kconfig description to clarify that the sysctl can still
+>    be changed during runtime regardless of the initial value chosen
+>  - Improve the description of vstate clobbering and the sysctl in
+>    section 3 of vector.rst
+>  - v2: https://lore.kernel.org/linux-riscv/20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org/
 > 
+> Changes in v2:
+>  - Reword the description of the abi.riscv_v_vstate_discard sysctl to
+>    clarify that option '0' does not preserve the vector state - it just
+>    means that vector state will not always be clobbered in the syscall
+>    path.
+>  - Add clarification suggested by Palmer in v1 to the "Vector Register
+>    State Across System Calls" documentation section.
+>  - v1: https://lore.kernel.org/linux-riscv/20250719033912.1313955-1-fustini@kernel.org/
+> 
+> Test results:
+> I've tested the impact of riscv_v_vstate_discard() on the SiFive X280
+> cores [1] in the Tenstorrent Blackhole SoC [2]. The results from the
+> Blackhole P100 [3] card show that discarding the vector registers
+> increases null syscall latency by 25%.
+> 
+> The null syscall program [4] executes vsetvli and then calls getppid()
+> in a loop. The average duration of getppid() is 198 ns when registers
+> are clobbered in riscv_v_vstate_discard(). The average duration drops
+> to 149 ns when riscv_v_vstate_discard() skips clobbering the registers
+> because riscv_v_vstate_discard is set to 0.
+> 
+> $ sudo sysctl abi.riscv_v_vstate_discard=1
+> abi.riscv_v_vstate_discard = 1
+> 
+> $ ./null_syscall --vsetvli
+> vsetvli complete
+>  iterations: 1000000000
+>    duration: 198 seconds
+> avg latency: 198.73 ns
+> 
+> $ sudo sysctl abi.riscv_v_vstate_discard=0
+> abi.riscv_v_vstate_discard = 0
+> 
+> $ ./null_syscall --vsetvli
+> vsetvli complete
+>  iterations: 1000000000
+>    duration: 149 seconds
+> avg latency: 149.89 ns
+> 
+> I'm testing on the tt-blackhole-v6.16-rc1_vstate_discard [5] branch that
+> has 13 patches, including this one, on top of v6.16-rc1. Most are simple
+> yaml patches for dt bindings along with dts files and a bespoke network
+> driver. I don't think the other patches are relevant to this discussion.
+> 
+> This patch applies clean on its own mainline and riscv/for-next.
+> 
+> [1] https://www.sifive.com/cores/intelligence-x200-series
+> [2] https://tenstorrent.com/en/hardware/blackhole
+> [3] https://github.com/tenstorrent/tt-bh-linux
+> [4] https://gist.github.com/tt-fustini/ab9b217756912ce75522b3cce11d0d58
+> [5] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1_vstate_discard
+> 
+> Signed-off-by: Drew Fustini <fustini@kernel.org>
+> ---
+>  Documentation/arch/riscv/vector.rst | 27 +++++++++++++++++++++++++--
+>  arch/riscv/Kconfig                  | 20 ++++++++++++++++++++
+>  arch/riscv/include/asm/vector.h     |  4 ++++
+>  arch/riscv/kernel/vector.c          | 16 +++++++++++++++-
+>  4 files changed, 64 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
+> index 3987f5f76a9deb0824e53a72df4c3bf90ac2bee1..2a6b52990ee75a60d8ebd1b4b1292838358bc9f2 100644
+> --- a/Documentation/arch/riscv/vector.rst
+> +++ b/Documentation/arch/riscv/vector.rst
+> @@ -134,7 +134,30 @@ processes in form of sysctl knob:
+>  3.  Vector Register State Across System Calls
+>  ---------------------------------------------
+>  
+> -As indicated by version 1.0 of the V extension [1], vector registers are
+> -clobbered by system calls.
+> +Linux adopts the syscall ABI proposed by version 1.0 of the V extension [1],
+> +where vector registers are clobbered by system calls. Specifically:
+> +
+> +    Executing a system call causes all caller-saved vector registers
+> +    (v0-v31, vl, vtype) and vstart to become unspecified.
+> +
+> +Linux clobbers the vector registers (e.g. discards vector state) on the syscall
+> +entry path. This is done to identify userspace programs that mistakenly expect
+> +vector registers to be preserved across syscalls. This can be helpful for
+> +debugging and testing. However, clobbering vector state can negatively impact
+> +performance on some RISC-V implementations, and is not strictly necessary.
+> +
+> +To mitigate this performance impact, a sysctl knob is provided that controls
+> +whether vector state is always clobbered on syscall entry:
+> +
+> +* /proc/sys/abi/riscv_v_vstate_discard
+> +
+> +    Valid values are:
+> +
+> +    * 0: Vector state is not always clobbered in all syscalls
+> +    * 1: Mandatory clobbering of vector state in all syscalls
+> +
+> +    Reading this file returns the current discard behavior. Write to '0' or '1'
+> +    to file to change the current behavior. The initial state is controlled by
+> +    CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
+>  
+>  1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 451eb23d86c96307422d95e233e35b97569e9816..c0c64d1a4dfe2b0058e3265082b6e3c5207755c7 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -654,6 +654,26 @@ config RISCV_ISA_V_DEFAULT_ENABLE
+>  
+>  	  If you don't know what to do here, say Y.
+>  
+> +config RISCV_ISA_V_VSTATE_DISCARD
+> +	bool "Enable Vector state discard by default"
+> +	depends on RISCV_ISA_V
+> +	default n
+> +	help
+> +	  Discarding vector state (also known as clobbering) on syscall entry
+> +	  can help identify userspace programs that are mistakenly relying on
+> +	  vector registers being preserved across syscalls. This can be useful
+> +	  for debugging and testing. However, this behavior can negatively
+> +	  impact performance on some RISC-V implementations and is not strictly
+> +	  necessary.
+> +
+> +	  Select Y here if you want mandatory clobbering of vector state even
+> +	  though it can increase the duration of syscalls on some RISC-V cores.
+> +	  If you don't know what to do, then select N.
+> +
+> +	  This choice sets the initial value of the abi.riscv_v_vstate_discard
+> +	  sysctl. Regardless of whether you choose Y or N, the sysctl can still
+> +	  be changed by the user while the system is running.
+> +
+>  config RISCV_ISA_V_UCOPY_THRESHOLD
+>  	int "Threshold size for vectorized user copies"
+>  	depends on RISCV_ISA_V
+> diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
+> index b61786d43c2054f71727356fa9718b91ec97a38b..9d236e456d608fe363cd566a526e07fea970818e 100644
+> --- a/arch/riscv/include/asm/vector.h
+> +++ b/arch/riscv/include/asm/vector.h
+> @@ -40,6 +40,7 @@
+>  	_res;								\
+>  })
+>  
+> +extern bool riscv_v_vstate_discard_ctl;
+>  extern unsigned long riscv_v_vsize;
+>  int riscv_v_setup_vsize(void);
+>  bool insn_is_vector(u32 insn_buf);
+> @@ -270,6 +271,9 @@ static inline void __riscv_v_vstate_discard(void)
+>  {
+>  	unsigned long vl, vtype_inval = 1UL << (BITS_PER_LONG - 1);
+>  
+> +	if (READ_ONCE(riscv_v_vstate_discard_ctl) == 0)
+> +		return;
+> +
+>  	riscv_v_enable();
+>  	if (has_xtheadvector())
+>  		asm volatile (THEAD_VSETVLI_T4X0E8M8D1 : : : "t4");
+> diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
+> index 184f780c932d443d81eecac7a6fb8070ee7a5824..7a4c209ad337efd7a3995cfc7cf1700c03e55b40 100644
+> --- a/arch/riscv/kernel/vector.c
+> +++ b/arch/riscv/kernel/vector.c
+> @@ -26,6 +26,7 @@ static struct kmem_cache *riscv_v_user_cachep;
+>  static struct kmem_cache *riscv_v_kernel_cachep;
+>  #endif
+>  
+> +bool riscv_v_vstate_discard_ctl = IS_ENABLED(CONFIG_RISCV_ISA_V_VSTATE_DISCARD);
+>  unsigned long riscv_v_vsize __read_mostly;
+>  EXPORT_SYMBOL_GPL(riscv_v_vsize);
+>  
+> @@ -307,11 +308,24 @@ static const struct ctl_table riscv_v_default_vstate_table[] = {
+>  	},
+>  };
+>  
+> +static const struct ctl_table riscv_v_vstate_discard_table[] = {
+> +	{
+> +		.procname       = "riscv_v_vstate_discard",
+> +		.data           = &riscv_v_vstate_discard_ctl,
+> +		.maxlen         = sizeof(riscv_v_vstate_discard_ctl),
+> +		.mode           = 0644,
+> +		.proc_handler   = proc_dobool,
+> +	},
+> +};
+> +
+>  static int __init riscv_v_sysctl_init(void)
+>  {
+> -	if (has_vector() || has_xtheadvector())
+> +	if (has_vector() || has_xtheadvector()) {
+>  		if (!register_sysctl("abi", riscv_v_default_vstate_table))
+>  			return -EINVAL;
+> +		if (!register_sysctl("abi", riscv_v_vstate_discard_table))
+> +			return -EINVAL;
+> +	}
+>  	return 0;
+>  }
+>  
+> 
+> ---
+> base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
+> change-id: 20250818-riscv_v_vstate_discard-e89b3181e0ac
+> 
+> Best regards,
 > -- 
->   Kiryl Shutsemau / Kirill A. Shutemov
+> Drew Fustini <fustini@kernel.org>
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
