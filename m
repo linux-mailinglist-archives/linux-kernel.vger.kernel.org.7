@@ -1,165 +1,166 @@
-Return-Path: <linux-kernel+bounces-774786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353C4B2B77E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E358B2B77F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF4B4E1DF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:26:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C4A3A5D5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846E72D660D;
-	Tue, 19 Aug 2025 03:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049C72D5C86;
+	Tue, 19 Aug 2025 03:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="lIocyK96"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzIz/FRu"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074C24A35;
-	Tue, 19 Aug 2025 03:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0332D3EEE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755574005; cv=none; b=HeT0GN2fnM/+QdCdyDSDCTtgoe3X+e6AgsJICTSFMTg7KLQGkAeht8UiAwoY25stw8gPuIgD3QIMuxzwjg+XxF1JnFrwToRZ+PR/D1U0V5Tkl67+UeChzdA8Jq8+IjrWzWIwJdy+02+VF0yubo1EssI2VQOuRTxg6xyHHonpzl0=
+	t=1755574023; cv=none; b=iwzrxcnWC/kWaj0rqKd7RmQRsPBl9iJ2Rz6o/K4Sx7vkR4FYWM+49Dn6xe3aK1w1Zz0Pir1f6ocf7AhdDET1+RL8SJ8TH+jRauFb8PZXbzQnJ7W4f4pLV7dWvDOvsxBeW/5YlXVGBFstQF0gHRnHwoW3BJlyPfYOVFNTUHBB9GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755574005; c=relaxed/simple;
-	bh=v2fOmGvCEa1uf4z/p4esCXg2wiXJmeWbshwawmhZPck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3cGpzrmgI8LsF6TJiBSYoGbvt3iuBf8PFiZ3bzrSI3ppXabx2cZL/5FbvSmQuJuF8LPJZMmSuxnJu2aXnjVqiOrcB4T8CTOLQ3/HnBiR+1pS/CFfQleC3iolvOZO+OYuu0pevbtm3i6PppGOTVt+iON9InaaU5ZC6rLQKs6hfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=lIocyK96; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 1BC3F22D7F;
-	Tue, 19 Aug 2025 05:26:40 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 6mf-pBRRXyKk; Tue, 19 Aug 2025 05:26:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755573999; bh=v2fOmGvCEa1uf4z/p4esCXg2wiXJmeWbshwawmhZPck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lIocyK96JzLEoWkrV/InqiZnpuh5giFNVn7nTAr4tSxuJTGEOC7rFrJr9L4axHtEN
-	 f4+O36eWEssxmtQCGx6ey9rkLp9UTPIRu76Rlr25CobclxH0YkZLuJhd05iC/ae24o
-	 Y7Uf4iu104epCpo/in1Ff7Ih3VPWj6kMJqSqwv8qXtm2rpMn/ExADKsClvRBUUbslN
-	 28HPJYDduR8hNPecYhtNDv5tpExyjmu4YLliYLLpeRvgxwByWf+Edtkt0aRFW58Efd
-	 8suHStYpx+zphVDOflDvS+HYKlStJ/Il3+fNPjB+1J7kY3kjLLFaK5HPaqoyxpscxC
-	 BrIm4QZw5cBxA==
-Date: Tue, 19 Aug 2025 03:26:18 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Anup Patel <apatel@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] RISC-V: Add common csr_read_num() and
- csr_write_num() functions
-Message-ID: <aKPu2g1MOZBBzQbV@pie>
-References: <20250818143600.894385-1-apatel@ventanamicro.com>
- <20250818143600.894385-3-apatel@ventanamicro.com>
+	s=arc-20240116; t=1755574023; c=relaxed/simple;
+	bh=YfJYeNuK5s6n+6K9DDdIvhqVIE3tNH0UjNo9blGT8Rk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ipaRFpooc9CQwI6hnOB5CbA/Z3Fr/gz1VM/1W/v+BQX8AuOoC6QRm8bCE2WNWwC1RUwvEXVtVvqB33uRqvKNY/CFNjkKHMH97I8nzEP0VhKgBOKRCXD08l5sHo/eB5CNOMq6dWzdlGAHlMrMYBPHbmqzK7jSib0FBU9VFuasa+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzIz/FRu; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-244580536efso33746925ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755574021; x=1756178821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vr68yBZi3TFfbnXKqi+esYUOPsHcYPZ3pVlLEo5gGLw=;
+        b=ZzIz/FRuuKKPXVqpzKcFFcYmHsAAl56spvGbzCnKOdhtcaPbaNFjieTJCFa69i40Gy
+         myucmdQcgYhJ1QP2UqAhiVxrnlJNnjFzxGp4vbrJP/RKCeNsSS+FvCRoCGsRDXbN13dr
+         0hEmqXJ/cRYEHG0gETdzLIckvCgrUNKEFNAov5XyaIijke1SUvrX+CmB6ADuq9ulqBpY
+         d8TNxDghJ4poQUF3c3K6BfIJnSD3FJwN842Q/sXUO8v0dsMDq+MwTtZ5DV2tISmnjgqg
+         sPBGNe/HVGDmpAVxy/LmBYx09KeUPeo3tEtK243IZjdH9BaiokiTXXl2MF5zEpUyx4BQ
+         CxpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755574021; x=1756178821;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vr68yBZi3TFfbnXKqi+esYUOPsHcYPZ3pVlLEo5gGLw=;
+        b=v3vv3tw/fDjqJi/cY2XDzQWAFTV82hYZg8R11o4lTix34JC1IOXovDeg1xZGLvWC5F
+         7RfxnVMLqF3QQzCymiCFHerb8N8SjkMhvLOPjM1wci4LADc/s6185QKsbFj6la9sfENR
+         I5afwLUG9i5CQwLH5hUF89Wi4nVM+V241v40J/HFFd6Ez1lq5oE/eW9s0HAZsAoINV3E
+         t3OCoPp7Sy876Cy0VsObkeXMsbKmz6z/usoxJaYnFypV0Qas6riL+W2pVaZFDzWrzZo1
+         I4tsEAgSy07SgXNAu7wlb8K86KG6iWk2xJgauT2GTTROSieBZbkvzAvJCV77RByfcy+M
+         H99w==
+X-Forwarded-Encrypted: i=1; AJvYcCXKuvTqvGxuPA+0jsDoG3ITLppxFeC278rp/Q1rPC6+xqP5yD5Ri3SO60AHC5GPRAbOn2jWx3lMG8OCIPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQxpH5Iib7cc49K4lOMXJ2VyWZmvmwCBGTu5GzsU8ElwYXf8D4
+	nLE76UXT45VBnzSrK5Jfof4iW4LArPwUCS7Vu7HaKprGuv6qyW9LRFvs
+X-Gm-Gg: ASbGnctArKY6PHakr9nxOqb5ckYAKoGfUQXN1NDuX7qdtGvq7TLU8/Cw8EsnkSNw1Sa
+	oCi7+NEOQX7nnHT+XBC3kml3JbDH1TZsoWJc8XJHjJoCh+cdWi2GDEaYlGJwH/iOggChkZPzHqe
+	GegDPhjJ/YIapBj0JoBPZUKyJuhPBqOqA6qHPs49XUA8q1fF6inaBNw2ZrySSYNCYI10kUf3uVp
+	bbh1Vl6ToXMN+ZIZSZUK1odaR3vXxzdSL3O2kYcTp96V+eBsj4rOsttmE/28EP8xlyVeuOZyV/b
+	xgLroA+9tlMSnS1Eq17IVeyxdxNs2jIrnWoD/9F9q2ILBHKfOFERl+NroEU3wLLTB+qza/ttDFb
+	IxVQO5KCnk7AYCcXRowha1UI5DDeW7JqNdhDYvu3VqKX0PYperRseh2AYvoGLxK82OH2JsZkcyR
+	A=
+X-Google-Smtp-Source: AGHT+IFwjWO9fZD3g8LIFOJO7X2Wija0jcyJGdc8SrAd/SCDg7XngqtnwRQL5pP5IA0IXoJApdAKBA==
+X-Received: by 2002:a17:903:3c4e:b0:23d:fa9a:80ac with SMTP id d9443c01a7336-245e031010dmr12452115ad.16.1755574021175;
+        Mon, 18 Aug 2025 20:27:01 -0700 (PDT)
+Received: from bj-kjy-standalone-gaoxiang17.mioffice.cn ([43.224.245.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446ca9d99csm93979715ad.24.2025.08.18.20.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 20:27:00 -0700 (PDT)
+From: Xiang Gao <gxxa03070307@gmail.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com
+Cc: lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: [PATCH] mm/cma: add available_count and total count in trace_cma_alloc_start
+Date: Tue, 19 Aug 2025 11:26:54 +0800
+Message-Id: <20250819032654.4345-1-gxxa03070307@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818143600.894385-3-apatel@ventanamicro.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 08:06:00PM +0530, Anup Patel wrote:
-> In RISC-V, there is no CSR read/write instruction which takes CSR
-> number via register so add common csr_read_num() and csr_write_num()
-> functions which allow accessing certain CSRs by passing CSR number
-> as parameter. These common functions will be first used by the
-> ACPI CPPC driver and RISC-V PMU driver.
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/csr.h |   3 +
->  arch/riscv/kernel/Makefile   |   1 +
->  arch/riscv/kernel/csr.c      | 165 +++++++++++++++++++++++++++++++++++
->  drivers/acpi/riscv/cppc.c    |  17 ++--
->  drivers/perf/riscv_pmu.c     |  54 ++----------
->  5 files changed, 184 insertions(+), 56 deletions(-)
->  create mode 100644 arch/riscv/kernel/csr.c
-> 
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 6fed42e37705..1540626b3540 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -575,6 +575,9 @@
->  			      : "memory");			\
->  })
->  
-> +extern unsigned long csr_read_num(unsigned long csr_num, int *out_err);
-> +extern void csr_write_num(unsigned long csr_num, unsigned long val, int *out_err);
+From: gaoxiang17 <gaoxiang17@xiaomi.com>
 
-I think it's more consistent to directly return the error code, and for
-csr_read_num, we could pass out the read value by a pointer. e.g.
+This makes cma info more intuitive during debugging.
 
-	int csr_read_num(unsigned long csr_num, unsigned long *val);
-	int csr_write_num(unsigned long csr_num, unsigned long val);
+Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+---
+ include/trace/events/cma.h | 17 ++++++++++++-----
+ mm/cma.c                   |  2 +-
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
-This allows the caller to eliminate a variable for temporarily storing
-the error code if they use it just after the invokation, and fits the
-common convention of Linux better.
+diff --git a/include/trace/events/cma.h b/include/trace/events/cma.h
+index 383c09f583ac..fbe70008ffc7 100644
+--- a/include/trace/events/cma.h
++++ b/include/trace/events/cma.h
+@@ -38,25 +38,32 @@ TRACE_EVENT(cma_release,
+ 
+ TRACE_EVENT(cma_alloc_start,
+ 
+-	TP_PROTO(const char *name, unsigned long count, unsigned int align),
++	TP_PROTO(const char *name, unsigned long request_count, unsigned long available_count,
++		unsigned long total_count, unsigned int align),
+ 
+-	TP_ARGS(name, count, align),
++	TP_ARGS(name, request_count, available_count, total_count, align),
+ 
+ 	TP_STRUCT__entry(
+ 		__string(name, name)
+-		__field(unsigned long, count)
++		__field(unsigned long, request_count)
++		__field(unsigned long, available_count)
++		__field(unsigned long, total_count)
+ 		__field(unsigned int, align)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__assign_str(name);
+-		__entry->count = count;
++		__entry->count = request_count;
++		__entry->available_count = available_count;
++		__entry->total_count = total_count;
+ 		__entry->align = align;
+ 	),
+ 
+ 	TP_printk("name=%s count=%lu align=%u",
+ 		  __get_str(name),
+-		  __entry->count,
++		  __entry->request_count,
++		  __entry->available_count,
++		  __entry->total_count,
+ 		  __entry->align)
+ );
+ 
+diff --git a/mm/cma.c b/mm/cma.c
+index 2ffa4befb99a..e56ec64d0567 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -864,7 +864,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 	if (!count)
+ 		return page;
+ 
+-	trace_cma_alloc_start(name, count, align);
++	trace_cma_alloc_start(name, count, cma->available_count, cma->count, align);
+ 
+ 	for (r = 0; r < cma->nranges; r++) {
+ 		page = NULL;
+-- 
+2.34.1
 
-> +
->  #endif /* __ASSEMBLY__ */
->  
->  #endif /* _ASM_RISCV_CSR_H */
-
-...
-
-> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> index 42c1a9052470..fe491937ed25 100644
-> --- a/drivers/acpi/riscv/cppc.c
-> +++ b/drivers/acpi/riscv/cppc.c
-> @@ -65,24 +65,19 @@ static void sbi_cppc_write(void *write_data)
->  static void cppc_ffh_csr_read(void *read_data)
->  {
->  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)read_data;
-> +	int err;
->  
-> -	switch (data->reg) {
-> -	/* Support only TIME CSR for now */
-> -	case CSR_TIME:
-> -		data->ret.value = csr_read(CSR_TIME);
-> -		data->ret.error = 0;
-> -		break;
-> -	default:
-> -		data->ret.error = -EINVAL;
-> -		break;
-> -	}
-> +	data->ret.value = csr_read_num(data->reg, &err);
-> +	data->ret.error = err;
->  }
->  
->  static void cppc_ffh_csr_write(void *write_data)
->  {
->  	struct sbi_cppc_data *data = (struct sbi_cppc_data *)write_data;
-> +	int err;
->  
-> -	data->ret.error = -EINVAL;
-> +	csr_write_num(data->reg, data->val, &err);
-> +	data->ret.error = err;
->  }
-
-This could be simplified as
-
-	data->ret.error = csr_write_num(data->reg, data->val);
-
-and variable err could be dropped.
-
-Best regards,
-Yao Zi
 
