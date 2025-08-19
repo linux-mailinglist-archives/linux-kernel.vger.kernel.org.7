@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-774938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6153CB2B95D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:28:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9310B2B961
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6491BA3D67
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023D51BA3A98
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5ABE265CA7;
-	Tue, 19 Aug 2025 06:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378D92673AA;
+	Tue, 19 Aug 2025 06:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2xVcKYy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bq6PI60W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D80E217733;
-	Tue, 19 Aug 2025 06:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6072620C3;
+	Tue, 19 Aug 2025 06:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755584870; cv=none; b=dQ0NEsU6yKf9AbbpYBEUZdqzu4Tr2B8GNdDQVJXaYRWq0LAcPKdnGGnnHzWn3seHxzzlnHyJgbc+CYtePKmR8xbqMd7qsQUCaZFhDwoBTljV5oatDz6uVMH1lXpNFvWExpsFxgXsMitCcB+kVuKXLqxa6FGMjNbffcz18GmrunQ=
+	t=1755584957; cv=none; b=ecerGtFz5TGypuVxH+iQ7NrmGYffrR9dnXSAECVkD3+Fb+oOcZwPTvOQL3Q5VMPAtCzvVSvV8aDIFzKhkCeXrU16jwIAACwSs2wrgQhwbOG5ZZf9/axkfjyyxxRgzlZ/vyA9QxbhO9h+MwAVV31isewDLGEZ5cxrX9rJQgOTcSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755584870; c=relaxed/simple;
-	bh=AwJvsFLxwS4iuj+sBbq471Qe7na3TD9I6DWOiSYCPCs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YAlgQWclIiU99IVIu0RSMwxMm1kF4nY0g/7W70o87RXVRLSHk9TVwQl566ny9cPGc9RdLD7RgU6AlZdxTAVK5lXu5CTvfA1fNUw6se3aFzId/cLMPGT1JjkucazKcrDu8yWHfwqLbHmEPuCMblK/WQONcl+yRQRKlNGMBaJCIss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2xVcKYy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEC7C4CEF4;
-	Tue, 19 Aug 2025 06:27:49 +0000 (UTC)
+	s=arc-20240116; t=1755584957; c=relaxed/simple;
+	bh=Ds/kYnJixEUoFRnXtUsQJvHiSZQr8WOM/RaU3EBAFv4=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=PM6EjmR2gY5V+VoiDprEqyvtbJc6Cli8pNWS5xckovBGJ8z0H8ALOSjQhaASQux78jGqGaF852jp/PeqIgm74xNgdoA6JA7swNYcG80q4JKX15Zv1rngXiDLPofaoyxQ2r+YLUiTvIx/tnBLGYPjgpBAmRyFjCnX+ApjYLfv1Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bq6PI60W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6090C4CEF4;
+	Tue, 19 Aug 2025 06:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755584869;
-	bh=AwJvsFLxwS4iuj+sBbq471Qe7na3TD9I6DWOiSYCPCs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h2xVcKYyCz8zH0A41cHA5/5KzkzTWDc0ZeVVESjbJldNtbfYLfmz3vVrsphAclUph
-	 HsGPkNLUlnBsetxjioJMFbQYY+/lSM9yjFdjzSdbjpApwnNc3u00PdSZ+LfBz+SchI
-	 o0XdMK9OmbIzGvl8fXzlvpthBkxLqsrZh7QF6e16/vB3hwf5kBHiAsIF7mv+NHj+qp
-	 DvprCneFcRxkpPHuR2yVtdorvHr3B0tm6f6o0yR2T1GEXXE60rHTVDK/SbLkhfVLKt
-	 4/VqoWcphkOLmDnkn2ewCrlsBG+BSjpZAG+jGi1nzNdzeRLD7J5nmGZ8rFNqNcfVLQ
-	 WtYUn+JrNHlJA==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Quanmin Yan <yanquanmin1@huawei.com>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 06/16] mm/damon/paddr: support addr_unit for DAMOS_STAT
-Date: Mon, 18 Aug 2025 23:27:47 -0700
-Message-Id: <20250819062747.40259-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250819062217.39729-1-sj@kernel.org>
-References: 
+	s=k20201202; t=1755584956;
+	bh=Ds/kYnJixEUoFRnXtUsQJvHiSZQr8WOM/RaU3EBAFv4=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=bq6PI60WYmKRIGvFdLyxhcqWoHr48sPYL6I8r0PFSxnU3m4eNKGSxHd91V9h2lWIT
+	 mxBIDYKLM3FduoRiOtyqArmX6JiKY3Q/4DYZgEctttb6XHV6CbM0vhUpc7zXHWMkLB
+	 RGrbMT7Ar5+OFbeVdCRlpg09dn4WMX7F3oSGvkxWFQz3veLOF8DjnSC4TekSzjTDmy
+	 0NbzL5ldXoPtNV3IrJuvhQzZPbMbnnIha3OG6T3jRvF2/xqgdS4hKNUKdy7tfE32jY
+	 MTuXtluTk88RTTOPwqTZsRkDhja2lCv5ZLaAi9B7FyqCwadE4/JnEoi/Kl0CxVV8x2
+	 ulCDqTsZjkIwg==
+Date: Tue, 19 Aug 2025 01:29:15 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com, 
+ linux-input@vger.kernel.org, dianders@chromium.org, bentiss@kernel.org, 
+ devicetree@vger.kernel.org, jikos@kernel.org, conor+dt@kernel.org, 
+ krzk+dt@kernel.org
+To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+In-Reply-To: <20250819034852.1230264-2-yelangyan@huaqin.corp-partner.google.com>
+References: <20250819034852.1230264-1-yelangyan@huaqin.corp-partner.google.com>
+ <20250819034852.1230264-2-yelangyan@huaqin.corp-partner.google.com>
+Message-Id: <175558495339.3265543.8952208535079492565.robh@kernel.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: HID: i2c-hid: parade: Introduce
+ bindings for Parade tc3408
 
-On Mon, 18 Aug 2025 23:22:17 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-> Hi Quanmin,
+On Tue, 19 Aug 2025 11:48:51 +0800, Langyan Ye wrote:
+> The tc3408 touch screen chip same as Elan eKTH6915 controller
+> has a reset gpio. The difference is that they have different
+> post_power_delay_ms.
 > 
-> On Wed, 13 Aug 2025 13:06:56 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+> ---
+>  .../bindings/input/parade,tc3408.yaml         | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/parade,tc3408.yaml
 > 
-> > From: SeongJae Park <sj@kernel.org>
-> > 
-> > Add support of addr_unit for DAMOS_STAT action handling from the DAMOS
-> > operation implementation for the physical address space.
-> 
-> As I suggested on another reply[1], please squash attaching patch to this one
-> when you post next version of this series.
-> 
-> [1] https://lore.kernel.org/0001-mm-damon-paddr-set-DAMOS_PAGEOUT-stat-in-core-addres.patch
 
-Sorry for the above wrong link.  Plese use
-https://lore.kernel.org/20250813170806.6251-1-sj@kernel.org instead.
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
 
 
-Thanks,
-SJ
+doc reference errors (make refcheckdocs):
 
-[...]
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819034852.1230264-2-yelangyan@huaqin.corp-partner.google.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
