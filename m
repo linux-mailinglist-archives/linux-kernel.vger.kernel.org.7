@@ -1,213 +1,124 @@
-Return-Path: <linux-kernel+bounces-774646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45308B2B583
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:43:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7A5B2B585
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320B73AEEC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:42:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10270166AA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85EE16D9BF;
-	Tue, 19 Aug 2025 00:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CVSLpQFI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE2918FC92;
+	Tue, 19 Aug 2025 00:44:52 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8990FC120
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0C63451CC;
+	Tue, 19 Aug 2025 00:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755564133; cv=none; b=AEmfYZngJLRGhvhp6IqY8sydmbHhVosaIN+ivHMJ14fh2rN3fTq03nUI8RdELc2DN3N5kBrvFlCuMjw/HehaTEbJpUypheWOyJTDez0KKb8oKH/GFoH1w6v+nmEfFbDI/FirGy2OgulbQ/cjF2TR5N3fg/4IBXPAO7YaOXEU+QU=
+	t=1755564291; cv=none; b=Sq7HboSMiw5AEPqVNFMSztQq+jbrw/st6LotbnZ8C+SLBJO1J05vvu8GQdsMS+xBYxfGnUKoZJx6aLHwk7r+ID3PyO07wESq7dPsaQWHYB/Bympj13b3L7+lBXoLWZYHYWB9JUtDFIL2VBhpxGwutGDTcsapcWJd2biYPlFmcx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755564133; c=relaxed/simple;
-	bh=E6ucyaG5lhvJ3EQJ+nG1y8pA3mjJ1P2JUKznaepr9cU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mLmeNxVaA0Ow1b+FKQ8oEu7Jw+b9OA/FLX9Hu7eZeKr54QeFfGrkfEc7UELio66uSInjj3orr+OlRWZHFq+J3Bxm/MqW9hnx83K/v1mkLwjMdEVRAKSdzohSCRjafh/5fJAAkSDlxxQX0nNeJ+V6vAlcSNi75PxQEs/rCG1cQcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CVSLpQFI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57ILPdFT006647
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:42:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OBbn273P8/f9yxcLk4nZc3A83z2zO0Iuz9NA/0alo3o=; b=CVSLpQFIqL2ri/kW
-	j3XH9eOVJXfBRJyXZv5o3bkzw/gumYdiq6/AyhS37XxIdOPTUWYjlfjVV7Cb8Rhe
-	xQbrHHpqWGwzowE6684jOZ1WAwq26Prr/ojNpbaOMYIE9/Z9DlKBL94w7zBboOmY
-	qG85j3YubU5x9rZOzd7z9MSo+yBwYEwOLqa8CwsxmNBbXKfhDLASmNbtE53jTnJX
-	DEY8AAOXfEuLGvk5+Uz9NHkMogsDaohynyfcuBNGf15hnC7Rmemke+AxPfSlVXPA
-	DfYhMyVkYrquUw2nhEE75BbwVF3T1Akgb5wK1UxUYCX4If+csARnnNJmcfkOqkKZ
-	FV00Cw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj2uep2w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:42:09 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a92827a70so106668366d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:42:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755564128; x=1756168928;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OBbn273P8/f9yxcLk4nZc3A83z2zO0Iuz9NA/0alo3o=;
-        b=AGzy6kh4TkCpSepEGFsFawodsPJJRciyXCi7+/Mkq+/VLZ7ySgZoggI3vOOeqNKEno
-         6OVc68O8aFBqudTRgpPqhZ1LcYcuaKLO4X8TXr4jTipWcOBBPNaM7AgMcHaz/cFB91qj
-         xjyzTecNXYpGbDxulNrZY6b04qeO89el3Vr+bTqe8qobdYdvbP4YlX8JUmUOBDtLSlvT
-         E/yzqDq5mktn78Z88RhRFF8o81epze/kBzC3QEd+y2QOKmvo2DzeOVij9XPHoYck/AB6
-         TCdxYc/iW7rVlDdkusp+a/WtrjAibtkGnLNT3rCCKVmVoH2iagfTp9rQjA9TXt0BMYPB
-         S+mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnevr7vBmOe9poCRF6CF4jBz4/B5Wlpk/aEMNi/9SxG3wtZJRmkcy4Jx3x4M5hLMlJOFW3u/cZhyDVYJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8SxlJabMtph4R6rNZLSdpIqR1QsOqqqNnXA7fS14d0O/guzfZ
-	5tyhS0zieHU2ZOGiTSt6UEuzzZ4wGMxceGBdns9agorJLUr3/mxGR6Hb989xBMmAMK0K39nuJrG
-	OoMukqQyAqWApfuYPekUwVeeQ5aILOFZacX8jZZGDAmydEJXKjyDrgenGuSUTg3GyoOg=
-X-Gm-Gg: ASbGncue29ke+zwHymW8W/PN+orPazKzmuqYjqPO1qplhGoASdIjcjMn11zLvytdNDY
-	VznSObgFC1gkOcZk0uv5cBaEnucpGZPJvhNMNrh469kmoWeE9bIsUSzxENGjjTemTDdpHBy94Pm
-	O8EkGkzsbcmtrAtbdWi/1Hr5nU78s6EoUwHe26s5Cf1x6nyiADR7sO6fO4iJBvdneFeohVyPicS
-	xMSKxC5UOLbqeuclG2RGkjkKKtTW/CbRJPs0jba3ha6G6EB12pI4ZSnJ+0mCvwMJLfxvVrs/bnq
-	7oCQ96DbYof+nez7qaofcYCrS2+19f/7OZigzlIeM6MYQTdVYfrUEWP7DH0wRUG8eMfB492GXJC
-	zR1cCngZK/+17bMporND+943YC0jvoIczgkFpWPOq
-X-Received: by 2002:a05:6214:e8b:b0:704:a0cd:f597 with SMTP id 6a1803df08f44-70c35b8b5a0mr9282166d6.21.1755564128325;
-        Mon, 18 Aug 2025 17:42:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYUQOO9C5theUsgHuQ7WuHIc+c5d31s4BRQUPisTdCBR05/M1rf3y3WoAQasBUktoz06m8MA==
-X-Received: by 2002:a05:6214:e8b:b0:704:a0cd:f597 with SMTP id 6a1803df08f44-70c35b8b5a0mr9281776d6.21.1755564127778;
-        Mon, 18 Aug 2025 17:42:07 -0700 (PDT)
-Received: from [192.168.10.39] (91-154-146-251.elisa-laajakaista.fi. [91.154.146.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef351545sm1861560e87.21.2025.08.18.17.42.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 17:42:05 -0700 (PDT)
-Message-ID: <3f857197-1cd1-4c18-88e9-e8c00d95af82@oss.qualcomm.com>
-Date: Tue, 19 Aug 2025 03:42:04 +0300
+	s=arc-20240116; t=1755564291; c=relaxed/simple;
+	bh=G+3x4iO7YudQi/d9E2cAzuUHCVJPYOopGklJPRoumNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I4FPTYqCD4G/s5Mc/1qFJdpVzXAZns87IZGE9Yqo++HexDPYw//hglMlHN/nocbe9cGkHfyKgTtuW0J3K2eBdkNonvDrXJnI6N6k8RjegMU20CluAJ/yyZuYLusr4tOiuV27UQSX8rEfePqpErB5AJN73qmPrH9UyHTNeIgJjMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uoASl-000000008Qq-2F6B;
+	Tue, 19 Aug 2025 00:44:31 +0000
+Date: Tue, 19 Aug 2025 01:44:27 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Arkadi Sharshevsky <arkadis@mellanox.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH RFC net-next 06/23] net: dsa: lantiq_gswip: load
+ model-specific microcode
+Message-ID: <aKPI6xMIgIeBzqy7@pidgin.makrotopia.org>
+References: <aKDhZ9LQi63Qadvh@pidgin.makrotopia.org>
+ <c8128783-6eac-4362-ae31-f2ae28122803@lunn.ch>
+ <aKI_t6F0zzLq2AMw@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/14] phy: hdmi: Add HDMI 2.1 FRL configuration
- options
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>,
-        Dmitry Baryshkov <lumag@kernel.org>
-Cc: kernel@collabora.com, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-References: <20250818-phy-hdptx-frl-v3-0-c79997d8bb2b@collabora.com>
- <20250818-phy-hdptx-frl-v3-1-c79997d8bb2b@collabora.com>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <20250818-phy-hdptx-frl-v3-1-c79997d8bb2b@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=MJ9gmNZl c=1 sm=1 tr=0 ts=68a3c861 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=CKk/IlMN6Gw3Dq31eR3Dfg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=QX4gbG5DAAAA:8 a=bbK825GtWpsu-Oi3XvwA:9
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-ORIG-GUID: C1hGZTccIGCcUu8jAAolFsntaNAj5icE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMSBTYWx0ZWRfX2F2Cbl8THIin
- E0mwrV4qW5BdXVwnpJwO3GbtwBqRdboFIepIw9t6djl3Mv0RtKDU+hsi6u5+7Tjwhcr2qzVku2G
- DFaRJYVvmafJGLd1wMDas1dFlkAe6F5A2ECiOvJbugru4dyluT+T0DtKAvo2m925EEgCffX+4Fi
- uH8h7ArohRFcaRrcdTACfhvNakEjyT07WlKW9u/7y6Psjz9pxmTa3ybWYoNWxI/07NCoPn0iUs+
- WOVwmIgmusNlx9hoxInfyZ2Pt87QakvjmQgZZHpHAEM3UPSy9IBRoLFR+mhXCzQPUED4lXM6k9P
- E73PXM4ZNpKCJD/PlHmnfBnZZLZpOtyBnEu3jhBZ92xfLdrBDX/6s2ZR7RGm6nHBH1rkXRbDerx
- G7WLacRY
-X-Proofpoint-GUID: C1hGZTccIGCcUu8jAAolFsntaNAj5icE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_06,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKI_t6F0zzLq2AMw@pidgin.makrotopia.org>
 
-
-
-On 18/08/2025 21:59, Cristian Ciocaltea wrote:
-> The HDMI 2.1 specification introduced the Fixed Rate Link (FRL) mode,
-> aiming to replace the older Transition-Minimized Differential Signaling
-> (TMDS) mode used in previous HDMI versions to support much higher
-> bandwidths (up to 48 Gbps) for modern video and audio formats.
+On Sun, Aug 17, 2025 at 09:46:51PM +0100, Daniel Golle wrote:
+> On Sun, Aug 17, 2025 at 05:29:16PM +0200, Andrew Lunn wrote:
+> > >  
+> > > +struct gswip_pce_microcode {
+> > > +	u16 val_3;
+> > > +	u16 val_2;
+> > > +	u16 val_1;
+> > > +	u16 val_0;
+> > > +};
+> > > +
+> > 
+> > I would leave this where it is, and just have
+> > 
+> > struct gswip_pce_microcode;
+> > 
+> > Since only a pointer is needed, the compiler does not need the full
+> > type info, at this point.
+> > 
+> > The structure itself is rather opaque, and only makes some sort of
+> > sense when next to the MAC_ENTRY macro.
 > 
-> FRL has been designed to support ultra high resolution formats at high
-> refresh rates like 8K@60Hz or 4K@120Hz, and eliminates the need for
-> dynamic bandwidth adjustments, which reduces latency.  It operates with
-> 3 or 4 lanes at different link rates: 3Gbps, 6Gbps, 8Gbps, 10Gbps or
-> 12Gbps.
+> The structure is also used in the function gswip_pce_load_microcode().
+> Now, if we keep defining the struct fields along with the microcode this
+> will become a problem once there is more than one such set of microcode
+> instructions and additional header files for them. Each of them would
+> need to define struct gswip_pce_microcode with its fields.
+> The lantiq_pce.h header then becomes private to the driver for the
+> in-SoC switches, while gswip_pce_load_microcode() would be part of the
+> shared/common module use by both, in-SoC/MMIO switches as well as
+> (newer) MDIO-connected ones, and I would not want to include any of the
+> *_pce.h headers in the shared/common module.
 > 
-> Add support for configuring the FRL mode for HDMI PHYs.
+> Obviously I can just move the struct definition in the later commit
+> which actually separates the MMIO-specific parts of the driver and the
+> common/shared parts into different modules. Is it that what you had in
+> mind?
 
-Could you please point out corresponding DRM patches? They might be WIP 
-or incomplete. I'd like to see how this works on the consumer side.
+I didn't consider that the size of the array elements needs to be known
+when defining struct gswip_hw_info in lantiq_gswip.h.
+So the only reasonable solution is to make also the definition of
+struct gswip_pce_microcode into lantiq_gswip.h, so lantiq_pce.h won't
+have to be included before or by lantiq_gswip.h itself.
 
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->   include/linux/phy/phy-hdmi.h | 19 +++++++++++++++++--
->   1 file changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/phy/phy-hdmi.h b/include/linux/phy/phy-hdmi.h
-> index f0ec963c6e84f1b7728acafc824dff191c6b873d..83330d359e3ae345554f20429519da14506b8ab5 100644
-> --- a/include/linux/phy/phy-hdmi.h
-> +++ b/include/linux/phy/phy-hdmi.h
-> @@ -6,16 +6,31 @@
->   #ifndef __PHY_HDMI_H_
->   #define __PHY_HDMI_H_
->   
-> +#include <linux/types.h>
-> +
-> +enum phy_mode_hdmi {
-> +	PHY_MODE_HDMI_TMDS,
-> +	PHY_MODE_HDMI_FRL,
-
-There is no unified approach for PHY submode names. Nevertheless I'd 
-suggest something like PHY_HDMI_MODE_TMDS / _FRL. It follows more 
-closely the networking / USB submodes. An alternative might be to use 
-PHY_SUBMODE_HDMI_TMDS / _FRL.
-
-But it's really a nit and/or bikeschedding.
-
-> +};
-> +
->   /**
->    * struct phy_configure_opts_hdmi - HDMI configuration set
-> - * @tmds_char_rate: HDMI TMDS Character Rate in Hertz.
->    * @bpc: Bits per color channel.
-> + * @tmds_char_rate: HDMI TMDS Character Rate in Hertz.
-> + * @frl.rate_per_lane: HDMI FRL Rate per Lane in Gbps.
-
-This works nicely until HDMI Forum adds an rate not being even Gbps. Is 
-there a reason for not using ULL and bps following the tmds_char_rate 
-design?
-
-> + * @frl.lanes: HDMI FRL lanes count.
->    *
->    * This structure is used to represent the configuration state of a HDMI phy.
->    */
->   struct phy_configure_opts_hdmi {
-> -	unsigned long long tmds_char_rate;
->   	unsigned int bpc;
-> +	union {
-> +		unsigned long long tmds_char_rate;
-> +		struct {
-> +			u8 rate_per_lane;
-> +			u8 lanes;
-> +		} frl;
-> +	};
->   };
->   
->   #endif /* __PHY_HDMI_H_ */
-> 
-
--- 
-With best wishes
-Dmitry
-
+In file included from drivers/net/dsa/lantiq_gswip.c:28:
+drivers/net/dsa/lantiq_gswip.h:226:44: error: array type has incomplete element type 'struct gswip_pce_microcode'
+  226 |         const struct gswip_pce_microcode (*pce_microcode)[];
+      |                                            ^~~~~~~~~~~~~
+ 
 
