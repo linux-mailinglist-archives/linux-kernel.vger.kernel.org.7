@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-775314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1A2B2BDCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:45:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B71AB2BDD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F967AD5F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:43:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4B25246EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275A631AF01;
-	Tue, 19 Aug 2025 09:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0367331A06C;
+	Tue, 19 Aug 2025 09:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0tVvonW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ky3nvWSv"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E69274666;
-	Tue, 19 Aug 2025 09:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E117B26D4EF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596697; cv=none; b=f1VhxVYgb8GJ5tRkzPcZJTxoI7gIe6q3m6vnAVeXMIRhoeDpdbfJkqYygeHyjBG8NMOIMZD4UciHKsB2PT+vt6YVYVTQTpxb9/bCOWhG+tRPylX3Pw8FX0AEOJFhxepSiqEzKsEPDOir6+GrjrtsbEoXXoLQFTPLlHoMb1sgwwM=
+	t=1755596758; cv=none; b=imtES516oxtl1Ui3IOUnuJl1nm9eF+9CvDvtRoHTfvXmyT/shoWbKBcU8ohztfkE/54Qk04rQQPu2ujDJDz8j8TLPop6BqDWJj+yfNVlK/qDd0j9mFGyRaVRoJ6w4ytiUZDjX67KHGbsaiPmO3/zOJ0RAVzBhn2uzG2FAhV7jUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596697; c=relaxed/simple;
-	bh=qkoSavUo25iuaFyv6MbaWJ1hYMagYZR2yJl9AnwGilk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BxDkymUe4eJmOU67++/b1t+Z+efaNpqmwDp55ZFMMrJeQNtFHmK/zbPvjv2S1ivmc1dwC2Q9aCYZxXxlRH1TYj85h7vw3s4T++CeDLILdn85Ma8LHplcuY/Tk6mFpFDM+goycoAAZjwjal2cXuDUkTCUHOpkKwl4CoR2aKqOdo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0tVvonW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A37EC4CEF1;
-	Tue, 19 Aug 2025 09:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755596697;
-	bh=qkoSavUo25iuaFyv6MbaWJ1hYMagYZR2yJl9AnwGilk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n0tVvonWE1oEyrGMBnKN7BtdvUYyXYUQ+yYnW91g4LS7S3b+Wic8ckZOkm2c0LQgR
-	 W3HpDgxJO3Izhz3SyUlED62hj5dA4ADph7+TZn1CfpcnL1QG2Bfj11Tt4C1oyxNtNS
-	 /H+5TlR76OOTKY6AI8bjUTwfmcr4T6EEcBiPOOAKLNWGu5eKrY4LT2T29dcoyt7OJN
-	 +CXdYIgO/f1SDXr1D5sF+9nefcAflvmgiFFWSy9N73q7Rqk5Y/nVk/HdKlZpnYmlqU
-	 Z+nm9okydm70LTdECMr3tBB+Vn2TrfHNwSC8FvOfv3kbPl/POtg1n8TBtQ9q2QJ2rD
-	 XQ2BbTozJRPLA==
-Date: Tue, 19 Aug 2025 11:44:48 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Christoph Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez <da.gomez@samsung.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Matthias Maennich <maennich@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-Message-ID: <20250819-vorgibt-bewalden-d16b7673cc72@brauner>
-References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
- <20250811-wachen-formel-29492e81ee59@brauner>
- <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
- <20250815-darstellen-pappen-90a9edb193e5@brauner>
- <6cce2564-04f2-44ab-96d3-2f47fc221591@kernel.org>
+	s=arc-20240116; t=1755596758; c=relaxed/simple;
+	bh=V/Oq678BArHS/pkn3z/1AG2tX/0VWyD29OgrHSZ5KYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GxiXOmrkx1wXh4BxpflSzCgmKgnyvziSlu3QWwhIWiPq/RxoQsITGm73ORHAUXWzzFLPJzH8ekxGcaiIiKxWdVwqTmVrQwY+Ippv38H87qZk3D/IOHxQsDWATt0duGAF3WmG9UV16YFODUwKU27xT8xLFUAfORQQR4k7BIYyJdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ky3nvWSv; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 91468C6B3B5;
+	Tue, 19 Aug 2025 09:45:41 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F3BA060697;
+	Tue, 19 Aug 2025 09:45:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6D1CB1C22D747;
+	Tue, 19 Aug 2025 11:45:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1755596754; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=V/Oq678BArHS/pkn3z/1AG2tX/0VWyD29OgrHSZ5KYs=;
+	b=ky3nvWSvMoX2c+pvIhTj+cu1ov2JfLwOCNQzdenjwhDzyP15XnEafVUzBDGclQe7UiRLBF
+	Lx0kJ9pOIEUf2aZoP10qr3Y6vADaSF2KMjB6p7sI3LKdie9W5CYg20qkZEr/QRJDjKqelp
+	sSo4m4PyebziLqf2RZKOfFNuGVa74ZaXOsdlV8CqMV9N9BQ3mxl2I8WE0d+w5VdaXFu9nv
+	KFbnOyin5ZSHH4ncKfo24m2iHalyUbot7UvVqS+BqnoTszYBculjmAAbLM9CWs5AEHvmUC
+	orXR4REnEQLGDydkvqhTtHdKYYpkjjaMSxHGr/B5HKKfIsg48EeGlZc7p4sfGQ==
+Message-ID: <6d664b4b-080f-442e-bb7e-4d220a16ccf4@bootlin.com>
+Date: Tue, 19 Aug 2025 11:45:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6cce2564-04f2-44ab-96d3-2f47fc221591@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] phy: ti: gmii-sel: Always write the RGMII ID setting
+To: Michael Walle <mwalle@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Andrew Lunn <andrew@lunn.ch>, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, nm@ti.com,
+ vigneshr@ti.com
+References: <20250819065622.1019537-1-mwalle@kernel.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20250819065622.1019537-1-mwalle@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Aug 15, 2025 at 05:39:54PM +0200, Daniel Gomez wrote:
-> 
-> 
-> On 15/08/2025 07.25, Christian Brauner wrote:
-> > On Tue, Aug 12, 2025 at 09:54:43AM +0200, Daniel Gomez wrote:
-> >> On 11/08/2025 07.18, Christian Brauner wrote:j
-> >>> On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
-> >>>> Christoph suggested that the explicit _GPL_ can be dropped from the
-> >>>> module namespace export macro, as it's intended for in-tree modules
-> >>>> only. It would be possible to restrict it technically, but it was
-> >>>> pointed out [2] that some cases of using an out-of-tree build of an
-> >>>> in-tree module with the same name are legitimate. But in that case those
-> >>>> also have to be GPL anyway so it's unnecessary to spell it out in the
-> >>>> macro name.
-> >>>>
-> >>>> [...]
-> >>>
-> >>> Ok, so last I remember we said that this is going upstream rather sooner
-> >>> than later before we keep piling on users. If that's still the case I'll
-> >>> take it via vfs.fixes unless I hear objections.
-> >>
-> >> This used to go through Masahiro's kbuild tree. However, since he is not
-> >> available anymore [1] I think it makes sense that this goes through the modules
-> >> tree. The only reason we waited until rc1 was released was because of Greg's
-> >> advise [2]. Let me know if that makes sense to you and if so, I'll merge this
-> >> ASAP.
-> > 
-> > At this point it would mean messing up all of vfs.fixes to drop it from
-> > there. So I'd just leave it in there and send it to Linus.
-> 
-> Got it. I was waiting for confirmation before taking it into the modules tree,
-> and I agree that at this point it makes sense to keep it in vfs.fixes.
-> 
-> > Next time I know where it'll end up.
-> 
-> Can you clarify what you mean by this?
 
-Next time I know that you are responsible for taking such patches. :)
+
+On 19/08/2025 08:56, Michael Walle wrote:
+> Some SoCs are just validated with the TX delay enabled. With commit
+> ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
+> RGMII TX delay"), the network driver will patch the delay setting on the
+> fly assuming that the TX delay setting is fixed. In reality, the TX
+> delay is configurable and just skipped in the documentation. There are
+> bootloaders, which will disable the TX delay and this will lead to a
+> transmit path which doesn't add any delays at all.
+> Fix that by always writing the RGMII_ID setting and report an error for
+> unsupported RGMII delay modes.
+>
+> This is safe to do and shouldn't break any boards in mainline because
+> the fixed delay is only introduced for gmii-sel compatibles which are
+> used together with the am65-cpsw-nuss driver and also contains the
+> commit above.
+>
+> Fixes: ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Maxime
+
 
