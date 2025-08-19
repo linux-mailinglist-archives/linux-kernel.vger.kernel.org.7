@@ -1,139 +1,192 @@
-Return-Path: <linux-kernel+bounces-775447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30CEB2BF43
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:46:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69564B2BF44
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739721BA29DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9C41BA3906
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB24232A3CD;
-	Tue, 19 Aug 2025 10:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E623322DA4;
+	Tue, 19 Aug 2025 10:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JW1j8lB9"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEMPtvzG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E54326D6F
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F3C31E0F7;
+	Tue, 19 Aug 2025 10:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755600342; cv=none; b=J0q350j4TTPqldsrETIdpKmiEStIXKkW7SOsJTM4/xKQh2r9rh+3YpT9z+VzobNZHGjkTuvV0UIr2A5GjpMo3cDjRK7pGgLbS540m571Gqk33KlsAgqiLVOsp2dHSONHpWO8BYY8I2DBxoEKZuwjGq3t9yb6nrz6j8dSTA2D6jU=
+	t=1755600377; cv=none; b=rQq43AdNAzZfjToXtcktCYsARNK34Ly3sRl4+CphQd2gBVBRTOagQl2B+GE8zpU1LLqW5G+OBk8x/58u/8XG698Cfhv4omkwBoqhABkXwqaI97vnnKYIGTDk+0LnT3cT+YYbUhxbVdzF8Y/jHvhabuVbwo3WWDgnOU4n8eqXebU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755600342; c=relaxed/simple;
-	bh=x7zE6RyMG5SmYkscjJboHkA/xd9epaIl07B119p3nJE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iRNivgSbNT+xlf2CAehdBauCxpKT8OX3l/+cAa1GbJ08grR1LjQarCK7shSOI9SWYnp9A+cFVLTpsz/2ZHMzyBwrIPKsAuC45V/CRpPTvafVgboLwMHqaCNjSCiO2Re/IwkZlxOVytT6UjZg6OtINvwdSDgLYRcOOWmyBeSsrao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JW1j8lB9; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-618aea78f23so5182484a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755600339; x=1756205139; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vlgDGE85YBp2j9bhgXZJumZoSN1cJSrjsFNnN/m97uw=;
-        b=JW1j8lB9hcaa5E/Nw9yvJ1ekrUmIkoERLs4fyU9NoGFzw+eYYlfx+IQ/ObGyN7IacG
-         TnFg6Tt7Muy0KdePPclKPPPaUWOHv1oGaAfOaVAvufCoGI+WbMODGU5M1TqCCikpPEbe
-         qBjWdrY1dlJF01U/mTfG+cUNv3KYoFlQcmEWFuTdYcEOjjzMgFlTDWGiFdmZfpyMWre2
-         u7HaY3FQGRSsnvZGdxqCZZ/6Y+nkp7gPzdsgapBbdJCp1y/xkpD6xOpANDSAxiKMGsP5
-         kRlcSXSvnKhP0TQIAenA0Npd+KhhPElj1TcGrHG0mbdQEvjza0ad9pLYw6yJoC28b1g+
-         riAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755600339; x=1756205139;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vlgDGE85YBp2j9bhgXZJumZoSN1cJSrjsFNnN/m97uw=;
-        b=Hcjm3jkACMxiDkmmzvchrmsVuEW7KH+vPlelC/IoLJdbubTnj/XGLru/g8RitYWeN+
-         G+9gfYfRooioQhD4fZX8mGzGMsMcmQ2SaXAVGCsAYPmCzo9QKHOkI/prJDGjMxiBZQM5
-         naETUWIyWliA8e0z2C/zfRKrjWJzVpCze2+eiaExPhCjTm/k4N4EQAaLHa0yP/8/zkjs
-         4+Q1hsQVGucF3ikcnKLzJj+WJgGDf9XqUbbm9BNnHGP289RdKbCC8ZcnXkCSKJ31bHMl
-         dfBfTpqXhIr4HuqQBDn9lAENOtNbU/9YqXZHR7det5ExeexTDctwBy/4QmKne8U0MgaB
-         u/eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1z5Gt5wZHXuGBCV+9h054+W9LVblTk1I+HUShzIqu/wYhBc9WtI0Q7Bca5muWedETYIoS0k6MpiyiZx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaPMFWi3OfcQOroGP3ZxzQcgGugUd05cjm8oFzgL8w5eL1ZQIE
-	JWN/zJH2by4iWKXzdFu8esnaN0q52rXePuLAgCyJiH/wI0eWnJ8BDRpmNzJDxI5wIuY=
-X-Gm-Gg: ASbGncssog0c12Atz1tAznbQC2lUKDZ0DRlfowS8heM47yf6LL7mClVzdYr0TAAQCln
-	9foHmAKUULgYeHG1gtFG3KLEiK3/1yCMjPzRKhGPOWAbiP0WKVoJOOhUKeH8GhoZu501/LmmnD8
-	9Or1P2Q9kFxC1KFWYEdqOh2PWm1jTjJEbHz/2k+EX8nAFP1opW+8hl/xgE4OktwRL/hFqUuQyRH
-	9d1fr0a1OoOXFZDuLORNKyuzrVKmVFI8Pd6xT+SPvWT8ELWE8y9CTrmkGpLKzRhV7sSXYtWirtH
-	zfkw/SGMWao+cfB/P7jnpSja2wZfAyqWuGI+Gol6YjAvwKW458kSCTeQ0JjFzkoPZSeGTN7MkBs
-	4sRV48sM+jkgDg19m/0LDvDdb4f9Hp5faU1R1onylSuEp3C8v
-X-Google-Smtp-Source: AGHT+IEJTLHyh0N/3ZjA8OKmxUPpDwP3GB0LJkHFUpf5OZrWH5pLrgfrVM4pyeZ8cSQdbw2CHOt10w==
-X-Received: by 2002:a05:6402:524d:b0:617:dc54:d808 with SMTP id 4fb4d7f45d1cf-61a7e6d99b2mr1532953a12.3.1755600336112;
-        Tue, 19 Aug 2025 03:45:36 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:db5f:8096:4609:9b24])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a757a48e2sm1469787a12.40.2025.08.19.03.45.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 03:45:35 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Tue, 19 Aug 2025 12:45:23 +0200
-Subject: [PATCH 4/4] arm64: dts: qcom: x1e80100-qcp: Fix swapped USB MP
- repeaters
+	s=arc-20240116; t=1755600377; c=relaxed/simple;
+	bh=JfTBbv8jpNK14cUe0jQzor4Nu6VNU6jXNCwErFbJEAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGdnxBc9OeYzueu/zvS1zalGNu+D/D6GPwAD3TVxbFr6TrzpHBERJooT+buZblEyFMYJZsq5GahMK7EQgU57CNwkUWfL4u39RyLaD3wpumYNXAJ2/D3Rq3TpcJQd2N8bafAYkvZo/iyK7n/eIb5Nc6888zyR0LDhyD41k1Id0Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEMPtvzG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD96C4CEF1;
+	Tue, 19 Aug 2025 10:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755600375;
+	bh=JfTBbv8jpNK14cUe0jQzor4Nu6VNU6jXNCwErFbJEAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FEMPtvzGqBTk2bcuops306HDF1FUx7bqXIVqJgVtzhxivOnvZxP1I3a3hdf7Vxo57
+	 3Y5J72y0V4eMio1aoZyMXqMSnvRAqjb3xBhxL7gEOBJlXhwrzpN4wPKFs2L3VeLKB/
+	 lM3YRFSn9KfHzQ2cS8YuhGtWM4H7UDGRtockprpgOLvd9KIOxJeJ9SDTzFq+aE6ISe
+	 o5i84yhscZG1eOIVOlnGsbpfekv5hIaWdL0NQEiuSVy3SvF2CoUESvXsot7uSQg77q
+	 NMGExXcaJmdO7jasmxBayCvYicRC2Z7nu0CiA332ydy55BkVUUc0PBNAIp1hKEWqM/
+	 rVo11aaOtmz4A==
+Date: Tue, 19 Aug 2025 11:46:08 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v10 2/6] KVM: arm64: Use SMCCC 1.2 for FF-A
+ initialization and in host handler
+Message-ID: <aKRV8FEuO5ZOcEfn@willie-the-truck>
+References: <20250809-virtio-msg-ffa-v10-0-189eeecf8ae8@google.com>
+ <20250809-virtio-msg-ffa-v10-2-189eeecf8ae8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-x1e80100-fix-usb-mp-repeaters-v1-4-0f8c186458d3@linaro.org>
-References: <20250819-x1e80100-fix-usb-mp-repeaters-v1-0-0f8c186458d3@linaro.org>
-In-Reply-To: <20250819-x1e80100-fix-usb-mp-repeaters-v1-0-0f8c186458d3@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Maud Spierings <maud_spierings@hotmail.com>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Johan Hovold <johan@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250809-virtio-msg-ffa-v10-2-189eeecf8ae8@google.com>
 
-The &eusb3_repeater belongs to the first port of the USB MP controller and
-the &eusb6_repeater belongs to the second. This is obvious if one looks at
-e.g. the CRD or the Dell XPS where only the second port of the USB MP is
-used: They only have the &eusb6_repeater and already specify it for the
-&usb_mp_hsphy1.
+On Sat, Aug 09, 2025 at 02:33:20AM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
+> 
+> SMCCC 1.1 and prior allows four registers to be sent back as a result
+> of an FF-A interface. SMCCC 1.2 increases the number of results that can
+> be sent back to 8 and 16 for 32-bit and 64-bit SMC/HVCs respectively.
+> 
+> FF-A 1.0 references SMCCC 1.2 (reference [4] on page xi) and FF-A 1.2
+> explicitly requires SMCCC 1.2 so it should be safe to use this version
+> unconditionally. Moreover, it is simpler to implement FF-A features
+> without having to worry about compatibility with SMCCC 1.1 and older.
+> 
+> SMCCC 1.2 requires that SMC32/HVC32 from aarch64 mode preserves x8-x30
+> but given that there is no reliable way to distinguish 32-bit/64-bit
+> calls, we assume SMC64 unconditionally. This has the benefit of being
+> consistent with the handling of calls that are passed through, i.e., not
+> proxied. (A cleaner solution will become available in FF-A 1.3.)
+> 
+> Update the FF-A initialization and host handler code to use SMCCC 1.2.
+> 
+> Signed-off-by: Per Larsen <perlarsen@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
+>  arch/arm64/kvm/hyp/nvhe/ffa.c    | 188 +++++++++++++++++++++++++--------------
+>  2 files changed, 120 insertions(+), 69 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
+> index 0b0a68b663d4bd202a7036384bf8a1748cc97ca5..a244ec25f8c5bd0a744f7791102265323ecc681c 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/Makefile
+> +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
+> @@ -27,6 +27,7 @@ hyp-obj-y := timer-sr.o sysreg-sr.o debug-sr.o switch.o tlb.o hyp-init.o host.o
+>  	 cache.o setup.o mm.o mem_protect.o sys_regs.o pkvm.o stacktrace.o ffa.o
+>  hyp-obj-y += ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../entry.o \
+>  	 ../fpsimd.o ../hyp-entry.o ../exception.o ../pgtable.o
+> +hyp-obj-y += ../../../kernel/smccc-call.o
+>  hyp-obj-$(CONFIG_LIST_HARDENED) += list_debug.o
+>  hyp-obj-y += $(lib-objs)
+>  
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 2c199d40811efb5bfae199c4a67d8ae3d9307357..19239f133a1cfb86db1b85251035709481cdef5b 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -71,36 +71,63 @@ static u32 hyp_ffa_version;
+>  static bool has_version_negotiated;
+>  static hyp_spinlock_t version_lock;
+>  
+> -static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
+> +static void ffa_to_smccc_error(struct arm_smccc_1_2_regs *res, u64 ffa_errno)
+>  {
+> -	*res = (struct arm_smccc_res) {
+> +	*res = (struct arm_smccc_1_2_regs) {
+>  		.a0	= FFA_ERROR,
+>  		.a2	= ffa_errno,
+>  	};
+>  }
+>  
+> -static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
+> +static void ffa_to_smccc_res_prop(struct arm_smccc_1_2_regs *res, int ret, u64 prop)
+>  {
+>  	if (ret == FFA_RET_SUCCESS) {
+> -		*res = (struct arm_smccc_res) { .a0 = FFA_SUCCESS,
+> -						.a2 = prop };
+> +		*res = (struct arm_smccc_1_2_regs) { .a0 = FFA_SUCCESS,
+> +						      .a2 = prop };
+>  	} else {
+>  		ffa_to_smccc_error(res, ret);
+>  	}
+>  }
+>  
+> -static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
+> +static void ffa_to_smccc_res(struct arm_smccc_1_2_regs *res, int ret)
+>  {
+>  	ffa_to_smccc_res_prop(res, ret, 0);
+>  }
+>  
+>  static void ffa_set_retval(struct kvm_cpu_context *ctxt,
+> -			   struct arm_smccc_res *res)
+> +			   struct arm_smccc_1_2_regs *res)
+>  {
+>  	cpu_reg(ctxt, 0) = res->a0;
+>  	cpu_reg(ctxt, 1) = res->a1;
+>  	cpu_reg(ctxt, 2) = res->a2;
+>  	cpu_reg(ctxt, 3) = res->a3;
+> +	cpu_reg(ctxt, 4) = res->a4;
+> +	cpu_reg(ctxt, 5) = res->a5;
+> +	cpu_reg(ctxt, 6) = res->a6;
+> +	cpu_reg(ctxt, 7) = res->a7;
+> +
+> +	/*
+> +	 * DEN0028C 2.6: SMC32/HVC32 call from aarch64 must preserve x8-x30.
+> +	 *
+> +	 * In FF-A 1.2, we cannot rely on the function ID sent by the caller to
+> +	 * deteect 32-bit calls as there are cases where a 32-bit interface can
 
-Swap them to set the correct repeater for each of the USB ports.
+typo: deteect
 
-Fixes: 9f53c3611960 ("arm64: dts: qcom: x1e78100-qcp: Enable Type-A USB ports labeled 3 and 4/6")
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +	 * have a 64-bit response 1.2 (e.g. FFA_MSG_WAIT or FFA_RUN). This will
+> +	 * be addressed in FF-A 1.3. We also cannot rely on function IDs in the
+> +	 * response.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 9369b76c668b5c008fefd85d5ca18e87ab9ce93f..b02a66f0895e9c91e5403553620615e0a3bfd7a9 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -1507,7 +1507,7 @@ &usb_mp_hsphy0 {
- 	vdd-supply = <&vreg_l2e_0p8>;
- 	vdda12-supply = <&vreg_l3e_1p2>;
- 
--	phys = <&eusb6_repeater>;
-+	phys = <&eusb3_repeater>;
- 
- 	status = "okay";
- };
-@@ -1516,7 +1516,7 @@ &usb_mp_hsphy1 {
- 	vdd-supply = <&vreg_l2e_0p8>;
- 	vdda12-supply = <&vreg_l3e_1p2>;
- 
--	phys = <&eusb3_repeater>;
-+	phys = <&eusb6_repeater>;
- 
- 	status = "okay";
- };
+Do you know what the FF-A 1.3 update is likely to say? It would be nice
+to get an idea of what the code might need to do in future in case this
+approach is going in a completely different direction.
 
--- 
-2.50.1
+> @@ -666,17 +703,21 @@ static bool do_ffa_features(struct arm_smccc_res *res,
+>  static int hyp_ffa_post_init(void)
+>  {
+>  	size_t min_rxtx_sz;
+> -	struct arm_smccc_res res;
+> +	struct arm_smccc_1_2_regs res;
+>  
+> -	arm_smccc_1_1_smc(FFA_ID_GET, 0, 0, 0, 0, 0, 0, 0, &res);
+> +	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs){
+> +		.a0 = FFA_ID_GET,
+> +	}, &res);
 
+Regardless of the problems with the spec, it's really nice to get rid
+of all those zero arguments that come with the arm_smccc_1_1_smc()
+macro.
+
+Will
 
