@@ -1,182 +1,110 @@
-Return-Path: <linux-kernel+bounces-776304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44371B2CB91
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35595B2CB97
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7AB3A6665
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3B0D1BC7206
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFDC30EF80;
-	Tue, 19 Aug 2025 18:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCAF30EF99;
+	Tue, 19 Aug 2025 18:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpVyhAfA"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EalDzgoN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DFC2FA0FF;
-	Tue, 19 Aug 2025 18:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C15130E0F4;
+	Tue, 19 Aug 2025 18:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755626446; cv=none; b=buDT1QuDybc0i0d94n0/iEAlNeBOBT8N52+j+JGYdxi6RdGJ6eLONKx1/Pg66lHOXVuxj09olnoAil5+oSC5A56jIJL+E1m4IXaL29Q2FmdqgjbQ4zUizVkUI//NL1+I8JxiwOiBIfpBxoxIY1leUPNflpXDRDfuM1USwvieOUA=
+	t=1755626583; cv=none; b=qCfFObCiNTqsudI1X2VkevdR6r2hx34P5WIJkxH1au+kcZ58o5wa/6l3Yq0JnKWQmswZdaosDwaayK5ppU83jAJm8ALwpt8TiGs+dGRTKeqT1sRb4n+SYL2kr/m9Mg3iXTzV5cGNgQ8TBeSulwf3Brcc1JxGM4TcyxBlDeFpCo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755626446; c=relaxed/simple;
-	bh=uggPgRTYqNjlmoaEi7wJCNeZIPbeRDwM2GTq7HQrLqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ugv5by+01JdGT4nAimE3DtsYJTDptcOGZbS0Hq8vlRfTu3uT1Ck/tKVsBwYPNsrlpoWyI1li+ISeoMwehjz6rtUn/Cc6l4SBbrwFoqy20BHOOvil5gfOBDDiCdwUACwZFbxtbR7eqf4SObafz4AXoBwBYO68eLZpDb67HaLYXPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpVyhAfA; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b47174c8e45so5019655a12.2;
-        Tue, 19 Aug 2025 11:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755626444; x=1756231244; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dlbE7qD4fBSNNkxix39Mi2yorN+MF+uyvTsDhoGqPO8=;
-        b=RpVyhAfAZmZvOBiO+v9otE30r9UqNDHH4EZEvY7rMk1LdmzULEX3DopmYjZUqiS6Tu
-         lbG8CoNIBMLq6/sIrqncacgbzHTtuHkCu3mse/ubnn0rFPvXHcV7lG4fdBflgexpbOj6
-         q0Zs4jW65XfVtD/pOrdMXfqJRBkhqm5ufuZkAR+MKl6R8pWb399d73qzHlWBHXZlz+1L
-         mDvyAImw3Btpt2sW8BGplTu14qJ2pdbNS8Qt0hHAQiXAKjPBda2NjYt2U4iM3sPgdeur
-         mddOR5kraSrLWgSi62OTbAQkdN6jdzcMK/WF4yOdrps+TfKLtdM25O1pX5tzgr7/psce
-         wysQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755626444; x=1756231244;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dlbE7qD4fBSNNkxix39Mi2yorN+MF+uyvTsDhoGqPO8=;
-        b=LZX5oSq57YeCJWJ52MkDN1pBcsRz3ZGXx8BPtfRILszKo0wBhXC5z90TcOIC4tYXyF
-         Ulz8dhEyHAI1VSXPvevn83rAz8KHWpONrfPlW4iRc806DnWXE3EeWeFCXTPr9PB3bw3X
-         lZ9DGhv9fRKbQN0idllHuFan5VbkAZvm50eCGUqId8MTD7paP14nKAEXG0cwOq45/faB
-         afSBXET4QV8rfkvG/4ESzT9lYV/XELHMsjF+nBkEfxOHb3bxW7MfCsFWEPfE6e400yxN
-         T7p40fc8cXCDisAX3u3+ANBXVBnwVuo0xZcUrOUn4hys3LmpFh/SGh0Owl3lwgbu0dud
-         NX7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUxWcv4ISZxIJp27yJsVTU3DPc3A5ed/b0HGg23ZL3lWlCiPIzGrHaPoIimN2QWaLbo+80sJkZ36H8v@vger.kernel.org, AJvYcCWaCl9Y+LknNPqvYkZ0bDSCRAYteNOPm/ETJOB3uU8sqDt1l8COfhNAG3Y+sxeoMRC8kabTBalwI07wwmu4@vger.kernel.org, AJvYcCXrawDECcOdA8S+Fqc4iGAg1VLzQlnGhiHVJQxWwCYDQf2HDVO7fLJRLB2wzMqlOfqtP8S5EbgApYeM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxifH/Xzoy8ixU9R6DYH7yszVU82e87Tcsc2IYnS/+BxSLH056b
-	2IliC+MzGynOSTvMElXtHVuHEYUIC+cOD0O9QxRkWJuqk6vJkUmHqqtJ2zAtK9Uv
-X-Gm-Gg: ASbGncsUTd4oaMNLNL+EOl7HhZ1VOWKrlHbb/1lHvgMPjmNCeblHlU4hwxoPJw4PfLc
-	AfUqkwQAS4xV1kbGfRu3wid7ZazgFbyFGrVhtJwYHt0Sy4YErQak2IU0p6O1QvYNV2JOkz/avd7
-	EYmndsQYapka29Ciegf8/TzAMlcpNbIkGchtth1WfkyquSn1d6S40XUTxRaQmCeMKgvCgpQTDW0
-	NByltQ1B1RyMm37ClJ+Ir9xWOe5YU0GRU6TbaCqBGUxAorc5+mZFXvUwTDDrU9VUhVAjFABUWDW
-	YvD/EX0KqYWeftFb1uYcAUHrly6YVnhIQBFIJCQ3fDIU5OPIaLCm1wk6E5ReyUzr3ZRFK/Aq5v3
-	EbS1EINyz2JLbFcvw5TvsJ4NBCOZS+u8/9ivD6wHUMQ==
-X-Google-Smtp-Source: AGHT+IFJy5JckZxpt90aMohFioubuWk8E0gpbYob5TFHcas8o5j9rpydHf1Y9T1yNSQsI6RoBUXcMA==
-X-Received: by 2002:a17:902:f606:b0:240:b075:577f with SMTP id d9443c01a7336-245e04926e5mr47416425ad.37.1755626444145;
-        Tue, 19 Aug 2025 11:00:44 -0700 (PDT)
-Received: from localhost ([2804:30c:2767:3c00:70b9:40f2:fa7f:19cd])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-245ed4e9bd2sm3117445ad.106.2025.08.19.11.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 11:00:43 -0700 (PDT)
-Date: Tue, 19 Aug 2025 15:01:04 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: 20250816141220.0dd8d68f@jic23-huawei.smtp.subspace.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
- parts
-Message-ID: <aKS74OjRSCYhq8Es@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1754617360.git.Jonathan.Santos@analog.com>
- <ecb7406f54938658b51b4469034d87a57086bd1e.1754617360.git.Jonathan.Santos@analog.com>
- <c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org>
- <aJ0UEUVmIH94Nuwi@JSANTO12-L01.ad.analog.com>
- <8c27b00c-5b80-400f-8538-b9ad96fd5feb@kernel.org>
- <20250816141220.0dd8d68f@jic23-huawei>
- <aKOVY+F8JfOFr0O4@JSANTO12-L01.ad.analog.com>
- <41ad5dc8-0179-49b7-a660-2c55b5048db6@kernel.org>
+	s=arc-20240116; t=1755626583; c=relaxed/simple;
+	bh=RlZTJUqIlimT1tWCSSY0h8X/eWmkIxu4Et0KQlg5A2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UyxK+h0Ip/RoRa5zw8+sWY5xDwAZWjqNFaixKcYTDqKG945TCWKhxOHGduJv0CsOFAWeyxf8lnluU1uaCTRnqGYHk88l+qF4lvqwyOmQnTTa3TUQ0i73vUIcpO2Y+tUKFdUg7jS+6ZoZZ9zOOR3B/0XstiGgn0ooODmfykuDXsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EalDzgoN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE235C4CEF1;
+	Tue, 19 Aug 2025 18:03:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755626583;
+	bh=RlZTJUqIlimT1tWCSSY0h8X/eWmkIxu4Et0KQlg5A2c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EalDzgoN/7Y3KAbfB4cazq6wZtBpmRvual893K1SJmmx/DuhYsrrSTe53FFGHmBfL
+	 tTbyh7LaaK15dJga2iRCqqP/cUkNp0FsKPFAaesZFufl8QUG2q657Gl64iRM6B6nDP
+	 rhKDoQil9Fm00Wn0UseOwl1yllT8NTIVUZFp8VFWOxWJdO/deOAo8jFjFKPHYYLv97
+	 enC2fFWmd8TKrbJU3HZHStalauGg1/kCCH1/G9umbauTRb/lCst9NCMod2cGMkkQMR
+	 dLSUbvodpJ2gGgGiK3PJSFA6FuE3sgpHo8Py25nojEndpSK+7qkFDQAX71+MKlULbO
+	 LbnZhJafrZ8wA==
+Message-ID: <36974682-c8f1-4bcd-91f3-255c6332c0fe@kernel.org>
+Date: Tue, 19 Aug 2025 21:02:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Glymur SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Mike Tipton <mike.tipton@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+References: <20250814-glymur-icc-v2-0-596cca6b6015@oss.qualcomm.com>
+ <20250814-glymur-icc-v2-1-596cca6b6015@oss.qualcomm.com>
+ <CAL_JsqL+C1VueQjrKra8fNTd-2k=gkoy-jA9uuQOhuyRMbQroQ@mail.gmail.com>
+ <363db534-92a2-4108-8a41-8e07ec22513d@kernel.org>
+ <09247b50-05c4-40ff-9d9e-51e36846996d@kernel.org>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <09247b50-05c4-40ff-9d9e-51e36846996d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <41ad5dc8-0179-49b7-a660-2c55b5048db6@kernel.org>
 
-Hi,
-
-On 08/19, Krzysztof Kozlowski wrote:
-> On 18/08/2025 23:04, Jonathan Santos wrote:
-> > On 08/16, Jonathan Cameron wrote:
-> >> On Thu, 14 Aug 2025 08:03:23 +0200
-> >> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >>
-> >>> On 14/08/2025 00:39, Jonathan Santos wrote:
-> >>>>>>  
-> >>>>>> +  adi,aaf-gain:
-> >>>>>> +    description: |
-> >>>>>> +      Specifies the gain of the Analog Anti-Aliasing Filter (AAF) applied to the
-> >>>>>> +      ADC input, measured in milli-units. The AAF provides additional signal  
-> >>>>>
-> >>>>> What is milli unit? Isn't gain in dB, so maybe you want mB? Quite
-> >>>>> unpopular to see mB, but we cannot use 1/100 of dB, so I could
-> >>>>> understand it.
-> >>>>>  
-> >>>>
-> >>>> Actually, the gain is expressed in V/V, not in dB. I may have phrased it poorly, but since
-> >>>> there are fractional values like 0.364 and 0.143, I chose to represent it
-> >>>> in milli-units.  
-> >>>
-> >>> Why your reply to is corrupted:
-> >>> "c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org"?
-> >>>
-> >>>
-> >>> What sort of unit is milli-unit? Isn't this 1/1000 of some BASE unit,
-> >>> but you do not have here a base?
-> >>>
-> >>> I think you want just basis point if this is V/V (already in common
-> >>> property suffixes)
-> >> Nice. I didn't know about -bp.   That does sound like a good choice for ratio
-> >> stuff and here would be 100x larger actual values which is fine.
-> >>
-> > 
-> > Yes, it would be, but the here it is 1000x larger than the
-> > actual value (1/1000 V/V). I don't see another unit in
+On 8/19/25 7:03 PM, Krzysztof Kozlowski wrote:
+> On 19/08/2025 15:46, Georgi Djakov wrote:
+>> On 8/19/25 4:31 PM, Rob Herring wrote:
+>>> On Thu, Aug 14, 2025 at 9:54 AM Raviteja Laggyshetty
+>>> <raviteja.laggyshetty@oss.qualcomm.com> wrote:
+>>>>
+>>>> Document the RPMh Network-On-Chip Interconnect in Glymur platform.
+>>>>
+>>>> Co-developed-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+>>>> Signed-off-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+>>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>>>> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+>>>> ---
+>>>>    .../bindings/interconnect/qcom,glymur-rpmh.yaml    | 172 +++++++++++++++++
+>>>>    .../dt-bindings/interconnect/qcom,glymur-rpmh.h    | 205 +++++++++++++++++++++
+>>>>    2 files changed, 377 insertions(+)
+>>>
+>>> This is breaking linux-next "make dt_binding_check". Looks like the
+>>> clock header dependency in the example is not applied. Please drop
+>>> this until the dependency is there.
+>>
+>> Thanks! And now i see why my script didn't catch this... now fixed and
+>> patch dropped.
 > 
-> Huh? How? 1000x larger would be = 1... This makes no sense...
-> 
-> 
-> > property-units.yaml for this specifc case. Maybe using -milli suffix
-> > like in 'adi,ad4000.yaml' and 'adi,ad7380.yaml'?
-> 
-After having a look at the data sheets for these parts (AD7768-1, ADAQ7767-1,
-ADAQ7768-1, ADAQ7769-1), I think this indeed has similar semantics to
-adi,gain-milli. The data sheet says the AAF selection has an impact on the -3dB
-cutoff frequency but, for a given ODR, there is no difference between the
-reported −3 dB Bandwidth (kHz) in Table 12, Table 32, and Table 35 from
-AD7768-1, ADAQ7767-1, and ADAQ7769-1, respectively. So, looks like this is just 
-about signal amplification/attenuation and so the use of adi,gain-milli sounds
-appropriate to me.
+> What are you using to apply patches? Because b4 would pull all
+> dependencies, which would brake your branch as well, but at least you
+> would see something odd happening here.
 
-Considering the AAF doesn't really impact the -3dB cutoff frequency, maybe the
-property could be documented like:
+I am using b4, but in cherry-pick mode, so i just pipe the current email to
+it. And i also noticed the prerequisite-change-id lines and the dependency
+on gcc, but my local scripts (that do all kinds of checks) passed, because
+of a bug that didn't properly log the dt_binding_check error, so i thought
+the dependency is there. I recently modified it to run with not just the
+DT_SCHEMA_FILES="Documentation/devicetree/bindings/interconnect/" but with
+a few more schemas and very likely i introduced the logging bug at that time.
 
-  adi,gain-milli:
-    description: |
-	  Specifies the gain applied by the Analog Anti-Aliasing Filter (AAF) to the
-	  ADC input (in milli units). The hardware gain is determined by which input
-      pin(s) the signal goes through into the AAF. The possible connections are:
-      * For the ADAQ7767-1: input signal connected to IN1±, IN2± or IN3±.
-      * For the ADAQ7769-1: OUT_PGA pin connected to IN1_AAF+, IN2_AAF+, or
-        IN3_AAF+.
-      If not present, default to 1000 (no actual gain applied).
-    $ref: /schemas/types.yaml#/definitions/uint16
-    enum: [143, 364, 1000]
-    default: 1000
-
-Would something along those lines make sense for these devices?
-
-Best regards,
-Marcelo
+Thanks,
+Georgi
 
