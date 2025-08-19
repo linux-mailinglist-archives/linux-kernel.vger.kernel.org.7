@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-775313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0728B2BDC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:44:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1A2B2BDCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736FD18842C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:44:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F967AD5F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EBA311C3B;
-	Tue, 19 Aug 2025 09:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275A631AF01;
+	Tue, 19 Aug 2025 09:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mFCVi/vu"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0tVvonW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9761A3A80
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E69274666;
+	Tue, 19 Aug 2025 09:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596652; cv=none; b=S1uQSHHNeU5JXXBf1FCF5/bQYxZF7Ut+0xMn5bB1pZEmOq1bNJVhw0z7+7F5E3JWDG//dxZEZAuwpanKhECExMAj4paqd6cPhZ5mRDRlG1PF4BBxN9IagEk+HOdgdDgjmbkK7cKlaFfjGTPyzSI1sP3VTBw+5KHVQWVdamOMO4A=
+	t=1755596697; cv=none; b=f1VhxVYgb8GJ5tRkzPcZJTxoI7gIe6q3m6vnAVeXMIRhoeDpdbfJkqYygeHyjBG8NMOIMZD4UciHKsB2PT+vt6YVYVTQTpxb9/bCOWhG+tRPylX3Pw8FX0AEOJFhxepSiqEzKsEPDOir6+GrjrtsbEoXXoLQFTPLlHoMb1sgwwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596652; c=relaxed/simple;
-	bh=OOZDAaZrI66ydwRO+2rFbEiHfOOLnYyWJFOFD28ZEkM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rasd2u6laVnTdNd/f0SzOmlWUm+eMdZzYdAmLWqOeJ9/7MaseqB4IzBX3uEJe1LDch20MSE2cjQ42+uhSrqjQhQbQgxbSWXpsSGGI42NSL6DQuOplrhAjN66x8c/yWCV1o8J/nyi/iaoxmrdrxVCP9KN1tSuL5tZSwXc1ZUBF2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mFCVi/vu; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce4b9c904so5729716e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:44:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596649; x=1756201449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OOZDAaZrI66ydwRO+2rFbEiHfOOLnYyWJFOFD28ZEkM=;
-        b=mFCVi/vuIFYlZZ1cLIFUqyzkYGLhxDoRqcDy9cD0TsD8OZXniljtD66sn7Qc3sFS98
-         wP80kxA9himGXp9qKdYudJPJflEzZA+H/uiWdcaeatgTAdhNFOY2xfZlRNYeIbJ1WQPB
-         snMDHcqbzTiMd4lRk04WsqVS1nFYK5baWaD9frHez0OFiFJb2Am5fpdq6AKFA2WejnCa
-         8B72mPzTmEmgummURROiVbgzmOaFk/LU4Ybr0m7QtNQZ+kIgU/bvlDzqdyq3CmYnzPiP
-         jLrGk1lh++gxG0FQ+6R2DElxtJkxSwGf4vg4U+MXSMLKYhUPhYoVl2mPZG1cTAk61aQv
-         lMLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596649; x=1756201449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OOZDAaZrI66ydwRO+2rFbEiHfOOLnYyWJFOFD28ZEkM=;
-        b=p+fSBLTZih2lsLEPNhWqjSM1qCg2v/vOfgsyx4isu73ctju+4gKnvCwXpBj2H+HnnQ
-         dJo6lpCwE8VHWD0s/LrZAqClLk1ExGHfxBFjaZzag08QDF/rhuk+4qAAx+FC/BV4k2ao
-         X+l5h5CVmdtKV53INPEuxdsl7yO1eT3GWZ+eiu0Gs1jvNhnA1F1l9cbjnj9dvw1fBbi/
-         EE0C/18uniW7Pv7f6PJpmMF7oi48zKKdBFVsNd04T+wIaSW16CJ/l5SzPvrLrIlV368M
-         IIwnSvpEI6hl7LCgXJMbWftsXAzOvUeQPoU2DeFcNn0FFvZ3ynti6zn/ZCgKShcdDql5
-         jv+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXDP0spitKljeUQCIqN0pWaqFUZM1Uu+1M3PuaQDiAO8tU+DUhiKf1BJRGWzyLVtyErwhKpsQMHSCmabuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylsmG1Uvl01jM0p96nHRNV6uTZuZgBPwChyDRzi03KXAsmaEw3
-	zKGsY2zg3t6hHRuhoask+8wAe0/JhY0Fh8/rnrQpeYgxEXQueJ43zM3OWrMJYkv6kHauS7tpKwF
-	uvLZlsqvi8IsUU3Fj1P/l+yaM5DrsUvDqQ9nUQXPsyg==
-X-Gm-Gg: ASbGncsHA0c44chur0KzfLLXjzgzdjXBD9m9HUkq8EzvTgTJB1+pg+F19G3YoPkS6jf
-	HNtD6aySsqUOrBV3hwrx/hIwMrvzkaL+X+nxlVaUOVo8U7WWNgutXpyWPClJzRfQvFLB7JDuKNJ
-	HYHAoOIGpldWZhcnd49AsOBJrKppXj0f9PET0rxrGEUjD7vKxTVqdMUA7ZVlVcRbhdnLtcN3Pw0
-	Z1pTIDsf5DV
-X-Google-Smtp-Source: AGHT+IEb5axoDvieP94ahUcvQF4Cdj/DI1kgL87CBZO05dhRfNXWtWdEPdVzxE8EKpKiDOV7nU9/phOY4imeW35mO0s=
-X-Received: by 2002:a05:6512:3984:b0:55b:79e8:bf83 with SMTP id
- 2adb3069b0e04-55e00e3ab16mr476219e87.14.1755596649121; Tue, 19 Aug 2025
- 02:44:09 -0700 (PDT)
+	s=arc-20240116; t=1755596697; c=relaxed/simple;
+	bh=qkoSavUo25iuaFyv6MbaWJ1hYMagYZR2yJl9AnwGilk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxDkymUe4eJmOU67++/b1t+Z+efaNpqmwDp55ZFMMrJeQNtFHmK/zbPvjv2S1ivmc1dwC2Q9aCYZxXxlRH1TYj85h7vw3s4T++CeDLILdn85Ma8LHplcuY/Tk6mFpFDM+goycoAAZjwjal2cXuDUkTCUHOpkKwl4CoR2aKqOdo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0tVvonW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A37EC4CEF1;
+	Tue, 19 Aug 2025 09:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755596697;
+	bh=qkoSavUo25iuaFyv6MbaWJ1hYMagYZR2yJl9AnwGilk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n0tVvonWE1oEyrGMBnKN7BtdvUYyXYUQ+yYnW91g4LS7S3b+Wic8ckZOkm2c0LQgR
+	 W3HpDgxJO3Izhz3SyUlED62hj5dA4ADph7+TZn1CfpcnL1QG2Bfj11Tt4C1oyxNtNS
+	 /H+5TlR76OOTKY6AI8bjUTwfmcr4T6EEcBiPOOAKLNWGu5eKrY4LT2T29dcoyt7OJN
+	 +CXdYIgO/f1SDXr1D5sF+9nefcAflvmgiFFWSy9N73q7Rqk5Y/nVk/HdKlZpnYmlqU
+	 Z+nm9okydm70LTdECMr3tBB+Vn2TrfHNwSC8FvOfv3kbPl/POtg1n8TBtQ9q2QJ2rD
+	 XQ2BbTozJRPLA==
+Date: Tue, 19 Aug 2025 11:44:48 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Christoph Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez <da.gomez@samsung.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Matthias Maennich <maennich@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
+ EXPORT_SYMBOL_FOR_MODULES
+Message-ID: <20250819-vorgibt-bewalden-d16b7673cc72@brauner>
+References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
+ <20250811-wachen-formel-29492e81ee59@brauner>
+ <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
+ <20250815-darstellen-pappen-90a9edb193e5@brauner>
+ <6cce2564-04f2-44ab-96d3-2f47fc221591@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-gpio-mmio-pinctrl-conv-v1-0-a84c5da2be20@linaro.org>
-In-Reply-To: <20250811-gpio-mmio-pinctrl-conv-v1-0-a84c5da2be20@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 11:43:58 +0200
-X-Gm-Features: Ac12FXxWHK9Y341YvKoMtvojeGQDJurTuXUIgTK46n0rp4Sv0-QLWOBJFmGfpkc
-Message-ID: <CACRpkdYungF_01g0XO=u7meo7pq+9y2YHP5XCBDtKHByee8yPA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] pinctrl: replace legacy bgpio_init() with its
- modernized alternative
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
-	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
-	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
-	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6cce2564-04f2-44ab-96d3-2f47fc221591@kernel.org>
 
-On Mon, Aug 11, 2025 at 5:02=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+On Fri, Aug 15, 2025 at 05:39:54PM +0200, Daniel Gomez wrote:
+> 
+> 
+> On 15/08/2025 07.25, Christian Brauner wrote:
+> > On Tue, Aug 12, 2025 at 09:54:43AM +0200, Daniel Gomez wrote:
+> >> On 11/08/2025 07.18, Christian Brauner wrote:j
+> >>> On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
+> >>>> Christoph suggested that the explicit _GPL_ can be dropped from the
+> >>>> module namespace export macro, as it's intended for in-tree modules
+> >>>> only. It would be possible to restrict it technically, but it was
+> >>>> pointed out [2] that some cases of using an out-of-tree build of an
+> >>>> in-tree module with the same name are legitimate. But in that case those
+> >>>> also have to be GPL anyway so it's unnecessary to spell it out in the
+> >>>> macro name.
+> >>>>
+> >>>> [...]
+> >>>
+> >>> Ok, so last I remember we said that this is going upstream rather sooner
+> >>> than later before we keep piling on users. If that's still the case I'll
+> >>> take it via vfs.fixes unless I hear objections.
+> >>
+> >> This used to go through Masahiro's kbuild tree. However, since he is not
+> >> available anymore [1] I think it makes sense that this goes through the modules
+> >> tree. The only reason we waited until rc1 was released was because of Greg's
+> >> advise [2]. Let me know if that makes sense to you and if so, I'll merge this
+> >> ASAP.
+> > 
+> > At this point it would mean messing up all of vfs.fixes to drop it from
+> > there. So I'd just leave it in there and send it to Linus.
+> 
+> Got it. I was waiting for confirmation before taking it into the modules tree,
+> and I agree that at this point it makes sense to keep it in vfs.fixes.
+> 
+> > Next time I know where it'll end up.
+> 
+> Can you clarify what you mean by this?
 
-> We are in the process of modernizing the gpio-mmio interface. This
-> series converts all pinctrl drivers calling bgpio_init() to using the
-> new variant from linux/gpio/generic.h.
->
-> Linus: Please create an immutable branch containing these commits once
-> queued as I'll have some more changes comming on top of them - most
-> importantly: removing the old interface. I will need them in my tree.
-
-All patches applied to this immutable branch based on v6.17-rc1:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/lo=
-g/?h=3Dib-gpio_generic_chip_init
-
-Then I have merged this to my devel branch.
-
-Yours,
-Linus Walleij
+Next time I know that you are responsible for taking such patches. :)
 
