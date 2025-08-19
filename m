@@ -1,170 +1,316 @@
-Return-Path: <linux-kernel+bounces-774659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0D6B2B5B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:04:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AE8B2B5AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B05567A31C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:02:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42CBD4E10D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A64718DF89;
-	Tue, 19 Aug 2025 01:03:52 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3694C1CA81;
-	Tue, 19 Aug 2025 01:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E764176ADB;
+	Tue, 19 Aug 2025 01:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMX9BzjE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E2D1CA81;
+	Tue, 19 Aug 2025 01:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755565431; cv=none; b=AybWCtAXp9l4tLPiwMbKeYs5/26R0nSpJi87JR0oPTdamg9bnF3Dyb3FcKP7QUcR0Gs5Z4cSzd+rNK2F9D4qbD2wxnSOSv8Dnr6B7z8hwoG0zP/wIqXzNkuPUDup0cPj0RtIL+qvAikjxmlZC6M2x5InZ4o6sv1ILHiooO/Z4aI=
+	t=1755565364; cv=none; b=NEjLLVIXmuH9kyo/xnnRjBQEz8Vg4Ki4KdywaoMh1WEsaWqDXErKROSIl4dAbGYgT9fXKUCHDIyG5YvS8aIi9LIjltwumt8j2AuEwHPIDQgLKlQ017jqCewfxZMvG30U32LfompaxrKf2dA9Thql7aWrrb/XF7ytzkxi0TTATzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755565431; c=relaxed/simple;
-	bh=hKTQRaoNIqjDRqMkHHqIHOMNz8DoDmVCJIZc1XXRr4Q=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FZZidMXAsUUFVFiO4nGtZ0/XkJwo3j2NoQB/aljNmnMQm/sx7g6V3QeVlEm7aO65NLKAQUYWsGaPJTqd5lSIAzE+2+FLpFCg1ExdRKWOBiP55kD4eTzaJqkvd948pOLvF98OiWSx7/PjHoIeKZvU88ja9J9rhFW4cnl1jiVWDKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Cxf9NqzaNolCUAAA--.318S3;
-	Tue, 19 Aug 2025 09:03:38 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJCxM+RfzaNozyRXAA--.4222S3;
-	Tue, 19 Aug 2025 09:03:29 +0800 (CST)
-Subject: Re: [PATCH] KVM: loongarch: selftests: Remove common tests built by
- TEST_GEN_PROGS_COMMON
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Dong Yang <dayss1224@gmail.com>, pbonzini@redhat.com, shuah@kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, chenhaucai@kernel.org,
- Quan Zhou <zhouquan@iscas.ac.cn>
-References: <20250811082453.1167448-1-dayss1224@gmail.com>
- <11d1992d-baf0-fc2f-19d7-b263d15cf64d@loongson.cn>
- <20250818-2e6cf1b89c738f0fb1264811@orel>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <02ad7973-f1d9-573b-8986-9a13e51aa661@loongson.cn>
-Date: Tue, 19 Aug 2025 09:01:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1755565364; c=relaxed/simple;
+	bh=YaDOaaTEUOeeBcM1XyuKNmtaW3o7dnaiEAL/Toz1Xs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZhZq5RJ3KZP3grQIKFZaxtAa8aiq6C5gYhH15zLbSAQrHmW6119UcPTzqVHZc1a2m7x7X9cUME2MoNiOXGJia7dEFh3mI+kONcYJ6EYEqYxELeqKqbckoTQa6xozDZse/bv6bMns7dlxrrcYLxTgc4x9ku9djKh8DK2ZblaTd7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMX9BzjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A2EC113D0;
+	Tue, 19 Aug 2025 01:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755565363;
+	bh=YaDOaaTEUOeeBcM1XyuKNmtaW3o7dnaiEAL/Toz1Xs0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lMX9BzjEnAYG6Ny7Yr3vkMiJ61BmtFAFMytXHp5yHV2IL0RqDiYDs2YlQcoEPtuDM
+	 ILRzj1qC8ceRqc9f4VDKA7a3YwjDQqnIJl98VSSdJtwqiem7elvg2Gi/4wyMfdLY99
+	 96OmanYeLsnA2Q529Jyxa/gPZmilgosvSBHBjRGSrHYC1Rhf9Cy8Ba2KLyE8+iOsBu
+	 f4AtWuWSRheV2InQeCwYoYMgGgGO0G2wHCejjuOGjiN6g/biQtgGFIFmDhFI8s2pEc
+	 nbnHMW5L3bTbUBcpbctHDxiJFwXfLEQMyU36KKm8ImvtXoPOmE+C64TWc/AUc1O+dD
+	 hTQzaThM4jbWw==
+Date: Tue, 19 Aug 2025 03:02:39 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+Message-ID: <20250819030239.41a2e97f@foz.lan>
+In-Reply-To: <16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
+References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+	<773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+	<20250816135538.733b80d3@foz.lan>
+	<acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
+	<20250817133606.79d968ed@sal.lan>
+	<b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
+	<20250817154544.78d61029@foz.lan>
+	<b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
+	<87y0rg7e35.fsf@trenco.lwn.net>
+	<16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250818-2e6cf1b89c738f0fb1264811@orel>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxM+RfzaNozyRXAA--.4222S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxur4UKr1fWrW8KFyUCF43CFX_yoW5urWUpr
-	WI9F129FW0vrs3Gr1fGw1DZFZFkr9rKF40gF1rtw48Ary5AFs7JF18trW5KFnYqw4UXF4a
-	9a4rKwnFvFWDAabCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_
-	JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
-	xVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU2MKZDUUUU
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+Em Tue, 19 Aug 2025 08:26:31 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
+> On Mon, 18 Aug 2025 11:07:58 -0600, Jonathan Corbet wrote:
+> > Akira Yokosawa <akiyks@gmail.com> writes:
+> >  =20
+> >> Ah, I have finally understood what 5/11 is trying to do.
+> >>
+> >> Its changelog mainly talks about an issue you saw after adding options
+> >> to xindy in that same commit, and you added
+> >>
+> >>    \newfontfamily\headingfont{DejaVu Serif}
+> >>
+> >> to resolve it.
+> >>
+> >> Current changelog didn't make sense at all for me.
+> >>
+> >> Can you please reword it and make it easier to follow?
+> >>
+> >> With that, feel free to add my
+> >>
+> >> Reviewed-by: Akira Yokosawa <akiyks@gmail.com> =20
+> >=20
+> > So, if I have managed to understand this conversation, this reword is
+> > all we need to get this series merged..? =20
+>=20
+> Well, after some thoughts on the conversation took place on xindy,
+> I think I have to withdraw my Reviewed-by: tag.
+>=20
+> I was the one who was totally confused.
+>=20
+> Please disregard it.
+>=20
+> Mauro, I can't review on 5/11 unless you provide me exact steps to reprod=
+uce
+> the font discovery issue you said you have observed under debian at 4/11 =
+of
+> this series.  That is, without assuming your other series of build-wrappe=
+r.
 
-On 2025/8/19 上午8:30, Andrew Jones wrote:
-> On Mon, Aug 11, 2025 at 06:49:07PM +0800, Bibo Mao wrote:
->> Hi Dong,
->>
->> Thanks for you patch.
->>
->> On 2025/8/11 下午4:24, Dong Yang wrote:
->>> Remove the common KVM test cases already added to TEST_GEN_PROGS_COMMON
->>>    as following:
->>>
->>> 	demand_paging_test
->>> 	dirty_log_test
->>> 	guest_print_test
->>> 	kvm_binary_stats_test
->>> 	kvm_create_max_vcpus
->>> 	kvm_page_table_test
->>> 	set_memory_region_test
->>>
->>> Fixes: a867688c8cbb ("KVM: selftests: Add supported test cases for LoongArch")
->>> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
->>> Signed-off-by: Dong Yang <dayss1224@gmail.com>
->>> ---
->>>    tools/testing/selftests/kvm/Makefile.kvm | 7 -------
->>>    1 file changed, 7 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
->>> index 38b95998e1e6..d2ad85a8839f 100644
->>> --- a/tools/testing/selftests/kvm/Makefile.kvm
->>> +++ b/tools/testing/selftests/kvm/Makefile.kvm
->>> @@ -199,17 +199,10 @@ TEST_GEN_PROGS_riscv += get-reg-list
->>>    TEST_GEN_PROGS_riscv += steal_time
->> TEST_GEN_PROGS_loongarch = $(TEST_GEN_PROGS_COMMON) is missing.
->>
->> BTW irqfd_test in TEST_GEN_PROGS_COMMON fails to run on LoongArch, does this
->> test case pass to run on Riscv?
-> 
-> It appears to. It outputs the vm mode created and then exits with a zero
-> exit code.
-Here is output of irqfd test on LoongArch
-[root@kvm-131 kvm]# ./irqfd_test
-Random seed: 0x6b8b4567
-==== Test Assertion Failure ====
-   include/kvm_util.h:527: !ret
-   pid=4016 tid=4016 errno=11 - Resource temporarily unavailable
-      1  0x00000001200027ab: kvm_irqfd at kvm_util.h:527
-      2  0x00000001200020d7: main at irqfd_test.c:100
-      3  0x00007ffff38a8707: ?? ??:0
-      4  0x00007ffff38a87ef: ?? ??:0
-      5  0x00000001200023b7: _start at ??:?
-   KVM_IRQFD failed, rc: -1 errno: 11 (Resource temporarily unavailable)
+See below.
 
-The problem is that kernel irqchip is not created with irqfd_test, and 
-function kvm_arch_intc_initialized() returns false on LongArch.
-/*
-  * returns true if the virtual interrupt controller is initialized and
-  * ready to accept virtual IRQ. On some architectures virtual interrupt
-  * controller is dynamically instantiated and this is not always true.
-  */
-bool kvm_arch_intc_initialized(struct kvm *kvm);
+> The build-wrapper should be upper compatible with the current way of
+> running sub-make, without any change in conf.py.
 
-On LoongArch virtual irqchip is dynamically created by VMM.
+The build-wrapper series doesn't make any changes on conf.py:
 
-Regards
-Bibo Mao
-> 
-> Thanks,
-> drew
-> 
->>
->> Regards
->> Bibo Mao
->>>    TEST_GEN_PROGS_loongarch += coalesced_io_test
->>> -TEST_GEN_PROGS_loongarch += demand_paging_test
->>>    TEST_GEN_PROGS_loongarch += dirty_log_perf_test
->>> -TEST_GEN_PROGS_loongarch += dirty_log_test
->>> -TEST_GEN_PROGS_loongarch += guest_print_test
->>>    TEST_GEN_PROGS_loongarch += hardware_disable_test
->>> -TEST_GEN_PROGS_loongarch += kvm_binary_stats_test
->>> -TEST_GEN_PROGS_loongarch += kvm_create_max_vcpus
->>> -TEST_GEN_PROGS_loongarch += kvm_page_table_test
->>>    TEST_GEN_PROGS_loongarch += memslot_modification_stress_test
->>>    TEST_GEN_PROGS_loongarch += memslot_perf_test
->>> -TEST_GEN_PROGS_loongarch += set_memory_region_test
->>>    SPLIT_TESTS += arch_timer
->>>    SPLIT_TESTS += get-reg-list
->>>
->>
+	 $ git diff pdfdocs..sphinx-build-wrapper --stat
 
+	 .pylintrc                                |   2 +-
+	 Documentation/Makefile                   | 142 +++-------
+	 Documentation/sphinx/parallel-wrapper.sh |  33 ---
+	 scripts/jobserver-exec                   |  88 ++-----
+	 scripts/lib/jobserver.py                 | 149 +++++++++++
+	 scripts/sphinx-build-wrapper             | 767 ++++++++++++++++++++++++++=
+++++++++++++++++++++++++++++
+	 scripts/sphinx-pre-install               |  14 +-
+	 7 files changed, 994 insertions(+), 201 deletions(-)
+
+It also doesn't change the build logic: it just moves it to the
+script. The only difference was with regards to serializing the build,
+as I forgot to take it into account when I wrote it. However, I sent
+already a patch addressing it.
+
+In summary, all the sphinx-build-wrapper series do is:
+
+- move code from Documentation/Makefile into a python script;
+- get rid of a shell script;
+- split scripts/jobserver-exec into an exec and a library;
+- change the output of doc build to produce a summary at the end,
+  returning an error code only if one or more PDF files were not
+  built;
+- allow calling the script directly without requiring a makefile;
+- add a couple of optional command line parameters to help debugging.
+
+On the other hand, the pdf series diffstat is:
+
+$ git diff netlink_v10..pdfdocs --stat
+ Documentation/Makefile     |   4 ++--
+ Documentation/conf.py      | 106 +++++++++++++++++++++++++++++++++++++++++=
++++++++++++++++++++++--------------------------------------------
+ scripts/sphinx-pre-install |  41 ++++++++++++++++++++++++++++++++---------
+ 3 files changed, 96 insertions(+), 55 deletions(-)
+
+The Makefile change is actually a fix:
+
+	diff --git a/Documentation/Makefile b/Documentation/Makefile
+	index 820f07e0afe6..2ed334971acd 100644
+	--- a/Documentation/Makefile
+	+++ b/Documentation/Makefile
+	@@ -63,2 +63,2 @@ endif #HAVE_LATEXMK
+	-PAPEROPT_a4     =3D -D latex_paper_size=3Da4
+	-PAPEROPT_letter =3D -D latex_paper_size=3Dletter
+	+PAPEROPT_a4     =3D -D latex_elements.papersize=3Da4paper
+	+PAPEROPT_letter =3D -D latex_elements.papersize=3Dletterpaper
+
+So, the entire series do:
+
+1. Fix paper size define, as latex_paper_size doesn=C2=B4t exist since
+   Sphinx 1.x. It got replaced by latex_elements.papersize;
+
+2. Broken package dependencies related to PDF builds on several
+   distros inside sphinx-pre-install;
+
+3. It properly construct the name of pdfdocs to be built when
+   SPHINXDIRS is used;
+
+4. It prevents the usage of T1 fontenc fonts, which could be
+   caused by either one of those two reasons:
+
+	a) \sphinxhyphen{}
+	b) index build
+
+I got those when checking what packages were required on some
+distros (Debian, Ubuntu, Mageia, openMandriva, Gentoo).
+
+Depending on the distro, the Sphinx version and the installed
+packages, the *.tex file ends adding:
+
+	\usepackage[T1]{fontenc}
+
+This is incompatible with xelatex with utf-8 fonts as T1 is not UTF-8
+ready.
+
+with (a), \sphinxhyphen{} logic - together with babel, ends
+requiring pzdr.tfm.
+
+To do the conf.py, I did some changes for it to better align
+with:
+
+	https://www.sphinx-doc.org/en/master/latex.html#module-latex
+
+As the original settings were written for Sphinx 1.4.1 and
+had very little fixes since then.
+
+The changes are:
+
+1. Added:
+	"fontenc": ""
+
+   to prevent a possible default of having:
+	r'\usepackage[T1]{fontenc}'
+
+2. Place font settings at the right place for more modern Spinx versions.
+   If you look there, font specs shall be under "fontpkg", not under
+   "preamble":
+
++    'fontpkg': dedent(r'''
++        \usepackage{fontspec}
++        \setmainfont{DejaVu Serif}
++        \setsansfont{DejaVu Sans}
++        \setmonofont{DejaVu Sans Mono}
+
+-    # Additional stuff for the LaTeX preamble.
+-    "preamble": """
+-        % Use some font with UTF-8 support with XeLaTeX
+-        \\usepackage{fontspec}
+-        \\setsansfont{DejaVu Sans}
+-        \\setromanfont{DejaVu Serif}
+-        \\setmonofont{DejaVu Sans Mono}
+-    """,
+ }
+
+3. Added a fix where some LaTeX modules were trying to use T1 fontenc:
+
+        \newfontfamily\headingfont{DejaVu Serif}
+
+4. I used dedent() to remove weird whitespaces at the beginning inside
+   .tex files - no functional changes - this is just cosmetic at the
+   output;
+
+5. I moved preamble from a separate part of conf.py:
+
++    "preamble": dedent(r"""
++        % Load kerneldoc specific LaTeX settings
++        \input{kerneldoc-preamble.sty}
++    """),
+
+-# Load kerneldoc specific LaTeX settings
+-latex_elements["preamble"] +=3D """
+-        % Load kerneldoc specific LaTeX settings
+-        \\input{kerneldoc-preamble.sty}
+-"""
+
+6. I solved an issue were xindy was trying to include T1 fontenc.
+   while here, I also added a parameter recommended at sphinx Latex
+   configuration doc:
+
++    "passoptionstopackages": dedent(r"""
++        \PassOptionsToPackage{svgnames}{xcolor}
++        % Avoid encoding troubles when creating indexes
++        \PassOptionsToPackage{xindy}{language=3Denglish,codepage=3Dutf8,no=
+automatic}
++    """),
+
+(the xcolor came from the documentation)
+
+The above doesn't load xindy; it just ensures that codepage=3Dutf8 is used
+if it is used;
+
+7. some distros didn't build pdf due to the lack of an index file.
+   So, I added this:
+
++    'printindex': r'\footnotesize\raggedright\printindex',
+
+which is also suggested at
+	 https://www.sphinx-doc.org/en/master/latex.html#module-latex
+
+So, basically, the changes at conf.py better align it with Sphinx
+documentation, and were experimentally tested: I didn't find
+any regressions on it, and it fixed PDF builds for several distros.
+
+Did you find any regressions?
+
+> I don't think this is too much to ask.=20
+
+Actually, it is... finding a way for you to reproduce it would=20
+require me to start from scratch and redo everything again,
+hoping that I'll do exactly the same way. It took me 2 entire
+weeks to do it the first time.=20
+
+I very much prefer dropping patch 05/11 and keep PDF broken
+than spending 2 weeks redoing it.
+
+> Moving both the goal post
+
+What do you mean by "goal post"?
+
+The pdfdocs series is there just to make sure that pdf builds
+will work on most distros, as currently they don't build on
+several of them.
+
+> and the build script at the same time is the wrong thing to do
+> in my opinion.
+
+Well, we can postpone the PDF series - or at least the patches
+you find problematic.
+
+The build script cleanup is important, though as it affects
+a series I have afterwards addressing some build issues=20
+affecting only the media subsystem, which is the only user
+of kernel-include tag.
+
+Thanks,
+Mauro
 
