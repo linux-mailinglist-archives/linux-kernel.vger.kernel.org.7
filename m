@@ -1,184 +1,151 @@
-Return-Path: <linux-kernel+bounces-775440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EE1B2BF28
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6216BB2BF4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584EC5E3B1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4185A16A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D74322C7E;
-	Tue, 19 Aug 2025 10:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cgG4qm/y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C34326D68;
+	Tue, 19 Aug 2025 10:46:54 +0000 (UTC)
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EBA322C61
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EFA322DD9;
+	Tue, 19 Aug 2025 10:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755600014; cv=none; b=Ifz8e4ypwls/MnLm+w+qFRCMAVDlD3ueGpAhK9+1+B7WpEyWdhK9WVEL9yNH5bltYMRrRJq8bYpQzqwLuxVMZQ62aD6gA2DZ2JcboRLJtg1C9XL/5YOohh3a8+5HSrlTs68LmQ20Yvrd7trFZ4Wt5e+mbzj3s8KCmiktahrNWeU=
+	t=1755600413; cv=none; b=L3S79EUbE1dyP6hfOzw1tl0S3LJEmJ+dgzcKtkYxedf+AYrlANSsx8QkbJOuiKaPrOJ3JtQVfMdZQ7jPw4d0P6bWiTEeSu02ZBvqJ4lz06KUz93tvOZWdyj9oKonlbBPhZxMPm6roP9g8ZgzYGuGRbKz8GsaqGfok4tVHyd0LC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755600014; c=relaxed/simple;
-	bh=6Mh3OcWG/P/mVc70L6Bz+2SOOMG4XOUFXpU2o4QLQUQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Sb0bBaiM1U9BFEEfODQ5pFguoK8MPQeC5Xt48Kv35aXtPXTrOIafWzal164jMTNCV6NDcg7S62Smu1zyes0cndRWIB8pwsWCAVqx+l/o0HB4Lmlkww3xggkc8B5cQKCWsppRU+6BKqqetNjB+WufkIB12V6XrbCDEQPEtpYo5do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cgG4qm/y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755600012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6Mh3OcWG/P/mVc70L6Bz+2SOOMG4XOUFXpU2o4QLQUQ=;
-	b=cgG4qm/ybHxUbnzWz4Cpk67HaMCgTrHHfXChu3hCQz0ymSzRzqmPEy2B4A6dsmYrOu8f2W
-	1NyDiVpLVh5YHRXXNy5MOvuD5qLcoDDKjrQv/catJsC28eKOdAlyF8D4JhxPEHnb7RTkPs
-	Ta68HRiSAmCVtdv3hq+gQntn+H+xwbw=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-658-9OT6-x-uN8S72f-pWbJjqg-1; Tue, 19 Aug 2025 06:40:11 -0400
-X-MC-Unique: 9OT6-x-uN8S72f-pWbJjqg-1
-X-Mimecast-MFC-AGG-ID: 9OT6-x-uN8S72f-pWbJjqg_1755600010
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e8706a5e78so2362839685a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:40:11 -0700 (PDT)
+	s=arc-20240116; t=1755600413; c=relaxed/simple;
+	bh=uopoiV8HyAqxU9op6og8ChAkirSUUQctyoGCBvLV9t8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C7+MeaCSzvtyBOUtC65gPQDtLoB66ESllWp5BM2gO0QAnTk6QMkeuwSBnyxn/0OhTULUMhpqKUIsFAU8mnNkZfTekQO7rlxeaoR0Jl306MMmDXDD/M0fLKRmOEQM4HXJL+sQziWtDA+njNos6WovQEti/TaUn/MZKL95rkHFft4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381f3a3daso2397566a34.1;
+        Tue, 19 Aug 2025 03:46:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755600010; x=1756204810;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Mh3OcWG/P/mVc70L6Bz+2SOOMG4XOUFXpU2o4QLQUQ=;
-        b=wkPKWv/ckNQxd5VQEEVjVSnDVbRcLesJIVlix3lMpH4ypjTJVMZ7oBih1ueOw8TLf3
-         xPpOtSlIBKUUtd29E9fDQXIJ2QBiek2V8cvUU4CN3ClvobWzhpn56wyeh/Ec686m6w8D
-         Xn34PBw3xZa4+Q88cp000aAr2MOson8hscLniKtXrtXbpU8yHyMhDaTnxlA63ZH9qJIm
-         cBurAK+hpZptz0tuePNTJXDhc/nci/iDbQm8gRyUiem5boT8yBr2COHqi/KMiUuMvtqX
-         w3C/C09qXOz9K041qTi/sGVmbcuMZ0EUebsW9iUOXgssODwe7yFc4DJfk/hvwgcVNAuD
-         BExg==
-X-Gm-Message-State: AOJu0Yx/BKrQlwLJHyFmiyFrBR6nHe84Ax8xLWtBRinxIbKE0hc6jPgC
-	C5tjLf1Khi7rhDv2OizVJWvjcspGhD/n+oS2T6gwjMEdXHfFahDktiIA7amp/lCu0HqKyIlbScL
-	OMbNDsZId4B/NBSfwa0YZf5E4CtKoFkbkb11/LMMduLu8fBWS7ETqafgMU/OezqIBIw==
-X-Gm-Gg: ASbGncsC4UYWcWFAJ7Q+0jsqQsbAAC4DKylzsk+IlP+FpekN1A439JfxPbbDqPFT3qv
-	m0n6xYt8zmITxBDV5onPpw8zU4mjOskZ7DwnTyL/tU4mTySVWIcFSxjsdMY7GZwsZzjy7Q31G2F
-	FSdMHEQu4AzvOLMO8fjtAG/8VTXspncfgSJAN+CVaQ7D5W2gCXxUwHOar0sivrri8YqBRYIK8PB
-	Ma5gGwrvx2bRw/MnC1S1R3u80zH+HWZqnkZ4cLZC/naMh6W8QJXTv9SGbF4tqIOITQg5oqJH75a
-	4UlUHrWg/8Dp+BOq8ZE0ECgwDx9v3wmuA5cOxiCE8mKts5yu94TImRU+Url2KRO+uw==
-X-Received: by 2002:a05:620a:471f:b0:7e6:998c:99c0 with SMTP id af79cd13be357-7e9f32eac3amr281898885a.24.1755600010562;
-        Tue, 19 Aug 2025 03:40:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFx+fHRkuCSbwkkENyWo6GP3r/1txAJ/JN4LqgGMck+98eE4qPrdw+WG4j41jvp+1cDdp6qNA==
-X-Received: by 2002:a05:620a:471f:b0:7e6:998c:99c0 with SMTP id af79cd13be357-7e9f32eac3amr281895985a.24.1755600010157;
-        Tue, 19 Aug 2025 03:40:10 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1c0eabsm745844985a.64.2025.08.19.03.40.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 03:40:09 -0700 (PDT)
-Message-ID: <cdf1912c57cc49d203aec31c645c1c38e863a0ab.camel@redhat.com>
-Subject: Re: [RFC PATCH 11/17] Documentation/rv: Add documentation about
- hybrid automata
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
- Jonathan Corbet	 <corbet@lwn.net>, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org,  Nam Cao <namcao@linutronix.de>, Tomas Glozar
- <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,  Clark Williams
- <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Date: Tue, 19 Aug 2025 12:40:06 +0200
-In-Reply-To: <aKQ7iaSb9GGUtuCZ@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
-	 <20250814150809.140739-12-gmonaco@redhat.com>
-	 <aKQ7iaSb9GGUtuCZ@jlelli-thinkpadt14gen4.remote.csb>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        d=1e100.net; s=20230601; t=1755600410; x=1756205210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=doFbpw5H93w6OCFZvWHsPgEA4fiQmo1QkgmSlnIHgck=;
+        b=mVLrRhMMsSW+PZy6qVLNMJe2Od4nqEbsD4YpMJBIkzbVga6n8nzFsxOeyBB57Mz10o
+         3uk7GUqeygKq0YZ8jlTPgZkewdxL8BNpS1OSNm+baU/wD7nrvMM8ezYqcDsnfx+A0E1S
+         +xBJUGdS4uTnqxv9FcaWyCkQAyWjNz+c6etwpcXWb8NlVl9V0vNdc2mJZbLkh3HznWDm
+         sCRH9u2J983ykGD+oyegtHt8rzf7Xx4V/VDRErLAgyGk+ZXIeZezjY2dRP5n6yShawaw
+         5Iqrt2MlWcZ6GUlh7N7WuFU5W1ZiDUVRVJYdHnFm5YMrnMz9w7cQBTRsUHdvRcvIM6u/
+         7njQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMGxfcDY5CNX9rQGtj71N58b7KAYWS5NwtgS0hykKj9WbiyHh4AzyUDARW18abtBNCuPGBrVPnieoz@vger.kernel.org, AJvYcCUWZW4GyhtoiPFnfK2guFiZ6QEC9OS4HXZN87LyIagFUrQdH8Xk7FYC2/QnDXOka/doISnDpsk5Gv8GPza9DhsJrjU=@vger.kernel.org, AJvYcCVf8747iLKSagUAKdAmIwR/WFcm8BPmReLxyB/hDCeu14on0KKA0Sm25EW4UuME+faw51EkTu+xlkX1@vger.kernel.org, AJvYcCWp6WvWaS343yYosG31pYyvt7+HU1Cx0hHjczPc79x4zq7mvViCCmA1Cx3Lj/E2JK2NFBLkAyT4B9oDUhUx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLLu0K5ancwucAd34yhzmlJmQIEFdkOBgdB5XTm/Ytc3Q9fleL
+	qXUT86chifOFOmbCbr00a0PmZqO8TY9tuDIcSHgE60JTGixk9CP/KCdpb89bW6Zp
+X-Gm-Gg: ASbGncuj7Nmp91giq929bO8sunnh4xyBNi2TXvXtnFFa6T4XYzbbBBmtHS1qH9L6FEz
+	SIY6HUQ/cTvolu83wH27vvikeZy0aNduVBy1gTTgN6gfd/PpI+UyNPQ/V8KOtLwv7/Nm/mnRW3u
+	ZhisnajlLuz9huvLsz8WoKC2vuGe4t6bK+wSQ+6q6ufybVT6ul5y/0JP1F+79uAOJHtNZsesrdo
+	1dAq5YaDBRrf+OhgogmUrEmheufA3mTcJfEdwrILirNYodhFXL1e0gBTbMzFSnYpZRh+DQHC7Xb
+	eWrfxWjB02Y7OdaIXCIgOxFvch2Kp4zbiC4BehQnhk7P5uLpoHjDYRgM58QqmQHu8KdTgcC+zaG
+	9M6w40K5S/lygf89LIXM+1Uoj7tDjxHbIeRprOG8Ea5noftSL6sRUnX5Uap+yxedfysbob7M=
+X-Google-Smtp-Source: AGHT+IEu5IukSeD8mPykXzn+hztoe/vfT0lWboNhEX/LD0NwIRwj6GFYm3rYRDtEkMj+OFi4432iwA==
+X-Received: by 2002:a05:6830:2b21:b0:742:f90c:ec75 with SMTP id 46e09a7af769-744e0afb22fmr1342088a34.25.1755600410421;
+        Tue, 19 Aug 2025 03:46:50 -0700 (PDT)
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com. [209.85.160.50])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-310abb343d4sm3355355fac.17.2025.08.19.03.46.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 03:46:50 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30cce8ec298so4336225fac.1;
+        Tue, 19 Aug 2025 03:46:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJnimBvoMtASqwSwBRm5OG04SEALKBOlecrUf/2fzu8EMK9w9//AfGAl19znHKhzdKe1RebxGn8HEy@vger.kernel.org, AJvYcCW+PS4F7MOYi8kNx7VdpbYwytUtfgdRtHEtOVhM2OeOTtEM0nWXTw+wl8M4VgqGxQ68VnH40o80/9I18dL5DpjPqaM=@vger.kernel.org, AJvYcCWoW0YJ1yR/hQJ3/kINDpLMJT3820vtdljB10bEtcc+VT4szscA8p5K3EJ8/988ejvWvYPZj9nH9HYM4dft@vger.kernel.org, AJvYcCXpX+WBXqyCqtA3qoN8Zk0cuLZZIAh+0v+lK1S3SH9LBym3rTCGeOIxPIpDpX6pvuY0Y9jnjX/XKbnu@vger.kernel.org
+X-Received: by 2002:a05:6102:548a:b0:4e6:f7e9:c4a5 with SMTP id
+ ada2fe7eead31-51924b3b1c1mr573466137.22.1755600045268; Tue, 19 Aug 2025
+ 03:40:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CA+V-a8ujMaFFOv8Jd-5=fKHUEfVji1Xt5y_h4uwtR96TBz4VNA@mail.gmail.com>
+In-Reply-To: <CA+V-a8ujMaFFOv8Jd-5=fKHUEfVji1Xt5y_h4uwtR96TBz4VNA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Aug 2025 12:40:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVFxaCrBu0fAJX3wmY9wdgHn1O8-cVOS6OKN6HGX9v55g@mail.gmail.com>
+X-Gm-Features: Ac12FXz7ywVTeSgdEqc13iyHS6v2zZGzk_1Dft3Db5rZ3MNDTn1vQslXfUK25bs
+Message-ID: <CAMuHMdVFxaCrBu0fAJX3wmY9wdgHn1O8-cVOS6OKN6HGX9v55g@mail.gmail.com>
+Subject: Re: [PATCH v7 4/6] dt-bindings: display: bridge: renesas,dsi:
+ Document RZ/V2H(P) and RZ/V2N
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-08-19 at 10:53 +0200, Juri Lelli wrote:
-> Hi!
->=20
-> On 14/08/25 17:08, Gabriele Monaco wrote:
-> >=20
-> > +
-> > +Examples
-> > +--------
->=20
-> Maybe add subsection titles to better mark separation between
-> different examples?
+On Mon, 28 Jul 2025 at 22:28, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Jul 28, 2025 at 9:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
+> > RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
+> > with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, t=
+he
+> > RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and require=
+s
+> > five clocks instead of six.
+> >
+> > To reflect these hardware differences, update the binding schema to
+> > support the reduced clock and reset requirements for RZ/V2H(P).
+> >
+> > Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
+> > RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
+> > reused for RZ/V2N.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v6->v7:
+> > - Renamed pllclk to pllrefclk
+> > - Preserved the reviewed by tag from Geert and Krzysztof
+> >
+> - Included support for RZ/V2N in the same patch
+> - Updated commit description.
+>
+> I missed mentioning the above.
 
-Sure, makes sense.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->=20
-> > +The 'wip' (wakeup in preemptive) example introduced as a
-> > deterministic automaton
-> > +can also be described as:
-> > +
-> > +- *X* =3D { ``any_thread_running`` }
-> > +- *E* =3D { ``sched_waking`` }
-> > +- *V* =3D { ``preemptive`` }
-> > +- x\ :subscript:`0` =3D ``any_thread_running``
-> > +- X\ :subscript:`m` =3D {``any_thread_running``}
-> > +- *f* =3D
-> > +=C2=A0=C2=A0 - *f*\ (``any_thread_running``, ``sched_waking``,
-> > ``preemptive=3D=3D0``) =3D ``any_thread_running``
-> > +- *i* =3D
-> > +=C2=A0=C2=A0 - *i*\ (``any_thread_running``) =3D ``true``
-> > +
-> > +Which can be represented graphically as::
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0 |
-> > +=C2=A0=C2=A0=C2=A0=C2=A0 |
-> > +=C2=A0=C2=A0=C2=A0=C2=A0 v
-> > +=C2=A0=C2=A0 #=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D#=C2=A0=C2=A0 sched_waking;preemptive=3D=3D0
-> > +=C2=A0=C2=A0 H=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 H ------------=
-------------------+
-> > +=C2=A0=C2=A0 H any_thread_running H=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
-> > +=C2=A0=C2=A0 H=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 H <-----------=
-------------------+
-> > +=C2=A0=C2=A0 #=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D#
-> > +
-> > +In this example, by using the preemptive state of the system as an
-> > environment
-> > +variable, we can assert this constraint on ``sched_waking``
-> > without requiring
-> > +preemption events (as we would in a deterministic automaton),
-> > which can be
-> > +useful in case those events are not available or not reliable on
-> > the system.
-> > +
-> > +Since all the invariants in *i* are true, we can omit them from
-> > the representation.
-> > +
-> > +As a sample timed automaton we can define 'stall' as:
->=20
-> Maybe indicate this first one is a not properly correct example
-> (correct version follows)?
+Gr{oetje,eeting}s,
 
-Yeah I should definitely be clearer about it. As you've guessed, this
-example is to show things can be done differently as a tradeoff with
-responsiveness, I should make that explicitly.
+                        Geert
 
-Thanks for the comments,
-Gabriele
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
