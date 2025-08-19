@@ -1,180 +1,142 @@
-Return-Path: <linux-kernel+bounces-776297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06E3B2CB83
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:56:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FDCB2CB7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77ED72814A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C16C1C202A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDAF30DEA0;
-	Tue, 19 Aug 2025 17:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F2A30DEC6;
+	Tue, 19 Aug 2025 17:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="dH7P+UVp"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="gcjA76+M"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3731742065;
-	Tue, 19 Aug 2025 17:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0812550CA;
+	Tue, 19 Aug 2025 17:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755625943; cv=none; b=aMsHDdJ/IYH+XMdgRcUdf9nJZNSdZUq4D9/7droPEfU0XPCMxed6IcO/uK+lSbm5fDiifaewBFZyY9zZgw5TJuxUCBXxWVAi3Vqg643/KXP+5z7dFEECsez2kxXzJ0LwbIlnxt3tSZSTzbWS6wi8WIUMzqwga2nB9bmhiPekyTE=
+	t=1755626054; cv=none; b=gbSb7nV44QpF++nuEns1740lTddW34oPh8zQmgeWODRRTiCjDngxn0Y//NncKaPtzJg1WwcdRcqZELdvhCxFSpsK/E1GUyuVp9sXwFO3U1r3pTUcr7VDuQz7CGlLXGNF3tTEZ8UxAivKC6avVT5fpmOsSrvNfUjopGnOpBkQk6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755625943; c=relaxed/simple;
-	bh=FHQbCGsWAX0wCQwbh53ZoVSGGXHOlu7JbCC79vMNKm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVrJeJjca3+wQJzx/zJMCnvZRn6AREWVyIXqAQtdMVGCKaTVuw2JY6A5wEztpYSiLLD2kZ5MDG9SnMO7Yg/G152r5GAwNDMs6tNXmfxjUaC56nWICKjwYJSfG6FHYXU1JrCIEUQZbSFLUPMJjZEZYbbVYhXSoZVQzvn9LtGlURE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=dH7P+UVp; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eVJwE8LXHuTcSQYuU8Nun8a0+Ezt+MXVF3/+UllM6iU=; b=dH7P+UVp1FgY2nyGq2AW7A4Yu5
-	UwY99gPv1p5Juy0cdftW/JALX/V7spocEqB20YAOgdvzYHJf9sXn6yk2d6/sYqWfpR2QOh8vSDWFy
-	LGGMF2lc4a+Wz/bj0kkFInACBiYwf9RCS3GmkxslMeJ0Ohx8Km/bQOvz9YWTQ6E+cVqemWm8vGGqX
-	khv8kKsI/zQ2CqOFRuuBvoa9NPCss+hmNA9rIIUIJti81mIYRXLp8xTAAFnDEyp3lJo0W57cUFZMb
-	9kxd6/6I8Q+iRCWk/KZYT4k9C56GUFRmH1TMkM6Wzb2iIcnrqQ1lS+52wEZ32blExGwV5BPma0co6
-	BqMJ59dA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56586)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uoQUo-0003RU-1Q;
-	Tue, 19 Aug 2025 18:51:43 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uoQUi-0003gJ-0o;
-	Tue, 19 Aug 2025 18:51:36 +0100
-Date: Tue, 19 Aug 2025 18:51:36 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Lukasz Majewski <lukma@denx.de>, Jonathan Corbet <corbet@lwn.net>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Divya.Koppera@microchip.com
-Subject: Re: [PATCH net-next v2 1/1] Documentation: networking: add detailed
- guide on Ethernet flow control configuration
-Message-ID: <aKS5p8ALKEl5PISD@shell.armlinux.org.uk>
-References: <20250814075342.212732-1-o.rempel@pengutronix.de>
- <36bdd275-25bb-4b53-a14d-39677da468cc@lunn.ch>
+	s=arc-20240116; t=1755626054; c=relaxed/simple;
+	bh=4J1bjXbT5ammo3TwOOtd1UIg3jLW9cn6POgEJUnjFXA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sN3aNA3X/G4HrS+s6LOLYvnKPVGb/CocGLc8jTPqGkO7hW2gqdkoxtjq93//V8YPLKAV9S8PX8IskyrBxKPjN6grsbjp/wbq7JcEXmcdM6WYSaZBpeRNKRw6/UIVpAdgKw9kampPSGuGpR8YCQDfU+xTd4PRwBFJNpEdTti0PJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=gcjA76+M; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57JHrS5M2742817
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 19 Aug 2025 10:53:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57JHrS5M2742817
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1755626017;
+	bh=aB04BRRbyT2lWMhMsx+xff17/ihdjQGqjAFAwjLk104=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gcjA76+M+R9oatXRnLMbvZFA80vUOj4zPOI3zMe4SJnkju1ez8+dqmz/x1iS0t5RR
+	 /GEnZM3rrJ3uAii4CNI/BGeI2KQFOlr6QzaZ6V+P897dY9yeL0lmLyx3fGGIPF0If8
+	 SZWa6WQDS1MHKzWr7OP1J6a03rbNBwWQ9oIOMBLBj/mw4wo5Zd8JLRn9Zsa87gbmXc
+	 cZ756Pq/StiXBnphJQWAXJtjnSBd5wZWGNIyIoz4xpOKD1h+o4ztdrz25SjusagiS1
+	 kURzc03y/itjN4u2opykUPKUgkUcT6AFnEe8JCBHtDTpn60asUpK7eBmnn8GsX6U47
+	 CDHYeOuHLKKMQ==
+Message-ID: <915d0ca8-05c5-42c1-90fe-b214904b23bc@zytor.com>
+Date: Tue, 19 Aug 2025 10:53:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36bdd275-25bb-4b53-a14d-39677da468cc@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 15/24] KVM: VMX: Emulate read and write to CET MSRs
+To: Sean Christopherson <seanjc@google.com>, Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mlevitsk@redhat.com,
+        rick.p.edgecombe@intel.com, weijiang.yang@intel.com,
+        Mathias Krause <minipli@grsecurity.net>,
+        John Allen <john.allen@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: <20250812025606.74625-1-chao.gao@intel.com>
+ <20250812025606.74625-16-chao.gao@intel.com> <aKShs0btGwLtYlVc@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aKShs0btGwLtYlVc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 19, 2025 at 02:48:22PM +0200, Andrew Lunn wrote:
-> > +2. Half-Duplex: Collision-Based Flow Control
-> > +--------------------------------------------
-> > +On half-duplex links, a device cannot send and receive simultaneously, so PAUSE
-> > +frames are not used. Flow control is achieved by leveraging the CSMA/CD
-> > +(Carrier Sense Multiple Access with Collision Detection) protocol itself.
-> > +
-> > +* **How it works**: To inhibit incoming data, a receiving device can force a
-> > +    collision on the line. When the sending station detects this collision, it
-> > +    terminates its transmission, sends a "jam" signal, and then executes the
-> > +    "Collision backoff and retransmission" procedure as defined in IEEE 802.3,
-> > +    Section 4.2.3.2.5. This algorithm makes the sender wait for a random
-> > +    period before attempting to retransmit. By repeatedly forcing collisions,
-> > +    the receiver can effectively throttle the sender's transmission rate.
-> > +
-> > +.. note::
-> > +    While this mechanism is part of the IEEE standard, there is currently no
-> > +    generic kernel API to configure or control it. Drivers should not enable
-> > +    this feature until a standardized interface is available.
+On 8/19/2025 9:09 AM, Sean Christopherson wrote:
+>> +	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
+>> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
+>> +			return KVM_MSR_RET_UNSUPPORTED;
+>> +		if (is_noncanonical_msr_address(data, vcpu))
+> This emulation is wrong (in no small part because the architecture sucks).  From
+> the SDM:
 > 
-> Interesting. I did not know about this.
+>    If the processor does not support Intel 64 architecture, these fields have only
+>    32 bits; bits 63:32 of the MSRs are reserved.
 > 
-> I wounder if we want phylib and phylink to return -EOPNOTSUPP in the
-> general code, if the current link is 1/2 duplex?
+>    On processors that support Intel 64 architecture this value cannot represent a
+>    non-canonical address.
 > 
-> It might be considered an ABI change. I guess the generic code
-> currently stores the settings and only puts them into effect when the
-> link changes to full duplex?
+>    In protected mode, only 31:0 are loaded.
+> 
+> That means KVM needs to drop bits 63:32 if the vCPU doesn't have LM or if the vCPU
+> isn't in 64-bit mode.  The last one is especially frustrating, because software
+> can still get a 64-bit value into the MSRs while running in protected, e.g. by
+> switching to 64-bit mode, doing WRMSRs, then switching back to 32-bit mode.
+> 
+> But, there's probably no point in actually trying to correctly emulate/virtualize
+> the Protected Mode behavior, because the MSRs can be written via XRSTOR, and to
+> close that hole KVM would need to trap-and-emulate XRSTOR.  No thanks.
+> 
+> Unless someone has a better idea, I'm inclined to take an erratum for this, i.e.
+> just sweep it under the rug.
 
-The pause API is exactly that, it's an API for controlling the pause
-frame stuff which isn't the HD version of flow control. We haven't had
-an API for it, but it does exist.
+Since WRMSR (WRMSRNS) and XRSTORS are the two instructions that write to
+MSRs in CPL0, Why KVM doesn't use the XSS-exiting bitmap?
 
-In networks which are HD in nature, enabling HD "flow control" would
-be disasterous. (Think 10base2 or a twisted-pair network that uses a
-hub rather than a switch.) When the station decides to inhibit the
-reception of packets, it will cause a collision on the network, which
-will be network-wide rather than just the segment between a switch
-and host. Whether that's something we care, whether it's something
-that should be mentioned is an open question.
 
-> > +
-> > +Configuring Flow Control with `ethtool`
-> > +=======================================
-> > +
-> > +The standard tool for managing flow control is `ethtool`.
-> > +
-> > +Viewing the Current Settings
-> > +----------------------------
-> > +Use `ethtool -a <interface>` to see the current configuration.
-> > +
-> > +.. code-block:: text
-> > +
-> > +  $ ethtool -a eth0
-> > +  Pause parameters for eth0:
-> > +  Autonegotiate:  on
-> > +  RX:             on
-> > +  TX:             on
-> > +
-> > +* **Autonegotiate**: Shows if flow control settings are being negotiated with
-> > +    the link partner.
-> > +
-> > +* **RX**: Shows if we will *obey* PAUSE frames (pause our sending).
-> > +
-> > +* **TX**: Shows if we will *send* PAUSE frames (ask the peer to pause).
-> > +
-> > +If autonegotiation is on, `ethtool` will also show the active, negotiated result.
-> > +This result is calculated by `ethtool` itself based on the advertisement masks
-> > +from both link partners. It represents the expected outcome according to IEEE
-> > +802.3 rules, but the final decision on what is programmed into the MAC hardware
-> > +is made by the kernel driver.
-> > +
-> > +.. code-block:: text
-> > +
-> > +  RX negotiated: on
-> > +  TX negotiated: on
-> 
-> Maybe add a description of what happens if Pause Auto negotiation is
-> off?
-> 
-> Also, one of the common errors is mixing up Pause Autoneg and Autoneg
-> in general. Pause Autoneg can be off while generic Autoneg is on.
-> 
-> And if i remember correctly, with phylink, if generic Autoneg is off,
-> but pause Autoneg is on, the settings are saved until generic Autoneg
-> is enabled.
-
-Yes, phylink remembers the settings for the ethtool command in
-pl->link_config.pause.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
