@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-775957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70107B2C6D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:20:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FD2B2C6D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5573563A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:15:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D5FA203BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74F923909F;
-	Tue, 19 Aug 2025 14:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5440923B62C;
+	Tue, 19 Aug 2025 14:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="MheK5weS"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FnHNivYE"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C13523D29A
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A7B22157F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755612914; cv=none; b=ehAYdxSSnkl45yYPKNV5YjuqOSqxVeO/NSyRu2eyzXAbBYRheOYEjNnhY1JBetfcD23SygMTAcxgkF4o/voN7jQDazAB+/WfNQXC09+IEGKW3kFUkQeKI/9vtXGPtsj1Jfyidf9OsvwIFsh1SoRVqlPTpjt/8GlFE3TX3k4uVwI=
+	t=1755612927; cv=none; b=ohUxozWfzrXC1jZ2t3c6z6MQ7TLd21H3KD8VaktSYNEhTxsHZH83u253EhoQpLUaXkg5T0i0WkPYbd70LJpVeuWB2XqDLRF4bHXZykqX9dv2s2CgwFzHWIHJ99iw3PlRW/eldzlKzppws61aD7ny5cYO/OIa24E3byQFOMyE1Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755612914; c=relaxed/simple;
-	bh=Ws/VhLDuvp9BwVOHbuZ7PLccW8mfappO32GbDbsanl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0tdqbuAt6L/yU2h8q6zhlkEs/XGjsbhYdOPcXP27Ike0kwwfwcDoA4yFB6vMtUq1V2d+11guIM1jltHTNia0fpjVfOcsc3Cajt4Vx5wirKcTfXd50gxgGOViuCieopPfBWEvPHQKYxY3gA5CtNBekpN9NOTi1i9/3+Ldngoznc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=MheK5weS; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1755612905;
-	bh=Ws/VhLDuvp9BwVOHbuZ7PLccW8mfappO32GbDbsanl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MheK5weScHTpxz+WTnqi4y6cQ4kz5ypL/3KPLLEMxD/j8a0cbQugUsG5N+x/sbF2P
-	 qNHNbWmyvKjcDhy3+GXFsu01L5N+kHm6BsEpVaroWFLG7XVQ11x6F9OVxfP+lcWipq
-	 gRfK3+QPu8Rc5bf0Mua2JwV4l6HSsoMYlshKUHmk=
-Date: Tue, 19 Aug 2025 16:15:04 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] sysfs: attribute_group: allow registration of
- const attribute
-Message-ID: <39a39901-7b10-4948-bd7c-b4c92551b5b6@t-8ch.de>
-References: <20250811-sysfs-const-attr-prep-v3-0-0d973ff46afc@weissschuh.net>
- <20250811-sysfs-const-attr-prep-v3-1-0d973ff46afc@weissschuh.net>
- <2025081957-refueling-anteater-4720@gregkh>
- <daafd875-d3bc-4df7-a035-5a7dccdaaafb@t-8ch.de>
- <2025081953-canteen-criteria-c604@gregkh>
+	s=arc-20240116; t=1755612927; c=relaxed/simple;
+	bh=E91A0EvBQGwTzDoV07eJuCoxJjwmCa8uGCWrOxeGhdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pDFmvqAr2SZiZfHaQL/6dtWI2Ij9ye8X8YntQwPalkCKmwgRCK90+dBZYQjL5T4xRX/sUvrMxIAl0CJndI5g76g/LomSL0wrjy/8jN10kO7ivYEb2OK/aQ6aaOtaD1eUazQgdzgmMf4tLUtxHw5Elz095d4SbGnRoL6meA3gDs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FnHNivYE; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30cce534a91so2014891fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755612925; x=1756217725; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6iJgXIyjoxyQaOeBIKWzkn4AAW3hsDkELpNRI4OWlq8=;
+        b=FnHNivYE1FDnpTbo8xLF9Off5ZfZUFb294LvL/yvxW/WwTdQRDRhiiJ9+8OfqE8OpT
+         Kw38xzrMVZDjUh3uq12WtgOt2BGIOMGFrY5YDFmewjnTY3eaLwPkU5AxO94aZRJifUmo
+         UtDL9b2qyGqnrrsrD/BdwmKW/ar92p6xCmuoGa/cNrcEl+OVJRA/hitCW553mptKseVV
+         oUymiKFyMIU97+gzeZ7WI5V7L5V+AA++QkwGfzWqYiZqcvVBcTKPlj5qT73iC7218nvt
+         fetzBkMJRIcF7qSe58rvJgSwIkxVDxSUs+Y65H3AozZ/B4rCRKXqicJuOVjttyLg5+6I
+         GS9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755612925; x=1756217725;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6iJgXIyjoxyQaOeBIKWzkn4AAW3hsDkELpNRI4OWlq8=;
+        b=YaZclH0ielirvx+jYFiV8dfYg20JDaz4TH2ujkrXX5OBabNxPP4THBkAEMoHToq/z1
+         GO6EFu8gnbnwQlor+6srtHdwm6L9oagkqMRBINc7ir43DMWrji/g2paJ94nEkMocj8YO
+         887PEPl4t/R/FcBxOUKxv+1bpflTn66n3bJd4SQuXkAL/THCwqT3I9UBJUnImB3Kn4yS
+         EkB0nQTGCBhw8Pp99ZX/BI1NWIpfVydFLLAb+aiit38jxJRMZrJCoxNCNiFE+qvNe6Wb
+         9DMWn+bdEcmtr03teg/OJhjBQc0V5vx8BmdWCBVqJr8xTajUF/lABcT2ADke4M6fM/ev
+         zS1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNwBpTSIDy44CyBIa6Rb/9LDHTHb0LoWx9A2ZETDUD9RBhAJ5AATV3GeUtTpbyyC6qfGsVIAlsJnME0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZHitCSaLWMTuAaU8lZ2Ckhg6zseJHsu/QNQ+h+h+Fw0gTO/aW
+	wldrNvgi0jw8BqilA6YMM9QsvsRqfUbr4S8Xl4KiXz8UeJ4A55MtskAxUGk8oi0LzBM=
+X-Gm-Gg: ASbGncuEHTk9Z5Ns87GAqJj8jDKxz4FcU2tjFTiQ9vXk6TonYbVPyKBSKbwYTpx4kKv
+	MTI+znv4FaEU6JHUnYd4oobbRco4O9oDz9aJYQ2eVnHgAzML0Q0O2ty2cEokx8cC5opntBUOP4U
+	93/J74eEB7x8rKU1i7rw5dJ2nSJe6nLjHs8HKmOR3SrBHQRwI1yMhun23+sH8G5FxU9+BNdp9zu
+	b/h6oce980w1TE4VG2nc3mqUqqVABRUZUUpt5A3S4j6ZtCm01MVffm2MVaVLfCvEcRANCXLi8XZ
+	NdwQ3v/jSuNw9Oo7l6I8P5Jhg3jf6uhZqLobHkoZspVQkpx+vwwKGUbfT7vYlOxTpGz5O9xjaM2
+	8+/AxpCJTiw9LHL5V3Je/hJ4m2svaJO7zrqDsSt8o47MYNsxKgrWc6wrEx9UhDvpfys1Fb8xNkY
+	akDyfesn6uDg==
+X-Google-Smtp-Source: AGHT+IEt6dwsX4DtUvqC7sEljEdquQSqUldMPbdUrFmoYm8as/bmWB3i+egN0ftcqMAL3gZVqjC+cQ==
+X-Received: by 2002:a05:6871:a1d1:b0:307:bfe5:481e with SMTP id 586e51a60fabf-3110c4bc7a6mr2132053fac.27.1755612925043;
+        Tue, 19 Aug 2025 07:15:25 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:990c:4d50:9c6c:f367? ([2600:8803:e7e4:1d00:990c:4d50:9c6c:f367])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-310abbb4463sm3480511fac.29.2025.08.19.07.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 07:15:24 -0700 (PDT)
+Message-ID: <f7292e8d-ac7f-43af-b77a-7a1ad8403962@baylibre.com>
+Date: Tue, 19 Aug 2025 09:15:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025081953-canteen-criteria-c604@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] iio: mcp9600: Add support for IIR filter
+To: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250818183214.380847-1-bcollins@kernel.org>
+ <20250818183214.380847-7-bcollins@kernel.org>
+ <f8e95533-c486-442f-a186-5e746dad2f4c@baylibre.com>
+ <2025081910-arcane-parakeet-ded8c5@boujee-and-buff>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <2025081910-arcane-parakeet-ded8c5@boujee-and-buff>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-08-19 16:10:42+0200, Greg Kroah-Hartman wrote:
-> On Tue, Aug 19, 2025 at 03:59:04PM +0200, Thomas Weißschuh wrote:
-> > On 2025-08-19 13:22:55+0200, Greg Kroah-Hartman wrote:
-> > > On Mon, Aug 11, 2025 at 11:14:27AM +0200, Thomas Weißschuh wrote:
-> > > > To be able to constify instances of struct attribute it has to be
-> > > > possible to add them to struct attribute_group.
-> > > > The current type of the attrs member however is not compatible with that.
-> > > > Introduce a union that allows registration of both const and non-const
-> > > > attributes to enable a piecewise transition.
-> > > > As both union member types are compatible no logic needs to be adapted.
-> > > > 
-> > > > Technically it is now possible register a const struct
-> > > > attribute and receive it as mutable pointer in the callbacks.
-> > > > This is a soundness issue.
-> > > > But this same soundness issue already exists today in
-> > > > sysfs_create_file().
-> > > > Also the struct definition and callback implementation are always
-> > > > closely linked and are meant to be moved to const in lockstep.
-> > > > 
-> > > > Similar to commit 906c508afdca ("sysfs: attribute_group: allow registration of const bin_attribute")
-> > > > 
-> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > > ---
-> > > >  include/linux/sysfs.h | 5 ++++-
-> > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-> > > > index f418aae4f1134f8126783d9e8eb575ba4278e927..a47092e837d9eb014894d1f7e49f0fd0f9a2e350 100644
-> > > > --- a/include/linux/sysfs.h
-> > > > +++ b/include/linux/sysfs.h
-> > > > @@ -105,7 +105,10 @@ struct attribute_group {
-> > > >  	size_t			(*bin_size)(struct kobject *,
-> > > >  					    const struct bin_attribute *,
-> > > >  					    int);
-> > > > -	struct attribute	**attrs;
-> > > > +	union {
-> > > > +		struct attribute	**attrs;
-> > > > +		const struct attribute	*const *attrs_new;
-> > > 
-> > > I know you will drop the "_new" prefix after a while, but "new" is
-> > > relative, and not very descriptive.
-> > 
-> > That is somewhat intentional to express that it is a transitional thing.
+On 8/19/25 9:11 AM, Ben Collins wrote:
+> On Tue, Aug 19, 2025 at 09:05:39AM -0500, David Lechner wrote:
+>> On 8/18/25 1:32 PM, Ben Collins wrote:
+>>> From: Ben Collins <bcollins@watter.com>
+>>>
+>>> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+>>> to allow get/set of this value.
+>>>
+>>> Use a filter_type[none, ema] for enabling the IIR filter.
+>>>
+>>> Signed-off-by: Ben Collins <bcollins@watter.com>
+>>> ---
+>>> +		if (data->filter_level == 0)
+>>> +			return -EINVAL;
+>>
+>> To implement Jonathan's request from v5, drop this error return.
+>> We'll also need a separate bool data->is_filter_enabled field so
+>> that we can keep the last set filter_level even when the filter
+>> is disabled. (i.e. data->filter_level is never == 0).
+>>
+>> This way, if you set the filter level, you can enable and disable
+>> the filter via filter_type and still have the same filter level.
+>>
 > 
-> Fair, but given the huge quantity here, it's going to take a long time,
-> so "new" is going to be rough to push through for 6+ months.
-
-Looking at how 'struct bin_attribute' went probably quite a bit longer.
-
-> > > How about "_const"?
-> > 
-> > At some point the regular variant will be const too, so "_const" would
-> > be a bit weird.
+> Thanks, David. This is exactly what I've implemented, plus the
+> filter_enable attribute.
 > 
-> Yes, that's when you "switch it back", right?  You would have to do that
-> for _new as well.
+> Adding the ABI doc updates as well.
+> 
 
-There will probably be some overlap. But in the end it probably
-doesn't matter. Let's go with "_const".
 
-Thomas
+Don't add the filter_enable attribute. The filter_type attribute
+already does the job.
+
 
