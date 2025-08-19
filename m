@@ -1,100 +1,96 @@
-Return-Path: <linux-kernel+bounces-775095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B27EB2BB2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2681B2BB2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83DA8166FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038444E0E4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D8F3115A1;
-	Tue, 19 Aug 2025 07:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050F13112B2;
+	Tue, 19 Aug 2025 07:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AylmN7UZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nMhilJ6l"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KQuU/FZy"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A74311583;
-	Tue, 19 Aug 2025 07:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBA881732;
+	Tue, 19 Aug 2025 07:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755590102; cv=none; b=Q3pvzc6nELBR02ua7gvl3YJ5hgzpwzG55HvqM9F4kKBhSw7hRmI49DgcNrNIf9nEf9EkltgAehJT8v+ZYHN6/npUOlKAysbo/cwYTcDGnw0qs+iRhFaumqoIWCX63mSAtHH0TteF06UyKsHNYev1evblLmW3QVowZegFBiNLSMA=
+	t=1755590110; cv=none; b=fDsZFgZlhojC+pPl/iKh2OcdtDz8D/CZlYFofYBdJKe9T9jA0OAVINwp73i1ECkEXBhNkQobK2xCCIuZ/M9w09CO+y8QHIti2Wr9CdHcsQaSKXT7Zd5HonaA71dBlWDIADkQq+OE+qfa4Dge10HzszA6BtUSb9UAxdFjEXxEaw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755590102; c=relaxed/simple;
-	bh=OY+sicMelY1hnYn/pM29XhqhuTFCJs6xvuX6JR7m17A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdvBDoirTIvFboGGUyfRlHVu/KVRImnVmMbCweztrH6WwVJdvwCaNkwAMAyheJWtzHSwCZulqUVyxsQPZuwaWLF5ZC53jrBAUuinTNdStpLs12GF/wnxGhH0WfJFoFV6zWd32PEFEC9G49Rhmdt8WKM0MQrpa3EO8dPOGshXdQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AylmN7UZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nMhilJ6l; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 09:54:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755590099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XVaDSb142K8hJ7jox21NKb4hwtUDlG1LZQOLiyezwT8=;
-	b=AylmN7UZHmZMbQK+pP0GxYCm1+2oG6kw0SKTDlPl3S2BVsFMZYOyhNu1Sh3GjAS0ah0fkk
-	CqGFMtG9paOstBCMk4kQALOPSxTWtGTYPft5yqfWoXBXyoCjfNZdp1xGr8Bt2U1YNut/3f
-	lqG4VM75ZmSHct/BFrKGWb+lgP/YTX9LmmKwPOlyqbB0sYWG573PKHYVTNTgD+gqL37oDg
-	Q+WmOofFuDJ7ZotRxMFT6mC8Q0o712n4H+lFuk6HCrhvqbp0w5zPfywagrBFuXRcgYkGid
-	O9irwC/El3Dj7ZhLKhwK/eFrsCjvkyLYY+30VHZUWjWsfJsVIu0F0sS2fevjlA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755590099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XVaDSb142K8hJ7jox21NKb4hwtUDlG1LZQOLiyezwT8=;
-	b=nMhilJ6lv08VOGu/ZnawL6+3VoGEGaJEb0d9hBns1kpUuPnDjFU2/oCVmZADXCa2SXehEh
-	GyuHB7S03rgJrSDA==
-From: Nam Cao <namcao@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v2 5/5] rv: Add rts monitor
-Message-ID: <20250819075457.AqRdkkvf@linutronix.de>
-References: <cover.1754466623.git.namcao@linutronix.de>
- <88fdbeb3f2ecf3a6259f3ee8636ae5b21fa6b72d.1754466623.git.namcao@linutronix.de>
- <20250815134851.GC3289052@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1755590110; c=relaxed/simple;
+	bh=xLuI9J3eKRbOgmyykghu0sMWbo+gDxFTq5myhbGOfLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VoJkKY6bgAzGrkc4uSULHI2nFa41H4JTY1ofpP6kMta7t7PvyfwNWmlQ3cJi3uL2UPs34Rh5byRO/mYJ5bARcYUdbcZSP+c1njGBdEFx3bkV7o5q/uqQR1oF9q9Tjh00gEF8m/UTxtQDwqI30PqHD8uUDBpkz85zNZPzBl6ZWwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KQuU/FZy; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=7Yq37uEARiaeWzVAuQ1673KP3G4WL0vAS2SoUZ9rgsc=; b=KQuU/FZydiS/sP1KorWl2dJriw
+	n0UhmFRYGcF4Wecqrw4HMrzdCLsozhQy/ogCM/a8JQFMlWHmCykFZ4i8FigU3mUETlRYwYa1IhkEJ
+	jWJrkzciCtH8k7yKMZM7HgPxR5RfLkCuo/aBsB11PFJ0B9lcn3qOBlXHD4JtrN6hMYVZ6H4vkOfEB
+	p7CgqT93wbHBlbG2kdQiG8wDjPQjgn4goKebI6+YqbMft5qZ/8LQ/TU0tLueeeBFfkEglhhxN5ijR
+	/GlEe6RYwpWbJGv2pXAwk8lXpmnJ6zcubUvpJnJYBnZE5atqHKD0/32r4BqKLHftRPrYzsLv0ObzD
+	tTPIG2ow==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uoHBU-00000009jl3-1cD3;
+	Tue, 19 Aug 2025 07:55:08 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] list.h: add missing kernel-doc for basic macros
+Date: Tue, 19 Aug 2025 00:55:07 -0700
+Message-ID: <20250819075507.113639-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815134851.GC3289052@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 15, 2025 at 03:48:51PM +0200, Peter Zijlstra wrote:
-> On Wed, Aug 06, 2025 at 10:01:21AM +0200, Nam Cao wrote:
-> > Add "real-time scheduling" monitor, which validates that SCHED_RR and
-> > SCHED_FIFO tasks are scheduled before tasks with normal and extensible
-> > scheduling policies
-> 
-> The actual monitor seems to know about deadline too. Surely changelog
-> and document need updating?
+kernel-doc for the basic LIST_HEAD() and LIST_HEAD_INIT() macros has
+been missing forever (i.e., since git). Add them for completeness.
 
-Yes.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ include/linux/list.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> While there, you should probably extend to cover at least STOP class,
-> but possibly also IDLE class, no? Validating: IDLE < EXT < FAIR <
-> FIFO/RR < DL < STOP.
-
-Right, I forgot that idle and stop exists. Thanks for the reminder.
-
-Nam
+--- linux-next-20250814.orig/include/linux/list.h
++++ linux-next-20250814/include/linux/list.h
+@@ -20,8 +20,16 @@
+  * using the generic single-entry routines.
+  */
+ 
++/**
++ * LIST_HEAD_INIT - initialize a &struct list_head's links to point to itself
++ * @name: name of the list_head
++ */
+ #define LIST_HEAD_INIT(name) { &(name), &(name) }
+ 
++/**
++ * LIST_HEAD - definition of a &struct list_head with initialization values
++ * @name: name of the list_head
++ */
+ #define LIST_HEAD(name) \
+ 	struct list_head name = LIST_HEAD_INIT(name)
+ 
 
