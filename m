@@ -1,166 +1,183 @@
-Return-Path: <linux-kernel+bounces-775384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422A6B2BE88
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:09:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7723AB2BE87
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F211887B2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0372918830C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2805320CD2;
-	Tue, 19 Aug 2025 10:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01305321F21;
+	Tue, 19 Aug 2025 10:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IPT20K5K"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sGUfOUlY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758B4253B56
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2C43218D0
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598136; cv=none; b=qTjccZkGWPmZFmCuONI3oVRm5hdEJUBG4KD+aASkVc0aLR3Sgrx2lmiNNMmwb5ek0cDHkniK/P2TZRqaul2TCGWcmuOHKBAlj7fUiI0L90vf4VAGrr8re0JarbMzoWRTrd/PocHY4+ZC8oyMP0suRZAQ1kKcUjeQ7uo6gEOHulE=
+	t=1755598129; cv=none; b=NQifGalZY/vS5Sv/mdtLZrMx1jXx4fWfxc1tCqa1yr3wtQw/VOhgqTgz/KMucESYAPl2r3u+Ck88mITGLP7XaALBFNnx0QobqNV7/whRcnU6AqecxKyOYXc2HysAWB9C/0CnhiTjaCXXiWmT3OCB4ILQ6mmvPnzk43SDLcttSLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598136; c=relaxed/simple;
-	bh=+txACB+X3vc3b5peBHCJLtbu+Xn8ZQNS4ue+1NJqTKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ULzeaivRQeMaVNhprbB8j8MBat5P6lP86iwr+RAVvu7EtdVuljVh5Zz+bPVaUiMggF8dR0bz/MCJuzY3X77GdHAIyoEW6zy8gcqzed2lRjguA5ux7pDocYVETDEGbUSiSC93fXqzHxYStUWVtAGau615gxSQI5E1CPSYjfGvMd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IPT20K5K; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qVhCXGbmsJJwi8S4yhVCxLw4FwXst5ChE6QK/bHZT4w=; b=IPT20K5KC2Fw8GdxloUUv9JIko
-	TAzhz/CocvenxHK8WLuRDfjQyffThXQ70cvNCqU+qwEY8BBlPmcu97F7M9zCvb2B+YZP0TbBh+Esf
-	L6qqv7lEIIwBARch1KqJJp+dSYrdnM9/5FND74aU7FNkxgliAu2pYAiL6EBqXWVDBFQ3gdj7XVFHH
-	y4uMX8Xdc+SCc7eaCJXCW6LnsRkf3/VBjGGn0uAm9hbRxy0yeArrU9LdVXEcTy63F9fWIw5OAh79m
-	EuJZ0zNmKCSP4S9kaNIOy0PeGnabk5jA7f7lsrnLcRycncbeaCbXlf8M/W1tRH2Dv0wbzFhENuNkG
-	DHYDjU1A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uoJGi-000000000fj-09qX;
-	Tue, 19 Aug 2025 10:08:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0D8CF30036F; Tue, 19 Aug 2025 12:08:39 +0200 (CEST)
-Date: Tue, 19 Aug 2025 12:08:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: liuwenfang <liuwenfang@honor.com>
-Cc: 'Tejun Heo' <tj@kernel.org>, 'David Vernet' <void@manifault.com>,
-	'Andrea Righi' <arighi@nvidia.com>,
-	'Changwoo Min' <changwoo@igalia.com>,
-	'Ingo Molnar' <mingo@redhat.com>,
-	'Juri Lelli' <juri.lelli@redhat.com>,
-	'Vincent Guittot' <vincent.guittot@linaro.org>,
-	'Dietmar Eggemann' <dietmar.eggemann@arm.com>,
-	'Steven Rostedt' <rostedt@goodmis.org>,
-	'Ben Segall' <bsegall@google.com>, 'Mel Gorman' <mgorman@suse.de>,
-	'Valentin Schneider' <vschneid@redhat.com>,
-	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-	joelagnelf@nvidia.com
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjQgMi8z?=
- =?utf-8?Q?=5D_sched=5Fext=3A_Fix_cpu=5Frelease?= =?utf-8?Q?d?= while RT task
- and SCX task are scheduled concurrently
-Message-ID: <20250819100838.GH3245006@noisy.programming.kicks-ass.net>
-References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
- <aFmwHzO2AKFXO_YS@slm.duckdns.org>
- <ced96acd54644325b77c2d8f9fcda658@honor.com>
- <aHltRzhQjwPsGovj@slm.duckdns.org>
- <0144ab66963248cf8587c47bf900aabb@honor.com>
- <814bebd2ad844b08993836fd8e7274b8@honor.com>
- <228ebd9e6ed3437996dffe15735a9caa@honor.com>
- <8d64c74118c6440f81bcf5a4ac6b9f00@honor.com>
- <20250819074736.GD3245006@noisy.programming.kicks-ass.net>
- <55d707b1f4e1478ea19b022e60805b98@honor.com>
+	s=arc-20240116; t=1755598129; c=relaxed/simple;
+	bh=737a7gXy/T0JRvCPCsi7SuPm2Di5qOsTwyUNcFvqQ4s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PgL7UWHVTP1VbnpFXkrrYbL9kIEAV09JZTbGL1Hvmxp5KBKjUHGGKeCd9TxeQDjDZeRbTrQiOgSTDMNvmNL9+tcn2mdsdtGhue8RQATFQqiVs193Q7AsHdzIKQmL2v4mLi3v+YU7yixSKRp1T4nSBu8JiGeKaVWTjt6y3OF5jdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sGUfOUlY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19147C4AF09;
+	Tue, 19 Aug 2025 10:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755598128;
+	bh=737a7gXy/T0JRvCPCsi7SuPm2Di5qOsTwyUNcFvqQ4s=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=sGUfOUlYN/Mn0Zsh4uuzrZh1ZP6AWTBOeMXkmBp0O0DD/NVabVFQIDkcOiU29LCH4
+	 NfjT1HT+kRJtVJnqtV+1iq0xzWMJELIAzL0pG+yqBh0p9YARdcdbX2/btUdHD5eaiP
+	 8XsJAE+M+nLpqfg5S2A2LU8AEhvq7iKxoV+D9ardpuzHfejvxJO9Rq7EVu8GH4GelI
+	 cpbp3htQscMsCpLrikXb7q6wJRXzc2hRp/gRtcNUJWxHxw0NoerwqFFhQqGe684Vq1
+	 Q2Cd5bo1DYyTqphbFy9JeXsb0TnzzTV05M0C/D2bEIhrGtEj42wXthnzvz+ZEaNCat
+	 c7ZxZmS/PJ5Ew==
+Message-ID: <0a5c4b7deb443ac5f62d00b0bd0e1dd649bef8fe.camel@kernel.org>
+Subject: Re: [PATCH] tmpfs: preserve SB_I_VERSION on remount
+From: Jeff Layton <jlayton@kernel.org>
+To: libaokun@huaweicloud.com, linux-mm@kvack.org
+Cc: hughd@google.com, baolin.wang@linux.alibaba.com,
+ akpm@linux-foundation.org, 	linux-kernel@vger.kernel.org, Baokun Li
+ <libaokun1@huawei.com>
+Date: Tue, 19 Aug 2025 06:08:47 -0400
+In-Reply-To: <20250819061803.1496443-1-libaokun@huaweicloud.com>
+References: <20250819061803.1496443-1-libaokun@huaweicloud.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55d707b1f4e1478ea19b022e60805b98@honor.com>
 
-On Tue, Aug 19, 2025 at 08:47:38AM +0000, liuwenfang wrote:
+On Tue, 2025-08-19 at 14:18 +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+>=20
+> Now tmpfs enables i_version by default and tmpfs does not modify it. But
+> SB_I_VERSION can also be modified via sb_flags, and reconfigure_super()
+> always overwrites the existing flags with the latest ones. This means tha=
+t
+> if tmpfs is remounted without specifying iversion, the default i_version
+> will be unexpectedly disabled.
+>=20
+> To ensure iversion remains enabled, SB_I_VERSION is now always set for
+> fc->sb_flags in shmem_init_fs_context(), instead of for sb->s_flags in
+> shmem_fill_super().
+>=20
+> Fixes: 36f05cab0a2c ("tmpfs: add support for an i_version counter")
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  mm/shmem.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index e2c76a30802b..eebe12ff5bc6 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -5081,7 +5081,7 @@ static int shmem_fill_super(struct super_block *sb,=
+ struct fs_context *fc)
+>  		sb->s_flags |=3D SB_NOUSER;
+>  	}
+>  	sb->s_export_op =3D &shmem_export_ops;
+> -	sb->s_flags |=3D SB_NOSEC | SB_I_VERSION;
+> +	sb->s_flags |=3D SB_NOSEC;
+> =20
+>  #if IS_ENABLED(CONFIG_UNICODE)
+>  	if (!ctx->encoding && ctx->strict_encoding) {
+> @@ -5385,6 +5385,9 @@ int shmem_init_fs_context(struct fs_context *fc)
+> =20
+>  	fc->fs_private =3D ctx;
+>  	fc->ops =3D &shmem_fs_context_ops;
+> +#ifdef CONFIG_TMPFS
+> +	fc->sb_flags |=3D SB_I_VERSION;
+> +#endif
+>  	return 0;
+>  }
+> =20
 
-
-> > Oh gawd, this is terrible.
-> > 
-> > Why would you start the pick in balance and then cry when you fail the pick in
-> > pick ?!?
-> > 
-> > This is also the reason you need that weird CLASS_EXT exception in
-> > prev_balance(), isn't it?
-> Yeah, you are right, because there is task migration in our exception process.
-> > 
-> > You're now asking for a 3rd call out to do something like:
-> > 
-> >   ->balance() -- ready a task for pick
-> We must clarify that the target SCX task is currently located in the global queue, and it's CPU selection maybe CPU2,
-> when the current CPU0 will be idle, this SCX task should be migrated to CPU0.
-> >   ->pick() -- picks a random other task
-> The rq lock of CPU0 will be released during task migration, and higher priority task will be placed on CPU0 rq,
-> So the CPU0 will not always pick the target SCX task timely.
-> >   ->put_prev() -- oops, our task didn't get picked, stick it back
-> The higher priority task may cost a long time on CPU0, so we need to get the SCX task back for its low latency demand. 
-> > 
-> > Which is bloody ludicrous. So no. We're not doing this.
-> > 
-> > Why can't pick DTRT ?
-> This's why the CPU0 cannot pick one SCX task directly which task_cpu() is not CPU0.
-
-Can you please have a look at these patches from Joel:
-
-  https://lkml.kernel.org/r/20250809184800.129831-1-joelagnelf@nvidia.com
-
-I think it is dealing with a similar problem, and possibly making your
-issue worse. At the same time, it might just be sufficient to solve
-both.
-
-It would be really good if we can get rid of this prev_balance() hack and
-instead make sched_class::pick_task() able to deal with the whole thing.
-
-Notably, I'm thinking that by passing &rf to pick_task() it becomes
-possible to do something like (and I'm sketchy here because I'm never
-quite sure how ext actually works):
-
-
-  pick_task_scx(rq, rf)
-  {
-  again:
-    p = pick_local_task();
-    if (!p) {
-       /*
-	* comment that explains why we can drop rq-lock here
-	*/
-       unlock(rq, rf);
-       ... get task from global thing ...
-       lock(rq, rf);
-       if (rq->nr_running != rq->ext.nr_running)
-	 return RETRY_PICK;
-       goto again;
-    }
-
-    return p;
-  }
-
-
-And Joel's code seem very close to that, but doesn't seem to deal with
-your issue.
-
-Anyway, the above has this: 'rq->nr_running != rq->ext.nr_running'
-thing, which is supposed to check if there is a higher class runnable
-task, in which case it must 'abort' and re-try the pick. We should do
-this every time we drop rq->lock.
-
-Now in the case of a dl-server, we'll obviously have the dl-server be
-runnable (in fact, its pick is what gets you here in the first place).
-But its presence will then make you re-try the pick.
-
-It might just work, it might need a little help -- please carefully
-consider that case.
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
