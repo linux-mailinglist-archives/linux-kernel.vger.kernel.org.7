@@ -1,208 +1,102 @@
-Return-Path: <linux-kernel+bounces-776440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22621B2CD4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:50:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638A3B2CD59
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC3AD4E4BAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C661B2A60FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593AE30F80C;
-	Tue, 19 Aug 2025 19:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A63730EF99;
+	Tue, 19 Aug 2025 19:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbSR4YNA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AOFY0fy8"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ECA26E17A;
-	Tue, 19 Aug 2025 19:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7362BD029
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755633011; cv=none; b=a5DTlnRZdm7AS0SmvJwxk+vdTg6r29gG88JvO9G9ulD0346LjhOTCfLQYk8YaWLycKPledorrZ/eWPTlf0Fxm+tHQVaY86YPy7zWFJGmpiZ7wIRfbozEA8TzTqb1aF9R3rdJcUsKLSv6eb41jnkamh9kPfGEUbO9gjLd2fpag9U=
+	t=1755633142; cv=none; b=ph6HbZ578xGh85osDM64lB46tv8zjSAj8XRbunbPGMsIuW6LvafYjQB/MtwPRVT9X4WfRDlFPGi5XhPOtitEzDJwUkIo0n5qpci09y///FkLmYFoSRjkE/yNHn/KdEKzcbmp5E8HXx85zjx1vymSXjvSIN7Rh8zDzb2i0ofywh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755633011; c=relaxed/simple;
-	bh=rXxbSd4NGFsxG7Du96tt0eWEUIA3BJVgGFwkWbEkdlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KO1QRVUODhOBgEfSJ+RgAOXERHDEplTpVSjinBNhlsRkZeQN/tVrQb3794dfp6q+xburA5mKFKIH9mWeqsExSghzhIJS1oTWDEBplZwEJSSMshkZ7QU/H1BKd4Wb9/pcVNB2LGOga/QBPDoQlUyXw0iMzral1eczYHzu8OrVQco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbSR4YNA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF38C4CEF1;
-	Tue, 19 Aug 2025 19:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755633009;
-	bh=rXxbSd4NGFsxG7Du96tt0eWEUIA3BJVgGFwkWbEkdlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hbSR4YNABzlsy9pJN7WzfYzMVwnfolauDV1rXZvGW1mI57p37MW6oOe/+01+xg9uF
-	 zOXCvwuNvXPxm6cWiQ+QwG4+aQ5CfXoZ0i5/CzsnUVt8SMTgpdKuzYChqbu9fZs7FM
-	 WQl10SuiBy8dl8BBGcq8xO+lE7sfEYW1Ll9/qOBU7AjSmHPDXQBC/eU36HnOrllsLg
-	 1tWHtEsc0si4gDYUsimTmzNppaCEJ2nBflrXkrQjRUTnlVAgSc5CY+2Sa6hb9i0Dsf
-	 GZyAXddObnGMRBLA4YPev/YmuJ+IsW4i9++EooA4pKs4GusYblwazFzCp2/tINsGiy
-	 atSDfqecI84Lw==
-Date: Tue, 19 Aug 2025 14:50:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Maud Spierings <maudspierings@gocontroll.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: backlight: Add max25014 bindings
-Message-ID: <20250819195008.GA1218175-robh@kernel.org>
-References: <20250819-max25014-v2-0-5fd7aeb141ea@gocontroll.com>
- <20250819-max25014-v2-1-5fd7aeb141ea@gocontroll.com>
+	s=arc-20240116; t=1755633142; c=relaxed/simple;
+	bh=uaT5O8+gH40OBP1k8JO+8K7fEf6thBZsopWOAgvWGIQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NqPNAqd8zgZiMcvAP2ieiKxDmGLcfeASG4PINLew0uUI6/34hbeLledWv6FFe6FhKQnMigxBjkTu5pQo1MqlRCeqLL5N82Wr+Jzf5SBuN12NcZAHLruCMAUNkWVspAGRlZDYb6whSs9GUjkINu7i6FPr8JNAw2oAfdLgvJI1rrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AOFY0fy8; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755633128;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DiIJaIurNs+d0wpVmpnQe7JGyakHNwZCGwlLVvllqGo=;
+	b=AOFY0fy8b+J4w2Sz1K6yMWTww3B1VaCi/oU4JySA336aFTWeN3WV7o2nxuOs/l8cpbHIYL
+	BG8iS3jKdQY/yQ/fpSaeSkFI0bEsfKPGjVj6sBus90jZcECifLpHnvSmm2UNunNlMPc2d6
+	9p2Xnksc+DE2i6yd/eYbBGJ8ZqdukT0=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Johannes Weiner
+ <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David Rientjes
+ <rientjes@google.com>,  Matt Bobrowski <mattbobrowski@google.com>,  Song
+ Liu <song@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+  Alexei Starovoitov <ast@kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/14] mm: BPF OOM
+In-Reply-To: <CAJuCfpG1+bnFwpc4bxut_5tFtFc-s7+u2YF-suefoXq2-NijJw@mail.gmail.com>
+	(Suren Baghdasaryan's message of "Mon, 18 Aug 2025 21:08:27 -0700")
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	<CAJuCfpG1+bnFwpc4bxut_5tFtFc-s7+u2YF-suefoXq2-NijJw@mail.gmail.com>
+Date: Tue, 19 Aug 2025 12:52:01 -0700
+Message-ID: <87a53v2iou.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-max25014-v2-1-5fd7aeb141ea@gocontroll.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 19, 2025 at 12:58:59PM +0200, Maud Spierings wrote:
-> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
-> with intgrated boost controller.
-> 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-> ---
->  .../bindings/leds/backlight/maxim,max25014.yaml    | 79 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 ++
->  2 files changed, 84 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..30b591152fa31d5e43243cac44c72028b05b5f8a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim max25014 backlight controller
-> +
-> +maintainers:
-> +  - Maud Spierings <maudspierings@gocontroll.com>
-> +
-> +allOf:
-> +  - $ref: common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - maxim,max25014
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  enable-gpios:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-supply:
-> +    description: Regulator which controls the boost converter input rail.
-> +
-> +  pwms:
-> +    maxItems: 1
-> +
-> +  maxim,iset:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
+Suren Baghdasaryan <surenb@google.com> writes:
 
-       maximum: 15
+> On Mon, Aug 18, 2025 at 10:01=E2=80=AFAM Roman Gushchin
+> <roman.gushchin@linux.dev> wrote:
+>>
+>> This patchset adds an ability to customize the out of memory
+>> handling using bpf.
+>>
+>> It focuses on two parts:
+>> 1) OOM handling policy,
+>> 2) PSI-based OOM invocation.
+>>
+>> The idea to use bpf for customizing the OOM handling is not new, but
+>> unlike the previous proposal [1], which augmented the existing task
+>> ranking policy, this one tries to be as generic as possible and
+>> leverage the full power of the modern bpf.
+>>
+>> It provides a generic interface which is called before the existing OOM
+>> killer code and allows implementing any policy, e.g. picking a victim
+>> task or memory cgroup or potentially even releasing memory in other
+>> ways, e.g. deleting tmpfs files (the last one might require some
+>> additional but relatively simple changes).
+>>
+>> The past attempt to implement memory-cgroup aware policy [2] showed
+>> that there are multiple opinions on what the best policy is.  As it's
+>> highly workload-dependent and specific to a concrete way of organizing
+>> workloads, the structure of the cgroup tree etc, a customizable
+>> bpf-based implementation is preferable over a in-kernel implementation
+>> with a dozen on sysctls.
+>
+> s/on/of ?
 
-> +    default: 11
-> +    description:
-> +      Value of the ISET register field (0-15).
-
-Perhaps a little on what this controls? 
-
-> +
-> +  maxim,strings:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      A 4-bit bitfield that describes which led strings to turn on.
-> +    minItems: 4
-> +    maxItems: 4
-
-       items:
-         maximum: 1
-
-But why not just an 8-bit value 0x0-0xF?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - maxim,strings
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        backlight: backlight@6f {
-
-Drop unused labels.
-
-> +            reg = <0x6f>;
-> +            compatible = "maxim,max25014";
-
-compatible is always first.
-
-> +            default-brightness = <50>;
-> +            enable-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-> +            interrupt-parent = <&gpio1>;
-> +            interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> +            pinctrl-names = "default";
-> +            pinctrl-0 = <&pinctrl_backlight>;
-
-Generally we don't put pinctrl properties in examples as they are always 
-allowed.
-
-> +            power-supply = <&reg_backlight>;
-> +            pwms = <&pwm1>;
-> +            maxim,iset = <7>;
-> +            maxim,strings = <1 1 1 1>;
-> +        };
-> +    };
-> +
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e81d5f9fbd16cc384356804390d65652bbb9e3f6..11c73d2e37fac22aea852152746236c1472f41b8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14972,6 +14972,11 @@ F:	Documentation/userspace-api/media/drivers/max2175.rst
->  F:	drivers/media/i2c/max2175*
->  F:	include/uapi/linux/max2175.h
->  
-> +MAX25014 BACKLIGHT DRIVER
-> +M:	Maud Spierings <maudspierings@gocontroll.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
-> +
->  MAX31335 RTC DRIVER
->  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
->  L:	linux-rtc@vger.kernel.org
-> 
-> -- 
-> 2.50.1
-> 
+Fixed, thanks.
 
