@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-774625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098A9B2B52F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2D3B2B531
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A859B19620FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:00:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C36F525AC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D922726F280;
-	Tue, 19 Aug 2025 00:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC0A14A8E;
+	Tue, 19 Aug 2025 00:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ptk8UqZQ"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W4tMuMFn"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD10C1B85FD
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5054A11
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755561630; cv=none; b=JKR59y8XjUrCPEvI5B9sePC1ZeL0gKy/Ixj4Tw4gatAxkB/yxjSPpV+da94Jz9MdmRVCzLMc5/LbdUWTXeZSLzEuoRqbYp2KnMPkivnLdseKxJ9XRLQxT6pf+Ex0TFowSgSYmyIumyBZpwQxS+s0x21ILu4Yl2/emYyQ5bjUXvI=
+	t=1755561741; cv=none; b=cTquZV5X2Vsj42MjUnAcC3f86VKWYVHUaVOwvR5RJ4qSWGIgq6et5u0Fn6LE4FWEKmgsdzjS8FS/xA2luwZlfzqFevH5jekmITD/4eBowEFgocDTmjdA5pavapjqVBxAdsAFV6iQ2MlYZm/j0t9oEhQa61Jx8FytoqxlQPaXxVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755561630; c=relaxed/simple;
-	bh=eVGtw0RifMH4dB6Opi7sPhmBoc91u4F4OTi82OGM6p4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pLh+sv9xtzlxOvlTmWOY+YpxWhh5/2e06iZ8T/tQfv+ibmD0j6TjyIyR6w/wFd/Gp+2+P0ZObvzo3MWYRyp41XOtQPpK6YrShYp4imSY29ZpOR5+2Lz2tOb0Csw4Fpnb8r9zvXXcKAJqPx8l/j2bZCkVvfGXjfCbZ2R6wtCxhBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ptk8UqZQ; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1755561741; c=relaxed/simple;
+	bh=IYI91/LE9Llcly1/RR9GAXRgHt5xZK04GitaKe7QsYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XL02ElLKQ7YaTyK9nen2ciZuERgT6ICyAaFS5cNeljDoY0ArJoc7DmmfMITBJYWKcStNMmAy6QautD+c7Jpny0bdXkuHvjCTqyfT/mt0XMhBrQ4ijvj85FqXkJwbeJcpj6e9sePCeQizjXAlGJcEISNH9cXSscxr2AWib4owKgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W4tMuMFn; arc=none smtp.client-ip=209.85.167.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55df3796649so4248e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:00:28 -0700 (PDT)
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-435de820cd3so3017325b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 17:02:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755561627; x=1756166427; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eVGtw0RifMH4dB6Opi7sPhmBoc91u4F4OTi82OGM6p4=;
-        b=Ptk8UqZQFh7GWEjH3RZOwJddEK0mC5FrBAa6v5snwrpGjprloVaf0kJNgNLO/RrdNB
-         OeY7mKaLFgLo6io7HK7BY3CAwoQstG6gLXUXRzm5Z+4O4L3UH1rekgDqkgKTI+u5kfuH
-         mfNlSBUpjxvQInHfzjEe8UN7r6JjyCH5W+h/1TvX6GTRjbVhajYtS9GWfOwksyf8R9jv
-         Ps+3IgKbzK9vafogJo8zEtARe5lFMJUwZRZDS69oh7tKPMhRHLHQNpvnOlVRqtIR3X8o
-         Y+5G7SdJ+TrWi/9t6NjlpuR3pto9JXGcfFhUIDuJRG2GNxN5lpEkmaRfOSnnrXOBucx8
-         yIgQ==
+        d=google.com; s=20230601; t=1755561738; x=1756166538; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oMsgbwBVAVhf//iwhRHAmazuWGfkfHKPwkTozN8mYH0=;
+        b=W4tMuMFnm25GdNZbPYhPn7cwIhzmZU7JAQ54Nx5hcDY4ZvarRH/o5jDOkUL2YAbG2g
+         lnuGIGF3aGFdgaF+4j7mDk3X8CFNvDQEjhIdrA6JvyvYgUj9nEzBFu8nCXyEKqa8TuaY
+         cZBaOpOCAPNNFmVe5dnw5ERkOMAMsMo9kWnMT8snfWi7+mGq/bfBE2NJj1WpokRLBnFp
+         h+JJWEeA1G/NHsQoY6lm844YTdNfHv6aAxKLpWIVg1m31FpNgyWm0n0Xh0/1ggAmxs4a
+         Ewyco05MWIm8QQNy2bzdIXppbPBbdBDBPoB7tZu/p8wuCOajACLWd5wBsQ9efx00YLv3
+         k+Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755561627; x=1756166427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eVGtw0RifMH4dB6Opi7sPhmBoc91u4F4OTi82OGM6p4=;
-        b=CdPyXGq6+uagzqihvRv94zqvy2REwDsmhaKAKGMhPZ3mUQut7nHhqs3PWIWwDQE4WZ
-         RCAVihfcSrvj1AXu284t5T6weogzNy3SOTlnJKTvC3BxtfBS5XgMos2NeBffkLmHvrCN
-         k3U1WG4t+3SJgxWUlh4LWR8LGUFqrsFUsGO83bE4Z1+5F5lQHcH+ljqqOCj0UmUsw3OY
-         a7s55N6hMJPPPoeLO+nUnLQD2fvORDDBA1NAfkbphfogAqxIAqSuMrehEnDm2RGIhhl3
-         zv+secP0M8fSgImlGM/F9aZ7gzHdhDfYOXw8Pz1cjIlkbqWpJBBoSM8nSzONizGgIcZa
-         ppKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVytcLG9kFPwZEIjOy2DHQ0K/aFjb+JiUNxXGdsdhiEqtCYAbIaEwK+yjGcAmVtpwii+TN3JGUhbnrHjYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrYfAnXBByvLoQYLDWovPWdjsaIVEM0mkE47cKz8kFSKW8b3zL
-	uYu+gZVAOod7cfSZatzrW4NcZy5s1N4Lc/aMBdn/ZpzmryFPZBq7udnUGegj31GCWy38ZYzIaEI
-	Z72jiYSzeHaVYVfPTww5863LGhjRCDRXUKwyH9pWe
-X-Gm-Gg: ASbGncsnEgkPLRgl9fyXv9zrbvzztXwCKN2klMfwhuO4sAE+h+nFLwPYvaCj1jmk9Nz
-	Vk3xiex8xiPqVou4XUb9bZScn8qWukbUhQQ84k5DUv9j407Ta7jpCm+6dsV+aWLzocU/XVlaHLn
-	KQT0YNT+etqc1/hGAH9L2g/rF1ksY3jkR5wPt7fhj4qOmTPbl+J7bZ7sCiPYVWwAKtFRMJc7z2n
-	DUzFxABEgUcsl3qajkoXM55yCAPnO+PmOJR3pTfNRvj
-X-Google-Smtp-Source: AGHT+IEZEaETdAR6zcqYMOSJMAOQypdk9OIqzaXxKsBGtn0E30zwjU1WLFWapWhBelD0iYBZ0U99b4mUlXJ5fCSa36o=
-X-Received: by 2002:a05:6512:1092:b0:55b:749a:35b6 with SMTP id
- 2adb3069b0e04-55e00c43a89mr47660e87.5.1755561626616; Mon, 18 Aug 2025
- 17:00:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755561738; x=1756166538;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oMsgbwBVAVhf//iwhRHAmazuWGfkfHKPwkTozN8mYH0=;
+        b=T+yuxWqgZrsjbZBC+XzQOuVay7li0Pzt4NoGEKyPAM577LZp63u+j+NTrofeTa4e6M
+         1tvvoRcUZz3ANIYkqZDgaNpOuz2HLDNxF72ahTJ/tkrRZcdQA2jVwv3L8XRJNlAOj2Sc
+         2Ot5OTcvVCwYxes/0N9NEMnjyP5SvnBKIWN80OC4RNLZESp8k+nk9jEMdXU+KMt61/C+
+         zZWrvW07dOFF+ALU1mlaRxcf4AeCdpm58t6YFLM3ZzQjL4Qee7ybreskdjLmnCshVCYF
+         KSwlxWZ2jqkZJ1fHZakhPw1YbEMv0FNZT0O7lof2Uf2VbD8Jekqlewq8pfo6z4QN2D8J
+         Pm4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWujFLNNJ+i8FjDgXKsEBXqRJeisLe1c2UohGE30FAVLD9b6zvaIASzQz6FBrMuycvEld96Q3MxacvaA7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv7A1O9uTl4EfCwWwlzVGq8PYk7Y3yXMEqcwvH6GE2X2VzdGJE
+	zrlYa6mXelV6UOQDzXjHL7kITNstdKMcSKXwhUfzilrYuSrsPKOpoK8Rk1ywW9evqw==
+X-Gm-Gg: ASbGncsMbHdHo2nFs077GhMu5IMveijaiobeh4dAcjI6xec8ACzX+jFnHgqTeQknGAf
+	ouHCBZn3Od9ABfZKHY81kIc60XW34oAsFtAewIlDCtsPi3s0yLNoKs6BboAW8zNLiGrnkOCvVlS
+	4Q++jYOVa+4dNB3OLyYlHCuBCG6IhZ08UCofOjNk/d4J8CDFIeaQAbliDQvArs5AcTfV0NcVJRR
+	nHKYlteNniyiIG3JtLQidnKMvrXkUfbyTb/5NBtpoPu0v7J81IkFagcvKDPsgN3br5AVNVAuIZm
+	8oZxm8prF1WxFaw8z4QNky94gH/xJVKjm9+P5Z4hg2XVetdjl6zsL3b2LXigkJpqfIn7sKP9XpK
+	IvAKvw7zSvZbFthAjN6JeNqJK3KEqAHzWm8V3QiA+GAVphjyzVvy/6rWvbiwwB6Q=
+X-Google-Smtp-Source: AGHT+IHxC2a8ADbE8Man2mxRnjf7l32j3oW2wJDIpc4tYOrxF0mDpcOuNs9sRV+UqoA+G+aHiT1l0g==
+X-Received: by 2002:a05:6808:11ce:b0:433:fe69:fd85 with SMTP id 5614622812f47-436da1e48dfmr462238b6e.20.1755561738182;
+        Mon, 18 Aug 2025 17:02:18 -0700 (PDT)
+Received: from google.com (2.82.29.34.bc.googleusercontent.com. [34.29.82.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c94786c0fsm2917906173.3.2025.08.18.17.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 17:02:17 -0700 (PDT)
+Date: Mon, 18 Aug 2025 17:02:14 -0700
+From: Justin Stitt <justinstitt@google.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	linux-hardening@vger.kernel.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/8] MIPS: octeon: Replace memset(0) + deprecated
+ strcpy() with strscpy_pad()
+Message-ID: <mnqgvgvlnnamfyy7eb54thjs4edkrcdwqy6mg2ybqhf3nxtapu@rntlepvgtbd6>
+References: <20250817183728.612012-1-thorsten.blum@linux.dev>
+ <20250817183728.612012-6-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755499375.git.asml.silence@gmail.com> <d25ecf7a633d5ec6d86e667ef3f86a13ea1a242b.1755499376.git.asml.silence@gmail.com>
-In-Reply-To: <d25ecf7a633d5ec6d86e667ef3f86a13ea1a242b.1755499376.git.asml.silence@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 18 Aug 2025 17:00:14 -0700
-X-Gm-Features: Ac12FXwnRiB0WNJpRl44QeJvz_0GJSGinfE7h26oEfh-sETdFXD8uKnYn5wG09w
-Message-ID: <CAHS8izPyDDxtDM4KcnuHzr0BJ3WYd1mv8gJEjG3zAW=Va4yG0Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 03/23] net: ethtool: report max value for rx-buf-len
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
-	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
-	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817183728.612012-6-thorsten.blum@linux.dev>
 
-On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
+Hi,
+
+On Sun, Aug 17, 2025 at 08:37:16PM +0200, Thorsten Blum wrote:
+> Replace memset(0) followed by the deprecated strcpy() with strscpy_pad()
+> to improve octeon_fdt_set_phy(). This avoids zeroing the memory before
+> copying the string and ensures the destination buffer is only written to
+> once, simplifying the code and improving efficiency.
+> 
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+
+Reviewed-by: Justin Stitt <justinstitt@google.com>
+
+> ---
+>  arch/mips/cavium-octeon/octeon-platform.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/mips/cavium-octeon/octeon-platform.c b/arch/mips/cavium-octeon/octeon-platform.c
+> index 5e1dd4e6e82f..47677b5d7ed0 100644
+> --- a/arch/mips/cavium-octeon/octeon-platform.c
+> +++ b/arch/mips/cavium-octeon/octeon-platform.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/of_fdt.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/libfdt.h>
+> +#include <linux/string.h>
+>  
+>  #include <asm/octeon/octeon.h>
+>  #include <asm/octeon/cvmx-helper-board.h>
+> @@ -538,8 +539,7 @@ static void __init octeon_fdt_set_phy(int eth, int phy_addr)
+>  
+>  	if (octeon_has_88e1145()) {
+>  		fdt_nop_property(initial_boot_params, phy, "marvell,reg-init");
+> -		memset(new_name, 0, sizeof(new_name));
+> -		strcpy(new_name, "marvell,88e1145");
+> +		strscpy_pad(new_name, "marvell,88e1145");
+>  		p = fdt_getprop(initial_boot_params, phy, "compatible",
+>  				&current_len);
+>  		if (p && current_len >= strlen(new_name))
+> -- 
+> 2.50.1
+> 
 >
-> From: Jakub Kicinski <kuba@kernel.org>
->
-> Unlike most of our APIs the rx-buf-len param does not have an associated
-> max value. In theory user could set this value pretty high, but in
-> practice most NICs have limits due to the width of the length fields
-> in the descriptors.
->
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-The other driver that supports rx_buf_len I think is hns3, and I think
-you can set the max_rx_buf_len as RX_BUF_LEN_4K there? It only support
-2K and 4K.
-
-Other than that, looks good to me,
-
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-
---=20
-Thanks,
-Mina
+Thanks
+Justin
 
