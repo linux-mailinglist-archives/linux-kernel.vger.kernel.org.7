@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-775307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45C8B2BDAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:41:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34795B2BDB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45632684ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FEB3ABB8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38FB31AF0A;
-	Tue, 19 Aug 2025 09:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D546231A057;
+	Tue, 19 Aug 2025 09:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vECM7eRe"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jy/ruT42"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD9926C39B
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0D41E5B60
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596482; cv=none; b=HGpZnSvmRQyX52iG2IT1I1Gc+wYIpExaAkzTd3MApGfTNTRMu9mYNxetVneQskENyW6PvxOLZ7hWxgFe+JYrBmiAWeL6sJi4yrXrysRACMGyxE5XA0QcqBLiLz/wCe3HjBccs5a5Nch4LSYPRVOZF4dbgaIfXQoAEQM1EYn+QXA=
+	t=1755596518; cv=none; b=n9DzivNftq4xsiMtS4Dz0Jq/YROW835PEqJUn3EzEVKpr12ThcONaNwX0wPK1EbJG+nyJ7+jPQCHLzVsM4FZQ+goDlyovn6TyTN0JIrgRqsRAdHPxJ5npD269cju1RwCHoJQaRxSsTduGV5nrUjaRjBLmivCAovo7CDCGAVaCwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596482; c=relaxed/simple;
-	bh=8OzrB53Bn5TxGHC664tdW+P0TA2+NR/DwiZkzjNkzZg=;
+	s=arc-20240116; t=1755596518; c=relaxed/simple;
+	bh=Rn+8s1z9P5Tpkw9T71JqBJFM5aF2BjvuA2JqLXFJzxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BI8KeM61nRCqqAE53piPGbeKsg9QDdk9mHOFLDZ0LJl6vqV7PuzmEyBQdixb7m0oLvcJo4P6s7KarrdLAmb+7Gb3eWxkTudlFK0oIMFSbMiGWHbmDYrOcKAfdBPA5mKe7X+hwO7nI+tDiiubRgKOMglp3aJpkbTVftjL2e8bkHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vECM7eRe; arc=none smtp.client-ip=209.85.221.52
+	 Content-Disposition; b=lWyJWyZO1qj6xG1MREhNUjMbXPxTPK8ejIgg2C0ZdYqrYl0FLDe2BMEZ9HDNrUVcq8aPpW0LpGHa1/TXAF9LtUfdabHmKekRSpqZgL5qMFRNFe8+exKlfv2n/0P6XA2Gz4o7UhWa+GMg1MAdc5NLgMJp56PcqXOqI3sPprZB3og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jy/ruT42; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9edf504e6so2415963f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:41:20 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9d41bea3cso5400754f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596479; x=1756201279; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755596515; x=1756201315; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
-        b=vECM7eRed+zPnhTQQ6tRAwVWn5fTpl368Jau591Wr2fZij3Yr7XyNaVxSrPIjzKD5w
-         U16QCwvxBZNdS3ZsHQ6cgPoyv9Bmlr3Ub4+W5BRNpGxEzumyL3Uj2nkzD51YcDGg0Lb7
-         FK3qHQLqJ7VyCygn+ttLObvv+YOmIls+svsyHnG0bvIaNds/2ezTKyvyu8HOeG2Zi60U
-         fuqEX/vstVyYMt+Qf0AfuqdeqwH7lyRoHhaZu3xtOiG0iVHqec9plpW5BLTs1IX3wXOD
-         NK8c7/I/WvA9O0TvVPR//s1nf4R8Mv1FkLHOF4deJ6PHn6Xf+w37CJR6hGO+Wiwb3frb
-         PJnQ==
+        bh=uVLLl9OqNk7Zu3EPzfXMDRVe4XrWiVodoUaeSDsMNj8=;
+        b=jy/ruT42PnzyoSFxgOw03yjg6ghYeio7M8XRTStzj/dvvrpYZB2rmga03gce07gSTm
+         QBnrvZfpmKbkTvCcNtMrUo9X9/Ly/D4HvmmKgz700NVxAtqFsKcJ3JCOdaIS2yBVMmsF
+         xRbOQX2yxJ/9g/kj4THfDBPPYFS56kpwmra2+T3iUUt6+Mc26OvC0e3kL/xrWN7cffWA
+         BHyK49iKUYokEuqlMj1bELhhiggvkmhtgN0dHEogI1GaYOUa3I/ZAbCNbdvMT6K4mMgb
+         EeskYcvFHx5L1beMfzED8Z1H6PwPDsJmy4yCEc9mrfqs4dvOfoPe4Oz+5l72+8vrbPBy
+         ot6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596479; x=1756201279;
+        d=1e100.net; s=20230601; t=1755596515; x=1756201315;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
-        b=YtmMrEO1YMLxIuTp7/1TvfK7w2rjnFmQA460nsWsNLv/xJ9tIXGFoAgyBlRRsomgbw
-         UqVq+0AJPvPKIJte5NJvED7/ecBzJzETl9+Tqh2svTqQQ2gMhmP7vyMC+bSuquIvYUxl
-         Sw9klsWi5fm9q67ih/SdLvOduS7epjioyFmUtls4KD9h/dvY7CcHPifTJAbZK9s0E1iz
-         1K6sDJM3XT1pvAKM10CnRV2jSG6O/LdDk7dksk6UIqTaBsFHZa03dkLS3G5RyTjBh6tb
-         Uwi1k9ZIIFZHRhDV6OP1oisG1rQvJHPHaPsB7gOxBy9KCUaKUZWu8v/7DcEwpCKPe2CX
-         PGrg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6F+Jq3fJwYSly6xT0z1xCrKqUk3pOiVCuWGuejUyi4msMFlFrcloSzjfyKmTXT9E6+qnUbQRbkMNguFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyprQmfJIcPCaNpoVwBOUFjujgfTBI0CqkbiKXpkfg1GW6NKsg9
-	93LbapZ3XvH9SmrrQqY7ruj/txV60AWeDJ00aTxZd3cag4o/EBirXt1/hNfH6iCTDP4=
-X-Gm-Gg: ASbGnctUSBKVFofoPDItz3loVt89dSDek5RvOLDmcfYRuJHP9lzv8RlY9l7cxcR3rpb
-	CxgqEqYsOPjIZ8OhOG0/1JMiOf5x68BU2IC5Fpj+NtqWH+X1PwwNtkcXWO/q6rVo8WDdlDnbKGE
-	jq1WGfOjKoZ+n0Ch62ngh74FQKr5ZJjWKiv7yMrBtG9uSVwDuP1KPzRRj/Sg/YFY7Neb8fnAvW2
-	hsaxhtEAf9FeKeW0KjPKVwBBtHw/RgmLEbzfSNLAIltks42eBcELhXLzh3hnZ/pZit32TXfIrM4
-	SSgMVPQIoikJFFQYu9pvVsnxwO7gCHI0O9V7RsWpu5DLncQqzqmqO5rohmhAbEjTyRK8anZzNPL
-	l6lew31ofVsR+vqS+WWRR4amktPI=
-X-Google-Smtp-Source: AGHT+IFPnGBxUMbzp7/ciRb/4QDD/AoPuRkeVnisBhwmTgmtd+TF2XWKrPM0uJzG+Ht4NJS9oAj7Vw==
-X-Received: by 2002:a05:6000:178b:b0:3b8:12a6:36b8 with SMTP id ffacd0b85a97d-3c0ec195bb7mr1400850f8f.46.1755596478926;
-        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
+        bh=uVLLl9OqNk7Zu3EPzfXMDRVe4XrWiVodoUaeSDsMNj8=;
+        b=oUQrh8gYIQW9FViHlg0n3mXJ0eDlpgfdzxIPqJes8L9YhqE79oWdANNg2QpWhyDAVp
+         JQ/W1hctNDLI8A6/NR289KCb3t7pfQxaDse3kR35eT0ZJVQ5V/84V91cWrLJJnnC0rdv
+         hbVOLecII/WgkMc0ksQMfIEYeY6D+BYneHTCM6lUTGBPJPY5zAu0fVgQ8tAXpu56lMYg
+         48tGROUxTxh4Koj/e6092Deyqb1Y8cH8yc4tfXWPjUs/aZ2wzx2SGy+SHSWcuRvSJY5n
+         +nA+0IlGWShYYuFjDiJxJrYyP8WZIxOpTrRvTOIUJHH+Y8zUAXketaIl++PYQL7oAhDG
+         W3fA==
+X-Forwarded-Encrypted: i=1; AJvYcCWL67M/d/jizzzG3tTB2sW0M56YHED2cBTyFekQAM6uRZF1nBN3iQTaCCIi0et+zxkdjsdA7hUTpOZqkrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx35lEtzBZrd8XpwyJBjWYFTlGo0YHpIDmbkn7QpKMpkGUdpeJX
+	hsSC8+k5QMOi/Atq7lOmhDmAh7uKqK1ceX2RIbV2wPnqBu6CBy2P91k/fwFuCLbUR7Y=
+X-Gm-Gg: ASbGncstRShkYOjiet6EK49SDljBAZn1IgzRPcjPH9f0y8YYErOEgv3XUEhYT9edQuT
+	0otBWJ/jomKcwqydUpQs2kNTRaO6lxtiXyT0fDdNjGrvbser3z0YOuzzektlDh60deU74Z9yzJd
+	clTrq9XvwCvr7lpczKn2/VD5ozK/WFs5VrRsDfuMZwR3Qr4c65BT5X3sOQlQe7JiQcJ4EW5HDnt
+	z9roblJEwSEL/N9jnru26/eNYrf8oAmRtlPEUw6346pUmHs2XfFSrRYmRstNDhc5qhRJ/jdhZT5
+	XFVw+xJuUUSZspan5yxXH8mY6Ybr1t8k2obqTz3fk8LHGVoYcy3jmTj55ZqBmM8lXuS7PATLxsf
+	pkTGuYh07hUtiIlNzeFitALK5F1TLs4hiHL8oBMkvWc6EUoZNygmy7w==
+X-Google-Smtp-Source: AGHT+IFmUB9GNTXpWwyDrW0I7+LgcmGoPg5Mmao/+q2ZsLIelBxWWUigl7kupDpLBula5DDMuHfjng==
+X-Received: by 2002:a5d:5d0f:0:b0:3b7:8832:fdcc with SMTP id ffacd0b85a97d-3c0ecc3219emr1522505f8f.38.1755596514815;
+        Tue, 19 Aug 2025 02:41:54 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b42a97c02sm35092625e9.23.2025.08.19.02.41.18
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c077c5776fsm2929467f8f.61.2025.08.19.02.41.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:41:15 +0300
+        Tue, 19 Aug 2025 02:41:54 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:41:51 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] coredump: Fix return value in coredump_parse()
-Message-ID: <aKRGu14w5vPSZLgv@stanley.mountain>
+Subject: [PATCH] ocfs2: remove unnecessary NULL check in ocfs2_grab_folios()
+Message-ID: <aKRG39hyvDJcN2G7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,31 +89,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The coredump_parse() function is bool type.  It should return true on
-success and false on failure.  The cn_printf() returns zero on success
-or negative error codes.  This mismatch means that when "return err;"
-here, it is treated as success instead of failure.  Change it to return
-false instead.
+Smatch complains that checking "folios" for NULL doesn't make sense
+because it has already been dereferenced at this point.  Really passing a
+NULL "folios" pointer to ocfs2_grab_folios() doesn't make sense, and
+fortunately none of the callers do that.  Delete the unnecessary NULL
+check.
 
-Fixes: a5715af549b2 ("coredump: make coredump_parse() return bool")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ocfs2/alloc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index e5d9d6276990..f9d82ffc4b88 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -345,7 +345,7 @@ static bool coredump_parse(struct core_name *cn, struct coredump_params *cprm,
- 				was_space = false;
- 				err = cn_printf(cn, "%c", '\0');
- 				if (err)
--					return err;
-+					return false;
- 				(*argv)[(*argc)++] = cn->used;
- 			}
- 		}
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 821cb7874685..162711cc5b20 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6928,8 +6928,7 @@ static int ocfs2_grab_folios(struct inode *inode, loff_t start, loff_t end,
+ 
+ out:
+ 	if (ret != 0) {
+-		if (folios)
+-			ocfs2_unlock_and_free_folios(folios, numfolios);
++		ocfs2_unlock_and_free_folios(folios, numfolios);
+ 		numfolios = 0;
+ 	}
+ 
 -- 
 2.47.2
 
