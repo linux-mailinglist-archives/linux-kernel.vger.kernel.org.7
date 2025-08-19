@@ -1,178 +1,100 @@
-Return-Path: <linux-kernel+bounces-776652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15659B2CFE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:28:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E67B2CFD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E771889009
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:26:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01AE07A4EF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D04257829;
-	Tue, 19 Aug 2025 23:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E2F257829;
+	Tue, 19 Aug 2025 23:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="KnpbVD6f"
-Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tMin5XGl"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5A921885A;
-	Tue, 19 Aug 2025 23:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.77.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9979F35336A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755645971; cv=none; b=iEN5+oX1X92Zr+8yRZiO+bkdW/ujboy4mJ3+l2doaJF9RhIEqD+kh4m69VebFsZbzkAn9DKcS6KzVt3AaHi1fytPBV4PZ9ZDKiK6tpdTUSbiDNtl8Y6T8khR+RwNbh/hTy6IVjWlrY2V93Ge5h89sOdjQBE9eVFTn5VtO4TonZw=
+	t=1755645794; cv=none; b=VHGNMeUBmh0mve+cIwSA+JPM8fmFDQS0NkmT+AMY/JMhym8wp23nlAc4o2/d/+2j1Ghm4xYAgrNkZ3M/Kr/AxGUeQ2qMTTFWevxtGhltYmSP2V2UQEP2RQYvxamaF/5sv7oy+9rxHot05bPoNz3rgPRp4Jgz2a7HZ89hwJVoZMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755645971; c=relaxed/simple;
-	bh=0ECDqm7JCQ6QeKFXSeUl3cVeFXW3SXURQRlso2w+a7g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pd3QPFwrKxjHh5JaweRaEov8zw2tN9NaZyivWRd57WOhvx5HLlM3pncQ/Eo6ZK96PLl/vYLmS5YRdXypvj5dRytlz8tehEU/VBVK+CzNYYc1Xq18Ht+zxm9nTpRGQD5xw6zz/Jj8Vf5v6lNA5e2H7L/E881I3OE4oEoUP5tAXnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=KnpbVD6f; arc=none smtp.client-ip=44.246.77.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1755645794; c=relaxed/simple;
+	bh=FgXbsPON8BjVPusem9QjMh23k1yZqq1A6IIZikaB0S4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Swm3azVtHj0v/Fc7MRQ32fJGhC5xADj97v3woZpANfD6n+fijI4quis5slbfoGFYsh7tnvUILvndK5a0mP58Pzg//WUMEma/2QsPyQoCvTZVQUHHwVkWZ3ZbQuNfdgM5LNpV+LGySDxtWwZirFd39LpyH9O891R36FkvHQxrK/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tMin5XGl; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-618076fd48bso1648a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1755645970; x=1787181970;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cd20LjcxPOsEg21zYy/cmh2I9QA1AIBt6CLKTzRjH7g=;
-  b=KnpbVD6fOmEb3c4Q++WgGYpalpbQNfLt2KP3eB6dkv1VCYEed7bVE22f
-   nK62bNOl8TmvNNt9gKu0eRckdBOWKRETsfeDC/TT2hACWb15bmWPuCg8u
-   2izG2Jn/6DOJvn6jCWK1vaTJ830FNqW4zexp/VmvdEvWqrgpXVoARG4sz
-   qmQBfuWGt5CtheUisrfN1P8lLr9u4w+As210ncUuylN9xPmz4Nyx2Gme1
-   V6/3Kiz1QA/iKbhgWUkHN9neX6BMBdn5owXE3xfaM8SBfyji9A6hmoOCS
-   vGBhW0X5Dy8Hw3RMvUyBZFGb2MOtObGspFCwcg2mUsdef7ytnevzEuwSC
-   w==;
-X-CSE-ConnectionGUID: vgDJ3wGLRkyBdDWeMGCc+w==
-X-CSE-MsgGUID: znqb36LARvCDQs2S0Xz73Q==
-X-IronPort-AV: E=Sophos;i="6.17,302,1747699200"; 
-   d="scan'208";a="1403455"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 23:26:08 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:8848]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.29.170:2525] with esmtp (Farcaster)
- id 1f517b9c-a5d9-4ed2-9cc8-20113cac2a08; Tue, 19 Aug 2025 23:26:07 +0000 (UTC)
-X-Farcaster-Flow-ID: 1f517b9c-a5d9-4ed2-9cc8-20113cac2a08
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 19 Aug 2025 23:26:07 +0000
-Received: from dev-dsk-epetron-1c-1d4d9719.eu-west-1.amazon.com
- (10.253.109.105) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17; Tue, 19 Aug 2025
- 23:26:05 +0000
-From: Evangelos Petrongonas <epetron@amazon.de>
-To: Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>
-CC: Evangelos Petrongonas <epetron@amazon.de>, Alexander Graf
-	<graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-	<kexec@lists.infradead.org>, <linux-mm@kvack.org>,
-	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nh-open-source@amazon.com>
-Subject: [PATCH v2 2/2] efi: Support booting with kexec handover (KHO)
-Date: Tue, 19 Aug 2025 23:22:46 +0000
-Message-ID: <9e80381d4fafc71d6e0c64d69a8b3ac9c8949865.1755643201.git.epetron@amazon.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1755643201.git.epetron@amazon.de>
-References: <cover.1755643201.git.epetron@amazon.de>
+        d=google.com; s=20230601; t=1755645791; x=1756250591; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FgXbsPON8BjVPusem9QjMh23k1yZqq1A6IIZikaB0S4=;
+        b=tMin5XGlhL3bce/Ermqmj7VllDam3ypeLqlKtip+T1O51UFcplboDAKUiqRm15uIW6
+         6n1Wp4Hy8BfPevM/KyWhcNpKLlIqMF2EjCfYNa6hP7rhYuNz9zXWqPPs5uKWx+7dYTfq
+         mPBdHKn7ceVw1Pzl/pW+INxVvi3bAvykG7zSDG4bgN1ilCUXDbFCJ4vnyHt2mdMsMqCc
+         FW1GWbYCOJY9kmZBdmoB1cOmcE2ZuVs3Utme1Hk6Q/ConSuYc436HRF24xfEd2JCWj8p
+         zCi9oZyjboULKQwSGHu3WPprBupT1TNggSJOOJwHZA4wWufr6MF2QUQsiRsj98Yil2cj
+         lzNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755645791; x=1756250591;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FgXbsPON8BjVPusem9QjMh23k1yZqq1A6IIZikaB0S4=;
+        b=wxTN+vOICVD6f1VPAalWqXFkGvDCOtt9yNUAVUONG8hrSV8mMB4v+KbUd5fOrXr9hw
+         JqD4Lh1BZSw9fsSbS5dJnmwDPS82oXQ2LUmuHB2b5Y7zaoPDzIRU845lpHsj0zt8DzlO
+         ytcye7ZWlaPk1GxpW4WbrOg2RH4nACAlikKhtzihzxTfMgwth4SV+MQnAXq8ykHH4qti
+         8jcQnCTkR2JOHYbvhI/QgEo5vFI6LCzFxSescUXmUM5q8NvgEh2PCCFljUNdHaVm/ibZ
+         63Isz4Fg2urB7XSHmDZX3YMlQJVtFYqxTCCx9ENDpx39wwWEHDoiLUU89pVjWUDg02sX
+         kufA==
+X-Forwarded-Encrypted: i=1; AJvYcCVudpfie3cJ1bjh3tOU+rhfwn18+Zn+wSKUIkgF6JnXAVbSOUS6hA7TlV3ZYVySKzkr69U0J1Eayi9R1Ow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu4WDB8jnMkvAqNSUUJMAe8Gz5grdy83rT4g8WDzs7yBFevzxb
+	ndmJYzbdcNEdQPaCbI5xAENyZhBsFEi7nZmdGV0rTE5FMst0ORtWWHXxsCPBhmMhzy3vVt5uN0J
+	LBgd2Wb2J7WC803K7ddwxLLL443l7ECUuxNpknzFU
+X-Gm-Gg: ASbGncvRECiUqtVDUOVMt5YoamOdcVuIDGxtbk2mB+N9v9dG4kF57MxKnICL0lFApVu
+	eyB6qEquhxzHZSYakcWq5lKPAEebFuLTqv+WO78CrZ8U7I5vTeXJ3/PHnkf3OcfXey0EuOP37cA
+	qFKsFuQSR45wJ/yiKpUFgmSg8WjMlPFEhQj/2T6kvVERsdczjwzyOnLJFmj2G6w5TQ0n3wuT+yB
+	L/whoOLRchZ32Mykc1l8751tyeUJJKxv0EUC4yNSQbb
+X-Google-Smtp-Source: AGHT+IFSCLPVTfsBiaf24hTwkehzYNAWh1etb+0SGuEqrrfRehL7fLOqvcwLgHZ2cPcFG59kqvBg4cby0Sli6tYfTVc=
+X-Received: by 2002:a05:6402:2089:b0:618:a73b:9cfe with SMTP id
+ 4fb4d7f45d1cf-61a9b2acd4bmr26165a12.3.1755645790860; Tue, 19 Aug 2025
+ 16:23:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D038UWC003.ant.amazon.com (10.13.139.209) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
+ <20250709-debugfs-rust-v9-3-92b9eab5a951@google.com> <2a0f2965-af37-4ffe-8806-3bb469361b1d@de.bosch.com>
+ <CAGSQo03meaA2fmoHqxdcVSXrKdE7yTTK0JfWH28mHZ=0kWoTzA@mail.gmail.com> <CANiq72ks-B--6UxO-VsPAvvqpKap7G7rSHxJs5gam0hjWB+vOg@mail.gmail.com>
+In-Reply-To: <CANiq72ks-B--6UxO-VsPAvvqpKap7G7rSHxJs5gam0hjWB+vOg@mail.gmail.com>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Tue, 19 Aug 2025 16:22:58 -0700
+X-Gm-Features: Ac12FXyOMFlmQPAe103eecrycpXODR3C_02-CqxCcXGkK8czg1euU5bo8OQ405k
+Message-ID: <CAGSQo02NP0bBSuPWUXkhz0gh9y5A=X16UkCQb40DTJ6Qkm8avg@mail.gmail.com>
+Subject: Re: [PATCH v9 3/5] rust: debugfs: Support `PinInit` backing for `File`s.
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, 
+	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
-early during device tree scanning. After kexec, the new kernel
-exclusively uses this region for memory allocations during boot up to
-the initialization of the page allocator
+This is resolved in V10 [1], just sent.
 
-However, when booting with EFI, EFI's reserve_regions() uses
-memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
-rebuilding them from EFI data. This destroys KHO scratch regions and
-their flags, thus causing a kernel panic, as there are no scratch
-memory regions.
-
-Instead of wholesale removal, iterate through memory regions and only
-remove non-KHO ones. This preserves KHO scratch regions, which are
-good known memory, while still allowing EFI to rebuild its memory map.
-
-Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
----
-Changes in v2:
-	- Replaced the for loop with for_each_mem_region
-	- Fixed comment indentation
-	- Amended commit message to specify that scratch regions
-	are known good regions
-
- drivers/firmware/efi/efi-init.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/firmware/efi/efi-init.c b/drivers/firmware/efi/efi-init.c
-index a00e07b853f2..99f7eecc320f 100644
---- a/drivers/firmware/efi/efi-init.c
-+++ b/drivers/firmware/efi/efi-init.c
-@@ -12,6 +12,7 @@
- #include <linux/efi.h>
- #include <linux/fwnode.h>
- #include <linux/init.h>
-+#include <linux/kexec_handover.h>
- #include <linux/memblock.h>
- #include <linux/mm_types.h>
- #include <linux/of.h>
-@@ -164,12 +165,31 @@ static __init void reserve_regions(void)
- 		pr_info("Processing EFI memory map:\n");
- 
- 	/*
--	 * Discard memblocks discovered so far: if there are any at this
--	 * point, they originate from memory nodes in the DT, and UEFI
--	 * uses its own memory map instead.
-+	 * Discard memblocks discovered so far except for KHO scratch
-+	 * regions. Most memblocks at this point originate from memory nodes
-+	 * in the DT and UEFI uses its own memory map instead. However, if
-+	 * KHO is enabled, scratch regions must be preserved.
- 	 */
- 	memblock_dump_all();
--	memblock_remove(0, PHYS_ADDR_MAX);
-+
-+	if (is_kho_boot()) {
-+		struct memblock_region *r;
-+
-+		/* Remove all non-KHO regions */
-+		for_each_mem_region(r) {
-+			if (!memblock_is_kho_scratch(r)) {
-+				memblock_remove(r->base, r->size);
-+				r--;
-+			}
-+		}
-+	} else {
-+		/*
-+		 * KHO is disabled. Discard memblocks discovered so far:
-+		 * if there are any at this point, they originate from memory
-+		 * nodes in the DT, and UEFI uses its own memory map instead.
-+		 */
-+		memblock_remove(0, PHYS_ADDR_MAX);
-+	}
- 
- 	for_each_efi_memory_desc(md) {
- 		paddr = md->phys_addr;
--- 
-2.47.3
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
-
+[1] https://lore.kernel.org/all/CAGSQo03RGzmP2diL-vvLDZHduu=d4oFy8X46Fc8vg0SzE-XfDw@mail.gmail.com/
 
