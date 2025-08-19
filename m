@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-776615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93553B2CF92
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:57:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1E8B2CF93
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28771C23C57
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A4C1C42E69
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBB02417F0;
-	Tue, 19 Aug 2025 22:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E62D277C9A;
+	Tue, 19 Aug 2025 22:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F1ME8vxL"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ASAlEIyU"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E95274B59
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2A223F41F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755644038; cv=none; b=bleXQJcUQHqsVbfHKl5bmtf7trYnU5Te5wb67X/Ds9OkKFYdsAmUPjJs1mHHkxx/DjONycE5yiHma/3Qh8F6equHGY9CDRIhteSS+bJeIWWajau9HURqKCOlbkNeAnyBhMaYWNvrPeGQy2qN+Pp0jd8rUPNJPQN6EYJt0ZiZnZM=
+	t=1755644039; cv=none; b=eua1CVNHLlJwr8EM4xPo2acRduIF6uMKSwcv2J+fnZmzlYRUd38bBBsfFJikHwbaWuvo58FUAUi+DagNlLU6zkiY3CBhBpMTd+hjDgxzhS84/szhu7xW/NFNZs0m3KNNCdvjdWADVwkL9BzSGyqtcEl9FH9bxe0+Go0S/DKmRf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755644038; c=relaxed/simple;
-	bh=Q6gbENqBZLgftJNURwx+pcGrvP2HoM5MUdDZJTubatI=;
+	s=arc-20240116; t=1755644039; c=relaxed/simple;
+	bh=guKkQWk0Wjy3KEPKk9viQ+9k5JCWYAdpW0xugQqvnfY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UvLPW19Boi82Lx7v+OInWfxd8nwOd2vQnJy9LSFLBj2AbkQr8dBA69/JCT9KbVAemDIKm4NztHHv97VxpTOx2JR8gOYpieRibO4D3s7qayl4pGXarEzrzzz2aDm9emyK8OyVpcJB28Iiycj3izcNEu/kpbxj+nm+uzOyicQCqZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F1ME8vxL; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=BQpmipT+uJR+P4GNYCNfho8v3dyc1QiZULWq4iRyNx2i3u8JtWNc5u0pvxiblCZ2fmbZpqEDr3RA0HLoKz4pbHsbNeSWifIRrEQcN1xvwj0VRV3ssFF7XGa3ZKlQ1y/3ickG6JDL87F1du+Cw0BkDNe9zHVhlylaIHauO0w0K28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ASAlEIyU; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24457f59889so61982905ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:53:56 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458345f5dso62707375ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:53:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755644036; x=1756248836; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755644037; x=1756248837; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iYi9g84IW9mJ6DZoQ8KgU6DxtgqHpReZrDyUTPXUQwY=;
-        b=F1ME8vxL+fNdIgm0T3v+cctm/Jk50ZGqrW810nyDRhhGhLVUyylMuqOwixf+KX7urC
-         NUGOnmT5TrhSyVmp5IqGge4LzU8qUyvKYzsJXN2E/DfzLhnEZ9532m93IN8xUlhWvPOd
-         1vg48sGBRcWP4HxObjyuuuJrbsF+f31JRL9my829Noko7CafIYSOGb8Te2Xa4dpo6gSb
-         lOqzUmejIVEaVKDCk2N06w7N6A/sJYWySS0VyNNRsiMQYenRmHpIa6F4Q4dXU6mvZW8Q
-         Prkc037nKHR55j5ZNsHi97CRhYX5/QFKxw5SWYm10S7OLrXEdu7pGjHJxrkKOzU+qc5Y
-         sbTA==
+        bh=a5b7ATtWYbDHgkSUGYgdvos0SG8tLhPoIOBmVwWuj9Y=;
+        b=ASAlEIyUnCLLf1PdGwc8unmgxoZTmAKjkPoesAbEh6nuTIdtOEWE+yh9UI4x39fXsi
+         0OBCY44Jbq7OVVc/8t4WawYDsmc3t0teh/M9n4wa/IbxwTXwkAILEdhSe8FtBI9TKkGo
+         DLfoiOgLEtHHyCjHcBZ+ePXbPgdbpZihr7sgg3ZLjShFtZnZeUH+6mABn02WHJ3l8wwp
+         z2k68cw2bCyYncdUydU9CCg84uuLoDO1U5cBJ15jhn/cS33yOkNfOLBm7WyhqkSy0PD2
+         VMKbHsT9lYvWnt0/ol0I+XZSTKB/pIxEJqiuT07jP0z+WrmLRZlTPhhEmMeQg2oNApAp
+         Dyzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755644036; x=1756248836;
+        d=1e100.net; s=20230601; t=1755644037; x=1756248837;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iYi9g84IW9mJ6DZoQ8KgU6DxtgqHpReZrDyUTPXUQwY=;
-        b=tuurW2nNhKEHQ3Q6XwyCDn8PssZdk+8BVx/jxq9QMrwZ1ZkTPnnGymubRTLYWngdpr
-         aVexnyFt1s0XQK44rVc3YweBaj6mIr5a6rmUkOkzR/JOeW1F88xnlGWQZ/x5lslUei0G
-         O1eoML/D3JYb4eYS1ll086lfK0slaQRkcK5wEagQoGhajU9VTj2d8ZeAgbWPj2S6AwF3
-         OJNv9h+B9vrgbqeIGtiXhwHQW0ND/Jlfl7PzBRWw1MQCh0EM924suAhGoGIrGWJ3puIU
-         2Aw1yC4Tijm50+62wn533GmOvHCz+kl2EKVoCF8jUkXiPH0nDIf2ivNsKKHhREZ2NSGq
-         NMeQ==
-X-Gm-Message-State: AOJu0YxOhped2DR20c/eKx+97lxEpcre+y7EXnuzIqh+NxzVDxpKH7Fi
-	Rw8PkqAzwej8FQQsLdhMwaPtJX1VuNRacKnezmsWbRuDgA5MG85ihdqzHcJkS4NGUZCXmAz354p
-	jXDUnTSebZQ==
-X-Google-Smtp-Source: AGHT+IHFMsiN8zWFvgpPY4KvwcYgAO/SFPqahNYCFRQvt77/3GvahzpIinaV/VYbyYstkHvBGY5gInZDaxyU
-X-Received: from pldo18.prod.google.com ([2002:a17:903:92:b0:235:f4e3:ba29])
- (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ef47:b0:240:99e6:6bc3
- with SMTP id d9443c01a7336-245ef15604cmr6993685ad.20.1755644035672; Tue, 19
- Aug 2025 15:53:55 -0700 (PDT)
-Date: Tue, 19 Aug 2025 22:53:41 +0000
+        bh=a5b7ATtWYbDHgkSUGYgdvos0SG8tLhPoIOBmVwWuj9Y=;
+        b=AUqJ3tCiKW57EVjFvdPqdWQIe64EQS8OjXgFBWHpCEyl4bXG65DyXEXcvwIfDetZMO
+         G5Fasy+L8lJU+t5IMRLRsjKfv5mpYeep2g0/L/1FJP8/mE4Y89uTV81sV9WE6J9ojLXI
+         4fgndB9ozH5xidDGX6XMine4ZOqLfx45Jg0GKggWMClyudeaanmSuwLl1oDBW3GcB3Cw
+         6MRjImvOPkFBSyIUjX67yNn240gXNdn1eqNKpo6C9O3FgimGbd5UGJFY5THkKad82VmW
+         bS27K3S+H4HQ4l7mOryY1WtzRnAHJ96GiEO3g9QvkpEsiHNZP/5KVbRmY12X29aNInDx
+         8aMQ==
+X-Gm-Message-State: AOJu0YxOFcCzZxx5kulDfuzHFphrHG++SRVRMzcYPiiOc5rChud5O/nc
+	dUSeFHI5pQUvQVJTsmCqybN4S/QCf46ILIp41Wkm1QD//dtdxrLJQE+lnT2AJi0jDf9Y+KF+dpT
+	xIUjZKvXwZw==
+X-Google-Smtp-Source: AGHT+IFVb5OKS4efQ9HXGY/B21B3D+QSi9OXzLMr7CD2GATBbB4apepGntwqOQXPMO28tpHljh4Xa0qkb3DQ
+X-Received: from pjbsd14.prod.google.com ([2002:a17:90b:514e:b0:321:78e7:57fb])
+ (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:181:b0:242:89fd:48cc
+ with SMTP id d9443c01a7336-245ef25b64fmr6737275ad.50.1755644037264; Tue, 19
+ Aug 2025 15:53:57 -0700 (PDT)
+Date: Tue, 19 Aug 2025 22:53:42 +0000
 In-Reply-To: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,13 +72,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
 X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755644022; l=17271;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755644022; l=7159;
  i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
- bh=Q6gbENqBZLgftJNURwx+pcGrvP2HoM5MUdDZJTubatI=; b=JWi2UzldE/O4OPm9njbpBfh2G30Bs4WkbSyMoGucjKWWlNyaZftKZnSa6mOPqHvyYLCiT1NJf
- JqOtO/niVpeAp/KRB/cDTA28XaKYm+Aw6R2alKeVBKH0Q9/xbrW6sPb
+ bh=guKkQWk0Wjy3KEPKk9viQ+9k5JCWYAdpW0xugQqvnfY=; b=jk2cW46gmwo95KDYJcb0fC6ITVr/buzZ/KWUWFbtmsVlvWaZf4/5notCvfPMHxcEaU2Dy7/jh
+ xeX1m3sFYeVCA0qaSM/V9ZmV08MirTHBWdmuAqEztjgQZag7PvA4CCb
 X-Mailer: b4 0.14.2
-Message-ID: <20250819-debugfs-rust-v10-6-86e20f3cf3bb@google.com>
-Subject: [PATCH v10 6/7] rust: debugfs: Add support for scoped directories
+Message-ID: <20250819-debugfs-rust-v10-7-86e20f3cf3bb@google.com>
+Subject: [PATCH v10 7/7] samples: rust: Add scoped debugfs sample driver
 From: Matthew Maurer <mmaurer@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -92,470 +92,216 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Matthew Maurer <mmaurer@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-Introduces the concept of a `ScopedDir`, which allows for the creation
-of debugfs directories and files that are tied to the lifetime of a
-particular data structure. This ensures that debugfs entries do not
-outlive the data they refer to.
+Adds a new sample driver `rust_scoped_debugfs` that demonstrates the
+use of the scoped debugfs APIs.
 
-The new `Dir::scope` method creates a new directory that is owned by a
-`Scope` handle. All files and subdirectories created within this scope
-are automatically cleaned up when the `Scope` is dropped.
+The driver creates a `control` directory with two write-only files,
+`create` and `remove`. Writing a name and a series of numbers to
+`create` will create a new subdirectory under a `dynamic` directory.
+This new subdirectory will contain files that expose the numbers as
+atomic values.
+
+Writing a name to `remove` will remove the corresponding subdirectory
+from the `dynamic` directory.
+
+This sample serves as an example of how to use the `debugfs::Scope`
+and `debugfs::ScopedDir` APIs to create and manage debugfs entries
+that are tied to the lifetime of a data structure.
 
 Signed-off-by: Matthew Maurer <mmaurer@google.com>
 ---
- rust/kernel/debugfs.rs       | 267 ++++++++++++++++++++++++++++++++++++++++++-
- rust/kernel/debugfs/entry.rs |  73 +++++++++++-
- 2 files changed, 330 insertions(+), 10 deletions(-)
+ MAINTAINERS                         |   1 +
+ samples/rust/Kconfig                |  11 +++
+ samples/rust/Makefile               |   1 +
+ samples/rust/rust_scoped_debugfs.rs | 134 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 147 insertions(+)
 
-diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-index a843d01506a54d5f8626dab5223d006c9a363a91..5e2b60cc1ea3eff859dbad8d7dd7a84d7c08d766 100644
---- a/rust/kernel/debugfs.rs
-+++ b/rust/kernel/debugfs.rs
-@@ -14,7 +14,10 @@
- use crate::sync::Arc;
- use crate::uaccess::UserSliceReader;
- use core::fmt;
-+use core::marker::PhantomData;
- use core::marker::PhantomPinned;
-+#[cfg(CONFIG_DEBUG_FS)]
-+use core::mem::ManuallyDrop;
- use core::ops::Deref;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5b6db584a33dd7ee39de3fdd0085d2bd7b7bef0e..2cbe890085dbb6a652623b38dd0eadeeaa127a94 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7482,6 +7482,7 @@ F:	rust/kernel/driver.rs
+ F:	rust/kernel/faux.rs
+ F:	rust/kernel/platform.rs
+ F:	samples/rust/rust_debugfs.rs
++F:	samples/rust/rust_scoped_debugfs.rs
+ F:	samples/rust/rust_driver_platform.rs
+ F:	samples/rust/rust_driver_faux.rs
  
- mod traits;
-@@ -40,7 +43,7 @@
- // able to refer to us. In this case, we need to silently fail. All future child directories/files
- // will silently fail as well.
- #[derive(Clone)]
--pub struct Dir(#[cfg(CONFIG_DEBUG_FS)] Option<Arc<Entry>>);
-+pub struct Dir(#[cfg(CONFIG_DEBUG_FS)] Option<Arc<Entry<'static>>>);
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 01101db41ae31b08a86d048cdd27da8ef9bb23a2..3372935519d658529ee7ba25fb2c3fff6adae8c4 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -73,6 +73,17 @@ config SAMPLE_RUST_DEBUGFS
  
- impl Dir {
-     /// Create a new directory in DebugFS. If `parent` is [`None`], it will be created at the root.
-@@ -268,6 +271,54 @@ pub fn write_callback_file<
-             .adapt();
-         self.create_file(name, data, file_ops)
-     }
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_SCOPED_DEBUGFS
++	tristate "Scoped DebugFS Test Module"
++	depends on DEBUG_FS
++	help
++	  This option builds the Rust Scoped DebugFS Test module sample.
 +
-+    // While this function is safe, it is intentionally not public because it's a bit of a
-+    // footgun.
-+    //
-+    // Unless you also extract the `entry` later and schedule it for `Drop` at the appropriate
-+    // time, a `ScopedDir` with a `Dir` parent will never be deleted.
-+    fn scoped_dir<'data>(&self, name: &CStr) -> ScopedDir<'data, 'static> {
-+        #[cfg(CONFIG_DEBUG_FS)]
-+        {
-+            let parent_entry = match &self.0 {
-+                None => return ScopedDir::empty(),
-+                Some(entry) => entry.clone(),
-+            };
-+            ScopedDir {
-+                entry: ManuallyDrop::new(Entry::dynamic_dir(name, Some(parent_entry))),
-+                _phantom: PhantomData,
++	  To compile this as a module, choose M here:
++	  the module will be called rust_scoped_debugfs.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_DRIVER_PCI
+ 	tristate "PCI Driver"
+ 	depends on PCI
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index 61276222a99f8cc6d7f84c26d0533b30815ebadd..de10b7f4db3996dc57be813ceb076d050ad8f65a 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -5,6 +5,7 @@ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+ obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+ obj-$(CONFIG_SAMPLE_RUST_DEBUGFS)		+= rust_debugfs.o
++obj-$(CONFIG_SAMPLE_RUST_SCOPED_DEBUGFS)	+= rust_scoped_debugfs.o
+ obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+diff --git a/samples/rust/rust_scoped_debugfs.rs b/samples/rust/rust_scoped_debugfs.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..7c34cab62a2753d1ede3a1334be1fb13ddce780c
+--- /dev/null
++++ b/samples/rust/rust_scoped_debugfs.rs
+@@ -0,0 +1,134 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2025 Google LLC.
++
++//! Sample DebugFS exporting platform driver that demonstrates the use of
++//! `Scope::dir` to create a variety of files without the need to separately
++//! track them all.
++
++use core::sync::atomic::AtomicUsize;
++use kernel::debugfs::{Dir, Scope};
++use kernel::prelude::*;
++use kernel::sync::Mutex;
++use kernel::{c_str, new_mutex, str::CString};
++
++module! {
++    type: RustScopedDebugFs,
++    name: "rust_scoped_debugfs",
++    authors: ["Matthew Maurer"],
++    description: "Rust Scoped DebugFS usage sample",
++    license: "GPL",
++}
++
++fn remove_file_write(
++    mod_data: &ModuleData,
++    reader: &mut kernel::uaccess::UserSliceReader,
++) -> Result<()> {
++    let mut buf = [0u8; 128];
++    if reader.len() >= buf.len() {
++        return Err(EINVAL);
++    }
++    let n = reader.len();
++    reader.read_slice(&mut buf[..n])?;
++
++    let s = core::str::from_utf8(&buf[..n]).map_err(|_| EINVAL)?.trim();
++    let nul_idx = s.len();
++    buf[nul_idx] = 0;
++    let to_remove = CStr::from_bytes_with_nul(&buf[..nul_idx + 1]).map_err(|_| EINVAL)?;
++    mod_data
++        .devices
++        .lock()
++        .retain(|device| device.name.as_bytes() != to_remove.as_bytes());
++    Ok(())
++}
++
++fn create_file_write(
++    mod_data: &ModuleData,
++    reader: &mut kernel::uaccess::UserSliceReader,
++) -> Result<()> {
++    let mut buf = [0u8; 128];
++    if reader.len() > buf.len() {
++        return Err(EINVAL);
++    }
++    let n = reader.len();
++    reader.read_slice(&mut buf[..n])?;
++
++    let mut nums = KVec::new();
++
++    let s = core::str::from_utf8(&buf[..n]).map_err(|_| EINVAL)?.trim();
++    let mut items = s.split_whitespace();
++    let name_str = items.next().ok_or(EINVAL)?;
++    let name = CString::try_from_fmt(fmt!("{name_str}"))?;
++    let file_name = CString::try_from_fmt(fmt!("{name_str}"))?;
++    for sub in items {
++        nums.push(
++            AtomicUsize::new(sub.parse().map_err(|_| EINVAL)?),
++            GFP_KERNEL,
++        )?;
++    }
++
++    let scope = KBox::pin_init(
++        mod_data
++            .device_dir
++            .scope(DeviceData { name, nums }, &file_name, |dev_data, dir| {
++                for (idx, val) in dev_data.nums.iter().enumerate() {
++                    let Ok(name) = CString::try_from_fmt(fmt!("{idx}")) else {
++                        return;
++                    };
++                    dir.read_write_file(&name, val);
++                }
++            }),
++        GFP_KERNEL,
++    )?;
++    (*mod_data.devices.lock()).push(scope, GFP_KERNEL)?;
++
++    Ok(())
++}
++
++struct RustScopedDebugFs {
++    _data: Pin<KBox<Scope<ModuleData>>>,
++}
++
++#[pin_data]
++struct ModuleData {
++    device_dir: Dir,
++    #[pin]
++    devices: Mutex<KVec<Pin<KBox<Scope<DeviceData>>>>>,
++}
++
++impl ModuleData {
++    fn init(device_dir: Dir) -> impl PinInit<Self> {
++        pin_init! {
++            Self {
++                device_dir: device_dir,
++                devices <- new_mutex!(KVec::new())
 +            }
 +        }
-+        #[cfg(not(CONFIG_DEBUG_FS))]
-+        ScopedDir::empty()
 +    }
++}
 +
-+    /// Creates a new scope, which is a directory associated with some data `T`.
-+    ///
-+    /// The created directory will be a subdirectory of `self`. The `init` closure is called to
-+    /// populate the directory with files and subdirectories. These files can reference the data
-+    /// stored in the scope.
-+    ///
-+    /// The entire directory tree created within the scope will be removed when the returned
-+    /// `Scope` handle is dropped.
-+    pub fn scope<
-+        'a,
-+        T: 'a,
-+        E: 'a,
-+        TI: PinInit<T, E> + 'a,
-+        F: for<'data, 'dir> FnOnce(&'data T, &'dir ScopedDir<'data, 'dir>) + 'a,
-+    >(
-+        &'a self,
-+        data: TI,
-+        name: &'a CStr,
-+        init: F,
-+    ) -> impl PinInit<Scope<T>, E> + 'a {
-+        Scope::new(data, |data| {
-+            let scoped = self.scoped_dir(name);
-+            init(data, &scoped);
-+            scoped.into_entry()
-+        })
-+    }
- }
- 
- #[pin_data]
-@@ -276,7 +327,7 @@ pub fn write_callback_file<
- pub struct Scope<T> {
-     // This order is load-bearing for drops - `_entry` must be dropped before `data`.
-     #[cfg(CONFIG_DEBUG_FS)]
--    _entry: Entry,
-+    _entry: Entry<'static>,
-     #[pin]
-     data: T,
-     // Even if `T` is `Unpin`, we still can't allow it to be moved.
-@@ -314,11 +365,11 @@ fn new<E, TI: PinInit<T, E>, F: for<'a> FnOnce(&'a T)>(
- 
- #[cfg(CONFIG_DEBUG_FS)]
- impl<T> Scope<T> {
--    fn entry_mut(self: Pin<&mut Self>) -> &mut Entry {
-+    fn entry_mut(self: Pin<&mut Self>) -> &mut Entry<'static> {
-         // SAFETY: _entry is not structurally pinned
-         unsafe { &mut Pin::into_inner_unchecked(self)._entry }
-     }
--    fn new<'b, E: 'b, TI: PinInit<T, E> + 'b, F: for<'a> FnOnce(&'a T) -> Entry + 'b>(
-+    fn new<'b, E: 'b, TI: PinInit<T, E> + 'b, F: for<'a> FnOnce(&'a T) -> Entry<'static> + 'b>(
-         data: TI,
-         init: F,
-     ) -> impl PinInit<Self, E> + 'b
-@@ -339,6 +390,36 @@ fn new<'b, E: 'b, TI: PinInit<T, E> + 'b, F: for<'a> FnOnce(&'a T) -> Entry + 'b
-     }
- }
- 
-+impl<T> Scope<T> {
-+    /// Creates a new scope, which is a directory at the root of the debugfs filesystem,
-+    /// associated with some data `T`.
-+    ///
-+    /// The `init` closure is called to populate the directory with files and subdirectories. These
-+    /// files can reference the data stored in the scope.
-+    ///
-+    /// The entire directory tree created within the scope will be removed when the returned
-+    /// `Scope` handle is dropped.
-+    pub fn dir<
-+        'a,
-+        E: 'a,
-+        TI: PinInit<T, E> + 'a,
-+        F: for<'data, 'dir> FnOnce(&'data T, &'dir ScopedDir<'data, 'dir>) + 'a,
-+    >(
-+        data: TI,
-+        name: &'a CStr,
-+        init: F,
-+    ) -> impl PinInit<Self, E> + 'a
-+    where
-+        T: 'a,
-+    {
-+        Scope::new(data, |data| {
-+            let scoped = ScopedDir::new(name);
-+            init(data, &scoped);
-+            scoped.into_entry()
++struct DeviceData {
++    name: CString,
++    nums: KVec<AtomicUsize>,
++}
++
++fn init_control(base_dir: &Dir, dyn_dirs: Dir) -> impl PinInit<Scope<ModuleData>> + '_ {
++    base_dir.scope(
++        ModuleData::init(dyn_dirs),
++        c_str!("control"),
++        |data, dir| {
++            dir.write_only_callback_file(c_str!("create"), data, &create_file_write);
++            dir.write_only_callback_file(c_str!("remove"), data, &remove_file_write);
++        },
++    )
++}
++
++impl kernel::Module for RustScopedDebugFs {
++    fn init(_module: &'static kernel::ThisModule) -> Result<Self, Error> {
++        let base_dir = Dir::new(c_str!("rust_scoped_debugfs"));
++        let dyn_dirs = base_dir.subdir(c_str!("dynamic"));
++        Ok(Self {
++            _data: KBox::pin_init(init_control(&base_dir, dyn_dirs), GFP_KERNEL)?,
 +        })
 +    }
 +}
-+
- impl<T> Deref for Scope<T> {
-     type Target = T;
-     fn deref(&self) -> &T {
-@@ -352,3 +433,181 @@ fn deref(&self) -> &T {
-         &self.scope
-     }
- }
-+
-+/// A handle to a directory which will live at most `'dir`, accessing data that will live for at
-+/// least `'data`.
-+///
-+/// Dropping a ScopedDir will not delete or clean it up, this is expected to occur through dropping
-+/// the `Scope` that created it.
-+pub struct ScopedDir<'data, 'dir> {
-+    #[cfg(CONFIG_DEBUG_FS)]
-+    entry: ManuallyDrop<Entry<'dir>>,
-+    _phantom: PhantomData<fn(&'data ()) -> &'dir ()>,
-+}
-+
-+impl<'data, 'dir> ScopedDir<'data, 'dir> {
-+    /// Creates a subdirectory inside this `ScopedDir`.
-+    ///
-+    /// The returned directory handle cannot outlive this one.
-+    pub fn dir<'dir2>(&'dir2 self, name: &CStr) -> ScopedDir<'data, 'dir2> {
-+        #[cfg(not(CONFIG_DEBUG_FS))]
-+        let _ = name;
-+        ScopedDir {
-+            #[cfg(CONFIG_DEBUG_FS)]
-+            entry: ManuallyDrop::new(Entry::dir(name, Some(&*self.entry))),
-+            _phantom: PhantomData,
-+        }
-+    }
-+
-+    fn create_file<T: Sync>(&self, name: &CStr, data: &'data T, vtable: &'static FileOps<T>) {
-+        #[cfg(CONFIG_DEBUG_FS)]
-+        core::mem::forget(Entry::file(name, &self.entry, data, vtable));
-+    }
-+
-+    /// Creates a read-only file in this directory.
-+    ///
-+    /// The file's contents are produced by invoking [`Render::render`]`.
-+    ///
-+    /// This function does not produce an owning handle to the file. The created
-+    /// file is removed when the [`Scope`] that this directory belongs
-+    /// to is dropped.
-+    pub fn read_only_file<T: Render + Send + Sync + 'static>(&self, name: &CStr, data: &'data T) {
-+        self.create_file(name, data, &T::FILE_OPS)
-+    }
-+
-+    /// Creates a read-only file in this directory, with contents from a callback.
-+    ///
-+    /// The file contents are generated by calling `f` with `data`.
-+    ///
-+    ///
-+    /// `f` must be a function item or a non-capturing closure.
-+    /// This is statically asserted and not a safety requirement.
-+    ///
-+    /// This function does not produce an owning handle to the file. The created
-+    /// file is removed when the [`Scope`] that this directory belongs
-+    /// to is dropped.
-+    pub fn read_callback_file<
-+        T: Send + Sync + 'static,
-+        F: Fn(&T, &mut fmt::Formatter<'_>) -> fmt::Result + Send + Sync,
-+    >(
-+        &self,
-+        name: &CStr,
-+        data: &'data T,
-+        _f: &'static F,
-+    ) {
-+        let vtable = <FormatAdapter<T, F> as ReadFile<_>>::FILE_OPS.adapt();
-+        self.create_file(name, data, vtable)
-+    }
-+
-+    /// Creates a read-write file in this directory.
-+    ///
-+    /// Reading the file uses the [`Render`] implementation on `data`. Writing to the file uses
-+    /// the [`UpdateFromSlice`] implementation on `data`.
-+    ///
-+    /// This function does not produce an owning handle to the file. The created
-+    /// file is removed when the [`Scope`] that this directory belongs
-+    /// to is dropped.
-+    pub fn read_write_file<T: Render + UpdateFromSlice + Send + Sync + 'static>(
-+        &self,
-+        name: &CStr,
-+        data: &'data T,
-+    ) {
-+        let vtable = &<T as ReadWriteFile<_>>::FILE_OPS;
-+        self.create_file(name, data, vtable)
-+    }
-+
-+    /// Creates a read-write file in this directory, with logic from callbacks.
-+    ///
-+    /// Reading from the file is handled by `f`. Writing to the file is handled by `w`.
-+    ///
-+    /// `f` and `w` must be function items or non-capturing closures.
-+    /// This is statically asserted and not a safety requirement.
-+    ///
-+    /// This function does not produce an owning handle to the file. The created
-+    /// file is removed when the [`Scope`] that this directory belongs
-+    /// to is dropped.
-+    pub fn read_write_callback_file<
-+        T: Send + Sync + 'static,
-+        F: Fn(&T, &mut fmt::Formatter<'_>) -> fmt::Result + Send + Sync,
-+        W: Fn(&T, &mut UserSliceReader) -> Result<(), Error> + Send + Sync,
-+    >(
-+        &self,
-+        name: &CStr,
-+        data: &'data T,
-+        _f: &'static F,
-+        _w: &'static W,
-+    ) {
-+        let vtable = <WritableAdapter<FormatAdapter<T, F>, W> as ReadWriteFile<_>>::FILE_OPS
-+            .adapt()
-+            .adapt();
-+        self.create_file(name, data, vtable)
-+    }
-+
-+    /// Creates a write-only file in this directory.
-+    ///
-+    /// Writing to the file uses the [`UpdateFromSlice`] implementation on `data`.
-+    ///
-+    /// This function does not produce an owning handle to the file. The created
-+    /// file is removed when the [`Scope`] that this directory belongs
-+    /// to is dropped.
-+    pub fn write_only_file<T: UpdateFromSlice + Send + Sync + 'static>(
-+        &self,
-+        name: &CStr,
-+        data: &'data T,
-+    ) {
-+        let vtable = &<T as WriteFile<_>>::FILE_OPS;
-+        self.create_file(name, data, vtable)
-+    }
-+
-+    /// Creates a write-only file in this directory, with write logic from a callback.
-+    ///
-+    /// Writing to the file is handled by `w`.
-+    ///
-+    /// `w` must be a function item or a non-capturing closure.
-+    /// This is statically asserted and not a safety requirement.
-+    ///
-+    /// This function does not produce an owning handle to the file. The created
-+    /// file is removed when the [`Scope`] that this directory belongs
-+    /// to is dropped.
-+    pub fn write_only_callback_file<
-+        T: Send + Sync + 'static,
-+        W: Fn(&T, &mut UserSliceReader) -> Result<(), Error> + Send + Sync,
-+    >(
-+        &self,
-+        name: &CStr,
-+        data: &'data T,
-+        _w: &'static W,
-+    ) {
-+        let vtable = &<WritableAdapter<NoRender<T>, W> as WriteFile<_>>::FILE_OPS
-+            .adapt()
-+            .adapt();
-+        self.create_file(name, data, vtable)
-+    }
-+
-+    fn empty() -> Self {
-+        ScopedDir {
-+            #[cfg(CONFIG_DEBUG_FS)]
-+            entry: ManuallyDrop::new(Entry::empty()),
-+            _phantom: PhantomData,
-+        }
-+    }
-+    #[cfg(CONFIG_DEBUG_FS)]
-+    fn into_entry(self) -> Entry<'dir> {
-+        ManuallyDrop::into_inner(self.entry)
-+    }
-+    #[cfg(not(CONFIG_DEBUG_FS))]
-+    fn into_entry(self) {}
-+}
-+
-+impl<'data> ScopedDir<'data, 'static> {
-+    // This is safe, but intentionally not exported due to footgun status. A ScopedDir with no
-+    // parent will never be released by default, and needs to have its entry extracted and used
-+    // somewhere.
-+    fn new(name: &CStr) -> ScopedDir<'data, 'static> {
-+        ScopedDir {
-+            #[cfg(CONFIG_DEBUG_FS)]
-+            entry: ManuallyDrop::new(Entry::dir(name, None)),
-+            _phantom: PhantomData,
-+        }
-+    }
-+}
-diff --git a/rust/kernel/debugfs/entry.rs b/rust/kernel/debugfs/entry.rs
-index 227fa50b7a79aeab49779e54b8c4241f455777c3..f99402cd3ba0ca12f62d3699e4d6e460d0085d26 100644
---- a/rust/kernel/debugfs/entry.rs
-+++ b/rust/kernel/debugfs/entry.rs
-@@ -5,26 +5,29 @@
- use crate::ffi::c_void;
- use crate::str::CStr;
- use crate::sync::Arc;
-+use core::marker::PhantomData;
- 
- /// Owning handle to a DebugFS entry.
- ///
- /// # Invariants
- ///
- /// The wrapped pointer will always be `NULL`, an error, or an owned DebugFS `dentry`.
--pub(crate) struct Entry {
-+pub(crate) struct Entry<'a> {
-     entry: *mut bindings::dentry,
-     // If we were created with an owning parent, this is the keep-alive
--    _parent: Option<Arc<Entry>>,
-+    _parent: Option<Arc<Entry<'static>>>,
-+    // If we were created with a non-owning parent, this prevents us from outliving it
-+    _phantom: PhantomData<&'a ()>,
- }
- 
- // SAFETY: [`Entry`] is just a `dentry` under the hood, which the API promises can be transferred
- // between threads.
--unsafe impl Send for Entry {}
-+unsafe impl Send for Entry<'_> {}
- 
- // SAFETY: All the C functions we call on the `dentry` pointer are threadsafe.
--unsafe impl Sync for Entry {}
-+unsafe impl Sync for Entry<'_> {}
- 
--impl Entry {
-+impl Entry<'static> {
-     pub(crate) fn dynamic_dir(name: &CStr, parent: Option<Arc<Self>>) -> Self {
-         let parent_ptr = match &parent {
-             Some(entry) => entry.as_ptr(),
-@@ -39,6 +42,7 @@ pub(crate) fn dynamic_dir(name: &CStr, parent: Option<Arc<Self>>) -> Self {
-         Entry {
-             entry,
-             _parent: parent,
-+            _phantom: PhantomData,
-         }
-     }
- 
-@@ -71,14 +75,71 @@ pub(crate) unsafe fn dynamic_file<T>(
-         Entry {
-             entry,
-             _parent: Some(parent),
-+            _phantom: PhantomData,
-         }
-     }
-+}
-+
-+impl<'a> Entry<'a> {
-+    pub(crate) fn dir(name: &CStr, parent: Option<&'a Entry<'_>>) -> Self {
-+        let parent_ptr = match &parent {
-+            Some(entry) => entry.as_ptr(),
-+            None => core::ptr::null_mut(),
-+        };
-+        // SAFETY: The invariants of this function's arguments ensure the safety of this call.
-+        // * `name` is a valid C string by the invariants of `&CStr`.
-+        // * `parent_ptr` is either `NULL` (if `parent` is `None`), or a pointer to a valid
-+        //   `dentry` (because `parent` is a valid reference to an `Entry`). The lifetime `'a`
-+        //   ensures that the parent outlives this entry.
-+        let entry = unsafe { bindings::debugfs_create_dir(name.as_char_ptr(), parent_ptr) };
-+
-+        Entry {
-+            entry,
-+            _parent: None,
-+            _phantom: PhantomData,
-+        }
-+    }
-+
-+    pub(crate) fn file<T>(
-+        name: &CStr,
-+        parent: &'a Entry<'_>,
-+        data: &'a T,
-+        file_ops: &FileOps<T>,
-+    ) -> Self {
-+        // SAFETY: The invariants of this function's arguments ensure the safety of this call.
-+        // * `name` is a valid C string by the invariants of `&CStr`.
-+        // * `parent.as_ptr()` is a pointer to a valid `dentry` because we have `&'a Entry`.
-+        // * `data` is a valid pointer to `T` for lifetime `'a`.
-+        // * The returned `Entry` has lifetime `'a`, so it cannot outlive `parent` or `data`.
-+        // * The caller guarantees that `vtable` is compatible with `data`.
-+        // * The guarantees on `FileOps` assert the vtable will be compatible with the data we have
-+        //   provided.
-+        let entry = unsafe {
-+            bindings::debugfs_create_file_full(
-+                name.as_char_ptr(),
-+                file_ops.mode(),
-+                parent.as_ptr(),
-+                core::ptr::from_ref(data) as *mut c_void,
-+                core::ptr::null(),
-+                &**file_ops,
-+            )
-+        };
-+
-+        Entry {
-+            entry,
-+            _parent: None,
-+            _phantom: PhantomData,
-+        }
-+    }
-+}
- 
-+impl Entry<'_> {
-     /// Constructs a placeholder DebugFS [`Entry`].
-     pub(crate) fn empty() -> Self {
-         Self {
-             entry: core::ptr::null_mut(),
-             _parent: None,
-+            _phantom: PhantomData,
-         }
-     }
- 
-@@ -94,7 +155,7 @@ pub(crate) fn as_ptr(&self) -> *mut bindings::dentry {
-     }
- }
- 
--impl Drop for Entry {
-+impl Drop for Entry<'_> {
-     fn drop(&mut self) {
-         // SAFETY: `debugfs_remove` can take `NULL`, error values, and legal DebugFS dentries.
-         // `as_ptr` guarantees that the pointer is of this form.
 
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
