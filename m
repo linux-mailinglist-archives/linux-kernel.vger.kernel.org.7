@@ -1,421 +1,181 @@
-Return-Path: <linux-kernel+bounces-774785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F2BB2B77B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:18:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98922B2B7B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06386189FA42
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5298B3AE274
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A2D2D3EEE;
-	Tue, 19 Aug 2025 03:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6437023ED75;
+	Tue, 19 Aug 2025 03:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxCzhfvy"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="N9sAEFlW"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B72177111;
-	Tue, 19 Aug 2025 03:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA1B22D7B0
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755573514; cv=none; b=sJ22VJv5OUekZ5IQIhuwoDaZeHgfaBcNOpj/Z0tXJdtc43oVok6Ta49WIDZRKMkgdBSjLXfGFOD/DBrfnDOeqrF4ET5Nh/ceU2tHA6nzRLRXYAHJNpNgJSLhIDbz3rNlrpDEB6t/6bfAitjqNkbdC+2UdyLkUW7PraJudq63qTE=
+	t=1755574579; cv=none; b=HIJtkaNoNzTpzAI1lUmhrIwsYHL+lmwFm/8pN8gYbw3sFzJRwmqLh3l1tQ/sE50Z7N7PgGg/VgVDrXka6jdpLMDOO+5E8XzV/ZbHcVgT2J5idD2NACd0hy8sfMkvijHu6Mlz97ZR7aXpfAPfGRb4G7J5hiZjmkWyHz52s8zL/Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755573514; c=relaxed/simple;
-	bh=+ho5jIKj1qDedkpFWgPNP3rYewspWMkQh1OAld8mQpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BWnpBF/QfeVUJ5gUCaYS41CZy8La9Z1tCsQ2+wV4fwPB53Fp8E9WlU1iZwwtEiBXb/NIiZPJZ5z2OqhE3Jj51fdkXC2oEyClV+IxqPTiyUdI9lc1txROxTBLNIupagIGvu5ks+g6UwS1E4lPXpp24Yynaopc6XzctlCwah4dWy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxCzhfvy; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-244581caca6so36833405ad.2;
-        Mon, 18 Aug 2025 20:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755573512; x=1756178312; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObN9f6kDVQBk4T25jWY6sLhImofyjEsN+l2qi7eC9Xo=;
-        b=ZxCzhfvyAWHDx2K6V9Ae2IkXXnPstoi3ZzKfpgleZq0Ss9iPSfkA163oLPeuQSUXJu
-         UmCBQmLVUb6OzMhjPekdrlqNms0vwlpEQxVeaUw+LrG+cZ4G5Bqq9254nWAFGzYi4WWI
-         aUOn/pRvVdpBc0PA8KGFQU5E5NaYdsLl9v9+48sYToQcWRYz3KFegjKsnILmPQjfuV7C
-         RLUzC/yYqPqOaOgufFKmJu5CjywBMBSttxTmr8Abxz6VYomKfdqveM5DojNJXGZ4aCVT
-         LOXx7Ed0VHy++QPTDjPSh7Zs5iPnhDR1Pi9I2bT1oZZnFq+RnMfih38PI4Z8sH5gp+Ih
-         1ADA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755573512; x=1756178312;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ObN9f6kDVQBk4T25jWY6sLhImofyjEsN+l2qi7eC9Xo=;
-        b=hEIP86YoIY0BRXUvcb2OSsi5ToZoaCpdoDxkHXproNUCXejSKhl8Zys5flMKwkWMVE
-         f2f3M361jAqTCxpLrgg90wVOkY1th1R/U7f1yxh0EadOYXSIkUVdrDdGjAv8k98b2SvH
-         8RZlG0a1qjNVD+UBVQBsrmL2ndEQnY0+nAihD8Iwu7EaXQrw4Zzn6PXJBfuJRQpTJFsQ
-         i3UdJen/ragPuogYMnTClzrkXCSh5ulJiu9LS+HUIx2XeFJRasxdKydwK9wSEW5FxHC5
-         Denxi5c3TEGnm1oN8/e66Z0kL3WBe6M3T4tbmS2VvPDlp+1F+gHyRkgp856JSkoWCArB
-         OVPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbHgkBiWnDzDA6ky+a/k9G4V4NJztsnHH5cFoBEBpp9SI1hsFY/u0XmtGPX99Ygw+6NoR9JOSDVr2A6QIv2PCPby4t@vger.kernel.org, AJvYcCWqFTs1G5dQxsT/4o2Kg0k8SrEu2pA40nCBTTWL+G+kuHK/YcqoyvZF7sL8BTx4uEmVK4CgUgw14rueaUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDPToppdo7Ipru/EufvhRhrdWsvQQX9BR3NwfyKdm18SChVLkX
-	IzNzCbnA5w+DQh9CLtICkgjPEDuXNrJsfz1fJxP+1WZU4Eu25Yc/pcMj
-X-Gm-Gg: ASbGnct4cAeHGpcJm6NBC3y9n0u6H/4UWzBV2MwOesAsn7E8MHPqYiQBnlxiB+WdCSX
-	xs430ULh4E7SyS8R4nclZE0DOEwoOQgg847a3qqMR2BsRf5F3ayv3I/JVDIwpmSSOERsxn805oI
-	m5DzrGltKEP8M63lZ25fB9DmDX+1wO+4QBiU+nb0EPqWJv+79NlbvaP5uNIlKYqgw06o62YErDL
-	AUNiG6JtTNlJov47JF2v0UyP5goCEPKofgPAMZytsfpjPicAnkgU+Ey0Ute0l9SnO0C1z+vurKw
-	11CZtwTzaaJLIRjXUdDc3ylUvI2BR3ZNUAUrEChXh9pEQ0OjSU9hJj3U3GxFI6txiGnnDB1T2U/
-	o3+uYelUAIm2uVdD3EG4=
-X-Google-Smtp-Source: AGHT+IGkRi2nb3XOsy0Xn0DVXi38AReWIFR2vwSOBGE7YodAVRzpaVsybNs0Uf5F+ZSxVwJrXa/TQQ==
-X-Received: by 2002:a17:902:d4c6:b0:23f:fdeb:4171 with SMTP id d9443c01a7336-245e04b7cecmr16970625ad.39.1755573511570;
-        Mon, 18 Aug 2025 20:18:31 -0700 (PDT)
-Received: from 7940hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24498d027acsm20677175ad.129.2025.08.18.20.18.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 20:18:30 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: mhiramat@kernel.org
-Cc: rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	hca@linux.ibm.com,
-	revest@chromium.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v6] tracing: fprobe: use rhltable for fprobe_ip_table
-Date: Tue, 19 Aug 2025 11:18:25 +0800
-Message-ID: <20250819031825.55653-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755574579; c=relaxed/simple;
+	bh=XRtna1RjM2DTQni0lMCT0SHGY6+9Ygy0GmujFCOwhek=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=FM9MBIg8FA/NrWeUmNeylJJVhJdFLNOVPlrLnkj3lRQpfZCETWLdJR5G4L+X+XG3NIsw4VZLZaXuokbPzOcf1FfBo7ZXP4kTxfR6LJxPkUodN4LylDk98LCQlyDCC1lK+eRaa70/kILM734ok3VJRzwLMZ9LNhPFNpwbo7P949A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=N9sAEFlW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J12Qvv016582;
+	Tue, 19 Aug 2025 03:36:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:date:from:in-reply-to:message-id:references:subject:to; s=pp1;
+	 bh=H1O5Fp1ayX5MCwcRDMcMUivVM3md77FsR7ps6Nq+QmE=; b=N9sAEFlW6rt0
+	64qc6Td07/wBpq6IgptBzqZnZbMI0Xm09icXXzzLRy+i7Zrep51vKxdwDPjcTHdl
+	7asFE/bYXcK7toGb3mKrEmYr9b/WxVY1yxqutnHYGc33TeK8xe66qU+7shvEOih+
+	ToWMQw9lOnbPzkiVxJpShxVM5ybdHQxOQ1FC1Vapbqxnd59O+zBetKezql9e7RON
+	frEC9rAcR9P6rADzFEXXIna7qfdGH55lxwwdEoOI9YRJVQqIE2xV+id0X1x15weN
+	gbyIAuJNUCQzKCMBf1yDvJyYKm2h8NIgjoae1hJ53p3N5xPk0LmqSgc4kLP/Iz96
+	6aVPj0uYvg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jfdrvjpy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 03:36:00 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57J3ZxfX016454;
+	Tue, 19 Aug 2025 03:36:00 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jfdrvjpu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 03:35:59 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57J1XSCB002336;
+	Tue, 19 Aug 2025 03:35:59 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48k713092u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 03:35:59 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57J3Zt1058392902
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Aug 2025 03:35:55 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 45C6B20043;
+	Tue, 19 Aug 2025 03:35:55 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 420FB20040;
+	Tue, 19 Aug 2025 03:35:53 +0000 (GMT)
+Received: from dw-tp (unknown [9.204.200.232])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 19 Aug 2025 03:35:53 +0000 (GMT)
+From: Ritesh Harjani (IBM) <riteshh@linux.ibm.com>
+To: Gautam Menghani <gautam@linux.ibm.com>, maddy@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Remove duplicate definition for ppc_msgsnd_sync()
+In-Reply-To: <20250813122319.62278-1-gautam@linux.ibm.com>
+Date: Tue, 19 Aug 2025 08:50:25 +0530
+Message-ID: <87bjocatfq.fsf@gmail.com>
+References: <20250813122319.62278-1-gautam@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: oLiwYisuEdzjke1bXIi87s-7-OvclDfl
+X-Proofpoint-GUID: 2AjALPJol3RmTjF4HoyMN-z0cC3QbWCn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAwMSBTYWx0ZWRfX1qMawPF5MugE
+ uttEhX9/jrLcKNsRVxAdQefQKjCbRJjUbxQvCUL816YwpPaYlBcHzYdwy/VhNSHv6yakEwD+R2c
+ GWjubOu7y1LGc3IJnxSzmEqORsJgcMVB9k37kdYTKNzMLl2WjcwaSQ54y1R1Q+lFC+4ZPfR5ijo
+ 8O8Fnw5PC6KMfDyPTIRGZRwTUrb09VX/JK6DkDkrunlZObf49VSc9xgF6QmXFBu/MKyYJT5Yf06
+ aAmBdeX6ghAohqW7+gc7snaVgo8P9Z9WXs2RZgCnpxQZFfsKrn3dN+CbHuEaYmsjCG8QBNDX5Ft
+ 17Sj3qhAkfjLVsC4Vz+deKFtbT91OnZTT94fA/gCK6dTkjPezDGRzA62h0pyQlNOeuSVrxnU5QA
+ TU5gGbPS
+X-Authority-Analysis: v=2.4 cv=GotC+l1C c=1 sm=1 tr=0 ts=68a3f120 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=AjKfnhLaCVDwOzmiWWAA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 adultscore=0 suspectscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160001
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-For now, all the kernel functions who are hooked by the fprobe will be
-added to the hash table "fprobe_ip_table". The key of it is the function
-address, and the value of it is "struct fprobe_hlist_node".
+Gautam Menghani <gautam@linux.ibm.com> writes:
 
-The budget of the hash table is FPROBE_IP_TABLE_SIZE, which is 256. And
-this means the overhead of the hash table lookup will grow linearly if
-the count of the functions in the fprobe more than 256. When we try to
-hook all the kernel functions, the overhead will be huge.
+> Remove duplicate definition of ppc_msgsnd_sync() introduced in commit
+> b87ac0218355 ('powerpc: Introduce msgsnd/doorbell barrier primitives').
+>
+> No functional change intended.
+>
 
-Therefore, replace the hash table with rhltable to reduce the overhead.
+Earlier this function was duplicated at 2 places i.e. in
+#ifdef CONFIG_PPC_BOOK3S and #else block. This patch takes those
+duplicate definitions out and move it to a common place.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v6:
-- use rcu_read_lock() in delete_fprobe_node()
+BTW, there is nothing sndmsg specific in this, so this could be open
+coded as well. But as far as this patch is concerned, it looks good.
 
-v5:
-- remove unnecessary rcu_read_lock in fprobe_entry
+So please feel free to add:
+Reviewed-by: Ritesh Harjani (IBM) <riteshh@linux.ibm.com>
 
-v4:
-- replace rhashtable_walk_enter with rhltable_walk_enter
 
-v3:
-- some format optimization
-- handle the error that returned from rhltable_insert in
-  insert_fprobe_node
----
- include/linux/fprobe.h |   3 +-
- kernel/trace/fprobe.c  | 157 ++++++++++++++++++++++++-----------------
- 2 files changed, 93 insertions(+), 67 deletions(-)
-
-diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-index 7964db96e41a..0a3bcd1718f3 100644
---- a/include/linux/fprobe.h
-+++ b/include/linux/fprobe.h
-@@ -7,6 +7,7 @@
- #include <linux/ftrace.h>
- #include <linux/rcupdate.h>
- #include <linux/refcount.h>
-+#include <linux/rhashtable.h>
- #include <linux/slab.h>
- 
- struct fprobe;
-@@ -26,7 +27,7 @@ typedef void (*fprobe_exit_cb)(struct fprobe *fp, unsigned long entry_ip,
-  * @fp: The fprobe which owns this.
-  */
- struct fprobe_hlist_node {
--	struct hlist_node	hlist;
-+	struct rhlist_head	hlist;
- 	unsigned long		addr;
- 	struct fprobe		*fp;
- };
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index c8034dfc1070..fb127fa95f21 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -10,6 +10,7 @@
- #include <linux/kprobes.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
-+#include <linux/rhashtable.h>
- #include <linux/slab.h>
- #include <linux/sort.h>
- 
-@@ -41,60 +42,67 @@
-  *  - RCU hlist traversal under disabling preempt
-  */
- static struct hlist_head fprobe_table[FPROBE_TABLE_SIZE];
--static struct hlist_head fprobe_ip_table[FPROBE_IP_TABLE_SIZE];
-+static struct rhltable fprobe_ip_table;
- static DEFINE_MUTEX(fprobe_mutex);
- 
--/*
-- * Find first fprobe in the hlist. It will be iterated twice in the entry
-- * probe, once for correcting the total required size, the second time is
-- * calling back the user handlers.
-- * Thus the hlist in the fprobe_table must be sorted and new probe needs to
-- * be added *before* the first fprobe.
-- */
--static struct fprobe_hlist_node *find_first_fprobe_node(unsigned long ip)
-+static u32 fprobe_node_hashfn(const void *data, u32 len, u32 seed)
- {
--	struct fprobe_hlist_node *node;
--	struct hlist_head *head;
-+	return hash_ptr(*(unsigned long **)data, 32);
-+}
- 
--	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
--	hlist_for_each_entry_rcu(node, head, hlist,
--				 lockdep_is_held(&fprobe_mutex)) {
--		if (node->addr == ip)
--			return node;
--	}
--	return NULL;
-+static int fprobe_node_cmp(struct rhashtable_compare_arg *arg,
-+			   const void *ptr)
-+{
-+	unsigned long key = *(unsigned long *)arg->key;
-+	const struct fprobe_hlist_node *n = ptr;
-+
-+	return n->addr != key;
- }
--NOKPROBE_SYMBOL(find_first_fprobe_node);
- 
--/* Node insertion and deletion requires the fprobe_mutex */
--static void insert_fprobe_node(struct fprobe_hlist_node *node)
-+static u32 fprobe_node_obj_hashfn(const void *data, u32 len, u32 seed)
- {
--	unsigned long ip = node->addr;
--	struct fprobe_hlist_node *next;
--	struct hlist_head *head;
-+	const struct fprobe_hlist_node *n = data;
-+
-+	return hash_ptr((void *)n->addr, 32);
-+}
- 
-+static const struct rhashtable_params fprobe_rht_params = {
-+	.head_offset		= offsetof(struct fprobe_hlist_node, hlist),
-+	.key_offset		= offsetof(struct fprobe_hlist_node, addr),
-+	.key_len		= sizeof_field(struct fprobe_hlist_node, addr),
-+	.hashfn			= fprobe_node_hashfn,
-+	.obj_hashfn		= fprobe_node_obj_hashfn,
-+	.obj_cmpfn		= fprobe_node_cmp,
-+	.automatic_shrinking	= true,
-+};
-+
-+/* Node insertion and deletion requires the fprobe_mutex */
-+static int insert_fprobe_node(struct fprobe_hlist_node *node)
-+{
- 	lockdep_assert_held(&fprobe_mutex);
- 
--	next = find_first_fprobe_node(ip);
--	if (next) {
--		hlist_add_before_rcu(&node->hlist, &next->hlist);
--		return;
--	}
--	head = &fprobe_ip_table[hash_ptr((void *)ip, FPROBE_IP_HASH_BITS)];
--	hlist_add_head_rcu(&node->hlist, head);
-+	return rhltable_insert(&fprobe_ip_table, &node->hlist, fprobe_rht_params);
- }
- 
- /* Return true if there are synonims */
- static bool delete_fprobe_node(struct fprobe_hlist_node *node)
- {
- 	lockdep_assert_held(&fprobe_mutex);
-+	bool ret;
- 
- 	/* Avoid double deleting */
- 	if (READ_ONCE(node->fp) != NULL) {
- 		WRITE_ONCE(node->fp, NULL);
--		hlist_del_rcu(&node->hlist);
-+		rhltable_remove(&fprobe_ip_table, &node->hlist,
-+				fprobe_rht_params);
- 	}
--	return !!find_first_fprobe_node(node->addr);
-+
-+	rcu_read_lock();
-+	ret = !!rhltable_lookup(&fprobe_ip_table, &node->addr,
-+				fprobe_rht_params);
-+	rcu_read_unlock();
-+
-+	return ret;
- }
- 
- /* Check existence of the fprobe */
-@@ -249,9 +257,10 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
- static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
- 			struct ftrace_regs *fregs)
- {
--	struct fprobe_hlist_node *node, *first;
- 	unsigned long *fgraph_data = NULL;
- 	unsigned long func = trace->func;
-+	struct fprobe_hlist_node *node;
-+	struct rhlist_head *head, *pos;
- 	unsigned long ret_ip;
- 	int reserved_words;
- 	struct fprobe *fp;
-@@ -260,14 +269,11 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
- 	if (WARN_ON_ONCE(!fregs))
- 		return 0;
- 
--	first = node = find_first_fprobe_node(func);
--	if (unlikely(!first))
--		return 0;
--
-+	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
- 	reserved_words = 0;
--	hlist_for_each_entry_from_rcu(node, hlist) {
-+	rhl_for_each_entry_rcu(node, pos, head, hlist) {
- 		if (node->addr != func)
--			break;
-+			continue;
- 		fp = READ_ONCE(node->fp);
- 		if (!fp || !fp->exit_handler)
- 			continue;
-@@ -278,13 +284,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
- 		reserved_words +=
- 			FPROBE_HEADER_SIZE_IN_LONG + SIZE_IN_LONG(fp->entry_data_size);
- 	}
--	node = first;
- 	if (reserved_words) {
- 		fgraph_data = fgraph_reserve_data(gops->idx, reserved_words * sizeof(long));
- 		if (unlikely(!fgraph_data)) {
--			hlist_for_each_entry_from_rcu(node, hlist) {
-+			rhl_for_each_entry_rcu(node, pos, head, hlist) {
- 				if (node->addr != func)
--					break;
-+					continue;
- 				fp = READ_ONCE(node->fp);
- 				if (fp && !fprobe_disabled(fp))
- 					fp->nmissed++;
-@@ -299,12 +304,12 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
- 	 */
- 	ret_ip = ftrace_regs_get_return_address(fregs);
- 	used = 0;
--	hlist_for_each_entry_from_rcu(node, hlist) {
-+	rhl_for_each_entry_rcu(node, pos, head, hlist) {
- 		int data_size;
- 		void *data;
- 
- 		if (node->addr != func)
--			break;
-+			continue;
- 		fp = READ_ONCE(node->fp);
- 		if (!fp || fprobe_disabled(fp))
- 			continue;
-@@ -448,25 +453,21 @@ static int fprobe_addr_list_add(struct fprobe_addr_list *alist, unsigned long ad
- 	return 0;
- }
- 
--static void fprobe_remove_node_in_module(struct module *mod, struct hlist_head *head,
--					struct fprobe_addr_list *alist)
-+static void fprobe_remove_node_in_module(struct module *mod, struct fprobe_hlist_node *node,
-+					 struct fprobe_addr_list *alist)
- {
--	struct fprobe_hlist_node *node;
- 	int ret = 0;
- 
--	hlist_for_each_entry_rcu(node, head, hlist,
--				 lockdep_is_held(&fprobe_mutex)) {
--		if (!within_module(node->addr, mod))
--			continue;
--		if (delete_fprobe_node(node))
--			continue;
--		/*
--		 * If failed to update alist, just continue to update hlist.
--		 * Therefore, at list user handler will not hit anymore.
--		 */
--		if (!ret)
--			ret = fprobe_addr_list_add(alist, node->addr);
--	}
-+	if (!within_module(node->addr, mod))
-+		return;
-+	if (delete_fprobe_node(node))
-+		return;
-+	/*
-+	 * If failed to update alist, just continue to update hlist.
-+	 * Therefore, at list user handler will not hit anymore.
-+	 */
-+	if (!ret)
-+		ret = fprobe_addr_list_add(alist, node->addr);
- }
- 
- /* Handle module unloading to manage fprobe_ip_table. */
-@@ -474,8 +475,9 @@ static int fprobe_module_callback(struct notifier_block *nb,
- 				  unsigned long val, void *data)
- {
- 	struct fprobe_addr_list alist = {.size = FPROBE_IPS_BATCH_INIT};
-+	struct fprobe_hlist_node *node;
-+	struct rhashtable_iter iter;
- 	struct module *mod = data;
--	int i;
- 
- 	if (val != MODULE_STATE_GOING)
- 		return NOTIFY_DONE;
-@@ -486,8 +488,16 @@ static int fprobe_module_callback(struct notifier_block *nb,
- 		return NOTIFY_DONE;
- 
- 	mutex_lock(&fprobe_mutex);
--	for (i = 0; i < FPROBE_IP_TABLE_SIZE; i++)
--		fprobe_remove_node_in_module(mod, &fprobe_ip_table[i], &alist);
-+	rhltable_walk_enter(&fprobe_ip_table, &iter);
-+	do {
-+		rhashtable_walk_start(&iter);
-+
-+		while ((node = rhashtable_walk_next(&iter)) && !IS_ERR(node))
-+			fprobe_remove_node_in_module(mod, node, &alist);
-+
-+		rhashtable_walk_stop(&iter);
-+	} while (node == ERR_PTR(-EAGAIN));
-+	rhashtable_walk_exit(&iter);
- 
- 	if (alist.index < alist.size && alist.index > 0)
- 		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-@@ -727,8 +737,16 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
- 	ret = fprobe_graph_add_ips(addrs, num);
- 	if (!ret) {
- 		add_fprobe_hash(fp);
--		for (i = 0; i < hlist_array->size; i++)
--			insert_fprobe_node(&hlist_array->array[i]);
-+		for (i = 0; i < hlist_array->size; i++) {
-+			ret = insert_fprobe_node(&hlist_array->array[i]);
-+			if (ret)
-+				break;
-+		}
-+		/* fallback on insert error */
-+		if (ret) {
-+			for (i--; i >= 0; i--)
-+				delete_fprobe_node(&hlist_array->array[i]);
-+		}
- 	}
- 	mutex_unlock(&fprobe_mutex);
- 
-@@ -824,3 +842,10 @@ int unregister_fprobe(struct fprobe *fp)
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(unregister_fprobe);
-+
-+static int __init fprobe_initcall(void)
-+{
-+	rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
-+	return 0;
-+}
-+late_initcall(fprobe_initcall);
--- 
-2.50.1
-
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+>  arch/powerpc/include/asm/dbell.h | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/dbell.h b/arch/powerpc/include/asm/dbell.h
+> index 3e9da22a2779..0b9ef726f92c 100644
+> --- a/arch/powerpc/include/asm/dbell.h
+> +++ b/arch/powerpc/include/asm/dbell.h
+> @@ -40,12 +40,6 @@ static inline void _ppc_msgsnd(u32 msg)
+>  				: : "i" (CPU_FTR_HVMODE), "r" (msg));
+>  }
+>  
+> -/* sync before sending message */
+> -static inline void ppc_msgsnd_sync(void)
+> -{
+> -	__asm__ __volatile__ ("sync" : : : "memory");
+> -}
+> -
+>  /* sync after taking message interrupt */
+>  static inline void ppc_msgsync(void)
+>  {
+> @@ -76,12 +70,6 @@ static inline void _ppc_msgsnd(u32 msg)
+>  	__asm__ __volatile__ (PPC_MSGSND(%0) : : "r" (msg));
+>  }
+>  
+> -/* sync before sending message */
+> -static inline void ppc_msgsnd_sync(void)
+> -{
+> -	__asm__ __volatile__ ("sync" : : : "memory");
+> -}
+> -
+>  /* sync after taking message interrupt */
+>  static inline void ppc_msgsync(void)
+>  {
+> @@ -91,6 +79,12 @@ static inline void ppc_msgsync(void)
+>  
+>  extern void doorbell_exception(struct pt_regs *regs);
+>  
+> +/* sync before sending message */
+> +static inline void ppc_msgsnd_sync(void)
+> +{
+> +	__asm__ __volatile__ ("sync" : : : "memory");
+> +}
+> +
+>  static inline void ppc_msgsnd(enum ppc_dbell type, u32 flags, u32 tag)
+>  {
+>  	u32 msg = PPC_DBELL_TYPE(type) | (flags & PPC_DBELL_MSG_BRDCAST) |
+> -- 
+> 2.50.1
 
