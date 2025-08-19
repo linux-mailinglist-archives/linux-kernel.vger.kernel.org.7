@@ -1,187 +1,108 @@
-Return-Path: <linux-kernel+bounces-775202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E139B2BC88
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80597B2BC89
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552C9188BC43
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B593B6280
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116BB3115A1;
-	Tue, 19 Aug 2025 09:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54ED131197F;
+	Tue, 19 Aug 2025 09:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEgxQ2C6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RO36CdV0"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE1523E34C;
-	Tue, 19 Aug 2025 09:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A457318126
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755594236; cv=none; b=AWR8vg+VOJS8GU0zmLSsXuLAsnDyQ1zReK9x1I9hIrvbQgoJM3ipSTMUibWxEOwbbYf4dDmOcqAK/pOFe5pJNU8W9OuF3eWT2cqK+g6DkHA+8INZQa34f7Dmdz1GypECFgpcB/fnodTdJXxUt2OvH0MdojvChxFPrPTiIA4IuDQ=
+	t=1755594249; cv=none; b=TdU+WFZcu8s/D+UYulKgXwTEWZQxSdfeHcG6Rrf5rd4UC7i3VxbNdqULxHHvBMt9LvlEDTDBbiBRCDg5Z2FlBTxyjintv1066TMYuAdOwKD588yFvkhdP4GFAdZkVrFF4VHvuEZNmRjs9lds/4mS3uneUjhGS7DCxfFFo9eoOo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755594236; c=relaxed/simple;
-	bh=U81+p77c0JQOTqk7IOzyd3hR2gXqfCNzh6rYyurZ5Eg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8Py3kOLecB0TUoYA4MhrtLgYGYmpIPb0UVQjxtH3OPL6UqRAmpfQQhEsqp1xzftzfbYLT0rxuJuIwsFQjtRm5WIzdMInkBwrVetMoy7DIb8+GB7VilFaVfjri9cbvmUjgr1LxZRgEL5lE46PHwTEr/QuQ5s6jAuvUtjH0Ggazs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEgxQ2C6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 314B1C113D0;
-	Tue, 19 Aug 2025 09:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755594235;
-	bh=U81+p77c0JQOTqk7IOzyd3hR2gXqfCNzh6rYyurZ5Eg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aEgxQ2C69qgc/E3qFBtTnEN5YhZhnpiBwiTtNRk3f7rG92qb2o4dGHM/zWPGz5sib
-	 qjOaifilW0lTtkcatgbMzeYCdiM3ORf3w62gUV7u/ou37VxECoP+mZ2M8Ww1BG5H+v
-	 VLwGwUzE6Xn1qp4MFbo9BhBzu23V94p8GqHdMo0BfieN/4lrU8zsDoOh/lii49ndxg
-	 t3h7P5PnNiew4XBQXz2qbKD6Ibq4ASeT0tdPcx31QNZBsQaKCBYfqRk2OkWO/Gv/Pk
-	 j6e4Jy6LP/lG2SMUcJK5L/2Nqmoi9sLBSiqG/nUXu8F7Ai1wrAVBHbIYRpfSLFJuUP
-	 L9W5Qw7/hz5eg==
-Date: Tue, 19 Aug 2025 11:03:52 +0200
-From: "mripard@kernel.org" <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: "liviu.dudau@arm.com" <liviu.dudau@arm.com>, 
-	"Kandpal, Suraj" <suraj.kandpal@intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
-	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>, 
-	"Murthy, Arun R" <arun.r.murthy@intel.com>, "Shankar, Uma" <uma.shankar@intel.com>, 
-	"Nikula, Jani" <jani.nikula@intel.com>, "harry.wentland@amd.com" <harry.wentland@amd.com>, 
-	"siqueira@igalia.com" <siqueira@igalia.com>, "alexander.deucher@amd.com" <alexander.deucher@amd.com>, 
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>, 
-	"abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>, "sean@poorly.run" <sean@poorly.run>, 
-	"marijn.suijten@somainline.org" <marijn.suijten@somainline.org>, "mcanal@igalia.com" <mcanal@igalia.com>, 
-	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>, 
-	"tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>, 
-	"kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>, "louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
-Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
- structure
-Message-ID: <wr76vyag2osox2xf7ducnkiaanzk2k5ehd2ahnoyqdm5qiywlk@penf4v5bvg5z>
-References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
- <20250811092707.3986802-2-suraj.kandpal@intel.com>
- <20250811094429.GE21313@pendragon.ideasonboard.com>
- <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
- <20250811111546.GA30760@pendragon.ideasonboard.com>
- <2ah3pau7p7brgw7huoxznvej3djct76vgfwtc72n6uub7sjojd@zzaebjdcpdwf>
- <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
- <aJ4LQvqli36TlETu@e110455-lin.cambridge.arm.com>
- <hc6f6wgsnauh72cowocpm55tikejhiha5z4mgufeq7v6gb2qml@kmgfd26bigos>
+	s=arc-20240116; t=1755594249; c=relaxed/simple;
+	bh=j1702PwtMzDQe5/1lQ6DecIyL64vgc8wHTrATNQRhR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lRhtCc2Udj1sA0YdXVQIY4Syft7XAtRPuC+fErF3i9atM55nQOEtraBkuIaOP9wgnD2E7Z/BMVMGFffGSsYdjnWe4fXf2s4Dwb4H2pUgk9K0NYfeiFxJL8s7XqzIiiDWYbewWjI9Ws1hayRbhH763ayrmIR+R5srpYVcOKRwSEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RO36CdV0; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b0b42d5so35861415e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755594246; x=1756199046; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rw4/SYfYTbVLI+W3vVMq9GPldn1oSL4x6P0EM98hAz4=;
+        b=RO36CdV04gbgt/gqerVwSTjPhjte3Q9sqG0/tPnAjaRQ6tphy9EyGH5C21NZudgBny
+         HaniA+8LnyAYnmqplQ/7RkhOJTbN4r3ffFh0Dy5HNk9Dv4VdfY138UYaIStE/7e4iaDc
+         7t96nII9LWMjtS7rIea1bS+e4yry/McaAjJM5pyLIzOsBwffWMnCNsIw0fwxWs53CKsS
+         ofg3BSTxkXubERr/rD9LjamKMdy9DLj4ABmzBd9IR/xJlmGEE4HrOrOz0ULRqSrk3qwa
+         vx5uUgdwxT84wxqf6A/g6VDUJC2Sr/MCh/2TvRK9HQebf7YW8DVFg3bZgwUMVWW4Vy7x
+         8LBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755594246; x=1756199046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rw4/SYfYTbVLI+W3vVMq9GPldn1oSL4x6P0EM98hAz4=;
+        b=N30GZlhI3669ymYsci+MiFu4KX2iZWB2haM21MAISV83Y/sRHtPXY3pWZ2eUU8VAYx
+         8IihDuCgd0sA8HV/C80lIZ2DT+VDWx/Y/vw8qhmg7hKEd6sYPPMypSTDs3+vA9Vgom/B
+         8MrM8r17opP0mCb5G98R3EfESo4KkDmVv6E7PyXix8EjK+xS3D9ByuxXvP4idU07W/zf
+         lEk3uspmzzMRKu/kglsTh/uTEHWfQhC9XiOltcEu+iO9cc492PhYRi3JA/dYoyHVfoq2
+         qhVuN5Hz60zmASups1cuO7QNc0omnK1hf9R7Asa8P0OEPq/F1PoiC961VrDA07UD3Epv
+         OM2g==
+X-Forwarded-Encrypted: i=1; AJvYcCU+X2ZZD5OI0UhEivzyltX6hbWMBZfrVCRCBQj7drCaYs1j5ie3K5FoweEQOf94mDQ4sS6ndlY2YdFhSmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuBfig8PDHNv9kCuHSxSHC4dpmJb21g5CY+40x4Z0h1BBbb5ni
+	r15Gp5UZF+Za8HGnoY5ZbP0CiZ5Z5x3cffDeCbkc1EmXsmwfeej9/zwF5NSguKw76lG2mE+9r+0
+	Ssi8VEVAl8X+CPpsppvrMwgLzQFRj7q2TuRnxJiya
+X-Gm-Gg: ASbGncsHP/tmxiDksxU9ggnsQMRRru9nhGvU6/5wGjIByp77IEEfjf4hFcWScieXoRd
+	leWB9mz5ZExXVYguWUscpgaLmGIyDF2XroLli0cqxXHvkrNcdt/biJJcM1SzsWIBi6JAHi1WHU+
+	iLdh6gqxKaGd6qUy6VfvGgeNOvSnyk6Xg4GEgOpuvBInKX3qDbaBvnd6wNs71fNd8iHhQqmfbHG
+	SCesVYzKmpaedA9m777uibrqVRXXLcgtRs/cOFykgqRE+Ek5RKvwh7ShxR9oGWcfw==
+X-Google-Smtp-Source: AGHT+IHdcHy27qthc6ylIMnNVnNh5YNWX6Vrep+6osB8MyR7vljR5PzozjKPhzxheJhAHt+ndRzWPDYEnKmFRRYqYiI=
+X-Received: by 2002:a05:600c:3585:b0:458:bc2c:b2ed with SMTP id
+ 5b1f17b1804b1-45b43db65f9mr12911025e9.7.1755594246118; Tue, 19 Aug 2025
+ 02:04:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="skbefrsfocmocpeu"
-Content-Disposition: inline
-In-Reply-To: <hc6f6wgsnauh72cowocpm55tikejhiha5z4mgufeq7v6gb2qml@kmgfd26bigos>
-
-
---skbefrsfocmocpeu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com> <DC19CXUEORB7.241EQY0IXV7WD@kernel.org>
+In-Reply-To: <DC19CXUEORB7.241EQY0IXV7WD@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 19 Aug 2025 11:03:54 +0200
+X-Gm-Features: Ac12FXzqmfWcGjpWA2_Z1mE6xkkkJkyW-2offzZARxXIQ07VSGbaL_je_9ZDZC4
+Message-ID: <CAH5fLgggp0Nkdcuwv6HTZBo=92xCJt=8JfSVvmy2SRR_e9kSFQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] Rust support for `struct iov_iter`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Benno Lossin <lossin@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
- structure
-MIME-Version: 1.0
 
-Hi,
+On Wed, Aug 13, 2025 at 1:20=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Wed Aug 13, 2025 at 10:27 AM CEST, Alice Ryhl wrote:
+> >  rust/kernel/iov.rs               | 311 +++++++++++++++++++++++++++++++=
+++++++++
+>
+> Does this need an entry in MAINTAINERS?
 
-On Sat, Aug 16, 2025 at 01:20:53AM +0300, Dmitry Baryshkov wrote:
-> On Thu, Aug 14, 2025 at 05:13:54PM +0100, liviu.dudau@arm.com wrote:
-> > Hi,
-> >=20
-> > On Wed, Aug 13, 2025 at 10:04:22AM +0000, Kandpal, Suraj wrote:
-> > > > > > };
-> > > > >
-> > > > > I still don't like that. This really doesn't belong here. If anyt=
-hing,
-> > > > > the drm_connector for writeback belongs to drm_crtc.
-> > > >=20
-> > > > Why? We already have generic HDMI field inside drm_connector. I am =
-really
-> > > > hoping to be able to land DP parts next to it. In theory we can hav=
-e a DVI-
-> > > > specific entry there (e.g. with the subconnector type).
-> > > > The idea is not to limit how the drivers subclass those structures.
-> > > >=20
-> > > > I don't see a good case why WB should deviate from that design.
-> > > >=20
-> > > > > If the issue is that some drivers need a custom drm_connector
-> > > > > subclass, then I'd rather turn the connector field of
-> > > > > drm_writeback_connector into a pointer.
-> > > >=20
-> > > > Having a pointer requires additional ops in order to get drm_connec=
-tor from
-> > > > WB code and vice versa. Having drm_connector_wb inside drm_connector
-> > > > saves us from those ops (which don't manifest for any other kind of=
- structure).
-> > > > Nor will it take any more space since union will reuse space alread=
-y taken up by
-> > > > HDMI part.
-> > > >=20
-> > > > >
-> > >=20
-> > > Seems like this thread has died. We need to get a conclusion on the d=
-esign.
-> > > Laurent do you have any issue with the design given Dmitry's explanat=
-ion as to why this
-> > > Design is good for drm_writeback_connector.
-> >=20
-> > I'm with Laurent here. The idea for drm_connector (and a lot of drm str=
-uctures) are to
-> > be used as base "classes" for extended structures. I don't know why HDM=
-I connector ended
-> > up inside drm_connector as not all connectors have HDMI functionality, =
-but that's a cleanup
-> > for another day.
->=20
-> Maybe Maxime can better comment on it, but I think it was made exactly
-> for the purpose of not limiting the driver's design. For example, a lot
-> of drivers subclass drm_connector via drm_bridge_connector. If
-> struct drm_connector_hdmi was a wrapper around struct drm_connector,
-> then it would have been impossible to use HDMI helpers for bridge
-> drivers, while current design freely allows any driver to utilize
-> corresponding library code.
+I think it goes together with the existing uaccess.rs file. We don't
+currently have an entry for it. I guess one could be added.
 
-That's exactly why we ended up like this. With that design, we wouldn't
-have been able to "inherit" two connector "classes": bridge_connector is
-one, intel_connector another one.
-
-See here for the rationale:
-https://lore.kernel.org/dri-devel/ZOTDKHxn2bOg+Xmg@phenom.ffwll.local/
-
-I don't think the "but we'll bloat drm_connector" makes sense either.
-There's already a *lot* of things that aren't useful to every connector
-(fwnode, display_info, edid in general, scaling, vrr, etc.)
-
-And it's not like we allocate more than a handful of them during a
-system's life.
-
-Maxime
-
---skbefrsfocmocpeu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKQ99AAKCRAnX84Zoj2+
-dss/AYCDsxLbReOhvxm2/ItnX1NwLBeplh9X5QtqlMFGtACSlJY1IY0m/StI+3f5
-mo8yNFoBgN6HXqzLYYWhMVbxXRVEQKIXD0+CH717KpLuEe2LfvOxFR4OrVqtC0CA
-RG5v2F7KYw==
-=NIHR
------END PGP SIGNATURE-----
-
---skbefrsfocmocpeu--
+Alice
 
