@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-774970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5598B2B9C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:45:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED398B2B9D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2ED7AA1F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:43:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3951C1BA083E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1F92773F9;
-	Tue, 19 Aug 2025 06:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2808E2773C0;
+	Tue, 19 Aug 2025 06:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddbjIUdU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pF7BZ0Lh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81EF26B09F;
-	Tue, 19 Aug 2025 06:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5A726E6EB;
+	Tue, 19 Aug 2025 06:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755585866; cv=none; b=TM2pycuV5/FjaqEyjm5SD87SER3ov/3gGF5fn/sk1ZhpSWimVdcgH6cpvh2Y8XvaQLVnOzyJSZ+h75qbPo8giYcGRHIk6HEWxj4PU9yENlWmfECWOWLu/EKY6fRAvg5vKttaFouBxVPQBVtB2mhP0rKJQ118eLaufCQNqo8maJ8=
+	t=1755585912; cv=none; b=ldv3seipU+JPH84A61NqJKHqogtkhG6oDwghtivLmrpLLOpCfy0ChVIcbs1AfLLETTQoPUWPaFyEZPjZ4qm1PxfERbS90Q3+oz6EEevzSusXm1+PoQ+6HXNyixrG9wE9JvZNnvrZeRsxGQqmdJqZHYcoYEq29nD9rZ+cFh2fnQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755585866; c=relaxed/simple;
-	bh=gx003cAub2W7yI9noj/k+7+A81Ogp/xX+qJqdRrcU2s=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Bhd/5Nv7NXXYUOqGFbnWmnoRKtEVnTNjgmdUcEcy971WqKgOycYeL/UUmS1/RI7g7q2p1OrsGTBuPY5IM6f/HSXdfgsAUOp2eVb9wX9LIEhedtKoHQLvFspNZ5opX9yUZ9YRCNLSeM5WEUFXSz9J+C5geNhkDneh5TLKsXTj7bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddbjIUdU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35178C4CEF4;
-	Tue, 19 Aug 2025 06:44:26 +0000 (UTC)
+	s=arc-20240116; t=1755585912; c=relaxed/simple;
+	bh=UP9QrxfK6QYEHcUJrlYlyfxkQRb2pZ0b31ddHRriPIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VeXWJv6sXh7nhOUIIbE8RQt5A8j8DUjQThJ42F+4aXCCDU8eFyk3akqcLnQMFygRUHDGjkFqPctCBYpnBxQL6MxzUEHjnnOHXXnE3pCIuq/e2/Xgggkt7LrdlPOI9NwSXpPj9NUXAg72Pe+H1jzc92eeM9oUOnmFXfw1dwVDYd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pF7BZ0Lh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25906C4CEF4;
+	Tue, 19 Aug 2025 06:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755585866;
-	bh=gx003cAub2W7yI9noj/k+7+A81Ogp/xX+qJqdRrcU2s=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ddbjIUdU2RFNdE2+pTkxES41YUlBnBeUFYbOrCxL84AHOJ2aaYAMWHvPMXiDKNVUv
-	 jSOE/5ZyVxlO+oLZJ7WJaSlBHeq0pmTI8hz/RhwUry6FDC0S9IIiiIxzeSUgPJhPcR
-	 Vggsfb0GR2HK/ClAzdLFJgCTn0PSoRsHNlHuGCc7dHSRb8ybKD7oeMvnF+8pWoid0N
-	 21BrXg2F/PFV3bcOjW2xsxeXTeisnxuvZoQqdmLgsFY4rufe1cpW5lGvHHBeywHK7j
-	 z2kEomYfChxO+Ve4MW9h+fZbmbkKTn+31IwzFyQzk1dj6hcqW1JMJzEYxVF4COL+wz
-	 lpc+SJeu/5E/A==
-Date: Tue, 19 Aug 2025 01:44:25 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1755585912;
+	bh=UP9QrxfK6QYEHcUJrlYlyfxkQRb2pZ0b31ddHRriPIQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pF7BZ0Lh144HFRdf5oCuVGgwhS7bRIQEywwzSk6HQeJ/ALSsZDqbmX1Mk168Z/kKe
+	 jx8wzNKp4rnFXGafekaeWb0JvrWmtmuqGF0cdq2pPSKfH47PD7fUhvSYR+5FQdb0Jb
+	 yjuLh6wYWTqAGcx8RghQz0VbMo2YtdGRGhH8cuz7qXaZre0aivb9DwwW4pdxQRKgRZ
+	 N6sZgsVkPlM20oc+MnJq7W9u2yH30quU+dSMjTfmiHxsq2QiksdauUpz2oXQrrx9Op
+	 JdtbmLse2hd8SIF+h0v2IZq9ZdQq8vrM6R+ibymfYLih6iS4zxZVWvDNUyqe1zhhrv
+	 LcUn7JuQFMOrQ==
+From: guoren@kernel.org
+To: guoren@kernel.org
+Cc: alex@ghiti.fr,
+	anup@brainfault.org,
+	aou@eecs.berkeley.edu,
+	atish.patra@linux.dev,
+	fangyu.yu@linux.alibaba.com,
+	guoren@linux.alibaba.com,
+	kvm-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com
+Subject: [PATCH] RISC-V KVM: Remove unnecessary HGATP csr_read
+Date: Tue, 19 Aug 2025 02:44:29 -0400
+Message-Id: <20250819064429.1947476-1-guoren@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <CAJF2gTQFWJzHhRoQ-oASO9nn1kC0dv+NuK-DD=JgfeHE90RWqw@mail.gmail.com>
+References: <CAJF2gTQFWJzHhRoQ-oASO9nn1kC0dv+NuK-DD=JgfeHE90RWqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, dri-devel@lists.freedesktop.org, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Simona Vetter <simona@ffwll.ch>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- linux-kernel@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, 
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>, 
- devicetree@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-In-Reply-To: <20250819053205.9976-2-mike.looijmans@topic.nl>
-References: <20250819053205.9976-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.f1878466-8551-4b5d-bf2e-1706e377d436@emailsignatures365.codetwo.com>
- <20250819053205.9976-2-mike.looijmans@topic.nl>
-Message-Id: <175558586542.3297343.1727329381357860993.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI
- TMDS181 and SN65DP159 bindings
+Content-Transfer-Encoding: 8bit
 
+From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-On Tue, 19 Aug 2025 07:31:14 +0200, Mike Looijmans wrote:
-> Add DT binding document for TI TMDS181 and SN65DP159 HDMI retimers.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> 
-> ---
-> 
-> Changes in v2:
-> Document driver specific bindings like slew-rate and threshold
-> 
->  .../bindings/display/bridge/ti,tmds181.yaml   | 143 ++++++++++++++++++
->  1 file changed, 143 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,tmds181.yaml
-> 
+The HGATP has been set to zero in gstage_mode_detect(), so there
+is no need to save the old context. Unify the code convention
+with gstage_mode_detect().
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+---
+This cleanup is based on yufang.yu's vmid fixup patch.
+---
+ arch/riscv/kvm/vmid.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/ti,tmds181.yaml: ti,slew-rate: missing type definition
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819053205.9976-2-mike.looijmans@topic.nl
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+index 5f33625f4070..abb1c2bf2542 100644
+--- a/arch/riscv/kvm/vmid.c
++++ b/arch/riscv/kvm/vmid.c
+@@ -25,15 +25,12 @@ static DEFINE_SPINLOCK(vmid_lock);
+ 
+ void __init kvm_riscv_gstage_vmid_detect(void)
+ {
+-	unsigned long old;
+-
+ 	/* Figure-out number of VMID bits in HW */
+-	old = csr_read(CSR_HGATP);
+ 	csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) | HGATP_VMID);
+ 	vmid_bits = csr_read(CSR_HGATP);
+ 	vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
+ 	vmid_bits = fls_long(vmid_bits);
+-	csr_write(CSR_HGATP, old);
++	csr_write(CSR_HGATP, 0);
+ 
+ 	/* We polluted local TLB so flush all guest TLB */
+ 	kvm_riscv_local_hfence_gvma_all();
+-- 
+2.40.1
 
 
