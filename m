@@ -1,199 +1,118 @@
-Return-Path: <linux-kernel+bounces-776204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D47B2C9F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:48:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E28B2CA42
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C5852197B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:46:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9BD7B6F26
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BF928643F;
-	Tue, 19 Aug 2025 16:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EB82D24AD;
+	Tue, 19 Aug 2025 17:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eyCEA3rR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="atFNyqdL"
+Received: from sonic312-24.consmr.mail.gq1.yahoo.com (sonic312-24.consmr.mail.gq1.yahoo.com [98.137.69.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67944283C87;
-	Tue, 19 Aug 2025 16:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F28B1E47BA
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755622005; cv=none; b=LLAlkNwO4K57bEhBKaqS3TqogPC4mHE99le/XdR1NlsN+gJazP7nwMRAGQzexHpblrWqdmhJVrBQSCBiiAA5kpy74FD0/k4wcZm+lXt1QS9106I1Gyc3bz+IlbEZ2gVdvm4s95A6nAIRJiYbdxx5ZA8hRNzDqOBhsFAlyTubIm4=
+	t=1755623352; cv=none; b=SMDPuLD/H9SBuzwml+rHG1jlbEZT/hynx9+PFgqTtINLq0O3movQ9nDNInVAN5gpLIC5vZjASHcPvnqirbacBqUuT3O0R0gv+ptQ4c1MrnYY7D4SvhWJmmlJTbqC78e90Yjn7DfgP7ukXlrHN2GM2cUeYuBzfQyZCZ+96Ck8HPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755622005; c=relaxed/simple;
-	bh=gJlCbtML3/hYLPe1GeD4TuTAglGALBUIYnsjaTlV7b4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMzt8ukFTna0pb+uTj5NYofBXHymQkJDdhqlB7mg4O9MrQcKnD+rajQdSJ1/PoP5u0arBm7/ET0upqFaNnVpy3jgun5eCDgYTlOAnPXPNsnK0jLw1/7ngqW8j4CLNKV9iMmrhK96X2tAf6ag2TBbul8X3UtWLE9x0oElmfouhDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eyCEA3rR; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755622004; x=1787158004;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gJlCbtML3/hYLPe1GeD4TuTAglGALBUIYnsjaTlV7b4=;
-  b=eyCEA3rROmmN2FsjLM69oXtYtuEa7rmGSieeFwpNawu1bCjWyE8bOqoT
-   ggEyDrLsqm5jt9HibkXFccAgeggype/5wusCgQCQnxcKHLf2SlkROgXC6
-   uf4fJiHaH/7doYL6PZclK8I8sfyqoYa9Xq30ze1AkIbEgtGkZ+zvkbGkd
-   zX07Al66wNDdm6P1L67WrMzZijVx8O65qT68voJkI4ksQsApBd6M/ScT+
-   IJbAvrhVEHjseFC3AmMCtzxklOOtcUgllo8zDZ1AE4sXEtOcSFUyzBCh6
-   qt6kuNkuCOzmx7otflbqLq/ofTpgmow0EI8Y8SN/991H5ATfAtnnNl/Ul
-   g==;
-X-CSE-ConnectionGUID: zBNFfusJT8KG3/muG3iBUQ==
-X-CSE-MsgGUID: GhhwPI3cSXqyI3gnH+qCqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61706165"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="61706165"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 09:46:43 -0700
-X-CSE-ConnectionGUID: R+JSMxuVTImX1WWpIWSi/A==
-X-CSE-MsgGUID: hNi8ogtaSYuLdJCpLMDC7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="205044336"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.244.222])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 09:46:37 -0700
-Date: Tue, 19 Aug 2025 18:46:29 +0200
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: michael.riesch@collabora.com
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Gerald Loacker <gerald.loacker@wolfvision.net>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Markus Elfring <Markus.Elfring@web.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Kever Yang <kever.yang@rock-chips.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Collabora Kernel Team <kernel@collabora.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Alexander Shiyan <eagle.alexander923@gmail.com>, Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v10 08/13] media: rockchip: rkcif: add support for mipi
- csi-2 capture
-Message-ID: <rpaa2jspgmw3do5y367kq4pvvtpboeu7gjd4chmh6pgztmj6ar@ckh7jxvfuhlg>
-References: <20240220-rk3568-vicap-v10-0-62d8a7b209b4@collabora.com>
- <20240220-rk3568-vicap-v10-8-62d8a7b209b4@collabora.com>
+	s=arc-20240116; t=1755623352; c=relaxed/simple;
+	bh=ZzlugSwr1NuiDTXaRBuI6egiVVmhVYhSAWDLJ2hyFUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=foaG/pyY3FoOO95OoR3qLhGOumNFia5yWPRfMBmzqoRWS+XNQh3xGNQsQACbI4kzIw9FKRyqAjANkYfrG9UaUjmXn2rSxw3HpfAFKlu+hKgCoshXgxzCMSlaMpn0euQeZVoNlYvapMF6vwWele3h8QYhkqc5lZ/T4gU55Vmz0Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=atFNyqdL; arc=none smtp.client-ip=98.137.69.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755623350; bh=A8SWyyT0DiX2Rnzy5SGMSBgCFA0refGm5qe5v8qneCE=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=atFNyqdLLaj154yndYf2pLSz8xmL1kGjuzMh753hF7PdYEitiMSCr6L6GMgIi7vNZzEtgPr1mlBUNTZKBAv++Mt8v5OFUVE8PM93zrTFoHyYcrYvMKdHidte/zSMX1ptTTbswGLtuVn2kYx9JYaYK0oHOgavmSSpNKnbfXx1UobyeUgwKIm5l0R3yKmvDsHXGeQOiSe11yGhAvVGL+iS+6Yzp1wYD2QzNF+xkSKUBkfuabP4rJwn+acBPV42U/fWsqPLFy70OcThKiq2P25JQQvhiejSkvrrnImWi3EQqDVq6FJyUEccadEOswy6TIp7Nzjz1ilEPfcKp0Rf/4bWEA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755623350; bh=62L5NK4+2DTGnC5gXyjRzYsrqYJEtulUtjcQgLMhYVi=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ZRu6mH4W4yDHXtU6FVhoxL9PyYCt+R3ZQDRM5OgIWYi+sfeQRkIjp3Q25oj3ZVAU315gcbs/Sjw6rVv/eMzdWQWuDhlRmAwWI0cd0H8RJjkWzggcyndM3+CrrmdfJE3H6nCZdCcQH53GwY8foJKUmUq1A+i1QihgUNFrmYOP8Qg/GA0Ijp/a7PgeE98LYMP36fjD9s5biZd43ldyg+SqrBkkclGL583RL6/JkDoHENBqfHHtTth+zl2+byORdWOgub1CY3nBt9znfyRCB0/Z2AwjtGdnx+zxuH+jnr/jonuan0DbvDwFNutiHXcdj04xjsM02A9SENExM7D5YWRS5A==
+X-YMail-OSG: 3mftnr4VM1lN0NAgHCOnPyNyN9yV1.nSXllhOSAFyQyekOmLRW9EWYQToQE5X8o
+ 7UcdkL1OuSohjdWNamCAScUg9.NNg.BWdlENSxXR2RRmhvQLDl5wUg0kNSyPPkgSo6HlF3c1EUCV
+ 0KNqf3bAnYBK9vtciSbY.LGpredRwMYTnHuttkpZjSqFVyTSwrByx1E_GqHIZF.pAxgVlJPOGMHC
+ r3sVmmMTdtMSyG_XDtjGaIL2ZPwXBAqVY1J5O8cLcHOSeM7Clf4i4tQV3jfvSVED428arI5aJTVY
+ aoqX.2WzTaxcJTiViFYU3YQPLNoObY_tH9_E88KqNM4JMJlnE2r_dvzxvmsG05ZJvUeG.nvV0Rmh
+ rFpFpICM6.Q3XoC75kzenAon9jFtl4e3Tz1dHOsOzzb4.7vHozZlNbVaIFWdbJBT9RKpcsPhUlGk
+ bCEkdz9TdyV0T8gKg.ifgoy3YryiQgKoVygkeRZXXsM8l.1y2eucN7rmOeMwopQiUvGVUsKyVRi7
+ U0auA_FFdJtBxjEfVCxGRz5qhSHA1kpCB_ODm3RC2XBnxJROh2ZlmiWWA.Ig_MNSbgQYNo3ey6c.
+ pNVfwEt.4wl4s.gNkyNDCfMIwlhD_Vlw3nun9QrOMjSGLcn7QhQA.W7ZHB_fm95F6IsoD6eIt6e_
+ Ic7cq1lxwJuubt1Abmjg6_6tbrqXdz8y9yP.rbDk6QNl.SjDbuOjQWrKVvfmHisUc7mrTCMosRT7
+ OlQhdGbTeEKWfgYMq0ZRzKNPwLATeAcWEamxBx0VGsgPN2_azMEj5ABlGNqIEO3VvJj3pQa1XndZ
+ nSyErD.thxwNSwwVAQ6Fm2DiDs6nbV01KXbSa9p3M8mXmIl8FUZ2CfeFrKFV0VqCpMwV77DLzfsT
+ oy1KJ6gOtpLqPTuPQYFeXH6dU0QGxaRCJgZtPUEaNQugxWhTSG2OEmlmqGRVYH5hxKN0x2wucgL6
+ HMcHht70U8KW1YxxPfiE.cp1dRpUuVZ.3pPUTaMqYx75N9em_drcCyoVKRrqWx2n9oVVSAFm1GCR
+ .IXABYTwcDoTlFTGQZ0D3QhutMmhG2jUNE0kjRBRmKuGJ0rn39b03IoSsy2xqdaCb_Cdk6UqxXEr
+ uZSZvW5ivnu_3LHjdeBJ1QJDl9caqxPpeX1vO_RJpfX71AGXTjQVpEAzHehSYHekq6yy1mcajCun
+ OVF5fldCON3RyWGx0txTucPzUp.Fwh_HKx9PwvkiTGFY5v9My3k7Qs1y2bx4wEPoKZjii08alhJG
+ 0yscs0Cac1zhWdF.Ih9j475mTeZYJ036TahKflzK0m2tO8v2N8DNUDciqBOjaCbJIy4mHLEpQocP
+ s86dtR_t3nGg5GjfyMlE_Xv8A9uZuDmD7dkGjSDRp5.0KNEyUoOFhIYdKz9dJaHoAo.MLRt1VuhV
+ qOtwWYj2D_CQdND0hPz51c6tYUB9qznGUTUBAx9_MzKp2jeXnqdpbmfVEM9QlyFzBpr2w.MtEYZo
+ 4FOlKICy.HchnVpQvyEVGg._Zl6vJIvgfzfVjL8MAIr24yanjETQ7r4BPZICfXNvWjj0Z__SEy0_
+ ycfCeODNXeFYhlD7QZPqSvk3ChzPnC38C9in8h4EEnEqUUBs5c7yztpMRw11KFwuVaVcRkpHd6yA
+ UnpL39ns6dQ7qJ0ZLEjvLCFuyiA57Nba12UNigjuO5LCrF2WX4ygZeZrvv8oDMB9aR0Jd6bEkk25
+ Q4322QmsUbsfiKdwiCb46H0x2yEw8Aebto5zJH607hoeV5VC1QAwocnofvPh4.fL8B9mfsybKnC9
+ PM0KGqZu8afJw8rSR2nhjLHki5xtB40zJ6jn2hlp1XDSldLAlc6OYfGTA9HgAx._7oTy6kxw14Zc
+ ljpYGX_zzoQWgMl5iIkXhhJoURTwd5630SjSI3JfYv2QjjkWoCjVI.9mkYcsPIrl0IeNiDe2EQLX
+ a5kkGMtzMwt306jB4cMoz_IkXJjVbHIJQzXgXTUkLXXkP9FK1e79q7RjVnM_kP0hy61h46swCXDM
+ 0t4OPbWJryETp_NJ9MUOz97Z8iW02adIsiZwQHm17jVz1zsqozuPIWHfk1I8BFSEnazeYORuZFTc
+ qbdnYfuZDyxwwQCNHw3purDihdHrP4.Da0Pj2Ft7J74OqN0rjJABIQbhxReITEz6tleSMl9gPAcy
+ tplyl0YYcrexDSeFJs1a8SMfZkCtlvAS4Q1.aQcp_S5ICuOR5riN_mpFxbmXhjbXiIgyMb1K4.AL
+ xTtVYkabv_S0E3q8zuQBY.kQ39L1vfpWqCplbB4Tc0ChuzbyvwQ2nxzLC7i97Ww--
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: 014cbe4a-0fbd-4d25-84d7-25c8930f871f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Tue, 19 Aug 2025 17:09:10 +0000
+Received: by hermes--production-bf1-689c4795f-67vx2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5d23dd5995e0d4828092d9660ef3af68;
+          Tue, 19 Aug 2025 16:48:52 +0000 (UTC)
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Subject: [PATCH] fs: Add missing parameter docs for name_contains_dotdot()
+Date: Tue, 19 Aug 2025 17:48:22 +0100
+Message-ID: <20250819164822.15518-1-adelodunolaoluwa@yahoo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240220-rk3568-vicap-v10-8-62d8a7b209b4@collabora.com>
+Content-Transfer-Encoding: 8bit
+References: <20250819164822.15518-1-adelodunolaoluwa.ref@yahoo.com>
 
-Hi Michael,
+Fix kernel-doc warning by adding missing @name
+parameter description for the name_contains_dotdot()
+function.
 
-I am seeing IOMMU page faults: See below.
+Fixes the following warning:
 
-On Tue, Aug 19, 2025 at 01:26:00AM +0200, Michael Riesch via B4 Relay wrote:
-> From: Michael Riesch <michael.riesch@collabora.com>
-> 
-> The RK3568 Video Capture (VICAP) unit features a MIPI CSI-2 capture
-> interface that can receive video data and write it into system memory
-> using the ping-pong scheme. Add support for it.
-> 
-> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+WARNING: ./include/linux/fs.h:3287 function parameter
+'name' not described in 'name_contains_dotdot'
+Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+---
+ include/linux/fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-[..]
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..48a726839e22 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3281,6 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
+ 
+ /**
+  * name_contains_dotdot - check if a file name contains ".." path components
++ *@name: the file name or path to check
+  *
+  * Search for ".." surrounded by either '/' or start/end of string.
+  */
+-- 
+2.43.0
 
->  irqreturn_t rkcif_mipi_isr(int irq, void *ctx)
->  {
-> +	struct device *dev = ctx;
-> +	struct rkcif_device *rkcif = dev_get_drvdata(dev);
->  	irqreturn_t ret = IRQ_NONE;
-> +	u32 intstat;
-> +
-> +	for (unsigned int i = 0; i < rkcif->match_data->mipi->mipi_num; i++) {
-> +		enum rkcif_interface_index index = RKCIF_MIPI_BASE + i;
-> +		struct rkcif_interface *interface = &rkcif->interfaces[index];
-> +
-> +		intstat = rkcif_mipi_read(interface, RKCIF_MIPI_INTSTAT);
-> +		rkcif_mipi_write(interface, RKCIF_MIPI_INTSTAT, intstat);
-> +
-> +		for (unsigned int j = 0; j < interface->streams_num; j++) {
-> +			struct rkcif_stream *stream = &interface->streams[j];
-
-In the TRM you can see in the MIPI_INTSTAT interrupts to detect
-overflows: why not activate them ?
-
-something like this:
-
-#define RKCIF_MIPI_INT_Y_OVERFLOW(id)          BIT(16)
-#define RKCIF_MIPI_INT_UV_OVERFLOW(id)         BIT(17)
-#define RKCIF_MIPI_INT_FIFO_OVERFLOW(id)       BIT(18)
-#define RKCIF_MIPI_INT_CSI2RX_FIFO_OVERFLOW(id)        BIT(20)
-
-and then OR them with the int_mask in rkcif_mipi_start_streaming()
-
-and then you can log the err if something happened ?
-
-> +
-> +			if (intstat & RKCIF_MIPI_INT_FRAME0_END(stream->id) ||
-> +			    intstat & RKCIF_MIPI_INT_FRAME1_END(stream->id)) {
-> +				ret = IRQ_HANDLED;
-> +
-> +				if (stream->stopping) {
-> +					rkcif_mipi_stop_streaming(stream);
-> +					wake_up(&stream->wq_stopped);
-> +					continue;
-> +				}
-> +
-> +				rkcif_stream_pingpong(stream);
-> +			}
-> +		}
-> +	}
->  
->  	return ret;
->  }
-
-Now to the IOMMU page faults:
-
-Camera Sensor: IMX219
-Frame Size: 1920x1080
-Format: SRGGB10P
-
-Packed SRGGB10
---> Every four consecutive samples are packed into 5 bytes
---> Stride = 2400 bytes (1920 * 5/4)
-
-So the imagesize = 1080 * 2400 = 2 592 000
-
-in __vb2_buf_mem_alloc() the size of the buf will be PAGE_ALIGNED in:
-PAGE_ALIGN(vb->planes[plane].length);
-
-So we allocate a buffer with the size: 2 592 768 -> hex = 0x297000
-
-In rkcif_mipi_queue_buffer():
-We will queue a total of two buffers to the HW (2 because of pingpong)
-The first buffer will have the address: 0x00000000ffc00000
-
-We start to capture and then this happens:
-
-rk_iommu fdfe0800.iommu: Page fault at 0x00000000ffe79000 of type write
-rk_iommu fdfe0800.iommu: iova = 0x00000000ffe79000: dte_index: 0x3ff pte_index: 0x279 page_offset: 0x0
-rk_iommu fdfe0800.iommu: mmu_dte_addr: 0x0000000012cc8000 dte@0x0000000012cc8ffc: 0x11a0d001 valid: 1 pte@0x0000000011a0d9e4: 0x31b79006 valid: 0 page@0x0000000000000000 flags: 0x0
-
-With:
-0xffe79000 = 0xffc00000 (buffer address) + 0x297000 (buffersize)
-
---> So the VICAP is overflowing the buffer even though everything was
-correctly configured ?! (If I understood everything correctly ofc.)
-
-I also see the same problem with the SRGGB8 format. It also happens in
-the downstream Radxa/Rockchip Kernel.
-
-Do you see the same problem ?
-
---
-Kind Regards
-Mehdi Djait
 
