@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-776002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C368B2C74C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:41:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E477B2C754
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E528E189AC61
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FF85E3D3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264F027B321;
-	Tue, 19 Aug 2025 14:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087EC279DBC;
+	Tue, 19 Aug 2025 14:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCfMjn7s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kicv+klc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C942773E8
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58646227EB9;
+	Tue, 19 Aug 2025 14:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614486; cv=none; b=mgm99Xaan/6CwEFisp4mJbx/6tnUo1EijoNZ0eGZFQPCGPo9j739qUOJsml4lz8PTSc8nGrBHnQaZFY2E7dOK9Z5iQsqlJw4YKVwOp6hqUJwIDgXFzEIK0slBPAdPUShTIfG8+t2JHCs/WZwpl0gatMUTL5B5IULY4M1BUo+Qa4=
+	t=1755614536; cv=none; b=O8fnt7zCr1m9+1PYSp/hyJwCJggyfg+FtXMs7stqpmujHDdjQIHnKgAIfrrZug7ohaRK4I0zAEXRpB2TKHRhodGQ/5MS7LrWXXzlcU4XfYr9xWZBbEDjKUnsug79DAbOj5biTVQPhj/O8HPYkdAg1QcoaFWkUx38VK6YgBwiOT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614486; c=relaxed/simple;
-	bh=3X8zskgg23YAXa6oY8662gl/iTxu3eC1dGiEIV+n4s8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dahGRsOf9QDsUFeBRvlif/GVGswlFk7p3fxG4WWQoNpCI/v9TuHCHDiiaHnsxTy9topS8a0av47pIPq5OeIg2uYVggV8KRqxa+t0b3e5iFpLVCONxTzPZNgI0WgrVeQiYnBYm90ny6WjbioU4vVesxk23+AMXpF4zekOOVIezmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCfMjn7s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE949C113CF;
-	Tue, 19 Aug 2025 14:41:24 +0000 (UTC)
+	s=arc-20240116; t=1755614536; c=relaxed/simple;
+	bh=cqwQADpES4py+UAccBwue5Qou0LgZbNLPNo27fvu4p0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KZLrKt/dg1qhN6kX29TDBHhSakRWd9/X6izsAwtYtn9M2aEZisMeOQkJqJc4M0FnMwcAinWL+AH3FaeaZpWGYtDSH6zl+ixBN/B3IofJOzHxs0l7bVXf0FxdFHrZN9nOyP55oCWI0an18GnEPkPq1H48gsSfK2gYUctc/1Gk/go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kicv+klc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC71C4CEF1;
+	Tue, 19 Aug 2025 14:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755614486;
-	bh=3X8zskgg23YAXa6oY8662gl/iTxu3eC1dGiEIV+n4s8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PCfMjn7s4k/a8u+2sH91mo7APwnnaq4c+tiHUj9PTg+ebiFwcY1wovT5m1yG4o137
-	 YqC5RbMH4I5oABysVVgDVTqVYI0T4ZFLh2Yea71cyqndBAUKrKlbwT9boPUjqZT8nv
-	 lDzoRsqW1wNB6/QdBOwXFDu1Df6L5PlFR24403b/Hvcsi0nbC0Pdr2vqiaG9TatPhs
-	 LL2u3u5WsfLoO7AZ7mdXM7VnnUWYg613D/+y0POq2BKmiARB0CszpH/ueagejOqsxQ
-	 fzze3HqsaAKmAqRDk9CuXR1t99o6SYvXh1t1MOy5zSdvmETYsbNDN4RM3vcn5ooUFM
-	 9+djfdNDkPFXw==
-Date: Tue, 19 Aug 2025 17:41:20 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: pratyush.brahma@oss.qualcomm.com
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/numa_memblks: Use SZ_1M macro to denote bytes to MB
- conversion
-Message-ID: <aKSNED01R-AaclOT@kernel.org>
-References: <20250819-numa-memblks-refac-v1-1-936b4fd35000@oss.qualcomm.com>
+	s=k20201202; t=1755614536;
+	bh=cqwQADpES4py+UAccBwue5Qou0LgZbNLPNo27fvu4p0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kicv+klc2cIfiXFaq2sWfwYPPMXQsWzdHFOAlFRIs5e3dbX95dkJ7kDUog6a62sOh
+	 jPJwjboA5nDUPvI4at1SAw8OWQ+a9SvASNHzu5wg+9sBB56p/iyIhXs0rX87l+cozs
+	 UmkXEwwGbg3p8q+o2yCwCztEeZolwoCccDFGHK4Sxzbd2q3Ng1BsOCTND2d9zqP/kc
+	 cP7JvWhhOKDowMXIP0YJfXGW1kMYsFtJlFvulYGeabY4C7cMwViRgbzh1wTezFEd5g
+	 2Z41X0WxNsA7oiNTqBtCB/gmEqWfbjW3evPvSoEFgj8Mzlx/YWCcYHGm2N5lfEY403
+	 tGxAqddpzvM9A==
+Date: Tue, 19 Aug 2025 07:42:14 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?xYF1a2Fzeg==?= Majewski <lukasz.majewski@mailbox.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v18 5/7] net: mtip: Add mtip_switch_{rx|tx} functions
+ to the L2 switch driver
+Message-ID: <20250819074214.23d4332a@kernel.org>
+In-Reply-To: <20250819103119.42a64541@wsk>
+References: <20250813070755.1523898-1-lukasz.majewski@mailbox.org>
+	<20250813070755.1523898-6-lukasz.majewski@mailbox.org>
+	<20250815183359.352a0ecb@kernel.org>
+	<20250819103119.42a64541@wsk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-numa-memblks-refac-v1-1-936b4fd35000@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 02:21:44PM +0530, pratyush.brahma@oss.qualcomm.com wrote:
-> From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-> 
-> Replace the manual bitwise conversion of bytes to MB with
-> SZ_1M macro, a standard macro used within the mm subsystem,
-> to improve readability.
+On Tue, 19 Aug 2025 10:31:19 +0200 =C5=81ukasz Majewski wrote:
+> > The rx buffer circulation is very odd. =20
+>=20
+> The fec_main.c uses page_pool_alloc_pages() to allocate RX page from
+> the pool.
+>=20
+> At the RX function the __build_skb(data, ...) is called to create skb.
+>=20
+> Last step with the RX function is to call skb_mark_for_recycle(skb),
+> which sets skb->pp_recycle =3D 1.
+>=20
+> And yes, in the MTIP I do copy the data to the newly created skb in RX
+> function (anyway, I need to swap bytes in the buffer).=20
+>=20
+> It seems like extra copy is performed in the RX function.
 
-There are few others:
+Right, so the use of page pool is entirely pointless.
+The strength of the page pool is recycling the pages.
+If you don't free / allocate pages on the fast path you're=20
+just paying the extra overhead (of having a populated cache)
 
-$ git grep '>> 20' mm/
-mm/memblock.c:          mem_size_mb = memblock_phys_mem_size() >> 20;
-mm/memblock.c:                 (nr_pages << PAGE_SHIFT) >> 20, mem_size_mb);
-mm/numa_emulation.c:           nid, eb->start, eb->end - 1, (eb->end - eb->start) >> 20);
-mm/numa_emulation.c:                    size >> 20, min_size >> 20);
+> > Also you are releasing the page to be recycled without clearing it
+> > from the ring. I think you'd free it again on shutdown, so it's a
+> > double-free. =20
+>=20
+> No, the page is persistent. It will be removed when the driver is
+> closed and memory for pages and descriptors is released.
 
-It makes sense to replace all of them in one patch.
- 
-> Signed-off-by: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-> ---
->  mm/numa_memblks.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-> index 541a99c4071a67e5b0ef66f4136dee268a880003..a47aa262a33366337c38ccc7c7064da818523dd2 100644
-> --- a/mm/numa_memblks.c
-> +++ b/mm/numa_memblks.c
-> @@ -427,9 +427,9 @@ static int __init numa_register_meminfo(struct numa_meminfo *mi)
->  		unsigned long pfn_align = node_map_pfn_alignment();
->  
->  		if (pfn_align && pfn_align < PAGES_PER_SECTION) {
-> -			unsigned long node_align_mb = PFN_PHYS(pfn_align) >> 20;
-> +			unsigned long node_align_mb = PFN_PHYS(pfn_align) / SZ_1M;
->  
-> -			unsigned long sect_align_mb = PFN_PHYS(PAGES_PER_SECTION) >> 20;
-> +			unsigned long sect_align_mb = PFN_PHYS(PAGES_PER_SECTION) / SZ_1M;
->  
->  			pr_warn("Node alignment %luMB < min %luMB, rejecting NUMA config\n",
->  				node_align_mb, sect_align_mb);
-> 
-> ---
-> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-> change-id: 20250819-numa-memblks-refac-7b4b5017b598
-> 
-> Best regards,
-> -- 
-> Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-> 
+So remove the page_pool_recycle_direct() call, please:
 
--- 
-Sincerely yours,
-Mike.
+  static int mtip_switch_rx(struct net_device *dev, int budget, int *port)
+	...
+	skb =3D netdev_alloc_skb(pndev, pkt_len + NET_IP_ALIGN);
+	if (unlikely(!skb)) {
+			...
+			page_pool_recycle_direct(fep->page_pool, page);
 
