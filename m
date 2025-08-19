@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-775593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D92AB2C11C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:49:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594D8B2C095
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602611BA6BEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C893A6AAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BFE33470A;
-	Tue, 19 Aug 2025 11:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D021A32BF26;
+	Tue, 19 Aug 2025 11:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5aCQ/Kq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6OYW1j2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C04B32C31C;
-	Tue, 19 Aug 2025 11:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AB530F813;
+	Tue, 19 Aug 2025 11:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755604103; cv=none; b=bABDp2UWyAniaE8Lq9wbI05zbd7jif0SYKOWVMep8Fmz0UZ0ceKjyUuTjzS04VY2QQ83OLqOqiakoyuX81gBZ4VYQqCbqPjBUzMW1KYoOukp6GzJd1JPN6HWjy//y3RCEGjhqcbg8kXrxGuOmlILPVDKQapM7ZqsyvU7pSq7c54=
+	t=1755603121; cv=none; b=BT6iN3/c3GMv6TEoBZ6D5rVPWouTOVSRAUFdxm5C+hg704XYimjTlklJcPmJaoXKCOgNDKwp3Nt6mTsnxT0piGqatTGZoaZ3GVA0JSS8kkckV8FVkrsbeCwBqL6LylQc3dTlPiAlHRZa/faBC5jzfLCtoq4hHufm3085j9C4P7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755604103; c=relaxed/simple;
-	bh=kK494ULd0FaqUhSjJYz7AcYCn5SJUR6HSRFGqIrWw6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ungS9XRLAkIFuxBinXiLkMiaBo5wuq+FWIVdl4R37LnrGGIVnnqUegKrHegiCjkq4WHjNAcZxhqxx8UykCOVNGx2+4EMIhEfG7q8hzk6Zd+JvBsR7M3S+Q8n92S4uG1GqcLqb5skMuWISzaoHTwXgQXZdZ7/k8t/0YSZc73HOjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5aCQ/Kq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA7CC4CEF1;
-	Tue, 19 Aug 2025 11:48:20 +0000 (UTC)
+	s=arc-20240116; t=1755603121; c=relaxed/simple;
+	bh=xk21yYxTPrpJlQW1zpMfkatIUVFMuWMI1dlu7eQZ/Ds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=To0N9DMjgycrOLatLZ/NrRl48/kbRWF/cqM5NqqXTZW7aL/Ek/vtVSi8HhIULL77nuyGiQ+WYD6zwnHWyJMhqaEamm8PrcHptU4AQIY0d6UVrTNtna7ZUaNrU2h/wVkFPnDeqBy7xeAA2IVFDFHjtx5oXQ2Cx6NlcpsOd1E8vcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6OYW1j2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A1EC4CEF1;
+	Tue, 19 Aug 2025 11:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755604103;
-	bh=kK494ULd0FaqUhSjJYz7AcYCn5SJUR6HSRFGqIrWw6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X5aCQ/KqYRNrdXC8wx8LBSO/6BmDsylC64A39uv+l04MKM77Of6zuuRFMqnJ4jz1K
-	 QlIvn+Fz/+A7x+TRdqRFQTPklIQLQAXWZcJqQVuqGotceDheTuj3SkyyjznbVlQSq8
-	 7Z2AuiLooffkNLTStoKkVVnADcbQQB5WHISy1U04Srm/6hZfUvTPRbseAGTePd2zIn
-	 ZkeyZBNN0ON3E4xC/JXz5xLqKs9z/rZnyDM0JgIW9tX4GIkMQR9yXSej3wQyVJIo7B
-	 MI9jJD0aTOYZLG/nzGPtEJKSlEpElPFYMqrJtq+9j/RCoP8glBiGvW0QDCqf2dAhIV
-	 GJgXGjrR9wr0A==
-Date: Tue, 19 Aug 2025 19:31:08 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Richard Leitner <richard.leitner@linux.dev>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: usb: usb251xb: make reg optional for
- no I2C ctrl use case
-Message-ID: <aKRgfFpF8thM3vjr@xhacker>
-References: <20250819002217.30249-1-jszhang@kernel.org>
- <20250819002217.30249-2-jszhang@kernel.org>
- <20250819-eminent-cobra-from-venus-d891b6@kuoka>
+	s=k20201202; t=1755603120;
+	bh=xk21yYxTPrpJlQW1zpMfkatIUVFMuWMI1dlu7eQZ/Ds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=n6OYW1j2RqLKw6TyxArRNH26G93qpiwO6sRXgeCNldIveXwLltxRkGLtMabet3CkR
+	 wQunkdQE7q5QiwMJCbpYdt8O6DObyoAjcwi+NUpVdD1LWVLiRvR3Xl04sBvA9cOdwe
+	 zALJ2IKZK7SnG+TPAJ+dQ47ImZU51W9t4818hC0egbkeKD7mpoRahPNYYsyY3JMv6e
+	 abDHF2GE5nEXgrC8hNA2fepVnxx3yAFN86vfXmymXazAq0XpeJ5sKLI/6aAUdQuEie
+	 wcQZDTNNUFjyWbFVjQ0iBGgEZmTJhzc7j8DRl84kLsy1FvRZs7s4Icfd17Eq2CoDLv
+	 ZsuAuvAhyxUSQ==
+From: Srinivas Kandagatla <srini@kernel.org>
+To: amahesh@qti.qualcomm.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+ sumit.semwal@linaro.org, christian.koenig@amd.com, 
+ thierry.escande@linaro.org, quic_vgattupa@quicinc.com, 
+ Ling Xu <quic_lxu5@quicinc.com>
+Cc: quic_kuiw@quicinc.com, ekansh.gupta@oss.qualcomm.com, 
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250807100420.1163967-1-quic_lxu5@quicinc.com>
+References: <20250807100420.1163967-1-quic_lxu5@quicinc.com>
+Subject: Re: [PATCH v3 0/4] Add missing fixes to FastRPC driver
+Message-Id: <175560311807.1303568.7881475983315661805.b4-ty@kernel.org>
+Date: Tue, 19 Aug 2025 12:31:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250819-eminent-cobra-from-venus-d891b6@kuoka>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Tue, Aug 19, 2025 at 11:22:51AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Aug 19, 2025 at 08:22:15AM +0800, Jisheng Zhang wrote:
-> > Make "reg" optional to allow the driver to be used to manage GPIO
-> > based control of the device.
+
+On Thu, 07 Aug 2025 15:34:16 +0530, Ling Xu wrote:
+> This patch series adds the listed bug fixes that have been missing
+> in upstream fastRPC driver.
+> - Store actual size of map and check it against the user passed size.
+> - Consider map buf for map lookup.
+> - Fix possible map leak in fastrpc_put_args.
+> - Skip refcount increment for DMA handles.
+> Patch [v2]: https://lore.kernel.org/linux-arm-msm/20250806115114.688814-1-quic_lxu5@quicinc.com/
 > 
-> I don't understand how optional reg allows or disallows anything for the
-> driver. It's really not relevant to GPIO at all.
+> [...]
 
-w/o this patch, then there will be DT check complains for the following
-usb251xb usage:
+Applied, thanks!
 
-usb-hub {
-	compatible = "microchip,usb2512b";
-	reset-gpios = <&porta 2 GPIO_ACTIVE_LOW>;
-};
+[1/4] misc: fastrpc: Save actual DMA size in fastrpc_map structure
+      commit: 69fb36431c5e1bd09981f931b3030296cdc6c7b5
+[2/4] misc: fastrpc: Fix fastrpc_map_lookup operation
+      commit: a8b2a851e3f9a8497ff857d9a152659988612af4
+[3/4] misc: fastrpc: fix possible map leak in fastrpc_put_args
+      commit: ba7a9771f1e3a622d51f95a1f5a4ff9958ca5c64
+[4/4] misc: fastrpc: Skip reference for DMA handles
+      commit: cbf27dd4e98e5a3b71dbe89972461ce5bb4c188c
 
+Best regards,
+-- 
+Srinivas Kandagatla <srini@kernel.org>
 
-> 
-> Also feels wrong, but maybe you just lack proper, reasonable
-> justification. Just explain carefully the hardware, not drivers.
-
-It's simple, the hub allows usage w/o connecting to any i2c, see above
-example for reference. But current dt-binding make the reg required.
-
-Regards.
 
