@@ -1,670 +1,166 @@
-Return-Path: <linux-kernel+bounces-775413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A996B2BEDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7670B2BEE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D134524128
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D482E5230FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F73D311968;
-	Tue, 19 Aug 2025 10:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DC131CA58;
+	Tue, 19 Aug 2025 10:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P5JhTto1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kYlZo1TZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FA4275860
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCD827990A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755599213; cv=none; b=T+MQo2cxRNBwRv2xqlS/kksEHq83aTDIGgjebGdkewwWBGa4MjAtMBOFYIxIwNjMNXU3T4o2oRmrch9g0zRDIfn1A3gqp455qtUfMdQIZW9iEjnoD5RCBzDP2mk8P20wRHfnZncpfNz4nDJwdkf1dVfeoXt4LAhv2Gda1i2iKgc=
+	t=1755599276; cv=none; b=nXime9eC/vBUIxOOhexZhRoU53nTqdh/vwOs2JIJxf75qYJ5uYRWDRQtUkatI34KD/nvdBVphTRwx86uPuC3ldvEV6zkyrAHHkDTB2TB2dqm7UhHROzMOL2IovzGJLgs4gvy2iHauF/m3QMylt52aOUWvgAPGPDxNtLZ/Cz4psQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755599213; c=relaxed/simple;
-	bh=ndnnqMn48HdwN7z/kDuMJ8Fg8NEVYRyeY1bgb+T59Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ATesQNPtOizWtU6mnTb2CcSyQJoMJJeSWHZpvjxa23zgQH2m/Y+j0Q6vtig0Irq7tMLOCx6XsSVqSr2WX6Aov4V9fJ6ITCL/VEg5KcLb5OlobqRFi9SRdVsn5ank5dNNS9QvDpbMjuKzay6YcUJUEmaOSVXsnRA4uYs1KUa9UyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P5JhTto1; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1755599276; c=relaxed/simple;
+	bh=XHlIDamfozF0NB3BJsqHQ2b+McMZm5vEA+kk0C9b6SM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WlQHGJtAJKfiL5w8f2SdtmkvHjvOr9LXY3vOYjZurqfzkzmAB/aLGUxlX/aD1lV0wX8WilRTKIXpZsliIvLxe9g7BrQ66msbWXvy0saBywLPihFbyz9rY71jJJxg/+mKFIw8jo77R0VS5XBTT1fodlEXlzRRpf4mfxuBErP3TGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kYlZo1TZ; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90XeR023326
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:26:50 GMT
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90WQD027738
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:27:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xE7uyuKMxcBKXrxBsPxzQapw
-	O+ECMi8oJU47VWU7q9s=; b=P5JhTto1xhp44zXtePfv1MxuWSA7GDZeyRAh9H99
-	d8YaN16ENMVeKyPX4BCiLUQgM/LGzLSMHOCijpe/nLqx7t/reYdmHtXOwgpRW9my
-	Zt8Fwb0hceJ52FoDU0RtgTXI90REIKYY58AldirlRofk7rsHlXce4euXEIvdrJ/v
-	yIPXR2hiFEvKveEyRzbV12WXhvyPSQJ5MSbWCk3DhOhUTHwkdT6B9X7EJj4sbNkm
-	6ApxW38pwEm7O+zXLt49RBrYTqwXLx1NpZPtu6o7Fs1j0ncc3WNnK3XzrhIgZFiG
-	48oykR00n9OMD5JRRzcNmQNPWc1mVU8pvuBrFJNuOkDCfQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48m62vk457-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XUfhVRdQ6/3Ng5WhQWu0dh
+	68glt2LJ/MwzF2hOh4lbU=; b=kYlZo1TZzLAka7bMxeRXPCD/1OktA4mIUDGxFl
+	SFzBAP/Kgdd3sFXZQmOBIRoS1UDHaOmGU+yfszUmj6qyADgNgrwZJCLkRVC7vpf7
+	KomcTlIzyhYTvRQjHcV3tEVe6saagNAOYUD1ZHhH807Q845sbasSzNXUV+8jmpeg
+	NQJgS7pgmATZqocaGUfnG1mHqgoR4S1VOHJccydPzUJQwMGOMOX2ef4t5Hnj+yfG
+	wnlaUfMk6ceTzL4cIWBGCnNw7XM+FVLORoO0ynB4v1k7CU419bGk12Sc5lJSWsZN
+	HowRMOpjDOlskybuFDXfgHBHoT24UTA5VPyX+MzINnzoB87g==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jgxtgcae-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:26:49 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b109bc103bso139585001cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:26:49 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:27:53 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24457f4f3ecso61514235ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:27:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755599208; x=1756204008;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xE7uyuKMxcBKXrxBsPxzQapwO+ECMi8oJU47VWU7q9s=;
-        b=tcveVZGaXMY1c10Y3sD/XQq5htkAJu3tWrf/GTi5c5VwB2friByht8QpnuuynSzqcK
-         Bhh88Z+15+bplSLsFXUuCMhiTk/Ec8R7V/5ZT4ERWakDfwPtpJYtuN24J8avv/UUrNpB
-         xvqr2WlxluEUAu1TdeyrHbeFW4CmZQZYlmUtEc5j1D9NooB7qEFd7mUNWGBp79wfFb1P
-         e2ZOMUxCVZHkIYN/a4+aPy/08CBLZ1I0tIM911caFkKktMDsXEcdRn+7WMt3PjHh8Wvi
-         0J4ssoLRZrWuZzHWGeCewYeJwvTZ75GJ433mFz9U8slk8PQhL6BlGubxXpuftsKT5Ew5
-         /2ag==
-X-Forwarded-Encrypted: i=1; AJvYcCX6PvOOegBLdUcW94jFNMm+tK+IFsAWoFIc6FhHMQ/LnNMluTw55auk1Np+Pj6wlSec3mp0njc1Fy5kcjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydZ2wdjf6ScQAKM1zEG/p3HXkDC7ZBNw+kuNdxxTsIm7A9CeYY
-	cM/3rUOrKYi0DY8NdfZ0lU1SiU6i0m2QGmhsUDjXvHLnh6ZCfCWO9WxM01GXka3QIOVNWZxsAVz
-	nHMvwj99oKTbnDeQjF3HdUWdkqyihKyYrrQ0GCNJtej9KKF7keXGs6bwY6y0CcPLQkIw=
-X-Gm-Gg: ASbGncujh/dc/6NRbn4pXofLDBdsPZLvDT2GWQwze48+OE+mFtZw+L/YIUL0adDNIL0
-	06UmtbNG3a6FYpa5LtvD6d1UA7sHLu+urnWSmM5QCwkvsmIg8YyzId2QoBrZ6Zt2Sx1nS59Mvrg
-	SPR7JSUTSw7FuqAKbusLxSbMvBtLxTANRRcI6bkN2BDvUZKl1vOpTdBkwSn+AMNA27YqnCGDVly
-	7bm8xWR1dux9SCAvt8zn4nZguuT7qFnDB+xwcvMhpRjwcuI2yYVafa0LoNLAZMD3wpRfWj/J4ib
-	31xBsp2AY0QcBJ6JNbbAtPBwsa5DWlfOkYcDo7HGla1j7dm25z7TCBcoSmjKRN5xfZkb6ZNLSLh
-	gyGusWrdOWo9H2TzRuHM9+2fZMRiMOQ43mSO/1jyR9LWFREvXWssG
-X-Received: by 2002:ad4:5ca3:0:b0:707:4710:a551 with SMTP id 6a1803df08f44-70c35d9c531mr18088956d6.46.1755599208060;
-        Tue, 19 Aug 2025 03:26:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEL+NwHdqESLr4H1zNqBf4L2J3X7OtnhGZV79//D9XbHk/5wVxx4ZjWe4bRnazONdoj9BEFlg==
-X-Received: by 2002:ad4:5ca3:0:b0:707:4710:a551 with SMTP id 6a1803df08f44-70c35d9c531mr18088626d6.46.1755599207207;
-        Tue, 19 Aug 2025 03:26:47 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3340a41e3cfsm22274001fa.6.2025.08.19.03.26.46
+        d=1e100.net; s=20230601; t=1755599273; x=1756204073;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XUfhVRdQ6/3Ng5WhQWu0dh68glt2LJ/MwzF2hOh4lbU=;
+        b=w+Gy1oamLlrDYzSsGmRchatzRZgY7L56MRIA8oz900Ljx73sPkJnnwqnDNnWbOEwrq
+         W2YG/7lUqljDEsx/VwW1LAiyOO3H71ZdfUFnQyT/Jwua8/TDqbXIwo9h4pM+ELCLwIb2
+         LvgrzX6/CwGIm/yGiY7CAqO0S2GuWlq8WoGm8lJiIGGksRINZCQXXopajJZetBYN6OJw
+         6Wu93mvkWgvzmSXEKWPSlL6AetIdcVZZrTBHpUgCOJHIV6G6hdNT7kQom8gzCzoLzROm
+         i0kNo3pdxjMvaWm9xpB12g6aAuiasTfirFfu5NlOgHwW+SOE5so77ttsiATXMLE0MAWR
+         J7lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSrgdaa5U7gbFnQW2blhyoNqr7Zo4v1lxVYHZId8JoGlHdt3h+MwxLs4X+rpmvnj2GbvJ7/nvQ1oOC9aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAo8ME0csOm8rVmLPJB9z4pZnLILyNlOwDZR+KHcXZh6s0xHQv
+	Xa69te68AkO6GJTfZ4jZiT2ouebnNmYijyOiyMTon9fQ94KfTp0FfczqpVReREN9Rj1UgRLd8B7
+	82mmmf5T/0CNXYBppsqBvvs/y396A2RFZ1OoIW6E2kXE6K5QNgoOeCFjPV9ghqEorHMM=
+X-Gm-Gg: ASbGncsMTc1QROZsVfVh49Rf+XzRGlgsYAVJr1aeSoY+3LiwU2LyOXMw9BKYil5j8No
+	w/woouVBT8EqMsV2bqdIRXRgbCsKH2XNCvU/qHqx5nsLVq6iccZx/tTnOJJKlOjMcbzs4NYOGvr
+	XeoG6jVb7CTdhNcTKpQOVxcUka0hxDkBYSPNEyyryrcqWujvCrWaoQO2nzJhqfDMFt0prWV6tJP
+	D5IC+fEKQwTs6LGzlOyewpFpotQzMBFEcm3VpXTklgFWt0uurbRoq0LwhaEg/pIeb7o+HBZZZSG
+	gI1TNqjahnCCcE6I+tkwB+tKtFWXz2PAKQSmn4RmwblDB3bknlVt93njXjWGu7xzOwAOCGv8Kgf
+	aeKppxTyHrRBeA8Jo1P5yAA==
+X-Received: by 2002:a17:903:1b04:b0:240:84b:a11a with SMTP id d9443c01a7336-245e045d719mr27783375ad.17.1755599272904;
+        Tue, 19 Aug 2025 03:27:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkkTrBxR/KyTC6Y/uomVmhYDGXtvfmzqkiXxTlXuSZLzj8nMvj3e+2tNVfCfiHbyyASg7A3w==
+X-Received: by 2002:a17:903:1b04:b0:240:84b:a11a with SMTP id d9443c01a7336-245e045d719mr27783065ad.17.1755599272479;
+        Tue, 19 Aug 2025 03:27:52 -0700 (PDT)
+Received: from hu-yuanfang-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3237e3eef8fsm2499643a91.18.2025.08.19.03.27.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 03:26:46 -0700 (PDT)
-Date: Tue, 19 Aug 2025 13:26:44 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-Message-ID: <63xsz4p45hkz23z5hnqzyminrsr2s7m6u74csw244wmlaaihqa@4ib2opfe5l2v>
-References: <20250812145256.135645-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.6fffab14-bc0e-422f-81bd-f55176f1f6c8@emailsignatures365.codetwo.com>
- <20250812145256.135645-3-mike.looijmans@topic.nl>
+        Tue, 19 Aug 2025 03:27:52 -0700 (PDT)
+From: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+Subject: [PATCH v2 0/3] coresight-tnoc: Add support for Interconnect TNOC
+Date: Tue, 19 Aug 2025 03:27:42 -0700
+Message-Id: <20250819-itnoc-v2-0-2d0e6be44e2f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812145256.135645-3-mike.looijmans@topic.nl>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE4MDEzOSBTYWx0ZWRfXxz8a18hAFJeS
- XkQ506tBx8YWIDUwaeaitYEj96TH+SLQ2yJnou+hZSe0z7Mg1mQL72kKECBWMWN6FhcBW+tr+Vl
- FYvcJ8PdQu7MIsmvWknHoAf01VsB5irH4/tJ6GIr3J8dJc+GdPPgyDfheyXqKIrkL+hRmMKqYya
- KKODBPe0NsfddUpI/YLs2hdaqPBOee0SXkXH5HP0Bfr2M4nBAzs829r80g2MBJ+39NTf4PLr1si
- jFsQ3MRz9UjQ2DYckEwFS6rZtkhXEFMKYWmcV7x2Y/PEaWHPvCG+jPvMw4yAZjYwHrgwdzN4m1Q
- BdsI1F947E/qJy7N3W3vpcealvzbKu9opCWoaqIBYsd+HHaL94K2xqjaHqTnojlH7UmBDrrYmsq
- gzykSLGq
-X-Proofpoint-GUID: QfaPHPPeF8AF7Ot_uvDd3WbEeMcxDfwx
-X-Authority-Analysis: v=2.4 cv=A4tsP7WG c=1 sm=1 tr=0 ts=68a45169 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=Z6EfDJrRAAAA:8 a=4mo8Gh65AAAA:8 a=2DNHKj4biBUlbhhL0xsA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=GLvejNd0Yr38jcbvy3o4:22
- a=-TqyL22UkbLrTLSMRg8E:22
-X-Proofpoint-ORIG-GUID: QfaPHPPeF8AF7Ot_uvDd3WbEeMcxDfwx
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ9RpGgC/12Myw7CIBBFf6WZtTRAX8SV/2G6QKB2EguVqUTT8
+ O9il25ucm5Ozg7kIjqCc7VDdAkJgy8gTxWYWfu7Y2gLg+Sy40p0DDcfDGt7LofGipviBoq7Rjf
+ h++hcx8Iz0hbi58gm8Xv/C0kwznpplGunQdtGXgJR/XzphwnLUpeBMef8Be4yqRWhAAAA
+X-Change-ID: 20250815-itnoc-460273d1b80c
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel@oss.qualcomm.com, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755599271; l=1208;
+ i=yuanfang.zhang@oss.qualcomm.com; s=20250814; h=from:subject:message-id;
+ bh=XHlIDamfozF0NB3BJsqHQ2b+McMZm5vEA+kk0C9b6SM=;
+ b=7C6M4/UOPx5g23jPQPBAf62HvnTMhZrJOK1dyo2JQfFc3IumuNoX1xYONxfzKsr/SIhyPRB+Y
+ uzpmlgMQzCrDHokCxhGOakwF+xq32r0XeI8ruflGjYU3OPvVakR8Mqz
+X-Developer-Key: i=yuanfang.zhang@oss.qualcomm.com; a=ed25519;
+ pk=9oS/FoPW5k0CsqSDDrPlnV+kVIOUaAe0O5pr4M1wHgY=
+X-Proofpoint-ORIG-GUID: yhc00_exB4kAMIyFbvTeSJ82WjJ3o2Ny
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyMCBTYWx0ZWRfX25FaHjOgVNbc
+ YIU4CwilDV6hUb/lc/q8teeHuryrh7CjHOo3+Q+ssLbiYhH4aTuDDhWy+HCgUc5v7XAQOgVPDxp
+ l8BsULmA8C77XEa6I6csmtN7Imn7ZT+FFsalQ4Ngw2bgbCuYKcaucRTe2FOlo6dVyqQ6inCHH4b
+ AT9AHKzZ9bxkvkXIZ2ZpkAU9NS4EBjiad+CcAzd8yXEKNXmCljc8G5LcJiKLwrIegKq6X/8RXkE
+ Ukpwr2E93OrKtuEqWXxyf6eolNXMtv9htOyvBKgrgAyJ26B7nhSJuajeizdi85uKSr+WFTqSyB2
+ dbbW6DjGVsTWG5CLQQh1A8kGIfZBGZ519Vy2+UHS71t967YeMdmc9kFkuSekBHGdBq5gXVmnlrX
+ n5KcNZLQ
+X-Proofpoint-GUID: yhc00_exB4kAMIyFbvTeSJ82WjJ3o2Ny
+X-Authority-Analysis: v=2.4 cv=V7B90fni c=1 sm=1 tr=0 ts=68a451a9 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=s8j_kBg_6ddNrZYoh_kA:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 adultscore=0 malwarescore=0 bulkscore=0
- spamscore=0 impostorscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508180139
+ priorityscore=1501 phishscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ suspectscore=0 impostorscore=0 bulkscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508160020
 
-On Tue, Aug 12, 2025 at 04:51:35PM +0200, Mike Looijmans wrote:
-> The tmds181 and sn65dp159 are "retimers" and hence can be considered
-> HDMI-to-HDMI bridges. Typical usage is to convert the output of an
-> FPGA into a valid HDMI signal, and it will typically be inserted
-> between an encoder and hdmi-connector.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> ---
-> 
->  drivers/gpu/drm/bridge/Kconfig      |  11 +
->  drivers/gpu/drm/bridge/Makefile     |   1 +
->  drivers/gpu/drm/bridge/ti-tmds181.c | 512 ++++++++++++++++++++++++++++
->  3 files changed, 524 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/ti-tmds181.c
-> 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index b9e0ca85226a..753177fc9b50 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -430,6 +430,17 @@ config DRM_TI_SN65DSI86
->  	help
->  	  Texas Instruments SN65DSI86 DSI to eDP Bridge driver
->  
-> +config DRM_TI_TMDS181
-> +        tristate "TI TMDS181 and SN65DP159 HDMI retimer bridge driver"
-> +	depends on OF
-> +	select DRM_KMS_HELPER
-> +	select REGMAP_I2C
-> +	help
-> +	  Enable this to support the TI TMDS181 and SN65DP159 HDMI retimers.
-> +	  The SN65DP159 provides output into a cable (source) whereas the
-> +	  TMDS181 is meant to forward a cable signal into a PCB (sink). Either
-> +	  can be set up as source or sink though.
-> +
->  config DRM_TI_TPD12S015
->  	tristate "TI TPD12S015 HDMI level shifter and ESD protection"
->  	depends on OF
-> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-> index 245e8a27e3fc..f4b5089e903c 100644
-> --- a/drivers/gpu/drm/bridge/Makefile
-> +++ b/drivers/gpu/drm/bridge/Makefile
-> @@ -39,6 +39,7 @@ obj-$(CONFIG_DRM_TI_SN65DSI83) += ti-sn65dsi83.o
->  obj-$(CONFIG_DRM_TI_SN65DSI86) += ti-sn65dsi86.o
->  obj-$(CONFIG_DRM_TI_TDP158) += ti-tdp158.o
->  obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
-> +obj-$(CONFIG_DRM_TI_TMDS181) += ti-tmds181.o
->  obj-$(CONFIG_DRM_TI_TPD12S015) += ti-tpd12s015.o
->  obj-$(CONFIG_DRM_NWL_MIPI_DSI) += nwl-dsi.o
->  obj-$(CONFIG_DRM_ITE_IT66121) += ite-it66121.o
-> diff --git a/drivers/gpu/drm/bridge/ti-tmds181.c b/drivers/gpu/drm/bridge/ti-tmds181.c
-> new file mode 100644
-> index 000000000000..6fbbc13ddc10
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/ti-tmds181.c
-> @@ -0,0 +1,512 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * TI tmds181 and sn65dp159 HDMI redriver and retimer chips
-> + *
-> + * Copyright (C) 2018 - 2025 Topic Embedded Products <www.topic.nl>
-> + *
-> + * based on code
-> + * Copyright (C) 2007 Hans Verkuil
-> + * Copyright (C) 2016, 2017 Leon Woestenberg <leon@sidebranch.com>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/i2c.h>
-> +#include <linux/slab.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/delay.h>
-> +
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_crtc.h>
-> +#include <drm/drm_print.h>
-> +#include <drm/drm_probe_helper.h>
-> +
-> +MODULE_DESCRIPTION("I2C device driver for DP159 and TMDS181 redriver/retimer");
-> +MODULE_AUTHOR("Mike Looijmans");
-> +MODULE_LICENSE("GPL");
-> +
-> +#define TMDS181_REG_ID		0
-> +#define TMDS181_REG_REV		0x8
-> +#define TMDS181_REG_CTRL9	0x9
-> +/* Registers A and B have a volatile bit, but we don't use it, so cache is ok */
-> +#define TMDS181_REG_CTRLA	0xA
-> +#define TMDS181_REG_CTRLB	0xB
-> +#define TMDS181_REG_CTRLC	0xC
-> +#define TMDS181_REG_EQUALIZER	0xD
-> +#define TMDS181_REG_EYESCAN	0xE
+This patch series adds support for the Qualcomm CoreSight Interconnect TNOC
+(Trace Network On Chip) block, which acts as a CoreSight graph link forwarding
+trace data from subsystems to the Aggregator TNOC. Unlike the Aggregator TNOC,
+this block does not support aggregation or ATID assignment.
 
-Usually it's recommended to use lowercase hex.
+Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+---
+Changes in v2:
+- Refactor the dt-binding file.
+- Change "atid" type from u32 to int, set it as "-EOPNOTSUPP" for non-AMBA device.
+- Link to v1: https://lore.kernel.org/r/20250815-itnoc-v1-0-62c8e4f7ad32@oss.qualcomm.com
 
-> +
-> +enum tmds181_chip {
-> +	tmds181,
-> +	dp159,
-> +};
-> +
-> +struct tmds181_data {
-> +	struct i2c_client *client;
-> +	struct regmap *regmap;
-> +	struct drm_bridge *next_bridge;
-> +	struct drm_bridge bridge;
-> +	enum tmds181_chip chip;
-> +};
-> +
+---
+Yuanfang Zhang (3):
+      dt-bindings: arm: qcom: Add Coresight Interconnect TNOC
+      coresight-tnoc: add platform driver to support Interconnect TNOC
+      coresight-tnoc: Add runtime PM support for Interconnect TNOC
 
-[...]
+ .../bindings/arm/qcom,coresight-itnoc.yaml         |  96 ++++++++++++++
+ drivers/hwtracing/coresight/coresight-tnoc.c       | 147 ++++++++++++++++++---
+ 2 files changed, 226 insertions(+), 17 deletions(-)
+---
+base-commit: 2b52cf338d39d684a1c6af298e8204902c026aca
+change-id: 20250815-itnoc-460273d1b80c
 
-> +
-> +static const char * const tmds181_modes[] = {
-> +	"redriver",
-> +	"auto1",
-> +	"auto2",
-> +	"retimer",
-> +};
-> +
-> +static ssize_t mode_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct tmds181_data *data = dev_get_drvdata(dev);
-> +	const char *equalizer;
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(data->regmap, TMDS181_REG_CTRLA, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (val & BIT(4)) {
-> +		if (val & BIT(5))
-> +			equalizer = "eq-adaptive";
-> +		else
-> +			equalizer = "eq-fixed";
-> +	} else {
-> +		equalizer = "eq-disabled";
-> +	}
-> +
-> +	return scnprintf(buf, PAGE_SIZE, "%6s %s %s\n",
-> +			(val & BIT(7)) ? "sink" : "source",
-> +			tmds181_modes[val & 0x03],
-> +			equalizer);
-> +}
-> +
-> +static ssize_t mode_store(struct device *dev,
-> +		struct device_attribute *attr, const char *buf, size_t len)
-> +{
-> +	struct tmds181_data *data = dev_get_drvdata(dev);
-> +	u32 val;
-> +	int ret;
-> +	int i;
-> +
-> +	/* Strip trailing newline(s) for being user friendly */
-> +	while (len && buf[len] == '\n')
-> +		--len;
-> +
-> +	/* Need at least 4 actual characters */
-> +	if (len < 4)
-> +		return -EINVAL;
-> +
-> +	ret = regmap_read(data->regmap, TMDS181_REG_CTRLA, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(tmds181_modes); ++i) {
-> +		if (strncmp(tmds181_modes[i], buf, len) == 0) {
-> +			val &= ~0x03;
-> +			val |= i;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (strncmp("sink", buf, len) == 0)
-> +		val |= BIT(7);
-> +
-> +	if (strncmp("source", buf, len) == 0)
-> +		val &= ~BIT(7);
-> +
-> +	if (strncmp("eq-", buf, 3) == 0) {
-> +		switch (buf[3]) {
-> +		case 'a': /* adaptive */
-> +			val |= BIT(4) | BIT(5);
-> +			break;
-> +		case 'f': /* fixed */
-> +			val |= BIT(4);
-> +			val &= ~BIT(5);
-> +			break;
-> +		case 'd': /* disable */
-> +			val &= ~(BIT(4) | BIT(5));
-> +			break;
-> +		}
-> +	}
-> +
-> +	/* Always set the "apply changes" bit */
-> +	val |= BIT(2);
-> +
-> +	ret = regmap_write(data->regmap, TMDS181_REG_CTRLA, val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +/* termination for HDMI TX: 0=off, 1=150..300, 3=75..150 ohms */
-> +static ssize_t termination_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct tmds181_data *data = dev_get_drvdata(dev);
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(data->regmap, TMDS181_REG_CTRLB, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	val >>= 3;
-> +	val &= 0x03;
-> +
-> +	return scnprintf(buf, PAGE_SIZE, "%u\n", val);
-> +}
-> +
-> +static ssize_t termination_store(struct device *dev,
-> +		struct device_attribute *attr, const char *buf, size_t len)
-> +{
-> +	struct tmds181_data *data = dev_get_drvdata(dev);
-> +	u32 val;
-> +	unsigned long newval;
-> +	int ret;
-> +
-> +	ret = regmap_read(data->regmap, TMDS181_REG_CTRLB, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = kstrtoul((const char *) buf, 10, &newval);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (newval > 3)
-> +		return -EINVAL;
-> +
-> +	val &= ~(0x03 << 3);
-> +	val |= newval << 3;
-> +
-> +	ret = regmap_write(data->regmap, TMDS181_REG_CTRLB, val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static DEVICE_ATTR_RW(mode);
-> +static DEVICE_ATTR_RW(termination);
-
-Undocumented ABI. Why are they configured at runtime rather than through
-the DT / fwnode?
-
-> +
-> +static struct attribute *tmds181_attrs[] = {
-> +	&dev_attr_mode.attr,
-> +	&dev_attr_termination.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group tmds181_attr_group = {
-> +	.attrs = tmds181_attrs,
-> +};
-> +
-> +static const u8 tmds181_id_tmds181[8] = "TMDS181 ";
-> +static const u8 tmds181_id_dp159[8]   = "DP159   ";
-> +
-> +static int tmds181_check_id(struct tmds181_data *data)
-> +{
-> +	int ret;
-> +	int retry;
-> +	u8 buffer[8];
-> +
-> +	for (retry = 0; retry < 20; ++retry) {
-> +		ret = regmap_bulk_read(data->regmap, TMDS181_REG_ID, buffer,
-> +				       sizeof(buffer));
-> +		if (!ret)
-> +			break;
-> +
-> +		/* Compensate for very long OE power-up delays due to the cap */
-> +		usleep_range(5000, 10000);
-> +	}
-> +
-> +	if (ret) {
-> +		dev_err(&data->client->dev, "I2C read ID failed\n");
-> +		return ret;
-> +	}
-> +
-> +	if (memcmp(buffer, tmds181_id_tmds181, sizeof(buffer)) == 0) {
-> +		dev_info(&data->client->dev, "Detected: TMDS181\n");
-> +		data->chip = tmds181;
-> +		return 0;
-> +	}
-> +
-> +	if (memcmp(buffer, tmds181_id_dp159, sizeof(buffer)) == 0) {
-> +		dev_info(&data->client->dev, "Detected: DP159\n");
-> +		data->chip = dp159;
-> +		return 0;
-> +	}
-> +
-> +	dev_err(&data->client->dev, "Unknown or wrong ID: %*pE\n", (int)sizeof(buffer), buffer);
-> +
-> +	return -ENODEV;
-> +}
-> +
-> +static bool tmds181_regmap_is_volatile(struct device *dev, unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	/* IBERT result and status registers, not used yet */
-> +	case 0x15:
-> +	case 0x17 ... 0x1F:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static const struct regmap_config tmds181_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.cache_type = REGCACHE_RBTREE,
-> +	.max_register = 0x20,
-> +	.volatile_reg = tmds181_regmap_is_volatile,
-> +};
-> +
-> +static int tmds181_probe(struct i2c_client *client)
-> +{
-> +	struct tmds181_data *data;
-> +	struct gpio_desc *oe_gpio;
-> +	int ret;
-> +	u32 param;
-> +	u8 val;
-> +
-> +	/* Check if the adapter supports the needed features */
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-> +		return -EIO;
-> +
-> +	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->client = client;
-> +	i2c_set_clientdata(client, data);
-> +	data->regmap = devm_regmap_init_i2c(client, &tmds181_regmap_config);
-> +	if (IS_ERR(data->regmap))
-> +		return PTR_ERR(data->regmap);
-> +
-> +	/* The "OE" pin acts as a reset */
-> +	oe_gpio = devm_gpiod_get_optional(&client->dev, "oe", GPIOD_OUT_LOW);
-> +	if (IS_ERR(oe_gpio)) {
-> +		ret = PTR_ERR(oe_gpio);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&client->dev, "failed to acquire 'oe' gpio\n");
-> +		return ret;
-> +	}
-> +	if (oe_gpio) {
-> +		/* Need at least 100us reset pulse */
-> +		usleep_range(100, 200);
-> +		gpiod_set_value_cansleep(oe_gpio, 1);
-> +	}
-> +
-> +	/* Reading the ID also provides enough time for the reset */
-> +	ret = tmds181_check_id(data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* We take care of power control, so disable the chips PM functions */
-> +	/* SIG_EN=0 PD_EN=1 HPD_AUTO_PWRDWN_DISABLE=1 I2C_DR_CTL=0b11*/
-> +	regmap_update_bits(data->regmap, TMDS181_REG_CTRL9, 0x1f, 0x0f);
-> +
-> +	/* Apply configuration changes */
-> +	if (of_property_read_bool(client->dev.of_node, "source-mode"))
-
-Undocumented DT properties. Please document them in DT bindings.
-
-> +		regmap_update_bits(data->regmap,
-> +				TMDS181_REG_CTRLA, BIT(7), 0);
-> +	if (of_property_read_bool(client->dev.of_node, "sink-mode"))
-> +		regmap_update_bits(data->regmap,
-> +				TMDS181_REG_CTRLA, BIT(7), BIT(7));
-> +	if (of_property_read_bool(client->dev.of_node, "redriver-mode"))
-> +		regmap_update_bits(data->regmap,
-> +				TMDS181_REG_CTRLA, 0x03, 0x00);
-> +	if (of_property_read_bool(client->dev.of_node, "retimer-mode"))
-> +		regmap_update_bits(data->regmap,
-> +				TMDS181_REG_CTRLA, 0x03, 0x03);
-> +	if (of_property_read_bool(client->dev.of_node, "adaptive-equalizer"))
-> +		regmap_update_bits(data->regmap,
-> +			TMDS181_REG_CTRLA, BIT(4) | BIT(5), BIT(4) | BIT(5));
-> +	if (of_property_read_bool(client->dev.of_node, "disable-equalizer"))
-> +		regmap_update_bits(data->regmap, TMDS181_REG_CTRLA, BIT(4), 0);
-> +
-> +	switch (data->chip) {
-> +	case dp159:
-> +		/*  SLEW=0b00 Mode=HDMI DDC_TRAIN_SET=1 */
-> +		val = BIT(0);
-> +		/* Default slew rate is max */
-> +		param = 3;
-> +		if (!of_property_read_u32(client->dev.of_node,
-> +					"slew-rate", &param)) {
-> +			if (param > 3) {
-> +				dev_err(&client->dev, "invalid slew-rate\n");
-> +				return -EINVAL;
-> +			}
-> +			/* Implement 0 = slow, 3 = fast slew rate */
-> +			val = (3 - param) << 6;
-> +		}
-> +		if (of_property_read_bool(client->dev.of_node, "dvi-mode"))
-> +			val |= BIT(5);
-> +		break;
-> +	default:
-> +		/* DDC_DR_SEL=1 DDC_TRAIN_SETDISABLE=1 */
-> +		val = BIT(2) | BIT(0);
-> +		break;
-> +	}
-> +
-> +	/* termination for HDMI TX: 0=off, 1=150..300, 3=75..150 ohms */
-> +	if (!of_property_read_u32(client->dev.of_node, "termination", &param))
-> +		val |= ((param & 0x3) << 3);
-> +
-> +	ret = regmap_write(data->regmap, TMDS181_REG_CTRLB, val);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "regmap_write(B) failed\n");
-> +		return ret;
-> +	}
-> +
-> +	val = 0; /* Default for C register */
-> +	if (!of_property_read_u32(client->dev.of_node, "vswing-data", &param))
-> +		val |= (param << 5);
-> +	if (!of_property_read_u32(client->dev.of_node, "vswing-clk", &param))
-> +		val |= (param << 2);
-> +	/* Datasheet recommends HDMI_TWPST=0b01 for HDMI compliance */
-> +	if (of_property_read_bool(client->dev.of_node, "enable-de-emphasis"))
-> +		val |= 0x01;
-> +	ret = regmap_write(data->regmap, TMDS181_REG_CTRLC, val);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "regmap_write(C) failed\n");
-> +		return ret;
-> +	}
-> +
-> +	/* DIS_HDMI2_SWG: HDMI 1.x only, keep clock at full rate */
-> +	val = BIT(0);
-> +	if (!of_property_read_u32(client->dev.of_node, "eq-data", &param)) {
-> +		val |= (param << 3);
-> +		/* If defined, also force the "fixed" equalizer mode */
-> +		regmap_update_bits(data->regmap, TMDS181_REG_CTRLA, BIT(5), 0);
-> +	}
-> +	if (!of_property_read_u32(client->dev.of_node, "eq-clk", &param)) {
-> +		val |= (param << 1);
-> +		regmap_update_bits(data->regmap, TMDS181_REG_CTRLA, BIT(5), 0);
-> +	}
-> +	ret = regmap_write(data->regmap, TMDS181_REG_EQUALIZER, val);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "regmap_write(EQUALIZER) failed\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = tmds181_apply_changes(data);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "tmds181_apply_changes failed\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = sysfs_create_group(&client->dev.kobj, &tmds181_attr_group);
-> +	if (ret)
-> +		dev_err(&client->dev, "sysfs_create_group error: %d\n", ret);
-> +
-> +	/* Find next bridge in chain */
-> +	data->next_bridge = devm_drm_of_get_bridge(&client->dev, client->dev.of_node, 1, 0);
-> +	if (IS_ERR(data->next_bridge))
-> +		return dev_err_probe(&client->dev, PTR_ERR(data->next_bridge),
-> +				     "Failed to find next bridge\n");
-> +
-> +	/* Register the bridge. */
-> +	data->bridge.funcs = &tmds181_bridge_funcs;
-> +	data->bridge.of_node = client->dev.of_node;
-> +
-> +	return devm_drm_bridge_add(&client->dev, &data->bridge);
-> +}
-> +
-> +static const struct i2c_device_id tmds181_id[] = {
-> +	{ "tmds181", tmds181 },
-> +	{ "sn65dp159", dp159 },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i2c, tmds181_id);
-> +
-> +#if IS_ENABLED(CONFIG_OF)
-> +static const struct of_device_id tmds181_of_match[] = {
-> +	{ .compatible = "ti,tmds181", },
-> +	{ .compatible = "ti,sn65dp159", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, tmds181_of_match);
-> +#endif
-> +
-> +static struct i2c_driver tmds181_driver = {
-> +	.driver = {
-> +		.owner = THIS_MODULE,
-> +		.name	= "tmds181",
-> +		.of_match_table = of_match_ptr(tmds181_of_match),
-> +	},
-> +	.probe		= tmds181_probe,
-> +	.id_table	= tmds181_id,
-> +};
-> +
-> +module_i2c_driver(tmds181_driver);
-> -- 
-> 2.43.0
-> 
-> 
-> Met vriendelijke groet / kind regards,
-> 
-> Mike Looijmans
-> System Expert
-> 
-> 
-> TOPIC Embedded Products B.V.
-> Materiaalweg 4, 5681 RJ Best
-> The Netherlands
-> 
-> T: +31 (0) 499 33 69 69
-> E: mike.looijmans@topic.nl
-> W: www.topic.nl
-> 
-> Please consider the environment before printing this e-mail
-
+Best regards,
 -- 
-With best wishes
-Dmitry
+Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+
 
