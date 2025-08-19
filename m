@@ -1,153 +1,151 @@
-Return-Path: <linux-kernel+bounces-775222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72AFB2BCB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:13:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C77B2BCB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CCBE7B8543
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:11:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F8537B8252
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD22319877;
-	Tue, 19 Aug 2025 09:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A36831A079;
+	Tue, 19 Aug 2025 09:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="si2Jmb4A"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oM/E5tg6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DjN5x7Y1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0071318131
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64287315781;
+	Tue, 19 Aug 2025 09:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755594720; cv=none; b=aD8F2dQqybcbA+J1OUnpamExa5T9sqd6EnVuxxbgxgsdsFu1LPq8XpBVQcIukPuCed6AVc/SHacWo7PDEdj8MTMuEJolH3tFekK98hwjQjz7kDNL5HTIAfKFePb8enShJIw/d/8TBwGmbThf0hivVzIkM0rPp3rjfmuV7sbo2A4=
+	t=1755594708; cv=none; b=g08t/7NNpEnS2OXy/m+2eVTMXVoBAU8rMmaI5OgBY2ErLswVeDgXOWj+fSyTXsEsg+A/rbnYpWZY05PBwXoYZo3wYxA1pAoN8fzg4I0z8LN4tTI/w3TQIkFLJCnG/0TTvsRPbhQ/ajrHLH5GIHCuX9sMOVcb/P/rvdZ3+4ybK/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755594720; c=relaxed/simple;
-	bh=dnsJB4XBdnq79F69BsbT+C1e0Sw7iogBj5KndCGpujs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=kXPOtKM8fG/KIFZHbSXhrcYZobNGvPAtpyKTsB7yiL508H4F/JoQ483hXTMhFN+VHKokROVIT/cEKQ+y+AljHWLPElpObCV+H+nJRs5RRLTsEqfIaO8mR5t+IFGhcOQmYUV5q9BY9mPROi0osBb7gSL1fDsDKDOPBiBiqlB/hC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=si2Jmb4A; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755594705; x=1756199505; i=markus.elfring@web.de;
-	bh=dnsJB4XBdnq79F69BsbT+C1e0Sw7iogBj5KndCGpujs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=si2Jmb4AXKoMow5DbVoNsUWDwB0rWFkAa6XfpeFSELqJawNlxPoVAR6CuHYsy8sy
-	 AgkoC11xTkxrdP4CQq413WGiNL0l2SmYcjw/+tskkkl+8MErCDhfALW74GS12dOmd
-	 I6xSW1HfJ2znuFx6y4J1mpecBvSnc2ngGcYS88quIKY9JpqyX+GEWy57v+7F6EjUI
-	 bwie0CpN2j1IhjPdji1BPrXmHvsGk+o0U4KSTPJjVPigo1JDbqpqG7Y+wg/ljbpye
-	 gg7c7sdEvDoI3V8PQr6CCFl7SNQRfY9ocyIwJ3E7iKEx1ckXvYqcrSqzZsJ5nx8x8
-	 suDryz2NcFrjAgFUmQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MDMzC-1ueuCF0aN4-00BNhv; Tue, 19
- Aug 2025 11:11:45 +0200
-Message-ID: <c98dacc1-46db-4924-bfb3-c56a084eed37@web.de>
-Date: Tue, 19 Aug 2025 11:11:39 +0200
+	s=arc-20240116; t=1755594708; c=relaxed/simple;
+	bh=wTLgXyFErwbqAmB1GzUKHOaEqggvrPIkBrMSoBmmeyQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=siTD+t8f3URk9BNXrN5M2YvREtJKfTZ4S2bmxwxP8RGIlZzVZzqEYj6FQwXP7ZbAfPUUU0vz+YN3Yy6h0Ar4VyJtW2XsdhXC5r0ZTCdawkm2d3A7bgi9XcQxw9nxq7yxisF/BNLGNUwg2YEw6oIJ0Dj9tNCv+jpfFmbVAXTdPNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oM/E5tg6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DjN5x7Y1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 19 Aug 2025 09:11:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755594704;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h1xcSsbomoZtPMZ82+TU5MaT+ilF/IjvCyLG26neCmU=;
+	b=oM/E5tg6U466D6RplaJkrIdd/ZioHRDNeh6OACxjW6C+Y2DROZhg8Bn3pGDvu3j51YZkND
+	9ZqTMashlH3HQRccOSRJ5D1blfFkzclRkTmYEmVTd5E2PbPky7omB1IJmCIokjtPhlV84F
+	libC4Vn5Y6kiz/sMTTTef22j5ZpMkEwQRFOS8UdO3xHxeLosY+kXg99l1G+gKoRHji9S+h
+	w/0hjbgzGPqj4xkYiZ71DfFphS2oNzafd02d166hSPH97ptDMGG7tLOoFxYrk6/INYjn3e
+	z4uR1QFNCukIEvpvsbGZP0GwkO1ZSQCu8dV8sRxYdpWYrChaVX3rx1sYca9zcA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755594704;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h1xcSsbomoZtPMZ82+TU5MaT+ilF/IjvCyLG26neCmU=;
+	b=DjN5x7Y1rc+ofTCD/8A87rNwR44L4ap6E/ocXcPw6LtAgRxzh2Dl/06tI5t3IYNB1/Qlaa
+	s6zAMqnWboXTLeCQ==
+From: "tip-bot2 for Li RongQing" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/bugs: Fix GDS mitigation selecting when
+ mitigation is off
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Li RongQing <lirongqing@baidu.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250819023356.2012-1-lirongqing@baidu.com>
+References: <20250819023356.2012-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, ocfs2-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>,
- Daniel Yang <danielyangkang@gmail.com>, Dmitry Antipov
- <dmantipov@yandex.ru>, Joel Becker <jlbec@evilplan.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>, Mark Fasheh <mark@fasheh.com>
-References: <20250819032958.426932-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] ocfs2: Remove redundant 0 value initialization
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250819032958.426932-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:b5PwUhEO953XhRWJ0uAFoDbGnnaXKc4HRvD/PVftfjSuL66CzMI
- 7xTBUciCXLUuC1EO4bTsBDdqTeQ2zXtAsmjIQ443wbBp0dtZN4D+o8u0/2NBHDNF0gJtDgp
- 35W4mzGkOEqGCyWjyvcAAvQ/d4E6aAAXI/f00bSTVqS2vDP3bI+PG9QaLmapqPAUSVUUUy6
- htvfP7EvZr+1q6Lgmj4Pg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qlODxoJViqo=;MVM0QmGc03VPBsZKb60SFNPYo7D
- iqB69nzssXlz3qu4RHtysZHRE46Idq/W+GEZwt7vBiSr+5yJTOYLmgv4dEyAoxvkPH9ugMWvd
- 27kJ/eFALs9XJ5GsbIrwtneQqasp3uJqB3ol4wQtKiFfMZZ5Tqrj+QThDQq/q+UATQaWM0+83
- UMjgAxelNN9I3F3Wj66I61Fz7+Y4ycpDw8SojH1pVXNJlq0/gZqB21yWENcc4t3v8A79J+ovP
- 9HAdO+CCyqDf+R8gA54v29EoHDwcHURAepJ6u53yLA7PwgXH9vI1oAVlN1FpRR93SVlbmEkm9
- Jd93s1r1CDBwW/tBw2Y62FKsFUKrMikEc1BGtFoNFD01gs7gveTOb6wtUY8rKdlGlxSOQo9qr
- +Sj7tQpp21Dv/pIqZ7pnaqeXFiJJyAL9UG611HW3IpcaaOcjoRQ01vY460kZyoCbqq/Q6V4aU
- mEDGQsYE7npIXEKLoH7otkKk2AfKL2QGljowq8ffM/0ReGLBg0AgT4UyfDH0bg3QaDUqP9I9Z
- 1ahKhkYrEgcQUQ4N43ZpeI56EGhfFdiCRkGqA466O5FoDzWrHlgXXIb1ng+HKeY7fhT3djYA0
- j1ppnt7zoGu0l+pNUNoLMECvDXixjwnggnJX8zXZuYWWMQQejqRdUzrw0clpC2Vp3OaNJQbK7
- wtv6fSjSif9QR845UZIpS95sFTBGBofVhPajDBCCYukefsp+vafqVIuQlaFspm99qaS3Mi8Hm
- vozlN47ShwaYOpabmT9mUX4IX/deFrnp5FXB++ji/k0z9Z44qwEFsvBNDKu+ExMwieQyCjPpi
- a2BEXe+kb9TzfyJ94ouhfSpNagYto52iHdEYDa3e4/fS1KHUf7z8/T0GUg9oZcWKg792wn9ih
- mkZu6kz/isB8iptyPqSpTlFrTtOTSSMlaiko5V+3pjpJ3mMrV2PJFTVSF/svmHKVnClc0tpp6
- tk9QS2DkUJAS8pm5PNz812jeEYetdOaMzEDIFGLBWFisTi3asbEpN8aTkzWBTBLZ5eVJarAAs
- sxtWrMoOEw4spPsMA9Na+XAGNidbXb9xuMKanLq0ZpBHUWJflc5ggNMPijjYEADvKd8w6CYIM
- 1udmWb5Uflgwb/tIRjdMeqD5KOu5GKTUN5Ua/KCUIB8PXWYR7+j9jNzXmjbLdn7UMm8tnUpcH
- s1F+HXek11nS7fA2pAv+L6+enV9f4wsuUpNTHR1xeB81cMaJl+KLDI5CCIM0rQHMrUwAvYJUG
- 5bbDJt2WJmzspyGLkB+S6bAaDFNsj7A9n5pIj41iEjEM523tnvdR53Bfkeiuucg2HJJTd5BaQ
- MxWFNx4uIxAzgOeYbS56uQI8cdNWu1At9jznc8wJdCGTglQFtsN6/QWUooQX5hrD4Wqc9RofA
- TZUA2ErEcGUZ7iYd/ATci8egi6c9kkjXuYPsNgi9JUwV0sfFSUjw4jrblipR5PsCswo7o0KRl
- DY7t5ZG7VAZbeiSdp3SLghkk+vzgVww2ySkquzkLkANZbXvetF+kgvPYKJavgxtGcI2sqKVHW
- VReLYxXLrdp9yXDOHQeJVCj2Vpq/mKAZLYWKlyw5VTlmBrPONLEixF+v0MI/Hvy4ERe56LZI0
- zEXC9C6NhIU+QRvjCZxTzlP78ebs2dIQzf5XKBjZ1gztyi9XmW/+C1mzKeQNM7UzaqFrP6dEX
- 8NmGHfa6WkTAIqQUBwiUa7txqtshOvslEfNldnew52IOm3wRiqSLGzcAc2Rgy2lYsvL2g45hz
- GfXg+pjwL+Q1bIAtWcITjTWGtPxcVwnmhl9vDA4z+DB113sWB6iwKzDqJVZFQVSc4myAr0rw5
- YMBgwVHxat63rFufDKaiF6scMvLghwZW5n0jVG9JpJS9MBtzt2tU2BtsQbvKqQ6jzWvObxwLO
- n6K9eudQyDe0s9L4wat+cuuVrzh529iBS17Pp1KaW9ruZHJ29mnXMsw4ynRjGEi8+Fa0xNe+2
- eD02hFsFoofvlZrv5b7Ch7gXQfR29zzVAKj1CZJy2F20EtSJ6Zi6791UFNVaViZI/fBrD40U2
- 4st/uaNp1SO4tSNWz63QCFyaPQUsVnCtPI7XOqqQi9wbeBySryCWocfQxzKpuFNsJJBSanwrB
- MjKl3Vzguj6XPoXDYqpZbF+qZLoWrXSdWcRDm0n7aXU+zYfV3Mr4M93jh+3VzJtf04j76eGIG
- I1VGvm1Hw7T+zB6sXxqXGyQkusgaT6WVqyT5DH1hAX2Iv7FNBIP1pnYVVwE1iNQd44NsStEXz
- qCcOxxefrdqjIXnnR0k0t6Zs2PogrdxKYl6A/7DL1rgPsxRgK1n3AA2XwUC8OkbphF7g9IlFI
- PLteY9VRGnGEBWV5whRGA6n941y2AI0gDO3HYLHpJVHozZzJ6WuwKCjYebHSjNfqjdTzJX/Tq
- sQgmSBKjUiLhQtPmMoEMn8mAj/XRwtdFJxyiyelTu3OyaGyaOWcI67WP12tisOIodDYoMreP0
- 9QB8Xsw6+qb/tDtZ1lTB79T02em+oyPdYp+rBlkSsqLV6PQYpKkmWdSGv+/ohPvboZpY2QFcL
- nA6H7ZSXOUt9GHKmHgNLK9/tFwAyKUlOuPGQXYN6APmgQnYmtoe2DJqbwAubWQzmhU0+VU6jk
- qGuqgW7OCv+WCfYEmsYZ8KTDYdKwk7L2cvB1NIJmtVNnfRXz/b8CQySoWT0ZzbGnhn6O1Dbgq
- HGGrF1SHDKJIpJ7PMVWYnNZRbahWUdbiaymn+bmUG9xuPRUObZx44M+S+JuM95qUdDpZMjHXz
- x9wl6tGZyrZUtFqWsYPn00wFhtg5FSHKGjsLLhGcLQAQvowplVz9yeWF1/4ipJV1QZ+icWxHl
- ytEeW1OKz2OMKdZPhDbgRAyNcLhNfOm8T1VW4n+shZrNiE6NAklwPjNLo7KLt0j/KGEkiI2mv
- kdQn1+QV9CfOVKXy1MD2G0r8odHrK8NpOiFgAZcYsVX4utTY3CMdrQwJ7xjSh4ZyNm09LeiSW
- w0AON88KhtNEnITyMrxDAFzpzc5SmWX4nxA0zX2d7D/Tc+XM6oGV0qry+HrSjhVsLYjPW68E3
- 0mBxBW/M/kFxPTuX45tMUHRVEALWZ1oZ3SxCKhoxZGSGcXr2xgEXsUL+7hQud5xWa26JM9H4N
- cZpqZmzaXJnyMAr1kL5iwxQvEuqoOJfJ6vXjyMbCTSDa+Hv/cRA6Xky23Fy2X3ifKWMjawalR
- GFk56ehd28r2sY2y+tc7wfYBUkgFL1eoO4LB75tg5C/qY38qxl+u/V32ZNMzQ5xzZ0Z6azPZo
- iAIDZZ9f4OFiUH0oLfFCEAiXFH95cm72k7Y4HEvISE8y/UZ9R/Pzy5+QLcZDVX0cqs9vIyomV
- mi4m+ePjgfFyY4ZqgBVzodqzIEbLoOby1zoTAuqCGDR8/elYOa2iXD0zLiNp9EwtgEd7WoaKs
- XkYmhRtTWIvdC1O+XTiD9HjzFrnB7OYjpfNyedJ3T0Y0zSOuRtHmscLPiQa7wcxwDi85Ur2LL
- Ct/fuz/ZNpf/DRyaT7dSX1dThICVUsrpnv31Dvh5lvdWdPHM625nx75YyHQvzwcAf/Qj0aZfK
- xGXJ2AAGmb4L2Hx4o43i0u0vikFuljGToiuZaSr4cGkIjqOLd3w3H6EhEBn1YHDPnyT0TsWBu
- NZMAWN2mG0QX6fzib3pFBgTDQb7PSnBSdfOVrk5Ppeu9gvm/XLdAnCl/7b+riONlwC9ov2A+M
- +bBEJLORH4OWXDDzHrOl3p1bF7+jVEWkc09//GoeVihWp7RU33vfunq1vhuhDrYNvihSH1eeT
- pvIutTsS3mhpkZn4WpOD55LFq+ILATLg7QOyKCy8IaAn/8V0T2bglJ768vY0/kwbvhYAVnE50
- jM/3uKDlz7y/UIieRGG9ojoLOQncw1JoRkrYZXIfhxdSj9eU93h+kfHxguGtOQZqi4WuZyHh7
- Uv16ajo4e186RXXy8+PaNE2xreZD+bcy60Rac5d0aDBMrlnFrsoDdX92haoL9BDkmGZ5sfRbe
- Tdj98XWDYTnIIKmb5rRe1R5uOt3PuVbR6c+7RBvadEJqzKeJuWejCwrU1aH2NvtYuC0Pr6XxF
- M9pc2I+uHqJJzXFY+jop8azZQhtJZE0fG/TP3L8xBKj6CnS8hBqjdP+KPpOHT/P0IQEcaY3t8
- fLElGIg2J0JONUqOLulYh67HiBJW0Cj0SrxQh/sXytIDkEEcsMTysme/2Gx6tcA5bTdekxf+6
- 1Zk3/AoeA2/YFkNVgnKXQLZofYd3+GWnsWD+ciXlKShFvm2DwwWDoy7FafHLmCDJH2+b04CM0
- 6CdIaEM92SOVO+Ov5D63p+jlfQV14c/FgQNes1x3w20nUMzNliudYCn//EOgu2jlPAkFMKqUH
- Ds+2LYfvQu8E78lo+btGYv+3dIAOzgl4H7oVj7QEfDJXUu2uiYAPeCv9+LnNi0Maq00qwcUt0
- D4JSbaKaxk45DCJlWoFEDSDj9qGECzp8BS6ImWxyxhK7nVdPquG3Fdg5rVoOImBcqsTJY3I03
- v4ndHI/zq2jhIkR3r5SwPnhm1XcXMKE4uBIcKJ+GHXhVinH0MIn0ltlE9QMdy6Vd+HLzcSXUh
- DAnMEWhjMGoNgXbaaHjxVHeSHcmL4any0xVmAGbHYPulxdZqQNi+ux2YvrN/skvt2J+qtqqQk
- zTxaQdnCQ4tIDl6A=
+Message-ID: <175559470048.1420.1064883565288738803.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> The o2hb_region struct is already zeroed by kzalloc(). It's redundant to
-> initialize reg->hr_region_num to 0.
+The following commit has been merged into the x86/urgent branch of tip:
 
-See also once more:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc2#n94
+Commit-ID:     d4932a1b148bb6121121e56bad312c4339042d70
+Gitweb:        https://git.kernel.org/tip/d4932a1b148bb6121121e56bad312c43390=
+42d70
+Author:        Li RongQing <lirongqing@baidu.com>
+AuthorDate:    Tue, 19 Aug 2025 10:33:56 +08:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 19 Aug 2025 10:38:04 +02:00
 
-Regards,
-Markus
+x86/bugs: Fix GDS mitigation selecting when mitigation is off
+
+The current GDS mitigation logic incorrectly returns early when the
+attack vector mitigation is turned off, which leads to two problems:
+
+1. CPUs without ARCH_CAP_GDS_CTRL support are incorrectly marked with
+   GDS_MITIGATION_OFF when they should be marked as
+   GDS_MITIGATION_UCODE_NEEDED.
+
+2. The mitigation state checks and locking verification that follow are
+   skipped, which means:
+   - fail to detect if the mitigation was locked
+   - miss the warning when trying to disable a locked mitigation
+
+Remove the early return to ensure proper mitigation state handling. This
+allows:
+- Proper mitigation classification for non-ARCH_CAP_GDS_CTRL CPUs
+- Complete mitigation state verification
+
+This also addresses the failed MSR 0x123 write attempt at boot on
+non-ARCH_CAP_GDS_CTRL CPUs:
+
+  unchecked MSR access error: WRMSR to 0x123 (tried to write 0x00000000000000=
+10) at rIP: ... (update_gds_msr)
+  Call Trace:
+   identify_secondary_cpu
+   start_secondary
+   common_startup_64
+   WARNING: CPU: 1 PID: 0 at arch/x86/kernel/cpu/bugs.c:1053 update_gds_msr
+
+  [ bp: Massage, zap superfluous braces. ]
+
+Fixes: 8c7261abcb7ad ("x86/bugs: Add attack vector controls for GDS")
+Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Link: https://lore.kernel.org/20250819023356.2012-1-lirongqing@baidu.com
+---
+ arch/x86/kernel/cpu/bugs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 2186a77..49ef1b8 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1068,10 +1068,8 @@ static void __init gds_select_mitigation(void)
+ 	if (gds_mitigation =3D=3D GDS_MITIGATION_AUTO) {
+ 		if (should_mitigate_vuln(X86_BUG_GDS))
+ 			gds_mitigation =3D GDS_MITIGATION_FULL;
+-		else {
++		else
+ 			gds_mitigation =3D GDS_MITIGATION_OFF;
+-			return;
+-		}
+ 	}
+=20
+ 	/* No microcode */
 
