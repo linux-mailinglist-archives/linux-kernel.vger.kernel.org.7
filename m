@@ -1,90 +1,60 @@
-Return-Path: <linux-kernel+bounces-776064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B74B2C814
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:10:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF2BB2C81D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D0B0B6107F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3A11883F1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A069275869;
-	Tue, 19 Aug 2025 15:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BB8283141;
+	Tue, 19 Aug 2025 15:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="asyH9tUP"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE+N92nb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF4E279DAE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE05280309;
+	Tue, 19 Aug 2025 15:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615919; cv=none; b=DowJYCw+WUJD3Ve9i7myT1i39aMRTTXIf64174lpcyBtp/0uu5bT8I3L8lHsMIfbYX5/mynYG3YC13apHCE1o+64aXZgt9fn7nHP7jBMvucx7jd696Rwwm9+WRX0HBLbLE2JxSYliFz1jx5buMzDPl08q1uqb06aNqLl1oNuuNA=
+	t=1755616049; cv=none; b=PljLhOENxXGLqwBfe8tD5UD2t8fEnxGoRufW0x4nrFfinxvsaWBUGsNz0l7ZHMbS1oDqeKEz39aIluhtsOvJhLW1Cqs4OnKR7eUk9PWvPcU4EnoRxCMtrp0gyvTQjoizQFdvwPghMBqJcoThNcVJwMqMGY7bQCwMeZLWjiLG0sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615919; c=relaxed/simple;
-	bh=TIX+Ee8NEb/a3r6gXiqiPEEIYEocYif+rv1rShliL+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhQLFQ5qH+TTXNLgCizeSEA2LliO23GWqtUNequ+iTKblloFwl6GnZpDx17cokwG8POrsF3+7cmMHDQlzQgBofUQCG/Jh7nYRlKjFDMlxnOTSurugfSt7Fmv4sSOyMzpi0DDsVmsbybW41UXsOaYTbzRvMd4GSxC3ftYBrh1u90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=asyH9tUP; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7322da8so901321966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755615916; x=1756220716; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HB1TK8MiMyt5D8q2I3xfM+5BRtgJsqXxPf3TbQkOCwU=;
-        b=asyH9tUP5pbEhC5pkZ1VMfczlmotEScbp7LbSWcwf5yQAtbFQrnFI68DUtVDQLgnz0
-         ZG9LJJCA6QI8MJNkcsbNYiDzPbAoMjbYbZtwoZd8JVAVGSx0OaRPsvDo5WT+kGnXn6d/
-         mYItlYMeV9yA0jNgsuolekn58VXHf1g2HcU5VDNx6SUCyMNZ6M6/TmKuLW0pkDMZLDtF
-         nGq3DKOrGiKi8vh9qV0pr+BCX3xhKge/CVK+kuD1jpE6BRqZlMZze4/YpDR99/jHkcvb
-         FzQKz/HkgFK5m6y943oEORVt3pDx/rs+Gz10b9awAccUmKU6GOwnw3njkFQl/TwKnAXm
-         i0kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755615916; x=1756220716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HB1TK8MiMyt5D8q2I3xfM+5BRtgJsqXxPf3TbQkOCwU=;
-        b=s20byeryN/T3EEDVSwx4OW+7dTmt3sKSvnImYAnKdPSR55JZ1j71OX6QYHclgcRy0k
-         7MNwTml1H3gIHIr+XZeXxNrf8WT9EHQFMb9iS2eV6LYNpCCt3bqp/yO1BVVnNhTwwTUB
-         00o/ztSBWXZ+r1OMr6fJtN2nOYTpPrWa3Eiwalnq9y4FtQdp5jyCJ5q9lw+GHLcG+sw8
-         5dxA3tvMFHmMkhS/YuZAYg6STMdj9ko36aix/pgoPQuqWySBT7QsyW/ozP0TAuVKDE/L
-         kK8OZ+cjZloaLKJ4iBrNtwlLPm1lnTJlx+3QjB2RfJgFzkdES7N6RSZwg6FhJ+nfnglh
-         Vx/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXn23vbYcFKiSGGdePhikq9sx5n7PUjVeclHv4mmN9bCDhbdoobJUI/dsIsNviX7T9kw/pKoBpxjXSMALs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOz+/VmYc4rLeuqNh90bxUyHYhb1H22xudaCf9s7V5QaGezP/L
-	N1bFW1kFuQNINDGBh1aO2mbzYId4iI0V0bdMZ6UQ9e6gkfXt41Q3WyaEYQhxjJe9jHE=
-X-Gm-Gg: ASbGnctt3ITDpvpRCH584StFg7gpp/9qXVK9lXrfJnoRRkHL+hmYpq+XxwsAKgPFSd7
-	0KSLBYv9cAmxli71V1OCaENVv2T0cDdlyhmumBxGvzwY89N0HQN+RnCewpVjmIuByw16rA+YwSU
-	6rGFdj6bMmighABFUETViYIY6kDaDn98jwaM72kjv63aCjfXw4oM2N2VACi3xGUsL53WvrflJJH
-	ECPLStcbQVwIeh/fbE48w2wIhol36fCAH3NC/mEY/J70D27nOABLNATVufyGBuQteYZnKZ1Pemp
-	bDlEt1YSXACOJRxLvExPw6+7dpkvPG06XE7sjXSyEb4A5JnuYKNOlM6TIez05e55AsrL1yIJ1XL
-	sjSWrrIzsUSLo4OTugxlZq2XT/UFskVWLdVs=
-X-Google-Smtp-Source: AGHT+IGeywteA2t6LtBxKbFOHU2kX8UJSx3r5/9iIliKQyi/MAgw5IMMeRSE7Wt/KuB7uYx83gPwDg==
-X-Received: by 2002:a17:907:2d09:b0:ae0:e18b:e92f with SMTP id a640c23a62f3a-afddcbb89b2mr285426266b.23.1755615916125;
-        Tue, 19 Aug 2025 08:05:16 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:3ab9:939f:d84a:b5f0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd016bffsm1013201866b.103.2025.08.19.08.05.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 08:05:15 -0700 (PDT)
-Date: Tue, 19 Aug 2025 17:05:13 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH 2/3] remoteproc: qcom_q6v5: Avoid handling handover twice
-Message-ID: <aKSSqXV5FOW27VJo@linaro.org>
-References: <20250819-rproc-qcom-q6v5-fixes-v1-0-de92198f23c7@linaro.org>
- <20250819-rproc-qcom-q6v5-fixes-v1-2-de92198f23c7@linaro.org>
- <r4kjhua4aakkgni2y4feigk5vvaz73ncetdvegic74lhuadosg@s2yzjlgb65lu>
+	s=arc-20240116; t=1755616049; c=relaxed/simple;
+	bh=FWERPV2b/K8+f34kGRRaIibkqQthKRkjtRIcOO9bI5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UattT2Yvamf+ZEbWziwuRw2N5EOBLLCdWIEY0rVPO914BRrkV+d8PANbeRTYj4mNQi/fv9LGr6rO1tjgOKGS7Is0Y/R1J/q4R6CxXODGfNVMcNExoxX89lZ5TyvG3bMMfzEIegM/Zjj7/VfJBRgqs33kmmAeBTK7RwuMggzVWzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE+N92nb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08798C2BC86;
+	Tue, 19 Aug 2025 15:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755616049;
+	bh=FWERPV2b/K8+f34kGRRaIibkqQthKRkjtRIcOO9bI5Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mE+N92nbp+0JXiAfwUIvsTH3cdqCCtHHsNuHILfE2mK2nj9Hu6eIbPQAYGqMadNYQ
+	 lE+BY04Cx6za6/mrYs/m3pr7JWmln6sXgeXvUZi9UP4Wj0RHKSxYZuMQKRWXb0RUTe
+	 TQmGYIyAGtIBlvq1EfONtAE15fNiJ+sSdAy+dimAV901J6WuE592aAiuzvEeimJeLr
+	 kZSiT12cx0D0uYSsObJj160WPnjKuyxpEKA57YcYffTu3t3VT7TxZ0ggDE6qFA8PuJ
+	 4EXUpJ00lgf0jG+1Jkvz9DD70nYzymAm09Ch9bl5Cu15uowQic72B51sLb+htyhYz8
+	 NAHjFR3vapv4g==
+Date: Tue, 19 Aug 2025 10:07:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, mani@kernel.org,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com, vkoul@kernel.org,
+	kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com,
+	jh80.chung@samsung.com, pankaj.dubey@samsung.com
+Subject: Re: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
+Message-ID: <20250819150727.GA586493@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,27 +63,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <r4kjhua4aakkgni2y4feigk5vvaz73ncetdvegic74lhuadosg@s2yzjlgb65lu>
+In-Reply-To: <00b501dc10fd$f1fecc10$d5fc6430$@samsung.com>
 
-On Tue, Aug 19, 2025 at 02:41:55PM +0300, Dmitry Baryshkov wrote:
-> On Tue, Aug 19, 2025 at 01:08:03PM +0200, Stephan Gerhold wrote:
-> > A remoteproc could theoretically signal handover twice. This is unexpected
+On Tue, Aug 19, 2025 at 05:09:34PM +0530, Shradha Todi wrote:
+> ...
+
+> > Another question about the test:
+> > 
+> >   if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
+> > 
+> > This assumes there are no other bits in FSD_IRQ2_STS that could be
+> > set.  I would have expected a test like this:
+> > 
+> >   if (val & FSD_IRQ_MSI_ENABLE) {
 > 
-> theoretically or practically?
-> 
+> Thanks for pointing this out. FSD_IRQ_MSI_ENABLE is a single-bit, so there
+> is no functional difference in the two statements. I didn't have a specific
+> reason for using "== FSD_IRQ_MSI_ENABLE".
+> But I see that "val & FSD_IRQ_MSI_ENABLE" would have been the more
+> standard way to write this. I will update this for clarity.
 
-You could easily trigger handover again from a custom remoteproc
-firmware by setting the handover state to 0 and then back to 1. However,
-if you find a firmware version doing this, you might want to have a
-serious conversation with the firmware developer. It makes no sense to
-do that. :-)
+Oof, sorry, I don't know what I was thinking.  You're right, it's OK
+as is.  But "val & FSD_IRQ_MSI_ENABLE" *is* shorter and more
+idiomatic, so I think preferable anyway.
 
-In other words, on technical level it is practical. From a conceptual
-point of view it is just theoretical.
-
-In any case, if it happens, we shouldn't mess up reference counters in
-my opinion (or risk dereferencing invalid pointers etc).
-
-Thanks,
-Stephan
+Bjorn
 
