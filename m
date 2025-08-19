@@ -1,93 +1,86 @@
-Return-Path: <linux-kernel+bounces-775300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14486B2BDA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF30B2BDA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B783B18973BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90D081884724
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201C031AF36;
-	Tue, 19 Aug 2025 09:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7CE319869;
+	Tue, 19 Aug 2025 09:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ERSuohNr"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bIoMt6qf"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B8B3115A1
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C18304BC6
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596322; cv=none; b=FwLJSZb61XCgbKR3Uwr6Xac41rLusy8oMYLj5uZVQqxFinfMIqqkHuhFWWo1BuRwa/DnweThxCotd8AIzbDRl0zOVDx4aM8+Q/pk5EWrtXeTYiBqINkHibnfg2Boajmdl6kt6GuF3A8knZs0WbHeU89nH7Tvb6lwVBsNvCVxT6E=
+	t=1755596387; cv=none; b=r/QnKwAYkQUnmxYZwdTy7LX+pwnYZVviUzR83jLqXsKKwu4QpwLLLD0QnHCVyBPxeXpKTydriqEHlI2Q6Oz7PKb3QrUb7ftnQ4iGGYWPfNT7xqHE9DwP9hbCFd7rlL6E4ez/0qHx//o2yn3wegthmNBT+P8yxo7W/VIQqc38j60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596322; c=relaxed/simple;
-	bh=BNBYTrkKh+r61QPjXesr09akZIgnL2UxuB3fmlO0oaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNPOQXS/DS1Asngq8FDJo7HjLJdl3hegLBZ8/yKKHiAU0NKA1+7vymgwPHVgZGLMPYx8/kyBqpiGL40VoPR0P97arKH1eJ0CoJe7zK2h04lA4J91VL5c7E4A5a6XayRflKL1aWkxeUcTw/+M08biw9AijQVYZtjkKwSpbKNN9sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ERSuohNr; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1755596387; c=relaxed/simple;
+	bh=CfV42cEPw8lWB0t0dITt7ACs1R/IcMKpBkeea2hlqWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=O7FWrTL6HgG9sX5atj0GFgdLPXJ53I/6p1gBiMUVL2k6ScQDlu3Rswq5O9dmNiVYCjI+YNKrKmUInT3jciJaVKeVqj8etfXPBjscMFlNWkkALqDhRvd7yEYiF2KOmLe2skz3ga9JTK+L23bmRNQmXYRehZxA859MgPl8qYu2LHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bIoMt6qf; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9d41c1964so3402588f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:38:40 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so25779725e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596319; x=1756201119; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=at/5eKe3PrrAbraNpLb6KoExLUDoe69Dgy/Mvb40QeY=;
-        b=ERSuohNrCDyjY/Je7UnqxtAnuR1lFeZpQi8z0aeOCFe+Ws1MYxELdwSYR8XWcW9Hcq
-         yc9wg/MCc9pb+7Pulg6fn15ye5xk7M2YfRlpDuFKM5YEPjA2mPwbKCOEdgF8MH5a3McL
-         PYNbAMKXOwVa9St479M9Ot1MbeZ40ahlLkmJZc6qMyD+mvrFLL6vDOFt6KCg3uDrF/xB
-         IWkHQi5bQtk8s3wxo7RZX9nz/ZJzvCCtQo5nC50z7agNynHKtOsJL7sD4EqkJq+Cy57U
-         +Ouphy1Y98+T9ZUQJnsySdSNEhrM7b3VhtcLSMeNUyrvlo6BGfWqlvfi9i6ho0QUbCnX
-         3ZIw==
+        d=linaro.org; s=google; t=1755596384; x=1756201184; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9ybn3YmMAxEA0Eee9hCzXqIV+SQtPmXHBsQojxOHa/s=;
+        b=bIoMt6qfJ2e6rnhvsGoCBzmHxajT9W/3pCdj3TwYmSKgMIkgWxtJB69lwWODrk++/e
+         uSVLBHt+UHTJOACI9pxlLTkGv/WSJVgS5Tn+AFFwAhYiBN3G8M96KUI94dysOowyFkSq
+         H0GAoAsNIpXJvyyO3zYdQFiP8z5th2X5zHx4Cno3iJvASMoJaLQrd0h4azA4kQnqNZuj
+         /eQzrk/1/zsb3YjkN+XkFblnRrlIr3CV0p8qeYaR6VS9+/mygj2Lk9vbMBo/afSFhy2c
+         KCgqqsLZkQKrINfwB3kWt3UYvMLNmgQm7TDUdBvjOVjJM3lRNweH0OaXqDlAetLl2U2e
+         QTbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596319; x=1756201119;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=at/5eKe3PrrAbraNpLb6KoExLUDoe69Dgy/Mvb40QeY=;
-        b=EDMor1C6NfF94hlbw02RSk2pZpmt5fyWsX/K+/kophT7LIg7MYg5cTBeRLdbki1tCF
-         evA3tGUbM+3Q5Tt0qLMYS1OPOvgLTk4LBfVwRJqkLCF/e/U8jDH24aZfF5tA6zUzL4Cx
-         O1kt2Ej+aNXahyTmKajPIk3FNS0YPMNgaWxw+fPys3Anzoqx++AXhvJYPl697kpktsmD
-         m/M3/oc6eqE70YR93fWWW0isLGh+VaztHMRdv/GCfYFn3oSP2iyEA8mxcJn2C4VFKIhM
-         TH8rsqHYkNixAwhCdjkOm+t7I/GX4Mtc1RtzU9WCuyPcWc/PwI3h6XaRLaevdOoWQpvN
-         b7Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd19w1uCMhezkuLvG2BmqqGuw/pMmHz1f2YEOhN3wGF7I3HdsxMdUCbWEZIgi4rB85IIU2Ll/SDwIk+q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNsjMlSVg/vG4xysZELHRGgh74GxkUMboocoG0jUK7t9nbOcnD
-	AxBc6JUQ8N6ma2M9N1WkvEVBiEfWEpMUu+49mif9+2OzLaVQT5uaei3L1Dg67tguIf0=
-X-Gm-Gg: ASbGncumNkBBv87IKz0ji7p/hwtnF2MDkAA0M3HrIcwaiwzGTSNhszi3yqx3Q8JABHv
-	7IKyjwOFOjyJtPTZqhfVIFDqfV1BmgYFusYJbzzPKT5UNtH4eW5sBsQag8beRLarSi27ek0Ipql
-	JBBA6wm1DcGK1AiencU3BgSmAW7K8Qc6SxptkAu64qwOPZmmRAVqzamJTjwIEUai9GVyVP1QyCN
-	uFPokT7uVZxD+vHH0lDj151yH44AmLoxWjAZn+cB7EoB0D1vZPRoSzJFaHylM3b071YHASvP/v9
-	rRcX1YM7hjIC7sf/BSabAW3hvSUOmmmCJ/vjPxKzBK/0FgG0mPaP8Lnr0jT7WCjUwKXFnJcs9f7
-	YyN2P3IjW4gk51ApKOrZVDgnB404=
-X-Google-Smtp-Source: AGHT+IFkB5hfOSqRO9ucIKbwVALsj+nCtLLW02xqPar2YbcIy4HqcpvqEUmAihdf079LhDp9jt6P0g==
-X-Received: by 2002:a05:6000:4028:b0:3b7:7749:aa92 with SMTP id ffacd0b85a97d-3c0ed6c4b1cmr1345276f8f.58.1755596319074;
-        Tue, 19 Aug 2025 02:38:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755596384; x=1756201184;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ybn3YmMAxEA0Eee9hCzXqIV+SQtPmXHBsQojxOHa/s=;
+        b=p4urZohu8c0QMHFpXIG3/Ni/rAIZXsl6b7C5gJpFmaQSwfe0htCXd4kIuchiDyDbfH
+         MzdEyS6tX9csrGGe2OnPCrjImskxjJgHbuAp5DFhcLV6q57jbyHZM/dsAGmbOpRHaiOh
+         b4RCN2ULikkp5j0F5W2myC7Xty2SD3kill6CKVqLboFYWsmKJWex09bN3JWJ+ISYvAAF
+         +Pn89P9tdVvLDKZjQ0hRZPSO6t4m0mTUbhVzxOkqD/5BJFaXSKdXFp9XOd22zLCfBRI6
+         alCHwpGvBlmEwtGz4EFTUQCOZn9MhFfJYPF3fSoW3Sk3SjQsuxZwFN/IU79ia5G2ehOt
+         Zplg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGsosaWhdJ3UlfPnxPi5HUt6HDMSB17TO2QC0u3eHIzZfdPhXilEuaVDBsJb1yANcpGn/EitFtlZnqrSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCkY+Mm1+72+T+k5LuYjpjmLk/DPgj/vc6dcvJ5oXtJRJwatuX
+	hl+1MaxXc807OFpljCmg6Vc1wuktqxvYe1AOLSY76TZHek2N+968TAtewHRDs0dnCEw=
+X-Gm-Gg: ASbGnctsJ4fPxviZDDWnOIJ06gDjE5AP67gnLI0KdYS26dbuVa9zA81shyI5ZZG/bgy
+	9A84wDFfQ7yFYUJQ4HVLyYnZi6EH+5vsV5vbOOhMc/GPYHPhFByT5qjtijI40gbHJByE+Bx5o7u
+	lbJEtzE3oNrV+ioPumB6Y3jSYSel3Jt7lm5wyREUvm7pWuVzJwhVK3XL/zAOA+yrjzXmTGee4/+
+	8T/tOjt+wOQ1GwVA6B7sApCuIatVRZ5sU7UYJo35/hyu+ND/Qd+aq1xGKTnoHR/FROlWIxl7COr
+	cx1wYBSdhaEDX3GgK9w9ZHgi77P/t8Picsl6VhPrrp4Zh+8wrVNV5KkpXu8U0S1vZjTA/ryXwMA
+	cJgnyYAq4Uxzeg36q4nJv6deZbO1hZ72vPpPgsHr9c5g=
+X-Google-Smtp-Source: AGHT+IEaFIhVwX9haJqJj9y8XmIJjJBEgfC6H62/4M1ejGfKBt/x5SRVvWKacOOoQ6lNE8CMUtGT0A==
+X-Received: by 2002:a05:600c:4fc7:b0:43c:ec4c:25b4 with SMTP id 5b1f17b1804b1-45b43dc5099mr19675405e9.10.1755596383877;
+        Tue, 19 Aug 2025 02:39:43 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c6bd172sm220059075e9.6.2025.08.19.02.38.38
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c773e57sm218767735e9.23.2025.08.19.02.39.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:38:38 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:38:35 +0300
+        Tue, 19 Aug 2025 02:39:43 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:39:40 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Arun R Murthy <arun.r.murthy@intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Suraj Kandpal <suraj.kandpal@intel.com>,
-	Xaver Hugl <xaver.hugl@kde.org>,
-	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/plane: Fix IS_ERR() vs NULL bugs in
- __drm_universal_plane_init()
-Message-ID: <6f9fc3889e0c79d7ac2833f3a2a6ff8b047c2b11.1755591666.git.dan.carpenter@linaro.org>
-References: <cover.1755591666.git.dan.carpenter@linaro.org>
+To: Waqar Hameed <waqar.hameed@axis.com>
+Cc: Song Qiang <songqiang1304521@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] io: proximity: vl53l0x-i2c: Fix error code in probe()
+Message-ID: <aKRGXFJxf2bdQE-Q@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,39 +89,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1755591666.git.dan.carpenter@linaro.org>
+X-Mailer: git-send-email haha only kidding
 
-The create_in_format_blob() function returns NULL on error.  It never
-returns error pointers.  Update the check to match.
+Commit 65e8202f0322 ("iio: Remove error prints for
+devm_add_action_or_reset()") accidentally introduce a bug where we
+returned "ret" but the error code was stored in "error" if
+devm_add_action_or_reset() failed.  Using two variables to store error
+codes is unnecessary and confusing.  Delete the "error" variable and use
+"ret" everywhere instead.
 
-Fixes: 0d6dcd741c26 ("drm/plane: modify create_in_formats to acommodate async")
+Fixes: 65e8202f0322 ("iio: Remove error prints for devm_add_action_or_reset()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/drm_plane.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/proximity/vl53l0x-i2c.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
-index beef2a06bc75..2f5a95bc0528 100644
---- a/drivers/gpu/drm/drm_plane.c
-+++ b/drivers/gpu/drm/drm_plane.c
-@@ -483,7 +483,7 @@ static int __drm_universal_plane_init(struct drm_device *dev,
- 	if (format_modifier_count) {
- 		blob = create_in_format_blob(dev, plane,
- 					     plane->funcs->format_mod_supported);
--		if (!IS_ERR(blob))
-+		if (blob)
- 			drm_object_attach_property(&plane->base,
- 						   config->modifiers_property,
- 						   blob->base.id);
-@@ -492,7 +492,7 @@ static int __drm_universal_plane_init(struct drm_device *dev,
- 	if (plane->funcs->format_mod_supported_async) {
- 		blob = create_in_format_blob(dev, plane,
- 					     plane->funcs->format_mod_supported_async);
--		if (!IS_ERR(blob))
-+		if (blob)
- 			drm_object_attach_property(&plane->base,
- 						   config->async_modifiers_property,
- 						   blob->base.id);
+diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+index 696340ec027a..ad3e46d47fa8 100644
+--- a/drivers/iio/proximity/vl53l0x-i2c.c
++++ b/drivers/iio/proximity/vl53l0x-i2c.c
+@@ -311,7 +311,6 @@ static int vl53l0x_probe(struct i2c_client *client)
+ {
+ 	struct vl53l0x_data *data;
+ 	struct iio_dev *indio_dev;
+-	int error;
+ 	int ret;
+ 
+ 	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+@@ -344,13 +343,13 @@ static int vl53l0x_probe(struct i2c_client *client)
+ 		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
+ 				     "Cannot get reset GPIO\n");
+ 
+-	error = vl53l0x_power_on(data);
+-	if (error)
+-		return dev_err_probe(&client->dev, error,
++	ret = vl53l0x_power_on(data);
++	if (ret)
++		return dev_err_probe(&client->dev, ret,
+ 				     "Failed to power on the chip\n");
+ 
+-	error = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
+-	if (error)
++	ret = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
++	if (ret)
+ 		return ret;
+ 
+ 	indio_dev->name = "vl53l0x";
 -- 
 2.47.2
 
