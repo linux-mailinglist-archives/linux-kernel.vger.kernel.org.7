@@ -1,215 +1,251 @@
-Return-Path: <linux-kernel+bounces-775003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64CBB2BA2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:07:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D10EB2BA33
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C2D3566BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10AB03B4C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A0026CE12;
-	Tue, 19 Aug 2025 07:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5E4284890;
+	Tue, 19 Aug 2025 07:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="hry9eNFp"
-Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iLUDcTIy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795F23451A7
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF9B26462E;
+	Tue, 19 Aug 2025 07:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755587229; cv=none; b=JpgLy2JHdH9ykrNIe3+IvA0vBWPzikxiQY7tGLDkiA+NkMUYI4oN2f99RsGBqegHuSQu/RxAbGsNrL8oT+8VA5vqfH4SwMkqht3jAEMlkkyX+aY7o1PNHyTUoQMK9gMhlf9+M9FMYEcCMRH0KwTZ3/nGcFhAiNifmr2nW8qxdMQ=
+	t=1755587242; cv=none; b=K7cfNLdU4gwkoORP5q0/+QlrbstFxeTvlTAgFdW/NPEQw7JoV1wKMFGb10acVDQTeKo6MrSaBivbgJmmgb/TZWw+ePv3O85f93laFKefRmTelT9/7GbcwNJlovJQM8zGHTjUJQTfPvTEDkk4ba0yF70rxC5MokZq+DGZZbNPslU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755587229; c=relaxed/simple;
-	bh=HSqaR7LVndkAWyLI/MVlxMq2bG7sHOFh6TxUwhwWR44=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UNPx86w8FqX7hB8bYvX3z/4reN+MrWKLksLz2Se3cNvT4QczaHMX5L0xZTOlAlS5/NYjfM+KXFLXUyCDCdFquLqDV06m85UZliYH++ted32dTNlbyke2v4O82mb9f3uu+2y4Lb888JochQlv4CEWEJ7jERbAV7HQ4AZxgg9w+2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=hry9eNFp; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=xxMPM9jTESxXNvCOfoWmFKJz/UHN/qpEaQD2gvlv5Ro=;
-	b=hry9eNFpkWw+5qzBgkHk9USDTWZ3of1rum8zzPUkGxmbwM6Qr4125gjpv/kgcuJDX48JI31t9
-	sE9Tze/TyTUZgIfcrlYVeG3LFEkmCXTdY3BPfhndRBotzpgtN6J/WpDlaHg5Yw7ik2wt2+NGAgw
-	+0oaqknBMFd3S0jK5vttHqc=
-Received: from w013.hihonor.com (unknown [10.68.26.19])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4c5gcb3VLjzYl6X6;
-	Tue, 19 Aug 2025 15:06:55 +0800 (CST)
-Received: from a008.hihonor.com (10.68.30.56) by w013.hihonor.com
- (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Aug
- 2025 15:07:03 +0800
-Received: from a008.hihonor.com (10.68.30.56) by a008.hihonor.com
- (10.68.30.56) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Aug
- 2025 15:07:03 +0800
-Received: from a008.hihonor.com ([fe80::aed1:4fa1:46bd:7de9]) by
- a008.hihonor.com ([fe80::aed1:4fa1:46bd:7de9%6]) with mapi id 15.02.1544.011;
- Tue, 19 Aug 2025 15:07:03 +0800
-From: liuwenfang <liuwenfang@honor.com>
-To: 'Tejun Heo' <tj@kernel.org>
-CC: 'David Vernet' <void@manifault.com>, 'Andrea Righi' <arighi@nvidia.com>,
-	'Changwoo Min' <changwoo@igalia.com>, 'Ingo Molnar' <mingo@redhat.com>,
-	'Peter Zijlstra' <peterz@infradead.org>, 'Juri Lelli'
-	<juri.lelli@redhat.com>, 'Vincent Guittot' <vincent.guittot@linaro.org>,
-	'Dietmar Eggemann' <dietmar.eggemann@arm.com>, 'Steven Rostedt'
-	<rostedt@goodmis.org>, 'Ben Segall' <bsegall@google.com>, 'Mel Gorman'
-	<mgorman@suse.de>, 'Valentin Schneider' <vschneid@redhat.com>,
-	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 3/3] sched_ext: Fix cpu_released while changing sched
- policy of the running task
-Thread-Topic: [PATCH v4 3/3] sched_ext: Fix cpu_released while changing sched
- policy of the running task
-Thread-Index: AQHcENfdGu4ftGlPUU6k9iMLW33GpA==
-Date: Tue, 19 Aug 2025 07:07:03 +0000
-Message-ID: <0ac70bd4cd30418488e0355a4c0e7281@honor.com>
-References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
- <aFmwHzO2AKFXO_YS@slm.duckdns.org>
- <ced96acd54644325b77c2d8f9fcda658@honor.com>
- <aHltRzhQjwPsGovj@slm.duckdns.org>
- <0144ab66963248cf8587c47bf900aabb@honor.com>
- <814bebd2ad844b08993836fd8e7274b8@honor.com>
- <228ebd9e6ed3437996dffe15735a9caa@honor.com>
- <8d64c74118c6440f81bcf5a4ac6b9f00@honor.com>
-In-Reply-To: <8d64c74118c6440f81bcf5a4ac6b9f00@honor.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1755587242; c=relaxed/simple;
+	bh=ETf/u4Lpdc3XNRyiJ8tnjtoa9Gna6lhRAGwNIvHZTk4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=d6tZy9PtVFKRUFqv23u9Rou5WK6viXlhq1pdcKldzfozx0TpyRemn0Y1con0hdp5egodDzmrljkM4h55RgMoEu4M1jr1P8APijf15VVe7dQrQ/2AfiRBA5puXu4oYilTiNYWzqGlWWnLqrLsm0sR2WHlO5tgWbVRWnWycVCbESU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iLUDcTIy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.1.106] (mob-5-90-52-92.net.vodafone.it [5.90.52.92])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 437CFC6D;
+	Tue, 19 Aug 2025 09:06:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755587181;
+	bh=ETf/u4Lpdc3XNRyiJ8tnjtoa9Gna6lhRAGwNIvHZTk4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=iLUDcTIyeMTco5Kikh2r+AdZoYZpVyq+9TUeMAizmGaJ+wQ/XazCscVqeAnO+TuF9
+	 zkYi1wdbr3ve5L/6EEUnXkdUNX47flQwQTD0ROt81if8PsLw62ildFaHZU6ekFzRfD
+	 lx/MqUgYtdTZNG/rcGwJj0LBwuKgWuV9DsomnLVk=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Date: Tue, 19 Aug 2025 09:07:03 +0200
+Subject: [PATCH v4 1/2] media: cx18: Fix invalid access to file *
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250819-cx18-v4l2-fh-v4-1-9db1635d6787@ideasonboard.com>
+References: <20250819-cx18-v4l2-fh-v4-0-9db1635d6787@ideasonboard.com>
+In-Reply-To: <20250819-cx18-v4l2-fh-v4-0-9db1635d6787@ideasonboard.com>
+To: Andy Walls <awalls@md.metrocast.net>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans Verkuil <hverkuil+cisco@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6407;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=ETf/u4Lpdc3XNRyiJ8tnjtoa9Gna6lhRAGwNIvHZTk4=;
+ b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBopCKlgkVzauhx0nA8uFPQC3lBbSY3hJsRG576m
+ NwkqcbbLN6JAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaKQipQAKCRByNAaPFqFW
+ PFcDD/9VVNdjjVR+t8Kcr/E2UcYvMgSlmp8YjwOA4byzKCpSA21euTFU1wjxRO5sFlXoWmbtTL5
+ Potr3H8QNW/Py1eHXQ8S8JwPbrq5XnoNSd57bAQE208QZljJo88m9iC8zAd+WnN9aMA4Wh7n9FK
+ W8kQFy9vz0XdgK6vEk4V7xfjA5Y0JOl5uTuJXREDtkfca6bz+BmqJWmZ1EePfqxhlg9YKjjBnNJ
+ TSA9xqtuw4vOKEfCiqwCkE6MnV7gmiRDRYaF51j08hamdgmdYgU4vJLxCEn6KACEFLTVsma8QCb
+ lg+ypyC1Icd0weEvGSXZN17MunOlZNsNQDFr0bbYnL+9/BbnDRyNuknoUdBZTY3TlKRzOY5PCv1
+ YiKddEOFfWvPu2JprUaICzTW8O1oenLzd8qzGm7pYrO74J/MaGlN6sBRM5MWyDEhn9jyvOWpQBv
+ D50fPgX+KebYDgm3giFgeP/CUiyGK6CMuHAVmJkZisyYicZBK2g2tALtup98q0gTiOgxQwq/dsS
+ u+ChIvSfJeN1AS7699APzL1yYLefnmfBE0PO1DKW5fFNZugJ+QZqRNfT+nkbH2WscT4yFVeBwSD
+ BNk9KVIcdMkYpElMybjM7XSuHGVx/7wYjwq30DcT6nfmR+AdvS7eehAH1/iE+DHuI/zzP2RQM0n
+ +RYhtyy9OMMVKWQ==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-Priority inheritance policy should be cared, eg., one SCX task can be
-boosted to REAL-TIME while holding a mutex lock, and then restored while
-releasing the lock. The value cpu_released is fixed when changing the
-sched class of the running task.
+Sice commit 7b9eb53e8591 ("media: cx18: Access v4l2_fh from file")
+all ioctl handlers have been ported to operate on the file * first
+function argument.
 
-Signed-off-by: Wenfang Liu liuwenfang@honor.com
+The cx18 DVB layer calls cx18_init_on_first_open() when the driver needs
+to start streaming. This function calls the s_input(), s_std() and
+s_frequency() ioctl handlers directly, but being called from the driver
+context, it doesn't have a valid file * to pass them. This causes
+the ioctl handlers to deference an invalid pointer.
+
+Fix this by moving the implementation of those ioctls to functions that
+take a cx18 pointer instead of a file pointer, and turn the V4L2 ioctl
+handlers into wrappers that get the cx18 from the file. When calling
+from cx18_init_on_first_open(), pass the cx18 pointer directly. This
+allows removing the fake fh in cx18_init_on_first_open().
+
+The bug has been reported by Smatch:
+
+--> 1223         cx18_s_input(NULL, &fh, video_input);
+The patch adds a new dereference of "file" but some of the callers pass a
+NULL pointer.
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
+Fixes: 7b9eb53e8591 ("media: cx18: Access v4l2_fh from file")
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/stable/20250818-cx18-v4l2-fh-v1-1-6fe153760bce%40ideasonboard.com
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 ---
- kernel/sched/ext.c   | 44 ++++++++++++++++++++++++++++++--------------
- kernel/sched/sched.h |  4 ++--
- 2 files changed, 32 insertions(+), 16 deletions(-)
+ drivers/media/pci/cx18/cx18-driver.c |  9 +++------
+ drivers/media/pci/cx18/cx18-ioctl.c  | 30 +++++++++++++++++++-----------
+ drivers/media/pci/cx18/cx18-ioctl.h  |  8 +++++---
+ 3 files changed, 27 insertions(+), 20 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 98a05025b..bf4512908 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2959,6 +2959,8 @@ static void flush_dispatch_buf(struct rq *rq)
- 	dspc->cursor =3D 0;
+diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+index 743fcc9613744bfc1edeffc51e908fe88520405a..cd84dfcefcf971a7adb9aac2bafb9089dbe0f33f 100644
+--- a/drivers/media/pci/cx18/cx18-driver.c
++++ b/drivers/media/pci/cx18/cx18-driver.c
+@@ -1136,11 +1136,8 @@ int cx18_init_on_first_open(struct cx18 *cx)
+ 	int video_input;
+ 	int fw_retry_count = 3;
+ 	struct v4l2_frequency vf;
+-	struct cx18_open_id fh;
+ 	v4l2_std_id std;
+ 
+-	fh.cx = cx;
+-
+ 	if (test_bit(CX18_F_I_FAILED, &cx->i_flags))
+ 		return -ENXIO;
+ 
+@@ -1220,14 +1217,14 @@ int cx18_init_on_first_open(struct cx18 *cx)
+ 
+ 	video_input = cx->active_input;
+ 	cx->active_input++;	/* Force update of input */
+-	cx18_s_input(NULL, &fh, video_input);
++	cx18_do_s_input(cx, video_input);
+ 
+ 	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
+ 	   in one place. */
+ 	cx->std++;		/* Force full standard initialization */
+ 	std = (cx->tuner_std == V4L2_STD_ALL) ? V4L2_STD_NTSC_M : cx->tuner_std;
+-	cx18_s_std(NULL, &fh, std);
+-	cx18_s_frequency(NULL, &fh, &vf);
++	cx18_do_s_std(cx, std);
++	cx18_do_s_frequency(cx, &vf);
+ 	return 0;
  }
-=20
-+static void scx_maybe_cpu_acquire(struct rq *rq);
-+
- static int balance_one(struct rq *rq, struct task_struct *prev)
+ 
+diff --git a/drivers/media/pci/cx18/cx18-ioctl.c b/drivers/media/pci/cx18/cx18-ioctl.c
+index bf16d36448f888d9326b5f4a8f9c8f0e13d0c3a1..6e869c43cbd520feb720a71d8eb2dd60c05b0ae9 100644
+--- a/drivers/media/pci/cx18/cx18-ioctl.c
++++ b/drivers/media/pci/cx18/cx18-ioctl.c
+@@ -521,10 +521,8 @@ static int cx18_g_input(struct file *file, void *fh, unsigned int *i)
+ 	return 0;
+ }
+ 
+-int cx18_s_input(struct file *file, void *fh, unsigned int inp)
++int cx18_do_s_input(struct cx18 *cx, unsigned int inp)
  {
- 	struct scx_dsp_ctx *dspc =3D this_cpu_ptr(scx_dsp_ctx);
-@@ -2970,18 +2972,7 @@ static int balance_one(struct rq *rq, struct task_st=
-ruct *prev)
- 	rq->scx.flags |=3D SCX_RQ_IN_BALANCE;
- 	rq->scx.flags &=3D ~(SCX_RQ_BAL_PENDING | SCX_RQ_BAL_KEEP);
-=20
--	if (static_branch_unlikely(&scx_ops_cpu_preempt) &&
--	    unlikely(rq->scx.cpu_released)) {
--		/*
--		 * If the previous sched_class for the current CPU was not SCX,
--		 * notify the BPF scheduler that it again has control of the
--		 * core. This callback complements ->cpu_release(), which is
--		 * emitted in switch_class().
--		 */
--		if (SCX_HAS_OP(cpu_acquire))
--			SCX_CALL_OP(SCX_KF_REST, cpu_acquire, rq, cpu_of(rq), NULL);
--		rq->scx.cpu_released =3D false;
--	}
-+	scx_maybe_cpu_acquire(rq);
-=20
- 	if (prev_on_scx) {
- 		update_curr_scx(rq);
-@@ -3187,7 +3178,23 @@ preempt_reason_from_class(const struct sched_class *=
-class)
- 	return SCX_CPU_PREEMPT_UNKNOWN;
+-	struct cx18_open_id *id = file2id(file);
+-	struct cx18 *cx = id->cx;
+ 	v4l2_std_id std = V4L2_STD_ALL;
+ 	const struct cx18_card_video_input *card_input =
+ 				cx->card->video_inputs + inp;
+@@ -558,6 +556,11 @@ int cx18_s_input(struct file *file, void *fh, unsigned int inp)
+ 	return 0;
  }
-=20
--void switch_class(struct rq *rq, struct task_struct *next)
-+static void scx_maybe_cpu_acquire(struct rq *rq)
+ 
++static int cx18_s_input(struct file *file, void *fh, unsigned int inp)
 +{
-+	if (static_branch_unlikely(&scx_ops_cpu_preempt) &&
-+	    unlikely(rq->scx.cpu_released)) {
-+		/*
-+		 * If the previous sched_class for the current CPU was not SCX,
-+		 * notify the BPF scheduler that it again has control of the
-+		 * core. This callback complements ->cpu_release(), which is
-+		 * emitted in scx_maybe_cpu_release().
-+		 */
-+		if (SCX_HAS_OP(cpu_acquire))
-+			SCX_CALL_OP(SCX_KF_REST, cpu_acquire, rq, cpu_of(rq), NULL);
-+		rq->scx.cpu_released =3D false;
-+	}
++	return cx18_do_s_input(file2id(file)->cx, inp);
 +}
 +
-+void scx_maybe_cpu_release(struct rq *rq, struct task_struct *next)
+ static int cx18_g_frequency(struct file *file, void *fh,
+ 				struct v4l2_frequency *vf)
  {
- 	const struct sched_class *next_class =3D next->sched_class;
-=20
-@@ -3881,11 +3888,20 @@ static void switching_to_scx(struct rq *rq, struct =
-task_struct *p)
-=20
- static void switched_from_scx(struct rq *rq, struct task_struct *p)
- {
-+	if (task_current(rq, p))
-+		scx_maybe_cpu_release(rq, p);
-+
- 	scx_ops_disable_task(p);
+@@ -570,11 +573,8 @@ static int cx18_g_frequency(struct file *file, void *fh,
+ 	return 0;
  }
-=20
- static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p,int wa=
-ke_flags) {}
--static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
-+static void switched_to_scx(struct rq *rq, struct task_struct *p)
+ 
+-int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
++int cx18_do_s_frequency(struct cx18 *cx, const struct v4l2_frequency *vf)
+ {
+-	struct cx18_open_id *id = file2id(file);
+-	struct cx18 *cx = id->cx;
+-
+ 	if (vf->tuner != 0)
+ 		return -EINVAL;
+ 
+@@ -585,6 +585,12 @@ int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
+ 	return 0;
+ }
+ 
++static int cx18_s_frequency(struct file *file, void *fh,
++			    const struct v4l2_frequency *vf)
 +{
-+	lockdep_assert_rq_held(rq);
-+
-+	if (task_current(rq, p))
-+		scx_maybe_cpu_acquire(rq);
++	return cx18_do_s_frequency(file2id(file)->cx, vf);
 +}
-=20
- int scx_check_setscheduler(struct task_struct *p, int policy)
++
+ static int cx18_g_std(struct file *file, void *fh, v4l2_std_id *std)
  {
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e46becfed..ee0f35d47 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1738,7 +1738,7 @@ static inline void scx_rq_clock_invalidate(struct rq =
-*rq)
- 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
+ 	struct cx18 *cx = file2id(file)->cx;
+@@ -593,11 +599,8 @@ static int cx18_g_std(struct file *file, void *fh, v4l2_std_id *std)
+ 	return 0;
  }
-=20
--extern void switch_class(struct rq *rq, struct task_struct *next);
-+extern void scx_maybe_cpu_release(struct rq *rq, struct task_struct *next)=
-;
-=20
- static inline void __put_prev_set_next_scx(struct rq *rq,
- 					   struct task_struct *prev,
-@@ -1759,7 +1759,7 @@ static inline void __put_prev_set_next_scx(struct rq =
-*rq,
- 	if (next->sched_class =3D=3D &ext_sched_class)
- 		return;
-=20
--	switch_class(rq, next);
-+	scx_maybe_cpu_release(rq, next);
+ 
+-int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
++int cx18_do_s_std(struct cx18 *cx, v4l2_std_id std)
+ {
+-	struct cx18_open_id *id = file2id(file);
+-	struct cx18 *cx = id->cx;
+-
+ 	if ((std & V4L2_STD_ALL) == 0)
+ 		return -EINVAL;
+ 
+@@ -642,6 +645,11 @@ int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
+ 	return 0;
  }
-=20
- #else /* !CONFIG_SCHED_CLASS_EXT */
---=20
-2.17.1
+ 
++static int cx18_s_std(struct file *file, void *fh, v4l2_std_id std)
++{
++	return cx18_do_s_std(file2id(file)->cx, std);
++}
++
+ static int cx18_s_tuner(struct file *file, void *fh, const struct v4l2_tuner *vt)
+ {
+ 	struct cx18_open_id *id = file2id(file);
+diff --git a/drivers/media/pci/cx18/cx18-ioctl.h b/drivers/media/pci/cx18/cx18-ioctl.h
+index 221e2400fb3e2d817eaff7515fa89eb94f2d7f8a..7a42ac99312ab6502e1abe4f3d5c88c9c7f144f3 100644
+--- a/drivers/media/pci/cx18/cx18-ioctl.h
++++ b/drivers/media/pci/cx18/cx18-ioctl.h
+@@ -12,6 +12,8 @@ u16 cx18_service2vbi(int type);
+ void cx18_expand_service_set(struct v4l2_sliced_vbi_format *fmt, int is_pal);
+ u16 cx18_get_service_set(struct v4l2_sliced_vbi_format *fmt);
+ void cx18_set_funcs(struct video_device *vdev);
+-int cx18_s_std(struct file *file, void *fh, v4l2_std_id std);
+-int cx18_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
+-int cx18_s_input(struct file *file, void *fh, unsigned int inp);
++
++struct cx18;
++int cx18_do_s_std(struct cx18 *cx, v4l2_std_id std);
++int cx18_do_s_frequency(struct cx18 *cx, const struct v4l2_frequency *vf);
++int cx18_do_s_input(struct cx18 *cx, unsigned int inp);
+
+-- 
+2.50.1
+
 
