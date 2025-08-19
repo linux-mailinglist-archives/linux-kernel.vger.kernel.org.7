@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-774994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A20B2BA0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:01:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DC5B2BA23
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646A5524F5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3AA3A4B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CE926CE39;
-	Tue, 19 Aug 2025 07:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E1626F443;
+	Tue, 19 Aug 2025 07:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqU8qQ7k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JI+vYmjZ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6011C1E32C6;
-	Tue, 19 Aug 2025 07:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B23A23D298;
+	Tue, 19 Aug 2025 07:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755586856; cv=none; b=i0GpO5jwfhZIeGg88Q9JJ2reeSp7O8PNr/IJoo2I1YyqbtvVjJxfr68GhB2wQbRimwerm+j5TEIvGPnD2wo/ttPnfeZxf2pZT+Xz0ZTbHZX+fiypnNFpLKmCvvcgESw5YQWMnocTPv+bxPUghSYdXe6jNWxgTIGbOYbYnmwGQ7Q=
+	t=1755586939; cv=none; b=FRS0TyGpEgisJzoNa6cx4+qssdsANJ1sYIQHiu2btxdNzsMRre5+8700RfbAMbSoAsPv6u3TDfVB3iwz2JrjJJPfCcYIAlPSzgwHoZ0fJPETGg8N75sDdaJRDzRfMAliRYoyS/33e0lIfVXDp6lSUs7ZP393/8WCvR7InyNkWDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755586856; c=relaxed/simple;
-	bh=qPuOc9Ega1pffFKeTePKWI+Bzt1QmJwNdh8xyCSDZDw=;
+	s=arc-20240116; t=1755586939; c=relaxed/simple;
+	bh=L3/Jsto8SKgbARYjbaV5YJtQ3TvA6hXl2fH2c004Bac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jWPV3PxhcTnnIxw519U5B2zPABi4OTL7G6ryk7eGShFM/rL6nWPsE471lhV3nP1r6bIztzM10rAeF11Yog/6RnHr+Oq9iztCTmYnkQRtt5SRiYwAuXSa3WG1oYpPCcP9zsAnagTtUO9Ag9OvXlE/k1/x7UYyI0nIZnkjxyQi/EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqU8qQ7k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA93C4CEF1;
-	Tue, 19 Aug 2025 07:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755586855;
-	bh=qPuOc9Ega1pffFKeTePKWI+Bzt1QmJwNdh8xyCSDZDw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=qz8dF2/4tHDo6Dw7JYIiOlv7C5msTypfwI4A+Xv7D1J0TK5xxibk52t/vk+a8gmt22m4cysweman28fXDS+u0+yw/ytQDNbWJNqiA/vhJIzzvrUN81m/Gt7SMQjJoJFNC9JvdCEMZqCgSRwN1LborjHjkpYmy05FD9dbTHfxod4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JI+vYmjZ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-52-92.net.vodafone.it [5.90.52.92])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A57A82A6E;
+	Tue, 19 Aug 2025 09:01:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755586876;
+	bh=L3/Jsto8SKgbARYjbaV5YJtQ3TvA6hXl2fH2c004Bac=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JqU8qQ7kdBtEx/UFQ684wBTsD0bLuXCgEuLRXQUIkWPIO7rxsD4U9iPjLVk88IDe6
-	 8l0kN/IIj1kTXl9m0zBlMiI+O/AiNljWJL1bOSHYvl/RWXAQ2pfVeyXnhBLm5T/4vg
-	 7OMNCmM7lBfuPlCiJiDn2Yuf7uRenQMKXXZ5Brm0vYkooMGNX/XnmB8NrAKkanGbeS
-	 jfzLvQA9Q/wFjeQ4WqsBlaIWIZROh79tz4E4TA1/UvSjebrfT3oMT5sPRZn34OU12f
-	 Tdv2IJJCfd6cVn95nFA/N/QQnlx6tzvDoOqztk8d07zwCB8IjW/qM5pAc61kGd4lGQ
-	 BmQmlKmTzfMGQ==
-Date: Tue, 19 Aug 2025 09:00:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org, dianders@chromium.org, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: HID: i2c-hid: parade: Introduce
- bindings for Parade tc3408
-Message-ID: <20250819-succinct-burgundy-doberman-09f29f@kuoka>
-References: <20250819034852.1230264-1-yelangyan@huaqin.corp-partner.google.com>
- <20250819034852.1230264-2-yelangyan@huaqin.corp-partner.google.com>
+	b=JI+vYmjZb4lbwLchQgXdhzf/IMELxZ4JWE/pVjEmndhC+AcWa2KZJ6ei3GruZDrGZ
+	 orxryxkYAHWRzVtPzPew4ZPiibE+XQriXHtpAhW13iKFbHGKKT11HXhlgPQzJQlyDZ
+	 4s7rPakildkXuLeiYjY1lilvJJ4c9SYGXBq+FSuI=
+Date: Tue, 19 Aug 2025 09:02:10 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil+cisco@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] media: ivtv: Fix invalid access to file *
+Message-ID: <db7ynwwwwi6lja7l4itpdkbnbzyg7sqa32mhm3xfcjrhb67hij@dcfs3m6w73il>
+References: <20250818-cx18-v4l2-fh-v3-0-5e2f08f3cadc@ideasonboard.com>
+ <20250818-cx18-v4l2-fh-v3-2-5e2f08f3cadc@ideasonboard.com>
+ <20250818235906.GC10308@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,97 +60,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250819034852.1230264-2-yelangyan@huaqin.corp-partner.google.com>
+In-Reply-To: <20250818235906.GC10308@pendragon.ideasonboard.com>
 
-On Tue, Aug 19, 2025 at 11:48:51AM +0800, Langyan Ye wrote:
-> The tc3408 touch screen chip same as Elan eKTH6915 controller
-> has a reset gpio. The difference is that they have different
-> post_power_delay_ms.
-> 
-> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+On Tue, Aug 19, 2025 at 02:59:06AM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> Thank you for the patch.
+>
+> On Mon, Aug 18, 2025 at 10:39:37PM +0200, Jacopo Mondi wrote:
+> > Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> > all ioctl handlers have been ported to operate on the file * first
+> > function argument.
+> >
+> > The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
+> > needs to start streaming. This function calls the s_input() and
+> > s_frequency() ioctl handlers directly, but being called from the driver
+> > context, it doesn't have a valid file * to pass them. This causes the
+> > ioctl handlers to deference an invalid pointer.
+> >
+> > Fix this by wrapping the ioctl handlers implementation in helper
+> > functions.
+>
+> You may want to reword this in a similar way as proposed in 1/2.
+>
+> >
+> > The ivtv_do_s_input() helper accepts a struct ivtv * as first argument,
+> > which is easily accessible from the DVB layer as well as from the file *
+> > argument of the ioctl handler.
+> >
+> > The ivtv_s_frequency() takes an ivtv_stream * instead. The stream * can
+> > safely be accessed from the DVB layer which hard-codes it to the
+> > IVTV_ENC_STREAM_TYPE_MPG stream type, as well as from the ioctl handler
+> > a valid stream type is associated to each open file handle depending on
+> > which video device node has been opened in the ivtv_open() file
+> > operation.
+> >
+> > The bug has been reported by Smatch.
+> >
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
+> > Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > ---
+> >  drivers/media/pci/ivtv/ivtv-driver.c | 11 ++++-------
+> >  drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
+> >  drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
+> >  3 files changed, 25 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
+> > index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..7e2fb98cfccf02f701ceb4484dd1d330dd1dc867 100644
+> > --- a/drivers/media/pci/ivtv/ivtv-driver.c
+> > +++ b/drivers/media/pci/ivtv/ivtv-driver.c
+> > @@ -1260,15 +1260,12 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+> >
+> >  int ivtv_init_on_first_open(struct ivtv *itv)
+> >  {
+> > -	struct v4l2_frequency vf;
+> >  	/* Needed to call ioctls later */
+>
+> I'd drop the comment.
 
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+it was there already and it's not misleading
 
-Just "Add foo bar"
+>
+> > -	struct ivtv_open_id fh;
+> > +	struct ivtv_stream *s = &itv->streams[IVTV_ENC_STREAM_TYPE_MPG];
+> > +	struct v4l2_frequency vf;
+> >  	int fw_retry_count = 3;
+> >  	int video_input;
+> >
+> > -	fh.itv = itv;
+> > -	fh.type = IVTV_ENC_STREAM_TYPE_MPG;
+> > -
+> >  	if (test_bit(IVTV_F_I_FAILED, &itv->i_flags))
+> >  		return -ENXIO;
+> >
+> > @@ -1310,13 +1307,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
+> >
+> >  	video_input = itv->active_input;
+> >  	itv->active_input++;	/* Force update of input */
+> > -	ivtv_s_input(NULL, &fh, video_input);
+> > +	ivtv_do_s_input(itv, video_input);
+> >
+> >  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
+> >  	   in one place. */
+> >  	itv->std++;		/* Force full standard initialization */
+> >  	itv->std_out = itv->std;
+> > -	ivtv_s_frequency(NULL, &fh, &vf);
+> > +	ivtv_do_s_frequency(s, &vf);
+>
+> 	ivtv_do_s_frequency(&itv->streams[IVTV_ENC_STREAM_TYPE_MPG], &vf);
+>
+> would work too. Up to you.
+>
 
+I know, but I prefer the way I have here
 
-> ---
->  .../bindings/input/parade,tc3408.yaml         | 72 +++++++++++++++++++
->  1 file changed, 72 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/parade,tc3408.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/input/parade,tc3408.yaml b/Documentation/devicetree/bindings/input/parade,tc3408.yaml
-> new file mode 100644
-> index 000000000000..25db85e90b18
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/parade,tc3408.yaml
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/parade,tc3408.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Parade tc3408 touchscreen controller
-> +
-> +maintainers:
-> +  - Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-> +
-> +description:
-> +  Supports the Parade tc3408 touchscreen controller.
+> >
+> >  	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
+> >  		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
+> > diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> > index 8077a71d4850ec773caa20c3fca08f92f3117d69..dfbc842b22453868a2075935a81db7ae313ee46c 100644
+> > --- a/drivers/media/pci/ivtv/ivtv-ioctl.c
+> > +++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> > @@ -974,9 +974,8 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
+> >  	return 0;
+> >  }
+> >
+> > -int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> > +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp)
+> >  {
+> > -	struct ivtv *itv = file2id(file)->itv;
+> >  	v4l2_std_id std;
+> >  	int i;
+> >
+> > @@ -1017,6 +1016,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> >  	return 0;
+> >  }
+> >
+> > +static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> > +{
+> > +	return ivtv_do_s_input(file2id(file)->itv, inp);
+> > +}
+> > +
+> >  static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
+> >  {
+> >  	struct ivtv *itv = file2id(file)->itv;
+> > @@ -1065,10 +1069,9 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
+> >  	return 0;
+> >  }
+> >
+> > -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
+> > +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf)
+> >  {
+> > -	struct ivtv *itv = file2id(file)->itv;
+> > -	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
+> > +	struct ivtv *itv = s->itv;
+> >
+> >  	if (s->vdev.vfl_dir)
+> >  		return -ENOTTY;
+> > @@ -1082,6 +1085,15 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
+> >  	return 0;
+> >  }
+> >
+> > +static int ivtv_s_frequency(struct file *file, void *fh,
+> > +			    const struct v4l2_frequency *vf)
+> > +{
+> > +	struct ivtv_open_id *id = file2id(file);
+> > +	struct ivtv *itv = id->itv;
+> > +
+> > +	return ivtv_do_s_frequency(&itv->streams[id->type], vf);
+> > +}
+> > +
+> >  static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
+> >  {
+> >  	struct ivtv *itv = file2id(file)->itv;
+> > diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> > index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..dd713a6b095e5ebca45a234dd6c9a90df0928596 100644
+> > --- a/drivers/media/pci/ivtv/ivtv-ioctl.h
+> > +++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> > @@ -17,7 +17,9 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
+> >  void ivtv_set_funcs(struct video_device *vdev);
+> >  void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
+> >  void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
+> > -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
+> > -int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
+> > +
+> > +struct ivtv;
+>
+> I'd drop this, as the structure is already used above.
 
-Describe the hardware, not what binding supports. You just repeated
-title, BTW.
+So it works by chance. I'll move the forward declaration up.
 
-> +  This touchscreen controller uses the i2c-hid protocol with a reset GPIO.
-> +
-> +allOf:
-> +  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: parade,tc3408
-> +
-> +  reg:
-> +    const: 0x24
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  panel: true
-
-Drop
-
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: Reset GPIO.
-
-Drop description, redundant.
-
-> +
-> +  vcc33-supply:
-> +    description: The 3.3V supply to the touchscreen.
-> +
-> +  vccio-supply:
-> +    description: The 1.8V supply to the touchscreen.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - panel
-> +  - vcc33-supply
-> +  - vccio-supply
-> +
-> +additionalProperties: false
-
-unevaluatedProperties instead
-
-Best regards,
-Krzysztof
-
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> > +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf);
+> > +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp);
+> >
+> >  #endif
+> >
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
