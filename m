@@ -1,129 +1,149 @@
-Return-Path: <linux-kernel+bounces-775324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D46CB2BDF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A717AB2BDFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE96524FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F2F5E248E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A5031AF01;
-	Tue, 19 Aug 2025 09:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A528731B108;
+	Tue, 19 Aug 2025 09:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t0sru7cj"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xUGfaqai"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BA726560A;
-	Tue, 19 Aug 2025 09:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905B131E0E9
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596968; cv=none; b=CGXSi5rvclIDPyroVC5OEclW8cCLAusRWwwaQUBL+0rZlmxNFy2N51g9s/A71EYjXJGKeq4JZNNFISg9eCYNvQWNVyJtLOXWZQ0b1kkJGnkzM2aaCHzHHaVKGqsz1zO1P8b1Fkta6gOYUltNDpn2s3w2I+hYGlVI3PiEjXYxTsY=
+	t=1755596995; cv=none; b=m0rZ13UwBhK7FP7kHQmzXTHxQ8ic2c/ta68X18yfbUzx6FJlSSW3G0MmAhVAApQVXFmVK+USpmtWQB1I9yMgkYbYTqa1AwtsSkW8awniZ64pJeRk5pQlIzjMgWaH2oafSOISxd/Ak9TZAyAPC58Ly11EFJ9iBsZPsAVerWMLFp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596968; c=relaxed/simple;
-	bh=QmsCU85exE8ivGxqjNzmk5Y7YhtnUXRXvatQtTn7XnQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7ZNeo/LUdDGrV4ZhHFrjcebkXmapTS0HYbsdTPqgoMMzqvxohrkxySLc9fgtFVqcxEjE+rXg04V/hOK85mW30h/aM4Md4PioGuDVURrrDQORd9+CX0eOmIik3Lwi2ESpRZTBJXKgepuLYNce+5ogd8OYH7qpxOv3QJ02hRlIjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=t0sru7cj; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57J9nFLA3286514;
-	Tue, 19 Aug 2025 04:49:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755596955;
-	bh=wlRI//KB0EuOY+l24O2uC3n8/OTg+wh6L9BOMvOPHYw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=t0sru7cj+g8lkQHQvUVWaDgI/jzjKJkXCl8Y+YUTBlbEkgDdyqRR/GDnxmxEfG/RL
-	 eMPFj91lA2m0rwZcd10h5Abb0Pp+/CrmMAbSolnBXiXXBr493e2euwa/CZCNjI9+19
-	 KLSPNqznqbMQgaXFSDsa1ekN/y0sqw3TTXzKbh6I=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57J9nFCJ318273
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 19 Aug 2025 04:49:15 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 19
- Aug 2025 04:49:15 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 19 Aug 2025 04:49:15 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57J9nDfu2523075;
-	Tue, 19 Aug 2025 04:49:14 -0500
-Date: Tue, 19 Aug 2025 15:19:13 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-CC: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam
-	<mani@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>,
-        Niklas Cassel <cassel@kernel.org>,
-        Kishon Vijay
- Abraham I <kishon@kernel.org>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Hans Zhang
-	<18255117159@163.com>,
-        "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: keystone: Use kcalloc() instead of kzalloc()
-Message-ID: <f5fb6c50-7576-4b75-bbed-7989f4718daf@ti.com>
-References: <20250819085917.539798-1-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1755596995; c=relaxed/simple;
+	bh=tV6Flkuo2P/+55L7Kh0T7daOZ9uv2yK47XAxZBt9LOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RYE0m/SCRKUaFxGPYIB7Y1NgJDQMLAsQPyQmVbpt3b0pWmWH8JTiB+RDq3wZScOI3/fsWPRrv0msPJZYvOumy7LX9dOkM8HdIKndUhtUUZ9iRzcdUQTKianr5DpASn23LtYeJvulj+aZZJ82dplbm7tEx4ccUvYeBAGW20lUpj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xUGfaqai; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55ce510b4ceso5792342e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755596990; x=1756201790; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tV6Flkuo2P/+55L7Kh0T7daOZ9uv2yK47XAxZBt9LOQ=;
+        b=xUGfaqailfILgnn9twlZVvknsFLdaaDvd0vqvVv3J2OlV1wmvU4DB0M/sM11KDa2xe
+         i8YagmU7rgfupxhwmH+NBPI4s9Vy/uFYXiXNocNTdb+er7NFgOK8bIpnx0DGn9jhhYV+
+         iqoLOLHkNqu/hMI2X+KiHL/6IJ7eTiJR3DmkRidipAG7dnS3oyjcpyF6/rW3du8ZMFKR
+         dhCSQYm1/LFv+CMJiBBA6OFpM3NfciPZPNmd8f0/u0Qs2dh+1GajWVxUMdsl3UQAcjeN
+         G2699YMNi3HziBPSD/pLEVDhCNo0nEaddDRxLpkI2T5pa4zsATVAXEzgm7aNhn1uAL4h
+         yJiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755596990; x=1756201790;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tV6Flkuo2P/+55L7Kh0T7daOZ9uv2yK47XAxZBt9LOQ=;
+        b=OyrLoAeMJgomvJQ1OGqEkWddhw4e7Uyw0OAvl5wjrjgKRvdlK//cvaRX+3jviqfj6e
+         X+jPDcf3HR5RmXHo5gVHtwJtdaf6qImr6rFIltBrp67sumcRgz29RXWRozkTtq0ZTKiO
+         lsTM5qjAbPu1hjjzK2wkwLfSerfiWrSy25Ymg+w7CpD0P7VRh1G/+ed0BmiWq/+uLsa+
+         PcqEIqvNae+6103xzQgv7auWxWQwW9hixD8Rl/PpUZeHOlLSDhpxIgAvSq6imumz0KW2
+         15fL/WZPUmWPz4tnyPm+f3lyFRkvh+Ft/BA+h3sl20TH9rEIGX1GfJtBfLLGYN3EkwIp
+         Utnw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/jUPByL1WyBrfaMpIMor7N+AIUoj4fcBcUAgG/MxMXkLmtEiauQhBmYKrpxq+R971fQ3UqZwp3ZxWiR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQkptd32SORXhRkDJX4FqQpVqN1Zhb+zHuW/rIrYcnZ/aYzzIq
+	pphtAWpfQ+pF0upknqwj/+0uZB0TGzAheW7ntnZWhMU7CldWfCWo11kSvje8ST1hSZ8QXqTvqbp
+	wk7eXZ4DS9+Gm6hzmxMe5YQt4YDz6d0qodPiu9L/qjA==
+X-Gm-Gg: ASbGncvnvApxx/w6zSgjeFaf5+eF6Xx6kkHlzO1b6B9QGZfeDQyzND5M1rkwQse6/gx
+	UtXjUvlw9cokkllJ3J7/wdr/QrtFIbce8kDAZei/HgRuhdYY4z9611dKZ5IUQ1kdfpLSnj9LigR
+	mgRJY7IsY8+d/fOZ0APxNFS7gwwN6hN0UCdkH3xia+84KFZgp34zlPim2CshmBYjCU7bJia0SBj
+	tfA7dT/nqxm
+X-Google-Smtp-Source: AGHT+IEt8RlqWWvwC2uqrmb7EU75OBtpQ0q0kJ1zr3PFW1jsKW7QqgA/pBKXOLyxKfth/q0XXJuPhRlLhC58Y7ZaIjE=
+X-Received: by 2002:a05:6512:ac9:b0:553:51a2:4405 with SMTP id
+ 2adb3069b0e04-55e00850835mr590681e87.45.1755596989499; Tue, 19 Aug 2025
+ 02:49:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250819085917.539798-1-rongqianfeng@vivo.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-109-b3bf97b038dc@redhat.com>
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-109-b3bf97b038dc@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 19 Aug 2025 11:49:38 +0200
+X-Gm-Features: Ac12FXyEOw7KCbkbFT2OqCP4TngpQPKLbvy9M6n90z-zmlM7tVP9PQNq8vVGJnI
+Message-ID: <CACRpkdaW=f7xm+rsD8XUUx-qhuh8sk1mCU-erve-_9S4uUpHbA@mail.gmail.com>
+Subject: Re: [PATCH 109/114] clk: versatile: vexpress-osc: convert from
+ round_rate() to determine_rate()
+To: bmasney@redhat.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
+	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
+	Andrea della Porta <andrea.porta@suse.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Alex Helms <alexander.helms.jy@renesas.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
+	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 04:59:15PM +0800, Qianfeng Rong wrote:
+On Mon, Aug 11, 2025 at 5:21=E2=80=AFPM Brian Masney via B4 Relay
+<devnull+bmasney.redhat.com@kernel.org> wrote:
 
-Hello,
+> From: Brian Masney <bmasney@redhat.com>
+>
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-> Replace calls of devm_kzalloc() with devm_kcalloc() in ks_pcie_probe() for
-> safer memory allocation with built-in overflow protection.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Please add more details by referring to:
-https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
-and stating that multiplication could lead to an overflow and isn't safe
-when it is used to calculate the size of allocation.
-
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
->  drivers/pci/controller/dwc/pci-keystone.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index 7d7aede54ed3..3d10e1112131 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -1212,11 +1212,11 @@ static int ks_pcie_probe(struct platform_device *pdev)
->  	if (ret)
->  		num_lanes = 1;
->  
-> -	phy = devm_kzalloc(dev, sizeof(*phy) * num_lanes, GFP_KERNEL);
-> +	phy = devm_kcalloc(dev, num_lanes, sizeof(*phy), GFP_KERNEL);
->  	if (!phy)
->  		return -ENOMEM;
->  
-> -	link = devm_kzalloc(dev, sizeof(*link) * num_lanes, GFP_KERNEL);
-> +	link = devm_kcalloc(dev, num_lanes, sizeof(*link), GFP_KERNEL);
->  	if (!link)
->  		return -ENOMEM;
-
-Regards,
-Siddharth.
+Yours,
+Linus Walleij
 
