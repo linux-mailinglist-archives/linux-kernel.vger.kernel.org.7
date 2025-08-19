@@ -1,191 +1,108 @@
-Return-Path: <linux-kernel+bounces-775769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A605B2C4A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:07:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626A4B2C48F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCF5188929F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:05:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B13FB7B2761
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17967341AC1;
-	Tue, 19 Aug 2025 13:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rIFGX3Rc"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EE733EB02;
+	Tue, 19 Aug 2025 13:03:57 +0000 (UTC)
+Received: from mail.grinn-global.com (mail.grinn-global.com [77.55.128.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E043233CEA0
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370D1224AF9;
+	Tue, 19 Aug 2025 13:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.55.128.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755608523; cv=none; b=rY/lpghAbOIUBio9oBOsj1eoyK9ykZ7/Odkd9a+uuY8HEjzoS74yxDAOTuMzG2hDErJNhqVmCLzpsB3ApHUikfWR7W5VGNVH8kH5laOZ3gi3ltmePawk0C/8838uSqvElT/dl70J967vJ88OEnlbaT9UL7/2BUBRrlZOjgslhwM=
+	t=1755608636; cv=none; b=ZQcHpJXcD8l74FR/+E0LcBGvxW/deCDGPT6BrL2OwD+0mVwdUw4ahOZrTFMrEGGJHfTifaab+or4v88tiiBbuqHs+2x7KZuoHriXCZoczGWe1IdqaIrAhNQ5ZsIugFvVh1L4N49/0vqL452v9LtD0h13AleT1CxSHYoCmOlGGhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755608523; c=relaxed/simple;
-	bh=xDml88sPMX5R8HY2YfDw7tFyskzPjxRWQr7bMllRWeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WYo4ygA1KiCS+lYaD8dzbsEj0S2cCuUFe6Lt6LTObWNrauPTeCnUw3jpunBpb7fVQb6fNY/rNkG4Q1G+sohaMiBLp9TdNoYONCTziQrOet/hZ7g5MRvEF/j/yYsCQe29Y8zLdLck/RHuXLbl1AQH2tXtKObTQMbqMLtoJrXyNsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rIFGX3Rc; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-333e7517adcso56148811fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:02:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755608519; x=1756213319; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qxb1RM5Ht9n1r5SEfzEp8KCVi3ssjTbIBjJD7cNdVUs=;
-        b=rIFGX3Rca8BQbotWBuyjMi53L/jSLyggBdIK9QeWUWOf6ZFMfHN3rD9brhbAOpt+A+
-         Nfb0R8GK4F+so43kB7dvW+mYl7mBOiWc8Q7arNcLhM7gC/wWVQPiOigCzLIg2BwNe/ZD
-         xf3ExINAKjlFjkwMu8HJyXEFVCd5cGsBd2T0IZhG7pUsANV0hDKZuWRH5KclCm5I87GX
-         8mFll2ksFAgQ+ey/nQrLq0/oVX3zO6n1bPJkVUrv7D182fnnFWZgBKqzrVoEE4FXvMZa
-         lRA3YTirIsuosT3ZYCSOxq9oePQa8HJR4n5ED0eQq+L13d9qmg190A8XLaNDv/lX8iZM
-         aEoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755608519; x=1756213319;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qxb1RM5Ht9n1r5SEfzEp8KCVi3ssjTbIBjJD7cNdVUs=;
-        b=mY5qMVYMxZLctB//WBt2/osfZrETqf73H+EGavGkpcc5emJkZL+FT7JzdRtfDiAQV9
-         AeJPvlOK4cxq3aNGo8N7szPW2Skfr0vrQPWVcF5tlrZtY2ceIVowlKWGGac3ZcP4afy6
-         rkeWnD+KCnXBlPiUBFtljnVjpds54r+C1XHW+whh+IIFwypkmLTl2w5OUXehKvxt8cAb
-         LZ1DwOjguXVGY8y4Bq5r//Q/2jB3iPCDhMKS3NDSNfwCdLdYhbw7piN51zc6Dbwxg9Tn
-         OBqUtnsArEWFVbLB0Xh0U812aEK9xDJ8jXMGAiDOnBNvpnYaR1hFRKH0cNqi9yMMGS1L
-         8ziQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHLtqFLaePvh7hYhgAnNA2cyUUdowOvbdnQEtojapZs9t1JOJ3GjmAkWE8Zj5Vj3IwsFhX8DeO5TZbroE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNBeoxkm1rWVl+EZc10Q8ucE4WFpEAXWX/62Ei8Muu4ErogylP
-	GFNJAo7rJI0aPznV+4jnOb4+3DyqKsUKrxWmCtruPJFnphj03KfdGPDV+b6bLD9YhDaB6tpP3vL
-	ijq2gru0XLh+1TIbYeBPVyxy7B0IGQSjHaLt8IKkM1w==
-X-Gm-Gg: ASbGncu2T+LgPYfca5zyDP6thP57ovy8z1XY/soU3LLARrFEtrzOyUu37ovQb8pac7D
-	DUo5x1tIw+NmlO+LnCO5QrSSMLAz2JcU9jKZQy9OxPpd2Wj4hl160mN2v6ulUEerk+u+JY/rVxC
-	Fq8I6e7xbalCSeM31295xLHPOf5+EdiMHmLjhGj4MyLGel6cz87UZSfuiO8lJF8q9GEo2Mia00m
-	RZiIHU=
-X-Google-Smtp-Source: AGHT+IE7bjsIxvb3/p90/iX8lbM0JfYfSlfdYQ83gKcwpD46fl2MWv7BXJs8CRajKFvUVpb0cf1UMxfJ5zwUc8D1bZs=
-X-Received: by 2002:a2e:a490:0:b0:332:20c7:2820 with SMTP id
- 38308e7fff4ca-33531348988mr4833881fa.5.1755608518741; Tue, 19 Aug 2025
- 06:01:58 -0700 (PDT)
+	s=arc-20240116; t=1755608636; c=relaxed/simple;
+	bh=7b+b9Zckr0VwfWoq+godGIUO2yqQ3Ss0ZnT0y2zcC5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oBtsQKhwjxTQ8/oHCCmtUXWlRH66joBBkQiUikjzkW49OdO1HKUCOzHgUD0c4+WOAmNHqEVnrSxOLYaddi3D/GocPM3QYZ39TxORKR+RpC7jwNSTQ+eluxjrbEGAxVZgeBl3zoZyRsRFugmN2HzwJG+AMK09wrzVvDSvNWhdIgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com; spf=pass smtp.mailfrom=grinn-global.com; arc=none smtp.client-ip=77.55.128.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grinn-global.com
+X-Virus-Scanned: by amavisd-new using ClamAV (9)
+X-Spam-Flag: NO
+X-Spam-Score: -1
+X-Spam-Level: 
+Received: from mateusz.int.grinn-global.com (f90-187.icpnet.pl [46.228.90.187])
+	by server220076.nazwa.pl (Postfix) with ESMTP id 7FA421BE387;
+	Tue, 19 Aug 2025 15:03:45 +0200 (CEST)
+From: Mateusz Koza <mateusz.koza@grinn-global.com>
+To: angelogioacchino.delregno@collabora.com,
+	robh@kernel.org
+Cc: krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	marcin.czarnecki@grinn-global.com,
+	b.bilas@grinn-global.com,
+	Mateusz Koza <mateusz.koza@grinn-global.com>
+Subject: [PATCH v2 0/4] Add support for Grinn GenioSBC-510/700 boards
+Date: Tue, 19 Aug 2025 15:02:27 +0200
+Message-ID: <20250819130231.181571-1-mateusz.koza@grinn-global.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815-pinctrl-gpio-pinfuncs-v5-0-955de9fd91db@linaro.org>
-In-Reply-To: <20250815-pinctrl-gpio-pinfuncs-v5-0-955de9fd91db@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 15:01:47 +0200
-X-Gm-Features: Ac12FXyC72fjsmfBKj8qknXL2IcZGnP7oQB_by_QmlQnlUNrEkhpI-BF0K24mIM
-Message-ID: <CACRpkdaDGmdhaik+1saRv7Ts4myQ+tg1aQqGU3xQyT7ma8dJFw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] pinctrl: introduce the concept of a GPIO pin
- function category
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-NA-AI-Spam-Probability: 0.48
+X-NA-AI-Is-Spam: no
 
-On Fri, Aug 15, 2025 at 11:09=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
+This patch series adds support for Grinn GenioSBC-510 and GenioSBC-700
+boards based on MediaTek MT8370 and MT8390 SoCs, respectively. It
+includes device tree files for both boards, updates to the device tree
+bindings, and necessary modifications to the Makefile.
 
-> Problem: when pinctrl core binds pins to a consumer device and the
-> pinmux ops of the underlying driver are marked as strict, the pin in
-> question can no longer be requested as a GPIO using the GPIO descriptor
-> API. It will result in the following error:
->
-> [    5.095688] sc8280xp-tlmm f100000.pinctrl: pin GPIO_25 already request=
-ed by regulator-edp-3p3; cannot claim for f100000.pinctrl:570
-> [    5.107822] sc8280xp-tlmm f100000.pinctrl: error -EINVAL: pin-25 (f100=
-000.pinctrl:570)
->
-> This typically makes sense except when the pins are muxed to a function
-> that actually says "GPIO". Of course, the function name is just a string
-> so it has no meaning to the pinctrl subsystem.
->
-> We have many Qualcomm SoCs (and I can imagine it's a common pattern in
-> other platforms as well) where we mux a pin to "gpio" function using the
-> `pinctrl-X` property in order to configure bias or drive-strength and
-> then access it using the gpiod API. This makes it impossible to mark the
-> pin controller module as "strict".
->
-> This series proposes to introduce a concept of a sub-category of
-> pinfunctions: GPIO functions where the above is not true and the pin
-> muxed as a GPIO can still be accessed via the GPIO consumer API even for
-> strict pinmuxers.
->
-> To that end: we first clean up the drivers that use struct function_desc
-> and make them use the smaller struct pinfunction instead - which is the
-> correct structure for drivers to describe their pin functions with. We
-> also rework pinmux core to not duplicate memory used to store the
-> pinfunctions unless they're allocated dynamically.
->
-> First: provide the kmemdup_const() helper which only duplicates memory
-> if it's not in the .rodata section. Then rework all pinctrl drivers that
-> instantiate objects of type struct function_desc as they should only be
-> created by pinmux core. Next constify the return value of the accessor
-> used to expose these structures to users and finally convert the
-> pinfunction object within struct function_desc to a pointer and use
-> kmemdup_const() to assign it. With this done proceed to add
-> infrastructure for the GPIO pin function category and use it in Qualcomm
-> drivers. At the very end: make the Qualcomm pinmuxer strict.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-(...)
-> Bartosz Golaszewski (15):
->       devres: provide devm_kmemdup_const()
->       pinctrl: ingenic: use struct pinfunction instead of struct function=
-_desc
->       pinctrl: airoha: replace struct function_desc with struct pinfuncti=
-on
->       pinctrl: mediatek: mt7988: use PINCTRL_PIN_FUNCTION()
->       pinctrl: mediatek: moore: replace struct function_desc with struct =
-pinfunction
->       pinctrl: imx: don't access the pin function radix tree directly
->       pinctrl: keembay: release allocated memory in detach path
->       pinctrl: keembay: use a dedicated structure for the pinfunction des=
-cription
->       pinctrl: constify pinmux_generic_get_function()
->       pinctrl: make struct pinfunction a pointer in struct function_desc
->       pinctrl: qcom: use generic pin function helpers
->       pinctrl: allow to mark pin functions as requestable GPIOs
+As far as I know, <angelogioacchino.delregno@collabora.com> has access
+to the schematics for these boards, as we've shared them under NDA with
+Collabora.
 
-I applied these 12 patches as a starter so they can
-stabilize in linux-next.
+Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
+---
+v2: Fixed the subject prefixes,
+	Fixed alignment in dts files,
+	Added missing SPDX-License-Identifier,
+	Fixed the ordering in dt-bindings,
+	Dropped redundant info from commit messages,
+	Run checkpatch.pl on the patchset and fixed the issues,
+	as suggested by Krzysztof Kozlowski <krzk@kernel.org>.
 
->       pinctrl: qcom: add infrastructure for marking pin functions as GPIO=
-s
->       pinctrl: qcom: mark the `gpio` and `egpio` pins function as non-str=
-ict functions
->       pinctrl: qcom: make the pinmuxing strict
+---
+Bartosz Bilas (1):
+  arm64: dts: mediatek: mt8370-grinn-genio-510-sbc: Add Grinn
+    GenioSBC-510
 
-Neil reports of regressions on qcom platforms so I assume it's something
-in the last three patches that's causing it and I hold these three off
-until you have time to look at it (and focus at just the final qcom pieces)=
-.
+Mateusz Koza (3):
+  arm64: dts: mediatek: mt8390-genio-700-evk: Add Grinn GenioSBC-700
+  dt-bindings: arm: mediatek: Add grinn,genio-700-sbc
+  dt-bindings: arm: mediatek: Add grinn,genio-510-sbc
 
-Yours,
-Linus Walleij
+ .../devicetree/bindings/arm/mediatek.yaml     |   2 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   2 +
+ .../mediatek/mt8370-grinn-genio-510-sbc.dts   |  19 +
+ .../mediatek/mt8390-grinn-genio-700-sbc.dts   |  19 +
+ .../dts/mediatek/mt8390-grinn-genio-sbc.dtsi  | 674 ++++++++++++++++++
+ .../dts/mediatek/mt8390-grinn-genio-som.dtsi  | 209 ++++++
+ 6 files changed, 925 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-700-sbc.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-sbc.dtsi
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-som.dtsi
+
+-- 
+2.43.0
+
 
