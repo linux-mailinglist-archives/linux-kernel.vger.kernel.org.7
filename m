@@ -1,119 +1,211 @@
-Return-Path: <linux-kernel+bounces-775721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C45B2C402
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B866AB2C407
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6AF5188ABB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3323917FCCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220163101BB;
-	Tue, 19 Aug 2025 12:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7570F322A22;
+	Tue, 19 Aug 2025 12:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zesjhzVD"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="gDEdXieo"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6123043A7
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E844305053;
+	Tue, 19 Aug 2025 12:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607316; cv=none; b=BnFzMFIQ6dD60BjX2Y7+Rkp9XOxBCL0xzdaUIx88gnq/CA1oK/RluNnDCCTGMpj0OK9ZxXf5AbDyjByqz04q7OlXm/WzHPGNk14MeRwCdlniawpLtMll+6Wej0JevH7aOjaaZyqjoYYMU5d9rgKHl2BB10lvFnLWzB/SDUsDUcs=
+	t=1755607335; cv=none; b=fHNHbMYv9vgr3wS1R8ydgOll8c2B1bj+wrBdU3TJwYFueP42bMUdA2Drx0V2K1dTKNGvIoJfAa2J0vy2CE17FUgS3O3C7s/r55ix/1wUChAaZImjcjrq/3DJzQ2aHS/DaR31QOf0pYmr+CcynSoSvqPObAM+NPCpAbsoIS+qig4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607316; c=relaxed/simple;
-	bh=2oNXOoxywYfVBFFbPZ7hZAbK09R5OqnjTJGfv1ceELQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qal5rrp8zUtWSthQ5lzTaxZt1hKMXGKPHaqkhj2oN1MU5Ify4WYnj9cpi/tpV+svcNt04o732+zJ9tjWk10f2cv1DtQLpHFVsBc+FSjkY+rqfMZ6M6MhMe+TmFbMe/8xVA3kr0vf4lV+SrI0dY9IWUMkrdEUDGF5OyE7jZ62ySQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zesjhzVD; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b9e4166a7bso2641196f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:41:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755607313; x=1756212113; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZPu71v4iJrj40UYhCf2EubxUaw6sgyARKI4hkp1H/4=;
-        b=zesjhzVDWBfqUr6mtGxBhk2nDVrSj3y/LqNH5RHdUiuqLyUvCKA0PMn7muc+v4K+/0
-         rV69pTnM7S5jWJPcBGQSk/I/kGgR0WYlulhCZ/Fo8kMem+Fv16wyVB428XHJBwbzwpR7
-         Uo3a3mqU2PiNJ/BuN41m6QT/xatJ8aDr8OL8553m5L8NiBOVT+fQrOsc6CQaf55RjKG2
-         938p2eRN9Ay4u7AbpH6ce2RUHjojXrPVxD38arADQWPC//WGGbqqdopASNvvj1ZG4mDA
-         GS1FsV5btfjI6ba9YZOuNZyKlqKT+GZGBUg/WbdmF06wyNcYmPgWGzhK5v0Oc8+XZxBM
-         7Yfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755607313; x=1756212113;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZPu71v4iJrj40UYhCf2EubxUaw6sgyARKI4hkp1H/4=;
-        b=uC1bwKO3KRTLc4F527wz7avpHYoY75v7jcOSi3ISpTJhGeUoMAwDHoMz48BwLnKeZ1
-         it5FbojGbMYW0w/JZ2iOXNembL8jXPt3olVpYAxaALa8MUqJWrDnRAab4N3hwzqXDDTF
-         TlahF/H93yaFn5B4oELUP3pRnwyLRXLBxE8oxTN3mjXG+pZPqNgE30TFQLI7UMlX054O
-         F6ILMvUl3uaaHT1xAfwAefF6sY/L9PeTy9OAYO8jgSrjXmyF9Kz5qqYB0xOmOdWr8ihp
-         h8TT2u1v7LV4S1pJY/M2SlPBcAabwdcx2YVe5bC/c27iKksWVeFpNjZXjhUlIVMfzViq
-         9GSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKrc+TIkqIp2i6d6VlooG2Ry7xss/3psaRW1gXdX3EIUggY5eRW2Wg3AllclFLcXEeudErgu8fyXTR4BM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwVX7e8XX6IVIhLl9Fj2DOcVmGlE1tj0y4k83al3qmPxu676LF
-	l/MJYwo3/MCjEqCOxOpspHXMYOJasT4DA68e6X8mN7l72ZWd2y+xHHj/VC8e8Uhgr1ulMDswBhV
-	Fz91RuHmfMaDO4FMTEg==
-X-Google-Smtp-Source: AGHT+IG4HvCG6xMAP0kc+KeWFDcdVkf0VrlLc9RsRO55bsIjMgWKuo8r9NDS3JOpE0Jihm8a/GII747UxtSnXhc=
-X-Received: from wrbee4.prod.google.com ([2002:a05:6000:2104:b0:3b8:e8d5:b8d4])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2d08:b0:3b9:14f2:7eed with SMTP id ffacd0b85a97d-3c0ecc315fbmr1499787f8f.56.1755607313087;
- Tue, 19 Aug 2025 05:41:53 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:41:52 +0000
-In-Reply-To: <20250819-maple-tree-v2-1-229b48657bab@google.com>
+	s=arc-20240116; t=1755607335; c=relaxed/simple;
+	bh=5YmId6TaJSXxbQAcmBKh+QzUHZdg3v1E8gFElkn2tlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRdf+EwA4i4wUZCQ1KL5BM3NZet0tCTSBwjMagEjEKF0FSraS5vfw1deSowoB0Uu70wncKvoP4iG4W3BFQiOogeGuor8dcW5cxgWa9w2vSZV+EWBMCsjClto8qgR9307FMhKRmrZ7jUBRqKLBcuOAuH9GIlWNCSN/DilYpVI9yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=gDEdXieo; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=mQNnN16mIYhaXp4sreQmcdqv7Ohu0QtrzdbShxrwIUE=; b=gDEdXieo2XHmZfvDDMXPiJzmO8
+	se3oLVyBUlfyC40YGD5hE7JPOA+9nlwDd/AdA7ugCZK1h87RLw4yoXiPhFT+2x5eVMC0UB038ZgSo
+	q4BLS1komBZdCEISFDsOPxh81J6ASvsAlskPq1zFnLpNQv+iHdBydJvgntohpMnaz50E4GEJJnoam
+	WXmHYKJ9m2MJK2SnW0tKUilQykbLACJKKOiC654Ck2YFY25iv/WykgXE1xLqKokClBxYS/puuokXC
+	zthd87qoD8miGYBA+HIY5gKqQK5RtOnTlxZgLtKrtF8Aasor40N1COFNk7QPAlI/q/VmnfAYKgcOz
+	GT73mfWA==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1uoLfF-0009Xt-10;
+	Tue, 19 Aug 2025 14:42:09 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1uoLfE-000KJH-14;
+	Tue, 19 Aug 2025 14:42:08 +0200
+Message-ID: <7d2f3767-64c5-4efa-862b-f463751a03bb@iogearbox.net>
+Date: Tue, 19 Aug 2025 14:42:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819-maple-tree-v2-0-229b48657bab@google.com> <20250819-maple-tree-v2-1-229b48657bab@google.com>
-Message-ID: <aKRxEEy5ln8qcGGI@google.com>
-Subject: Re: [PATCH v2 1/5] maple_tree: remove lockdep_map_p typedef
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andrew Ballance <andrewjballance@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/cls_cgroup: Fix task_get_classid() during qdisc run
+To: Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Graf <tgraf@suug.ch>, Paul McKenney <paulmck@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "open list:BPF [RINGBUF]" <bpf@vger.kernel.org>,
+ Willem de Bruijn <willemb@google.com>
+References: <20250819093737.60688-1-laoar.shao@gmail.com>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <20250819093737.60688-1-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27737/Tue Aug 19 10:27:27 2025)
 
-On Tue, Aug 19, 2025 at 10:34:42AM +0000, Alice Ryhl wrote:
-> Having the ma_external_lock field exist when CONFIG_LOCKDEP=n isn't used
-> anywhere, so just get rid of it. This also avoids generating a typedef
-> called lockdep_map_p that could overlap with typedefs in other header
-> files.
+On 8/19/25 11:37 AM, Yafang Shao wrote:
+> During recent testing with the netem qdisc to inject delays into TCP
+> traffic, we observed that our CLS BPF program failed to function correctly
+> due to incorrect classid retrieval from task_get_classid(). The issue
+> manifests in the following call stack:
 > 
-> With this change, bindgen will generate better definitions for this
-> union, which makes it nicer to use from Rust. This avoids a cast in the
-> Rust abstractions for the maple tree, ensuring that Rust's type checker
-> will notice at build-time if ma_lock is changed from spinlock_t to
-> something else.
+>          bpf_get_cgroup_classid+5
+>          cls_bpf_classify+507
+>          __tcf_classify+90
+>          tcf_classify+217
+>          __dev_queue_xmit+798
+>          bond_dev_queue_xmit+43
+>          __bond_start_xmit+211
+>          bond_start_xmit+70
+>          dev_hard_start_xmit+142
+>          sch_direct_xmit+161
+>          __qdisc_run+102             <<<<< Issue location
+>          __dev_xmit_skb+1015
+>          __dev_queue_xmit+637
+>          neigh_hh_output+159
+>          ip_finish_output2+461
+>          __ip_finish_output+183
+>          ip_finish_output+41
+>          ip_output+120
+>          ip_local_out+94
+>          __ip_queue_xmit+394
+>          ip_queue_xmit+21
+>          __tcp_transmit_skb+2169
+>          tcp_write_xmit+959
+>          __tcp_push_pending_frames+55
+>          tcp_push+264
+>          tcp_sendmsg_locked+661
+>          tcp_sendmsg+45
+>          inet_sendmsg+67
+>          sock_sendmsg+98
+>          sock_write_iter+147
+>          vfs_write+786
+>          ksys_write+181
+>          __x64_sys_write+25
+>          do_syscall_64+56
+>          entry_SYSCALL_64_after_hwframe+100
 > 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> The problem occurs when multiple tasks share a single qdisc. In such cases,
+> __qdisc_run() may transmit skbs created by different tasks. Consequently,
+> task_get_classid() retrieves an incorrect classid since it references the
+> current task's context rather than the skb's originating task.
+> 
+> Given that dev_queue_xmit() always executes with bh disabled, we can safely
+> use in_softirq() instead of in_serving_softirq() to properly identify the
+> softirq context and obtain the correct classid.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Thomas Graf <tgraf@suug.ch>
+> ---
+>   include/net/cls_cgroup.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/net/cls_cgroup.h b/include/net/cls_cgroup.h
+> index 7e78e7d6f015..fc9e0617a73c 100644
+> --- a/include/net/cls_cgroup.h
+> +++ b/include/net/cls_cgroup.h
+> @@ -63,7 +63,7 @@ static inline u32 task_get_classid(const struct sk_buff *skb)
+>   	 * calls by looking at the number of nested bh disable calls because
+>   	 * softirqs always disables bh.
+>   	 */
+> -	if (in_serving_softirq()) {
+> +	if (in_softirq()) {
+>   		struct sock *sk = skb_to_full_sk(skb);
+>   
+>   		/* If there is an sock_cgroup_classid we'll use that. */
 
-Ah ... this didn't work. There's still a configuration where I get the
-error:
+Hm, essentially you only want to use the fallback method of retrieving cgroup from
+the socket when the dev_queue_xmit() was triggered via ksoftirqd, rather than from
+a process via syscall all the way into dev_queue_xmit(). It gets more fuzzy presumably
+when skbs are queued somewhere and then some other kthread calls the dev_queue_xmit().
 
-ERROR:root:error[E0308]: mismatched types
-   --> ../rust/kernel/maple_tree.rs:256:18
-    |
-254 |     fn ma_lock(&self) -> *mut bindings::spinlock_t {
-    |                          ------------------------- expected `*mut bindings::spinlock` because of return type
-255 |         // SAFETY: This pointer offset operation stays in-bounds.
-256 |         unsafe { &raw mut (*self.tree.get()).__bindgen_anon_1.ma_lock }
-    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*mut spinlock`, found `*mut __BindgenUnionField<spinlock>`
-    |                                                                               
-    = note: expected raw pointer `*mut bindings::spinlock`
-               found raw pointer `*mut bindings::__BindgenUnionField<bindings::spinlock>`
+Looking at in_softirq(), the comment says "the following macros are deprecated and
+should not be used in new code", see commit 15115830c887 ("preempt: Cleanup the
+macro maze a bit"). Maybe Sebastian or Paul has input on whether in_softirq() is
+still supposed to be used.
 
-Alice
+Side question, did you investigate where the skb->sk association got orphaned
+somewhere along the way?
+
+Thanks,
+Daniel
 
