@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-776160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93176B2C962
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD2CB2C963
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDAC73AFD6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8618E3AFE9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21442522B4;
-	Tue, 19 Aug 2025 16:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MYnjcJRg"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85338248F42;
+	Tue, 19 Aug 2025 16:21:10 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D501B22D4C3;
-	Tue, 19 Aug 2025 16:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084521FDA8E;
+	Tue, 19 Aug 2025 16:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755620444; cv=none; b=FlNYYBF0cvCquz7Vgt8QqeF3e/7ot5AWTFVN81h0rNcP32lJju4Zt87/Q8xxJcP2JVGOxnllPh0K9Ibq+YcUekd9KZp4c9tkKZafun+GAIleFpqT2wT1WsEamtnvtXvYPRRMScuf7H9vklgnWHX6vLa28W8Q55prxALokqsMAGI=
+	t=1755620470; cv=none; b=r1DEf6KFKftzrFbU2QQ4FesiCQS1W0F7E6sDAiDlPAkWrMFjuaXj8n1fAuDrMnWB2G1TJ09cy3CJcb8E3FBGhslL+SLgAwPkombYkWh8U50Ev0ZhQD4q4cYfqtBsTa8+UCKITE9069bKMP63wbzPvFJUZS8GSnyyrnSC61ejpbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755620444; c=relaxed/simple;
-	bh=XPfOm7nEgRY7hdOmem221KkJIe2yW4S93V2YVQOa6oU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=il/keIbcn65Agy2+N68s8MeY34O9tEH8eKtcW6yfhFvymawKXhyreDFybCigo9an071jqCzRA1JoT2anW+YDy1pi4n1BRDUZi9yt+W25GkLLUgb8dLY23ZSjAOO5dCCpd96CWMphQ314P81wSrSqkNud6kVL/m0kLAjQRPi5CzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MYnjcJRg; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XrqByDDD1Ij8KuEP6AwMvl51hQMZ1NfZoFOmBPz4nWc=; b=MYnjcJRgkpt2w7ModbMj2O7a97
-	9fqNpd+gL4/JtJqA96022PcTRJZVLwYoeldu0jwQe5NNZTDoguEv47Tdv4Y/HLb76GkwyiBMvdRiN
-	uTMyJGlOSHnDsRSgkgzC1kxTccdSvlL1Gu8fZO+fINYXXWBUpbww/KviHcShY1hhSLiA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uoP4V-005DEc-NO; Tue, 19 Aug 2025 18:20:27 +0200
-Date: Tue, 19 Aug 2025 18:20:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, stable+noautosel@kernel.org
-Subject: Re: [PATCH v4 2/6] net: stmmac: Inverse the phy-mode definition
-Message-ID: <80a60564-3174-4edd-a57c-706431f2ad91@lunn.ch>
-References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
- <20250819-qcs615_eth-v4-2-5050ed3402cb@oss.qualcomm.com>
+	s=arc-20240116; t=1755620470; c=relaxed/simple;
+	bh=xFNCSoUoI/QBeEEDdHgL5WulflhR/d72oEr+1fHBGC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sFcZvIl5Q7CSTBSAjPWnktyvaYyRlavDkCYrpLW6FuPQ24iR2bhlCoAeptxMVJjyFiUHPTlUuNi4xXBTSMfuKjroka0XCX1+G5EAoO9+zAuuCSZq7CxKQC3MbjYfTP4zotDTXBrMswFeWianJ8nC3NcXuYhQ7ePTfc62hgzFQLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:a45f:4d28:5bd6:f5e1] (unknown [IPv6:2a02:8084:255b:aa00:a45f:4d28:5bd6:f5e1])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id EEE104099F;
+	Tue, 19 Aug 2025 16:20:58 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:a45f:4d28:5bd6:f5e1) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:a45f:4d28:5bd6:f5e1]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <a0d0ed39-3c47-42dc-bdf9-a1961368b166@arnaud-lcm.com>
+Date: Tue, 19 Aug 2025 17:20:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-qcs615_eth-v4-2-5050ed3402cb@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v4 2/2] bpf: fix stackmap overflow check in
+ __bpf_get_stackid()
+To: Yonghong Song <yonghong.song@linux.dev>, song@kernel.org, jolsa@kernel.org
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+ martin.lau@linux.dev, sdf@fomichev.me,
+ syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <20250813204606.167019-1-contact@arnaud-lcm.com>
+ <20250813205506.168069-1-contact@arnaud-lcm.com>
+ <07d849b2-67c2-40b2-9cd3-75b8f3a4e0a6@arnaud-lcm.com>
+ <ca5b2f4a-f92d-4749-9abe-c2af9254addc@linux.dev>
+ <ae450780-f2a9-46fc-8e49-3528ff2e5daa@linux.dev>
+Content-Language: en-US
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+In-Reply-To: <ae450780-f2a9-46fc-8e49-3528ff2e5daa@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175562045987.14819.824542910901246384@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
->  static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos, int speed)
->  {
->  	struct device *dev = &ethqos->pdev->dev;
-> -	int phase_shift;
-> +	int phase_shift = 0;
->  	int loopback;
->  
->  	/* Determine if the PHY adds a 2 ns TX delay or the MAC handles it */
-> -	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID ||
-> -	    ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
-> -		phase_shift = 0;
-> -	else
-> +	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
->  		phase_shift = RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN;
+On 18/08/2025 18:02, Yonghong Song wrote:
+>
+>
+> On 8/18/25 9:57 AM, Yonghong Song wrote:
+>>
+>>
+>> On 8/18/25 6:49 AM, Lecomte, Arnaud wrote:
+>>> Hey,
+>>> Just forwarding the patch to the associated maintainers with 
+>>> `stackmap.c`.
+>>
+>> Arnaud, please add Ack (provided in comments for v3) to make things 
+>> easier
+>> for maintainers.
+>>
+>> Also, looks like all your patch sets (v1 to v4) in the same thread.
+>
+> sorry, it should be v3 and v4 in the same thread.
+>
+Hey, ty for the feedback !
+I am going to provide the link to the v3 in the v4 commit and resent the 
+v4 with the Acked-by.
 
-Does this one setting control both RX and TX delays? The hardware
-cannot support 2ns delay on TX, but 0ns on RX? Or 2ns on RX but 0ns on
-TX?
-
-	Andrew
+>> It would be good to have all these versions in separate thread.
+>> Please look at some examples in bpf mailing list.
+>>
+>>> Have a great day,
+>>> Cheers
+>>>
+>>> On 13/08/2025 21:55, Arnaud Lecomte wrote:
+>>>> Syzkaller reported a KASAN slab-out-of-bounds write in 
+>>>> __bpf_get_stackid()
+>>>> when copying stack trace data. The issue occurs when the perf trace
+>>>>   contains more stack entries than the stack map bucket can hold,
+>>>>   leading to an out-of-bounds write in the bucket's data array.
+>>>>
+>>>> Changes in v2:
+>>>>   - Fixed max_depth names across get stack id
+>>>>
+>>>> Changes in v4:
+>>>>   - Removed unnecessary empty line in __bpf_get_stackid
+>>>>
+>>>> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+>>>> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+>>>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+>>>> ---
+>>>>   kernel/bpf/stackmap.c | 23 +++++++++++++----------
+>>>>   1 file changed, 13 insertions(+), 10 deletions(-)
+>>>>
+>> [...]
+>>
+>>
+>
+>
 
