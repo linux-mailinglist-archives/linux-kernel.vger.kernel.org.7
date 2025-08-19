@@ -1,78 +1,170 @@
-Return-Path: <linux-kernel+bounces-776256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C75B2CA9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:33:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19689B2CAB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924E95A6DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:33:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399065A733B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7649C30C346;
-	Tue, 19 Aug 2025 17:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BEF30BF7A;
+	Tue, 19 Aug 2025 17:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUyBlaIM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="a4y0J3+M";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y79F2h1d"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8D6255F31;
-	Tue, 19 Aug 2025 17:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861072E22BC;
+	Tue, 19 Aug 2025 17:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755624818; cv=none; b=Ex5JJRY/07P5jA0/mRQSEmActxpVqvgC0cL5sfcb8aEqP/QWgLtPNSWm1vVOOAMdYI5InpQlLPBNG11Hycf7TDrCy6do7scCFHSYuLA+nsBPjwD0pJaXaCqjlaICZ9BvDkB6V+Fc9mUvXpFVRL15Cj638SckC8oyc4KCRA3bnuI=
+	t=1755624947; cv=none; b=cX0958DE0MmmmWdHsCvuc5k0ujrETgE0bw5avP0SCDwHcNJAhn4kDFDhNFe6am6lcaw+Wtdoqy0IbO8XJPHWFD1DSlXkaGMp0tOEQFTUhGZofyF5519JWXSCOpCqfliKlI21HWzyDnp6itiMuvrBggE9BPMT90f0CbXHjFdIe2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755624818; c=relaxed/simple;
-	bh=L84S1KtXWdqA6M1nGKA5+wCQ5JD1fy2xx9oxSfrb390=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LpA1NadTZoSLX1w121sYq4P55gHpZ9noTCFQRgiWD2A5+LqdsP6A8Vkh2AGyGOSNQcr9mm4mdRCgwSpBkWwTuWshn929dvAXniKC5EGJA59vkUZclDDkxLEQOwRnRXRGKQsfMkqaeUupibMJ/knhAV7vUm0kiODGLz93DhnMF5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUyBlaIM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56121C4CEF1;
-	Tue, 19 Aug 2025 17:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755624815;
-	bh=L84S1KtXWdqA6M1nGKA5+wCQ5JD1fy2xx9oxSfrb390=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=qUyBlaIMEQY0x3xHB45H/Dqjlmu5XJvq1+wV3ku+1CcjPdcl5uh7DFoR06xd6jRRO
-	 kXhHv2Lu7Fh9u3wN18xhulxmANr/puKiwHeonqF0j6L1HgiqYdpdq5LjR6VB9q/hNb
-	 gqT7NkL/tEytlqXykvBHpecWGpZ8FjEsIR6D8lB1x6OQqJUNsCfj86ES+qZKdfqL+N
-	 g4VxfYTG2dQLU7KzPdn2lr/eL8N+W4AFP/tFhQ5ugT0A6qGVPNvN2+x1dKL3VeMK2X
-	 aoT8nNhJKR6IL39Zs5PIBnDX22IzQMKJRAzl5c4eFuedsg4weaVkjU+9pF75Hi6b19
-	 LkqP37gYUTNZA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E69383BF58;
-	Tue, 19 Aug 2025 17:33:46 +0000 (UTC)
-Subject: Re: [GIT PULL] overlayfs fixes for 6.17-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250819151933.681698-1-amir73il@gmail.com>
-References: <20250819151933.681698-1-amir73il@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250819151933.681698-1-amir73il@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes-6.17-rc1
-X-PR-Tracked-Commit-Id: e8bd877fb76bb9f35253e8f41ce0c772269934dd
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7cca555b94a2191d012837a37c891eca4e876c6b
-Message-Id: <175562482502.3631675.18385180455259333540.pr-tracker-bot@kernel.org>
-Date: Tue, 19 Aug 2025 17:33:45 +0000
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+	s=arc-20240116; t=1755624947; c=relaxed/simple;
+	bh=TbYlPaN8y09mXVm7U32ZTGP7XaIU/o4ZbvH5yZ+Q6Yc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=FEPflm499rzT1M96gzVOPKZGhKHwTssbE21kt0Cbev6BHvvUzWCiUDxFEg7PotGrZVmiR+NwxoBpqbBtXvQyN1Rti1pc5HwD8m1ZWBgzQF+mrE5qSs8in5nbYt2Juua4tSLoaCRzly1lPTqUwgFTlviUmuhF0M+4Cau7tdV+7G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=a4y0J3+M; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y79F2h1d; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A3EC014001C8;
+	Tue, 19 Aug 2025 13:35:43 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 19 Aug 2025 13:35:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755624943;
+	 x=1755711343; bh=AfPyoG66MRGoGsRhRebr6qC/Wlem8LqEZGgBOHpR/7g=; b=
+	a4y0J3+MvFBxCiIo7y8SBfeEQ/CQ+2iaHuTNLWWVz0kWW97s8sDRxeO/uTJG6ve/
+	RG8uTSu0nu4ah3qpS4pJKFMx1TLXiRT10N2vMuuKgmuscNmALPRExwuw13MyZdkl
+	nNWhMrj4T3Rq44G6mQFGHPWrYR3ofoNdiZudI/fyj6tIhaLkhL/qMwcJQeWexhi1
+	T8jYeBHOM5uEdQbSlno0NX6SWUK3O9b6HbZjCFlx5FlbyK5jKs9qBqlyDSoPB2UA
+	VQoet9S3JMD91jOgAYIJYWHBNfodKxW6ucjVWi3dXo+mS6t6FKO/rgHpC2SKgW8N
+	tKc9gAl76lsW0mbLa8nFig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755624943; x=
+	1755711343; bh=AfPyoG66MRGoGsRhRebr6qC/Wlem8LqEZGgBOHpR/7g=; b=Y
+	79F2h1d7oVPzJyNsaCA0z99ZOPZuGOz9skw/dVePF2rinpsiutMH1/rpAhyBUjnp
+	f4SiSRIoieGOoV9OVeJIF09URPqF4DTfV+Og2WtRhpjwGVsogr2QoIGAUwb2sRVa
+	RtnnC/Eb+gj6KVWY7juYDOaS5uTzXm+emjKAhaR04A24qogp6Dfhw+apITKf+z4b
+	6O/XHOuuUgY0KQh3r/bMW9p13cKi8Yn7qVo9ZZXCcraJhmQNPMHqHon0YV9g8rDL
+	v9ZI82APtyRpxVY5xP00r9ETlpy94mbKXH+zgAN/2GM3rVMrtlKhH6eMTvY1xWJ8
+	nGRhUY9gG7XQeOMRpYDLQ==
+X-ME-Sender: <xms:7rWkaAMu4G6h_VRqx2PP7t1V_8KAaxIJLjUgTrYPbQ0SAcQY8W7WdA>
+    <xme:7rWkaG9lhOtDlVxcRRtIMZ-ss9PcIoDu_UJLjfNtEnmK_dig_cqGg1XcSdjJ4zczR
+    15uHXOTReKIHOtu17Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheeiuddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
+    dprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohep
+    rghlvgigrghnughrvgdrthhorhhguhgvsehfohhsshdrshhtrdgtohhmpdhrtghpthhtoh
+    epkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrhhogigv
+    lhhlsehlihhnrghrohdrohhrghdprhgtphhtthhopegsvghnjhgrmhhinhdrtghophgvlh
+    grnhgusehlihhnrghrohdrohhrghdprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghr
+    sehlihhnrghrohdrohhrghdprhgtphhtthhopehnrghrvghshhdrkhgrmhgsohhjuheslh
+    hinhgrrhhordhorhhgpdhrtghpthhtoheprghgohhruggvvghvsehlihhnuhigrdhisghm
+    rdgtohhm
+X-ME-Proxy: <xmx:7rWkaOosbCTr4cAmiU6JpdChoouFQxnpot3ea40SuFsNm33heoRmgg>
+    <xmx:7rWkaBxQgCCVUjv7bBke2u5GEbDDHFEEZR_2yu_qi1GFgxykD6GC7A>
+    <xmx:7rWkaGIbPb2M4YfKlHa-77x2qddx56AXIQLmp-pv8mbOusaPGNzAHA>
+    <xmx:7rWkaD79QucciIfIZd3HAgp5e23HgjtH2OnGtRFAdLU4VUEywQZDmw>
+    <xmx:77WkaDF0xjZgLdJnMyexR335RTOn6twT6-Eu1zNmUegTtRAyXRN7yd7h>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CA9C8700065; Tue, 19 Aug 2025 13:35:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-ThreadId: ANJBU5t4alyg
+Date: Tue, 19 Aug 2025 19:35:20 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "Russell King" <rmk+kernel@armlinux.org.uk>
+Cc: "open list" <linux-kernel@vger.kernel.org>,
+ Netdev <netdev@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ "Linux Regressions" <regressions@lists.linux.dev>,
+ linux-s390@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+ "Heiko Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>,
+ "Jakub Kicinski" <kuba@kernel.org>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+ "Jose Abreu" <joabreu@synopsys.com>,
+ "Benjamin Copeland" <benjamin.copeland@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>
+Message-Id: <0666e47e-a675-47b6-9b6a-5d4e33f6bf5e@app.fastmail.com>
+In-Reply-To: <20250819160049.4004887A48-agordeev@linux.ibm.com>
+References: 
+ <CA+G9fYuY=O9EU6yY_QzVdqYyvWVFMcUSM9f9rFg-+1sRVFS6zQ@mail.gmail.com>
+ <20250819160049.4004887A48-agordeev@linux.ibm.com>
+Subject: Re: next-20250813 s390 allyesconfig undefined reference to
+ `stmmac_simple_pm_ops'
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Tue, 19 Aug 2025 17:19:33 +0200:
+On Tue, Aug 19, 2025, at 18:00, Alexander Gordeev wrote:
+> On Tue, Aug 19, 2025 at 03:07:56PM +0530, Naresh Kamboju wrote:
+> CONFIG_PM is not defined on s390 and as result stmmac_simple_pm_ops ends up
+> in _DISCARD_PM_OPS(). The below patch fixes the linking, but it is by no
+> means a correct solution:
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c 
+> b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> index 5769165ee5ba..d475a77e4871 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> @@ -668,7 +668,7 @@ static struct pci_driver loongson_dwmac_driver = {
+>  	.probe = loongson_dwmac_probe,
+>  	.remove = loongson_dwmac_remove,
+>  	.driver = {
+> -		.pm = &stmmac_simple_pm_ops,
+> +		.pm = &__static_stmmac_simple_pm_ops,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes-6.17-rc1
+The correct solution is to make the PM_SLEEP versions use this
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7cca555b94a2191d012837a37c891eca4e876c6b
+            .pm = pm_sleep_ptr(stmmac_simple_pm_ops),
 
-Thank you!
+or the corresponding version for the PM_RUNTIME+PM_SLEEP drivers:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+            .pm = pm_ptr(stmmac_pltfrm_pm_ops),
+ 
+By convention, the pm_ptr()/pm_sleep_ptr() macro should be
+used for any driver using DEFINE_DEV_PM_OPS() or its variants,
+though missing that does not produce a warning for non-exported
+options and only wastes a few bytes of .data.
+
+>  #define _DISCARD_PM_OPS(name, license, ns)				\
+> -	static __maybe_unused const struct dev_pm_ops __static_##name
+> +	__maybe_unused const struct dev_pm_ops __static_##name 
+
+This would cause a lot of link failures elsewhere, since _DISCARD_PM_OPS
+needs to ensure the operations are discarded by the compiler, which does
+not happen when they are defined as a global symbol.
+
+The idea of making this a 'static __maybe_unused' symbol is that
+the actual functions get discarded as well but don't need an individual
+__maybe_unused annotation or an #ifdef around them to prevent a
+warning for unused symbols.
+
+     Arnd
 
