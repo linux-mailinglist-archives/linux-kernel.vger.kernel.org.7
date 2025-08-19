@@ -1,114 +1,145 @@
-Return-Path: <linux-kernel+bounces-774871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72D4B2B8A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:29:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E26F4B2B8A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A922F3B746C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:27:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EBAB7B3462
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F97130FF21;
-	Tue, 19 Aug 2025 05:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6A330FF2B;
+	Tue, 19 Aug 2025 05:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zPLpZ0HC"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="brJ/24nR"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F92FE06D
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87B730F80D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755581243; cv=none; b=JP/mvxs/yTUZKk0V6Z83jxUceJlnY04SRy5AZFD/G7453b/jQE9znYMxrcGUYNYx1lB6I0uFimKtOAaoscuXVXV7xtw3Ij3isldCIQWpdwYe7Ik/gVrxnS2iMHh/6MvAGGhIlU0HXm+x8HxQaCJgFfUucjJorCXRT+K4PnKvfWg=
+	t=1755581284; cv=none; b=HBKA8rgtITGMkzoeVoJL7F+Q9e41GcLM6z2zEFd1r464mbvmX7vW0jDaIpyruNelxRwcZfMBr2tw+bMXzsTMZqQ9HoaYzXcluRU61+32qt9oZsqDyKDwrRY73tgQ1+Pq8mFRbc0yZ0AeII2vE37fWcPPbR958uxAn70XQ7c2R3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755581243; c=relaxed/simple;
-	bh=m58pm/y93ex8Ncv061DlagzVcecj++xj/Do3CRly1jc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tjqdGmNmeMUXyO7zjmbFfT1ad9+EALXVVldSPry/MwNHvb6sKjoS1gqLblpbKomvFD3gDczy0S960U958Uf+yEE4t+E3iN+8SFlbN1luKATzc2jGvbdomQptIiAVb/5UbMNcx/Qb+8PGcyuQEpsQwC5RlvosQKTGDRqbWp61JIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zPLpZ0HC; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso34574675e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 22:27:21 -0700 (PDT)
+	s=arc-20240116; t=1755581284; c=relaxed/simple;
+	bh=/k8xE7t+OgThCjUxK+m7fbeLU/9i6tkyCwdzsAyplLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IEXIFK5r8sCszvC+5XbcXyrdZ/HSXHAiHbOC1GasfXxDII2RbIovy/dMe9Ix2CXiPTj29o5FcLZD5s4FnDY3bHh01b7HFuR0PpeQhg4A9vRVyhd/t+gB0VjE/oHVSsCItIYGWqWIt1j13op6SsJX8LG6SqwIXgTNNXaOYyG21Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=brJ/24nR; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55ce527ffbfso4343677e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 22:28:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755581240; x=1756186040; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=POjRSSun8byVdEQqP9DQ7UyrlJnob6YXd9k0xYVJVr4=;
-        b=zPLpZ0HCZkNozIEAPnEkxbwb6aFyUO7jvyzQiDo1EpGW48gD8lw/iejvSJXlX1yh0T
-         c5UYxE0/Z31W10ilKCSRs5MeDdkcD+OxGkPHHvZcHnPyqtQRnY7vRAosKkIc06mHumbF
-         Myi11mLHljGKPLmEaHRsAt7hpptzXH6RswpmiSiubnaUxfOiHtI0pm5EiADf1pnr8O1/
-         C12Nov6eLKolum/j6sq4Kqsl+PbqeJIGiL6/VjCCHM69aikjtruWFwubwyUU0ElfVOkY
-         F3XkPgpcYrS5zznIjVuofxJTbHfUskIkxZY2Io5Uc6ylEg5WoxdMN0Jk2dZOndapUFna
-         YFaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755581240; x=1756186040;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1755581281; x=1756186081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=POjRSSun8byVdEQqP9DQ7UyrlJnob6YXd9k0xYVJVr4=;
-        b=DF+8mB7lnzjP1LqRoOcY7zWYk9GLnuLNrPCy6hBgLuRCVBNHiL8ErexMMovLMVG/T+
-         lsw+Ynl/gGi4QaS8LTYjrKvJXu63vI2OQfSuWmJnXxC871rkCrN2V1FnQyzsq8Gw2YsV
-         JwdoBIUdrCsX6FQzC89Y55JMNRq2LHEB6ZnguOa8J40n68eJPl6YL5cmOPMfcSptdT3A
-         7RNw/iYunrJmoxLZIUE93XCckUOOnuoGv2U3rLwDdU6uSklkz+LhR4rs7W3BvXpy1kHv
-         msy1SjC0NYZAtE7ktPx4flqcdfHD020YckkyJOcVhlw6MJblXU+7cIZKfqpSBiY7t2hc
-         elPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKeP9DTPi1+4Zs7nwPg/94rghjr9miHo/OwV6TFHg9B+05ro2D9erp5UrvWZsNTGgK23OFKDdT8+GFliw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzcCzsfb1j8+Pr/yeRBk3fw+OEuE+rDZPh4gwTLOr2bp0LidOj
-	cnxdCBUIIDyHEcJM9aIVjCtNR7T3znt6yZyrJ0kmjRDGfEnuncZkWIqj4vWNSJpd/Ds=
-X-Gm-Gg: ASbGncsFFHbjjdSKDI21jrijwLnfkAAymxuVJhEdIcvL2SDRBXX+jzIxbetngG8Jbe8
-	NNUq7iNhApkCrbnNQUb3Zf6U9LXE44ZEDNsQyEqIjPVuqW+Ooa0WAKyjrwCrhloO9dWoMBoTStz
-	gwexeQulKwYAGpscLzSjy4k1TOyc7sPeLY8rSk+FQ87+IL1r6VZE+334nfRrR5KgBcxz63MZGnW
-	3iXkC0OCF9dmaHAPcBC8ZCSs+2vhw42x5gq7hGdRT9onKpyYv4p4W6+G6eU7ByCpzAwN21S3klg
-	x/aPENyGN7GskjhPdnra1K0oihGZnmGCyWpPHVbmREuYJVKuXRMAE4BdYeO4fju+cq4qucR39gV
-	mbZwxyK1iJOw8aXbaJN8QNH+Ky7o=
-X-Google-Smtp-Source: AGHT+IGKYSqUDzbc4GjhgW3BDdJh5Ev2IvdZsejLJPAp4FscOBlrz16sEekNNDLRTobugxi8K9O8Kg==
-X-Received: by 2002:a05:6000:2f84:b0:3b9:1c60:d795 with SMTP id ffacd0b85a97d-3c0e3337785mr885643f8f.22.1755581240310;
-        Mon, 18 Aug 2025 22:27:20 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c074879864sm2110199f8f.13.2025.08.18.22.27.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 22:27:19 -0700 (PDT)
-Date: Tue, 19 Aug 2025 08:27:16 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Wang Zhaolong <wangzhaolong@huaweicloud.com>,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] smb: client: Fix NULL vs ERR_PTR() returns in
- cifs_get_tcon_super()
-Message-ID: <aKQLNODuSBvUP4_F@stanley.mountain>
-References: <aKL5dUyf7UWcQNvW@stanley.mountain>
- <89a2023c-e383-4780-83e3-ba8f9e44c015@huaweicloud.com>
- <CAH2r5muVjS+Y_NFSWwYoisPGfynyTkmynjpQHi2_Kk6Z8AiG0w@mail.gmail.com>
+        bh=x1RoE19cvLBaBi0011V8fYVXjhA8rp/exNRIajTxVcc=;
+        b=brJ/24nRZlVejUNTRe/PwpoEie6Wxys/rJ0RyZWh77GiAQZ4pxUFeVeJT8mbz065NQ
+         RR8vcsvtI9gFKvGC6jkrBrUv8xZrKUn1GznapUaYn3dmRRVASJIscKFhNOZ1+8sccdbF
+         +jlMqrLRKJyTMwd3g78ZTTS5b+7i7k+ngR/bA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755581281; x=1756186081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x1RoE19cvLBaBi0011V8fYVXjhA8rp/exNRIajTxVcc=;
+        b=L/Lb0xQO6j9QvuFmZHLWG4mGq9bLwDfQBJw/VDUjhQsLRWKswAb/xfk++Gze79otC9
+         tkI2pu7M8I2lEdbzfmD7E6RkY+wWgWIcyQGUAQduA+Y/Xgura3eNoH8VwQuhgepQMQjq
+         GC8pCHWcOaRDYyRw8a1cW1hchCcfLKG2QpiglYGRigQYE0fhTw4i26SLA6u6jAm/KF8a
+         3d+fXhMSYrhcmFAF8n0XZ98qMTo2XV6PJw4+51Nk39MOQyrlkAil0qERud4L8vczc8rC
+         s2jXEiXyVi4T3D8n7XWAPF/KbmWHa6F09/wtC6hxBuGJcvhA8RJvgdQ8/FWS53Nv00hR
+         UhiA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2V1t9zIDgMME6yuBHpvWG9n7uY3Jdv1aUwjAt22BK5Bx3gHfpQuVUpxOMqO0wbyGN7t4Kw7dmMJibr2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi8XNEbtOg0+DFJ9x+PJAjjNW1MDehm/nNfU+YOn368MY3VH1n
+	X1VwWaNVo6IUZdKxGnDDJcBUi3ZqhvCU01RiaCK6qurUezbD6RHCspIA7oMvwykXp6zkBMRl9l5
+	FEzcQoeNUuPBgJa/hNQ0SmQ7jKSq1vY4POX0nHk2Q
+X-Gm-Gg: ASbGncvmacae8ocHplRdWSXAl7CtDyaIahYngvjqQM6Ib04cYiLJNd65C1DCpcfO2g4
+	aOyGLI6v7v+yhyjj5na6RqjnpJEhDPzOQCCPJbjiMuWn9UwYhCdi/jEyDGrponUYLVr+v+8Cjgn
+	n4pnusQbvk7Qht9xNk554hp78Xskb1CUayIFdReQ1dO8S8BxdZd1iDzU7kRmd8YnqnG9k0Gs2gM
+	ew7O/7raO8n/Ppvqj4+cKym8jPXJDZPWUI=
+X-Google-Smtp-Source: AGHT+IGQHTGEbyr4SR72kvidWQutZvf7AK9o9RoOcU43ggNdNpSPatYscdMG6FtrXgyqF7WItvuWeeeG17g3X0SMn88=
+X-Received: by 2002:a05:6512:1585:b0:553:2f40:3705 with SMTP id
+ 2adb3069b0e04-55e007aeccamr350494e87.15.1755581280895; Mon, 18 Aug 2025
+ 22:28:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH2r5muVjS+Y_NFSWwYoisPGfynyTkmynjpQHi2_Kk6Z8AiG0w@mail.gmail.com>
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+ <20250801-mtk-dtb-warnings-v1-8-6ba4e432427b@collabora.com>
+ <CAGXv+5EHk=f62+KiLo-aWMcd0-q+_59kno+uOW5rdYaq5q+5tQ@mail.gmail.com> <CACRpkdbWctNH0XJfcHfVJM9Etp0WCXpdyhhyaQemH-Xc0LDr0A@mail.gmail.com>
+In-Reply-To: <CACRpkdbWctNH0XJfcHfVJM9Etp0WCXpdyhhyaQemH-Xc0LDr0A@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 19 Aug 2025 13:27:50 +0800
+X-Gm-Features: Ac12FXyZj9pu4uTVlJ9GtMYFjXUlZm3D496E2G53MlvCfEEQUDKze_RDvsyqUZk
+Message-ID: <CAGXv+5ECsP7_wbdcaAkWuD=RyJiJpPe4r60bhD5U8xUvEBzmXw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] arm64: dts: mediatek: mt8183-kukui: Fix
+ pull-down/up-adv values
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>, 
+	Enric Balletbo i Serra <eballetbo@kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
+	Eugen Hristev <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, 
+	Sean Wang <sean.wang@kernel.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 04:41:52PM -0500, Steve French wrote:
-> Since Paulo pointed out a problem with v4 of this patch, an obvious
-> question is Dan's patch "independent enough" to take or would it make
-> the v5 of your patch harder.  Let me know when there is a v5 of the
-> patch so we can do more testing and review
-> 
+On Mon, Aug 18, 2025 at 11:22=E2=80=AFPM Linus Walleij <linus.walleij@linar=
+o.org> wrote:
+>
+> On Wed, Aug 6, 2025 at 8:38=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> =
+wrote:
+> > On Fri, Aug 1, 2025 at 7:18=E2=80=AFPM Julien Massot wrote
+>
+> > >                 pins-clk {
+> > >                         pinmux =3D <PINMUX_GPIO124__FUNC_MSDC0_CLK>;
+> > >                         drive-strength =3D <MTK_DRIVE_14mA>;
+> > > -                       mediatek,pull-down-adv =3D <10>;
+> > > +                       mediatek,pull-down-adv =3D <2>;
+> >
+> >         bias-pull-down =3D <MTK_PUPD_SET_R1R0_10>;
+> >
+> > and so on.
+> >
+> > ChenYu
+>
+> I agree with ChenYu, the more standardized properties are the better it i=
+s.
+>
+> All the custom properties makes sense for an engineer working with just
+> that one SoC (like the SoC vendor...) but for field engineers who have
+> to use different SoCs every day this is just a big mess for the mind.
+>
+> The standard properties are clear, concise and tell you exactly what
+> they are about.
+>
+> The argument should be in Ohms though, according to the standard
+> bindings, but maybe the value of MTK_PUPD_SET_R1R0_10 is
+> something like that?
 
-Probably it's best to just fix this in version 5 instead of sending a
-separate fix patch.
+For reasons I can't recall clearly these are just placeholder values
+that the driver then maps to the R1 and R0 settings. But at least they
+use the standard properties.
 
-regards,
-dan carpenter
+The reason was either one of the following or both:
 
+  a. not every group of pins had the same resistance values for R1 & R0
+  b. there are no known precise values; the values depend on the process
+     and batch
+
+
+ChenYu
 
