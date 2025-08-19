@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-775918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEFAB2C678
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:04:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42923B2C65E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C091659D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:58:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 401237BD618
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4217B3431F9;
-	Tue, 19 Aug 2025 13:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObxBfEsF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9966633CE90;
-	Tue, 19 Aug 2025 13:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49091342CBA;
+	Tue, 19 Aug 2025 13:58:51 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0236426656D;
+	Tue, 19 Aug 2025 13:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611915; cv=none; b=L2LLvxd6Qgckl1gMbx+molU6/ZAsNEJfgWt3eOEsRagmnFThmKTN+gDdEAaB31qp2vpWshTaCjw6ZT1Sc4mhwjvNzo2vTptfdS0XL3lRqX4MpMN7WcXpESytXX1I7URz6beF/1ose/KvoY1kgVr1oHBpFK0HuU25n3at91OMX2s=
+	t=1755611930; cv=none; b=eMROj72o2nASbMGJXUdYS4S+rdX/H4n9Usri0+lsBYg6MTGE2yzEWXUhB5Y0W1xlvVpo2mkhK/egdOdGz8yc4p3q29A9DD9rXBIhmbsScs6VeJ+sO0sVb3KU7AkGAlcOhRA3xg7v1qN7nitqHCxePNN8NI7d7VO16HaJVAR2Su4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611915; c=relaxed/simple;
-	bh=4dItgwa1YS8ulkeOOZQgdQJhwmbVdtQ1PYab2cpPn08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YUBzWHXqLtmEOYf1nGjRgNa1CgLJaAj+iUwH1GnawpiahEqtvT0fOI14XA9zNRyBYTFY2f25Mw4MUh2Gd6YkQSWAqoq/MY/t9D0snpTvDJ2Ay7DGzPplbiw4zcWAoBE8sDnIsO0tqcDn5Q6+zQNFospG+iQX7H6toUhbBZ5OHug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObxBfEsF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 602B9C113D0;
-	Tue, 19 Aug 2025 13:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755611915;
-	bh=4dItgwa1YS8ulkeOOZQgdQJhwmbVdtQ1PYab2cpPn08=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ObxBfEsFs36h1jBDe8dzr/P4kMm49Jstpnt7VgyPcJOmv0rX7XlcOu+i+17VJh6az
-	 9TSMYkK2DVwctOvikIK1jn9DlLycpI5lopAlLBQkXsU3vxir3LN2H0YdYnW7RcnTl6
-	 j72cSyHUxeLOhfUQ5r8gFOFjbrR4t2KpCphDl1LPORZO//pw3xubYbgVYe7XyRpriW
-	 wiCRtZSPGNkGcltM0SPfSF54lRCSA8kEwESNyyYioJto/G0WZj5duT45zFFMASCaSV
-	 MtUhrqtlhwo3Gco1tGH5YtsJjUY/E43LAC+wEtjmsaubYPfpALft2Cu5ZU+i8SMOfR
-	 bacAvGc53/3XA==
-Message-ID: <20be4ac4-42c0-422c-bcd4-8d49527f217f@kernel.org>
-Date: Tue, 19 Aug 2025 14:58:32 +0100
+	s=arc-20240116; t=1755611930; c=relaxed/simple;
+	bh=EwNCsjMb9SHWU6jvtV9sk3wnWGtnNG2nrZjBR76hXko=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XB8zqR/xANqhdb7oPJONqRAKv8vUnB0/QMnDXRUwhnX07EzoMqVlID4GVjb/6O7fRhTRlvA/MFv1xISm2Ea0KFiI1g5CwiJDe4Ydbu0r9mvvKgY9PaZ2NBT58NhYO/EhRr4u1u1r98ZQGx6bCY9kx/4yfYU7PC6ISFf2uRJ5Cbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app1 (Coremail) with SMTP id TAJkCgAHHxALg6Roxa7AAA--.63443S2;
+	Tue, 19 Aug 2025 21:58:37 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	linux-phy@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	zhengyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	luyulin <luyulin@eswincomputing.com>
+Subject: [PATCH v2 2/3] dt-bindings: phy: eswin: Document for EIC7700 SoC SATA PHY
+Date: Tue, 19 Aug 2025 21:58:33 +0800
+Message-Id: <20250819135833.1227-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250819134722.220-1-luyulin@eswincomputig.com>
+References: <20250819134722.220-1-luyulin@eswincomputig.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the nvmem tree
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Srinivas Kandagatla <srini@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Lee Jones <lee@kernel.org>
-References: <20250819134039.5742c60e@canb.auug.org.au>
- <3861530.VQhiAETyHQ@diego> <5c527946-31c4-45a9-a804-f873ce0db4a4@kernel.org>
- <10708013.qUNvkh4Gvn@diego>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <10708013.qUNvkh4Gvn@diego>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgAHHxALg6Roxa7AAA--.63443S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFW7tryfuF1kGr1xWFykZrb_yoW8Xr13pF
+	4kGr9rWFnaqr1Ik39xJ3W0kF13Xws7uFWYvrs7tF1Utrs8J3Z5ta1akw1Yv3WUAr48Way3
+	XFZIga43Aw4UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRJPE-UUUUU=
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
+From: luyulin <luyulin@eswincomputing.com>
 
+Add document for the SATA phy on the EIC7700 SoC platform,
+describing its usage.
 
-On 8/19/25 2:54 PM, Heiko Stübner wrote:
-> Am Dienstag, 19. August 2025, 13:22:04 Mitteleuropäische Sommerzeit schrieb Srinivas Kandagatla:
->> On 8/19/25 12:14 PM, Heiko Stübner wrote:
->>> Hi,
->>>
->>> Am Dienstag, 19. August 2025, 05:40:39 Mitteleuropäische Sommerzeit schrieb Stephen Rothwell:
->>>> After merging the nvmem tree, today's linux-next build (x86_64
->>>> allmodconfig) failed like this:
->>>>
->>>> In file included from drivers/nvmem/qnap-mcu-eeprom.c:12:
->>>> include/linux/mfd/qnap-mcu.h:13:9: error: unknown type name 'u32'
->>>>    13 |         u32 baud_rate;
->>>>       |         ^~~
->>>
->>> [...]
->>>
->>>>
->>>> Caused by commit
->>>>
->>>>   117c3f3014a9 ("nvmem: add driver for the eeprom in qnap-mcu controllers")
->>>>
->>>> I have used the nvmem tree from next-20250818 for today.
->>>
->>> bah, sorry about messing this up.
->>>
->>> While I encountered this, and fixed that with the pending
->>>   https://lore.kernel.org/all/20250804130726.3180806-2-heiko@sntech.de/
->>>
->>> I completely missed that the nvmem driver applied alone would break
->>> without that change :-( .
->>
->> I have now reverted this change, @Heiko Please let me know if you want
->> to take this to mfd tree or vice-versa.
-> 
-> ok, no worries :-) .
-> 
-> I guess for now, I'll just make sure the header patch gets somewhere.
-> And I guess I'll re-try the nvmem driver once that has happened,
-> probably for the next cycle.
+Signed-off-by: luyulin <luyulin@eswincomputing.com>
+---
+ .../bindings/phy/eswin,eic7700-sata-phy.yaml  | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
 
-I don't think we need to wait till next cycle, Lee can pick up this
-patch via mfd tree if header change is going via mfd tree.
-
-
---srini
-
-> 
-> Creating dependencies between trees somehow does sound like
-> more hassle so I'll just wait for a stable base, to not cause more
-> breakage :-)
-> 
-> 
-> Heiko
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml b/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
+new file mode 100644
+index 000000000000..d914cb4402d8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
+@@ -0,0 +1,36 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/eswin,eic7700-sata-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 SoC SATA PHY
++
++maintainers:
++  - Yulin Lu <luyulin@eswincomputing.com>
++  - Huan He <hehuan1@eswincomputing.com>
++
++properties:
++  compatible:
++    const: eswin,eic7700-sata-phy
++
++  "#phy-cells":
++    const: 0
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - "#phy-cells"
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    sata-phy@50440300 {
++        compatible = "eswin,eic7700-sata-phy";
++        reg = <0x50440300 0x40>;
++        #phy-cells = <0>;
++    };
+-- 
+2.25.1
 
 
