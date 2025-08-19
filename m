@@ -1,306 +1,143 @@
-Return-Path: <linux-kernel+bounces-775589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CD1B2C10C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:49:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC83DB2C11E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C025861DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:47:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59FC15A043F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2591E32A3E2;
-	Tue, 19 Aug 2025 11:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338332C330;
+	Tue, 19 Aug 2025 11:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTxGDyR7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BwveoB+w"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0BD1E4AB
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1777A322DBF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755604024; cv=none; b=SmmSW1t/W1GCg3HaWIhZD9V65QasrUedNjki+nGbCSsynkyO+yKcslzbgClVAzhRQf2VR1Tr4oUj4+T7PClwdhqYnf6GAgXZMVf/LZUGucHN5WRjf72nbdO1X5m+naIGQaLDHGtB7Pfjp1cc7CJzMQjdqmAhLoDL5BW9ySYHr5U=
+	t=1755604068; cv=none; b=tjzkuWBvtdQ/NlLe7xZ261FgZdtyyNLzyS96j5mG1Xhr0wJoGiwa/Sa5HdRpRXYpUmYLabOalnxAlL7iWD/LmscG6MSEnQqarAg5c38wghewjAO7hwbncKFztC6wpY6VVQ0ed7xxHkRYiu7DfLh+/VNKrEyiIkLQg9eGiEhbdpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755604024; c=relaxed/simple;
-	bh=6U2Rg5LmJXqhRnNkGxZf+eWaD5s7DR7T3ETF0Ln/Vek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kiS27a6tYvXWgpuWO3csL/lbTsHwC079UMpJmRqoO9sLYWS5Hg/K1GXGEYr7GlBLA1de4COcTNYcRWufU3yXMbzuhFNErC6QdY0Bj/rDTyvnwwQfDBBv53ywz5FQge2hEwAlstnd9B1m9BnsU3OKbL1RLOh+MlMCEddmlOFqSLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTxGDyR7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD37C116B1;
-	Tue, 19 Aug 2025 11:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755604023;
-	bh=6U2Rg5LmJXqhRnNkGxZf+eWaD5s7DR7T3ETF0Ln/Vek=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NTxGDyR7ATSUXnStkc/urLe3P/1HoC/9YG0XL78Fe7tdZVWD5ra/Dp9B5qOmo4IPr
-	 qzSSLR3CFLJs0CMdyRMwo/2rTQQYfo3IOpogYxtWbPdnVxiw91QSOTP/6Wxy071khl
-	 /gjfE+ayLnLPPvkpS9raDf+Rr77F0ZyTV+zr1wnu8mBHjFh1GvOzjvy9hCJT09fAmU
-	 tz2k85wXcmhOG+AB/43LHB6na2n+KeSygOrsLe1aBI1u/LzkQWcRAK8+RBFNR1z7jD
-	 wJ6zNbeS5N/ACxY8RIC9baXzH8iGv1m54j8635m/nHANem1QuRVs2p/ZwSKhTeGbja
-	 oqnd3RhgKxDRA==
-Message-ID: <28867f10-aa68-449e-bd1c-2e69a26b5f96@kernel.org>
-Date: Tue, 19 Aug 2025 12:47:01 +0100
+	s=arc-20240116; t=1755604068; c=relaxed/simple;
+	bh=a21opQrx6FtgjxLAH8msEDeK1LTD9NhoP7uXufEvrZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NCJztKYuvoG67z+Vq70vaHOeXUvomf6R9qmUjYjH1QgevUxFPN5LRTvZnmfQsV4G1GAnmKrFtNF5qC6JsbUdeD9lu8KO5t6JD6NXnDwYF+iMqLyFVgT5Sr386vFF0XdPaNtpzUQgOfjdNr9R0AsuycvQhYd1+2SR6OdmpZRPkoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BwveoB+w; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90X4V007209
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:47:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=eTLV4pbAiALqLWMe9z9+F23m
+	6/Z57HSatoPEldwbxjY=; b=BwveoB+we/C98knvJ4KJIE+TpFVSfbPzdCUk6T1e
+	sS9viKkbTE8osTL7y8p/imthlQwonXoE95UXx68uVipXP4QGdCJwmP9YyQ8Ujhlw
+	b0UJrSEinRKtJN5+MSG80XO3u6cmKIcl8BKDHsnwkYcwW+bouG2zuf4joQ/v1t7Y
+	H6gJk/ydtNvtMcvLulX3Pfb03SW4mj2hE1qFpD0NWuVPwhab9OAYfMh5d/leUHE7
+	e7JzUB0jjgUR+lqT6Gpc9ZiXvd4HYafno5PloaWMhVPp9rnESCkebPRYwgT6zxlI
+	ABcj1gErNhi3Uzg5uNZrgd4GIuU0JnH1YOxELZAKcB+oVA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj748dgm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:47:46 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b134a9a179so25257501cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:47:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755604065; x=1756208865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eTLV4pbAiALqLWMe9z9+F23m6/Z57HSatoPEldwbxjY=;
+        b=U2TMNxhKVGkSq2KOWr2Z2rbYKxWPkIbx96hNDhV/cpMkjO5HlzH4f8hFEA48UgLR4f
+         inQgLDbP1gvRPWatvHzyQQ18h2hJkRz4srMGFv3svlVD0XgCLiC4R9wHgekwIaA1zlDh
+         Bm0muwYNGS6cIM1VJvuBxKOmugsEaWfk5OALQRNh6Rg3rTCt1XAs3lxpMVkZlbt9s62+
+         0PftScw2sVkDcyMQay1O2trFbR9nRf4EFfRAj09O7VoZ9ByQJdWEjep8i6SJlN7S5h8L
+         U0YFsFgD5tYymz5XAlQpWhfgJwo3JAwTjz1sn4Ng69HDsFo9PVlJ7vMnjblQvVQFr3+I
+         gCWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaPgb56PuXpxWEynZSt9IUk8ri3k3RHJCbc1B/qv3WjnjkBUEKIgpBCRwBQX5o+dTWhUmxgOy0HeNNhqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmnQGjnpvw/OHDo2/qai5yCPfrL6RtK3XtGHW/LB1aLGbs39P5
+	8tGcOHptniQit0gF3mOqSyLtpSbktXKxA4RrXKiCVIkiuzkJ8phx9RvsZiiiNrtGQamgobW6ipa
+	4//PW0f5hsHTxyo7xknzmXiAH/Zi0SR79Q877DPh3RoxcDdGMb4xHPyt9xYV8U5uKUBM=
+X-Gm-Gg: ASbGnctIUG8IatKS6NnhN6Re1A/AFusv5J+1KKb5RF1V9oDdeyPAtiWu9TPYk/bMKlD
+	2s0uFh+y1JJ85uuUbWE+1c56GY7zm3CtDA8KOlB0bD+03xAuTv738zCktnCrZIBwNL1FhoY6iCs
+	Y1STWXbnepPcYgfmdVDP5SbCOutDxBHpZQ+p0ilArIaTGS77XcERovKEXfh614GnjtqCmeAuJrv
+	WZEfsOHixVpidk5VojTG0VQsOqI+ANZUyf5ZpV7MSbO/vwisw9pxIT5uVsUlJ5hpT/gN1YLJGs1
+	trCaia0W4kfNWQZUITC5qst3omb6onSS7AGw0WA0cAJIE2xc7jbuuuM+N+vghBBBUwX7BgOuFCA
+	58jnjFwwGzlBojz1DxIzT1A5vvN1GP1RkgxYykfFyg52fCHAyAdRh
+X-Received: by 2002:a05:622a:4896:b0:4af:41b9:f66a with SMTP id d75a77b69052e-4b286d32b7cmr27661331cf.26.1755604064593;
+        Tue, 19 Aug 2025 04:47:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGUsM+R5H5wwSDp0LniUfNSxIvrGeWb7sj9B7rqdTJ3m7dL4JTwfKGIh+GVqeo5+ljeA2NF+A==
+X-Received: by 2002:a05:622a:4896:b0:4af:41b9:f66a with SMTP id d75a77b69052e-4b286d32b7cmr27661081cf.26.1755604064113;
+        Tue, 19 Aug 2025 04:47:44 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3ff916sm2047292e87.131.2025.08.19.04.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 04:47:43 -0700 (PDT)
+Date: Tue, 19 Aug 2025 14:47:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: qcom-pmic-typec: use kcalloc() instead of
+ kzalloc()
+Message-ID: <x2fao6hlzdis6pqucfqwrjtv7xr274cdkjpz2jhz7iglbpcbei@y3dxedn2diwf>
+References: <20250819090125.540682-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] nvmem: s32g-ocotp: Add driver for S32G OCOTP
-To: Ciprian Costea <dan.carpenter@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: linaro-s32@linaro.org, NXP S32 Linux Team <s32@nxp.com>,
- linux-kernel@vger.kernel.org
-References: <cover.1755341000.git.dan.carpenter@linaro.org>
- <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <7e1f16bf09e77afef4cc5fa609a6c3ad820bb14c.1755341000.git.dan.carpenter@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819090125.540682-1-rongqianfeng@vivo.com>
+X-Proofpoint-GUID: eZq4Ot0BjNR16Awq3enMQSSrTWFwWa5G
+X-Proofpoint-ORIG-GUID: eZq4Ot0BjNR16Awq3enMQSSrTWFwWa5G
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMyBTYWx0ZWRfX7nV3gxxTvpYW
+ jL54S1asOMeWN/83B2PUMqK6g6mWv2s7LNbjod7zZu+MVSs0HvDHod1ox9Ru0RZdIHu9ZH70u+U
+ ta3ROd1oH3dFpyQ30675UiSMEoqn87+pn2iD1lk0fJ17FOZ/J7I5li5SJaNX4c7tUhulZrBP37A
+ Q4NjEN5VcdB0mzYS/spUKg6270R/pKoPjgXaaCqp4juLvHRSkOU3CMpox0PkuDht0f3Y1Ee0+Vz
+ DljN0txQe7iZAf2OY5vmsz9ds/9XvHrGg8Urg3mE69121C3vbvAgvemFRpkctoVQ8JjygGCixvt
+ XSb13WmzBzDus/u33XYlA0f0/BzIUERxtLe10Li8n3QsVRtSarP9GQlSKdYQ+6yasgNQ2irq23c
+ 0ffArKqw
+X-Authority-Analysis: v=2.4 cv=MJtgmNZl c=1 sm=1 tr=0 ts=68a46462 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=1WtWmnkvAAAA:8 a=EUspDBNiAAAA:8 a=KBxqgXywe9IIF68hBIUA:9
+ a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ phishscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160033
 
-
-
-On 8/16/25 11:47 AM, Ciprian Costea wrote:
-> Provide access to the On Chip One-Time Programmable Controller (OCOTP)
-> pages on the NXP S32G platform.
+On Tue, Aug 19, 2025 at 05:01:24PM +0800, Qianfeng Rong wrote:
+> Replace devm_kzalloc() with devm_kcalloc() in qcom_pmic_typec_pdphy_probe()
+> and qcom_pmic_typec_port_probe() for safer memory allocation with built-in
+> overflow protection.
 > 
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 > ---
->  drivers/nvmem/Kconfig            |  10 ++
->  drivers/nvmem/Makefile           |   2 +
->  drivers/nvmem/s32g-ocotp-nvmem.c | 171 +++++++++++++++++++++++++++++++
->  3 files changed, 183 insertions(+)
->  create mode 100644 drivers/nvmem/s32g-ocotp-nvmem.c
+>  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c | 2 +-
+>  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-> index edd811444ce5..6a1cafa74e36 100644
-> --- a/drivers/nvmem/Kconfig
-> +++ b/drivers/nvmem/Kconfig
-> @@ -314,6 +314,16 @@ config NVMEM_ROCKCHIP_OTP
->  	  This driver can also be built as a module. If so, the module
->  	  will be called nvmem_rockchip_otp.
->  
-> +config NVMEM_S32G_OCOTP
-> +	tristate "S32G SoC OCOTP support"
-> +	depends on ARCH_S32
-> +	help
-> +	  This is a driver for the On Chip One-Time Programmable controller
-> +	  (OCOTP) available on S32G platforms.
-> +
-> +	  If you say Y here, you will get support for the One Time
-> +	  Programmable memory pages.
-> +
->  config NVMEM_SC27XX_EFUSE
->  	tristate "Spreadtrum SC27XX eFuse Support"
->  	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-> index 2021d59688db..b7bfa78af8f3 100644
-> --- a/drivers/nvmem/Makefile
-> +++ b/drivers/nvmem/Makefile
-> @@ -64,6 +64,8 @@ obj-$(CONFIG_NVMEM_ROCKCHIP_EFUSE)	+= nvmem_rockchip_efuse.o
->  nvmem_rockchip_efuse-y			:= rockchip-efuse.o
->  obj-$(CONFIG_NVMEM_ROCKCHIP_OTP)	+= nvmem-rockchip-otp.o
->  nvmem-rockchip-otp-y			:= rockchip-otp.o
-> +obj-$(CONFIG_NVMEM_S32G_OCOTP)		+= nvmem-s32g-ocotp-nvmem.o
-> +nvmem-s32g-ocotp-nvmem-y		:= s32g-ocotp-nvmem.o
->  obj-$(CONFIG_NVMEM_SC27XX_EFUSE)	+= nvmem-sc27xx-efuse.o
->  nvmem-sc27xx-efuse-y			:= sc27xx-efuse.o
->  obj-$(CONFIG_NVMEM_SNVS_LPGPR)		+= nvmem_snvs_lpgpr.o
-> diff --git a/drivers/nvmem/s32g-ocotp-nvmem.c b/drivers/nvmem/s32g-ocotp-nvmem.c
-> new file mode 100644
-> index 000000000000..37355bd83b17
-> --- /dev/null
-> +++ b/drivers/nvmem/s32g-ocotp-nvmem.c
-> @@ -0,0 +1,171 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2023-2025 NXP
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/nvmem-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define S32G_OCOTP_BANK_OFFSET	512u
-> +#define S32G_OCOTP_BANK_SIZE	32u
-> +#define S32G_OCOTP_WORD_SIZE	4u
-> +
-> +struct s32g_fuse {
-> +	u8 bank;
-> +	u8 words_mask;
-> +};
-> +
-> +struct s32g_fuse_map {
-> +	const struct s32g_fuse *map;
-> +	size_t n_entries;
-> +};
-> +
-> +struct s32g_ocotp_priv {
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	const struct s32g_fuse_map *fuse;
-> +};
-> +
-> +static const struct s32g_fuse s32g_map[] = {
-> +	{ .bank = 0,  .words_mask = GENMASK(6, 2) },
-> +	{ .bank = 1,  .words_mask = GENMASK(7, 5) },
-> +	{ .bank = 2,  .words_mask = GENMASK(1, 0) },
-> +	{ .bank = 2,  .words_mask = GENMASK(4, 2) },
-> +	{ .bank = 4,  .words_mask = BIT(6) },
-> +	{ .bank = 5,  .words_mask = BIT(1) },
-> +	{ .bank = 5,  .words_mask = BIT(2) },
-> +	{ .bank = 6,  .words_mask = BIT(7) },
-> +	{ .bank = 7,  .words_mask = GENMASK(1, 0) },
-> +	{ .bank = 11, .words_mask = GENMASK(5, 0) },
-> +	{ .bank = 11, .words_mask = GENMASK(7, 6) },
-> +	{ .bank = 12, .words_mask = GENMASK(2, 0) },
-> +	{ .bank = 12, .words_mask = BIT(7) },
-> +	{ .bank = 13, .words_mask = GENMASK(4, 2) },
-> +	{ .bank = 14, .words_mask = BIT(1) | BIT(4) | BIT(5) },
-> +	{ .bank = 15, .words_mask = GENMASK(7, 5) },
-> +};
-> +
-> +static const struct s32g_fuse_map s32g_fuse_map = {
-> +	.map = s32g_map,
-> +	.n_entries = ARRAY_SIZE(s32g_map),
-> +};
-> +
-> +static const struct of_device_id ocotp_of_match[] = {
-> +	{ .compatible = "nxp,s32g2-ocotp", .data = &s32g_fuse_map},
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static u32 get_bank_index(unsigned int offset)
-> +{
-> +	return (offset - S32G_OCOTP_BANK_OFFSET) / S32G_OCOTP_BANK_SIZE;
-> +}
-> +
-> +static u32 get_word_index(unsigned int offset)
-> +{
-> +	return offset % S32G_OCOTP_BANK_SIZE / S32G_OCOTP_WORD_SIZE;
-> +}
-> +
-> +static bool is_valid_word(struct s32g_ocotp_priv *s32g_data,
-> +			  unsigned int offset, int bytes)
-> +{
-> +	const struct s32g_fuse_map *fuse = s32g_data->fuse;
-> +	u32 bank, word;
-> +	size_t i;
-> +
-> +	if (offset < S32G_OCOTP_BANK_OFFSET)
-> +		return false;
-If you do not want to allow reading below S32G_OCOTP_BANK_OFFSET, Please
-take a look at keepouts for such things.
 
-> +
-> +	if (bytes != S32G_OCOTP_WORD_SIZE)
-> +		return false;
-> +
-Why one word at a time? reading for sysfs will not guarantee that it
-will be S32G_OCOTP_WORD_SIZE.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-> +	bank = get_bank_index(offset);
-> +	word = get_word_index(offset);
-> +	if (bank >= fuse->n_entries)
-> +		return false;
-> +
-> +	for (i = 0; i < fuse->n_entries; i++) {
-> +		if (fuse->map[i].bank == bank &&
-> +		    fuse->map[i].words_mask & BIT(word))
-> +			return true;
 
-May be we can do something in keepout areas?
-
---srini
-> +	}
-
-> +	return false;
-> +}
-> +
-> +static int s32g_ocotp_read(void *context, unsigned int offset,
-> +			    void *val, size_t bytes)
-> +{
-> +	struct s32g_ocotp_priv *s32g_data = context;
-> +
-> +	if (!is_valid_word(s32g_data, offset, bytes))
-> +		return -EINVAL;
-
-> +
-> +	/* Read from Fuse OCOTP Shadow registers */
-> +	*(u32 *)val = ioread32(s32g_data->base + offset);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct nvmem_config s32g_ocotp_nvmem_config = {
-> +	.name = "s32g-ocotp",
-> +	.add_legacy_fixed_of_cells = true,
-> +	.read_only = true,
-> +	.word_size = S32G_OCOTP_WORD_SIZE,
-> +	.reg_read = s32g_ocotp_read,
-> +};
-> +
-> +static int s32g_ocotp_probe(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *of_matched_dt_id;
-> +	struct s32g_ocotp_priv *s32g_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct nvmem_device *nvmem;
-> +	struct resource *res;
-> +
-> +	of_matched_dt_id = of_match_device(ocotp_of_match, dev);
-> +	if (!of_matched_dt_id) {
-> +		dev_err(dev, "Unable to find driver data.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	s32g_data = devm_kzalloc(dev, sizeof(*s32g_data), GFP_KERNEL);
-> +	if (!s32g_data)
-> +		return -ENOMEM;
-> +
-> +	s32g_data->fuse = of_device_get_match_data(dev);
-> +	if (!s32g_data->fuse) {
-> +		dev_err(dev, "Cannot find platform device data.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	s32g_data->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> +	if (IS_ERR(s32g_data->base)) {
-> +		dev_err(dev, "Cannot map OCOTP device.\n");
-> +		return PTR_ERR(s32g_data->base);
-> +	}
-> +
-> +	s32g_data->dev = dev;
-> +	s32g_ocotp_nvmem_config.dev = dev;
-> +	s32g_ocotp_nvmem_config.priv = s32g_data;
-> +	s32g_ocotp_nvmem_config.size = resource_size(res);
-> +
-> +	nvmem = devm_nvmem_register(dev, &s32g_ocotp_nvmem_config);
-> +
-> +	return PTR_ERR_OR_ZERO(nvmem);
-> +}
-> +
-> +static struct platform_driver s32g_ocotp_driver = {
-> +	.probe = s32g_ocotp_probe,
-> +	.driver = {
-> +		.name = "s32g-ocotp",
-> +		.of_match_table = ocotp_of_match,
-> +	},
-> +};
-> +module_platform_driver(s32g_ocotp_driver);
-> +MODULE_AUTHOR("NXP");
-> +MODULE_DESCRIPTION("S32G OCOTP driver");
-> +MODULE_LICENSE("GPL");
-
+-- 
+With best wishes
+Dmitry
 
