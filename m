@@ -1,139 +1,228 @@
-Return-Path: <linux-kernel+bounces-775170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC957B2BC21
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5851B2BC24
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25B9A562AEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:46:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0521967599
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D69311C14;
-	Tue, 19 Aug 2025 08:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237FF31197D;
+	Tue, 19 Aug 2025 08:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="p0XoHSCj"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="arOtl12A"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7458428488C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4524925D202;
+	Tue, 19 Aug 2025 08:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755593154; cv=none; b=TKsODdfKnDzL3k8Su/NIwvmCL6kwWoM1qlTIuLFFOvSG9nk8CnSXzRMBamT3ci3zRR7PaZk+wXd8BC9SNv+A7jKfh14LfSF31iF+5usKulWKv5TQjQjb3xW/Cg0S6cbiEyzTn7kqmCN8Y8uF2cgffUVHfDQ/aU6tQ5d2F2STJEs=
+	t=1755593153; cv=none; b=pbTxyTfj5fFBuR9Nt6Ui8BFQDOXo2GwrIgz+7PAASYri/9N7izS7U9Nk54RRzQ+jfTvFKwxMlwkyWuYzzzTzQ8kSAYiYKMfUOUitPKmr0qKXvTTonnAN5fPiyOP4wqIZidQ3kO23ML1PtjpXpxA27iA/MVdkKjNjA/iqE00qPng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755593154; c=relaxed/simple;
-	bh=QCQ4VLkSYWBqqnAcjBhTIVS85lKDu260mnaEea+LbfQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SDE1tvpy66AyThY+kDjSDzus8PgMKcQgxR7ZiGfqFq26+krg6XH3Afw3TxAUPbHejC86XkEtZG/VeGuFEtM/VIz5CHRsutPmjycKTx1Fg/J4bIXR02OHb1QrWjeHAoRV+Aj9T63uewdQvxFp/fHqxfznmHhIMK7ZrkaHfKm4O7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=p0XoHSCj; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1755593144; x=1755852344;
-	bh=Lqk/Lq78mdoheCSk5SMpLjr23GDoE0vleFgdSoHUaXk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=p0XoHSCjEUv3NE3LVuk+SNrvT7r70oXMqqcfe9Z5XAzNvPel2i6G7qxyldQKdZSVi
-	 YibwPoeHhcji9n5toGFwEbhZIYNAV53n1Hcz7H+gA2ktGXFi2nbNlfV+qXUbiKQnqH
-	 YuTvxgi3Vl4oLXsSorChLPZfHFE3o7BczLgFdOxA0o7qMdrkaGfrGY4xZnOE96sI6u
-	 XoU3jgxbb5fM6MsEeAdCvz/JDNkVhYZE/MQOEbqAYsS7NF6mp2ofmT/j93DaT6P//W
-	 xkgGl/Yr0NwZOKSS7Jp1GuNDl6/8i+eKxbeeQvIeU39BLL3WsF41n1jQ6EBY8PodyO
-	 dJFLe2S3xfNQQ==
-Date: Tue, 19 Aug 2025 08:45:38 +0000
-To: Benno Lossin <lossin@kernel.org>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-Message-ID: <aKQ5rHqxOBEI2n4w@mango>
-In-Reply-To: <DC69F17AFLB2.1KZ8JJUIH2CSP@kernel.org>
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <2OkNj7ab-vTaPaqMj_KRpIjaKTWgOW-F9Cn-CxnR12E6Dwg4lnjr6fx1vkjnoTx0boUeReeIVDbSyVFBWlYx7g==@protonmail.internalid> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me> <87o6scdchf.fsf@t14s.mail-host-address-is-not-set> <aKMkvHAfDozzDjkB@mango> <DC5WOFIKX7VQ.30UNUNE37LOO5@kernel.org> <aKQT92ViZSL841rT@mango> <DC69F17AFLB2.1KZ8JJUIH2CSP@kernel.org>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 8ad0d1d446a53bbd25e128fc86bc75f98cc760fb
+	s=arc-20240116; t=1755593153; c=relaxed/simple;
+	bh=v1lovRa7L9CtbXbJ5XSAYClSZnPlMp2T8lQ2SwwCE6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfkrDpI/zZFYc6/UwCgIt/dRGmKZjbhrHJ9Vcw/7HrkAPKO+mM1QWi8a9Cu9owwz5tUGXtRk1+H9dRx26U8/R/c0qlKKInCvIKAQGvnQWKJzGEX73X2GkadHB0s4qd4ju8gYeDdZTdXkyDtFfjJR8dJLMH2BzLZMzN8UV+BSHxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=arOtl12A; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=brn1kG/AFuqEBTsxYiHvrO8wEDuL4EYKauL762B24mA=; b=arOtl12A9UmkB1PCAN3anpM28Q
+	HCVA7u6B4GlKagUiczuwSao8C677DRbshPZMvOZJQlywrMR61lft1c/VGJpvhkQQHmeNPj0V7h1xe
+	GMhwKOBT6SzJG5hHZ91qtDOxFHLSb4Wg3VBvEzOIrWH51cOVK3qUs4swccmz+VUjlMvw31kD9h7WU
+	q0tqFzk2O0AYH8In5P01nDlfL2qdXVTjHHx9bROm8Ls3ydwLCK66UGKX+ygS9dSb1BxvScx9XATng
+	NKWX7O/LcxNEe10INom9YO1SpmSgFkqcrfq5v2TbNDRUW2AAy07QugeWVKKoqf3p3wHWmyYbdOaOs
+	h9efIN4Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uoHyR-0000000007w-1FqF;
+	Tue, 19 Aug 2025 08:45:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5728830036F; Tue, 19 Aug 2025 10:45:42 +0200 (CEST)
+Date: Tue, 19 Aug 2025 10:45:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: Re: [Patch v2 3/6] perf/x86: Check if cpuc->events[*] pointer exists
+ before accessing it
+Message-ID: <20250819084542.GG3245006@noisy.programming.kicks-ass.net>
+References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
+ <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
 
-On 250819 1026, Benno Lossin wrote:
-> On Tue Aug 19, 2025 at 8:04 AM CEST, Oliver Mangold wrote:
-> > On 250819 0027, Benno Lossin wrote:
-> >> On Mon Aug 18, 2025 at 3:04 PM CEST, Oliver Mangold wrote:
-> >> > On 250818 1446, Andreas Hindborg wrote:
-> >> >> "Oliver Mangold" <oliver.mangold@pm.me> writes:
-> >> >> > +impl<T: OwnableMut> DerefMut for Owned<T> {
-> >> >> > +    fn deref_mut(&mut self) -> &mut Self::Target {
-> >> >> > +        // SAFETY: The type invariants guarantee that the object=
- is valid, and that we can safely
-> >> >> > +        // return a mutable reference to it.
-> >> >> > +        unsafe { self.ptr.as_mut() }
-> >> >> > +    }
-> >> >> > +}
-> >> >>
-> >> >> I think someone mentioned this before, but handing out mutable
-> >> >> references can be a problem if `T: !Unpin`. For instance, we don't =
-want
-> >> >> to hand out `&mut Page` in case of `Owned<Page>`.
-> >> >>
-> >> >
-> >> > That was the reason, why `OwnableMut` was introduced in the first pl=
-ace.
-> >> > It's clear, I guess, that as-is it cannot be implemented on many cla=
-sses.
-> >>
-> >> Yeah the safety requirements ensure that you can't implement it on
-> >> `!Unpin` types.
-> >>
-> >> But I'm not sure it's useful then? As you said there aren't many types
-> >> that will implement the type then, so how about we change the meaning
-> >> and make it give out a pinned mutable reference instead?
-> >
-> > Making `deref_mut()` give out a pinned type won't work. The return type=
-s of
-> > deref() are required to match.
->=20
-> I meant the changes that Andreas suggested.
->=20
-> >> > Good question, I have been thinking about it, too. But it might
-> >> > be, that it isn't needed at all. As I understand, usually Rust wrapp=
-ers
-> >> > are around non-movable C structs. Do we actually have a useful appli=
-cation
-> >> > for OwnableMut?
-> >>
-> >> Also, do we even need two different traits? Which types would only
-> >> implement `Ownable` but not `OwnableMut`?
-> >
-> > I'm not 100% sure, but on a quick glance it looks indeed be safe to
-> > substitute `OwnableMut` by `Unpin`.
->=20
-> We just have to change the safety requirements of `OwnableMut`.
+On Mon, Aug 11, 2025 at 05:00:31PM +0800, Dapeng Mi wrote:
+> The PMI handler could disable some events as the interrupt throttling
+> and clear the corresponding items in cpuc->events[] array.
+> 
+> perf_event_overflow()
+>   -> __perf_event_overflow()
+>     ->__perf_event_account_interrupt()
+>       -> perf_event_throttle_group()
+>         -> perf_event_throttle()
+>           -> event->pmu->stop()
+>             -> x86_pmu_stop()
+> 
+> Moreover PMI is NMI on x86 platform and it could interrupt other perf
+> code like setup_pebs_adaptive_sample_data(). 
 
-You mean of `Ownable`, when `OwnableMut` is removed? Yes. A good question
-in that context is, what it actually means to have an `&mut Opaque<T>`
-where `T` is `Unpin`. If that implies being allowed to obtain an `&mut T`,
-it would we easy, I guess.
+Uhh, how? AFAICT we only do drain_pebs() from the PMI itself, or disable
+the PMU first by clearing GLOBAL_CTRL.
 
-> > If we add `get_pin_mut(&mut self) -> Pin<&mut T>` as Andreas suggested,
-> > it would be possible to obtain an `&mut T` anyway, then, if T is `Unpin=
-`.
->=20
-> Well the `DerefMut` impl still is convenient in the `Unpin` case.
+> So once PMI handling
+> finishes and returns into setup_pebs_adaptive_sample_data() and it could
+> find the cpuc->events[*] becomes NULL and accessing this NULL pointer
+> triggers an invalid memory access and leads to kernel crashes eventually.
+> 
+> Thus add NULL check before accessing cpuc->events[*] pointer.
 
-I agree. What I meant is, it could not introduce an extra safety
-requirement having it, if that indirect method can be used anyway.
+This doesn't seem fully thought through.
 
-But what I am wondering is, if we actually want to start using `Pin`
-at all. Isn't `Opaque` currently used about everywhere pinning is needed?
+If we do this NULL check, then the active_mask bittest is completely
+superfluous and can be removed, no?
 
-Best,
+Also, what about this race:
 
-Oliver
+	event = cpuc->events[idx]; // !NULL;
+	<PMI>
+		x86_pmu_stop()
+		  cpuc->events[idx] = NULL;
+	</PMI>
+	... uses event
 
+Worse, since it is a 'normal' load, it is permitted for the compiler to
+re-issue the load, at which point it will still explode. IOW, it should
+be READ_ONCE(), *if* we can live with the above race at all. Can we?
+
+First though, you need to explain how we get here. Because drain_pebs()
+nesting would be *BAD*.
+
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
+> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Tested-by: kernel test robot <oliver.sang@intel.com>
+> ---
+>  arch/x86/events/core.c       |  3 +++
+>  arch/x86/events/intel/core.c |  6 +++++-
+>  arch/x86/events/intel/ds.c   | 13 ++++++-------
+>  3 files changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index 7610f26dfbd9..f0a3bc57157d 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -1711,6 +1711,9 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
+>  			continue;
+>  
+>  		event = cpuc->events[idx];
+> +		if (!event)
+> +			continue;
+> +
+>  		last_period = event->hw.last_period;
+>  
+>  		val = static_call(x86_pmu_update)(event);
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 15da60cf69f2..386717b75a09 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -2718,6 +2718,8 @@ static void update_saved_topdown_regs(struct perf_event *event, u64 slots,
+>  		if (!is_topdown_idx(idx))
+>  			continue;
+>  		other = cpuc->events[idx];
+> +		if (!other)
+> +			continue;
+>  		other->hw.saved_slots = slots;
+>  		other->hw.saved_metric = metrics;
+>  	}
+> @@ -2761,6 +2763,8 @@ static u64 intel_update_topdown_event(struct perf_event *event, int metric_end,
+>  		if (!is_topdown_idx(idx))
+>  			continue;
+>  		other = cpuc->events[idx];
+> +		if (!other)
+> +			continue;
+>  		__icl_update_topdown_event(other, slots, metrics,
+>  					   event ? event->hw.saved_slots : 0,
+>  					   event ? event->hw.saved_metric : 0);
+> @@ -3138,7 +3142,7 @@ static void x86_pmu_handle_guest_pebs(struct pt_regs *regs,
+>  
+>  	for_each_set_bit(bit, (unsigned long *)&guest_pebs_idxs, X86_PMC_IDX_MAX) {
+>  		event = cpuc->events[bit];
+> -		if (!event->attr.precise_ip)
+> +		if (!event || !event->attr.precise_ip)
+>  			continue;
+>  
+>  		perf_sample_data_init(data, 0, event->hw.last_period);
+> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+> index c0b7ac1c7594..b23c49e2e06f 100644
+> --- a/arch/x86/events/intel/ds.c
+> +++ b/arch/x86/events/intel/ds.c
+> @@ -2480,6 +2480,8 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64
+>  	 */
+>  	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
+>  		event = cpuc->events[bit];
+> +		if (!event)
+> +			continue;
+>  		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
+>  			intel_pmu_save_and_restart_reload(event, 0);
+>  	}
+> @@ -2579,10 +2581,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+>  			continue;
+>  
+>  		event = cpuc->events[bit];
+> -		if (WARN_ON_ONCE(!event))
+> -			continue;
+> -
+> -		if (WARN_ON_ONCE(!event->attr.precise_ip))
+> +		if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
+>  			continue;
+>  
+>  		/* log dropped samples number */
+> @@ -2645,9 +2644,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+>  		pebs_status = basic->applicable_counters & cpuc->pebs_enabled & mask;
+>  		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
+>  			event = cpuc->events[bit];
+> -
+> -			if (WARN_ON_ONCE(!event) ||
+> -			    WARN_ON_ONCE(!event->attr.precise_ip))
+> +			if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
+>  				continue;
+>  
+>  			if (counts[bit]++) {
+> @@ -2663,6 +2660,8 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+>  			continue;
+>  
+>  		event = cpuc->events[bit];
+> +		if (!event)
+> +			continue;
+>  
+>  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
+>  					    counts[bit], setup_pebs_adaptive_sample_data);
+> -- 
+> 2.34.1
+> 
 
