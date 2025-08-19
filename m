@@ -1,278 +1,233 @@
-Return-Path: <linux-kernel+bounces-776132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6346AB2C8F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:01:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D13B2C8F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667945E8073
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7A11BA186E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610B129E105;
-	Tue, 19 Aug 2025 15:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F822BD5BB;
+	Tue, 19 Aug 2025 16:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UVB8slGW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W2kQEUBR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE385298CB2;
-	Tue, 19 Aug 2025 15:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755619189; cv=fail; b=jYgWREg1SRfe504mhQLc9fmn4hZR2hHsXgZZMiVAcZzX5fVYSxWviC13OdFnMEyYM9NSNJLm9sqHbw3ZqY/F07lsoRZRFakdR/ZlDXv8Qm3nRJlubOH6sb5mHTVCbtkuLqFTlWWFAsLH+6iP3thAEKxpKB/Q+CRG4eGFykrb7Z0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755619189; c=relaxed/simple;
-	bh=CnJtEApHUcVBv2upVjKeDCGvyfI60IjfubqC+1kdhos=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MCq3brSOxlnWDgLHoe369hoS3AYa82VBoeTao59Tkmu6gMo40tj27L3StpkFwJOXXC/cgFRUoluEAROir594QgY5dJevfNWN7Fb1EQBk6l1hddtrnyBl1pLU3ivGtSp/8KXdOlGKfy+5kWd8FnPb82ukw803jHm//pDg+QY7g0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UVB8slGW; arc=fail smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AE9272E53
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755619239; cv=none; b=iotEBYy2iI3H9pnOQKZpvzHrCYdVA3HEbqA8iUlZeYw3vBJE7h/cq8UGeUnJYw6ZmkNlqxlQvo+1Dsn0Mr9PaEwu7pObrNP9niyPi4JhWwgVZBUagma6IqbSpdvrf/7V+be8Nnhgx1naK7PdY0/4XIjgCtNojZCNDOzM6F6Y+FY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755619239; c=relaxed/simple;
+	bh=9pCGquBfB9iEH+++tWiD+pVK53sSQfG2z2BeRYgVW70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVxZ63lGyuGuthR7uaYMN6aE/t2vKxO6zk43TUuOhRRV882rQyZv313D0x3jn/ZmzPDljgRyV/gZ95WVSkDiif8sl6zvrP45OKwi4QMDwc8SMaMSCSVS1NH3yuIGU4KZcP5uYVon6Dj75/5jucFOC/ELCnfE3zefUfuBQrYUDN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W2kQEUBR; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755619188; x=1787155188;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=CnJtEApHUcVBv2upVjKeDCGvyfI60IjfubqC+1kdhos=;
-  b=UVB8slGW4s34TQio1TLZ5s85ZdcxB5GaF6jH41GKKHVDzNFqtDFXHpnE
-   XBEOtC7QnYQudGe9MIbMC/brsFE/KNdNtucDtOQKtSk/SParDeMN9Ax5t
-   AlQXU1XCt215H/lYIR6HXUH5zwHAsWBfq2yQ3CQtm4dYVlPtOm8P7zRNn
-   dRZpfLNPKp+HZ01B53YexKPDlHbk+0EmA2mBi8guL9I6y4uSPSrjxwDvK
-   4SCj/x8atIm7hWRy9xn9//ciB7JZPBPKXZ+51TQ6jh+fZCuPFPXbL670b
-   2e8kXVHOckkw5OMNagcx5Hyc1PFH1USn7wm1YN5M2dOuOYAOSjc57P0GX
-   w==;
-X-CSE-ConnectionGUID: 1XMep1nlRIiq7/60qZ+F4A==
-X-CSE-MsgGUID: ueryo8txR9O5yvyLZZu7Fw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="45440049"
+  t=1755619237; x=1787155237;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9pCGquBfB9iEH+++tWiD+pVK53sSQfG2z2BeRYgVW70=;
+  b=W2kQEUBRsPrPbBnm8gGyCOd0gkXFLTjoEfqTi4+0tqvwldhqLSjlGgeT
+   1mSDlUS9wZraubae2phPfRAY7tiyZMtpNOz3gFMQ64FdRh0Qi1JJVBLEp
+   lzRzLjbN3oggDZer9xXKCjSq3BY5u5hdg+ZfvBrNOUoqQnFTYMENE0Z/z
+   YJLRDSyUAwpghsynrDfErsitF0h1gVFFemgKFYaxZglBUTxWMw8wWBLn4
+   lWR3Sb/aGRtXqpwJvZGEApSdpZTRWtHLguVH/rnbJSN/69MS9iskEQJ2V
+   /8VzgYqdhVZtEWe6W1GhxUbMcskzg08eipw8s3qKx8zz8TFOAsR7rptKS
+   A==;
+X-CSE-ConnectionGUID: tYnM7SwfQ8Oj+U6Ee6Nidw==
+X-CSE-MsgGUID: hm3zDmtQTkWTG4fl+Wahvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="56896693"
 X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="45440049"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 08:59:47 -0700
-X-CSE-ConnectionGUID: lNr5ZPCNTt+xuRNf9vUPYQ==
-X-CSE-MsgGUID: 1q9tUCkoQAa0PfhvY+sNtw==
+   d="scan'208";a="56896693"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 09:00:35 -0700
+X-CSE-ConnectionGUID: RPcjQSr2QdGwG+6/sj9wKg==
+X-CSE-MsgGUID: 6kHb0nwpQF+Tr0QnUKeOLw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="172120231"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 08:59:47 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 19 Aug 2025 08:59:46 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 19 Aug 2025 08:59:46 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.41) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 19 Aug 2025 08:59:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vTFGMifP5rqhiIoPbsKYCYqdasE4PxRb3bde3c9x9LCCEt+QDUPgX3FyMKh7EW6enohCVksxEJkbPlwrtjGo2654bI+kf8NLaBHjgmBHTsvZSq4b1jYAIpFMfVUHVWxT077pV4HPjbi7emF417eW8zCsCUWMhX+pnYwJOXbAEGMqTLPeMUcY5OAMQ1niPIdxQQeb6n88W9mWOsj34yIlWt4afeJr6MxPcytNxg0jxkAb71RRNUCCHwLG1AJyByV5T/FeV280oYuC9NT3ZSwoa1e1Q4OFbNM4hd0TycimJFYBmLAJbpeEIFWSHs+hDqVhCRLz2fnHMur41225SBczHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CnJtEApHUcVBv2upVjKeDCGvyfI60IjfubqC+1kdhos=;
- b=BzRBvCHpFDPMBS8wS18QSl+hazCtxPP8/3rY4F2d0Obxy1KNhbVJnPBJK1qJq4NIjB5sw1P9EAiGt6vnBM5Bj1qXM5VK9zbmpOn3p3ByJ9tQzzandXBep+n9F0Q9xXv3I1A72b2OfnXWvkwbAN9iquXAta11RdXit0fqqIJzc8SnzGPPSkBwBw9Oz2/AI1TIg5Qy5fNVMgvtP5FcJOnPGNj8TNyot6DskBwVsWLX0wwWx8GTisebHVn1B3wegM2z0MG9Qu2Iv3LFSFbHr4PsKQcE0MoMHaSXsKI0I2LD4mVNjM9khXjSocULr0MzQwas7YxrJr/W9VWgDTIBlSyGsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by PH0PR11MB5063.namprd11.prod.outlook.com (2603:10b6:510:3d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 15:59:44 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
- 15:59:44 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "Hunter, Adrian" <adrian.hunter@intel.com>, "seanjc@google.com"
-	<seanjc@google.com>, "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>
-CC: "Gao, Chao" <chao.gao@intel.com>, "Huang, Kai" <kai.huang@intel.com>, "Li,
- Xiaoyao" <xiaoyao.li@intel.com>, "Chatre, Reinette"
-	<reinette.chatre@intel.com>, "kirill.shutemov@linux.intel.com"
-	<kirill.shutemov@linux.intel.com>, "tony.lindgren@linux.intel.com"
-	<tony.lindgren@linux.intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Yamahata, Isaku"
-	<isaku.yamahata@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, "Weiny,
- Ira" <ira.weiny@intel.com>
-Subject: Re: [PATCH RFC 1/2] KVM: TDX: Disable general support for MWAIT in
- guest
-Thread-Topic: [PATCH RFC 1/2] KVM: TDX: Disable general support for MWAIT in
- guest
-Thread-Index: AQHcDrxaRC2HgQTKCkiAAwmmnxOsO7RodPeAgABPRoCAALX3AIAArOGA
-Date: Tue, 19 Aug 2025 15:59:44 +0000
-Message-ID: <b7ee32f9e343a10094b21bed455262fecd2e071e.camel@intel.com>
-References: <20250816144436.83718-1-adrian.hunter@intel.com>
-	 <20250816144436.83718-2-adrian.hunter@intel.com>
-	 <aKMzEYR4t4Btd7kC@google.com>
-	 <136ab62e9f403ad50a7c2cb4f9196153a0a2ef7c.camel@intel.com>
-	 <97d3090d-38c5-40df-bab0-c81fc152321d@linux.intel.com>
-In-Reply-To: <97d3090d-38c5-40df-bab0-c81fc152321d@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|PH0PR11MB5063:EE_
-x-ms-office365-filtering-correlation-id: d956dd9a-1dfc-45cd-95a9-08dddf3969fb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?S0Q5Sk9KdEFBdWh0aXhCTlZYdGRyakNHNFE4VkNSUDNFT2tSWGNwMTBqSHUv?=
- =?utf-8?B?NWZJc1Q1MDd3a0k0cW1HMkd1STJlNzVNRFNnWGFOcTF2UEJTTDdWa29PQWJz?=
- =?utf-8?B?RCtuTGVtYW95UW9yajVNR0dOUU9WTVpQbVRrL3lGM1VocGE1UFFpRERjNVVz?=
- =?utf-8?B?bit3aG5xTG5VKzl2VVhuS0N5UU1UV3AxKzEvY1lTeGlDNXhRaVVnc0NqOU5k?=
- =?utf-8?B?ZzJuV0Robzhid1FqUWd6MVRNc25NcHBOVVhERzZoZXZvaW9MUTlCL1MralAx?=
- =?utf-8?B?SFFhYXFTdGpmZytiRVZ3WkVPTnFJckwybDdQY3lDaWZUNWtCeFJDa0dqT2sx?=
- =?utf-8?B?UnNUdUZnUlJxTjhJbjI5QnRSQUNuVW5MY1Y5enhVMWZXeG4yemkyU0YxVVBF?=
- =?utf-8?B?TDN2SStjaS9PSlUvK0U3eWxwNEZjWm5aWGdTM3diYkxlWUNGOC81OHA5T3Rj?=
- =?utf-8?B?ODNRZ2k0ekRIMlpJb2liT0ZLSDlzR3o0NGE4UXlmcWtSL01sRlpqYWM0bHFv?=
- =?utf-8?B?a2RFTm5qRjQ2blFtU0hmeXBtenhqU0VLOGVQRDFVakFJYWRBelZid29saDkv?=
- =?utf-8?B?N1RVaFRJR1oyVnF5cmlQZ1QxVk5KcVlxeTBxQ01aUDdkUVd6bmljazFDYUtv?=
- =?utf-8?B?QkVvMzJCdGFEY29Dc3IzbVBDVE1ZWnhtQ3RScFN3c3I3L0s2bkVpOUxTcE5S?=
- =?utf-8?B?cU1DeVF3ak9lUHU0TFk3dkxGWHhjUk13WU4yc0xQUHE5a0xjRTE1Y0F4amFp?=
- =?utf-8?B?NkthdzRHZm1lUmY3a1gvYUJETUxCczVTYUZHRTFLajM2Q1BOMUNPbmJZQy9u?=
- =?utf-8?B?SEd0OS9MM3dhak91elJqM2xTVmNiRWN5SEU4ZURONy8rU2h1Ni9oZkVRM2lO?=
- =?utf-8?B?NWpBVE1GczQ0b0twMlkrQTArQkxMWE0vdXpyTXBnUzhnNXk1WWpIQXEvaGhP?=
- =?utf-8?B?dXZDdk9FWjFIbEdJNDBNRXBraWdMQVRSc0wvdXNQcjNjaFVhc25QbFVWZ2VW?=
- =?utf-8?B?Ui9EcDdJTU5MdG1PN2hYWGlReWkwTGorLzljUlpTeFpRbHBCZWtZdERCbVhm?=
- =?utf-8?B?akY4TjI0Y2N0TFFoWlJxc1lkL2F1d28yejgxbXk3OXpMdm9ZRVl6WkFnODg4?=
- =?utf-8?B?TjZidVpiYTBFb3JMSlN5N1ZsZ1B3NlU3ZE1qOVZNVTliVEpwRWJpMHNXTGFx?=
- =?utf-8?B?dVp4RmdpakhRSkNYcWFhQXlwUUwxczNhTnlWeGk2a1h2T1lsblJTdjNhcnZB?=
- =?utf-8?B?cVV5cm1HZEN1bXZqbUJySkkzUVpmWllWN2lmZlZaZnpLTzhLZ2o5amVoZUY5?=
- =?utf-8?B?cmlvT3hYUzBvWndDdEh1eW5xMXJxWmtCYjFtT2p1WXdnRUR1ditKUmhDTlJW?=
- =?utf-8?B?dTVUU3cwbFpVYlBSdTdZZ09ESVB4UmJ3bXdlaTRkNmpkV09XbU52Qmp6RENq?=
- =?utf-8?B?aU92UDdLRUVMQlN4VGp4QUVvM1AxdTlxL3BRT3Rab005aUtEMThOelVlTnUy?=
- =?utf-8?B?VGlsTU9WUE90RC9NbVNhNlR0Q0FpdGNyakJ2cTRxNVFrbCtjRnpyL1JrUHJ1?=
- =?utf-8?B?TU9Qa1lMR3F5Zi9COU9DSVhwbG1xV3hQT2hPcTRoaXdSWGg4dWpRMzJEZ2tZ?=
- =?utf-8?B?UmdMa2k3OGRNaHEzQmFzSk9pMDlpNVdJZHZyS2pMNG12clNUeks3dG1nQkxQ?=
- =?utf-8?B?c09jc2g1czBUWUVvbmljeWx6LzZyZG1Wd3lubU80b3FoNHRUNzNVRVkzSXZy?=
- =?utf-8?B?WDJoRVJSZ3QxLzhMQWtjR0JBTkdZQ0VkaUNOZll0VlZURnAzclFTT0t6S09h?=
- =?utf-8?B?VUpiMUNrTVBXNkNzSC9aV0hoNy85MUtLV291d0tFb0tmcWlyTjIvMGNOUjhv?=
- =?utf-8?B?aFIxUmJPN1pqWlVUTktMOEM3dkZ1cGgwRHZ5MGJSeFRUaXF1NTZCTy9iSWg0?=
- =?utf-8?B?c0Ridm1sV1loUnFkeUF3RG8zUTNQUHJYeUNvRGZ3aU1TaXR6eEhSam9DbVZr?=
- =?utf-8?Q?MTElblMjkNZJqf7cc10y9lt8JPfw6Y=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?R1J0QzltelZ6a3ZBa01DdWgyR20vaUdQR0d0ZE4vaVFQYk5JcklpaVNTRUQ0?=
- =?utf-8?B?ZFZpMGc3ditTVm9CVklzbjcxVFRBdmsrL3ZlK1BiQmczUkhNc0JCR2xueE1N?=
- =?utf-8?B?MTRmcjNsbVd2OXpzRzk4UWt5dm8rM256cDZXQ2pPbkJVRFA3OWpneHZLdldy?=
- =?utf-8?B?Tm9UditicEdxejBkZlV4elU3WE50V01MeWdpenBPbWNNZHMzMUI5ckFOOW9l?=
- =?utf-8?B?YVJBanRDSWtmek91V2lXTndUQitBc0FPajlSM09BMzRpME1iNjdlY2VvUE1L?=
- =?utf-8?B?amhVM2o0M01rVTFxazEvUWZCRjVENVBTek5mMWIzNjdNTnNrWHdZeG5LSlN6?=
- =?utf-8?B?OVlwYmlmL2lidDQyVVl5bklEOWEydzhNSVROWW10Z2VMb0tHNzBmQXhydTdH?=
- =?utf-8?B?NjN4TGxrTlB0Yk54TTFOREUyK3duR1d4Y04wNXpWMUl5TTROaHE3R2JzMjQ2?=
- =?utf-8?B?cXc5bzJDVld2d3pNaEltZE1pTUhjNDFTakNyMDRJTDNCNVRsaUlhbk9HazY0?=
- =?utf-8?B?alpDdjlHdlN4RmhCVThoSVdUaVZDUTErZmU3WVY4NDdVbElwbXhYZWp1bFVR?=
- =?utf-8?B?MFJHTFE4eVRBTnpsazU1QUdMRTlZMnU1U1JDS1V0eVU1eGJwT0NETzVWeHZx?=
- =?utf-8?B?Y1dGTUp5RDVVZmVLNTlhOWhHTDNOendBSUphRzE1ejViTnBTRUh1SDNvOWZj?=
- =?utf-8?B?TzRjQ2d5UFBrcnE2OElmS1NtYm1zL1NQTXdNbGFOSXd3RnV0WnpwNUZ2TGc4?=
- =?utf-8?B?djZKQSt0cmZNZk1WOCtXY1IwQjRZTEs3QWhDQ1E5NStKNDdCdmFKbE9mUGEv?=
- =?utf-8?B?S2N6bGtRQjBJcGlQL0Y3SEk4V1hyR0Z5dVZTc1Vac3RDRkNmek9iY3ZkWDZx?=
- =?utf-8?B?aDZjUmVqZXhnZThNdk14ZjdMV1VpempEeVlMSnUyMVRUWWZ4MlBkbkt1anlo?=
- =?utf-8?B?Y2wvekFPYi9UY3l3Vm1NTUNKQ1hnSVhkTUhDUDV2WE5EOWdEY0FzVmhpeUlT?=
- =?utf-8?B?cnJPL08weklRbzVrN3JBSFpCQk9QNkp5aCtEa21RdllSRzJneGs2RGR2eS91?=
- =?utf-8?B?OSsxQXUyc1VNOXZtSjhDa0NMeTRrK2d2TDg2cU9PczBCb2gvY0djNHFya0pa?=
- =?utf-8?B?dHF2N3hhN1BxM1Yyb0RGZ1V1bTRIcU1DSkhXQTdKSlpESk5BdkxRY2VUOTJL?=
- =?utf-8?B?c2JaaFZXVVB6TEptQUhNUG04YWl2NExxdVJvTjQ4c1hhVy9ZMWFJUlpKZmwr?=
- =?utf-8?B?SFFHWVJ6M1NJSldyUkgzWXZxVHFkUDM2ai9CdFBrT1RwV2luRmV5bWg2eFNK?=
- =?utf-8?B?V1VONVVXTEg5YVU0MnlLaXJ0T3QzS3dFUXJEMVRxR2IzcTg1MWFiRXgvV3ov?=
- =?utf-8?B?NllFRERwMHI4R1NGV2RlejhEOGlnbXBxMHpnTldoZ0RFWmdSOXBVSUlzMjhz?=
- =?utf-8?B?YmZ5TEJCdFBMTmlCWW51bEtVRUIyM0w0RS9vdDN3bitXNVRERlJvMWdheFRl?=
- =?utf-8?B?bUsrclEwQUNtT2RBWXdoeGlBN1VXeE1YSWR2VWdMNzROSWlUcXNzNVpTMmJN?=
- =?utf-8?B?aExyakQyR0RIek00eEdXZ3owclRTSmdPRENKaUZrdGFBTWwvSmxya3B5WURN?=
- =?utf-8?B?c283VDJrTW12TGU3cy9YQ0dueXpzOGxJWXYzMFJlOXRrcHRvcnVGa1BvdndH?=
- =?utf-8?B?TEp6RENoOHdxOGFHUXk5SkRCYzRJMGMzdDRNUFQvcmxIVXQ5cHhwNEFtTHVN?=
- =?utf-8?B?bnYvckhpaTZJSlcxWlo2TTVsM3gyQ3dyaTRMeHdmTWE5bmRXTGFadml5UTJF?=
- =?utf-8?B?RTIzUnZFZmI5ZTc5M1Bab3RsMUlFNWh2R2k5UVNrNG55bk5oalZrNmpYRzZC?=
- =?utf-8?B?eVdxam1XZ2ExQXVDSXNxOHh2VzB6aWw1SCtya2owbVpOY1JhQ3JWUHhmWDho?=
- =?utf-8?B?aVdXMGJJdmdraUxtdnloUTBKaGN6Vmk3bFYwTzFPaE5vWEFiT0dsR0xPV2RM?=
- =?utf-8?B?NUQyNS91LzZmVHdqNHluUUFJemx5M24xOXhKcFRWc1RNenBTR25Ud2pJVGx6?=
- =?utf-8?B?RWtaaWpMQ3FqV3FTU0MxRVN5TzZ6OS9EUGRaeWU4TEFEUUlybGtCcDdLbTJZ?=
- =?utf-8?B?Smc5YUxkcUdZN2xFL2thaXdqMnQ4YnBIem1IeWFlakdXM2JNK1BqdGtFRFdJ?=
- =?utf-8?B?R3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4E8288EB61FD9248BA45E28D1167E73B@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+   d="scan'208";a="191567611"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 19 Aug 2025 09:00:32 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uoOl0-000H55-0I;
+	Tue, 19 Aug 2025 16:00:21 +0000
+Date: Wed, 20 Aug 2025 00:00:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org,
+	david@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: Re: [PATCH] mm/cma: add available_count and total count in
+ trace_cma_alloc_start
+Message-ID: <202508192303.cnpF2rQG-lkp@intel.com>
+References: <20250819032654.4345-1-gxxa03070307@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d956dd9a-1dfc-45cd-95a9-08dddf3969fb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2025 15:59:44.0391
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZObFqPOwXVQz5LSE28u881cTAKFbCdV8moSKBG+NNt4n/D9nqK2aKsV/0qteppauJjkhv1Z6yxXuXseHkWicroc2P59z7EAVaBO1Jbzq/7A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5063
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819032654.4345-1-gxxa03070307@gmail.com>
 
-T24gVHVlLCAyMDI1LTA4LTE5IGF0IDEzOjQwICswODAwLCBCaW5iaW4gV3Ugd3JvdGU6DQo+IEN1
-cnJlbnRseSwgS1ZNIFREWCBjb2RlIGZpbHRlcnMgb3V0IFRTWCAoSExFIG9yIFJUTSkgYW5kIFdB
-SVRQS0cgdXNpbmcNCj4gdGR4X2NsZWFyX3Vuc3VwcG9ydGVkX2NwdWlkKCksIHdoaWNoIGlzIHNv
-cnQgb2YgYmxhY2tsaXN0Lg0KPiANCj4gSSBhbSB3b25kZXJpbmcgaWYgd2UgY291bGQgYWRkIGFu
-b3RoZXIgYXJyYXksIGUuZy4sIHRkeF9jcHVfY2Fwc1tdLCB3aGljaCBpcyB0aGUNCj4gVERYIHZl
-cnNpb24gb2Yga3ZtX2NwdV9jYXBzW10uDQo+IA0KPiBVc2luZyB0ZHhfY3B1X2NhcHNbXSBpcyBh
-IHdoaXRlbGlzdCB3YXkuDQoNCldlIGhhZCBzb21ldGhpbmcgbGlrZSB0aGlzIGluIHNvbWUgb2Yg
-dGhlIGVhcmxpZXIgcmV2aXNpb25zIG9mIHRoZSBURFggQ1BVSUQNCmNvbmZpZ3VyYXRpb24uDQoN
-Cj4gRm9yIGEgbmV3IGZlYXR1cmUNCj4gLSBJZiB0aGUgZGV2ZWxvcGVyIGRvZXNuJ3Qga25vdyBh
-bnl0aGluZyBhYm91dCBURFgsIHRoZSBiaXQganVzdCBiZSBhZGRlZCB0bw0KPiDCoMKgIGt2bV9j
-cHVfY2Fwc1tdLg0KPiAtIElmIHRoZSBkZXZlbG9wZXIga25vd3MgdGhhdCB0aGUgZmVhdHVyZSBz
-dXBwb3J0ZWQgYnkgYm90aCBub24tVERYIFZNcyBhbmQgVERzDQo+IMKgwqAgKGVpdGhlciB0aGUg
-ZmVhdHVyZSBkb2Vzbid0IHJlcXVpcmUgYW55IGFkZGl0aW9uYWwgdmlydHVhbGl6YXRpb24gc3Vw
-cG9ydCBvcg0KPiDCoMKgIHRoZSB2aXJ0dWFsaXphdGlvbiBzdXBwb3J0IGlzIGFkZGVkIGZvciBU
-RFgpLCBleHRlbmQgdGhlIG1hY3JvcyB0byBzZXQgdGhlIGJpdA0KPiDCoMKgIGJvdGggaW4ga3Zt
-X2NwdV9jYXBzW10gYW5kIHRkeF9jcHVfY2Fwc1tdLg0KPiAtIElmIHRoZXJlIGlzIGEgZmVhdHVy
-ZSBub3Qgc3VwcG9ydGVkIGJ5IG5vbi1URFggVk1zLCBidXQgc3VwcG9ydGVkIGJ5IFREcywNCj4g
-wqDCoCBleHRlbmQgdGhlIG1hY3JvcyB0byBzZXQgdGhlIGJpdCBvbmx5IGluIHRkeF9jcHVfY2Fw
-c1tdLg0KPiBTbywgdGR4X2NwdV9jYXBzW10gY291bGQgYmUgdXNlZCBhcyB0aGUgZmlsdGVyIG9m
-IGNvbmZpZ3VyYWJsZSBiaXRzIHJlcG9ydGVkDQo+IHRvIHVzZXJzcGFjZS4NCg0KSW4gc29tZSB3
-YXlzIHRoaXMgaXMgdGhlIHNpbXBsZXN0LCBidXQgaGF2aW5nIHRvIG1haW50YWluIGEgYmlnIGxp
-c3QgaW4gS1ZNIHdhcw0Kbm90IGlkZWFsLiBUaGUgb3JpZ2luYWwgc29sdXRpb24gc3RhcnRlZCB3
-aXRoIEtWTV9HRVRfU1VQUE9SVEVEX0NQVUlEIGFuZCB0aGVuDQptYXNzYWdlZCB0aGUgcmVzdWx0
-cyB0byBmaXQsIHNvIG1heWJlIGp1c3QgZW5jb2RpbmcgdGhlIHdob2xlIHRoaW5nIHNlcGFyYXRl
-bHkNCmlzIGVub3VnaCB0byByZWNvbnNpZGVyIGl0Lg0KDQpCdXQgd2hhdCBJIHdhcyB0aGlua2lu
-ZyBpcyB0aGF0IHdlIGNvdWxkIG1vc3Qgb2YgdGhhdCBoYXJkY29kZWQgbGlzdCBpbnRvIHRoZQ0K
-VERYIG1vZHVsZSwgYW5kIG9ubHkga2VlcCBhIGxpc3Qgb2Ygbm9uLXRyaXZpYWwgZmVhdHVyZXMg
-KGkuZS4gbm90IHNpbXBsZQ0KaW5zdHJ1Y3Rpb24gQ1BVSUQgYml0cykgaW4gS1ZNLiBUaGUgbGlz
-dCBvZiBzaW1wbGUgZmVhdHVyZXMgKGRlZmluaXRpb24gVEJEKQ0KY291bGQgYmUgcHJvdmlkZWQg
-YnkgdGhlIFREWCBtb2R1bGUuIFNvIEtWTSBjb3VsZCBkbyB0aGUgZnVsbCBmaWx0ZXJpbmcgYnV0
-IG9ubHkNCmtlZXAgYSBsaXN0IHRoYXQgdG9kYXkgd291bGQganVzdCBsb29rIGxpa2UgVFNYIGFu
-ZCBXQUlUUEtHIHRoYXQgd2UgYWxyZWFkeQ0KaGF2ZS4gU28gYmFzaWNhbGx5IHRoZSBzYW1lIGFz
-IHdoYXQgeW91IGFyZSBwcm9wb3NpbmcsIGJ1dCBqdXN0IHNocmlua3MgdGhlIHNpemUNCm9mIGxp
-c3QgS1ZNIGhhcyB0byBrZWVwLg0KDQo+IA0KPiBDb21wYXJpbmcgdG8gYmxhY2tsaXN0IChpLmUu
-LCB0ZHhfY2xlYXJfdW5zdXBwb3J0ZWRfY3B1aWQoKSksIHRoZXJlIGlzIG5vIHJpc2sNCj4gdGhh
-dCBhIGZlYXR1cmUgbm90IHN1cHBvcnRlZCBieSBURFggaXMgZm9yZ290dGVuIHRvIGJlIGFkZGVk
-IHRvIHRoZSBibGFja2xpc3QuDQo+IEFsc28sIHRkeF9jcHVfY2Fwc1tdIGNvdWxkIHN1cHBvcnQg
-YSBmZWF0dXJlIHRoYXQgbm90IHN1cHBvcnRlZCBmb3Igbm9uLVREWCBWTXMuDQoNCldlIGRlZmlu
-aXRlbHkgY2FuJ3QgaGF2ZSBURFggbW9kdWxlIGFkZGluZyBhbnkgaG9zdCBhZmZlY3RpbmcgZmVh
-dHVyZXMgdGhhdCB3ZQ0Kd291bGQgYXV0b21hdGljYWxseSBhbGxvdy4gQW5kIGhhdmluZyBhIHNl
-cGFyYXRlIG9wdC1pbiBpbnRlcmZhY2UgdGhhdCBkb2Vzbid0DQoic3BlYWsiIGNwdWlkIGJpdHMg
-aXMgZ29pbmcgdG8ganVzdCBjb21wbGljYXRlIHRoZSBhbHJlYWR5IGNvbXBsaWNhdGVkIGxvZ2lj
-DQp0aGF0IGlzIGluIFFFTVUuDQoNCj4gDQo+IFRoZW4gd2UgZG9uJ3QgbmVlZCBhIGhvc3Qgb3B0
-LWluIGZvciB0aGVzZSBkaXJlY3RseSBjb25maWd1cmFibGUgYml0cyBub3QNCj4gY2xvYmJlcmlu
-ZyBob3N0IHN0YXRlcy4NCj4gDQo+IE9mIGNvdXJzZSwgdG8gcHJldmVudCB1c2Vyc3BhY2UgZnJv
-bSBzZXR0aW5nIGZlYXR1cmUgYml0IHRoYXQgd291bGQgY2xvYmJlciBob3N0DQo+IHN0YXRlLCBi
-dXQgbm90IGluY2x1ZGVkIGluIHRkeF9jcHVfY2Fwc1tdLCBJIHRoaW5rIGEgbmV3IGZlYXR1cmUg
-dGhhdCB3b3VsZA0KPiBjbG9iYmVyIGhvc3Qgc3RhdGUgc2hvdWxkIHJlcXVpcmVzIGEgaG9zdCBv
-cHQtaW4gdG8gVERYIG1vZHVsZS4NCg0KWWVzLCBidXQgaWYgaGF2ZSBzb21lIHdheSB0byBnZXQg
-dGhlIGhvc3QgY2xvYmJlcmluZyB0eXBlIGluZm8gcHJvZ3JhbWF0aWNhbGx5DQp3ZSBjb3VsZCBr
-ZWVwIHRoZSBob3N0IG9wdC1pbiBhcyBwYXJ0IG9mIHRoZSBtYWluIENQVUlEIGJpdCBjb25maWd1
-cmF0aW9uLiBXaGF0DQpJIHRoaW5rIHdpbGwgYmUgYmFkIGlzIGlmIHdlIGdyb3cgYSBzZXBhcmF0
-ZSBwcm90b2NvbCBvZiBvcHQtaW5zLiBLVk0gYW5kIFFFTVUNCm1hbmFnZSBldmVyeXRoaW5nIHdp
-dGggQ1BVSUQsIHNvIGl0IHdpbGwgYmUgZWFzaWVyIGlmIHdlIHN0aWNrIHRvIHRoYXQuDQoNCg==
+Hi Xiang,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiang-Gao/mm-cma-add-available_count-and-total-count-in-trace_cma_alloc_start/20250819-112831
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250819032654.4345-1-gxxa03070307%40gmail.com
+patch subject: [PATCH] mm/cma: add available_count and total count in trace_cma_alloc_start
+config: s390-randconfig-002-20250819 (https://download.01.org/0day-ci/archive/20250819/202508192303.cnpF2rQG-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250819/202508192303.cnpF2rQG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508192303.cnpF2rQG-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/trace/define_trace.h:132,
+                    from include/trace/events/cma.h:138,
+                    from mm/cma.c:31:
+   include/trace/events/cma.h: In function 'trace_raw_output_cma_alloc_start':
+>> include/trace/events/cma.h:62:19: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat=]
+      62 |         TP_printk("name=%s count=%lu align=%u",
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:219:34: note: in definition of macro 'DECLARE_EVENT_CLASS'
+     219 |         trace_event_printf(iter, print);                                \
+         |                                  ^~~~~
+   include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+      45 |                              PARAMS(print));                   \
+         |                              ^~~~~~
+   include/trace/events/cma.h:39:1: note: in expansion of macro 'TRACE_EVENT'
+      39 | TRACE_EVENT(cma_alloc_start,
+         | ^~~~~~~~~~~
+   include/trace/events/cma.h:62:9: note: in expansion of macro 'TP_printk'
+      62 |         TP_printk("name=%s count=%lu align=%u",
+         |         ^~~~~~~~~
+   In file included from include/trace/trace_events.h:256:
+   include/trace/events/cma.h:62:45: note: format string is defined here
+      62 |         TP_printk("name=%s count=%lu align=%u",
+         |                                            ~^
+         |                                             |
+         |                                             unsigned int
+         |                                            %lu
+>> include/trace/events/cma.h:62:19: warning: too many arguments for format [-Wformat-extra-args]
+      62 |         TP_printk("name=%s count=%lu align=%u",
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:219:34: note: in definition of macro 'DECLARE_EVENT_CLASS'
+     219 |         trace_event_printf(iter, print);                                \
+         |                                  ^~~~~
+   include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+      45 |                              PARAMS(print));                   \
+         |                              ^~~~~~
+   include/trace/events/cma.h:39:1: note: in expansion of macro 'TRACE_EVENT'
+      39 | TRACE_EVENT(cma_alloc_start,
+         | ^~~~~~~~~~~
+   include/trace/events/cma.h:62:9: note: in expansion of macro 'TP_printk'
+      62 |         TP_printk("name=%s count=%lu align=%u",
+         |         ^~~~~~~~~
+   include/trace/events/cma.h: In function 'do_trace_event_raw_event_cma_alloc_start':
+>> include/trace/events/cma.h:56:24: error: 'struct trace_event_raw_cma_alloc_start' has no member named 'count'
+      56 |                 __entry->count = request_count;
+         |                        ^~
+   include/trace/trace_events.h:427:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
+     427 |         { assign; }                                                     \
+         |           ^~~~~~
+   include/trace/trace_events.h:435:23: note: in expansion of macro 'PARAMS'
+     435 |                       PARAMS(assign), PARAMS(print))                    \
+         |                       ^~~~~~
+   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
+      40 |         DECLARE_EVENT_CLASS(name,                              \
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
+      44 |                              PARAMS(assign),                   \
+         |                              ^~~~~~
+   include/trace/events/cma.h:39:1: note: in expansion of macro 'TRACE_EVENT'
+      39 | TRACE_EVENT(cma_alloc_start,
+         | ^~~~~~~~~~~
+   include/trace/events/cma.h:54:9: note: in expansion of macro 'TP_fast_assign'
+      54 |         TP_fast_assign(
+         |         ^~~~~~~~~~~~~~
+   In file included from include/trace/define_trace.h:133:
+   include/trace/events/cma.h: In function 'do_perf_trace_cma_alloc_start':
+>> include/trace/events/cma.h:56:24: error: 'struct trace_event_raw_cma_alloc_start' has no member named 'count'
+      56 |                 __entry->count = request_count;
+         |                        ^~
+   include/trace/perf.h:51:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
+      51 |         { assign; }                                                     \
+         |           ^~~~~~
+   include/trace/perf.h:67:23: note: in expansion of macro 'PARAMS'
+      67 |                       PARAMS(assign), PARAMS(print))                    \
+         |                       ^~~~~~
+   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
+      40 |         DECLARE_EVENT_CLASS(name,                              \
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
+      44 |                              PARAMS(assign),                   \
+         |                              ^~~~~~
+   include/trace/events/cma.h:39:1: note: in expansion of macro 'TRACE_EVENT'
+      39 | TRACE_EVENT(cma_alloc_start,
+         | ^~~~~~~~~~~
+   include/trace/events/cma.h:54:9: note: in expansion of macro 'TP_fast_assign'
+      54 |         TP_fast_assign(
+         |         ^~~~~~~~~~~~~~
+
+
+vim +56 include/trace/events/cma.h
+
+    38	
+  > 39	TRACE_EVENT(cma_alloc_start,
+    40	
+    41		TP_PROTO(const char *name, unsigned long request_count, unsigned long available_count,
+    42			unsigned long total_count, unsigned int align),
+    43	
+    44		TP_ARGS(name, request_count, available_count, total_count, align),
+    45	
+    46		TP_STRUCT__entry(
+    47			__string(name, name)
+    48			__field(unsigned long, request_count)
+    49			__field(unsigned long, available_count)
+    50			__field(unsigned long, total_count)
+    51			__field(unsigned int, align)
+    52		),
+    53	
+    54		TP_fast_assign(
+    55			__assign_str(name);
+  > 56			__entry->count = request_count;
+    57			__entry->available_count = available_count;
+    58			__entry->total_count = total_count;
+    59			__entry->align = align;
+    60		),
+    61	
+  > 62		TP_printk("name=%s count=%lu align=%u",
+    63			  __get_str(name),
+    64			  __entry->request_count,
+    65			  __entry->available_count,
+    66			  __entry->total_count,
+    67			  __entry->align)
+    68	);
+    69	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
