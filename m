@@ -1,155 +1,114 @@
-Return-Path: <linux-kernel+bounces-775742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B74B2C456
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C23F3B2C45B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A7116BE76
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9661D16C492
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DD5322DA4;
-	Tue, 19 Aug 2025 12:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFB533A012;
+	Tue, 19 Aug 2025 12:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Op6q3UE7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mngec7y8"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5207421765B;
-	Tue, 19 Aug 2025 12:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5565732BF4C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755608124; cv=none; b=cne76+bK98/1BpAPIYl79CJimnVjEdROAAbsGLff0cnsuWVQ2/FRecnfGVRJ06dAq8u7TJdEmejBnXi7Ym9glAAE0dFuQV1e9f2WVxD6su2cDaNYHOPrEVh37VhR3AwT91M8Mza7t6ziA/IHNeiDYNETFKD1shGC7w+UbQcFi/Y=
+	t=1755608176; cv=none; b=J7+vcsElfdjJ92ymV00Uv/oT/x0lSDdEsc/26yREC4U3kL6ernUE4LIbc0yYIGR18DaVBk+y5cQ+ABjvnioqgbG+ykOv6Sbey5IsF+AO5Qsr2Y77zhtgWO3VfO4FViia2+LMbRw98H1oimJHqFDsq+wwdzzBAWHVyQ7Yc8z2Res=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755608124; c=relaxed/simple;
-	bh=+1/10nzw4Yf4yiVjA7ztc1dX3OYsmM9+0qlQA3cpdSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmmysCGMOOBgDYaicuwibIjas56QYSxSKU54MO4uy7pCD2ZGaA+hZT/A1DgSqN46CE1Z1ud8sHMF3vMqCXLPDW/07IG5hUOeFNQG8qz6SEFFmQeVzL8GVuxf+ZVlNwHLGqUWJduGCOzTgxB3ENtZwXcObU9ti1xMl+PSZ7bDqHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Op6q3UE7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D705C4CEF1;
-	Tue, 19 Aug 2025 12:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755608123;
-	bh=+1/10nzw4Yf4yiVjA7ztc1dX3OYsmM9+0qlQA3cpdSg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Op6q3UE7eKv7xYk37W//xhzKMUL2XvdoNTa45dNkDlSf/a0dqxSKLzGkTFjy1ODhC
-	 gOfaNm1m5FpSsq0WGgFhmbTi11oQ5UT2a6utUz25TkBRkYfHfmjB6l9AGbaGLtX5Lg
-	 M9le2ylpxoFrce1kmFrMqwbieVaCIdyb8z0IkNZWiulgV8tw1HqujTHFV4m9QI/fh9
-	 NfJDeVggrWmvGUreyIo4UrBCejq9BOWTOlTae3A4VDfGZWzgGTQKZ/DUNuebOPnlsN
-	 oCL2ady6yZfisD5j5SWcqRBG0XxGb2koSMhhWKBDolwocwJl6wkrI31vjuyARtpBae
-	 yNmxj40rSPOiQ==
-Date: Tue, 19 Aug 2025 13:55:18 +0100
-From: Lee Jones <lee@kernel.org>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Cc: herbert@gondor.apana.org.au, jarkko@kernel.org,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	davem@davemloft.net, linux-crypto@vger.kernel.org,
-	peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	Yinggang Gu <guyinggang@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v12 2/4] crypto: loongson - add Loongson RNG driver
- support
-Message-ID: <20250819125518.GF7508@google.com>
-References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
- <20250705072045.1067-3-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1755608176; c=relaxed/simple;
+	bh=jz0QOg/akzSjE/H2JWtFn2TjUHHbmNYxDvqdiKH5wjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jTlxAzS2Tb553kJ1OK0zVwxcxeUWA7hCzc7hsuiIX30CUAccnJw+IjqRBA6OJt9qEpF/O7j6Dg6zYev0wCPw5r93WySzcUsjhScC8jxo5WxvbyZiVczH28hoBjp7MT9XOwiAaSG7iy6Ar4zwgT6QbNJPWrbAfm5b1BwUMH+5UQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mngec7y8; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-333f8d1ecffso40186181fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755608172; x=1756212972; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jz0QOg/akzSjE/H2JWtFn2TjUHHbmNYxDvqdiKH5wjY=;
+        b=Mngec7y8BQP4xvfWALWD6RzLqBvh4Iyw6amqXKQYGZMT6S8DehFMRaxmgFHr3sEpOo
+         Oaj3FO/6Cq3d310OXbGrVHVXKLk/ZoK3LJxVumQ7OPlLrvXV6clsfB2Xxh9M8JqwCkj5
+         LMBuTi+h2oCslNZciU0Hd5pIG0iiCjUbfTrdPXLYKU2Alz3HN6mWgQopJQrwNpZS5icZ
+         BiN+0AmmUf2QAMuYMD7otAFYl+JUOUJLfd/NHY17YAHcddMVLmgRWUm+ifZFBaC3HMNb
+         g9Cy4bu3BjMjJXTqJWY7La/fCehusSFhFQVdjsh5v84+4EmTbY6TjKpxZ0NJgLIRmjar
+         +4AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755608172; x=1756212972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jz0QOg/akzSjE/H2JWtFn2TjUHHbmNYxDvqdiKH5wjY=;
+        b=vRDsTTR1vJuOAY8Cd/qhYarpAiuYkkL+86MbNCBsj6VWc2jm0v3WQk2ay1J2srgwTm
+         cDz/piFEGO9RfMfxA99QQiydR7/tIzVGHWsuI7ecb/IiSwgympblO/hIJZ+XGinSX+XL
+         CZvHW2ChZvhFddX8Ag0AfOnymjE6QT4MyW1hPwx0DbjlbhqfXf3vUAh9Ga55pwaHbJFI
+         +eBg1P5QnBjIvtqk34b0JChvEGdSoqVywH0iCUBeJio/oR6urbuHu3kwdLvltQfG3NxT
+         a9vXobSobT1ny4WDn0NZ0Hy5c4sJoRaAByJoCPFkQKw8PBgWvWKv52XF1rIUHjesjRaj
+         xhEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGoaxuQ/woD8C4Y7jJh0PElZgb8r6fZdgyb/bZZwuEufhm+M2GQgNw0sf7P0BKOgC00MI9gH3HOkDwWu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4Y9Vs2Yflimc6i0IXg16qV8jHRllvtouQZwb9Y4Lfjoso5o3M
+	ZWJygM2wmLN35p0fMcF0IeppaEZsme/GxmDFant7KWrqT19TEhjg0FtyRTdGHKPBOuBPwgt/zW7
+	mE/M4PMLYjobngSL6swujlDm+uvDKq4+i9KTpLJEnnA==
+X-Gm-Gg: ASbGncvREabpkwwCQMhONl9vHHn/WbCSAgul4sdMzzpUDNXB1/frnLPGC4LnPDmwn33
+	34q80D0viLkHwAF+J/899P+clEQixuoofXBzFQyWZs1PhLg4nCLpEg2HYA6oUAexkiZyieCMBcX
+	n4aAKCUYZ9sTL0FLU5SCH85jgZbm35lB1tKIOqayYDVjOPtsjEu/6CMVOz30713vI0k+OErx8bx
+	V/xm+j5diaLDMimlQ==
+X-Google-Smtp-Source: AGHT+IFUdE20zyrUEk40f2kUzg2iU7WpPNLkuJOKXQXp3DLrjB3ncJifjSzbF9DsaL3zu7uLvfHfbMV3X1spc0EVxok=
+X-Received: by 2002:a2e:a594:0:b0:333:7e5b:15c0 with SMTP id
+ 38308e7fff4ca-3353050e1e0mr6448301fa.13.1755608172324; Tue, 19 Aug 2025
+ 05:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250705072045.1067-3-zhaoqunqin@loongson.cn>
+References: <20250818-modularize-sx150x-gpio-expander-v1-0-c2a027200fed@oss.qualcomm.com>
+ <20250818-modularize-sx150x-gpio-expander-v1-1-c2a027200fed@oss.qualcomm.com>
+In-Reply-To: <20250818-modularize-sx150x-gpio-expander-v1-1-c2a027200fed@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 19 Aug 2025 14:55:59 +0200
+X-Gm-Features: Ac12FXxA0aTHF_AbE4XLBFhBLRwXcBfdoeDod62FVE4dAtkrcQvpYv97-QS9ik4
+Message-ID: <CACRpkdaeAqD=mpG4y16CPKwJ=pjATY9TxeRnXR9abziCOQb-0Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sx150x: Make the driver tristate
+To: Fange Zhang <fange.zhang@oss.qualcomm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	dmitry.baryshkov@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
+	xiangxu.yin@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 05 Jul 2025, Qunqin Zhao wrote:
+On Mon, Aug 18, 2025 at 6:41=E2=80=AFAM Fange Zhang
+<fange.zhang@oss.qualcomm.com> wrote:
 
-> Loongson's Random Number Generator is found inside Loongson Security
-> Engine chip.
-> 
-> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
-> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
-> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
-> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->  drivers/crypto/Kconfig                 |   1 +
->  drivers/crypto/Makefile                |   1 +
->  drivers/crypto/loongson/Kconfig        |   5 +
->  drivers/crypto/loongson/Makefile       |   1 +
->  drivers/crypto/loongson/loongson-rng.c | 209 +++++++++++++++++++++++++
->  5 files changed, 217 insertions(+)
->  create mode 100644 drivers/crypto/loongson/Kconfig
->  create mode 100644 drivers/crypto/loongson/Makefile
->  create mode 100644 drivers/crypto/loongson/loongson-rng.c
-> 
-> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-> index 9f8a3a5be..f6117bc77 100644
-> --- a/drivers/crypto/Kconfig
-> +++ b/drivers/crypto/Kconfig
-> @@ -827,6 +827,7 @@ config CRYPTO_DEV_CCREE
->  	  If unsure say Y.
->  
->  source "drivers/crypto/hisilicon/Kconfig"
-> +source "drivers/crypto/loongson/Kconfig"
->  
->  source "drivers/crypto/amlogic/Kconfig"
->  
-> diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
-> index 22eadcc8f..125b99b24 100644
-> --- a/drivers/crypto/Makefile
-> +++ b/drivers/crypto/Makefile
-> @@ -44,6 +44,7 @@ obj-y += inside-secure/
->  obj-$(CONFIG_CRYPTO_DEV_ARTPEC6) += axis/
->  obj-y += xilinx/
->  obj-y += hisilicon/
-> +obj-y += loongson/
->  obj-$(CONFIG_CRYPTO_DEV_AMLOGIC_GXL) += amlogic/
->  obj-y += intel/
->  obj-y += starfive/
-> diff --git a/drivers/crypto/loongson/Kconfig b/drivers/crypto/loongson/Kconfig
-> new file mode 100644
-> index 000000000..15475da8f
-> --- /dev/null
-> +++ b/drivers/crypto/loongson/Kconfig
-> @@ -0,0 +1,5 @@
-> +config CRYPTO_DEV_LOONGSON_RNG
-> +	tristate "Support for Loongson RNG Driver"
-> +	depends on MFD_LOONGSON_SE
-> +	help
-> +	  Support for Loongson RNG Driver.
-> diff --git a/drivers/crypto/loongson/Makefile b/drivers/crypto/loongson/Makefile
-> new file mode 100644
-> index 000000000..1ce5ec32b
-> --- /dev/null
-> +++ b/drivers/crypto/loongson/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_CRYPTO_DEV_LOONGSON_RNG)  += loongson-rng.o
-> diff --git a/drivers/crypto/loongson/loongson-rng.c b/drivers/crypto/loongson/loongson-rng.c
-> new file mode 100644
-> index 000000000..3a4940260
-> --- /dev/null
-> +++ b/drivers/crypto/loongson/loongson-rng.c
-> @@ -0,0 +1,209 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2019 HiSilicon Limited. */
-> +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
-> +
-> +#include <linux/crypto.h>
-> +#include <linux/err.h>
-> +#include <linux/hw_random.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
-> +#include <linux/list.h>
-> +#include <linux/mfd/loongson-se.h>
+> Set PINCTRL_SX150X config option as a tristate and add
+> MODULE_DEVICE_TABLE()/MODULE_LICENSE() to export appropriate information.
+>
+> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
 
-This depends on the first patch in the series.
+Fair enough!
 
-Does this one have an Ack?
+This patch 1/2 applied to the pinctrl tree.
 
--- 
-Lee Jones [李琼斯]
+Please funnel patch 2/2 through the SoC tree.
+
+> subsys_initcall(sx150x_init
+
+I seriously wonder about this. It feels like this driver should
+be a pure module_init() device. But other users may disagree.
+
+Yours,
+Linus Walleij
 
