@@ -1,236 +1,162 @@
-Return-Path: <linux-kernel+bounces-776323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B49AB2CBED
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:26:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4910B2CBE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133281BC7AFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D135A2EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448E130F54B;
-	Tue, 19 Aug 2025 18:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2F030F526;
+	Tue, 19 Aug 2025 18:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="azTDeidC"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2053.outbound.protection.outlook.com [40.107.220.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IMOWd995"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BED22F757;
-	Tue, 19 Aug 2025 18:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755627904; cv=fail; b=WekZQNvTVbO0P1NRohWiu5LPzB9u3iOdiq1sqEujhQzoZ+IJjrbPSTrYUQNhdYYQb8DQvHfa037t4Fgz/1g5MWnQwiQiU1nLgUcMla/ishgb7z6VaUmjrGUXDspmcJ7od8LBalxWRffuOB8egzcflIzBtPASNma0vgb8dSheypk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755627904; c=relaxed/simple;
-	bh=pCnoQkrNiX+/v4WWZxe18ZlChb7tW8nf9yOgR+AsEyw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ns/1zysaKN1B5gDySscVNifrAWJcU8h6tM2lyuCFL1YVZWQSFnJVMjlAtVHowKAPGuG7DV9cmufh+hmzJBE6g5yp2pRKt+urYBtVZGn5R+54rA9+qKgRxeg/fP71aZvx48GmEnIDvM2U4OqrEH+kAhU5aXd96hhyo9CKXQ3Ofps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=azTDeidC; arc=fail smtp.client-ip=40.107.220.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zIfx0aUCCmwWUm+H4nBS3oMsSIeF2MSsLRfJPRz17B3lkVwVNpwZRqDcQlgRs9FuKjQlQSHh+HZ/wLAUrlFwelBM3gHCprdsoVWmNoKX5VGmgkhmL83dd1v3F9yRbislhH8QAKqdvhXzUm/VgMT5/sQDkG2tmO3CMXiaDWwniMQHH03Gf8i+HPZilE3FrhJNPeLmH7pmejwChC1TJWAq5eVGKF6tvKAF5kxaN4HEeqke5Z+sMhN0yR8lfUzjNs709KryYgDFF99WMujFtJ4DqbYAojSyngpqLpCqb9E62PvSDWa7im3LkZko4I7QfnxxbpA6ReLQExddJqnwyWz2yA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y6A2eokXr1XBlpOCZcS2fGD+F0Kh+MInrfGFrmCpDOY=;
- b=QWLROZ7RtMiN/OvcvA7vcmjCw+b6DcYplq5H8WWlzSZFSRrae8Fu02CdCsxto4goFX6UdKgn9rE/uVI0nz7zfCM6sl1pCzN/wZMDZGzpbzzIL1HCMdcw9THbu8+xlDjiuoZT6v060Sx0oseqLYS/eqzxvWufuiqGU8DIl+JBibrFloPqer2itfayoJFPUjvesDb9ia+qnqHhX3xeuTaepQrwChdLeqqGTNH67SOd2XFD1sb+FslFRoptdlRRQ1wTYGETTuyCus1Re6ZGl0iouuJXZ+tkafbZDptyiCWbIPuhg2N1ncvWXlrMsmD2pQQ3p9TQlW9AiMUzflgt1gUNHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y6A2eokXr1XBlpOCZcS2fGD+F0Kh+MInrfGFrmCpDOY=;
- b=azTDeidCZpEdN2eBsOv4I8GjzEy7qSO2b0TOfkcd80x+IAR3hdOZIcswZj4sb2j0ehDhF+wRdDzsbBQvD9pEMeG6hYnrZL0sW/r1UQ9yuUneBQR/6D0BtFF2+jYESK+Cv5//WPR6UvaRcwVKjkMfNgwHhTWXhW9qqd1CqUj7c0CKZDkTcO7xnNoEHnuaopnzVI36CPhlwbERV843+LlfLJXfU7/iBmc0LHzjafPWhQjfUERYfxE/94mAeiYs50XKOzbwQ2jneq/aajJESXn3/pWo6vqJrmKVCy9wrhNryLyvbh5Hwim9g/Hq1HAgsu9UGNS44vZ04PG+AFJTbTW1Vw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by PH7PR12MB6468.namprd12.prod.outlook.com (2603:10b6:510:1f4::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 18:25:00 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
- 18:25:00 +0000
-Message-ID: <aaaead9a-05e4-4b2c-8a88-af9966cf2e7d@nvidia.com>
-Date: Tue, 19 Aug 2025 11:24:57 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] rust: pci: provide access to PCI Vendor values
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
- rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20250819031117.560568-1-jhubbard@nvidia.com>
- <20250819031117.560568-4-jhubbard@nvidia.com>
- <DC6AHIFTOH7O.1USOTN2YAHGF9@kernel.org>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <DC6AHIFTOH7O.1USOTN2YAHGF9@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR06CA0049.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::26) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09BB22F757
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 18:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755627953; cv=none; b=mOkfHowIL7VqubpoDpYH3lczB1TMM9IVT/c+gr8dn0OcBNFJUFKP0oM+WrwYwLGP1LauxLarU9ge+6V3IIP6E2Cd2fGdZtU6EH7VY/7SqPPVM6NajxCMlKFWjIWCfpLjeqDoCR2MU9xvN9fJO3B51nFRnN0H3GrQwEbVv9ocKT4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755627953; c=relaxed/simple;
+	bh=nGvilOwUg1ObIwVHBF1JacpUkDn9sYUWH3In19bCuK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHP8keULNE1dVBSyesjLO4bU7RnfMRO+I16XtOBuhQknbOcaQ13dM9RiOKQu+9G6kAVfdWmQqTUmYOUSTRk+AdhTdHAzp9CppsiPnZ+xTNulqC0o0ZzJMQUkhafZBXAtiaTMaMpzh7ZAopKFFlh1wffDErJQ7cqEyeYcCQ4RwLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IMOWd995; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-88432e6ca05so348261839f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:25:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755627951; x=1756232751; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjcLjUdfx2b5kyu1zQdvPBjWREHanlpzr8pf7Mlw9+s=;
+        b=IMOWd995i0eUvcswyHZUn+B/8VsayCr2A6O7aVLoccRYmQG4Z5SQISmPzWqmeUuMkV
+         aW8bhPsNihUSm6MtIpvA6kpgorvL96XDkPyD3JPcm62l7iNCosIp+ALnMhQi4TNjcvin
+         RZLp887KRsFzJLwnCGQsDKiMelmlpjX0xyW96rt97lNUDZGSthdl44rQvajCR+zMOWGG
+         +3OcXkJ2vrZQErmffRG0JqYAWnRx+1EMOQm/PjORCwBS9DYJvYbK97XJKr0gVkbPXDQZ
+         P5J8ClfrqnP5NYtFSLI6ynogMr5F7etuxGvaoYUZ+9cxmNrfawOmNfdL1EfpyLKmqx+D
+         NcmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755627951; x=1756232751;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SjcLjUdfx2b5kyu1zQdvPBjWREHanlpzr8pf7Mlw9+s=;
+        b=lxD3ltU5MnVZd7lN8Vd9fk2Fc2F1yLGFJLXzlB/vAFEA7J+tVV2u7Xot5Ad9rTAkKf
+         5Y/R+y3Gt9piQv+8wVmZu5kuo5FG6WA/WZEeO0+5cVm6TwL5c/u6xHROdhyB2Gj2xux9
+         UaGR3NVlR316YO/BPgnTC9oPkQTC17fgEjvYoi6HGfl03rKNaIFWaaPQaxUtdavT9JAQ
+         TNedy9U1ts+GCYe6g9TLqxF2nimE7Rd4H/5Dx7DyN9oclUMau6zADoqJ1DyxZi/EHmXT
+         MaQCu9e4ennihRH3dhH1iZFbH3e59SXwPxrPtWOJwxjvMOh5PLRBHJrPCJWTrn808QuC
+         VEPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhCfbZ5b0NzcG1cs5EVM6h7Al7yD096Wej1JhyrETPOkhg2pKzVxvrQrOjiuOYYzgx/4q95GLOpXI/2zY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXWBLFgcRydgBzxkWxedOeyCKuRGJ7z0+GTc9IjBY7Kd0wXixv
+	KWTi/SOcOliKO/zfG6pax+I58FmmT/dniwc3hNAlBgRdA9ahs7W9CFSclK9jqCglPr0=
+X-Gm-Gg: ASbGncv0u8dd2kZPipwwQCAkG2+Mr0Jr0QJmLk0G376J1J4pb6PDAaA1Gegb0YKSn5a
+	Vo5tnv9zrdl6x5Sd8sFE3W6j1PbtKz3bcYpBfUtsgY77MtxsB0nOC5UacHYI8s6cjIKfTDqdeCE
+	uqeOgtALgy8/PT8YgKGY7qqF9GT5MhHGuHTvIghpMxBpL7rEBLatfvjk9swlNIn87I0n0S5qyzZ
+	nhSYk7x10NQvw3d0RvI+PgRKXFeVJgxsuZ7u1FlGRFdJ6NxU/oNzBfz71cbs0AwT4PtCn8vlUi3
+	Uaw43EmN5T9/WffPY6XRUQNCN/R4DXBx1qaDCS/SNM809zov24UfSQO0Hkz2KSxAgyL3ftiQMjK
+	K3DEZeImLwJsf5OBAl4oby9WG
+X-Google-Smtp-Source: AGHT+IE6fqIEj5m/DaNqdyH4siLxHSicGC+isWwpsiSl3g9mfo/W7KkG9POZskmo3mstpG06/kTUsw==
+X-Received: by 2002:a05:6e02:2506:b0:3e6:6b01:ebd with SMTP id e9e14a558f8ab-3e67ca2ba4emr1836755ab.18.1755627950635;
+        Tue, 19 Aug 2025 11:25:50 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c949f8038sm3584125173.80.2025.08.19.11.25.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 11:25:50 -0700 (PDT)
+Date: Tue, 19 Aug 2025 13:25:49 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Jimmy Ho <jimmy.ho@sifive.com>, linux-riscv@lists.infradead.org, 
+	ziyao@disroot.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, cyrilbur@tenstorrent.com, cleger@rivosinc.com, 
+	charlie@rivosinc.com, kees@kernel.org, ben.dooks@codethink.co.uk, jszhang@kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] riscv: fix using wrong load type
+Message-ID: <20250819-aa072701b64fc0f42795e491@orel>
+References: <20250819071318.21103-1-jimmy.ho@sifive.com>
+ <B1669DA80470EE6A+aKQldVbfZ9rnlD9o@LT-Guozexi>
+ <D49B33DEEB859CD5+aKQltEZ8Ef3v6rB9@LT-Guozexi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|PH7PR12MB6468:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e6194a8-192e-44ec-3705-08dddf4db4fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VXNwZTBoeDdIa1orTHZMcUtnRVVpL3pSV1VVKzM1dW9TblVOR2tqVTBhdWhG?=
- =?utf-8?B?UG9PSmZFYTJIZEl4RnRCcFU2YVpqZ0t4RmhYRlRkb3dVMG5kL3orUDdNN3dX?=
- =?utf-8?B?bkNYUk93emVlUmNWZTFFTUtmMDhxSkNtR1I5WDhoejFqNUhrbFFzVVlnVFFn?=
- =?utf-8?B?RHlpTzZvOVZTdmFaVDJTOWNYZS9sM1FMZEpwcE5uNkRJM2YzNzcrVjNuMEtT?=
- =?utf-8?B?aDRwQ3o1RGRKTnpLbUVIMnRmY0QxM0hJRkhKUmpKOFV5Y0xXZmJ6M1RLdk9L?=
- =?utf-8?B?VWR5eGJYcnl2cjMvbmhzOXlEWmh2Z1E1dytSUlJXYkRYTmtUTEVESWxXbys5?=
- =?utf-8?B?NGRmZWh4OExmTUhzSlJQVjIvcCtIbThwNmpzYnFzWHBzTWJBK1FTUnllNHc0?=
- =?utf-8?B?eUhUMVFJYUJVcEpaZ0RsVFBxUGg1NnRxZ2xYeGw4Vmg1M0FWSm9yNmRpRitY?=
- =?utf-8?B?UUZqL29tWkZHT0pabUlYaS9XWkpOMzFmL0VSSXRPMmoxSzI4amxJZ000UWVl?=
- =?utf-8?B?UDJCUGZXMVVJR0lxOXNSclhvaG0xaUNndXVuVm5wc3RzMXNpY2ZWaUxsNGVN?=
- =?utf-8?B?bFZWVDUrcUhuQXBpb0dPMWgraUJGRHFvblRGcmVCaUZjWUxCenByUUZQUzVx?=
- =?utf-8?B?cThLelZCUTZJZ2ZDOFVQQkhEK2QweTF4Qk5zanRndzRNTGo1a2xMWW40OTZp?=
- =?utf-8?B?Vkx0c3JDZHNVWWl0NzhDRy9NSW84bU9yZFR3SVZRS2doYzM5K1pXWHhwMjdx?=
- =?utf-8?B?MldicE1mc2p5TWc4c1NFb2pocHJvcjRLMG9xWWhmYzgrR25hT0VSbjRmZ0Fw?=
- =?utf-8?B?WWNJOUNVZGtCcWN4OFFJTXB0Yy9uMEl6OU5MaG43eVN3NlRkY09wSGtPSHNs?=
- =?utf-8?B?eEM1alZJdDQzdGlnd1hLblpBR25mZ2gwdGdHdnlwL0JUem5uR1U3OUN0a0Rh?=
- =?utf-8?B?Q2lzZm1pQ0RCVEtpaFBTaHRQQTlsWERleE5halhNWTQycjlrSFdRR2o2Qm5S?=
- =?utf-8?B?WFg4elAyM25BNGwzbmxneGh2N1lEcFovUHRJUHhQYmdHbFBUbUNHbUpGa2Rm?=
- =?utf-8?B?RWk3bUE2NU52TStZTHVTRzR0YXZYbEdFMTQzNW8rU3BoUUdEeEo3OHFsbE5D?=
- =?utf-8?B?QmNmR0JlK3dyMkNYSUJ5U240blNJM0RjTG1sWGdGTzJFT0tVYWFkSEpYMC81?=
- =?utf-8?B?UXVxTUFNYW1lbXNLWlNnSnpyK1FRcG9kaEtqQ3huUEZUZUZNdVIrRDEwei9n?=
- =?utf-8?B?Y2R0bUxvU1BLT2hTQW8wZFpQeUFxelIzaFZnYmVRR1dOdzNhMWdDQkd1aXBU?=
- =?utf-8?B?TzlsQ1Yrc0s3WTZFYWNBMGN5TnZnUkJ5SWRkeUtqMDhuNnNhaW9mQ1d5TW9o?=
- =?utf-8?B?alpmYXhwMmphVW53bDZ0OHJRRlYrK21pUm9COHVqMXl5NmovMjlBOXJUeEh5?=
- =?utf-8?B?UG9Ia0Iya0FvdG5Rbys4M1F2dVNyYkJZUUlYWG1LWGZpN0lpZGt2aFVpNWFt?=
- =?utf-8?B?K3NTU2RDalgxcjM5QzZLbW9PY0Y4dmhPZFpYSFpmWCsrS1A0U05KUkNaREUy?=
- =?utf-8?B?SWZsNTltbTJpWlhYaFlaazNOdnhTNitBM25BSSs5RnpTZW1IMmZudkVCVUVs?=
- =?utf-8?B?WVcvZXhldnNsVXpLWFhtbHUveXFmRTI3NUlrUkhzUDl0TzBqaHJzbUU1ak45?=
- =?utf-8?B?SkVlRHZ6ME1TbWd0UzVseEhrQ25RNytxMWtQYVlidkM1SWw5TktGQmFtT254?=
- =?utf-8?B?YzQ0dlVZYVl1UUxxMnRSdU9MZG5MUkROVHNyc0svdUUxOWxBN1NHREFHeWVE?=
- =?utf-8?B?dkVhc0dKQmJKd21temZyallkdjh6RXhsODBFNDRGaEFDT1BLVmtXOVJCQVpr?=
- =?utf-8?B?YXpUM2JCTUxhSWNJc2MzYmcwNEJPQytuaE5XeXVuZ0IxUE9BTU1wMFAzZS8r?=
- =?utf-8?Q?YuWYtEbVTPk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eDZveWxhelFqNWo2UVdNcHd6c1B4dWZRR3BGN3F3MDEvdnNJUXJqd3RqWDFl?=
- =?utf-8?B?dzl2MUY1RXh3Q1pUY2tKOXhsQ1BoOVZPNXU2ZmhaYTRURUdVZnR6VmxNVlJY?=
- =?utf-8?B?R2hJak0rY2Fyay92UkNJMjh2dGdzYkFHenRneWNiV2EvL0NINHdLZmN0K2x5?=
- =?utf-8?B?WWJ1My8wbnVtTEhISVhETWQ5RlB2Z3RsYXZlSWsrT1hKdEx1NzVpQ2p3R05S?=
- =?utf-8?B?eUtzaGxQU21LUzJybW1UN3hkb2ZtQVBVN2xQN3U0cEs1aDNPNkhQVGxFSFBW?=
- =?utf-8?B?Vjh2blQzWVFmUHQ4QXpOQVNIa2Z2VVZHUVFXdTQ3bnZHTVBCWE9wRFkyZ3Yy?=
- =?utf-8?B?c1VveHNqWllicUxiNXd1WVNJR2IvNjhndDI3WTlDTGhVQnZvbnk4cllDeEFO?=
- =?utf-8?B?SndPNVhSamJhZW13RFA2MmJENWhsV0dmbDU4N0VhZXBhYlBtWTdhdk53cDlu?=
- =?utf-8?B?eXV0UTBhMk5oZjFZUi9RR1JHZlhnenNaZ21FVEFqYXdHdWdEWkpZRTFobHd5?=
- =?utf-8?B?WjJwd1VFeUk3SXVFVjZWWG93a0FtU2VZY2lmSnJRTHRKdHlvdVoxY1A5NkJ6?=
- =?utf-8?B?NHp5b1lpNzl3SGt2aGFuUmFxeFE4dHJ5bllsZ0NXWXI4VjBEdXBjd25YU3BM?=
- =?utf-8?B?OTVRRThWUzNJOXBVdDNqSDBJMk5pRkRaeC81Y1ZWSEFFdWpsUUVFQmR4RWF2?=
- =?utf-8?B?K1QzZzlBa3VEYVJuOGRRaWZBdTMrMjR1ZE5uVkdJaENaRFI2V0NDWWEwbmpw?=
- =?utf-8?B?NC9Za2lXWm53dVdGUWhubkhwcGxac29LZituWVd3cUVzZURialh5bUlBQ2JJ?=
- =?utf-8?B?Y0NDYUxTNTF5UkZQRFFPdy9jZ1hQQ05jdzltSytvMUlXQmQ3ZHFVRTNmM2Er?=
- =?utf-8?B?WHorK2JKQjZsb0o1MXlxRjBuN2swaHNEbEUwclIzWkF1OXp6VFluZGJwMkRs?=
- =?utf-8?B?S0VoV0xhMjFRMndLMEpNSmlhZGFmbFdpelhHalZmWWF4MXBheVR1Z2RnOWdV?=
- =?utf-8?B?eldPWjZPbmZoZXk0N0Z0WTNKelNBT1lOUFpLWWpsb2dCNnMxQkJML0pmM1M5?=
- =?utf-8?B?TXhOakxzeHh5YlhpRkwzR29VL2xaQzhnRHhjd2E5eGJWMHc0SmlMMkVybW0z?=
- =?utf-8?B?L3FmcEFrNlZaZkdzemV6S0g3MFZFSjJHSEQ4VU5GOVpYdjdKeU1HYTF4ZUho?=
- =?utf-8?B?R0RLKzZoWDBWMFpqSVBaU2o1TDc5Ulp3N3NhUVRDWEdjZll1c2xVMEJQeGda?=
- =?utf-8?B?b0hPWEFnMEdaUUFzZnBBcVhMVTZVSzVKTDZETFRNejBYMk9JYkpsTkp5T2tk?=
- =?utf-8?B?dWNxYnVsUUs4eUxNd2pvRjBTeHpJK0treHJDcUFSOU02aTBkSlU2U2FIS1FH?=
- =?utf-8?B?ak1NTWdPUHhNblhrTUI3SXBFZm5PY1N4VklITXB3RG5CcDhOdW1vTXlZdWRV?=
- =?utf-8?B?Qm9mYzIvRzA2QXh0NlJWOTNmdXQyMCtOenltOHhXS1BGaDUzeHBSVWV3Y3h3?=
- =?utf-8?B?N3B4SzhWUFAzeVU2YVkxQVQ1QlZMdmtzZjg5RmNvWTZac1pQY2VESmF1UEZM?=
- =?utf-8?B?OHhOcndKejd6Uk05SFZtMXdZUS9HU01Zbm9EWmxsZXZPem1EL2NzL0hrSjh0?=
- =?utf-8?B?TjgwcElISE5GbjY4dlU5V3RzMFFxQUloMHpXRnVEcGhEcGwyQ2VYRWlTbk9p?=
- =?utf-8?B?UUhKeU50Z3VjRFRZMWFuVVdIM2I4SzAycVdTaklnaTlzQmR5Vit4eGd0Zm5P?=
- =?utf-8?B?ZnIrNm03STdCZXlCdXFaYmROMnhWL0VUbzYzUXRwUVBuODZnWUpQd2VYRmZL?=
- =?utf-8?B?M0R4aVhXNk5rajY0d1VMK0JvQm1YalBNK3Nid2Jna2lNakhnUWJ0cnRaZTVx?=
- =?utf-8?B?cVVDaVZ3ZXROUWNWUEVRQlp5SUF1T3FBZytMY1hyTXhDMmZ3NTJscHRJU2Fl?=
- =?utf-8?B?b0RWdjNUUExSR3VZaDcwZ2VNbVRnbGZXb1AzR2pqdkxTY3FkY2xGZ0d1RkFI?=
- =?utf-8?B?M2cxRDVjc0JjQ0JIc05HWTV6MEFXa2FTYXhFeTNHeUhVZU13U0JmY0lKdkJB?=
- =?utf-8?B?NjhMN3djT0dkWkxvUnBKT0F4WnlMZ2s1R0RKTmlibXpIU2g4SE5iRndZeW5D?=
- =?utf-8?B?bDNFQ3o1dC92TDR2Vk9tSDFubCtja1BScEVwVVVybnhJc04xTXkrM3ZSeXdu?=
- =?utf-8?B?cEE9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e6194a8-192e-44ec-3705-08dddf4db4fd
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 18:25:00.0577
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UD/c63d0ZliqYan5CId3WBgX7F4PC2wdyzIGAsSeMRJdOfnBEuv+6M/9f4znYIMBdVvcXx+WiJQKT3T50ml8JA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6468
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D49B33DEEB859CD5+aKQltEZ8Ef3v6rB9@LT-Guozexi>
 
-On 8/19/25 2:16 AM, Danilo Krummrich wrote:
-> On Tue Aug 19, 2025 at 5:11 AM CEST, John Hubbard wrote:
->> +/// PCI vendor IDs.
->> +///
->> +/// Each entry contains the 16-bit PCI vendor ID as assigned by the PCI SIG.
->> +///
->> +/// # Examples
->> +///
->> +/// ```
->> +/// # use kernel::{device::Core, pci::{self, Vendor}, prelude::*};
->> +/// fn probe_device(pdev: &pci::Device<Core>) -> Result<()> {
->> +///     // Validate vendor ID
->> +///     let vendor = Vendor::try_from(pdev.vendor_id() as u32)?;
-> 
-> Why not change vendor_id() to return a Vendor instance directly?
+On Tue, Aug 19, 2025 at 03:20:20PM +0800, Troy Mitchell wrote:
+> On Tue, Aug 19, 2025 at 03:19:17PM +0800, Troy Mitchell wrote:
+> > On Tue, Aug 19, 2025 at 03:13:18PM +0800, Jimmy Ho wrote:
+> > > thread_info.cpu field is 32 bits wide,
+> > > but is accessed using an XLEN-bit load, which might be 64bit load, fix it
+> > > 
+> > > Changes in v3:
+> > > - replace space with tab to keep it aligned with code block
+> > > - Add "Fixes" tag
+> > Please add previous version link.
+> > 
+> > > 
+> > > Changes in v2:
+> > > - add a comment to explain why use lw instead of REG_L.
+> > > - correct commit message
+> > ditto.
+> > 
+> > Additionally, I see a patch here that serves the same purpose as yours,
+> Sry I forgot to put link:
+> https://lore.kernel.org/all/20250722160556.2216925-4-rkrcmar@ventanamicro.com/
 
-Yes, will do.
+Ah, yes. I forgot about Radim's patch. We should go with that.
+
+Thanks,
+drew
 
 > 
->> +///     dev_info!(
->> +///         pdev.as_ref(),
->> +///         "Detected vendor ID: (0x{:04x})\n",
->> +///         vendor.as_u32()
->> +///     );
->> +///     Ok(())
->> +/// }
->> +/// ```
->> +#[derive(Debug, Clone, Copy, PartialEq, Eq)]
->> +#[repr(transparent)]
->> +pub struct Vendor(u32);
+>                  - Troy
 > 
-> [ Vendor impl and lots of ids... ]
+> > but it's more comprehensive and was submitted earlier.
+> > 
+> > In any case, if you'd like to proceed, here is the:
+> > Acked-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > > 
+> > > Fixes: 503638e0babf3 ("riscv: Stop emitting preventive sfence.vma for new vmalloc mappings")
+> > > Signed-off-by: Jimmy Ho <jimmy.ho@sifive.com>
+> > > ---
+> > >  arch/riscv/kernel/entry.S | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > > index 3a0ec6fd5956..492ae936dccd 100644
+> > > --- a/arch/riscv/kernel/entry.S
+> > > +++ b/arch/riscv/kernel/entry.S
+> > > @@ -45,8 +45,10 @@
+> > >  	 * Computes:
+> > >  	 * a0 = &new_vmalloc[BIT_WORD(cpu)]
+> > >  	 * a1 = BIT_MASK(cpu)
+> > > +	 * 
+> > > +	 * using lw instead of REG_L is because the thread_info.cpu field is 32 bits wide
+> > >  	 */
+> > > -	REG_L 	a2, TASK_TI_CPU(tp)
+> > > +	lw	a2, TASK_TI_CPU(tp)
+> > >  	/*
+> > >  	 * Compute the new_vmalloc element position:
+> > >  	 * (cpu / 64) * 8 = (cpu >> 6) << 3
+> > > -- 
+> > > 2.39.3
+> > > 
+> > > 
 > 
-> Same as for Class; probably better to move it to its own module.
-> 
-> We could also move both Class and Vendor into a single module, e.g. id.rs and
-> keep the module prefix. This would have the advantage that we could have
-> pci::id::Class, pci::id::Vendor and pci::id::Device (which, eventually, we want
-> as well), without getting a name conflict with pci::Device.
-
-id.rs does provide a nice naming situation, I'll do that.
-
-Thanks for the reviews again!
-
-
-thanks,
--- 
-John Hubbard
-
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
