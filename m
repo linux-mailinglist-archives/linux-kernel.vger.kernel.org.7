@@ -1,208 +1,139 @@
-Return-Path: <linux-kernel+bounces-775351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97DCB2BE44
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:00:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C3AB2BE47
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53EC01681EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:57:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CDC53AE0BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B20319844;
-	Tue, 19 Aug 2025 09:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B493B21ABBB;
+	Tue, 19 Aug 2025 09:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GZI3vuYC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Crgz4/rJ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D5E220F2A
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34473311962
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597428; cv=none; b=JRLyyrggLky/V86kF1JxmtXu2BqYILPP2usX6+bX3wpjY65fcxy1kcKpWSsbNj0l2vKqFsDpo2WG3aB87yr5GK8rQWaTT2JxmLrEwF/Simlx+FiS5TaYbW8d5qH+PerHteJSVWqjKn+ZZ8RpbDQhS410On1tzPdJ6lAxlp2YH2w=
+	t=1755597439; cv=none; b=XE5xRv9YgPmgKRLBErJ8/3zldw6J6qeAAECufYsJcTqzNM2gFQOamUjpBOWAhxyg5sbzax8omTiCebq534UIcBSnMbSigw1guoD8wmmxruV+UewnXQH2YErNg9Jk8zge5T94lKfBiQzcV2W7C7jc1Z06OeAWBONPuK0zfLGImrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597428; c=relaxed/simple;
-	bh=1ubucLddQMJmUq8vjtzNlVwWTiogh6llKgtEaT/i9oE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6Jy5Ti0IYVDf1/XrswzCyOXsVym2tfPBZaiwwYI/YUHb8psznkgfxPxO1TbBZPeQQPiocLnKFL5QIWroW7cqhEBcVJacqT5iw4Hc7n3/o5Z8H0xo1WSihD2RCxSnb/7MsG6HRSj3wlk5EnTMTW1+POHqYBAJaAh/0Oamg9a0VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GZI3vuYC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755597425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ovO3/gXHZDqtkD72WJKDDP7JTR3a7GhFon9JbVq5pdo=;
-	b=GZI3vuYC3kDsf3PkLjyKefAtmldAqAtn3aKSXCKegUVX08A/JvG2DaTZXi7OwTptPWqxoD
-	CH0LX2FpBWI6pEzq8eQ0kli4kih/5gixOuVQweBFa+UqdqWo+Q8ZGjS6Aw1pZrO8vCdHGi
-	f0koweIInN7jHRh9Hpmzb0WsBq6ZA38=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-477-rwdqMG3gPpGRiJGklooE6g-1; Tue, 19 Aug 2025 05:57:03 -0400
-X-MC-Unique: rwdqMG3gPpGRiJGklooE6g-1
-X-Mimecast-MFC-AGG-ID: rwdqMG3gPpGRiJGklooE6g_1755597423
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b10992cfedso117324431cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:57:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755597423; x=1756202223;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1755597439; c=relaxed/simple;
+	bh=RQZmLelstrX1SotmAT9zZXcUSdkqlq/nNJekgpnEDi8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n06fzAUZ5SaZpUlMkjsfmY902/NnSdsRO3J2cIis1XpRrZMDg9Vg5dZosiDzgAMmkHZnIVaRZfvyWs5AsS5AuIaJY9Mox3Sd/xTnR9LsVPJUNUHHTZghQPdQtsU7/UDcv/9O90OwSelYGySnTENfVJ9Jga/HuCBQkI+rEpCh9fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Crgz4/rJ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55ce510f4f6so5409956e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755597435; x=1756202235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ovO3/gXHZDqtkD72WJKDDP7JTR3a7GhFon9JbVq5pdo=;
-        b=BVP3/RWs9P0qw+8QO+FfPDzygFrGSD8L91ut7ikzu1k0xb8QzEnK0G8AonGD239nlk
-         iez7g/9tFn2aNmQA7nwSgf44Jr+yz+gRgTa5+KaHpBOGpEPVsrCSRtmpthSswsrQQnXb
-         nRGBCQ+3gbmkfql7/cIZhx7m73TNZ8BDMD/qNkz5ZawtCwYFVzlOeiI13FmzoZFJuxDt
-         y6OiFXU9r3tIfFqdPRnrSwNPCltUhx7qO0WhVg49b7IMzKJgmgMkNLoxVNmjGfHVgvG2
-         8z9PPlklPCgVmJnQRDn7jqbKiVvufqgNZg8DX20fBtS/fu+AXC44zghNKg9FV1MyQJV9
-         7UXg==
-X-Gm-Message-State: AOJu0Yy25Rn4rqAGyyNnP+RPzb/9xdYEDKvTV7z9KQnXiIzsL6DkVdse
-	ycUkdP1M+3giC6iEJemFdqF2B9SFVcQ8T5DIhVoQlCdp2XXqVYwn+SxLAmgGQuW/aOivzAAsAY2
-	FipNyj7J5Tv1qYCAKWfL/GIaS0UXxzUjDV39fBgLI4pl7Q675sqJfALZngqWNWNwkTg==
-X-Gm-Gg: ASbGncvzRJQohUUSic5OReekvEsNjO2X1kR7jZVw4z4+Q1W7M77l7m6pqh71Al/NkIr
-	0anHmYJ+ICqN21fMa4boEVavEskGyoP4Sem+u4Cx7pAfp2ckUdgWx+zOLQ6Vv37tCBfnBp/rL6K
-	pd0VveP8526iw0jqwB3Ke5N0OpPMYU26Gsz3KwpHtEu2juBALzXSBiGtctROgGXZrerHhXy6eui
-	UMfTtlKFSbeN9vDhthwIWp9FQlo6qSIAW/218fGTxKg2YYTyvIKYhoQC2p7cn2s+bLK78nhXLsb
-	dTQIJsaA72OvWT+ATMC2yo4cxxZtdcJSHqft7hK6RCAurYpvHMG8c59g/ODBKGPovI/c
-X-Received: by 2002:ac8:5cc7:0:b0:4b0:7d41:df7a with SMTP id d75a77b69052e-4b286ef3974mr18223081cf.56.1755597422850;
-        Tue, 19 Aug 2025 02:57:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFPOnJ8MWq8N3ISVkEuPgun5DwRV+bNUHYaZl50LdgymHYzejrD/IRP5r0A6M+wbxfPykgqiA==
-X-Received: by 2002:ac8:5cc7:0:b0:4b0:7d41:df7a with SMTP id d75a77b69052e-4b286ef3974mr18222921cf.56.1755597422408;
-        Tue, 19 Aug 2025 02:57:02 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.81.70])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc5d069sm65369421cf.21.2025.08.19.02.56.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:57:01 -0700 (PDT)
-Date: Tue, 19 Aug 2025 11:56:57 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 14/17] sched: Add deadline tracepoints
-Message-ID: <aKRKaTJBxD3kdt_G@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-15-gmonaco@redhat.com>
+        bh=B657FCRrA1HpbcN+g/vtvEIg1TfbvbOHf4kJ5LZvO5U=;
+        b=Crgz4/rJWY9ajhNfIko3K3qRIt2Ao8Kn/WyBwNb+k4BNCgtl3Hifc3buCHBsGCXAn7
+         ER+IXudCW+H/ScI8yAbvRnpnb/mNCcnVrYv9PxKPlwUMKhS5XKanmM2yoytOg1xD2MLk
+         WqCA+wqVuBurg8VGgzdI3rpUYxX6Z9daMcOGdySIRBPqiwTdumu7/Puj3tknNnI/aKHp
+         If/Vna9fqPuzX1zb7V7P9pXXNwT2o5nBhVScqeTzas75Ee0iQuG8a54m8+YXhk3Q8JI5
+         qX6ahOntDHLGUZqm+xSqmfjOD+9plca8SxujfKVMNMeazjWaE8IdEJPVZyYAJOUutGZC
+         so2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755597435; x=1756202235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B657FCRrA1HpbcN+g/vtvEIg1TfbvbOHf4kJ5LZvO5U=;
+        b=bRB6l7ZmnnilJdPrHfsrAm9RMUs7s424H6fX5rMB6BbMKyqWIlDP2iLQtwKAi3jpUe
+         9dVS/5zicbbkjPwb5DPljzTWMY1qWiXG2aRSnC5NK9Ps9vNtviON5awC2mHlj8mV5X21
+         VmAILPSUlb5q3NMucyGOn8w0kefERYJZa8fTi/5dULSGP3MDQEiZoHQhqaOCxJZxbBsD
+         4VR5eaC3Kp9VHKipQvg4BgeUvRF22OmSDWzIAsc12lsY7QpOp1YLtd5N3GN7ZdEf0vMn
+         ul1RQYzdbXdMeikWHbHIp5qt7BpTHGHYuF1h7UjbZ+hgQqF8KUPO9l8zahXFx3qAMGJT
+         KdHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnpjgLDosem1KcJUJkNPhSGIZtYqqLXpem/O1b1MQSY08k9NNgT7SIj6nSB5tHMykX3asFF6jfvMvjAj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcfXcWWayG5jI6vVjNj9aeHZNftaSrDk1K+17oQ6H8DT0qWEPR
+	atPNver+GDggdyoXCZHmw2+a9muiv4zFYVyBw1SsnDJN/VwEvwBveaMgsWDr5uYepqzE2Ae4CMn
+	TBfcATKPvm8UcyMsIvFwzV/mo7jWUTeuOPmdFJdDZ9A==
+X-Gm-Gg: ASbGncsanHtc37PXK7LVBEjorJKTyRyfMUpCiTIq4dRVwYEena/8V5VNR+tZVTPCJ2n
+	ci0n2CbqrNdrdKsgQEZPrkO0MPcrmTgf0FCHjUkfw5n6tvhsyD6nTrcXSo4Ep4AmzgH4t8T6uVZ
+	cEsBuVZyKzSqkV+4rOwsI7XXW9MJBAcABIyYldhRSJVYCg8vKEQlNpd7NTY5oTRueLky6L4FF0n
+	owRQsoa
+X-Google-Smtp-Source: AGHT+IE584Lps5ZJGPPasz2qjXvE1uln/YoeKZ+NEr5/UBb8mlMMaF+8xE4Mk12v0EiPPAIF33QJj8U3svU1V3OfZ8Y=
+X-Received: by 2002:a05:6512:3411:b0:55c:e5c3:1a44 with SMTP id
+ 2adb3069b0e04-55e007db76bmr626581e87.48.1755597435230; Tue, 19 Aug 2025
+ 02:57:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814150809.140739-15-gmonaco@redhat.com>
+References: <CAAhSdy3omyk7YGVHNV5mgR13cON1SxdpqsxGQJsWWE1Hoyw=5A@mail.gmail.com>
+ <20250819012558.88733-1-fangyu.yu@linux.alibaba.com>
+In-Reply-To: <20250819012558.88733-1-fangyu.yu@linux.alibaba.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Tue, 19 Aug 2025 15:27:01 +0530
+X-Gm-Features: Ac12FXyTUxSpF4ciP7rx8i1SvNQzuuHLy0NA8cpXjF9T81-EV5Hi44pHTVwLXYE
+Message-ID: <CAK9=C2XN3izaV_cB5dTkRD0FRD+gqdRVYWKxMAuaCG+LP3D2aw@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: Using user-mode pte within kvm_riscv_gstage_ioremap
+To: fangyu.yu@linux.alibaba.com
+Cc: anup@brainfault.org, alex@ghiti.fr, aou@eecs.berkeley.edu, 
+	atish.patra@linux.dev, guoren@linux.alibaba.com, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	palmer@dabbelt.com, paul.walmsley@sifive.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Tue, Aug 19, 2025 at 6:56=E2=80=AFAM <fangyu.yu@linux.alibaba.com> wrote=
+:
+>
+> >>
+> >> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> >>
+> >> Currently we use kvm_riscv_gstage_ioremap to map IMSIC gpa to the spa =
+of
+> >> guest interrupt file within IMSIC.
+> >>
+> >> The PAGE_KERNEL_IO property does not include user mode settings, so wh=
+en
+> >> accessing the IMSIC address in the virtual machine,  a  guest page fau=
+lt
+> >> will occur, this is not expected.
+> >>
+> >> According to the RISC-V Privileged Architecture Spec, for G-stage addr=
+ess
+> >> translation, all memory accesses are considered to be user-level acces=
+ses
+> >> as though executed in Umode.
+> >>
+> >> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> >
+> >Overall, a good fix. Thanks!
+> >
+> >The patch subject and description needs improvements. Also, there is no
+> >Fixes tag which is required for backporting.
+> >
+> >I have taken care of the above things at the time of merging this patch.
+> >
+> >Queued this patch as fixes for Linux-6.17
+> >
+> >Thanks,
+> >Anup
+> >
+>
+> Thanks for your review.
+> I will send a v2 patch to fix these comments.
 
-On 14/08/25 17:08, Gabriele Monaco wrote:
-> Add the following tracepoints:
-> 
-> * sched_dl_throttle(dl):
->     Called when a deadline entity is throttled
-> * sched_dl_replenish(dl):
->     Called when a deadline entity's runtime is replenished
-> * sched_dl_server_start(dl):
->     Called when a deadline server is started
-> * sched_dl_server_stop(dl, hard):
->     Called when a deadline server is stopped (hard) or put to idle
->     waiting for the next period (!hard)
-> 
-> Those tracepoints can be useful to validate the deadline scheduler with
-> RV and are not exported to tracefs.
-> 
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->  include/trace/events/sched.h | 55 ++++++++++++++++++++++++++++++++++++
->  kernel/sched/deadline.c      |  8 ++++++
->  2 files changed, 63 insertions(+)
-> 
-> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> index 7b2645b50e78..f34cc1dc4a13 100644
-> --- a/include/trace/events/sched.h
-> +++ b/include/trace/events/sched.h
-> @@ -609,6 +609,45 @@ TRACE_EVENT(sched_pi_setprio,
->  			__entry->oldprio, __entry->newprio)
->  );
->  
-> +/*
-> +DECLARE_EVENT_CLASS(sched_dl_template,
-> +
-> +	TP_PROTO(struct sched_dl_entity *dl),
-> +
-> +	TP_ARGS(dl),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(  struct task_struct *,	tsk		)
-> +		__string( comm,		dl->dl_server ? "server" : container_of(dl, struct task_struct, dl)->comm	)
-> +		__field(  pid_t,	pid		)
-> +		__field(  s64,		runtime		)
-> +		__field(  u64,		deadline	)
-> +		__field(  int,		dl_yielded	)
+No need, it's already part of my riscv_kvm_fixes branch at:
+https//github.com/kvm-riscv/linux.git
 
-I wonder if, while we are at it, we want to print all the other fields
-as well (they might turn out to be useful). That would be
-
- .:: static (easier to retrieve with just a trace)
- - dl_runtime
- - dl_deadline
- - dl_period
-
- .:: behaviour (RECLAIM)
- - flags
-
- .:: state
- - dl_ bool flags in addition to dl_yielded
-
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(comm);
-> +		__entry->pid		= dl->dl_server ? -1 : container_of(dl, struct task_struct, dl)->pid;
-> +		__entry->runtime	= dl->runtime;
-> +		__entry->deadline	= dl->deadline;
-> +		__entry->dl_yielded	= dl->dl_yielded;
-> +	),
-> +
-> +	TP_printk("comm=%s pid=%d runtime=%lld deadline=%lld yielded=%d",
-                                                        ^^^
-							llu ?
-
-> +			__get_str(comm), __entry->pid,
-> +			__entry->runtime, __entry->deadline,
-> +			__entry->dl_yielded)
-> +);
-
-...
-
-> @@ -1482,6 +1486,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64
->  
->  throttle:
->  	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
-> +		trace_sched_dl_throttle_tp(dl_se);
->  		dl_se->dl_throttled = 1;
-
-I believe we also need to trace the dl_check_constrained_dl() throttle,
-please take a look.
-
-Also - we discussed this point a little already offline - but I still
-wonder if we have to do anything special for dl-server defer. Those
-entities are started as throttled until 0-lag, so maybe we should still
-trace them explicitly as so?
-
-In addition, since it's related, maybe we should do something about
-sched_switch event, that is currently not aware of deadlines, runtimes,
-etc.
-
-Thanks,
-Juri
-
+Regards,
+Anup
 
