@@ -1,216 +1,142 @@
-Return-Path: <linux-kernel+bounces-776647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E42B2CFD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:22:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF070B2CFDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F05568193
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBCAA5680F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7398258EEA;
-	Tue, 19 Aug 2025 23:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A566325485A;
+	Tue, 19 Aug 2025 23:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6jwqxZr"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="XsxzScub"
+Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A7721ADDB;
-	Tue, 19 Aug 2025 23:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B481221DB6;
+	Tue, 19 Aug 2025 23:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.1.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755645767; cv=none; b=fD+oGFPGVy1noHcdfUHzi57IeYro4kOHrk20svFeHYT1DkH0WtevHZYkQTv+34/PbPZOrzTTZKXIISfr922r6L/uLl/W0PScVHDq9+Ag+K6wmMsKAwLQWgmxM1JdL474zeHE9x301aH/igQqbXrqWJcKOoZcTbcyHCH2DOtdZkY=
+	t=1755645827; cv=none; b=mEEaCnmyhfzhsa9fTfv6cO+o0sDolgc4CelANMLE2Xsdm0BswjlOTHHlmJKZNU9P8YRuObFRewh9kLgGsiozUHQRCgEIPwN097DoX3mQOOOP4FvfTVKi9I5HGeQ+JmdOhs5b4zp/9cgyUl5JjOh2OHFCFlwgpHdiMqy8+UCTUI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755645767; c=relaxed/simple;
-	bh=9jkN28NHaaCVj6JDzv6Hw14M+7ThWCQNtbL0G3psptQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GqZGdCbOGG58l7fwDFyN9kw7u8h77UVeRo00KQw9lIm8Q20NQYYNc2TwX1X4sVjJjP1ihEygXxLFncj87mg4alYUVCXzEFkdgtYTC9L1DMh46XpzSkJsBpNZ0BRQSDzszvOa5WIpKybFy7ZDyMqinrzbTSfusATYv59N7rmkdlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6jwqxZr; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b113500aebso41323261cf.0;
-        Tue, 19 Aug 2025 16:22:46 -0700 (PDT)
+	s=arc-20240116; t=1755645827; c=relaxed/simple;
+	bh=XFZ8zLvoaO4Ym4OlI/vg69pUaQKnl/wpQKOys7NVI8o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r/MpZZ3tDIf8dAGsSX/EfcNw6QPpWoZRKpEqbxgxK7hqJ+ni0Af5K+4E5T5GB+dIBT1sg+ImKa9oER6sPuc3++APr4iYIBg3DuheGAKlT5i4zxbIiXi54deJpseZcZrqWvYrOCoZYaZY2UZH5fOIYjJ1InycXWuX/Tmk60yb87A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=XsxzScub; arc=none smtp.client-ip=44.246.1.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755645765; x=1756250565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K422/Y/9yj8ALHij9Y1sYg9rSj8Y/+PMz3oGCIVOfdw=;
-        b=K6jwqxZrjaNrV+uHBKktGJCBlWeVDkE9vuEcr4AwUleV0IRC06Ddr6HogdqXnfv4Jq
-         ecxHsT0aiNhXzZVTREofbQUOJIo8L36pejQ6DKDMTapvc8zCqxZ+zIa0ZfsUYwoGTT0E
-         RJVv9aomnQXn69zBeTpKwpHKKtk8jyEfthY9OMuyeSZMGA5y/BYOMwG1v4ma0UIjRIi2
-         vvUW0pPxrLH+7itfGNyQzH43DWmzzwvsd85+nSf1g/Y8Uqa2SJzw4F/o9eGoJ8g/+ZjN
-         1vuMDcr34y5RwRDNmoObPZI1UpVsZ4i6UoY3Ffqbgo35+QNNsFzrl4lzcq1YA1QH0/Ax
-         58lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755645765; x=1756250565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K422/Y/9yj8ALHij9Y1sYg9rSj8Y/+PMz3oGCIVOfdw=;
-        b=aNVp09vXH3PcIUpVBbKtRJydXpJFjHng/ZUJJ74Ag/kkpEeUjkL/VIald4lze+NGrY
-         fbn8Qv8t1Y91TejNJQriKfSSdA0H1+PhjmKVWihjnSlrYS4mRjQ0b9aKNksLqKr7yYLB
-         twTxmZSP8PAN78MJ/1niMwszmXjMd0jyuTrW4jE0f79ByPzqOI7fHUb3OZjr5ZH5KQFl
-         jzctl027YeDX1e3FHYzHC6sjweXOxGBw3sY4HJ3KTRn2yYEXBE016uSlfxl05mYfxcW6
-         NfVzJl39wrFzJngenrlYu+28szTmbFiJSZ3ijgcUkaxyl0/Drp2eIey3Ve0g/Iq4JiiZ
-         w6Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwcVvb2kU3H+RdRGbdGqeyzo8MZauNKpvOBxpjgKvROj507u5I6jmcmq/nkYUEUc+o+f3U/73KGawqfe0=@vger.kernel.org, AJvYcCWHhhxSDr8DEVTUxMoPILoL0J6c6OmhBRFm3z+8RGnQ0cMQf0lHg66H14ZwVshm7bRiEwvnXeSbZ+PMGjY=@vger.kernel.org, AJvYcCWi6Q92YMPLLKIQ3FIk+DXCwmaXWfbFDjJ/gjbqDYAzoJyqEOQQdKZFpR7fux2BuBf+azaih7HwM2p6e7eT@vger.kernel.org, AJvYcCXEogQ0mNVzVVUEm6QMhnRYVA9WwrZobbYHgLGA7kfaoMO4Fq0Ax0T1qPEB4S/qzOqcjwpPrP/mDt7l@vger.kernel.org, AJvYcCXirtnkJ0ImEVcv2YIKUgRRU+5ETRQm9l68d577PWDE0x+9xoxwvajhIQgdnXTin0TLNZ7fUgAKlf+x@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+8sDQ/Ba2YfemplplzHQfXCqfRtBdTqf+4KKynjMwnOMOnsIv
-	z0h9ENDGB8b3DmG9g0PXwqhtmSyCxgXo+hPrVcu+qyYrr3jPF/zdhllAkWUSv0foOxsyPFqoLyk
-	WHjedqm4W9B/i5VSF6ypwHPrcKwzc2Lc=
-X-Gm-Gg: ASbGncty9S4gXksULV1q2YjFUfAu7LcPwuGtlM7JCiph/l6eAzkqWd/ts7Sg2tll3/Y
-	C9rN05BbWplDcsQ75A4QOg+nmTZV3DQ0p5/w4dUUTJSr5Gwx8g1XpcnEQgR2yamSDm5vQMetVmy
-	j9nr6kfTT0TJLXqDNwMefDX41vQLQuCSjdeun8qD7ukOB5XNcCki4kWVN0d1N8aoeZggqMTYg2q
-	2zaw03MxNcP4WC5
-X-Google-Smtp-Source: AGHT+IHJre8AvfYFwM+tKjlP1D/tcobYVeLPY4jalmq308RktLJB1oePkAuJ7BQTBO7wQ2idbBiWEq+aIlj4VxZBRRo=
-X-Received: by 2002:a05:622a:304:b0:4b2:8ac4:ef61 with SMTP id
- d75a77b69052e-4b291c0a095mr9690251cf.68.1755645765106; Tue, 19 Aug 2025
- 16:22:45 -0700 (PDT)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1755645825; x=1787181825;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JrfIpk3vI2iEZnlCjBatj++PBwaKwr0n+7Op9hx7NqM=;
+  b=XsxzScubOO6PcrQSBN7v5MFhoVYDOK3W9MKN40kkm2BDl8knCcuz27n6
+   n4ibqZEX9qFvlkjwCvCQoc4E+GtT4uNIp9V7loniF/XDnS9HVPVg1JM0y
+   X4Hgfru9IzJqEe/lU4rUCOc0AMfv0hAKZO3BlLqwJ4AI3S6EmaQJhxQhM
+   ZPepp4KUJyIJh8E8wFJIEzW4kxYaAOCqf86FLwkJAqd0VguNNNZa8oPow
+   HD357cL0I0z7DIbRwc5ZCTfg0Ovy4TrpA1grX26RZZcqcU/YPXqlYychJ
+   NqNHiENwLNphogOFcSWVYXv/vU38YXkpvsyX9GTROLs0ZgVMli1dADVvW
+   w==;
+X-CSE-ConnectionGUID: A3CnChY0S4G6zO7ySKE+3w==
+X-CSE-MsgGUID: rIVmzT6GRpyTTXD+abL8SA==
+X-IronPort-AV: E=Sophos;i="6.16,202,1744070400"; 
+   d="scan'208";a="1404456"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 23:23:42 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:23645]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.41.67:2525] with esmtp (Farcaster)
+ id 28c909b1-13a1-425e-9469-766521fc37e4; Tue, 19 Aug 2025 23:23:42 +0000 (UTC)
+X-Farcaster-Flow-ID: 28c909b1-13a1-425e-9469-766521fc37e4
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 19 Aug 2025 23:23:42 +0000
+Received: from dev-dsk-epetron-1c-1d4d9719.eu-west-1.amazon.com
+ (10.253.109.105) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17; Tue, 19 Aug 2025
+ 23:23:40 +0000
+From: Evangelos Petrongonas <epetron@amazon.de>
+To: Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>
+CC: Evangelos Petrongonas <epetron@amazon.de>, Alexander Graf
+	<graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+	<kexec@lists.infradead.org>, <linux-mm@kvack.org>,
+	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nh-open-source@amazon.com>
+Subject: [PATCH v2 0/2] efi: Fix EFI boot with kexec handover (KHO)
+Date: Tue, 19 Aug 2025 23:22:44 +0000
+Message-ID: <cover.1755643201.git.epetron@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819-macsmc-subdevs-v1-0-57df6c3e5f19@gmail.com>
- <20250819-macsmc-subdevs-v1-2-57df6c3e5f19@gmail.com> <20250819201537.GA1223169-robh@kernel.org>
-In-Reply-To: <20250819201537.GA1223169-robh@kernel.org>
-From: James Calligeros <jcalligeros99@gmail.com>
-Date: Wed, 20 Aug 2025 09:22:26 +1000
-X-Gm-Features: Ac12FXy5USWNvk81C09AV_y_m0PHlKCGlBXsRbqwyr8NREPpK7i0eE4MCUv2BBE
-Message-ID: <CAHgNfTw+wetmZzvPgkANpmSD4b6k0785QZLpBVD9FMqNDnq2EQ@mail.gmail.com>
-Subject: Re: [PATCH 2/8] dt-bindings: hwmon: add Apple System Management
- Controller hwmon schema
-To: Rob Herring <robh@kernel.org>
-Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: EX19D038UWC003.ant.amazon.com (10.13.139.209) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+This patch series fixes a kernel panic that occurs when booting with
+both EFI and KHO (Kexec HandOver) enabled.
 
-On Wed, Aug 20, 2025 at 6:15=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Tue, Aug 19, 2025 at 09:47:54PM +1000, James Calligeros wrote:
-> > Apple Silicon devices integrate a vast array of sensors, monitoring
-> > current, power, temperature, and voltage across almost every part of
-> > the system. The sensors themselves are all connected to the System
-> > Management Controller (SMC). The SMC firmware exposes the data
-> > reported by these sensors via its standard FourCC-based key-value
-> > API. The SMC is also responsible for monitoring and controlling any
-> > fans connected to the system, exposing them in the same way.
-> >
-> > For reasons known only to Apple, each device exposes its sensors with
-> > an almost totally unique set of keys. This is true even for devices
-> > which share an SoC. An M1 Mac mini, for example, will report its core
-> > temperatures on different keys to an M1 MacBook Pro. Worse still, the
-> > SMC does not provide a way to enumerate the available keys at runtime,
-> > nor do the keys follow any sort of reasonable or consistent naming
-> > rules that could be used to deduce their purpose. We must therefore
-> > know which keys are present on any given device, and which function
-> > they serve, ahead of time.
->
-> I'm confused because you say this, but then the .dtsi files are common.
+The issue arises because EFI's `reserve_regions()` clears all memory
+regions with `memblock_remove(0, PHYS_ADDR_MAX)` before rebuilding them
+from EFI data. This destroys KHO scratch regions that were set up early
+during device tree scanning, causing a panic as the kernel has no valid
+memory regions for early allocations.
 
-The SMC exposes dozens of sensors, and figuring out which one is which
-when all we have to go by are cryptic FourCCs is proving very time consumin=
-g.
-This is made worse by the fact that even sensors which you'd think should
-be consistent across devices with a given SoC are often not. For example,
-the M1 Mac mini exposes the application core temperature sensors on differe=
-nt
-keys to the M1 MacBook Pro. We have only included the minimal subset of
-sensors/fans that we know are common to most devices to validate our approa=
-ch
-with and make the driver itself useful.
+The first patch introduces `is_kho_boot()` to allow early boot
+components to reliably detect if the kernel was booted via KHO-enabled
+kexec. The existing `kho_is_enabled()` only checks the command line and
+doesn't verify if an actual KHO FDT was passed.
 
-> > +    patternProperties:
-> > +      "^fan-[A-Za-z0-9]{4}":
-> > +        type: object
-> > +        additionalProperties: false
-> > +        required:
-> > +          - apple,key-id
-> > +        properties:
-> > +          apple,key-id:
-> > +            $ref: /schemas/types.yaml#/definitions/string
-> > +            pattern: "^[A-Za-z0-9]{4}"
-> > +            description: The SMC FourCC key of the desired fan. This i=
-s the
-> > +              main key, which reports the fan's current speed. Sould m=
-atch
->
-> typo
->
-> > +              the node's suffix, but doesn't have to.
->
-> Why can't we require that they match? (Other than we can't express that
-> in schema?)
+The second patch modifies EFI's `reserve_regions()` to selectively
+remove only non-KHO memory regions when KHO is active, preserving the
+critical scratch regions while still allowing EFI to rebuild its memory
+map.
 
-I made this optional mostly because these subnode names are inconsequential=
-.
-It's the apple,key-id property that matters. If it makes more sense
-to say that the node name and property 'must' match instead of 'should' the=
-n
-there's no reason we can't do that. Another option is to just have a
-numbered sequence, e.g. fan-01, temperature-01, etc.
+The patchset was developed/tested on arm64.
 
-> > +          apple,fan-minimum:
-> > +            $ref: /schemas/types.yaml#/definitions/string
-> > +            pattern: "^[A-Za-z0-9]{4}"
-> > +            description: The minimum speed the current fan can run at
->
-> This is not the speed, but the identifier key to retrieve the min speed,
-> right? That's not clear. It's a bit odd that everything is a key id, but
-> one property has that in the name and the others don't. I don't have any
-> better suggestion though...
+On a side note, I have noticed that `kho_populate()` calls
+`memblock_set_kho_scratch_only()`, but the `kho` cmdline option is
+not checked until much later. Therefore, memblock will use only the
+scratch regions that were passed from the outgoing kernel, even if the
+incoming kernel doesn't explicitly want that. I am not sure if this is
+done on purpose, but in any case we can discuss this in another patch,
+as it is orthogonal to this one.
 
-Would it make sense to append '-key' to all of the optional fan properties
-to make this clearer?
+Main Changes in v2 (smaller changes can be found in individual patches):
+    - Introduce is_kho_boot()
+    - Replaced manual loop with for_each_mem_region macro
 
-> > +          apple,fan-maximum:
-> > +            $ref: /schemas/types.yaml#/definitions/string
-> > +            pattern: "^[A-Za-z0-9]{4}"
-> > +            description: The maximum speed the current fan can run at
-> > +          apple,fan-target:
-> > +            $ref: /schemas/types.yaml#/definitions/string
-> > +            pattern: "^[A-Za-z0-9]{4}"
-> > +            description: Writeable endpoint for setting desired fan sp=
-eed
-> > +          apple,fan-mode:
-> > +            $ref: /schemas/types.yaml#/definitions/string
-> > +            pattern: "^[A-Za-z0-9]{4}"
-> > +            description: Writeable endpoint to enable/disable manual f=
-an
-> > +              control
-> > +          label:
-> > +            $ref: /schemas/types.yaml#/definitions/string
-> > +            description: Human-readable name for the sensor
->
-> Surely more than apple,key-id is required? How would it be useful with
-> only that? You can know how many fans you have, but have no info or
-> control over them?
+Evangelos Petrongonas (2):
+  kexec: introduce is_kho_boot()
+  efi: Support booting with kexec handover (KHO)
 
-The key specified in apple,key-id is the fan's current speed, which is the
-only key strictly required to enumerate the presence of a fan in the system=
-.
-All of the other keys are optional information that are only really useful
-when implementing manual fan control, which is itself optional as the platf=
-orm
-really expects the SMC firmware to have control over fan speeds at all time=
-s.
+ drivers/firmware/efi/efi-init.c | 28 ++++++++++++++++++++++++----
+ include/linux/kexec_handover.h  |  6 ++++++
+ kernel/kexec_handover.c         | 20 ++++++++++++++++++++
+ 3 files changed, 50 insertions(+), 4 deletions(-)
 
-> Rob
+-- 
+2.47.3
 
-Regards,
 
-James
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
