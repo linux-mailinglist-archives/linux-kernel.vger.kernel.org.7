@@ -1,178 +1,125 @@
-Return-Path: <linux-kernel+bounces-776531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5883EB2CE90
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:32:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DB8B2CE94
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC1053BCB02
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:32:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEF397B03F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19996284896;
-	Tue, 19 Aug 2025 21:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73038319874;
+	Tue, 19 Aug 2025 21:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="eGXwtxI8"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Bpa6EGt8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0A62620C3
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 21:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F40284896;
+	Tue, 19 Aug 2025 21:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755639160; cv=none; b=HQSTP5Hyv47FTJFQ5r4H1uLMF/93VpW+/7U5a9I9MwDmVRD2Ynlrxss5wjm7bfi3wSPXraTd5sdprmdjqaokY4JJgiuEq5uHb76sumpl4hu5VTZd8dg/bgUAysCfBgzx7EeSJP0+qrkszOqBycuu2IhywEMRRs12fFaY3bGAdyI=
+	t=1755639202; cv=none; b=BkI6oIevk7Y/ROEijp46HVPQGp5EJgudO0R94Klt9/VIQdgrZlaR6tE73hn79nRr3ZeBwyiKYMRNXCVPBA/75QT98pgfB5ePzwaQOyJZUnAPgN0XpsKFCWcgDNHAsyZkBUXwSOEMJW7KjrwOIvWLCz72Yh0Jx34EqKs6n1zmudY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755639160; c=relaxed/simple;
-	bh=jc3BvvZPYp6Ws/XW8HSSgCQw3zydyc5fLCTQ3ZrChS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ylu8BJwABP+V6Gp5w25unP1aQ2M+HtIO+Z3yPbeXviU0wxAze7rJlR8c9j30QdeeumdBCks3zDDv7fnrLMQaqRUK+voyfYxLYd3KLmP/4ZaCS9xo+gLxamcn9xdvSnxn+tcSN05+U5sq9gXHbNL35JyRJO3Qo5R7mbBuC5jOfQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=eGXwtxI8; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso32326395e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pinefeat.co.uk; s=google; t=1755639155; x=1756243955; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6BYh4GCaj3UOu780opvLnkEvnPL7yLCaLlvBDFyBcyI=;
-        b=eGXwtxI8ii6Sw2dzensPh1P+zTTk+1PpIHrNiyyu5RX9lyyGZ1n76v6U5rwPwfGdOT
-         0iIifOyvc752DSQikM8GDb16XELBuXScws/cYfipEVe4gh/ow6e9Zig6V9JKgsbRwuBo
-         0c8+Pcjx3nJDqMolBjussNoNpnLWPX8HOHBcIiQhtVdwBHkx6TlQqfm5moxTSt0ISpgZ
-         LhaqayK6nxzqp/KeOi13uXrdHM58NCNkZy5faiZhGS1q8m+R/7LlDDrSMoUk5WVaWQHv
-         9X0+wLuDda1pcKsJDij9cUBwMOfEIFUb6CTwHGkvqtDHOZkNHxNkBdMwaLeQnHtPJpGJ
-         qVgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755639155; x=1756243955;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6BYh4GCaj3UOu780opvLnkEvnPL7yLCaLlvBDFyBcyI=;
-        b=sAPdWAlSEIyWpeN48ApnE0tjF3DVKl42WQFmbyDmJmA0LV3x+tvUJcW2IDLszDTcv2
-         FCZaKjsqyiRj36OxP0tSdNnPk0HCBxdL1JpqoMjfQMi5+bm+YweAS/zKRVW9XTdzluZU
-         azHVx7MRx3PgELUANQXI1NCt90J3xfyNSwKPRrenjyU/R5YwKQxX0iSLvDVtCrb6FX98
-         jCOQ+9BEsVyXtvw7feIB4azZa7QXQdSs1z7+74imIuNdHMAR0qlFtVWkT74oafMv3FBq
-         h31zKd2OBgC75dJhdmv3PmMqkyX2a5ReIS86UAbN65CcK+WLlXClsCKbB6F95pTk7xsC
-         VwZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWw2iS0KWKpXm9qiQbcDTNZyhKKI55MzJlkdh0+2u978sI9sPWD9WMsKxSO00grpB/C6gk9JhsI0yhv7B0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg/DRM8/TscwrLA3u/x92It8pTVKxXO2iwmF2bbzO6lmgbcitp
-	UzCQiBdqhmtiSFl9ZwaGHoC0v9ozNxSljLf9ve1xA8L1iIj3EFfGqMlHUQUyP2FfK7g=
-X-Gm-Gg: ASbGnctRy/0ytkHrevwZSR7r5+ksIHuiDflsZVIwuGxATlblGZ4a+dDP2F9dKVpRlmG
-	5q3hTrF00+nT5Ggr8pD9hE4wgkVg1vrPtGoFk+1nkl8nRNj3C02EYQrjyPm9yT76FF7+sp+EGnX
-	jaJHx6em9aQbGTL9x3oSlqB+DYN1T6wnZDTtyhH75DNhORzkBrowhVFE0OS4JkJSjcl1ooa2vYX
-	nF2EutBfWjAnBpW5ue1WC2WwndAFjul87u0oekKwsBjSu0MzlHctWeOWRM1QmcSLXPBHypSrUJv
-	Ypuk7SrkZ8TTb48w/egMOqfeEjTVtCibRFkewwe2pE1ccMvMSvDHAhX9e96Edn4Zc7Gy6eA9m1M
-	OP/Z3uM33uKao34h4saL0lCfztqRqHa99IhkYrHaZ
-X-Google-Smtp-Source: AGHT+IEcyNrxp3SHEyt2CBRL9VUsDkFP7P0pHC4zqMyxndYLah7gl2FLCMywmLM6ECrvuDEPDmirIA==
-X-Received: by 2002:a05:600c:1988:b0:459:d645:bff7 with SMTP id 5b1f17b1804b1-45b479b57a0mr3202945e9.12.1755639155215;
-        Tue, 19 Aug 2025 14:32:35 -0700 (PDT)
-Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:f371:d547:373f:e542])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077c56454sm5090606f8f.58.2025.08.19.14.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 14:32:34 -0700 (PDT)
-From: Aliaksandr Smirnou <support@pinefeat.co.uk>
-To: jacopo.mondi@ideasonboard.com
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	robh@kernel.org,
-	support@pinefeat.co.uk
-Subject: Re: [PATCH v3 2/2] media: i2c: Pinefeat cef168 lens control board driver
-Date: Tue, 19 Aug 2025 22:32:34 +0100
-Message-Id: <20250819213234.18378-1-support@pinefeat.co.uk>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <4qxxvvzxbbdukjn5ykjxhgj6kp2yqd4bidpl74ozbrwtt2jgjj@ipleqjgnnpys>
-References: <4qxxvvzxbbdukjn5ykjxhgj6kp2yqd4bidpl74ozbrwtt2jgjj@ipleqjgnnpys>
+	s=arc-20240116; t=1755639202; c=relaxed/simple;
+	bh=5GKkr71Vqh1UydfQJdAoG61RmWXd5ZaX8ORcmo57KgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gph9AL1dlgXSI/DJypn/AayMkfExfuYxfDVT7O3KfA906Rfz/JOs8jweAdQV4bpWcN19MD8Q6VogRGhlfrhKpOj2jzZtf3hwfv6CNukK+q+wwfNn9xA7QlubHzM4G4gWTezdZ4dhMi1P5JiQenuH8EKbPyR7fWpfC7lQVCZ1bVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Bpa6EGt8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D710440E0286;
+	Tue, 19 Aug 2025 21:33:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Dn354hQKDEPk; Tue, 19 Aug 2025 21:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755639193; bh=nAbSgNtJTr5mL95vcDKXETLp7bDfTbShwe9wYBDiXM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bpa6EGt8Dok47Rvv/1Xfd+kfcvv92lcJUrYu6nHS1Uwf72u6ewozutEtaf/axqjFK
+	 EKZygJ/vVrc8JcFWBiFJeF9np7oo2lGvuv8m8SIR+9ssFZncu4iJ4/PqLqq7hZEjFB
+	 UaOSPu5evIpO2hfZH0pWgo2EWkH0PJNrkJ6upFwyA+qag4sint05grYbdfFy4v5Ycr
+	 BCFhh9JMdaEyA0fu6aQyc6SZ/ksTzhLpxB6YWZihahjbrBb3Lunpm6rcjLM/IklKFK
+	 xuLHCtPb1rj+HKSKMmeJ+HNiVgG++DFYsV4S4IOgmhIiqpZd/g+VMDj3d1kaLQLWUP
+	 DzOFxCh0sxMXDgtzBXaLOmxxt1EzSdSDxriE5wmgaic4TXIRy6etT1dpK8WfCi/lip
+	 BQQLaFN2FxmV7tmlpehffFJ5jY9eFeLVJagd5q1crD+/wJg+xCPbCICcUWl0iyDjJC
+	 UyV31WmY5smUHbKiO6jyfGdXiJ0PMPz9RMTIhETv8UNQv+1/BHfLearhZmSVBhovLu
+	 r81HUIYroyYX7/ckAVFkhdfRrjmIOJqsfZxJ/EryU2se4uQgLQ/+D6xlH+sNVYrHsb
+	 YCv+fT6L87XJiRx/30PbmZ80T6lZP94Pp7WdUXvEVL8PBLFokYD/cHQ88cxznZBQWX
+	 Prxgk3zaim22t6freZJ8jsgA=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6AAFD40E023B;
+	Tue, 19 Aug 2025 21:32:48 +0000 (UTC)
+Date: Tue, 19 Aug 2025 23:32:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, vannapurve@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com, kai.huang@intel.com,
+	reinette.chatre@intel.com, xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com,
+	Fan Du <fan.du@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
+	yan.y.zhao@intel.com, chao.gao@intel.com
+Subject: Re: [PATCH RESEND V2 1/2] x86/mce: Fix missing address mask in
+ recovery for errors in TDX/SEAM non-root mode
+Message-ID: <20250819213247.GJaKTtf1er-Ced_mzP@fat_crate.local>
+References: <20250819162436.137625-1-adrian.hunter@intel.com>
+ <20250819162436.137625-2-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250819162436.137625-2-adrian.hunter@intel.com>
 
-Hi Jacopo,
-
-Thank you for the review. Your remarks are very helpful. While I'll apply
-most of them, could you clarify the one regarding pm_runtime_ for me?
-
-On Tue, 19 Aug 2025 15:47:54 +0200, Jacopo Mondi wrote:
-> > +#include <linux/crc8.h>
->
-> Do you need to "select CRC8" in Kconfig then ?
-
-Yes, I'll include it.
-
-> > +#include "cef168.h"
->
-> Why an header file ?
-
-Ok, I'll remove the header moving everying in the .c file.
-
-> > +	for (retry = 0; retry < 3; retry++) {
->
-> This seems a bit random, why do you need to retry three times ?
-
-The driver retries writes to work around an issue in the Raspberry
-Pi's I2C hardware, where the BCM2835 mishandles clock stretching.
-When the slave stretches the clock, the Pi can misread the SCL line
-or sample data too early, making it think the write failed. To
-improve reliability, the kernel driver automatically retries the
-write, effectively compensating for the hardware's timing bug.
-
-> > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(data) &&
-> > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(focus_range) &&
-> > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(lens_id))
-> > +		return -EINVAL;
->
-> If you mark them WRITE_ONLY wouldn't the core take care of this ?
-
-These controls are read-only. The data they return depens on the lens.
-
-> > +	struct cef168_data data;
->
-> I thought the compiler would complain for variables declared not at
-> the beginning of the function
-
-Ok, I'll move the variable at the beginning.
-
-> > +	pm_runtime_set_active(&client->dev);
+On Tue, Aug 19, 2025 at 07:24:34PM +0300, Adrian Hunter wrote:
+> Commit 8a01ec97dc066 ("x86/mce: Mask out non-address bits from machine
+> check bank") introduced a new #define MCI_ADDR_PHYSADDR for the mask of
+> valid physical address bits within the machine check bank address register.
 > 
-> Is the device powered up at this point ?
-> If you depend on the pm_runtime_resume_and_get() call in open() to
-> power the device up, then you need to depend on PM in KConfig ?
-
-Yes, the device powers from 3v3 rail of a SBC, which makes it powered
-up as soon as the SBC is up. Given that, should I remove all code
-around Power Management Runtime (pm_runtime_*) as redundant?
-
-> > +#define CEF168_V4L2_CID_CUSTOM(ctrl) \
-> > +	((V4L2_CID_USER_BASE | 168) + custom_##ctrl)
+> This is particularly needed in the case of errors in TDX/SEAM non-root mode
+> because the reported address contains the TDX KeyID.  Refer to TDX and
+> TME-MK documentation for more information about KeyIDs.
 > 
-> I think you need to reserve space for your controls in
-> include/uapi/linux/v4l2-controls.h
->
-> otherwise this will never be visible to applications ?
+> Commit 7911f145de5fe ("x86/mce: Implement recovery for errors in TDX/SEAM
+> non-root mode") uses the address to mark the affected page as poisoned, but
+> omits to use the aforementioned mask.
+> 
+> Investigation of user space expectations has concluded it would be more
+> correct for the address to contain only address bits in the first place.
+> Refer https://lore.kernel.org/r/807ff02d-7af0-419d-8d14-a4d6c5d5420d@intel.com
+> 
+> Mask the address when it is read from the machine check bank address
+> register.  Do not use MCI_ADDR_PHYSADDR because that will be removed in a
+> later patch.
 
-I found there is no need for that. Custom control become available
-automatically by name via the v4l2-ctl utility. For example, the focus
-range can be read directly in the terminal as follows:
+Why is this patch talking about TDX-something but doing "global" changes to
+mce.addr?
 
-v4l2-ctl -d $DEV_LENS -C focus_range
+Why don't you simply do a TDX-specific masking out when you're running on
+in TDX env and leave the rest as is?
 
-> > +/**
-> > + * cef168 data structure
->
-> No need to kerneldoc unless you properly document all fields and
-> include the file in some of the Documentation/
+-- 
+Regards/Gruss,
+    Boris.
 
-OK, I'll remove the comment above the structure.
-
-Kind regards,
-  Aliaksandr
+https://people.kernel.org/tglx/notes-about-netiquette
 
