@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-774718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E62B2B66C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEB4B2B66D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79CA1B63C81
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659473BE4EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638827E7FD;
-	Tue, 19 Aug 2025 01:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FB227F19F;
+	Tue, 19 Aug 2025 01:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r31LgyI1"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RGvcmBAM"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25CB27CB04
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A983727F00E
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755567637; cv=none; b=LwAJHwda+YACoV9q+mkYqKI+EgBBFnzD4ZKYCO0dSA2Ao4hDUtWmhm6QVZ7ePqwG8Wyxp+6P8e8rjhaqy9uRLEZ3xHng8MyT/DTSovIhR1a4dxwJQkCura8zyiwc9OT+GIbJHmgyvIOl/3VNSXMuJwJrsJHr3Idux134/PPf3zE=
+	t=1755567640; cv=none; b=Ww04pU4o9hHFfzDM4RJ9L07Q4cSpKo6x1fI5XRD2uxhBpqaeGTHaOuw83djcEwarheTdbiVoFgJSJ5UJKvEQwvxDG++P1CA9W8OtsL2OgtQeZIOf+QNYY3aXcD83lSY41JgdXBFuRG4FpGnzS28pa2AkcG8TlOPapg6tCp9+r/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755567637; c=relaxed/simple;
-	bh=54O4qwPl3pYABWv4bHwl6c0YHU2Dn9GO8qnhYsTvTU8=;
+	s=arc-20240116; t=1755567640; c=relaxed/simple;
+	bh=t4wvV9vwekMMrq2ydrKd6eNCnUoW4JbMeNG6gK6G9V4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZGD4z2mNJnTVlk/hXBrg7gnCP7lAYCMWQdmTw55CSv+3bjQTTFujlQYgZQkAE1PO0aWlWpMJxxErraFZMAYWkz1hUiM49b6ptp5vaZ2ysxtzFirvkLHZzbCqk/fipelwY//yvRZ75d6Q+0yPUr457mZ/S8rCTM3o/mxKQopSEog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r31LgyI1; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=NB9t3EiE9D89W0rVoW3v166CbLIKikfYtzjQdhuvz9Dm8YiaoYf3Pfi3uWMu2qMXxyjmunWtSyBvxFFxzQIKW2wa4EFF7qBlTOI6oQg/pXOoh7BOB9yZMEnCBue3VRHcKQiaU+z/Wdp1lgLSopLQ8VBC//oeqISToUCi4lvHRw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RGvcmBAM; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32326e09c5fso4751249a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:40:35 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e933de385cbso3780735276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755567635; x=1756172435; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755567638; x=1756172438; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmibaETcnJ3KysxuOmPon6EiiVF0b4+yUjRDx5iYegU=;
-        b=r31LgyI1QvWI/uR4+CkHhOQyw6peNq2/+uQ8SfsVjh4qcetoGnjuMBVkSzWbEgwUGK
-         aY8Hg3EzOFQr/Cec8boLXtJ4QWvkJy8/fmnpdWyoDa5efO60KNEnibkqYLZ1qcbt4An+
-         efxY3X8HCAftmQ3mQ6mYNzvvWyeuWDWi3upqnIOzblU0beHlvXseUWfzGg8/R8prIorc
-         8ipwosiOqOobDCL93562Fn2WexXGNnvWf7mayR48GXCFqQTCBbZYf0UmGzvbHJG6ZI3v
-         Vfq6Z5I5GTwFniEimAWCMcPUR6PinzEfKXMqS6TGLBPh3pTZeyGIbsu8/8EDpAz8zr1o
-         VPzw==
+        bh=Hl7AyxzldYvZFRTRgIoYqh+Kx2ZHoiUBsCMLQEtAIgk=;
+        b=RGvcmBAMXK9TmiBdMjkygLXxvEZEG7Arx9tAw06Pec4jXYFa22m7n3XZtrSFHZC3pa
+         WbnnpvUcmslLtwudz7/sc2665fFMah7I+tFtyHWyh4sR5jLUYrJ2rEIIzVBm2SfixeZF
+         ysWMzzVRXkgA21d/k9G2gJiuJh/LYBWLHkYBfydLoiGIwsCaTyRenjIoLDDDd1SxCZB9
+         B9SY2GMxuKWvIvJFsTt8ixTU50Vk9ZtCtmAM8GPdq2ITpeariSz4yhS7VTTPHMriHqa2
+         dwRbdj7IUt/G5wH2DRRgfg8F70kLExS5i4rMUf3a8mLctq2OB6CtPccxhKWIj9c+BehX
+         FjgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755567635; x=1756172435;
+        d=1e100.net; s=20230601; t=1755567638; x=1756172438;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmibaETcnJ3KysxuOmPon6EiiVF0b4+yUjRDx5iYegU=;
-        b=MDTtF4ysRUUBpSckTseP/VAu4Ok4q2DXoB5vIMur/ERthInViJqM1J/NQKG/4aexOz
-         SiuQRDIg0TmZMkzB0jVKmJYpHZ7SPizTDgoTOrVjJVwRQmKG9DWNYqFkKa4f4WqtE+w7
-         xsX6gqMBVzqABYO7l233nXlK9Mj7NIb0QLquH8QFpZ2Y0QKj25yCOtCUb5wW9SrYlO6r
-         VyCoYkYaoh4DZhts7ujQ6RNqhJivP124URWBV2SvVtT5HmUkc+a5nLzI/47h/tyr8ylY
-         SABsJFMWcY2RC6ADohLGzk+UkMl7G9U8dtxbVUlJyM7SYWueLhVhnr9bTGgmCEAoiKzg
-         0Vgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEukToQeXyiwyK47rRpvJOFSNE3gOhIUe3gI27Yl4ljAZRyB9GVMr3PBjGr74UVK4LVrxXruW3YwaVKD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsN/wxoroF4ILOASIVAV4PVWS3fwxRAYghSmaj/0qzE5urNvJX
-	7Twu6HWoHQAz3v3OOphjrzsozA1Lkn4dR8MAFVjreunCXbdrhfDgq3nfkHFAUQjgChRyXd+tsRL
-	mWJSmf5WPAg==
-X-Google-Smtp-Source: AGHT+IF8dlH5fhV/I4zHE0ctt3jtWDWmAghBmvFvbGWFwUX1pXP8P4UaRWIlz+JUjNVacfJJ9QXbdTj8JyZv
-X-Received: from pjee16.prod.google.com ([2002:a17:90b:5790:b0:321:c567:44cf])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:42:b0:313:352f:6620
- with SMTP id 98e67ed59e1d1-32476a4a2b6mr1363114a91.4.1755567635430; Mon, 18
- Aug 2025 18:40:35 -0700 (PDT)
-Date: Mon, 18 Aug 2025 18:39:39 -0700
+        bh=Hl7AyxzldYvZFRTRgIoYqh+Kx2ZHoiUBsCMLQEtAIgk=;
+        b=FVJWj9Vcu7WElHbEmjb/l4/VSRrSQwQ6Z50St0Fly59W+rKPv2pLLfnvysfEgccDx+
+         R5NjNgDq+FGW5Vn3reV0ats3I42e3CE5FMiD86BymuNMxxLP9tG7FHSTGAi2tlqqLeYf
+         UQl+hpmCWoEOs+/WE9e2kBt+TQApwRhhp2BqFOur5lXgDejGmoU1eFuqvXuLu3TU9UmO
+         jJxbBv5+aVvMjm/wE3dj18lKSFOnHLmzPyNPKMQJNhQOyH3+/L7h7WaVGhijtrhnT9wt
+         kX8l0Ezt/uPfJvWFdmqVI4OnlNSEUSt8LoFl3zeEopzew8Ip/ZHJkGlLZuDPGAoq3Muh
+         DfZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIDMJGVCKNYwnCYa60HB9VjCp/3VIhDENGiRdR6up8aKtK3ZI7fMysEze7CZ7YNtP4YwqWcRfh+TP8uJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO6nF78lI3/FrjlJaMzCE2VwDPv4ybhhYKmUr2GaLefJQUmtay
+	eGYknZU2W5qVpLLfzUzHH2D/xqDkFhlh5h2p/NwnJLiVgq43XatATOu7OQg4zs0ppHxo5q+yE4A
+	lo+0Af1YSGA==
+X-Google-Smtp-Source: AGHT+IGEy55mHjNSF8FticXDHLMT32LWX3I+ztnRk8dOjCjooAEx0eIdkQYy3vXz2DfomggqMRHv/JGZtMkA
+X-Received: from ybbei5.prod.google.com ([2002:a05:6902:1b85:b0:e93:76f:4c57])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6902:4086:b0:e8f:eb74:24b7
+ with SMTP id 3f1490d57ef6-e94e63b6330mr1225466276.49.1755567637753; Mon, 18
+ Aug 2025 18:40:37 -0700 (PDT)
+Date: Mon, 18 Aug 2025 18:39:40 -0700
 In-Reply-To: <20250819013941.209033-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250819013941.209033-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-Message-ID: <20250819013941.209033-10-irogers@google.com>
-Subject: [PATCH v10 09/11] perf python: Add metrics function
+Message-ID: <20250819013941.209033-11-irogers@google.com>
+Subject: [PATCH v10 10/11] perf ilist: Add support for metrics
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -92,122 +92,383 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The metrics function returns a list dictionaries describing metrics as
-strings mapping to strings, except for metric groups that are a string
-mapping to a list of strings. For example:
-```
->>> import perf
->>> perf.metrics()[0]
-{'MetricGroup': ['Power'], 'MetricName': 'C10_Pkg_Residency',
- 'PMU': 'default_core', 'MetricExpr': 'cstate_pkg@c10\\-residency@ / TSC',
- 'ScaleUnit': '100%', 'BriefDescription': 'C10 residency percent per package'}
-```
+Change tree nodes to having a value of either Metric or PmuEvent,
+these values have the ability to match searches, be parsed to create
+evlists and to give a value per CPU and per thread to display.  Use
+perf.metrics to generate a tree of metrics. Most metrics are placed
+under their metric group, if the metric group name ends with '_group'
+then the metric group is placed next to the associated metric.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Reviewed-by: Howard Chu <howardchu95@gmail.com>
 ---
- tools/perf/util/python.c | 86 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+ tools/perf/python/ilist.py | 226 +++++++++++++++++++++++++++----------
+ 1 file changed, 168 insertions(+), 58 deletions(-)
 
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index e0769538b8d9..56102034d5b8 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -2083,7 +2083,93 @@ static PyObject *pyrf__parse_metrics(PyObject *self, PyObject *args)
- 	return result;
- }
+diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
+index 22c70a8b31f3..9d6465c60df3 100755
+--- a/tools/perf/python/ilist.py
++++ b/tools/perf/python/ilist.py
+@@ -2,19 +2,121 @@
+ # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+ """Interactive perf list."""
  
-+static PyObject *pyrf__metrics_groups(const struct pmu_metric *pm)
-+{
-+	PyObject *groups = PyList_New(/*len=*/0);
-+	const char *mg = pm->metric_group;
++from abc import ABC, abstractmethod
+ import argparse
++from dataclasses import dataclass
++import math
+ from typing import Any, Dict, Optional, Tuple
+ import perf
+ from textual import on
+ from textual.app import App, ComposeResult
+ from textual.binding import Binding
+ from textual.containers import Horizontal, HorizontalGroup, Vertical, VerticalScroll
++from textual.css.query import NoMatches
+ from textual.command import SearchIcon
+ from textual.screen import ModalScreen
+ from textual.widgets import Button, Footer, Header, Input, Label, Sparkline, Static, Tree
+ from textual.widgets.tree import TreeNode
+ 
+ 
++def get_info(info: Dict[str, str], key: str):
++    return (info[key] + "\n") if key in info else ""
 +
-+	if (!groups)
-+		return NULL;
 +
-+	while (mg) {
-+		PyObject *val = NULL;
-+		const char *sep = strchr(mg, ';');
-+		size_t len = sep ? (size_t)(sep - mg) : strlen(mg);
++class TreeValue(ABC):
++    """Abstraction for the data of value in the tree."""
 +
-+		if (len > 0) {
-+			val = PyUnicode_FromStringAndSize(mg, len);
-+			if (val)
-+				PyList_Append(groups, val);
++    @abstractmethod
++    def name(self) -> str:
++        pass
 +
-+			Py_XDECREF(val);
-+		}
-+		mg = sep ? sep + 1 : NULL;
-+	}
-+	return groups;
-+}
++    @abstractmethod
++    def description(self) -> str:
++        pass
 +
-+static int pyrf__metrics_cb(const struct pmu_metric *pm,
-+			    const struct pmu_metrics_table *table __maybe_unused,
-+			    void *vdata)
-+{
-+	PyObject *py_list = vdata;
-+	PyObject *dict = PyDict_New();
-+	PyObject *key = dict ? PyUnicode_FromString("MetricGroup") : NULL;
-+	PyObject *value = key ? pyrf__metrics_groups(pm) : NULL;
++    @abstractmethod
++    def matches(self, query: str) -> bool:
++        pass
 +
-+	if (!value || PyDict_SetItem(dict, key, value) != 0) {
-+		Py_XDECREF(key);
-+		Py_XDECREF(value);
-+		Py_XDECREF(dict);
-+		return -ENOMEM;
-+	}
++    @abstractmethod
++    def parse(self) -> perf.evlist:
++        pass
 +
-+	if (!add_to_dict(dict, "MetricName", pm->metric_name) ||
-+	    !add_to_dict(dict, "PMU", pm->pmu) ||
-+	    !add_to_dict(dict, "MetricExpr", pm->metric_expr) ||
-+	    !add_to_dict(dict, "MetricThreshold", pm->metric_threshold) ||
-+	    !add_to_dict(dict, "ScaleUnit", pm->unit) ||
-+	    !add_to_dict(dict, "Compat", pm->compat) ||
-+	    !add_to_dict(dict, "BriefDescription", pm->desc) ||
-+	    !add_to_dict(dict, "PublicDescription", pm->long_desc) ||
-+	    PyList_Append(py_list, dict) != 0) {
-+		Py_DECREF(dict);
-+		return -ENOMEM;
-+	}
-+	Py_DECREF(dict);
-+	return 0;
-+}
++    @abstractmethod
++    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
++        pass
 +
-+static PyObject *pyrf__metrics(PyObject *self, PyObject *args)
-+{
-+	const struct pmu_metrics_table *table = pmu_metrics_table__find();
-+	PyObject *list = PyList_New(/*len=*/0);
-+	int ret;
 +
-+	if (!list)
-+		return NULL;
++@dataclass
++class Metric(TreeValue):
++    """A metric in the tree."""
++    metric_name: str
 +
-+	ret = pmu_metrics_table__for_each_metric(table, pyrf__metrics_cb, list);
-+	if (!ret)
-+		ret = pmu_for_each_sys_metric(pyrf__metrics_cb, list);
++    def name(self) -> str:
++        return self.metric_name
 +
-+	if (ret) {
-+		Py_DECREF(list);
-+		errno = -ret;
-+		PyErr_SetFromErrno(PyExc_OSError);
-+		return NULL;
-+	}
-+	return list;
-+}
++    def description(self) -> str:
++        """Find and format metric description."""
++        for metric in perf.metrics():
++            if metric["MetricName"] != self.metric_name:
++                continue
++            desc = get_info(metric, "BriefDescription")
++            desc += get_info(metric, "PublicDescription")
++            desc += get_info(metric, "MetricExpr")
++            desc += get_info(metric, "MetricThreshold")
++            return desc
++        return "description"
 +
- static PyMethodDef perf__methods[] = {
-+	{
-+		.ml_name  = "metrics",
-+		.ml_meth  = (PyCFunction) pyrf__metrics,
-+		.ml_flags = METH_NOARGS,
-+		.ml_doc	  = PyDoc_STR(
-+			"Returns a list of metrics represented as string values in dictionaries.")
-+	},
- 	{
- 		.ml_name  = "tracepoint",
- 		.ml_meth  = (PyCFunction) pyrf__tracepoint,
++    def matches(self, query: str) -> bool:
++        return query in self.metric_name
++
++    def parse(self) -> perf.evlist:
++        return perf.parse_metrics(self.metric_name)
++
++    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
++        val = evlist.compute_metric(self.metric_name, cpu, thread)
++        return 0 if math.isnan(val) else val
++
++
++@dataclass
++class PmuEvent(TreeValue):
++    """A PMU and event within the tree."""
++    pmu: str
++    event: str
++
++    def name(self) -> str:
++        if self.event.startswith(self.pmu) or ':' in self.event:
++            return self.event
++        else:
++            return f"{self.pmu}/{self.event}/"
++
++    def description(self) -> str:
++        """Find and format event description for {pmu}/{event}/."""
++        for p in perf.pmus():
++            if p.name() != self.pmu:
++                continue
++            for info in p.events():
++                if "name" not in info or info["name"] != self.event:
++                    continue
++
++                desc = get_info(info, "topic")
++                desc += get_info(info, "event_type_desc")
++                desc += get_info(info, "desc")
++                desc += get_info(info, "long_desc")
++                desc += get_info(info, "encoding_desc")
++                return desc
++        return "description"
++
++    def matches(self, query: str) -> bool:
++        return query in self.pmu or query in self.event
++
++    def parse(self) -> perf.evlist:
++        return perf.parse_events(self.name())
++
++    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
++        return evsel.read(cpu, thread).val
++
++
+ class ErrorScreen(ModalScreen[bool]):
+     """Pop up dialog for errors."""
+ 
+@@ -126,8 +228,9 @@ class IListApp(App):
+     def __init__(self, interval: float) -> None:
+         self.interval = interval
+         self.evlist = None
+-        self.search_results: list[TreeNode[str]] = []
+-        self.cur_search_result: TreeNode[str] | None = None
++        self.selected: Optional[TreeValue] = None
++        self.search_results: list[TreeNode[TreeValue]] = []
++        self.cur_search_result: TreeNode[TreeValue] | None = None
+         super().__init__()
+ 
+     def expand_and_select(self, node: TreeNode[Any]) -> None:
+@@ -145,7 +248,7 @@ class IListApp(App):
+         l = len(self.search_results)
+ 
+         if l < 1:
+-            tree: Tree[str] = self.query_one("#pmus", Tree)
++            tree: Tree[TreeValue] = self.query_one("#root", Tree)
+             if previous:
+                 tree.action_cursor_up()
+             else:
+@@ -180,7 +283,7 @@ class IListApp(App):
+             event = event.lower()
+             search_label.update(f'Searching for events matching "{event}"')
+ 
+-            tree: Tree[str] = self.query_one("#pmus", Tree)
++            tree: Tree[str] = self.query_one("#root", Tree)
+ 
+             def find_search_results(event: str, node: TreeNode[str],
+                                     cursor_seen: bool = False,
+@@ -189,7 +292,7 @@ class IListApp(App):
+                 """Find nodes that match the search remembering the one after the cursor."""
+                 if not cursor_seen and node == tree.cursor_node:
+                     cursor_seen = True
+-                if node.data and event in node.data:
++                if node.data and node.data.matches(event):
+                     if cursor_seen and not match_after_cursor:
+                         match_after_cursor = node
+                     self.search_results.append(node)
+@@ -203,7 +306,7 @@ class IListApp(App):
+             self.search_results.clear()
+             (_, self.cur_search_result) = find_search_results(event, tree.root)
+             if len(self.search_results) < 1:
+-                self.push_screen(ErrorScreen(f"Failed to find pmu/event {event}"))
++                self.push_screen(ErrorScreen(f"Failed to find pmu/event or metric {event}"))
+                 search_label.display = False
+             elif self.cur_search_result:
+                 self.expand_and_select(self.cur_search_result)
+@@ -221,16 +324,16 @@ class IListApp(App):
+         self.set_searched_tree_node(previous=True)
+ 
+     def action_collapse(self) -> None:
+-        """Collapse the potentially large number of events under a PMU."""
+-        tree: Tree[str] = self.query_one("#pmus", Tree)
++        """Collapse the part of the tree currently on."""
++        tree: Tree[str] = self.query_one("#root", Tree)
+         node = tree.cursor_node
+-        if node and node.parent and node.parent.parent:
++        if node and node.parent:
+             node.parent.collapse_all()
+             node.tree.scroll_to_node(node.parent)
+ 
+     def update_counts(self) -> None:
+         """Called every interval to update counts."""
+-        if not self.evlist:
++        if not self.selected or not self.evlist:
+             return
+ 
+         def update_count(cpu: int, count: int):
+@@ -259,8 +362,7 @@ class IListApp(App):
+             for cpu in evsel.cpus():
+                 aggr = 0
+                 for thread in evsel.threads():
+-                    counts = evsel.read(cpu, thread)
+-                    aggr += counts.val
++                    aggr += self.selected.value(self.evlist, evsel, cpu, thread)
+                 update_count(cpu, aggr)
+                 total += aggr
+         update_count(-1, total)
+@@ -271,47 +373,37 @@ class IListApp(App):
+         self.update_counts()
+         self.set_interval(self.interval, self.update_counts)
+ 
+-    def set_pmu_and_event(self, pmu: str, event: str) -> None:
++    def set_selected(self, value: TreeValue) -> None:
+         """Updates the event/description and starts the counters."""
++        try:
++            label_name = self.query_one("#event_name", Label)
++            event_description = self.query_one("#event_description", Static)
++            lines = self.query_one("#lines")
++        except NoMatches:
++            # A race with rendering, ignore the update as we can't
++            # mount the assumed output widgets.
++            return
++
++        self.selected = value
++
+         # Remove previous event information.
+         if self.evlist:
+             self.evlist.disable()
+             self.evlist.close()
+-            lines = self.query(CounterSparkline)
+-            for line in lines:
+-                line.remove()
+-            lines = self.query(Counter)
+-            for line in lines:
++            old_lines = self.query(CounterSparkline)
++            for line in old_lines:
+                 line.remove()
++            old_counters = self.query(Counter)
++            for counter in old_counters:
++                counter.remove()
+ 
+-        def pmu_event_description(pmu: str, event: str) -> str:
+-            """Find and format event description for {pmu}/{event}/."""
+-            def get_info(info: Dict[str, str], key: str):
+-                return (info[key] + "\n") if key in info else ""
+-
+-            for p in perf.pmus():
+-                if p.name() != pmu:
+-                    continue
+-                for info in p.events():
+-                    if "name" not in info or info["name"] != event:
+-                        continue
+-
+-                    desc = get_info(info, "topic")
+-                    desc += get_info(info, "event_type_desc")
+-                    desc += get_info(info, "desc")
+-                    desc += get_info(info, "long_desc")
+-                    desc += get_info(info, "encoding_desc")
+-                    return desc
+-            return "description"
+-
+-        # Parse event, update event text and description.
+-        full_name = event if event.startswith(pmu) or ':' in event else f"{pmu}/{event}/"
+-        self.query_one("#event_name", Label).update(full_name)
+-        self.query_one("#event_description", Static).update(pmu_event_description(pmu, event))
++        # Update event/metric text and description.
++        label_name.update(value.name())
++        event_description.update(value.description())
+ 
+         # Open the event.
+         try:
+-            self.evlist = perf.parse_events(full_name)
++            self.evlist = value.parse()
+             if self.evlist:
+                 self.evlist.open()
+                 self.evlist.enable()
+@@ -319,13 +411,12 @@ class IListApp(App):
+             self.evlist = None
+ 
+         if not self.evlist:
+-            self.push_screen(ErrorScreen(f"Failed to open {full_name}"))
++            self.push_screen(ErrorScreen(f"Failed to open {value.name()}"))
+             return
+ 
+         # Add spark lines for all the CPUs. Note, must be done after
+         # open so that the evlist CPUs have been computed by propagate
+         # maps.
+-        lines = self.query_one("#lines")
+         line = CounterSparkline(cpu=-1)
+         lines.mount(line)
+         for cpu in self.evlist.all_cpus():
+@@ -339,28 +430,49 @@ class IListApp(App):
+ 
+     def compose(self) -> ComposeResult:
+         """Draws the app."""
+-        def pmu_event_tree() -> Tree:
+-            """Create tree of PMUs with events under."""
+-            tree: Tree[str] = Tree("PMUs", id="pmus")
+-            tree.root.expand()
++        def metric_event_tree() -> Tree:
++            """Create tree of PMUs and metricgroups with events or metrics under."""
++            tree: Tree[TreeValue] = Tree("Root", id="root")
++            pmus = tree.root.add("PMUs")
+             for pmu in perf.pmus():
+                 pmu_name = pmu.name().lower()
+-                pmu_node = tree.root.add(pmu_name, data=pmu_name)
++                pmu_node = pmus.add(pmu_name)
+                 try:
+                     for event in sorted(pmu.events(), key=lambda x: x["name"]):
+                         if "name" in event:
+                             e = event["name"].lower()
+                             if "alias" in event:
+-                                pmu_node.add_leaf(f'{e} ({event["alias"]})', data=e)
++                                pmu_node.add_leaf(f'{e} ({event["alias"]})',
++                                                  data=PmuEvent(pmu_name, e))
+                             else:
+-                                pmu_node.add_leaf(e, data=e)
++                                pmu_node.add_leaf(e, data=PmuEvent(pmu_name, e))
+                 except:
+                     # Reading events may fail with EPERM, ignore.
+                     pass
++            metrics = tree.root.add("Metrics")
++            groups = set()
++            for metric in perf.metrics():
++                groups.update(metric["MetricGroup"])
++
++            def add_metrics_to_tree(node: TreeNode[TreeValue], parent: str):
++                for metric in sorted(perf.metrics(), key=lambda x: x["MetricName"]):
++                    if parent in metric["MetricGroup"]:
++                        name = metric["MetricName"]
++                        node.add_leaf(name, data=Metric(name))
++                        child_group_name = f'{name}_group'
++                        if child_group_name in groups:
++                            add_metrics_to_tree(node.add(child_group_name), child_group_name)
++
++            for group in sorted(groups):
++                if group.endswith('_group'):
++                    continue
++                add_metrics_to_tree(metrics.add(group), group)
++
++            tree.root.expand()
+             return tree
+ 
+         yield Header(id="header")
+-        yield Horizontal(Vertical(pmu_event_tree(), id="events"),
++        yield Horizontal(Vertical(metric_event_tree(), id="events"),
+                          Vertical(Label("event name", id="event_name"),
+                                   Static("description", markup=False, id="event_description"),
+                                   ))
+@@ -369,12 +481,10 @@ class IListApp(App):
+         yield Footer(id="footer")
+ 
+     @on(Tree.NodeSelected)
+-    def on_tree_node_selected(self, event: Tree.NodeSelected[str]) -> None:
++    def on_tree_node_selected(self, event: Tree.NodeSelected[TreeValue]) -> None:
+         """Called when a tree node is selected, selecting the event."""
+-        if event.node.parent and event.node.parent.parent:
+-            assert event.node.parent.data is not None
+-            assert event.node.data is not None
+-            self.set_pmu_and_event(event.node.parent.data, event.node.data)
++        if event.node.data:
++            self.set_selected(event.node.data)
+ 
+ 
+ if __name__ == "__main__":
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
 
