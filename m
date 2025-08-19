@@ -1,330 +1,254 @@
-Return-Path: <linux-kernel+bounces-775125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA04B2BB9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:19:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BC8B2BB9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9441BA4D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:19:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF37652705D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5033311588;
-	Tue, 19 Aug 2025 08:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C56311957;
+	Tue, 19 Aug 2025 08:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HNmegieV"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kQgltXp2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D54D28488C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755591545; cv=none; b=G7yb07BhcQjMH2fykE8b1FO6UB1ZzpWGUV4tTP+1eC0bzorJPj4256bT1k/o9zpSBVD3GOi3kNGIz3WL0KKS5BsoyaKPL/9DY9MZ5KEJUHuRDbwqN3wpKHygxAK1G15lUMKQzwhlz9VA0S8+EF5Qgc326sO14HTIOxGLJwrN/cI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755591545; c=relaxed/simple;
-	bh=7mdmCI3pE7SRxl1wlksDJT3J22O8ixrwa/mzwPyZYyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fwc+VsmvpkxGh2NuKlaQt36MEWceb8kU2PU0brbdB46kCA0FM0r14L85rEHvdBSKToP8xmLh0bsULSvDX+OG37MOPJX/eqkAPjcN7QnY7WPgTtJST6fecSzmWLjautz7op7BgYrmfA3IHfyhPmhiC/pu+3HJCQnauN0mQ+P/fSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HNmegieV; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24457f5b692so53216275ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755591542; x=1756196342; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qTeQV7lwJJxjZljBmKtx6Yk8mSFRaLi85Z6cMQKmB0g=;
-        b=HNmegieVJm8NlXlZsLOJVpsIhuX1qgcx5wsodofvTThCtdinCcBam4JehhVzwRxwoN
-         afqNc3+3MV0HaEm1n4iLqlCROYSl3tjoY/Nt3J/Smxs79Fd0M1u6rfjZN08kaDeeGO0/
-         GWBQ31SKGws8ttbkGlB7MXz5m2eK82g48Nu/aP/WMxmviAjTzQWAsT4hhD8bonNarh5B
-         xSCfkGwodeArXbxxGwVPYYFKMEjINlXHrWkf+dnNDctCO6gC9+gI4/EqN/CMNC+628S6
-         6QEjXb2hrc3fMyjxS/udxkDL3sxtjmU5trzfryZ9pfj9F2IGQmFYqG7GdqG7vi4bsEs8
-         UebQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755591542; x=1756196342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qTeQV7lwJJxjZljBmKtx6Yk8mSFRaLi85Z6cMQKmB0g=;
-        b=LJ+b2MM6yFsDmYz9lal1VTg0d1hLr4Hm1LWD8ECdK1VTTeJG62U5X2dpnciQTSBi6V
-         UGmd01eM836Xo8bWKFDQbjelyBaxkAe+q0bvzsCBw/Yg2kgjn2Pn3qM/GIam7nOJR8+E
-         QAw3SQYKQqtLbvAI4qBg/pc0T6Dgj4qC2OFgYtzmJcJStmF+m9XaJeH+lCQDOFBH+yhI
-         oE8r3aUQ6n8iXlQhDcPTLGDAqIvwPeTkx1qKOc1GcRA1W9+xQ5Y1BG6t58jZh8Wo9GCb
-         es5b9zxGDCEoDVc7jArb+uRuZGbq3YNzU4iVPLCagGt5uFIegYEiONB7hR7mLgQcjmte
-         cRzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkt9S3qmUKMYq8LO+gc7E4QFy9+XUFJfaE/9HKUe9SJ7ruBAzIAJZH8sMU/ls5IPmsMP3MjpzURh94Km0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtsrzpD/5sYJW15QlhzFRKJDNFo8vQF92HZnd/ScyDmI6OSpSu
-	eMpo/BAtDpQY3xTWc+CTbhwOA1qGgsnU2/pbioi7Td1QzTzZM3vb3joSByuI2IhUY5c=
-X-Gm-Gg: ASbGncvQDzau8R4ltLciXGMzgjV9Gk5yH2Iwgr8xJCtnxs6HmXFrCJWZEzfC9zsSwc5
-	lhFW4FURuVw8WZm/3rM+DAjogH0dj1RK1auedBRdGsyd/gc1Qw4ApAAXxIM0nFUXUzwY1rMbDt9
-	ghGmAn+6GcAD9/YNqdmHjuS2chQsQjATPPA2OpbbxQK2lxE3XCmsqBKabhGlx4d5DnVI4TptEZK
-	GbOKumdorCX8t0Dk6ZwQV04kZJArm822NY/sLIC0R6CJrx1D1KTCDrWci4oAf9bsWBHvLmW5EBw
-	tnlbRHrduC/wQVuA4Ed8DvMucMhk3F5XqCYi6hBkn0zIg1x5vLO134cRB8SK7//msVTVUIDIMu9
-	gxDMXfvBSN/7pR3cmS+X1Sl7B
-X-Google-Smtp-Source: AGHT+IH7e2rkNmbirPUr5cb6RvIu5W5Vnrp1govzDEs6PM6/amKHuOzA0EBh8ZNtgUjYiTgESR1hqA==
-X-Received: by 2002:a17:903:2443:b0:242:8a7:6a6c with SMTP id d9443c01a7336-245e02d7629mr23754105ad.17.1755591542312;
-        Tue, 19 Aug 2025 01:19:02 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f71bsm100890425ad.80.2025.08.19.01.19.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 01:19:01 -0700 (PDT)
-Date: Tue, 19 Aug 2025 13:48:59 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] OPP: Add support to find OPP for a set of keys
-Message-ID: <20250819081859.kz7c27d6c77oy2gv@vireshk-i7>
-References: <20250819-opp_pcie-v3-0-f8bd7e05ce41@oss.qualcomm.com>
- <20250819-opp_pcie-v3-1-f8bd7e05ce41@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581F73115A9;
+	Tue, 19 Aug 2025 08:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755591549; cv=fail; b=SdoKfw0Yr8yopMWCUvBknjxYLjCS6pvHnEyfhSHDY7sXliG2RMFUfpocxWbLgHQLFwjW65OXCkX60SnBGWb7Zh5+iVTNhrbFJUJe3ZkygXSmQTUCTMqwQFugJVZgxXiFvaLmZv13UeNlgvO1YF31HaeQonS9wBjccMe5V8ITzkU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755591549; c=relaxed/simple;
+	bh=WFocAMcBp2pA8e8xzpHLEhiNi60lkCf7pELddksh1c0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=a4Uc2q+/ImZ7CaaoQ1kQudXP9psVermXJng4NO326wzHaH/ZPycBqSkilrP9SrJsD3HnIgoqtJOekaiXspDI7XKWglD2rfd//UbFXsbujkHlrtO3wfbDrIks4GCO8CM1//uppffoKfaXKTqze7zflF44rCcj4SlAYcgDKLE/g40=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kQgltXp2; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755591547; x=1787127547;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=WFocAMcBp2pA8e8xzpHLEhiNi60lkCf7pELddksh1c0=;
+  b=kQgltXp2F2rK5tYWniUE6X+DpK+/rZYFRi4+dDmj8W+JoMsfkMNHzUBq
+   ua0708rinPp012eYkkNxnu2+J6hO7W4fV8yf5+YMrec6XsJN421f4sFuF
+   dOOdQXVVo3xGuEcbwdkmsFRxebxIfFK2lNetFwNpGHO212tM59TgvNhaV
+   bIJDiNHzgIDTJSN/0LqlFD6GPYfoahlhbCtLyPWORgHvt4eVAh2B4WDB9
+   xWx3pJKmCY9u8YwFn8w2Xh2kx9oHJ60UpDH4GPWPrp36FY3nXJ4LQUwtB
+   W3CA1DWDz1JpjUZwRwnkeH6U1bdzWtCmDggl3zmPwmtMZcGeZOV/yl47H
+   g==;
+X-CSE-ConnectionGUID: nxxO3K57QAu3rFky4goQjQ==
+X-CSE-MsgGUID: 7Wmv0DIHQda7o7kSWMvpCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="56855191"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="56855191"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 01:19:06 -0700
+X-CSE-ConnectionGUID: Mh6PEWY3RnO8pe4IaRSV/w==
+X-CSE-MsgGUID: qFFPCRLiSGyAEjVX6SZwNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="166967238"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 01:19:06 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 19 Aug 2025 01:19:05 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 19 Aug 2025 01:19:05 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.70) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 19 Aug 2025 01:19:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MSC7rMElO7tHpAOfEiAkxbTZeguYjQEwuyQkvuS+A3UCs7UkaBQ1vXYqNvAvvkIVYMV0A7RMXnFrNAf+ae63s3xBtX4atBWJLzIAEt6VO4AvpoEYt9mk2Ke90aY4JKsJS0JqgRRFVi0nK4TNPxiHXT27ZSL6FVtbztM+RhdfGjFIgWlRu7p71mbQZAq5XwWCp//v+NiVRb4L1MYld1hYhbPNs3nfYYeNeoH5ALLPlEJ/tECs0ermIJmgcCi5qYF0jC/9rGyt/zDeQ4SCdpEd4qKkx/OzbuSTq5aqGE974nKL/ML1+5VS8OJUFQjblVesILgjcs/DTvDzIK97KUbz2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zZL+olk+y6yUZqUlVM+YxKGzu09yjRDB4IlJPexGDyQ=;
+ b=OPIl04YTndmCBQfC1giOxDlgQWPxwSy575lFcVqg/YmzStn2gXcYDg1gEWSW6/rmGwAyAiYdk3UwAaUFXL4wdfrqy4MtDwT/Dp6xGW6kNl2E/b0D2DLf/mlTfpYEWtkI6e/XHNDMm5wAmduGelVzzvKrxs5ZU2Yx/dutaW1u2yxI06xvRRVx9YSePxubHhoYhp+M31/GUe1fJhCIbpUa3WPdLLZuEjcK7IYEz4y1DM7plF6+gnPCBKSFjRoZDvX1Z/l07kNAy+4MU3BK2QmgXmJeBK5TnAmdffe+lyTHQde4X9sCQW7TZVPb3CaaI2CDChd4gw10NnDiV8G3V9ISXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
+ by DM4PR11MB7757.namprd11.prod.outlook.com (2603:10b6:8:103::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 08:19:03 +0000
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408%4]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 08:19:03 +0000
+From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
+To: Kohei Enju <enjuk@amazon.com>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"kohei.enju@gmail.com" <kohei.enju@gmail.com>, Paul Menzel
+	<pmenzel@molgen.mpg.de>
+Subject: RE: [Intel-wired-lan] [PATCH v2 iwl-next 2/2] igbvf: remove redundant
+ counter rx_long_byte_count from ethtool statistics
+Thread-Topic: [Intel-wired-lan] [PATCH v2 iwl-next 2/2] igbvf: remove
+ redundant counter rx_long_byte_count from ethtool statistics
+Thread-Index: AQHcEFOo9WVb8pEOKUC7eF83GsQahbRpox2Q
+Date: Tue, 19 Aug 2025 08:19:03 +0000
+Message-ID: <IA3PR11MB8986EFD5F42D8EF46BE38532E530A@IA3PR11MB8986.namprd11.prod.outlook.com>
+References: <20250818151902.64979-4-enjuk@amazon.com>
+ <20250818151902.64979-6-enjuk@amazon.com>
+In-Reply-To: <20250818151902.64979-6-enjuk@amazon.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|DM4PR11MB7757:EE_
+x-ms-office365-filtering-correlation-id: 56f083d0-3d34-4fc3-d032-08dddef90ef4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?9FUO2iFlk4l3uo4uQe5zvJ32eDJQ0/9v6X7tJQbBegCo0LK9cz85YiB1z/Xo?=
+ =?us-ascii?Q?7pPnU9OeNk4iTX+XOy90rEga7RXBbE7PNkCqMxCyjLyj7/JM5ReIxnLFIzO+?=
+ =?us-ascii?Q?zbmJgyr7G5vwYCA9AQ6zEwxdm2KYW44tBsuKEMwqXGYET11HV1BfxCUYFx+r?=
+ =?us-ascii?Q?eXC970eCmUT7QdU0sspYLYAAVhxeQXDEw7BnKoJ9qi1q/m5T1m5qXVbkclXr?=
+ =?us-ascii?Q?1gtzv6Pd9YCa1ohkRaVRPnYEJ6yucO11SpHwXChT+ibB+A5EuuNzRIhzU7oZ?=
+ =?us-ascii?Q?sjzQVvxyGyBa2SKAr7mbVmPq2smCpncamo9b+kNdZ9Keezd6DQu53JovdBlm?=
+ =?us-ascii?Q?Ciws/K8LGAib0IaWhTrNowc8sHaHIx7gI9E85Ywozn2EZM4crub+oSxJ6nLl?=
+ =?us-ascii?Q?jJzijNdTCqDwMLA+wzfvXLC0minCjQxjRKSkycEmGiNqG3YdWOYDwpKoPkzI?=
+ =?us-ascii?Q?3T2c1UHJZNUs6gwlnD42FAxdoJbZZ1RSOYj2f+4cO1J39aQ3g+iFto6qot+A?=
+ =?us-ascii?Q?a31x8YPHZrubbgFJIUaNXsIGdhzDLh4GVXVc17jdKEO5bSzQIRTLGMseZ0UL?=
+ =?us-ascii?Q?q5PPErhW74Q5dqTIoHCLAkO9y/c4iLGarNYjsLJcoKckWtbGQwGu0YM7QLMo?=
+ =?us-ascii?Q?WsykUiZLsG1W6cAnYjp/vktwnCcj3zxIEfc6/ZdEPzDbE2ts3ykUGUOB0i4q?=
+ =?us-ascii?Q?neGAyFubGPJHVhlB4ve1CC8KdDF1/nhzOmhuLBrjDfVCfRprZTmbxRc0JZ9n?=
+ =?us-ascii?Q?TE+1GR78AFGdZ9xD8qO+RiSJ3e7l4B3H0VlFtPiCGokCwgIMLAa/7NlZN9Ja?=
+ =?us-ascii?Q?xhfTH2AcFisRZktwQ5IvKDXzo/Hu3JyJ7mhnU4CiOkAa0OzOs7/w8Y5SLTA7?=
+ =?us-ascii?Q?q+C+5NOk3GFRIuLfFq0pcLc6BNfOriO+/JcYwg6S2XFWUJLjYWhroX05NpEN?=
+ =?us-ascii?Q?cI85S3qWPZA9KanIlgNmyHyzMJZjZ2hJZ0P2ZoDCaWm5c6JS26rdt7n7X/xL?=
+ =?us-ascii?Q?PfmSUReseFpbBz4G4HTwdRlnzsaqa96G98JEf5UaExP+PqpAA/MtCau42ejU?=
+ =?us-ascii?Q?lSbaHBgDvfHXyBGMvX5l//dkkLELtdRHP4non4PUqDmpJfAb+iKMbFwKRCfZ?=
+ =?us-ascii?Q?MX7o2ZybSU0gKoAvIUJEB3Sjl2aSZPyrX8fuRqXluqNzxLUVdR8pAWwEp36L?=
+ =?us-ascii?Q?OGnYCbWayxGpHOH/ilq0zyUU5MCxrk4IwKguOOoAdLdzWRV9PTsHUGXops0P?=
+ =?us-ascii?Q?eoI6uD527j7iJO/SJlJyoAUklqpnn29ON3bwd66q0dmt7/mfetz9+w8G9sQp?=
+ =?us-ascii?Q?LwX5g0mp7Hp4VpCWA7v+WuJBiw9Eebb6EgUpa5L2Dlcp0TvBIM8Fr5ljAIin?=
+ =?us-ascii?Q?r1bpfVarHMnDUhMOZOx8KZLzaBXC+W+ibuVIED/BJpnUBw30SdYh8+nP/p+N?=
+ =?us-ascii?Q?gPJ1rXmQTyAwKuOVOtQ5RZJ96TFsbJ0VKhO7jI89o4X9dWRvYObzvg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?saPhps7H6M14j+4hhMDsw4Auw4YeqSZPIdkIX8FgbeBp5poIK3u+hyeOizwJ?=
+ =?us-ascii?Q?5X/CNwE3YET5w1p9ITYzyOGzZjmUKqE/es8BChAopL9SnohkpshmEAaVIrbp?=
+ =?us-ascii?Q?bbD5pzw1kEhEpx5Zw2bHMGrjM2C1DD+hGWKl0jOEa3C5aD1moEGO2mjVH1o1?=
+ =?us-ascii?Q?mt5bKAUmgUBpMFNRKeDkDvCGMpkJ/NQpb59YKMNnNdEsqh7AeeJE9DXZBJtB?=
+ =?us-ascii?Q?VAaehZ1Ur79HxRhEgQSiAoPy3ptIFGkowpM1L+8iAe3zer6F+rLg+Od2PJcU?=
+ =?us-ascii?Q?tbwr9d/OU1g+D45C8RISMuDv0Me9m/AFBrv81Ha60MMMVR1/drKnbbt4Hjv6?=
+ =?us-ascii?Q?BhAHcvr+k8+ojv7R30ZnDv4l+pi66XfYY/SYdEO4liIDls7lzXlDErwbFB3C?=
+ =?us-ascii?Q?K7OJluFzcX9j9KYfX06Jr9h+r8MX8WNXw8SB8HfxKAahQamDSOCQO54q62U2?=
+ =?us-ascii?Q?0WY9W0JsjCJEdNW7PpriDvq3YLMTj0WO9FrBnzbU7p92Jg4Ug/Y4264T+V6g?=
+ =?us-ascii?Q?ZaFY6vKOVAX8ysSX/QYjI1E0tgxoiAOJ5UEr/OxYgEaPJIiEl6nIurwd1Jth?=
+ =?us-ascii?Q?B1wvV3kUqRPk1m0RPZdlKwNAW5dgOtgpgzO2lyYnQLSMplS/+NKVsuCz8n3v?=
+ =?us-ascii?Q?tfzOHLIOWM7kbdU87qVijJb211UapVforZ19y/6Xcq1JdczuTFJ7pMyJoN/8?=
+ =?us-ascii?Q?+zEsJ+JyMP281ZXmDb7a8YIDehW0JK1eI0xZHKCbGU0kuiNkwVPLY2McLXb5?=
+ =?us-ascii?Q?pE3XpuTGS9yQ8+KtPmq7VbZde76WJv6uWfaF6dl3nwcDUfMSMIauehBRbAQy?=
+ =?us-ascii?Q?5KB852yali8CJyfrEvXGfo+gwhTyS4VoCAU/OOXxpVv+pYCX35mD/yKsQvcT?=
+ =?us-ascii?Q?YSGb7rOyymCM3qN/GCNXrgWy8AI7HQJcywXGcuZY3oZq8IwS1/hAGgv3jd6h?=
+ =?us-ascii?Q?lkcFL5KiRhfgWYpLayBCYhlwAxnqyffFnKNCPmMZsqBlXsCVdnGfCr2fW26E?=
+ =?us-ascii?Q?3ObNkwe85I7pRwRwQ2OSK5OfgzU6Lr7KyQXCofrJWsIaH4tRqxiqlUZYbN4u?=
+ =?us-ascii?Q?aAGCVaVPKAlagQY0PHs5kFGRELs7ojxereWEU9ikvYgy+rIJOakbSb8ZWQdU?=
+ =?us-ascii?Q?j5VdYAy5NLc5L9WOD18Mxeu/qQYjoUGfrGtkpNsLjfZEqZcPu9mvqm9uk4++?=
+ =?us-ascii?Q?fClS/VjVIOd9aqv/FLqbaMg5mQNsdsIR355DXOlMCnZKKwNgBoU+B7mN78/g?=
+ =?us-ascii?Q?DklZrNOK6Nc/lNczJaxA0zE79tOolW599a2S1bYEFlUvWWnOIvBHRdbHTP7B?=
+ =?us-ascii?Q?TgnXwlSiaVl/bOAgLvkWwAjcZLbRodOJjCDNw/SeRhcJHRNBbDGwyxxNVDZk?=
+ =?us-ascii?Q?x5/aWTUL1oM8E/eqQRbbL2Y8wmOPxJtcXwGYzqElktZ7Vp/oyAC685goAqyr?=
+ =?us-ascii?Q?0vzFhACGrUNHDB8d5OaO5U1NmksQ3fGx2g74ErvnTp/pVklozWf7Mi0FZnf/?=
+ =?us-ascii?Q?9N1IRKb4hqXyhO9bbZcJ9tWc8fnUkbqbSl1vv/ubSxPvNHbtLWG/82C6M33g?=
+ =?us-ascii?Q?dOercfzfbV/7QGsrBoveqG1TZYrIT+99qP6+nOoUxupJWy/hx21gSUGcegP7?=
+ =?us-ascii?Q?Tg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-opp_pcie-v3-1-f8bd7e05ce41@oss.qualcomm.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56f083d0-3d34-4fc3-d032-08dddef90ef4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2025 08:19:03.5325
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: w8H7cgIva5p38vEb+8x+oJDw4YDP/psHlJccZ3Yaisy3IBzIpk9+Jc0VDe038cSpfdy/P8bDV9Aq2VR1JPmL74c/W/yB3BOriH9r6fj+AR4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7757
+X-OriginatorOrg: intel.com
 
-On 19-08-25, 11:04, Krishna Chaitanya Chundru wrote:
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index edbd60501cf00dfd1957f7d19b228d1c61bbbdcc..ce359a3d444b0b7099cdd2421ab1019963d05d9f 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -461,6 +461,15 @@ int dev_pm_opp_get_opp_count(struct device *dev)
->  EXPORT_SYMBOL_GPL(dev_pm_opp_get_opp_count);
->  
->  /* Helpers to read keys */
-> +static unsigned long _read_opp_key(struct dev_pm_opp *opp, int index, struct dev_pm_opp_key *key)
 
-Move this to the end of the list, after _read_bw() i.e.
 
-> +{
-> +	key->bandwidth = opp->bandwidth ? opp->bandwidth[index].peak : 0;
-> +	key->freq = opp->rates[index];
-> +	key->level = opp->level;
-> +
-> +	return true;
-> +}
-> +
->  static unsigned long _read_freq(struct dev_pm_opp *opp, int index)
->  {
->  	return opp->rates[index];
-> @@ -488,6 +497,23 @@ static bool _compare_exact(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
->  	return false;
->  }
->  
-> +static bool _compare_opp_key_exact(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
-> +				   struct dev_pm_opp_key opp_key, struct dev_pm_opp_key key)
-> +{
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf
+> Of Kohei Enju
+> Sent: Monday, August 18, 2025 5:18 PM
+> To: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Cc: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; Kitszel,
+> Przemyslaw <przemyslaw.kitszel@intel.com>; Andrew Lunn
+> <andrew+netdev@lunn.ch>; David S. Miller <davem@davemloft.net>; Eric
+> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
+> Abeni <pabeni@redhat.com>; kohei.enju@gmail.com; Kohei Enju
+> <enjuk@amazon.com>; Paul Menzel <pmenzel@molgen.mpg.de>
+> Subject: [Intel-wired-lan] [PATCH v2 iwl-next 2/2] igbvf: remove
+> redundant counter rx_long_byte_count from ethtool statistics
+>=20
+> rx_long_byte_count shows the value of the GORC (Good Octets Received
+> Count) register. However, the register value is already shown as
+> rx_bytes and they always show the same value.
+>=20
+> Remove rx_long_byte_count as the Intel ethernet driver e1000e did in
+> commit 0a939912cf9c ("e1000e: cleanup redundant statistics counter").
+>=20
+> Tested on Intel Corporation I350 Gigabit Network Connection.
+>=20
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Signed-off-by: Kohei Enju <enjuk@amazon.com>
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
 
-And this after _compare_floor().
+> ---
+>  drivers/net/ethernet/intel/igbvf/ethtool.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/net/ethernet/intel/igbvf/ethtool.c
+> b/drivers/net/ethernet/intel/igbvf/ethtool.c
+> index c6defc495f13..9c08ebfad804 100644
+> --- a/drivers/net/ethernet/intel/igbvf/ethtool.c
+> +++ b/drivers/net/ethernet/intel/igbvf/ethtool.c
+> @@ -36,7 +36,6 @@ static const struct igbvf_stats
+> igbvf_gstrings_stats[] =3D {
+>  	{ "lbtx_bytes", IGBVF_STAT(stats.gotlbc, stats.base_gotlbc) },
+>  	{ "tx_restart_queue", IGBVF_STAT(restart_queue, zero_base) },
+>  	{ "tx_timeout_count", IGBVF_STAT(tx_timeout_count, zero_base)
+> },
+> -	{ "rx_long_byte_count", IGBVF_STAT(stats.gorc, stats.base_gorc)
+> },
+>  	{ "rx_csum_offload_good", IGBVF_STAT(hw_csum_good, zero_base)
+> },
+>  	{ "rx_csum_offload_errors", IGBVF_STAT(hw_csum_err, zero_base)
+> },
+>  	{ "rx_header_split", IGBVF_STAT(rx_hdr_split, zero_base) },
+> --
+> 2.48.1
 
-> +	bool level_match = (opp_key.level == OPP_LEVEL_UNSET ||
-
-Why are we still checking this ? You removed this from freq check but
-not level and bandwidth ?
-
-> +			    key.level == OPP_LEVEL_UNSET || opp_key.level == key.level);
-> +	bool bw_match = (opp_key.bandwidth == 0 ||
-> +			 key.bandwidth == 0 || opp_key.bandwidth == key.bandwidth);
-> +	bool freq_match = (key.freq == 0 || opp_key.freq == key.freq);
-> +
-> +	if (freq_match && level_match && bw_match) {
-> +		*opp = temp_opp;
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static bool _compare_ceil(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
->  			  unsigned long opp_key, unsigned long key)
->  {
-> @@ -541,6 +567,40 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
->  	return opp;
->  }
->  
-> +static struct dev_pm_opp *_opp_table_find_opp_key(struct opp_table *opp_table,
-> +		struct dev_pm_opp_key *key, int index, bool available,
-> +		unsigned long (*read)(struct dev_pm_opp *opp, int index,
-> +				      struct dev_pm_opp_key *key),
-> +		bool (*compare)(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
-> +				struct dev_pm_opp_key opp_key, struct dev_pm_opp_key key),
-> +		bool (*assert)(struct opp_table *opp_table, unsigned int index))
-> +{
-> +	struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ERANGE);
-> +	struct dev_pm_opp_key temp_key;
-> +
-> +	/* Assert that the requirement is met */
-> +	if (assert && !assert(opp_table, index))
-
-Just drop the `assert` check, it isn't optional. Make the same change
-in _opp_table_find_key() too in a separate patch if you can.
-
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	guard(mutex)(&opp_table->lock);
-> +
-> +	list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
-> +		if (temp_opp->available == available) {
-> +			read(temp_opp, index, &temp_key);
-> +			if (compare(&opp, temp_opp, temp_key, *key))
-
-Update *key and do dev_pm_opp_get() here itself. And same in
-_opp_table_find_key().
-
-> +				break;
-> +		}
-> +	}
-> +
-> +	/* Increment the reference count of OPP */
-> +	if (!IS_ERR(opp)) {
-> +		*key = temp_key;
-> +		dev_pm_opp_get(opp);
-> +	}
-> +
-> +	return opp;
-> +}
-> +
->  static struct dev_pm_opp *
->  _find_key(struct device *dev, unsigned long *key, int index, bool available,
->  	  unsigned long (*read)(struct dev_pm_opp *opp, int index),
-> @@ -632,6 +692,46 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_opp_find_freq_exact);
->  
-> +/**
-> + * dev_pm_opp_find_key_exact() - Search for an exact OPP key
-> + * @dev:                Device for which the OPP is being searched
-> + * @key:                OPP key to match
-> + * @available:          true/false - match for available OPP
-> + *
-> + * Return: Searches for an exact match the OPP key in the OPP table and returns
-
-The `Return` section should only talk about the returned values. The
-above line for example should be present as a standalone line before
-the `Return` section.
-
-> + * pointer to the  matching opp if found, else returns ERR_PTR  in case of error
-> + * and should  be handled using IS_ERR. Error return values can be:
-> + * EINVAL:      for bad pointer
-> + * ERANGE:      no match found for search
-> + * ENODEV:      if device not found in list of registered devices
-> + *
-> + * Note: available is a modifier for the search. if available=true, then the
-> + * match is for exact matching key and is available in the stored OPP
-> + * table. if false, the match is for exact key which is not available.
-> + *
-> + * This provides a mechanism to enable an opp which is not available currently
-> + * or the opposite as well.
-> + *
-> + * The callers are required to call dev_pm_opp_put() for the returned OPP after
-> + * use.
-
-There are various minor issues in the text here, like double spaces,
-not starting with a capital letter after a full stop, etc. Also put
-arguments in `` block, like `available`.
-
-> + */
-> +struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
-> +					     struct dev_pm_opp_key key,
-> +					     bool available)
-> +{
-> +	struct opp_table *opp_table __free(put_opp_table) = _find_opp_table(dev);
-> +
-> +	if (IS_ERR(opp_table)) {
-> +		dev_err(dev, "%s: OPP table not found (%ld)\n", __func__,
-> +			PTR_ERR(opp_table));
-> +		return ERR_CAST(opp_table);
-> +	}
-> +
-> +	return _opp_table_find_opp_key(opp_table, &key, 0, available, _read_opp_key,
-> +				       _compare_opp_key_exact, assert_single_clk);
-
-Since the only user doesn't use `index` for now, I wonder if that
-should be added at all in all these functions.
-
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pm_opp_find_key_exact);
-> +
->  /**
->   * dev_pm_opp_find_freq_exact_indexed() - Search for an exact freq for the
->   *					 clock corresponding to the index
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index cf477beae4bbede88223566df5f43d85adc5a816..53e02098129d215970d0854b1f8ffaf4499f2bd4 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -98,6 +98,18 @@ struct dev_pm_opp_data {
->  	unsigned long u_volt;
->  };
->  
-> +/**
-> + * struct dev_pm_opp_key - Key used to identify OPP entries
-> + * @freq:       Frequency in Hz
-> + * @level:      Performance level associated with the OPP entry
-> + * @bandwidth:  Bandwidth associated with the OPP entry
-
-Also mention the NOP value of all these keys, i.e. what the user must
-fill them with if that key is not supposed to be matched.
-
-> + */
-> +struct dev_pm_opp_key {
-> +	unsigned long freq;
-> +	unsigned int level;
-> +	u32 bandwidth;
-
-Maybe use `bw` here like in other APIs.
-
-> +};
-> +
->  #if defined(CONFIG_PM_OPP)
->  
->  struct opp_table *dev_pm_opp_get_opp_table(struct device *dev);
-> @@ -131,6 +143,10 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
->  					      unsigned long freq,
->  					      bool available);
->  
-> +struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
-> +					     struct dev_pm_opp_key key,
-> +					     bool available);
-> +
->  struct dev_pm_opp *
->  dev_pm_opp_find_freq_exact_indexed(struct device *dev, unsigned long freq,
->  				   u32 index, bool available);
-> @@ -289,6 +305,13 @@ static inline struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
->  	return ERR_PTR(-EOPNOTSUPP);
->  }
->  
-> +static inline struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
-> +							   struct dev_pm_opp_key key,
-> +							   bool available)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +
->  static inline struct dev_pm_opp *
->  dev_pm_opp_find_freq_exact_indexed(struct device *dev, unsigned long freq,
->  				   u32 index, bool available)
-> 
-> -- 
-> 2.34.1
-
--- 
-viresh
 
