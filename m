@@ -1,158 +1,175 @@
-Return-Path: <linux-kernel+bounces-775641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21C7B2C2CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:11:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 232EAB2C2D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83F82622496
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FAC5A4169
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A437433470D;
-	Tue, 19 Aug 2025 12:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5413B3375A9;
+	Tue, 19 Aug 2025 12:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfqpuK/M"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="hGu/EWT2"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013019.outbound.protection.outlook.com [52.101.127.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E876334707;
-	Tue, 19 Aug 2025 12:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755605496; cv=none; b=G9pASLloxck53vPFZXNIMxziIcllcnwnD7uWjM2C82cdTSeoYYtGt23oY6Isq5nu6AsC/b+0xdcgOUimPFIg7+PeJd/jkz8hyQJq7Yp422CPJnBjem4x8ZbPfGUrB7lw9NmDrUDDkQmM9xe7Et3lHHbAOqXIf0EeNDMBBNZL9y0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755605496; c=relaxed/simple;
-	bh=ghTe/hJO8m8TU6lItqGvP/g3/v2V2hM+Y5Q774nzWew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OHzPWjl2TH3r5ykTHQegfcnefsUhllm4sfZkhLlIF+HfHJbLCHf+/8BJr/h4cEgfI3lRNWp3UbcYxxYSAIwj/9GQGpWtPB7rm3JfVP7IrFf+V5Bxlhmwk9POYoKOXqYBUkBGNEgfpOmrIE8y22gEz3SnGDVtPFGRyh2as8cptBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mfqpuK/M; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b46158e11so227795e9.0;
-        Tue, 19 Aug 2025 05:11:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755605493; x=1756210293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRI96Tnd5IBAwt0UVHPzAxc8vO83yPZkaLZ/vLMLJLc=;
-        b=mfqpuK/M9OtTaHgJzhzOBnnMds7sb3vFcHrdUbR1ddB/APtJBBim6uizUIANj162OT
-         EWTpDcc6Otic9zHbM7lTcZR+iwRLgZPBvxSlMwusCykLhsE6WVcav/olfXt14h0GXsl7
-         FmBnjD6Mra0UsY78s+udfSILaQKkOMcsPPw/lgQh10Uvwb5MQGBVEfb975WLdvAI4gwk
-         RaPKfZbsFSENY7xv+9XdjdzDszynkELKcgeKvhhg0cQ97LBfMyR9PXLwnoFG9mHSn3Li
-         W5dFsJVeORh1vGKYNLuG7wRIBFFM3sxEEftstP8YNCdbhwTuV7DmC62gfdvVHdo4W0Xq
-         NsVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755605493; x=1756210293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KRI96Tnd5IBAwt0UVHPzAxc8vO83yPZkaLZ/vLMLJLc=;
-        b=uLlbNaZH116D4K95mgwcMws0g1mY/df2+awM52y0q5cXwADdUZacIVT1xsMH8YiU/d
-         ZFCwZCJA90ZkFpwDD9rUti/ycsIRqt6PHErG2a+bDi6A2Dnuwq0x+cr5Fx85cPdqeU6L
-         rCgKU0hRPr7pAUqkbVzJZHcBdYr+/iJ4/AH+tubRxw2BCge2cipT62GnoMxWeR5if7Lq
-         LqYlG9awVbTQmHObzd1Jy+tpU+nqUh8GPktpV+ALVia3chgtMYJM5NqQxKzO/zZ8lSN9
-         LW4+ME334ohpkcsF5XR1wiZPDCzDsSlBDQtO22Ld558JPHjxA5libsIs/cm7MGpfaHve
-         AnYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCD94z4VAEHkNXtzUWASjJGjUEG1beVF4KVkfov64mQx7o0xW+azjwbXQhQjIU7UnhodHeJTEo@vger.kernel.org, AJvYcCWY3VezC5jS4qNjPqQyQ83JgutHsQ4bFoDq09k+AFFYmZT/su3HWyFdxlQowtICfCXDHV3RA8JSMWwPosY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfo+GDsAipFzvk0rqkh9XZXLpc0/2L74lbR+G7gUKGcrmGy3pi
-	5aD6Sf26S8ApuKA0Wf2vefng/rOjWvMH/y/uLoLEk06Yli2Lxo0tVFMb
-X-Gm-Gg: ASbGncvLU15sIDloCvmYIHwmOo0SRAZ+XIv1CsRTWMBFMTl+gEZbUM4AJ4wjl8b4f7N
-	cFD0NTuj0dsFeTW5UdbxdM87jTh4FdirKASCHHktX08IuFA2BeA4Q4Xa7Q3mTYdppVbkBLgczU9
-	qjyYL5MMwcl6BfQu4l67rYfCB2I+CYNk+TG6j9SJ7JSM3/3AcqxBQyPp/m9Z8s4edgBPMeP9Vkw
-	0mHy/NzbfAZ66sEaegdrxnK2xMZIJ4ulSxx7RyH8hrLqMR5raRXf8gqEDdP5iiSTbYEyfRDjnhE
-	qdzYom9Rr3fGha4OxiJr3iQcpktk4Le4y0hj5cC0Fxg5jtKxR0bCSMxnwWLqRWcEPx/J8p/lJDt
-	gKIdCdYi04RIiykE=
-X-Google-Smtp-Source: AGHT+IHb3g0KqyXlO1gF7yGcFxPS1MfSocspJ6urB4KB840Hl2rTj3z6kqq4Ksvh20FMSCtf6nPWLw==
-X-Received: by 2002:a05:6000:24c9:b0:3a5:7875:576 with SMTP id ffacd0b85a97d-3c0dffac5camr889442f8f.1.1755605492696;
-        Tue, 19 Aug 2025 05:11:32 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:5508:97d1:7a8e:6531])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074d43b9asm3467612f8f.24.2025.08.19.05.11.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 05:11:30 -0700 (PDT)
-Date: Tue, 19 Aug 2025 15:11:26 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v2 3/8] net: dsa: lantiq_gswip: move definitions
- to header
-Message-ID: <20250819121126.y7jyc4xtvadnjemv@skbuf>
-References: <cover.1755564606.git.daniel@makrotopia.org>
- <cover.1755564606.git.daniel@makrotopia.org>
- <a6dd825d9e3eefa175a578a43e302b6eaae2b9dd.1755564606.git.daniel@makrotopia.org>
- <a6dd825d9e3eefa175a578a43e302b6eaae2b9dd.1755564606.git.daniel@makrotopia.org>
- <20250819105055.tuig57u66sit2mlu@skbuf>
- <aKRb3R1l9XLr3DHw@pidgin.makrotopia.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC0520C000;
+	Tue, 19 Aug 2025 12:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755605550; cv=fail; b=pGphEN821FaLObPFXv7rdVAFWgsi3kK2Gwxm/qfboo5DikGvJ0p/Iql3pkdNwhNYerK8ToymvpijPxbBD9YtbOKXK/+JXK2uiFEo+ZZxLK4hILdBtkV1x+Hg3gjUVCWt2mJwE5NCKZf0mFVODgAbHYWXOPw0PthzCr927tAr6OQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755605550; c=relaxed/simple;
+	bh=CCwDXkjf0h643h7x4M2zGSUZWWXmRykx1io9ph9vpRA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mPrpftM/nRmAR8/xwduLOvJOZ4jjLEve1EVrW4GRnvG/Ov7J2HSVdRN12ccBmpgfXZi3CB8ATsci/SeDBDEkltYoPGR6KPHVyVUVPlmAIXJykE9cvB/nP9fEZFpitYN36K7uv4vCECqQTCp4SX8pWr7zrfJM9WwFPsFyvuTEMOc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=hGu/EWT2; arc=fail smtp.client-ip=52.101.127.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gFuVvAvWiOApblIrZY2I7uRTprzGN27eG2MMmO2m4uQznopywppafMStiLqTI2LGuDlHQykwN7ydOuWmaUHEZUshDYcCHpL/ijDfXkrIXlf6QYVtN++Nw0iJvXiGGZTt409QKRLgMQRxaM2NNi6/WmHJ82KkBcSKAV3Ax7yRAQgRDxHfomEE49zpFitqcnXmcL0La9wg4EfjFA2Iqoa8uM5tB/Dg5c5E34AwJQXFrGoAMB8fIlofqjkSuo8GcFjjDhoDbHuVbnBy2Ug87fuVDfVCPfJO0phQCX8Z6vd8L4BW8sJy+RrMAMKcQvFGmIrHgUid5TmOmyrZDlg5ly313g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SpJPGMxV/f9LxVyWnaSUPX8PIJ/q0uF4DHAU/hMYeew=;
+ b=pCMyU2mfBC8176N+3MRR84FfIN9cd5cOpn89LFFvMjniuNmxM3bQ+67jFdvV4XD8qXJG4OQd7NhBcNn4JHc/G1F7Ee1LOdp/cW75NTPDMyzpCEnfmqwVK/5k/3/85dlIKVUTqcf74rz+rMub6lbJ9Y3Eee/FcWNa26leYq0OrSBUBdB82bW6kNpjD+PRZJJyJneZZcjEFVr75l+AmMBuno90yNb9d1d9XN3CV6kaSR76DmsO3hlPlaEPLxiD/YSi8N1HzuwWivHVsUWEWbpl93QxORRtB1MkWplW2vukZQNPuV7ri9iuHXrnQpvVioIBMHzOJOLBaIGojVtI0yBfIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SpJPGMxV/f9LxVyWnaSUPX8PIJ/q0uF4DHAU/hMYeew=;
+ b=hGu/EWT2/bwlFMmBykmng6tnNawWl8hX+M8IV3TYHbF65nvO+2ahwa+3okKSWscvWuEGWmXasq1TBkpwklC11N2SX5Uz3dnvh0Dc5fus+WpeSsi5EDqBWED3LoGXzPwmikYis66Gftjmfy0RDFhiIjSa+SeY9VL5CmsgFr6OjxKgZBJcWvGhFoi28p4I7XYs0iTub5jjCLMRK5H1fSruAxs1SmAJLN9lzEVLKmYU3+JLVSPHtOrVynD9vf5Mcal4Tiiq1o/NOG7fLk3bzEDEH0wYT6SoWnFS5UBT+R1jV+sJ0k2PRtEt0ZVatsG0JyE+va0BhC5hctSmZESDF+wYbQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TYZPR06MB6828.apcprd06.prod.outlook.com (2603:1096:405:1d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 12:12:25 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 12:12:25 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	"Somashekhar(Som)" <somashekhar.puttagangaiah@intel.com>,
+	Rotem Kerem <rotem.kerem@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	Gregory Greenman <gregory.greenman@intel.com>,
+	linux-wireless@vger.kernel.org (open list:INTEL WIRELESS WIFI LINK (iwlwifi)),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH 0/2] wifi: iwlwifi: Remove redundant header files to clean code
+Date: Tue, 19 Aug 2025 20:11:50 +0800
+Message-Id: <20250819121201.608770-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0023.apcprd02.prod.outlook.com
+ (2603:1096:4:195::11) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKRb3R1l9XLr3DHw@pidgin.makrotopia.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB6828:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9ba9440-2b76-4216-fc8f-08dddf19a89c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|52116014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?z44SfdNvQ4R38jlxSJPxAk860wVJHqF7aqNLAR4T84ZwJG9epqPVdTykb9ln?=
+ =?us-ascii?Q?SmcO1PZaDLzQtwTkG+Zc+Sji47MswlprdxDYeuaqxnwgs7w4ZKCGHx/iYYwf?=
+ =?us-ascii?Q?5xTbAEAIKesdK4sVTQiwH0BKwW2U6od8IuDzyfM8HZrNP2/wRioEq3TQrif0?=
+ =?us-ascii?Q?pODF/NBjHLL7P4su5dcol/NKs5WJ6kBcJ+SlWXnlnnbJpjfhgNGp3rcxY6NP?=
+ =?us-ascii?Q?D6zx7Nw2GB1WD14y7jZXrHQiQtxx3h9iL3jacVPt2cWNyiVjKdbF2QC+PyO0?=
+ =?us-ascii?Q?wtKeRNORDlCh7egFs2l7DvdIawKifjsTStKuHHUVk0wWQB+7kxhNnJRC1Vq5?=
+ =?us-ascii?Q?ZxjEyd42tVHUb2eMxipYP8OJWU63ATjg/gmyYLj3Ngxhq11HTtg6No7bJETP?=
+ =?us-ascii?Q?yvDSZDyxpM+y9oaYlh5TN4BZdDF+zvmdZcUXhc+QzpRe15l8/eP23LJyaN0c?=
+ =?us-ascii?Q?CZHbAOM7thrXz2b+1PFvivDjHItchjif3GQqTso3he2U8ZzFfQX7mBnFYsxl?=
+ =?us-ascii?Q?A6Xpg6X6yvMp6qtjmEhDNW7mSLUz+pmsdgnOSpJg7WCC/D0iiV26Oo3mTBho?=
+ =?us-ascii?Q?0xTbC9TdL8w+BV41zfJvRzCU6yM2FAhNt5Sjh/dVPwB9Op1lOOyJzzsbsd9d?=
+ =?us-ascii?Q?vXLjTjknuXUlnGe2bbIuzvbGDP5n8EBlzgZidYUyxn5THQQlevsDisT9PLYK?=
+ =?us-ascii?Q?bVedpaoCN3SF+OilvRci3uu0Se/JoofhLuefobnWvNfx3EgpNfozrgpD2xdr?=
+ =?us-ascii?Q?NQ5GhOZtl/oubrnQ3GDyPIPOK2CBnnFxEk+wKBOVrELU5SbYEZrUnWFS8nJx?=
+ =?us-ascii?Q?omChqDD7MohaUTQOhrS66IV4WTuyfc2DH7iJQgAZFdQExeWrhuY7gc9M3aBR?=
+ =?us-ascii?Q?5R0lXL8epvvBqgzOrkBRlb0NpQkV4WYIpxcQp4spRAVaAS8i7iVoFf8fCMFN?=
+ =?us-ascii?Q?b0GocmO3N26ly75ReHv8CUSY+XL1Dx/lrguEyrpb3RNi4YHVNjLODx1srvkq?=
+ =?us-ascii?Q?3OtWyYjPNeHP/aPgJdXs4ekFzgmE5ATGx/VD1TDD9jskFIUmyyJISZKA9nge?=
+ =?us-ascii?Q?dz370aZw0nZ6gjv1qjBfunC3836hJUm0faXL0mfPog5ZwvJShrsgBvpFjKLe?=
+ =?us-ascii?Q?DzLmefbfd6VrkazklKjO9Os4a/SZ87QPeFM1yrGuzAQdE68b6Gj6Uuqp1O6V?=
+ =?us-ascii?Q?ulyHAvT7rG4ykiqBpJ5LYfluiLwuDMLNqSN5+PXnljri0jv4ligl6d09oszt?=
+ =?us-ascii?Q?l2KYy7x0PHNLCznefLdTfNvitEeTfJQmdHGaKTEp39ugFyDfWSygS+wHebtH?=
+ =?us-ascii?Q?AKQ428qnd+pH+/wlLSsJz1QD5TvlJNjZJhY+clVyiIFxwt6MHCw2W6wvlmiJ?=
+ =?us-ascii?Q?Wqq3yCBN7xYTp0IYhlcBx/Lqbj+khAfMtPNAjP2aCQhUwXiYgsaD6tyOThUG?=
+ =?us-ascii?Q?Zf2zQykai40ud3TFevXKO+TIXFpI7d/yEJmb8OVTRU5WUzFXRJjIHNfHcJkj?=
+ =?us-ascii?Q?GE2VW70rV3kDSIQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BrQX6adpUs87vcxFfHqOAMi3bvT2/fylMcTJ2dXI0HWKCQGw7VT2kOzQi30p?=
+ =?us-ascii?Q?voS+hIn/BzU8ppWZqXfhjlLh07mnHqqUqSYU2Pto3KFdwgNUT3LRv/NV33Pq?=
+ =?us-ascii?Q?YXd20g47EvQAxMkT4YLJZ4wpJqwx8g1WfxHoOM9UFh46VLxDmGe4YKroMFHd?=
+ =?us-ascii?Q?eOYyYT422d9IoB3S43rqCidsG414QTQ4djGmEulU5Hi8CmBa6YPj4E2Jiy5I?=
+ =?us-ascii?Q?jqp9yPqNc2Or27k2bzlgXI/L8KS0RLhMulNTuu6rMEakvoQj2tBgBm89qsr7?=
+ =?us-ascii?Q?LaGGBF7PdCxTPPh4gH9YDs9QLGd/JOY+jdDoKqj6fhm1GgoYd2If+chWQSn4?=
+ =?us-ascii?Q?QQQprQZLWT1hWa6ZnBitZJudt0guKrmcSZMGe11FEs4ZX7rE4RDdvM9mifAN?=
+ =?us-ascii?Q?RxfRNq7quZW7k5to/4fe0Qb3FjRxzffGwSF33BU6+E6CQbyiwjyxC3ggu4me?=
+ =?us-ascii?Q?vi9XfRYXQXu7HKrIBEX6lqzrVTIqqp9H2bqD8v7jMAniW7G7u9BHLmKuE78I?=
+ =?us-ascii?Q?cBaDReMTKnOJidKwxE0uARJP/F/Av4Lj9vleCS7DITuiUeN2fQAyswJB4BO3?=
+ =?us-ascii?Q?1NvBykTLBI45aH8gHKg6FFEA1GZhjsxK32oj1Kcw/VeqVpxhjpOPtUT6GFFp?=
+ =?us-ascii?Q?fJOFS6A2ETeuTvZ/UrCYmhXtk4jlBvrMNKRYSCuvKI6RrOs9IMGoUkU/1mqV?=
+ =?us-ascii?Q?3bLLlajnGxTNiv93RiFlQWquo+enCmEiFRoecHuvYzk+EeYGhWQ+7qmV1Lv7?=
+ =?us-ascii?Q?N5aQapR4sK4hD6PQFKXMljsLjXLtW6donJ+eQD1u22Kf1qJzHDrRsmLSM/nT?=
+ =?us-ascii?Q?PSVLV1mWfcxvuoQZRKhCidR+oqpeIXi6rGMJk+4Gumyh+vxSpDyzDAbU0AT+?=
+ =?us-ascii?Q?NAgm8J6ilt0JYkqA38gg0FCUlstJkUngyCoWDa2rq0rp4SK6oIwrLe24rmg5?=
+ =?us-ascii?Q?W0JFvIsbn9iZs6amBdhJ82yiTq8VIDyREmuVVIhz2m3fY50C71VHpCMLCJCG?=
+ =?us-ascii?Q?xc3qRcssetRSPsLGqtWGxOj1XTKLptZHOkif5vqEM3AIG1SBiFPHUM12aXy+?=
+ =?us-ascii?Q?YjlhOqjnzjvGC+DnAzwqL7MuEu8Tn8gUOyVX+LIy3+kFsVDpkzOEgXOCSiOK?=
+ =?us-ascii?Q?iy4JjGpTbEyOAYcf5AYPswb4upsEewqiSOvZYwo7FsWsWGV2+9xa/dTOZz+G?=
+ =?us-ascii?Q?2JF7RDkTAeiYcFIy1SO4eFUyZSNLde0aegTsxlOZWBObFCQvQk56iHsib0+Y?=
+ =?us-ascii?Q?piqlxytG45aeTRTscM3DlFt/Qb8uTb6qhq+LhYR6FCG9rvpJJv2lCcO4sOdg?=
+ =?us-ascii?Q?oKSQaT7sOPTrxq734QpA4Vmar+8lC2vg9UiI8bxi6JBlw64ng6IZMGHWG66m?=
+ =?us-ascii?Q?qle4WoNkXrDmPdhpmmOt+Q+18FxM3I5YkGMpRN4gd4yA1KtGpVbdGWd+kKaq?=
+ =?us-ascii?Q?m7XByzFkW6rZ3zj7SoymTJPreQlFatAdoOAmk2yMRI2N/Ez+fo5LGUzN8Zr0?=
+ =?us-ascii?Q?MYON35AKvIF3jR/Ss+iHnllAbREYR4u3VPG7lNmA6ca9uzqY+GLlj9SaAj20?=
+ =?us-ascii?Q?b4XxrntaICt4/wQ3b1AWU4K+H1ur0ggOgpxlLSpj?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9ba9440-2b76-4216-fc8f-08dddf19a89c
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 12:12:25.5249
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pA6Z8UE6P8Azx23xE9FT1U+WTqUiDj5f6DawQd5vGdo2u/6zlsIb4Hg+hgXUZ0nlojHIPh81sXfS+Abkc4tRgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6828
 
-On Tue, Aug 19, 2025 at 12:11:25PM +0100, Daniel Golle wrote:
-> On Tue, Aug 19, 2025 at 01:50:55PM +0300, Vladimir Oltean wrote:
-> > On Tue, Aug 19, 2025 at 02:33:02AM +0100, Daniel Golle wrote:
-> > > +#define GSWIP_TABLE_ACTIVE_VLAN		0x01
-> > > +#define GSWIP_TABLE_VLAN_MAPPING	0x02
-> > > +#define GSWIP_TABLE_MAC_BRIDGE		0x0b
-> > > +#define  GSWIP_TABLE_MAC_BRIDGE_KEY3_FID	GENMASK(5, 0)	/* Filtering identifier */
-> > > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL0_PORT	GENMASK(7, 4)	/* Port on learned entries */
-> > > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC	BIT(0)		/* Static, non-aging entry */
-> > > +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID	BIT(1)		/* Valid bit */
-> > 
-> > The VAL1_VALID bit definition sneaked in, there was no such thing in the
-> > code being moved.
-> > 
-> > I'm willing to let this pass (I don't think I have other review comments
-> > that would justify a resend), but it's not a good practice to introduce
-> > changes in large quantities of code as you're moving them around.
-> 
-> I agree that this is bad and shouldn't have happened when moving the code.
-> Already this makes git blame more difficult, so it should be as clean as
-> possible, source and destination should match byte-by-byte.
-> It happened because I had the fix for the gswip_port_fdb() (for which Vladimir
-> is working on a better solution) sitting below the series and that added this
-> bit.
-> 
-> I can resend just this single patch another time without the rest of the
-> series, or send it all again. Let me know your preference.
+There are two files with duplicate header files inclusions. Remove these
+unnecessary header files to clean up the code.
 
-I think in this case it's tolerable, because it's just a new macro, it
-doesn't change the existing ones and doesn't result in changes to the
-generated code. Not to mention it will probably have to be used - if you
-saw it is used in Maxlinear's SDK drivers for newer switch IPs, then I
-expect you will also need to set this bit, irrespective of my other
-gswip_port_fdb() fix which just has to do with DSA API compliance.
+Liao Yuanhong (2):
+  wifi: iwlwifi: Remove redundant header files
+  wifi: iwlwifi: pcie: Remove redundant header files
 
-At least I wouldn't push for the resend of an 8-patch set just because
-of this. But it's a practice I would pay more attention to, in the
-future, to avoid more serious things being modified.
+ drivers/net/wireless/intel/iwlwifi/fw/regulatory.h     | 1 -
+ drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-If current-generation switches need the VAL1_VALID bit set, and are
-broken without it, then the current arrangement would indeed be
-problematic and I would advise to first fix that in 'net', wait for the
-net -> net-next merge on Thursday to avoid conflicts, and then rebase
-this patch on top. But I wasn't under the impression that VAL1_VALID is
-needed for the IPs currently supported by the driver.
+-- 
+2.34.1
+
 
