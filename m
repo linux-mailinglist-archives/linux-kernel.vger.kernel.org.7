@@ -1,139 +1,122 @@
-Return-Path: <linux-kernel+bounces-775601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E645BB2C241
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:53:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C90B2C27A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49773BD9E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:51:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2A55A613A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A765E3314C7;
-	Tue, 19 Aug 2025 11:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0sgHGSs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F1D33472F;
+	Tue, 19 Aug 2025 11:56:43 +0000 (UTC)
+Received: from lankhorst.se (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1032232C323;
-	Tue, 19 Aug 2025 11:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DBA335BBC;
+	Tue, 19 Aug 2025 11:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755604172; cv=none; b=CF8Yct6uOSM4HHmGWE7vLRwpCxbtI2KSsHYYBx/LGaqPczDA2gKp7G/Gxv2t6wHBojUX4H+NI6VcT2xVCtOq4sfi6EyRZz7Xgj30+26fAb/NvBRStBlu65SL6ZL87vsrrtA9+3HqaVkF6//oH82353IsB1f0GidmwcHT54bsxvQ=
+	t=1755604602; cv=none; b=MhIyxWD75rRrXGTLT7wZ/1vgiU+DX7u1auTqbVugd7nR4HXvGQ7d+ylbipOPYNDM/WnPyPrOJzPpr8wg1gmrCt7CcOXziaiA4m5m7nkFOs/+8BKutM73r98bu+1hwD0s86dNwtmcLnLsyfd1+kATM0YWTuXXViedIa/WKsmLns0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755604172; c=relaxed/simple;
-	bh=I9+81pArqE7MexOVxf+17csPrj9JT4C0Iku6aEw9/vc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=kgW0O48eEqo2cblhX6lHofs+vjzGgJvi0KIvVDhzIXwsEhWiTtBvBq+wvkEgyC7UYGC+hPjj0jdSCGHLRvg6A1W7TPalV9mYOUxt7Joy6qvu/O1tAy9qZkP03dO3BGXFOxHC0TYGXYlhFqtR5ey6lidJCA0BuRsCWBqQqFhfinA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0sgHGSs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC37FC4CEF1;
-	Tue, 19 Aug 2025 11:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755604171;
-	bh=I9+81pArqE7MexOVxf+17csPrj9JT4C0Iku6aEw9/vc=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=m0sgHGSs550VMnsNyZqMx1V/yqwEthhAqTI0c4BU9iqzQAn/yYFh37WhdrYb1R6PD
-	 G6KfDbtEiUmTqbWw2XwV8B2punfA8JIVR20RsugasPvzeTR6Gnr5Cz1Vfnc7HYUxpZ
-	 gqXqnu26hgcehsaYgVfz6M0eM/Jb5qeGw6RGKS+5ZVUXwUr6/5x14OC/X+G7dNyRLd
-	 xAEs2x+tgxEJldw9S4+lwxXta33mfrj5VfnHi/eB3/k1CnWVsRFBECzrOyoqfq8Sw7
-	 vCdGz7Wlo2s4BNSzeAcmLjHt9Rva0JCUNEmuypy3F2MCU8f0kIH9++3fvAHsEWQ2fg
-	 3ut3VeET5N5pw==
+	s=arc-20240116; t=1755604602; c=relaxed/simple;
+	bh=GIISownnYtCgjery2+EEV+uJeLjYClQqLzwwUwlCxJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=neX40R6Ei1+dpPNH8SLSBNAN2RiVvOpdJElsdlkid1p3TOH2Tblm3D7Hc0yX8HcznCUDABbTXVCCpTJ7Tt/st2gHos02hVK1UttQcqEL2mtC0v9hGHm5G71FxAYKlNeu21nHZ6mw5Ww9W+K7wec3VeFeAE/gVKCO4my0BE2KMYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se; spf=pass smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lankhorst.se
+From: Maarten Lankhorst <dev@lankhorst.se>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?=27Thomas=20Hellstr=C3=B6m=27?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <dev@lankhorst.se>,
+	Maxime Ripard <mripard@kernel.org>,
+	Natalie Vock <natalie.vock@gmx.de>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?=27Michal=20Koutn=C3=BD=27?= <mkoutny@suse.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"'Liam R . Howlett'" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC 0/3] cgroups: Add support for pinned device memory
+Date: Tue, 19 Aug 2025 13:49:33 +0200
+Message-ID: <20250819114932.597600-5-dev@lankhorst.se>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 19 Aug 2025 13:49:27 +0200
-Message-Id: <DC6DQKE6LVNQ.3BBD8WF8XGROO@kernel.org>
-Subject: Re: [PATCH v2 5/5] rust: maple_tree: add MAINTAINERS entry
-Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Andrew Ballance"
- <andrewjballance@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>,
- <rust-for-linux@vger.kernel.org>, <linux-mm@kvack.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250819-maple-tree-v2-0-229b48657bab@google.com>
- <20250819-maple-tree-v2-5-229b48657bab@google.com>
-In-Reply-To: <20250819-maple-tree-v2-5-229b48657bab@google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Aug 19, 2025 at 12:34 PM CEST, Alice Ryhl wrote:
-> Similar to and just below the existing MAPLE TREE entry.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Liam: I'm not sure what you prefer for the MAINTAINERS entry, so let me
-> know if you want anything changed. There are also a few other options,
-> for example, I could just add the files under the existing MAPLE TREE
-> entry? The get_maintainers script should still send any relevant patches
-> my way because they also match the RUST entry that has a wildcard on the
-> rust/ directory.
+When exporting dma-bufs to other devices, even when it is allowed to use
+move_notify in some drivers, performance will degrade severely when
+eviction happens.
 
-From v1 [1]:
+A perticular example where this can happen is in a multi-card setup,
+where PCI-E peer-to-peer is used to prevent using access to system memory.
 
-	>> We should have another section for the maple tree, since it's not just
-	>> used for mm.  Your stated plan is to use it for GPU allocations and the
-	>> code doesn't live in mm/, wdyt?
-=09
-	> Sure, I can add a new section if you prefer that.
+If the buffer is evicted to system memory, not only the evicting GPU wher
+the buffer resided is affected, but it will also stall the GPU that is
+waiting on the buffer.
 
-Maple tree is already used outside of mm, e.g. for regmap stuff and I also =
-use
-it in nouveau. Hence, I read this as moving maple tree to e.g. lib/ adjusti=
-ng
-the existing entry.
+It also makes sense for long running jobs not to be preempted by having
+its buffers evicted, so it will make sense to have the ability to pin
+from system memory too.
 
-I personally think that - of course unless the affected people prefer other=
-wise
-- it is usually best to keep a single maintainers entry for the C and the R=
-ust
-code. Maybe Alice can simply be added to the existing maintainers entry?
+This is dependant on patches by Dave Airlie, so it's not part of this
+series yet. But I'm planning on extending pinning to the memory cgroup
+controller in the future to handle this case.
 
-What do you think?
+Implementation details:
 
-[1] https://lore.kernel.org/all/aJW3L3SEVUl_AVvN@google.com/
+For each cgroup up until the root cgroup, the 'min' limit is checked
+against currently effectively pinned value. If the value will go above
+'min', the pinning attempt is rejected.
 
-> Which tree does maple tree patches usually land through?
->
-> Andrew Ballance: You mentioned being interested in being listed here as
-> well?
-> ---
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 26053163fe5aed2fc4b4e39d47062c93b873ac13..4a52d884e36eafe1c81922720=
-7123c51caf02ee5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14674,6 +14674,16 @@ F:	lib/test_maple_tree.c
->  F:	tools/testing/radix-tree/maple.c
->  F:	tools/testing/shared/linux/maple_tree.h
-> =20
-> +MAPLE TREE [RUST]
-> +M:	Liam R. Howlett <Liam.Howlett@oracle.com>
-> +M:	Alice Ryhl <aliceryhl@google.com>
-> +L:	maple-tree@lists.infradead.org
-> +L:	linux-mm@kvack.org
-> +L:	rust-for-linux@vger.kernel.org
-> +S:	Supported
-> +F:	rust/helpers/maple_tree.c
-> +F:	rust/kernel/maple_tree.rs
-> +
->  MARDUK (CREATOR CI40) DEVICE TREE SUPPORT
->  M:	Rahul Bedarkar <rahulbedarkar89@gmail.com>
->  L:	linux-mips@vger.kernel.org
->
-> --=20
-> 2.51.0.rc1.167.g924127e9c0-goog
+Pinned memory is handled slightly different and affects calculating
+effective min/low values. Pinned memory is subtracted from both,
+and needs to be added afterwards when calculating.
+
+This is because increasing the amount of pinned memory, the amount of
+free min/low memory decreases for all cgroups that are part of the
+hierarchy.
+
+Maarten Lankhorst (3):
+  page_counter: Allow for pinning some amount of memory
+  cgroup/dmem: Implement pinning device memory
+  drm/xe: Add DRM_XE_GEM_CREATE_FLAG_PINNED flag and implementation
+
+ drivers/gpu/drm/xe/xe_bo.c      | 66 +++++++++++++++++++++-
+ drivers/gpu/drm/xe/xe_dma_buf.c | 10 +++-
+ include/linux/cgroup_dmem.h     |  2 +
+ include/linux/page_counter.h    |  8 +++
+ include/uapi/drm/xe_drm.h       | 10 +++-
+ kernel/cgroup/dmem.c            | 57 ++++++++++++++++++-
+ mm/page_counter.c               | 98 ++++++++++++++++++++++++++++++---
+ 7 files changed, 237 insertions(+), 14 deletions(-)
+
+-- 
+2.50.0
 
 
