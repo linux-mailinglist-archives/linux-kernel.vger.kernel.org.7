@@ -1,117 +1,325 @@
-Return-Path: <linux-kernel+bounces-776525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D652B2CE7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:25:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91186B2CE7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C4427ACBD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B8F31C26273
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF6D343D9A;
-	Tue, 19 Aug 2025 21:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC59343D9A;
+	Tue, 19 Aug 2025 21:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kJ1XyVjl"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="MJ15i9/q"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2103.outbound.protection.outlook.com [40.107.243.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210A333CE99;
-	Tue, 19 Aug 2025 21:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755638711; cv=none; b=cOPbCGGgi7xE32417hdHJH3gOYfWCgj5X+Le1rRSklH1tpX+pthTgRBtv41QFxlhpB0QHyIFfkgEV5ZpYYGX0UMM7njYt49BZxMk3SqzgOBYXkoPfGQR/8lklnVUtvx3MhVbWVMYSG4PAHUjH5TS/hpOT3I9v5zyaycYRxJRaQ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755638711; c=relaxed/simple;
-	bh=gz4cSJidYvlRm3l98kEQpnBrC6PXb3bq3dh8HN1CvVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qidUkNzU//aaEshd9L1tfO1H1kPJIyhDEzjgtsVub1eallSvCktlCASYxcFSba2H/ndPsF075fN7frN6SQ+0n40CeufHv2mrWlIB7r9VNRc82gtx+TbFQGoSrJcdCtIdy5VzQDdvLc8IlNAEcartRPILJZQTjv0NT9hB09zrPvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kJ1XyVjl; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9469D40E0206;
-	Tue, 19 Aug 2025 21:25:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ghLrb5KTflZr; Tue, 19 Aug 2025 21:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755638701; bh=xNjVKGDyo0LdT07rIb/GdeJXA9lh/FC32YYUKXTYqCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kJ1XyVjlF3OZQOVI1MfOatgUUQc2yslNBcCWiJ93iOMsytWJt1Y0op+ubx2Mlh9Gx
-	 c/fRvDd7nCozp6MlMn14BmuLvVmmsxxjOZSnnFTj6uSssn33ZZpifnGeOG+/taIE+H
-	 80bUOHn4EtnPY3VWYv2zQNOpvqHtW6ZvaZG3ObeprDcwqv4miAwS4kbCbTMDvQNXm+
-	 NZew+MrIuG8IfQL+fEA1YqoL6LwTH6S3DV/HLLwtZULNGIUFGA1Mux0CzWUQ0g1meg
-	 QoH+Y1qO7VV18RtUlGgkbgO5VnxDdax8XlgUfzRRFjF11SXjgBF1aOtnhOqf/WnW7R
-	 dvq+HpC91Yj2PTUIOBox2msG9Y43Xfh42+fFU/FFqtiqwfSuwS8oEcfVXTZJnwYI3n
-	 6kfDJ+H2xGPcm31F88ZjFJnA1CQzwP2ww/Gu1n2d98ZMzghylFXGyWjclyIloUbeb+
-	 mAVl53VZfjijMrtKn/LlRpj8Z+0gw4a68dFMQ3ylALuQh0KcRMiV9bT/FcWNDHwrzc
-	 ZT5v7+QDeZrGEWYaGm86Wzv0UPAQ0Tp02aO32Qrn5Db5m3wW3/i973cphIRhAgeNv7
-	 w02o9lE3lurUzZVI7pTkyUMPr8OorXtWHLo1aAovvwIQy0E4s0RhnisHUnyFmYfR31
-	 jlLqOsIgsAZeBodWMJP2eURw=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8393240E0232;
-	Tue, 19 Aug 2025 21:24:42 +0000 (UTC)
-Date: Tue, 19 Aug 2025 23:24:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-	Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	"Xin Li (Intel)" <xin@zytor.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v3 0/4] x86/cpu/topology: Work around the nuances of
- virtualization on AMD/Hygon
-Message-ID: <20250819212436.GIaKTrlN6tjmuXJvxs@fat_crate.local>
-References: <20250818060435.2452-1-kprateek.nayak@amd.com>
- <20250819113447.GJaKRhVx6lBPUc6NMz@fat_crate.local>
- <e3a8e247-0ced-4354-b7cf-25ee7beb9987@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ECB21578D;
+	Tue, 19 Aug 2025 21:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755638781; cv=fail; b=dXaBodGOTAugNrGqPfeeIkESFBowIDB9BGQEsStlI+dWDZNwKBDKymdMT17ZyBZLAim10R0d0Ap1C36s6Ibt936GZV1CQeTRrw44GUjFENHgLrLyesAAhgV2Ud2EUw3Y5qYzVJjFs5Jzv1+5RtyI51svEIDu+/+cCC2PUD74jQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755638781; c=relaxed/simple;
+	bh=4FZge57ecbLWqh9xZWYxm641j5xWgawLSrMzQl3FuWo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 Content-Type:MIME-Version; b=hXU/4V4G7V4p8t2JOTY5xWs4Ir1t0H6FnoYvQvmTcFXPzIBmU31aXTw4ajzgEOlRSYlN+WthINEl5nGzzcCpBcgZwE44Rms2Gn/6ihOZcFyZ+2OvE96CALmSD7Nfrt7IFWWA6h6TXyaSatSubFEdYK+9d4/NxnY4qzfghIwrSWw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=MJ15i9/q; arc=fail smtp.client-ip=40.107.243.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xJgk9lrgA8JBB/GqXN724SHunT4kVPRcD92Q2BfziNbg8LDzTKVQaiNPvBX1VWSAcwhcrN01qs+XM4n2YeilZrWrAa1H+WhYDZ7/9j0cw47+dIUUC/eTzBAic+CHnxsZqlrD14xRdY0/2BybKjSeg6W3KsbCYWfkpS0ay55snXX9gp0lR9jQDFrnQT/laNOwW+uWgOR3x/UhcSj09PbeB2lnSBzhM80B3Jpau707hGww6SIfQBIPGbtZPA8x9gR04F4+TAv+9ygzADlY2y1hulkAfeD6cdhTFeu/3BE+9Vxgx89rpwnYsiXaXNZBcf11EEJ49E/TlGqarZ3U59K+ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZvIZvPGVnLGM2xp6bNBDjEAC6gQoW0codP4/hW9bt0M=;
+ b=E1nRx+/wnJdycMyWS4DyyJWoVmxTHdWRcwPC+2ZVtdXlxG3bHz1JfPVFQ/uPRuODSycI/59SdVuzTGN/XRonNOsvrpbBwZfo9gY7CHj6/+rjg8zKqFwcu9mqqln4QbIVRESmkGzNcZMo2EMOfpyR8S3Krntmwlzy2RzNR73Hgn2e0VZfTv/aaNsZCoomZNHIE0xPSPMENkc6TN7pIErdz/RKYK/5wFIM900lEGGa5Mbt5NEEkUYsz/hKzc/lCT3Enc0MDzTxi8aXz84L7A8cccllnH7wKAPiQn/ie40EfUWQDl6fwJ1gXTzZsqVVcTKZKKyTys74lYfiyw0lqwwy/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZvIZvPGVnLGM2xp6bNBDjEAC6gQoW0codP4/hW9bt0M=;
+ b=MJ15i9/qzA1SRQkHVwFPO5Ygf7sb7PkWRh16jwDJH6h8CB6t7oN7dUWmY+OIVNpho6kQCbZhhS7twmdHASEaQmyrlNLshh6WX03gUJU3yHecR2Mzux6w9ypd+vZOrjMQtWKfWGYX9YsR2WXWh+nx0psvHsjDgypYci0vwjHUIvw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ MN0PR01MB7681.prod.exchangelabs.com (2603:10b6:208:378::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.24; Tue, 19 Aug 2025 21:26:13 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%6]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 21:26:13 +0000
+Date: Tue, 19 Aug 2025 14:26:08 -0700 (PDT)
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: Besar Wicaksono <bwicaksono@nvidia.com>
+cc: will@kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+    suzuki.poulose@arm.com, robin.murphy@arm.com, ilkka@os.amperecomputing.com, 
+    mark.rutland@arm.com, treding@nvidia.com, jonathanh@nvidia.com, 
+    vsethi@nvidia.com, rwiley@nvidia.com, sdonthineni@nvidia.com
+Subject: Re: [PATCH 3/5] perf/arm_cspmu: Add pmpidr support
+In-Reply-To: <20250812233411.1694012-4-bwicaksono@nvidia.com>
+Message-ID: <44873beb-f296-5ea8-c349-ca2d5f8eab94@os.amperecomputing.com>
+References: <20250812233411.1694012-1-bwicaksono@nvidia.com> <20250812233411.1694012-4-bwicaksono@nvidia.com>
+Content-Type: text/plain; format=flowed; charset=US-ASCII
+X-ClientProxiedBy: CY5PR15CA0202.namprd15.prod.outlook.com
+ (2603:10b6:930:82::17) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e3a8e247-0ced-4354-b7cf-25ee7beb9987@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|MN0PR01MB7681:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b17887a-0d5a-4391-cbff-08dddf6705c7
+X-LD-Processed: 3bc2b170-fd94-476d-b0ce-4229bdc904a7,ExtAddr
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?0Z6g5Yye7YN1xR6Bh9C60dy2XLnCFiLyaDNhyB75uyNAblQwkqR9ixeMp7h0?=
+ =?us-ascii?Q?nbAUXrt9KHKP2ldg0Ll3g5PL7LU6Y1Ws4XIiebICcttVuDnZC0GRo1mInIUT?=
+ =?us-ascii?Q?88KTp1/jd1t3DAo0NoN2hu24hbrw0ICj0erKZvUQ+FMba2sHOVQF7YPX3wvD?=
+ =?us-ascii?Q?lr9eTGeJM08KTvloqt/aQsgsAdmcUvRkwD1gw0WEBtbP0W4uTQTgcW3NBKQQ?=
+ =?us-ascii?Q?yfvaTzFZSffS2xYHuNGVCYyptP1HVC1h5/+bOnkXnz2Z8nCXAcRTrpVUqQPA?=
+ =?us-ascii?Q?SylU4j+s+ficZmOdCB+TKGrv6sBIcNkMhjHAP2hCcHowkOLw4RKMQmOmLJIg?=
+ =?us-ascii?Q?iFTNGM+H6RW+OLa2XyNMjwe2PoMiKJiRLazLmYMkJ6ErJU/QvLCjuUlfyQxR?=
+ =?us-ascii?Q?E/dDj/rrUhwXQxr5YFWC/IJ67uWry/C9a2hA7wo9DD3kUPMfxTAPpmSnYgqY?=
+ =?us-ascii?Q?TXkY2/gVnUYO5zRLwDyj2tYEzXC4LbUdTYiMQD/w68wSvmd3VSNeQW55ucvq?=
+ =?us-ascii?Q?k7drfMlpYc9E2LA4gyXmPRVQ5p/Z+YUJyAmurcy7hQcFKhUOH6eLAYpUhdxW?=
+ =?us-ascii?Q?EaRywiAgt2JVp+pX+Iu1DO+Rw3eu6nQfqd0uYJaCBNdCpX1WXPNclgO72pUl?=
+ =?us-ascii?Q?Db5rQqP4IopN7VVIZr0PPPKt53VG5n+1ASj+dqjCf20syH3K0JJOEFmKwp9k?=
+ =?us-ascii?Q?kk4PyL3OHzdOljkMDprHyGwNHIrEfbBPkJ8K7snCg3Oal0T1vDaJYZEqsjNr?=
+ =?us-ascii?Q?yZUxsKxB7QIh0UsrMtTKMmB463RP5V5El3ptTQTlUl76R0XBinqWucNbwbTR?=
+ =?us-ascii?Q?NtycWTINHKCy6/US5vIge37pzLo1vNE3WvBxCCiIDruj/Yu93uT8FKMT8LNb?=
+ =?us-ascii?Q?VbMhcZ1sH+hLImvSmRfpu8I6fDlQN0JyPoEDhuo9or/pyKgSYTzRMLX+yJGi?=
+ =?us-ascii?Q?FO4gzZWeHygUdvfH8BYhlRu0isfOzF8sUcfH9YDcofjWUfFtHgNSGo5FAwuI?=
+ =?us-ascii?Q?8RtuKmiYM76F81ZV596XDr0koeBQk+Gw96qC5HZ/TAgWZOPQLKjr2yxoWkF/?=
+ =?us-ascii?Q?PKi2xm28E+F6ieGK9K0TAPbKy1d2mZcsiytLv1OKtWXdTVTmPDCGHt15iWbA?=
+ =?us-ascii?Q?r+D8nBmgbRAU6n4EYgBykb+zwBKfNnf2ESZzW2C8qElel9fE/WyfDkV8/Yzj?=
+ =?us-ascii?Q?JjKDoXuW4/AiNzjceywGPgt/NpWRJDArPQYq1zZ3x/SFPY//DFzOu4TmUaqj?=
+ =?us-ascii?Q?EnN3GFrLFLYletZdpyr0PNcFYCrMh4sB4iE6KHWCmbdV0Lmw1FE/0IaAPxlb?=
+ =?us-ascii?Q?WOKEZ5Pe0A2jc+cG99oyDJOKnJ1C2ci+PrqtOMg4vfXHjPoSqOoUGoX4+M6c?=
+ =?us-ascii?Q?peWNbyKaPM1bParm56MeZBy30TufRdQXcMhUbKxmAVKw1b9b/3Ivf/o2s/bB?=
+ =?us-ascii?Q?+qbqyaFszHz/QBFIpr49+RhZZm5bkf9749fET/cdEopjVQ2P43LN0g=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?bBi3TQOqtwH4PrlXnxARX7Vtv8fDOKu1ytnzpmcNRmbW38uvhC6ZRlyHuxOp?=
+ =?us-ascii?Q?1Q97TkJ48G1fiTYsR3t5m5qLUV0joiTYCuIrBk5JCQjy+3E5bCFgf7j0ETKV?=
+ =?us-ascii?Q?dCgfef+hX0UV1QZL0x7HCeLrecdrDbCGysWsCTaN60YSLjkirEktWQSQzd4I?=
+ =?us-ascii?Q?88q1x8euCTPd9finUkHF/14S7Q49lkvk6MLSZ8shIgVDtSEZL2JUWwhMH/N6?=
+ =?us-ascii?Q?t9mdlyS21C3JsQ0zZD9PIcn10vbVFsZcH82HsNm6dtqyeorVt5wMIbjJRopj?=
+ =?us-ascii?Q?789eCtZPJPByBwZVb+JsqK4PRQJNNC8zI3bVJMOEUyqnh+M4kkXnAGVGM1dw?=
+ =?us-ascii?Q?rUPogCjB0G6OR4BsanloeQNNknQ0e49N2Q5xiw6ob/gT3BxhnoC2CVJiOo+0?=
+ =?us-ascii?Q?q41PnncmdjepTPOfdFmjkyJYFIzehvJfWge7uOw6L03YtP2bpshB7dzxkZIJ?=
+ =?us-ascii?Q?YBK2Lx1oAys3Yjr5TXx26shcq5Gt5S0UUr3HpN3/BvlnqRsmzlGpmDyM2kSx?=
+ =?us-ascii?Q?7Q1K0edCYjx2gsaZ9qY1uAPyngYAWRSbfGojYR6Cs14dnJxIlJtW124btTIu?=
+ =?us-ascii?Q?vYmWl7qF/VLTFwLPcfwWfRsCUJGXTwnALrP2lHvHZd2qlDXLIOQ5no9ZhISC?=
+ =?us-ascii?Q?SOAEmf34ZBIwOYSE7JYslQwwItG5VhT48bu1mzPC9o6VAFw5UhBhZxY5rVHe?=
+ =?us-ascii?Q?p+/A1/vC9a5iNCt1Zg2+PDTMBTwdjHaj6H4ww5GNodl/zAcKRfIDooMqzKQK?=
+ =?us-ascii?Q?Svj+voYFVWeXJeXJRrE5mNqX/Sky66wgdZjhAIvtObctm9KhN4/frQGUYsNj?=
+ =?us-ascii?Q?Fa5q99m8yBh7ts+mCbqzo+7SGYbauhUHI7ab40fyvpOsYG0N8CJ70l30RDkU?=
+ =?us-ascii?Q?LMPxymodi+08yjAuEGoBWA3Igfaded6vQPPW8ExQGM5glTCWJIajN5X4kIVt?=
+ =?us-ascii?Q?M2SsVJrVLWcyrar8xaMAna2RgLvr5b+dteEodVRbk5QtJ0LfdgASYcWH1hm/?=
+ =?us-ascii?Q?hLY2h9HkFwTmmSeaOqqhWYhCA55EmL9evqrJn6sDGow2OSvir7+YxuwtIxT/?=
+ =?us-ascii?Q?5RSCPAzaXP55VV2uGPa5qcNZ4bJwv8lHtRv7wduKpBC5ek6Ryg7HDsnHdvKe?=
+ =?us-ascii?Q?k23wJAdqpSvqE5543JyxNkH5AdR7l53mL2knsuDFr5LzLKwbbkzmkFqOuerz?=
+ =?us-ascii?Q?BI2nXI1AZVdN8pYwK5HcZQPnFWzzmKrgADuZwfuSxcHshBQQj5IFbAduzJKG?=
+ =?us-ascii?Q?rOy6UvCXwC9ERf7B0/3DYCVNAFmYSEen4i6b2Mg/EnxipmS6plNRL5DF7wJR?=
+ =?us-ascii?Q?1OMWlCsv1oAOYqiVGGhdO0XCp2UQ9e7ouKIcLplz90fdmAxeuzPtMra7z4a2?=
+ =?us-ascii?Q?on0Pum5nr8/8f5cku/qaYydztHUMbnz1RaMgOdBxVYeP6ylIRTz/50IhI1BF?=
+ =?us-ascii?Q?Zypo4aOnTiGMZg2aM/NfuAK57EXEEfTDj9AiaId4cXJbhlvOe62LMYiawYRx?=
+ =?us-ascii?Q?IxlBCwfD5axRwMugtQBxV5AUqZ/MvQ7O2Pl8p3+b8ZNsBqyqWFUmXJS6yG74?=
+ =?us-ascii?Q?ZFu4/riivkbOBn/sySZAxvwen9J+QQoNQcJyMSIdgpOmQew8Y90yzdp9P4Op?=
+ =?us-ascii?Q?79XQqDUFUiDk6y5HF32NWQY=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b17887a-0d5a-4391-cbff-08dddf6705c7
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 21:26:12.9542
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6gEfB0yWQDaUUeS9Pmlk66qPAasZyc3Q6ugqieFxfqmm9qCzL/DNSNiMb9lhDxEKdrXF/9+1h9ZdFGFIjbjdKsjgHjtTjqekrPEQzfJHCyeJ6qW1dC6eFmxSapj8TK7n
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR01MB7681
 
-On Tue, Aug 19, 2025 at 07:58:52PM +0530, K Prateek Nayak wrote:
-> This is possible, however what should be the right thing for
-> CPUID_Fn8000001E_EBX [Core Identifiers] (Core::X86::Cpuid::CoreId)?
-> 
-> Should QEMU just wrap and start counting the Core Identifiers again
-> from 0?
-> 
-> Or Should QEMU go ahead and populate just the
-> CPUID_Fn8000001E_EAX [Extended APIC ID] (Core::X86::Cpuid::ExtApicId)
-> fields and continue to zero out EBX and ECX when CoreID > 255?
 
-I think the right thing to do is what the HW does (or will do), when it gets
-to more than 256 APIC IDs - "cores" is ambiguous.
 
-Perhaps something to discuss with hw folks internally first and then stick to
-that plan everywhere, qemu included.
+On Tue, 12 Aug 2025, Besar Wicaksono wrote:
 
--- 
-Regards/Gruss,
-    Boris.
+> The PMIIDR value is composed by the values in PMPIDR registers.
+> We can use PMPIDR registers as alternative for device
+> identification for systems that do not implement PMIIDR.
+>
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Looks good to me
+
+Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+
+> ---
+> drivers/perf/arm_cspmu/arm_cspmu.c    | 44 +++++++++++++++++++++++++--
+> drivers/perf/arm_cspmu/arm_cspmu.h    | 35 +++++++++++++++++++--
+> drivers/perf/arm_cspmu/nvidia_cspmu.c |  2 +-
+> 3 files changed, 75 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index 595e4bdd0b4b..347aefbd1704 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -323,14 +323,14 @@ static struct arm_cspmu_impl_match impl_match[] = {
+> 	{
+> 		.module_name	= "nvidia_cspmu",
+> 		.pmiidr_val	= ARM_CSPMU_IMPL_ID_NVIDIA,
+> -		.pmiidr_mask	= ARM_CSPMU_PMIIDR_IMPLEMENTER,
+> +		.pmiidr_mask	= PMIIDR_IMPLEMENTER,
+> 		.module		= NULL,
+> 		.impl_init_ops	= NULL,
+> 	},
+> 	{
+> 		.module_name	= "ampere_cspmu",
+> 		.pmiidr_val	= ARM_CSPMU_IMPL_ID_AMPERE,
+> -		.pmiidr_mask	= ARM_CSPMU_PMIIDR_IMPLEMENTER,
+> +		.pmiidr_mask	= PMIIDR_IMPLEMENTER,
+> 		.module		= NULL,
+> 		.impl_init_ops	= NULL,
+> 	},
+> @@ -352,6 +352,44 @@ static struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
+> 	return NULL;
+> }
+>
+> +static u32 arm_cspmu_get_pmiidr(struct arm_cspmu *cspmu)
+> +{
+> +	u32 pmiidr, pmpidr;
+> +
+> +	pmiidr = readl(cspmu->base0 + PMIIDR);
+> +
+> +	if (pmiidr != 0)
+> +		return pmiidr;
+> +
+> +	/* Construct PMIIDR value from PMPIDRs. */
+> +
+> +	pmpidr = readl(cspmu->base0 + PMPIDR0);
+> +	pmiidr |= FIELD_PREP(PMIIDR_PRODUCTID_PART_0,
+> +				FIELD_GET(PMPIDR0_PART_0, pmpidr));
+> +
+> +	pmpidr = readl(cspmu->base0 + PMPIDR1);
+> +	pmiidr |= FIELD_PREP(PMIIDR_PRODUCTID_PART_1,
+> +				FIELD_GET(PMPIDR1_PART_1, pmpidr));
+> +	pmiidr |= FIELD_PREP(PMIIDR_IMPLEMENTER_DES_0,
+> +				FIELD_GET(PMPIDR1_DES_0, pmpidr));
+> +
+> +	pmpidr = readl(cspmu->base0 + PMPIDR2);
+> +	pmiidr |= FIELD_PREP(PMIIDR_VARIANT,
+> +				FIELD_GET(PMPIDR2_REVISION, pmpidr));
+> +	pmiidr |= FIELD_PREP(PMIIDR_IMPLEMENTER_DES_1,
+> +				FIELD_GET(PMPIDR2_DES_1, pmpidr));
+> +
+> +	pmpidr = readl(cspmu->base0 + PMPIDR3);
+> +	pmiidr |= FIELD_PREP(PMIIDR_REVISION,
+> +				FIELD_GET(PMPIDR3_REVAND, pmpidr));
+> +
+> +	pmpidr = readl(cspmu->base0 + PMPIDR4);
+> +	pmiidr |= FIELD_PREP(PMIIDR_IMPLEMENTER_DES_2,
+> +				FIELD_GET(PMPIDR4_DES_2, pmpidr));
+> +
+> +	return pmiidr;
+> +}
+> +
+> #define DEFAULT_IMPL_OP(name)	.name = arm_cspmu_##name
+>
+> static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
+> @@ -362,7 +400,7 @@ static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
+>
+> 	/* Start with a default PMU implementation */
+> 	cspmu->impl.module = THIS_MODULE;
+> -	cspmu->impl.pmiidr = readl(cspmu->base0 + PMIIDR);
+> +	cspmu->impl.pmiidr = arm_cspmu_get_pmiidr(cspmu);
+> 	cspmu->impl.ops = (struct arm_cspmu_impl_ops) {
+> 		DEFAULT_IMPL_OP(get_event_attrs),
+> 		DEFAULT_IMPL_OP(get_format_attrs),
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
+> index e3a4dd068805..7eb150abc3b7 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
+> @@ -87,6 +87,11 @@
+> #define PMCFGR				0xE00
+> #define PMCR				0xE04
+> #define PMIIDR				0xE08
+> +#define PMPIDR0				0xFE0
+> +#define PMPIDR1				0xFE4
+> +#define PMPIDR2				0xFE8
+> +#define PMPIDR3				0xFEC
+> +#define PMPIDR4				0xFD0
+>
+> /* PMCFGR register field */
+> #define PMCFGR_NCG			GENMASK(31, 28)
+> @@ -116,8 +121,34 @@
+> #define PMCR_E				BIT(0)
+>
+> /* PMIIDR register field */
+> -#define ARM_CSPMU_PMIIDR_IMPLEMENTER	GENMASK(11, 0)
+> -#define ARM_CSPMU_PMIIDR_PRODUCTID	GENMASK(31, 20)
+> +#define PMIIDR_IMPLEMENTER		GENMASK(11, 0)
+> +#define PMIIDR_IMPLEMENTER_DES_0	GENMASK(3, 0)
+> +#define PMIIDR_IMPLEMENTER_DES_1	GENMASK(6, 4)
+> +#define PMIIDR_IMPLEMENTER_DES_2	GENMASK(11, 8)
+> +#define PMIIDR_REVISION			GENMASK(15, 12)
+> +#define PMIIDR_VARIANT			GENMASK(19, 16)
+> +#define PMIIDR_PRODUCTID		GENMASK(31, 20)
+> +#define PMIIDR_PRODUCTID_PART_0		GENMASK(27, 20)
+> +#define PMIIDR_PRODUCTID_PART_1		GENMASK(31, 28)
+> +
+> +/* PMPIDR0 register field */
+> +#define PMPIDR0_PART_0			GENMASK(7, 0)
+> +
+> +/* PMPIDR1 register field */
+> +#define PMPIDR1_DES_0			GENMASK(7, 4)
+> +#define PMPIDR1_PART_1			GENMASK(3, 0)
+> +
+> +/* PMPIDR2 register field */
+> +#define PMPIDR2_REVISION		GENMASK(7, 4)
+> +#define PMPIDR2_DES_1			GENMASK(2, 0)
+> +
+> +/* PMPIDR3 register field */
+> +#define PMPIDR3_REVAND			GENMASK(7, 4)
+> +#define PMPIDR3_CMOD			GENMASK(3, 0)
+> +
+> +/* PMPIDR4 register field */
+> +#define PMPIDR4_SIZE			GENMASK(7, 4)
+> +#define PMPIDR4_DES_2			GENMASK(3, 0)
+>
+> /* JEDEC-assigned JEP106 identification code */
+> #define ARM_CSPMU_IMPL_ID_NVIDIA	0x36B
+> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> index dc6d4e3e2a1b..b6cec351a142 100644
+> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> @@ -322,7 +322,7 @@ static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
+> 	if (!ctx)
+> 		return -ENOMEM;
+>
+> -	prodid = FIELD_GET(ARM_CSPMU_PMIIDR_PRODUCTID, cspmu->impl.pmiidr);
+> +	prodid = FIELD_GET(PMIIDR_PRODUCTID, cspmu->impl.pmiidr);
+>
+> 	/* Find matching PMU. */
+> 	for (; match->prodid; match++) {
+> -- 
+> 2.47.0
+>
+>
 
