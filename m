@@ -1,174 +1,366 @@
-Return-Path: <linux-kernel+bounces-775937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40F6B2C698
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:09:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5CFB2C69F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACDD1BA703A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12BAF16C549
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39874215075;
-	Tue, 19 Aug 2025 14:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741C32063E7;
+	Tue, 19 Aug 2025 14:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zyPWSPld"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2044.outbound.protection.outlook.com [40.107.212.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PGEkbVgu"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E771FC7C5;
-	Tue, 19 Aug 2025 14:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755612267; cv=fail; b=NPKV5QilZNj7Bx+YGG9svPG0Hp/8ZqrfjknNoOhOjFWMh057vzo4WgeMufSZUeOB+6r4XCjMpc5uh39BFi4cPJgQ2rG+py+QX4Lq4ItXHMkPqN4u6Qb/r81x4WQeiTBGWmi+vjvSgJlZa88sorWEx7AdUFcRL4pmEp5Hkjh2OqE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755612267; c=relaxed/simple;
-	bh=KTyLdPImNFFUOrlJ+tM/K2rCnijZdln8pWrjVZKnl1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=frcZUPOrH8FGm5KZwnb3WMK1GyOAf3rYuNXZpQxF8g8frsSrlVSw/NHl1ZzzjdciqCBeAQQgMUYZokeec8LAiJjK/UAjLZlUVBSuplFBUv/VgWJfNe1fa9GhReW60BYbz3cqESGW+XGKlZHWSOpRva8aeiESjN5hVnTvxiWX5SY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zyPWSPld; arc=fail smtp.client-ip=40.107.212.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N624HyVTt3JGIy+JBAZr1CP+t+8Pubm1T/Ym61QrjjQ2wZff++BRnJFstfhT+0gTFpJQTgTgzCDyGtCQEmrHmMI5cKQVJMt5Y7ZpXng7DwAlpphj/8/tUUmT7UFSSaNKKH2qTZWECddDbquceYnXBIr5zLMT9g/Iwmajq5acmutlOX4BOmLI9JOLX+5FcD7leetF7NTC7eFBIzP5i9K4nxaX6e8Q9g97ZkCq3+3oKgwv/nzJUV501XpOPqL8+KaWeV4rAGfB3cdVCSE7175LqnTZST2+udOKhXIwGwM6L71i88DSFT5AhwSukB0lzsXsVzlFNZu/dE1H+CkmJU3FtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D1Pkz3mOqZ4L1ZGIAPx6Vs5T6/vEQ/E6CoUc0plVBMc=;
- b=fUfuTwXollB/ThYD7vT3PmuJzidJntM0UmkIBWfGnQ4/NDsaZXD4W8zx3kiGMgoCkfZcSwrvf0xRwgum2tSGVk80Er6TCiGiUq+pdSEigW5cLI6ngg5oeyfeIdqHSDR2GLvHlBQo10iwAi6Q05NLy7DgrdBIX7RK0TF+mpFLD1LI4FSI1eoSgy27IcHYOjaQUQK2vSlq4kdSSU6ojDJoRjh4CKm5tNXUdKOqTgjBN5ik5ok+FxiJKcI06+q7w6ICJ9tTdbhVxF+OLx64ZCL3m7HZg1re+BcD0iBq4umO8+HmadQTxYfClsR7mHfnpWCETGRjnRa3kNmAtytfGnM9Jg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D1Pkz3mOqZ4L1ZGIAPx6Vs5T6/vEQ/E6CoUc0plVBMc=;
- b=zyPWSPldkGlVajdmu5ZlFA/eDL7fvGnd0dHYqB/Of+B5Riaq52RM3KsXXcuLqTTlFNhJG9chX/GIABIqONRybs5kKgNMD2b4abgoHJzC1yGOC8n3JEFrlVoPcC4AMQPoIsNWe69r64IUpMYKgadDMAPl3ENgmD/NtoR7bgHDjq8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- PH7PR12MB6586.namprd12.prod.outlook.com (2603:10b6:510:212::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 19 Aug
- 2025 14:04:21 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
- 14:04:21 +0000
-Date: Tue, 19 Aug 2025 10:04:11 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Charles Han <hanchunchao@inspur.com>
-Cc: rafael@kernel.org, tony.luck@intel.com, bp@alien8.de,
-	guohanjun@huawei.com, mchehab@kernel.org,
-	xueshuai@linux.alibaba.com, lenb@kernel.org, ira.weiny@intel.com,
-	zaidal@os.amperecomputing.com, Jonathan.Cameron@huawei.com,
-	colin.i.king@gmail.com, dan.carpenter@linaro.org,
-	dan.j.williams@intel.com, sudeep.holla@arm.com,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI: APEI: EINJ: fix potential NULL dereference in
- __einj_error_inject
-Message-ID: <20250819140411.GA389101@yaz-khff2.amd.com>
-References: <20250815024207.3038-1-hanchunchao@inspur.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815024207.3038-1-hanchunchao@inspur.com>
-X-ClientProxiedBy: BN9PR03CA0039.namprd03.prod.outlook.com
- (2603:10b6:408:fb::14) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D1C1EFF9A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755612345; cv=none; b=uG9i/VZp+YuVMEca8rPoS3MQpnOlnt5Wm1rm46YFWltZlMP8DFlp6UwUkd/J8JjnVyw1gZDgcyLLfDfvnzYDlYge5Bv7IwfW+NHADsheAb0SOSyDPrgmfNTqDTw9lwfS4b4rQOBF7ReJPGrFPquI+KR6Dqbaon46PiDvGw2mTbM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755612345; c=relaxed/simple;
+	bh=U9I9HNEp0+4Gz5xEHfaKauD4IVv3OHGVKeBcb/I6od0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DCuaNjiVbVvy09IE6W4NBEl6rNjuzs671XR5uqCkwCjTBpH7GSmujSjAfmodJ6o+JVYaioLSgodUW6R9w5NeHmdHScer/W/yQkWyFyVNHop9ja6L+51t4FnIVxkmySRYetxZSOFsKAs/vxK0JSpxtMqTxS45QIYJsIgeJdvuZjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PGEkbVgu; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61be874dcaeso273554eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755612341; x=1756217141; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a7IXcxSq366tXdmeyBNegwQEPnHuF26aW6nAQ3VNfA0=;
+        b=PGEkbVgu9NXAXUDLDXtM2rXxeLtnpVrPAkcJ5mgjaXoeAgOUoCSjmFAs0GNdsbCy8y
+         rh9PIohRWXp2prWZScagkpBdU/56QhfPQ458HsSIu8lnuSAxLw8e1TuCaNNdQaMLvw+x
+         alkDOGMtLgeX5LDJK8HttvHJ8SgdspKuv5E0/ITZs2DmlV7L+/+SzkKnW9T3d4T/dfFs
+         qoa1NU8v2m3U2NQEjhLW7OdXa5/Mw8VGzTiIUWjzx0QXhpkt45Q8C3Tf2piJxNzzhvMI
+         J6BdE7tGcgSI+BGu6uLZERCgujRPjKOA4sziYzJYuO72rtLBRSqYBtI1G+mAUulwqQ1m
+         MIig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755612341; x=1756217141;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a7IXcxSq366tXdmeyBNegwQEPnHuF26aW6nAQ3VNfA0=;
+        b=rAtHrfTqNyk5Y9snz8HhM/JHe1/JRTRIU+Vi8IjrACOyi58b+TCKvSCEjyJ7MYQ3s/
+         s/v9EXDtzpJklHxp86sF/D2Cai6mZKZJroy67hx+poKu32X5Nl5jFU9hTSHoctJZPKIB
+         qLMsqcapTfTHHFWXhb4n2CnUZx0YCUzAiYACr62YbV1ayjpIYE+aJLD3Hz6BIyLdH+2i
+         QvJsMxkpa2nOAV0Mv5OcpFRzIA424ypxBoEpI7u8noLwjhG6TWdfz4Y1OKdgYauOwNyr
+         mbeJYvT9PyawfwQa6aiATzj5SBQD16peeW+CxmDoaOd+F4DTgb+qa1sHImgJf0LKgO1P
+         dyEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnCEi9OlFW2zxTnTg6cqesSzUDkt+qtJ1wZ6GFWxafR/1OIDo252akcqbH54orM9AS8xcdsxb3lwIAWgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8AhACX8xaaF5Q2qTSrONfNdLrgeXMJaWnQuGHMbaZOXj8x7w7
+	JqeT9UuMzG7r4qC3hc/kAgXX9EmYa3KBcJcFBWGiPBNQwWq2zreK7OyBEF10hfA0ehw=
+X-Gm-Gg: ASbGncsongbh6JBkcp66O2qrMgy+ib6JTrQIr2DTU5ziZGKKNOf1+WGo/LduqA9oFYR
+	X4ANPkAYO03rZPYCtOymMVf0YDME0i9BpTCUubZqp62+qtWBZgNjJ2f+2x/xjhQU7SRC0Mbs+8a
+	tdB2TAG6PJ0CkKjaeiN8P8ngqOio1wnhAsloauf5zSDVVmIauP+tXhwaYaE2ZnMJERFC0QpF8tW
+	GZKYrrDequFcW99vlm9fysGMCNDxY84xr5XOgjo6KbhWXPuMkDJd7h71RxIP6gifkXYNm+s/sZq
+	7VCUsOZcl1I+ES/FecdbW4IY6DyMqUjZJgfOrnXCnLfo9rmtsxwERnIgE5DEpduZzeEKC1RCu3O
+	buYeahkJCrVMfnF2nB9oxFT2cH5mr/N/j8la2VMYfCSrMTadjn1KQ0YN3RYIZUvRigWQfXarYkh
+	A=
+X-Google-Smtp-Source: AGHT+IHjF7sm3BM6UqpsCOtViY+JAbenMV7/s4EAL5cMuLNS5sTyBZc8mLeIWMkrcU5gOa4R+PWZaQ==
+X-Received: by 2002:a05:6820:2214:b0:61c:60:a68d with SMTP id 006d021491bc7-61d919f3ae6mr1887604eaf.6.1755612340610;
+        Tue, 19 Aug 2025 07:05:40 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:990c:4d50:9c6c:f367? ([2600:8803:e7e4:1d00:990c:4d50:9c6c:f367])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61bec14b3cesm1082668eaf.27.2025.08.19.07.05.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 07:05:40 -0700 (PDT)
+Message-ID: <f8e95533-c486-442f-a186-5e746dad2f4c@baylibre.com>
+Date: Tue, 19 Aug 2025 09:05:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|PH7PR12MB6586:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6957e5eb-f1ad-4705-519f-08dddf294b72
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zMRI2e7MlXaV+xweoiUjsVZd1M7Eb37DqI5gPvLKZo4LETlpOA0M2Zvja1XQ?=
- =?us-ascii?Q?z//lcHNUoCwjfGEsI7Srj7E4nIjHS6eQzUgSR03+wcFZAmz1XCW4Hp6rUwuN?=
- =?us-ascii?Q?6MrVBL5Vk1OdkDYbTi+ExXNj23W8BMUJqiwf9PwN4jnbweJPjFKj2X87ULR3?=
- =?us-ascii?Q?zwoSQf6oIbqoBjYklp6+nrUsGUyD/W9GwG7Oj1KG9A6MWCPQqMRSENHdaQDD?=
- =?us-ascii?Q?fBEw2DMDPUAttbLyULLSMtAKh2ACHSUTre2Iy9RNwAldCJ3LDA2bsiFfEDw8?=
- =?us-ascii?Q?UDGaUBfRTsmIdDaOpNT7ywT1wwoyPEL1PPmzDSUud0ptcO7zik3ZNBh0bS5D?=
- =?us-ascii?Q?bGIo/l9s2n9CNXkWog9hWQH1j9d3mzxTLNDfDc4kiAzkjaK1BBCMM9ByI2Q7?=
- =?us-ascii?Q?6Y09DcTEpmvejjzeIx7T/dmQZrNViaoQBoDRIKLNc3TxB+0d5JtcFobpdM/t?=
- =?us-ascii?Q?SP34XvIPPkPpnuX5HeqDwE/ko76IO425FuEkGd2FVZNtIq7Re5f4bsgGiy4W?=
- =?us-ascii?Q?MMa+exAuGM3EVCU8Cnh/yb6W7AkRHykQnWqssjTqQBXc992y9RAc8ZyHRwDT?=
- =?us-ascii?Q?Ioi7T261/ZS28i+7dxFyyQ4zosSwXXbOycDemgBYZ046pKBnNKnnLgSWlAwG?=
- =?us-ascii?Q?dcZ3/dBn5ACkm63logO1XLobGzsItvSk4uPgKSx1tjYTLSOExefOOza0ZJyx?=
- =?us-ascii?Q?BhvxwDO0/JB425oFcR7e0L7F+1r+oMrEdQuHxIERv7BfxaWG0StyAT1QAjKT?=
- =?us-ascii?Q?XLdygPBDBkkXwjrKPkyVPUm7IdQldMh202v8ofZLBXbVTC+rRxkIAbVJwll1?=
- =?us-ascii?Q?BKC9/B7zSolTA5MxS4hBOrTQMYDJlHnvGpqtPPdsOPMkN5VfamE12GNrEzm3?=
- =?us-ascii?Q?gqNW23KJrmL2CG9ntvI4RNvv462+s/xvu4cf4QmQfiSC3ra4VL2rKfFHjGXM?=
- =?us-ascii?Q?+NEmMkBRH1JWukZ2hbeymDigN2J7kk+uaqmrq0MAzUgUFYpDSQ1GQ12udBZi?=
- =?us-ascii?Q?kq0Ix1lZXwgKYBDIJr8CaBb5W73YhvnUh/KuUXJ2YJ/KNqPrTRyYAhulVes/?=
- =?us-ascii?Q?rE/PUP60fu8VxCluW3PV8ObO4ftSfeuZH33M5x96zy2BbwD46dHD5f15BafW?=
- =?us-ascii?Q?2IhnhDrdBp2m8dTPGnwnA04JA2ansLOCOZK95VzpE7p934MfpNdsfxMlHz3y?=
- =?us-ascii?Q?Tf5oQ17f9H5X19hlytetlya6rPrYv2MflwCVLmm0183AZP2PpZqU8IXjuB8d?=
- =?us-ascii?Q?4AJVn+0Rl0CBhGRvxezcOF/VQSluGczGWve3+O05NIqPKJAAM/aJhnNn3JN1?=
- =?us-ascii?Q?xtUR/Qwze3YE1LrPGIxj95hGw/chiwRt3KMlcDdtJNvgWvpIzF4vHctIMWyG?=
- =?us-ascii?Q?lFbrDut30lVSXsc+SlrGlkeykdDuKqUfeOneStRj7lbE7WCz1rw/Dj2v+w+u?=
- =?us-ascii?Q?aAIbu2kATVg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?L2qQC0IsK66tM+ZZ+8bfhK/Ht1eMHf6vH8Q6AwJwa6+dmURLbnZdEiyU1R1t?=
- =?us-ascii?Q?lio3b6mezImtsVstnv2lQHCyBXDENet6aKW4e+FgEvYrHOn0bMzJW+X2u36z?=
- =?us-ascii?Q?69NuopndjDwqEEtg/bFhXR0eQubYn0fZLAlSe83dHIdvEAGxRu7C0Lcu+0TG?=
- =?us-ascii?Q?SSzHUXuBcVjWrd7ajgdMv7MMeQ+6TqLOeauaYdhRHam4th/6YGroIUZi4NOz?=
- =?us-ascii?Q?fLrRE43C/PUYhqEqRBfID2FjiDZnAAaoGMfu9M17HGSkMyeldb7qHH+LeFCL?=
- =?us-ascii?Q?8i+zwh127KZBe1zyGIhkUwCABbQ+R0jqXUeZmjQwW3po4JxVJkQqEXtgVWKM?=
- =?us-ascii?Q?PN/izuEvoPq144XCHCrOWn4xhh5oZTS1NwzYaim9iIA7QBKRJ54onDS4rqhw?=
- =?us-ascii?Q?5ue3ichAajanhohBBAgkvw3m+agPQggF1DHw9w87fvZ8Bi1DB7Wb0Mz6/ExS?=
- =?us-ascii?Q?IvdmRYTVFx33Dmw80hnCAVf2yiKtXNcyzB4/dAtwFdmbZUJZi67eBidCcBB4?=
- =?us-ascii?Q?Zvwm/yk+ui8wwWheIV2EAE+11DTKYJhf5+bLjMt/o57sre0agbS67MTUmkgO?=
- =?us-ascii?Q?bALC9FSF+jIV3bDciB+SKRjnRu9BWeCZ43Wfpy0trAMb0od3wUuheTn0Bm89?=
- =?us-ascii?Q?KsMPVd//gDR6jzPpdi7hqnk4N1g9/PkR5y6bOfDOtZYzDpOTQlffsYRlkkFp?=
- =?us-ascii?Q?0or/vzheTrbXbGmCtbgWOsFDc83tpI/b9KQwpG+9ZmISUEmHnRgwcVHY7KBS?=
- =?us-ascii?Q?6Cf7Q0/38GPGWhXcr2MaysU+CibsSovoCGeZmqw8RwZ1hwQDiXE9dXRC/spt?=
- =?us-ascii?Q?E9ITrMpGniNU+xRAnlTPIVcH1w4Cem9Zl6zyA6O9thWdmEZS/ky4Yu7njMyS?=
- =?us-ascii?Q?6VNt6dzWeT11dXFpGo7Aon4GiYsU5kE4uDBCk9FE26H2Tqh/8bRQEaGldkCs?=
- =?us-ascii?Q?waCbN1/v/i8scEaSCsePiTxVhE2R8SPktNYVIMD9hRKCvB/TwAdWlkWdTsEL?=
- =?us-ascii?Q?OvgH4YzfwE/li+OcdXAPNTDENWZsMY0LgX6DH0RpcWogGzqGPodm3k7zMXNq?=
- =?us-ascii?Q?5iuwV0QkCPFJGf3ZvSAhmCuJCB7BEXQLLtx896cJhykj6rRN8aA4XQ8X+4Tt?=
- =?us-ascii?Q?YlK+pcA+cQQkjZRks6hka5M2Y2p2/3WbyKZisBGTG/CPVpWO1mcd2QX8ijwo?=
- =?us-ascii?Q?B2Zl5A30Gb/4DgmgiweYbaPo2rFR8X8TutjOMtklsWu7E3sXbjeciyZeCdgs?=
- =?us-ascii?Q?J1/XHcN2o/sRUsaTnDdiCogb3lySYOUJfTT/vbZkN5H5Y7O/n9XZ7H3RjrAA?=
- =?us-ascii?Q?QaWEhLUeyxYwUbuLW1wBur6aM96i/x3jtyE3jCCbMRzLO8zZSIcDyh8HTrI/?=
- =?us-ascii?Q?BTwbUbZTxgErQjMUdmKKvhiKpvLSoDkkjbk5TGpTUSpiQcDiD/X0NqiL0Rqa?=
- =?us-ascii?Q?VBLZJEvVlQDoEMOdnELYASeo7LbZAGgtmy9zikH2cg1EmWxRepVvHrNxewxC?=
- =?us-ascii?Q?DONo0R6fMv4VC6UnoSIVrkL7Y8t/VMc9zLwiUy1IbN9y892d2zRr650NE16t?=
- =?us-ascii?Q?RnSIHnSMPclD1A18dISolZP7reTlK5cU3p2W1rbu?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6957e5eb-f1ad-4705-519f-08dddf294b72
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 14:04:21.3050
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UxDamKiY9di9wkayOlMPW8kv9WKz/3WS/8dZyToWvZhCSbUux4hdGyGMxNh/XGLSju4/Hd6mzlh0KVmHms/9eg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6586
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] iio: mcp9600: Add support for IIR filter
+To: Ben Collins <bcollins@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: Ben Collins <bcollins@watter.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250818183214.380847-1-bcollins@kernel.org>
+ <20250818183214.380847-7-bcollins@kernel.org>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250818183214.380847-7-bcollins@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 10:42:06AM +0800, Charles Han wrote:
-> The __einj_error_inject() function allocates memory via kmalloc()
-> without checking for allocation failure, which could lead to a
-> NULL pointer dereference.
+On 8/18/25 1:32 PM, Ben Collins wrote:
+> From: Ben Collins <bcollins@watter.com>
 > 
-> Return -ENOMEM in case allocation fails.
+> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+> to allow get/set of this value.
 > 
-> Fixes: b47610296d17 ("ACPI: APEI: EINJ: Enable EINJv2 error injections")
-> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> Use a filter_type[none, ema] for enabling the IIR filter.
+> 
+> Signed-off-by: Ben Collins <bcollins@watter.com>
+> ---
+>  drivers/iio/temperature/mcp9600.c | 157 ++++++++++++++++++++++++++++++
+>  1 file changed, 157 insertions(+)
+> 
+> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
+> index 9b017820efc1..0ec47cbeb88c 100644
+> --- a/drivers/iio/temperature/mcp9600.c
+> +++ b/drivers/iio/temperature/mcp9600.c
+> @@ -31,6 +31,7 @@
+>  #define MCP9600_STATUS_ALERT(x)		BIT(x)
+>  #define MCP9600_SENSOR_CFG		0x05
+>  #define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
+> +#define MCP9600_FILTER_MASK		GENMASK(2, 0)
+>  #define MCP9600_ALERT_CFG1		0x08
+>  #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
+>  #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
+> @@ -94,6 +95,27 @@ static const int mcp9600_tc_types[] = {
+>  	[THERMOCOUPLE_TYPE_R] = 'R',
+>  };
+>  
+> +enum mcp9600_filter {
+> +	MCP9600_FILTER_TYPE_NONE,
+> +	MCP9600_FILTER_TYPE_EMA,
+> +};
+> +
+> +static const char * const mcp9600_filter_type[] = {
+> +	[MCP9600_FILTER_TYPE_NONE] = "none",
+> +	[MCP9600_FILTER_TYPE_EMA] = "ema",
+> +};
+> +
+> +static const int mcp_iir_coefficients_avail[7][2] = {
+> +	/* Level 0 is no filter */
+> +	{ 0, 524549 },
+> +	{ 0, 243901 },
+> +	{ 0, 119994 },
+> +	{ 0,  59761 },
+> +	{ 0,  29851 },
+> +	{ 0,  14922 },
+> +	{ 0,   7461 },
+> +};
+> +
+>  static const struct iio_event_spec mcp9600_events[] = {
+>  	{
+>  		.type = IIO_EV_TYPE_THRESH,
+> @@ -118,7 +140,11 @@ static const struct iio_event_spec mcp9600_events[] = {
+>  			.address = MCP9600_HOT_JUNCTION,		       \
+>  			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	       \
+>  					      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE) | \
+> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |  \
+>  					      BIT(IIO_CHAN_INFO_SCALE),	       \
+> +			.info_mask_separate_available =                        \
+> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY), \
+> +			.ext_info = mcp9600_ext_filter,			       \
+>  			.event_spec = &mcp9600_events[hj_ev_spec_off],	       \
+>  			.num_event_specs = hj_num_ev,			       \
+>  		},							       \
+> @@ -134,6 +160,26 @@ static const struct iio_event_spec mcp9600_events[] = {
+>  		},							       \
+>  	}
+>  
+> +static int mcp9600_get_filter(struct iio_dev *indio_dev,
+> +			      struct iio_chan_spec const *chan);
+> +static int mcp9600_set_filter(struct iio_dev *indio_dev,
+> +			      struct iio_chan_spec const *chan,
+> +			      unsigned int mode);
+> +
+> +static const struct iio_enum mcp9600_filter_enum = {
+> +	.items = mcp9600_filter_type,
+> +	.num_items = ARRAY_SIZE(mcp9600_filter_type),
+> +	.get = mcp9600_get_filter,
+> +	.set = mcp9600_set_filter,
+> +};
+> +
+> +static const struct iio_chan_spec_ext_info mcp9600_ext_filter[] = {
+> +	IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &mcp9600_filter_enum),
+> +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL,
+> +			   &mcp9600_filter_enum),
+> +	{ }
+> +};
+> +
+>  static const struct iio_chan_spec mcp9600_channels[][2] = {
+>  	MCP9600_CHANNELS(0, 0, 0, 0), /* Alerts: - - - - */
+>  	MCP9600_CHANNELS(1, 0, 0, 0), /* Alerts: 1 - - - */
+> @@ -161,6 +207,8 @@ struct mcp_chip_info {
+>  struct mcp9600_data {
+>  	struct i2c_client *client;
+>  	u32 thermocouple_type;
+> +	/* Filter enabled is 1-7, with 0 being off (filter_type none) */
+> +	u8 filter_level;
+>  };
+>  
+>  static int mcp9600_read(struct mcp9600_data *data,
+> @@ -191,13 +239,45 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
+>  		if (ret)
+>  			return ret;
+>  		return IIO_VAL_INT;
+> +
+>  	case IIO_CHAN_INFO_SCALE:
+>  		*val = 62;
+>  		*val2 = 500000;
+>  		return IIO_VAL_INT_PLUS_MICRO;
+> +
+>  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
+>  		*val = mcp9600_tc_types[data->thermocouple_type];
+>  		return IIO_VAL_CHAR;
+> +
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		if (data->filter_level == 0)
+> +			return -EINVAL;
 
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+To implement Jonathan's request from v5, drop this error return.
+We'll also need a separate bool data->is_filter_enabled field so
+that we can keep the last set filter_level even when the filter
+is disabled. (i.e. data->filter_level is never == 0).
 
-Thanks,
-Yazen
+This way, if you set the filter level, you can enable and disable
+the filter via filter_type and still have the same filter level.
+
+> +
+> +		*val = mcp_iir_coefficients_avail[data->filter_level - 1][0];
+> +		*val2 = mcp_iir_coefficients_avail[data->filter_level - 1][1];
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int mcp9600_read_avail(struct iio_dev *indio_dev,
+> +			      struct iio_chan_spec const *chan,
+> +			      const int **vals, int *type, int *length,
+> +			      long mask)
+> +{
+> +	struct mcp9600_data *data = iio_priv(indio_dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		if (data->filter_level == 0)
+> +			return -EINVAL;
+> +
+> +		*vals = (int *)mcp_iir_coefficients_avail;
+> +		*type = IIO_VAL_INT_PLUS_MICRO;
+> +		*length = 2 * ARRAY_SIZE(mcp_iir_coefficients_avail);
+> +		return IIO_AVAIL_LIST;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -211,6 +291,7 @@ static int mcp9600_config(struct mcp9600_data *data)
+>  
+>  	cfg  = FIELD_PREP(MCP9600_SENSOR_TYPE_MASK,
+>  			  mcp9600_type_map[data->thermocouple_type]);
+> +	FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->filter_level);
+
+And change the logic here to:
+
+	FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->is_filter_enabled ?
+		     data->filter_level : 0);
+
+>  
+>  	ret = i2c_smbus_write_byte_data(client, MCP9600_SENSOR_CFG, cfg);
+>  	if (ret < 0) {
+> @@ -221,6 +302,79 @@ static int mcp9600_config(struct mcp9600_data *data)
+>  	return 0;
+>  }
+>  
+> +static int mcp9600_write_raw_get_fmt(struct iio_dev *indio_dev,
+> +				     struct iio_chan_spec const *chan,
+> +				     long mask)
+> +{
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int mcp9600_write_raw(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan,
+> +			     int val, int val2, long mask)
+> +{
+> +	struct mcp9600_data *data = iio_priv(indio_dev);
+> +	int i;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		for (i = 0; i < ARRAY_SIZE(mcp_iir_coefficients_avail); i++) {
+> +			if (mcp_iir_coefficients_avail[i][0] == val &&
+> +			    mcp_iir_coefficients_avail[i][1] == val2)
+> +				break;
+> +		}
+> +
+> +		if (i == ARRAY_SIZE(mcp_iir_coefficients_avail))
+> +			return -EINVAL;
+> +
+> +		data->filter_level = i + 1;
+> +		return mcp9600_config(data);
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int mcp9600_get_filter(struct iio_dev *indio_dev,
+> +			      struct iio_chan_spec const *chan)
+> +{
+> +	struct mcp9600_data *data = iio_priv(indio_dev);
+> +
+> +	if (data->filter_level == 0)
+> +		return MCP9600_FILTER_TYPE_NONE;
+> +
+> +	return MCP9600_FILTER_TYPE_EMA;
+> +}
+> +
+> +static int mcp9600_set_filter(struct iio_dev *indio_dev,
+> +			      struct iio_chan_spec const *chan,
+> +			      unsigned int mode)
+> +{
+> +	struct mcp9600_data *data = iio_priv(indio_dev);
+> +
+> +	switch (mode) {
+> +	case MCP9600_FILTER_TYPE_NONE:
+> +		data->filter_level = 0;
+
+Don't touch data->filter_level here, just set data->is_filter_enabled = false.
+
+> +		return mcp9600_config(data);
+> +
+> +	case MCP9600_FILTER_TYPE_EMA:
+> +		if (data->filter_level == 0) {
+> +			/* Minimum filter by default */
+> +			data->filter_level = 1;
+
+And similar, just set data->is_filter_enabled = true without changing filter_level.
+
+> +			return mcp9600_config(data);
+> +		}
+> +		return 0;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  static int mcp9600_get_alert_index(int channel2, enum iio_event_direction dir)
+>  {
+>  	if (channel2 == IIO_MOD_TEMP_AMBIENT) {
+> @@ -358,6 +512,9 @@ static int mcp9600_write_thresh(struct iio_dev *indio_dev,
+>  
+>  static const struct iio_info mcp9600_info = {
+>  	.read_raw = mcp9600_read_raw,
+> +	.read_avail = mcp9600_read_avail,
+> +	.write_raw = mcp9600_write_raw,
+> +	.write_raw_get_fmt = mcp9600_write_raw_get_fmt,
+>  	.read_event_config = mcp9600_read_event_config,
+>  	.write_event_config = mcp9600_write_event_config,
+>  	.read_event_value = mcp9600_read_thresh,
+
 
