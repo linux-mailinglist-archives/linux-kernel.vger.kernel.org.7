@@ -1,182 +1,168 @@
-Return-Path: <linux-kernel+bounces-775176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD17B2BC32
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:51:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5B3B2BC38
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53761608B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A462B62291B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657F5315763;
-	Tue, 19 Aug 2025 08:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76821315763;
+	Tue, 19 Aug 2025 08:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="RicbzZWT"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XwXKZ2P/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A328B1E98EF;
-	Tue, 19 Aug 2025 08:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4F0311C07
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755593458; cv=none; b=X37fqK5kl42I87toVDwE2k4YlQPwYoZNjrWd+s714B0igqtmsdrGa4xntj2J9I2OA4vxOGrWV+iCwzoP/sHCVn1TpCYs4mdKdXpa5va5QCkcanXPmLgwc0mEPP+E2C68ultjwN7okEouvwfGUyHE5qI6PWmdiDmR5Q7Atd+hxJY=
+	t=1755593513; cv=none; b=ep3db0t8p2purr6Wo5NsHu1M9lqHO2OJwluII0bF2KEPkvmJf49jvIHvRbP2wr7fupKDe8qHnOgodMtAQKZaOAsSrem9Ub3VZ36KDe9k9j598CfHth7i0fyeBZ9IO/Nl6VSaYFuuVY4qnD5ivxV9uo7ZmsUtym+nh1nv+1ze44o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755593458; c=relaxed/simple;
-	bh=s4tkw0agwNjoZbMEvc5Aube6vc6jbp2vPgiUvx0ojac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+S157NMTxAfsDlCt6jkADlRBWyBjaksGgNGPeIFA32UOEMweL1X/Edh2Ot6TCuBRK8i2wWv/M9lBd2MY2gJS7dxAGKTOdkLXZEo+IHez+CTkuKssFPISNC2eQIhnNmxUkMPJ4QytkIIVqYNL58zSvQ3+rQOmg6+jWilh63LkHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=RicbzZWT; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c5jwQ6SDDz9sdD;
-	Tue, 19 Aug 2025 10:50:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1755593446;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4tkw0agwNjoZbMEvc5Aube6vc6jbp2vPgiUvx0ojac=;
-	b=RicbzZWTrhdND/IB6LktMwM2bHb9SNceUOR1HugqfrOVbjaT7EEwoYahgdXjiFv9lnaC9O
-	kFFArJKEhM88Q8nO9o9qJvp9hEXzCPvYt7y/EOVzVhPPjUDByRVD7FOqHcrwWiPNY9NEwR
-	mGj2xmSVGYV++vmtiHd2s/s0Y/xpuszB/SeivMtGiqLfY0cS5y+MRjEUvpztv/Sctmstk/
-	s5GNiM3D5vHEtNjEcL8rI3vXa5ZOtIGEkHT4KW2DuzE287qAqckLZ+IhGEsKmbKE4dDE6K
-	DgEW802cfS3NOk9uj4XoILSonoXY5XMm4ANAo3E4gTxBdPdQA83dvJJYZ04MKw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Tue, 19 Aug 2025 18:50:31 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Askar Safin <safinaskar@zohomail.com>, alx@kernel.org, 
-	dhowells@redhat.com, g.branden.robinson@gmail.com, jack@suse.cz, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-man@vger.kernel.org, mtk.manpages@gmail.com, viro@zeniv.linux.org.uk, 
-	Ian Kent <raven@themaw.net>, autofs mailing list <autofs@vger.kernel.org>
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-Message-ID: <2025-08-19.1755593370-twitchy-liquid-houses-wink-kqgdBL@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250817075252.4137628-1-safinaskar@zohomail.com>
- <2025-08-17.1755446479-rotten-curled-charms-robe-vWOBH5@cyphar.com>
- <20250819-erhitzen-knacken-e4d52248ca3e@brauner>
+	s=arc-20240116; t=1755593513; c=relaxed/simple;
+	bh=ANiqYqygBuucw6l4Je6RvILHlMLysiymX6SU3Gu1VAk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pFV68JsJSplZMF8bTKHzC1X81ae/Gk3z3GedlGgYcTOUKiqShA+lGpK3OKB5848o0nWBDoKdCXZA22s+fbm70Z69ybw1bdSrtXsW5zA0Orla7Ra0wBvbuFQArw8fjzePt/UAMEk7hJ/8k97cyuopeoFXnozmxIWq0yvlwOEes4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XwXKZ2P/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J8pHCA011662
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:51:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UtaQEPA70JUUBbPFESCLHu
+	D85Yw6S51mJSYTTPArkpI=; b=XwXKZ2P/CQ8X/woT44z55uo7ncMfCqf2oMNicb
+	EIlmgCa5BazWIOtuRQjBP2ybBV6VjXZ2bm4hQj/PliTrp9Eya9SlDUeXvXVViSGa
+	4xrJ5b+ATMif8ea6AzUP/p4acmCXpY4hXDZlTKSyjcnZJ+/BKlVE6OBqxGczSx5g
+	Th1nvl1EFT5u2eraU8PwDcL5m/d1Ubgq5AQLOw5ZpmRpDYunhqvlCGyULIFcnsfU
+	YpdtP3he/SLz2IQPxYhS/PagCtMmZqDLOoxSE8BYvKkZeLJoWc7qZPcSifWEue9a
+	fsO3+DYxjnZD1E18GfXO5ZdTWqOOlplU02NHsv9OlAxuBdTg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj2ufx70-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:51:50 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2445806dc88so128412055ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:51:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755593509; x=1756198309;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UtaQEPA70JUUBbPFESCLHuD85Yw6S51mJSYTTPArkpI=;
+        b=lcU2uIzfAnkaBDZ6irhPpIZzq+pRwHk6nUIa3JE43Z4ZIUdsjdp1dpR7Uo+wdBbOyf
+         AeQ41m+Pzd1+GZy4dIzUpL411/8MZ/Z1SnlkldS4uLeZKndda32JZozk4Q7PKevCBeXC
+         yS4ic4uGwQStngopLgJ19aHXUNuInZ9zVFR9Q70bE9Mz/tzKiJC1AAcm6CBcAehduVSQ
+         1h2bJg6cowegGdviBdKzJwi1EX8oUzB5v44w4DF5U84gl/QNY9Yj//Y8gjEJvz9DLDBQ
+         5c9UfQqTEcQlRoJbsGu/T03Kx6RLltC8elEASL+ItEobe6CyPtvGfTmrPl8IGrsovapl
+         jUtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlMeWN/BRI1e4fpy+zm6Lf8yqFusYQb/Lm5wgwsSsL8e1NtCcaS9OGejvYXRuumwB06Ow3gwssT3q1mnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJDXJsfhQwQT0GURUIXTHsRID12Ggc8eeqoXYAaSmE5JtFJ40M
+	a3NtbcSOAGt1LSqPIx415TqPkSg6jcIwfiAV0siqE4h9kuDqkaGcIkvhDatsSX1T8QP8ynSQ+h7
+	qP4RtmqBzatQvCgmRHpgiSWXjjYP/hy+cDjjy7+sFIdH6KSsmZPabsWU1pE2TgG4eLcW7fzL8yU
+	4=
+X-Gm-Gg: ASbGncuPUhhgGs3S9I7GzeoESzO9YYWb3vpL103hDvwL8cLCkjOQ3tIFdVw1J/EXlg6
+	5sErs++jNdqbe+x8OROdYrAIF9pDvcokMhrnVcisDN6YtFE5IlKreId32JIV0bQ4gIcByI1pG9f
+	eILeB4R00KBp+ta4gZItZyvEF3N/3b4Vk6O++R0gmH/3d7PG7FaulGPgBtrDPpXWDuFbG6kShkX
+	W9QhcLiF02zgRJyi6sIXLdi7mR75Gahw27bPtAfTMoqh1KpQWPjVew3H1/K8CQWmFP2fGpo24OU
+	V/3zcJV+a4SPGE5eJFuU8A/7T21F655J8ZGb2ndhqlI=
+X-Received: by 2002:a17:903:2f8e:b0:240:469d:beb0 with SMTP id d9443c01a7336-245e0494544mr22476155ad.31.1755593509517;
+        Tue, 19 Aug 2025 01:51:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFX8G+XdS44NqcCcHy4azwS1a/5x7lnx2W3dbU327cwfzsZzMnxPMyAw6Lxry5dSu3VZ2nS8Q==
+X-Received: by 2002:a17:903:2f8e:b0:240:469d:beb0 with SMTP id d9443c01a7336-245e0494544mr22475855ad.31.1755593509062;
+        Tue, 19 Aug 2025 01:51:49 -0700 (PDT)
+Received: from hu-pbrahma-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d56b44fsm102344815ad.146.2025.08.19.01.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 01:51:48 -0700 (PDT)
+From: pratyush.brahma@oss.qualcomm.com
+X-Google-Original-From: Pratyush
+Date: Tue, 19 Aug 2025 14:21:44 +0530
+Subject: [PATCH] mm/numa_memblks: Use SZ_1M macro to denote bytes to MB
+ conversion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mmwkuzmuzol2efok"
-Content-Disposition: inline
-In-Reply-To: <20250819-erhitzen-knacken-e4d52248ca3e@brauner>
-X-Rspamd-Queue-Id: 4c5jwQ6SDDz9sdD
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250819-numa-memblks-refac-v1-1-936b4fd35000@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAB87pGgC/x2MQQqAIBAAvxJ7bkEjyfpKdNDaaiktlCKQ/p50n
+ IGZBJECU4SuSBDo5siHzyDLAsbV+IWQp8xQiUoJLVv0lzPoyNl9ixhoNiM2trZKyMaqVkMOz6z
+ 5+af98L4fumtcnmQAAAA=
+X-Change-ID: 20250819-numa-memblks-refac-7b4b5017b598
+To: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755593506; l=1272;
+ i=pratyush.brahma@oss.qualcomm.com; s=20250808; h=from:subject:message-id;
+ bh=1n/B6T+EBi4imcFDM5sARQMMhhJ8zd0wI5Z3/7GqQeU=;
+ b=tqgIYcTpIp0/mL5rik9Uq5MvBl0gulCrHw9T2BhpCZe7GI73Yn8M1gHSiPq5LAVA8DveZexKu
+ 3QktpIJNyjLB+jX2lpO05uH+A8sb2fDqDSJPSwAMSuY6rWjTVpgr35v
+X-Developer-Key: i=pratyush.brahma@oss.qualcomm.com; a=ed25519;
+ pk=ZeXF1N8hxU6j3G/ajMI+du/TVXMZQaXDwnJyznB69ms=
+X-Authority-Analysis: v=2.4 cv=MJ9gmNZl c=1 sm=1 tr=0 ts=68a43b26 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=dRzHXBjQmnXEPONtsPAA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-ORIG-GUID: pSxYRHhgVtsVJp8ObyJe-zLn258eiuBi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMSBTYWx0ZWRfX6tx+0JTbOBBZ
+ JvCIqmcXY6s5S8YQMv5Jz17HJCPwHhB3TXNjk0EkRwxm7OD9Vryq+FSdiJbMooQczDeHrr8bUP5
+ +SZyo70EDBS6KUnB+GNSYPtEI204BAnPARj4Dv+yUBWNYGUBXwwPG9y8mZn1j4mxZMcWctQZtCr
+ nfQBhNuSEfzbj5p787V+oC2uaZSczX12AapFLhuI4YO87LhaGwW2DQwPc1re5/3cLlvccvRE8qD
+ fmrvd/IyVJvfDpNB1txXvvW7Lveqd+CkgEKyzVfHn4nXeXkMQVEjoa30SMi0Bfk2XLZEji66Yzx
+ aRpmrRo2ObyRJuMNAMoRWC8qu42tSgEjDqG9kLD1w1JMBCFRXVgHAlInI3mSt+x5ywTPHgSEbi5
+ 9VY1BOOs
+X-Proofpoint-GUID: pSxYRHhgVtsVJp8ObyJe-zLn258eiuBi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160031
 
+From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
 
---mmwkuzmuzol2efok
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-MIME-Version: 1.0
+Replace the manual bitwise conversion of bytes to MB with
+SZ_1M macro, a standard macro used within the mm subsystem,
+to improve readability.
 
-On 2025-08-19, Christian Brauner <brauner@kernel.org> wrote:
-> On Mon, Aug 18, 2025 at 02:16:04AM +1000, Aleksa Sarai wrote:
-> > On 2025-08-17, Askar Safin <safinaskar@zohomail.com> wrote:
-> > > I noticed that you changed docs for automounts. So I dig into
-> > > automounts implementation. And I found a bug in openat2. If
-> > > RESOLVE_NO_XDEV is specified, then name resolution doesn't cross
-> > > automount points (i. e. we get EXDEV), but automounts still happen! I
-> > > think this is a bug. Bug is reproduced in 6.17-rc1. In the end of this
-> > > mail you will find reproducer. And miniconfig.
-> >=20
-> > Yes, this is a bug -- we check LOOKUP_NO_XDEV after traverse_mounts()
-> > because we want to error out if we actually jumped to a different mount.
-> > We should probably be erroring out in follow_automount() as well, and I
-> > missed this when I wrote openat2().
-> >=20
-> > openat2() also really needs RESOLVE_NO_AUTOMOUNT (and probably
-> > RESOLVE_NO_DOTDOT as well as some other small features). I'll try to
-> > send something soon.
-> >=20
-> > > Are automounts actually used? Is it possible to deprecate or
-> > > remove them? It seems for me automounts are rarely tested obscure
-> > > feature, which affects core namei code.
-> >=20
-> > I use them for auto-mounting NFS shares on my laptop, and I'm sure there
-> > are plenty of other users. They are little bit funky but I highly doubt
-> > they are "unused". Howells probably disagrees in even stronger terms.
-> > Most distributions provide autofs as a supported package (I think it
-> > even comes pre-installed for some distros).
-> >=20
-> > They are not tested by fstests AFAICS, but that's more of a flaw in
-> > fstests (automount requires you to have a running autofs daemon, which
-> > probably makes testing it in fstests or selftests impractical) not the
-> > feature itself.
-> >=20
-> > > This reproducer is based on "tracing" automount, which
-> > > actually *IS* already deprecated. But automount mechanism
-> > > itself is not deprecated, as well as I know.
-> >=20
-> > The automount behaviour of tracefs is different to the general automount
-> > mechanism which is managed by userspace with the autofs daemon. I don't
-> > know the history behind the deprecation, but I expect that it was
-> > deprecated in favour of configuring it with autofs (or just enabling it
-> > by default).
-> >=20
-> > > Also, I did read namei code, and I think that
-> > > options AT_NO_AUTOMOUNT, FSPICK_NO_AUTOMOUNT, etc affect
-> > > last component only, not all of them. I didn't test this yet.
-> > > I plan to test this within next days.
-> >=20
-> > No, LOOKUP_AUTOMOUNT affects all components. I double-checked this with
-> > Christian.
->=20
-> Hm? I was asking the question in the chat because I was unsure and not
-> in front of a computer you then said that it does affect all components. =
-:)
+Signed-off-by: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+---
+ mm/numa_memblks.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yeah I misunderstood what you said -- didn't mean to throw you under the
-bus, sorry about that!
+diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
+index 541a99c4071a67e5b0ef66f4136dee268a880003..a47aa262a33366337c38ccc7c7064da818523dd2 100644
+--- a/mm/numa_memblks.c
++++ b/mm/numa_memblks.c
+@@ -427,9 +427,9 @@ static int __init numa_register_meminfo(struct numa_meminfo *mi)
+ 		unsigned long pfn_align = node_map_pfn_alignment();
+ 
+ 		if (pfn_align && pfn_align < PAGES_PER_SECTION) {
+-			unsigned long node_align_mb = PFN_PHYS(pfn_align) >> 20;
++			unsigned long node_align_mb = PFN_PHYS(pfn_align) / SZ_1M;
+ 
+-			unsigned long sect_align_mb = PFN_PHYS(PAGES_PER_SECTION) >> 20;
++			unsigned long sect_align_mb = PFN_PHYS(PAGES_PER_SECTION) / SZ_1M;
+ 
+ 			pr_warn("Node alignment %luMB < min %luMB, rejecting NUMA config\n",
+ 				node_align_mb, sect_align_mb);
 
-> > You would think that it's only the last component (like O_DIRECTORY,
-> > O_NOFOLLOW, AT_SYMLINK_{,NO}FOLLOW) but follow_automount() is called for
-> > all components (i.e., as part of step_into()). It hooks into the regular
-> > lookup flow for mountpoints.
-> >=20
-> > Yes, it is quite funky that AT_NO_AUTOMOUNT is the only AT_* flag that
-> > works this way -- hence why I went with a different RESOLVE_* namespace
-> > for openat2() (which _always_ act on _all_ components).
-> >=20
-> > --=20
-> > Aleksa Sarai
-> > Senior Software Engineer (Containers)
-> > SUSE Linux GmbH
-> > https://www.cyphar.com/
->=20
->=20
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250819-numa-memblks-refac-7b4b5017b598
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+Best regards,
+-- 
+Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
 
---mmwkuzmuzol2efok
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKQ61xsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+T+wEAlSeMmOrEV2wl+utJcEEb
-qpQ16Td0Br0wrJGYcTw/IfgA/2UtFxJ9pT6LUkwX14HPqUCCpRZipLkUkxiN3Nda
-9XsP
-=88Ba
------END PGP SIGNATURE-----
-
---mmwkuzmuzol2efok--
 
