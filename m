@@ -1,138 +1,165 @@
-Return-Path: <linux-kernel+bounces-775909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388CBB2C634
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16ECFB2C640
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1A747ADD5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89886563179
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DE2273803;
-	Tue, 19 Aug 2025 13:53:38 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6766A3375CF;
+	Tue, 19 Aug 2025 13:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/JDhJjk"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AD2202C2B;
-	Tue, 19 Aug 2025 13:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F5B19C540
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611617; cv=none; b=USKqWto9GAt+CwO3Oih4clircDjQrwQzc7oVa3bPW5P7UZMGoDi2n6gszOdhBzzXXgn3qooXOHeJYroEI+crJJ/S87O4rfWC6zhjNjTQTTeboyDfoodbZoxaqJemgJRiwCaPsztbFqypy8jiCaBeaq3+e4EnqY6Vk5iqp09HCvY=
+	t=1755611307; cv=none; b=jLeKzeuEl0tx1SdExtF3gsGOr/S1Y1qTxQxIZ5nKQ8AoUS/+u4f122+JmjUcV4Ej/0u9airkIXebcntijdQshamOOBvK1ftogvQeI7STJ79G7r6AO6rTatvCvwAMK9ClkMoMuADxR0C728uocIKKiIJ215MdnmMi0S6wEdKmoIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611617; c=relaxed/simple;
-	bh=sjCbpxSUHEfPb1ZxJ6/kPd85FQCs4RnOuqvLQFHp9YU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Acbr2PcoJF00xOYAIsHFc2n6jwyDrkDHaxZaUH8imi+yA2rcr94vnO7zNGe8aUfMmH2jdd+2FLWB2PhYlJf9BT6aDeZAXwdX5sxLYuFoHUure7dhR8Ep29yyIB5IKQgiMUu3qnAAg1kXjRcCbli7+qHv366bTTbIvWd9JQv7PmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1755611307; c=relaxed/simple;
+	bh=YfJYeNuK5s6n+6K9DDdIvhqVIE3tNH0UjNo9blGT8Rk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cN5REU8d6j0f6Te4w85sP55/fQurAZwrYKKjBY3nlbbvtUnmDMBCoIH46PRoHyVnox+4aCXuUiby8zhud9pqTDW7MdJ1epv/lvim2MffYtf7EmPu0FCWh3+iXv/eAtUPxD6sidJcFjgJqRj6lESSk8wCNjsa4+F16ETK3pr7L0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/JDhJjk; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8902ee514deso1727883241.1;
-        Tue, 19 Aug 2025 06:53:34 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so4691417a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:48:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755611305; x=1756216105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vr68yBZi3TFfbnXKqi+esYUOPsHcYPZ3pVlLEo5gGLw=;
+        b=m/JDhJjkg85K+05RA7Cbte1+/q3Q+VKwQVmP1XjGw25k61fppsu9ajG7GHBXyQE0xg
+         waAC82LD+9V4AVttf2fgNjt0mWg8skf1NPaeXddCUhtoZXA1JE/JOFup2/PKJhK1QkZ0
+         cAVqvTqlmnmfuWm2WmaCEPb9b/56kObO3UZYtdagqcDXBgi9zwFCW4Vm7L3kwfl3e6LH
+         ss6IQ6kISfsQwjoHsBYpqV18Cyx1WTq0Pg14eTYNq4RMYydnYqnaFMuxE/c65v53He8f
+         pPtgkeLAlpoSm42X2pA/EY5gVGCbAcomVEqQkJCNGmvJZTJ5k2wcYbmOpoYxt7nEePgK
+         ArIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755611614; x=1756216414;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755611305; x=1756216105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EeuW/6flpc2I+1hROrA6g3LcPwOigpLFE6GBluj/xEc=;
-        b=hI4IEdUUD8FPIbJ/FszB5WjAcOv5VtuaazEBOXnKmDq7jQYD0CdkyO8HJLrkKDYWcK
-         VfXUGEeWZdF5IB4/bmk/qmUG7DsioszfNKfG0cto5wVuiyQsvO0Hczd0AajAda6mYcWV
-         vdL0yENxR2HVIgWZPHlie4WmFpLAOD27j0YILh1iQFfEGlUGYsmTypora/NC8oZt9luH
-         0MQsErFKS6lXFl6g0LJUFXR9Ov19hXpXFM/jyFZNh0LhaxAssG6P4nYpiIhQ4wRkGcCl
-         04UawDWap9JPr10byc4nzIvtTRai7dqhhVGaC0fR6IUSaPANslO51uqe7qh2h/ZR+lsZ
-         MMtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFyEh30O73oPvQrsvUbMCzaAJ3DZdPcZqTeyRC6r1X/IJCGaJWkhu9SRD2FNUKfLFxMIctqrHxVrNq@vger.kernel.org, AJvYcCUjIipOe06PnNH1ZwSLwDR5hdESI8UHMRmT+OVg2+f8fWH2+jcvvL7PfWBs5KoiAxdq7zwTDgPvip1i/5laYj6Ei40=@vger.kernel.org, AJvYcCWVP43cCmH34dzPwAaYETjfWipeEFVZfZ0xunSPWdpFhV0PrIxBNKhC+R/YtQadPIqygSrC+DCVW3rV8bF0@vger.kernel.org, AJvYcCWbURJ9mFdEiZH8wkDRpcMp1L0NjZZOT/Gjop1kXb3rUNhFRouic/P14ffCgOuXj+Hk3nKM5eMBSfjP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM0+f8g2vjyxEJsu++eiKkZzN/KZFmm1SdhrXt0ogtPjgDJO/F
-	cpsaxdnvKpn5Rp4S7SoF0je3H5nUQO2hIVQ2q0gR7cWXeo1cSohKItgtDEd/4xYJ
-X-Gm-Gg: ASbGncv/2yW1VlyTFuqBI5sTT2C1AsCXO9dDeyteizFhqTBAS/b0lzxuqwMQ3uC3uFn
-	PZDuymYF+xKm7NX9NrfQKifAkDWqTKa/51ES5GbQWWJYxapCVNSaloGF916oeO1AfQRNZe7QG/Z
-	5y6lF7sPWSDwpGhlxAS86/Y+TB6+gF4xlYpSUMfJobvLf7+RD10T8S1BkjSQFZS0V/OJBuApaOT
-	zszxOVqdj8+yEo/li+chapF+OqBu3SRNVCGiKP1Xb3RuPXDdQluG4mlVCwLqTWItKjcX5j9jZtq
-	ZWr+EdFh/UHpLPvcQ56Ns7EFQwr/g5ybnm6UZyPmyumllOPI1Uvgu0fhPD8zg6IybvYQnzzwpZi
-	PT5pJRd4ot8W7FU5sciu174eTrwLtzB0AdEirq/bqEtOEC2wF6751FTqWUbrq
-X-Google-Smtp-Source: AGHT+IHHpjioCPjgXccsZlThj8bgKsr8YTjqiogVlvjduqtaYs53U7Mh6wj/hMpMUDdI6kcJu2x31g==
-X-Received: by 2002:a05:6102:4497:b0:4df:9281:5ec3 with SMTP id ada2fe7eead31-51929a189a0mr708934137.2.1755611613754;
-        Tue, 19 Aug 2025 06:53:33 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-51713f939edsm1450417137.15.2025.08.19.06.53.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 06:53:33 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-50f7e78cc12so3702833137.0;
-        Tue, 19 Aug 2025 06:53:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUokFAvD5mCzPsA/W2KX/Oh4IVaO5VUwzGoj3pxEuYfJbODg+gddxRJiQLZZre5qNIPm3Du+EoXqh3L@vger.kernel.org, AJvYcCV9pJEeEsVk4gLRuhJa2C2btL2MGS1u3FXwOgaqdDqKiv+5WjNtxWLm9MfJFb+XnVStbKEvNd9UsgTjibrZ@vger.kernel.org, AJvYcCX+pyq+KfN7gpgD+checYwYOLouycuS11P73DdrOJClEGFqDv00vYKzfpPdhQN3B2APOKiqppJ1kIQU@vger.kernel.org, AJvYcCXf+670aOZv8QBxbtMCM1xqW/yqYAbziIMnAnAKintSezBUL/EV4+dT7WzJr0TNxi8mGFkkJuz60WiQBtYqeiAHrA4=@vger.kernel.org
-X-Received: by 2002:a05:6102:8343:20b0:4fb:fbdb:283c with SMTP id
- ada2fe7eead31-5192628620bmr577370137.13.1755611300964; Tue, 19 Aug 2025
- 06:48:20 -0700 (PDT)
+        bh=vr68yBZi3TFfbnXKqi+esYUOPsHcYPZ3pVlLEo5gGLw=;
+        b=gOHEVAOmtkVER1ln2HuLAX456vSpQBNqAY+HYqDN7LIJGgyqdJ937drnfmdcSsRAnN
+         7MnSe4iJMhzgQHODHxeLiavvNWB5XMi8sMXnFj4sFMnnt3mwtKCoQGkdjQ1pv3PmCTx8
+         6AqQboT3rf99tDkMgEredcsFibvF32YLGbUjNybxjSLTkKVzh/yR1Yx26atat8BzgWDt
+         cRmuPS46Xbx1bvameZUl3EBHUrZ/p0CfOp1YQl+manCIDJU99XIVn2LBJmk1YA7b4+Vy
+         6ThqtGvti2M/AlDT+gw0iI6QPotGOnX1Xfz63nPFPK8UXnQuHdgZxh8xkbQ9oCnKZuT1
+         qDBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtDp+2YbfLt97du3Ih6PgzLeeLbtiartHPcEqWDLWfeV4KPDjf0Z/jl9RmcCRQSxOdP9en7FLT+HJ4k9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwOXvl9CUO+/0prnd7uX1mCxQdOMbH7ojSTRNDm3HEMPlLwd6z
+	0I2ldRQ9FOgLpX9za5q38mddEzLgH3fBUMddrWBxaJaDbsyWtwTtCY8HTO9qzadD
+X-Gm-Gg: ASbGncve4XO+uztnXC0pntoUS9zPKaWO61CJnHGBpBF7McM42g7M2esGykeD2fKZO8n
+	FA3rBTqx6ElKY3v819b+9ovoSyL2yd8fTvbSUsOxWRHYFWfrEFgxSquc4mZEhxKQXUwp/WwNnN2
+	XuBdCGSXlR8z2TtMxAneREH9euEshKKNVEpSAGXFFcYTId49pWD6dfVU1ommf+6PY8pnkmCh9ln
+	hzr0hhAIsiJgFJx0s+lJe8FPQsmrDRREoPBidQdB9lk9YDzk9ITSdaBHC3HV9Ly5qksE24JbrKp
+	RtTKBtLmXPU+JTs2SkHFsIn0GEvElJ7DqyHYlDhYqq/esIubgJpFlNR5usTtI3Il4+l/bapXx2n
+	GRBQz+KN/PJRbVGKG6vKa2toJNcKWhs81
+X-Google-Smtp-Source: AGHT+IFmyQHU0KuB7WvcyotnFbvRy12e45ykFdU1u5ZoWix/rIQxSCTZPZ3xcSSDMU+wjxXxseQ9Pw==
+X-Received: by 2002:a17:90a:da87:b0:321:3715:9a3 with SMTP id 98e67ed59e1d1-324d37ea418mr3137717a91.17.1755611305484;
+        Tue, 19 Aug 2025 06:48:25 -0700 (PDT)
+Received: from xiao.mioffice.cn ([43.224.245.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d5ad0f7sm10719364a12.2.2025.08.19.06.48.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 06:48:24 -0700 (PDT)
+From: Xiang Gao <gxxa03070307@gmail.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com
+Cc: lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: [PATCH] mm/cma: add 'available count' and 'total count' to trace_cma_alloc_start
+Date: Tue, 19 Aug 2025 21:48:17 +0800
+Message-Id: <20250819134817.247495-1-gxxa03070307@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Aug 2025 15:48:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXSJO1MOoNS5M2M1Zs=iWmiBbmc8Xc9tMDsXd_kM6bj=Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwqlAmfXivz66Sd55gS12RpO00X1Drkt6QaRo03rpO2tR6AE4qWRsOFRew
-Message-ID: <CAMuHMdXSJO1MOoNS5M2M1Zs=iWmiBbmc8Xc9tMDsXd_kM6bj=Q@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] Add support for DU/DSI clocks and DSI driver
- support for the Renesas RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+From: gaoxiang17 <gaoxiang17@xiaomi.com>
 
-On Mon, 28 Jul 2025 at 22:14, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> This patch series adds DU/DSI clocks and provides support for the
-> MIPI DSI interface on the RZ/V2H(P) SoC. It was originally part of
-> series [0], but has now been split into 6 patches due to dependencies
-> on the clock driver, making it easier to review and merge.
+This makes cma info more intuitive during debugging.
 
-Thanks for your series!
+Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+---
+ include/trace/events/cma.h | 17 ++++++++++++-----
+ mm/cma.c                   |  2 +-
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
-> Lad Prabhakar (6):
->   clk: renesas: rzv2h-cpg: Add instance field to struct pll
->   clk: renesas: rzv2h-cpg: Add support for DSI clocks
->   clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
->   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
->     RZ/V2N
->   drm: renesas: rz-du: mipi_dsi: Add support for LPCLK clock handling
->   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
-
-On the renesas-clk side, I am (almost) totally happy with this.
-Any feedback from the renesas-drm side?
-The last patch depends on a header file introduced by the second patch,
-so I will need to provide an immutable branch containing the first
-two patches (probably/hopefully based on v8).
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/include/trace/events/cma.h b/include/trace/events/cma.h
+index 383c09f583ac..fbe70008ffc7 100644
+--- a/include/trace/events/cma.h
++++ b/include/trace/events/cma.h
+@@ -38,25 +38,32 @@ TRACE_EVENT(cma_release,
+ 
+ TRACE_EVENT(cma_alloc_start,
+ 
+-	TP_PROTO(const char *name, unsigned long count, unsigned int align),
++	TP_PROTO(const char *name, unsigned long request_count, unsigned long available_count,
++		unsigned long total_count, unsigned int align),
+ 
+-	TP_ARGS(name, count, align),
++	TP_ARGS(name, request_count, available_count, total_count, align),
+ 
+ 	TP_STRUCT__entry(
+ 		__string(name, name)
+-		__field(unsigned long, count)
++		__field(unsigned long, request_count)
++		__field(unsigned long, available_count)
++		__field(unsigned long, total_count)
+ 		__field(unsigned int, align)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__assign_str(name);
+-		__entry->count = count;
++		__entry->count = request_count;
++		__entry->available_count = available_count;
++		__entry->total_count = total_count;
+ 		__entry->align = align;
+ 	),
+ 
+ 	TP_printk("name=%s count=%lu align=%u",
+ 		  __get_str(name),
+-		  __entry->count,
++		  __entry->request_count,
++		  __entry->available_count,
++		  __entry->total_count,
+ 		  __entry->align)
+ );
+ 
+diff --git a/mm/cma.c b/mm/cma.c
+index 2ffa4befb99a..e56ec64d0567 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -864,7 +864,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+ 	if (!count)
+ 		return page;
+ 
+-	trace_cma_alloc_start(name, count, align);
++	trace_cma_alloc_start(name, count, cma->available_count, cma->count, align);
+ 
+ 	for (r = 0; r < cma->nranges; r++) {
+ 		page = NULL;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
