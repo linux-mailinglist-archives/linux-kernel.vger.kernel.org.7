@@ -1,119 +1,178 @@
-Return-Path: <linux-kernel+bounces-775913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F99B2C663
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EF8B2C667
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED3F917E60D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B070616636B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5287D279DC0;
-	Tue, 19 Aug 2025 13:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5856F322C7B;
+	Tue, 19 Aug 2025 13:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMs87KV3"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="jzxktjfA"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013046.outbound.protection.outlook.com [40.107.44.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5321E202C2B;
-	Tue, 19 Aug 2025 13:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611721; cv=none; b=a0bGYf9q1Eg6xYYX63vZ2c+QdJFI7yoJwusDzSpQcS0tb44dOHAzwf5W3o/xoWP9CvykJuy4LAAN/zBSOSW26vWnEQoHgyZMl/xp18X+AcX1u/b8X98OcRIpNPG+zc8Gm7myosq2YDZhGi02xnVk6yA3ZIn8iGafmCiDui7cbyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611721; c=relaxed/simple;
-	bh=HdRgoNyvGlv0blslP7TgARjcvijjgp5g7JQE+Na0spY=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=h3SSIoTsWYdj66SqfANdIxjK+5hMiJzZ9V67zlu7dpUl+pzSzD69TMAoePRLSLMNVEu8LfI4U210EhAtSYxw0ckRkntNReMtdzbvZnld66kyR96GDMwZoXa+Z8+73+YBR2AjaK+BL1ST5ip5wu5yg7spRUl8V1Tne21ITf68B+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMs87KV3; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-53b09bdcb73so4491849e0c.1;
-        Tue, 19 Aug 2025 06:55:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755611718; x=1756216518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ibd7GwOhmC3MqSWvL4AYobC3T4haQQLYmBDW9/hgay4=;
-        b=mMs87KV3TP4INqbq4R5BeUYOYozp8JxM07lrYc3S0ewpnJrfuJ22FjLR7owgHC5mcL
-         559hKoNUM09DyueRCHDqYzOk61GACnog9TkhC6u1HVlWOiSi+lguHUDIRSWHf/PBwEGz
-         fE04zp1rzSNauyfA2Ybw060eAFE77U5BP87WBUEjMQhZIpDGYyjsTwXFK/asz4lNg1l4
-         MvJWVc3xkD8ZdQbCYEGJ1hxn6CzIwUete+2/RfZ+v2a3U571Nf8FGh1L9N+sVrxMlHxa
-         6OeUGYNc6inzB7uXziFU5WIrVgY9ZtjNUtkAQzsf7QCH/I3iLhPTZLZoJZSsosNiLpzy
-         abDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755611718; x=1756216518;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ibd7GwOhmC3MqSWvL4AYobC3T4haQQLYmBDW9/hgay4=;
-        b=t2QsssO+wK1fdjqMVkV/sH+AkHHcFyqEHflThmf9asyXTyZgZFxuoNB/3/8ULy7T0R
-         /ManBu05gpmZoqdf9YFWC1KWdmB/wX5JZRsF0LY8552TUsWZKeInl7Na36/ptutXFjxs
-         XHT9tdkvIUwqOxGbICtz9P+ntccjtIw7tCJcOoGMEQyZrkBJD4gSR5UtpG1dy7BMKPjg
-         pGI2X80qXc05LQhEVpPj07/1GYERK6tbK0VE5JEdLchhKpTOeL1rqdE5BPl8aqeBBxUI
-         q6NYc0JRKLeI9xEFmHL/6Yo2JXx2GzlqQlai5iwMi+V67lcPTSPOKa4wziog6X85fYXk
-         kqeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUx7JznA6Dvl98uKlx4EWD4dc5IxLmBcW46IDBKdm2gGfNBFz3f2efOU+YQX4QMalMFi2PZOCbAjbvGWzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3GyUXxSm3nUFsRF8q5uI9ocvDJSYQ8O7GI84fI/4f9iPequcd
-	sGxxHI64rGhoAwMSvbJOODuXEthbmjMrOl3mMezUr6+4RbRv8Srk9brEb1cRa5Zr
-X-Gm-Gg: ASbGncsz80iI3MtUs7UGbcy72CcL4cHoBZtLJK//o/dXXUqcJCW2OzjIXNGG9NLen9B
-	xxw9z9McmF6WSqtApo0fCJL/RJlLKRxsMKE0dxOnlhieyqKloBuEhGrVx4OTCdUhIdmJlpbQ54Q
-	+jz0b6lfi04kKbz3kXbhyXEApu/hSorjJ1Us0C5GnER0DcYh+MZQutxDvhNzvABSGucZSqRgzMM
-	fjWwrWHGzqUVYsoOf9O/4h6TRu6ip9fV8G9OBNuhgAEq3nl6uKBkxdE6lfreI7LRG8lTWlUGf7V
-	oMVVnqnaFdKyaY68eEiZj7pZwLmcCPGY0LTs4DbZRSf2HoWeXqUAX4DR9IRsHzEYqvsEL3Hgb7W
-	DAsiqzIsHwvW0n6zo2U+QcyFL2g+zzYXJLWzH3hiKME/6W5piFp04LYkRYVB1MoKsWv5Pfw==
-X-Google-Smtp-Source: AGHT+IEInlesI2rId5cEDBNwOSdQ5etELqd29Gj1DEM0JHb4V91Xcr06kMXt+1nlG/E4q+syWDXUwg==
-X-Received: by 2002:a05:6122:25fa:b0:539:237c:f95d with SMTP id 71dfb90a1353d-53b5de39980mr704555e0c.0.1755611717959;
-        Tue, 19 Aug 2025 06:55:17 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-53b2bd5514csm2570233e0c.6.2025.08.19.06.55.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 06:55:16 -0700 (PDT)
-Date: Tue, 19 Aug 2025 09:55:16 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Pengtao He <hept.hept.hept@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Willem de Bruijn <willemb@google.com>, 
- Mina Almasry <almasrymina@google.com>, 
- Jason Xing <kerneljasonxing@gmail.com>, 
- Michal Luczaj <mhal@rbox.co>, 
- Eric Biggers <ebiggers@google.com>, 
- Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Pengtao He <hept.hept.hept@gmail.com>
-Message-ID: <willemdebruijn.kernel.1ccfaff4b5510@gmail.com>
-In-Reply-To: <20250819021551.8361-1-hept.hept.hept@gmail.com>
-References: <20250819021551.8361-1-hept.hept.hept@gmail.com>
-Subject: Re: [PATCH net-next v5] net: avoid one loop iteration in
- __skb_splice_bits
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6F026C39B
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755611769; cv=fail; b=NW1Aeg4uYXLc9hu6qrC7I9F65UIhx6z6SCDuzDlp4iE0cw6TMw8v3qGBJzr8WLkUiqP8sri7n2Wkif+mpokhCjthC0J1dTOriiL+q08Y1M0wf6zfRKksf5umsTW0q1/YSbNbxPv+9JLhDVBJhm0g/TO2og7H8nXWIU9QGpzADjQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755611769; c=relaxed/simple;
+	bh=cCDBMICbmfZnW7cjuvYgF5GGREvjypOmMZrAupOI7R0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rjBSk2cfbWfI6xDOO2nq5siyydHalNKoiKWWw3VGy0wC7mj1BGerViVkCD4IhZZf7IasQ0BZIzox8j+CDeI+5N/Zpr7oYVmTn2PLs7h+HR71ningBBGme0FupLw7xgBLwwit4FhPr/RE8DJc25juh00zr8zehTOGckEx+tVoook=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=jzxktjfA; arc=fail smtp.client-ip=40.107.44.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dApAMNozt0vfWf6MksYxl37sKw+gH7O8S25MVKGufFJKCOi+/ZsPxvmsAC0yVxJ1gZFB2lW2LqJpCQ1P3TEVejMeCQVMh95IdzFNJTJnrB84XTNV20pETq5ATywgLPknVVkKrbr/e4VutobiY3C04wNVurDWxaLk+EuI4ItBn+gcs478OknU6hD9IMezGjKuTnXbzjgK+oeVhUwErboHWTfHP4UEiOTrkYnMxjBauShfMdhNIxHYzRkFWdRWNI0Bsf9ToHcGqlooSVXTcdaZWB9zVJsOKAXGfD7uj6eBTCBh8q0pIz9mKkV6Q7mY1aMhevqbBaYKOUpjBDNWJpqOug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AnPxRBRRhbbW91cQFkiy8C8kAvgKBtruGLhB7wubvyg=;
+ b=FukFxwUWRmxtSTUaHKvGv4xY+D1HsNViUTiyk5zjiyK3GdbRVLw4yzgopjc9IP5y+eUfD+j6u36UDjk8YIeoumtahtw4TCZu+vO5DExDI4z/fkcHWXE7RoIKnWxgMcBJMXgdu39TpZM4gseLA5OYh9mZPtGFgQLqUD8EuOxDz/2HJUKhYY1qCCtW6Jt3/Owkos051/QUNmRlrkDc+6JDvE1WwVZtJO9uit5o5ZF9Wj3K25v3WzLInx/J/MXGwBfpmYpQN6KuYzKRaZg1q5D8IQQImqtppE5/nPgQ1pk48Vp5aBFOZ7tlYMFPyADw6jYiP0G0u1gDop9CbAlsGuFhlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AnPxRBRRhbbW91cQFkiy8C8kAvgKBtruGLhB7wubvyg=;
+ b=jzxktjfA2NZ35bxpRwBAZeRYRbqSQsi4pIweWKew7XuS6LMeX2mwEcRWswlPtXt0mVo6A5I+Ah23X4qlLwd+5exUmwthZgxViq3abLyHhS3m04602/CtF0MkxXdpseJ0LoHrViWgTeyaXKcqkiXw6n2dm1YKvJ3m9UJQwJeaJvLmFceQXCvfWB+MkX8n8kJ2dhf98yUx9HBo1m+WyJhyblmrOhVmUkMHwLgn4nI5P6reAICossgAaJ5bApFW35UOHYS9R7CvD85i2k0RQrtQJdQ/xxQT4pcnyqTO4IPCdXORdM6114h7Cw3AtrYIhtt78jF7t5rETBatuPXF9HRNJQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SEZPR06MB5070.apcprd06.prod.outlook.com (2603:1096:101:3a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 13:56:04 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 13:56:04 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	nvdimm@lists.linux.dev (open list:LIBNVDIMM: NON-VOLATILE MEMORY DEVICE SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] nvdimm/pfn_dev: Remove redundant semicolons
+Date: Tue, 19 Aug 2025 21:55:53 +0800
+Message-Id: <20250819135554.339511-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGXP274CA0005.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::17)
+ To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEZPR06MB5070:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8fae9532-2f30-43f4-a2c1-08dddf282338
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Om6kCZA2mxOF/DpCTZH8S+gHbD6v9jR79/nmD8gfAWVMiBpk6SedPn3P9tpb?=
+ =?us-ascii?Q?CyJ/uWOpSFt/hNiUg99iC5Gq2mTvJLsXiDV+UXH5ldfwmr7N9FH51UCptROE?=
+ =?us-ascii?Q?/DuDa0belrJDxiMEYg8+AnCBv+Od0TNCfHwtPCSoXbnvv3DT3oeSxldwO6YB?=
+ =?us-ascii?Q?mksVyij1AO1GOJA41SB9uatbpssgaYRmhSINZj2lqQ3icWxLNQwZj7755yU9?=
+ =?us-ascii?Q?ElBQL9I1lezzXGGBiSitsDZWUDa7iFy5Z6YPoo0MCby3EtTH0zYBGF2W+E9i?=
+ =?us-ascii?Q?NH1prZ2vce+sG7Y9sB5sMyjXa3m7cUtSRQD46cElS8c+NKlUkAX5OBOsJnVW?=
+ =?us-ascii?Q?2CMuVswGad5CVW1651RYvt0szdB3SezALsWBCoTRO7SjVL2p7gfJS4g8SzC0?=
+ =?us-ascii?Q?jdZT1wOC9zBIe/w3iZSxwWDb50sFPc7kpyH+K06XpMrWAjIwdzsk7+WeUAc3?=
+ =?us-ascii?Q?VD0suUmNZnQ+EtV8BkWPSFjVwS0rv4jU/SXb73dZiZpMkegbBZA0+WF7JOG+?=
+ =?us-ascii?Q?bDNuoEHsWUa1htAs2kU/o6qQI59A9ZuEGDAzDz8EHi9DyP7BmcgK6ZbiyMEv?=
+ =?us-ascii?Q?h3ainLcTbYuuff7nweylgNo/YpIx2nXG/FTGRYOEUrURyoWq1TGS577hwQk3?=
+ =?us-ascii?Q?6g4Ehjo3LLwX4q1ifPjqFXDMMQEcdDgq7ZSJwuzaoopFnCT+alzE6/F3zRtp?=
+ =?us-ascii?Q?gzCJl9ItnA/0C3jWEMnkuJyp5UUqOxhh3b/ja/NKVzzOJsYRCRe5cb4tSt3C?=
+ =?us-ascii?Q?g2NiYgYXkxt001RzALKXAJ0wzrN72lBMe5vgFx065Hcrqr/gYpNIFujzfq37?=
+ =?us-ascii?Q?W3rPSCshXouzgst8jgWk7Mc+1B8TvwabpUvQUcG4s9vfwlRx+m1olTiFp//I?=
+ =?us-ascii?Q?EplqYjjgq9SVkaZM3er4g0adLyNPdXNsxZwFbnOkhVNso7kdmzwI5ro44yoZ?=
+ =?us-ascii?Q?k28iWeErkWTtW4868+A8T0wyN2IcIvGxou1Sjch/R8sSmZEltk8SKW/RDUS1?=
+ =?us-ascii?Q?HP8sKM14SwGJrrlVxX1M0TXUoWXh/BvdPjrSzKSwSp5pmCvC9pKIwU4T/o8p?=
+ =?us-ascii?Q?SKzafnllcR/DHx4vmgJowtFTikWmjpJl/dZWrFsut7J9Ie5fP99WYUevoa/n?=
+ =?us-ascii?Q?NJqrrrIfvw9sgzrMB4Lkr1ryIGuvNmwf4TU+eliKugwNHt6AuirdoJ4z+OgJ?=
+ =?us-ascii?Q?Z2fBmcZuq1ViXrXcn3wcR+5f2sKYSMvKGREw5qoVTLu1mOHh103nyFvW5b4k?=
+ =?us-ascii?Q?epzRjVdKwjUp2eodT3GEpIXB0ce/oRtZVeGo4CKO0NNtlqpcGPTOWgYXIMlt?=
+ =?us-ascii?Q?sj+Qd/abpQP52JeTunQfcC9BqlCZ+JZag43qUgHHlivgQ4c/scm1zk7FElLU?=
+ =?us-ascii?Q?0Xzo9GGkVSUmlv6Z8PJmA5pJlU0Vf3vPnvP4S9QK6W1H8bktUbXiuM+qkubO?=
+ =?us-ascii?Q?LJjkEgDzu1h/7ExoDUU6CA92VMDCgL9qvfWZJAaZqFM421EykQ60lA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?if7PKgKLNUlqT1gwImNNUCmMkTAqPXerd38obpzkDqbiuSsIgQBjWWYuyIu6?=
+ =?us-ascii?Q?kZJcUJMbDLQvHl+p1PrkfF7zlHqEgKP599NRrZxtvpbsYImOKZ8Q+6RYjz4R?=
+ =?us-ascii?Q?ogWTWK9kmIgLVWl94jYNTRKKiudgIAjIBaSztBwrrCr+x9nLZOuDHIpHAoME?=
+ =?us-ascii?Q?OcEOLN2VYbBpz1lsmXpv5PCVbIGTXOakeTWcTU+yLJMliAltltcIHTor7kll?=
+ =?us-ascii?Q?5OQ7K8GUl9pvVqwk9XKlubzkWksFwcXwnUb11hUHr8cANkacXM889b1k912P?=
+ =?us-ascii?Q?wYzJZQsE3uZuvmmXPvA3LPy0FNndHwz3bU+2PG2zKjHqkrxwvbN+66YgRNCO?=
+ =?us-ascii?Q?wgEB2lqmQcpkj5BDw2y8mmDgX/fejOCM5JrpnlrvSbp4in3QGbCgFgaIKvOw?=
+ =?us-ascii?Q?KuDx8kntbmm3Mujp+lcVPO/udeRaeU/FLZ6lAkbHUm28oNcqTIiUGd20a1C2?=
+ =?us-ascii?Q?JaXOBMAg1fBjqVmvnde8PuAB9DussDBJ0ISW3jEhx9mQlPJVUSwb/imQZc3K?=
+ =?us-ascii?Q?mqmzX+HvWwpdekq6tWv2l64vWDOLcqqFeCOa+hM4u/2Hm1AK46pcouTondFD?=
+ =?us-ascii?Q?6ndfzOTiLzifCh+n7YtbDxbb1VYt16Bg8x6mWhlsTp3PoXW7YAsiL8kc0FQF?=
+ =?us-ascii?Q?zcXIHKJAQ0MhQGLUTwguUKfD4MtiAx0WczDC0qW5AWk/g5NmomtZwCrZ2Yyi?=
+ =?us-ascii?Q?GpOe9Ay41bBCXFBtIMPN26laHHlKnGMZGIlLHbKv9E0i8J8tNflIveG2DMo3?=
+ =?us-ascii?Q?XYKQwWPhMGQsQdPlzvYRLA1uzbqlIlnie/OYeehAFThJU+HqAZ6DHWejquvi?=
+ =?us-ascii?Q?HXl2QHAypwete/W2Ivu/c9gXoPbotk0ZC5Wsu4g5O9EGBohdvTgWf4V0QHvY?=
+ =?us-ascii?Q?5lnhUrhOL/IBV37A/o2C/+dQ+tAzE9YU2ZYsP9aSTe8xCvVdD09eq6bDvazX?=
+ =?us-ascii?Q?82a9wfdGFaXReD4najusEH7crU3FwULSiFGPbDxKvbyTBmux5VEhC3jEATQI?=
+ =?us-ascii?Q?3IR7HEy7oMEw66CcP/Qnx5GzQyNkEReVQo3p/8BipcPBdmjiABwCr2gqhLeg?=
+ =?us-ascii?Q?/XswfkWXBVIFv+dvNU6651yyeC+g2fOE/ag1lm2G2HUsSvy+jOKhViM2eOsM?=
+ =?us-ascii?Q?ocqb7Kc0e+XzjRPRfVpz3/5x68geuuTFJRgLxM0y89GAhc8e9BFQNiYrnsLQ?=
+ =?us-ascii?Q?nLbNCiS6pSQ4+aXDNtmh+Y5jwPpDhtX5vZUAuUDjJFielGEzgA9gXcmxRAm5?=
+ =?us-ascii?Q?SoBJ7y69qvNpotN0hZTFOW/9KbLKWZLa0zZQxsYks02SY0Lr3spAy3R58XKA?=
+ =?us-ascii?Q?DXhyJ/AO0m1FOV74XLR16EMSUy+JK/AxZiYEse5ARWGkxUVr7alWrfT3PEQR?=
+ =?us-ascii?Q?85wsnD+AaUa/sROfpSp8uJDBgk/hYREgHoI4NtfQnuxbrGpnZ8COBzoYbeUJ?=
+ =?us-ascii?Q?09ZIufRajMn6C5RPKbEicYHqBwmdphRFjK2ut6JyoxKyUTk6RfMQ/v0FQ5tF?=
+ =?us-ascii?Q?wVF2i7CxHWO5qzJJInhr6GZMlm5o9fWhm7dBVFCVqR0OkDzJ7+uK2D17Sm60?=
+ =?us-ascii?Q?0gCG3FgAWV2n3qiQ5FygAFxNy4T/vG7Pg4gB9w4L?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fae9532-2f30-43f4-a2c1-08dddf282338
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 13:56:04.1337
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GwQl8HEEzIisgW3odYB9Lzr9DNm6oGcyGZ0JYrkHh3J87QB0MYOS8ICjIwYUjn9mcu+k4JEErAy+n0SNdBoqDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5070
 
-Pengtao He wrote:
-> If *len is equal to 0 at the beginning of __splice_segment
-> it returns true directly. But when decreasing *len from
-> a positive number to 0 in __splice_segment, it returns false.
-> The __skb_splice_bits needs to call __splice_segment again.
-> 
-> Recheck *len if it changes, return true in time.
-> Reduce unnecessary calls to __splice_segment.
-> 
-> Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
+Remove unnecessary semicolons.
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/nvdimm/pfn_devs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+index 8f3e816e805d..d5798aba9ad9 100644
+--- a/drivers/nvdimm/pfn_devs.c
++++ b/drivers/nvdimm/pfn_devs.c
+@@ -755,7 +755,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+ 	if (rc != -ENODEV)
+ 		return rc;
+ 
+-	/* no info block, do init */;
++	/* no info block, do init */
+ 	memset(pfn_sb, 0, sizeof(*pfn_sb));
+ 
+ 	nd_region = to_nd_region(nd_pfn->dev.parent);
+-- 
+2.34.1
+
 
