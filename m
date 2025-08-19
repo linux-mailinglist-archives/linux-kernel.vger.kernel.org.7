@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-776362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C060B2CC6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:51:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36847B2CC73
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C83637B1B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:50:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6DAC7B60B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D637631CA6A;
-	Tue, 19 Aug 2025 18:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FBF322C9F;
+	Tue, 19 Aug 2025 18:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lU0I3Br4"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZD+TihB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1D72EB851;
-	Tue, 19 Aug 2025 18:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728AF31E119;
+	Tue, 19 Aug 2025 18:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755629499; cv=none; b=iB8pA0PrG6GLI58AigwGmJNHO12LpLotYPZl2JVsA//kNSv93nnjlANhPu64FK4RL0mVmn9xmWFFT1G31cy5sKAXhOWpACy1g9VK7A4z7V9L08/lP2r9dowM+V4mS6FET3xyC3ZEZwIF4mk6vhFdCbFPhgZfjbiwslIbvO6UQ4c=
+	t=1755629538; cv=none; b=pAiEf4Fzuq8RchM+Jo+mt6BHQLNp48ck7PuGy0AvUqC2ejUkCcISu+gQL3SpcQ5/p/Uc3I9ip2RsPQ4WJ94+l9kfmULP837SqzA7S3Ju4bQBVHLnRSgkIWyJBK1b03DocF1qc+wmjfeUWSxP3Z+YFjUDt37VcECNzfd44BB1xiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755629499; c=relaxed/simple;
-	bh=glPXpSqU7EPo8oQAWr9g0aH+3EfAjj+J2Pat4S9P+D4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cAjBoA0Szf6o5EngVVSn9NRII8y12oco3e6fMgCYEaP0iVsmzoZO2AEXwwjlv175AONwDo3fv1DNv20kEImd1Nz8zLyQ6YprJIzk67iZj2HvxQOGtRT4rrCFkuFJeUNx/Qf+sNz/cgsdCn1P0PD0ntR6R/3yyEcwuIjHD/KhyC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lU0I3Br4; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb6856dfbso36210266b.1;
-        Tue, 19 Aug 2025 11:51:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755629496; x=1756234296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Brn2kGl8u5LDFhY5EdF9T38fEAsVYfGMVQtXxcK82As=;
-        b=lU0I3Br4mAz50QI319IdN/FDbLo9RmAx+eQy7mqRlESyJVtHTKydMe7Q55fX5MDmA3
-         GPE9lPWD30z0gGTdlu+6x5ooKhlYAfu62HWRgSQTDorOwzDbtCyMp9mMFQd2fbQt7cvc
-         oIFmsp8wLePyqRcxkk20PFI7y0rlg/n0Nmbbs5GY9KUtY1Dnix/gwuuB8sJDXhNXLjYu
-         RMBO27eHmm8WA5I8zmPYUwGpGGLHP+t/eDAzCWrl3u6IHOMEyW2ZslSDPkj+q9lBQlYA
-         CJUj/87wYYUJ1LSHn2CLPvPYRBKVCifN+RX8uEuYEx640dHtI90pMFRoV3U6PVvsbGo+
-         MszA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755629496; x=1756234296;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Brn2kGl8u5LDFhY5EdF9T38fEAsVYfGMVQtXxcK82As=;
-        b=KRNZuDqXHwAkJcFkNINl1AKvGUZVpJ/kjpOw9GN2sIFxinsAMxJR+WdHVGG2MhH2ri
-         xH9wN9KhQFj15ruKxJbt3UDZtz6f8QNm8tnAfm4CGximZbN1y0oMhPIk4InIjSW5hfD8
-         k51hyElXoVPxq+SUWBOfaHkXe7xpL8l6nAaVp5RTwbSdVevtesikOMi1LS8waGjenAZG
-         Lrikoxb9mM6aFVeWAKh9cB716wfiFKS3TB91Bkpj9a426r8e9TMVghkFXbNNPlKXDCtu
-         UlnWqNIcJYlNxwSqEUbRVTOrVusmfnvKlPW3Gp7TMuDINid9677q6Ujw8Bk+EMkPNgZU
-         WPzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVL1dXyCdIqmTcuzNxTh4sA9+A/aS72KF5whYYKDAWbQLkH6D9hDV/kGMt7gkwxmJ/SRJLG2dWu7jFAtLI=@vger.kernel.org, AJvYcCX8vYkevDX6c2Fc+hi0CuajBPtn69sm6D6tWSiz+KlTvTURotzQjJMNZYktuIaBBx6VKd8db2d85NFhh0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgBgW8SmtKWxlcWJTtn/Lqk4FIWOx3uxXzg2utPCGRiZIW+8y6
-	RoYaJ0vZVSRvWL0CruJ5905Tz2oZIF1JFsP2HgirQCWSbu7Be1AC94/X
-X-Gm-Gg: ASbGncv6t0jWz3qHb2y2KaAfJbGD80f8vTsLE4BDGNuzsiTEb58hg3j8pqLkQr32qjK
-	1QPonuIQI+8YIAIeBkCM449HU1oh656apT/lorZpQE67kwYGrXcVtfZz0KBf9oQsUYkJNCLsfFW
-	AHwrhcBDK7dmc+S7EDnxPTucszW5vhLwfun8gcD7qOdyAu0V1vUmK7aiANHD+8+R6d3EG2255gt
-	j8vIN8bXag2knhtGiSXwtmj5kw5uRJwhdJrBm9BCFPaF4lgkr/qNv5i5lBqw42GzRruf6TkxViA
-	AhUEfpQ8OL3slXmLotfv7qTsQONHV0zBse+3w/C9L+FjaoSZKzHbzVHPdMk+bYZO5tymB/XGMaW
-	JcmhKJiiUWrimnhxH5pF6N7dWbQBn9frcYwyTCGQGZXSpyDBdfjtBE6ECKNNoJBMHlBhv3u0t
-X-Google-Smtp-Source: AGHT+IEUQ8ifV0sQoU+D+0TDRTQpfGI1s/Ii3IRk0I8Z0F/dNuUc0EYyeyOulHAwNPqHLlPnEvbyOw==
-X-Received: by 2002:a17:907:d1b:b0:af9:6863:9d41 with SMTP id a640c23a62f3a-afddecf2db4mr361992366b.14.1755629495792;
-        Tue, 19 Aug 2025 11:51:35 -0700 (PDT)
-Received: from cachyos-x8664 (93-87-121-239.dynamic.isp.telekom.rs. [93.87.121.239])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2fc568sm31584766b.38.2025.08.19.11.51.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 11:51:35 -0700 (PDT)
-From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	lkp@intel.com
-Subject: [PATCH v2] ALSA: usb-audio: us144mkii: Fix null-deref in tascam_midi_in_urb_complete()
-Date: Tue, 19 Aug 2025 20:51:33 +0200
-Message-ID: <20250819185133.10464-1-ramiserifpersia@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755629538; c=relaxed/simple;
+	bh=Wkkw568iXoDJ0kw7A3ebaYw+w6YTHaGKsVwIET6hZh8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=npxyD3dU499kyCPnE2lQL67mKUU/RxpV8R9xBKxEFiQ89/BvkzNkyp65CCvXEZ/UWIMk49MBdT5oaYZH6dH7TlALkUhLoEOcoLZL8WrfaR+OPFrgYZfh/aSN/rwuuSOCBrT8GH2DmqtpNZ1oiZaNASkdZ9678q5ZgEx2kacOMSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZD+TihB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A20C4CEF4;
+	Tue, 19 Aug 2025 18:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755629537;
+	bh=Wkkw568iXoDJ0kw7A3ebaYw+w6YTHaGKsVwIET6hZh8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MZD+TihBFKBHZojf+8U75eK+gvYUBDbcrGGGh4FJ5Y+CLSCBS7IG+Lrf40p0UeCeu
+	 e5Pi+wAy5Cg5uN0wbc4PDzJHg2a9urWwjFKFSJwOm2pOZNQi5yELEvtUQ3NcSt3n8+
+	 GDh3fR8nGRptmcOU3CfIaWp0mpA6hI0Ggv14wKw+p67bcPdomUPFXaOyKIY4GyXiD6
+	 mYxVL0M/amD+dGy6lmA+o199wdf8h7uZzbjxqtPcG9+C8SM/xw49pJL/3eua01n5le
+	 loPommBtJ+r7acsAx3oF8ST75wq+cuC9bnWS4Mv4yR10yIWml27OVqF3T9ChG75yYz
+	 Oyg2vubv6Tn5Q==
+From: Mark Brown <broonie@kernel.org>
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-omap@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aKRGmVdbvT1HBvm8@stanley.mountain>
+References: <aKRGmVdbvT1HBvm8@stanley.mountain>
+Subject: Re: [PATCH] regulator: tps65219: regulator: tps65219: Fix error
+ codes in probe()
+Message-Id: <175562953472.246782.13325233916103955955.b4-ty@kernel.org>
+Date: Tue, 19 Aug 2025 19:52:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-Changes in v2:
- - Removed duplicate call to usb_put_urb() on submission failure.
- - Removed extra blank line after the function.
- 
-The smatch tool reported a potential null pointer dereference in
-tascam_midi_in_urb_complete(). The 'tascam' variable, derived from
-'urb->context', was checked for nullity in one place, but dereferenced
-without a check in several other places.
+On Tue, 19 Aug 2025 12:40:41 +0300, Dan Carpenter wrote:
+> There is a copy and paste error and we accidentally use "PTR_ERR(rdev)"
+> instead of "error".  The "rdev" pointer is valid at this point.
+> 
+> Also there is no need to print the error code in the error message
+> because dev_err_probe() already prints that.  So clean up the error
+> message a bit.
+> 
+> [...]
 
-This patch fixes the issue by adding a null check at the beginning of
-the function. If 'tascam' is null, the function now safely exits.
-This prevents any potential crashes from null pointer dereferences.
+Applied to
 
-It also fixes a latent bug where 'usb_put_urb()' could
-be called twice for the same URB on submission failure, which would
-lead to a use-after-free error.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202508192109.lcMrINK1-lkp@intel.com/
-Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
----
- sound/usb/usx2y/us144mkii_midi.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Thanks!
 
-diff --git a/sound/usb/usx2y/us144mkii_midi.c b/sound/usb/usx2y/us144mkii_midi.c
-index 5759f6010..08b04aa39 100644
---- a/sound/usb/usx2y/us144mkii_midi.c
-+++ b/sound/usb/usx2y/us144mkii_midi.c
-@@ -41,6 +41,9 @@ void tascam_midi_in_urb_complete(struct urb *urb)
- 	struct tascam_card *tascam = urb->context;
- 	int ret;
- 
-+	if (!tascam)
-+		goto out;
-+
- 	if (urb->status) {
- 		if (urb->status != -ENOENT && urb->status != -ECONNRESET &&
- 		    urb->status != -ESHUTDOWN && urb->status != -EPROTO) {
-@@ -51,7 +54,7 @@ void tascam_midi_in_urb_complete(struct urb *urb)
- 		goto out;
- 	}
- 
--	if (tascam && atomic_read(&tascam->midi_in_active) &&
-+	if (atomic_read(&tascam->midi_in_active) &&
- 	    urb->actual_length > 0) {
- 		kfifo_in_spinlocked(&tascam->midi_in_fifo, urb->transfer_buffer,
- 				    urb->actual_length, &tascam->midi_in_lock);
-@@ -65,8 +68,9 @@ void tascam_midi_in_urb_complete(struct urb *urb)
- 		dev_err(tascam->card->dev,
- 			"Failed to resubmit MIDI IN URB: error %d\n", ret);
- 		usb_unanchor_urb(urb);
--		usb_put_urb(urb);
-+		goto out;
- 	}
-+
- out:
- 	usb_put_urb(urb);
- }
--- 
-2.50.1
+[1/1] regulator: tps65219: regulator: tps65219: Fix error codes in probe()
+      commit: 11cd7a5c21db020b8001aedcae27bd3fa9e1e901
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
