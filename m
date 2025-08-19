@@ -1,136 +1,199 @@
-Return-Path: <linux-kernel+bounces-775728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A106AB2C418
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:49:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4907CB2C41F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D1616B3D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6786A1BC4AC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC6632BF55;
-	Tue, 19 Aug 2025 12:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2377A32C310;
+	Tue, 19 Aug 2025 12:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHQwHGF/"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVPewsaq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C46E322A22;
-	Tue, 19 Aug 2025 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B74C1DC9B5;
+	Tue, 19 Aug 2025 12:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607571; cv=none; b=DWHrd0Z0bhgiH1Z4PyzDbWmPLwq8hpehJJm/ywHQPIbW9RRQqXV/+M2RXY9ZbZZx20RXf3xr8Db+5qbM6PwlGQ/jZqle0WBdF4XkQwUJqbnmmnhIiAiP7tljZkflNVCORVGRcMYKa/6CkTNP+5MP8UCeyDYdv9NtXcwUKGvdzZU=
+	t=1755607686; cv=none; b=OZnyHXgKg3SB8gkjIOxx/uCwA/0iZBuC8zg3mIFwU5y71Uq40VEdmdSw3bHykXdHhTcUvAHoi8+iku1Yo4GnZUjK2Sfimq42cenhfHiu447/63gAApLOVYVYVeuKJmt08YPM8Amk6Wfh0NY2517sVtD9egkiNk+FX2t+nb9eKwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607571; c=relaxed/simple;
-	bh=pG2DqksVXTDv8BiEOMDJb+cN6yI4T+1iuVCpREYgMk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MJ0laGKuucDQTLgFMUdsesqc4Cy9o5xhTd9QdvUm4vfbHAh4ZcPXp3AR2IbaWbve3T0sox36QrscV2O2urpS8Vki37qXasVANROgDUydJqydN+/h6dQaQLXveMRoh51lXqOCA5NFkuO8odALcgPXxJq6WbNWafloAk1RD/iCZyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHQwHGF/; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55ce521f77bso5310762e87.1;
-        Tue, 19 Aug 2025 05:46:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755607568; x=1756212368; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7LOzMVNNMA/KN/2H97VViAKJUt9B2Qu2D9DsKhv2Fc=;
-        b=NHQwHGF/HKLBQBuJXPwRDmeLdQvQO/8zsq2F+yxN0GUfs6CTH0v/3wkulMVGf19a9P
-         JDOScJHY5RlWSlLBmtjhmZqv93mCQoGhuuAnLgxBBHUqxT48LSLIWidsfR9oNUMWQmEl
-         DPEK57PMqAj/LK/ANn5V+wzsMPGT69kcMSeKL5ygCXxEK6Ogf8gqPQBEUG3Wb1vqbpEs
-         R7imUYskt8vJh+ajMpipQZq78q86ekMg7AnVN95uR2jvvDFIZJJMomGAgfK1l7q1trca
-         dbSLt7khzotCOY9ZiJEl/6GX9GBjYxpIaPhvbJw+5v6gSp7sr6y8B9yggVlK/h4NrIbO
-         elYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755607568; x=1756212368;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q7LOzMVNNMA/KN/2H97VViAKJUt9B2Qu2D9DsKhv2Fc=;
-        b=D9HbWlT1pnRgQUwuV4oB5AEh6Ux+vVSEs5xOp7P5hHNQFMUY7vLsKvg5S0MHwS1zQp
-         YRHVtd4h4To2Wp3zA2DtubVjdXvMNVpQyqYThWLsS8EE2ZqHBlH5/XgPprfq2zOr8qc1
-         IqTl2DDWUoIcRvy8PZ01kMW2h2OZ+D+TU5uO9nBOiT1OEMgE5c6r+oSmfVwvNmDp1+JF
-         LGLWhk+sDuAdRJD8BqPMIMYHX7k9w7QPKCmi0ihlHfLdHXmgLD0T31LEIyvY8Q0HkEPv
-         MpeRKj2NMIfLKsVNLmkYEbywJjRwdw6HwQH4gta00iOpD70+ThCMpnmO6Kz9mc6NOEI5
-         DQqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfU+AuM3iTw6NytEMLAh5ctWAhR3hgP0AC3pxNWSV904/oB6+14YYyUbSPTU77+cRCuQy6fwAPbMalKmjo@vger.kernel.org, AJvYcCVGDN2LnAfVqtiRt9ZhHdwBUEElBrSBggeAp5QdaVUDgwV/dhitK6b299tChv7waa0/lGM1ZsmPdz0p3w==@vger.kernel.org, AJvYcCW0hL7glSZKfWNJIwTEhlGuEF+YyZ0qWfyuDKFcBDkBOr6f8xD4ZKx/aH0erppBp0zHg7rcNtLXHo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz07hYALWH/ftKe44S0eB2cjIFtAtnqwBXl9hkDdGmRcm0UdkUI
-	yTvwCa7oukgb725rXlYJP/ZCgPJZEJ9Tdr/E7joaXD8JjwRGHjJE5x3u
-X-Gm-Gg: ASbGncseoKH8teZLhzecuh7jdt4szgvRb4zPSoeeFo+6QCYBG8+cg75v+O29cYTvqc+
-	H9xb8Wduy76G9azKI5QkbkEZix5/IbCKoCMoDUZq0H+Zo+If93sptVolLKgkhh1vHIMi5wc224C
-	5aEEasYZBYyVEdSeJqNu8F8Q+nB+fLZHTESuNhLlJbMfshMnIpmwPEkdTtUOOArka4qVt0TSjCA
-	CoRXb8BaJgG7fjiGX1DYyijC/arHY9pclugxdnjZko4l5HcjVeF4K8+EKrEG9N4xv/aitU1+76Y
-	NkHFdBTjF5QjomDBaGkmLkvAivbl3Plb/MvDi37EjIh3Su2TNRt6q94WhxLJf/Zpqtj2PW20HJB
-	Q7ni5me2ez6DpXcR5Z8DVT1dohcLZY+CpCOgrgcMHZD7TKJDarmu+TKtacNiqKrmt9DqO46egrV
-	3nfox4ENDDEY/YnC+xkS19MWGe81wgOMfvAXRMMfcYiMXLAX6okabdLQ==
-X-Google-Smtp-Source: AGHT+IGuGWV7U/oDcYBoO/dSE1FpDen5x0o2bX2DtOCb/orjQtQT2rTj0HKcoTgezUHktREn8UG7FA==
-X-Received: by 2002:a05:6512:2399:b0:55b:57e8:16c4 with SMTP id 2adb3069b0e04-55e0082cab2mr663991e87.30.1755607567254;
-        Tue, 19 Aug 2025 05:46:07 -0700 (PDT)
-Received: from ip-172-31-45-110.eu-north-1.compute.internal (ec2-16-170-211-41.eu-north-1.compute.amazonaws.com. [16.170.211.41])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3ccb38sm2136038e87.97.2025.08.19.05.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 05:46:06 -0700 (PDT)
-From: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
-To: tytso@mit.edu
-Cc: adilger.kernel@dilger.ca,
-	corbet@lwn.net,
-	linux-ext4@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
-Subject: [PATCH] docs: fix spelling and grammar in atomic_writes
-Date: Tue, 19 Aug 2025 12:46:04 +0000
-Message-ID: <20250819124604.8995-1-mallikarjunst09@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755607686; c=relaxed/simple;
+	bh=v+nlukooyHgiiAzOjRBCWU5iDkofOBDlFVD92uktfbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TXzT2Rh9sSJUuOVJPRQwR2VAsmtR/7eABEIpmrWxmOmSPSx/yGZft1jXUpem/wciGALEMld6DuXhPnky9Xuz8pn5+4OmVtySxBJdRIPDcy5czXKlHIw1vmieZ//TIQxI9dqq6++GHs7J3lbEx8eHBxHl1foztTc/HPsCVbKpI2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVPewsaq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE68C4CEF1;
+	Tue, 19 Aug 2025 12:48:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755607686;
+	bh=v+nlukooyHgiiAzOjRBCWU5iDkofOBDlFVD92uktfbw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lVPewsaqbQIuJ0t3bzUzChQT0LnErbAOZDM9m+oOYqjM00Q2YkRPG6p3+yEpNge2v
+	 bp0RWxBaEda/G05TMyw+ZNpcA+Ib73LZMKmFhoJWgII0sHL4cLjKr3kKe/yPzYpb/W
+	 5iCGXYu+jMzNkULPP6dfmT7CLDiXSeQpeXEuqMNXBJ6VrzJz3WEP5C27Hx1qoFRAGH
+	 E+IREyOQao9jlZUCQLO9Bm1p6ukXRaK58KczZdprloFe3xc5zHcMmwqhx+hzWWYX7W
+	 PS1s/z7Ji177TU9MNZ3jO5iie6udBd1hWfoZsfU5NvACSxanGXUAWErLQBW3d5c+Pp
+	 oDQCK/y1l0KQA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Tue, 19 Aug 2025 14:46:16 +0200
+Message-ID: <20250819-vfs-fixes-69c14bc8543f@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4524; i=brauner@kernel.org; h=from:subject:message-id; bh=v+nlukooyHgiiAzOjRBCWU5iDkofOBDlFVD92uktfbw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsKSpbe0SvdwPH4Zdflhc55M/5OPdLb0DL9nVHz7Jdu uD+wNRod0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE8lgYGRYKnfPzOC5cmlo9 oy7VxoWnnf2MzP99aoxnJzGd3iYwOY6RYa1s1K+19Rp27Xy50bZBjXs0f7/a+fO5tXVAkGUi7+E 5zAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Fix minor spelling and grammatical issues in the ext4 atomic_writes
-documentation.
+Hey Linus,
 
-Signed-off-by: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
----
- Documentation/filesystems/ext4/atomic_writes.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+/* Summary */
 
-diff --git a/Documentation/filesystems/ext4/atomic_writes.rst b/Documentation/filesystems/ext4/atomic_writes.rst
-index f65767df3620..b614b5ffe76b 100644
---- a/Documentation/filesystems/ext4/atomic_writes.rst
-+++ b/Documentation/filesystems/ext4/atomic_writes.rst
-@@ -14,7 +14,7 @@ I/O) on regular files with extents, provided the underlying storage device
- supports hardware atomic writes. This is supported in the following two ways:
- 
- 1. **Single-fsblock Atomic Writes**:
--   EXT4's supports atomic write operations with a single filesystem block since
-+   EXT4 supports atomic write operations with a single filesystem block since
-    v6.13. In this the atomic write unit minimum and maximum sizes are both set
-    to filesystem blocksize.
-    e.g. doing atomic write of 16KB with 16KB filesystem blocksize on 64KB
-@@ -50,7 +50,7 @@ Multi-fsblock Implementation Details
- 
- The bigalloc feature changes ext4 to allocate in units of multiple filesystem
- blocks, also known as clusters. With bigalloc each bit within block bitmap
--represents cluster (power of 2 number of blocks) rather than individual
-+represents a cluster (power of 2 number of blocks) rather than individual
- filesystem blocks.
- EXT4 supports multi-fsblock atomic writes with bigalloc, subject to the
- following constraints. The minimum atomic write size is the larger of the fs
-@@ -189,7 +189,7 @@ The write must be aligned to the filesystem's block size and not exceed the
- filesystem's maximum atomic write unit size.
- See ``generic_atomic_write_valid()`` for more details.
- 
--``statx()`` system call with ``STATX_WRITE_ATOMIC`` flag can provides following
-+``statx()`` system call with ``STATX_WRITE_ATOMIC`` flag can provide following
- details:
- 
-  * ``stx_atomic_write_unit_min``: Minimum size of an atomic write request.
--- 
-2.43.0
+This contains a few fixes for this cycle:
 
+- Fix two memory leaks in pidfs.
+
+- Prevent changing the idmapping of an already idmapped mount without
+  OPEN_TREE_CLONE through open_tree_attr().
+
+- Don't fail listing extended attributes in kernfs when no extended
+  attributes are set.
+
+- Fix the return value in coredump_parse().
+
+- Fix the error handling for unbuffered writes in netfs.
+
+- Fix broken data integrity guarantees for O_SYNC writes via iomap.
+
+- Fix UAF in __mark_inode_dirty().
+
+- Keep inode->i_blkbits constant in fuse.
+
+- Fix coredump selftests.
+
+- Fix get_unused_fd_flags() usage in do_handle_open().
+
+- Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES.
+
+- Fix use-after-free in bh_read().
+
+- Fix incorrect lflags value in the move_mount() syscall.
+
+/* Testing */
+
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc3.fixes
+
+for you to fetch changes up to a2c1f82618b0b65f1ef615aa9cfdac8122537d69:
+
+  signal: Fix memory leak for PIDFD_SELF* sentinels (2025-08-19 13:51:28 +0200)
+
+Please consider pulling these changes from the signed vfs-6.17-rc3.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.17-rc3.fixes
+
+----------------------------------------------------------------
+Adrian Huang (Lenovo) (2):
+      pidfs: Fix memory leak in pidfd_info()
+      signal: Fix memory leak for PIDFD_SELF* sentinels
+
+Aleksa Sarai (2):
+      open_tree_attr: do not allow id-mapping changes without OPEN_TREE_CLONE
+      selftests/mount_setattr: add smoke tests for open_tree_attr(2) bug
+
+Christian Brauner (2):
+      Merge patch series "open_tree_attr: do not allow id-mapping changes without OPEN_TREE_CLONE"
+      kernfs: don't fail listing extended attributes
+
+Dan Carpenter (1):
+      coredump: Fix return value in coredump_parse()
+
+David Howells (1):
+      netfs: Fix unbuffered write error handling
+
+Jan Kara (1):
+      iomap: Fix broken data integrity guarantees for O_SYNC writes
+
+Jiufei Xue (1):
+      fs: writeback: fix use-after-free in __mark_inode_dirty()
+
+Joanne Koong (1):
+      fuse: keep inode->i_blkbits constant
+
+Nam Cao (1):
+      selftests/coredump: Remove the read() that fails the test
+
+Thomas Bertschinger (1):
+      fhandle: do_handle_open() should get FD with user flags
+
+Vlastimil Babka (1):
+      module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES
+
+Ye Bin (1):
+      fs/buffer: fix use-after-free when call bh_read() helper
+
+Yuntao Wang (1):
+      fs: fix incorrect lflags value in the move_mount syscall
+
+ Documentation/core-api/symbol-namespaces.rst       | 11 ++--
+ drivers/tty/serial/8250/8250_rsa.c                 |  8 +--
+ fs/anon_inodes.c                                   |  2 +-
+ fs/buffer.c                                        |  2 +-
+ fs/coredump.c                                      |  2 +-
+ fs/fhandle.c                                       |  2 +-
+ fs/fs-writeback.c                                  |  9 +--
+ fs/fuse/inode.c                                    |  5 --
+ fs/iomap/direct-io.c                               | 14 ++--
+ fs/kernfs/inode.c                                  |  4 +-
+ fs/namespace.c                                     | 35 ++++++----
+ fs/netfs/read_collect.c                            |  4 +-
+ fs/netfs/write_collect.c                           | 10 ++-
+ fs/netfs/write_issue.c                             |  4 +-
+ fs/pidfs.c                                         |  2 +-
+ fs/splice.c                                        |  3 +
+ include/linux/export.h                             |  2 +-
+ include/linux/netfs.h                              |  1 +
+ kernel/signal.c                                    |  6 +-
+ tools/testing/selftests/coredump/stackdump_test.c  |  3 -
+ .../selftests/mount_setattr/mount_setattr_test.c   | 77 ++++++++++++++++++----
+ 21 files changed, 138 insertions(+), 68 deletions(-)
 
