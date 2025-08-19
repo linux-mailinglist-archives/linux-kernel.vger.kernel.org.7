@@ -1,434 +1,134 @@
-Return-Path: <linux-kernel+bounces-775036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D4BB2BA8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:22:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443A1B2BA8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5576581D08
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:22:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742F91BA70DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CB8311972;
-	Tue, 19 Aug 2025 07:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F94311965;
+	Tue, 19 Aug 2025 07:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Fer9lFrS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEdfHIV7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DBF28640F;
-	Tue, 19 Aug 2025 07:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8DA156678;
+	Tue, 19 Aug 2025 07:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755587875; cv=none; b=l1McAiZhpw5EVmptfs3X6T2H9/YXUB9PRNqVDzaj5c7tF7liOyk1WGo1/TL4u4ugCysn3srY53CehtozJj2i8Tixuf1tquI9tZOcl4brYhVrTr4Urs4j8OyjmwDSKPteERTmSpBovR+ny9ESRwTswbyvvap0liarlONZlZIePJE=
+	t=1755587875; cv=none; b=nxu/jiZRR6ZSKgkLrE9T1FRSppQExcO1kPOKTXp09DSFRtwE/S29E5e6rC8dcTCZKQLRwQ/Jb0IgFHCO3euFNFVKIvn4lUVRICGRi5BTIZnxSBv/GWTar+5BjzmEz4kNufiHFAXv4mUutJpLs9CuclXnB/jCQgWM7poKjFL3BYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755587875; c=relaxed/simple;
-	bh=vzQ/LVDgaaPpdFZXRZapHKTceQmDWmU6YFzQkx3GbiM=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=a2syaIUnYP4eND/HiVaN+2FY5wCx4n7iNiBbLRI9+m4WRpyCx+Xkg2PiegMR0wlU/fnC/MhqV+Ocnnx8KZDVVbeCVX+H1eZYDOkPzScmkNFo0GOrwofR/k6n+8mMK97CFWWMZgjC4vamucF2xs/ce8OqOgxvqsScxh1Nw7Imnmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Fer9lFrS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [223.190.80.157])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2D5ED596;
-	Tue, 19 Aug 2025 09:16:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755587814;
-	bh=vzQ/LVDgaaPpdFZXRZapHKTceQmDWmU6YFzQkx3GbiM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Fer9lFrSU5EK5ce2OfPJ9IcsCOM7i2Ak/RpFilJwBkzXd1+tUrQYjkePrMryqzfq9
-	 Khc1myZZwj0MYlw10u8b67WIu9C82HbKNJzsvHUglca0B5qxgv/jwD5Ju7qgelwOzS
-	 lmLXzkxhWeCV4ABnplm/I0mcjjSguS6iYeLchtGs=
-Content-Type: text/plain; charset="utf-8"
+	bh=zwkVsnNpTCf09HtlNPmAcOy9+OuUfq56umVNxBySO1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VwHdy2sGptw4tEdU34Mkz5E/VS43d/lF7cWzccX7c2PMbvY2ERinpiVrpTZ4jSsxUNCkCfWJQRqqoGxWCLEFIFurgkCuwONT9/UtrAG8lxZS+RTJs6qNQq0L2VcgR7ipMFFGR0Ycs0/HH1atn+1uhK8LaW1p/McSprOG78w/+1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEdfHIV7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADC5C4CEF1;
+	Tue, 19 Aug 2025 07:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755587875;
+	bh=zwkVsnNpTCf09HtlNPmAcOy9+OuUfq56umVNxBySO1o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LEdfHIV7OB6RlXfgJauN4VhzbIkEE6flUJM/foAXWduEvjKJyois/dozrV6ZMIbgP
+	 QML4wEaeZxny6CcwkGcBEZoC2m3pSfYnn8uZRy1eBIrBQvgh3qKjIemADuKBGcrlVV
+	 pywefmu+TC6Ic/UiCqcUib4MlW2NDxUDvIFCevSXc1qQl8rnefNz9yhweNu0MLuuIZ
+	 /WObS+NMdGAZbbMkcjnEl0chhsnRx65mNxVY5P0Op0tT1iz+MCv+7M4yEgGV8f/xcK
+	 Bj4duvJCOVHwCRFykybj5xIZnmLBStAkEp/eN2ucNkPxuWX/dQE1F+o4lOmhp9r+tg
+	 bxG/HCo6nOF8g==
+Message-ID: <d24ee864-aabd-4960-a9b3-42f80774e2bd@kernel.org>
+Date: Tue, 19 Aug 2025 09:17:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <175508069643.560048.635717738150928802@ping.linuxembedded.co.uk>
-References: <20250813-imx335_binning-v1-0-a42b687d8541@ideasonboard.com> <20250813-imx335_binning-v1-5-a42b687d8541@ideasonboard.com> <175508069643.560048.635717738150928802@ping.linuxembedded.co.uk>
-Subject: Re: [PATCH 5/6] media: imx355: Use subdev active state
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Tue, 19 Aug 2025 12:47:36 +0530
-Message-ID: <175558785653.1633224.4967063092419543795@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/15] ARM: dts: ls1021a-qds: Rename node name
+ at45db021d@0 to flash@0
+To: Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
+References: <20250818-ls1021a_dts_warning-v1-0-7a79b6b4a0e2@nxp.com>
+ <20250818-ls1021a_dts_warning-v1-9-7a79b6b4a0e2@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250818-ls1021a_dts_warning-v1-9-7a79b6b4a0e2@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Kieran Bingham (2025-08-13 15:54:56)
-> Quoting Jai Luthra (2025-08-13 08:20:36)
-> > Port the driver to use the subdev active state. This simplifies locking,
-> > and makes it easier to support different crop sizes for binned modes, by
-> > storing the crop rectangle inside the subdev state.
-> >=20
->=20
-> Has this patch inadverntently squashed subdev active state and some
-> runtime power / start/stop stream changes together?
->=20
-> It looks like there's some interesting additional development in there
-> but I don't think that's related to subdev active state ?
->=20
+On 18/08/2025 22:48, Frank Li wrote:
+> Rename node name at45db021d@0 to flash@0 to fix below CHECK_DTBS warnings:
+>   arch/arm/boot/dts/nxp/ls/ls1021a-qds.dtb: at45db021d@0 (atmel,at45db021d): Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'spi-cpha', 'spi-cpol' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/mtd/atmel,dataflash.yaml#
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts b/arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts
+> index 227a886ca6825465cfbb404e93c8f5e9977b1321..8bc8ff2e3b03d6eeb43d79fe0555842536ab735c 100644
+> --- a/arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts
+> +++ b/arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts
+> @@ -66,7 +66,7 @@ &dspi0 {
+>  	bus-num = <0>;
+>  	status = "okay";
+>  
+> -	dspiflash: at45db021d@0 {
+> +	dspiflash: flash@0 {
+Don't do this node by node. Squash your patches.
 
-Oops, good catch, I will split the runtime PM related changes in a separate
-patch in v2 of this series.
-
-> --
-> Kieran
->=20
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > ---
-> >  drivers/media/i2c/imx335.c | 125 +++++++++++++++----------------------=
---------
-> >  1 file changed, 41 insertions(+), 84 deletions(-)
-> >=20
-> > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> > index c61a6952f828fd8b945746ae2f53f5517e98c410..df1535927f481de3a0d043a=
-c9be24b9336ea8f7f 100644
-> > --- a/drivers/media/i2c/imx335.c
-> > +++ b/drivers/media/i2c/imx335.c
-> > @@ -196,7 +196,6 @@ struct imx335_mode {
-> >   * @vblank: Vertical blanking in lines
-> >   * @lane_mode: Mode for number of connected data lanes
-> >   * @cur_mode: Pointer to current selected sensor mode
-> > - * @mutex: Mutex for serializing sensor controls
-> >   * @link_freq_bitmap: Menu bitmap for link_freq_ctrl
-> >   * @cur_mbus_code: Currently selected media bus format code
-> >   */
-> > @@ -223,7 +222,6 @@ struct imx335 {
-> >         u32 vblank;
-> >         u32 lane_mode;
-> >         const struct imx335_mode *cur_mode;
-> > -       struct mutex mutex;
-> >         unsigned long link_freq_bitmap;
-> >         u32 cur_mbus_code;
-> >  };
-> > @@ -758,36 +756,6 @@ static void imx335_fill_pad_format(struct imx335 *=
-imx335,
-> >         fmt->format.xfer_func =3D V4L2_XFER_FUNC_NONE;
-> >  }
-> > =20
-> > -/**
-> > - * imx335_get_pad_format() - Get subdevice pad format
-> > - * @sd: pointer to imx335 V4L2 sub-device structure
-> > - * @sd_state: V4L2 sub-device configuration
-> > - * @fmt: V4L2 sub-device format need to be set
-> > - *
-> > - * Return: 0 if successful, error code otherwise.
-> > - */
-> > -static int imx335_get_pad_format(struct v4l2_subdev *sd,
-> > -                                struct v4l2_subdev_state *sd_state,
-> > -                                struct v4l2_subdev_format *fmt)
-> > -{
-> > -       struct imx335 *imx335 =3D to_imx335(sd);
-> > -
-> > -       mutex_lock(&imx335->mutex);
-> > -
-> > -       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_TRY) {
-> > -               struct v4l2_mbus_framefmt *framefmt;
-> > -
-> > -               framefmt =3D v4l2_subdev_state_get_format(sd_state, fmt=
-->pad);
-> > -               fmt->format =3D *framefmt;
-> > -       } else {
-> > -               imx335_fill_pad_format(imx335, imx335->cur_mode, fmt);
-> > -       }
-> > -
-> > -       mutex_unlock(&imx335->mutex);
-> > -
-> > -       return 0;
-> > -}
-> > -
-> >  /**
-> >   * imx335_set_pad_format() - Set subdevice pad format
-> >   * @sd: pointer to imx335 V4L2 sub-device structure
-> > @@ -801,12 +769,12 @@ static int imx335_set_pad_format(struct v4l2_subd=
-ev *sd,
-> >                                  struct v4l2_subdev_format *fmt)
-> >  {
-> >         struct imx335 *imx335 =3D to_imx335(sd);
-> > +       struct v4l2_mbus_framefmt *format;
-> >         const struct imx335_mode *mode;
-> >         int i, ret =3D 0;
-> > =20
-> > -       mutex_lock(&imx335->mutex);
-> > -
-> >         mode =3D &supported_mode;
-> > +
-> >         for (i =3D 0; i < ARRAY_SIZE(imx335_mbus_codes); i++) {
-> >                 if (imx335_mbus_codes[i] =3D=3D fmt->format.code)
-> >                         imx335->cur_mbus_code =3D imx335_mbus_codes[i];
-> > @@ -814,19 +782,15 @@ static int imx335_set_pad_format(struct v4l2_subd=
-ev *sd,
-> > =20
-> >         imx335_fill_pad_format(imx335, mode, fmt);
-> > =20
-> > -       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_TRY) {
-> > -               struct v4l2_mbus_framefmt *framefmt;
-> > +       format =3D v4l2_subdev_state_get_format(sd_state, fmt->pad);
-> > +       *format =3D fmt->format;
-> > =20
-> > -               framefmt =3D v4l2_subdev_state_get_format(sd_state, fmt=
-->pad);
-> > -               *framefmt =3D fmt->format;
-> > -       } else {
-> > +       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
-> >                 ret =3D imx335_update_controls(imx335, mode);
-> >                 if (!ret)
-> >                         imx335->cur_mode =3D mode;
-> >         }
-> > =20
-> > -       mutex_unlock(&imx335->mutex);
-> > -
-> >         return ret;
-> >  }
-> > =20
-> > @@ -846,12 +810,10 @@ static int imx335_init_state(struct v4l2_subdev *=
-sd,
-> >         fmt.which =3D sd_state ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_F=
-ORMAT_ACTIVE;
-> >         imx335_fill_pad_format(imx335, &supported_mode, &fmt);
-> > =20
-> > -       mutex_lock(&imx335->mutex);
-> >         __v4l2_ctrl_modify_range(imx335->link_freq_ctrl, 0,
-> >                                  __fls(imx335->link_freq_bitmap),
-> >                                  ~(imx335->link_freq_bitmap),
-> >                                  __ffs(imx335->link_freq_bitmap));
-> > -       mutex_unlock(&imx335->mutex);
-> > =20
-> >         return imx335_set_pad_format(sd, sd_state, &fmt);
-> >  }
-> > @@ -919,13 +881,17 @@ static int imx335_start_streaming(struct imx335 *=
-imx335)
-> >         const struct imx335_reg_list *reg_list;
-> >         int ret;
-> > =20
-> > +       ret =3D pm_runtime_resume_and_get(imx335->dev);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> >         /* Setup PLL */
-> >         reg_list =3D &link_freq_reglist[__ffs(imx335->link_freq_bitmap)=
-];
-> >         ret =3D cci_multi_reg_write(imx335->cci, reg_list->regs,
-> >                                   reg_list->num_of_regs, NULL);
-> >         if (ret) {
-> >                 dev_err(imx335->dev, "%s failed to set plls\n", __func_=
-_);
-> > -               return ret;
-> > +               goto err_rpm_put;
-> >         }
-> > =20
-> >         /* Write sensor mode registers */
-> > @@ -934,27 +900,27 @@ static int imx335_start_streaming(struct imx335 *=
-imx335)
-> >                                   reg_list->num_of_regs, NULL);
-> >         if (ret) {
-> >                 dev_err(imx335->dev, "fail to write initial registers\n=
-");
-> > -               return ret;
-> > +               goto err_rpm_put;
-> >         }
-> > =20
-> >         ret =3D imx335_set_framefmt(imx335);
-> >         if (ret) {
-> >                 dev_err(imx335->dev, "%s failed to set frame format: %d=
-\n",
-> >                         __func__, ret);
-> > -               return ret;
-> > +               goto err_rpm_put;
-> >         }
-> > =20
-> >         /* Configure lanes */
-> >         ret =3D cci_write(imx335->cci, IMX335_REG_LANEMODE,
-> >                         imx335->lane_mode, NULL);
-> >         if (ret)
-> > -               return ret;
-> > +               goto err_rpm_put;
-> > =20
-> >         /* Setup handler will write actual exposure and gain */
-> >         ret =3D  __v4l2_ctrl_handler_setup(imx335->sd.ctrl_handler);
-> >         if (ret) {
-> >                 dev_err(imx335->dev, "fail to setup handler\n");
-> > -               return ret;
-> > +               goto err_rpm_put;
-> >         }
-> > =20
-> >         /* Start streaming */
-> > @@ -962,25 +928,29 @@ static int imx335_start_streaming(struct imx335 *=
-imx335)
-> >                         IMX335_MODE_STREAMING, NULL);
-> >         if (ret) {
-> >                 dev_err(imx335->dev, "fail to start streaming\n");
-> > -               return ret;
-> > +               goto err_rpm_put;
-> >         }
-> > =20
-> >         /* Initial regulator stabilization period */
-> >         usleep_range(18000, 20000);
-> > =20
-> >         return 0;
-> > +
-> > +err_rpm_put:
-> > +       pm_runtime_put(imx335->dev);
-> > +
-> > +       return ret;
-> >  }
-> > =20
-> >  /**
-> >   * imx335_stop_streaming() - Stop sensor stream
-> >   * @imx335: pointer to imx335 device
-> > - *
-> > - * Return: 0 if successful, error code otherwise.
-> >   */
-> > -static int imx335_stop_streaming(struct imx335 *imx335)
-> > +static void imx335_stop_streaming(struct imx335 *imx335)
-> >  {
-> > -       return cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
-> > -                        IMX335_MODE_STANDBY, NULL);
-> > +       cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
-> > +                 IMX335_MODE_STANDBY, NULL);
-> > +       pm_runtime_put(imx335->dev);
-> >  }
-> > =20
-> >  /**
-> > @@ -993,31 +963,18 @@ static int imx335_stop_streaming(struct imx335 *i=
-mx335)
-> >  static int imx335_set_stream(struct v4l2_subdev *sd, int enable)
-> >  {
-> >         struct imx335 *imx335 =3D to_imx335(sd);
-> > -       int ret;
-> > +       struct v4l2_subdev_state *state;
-> > +       int ret =3D 0;
-> > =20
-> > -       mutex_lock(&imx335->mutex);
-> > +       state =3D v4l2_subdev_lock_and_get_active_state(sd);
-> > =20
-> >         if (enable) {
-> > -               ret =3D pm_runtime_resume_and_get(imx335->dev);
-> > -               if (ret)
-> > -                       goto error_unlock;
-> > -
-> >                 ret =3D imx335_start_streaming(imx335);
-> > -               if (ret)
-> > -                       goto error_power_off;
-> >         } else {
-> >                 imx335_stop_streaming(imx335);
-> > -               pm_runtime_put(imx335->dev);
-> >         }
-> > =20
-> > -       mutex_unlock(&imx335->mutex);
-> > -
-> > -       return 0;
-> > -
-> > -error_power_off:
-> > -       pm_runtime_put(imx335->dev);
-> > -error_unlock:
-> > -       mutex_unlock(&imx335->mutex);
-> > +       v4l2_subdev_unlock_state(state);
-> > =20
-> >         return ret;
-> >  }
-> > @@ -1146,7 +1103,7 @@ static const struct v4l2_subdev_pad_ops imx335_pa=
-d_ops =3D {
-> >         .enum_frame_size =3D imx335_enum_frame_size,
-> >         .get_selection =3D imx335_get_selection,
-> >         .set_selection =3D imx335_get_selection,
-> > -       .get_fmt =3D imx335_get_pad_format,
-> > +       .get_fmt =3D v4l2_subdev_get_fmt,
-> >         .set_fmt =3D imx335_set_pad_format,
-> >  };
-> > =20
-> > @@ -1241,9 +1198,6 @@ static int imx335_init_controls(struct imx335 *im=
-x335)
-> >         if (ret)
-> >                 return ret;
-> > =20
-> > -       /* Serialize controls with sensor device */
-> > -       ctrl_hdlr->lock =3D &imx335->mutex;
-> > -
-> >         /* Initialize exposure and gain */
-> >         lpfr =3D mode->vblank + mode->height;
-> >         imx335->exp_ctrl =3D v4l2_ctrl_new_std(ctrl_hdlr,
-> > @@ -1363,12 +1317,10 @@ static int imx335_probe(struct i2c_client *clie=
-nt)
-> >                 return ret;
-> >         }
-> > =20
-> > -       mutex_init(&imx335->mutex);
-> > -
-> >         ret =3D imx335_power_on(imx335->dev);
-> >         if (ret) {
-> >                 dev_err(imx335->dev, "failed to power-on the sensor\n");
-> > -               goto error_mutex_destroy;
-> > +               return ret;
-> >         }
-> > =20
-> >         /* Check module identity */
-> > @@ -1401,11 +1353,18 @@ static int imx335_probe(struct i2c_client *clie=
-nt)
-> >                 goto error_handler_free;
-> >         }
-> > =20
-> > +       imx335->sd.state_lock =3D imx335->ctrl_handler.lock;
-> > +       ret =3D v4l2_subdev_init_finalize(&imx335->sd);
-> > +       if (ret < 0) {
-> > +               dev_err(imx335->dev, "subdev init error\n");
-> > +               goto error_media_entity;
-> > +       }
-> > +
-> >         ret =3D v4l2_async_register_subdev_sensor(&imx335->sd);
-> >         if (ret < 0) {
-> >                 dev_err(imx335->dev,
-> >                         "failed to register async subdev: %d\n", ret);
-> > -               goto error_media_entity;
-> > +               goto error_subdev_cleanup;
-> >         }
-> > =20
-> >         pm_runtime_set_active(imx335->dev);
-> > @@ -1414,14 +1373,14 @@ static int imx335_probe(struct i2c_client *clie=
-nt)
-> > =20
-> >         return 0;
-> > =20
-> > +error_subdev_cleanup:
-> > +       v4l2_subdev_cleanup(&imx335->sd);
-> >  error_media_entity:
-> >         media_entity_cleanup(&imx335->sd.entity);
-> >  error_handler_free:
-> >         v4l2_ctrl_handler_free(imx335->sd.ctrl_handler);
-> >  error_power_off:
-> >         imx335_power_off(imx335->dev);
-> > -error_mutex_destroy:
-> > -       mutex_destroy(&imx335->mutex);
-> > =20
-> >         return ret;
-> >  }
-> > @@ -1435,9 +1394,9 @@ static int imx335_probe(struct i2c_client *client)
-> >  static void imx335_remove(struct i2c_client *client)
-> >  {
-> >         struct v4l2_subdev *sd =3D i2c_get_clientdata(client);
-> > -       struct imx335 *imx335 =3D to_imx335(sd);
-> > =20
-> >         v4l2_async_unregister_subdev(sd);
-> > +       v4l2_subdev_cleanup(sd);
-> >         media_entity_cleanup(&sd->entity);
-> >         v4l2_ctrl_handler_free(sd->ctrl_handler);
-> > =20
-> > @@ -1445,8 +1404,6 @@ static void imx335_remove(struct i2c_client *clie=
-nt)
-> >         if (!pm_runtime_status_suspended(&client->dev))
-> >                 imx335_power_off(&client->dev);
-> >         pm_runtime_set_suspended(&client->dev);
-> > -
-> > -       mutex_destroy(&imx335->mutex);
-> >  }
-> > =20
-> >  static const struct dev_pm_ops imx335_pm_ops =3D {
-> >=20
-> > --=20
-> > 2.50.1
-> >
+Best regards,
+Krzysztof
 
