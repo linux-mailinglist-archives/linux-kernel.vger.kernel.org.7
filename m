@@ -1,235 +1,158 @@
-Return-Path: <linux-kernel+bounces-776153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5B1B2C944
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:14:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 407EEB2C94B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000E51893E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37911C22014
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A092C11DD;
-	Tue, 19 Aug 2025 16:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765C21E47A8;
+	Tue, 19 Aug 2025 16:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSm0Q3pj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YQCo1gge"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2C92BFC60;
-	Tue, 19 Aug 2025 16:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC5023741
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755620048; cv=none; b=hyiEoPhOt3AFgFV7tj2RwOOUOIWhzHrrU5Y/l0dW5uaSB7qaT/6MBDyN0xd6CzavZut1tyE5XU0BJyWFyv3LtMdj9aHjo1cTFnZlTkq/dJXq4GqrPBCbOKB/JlnZUswH9c4c3cUR8oXYge6+SDU3yZ3YW3bLB/TyMtVUrozvf4Y=
+	t=1755620133; cv=none; b=F3HL3z8a8/m0UlhlMAmW6GmudzyW8H3jxqWRTIbtfvFlbCG5M7kvqYtsCf4ERr0vAryiRCL0jmmtQLJUqYvj1Y4bU1wUOPTYErnnGN5cfFK0W4XZYPBQ6Ygi0+lHXECsUoG6YxNPfGEOgafq+WmQgOZRbTMfRE4hj1L/llgevZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755620048; c=relaxed/simple;
-	bh=7mkf/EqhebSrqdh5k2QADksG30ir99A1YyktolOn9J0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvepx9D04+UclS2hMThAZVjcfY7SQdpSispUkjQKOAkmwkw0+N9himDfNOc9gYghJ4jfUNyyPWYLaGF4lnMlzb2j2kXa+YuiNKVofOUtiX7R6hKSxc1HLhTM5ttB1jFy9xsil+zwB8HQlbj00Pvef6BtUqIbDk7YQK4Ci6QVBSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSm0Q3pj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E8BC116B1;
-	Tue, 19 Aug 2025 16:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755620047;
-	bh=7mkf/EqhebSrqdh5k2QADksG30ir99A1YyktolOn9J0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HSm0Q3pjLsLdY1MXZuiq4rwR2K/cBlGRf5KZAcZXIpQzdPvDjh+SRvBLRB3WyTdgo
-	 R9AFdkpqETBYl1rexcCKiX7hI3cFquQYDWtI1d+Gzd/sSPVeeDxXWoRRMv4AKy/kCc
-	 KQUB2is0f46tmM0GyZ5byyG9xif/Kd5JkCI/Yivt1219xxOjn39l+EHgb5dX9xia2a
-	 +rgP8tSBk30N6scO2PQC7qElTHEwc0pbucR81nTMxC68WfZlnT5UgKmnz05agZoYHU
-	 BH/sauRG8oubY6Gi+iDVHetexvJc4AkG4vhPGgyK3WPqc8RStjY1WDLjx2L6x+cFZe
-	 BuigNcKYViDYg==
-Date: Tue, 19 Aug 2025 21:43:58 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] PCI: brcmstb: Add a way to indicate if PCIe
- bridge is active
-Message-ID: <6maieqyzt2c73l7pbk37owh7dfjybnhgq746h5zxjhvmp3f472@dx4ibad3en6f>
-References: <20250807221513.1439407-1-james.quinlan@broadcom.com>
- <20250807221513.1439407-2-james.quinlan@broadcom.com>
+	s=arc-20240116; t=1755620133; c=relaxed/simple;
+	bh=rFPwxh0Fwj/iCYNbZAYnORN+8ShZscXdh6Ni/qKNArA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=EK/rtiCtzXTibXlGLc0O6Nmi99sNaajgD2zXFcr+NhwvPcKZo4MoiueN8EKJV+Q2uDldDCzlvX88zaf3h1iVc+vNs/hMyxSbVWL6xuGPTsSxIn4SOl+XdxSy06rqOtIMUd3SXCLkdnWnedxix6cuAifW7P9gcLzP5rPyvquMLyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YQCo1gge; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755620125; x=1756224925; i=markus.elfring@web.de;
+	bh=rFPwxh0Fwj/iCYNbZAYnORN+8ShZscXdh6Ni/qKNArA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=YQCo1ggevkLcZMFEhwyx4VwesrFIBcf5xg9d9D+CiQy0xf5Iw9mZgx0JA+auQc6e
+	 ff9CKxQfkZpbenXZUSairVBnwA8c0+9R4m2hsJTF4neg+e6R5cVYmjzqGlfaT7dre
+	 ILjks0BcZHSp1Jb2CI9vSKTZPwbyUeI4NDkvkvYhkoJ/fdfmeQpgKMYbaOuCmJTPf
+	 3erhLy/zYIOc3uP04uVRXcwVx8tL7XxUdUeUIQ9yeNMwLNrTtO1QJ18ExBxd38Icy
+	 fl0uZK2oTDPqP36eWPtO1G5GoKRxKZhdBlyk65Rc19YPFJntqMqyMSDLJY0olzo0i
+	 I0/GjTTIxK2kdwhLeg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.248]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWQud-1v4gQY0eWR-00Vxs1; Tue, 19
+ Aug 2025 18:15:25 +0200
+Message-ID: <acb4e709-a42f-4591-a406-7745bcd0422f@web.de>
+Date: Tue, 19 Aug 2025 18:15:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250807221513.1439407-2-james.quinlan@broadcom.com>
+User-Agent: Mozilla Thunderbird
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Matthew Brost <matthew.brost@intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Philipp Stanner <phasta@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+References: <20250819142630.368796-1-liaoyuanhong@vivo.com>
+Subject: Re: [PATCH] drm/sched/tests: Remove redundant header files
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250819142630.368796-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:N6HaCa9pJMpnG5YFymg4wJud6xXjJKqKHK54aZAbaK91Bnzkogx
+ Y3/kCqkxnviVgMdS0qSG6Bo2r6xX0j3kEuZHiMk2wkOlwaidj/DVPiiCdX14YGoNLZn+t3U
+ xgjdo4CBN9Z62E8sGyNmfkm7cgF2+dYhqPecPtaRVgJTpBD5vwVrGGU5nESN0C8SVOCOyX2
+ cv96GYgz36KkwYSj7ehtQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jlsom9YC+Lc=;dC951pIrPgk0zSW6W+p0jJHcRxm
+ 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
+ McYWjcy21ioqK6Gh7qVqVtDU3KPB
 
-On Thu, Aug 07, 2025 at 06:15:12PM GMT, Jim Quinlan wrote:
-> In a future commit, a new handler will be introduced that in part does
-> reads and writes to some of the PCIe registers.  When this handler is
-> invoked, it is paramount that it does not do these register accesses when
-> the PCIe bridge is inactive, as this will cause CPU abort errors.
-> 
-> To solve this we keep a spinlock that guards a variable which indicates
-> whether the bridge is on or off.  When the bridge is on, access of the PCIe
-> HW registers may proceed.
-> 
-> Since there are multiple ways to reset the bridge, we introduce a general
-> function to obtain the spinlock, call the specific function that is used
-> for the specific SoC, sets the bridge active indicator variable, and
-> releases the spinlock.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 51 +++++++++++++++++++++------
->  1 file changed, 40 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 9afbd02ded35..ceb431a252b7 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -30,6 +30,7 @@
->  #include <linux/reset.h>
->  #include <linux/sizes.h>
->  #include <linux/slab.h>
-> +#include <linux/spinlock.h>
->  #include <linux/string.h>
->  #include <linux/types.h>
->  
-> @@ -259,6 +260,7 @@ struct pcie_cfg_data {
->  	int (*perst_set)(struct brcm_pcie *pcie, u32 val);
->  	int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
->  	int (*post_setup)(struct brcm_pcie *pcie);
-> +	bool has_err_report;
->  };
->  
->  struct subdev_regulators {
-> @@ -303,6 +305,8 @@ struct brcm_pcie {
->  	struct subdev_regulators *sr;
->  	bool			ep_wakeup_capable;
->  	const struct pcie_cfg_data	*cfg;
-> +	bool			bridge_on;
-> +	spinlock_t		bridge_lock;
->  };
->  
->  static inline bool is_bmips(const struct brcm_pcie *pcie)
-> @@ -310,6 +314,24 @@ static inline bool is_bmips(const struct brcm_pcie *pcie)
->  	return pcie->cfg->soc_base == BCM7435 || pcie->cfg->soc_base == BCM7425;
->  }
->  
-> +static inline int brcm_pcie_bridge_sw_init_set(struct brcm_pcie *pcie, u32 val)
+> The header file <linux/atomic.h> is already included on line 8. Remove the
+> redundant include.
 
-No need to specify 'inline' keyword.
+You would like to omit a duplicate #include directive, don't you?
+Will a corresponding refinement become helpful for the summary phrase
+and change description?
 
-> +{
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	if (pcie->cfg->has_err_report)
-> +		spin_lock_irqsave(&pcie->bridge_lock, flags);
-> +
-> +	ret = pcie->cfg->bridge_sw_init_set(pcie, val);
-> +	/* If we fail, assume the bridge is in reset (off) */
-> +	pcie->bridge_on = ret ? false : !val;
-
-s/bridge_on/bridge_in_reset
-
-This callback is not necessarily turning the bridge ON/OFF.
-
-> +
-> +	if (pcie->cfg->has_err_report)
-> +		spin_unlock_irqrestore(&pcie->bridge_lock, flags);
-> +
-> +	return ret;
-> +}
-> +
->  /*
->   * This is to convert the size of the inbound "BAR" region to the
->   * non-linear values of PCIE_X_MISC_RC_BAR[123]_CONFIG_LO.SIZE
-> @@ -756,9 +778,8 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
->  
->  static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
->  {
-> -	u32 tmp, mask = RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> -	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> -	int ret = 0;
-> +	u32 tmp;
-> +	int ret;
->  
->  	if (pcie->bridge_reset) {
->  		if (val)
-> @@ -774,10 +795,10 @@ static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
->  	}
->  
->  	tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> -	tmp = (tmp & ~mask) | ((val << shift) & mask);
-> +	u32p_replace_bits(&tmp, val, RGR1_SW_INIT_1_INIT_GENERIC_MASK);
-
-This change doesn't belong to this patch.
-
->  	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, u32 val)
-> @@ -1081,7 +1102,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
->  	int memc, ret;
->  
->  	/* Reset the bridge */
-> -	ret = pcie->cfg->bridge_sw_init_set(pcie, 1);
-> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 1);
->  	if (ret)
->  		return ret;
->  
-> @@ -1097,7 +1118,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
->  	usleep_range(100, 200);
->  
->  	/* Take the bridge out of reset */
-> -	ret = pcie->cfg->bridge_sw_init_set(pcie, 0);
-> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
->  	if (ret)
->  		return ret;
->  
-> @@ -1565,7 +1586,7 @@ static int brcm_pcie_turn_off(struct brcm_pcie *pcie)
->  
->  	if (!(pcie->cfg->quirks & CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN))
->  		/* Shutdown PCIe bridge */
-> -		ret = pcie->cfg->bridge_sw_init_set(pcie, 1);
-> +		ret = brcm_pcie_bridge_sw_init_set(pcie, 1);
->  
->  	return ret;
->  }
-> @@ -1653,7 +1674,9 @@ static int brcm_pcie_resume_noirq(struct device *dev)
->  		goto err_reset;
->  
->  	/* Take bridge out of reset so we can access the SERDES reg */
-> -	pcie->cfg->bridge_sw_init_set(pcie, 0);
-> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
-> +	if (ret)
-> +		goto err_reset;
->  
->  	/* SERDES_IDDQ = 0 */
->  	tmp = readl(base + HARD_DEBUG(pcie));
-> @@ -1921,7 +1944,10 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  	if (ret)
->  		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
->  
-> -	pcie->cfg->bridge_sw_init_set(pcie, 0);
-> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "could not un-reset the bridge\n");
-
-I believe Bjorn asked you to change this error message to:
-'could not deassert the bridge' or similar, but you ended up changing the
-unrelated error message below.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+Markus
 
