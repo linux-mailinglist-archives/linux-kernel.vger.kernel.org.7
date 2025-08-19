@@ -1,112 +1,195 @@
-Return-Path: <linux-kernel+bounces-774912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E4BB2B91C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:08:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE1DB2B91B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258231964D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:09:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 269585820F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F335F269CF0;
-	Tue, 19 Aug 2025 06:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A082C266560;
+	Tue, 19 Aug 2025 06:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ay91WHAp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIBKQB2U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9C9266B41
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84771863E;
+	Tue, 19 Aug 2025 06:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755583703; cv=none; b=V9GmEIfK0/+5zzYmMSg8paq1Ypex5XUTjtpOpflixrbCTHCol26zOLhpmMRbQQeKbKy5Cr/pXgeoL8E0xdUtLgwbRsGYxM/8f/lsUf7kbh+zC2TCvnRGPW51IlHwTaeWMipPpccZDg3ExqAdpiv0eSWg5sIm4aEV9QXpe2fmb0Y=
+	t=1755583701; cv=none; b=euDrQtMO2rUlsrejdKf4Wsi88rDY9zxvPQYW7bF2I4EZ1fC38halDX5rpMt8wUY2WRTtZotj2KjDqd9T4qgVkhF8zVxLSPpmkEmraMfD+aQPeirrwYcWUCZp+vqX/bcEnMkhH6dNtTx7aF/aw4tIS2Zsc0CVYffMdmODh/eG0+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755583703; c=relaxed/simple;
-	bh=XChp3liQYL0Z3JG2IuJUG6yDs9kT5S2Sa2/Cnnjt764=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=L8iQ47kj/wqp+qbQV16qB6+rCc+IITncr4nI/WCby79XX6024x3issgnLWSPjlbgu8/R4Xtfzd6PL7aROQfC/l9tZQ8RUpQWAgZXMqnXR01jxiIQlPiSc2QbwW4p13X9HV9G4fO8lHZOXu+bKKLmfy+lfsYjfxurlz3O7R6W/YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ay91WHAp; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755583702; x=1787119702;
-  h=date:from:to:cc:subject:message-id;
-  bh=XChp3liQYL0Z3JG2IuJUG6yDs9kT5S2Sa2/Cnnjt764=;
-  b=ay91WHApRHXUA6TZgPbi8E3e37b5x1/JqxbXWgOsoeF4YMWHmhmPFVwT
-   V0PdiZ1cTaEeqwr2b7P9r5JCayrG1PlZ+guc8Jw2ZXFzIaXKwL9EryTqo
-   JE276fDcN0Mpp5Xr7w22RTooZA58vJXOAUVFZhoqy3Y6WinDpiTvu3uaO
-   kts4z0gFs4RdesMYIWZLW3GlVIujDjiB0329lD0YXbDodg9ZYx+nYRGYm
-   b+7blPVjgqfhwVuTgpUz3s2XrD7HuAwD8eEzdMWXjwjMyEDBlsi096m6k
-   LacJF0SPmywu7N9m2pR3PHzDhZ7CCFPLqR68Vmj+AyaPSBNvoYhRo30Ak
-   w==;
-X-CSE-ConnectionGUID: tLsvTHEuQnSXgGKlbXlfKA==
-X-CSE-MsgGUID: fAaCLwVgQeWpG3fok4mDPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="68081706"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="68081706"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 23:08:22 -0700
-X-CSE-ConnectionGUID: KLBdEWIES4yRNbI9U6oetA==
-X-CSE-MsgGUID: 7kFqYQspScaF5ANqjpgmNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
-   d="scan'208";a="168163890"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 18 Aug 2025 23:08:21 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uoFW6-000GZ1-1w;
-	Tue, 19 Aug 2025 06:08:18 +0000
-Date: Tue, 19 Aug 2025 14:07:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cpu] BUILD SUCCESS
- 215596ddc33f20945e8d1188a7e682831f0ef050
-Message-ID: <202508191424.eMvTrYL6-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1755583701; c=relaxed/simple;
+	bh=JFOqiQZygYJZwxR9jUnXSWxc6RjvoDhgTgxK8uDWeLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+oyngVtVGnD9IKF9WjYhuFYZcKZKv6ACRFyJoz2Qfb/JGWJ3gicbortAwhYRBRlsX0dxyRPsebw1ryVNSijjtTJ+Q+B9YugT0w8rmQ61V0xMZ8nF3hf7PITJ0Zu6Z+53OERV+rE7o3fRvIKuXWJHXgI2wjEC7PsiRX4V4xe3/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIBKQB2U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC394C4CEF4;
+	Tue, 19 Aug 2025 06:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755583700;
+	bh=JFOqiQZygYJZwxR9jUnXSWxc6RjvoDhgTgxK8uDWeLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mIBKQB2Ug804maWvOPuUOfpcsNLZO1bdOfLqRy/haIy1HpbJEdniEvVrEjX5PGrkn
+	 Zd5u2y457HAPPZ8RqN9l1HIW1r7OVJ3BxFlrMeNwyNwtG5Wnt4gadHSrTP8r4C7F0K
+	 98OuY+3Az23afPP211w0a9J7MP4uvuIlsaXKZCrUDWFX/dtPUMNcjiJjxkXZuO7bi9
+	 LMLIUb51Dli9W6YN+iVU0eyQ0YEJlyXMUCuCQwX86yf5cz0p3UxRIV4GggyITumYiZ
+	 D1VsrhYN/uIL3KTNVTYTwWtYpx9P5V9N/HXa3s/Zu/0lsx42U78eU1axRYCNilOIV3
+	 DMaHPbYmlXnaA==
+Date: Tue, 19 Aug 2025 08:08:17 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Cc: linux-kernel@vger.kernel.org, peter.ujfalusi@gmail.com, 
+	dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org, lgirdwood@gmail.com, 
+	tiwai@suse.com, conor+dt@kernel.org, lee@kernel.org, broonie@kernel.org, 
+	gregkh@linuxfoundation.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, 
+	shuah@kernel.org
+Subject: Re: [PATCH 5/8] pwm: dt-bindings: ti,twl-pwm: convert to DT schema
+Message-ID: <xs5dgd57ycqaohpqevy67mrmngqei5pyg2a62mk6gjzawzvwfm@pzhw5jthxmyo>
+References: <20250811224739.53869-1-jihed.chaibi.dev@gmail.com>
+ <20250811224739.53869-6-jihed.chaibi.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5yzp6gv7etjwnva5"
+Content-Disposition: inline
+In-Reply-To: <20250811224739.53869-6-jihed.chaibi.dev@gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-branch HEAD: 215596ddc33f20945e8d1188a7e682831f0ef050  x86/cpu: Detect FreeBSD Bhyve hypervisor
 
-elapsed time: 920m
+--5yzp6gv7etjwnva5
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 5/8] pwm: dt-bindings: ti,twl-pwm: convert to DT schema
+MIME-Version: 1.0
 
-configs tested: 20
-configs skipped: 119
+On Tue, Aug 12, 2025 at 12:47:36AM +0200, Jihed Chaibi wrote:
+> Convert the legacy TXT binding for the TWL-family PWM controller
+> to the modern YAML DT schema format. This adds formal validation
+> and improves documentation by inheriting from the base pwm schema.
+>=20
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> ---
+>  .../devicetree/bindings/pwm/ti,twl-pwm.txt    | 17 -------
+>  .../devicetree/bindings/pwm/ti,twl-pwm.yaml   | 46 +++++++++++++++++++
+>  2 files changed, 46 insertions(+), 17 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+>  create mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt b/Docum=
+entation/devicetree/bindings/pwm/ti,twl-pwm.txt
+> deleted file mode 100644
+> index d97ca1964..000000000
+> --- a/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+> +++ /dev/null
+> @@ -1,17 +0,0 @@
+> -Texas Instruments TWL series PWM drivers
+> -
+> -Supported PWMs:
+> -On TWL4030 series: PWM1 and PWM2
+> -On TWL6030 series: PWM0 and PWM1
+> -
+> -Required properties:
+> -- compatible: "ti,twl4030-pwm" or "ti,twl6030-pwm"
+> -- #pwm-cells: should be 2. See pwm.yaml in this directory for a descript=
+ion of
+> -  the cells format.
+> -
+> -Example:
+> -
+> -twl_pwm: pwm {
+> -	compatible =3D "ti,twl6030-pwm";
+> -	#pwm-cells =3D <2>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/pwm/ti,twl-pwm.yaml b/Docu=
+mentation/devicetree/bindings/pwm/ti,twl-pwm.yaml
+> new file mode 100644
+> index 000000000..5bbbdc13a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/ti,twl-pwm.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/ti,twl-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments TWL4030/TWL6030 family PWM controller
+> +
+> +maintainers:
+> +  - Peter Ujfalusi <peter.ujfalusi@gmail.com>
+> +
+> +description: |
+> +  Bindings for the following PWM controllers :
+> +    TWL4030 series: PWMA and PWMB (connected to LEDA and LEDB terminals)
+> +    TWL6030 series: LED PWM (mainly used as charging indicator LED)
+> +
+> +allOf:
+> +  - $ref: /schemas/pwm/pwm.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,twl4030-pwm
+> +      - ti,twl6030-pwm
+> +
+> +  '#pwm-cells':
+> +    const: 2
+> +
+> +required:
+> +  - compatible
+> +  - '#pwm-cells'
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    pwm {
+> +        compatible =3D "ti,twl4030-pwm";
+> +        #pwm-cells =3D <2>;
+> +    };
+> +
+> +  - |
+> +    pwm {
+> +        compatible =3D "ti,twl6030-pwm";
+> +        #pwm-cells =3D <2>;
+> +    };
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Without having asked dt_binding_check it looks ok formally. I guess you
+added Peter Ujfalusi as maintainer from the driver file. I'd like to see
+a confirmation from him this is fine.
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250819    gcc-12
-i386    buildonly-randconfig-002-20250819    clang-20
-i386    buildonly-randconfig-003-20250819    clang-20
-i386    buildonly-randconfig-004-20250819    clang-20
-i386    buildonly-randconfig-005-20250819    clang-20
-i386    buildonly-randconfig-006-20250819    clang-20
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250819    clang-20
-x86_64  buildonly-randconfig-002-20250819    clang-20
-x86_64  buildonly-randconfig-003-20250819    clang-20
-x86_64  buildonly-randconfig-004-20250819    clang-20
-x86_64  buildonly-randconfig-005-20250819    clang-20
-x86_64  buildonly-randconfig-006-20250819    clang-20
-x86_64                          defconfig    gcc-11
-x86_64                      rhel-9.4-rust    clang-20
+The 2nd example isn't very helpful. Unless I'm missing some detail that
+makes it have a value I suggest to drop it. (But no need to resend just
+for that, I don't feel that strong and can keep it or fixup when
+applying.)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards
+Uwe
+
+--5yzp6gv7etjwnva5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmikFM4ACgkQj4D7WH0S
+/k6TXQgAgOHpunUCvCKcPCdfYvw/x0GxIJld2NVPMHAvH/zoqHhuWyA80902Vml7
+oaOHd6EvK5AiYwfd6OFaODZy0zw4slH/wNW5v00NSJIkEj01gp/FLJGOmA1nEYSU
+oW6E4bjhEhaTM4LdDuIRBsi98yy1rmbwgRu0AgmoSv2Yof3jKwqbFW9UffjiJHus
+yjU8tTPF6Tcu7x9JaFNSEJqymp1K97cTTqs6e3njMt8OCCktpSNlKl/u4Wp2o6DY
+tXjPDChXLGYrcvwefTl2vb+qrc8/Q1xSx5GH/udU68l+c4RHdPivtxdwyUDOiWpB
+Ida7RVbLjhD3LQKIN8RWgaQxC6Pi8A==
+=hMLi
+-----END PGP SIGNATURE-----
+
+--5yzp6gv7etjwnva5--
 
