@@ -1,209 +1,113 @@
-Return-Path: <linux-kernel+bounces-775483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B97B2BFBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:03:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B88AB2BFA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BED41B62E80
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:02:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE0084E4027
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2420A32A3FC;
-	Tue, 19 Aug 2025 11:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788A4322DA6;
+	Tue, 19 Aug 2025 11:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="nLMIKj0+"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6WTmdxO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B77A326D65
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D295732255F;
+	Tue, 19 Aug 2025 11:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601280; cv=none; b=c2gjRZy+xb5+o+I6UWARATuycgGRwoge9q4Uf4HWKwktVkxhspldzD7JTd33helFla/ljXocy8mzvsg626yo1qhbQJqA93wPE/Sm29VSio5Lg9xjQWloen3fEGCmi1nxvN6IuP/BMbl2qZFNuvVyDvFer357LvyjTO2ga9Fsvls=
+	t=1755601274; cv=none; b=ZbV899JnKq0KeONNt0lRX7kPzvcVM0pXtP8uxXhty4QFexar3Ui+LYz+pkkp8YfbSnbiEViRiucqvbq37mW7D3e2msJie4tdYdop/w4kDGdOv8vlnfIJQ8gHLNi+Jb4QVabgTRPhOdH5oA3+XjQ8ZS4M5zVBJ1W+/oyhvXdXE04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755601280; c=relaxed/simple;
-	bh=rBoh3tTRWRVwm4WtZsNA9+gBHKDnPEyycJ/HGvoY0oA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=caoByxpDSl+q4w9Bz+RWYKrjyUYmDM0XzCByr0C9uViVwH5UVCum+G9rqfGB30KxJx5AIxwW/wYgz81oaMzcCvSsjZT38mFXNvgJCzdXHOMsMmCTh7MxCnlWyoq1f/xGLHUcfxzf3N+SQ0KIGmVt1TzTOkVcBObUo2nOd7xXVnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=nLMIKj0+; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-333f8dd3620so37146721fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755601276; x=1756206076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C80fm0GDc3jc75LWz0UrKrGBSlO4fahAHmLCSkDw+Sw=;
-        b=nLMIKj0+t4UJ0ctZhdWnTZV6sZB3TRT4jDu7NfbqTiogeqeNNXlpcpcjIK1aK0M0Py
-         7bilsbrW8cwEjqwg7ueh+GnChp+d7BKy0Un1ojRtLvaz9dAErWMuDU4VNpz3cj+SkdJg
-         sIoAbDPdydsXCZcX7J6+rTBSbi5NkWbj5ve30rMefmj832lMwAnzq1vMPdLwWN1VWI0A
-         P+iJwH7JSx07Njrt5XC9ZQLYnZnneSRJeUZb9XaxNe9titSFLUWxD8/lq++Dh9NT+hce
-         UztzD1lRTsGejhJ46N8uruIDsvuHHosh89P1JjDvhSb+JeXQrg9mOHpgyz6c2UcaYrbN
-         O/Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755601276; x=1756206076;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C80fm0GDc3jc75LWz0UrKrGBSlO4fahAHmLCSkDw+Sw=;
-        b=agI6H95Y/iuF5/+15BO7TcEo5rZcXT2iEju0Y8QXxkx9vrpq/oZH3W7bMj4SZ1O6ex
-         H6Bm7EvNYir6EmEjKHcehD12h8sRNPSai7ufd1Y5bvcXyS1mZCf798SiVX2Q/q0ONzcn
-         GaGcXkEmYrYK7LfWZ4UnDF37J82smO1d5vk/7Od0fvBy+WqDD7G3ZsEx8LNRu+s7zGXO
-         io6BeN+EUdt/uqMWz6j7AIpMMSKxXt+5YdbNe7QIVTBRmUrHhDTXRt9BFaqwjoWuqyfs
-         9eNXcGqcOPlqgqW74h06IuKdDKPnu4yV+RpAbr5Yzybvr03Kd5isHc6KpqAfjDPrSsr+
-         JKtg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9V89S+n0o1arx/CWDDz2HSy1JnpJ0nsN0XRH9ZwuFrJrgPOHr+xiL/Qi2WII0neSmoPrzD5IoIjqe28A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9ma15Z24E1oWxBlAchJjY82GAxksyMRgosS0U8AqagRH079Ro
-	ZqUQSriLpSpgdd4gWrXNHbaOphR+6QeoxIlWxMf9yyfXkl5vZm7v3j4kEwIr/rT2Iz6OLcNIGO/
-	Cslc79DUUGILeaVI5jV4MBPMBhJO4Oz/treXcgNkcRQ==
-X-Gm-Gg: ASbGnctTAFwxu4PBUB7p/wwx3rhCeeg7u7eWkmK15QNbuBTReXuQ2iEQTFBJwZcFftK
-	nbnAoieBXj8T2UGP/2FJVoJfqBiB4Y1ea1zGY+ghHVbmcIe88AJ8csIHywI2K4Gc+c84Z1BZDQs
-	XpE2nxL/DfkzYAJDjwDajuil3idjV+V0xGEtWa2YS0eWUiwT880rtKUSowfqo8H8AI4W+wgtYlk
-	DQrgpXn
-X-Google-Smtp-Source: AGHT+IHlIIdtCFdyCt7BneXnJGieYkzZry9p86M1MLWKm3IaZVgcEXSSysCiKPyBhgKLxKZbQYCB+SGi8IsuSWQ4UsE=
-X-Received: by 2002:a2e:b8d3:0:b0:332:42a6:5ca2 with SMTP id
- 38308e7fff4ca-335304fbb66mr5924491fa.10.1755601276145; Tue, 19 Aug 2025
- 04:01:16 -0700 (PDT)
+	s=arc-20240116; t=1755601274; c=relaxed/simple;
+	bh=UGEMRjTBsqlULw3vbm/co9eRDP9gi0S0uyPX0lvQ2dA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=pKJCHrJJtsX90xYayJdu6oE4zc3kpb286VsaCqUjdpgFa79cTR2vIQjD9JSwt52G36x3Zcm9rMRXJNwJ86KxP3DO9BWoxDYrkGHciF4KJ+Er8JJR918BTMgkoiDekwRZZvQ15ckbbIDUbwIpnFoqhz6OR0fh54RtA60We6DfxSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6WTmdxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 133B4C113D0;
+	Tue, 19 Aug 2025 11:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755601274;
+	bh=UGEMRjTBsqlULw3vbm/co9eRDP9gi0S0uyPX0lvQ2dA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=I6WTmdxO2ti6c+P6AFRq0hFKJeuNl1wFUwj0NCunRFIAIcpiYhbCXl39rX1uzzk8p
+	 oB5gYz/yLkDitbzhq+hzzS/ov6i4f6lfXYm8gfYf78Yj8YQctSATdeDNwnjk+P4Bgh
+	 TXZ6h0UT0zxfLzwhySiolmUo5sHRgZhl61Ty5XusA0xmFH/L8mxqO3Nh3h4lT/x+gj
+	 PPjGvvzqEB8eh57UahoNtdT05LPmExIqkehWo5qmkQK/wwF3EVtLCVQr50SHozv6L0
+	 ZLRYekP4w/pHX34fIfDMtoNHVeDAfe+c3JPOJQjACZGhjU/2TJoUNe6c1afwx2+c3o
+	 pRqIiEKcfDqPQ==
+Date: Tue, 19 Aug 2025 06:01:13 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818143600.894385-1-apatel@ventanamicro.com>
- <20250818143600.894385-3-apatel@ventanamicro.com> <aKPu2g1MOZBBzQbV@pie>
- <CAK9=C2XmDGOz9_euC4vtchOxr+8f+m+9zZYVewCc2s7GZhd4Pw@mail.gmail.com> <aKP553e1S5RCYNhU@pie>
-In-Reply-To: <aKP553e1S5RCYNhU@pie>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 19 Aug 2025 16:31:03 +0530
-X-Gm-Features: Ac12FXyzoEVZIICp9ybAr45jkWILs6mVWIyXA9urG_cQME-dgkISLwPNd_y4zjA
-Message-ID: <CAK9=C2Xt2RYm90wFBiYg+8Wpui1e3h8U72OkG5J5u2UFS=AfWg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] RISC-V: Add common csr_read_num() and
- csr_write_num() functions
-To: Yao Zi <ziyao@disroot.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atish.patra@linux.dev>, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org, 
-	Andrew Jones <ajones@ventanamicro.com>, Will Deacon <will@kernel.org>, Len Brown <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
+ Christophe Roullier <christophe.roullier@foss.st.com>, 
+ David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ linux-kernel@vger.kernel.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ devicetree@vger.kernel.org, Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20250819-drm-misc-next-v3-1-04153978ebdb@foss.st.com>
+References: <20250819-drm-misc-next-v3-0-04153978ebdb@foss.st.com>
+ <20250819-drm-misc-next-v3-1-04153978ebdb@foss.st.com>
+Message-Id: <175560127037.3969097.6130940505156039734.robh@kernel.org>
+Subject: Re: [PATCH v3 01/13] dt-bindings: display: st: add new compatible
+ to LTDC device
 
-On Tue, Aug 19, 2025 at 9:43=E2=80=AFAM Yao Zi <ziyao@disroot.org> wrote:
->
-> On Tue, Aug 19, 2025 at 09:00:03AM +0530, Anup Patel wrote:
-> > On Tue, Aug 19, 2025 at 8:56=E2=80=AFAM Yao Zi <ziyao@disroot.org> wrot=
-e:
-> > >
-> > > On Mon, Aug 18, 2025 at 08:06:00PM +0530, Anup Patel wrote:
-> > > > In RISC-V, there is no CSR read/write instruction which takes CSR
-> > > > number via register so add common csr_read_num() and csr_write_num(=
-)
-> > > > functions which allow accessing certain CSRs by passing CSR number
-> > > > as parameter. These common functions will be first used by the
-> > > > ACPI CPPC driver and RISC-V PMU driver.
-> > > >
-> > > > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > > > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> > > > ---
-> > > >  arch/riscv/include/asm/csr.h |   3 +
-> > > >  arch/riscv/kernel/Makefile   |   1 +
-> > > >  arch/riscv/kernel/csr.c      | 165 +++++++++++++++++++++++++++++++=
-++++
-> > > >  drivers/acpi/riscv/cppc.c    |  17 ++--
-> > > >  drivers/perf/riscv_pmu.c     |  54 ++----------
-> > > >  5 files changed, 184 insertions(+), 56 deletions(-)
-> > > >  create mode 100644 arch/riscv/kernel/csr.c
-> > > >
-> > > > diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/=
-csr.h
-> > > > index 6fed42e37705..1540626b3540 100644
-> > > > --- a/arch/riscv/include/asm/csr.h
-> > > > +++ b/arch/riscv/include/asm/csr.h
-> > > > @@ -575,6 +575,9 @@
-> > > >                             : "memory");                      \
-> > > >  })
-> > > >
-> > > > +extern unsigned long csr_read_num(unsigned long csr_num, int *out_=
-err);
-> > > > +extern void csr_write_num(unsigned long csr_num, unsigned long val=
-, int *out_err);
-> > >
-> > > I think it's more consistent to directly return the error code, and f=
-or
-> > > csr_read_num, we could pass out the read value by a pointer. e.g.
-> > >
-> > >         int csr_read_num(unsigned long csr_num, unsigned long *val);
-> > >         int csr_write_num(unsigned long csr_num, unsigned long val);
-> > >
-> > > This allows the caller to eliminate a variable for temporarily storin=
-g
-> > > the error code if they use it just after the invokation, and fits the
-> > > common convention of Linux better.
-> >
-> > Drew had similar comments so see my response in the previous
-> > patch revision. (Refer, https://www.spinics.net/lists/kernel/msg5808113=
-.html)
->
-> Thanks for the reference.
->
-> > I had considered this but the problem with this approach is that
-> > individual switch cases in csr_read_num() become roughly 4
-> > instructions because value read from CSR has to written to a memory
-> > location.
->
-> You could return a structure smaller than or equal to 2 * XLEN from
-> csr_read_num(), according to the ABI it could be passed in a0 and a1 and
-> thus should require no memory operation.
->
-> Let's assume we have
->
->         struct __csr_read_ret {
->                 long error;
->                 unsigned long value;
->         };
->
->         struct __csr_read_ret __csr_read_num(unsigned long csr_num);
->
-> Then a wrapper like
->
->         /* piece of untested code */
->         static inline int csr_read_num(unsigned long csr_num,
->                                        unsigned long *val)
->         {
->                 struct __csr_read_ret ret =3D __csr_read_num(csr_num);
->                 *val =3D ret.value;
->                 return ret.error;
->         }
->
-> could provide an interface that I've talked about earlier, and it
-> follows the kernel's convention.
 
-Like I mentioned previously, the current implementation tries to
-minimize instructions for each switch case and avoid unnecessary
-memory load/store. Your alternate suggestion is no better in this
-respect.
+On Tue, 19 Aug 2025 11:15:54 +0200, Raphael Gallais-Pou wrote:
+> The new STMicroelectronics SoC features a display controller similar to
+> the one used in previous SoCs.  Because there is additional registers,
+> it is incompatible with existing IPs.
+> 
+> Add the new name to the list of compatible string.
+> 
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> ---
+>  .../devicetree/bindings/display/st,stm32-ltdc.yaml | 30 ++++++++++++++++++++--
+>  1 file changed, 28 insertions(+), 2 deletions(-)
+> 
 
->
-> > The current approach results in just 2 instructions for each
-> > switch-case. Additionally, the current prototypes of csr_read_num()
-> > and csr_write_num() are closer to csr_read() and csr_write()
-> > respectively.
->
-> But csr_read() and csr_write() never directly raise errors that is
-> expected to be handled by the caller. I don't think it's a fair
-> comparison.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-csr_read_num() and csr_write_num() are different because
-these functions take CSR number as parameter so caller can
-pass an unsupported value to these functions which needs to
-be reported back as an error.
+yamllint warnings/errors:
 
-Regards,
-Anup
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819-drm-misc-next-v3-1-04153978ebdb@foss.st.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
