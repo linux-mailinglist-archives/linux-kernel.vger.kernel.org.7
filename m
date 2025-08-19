@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-774964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A18EB2B9B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:41:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE5FB2B9B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00CA86839C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:39:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FFE73B2FA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632BF26D4C0;
-	Tue, 19 Aug 2025 06:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5312A26A1C9;
+	Tue, 19 Aug 2025 06:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="GLOmXOs4"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nP5vVfov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51F41AF0C8;
-	Tue, 19 Aug 2025 06:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949173FE7;
+	Tue, 19 Aug 2025 06:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755585534; cv=none; b=vEEflVP+gPR/KHVQE/4NncWicG/vmHb3pULOgZedsIZJx6M32/SVRC+v+YTLFzolBHhBPd6xe7tyDn7xxYfMf6odyoZLI7Jeh+jL+yoqH5zj6kghUhH4UC7JL7CgUydHeuqB1n1dhRvsVLHPJlvjn9GbdBlx+J3si6CWQk2WrYo=
+	t=1755585586; cv=none; b=maqXhyUfW4kx6FzCs327AcQWdgRMJTJODlG2LM+W937G5ZtCML+WEEBMDcJqFUhWfXvfdb7HbaUbZQUpJOMJIAPx52OrFDgdyPstnpH3RAvILRtkz0XlLJ4Fp9TkKL8eKn2lWfpmDSmJCqdirw1FRgOUcpt1lysNSWdh9ypawd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755585534; c=relaxed/simple;
-	bh=NJnYaJ1A22Lr2BKCr3YkvWlJsaIjpApT5aFP2VZVFcI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Hm0e7+nqiWLq6BLehfNxt3a/TbYPCRaJl01rrthhkPpW20Sr4uDQTCjdOzBBofiddlZ0M2MYd+cJZaRf2XRkryMpY0F2G3nJv60976reX3l2J846baW8IgEVJF8//EEE/qR7Zd0LXm2wv29YeZF8kAQgEOgnQ11KQjoogpAR2lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=GLOmXOs4; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 35F6D34A;
-	Tue, 19 Aug 2025 08:38:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1755585524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ObL26OE97gG5flRbHvdO93Fpd5gaO/HRUMy/l+G5JRk=;
-	b=GLOmXOs4SK0S5ZeBtoSbCC4KJ8ATerfn7naXeU3hX+r/7f/HSj8lG6iznyNL1/cjpjKCkg
-	BpG/G21iDSsy9UrSCCr5SEVGyCMLvl/l5insHYezX+qyvrOxSoyz3C2PqKyxXOiKgqYNQF
-	Nb2kEBD0rLzRfcNvKHBEH8t6cQW07c96ywANk6DgRAW0xDHcTIZGTJkZmsevN4IxCRayVx
-	Wh14y6dPXOEbHU/pSeLHWVjPUhBpv+OXnPoQg+pdE9R8yIVCZGkJVgFU/s/3Z8+6GJoQYR
-	yhUwnHXSGfyu5QtMg+noXOTHVM6XGRuDTG6KKpbpeeYaEEY7U4QKpNKRuKQRCw==
+	s=arc-20240116; t=1755585586; c=relaxed/simple;
+	bh=5TdbgDMcTMoYx896jp5mrGxDjLrmQ8N8B6xExaeAz9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UUCOtp72AM3yCAOVei90zwlKzMBtVsnslpdLvneHcEYeKygvbMc9maxUBSUPqD5JFj1P2usQOmNv2GrlXC2gW+iwV23lvnyewKyWM+VlUAAkmCb8ZdrMJcYBoRS84wKsIpaj1M87lhJYiZblwJ2gjufaFYAc+X5DjEQ63fvN5XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nP5vVfov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E0E1C4CEF4;
+	Tue, 19 Aug 2025 06:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755585586;
+	bh=5TdbgDMcTMoYx896jp5mrGxDjLrmQ8N8B6xExaeAz9g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nP5vVfovPeiETnUhWL+gGPhzQZIp44Za85cLnr7UI7eZwRxbMPsK6krbj/7NbwKbh
+	 WjZkCwKVcW+KgbQ+F3Vz89dtJ9za/ggHxfafHGXdZpX7n/sN8Way1b+U+NnLRG6RZO
+	 JZ6h4Wu9Sp5NoGwichareey4LkgrVvQJi+1uRgCP37PkO9Joy/Ue3FBVdhEeloiJyP
+	 7VXyl55A3OxGttHnGTDiDlIH0KzU3qo6Z69WnLFV0zc+H2B6BBkefIkN9iS2CIFuLY
+	 q/BJwR4WdIfFeOEl0PqriLsHIj9LeCgeEVl17ckaM+lUsH/GQ5eoOt7Xosre+79to+
+	 /wrD4872LsO/g==
+Message-ID: <41ad5dc8-0179-49b7-a660-2c55b5048db6@kernel.org>
+Date: Tue, 19 Aug 2025 08:39:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 19 Aug 2025 08:38:43 +0200
-From: Michael Walle <michael@walle.cc>
-To: Randolph Sapp <rs@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, vigneshr@ti.com, kristo@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, d-gole@ti.com,
- afd@ti.com, bb@ti.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, detheridge@ti.com,
- matt.coster@imgtec.com
-Subject: Re: [PATCH 3/3] arm64: dts: ti: k3-j784s4-j742s2: enable the bxs-4-64
-In-Reply-To: <DC5T752T3P8B.1UC57G2GH35Z5@ti.com>
-References: <20250808232522.1296240-1-rs@ti.com>
- <20250808232522.1296240-3-rs@ti.com>
- <20250813151819.5rthljjrpryfwezz@skinning>
- <DC1HU458W3QA.YLONSMYKK0C4@ti.com>
- <20250813181300.xfpsu23arx7xy4fy@anointer>
- <DC5C5JA237HD.1ACBQVG1LYQ7Z@walle.cc> <DC5T752T3P8B.1UC57G2GH35Z5@ti.com>
-Message-ID: <f0353dea24751f2f2ad6e7735232b933@walle.cc>
-X-Sender: michael@walle.cc
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
+ parts
+To: 20250816141220.0dd8d68f@jic23-huawei.smtp.subspace.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+References: <cover.1754617360.git.Jonathan.Santos@analog.com>
+ <ecb7406f54938658b51b4469034d87a57086bd1e.1754617360.git.Jonathan.Santos@analog.com>
+ <c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org>
+ <aJ0UEUVmIH94Nuwi@JSANTO12-L01.ad.analog.com>
+ <8c27b00c-5b80-400f-8538-b9ad96fd5feb@kernel.org>
+ <20250816141220.0dd8d68f@jic23-huawei>
+ <aKOVY+F8JfOFr0O4@JSANTO12-L01.ad.analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aKOVY+F8JfOFr0O4@JSANTO12-L01.ad.analog.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
->> Apart from that, we now have two series which partly overlap.
->> Should I repost mine, as that's more than just the DT entry? (Which
->> doesn't work as is, I'd guess.)
+On 18/08/2025 23:04, Jonathan Santos wrote:
+> On 08/16, Jonathan Cameron wrote:
+>> On Thu, 14 Aug 2025 08:03:23 +0200
+>> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>>> On 14/08/2025 00:39, Jonathan Santos wrote:
+>>>>>>  
+>>>>>> +  adi,aaf-gain:
+>>>>>> +    description: |
+>>>>>> +      Specifies the gain of the Analog Anti-Aliasing Filter (AAF) applied to the
+>>>>>> +      ADC input, measured in milli-units. The AAF provides additional signal  
+>>>>>
+>>>>> What is milli unit? Isn't gain in dB, so maybe you want mB? Quite
+>>>>> unpopular to see mB, but we cannot use 1/100 of dB, so I could
+>>>>> understand it.
+>>>>>  
+>>>>
+>>>> Actually, the gain is expressed in V/V, not in dB. I may have phrased it poorly, but since
+>>>> there are fractional values like 0.364 and 0.143, I chose to represent it
+>>>> in milli-units.  
+>>>
+>>> Why your reply to is corrupted:
+>>> "c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org"?
+>>>
+>>>
+>>> What sort of unit is milli-unit? Isn't this 1/1000 of some BASE unit,
+>>> but you do not have here a base?
+>>>
+>>> I think you want just basis point if this is V/V (already in common
+>>> property suffixes)
+>> Nice. I didn't know about -bp.   That does sound like a good choice for ratio
+>> stuff and here would be 100x larger actual values which is fine.
+>>
 > 
-> Ah, I don't see that series on the linux-arm-kernel list. If you can 
-> forward me
-> that I can work around whatever you've got.
+> Yes, it would be, but the here it is 1000x larger than the
+> actual value (1/1000 V/V). I don't see another unit in
 
-That was the one Nishanth mentioned earlier:
-https://lore.kernel.org/linux-arm-kernel/20250716134717.4085567-1-mwalle@kernel.org/
+Huh? How? 1000x larger would be = 1... This makes no sense...
 
-Also this:
-https://lore.kernel.org/all/DC5KCSEUZQUJ.3KPENNUQBUFM8@kernel.org/
 
--michael
+> property-units.yaml for this specifc case. Maybe using -milli suffix
+> like in 'adi,ad4000.yaml' and 'adi,ad7380.yaml'?
+
+
+Best regards,
+Krzysztof
 
