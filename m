@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-775898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9F0B2C641
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:55:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DCEB2C62D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C11565F91
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB92B188861E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDE12EB84D;
-	Tue, 19 Aug 2025 13:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E86F3431EF;
+	Tue, 19 Aug 2025 13:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QJxEHck5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htFVzjby"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C65B2C11FC;
-	Tue, 19 Aug 2025 13:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E3A2EB84D;
+	Tue, 19 Aug 2025 13:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611352; cv=none; b=Co2eDekYAHFgcxRx8/TmMot7Y9eVPEWrJaAngZ5PjQGXrb1ro+aWDLaizegRUvUXYhq1TDl/cZcAlyoSM7Ae5mAhsOggKVZPy6uzkMDqUhe+Ld4Iku1BdjueWng/8vo9ObwBionbLscqEYHIuERNAJ4x0xlYypZKGFk1xA0xzKg=
+	t=1755611363; cv=none; b=VUIk95Lqm6OP0ppzSfyjibX1Lbz9sUc1KYPIY75eS0N/X5ONatE7eg24UP+iGHFvLwZoHSqAh/+Ud9aEy0Pa0swJ0EXID6vMpiI6mGTDHYEsXsgm0mu2rlGFKU+mpavQ0+pwo34rlxINMMxjxEE3I9dLdkhmKMAE24VOveRfhnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611352; c=relaxed/simple;
-	bh=lud/lXMLpcg+6k40Unk5Vvbc3F87BdpQ9ll7DPMri7A=;
+	s=arc-20240116; t=1755611363; c=relaxed/simple;
+	bh=pAa6+fogJNC9Vf/6kvb+kw13f83SMQh7YyuSr8yp6CU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9fOjYsX9wqTaJCPdU74kXQ3NDPfMIRWhrUqeWZlf+aylkts8A1aHeM+VRaMLx5+pFfenEtC5zO0aO3bR1SUdkESkimaiqRlIC7KEvfgY59sEqBFwchtfcTAEsV18mE7TgMQNR/EgdxYNlcmx9Y1ybDWkVe2wZb5cc1ewfYuqxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QJxEHck5; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2259640E0232;
-	Tue, 19 Aug 2025 13:49:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id LhfCHcjT8P5Y; Tue, 19 Aug 2025 13:49:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755611343; bh=hX8gkKPCknuwFfJe0Mc+DoX1O/AMSSHAZ5TIElPIwQ8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiE2BGlkIE8b5dgvTwH9e0hYQVmb5fN9f6oFN+EoH0jUBSpNkw/9SOdCtDWbMDGq9aPViYhyG6nxEZlc5IemcP2Catsl72BPOsaY4UK/iMV9Q2vRXjL79HV/76p2Cz9mIeu5jNdCyRSOgx9WF8IK8p06Ab8Vm8w/s0O+tZm5A9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htFVzjby; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4789C4CEF1;
+	Tue, 19 Aug 2025 13:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755611363;
+	bh=pAa6+fogJNC9Vf/6kvb+kw13f83SMQh7YyuSr8yp6CU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QJxEHck5a0prvkNWAop/I7j1LrMcmQ40P1a8YQ4uXqXfqmTuOV0raf9J5auxpMFdA
-	 A6PL7PS9YGR5j1Ui7kwhv7mlxBKOxfpQXZ8asRSbJo81Y1gRi2Lata92xsN62E63Nm
-	 h1kFSfKle7FQx2PT1XZqmwwHOfzkEOTZ8rQKp+62iDiLry21TyNyL7dG47o3AdVgxL
-	 ZbTR3qJRTzXezUXSY80KjbzVIgnjOkOn9+HnMFW0ku5qUhZuiBnwdl2B3813ppzhdm
-	 AqHHpqbPG2A67rnsZrL1jhwsoFdp/4ONiniopYfE8I+TJh25VncRjqyz8AYVo+ryp+
-	 dJ3+IL/7YnWX34V86TEfgtwNqm1Yeqfeny15rz08SWS2ZWDz/ApF3Cohd1fK+fODki
-	 RGtSazL0PcGsgUNUc8KLyKeP6zCRgR+britVO2PWPNezaPzrG9g5kia5jz2yAbWzEP
-	 xqOVvYNoRrZp5ngRUcGvTTVsczGD1zVrYsJTWrqwXaGzDaO7DBCR9d2W1ub326I8Vy
-	 YIrJpMwzOycGXu4rPSaJhmIWVfD0JRKC0QEV0eprKANL1xjWBVoQZWSwqXPMM/9NgP
-	 pWNDTko166zr3aqviTtEgFXqNs2Nh58C7HfAdz9BaKXqej7YhM5r49kToahDMYj6VI
-	 ZzEOw8EcUWKxciWchslrGUJ4=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A61A540E0206;
-	Tue, 19 Aug 2025 13:48:59 +0000 (UTC)
-Date: Tue, 19 Aug 2025 15:48:53 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Avadhut Naik <avadhut.naik@amd.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] EDAC/mc_sysfs: Increase legacy channel support to
- 16
-Message-ID: <20250819134853.GEaKSAxRGK0SPOmU0I@fat_crate.local>
-References: <20250807201843.4045761-1-avadhut.naik@amd.com>
- <20250807201843.4045761-3-avadhut.naik@amd.com>
- <20250818213651.GIaKOc88InL4iy-SGM@fat_crate.local>
- <20250819133040.GA359442@yaz-khff2.amd.com>
+	b=htFVzjby+ptCXERI+Lu1EFm7PWmsWbCkgpy++eEM1lWil6JxmJvktmfFobmbGUkCR
+	 lvmL8AmBHBygSX4digY7VVW0PdpYnH9EIhl9QmDzJMICeo5FqLlT55QYvo/ZwpCa0j
+	 bcx5BBNzjKkAO48VpLwHfDiOF+6bu3eKH8/0/C3N2fLP0OWs8eS94YkktT5vvFTa2j
+	 UCLLJGE4F8LS86x/yKwwILSe5OqsHzYWdOpNbZvpHyvpD2rSC8x9+SeHOImb4ZglTN
+	 /Hktw0BFZEQFMXYOz/J+cRrBD3an3LEek+zYYm/le7Whc3BW3PVYbMfRfKekbXyW0s
+	 Pk6TXH+rqLW5g==
+Date: Tue, 19 Aug 2025 08:49:21 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2] media: dt-bindings: renesas,rzg2l-cru: Improve
+ documentation
+Message-ID: <175561136132.114786.9601783480091957851.robh@kernel.org>
+References: <20250819074849.18696-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819133040.GA359442@yaz-khff2.amd.com>
+In-Reply-To: <20250819074849.18696-1-biju.das.jz@bp.renesas.com>
 
-On Tue, Aug 19, 2025 at 09:30:40AM -0400, Yazen Ghannam wrote:
-> Maybe it's time to final remove this legacy interface? It's been
-> obsolete for more than a decade now.
+
+On Tue, 19 Aug 2025 08:48:42 +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 > 
-> 199747106934 ("edac: add a new per-dimm API and make the old per-virtual-rank API obsolete")
+> Drop CRU prefix from clocks and interrupts description.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> Ref: https://lore.kernel.org/all/20240909143358.GA2013-robh@kernel.org/
+> v1->v2:
+>  * Updated commit description
+>  * Dropped CRU prefixes from clocks and interrupts description.
+> ---
+>  .../bindings/media/renesas,rzg2l-cru.yaml     | 22 +++++++++----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
 
-Bah, look how time flies... :-\
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Good catch - I had completely forgotten about this gunk.
-
-> Any guidance on the best way to remove this?
-
-Yeah, you set it to default n in Kconfig and add a warning when someone reads
-the old sysfs nodes. Something along the lines that this interface has been
-deprecated for a decade now and that people should switch to the new dimm
-interface and that it will be removed in, say, 2-3 kernel releases or so.
-
-I'd say.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
