@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-774674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D1DB2B5EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:26:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6728B2B5F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F3017D232
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:26:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A3B1964144
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7406E1E8324;
-	Tue, 19 Aug 2025 01:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4261B21BF;
+	Tue, 19 Aug 2025 01:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Z2vlis7h"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enR00Iui"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23871DF246;
-	Tue, 19 Aug 2025 01:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FD51E51EA;
+	Tue, 19 Aug 2025 01:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755566766; cv=none; b=b7STXHLKZEZ/BmZuaEbbiP66iDu3uE3nDEthHyOBJonmjhx8Svkt8o3x8fMENURI9bk8tt/tA/31mfbSk43xNywbPUcpyxRH+SC3BN22s5+O8oj020yfLAk5njMWqr2DkyX9jwzzm462QW3o48xnl1JbQocpO5DQMQdJBxghtZc=
+	t=1755566789; cv=none; b=Onp+Nbh8Z6UGDze96RBEQ2LVqqbDXSWUiqyG/rM1d9ry0bZOX/7VZhlGBN8Fp71KMe7bD4SH9cH11Fi7qulm//Umw6f4zxAWST4zABQugoxAz85GIhZhx1sJn86CR/Dd3/99T1QzpT46e4FQn+cr+9OJh+G6CeWGOogesk+RS7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755566766; c=relaxed/simple;
-	bh=KMFWf+szge8CEFRLqidpE5roRvFUuOgWAw5WnIoHLPU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NU+/iM8lMBR3nXtblXAetTvzrblm7dzcZ0bzQV8FDUbFUB83v9hFbv/brfcKbXCb3TY65kE09psSmkCPuKDOoLNLMVo+7EJSSAqXUK6xnWBmaXVab57pyXeuG6WfERFrxgLiUQlBEhNhFR+skfaIDUgSG3KSRqDqInim/vBYnd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Z2vlis7h; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755566760; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=5OVVf637/rFSQpfwdp/hg0O0Ow8p4WzZ4tWTlQ0JpQc=;
-	b=Z2vlis7h3Aw8Y1htBF/PY/OAEvKRLvEt2lzhuf+vfcxH4IKSq6GuMF5fXgZdM2QgxFZo/D+Emw4uumq7B8ZgdH3WzOeEiPjyPGLjnVo9mFBQ2+/lFjNcP1gAfnBOMJ14D4oiJZ9NweBKaxDRI62xvIwf1t9KbWDZlhOo873pL0A=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0Wm4m1nl_1755566758 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 19 Aug 2025 09:26:00 +0800
-From: fangyu.yu@linux.alibaba.com
-To: anup@brainfault.org
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	atish.patra@linux.dev,
-	fangyu.yu@linux.alibaba.com,
-	guoren@linux.alibaba.com,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com
-Subject: Re: [PATCH] RISC-V: KVM: Using user-mode pte within kvm_riscv_gstage_ioremap
-Date: Tue, 19 Aug 2025 09:25:58 +0800
-Message-Id: <20250819012558.88733-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <CAAhSdy3omyk7YGVHNV5mgR13cON1SxdpqsxGQJsWWE1Hoyw=5A@mail.gmail.com>
-References: <CAAhSdy3omyk7YGVHNV5mgR13cON1SxdpqsxGQJsWWE1Hoyw=5A@mail.gmail.com>
+	s=arc-20240116; t=1755566789; c=relaxed/simple;
+	bh=LRaCLQ18Q6kzPYjgpZThadsFFrAIt5hd5JMc+Bp70aI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HbuBoNW2tqV2cMbvqNujWQiaQtOr9OMrTB237opOhiZM5uUkYtjXyeH9k0bNbkFhCqdrnQgVrNMu33+yWJhahjCvViTbW3W1hR5DwhsDaPJfG/YO8ZvQweIVcL0wBPo42t+i/xBnpxLolAlvyT6QJXePZXQHumr8XjB9oG9Kmf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enR00Iui; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b47174b3429so3031407a12.2;
+        Mon, 18 Aug 2025 18:26:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755566787; x=1756171587; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0HxoeoNbyCC1Fpr5/MABkG5tz9PwDB+aucTsQQK+TTA=;
+        b=enR00Iui4NVMDoUsn9DhrJOCV6KVENXf4JfMTwEaFf63xukkaEHPWcLSM6B/vv681w
+         TNK3HCTnTB7xShuo3ESaj3+ZgSlg6vy2EGQ0salP2I8Eu7k695xMBTgd/HPc/UEpay25
+         E9j4GfJiDZPgU0hg1nFsypKy1lUDE/1F4RAI/uFT+Oh2gOzrEomr6GJqLMwXvR51P2QA
+         os5ewweRdT4lDd9tlRHxbopKicyj/tzKL87SIB2K3Pa3NcW+eEbK8xvUE3BU5u4+SqCW
+         wepwsuzXpZHbp1qyFdfo7063neshhFmbuAfAA7LBoBSQqwuBMF3s+XXvxE0QXKx6Tru6
+         hEHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755566787; x=1756171587;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0HxoeoNbyCC1Fpr5/MABkG5tz9PwDB+aucTsQQK+TTA=;
+        b=eleqGvuJphc9Uaaq1UfJ0KCp0oq2TX8AY3LGVBjVytjZVijPazZbRhRpvFztLJTBkD
+         TUG4tVWVG8SP6JhuKhryq/BuWdFI2TJ7O8v9zTpTovyAXxVFWQIi8JR4QGIwobVtWPyz
+         2zcuDFhP07KBftlUJZ3HnwPAsJZIuC/9oNUYdxHnOVTXjiAFou0duHmr9iUZ2wLlM2Yh
+         i/TBw36K9hMJER5spBfZ3efVAmiHP0sP1WPqddExv0kRhAlBO+JOMY6tBjwBjf1qm4+2
+         2p97jL0GMW+XN9kyyXO4PM3uP5yWwQ7PD9Ox0lgcK0HclhfZdLalhzLkQStwzMhfkp83
+         Yn8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUr1MCRP1UyrUHpaAVdNJTHDHu/nJ5XI7S22lj5aT563Pm4mSn1PcFLtNFQItyzjZuRjb9T@vger.kernel.org, AJvYcCVJy0+MTY8fj/d8c4gIm+SKkuUo67kj6PY0ex8Z59KQb3iILm5+sGNAGUSYCAy8EWYs8Q0otVhAvMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywx644OkBOxF66x6HwylpqUeWQ8epnLymZynOLBUz97qGmi/nv
+	uInuFWMlixlQfMoxA6HsvtD+IMRHwi1/PVYiBEBVeO53JE3aaULVPSEq
+X-Gm-Gg: ASbGncstXzb/EBsjzUzBUFCrHBt6ZRLl29P1XQnhGeOzvudQyPomNLwifNB7GExzjMw
+	a9+2qR5mofquIldocEMmuJNM61YVl7x2hlkPKm4RHx8sZoG6gPTFf7hqb6OrmF8k5Pwk7us0pWg
+	OKfSRc2euobUghZpzcDqlxtRtR44lzrulqjEvx1zFOvwCSgeYX6RZmXgyF97OGVooDsdDS0Uery
+	e7w5fgWPMTTAnv6xDozr7eyWYyVTUfwU9a0ZGA/DNf4zSAcG5hsNRO5LgysrtZgoY9feF0Mcsz9
+	5MTvlY5+SoPKU7/2J1EU6BQsRJm56xg5VhwIlpRpCXu3Io6WZ4FZfKgovn61TgRiL4IDiLe7pn1
+	ttwpnTIk8db80ffkO5ptMDg==
+X-Google-Smtp-Source: AGHT+IGtEm/cQazpWCcYQKgrQV+q1sHdAa7xD/XTUG9zbOQrhjLr91FtcYZGSvZtyRSk52KXEawJOw==
+X-Received: by 2002:a17:902:cf0f:b0:240:2145:e526 with SMTP id d9443c01a7336-245e02d885cmr8545905ad.6.1755566787035;
+        Mon, 18 Aug 2025 18:26:27 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f3c6sm92466565ad.90.2025.08.18.18.26.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 18:26:25 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 693CC41A38C3; Tue, 19 Aug 2025 08:26:22 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux RCU <rcu@vger.kernel.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 0/2] RCU docs toctree cleanup
+Date: Tue, 19 Aug 2025 08:26:18 +0700
+Message-ID: <20250819012620.14606-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=681; i=bagasdotme@gmail.com; h=from:subject; bh=LRaCLQ18Q6kzPYjgpZThadsFFrAIt5hd5JMc+Bp70aI=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmLLzl9Pd0xRaujP1k0dn37RgGf2dNrlpwJULILjI7eO fOX/M9JHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZjIbTlGhvmBaX/2HJkdmxf0 l0fa6n/83Gv/AmV+VE9Iv7IqXV01J5bhv7PwMjtx7qnSqaY/lXM4vpktd8n8y/TfaV5qk9y/3zV JvAA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
->>
->> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->>
->> Currently we use kvm_riscv_gstage_ioremap to map IMSIC gpa to the spa of
->> guest interrupt file within IMSIC.
->>
->> The PAGE_KERNEL_IO property does not include user mode settings, so when
->> accessing the IMSIC address in the virtual machine,  a  guest page fault
->> will occur, this is not expected.
->>
->> According to the RISC-V Privileged Architecture Spec, for G-stage address
->> translation, all memory accesses are considered to be user-level accesses
->> as though executed in Umode.
->>
->> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->
->Overall, a good fix. Thanks!
->
->The patch subject and description needs improvements. Also, there is no
->Fixes tag which is required for backporting.
->
->I have taken care of the above things at the time of merging this patch.
->
->Queued this patch as fixes for Linux-6.17
->
->Thanks,
->Anup
->
+Hi,
 
-Thanks for your review.
-I will send a v2 patch to fix these comments.
+As the subject suggests: a small cleanup on RCU documentation toctree index.
+The first patch tidying up toctree by not spoiling the full hierarchy
+by means of reducing its depth. The second one edits the index title to
+reflect nature of the toctree.
 
-Thanks,
-fangyu
+Enjoy!
 
->> ---
->>  arch/riscv/kvm/mmu.c | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
->> index 1087ea74567b..800064e96ef6 100644
->> --- a/arch/riscv/kvm/mmu.c
->> +++ b/arch/riscv/kvm/mmu.c
->> @@ -351,6 +351,7 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
->>         int ret = 0;
->>         unsigned long pfn;
->>         phys_addr_t addr, end;
->> +       pgprot_t prot;
->>         struct kvm_mmu_memory_cache pcache = {
->>                 .gfp_custom = (in_atomic) ? GFP_ATOMIC | __GFP_ACCOUNT : 0,
->>                 .gfp_zero = __GFP_ZERO,
->> @@ -359,8 +360,11 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
->>         end = (gpa + size + PAGE_SIZE - 1) & PAGE_MASK;
->>         pfn = __phys_to_pfn(hpa);
->>
->> +       prot = pgprot_noncached(PAGE_WRITE);
->> +
->>         for (addr = gpa; addr < end; addr += PAGE_SIZE) {
->> -               pte = pfn_pte(pfn, PAGE_KERNEL_IO);
->> +               pte = pfn_pte(pfn, prot);
->> +               pte = pte_mkdirty(pte);
->>
->>                 if (!writable)
->>                         pte = pte_wrprotect(pte);
->> --
->> 2.39.3 (Apple Git-146)
->>
+This series is based on kvm-remote.sh wrap patch [1].
+
+[1]: https://lore.kernel.org/linux-doc/20250819004559.11429-1-bagasdotme@gmail.com/
+
+Bagas Sanjaya (2):
+  Documentation: RCU: Reduce toctree depth
+  Documentation: RCU: Retitle toctree index
+
+ Documentation/RCU/index.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
