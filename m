@@ -1,420 +1,214 @@
-Return-Path: <linux-kernel+bounces-776017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245A8B2C789
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:51:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972FCB2C78C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E9A520356
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:50:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A96977AF8B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E0D27E1C5;
-	Tue, 19 Aug 2025 14:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBBA25DCEC;
+	Tue, 19 Aug 2025 14:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Uew5Wgqk"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdzC9lTx"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6769427B328;
-	Tue, 19 Aug 2025 14:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE1321772D;
+	Tue, 19 Aug 2025 14:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615029; cv=none; b=AFpZJOB3yQtIgt6DJQUuh9c7pVp17sgULmKbfVqDbw65rsnyspgbu3BN8XMT1cLrhBukjQnexiSSr69MyH1ewiXgrS7o7NUTsgelqHZ85fyQH7W6IJVKHp5ieCtIZsEYXgufT8TBDd35ms1mwWorAc8C1xRNAr+GxV3KXj1EEBA=
+	t=1755615074; cv=none; b=roSGSQ7Nmkq556rsHpFIaw7vETOslsIbAR7hmWj2Fa8oACsWeRARHBV6w/sHJr80zkjDuPeQonx2qOme36YkZhHLQbYyQK8c1j4BErGXRIecneGCfmjP+u1HPG15srlm4E1m6Lx+yLsoIqXRpoKsNVLGrcYhmzbHnY4S1vDuRi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615029; c=relaxed/simple;
-	bh=Yiwz8AGMAP/ESeshF5msVk8My9HQeNxOKXjxXregOWI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UtcTy6ARU2H5CJatjQ1fQpeyWeQK+5GYgGBg9rqvmRxjrpY8Icq6a15iH+L0T33MfzcaV5RiOBCBefkPQWmAeGUMyZfUA9siY48DRP/XALpoPczpamxTYMEqX7C3efMEWSP3iwWBj5Zffd/js4fHPbZga+1sRgmSAKdZE7Pg3t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Uew5Wgqk; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755615020;
-	bh=Yiwz8AGMAP/ESeshF5msVk8My9HQeNxOKXjxXregOWI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Uew5WgqkH/9s5sSWxVLaf7HvDET5RtGtF94110P+MTIAkk7vEoSsUNp5X96yaMdaT
-	 e8Nka3IY9C0PDdvPqOAAyXANfWREhSPi1vyhYj9X9dmVsBA0GaN4HZGG/53ZOyRC13
-	 kqup/Woydv/9Oi+Zu3SmgB6R32sEfFCFrpnEnm0soK7Jyy3LYzJfMjTeQBI36POxoZ
-	 zwphSo61Azlnb+hb3a72Abj7CFzdisJZc+B8vFXZbYNxWm6EHeUNfP8RCQ6cVfhhvA
-	 i/l0NpUzGtSMfvwIpNmIMzO7JW8F7sYZrWl8L599DpydIaBOHxYA3XI3F8Dy/iQYjW
-	 Jtnsz6h+hXxqg==
-Received: from jupiter.universe (dyndsl-091-248-189-012.ewe-ip-backbone.de [91.248.189.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0751017E110D;
-	Tue, 19 Aug 2025 16:50:20 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id B77F1480044; Tue, 19 Aug 2025 16:50:19 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Tue, 19 Aug 2025 16:50:13 +0200
-Subject: [PATCH v4] arm64: dts: rockchip: add USB-C support for ROCK
- 5B/5B+/5T
+	s=arc-20240116; t=1755615074; c=relaxed/simple;
+	bh=eKOwK0qY0XlIYHG/mfv6JRGT834tGvbpGugdoJwXfiw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XwJS/bUCRfST0w9SjKUZXWc7naqayJ1tYAzk5o7knUxNVAgm4Ycdti2y5thh6e7+jeferJKzcQvWeIT1DikL4R+b/rOCjYishrnwOF2KkmISlgoXY29F1Dvjb63LgTeoQfrB1sm9b6Ii715Yer4Jap0Ffd8m4suYiTD7AWh1iJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdzC9lTx; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32326de9f4eso4716286a91.2;
+        Tue, 19 Aug 2025 07:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755615072; x=1756219872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=84JBC/K4prfKTVHBWmcQiE2Ae580xZlTp9zQ8TNTSNA=;
+        b=XdzC9lTxcPRY7N+Kabkp7vSPBem3WSlSNOEshPU6GORd84T7ObUDPJQbzgEytlWIpZ
+         b8EAwnVXR7bGkffTMlkb8tztOUw5qDAXsr/+VcU2wwyw7u2dbbtEnH3bR36RyK0WdZa8
+         N+fOxO1iViF9QOPFQZe9iyYHXmcWtrA4+CenTC2/qnIYkJlqK0z/QUF6Itr5VggV378M
+         FezOun4VLyRTIP19W3VHpcOAbVZXSp68ZbqxHhhBMwCSf1JyvjV+zSEtBFxnXRFFOs0I
+         Y6xX9bOdGRmpVcv+dZWzQJV6YZY/BPWga+KsXXvML0q30Pa+FT7pRk7/bt/zoJmY5UfD
+         OOXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755615072; x=1756219872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=84JBC/K4prfKTVHBWmcQiE2Ae580xZlTp9zQ8TNTSNA=;
+        b=PrW47UPbb+4uCfby/Km8RJ/8e4Jj25Ns0KsJiV5bTFlqlJAE+6VD7wyrhf+5ZiMejs
+         ah6sw9tjx2bMwTYWUpnSZzE1kZmiVSRm6OSh91/MbB67iackG49WT5wkTap6YSvNUlvP
+         +YCTUeVA2qinrPK9NZr1c8fIO2+nnTptyrOTetOp11geFoMYZmG6PH4KTJPiEEIrJdj2
+         NBsHhs6dR1tpVlX12JpOFfDEud/pNTDJbvN9Vr+wEDU0t4MM6Yqrx60fbOXY3rmOxR/i
+         BEe7S5/BPPa18Oc1Fb/7PUKqElKl/jhSggrovo4g+V6mpsV22TmITAkBiMlpvAjZClzO
+         yLzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8F+0vySOpamRbWB4WbZtvAx0RUfP1tNdKcW4fd8NHoWzZGKpr3SRTCw/dlFDO3VnQ2BnHgPrZK9vm@vger.kernel.org, AJvYcCUMNPxlV51SSjs6jpID71dv2sq22lHK+zojmLiEdp3VqvstDlFzfpNJmTghlt+/sQIBSmjUzGREQCGG@vger.kernel.org, AJvYcCUXjKHFQxEh5Ry5NN6Evab2oE/TbrELeRdyihiPyMZ7AMrRLfFd349m/5SGz3OpiFBMjmD0geX5xM7hTg==@vger.kernel.org, AJvYcCUYVY3KNv8qU+LxsO3Vx8e+1n6w5FCpbW+WcQv0TSi6cPInA35WEAaFYG+D3aNf4v2f7G+P6pSfNkXYFZk=@vger.kernel.org, AJvYcCUqPgxIZK/i5BDL1sVPFnK5nVPL16xgGmw4cbngadDHXr5mbkM/90CQvALt175V/rdFVI22PdKeplr2@vger.kernel.org, AJvYcCWlwrj5HW9N/eGnok0i4T6KZGSgVF9VWVDMPWUd57SRxXN7GMA34DG2JEG3rlepwcTMu/aZirJJHhrLPLI=@vger.kernel.org, AJvYcCXscHSGQ+VNKQ1wVg11zKwO8hdefrj1pMJF2qdXJzjU/NFjoAhPvsKZcrupM1IUnrWHIHh9oDFMeDu59g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdpbGzsX4148l3IfsL/y1j+4+/bAyR9TN6H/HT7ST+UnL5m4E9
+	P+3OuIINNQiuecbqVsllY45dk9xArQu3mertCZk8rxRTitkC7Z7VYBq1cRq8hVBYJCLgcSTvtFJ
+	sEN0/h+i4XRH44/LLOoLL3o0k50da2w==
+X-Gm-Gg: ASbGnctYsyNVABx2OZB/+S+40W7KAvM/mNaFjqaGC0p0d1Jjw8BCTuvpR4UUNMsEA1F
+	BZYtqdRvQU9iKar9ahHJl3r5m5HhRLi4AWzFZMczblUSW2LymVG3jODtWqPcyRpyO5YQAZORFq0
+	Wo8nScz5QHYa8sVQpjF02ZNoJerNDBEmMXEqCEWRuDGPmrX251YY0qOVyQOSmtl/RYEP5U6baHW
+	A92Faw=
+X-Google-Smtp-Source: AGHT+IGFX3Kpa1nizieMl3Ixu9nhO8VijjVmgDz/D33VTEV/CrtZhkKtRMf84sQy3fytu82eKOQOb3mHib8daIX2DhE=
+X-Received: by 2002:a17:90b:134e:b0:311:df4b:4b7a with SMTP id
+ 98e67ed59e1d1-32497102910mr3896605a91.29.1755615071705; Tue, 19 Aug 2025
+ 07:51:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-rock5bp-for-upstream-v4-1-7a2365ce7176@kernel.org>
-X-B4-Tracking: v=1; b=H4sIACSPpGgC/4XNQQrCMBCF4atI1o5kksZWV95DXDTJRIPalEktS
- undbd2IiLj8H8w3g8jEkbLYLgbB1MccUzNFsVwId6qbI0H0UwsllZFaFcDJnY1tISSGW5s7pvo
- KwVfGSmnNRlsxnbZMId5f7P4w9SnmLvHj9aXHef0D9ggS1gpL8gGNxc3uTNzQZZX4KGaxV2/Fy
- OqHomalLKXWzmHt1Jei30qFvxQNCB510M6Tq9buQxnH8QmTAAXCRQEAAA==
-X-Change-ID: 20250324-rock5bp-for-upstream-fd85b00b593b
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, kernel@collabora.com, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9307; i=sre@kernel.org;
- h=from:subject:message-id; bh=Yiwz8AGMAP/ESeshF5msVk8My9HQeNxOKXjxXregOWI=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGikjyuF3J7QK518kBCdeKNz/W3LNWSqA/ttL
- wJxLjmSvA1+p4kCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJopI8rAAoJENju1/PI
- O/qaRMQP/1mdQ7NjIKQ2Br/iT5KidWYnSB8xTJJYCyrTkoCpqI8M73kPblwS8N3W4EFUZPTmCdV
- 6U2/5LAp/Ln6dqbLfxb76vwCIDIKf4E5XjWc87T5k28vcPv7pj6KLhza/g5ID2NhFIden45EChL
- 0VqxGmaV97BSGCZOh+UHwuobElXTRZMHkRjLMKUpe/pgrnDC5hQTgoB14+sqYY+RhmsFgXtd8Vm
- HZvIFl7Cei/4RGHE7NjpW/O4JMNtI897jdOociyYB09SvWIUpn2tTfj8miYUs9l0MLxPhjZMFXM
- u1UnhAL5j1P4EljoNr6Q5hWKTw7Po/l2iApVh0Xo9dzwb1mrqr2o6g9bACHKbCgV/FZWzqPsqlm
- ilR3vYrL+5/QYMtxEU/2OVzt59yPJ1VRR+wmLg7AA0ZfERa961wf4OLpcD0dl9uJF7/a9wOQ/My
- xqhCPiQpogAioBFugokPwtRMORjBB0SuvzKX5EfkUEeV2OJIzBw1lx37bEW/1ITWn2lAdsNUxZP
- zt4CnCNjj7kigkztz8t8gcHu81IM+wyUJqsKYXAS5OpPL+7rgaxPXM0AyR8UHA3vJmbTwYoXNGE
- GmXrw3EIEBuLor9RcNMtLOP5rjPvOuDKZh/p6glbvS4B0MLyJJ4FfCOhqTh0H+uhWvohWkBHT/B
- eXI9/gU9+nNNitQIyj0slHQ==
-X-Developer-Key: i=sre@kernel.org; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+References: <20250816021523.167049-1-jihed.chaibi.dev@gmail.com>
+ <20250816021523.167049-2-jihed.chaibi.dev@gmail.com> <20250819-humongous-muscular-curassow-5accd5@kuoka>
+In-Reply-To: <20250819-humongous-muscular-curassow-5accd5@kuoka>
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Date: Tue, 19 Aug 2025 16:51:00 +0200
+X-Gm-Features: Ac12FXwysxyGsjAabyXw5_P1WV9yLN_7McwriOwmRdAXImPNCo-sOD4JlUKkl3s
+Message-ID: <CANBuOYr9Kmj7n664CSRuORKfxx70w+DHzO5kToyBnHyBv0SjNg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: mfd: twl: Add missing sub-nodes for
+ TWL4030 & TWL603x
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, andreas@kemnade.info, 
+	peter.ujfalusi@gmail.com, dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzk+dt@kernel.org, lgirdwood@gmail.com, tiwai@suse.com, conor+dt@kernel.org, 
+	lee@kernel.org, ukleinek@kernel.org, broonie@kernel.org, 
+	gregkh@linuxfoundation.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org, 
+	tony@atomide.com, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-omap@vger.kernel.org, shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add hardware description for the USB-C port in the Radxa ROCK 5 Model B
-family. This describes the OHCI, EHCI and XHCI USB parts. The DisplayPort
-AltMode is only partially described, as bindings for the necessary
-DisplayPort controller are still being reviewed.
+On Tue, Aug 19, 2025 at 10:13=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On Sat, Aug 16, 2025 at 04:15:18AM +0200, Jihed Chaibi wrote:
+> > Update the TI TWL family Device Tree binding to include additional
+> > subnodes for TWL4030, TWL6030, and TWL6032 devices.
+> >
+> > The simple power and PWM bindings (ti,twl4030-power, ti,twl-pwm, and
+> > ti,twl-pwmled) are now defined directly within this binding.
+> >
+> > Other child node definitions (audio, gpio, keypad, usb, etc.) are also
+> > added to the schema. These additions fix 'unevaluated properties'
+> > errors found during dtbs_check for boards like the omap3-beagle
+> > and improve the binding's overall completeness.
+> >
+> > Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> >
+> > ---
+> > Changes in v3:
+> >  - New patch to consolidate simple bindings (power, pwm) and add
+> >    definitions for all child nodes to fix dtbs_check validation
+> >    errors found in v2.
+> > ---
+> >  .../devicetree/bindings/mfd/ti,twl.yaml       | 191 ++++++++++++++++++
+> >  .../devicetree/bindings/mfd/twl4030-power.txt |  48 -----
+> >  .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
+> >  .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
+> >  4 files changed, 191 insertions(+), 82 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power=
+.txt
+> >  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.tx=
+t
+> >  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled=
+.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Docume=
+ntation/devicetree/bindings/mfd/ti,twl.yaml
+> > index f162ab60c..b0f1cb7b5 100644
+> > --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> > @@ -76,6 +76,98 @@ allOf:
+> >            properties:
+> >              compatible:
+> >                const: ti,twl4030-wdt
+> > +
+> > +        audio:
+> > +          type: object
+> > +          $ref: /schemas/sound/ti,twl4030-audio.yaml#
+> > +          unevaluatedProperties: false
+> > +
+> > +        keypad:
+> > +          type: object
+> > +          $ref: /schemas/input/ti,twl4030-keypad.yaml#
+> > +          unevaluatedProperties: false
+> > +
+> > +        pwm:
+> > +          type: object
+> > +          $ref: /schemas/pwm/pwm.yaml#
+> > +          unevaluatedProperties: false
+> > +          description: |
+> > +            TWL4030 series: PWMA and PWMB (connected to LEDA and LEDB =
+terminals)
+> > +          properties:
+> > +            compatible:
+> > +              enum:
+> > +                - ti,twl4030-pwm
+> > +            '#pwm-cells':
+> > +              const: 2
+> > +          required:
+> > +            - compatible
+> > +            - '#pwm-cells'
+> > +
+> > +        pwmled:
+> > +          type: object
+> > +          $ref: /schemas/pwm/pwm.yaml#
+> > +          unevaluatedProperties: false
+> > +          description: |
+> > +            TWL4030 series: PWMA and PWMB (connected to LEDA and LEDB =
+terminals)
+> > +          properties:
+> > +            compatible:
+> > +              enum:
+> > +                - ti,twl4030-pwmled
+> > +            '#pwm-cells':
+> > +              const: 2
+> > +          required:
+> > +            - compatible
+> > +            - '#pwm-cells'
+> > +
+> > +        'twl4030-usb':
+>
+> No need for quotes.
+>
+> > +          type: object
+> > +          $ref: /schemas/usb/ti,twlxxxx-usb.yaml#
+>
+> Are you sure your patchset is bsiectable? Apply this patch and test. You
+> will see errors and you must fix these. Even after fixing you have
+> strict dependencies so your cover letter must explain these (or merging
+> constraints)...
+>
+> I suggest listing here only compatible with additionalProperties:true
+> and splitting entire patchset per different maintainers.
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
-This series adds USB-C support for the ROCK 5B, ROCK 5B+ and ROCK 5T.
+Hi Krzysztof,
 
-Now that [0] has been merged, this should finally work reasonably
-stable. Note, that there is a regression in 6.17-rc1, which breaks
-stable operation again. I've send a revert of that in [1]. I think
-it's time to enable the USB-C interface, so that we can claim further
-breaks as proper regressions :)
+Thank you for the review. That additionalProperties
+suggestion is definitely helpful in this scenario.
 
-[0] https://lore.kernel.org/all/20250704-fusb302-race-condition-fix-v1-1-239012c0e27a@kernel.org/
-[1] https://lore.kernel.org/linux-usb/20250818-fusb302-unthreaded-irq-v1-1-3a9a11a9f56f@kernel.org/
+I will split (in v4) the patchset into smaller & independent
+series for each subsystem as recommended.
 
-Changes in PATCHv4:
- - Link to v3: https://lore.kernel.org/r/20250818-rock5bp-for-upstream-v3-1-d13f3cdec86c@kernel.org
- - Fix ROCK 5T pinctrl DT warning
-
-Changes in PATCHv3:
- - Link to v2: https://lore.kernel.org/r/20250508-rock5bp-for-upstream-v2-0-677033cc1ac2@kernel.org
- - Rebased to latest for-next branch from Heiko
-   - Dropped merged patches for initial ROCK 5B+ support
- - Renamed series, since it just adds USB-C support now
- - Fix pinctrl for Rock 5B SBU DC pins
- - Also handle ROCK 5T
-
-Changes in PATCHv2:
- - Link to v1: https://lore.kernel.org/r/20250324-rock5bp-for-upstream-v1-0-6217edf15b19@kernel.org
- - Replaced DT binding patch with the version from NAOKI
- - Dropped unused pinctrl for vcc5v0_host_en from the shared DT
- - Moved USB-C SBU DC pins to board specific files, since they differ
-   between Rock 5B and Rock 5B+
- - Added pinmux for SBU DC pins
- - Rebased to latest version of Heiko's for-next branch
- - Disable USB-C on Rock 5B for now
----
- .../boot/dts/rockchip/rk3588-rock-5b-5bp-5t.dtsi   | 136 +++++++++++++++++++++
- .../boot/dts/rockchip/rk3588-rock-5b-plus.dts      |  12 ++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    |  12 ++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts    |  14 +++
- 4 files changed, 174 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-5bp-5t.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-5bp-5t.dtsi
-index 612808d2b4c5d4c0de998798a0ce3002f64b32e0..f138e8df511a45a3f3de83024f5ed0fb58f38be2 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-5bp-5t.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-5bp-5t.dtsi
-@@ -5,6 +5,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/soc/rockchip,vop2.h>
-+#include <dt-bindings/usb/pd.h>
- #include "rk3588.dtsi"
- 
- / {
-@@ -55,6 +56,18 @@ rfkill-bt {
- 		shutdown-gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_HIGH>;
- 	};
- 
-+	vbus5v0_typec: vbus5v0-typec {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio2 RK_PB6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vbus5v0_typec_en>;
-+		regulator-name = "vbus5v0_typec";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
-+
- 	vcc3v3_pcie2x1l0: regulator-vcc3v3-pcie2x1l0 {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -291,6 +304,76 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4m1_xfer>;
-+	status = "okay";
-+
-+	usbc0: usb-typec@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <RK_PB4 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usbc0_int>;
-+		vbus-supply = <&vbus5v0_typec>;
-+		/*
-+		 * When the board is starting to send power-delivery messages
-+		 * too late (5 seconds according to the specification), the
-+		 * power-supply reacts with a hard-reset. That removes the
-+		 * power from VBUS for some time, which resets te whole board.
-+		 */
-+		status = "fail";
-+
-+		usb_con: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			/* fusb302 supports PD Rev 2.0 Ver 1.2 */
-+			pd-revision = /bits/ 8 <0x2 0x0 0x1 0x2>;
-+			power-role = "sink";
-+			try-power-role = "sink";
-+			op-sink-microwatt = <1000000>;
-+			sink-pdos =
-+				<PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>,
-+				<PDO_VAR(5000, 20000, 5000)>;
-+
-+			altmodes {
-+				displayport {
-+					svid = /bits/ 16 <0xff01>;
-+					vdo = <0xffffffff>;
-+				};
-+			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					usbc0_hs: endpoint {
-+						remote-endpoint = <&usb_host0_xhci_to_usbc0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					usbc0_ss: endpoint {
-+						remote-endpoint = <&usbdp_phy0_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					usbc0_sbu: endpoint {
-+						remote-endpoint = <&usbdp_phy0_sbu>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i2c6 {
- 	status = "okay";
- 
-@@ -445,6 +528,16 @@ pcie3_vcc3v3_en: pcie3-vcc3v3-en {
- 			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	usb {
-+		usbc0_int: usbc0-int {
-+			rockchip,pins = <3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		vbus5v0_typec_en: vbus5v0-typec-en {
-+			rockchip,pins = <2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &pwm1 {
-@@ -860,6 +953,14 @@ &uart2 {
- 	status = "okay";
- };
- 
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
- &u2phy1 {
- 	status = "okay";
- };
-@@ -887,6 +988,27 @@ &u2phy3_host {
- 	status = "okay";
- };
- 
-+&usbdp_phy0 {
-+	mode-switch;
-+	orientation-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy0_ss: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc0_ss>;
-+		};
-+
-+		usbdp_phy0_sbu: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&usbc0_sbu>;
-+		};
-+	};
-+};
-+
- &usbdp_phy1 {
- 	status = "okay";
- };
-@@ -899,6 +1021,20 @@ &usb_host0_ohci {
- 	status = "okay";
- };
- 
-+&usb_host0_xhci {
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usb_host0_xhci_to_usbc0: endpoint {
-+			remote-endpoint = <&usbc0_hs>;
-+		};
-+	};
-+};
-+
- &usb_host1_ehci {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts
-index 74c7b6502e4dda4b774f43c704ebaee350703c0d..5e984a44120e4086fce9e7b72b3db1feaa820275 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus.dts
-@@ -99,12 +99,24 @@ pcie3x2_rst: pcie3x2-rst {
- 	};
- 
- 	usb {
-+		usbc_sbu_dc: usbc-sbu-dc {
-+			rockchip,pins = <0 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>,
-+					<0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
- 		vcc5v0_host_en: vcc5v0-host-en {
- 			rockchip,pins = <1 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
- };
- 
-+&usbdp_phy0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usbc_sbu_dc>;
-+	sbu1-dc-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
-+};
-+
- &vcc5v0_host {
- 	enable-active-high;
- 	gpio = <&gpio1 RK_PA1 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index 9407a7c9910ada1f6c803d2e15785a9cbd9bd655..8ef01010d985bab42db33f88e5e50a3e96053288 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -38,12 +38,24 @@ &uart6 {
- 
- &pinctrl {
- 	usb {
-+		usbc_sbu_dc: usbc-sbu-dc {
-+			rockchip,pins = <4 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>,
-+					<4 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
- 		vcc5v0_host_en: vcc5v0-host-en {
- 			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
- };
- 
-+&usbdp_phy0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usbc_sbu_dc>;
-+	sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
-+};
-+
- &vcc5v0_host {
- 	enable-active-high;
- 	gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-index 258c7400301d7f77517197ab433946bbfa39cf63..217954767845a73c7462a71c27c724f1309144eb 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-@@ -95,6 +95,20 @@ hp_detect: hp-detect {
- 			rockchip,pins = <4 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	usb {
-+		usbc_sbu_dc: usbc-sbu-dc {
-+			rockchip,pins = <0 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>,
-+					<0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&usbdp_phy0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usbc_sbu_dc>;
-+	sbu1-dc-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
- };
- 
- &vcc3v3_pcie2x1l0 {
-
----
-base-commit: 7f0817eee7ba40b48e956955d6fd8ba14750168c
-change-id: 20250324-rock5bp-for-upstream-fd85b00b593b
-
-Best regards,
--- 
-Sebastian Reichel <sre@kernel.org>
-
+Thanks again for your guidance.
+Jihed
 
