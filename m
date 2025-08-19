@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-775737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCFFB2C427
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:52:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCB8B2C431
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4ED5A5A6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:50:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8CE1895B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7533EAEB;
-	Tue, 19 Aug 2025 12:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88BE33EAE2;
+	Tue, 19 Aug 2025 12:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h8Dcovti"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b9yym+lj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0E433CEAC
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9933933CEAE;
+	Tue, 19 Aug 2025 12:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607808; cv=none; b=cVKvoMiDdmCHG1BB4qaDUGvvPe+5t5bJI2kDJ9bDZXlNEPM155kNA70SjRDYs4OW2oJdJ/VO0o+u1sbkOJ7R9TimeHv+pyrgBrShHXzFjbvkusxRBUsI+fXVF8SbZ6s/OYEAfcWSipy+pimLKN+BNcfrwHtnFybWaA5Ph1fhcaE=
+	t=1755607807; cv=none; b=Adn2wQAkK7iuO/9790jGMvW4R/RV+wP+pTsUyKJdhEavbYq2YIDw4pNnJwr6MG+zor4WSxw8LnFL5ofeoSR5pW79QGxiJvi9t6mEVh88cas+IxGMnTRJs5FwTBNOb39cC8uOTj8rTv+TsJGe3fW132c4stbZhCynJOhNO6iwfLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607808; c=relaxed/simple;
-	bh=VK+2UvvpL/cCLU3utXHTMH09m4NrnfRk3clo5zecdXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BIavP8J7N46sHkE+iJFgmNfCKmBgl3hfix6yISxUNCx+iWjY01CcIxPJQWVWuB1E/sjGHXk+n86ZH8UGYyIE30s82pC7tOKkOfDOZ5YMewgaMQU2MrqS9ackrVWmcbpFajRiYLgpuFDYI5JaBJzM8jmAB0pZM9a1uxmIr6ORo/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h8Dcovti; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-333f8d1cbcdso43220351fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755607804; x=1756212604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VK+2UvvpL/cCLU3utXHTMH09m4NrnfRk3clo5zecdXc=;
-        b=h8Dcovtiih6rKkfnPp12hbsbmeHRx5VJqZJ+LQxCpdZZrShrLCh3Zpr50I4pWnQIH3
-         hgK5uIy5Vw2ZoYGA/FREUecPEUBqZUT3k6zeMB/iWSgH4vdCC5g8zqFyjydZ85wbqXxV
-         7S34aOUN6JvFOKbvKXWCPJDc/uM5sor44P1VPHLM5d4/wcKAFIc8JXSqTLvNjI4QrM8P
-         MD9SGk5w7O7aGx1dhQ4W90286eCT+3K6gVVILHK1ssT6oi7MRwzzjXl957BAFJoSlckS
-         nGwQEQfIg+T5p1ILyibZ2q5yasxJALGs7KflQ6co4wsmyT/uZmQ+taUCOZL8MIhD+ZJK
-         2Czg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755607804; x=1756212604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VK+2UvvpL/cCLU3utXHTMH09m4NrnfRk3clo5zecdXc=;
-        b=fSB6yynhrDcWp6/J4KGJxQMQjESLFEkn45xD3ROBppyXixZF8bNh+gaBcqaVvKh4Wp
-         QiYuz/gNPPNe9PutZWbsd0PeNnagQET2fr6MA+4MT8HF3g+XUtxFvoF/8Wxsje58xbPn
-         6oDTbleUbpjJ157dJ4L2+lvYmuSmcRO2lP629xSuo9AFdb/w15jke8CV3CHKR8psZeFd
-         bsFauYxuPnKYn29eEqyRjWUMs/034Ru9wvbs6D+vMeOJtQt7KDDvf3mj+fZ1Re+OfccP
-         ulmr1Bs4v/Bq8+ULrO224iw9+NRego+u3JSPF+wS7Bs8dyzceLb0kr9zb+Tzk1Mmmo5F
-         EFyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSinTGXBu74nMYFJKAqpjundciVTILEipg/khWgbpXpBjIG32NXULpT0fwMSl3rbBs1Xwf6M4FdjBGIIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyeq0pjMuj4wl8E2DGOwdZqr7py+8PnFrM2DlnVSDj8YbFJylke
-	Ho0e3zj7PbGUetheX0u/tNA1+6rI0MwTve7eRC1YDzDxfLF3cG+NEZTKfIIbluhikpQpMeWg0T4
-	kpgBqFtiuKs6MD6VZnIVjB3XEhJu2uG+BhvWIXClC2Q==
-X-Gm-Gg: ASbGnctxehCZpDrgUBit1eak74xdVDVj6BHYTJ0JQ3nrg82JdZQ4wFR+FgAd9yIlZC+
-	TPDeas2+muEZ4pF4pKM3jOkHFEan7ddCAwOWI2hzYT8o+GVEmlzAtw7ssJj+N4tzJ+nOrUICSc5
-	mJGewxdaW3s4nRL10l8ayZs/3c01VGUyxqB75j0MHrM+ccS9NdOHK3jra7RA8oTMLi4xoMwU+GN
-	AZa03fU8doxLRmPlZ2NTPA=
-X-Google-Smtp-Source: AGHT+IHeICNzId0TeCOa2HwCS057ZaEol6I8kkIJiDlz6bpaH7LQuiJrRfIa3kWPjQ+FO6z3QaESPtE94SzLL8OyVIg=
-X-Received: by 2002:a05:651c:20d7:b0:32c:ab57:b03 with SMTP id
- 38308e7fff4ca-335304f93acmr4931641fa.3.1755607804225; Tue, 19 Aug 2025
- 05:50:04 -0700 (PDT)
+	s=arc-20240116; t=1755607807; c=relaxed/simple;
+	bh=BNNqh4Chf6E3EnB46K487xZwNEbEQafwRyXVXiMt44I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hCUhsiuo4z+m92lD1f1Rt3Y8VGk4GR1JhCYiZPM7cIJSAECvvSTgdIIhCa1uv+V1xB07FEK14SHzaf6HFuFpY1BOx2QcfSAvXvxUvVt8wZ5AyjyQc/xjbMu9998V6IWzQ7nU57Msnd2xwQUSkezakzm4utFUO9EIB6ykc1/2hi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b9yym+lj; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755607806; x=1787143806;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=BNNqh4Chf6E3EnB46K487xZwNEbEQafwRyXVXiMt44I=;
+  b=b9yym+lj455SemSvZlPiBPIJZvYceaU6V6xKv/eyVRd72Z9OhvgD+DGG
+   dalceUxOHqzpLjf08nc+ufmUCmW/e/XRBT/RLQccUBKU8jxN1ISw0EVMF
+   gHgSUdWVS4D7rXSl3p4ScjzecbJkBMjfjbe5cDsWFTkeD/DcoMaq/Ocyc
+   HHYGpcoYx+g69tsyj5ItWZUtLd7vGyhEeeqiw9Ac3vRAsDo9s7jN199G5
+   TRoH2KyN8SbeIOobd8Ah2VivztQpNHLjTcelgAhDko684aOXd27Z9y41l
+   JKmky92FgAR4QWzkd52Ln/I+okDl17lqFjIR5rjwPGbcZS4TBkWfhYWQy
+   g==;
+X-CSE-ConnectionGUID: hCrE33GdTrat8SLim/S/vQ==
+X-CSE-MsgGUID: zkDO+n1+QVqEITYCWfuQVw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75300444"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="75300444"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 05:50:05 -0700
+X-CSE-ConnectionGUID: 0aOZuD3URtSfFhgIgt/7WA==
+X-CSE-MsgGUID: nkG19eSCRoC6qnJ+sLFSow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="168245382"
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.251])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 05:49:57 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Menglong Dong
+ <menglong8.dong@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, ast@kernel.org,
+ daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, simona.vetter@ffwll.ch,
+ tzimmermann@suse.de, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] sched: make migrate_enable/migrate_disable inline
+In-Reply-To: <20250819123214.GH4067720@noisy.programming.kicks-ass.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250819015832.11435-1-dongml2@chinatelecom.cn>
+ <20250819015832.11435-3-dongml2@chinatelecom.cn>
+ <20250819123214.GH4067720@noisy.programming.kicks-ass.net>
+Date: Tue, 19 Aug 2025 15:49:54 +0300
+Message-ID: <42cbca3dc56a1fde7d472754430458e2de8412a1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tnaaz2qlk5jpbonfle7uy7pb54qx6ixwuczfbkwtxxwpj7hwas@y7a2rwko3k6c>
-In-Reply-To: <tnaaz2qlk5jpbonfle7uy7pb54qx6ixwuczfbkwtxxwpj7hwas@y7a2rwko3k6c>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 14:49:52 +0200
-X-Gm-Features: Ac12FXzlHx5q_PBstfTvDK3Lfp-tFPZCTH94QW-bgrJdiOv30F24hNuiuM-S6zQ
-Message-ID: <CACRpkdZyWYY11akth2RFw5FsbAo2WsiUBPPnnjw7bFaK=y+VbQ@mail.gmail.com>
-Subject: Re: [PATCH v3] Documentation: gpio: add documentation about using
- software nodes
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@kernel.org>, 
-	Hans de Goede <hansg@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sun, Aug 17, 2025 at 11:30=E2=80=AFPM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-
-> Introduce documentation regarding use of software nodes to describe
-> GPIOs on legacy boards that have not been converted to device tree.
+On Tue, 19 Aug 2025, Peter Zijlstra <peterz@infradead.org> wrote:
+>> +EXPORT_SYMBOL_GPL(runqueues);
 >
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Oh no, absolutely not.
+>
+> You never, ever, export a variable, and certainly not this one.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Tangential thought:
 
-Yours,
-Linus Walleij
+I think it would be possible to warn about non-function exports at build
+time, and maybe plug it in W=1 builds.
+
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel
 
