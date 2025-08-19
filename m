@@ -1,211 +1,227 @@
-Return-Path: <linux-kernel+bounces-775107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5209B2BB4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5976DB2BB4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27263B0989
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:00:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298E617AC95
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1C03112D7;
-	Tue, 19 Aug 2025 08:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D29D270565;
+	Tue, 19 Aug 2025 08:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GR76L6yq"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDzEvhn9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0338825A2DA;
-	Tue, 19 Aug 2025 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8676D3451CD;
+	Tue, 19 Aug 2025 08:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755590419; cv=none; b=gt4EE7miUvDon0Fmi2jrHLYoB8YPXn4B8zyXLcDkVqo4RjIW8MRhCR8TUE6DyVBJkUN6uRc8Lfub/oRGQ2ylLcm2OeiqJmL80nLvVrQITLduCTNegu6sKzeZgrOaGJXousTF3aaMobabG8oJZcYXsku8YBLFvwJxN/0ODtdk8BU=
+	t=1755590417; cv=none; b=AbjDAa3kIarGW27x+NDng1Mbr9AZLBfH42n0c+eoHs14gIUlxaCSMtz0M9FQSrl9M9wxH0F+jh5vLccF0DPbKAwyI8Xme9AeWqGncharu9q9Tdm0+VyDpRTXtz8V0j5RV8nB1ahEjHArAdwY7TSEa+2Gmrk/H75ZDfvku0hRsqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755590419; c=relaxed/simple;
-	bh=Nx8qIbi9SAkXbLGaFH71R/tnLFDf4K94bN5+uJ2TPc8=;
+	s=arc-20240116; t=1755590417; c=relaxed/simple;
+	bh=tmc3N1nD1K1xMBNw5cScsvqY8FA1XStzHAdcTAMUWwU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUUtz8YNQ31qRgztfZjlkKQWB3+7HQFKKoOyOQSs68BAwukWK38mBju4RIYRO/71qbvkppx3UodYDIx9B1IAUrbOKYjuHAcsdoMFpuuu4KjR6l2TwPYaCgmw1185s18PkRZgDgRonuTcKfCDNnaFoyfXpmBVetZO59Zzb5LFg8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GR76L6yq; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9e418ba08so2746979f8f.3;
-        Tue, 19 Aug 2025 01:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755590414; x=1756195214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VRkdl0D7uOf0r2y3rQHAJ6SZi0yVeRGRkxwoZZVAQIA=;
-        b=GR76L6yquM7fMUXzA2GTN1axRfkR//6pJ9yHBx8aSyvGDwAFqLBjGjrQvdApSkL9Tn
-         byNR5RS0tfW8tLvYp14s01vP6/S0CGXmxKjqA7CynN5T/au+dASdcxD024Z6cAptYczx
-         pSNWndrSNSSvQ1Kt3N3yWq08CYdFB8nDoBNpA3sv+vUobJ3P6onffpcwjWJUuhd0aTdI
-         AhMaGgAYQme5xEjxGRVmckFyEtbRjywzfJIsiAih7EHIScUlaBgrS4khMI+NGoFhx1y8
-         QcjqYkfstXAEEwPL6F6QPwktZQJPqIxvQF74VFI1YU5nQgKQw0wGxbgbaOOyJ+9SdjZ3
-         2tdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755590414; x=1756195214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VRkdl0D7uOf0r2y3rQHAJ6SZi0yVeRGRkxwoZZVAQIA=;
-        b=eVSsv/zYWy0igeFYWjP5YHy9jsy9i6ttpyxPrzr9l0isGO4VFGq9+teoTh7KMoyh7B
-         honHMomQ3W6yxGm6nrOJaVpqfOlUoNSZo+rWnoH6m7fiSajg2lFiWjJnBK9x8pB23c2P
-         lK40WyPbWwFl7ectWIH2B64BX6Rks2h0s2I3cvzrX+6c1pyqa2NUy7UbzLqzdbdq0t7i
-         YxcSpws39SFKOnL64RHWKgCcWTxbaUSJ4qBJSJGWYgmtJpMyLiJ2eGJ4MUwsiQWpJ9sn
-         CPbJHBnZu3O7jBgfgSV0VqAJaORtmWPcGhMCsSGB69RRh2idLXFiuRpMoE9ITI/l52cV
-         rxMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR6PyyklUmsh/qDvwFk8zqVvr/u3DvV8o1tUpkqE2syDqcJikitgR3Nfs9fKAFWkl/2M9TmKz/CfO7sF/aoOtsTu8=@vger.kernel.org, AJvYcCWbm7WEOW9heLeo9ix0rrJ7Y3NVntYpHJjPaUOeuBPf5N+m/K0xjQn2n48S+pp+CouCINDLiSZDU4YOsBLx@vger.kernel.org, AJvYcCXT3Rr57jSFS6UWDPI8NLxdl1jppRqvKOiYChMWIfnhu3sVTivcsjb55u8NQjKyYTsY4kUybGt0nTCy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvKOqFBme8U3kaTH9Fp3K/B0zYxleMYvaTMRV2wTDTqXriEo6e
-	RJ0dRHodtVrKV3c3DhaAeGx00vHiR3S28DNTK1QkIVR7iuml3TF7KqeSa8Gp9TWODLi5uqEKemt
-	G2sZ6arFBI3m9dtUIlOS5dRuN2dbgtozYCc+p
-X-Gm-Gg: ASbGnctnZJzYXcLaTlu6LQQWVhOh6j2wHTQoJ+YzLjSji2fPBrDEdoqWXv28gK/kjE3
-	scmlghxUWQSj4ta3fu1i9O2BCZwNSZAA6qnQa2C+0x+BzQjMHVtuoMLep2hC5yDaCyJQ+u1jqzH
-	o/fisvT/6TJbfEL5gSrQwpK1jW/7eNJpy+yN31vLtuRJ8LvRdmVZROlEx/ioTKSaA1iCwhpOoeE
-	unlPd/HaejxLOMWPmg=
-X-Google-Smtp-Source: AGHT+IEflyYOgnjuJ8k5zdcmtQD7PXqL/yUuZjz4sozRotIwvgXG7UBVdB+gHtBDdUMTj4mP5zp3V0wCp/5sfgn2ktw=
-X-Received: by 2002:a05:6000:4387:b0:3b8:d15e:ed35 with SMTP id
- ffacd0b85a97d-3c0e9f010d8mr1173323f8f.23.1755590413977; Tue, 19 Aug 2025
- 01:00:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=h2RYW01GBtCqU8FQAyl1JG+a5lm01EpBpO7ldfepz7QIsIW2OaCSO5Kc6Q84v8AhyRwlrcebUKPSPLu5iC2D87FJJ2aFdoPtAVA3bci/V+qCqZU0JMUL1T5FIxI1riq6L+hV72CE8YqHJerrgE55pJEu029RGkjPcofRmTdAfSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDzEvhn9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2492DC19423;
+	Tue, 19 Aug 2025 08:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755590417;
+	bh=tmc3N1nD1K1xMBNw5cScsvqY8FA1XStzHAdcTAMUWwU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TDzEvhn9w129Bk1K2/599fYjPtuu7/Vr+nqK7rCgst2FvdTo5AvyKuuvDGb6J/lHv
+	 WQd1BWLRWyY1naSkQwhJoAVBXqcFLi9i77rQZW6ApWCmnatW+G3jDNhZj26sOid6Xp
+	 x3EGXhDWQyERHOBjgY7pFWHm4v9stMTU+ig8IbdIG/AyRj2VOm0GBP7jDuqOUfp++l
+	 nNAL4YSzCcU/juHWh70HlyiW1v6HtLVB8jIqvJLEnbbPon09vmPViG5d549nmWQAKF
+	 ga0B+OrcFCIzGyf714r4ZVZVme2pupL0Sn2JIviRXJ2rWF7RAJ6bvE3B7jBvUVtOwg
+	 QhYIOQRzY6Umw==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb7ae31caso889259566b.3;
+        Tue, 19 Aug 2025 01:00:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXI4paF5/Cz3aowvS8zcbcCYni8fePEK/5MOdGeiLWr0hAK3a+krwx46X3Any837tIiRUNcUQE/Bx2mim6H@vger.kernel.org, AJvYcCXLqb5NNMJZ2YeDS9YsexlOz5lG7mT1Yo8NiWiqI/KC1INoZljtkfxE0B4fqYB1Pj6mKeuIvJ5xv5kp@vger.kernel.org
+X-Gm-Message-State: AOJu0YySh26dx92YOJfRb6PFn7UmupR6N9y0vEEJz0PpxvXjbTXzYjjT
+	djoH3wNs1O7Gr+xxdVvanHbzy77Y0bC3aNKdvcNplbQE1+JWCWEdYElEWnWnZ1UwzmXkeom4dcA
+	Hs4zCVCUKt9okeUi398r1UsUOA4atOPI=
+X-Google-Smtp-Source: AGHT+IHArXvGj+Ci5nhs1OVnJgbgZb4wKUqrrHL+0qqkNF7bbarfoDEI/LiSAx0MJQn6bCoIras0ivyA8UgHEpeIKeg=
+X-Received: by 2002:a17:907:3f07:b0:ae0:66e8:9ddb with SMTP id
+ a640c23a62f3a-afddcbc241amr151884266b.19.1755590415511; Tue, 19 Aug 2025
+ 01:00:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250812200344.3253781-12-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUeLewbDu-pge0ee0+AKzicKuS7fzce7d0pNc20h6CoGQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUeLewbDu-pge0ee0+AKzicKuS7fzce7d0pNc20h6CoGQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 19 Aug 2025 08:59:47 +0100
-X-Gm-Features: Ac12FXx3a_vfRR0cCVmfuQu70K6rUoEc6UqjsVGIG0wNRXq_W7RD2fJ5FCybwxI
-Message-ID: <CA+V-a8s5Z+X-ueGdNWGs1i3PDN4P4COxCR9p-k0X8v22BkfvUg@mail.gmail.com>
-Subject: Re: [PATCH 11/13] arm64: dts: renesas: rzt2h/rzn2h: Enable eMMC
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250806143955.122816-2-ysk@kzalloc.com>
+In-Reply-To: <20250806143955.122816-2-ysk@kzalloc.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 19 Aug 2025 17:00:03 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-7ojpN=jc+R2wwxyQsZCTBJT6tEYszb4VOgbPeWn1NKA@mail.gmail.com>
+X-Gm-Features: Ac12FXzKNX4ih0NnnSVYjLX5TrEIPXLQcAFOEVNQvlAyBPLacLhiPlH3HBC0KlU
+Message-ID: <CAKYAXd-7ojpN=jc+R2wwxyQsZCTBJT6tEYszb4VOgbPeWn1NKA@mail.gmail.com>
+Subject: Re: [PATCH v3] ksmbd: add kcov remote coverage support via ksmbd_conn
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Steve French <smfrench@gmail.com>, Stefan Metzmacher <metze@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
+	linux-cifs@vger.kernel.org, syzkaller@googlegroups.com, 
+	linux-kernel@vger.kernel.org, notselwyn@pwning.tech
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
-
-Thank you for the review.
-
-On Mon, Aug 18, 2025 at 5:02=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, 12 Aug 2025 at 22:03, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+On Wed, Aug 6, 2025 at 11:41=E2=80=AFPM Yunseong Kim <ysk@kzalloc.com> wrot=
 e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Enable eMMC on RZ/T2H and RZ/N2H EVKs. As SDHI0 can be connected to
-> > either eMMC0/SD0 `SD0_EMMC` macro is added.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Thanks for your patch!
+Hi Yunseong,
+> KSMBD processes SMB requests on per-connection threads and then hands
+> off work items to a kworker pool for actual command processing by
+> handle_ksmbd_work(). Because each connection may enqueue multiple
+> struct ksmbd_work instances, attaching the kcov handle to the work
+> itself is not sufficient: we need a stable, per-connection handle.
 >
-> > --- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-> > @@ -10,6 +10,15 @@
-> >  #include <dt-bindings/gpio/gpio.h>
-> >
-> >  #include "r9a09g087m44.dtsi"
-> > +
-> > +/*
-> > + * SD0 can be connected to either eMMC (U33) or SD card slot CN21
-> > + * Lets by default enable the eMMC, note we need the below SW settings
-> > + * for eMMC.
-> > + * DSW5[1] =3D ON; DSW5[2] =3D ON
-> > + */
->
-> Both SD0 and eMMC also need DSW17[5] =3D OFF; DSW17[6] =3D ON.
->
-Agreed.
+> Introduce a kcov_handle field on struct ksmbd_conn (under CONFIG_KCOV)
+> and initialize it when the connection is set up. In both
+> ksmbd_conn_handler_loop() which only receives a struct ksmbd_conn*
+> and handle_ksmbd_work() which receives a struct ksmbd_work*, start
+> kcov_remote with the per-connection handle before processing and stop
+> it afterward. This ensures coverage collection remains active across
+> the entire asynchronous path of each SMB request.
+I'm a bit unclear on the overall impact. Do you have the goal to measure
+the code coverage of all ksmbd components ?
+Is there the next patch set or any plan for next work, or is this patch eno=
+ugh
+to check all functions of ksmbd with syzkaller?
 
-> > +#define SD0_EMMC       1
-> > +
-> >  #include "rzt2h-n2h-evk-common.dtsi"
-> >
-> >  /*
+Thanks.
 >
-> > --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> The kcov context tied to the connection itself, correctly supporting
+> multiple outstanding work items per connection.
 >
-> > @@ -44,6 +63,34 @@ sci0_pins: sci0-pins {
-> >                 pinmux =3D <RZT2H_PORT_PINMUX(27, 4, 0x14)>,
-> >                          <RZT2H_PORT_PINMUX(27, 5, 0x14)>;
-> >         };
-> > +
-> > +#if SD0_EMMC
-> > +       sdhi0-emmc-iovs-hog {
-> > +               gpio-hog;
-> > +               gpios =3D <RZT2H_GPIO(2, 6) GPIO_ACTIVE_HIGH>;
-> > +               output-high;
-> > +               line-name =3D "SD0_IOVS";
-> > +       };
-> > +#endif
-> > +
-> > +       sdhi0_emmc_pins: sd0-emmc-group {
-> > +               sd0-emmc-data-pins {
+> In patch v2, I added the missing initialization of kcov_handle. In v3,
+> I fixed an kcov_hanlde argument was previously unused on
+> ksmbd_conn_set_kcov_handle().
 >
-> No need for repeated sd0-emmc-prefixes in the subnodes.
+> The related work for syzkaller support is currently being developed
+> in the following GitHub PR:
+> Link: https://github.com/google/syzkaller/pull/5524
 >
+> Based on earlier work by Lau.
+> Link: https://pwning.tech/ksmbd-syzkaller/
 >
-Ok, I will get rid of them.
-
-Cheers,
-Prabhakar
-
-> > +                       pinmux =3D <RZT2H_PORT_PINMUX(12, 2, 0x29)>, /*=
- SD0_DATA0 */
-> > +                                <RZT2H_PORT_PINMUX(12, 3, 0x29)>, /* S=
-D0_DATA1 */
-> > +                                <RZT2H_PORT_PINMUX(12, 4, 0x29)>, /* S=
-D0_DATA2 */
-> > +                                <RZT2H_PORT_PINMUX(12, 5, 0x29)>, /* S=
-D0_DATA3 */
-> > +                                <RZT2H_PORT_PINMUX(12, 6, 0x29)>, /* S=
-D0_DATA4 */
-> > +                                <RZT2H_PORT_PINMUX(12, 7, 0x29)>, /* S=
-D0_DATA5 */
-> > +                                <RZT2H_PORT_PINMUX(13, 0, 0x29)>, /* S=
-D0_DATA6 */
-> > +                                <RZT2H_PORT_PINMUX(13, 1, 0x29)>; /* S=
-D0_DATA7 */
-> > +               };
-> > +
-> > +               sd0-emmc-ctrl-pins {
-> > +                       pinmux =3D <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /*=
- SD0_CLK */
-> > +                                <RZT2H_PORT_PINMUX(12, 1, 0x29)>, /* S=
-D0_CMD */
-> > +                                <RZT2H_PORT_PINMUX(13, 2, 0x29)>; /* S=
-D0_RST# */
-> > +               };
-> > +       };
-> >  };
+> Cc: linux-cifs@vger.kernel.org
+> Cc: notselwyn@pwning.tech
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+> ---
+>  fs/smb/server/connection.c |  7 ++++++-
+>  fs/smb/server/connection.h | 22 ++++++++++++++++++++++
+>  fs/smb/server/server.c     |  4 ++++
+>  3 files changed, 32 insertions(+), 1 deletion(-)
 >
-> The rest LGTM.
+> diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
+> index 3f04a2977ba8..21352f37384f 100644
+> --- a/fs/smb/server/connection.c
+> +++ b/fs/smb/server/connection.c
+> @@ -93,6 +93,9 @@ struct ksmbd_conn *ksmbd_conn_alloc(void)
+>         down_write(&conn_list_lock);
+>         list_add(&conn->conns_list, &conn_list);
+>         up_write(&conn_list_lock);
+> +
+> +       ksmbd_conn_set_kcov_handle(conn, kcov_common_handle());
+> +
+>         return conn;
+>  }
 >
-> Gr{oetje,eeting}s,
+> @@ -322,6 +325,8 @@ int ksmbd_conn_handler_loop(void *p)
+>         if (t->ops->prepare && t->ops->prepare(t))
+>                 goto out;
 >
->                         Geert
+> +       kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
+> +
+>         max_req =3D server_conf.max_inflight_req;
+>         conn->last_active =3D jiffies;
+>         set_freezable();
+> @@ -412,7 +417,7 @@ int ksmbd_conn_handler_loop(void *p)
+>                         break;
+>                 }
+>         }
+> -
+> +       kcov_remote_stop();
+>  out:
+>         ksmbd_conn_set_releasing(conn);
+>         /* Wait till all reference dropped to the Server object*/
+> diff --git a/fs/smb/server/connection.h b/fs/smb/server/connection.h
+> index dd3e0e3f7bf0..a90bd1b3e1df 100644
+> --- a/fs/smb/server/connection.h
+> +++ b/fs/smb/server/connection.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/kthread.h>
+>  #include <linux/nls.h>
+>  #include <linux/unicode.h>
+> +#include <linux/kcov.h>
 >
+>  #include "smb_common.h"
+>  #include "ksmbd_work.h"
+> @@ -109,6 +110,9 @@ struct ksmbd_conn {
+>         bool                            binding;
+>         atomic_t                        refcnt;
+>         bool                            is_aapl;
+> +#ifdef CONFIG_KCOV
+> +       u64                             kcov_handle;
+> +#endif
+>  };
+>
+>  struct ksmbd_conn_ops {
+> @@ -246,4 +250,22 @@ static inline void ksmbd_conn_set_releasing(struct k=
+smbd_conn *conn)
+>  }
+>
+>  void ksmbd_all_conn_set_status(u64 sess_id, u32 status);
+> +
+> +static inline void ksmbd_conn_set_kcov_handle(struct ksmbd_conn *conn,
+> +                                      const u64 kcov_handle)
+> +{
+> +#ifdef CONFIG_KCOV
+> +       conn->kcov_handle =3D kcov_handle;
+> +#endif
+> +}
+> +
+> +static inline u64 ksmbd_conn_get_kcov_handle(struct ksmbd_conn *conn)
+> +{
+> +#ifdef CONFIG_KCOV
+> +       return conn->kcov_handle;
+> +#else
+> +       return 0;
+> +#endif
+> +}
+> +
+>  #endif /* __CONNECTION_H__ */
+> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+> index 8c9c49c3a0a4..0757cd6ef4f7 100644
+> --- a/fs/smb/server/server.c
+> +++ b/fs/smb/server/server.c
+> @@ -264,6 +264,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
+>         struct ksmbd_work *work =3D container_of(wk, struct ksmbd_work, w=
+ork);
+>         struct ksmbd_conn *conn =3D work->conn;
+>
+> +       kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
+> +
+>         atomic64_inc(&conn->stats.request_served);
+>
+>         __handle_ksmbd_work(work, conn);
+> @@ -271,6 +273,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
+>         ksmbd_conn_try_dequeue_request(work);
+>         ksmbd_free_work_struct(work);
+>         ksmbd_conn_r_count_dec(conn);
+> +
+> +       kcov_remote_stop();
+>  }
+>
+>  /**
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
+> 2.50.0
 >
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
 
