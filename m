@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-775086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABC6B2BB1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9EE5B2BB1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7F33AE88D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A588A1BC09E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67223101CD;
-	Tue, 19 Aug 2025 07:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B8B81732;
+	Tue, 19 Aug 2025 07:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3xd/PLX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gH/FHrlR"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E18265CC0;
-	Tue, 19 Aug 2025 07:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B7E265CC0;
+	Tue, 19 Aug 2025 07:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755589878; cv=none; b=lKO3cshM3buDgaxNee28oeKsT3IE9YF5b3On0NxwqWSD3ChyTGR5xqAGVDazGrKTo/xcV4oPu6Nus/V1caqfEnzE3LKi9nFrwm5mAldQEqHRlEuOB2hEBCI7vrnpH9yPawsCsJwEK2yGC82AWm+vHDlXOxNXBKw8hddjj/p+lsc=
+	t=1755589883; cv=none; b=D1jO6q8hCjc45o1pDG0XnVdnT07acONAIl6wjUS/iGvXKeo/qlcyqzVmR0PjBFS6k0m4uYlyZhZF3TY7ieo+NaMIhwvrPjne2GiZErvy5IsN2dL++NctFNZvCmYQdMQQ+oJdSRT/vTmWIAmQdWfV3REmmcbpBwhdIJVwHTW0MJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755589878; c=relaxed/simple;
-	bh=1KjMFPAAy7Of/g5v9RlyD3qGeTWf6aQZhMCt01jFZm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVrez5Dv1EGChUgsA8MjyCQt3QodsDDWIvY5hAjY+VJ9Lnu5+ctvVYzH+2wEUjiyMEIJjWYckU/s5Hmpfzo0/3I0LBPuavz++XevVAKfn8rC1Vdv8GRT05+30zoh8Njn0l2dK+mYFv17jMmGirPJR73vMAIwgHjyWDsIJ/DvNbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3xd/PLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E80C4CEF1;
-	Tue, 19 Aug 2025 07:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755589874;
-	bh=1KjMFPAAy7Of/g5v9RlyD3qGeTWf6aQZhMCt01jFZm0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S3xd/PLXPsg8ni9XMNKrIMcyApxi0ibkwoCM9y72SbJeks01m7kD4A+ZkZqllc9WW
-	 ABL4hzma5LVBv4rLd6YU3WFQoce/JFOTb86NKoZBA4EzGtpmixuw97almGHm1Ew5OT
-	 Y5lkCYBJVjT/ZbTxZwNtSWIrINtmJy+khWXtnrjjvXyfcx+ETF0Xgt9b2aatVogrTa
-	 zgrAJ1ocMsgoXRD3tCpHkI7CfvNY84fW9X+qhlQ+GUcbqHh57pfMYf5ivy7fAjarHH
-	 gOc1NbNa2qLnWrgtT38eFkpwSJKLKXS6qSezstBuc7rRei7s+41/3Zlmw+ZYFTfnHW
-	 Qc5QESmf+UVsw==
-Message-ID: <9fba4917-a24f-4fee-8f1a-7509a0bc542e@kernel.org>
-Date: Tue, 19 Aug 2025 09:51:06 +0200
+	s=arc-20240116; t=1755589883; c=relaxed/simple;
+	bh=3k9u5LZQEUkZoUF1ZY244Bm/yCIAsRnEdGYJ1mociEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YQ8kGzquuf1PgjMrqDTjE4xIaFaUWqJTI4NjKMxfiaLLH9+KJiuh89Q9igJso943KLZgrfv7qH3xBjbESJl6L+4KzjXgqOwwjRWXDPIKkx3MIW/3hB1CA6tmgo/x7C+rg1rAm7i6LAkbL7/pITR7NkGPcn6qve1RThGetWUWdnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gH/FHrlR; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb61f6044so832416366b.0;
+        Tue, 19 Aug 2025 00:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755589880; x=1756194680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TTuGzRayZKrEwv7EtQQOorRzKF9lVUpPF9b85RRyVlY=;
+        b=gH/FHrlRRmeRykRR4gQwhMKoyRLOraWAZbO94Kh/hIzrw96BRoxg+MgeQwWOlAAv+3
+         SRi6aUQtD5r2MYTv/MLJhbUE0BdBpJuL1F/BaTw3k9ilOQ1Qe6I3uS7l8H/r+EZHlNg0
+         6q4GNBuwec4q1BjORK+GipCflBMGIb+scq+Tp2BmZL0CpCGZjZF1th0qO8R0k41TgaSM
+         q0fwXfHcOUF3Pn+Map3ohXTZSUvzygtnpmHkEaznXMTKeSweb8na96FIggzCYS03InIg
+         ZCOtDlNVH6236uyQeMj132KVYNPQ14/Cf0KD2y6KznUZONzlBcwn5blVQI0qcQ1fEY9H
+         D7Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755589880; x=1756194680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TTuGzRayZKrEwv7EtQQOorRzKF9lVUpPF9b85RRyVlY=;
+        b=RyjuxWepi23eVyO2Nyv9djpiSLqM/ZxdxepxXk/TVoPDXccwI7/MnSnpiyl2karBBe
+         50DbDaRw3Myco8MQKLnQKnbSiMuwSCjQk7K8/FkMxpDOQU9c+yz1aMULtE58Y2vGL388
+         J/Wspvn9j1Pnt2ks0/p1ogzvcvpqxUh0P2B0PNgGp9KU/BJbaka/HFnxsYDmArxQdTax
+         Xa9Zxn3jgxE23KvAVNHQ/sQ3qqFgXyry1Vo94JlLzwC8ewKb+DQmM4JapTwVLD8dvAcq
+         O+uq+ei8PfKdKELMCsqJTdgCiNFClNi4BaXg5r00x0CcqsvZzcPYBg6FFGu6N12ajaar
+         CnmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDtdGlMo8wFlShAKuLltXqenIaNymbvIKGoGr3sDJVlSxUBeZRdpG4ZrJ3XwzLdPyPDugPqyajGlFlYoM=@vger.kernel.org, AJvYcCWf60zHWnCT4z49haBBMlmtSi7GIRBxAtfPCw5WxTui86ti15kWvwkxtdpYsCsx21gqdlOsKewv7w+pSRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsLJMsewIcmZElY6mSiZ/IqA+YSS1/zRvYulPAMXQfmAu9qePi
+	HFiD5sadjTEkU0BZIDPgrflusRhZyiot+WtFT/51wnBzzxO7LgEI2w52Pr2QcfG1xZI=
+X-Gm-Gg: ASbGncvJk7bmZwLqrhyLyNGkU3NjfBgcbn/u/dORKX5zE02b9bEcyE9eXtV5qPu0mnL
+	5qLFZIbru3P/bbbqTzopzNzz4QPOD6Q82akHMX6PJzKpU93ot8Niu6SEX/D8tflTN2jhFookgo6
+	l79/M4WCl1C16Qra5BcEy/sw2QGXehOBgmvtvf6n5Ixdui+62eSL5Ua+OPRUbhgHQnh5ompPl7s
+	ZfQqkz6Brpc3S6QM0JXnCMtFw+yRNdYR0ufM2Pc4lzSVdILZN66MRY8h/R2F7EiArzBbda9fR0b
+	DnN/T/5+WWTYcJkrp3Rz2BuKd3eeIbAWhtWZUldYI5OFnvncgS+lBCkr2NN5BQjiz/wH/8EWyWs
+	2NxX3itEgallhwxnE5YfRbxi4eYklnzlE1AqGg7uArq0qeBB83F9uHiZ0GFaYea+toaCPX1LQ
+X-Google-Smtp-Source: AGHT+IEmyKv17T56iDLZqo9FBGeDJj4hc5GvAybxr/mgcRbrU5zZbDCjymQ7tP0kZu6qJ7tR6avUsg==
+X-Received: by 2002:a17:907:9804:b0:af2:5687:c088 with SMTP id a640c23a62f3a-afddf09304bmr134954666b.14.1755589879791;
+        Tue, 19 Aug 2025 00:51:19 -0700 (PDT)
+Received: from cachyos-x8664 (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd010e1bsm939493866b.93.2025.08.19.00.51.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 00:51:19 -0700 (PDT)
+From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel test robot <lkp@intel.com>
+Subject: [PATCH] ALSA: usb-audio: us144mkii: Use le16_to_cpu() for product ID comparison
+Date: Tue, 19 Aug 2025 09:51:17 +0200
+Message-ID: <20250819075118.9221-1-ramiserifpersia@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI TMDS181
- and SN65DP159 bindings
-To: Mike Looijmans <mike.looijmans@topic.nl>, Conor Dooley <conor@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250812145256.135645-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.3b7d4319-e208-470d-9ada-585343a64822@emailsignatures365.codetwo.com>
- <20250812145256.135645-2-mike.looijmans@topic.nl>
- <20250812-designing-tyke-db85527b373d@spud>
- <f4ec7690-322e-493a-b346-7b9560ac0616@topic.nl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <f4ec7690-322e-493a-b346-7b9560ac0616@topic.nl>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/08/2025 09:46, Mike Looijmans wrote:
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - ti,tmds181
->>> +      - ti,sn65dp159
->> The driver contains:
->> +	{ .compatible = "ti,tmds181", },
->> +	{ .compatible = "ti,sn65dp159", },
->> +	{}
->> so why is a fallback compatible not suitable here?
-> 
-> I don't understand the question. The two are slightly different chips, 
+The `us144mkii.c` driver was generating sparse warnings due to direct
+comparisons of `dev->descriptor.idProduct` (a `__le16` type) with
+integer constants. This commit resolves these warnings by explicitly
+converting `idProduct` to a CPU-endian integer using `le16_to_cpu()`
+before comparison.
 
-Your driver says they are compatible. No one said the same, but compatible.
+This ensures correct handling of endianness and eliminates the sparse
+warnings:
+- `restricted __le16 degrades to integer`
 
-> so it makes sense to describe that in the DT.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508190811.tjQJZI1X-lkp@intel.com/
+Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
+---
+ sound/usb/usx2y/us144mkii.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Compatible devices should use fallback. There is plenty of examples (90%
-of all binding files?) including example-schema describing this.
+diff --git a/sound/usb/usx2y/us144mkii.c b/sound/usb/usx2y/us144mkii.c
+index da53c1908..3127a3206 100644
+--- a/sound/usb/usx2y/us144mkii.c
++++ b/sound/usb/usx2y/us144mkii.c
+@@ -514,10 +514,10 @@ static int tascam_probe(struct usb_interface *intf,
+ 	}
+ 
+ 	strscpy(card->driver, DRIVER_NAME, sizeof(card->driver));
+-	if (dev->descriptor.idProduct == USB_PID_TASCAM_US144) {
++	if (le16_to_cpu(dev->descriptor.idProduct) == USB_PID_TASCAM_US144) {
+ 		strscpy(card->shortname, "TASCAM US-144",
+ 			sizeof(card->shortname));
+-	} else if (dev->descriptor.idProduct == USB_PID_TASCAM_US144MKII) {
++	} else if (le16_to_cpu(dev->descriptor.idProduct) == USB_PID_TASCAM_US144MKII) {
+ 		strscpy(card->shortname, "TASCAM US-144MKII",
+ 			sizeof(card->shortname));
+ 	} else {
+-- 
+2.50.1
 
-> 
-
-
-Best regards,
-Krzysztof
 
