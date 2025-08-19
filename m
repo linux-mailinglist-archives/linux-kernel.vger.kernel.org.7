@@ -1,175 +1,134 @@
-Return-Path: <linux-kernel+bounces-776103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B7AB2C89D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:40:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B919B2C8A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C6C3BE4A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:40:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 615E67AEF00
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915EC2820AC;
-	Tue, 19 Aug 2025 15:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1763E27D773;
+	Tue, 19 Aug 2025 15:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DWI2V0nW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXY2yodX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D44127D773;
-	Tue, 19 Aug 2025 15:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B1E25F7A4;
+	Tue, 19 Aug 2025 15:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755618010; cv=none; b=NF1D3AVDlJxdCuBi9YILgUa8LMwwz81RtH8Lmr5xXvfRxkBm/W5IvClkEcZDHMQdnZW6Dg1RvZF8yo/sjBNG2MWb77zH5LQuzFQwH6k8dsca9t9EUIWBuvgp1pz0TnendgkVxvhqW1DKllo/JaE8DCvPZbiXD5+i/+AukA6zVqw=
+	t=1755618020; cv=none; b=Qzigbc6EMCTE9rLySvHjWXynTLmz/OA4UvThcT1BVamWKR76uADHFu6QWVYsJL9+3ynalyoSKCDKW+k8V2DT3tTglt0H/vD9MYpBDgoooUn6CGj7QTcWAQV1hb21rMXJZMU5x53fipYQcW7WQzlGFFZ1pVE3ELTzyDwtquxy+9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755618010; c=relaxed/simple;
-	bh=mb22CbyTSLKtrklNFTa9P+2epTAAccGvqYeFCikf+sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwAo0r2KEIyQRy9iPM8KXZOccJQv8P30oW7gIhHGZEEzVaILZqEdKUJ07VtfCGkyrZguvNWEDvrN5wPKSgaF2iSR4dnd6YXR1t6f/qMKcNPIzBdNQn5XD5wE+9b7Aft0dBQQxt0clgeqHfGKv4DzS38pXinN23pOtbbGD6UF1DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DWI2V0nW; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755618009; x=1787154009;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mb22CbyTSLKtrklNFTa9P+2epTAAccGvqYeFCikf+sk=;
-  b=DWI2V0nWdIYa8FeZbFBMKTwX4AI3HWtXL9+pEw29WWFI8WW260eAo6M5
-   ur2KCZ9oqwgjHDDbwvx+/oz1yrbVlywIo7lAJXkIt7PfnJJHAnIyRIiJS
-   f+NmnhFHzVpGk/8VZ8kJRj9PHH95PMmQoqACuSeY1F/94l0oV+Zu4fcZ7
-   hGnIf+sh25+Hf9ZAmWnYiqctcOqqMP2dZehsJa6Bnm6TWUwQ/v+FMqRC7
-   hQlr8iu6/qmRARodMryrZR49pJZ2mHAKjA1NVcPYicC9kGC5yedISaPop
-   kE/ZRLlA5NB8hgCeMm+JvznoCmpScglib+tC5sTZL58y6VSQDYQab6lsP
-   w==;
-X-CSE-ConnectionGUID: C8ULNMt2SZqqRC9+cLZz9Q==
-X-CSE-MsgGUID: O+IkSYBsR8CubCwNgLTyQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="68964399"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="68964399"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 08:40:08 -0700
-X-CSE-ConnectionGUID: waRshYcTSwiiQ01LJfjtYQ==
-X-CSE-MsgGUID: vRqpxgOkQEaech0MTM9LTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="173121892"
-Received: from unknown (HELO [10.247.119.200]) ([10.247.119.200])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 08:40:00 -0700
-Message-ID: <41ec1e23-e0f6-4275-ba9b-a34c2cbddbd9@intel.com>
-Date: Tue, 19 Aug 2025 08:39:55 -0700
+	s=arc-20240116; t=1755618020; c=relaxed/simple;
+	bh=eu6+uWSzQeXY4M0g9U4l/Ckhh9dAJmMP6fSnoQVnY+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rODbS4xaOBFg3zdTC7sK8E/WXkAQRnVedZNWAcZqYgN6a7Y6nUBjJcla9MbgIv+3m1P3TVy9Hv7RAeytwVEVrBBmQfkEgVhlR2DU+yPk0uHAjEW7VaKj2Ynj0fps4Lbehp+Brj4ZrFPSI+1gfHBGrhkCOmF6Saq0VDzKALk+J1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXY2yodX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0126DC4CEF1;
+	Tue, 19 Aug 2025 15:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755618016;
+	bh=eu6+uWSzQeXY4M0g9U4l/Ckhh9dAJmMP6fSnoQVnY+w=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=KXY2yodXly2/ITnui9/1ULmLi/irI8XaUdL4WUcQQqOmUd2UoSd3L8UxD6nqY0OGb
+	 GBPZY8uElrPslfOGkX2QfI4c0JS7kcTvXptMpfyUQz+60L/IeSVjd4CKBjr4CfOC5p
+	 SBViaqiOFzgDn2uDdHywpuxA4c6HjlJ85TSynCGsHK5yE0DUyenD6M2imxZbcRZ0c7
+	 gne79rctHlu/aQh5HPzqZiillycnwfSAaa8H5VQC2GOlNZZ94P9dY/VA1otDnv0uxF
+	 HQf5AxPYhhixusyNFoaas2F+cgEnxF2rY0R6g8f1LQRB/5FyQ1emvWtiDCfLKGWNV8
+	 RkB8/xv2W+b+g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9F1F2CE0853; Tue, 19 Aug 2025 08:40:15 -0700 (PDT)
+Date: Tue, 19 Aug 2025 08:40:15 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux RCU <rcu@vger.kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang@linux.dev>
+Subject: Re: [PATCH] Documentation: RCU: Wrap kvm-remote.sh rerun snippet in
+ literal code block
+Message-ID: <3b5d4337-9e19-40b5-a8cb-021c6afab9a1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250819004559.11429-1-bagasdotme@gmail.com>
+ <f36daf4d-ed4b-4ac2-9932-10e46abdc109@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm/memory_hotplug: Update comment for hotplug memory
- callback priorities
-To: David Hildenbrand <david@redhat.com>,
- Marc Herbert <marc.herbert@linux.intel.com>, linux-cxl@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
- dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
- akpm@linux-foundation.org
-References: <20250814171650.3002930-1-dave.jiang@intel.com>
- <20250814171650.3002930-2-dave.jiang@intel.com>
- <c3e30bf7-403a-4105-8e04-a73b80039ea5@redhat.com>
- <cd3d3e33-7b2e-45f1-977f-2d634ff1ef81@intel.com>
- <3e48429a-b52d-43a1-b48a-06fb46f0a37c@linux.intel.com>
- <83a930e5-660e-49ed-8c34-66c4edf93665@redhat.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <83a930e5-660e-49ed-8c34-66c4edf93665@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f36daf4d-ed4b-4ac2-9932-10e46abdc109@infradead.org>
 
+On Mon, Aug 18, 2025 at 09:16:04PM -0700, Randy Dunlap wrote:
+> 
+> 
+> On 8/18/25 5:45 PM, Bagas Sanjaya wrote:
+> > Unlike other kvm*.sh snippets in RCU torture test documentation,
+> > kvm-remote.sh rerun snippet isn't formatted as literal code block,
+> > causing it to be definition list instead in htmldocs output.
+> > 
+> > Wrap it like the rest.
+> > 
+> > Fixes: 0c208a793022 ("doc: Update torture.rst")
+> > Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
+Thank you, and I will apply this on my next rebase.
 
-On 8/19/25 2:18 AM, David Hildenbrand wrote:
-> On 19.08.25 05:14, Marc Herbert wrote:
->>
->>
->> On 2025-08-18 07:08, Dave Jiang wrote:
->>>
->>>
->>> On 8/16/25 12:29 AM, David Hildenbrand wrote:
->>>> On 14.08.25 19:16, Dave Jiang wrote:
->>>>> Add clarification to comment for memory hotplug callback ordering as the
->>>>> current comment does not provide clear language on which callback happens
->>>>> first.
->>>>>
->>>>> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
->>>>> ---
->>>>>    include/linux/memory.h | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/include/linux/memory.h b/include/linux/memory.h
->>>>> index 40eb70ccb09d..02314723e5bd 100644
->>>>> --- a/include/linux/memory.h
->>>>> +++ b/include/linux/memory.h
->>>>> @@ -116,7 +116,7 @@ struct mem_section;
->>>>>      /*
->>>>>     * Priorities for the hotplug memory callback routines (stored in decreasing
->>>>> - * order in the callback chain)
->>>>> + * order in the callback chain). The callback ordering happens from high to low.
->>>>>     */
->>>>>    #define DEFAULT_CALLBACK_PRI    0
->>>>>    #define SLAB_CALLBACK_PRI    1
->>>>
->>>> "stored in decreasing order in the callback chain"
->>>>
->>>> is pretty clear? It's a chain after all that gets called.
->>>
->>> I can drop the patch. For some reason when I read it I'm thinking the opposite, and when Marc was also confused I started questioning things.
->>>
->>
->> I think we both found the current comment confusing (even together!)
->> because:
->>
->> - It very briefly alludes to an implementation detail (the chain)
->>    without really getting into detail. A "chain" could be bi-directional;
->>    why not? This one is... "most likely" not. Doubt.
->>
+> BTW, 20 lines above this change, the text says:
 > 
-> Please note that the memory notifier is really just using the generic *notifier chain* mechanism as documented in include/linux/notifier.h.
+>   If you the following command works::
 > 
-> Here is a good summary of that mechanism. I don't quite agree with the "implementation detail" part, but that information might indeed not be required here.
-> 
-> https://0xax.gitbooks.io/linux-insides/content/Concepts/linux-cpu-4.html
-> 
->> - Higher priorities can have lower numbers, example: "P1 bugs". Not the
->>    case here, but this "double standards" situation makes _all_
->>    priorities suspicious and confusing.
->>
-> 
-> Yes, "priorities" are handled differently in different context.
-> 
->> - Constants that come first in the file are called last.
-> 
-> Yes, but that part makes perfect sense to me.
->  > I would go further than Dave and also drop the "chain" implementation
->> detail because it makes the reader to think too much.  Not needed and
->> distracting at this particular point in the file.
-> 
->  > /*
->>   * Priorities for the hotplug memory callback routines.
->>   * Invoked from high to low.
->>   */
->>
->>    => Hopefully zero cognitive load.
-> 
-> Still confusion about how a high priority translates to a number, maybe?
-> 
-> /*
->  * Priorities for the hotplug memory callback routines. Invoked from
->  * high to low. Higher priorities corresponds to higher numbers.
->  */
-> 
+> Do you have any idea what word is missing there?
+> or maybe Paul can make a suggestion.
 
-This reads clear to me. I will adopt this comment if there are no additional objections. 
+I suggest dropping the "you".  In fact, I just created a commit with
+your Reported-by doing just that.
 
+Thank you, and now to find that brown paper bag...
+
+							Thanx, Paul
+
+> Thanks.
+> 
+> > ---
+> >  Documentation/RCU/torture.rst | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/RCU/torture.rst b/Documentation/RCU/torture.rst
+> > index 4b1f99c4181fee..cc57d01ed700ff 100644
+> > --- a/Documentation/RCU/torture.rst
+> > +++ b/Documentation/RCU/torture.rst
+> > @@ -364,7 +364,7 @@ systems must come first.
+> >  The kvm.sh ``--dryrun scenarios`` argument is useful for working out
+> >  how many scenarios may be run in one batch across a group of systems.
+> >  
+> > -You can also re-run a previous remote run in a manner similar to kvm.sh:
+> > +You can also re-run a previous remote run in a manner similar to kvm.sh::
+> >  
+> >  	kvm-remote.sh "system0 system1 system2 system3 system4 system5" \
+> >  		tools/testing/selftests/rcutorture/res/2022.11.03-11.26.28-remote \
+> > 
+> > base-commit: 61399e0c5410567ef60cb1cda34cca42903842e3
+> 
+> -- 
+> ~Randy
 
