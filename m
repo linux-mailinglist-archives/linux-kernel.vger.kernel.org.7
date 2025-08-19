@@ -1,164 +1,113 @@
-Return-Path: <linux-kernel+bounces-775153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A48B2BBF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:35:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F37DB2BBFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC421896822
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7196F5636FB
 	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A59D311592;
-	Tue, 19 Aug 2025 08:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75401311592;
+	Tue, 19 Aug 2025 08:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiTz9mr9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZN9b3d1B"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C4626D4CF;
-	Tue, 19 Aug 2025 08:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757631C84BC
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755592514; cv=none; b=ZKg9CH5JufqBqnBOsuG9sI/2vMUFsPJifQBFbRG23phnhe+5YEzyYFhrcWzVfx6KP2tUua3Gt6+rGuyXJDXOGXZhyv2414FX1UGJk2Cjj6LQVM6O5CMPX/b8pjJLWdgT7AoPSLWIaPN4OvtICo30j+vSIB+LinNC7SPHzI66Hio=
+	t=1755592534; cv=none; b=Fgj7vS+qNzIXYmi/9fCK9WQAAl7EVgppGuTX/VnskWqVh3Vg7gWjPDL9Oddwwse8xI5tjKWp11MRqLJorLcPNMnjz+3TxKxjQjhRue9nZ06x4/WyFgkeP7rmKQKjbYx28ycsH0E4lsGpE6qMowPd4g/bGFJX1Kue2Pv+PjuPohg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755592514; c=relaxed/simple;
-	bh=EGFYn9S9X5jab97X6MPlmhaU5A2DD/JytViFQMo3Yuc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DQ9KkkWYOcHL0RZMdnlQT8vYV/6qUNmm9RP8YdeBB1uxe/iceL+vH8B30xJ4hyiVy5Kn1iIQDWkzWW80Q4Y36Cy7+iIOVqeoltECneHSSyBVC2cllLIi1M1jyOFkEg0asQAmn7Sm93uV16fybjJKAOMOMrp9NF33+7XTcdqmUUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiTz9mr9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460EDC4CEF1;
-	Tue, 19 Aug 2025 08:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755592514;
-	bh=EGFYn9S9X5jab97X6MPlmhaU5A2DD/JytViFQMo3Yuc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FiTz9mr9lu+tPaJqN1PK8f3hv1IHwQ0TXG3HfeoAszxK49VtEVJU+Wp7p8emNpYz2
-	 T3IgG3WTo0tobbNFt5Qxqk0zYzDACtP3W03oQj1wIzVMWt/uRxSRwV6Xy2cy8Ovow/
-	 kQTT3z8rhJS1GuuHwywz1HFIJCgTAq8NBs/IV4ywVf5064Z97qY+772oOeKMg3soYK
-	 XX8VxH4mtBU5jz6+XN45tMIezcmBumcPY2z9yoo/X2QKEfd+hQbs1iRSmayMSEVNJI
-	 XirSg2SCrsBGiuUt8fWbELHouDortubfS/ngfCnjO838uWg50nATPu/XGHasvtblVv
-	 V93VIOObmV9PQ==
-Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uoHoB-008tOd-1V;
-	Tue, 19 Aug 2025 09:35:07 +0100
-Date: Tue, 19 Aug 2025 09:35:06 +0100
-Message-ID: <87sehnk8ud.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] arm64/sysreg: Add VTCR_EL2 register
-In-Reply-To: <bf78530c-e3e7-42b1-be7c-409d6427afda@arm.com>
-References: <20250818045759.672408-1-anshuman.khandual@arm.com>
-	<20250818045759.672408-5-anshuman.khandual@arm.com>
-	<aKLw1jvwOo4wG64n@J2N7QTR9R3>
-	<bf78530c-e3e7-42b1-be7c-409d6427afda@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1755592534; c=relaxed/simple;
+	bh=M6MAsJKmOEe8NoOIu3KbdJXFxBlN0fOMBGKcFyDv8L4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h56SBgCIlkDAXPn7RpJ6XfnQ1j4yVig78s6XDIoJT6PB8IBCrdZaE22R3GFbGkbho1Eo1CvYZ6iMGELHwEnnlYh4+0u2xK0U139kPjWrdAFt8NS0qOBcCYLqXr77GWJwol+uIpT7Aq85n0fDdeD5z1BKAT5CDZg4te77cgWD3kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZN9b3d1B; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb79f659aso756277266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755592531; x=1756197331; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1cBovOT05BmrwzYOJOxZ5z+DToAOtvf0DyUqfnYGFE=;
+        b=ZN9b3d1BZ+RCJIi0RYvCoTI/G/cQNOTJIQpOjJ+9JkKelLXHvkmuumRVefh7aZfZcx
+         pyVcQmCFfqKuR2/yCMrr186H1j7aSu/tuOOGzXqE0tDK64emEGjmbfqklb1b/Q80hI5J
+         FH2gLosNDJRhzrzcfUi3Bx4AhDXQkofus4dO77LUm/oWqvwzl616BRjEeGUdWHFgIPO3
+         RtgSELcQ7IQVRzE4FC/iqq+mUnhIvn3hg7bIsGXJFYuiznoNmVubyM3sugCzUhC2IAts
+         O9bAvXNSs1ZxyTWDLMj2IJeq7v/+4G9YKJaE3uYWHW1fM/ByaVeJj+XNAtQwKq8K2lXN
+         vDhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755592531; x=1756197331;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P1cBovOT05BmrwzYOJOxZ5z+DToAOtvf0DyUqfnYGFE=;
+        b=CmBD14fIsN6b8c8fRDPiG43nnMMkpsPfW0VZyGNwlPW+cUrFX0R9Oj/afsf1faDU04
+         XE91hp48iDsKgv4uQOZGqQ8bFyWZw+jD+X7T9cA2JopfWcoIElunvrTRtGIxIm20leTM
+         zbjKTddV4jYd1dF36nNtM7PPOwAlPr6czK3VQtJdAax0W5ladSQ+TSht2Jyv7hdqKIMw
+         BAx5W8/N0cWJgCbOeYinkkKWjMnY2i9xrfgy0YAPZPGAxLG1wEUw2v5/b/5eJE88AK53
+         xIneqSM0rU5mKpHvsO1JVV6qvqdUYOK4tgYREjGv6V9pkG01lHJFiX4/FY2YFoHx/tVo
+         Gv7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWxdxf4qx0GeXBdYTWwv+AT29uE0AFaFox2mnwsREL9yN/XFcIHOx1Uwxq2bLOQUi9dahRISG8mAgWYJf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfhx0TEilXqkH9LkJAYnQBsTvacGq6mZ9SDasLUliTc8tiTOHX
+	nCCdA3pIiHcj47hTSCydkPHtk/2bYu0QGqHd7pVKubF0Bsd94/qnD5mZUGE2vWs4OOfgAZzWRH+
+	v7OMP
+X-Gm-Gg: ASbGncv1GuPSqT3pzjLAaMsWVlf8X06M5W5r0KgRPjMKa4WZWpCQ3hUPOOIWxznT6sB
+	XUl4nOwUNGkceiiKHhSvtHsLg02QY5zu6O+p2bu6LoOLlNFvuFn2IfS+/+cXA9gRwQf+q01HRyU
+	DGejIYmdYYc1Z9K9m4aQQmovO47pfCsQrJ68jO1zmT76lMGHvcTkZoHc5maAs6vacpFDO14TL4Y
+	fT7QFzu6sUuUMycZ3QEgnrnyfSWWdW8gU9WTCgNyV4S2U1ZckbRbAExzWxmj8QC+gRwlNeBg67L
+	1mWzh0OMtJkvLnECAe6KYgSsXm9AZKW1Vc1JnCe82sp9plbL184zOViIvrMJ5Qs3BjteU5r+Bf6
+	W9e0kkZFWocEvXN/pzL30fxBnxA==
+X-Google-Smtp-Source: AGHT+IFJjU/g3OyARUavbGWdZ5aC2lNhssJZ4ZZOaAanuC8tNwgtJ+pS5IkxfemmqmSjTrpZHwS1eQ==
+X-Received: by 2002:a17:906:6a01:b0:af9:c119:3b4 with SMTP id a640c23a62f3a-afddc95da35mr156875366b.13.1755592530657;
+        Tue, 19 Aug 2025 01:35:30 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce54016sm953838166b.9.2025.08.19.01.35.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 01:35:30 -0700 (PDT)
+Date: Tue, 19 Aug 2025 10:35:28 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	john.ogness@linutronix.de, Askar Safin <safinaskar@zohomail.com>
+Subject: Re: [PATCH 2/3] panic: refine the document for 'panic_print'
+Message-ID: <aKQ3UKefo8A_AYFq@pathway.suse.cz>
+References: <20250815071428.98041-1-feng.tang@linux.alibaba.com>
+ <20250815071428.98041-3-feng.tang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 86.149.246.145
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, broonie@kernel.org, ryan.roberts@arm.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815071428.98041-3-feng.tang@linux.alibaba.com>
 
-On Tue, 19 Aug 2025 05:24:29 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+On Fri 2025-08-15 15:14:27, Feng Tang wrote:
+> User reported current document about SYS_INFO_PANIC_CONSOLE_REPLAY
+> is confusing, that people could expect all user space console messages
+> to be replayed.
 > 
+> Specify that only 'kernel' messages will be replayed to solve the confusion.
 > 
-> 
-> On 18/08/25 2:52 PM, Mark Rutland wrote:
-> > On Mon, Aug 18, 2025 at 10:27:59AM +0530, Anshuman Khandual wrote:
-> >> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-> >> index d2b40105eb41..f5a0a304f844 100644
-> >> --- a/arch/arm64/tools/sysreg
-> >> +++ b/arch/arm64/tools/sysreg
-> >> @@ -4910,6 +4910,63 @@ Field	1	PIE
-> >>  Field	0	PnCH
-> >>  EndSysreg
-> >>  
-> >> +Sysreg	VTCR_EL2	3	4	2	1	2
-> >> +Res0	63:46
-> >> +Field	45	HDBSS
-> >> +Field	44	HAFT
-> >> +Res0	43:42
-> >> +Field	41	TL0
-> >> +Field	40	GCSH
-> >> +Res0	39
-> >> +Field	38	D128
-> >> +Field	37	S2POE
-> >> +Field	36	S2PIE
-> >> +Field	35	TL1
-> >> +Field	34	AssuredOnly
-> >> +Field	33	SL2
-> >> +Field	32	DS
-> >> +Res1	31
-> >> +Field	30	NSA
-> >> +Field	29	NSW
-> >> +Field	28	HWU62
-> >> +Field	27	HWU61
-> >> +Field	26	HWU60
-> >> +Field	25	HWU59
-> >> +Res0	24:23
-> >> +Field	22	HD
-> >> +Field	21	HA
-> >> +Res0	20
-> >> +UnsignedEnum	19	VS
-> >> +	0b0	8BIT
-> >> +	0b1	16BIT
-> >> +EndEnum
-> > 
-> > You left TCR_EL1.AS as a single-bit 'Field', so please do the same here
-> > for consistency. I don't think there's much gained by making this any
-> > sort of enum.
-> 
-> But actually there is an use case in kvm_get_vtcr().
-> 
->         /* Set the vmid bits */
->         vtcr |= (get_vmid_bits(mmfr1) == 16) ?
->                 SYS_FIELD_PREP_ENUM(VTCR_EL2, VS, 16BIT) :
->                 SYS_FIELD_PREP_ENUM(VTCR_EL2, VS, 8BIT);
->
+> Reported-by: Askar Safin <safinaskar@zohomail.com>
+> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
 
-Here you go (untested):
+Looks good to me:
 
-diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-index c351b4abd5db..49266efc8bab 100644
---- a/arch/arm64/kvm/hyp/pgtable.c
-+++ b/arch/arm64/kvm/hyp/pgtable.c
-@@ -623,10 +623,7 @@ u64 kvm_get_vtcr(u64 mmfr0, u64 mmfr1, u32 phys_shift)
- 	if (kvm_lpa2_is_enabled())
- 		vtcr |= VTCR_EL2_DS;
- 
--	/* Set the vmid bits */
--	vtcr |= (get_vmid_bits(mmfr1) == 16) ?
--		VTCR_EL2_VS_16BIT :
--		VTCR_EL2_VS_8BIT;
-+	vtcr |= FIELD_PREP(BIT(VTCR_EL2_VS_SHIFT), (get_vmid_bits(mmfr1) == 16));
- 
- 	return vtcr;
- }
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+Best Regards,
+Petr
 
