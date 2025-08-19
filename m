@@ -1,128 +1,184 @@
-Return-Path: <linux-kernel+bounces-776190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEC4B2C9C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:34:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BA1B2C9C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05794720AB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A085E16BE30
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485DA258ECE;
-	Tue, 19 Aug 2025 16:28:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80D6255F31;
-	Tue, 19 Aug 2025 16:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AD825B69F;
+	Tue, 19 Aug 2025 16:29:40 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C613257824;
+	Tue, 19 Aug 2025 16:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755620910; cv=none; b=lU8SFT8G8QQHYuNyBOyLJtMXR2GZrv28xMnQgFyrICvLoAiiaP94M6dr4B0pVloDA2uQspFAlr0huGb6KUMJu7d9UBMl56YSv79e4ifmlugzXqDh427ZlatRbLsTmJ4zYuwBL0vKg6hWE5HUsa0JKTPmR6u2rZi8+AHoFgwhd8M=
+	t=1755620980; cv=none; b=cMGLaG/LS+BNPrQw+55xPFZCzNt1r3YY7n3iwurx/ZrKWSiLqi3d9CUeFqeB87+3FZ8pRvrjc6yxbOWri6CLRjxPFOA7IREAp74jDIZNfn8ObpOnkR/ALn7JqoZYzaa94TYseRY9DC1Ii5KjAMjQihnmtrzs/MluwqJloc5CaJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755620910; c=relaxed/simple;
-	bh=59eMJBbsypb0bqhMladJTLt9RfpDyJ0/o/Jv5WMJiR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NhVjGEoSygsjfpziu45qJK+EFxmrNDSNY3BIzXjewHjeI8G7q8C0zm/eDYrYfmFM3v6CYH+u3kgUQtV9V5mRb+vL45Gr+fal8QWnVO0xAoX7LV4bodkMKpTomXRFhaHlP2PPgcb8rglptK4VwgZyL0/AuBZMjmY1WuQfrfQ7aZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F321F152B;
-	Tue, 19 Aug 2025 09:28:19 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C1B6F3F63F;
-	Tue, 19 Aug 2025 09:28:26 -0700 (PDT)
-Date: Tue, 19 Aug 2025 17:28:24 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] firmware: arm_scmi: imx: Support getting board
- info of MISC protocol
-Message-ID: <aKSmKJSJNc9a6s5E@pluto>
-References: <20250710-sm-misc-api-v1-v2-0-c3e953e34be6@nxp.com>
- <20250710-sm-misc-api-v1-v2-4-c3e953e34be6@nxp.com>
+	s=arc-20240116; t=1755620980; c=relaxed/simple;
+	bh=2TQyQwcpxqVc//vKXkU1JO1qGeb9l9tG/hj8sKBZozc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dddj8Nj+zOFKubaIZJgk3goIn7vIJ3xDeUjnVpe+O61SlVEpJJiY7mxibmTndlllOmVGXFaW/QqU1i2sDTlfpn7a1+vOvabkOVoDF04K7Ju3DlHYjcespiK3mjMLXAq8HzGw9O+cVNV1dhAvomcAShfGSsU3VZGmGyJAj3EaIhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:a45f:4d28:5bd6:f5e1])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 9977D41FE5;
+	Tue, 19 Aug 2025 16:29:34 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:a45f:4d28:5bd6:f5e1) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: song@kernel.org
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	yonghong.song@linux.dev,
+	Arnaud Lecomte <contact@arnaud-lcm.com>
+Subject: [PATCH bpf-next RESEND v4 2/2] bpf: fix stackmap overflow check in
+ __bpf_get_stackid()
+Date: Tue, 19 Aug 2025 17:29:27 +0100
+Message-ID: <20250819162927.8865-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250819162652.8776-1-contact@arnaud-lcm.com>
+References: <20250819162652.8776-1-contact@arnaud-lcm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-sm-misc-api-v1-v2-4-c3e953e34be6@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175562097546.18874.12429982006167028867@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Thu, Jul 10, 2025 at 04:33:29PM +0800, Peng Fan wrote:
-> MISC protocol supports getting board information. Retrieve the information
-> from SM.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> index dc6ea67255b8b1ac95dfb552fa88b65044de8d3f..6b86c35c192d02e13f0d2a7d713bc447886b84bf 100644
-> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> @@ -27,6 +27,7 @@ enum scmi_imx_misc_protocol_cmd {
->  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
->  	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
->  	SCMI_IMX_MISC_CFG_INFO = 0xC,
-> +	SCMI_IMX_MISC_BOARD_INFO = 0xE,
->  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
->  };
->  
-> @@ -76,6 +77,12 @@ struct scmi_imx_misc_buildinfo_out {
->  	u8 buildtime[MISC_MAX_BUILDTIME];
->  };
->  
-> +struct scmi_imx_misc_board_info_out {
-> +	__le32 attributes;
-> +#define MISC_MAX_BRDNAME	16
-> +	u8 brdname[MISC_MAX_BRDNAME];
-> +};
-> +
->  struct scmi_imx_misc_cfg_info_out {
->  	__le32 msel;
->  #define MISC_MAX_CFGNAME	16
-> @@ -317,6 +324,30 @@ static int scmi_imx_misc_discover_build_info(const struct scmi_protocol_handle *
->  	return ret;
->  }
->  
-> +static int scmi_imx_misc_board_info(const struct scmi_protocol_handle *ph)
-> +{
-> +	struct scmi_imx_misc_board_info_out *out;
-> +	char name[MISC_MAX_BRDNAME] = {'\0'};
+Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
+when copying stack trace data. The issue occurs when the perf trace
+ contains more stack entries than the stack map bucket can hold,
+ leading to an out-of-bounds write in the bucket's data array.
 
-same...
+Changes in v2:
+ - Fixed max_depth names across get stack id
 
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_BOARD_INFO, 0, sizeof(*out), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +	if (!ret) {
-> +		out = t->rx.buf;
-> +		strscpy(name, out->brdname, MISC_MAX_BRDNAME);
-> +		dev_info(ph->dev, "Board\t\t= %s, attr=0x%08x\n",
-> +			 name, le32_to_cpu(out->attributes));
-> +	}
-> +
+Changes in v4:
+ - Removed unnecessary empty line in __bpf_get_stackid
 
-...other than this...LGTM.
+Link to v3: https://lore.kernel.org/all/997d3b8a-4b3a-4720-8fa0-2f91447021bd@linux.dev/
 
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+---
+ kernel/bpf/stackmap.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-Thanks,
-Cristian
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index b9cc6c72a2a5..318f150460bb 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -246,7 +246,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
+ }
+ 
+ static long __bpf_get_stackid(struct bpf_map *map,
+-			      struct perf_callchain_entry *trace, u64 flags)
++			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
+ {
+ 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+ 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+@@ -262,6 +262,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ 
+ 	trace_nr = trace->nr - skip;
+ 	trace_len = trace_nr * sizeof(u64);
++	trace_nr = min(trace_nr, max_depth - skip);
++
+ 	ips = trace->ip + skip;
+ 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+ 	id = hash & (smap->n_buckets - 1);
+@@ -321,19 +323,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags)
+ {
+-	u32 max_depth = map->value_size / stack_map_data_size(map);
+-	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 elem_size = stack_map_data_size(map);
+ 	bool user = flags & BPF_F_USER_STACK;
+ 	struct perf_callchain_entry *trace;
+ 	bool kernel = !user;
++	u32 max_depth;
+ 
+ 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+ 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+ 		return -EINVAL;
+ 
+-	max_depth += skip;
+-	if (max_depth > sysctl_perf_event_max_stack)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+ 
+ 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+ 				   false, false);
+@@ -342,7 +342,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 		/* couldn't fetch the stack trace */
+ 		return -EFAULT;
+ 
+-	return __bpf_get_stackid(map, trace, flags);
++	return __bpf_get_stackid(map, trace, flags, max_depth);
+ }
+ 
+ const struct bpf_func_proto bpf_get_stackid_proto = {
+@@ -374,6 +374,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 	bool kernel, user;
+ 	__u64 nr_kernel;
+ 	int ret;
++	u32 elem_size, max_depth;
+ 
+ 	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
+ 	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
+@@ -392,12 +393,13 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 		return -EFAULT;
+ 
+ 	nr_kernel = count_kernel_ip(trace);
+-
++	elem_size = stack_map_data_size(map);
+ 	if (kernel) {
+ 		__u64 nr = trace->nr;
+ 
+ 		trace->nr = nr_kernel;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, max_depth);
+ 
+ 		/* restore nr */
+ 		trace->nr = nr;
+@@ -409,7 +411,8 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 			return -EFAULT;
+ 
+ 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, max_depth);
+ 	}
+ 	return ret;
+ }
+-- 
+2.43.0
+
 
