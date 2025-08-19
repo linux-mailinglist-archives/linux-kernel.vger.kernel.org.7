@@ -1,100 +1,136 @@
-Return-Path: <linux-kernel+bounces-774755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CFEB2B6F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DC8B2B6FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252875E6E6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F6A1B65E5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C751F2882CF;
-	Tue, 19 Aug 2025 02:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076862BCF45;
+	Tue, 19 Aug 2025 02:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="sCAjS4Bg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiizOzQU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A57313A265;
-	Tue, 19 Aug 2025 02:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A2F13A265;
+	Tue, 19 Aug 2025 02:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755570583; cv=none; b=hFWtb/cRXOKySM6rgxtXu4GEXk5nVAMh50DACF1MtKwKOB0wBJsg/ASKPS/oVbZyWcrQ3zaZDpwiPqAcV1OaIoEoZgnuyhyhiFZKRZQ0wIxtQ6+9tFUnbfSVlnwNYqVNZ6GyYuzXU67VcIQVKrGk8OEoNA5I1E5KonLAyGY3JgU=
+	t=1755570586; cv=none; b=e6+C/elAOTeLZjiDYT9PW/ZWTZAoSVnetfbM5hMfkJiFmI+EU2agx8iXQblYVy1UMUx+XbC1U849YaV7Ey2L5SCK5Pv/OeYEAj8cQRGXak3eORCYb8f5XFLfmDZTzHKY4+qegupt61gACMVgeZKEDncbE+M2pE3c4N82/D2glvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755570583; c=relaxed/simple;
-	bh=dxQFtiQqBfgcZW7jYK5rAIvwpnQhF5wbmU8vX/hiHkY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FRrMQmA85oila80beRhCN8Bv8Y48MseeoamSk6Ng6mrHygRgv45zNhgwXhgcoEOVPJPyqozdppKuRfob/cn6k2Xog9okysNi18EVhnLz/772xs/Qu7elihvEgIWBEdzk36PNA9W8Vtc8ekkKo4F/oyKz9YD5jtQJqqPiDXqW8Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=sCAjS4Bg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D036C4CEEB;
-	Tue, 19 Aug 2025 02:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755570582;
-	bh=dxQFtiQqBfgcZW7jYK5rAIvwpnQhF5wbmU8vX/hiHkY=;
+	s=arc-20240116; t=1755570586; c=relaxed/simple;
+	bh=pnbIGffi+m0JiaoTE1u58BWNGkLr6BjTzLhLMx6GpIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dIgilfNMEQr9+K9sQO8avBfjaCK2GJB+yyJXdjyocNi4myHN0RFcIDuhdV/gI0nF10PePAqNO+Hy9pTzj9kStX9HOH6GayGpu2wTTONkeFI8n0B545IDUCrRbItp37w0P9YPNDEd4UoiF/Bf5nSv/JIdlFEFGy5T2PfXugudloQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiizOzQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80979C4CEED;
+	Tue, 19 Aug 2025 02:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755570584;
+	bh=pnbIGffi+m0JiaoTE1u58BWNGkLr6BjTzLhLMx6GpIM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sCAjS4Bgjt5fjnskES8nB6XtFvx2P1Na1sz0CzgGO0DXgbwbYHrRAbKeHInwBh0P8
-	 FmcJvh9dDGm2dOV+R+BZMf8on9dzq/GTistX95T0nS6E9WbIwOB9zbwOqDY+J6Cz2b
-	 Q+K3IqMiaYCkbVq11pjfVHANP3mzO9kuzG4sS/k0=
-Date: Mon, 18 Aug 2025 19:29:41 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: Re: linux-next: manual merge of the bcachefs tree with the
- mm-unstable tree
-Message-Id: <20250818192941.94fa175267dd4e334ca529ad@linux-foundation.org>
-In-Reply-To: <20250819111228.6c6209eb@canb.auug.org.au>
-References: <20250819111228.6c6209eb@canb.auug.org.au>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=MiizOzQUjbCkSIxwlHYSR8zVbvom7LhEBydxrRrbUgRz9NFA+rPRnUdc740pB+o4x
+	 NmGpHReKVnQUmwkuKaf+/aNF+H9N7zgE9dMz9B7ZGrQjZG5etdWoRNJ7Nq4R/ILzol
+	 fVe6+7I1xeAwBjm+oNVGEiOjfCbGkB1TRjcD7Agx9geoR61hjQn7ahxM1Po4YX6hYu
+	 5rnOYfEmOFIKRy3esHKsSP6ZcbPnK+ZhsNm+K65+N8e0hEOG2V/IVbpPomDkxwnVcB
+	 xS6OCXqRN18W0EqkN+qGndEvjH6/nskq5B9e9fUtLeiHdrbt0D8XEonDxis1ovwwWf
+	 CvddQnpGFchcg==
+Date: Mon, 18 Aug 2025 19:29:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Schmidt
+ <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>
+Subject: Re: [PATCH net-next v3 5/5] dpll: zl3073x: Implement devlink flash
+ callback
+Message-ID: <20250818192943.342ad511@kernel.org>
+In-Reply-To: <20250813174408.1146717-6-ivecera@redhat.com>
+References: <20250813174408.1146717-1-ivecera@redhat.com>
+	<20250813174408.1146717-6-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 19 Aug 2025 11:12:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, 13 Aug 2025 19:44:08 +0200 Ivan Vecera wrote:
+> +	struct zl3073x_dev *zldev = devlink_priv(devlink);
+> +	struct zl3073x_fw_component *util;
+> +	struct zl3073x_fw *zlfw;
+> +	int rc = 0;
+> +
+> +	/* Load firmware */
 
-> Hi all,
-> 
-> Today's linux-next merge of the bcachefs tree got a conflict in:
-> 
->   fs/bcachefs/darray.c
-> 
-> between commit:
-> 
->   97b75b7e275a ("mm/slub: allow to set node and align in k[v]realloc")
-> 
-> from the mm-unstable tree and commit:
-> 
->   808708fe9da0 ("bcachefs: darray_make_room_rcu()")
-> 
-> from the bcachefs tree.
-> 
-> ...
->
-> --- a/fs/bcachefs/darray.c
-> +++ b/fs/bcachefs/darray.c
-> @@@ -20,10 -22,11 +22,11 @@@ int __bch2_darray_resize_noprof(darray_
->   		if (unlikely(check_mul_overflow(new_size, element_size, &bytes)))
->   			return -ENOMEM;
->   
-> - 		void *data = likely(bytes < INT_MAX)
-> + 		void *old = d->data;
-> + 		void *new = likely(bytes < INT_MAX)
->  -			? kvmalloc_noprof(bytes, gfp)
->  +			? kvmalloc_node_align_noprof(bytes, 1, gfp, NUMA_NO_NODE)
->   			: vmalloc_noprof(bytes);
-> - 		if (!data)
-> + 		if (!new)
->   			return -ENOMEM;
+Please drop the comments which more or less repeat the name 
+of the function called.
 
-uh, OK, I guess a 2GB allocation is reasonable on a 16TB machine.
+> +	zlfw = zl3073x_fw_load(zldev, params->fw->data, params->fw->size,
+> +			       extack);
+> +	if (IS_ERR(zlfw))
+> +		return PTR_ERR(zlfw);
+> +
+> +	util = zlfw->component[ZL_FW_COMPONENT_UTIL];
+> +	if (!util) {
+> +		zl3073x_devlink_flash_notify(zldev,
+> +					     "Utility is missing in firmware",
+> +					     NULL, 0, 0);
+> +		rc = -EOPNOTSUPP;
 
-But why does bcachefs find it necessary to bypass allocation profiling?
+I'd think -EINVAL would be more appropriate.
+If you want to be fancy maybe ENOEXEC ?
+
+> +		goto error;
+> +	}
+> +
+> +	/* Stop normal operation during flash */
+> +	zl3073x_dev_stop(zldev);
+> +
+> +	/* Enter flashing mode */
+> +	rc = zl3073x_flash_mode_enter(zldev, util->data, util->size, extack);
+> +	if (!rc) {
+> +		/* Flash the firmware */
+> +		rc = zl3073x_fw_flash(zldev, zlfw, extack);
+
+this error code seems to be completely ignored, no?
+
+> +		/* Leave flashing mode */
+> +		zl3073x_flash_mode_leave(zldev, extack);
+> +	}
+> +
+> +	/* Restart normal operation */
+> +	rc = zl3073x_dev_start(zldev, true);
+> +	if (rc)
+> +		dev_warn(zldev->dev, "Failed to re-start normal operation\n");
+
+And also we can't really cleanly handle the failure case.
+
+This is why I was speculating about implementing the down/up portion
+in the devlink core. Add a flag that the driver requires reload_down
+to be called before the flashing operation, and reload_up after.
+This way not only core handles some of the error handling, but also
+it can mark the device as reload_failed if things go sideways, which 
+is a nicer way to surface this sort of permanent error state.
+
+Not feeling strongly about it, but I think it'd be cleaner, so bringing
+it up in case my previous comment from a while back wasn't clear.
+
+> +error:
+> +	/* Free flash context */
+> +	zl3073x_fw_free(zlfw);
+> +
+> +	zl3073x_devlink_flash_notify(zldev,
+> +				     rc ? "Flashing failed" : "Flashing done",
+> +				     NULL, 0, 0);
 
