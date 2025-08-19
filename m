@@ -1,130 +1,299 @@
-Return-Path: <linux-kernel+bounces-775408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A7DB2BECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:21:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046F0B2BED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC3F3AAA25
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:21:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA47C7A61AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25BF2F9C3E;
-	Tue, 19 Aug 2025 10:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916BD2FD7B1;
+	Tue, 19 Aug 2025 10:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LQM38gBg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C3SPVIau"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lFIQneHU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83073451D2;
-	Tue, 19 Aug 2025 10:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304D627A13A;
+	Tue, 19 Aug 2025 10:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598889; cv=none; b=NVSHbh7cpqHLKQfLz4tOoqsFnIQrlyyywyxazKJAJxwBEAh1r9D+Wg/ovo25os2wI0j136Uvg43iR/KLM89W1YRgKop7lCF5RH89wXOH7F4oU7reglGwUgJYVchK48bfflLcS8NifqeDjjDIunkAfXObrjp1JkZ3ick3Yzd5rko=
+	t=1755598978; cv=none; b=JC/ZBAZWgAdU76XaJwp3qQg+hx2GUrEsLYapjxMdrJwGnak2jyO8VVwm+tKoX88eRHMfvb3XFyfvgS0JAPdlTf96ujuHtT6PhL5pCRD6qf4+uGu2mnXwp6y9Jyx1VWIXdg5B0hWv1Q1H0VlgavjJBrVjsX29EubH9BaNEQB5qTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598889; c=relaxed/simple;
-	bh=rRqk9njGn48z615Rr5gmeoeW2PcgQLl2A9aZ7ED0mu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8DRgE+JzY2KHkfhEmkVk+p7oaNqwAxWvcELnSRbAoIBcldSegeV5bfKZqKl8bD6L18MpbFBU0VgBwomuIC8hFPwYwcer61gQioaLEP4tRg1onraSgPjOF9e7Wj5ewicHA2JbNq0mPGWhQsnDWMXKTrhJlz/YJsayA9o/nydtSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LQM38gBg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C3SPVIau; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 12:21:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755598885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sd1NbSqSUSHxU54jSrNDalpf8ONqHH3DQZD09RzfBWM=;
-	b=LQM38gBgcRmJF24jHmc27bvLn2Hk60/XBsuvIDxQL1tNWGFMTDOcWKDLI1R1VR+zgEbuDR
-	kmgaWDboqqCGL13CztQRHciWdDP3T92S3jMj2Dmzdx6Q2MklTay9ZNbm4rFcXSqvA4+gO6
-	YEqqlVA3m1Gzmu9afnW9M/sc8i2NB7TrHcL7m9sxxWFoPWglVQ02FFzQ8vPwuqbf3xYHVR
-	YyI2V+hp9wi6wKu2XGFEkW2yyFKg63x9bMwYUkS9Hnh4IlcUwZxiUq++7WUjLYp7nOBd2r
-	KBmfZ79K7Bis/G1J43bObMZhvCZHlaIg0GGningphQQcoJ3PGo2lI9g20Ok1OA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755598885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sd1NbSqSUSHxU54jSrNDalpf8ONqHH3DQZD09RzfBWM=;
-	b=C3SPVIauGLe8408fq+HxrmLRQrTutc2xTJUFDGY1HmP8Y3pwo2fiFWHg/YS7DyJMPwGMr+
-	91AEgGX19OnrXPDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Yunseong Kim <ysk@kzalloc.com>, gregkh@linuxfoundation.org,
-	stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Marcello Sylvester Bauer <sylv@sylv.io>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, andreyknvl@gmail.com,
-	Austin Kim <austindh.kim@gmail.com>, linux-rt-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-Subject: Re: [BUG] usb: gadget: dummy_hcd: Sleeping function called from
- invalid context in dummy_dequeue on PREEMPT_RT
-Message-ID: <20250819102124.O6E7YfEJ@linutronix.de>
-References: <5b337389-73b9-4ee4-a83e-7e82bf5af87a@kzalloc.com>
- <20250816065933.EPwBJ0Sd@linutronix.de>
+	s=arc-20240116; t=1755598978; c=relaxed/simple;
+	bh=j95Um73gyG4EtltIsfdN0ieCULPUTUdPkrOxfnhQWiw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=njzNnTCCCQw019fD6fQAWmxa/+VUro48PEVsEPdAnicSahZCJ7AG63CTWlsqVsUQuBCLOv8CCIURVmR6BK2R66Q7pjf+m4mOnff33PTqZwMGFGrXrBXKHRaV7q8nCS3A/62TtFGVkgct/ZS0Xv+CQ5jk/SrgnGVTphE3H8JnUa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lFIQneHU; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755598978; x=1787134978;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=j95Um73gyG4EtltIsfdN0ieCULPUTUdPkrOxfnhQWiw=;
+  b=lFIQneHULSInvHOW18Q3RV7rGIZUP+jRkotkJV3YfjIV6AAFR3GdRc/B
+   rNgOkFkNXIXWK25uoRk1L0yjHS6bN6ODfskUaDT62r6tuKsxzW06HDdgb
+   0uPRiCFKS2DE3eL6XfhqfL+zpAK3Sf/ixCQk3MbmlqqBz7v50CrkpX7pg
+   wJUCYjIW8QK01B3YjcjA9Cpd+pZfKNfGke+isi2AGWiJVwo1mHgA0+kF0
+   kyEV5yn5MokTg6TIa00sGHF+QXd1KNHKHmvOYvgUAhtprM6nsYqbJVZ3K
+   v0KZDsp6mUMrqwLYshVkMwmj75LixDNx/5A6Dnk9L07tuHQwsHToQh4mg
+   A==;
+X-CSE-ConnectionGUID: XThKuLDxQwqs+YiA7Rt5rQ==
+X-CSE-MsgGUID: bXXjyfyqScK/i0FS6cGFwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57984851"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="57984851"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 03:22:56 -0700
+X-CSE-ConnectionGUID: QvlZq7gwQ9+E/5LhCsTkdQ==
+X-CSE-MsgGUID: wxs8UbLiQcSp83OgTe8Nxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="168616509"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.120])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 03:22:52 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 19 Aug 2025 13:22:49 +0300 (EEST)
+To: Gladyshev Ilya <foxido@foxido.dev>
+cc: Armin Wolf <w_armin@gmx.de>, linux-input@vger.kernel.org, 
+    nikita.nikita.krasnov@gmail.com, Armin Wolf <W_Armin@gmx.de>, 
+    Hans de Goede <hansg@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v5] platform/x86: Add WMI driver for Redmibook
+ keyboard.
+In-Reply-To: <20250813153137.18355-1-foxido@foxido.dev>
+Message-ID: <0ed8cf19-09cc-52cd-bc55-bf3f5d9e0c33@linux.intel.com>
+References: <20250813153137.18355-1-foxido@foxido.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250816065933.EPwBJ0Sd@linutronix.de>
+Content-Type: text/plain; charset=US-ASCII
 
-On 2025-08-16 08:59:33 [+0200], Nam Cao wrote:
-> diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
-> index 21dbfb0b3bac..a4653c919664 100644
-> --- a/drivers/usb/gadget/udc/dummy_hcd.c
-> +++ b/drivers/usb/gadget/udc/dummy_hcd.c
-> @@ -765,8 +765,7 @@ static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
->  	if (!dum->driver)
->  		return -ESHUTDOWN;
+On Wed, 13 Aug 2025, Gladyshev Ilya wrote:
+
+> This driver implements support for various Fn keys (like Cut) and Xiaomi
+> specific AI button.
+> 
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+> ---
+> Changes since v4:
+> - Cosmetic fixes from Ilpo's review (posted on v3)
+> 
+> Link to v4: https://lore.kernel.org/platform-driver-x86/20250801120321.9742-1-foxido@foxido.dev
+> ---
+>  MAINTAINERS                      |   6 ++
+>  drivers/platform/x86/Kconfig     |  12 +++
+>  drivers/platform/x86/Makefile    |   1 +
+>  drivers/platform/x86/redmi-wmi.c | 128 +++++++++++++++++++++++++++++++
+>  4 files changed, 147 insertions(+)
+>  create mode 100644 drivers/platform/x86/redmi-wmi.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c0b444e5fd5a..eb25fb10e751 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20965,6 +20965,12 @@ S:	Maintained
+>  T:	git https://github.com/pkshih/rtw.git
+>  F:	drivers/net/wireless/realtek/rtw89/
 >  
-> -	local_irq_save(flags);
-> -	spin_lock(&dum->lock);
-> +	spin_lock_irqsave(&dum->lock, flags);
->  	list_for_each_entry(iter, &ep->queue, queue) {
->  		if (&iter->req != _req)
->  			continue;
-> @@ -776,15 +775,16 @@ static int dummy_dequeue(struct usb_ep *_ep, struct usb_request *_req)
->  		retval = 0;
->  		break;
->  	}
-> -	spin_unlock(&dum->lock);
-> +	spin_unlock_irqrestore(&dum->lock, flags);
+> +REDMIBOOK WMI DRIVERS
+> +M:	Gladyshev Ilya <foxido@foxido.dev>
+> +L:	platform-driver-x86@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/platform/x86/redmi-wmi.c
+> +
+>  REDPINE WIRELESS DRIVER
+>  L:	linux-wireless@vger.kernel.org
+>  S:	Orphan
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index e5cbd58a99f3..9f98a7042e43 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -109,6 +109,18 @@ config XIAOMI_WMI
+>  	  To compile this driver as a module, choose M here: the module will
+>  	  be called xiaomi-wmi.
+>  
+> +config REDMI_WMI
+> +	tristate "Redmibook WMI key driver"
+> +	depends on ACPI_WMI
+> +	depends on INPUT
+> +	select INPUT_SPARSEKMAP
+> +	help
+> +	  Say Y here if you want support for WMI-based hotkey events on
+> +	  Xiaomi Redmibook devices.
+> +
+> +	  To compile this driver as a module, choose M here: the module will
+> +	  be called redmi-wmi.
+> +
+>  config GIGABYTE_WMI
+>  	tristate "Gigabyte WMI temperature driver"
+>  	depends on ACPI_WMI
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+> index bea87a85ae75..406dd0807ba7 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -13,6 +13,7 @@ obj-$(CONFIG_HUAWEI_WMI)		+= huawei-wmi.o
+>  obj-$(CONFIG_MXM_WMI)			+= mxm-wmi.o
+>  obj-$(CONFIG_NVIDIA_WMI_EC_BACKLIGHT)	+= nvidia-wmi-ec-backlight.o
+>  obj-$(CONFIG_XIAOMI_WMI)		+= xiaomi-wmi.o
+> +obj-$(CONFIG_REDMI_WMI)			+= redmi-wmi.o
+>  obj-$(CONFIG_GIGABYTE_WMI)		+= gigabyte-wmi.o
+>  
+>  # Acer
+> diff --git a/drivers/platform/x86/redmi-wmi.c b/drivers/platform/x86/redmi-wmi.c
+> new file mode 100644
+> index 000000000000..104c4953d67d
+> --- /dev/null
+> +++ b/drivers/platform/x86/redmi-wmi.c
+> @@ -0,0 +1,128 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* WMI driver for Xiaomi Redmibooks */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/device.h>
+> +#include <linux/input.h>
+> +#include <linux/input/sparse-keymap.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/unaligned.h>
+> +#include <linux/wmi.h>
+> +
+> +#include <uapi/linux/input-event-codes.h>
+> +
+> +#define WMI_REDMIBOOK_KEYBOARD_EVENT_GUID "46C93E13-EE9B-4262-8488-563BCA757FEF"
+> +
+> +#define AI_KEY_VALUE_MASK 0x00000100
+> +
+> +static const struct key_entry redmi_wmi_keymap[] = {
+> +	{KE_KEY, 0x00000201,	{KEY_SELECTIVE_SCREENSHOT}},
+> +	{KE_KEY, 0x00000301,	{KEY_ALL_APPLICATIONS}},
+> +	{KE_KEY, 0x00001b01,	{KEY_SETUP}},
+> +
+> +	/* AI button has code for each position */
+> +	{KE_KEY, 0x00011801,	{KEY_ASSISTANT}},
+> +	{KE_KEY, 0x00011901,	{KEY_ASSISTANT}},
+> +
+> +	/* Keyboard backlight */
+> +	{KE_IGNORE, 0x00000501, {}},
+> +	{KE_IGNORE, 0x00800501, {}},
+> +	{KE_IGNORE, 0x00050501, {}},
+> +	{KE_IGNORE, 0x000a0501, {}},
+> +
+> +	{KE_END}
+> +};
+> +
+> +struct redmi_wmi {
+> +	struct input_dev *input_dev;
+> +	/* Protects the key event sequence */
+> +	struct mutex key_lock;
+> +};
+> +
+> +static int redmi_wmi_probe(struct wmi_device *wdev, const void *context)
+> +{
+> +	struct redmi_wmi *data;
+> +	int err;
+> +
+> +	/* Init dev */
+> +	data = devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(&wdev->dev, data);
+> +
+> +	err = devm_mutex_init(&wdev->dev, &data->key_lock);
+> +	if (err)
+> +		return err;
+> +
+> +	data->input_dev = devm_input_allocate_device(&wdev->dev);
+> +	if (!data->input_dev)
+> +		return -ENOMEM;
+> +
+> +	data->input_dev->name = "Redmibook WMI keys";
+> +	data->input_dev->phys = "wmi/input0";
+> +
+> +	err = sparse_keymap_setup(data->input_dev, redmi_wmi_keymap, NULL);
+> +	if (err)
+> +		return err;
+> +
+> +	return input_register_device(data->input_dev);
+> +}
+> +
+> +static void redmi_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
+> +{
+> +	struct redmi_wmi *data = dev_get_drvdata(&wdev->dev);
+> +	bool autorelease = true;
+> +	u32 payload;
+> +	int value = 1;
+> +
+> +	if (obj->type != ACPI_TYPE_BUFFER) {
+> +		dev_err(&wdev->dev, "Bad response type %u\n", obj->type);
+> +		return;
+> +	}
+> +
+> +	if (obj->buffer.length < 32) {
+> +		dev_err(&wdev->dev, "Invalid buffer length %u\n", obj->buffer.length);
+> +		return;
+> +	}
+> +
+> +	payload = get_unaligned_le32(obj->buffer.pointer);
+> +	struct key_entry *entry = sparse_keymap_entry_from_scancode(data->input_dev, payload);
 
-The two above are fine.
+Please only define variables at the beginning of some block (in this case, 
+at the beginning of the function).
 
->  	if (retval == 0) {
->  		dev_dbg(udc_dev(dum),
->  				"dequeued req %p from %s, len %d buf %p\n",
->  				req, _ep->name, _req->length, _req->buf);
-> +		local_irq_save(flags);
->  		usb_gadget_giveback_request(_ep, _req);
-> +		local_irq_restore(flags);
+The only exception to this rule are cleanup.h related variables which may 
+have to be defined mid-function to ensure the correct teardown order of 
+the auto variables.
 
-This is not. I don't see the need for it. The queue part does
-	spin_lock_irqsave()
-	spin_unlock();
-	usb_gadget_giveback_request()
-	spin_lock();
-	spin_unlock_irqrestore();
+> +
+> +	if (!entry) {
+> +		dev_dbg(&wdev->dev, "Unknown WMI event with payload %u", payload);
+> +		return;
+> +	}
+> +
+> +	/* AI key quirk */
+> +	if (entry->keycode == KEY_ASSISTANT) {
+> +		value = !(payload & AI_KEY_VALUE_MASK);
+> +		autorelease = false;
+> +	}
+> +
+> +	guard(mutex)(&data->key_lock);
+> +	sparse_keymap_report_entry(data->input_dev, entry, value, autorelease);
+> +}
+> +
+> +static const struct wmi_device_id redmi_wmi_id_table[] = {
+> +	{ WMI_REDMIBOOK_KEYBOARD_EVENT_GUID, NULL },
+> +	{ }
+> +};
+> +
+> +static struct wmi_driver redmi_wmi_driver = {
+> +	.driver = {
+> +		.name = "redmi-wmi",
+> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> +	},
+> +	.id_table = redmi_wmi_id_table,
+> +	.probe = redmi_wmi_probe,
+> +	.notify = redmi_wmi_notify,
+> +	.no_singleton = true,
+> +};
+> +module_wmi_driver(redmi_wmi_driver);
+> +
+> +MODULE_DEVICE_TABLE(wmi, redmi_wmi_id_table);
+> +MODULE_AUTHOR("Gladyshev Ilya <foxido@foxido.dev>");
+> +MODULE_DESCRIPTION("Redmibook WMI driver");
+> +MODULE_LICENSE("GPL");
+> 
 
-and keeps the interrupts disabled during callback invocation. This seems
-to be just to unify the code vs the else path.
+-- 
+ i.
 
->  	}
-> -	local_irq_restore(flags);
->  	return retval;
->  }
-
-Sebastian
 
