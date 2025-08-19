@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-774628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C71B2B536
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685F9B2B540
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3671963EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23306622B60
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D16D2FF;
-	Tue, 19 Aug 2025 00:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC9D49659;
+	Tue, 19 Aug 2025 00:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EZIufOcn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zdz/1STj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F102110
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9418B1CA81;
+	Tue, 19 Aug 2025 00:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755562422; cv=none; b=aXo4Vp/NxefhbJYqn5oZAY29vP21M8CI8/hyZWiNojm4xbvjdZHN68oIGOO5q4X3cYBCidYJMUpNQd/maE/IQ9NMfLdfXFR7kkXjJWbLsQ7zCEXNEnYaobDWLI2hCsy/MEMc6DYTEjoTt1agn/EmarEk+WBJMEKzbCMxC0Llqvs=
+	t=1755562796; cv=none; b=PmPd1xVr8bK2LeLqqbgySsuQMYmzTgjCJSrXU2KXLxJZ8pS5yjZwLFJ9t2BHaDOO5mFW2WAMw9YFQnsEs9EqoNiHHxTMHKiehvKnniLSfcOvh1SZH3ikvvdRFgRV+cQVee9HitOo7wTIe05iYpKo3ZHYlCGYh21mYvsGyr0/U5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755562422; c=relaxed/simple;
-	bh=GBanHK/LR/pCa+c9vWGF20U2DJFnrBk8djjY08eqQnI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZNAwCpjYmgouYkocNwj7XnYTorvKbJJnVcc4YXWfJz3fX/yyYaeJrBp7N03WlLYPLqfjH5JryFMFWOUA/AWqbWdxtftRyMwKFVvsZrKbgTtTTdfiqVyTjJ/jxWnXJeWtrmcx5cQTKtxuD6gXvinzuaXv8qaVpCL1gDrCTPhNtpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EZIufOcn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7BDC4CEEB;
-	Tue, 19 Aug 2025 00:13:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755562421;
-	bh=GBanHK/LR/pCa+c9vWGF20U2DJFnrBk8djjY08eqQnI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EZIufOcnq3zWlRpA9rbGk9p/f1cZCEKsXyvKj1S+SVM+4GuekTaYnAQeUabIkSBFl
-	 p2ErIcETq0LI3Sm8ulCEAYOuI0sg+jYbSF83JwcVjHQjlfy36QDSW6S1Ls4+Soq0lK
-	 Qjm0I4kbptksi3V8jY59h3Ip/yTyvcszwGZTBA+w=
-Date: Mon, 18 Aug 2025 17:13:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>,
- Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@gogle.com>,
- Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, Zi
- Yan <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com
-Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in
- batch freeing
-Message-Id: <20250818171340.2f4ce3356f1cda59acecab57@linux-foundation.org>
-In-Reply-To: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
-References: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755562796; c=relaxed/simple;
+	bh=AR34Y3cUHe299MkLB5vxlNw6W6dIHDHLtnEw+RTlkQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAXt3aK3C/CFqNllS+yIY0+xkm19xFndqMWi+ts4wj4bDcpH0lrMq1ZOeiREW6RA0xC0lNI5rkgd7+SvDNGtQkxkN9ly6sKz7p3MFzwLKUXcZRg1DRnGpuDCLWFLrNm34C8QrbDHbzuDOjQPZGWmC5P6aXTjFrvNEdjdt8/4Qws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zdz/1STj; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755562795; x=1787098795;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AR34Y3cUHe299MkLB5vxlNw6W6dIHDHLtnEw+RTlkQo=;
+  b=Zdz/1STjYrRH273/we+szdpsyrgFRhQ0CleWtl8VOh/301WPt283xu27
+   ck17tTdN13CgqHn7cLTNHTVR5skdnkBcpTZQHZInkFYKLVJXYYYCvnKrf
+   vncvNEc5nBrFsv18JoDKj+CZfTh8n0XC1d5dYESsZwuyMlKf+IG6a8Y5E
+   g+Nr8DdU3g8ngrVv6SyCiYDSCb073ALW741fR1KULE8tgYnQXShZ/gRkb
+   a0seVZzZNFqJt5uKzS0VUilibS0dZ6FPqUXKqCyULtJaBt8IyJ3QWIL7S
+   KlkhNx8V6OElwI+WV+6X9zfSoAZP5qqpC/u3KOLdALwEPvOShTVmxAKiM
+   g==;
+X-CSE-ConnectionGUID: Q3H/u4omSHqbQOGQ1wZcyQ==
+X-CSE-MsgGUID: VkjISQJ2S+OJBObH/xILsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57509727"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="57509727"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 17:19:54 -0700
+X-CSE-ConnectionGUID: JkeMgubOSbmutcJ2PIIx5A==
+X-CSE-MsgGUID: JOl/WuWzSUuBYHJ5PZzkZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="167617232"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 18 Aug 2025 17:19:52 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uoA4L-000GKd-2m;
+	Tue, 19 Aug 2025 00:19:26 +0000
+Date: Tue, 19 Aug 2025 08:18:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, simona@ffwll.ch, deller@gmx.de,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH 2/6] fbcon: Rename struct fbcon_ops to struct fbcon
+Message-ID: <202508190824.awMtfRRR-lkp@intel.com>
+References: <20250818104655.235001-3-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818104655.235001-3-tzimmermann@suse.de>
 
-On Mon, 18 Aug 2025 11:58:03 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+Hi Thomas,
 
-> While testing workloads with high sustained memory pressure on large machines
-> (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
-> Further investigation showed that the lock in free_pcppages_bulk was being held
-> for a long time, even being held while 2k+ pages were being freed.
-> 
-> Instead of holding the lock for the entirety of the freeing, check to see if
-> the zone lock is contended every pcp->batch pages. If there is contention,
-> relinquish the lock so that other processors have a change to grab the lock
-> and perform critical work.
-> 
-> In our fleet,
+kernel test robot noticed the following build errors:
 
-who is "our"?
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.17-rc2 next-20250818]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> we have seen that performing batched lock freeing has led to
-> significantly lower rates of softlockups, while incurring relatively small
-> regressions (relative to the workload and relative to the variation).
-> 
-> The following are a few synthetic benchmarks:
-> 
-> Test 1: Small machine (30G RAM, 36 CPUs)
-> 
-> ...
->
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
->
-> ...
->
-> @@ -1267,12 +1270,22 @@ static void free_pcppages_bulk(struct zone *zone, int count,
->  
->  			/* must delete to avoid corrupting pcp list */
->  			list_del(&page->pcp_list);
-> +			batch -= nr_pages;
->  			count -= nr_pages;
->  			pcp->count -= nr_pages;
->  
->  			__free_one_page(page, pfn, zone, order, mt, FPI_NONE);
->  			trace_mm_page_pcpu_drain(page, order, mt);
-> -		} while (count > 0 && !list_empty(list));
-> +		} while (batch > 0 && !list_empty(list));
-> +
-> +		/*
-> +		 * Prevent starving the lock for other users; every pcp->batch
-> +		 * pages freed, relinquish the zone lock if it is contended.
-> +		 */
-> +		if (count && spin_is_contended(&zone->lock)) {
-> +			spin_unlock_irqrestore(&zone->lock, flags);
-> +			spin_lock_irqsave(&zone->lock, flags);
-> +		}
->  	}
+url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/fbcon-Fix-empty-lines-in-fbcon-h/20250818-185124
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250818104655.235001-3-tzimmermann%40suse.de
+patch subject: [PATCH 2/6] fbcon: Rename struct fbcon_ops to struct fbcon
+config: x86_64-buildonly-randconfig-004-20250819 (https://download.01.org/0day-ci/archive/20250819/202508190824.awMtfRRR-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250819/202508190824.awMtfRRR-lkp@intel.com/reproduce)
 
-Pretty this isn't.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508190824.awMtfRRR-lkp@intel.com/
 
-Sigh, we do so much stuff here and in __free_one_page().
+All errors (new ones prefixed by >>):
 
-What sort of guarantee do we have that the contending task will be able
-to get in and grab the spinlock in that tiny time window?
+>> drivers/video/fbdev/core/fbcon.c:708:19: error: use of undeclared identifier 'con'
+     708 |         fbcon_set_bitops(con);
+         |                          ^
+   1 error generated.
+
+
+vim +/con +708 drivers/video/fbdev/core/fbcon.c
+
+   689	
+   690	static int fbcon_invalid_charcount(struct fb_info *info, unsigned charcount)
+   691	{
+   692		int err = 0;
+   693	
+   694		if (info->flags & FBINFO_MISC_TILEBLITTING &&
+   695		    info->tileops->fb_get_tilemax(info) < charcount)
+   696			err = 1;
+   697	
+   698		return err;
+   699	}
+   700	#else
+   701	static void set_blitting_type(struct vc_data *vc, struct fb_info *info)
+   702	{
+   703		struct fbcon *confb = info->fbcon_par;
+   704	
+   705		info->flags &= ~FBINFO_MISC_TILEBLITTING;
+   706		confb->p = &fb_display[vc->vc_num];
+   707		fbcon_set_rotation(info);
+ > 708		fbcon_set_bitops(con);
+   709	}
+   710	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
