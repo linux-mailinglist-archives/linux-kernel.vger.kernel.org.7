@@ -1,378 +1,227 @@
-Return-Path: <linux-kernel+bounces-776164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F55B2C968
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:22:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873DFB2C976
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA66D1BC3241
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CA15C26C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A041124C076;
-	Tue, 19 Aug 2025 16:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B68325783F;
+	Tue, 19 Aug 2025 16:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GHib9DjB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="iiXpXx2m"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011040.outbound.protection.outlook.com [52.101.125.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD189223337;
-	Tue, 19 Aug 2025 16:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755620543; cv=none; b=E1wuCvbuopEbUeNeaTDt2jpez8m2mk/szxZwAkr8rhIPdcHcpPtoC+bmK4gRBziD4B3dDLZLgePeNy9HdSEm8erHZRL/ZPdTA8m1psG/G7xV/Nn2YHmOTH3p2pak5OhSPQQBkTvEIV2qB0tvH5MDt+WfSx2UKNE/ZJufLJLj3fw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755620543; c=relaxed/simple;
-	bh=W5BXlbdL6VMt9fy51GQ8P4Eh8jE43eeq4m0X4bsoFVk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kUVg7tPNZsZpM9ellBprJUZdLNjOVi4sgW2rQh9HmoRKxnX4Pkrm5qSRXlDCHLfZmKkjwBri4QKpSf3NXbclF9ZBj5WEz6ntmb3csv1k8ONkVCNc4c8+2izgBHRjEn72pq6LwFHUiTrghF1EUQj+ilXVX8eYW0QE7KJA05aQ9b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GHib9DjB; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755620542; x=1787156542;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=W5BXlbdL6VMt9fy51GQ8P4Eh8jE43eeq4m0X4bsoFVk=;
-  b=GHib9DjBJp6vJDDrh8UTl313YE1glh1dQ+sVhVmFjvrydx5PpOYGcrlK
-   chhJROyMBjt9b7kAO2q1T3mftxWawLh/1ysd9mVvWMv87VbJMeJ3KH1FB
-   S4ReA/bZ12htap3I1Ku3axfYIl24CFhkBsFREcl2GNfaTVYd/Nns8LuRn
-   RP6Ha3Opy3SgfPxX25W5XkEOc3RSfpznSQmKz0VrD74Bg0mCCHuUfeOzP
-   KvgdoXeAcdBw2LERAclxM5jcT9RqgvvsOvruBM/6QzUsoHWdWpu+UoxFg
-   6h0LxtsHLU7lQ+9+0mObDqUJycg4GF18AkA50QBvQ135G4MTFYY1z5oIY
-   Q==;
-X-CSE-ConnectionGUID: J6WwT4H/Tg2NIJzz7ukIzA==
-X-CSE-MsgGUID: VFeUH2mQTFSUNQfB84Vn4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57784057"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="57784057"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 09:22:21 -0700
-X-CSE-ConnectionGUID: KRj5XQo4TCqnKLwiAeRdFQ==
-X-CSE-MsgGUID: L0XRhVf3RUKqK362RJBLlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="172326288"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO [10.245.244.175]) ([10.245.244.175])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 09:22:14 -0700
-Message-ID: <a781f7781a9bf510c3707a5c9a235e1dab785617.camel@linux.intel.com>
-Subject: Re: [RFC 3/3] drm/xe: Add DRM_XE_GEM_CREATE_FLAG_PINNED flag and
- implementation
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Maarten Lankhorst <dev@lankhorst.se>, Lucas De Marchi	
- <lucas.demarchi@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David
- Airlie	 <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maxime Ripard
-	 <mripard@kernel.org>, Natalie Vock <natalie.vock@gmx.de>, Tejun Heo	
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 'Michal
- =?ISO-8859-1?Q?Koutn=FD=27?=	 <mkoutny@suse.com>, Michal Hocko
- <mhocko@kernel.org>, Roman Gushchin	 <roman.gushchin@linux.dev>, Shakeel
- Butt <shakeel.butt@linux.dev>, Muchun Song	 <muchun.song@linux.dev>, Andrew
- Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "'Liam R . Howlett'"	
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport	
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Thomas
- Zimmermann	 <tzimmermann@suse.de>
-Cc: Michal Hocko <mhocko@suse.com>, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org
-Date: Tue, 19 Aug 2025 18:22:12 +0200
-In-Reply-To: <20250819114932.597600-8-dev@lankhorst.se>
-References: <20250819114932.597600-5-dev@lankhorst.se>
-	 <20250819114932.597600-8-dev@lankhorst.se>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B03A244661;
+	Tue, 19 Aug 2025 16:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755620551; cv=fail; b=Y/Wmqhlose0ffu+8U6a/eG64E7sS/vsQ+5GgIjXbwaq4BWtTuPuZ5HkwnzM4XPhEYsNVlUtQ3GyYtS4dtSo5/yJsn7Kv5VlesLvxUbV31dHFukFH2Dp198RG9Il8yFoak379HG8gy8dEJzk4yswMvna4rERICdfVaqv1jjI0fXg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755620551; c=relaxed/simple;
+	bh=eAESYgqLFPDnoGVPeQlwDBOLyWaJAPtkuwfJp4/kzxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=S6KvJfzL1bAE/sFWDvN54tpcksMUnuT4oTs6o43LNL6vS+l+Mq/brUgF3SuExIRVS0N5J7XJT0ghpLEsaHhc9/3x0JKvre+NrGOCV4Z3qESCX6N/pjuvmxAxwekmFCLbiFMwa76oYYNUWrZwvXYo6ojz8S4cEDP5NJo4+MuZvK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=iiXpXx2m; arc=fail smtp.client-ip=52.101.125.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SUre8JbRS+JLw/ztKEOsChk2QK0IejphbvQZv/bLwxTK6ycSSl2HyQqwSez+W2MMA8K0EV4K2iyKqHCvggV8QKifdmAka45pbI25rYBe5ajxq/Yq0prJCbSC0FFFjgh2nPzQWBa5HmISKkqc5i6Q8bjixLSqs0PdeAWoXeAF0nlLJGsOFkBNA+AIgw845ofMMggwob4PuIXa4Asnm8FL9p1/+0DhWW59LMUQiT7q243TKF4jZNaVixXC8OEomlDTgdkkQTFJ0Fgu+YHBFC44ktBa03Oh3TMvhR5AwvEYLxBAMorw4Pr8Jag+9k3W7UYymnEU6HQ3+uJ0QCNJ1krXhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GQoAO5LLe5clxmsYipgznSDP3S9yGT3EvLIakZo7zbs=;
+ b=dX7bUme1RSMNb8YlvgvlFmjLf4ySoQJowbLTbeJds1NNe6rhGwr5pbz/DoxV59SxrxrcfgpAjq4XnGy1rGTgb9+TlJex23jey7EXCPo0lKhTWfnnl9gI2BaIAb2N/tvcgLD0lN1GOvA6L4nzwkgDzP8ZYBYlWqljEwSBTl4iOe3miQ55yRZ2brN8F/yS0Pq1fMezGFjks+cel6EvRWIezNZrEqX2itgS4+kmhOQEUwR/N/12mcsPFk5V9KXdZTquIs/XIrmPZTY4oMroKRjKM3DHTOLqA1/tGcqlP7ivIW2/fqwEM+7Eg4TN0rHu0kefT6zabtJrzA48Jeu5436U0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GQoAO5LLe5clxmsYipgznSDP3S9yGT3EvLIakZo7zbs=;
+ b=iiXpXx2mB99CCF66sk6sUKQcxnsbv2Mgem4YmFPcK8T+EElIaYu5YmRdBjM5+hWB9jLxqskd0M8KkFZ504NbWivPzNuGcIU0dr6YHciae+Pa8n1vy/4cPwhfvA5YWB0XeSl91lo0kWUVSW1TIJuUz4NKMUoR9P/lW4howzaHCak=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by OSZPR01MB7049.jpnprd01.prod.outlook.com (2603:1096:604:13c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Tue, 19 Aug
+ 2025 16:22:27 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31%5]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 16:22:27 +0000
+Date: Tue, 19 Aug 2025 18:22:18 +0200
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Biju <biju.das.au@gmail.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 4/7] pwm: rzg2l-gpt: Add calculate_prescale() callback to
+ struct rzg2l_gpt_info
+Message-ID: <aKSkutjQ58bTHYT4@tom-desktop>
+References: <20250814184115.192930-1-biju.das.jz@bp.renesas.com>
+ <20250814184115.192930-5-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814184115.192930-5-biju.das.jz@bp.renesas.com>
+X-ClientProxiedBy: FR4P281CA0348.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f4::7) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|OSZPR01MB7049:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa5279c2-4e8c-4d22-5e45-08dddf3c967d
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bGVJtfQE0GU5VXpgl4ccr58APMgnN0raIaPddPUfTJIos6iKBSC0Eg1+kfs3?=
+ =?us-ascii?Q?2MDsgDXQ2HayRh3LhvaqsHsqIw2ONrWDoXj9mvMCir4hKfgRz4TfSuGo7yDm?=
+ =?us-ascii?Q?rkdBsJVUll1JZWFARnDLyty3BHXUTtQOugkMGPr6G/lmYT2aqlFQFqqeRKLU?=
+ =?us-ascii?Q?zm2wNq2dNTnDkfQl7ty/bZfJw7o14yOHr7mHx5IBchbOh8MHNy9kKdXicWRu?=
+ =?us-ascii?Q?LmutIn7LG43e/6DVtkJUBq3VvEJff/66csYvu32nv7zlmhP6V75lt38NvbY9?=
+ =?us-ascii?Q?lU9pv2gdv7qErQEdezlnSAbKfs25l59nU7OrsuvBFpyOA4OlHyvD0OdnpaYV?=
+ =?us-ascii?Q?evBTQET8YLZdu+nrULKfDOhFpbbyAV3RXYmbV81xKaF+vzgLITNLsaGOxUK5?=
+ =?us-ascii?Q?2aGo+RIUh6qUNiKYqVWcNzbWRPQJ3omPbXjYYR7sF5+yCyMVOOn6fqVbWNQu?=
+ =?us-ascii?Q?imB+6H5wcKr6+MIw1aF5Rl/6hie4y5ZB+proMpx9d2pmZFQJhvjnslISf0II?=
+ =?us-ascii?Q?QGM+6BplildqWOwJL4Jg/X7zi4F0b3viazNVxAFhn3ra3RI8mHghzPhrI4ro?=
+ =?us-ascii?Q?33sQ/sS2xAvXwZA7ftZhl49dYopDr389oburXZHwnLr/WRCrm5KnKyGIBJsS?=
+ =?us-ascii?Q?EVFGGSVLoTetU4VGti/DV5tilh6lSb6MrTOUbUfBFuWaf1K9SpNOoVyuxcZR?=
+ =?us-ascii?Q?yak0FhPic2IFuIX728azk8FsZ18UMYAFKaQe8mO0l2qtFRb1Z1YEvsfABpNo?=
+ =?us-ascii?Q?lhQ5uXQxpri2abVgZ5NQhhzJXy1aXjmzIejnh7KZk7Fanr7c6awVXuiCbMmh?=
+ =?us-ascii?Q?5/1h1PK+tnJZRheW4RMI6oLbWom76OzTZvk6J/wbS3ehW2l6E2I7/xM/pZUi?=
+ =?us-ascii?Q?A7kh3GOquq33quyu0klAFgEym5uY4CweV4GQyL7Z6slrPymWC1QPnyteRrog?=
+ =?us-ascii?Q?hmosGBJEC9am3Pq/vh8IWV9EeVjBXZOxaTK8tIh0BW1KszAo9HMcwDgSKvf+?=
+ =?us-ascii?Q?aN+RKoHS7YB1A/FL+R/4FvOcPSOLVVAUikdRQE5Z8+JKfY787QxMYeBFlDHM?=
+ =?us-ascii?Q?QHHZC5Oly8i/fDx7JtUqY7df6xCdIe21QuuY6Qes1Vx6qXtaj4fM7RyLugVY?=
+ =?us-ascii?Q?RNhMrp3mAyzlIEgWg8t8atKbwKm/PO5dH3ZraDFU7I0WChl5i8cRxrXBSLhQ?=
+ =?us-ascii?Q?nwpYpj2xwo3Ik1TNu4Vl6syk1wWSHvPe372b3ef2oyK2ebY9ar0NpHeS1Ogk?=
+ =?us-ascii?Q?UcsGl7auXQi1/EJkES7eYiuaeWrVak4jRszwXUm8W5U8N8a4KkvM6/d4mucA?=
+ =?us-ascii?Q?Tpa979U6GELcQAc+NQ1SbWimLuognWxODTdim49mA2FBds7bSbj6coJw/cLQ?=
+ =?us-ascii?Q?ey0IKfEXqSwbqHeMyG4A3LeUSyaC8QsejrQexffZg4JVzBjOuzAOs5OjeqLL?=
+ =?us-ascii?Q?M5TlTDJVvjWpUmkbp2PnOoP61E+ZxhsyVUFXt3RrMEEDnXhALLTVrA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RJPaVuIyoKLNhsqqr71WVkXB8aUkoY2yn0XXpKdzlvbhDzem7nQ8jxFtcLjz?=
+ =?us-ascii?Q?Up1BIczLfx1wG7Fo0YAZM624QqoWWTYjZOEZsWgMx7ErknuegMklG2FxlFrZ?=
+ =?us-ascii?Q?QAXUKMjSe7lr70guvOpyU8nEyYz3wACh6CwGj1Mci5dXWCa+tYQDr7zSyrYS?=
+ =?us-ascii?Q?9E7GMGKfwuPxQGcZW/s5y58PNhZryoC8tti6UK+lRnS58U0nXvRSWkZ8BnwC?=
+ =?us-ascii?Q?WTUM2a6sTNxk/dxkQvWtd0kuxw2gdQmngEeypFvm5uqay3iUmJNLjNG9A2fM?=
+ =?us-ascii?Q?ScjyFz/0W0sDVte/UosKpDcM7DxtDIQY0QeIVoA0heyV/DgrMGtITXenCK84?=
+ =?us-ascii?Q?34D9LvipBBSUq8osj+Ej07H2s4skLDN/um1jswCBhIi7l2cNcTb517F2/9Qg?=
+ =?us-ascii?Q?iGWLUiyF+CUqQNujBju2uSoVnZI/YlQ5hSaVUQKpr4IPH4EgGdt2RZQgqh0g?=
+ =?us-ascii?Q?qYCaDJgfJitIZF7eQm/7FaQl3qabk7QLRtx51eo+3+ADFgOig9V7IBFs0R59?=
+ =?us-ascii?Q?GFWa2MgY3ZLDmIyvKF1MUFyrapizHcClokRkBmdoEwVlZFSD4cDdYHg+no5L?=
+ =?us-ascii?Q?PQQOxkJtL+dtThLbZPGC4NS8zLbOkfOdM49cfZbHu8gu/0MUaf+4fxXaNubP?=
+ =?us-ascii?Q?Jrv4dp2NihfThSDUIUT53pnFUMWl8cr9yYz0QsxxwEYBWu9j5wBB8Sn0ZXQa?=
+ =?us-ascii?Q?jG184u7iTkFkL7RHvYwtr2IlseU1I992lHl84+pTlvmGIuBoAlYiMFkj7JDc?=
+ =?us-ascii?Q?4PB7rS37oHJgKu7S+KywUVdcsm2YYrHA7vS4LWlEXYTK1s350qZe4a5QCk9c?=
+ =?us-ascii?Q?uOSvZn76GTtsrSqpwSFGF6w6qe7tpzipRc2mA5NvCBIzcSpQE8sJmv+jjgf+?=
+ =?us-ascii?Q?LkAojPAgtcb3FoPAkkb/HIx6i74sntmiePQiZSovuODxa9iUw4tXPmC5HYH7?=
+ =?us-ascii?Q?amvM2RGDsUl15NvxW8PY1rT2b5OJDAaVjaupH5BbzFMFgsEtE21SiFQ3XNHc?=
+ =?us-ascii?Q?dl68wEFDBQnhgyWS36XXwikdaxsLTcpkO5AN46rRF3YDqqK90PEwOTeCY0Qv?=
+ =?us-ascii?Q?kDrO6IOdMu30IA+O/g44W3hj4ECl7DjcIydJ9eNnIgMj8kBx7X4NVwK2L5iZ?=
+ =?us-ascii?Q?kLralcPgqtplzIhFsUAw7RkPP2l7CNGQ8K8g39F1GvRA647rm2Kpu2iqzapt?=
+ =?us-ascii?Q?c6bNWoA0L6y0JbOvMSTh93BRZtFgYjtLQR66IlOFd9mZJTjNUxGGGHC+vrKN?=
+ =?us-ascii?Q?YZLN+s4Q7VaD2USjpaVm6NIBGrFm9bpZBrhRE/DwDLcO7iq7Ybl4SIc0ADs0?=
+ =?us-ascii?Q?nIexy7wwkthAT3AIeuY28bHfgTBkMu/p2tyuK59vaSW0xAaFhze6pMUBjkhm?=
+ =?us-ascii?Q?8dwVpqtcQ0AMuIQ6lGhmyy88hkb5j1B8TDIwvRSN2F+45egK1pJhRgEoPUYL?=
+ =?us-ascii?Q?1iKCeSa4OPTmETEaL9bwLR8S1CMPWNrBfoxf+35t37p9cnhdyHVDGd5DKCbd?=
+ =?us-ascii?Q?aAVARA0WFUqv1iUCxrZAbEhjk49m8BovOq7Xnlk1VnAa87mFntc4PRn0g7i9?=
+ =?us-ascii?Q?eNEUs9MBj6gpATccZeHqYJRK6+fVHLGdryZRku65CBp2nYOQjGnaBNcbOa3i?=
+ =?us-ascii?Q?TnJkbwChmm7sQRZHxBsl2cc=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa5279c2-4e8c-4d22-5e45-08dddf3c967d
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 16:22:27.5466
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nMhYo/WNsuvp2f+fXCI/qWMfjM9c2IR/FVgWhRwv6RWKxLq65C3O3Z28l4/cCOXLJ7UIPD8/6GLFzd+nQMTO05ttcdk737O9eE1yfB9SHPP1H8yaoBLiGSKkyK/Zl2gm
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7049
 
-Hi, Maarten,
+Hi Biju,
+Thank you for your patch.
 
-On Tue, 2025-08-19 at 13:49 +0200, Maarten Lankhorst wrote:
-> Add an option to pin memory through the science of cgroup accounting.
-> A bo will be pinned for its entire lifetime, and this allows buffers
-> that are pinned for dma-buf export without requiring the pinning to
-> be
-> done at the dma-buf layer for all devices.
->=20
-> For now only implement VRAM pinning. Dave Airlie has a series to
-> implement
-> memcg accounting for the GPU but that is not ready yet.
+On Thu, Aug 14, 2025 at 07:41:08PM +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> RZ/G2L GPT the prescale factors are continuous power of 4 whereas on RZ/G3E
+> it is power of 2 but discontinuous. Add calculate_prescale() callback to
+> struct rzg2l_gpt_info for handling this difference.
+> 
 
-Previous discussions around this have favoured a UAPI where we pin a
-gpu-vm range, with a pin at mapping time, or dma-buf pin time where
-required, this allows for dynamic pinning and unpinning, and would
-avoid having separate pinning interfaces for bos and userptr.
+Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-In particular if we don't know at bo creation time which buffer objects
-will be exported with a method requiring pinning, how would UMD deduce
-what buffer objects to pin?
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks,
-Thomas
+Thanks & Regards,
+Tommaso
 
-
-
->=20
-> Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
 > ---
-> =C2=A0drivers/gpu/drm/xe/xe_bo.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 66
-> ++++++++++++++++++++++++++++++++-
-> =C2=A0drivers/gpu/drm/xe/xe_dma_buf.c | 10 ++++-
-> =C2=A0include/uapi/drm/xe_drm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 =
-++++-
-> =C2=A03 files changed, 82 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/xe/xe_bo.c b/drivers/gpu/drm/xe/xe_bo.c
-> index 6fea39842e1e6..4095e6bd04ea9 100644
-> --- a/drivers/gpu/drm/xe/xe_bo.c
-> +++ b/drivers/gpu/drm/xe/xe_bo.c
-> @@ -5,6 +5,7 @@
-> =C2=A0
-> =C2=A0#include "xe_bo.h"
-> =C2=A0
-> +#include <linux/cgroup_dmem.h>
-> =C2=A0#include <linux/dma-buf.h>
-> =C2=A0#include <linux/nospec.h>
-> =C2=A0
-> @@ -208,7 +209,8 @@ static bool force_contiguous(u32 bo_flags)
-> =C2=A0	 * must be contiguous, also only contiguous BOs support
-> xe_bo_vmap.
-> =C2=A0	 */
-> =C2=A0	return bo_flags & XE_BO_FLAG_NEEDS_CPU_ACCESS &&
-> -	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bo_flags & XE_BO_FLAG_PINNED;
-> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bo_flags & XE_BO_FLAG_PINNED &&
-> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !(bo_flags & XE_BO_FLAG_USER);
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void add_vram(struct xe_device *xe, struct xe_bo *bo,
-> @@ -1697,6 +1699,16 @@ static void xe_gem_object_free(struct
-> drm_gem_object *obj)
-> =C2=A0	ttm_bo_put(container_of(obj, struct ttm_buffer_object,
-> base));
-> =C2=A0}
-> =C2=A0
-> +static void xe_bo_unpin_user(struct xe_bo *bo)
-> +{
-> +	xe_bo_unpin_external(bo);
-> +
-> +	if (bo->flags & XE_BO_FLAG_SYSTEM)
-> +		WARN_ON(1);
-> +	else
-> +		dmem_cgroup_unpin(bo->ttm.resource->css,
-> xe_bo_size(bo));
-> +}
-> +
-> =C2=A0static void xe_gem_object_close(struct drm_gem_object *obj,
-> =C2=A0				struct drm_file *file_priv)
-> =C2=A0{
-> @@ -1708,6 +1720,10 @@ static void xe_gem_object_close(struct
-> drm_gem_object *obj,
-> =C2=A0		xe_bo_lock(bo, false);
-> =C2=A0		ttm_bo_set_bulk_move(&bo->ttm, NULL);
-> =C2=A0		xe_bo_unlock(bo);
-> +	} else if (bo->flags & XE_BO_FLAG_PINNED) {
-> +		xe_bo_lock(bo, false);
-> +		xe_bo_unpin_user(bo);
-> +		xe_bo_unlock(bo);
-> =C2=A0	}
-> =C2=A0}
-> =C2=A0
-> @@ -2128,8 +2144,27 @@ struct xe_bo *xe_bo_create_user(struct
-> xe_device *xe, struct xe_tile *tile,
-> =C2=A0	struct xe_bo *bo =3D __xe_bo_create_locked(xe, tile, vm, size,
-> 0, ~0ULL,
-> =C2=A0						 cpu_caching,
-> ttm_bo_type_device,
-> =C2=A0						 flags |
-> XE_BO_FLAG_USER, 0);
-> -	if (!IS_ERR(bo))
-> +	if (!IS_ERR(bo)) {
-> +		int ret =3D 0;
-> +
-> +		if (bo->flags & XE_BO_FLAG_PINNED) {
-> +			if (bo->flags & XE_BO_FLAG_SYSTEM) {
-> +				ret =3D -ENOSYS; // TODO
-> +			} else {
-> +				ret =3D dmem_cgroup_try_pin(bo-
-> >ttm.resource->css, size);
-> +			}
-> +			if (!ret)
-> +				ret =3D xe_bo_pin_external(bo);
-> +			else if (ret =3D=3D -EAGAIN)
-> +				ret =3D -ENOSPC;
-> +		}
-> +
-> =C2=A0		xe_bo_unlock_vm_held(bo);
-> +		if (ret) {
-> +			xe_bo_put(bo);
-> +			return ERR_PTR(ret);
-> +		}
-> +	}
-> =C2=A0
-> =C2=A0	return bo;
-> =C2=A0}
-> @@ -2745,6 +2780,28 @@ int xe_gem_create_ioctl(struct drm_device
-> *dev, void *data,
-> =C2=A0			 args->cpu_caching =3D=3D
-> DRM_XE_GEM_CPU_CACHING_WB))
-> =C2=A0		return -EINVAL;
-> =C2=A0
-> +	if (XE_IOCTL_DBG(xe, args->flags &
-> DRM_XE_GEM_CREATE_FLAG_PINNED)) {
-> +		bool pinned_flag =3D true;
-> +		/* Only allow a single placement for pinning */
-> +		if (XE_IOCTL_DBG(xe, pinned_flag && hweight32(args-
-> >placement) !=3D 1))
-> +			return -EINVAL;
-> +
-> +		/* Meant for exporting, do not allow a VM-local BO
-> */
-> +		if (XE_IOCTL_DBG(xe, pinned_flag && args->vm_id))
-> +			return -EINVAL;
-> +
-> +		/* Similarly, force fail at creation time for now.
-> We may relax this requirement later */
-> +		if (XE_IOCTL_DBG(xe, pinned_flag && args->flags &
-> DRM_XE_GEM_CREATE_FLAG_DEFER_BACKING))
-> +			return -EINVAL;
-> +
-> +		/* Require the appropriate cgroups to be enabled. */
-> +		if (XE_IOCTL_DBG(xe, pinned_flag &&
-> !IS_ENABLED(CONFIG_CGROUP_DMEM) && bo_flags & XE_BO_FLAG_VRAM_MASK)
-> ||
-> +		=C2=A0=C2=A0=C2=A0 XE_IOCTL_DBG(xe, pinned_flag &&
-> !IS_ENABLED(CONFIG_MEMCG) && bo_flags & XE_BO_FLAG_SYSTEM))
-> +			return -EINVAL;
-> +
-> +		bo_flags |=3D XE_BO_FLAG_PINNED;
-> +	}
-> +
-> =C2=A0	if (args->vm_id) {
-> =C2=A0		vm =3D xe_vm_lookup(xef, args->vm_id);
-> =C2=A0		if (XE_IOCTL_DBG(xe, !vm))
-> @@ -2790,6 +2847,11 @@ int xe_gem_create_ioctl(struct drm_device
-> *dev, void *data,
-> =C2=A0		__xe_bo_unset_bulk_move(bo);
-> =C2=A0		xe_vm_unlock(vm);
-> =C2=A0	}
-> +	if (bo->flags & XE_BO_FLAG_PINNED) {
-> +		xe_bo_lock(bo, false);
-> +		xe_bo_unpin_user(bo);
-> +		xe_bo_unlock(bo);
-> +	}
-> =C2=A0out_put:
-> =C2=A0	xe_bo_put(bo);
-> =C2=A0out_vm:
-> diff --git a/drivers/gpu/drm/xe/xe_dma_buf.c
-> b/drivers/gpu/drm/xe/xe_dma_buf.c
-> index 346f857f38374..6719f4552ad37 100644
-> --- a/drivers/gpu/drm/xe/xe_dma_buf.c
-> +++ b/drivers/gpu/drm/xe/xe_dma_buf.c
-> @@ -53,6 +53,11 @@ static int xe_dma_buf_pin(struct
-> dma_buf_attachment *attach)
-> =C2=A0	struct xe_device *xe =3D xe_bo_device(bo);
-> =C2=A0	int ret;
-> =C2=A0
-> +	if (bo->flags & XE_BO_FLAG_PINNED) {
-> +		ttm_bo_pin(&bo->ttm);
-> +		return 0;
-> +	}
-> +
-> =C2=A0	/*
-> =C2=A0	 * For now only support pinning in TT memory, for two
-> reasons:
-> =C2=A0	 * 1) Avoid pinning in a placement not accessible to some
-> importers.
-> @@ -83,7 +88,10 @@ static void xe_dma_buf_unpin(struct
-> dma_buf_attachment *attach)
-> =C2=A0	struct drm_gem_object *obj =3D attach->dmabuf->priv;
-> =C2=A0	struct xe_bo *bo =3D gem_to_xe_bo(obj);
-> =C2=A0
-> -	xe_bo_unpin_external(bo);
-> +	if (bo->flags & XE_BO_FLAG_PINNED)
-> +		ttm_bo_unpin(&bo->ttm);
-> +	else
-> +		xe_bo_unpin_external(bo);
-> =C2=A0}
-> =C2=A0
-> =C2=A0static struct sg_table *xe_dma_buf_map(struct dma_buf_attachment
-> *attach,
-> diff --git a/include/uapi/drm/xe_drm.h b/include/uapi/drm/xe_drm.h
-> index c721e130c1d2d..3184fa38ce17e 100644
-> --- a/include/uapi/drm/xe_drm.h
-> +++ b/include/uapi/drm/xe_drm.h
-> @@ -765,12 +765,15 @@ struct drm_xe_device_query {
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 until the object is either bound to a virtual =
-memory region
-> via
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 VM_BIND or accessed by the CPU. As a result, n=
-o backing memory
-> is
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 reserved at the time of GEM object creation.
-> - *=C2=A0 - %DRM_XE_GEM_CREATE_FLAG_SCANOUT
-> + *=C2=A0 - %DRM_XE_GEM_CREATE_FLAG_SCANOUT - GEM object will be used
-> + *=C2=A0=C2=A0=C2=A0 display framebuffer.
-> =C2=A0 *=C2=A0 - %DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM - When using =
-VRAM
-> as a
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 possible placement, ensure that the correspond=
-ing VRAM
-> allocation
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 will always use the CPU accessible part of VRA=
-M. This is
-> important
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 for small-bar systems (on full-bar systems thi=
-s gets turned
-> into a
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 noop).
-> + *=C2=A0 - %DRM_XE_GEM_CREATE_FLAG_PINNED - Pin the backing memory
-> permanently
-> + *=C2=A0=C2=A0=C2=A0 on allocation, if withing cgroups limits.
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 Note1: System memory can be used as an extra p=
-lacement if the
-> kernel
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 should spill the allocation to system memory, =
-if space can't
-> be made
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 available in the CPU accessible part of VRAM (=
-giving the same
-> @@ -781,6 +784,10 @@ struct drm_xe_device_query {
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 need to use VRAM for display surfaces, therefo=
-re the kernel
-> requires
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 setting this flag for such objects, otherwise =
-an error is
-> thrown on
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 small-bar systems.
-> + *=C2=A0=C2=A0=C2=A0 Note3: %DRM_XE_GEM_CREATE_FLAG_PINNED requires the =
-BO to have
-> only
-> + *=C2=A0=C2=A0=C2=A0 a single placement, no vm_id, requires (device) mem=
-ory cgroups
-> enabled,
-> + *=C2=A0=C2=A0=C2=A0 and is incompatible with the %DEFER_BACKING and
-> %NEEDS_VISIBLE_VRAM
-> + *=C2=A0=C2=A0=C2=A0 flags.
-> =C2=A0 *
-> =C2=A0 * @cpu_caching supports the following values:
-> =C2=A0 *=C2=A0 - %DRM_XE_GEM_CPU_CACHING_WB - Allocate the pages with wri=
-te-
-> back
-> @@ -827,6 +834,7 @@ struct drm_xe_gem_create {
-> =C2=A0#define DRM_XE_GEM_CREATE_FLAG_DEFER_BACKING		(1 << 0)
-> =C2=A0#define DRM_XE_GEM_CREATE_FLAG_SCANOUT			(1 << 1)
-> =C2=A0#define DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM	(1 << 2)
-> +#define DRM_XE_GEM_CREATE_FLAG_PINNED			(1 << 3)
-> =C2=A0	/**
-> =C2=A0	 * @flags: Flags, currently a mask of memory instances of
-> where BO can
-> =C2=A0	 * be placed
-
+>  drivers/pwm/pwm-rzg2l-gpt.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
+> index 74bb0cca4ab4..b247a6c181d5 100644
+> --- a/drivers/pwm/pwm-rzg2l-gpt.c
+> +++ b/drivers/pwm/pwm-rzg2l-gpt.c
+> @@ -90,6 +90,7 @@
+>  #define RZG2L_MAX_TICKS		((u64)U32_MAX * RZG2L_MAX_SCALE_FACTOR)
+>  
+>  struct rzg2l_gpt_info {
+> +	u8 (*calculate_prescale)(u64 period);
+>  	u32 gtcr_tpcs_mask;
+>  	u8 prescale_pow_of_two_mult_factor;
+>  };
+> @@ -138,8 +139,7 @@ static void rzg2l_gpt_modify(struct rzg2l_gpt_chip *rzg2l_gpt, u32 reg, u32 clr,
+>  			(rzg2l_gpt_read(rzg2l_gpt, reg) & ~clr) | set);
+>  }
+>  
+> -static u8 rzg2l_gpt_calculate_prescale(struct rzg2l_gpt_chip *rzg2l_gpt,
+> -				       u64 period_ticks)
+> +static u8 rzg2l_gpt_calculate_prescale(u64 period_ticks)
+>  {
+>  	u32 prescaled_period_ticks;
+>  	u8 prescale;
+> @@ -292,7 +292,7 @@ static int rzg2l_gpt_round_waveform_tohw(struct pwm_chip *chip,
+>  			period_ticks = rzg2l_gpt->period_ticks[ch];
+>  	}
+>  
+> -	wfhw->prescale = rzg2l_gpt_calculate_prescale(rzg2l_gpt, period_ticks);
+> +	wfhw->prescale = info->calculate_prescale(period_ticks);
+>  	pv = rzg2l_gpt_calculate_pv_or_dc(info, period_ticks, wfhw->prescale);
+>  	wfhw->gtpr = pv;
+>  	duty_ticks = mul_u64_u64_div_u64(wf->duty_length_ns, rzg2l_gpt->rate_khz, USEC_PER_SEC);
+> @@ -482,6 +482,7 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct rzg2l_gpt_info rzg2l_data = {
+> +	.calculate_prescale = rzg2l_gpt_calculate_prescale,
+>  	.gtcr_tpcs_mask = GENMASK(26, 24),
+>  	.prescale_pow_of_two_mult_factor = 2,
+>  };
+> -- 
+> 2.43.0
+> 
 
