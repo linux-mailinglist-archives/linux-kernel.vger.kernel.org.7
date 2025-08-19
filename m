@@ -1,282 +1,134 @@
-Return-Path: <linux-kernel+bounces-776041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E77B2C7C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:00:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B3CB2C7CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72C61888A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:58:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD881724EAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D30283153;
-	Tue, 19 Aug 2025 14:56:45 +0000 (UTC)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC11283FF4;
+	Tue, 19 Aug 2025 14:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="PLfrC8/C"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2471927E1C5;
-	Tue, 19 Aug 2025 14:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE09283C89;
+	Tue, 19 Aug 2025 14:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615405; cv=none; b=RIxOOPQ8Szu4bDpn16g4JO8Up9HAJyqV41Sb4gZgtj2XTyFHEe3l0T71KZEt6w4nMnzTku/QJqAYQRGVThq6NjWVASznxouzILwWQpGnfKtD2CK4jGbLed2rH3AlDUCbXAtRky47PJTOjKy/t1P6InJ8tIeHfE2olGERSRI2Wj8=
+	t=1755615426; cv=none; b=FElmS58hhnW5H0OgO04iGij22RUS0oK8xNt+B1be3YdYrGhJwdBYlKJm+1SaBvy1ZfOvpTl/JEX5gGpoy2xVjHatjiY2mCMyUpbDCnRLKRethmPc29Bd+r4btz5mXA607JyIHAo2U9iVWTV9hmVZRNLpJXWnSWb1oUeAfOGmnCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615405; c=relaxed/simple;
-	bh=bUsDKewtvp1b2vKlIYgLqyZp8TdJkhLH1lo33Ru1UKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WkeydzImCkRXU9E1pEiOzGBad/p7NnEmn2P9yVs7sY4WkuZtqLrnDlN64McKJYCJvQ8NWbYcx6I/vh2SypJDKg6yZGi8K7W0ccUE1ZUzzhBUdBIFFqaRN5wNtHPdFw8AZbm2gMO9CvyMLgyhky3Cd9SIRmhvucJby3fEdKuLf1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e2e61108dso392749b3a.0;
-        Tue, 19 Aug 2025 07:56:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755615402; x=1756220202;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vKxtMwITbgg+OywFpBH8T4AA1fvAKojwdWxhEzg459M=;
-        b=Rh7qm96PxA9gk46oFcRhc+lLw9563BmNdMY01wXVvoeSWBXzcJ/OmJDSqWdcbUmJ4D
-         4HhpeTlZeXfP5QTLF9CdfWHTc1gxyW6FntDSnfi6BF/GCqo5uXZMfiLgo+KbFvZyZXEG
-         +nGeZWGeAXJ2O8g9tVNhPCkVOB3P3xPbenbitCPKkf5laT3Tp87I1u5oP+w+/m27aaLG
-         Be/HB4OMuJ74Mk2NIMol050FB/4y3u0j4IWMc2peI6HMbxhbaTipj1QehWsIXU4lul/e
-         s1dwW2kJJg0fTsn1GJP7La0HTXgOjGqqpLiXnq2nDkS4d5EWBT643W+iU5SyPwQiV71n
-         jM8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXeNTXU7rhCfMAgDJ1zno+oN6O0MNS4VyjC8atUrEOBQ+Qx7Qi/hXDQzGObZ8/jc4t/iuZaMzi7yQw8@vger.kernel.org, AJvYcCXeSN5OFzuDAy/onVwbLRzrcRRmTPo6pl1OjudXYIchCoAMOoB5rTUJsW+RteTd0gKW9xjSxf8X4LN3RkoR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHqxBfe33SJY4UGOVKw4zrAbjVrwthavzJQj7I53Yg6R3PSwje
-	92cIQCKIez18S6NmrpXvO3gVFbM+gj8cK0vfUtBbqHn/86Fo1/ABXWha
-X-Gm-Gg: ASbGncvr+8SXqL12+umF4fCzjqre12WjDt8HerCu8suIE4nJbLYhFLA+nHCHs0MvBNY
-	NAnwLLF6vxe4K3STxy5aIYKVA/hRf8wDSMUkm+qx+PSkfjZooTSq4qEn/vuV/tG+PymQxtM7Dmj
-	MuRbEW3Pm6hUpxzRRRVllFFIUCs3+XVVp1ESxTYUzev+Hyu/8Gs21lGHn2X+mXiBjSvQ632a7Ky
-	Ab7T9Z19fG4ltGrBzwcDJlfwL2SjK/efA3apdoNZZ2uZcsO9VljukNZzRAEggXfjAev7znJSEQJ
-	CRNPPf1qnicWIlKFjhXBs7HxaQY7miVDrBoCy43/Y8dX+5pbiPx8rE6WKOMorMvKQ0073NLXZ9a
-	JEw2wwwZvLPXJswQ0XQCUF/aKtkj3UXMhSMi4U3AQMJk=
-X-Google-Smtp-Source: AGHT+IFiBXFUk8G1EL2FF8x3trLuns2m/hrb1OvL5B3+4opDQT4FS5T6ik8kXL0ZR6nR6/hhZMi5Kw==
-X-Received: by 2002:a05:6a20:2451:b0:23f:f550:6e2b with SMTP id adf61e73a8af0-2430d4bf98cmr2009854637.6.1755615402247;
-        Tue, 19 Aug 2025 07:56:42 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b472d73aa36sm10823572a12.35.2025.08.19.07.56.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 07:56:41 -0700 (PDT)
-Message-ID: <13b10448-9743-4f05-9662-370862c2040e@kzalloc.com>
-Date: Tue, 19 Aug 2025 23:56:36 +0900
+	s=arc-20240116; t=1755615426; c=relaxed/simple;
+	bh=3Qbz8pqFfdOsOOoqVrdwNTsM+mi/gpOylrAwS7+boC4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DTnhBXqeA8kgDIFyuM1Bjh3FCvG3JTM5jdw8cFJGcvVzuFf7mC0ne9iuvvyxRwY00ngaCefKorMb08e6dbVt42UOhQpaDgwBerv4B5hG8IdVwNCc15ZfP4m2QJhHwxAdYI1E51PQTL8jakRVdx4nLPp9GQ/4CvQ3qJkRbkPjvlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=PLfrC8/C; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 39FE225D53;
+	Tue, 19 Aug 2025 16:57:02 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id mk32Vz6sFa6J; Tue, 19 Aug 2025 16:57:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755615421; bh=3Qbz8pqFfdOsOOoqVrdwNTsM+mi/gpOylrAwS7+boC4=;
+	h=From:Subject:Date:To:Cc;
+	b=PLfrC8/C4ggYoNVTx1MUO2ukwPsNaRlclnZze4eG5oNL3GJrpZmFNMgv7dLnMDOyA
+	 iswh+GES2GgUswTvmQE/Kz9wBn1ja6cfNfL4ypJIa0eBUNWU4tRtBQ4SCVEZ3hTnph
+	 07Xvp8mkLdSwZDBYNf/awi/llMvf2ALjuFHnSZv/tEnyHOXWdASw28kE8xb4cwGchN
+	 wShxAvGkaEpw7Ar5az5I0cpgLNfScDdpfqNaVu7rm9KCbzHeEWE2kIc2CXNxM75Yaj
+	 Z/ghhKsHWSU8Tik5LSa0UI7UIP4gEyRChXTeVucMCDcCZ1KsACQ64IS1lIJxoM2LU6
+	 xhVyCdmHqyp+Q==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v4 0/2] Support for Synaptics TDDI series panels
+Date: Tue, 19 Aug 2025 20:26:43 +0530
+Message-Id: <20250819-panel-synaptics-tddi-v4-0-448f466d16a6@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ksmbd: add kcov remote coverage support via ksmbd_conn
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Steve French <smfrench@gmail.com>, Stefan Metzmacher <metze@samba.org>,
- Paulo Alcantara <pc@manguebit.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>,
- linux-cifs@vger.kernel.org, syzkaller@googlegroups.com,
- linux-kernel@vger.kernel.org, notselwyn@pwning.tech
-References: <20250806143955.122816-2-ysk@kzalloc.com>
- <CAKYAXd-7ojpN=jc+R2wwxyQsZCTBJT6tEYszb4VOgbPeWn1NKA@mail.gmail.com>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <CAKYAXd-7ojpN=jc+R2wwxyQsZCTBJT6tEYszb4VOgbPeWn1NKA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKuQpGgC/3XNQQ7CIBCF4as0rMXAAKW68h7GBRRoJzGlgaaxM
+ b27qAs16vJ/yXxzJdkn9JnsqytJfsaMcSghNxVpezN0nqIrTYCBYgoEHc3gzzQvgxknbDOdnEP
+ KLLMiMB0aLkk5HZMPeHmwx1PpHvMU0/L4MvP7+gRrDr/BmVNGXbCNkaCCrtuDw5xinLYxdeROz
+ vDGgPrDQGG0qcFY7rho9TcjXowG9ocRhZHCqJ3SQVqQn8y6rje2+el5SAEAAA==
+X-Change-ID: 20250523-panel-synaptics-tddi-0b0b3f07f814
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755615411; l=2195;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=3Qbz8pqFfdOsOOoqVrdwNTsM+mi/gpOylrAwS7+boC4=;
+ b=mH8hor6y2lPboSWr3nqjiosJrnuuMMK1U5fXyMorEdgBh3P0ASbRX//Ki9+6R1KjkDBujdo06
+ RshDNEUSSoOAEUW0cmDiRqNjKs9P0os+3Wz6QvNGq5TudbXH5oyn+45
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Hi Namjae,
+Synaptics' Touch and Display Driver Integration (TDDI) technology [1]
+employs a single chip for both touchscreen and display capabilities.
+Such designs reportedly help reducing costs and power consumption.
 
-Thank you for the review and the detailed questions.
+Although the touchscreens, which are powered by Synaptics'
+Register-Mapped Interface 4 (RMI4) touch protocol via I2C or SPI have
+driver support in the kernel, the MIPI DSI display panels don't.
 
-On 8/19/25 5:00 PM, Namjae Jeon wrote:
-> On Wed, Aug 6, 2025 at 11:41 PM Yunseong Kim <ysk@kzalloc.com> wrote:
->>
-> Hi Yunseong,
->> KSMBD processes SMB requests on per-connection threads and then hands
->> off work items to a kworker pool for actual command processing by
->> handle_ksmbd_work(). Because each connection may enqueue multiple
->> struct ksmbd_work instances, attaching the kcov handle to the work
->> itself is not sufficient: we need a stable, per-connection handle.
->>
->> Introduce a kcov_handle field on struct ksmbd_conn (under CONFIG_KCOV)
->> and initialize it when the connection is set up. In both
->> ksmbd_conn_handler_loop() which only receives a struct ksmbd_conn*
->> and handle_ksmbd_work() which receives a struct ksmbd_work*, start
->> kcov_remote with the per-connection handle before processing and stop
->> it afterward. This ensures coverage collection remains active across
->> the entire asynchronous path of each SMB request.
-> I'm a bit unclear on the overall impact. Do you have the goal to measure
-> the code coverage of all ksmbd components ?
+This series introduces a rudimentary driver for controlling said display
+panels, which supports TD4101 and TD4300 panels.
 
-Yes, exactly. The ultimate goal is to effectively fuzz ksmbd using
-syzkaller. To achieve this, it is essential to maximize the code coverage
-of the core components involved in handling SMB requests.
+[1] https://www.synaptics.com/technology/display-integration
 
-The primary motivation for this patch is to address the limitations of KCOV
-within ksmbd's asynchronous architecture. Ksmbd receives requests on
-connection threads but offloads the actual command processing to a kworker
-pool via handle_ksmbd_work(). Previously, the coverage from code executed
-in the worker threads was not associated with the initial connection's KCOV
-handle, resulting in lost coverage data.
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v4:
+- utilized drm_connector_helper_get_modes_fixed() (dmitry.baryshkov)
+- constified backlight properties (dmitry.baryshkov)
+- Link to v3: https://lore.kernel.org/r/20250720-panel-synaptics-tddi-v3-0-43a5957f4b24@disroot.org
 
-By introducing a stable KCOV handle on struct ksmbd_conn, this patch
-ensures that code coverage is accurately tracked across the entire
-execution path of an SMB request, from reception to the completion of
-asynchronous processing. This is the key impact of this change.
+Changes in v3:
+- fixed various dt_binding_check errors (robh's bot)
+- adjusted commit description of [v2 1/2] (robh)
+- utilized devm_drm_panel_alloc() and devm_regulator_bulk_get_const()
+- Link to v2: https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
 
-> Is there the next patch set or any plan for next work, or is this patch enough
-> to check all functions of ksmbd with syzkaller?
+Changes in v2:
+- fixed various dt_binding_check errors (conor)
+- did s/tddi_update_brightness/tddi_update_status
+- added check for panel enable in tddi_update_status()
+- used backlight_get_brightness() in appropriate places
+- Link to v1: https://lore.kernel.org/r/20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org
 
-This patch provides the necessary kernel-side infrastructure required to
-collect accurate coverage data. It is a crucial prerequisite.
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: display: panel: document Synaptics TDDI panel
+      drm: panel: add support for Synaptics TDDI series DSI panels
 
-However, this patch alone is not sufficient to check all ksmbd functions.
-To actually exercise and test ksmbd's functionalities, corresponding
-user-space support in syzkaller (such as syscall descriptions) is required
-o leverage this infrastructure. As mentioned in the commit message, that
-work is currently in progress here:
-
-Link: https://github.com/google/syzkaller/pull/5524
-
-I am currently investigating cases where Samba, as you previously mentioned,
-is mounted on the client and actually writing files exceeds the permissions.
-In this process, I discovered a potentially serious vulnerability in netfs.
-I have separately reported this issue privately to David Howells.
-
-> Thanks.
-
-In summary, both this kernel patch and the ongoing syzkaller PR need to be
-merged to enable effective fuzzing and coverage analysis of ksmbd.
-
->> The kcov context tied to the connection itself, correctly supporting
->> multiple outstanding work items per connection.
->>
->> In patch v2, I added the missing initialization of kcov_handle. In v3,
->> I fixed an kcov_hanlde argument was previously unused on
->> ksmbd_conn_set_kcov_handle().
->>
->> The related work for syzkaller support is currently being developed
->> in the following GitHub PR:
->> Link: https://github.com/google/syzkaller/pull/5524
->>
->> Based on earlier work by Lau.
->> Link: https://pwning.tech/ksmbd-syzkaller/
->>
->> Cc: linux-cifs@vger.kernel.org
->> Cc: notselwyn@pwning.tech
->> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
->> ---
->>  fs/smb/server/connection.c |  7 ++++++-
->>  fs/smb/server/connection.h | 22 ++++++++++++++++++++++
->>  fs/smb/server/server.c     |  4 ++++
->>  3 files changed, 32 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/smb/server/connection.c b/fs/smb/server/connection.c
->> index 3f04a2977ba8..21352f37384f 100644
->> --- a/fs/smb/server/connection.c
->> +++ b/fs/smb/server/connection.c
->> @@ -93,6 +93,9 @@ struct ksmbd_conn *ksmbd_conn_alloc(void)
->>         down_write(&conn_list_lock);
->>         list_add(&conn->conns_list, &conn_list);
->>         up_write(&conn_list_lock);
->> +
->> +       ksmbd_conn_set_kcov_handle(conn, kcov_common_handle());
->> +
->>         return conn;
->>  }
->>
->> @@ -322,6 +325,8 @@ int ksmbd_conn_handler_loop(void *p)
->>         if (t->ops->prepare && t->ops->prepare(t))
->>                 goto out;
->>
->> +       kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
->> +
->>         max_req = server_conf.max_inflight_req;
->>         conn->last_active = jiffies;
->>         set_freezable();
->> @@ -412,7 +417,7 @@ int ksmbd_conn_handler_loop(void *p)
->>                         break;
->>                 }
->>         }
->> -
->> +       kcov_remote_stop();
->>  out:
->>         ksmbd_conn_set_releasing(conn);
->>         /* Wait till all reference dropped to the Server object*/
->> diff --git a/fs/smb/server/connection.h b/fs/smb/server/connection.h
->> index dd3e0e3f7bf0..a90bd1b3e1df 100644
->> --- a/fs/smb/server/connection.h
->> +++ b/fs/smb/server/connection.h
->> @@ -15,6 +15,7 @@
->>  #include <linux/kthread.h>
->>  #include <linux/nls.h>
->>  #include <linux/unicode.h>
->> +#include <linux/kcov.h>
->>
->>  #include "smb_common.h"
->>  #include "ksmbd_work.h"
->> @@ -109,6 +110,9 @@ struct ksmbd_conn {
->>         bool                            binding;
->>         atomic_t                        refcnt;
->>         bool                            is_aapl;
->> +#ifdef CONFIG_KCOV
->> +       u64                             kcov_handle;
->> +#endif
->>  };
->>
->>  struct ksmbd_conn_ops {
->> @@ -246,4 +250,22 @@ static inline void ksmbd_conn_set_releasing(struct ksmbd_conn *conn)
->>  }
->>
->>  void ksmbd_all_conn_set_status(u64 sess_id, u32 status);
->> +
->> +static inline void ksmbd_conn_set_kcov_handle(struct ksmbd_conn *conn,
->> +                                      const u64 kcov_handle)
->> +{
->> +#ifdef CONFIG_KCOV
->> +       conn->kcov_handle = kcov_handle;
->> +#endif
->> +}
->> +
->> +static inline u64 ksmbd_conn_get_kcov_handle(struct ksmbd_conn *conn)
->> +{
->> +#ifdef CONFIG_KCOV
->> +       return conn->kcov_handle;
->> +#else
->> +       return 0;
->> +#endif
->> +}
->> +
->>  #endif /* __CONNECTION_H__ */
->> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
->> index 8c9c49c3a0a4..0757cd6ef4f7 100644
->> --- a/fs/smb/server/server.c
->> +++ b/fs/smb/server/server.c
->> @@ -264,6 +264,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
->>         struct ksmbd_work *work = container_of(wk, struct ksmbd_work, work);
->>         struct ksmbd_conn *conn = work->conn;
->>
->> +       kcov_remote_start_common(ksmbd_conn_get_kcov_handle(conn));
->> +
->>         atomic64_inc(&conn->stats.request_served);
->>
->>         __handle_ksmbd_work(work, conn);
->> @@ -271,6 +273,8 @@ static void handle_ksmbd_work(struct work_struct *wk)
->>         ksmbd_conn_try_dequeue_request(work);
->>         ksmbd_free_work_struct(work);
->>         ksmbd_conn_r_count_dec(conn);
->> +
->> +       kcov_remote_stop();
->>  }
->>
->>  /**
->> --
->> 2.50.0
->>
-Please let me know if you have any further questions.
+ .../display/panel/synaptics,td4300-panel.yaml      |  89 +++++++
+ drivers/gpu/drm/panel/Kconfig                      |  11 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-synaptics-tddi.c       | 276 +++++++++++++++++++++
+ 4 files changed, 377 insertions(+)
+---
+base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
+change-id: 20250523-panel-synaptics-tddi-0b0b3f07f814
 
 Best regards,
-Yunseong Kim.
-
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
