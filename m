@@ -1,511 +1,193 @@
-Return-Path: <linux-kernel+bounces-776669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE20AB2D046
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5436B2D024
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6978B188C1E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FDB8169844
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F59278150;
-	Tue, 19 Aug 2025 23:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F9F2701CC;
+	Tue, 19 Aug 2025 23:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="b0cs13c1";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="I7+3JK5O"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DvzsoGvp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8iG7PUeS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA2F277CA1;
-	Tue, 19 Aug 2025 23:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E43821883E;
+	Tue, 19 Aug 2025 23:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755646767; cv=none; b=bdPq88p/DSDWQgjrjYttti9oCGJTnJS4CsR/a+RpHDW+RUoqd90DD14xo+cNlJ5WIlclC4Q35xW3GIKByoo5BwuTLGgUK/1R8QTOdSzavKnsUtUPQu4lIOfrnbkDF/T4qjFJB1163lRhAeFVt4h4eQORaSfvl40zUHoomeYwkqU=
+	t=1755646727; cv=none; b=NX4ZsSLxfiqJ1ih6R9ma7Lr63v+zquy61RRWmq+hLrFnzan1foYiCOe+K6Zj+rc8ewPXxnojVs7DZhxteQizV1RYpzOpKjPHbqtCaAzE8XdnblaA5yfKpR6wBYwnpQrCdm+FG4cR/sPKOAhP9AJwsH0NbuvXzHXZMXPF89+dYQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755646767; c=relaxed/simple;
-	bh=9Vv95yl5Cq7Vj9aiXKDQhEVooPZQCfQv7fqnC4LmqW4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ohxDHzP8Z9kfvaCCtXD9kvpTI2m+KdFhrIpB3fNARCQfXewKibfVwSYo3igxG5+XBt5kkJLmZnOu9yM9aVrZv4CddfkpH6Bm4+/aC+0LyQv/Jth5G0jvlU1a5D0RZ3ZCsmgZM6cfh++xlz1PMR2Ow7ucO26buEG9u/OB4dwP/hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=b0cs13c1; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=I7+3JK5O; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1755646728; bh=1yqgbg5M/CiR3ypNBGFrMHO
-	ULbYh8l1VuDTVtmaBwuk=; b=b0cs13c1KhsZCYuYn15s57WB5zkwJyvVCvjFd2uJplhg0P06TY
-	sryNostxqD/mq53IHED/SNPyS0DjeMZrZSUlbRBg5sPz9lst4Kd/m4q/Y99r4qHOF6gPQRMng2G
-	OBAk8hug/tET4kd+TxB5QJn2NaN0czRdxalDB3EuprUyBvs8F4y9iYvxD6S6eN1uB6lghDog5bN
-	z8q6KnENyxVuhUajKJbITLBWsbcK9q+YP74rG+Pdx5N5XKMKUwfwad4aeek89gPcdn/Rakg68eK
-	le+HJV7GKIj+9Yaym3GRd5dKisRfx7rii8/cbvZS2Zlw1XN4e7zY88bGIUUcATy7M0A==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1755646728; bh=1yqgbg5M/CiR3ypNBGFrMHO
-	ULbYh8l1VuDTVtmaBwuk=; b=I7+3JK5OyLtU4u1Sn5d+MlYbJRS+GLQYHszetLcGssPlMdUekX
-	MaJ5SYzA/O4pLMxQOR6JkMIaNhgnm9LXe8AQ==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 20 Aug 2025 01:37:50 +0200
-Subject: [PATCH v6 6/6] arm64: dts: qcom: Add Xiaomi Redmi 3S
+	s=arc-20240116; t=1755646727; c=relaxed/simple;
+	bh=aPnEXEI8TH0CQRjYSff/UVlM1XXewUGIM4xEOi9LAos=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=YWq5FVfzFExZsvy6VB3CFSWP+x5kZ85FC7wgjknBwWstmVqsjWNTGXqY1IzBHqabBtJGYrsGoy8LwwJ8oe46CFhc6AlMZhwThvfM5gF9t6PUP3CKk6JA1xS4/GjVvNTKt7tKPF/wHPfIJkxjZqQH/N/438t7wWWILNqkvmqsPgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DvzsoGvp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8iG7PUeS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 19 Aug 2025 23:38:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755646723;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=aivyC6nV4X1QHy/avFC2CYmaso6VzIAOErqH6w8JsoU=;
+	b=DvzsoGvp46r8hvMHlJ2EjbuJUR3trxZGZVWCd6uq0XY48h8PXZleHkFOnmjjlfEaNFMaz2
+	o9Wlu4L93RuWao6ONYCwBwrhzxzxJyUW/rYP7CKMTzM9MiN3YhQAOGTZ6NOx58MzUS0Wvc
+	5saKGcpzvlWElZ/awyf2tvFnsN1quo/EDY9MZzrVhfE+sumZJHDqntXXsu8OQprUeNjQLU
+	ZPIVsaZ6VwL2Avgqhak8SNTzYoVw9KT4D5kxQMoynGn8NgRLV0iYgiWcA90dmOT2OC04PO
+	6WJRXy9b8YwDNy0GZW2vrdyQY6DZCXJuKKj1x4Si9j1eFFdjkLr0Jnsn16F50A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755646723;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=aivyC6nV4X1QHy/avFC2CYmaso6VzIAOErqH6w8JsoU=;
+	b=8iG7PUeSwwzRZbznZlfDvQCpfSe3x+IHO3EB3+0e8ZUF5YQLQTu4vciYLSoaAK2kLzCew6
+	Mbuse0jRf7Vv2kAw==
+From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/cpu] x86/cpu: Rename and move CPU model entry for Diamond Rapids
+Cc: Peter Zijlstra <peterz@infradead.org>, Tony Luck <tony.luck@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <175564672078.1420.16983385013215397877.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250820-msm8937-v6-6-b090b2acb67e@mainlining.org>
-References: <20250820-msm8937-v6-0-b090b2acb67e@mainlining.org>
-In-Reply-To: <20250820-msm8937-v6-0-b090b2acb67e@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Adam Skladowski <a_skl39@protonmail.com>, 
- Sireesh Kodali <sireeshkodali@protonmail.com>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755646705; l=9618;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=9Vv95yl5Cq7Vj9aiXKDQhEVooPZQCfQv7fqnC4LmqW4=;
- b=wq2XAkXkAyonz+OdfQGTPk9cKmAYiXCnwzgBpKvuwL+Q6MtUeWSTTM211v49WyMTSXiokwM91
- I6sztSQUuhhA82zI2IvIO77Bq3vdOkBYEypKfCGi42EJhaqi5vlM0Sm
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Content-Transfer-Encoding: quoted-printable
 
-Add initial support for Xiaomi Redmi 3S (land).
+The following commit has been merged into the x86/cpu branch of tip:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+Commit-ID:     6a42c31ef324476fb304e137fe71870fcc538c88
+Gitweb:        https://git.kernel.org/tip/6a42c31ef324476fb304e137fe71870fcc5=
+38c88
+Author:        Tony Luck <tony.luck@intel.com>
+AuthorDate:    Mon, 11 Aug 2025 14:33:45 -07:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Tue, 19 Aug 2025 16:06:17 -07:00
+
+x86/cpu: Rename and move CPU model entry for Diamond Rapids
+
+This model was added as INTEL_PANTHERCOVE_X (based on the name of the
+core) with a comment that the platform name is Diamond Rapids. It was
+also placed at the end of the file in a new section for family 19
+processors.
+
+This is different from previous naming. Andrew Cooper complained.
+PeterZ agreed and posted a patch[1] to fix the name and move it in
+sequence with other Xeon servers. But without a commit description or
+sign-off the patch wasn't ever applied.
+
+Patch updated to cover one additional use of the #define by turbostat
+and to change the "Family 6" comment to also list 18 and 19 since new
+models in these families are mixed in with family 6.
+
+Originally-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+Link: https://lore.kernel.org/all/20250214130205.GK14028@noisy.programming.ki=
+cks-ass.net/ # [1]
+Link: https://lore.kernel.org/all/20250811213345.7029-1-tony.luck%40intel.com
 ---
- arch/arm64/boot/dts/qcom/Makefile                |   1 +
- arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts | 381 +++++++++++++++++++++++
- 2 files changed, 382 insertions(+)
+ arch/x86/include/asm/intel-family.h                         | 7 +++----
+ drivers/platform/x86/intel/speed_select_if/isst_if_common.c | 2 +-
+ drivers/platform/x86/intel/tpmi_power_domains.c             | 2 +-
+ tools/power/x86/turbostat/turbostat.c                       | 2 +-
+ 4 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 94a84770b0802a9dc0c56ce6c59eea20967a5d89..0476a87636584216ba359714ab46a6f085620286 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -66,6 +66,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8917-xiaomi-riva.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8937-xiaomi-land.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-samsung-a7.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts b/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..91837ff940f1b6b13a9ef519519f471a7a4cdac0
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts
-@@ -0,0 +1,381 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Barnabas Czeman
-+ */
-+/dts-v1/;
-+
-+#include <dt-bindings/arm/qcom,ids.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+
-+#include "msm8937.dtsi"
-+#include "pm8937.dtsi"
-+#include "pmi8950.dtsi"
-+
-+/delete-node/ &qseecom_mem;
-+
-+/ {
-+	model = "Xiaomi Redmi 3S (land)";
-+	compatible = "xiaomi,land", "qcom,msm8937";
-+	chassis-type = "handset";
-+
-+	qcom,msm-id = <QCOM_ID_MSM8937 0x0>;
-+	qcom,board-id = <0x1000b 1>, <0x2000b 1>;
-+
-+	aliases {
-+		mmc0 = &sdhc_1;
-+		mmc1 = &sdhc_2;
-+	};
-+
-+	battery: battery {
-+		compatible = "simple-battery";
-+
-+		charge-full-design-microamp-hours = <4100000>;
-+		constant-charge-current-max-microamp = <1000000>;
-+		voltage-min-design-microvolt = <3400000>;
-+		voltage-max-design-microvolt = <4400000>;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		stdout-path = "framebuffer0";
-+
-+		framebuffer0: framebuffer@8dd01000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0x8dd01000 0x0 (720 * 1280 * 3)>;
-+			width = <720>;
-+			height = <1280>;
-+			stride = <(720 * 3)>;
-+			format = "r8g8b8";
-+
-+			clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+				 <&gcc GCC_MDSS_AXI_CLK>,
-+				 <&gcc GCC_MDSS_VSYNC_CLK>,
-+				 <&gcc GCC_MDSS_MDP_CLK>,
-+				 <&gcc GCC_MDSS_BYTE0_CLK>,
-+				 <&gcc GCC_MDSS_PCLK0_CLK>,
-+				 <&gcc GCC_MDSS_ESC0_CLK>;
-+			power-domains = <&gcc MDSS_GDSC>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&gpio_keys_default>;
-+		pinctrl-names = "default";
-+
-+		key-volup {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
-+			debounce-interval = <15>;
-+		};
-+	};
-+
-+	irled {
-+		compatible = "gpio-ir-tx";
-+		gpios = <&tlmm 45 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reserved-memory {
-+		reserved@84a00000 {
-+			reg = <0x0 0x84a00000 0x0 0x1900000>;
-+			no-map;
-+		};
-+
-+		framebuffer: memory@8dd01000 {
-+			reg = <0x0 0x8dd01000 0x0 (720 * 1280 * 3)>;
-+			no-map;
-+		};
-+	};
-+
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&blsp1_i2c2 {
-+	status = "okay";
-+
-+	led-controller@45 {
-+		compatible = "awinic,aw2013";
-+		reg = <0x45>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vcc-supply = <&pm8937_l10>;
-+		vio-supply = <&pm8937_l5>;
-+
-+		led@0 {
-+			reg = <0>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@1 {
-+			reg = <1>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@2 {
-+			reg = <2>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+};
-+
-+&blsp1_i2c3 {
-+	status = "okay";
-+
-+	touchscreen@3e {
-+		compatible = "edt,edt-ft5306";
-+		reg = <0x3e>;
-+
-+		interrupts-extended = <&tlmm 65 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&tlmm 64 GPIO_ACTIVE_LOW>;
-+		vcc-supply = <&pm8937_l10>;
-+		iovcc-supply = <&pm8937_l5>;
-+
-+		pinctrl-0 = <&tsp_int_rst_default>;
-+		pinctrl-names = "default";
-+
-+		touchscreen-size-x = <720>;
-+		touchscreen-size-y = <1280>;
-+	};
-+};
-+
-+&pm8937_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+
-+	status = "okay";
-+};
-+
-+&pm8937_spmi_regulators {
-+	/* APC */
-+	pm8937_s5: s5 {
-+		regulator-min-microvolt = <1050000>;
-+		regulator-max-microvolt = <1350000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&pmi8950_wled {
-+	qcom,num-strings = <2>;
-+	qcom,external-pfet;
-+	qcom,current-limit-microamp = <20000>;
-+	qcom,ovp-millivolt = <29600>;
-+
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators-0 {
-+		compatible = "qcom,rpm-pm8937-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_s2-supply = <&vph_pwr>;
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+
-+		vdd_l1_l19-supply = <&pm8937_s3>;
-+		vdd_l2_l23-supply = <&pm8937_s3>;
-+		vdd_l3-supply = <&pm8937_s3>;
-+		vdd_l4_l5_l6_l7_l16-supply = <&pm8937_s4>;
-+		vdd_l8_l11_l12_l17_l22-supply = <&vph_pwr>;
-+		vdd_l9_l10_l13_l14_l15_l18-supply = <&vph_pwr>;
-+
-+		pm8937_s1: s1 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1225000>;
-+		};
-+
-+		pm8937_s3: s3 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+		};
-+
-+		pm8937_s4: s4 {
-+			regulator-min-microvolt = <2050000>;
-+			regulator-max-microvolt = <2050000>;
-+		};
-+
-+		pm8937_l2: l2 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+
-+		pm8937_l5: l5 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l6: l6 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l7: l7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l8: l8 {
-+			regulator-min-microvolt = <2850000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l9: l9 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l10: l10 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <3000000>;
-+		};
-+
-+		pm8937_l11: l11 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-allow-set-load;
-+			regulator-system-load = <200000>;
-+		};
-+
-+		pm8937_l12: l12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2950000>;
-+		};
-+
-+		pm8937_l13: l13 {
-+			regulator-min-microvolt = <3075000>;
-+			regulator-max-microvolt = <3075000>;
-+		};
-+
-+		pm8937_l14: l14 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l15: l15 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l16: l16 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l17: l17 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l19: l19 {
-+			regulator-min-microvolt = <1225000>;
-+			regulator-max-microvolt = <1350000>;
-+		};
-+
-+		pm8937_l22: l22 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+		};
-+
-+		pm8937_l23: l23 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+	};
-+};
-+
-+&sdc2_cmd_default {
-+	drive-strength = <12>;
-+};
-+
-+&sdc2_data_default {
-+	drive-strength = <12>;
-+};
-+
-+&sdhc_1 {
-+	vmmc-supply = <&pm8937_l8>;
-+	vqmmc-supply = <&pm8937_l5>;
-+
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	cd-gpios = <&tlmm 67 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&pm8937_l11>;
-+	vqmmc-supply = <&pm8937_l12>;
-+	pinctrl-0 = <&sdc2_default &sdc2_cd_default>;
-+	pinctrl-1 = <&sdc2_sleep &sdc2_cd_default>;
-+	pinctrl-names = "default", "sleep";
-+
-+	status = "okay";
-+};
-+
-+&sleep_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <0 4>, <20 4>;
-+
-+	gpio_keys_default: gpio-keys-default-state {
-+		pins = "gpio91";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+
-+	sdc2_cd_default: sdc2-cd-default-state {
-+		pins = "gpio67";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	tsp_int_rst_default: tsp-int-rst-default-state {
-+		pins = "gpio64", "gpio65";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-up;
-+	};
-+};
-+
-+&wcnss {
-+	vddpx-supply = <&pm8937_l5>;
-+
-+	status = "okay";
-+};
-+
-+&wcnss_iris {
-+	compatible = "qcom,wcn3620";
-+	vddxo-supply = <&pm8937_l7>;
-+	vddrfa-supply = <&pm8937_l19>;
-+	vddpa-supply = <&pm8937_l9>;
-+	vdddig-supply = <&pm8937_l5>;
-+};
-+
-+&wcnss_mem {
-+	status = "okay";
-+};
-+
-+&xo_board {
-+	clock-frequency = <19200000>;
-+};
-
--- 
-2.50.1
-
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel=
+-family.h
+index e345dbd..f32a0ec 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -51,7 +51,7 @@
+ #define INTEL_PENTIUM_MMX		IFM(5, 0x04) /* P55C */
+ #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
+=20
+-/* Family 6 */
++/* Family 6, 18, 19 */
+ #define INTEL_PENTIUM_PRO		IFM(6, 0x01)
+ #define INTEL_PENTIUM_II_KLAMATH	IFM(6, 0x03)
+ #define INTEL_PENTIUM_III_DESCHUTES	IFM(6, 0x05)
+@@ -126,6 +126,8 @@
+ #define INTEL_GRANITERAPIDS_X		IFM(6, 0xAD) /* Redwood Cove */
+ #define INTEL_GRANITERAPIDS_D		IFM(6, 0xAE)
+=20
++#define INTEL_DIAMONDRAPIDS_X		IFM(19, 0x01) /* Panther Cove */
++
+ #define INTEL_BARTLETTLAKE		IFM(6, 0xD7) /* Raptor Cove */
+=20
+ /* "Hybrid" Processors (P-Core/E-Core) */
+@@ -203,9 +205,6 @@
+ #define INTEL_P4_PRESCOTT_2M		IFM(15, 0x04)
+ #define INTEL_P4_CEDARMILL		IFM(15, 0x06) /* Also Xeon Dempsey */
+=20
+-/* Family 19 */
+-#define INTEL_PANTHERCOVE_X		IFM(19, 0x01) /* Diamond Rapids */
+-
+ /*
+  * Intel CPU core types
+  *
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c b/dr=
+ivers/platform/x86/intel/speed_select_if/isst_if_common.c
+index 71e104a..7449873 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
+@@ -790,7 +790,7 @@ static const struct x86_cpu_id isst_cpu_ids[] =3D {
+ 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X,	SST_HPM_SUPPORTED),
+ 	X86_MATCH_VFM(INTEL_ICELAKE_D,		0),
+ 	X86_MATCH_VFM(INTEL_ICELAKE_X,		0),
+-	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	SST_HPM_SUPPORTED),
++	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	SST_HPM_SUPPORTED),
+ 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	0),
+ 	X86_MATCH_VFM(INTEL_SKYLAKE_X,		SST_MBOX_SUPPORTED),
+ 	{}
+diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platfo=
+rm/x86/intel/tpmi_power_domains.c
+index 9d8247b..e8d1037 100644
+--- a/drivers/platform/x86/intel/tpmi_power_domains.c
++++ b/drivers/platform/x86/intel/tpmi_power_domains.c
+@@ -85,7 +85,7 @@ static const struct x86_cpu_id tpmi_cpu_ids[] =3D {
+ 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	NULL),
+ 	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X,	NULL),
+ 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_D,	NULL),
+-	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	NULL),
++	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	NULL),
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(x86cpu, tpmi_cpu_ids);
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbosta=
+t/turbostat.c
+index 72a280e..47eb2d4 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -1195,7 +1195,7 @@ static const struct platform_data turbostat_pdata[] =3D=
+ {
+ 	{ INTEL_EMERALDRAPIDS_X, &spr_features },
+ 	{ INTEL_GRANITERAPIDS_X, &spr_features },
+ 	{ INTEL_GRANITERAPIDS_D, &spr_features },
+-	{ INTEL_PANTHERCOVE_X, &dmr_features },
++	{ INTEL_DIAMONDRAPIDS_X, &dmr_features },
+ 	{ INTEL_LAKEFIELD, &cnl_features },
+ 	{ INTEL_ALDERLAKE, &adl_features },
+ 	{ INTEL_ALDERLAKE_L, &adl_features },
 
