@@ -1,176 +1,220 @@
-Return-Path: <linux-kernel+bounces-775008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1CFAB2BA39
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAFEB2BA38
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13EDA4E044D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED86F5E8358
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A201A284887;
-	Tue, 19 Aug 2025 07:13:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAE22773D4;
+	Tue, 19 Aug 2025 07:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CJCjvKiM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A910526B777
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ECC1EA7D2;
+	Tue, 19 Aug 2025 07:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755587599; cv=none; b=WJAAx3XOrszUgr4ivnZMaJXgYwk4NSJo4Qz3xCjERkNaVoygIwnu33AWoeKbn1KkaFDG3sxw4tPsv+bYS+CXnG3CLlW5whaGY9vEdeFR3tJRhEjq4BoKOLzwou4+KLr+xbvjT6Wd3HUDVMfQmNDsp2/eIJFe8SAsBu5rjE1dt68=
+	t=1755587598; cv=none; b=qwieh6hHbvoVZ1nr251479r6P0YKO7D/c0bLE6hoiu2bD8vOIwllBvxi3kbducH89TalYG9MMPghsSrm9QVEl0TV1s2M/lPSWghM6oZ6Z11B3Q9H4CIlNXKl54V9pvS+fXfIB1bc1P2Ik9yDQZ+AHqWP/ebF9DSjZS7Llo/Bm7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755587599; c=relaxed/simple;
-	bh=34LTcszKLeYDmHdbnh9rrfPNBpaMAPrseZ4WCws0Ieg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i6tc4TEbCyVmPA6uTRyq56tjg+sCs6bAAIIHlCOw7aCJPwz+XssD+E/Elx6l40IKsuyCmwGlKAV87pAeX/GlrItv3wuhkcRdkxzoBqeE3i7J+xY/IgF0A4fAl20L7uLAgf1eQ5e42AtSBjPNIyhUZZjdX/MZFdfk35IM2hJP83c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoGWj-0004jN-QK; Tue, 19 Aug 2025 09:13:01 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoGWf-00121d-0w;
-	Tue, 19 Aug 2025 09:12:57 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoGWf-00EEba-0Z;
-	Tue, 19 Aug 2025 09:12:57 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>,
-	Roan van Dijk <roan@protonic.nl>
-Subject: [PATCH net-next v3 5/5] net: phy: dp83td510: add MSE interface support for 10BASE-T1L
-Date: Tue, 19 Aug 2025 09:12:56 +0200
-Message-Id: <20250819071256.3392659-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250819071256.3392659-1-o.rempel@pengutronix.de>
-References: <20250819071256.3392659-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1755587598; c=relaxed/simple;
+	bh=OrioP7w60uI64tfCAiOMNFmII/54iaJxUCo4tU0t6Qs=;
+	h=Content-Type:MIME-Version:Content-Disposition:In-Reply-To:
+	 References:From:Cc:To:Subject:Date:Message-ID; b=C9q3DTuPbahDJKtNNK4dnF3Z/pdDzjnvf+Ls9PXSoUqjkIyRCA9ZoXEkkuTRlKit8p0nO7RkA7Pfuz7vV92fQra7zbQd+RuwMgADM3CRQARBRvw5COklp31WQLclvAqHwDmQWAu8JBg8Rpd5eEQoi6Acp8cjb0n+zd0G/jwzjyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CJCjvKiM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.80.157])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F3404596;
+	Tue, 19 Aug 2025 09:12:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755587537;
+	bh=OrioP7w60uI64tfCAiOMNFmII/54iaJxUCo4tU0t6Qs=;
+	h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
+	b=CJCjvKiMimj4HLW9ftJG+0Sg6nVSu5s8RX4hvumRsf5D4VWLRZfYD7hXr0/1EeJNf
+	 XHOI++BfQOzfyZvNuEC9IooP/h+3MQuMnxF9xSA4wAsrAsnYHnreVawtLrDttUX9is
+	 8sYm4pttTi1T+nIKmIFZu/rYMTUNbdsndhwxAAmA=
+Content-Type: multipart/signed; micalg="pgp-sha512"; protocol="application/pgp-signature"; boundary="===============1524516976780608898=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Disposition: inline
+In-Reply-To: <175508015948.560048.7430206645162546917@ping.linuxembedded.co.uk>
+References: <20250813-imx335_binning-v1-0-a42b687d8541@ideasonboard.com> <20250813-imx335_binning-v1-3-a42b687d8541@ideasonboard.com> <175508015948.560048.7430206645162546917@ping.linuxembedded.co.uk>
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH 3/6] media: imx335: Update the native pixel array width
+Date: Tue, 19 Aug 2025 12:43:01 +0530
+Message-ID: <175558758114.8696.4076428044281728141@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-Implement get_mse_config() and get_mse_snapshot() for the DP83TD510E
-to expose its Mean Square Error (MSE) register via the new PHY MSE
-UAPI.
+--===============1524516976780608898==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 
-The DP83TD510E does not document any peak MSE values; it only exposes
-a single average MSE register used internally to derive SQI. This
-implementation therefore advertises only PHY_MSE_CAP_AVG, along with
-LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
-refresh interval/number of symbols are estimated from 10BASE-T1L
-symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+Quoting Kieran Bingham (2025-08-13 15:45:59)
+> Quoting Jai Luthra (2025-08-13 08:20:34)
+> > The sensor datasheet reports actual total number of pixels as 2696x2044.
+>=20
+> Err ...
+>=20
+> Page 2 of the IMX335LQN-D datasheet I have says:
+>=20
+> Total number of pixels: 2704 (H) x 2104 (V) approx 5.69 M pixels
+> Number of Effective Pixels: 2616 (H) x 1964 (V) approx 5.14 M pixels
+> Number of Active Pixels: 2616 (H) x 1964 (V) approx 5.04 M pixels
+>=20
+> Where does 2696x2044 come from ?
+>=20
+>=20
+> Argh - then on page 8 - indeed it says
+> Total Number of pixels 2696(H) x 2044(V) =3D 5.51M
+>=20
 
-For 10BASE-T1L deployments, SQI is a reliable indicator of link
-modulation quality once the link is established, but it does not
-indicate whether autonegotiation pulses will be correctly received
-in marginal conditions. MSE provides a direct measurement of slicer
-error rate that can be used to evaluate if autonegotiation is likely
-to succeed under a given cable length and condition. In practice,
-testing such scenarios often requires forcing a fixed-link setup to
-isolate MSE behaviour from the autonegotiation process.
+Yeah, I don't know which one to use, but the page 8 seems "safer".
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83td510.c | 44 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+>=20
+> In imx283.c I've moved to defining these windows as a v4l2_rect. I find
+> that's a nicer way to convey the rectangles specifically instead of
+> through #defines and then they can be directly used to report crop
+> rectangles:
+>=20
+> i.e.:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/=
+drivers/media/i2c/imx283.c:
+>=20
+> /* IMX283 native and active pixel array size. */
+> static const struct v4l2_rect imx283_native_area =3D {
+>         .top =3D 0,
+>         .left =3D 0,
+>         .width =3D 5592,
+>         .height =3D 3710,
+> };
+>=20
+> static const struct v4l2_rect imx283_active_area =3D {
+>         .top =3D 40,
+>         .left =3D 108,
+>         .width =3D 5472,
+>         .height =3D 3648,
+> };
+>=20
+> Not required - but just an idea (that obviously I like :D)
+>=20
 
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index 23af1ac194fa..094c070f3f96 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -249,6 +249,47 @@ struct dp83td510_priv {
- #define DP83TD510E_ALCD_COMPLETE			BIT(15)
- #define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
- 
-+static int dp83td510_get_mse_config(struct phy_device *phydev,
-+				    struct phy_mse_config *config)
-+{
-+	/* The DP83TD510E datasheet does not specify peak MSE values.
-+	 * It only provides a single MSE value which is used to derive SQI.
-+	 * Therefore, we only support the average MSE capability.
-+	 */
-+	config->supported_caps = PHY_MSE_CAP_AVG | PHY_MSE_CAP_LINK |
-+		PHY_MSE_CAP_CHANNEL_A;
-+	config->max_average_mse = 0xFFFF;
-+
-+	/* The datasheet does not specify the refresh rate or symbol count,
-+	 * but based on similar PHYs and standards, we can assume a common
-+	 * value. For 10BaseT1L, the symbol rate is 7.5 MBd. A common
-+	 * diagnostic interval is around 1ms.
-+	 * 7.5e6 symbols/sec * 0.001 sec = 7500 symbols.
-+	 */
-+	config->refresh_rate_ps = 1000000000; /* 1 ms */
-+	config->num_symbols = 7500;
-+
-+	return 0;
-+}
-+
-+static int dp83td510_get_mse_snapshot(struct phy_device *phydev, u32 channel,
-+				      struct phy_mse_snapshot *snapshot)
-+{
-+	int ret;
-+
-+	if (channel != PHY_MSE_CHANNEL_LINK &&
-+	    channel != PHY_MSE_CHANNEL_A)
-+		return -EOPNOTSUPP;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_MSE_DETECT);
-+	if (ret < 0)
-+		return ret;
-+
-+	snapshot->average_mse = ret;
-+
-+	return 0;
-+}
-+
- static int dp83td510_led_brightness_set(struct phy_device *phydev, u8 index,
- 					enum led_brightness brightness)
- {
-@@ -893,6 +934,9 @@ static struct phy_driver dp83td510_driver[] = {
- 	.get_phy_stats	= dp83td510_get_phy_stats,
- 	.update_stats	= dp83td510_update_stats,
- 
-+	.get_mse_config	= dp83td510_get_mse_config,
-+	.get_mse_snapshot = dp83td510_get_mse_snapshot,
-+
- 	.led_brightness_set = dp83td510_led_brightness_set,
- 	.led_hw_is_supported = dp83td510_led_hw_is_supported,
- 	.led_hw_control_set = dp83td510_led_hw_control_set,
--- 
-2.39.5
+Ah that is indeed quite nice, will do the same in v2.
 
+>=20
+> >=20
+> > This becomes important for supporting 2x2 binning modes that can go
+> > beyond the current maximum pixel array width set here.
+> >=20
+> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> > ---
+> >  drivers/media/i2c/imx335.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> > index 6369bdbd2b09ba1f89c143cdf6be061820f2d051..dbf2db4bf9cbfd792ff5865=
+264c6f465eb79a43b 100644
+> > --- a/drivers/media/i2c/imx335.c
+> > +++ b/drivers/media/i2c/imx335.c
+> > @@ -124,10 +124,10 @@
+> >  #define IMX335_NUM_DATA_LANES  4
+> > =20
+> >  /* IMX335 native and active pixel array size. */
+> > -#define IMX335_NATIVE_WIDTH            2616U
+> > -#define IMX335_NATIVE_HEIGHT           1964U
+> > -#define IMX335_PIXEL_ARRAY_LEFT                12U
+> > -#define IMX335_PIXEL_ARRAY_TOP         12U
+> > +#define IMX335_NATIVE_WIDTH            2696U
+>=20
+> The all scan mode on page 56 doesn't show these at all.
+> Just 12 + 2592 + 12
+>=20
+> But I think that's the datasheet being inconsistent/restrictive about
+> what it says an all scan mode could be.
+>=20
+> It would be interesting to make a 'super resolution' output mode that
+> can transmit every pixel possible but not required for this series
+> development just for fun tests.
+>=20
+
+Yeah I think datasheet is being quite restrictive, and even the +12 on both
+sides for "color processing" makes it very difficult to parse what the
+actual resolution is on the wire, and what they expect to be used post ISP
+processing.
+
+The all-pixel scan mode table given in the datasheet is actually different
+from what we actually use (we use WINMODE=3D4 i.e. cropped) for the 2592x19=
+44
+mode in driver, as the datasheet settings would give us 2592+24 =3D 2616
+pixels per line.
+
+I didn't want to change the existing mode in this series though. Making the
+driver freely-configurable will fix all of this (hopefully).
+
+> I'm torn here - as the datasheet changes it's points of reference to
+> make it's "all scan mode" essentially start at 0 which is clearly not
+> correct against the 'native' positions.
+>=20
+> So ... I think I'm just going to say I think we don't believe the
+> datasheet as we *know* there are more pixels and we are using them so :
+>=20
+>=20
+> > +#define IMX335_NATIVE_HEIGHT           2044U
+> > +#define IMX335_PIXEL_ARRAY_LEFT                52U
+> > +#define IMX335_PIXEL_ARRAY_TOP         50U
+>=20
+> I see you have taken the '80' extra pixels on both width and height and
+> divided half before and half after centering the window. I have no
+> information to say if it's position is otherwise so I think this is all
+> we can do:
+>=20
+> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>=20
+> >  #define IMX335_PIXEL_ARRAY_WIDTH       2592U
+> >  #define IMX335_PIXEL_ARRAY_HEIGHT      1944U
+> > =20
+> >=20
+> > --=20
+> > 2.50.1
+> >
+
+Thanks,
+Jai
+--===============1524516976780608898==
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Description: signature
+Content-Type: application/pgp-signature; name="signature.asc"; charset="us-ascii"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmikI/wACgkQQ96R+SSa
+cUUhrg/8CaJH8DpYJ0aYicgshRm6ZP3Isy9DSxNCy4UC9iKY3+/mNu1N2gewyP3M
+zRYujQIhE74IAxh/WaSyn/UdEiyJ2NIzu5fhmAGkN9jEV5ZRhTSW0pAum+WzpMsv
+PRgF4dLnkxWon6xoVoxGIIV7kU+dyfWhLy6KO8ES5mWbR0grtx5z7MbNSyeNdXsR
+QXgTRUwhSeIfR759Juh5/ZueubFPnC7eYyNjNXgjoRNGHnIDCgK6kze3ZoVUCh4Y
+gXniEfuzZNGm87N6TY4HkSUtPyowemUeV9JiwXzMS1hSQ1AqFvYcdYhO1i/CS2Sj
+u/YOz4SnON+fB8YVihSoSas5xGWdfmc/qyEI4DpqwrfYH5t0TQJeTruEl4X7EzSc
+y4an+wV6o+UzaW12Z58qQLQEHHYYREViNNDnoJaPjApr7NbPWGXE7BzlK+a89Ym/
+nI907+jNB7fjCF+HNYQO0lnjbIFDA+l4yzbNe6RZZBN5u19KYPo67Goa7nVQvaPH
+64HzZhCR6Ir8K8oIr5oXWWfOQJsUVCLHeDe2jNdrm2mIV2O2NtNrcEd43cucw0ef
+bhakI8+TqLup9W/AckBQhR+dQURg/GvZtF/YoCeaInzSXa4ebbn8MIpa76n0jC99
+HSn1aHO9Ry3unDS8JOng5bzByphjGDVEEJ+CmLV2DMHT9+o0PVE=
+=14ti
+-----END PGP SIGNATURE-----
+
+--===============1524516976780608898==--
 
