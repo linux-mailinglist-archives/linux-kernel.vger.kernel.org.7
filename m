@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-775484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBB4B2BFBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:03:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396A9B2BFCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3791BC535A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:02:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC1258043A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA70232A3F7;
-	Tue, 19 Aug 2025 11:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A8E32BF4E;
+	Tue, 19 Aug 2025 11:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxezlpTQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZvyTfZm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3607432A3D9;
-	Tue, 19 Aug 2025 11:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5593132BF2C;
+	Tue, 19 Aug 2025 11:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601280; cv=none; b=RBmt5LIQF8qplzd/7+GhJyVibbv2TLrFsA26IOBmkNjW9htFXsOWhdtkJdvzQBaneob/mpP5w8lSrYtNn4n/24dTQGQrJSc2hj1m0DOG+EC01jK3hwwjGSiAG0xVmnkWME4DcdEYoCkN2AoLcxqHb6Qpn1Pp5M7mimP85jQmkZc=
+	t=1755601281; cv=none; b=mvLQPx8wjgiBwHfxpZtPYoqoRlUrPG5t5yy3plBihOPJ/A059KdVAKgNS7p8y7SvzbP6ozHeTABUQussh01rNKcIL126TgvfsSl7csxtpHRsdzUYZs+WmcdKxRd3i/SmE+UBMWyqGgd3avOK2O5vHDOyJ6AIwVDpEK0FvWWTp+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755601280; c=relaxed/simple;
-	bh=3om6RlJ1FrtuQO9/XxQ8KBEG17jf3kejVcBwwMOA+mM=;
+	s=arc-20240116; t=1755601281; c=relaxed/simple;
+	bh=LLuG8UUhpyncc1Ow4ZHRPwCCdhOwxCqGMAhjDj7ySoI=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Ugn90ezjEB1VjFozIcJEAo675mcR48ysqGBnNDdFDNILG0Mht5nppsCEJQHHavmnjEviYQYBYrd1+mJHH9vAsJtYBlXzoj3/ZTrKqM8hV5+XI1sKU47NaTy/Iftb2/hPQvjTpopQLiXWbJAdjehZ03SeNOzpw+Z/FY9gNOaf1No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxezlpTQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F9BC19423;
-	Tue, 19 Aug 2025 11:01:19 +0000 (UTC)
+	 Message-Id:Subject; b=jP/pBYudx8xKI9QSvJ2j8fxRatOXWCuGFMiVTdHkq6ACYPyuqCNUBmmSvBZ/w3T9rinolNKfetI/HK4sOqEDs9HN3w2AKMssrM7T5ocjCOwOJRzcP6zuvQ1vt6Rrb1ZX4VtmkPQQ2XzbxhsbOGCk5dSvjMQe5F9jRv3zW7z0xR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZvyTfZm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E3EC4AF0D;
+	Tue, 19 Aug 2025 11:01:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755601279;
-	bh=3om6RlJ1FrtuQO9/XxQ8KBEG17jf3kejVcBwwMOA+mM=;
+	s=k20201202; t=1755601280;
+	bh=LLuG8UUhpyncc1Ow4ZHRPwCCdhOwxCqGMAhjDj7ySoI=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=lxezlpTQ1VJxdf0sF3n0/rnCC5CGmWaOdQERGWLOLzdxQ0gwflpmXEjxaoGoiJNaq
-	 LRMvTWMmc7D1V7y9qdS+Qui5fhozl713FNJQAFfUZtJLLO/husIrdEc8BHU8nnwNk1
-	 5H/Ux+E9/4IO43soMLS6pxKTNHeZdO1J7OfpSWV/uzDrSeDEw2/SW7jR+0PwUiBP9R
-	 oENsFr/qSfrkwcWjvtFas+aQeYLpyr+/GSj4NNbXEsj8K8O5EHpYQGz54DY1Gu+RBU
-	 XAM6yMaMK9KJ2/0QK2MFHgHM7HyRSO0R0DobKAnTonjmydQqwnmSXRVbt6c58NKc6V
-	 fuv+SzbfqA9eg==
-Date: Tue, 19 Aug 2025 06:01:18 -0500
+	b=ZZvyTfZmerde8pNhMfOL3u+TomyGc1qsh/jorWa49JCyGoe4OWFVjjKr7f5oXBfG4
+	 QMLiauXOd7UIw8Wzsd2SqefGzmrUdDuciqVYKUtLp7CCznE+tX/chq99np5nuWhBbf
+	 K4CdcvMXIUL5/h8C2TGbu4N8Lk4MgO+HmWIuFZtr4GINE5SiD9i6WSq5MydMn7A2jG
+	 5YRuO1DfX5y7jWvHtv6wLPDKE4N4g4HdRsymWuAPXqNU7T8uR0ZZlYwTGQ1Zl9zR7s
+	 CT04yyJajSDE+u0oiFNut8uQ2H1K5JF40w99h9HWpX9y16x4PJO7YoOZDWSPEgbqdb
+	 n4LCyT3l6tOAA==
+Date: Tue, 19 Aug 2025 06:01:19 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,39 +50,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, 
+Cc: Conor Dooley <conor+dt@kernel.org>, 
  Philippe Cornu <philippe.cornu@foss.st.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>, 
- David Airlie <airlied@gmail.com>, 
  Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Yannick Fertre <yannick.fertre@foss.st.com>, linux-kernel@vger.kernel.org, 
- Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Christophe Roullier <christophe.roullier@foss.st.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ dri-devel@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>
 To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <20250819-drm-misc-next-v3-5-04153978ebdb@foss.st.com>
+In-Reply-To: <20250819-drm-misc-next-v3-6-04153978ebdb@foss.st.com>
 References: <20250819-drm-misc-next-v3-0-04153978ebdb@foss.st.com>
- <20250819-drm-misc-next-v3-5-04153978ebdb@foss.st.com>
-Message-Id: <175560127275.3969236.2787022865949537210.robh@kernel.org>
-Subject: Re: [PATCH v3 05/13] dt-bindings: display: st,stm32mp25-lvds: add
- power-domains property
+ <20250819-drm-misc-next-v3-6-04153978ebdb@foss.st.com>
+Message-Id: <175560127329.3969258.11704849224286577096.robh@kernel.org>
+Subject: Re: [PATCH v3 06/13] dt-bindings: arm: stm32: add required
+ #clock-cells property
 
 
-On Tue, 19 Aug 2025 11:15:58 +0200, Raphael Gallais-Pou wrote:
-> STM32 LVDS peripheral may be in a power domain.  Allow an optional
-> single 'power-domains' entry for STM32 LVDS devices.
+On Tue, 19 Aug 2025 11:15:59 +0200, Raphael Gallais-Pou wrote:
+> On STM32MP25 SoC, the syscfg peripheral provides a clock to the display
+> subsystem through a multiplexer.  Since it only provides a single clock,
+> the cell value is 0.
 > 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Doing so allows the clock consumers to reach the peripheral and gate the
+> clock accordingly.
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 > Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 > ---
->  Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../bindings/arm/stm32/st,stm32-syscon.yaml        | 31 +++++++++++++++-------
+>  1 file changed, 21 insertions(+), 10 deletions(-)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -94,7 +98,7 @@ dtschema/dtc warnings/errors:
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819-drm-misc-next-v3-5-04153978ebdb@foss.st.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819-drm-misc-next-v3-6-04153978ebdb@foss.st.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
