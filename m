@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-774896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D976B2B8ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D1EB2B8EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3122524701
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED501BA14EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0591C21D3DC;
-	Tue, 19 Aug 2025 05:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBE6223DC6;
+	Tue, 19 Aug 2025 05:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="IPSkTInh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="GWS0n9tp"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ENpjeqjJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3C219F135;
-	Tue, 19 Aug 2025 05:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4806D21ADAE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755582395; cv=none; b=O/QdSuOU4ZnVP9gUFzoiLI0+zzoIKgQ/zGzYAMnxAacI6NxaGt01P0asHgWpZ4Qizou8mrivVgvlDxB0NSKvA0yBXaP3woclsPN2LaKpFJscvKlnqLsRS0TSJydB8ZLi90azuhtWIyp7DBeknvge0wzepc9XHAzuO2fE0WS9AT4=
+	t=1755582525; cv=none; b=TsqawHmBQUd9kblBuTxMu2OzKo/8ZIsuAvm8G95JcZDU2mzSXv2feSzwGn0KdsrW4OT1cs/EnwpGB4eQqjXBf2nsEW7poxM47qm2YLt5Mpbf+/DYJoKacw6ahISPWLA5ZskXwQy8sSQ/72wQcsgE2/eJ3ea9dbe98AA4DMaxGrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755582395; c=relaxed/simple;
-	bh=7SE/MWNUIpqD+lQT8z32lhaobqwEGn23lGpJ8NP/BJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cp0v04xxjItgZXdnZwwtXaOAiJ3zVigD7n5EZ0TsY3O1dBh8mYZrxVPacflZZk7gIJpBturPTMQTL7gFLG8pX6Q3lzZLGhthfd2oOmEG8jZaVoonhvk5L3XCvdizDS5Ab5XwYQzbMig90pFbIdAadpXAIBekYLU8eL6KOSBO5ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=IPSkTInh; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=GWS0n9tp reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1755582393; x=1787118393;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9nCL3QwkJnOTRYEn9BtTPEX3wFqEJoR9A5wWGYPLvuo=;
-  b=IPSkTInh8BH/cjZyXwPIps4Nj1XqpId1Reqvvx+THKENjsZiARSYLKxd
-   Dcr1KVP/GCGpqKX/kbX4zLk42kY7kADkAOOrAI3veIL0fFDXlokqA+tkU
-   +u9ffL3ArRXBVWi3nQv5SILgOXx+zilpR0IK5qNfQTWlCgNvcpfZf4WWO
-   HVQe1l9fg6sZnwhKliOo8ZT2yXc50dMTZ+ZBSpo6uPbJMDIxE06S1xjNo
-   T7RrHZo4NAUcuU51knQ2cgopMsnOeoal5D2OapaFhod2o51K9YojjM/J4
-   KQzoYFYrI9608g5aivu4EuvJjJmXC6tUwugvJM9JIfoWDVDVbfOKZ56Ed
-   g==;
-X-CSE-ConnectionGUID: l/Kii1V6RmSQnbDfi2tSnw==
-X-CSE-MsgGUID: mrA2fpkWSOSZPhAPjUiBAg==
-X-IronPort-AV: E=Sophos;i="6.17,300,1747692000"; 
-   d="scan'208";a="45794423"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 19 Aug 2025 07:46:30 +0200
-X-CheckPoint: {68A40FB6-D-820F521C-C7779E56}
-X-MAIL-CPID: 8AD0AB6E002B742D345C793ABC4510B1_4
-X-Control-Analysis: str=0001.0A002121.68A40F50.002B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9A990169523;
-	Tue, 19 Aug 2025 07:46:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1755582385;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9nCL3QwkJnOTRYEn9BtTPEX3wFqEJoR9A5wWGYPLvuo=;
-	b=GWS0n9tpmRlEDConDS9JHV39aMOHYjdgWOzGkJgoeMcW8xxrqzl3Pt/FSfG5W2icrP6lxc
-	UDSLzIMuKukSs+CYSBKNXAznLslkfe4ViYTyLJSpbNzOiwkYUOGReTKokTpR1JSFLYGh6B
-	0meTvTDzw0S6x4aHbYeJ52XvVkoow+otUsjmfz/8qps27Ccjenwnzl57KyzYMxm5SlZC3Y
-	QpZKUOWnS9xLd8S1d/keAHb7bZXuLyqGCIwpH4pPunjwe86NK40u4nkNKeiGd/mYgW4Ufk
-	hDIc34aIhIBjnSW/aaor4/Qn2673WtOP30gDrQAI4trlRTOxSCL+wGjWJiANsw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
-Subject:
- Re: [PATCH 07/15] ARM: dts: ls1021a: Rename esdhc@1560000 to mmc@1560000
-Date: Tue, 19 Aug 2025 07:46:25 +0200
-Message-ID: <5920180.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250818-ls1021a_dts_warning-v1-7-7a79b6b4a0e2@nxp.com>
-References:
- <20250818-ls1021a_dts_warning-v1-0-7a79b6b4a0e2@nxp.com>
- <20250818-ls1021a_dts_warning-v1-7-7a79b6b4a0e2@nxp.com>
+	s=arc-20240116; t=1755582525; c=relaxed/simple;
+	bh=awBNQis2/Wp2vHf0nSTW4ilfCnxB3WgzqqA1wHWPNEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I4negk4iD1MsmF19XYmdKpZYudyc8c2yTupsiFHemGeNL8vRDjNW/9/Se/1sUOsB1K88oEtI6q6caxPHcmZ8VzlpxAd9RIZJmJi66nOK7YDJwTIfNJLVnQzAqYenU5lQr7GwfXNPsXGuS43upjjmGY5irSpboCeahVYxiQMVazg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ENpjeqjJ; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755582524; x=1787118524;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=awBNQis2/Wp2vHf0nSTW4ilfCnxB3WgzqqA1wHWPNEw=;
+  b=ENpjeqjJaIdCNK8NE4tGlzPbphCUZHI2lkuGizEcblearHP+v5gFewD7
+   T5+5PgT0HSo9s2RSU7RGect1Xhq6WDWFjg5ELWAwb+pMXx3y0C2sbLjaK
+   AynYVZwi/yDO9EICnbcmtSFk6g0TO5VmdxmCC0wShkyxmwqeZlKRhtcYo
+   S7dbm4fTpGo8ICXl4QO3YzTdvq34hVI6zmKmd/D2uFDYD9oBejiz88P1R
+   zMNb00W4dfztryWukhMdYPisaw28JmwYDb0+0ll0+G19WqqGXHka4cogt
+   +zzz5mnTtcNTA9izCE/yh7+VSki7majNjJ465vGqTB1mvWxg3CUiHnB0G
+   Q==;
+X-CSE-ConnectionGUID: 9KCwHNnPSUS3B21xyNBeNw==
+X-CSE-MsgGUID: /WUTJ6WJSBmquUviBNiwXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57921216"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="57921216"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 22:48:43 -0700
+X-CSE-ConnectionGUID: W4Gr7TKHQFKWtBI3CtnaRg==
+X-CSE-MsgGUID: DGONlHHLSx27vdC+evfYkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="204909581"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 18 Aug 2025 22:48:39 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uoFD2-000GXq-2I;
+	Tue, 19 Aug 2025 05:48:36 +0000
+Date: Tue, 19 Aug 2025 13:47:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nipun Gupta <nipun.gupta@amd.com>, arnd@arndb.de,
+	gregkh@linuxfoundation.org, nikhil.agarwal@amd.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, krzk@kernel.org,
+	tglx@linutronix.de, maz@kernel.org, linux@weissschuh.net,
+	chenqiuji666@gmail.com, peterz@infradead.org, robh@kernel.org,
+	abhijit.gangurde@amd.com, nathan@kernel.org,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 2/2] vfio/cdx: update driver to build without
+ CONFIG_GENERIC_MSI_IRQ
+Message-ID: <202508191254.kSWLsaT3-lkp@intel.com>
+References: <20250818063244.1242634-2-nipun.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818063244.1242634-2-nipun.gupta@amd.com>
 
-Hi Frank,
+Hi Nipun,
 
-Am Montag, 18. August 2025, 22:48:18 CEST schrieb Frank Li:
-> Rename node name esdhc@1560000 to mmc@1560000 to fix below CHECK_DTBS
-> warnings:
->   arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.d=
-tb: esdhc@1560000 (fsl,ls1021a-esdhc): $nodename:0: 'esdhc@1560000' does no=
-t match '^mmc(@.*)?$'
-> 	from schema $id: http://devicetree.org/schemas/mmc/fsl,esdhc.yaml#
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm/boot/dts/nxp/ls/ls1021a.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi b/arch/arm/boot/dts/nx=
-p/ls/ls1021a.dtsi
-> index d095c6107745d75b108a430a5eb15e4f2511e81f..3921d9c4912713064dec1e10a=
-c00cc0916d8974e 100644
-> --- a/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
-> +++ b/arch/arm/boot/dts/nxp/ls/ls1021a.dtsi
-> @@ -154,7 +154,7 @@ qspi: spi@1550000 {
->  			status =3D "disabled";
->  		};
-> =20
-> -		esdhc: esdhc@1560000 {
-> +		esdhc: mmc@1560000 {
+kernel test robot noticed the following build errors:
 
-As mentioned in the cover letter to [1] this would break some version of
-u-boot because they explicitly reference '/soc/esdhc@1560000' node name.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.17-rc2 next-20250818]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards
-Alexander
+url:    https://github.com/intel-lab-lkp/linux/commits/Nipun-Gupta/vfio-cdx-update-driver-to-build-without-CONFIG_GENERIC_MSI_IRQ/20250818-143703
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250818063244.1242634-2-nipun.gupta%40amd.com
+patch subject: [PATCH 2/2] vfio/cdx: update driver to build without CONFIG_GENERIC_MSI_IRQ
+config: powerpc-randconfig-003-20250819 (https://download.01.org/0day-ci/archive/20250819/202508191254.kSWLsaT3-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250819/202508191254.kSWLsaT3-lkp@intel.com/reproduce)
 
->  			compatible =3D "fsl,ls1021a-esdhc", "fsl,esdhc";
->  			reg =3D <0x0 0x1560000 0x0 0x10000>;
->  			interrupts =3D <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
->=20
->=20
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508191254.kSWLsaT3-lkp@intel.com/
 
+All error/warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+ERROR: modpost: missing MODULE_LICENSE() in drivers/vfio/cdx/intr.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vfio/cdx/intr.o
+>> ERROR: modpost: "vfio_cdx_irqs_cleanup" [drivers/vfio/cdx/vfio-cdx.ko] undefined!
+>> ERROR: modpost: "vfio_cdx_set_irqs_ioctl" [drivers/vfio/cdx/vfio-cdx.ko] undefined!
+>> WARNING: modpost: module intr uses symbol cdx_enable_msi from namespace CDX_BUS, but does not import it.
+>> WARNING: modpost: module intr uses symbol cdx_disable_msi from namespace CDX_BUS, but does not import it.
 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
