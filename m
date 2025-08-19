@@ -1,105 +1,71 @@
-Return-Path: <linux-kernel+bounces-774652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8669CB2B59A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE73B2B5A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B6727A5D05
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A2E18A4FE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 00:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C48F194C86;
-	Tue, 19 Aug 2025 00:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8104719AD48;
+	Tue, 19 Aug 2025 00:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf9fcNQg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXUpGYPD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83532176ADB;
-	Tue, 19 Aug 2025 00:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7B03451D0;
+	Tue, 19 Aug 2025 00:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755564929; cv=none; b=PpaXyeNQspHVWTIckK9mcmJgXrYx0FlRNu8zuMXmWZD7iLOeHwNWrtBxBjXP6vJiU2q7lnKBBNZvwSVMbTpg/XFV1Y7EcZAXgJzU8hJ+mDG0s1YNY8wlOzzIu24ueRazIM9mlkfwnqDuoYBLbdMGwfhM/+/I38r82SPP4iSlO5k=
+	t=1755565142; cv=none; b=HKz4Fzo2ANKnHo94ltHL3UJ50oOQBBrt4Vo/8oV4Ybts8iBdzyc41GnQzxd9neY0VMLEpr5nOHWhDT9kVTySbHp/CoMrZDU74PBP/LlC+zFI8ShNqcik+wGESADBx8G8+crhvV8ISG0hMoSonStquuB5ywqCkmKDoZtkwefFks4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755564929; c=relaxed/simple;
-	bh=RHDDgdI1KU5gTd6q3RZ5KjPYkSkpxLcDr1NCuu19268=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vrwp53Vxoa7wFDp4GkErXUTYyCVjL2F9uslq8ztOhl4p4crO8Z+iTw35Qk+o/AguRF6Q/9mom4vIuusk/E2H1chA/ps9syrMPB9R6Yo26oNE/KrnswQna5mWSkMsvN1nkfbe726k+pIptuvkVCyjXJm6/KuI5iX1bO+02ULCssg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf9fcNQg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A33C4CEEB;
-	Tue, 19 Aug 2025 00:55:28 +0000 (UTC)
+	s=arc-20240116; t=1755565142; c=relaxed/simple;
+	bh=9T0dOVwu+vVQ2RIasShYoplaSomai6cPaXmNmicLnmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RNj5yMeQN3caLPImIuAkcwo78IPX9Iozae5cVRHL7Tq0Qm17t8YyQJmdxWZFX3XAf4xhZhtCYLe/6RuFB6QvOTr6EJ/DW4rkXC0SK6J9uBpe8oXNt4m6g2hI1oZiQylDUI+tUlpBgMhqlhLad2CcZvcQFu2pZuM7Mo2Tz2+NPOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXUpGYPD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2DB6C113D0;
+	Tue, 19 Aug 2025 00:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755564929;
-	bh=RHDDgdI1KU5gTd6q3RZ5KjPYkSkpxLcDr1NCuu19268=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xf9fcNQgSU+Jeg+ZP/DY9xu+7OEGwXkut8IrHzRW8NQLSJst0aTV0vjj7mBLD2TMC
-	 w5Fy48Sn79iupubE3YtfbIfAZusLxLPs26rf7V0ryA7My7a+9RNPJSdkDFA+bypbef
-	 SxGw74sKCkXQJfaZC+ps0lk9znD9XBmUnvgdm6lcfG4Dymf7j7PwKOAneQrOIzbUez
-	 vCSoiI+k4kes3saiX75j3h1XiAq43lBTMSMpkalNwUodG0ItYSp05wxSQjcjHYl4v/
-	 z2RjuW+7g/v5dY5viRILFm+jyrKcdgAUsnv3ksqOxqwz7dYrU5SvTErUHtrouytaWZ
-	 aW3FdXzlx4+Dw==
-Date: Mon, 18 Aug 2025 17:55:28 -0700
-From: Kees Cook <kees@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, patches@lists.linux.dev,
-	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org, Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	kasan-dev@googlegroups.com, Alexander Potapenko <glider@google.com>
-Subject: Re: [PATCH 00/10] Bump minimum supported version of LLVM for
- building the kernel to 15.0.0
-Message-ID: <202508181753.7204670E@keescook>
-References: <20250818-bump-min-llvm-ver-15-v1-0-c8b1d0f955e0@kernel.org>
+	s=k20201202; t=1755565142;
+	bh=9T0dOVwu+vVQ2RIasShYoplaSomai6cPaXmNmicLnmw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OXUpGYPD2EptVvhF6t0cFflJxmpkK0zTxgqQLggSfl1DMWH5GOH3oAUugVeOaa9mw
+	 Gc+Eil68ZGUMn4UyuHScv0HHGAScdC2bsht1MHE44yTWE49KYfwymM9nBDdM6TOath
+	 df1bPZBcDCDuX01vOgqmuv4iXD/8yjU8TQKL1fULsZoYsmlMlg9/z7wg4iFeHEx8iS
+	 nnlTNs3TySJBLzsMvGP+zFT18PRX4V2SN/ifowGYgTqZ23yZ0nEdGJNP8aICBiSQ38
+	 wWlbHF1HRZeTlyhNxyc7Aza+hEAr0CYK5CZYpEei9JqzLYpyVP6glT3Zdh3v/V/tro
+	 99HxochJ5yhtg==
+Date: Mon, 18 Aug 2025 17:59:01 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Osama Albahrani <osalbahr@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
+ <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: Fix broken link to cubic-paper.pdf
+Message-ID: <20250818175901.5b499b8c@kernel.org>
+In-Reply-To: <20250817133945.13728-1-osalbahr@gmail.com>
+References: <20250817133945.13728-1-osalbahr@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818-bump-min-llvm-ver-15-v1-0-c8b1d0f955e0@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 11:57:16AM -0700, Nathan Chancellor wrote:
-> s390 and x86 have required LLVM 15 since
->
->   30d17fac6aae ("scripts/min-tool-version.sh: raise minimum clang version to 15.0.0 for s390")
->   7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0")
->
-> respectively. This series bumps the rest of the kernel to 15.0.0 to
-> match, which allows for a decent number of clean ups.
+On Sun, 17 Aug 2025 16:39:45 +0300 Osama Albahrani wrote:
+> Use first Wayback Machine snapshot
 
-Looks good to me!
-
-Reviewed-by: Kees Cook <kees@kernel.org>
-
-> I think it makes sense for either Andrew to carry this via -mm on a
-> nonmm branch or me to carry this via the Kbuild tree, with the
-> appropriate acks.
-
-I vote you carry it with Kbuild. :)
-
---
-Kees Cook
+Maybe replace it with a title + author?
+The links keep getting stale, and for academic papers the reference
+should be pretty unambiguous.
+-- 
+pw-bot: cr
 
