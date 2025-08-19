@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-776012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FAC5B2C775
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:49:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AF0B2C79B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A8B3A7C97
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90261BC56BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015E62869E;
-	Tue, 19 Aug 2025 14:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF308283145;
+	Tue, 19 Aug 2025 14:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Xvn2E8EJ"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NxSnAqm8"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C527E060;
-	Tue, 19 Aug 2025 14:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C344279351;
+	Tue, 19 Aug 2025 14:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614808; cv=none; b=GYMgVi0Ru4zVtz9ehbhEDwJRU1nrE1RVAnfTpwfgeDpjnvN1Yvo/0t271uzQCWeNQJKSmeKU5GxS1IY7rsEaQzMmUNPNhPmC67JNGf1CuSMC1AIrteNg0WT93mZ9EIxfpP5z2aQ6n1GABmmDyK+bUaSDUgITdQalXWrLzjGGMkI=
+	t=1755615081; cv=none; b=jkpPkRsZoCqYUAYI2nFer6wv6NcT3xULkafH98GnzDIaPyc3jd/yEKHYOuXimFaMzVt181fsKaJ1C1TDV0VViF70nn69KuAADJnod8qOV5DPSeiER/PunzRccUHZt1ZNIUm3BXoIVh8WfQV+PuYMSRGbIAQoy3YgRUbHwQMLmZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614808; c=relaxed/simple;
-	bh=lIQwI5HsEj/MNS6ooAEjHaJqIuOIhzaddWDiwenv7EA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Riz1tnXmYWYZYDmmcPeD0/OjzeVOKEkZaD0qUZPyJ0EU2aN2Clsz+kRDKlvHiV6O+0FJqoZ9q3AacZPOusAweRX1UdTVeQcQs3N/wa/JOqXRLORaJdW92GLrdohemDHMW6mG5N9M0Hg17y5a8aOWyW3iRVCn6+6GdS5hjAKHWS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Xvn2E8EJ; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D0DE31F47A;
-	Tue, 19 Aug 2025 14:46:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1755614801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Nc/LQSMQfGgp1YRf3tUnRSaCb+wuSL3TiqDWsh2u7Q=;
-	b=Xvn2E8EJKnK2mFkg85Mx73CYet081ujXFBzOiakOaRo2V2LGzVAvgvmw2dyNP6RODq8dzG
-	ER8M0Hk40YfSelzHZBRU9PK/jvELYGwnT8ZtQnSuZXIlN+qK2b3DhAB0gw/cNq1x7+zhLI
-	4oYIcL3wTQOxxNaIVXd2zOnyQCGwKODvImC2rdRuNXTcc9QJl0pbZvosjV3NLOg96UAONK
-	NqPqI9ynkKqn/sFG3t4VSQF0cmy3hJF8BYkmMiTkleLZG6f/A1KRKhp5d529/OwuUJlGv5
-	LxiedjIRiRYDouo1J7nL/jGRLhgKtHu7Z8+B5uyPwqFqORjgp+iRh3hX+Wnc2Q==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
- Xichao Zhao <zhao.xichao@vivo.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- Xichao Zhao <zhao.xichao@vivo.com>
-Subject: Re: [PATCH] usb: typec: mux: Remove the use of dev_err_probe()
-Date: Tue, 19 Aug 2025 16:46:39 +0200
-Message-ID: <6186026.lOV4Wx5bFT@fw-rgant>
-In-Reply-To: <20250819112451.587817-1-zhao.xichao@vivo.com>
-References: <20250819112451.587817-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1755615081; c=relaxed/simple;
+	bh=ThBHGtPKYvhMxyBJR4R6NNzpP7faBpaTSxbgTppVZCk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Y8Gi6jIdoGMw+A+4nh1YZRAI9FpVHPNiiRuD6UvZR0DW9R9dOOwEPOv6PB4X3VUTpcrEapyYh9wAQPusNACRWDTpfszkfSoiLnTCO3bZ1DMO1ff/DWcscumLbebLabX4kQDIHkEOQESBSzkNGCDfH6uRe96R/TxRQ1aaBuxzAXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NxSnAqm8; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57JEQlse022536;
+	Tue, 19 Aug 2025 16:51:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=ebOIIZZ3DRVN0g4QYrPpIA
+	WIJHsQWEwswQw/dE8omoI=; b=NxSnAqm8oiito/2M7Upo1R9G2KX1utqpVzArM9
+	hiz0iBLUWCpHo1gDCvbijp7i5nLseHQZAHEVLRz3iirCbMClwntH5rcQnxtpdDFD
+	qy75K6Hz7TFtS08tnM1Eyt/XaPx5GJyQn4aegI4lVPdxQ4OArHwfwlkLeZKUrIQa
+	IdwTT3QCTmljqew+nAbtaBHMDjiNaDHlj8BEoui8U1Tu7oUYm5ahTeJK0yFs7yIP
+	CCYeuSPyZDZm1OW+usPSp0NeoQADdpuNsvy3v2KXmq9d/i/aY1gFcZA7PQmwVG/N
+	m0m5JkmABG2M+3SyKUjl3mfUF7MQcI47w+6srsCue8Rna5IQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48jfdkbqd8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 16:51:10 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8D0FF40044;
+	Tue, 19 Aug 2025 16:50:27 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6CA6F7392E7;
+	Tue, 19 Aug 2025 16:49:53 +0200 (CEST)
+Received: from localhost (10.130.78.67) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 19 Aug
+ 2025 16:49:53 +0200
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Subject: [PATCH v2 0/2] media: i2c: vd55g1: Support vd65g4 RGB variant
+Date: Tue, 19 Aug 2025 16:47:40 +0200
+Message-ID: <20250819-vd55g1_add_vd65g4-v2-0-500547ac4051@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5034698.31r3eYUQgx";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheehjeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeekffdvuefgkeejgeefhfdvteeuhfdtleeiudehieeludelvdetleeggfffffenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehhvghikhhkihdrkhhrohhgvghruhhssehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepiihhrghordigihgthhgrohesvhhivhhordgtohhmpdhrtghpthhtoheplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhop
- ehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIyOpGgC/22NQQqDMBBFryKzbiRJMyHtqvcoItaMmkWNZCS0i
+ HdvKnTX5Xvw39+AKQViuFYbJMqBQ5wL6FMF/dTNI4ngC4OWGqVTTmSPOKq2877N3uJohCOHytF
+ gUVoouyXREF5H894UngKvMb2Pi6y+9le7/KllJaR4GGeNNWh7fb4Nkbnmte7jE5p93z9qDa2Vt
+ AAAAA==
+X-Change-ID: 20250818-vd55g1_add_vd65g4-8e8518ef6506
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sylvain Petinot
+	<sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_02,2025-08-14_01,2025-03-28_01
 
---nextPart5034698.31r3eYUQgx
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Tue, 19 Aug 2025 16:46:39 +0200
-Message-ID: <6186026.lOV4Wx5bFT@fw-rgant>
-In-Reply-To: <20250819112451.587817-1-zhao.xichao@vivo.com>
-References: <20250819112451.587817-1-zhao.xichao@vivo.com>
-MIME-Version: 1.0
+This serie adds the support for the vd65g4, the color variant of the
+vd55g1.
 
-On Tuesday, 19 August 2025 13:24:51 CEST Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> Therefore, remove the useless call to dev_err_probe(), and just
-> return the value instead.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->  drivers/usb/typec/mux/tusb1046.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/mux/tusb1046.c
-> b/drivers/usb/typec/mux/tusb1046.c index b4f45c217b59..3c1a4551c2fb 100644
-> --- a/drivers/usb/typec/mux/tusb1046.c
-> +++ b/drivers/usb/typec/mux/tusb1046.c
-> @@ -129,7 +129,7 @@ static int tusb1046_i2c_probe(struct i2c_client *client)
-> 
->  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->  	if (!priv)
-> -		return dev_err_probe(dev, -ENOMEM, "failed to allocate driver 
-data\n");
-> +		return -ENOMEM;
-> 
->  	priv->client = client;
+First patch is the device tree bindings update, while the second is the
+driver support per se.
 
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+---
+Changes in v2:
+- Fix smatch warning about vd55g1_mbus_formats_bayer potential overflow
+- Fix vd55g1_mbus_formats_bayer dimensions
+- Link to v1: https://lore.kernel.org/r/20250819-vd55g1_add_vd65g4-v1-0-b48646456c23@foss.st.com
 
+---
+Benjamin Mugnier (2):
+      media: dt-bindings: vd55g1: Add vd65g4 compatible
+      media: i2c: vd55g1: Add support for vd65g4 RGB variant
 
+ .../devicetree/bindings/media/i2c/st,vd55g1.yaml   |   6 +-
+ drivers/media/i2c/vd55g1.c                         | 234 +++++++++++++++------
+ 2 files changed, 172 insertions(+), 68 deletions(-)
+---
+base-commit: 2412f16c9afa7710778fc032139a6df38b68fd7c
+change-id: 20250818-vd55g1_add_vd65g4-8e8518ef6506
 
---nextPart5034698.31r3eYUQgx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmikjk8ACgkQKCYAIARz
-eA41AQ//QR8aTYlAaJQzQ4KHzYrI7WpumkxyF8uxkVvPMiCJHCsbpySePEn/sIGe
-tY42RUyYkQ2P5+eWqjJwy5qwFTl3neTxjFzWoJqEwpUBOCzSkKsHfEDoT5MWW7wc
-NUYKbxi73nvVawpfi5N762GxmWxBLgHxmmF0LnBVnldC16xcWCKB5F+PPOzgujk/
-peymHaShLBh+p1R9vXP2a19+wXyoP1DxNb05pfmVUAKTbu4cjExUOpXRdc0Jwfd7
-ZRXDJXyIN8Ahl9UI3alyia0nZkbUvpBpyWC0jpvsVDA7NljmUlGRfmtpQSwgFoR6
-e7ojvmRDU7oJuV002s8T9DSTdMA6HPZofKXDr4jRx/MQeV3p7tfECI5PTqxSuwfC
-kaJXU6b7H20GyIy5GV0J+WZb1cCMZrIVy6RJFUNWSAAb7G6EiIx1yz0H/dYKRAUJ
-Ul59se2GbwBIEauOiuzrHDBzJzUCRSHAevz6jsaiJmMTJQ7BGd01HRO007oHSq5y
-h7bX6ZBF5PHjW6vUWLS120UO4U6O9PAnNr5wF6MASMTU7SZrR0Z92MIblSBg7SyC
-aGd7X74WRQHhy21ufnO2/8xYOi9MqwDb/ig01FKDfAG7iiBUlk9yhSgdP42luczD
-bYWlXT02PR6u2TPeOzSbideSIy2zbdIOLDOVrYP5EkuIGRWUtq8=
-=GBSg
------END PGP SIGNATURE-----
-
---nextPart5034698.31r3eYUQgx--
-
-
+Best regards,
+-- 
+Benjamin Mugnier <benjamin.mugnier@foss.st.com>
 
 
