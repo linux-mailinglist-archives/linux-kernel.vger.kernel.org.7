@@ -1,116 +1,94 @@
-Return-Path: <linux-kernel+bounces-775491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05588B2BFC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:05:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D837B2BFD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D27264E40C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6585C1642AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D39322DD7;
-	Tue, 19 Aug 2025 11:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC11322A1A;
+	Tue, 19 Aug 2025 11:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2PGxiU+u";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5se6tVPg"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f7sDmmIv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8D1277815;
-	Tue, 19 Aug 2025 11:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC80311941
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601503; cv=none; b=ZWb5DjQr8inPjY0dF/KMiXWZMYcfZp0gr1EbRWYjSujMooqnFMpDqxTOs9E9/Iwp6mC6pAjhWEkn5MeWpnQ1/01WUK+ioUMXkhlOnqqG9oDv/PDHCKyPTCOj1yi19pQ+kB8MMtEh3hh93xtuLx+XdwJZZPgdbkwIb+netmqqH20=
+	t=1755601571; cv=none; b=Of7Iptr5YhXWftTTwlMIfZK5YoFHDTghQBENZRcLrbf3Ok7HE1a9FHaWj1jwhDGq+oRcwcjhJXVsMBdC628ybHvhdAJVXWh35YOsIBXfQy4vWejmoYv4nXKuhJ8fBgMZMHxvtf9gUQqBo6eM4hETCpf34rgIEtrPz8olsFokfck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755601503; c=relaxed/simple;
-	bh=rHEaaqol+wq/PQNpycnOEkWJjXBDEIgMozYeYNpptek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xw8zfuzxM7hDu7ouIbZPQfwpqBUOCj4eRfcokAcDXDtklh6jQIdzM+pEJueHT9+5gnGiA1aFH71OGo32++zOHUazLvM8sKBvXRyyQjSQ3k3hC+chcHhkWiwEKlXD0M95NyFCXr3O37eQMKQhLbSI+PGZPK/z7N3ZdAPHaK8Gfho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2PGxiU+u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5se6tVPg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 13:04:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755601499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rqh3iYHKlyPINsf7PNaMKXhkXHfqA7fwYANjIihyFuo=;
-	b=2PGxiU+uGZFhhZWRgEV6eDHVadp7vpBOd/pefe7KSysvMbHwAbF4+NXL5oABADTgbMpkjU
-	TyKYJWyE4BWkezRelUcknyX0OZFo19U0oH2H1z4EOB+Qpneh43nt5Z7iBPXeZtaAhe8CgG
-	5Ti0slD3PtCuCIHgXST7K1Vf8FYyI2TNU80belu8Vk3Tqmw69ZwGDFdMhaITLjVJfCb+Fr
-	J+lB5FuodjS9NTj//aU3bYOsSHQ7RWBE51NeoEzD8cH5/NWBuKRP/UExrDxM6D/m6hNM/A
-	g8cej4XsXNonz3/Si8Co99KN1caAlal3vHP+XUAKLppqhbq/KuIgEUyNZPh/OA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755601499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rqh3iYHKlyPINsf7PNaMKXhkXHfqA7fwYANjIihyFuo=;
-	b=5se6tVPgpJvj7sc17yngQFEUN4QaEDbpZOW0Pgsk2c0A0XpF+IolQhNVQOHmHuYywA7PHJ
-	AAtH0F/yK0ZBrnCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Yunseong Kim <ysk@kzalloc.com>, linux-usb@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
- in vhci_urb_enqueue on PREEMPT_RT
-Message-ID: <20250819110457.I46wiKTe@linutronix.de>
-References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
- <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
- <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
- <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
- <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
+	s=arc-20240116; t=1755601571; c=relaxed/simple;
+	bh=CdX8yhhE2/AY6zrdYFD+LDAXjVc4FSrHlpLJhlpx7ZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=utEce6TlgBvMrFJsrIFmZ7FqR6n1xYpV0ldNXeB7yeak6ai6OpwnEnqV6U5gHyPy8CvJLq7oRA1W7srB78Yn/J32YP9b2aNzKT4wnqj3WxJDnzwTd3Fp6OUrSnl0RSYlJrQ121alGA0XYvj3MFL+FZb8UHV/oEBcVAhvwpLqBhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f7sDmmIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B60C4CEF1;
+	Tue, 19 Aug 2025 11:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755601571;
+	bh=CdX8yhhE2/AY6zrdYFD+LDAXjVc4FSrHlpLJhlpx7ZE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f7sDmmIvnr6ftMItWPAcWziv/RLaGmLevP2jFHNojr8JodeyItrL5yMnA8xXhfaEv
+	 0PPtRFzkC8SIunSJuFnwxFtJz7WNGKXzKwzqBHpJ9tTm9PUr0nsa2tpfReN87eb4Qa
+	 Vqxo+vbmv7qLiqU7SO6mpECqw5mXYJD26Ug+nFdHs3mK8IC1mwaJf3gy8O8pjfGzvY
+	 0trDqVvpI7wGg8XyfUSnkN2WjzAdeV9t3hxrCl3TIj0+5mvQBTR6hCewxhkkOT7MmF
+	 L9u6czq2OB2WqF5GHi+ALlamPGIuFakR5rw3qFfNb+KpfaBX4kFxCHevqBA/8UFqhT
+	 pTmvAY5qA+9Lw==
+From: Christian Brauner <brauner@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	ahuang12@lenovo.com
+Subject: Re: [PATCH 1/1] signal: Fix memory leak for PIDFD_SELF* sentinels
+Date: Tue, 19 Aug 2025 13:06:04 +0200
+Message-ID: <20250819-geopolitisch-artikel-e64bc21337d6@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250818134310.12273-1-adrianhuang0701@gmail.com>
+References: <20250818134310.12273-1-adrianhuang0701@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1211; i=brauner@kernel.org; h=from:subject:message-id; bh=CdX8yhhE2/AY6zrdYFD+LDAXjVc4FSrHlpLJhlpx7ZE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsiZrH1NnVUfVpevrVL58yppps8nIJCN4UGx7IxbP1g IOJYOamjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIn8mcPI8HPpPSXJgn3LtpxZ UH66Ydf9b1H9X0zi9YVU3j56/ngx72RGhlvBVz7x/y5Kzp4fZlPyb8/Vyy+4t+Rp9UxkvCqmb/x RkwMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-17 10:27:11 [-0400], Alan Stern wrote:
-> On Sat, Aug 16, 2025 at 10:16:34AM -0400, Alan Stern wrote:
-> > So it looks like we should be using a different function instead of 
-> > local_irq_disable().  We need something which in a non-RT build will 
-> > disable interrupts on the local CPU, but in an RT build will merely 
-> > disable preemption.  (In fact, every occurrence of local_irq_disable() 
-> > in the USB subsystem probably should be changed in this way.)
+On Mon, 18 Aug 2025 21:43:10 +0800, Adrian Huang (Lenovo) wrote:
+> Commit f08d0c3a7111 ("pidfd: add PIDFD_SELF* sentinels to refer to own
+> thread/process") introduced a leak by acquiring a pid reference through
+> get_task_pid(), which increments pid->count but never drops it with
+> put_pid().
 > 
-> Or maybe what we need is something that in a non-RT build will disable 
-> local interrupts and in an RT build will do nothing.  (I suspect that RT 
-> kernels won't like it if we call spin_lock() while preemption is 
-> disabled.)
+> As a result, kmemleak reports unreferenced pid objects after running
+> tools/testing/selftests/pidfd/pidfd_test, for example:
+> 
+> [...]
 
-This is the local_irq_disable() in vhci_urb_enqueue() before
-usb_hcd_giveback_urb() is invoked. It was added in 9e8586827a706
-("usbip: vhci_hcd: fix calling usb_hcd_giveback_urb() with irqs
-enabled").
-The warning that fixed back then was 
-|         if (WARN_ON(in_task() && kcov_mode_enabled(mode))) {
-which was kernel/kcov.c:834 as of v5.9-rc8 (as of report the mentioned
-in the commit).
-local_irq_disable() does not change the preemption counter so I am a bit
-puzzled why this did shut the warning.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-> > Is there such a function?
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-We could use some API that accidentally does what you ask for. There
-would be local_lock_t where local_lock_irq() does that.
-What about moving the completion callback to softirq by setting HCD_BH?
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> Alan Stern
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Sebastian
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] signal: Fix memory leak for PIDFD_SELF* sentinels
+      https://git.kernel.org/vfs/vfs/c/4df38f680278
 
