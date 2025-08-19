@@ -1,92 +1,188 @@
-Return-Path: <linux-kernel+bounces-775992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DFB1B2C731
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4831AB2C73A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A17354E473A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:37:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0BF84E2E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C602773D2;
-	Tue, 19 Aug 2025 14:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03168275B1A;
+	Tue, 19 Aug 2025 14:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD/2BRXZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BjKVYhxP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD4127602E;
-	Tue, 19 Aug 2025 14:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9672920299B
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755614228; cv=none; b=O7jE0Pw/kSYf91WYyv0+1zFUbVHUWtrvjWz95QmWEk9QQzTfBr/uyhQ9pMH36us/o6ymF3v0j/vnVDCRvRIKXYJdnECmjexHUAlNgKUMDhBEwc8qjS8vNep2XTNotneRrNj8eEVlumUhHn/wJy5YSC9307ZsLSZWwNfHreFmKJ0=
+	t=1755614324; cv=none; b=K22K1hBQHL34WokFSU01YeGRWMqkvc3/1m/nwDBjDwuMHRWOkzwWGJrOEnnhr2ZT1IODe1rAXzC7OrBzj2FsN68O/cFhdLyoqgUa7/PxRvEXp1gVIATqIq7jtMWvd7rKd56lSh5g3cj9sB4A/Hee9Ovxync/OHZCiTgg/g+NkTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755614228; c=relaxed/simple;
-	bh=aZSj54aByG6mSlw6bfuWZN/4ePTQj9IrjVwHH3nYOsA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LbBGuMXhPGRKJcMJv5zNVO6NpsNp9kIPiG8CoBfE0kh0FQI4jgS4ojSHJN4bqXn40gbKBCnTYt/lMkEvCC2YoSohjpmTIEZYEIjgHeM6mhtwEnf1s0Y0TbWrFmPfgkKyWtaqvDwdg/dHvc5ohK6IrC3lkn42rCHx9tokTIYUJIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD/2BRXZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B6AC4CEF1;
-	Tue, 19 Aug 2025 14:37:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755614228;
-	bh=aZSj54aByG6mSlw6bfuWZN/4ePTQj9IrjVwHH3nYOsA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iD/2BRXZ4T/jKUg7tQ997lJ7azM1VrGJNnJ+qXZyVmdUhO3RcBAUSIYat8btn9nw+
-	 3jRbfFYtHrsENNrHiRpRORvxNLu/dOv21SkKxhYaZL2YC7JHKJ9H/L2LEpk+F1gPT4
-	 1O0cM58h7DG0Fxfc10+pj6d2tYoYwKgCVRkmNE+nmLfeZ5zCjC0xmpe2C24NXR3tJV
-	 YuRxmdxQoeHIIgRWNnIw3VcnvtPPHY3PMXmAoZmi5XvdpjqxcUCS6CSmbktfqi42yR
-	 qyll/n6gz4q26T0kw/Xrl+5vr9XaC5YKdadQJgWC1VXKnTHgAOwBf01m32nPClZnBv
-	 7z7G4ZW8EG7IA==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: jianjun.wang@mediatek.com, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: ryder.lee@mediatek.com, bhelgaas@google.com, lpieralisi@kernel.org, 
- kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, matthias.bgg@gmail.com, linux-pci@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel@collabora.com, Manivannan Sadhasivam <mani@kernel.org>
-In-Reply-To: <20250703120847.121826-1-angelogioacchino.delregno@collabora.com>
-References: <20250703120847.121826-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v2 0/3] mediatek-gen3: Add support for MT8196/MT6991
-Message-Id: <175561422286.13472.6948461219213166201.b4-ty@kernel.org>
-Date: Tue, 19 Aug 2025 20:07:02 +0530
+	s=arc-20240116; t=1755614324; c=relaxed/simple;
+	bh=cg2kXjVsoV0pRM1swFf/4CYooxQWUROeNNhtPwxIdF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoCOtSXPCcSgek7CsQmpIZHf6SyXRnBA2/N3nc9YBg8NTspvyYCPvdlgEboKTZXb6+cZ2gXHeRdZ607jEhmsYUoLKUqKhMaoTO76D0gMTlMlZ4vcQkkqFY+xRERcfjkOjET8k6cWWTpILm3PeVMN42DsC5D/PMD6ahFc8SvfTK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BjKVYhxP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755614320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lPO4BKtyeVC6K3B9qpVkrs0JgUOPn4bkW5RMZGLRlx8=;
+	b=BjKVYhxPsKQQS/6xFRMr1Vi2VAPJYb52A9ewCGmuTvDlHBniQmaEmsh+Xl3L1Vpr+h8bGB
+	ekaEqQyXFVwQJ/Y29qWVBc1R78yvX85EeXo9mDKWf3+FhmooRjyQ7U9AZJZ/o/zhP3M0Lz
+	tnTJovwEbtjxJZdo7twU5HAS7h3qJNI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-aCx41otDN--vxRg96zsBRQ-1; Tue,
+ 19 Aug 2025 10:38:36 -0400
+X-MC-Unique: aCx41otDN--vxRg96zsBRQ-1
+X-Mimecast-MFC-AGG-ID: aCx41otDN--vxRg96zsBRQ_1755614313
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 854EB1800366;
+	Tue, 19 Aug 2025 14:38:33 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.44.34.10])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C8451800280;
+	Tue, 19 Aug 2025 14:38:27 +0000 (UTC)
+Date: Tue, 19 Aug 2025 10:38:23 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, linux-trace-kernel@vger.kernel.org,
+	Nam Cao <namcao@linutronix.de>, Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [RFC PATCH 14/17] sched: Add deadline tracepoints
+Message-ID: <20250819143823.GB282929@pauld.westford.csb>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+ <20250814150809.140739-15-gmonaco@redhat.com>
+ <aKRKaTJBxD3kdt_G@jlelli-thinkpadt14gen4.remote.csb>
+ <20250819101244.GF4067720@noisy.programming.kicks-ass.net>
+ <711ff45f008bb4943418c40eba604e83858767ff.camel@redhat.com>
+ <aKSD3Pm_9qqmEaNv@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aKSD3Pm_9qqmEaNv@jlelli-thinkpadt14gen4.remote.csb>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
 
-On Thu, 03 Jul 2025 14:08:44 +0200, AngeloGioacchino Del Regno wrote:
-> Changes in v2:
->  - bindings: Removed useless minItems in reset
->  - bindings: Defined reset-names items
+Hi Juri,
+
+On Tue, Aug 19, 2025 at 04:02:04PM +0200 Juri Lelli wrote:
+> On 19/08/25 12:34, Gabriele Monaco wrote:
+> > 
+> > 
+> > On Tue, 2025-08-19 at 12:12 +0200, Peter Zijlstra wrote:
+> > > On Tue, Aug 19, 2025 at 11:56:57AM +0200, Juri Lelli wrote:
+> > > > Hi!
+> > > > 
+> > > > On 14/08/25 17:08, Gabriele Monaco wrote:
 > 
-> This series adds (at least partial) support for the MediaTek MT8196
-> Chromebook SoC and for the MT6991 Dimensity 9400 Smartphone SoC's
-> PCI-Express controller.
+> ...
 > 
-> [...]
+> > > > > @@ -1482,6 +1486,7 @@ static void update_curr_dl_se(struct rq
+> > > > > *rq, struct sched_dl_entity *dl_se, s64
+> > > > >  
+> > > > >  throttle:
+> > > > >  	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
+> > > > > +		trace_sched_dl_throttle_tp(dl_se);
+> > > > >  		dl_se->dl_throttled = 1;
+> > > > 
+> > > > I believe we also need to trace the dl_check_constrained_dl()
+> > > > throttle, please take a look.
+> > 
+> > Probably yes, strangely I couldn't see failures without it, but it may
+> > be down to my test setup. I'm going to have a look.
+> 
+> Not sure if you tested with constrained (deadline != period) tasks.
+> 
+> > > > Also - we discussed this point a little already offline - but I
+> > > > still wonder if we have to do anything special for dl-server defer.
+> > > > Those entities are started as throttled until 0-lag, so maybe we
+> > > > should still trace them explicitly as so?
+> > 
+> > The naming might need a bit of a consistency check here, but for the
+> > monitor, the server is running, armed or preempted. Before the 0-lag,
+> > it will never be running, so it will stay as armed (fair tasks running)
+> > or preempted (rt tasks running).
+> > 
+> > armed and preempted have the _throttled version just to indicate an
+> > explicit throttle event occurred.
+> > 
+> > We might want to start it in the armed_throttled if we are really
+> > guaranteed not to see a throttle event, but I think that would
+> > complicate the model considerably.
+> > 
+> > We could instead validate the 0-lag concept in a separate, server-
+> > specific model.
+> > 
+> > Does this initial model feel particularly wrong for the server case?
+> 
+> No it doesn't atm. :-) Thanks for the additional information.
+> 
+> > > > In addition, since it's related, maybe we should do something about
+> > > > sched_switch event, that is currently not aware of deadlines,
+> > > > runtimes, etc.
+> > 
+> > I'm not sure I follow you here, what relation with switch and
+> > runtime/deadline should we enforce?
+> > 
+> > We don't really force the switch to occur timely after throttling, is
+> > that what you mean?
+> > Or a switch must occur again timely after replenishing?
+> 
+> Hummm, yeah I was wondering if we need something along these lines, but
+> we can also maybe leave it for the future.
+> 
+> > > As per the whole _tp() thing, you can attach to the actual
+> > > sched_switch tracepoint with a module and read whatever you want.
+> > 
+> > Yeah I believe Juri referred to model constraints on the already
+> > existing events rather than new tracepoints here.
+> 
+> Separately from this series, maybe we should put such a module/bpf thing
+> somewhere shared, so it's easier to use it when needed.
+> 
+> 
 
-Applied, thanks!
+A few of us use: https://github.com/qais-yousef/sched_tp.git
 
-[1/3] PCI: mediatek-gen3: Implement sys clock ready time setting
-      commit: a895dc47ceba63feb711905440585cf2b16e9ce2
-[2/3] dt-bindings: PCI: mediatek-gen3: Add support for MT6991/MT8196
-      commit: 0106b6c114cf8b77d801d9e280b221f8b4d5595b
-[3/3] PCI: mediatek-gen3: Add support for MediaTek MT8196 SoC
-      commit: 81fedb39a9f0da301a11c7a3b81d91c3b9024462
+This has all the current scheduler raw tps exposed, I believe, but would
+need updates for these new ones, of course. 
 
-Best regards,
+I have a gitlab fork with our perf team uses to get at the ones they use
+(mostly the nr_running ones to make their heat maps).
+
+Fwiw...
+
+
+
+Cheers,
+Phil
+
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
 
 
