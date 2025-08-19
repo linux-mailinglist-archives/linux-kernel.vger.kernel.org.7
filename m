@@ -1,136 +1,87 @@
-Return-Path: <linux-kernel+bounces-774756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DC8B2B6FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD659B2B708
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F6A1B65E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5989D1B65363
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076862BCF45;
-	Tue, 19 Aug 2025 02:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D89E1DF24F;
+	Tue, 19 Aug 2025 02:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiizOzQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A2F13A265;
-	Tue, 19 Aug 2025 02:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bkY5koch"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282AC14A8E;
+	Tue, 19 Aug 2025 02:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755570586; cv=none; b=e6+C/elAOTeLZjiDYT9PW/ZWTZAoSVnetfbM5hMfkJiFmI+EU2agx8iXQblYVy1UMUx+XbC1U849YaV7Ey2L5SCK5Pv/OeYEAj8cQRGXak3eORCYb8f5XFLfmDZTzHKY4+qegupt61gACMVgeZKEDncbE+M2pE3c4N82/D2glvo=
+	t=1755570655; cv=none; b=XmrKl8C6VSNXgr8TOtlsItT+fCnb0J0jOvAm6EcaZ9waUFIbh2DlfN5zmVZpGcIRb3xp5JxsjJuXohx8zGdisTNp1iq+NKJRZP5GAKhSKJ72pV+cvI56liVEazhAEes5QFFvbasQG/JeUyudL69F2e6Ov7QIR1PgJ1ngEJbbmJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755570586; c=relaxed/simple;
-	bh=pnbIGffi+m0JiaoTE1u58BWNGkLr6BjTzLhLMx6GpIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dIgilfNMEQr9+K9sQO8avBfjaCK2GJB+yyJXdjyocNi4myHN0RFcIDuhdV/gI0nF10PePAqNO+Hy9pTzj9kStX9HOH6GayGpu2wTTONkeFI8n0B545IDUCrRbItp37w0P9YPNDEd4UoiF/Bf5nSv/JIdlFEFGy5T2PfXugudloQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiizOzQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80979C4CEED;
-	Tue, 19 Aug 2025 02:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755570584;
-	bh=pnbIGffi+m0JiaoTE1u58BWNGkLr6BjTzLhLMx6GpIM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MiizOzQUjbCkSIxwlHYSR8zVbvom7LhEBydxrRrbUgRz9NFA+rPRnUdc740pB+o4x
-	 NmGpHReKVnQUmwkuKaf+/aNF+H9N7zgE9dMz9B7ZGrQjZG5etdWoRNJ7Nq4R/ILzol
-	 fVe6+7I1xeAwBjm+oNVGEiOjfCbGkB1TRjcD7Agx9geoR61hjQn7ahxM1Po4YX6hYu
-	 5rnOYfEmOFIKRy3esHKsSP6ZcbPnK+ZhsNm+K65+N8e0hEOG2V/IVbpPomDkxwnVcB
-	 xS6OCXqRN18W0EqkN+qGndEvjH6/nskq5B9e9fUtLeiHdrbt0D8XEonDxis1ovwwWf
-	 CvddQnpGFchcg==
-Date: Mon, 18 Aug 2025 19:29:43 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Schmidt
- <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>
-Subject: Re: [PATCH net-next v3 5/5] dpll: zl3073x: Implement devlink flash
- callback
-Message-ID: <20250818192943.342ad511@kernel.org>
-In-Reply-To: <20250813174408.1146717-6-ivecera@redhat.com>
-References: <20250813174408.1146717-1-ivecera@redhat.com>
-	<20250813174408.1146717-6-ivecera@redhat.com>
+	s=arc-20240116; t=1755570655; c=relaxed/simple;
+	bh=b1qUQAM60cMYPl7V0ScUvR9LA9K1JoHvN22P5gTDwR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LhrsB9D9b1/7UAfo2Dz5SKLJX9XQ+Ink5g4SLNvfFzw3Kuv3DnGp5ACiH6MRuU4kh0k6jjsZjTF7GVk+1DLLzC1lwb2i2EweEN5NDW1uu7t4IqV5hm6KmJLzpmIIREi7I3F24lS3LX3QJjHVU5U6ytPpDRFueq47fPkr1wq02KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bkY5koch; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Ev
+	Tdpk/C0SrAV2N3VjzKTmAB7DE/+/AoiCYzOgohIRY=; b=bkY5kochVE6qKnJjFZ
+	sndwQzM+WuDz7hbU03R0xWXzj9xZBUYLVlfAamQ94qBK5dp/jWbb5NtxMat57KCS
+	ZhCXKRmmBiMSPBPWNxzkAZozrPlwg3Qa6jSWSibtGKu1OtzmisuRPfN0jLhs/5bS
+	q0onklo+mNvkxL3DfqZf+Zcwg=
+Received: from neo-TianYi510Pro-15ICK.. (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3d0Ow4aNo6PDgCw--.2226S2;
+	Tue, 19 Aug 2025 10:30:09 +0800 (CST)
+From: liuqiangneo@163.com
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qiang Liu <liuqiang@kylinos.cn>
+Subject: [PATCH] scsi: aic94xx: remove self-assigned redundant code
+Date: Tue, 19 Aug 2025 10:30:06 +0800
+Message-ID: <20250819023006.15216-1-liuqiangneo@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3d0Ow4aNo6PDgCw--.2226S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtryxGF4xtw4UCF48Ww4xtFb_yoWfGrc_Wr
+	Wjvan7WryUJrs7Kw15Aa45Jr9Yva1xW3y8u3s0vr93A3WSvFW5Zw1DAF9rAw4kG3yYyFy7
+	JrW8WF1Fkr1ktjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU11lkDUUUUU==
+X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/xtbBNROuYWij31JG5QAAsM
 
-On Wed, 13 Aug 2025 19:44:08 +0200 Ivan Vecera wrote:
-> +	struct zl3073x_dev *zldev = devlink_priv(devlink);
-> +	struct zl3073x_fw_component *util;
-> +	struct zl3073x_fw *zlfw;
-> +	int rc = 0;
-> +
-> +	/* Load firmware */
+From: Qiang Liu <liuqiang@kylinos.cn>
 
-Please drop the comments which more or less repeat the name 
-of the function called.
+Assigning ssp_task.retry_count to itself has no effect
 
-> +	zlfw = zl3073x_fw_load(zldev, params->fw->data, params->fw->size,
-> +			       extack);
-> +	if (IS_ERR(zlfw))
-> +		return PTR_ERR(zlfw);
-> +
-> +	util = zlfw->component[ZL_FW_COMPONENT_UTIL];
-> +	if (!util) {
-> +		zl3073x_devlink_flash_notify(zldev,
-> +					     "Utility is missing in firmware",
-> +					     NULL, 0, 0);
-> +		rc = -EOPNOTSUPP;
+Signed-off-by: Qiang Liu <liuqiang@kylinos.cn>
+---
+ drivers/scsi/aic94xx/aic94xx_task.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I'd think -EINVAL would be more appropriate.
-If you want to be fancy maybe ENOEXEC ?
+diff --git a/drivers/scsi/aic94xx/aic94xx_task.c b/drivers/scsi/aic94xx/aic94xx_task.c
+index 4bfd03724ad6..b26a468ddc98 100644
+--- a/drivers/scsi/aic94xx/aic94xx_task.c
++++ b/drivers/scsi/aic94xx/aic94xx_task.c
+@@ -488,7 +488,6 @@ static int asd_build_ssp_ascb(struct asd_ascb *ascb, struct sas_task *task,
+ 	scb->ssp_task.conn_handle = cpu_to_le16(
+ 		(u16)(unsigned long)dev->lldd_dev);
+ 	scb->ssp_task.data_dir = data_dir_flags[task->data_dir];
+-	scb->ssp_task.retry_count = scb->ssp_task.retry_count;
+ 
+ 	ascb->tasklet_complete = asd_task_tasklet_complete;
+ 
+-- 
+2.43.0
 
-> +		goto error;
-> +	}
-> +
-> +	/* Stop normal operation during flash */
-> +	zl3073x_dev_stop(zldev);
-> +
-> +	/* Enter flashing mode */
-> +	rc = zl3073x_flash_mode_enter(zldev, util->data, util->size, extack);
-> +	if (!rc) {
-> +		/* Flash the firmware */
-> +		rc = zl3073x_fw_flash(zldev, zlfw, extack);
-
-this error code seems to be completely ignored, no?
-
-> +		/* Leave flashing mode */
-> +		zl3073x_flash_mode_leave(zldev, extack);
-> +	}
-> +
-> +	/* Restart normal operation */
-> +	rc = zl3073x_dev_start(zldev, true);
-> +	if (rc)
-> +		dev_warn(zldev->dev, "Failed to re-start normal operation\n");
-
-And also we can't really cleanly handle the failure case.
-
-This is why I was speculating about implementing the down/up portion
-in the devlink core. Add a flag that the driver requires reload_down
-to be called before the flashing operation, and reload_up after.
-This way not only core handles some of the error handling, but also
-it can mark the device as reload_failed if things go sideways, which 
-is a nicer way to surface this sort of permanent error state.
-
-Not feeling strongly about it, but I think it'd be cleaner, so bringing
-it up in case my previous comment from a while back wasn't clear.
-
-> +error:
-> +	/* Free flash context */
-> +	zl3073x_fw_free(zlfw);
-> +
-> +	zl3073x_devlink_flash_notify(zldev,
-> +				     rc ? "Flashing failed" : "Flashing done",
-> +				     NULL, 0, 0);
 
