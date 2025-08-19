@@ -1,127 +1,144 @@
-Return-Path: <linux-kernel+bounces-776146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3259FB2C91F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C25EB2C940
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0052C723DCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACD83AFF80
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9402C236B;
-	Tue, 19 Aug 2025 16:09:40 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC52D2C11DF;
+	Tue, 19 Aug 2025 16:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QaUQu6qD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147A52C2348;
-	Tue, 19 Aug 2025 16:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4F6284B38
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755619780; cv=none; b=YnJqjZqKDEir61onttW+kFXZJ/6/AhbJq60lO71SGp/kSubFpWwdESJmkhmVRpIHqLK4GJitbVrE4GrfKI7CenbiEMzP1q3yRSwHmNI7bDkCLyJrmVUjkYUo9vc9DYaEyo2OOLTfy0NV2AuanfvQJUlIBUn47oxZ4bUkOn17kJQ=
+	t=1755619913; cv=none; b=LMhGczlbPi8xDaV8q9IHqF/NR3wTjyXPp/a07rPA7gOQhAwg3imQefjg+fiYWxrwzKNGMJh8aT/usJWYhopqUHqzovNCFKO0ePRSVcn+XicHcD62Szw4mkomjH97+YfJ2wcO/cdbWvPQJtaiVOC0dYAax1Essszwb4XTvypU4pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755619780; c=relaxed/simple;
-	bh=qHKvDC7J6u4sXlcBp8qdTF1AvREdbzHF7SFt0T2u97M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dL5zq0Z9Ccc17HxrUnCbAcXA9pwd9l7cfKCD1jUR6V0F2mncGewITWQ00A4j6Aja6rJZt2AOEo3tBT30Q0ed/XBLNrDceFCMvgBsI8PlfnCU2Ri9McJFDChXhifJJOH3CVIlC5HvZ051RjQVtC4/cTVKyGN19eKYMDoJ/uHkPUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 0E033B6058;
-	Tue, 19 Aug 2025 16:09:28 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id BF97C32;
-	Tue, 19 Aug 2025 16:09:25 +0000 (UTC)
-Date: Tue, 19 Aug 2025 12:09:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mohammad Gomaa <midomaxgomaa@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, kenalba@google.com,
- hbarnor@chromium.org, rayxu@google.com
-Subject: Re: [PATCH WIP v2] i2c: add tracepoints to aid debugging in
- i2c-core-base
-Message-ID: <20250819114641.26223fb9@gandalf.local.home>
-In-Reply-To: <20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e@gmail.com>
-References: <20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755619913; c=relaxed/simple;
+	bh=OqikgqTQZRNN8DIly2lUwxkGV2EJbmghjYOudB6m6W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eb2aCRZ4oeUYJ7Xufp0iKybHBQ4Eca/zGxcor0I2drGno4Uj4vQolTj4VUYNlsBoN5WZeMOKKOivgmuvkZqXARkgdYsbMtOtZ7+eJ/YarUW4C+dDAj8IEJebDVxBSQ2ZCbAX2fIK632iVo6P8dPcYxV9PoaEttUxTbeHLmBIxPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QaUQu6qD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755619910;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/3a3Z3L0HEIC3vaPkLm4MfWk/+SLSX3X+v7+5Ljf+M=;
+	b=QaUQu6qD/lqSKV6FDV/prjTHbB8B+gPovtbuWusXv2vXkl0V4hk8v9SQWqAX+eObbCob/R
+	K7USPD1RlzwKDk42eGikmk84PZaEYXeIIscX7D2IPxjOLJtnkTaTFLiEdgo6P/sIstu2RK
+	Z3+ziEsR1XWtqTunluRU9CiuVAs3GfM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-tSTadv3EM7ahhzm854JzNA-1; Tue,
+ 19 Aug 2025 12:11:44 -0400
+X-MC-Unique: tSTadv3EM7ahhzm854JzNA-1
+X-Mimecast-MFC-AGG-ID: tSTadv3EM7ahhzm854JzNA_1755619902
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B112C19775B0;
+	Tue, 19 Aug 2025 16:11:40 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.95])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D73F5180047F;
+	Tue, 19 Aug 2025 16:11:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 19 Aug 2025 18:10:22 +0200 (CEST)
+Date: Tue, 19 Aug 2025 18:10:13 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Dominique Martinet <asmadeus@codewreck.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	syzbot <syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, dvyukov@google.com,
+	elver@google.com, glider@google.com, jack@suse.cz,
+	kasan-dev@googlegroups.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	willy@infradead.org, v9fs@lists.linux.dev,
+	David Howells <dhowells@redhat.com>
+Subject: [PATCH] 9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+Message-ID: <20250819161013.GB11345@redhat.com>
+References: <68a2de8f.050a0220.e29e5.0097.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: jymgoxbcd1j99grf4xufu6juzhrogc7q
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: BF97C32
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+DOo1mg2HDL1m0POdHkmE/+M1wqI6Oy54=
-X-HE-Tag: 1755619765-711634
-X-HE-Meta: U2FsdGVkX19So0sr3hqpN3UgOBNxBYhcGbyjzSjOl0sDImiybizaTrvM78DHlqqj7etV1LxOHXq5jfMdNYaQQJmvJV7swErYMQuYhXB9zqM/+Wz49YUBi8EKYXNwl+SoQZ1zzRAE6nByTpkEkMdyXBzPTVN4sP5qdFJByLuK9dvaauQuxQ2sZn+AOIejo90AB7SfesHUo16FeJA/uYoJZYNF8ZOFL33RGxyzZ3UhnEstKGJHZgX18YlxcB6ox/7X7dzBsB4TVSHceIQSWIEqZ3ma9/OYxLcm3jvldvpWxIqQvUEJhL1m69ZwfpLGxOxBC1T85tkzJBDSp53TGRI4AgX/F88uqQjXON30w9cfiVSLFDT/ThTHmiI4K1I3lMueJLobUIVqwtJdYlwiup8Vvg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68a2de8f.050a0220.e29e5.0097.GAE@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Sun, 17 Aug 2025 10:55:14 +0300
-Mohammad Gomaa <midomaxgomaa@gmail.com> wrote:
+p9_read_work() doesn't set Rworksched and doesn't do schedule_work(m->rq)
+if list_empty(&m->req_list).
 
-> Hello,
-> 
-> This patch adds tracepoints to i2c-core-base to aid with debugging I2C probing failrues.
-> 
-> The motivation for this comes from my work in Google Summer of Code (GSoC) 2025:
-> "ChromeOS Platform Input Device Quality Monitoring"
-> https://summerofcode.withgoogle.com/programs/2025/projects/uCdIgK7K
-> 
-> This is my first submission to the Linux kernel, so any feedback is welcome.
+However, if the pipe is full, we need to read more data and this used to
+work prior to commit aaec5a95d59615 ("pipe_read: don't wake up the writer
+if the pipe is still full").
 
-Welcome Mohammad!
+p9_read_work() does p9_fd_read() -> ... -> anon_pipe_read() which (before
+the commit above) triggered the unnecessary wakeup. This wakeup calls
+p9_pollwake() which kicks p9_poll_workfn() -> p9_poll_mux(), p9_poll_mux()
+will notice EPOLLIN and schedule_work(&m->rq).
 
->  	driver = to_i2c_driver(dev->driver);
->  
+This no longer happens after the optimization above, change p9_fd_request()
+to use p9_poll_mux() instead of only checking for EPOLLOUT.
 
-I'll let those that own this code discuss the merits of this, and if
-there's a better way to achieve this. But I'll comment only on the tracing
-aspect of this change.
+Reported-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
+Tested-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68a2de8f.050a0220.e29e5.0097.GAE@google.com/
+Link: https://lore.kernel.org/all/67dedd2f.050a0220.31a16b.003f.GAE@google.com/
+Co-developed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ net/9p/trans_fd.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-> +	has_id_table = driver->id_table;
-> +	has_acpi_match = acpi_driver_match_device(dev, dev->driver);
-> +	has_of_match = i2c_of_match_device(dev->driver->of_match_table, client);
-> +
-> +	if (!has_id_table)
-> +		trace_i2c_device_probe_debug(dev, I2C_TRACE_REASON_NO_I2C_ID_TABLE);
-> +	if (!has_acpi_match)
-> +		trace_i2c_device_probe_debug(dev, I2C_TRACE_REASON_ACPI_ID_MISMATCH);
-> +	if (!has_of_match)
-> +		trace_i2c_device_probe_debug(dev, I2C_TRACE_REASON_OF_ID_MISMATCH);
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 339ec4e54778..474fe67f72ac 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -666,7 +666,6 @@ static void p9_poll_mux(struct p9_conn *m)
+ 
+ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ {
+-	__poll_t n;
+ 	int err;
+ 	struct p9_trans_fd *ts = client->trans;
+ 	struct p9_conn *m = &ts->conn;
+@@ -686,13 +685,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ 	list_add_tail(&req->req_list, &m->unsent_req_list);
+ 	spin_unlock(&m->req_lock);
+ 
+-	if (test_and_clear_bit(Wpending, &m->wsched))
+-		n = EPOLLOUT;
+-	else
+-		n = p9_fd_poll(m->client, NULL, NULL);
+-
+-	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
+-		schedule_work(&m->wq);
++	p9_poll_mux(m);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1.362.g51ebf55
 
-The above adds if statements into the running code when tracing is disabled
-and this causes pressure on the branch prediction and should be avoided. To
-avoid this, you could use the trace_<tracepoint>_enabled() helper:
 
-	if (trace_i2c_device_probe_debug_enabled()) {
-		has_id_table = driver->id_table;
-		has_acpi_match = acpi_driver_match_device(dev, dev->driver);
-		has_of_match = i2c_of_match_device(dev->driver->of_match_table, client);
-
-		if (!has_id_table)
-			trace_i2c_device_probe_debug(dev, I2C_TRACE_REASON_NO_I2C_ID_TABLE);
-		if (!has_acpi_match)
-			trace_i2c_device_probe_debug(dev, I2C_TRACE_REASON_ACPI_ID_MISMATCH);
-		if (!has_of_match)
-			trace_i2c_device_probe_debug(dev, I2C_TRACE_REASON_OF_ID_MISMATCH);
-	}
-
-But I suspect there's a better way to record this information. I just
-wanted to inform you on the trace_<tracepoint>_enabled() logic. What it
-does is to add a static branch (jump label) where there's no "if"
-statement. It's either a nop that skips this code altogether, or it's a jmp
-to the code that will do the logic as well as the tracing and then jump
-back to where it left off.
-
-It's much more efficient to use this and it doesn't add anything to the
-branch prediction cache.
-
--- Steve
 
