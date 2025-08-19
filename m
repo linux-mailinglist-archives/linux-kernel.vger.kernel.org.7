@@ -1,377 +1,130 @@
-Return-Path: <linux-kernel+bounces-775375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0FFB2BE73
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B07B2BE74
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A58EF5A2DA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:04:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 176875A2EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69369320393;
-	Tue, 19 Aug 2025 10:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5229253F03;
+	Tue, 19 Aug 2025 10:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hOByNF2u"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="RIEa/OVG"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAD431E119
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597798; cv=fail; b=iEwthfZ9jHaIzsvVqrXVPSqlx94f6wTHl7WXFLbWeCY7yC57MZdKwc7qQ2jCnqB3Eq2YQgJ8N47en4a0EfF9bKb0vdfPajMfk6EOAi7ndm5T0qGesu4VEXSZrLphXMVkB4/h77gPrPb7OLsmJnpM0xWyC6nAaCivnnfBYzNcgjo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597798; c=relaxed/simple;
-	bh=VFp64zG9cG47hs+3gXz/zW6b3LQOm+W6gXN4/15mERE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FURAIgjmNlREyM9N6EIug7yKFZgTpuewuSW2iCPoohPmpRH/I1E+puizkHmfG1kuuc2IWPHm24saKIHYkKr2uK03Xz+G28DYITJ3I77dbhsZUXbi2lPAK9EllDzu2R66L+vb7JvxBVU5/Tb6B720/VCzimxe4pWaGBopBSWWX3o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hOByNF2u reason="signature verification failed"; arc=fail smtp.client-ip=40.107.223.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QUNSCFRBhurTU/CNM/z/1AaFNFmpveR7SJNbRXb8nkYQCpt4RQ/PVj4RgoZAWklRvVdD4a95WV8LUcrfmVIOOFUGoyxZqheVonWhcfzgzqIc0FoVexGmqY5tL5P9TzcyhpHRHgPgKQu5CsUIjBx68Mt0MJOhj7fHB6Su2zOKtcYbtgWNrwICcxTSnOQzTHNRKk12WloSL6UV8ZbSE7L5Bd1AmbaISwDbYJ+YbV6Az6q+FUfoptq06Do9XRweEk+6DZl8YniyEI2ajwJzoKIrQ3gdAqYzGX/vEN8JgsQzPq0WCprnx6PLGSm6BARprUYOsB5y6aIunR5N/SpGySJpXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SumC/VSzvpwE1LHGvoFyRPRuH37QUOL8/IN8OMRO4P4=;
- b=CKx0SXLUx7FwkvMDasIym93sWoyXSpEeQw5YGV+Q8qb7Tu0WZO6YJWaIBTeGs23KCSCChF/SOeEQdKe1uEwvxOsWYQ1kUAU24wfQ3NiPe0DBQxWEafVhgWLNvy8ptvvXvhEOE3oDZVqfR7vepovWQMVSKNdePYsWEYqLHxXrwL3joPwjj7shZspze/ESIDrqnMnMMv80GwhzQgRS1b8Dwyt+lNemvCQLnwqHN7IbbVnhyTfKvo3ZRjx5pfS4sO+FwUnYfjUwyy4VZ3rRZ0xfBdipZqCEEUmfeb/LbI51bfpk9lCyKqUwvkSvZbMTTJ99bbjzcaqLYi5Xa0dpKjJaqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SumC/VSzvpwE1LHGvoFyRPRuH37QUOL8/IN8OMRO4P4=;
- b=hOByNF2uqa3vAtJk2Qmxb8M0uufZYfwDrbcfMjr64E6C7ialrJfz7o4JxajQNvSjlLETo9kn73QVXaL7udsR/NLiTKAv/klddOm/+LDAN16Q8l+uhP6+Lm1wK0sREPzHMxAV/YYf6MsXQzkDIFPWjQjytF2dHGCbabVNVgA3/hWV4CBRr7+MKjtXj+lhDSNUgxPrD9cHMlWiB/Hq/vq+0uzcd2EoIxs+aHFqpapQyczyrhvFbHCG/aeAKGGmSyGi2nHJ6rAyGtRI3Cr4ziBqCing6uVEoghtykTN4xvif46S0EzAekoruW+SStdaTQbkGLcFBN0UnFKAs++NtDFjqA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
- by IA0PR12MB8207.namprd12.prod.outlook.com (2603:10b6:208:401::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
- 2025 10:03:13 +0000
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6]) by CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6%7]) with mapi id 15.20.9009.017; Tue, 19 Aug 2025
- 10:03:13 +0000
-Date: Tue, 19 Aug 2025 20:03:08 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
-Cc: intel-xe@lists.freedesktop.org, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Andrew Morton <akpm@linux-foundation.org>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	Dave Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Matthew Brost <matthew.brost@intel.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [RFC PATCH 1/6] mm/mmu_notifier: Allow multiple struct
- mmu_interval_notifier passes
-Message-ID: <yzgn3nbaeftrthqwddwt3gap4uni4api2r2uik2gxoimnpdiy7@hty77udv6un2>
-References: <20250809135137.259427-1-thomas.hellstrom@linux.intel.com>
- <20250809135137.259427-2-thomas.hellstrom@linux.intel.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250809135137.259427-2-thomas.hellstrom@linux.intel.com>
-X-ClientProxiedBy: MEVP282CA0068.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:220:202::12) To CY8PR12MB7705.namprd12.prod.outlook.com
- (2603:10b6:930:84::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75E13D8B1
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755597863; cv=none; b=GoEc20UimsZg4yLUCGLWmRjEnq6Iq0mC11VPLfhFqfsvVN4n06pzmEBAcpJRtxrzH3LbnXbpWVp6wupGCzzhm2ZtysO61GZWkDv8Wa6UtsLMe+G6SPMn9wETEtMyc4DmUGxYpm/U6ZtzqNiw6x1ob3TsBRAyj3I3HjuHrrauUXo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755597863; c=relaxed/simple;
+	bh=hlJs2knitb1lARST0gkSxsBtUoXWm4wfC8UP8JL7gsc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=odieynQKrkU7+ui98yFqsFe11yn4eL2P6MAZnH+O4xQfbJo0EE9Hg5PCDSJOL2hPv+wc44sGD4kYbFNv2smYt+lhxNUpJx4UhR/EW3T9Klh2BfZtE3Ae+GdFEUu6Yi7up0AB9WueNVAVrtMul+87d5H9I0vrfBALDrjLX5Chy14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=RIEa/OVG; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
+	by cmsmtp with ESMTPS
+	id o6CQuDQ7UJLhFoJCQuu5qM; Tue, 19 Aug 2025 10:04:14 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id oJCMusWcjQb4IoJCNuoQpU; Tue, 19 Aug 2025 10:04:11 +0000
+X-Authority-Analysis: v=2.4 cv=GcEXnRXL c=1 sm=1 tr=0 ts=68a44c1d
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Zx/jWLPsUjbk4SBooCzjauSYqfhONLohftEAL4RH0So=; b=RIEa/OVGX3YEwQhQ6D3CfSivHt
+	pDUeKibg3N9gVpPdaYM/4Eju1KYB6VgXnWzbGxUwucKrOcccuEJNfySR7atHoUTMyZWYWf1jSiqg/
+	S1idIOpSsRjQiygS/V3mWUsavxYe5nERf38TLuiW6lP9yRv5kuUInjldkrVud5r97tCzr3nSLWz4R
+	nn744gG30mhz2q4IJdhmbo2N54V/gpj98MDVQFgQL/tTIMJ7dPIf53Sf75R/lXfz3k2GMdpK/SAzu
+	ap4g7H8bRZWGBmZwdCkrVHAMq2ex4H/qreguWRuy8RHtfHA1fZbmtoWUSFNq5u9rA4gKzxOO3/hfE
+	92pxYGZg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33660 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uoJCL-00000001zF3-2rZe;
+	Tue, 19 Aug 2025 04:04:09 -0600
+Message-ID: <c3dcd0ff-beac-45f6-919c-9f58a7d65d7b@w6rz.net>
+Date: Tue, 19 Aug 2025 03:04:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|IA0PR12MB8207:EE_
-X-MS-Office365-Filtering-Correlation-Id: c29403ce-3ca0-4eca-38f4-08dddf079c3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?Q/ezvpKl1oTp6BYtuQc7sRsXChLhCoJLGYSuhJo5eaAHNdtPlA7MwB2Shp?=
- =?iso-8859-1?Q?cv0oFrIAyk37CmANdXAWIfMXdya8HcLQUCpvaKy0RXLkO1KEydYMtNMmRx?=
- =?iso-8859-1?Q?wlL/u5sqDmR+AC9z3wtSgHAapTzTMDTWlbm/RX3bYAUY6Co0vyCUjMovhw?=
- =?iso-8859-1?Q?n9s+f2okXOVzEHfUZxmTz3az3A4GU0n2i2ZcDDoffFOpsvBaJY4XVpXhc2?=
- =?iso-8859-1?Q?s4sv+z0FSXVQuYg5L9RVuV6GR6DUNCX1lv6Rd4kUOsRxvGLq2wvb87E8yw?=
- =?iso-8859-1?Q?Uh8aEOA6iKpaiAchTb7aR4CdtyS4P4AfWVb2AbMFEH0Dliqln1uWkoP5Bo?=
- =?iso-8859-1?Q?cEXgD5LsWcCpIl5LKRgpDm/Adjcb5HMyB9OvVt2+BPHeWp5lxIrkefqeGY?=
- =?iso-8859-1?Q?vxYtRnG+92FMKF7Cjl1IKA5xj23Zenux3cu2YRcQCNbHs1f7efxG9lknNL?=
- =?iso-8859-1?Q?CNtDZ/xc91xyuz56Mx3+FyK9JZaMHPC9f1tfmQkXIGfvlL1p6PvVM7DY4S?=
- =?iso-8859-1?Q?SAq50gJJA8N49cBKDK8jbNMfKzQfKBCKXJSzs0U/IutTLx0/DmhnUpui+2?=
- =?iso-8859-1?Q?hXZ7axQwjXT+Pp0hcbVlDguMZc6VvC6Xe091h9KetK44aX20QcB8+WOY1s?=
- =?iso-8859-1?Q?Zx5RUOhxmOviEfknalJQrF0/PvP/GHkQ1+ByytEOFMh9IFrJ13G3XZoEoj?=
- =?iso-8859-1?Q?sKO9U/MT3OPoxJA7siNi3waGqp/fn0AhFJ1TQp2nKSb60fnwa62sIHGIbr?=
- =?iso-8859-1?Q?Aryyi/6nmxFPZzALaurGoq6RFN33nsWJl9+TULk4IpIE/IU0XRdHBYAcx0?=
- =?iso-8859-1?Q?tBJCiACrj8kylxUxuHTCKtCRlthN1sqUrjPZ3aXgEHIkwK59qtUc+VhBmD?=
- =?iso-8859-1?Q?lQ2HpwE5rWWH4DAUqItyL84U3qegj3NObKZsb8Cqi4gD+HnrUVVy54geRT?=
- =?iso-8859-1?Q?rx7yBjr7wASMSOhNSl7DFBYcMGKZrV1LtrCMKLt9cbnVfuNMCDBzWLidd4?=
- =?iso-8859-1?Q?5L+SZNtEwiPP4NVs1XNuzjTTt8eOc8SVfldpjTTv/i6vAUVGbBBtgpm7xv?=
- =?iso-8859-1?Q?1ZnklEytSKvbzUklIcozyRJhrolZdXuaCHfyM8Dug6taNjZmoqjRbdKHh5?=
- =?iso-8859-1?Q?oOeIFWWcWLrlQYri0ooH/oeDO+7LUXQS8n1CVWV1xKzjsrr3o74SLW5JhJ?=
- =?iso-8859-1?Q?LvNsQ+ssmHNmrMhNgBhgmasHJ5eYSo2nXk/tdtelr89MQJGNbF/9L/SCfO?=
- =?iso-8859-1?Q?Ypwe2UrqW85ssdKl4HHKR6lMtvhqw47Mr+ioSaFVGEPTx10B8hoxVcyNAD?=
- =?iso-8859-1?Q?G0QmKh0tuw+hNyAQvgqMSIHctFfA3DyYl3VqT7vI29INTgzF/RmOnt9nwm?=
- =?iso-8859-1?Q?QCydp0rMmVsnmCnqPs1t+WaZsxXnclqymCzNLl51fV5ulWYfxmyiwd/lRB?=
- =?iso-8859-1?Q?B5Z3zNjuTjfZOhAZjV0GjLTaVCS7XVlrEcQuESPEQGF47/WYwANXF0RRV8?=
- =?iso-8859-1?Q?E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?xdxL5euI9JcKZFG0W2hICIpyif9S4SaDFzuM09y33QvWOHlzZQ9JuRVsOk?=
- =?iso-8859-1?Q?YjSJbfYf8oan48VPvPo5rb5GlU18OiN3C5EbzhizUxz4No2z9OS5aPEaR7?=
- =?iso-8859-1?Q?cJ3qKNsXvPVVvC3XQ12BcmjgQTm92BupMPNnnOuY95TZkQcmHg2XX87RF6?=
- =?iso-8859-1?Q?UeZXf0IyBhMebzsLJM30OYXZHO1pTDfWnGBHOJYh+Z0hWcQu+FEtDaH4a+?=
- =?iso-8859-1?Q?PYDmJB1v4I4HO4ISCznuhoBstFsKxPJCa9PFj5/g5AMVggroHnIRHJWeoi?=
- =?iso-8859-1?Q?DgMhdr5MvhosIlCbhkjok5pjfZWefbGV1zyyy9/nEUUYJ5IM19Qwz23eO7?=
- =?iso-8859-1?Q?M7Jbw+v0SJrrJl+6Ud5anpbcJRL+JwHnnmOXqN0u2ATwBDZKTNjZYSC+qR?=
- =?iso-8859-1?Q?HBKjtw/GHuH75wkbB1i+sHtJT3U21RHJu9OREpesp2EfoU/62ZkynZhjWw?=
- =?iso-8859-1?Q?WW+QQ4VsSLKfOEDyIdxqDfYi+5Y5EoDdEyNw895sh+ZsfkGfd+sx9u0Ojp?=
- =?iso-8859-1?Q?fW17bOVvcmgaDLCwrsU7p6iC1AB8YgoyGax2seZTevWcRiHEU4Rih8Qm0r?=
- =?iso-8859-1?Q?rn4JjXKsBAHI5xqfkf4A0kQu0SL0tbtIy3CRv7tYyFGihaMuew0gegmo3b?=
- =?iso-8859-1?Q?AhN8MiCpv52ZwJCCA5BNvExq+KvyY/luMim0Z6O/7GZXiNwysr+uPp45Xx?=
- =?iso-8859-1?Q?IQRl2idP6yOpLDZCLs82Fu3Fwww49d4gLYVaBXK17xqBViwnADxs1JW0FX?=
- =?iso-8859-1?Q?ftRiorA0ts55xyKM2QZsl2h/fNHS3f9Kd3Qv2mv3jdgPH06FjKghJJJSCN?=
- =?iso-8859-1?Q?Dw6Di3OLIA/In49qEhEEVRkVxUWSopm695Gk72LyCJHHtmFyH5b1FDkIwj?=
- =?iso-8859-1?Q?3O2k6Bhwi77Na/D8ZLtL4nW6lhpqhvt6UudkDE7krChVsOvEyj90ZMzgHq?=
- =?iso-8859-1?Q?Hb74dO6I86AdqtUXU/VcuRXJhLPub6gIPQial95an4BBISh8u8i7rqA23M?=
- =?iso-8859-1?Q?CDG8swnwCW7z4uB5F2Z0Ova8TZWgAs7zg5AlZT1IpdJ+jgXlnFabLVbPnY?=
- =?iso-8859-1?Q?1297PMxWxPhp9UCiIqsMrEzMNSZw8LSngQGhnaHbb6td0KrnaLUMYv8j+1?=
- =?iso-8859-1?Q?Sr2+h0MBPTVKkoC6TLV2YeRZBlbotOU56baDP+/A9pU/IXJf8n/KIxXxBD?=
- =?iso-8859-1?Q?8e6ZAKJta+hgqcdLTFDzlApBNcVkKsaXfAyyYzvU2lA94fRwG4kwjsTOEv?=
- =?iso-8859-1?Q?IyyloUCZABJsLDbikBTAn0xSmcB6kkpy5aFi2UrKJ2S1tsvLwWfmmYPoF3?=
- =?iso-8859-1?Q?2Mv7AvpSEAqHG0masEM9n34R0TPW3EZ1TJUJOmp8iCYIWM9nZCXPZuNwS5?=
- =?iso-8859-1?Q?fIsAUBnLAJBNqqfKZul5XbHj1oQGD28ja+H0Y3weGANbPN8G3f1wA2GOpX?=
- =?iso-8859-1?Q?e+MC/MsHp9iRhNbDMvw+uKf1Kn77xMo4d4Ru0ozF7TbioXyHXjW7t4xDfK?=
- =?iso-8859-1?Q?gggfz568FKkImDBtS7ELn/rTaBdXAZSblY4dsxzmJD0Lf935lW0WZIRn8Q?=
- =?iso-8859-1?Q?w5TMlc1PVq0od6fJXgAaUClPlRCcHAgintpvZ4k55wu35eZUtNmQ2kdiD5?=
- =?iso-8859-1?Q?UHRRHHCousM8PC82QT+cDBoSJqzKB7Zom0?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c29403ce-3ca0-4eca-38f4-08dddf079c3a
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 10:03:13.8027
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R8p83f+86GxI1M7F2+w6ciD0ljRF1/peipv5s1keX37zkmxfYgpfdRIxg+YQzqOFOztnK7LBfkl/qtdf7zvS+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8207
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/570] 6.16.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250818124505.781598737@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250818124505.781598737@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uoJCL-00000001zF3-2rZe
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:33660
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfD1DT2iIfjqxzJnGxqFQaUs9rrrbjjKr3ssux+XxLzyVjBn4TeiOyUek0pGmgtMeyt4FOJQQnawGGFBFCjwIGOA/d7PCpq3s6mtEVfC/P926Aog0pf1U
+ IhnqkjXRCq7F0oBdv/4lWfNYD9w2lwrkRw7XmHmuxDyTYEp65vlkUAaoPcUu8xHIcK9ibIJt5PxnjMb5yh1hSeD50J4vF0Phog4=
 
-On Sat, Aug 09, 2025 at 03:51:32PM +0200, Thomas Hellström wrote:
-> GPU use-cases for mmu_interval_notifiers with hmm often involve
-> starting a gpu operation and then waiting for it to complete.
-> These operations are typically context preemption or TLB flushing.
-> 
-> With single-pass notifiers per GPU this doesn't scale in
-> multi-gpu scenarios. In those scenarios we'd want to first start
-> preemption- or TLB flushing on all GPUs and as a second pass wait
-> for them to complete on all gpus.
-> 
-> One can do this on per-driver basis multiplexing per-driver
-> notifiers but that would mean sharing the notifier "user" lock
-> across all GPUs and that doesn't scale well either, so adding support
-> for multi-pass in the core appears like the right choice.
-> 
-> Implement multi-pass capability in the mmu_interval_notifier. Use a
-> linked list for the additional passes to minimize the impact for
-> use-cases that don't need the multi-pass functionality.
-> 
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Simona Vetter <simona.vetter@ffwll.ch>
-> Cc: Dave Airlie <airlied@gmail.com>
-> Cc: <dri-devel@lists.freedesktop.org>
-> Cc: <linux-mm@kvack.org>
-> Cc: <linux-kernel@vger.kernel.org>
-> 
-> Signed-off-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-> ---
->  include/linux/mmu_notifier.h | 30 ++++++++++++++++
->  mm/mmu_notifier.c            | 67 +++++++++++++++++++++++++++++++-----
->  2 files changed, 88 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-> index d1094c2d5fb6..1107a8eafd8a 100644
-> --- a/include/linux/mmu_notifier.h
-> +++ b/include/linux/mmu_notifier.h
-> @@ -233,6 +233,32 @@ struct mmu_notifier {
->  	unsigned int users;
->  };
->  
-> +/**
-> + * struct mmu_interval_notifier_pass - mmu_interval_notifier multi-pass abstraction
-> + * @link: List link for the notifiers pending pass list
-> + *
-> + * Allocate, typically using GFP_NOWAIT in the interval notifier's first pass.
-> + * If allocation fails (which is not unlikely under memory pressure), fall back
-> + * to single-pass operation.
-> + */
-> +struct mmu_interval_notifier_pass {
+On 8/18/25 05:39, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.2 release.
+> There are 570 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 20 Aug 2025 12:43:43 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.2-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-If we limit the number of passes to two maybe call this
-`mmu_interval_notifier_finish()`? ...
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-> +	struct list_head link;
-> +	/**
-> +	 * @pass: Driver callback for additionall pass.
-> +	 * @additional_pass: Pointer to the mmu_interval_notifier_pass structure.
-> +	 * @range: The mmu_notifier_range.
-> +	 * @cur_seq: The current sequence set by the first pass.
-> +	 *
-> +	 * Return: Either a pointer to a valid mmu_interval_notifier_pass for
-> +	 * another pass to be called, or %NULL if processing is complete for this
-> +	 * notifier. There is no error reporting mechanism for additional passes.
-> +	 */
-> +	struct mmu_interval_notifier_pass *
-> +	(*pass) (struct mmu_interval_notifier_pass *additional_pass,
+Tested-by: Ron Economos <re@w6rz.net>
 
-... and call this `finish()` ...
-
-> +		 const struct mmu_notifier_range *range,
-> +		 unsigned long cur_seq);
-> +};
-> +
->  /**
->   * struct mmu_interval_notifier_ops
->   * @invalidate: Upon return the caller must stop using any SPTEs within this
-> @@ -243,6 +269,10 @@ struct mmu_interval_notifier_ops {
->  	bool (*invalidate)(struct mmu_interval_notifier *interval_sub,
->  			   const struct mmu_notifier_range *range,
->  			   unsigned long cur_seq);
-> +	bool (*invalidate_multipass)(struct mmu_interval_notifier *interval_sub,
-
-... and then this could be called `invalidate_start()`. That might address some
-of the concerns with naming.
-
-> +				     const struct mmu_notifier_range *range,
-> +				     unsigned long cur_seq,
-> +				     struct mmu_interval_notifier_pass **pass);
->  };
->  
->  struct mmu_interval_notifier {
-> diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-> index 8e0125dc0522..dd6af87db103 100644
-> --- a/mm/mmu_notifier.c
-> +++ b/mm/mmu_notifier.c
-> @@ -260,6 +260,22 @@ mmu_interval_read_begin(struct mmu_interval_notifier *interval_sub)
->  }
->  EXPORT_SYMBOL_GPL(mmu_interval_read_begin);
->  
-> +static void mn_itree_additional_passes(struct list_head *additional_passes,
-> +				       const struct mmu_notifier_range *range,
-> +				       unsigned long cur_seq)
-> +{
-> +	struct mmu_interval_notifier_pass *p, *next;
-> +
-> +	while (!list_empty(additional_passes)) {
-> +		list_for_each_entry_safe(p, next, additional_passes, link) {
-> +			list_del_init(&p->link);
-> +			p = p->pass(p, range, cur_seq);
-> +			if (p)
-> +				list_add_tail(&p->link, additional_passes);
-> +		}
-> +	}
-> +}
-> +
->  static void mn_itree_release(struct mmu_notifier_subscriptions *subscriptions,
->  			     struct mm_struct *mm)
->  {
-> @@ -272,17 +288,32 @@ static void mn_itree_release(struct mmu_notifier_subscriptions *subscriptions,
->  	};
->  	struct mmu_interval_notifier *interval_sub;
->  	unsigned long cur_seq;
-> +	LIST_HEAD(additional_passes);
->  	bool ret;
->  
->  	for (interval_sub =
->  		     mn_itree_inv_start_range(subscriptions, &range, &cur_seq);
->  	     interval_sub;
->  	     interval_sub = mn_itree_inv_next(interval_sub, &range)) {
-> -		ret = interval_sub->ops->invalidate(interval_sub, &range,
-> -						    cur_seq);
-> +		if (interval_sub->ops->invalidate_multipass) {
-> +			struct mmu_interval_notifier_pass *second = NULL;
-> +
-> +			ret = interval_sub->ops->invalidate_multipass(interval_sub,
-> +								      &range,
-> +								      cur_seq,
-> +								      &second);
-> +			if (ret && second)
-> +				list_add_tail(&second->link, &additional_passes);
-> +
-> +		} else {
-> +			ret = interval_sub->ops->invalidate(interval_sub,
-> +							    &range,
-> +							    cur_seq);
-> +		}
->  		WARN_ON(!ret);
->  	}
->  
-> +	mn_itree_additional_passes(&additional_passes, &range, cur_seq);
->  	mn_itree_inv_end(subscriptions);
->  }
->  
-> @@ -431,6 +462,8 @@ static int mn_itree_invalidate(struct mmu_notifier_subscriptions *subscriptions,
->  {
->  	struct mmu_interval_notifier *interval_sub;
->  	unsigned long cur_seq;
-> +	LIST_HEAD(additional_passes);
-> +	int err = 0;
->  
->  	for (interval_sub =
->  		     mn_itree_inv_start_range(subscriptions, range, &cur_seq);
-> @@ -438,23 +471,39 @@ static int mn_itree_invalidate(struct mmu_notifier_subscriptions *subscriptions,
->  	     interval_sub = mn_itree_inv_next(interval_sub, range)) {
->  		bool ret;
->  
-> -		ret = interval_sub->ops->invalidate(interval_sub, range,
-> -						    cur_seq);
-> +		if (interval_sub->ops->invalidate_multipass) {
-> +			struct mmu_interval_notifier_pass *second = NULL;
-> +
-> +			ret = interval_sub->ops->invalidate_multipass(interval_sub,
-> +								      range,
-> +								      cur_seq,
-> +								      &second);
-> +			if (ret && second)
-> +				list_add_tail(&second->link, &additional_passes);
-> +
-> +		} else {
-> +			ret = interval_sub->ops->invalidate(interval_sub,
-> +							    range,
-> +							    cur_seq);
-> +		}
->  		if (!ret) {
->  			if (WARN_ON(mmu_notifier_range_blockable(range)))
->  				continue;
-> -			goto out_would_block;
-> +			err = -EAGAIN;
-> +			break;
->  		}
->  	}
-> -	return 0;
->  
-> -out_would_block:
-> +	mn_itree_additional_passes(&additional_passes, range, cur_seq);
-> +
->  	/*
->  	 * On -EAGAIN the non-blocking caller is not allowed to call
->  	 * invalidate_range_end()
->  	 */
-> -	mn_itree_inv_end(subscriptions);
-> -	return -EAGAIN;
-> +	if (err)
-> +		mn_itree_inv_end(subscriptions);
-> +
-> +	return err;
->  }
->  
->  static int mn_hlist_invalidate_range_start(
-> -- 
-> 2.50.1
-> 
-> 
 
