@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-774691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFEDB2B634
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:33:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1120B2B63B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E03E952738A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4761968BCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 01:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687732405E7;
-	Tue, 19 Aug 2025 01:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BF41F0E58;
+	Tue, 19 Aug 2025 01:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CxCu3Kzm"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WNzZcKSS"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B6F20A5F5
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204D723D2B2
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 01:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755567122; cv=none; b=iRMolgtLaxLDeSu2AdwZKUUfng9N5RwxaU+2ZOsNJvYxQ1rwW1Sr/Lw/mD8ThpH3rs9GjrMCJEsCBf6Nkd+uE6nWgE3Yco8Coh4LpsgvtMot1TiJJJcfaHXcAaBS7unxCAQDo/caYe12KMQ3MGl/Y45zo867OCm6QGNZ0U8FyRE=
+	t=1755567127; cv=none; b=PlOcm+LMvKDEXP0PuDt3dTz6Xudpi8pU831NVAxa1etCyes+jC1kZ+2Mx7Mgjzfc1SPosfLPwKLuRW0KRzokxMJF5U4eEIyLgucl5cXMzxa7aJ+DL70jzRTRFMuQoy0hxkGyntF9BZ+MZn71FT2ik2zOaggDV6ckE3gW3ezDyQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755567122; c=relaxed/simple;
-	bh=CF4TPmOyKCuR1vONvBUPDXaEUNdePxwbzP99ZGSmrmQ=;
+	s=arc-20240116; t=1755567127; c=relaxed/simple;
+	bh=OhDnd2gXdAgyPEg+bHKAqPslfN0Sae4YKz05SBVvkhk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wj1D1I/BEIP+XOZE3RBWWe9+/f/4qHirKMvcd12R2JEi7iQfHB2kXB8kxU91MGOGE6rPWK9Fzw6xIJMZ7YZVQeENd+vGec0+fFbSO7Be+AsFGxKl9V93NCAgrvUzxzp/kAaw0jAlTxBNqFBj1YC6DmOSh7nPqjIH4dZml1u1FQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CxCu3Kzm; arc=none smtp.client-ip=209.85.214.172
+	 In-Reply-To:To:Cc; b=Vdb1rX8AmmJxdmTmLfqY0WhtL9D0B9mrA1Q+Z7QAYGOMQlg6piu94PfZtPBSiiGHzzrbDUw/yyXCDCINSL9OiHxeOllEiGR2Rm3DsRhgF3Rd7H2avKrwF3uiBr4NYQnWRfHPgrSOcWQHEkzak3RfYymu9TuY3zhQb8gBKx6ZPRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WNzZcKSS; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-244581caca6so36318335ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:32:00 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2e88c6a6so4340643b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 18:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755567120; x=1756171920; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755567125; x=1756171925; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4X9gMtrXb7FnTuL7OxdpBsAZ9YfPLCWw/9fwnW/EYKc=;
-        b=CxCu3KzmrhmVbCtFvTtzRqWvGIjzNxmK8WKh5HXB8ajapcS1K5nV4aWMF07rp3jMBG
-         LXWHmRK+Q826gw+1cI9ROKnxXSahW3r0Pcnl7i1kY1ad9N9ACPJ4W3kAw4mAHa6k3wn6
-         0NoTiczHVm1mgeg2Z0rf2aY+JBFp6ZXXv8mXHdQ5l6oRspchD4MOzQBRXipP+kZD1iqa
-         LlQ3R+T2K5lfrVL0G11hBrwIPnV3PrfRdY3oRlTwDAPEHnLWxXhIQDoh9h/384S1R8fP
-         LFa/4BOTj3PijOBah6YH9TORSBD0YlC4bnzAGME2lQrwqBqn/NMNgXjow17DauNJWcvP
-         ckPw==
+        bh=CeKw6Emxl2MD6KnkTTID2TGYzzL8WokCASiJsQxQ8Ec=;
+        b=WNzZcKSS3nyb0+KSBb0f1j4mNAdrBiRXytD9QyQRo6KNk2ey5kiWLu0pYqiyciBzMC
+         2uHm9enTz0vuZCBrjP9R58mSd4g0id64Pc1MmS5K578abD1C0iw6QuhiXY+VeqQ6eNz5
+         +schcfI3brOmTUYn0vnOLPi0MKevONNHaQ7tAhz5CH8fK/8gKwt6EjdRYHhMxL1XHqRx
+         UiIRxkYCEPUSHZeqMEbcJ2WRTR9kSuh8WZLs8NqnzaVAN/emdco5W+4bb3jX28NY0hoZ
+         gcqk6Yi8j1LKNH5IgYZCjCg8rxcEDO9T7zIJiV2PJx5Xxe0LLnCF41S0yhiV76gfHbqR
+         jtLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755567120; x=1756171920;
+        d=1e100.net; s=20230601; t=1755567125; x=1756171925;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4X9gMtrXb7FnTuL7OxdpBsAZ9YfPLCWw/9fwnW/EYKc=;
-        b=YRc5hEiwaEi0UPf7U7v+dUIr4Wtf81XXN5nUkocop94+z1tgs5ezNTlz6IWOEBs6/S
-         vODMtFJ5894F5vgyX9K9qiT7H51i39cJ2nP/0TOgz+v6CNWzkMnQMRR5KBDX8gLsqjTr
-         UmZDT3hajw5QwenH5KiV6iTxvGtaXGdn29oqZ9MpTF0gZCg3QTRkGbjD7EUfYQqFGTMk
-         H1mbDqL1tjzEvUeMMzghPL/XZTRYGoRZ3upVBWrKqWIzEYMkm1avmv9T/VYWu6quHtJC
-         AplCV/VTuBgpkYKKESPIIPk1aim+6uQ8Yi+ckGXosY2T+UYQ22eb3CrYlPMTlI2J1TV7
-         qwLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZQBahqpt8BgETOR13FltD6N8b8j3ei33+y79FQqcgSq8hjd9gZZd+5CiVaR8DaMi3IBtSb45vBqtK+Hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsDQ8TxPDAI5E5HAStNKdmzVSTxNRNGxFggJ9E8yzAGBwCaiMv
-	W66/165CJ1jeaBwCeFEPkSC35FQQoScc+UBy4wQ5asU7rXHc7tiQ3LvjGxFjLM06tms=
-X-Gm-Gg: ASbGncvdkD4RY2bTvc9O3GWSO8MsDCYbotsk+ffVb3zpc1hEId/m9801aI/srsf5kHV
-	2gbbLvYwgkVPU3XmKEmbbEGDSKRAH2NLziie9ikDU+FIPTmr/2bPAKA86TxrK/KwqYc87szHxSq
-	mxn4/99D2JVhvM+32uxWGg37QJT5jn8w7iBYnNZSOUWFsXWcuVIo37bTw+pmdUw6Bj2M+JfgEyj
-	md7jCqg1fdxOtqoHAktAx8EjW9MZ1kmB3TNzkevh30QbWkTmwMTrS7EAk2bKsVq4FSSUWJELzaM
-	mOk7JPAclxyoASn/TtPaO9+BkvIDdWLHK4XHv1Am6AfM4x1TRIOZm/Peqiq/1Cx1Ee/a0br4Yrz
-	ijppXkZ8VJPq46tSWqND+9QGobrTU
-X-Google-Smtp-Source: AGHT+IHnKN7T0YfiKiIoTLc75eC5UHMzcnpav1ymPyh+yaixHj7cUDQ0vmOI+Eihi4CF4RtYQRBNMw==
-X-Received: by 2002:a17:902:f54d:b0:240:7308:aecb with SMTP id d9443c01a7336-245e04926damr11947565ad.32.1755567119987;
-        Mon, 18 Aug 2025 18:31:59 -0700 (PDT)
+        bh=CeKw6Emxl2MD6KnkTTID2TGYzzL8WokCASiJsQxQ8Ec=;
+        b=lQbKYFTBF07v0A2J+cYDPanqSXIQM+GzlNALfRQt0Oz0sBotVHAKy8FrGWvSv4LEEQ
+         7XBMXf1Kq7ZXCQS5UYAO6bmIZj79LWzyx65nlcRRFdoC0VJhSC6TvpmrrEKv71MJIlrj
+         xb87XLJXqfSuzTN719qhXYytnlC+b6C7QO3JDed7SzvLd/yCSfctoVnqV0SFjANqSO5X
+         tLmoE9k0qZ4Y7eJlpKKAVW6FvCR97H5rMp0OfNBGeybrdZPpoxdX+xS6HBQopefgdpxW
+         0Efx+NrgCOPhj72YJwforekMG7KwHGcnswq1RnbVWkCBUNU4r4v+D3sJE8aNqR/9MpBq
+         z32Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXv++IMNA5IVnkSn1rF6TFgQnfeaxlEDqrwAi2u1obh4aXBo6AUbXxDo58S6piHhmgmtCViA29UXDalhZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4CFtHYbst9I0lVNES8vzmn7ZF+tGubxswfUuZ3xAl0uNjKlrr
+	FWggQBojJckUvb2y8NLSPO0N55ekN+RDaH/c2mt212pXg9h8X+Nv6ifvbImsnFt5Dx8=
+X-Gm-Gg: ASbGncvbTeqCMqAWlWFCiYKz7fTrEIPhtJvuRasRpS31Twy7363O/WqcdFJvMh8vsUu
+	GMZkyWZCMz/d0wA7k1wbuE1W6WrBhUD2ZgZWcF1qU/4mlpZu4IWRdoJ2PwjvCphKrlce2a11GDC
+	NekkTa9OSkaf8CcWjyZxSp7eQqm6jGfDAwVRXZCGoBzqjK8cGS+dE86Wzb4ZoBk2pTDDE+/+mFa
+	Rpo3HOgZ5AyMSwaWEOGqz424k5SftBTvvurxwe+dFz1i+gUOBhyBHHxIg5aDvCGlmZkPIM72CxF
+	UqW3JOFQZSuxcSKTDLjjw4yTTqGWsTlGJvOJtUOXxSwR59MGXH7Vg7A6/N4iNOnWONrnXILVv6R
+	mnzGSgeZmNn477SlQVA==
+X-Google-Smtp-Source: AGHT+IE7J+CSWvhgADHldZEJfbvbM0QqU925LggpL67EFlg6inlhgYegZ133Tr9uvDbxkuHOOdBTxg==
+X-Received: by 2002:a05:6a20:3ca8:b0:243:78a:828e with SMTP id adf61e73a8af0-2430d4d082bmr1106792637.53.1755567125257;
+        Mon, 18 Aug 2025 18:32:05 -0700 (PDT)
 Received: from [127.0.1.1] ([112.64.60.64])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3245e4faf80sm248637a91.5.2025.08.18.18.31.53
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3245e4faf80sm248637a91.5.2025.08.18.18.32.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 18:31:58 -0700 (PDT)
+        Mon, 18 Aug 2025 18:32:04 -0700 (PDT)
 From: Jun Nie <jun.nie@linaro.org>
-Date: Tue, 19 Aug 2025 09:31:04 +0800
-Subject: [PATCH v15 10/13] drm/msm/dpu: blend pipes per mixer pairs config
+Date: Tue, 19 Aug 2025 09:31:05 +0800
+Subject: [PATCH v15 11/13] drm/msm/dpu: support SSPP assignment for
+ quad-pipe case
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-v6-16-rc2-quad-pipe-upstream-v15-10-2c7a85089db8@linaro.org>
+Message-Id: <20250819-v6-16-rc2-quad-pipe-upstream-v15-11-2c7a85089db8@linaro.org>
 References: <20250819-v6-16-rc2-quad-pipe-upstream-v15-0-2c7a85089db8@linaro.org>
 In-Reply-To: <20250819-v6-16-rc2-quad-pipe-upstream-v15-0-2c7a85089db8@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -94,155 +95,257 @@ To: Rob Clark <robdclark@gmail.com>,
  Jessica Zhang <quic_jesszhan@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>, Dmitry Baryshkov <lumag@kernel.org>
+ Jun Nie <jun.nie@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755567061; l=5682;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755567061; l=9398;
  i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=CF4TPmOyKCuR1vONvBUPDXaEUNdePxwbzP99ZGSmrmQ=;
- b=jKyLYb95TCPGlUadXL4PbylqmJLTLCu78NFY2cQoAD+xKmhwDKWqC0oq1VHOuz4fmV3pGXzK6
- i/+2b9o2NPxDuu4tfIGjpVCgmQw0qYReY8ApquDVJi6dQl8mrfxl1Cf
+ bh=OhDnd2gXdAgyPEg+bHKAqPslfN0Sae4YKz05SBVvkhk=;
+ b=chrqfPGrTpPopdrqnD2cPasAzn9ufhKPlKgKwlF6nAA++oPnKy1o3ut1nIIkP0TRjdBUeAi5y
+ CmFWimeCk6cCA9CLv2j6kMyUv36dJh6KYla/f/QctSkqtdcQGwlCwH6
 X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
  pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-Currently, only 2 pipes are used at most for a plane. A stage structure
-describes the configuration for a mixer pair. So only one stage is needed
-for current usage cases. The quad-pipe case will be added in future and 2
-stages are used in the case. So extend the stage to an array with array
-size STAGES_PER_PLANE and blend pipes per mixer pair with configuration in
-the stage structure.
+Currently, SSPPs are assigned to a maximum of two pipes. However,
+quad-pipe usage scenarios require four pipes and involve configuring
+two stages. In quad-pipe case, the first two pipes share a set of
+mixer configurations and enable multi-rect mode when certain
+conditions are met. The same applies to the subsequent two pipes.
+
+Assign SSPPs to the pipes in each stage using a unified method and
+to loop the stages accordingly.
 
 Signed-off-by: Jun Nie <jun.nie@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 49 ++++++++++++++++++-----------
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  3 +-
- 2 files changed, 33 insertions(+), 19 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 150 ++++++++++++++++++------------
+ 1 file changed, 89 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 30fbd7565b82c6b6b13dc3ec0f4c91328a8e94c9..c7dc5b47ae18ebd78de30d2a0605caa7dd547850 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -400,7 +400,7 @@ static void _dpu_crtc_program_lm_output_roi(struct drm_crtc *crtc)
- static void _dpu_crtc_blend_setup_pipe(struct drm_crtc *crtc,
- 				       struct drm_plane *plane,
- 				       struct dpu_crtc_mixer *mixer,
--				       u32 num_mixers,
-+				       u32 lms_in_pair,
- 				       enum dpu_stage stage,
- 				       const struct msm_format *format,
- 				       uint64_t modifier,
-@@ -434,7 +434,7 @@ static void _dpu_crtc_blend_setup_pipe(struct drm_crtc *crtc,
- 	stage_cfg->multirect_index[stage][stage_idx] = pipe->multirect_index;
- 
- 	/* blend config update */
--	for (lm_idx = 0; lm_idx < num_mixers; lm_idx++)
-+	for (lm_idx = 0; lm_idx < lms_in_pair; lm_idx++)
- 		mixer[lm_idx].lm_ctl->ops.update_pending_flush_sspp(mixer[lm_idx].lm_ctl, sspp_idx);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+index d3db843d324efcda5477a7eac73a8872a55e95e5..99c902dfa7e0256028d294113a3e9bad0e1a0069 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+@@ -957,6 +957,23 @@ static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
+ 		dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth);
  }
  
-@@ -449,7 +449,7 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
- 	struct dpu_plane_state *pstate = NULL;
- 	const struct msm_format *format;
- 	struct dpu_hw_ctl *ctl = mixer->lm_ctl;
--	u32 lm_idx, i;
-+	u32 lm_idx, stage, i, pipe_idx, head_pipe_in_stage, lms_in_pair;
- 	bool bg_alpha_enable = false;
- 	DECLARE_BITMAP(active_fetch, SSPP_MAX);
- 	DECLARE_BITMAP(active_pipes, SSPP_MAX);
-@@ -472,16 +472,25 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
- 		if (pstate->stage == DPU_STAGE_BASE && format->alpha_enable)
- 			bg_alpha_enable = true;
++static bool dpu_plane_get_single_pipe_in_stage(struct dpu_plane_state *pstate,
++					       struct dpu_sw_pipe **single_pipe,
++					       struct dpu_sw_pipe_cfg **single_pipe_cfg,
++					       int stage_index)
++{
++	int pipe_idx;
++
++	pipe_idx = stage_index * PIPES_PER_STAGE;
++	if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].src_rect) != 0 &&
++	    drm_rect_width(&pstate->pipe_cfg[pipe_idx + 1].src_rect) == 0) {
++		*single_pipe = &pstate->pipe[pipe_idx];
++		*single_pipe_cfg = &pstate->pipe_cfg[pipe_idx];
++		return true;
++	}
++
++	return false;
++}
  
--		for (i = 0; i < PIPES_PER_PLANE; i++) {
--			if (!pstate->pipe[i].sspp)
--				continue;
--			set_bit(pstate->pipe[i].sspp->idx, active_fetch);
--			set_bit(pstate->pipe[i].sspp->idx, active_pipes);
--			_dpu_crtc_blend_setup_pipe(crtc, plane,
--						   mixer, cstate->num_mixers,
--						   pstate->stage,
--						   format, fb ? fb->modifier : 0,
--						   &pstate->pipe[i], i, stage_cfg);
-+		/* loop pipe per mixer pair with config in stage structure */
-+		for (stage = 0; stage < STAGES_PER_PLANE; stage++) {
-+			head_pipe_in_stage = stage * PIPES_PER_STAGE;
-+			for (i = 0; i < PIPES_PER_STAGE; i++) {
-+				pipe_idx = i + head_pipe_in_stage;
-+				if (!pstate->pipe[pipe_idx].sspp)
-+					continue;
-+				lms_in_pair = min(cstate->num_mixers - (stage * PIPES_PER_STAGE),
-+						  PIPES_PER_STAGE);
-+				set_bit(pstate->pipe[pipe_idx].sspp->idx, active_fetch);
-+				set_bit(pstate->pipe[pipe_idx].sspp->idx, active_pipes);
-+				_dpu_crtc_blend_setup_pipe(crtc, plane,
-+							   &mixer[head_pipe_in_stage],
-+							   lms_in_pair,
-+							   pstate->stage,
-+							   format, fb ? fb->modifier : 0,
-+							   &pstate->pipe[pipe_idx], i,
-+							   &stage_cfg[stage]);
-+			}
- 		}
+ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+ 				       struct drm_atomic_state *state,
+@@ -1022,17 +1039,20 @@ static bool dpu_plane_try_multirect_parallel(struct dpu_sw_pipe *pipe, struct dp
+ static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
+ 					  struct dpu_plane_state *prev_adjacent_pstate,
+ 					  const struct msm_format *fmt,
+-					  uint32_t max_linewidth)
++					  uint32_t max_linewidth, int stage_index)
+ {
+-	struct dpu_sw_pipe *pipe = &pstate->pipe[0];
+-	struct dpu_sw_pipe *r_pipe = &pstate->pipe[1];
+-	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg[0];
+-	struct dpu_sw_pipe *prev_pipe = &prev_adjacent_pstate->pipe[0];
+-	struct dpu_sw_pipe_cfg *prev_pipe_cfg = &prev_adjacent_pstate->pipe_cfg[0];
++	struct dpu_sw_pipe *pipe, *prev_pipe;
++	struct dpu_sw_pipe_cfg *pipe_cfg, *prev_pipe_cfg;
+ 	const struct msm_format *prev_fmt = msm_framebuffer_format(prev_adjacent_pstate->base.fb);
+ 	u16 max_tile_height = 1;
  
- 		/* blend config update */
-@@ -517,7 +526,7 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
- 	struct dpu_crtc_mixer *mixer = cstate->mixers;
- 	struct dpu_hw_ctl *ctl;
- 	struct dpu_hw_mixer *lm;
--	struct dpu_hw_stage_cfg stage_cfg;
-+	struct dpu_hw_stage_cfg stage_cfg[STAGES_PER_PLANE];
- 	DECLARE_BITMAP(active_lms, LM_MAX);
- 	int i;
+-	if (prev_adjacent_pstate->pipe[1].sspp != NULL ||
++	if (!dpu_plane_get_single_pipe_in_stage(pstate, &pipe,
++						&pipe_cfg, stage_index))
++		return false;
++
++	if (!dpu_plane_get_single_pipe_in_stage(prev_adjacent_pstate,
++						&prev_pipe, &prev_pipe_cfg,
++						stage_index) ||
+ 	    prev_pipe->multirect_mode != DPU_SSPP_MULTIRECT_NONE)
+ 		return false;
  
-@@ -538,10 +547,10 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
- 	}
+@@ -1047,11 +1067,6 @@ static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
+ 	if (MSM_FORMAT_IS_UBWC(prev_fmt))
+ 		max_tile_height = max(max_tile_height, prev_fmt->tile_height);
  
- 	/* initialize stage cfg */
--	memset(&stage_cfg, 0, sizeof(struct dpu_hw_stage_cfg));
-+	memset(&stage_cfg, 0, sizeof(stage_cfg));
- 	memset(active_lms, 0, sizeof(active_lms));
- 
--	_dpu_crtc_blend_setup_mixer(crtc, dpu_crtc, mixer, &stage_cfg);
-+	_dpu_crtc_blend_setup_mixer(crtc, dpu_crtc, mixer, stage_cfg);
- 
- 	for (i = 0; i < cstate->num_mixers; i++) {
- 		ctl = mixer[i].lm_ctl;
-@@ -562,13 +571,17 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
- 			mixer[i].mixer_op_mode,
- 			ctl->idx - CTL_0);
- 
-+		/*
-+		 * call dpu_hw_ctl_setup_blendstage() to blend layers per stage cfg.
-+		 * stage data is shared between PIPES_PER_STAGE pipes.
-+		 */
- 		if (ctl->ops.setup_blendstage)
- 			ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm->idx,
--						  &stage_cfg);
-+				&stage_cfg[i / PIPES_PER_STAGE]);
- 
- 		if (lm->ops.setup_blendstage)
- 			lm->ops.setup_blendstage(lm, mixer[i].hw_lm->idx,
--						 &stage_cfg);
-+				&stage_cfg[i / PIPES_PER_STAGE]);
- 	}
+-	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+-	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+-
+-	r_pipe->sspp = NULL;
+-
+ 	if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth) &&
+ 	    dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, max_linewidth) &&
+ 	    (pipe_cfg->dst_rect.x1 >= prev_pipe_cfg->dst_rect.x2 ||
+@@ -1180,36 +1195,69 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+ 	return 0;
  }
  
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-index 9f75b497aa0c939296207d58dde32028d0a76a6d..e4875a1f638db6f1983d9c51cb399319d27675e9 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-@@ -34,8 +34,9 @@
- #define DPU_MAX_PLANES			4
- #endif
++static int dpu_plane_assign_resource_in_stage(struct dpu_sw_pipe *pipe,
++					      struct dpu_sw_pipe_cfg *pipe_cfg,
++					      struct drm_plane_state *plane_state,
++					      struct dpu_global_state *global_state,
++					      struct drm_crtc *crtc,
++					      struct dpu_rm_sspp_requirements *reqs)
++{
++	struct drm_plane *plane = plane_state->plane;
++	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
++	struct dpu_sw_pipe *r_pipe = pipe + 1;
++	struct dpu_sw_pipe_cfg *r_pipe_cfg = pipe_cfg + 1;
++
++	if (drm_rect_width(&pipe_cfg->src_rect) == 0)
++		return 0;
++
++	pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, reqs);
++	if (!pipe->sspp)
++		return -ENODEV;
++	pipe->multirect_index = DPU_SSPP_RECT_SOLO;
++	pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++
++	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0)
++		return 0;
++
++	if (dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
++					      pipe->sspp,
++					      msm_framebuffer_format(plane_state->fb),
++					      dpu_kms->catalog->caps->max_linewidth))
++		return 0;
++
++	r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, reqs);
++	if (!r_pipe->sspp)
++		return -ENODEV;
++	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
++	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++
++	return 0;
++}
++
+ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+ 					      struct dpu_global_state *global_state,
+ 					      struct drm_atomic_state *state,
+ 					      struct drm_plane_state *plane_state,
+-					      struct drm_plane_state *prev_adjacent_plane_state)
++					      struct drm_plane_state **prev_adjacent_plane_state)
+ {
+ 	const struct drm_crtc_state *crtc_state = NULL;
+ 	struct drm_plane *plane = plane_state->plane;
+ 	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+ 	struct dpu_rm_sspp_requirements reqs;
+-	struct dpu_plane_state *pstate, *prev_adjacent_pstate;
++	struct dpu_plane_state *pstate, *prev_adjacent_pstate[STAGES_PER_PLANE];
+ 	struct dpu_sw_pipe *pipe;
+-	struct dpu_sw_pipe *r_pipe;
+ 	struct dpu_sw_pipe_cfg *pipe_cfg;
+-	struct dpu_sw_pipe_cfg *r_pipe_cfg;
+ 	const struct msm_format *fmt;
+-	int i;
++	int i, ret;
  
--#define PIPES_PER_PLANE			2
-+#define STAGES_PER_PLANE		1
- #define PIPES_PER_STAGE			2
-+#define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
- #ifndef DPU_MAX_DE_CURVES
- #define DPU_MAX_DE_CURVES		3
- #endif
+ 	if (plane_state->crtc)
+ 		crtc_state = drm_atomic_get_new_crtc_state(state,
+ 							   plane_state->crtc);
+ 
+ 	pstate = to_dpu_plane_state(plane_state);
+-	prev_adjacent_pstate = prev_adjacent_plane_state ?
+-		to_dpu_plane_state(prev_adjacent_plane_state) : NULL;
+-
+-	pipe = &pstate->pipe[0];
+-	r_pipe = &pstate->pipe[1];
+-	pipe_cfg = &pstate->pipe_cfg[0];
+-	r_pipe_cfg = &pstate->pipe_cfg[1];
++	for (i = 0; i < STAGES_PER_PLANE; i++)
++		prev_adjacent_pstate[i] = prev_adjacent_plane_state[i] ?
++			to_dpu_plane_state(prev_adjacent_plane_state[i]) : NULL;
+ 
+ 	for (i = 0; i < PIPES_PER_PLANE; i++)
+ 		pstate->pipe[i].sspp = NULL;
+@@ -1224,42 +1272,24 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+ 
+ 	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
+ 
+-	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0) {
+-		if (!prev_adjacent_pstate ||
+-		    !dpu_plane_try_multirect_shared(pstate, prev_adjacent_pstate, fmt,
+-						    dpu_kms->catalog->caps->max_linewidth)) {
+-			pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+-			if (!pipe->sspp)
+-				return -ENODEV;
+-
+-			r_pipe->sspp = NULL;
++	for (i = 0; i < STAGES_PER_PLANE; i++) {
++		if (prev_adjacent_pstate[i] &&
++		    dpu_plane_try_multirect_shared(pstate, prev_adjacent_pstate[i], fmt,
++						   dpu_kms->catalog->caps->max_linewidth,
++						   i))
++			continue;
+ 
+-			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+-			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++		if (dpu_plane_get_single_pipe_in_stage(pstate, &pipe, &pipe_cfg, i))
++			prev_adjacent_plane_state[i] = plane_state;
+ 
+-			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+-			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+-		}
+-	} else {
+-		pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+-		if (!pipe->sspp)
+-			return -ENODEV;
+-
+-		if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
+-						      pipe->sspp,
+-						      msm_framebuffer_format(plane_state->fb),
+-						      dpu_kms->catalog->caps->max_linewidth)) {
+-			/* multirect is not possible, use two SSPP blocks */
+-			r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+-			if (!r_pipe->sspp)
+-				return -ENODEV;
+-
+-			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+-			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+-
+-			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+-			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+-		}
++		pipe = &pstate->pipe[i * PIPES_PER_STAGE];
++		pipe_cfg = &pstate->pipe_cfg[i * PIPES_PER_STAGE];
++		ret = dpu_plane_assign_resource_in_stage(pipe, pipe_cfg,
++							 plane_state,
++							 global_state,
++							 crtc, &reqs);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+@@ -1272,7 +1302,7 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+ 			       unsigned int num_planes)
+ {
+ 	unsigned int i;
+-	struct drm_plane_state *prev_adjacent_plane_state = NULL;
++	struct drm_plane_state *prev_adjacent_plane_state[STAGES_PER_PLANE] = { NULL };
+ 
+ 	for (i = 0; i < num_planes; i++) {
+ 		struct drm_plane_state *plane_state = states[i];
+@@ -1286,8 +1316,6 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+ 							     prev_adjacent_plane_state);
+ 		if (ret)
+ 			break;
+-
+-		prev_adjacent_plane_state = plane_state;
+ 	}
+ 
+ 	return 0;
 
 -- 
 2.34.1
