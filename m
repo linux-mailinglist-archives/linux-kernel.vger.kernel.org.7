@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-775667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC4FB2C333
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:21:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 914FAB2C30F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0C224E422E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3834582749
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF271346A05;
-	Tue, 19 Aug 2025 12:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B398A33CE80;
+	Tue, 19 Aug 2025 12:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYjQgfrA"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="g//SJZfa"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A3B350843;
-	Tue, 19 Aug 2025 12:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCD032BF3C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 12:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755605833; cv=none; b=CFxxgE9XCyxDUlj2Vl2sL8uW1PjVjTySdH8pOkF0RcWBEih+2iTreCM+FIHGPnbG8Ao4kO3c+ke/hCMplhxz/Rry5cOrjzSshEQ9ZuUauzriGXaXGcdjJHueuRAcFb9ZYo8iO3SAqsyr3gn9oN6VkUWMmJnzT7rSXc4S52eT4ZQ=
+	t=1755605805; cv=none; b=d0nXrG6VCRmMfKmOGRL1xUnyaa/pouXRUHTHg1utvTf31nrf1v3kBhnI4JwYgDTryrqx9h2z99w7yLDD8vlwOuESnWmg+xnjpqtE0PhV6pCekhDFIJC+Tt9sk3zJX+yDoa4uXIeoMGY4wgb1twYxgaM8DKkLXr8MXhEPhJayIPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755605833; c=relaxed/simple;
-	bh=K9nKCMbcMP0yXHmTeB74OB3Tdfhh/E/inXnAw8T6vUM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W7ymW3nkhgoMNWmx8Peiwv/V6HaBS8EejiZD8bVHIA8CkMUJKtFphW44ebEO/p42WbZAytpT8VevUB2qlTK5uJR31ddG2U82y2lacVUk8Da5tkyPPq0RTer4rqmVCQVMHrBDlDzHWS0Uro4BMUimoKDgx8423ggz0i74OwDUJWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYjQgfrA; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb73394b4so782628066b.0;
-        Tue, 19 Aug 2025 05:17:11 -0700 (PDT)
+	s=arc-20240116; t=1755605805; c=relaxed/simple;
+	bh=+UdqJ2l0+r6uRordgh+zIkF9ttaFydJUFmIeQFhXjI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tyzqv002lOQkAM3o/3533/zI9L1+AQnYhf/aY8LDZ/u1sC/WC1v0u9IhT0Nu6gMwkiTTswct6T/BKarejDOD/ugFEkXd/ZzpFrbjbM4eQe3NhcFIo+VbLFlmtS4n0XQXWStvsrUkqK/8xAi6bojUb031zMbRQi7UK8t+YJhsfG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=g//SJZfa; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-618adbeff22so546191a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 05:16:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755605830; x=1756210630; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=ionos.com; s=google; t=1755605801; x=1756210601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rwi6FW5tkDofq2KfQKNu3LIz9dY4yfYtr7joa3HTroQ=;
-        b=ZYjQgfrAeWlI3LRWFCOcY3zFzWKcFXpcfzwmWruISPzuYF66TCg/ECYpkCQw4k0pVp
-         w+P1FVgOGp1oPu8++EVWh3Jf/ufCmcC2YZSzHf29PdLXY/C+NQzlNElFRGS5BDeIzKTm
-         dQQ/SJioGnGjo2T5Moly1E0lTUerx4tLxLhkAZ01e0Hm6rsn/j9exIM+HuOL8Ktt9Sb1
-         jM2MItCqjbHxoPXZbJfOLFdP1bdanOwAucqD1094hz+JrktSKEliPNm/ZD4XZbbDRDhl
-         vkT85c7dUrMxaTiJjW/vzlvKHMNWaz4/z7mAqCH0GPkijJoVPSaKnD1XJyzEr06MZIUD
-         r69A==
+        bh=LMlwZjg+BwGuKg1s6kTEEYqgJZl+nDMkdFkULY+5kpU=;
+        b=g//SJZfarPbx0ievrhtGEGp6QqRctgkj5zeD0HY5UXzS5vYX42u0mYsKlsSNA+M6hk
+         NFYAGgL3t316tteZI1fDo7bMVEsgNVhZL69NyJSDg7TD+wGBuXUvlDCiaNxvm+GSLgGp
+         IGSbYX1pFRLCjnhboZbAAPVr4JxC8GxCMY2N1VLhMa9eLOBGgNGtlDArLlNf8wSYK8/E
+         NkoozLr8yIoX5wiY17xxcVPOqefin7bVjf/t5BZKqmOAp8qVxXV3QKUFG05Wb2sPM74B
+         unqDJUBQTgdtuJrUsa22vtUFyJ7fAjp/+mlJ4mmnvHapSfxZmOCnQvKDv2OW1pm96n/+
+         aALg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755605830; x=1756210630;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755605801; x=1756210601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rwi6FW5tkDofq2KfQKNu3LIz9dY4yfYtr7joa3HTroQ=;
-        b=f6YzGcdz9K+GWdSOCq0fb+twz2WwmKgbFmUXnAIwmjpWnuuUkN1lt+u3JRQnQYv9Z2
-         SeaI9IMUUlfrqbpJG0v7gb5xP95tUGJx1GerP+BUQxTPuyH35WnQBCbHPF9o+oOHCd/M
-         3P1J701E2X+Noug8B/8Xjhe2yu6bVNEa/OM5ywG0JeJE+/fb8a5FCAV4vkLN1fv73LSI
-         hLH9dkCX5Lf2aYmzMEJH4PKY1ejeYFobw9dscg33beocttSUZ4h49yZz8DkHcBwGtSox
-         mdjBP1KMrUeisgOfHhPp7pLwH4/Tw9wPMkZzLt+zy2RiKZMatxaqYj+OyRmV1DPEza/z
-         qo2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkGEHWqrdJJaRHWnrdwGZzgj4pthmI28qx9icuMdly3F8p88NW95Fkll6Nvj2yEeMgtvJeEvButx+q@vger.kernel.org, AJvYcCWp8PNTMuhsvKxuAbG4VSfmk+xPbGOK5StDvcviJARMqlf1gczZ9f8A6KEZXOdtbbHWuJw53bspTN27kLM=@vger.kernel.org, AJvYcCX0lRsW5xJ0AdSoLIVTS1KVWbMQpDyV7V0GHKQNPEDjbN6jr+7HNZXSwJGmbTTW0/9uvPXmYaNx4rpv9CRf@vger.kernel.org, AJvYcCX9sebIhkLzQqVoBr7UXH5kEtq3q3aEwesN2Gq+xkP+ecQGFG/crqZEmiVmzI352HU6tbQN9gFuU4cC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV0NTW8qEmqxdF2Q3wKBRxILxyhAb+byUYrzr00acUKoEGBrYo
-	Ky76TaIRVb2JkHq3tOxCtmDoQvwi8A+xpfP2AFlh9e1cutwY+gVWBtxT
-X-Gm-Gg: ASbGnctptb1N3tiSnLXNEuTowEMShc6YPfPGsET3v9uDu9hYat88hbSdYRSGnqWTTYT
-	+GZ9pGMH53F5a+P4wV/7PyxU2O9sw0nXj16TnwOmIB5wkRjPozRFNcKCdnJM2PZfY+te3UZXpcW
-	uRpi41mFFkaBysmnFLq1T1o7f2G0egB9hJxqX7AEzrAZb/uOLhB9WOOeoHdPZM41ub7/xs19MXj
-	3j1QJ/jWOlzV0gBzvF7RdB90I/yswhHA/Hk+TnYFVde/0A5Ma2u4gZijDJBu8ikhFrYmS877Onj
-	Sm6AQvlMFZmE2zcCVVRlHkAA4VRl6ANco+7UxXR3Mhe1QateJv4wO0SsZR1IBUCWWWGzuJyetvr
-	cQMbKnzfzzveAJQzh2cPnZufj
-X-Google-Smtp-Source: AGHT+IGR21hvJiBGCH6Sbixi0M+53WC3OCr/Sk/5ODegpiy06wxb3jQkbalpqFcJAtPFjRUjEnbGKg==
-X-Received: by 2002:a17:906:6a17:b0:ae6:d47a:105d with SMTP id a640c23a62f3a-afddd208983mr230691466b.55.1755605829730;
-        Tue, 19 Aug 2025 05:17:09 -0700 (PDT)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce72cbbsm1012018666b.35.2025.08.19.05.17.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 05:17:09 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v1 16/19] staging: media: tegra-video: tegra20: adjust luma buffer stride
-Date: Tue, 19 Aug 2025 15:16:28 +0300
-Message-ID: <20250819121631.84280-17-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250819121631.84280-1-clamor95@gmail.com>
-References: <20250819121631.84280-1-clamor95@gmail.com>
+        bh=LMlwZjg+BwGuKg1s6kTEEYqgJZl+nDMkdFkULY+5kpU=;
+        b=eb63extvC/AsY6CsC2DMQJKR/LZCZCgxi9A8KqnJBbUgJlJuTXcmLoP20C+HT089L9
+         V0fJFgyxjuOf8v9tv505JuPJNm3PhWRUhzdX2NRKzLRpJTiQscXNtAP3dlUqjFt33/M/
+         Vi4DUn77/gZ1RESjCXwXSVvHx0Kz7P8VDYrEXY1xvzcgRJt5wobgCbVgjaafS2X314YS
+         0SbKgmICdBkG1hPXKJy4t03aweclH28mOQCy0Lo6cEx21jHopKoFLNBt7hFjB5ebFuQe
+         49ry/AD3eMHEAcJ9IfBr8ZcBxTtUodPA+GrUlFoZK0kFiomgj4ImQXglykPkRCHVJ8Go
+         clxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwu7Wknnti1sEGbFbPr4eiFe15iTIZdFCuHfhEFIr14simNePfM/DBmRZh7KoJ+6q3WDyqeKou3n0lvF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5shkOS+mQZNVZy7urlFB+6AJ7wZTqvUWgoXO/xuk77wOwJ1hE
+	dwANmJkEvrvDx/RGbpeKoIDSLSLm9xEvzokserxyk9U+MPjgWivs+qn44wRVjP6KD+b+eyqZt/H
+	BgZjpd24VneanJx2sOT0tDLV5OOJwdHzE2QHCaLowAw==
+X-Gm-Gg: ASbGncvJBXpMwjaA6PomIhUquVvAmJUcw8AhbNkNon6lTDlI0JWtAzCkA5d40y9+Ee4
+	L22/UJUaALRCKzTDCQ4nsnuj9wq4l0QNdfOuwg+jlt1yyyZM3aG6GLkBAFQkZl28XdSHowSbubm
+	99MBqftQ2HY5doi2jAk+Ea4O9zxn3M1aMDvGo1yUjp+xqidLnjrbcg1XrqA3k3RuiL5iizgnqqs
+	WdZgPYZoz/WXo8UjA==
+X-Google-Smtp-Source: AGHT+IFVPOJnpawqYW7dgmQm05ygm+o8VCZKwSKrOr4m0ElqSL/2bgxkgUBv9mgR5/NbA+QU7vlP8i/6O4WJ8B7wxWE=
+X-Received: by 2002:a05:6402:13c7:b0:618:1835:faa4 with SMTP id
+ 4fb4d7f45d1cf-61a7e7431a0mr952736a12.3.1755605800879; Tue, 19 Aug 2025
+ 05:16:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAMGffEmFm8wvgiw+s0ZpOhRxBLOz3dQiS=sQCkgJLD6qC3VwJg@mail.gmail.com>
+ <20250819105527.GCaKRYH9VnQaVdl7gQ@fat_crate.local>
+In-Reply-To: <20250819105527.GCaKRYH9VnQaVdl7gQ@fat_crate.local>
+From: Jinpu Wang <jinpu.wang@ionos.com>
+Date: Tue, 19 Aug 2025 14:16:29 +0200
+X-Gm-Features: Ac12FXyi5L7sFVX4UCj_Ji2kWikgHR5CHKMJy4pq_iRmfKf7TcnG4_KynvPZ4bc
+Message-ID: <CAMGffE=+hhf6EXCVYo+tvdUKN8B=uEtjkTpo1R9PXN3HycXG-Q@mail.gmail.com>
+Subject: Re: [BUG] amd-ucode 20250808: "No sha256 digest for patch ID:
+ 0xa0011de" on Linux 6.12.37
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, linux-firmware@kernel.org, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Luma buffer stride is calculated by multiplying height in pixels of image
-by bytes per line. Adjust that value accordingly.
+Hi Boris,
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/staging/media/tegra-video/tegra20.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for the quick help and for clarifying the situation. I
+apologize for overlooking the information in the `amd-ucode/README`
+file regarding the required minimum base microcode version.
 
-diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index b466fe7f4504..a06afe91d2de 100644
---- a/drivers/staging/media/tegra-video/tegra20.c
-+++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -496,7 +496,7 @@ static void tegra20_camera_capture_setup(struct tegra_vi_channel *chan)
- 	u32 data_type = chan->fmtinfo->img_dt;
- 	int width  = chan->format.width;
- 	int height = chan->format.height;
--	int stride_l = chan->format.bytesperline;
-+	int stride_l = chan->format.bytesperline * height;
- 	int stride_c = (output_fourcc == V4L2_PIX_FMT_YUV420 ||
- 			output_fourcc == V4L2_PIX_FMT_YVU420) ? 1 : 0;
- 	int output_channel = (data_type == TEGRA_IMAGE_DT_RAW8 ||
--- 
-2.48.1
+Thanks,
+Jinpu
 
+On Tue, Aug 19, 2025 at 12:55=E2=80=AFPM Borislav Petkov <bp@alien8.de> wro=
+te:
+>
+> On Tue, Aug 19, 2025 at 08:14:50AM +0200, Jinpu Wang wrote:
+> > Upon boot, the following error is reported in dmesg:
+> > `microcode: No sha256 digest for patch ID: 0xa0011de found`
+>
+> [boris@zn: ~/kernel/firmware-linux> less amd-ucode/README
+>
+> ...
+>
+>   Family=3D0x19 Model=3D0x01 Stepping=3D0x01: Patch=3D0x0a0011de Length=
+=3D5568 bytes
+>     Minimum base ucode version for loading: 0x0a0011d9
+>
+> So you need to update your BIOS in order to be able to load 11de.
+>
+> HTH.
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
