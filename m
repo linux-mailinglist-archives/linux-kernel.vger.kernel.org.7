@@ -1,173 +1,149 @@
-Return-Path: <linux-kernel+bounces-775069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762C7B2BAF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40B6B2BAEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9FBE189B668
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:40:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D011217836D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1863101D2;
-	Tue, 19 Aug 2025 07:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A7F3101AF;
+	Tue, 19 Aug 2025 07:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QkI5CVka"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IV3QuXD3"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B3B310621;
-	Tue, 19 Aug 2025 07:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE1130FF37
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755589191; cv=none; b=piyrJmTidMwOXP/5bpfBhhPs8KXVGMJjcyyzKhoDYC2HUGsDfumgfHqp6eJcvH3/H2gg7Fto0/28kDD2gbATWvk4gP/xaDwusIHmNpS1IVxyJPVh4hZRJh0Q+P3lzmZv0uWQP8uFW3RNTlkvlyDYlbT4Ms3WS7jCfMUal4MA9tg=
+	t=1755589186; cv=none; b=LnYir5qhOyeIKq2wkbzFKaUOKq+1a+gu7JHYTSh0c6buAUFmEPjkXVGC9x6gBGWmG1+wB5NBESz+Qp2CXdlzwxcKG+uKhnpSwZvdSopKN7jxanFzdTE/WphPTMj5GDItFEeJv/0vG3xCQiIiwme5T2WTCPmgkPcfM3sCY6ZO0Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755589191; c=relaxed/simple;
-	bh=gJZ4+unPtHp45j2uU3LHJmSOTMwXJ0V/cp0y+r6Oq14=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GvFP1Q8Zzegq+5aZE/ilgygGXIrWoR4GvdHyfQrLW5IL1nQZU6xICyyeFWFSvTZu9onVFyvbOLrkVfYByl8NfjJ6g97ynvu3Wmmzpg+9+hXSkBcvWvti/03WnRgfgBUbTqL01J7P1CodfnvFYY2tzhgKER9Ok2TpOUUKqzMeEWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QkI5CVka; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J5D69Y012840;
-	Tue, 19 Aug 2025 07:39:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=2fMT89
-	F0BR3wH3h7MhslCxoheegXP+7FD4CxweXIXOI=; b=QkI5CVkawkaIOpfz9UseLj
-	uKF8kQqQqrK7w3N9SfZWaTUd5jzsZhG59yVSKUEMMfNLiNMops4pUUsfTCgY1dd2
-	xSprP7vP1GCZJmMcdWHNoB57M/GyNnTUbVErN06+U1yAySTtECc5abs7PqMT/3be
-	i8tbQ3MROhcly+ygLlyHzLjI3F/4Ww0rIkETBjZQs1KpkBekvb49JvEtvfTmaKBl
-	8bF7rXbKmLViCgcHrs8ApD9+hlh8lstCeRKIgfykUn+FuNZAcL/VRdYXeTfJh5Lr
-	RniNOMdrRegLaq4uskvz2aBzQ+C/C0FzFNQdxQ/hPyL49tM8RMFyeJAbsOWryfpA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jhn3w48c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:39:35 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57J7dZtZ015939;
-	Tue, 19 Aug 2025 07:39:35 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48jhn3w488-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:39:35 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57J6Vx4j002213;
-	Tue, 19 Aug 2025 07:39:34 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48k7130yx7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:39:34 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57J7dWZD30540240
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Aug 2025 07:39:32 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8C0E020043;
-	Tue, 19 Aug 2025 07:39:32 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 89B1620040;
-	Tue, 19 Aug 2025 07:39:22 +0000 (GMT)
-Received: from aboo.ibm.com (unknown [9.150.10.135])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 19 Aug 2025 07:39:22 +0000 (GMT)
-Message-ID: <23fe7e2a5343090f387c15d70b95b13029f523e0.camel@linux.ibm.com>
-Subject: Re: [Fixup PATCH] mm/selftests: Fix formattig in
- split_huge_page_test
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, shuah@kernel.org,
-        pfalcato@suse.de, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        baohua@kernel.org, richard.weiyang@gmail.com, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        donettom@linux.ibm.com, ritesh.list@gmail.com
-Date: Tue, 19 Aug 2025 13:09:20 +0530
-In-Reply-To: <38734ae6-012d-4630-8bf3-efefb65f0d23@redhat.com>
-References: <20250816040113.760010-5-aboorvad@linux.ibm.com>
-	 <20250819041239.167537-1-aboorvad@linux.ibm.com>
-	 <8142d36d-2a0e-476c-8250-1a69c1f92913@redhat.com>
-	 <38734ae6-012d-4630-8bf3-efefb65f0d23@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1755589186; c=relaxed/simple;
+	bh=eRD1kroDbQ1a6DO8DjocsXJeFSn2D5Gc+Oh+p/Mt9VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qh9mavTeBfSjtpfZo/KL/f2Q980vWoUfeK4VWQz1RLTaPLWYa8aAA9YO8kFPAM9IROjYvhlzEJPlcNTlpoMBEhAM+1JzS+M2n9BPlUxHXpBGxkzwPGhq8s9cqKrOqhgYmeshl/7y8QqWGMON+la0yp0N0oNc7I9jItCdEJwAsiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IV3QuXD3; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7a8dd3dso707057066b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 00:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755589183; x=1756193983; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JlGG0MimgPVuD1cdmYrztEX7ylcMD0YKZDmGx1Z6TgU=;
+        b=IV3QuXD352E59L5BMLMf6kLkcnbLhEjwYZamSvGr9mYFh8dPwHGk5NOm11PAYsfRZ9
+         cRGdOnkF5F42HpPdr4SVopjGPESMpZ3FhvBhw7h854zrXgwRJR/LOxR+ylHi82i0Osf7
+         Ngwn0FR9eVHabfMOgdceAh8FcZqze4apAC1Cq+rv0sma5lFoEY2hDnVIxoDt7r3OxpIO
+         J1bXPHm11H4e6nxgLGx5gEF0AQaR1yyqVlhKQa42PvKbHgrj1e/LVO9gvNXkd5a9gn+7
+         O6eVS/Njp/FyQYbK3GmwMKIIIbTXnP+YnzMlVN9MvNEtUmirlzo/8931NJOy0/s8MpJh
+         YHpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755589183; x=1756193983;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JlGG0MimgPVuD1cdmYrztEX7ylcMD0YKZDmGx1Z6TgU=;
+        b=SBPNscK5f6dypCimPvTdZxQgcAGj3VVlM9uX66Oy7Fis3n1UmzFir3SsiR1Z8apuXP
+         xjCKI8b6XnW61pZ+W1RJGnlQoJ957aquQwBHB/kY2ntsgfZaSwh2xiTtg+S+bY4f9hBe
+         hCE4U3knV31IBQ+pB2e4lQFyjPL4T99H2zhIEah60yLE0s3jjrIeFYcO9krwNzXijabo
+         eehMgD3ywDUoeoD2DsIqh4Yt00e+2II0igD+ryKEhIujlSkpmDAaJIWLmfnpCX9iB93q
+         NNSmsWUgNfeI/QQ7k2JGSaw5w1eZGyCHurXxXF2L8Z5i5UOKfvq5rbV0nlijvc4y2kUx
+         cQJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWcgVOeWh5xvF4wGY5yp6hJBifrIfaypAe75EAM8Y1deay1eWIwm8tATC1zucCvu8po2qKG62/+9QgcwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPPmE2UQ6PPOP83A0MBP5QeQhhlqjP7LiQ6HKg+0T+bD5OeLI8
+	Gk699+PhCN21eUVqPYS5Pl/mXUhFzhCKDr9SFG4tVhH+e+I3IcjXHh/+
+X-Gm-Gg: ASbGnctq0z2Z9QSqlFr+749T3PyLvxZO3S55vBE85/hyarDmFMTClyytoJx+xvvy/+6
+	afVMQll3g7/qw20jXbDIj7JA/CA6NYgHZKx8h0xJCjEhnTa8QLQnJMuwgibOgIt0vvA05Bi7QQ8
+	guIJFZw99qf0+55QGybV+EpLSfr3C+jzV9hUh0Yff4YP+4ywAxKgfYWwgnX4vByptG0qnNof/Hz
+	yghUlwhzHjUfbJce1m7aa6T4feMuRbsmGuI3LpJkBAJGKgZcmPkfXVK5/o5EXyVyBVRPSAOx4LZ
+	6Q1re+cVOs5cJxdgLHZCWWlsqIfmL15PulNiWyZGI5e7uUWTGxDCbk0h0czg9NN6reZJTVA6ilE
+	X1tE0YgQAbhlNz2VICmZ4GA==
+X-Google-Smtp-Source: AGHT+IFDydZFQrkosnxXfosEK8EVZgkb6qLnlT4kiVd7o1+cVB/7rTEUO0G9UdoGYY9iwV3LjvIXOQ==
+X-Received: by 2002:a17:907:3e1d:b0:afc:bcfc:b3b7 with SMTP id a640c23a62f3a-afddd0d283amr142302066b.38.1755589182644;
+        Tue, 19 Aug 2025 00:39:42 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce53f2bsm973006866b.4.2025.08.19.00.39.42
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Aug 2025 00:39:42 -0700 (PDT)
+Date: Tue, 19 Aug 2025 07:39:41 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Bill Wendling <morbo@google.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 0/4] mm/mm_init: simplify deferred init of struct pages
+Message-ID: <20250819073941.esl7z5ibqqeabunh@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250818064615.505641-1-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: kldq267UTVqJ9C8Sml23beZipPKunToR
-X-Authority-Analysis: v=2.4 cv=L6wdQ/T8 c=1 sm=1 tr=0 ts=68a42a37 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=VnNF1IyMAAAA:8 a=Usu2G-oJ_OItclc4WmIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: azXWxStmn-7-WbVHLx7lZgRm3YkxeGHa
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyNyBTYWx0ZWRfXxboAV/ekxxSU
- TyKCUHpeqzG8mRxw4KAj8bza9YhUDdi6AjptGmFrS3BvCvk+l0D4THv3A0hoxc4jfJyr+mRDfw3
- fO4MKWsM6YBYhWXNBlciRIz3jipyGhciwO7aqWu30i6Od1QwdTZa46BlJQ1mwBRKxybO+Q7gS9K
- Ifu+Jgdae4+OR4IH+Te7snGp/ULKKgq2a0X3rd0jele9PVofbv6tcyiwYC2zgtIzhNG2KII6Q0T
- UBTwubX6Q0YLhAqjYr9NE7Xh/4YEa+omCNO/5vMZmi/jilN8BwS47q6MFw4pKwrFKMgipIA1YL0
- 9XzvCmKBYgYnSDsFRv031z7kl7sztTrTWC+W7F3hJ/DpYqaxlAbPN5qVawyD9mCUYDdbYCTBvv2
- +d02dbNk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 clxscore=1015 phishscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818064615.505641-1-rppt@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Tue, 2025-08-19 at 09:28 +0200, David Hildenbrand wrote:
-> On 19.08.25 09:25, David Hildenbrand wrote:
-> > On 19.08.25 06:12, Aboorva Devarajan wrote:
-> > > Removed an extra space in split_huge_page_test that was introduced
-> > > by commit 4b76e221794b ("mm/selftests: fix split_huge_page_test
-> > > failure on systems with 64KB page size").
-> > >=20
-> > > Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> > > ---
-> > > =C2=A0=C2=A0 tools/testing/selftests/mm/split_huge_page_test.c | 2 +-
-> > > =C2=A0=C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tool=
-s/testing/selftests/mm/split_huge_page_test.c
-> > > index 54e86f00aabc..faf7e1f88743 100644
-> > > --- a/tools/testing/selftests/mm/split_huge_page_test.c
-> > > +++ b/tools/testing/selftests/mm/split_huge_page_test.c
-> > > @@ -544,7 +544,7 @@ int main(int argc, char **argv)
-> > > =C2=A0=C2=A0=C2=A0		ksft_exit_fail_msg("Reading PMD pagesize failed\n=
-");
-> > > =C2=A0=C2=A0=20
-> > > =C2=A0=C2=A0=C2=A0	nr_pages =3D pmd_pagesize / pagesize;
-> > > -	max_order =3D=C2=A0 sz2ord(pmd_pagesize, pagesize);
-> > > +	max_order =3D sz2ord(pmd_pagesize, pagesize);
-> > > =C2=A0=C2=A0=C2=A0	tests =3D 2 + (max_order - 1) + (2 * max_order) + =
-(max_order - 1) * 4 + 2;
-> > > =C2=A0=C2=A0=C2=A0	ksft_set_plan(tests);
-> > > =C2=A0=C2=A0=20
-> >=20
-> > Please just comment next time one the respective patch as review commen=
-t.
-> >=20
->=20
-> To clarify what I mean is something like this:
->=20
-> https://lkml.kernel.org/r/3dca2de4-9a6a-4efe-a86c-83f9509831fc@gmail.com
->=20
-> Gives more context when the subject directly highlights to which patch=
-=20
-> you are replying.
+On Mon, Aug 18, 2025 at 09:46:11AM +0300, Mike Rapoport wrote:
+>From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+>Hi,
+>
+>These patches simplify deferred initialization of the memory map.
+>
+>Beside nice negative diffstat I measured 3ms reduction in the
+>initialization of deferred pages on single node system with 64GiB of RAM.
 
-Hi David,
+Nice cleanup.
 
-Thanks for pointing this out. I=E2=80=99ll make sure to follow this.
+For this series:
 
-Regards,
-Aboorva
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+
+I guess the speed up is from "use a job per zone". So we do initialization per
+zone instead of per memblock range in the zone, right?
+
+>
+>I don't have access to large memory machines, so I'd really appreciate
+>testing of these patches on them to make sure there's no regression there.
+>
+>The patches are also available at git:
+>https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=deferred-memmap-init/v1
+>
+>Mike Rapoport (Microsoft) (4):
+>  mm/mm_init: use deferred_init_memmap_chunk() in deferred_grow_zone()
+>  mm/mm_init: deferred_init_memmap: use a job per zone
+>  mm/mm_init: drop deferred_init_maxorder()
+>  memblock: drop for_each_free_mem_pfn_range_in_zone_from()
+>
+> .clang-format            |   1 -
+> include/linux/memblock.h |  22 -----
+> mm/memblock.c            |  64 -------------
+> mm/mm_init.c             | 195 +++++++++++++--------------------------
+> 4 files changed, 62 insertions(+), 220 deletions(-)
+>
+>
+>base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+>-- 
+>2.50.1
+>
+
+-- 
+Wei Yang
+Help you, Help me
 
