@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-775411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129DBB2BED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:25:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D1EB2BEDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6528626D7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65BA6626F2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233E531CA5E;
-	Tue, 19 Aug 2025 10:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X0J3KQ6Q"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AC831196B;
-	Tue, 19 Aug 2025 10:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA7B315767;
+	Tue, 19 Aug 2025 10:26:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A66275860;
+	Tue, 19 Aug 2025 10:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755599123; cv=none; b=bwlEwC+D3Z0hKcG2AiHdWEG1+LFn2rYIv6jSWm7Ckm4Zhhxnd0BRjYpYO/cSZSY1xiaQGf8HP7CXZOhlLvFZbSFF8pq097EwEhUqNr0H0+tSnODXk3s9MssV24WOZil6nJHMOmJYiLZirOAIppxpxEHmhBjdykJFd/dlyDyvb8E=
+	t=1755599206; cv=none; b=Tk/B4rs8jiv1IazhNpvo7sTbJ2tNyMGO1P5SXu3j6gJaNKJU47pcZe/9JUcWXatgm8xlD8bGzK58fj2IT8xu0stgGoVJ5jtiE0FT6ZSGPYTmd2IFb/34IR68TML2d9uo4DtgdtLBMe/aG9f/dRyPD1cza8I3+uWQyuOIhAGHNrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755599123; c=relaxed/simple;
-	bh=9QL/zWeJ1kTH8RgmiL/R/P0VNpJ9vMsoJqEulT2Nk28=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dNG+kCrc86h2zwsaUwaW0CfZ0w+mKLZ0+hLPhVSoUb5FenPYQ2eowEA2CC4rV70hao1jD73zudwYu3rBjtrZdUebzmshYBiKN/zz+Hvw+JRyWeWcb1r5Bx31uuNfbNb/+Hk7cMqKzzAJesUvd2croqwaRkxbJ5Y0gmSJnNB68WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X0J3KQ6Q; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755599118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XAEzHSx9J2WDYhJtUlgP9ek1q54RuWBFpaNSaatAxDQ=;
-	b=X0J3KQ6QdHp2nrkM17xzAYgP67qu8bj+5NRUEyfkYF7GW1riZzDqG5Is4S9oamDrUH8J+t
-	PDXdL73cV5/dsmwGikBBJsoHuNmspZlX/KOSdUXgJYrHkRkiQZXOQDrUuwMiE4VZ7kgAct
-	x+A9DXUIbyiHlvxwgv7KwPJv0ACwoGc=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-mips@vger.kernel.org,
+	s=arc-20240116; t=1755599206; c=relaxed/simple;
+	bh=7yoFpviv7y4iqdmS6H1TONkysfR98qLahaGcdvZS2eQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PuTZHyZxnhGO0Q6gQqJ+0DPeI/Naduaq33C31+TsX6yhzy6XCAa0LezeoMX7QxlX/1irZSXbAtovVCQyCypfHw4pFNkhoUf2FVx3RHYNbrnCNQx8poKiRGfbrqyWb3bZSfvq56pWkPkkAKkr/VpdxaYIJPmnFV5wei8zO7wECrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E64BD1BD0;
+	Tue, 19 Aug 2025 03:26:35 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1DB33F63F;
+	Tue, 19 Aug 2025 03:26:34 -0700 (PDT)
+Date: Tue, 19 Aug 2025 11:26:18 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Chengdong Li <chengdongli@optimatist.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: RB532: Replace deprecated strcpy() with memcpy() and strscpy()
-Date: Tue, 19 Aug 2025 12:24:17 +0200
-Message-ID: <20250819102419.712031-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] perf/core: Improve arguments checking of inherited
+ per-task counters when sampling.
+Message-ID: <aKRRSsEJxb1LZDV1@J2N7QTR9R3>
+References: <20250814110625.84622-1-chengdongli@optimatist.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814110625.84622-1-chengdongli@optimatist.com>
 
-strcpy() is deprecated; use memcpy() and strscpy() instead.
+On Thu, Aug 14, 2025 at 07:06:25PM +0800, Chengdong Li wrote:
+> It's not allowed to mmap() of inherited per-task counters with CPU ==
+> -1, this would create a performance issue. But it is not friendly to
+> developers as current implementation postponed the arguments checking to
+> perf_mmap(), developer can get an -EINVAL from mmap() but without
+> any previous error returned from perf_event_open().
+> 
+> This patch improves it by moving the arguments checking from perf_mmap()
+> to perf_event_open().
 
-Add the local variable 'size_t len' to keep track of the string lengths
-and prefer memcpy() over strscpy() when we use the string length to
-advance the 'cp' pointer.
+Why is that an improvement?
 
-No functional changes intended.
+IIUC before this patch, it would be possible to read() the event,
+whereas now the event cannot be opened at all.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/mips/rb532/prom.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+AFAICT this is removing functionality people could legitimately use, so
+this doesn't seem like an improvement.
 
-diff --git a/arch/mips/rb532/prom.c b/arch/mips/rb532/prom.c
-index b88e89ec5894..8c370eb180ef 100644
---- a/arch/mips/rb532/prom.c
-+++ b/arch/mips/rb532/prom.c
-@@ -53,6 +53,7 @@ static void __init prom_setup_cmdline(void)
- 	int prom_argc;
- 	char **prom_argv;
- 	int i;
-+	size_t len;
- 
- 	prom_argc = fw_arg0;
- 	prom_argv = (char **) fw_arg1;
-@@ -82,20 +83,20 @@ static void __init prom_setup_cmdline(void)
- 				mips_machtype = MACH_MIKROTIK_RB532;
- 		}
- 
--		strcpy(cp, prom_argv[i]);
--		cp += strlen(prom_argv[i]);
-+		len = strlen(prom_argv[i]);
-+		memcpy(cp, prom_argv[i], len + 1);
-+		cp += len;
- 	}
- 	*(cp++) = ' ';
- 
--	i = strlen(arcs_cmdline);
--	if (i > 0) {
-+	len = strlen(arcs_cmdline);
-+	if (len > 0) {
- 		*(cp++) = ' ';
--		strcpy(cp, arcs_cmdline);
--		cp += strlen(arcs_cmdline);
-+		memcpy(cp, arcs_cmdline, len + 1);
-+		cp += len;
- 	}
- 	cmd_line[COMMAND_LINE_SIZE - 1] = '\0';
--
--	strcpy(arcs_cmdline, cmd_line);
-+	strscpy(arcs_cmdline, cmd_line);
- }
- 
- void __init prom_init(void)
--- 
-2.50.1
+Mark.
 
+> 
+> Signed-off-by: Chengdong Li <chengdongli@optimatist.com>
+> ---
+>  kernel/events/core.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 8060c2857bb2..f102adb395ec 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -6941,14 +6941,6 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+>  	int ret, flags = 0;
+>  	mapped_f mapped;
+>  
+> -	/*
+> -	 * Don't allow mmap() of inherited per-task counters. This would
+> -	 * create a performance issue due to all children writing to the
+> -	 * same rb.
+> -	 */
+> -	if (event->cpu == -1 && event->attr.inherit)
+> -		return -EINVAL;
+> -
+>  	if (!(vma->vm_flags & VM_SHARED))
+>  		return -EINVAL;
+>  
+> @@ -13392,6 +13384,18 @@ SYSCALL_DEFINE5(perf_event_open,
+>  			return -EACCES;
+>  	}
+>  
+> +	/*
+> +	 * Don't allow perf_event_open() of inherited per-task counters
+> +	 * with cpu == 1 when sampling. Otherwise, this would create a
+> +	 * performance issue due to all children writing to the same mmap()
+> +	 * created ring buffer.
+> +	 *
+> +	 * We recommend to call perf_event_open() for all cpus when sampling on
+> +	 * inherited per-task counters.
+> +	 */
+> +	if (attr.sample_freq && attr.inherit && cpu == -1)
+> +		return -EINVAL;
+> +
+>  	if (attr.freq) {
+>  		if (attr.sample_freq > sysctl_perf_event_sample_rate)
+>  			return -EINVAL;
+> -- 
+> 2.43.0
+> 
 
