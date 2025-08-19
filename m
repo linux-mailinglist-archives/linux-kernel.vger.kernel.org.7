@@ -1,59 +1,49 @@
-Return-Path: <linux-kernel+bounces-776291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0BDB2CB69
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB22B2CB6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2972171B18
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AED41678FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3876230E856;
-	Tue, 19 Aug 2025 17:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDgHIzZE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC29D30DD35;
+	Tue, 19 Aug 2025 17:50:20 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3572206B8;
-	Tue, 19 Aug 2025 17:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245A930C37D;
+	Tue, 19 Aug 2025 17:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755625760; cv=none; b=HuZJTfjaLeslg9PQpwtAa6OzAWGk9RFaCMirxhZFGVWHLrpE8RJMYAUKimkWEo2SP0Rj8X84/WKpJ+DEMYkN60pdE360MGJaOa66YLKMUGIh55TlF78t7IkHq+nU01xfJ8o5uHXHBbZpRy1hOEznxLMN+XjX2z9vOVAjqxQiyfc=
+	t=1755625820; cv=none; b=fDQ+yWabYUjmvI9i9OzeTKIiXcxRu8WpNcN7SNpEMwpFqtFJg2RJc/Bdb0H49UXcbfTPf5TeSvi5JzEqU2MyosKEB+ZoLlVODZuBV+hL1V6wh34s/dtVXz4Yx1fEXB7RlhpxVeKdmjfeFMQ+ZG2iv7jHN6KH8oprC72e62C0sCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755625760; c=relaxed/simple;
-	bh=w1gebZhtcPh/rs7t+GaRcCMsH3OpcsQIB1iR3B6i4Ko=;
+	s=arc-20240116; t=1755625820; c=relaxed/simple;
+	bh=OhvM2c7vEcF7jWm0ycE4LKWrQFWuA4XQtHjMBwYvVro=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qt2SrNXakFtbc/s6hc6RCyLTJPBC3vdTVYSD5H7JiwEwokVnjD9V8pmxWwdUuXBWehr1/SH3aV88gXF2jDSZnbS8vAlXP0RzZQQS8gszU4RF/9xOjikvgcBy1FPuN/f4BOAwpJwYp33aSqAJ8LeeevW5eXkgI1DBKM7+VS87zrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDgHIzZE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3904DC113D0;
-	Tue, 19 Aug 2025 17:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755625758;
-	bh=w1gebZhtcPh/rs7t+GaRcCMsH3OpcsQIB1iR3B6i4Ko=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GDgHIzZE3+efgVVhAHR3c8usuZ9PRROcH+7FKK8uuKejWUc/2wx4xSgofrF0agtz5
-	 y/KitcOvPmhSb//6hU4xwuVFrLlbNxJ8PWwYptTjsGjKz5OR9wh5kWEs/q6abBqIE6
-	 WXo0KsKajkw9zb6tPbuOp6oADwOiLOmoteg8/E6WEU0JG5Td3fWA3XFcaS1314Znnn
-	 miTyjRgzlgSNxJopoDIA0mKrbaq/OQ9hlXuy8HSVGt/eHDb7eql4l0CEuyE/Q2F1DH
-	 EA+8WR0Owa7Wzm3kdR4AnU+lFGL4AFGiSnw3gER2GkyAoKk6xGRKVyy74nyMAKjJ2B
-	 AD4iyEjyVqeAw==
-Date: Tue, 19 Aug 2025 18:49:08 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Waqar Hameed <waqar.hameed@axis.com>, Song Qiang
- <songqiang1304521@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 next] iio: proximity: vl53l0x-i2c: Fix error code in
- probe()
-Message-ID: <20250819184908.324b0ca8@jic23-huawei>
-In-Reply-To: <aKSSHTdJf5QoYiRx@stanley.mountain>
-References: <aKSSHTdJf5QoYiRx@stanley.mountain>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=jdP9OKuLt0MEDajT58D4PlhjFZvjUAG20L7wEKmxeYGDum4cJY4ELmz0PA4oLpX/vtmUYvSMofI45ibHoio6dtO+d3OCOM1jLlmYofxbqc8/zv2IumKb6N6vfgP7SrV8c6n8dFS29wepqhMrZnqoca3MeoRK5aUEjSCw37RxygA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id D808B81E0F;
+	Tue, 19 Aug 2025 17:50:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 1AC4120028;
+	Tue, 19 Aug 2025 17:50:08 +0000 (UTC)
+Date: Tue, 19 Aug 2025 13:50:08 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Luo Gengkun <luogengkun@huaweicloud.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable
+Message-ID: <20250819135008.5f1ba00e@gandalf.local.home>
+In-Reply-To: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,64 +52,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 1AC4120028
+X-Stat-Signature: p8w9hboa5cfhpjby15feuu5fzpmreku7
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19WEKIKa+f8n9kXIveZU+urR907NvqVxVg=
+X-HE-Tag: 1755625808-295650
+X-HE-Meta: U2FsdGVkX18xwxqT8yDACISI+ww2K8vt7CJrfyYEbE9Cn0iPMCF2zzIr3mRABDlQWj+Hyob1lra91gAGYw2UPXqpF49FqkFclE1Rbvpb8uxh1YgR2Dvy2cXBZyKGZ+d1HOQA/SUU9JbMEIzNoZyxLDdzuGMr4kceqaw7axGmxnvVgvEjTQU7dv5zfHPl/9snGwjhr2pzsScNMoZr8wvQMO++miKZNJEjMpi8BSufxS0w6eCGdNWC9cImN7iyuHIBrx/oL22c+YABEJuBIASGiwkNZgw5ToHCS6rQAv0+67nBlkcUj2ntHG1tiNlcdbIIzddlnb/hPBc8sjQOLXMsQCNYYcriaL+p
 
-On Tue, 19 Aug 2025 18:02:53 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On Tue, 19 Aug 2025 10:51:52 +0000
+Luo Gengkun <luogengkun@huaweicloud.com> wrote:
 
-> Commit 65e8202f0322 ("iio: Remove error prints for
-> devm_add_action_or_reset()") accidentally introduced a bug where we
-> returned "ret" but the error code was stored in "error" if
-> devm_add_action_or_reset() failed.  Using two variables to store error
-> codes is unnecessary and confusing.  Delete the "error" variable and use
-> "ret" everywhere instead.
+> Both tracing_mark_write and tracing_mark_raw_write call
+> __copy_from_user_inatomic during preempt_disable. But in some case,
+> __copy_from_user_inatomic may trigger page fault, and will call schedule()
+> subtly. And if a task is migrated to other cpu, the following warning will
+
+Wait! What?
+
+__copy_from_user_inatomic() is allowed to be called from in atomic context.
+Hence the name it has. How the hell can it sleep? If it does, it's totally
+broken!
+
+Now, I'm not against using nofault() as it is better named, but I want to
+know why you are suggesting this change. Did you actually trigger a bug here?
+
+> be trigger:
+>         if (RB_WARN_ON(cpu_buffer,
+>                        !local_read(&cpu_buffer->committing)))
 > 
-> Fixes: 65e8202f0322 ("iio: Remove error prints for devm_add_action_or_reset()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-Applied to the togreg branch of iio.git (where that patch is)
-and very briefly pushed out as testing to get some build coverage for other
-stuff I'm queuing this evening.
-
-Thanks
-
-Jonathan
-
-> ---
-> v2: Fix typos.  Add Andy's r-b tag.
+> An example can illustrate this issue:
 > 
->  drivers/iio/proximity/vl53l0x-i2c.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
+> process flow						CPU
+> ---------------------------------------------------------------------
 > 
-> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-> index 696340ec027a..ad3e46d47fa8 100644
-> --- a/drivers/iio/proximity/vl53l0x-i2c.c
-> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
-> @@ -311,7 +311,6 @@ static int vl53l0x_probe(struct i2c_client *client)
->  {
->  	struct vl53l0x_data *data;
->  	struct iio_dev *indio_dev;
-> -	int error;
->  	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-> @@ -344,13 +343,13 @@ static int vl53l0x_probe(struct i2c_client *client)
->  		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
->  				     "Cannot get reset GPIO\n");
->  
-> -	error = vl53l0x_power_on(data);
-> -	if (error)
-> -		return dev_err_probe(&client->dev, error,
-> +	ret = vl53l0x_power_on(data);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
->  				     "Failed to power on the chip\n");
->  
-> -	error = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
-> -	if (error)
-> +	ret = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
-> +	if (ret)
->  		return ret;
->  
->  	indio_dev->name = "vl53l0x";
+> tracing_mark_raw_write():				cpu:0
+>    ...
+>    ring_buffer_lock_reserve():				cpu:0
+>       ...
+>       cpu = raw_smp_processor_id()			cpu:0
+>       cpu_buffer = buffer->buffers[cpu]			cpu:0
+>       ...
+>    ...
+>    __copy_from_user_inatomic():				cpu:0
+>       ...
+>       # page fault
+>       do_mem_abort():					cpu:0
 
+Sounds to me that arm64 __copy_from_user_inatomic() may be broken.
+
+>          ...
+>          # Call schedule
+>          schedule()					cpu:0
+> 	 ...
+>    # the task schedule to cpu1
+>    __buffer_unlock_commit():				cpu:1
+>       ...
+>       ring_buffer_unlock_commit():			cpu:1
+> 	 ...
+> 	 cpu = raw_smp_processor_id()			cpu:1
+> 	 cpu_buffer = buffer->buffers[cpu]		cpu:1
+> 
+> As shown above, the process will acquire cpuid twice and the return values
+> are not the same.
+> 
+> To fix this problem using copy_from_user_nofault instead of
+> __copy_from_user_inatomic, as the former performs 'access_ok' before
+> copying.
+> 
+> Fixes: 656c7f0d2d2b ("tracing: Replace kmap with copy_from_user() in trace_marker writing")
+
+The above commit was intorduced in 2016. copy_from_user_nofault() was
+introduced in 2020. I don't think this would be the fix for that kernel.
+
+So no, I'm not taking this patch. If you see __copy_from_user_inatomic()
+sleeping, it's users are not the issue. That function is.
+
+-- Steve
+
+
+
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
 
