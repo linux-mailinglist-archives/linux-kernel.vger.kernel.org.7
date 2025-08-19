@@ -1,191 +1,410 @@
-Return-Path: <linux-kernel+bounces-775204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AC8B2BC8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:05:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D93B2BC8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F1E1BA74A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C03A97B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC71F318126;
-	Tue, 19 Aug 2025 09:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C412126C39B;
+	Tue, 19 Aug 2025 09:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nb05A76Y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dD8NsG0b"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F1F286402
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EDC30FF39;
+	Tue, 19 Aug 2025 09:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755594260; cv=none; b=m36W8g8uJX3ksQ78RfILdlN4pCEeB2mZQXMPPe4Kuj7QUSUDp+0Qyh9JO02FO2Rll0xOpaLkoFzVYjrf8uJkZMH4L9WkQRW5iHQ0Mxg9OWEH45mWIvlWgWPn5dWSPaQVtwpy1Mx0mQaFCWPphaib7hkERu3K/ZYX2OGPVQ1Izzc=
+	t=1755594260; cv=none; b=cwKTkviT9Uqzny/YWGkBelONdUbI8QRh5JtBPnMTwruoVm22tcCzeazBiMtaYcmFmWGDIN4kWYK3PatePUxBpwEC3hyNX/IM71u5TSm6mOZDHfPFwZ0uaglIMpaS4XQ0wsYddIB3xmgLr+kyYWhazipS1+2nad8Bkg3U8hrRoRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755594260; c=relaxed/simple;
-	bh=Ur/EDwulXmk+KxS1Iyo/HiGIsV1LuoVRseDCDX7NNHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H/nfKaY6OJ1iCkfW+PY/zxGYFSbH6bUxtuqxDUzev8ySw8hGE95LPM0xkXn3ARU4UCUZ9CnZy9I70/RFtsNaBYhxKNtHC8d6tLnyMMUA8yf0x8mrCRWZogixBKkSptuz/vW/jTUEYpXbTDZqmY02ljnnnUGjGYgyoIIXMOB0d44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nb05A76Y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90XWC007201
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:04:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PtQwBBE7A/L6DYrB3suka029FN2KX9K7yxrcnIgCQII=; b=nb05A76YpPiOGSz2
-	vwKgyfBmE6HTLMxdi6KMSAwl+lCIrsM15BUf4wC5FcFazt++cmigwggE66ZVHZ+Z
-	LII/VhS37canuQuPj57BEoCVcQtDCQRHJZa1bDvjE7RmxNwQuI0qOdLDNEouVx1W
-	RXipSQsgCZ2tXrvtKmTPYVnzEQY10R31absN9NHWNQ4LNLFpHAHGlrwczdPAbeZK
-	8CvgKPFlbbnMT31my/tqNor12JVqpfefFg4bdNMJ7bIVA2gjNFoaNn6ovC/0KrYy
-	e3hZjWpl7xsh7UcxJcedHUcNRbJkRpLhqe2wYrcCxtTZakAiMefhOTSv3tC8E9Lk
-	zG1gJw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jj747x70-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:04:17 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2430c5d4d73so69192285ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:04:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755594257; x=1756199057;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PtQwBBE7A/L6DYrB3suka029FN2KX9K7yxrcnIgCQII=;
-        b=Q+iCwAtNFVG1vcITmiyCnPVs3kVHqneBJLPC8Drvl7geoD3LqFQqtjHfGRgMfmqXKG
-         n1jLp5qEd8Lquch3LyAjfubzu43Jr0AxZLRcj4IDiC4UFnwaNIlR22gQ3kyXtLXKX5uU
-         VlcJQq4Dgh70JS4u7Cyrp5a1tdxK7A2Va+EE6HQ33VuLasbo+HRkFJaF6RSsvR3509WE
-         gAQ7Y8vpbpvsG/NXVkSah1jAMGsQLxK19PAfrJSygOf0PttXjzUn4yLwRTwq8amL+YEB
-         t/e86jCtO3FOVnVqXrwzj4xwGw2dh06o60mA2XDzBs9Pv/JvkzmOfMzIbxdVGhvrtysz
-         s6vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgcJnJhjDWdcZLIW65cYN5PGX9dgUnp6WVJvJudG7EA4QhLtoPqBMUG+TU39JHJXE+NArpMe3FLD7NuCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcDan38N4z8HGCuabV63lDFVl2W94OUZQVED9F2Keb81a/SyGf
-	dkB+y6HbqAQ/Lg+AU6TeHvS659LuczDz9cl/vvlYp52KIBSQzpp+cKf7IVROy8neP54FBEpaZuz
-	8AnDC+HPx2etRbKHdmrtxst1c1z6gpe3/gtMQd+RRtIli8W6B977cHErwtLv8B4vbktc=
-X-Gm-Gg: ASbGncs5/cMII0zLzdssNDRXebYNeSf6kyJhrE/yHQFnUtsaklXX/yJeI+X6F+kzN7q
-	12iK5zpPBFXyUgTKT4iTZXoVpPXg8glD5c5DJq6aRhxrlDi6dh4D1su8n3fBapzyGkQSoMydG7i
-	CyCeUXuaFzWHRBot/hGfvAyYPnOzNuSdr4l1PnJIZ9DyallcOrdigiwA8TJllwKDUyvQ99kvzyi
-	IeQt17E+NBOYc7icsA0eIhwEWHaI+Q9fBXHpD53LhddTEl17Y3cp0pHyX37NYsys80YMRrveb53
-	YyvPspbuZZ+NUf7MjG/VnfHoDuKcVfeb+z0JErO+1YFyuBzJVzQ+RJJTVp1zbbNs8oq4tGxCytI
-	x7hnUn5et63fIJQKdFDYQVP+cga9DTSPM
-X-Received: by 2002:a17:903:1205:b0:231:d0da:5e1f with SMTP id d9443c01a7336-245e0f2775amr16133965ad.21.1755594256739;
-        Tue, 19 Aug 2025 02:04:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkh7QwrfpTpI4CY81hIJagXgTCB6D+xkbxXMTtgq4VmPlFbLxOxb5dFrnqC4gKaobuk82+qA==
-X-Received: by 2002:a17:903:1205:b0:231:d0da:5e1f with SMTP id d9443c01a7336-245e0f2775amr16133355ad.21.1755594256080;
-        Tue, 19 Aug 2025 02:04:16 -0700 (PDT)
-Received: from [10.133.33.88] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d50f8d0sm102888145ad.100.2025.08.19.02.04.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 02:04:15 -0700 (PDT)
-Message-ID: <1394aa43-3edc-4ed5-9662-43d98bf8d85f@oss.qualcomm.com>
-Date: Tue, 19 Aug 2025 17:04:07 +0800
+	bh=35wbuXUWqXLw3bf6coBuXABFfBPt40tPdTPKUaMbrMo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QJN9xvcSFGIrLWvR7+gaVJG7GxCzEnx1fVo+dSEaffMqiMRdZNUb1cpRhNVZ5MMh0MzKpUq7qjLFCswQbEQqtyQk3CZ91KXQsNhWgVhR7/QCHUcw/vjYeb8bb+Ynz73h2Si5+V0Qrlj3VK/Yn+U2RDMdSYPVNT6u1eqmREPDzEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dD8NsG0b; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755594259; x=1787130259;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=35wbuXUWqXLw3bf6coBuXABFfBPt40tPdTPKUaMbrMo=;
+  b=dD8NsG0bNaLSibAI1iioopdLS+r/fDHVxWPweT7QA6LZf4RJ91/krLWX
+   fkM8Cr4zeETzee9bykxHDs3GNl6HZJvYBJWGhPP9tG+UYenQ6s7RSpQ3Q
+   MCJlt7OxNgT/MD0xHLZkOJy8aUbYThqsO/T6P2Lb++E941XXxYkLriAan
+   j3H0DlGiM49nHYhD6foXuGxMU78RZaqGAS5Xd8QvsR3Mpj56QLrksGp+7
+   rNDwIEN78PDHtpNN9UzGK+sov/FFN91HqZ9DR7GTp7sExV7B0rPX5xmUw
+   ccPkIi2LL61lFYsDasLA2KN76Ln4eeER0DbD0EQP0YcxpqfPdylK/abdE
+   w==;
+X-CSE-ConnectionGUID: moK+sYB+T5mKfTttsjO2/w==
+X-CSE-MsgGUID: GlAxr+i1QuqbZm9zgYIl4w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="68540640"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="68540640"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:04:18 -0700
+X-CSE-ConnectionGUID: uvbEHuYfT9O568xJmssRyw==
+X-CSE-MsgGUID: asPcGpJWT1e3UldB8qS6jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="172222542"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com ([10.245.244.139])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:04:14 -0700
+From: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+To: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ Chris Wilson <chris.p.wilson@linux.intel.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org,
+ Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+Subject:
+ Re: [PATCH 4/4] dma-buf/fence-chain: Speed up processing of rearmed callbacks
+Date: Tue, 19 Aug 2025 11:04:11 +0200
+Message-ID: <2067093.PIDvDuAF1L@jkrzyszt-mobl2.ger.corp.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173,
+ 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <c4bac4d8-9c5b-446c-b9a1-1bc7ac6b38ff@amd.com>
+References:
+ <20250814094824.217142-6-janusz.krzysztofik@linux.intel.com>
+ <2443311.NG923GbCHz@jkrzyszt-mobl2.ger.corp.intel.com>
+ <c4bac4d8-9c5b-446c-b9a1-1bc7ac6b38ff@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] arm64: dts: qcom: qcs615: add ethernet node
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc: netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, stable+noautosel@kernel.org,
-        Yijie Yang <quic_yijiyang@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
- <20250819-qcs615_eth-v4-3-5050ed3402cb@oss.qualcomm.com>
- <c4cbd50e-82e3-410b-bec6-72b9db1bafca@kernel.org>
- <157c048d-0efd-458c-8a3f-dfc30d07edf8@oss.qualcomm.com>
- <0b53dc0b-a96f-49e1-a81e-3748fa908144@kernel.org>
-Content-Language: en-US
-From: Yijie Yang <yijie.yang@oss.qualcomm.com>
-In-Reply-To: <0b53dc0b-a96f-49e1-a81e-3748fa908144@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 7QR3pwhzrmCJl9LLOFZFBxsuagzsdhp9
-X-Proofpoint-ORIG-GUID: 7QR3pwhzrmCJl9LLOFZFBxsuagzsdhp9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAzMyBTYWx0ZWRfX43uNw4/mbJcz
- uAzjQzyzPmAsSu+7iSQ2ZgKat+jbokhKomm2bQzSC1I9gFd7U8ye4bPe5lSiIVB4C1eEgOxUQ6w
- i2MPE546xAHjTz278U16v7wTgosNdIjvm3NN/qtQRFZv9XKYE7LvcIMn5E1wCNqbyk6eGxkKU7G
- M2OeB2FrJhBhKlIwrvsON5ZuBN1piv4JJdLbaYBcLwDtiI56MqFeHC0rBRQBtz5EgEI+hQr+MsM
- CzEGbhq3b2ldyk9UAWDb0toKrRi5XI7jLa6WLh+/HYo+p8HfBs3DsbRtFXnfwEivcDJVVplNZSg
- F1fJB7O2p/4oQNXhF8mgyorBxgwA4Dm3ZtV4CyE8+QfCVXPwd22fHYFuf2IeEOvs7BILmqw1x32
- 2PkfdwFt
-X-Authority-Analysis: v=2.4 cv=MJtgmNZl c=1 sm=1 tr=0 ts=68a43e11 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=WpKivvdH6quKUe0GCQ0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
- phishscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160033
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+
+On Monday, 18 August 2025 16:42:56 CEST Christian K=C3=B6nig wrote:
+> On 18.08.25 16:30, Janusz Krzysztofik wrote:
+> > Hi Christian,
+> >=20
+> > On Thursday, 14 August 2025 14:24:29 CEST Christian K=C3=B6nig wrote:
+> >>
+> >> On 14.08.25 10:16, Janusz Krzysztofik wrote:
+> >>> When first user starts waiting on a not yet signaled fence of a chain
+> >>> link, a dma_fence_chain callback is added to a user fence of that lin=
+k.
+> >>> When the user fence of that chain link is then signaled, the chain is
+> >>> traversed in search for a first not signaled link and the callback is
+> >>> rearmed on a user fence of that link.
+> >>>
+> >>> Since chain fences may be exposed to user space, e.g. over drm_syncobj
+> >>> IOCTLs, users may start waiting on any link of the chain, then many l=
+inks
+> >>> of a chain may have signaling enabled and their callbacks added to th=
+eir
+> >>> user fences.  Once an arbitrary user fence is signaled, all
+> >>> dma_fence_chain callbacks added to it so far must be rearmed to anoth=
+er
+> >>> user fence of the chain.  In extreme scenarios, when all N links of a
+> >>> chain are awaited and then signaled in reverse order, the dma_fence_c=
+hain
+> >>> callback may be called up to N * (N + 1) / 2 times (an arithmetic ser=
+ies).
+> >>>
+> >>> To avoid that potential excessive accumulation of dma_fence_chain
+> >>> callbacks, rearm a trimmed-down, signal only callback version to the =
+base
+> >>> fence of a previous link, if not yet signaled, otherwise just signal =
+the
+> >>> base fence of the current link instead of traversing the chain in sea=
+rch
+> >>> for a first not signaled link and moving all callbacks collected so f=
+ar to
+> >>> a user fence of that link.
+> >>
+> >> Well clear NAK to that! You can easily overflow the kernel stack with =
+that!
+> >=20
+> > I'll be happy to propose a better solution, but for that I need to unde=
+rstand=20
+> > better your message.  Could you please point out an exact piece of the=
+=20
+> > proposed code and/or describe a scenario where you can see the risk of =
+stack=20
+> > overflow?
+>=20
+> The sentence "rearm .. to the base fence of a previous link" sounds like =
+you are trying to install a callback on the signaling to the previous chain=
+ element.
+>=20
+> That is exactly what I pointed out previously where you need to be super =
+careful because when this chain signals the callbacks will execute recursiv=
+ely which means that you can trivially overflow the kernel stack if you hav=
+e more than a handful of chain elements.
+>=20
+> In other words A waits for B, B waits for C, C waits for D etc.... when D=
+ finally signals it will call C which in turn calls B which in turn calls A.
+
+OK, maybe my commit description was not precise enough, however, I didn't=20
+describe implementation details (how) intentionally.
+When D signals then it doesn't call C directly, only it submits an irq work=
+=20
+that calls C.  Then C doesn't just call B, only it submits another irq work=
+=20
+that calls B, and so on.
+Doesn't that code pattern effectively break the recursion loop into separat=
+e=20
+work items, each with its own separate stack?
+
+>=20
+> Even if the chain is a recursive data structure you absolutely can't use =
+recursion for the handling of it.
+>=20
+> Maybe I misunderstood your textual description but reading a sentence lik=
+e this rings all alarm bells here. Otherwise I can't see what the patch is =
+supposed to be optimizing.
+
+OK, maybe I should start my commit description of this patch with a copy of=
+=20
+the first sentence from cover letter and also from patch 1/4 description th=
+at=20
+informs about the problem as reported by CI.  Maybe I should also provide a=
+=20
+comparison of measured signaling times from trybot executions [1][2][3]. =20
+Here are example numbers from CI machine fi-bsw-n3050:
+
+With signaling time reports only added to selftests (patch 1 of 4):
+<6> [777.914451] dma-buf: Running dma_fence_chain/wait_forward
+<6> [778.123516] wait_forward: 4096 signals in 21373487 ns
+<6> [778.335709] dma-buf: Running dma_fence_chain/wait_backward
+<6> [795.791546] wait_backward: 4096 signals in 17249051192 ns
+<6> [795.859699] dma-buf: Running dma_fence_chain/wait_random
+<6> [796.161375] wait_random: 4096 signals in 97386256 ns
+
+With dma_fence_enable_signaling() replaced in selftests with dma_fence_wait=
+()=20
+(patches 1-3 of 4):
+<6> [782.505692] dma-buf: Running dma_fence_chain/wait_forward
+<6> [784.609213] wait_forward: 4096 signals in 36513103 ns
+<3> [784.837226] Reported -4 for kthread_stop_put(0)!
+<6> [785.147643] dma-buf: Running dma_fence_chain/wait_backward
+<6> [806.367763] wait_backward: 4096 signals in 18428009499 ns
+<6> [807.175325] dma-buf: Running dma_fence_chain/wait_random
+<6> [809.453942] wait_random: 4096 signals in 119761950 ns
+
+With the fix (patches 1-4 of 4):
+<6> [731.519020] dma-buf: Running dma_fence_chain/wait_forward
+<6> [733.623375] wait_forward: 4096 signals in 31890220 ns
+<6> [734.258972] dma-buf: Running dma_fence_chain/wait_backward
+<6> [736.267325] wait_backward: 4096 signals in 39007955 ns
+<6> [736.700221] dma-buf: Running dma_fence_chain/wait_random
+<6> [739.346706] wait_random: 4096 signals in 48384865 ns
+
+Signaling time in wait_backward selftest has been reduced from 17s to 39ms.
+
+[1] https://intel-gfx-ci.01.org/tree/drm-tip/Trybot_152785v1/index.html?
+[2] https://intel-gfx-ci.01.org/tree/drm-tip/Trybot_152828v2/index.html?
+[3] https://intel-gfx-ci.01.org/tree/drm-tip/Trybot_152830v2/index.html?
+
+>=20
+> >>
+> >> Additional to this messing with the fence ops outside of the dma_fence=
+ code is an absolute no-go.
+> >=20
+> > Could you please explain what piece of code you are referring to when y=
+ou say=20
+> > "messing with the fence ops outside the dma_fence code"?  If not this p=
+atch=20
+> > then which particular one of this series did you mean?  I'm assuming yo=
+u=20
+> > didn't mean drm_syncobj code that I mentioned in my commit descriptions.
+>=20
+> See below.
+>=20
+> >=20
+> > Thanks,
+> > Janusz
+> >=20
+> >>
+> >> Regards,
+> >> Christian.
+> >>
+> >>>
+> >>> Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12904
+> >>> Suggested-by: Chris Wilson <chris.p.wilson@linux.intel.com>
+> >>> Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+> >>> ---
+> >>>  drivers/dma-buf/dma-fence-chain.c | 101 +++++++++++++++++++++++++---=
+=2D-
+> >>>  1 file changed, 84 insertions(+), 17 deletions(-)
+> >>>
+> >>> diff --git a/drivers/dma-buf/dma-fence-chain.c b/drivers/dma-buf/dma-=
+fence-chain.c
+> >>> index a8a90acf4f34d..90eff264ee05c 100644
+> >>> --- a/drivers/dma-buf/dma-fence-chain.c
+> >>> +++ b/drivers/dma-buf/dma-fence-chain.c
+> >>> @@ -119,46 +119,113 @@ static const char *dma_fence_chain_get_timelin=
+e_name(struct dma_fence *fence)
+> >>>          return "unbound";
+> >>>  }
+> >>> =20
+> >>> -static void dma_fence_chain_irq_work(struct irq_work *work)
+> >>> +static void signal_irq_work(struct irq_work *work)
+> >>>  {
+> >>>  	struct dma_fence_chain *chain;
+> >>> =20
+> >>>  	chain =3D container_of(work, typeof(*chain), work);
+> >>> =20
+> >>> -	/* Try to rearm the callback */
+> >>> -	if (!dma_fence_chain_enable_signaling(&chain->base))
+> >>> -		/* Ok, we are done. No more unsignaled fences left */
+> >>> -		dma_fence_signal(&chain->base);
+> >>> +	dma_fence_signal(&chain->base);
+> >>>  	dma_fence_put(&chain->base);
+> >>>  }
+> >>> =20
+> >>> -static void dma_fence_chain_cb(struct dma_fence *f, struct dma_fence=
+_cb *cb)
+> >>> +static void signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+> >>> +{
+> >>> +	struct dma_fence_chain *chain;
+> >>> +
+> >>> +	chain =3D container_of(cb, typeof(*chain), cb);
+> >>> +	init_irq_work(&chain->work, signal_irq_work);
+> >>> +	irq_work_queue(&chain->work);
+> >>> +}
+> >>> +
+> >>> +static void rearm_irq_work(struct irq_work *work)
+> >>> +{
+> >>> +	struct dma_fence_chain *chain;
+> >>> +	struct dma_fence *prev;
+> >>> +
+> >>> +	chain =3D container_of(work, typeof(*chain), work);
+> >>> +
+> >>> +	rcu_read_lock();
+> >>> +	prev =3D rcu_dereference(chain->prev);
+> >>> +	if (prev && dma_fence_add_callback(prev, &chain->cb, signal_cb))
+> >>> +		prev =3D NULL;
+> >>> +	rcu_read_unlock();
+> >>> +	if (prev)
+> >>> +		return;
+> >>> +
+> >>> +	/* Ok, we are done. No more unsignaled fences left */
+> >>> +	signal_irq_work(work);
+> >>> +}
+> >>> +
+> >>> +static inline bool fence_is_signaled__nested(struct dma_fence *fence)
+> >>> +{
+> >>> +	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+> >>> +		return true;
+> >>> +
+>=20
+> >>> +	if (fence->ops->signaled && fence->ops->signaled(fence)) {
+>=20
+> Calling this outside of dma-fence.[ch] is a clear no-go.
+
+But this patch applies only to drivers/dma-buf/dma-fence-chain.c, not=20
+outside of it.
+
+Thanks,
+Janusz
+
+>=20
+> Regards,
+> Christian.
+>=20
+> >>> +		unsigned long flags;
+> >>> +
+> >>> +		spin_lock_irqsave_nested(fence->lock, flags, SINGLE_DEPTH_NESTING);
+> >>> +		dma_fence_signal_locked(fence);
+> >>> +		spin_unlock_irqrestore(fence->lock, flags);
+> >>> +
+> >>> +		return true;
+> >>> +	}
+> >>> +
+> >>> +	return false;
+> >>> +}
+> >>> +
+> >>> +static bool prev_is_signaled(struct dma_fence_chain *chain)
+> >>> +{
+> >>> +	struct dma_fence *prev;
+> >>> +	bool result;
+> >>> +
+> >>> +	rcu_read_lock();
+> >>> +	prev =3D rcu_dereference(chain->prev);
+> >>> +	result =3D !prev || fence_is_signaled__nested(prev);
+> >>> +	rcu_read_unlock();
+> >>> +
+> >>> +	return result;
+> >>> +}
+> >>> +
+> >>> +static void rearm_or_signal_cb(struct dma_fence *f, struct dma_fence=
+_cb *cb)
+> >>>  {
+> >>>  	struct dma_fence_chain *chain;
+> >>> =20
+> >>>  	chain =3D container_of(cb, typeof(*chain), cb);
+> >>> -	init_irq_work(&chain->work, dma_fence_chain_irq_work);
+> >>> +	if (prev_is_signaled(chain)) {
+> >>> +		/* Ok, we are done. No more unsignaled fences left */
+> >>> +		init_irq_work(&chain->work, signal_irq_work);
+> >>> +	} else {
+> >>> +		/* Try to rearm the callback */
+> >>> +		init_irq_work(&chain->work, rearm_irq_work);
+> >>> +	}
+> >>> +
+> >>>  	irq_work_queue(&chain->work);
+> >>> -	dma_fence_put(f);
+> >>>  }
+> >>> =20
+> >>>  static bool dma_fence_chain_enable_signaling(struct dma_fence *fence)
+> >>>  {
+> >>>  	struct dma_fence_chain *head =3D to_dma_fence_chain(fence);
+> >>> +	int err =3D -ENOENT;
+> >>> =20
+> >>> -	dma_fence_get(&head->base);
+> >>> -	dma_fence_chain_for_each(fence, &head->base) {
+> >>> -		struct dma_fence *f =3D dma_fence_chain_contained(fence);
+> >>> +	if (WARN_ON(!head))
+> >>> +		return false;
+> >>> =20
+> >>> -		dma_fence_get(f);
+> >>> -		if (!dma_fence_add_callback(f, &head->cb, dma_fence_chain_cb)) {
+> >>> +	dma_fence_get(fence);
+> >>> +	if (head->fence)
+> >>> +		err =3D dma_fence_add_callback(head->fence, &head->cb, rearm_or_si=
+gnal_cb);
+> >>> +	if (err) {
+> >>> +		if (prev_is_signaled(head)) {
+> >>>  			dma_fence_put(fence);
+> >>> -			return true;
+> >>> +		} else {
+> >>> +			init_irq_work(&head->work, rearm_irq_work);
+> >>> +			irq_work_queue(&head->work);
+> >>> +			err =3D 0;
+> >>>  		}
+> >>> -		dma_fence_put(f);
+> >>>  	}
+> >>> -	dma_fence_put(&head->base);
+> >>> -	return false;
+> >>> +
+> >>> +	return !err;
+> >>>  }
+> >>> =20
+> >>>  static bool dma_fence_chain_signaled(struct dma_fence *fence)
+> >>
+> >>
+> >=20
+> >=20
+> >=20
+> >=20
+>=20
+>=20
 
 
 
-On 2025-08-19 15:15, Krzysztof Kozlowski wrote:
-> On 19/08/2025 08:51, Yijie Yang wrote:
->>
->>
->> On 2025-08-19 14:44, Krzysztof Kozlowski wrote:
->>> On 19/08/2025 08:35, YijieYang wrote:
->>>> From: Yijie Yang <quic_yijiyang@quicinc.com>
->>>>
->>>> Add an ethernet controller node for QCS615 SoC to enable ethernet
->>>> functionality.
->>>>
->>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
->>>> ---
->>>
->>>
->>> Why do you mix up DTS and net-next patches? This only makes difficult to
->>> apply it, for no benefits.
->>
->> The DTS changes and driver code modifications work together to achieve a
->> single purpose, so I included them in one patch series. Should I
->> consider splitting them into two separate series?
-> Of course yes. You are just making difficult to apply this. Patches are
-> completely independent and even your internal guideline asks to NOT
-> combine independent patches.
-
-The challenge with splitting this series lies in the fact that it 
-attempts to reverse the incorrect semantics of phy-mode in both the 
-driver code and the device tree. Selecting only part of the series would 
-break Ethernet functionality on both boards.
-
-As you can see, I’ve CC’d noautosel to prevent this issue. Given the 
-circumstances, I’m wondering if it would be acceptable to leave the 
-series as-is?
-
-> 
-> Best regards,
-> Krzysztof
-
--- 
-Best Regards,
-Yijie
 
 
