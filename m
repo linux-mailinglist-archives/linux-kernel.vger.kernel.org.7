@@ -1,169 +1,157 @@
-Return-Path: <linux-kernel+bounces-776263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF28B2CAF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:39:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24635B2CB48
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DB0A042A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213CF3B17E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D367B30E82B;
-	Tue, 19 Aug 2025 17:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAD834AAEA;
+	Tue, 19 Aug 2025 17:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n/5VW533"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ob8kXsqS"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F7130E0DF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB90A30F7F8;
+	Tue, 19 Aug 2025 17:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755625053; cv=none; b=J4UZ1TdHJmoRzZ0SPrH2HxhgVebWOR+zB+qtr6VB28+atdYD+PafOmzlxaZyLjDDVhzKW8srI3BgHxB6YU+TWq8C658nLRZA+Sm5RAQGgxL1wJHPBrvdqQFeHaCLvUfgooeAZt3V98n+b/gm//WGdBYcCKoSCUCjuSJflh5eXkI=
+	t=1755625154; cv=none; b=DwHb7byu+UJSfxBGmXrJR2a98WKopnrE6hGstmGxmzdXGYX5DrExnt60EIPfpntyV0V3AK14liWCMU30OWzPPQn6Yt0PpU1OsgRGnPzlcUdz1WaPdz1MM9DImtsYli6CrNZpJvSSQEo/ZY00oCm4zmxgKorJdBH0PQbpuGMrIGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755625053; c=relaxed/simple;
-	bh=Nek3Pvszbi5q4OIHQoHPCJUKyVyIMZNtiypwZkEUpNY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ByIEs864JtYg/yVKMxCPueCdjFBLmFq+KbnB+FX+JVrmJonxjJaWGvkcf9GQUAQgHvbwqUg1qm7bZRs5PxcLzOzysJDR7jlyAj6dcBnOLYyLX6gkWRcMXNaIsgoZVjJLzmWlNQWfQs5L3snHt1q2sDja4J2+zMtt7USAyJdKtD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n/5VW533; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2e5c4734so5452476b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:37:30 -0700 (PDT)
+	s=arc-20240116; t=1755625154; c=relaxed/simple;
+	bh=C8T7nnFfVi/R//bXZaaIRsb8AMvcerVkwQ86T42vMek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u5w/o2aYujfzg+mG6nIs1bc2alJIZKjnyGMu2OLOAKcXqXnyzkSgJ5Q6cq6gkm8Pc2WZWq0Ge9gOcArzrKJXFXH8NmmHsipS5pL1uc3ehOKyvMybe1QesjR4ZB1CvVIw84CR+Z7XgqZdapxIdsilBDT3lCEj3e6c9v+MdeR6F6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ob8kXsqS; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afca41c7d7fso21394366b.1;
+        Tue, 19 Aug 2025 10:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755625050; x=1756229850; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tvwHDk/yqCRnqD+LedgU5w1dqUV12jvsCwg/W7+3EAE=;
-        b=n/5VW533tuZZ19eBD4d6isht1reS+nB888fZqLF97jpWPEtdVju78dmub0Zmnju2Ey
-         Cr5aARi4+fa9J5OClXaHR9qT5yDOvSzh6ryKwx8nAU6c1ugbsQV2FrDaV3EuJ7jsAytM
-         qSAotzofjDoFxpxLeBpzQsyct7f1yOQvrBRoKpSl5Jtcg6/wgn/TyK989acsZhDsR4DP
-         PkRzMQNVDCG2yYT3It3U/SGcfS8hKQn63tQeU2N5TTBpR6NIk0jzOoHZOxOumOQmNW57
-         jwTMomEnD+t/2CA0Ytm/EN/KhUw0lZkvCq/NskWWwkIWDBcku/2o7X5bSKb5humC6qIz
-         nFVw==
+        d=gmail.com; s=20230601; t=1755625151; x=1756229951; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a0gEeKMeiocFCY5j4zKzhYSdZVtabcvvZ6/3Qtils6Y=;
+        b=Ob8kXsqSjr+H0Apcj/1wHbD7SXJL7DB/wpo3Exl6gr3yjzao8qvIznlQbaf0K4SlVF
+         h4yv21w/Uxi+ZIP8VpxN1SXZkfl9wgMOVX+d689z8+noo9IUPutoucQO6mGE/OZtecAQ
+         SGfvrXIw6cx4awVqele4SAXbeChTtc3SshD8H4dYDzBC1Rt9utU/KcJJTGJgcfw0rfzJ
+         kIdyugsxMjO1Q/KrsAQcpvWSwKE8nWtf36a2ANzd7s4hHShYG0T2CBD5G0YNILIVkmhe
+         Q+juiLsDDAn5srV+Beki9VBqAtsZjdzv8KLb0BUJ/L4WE4ugF5pvD/qAdkCoiVMu2Gmz
+         GZ3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755625050; x=1756229850;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tvwHDk/yqCRnqD+LedgU5w1dqUV12jvsCwg/W7+3EAE=;
-        b=LCPH4v46N8mvmDWQrCjBkQxUxgUCtNxbShUmGvgUzWHvCnbKWDTa74Y4XYF1Uuiu2k
-         CJS4wRIRHJUcMZ+yRxqsu0aD2mg7gsSyz1UU/J6XaTdKOHIG9NK+3MHF3fwbXnxLcS/R
-         HpxKSlowm+IIOKQ1QHcDeh+2a+ZOBgLkMrybBFcphEckQt+jgoc51fIHaBW41uKh4dVP
-         c7ocWSwd9qIPYmLu1XE8kK8mhlE2ZgqjASry0BKFlMvaeQG1JStLQc7xDqmo3PlcyCHt
-         5no/trlQjpssiMmgcl6oHJARlSPhsuiSUWAnc/v382SuIiAGRkp/uouwV2qlm6SYzBs3
-         nDDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTaElGZEiQrFcx/ByAm+K2sJbU4DahWZ08cBApERKzO6MQJcbpalnEYkbAQnJz0nF3tCzw9iprWe6DlkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpUUpCjQOj6CmgPTyb1Qzvk/XlTyqvcXnyPzwAyEDEG3FIhBVb
-	uMzhVuHV11S+oM7DnNyDBG6jMDJTSfib9rRSD1L+hqEZLr8atcnUAJggu1zI3eWZMIsaiQK7rAM
-	2DQswsQ==
-X-Google-Smtp-Source: AGHT+IFWoOsVQR5vLs1kkcy1LLRaJmXeYdHqmbqS2n7ben+PI7FVthnAUZylyprKBZj8jm5KAvMX4c12EeQ=
-X-Received: from pfnj11.prod.google.com ([2002:aa7:83cb:0:b0:748:f030:4e6a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2e97:b0:76c:1c69:1115
- with SMTP id d2e1a72fcca58-76e8dbf0488mr87280b3a.8.1755625049802; Tue, 19 Aug
- 2025 10:37:29 -0700 (PDT)
-Date: Tue, 19 Aug 2025 10:37:28 -0700
-In-Reply-To: <20250812025606.74625-7-chao.gao@intel.com>
+        d=1e100.net; s=20230601; t=1755625151; x=1756229951;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a0gEeKMeiocFCY5j4zKzhYSdZVtabcvvZ6/3Qtils6Y=;
+        b=QAX1W5ppXrNsG8OUzj/fSPN8Kz8dzRg/Wm/FGghvbbqWkqSFQjaVWPBOqTUZs8j+vP
+         TNx34HBH1iRPnrOrAkceO6bfmjF2MPIgGHmKXjzgMcfwVTuI2XBC8QrY7haDQEAKga+8
+         JFvELemtZQE/U4CSiChXMGg29KkaEH/H5M25hs4zktxi/Bqz6RZ5R4QJ+RhtQJJllVSb
+         o7clUUNQBz/svDHJCXOI+wM8wtRAgjmRCVn6k5RcBh7YRnl09ljyImD4hJFC3uRbQ9br
+         8rDGWVqWceVg+JzMiD7P1T8nn0Id+go2ApPZWeKLwgqOcnOYKr1LgAstK5NQfpVFoQh4
+         LNuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpPwDc4YPJP3sebAE1Tz4n9I+vEAczEFdaNWrJHtkRW/7EAodnTAg0jRvdElOjmACliCli5GcRR9kiFCQ=@vger.kernel.org, AJvYcCXe2ypWTf9xULbnnyHNzhZe5h6rXhpmRs/J4QmmmSzWMR1IwZrTmIIpicxl0izeC1onvpqDAnsMZLvBRjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeRsqRkIuR6cZj6yYrvJ6C/ytlI17dT2zdGvJQZyEsz4vhsuiu
+	U8Yno96pn088Hc0VJ0bEW3VKQyKPD+GA2xWbQk0JL7yLOu5UnqVPPZ3E
+X-Gm-Gg: ASbGncuhrR9bOgfyOreK6CxCV28rGwp4QiGZwMkEVq98RcuIpaAlb3pdy4c2dC6LhRI
+	V4xt3v6xRTJdTumzvmLQnIG3pmIBWsAgDu911SzbI37URfdexKezFV0uRlt6qhfVLFapbdXHj6V
+	1t1nOAuiW9ff4doFym6DV8sCbtL6CYa+v1DdqB1V9yPOGT35fUYaYXEWhLmPt+Gl/2dyx3e943K
+	vFK7Y3O3y+SwSu3PrYvDWcWRNVh257mKHDoXUu/Pgofj348kv/0QQ2gyJzeevXjfxd+N1BEV43S
+	b+ZmCIjSNZDLaX6+TXld7RcwLnvHEJFpOesyaJPyB2d+tN7Bi7MMzvrDMiGzXfuxS/KRVNMSZ5g
+	q3RxMpL0OpAd8s7ZmThyMnQJE93b9f6Fj2YJ59u9iGMOA+NJ6N4FMn5s7EN0o4fh8D3pumuJm
+X-Google-Smtp-Source: AGHT+IHb1rd3q617BOaoayVdRbhoDW0n7rRMKkxNycOIB3uwNq59L6y5svDY8v/qu9qraRdEpD+4FQ==
+X-Received: by 2002:a17:907:3c89:b0:afc:d246:8425 with SMTP id a640c23a62f3a-afdee4aad91mr18959466b.19.1755625150700;
+        Tue, 19 Aug 2025 10:39:10 -0700 (PDT)
+Received: from cachyos-x8664 (93-87-121-239.dynamic.isp.telekom.rs. [93.87.121.239])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded52ea4asm19026566b.101.2025.08.19.10.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 10:39:10 -0700 (PDT)
+From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>,
+	linux-sound@vger.kernel.org (open list:SOUND),
+	linux-kernel@vger.kernel.org (open list)
+Cc: kernel test robot <lkp@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH] ALSA: usb-audio: us144mkii: Fix null-deref in tascam_midi_in_urb_complete()
+Date: Tue, 19 Aug 2025 19:38:30 +0200
+Message-ID: <20250819173831.30818-1-ramiserifpersia@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250812025606.74625-1-chao.gao@intel.com> <20250812025606.74625-7-chao.gao@intel.com>
-Message-ID: <aKS2WKBbZn6U1uqx@google.com>
-Subject: Re: [PATCH v12 06/24] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs support
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mlevitsk@redhat.com, 
-	rick.p.edgecombe@intel.com, weijiang.yang@intel.com, xin@zytor.com, 
-	Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025, Chao Gao wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
-> 
-> Enable KVM_{G,S}ET_ONE_REG uAPIs so that userspace can access HW MSR or
-> KVM synthetic MSR through it.
-> 
-> In CET KVM series [1], KVM "steals" an MSR from PV MSR space and access
-> it via KVM_{G,S}ET_MSRs uAPIs, but the approach pollutes PV MSR space
-> and hides the difference of synthetic MSRs and normal HW defined MSRs.
-> 
-> Now carve out a separate room in KVM-customized MSR address space for
-> synthetic MSRs. The synthetic MSRs are not exposed to userspace via
-> KVM_GET_MSR_INDEX_LIST, instead userspace complies with KVM's setup and
-> composes the uAPI params. KVM synthetic MSR indices start from 0 and
-> increase linearly. Userspace caller should tag MSR type correctly in
-> order to access intended HW or synthetic MSR.
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Link: https://lore.kernel.org/all/20240219074733.122080-18-weijiang.yang@intel.com/ [1]
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> ---
->  arch/x86/include/uapi/asm/kvm.h | 10 +++++
->  arch/x86/kvm/x86.c              | 66 +++++++++++++++++++++++++++++++++
->  2 files changed, 76 insertions(+)
-> 
-> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-> index 0f15d683817d..e72d9e6c1739 100644
-> --- a/arch/x86/include/uapi/asm/kvm.h
-> +++ b/arch/x86/include/uapi/asm/kvm.h
-> @@ -411,6 +411,16 @@ struct kvm_xcrs {
->  	__u64 padding[16];
->  };
->  
-> +#define KVM_X86_REG_MSR			(1 << 2)
-> +#define KVM_X86_REG_SYNTHETIC		(1 << 3)
-> +
-> +struct kvm_x86_reg_id {
-> +	__u32 index;
-> +	__u8 type;
-> +	__u8 rsvd;
-> +	__u16 rsvd16;
-> +};
+The smatch tool reported a potential null pointer dereference in
+tascam_midi_in_urb_complete(). The 'tascam' variable, derived from
+'urb->context', was checked for nullity in one place, but dereferenced
+without a check in several other places.
 
-Some feedback from a while back never got addressed[*].  That feedback still
-looks sane/good, so this for the uAPI:
+This patch fixes the issue by adding a null check at the beginning of
+the function. If 'tascam' is null, the function now safely exits.
+This prevents any potential crashes from null pointer dereferences.
 
---
-#define KVM_X86_REG_TYPE_MSR	2ull
+It also fixes a latent bug where 'usb_put_urb()' could
+be called twice for the same URB on submission failure, which would
+lead to a use-after-free error.
 
-#define KVM_x86_REG_TYPE_SIZE(type) 						\
-{(										\
-	__u64 type_size = type;							\
-										\
-	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
-		     type == KVM_X86_REG_TYPE_SYNTHETIC_MSR ? KVM_REG_SIZE_U64 :\
-		     0;								\
-	type_size;								\
-})
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202508192109.lcMrINK1-lkp@intel.com/
+Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
+---
+ sound/usb/usx2y/us144mkii_midi.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-#define KVM_X86_REG_ENCODE(type, index)				\
-	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type) | index)
+diff --git a/sound/usb/usx2y/us144mkii_midi.c b/sound/usb/usx2y/us144mkii_midi.c
+index 5759f6010..1aca38f38 100644
+--- a/sound/usb/usx2y/us144mkii_midi.c
++++ b/sound/usb/usx2y/us144mkii_midi.c
+@@ -41,6 +41,9 @@ void tascam_midi_in_urb_complete(struct urb *urb)
+ 	struct tascam_card *tascam = urb->context;
+ 	int ret;
+ 
++	if (!tascam)
++		goto out;
++
+ 	if (urb->status) {
+ 		if (urb->status != -ENOENT && urb->status != -ECONNRESET &&
+ 		    urb->status != -ESHUTDOWN && urb->status != -EPROTO) {
+@@ -51,7 +54,7 @@ void tascam_midi_in_urb_complete(struct urb *urb)
+ 		goto out;
+ 	}
+ 
+-	if (tascam && atomic_read(&tascam->midi_in_active) &&
++	if (atomic_read(&tascam->midi_in_active) &&
+ 	    urb->actual_length > 0) {
+ 		kfifo_in_spinlocked(&tascam->midi_in_fifo, urb->transfer_buffer,
+ 				    urb->actual_length, &tascam->midi_in_lock);
+@@ -66,11 +69,14 @@ void tascam_midi_in_urb_complete(struct urb *urb)
+ 			"Failed to resubmit MIDI IN URB: error %d\n", ret);
+ 		usb_unanchor_urb(urb);
+ 		usb_put_urb(urb);
++		goto out;
+ 	}
++
+ out:
+ 	usb_put_urb(urb);
+ }
+ 
++
+ /**
+  * tascam_midi_in_open() - Opens the MIDI input substream.
+  * @substream: The ALSA rawmidi substream to open.
+-- 
+2.50.1
 
-#define KVM_X86_REG_MSR(index) KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_MSR, index)
---
-
-And then the kernel-only struct overlay becomes:
-
---
-struct kvm_x86_reg_id {
-	__u32 index;
-	__u8  type;
-	__u8  rsvd;
-	__u8  rsvd4:4;
-	__u8  size:4;
-	__u8  x86;
-}
---
-
-[*] https://lore.kernel.org/all/ZuGpJtEPv1NtdYwM@google.com
 
