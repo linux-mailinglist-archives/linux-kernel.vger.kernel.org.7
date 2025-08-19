@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-776612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA6FB2CF8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:55:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C53BB2CF8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623F77B02AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B972D72391A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CEF26FDBB;
-	Tue, 19 Aug 2025 22:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20D02737FF;
+	Tue, 19 Aug 2025 22:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ySrS5Yrt"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c0hqOXTS"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FC1258EE9
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF50026B0BE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755644031; cv=none; b=XWHACFzOZv5P9sY8zlqjDIlen904gAZJDzGoChGBszXof+4AhMdwi6EXmSE00f6ZV7kWtjL7nULVs0Zu3vzIrilWtRL9Y5zQXabpS66poMjQoVnfq2AjsBMXVP4mCg1XHwexg9B91uTiUuelRwLUb7HB3O+jvAd9iHF75xv/PoU=
+	t=1755644033; cv=none; b=gGALHsx3JM1IcqVvYoDT5Fdi713cY7Mgqe3wMjqlGvpaTeDIfh8SoWgon4zpy9drC9ZSJ4F26rk2/2nKhhCma0bk2pbHXFnZV9r3QoO6fQm9XKOz3Kb+TAdqQOnGhhkPBY+5aM1Aj3ifIf5ymppP3/fvqaN3XeGmIjWia4OiKr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755644031; c=relaxed/simple;
-	bh=O+A6dgp2BS8VYQ5vzwke7ZnXg1yBMRZ4JxfOHZfkf4w=;
+	s=arc-20240116; t=1755644033; c=relaxed/simple;
+	bh=LgVE70Exr9MebvQgLl2/p51njoOXYcatQNyOcdi3UNU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Czt5Ywe8hpKbxPT02dJvkXWuc/rBA4KGlc1uUFqdfOOlhbTOhuIdSUGskTy+lpr7OqxBe7bz4xQqw2jx8HNjjHC2SR9qloh/Mky3Z2tiYTFLKM9oduhpYvv5JPJWPgdCtQBOHwjunuj+SJEKRvVzFsvp9EKMrzQu6GAQwUJuOIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ySrS5Yrt; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=q7pGzH6K/bvYjutUnkd0I4MdmRsrY89C9+3xDxQud32xml3c8it2xQl/LocnBMqE9An7kb+fl2PgMbwEwBpsLxMRpGmgEeLjohaSpUDD/Gw7+ijY5g/lElj6wMFmQWX/pgjP0eIv1tpOu3y9ogkBb327E327juhpVKKxcHhQspY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c0hqOXTS; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24457f44a29so71736725ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:53:49 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2445806dc88so145983435ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:53:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755644029; x=1756248829; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755644031; x=1756248831; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bcGp6peJGEPcea/LfRat8rVkOX5gU/294WJfcP8Kk0=;
-        b=ySrS5Yrt0Exl+RZ4xukUxHONIbGoOPyUo+SRnHYEI/D2p7IwDHmLczdY8fLWV98l75
-         MH2o4hWBDVElpA3VmsLomMb2HQwGT2TK4ru374hKV46ZGFbNpkTfuNeG8RJePm3/jW1e
-         WcDhsSWjQ8v5Tud9bL64ilo//MInlt9UvoVHBKXd1ljlc8l7WEm/AqyLtuMhK08EDIcN
-         PbAd65h5t3yG9DhCz6b3BzRvJMxYdca79UgB2QrZ5/KU0k5qSlsFYZkua/Z1Tvln/13T
-         wOa2mM3NOtuWWjP3QOsH+knXRoQGVZTk1/JbeZuyfFtRFx8GftLo33hneXl5RNYU/pus
-         e7fQ==
+        bh=rRluY9LNozQ5/bivWkiW6p+82OL/8mCZ5RHLv0QIIwY=;
+        b=c0hqOXTSc7A2QDFmOu483vRlcPPcKSaFo3+DmCr1dgv8Q9fEcWhVPq2yDkyR4W9I72
+         IWMCRRF4kLsxd8N/IXPxDKoAO7WaDKEefYt9REv1uQ2OUQ6oTSoJJ1vDw1TrMPV0FLbz
+         vIQ6pX4qC5bzRa5YwKLgZluTurR1HP5bjQCJVH4GI2oxCv97Z+p6waJC/lDv7YNV1Y22
+         fYLJ6vjper+6tEgRETOIxWUx6JyFUEd7z0qEDse7hf48x7XDBQ8w/yRSjiWWAwVX139P
+         t4Ip2im6VhXMqklqF7FuNzdCZy/m3OCXnECyNOnVUcMKn3N9mrw5dv/AfPyegsakyZZL
+         PGWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755644029; x=1756248829;
+        d=1e100.net; s=20230601; t=1755644031; x=1756248831;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bcGp6peJGEPcea/LfRat8rVkOX5gU/294WJfcP8Kk0=;
-        b=FvWbW/WqLPNMxU9ujTGpWCsf6mWYLsGqJVwUwU6+jy6ylEknm6xHWfArdYAk6vutUP
-         RWlNi8y4mZUJrnw6ZQVPnNj38oNLt6YFFK695fjZQ3Ef3GpNjS1Gu5BriiCmhLmbZOy2
-         O0q0DNz72d0RZiB5CnhI6MlucvjjNpwmSw8icmtwuNf8GHinDXlOF0byZhRj9cecrCdz
-         /qJOOB93pxstzg4cz2gnXAaoJkE3u5NmohmoIbdaYTw6Xq7cCoTbpkmJ3MGRGQpUIxAX
-         44YoZvLQJjSFz0N1X46KRtUwfjVLJ4H43cQOZyM9W8fbNIpQAsAYOeeC+ksgYFXQlraW
-         wprQ==
-X-Gm-Message-State: AOJu0YzyageG2a6onyr5uf61WC39zq0RnFq16NUHesnVsBFvgD27Vd3B
-	9wGj0/K5rRKRCgDrOI5yZm6CkrzZaWWORy1iNilfQh4vBuXeFgt4QHGoNuT6PhkWnKGvRj2ctQ/
-	gAGd6FILgAQ==
-X-Google-Smtp-Source: AGHT+IGI+obYjde/gY6lcO3uPnCqStCuQ/C4QjHznPDL7Oi9XnQ5kAT5YtFaewtYLwGWYsrBoJ6V32tIcBUE
-X-Received: from plhu2.prod.google.com ([2002:a17:903:1242:b0:23f:fd13:e74d])
- (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f312:b0:244:9c27:9829
- with SMTP id d9443c01a7336-245ef113d3cmr4376245ad.10.1755644029432; Tue, 19
- Aug 2025 15:53:49 -0700 (PDT)
-Date: Tue, 19 Aug 2025 22:53:38 +0000
+        bh=rRluY9LNozQ5/bivWkiW6p+82OL/8mCZ5RHLv0QIIwY=;
+        b=OqO6w7UTjYs6M3c5v1cKYmw/jG/F09Zb96B37AlAlR9oxpH84544aoZ2VuavrIUtVQ
+         kuFDP5iK70K1K2oEyvNlbz05BIzPTRyiHazP5LpngtJ4vHntKSGl9FY9buXkk7e+5O7f
+         LR7/u137u9H6VfEI25wIciIHVkjRWxN91x9xpAJlYLaBeNri9DFjSDTJotz35Rwuu3zn
+         iBeoaho9arBwj91ZpP0yqgltnjgNTQ1j33D/eo2fj07lEitnEKQyrhEvWu9/P7ylzD5/
+         snF1Aw09Lza6vcMAs3OielPeTkbhpcrnNAkY7xWzCkL89x96E3pfufC/fB1o24jaVpfJ
+         Y6fQ==
+X-Gm-Message-State: AOJu0Yyi6U8B/s9zczqZ/yFPvCaZUkPse4P0TIzoq+JWNekNf21Qu3RJ
+	1+Sst9j9ysCvbFwiADULfWEiDXis4Ye3gXizTzwte5fBsVJL2qcISxMWwMyHf+KjMhWtB/uBpcl
+	lNgX6RFaysg==
+X-Google-Smtp-Source: AGHT+IGdrOzV7i91Ri5nCXJFbGeFIMcS2nMKO8t8GS8h0YIrL5C0k2wIG1zRldKx0LZr2bGqQFR3vvJw5JxL
+X-Received: from plnq2.prod.google.com ([2002:a17:902:f782:b0:23f:c627:bd6d])
+ (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ced0:b0:242:9bbc:c773
+ with SMTP id d9443c01a7336-245ef287c6amr7974025ad.54.1755644031091; Tue, 19
+ Aug 2025 15:53:51 -0700 (PDT)
+Date: Tue, 19 Aug 2025 22:53:39 +0000
 In-Reply-To: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,13 +72,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
 X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755644022; l=10824;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755644022; l=10621;
  i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
- bh=O+A6dgp2BS8VYQ5vzwke7ZnXg1yBMRZ4JxfOHZfkf4w=; b=Znvy+yVFxzuQ41yLC/kMxLvFcKXS/+upGpgyKn1EAbmIqrb56WY6yRVYamYZM05sZbl7hv+6v
- JtYa+rKAHacDE7+4cc+eQ1BQNfKHtDZ4/lsJcIFu9/CtEPpxtHRyWVe
+ bh=LgVE70Exr9MebvQgLl2/p51njoOXYcatQNyOcdi3UNU=; b=Uhz2yFwSTqO8EFH5FIStOa9+c28rNUOLUVBGjWtryQ8irg6IPrpQpKIsoUQGOAYwZS6VFJ7tD
+ q8FYD/5jh8vD1NssjGlCBn82W0IzCoIyqO46pSdGDp6/IwNUfjHOROh
 X-Mailer: b4 0.14.2
-Message-ID: <20250819-debugfs-rust-v10-3-86e20f3cf3bb@google.com>
-Subject: [PATCH v10 3/7] rust: debugfs: Add support for writable files
+Message-ID: <20250819-debugfs-rust-v10-4-86e20f3cf3bb@google.com>
+Subject: [PATCH v10 4/7] rust: debugfs: Add support for callback-based files
 From: Matthew Maurer <mmaurer@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -92,298 +92,310 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Matthew Maurer <mmaurer@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-Extends the `debugfs` API to support creating writable files. This
-is done via the `Dir::write_only_file` and `Dir::read_write_file`
-methods, which take a data object that implements the `UpdateFromSlice`
-trait.
+Extends the `debugfs` API to support creating files with content
+generated and updated by callbacks. This is done via the
+`read_callback_file`, `write_callback_file`, and
+`read_write_callback_file` methods.
+
+These methods allow for more flexible file definition, either because
+the type already has a `Render` or `UpdateFromSlice` method that doesn't
+do what you'd like, or because you cannot implement it (e.g. because
+it's a type defined in another crate or a primitive type).
 
 Signed-off-by: Matthew Maurer <mmaurer@google.com>
 ---
- rust/kernel/debugfs.rs          |  41 +++++++++++++-
- rust/kernel/debugfs/file_ops.rs | 115 +++++++++++++++++++++++++++++++++++++++-
- rust/kernel/debugfs/traits.rs   |  69 ++++++++++++++++++++++++
- 3 files changed, 222 insertions(+), 3 deletions(-)
+ rust/kernel/debugfs.rs                   |  95 ++++++++++++++++++++++++
+ rust/kernel/debugfs/callback_adapters.rs | 122 +++++++++++++++++++++++++++++++
+ rust/kernel/debugfs/file_ops.rs          |   8 ++
+ 3 files changed, 225 insertions(+)
 
 diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-index 875d433fc3608cc9ffcf022d7c00cb207016f146..62bc2b1d4e5a4b21441a09e03bff74c32c6781d2 100644
+index 62bc2b1d4e5a4b21441a09e03bff74c32c6781d2..a843d01506a54d5f8626dab5223d006c9a363a91 100644
 --- a/rust/kernel/debugfs.rs
 +++ b/rust/kernel/debugfs.rs
-@@ -16,10 +16,10 @@
+@@ -12,12 +12,16 @@
+ use crate::str::CStr;
+ #[cfg(CONFIG_DEBUG_FS)]
+ use crate::sync::Arc;
++use crate::uaccess::UserSliceReader;
++use core::fmt;
+ use core::marker::PhantomPinned;
  use core::ops::Deref;
  
  mod traits;
--pub use traits::Render;
-+pub use traits::{Render, UpdateFromSlice};
+ pub use traits::{Render, UpdateFromSlice};
  
++mod callback_adapters;
++use callback_adapters::{FormatAdapter, NoRender, WritableAdapter};
  mod file_ops;
--use file_ops::{FileOps, ReadFile};
-+use file_ops::{FileOps, ReadFile, ReadWriteFile, WriteFile};
+ use file_ops::{FileOps, ReadFile, ReadWriteFile, WriteFile};
  #[cfg(CONFIG_DEBUG_FS)]
- mod entry;
- #[cfg(CONFIG_DEBUG_FS)]
-@@ -136,6 +136,43 @@ pub fn read_only_file<'a, T: Render + Send + Sync + 'static, E: 'a, TI: PinInit<
-         let file_ops = &<T as ReadFile<_>>::FILE_OPS;
+@@ -137,6 +141,48 @@ pub fn read_only_file<'a, T: Render + Send + Sync + 'static, E: 'a, TI: PinInit<
          self.create_file(name, data, file_ops)
      }
-+
-+    /// Creates a read-write file in this directory.
+ 
++    /// Creates a read-only file in this directory, with contents from a callback.
 +    ///
-+    /// Reading the file uses the [`Render`] implementation.
-+    /// Writing to the file uses the [`UpdateFromSlice`] implementation.
-+    pub fn read_write_file<
++    /// `f` must be a function item or a non-capturing closure.
++    /// This is statically asserted and not a safety requirement.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// # use core::sync::atomic::{AtomicU32, Ordering};
++    /// # use kernel::c_str;
++    /// # use kernel::debugfs::Dir;
++    /// # use kernel::prelude::*;
++    /// # let dir = Dir::new(c_str!("foo"));
++    /// let file = KBox::pin_init(
++    ///     dir.read_callback_file(c_str!("bar"),
++    ///     AtomicU32::new(3),
++    ///     &|val, f| {
++    ///       let out = val.load(Ordering::Relaxed);
++    ///       writeln!(f, "{out:#010x}")
++    ///     }),
++    ///     GFP_KERNEL)?;
++    /// // Reading "foo/bar" will show "0x00000003".
++    /// file.store(10, Ordering::Relaxed);
++    /// // Reading "foo/bar" will now show "0x0000000a".
++    /// # Ok::<(), Error>(())
++    /// ```
++    pub fn read_callback_file<
 +        'a,
-+        T: Render + UpdateFromSlice + Send + Sync + 'static,
++        T: Send + Sync + 'static,
 +        E: 'a,
 +        TI: PinInit<T, E> + 'a,
++        F: Fn(&T, &mut fmt::Formatter<'_>) -> fmt::Result + Send + Sync,
 +    >(
 +        &'a self,
 +        name: &'a CStr,
 +        data: TI,
++        _f: &'static F,
 +    ) -> impl PinInit<File<T>, E> + 'a {
-+        let file_ops = &<T as ReadWriteFile<_>>::FILE_OPS;
++        let file_ops = <FormatAdapter<T, F>>::FILE_OPS.adapt();
 +        self.create_file(name, data, file_ops)
 +    }
 +
-+    /// Creates a write-only file in this directory.
+     /// Creates a read-write file in this directory.
+     ///
+     /// Reading the file uses the [`Render`] implementation.
+@@ -155,6 +201,33 @@ pub fn read_write_file<
+         self.create_file(name, data, file_ops)
+     }
+ 
++    /// Creates a read-write file in this directory, with logic from callbacks.
 +    ///
-+    /// The file owns its backing data. Writing to the file uses the [`UpdateFromSlice`]
-+    /// implementation.
++    /// Reading from the file is handled by `f`. Writing to the file is handled by `w`.
 +    ///
-+    /// The file is removed when the returned [`File`] is dropped.
-+    pub fn write_only_file<
++    /// `f` and `w` must be function items or non-capturing closures.
++    /// This is statically asserted and not a safety requirement.
++    pub fn read_write_callback_file<
 +        'a,
-+        T: UpdateFromSlice + Send + Sync + 'static,
++        T: Send + Sync + 'static,
 +        E: 'a,
 +        TI: PinInit<T, E> + 'a,
++        F: Fn(&T, &mut fmt::Formatter<'_>) -> fmt::Result + Send + Sync,
++        W: Fn(&T, &mut UserSliceReader) -> Result<(), Error> + Send + Sync,
 +    >(
 +        &'a self,
 +        name: &'a CStr,
 +        data: TI,
++        _f: &'static F,
++        _w: &'static W,
 +    ) -> impl PinInit<File<T>, E> + 'a {
-+        self.create_file(name, data, &T::FILE_OPS)
++        let file_ops =
++            <WritableAdapter<FormatAdapter<T, F>, W> as file_ops::ReadWriteFile<_>>::FILE_OPS
++                .adapt()
++                .adapt();
++        self.create_file(name, data, file_ops)
++    }
++
+     /// Creates a write-only file in this directory.
+     ///
+     /// The file owns its backing data. Writing to the file uses the [`UpdateFromSlice`]
+@@ -173,6 +246,28 @@ pub fn write_only_file<
+     ) -> impl PinInit<File<T>, E> + 'a {
+         self.create_file(name, data, &T::FILE_OPS)
+     }
++
++    /// Creates a write-only file in this directory, with write logic from a callback.
++    ///
++    /// `w` must be a function item or a non-capturing closure.
++    /// This is statically asserted and not a safety requirement.
++    pub fn write_callback_file<
++        'a,
++        T: Send + Sync + 'static,
++        E: 'a,
++        TI: PinInit<T, E> + 'a,
++        W: Fn(&T, &mut UserSliceReader) -> Result<(), Error> + Send + Sync,
++    >(
++        &'a self,
++        name: &'a CStr,
++        data: TI,
++        _w: &'static W,
++    ) -> impl PinInit<File<T>, E> + 'a {
++        let file_ops = <WritableAdapter<NoRender<T>, W> as WriteFile<_>>::FILE_OPS
++            .adapt()
++            .adapt();
++        self.create_file(name, data, file_ops)
 +    }
  }
  
  #[pin_data]
+diff --git a/rust/kernel/debugfs/callback_adapters.rs b/rust/kernel/debugfs/callback_adapters.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6001306bf4efabf144cb24aa793e07ea8ac2fb
+--- /dev/null
++++ b/rust/kernel/debugfs/callback_adapters.rs
+@@ -0,0 +1,122 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2025 Google LLC.
++
++//! Adapters which allow the user to supply a render or update implementation as a value rather
++//! than a trait implementation. If provided, it will override the trait implementation.
++
++use super::{Render, UpdateFromSlice};
++use crate::prelude::*;
++use crate::uaccess::UserSliceReader;
++use core::fmt;
++use core::fmt::Formatter;
++use core::marker::PhantomData;
++use core::ops::Deref;
++
++/// # Safety
++///
++/// To implement this trait, it must be safe to cast a `&Self` to a `&Inner`.
++/// It is intended for use in unstacking adapters out of `FileOps` backings.
++pub(crate) unsafe trait Adapter {
++    type Inner;
++}
++
++/// Adapter to implement `UpdateFromSlice` via a callback with the same representation as `T`.
++///
++/// * Layer it on top of `RenderAdapter` if you want to add a custom callback for `render`.
++/// * Layer it on top of `NoRender` to pass through any support present on the underlying type.
++///
++/// # Invariants
++///
++/// If an instance for `WritableAdapter<_, W>` is constructed, `W` is inhabited.
++#[repr(transparent)]
++pub(crate) struct WritableAdapter<D, W> {
++    inner: D,
++    _writer: PhantomData<W>,
++}
++
++// SAFETY: Stripping off the adapter only removes constraints
++unsafe impl<D, W> Adapter for WritableAdapter<D, W> {
++    type Inner = D;
++}
++
++impl<D: Render, W> Render for WritableAdapter<D, W> {
++    fn render(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
++        self.inner.render(fmt)
++    }
++}
++
++impl<D: Deref, W> UpdateFromSlice for WritableAdapter<D, W>
++where
++    W: Fn(&D::Target, &mut UserSliceReader) -> Result + Send + Sync + 'static,
++{
++    fn update_from_slice(&self, reader: &mut UserSliceReader) -> Result {
++        // SAFETY: WritableAdapter<_, W> can only be constructed if W is inhabited
++        let w: &W = unsafe { materialize_zst() };
++        w(self.inner.deref(), reader)
++    }
++}
++
++/// Adapter to implement `Render` via a callback with the same representation as `T`.
++///
++/// # Invariants
++///
++/// If an instance for `FormatAdapter<_, F>` is constructed, `F` is inhabited.
++#[repr(transparent)]
++pub(crate) struct FormatAdapter<D, F> {
++    inner: D,
++    _formatter: PhantomData<F>,
++}
++
++impl<D, F> Deref for FormatAdapter<D, F> {
++    type Target = D;
++    fn deref(&self) -> &D {
++        &self.inner
++    }
++}
++
++impl<D, F> Render for FormatAdapter<D, F>
++where
++    F: Fn(&D, &mut Formatter<'_>) -> fmt::Result + 'static,
++{
++    fn render(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
++        // SAFETY: FormatAdapter<_, F> can only be constructed if F is inhabited
++        let f: &F = unsafe { materialize_zst() };
++        f(&self.inner, fmt)
++    }
++}
++
++// SAFETY: Stripping off the adapter only removes constraints
++unsafe impl<D, F> Adapter for FormatAdapter<D, F> {
++    type Inner = D;
++}
++
++#[repr(transparent)]
++pub(crate) struct NoRender<D> {
++    inner: D,
++}
++
++// SAFETY: Stripping off the adapter only removes constraints
++unsafe impl<D> Adapter for NoRender<D> {
++    type Inner = D;
++}
++
++impl<D> Deref for NoRender<D> {
++    type Target = D;
++    fn deref(&self) -> &D {
++        &self.inner
++    }
++}
++
++/// For types with a unique value, produce a static reference to it.
++///
++/// # Safety
++///
++/// The caller asserts that F is inhabited
++unsafe fn materialize_zst<F>() -> &'static F {
++    const { assert!(core::mem::size_of::<F>() == 0) };
++    let zst_dangle: core::ptr::NonNull<F> = core::ptr::NonNull::dangling();
++    // SAFETY: While the pointer is dangling, it is a dangling pointer to a ZST, based on the
++    // assertion above. The type is also inhabited, by the caller's assertion. This means
++    // we can materialize it.
++    unsafe { zst_dangle.as_ref() }
++}
 diff --git a/rust/kernel/debugfs/file_ops.rs b/rust/kernel/debugfs/file_ops.rs
-index 134ac26e80f2e5b9cae53ed5a00462af7ce1aa38..30f6a0532c7f5f4a2974edc8f1100f5485aa8da9 100644
+index 30f6a0532c7f5f4a2974edc8f1100f5485aa8da9..d11c09520d4464417003362b7468c9b9e1a2e1bf 100644
 --- a/rust/kernel/debugfs/file_ops.rs
 +++ b/rust/kernel/debugfs/file_ops.rs
-@@ -1,10 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
+@@ -2,6 +2,7 @@
  // Copyright (C) 2025 Google LLC.
  
--use super::Render;
-+use super::{Render, UpdateFromSlice};
+ use super::{Render, UpdateFromSlice};
++use crate::debugfs::callback_adapters::Adapter;
  use crate::prelude::*;
  use crate::seq_file::SeqFile;
  use crate::seq_print;
-+use crate::uaccess::UserSlice;
- use core::fmt::{Display, Formatter, Result};
- use core::marker::PhantomData;
- 
-@@ -123,3 +124,115 @@ impl<T: Render + Sync> ReadFile<T> for T {
-         unsafe { FileOps::new(operations, 0o400) }
-     };
- }
-+
-+fn update<T: UpdateFromSlice + Sync>(data: &T, buf: *const c_char, count: usize) -> isize {
-+    let mut reader = UserSlice::new(UserPtr::from_ptr(buf as *mut c_void), count).reader();
-+
-+    if let Err(e) = data.update_from_slice(&mut reader) {
-+        return e.to_errno() as isize;
-+    }
-+
-+    count as isize
-+}
-+
-+/// # Safety
-+///
-+/// `file` must be a valid pointer to a `file` struct.
-+/// The `private_data` of the file must contain a valid pointer to a `seq_file` whose
-+/// `private` data in turn points to a `T` that implements `UpdateFromSlice`.
-+/// `buf` must be a valid user-space buffer.
-+pub(crate) unsafe extern "C" fn write<T: UpdateFromSlice + Sync>(
-+    file: *mut bindings::file,
-+    buf: *const c_char,
-+    count: usize,
-+    _ppos: *mut bindings::loff_t,
-+) -> isize {
-+    // SAFETY: The file was opened with `single_open`, which sets `private_data` to a `seq_file`.
-+    let seq = unsafe { &mut *((*file).private_data.cast::<bindings::seq_file>()) };
-+    // SAFETY: By caller precondition, this pointer is live and points to a value of type `T`.
-+    let data = unsafe { &*(seq.private as *const T) };
-+    update(data, buf, count)
-+}
-+
-+// A trait to get the file operations for a type.
-+pub(crate) trait ReadWriteFile<T> {
-+    const FILE_OPS: FileOps<T>;
-+}
-+
-+impl<T: Render + UpdateFromSlice + Sync> ReadWriteFile<T> for T {
-+    const FILE_OPS: FileOps<T> = {
-+        let operations = bindings::file_operations {
-+            open: Some(render_open::<T>),
-+            read: Some(bindings::seq_read),
-+            write: Some(write::<T>),
-+            llseek: Some(bindings::seq_lseek),
-+            release: Some(bindings::single_release),
-+            // SAFETY: `file_operations` supports zeroes in all fields.
-+            ..unsafe { core::mem::zeroed() }
-+        };
-+        // SAFETY: `operations` is all stock `seq_file` implementations except for `render_open`
-+        // and `write`.
-+        // `render_open`'s only requirement beyond what is provided to all open functions is that
-+        // the inode's data pointer must point to a `T` that will outlive it, which matches the
-+        // `FileOps` requirements.
-+        // `write` only requires that the file's private data pointer points to `seq_file`
-+        // which points to a `T` that will outlive it, which matches what `render_open`
-+        // provides.
-+        unsafe { FileOps::new(operations, 0o600) }
-+    };
-+}
-+
-+/// # Safety
-+///
-+/// `inode` must be a valid pointer to an `inode` struct.
-+/// `file` must be a valid pointer to a `file` struct.
-+unsafe extern "C" fn write_only_open(
-+    inode: *mut bindings::inode,
-+    file: *mut bindings::file,
-+) -> c_int {
-+    // SAFETY: The caller ensures that `inode` and `file` are valid pointers.
-+    unsafe {
-+        (*file).private_data = (*inode).i_private;
-+    }
-+    0
-+}
-+
-+/// # Safety
-+///
-+/// * `file` must be a valid pointer to a `file` struct.
-+/// * The `private_data` of the file must contain a valid pointer to a `T` that implements
-+///   `UpdateFromSlice`.
-+/// * `buf` must be a valid user-space buffer.
-+pub(crate) unsafe extern "C" fn write_only_write<T: UpdateFromSlice + Sync>(
-+    file: *mut bindings::file,
-+    buf: *const c_char,
-+    count: usize,
-+    _ppos: *mut bindings::loff_t,
-+) -> isize {
-+    // SAFETY: The caller ensures that `file` is a valid pointer and that `private_data` holds a
-+    // valid pointer to `T`.
-+    let data = unsafe { &*((*file).private_data as *const T) };
-+    update(data, buf, count)
-+}
-+
-+pub(crate) trait WriteFile<T> {
-+    const FILE_OPS: FileOps<T>;
-+}
-+
-+impl<T: UpdateFromSlice + Sync> WriteFile<T> for T {
-+    const FILE_OPS: FileOps<T> = {
-+        let operations = bindings::file_operations {
-+            open: Some(write_only_open),
-+            write: Some(write_only_write::<T>),
-+            llseek: Some(bindings::noop_llseek),
-+            // SAFETY: `file_operations` supports zeroes in all fields.
-+            ..unsafe { core::mem::zeroed() }
-+        };
-+        // SAFETY:
-+        // * `write_only_open` populates the file private data with the inode private data
-+        // * `write_only_write`'s only requirement is that the private data of the file point to
-+        //   a `T` and be legal to convert to a shared reference, which `write_only_open`
-+        //   satisfies.
-+        unsafe { FileOps::new(operations, 0o200) }
-+    };
-+}
-diff --git a/rust/kernel/debugfs/traits.rs b/rust/kernel/debugfs/traits.rs
-index 2939e18e3dda39571cd7255505e5f605f0e3d154..d64638898faaa1a6a9898c374b8c1114993376c9 100644
---- a/rust/kernel/debugfs/traits.rs
-+++ b/rust/kernel/debugfs/traits.rs
-@@ -3,8 +3,15 @@
- 
- //! Traits for rendering or updating values exported to DebugFS.
- 
-+use crate::prelude::*;
- use crate::sync::Mutex;
-+use crate::uaccess::UserSliceReader;
- use core::fmt::{self, Debug, Formatter};
-+use core::str::FromStr;
-+use core::sync::atomic::{
-+    AtomicI16, AtomicI32, AtomicI64, AtomicI8, AtomicIsize, AtomicU16, AtomicU32, AtomicU64,
-+    AtomicU8, AtomicUsize, Ordering,
-+};
- 
- /// A trait for types that can be rendered into a string.
- ///
-@@ -26,3 +33,65 @@ fn render(&self, f: &mut Formatter<'_>) -> fmt::Result {
-         writeln!(f, "{self:?}")
+@@ -44,6 +45,13 @@ pub(crate) const fn mode(&self) -> u16 {
      }
  }
-+
-+/// A trait for types that can be updated from a user slice.
-+///
-+/// This works similarly to `FromStr`, but operates on a `UserSliceReader` rather than a &str.
-+///
-+/// It is automatically implemented for all atomic integers, or any type that implements `FromStr`
-+/// wrapped in a `Mutex`.
-+pub trait UpdateFromSlice {
-+    /// Updates the value from the given user slice.
-+    fn update_from_slice(&self, reader: &mut UserSliceReader) -> Result<()>;
-+}
-+
-+impl<T: FromStr> UpdateFromSlice for Mutex<T> {
-+    fn update_from_slice(&self, reader: &mut UserSliceReader) -> Result<()> {
-+        let mut buf = [0u8; 128];
-+        if reader.len() > buf.len() {
-+            return Err(EINVAL);
-+        }
-+        let n = reader.len();
-+        reader.read_slice(&mut buf[..n])?;
-+
-+        let s = core::str::from_utf8(&buf[..n]).map_err(|_| EINVAL)?;
-+        let val = s.trim().parse::<T>().map_err(|_| EINVAL)?;
-+        *self.lock() = val;
-+        Ok(())
+ 
++impl<T: Adapter> FileOps<T> {
++    pub(super) const fn adapt(&self) -> &FileOps<T::Inner> {
++        // SAFETY: `Adapter` asserts that `T` can be legally cast to `T::Inner`.
++        unsafe { core::mem::transmute(self) }
 +    }
 +}
 +
-+macro_rules! impl_update_from_slice_for_atomic {
-+    ($(($atomic_type:ty, $int_type:ty)),*) => {
-+        $(
-+            impl UpdateFromSlice for $atomic_type {
-+                fn update_from_slice(&self, reader: &mut UserSliceReader) -> Result<()> {
-+                    let mut buf = [0u8; 21]; // Enough for a 64-bit number.
-+                    if reader.len() > buf.len() {
-+                        return Err(EINVAL);
-+                    }
-+                    let n = reader.len();
-+                    reader.read_slice(&mut buf[..n])?;
-+
-+                    let s = core::str::from_utf8(&buf[..n]).map_err(|_| EINVAL)?;
-+                    let val = s.trim().parse::<$int_type>().map_err(|_| EINVAL)?;
-+                    self.store(val, Ordering::Relaxed);
-+                    Ok(())
-+                }
-+            }
-+        )*
-+    };
-+}
-+
-+impl_update_from_slice_for_atomic!(
-+    (AtomicI16, i16),
-+    (AtomicI32, i32),
-+    (AtomicI64, i64),
-+    (AtomicI8, i8),
-+    (AtomicIsize, isize),
-+    (AtomicU16, u16),
-+    (AtomicU32, u32),
-+    (AtomicU64, u64),
-+    (AtomicU8, u8),
-+    (AtomicUsize, usize)
-+);
+ #[cfg(CONFIG_DEBUG_FS)]
+ impl<T> Deref for FileOps<T> {
+     type Target = bindings::file_operations;
 
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
