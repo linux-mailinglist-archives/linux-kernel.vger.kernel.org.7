@@ -1,100 +1,103 @@
-Return-Path: <linux-kernel+bounces-775395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B168BB2BEAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:16:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3200B2BEB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E455F1892722
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F91189DCA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 10:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653DF32255E;
-	Tue, 19 Aug 2025 10:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BCE26CE39;
+	Tue, 19 Aug 2025 10:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e6vMpkKo"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Qe76o2et"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7731A3167
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AED5272815
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 10:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598496; cv=none; b=nJL8A4FHKx+/15YC9XAix4pn5OKPVREmlkPDDntlCNtpgtTnTXZ26BuMSeJuu7aXBo7XwsYoUQdp3hAeJHLtIaGlQJG7Hwvsk6bsL2BtUP1wrpfnlshjuVXHlq8I4Gv+cwkv54CCovT2BBXmrHOATIF5U3IKj2IZwI99LODz3is=
+	t=1755598518; cv=none; b=H3YVJ4AnoCEb7Uxxpt2h8w3Etn3rK1MPU6sx0n3Va9f7C7lXpGmVYQj5WImsHmRql6BK1ONIXOmzP4vCLtfH93cLl36LerNOv7elY3KE6e78LmwuTcS7Y9yBClHy24J6C/9cBbNaUjVIyYDHcVEaCAj8ZwJrotgEabJciIKLh0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598496; c=relaxed/simple;
-	bh=xs95ecbsHBS98kdZmQYC1sEgD29qwsaCQXTwkKAmBZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k5N+FLWHazD0ivZ3bg/weungjPiT1H39jlsbVW/wOmtX0AhQCjH9Knqu4HB64JUrP//YVyQKYWge8va8N4N06rUedY+o/zvEWDzR3GchheCvU5DDLDMtBUBMbuKy2RopdBk3xemBdE0Sq99NdTO1TppxJZ9dsyXz/fsU2dqEszk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e6vMpkKo; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-333f8f0dd71so39674561fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755598493; x=1756203293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xs95ecbsHBS98kdZmQYC1sEgD29qwsaCQXTwkKAmBZ0=;
-        b=e6vMpkKoNoVB00do+Kh/e1XkOGESIfpZsHBBRBqpNWr5NCa73X0HlB004zfYBBVFcB
-         HytRO2aVmRhgEhAAS9vn5Z461VW0kDdPjt0emQc54tZTb87CQorgGA6oTCYt+HLZntyt
-         oZuXPAx2a6i/tmUmdmKehXRwHdZiKB8OwyrK4Pm9tA7kgDTHiKRJnuXP1HDIK2fhC1/+
-         AoZLWgmBCn5pfpCxsdkCqQHq5MXsubAraXhlmo6/Q3Cr10s8Hks/nY4FpHWbaVxGAOJi
-         hDBywKZGL2BPHUk3t7kJfwee2cDLnL/gYXabUTRk8QnKzbbTdgRo432fo5gbCSapiBH+
-         uCkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755598493; x=1756203293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xs95ecbsHBS98kdZmQYC1sEgD29qwsaCQXTwkKAmBZ0=;
-        b=FdJo6zCNb78qBRgVMxLdWGD77ADzjswH3ieb99IzbZ3risDF+U8hkYW/3DnPmpDgfe
-         AZS7zGkW1xPhGwbmHJl27n3V5S+db0LxQh+66BzeoE7u9CUcXBmIIg8VmSrSP7cqbW3n
-         pmEpbkgVD+T+HFAj+PWeD6h0RyHPjonzZIOnhep4TyMlbpaAg/g5fg4MD3btlHugETH4
-         IdLcFSeFMYDLeT3Tt2lLVP8rqT8cnfgfjdzrv5G941Ac8bcr2bmREFl+D0+w3A3bnsQH
-         vvBNrc+hPPwmGraWr/pVs4RbIrOeolezTP7gz5/gzNQ4sZVZvFmHtUcRMMB8+iQQLQ8E
-         hQfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0YjQMtlG/eI8v+fDQXxevH4h1UDs6S+NJGJ83Sx7zicWXe09a35acIh00Cs79qIOdIN8wSHroltdvSBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0o0o9R3e6i9fGlxH2fNzg1En8Q6Cbmo684x18hwmNS3biBflB
-	N123h9NDRXCTMN+GDWBGut0JwU3EwJpI4s2Gq+1gYNnErdnmrs/XVSijKwbF3xIhVEzu7LLL+IV
-	VUCyQ0P3n4Ruj2Ty2B7OkExEuZBThySp9UKuTsv5Jcg==
-X-Gm-Gg: ASbGnctcSnhQuiGE7W1C06mFfkfS1Mv3gG+3HuoBSjBLkuOBcm8gAJKsSAue892iPvD
-	FBGYsqyXrDuP6G9dDfPQDrnRx+XgarVgAYyGvWLVzXahNQBKY58hUvt9CjFtsoi3GR8PzxgM8WJ
-	z+HaGNYlNA6tz1xfN2s5hCgBhE9CVfqtPCxrnrQonyKSAgtFkxoiEILfoVLEGYE8GoOPrNvnBky
-	ebyUwUVO38IIHYC8HoFcIg=
-X-Google-Smtp-Source: AGHT+IFkQ/sC/s/4QAwlclM8xp2og6ZgeUxncw+E1xAHzjFAZWocrPGqkqt0tLwC0mxFcX7fM4H4zSIhQVpHMi/3Qc8=
-X-Received: by 2002:a2e:a587:0:b0:333:b656:a685 with SMTP id
- 38308e7fff4ca-33530534824mr7201021fa.1.1755598493156; Tue, 19 Aug 2025
- 03:14:53 -0700 (PDT)
+	s=arc-20240116; t=1755598518; c=relaxed/simple;
+	bh=cUGOOjaGkM6Jf7TMuhXO2JG7apiu/9dagHxz5wkg+0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OHXHFQEtT8sbUuZ2fTPClW33e+L4N0ykrXqISm9cipREvI4YyWteJkOiblA0w2omY5xz0C3/DeN+CdtWFwq4SqQP6v9toPibLWCT5Nd7XUkcRo/AhFgwjACGOGZVoHshq/TceolZsmst6MPb4ycer2K2ec2/z23E9ZQx0zzDlJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Qe76o2et; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 79CC51FD38;
+	Tue, 19 Aug 2025 10:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755598509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j1BlwARAd7XC47bHytw4rKPMTkQ2Zda9KuvTmOKI8Zg=;
+	b=Qe76o2etNDlqTA99DMe83pP9ElyHK39NqLpUD4YPDynEGN+rixgQe9RUfcVCQ4EsRTRAlR
+	hwOMer5JWI9c1UJht5Q1kCNiPawrzrY+FiBkOqsAAQu/QslNYMsVcZlkMcW1p5AhB9nXsL
+	LIt1Sqx5kCN8aqKTaNMoi0AmO4rrMRibWLk97OpxE+dNd9lZYIlzD7Z19lEvGrF7XCLLNy
+	cM3IzpFlBHeHSkL+WvEmYK+5dZvqNSaa52ktQpTmMR435B8Q8wiN/vzCE9Q7PvQ54/LXL1
+	sugJ5n0WzqhNmmLE9L7+n22FMTaxtZnqE2OdJlGRyyzvhdRnjWSvQ+PoMyar5Q==
+Date: Tue, 19 Aug 2025 12:15:04 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Miguel Ojeda
+ <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, Justin
+ Stitt <justinstitt@google.com>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Chaoyi Chen
+ <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2 0/9] drm/bridge: get/put the bridge when looping over
+ the encoder chain
+Message-ID: <20250819121504.0d5b45ff@booty>
+In-Reply-To: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812081243.22659-1-zhao.xichao@vivo.com>
-In-Reply-To: <20250812081243.22659-1-zhao.xichao@vivo.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 12:14:42 +0200
-X-Gm-Features: Ac12FXzU4f68lx-vnPMu0MlwjuQwlOsOhgF-cfcAJ8aW8LkUUYsFjc86GjLFFFg
-Message-ID: <CACRpkdYjsS1q1mF=SYA1J7YFGnmd6+m8aj=YBPFWthxVoJSnwg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: bcm: use PTR_ERR_OR_ZERO() to simplify code
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheehvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdegpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Tue, Aug 12, 2025 at 10:12=E2=80=AFAM Xichao Zhao <zhao.xichao@vivo.com>=
- wrote:
+On Fri, 08 Aug 2025 16:49:07 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-> Use the standard error pointer macro to shorten the code and simplify.
->
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> This series depends on:
+> 
+>  * commit 103578241512 ("drm/bridge-connector: Fix bridge in
+>    drm_connector_hdmi_audio_init()"), currently in drm-misc-fixes, not yet
+>    on drm-misc-next
 
-Patch applied!
+Just a quick update: this commit is now in drm-misc-next, so this patch
+has zero dependencies now.
 
-Yours,
-Linus Walleij
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
