@@ -1,93 +1,111 @@
-Return-Path: <linux-kernel+bounces-775828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62B6B2C56F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31587B2C575
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C2EA02AFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F9DA0367D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110842EB840;
-	Tue, 19 Aug 2025 13:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDC22EB878;
+	Tue, 19 Aug 2025 13:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b28gXOmJ"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sQkgxP8J"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA220343204
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6782D2EB87C;
+	Tue, 19 Aug 2025 13:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609497; cv=none; b=LnDoo4TkqScwd8X64B28snrHzZ0e2JD1tgNR49I61Ddz23OJ/epcbyZI0+aJY98jRGs8ulRpN/vQ6VZ6RiBT49fPvanFL9Nhn/jKT73eBYh16ZCgyRnIbFd6bFOoB00xDwhay4AANjb7QxR4lMAr/ns6alymiI6mLPsvleigM+4=
+	t=1755609534; cv=none; b=BiSsrEiUQmjtw19jKztq0xWbU9hwQ6gFOTkS2bCaG2Tsls3fLx52X5JwIDvZcuhtX5/e0cCdwpLYIfihMZEgPfhYRi0thPQuisamftysebQ8htwCIucTydXA+9yWMfS5kKIjfEBo/pFVPrjaQs52rLLyLaXcs4aUZ3uYqb6edKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755609497; c=relaxed/simple;
-	bh=haelXDwMy02Pwc8ZA2q/PxzyUxHWHwhLuI5ijIySm2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=ZReXa79LEydtsw7kosVAM3dULf5J1b7Clo8FvbeWNjFqClDJwan06A70ojW6nRygiVt9BsFTY2RYKXI/8bSHyeOsH4oCMKuEZT0zY7mW1X0/GwuJO8+eXYEfqofQl7H/U0jhymJ08UvAuj+ppZUcrWCq0qb6mQvScPZUlam73A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b28gXOmJ; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250819131814euoutp012e3078d07000df89dc75aee9f3892bc8~dLYibiI6E2012120121euoutp01T
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:18:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250819131814euoutp012e3078d07000df89dc75aee9f3892bc8~dLYibiI6E2012120121euoutp01T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755609494;
-	bh=haelXDwMy02Pwc8ZA2q/PxzyUxHWHwhLuI5ijIySm2Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b28gXOmJv53Ukifr2jI0aPiN+kMb9HQZdc90+xIpGWsCXMjzXCs2BhEZzlqeWCbEe
-	 XNIxLDdM7+bmLvwFirdlYVt922QudW1edmFOYmAXkyD3uaUur4O+Q/SNp8+NZrmsew
-	 6FWIkB/NKoNcUv+wqS/Dz0JkHhZdn8oXOWJ/oSfs=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab~dLYiBBqeM2800428004eucas1p2h;
-	Tue, 19 Aug 2025 13:18:14 +0000 (GMT)
-Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250819131813eusmtip1ef1102cfde54eb4bafb4302017462cbe~dLYhNgGmp2290322903eusmtip1f;
-	Tue, 19 Aug 2025 13:18:13 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux.amoon@gmail.com
-Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
-	justinstitt@google.com, krzk@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	llvm@lists.linux.dev, lukasz.luba@arm.com, m.majewski2@samsung.com,
-	morbo@google.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
-	rafael@kernel.org, rui.zhang@intel.com
-Subject: Re: [PATCH v7 7/7] thermal/drivers/exynos: Refactor IRQ clear logic
- using SoC-specific config
-Date: Tue, 19 Aug 2025 15:18:03 +0200
-Message-ID: <20250819131803.23296-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250813131007.343402-8-linux.amoon@gmail.com>
+	s=arc-20240116; t=1755609534; c=relaxed/simple;
+	bh=QCjWNvDQ7orwkY75alNFw0kz2KO8dEVMqrDeOIpYfX4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPQcQB/phpHgWkpFNhWTMmD0jdhk+vEvzo3pfUbKeEequvVFZkQAQK1wMtlbSMw3OmVMxG5dRXeozazZmxxFgQlXXlQTmY4zdZMW+2bKXxnZspY3ubKcjTrY6Kq7kp2+o4G2TKXVkyBppvSPQ6kGnglx1hFfcAaQoEyc+l2ExQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sQkgxP8J; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57JDIatB2960068;
+	Tue, 19 Aug 2025 08:18:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755609516;
+	bh=1FqbUz67mQuKjoGVkln7n7YBB1Sc9BIygUfegEpUCsY=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=sQkgxP8J1r+mwUr4iR9eblLRqx35Ke+JkqP1Cjzf/r+OQCy/R6cDvxEyLJrih3Rfk
+	 99koeWg0YYX/ScgMhHB4WYaSh54FZLsF+Eo2ojvf2jjP+xUB8YV469N3CY8oeSe73M
+	 1QnnPRtXfW9TAdpTZwpirQXAx3ExMbj2yl8gTF0k=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57JDIZVA610086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 19 Aug 2025 08:18:36 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 19
+ Aug 2025 08:18:35 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 19 Aug 2025 08:18:35 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57JDIYwI3045996;
+	Tue, 19 Aug 2025 08:18:35 -0500
+Date: Tue, 19 Aug 2025 18:48:33 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam
+	<mani@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Niklas Cassel <cassel@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Hans Zhang
+	<18255117159@163.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] PCI: keystone: Use kcalloc() instead of kzalloc()
+Message-ID: <0671bdc2-883e-4fb3-aa69-9e4d1579a38f@ti.com>
+References: <20250819131235.152967-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab
-X-EPHeader: CA
-X-CMS-RootMailID: 20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab
-References: <20250813131007.343402-8-linux.amoon@gmail.com>
-	<CGME20250819131814eucas1p2c57ccc084cf6736fed01a8a5c0b35fab@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250819131235.152967-1-rongqianfeng@vivo.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-> A unified
-> exynos4210_tmu_clear_irqs() implementation now replaces the previous
-> reliance on SoC-specific functions and hardcoded register mappings.
+On Tue, Aug 19, 2025 at 09:12:33PM +0800, Qianfeng Rong wrote:
+> Replace calls of devm_kzalloc() with devm_kcalloc() in ks_pcie_probe().
+> As noted in the kernel documentation [1], open-coded multiplication in
+> allocator arguments is discouraged because it can lead to integer
+> overflow.
+> 
+> Using devm_kcalloc() provides built-in overflow protection, making the
+> memory allocation safer when calculating the allocation size compared
+> to explicit multiplication.
+> 
+> [1]: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+> v2: Modified the commit message.
 
-Well, right now we actually add exynos{4412,5420,5433}_tmu_clear_irqs :)
-But those are quite similar except irq_map values, so maybe they can be
-unified into one?
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-Kind regards,
-Mateusz Majewski
+Regards,
+Siddharth.
 
