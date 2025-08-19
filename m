@@ -1,158 +1,326 @@
-Return-Path: <linux-kernel+bounces-774918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35492B2B934
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:14:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F65B2B938
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A34626F2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C4952861F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3222765C9;
-	Tue, 19 Aug 2025 06:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B3326A0AD;
+	Tue, 19 Aug 2025 06:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="giMbf/qk"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sv1HbAlq"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD65F26B973;
-	Tue, 19 Aug 2025 06:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016A226A088
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755583995; cv=none; b=NUj7Dysx1shps1h4VJCEXlMyIvVGc5k2yJiXYMoVSOxd5Gb1Cc/K9YheUi1Z6V70/ZqHl3w9FToYVNdYIJt1ahooGHYQR4xSRiAlfUbXX4AOjLFqKqICl6V+Y0OrjQrUQiAHAnzefC/gcD/BXXwpC7b7A8FNxyDb+WrtB47iE5Q=
+	t=1755584017; cv=none; b=c7CVz+tjmIKfEqKVD3m5mIOCpyXZ8nOqFRZfKQODkAWhAR5juBDToqjM6/185vQKeyYCfW07opa8LvC6Lz8iix1kV+MTZ19RA9g98zK37rgqyUn5JAyYsQBREzxeE9F4vRR5a41dQ13Fi7fe+rRAmHOG7Ip5AD9jQHh/A2ADw80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755583995; c=relaxed/simple;
-	bh=QvbQ3Yi9pFPzh0dk01am7J13l7ixDhkVqrIdUZUGhb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HEU/JAWN3Y0J7/MXbu0+f8Y7fzv7VRekVjnwfNuHk5hGOr6oafdEgpWmJ17KwzE9GjW5oEP1BtnxZhDI+AcZ1JsTMWQ4a2sZLnd64XCWZRkX70wph7BtjQ4yC1jDw+j0Ljy5FoVsj4Bob44Fz/PnOSl9Rffmbq941uwrYLS/6lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=giMbf/qk; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-323267872f3so4187396a91.1;
-        Mon, 18 Aug 2025 23:13:13 -0700 (PDT)
+	s=arc-20240116; t=1755584017; c=relaxed/simple;
+	bh=pwnw8a9mADcH9qJIzPKa/tq1ZyVltio+a8Y2AhJ473A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=G3hg9imPqQWhiK2pKg4DDZBracYLcuJ7iawn3COxw28Kx1AGfDJSJmdNzInngQcXIeZHyYdB5VL8Rm6/yoOVtBTtUDXMh4ITL1JSSSIix/8CgnwmyymKfpiimx6OdrtyHocBRKwjYBNR7TKdl/TyuaqllwKUJCAtmcJCzVOuq5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sv1HbAlq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b05d252so34229185e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:13:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755583993; x=1756188793; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MaZrleaHbOR6yTEtT9sf3iBhWN1ohy2mL86EbvZxfqc=;
-        b=giMbf/qkvmcbFgDlZeB8PjN9ltBG5uzCwODffV2cKS9+hyGhLof9vKkU5NXQOPYLUw
-         f07KPyTfkNkV/QIw0JZaHg0L/8Wq3i4VpukQK9L4YAl/dAVehZwqT0FrIwEd9aLmHXn6
-         W36Fsj66PSn4JTkmizKtyjfAhRuXr5lSyyDfhLPy+XRKQC2B0wZCYB6HooXxvBnqcm2x
-         TKqhTTGZuTuunks8YU9RbGUi6YVl0NbNLLjP8TKKeOm3pa82N7XwnfWfOVV+WP4d+Fyb
-         xI3u09kA9ShBOUBpK+7oCECZ+WaCjRIvFTaflVp0tDW7+yJU7LUDzlASa0cNK2tk1obH
-         WDTw==
+        d=linaro.org; s=google; t=1755584013; x=1756188813; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vR2Z/WDH6gOreEopMqHmHW9u0hd60Nj5JCbNxFQ+BRU=;
+        b=Sv1HbAlqLKBmTqq6WJVe2VxJ/MN9s0C6PfS8G947zFQoM7O81SVsWfOxh3iUMLLBlI
+         me1tXfxcixcleUOJtKu+3+XbhglztiV6pZbfd0Ya39uGelmWeiggnnS/z5n177EjhI4R
+         kG8lX2uR7yYNkAUwb6XQt/u4+e9B6YZchIP7n6wp1e9drXSNwtiBwl9zoka9WvFfmjXc
+         u5aops1bgVUy3so08RwmYLKOKc4cBwrrDIJNac3j71yqZPzlBwe9+l77OpEUKp+faGWt
+         FjjXL8+klPsy15IndTtwTogPQaLPhXOm+9Ex8WSFU37NAoEs4Amyo6VhO+BcJr8FcSt6
+         CEKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755583993; x=1756188793;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MaZrleaHbOR6yTEtT9sf3iBhWN1ohy2mL86EbvZxfqc=;
-        b=dLpVQOF2eduoqtdIotwx5AB+4WZnB3nZnrqFfU1XdwxmifM+Ay9pMEbfNoraxR8owg
-         VFCj3SLiGY2W/dRzzJbzSz48XpGGM4sVuQDOyGQJzav1NJT+UazoSQhV6T+gt5D+72J9
-         02H/RZ/u4RkZjiBS7YhCEbNrrzrgdfX6w1ZL4RVkO5v8u3uf/ofYxbvPMXX6sP6ISJ+N
-         tVe4nEIetN1AzXFsz8i6psQBMkV5x0oCieEc+4Cq40y213sk3RvYzsO0yRQFVGC5nvek
-         xbgem0FL7MwQo0rLev7otbC/cqOexhYJ/QN62u1bvEBb5CJsR8Ec8M5wrje5dosszb1n
-         rgWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUASrYPSIJTgsU1EY47zMq9pLqZ3S1t7Z50G1TUDfJnt+1Lng5h+pHZStoANH9UsueaQ58WCWYdC70=@vger.kernel.org, AJvYcCVhq83z8xeptADKu/wOY7gzBQuyNY9qp9sNlBXz6Q4REFw2n9J8COgO6pDf14h8x9+VkuEj/oQhjxim0IB8gA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YymB7/37ZjWaogGXHcgAmPWaNFxOYPtzxlUeUUoS7yTQByMl22D
-	CK7s+s2ZOdhtYRFPj1UKys15Fv+nToCiI+AYs0zazvmQmBtikSoO1v7P
-X-Gm-Gg: ASbGncsji8TEcerppzVzzZXzLDzFTEkwGyj0SzIxI9N0BN7GFvo722B40DCD/ttKYdl
-	5FW8gGC5S55SaJHEKCdycQCI2MTM5oxW8QUT7XSNlmhMDyAUrBSDFhh7tJYahG8UB/bXAv0iN0p
-	Tzqh8gSvvum4dDwK0n6aF1NVm/92zHYkzy+Dmkd49oRNIfgf44f5Z6vLfyuThTRo3bmADUPWhqn
-	EfLZdZ5urv98ZRGoMbppeTnRivdFFRO/0BF8wkdJfdWHlg2RkGYln+dxyg+WCa06hY0DTOAltTe
-	y2M1dH/l86YSOGHmg/FXBtQmr38hm6JcVRJvWxOu1e7CzBelRR9t0QKsk3nvJX4PFtiynHyJ96v
-	b13l1YRqwV4rDWO4gLfy6B3zaFhtkPT8o
-X-Google-Smtp-Source: AGHT+IGU58wwfT/quTp7EuntTbg1eQWm60+JbZHn0Oeg/m29Gae1PjVVDhcgaza6WxCqdYYE47E1Vw==
-X-Received: by 2002:a17:90b:4ccd:b0:312:f0d0:bc4 with SMTP id 98e67ed59e1d1-32476a4a623mr1950322a91.5.1755583992736;
-        Mon, 18 Aug 2025 23:13:12 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b473ce25dafsm7160306a12.17.2025.08.18.23.13.10
+        d=1e100.net; s=20230601; t=1755584013; x=1756188813;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vR2Z/WDH6gOreEopMqHmHW9u0hd60Nj5JCbNxFQ+BRU=;
+        b=d4Y4bW2latW1cYzljZOoI4j5ZI4Ph8gemDCUiFL1DPoYYNS1BLjqrRaY9xFRXw5Fhs
+         +5W1hLHYL+bMpu74fPRsprUxSe+7c/egtqL5Pc1pnstyiCcTqU/h7fkN/SyR+YgfYuNj
+         IUPhzqSUtFb6FyIjHpHjiRaNyjUkiVKqTL88KucdzK9Wgpokbu0DzoIriOgbEDSgvDYh
+         Y50mqEzNbnDslsk8Opr96OXJGAuohWtUvPiMvq3rOXCDhzwBh+udNtUehunDm1naqEMp
+         S/UEBuV6gA2w0KzM3+voYQz3Bs2axq/5d1v+8D3R6Lv7WY8F3SM7JJ+o7yCL0OmIeYss
+         tqzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMxZeq1AHZMO4rAx2kZxu+VxdUQqIjnluzgMXIH4SlX/ixYAxzvKGJm28MFbHYrbBkuDF9ZrtUx4HNB34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp/qft3Z47pImN1HZKdUkey4lqYofCFgd9+ER74gzE8FgDPsY5
+	EMvwbgyo90jv2ecNZ8OWAJn0uyrw3PUnoU3anCgDFLhcLL0gAz1c/c2NOStExIRlnRo=
+X-Gm-Gg: ASbGnctpWsG4bwIfyb7FJtTS0VIUYFA1qkaQYMJmxOuHC84/W6XrwfWV7we8xgiWvFa
+	HsCuEIWbFUPUFAhGphTT/7v//fNjc3UTJXKXfEf1gPKsTKs7cgmxtORpCE4B1WU4aYLmTqL9Ggu
+	cr7rC9E5hSYtRlaOuOJ3VEyeXzoHVHIsKigHwodqmF1W1N20dBo4LGIgxxxEkApuu1M8gZlTySo
+	Ts537rCdksjVDfGrEEodzLgKNzzPB1ZaEOXB9Gc3oBJsw7IW+4Lm6VPYFpP2acOthrE0Cauds3j
+	TbAu2eo0Yq9jRa4gb5pq5uFhrTt/eYayr6aXoianGAeFUqsKy74wcwmSiROisO8pfZqdrVABNIb
+	UfBTqa4tV3LtfR+dXGGsYoo0jpU0qiQ6OKdaXs9dId+k=
+X-Google-Smtp-Source: AGHT+IFf2NahY6DopTmenXeCCcDiRINlBfHfCPxPEpy5h+ISp3BJFr1CxlpB+wS3kFF53KDbbHEAvQ==
+X-Received: by 2002:a05:600c:1f93:b0:456:1bca:7faf with SMTP id 5b1f17b1804b1-45b43dfe5d7mr10266725e9.16.1755584012990;
+        Mon, 18 Aug 2025 23:13:32 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c6cfed5sm193702245e9.7.2025.08.18.23.13.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 23:13:11 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 55FC64650015; Tue, 19 Aug 2025 13:13:04 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 5/5] Documentation: sharedsubtree: Convert notes to note directive
-Date: Tue, 19 Aug 2025 13:12:53 +0700
-Message-ID: <20250819061254.31220-6-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250819061254.31220-1-bagasdotme@gmail.com>
-References: <20250819061254.31220-1-bagasdotme@gmail.com>
+        Mon, 18 Aug 2025 23:13:32 -0700 (PDT)
+Date: Tue, 19 Aug 2025 09:13:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@kernel.org>,
+	George Guo <guodongtai@kylinos.cn>
+Subject: arch/loongarch/net/bpf_jit.c:1547 __arch_prepare_bpf_trampoline()
+ error: uninitialized symbol 'retval_off'.
+Message-ID: <202508191020.PBBh07cK-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2074; i=bagasdotme@gmail.com; h=from:subject; bh=QvbQ3Yi9pFPzh0dk01am7J13l7ixDhkVqrIdUZUGhb8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlLRF7etkiJrHvRG+XVubXLzmdL8ob4RuZ0lbXldTWbP BVfXXLqKGVhEONikBVTZJmUyNd0epeRyIX2tY4wc1iZQIYwcHEKwEQufGH4n3B1OvstuxMTdToZ Ojrk7ViFkp98vJBgfsT+bccMoR0qyYwMjUf3NPDWn9wue5j3zRrT+ojGRqHygxXi/s8b7GsOSvZ zAwA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-While a few of the notes are already in reST syntax, others are left
-intact (inconsistent). Convert them to reST syntax too.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   be48bcf004f9d0c9207ff21d0edb3b42f253829e
+commit: f9b6b41f0cf31791541cea9644ddbedb46465801 LoongArch: BPF: Add basic bpf trampoline support
+date:   2 weeks ago
+config: loongarch-randconfig-r073-20250818 (https://download.01.org/0day-ci/archive/20250819/202508191020.PBBh07cK-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 15.1.0
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/filesystems/sharedsubtree.rst | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202508191020.PBBh07cK-lkp@intel.com/
 
-diff --git a/Documentation/filesystems/sharedsubtree.rst b/Documentation/filesystems/sharedsubtree.rst
-index b09650e285341c..8b7dc915908377 100644
---- a/Documentation/filesystems/sharedsubtree.rst
-+++ b/Documentation/filesystems/sharedsubtree.rst
-@@ -43,9 +43,10 @@ a) A **shared mount** can be replicated to as many mountpoints and all the
- 
-      # mount --make-shared /mnt
- 
--   Note: mount(8) command now supports the --make-shared flag,
--   so the sample 'smount' program is no longer needed and has been
--   removed.
-+   .. note::
-+      mount(8) command now supports the --make-shared flag,
-+      so the sample 'smount' program is no longer needed and has been
-+      removed.
- 
-    ::
- 
-@@ -242,8 +243,9 @@ D)  Versioned files
- The section below explains the detailed semantics of
- bind, rbind, move, mount, umount and clone-namespace operations.
- 
--Note: the word 'vfsmount' and the noun 'mount' have been used
--to mean the same thing, throughout this document.
-+.. Note::
-+   the word 'vfsmount' and the noun 'mount' have been used
-+   to mean the same thing, throughout this document.
- 
- a) Mount states
- 
-@@ -885,8 +887,12 @@ A) Datastructure
-    non-NULL, they form a contiguous (ordered) segment of slave list.
- 
-    A example propagation tree looks as shown in the figure below.
--   [ NOTE: Though it looks like a forest, if we consider all the shared
--   mounts as a conceptual entity called 'pnode', it becomes a tree]::
-+
-+   .. note::
-+      Though it looks like a forest, if we consider all the shared
-+      mounts as a conceptual entity called 'pnode', it becomes a tree.
-+
-+   ::
- 
- 
-                         A <--> B <--> C <---> D
+New smatch warnings:
+arch/loongarch/net/bpf_jit.c:1547 __arch_prepare_bpf_trampoline() error: uninitialized symbol 'retval_off'.
+
+vim +/retval_off +1547 arch/loongarch/net/bpf_jit.c
+
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1419  static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1420  					 const struct btf_func_model *m, struct bpf_tramp_links *tlinks,
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1421  					 void *func_addr, u32 flags)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1422  {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1423  	int i, ret, save_ret;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1424  	int stack_size = 0, nargs = 0;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1425  	int retval_off, args_off, nargs_off, ip_off, run_ctx_off, sreg_off;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1426  	void *orig_call = func_addr;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1427  	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1428  	struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1429  	struct bpf_tramp_links *fmod_ret = &tlinks[BPF_TRAMP_MODIFY_RETURN];
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1430  	u32 **branches = NULL;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1431  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1432  	if (flags & (BPF_TRAMP_F_ORIG_STACK | BPF_TRAMP_F_SHARE_IPMODIFY))
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1433  		return -ENOTSUPP;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1434  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1435  	/*
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1436  	 * FP + 8       [ RA to parent func ] return address to parent
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1437  	 *                    function
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1438  	 * FP + 0       [ FP of parent func ] frame pointer of parent
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1439  	 *                    function
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1440  	 * FP - 8       [ T0 to traced func ] return address of traced
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1441  	 *                    function
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1442  	 * FP - 16      [ FP of traced func ] frame pointer of traced
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1443  	 *                    function
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1444  	 *
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1445  	 * FP - retval_off  [ return value      ] BPF_TRAMP_F_CALL_ORIG or
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1446  	 *                    BPF_TRAMP_F_RET_FENTRY_RET
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1447  	 *                  [ argN              ]
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1448  	 *                  [ ...               ]
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1449  	 * FP - args_off    [ arg1              ]
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1450  	 *
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1451  	 * FP - nargs_off   [ regs count        ]
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1452  	 *
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1453  	 * FP - ip_off      [ traced func   ] BPF_TRAMP_F_IP_ARG
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1454  	 *
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1455  	 * FP - run_ctx_off [ bpf_tramp_run_ctx ]
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1456  	 *
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1457  	 * FP - sreg_off    [ callee saved reg  ]
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1458  	 *
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1459  	 */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1460  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1461  	if (m->nr_args > LOONGARCH_MAX_REG_ARGS)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1462  		return -ENOTSUPP;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1463  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1464  	if (flags & (BPF_TRAMP_F_ORIG_STACK | BPF_TRAMP_F_SHARE_IPMODIFY))
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1465  		return -ENOTSUPP;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1466  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1467  	stack_size = 0;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1468  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1469  	/* Room of trampoline frame to store return address and frame pointer */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1470  	stack_size += 16;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1471  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1472  	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1473  	if (save_ret) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1474  		/* Save BPF R0 and A0 */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1475  		stack_size += 16;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1476  		retval_off = stack_size;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1477  	}
+
+retval_off is uninitialized on the else path.
+
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1478  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1479  	/* Room of trampoline frame to store args */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1480  	nargs = m->nr_args;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1481  	stack_size += nargs * 8;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1482  	args_off = stack_size;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1483  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1484  	/* Room of trampoline frame to store args number */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1485  	stack_size += 8;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1486  	nargs_off = stack_size;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1487  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1488  	/* Room of trampoline frame to store ip address */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1489  	if (flags & BPF_TRAMP_F_IP_ARG) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1490  		stack_size += 8;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1491  		ip_off = stack_size;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1492  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1493  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1494  	/* Room of trampoline frame to store struct bpf_tramp_run_ctx */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1495  	stack_size += round_up(sizeof(struct bpf_tramp_run_ctx), 8);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1496  	run_ctx_off = stack_size;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1497  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1498  	stack_size += 8;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1499  	sreg_off = stack_size;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1500  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1501  	stack_size = round_up(stack_size, 16);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1502  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1503  	/* For the trampoline called from function entry */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1504  	/* RA and FP for parent function */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1505  	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1506  	emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1507  	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1508  	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1509  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1510  	/* RA and FP for traced function */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1511  	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1512  	emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1513  	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1514  	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1515  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1516  	/* callee saved register S1 to pass start time */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1517  	emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1518  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1519  	/* store ip address of the traced function */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1520  	if (flags & BPF_TRAMP_F_IP_ARG) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1521  		move_imm(ctx, LOONGARCH_GPR_T1, (const s64)func_addr, false);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1522  		emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -ip_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1523  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1524  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1525  	/* store nargs number */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1526  	move_imm(ctx, LOONGARCH_GPR_T1, nargs, false);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1527  	emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -nargs_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1528  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1529  	store_args(ctx, nargs, args_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1530  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1531  	/* To traced function */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1532  	/* Ftrace jump skips 2 NOP instructions */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1533  	if (is_kernel_text((unsigned long)orig_call))
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1534  		orig_call += LOONGARCH_FENTRY_NBYTES;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1535  	/* Direct jump skips 5 NOP instructions */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1536  	else if (is_bpf_text_address((unsigned long)orig_call))
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1537  		orig_call += LOONGARCH_BPF_FENTRY_NBYTES;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1538  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1539  	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1540  		move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im, false);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1541  		ret = emit_call(ctx, (const u64)__bpf_tramp_enter);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1542  		if (ret)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1543  			return ret;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1544  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1545  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1546  	for (i = 0; i < fentry->nr_links; i++) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05 @1547  		ret = invoke_bpf_prog(ctx, fentry->links[i], args_off, retval_off,
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1548  				      run_ctx_off, flags & BPF_TRAMP_F_RET_FENTRY_RET);
+
+It's undefined behavior to pass uninitialized data to a function (unless
+the function is inlined, I suppose).
+
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1549  		if (ret)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1550  			return ret;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1551  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1552  	if (fmod_ret->nr_links) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1553  		branches  = kcalloc(fmod_ret->nr_links, sizeof(u32 *), GFP_KERNEL);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1554  		if (!branches)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1555  			return -ENOMEM;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1556  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1557  		invoke_bpf_mod_ret(ctx, fmod_ret, args_off, retval_off, run_ctx_off, branches);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1558  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1559  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1560  	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1561  		restore_args(ctx, m->nr_args, args_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1562  		ret = emit_call(ctx, (const u64)orig_call);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1563  		if (ret)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1564  			goto out;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1565  		emit_insn(ctx, std, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -retval_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1566  		emit_insn(ctx, std, regmap[BPF_REG_0], LOONGARCH_GPR_FP, -(retval_off - 8));
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1567  		im->ip_after_call = ctx->ro_image + ctx->idx;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1568  		/* Reserve space for the move_imm + jirl instruction */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1569  		for (i = 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1570  			emit_insn(ctx, nop);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1571  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1572  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1573  	for (i = 0; ctx->image && i < fmod_ret->nr_links; i++) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1574  		int offset = (void *)(&ctx->image[ctx->idx]) - (void *)branches[i];
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1575  		*branches[i] = larch_insn_gen_bne(LOONGARCH_GPR_T1, LOONGARCH_GPR_ZERO, offset);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1576  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1577  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1578  	for (i = 0; i < fexit->nr_links; i++) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1579  		ret = invoke_bpf_prog(ctx, fexit->links[i], args_off, retval_off, run_ctx_off, false);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1580  		if (ret)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1581  			goto out;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1582  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1583  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1584  	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1585  		im->ip_epilogue = ctx->ro_image + ctx->idx;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1586  		move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im, false);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1587  		ret = emit_call(ctx, (const u64)__bpf_tramp_exit);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1588  		if (ret)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1589  			goto out;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1590  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1591  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1592  	if (flags & BPF_TRAMP_F_RESTORE_REGS)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1593  		restore_args(ctx, m->nr_args, args_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1594  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1595  	if (save_ret) {
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1596  		emit_insn(ctx, ldd, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -retval_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1597  		emit_insn(ctx, ldd, regmap[BPF_REG_0], LOONGARCH_GPR_FP, -(retval_off - 8));
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1598  	}
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1599  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1600  	emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1601  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1602  	/* trampoline called from function entry */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1603  	emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1604  	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1605  	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1606  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1607  	emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1608  	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1609  	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1610  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1611  	if (flags & BPF_TRAMP_F_SKIP_FRAME)
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1612  		/* return to parent function */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1613  		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA, 0);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1614  	else
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1615  		/* return to traced function */
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1616  		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0, 0);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1617  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1618  	ret = ctx->idx;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1619  out:
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1620  	kfree(branches);
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1621  
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1622  	return ret;
+f9b6b41f0cf317 Chenghao Duan 2025-08-05  1623  }
+
 -- 
-An old man doll... just what I always wanted! - Clara
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
