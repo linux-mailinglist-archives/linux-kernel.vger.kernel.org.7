@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-776081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D6DB2C850
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70019B2C858
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF723B5C36
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006A31BA706A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 15:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47FE28541A;
-	Tue, 19 Aug 2025 15:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6E8286409;
+	Tue, 19 Aug 2025 15:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="oec5CXSL"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="Z+bDDOE4"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3252127A108
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A679B2848BE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755616840; cv=none; b=ZJoivi3tbbrjn/kkbCFTmXsA7Q42lQjcdXYIMhpf6h7T8R0yzs2AAdUyVwFUCCa/tC9hox6BiGMih5SojMLU4QsnYFT2TXbpeDNZcUzZWH1ELuvi92R1JOnKTgT6gdvzrjB3HXyimtRJ3/D9D3ifA7DAlB17Cj0I09vtRLbqK6E=
+	t=1755616841; cv=none; b=WfiNgQZhWjHPPFwxN+PUzTeKBqhwbt3lno+Fd8D6c+bMxk3Nlj3d8Z2ECO+u8eLcBt5FlNWc+Y7/X4OSfwyYTX3ZYXty70mkeXu+NiyLfmlp9dKum2Pjo0af6GplmL9CZUYHa7oiTOUZ6K9q2n5oU8BrSz2gbmhFcYYrD/DQUhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755616840; c=relaxed/simple;
-	bh=NrN1uqcJdpnrp2jcDM9mNdL4V79R23IZ3fHrn4EeoLs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M+EOLcSUhY7xJCy93Qwnpbru7BPuaxm4MPJJDAYMTVvZIzPbtgfzC2Si/hTbQ3kLO9sAsvNXZyAMmOg5/x7j/05FjpGf1yASAqZ1hMNyp6//wr2oD2mzOZLl07LCamitEqPUOoyFBiDRLe2j+NAd+/inW7wvofuo1TWpgbcVMoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=oec5CXSL; arc=none smtp.client-ip=209.85.216.42
+	s=arc-20240116; t=1755616841; c=relaxed/simple;
+	bh=Mapi4qRO18JNApuqaFmvuJzPJiuchg7jIC/0OT7vifs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Rm750J0dlMJwlyIdmqjLJz5eAWsI1yl7bakeGh3GXWg9HHHHtwVlv8ZJWesFGXvwFpZUAjSmqoM+8tRlUvx0maYqcHakt+w/7mfzge8mkA5FXye/NneaevIgMdv9uHDQU4U5avzfax8jJ8T5sSuoGITPWNSzo6mdgxBsxIPRTY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=Z+bDDOE4; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=smartx.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-323267adb81so6415700a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:20:35 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b474e8d6d04so1400702a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 08:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1755616835; x=1756221635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IEMm8uKDjjFHpgykUaxgoa+ApFNTkgehyJI7jW32h00=;
-        b=oec5CXSLiZpDuztTTa13iJbcB/Zoh9yAUZVRW7DaydXtrgg2qD7hZ80oczvRs5ktFT
-         XOd847wmrqGmO+r/qlSCBNo7hqmJvFQvXGL5Q6jstSoPu7DYFm0wU5C7ArRP/9Y/SsP3
-         UcDCpFRytSEsW18XwnED0qGTP4S5pmASh2+RQMI7ytqJE8Qt8N3I1n+xECNWv7g89pLz
-         RX1Vt4OsC8T2PcVmLx6EfaYGNVvEYmgoCCWcMWtCk9zQyN5tZTKwqrVksdmu8Peb1APt
-         Raa9zDkrTnxgifBw77RALoRiJBjPszvWkhJP/NMjpNdfIbwcwIfDEqtOFlCs5wBTpeAc
-         rHvQ==
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1755616839; x=1756221639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8j1xWi8yHO61hmZJR2yMfuKWLMhG/TRDNgL+UU0ZcBE=;
+        b=Z+bDDOE4OkQ7j2GMMGtCq60C99LHGpkrUWJXg0JVbYaZ8Gge5jizq6yRAGevKCaCem
+         ZpyYCSkrNEy1yLynNKtBLESZeF7dJCZCLGy5sfw4N1ugUVUQLrovUSk/LmS9mFV6HViB
+         0sq75sNUsU1/97gkL8TYsHBPdjD7U7bLQ/2pZNyGggxDTnehqgOckR1ZPmyWPDBXRMko
+         LRlSlutSS7kDutOgyz826TBA2Up4O225ImwgXs9j3PFL+p03VaKxIM7xrrmtbCVQqD3y
+         nsFy2CaBcPQIqko2uRTLFnnjjfHk14UK1Rp+K9Mf8e7R3YpQf6ztiSsmIgGekdWFT0iE
+         Hixw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755616835; x=1756221635;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IEMm8uKDjjFHpgykUaxgoa+ApFNTkgehyJI7jW32h00=;
-        b=vVKPwpdIJgRdQTkeqV1vWJotRGwWVS1KtL+DMtKHPrZQHeU9KPL1BCNd/7nqJ/V6DX
-         ZK/XxS4H3lhQzlxVoPWzkMNgGfkM6DOIGJFsSngUkngCEH3PBjXJxtc0sB9RhRmR/AHl
-         wf2tOXy80Aj0TXJZptL7wM1jt3l3l+Hw/heDMThw7GaSnE/Ad65h/r/x8V6/x6L0ULir
-         X0xTiP4R94Ir1FOJh0eIfnrgXRKZNuGF9erbxlIT6yXWu1/njW6qkm9vSY8bxNzNjY24
-         PWrlCNB9l/Aa2LhYuH0T1SoUn53CrGVMsdP3bw8ZeZA6mMQvq25dJyHpIzzjGHDlIuau
-         C9Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiAFfeAS7ktvJ6OOaiYep6n3O6xPGPH0MznoaikHjWZGmakIcX1UBqWFUrZY7hLDgw2yxn2UyS7Mh0nH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy/7wB03I1dFBbUkAKyoml6+38ZzG6pn6y24S+AWOpXjfPa9bT
-	aHDPlVuIdcB57hpAafq8KfEYseqnO7MdY+9FHP/e0nGDo+evr6zBt+R6xMuDK6N1k0ELSUBRoR3
-	uGlAsK9pqWQdn
-X-Gm-Gg: ASbGncuyH4o5zDEsp4y4hR42nxGYJKai7oM/4FmB/dlD/Zp9M1VS2DPhayzSPcn45kr
-	wXa12X0W/JRCfUhvM4zgAX/yY1WMVdUDoIcwKWQ/uyLdpUoBSrjGK4ZFvOKwVgDip48wQs4+2bi
-	Ja59LCDffjPo0YU7oXF6vnVKo9tkpI9qxqPkwlycDUXYyUUzNySQ4Rze5Xn2t4iwmgbpyHlgXdz
-	ecEkbo0cGVnkkgNeYgnEDGIcLIMm/OkWKaxATGtFRAY24GT5GdUYEsiDzn5FBsOaANtNadMRYQ2
-	Vst4ADKZOKZKiH0vDg9J9d3PFeI3USOCbIS0cto0lNoNLJgUEtqBS8OM0GXXuCq+O8il95FzDqP
-	nAvfZyFy/xHC8pzirPUfDCuU/sizQJOCilPZ4HnuOkB+LyDqt
-X-Google-Smtp-Source: AGHT+IGykYJRPbFbofmtPcUluhHPVwhSmJLbKeQ3EY9zb5I1jlXalnsi2pHhddtB8yOO4hX9AXZOnQ==
-X-Received: by 2002:a17:90b:3cc5:b0:31f:762c:bc40 with SMTP id 98e67ed59e1d1-3245e59151fmr5112184a91.16.1755616834733;
-        Tue, 19 Aug 2025 08:20:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755616839; x=1756221639;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8j1xWi8yHO61hmZJR2yMfuKWLMhG/TRDNgL+UU0ZcBE=;
+        b=GYhQMcQzCUj746mrJkg854EflxXe+9Akbvn+Ad99td/5Er779Ai1oK28grPHUOS6TY
+         Gbi4ABi4o6bE6sjQ2v1LyilqM+Rk750UmsIm6tdz8KfCEHDzpzleVLZwWjvtc28M1z3W
+         b/AuFUqn2AYZRy6OUDoWnhd8fmg2naIfV0chupZFq4KwooNe/MhP1aFe2uoCKl45fBgh
+         zqmrVgU5q9WH38x8+WOYDim9KyRSum2iUT2yoodx4V2PJmo6JyRmOdUXk0eh6Tq8CX04
+         tCa4ypB9OjQsQPVx3a6XuwZxSXSpIcZxyJXcP8oGuapxDNsWn2+XtNaH3ofH8sCypYA3
+         SF2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWDxDu438mk5bQ3vhb701JI8rI8RM9E9iTQHm6f4YaCcYcer4JOeOlUB/wzNXG41pej+QiBOs5SJ6Bnx0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX7e7LpORsEJ97Ii93XR5XRxFp4fU8D6geg17O41oHhbyZRIo1
+	0zXYEcEbYcY5J/wg54cVZlZr/QxBjUNp6B+myNpT8iNNj/NXfWBKpz87GYRSomdOM8U=
+X-Gm-Gg: ASbGncsFwoxRjusuzroJ2CHAITZSpZf3bHsICAruo3CO8+pXvne2rVxtsWZUNJ1brKh
+	uJDn/Sp5Xd56M9JqIB43OLFVHlExa6yme28O5iCdXGC0nyZW6B4WFWJhSr+p2jO8m+qwd0m68gP
+	dxBe4Fr5agaEbIRNezODSnOYTY93dXea0GHOnvdCwJEEPbDBFbGocvIPb9jL1qBLug77Z0u1+/v
+	jbPNB7quRaAxla75HQ2qIz36/o/iza5fS4TXGckBmPMmjJrjspU5rupxC+Vb5A54s5ALCuWwJOU
+	q5bF4mM3PjaNonVubUKMVhA+Ahb9ZW3QE2EO6blcgAjOVp25y+6JwPo+tzGEyivb0nNyrVZXogU
+	ve53/qE9fLd+6SiKjZTYgcTqyJNpc4iYqScLarjEuC3vUrSrw
+X-Google-Smtp-Source: AGHT+IGQa/VvJVkJJiZS7k0VwFXOIzUvBZHkf8rJfdNj/RWnzCw/C6sQLoqqWJnZZtjkykT3dQtZDA==
+X-Received: by 2002:a05:6a20:918a:b0:23f:fa6e:912a with SMTP id adf61e73a8af0-2430d395366mr4209750637.16.1755616838689;
+        Tue, 19 Aug 2025 08:20:38 -0700 (PDT)
 Received: from localhost.localdomain ([193.246.161.124])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d546ce3sm2771227b3a.103.2025.08.19.08.20.31
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d546ce3sm2771227b3a.103.2025.08.19.08.20.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 08:20:34 -0700 (PDT)
+        Tue, 19 Aug 2025 08:20:38 -0700 (PDT)
 From: Lei Chen <lei.chen@smartx.com>
 To: Sean Christopherson <seanjc@google.com>,
 	Paolo Bonzini <pbonzini@redhat.com>,
@@ -82,10 +83,12 @@ To: Sean Christopherson <seanjc@google.com>,
 	"H. Peter Anvin" <hpa@zytor.com>
 Cc: kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/3] kvm:x86: simplify kvmclock update logic
-Date: Tue, 19 Aug 2025 23:20:24 +0800
-Message-ID: <20250819152027.1687487-1-lei.chen@smartx.com>
+Subject: [PATCH v1 1/3] Revert "x86: kvm: introduce periodic global clock updates"
+Date: Tue, 19 Aug 2025 23:20:25 +0800
+Message-ID: <20250819152027.1687487-2-lei.chen@smartx.com>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20250819152027.1687487-1-lei.chen@smartx.com>
+References: <20250819152027.1687487-1-lei.chen@smartx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,77 +97,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series simplifies kvmclock updating logic by reverting
-related commits.
+This reverts commit 332967a3eac06f6379283cf155c84fe7cd0537c2.
 
-Now we have three requests about time updating:
+Commit 332967a3eac0 ("x86: kvm: introduce periodic global clock
+updates") introduced a 300s interval work to sync ntp corrections
+across all vcpus.
 
-1. KVM_REQ_CLOCK_UPDATE:
-The function kvm_guest_time_update gathers info from  master clock
-or host.rdtsc() and update vcpu->arch.hvclock, and then kvmclock or hyperv
-reference counter.
-
-2. KVM_REQ_MASTERCLOCK_UPDATE: 
-The function kvm_update_masterclock updates kvm->arch from
-pvclock_gtod_data(a global var updated by timekeeping subsystem), and
-then make KVM_REQ_CLOCK_UPDATE request for each vcpu.
-
-3. KVM_REQ_GLOBAL_CLOCK_UPDATE:
-The function kvm_gen_kvmclock_update makes KVM_REQ_CLOCK_UPDATE
-request for each vcpu.
-
-In the early implementation, functions mentioned above were
-synchronous. But things got complicated since the following commits.
-
-1. Commit 7e44e4495a39 ("x86: kvm: rate-limit global clock updates")
-intends to use kvmclock_update_work to sync ntp corretion
-across all vcpus kvmclock, which is based on commit 0061d53daf26f
-("KVM: x86: limit difference between kvmclock updates")
-
-
-2. Commit 332967a3eac0 ("x86: kvm: introduce periodic global clock
-updates") introduced a 300s-interval work to periodically sync
-ntp corrections across all vcpus.
-
-I think those commits could be reverted because:
-1. Since commit 53fafdbb8b21 ("KVM: x86: switch KVMCLOCK base to
+Since commit 53fafdbb8b21 ("KVM: x86: switch KVMCLOCK base to
 monotonic raw clock"), kvmclock switched to mono raw clock,
-Those two commits could be reverted.
+we can no longer take ntp into consideration.
 
-2. the periodic work introduced from commit 332967a3eac0 ("x86:
-kvm: introduce periodic global clock updates") always does 
-nothing for normal scenarios. If some exceptions happen,
-the corresponding logic makes right CLOCK_UPDATE request for right vcpus.
-The following shows what exceptions might happen and how they are
-handled.
-(1). cpu_tsc_khz changed
-   __kvmclock_cpufreq_notifier makes KVM_REQ_CLOCK_UPDATE request
-(2). use/unuse master clock 
-   kvm_track_tsc_matching makes KVM_REQ_MASTERCLOCK_UPDATE, which means
-   KVM_REQ_CLOCK_UPDATE for each vcpu.
-(3). guest writes MSR_IA32_TSC
-   kvm_synchronize_tsc will handle it and finally call
-   kvm_track_tsc_matching to make everything well.
-(4). enable/disable tsc_catchup
-   kvm_arch_vcpu_load and bottom half of vcpu_enter_guest makes
-   KVM_REQ_CLOCK_UPDATE request
+Signed-off-by: Lei Chen <lei.chen@smartx.com>
+---
+ arch/x86/include/asm/kvm_host.h |  1 -
+ arch/x86/kvm/x86.c              | 25 -------------------------
+ 2 files changed, 26 deletions(-)
 
-Really happy for your comments, thanks.
-
-Related links:
-https://lkml.indiana.edu/hypermail/linux/kernel/2310.0/04217.html
-https://patchew.org/linux/20240522001817.619072-1-dwmw2@infradead.org/20240522001817.619072-20-dwmw2@infradead.org/
-
-
-Lei Chen (3):
-  Revert "x86: kvm: introduce periodic global clock updates"
-  Revert "x86: kvm: rate-limit global clock updates"
-  KVM: x86: remove comment about ntp correction sync for
-
- arch/x86/include/asm/kvm_host.h |  2 --
- arch/x86/kvm/x86.c              | 58 +++------------------------------
- 2 files changed, 5 insertions(+), 55 deletions(-)
-
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index f19a76d3ca0e..e41e4fe91f5e 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1436,7 +1436,6 @@ struct kvm_arch {
+ 	u64 master_kernel_ns;
+ 	u64 master_cycle_now;
+ 	struct delayed_work kvmclock_update_work;
+-	struct delayed_work kvmclock_sync_work;
+ 
+ #ifdef CONFIG_KVM_HYPERV
+ 	struct kvm_hv hyperv;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a1c49bc681c4..399045a384d4 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -157,9 +157,6 @@ EXPORT_SYMBOL_GPL(report_ignored_msrs);
+ unsigned int min_timer_period_us = 200;
+ module_param(min_timer_period_us, uint, 0644);
+ 
+-static bool __read_mostly kvmclock_periodic_sync = true;
+-module_param(kvmclock_periodic_sync, bool, 0444);
+-
+ /* tsc tolerance in parts per million - default to 1/2 of the NTP threshold */
+ static u32 __read_mostly tsc_tolerance_ppm = 250;
+ module_param(tsc_tolerance_ppm, uint, 0644);
+@@ -3439,20 +3436,6 @@ static void kvm_gen_kvmclock_update(struct kvm_vcpu *v)
+ 					KVMCLOCK_UPDATE_DELAY);
+ }
+ 
+-#define KVMCLOCK_SYNC_PERIOD (300 * HZ)
+-
+-static void kvmclock_sync_fn(struct work_struct *work)
+-{
+-	struct delayed_work *dwork = to_delayed_work(work);
+-	struct kvm_arch *ka = container_of(dwork, struct kvm_arch,
+-					   kvmclock_sync_work);
+-	struct kvm *kvm = container_of(ka, struct kvm, arch);
+-
+-	schedule_delayed_work(&kvm->arch.kvmclock_update_work, 0);
+-	schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
+-					KVMCLOCK_SYNC_PERIOD);
+-}
+-
+ /* These helpers are safe iff @msr is known to be an MCx bank MSR. */
+ static bool is_mci_control_msr(u32 msr)
+ {
+@@ -12327,8 +12310,6 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+ 
+ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+ {
+-	struct kvm *kvm = vcpu->kvm;
+-
+ 	if (mutex_lock_killable(&vcpu->mutex))
+ 		return;
+ 	vcpu_load(vcpu);
+@@ -12339,10 +12320,6 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+ 	vcpu->arch.msr_kvm_poll_control = 1;
+ 
+ 	mutex_unlock(&vcpu->mutex);
+-
+-	if (kvmclock_periodic_sync && vcpu->vcpu_idx == 0)
+-		schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
+-						KVMCLOCK_SYNC_PERIOD);
+ }
+ 
+ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+@@ -12722,7 +12699,6 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ #endif
+ 
+ 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_update_work, kvmclock_update_fn);
+-	INIT_DELAYED_WORK(&kvm->arch.kvmclock_sync_work, kvmclock_sync_fn);
+ 
+ 	kvm_apicv_init(kvm);
+ 	kvm_hv_init_vm(kvm);
+@@ -12830,7 +12806,6 @@ void kvm_arch_pre_destroy_vm(struct kvm *kvm)
+ 	 * is unsafe, i.e. will lead to use-after-free.  The PIT also needs to
+ 	 * be stopped before IRQ routing is freed.
+ 	 */
+-	cancel_delayed_work_sync(&kvm->arch.kvmclock_sync_work);
+ 	cancel_delayed_work_sync(&kvm->arch.kvmclock_update_work);
+ 
+ #ifdef CONFIG_KVM_IOAPIC
 -- 
 2.44.0
 
