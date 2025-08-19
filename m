@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-775733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193C6B2C430
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:53:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C62B2C41E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA0D3BBCD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:49:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446BC7A3C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909E23043C7;
-	Tue, 19 Aug 2025 12:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF6333CEA2;
+	Tue, 19 Aug 2025 12:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhclXTXB"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBJsEIAD"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5848F218EB1;
-	Tue, 19 Aug 2025 12:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14C01F8733;
+	Tue, 19 Aug 2025 12:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607770; cv=none; b=mEsPur+CgIbvXKqvz55sfyikzwfgcm+Dtvobd8tnsaDitoLzHxwy9FQAYdt/MEGkDryTh4WaV1lm+kLnmVzkRyvM2TfRUYDS9hBsoOAuKywYhAMVJzsUdh+2c3p2QR5h0ChbSMGrXBnUHf5peEFWbTStEKFxWwyTRqAEMS6Tokw=
+	t=1755607803; cv=none; b=UZMhko2hkOuDNc3iVlcZNgV+EBuqZhskrRiaFhe0w10DFLiHGzIs7uaHHbAtwK3dtVI2g3UeoGVzfdkT4XZOp0HNUtbE5079l1QkvW5NnzrbmZnFUybl5rQNBdSRBwevmy4O2woD6bmbjoPzVXd81uBoolpNdhZLe2xY+gCf4WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607770; c=relaxed/simple;
-	bh=qhVpFzoBqfd+RgjOal3oIe+9WXyASUdDms79CPbr8Rg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZp1roGQZqU0hLCmSpfibRaVslPg9vXZskPrLsnfCJuBQJgjN2P4URvko6XdLutLGMxlQKZLySfe3tbqHc1eHLU3LJ4rBSigepoJKSc+f0YxI+Ve2i4D5uUIkYhR9bLOH6XHBp11W8rnpLTEccpSO2v3gTFEwO7Wx43xJKun8Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhclXTXB; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1755607803; c=relaxed/simple;
+	bh=q/m1LY6xfwm2u+s4duiA5oQcykTMbM962zM/dxGBy3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ggdRQ/V3SjHD0CDxTzzoM1aYHOv9QQwo+gVIjy/hEz68LdbsznBhFqw+biiOXcmFt+bRlP0gVEZ20Ti96XiTSyYHqOq9zgqef7jAybTGJdSBIioNnDNH+Kr3W1LEhpc3uDS6lqSBd+wSkSpR13JC40Sz1RsX6BPApQyulgh6G7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBJsEIAD; arc=none smtp.client-ip=209.85.219.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55ce5284d63so4706901e87.0;
-        Tue, 19 Aug 2025 05:49:28 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e94e6c6150eso620416276.3;
+        Tue, 19 Aug 2025 05:50:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755607766; x=1756212566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyjnKLZ5WWpemxO8ebds83k13DRtYec6BqZXeYTy3EQ=;
-        b=RhclXTXBIvEfZSBIHFbN6UOjexRV1OBEyd2eceR/wRAqWngVtgMVH6xs4PnGB94eQH
-         jInsIyvzcf677l6ZAAKyM/XX7qFQvf3nPxWQYLUhcWxN7niNhCI9J0O7lP6PLedB/tGa
-         g2rIUah7OJQLUzIgbbIhWQOQDH4UrNvkD54DqKQbEyLtH2uC4TUSnmDOUSrSdI3I6noi
-         Cyr7WQoU3hb/JIyEb1UA85X7yE2Clk00kTCZ1aLEB41RoYTKzZk+5h9X9TYdPdrrU9u6
-         LeBmHFhvLdrwhv0TE7V/XngeddTG166ybSeOj8axLEeXVaiHxyPDQsnrFAWsu4DRnhgr
-         Tgcw==
+        d=gmail.com; s=20230601; t=1755607801; x=1756212601; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/m1LY6xfwm2u+s4duiA5oQcykTMbM962zM/dxGBy3Y=;
+        b=WBJsEIAD9yRodDszJlcdhM/59iiyH4LzOgFnYhuWdI1o0q1HLKL6cAXe/xM0301cHM
+         8TBTnHD1U0lIkYeK/jjVhMI/hWUZuKJabcWuYoPv5taQdV400ZEEjS1DnZIxed3yoqGX
+         CP+uD2y/Q3bzX7T1jOWDI7kK3eDwvO7VJEdNLD20wCgx4zUIqVNWYjYLzPNzERAneSQd
+         uEu9Cgm5jVZ3MBF0woGIoqtynhexLd7nSQ5kJGZ6LuT1HMwt2pdU/94OfdAZJSZAsyES
+         L/HypitYgnhUPvrJYo9prxd2cbPfSzrLzXorzsbYhmDlvZGbSGLPVUvr+PSv2xQzuZD8
+         Wpxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755607766; x=1756212566;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755607801; x=1756212601;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XyjnKLZ5WWpemxO8ebds83k13DRtYec6BqZXeYTy3EQ=;
-        b=Wlc/O/Wt7bxbFhgR0ZHvPYS9BOwILm6rWHtK8Y+H5IzmTVfyXLt7EvXN9TRCmoc+YL
-         n/ELhAekPXzaK9wIM6gIUE2sQkpVHGbpQ5iZ9aUIF+0OZ9Mlyd6AdqRYDX4CUN0KL4Uj
-         9W05zuu9U6D5XjwUZPYZyTUJ44DoQAKgO91YxqWJlPfYPAPu9ZdEVB9f4bTlECFquB0d
-         VS9aScZbmCFW4Is3cdIc/6T2DqvJTf3iCMXJhtmizqbYlUNTu2LYjelRWEoA1iN6x7RM
-         MWygu7eJSSxnIQI0kBwymBAPFH9LHzHgNABZXhlf3jfBJV5Fcno6g0RWfVqmcMLIXIKW
-         wowg==
-X-Forwarded-Encrypted: i=1; AJvYcCUi5piZ6LH7C9IQb2VGavMhEFrUv4T4s7apMYEjwMUiIE725zEOPKYJBdIkVsaIdBzGARxj4j75TkmaoX77+TS5@vger.kernel.org, AJvYcCXfMEgntJdRxLFkm0d9VMpqIW3weOnMQ0VNapfNj3wy3BHj0mDKKFokTE2evqpFO4bff6TnDEoAP9/BeuLN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiEeBchcR1VK3NsP83nOnO3YeOI+j1R7cWmECtYyjAata+6bgn
-	ZFiFCoAHP4G1QGPxaGpgZkuEurdDH7IRxJwgyX2gi1HVHFgco9TKE9q0
-X-Gm-Gg: ASbGncvrurls+4JumlTI+Xj5Eqpl0Xc6hkEbNcBT071HCbhK+/vRnJxt5PuPz3JJcHZ
-	s5oJzBgmxO1oF8uf0qpBeVkgVXNZq4RtoAJSja2rc6atSQTx88SABUMW1Dq39Jy58pbew5eG/vP
-	kTitOs1Ff1ej+R6W6tasNxEzI1k8Q2nwhwpISWt1h2HdyEYsEv59gnfc7FkwXuvPgtE22otZ5Nt
-	MIEaaUNM6SpsY6gxx5MKSkFvmVgsNKbmpu+/PaHq7cGaCl6axbWxVP7hlyPxAIuEYb5WF95lMwQ
-	UH9mV4g91/3HXX8KkqCau0CLhPacrxGBBAxA9j+SNAJ37dKxvzqfvIbyGVRYKIO2nxy2GrAvnL5
-	ImAjKGAzYqc4STpY75OcSbpDOd03MtBqzPbkJZpGr1bmKebe0DbdjGhcS42ktEVNZ9n67BTNUIw
-	BUD8/kvjYPNUzjj6yIfsEVzHJGPFwafnubi6Iv/q+AoaUOO4aVbqZY4A==
-X-Google-Smtp-Source: AGHT+IF/ijueuST2FzGRO5KJQvLOr6+fvvF8eW23F6aUlibk+kIAn4JNAVQY5TPYyrPNiWB6hR5YOg==
-X-Received: by 2002:ac2:4f07:0:b0:55b:8285:3f31 with SMTP id 2adb3069b0e04-55e00e87612mr708782e87.24.1755607766277;
-        Tue, 19 Aug 2025 05:49:26 -0700 (PDT)
-Received: from ip-172-31-45-110.eu-north-1.compute.internal (ec2-16-170-211-41.eu-north-1.compute.amazonaws.com. [16.170.211.41])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55df8db7463sm742057e87.166.2025.08.19.05.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 05:49:25 -0700 (PDT)
-From: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
-Subject: [PATCH] proc: /proc filesystem check error message
-Date: Tue, 19 Aug 2025 12:49:23 +0000
-Message-ID: <20250819124923.9094-1-mallikarjunst09@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=q/m1LY6xfwm2u+s4duiA5oQcykTMbM962zM/dxGBy3Y=;
+        b=b0Akjp4qI3kNUHSQO6MCN55S+5zW035PvoNBfynI9F4bCTULvM3zd6JW3zqE84jABe
+         mD11F8qZzvuFOfWRA1UWpm5tPvi9asbkdXqGzdRLlqvQuEQwWcwzyusxQFhvMrpc+Dno
+         z7ymRZUv7SKtiPqrclXfFIASOgzqZ6Bebki7W2NXLKtrs8vPhVMC/sfHJhH5n4wCrqmY
+         iLb/Bi3kTEU+3VH6gLRaC0PGYg0IYs4suxRh88npWyztzdX3MRy88GofPcrUdEj0vDV7
+         tJmZF6H15JNWQATnyus3WEUVWPh3JZf3fV1jBrK1wMo6ekAJtxFGjaVmfEluZO0JTpDf
+         Hzig==
+X-Forwarded-Encrypted: i=1; AJvYcCVoloKl/qlzeSJ0I3PcXpSQKHKaTPeCnAyCzuno0e0VMxOsn5FgZUHHa0qRbkd9cAO8K9EM6eqeqYMxczg=@vger.kernel.org, AJvYcCVt9mLu9pjP7w8lAuFmr58I9cZT/nqqumYo4jCcgvd1zbyRI2o4cdsgin9TXkZC8fc2FZfGl7Ums/aa@vger.kernel.org, AJvYcCWQAeroAhRh0OxccUQjB6GKJjcXqxJf0qddvAnVXDPNpyWq9wWYyvXa6EO5pJF8JTcJrlp0oANP9/K+@vger.kernel.org, AJvYcCWp1dlZYbLrLPYBZhLh43dAtpjanF/qZqYA8+uB54FnU2dgFnPxIvnx+YpeuT0iY788L3tZue25azivnbA=@vger.kernel.org, AJvYcCX45fHf9PnizP4OQk2g0rLd47tW6wmEuJWrPRKwvWhgHI/AU3Q1tdwSF0p1FQKS3i541z1hScr9aRmzDEN3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyicxONKiaGuWEI3pww3bNpLRXjXaMMzB+rjcdISOv0rZQI0YSi
+	MpH7YgGPCyPjlyfyGZYqvWI6OMwbKEYVeJgz7AzDW8dbn5jmoYAkxWF5w4plGzFEMlc5by7g4DR
+	EZnuAng+CS7WXN7daOrgJ/uj97kz8YR4=
+X-Gm-Gg: ASbGncsleuBEy044MOhlXXAWEsrr5Gj1uzZqEUFcMYoIhKXjMSeieUnxgknZyD85eSY
+	tB8plZCJUyS+CK6qfFgc6qH9Frt5VFz/x9yenL8cFTPz5NBjbYY/15IHP3GEhl0qk9p6YkDdEwY
+	LOwcK2ctAcA3g3DhrDUgIKuwlrmoHsPUb9N31FVsSO5qt897Pimq6PvZf0B8Lvq93jlf0qm+DcV
+	dSi96WJRhdInBSfcV2UOs3PyxmPOg==
+X-Google-Smtp-Source: AGHT+IH1h+BxKBN05pHvmSdWJ4xJ7m/5SogwxucTQGgwiqZY0kchIq341vqJ9PFqt91EW03TMyusPsdeBGu0IIfihnA=
+X-Received: by 2002:a05:6902:330e:b0:e93:2cea:b3f6 with SMTP id
+ 3f1490d57ef6-e94e630dad3mr2829156276.43.1755607800721; Tue, 19 Aug 2025
+ 05:50:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250819-macsmc-subdevs-v1-0-57df6c3e5f19@gmail.com>
+ <20250819-macsmc-subdevs-v1-5-57df6c3e5f19@gmail.com> <20250819123505.GC7508@google.com>
+In-Reply-To: <20250819123505.GC7508@google.com>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Tue, 19 Aug 2025 14:49:49 +0200
+X-Gm-Features: Ac12FXzpOXpP5YWbSOcVjUpbhP2SuxCAjsf5aVyKzjKV0kcqir3rI2XCSKPBx60
+Message-ID: <CAMT+MTQvMnv4Zj3A8hskU1JW3zys0diKxWUzK5ScerxeSmgPjw@mail.gmail.com>
+Subject: Re: [PATCH 5/8] input: macsmc-hid: New driver to handle the Apple Mac
+ SMC buttons/lid
+To: Lee Jones <lee@kernel.org>
+Cc: James Calligeros <jcalligeros99@gmail.com>, Sven Peter <sven@kernel.org>, 
+	Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org, 
+	Hector Martin <marcan@marcan.st>
+Content-Type: text/plain; charset="UTF-8"
 
-Improve /proc filesystem check error message when filesystem type
-is unexpected
+On Tue, 19 Aug 2025 at 14:39, Lee Jones <lee@kernel.org> wrote:
+> Separate patch please.
+>
 
-Signed-off-by: Mallikarjun Thammanavar <mallikarjunst09@gmail.com>
----
- tools/testing/selftests/proc/read.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/proc/read.c b/tools/testing/selftests/proc/read.c
-index 35ee78dff144..c0f44ee71e79 100644
---- a/tools/testing/selftests/proc/read.c
-+++ b/tools/testing/selftests/proc/read.c
-@@ -138,7 +138,7 @@ int main(void)
- 		return 1;
- 	}
- 	if (sfs.f_type != 0x9fa0) {
--		fprintf(stderr, "error: unexpected f_type %lx\n", (long)sfs.f_type);
-+		fprintf(stderr, "error: /proc is not procfs (f_type = %lx)\n", (long)sfs.f_type);
- 		return 2;
- 	}
- 
--- 
-2.43.0
-
+Per the discussion in the thread linked from the cover letter, the dt
+maintainers have requested the bindings for all subdevices to be added
+together. Do you want a separate series with just the dt bindings and dts
+changes and the actual drivers in separate series or how do you prefer it?
 
