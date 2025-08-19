@@ -1,83 +1,93 @@
-Return-Path: <linux-kernel+bounces-775100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56BDB2BB35
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:56:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3046B2BB38
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D45377A746B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD053AC8CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39EE3101DB;
-	Tue, 19 Aug 2025 07:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0294E81732;
+	Tue, 19 Aug 2025 07:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4w2IEShS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IgFSSr+C"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EJB2prlL"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5503451DB;
-	Tue, 19 Aug 2025 07:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE2E3101D1;
+	Tue, 19 Aug 2025 07:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755590194; cv=none; b=qCk+0JTTMHoIkzJisIhmYLdk0k5drLt9unsASJkUBkXLAL8YtrvArFlkMN0UZvxrtSx+iBTd6swiI0vgX6A8ee4yorfE5ID9Is9Z8GZS/TSH9kulOLREGfvRKKzT+rdrK1iJ10PUsyqAnts/a3grdYS7EPB49ulOkD6lZdYLeUQ=
+	t=1755590247; cv=none; b=k8K4VJGgbGvDPU9fOjGJV22s3HXfWZjzJNeWOVaB42cdLicQYKeYB5LOCfL8PPrICnIg9rM7pyPUFAuTlUhPwWsUD0VrBmEcK5W2F+8amgiCRJHXTIsuXRfVZMY9hokpdCrY5CHOW2MTrzv7ZM83+a7Mqp6F2qPabwjUkrWB9LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755590194; c=relaxed/simple;
-	bh=WShfxPZxOA/BSuc5s52oGJwr+EVQtf7UjaPODOk95K4=;
+	s=arc-20240116; t=1755590247; c=relaxed/simple;
+	bh=6pvltH+FqpRjs3ghx0QZ/sWmg06Mxyz5vKd8SKGqpzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bj9ZK2xcRiE2KDASkPGtsj+ZVlPaNY51Bv3JsC2HeYK3SDMcTRINaMCxmaH522C/I8UuIyHtVruUVg0Dj9nZtfqHc8+1M0R+NI90W+jo5fdkvxcSbJ0ikXhfckjbstiGWWEhXyXvogQAO3vRtX+Yni5maInMU2uWN+Yz0NAiRbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4w2IEShS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IgFSSr+C; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 19 Aug 2025 09:56:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755590191;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q8jGBaJVDKq9+XJjCbLG1nqfHT7wgCMOXZgXbDJCxEk=;
-	b=4w2IEShS59g143qYeTV7iyK1H6svLCqqEnNADu5p6lbqDGLY9SRNHxyYeNanCUOEp5ruI9
-	iaMjrOEVLZuMbgazOl2qnfk0mOudtL3+0PWu2Qiku3i4kA4GysWwD66I/1Nc5nPPbs4yKU
-	8qrarx0R2H95Ha1K+g9leXHgShVcwCSECWHSgF97VxspZ+b1W/o3Ux88+x6G5pSDt+Z1bl
-	EnRFhWtJqqkAqcSdgLwRmJQSCASGlSBI+WkdK20x6nYUHhNYgQ5S5Qj71O/K1JPOgibNqi
-	MeYsLGABmvCMwA5SjhKvTOQccOqllYqBUuk0E2CYDFcKeFLyC3rvlSG8K81vlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755590191;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q8jGBaJVDKq9+XJjCbLG1nqfHT7wgCMOXZgXbDJCxEk=;
-	b=IgFSSr+CO/ygfRHmFPANbHUA5H4kALARLgXiIeTsRSHdaJYzHFKGSoQkz02ejCsUKKxEw7
-	O16VPCXUm0+Y6uBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: hariconscious@gmail.com
-Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
-	dvhart@infradead.org, dave@stgolabs.net, andrealmeid@igalia.com,
-	shuah@kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] kselftest/futex : fixed typo errors
-Message-ID: <20250819075629.AqQPRVR3@linutronix.de>
-References: <20250815155147.917-1-hariconscious@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9v3gYdxV0naLsrYbNyr5nAVH0thYORI1sU3cfQwWxPV3AlOPOqLCaUgUyXctFIS54m2dLMG/EDOVsefjP6Ow9+R0fu7WLYNRUP4pP6AhByBpBraa5nNFI1WEWeet/YL2kz9gFC3CLNdJ0ViLnsWzCVVrQe0NgUnRlV1txYey1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EJB2prlL; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VmIosm4L4PY+P0mM7SGV9Zk2/LL+r6zCjeW39m4X7t4=; b=EJB2prlLkNY84ehu1mS2n4wkjK
+	L7qoY/lgnJ0QODp7pnIdbkLBELGIxv6/JEQVcE0fhzPlZI29hzmg2y4+pTZGOWef5U/TCJIotgmbK
+	czMGROWYX6rUZlJZwoYIYngvaJzVWc31otqJjkETJjehxgXXVWmbdTsDBg7hobZ2BzJg+YY9qJwal
+	dvXMtQJyN5PQL0YOvTqAHJIDXJQdZHzAK4d7sPUfkB/CeqvNfOfVGE/80Z4QRyrdcApSwNkxeoqLp
+	YCZz9ZXSk0pG+/Wunlz+NFG/Grc3ZANU0XG52ZNyPqLKEYP1g+OfJeZD6y3cbi4kEOIhvT9qM1Yjj
+	TogBDSLw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uoHDX-0000000Haj3-42yj;
+	Tue, 19 Aug 2025 07:57:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BBDF830036F; Tue, 19 Aug 2025 09:57:14 +0200 (CEST)
+Date: Tue, 19 Aug 2025 09:57:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Luigi De Matteis <ldematteis123@gmail.com>,
+	sched-ext@lists.linux.dev
+Subject: Re: [PATCH -rebased 07/15] sched_ext: Add a DL server for sched_ext
+ tasks
+Message-ID: <20250819075714.GE3245006@noisy.programming.kicks-ass.net>
+References: <20250809184800.129831-1-joelagnelf@nvidia.com>
+ <20250809184800.129831-8-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815155147.917-1-hariconscious@gmail.com>
+In-Reply-To: <20250809184800.129831-8-joelagnelf@nvidia.com>
 
-On 2025-08-15 21:21:47 [+0530], hariconscious@gmail.com wrote:
-> From: HariKrishna <hariconscious@gmail.com>
-> 
-> fixed typo errors in kselftest of futex module
-> 
-> Signed-off-by: HariKrishna <hariconscious@gmail.com>
+On Sat, Aug 09, 2025 at 02:47:52PM -0400, Joel Fernandes wrote:
 
-Addressed by https://lore.kernel.org/all/20250815093942.8595-1-krishnagopi487@gmail.com/
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1510,7 +1510,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64
+>  	 * The fair server (sole dl_server) does not account for real-time
+>  	 * workload because it is running fair work.
+>  	 */
+> -	if (dl_se == &rq->fair_server)
+> +	if (dl_se == &rq->fair_server || dl_se == &rq->ext_server)
+>  		return;
 
-Sebastian
+Does that want to be: if (dl_se->dl_server) ?
+
+>  
 
