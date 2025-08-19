@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-775956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FEBB2C6CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:19:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70107B2C6D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3181DA07826
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5573563A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C36235358;
-	Tue, 19 Aug 2025 14:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74F923909F;
+	Tue, 19 Aug 2025 14:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVk6gJ0P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="MheK5weS"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE631DF74F;
-	Tue, 19 Aug 2025 14:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C13523D29A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755612899; cv=none; b=QgayCtKIWiBvTozQyGijG4fw6rotca3325AKagrgFrfIb8VYGLP8O3M20mHpvw/ty6KuoqXUvBwIsDPXJsfe1XNuKV4ExhPFqWXTtlsRaSSktoa1fi4R9PMSshViA6KcMlNB+uVnev5CyARa7uC7i/j46PDTrTsjhjm93fHq2yU=
+	t=1755612914; cv=none; b=ehAYdxSSnkl45yYPKNV5YjuqOSqxVeO/NSyRu2eyzXAbBYRheOYEjNnhY1JBetfcD23SygMTAcxgkF4o/voN7jQDazAB+/WfNQXC09+IEGKW3kFUkQeKI/9vtXGPtsj1Jfyidf9OsvwIFsh1SoRVqlPTpjt/8GlFE3TX3k4uVwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755612899; c=relaxed/simple;
-	bh=mJLUmjH8bs9v1NolTC7GC/CjWIWsHL9aaoo5lsud3rc=;
+	s=arc-20240116; t=1755612914; c=relaxed/simple;
+	bh=Ws/VhLDuvp9BwVOHbuZ7PLccW8mfappO32GbDbsanl0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qU/88fgPFMKOki7ytMTYs1FzSVuvj2QgtY2aLhv8idI/xSImNbeKdlR3980v/PAq4JhMkZq9zmrNmsfQcrGinxF0TXvSKJGPuldv+UvvlG+szuzZ5OZaIUvwFVyUY59tfuIIB6FB8doD9H3W43UB6O0yXjgmeM7YnJ8X0MK1Sjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVk6gJ0P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4546C4CEF1;
-	Tue, 19 Aug 2025 14:14:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755612898;
-	bh=mJLUmjH8bs9v1NolTC7GC/CjWIWsHL9aaoo5lsud3rc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0tdqbuAt6L/yU2h8q6zhlkEs/XGjsbhYdOPcXP27Ike0kwwfwcDoA4yFB6vMtUq1V2d+11guIM1jltHTNia0fpjVfOcsc3Cajt4Vx5wirKcTfXd50gxgGOViuCieopPfBWEvPHQKYxY3gA5CtNBekpN9NOTi1i9/3+Ldngoznc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=MheK5weS; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1755612905;
+	bh=Ws/VhLDuvp9BwVOHbuZ7PLccW8mfappO32GbDbsanl0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eVk6gJ0PrfXMYDhQ8FedcweuXQZtLRStZUkM1ST+SO/z3UpTwApN/uF6Xa0ZnO0fi
-	 4jCrnyeKEPPCPAbpAy17souoT/AcETfn7mbOrLJkg5o8gXdMbfBvKo+oJAhX7RkLtH
-	 2NDGleGMbIPyzA8BwSZEJxWP7bNStGeqLVpgdGAjp2M31ukRxke/dcdb82DIZGVIx4
-	 5P9fZobU9PPXNWSxC9h9SmaNQsAGOyRkYHBlG1UpZo5e/Xo7KTfNSR09zaQB/qgUZx
-	 ExJ6BSoIepUjot9yU/OtVdMsDRNP3OylNwFYHMRBQiaakdY4JV4idNnqgKFSs70Byk
-	 Bh+u8GziLCIPw==
-Date: Tue, 19 Aug 2025 19:44:50 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, 
-	jingoohan1@gmail.com, robh@kernel.org, ilpo.jarvinen@linux.intel.com, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Use common PCI host bridge APIs for
- finding the capabilities
-Message-ID: <767tx2yce7ohfowz5vtec3a5fkcdo7qjmrfpklmy5g6y5yqwao@fxacvqh2zrhb>
-References: <20250616152515.966480-1-18255117159@163.com>
+	b=MheK5weScHTpxz+WTnqi4y6cQ4kz5ypL/3KPLLEMxD/j8a0cbQugUsG5N+x/sbF2P
+	 qNHNbWmyvKjcDhy3+GXFsu01L5N+kHm6BsEpVaroWFLG7XVQ11x6F9OVxfP+lcWipq
+	 gRfK3+QPu8Rc5bf0Mua2JwV4l6HSsoMYlshKUHmk=
+Date: Tue, 19 Aug 2025 16:15:04 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] sysfs: attribute_group: allow registration of
+ const attribute
+Message-ID: <39a39901-7b10-4948-bd7c-b4c92551b5b6@t-8ch.de>
+References: <20250811-sysfs-const-attr-prep-v3-0-0d973ff46afc@weissschuh.net>
+ <20250811-sysfs-const-attr-prep-v3-1-0d973ff46afc@weissschuh.net>
+ <2025081957-refueling-anteater-4720@gregkh>
+ <daafd875-d3bc-4df7-a035-5a7dccdaaafb@t-8ch.de>
+ <2025081953-canteen-criteria-c604@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,91 +59,67 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250616152515.966480-1-18255117159@163.com>
+In-Reply-To: <2025081953-canteen-criteria-c604@gregkh>
 
-On Mon, Jun 16, 2025 at 11:25:15PM GMT, Hans Zhang wrote:
-> Use the PCI core is now exposing generic macros for the host bridges to
-> search for the PCIe capabilities, make use of them in the DWC EP driver.
+On 2025-08-19 16:10:42+0200, Greg Kroah-Hartman wrote:
+> On Tue, Aug 19, 2025 at 03:59:04PM +0200, Thomas Weißschuh wrote:
+> > On 2025-08-19 13:22:55+0200, Greg Kroah-Hartman wrote:
+> > > On Mon, Aug 11, 2025 at 11:14:27AM +0200, Thomas Weißschuh wrote:
+> > > > To be able to constify instances of struct attribute it has to be
+> > > > possible to add them to struct attribute_group.
+> > > > The current type of the attrs member however is not compatible with that.
+> > > > Introduce a union that allows registration of both const and non-const
+> > > > attributes to enable a piecewise transition.
+> > > > As both union member types are compatible no logic needs to be adapted.
+> > > > 
+> > > > Technically it is now possible register a const struct
+> > > > attribute and receive it as mutable pointer in the callbacks.
+> > > > This is a soundness issue.
+> > > > But this same soundness issue already exists today in
+> > > > sysfs_create_file().
+> > > > Also the struct definition and callback implementation are always
+> > > > closely linked and are meant to be moved to const in lockstep.
+> > > > 
+> > > > Similar to commit 906c508afdca ("sysfs: attribute_group: allow registration of const bin_attribute")
+> > > > 
+> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > > ---
+> > > >  include/linux/sysfs.h | 5 ++++-
+> > > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> > > > index f418aae4f1134f8126783d9e8eb575ba4278e927..a47092e837d9eb014894d1f7e49f0fd0f9a2e350 100644
+> > > > --- a/include/linux/sysfs.h
+> > > > +++ b/include/linux/sysfs.h
+> > > > @@ -105,7 +105,10 @@ struct attribute_group {
+> > > >  	size_t			(*bin_size)(struct kobject *,
+> > > >  					    const struct bin_attribute *,
+> > > >  					    int);
+> > > > -	struct attribute	**attrs;
+> > > > +	union {
+> > > > +		struct attribute	**attrs;
+> > > > +		const struct attribute	*const *attrs_new;
+> > > 
+> > > I know you will drop the "_new" prefix after a while, but "new" is
+> > > relative, and not very descriptive.
+> > 
+> > That is somewhat intentional to express that it is a transitional thing.
 > 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
+> Fair, but given the huge quantity here, it's going to take a long time,
+> so "new" is going to be rough to push through for 6+ months.
 
-Please send it together with the dependent series.
+Looking at how 'struct bin_attribute' went probably quite a bit longer.
 
-- Mani
+> > > How about "_const"?
+> > 
+> > At some point the regular variant will be const too, so "_const" would
+> > be a bit weird.
+> 
+> Yes, that's when you "switch it back", right?  You would have to do that
+> for _new as well.
 
-> ---
-> - Submissions based on the following patches:
-> https://patchwork.kernel.org/project/linux-pci/patch/20250607161405.808585-1-18255117159@163.com/
-> 
-> Recently, I checked the code and found that there are still some areas that can be further optimized.
-> The above series of patches has been around for a long time, so I'm sending this one out for review
-> as a separate patch.
-> ---
->  .../pci/controller/dwc/pcie-designware-ep.c   | 39 +++++++------------
->  1 file changed, 14 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 0ae54a94809b..9f1880cc1925 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -69,37 +69,26 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_reset_bar);
->  
-> -static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, u8 func_no,
-> -				     u8 cap_ptr, u8 cap)
-> +static int dw_pcie_ep_read_cfg(void *priv, u8 func_no, int where, int size, u32 *val)
->  {
-> -	u8 cap_id, next_cap_ptr;
-> -	u16 reg;
-> -
-> -	if (!cap_ptr)
-> -		return 0;
-> -
-> -	reg = dw_pcie_ep_readw_dbi(ep, func_no, cap_ptr);
-> -	cap_id = (reg & 0x00ff);
-> -
-> -	if (cap_id > PCI_CAP_ID_MAX)
-> -		return 0;
-> -
-> -	if (cap_id == cap)
-> -		return cap_ptr;
-> +	struct dw_pcie_ep *ep = priv;
-> +
-> +	if (size == 4)
-> +		*val = dw_pcie_ep_readl_dbi(ep, func_no, where);
-> +	else if (size == 2)
-> +		*val = dw_pcie_ep_readw_dbi(ep, func_no, where);
-> +	else if (size == 1)
-> +		*val = dw_pcie_ep_readb_dbi(ep, func_no, where);
-> +	else
-> +		return PCIBIOS_BAD_REGISTER_NUMBER;
->  
-> -	next_cap_ptr = (reg & 0xff00) >> 8;
-> -	return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
-> +	return PCIBIOS_SUCCESSFUL;
->  }
->  
->  static u8 dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, u8 func_no, u8 cap)
->  {
-> -	u8 next_cap_ptr;
-> -	u16 reg;
-> -
-> -	reg = dw_pcie_ep_readw_dbi(ep, func_no, PCI_CAPABILITY_LIST);
-> -	next_cap_ptr = (reg & 0x00ff);
-> -
-> -	return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
-> +	return PCI_FIND_NEXT_CAP_TTL(dw_pcie_ep_read_cfg, PCI_CAPABILITY_LIST,
-> +				     cap, ep, func_no);
->  }
->  
->  /**
-> 
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> -- 
-> 2.25.1
-> 
+There will probably be some overlap. But in the end it probably
+doesn't matter. Let's go with "_const".
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thomas
 
