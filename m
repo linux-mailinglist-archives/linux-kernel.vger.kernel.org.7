@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-774771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6365BB2B748
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:48:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFE3B2B74A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061A01B6135A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:48:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CF2E4E3803
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FDF29E0F5;
-	Tue, 19 Aug 2025 02:48:22 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0326229E115;
+	Tue, 19 Aug 2025 02:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M00/pavj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679831DA4E;
-	Tue, 19 Aug 2025 02:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B124F2882DC
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755571701; cv=none; b=kPYHq8ORZvXYjWksEAQI3IkR2WQ/VmnKYbVzQiUzemUyReZH2txTrdxpO7EF/ETO0f5ndNe5eAxy1XtYoxsPtRTGm5mK8zsTjvXlX8YbfBgb9S0r/ZM8yTd5WhBv9/cxEEMOy32ZtoNFl9nKyno6vgZ/vO/zrvcaEkzfESsNZZ0=
+	t=1755571738; cv=none; b=cqiWzEnBt0P57NP10RkeuM0aqwv7ZwUA2TssLvPC4oaNr86zBddtzuW2+z9eBd0gHBK7gK2eAWxJe8Gs48rOFsSFTjK03g8SS8fix/Qhjuxt4BW0KuIFy+x/3pAE1hIPFf+ZipWsq2yVra21swb1Ru6BX7hagav29bdeFd5XSqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755571701; c=relaxed/simple;
-	bh=DIHpUinyjnwiM1J+nYXRaCDItBY4mUGiNKQwpS3s+0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aNuauvJB3UfWqEu9x9LkTmYz3lJ1Z8nAfuKJvHFluZ5dDzbU2GM9fSBIcmY3dXG818Sz2FAwCxA21OzJLQRkQTf8i6aMKITgcD9or7kUiBCtKfMDi6fz7eVg+0lfy8iPxyNfgBnCvDBF/+ydnrnbKkNZzoOwj74tpcvUV2B3dZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c5Yn416Kyz2Cg9D;
-	Tue, 19 Aug 2025 10:43:52 +0800 (CST)
-Received: from kwepemk100003.china.huawei.com (unknown [7.202.194.51])
-	by mail.maildlp.com (Postfix) with ESMTPS id 52FD3180042;
-	Tue, 19 Aug 2025 10:48:14 +0800 (CST)
-Received: from [10.174.178.209] (10.174.178.209) by
- kwepemk100003.china.huawei.com (7.202.194.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 19 Aug 2025 10:48:13 +0800
-Message-ID: <3059e4f5-8ad7-44f0-80fa-61e3838ed54a@huawei.com>
-Date: Tue, 19 Aug 2025 10:48:13 +0800
+	s=arc-20240116; t=1755571738; c=relaxed/simple;
+	bh=rKki1UBfO66wOspZuH0gsX0riYu6EtAjgPc5TTW/K7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DDz/hri5jL1oYVeqIvWY/PX+Zka6rFpLmP0ReMAid/IkEfrBP6e8nF+3V/+4HSI9QpN9LQRiV6wC+J+8Oy9UTfe3bi3clri2iZqW9BMnMavmLA5DIPtWWYHjTBQLMVoEi2pUfMiHh8aFg1Zltf1sBEJNe0k7vc4i/LDfre+gmuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M00/pavj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755571735;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rKki1UBfO66wOspZuH0gsX0riYu6EtAjgPc5TTW/K7M=;
+	b=M00/pavjlU8vzskX9xzbXJjKq2utamOvyhWXQN9ZX7zwAJfLcqCXkjU/F58+7Q0+4px+lu
+	dGAoJkQwM0PR96Vwa4rl1tS+c5QlNTWfFGvErV3ECXlTlx0dj6g5Mwi5SWHhdMcbp7/1dE
+	fmlbPgXzUmG8QpYL62J+ZlBnT1VrtQM=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-PCouq-ChNPWEuU2biT61ow-1; Mon, 18 Aug 2025 22:48:53 -0400
+X-MC-Unique: PCouq-ChNPWEuU2biT61ow-1
+X-Mimecast-MFC-AGG-ID: PCouq-ChNPWEuU2biT61ow_1755571733
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32326e017eeso4691969a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 19:48:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755571732; x=1756176532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rKki1UBfO66wOspZuH0gsX0riYu6EtAjgPc5TTW/K7M=;
+        b=Z0Np3Eq0LGRydwIzrh4D8IhbaPyhYglJGDqWcEvPePlzjgffnf7tPpBM5dwXFBL75Z
+         RB29i1Lsp5KLzVmVdw3IKNjNOAxCOmyozEMzZZqqWKo/EoVxVB3GsUKLT8N3mKSj1oBR
+         xNYx68a4yDZ2gxP74W4GVf4Mi4U9iLJ9mpKIoFYPQoRBs+tXscY3DnasSgF0Fco/aQoB
+         Q4U4+4mjlnKusfQo4RLaOQvlfSWI8Z5iQew/7xCqWyQw6vR2Oze6kDbhGZFRZaSrVbZy
+         CNAsEoveRI8cSXPgBsSzDV5FLZaKtzWdVHh56VLjOYNusS2YRYwPaR8cNcCXRUZHjFsx
+         oK2w==
+X-Forwarded-Encrypted: i=1; AJvYcCW3l/0lcs1i4WZJrGORESc+ehKoR4yy4abgE/usukJCS0CWlAo1ZsbTh82PzzRj8BeXWIqgfKg3e44/gbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNt2zI7mzHcT9mb3C75oLPbO0E6f/lhvjT2la+RaLxYBs1Fvar
+	6YPHjqLVBrk4gJScParlzsPxvPxscrZ7GXIb12u7RWWevrDOuOeNI1lGCYroQfde3/fXual2q9D
+	bl3W2zI9D9d2cqjShwcW+y6G1/1JX301LjDakOKMBwBIuKE5NTrUV8diX/QtKDNJendRgPyW5u1
+	27ZYfHqrodPw1irUMGsj9mKUs/+HmmO+1dgz6yr6Jv
+X-Gm-Gg: ASbGncu3iziX/ONViYQfyF2koV+ijItos1WRABW7a5bR3PTiTk3ewovtleUcwP1H5my
+	84xVV4RsmTmWhGCYrVf6pBqBaJNn6OHgmDbbQ01hsE3pcBpO9K5cEC4jZ8EX5T7Pke9TSWo+8vg
+	7nkJWftP+cOHCY6AuoDmMmEf0=
+X-Received: by 2002:a17:90b:388c:b0:2f8:34df:5652 with SMTP id 98e67ed59e1d1-32476a6c3b0mr1536794a91.21.1755571732544;
+        Mon, 18 Aug 2025 19:48:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6dKD0oWKP+FU214PIKLYVdhY8eEWItrOTXjcxGw6l+G1j5qcpIfVxj44ZLVtPTiZnrRSk7uCddgfYxZ/3F0A=
+X-Received: by 2002:a17:90b:388c:b0:2f8:34df:5652 with SMTP id
+ 98e67ed59e1d1-32476a6c3b0mr1536750a91.21.1755571731921; Mon, 18 Aug 2025
+ 19:48:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] smb: client: Fix NULL vs ERR_PTR() returns in
- cifs_get_tcon_super()
-To: Steve French <smfrench@gmail.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, Paulo Alcantara <pc@manguebit.org>
-CC: Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N
-	<sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM
-	<bharathsm@microsoft.com>, <linux-cifs@vger.kernel.org>,
-	<samba-technical@lists.samba.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-References: <aKL5dUyf7UWcQNvW@stanley.mountain>
- <89a2023c-e383-4780-83e3-ba8f9e44c015@huaweicloud.com>
- <CAH2r5muVjS+Y_NFSWwYoisPGfynyTkmynjpQHi2_Kk6Z8AiG0w@mail.gmail.com>
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-In-Reply-To: <CAH2r5muVjS+Y_NFSWwYoisPGfynyTkmynjpQHi2_Kk6Z8AiG0w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk100003.china.huawei.com (7.202.194.51)
+References: <20250815085503.3034e391@kernel.org> <CGME20250818011515epcas5p21295745d0e831fd988706877d598f913@epcas5p2.samsung.com>
+ <20250818011522.1334212-1-junnan01.wu@samsung.com> <20250818083917.435a4263@kernel.org>
+In-Reply-To: <20250818083917.435a4263@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 19 Aug 2025 10:48:37 +0800
+X-Gm-Features: Ac12FXwGjt0tc43brXAcZucIny41hc0azUrrUQ6OWLOA5fDrbWEhAZEnJ-HtEtw
+Message-ID: <CACGkMEsVJcb2YYvfXYA0soE++cPEmQatkC0tB+shNKB=OTteWg@mail.gmail.com>
+Subject: Re: [PATCH net] virtio_net: adjust the execution order of function
+ `virtnet_close` during freeze
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Junnan Wu <junnan01.wu@samsung.com>, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, eperezma@redhat.com, lei19.wang@samsung.com, 
+	linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, q1.huang@samsung.com, virtualization@lists.linux.dev, 
+	xuanzhuo@linux.alibaba.com, ying123.xu@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Since Paulo pointed out a problem with v4 of this patch, an obvious
-> question is Dan's patch "independent enough" to take or would it make
-> the v5 of your patch harder.  Let me know when there is a v5 of the
-> patch so we can do more testing and review
-> 
-> On Mon, Aug 18, 2025 at 8:30 AM Wang Zhaolong
-> <wangzhaolong@huaweicloud.com> wrote:
->>
-Hi Steve, Paulo, and Dan,
+On Mon, Aug 18, 2025 at 11:39=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
+rote:
+>
+> On Mon, 18 Aug 2025 09:15:22 +0800 Junnan Wu wrote:
+> > > > Yes, you are right. The commit of this fix tag is the first commit =
+I
+> > > > found which add function `virtnet_poll_cleantx`. Actually, we are n=
+ot
+> > > > sure whether this issue appears after this commit.
+> > > >
+> > > > In our side, this issue is found by chance in version 5.15.
+> > > >
+> > > > It's hard to find the key commit which cause this issue
+> > > > for reason that the reproduction of this scenario is too complex.
+> > >
+> > > I think the problem needs to be more clearly understood, and then it
+> > > will be easier to find the fixes tag. At the face of it the patch
+> > > makes it look like close() doesn't reliably stop the device, which
+> > > is highly odd.
+> >
+> > Yes, you are right. It is really strange that `close()` acts like
+> > that, because current order has worked for long time. But panic call
+> > stack in our env shows that the function `virtnet_close` and
+> > `netif_device_detach` should have a correct execution order. And it
+> > needs more time to find the fixes tag. I wonder that is it must have
+> > fixes tag to merge?
+> >
+> > By the way, you mentioned that "the problem need to be more clearly
+> > understood", did you mean the descriptions and sequences in commit
+> > message are not easy to understand? Do you have some suggestions
+> > about this?
+>
+> Perhaps Jason gets your explanation and will correct me, but to me it
+> seems like the fix is based on trial and error rather than clear
+> understanding of the problem. If you understood the problem clearly
+> you should be able to find the Fixes tag without a problem..
+>
 
-Thank you very much for your attention to this patch.
++1
 
-The NULL pointer issue has already been addressed in the V4
-version of the patch. I have considered submitting a V5 version
-of the patch, but I have not yet decided whether to proceed with it.
+The code looks fine but the fixes tag needs to be correct.
 
-While further analyzing the code, I discovered the following
-potential issues in the implementation of `cifs_tree_connect()` in
-`dfs.c`, which calls `cifs_get_dfs_tcon_super()`:
+Thanks
 
-1. `cifs_get_dfs_tcon_super()` only returns a single superblock reference.
-    Using this superblock, it retrieves the associated `cifs_sb`. However,
-    a single tcon is supposed to be associated with multiple `cifs_sb`
-    instances. I am unsure whether there is a mechanism that guarantees a
-    DFS tcon (where `tcon->origin_fullpath` is non-NULL) has exactly one
-    associated `cifs_sb`. My current patch series only retrieves the first
-    `cifs_sb` that satisfies the condition, which may not be sufficient.
-
-2. The only purpose of retrieving the `cifs_sb` is to update the `prepath`
-    field of the `cifs_sb` in `tree_connect_dfs_target()` by calling
-    `cifs_update_super_prepath()`. No other information from the VFS-layer
-    superblock is used. However, retrieving the superblock is also meant to
-    pin it in memory to prevent it from being released. Therefore, I am
-    considering whether to simplify the process of updating the prepath.
-
-If I decide to submit a V5 version of the patch, I will need to fully investigate:
-1. Whether a DFS tcon can be associated with multiple `cifs_sb` instances.
-2. If multiple `cifs_sb` instances are associated with a DFS tcon, whether
-    the `prepath` field of all associated `cifs_sb` instances needs to be
-     updated.
-
-Only after thoroughly understanding these two points can I come up with a
-better implementation for the V5 patch.
-
-Resolving these questions will take some time. If anyone can provide
-guidance or assistance, I would greatly appreciate it.
-
-Best regards,
-Wang Zhaolong
-Wang Zhaolong
 
