@@ -1,104 +1,235 @@
-Return-Path: <linux-kernel+bounces-776154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46F2B2C949
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:15:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5B1B2C944
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A61645C05E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:15:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000E51893E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B861F3BB5;
-	Tue, 19 Aug 2025 16:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A092C11DD;
+	Tue, 19 Aug 2025 16:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R7jNMwCr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSm0Q3pj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6372E38F80
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 16:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2C92BFC60;
+	Tue, 19 Aug 2025 16:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755620107; cv=none; b=Kqf1KjLVocoBO++vKzvV3SbmYdECuQSQtno/AnZo/HPynRGoEAFXAfEwLwG0ZGsjVDUWEvAmXPTGlFAYWHbsLclIbOeTo0qTawqsgmEiSVjraypS+bi4yjhL0mdTrLUAIae/BTh9VGMXw10RAB1XoiWgbV2s3q97bpevpcuci8A=
+	t=1755620048; cv=none; b=hyiEoPhOt3AFgFV7tj2RwOOUOIWhzHrrU5Y/l0dW5uaSB7qaT/6MBDyN0xd6CzavZut1tyE5XU0BJyWFyv3LtMdj9aHjo1cTFnZlTkq/dJXq4GqrPBCbOKB/JlnZUswH9c4c3cUR8oXYge6+SDU3yZ3YW3bLB/TyMtVUrozvf4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755620107; c=relaxed/simple;
-	bh=kr+F4blUg6FODR+2BQWkkRgkHiFy8Hzr+twDnZG4NyI=;
+	s=arc-20240116; t=1755620048; c=relaxed/simple;
+	bh=7mkf/EqhebSrqdh5k2QADksG30ir99A1YyktolOn9J0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u4ew79vxFne1sKVF84EYSq+Y/X/rlwD6iQ1IQw0kX9pdnVCOETwgpgXWwhvOJNlqxZ+ZDcFwQaYicFq6affHCSsVqPEE8kRCk2nAucmE3qtC/dRKuab4FVAF+51G6tW0K5TnUmrG13ORsis+s+9j7il6H/vMFLfwd1ecEVVpP30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R7jNMwCr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755620105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kr+F4blUg6FODR+2BQWkkRgkHiFy8Hzr+twDnZG4NyI=;
-	b=R7jNMwCr0dzxjPtJ0cU3+0+9CAIhRhhp4U3YjJ5INjfZvKB5PO30jdUv2JE7gcgzEo5i6U
-	MSKG4wBEwTgGPLcF1Hw3VP7CTemR/KLz+xY5NtZljf0Pt339dEpWk39ZAa6YeYxDn4Ng4m
-	yhVx1rvUB8P8bHCe7AASzv7BEpkfEqk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-3o2EMjNHMyeBJ5Vh3nX_AA-1; Tue,
- 19 Aug 2025 12:14:59 -0400
-X-MC-Unique: 3o2EMjNHMyeBJ5Vh3nX_AA-1
-X-Mimecast-MFC-AGG-ID: 3o2EMjNHMyeBJ5Vh3nX_AA_1755620096
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4928A180036E;
-	Tue, 19 Aug 2025 16:14:56 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.95])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id AF8BF18004A3;
-	Tue, 19 Aug 2025 16:14:49 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 19 Aug 2025 18:13:37 +0200 (CEST)
-Date: Tue, 19 Aug 2025 18:13:30 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Dominique Martinet <asmadeus@codewreck.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	syzbot <syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, dvyukov@google.com,
-	elver@google.com, glider@google.com, jack@suse.cz,
-	kasan-dev@googlegroups.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-	willy@infradead.org, v9fs@lists.linux.dev,
-	David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH] 9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
-Message-ID: <20250819161329.GC11345@redhat.com>
-References: <68a2de8f.050a0220.e29e5.0097.GAE@google.com>
- <20250819161013.GB11345@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jvepx9D04+UclS2hMThAZVjcfY7SQdpSispUkjQKOAkmwkw0+N9himDfNOc9gYghJ4jfUNyyPWYLaGF4lnMlzb2j2kXa+YuiNKVofOUtiX7R6hKSxc1HLhTM5ttB1jFy9xsil+zwB8HQlbj00Pvef6BtUqIbDk7YQK4Ci6QVBSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSm0Q3pj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E8BC116B1;
+	Tue, 19 Aug 2025 16:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755620047;
+	bh=7mkf/EqhebSrqdh5k2QADksG30ir99A1YyktolOn9J0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HSm0Q3pjLsLdY1MXZuiq4rwR2K/cBlGRf5KZAcZXIpQzdPvDjh+SRvBLRB3WyTdgo
+	 R9AFdkpqETBYl1rexcCKiX7hI3cFquQYDWtI1d+Gzd/sSPVeeDxXWoRRMv4AKy/kCc
+	 KQUB2is0f46tmM0GyZ5byyG9xif/Kd5JkCI/Yivt1219xxOjn39l+EHgb5dX9xia2a
+	 +rgP8tSBk30N6scO2PQC7qElTHEwc0pbucR81nTMxC68WfZlnT5UgKmnz05agZoYHU
+	 BH/sauRG8oubY6Gi+iDVHetexvJc4AkG4vhPGgyK3WPqc8RStjY1WDLjx2L6x+cFZe
+	 BuigNcKYViDYg==
+Date: Tue, 19 Aug 2025 21:43:58 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] PCI: brcmstb: Add a way to indicate if PCIe
+ bridge is active
+Message-ID: <6maieqyzt2c73l7pbk37owh7dfjybnhgq746h5zxjhvmp3f472@dx4ibad3en6f>
+References: <20250807221513.1439407-1-james.quinlan@broadcom.com>
+ <20250807221513.1439407-2-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250819161013.GB11345@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250807221513.1439407-2-james.quinlan@broadcom.com>
 
-On 08/19, Oleg Nesterov wrote:
->
-> Reported-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
-> Tested-by: syzbot+d1b5dace43896bc386c3@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68a2de8f.050a0220.e29e5.0097.GAE@google.com/
-> Link: https://lore.kernel.org/all/67dedd2f.050a0220.31a16b.003f.GAE@google.com/
-> Co-developed-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+On Thu, Aug 07, 2025 at 06:15:12PM GMT, Jim Quinlan wrote:
+> In a future commit, a new handler will be introduced that in part does
+> reads and writes to some of the PCIe registers.  When this handler is
+> invoked, it is paramount that it does not do these register accesses when
+> the PCIe bridge is inactive, as this will cause CPU abort errors.
+> 
+> To solve this we keep a spinlock that guards a variable which indicates
+> whether the bridge is on or off.  When the bridge is on, access of the PCIe
+> HW registers may proceed.
+> 
+> Since there are multiple ways to reset the bridge, we introduce a general
+> function to obtain the spinlock, call the specific function that is used
+> for the specific SoC, sets the bridge active indicator variable, and
+> releases the spinlock.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 51 +++++++++++++++++++++------
+>  1 file changed, 40 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 9afbd02ded35..ceb431a252b7 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/reset.h>
+>  #include <linux/sizes.h>
+>  #include <linux/slab.h>
+> +#include <linux/spinlock.h>
+>  #include <linux/string.h>
+>  #include <linux/types.h>
+>  
+> @@ -259,6 +260,7 @@ struct pcie_cfg_data {
+>  	int (*perst_set)(struct brcm_pcie *pcie, u32 val);
+>  	int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+>  	int (*post_setup)(struct brcm_pcie *pcie);
+> +	bool has_err_report;
+>  };
+>  
+>  struct subdev_regulators {
+> @@ -303,6 +305,8 @@ struct brcm_pcie {
+>  	struct subdev_regulators *sr;
+>  	bool			ep_wakeup_capable;
+>  	const struct pcie_cfg_data	*cfg;
+> +	bool			bridge_on;
+> +	spinlock_t		bridge_lock;
+>  };
+>  
+>  static inline bool is_bmips(const struct brcm_pcie *pcie)
+> @@ -310,6 +314,24 @@ static inline bool is_bmips(const struct brcm_pcie *pcie)
+>  	return pcie->cfg->soc_base == BCM7435 || pcie->cfg->soc_base == BCM7425;
+>  }
+>  
+> +static inline int brcm_pcie_bridge_sw_init_set(struct brcm_pcie *pcie, u32 val)
 
-Prateek, I turned your "Reviewed-by" from the previous discussion
-https://lore.kernel.org/all/67dedd2f.050a0220.31a16b.003f.GAE@google.com/
-into Co-developed-by + Signed-off-by, I hope you won't object?
+No need to specify 'inline' keyword.
 
-Oleg.
+> +{
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	if (pcie->cfg->has_err_report)
+> +		spin_lock_irqsave(&pcie->bridge_lock, flags);
+> +
+> +	ret = pcie->cfg->bridge_sw_init_set(pcie, val);
+> +	/* If we fail, assume the bridge is in reset (off) */
+> +	pcie->bridge_on = ret ? false : !val;
 
+s/bridge_on/bridge_in_reset
+
+This callback is not necessarily turning the bridge ON/OFF.
+
+> +
+> +	if (pcie->cfg->has_err_report)
+> +		spin_unlock_irqrestore(&pcie->bridge_lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+>  /*
+>   * This is to convert the size of the inbound "BAR" region to the
+>   * non-linear values of PCIE_X_MISC_RC_BAR[123]_CONFIG_LO.SIZE
+> @@ -756,9 +778,8 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
+>  
+>  static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+>  {
+> -	u32 tmp, mask = RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> -	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> -	int ret = 0;
+> +	u32 tmp;
+> +	int ret;
+>  
+>  	if (pcie->bridge_reset) {
+>  		if (val)
+> @@ -774,10 +795,10 @@ static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+>  	}
+>  
+>  	tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> -	tmp = (tmp & ~mask) | ((val << shift) & mask);
+> +	u32p_replace_bits(&tmp, val, RGR1_SW_INIT_1_INIT_GENERIC_MASK);
+
+This change doesn't belong to this patch.
+
+>  	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, u32 val)
+> @@ -1081,7 +1102,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  	int memc, ret;
+>  
+>  	/* Reset the bridge */
+> -	ret = pcie->cfg->bridge_sw_init_set(pcie, 1);
+> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 1);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1097,7 +1118,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  	usleep_range(100, 200);
+>  
+>  	/* Take the bridge out of reset */
+> -	ret = pcie->cfg->bridge_sw_init_set(pcie, 0);
+> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1565,7 +1586,7 @@ static int brcm_pcie_turn_off(struct brcm_pcie *pcie)
+>  
+>  	if (!(pcie->cfg->quirks & CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN))
+>  		/* Shutdown PCIe bridge */
+> -		ret = pcie->cfg->bridge_sw_init_set(pcie, 1);
+> +		ret = brcm_pcie_bridge_sw_init_set(pcie, 1);
+>  
+>  	return ret;
+>  }
+> @@ -1653,7 +1674,9 @@ static int brcm_pcie_resume_noirq(struct device *dev)
+>  		goto err_reset;
+>  
+>  	/* Take bridge out of reset so we can access the SERDES reg */
+> -	pcie->cfg->bridge_sw_init_set(pcie, 0);
+> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
+> +	if (ret)
+> +		goto err_reset;
+>  
+>  	/* SERDES_IDDQ = 0 */
+>  	tmp = readl(base + HARD_DEBUG(pcie));
+> @@ -1921,7 +1944,10 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
+>  
+> -	pcie->cfg->bridge_sw_init_set(pcie, 0);
+> +	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "could not un-reset the bridge\n");
+
+I believe Bjorn asked you to change this error message to:
+'could not deassert the bridge' or similar, but you ended up changing the
+unrelated error message below.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
