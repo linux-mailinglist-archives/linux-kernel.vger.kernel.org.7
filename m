@@ -1,366 +1,86 @@
-Return-Path: <linux-kernel+bounces-775938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5CFB2C69F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:11:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B0CB2C69B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12BAF16C549
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B76F3ADD23
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741C32063E7;
-	Tue, 19 Aug 2025 14:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BB4215F7D;
+	Tue, 19 Aug 2025 14:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PGEkbVgu"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="twNnSjrf"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D1C1EFF9A
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E602EB850
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 14:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755612345; cv=none; b=uG9i/VZp+YuVMEca8rPoS3MQpnOlnt5Wm1rm46YFWltZlMP8DFlp6UwUkd/J8JjnVyw1gZDgcyLLfDfvnzYDlYge5Bv7IwfW+NHADsheAb0SOSyDPrgmfNTqDTw9lwfS4b4rQOBF7ReJPGrFPquI+KR6Dqbaon46PiDvGw2mTbM=
+	t=1755612425; cv=none; b=l40fPQt6B0daQuDLfksAItmLPJIGBhn/D/YcBw2mE4c+lUElX7xmEo+f8AtRZvSK8RSQos8mnfk1nqW0GeHLNDunvj9zc2pJK6ewkNsGVvh2tJwecbZFo7qJ5cRsyfabM8YULhonWv9PvmKnzlRfFM45wE2pDov7epn2moRe0rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755612345; c=relaxed/simple;
-	bh=U9I9HNEp0+4Gz5xEHfaKauD4IVv3OHGVKeBcb/I6od0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DCuaNjiVbVvy09IE6W4NBEl6rNjuzs671XR5uqCkwCjTBpH7GSmujSjAfmodJ6o+JVYaioLSgodUW6R9w5NeHmdHScer/W/yQkWyFyVNHop9ja6L+51t4FnIVxkmySRYetxZSOFsKAs/vxK0JSpxtMqTxS45QIYJsIgeJdvuZjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PGEkbVgu; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61be874dcaeso273554eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755612341; x=1756217141; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a7IXcxSq366tXdmeyBNegwQEPnHuF26aW6nAQ3VNfA0=;
-        b=PGEkbVgu9NXAXUDLDXtM2rXxeLtnpVrPAkcJ5mgjaXoeAgOUoCSjmFAs0GNdsbCy8y
-         rh9PIohRWXp2prWZScagkpBdU/56QhfPQ458HsSIu8lnuSAxLw8e1TuCaNNdQaMLvw+x
-         alkDOGMtLgeX5LDJK8HttvHJ8SgdspKuv5E0/ITZs2DmlV7L+/+SzkKnW9T3d4T/dfFs
-         qoa1NU8v2m3U2NQEjhLW7OdXa5/Mw8VGzTiIUWjzx0QXhpkt45Q8C3Tf2piJxNzzhvMI
-         J6BdE7tGcgSI+BGu6uLZERCgujRPjKOA4sziYzJYuO72rtLBRSqYBtI1G+mAUulwqQ1m
-         MIig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755612341; x=1756217141;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7IXcxSq366tXdmeyBNegwQEPnHuF26aW6nAQ3VNfA0=;
-        b=rAtHrfTqNyk5Y9snz8HhM/JHe1/JRTRIU+Vi8IjrACOyi58b+TCKvSCEjyJ7MYQ3s/
-         s/v9EXDtzpJklHxp86sF/D2Cai6mZKZJroy67hx+poKu32X5Nl5jFU9hTSHoctJZPKIB
-         qLMsqcapTfTHHFWXhb4n2CnUZx0YCUzAiYACr62YbV1ayjpIYE+aJLD3Hz6BIyLdH+2i
-         QvJsMxkpa2nOAV0Mv5OcpFRzIA424ypxBoEpI7u8noLwjhG6TWdfz4Y1OKdgYauOwNyr
-         mbeJYvT9PyawfwQa6aiATzj5SBQD16peeW+CxmDoaOd+F4DTgb+qa1sHImgJf0LKgO1P
-         dyEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnCEi9OlFW2zxTnTg6cqesSzUDkt+qtJ1wZ6GFWxafR/1OIDo252akcqbH54orM9AS8xcdsxb3lwIAWgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8AhACX8xaaF5Q2qTSrONfNdLrgeXMJaWnQuGHMbaZOXj8x7w7
-	JqeT9UuMzG7r4qC3hc/kAgXX9EmYa3KBcJcFBWGiPBNQwWq2zreK7OyBEF10hfA0ehw=
-X-Gm-Gg: ASbGncsongbh6JBkcp66O2qrMgy+ib6JTrQIr2DTU5ziZGKKNOf1+WGo/LduqA9oFYR
-	X4ANPkAYO03rZPYCtOymMVf0YDME0i9BpTCUubZqp62+qtWBZgNjJ2f+2x/xjhQU7SRC0Mbs+8a
-	tdB2TAG6PJ0CkKjaeiN8P8ngqOio1wnhAsloauf5zSDVVmIauP+tXhwaYaE2ZnMJERFC0QpF8tW
-	GZKYrrDequFcW99vlm9fysGMCNDxY84xr5XOgjo6KbhWXPuMkDJd7h71RxIP6gifkXYNm+s/sZq
-	7VCUsOZcl1I+ES/FecdbW4IY6DyMqUjZJgfOrnXCnLfo9rmtsxwERnIgE5DEpduZzeEKC1RCu3O
-	buYeahkJCrVMfnF2nB9oxFT2cH5mr/N/j8la2VMYfCSrMTadjn1KQ0YN3RYIZUvRigWQfXarYkh
-	A=
-X-Google-Smtp-Source: AGHT+IHjF7sm3BM6UqpsCOtViY+JAbenMV7/s4EAL5cMuLNS5sTyBZc8mLeIWMkrcU5gOa4R+PWZaQ==
-X-Received: by 2002:a05:6820:2214:b0:61c:60:a68d with SMTP id 006d021491bc7-61d919f3ae6mr1887604eaf.6.1755612340610;
-        Tue, 19 Aug 2025 07:05:40 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:990c:4d50:9c6c:f367? ([2600:8803:e7e4:1d00:990c:4d50:9c6c:f367])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61bec14b3cesm1082668eaf.27.2025.08.19.07.05.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 07:05:40 -0700 (PDT)
-Message-ID: <f8e95533-c486-442f-a186-5e746dad2f4c@baylibre.com>
-Date: Tue, 19 Aug 2025 09:05:39 -0500
+	s=arc-20240116; t=1755612425; c=relaxed/simple;
+	bh=RBc+Mfrd5JZ5Shxaf+WcXhRVeM6ZXhVokwNykvbyHqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmA0RS0oR2V6qGU/0bBOhE467uqtk3fWCoZmVuG+XlEDVxUNxLPpzR5oj9HtGo3sIsr9k0WQxKFJKhL+LI6GuqNo2NqbAZa7grR4vfTYluR8ZAuy4Q8WMTUief2+LgRc3rEbhUvm2LshGT3jVst/a9Dt30R386J+GMkfXWpnlSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=twNnSjrf; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1755612421;
+	bh=RBc+Mfrd5JZ5Shxaf+WcXhRVeM6ZXhVokwNykvbyHqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=twNnSjrfWq17jU6NnXmyUMffT6kGI2LHzFUy+Au1sVsd2GaS0Qi1WcXk/2dW548Oc
+	 Onhq0TRPVrJnTaeVALtneZZZAI4T+5g9qBV+N7NYm1xY+pGs8d5yGss1AbZlRDiYWC
+	 jS3xXVLtogW1/YcE7WB27b5sO7CRJ52gi1vosgHc=
+Date: Tue, 19 Aug 2025 16:07:01 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] sysfs: attribute_group: enable const variants of
+ is_visible()
+Message-ID: <faf11932-3a09-4c26-b83e-fbe7bd5838f2@t-8ch.de>
+References: <20250811-sysfs-const-attr-prep-v3-0-0d973ff46afc@weissschuh.net>
+ <20250811-sysfs-const-attr-prep-v3-4-0d973ff46afc@weissschuh.net>
+ <2025081957-promotion-shrivel-32cc@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] iio: mcp9600: Add support for IIR filter
-To: Ben Collins <bcollins@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>
-Cc: Ben Collins <bcollins@watter.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250818183214.380847-1-bcollins@kernel.org>
- <20250818183214.380847-7-bcollins@kernel.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250818183214.380847-7-bcollins@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025081957-promotion-shrivel-32cc@gregkh>
 
-On 8/18/25 1:32 PM, Ben Collins wrote:
-> From: Ben Collins <bcollins@watter.com>
+On 2025-08-19 13:28:40+0200, Greg Kroah-Hartman wrote:
+> On Mon, Aug 11, 2025 at 11:14:30AM +0200, Thomas Weißschuh wrote:
+> > When constifying instances of struct attribute, for consistency the
+> > corresponding .is_visible() callback should be adapted, too.
+> > Introduce a temporary transition mechanism until all callbacks are
+> > converted.
 > 
-> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-> to allow get/set of this value.
-> 
-> Use a filter_type[none, ema] for enabling the IIR filter.
-> 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-> ---
->  drivers/iio/temperature/mcp9600.c | 157 ++++++++++++++++++++++++++++++
->  1 file changed, 157 insertions(+)
-> 
-> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-> index 9b017820efc1..0ec47cbeb88c 100644
-> --- a/drivers/iio/temperature/mcp9600.c
-> +++ b/drivers/iio/temperature/mcp9600.c
-> @@ -31,6 +31,7 @@
->  #define MCP9600_STATUS_ALERT(x)		BIT(x)
->  #define MCP9600_SENSOR_CFG		0x05
->  #define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
-> +#define MCP9600_FILTER_MASK		GENMASK(2, 0)
->  #define MCP9600_ALERT_CFG1		0x08
->  #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
->  #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
-> @@ -94,6 +95,27 @@ static const int mcp9600_tc_types[] = {
->  	[THERMOCOUPLE_TYPE_R] = 'R',
->  };
->  
-> +enum mcp9600_filter {
-> +	MCP9600_FILTER_TYPE_NONE,
-> +	MCP9600_FILTER_TYPE_EMA,
-> +};
-> +
-> +static const char * const mcp9600_filter_type[] = {
-> +	[MCP9600_FILTER_TYPE_NONE] = "none",
-> +	[MCP9600_FILTER_TYPE_EMA] = "ema",
-> +};
-> +
-> +static const int mcp_iir_coefficients_avail[7][2] = {
-> +	/* Level 0 is no filter */
-> +	{ 0, 524549 },
-> +	{ 0, 243901 },
-> +	{ 0, 119994 },
-> +	{ 0,  59761 },
-> +	{ 0,  29851 },
-> +	{ 0,  14922 },
-> +	{ 0,   7461 },
-> +};
-> +
->  static const struct iio_event_spec mcp9600_events[] = {
->  	{
->  		.type = IIO_EV_TYPE_THRESH,
-> @@ -118,7 +140,11 @@ static const struct iio_event_spec mcp9600_events[] = {
->  			.address = MCP9600_HOT_JUNCTION,		       \
->  			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	       \
->  					      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE) | \
-> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |  \
->  					      BIT(IIO_CHAN_INFO_SCALE),	       \
-> +			.info_mask_separate_available =                        \
-> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY), \
-> +			.ext_info = mcp9600_ext_filter,			       \
->  			.event_spec = &mcp9600_events[hj_ev_spec_off],	       \
->  			.num_event_specs = hj_num_ev,			       \
->  		},							       \
-> @@ -134,6 +160,26 @@ static const struct iio_event_spec mcp9600_events[] = {
->  		},							       \
->  	}
->  
-> +static int mcp9600_get_filter(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan);
-> +static int mcp9600_set_filter(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan,
-> +			      unsigned int mode);
-> +
-> +static const struct iio_enum mcp9600_filter_enum = {
-> +	.items = mcp9600_filter_type,
-> +	.num_items = ARRAY_SIZE(mcp9600_filter_type),
-> +	.get = mcp9600_get_filter,
-> +	.set = mcp9600_set_filter,
-> +};
-> +
-> +static const struct iio_chan_spec_ext_info mcp9600_ext_filter[] = {
-> +	IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &mcp9600_filter_enum),
-> +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL,
-> +			   &mcp9600_filter_enum),
-> +	{ }
-> +};
-> +
->  static const struct iio_chan_spec mcp9600_channels[][2] = {
->  	MCP9600_CHANNELS(0, 0, 0, 0), /* Alerts: - - - - */
->  	MCP9600_CHANNELS(1, 0, 0, 0), /* Alerts: 1 - - - */
-> @@ -161,6 +207,8 @@ struct mcp_chip_info {
->  struct mcp9600_data {
->  	struct i2c_client *client;
->  	u32 thermocouple_type;
-> +	/* Filter enabled is 1-7, with 0 being off (filter_type none) */
-> +	u8 filter_level;
->  };
->  
->  static int mcp9600_read(struct mcp9600_data *data,
-> @@ -191,13 +239,45 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
->  		if (ret)
->  			return ret;
->  		return IIO_VAL_INT;
-> +
->  	case IIO_CHAN_INFO_SCALE:
->  		*val = 62;
->  		*val2 = 500000;
->  		return IIO_VAL_INT_PLUS_MICRO;
-> +
->  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
->  		*val = mcp9600_tc_types[data->thermocouple_type];
->  		return IIO_VAL_CHAR;
-> +
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		if (data->filter_level == 0)
-> +			return -EINVAL;
+> I count about 600+ users of is_visible() now, how is that going to be
+> converted?  It feels like a lot of churn/work, what's the plan here?
 
-To implement Jonathan's request from v5, drop this error return.
-We'll also need a separate bool data->is_filter_enabled field so
-that we can keep the last set filter_level even when the filter
-is disabled. (i.e. data->filter_level is never == 0).
+The idea was to convert one driver at a time to the const variants.
+Adapting is_visible(), read(), write() and the group structs
+together. And then submit these batched per subsystem.
+It's not a purely mechanical change as the users may modify their
+attributes.
 
-This way, if you set the filter level, you can enable and disable
-the filter via filter_type and still have the same filter level.
+It will be a lot of churn. is_visible() is not even the big one.
 
-> +
-> +		*val = mcp_iir_coefficients_avail[data->filter_level - 1][0];
-> +		*val2 = mcp_iir_coefficients_avail[data->filter_level - 1][1];
-> +		return IIO_VAL_INT_PLUS_MICRO;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int mcp9600_read_avail(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan,
-> +			      const int **vals, int *type, int *length,
-> +			      long mask)
-> +{
-> +	struct mcp9600_data *data = iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		if (data->filter_level == 0)
-> +			return -EINVAL;
-> +
-> +		*vals = (int *)mcp_iir_coefficients_avail;
-> +		*type = IIO_VAL_INT_PLUS_MICRO;
-> +		*length = 2 * ARRAY_SIZE(mcp_iir_coefficients_avail);
-> +		return IIO_AVAIL_LIST;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -211,6 +291,7 @@ static int mcp9600_config(struct mcp9600_data *data)
->  
->  	cfg  = FIELD_PREP(MCP9600_SENSOR_TYPE_MASK,
->  			  mcp9600_type_map[data->thermocouple_type]);
-> +	FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->filter_level);
+> These changes seem a lot more intrusive than the bin_attr ones :(
 
-And change the logic here to:
+Indeed :-/
 
-	FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->is_filter_enabled ?
-		     data->filter_level : 0);
 
->  
->  	ret = i2c_smbus_write_byte_data(client, MCP9600_SENSOR_CFG, cfg);
->  	if (ret < 0) {
-> @@ -221,6 +302,79 @@ static int mcp9600_config(struct mcp9600_data *data)
->  	return 0;
->  }
->  
-> +static int mcp9600_write_raw_get_fmt(struct iio_dev *indio_dev,
-> +				     struct iio_chan_spec const *chan,
-> +				     long mask)
-> +{
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		return IIO_VAL_INT_PLUS_MICRO;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int mcp9600_write_raw(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     int val, int val2, long mask)
-> +{
-> +	struct mcp9600_data *data = iio_priv(indio_dev);
-> +	int i;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		for (i = 0; i < ARRAY_SIZE(mcp_iir_coefficients_avail); i++) {
-> +			if (mcp_iir_coefficients_avail[i][0] == val &&
-> +			    mcp_iir_coefficients_avail[i][1] == val2)
-> +				break;
-> +		}
-> +
-> +		if (i == ARRAY_SIZE(mcp_iir_coefficients_avail))
-> +			return -EINVAL;
-> +
-> +		data->filter_level = i + 1;
-> +		return mcp9600_config(data);
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int mcp9600_get_filter(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan)
-> +{
-> +	struct mcp9600_data *data = iio_priv(indio_dev);
-> +
-> +	if (data->filter_level == 0)
-> +		return MCP9600_FILTER_TYPE_NONE;
-> +
-> +	return MCP9600_FILTER_TYPE_EMA;
-> +}
-> +
-> +static int mcp9600_set_filter(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan,
-> +			      unsigned int mode)
-> +{
-> +	struct mcp9600_data *data = iio_priv(indio_dev);
-> +
-> +	switch (mode) {
-> +	case MCP9600_FILTER_TYPE_NONE:
-> +		data->filter_level = 0;
-
-Don't touch data->filter_level here, just set data->is_filter_enabled = false.
-
-> +		return mcp9600_config(data);
-> +
-> +	case MCP9600_FILTER_TYPE_EMA:
-> +		if (data->filter_level == 0) {
-> +			/* Minimum filter by default */
-> +			data->filter_level = 1;
-
-And similar, just set data->is_filter_enabled = true without changing filter_level.
-
-> +			return mcp9600_config(data);
-> +		}
-> +		return 0;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static int mcp9600_get_alert_index(int channel2, enum iio_event_direction dir)
->  {
->  	if (channel2 == IIO_MOD_TEMP_AMBIENT) {
-> @@ -358,6 +512,9 @@ static int mcp9600_write_thresh(struct iio_dev *indio_dev,
->  
->  static const struct iio_info mcp9600_info = {
->  	.read_raw = mcp9600_read_raw,
-> +	.read_avail = mcp9600_read_avail,
-> +	.write_raw = mcp9600_write_raw,
-> +	.write_raw_get_fmt = mcp9600_write_raw_get_fmt,
->  	.read_event_config = mcp9600_read_event_config,
->  	.write_event_config = mcp9600_write_event_config,
->  	.read_event_value = mcp9600_read_thresh,
-
+Thomas
 
