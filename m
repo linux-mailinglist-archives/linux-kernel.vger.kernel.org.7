@@ -1,190 +1,201 @@
-Return-Path: <linux-kernel+bounces-775563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3676CB2C0A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:38:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37366B2C0A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8631188AD22
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3EA3B65D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDA732BF30;
-	Tue, 19 Aug 2025 11:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633A932BF59;
+	Tue, 19 Aug 2025 11:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvkjlBNV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lAeSY4ZM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E35232A3F1;
-	Tue, 19 Aug 2025 11:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7FC30F813;
+	Tue, 19 Aug 2025 11:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603284; cv=none; b=SgtNjT7gJIzTTPhMPn8ByP9xbMPSkVHzA1OVIiqKQiK8xlfV44PSvOj5bzJKPBjg7DQlw+6xQfnIh5NhQFInoEhJssNGD+uprMfi14ktp63DyZNgRLpBtWv8dTzPgdr57iU+MpAbOMEHJESlF7QlHL33Js7A5Vnl58iRnDTjmfA=
+	t=1755603325; cv=none; b=eRZ2pvPDPfjLjvd2R5o1VCqybOt35iQrnxAxPTsKPrOHyFoQCf2MFpmxT7f3ar3owj1zTHesxKwL6pEYS4/xoV0mSmPnBbha49If2/VzDqiT63w7pTjixXKWkya3FiQVYWKec+vKGoQsxqbhZMz/DsoCQd4/LZARlhboa20UCoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603284; c=relaxed/simple;
-	bh=Q4yaDrURk+Xr79ZeU1JXAex3xPCQZk+Adyf7jM4uRnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GJsrPeC0NG9KThR2wyJCIhFTvf70kfZgwk4LsNvrGSX5P7O1qguMcBetjUPva2B7X+KZt/0VZBdsPLShgVtdsOUX8Gv51lXOT+oCPl0fdfZCFID3Bajs5oACJ49vJ142wvUsRS4CRr33GhQTQx1n9dxAct+5UfOa3K2ipy5IxbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FvkjlBNV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 454EAC4CEF1;
-	Tue, 19 Aug 2025 11:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755603283;
-	bh=Q4yaDrURk+Xr79ZeU1JXAex3xPCQZk+Adyf7jM4uRnU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FvkjlBNV/ifyaYBf6CsubgRXO/iXF3ryhUwL+dv1tXG0efYvc4T2bR+gEw7udoG4o
-	 DYvCzvpCnV2zWiNqPHHIC2govsxhVk26GlYK2dxFnh36vNb5vpPa1+hPRMyIhvvsGd
-	 VCSwwBbmoufcYsKZqem18+p7KUqVWCtYVN7qWH4lJQbTdxnFxLEcs8qmPe0XNI2g0c
-	 ewecxxIdRFjg5c4sAIcCwW4svHN4OmDPI0sTpyx7w9qWwmtrCYHgijREoyEIQHLAv7
-	 TdCeFBW0GIq6/Tzy4OcPLDfEgv98ZsAgzcu4dRpOImSPkQ3RHgbXjz3h+6Fv9YaAIB
-	 n9/6gdci1DAeA==
-Message-ID: <b3cd1b3f-fa0e-4a98-84c7-e4271f262795@kernel.org>
-Date: Tue, 19 Aug 2025 13:34:35 +0200
+	s=arc-20240116; t=1755603325; c=relaxed/simple;
+	bh=WV1rxNjB+TYqIAQsI+V7tfqrGc3WfHnR+6UzQJkULEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQdDrjIVlJHeJek99B8g7mp1h/1SRaWzoRU+bww3WDDSUaPmYLj2q1WvxqpRiLHUTkgS+2u1+st71aFqGzeGl9xVg87j/qhNQRbi8UTuGiMmm/iA5gOd0bZBFSltiK35U7h3MgY9+w/IQJdKVIb9aktq0+w8U+gVpnO0QGa1ZuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lAeSY4ZM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7B59540E0232;
+	Tue, 19 Aug 2025 11:35:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id aLRSC9M65czv; Tue, 19 Aug 2025 11:35:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755603314; bh=g/G+pgACZoF3hG1rLn4uE9m9WQvLEWOUUt+4q8jMk+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lAeSY4ZM2pw8IFmOlaS3AA7YC0WWO8kVSib0isnJ8MRUkSjuLstJyZqTzuRP8le9q
+	 CSNI7jaT/Lf5fG3tJyzKxBvuhs730KAvfOomyiuBWOIUgrlJv/F6rYw8Fk/yKCha+2
+	 3tZOnENDz3MTygaarLvMsyKcB+fY1RAx26rN81IhxOWSECHxXNVf2HplYbBFKPnbhv
+	 mr6A3xWbDhSinS0oFJgDwowtf3MYi65+a9pILK9HsmGZW9T9bRqfxZWwAW2Is6IenL
+	 K9lI1diW6dLFi6tCsmycgF2yLc4Ae3Ewav2kqmmLWYAZkn+OH0CGmZ+3VJWt5NaLlK
+	 le2zqk8WD8JwanqHAzd4O6RR3aeLoUbTzvFU4w1zdvJdpCLwFOT/csJ4lE7Wd7hQKW
+	 qp2jg1oaty6mizUrCYZ13ItdfTlk7bHo79g4v2FQDKh3YhrC+tcVjDalthNvYfVy9L
+	 gyBpsgCzj8gWW4gG/bh+b7nSQG7EE5pmlGbWequqkNjScRosvyMLD4UR6ZVtrloQz3
+	 Z73WYBQy2+mRobPzbi4xKJhqN7B+C+4oT0Ne+S0+f/WbShBLN+rXNuLtY7HIQo/ENC
+	 K4xQmKQXGQcXNYrtzevlnHZybRXnaQ6AabWK/hwM/5oer7TJYMOeVAkIIv1c2dg6z6
+	 AW5XntmANeHujyHURoDkG7Cc=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0DF5140E0194;
+	Tue, 19 Aug 2025 11:34:54 +0000 (UTC)
+Date: Tue, 19 Aug 2025 13:34:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
+	Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	"Xin Li (Intel)" <xin@zytor.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH v3 0/4] x86/cpu/topology: Work around the nuances of
+ virtualization on AMD/Hygon
+Message-ID: <20250819113447.GJaKRhVx6lBPUc6NMz@fat_crate.local>
+References: <20250818060435.2452-1-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] dt-bindings: nvme: apple,nvme-ans: Add Apple A11
-To: Sven Peter <sven@kernel.org>, Nick Chan <towinchenmi@gmail.com>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org
-References: <20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com>
- <20250818-t8015-nvme-v2-6-65648cd189e0@gmail.com>
- <20250819-polite-papaya-catfish-1a9d1a@kuoka>
- <8ac418ae-7ff0-4d5c-9f11-c24e36618ac1@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8ac418ae-7ff0-4d5c-9f11-c24e36618ac1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250818060435.2452-1-kprateek.nayak@amd.com>
 
-On 19/08/2025 12:01, Sven Peter wrote:
-> On 19.08.25 11:18, Krzysztof Kozlowski wrote:
->> On Mon, Aug 18, 2025 at 04:42:59PM +0800, Nick Chan wrote:
->>> Add ANS2 NVMe bindings for Apple A11 SoC.
->>>
->>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->>> ---
->>>   .../devicetree/bindings/nvme/apple,nvme-ans.yaml          | 15 +++++++++------
->>>   1 file changed, 9 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/nvme/apple,nvme-ans.yaml b/Documentation/devicetree/bindings/nvme/apple,nvme-ans.yaml
->>> index fc6555724e1858e8a16f6750302ff0ad9c4e5b88..4127d7b0a0f066fd0e144b32d1b676e3406b9d5a 100644
->>> --- a/Documentation/devicetree/bindings/nvme/apple,nvme-ans.yaml
->>> +++ b/Documentation/devicetree/bindings/nvme/apple,nvme-ans.yaml
->>> @@ -11,12 +11,14 @@ maintainers:
->>>   
->>>   properties:
->>>     compatible:
->>> -    items:
->>> -      - enum:
->>> -          - apple,t8103-nvme-ans2
->>> -          - apple,t8112-nvme-ans2
->>> -          - apple,t6000-nvme-ans2
->>> -      - const: apple,nvme-ans2
->>> +    oneOf:
->>> +      - const: apple,t8015-nvme-ans2
->>> +      - items:
->>> +          - enum:
->>> +              - apple,t8103-nvme-ans2
->>> +              - apple,t8112-nvme-ans2
->>> +              - apple,t6000-nvme-ans2
->>> +          - const: apple,nvme-ans2
->>
->> When some months ago this pattern of generic fallback appeared, I
->> believe I commented it is bad idea. So now months later we have a proof
->> - generic fallback is useless and you should have been using SoC
->> specific compatibles from the start.
->>
->> Now it is just confusing and this broken pattern will be spreading more
->> and more, because you folks put generic compatibles everywhere.
+Lemme try to make some sense of this because the wild use of names and things
+is making my head spin...
+
+On Mon, Aug 18, 2025 at 06:04:31AM +0000, K Prateek Nayak wrote:
+> When running an AMD guest on QEMU with > 255 cores, the following FW_BUG
+> was noticed with recent kernels:
 > 
-> I haven't commented on the dt-bindings yet because I suspect this patch 
-> is wrong but haven't had time to test this yet.
+>     [Firmware Bug]: CPU 512: APIC ID mismatch. CPUID: 0x0000 APIC: 0x0200
 > 
-> I believe we want "apple,t8015-nvme-ans2", "apple,nvme-ans2" here and
-> then use the code Nick added for "apple,nvme-ans2" by default and only
-> enable additional features (NVMMU, linear submission queue) when we see
-> the SoC-specific compatibles for t8103, t8112, and t6000. IIRC these
-> newer SoCs still support the old way of submitting commands just fine
-> and the new way was added at some point to add support for this weird
-> integrated IOMMU.
+> Naveen, Sairaj debugged the cause to commit c749ce393b8f ("x86/cpu: Use
+> common topology code for AMD") where, after the rework, the initial
+> APICID was set using the CPUID leaf 0x8000001e EAX[31:0] as opposed to
+
+That's
+
+CPUID_Fn8000001E_ECX [Node Identifiers] (Core::X86::Cpuid::NodeId)
+
+> the value from CPUID leaf 0xb EDX[31:0] previously.
+
+That's
+
+CPUID_Fn0000000B_EDX [Extended Topology Enumeration]
+(Core::X86::Cpuid::ExtTopEnumEdx)
+
+> This led us down a rabbit hole of XTOPOEXT vs TOPOEXT support, preferred
+
+What is XTOPOEXT? 
+
+CPUID_Fn0000000B_EDX?
+
+Please define all your things properly so that we can have common base when
+reading this text.
+
+TOPOEXT is, I presume:
+
+#define X86_FEATURE_TOPOEXT		( 6*32+22) /* "topoext" Topology extensions CPUID leafs */
+
+Our PPR says:
+
+CPUID_Fn80000001_ECX [Feature Identifiers] (Core::X86::Cpuid::FeatureExtIdEcx)
+
+"22 TopologyExtensions: topology extensions support. Read-only. Reset:
+Fixed,1. 1=Indicates support for Core::X86::Cpuid::CachePropEax0 and
+Core::X86::Cpuid::ExtApicId."
+
+Those leafs are:
+
+CPUID_Fn8000001D_EAX_x00 [Cache Properties (DC)] (Core::X86::Cpuid::CachePropEax0)
+
+DC topology info. Probably not important for this here.
+
+and
+
+CPUID_Fn8000001E_EAX [Extended APIC ID] (Core::X86::Cpuid::ExtApicId)
+
+the extended APIC ID is there.
+
+How is this APIC ID different from the extended APIC ID in
+
+CPUID_Fn0000000B_EDX [Extended Topology Enumeration] (Core::X86::Cpuid::ExtTopEnumEdx)
+
+?
+
+> order of their parsing, and QEMU nuances like [1] where QEMU 0's out the
+> CPUID leaf 0x8000001e on CPUs where Core ID crosses 255 fearing a
+> Core ID collision in the 8 bit field which leads to the reported FW_BUG.
+
+Is that what the hw does though?
+
+Has this been verified instead of willy nilly clearing CPUID leafs in qemu?
+
+> Following were major observations during the debug which the two
+> patches address respectively:
 > 
-> I've already seen some strings about ANS3 somewhere which I suspect
-> will be the controller in some future SoC (or maybe M3/M4 which we 
-> haven't reverse engineered yet) that actually breaks compatibility.
+> 1. The support for CPUID leaf 0xb is independent of the TOPOEXT feature
 
+Yes, PPR says so.
 
-This was 99% predictable and expected months/years ago when first Apple
-M1 generic compatibles appeared. I just do not understand why so much
-effort from reviewers has to go into explaining this and for arguing
-over that, and eventually we are right.
+>    and is rather linked to the x2APIC enablement.
 
-> 
-> It's too late to drop them here but if you're strongly opposed to these
-> generic fallbacks we can just switch to only use tXXXX-nvme-ans3 at that
-> point without making anything confusing. Same for any other new hardware
-> blocks we reverse engineer and upstream.
+Because the SDM says:
 
+"Bits 31-00: x2APIC ID of the current logical processor."
 
+?
 
-Best regards,
-Krzysztof
+Is our version not containing the x2APIC ID?
+
+> On baremetal, this has
+>    not been a problem since TOPOEXT support (Fam 0x15 and above)
+>    predates the support for CPUID leaf 0xb (Fam 0x17[Zen2] and above)
+>    however, in virtualized environment, the support for x2APIC can be
+>    enabled independent of topoext where QEMU expects the guest to parse
+>    the topology and the APICID from CPUID leaf 0xb.
+
+So we're fixing a qemu bug?
+
+Why isn't qemu force-enabling TOPOEXT support when one requests x2APIC?
+
+My initial reaction: fix qemu.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
