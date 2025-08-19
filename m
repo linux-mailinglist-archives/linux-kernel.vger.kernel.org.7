@@ -1,173 +1,219 @@
-Return-Path: <linux-kernel+bounces-774976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B6AB2B9DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:51:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF4FB2B9E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2185E74A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:51:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA72176CB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616532765DC;
-	Tue, 19 Aug 2025 06:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D3D26D4CF;
+	Tue, 19 Aug 2025 06:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RA1xZPkv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="R8wLYFQb"
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0CA26CE10
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58391E5215
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755586295; cv=none; b=aVlnu+4ACf3eHeQSqV8/mVaQ439PUXWgDCFEwWUrDqIGeLMhxrtd7qaY9UiFRxs8+zp3C+P9bbSrjKBxMyu+zwbuXYCFnG7fDdg7q+Es7GicHgjL1BD2QuJd3ISX8ZRGYisu1N3AjJKL+ccGDPXh+bJ1jX9qn+89+wi2XsF/tdU=
+	t=1755586334; cv=none; b=ZpiT0ne7KHaDUn6kIjHHOSCTj2QhE7wJn7WxCaBN9pkaGtWWGFsJ2MCHsPFDz0lw9u8BQETJf1TdxFgxI3j89PSp0YobvU9jI9pbD8u8A06FAeCamgnipCYSoEW7eVBNREvuIP2xDIbIDgKXh+L5XbyqUrCQ9D/4+U1GxhGbttE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755586295; c=relaxed/simple;
-	bh=ytBpBRy+4SzRAfoTHldnKXycB1vfiRkT22aOMpmBfLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A6aIb5En8O6m0u/U3S493aj0/M50dCCE/P+15u7cWGkR8OOlOJlKA01vkeHB/zolhEA/GPAk76JGKhxiy/ecb5NMMWUnX1aMc5UDSm1A1MUW2mm+HptEqJXz9AH7sjqUyqB1GSle5hrRXifDWSCAhz/4ccE6Ig8LVIh+i36VNOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RA1xZPkv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J21IvF027691
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:51:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KhcnubSus7MkpUMzXlz1FJ9i66J4sJ3ytWF3Qtk0VoU=; b=RA1xZPkvzllF0MpV
-	naoDi0yR2CxSqphg6p90qxi8lyy6MADcfyIb+nkKPjEoCoBV9uc+tBLfOsHmszpO
-	xyJO08L2fhdIpPJKpszYhLkQzhlB3U8XKYaiWda/pkkAkRVK3HmBcdHV0DAx9+Dn
-	LX7AjA3/OdnWRDTgQV94el6hFDRookIlXq1U+6SF1dzX2ia/3+Dp3slRNc/522k9
-	oI1RPosK4xauiQymYlcQyykReT4tCir++VLdkabDx3DL02Rhn640eXmVfoqZLr2N
-	VaG/+Tx1EDRKPPhWBqP31mETZ1MukY3FNGhCQAJj0+KAMbUMmdoOC5MBnAwSyNYG
-	u2tiRw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jk5mfduw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 06:51:33 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b47173ae6easo8953303a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 23:51:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755586292; x=1756191092;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KhcnubSus7MkpUMzXlz1FJ9i66J4sJ3ytWF3Qtk0VoU=;
-        b=OEnQMQq1nwxNwSPkq9EyX4hE8/pkXjffVw3rWPkIWZ6HSpt6GwuFVzEp64DdTqBpKe
-         1zgr3mMDZKC7mMIpvRrmTrKVVIL3K/TH02ApN6Lav0fi14JqkPFQHz8PvdnWo5y26SUJ
-         BlhtH2V/tnPGL8tQEZOpwzHSg/SnIQXVehB/ruw/Qqo25kc+gbYn6t7g7h8TvyafzLgn
-         79pwUS0fxkkxWLnqnV0E7nUdjuFbf332X0eKkpMRr461Ghm+JQhebH4q5R0v27irHU+E
-         vtR/xNsfk0iQzJ5qgRohhBjQ8MgdlQ5Tny+ny12BjWKd4EU9pRvtNSDofR7zfFwzo1wC
-         4kwg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7miGaNJagamXi2vMk5ewCnD2UZdnZ1yXbgCTzhqof72eOnwmYc4VyeF8JnTkesbz5ew9LC7JnzaPp0mk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeI7v41hgF7R36iUUFBEFKmqFwdQEXsGOsDgq+Ly+DOysvSjAT
-	kLKFd/+WDL5510BHFVbqXVILx3N078acaqhdMrhwIpgmiuRr0fi4aIJEh1cgK63waf5g/fbg587
-	bn+3aiQn6P+kLXiS6WX14PWgE3m/T7v4YxZlhgq2VNP3/Dk5jdz3pG+QesHsXSUNBNC0=
-X-Gm-Gg: ASbGncuibtXtEVs83GJgZ3Va44xHNiwxhvrFLjCeLHo7IqIqPiEh1SAv43zaEJN1mAg
-	KPrPPAn4y18TVBqnAmQH7cj4I/e0+ptvFJzlKscLwx2Wb7w4u3sxlwDeH/ocJ/HwXIGWTKJgWZz
-	sP3wCWoUJ8aYKelEOn38ua3Y6roRNw1M/kTawW0siqxKaeSTLn82cv73x7M7nXcIVGi3MQwr2hK
-	isIIqAulFLJZWUVRfceBLvLIkXkLhVwpadnIGzyvJvL53cadiMimHcDFGDT6Xld43gPqVpDjPQG
-	naXASKCUw6Bx+CluhWU3pquCiLdbTKuo0NmLKeZcdgBGOABseKEx1C6eyeFVRnr6owN4gnAPWKR
-	natBhfbMCzzAhPPw3yaM2yLAOQU5ou5e4
-X-Received: by 2002:a17:902:da8c:b0:240:aba:fe3b with SMTP id d9443c01a7336-245e02d7726mr20776565ad.16.1755586292673;
-        Mon, 18 Aug 2025 23:51:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrRQRvLzaR0no9uz4wl3VWShxiXhdMnGmDhx8W5wXZivwjwGSDV2ohd6ogQppD0UOvYx2W2A==
-X-Received: by 2002:a17:902:da8c:b0:240:aba:fe3b with SMTP id d9443c01a7336-245e02d7726mr20776395ad.16.1755586292249;
-        Mon, 18 Aug 2025 23:51:32 -0700 (PDT)
-Received: from [10.133.33.88] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446caa3e5bsm99455325ad.33.2025.08.18.23.51.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Aug 2025 23:51:31 -0700 (PDT)
-Message-ID: <157c048d-0efd-458c-8a3f-dfc30d07edf8@oss.qualcomm.com>
-Date: Tue, 19 Aug 2025 14:51:22 +0800
+	s=arc-20240116; t=1755586334; c=relaxed/simple;
+	bh=WSwMRnAZvLoT81Q/dx2mJi8O2X/K4xJf1ob1+3UxOvc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qc9ts0vU+yjwRoO5yCjLywOmG8TedJNB1T8FFjqmFgs/94e7l/dA4VJPoXtirdgeBTj+xmo5Hl21/D+txY176QvHD9F+YSXC2ChFc9Qf8YyBax9uvjDkfs502B0by7Z/R4MLUH/JVbuQLCPG2OyJxEiDhN33vxD9OGbuJ/vzwOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=R8wLYFQb; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=PmyVxGkhwCbKZqj9pYnA1o0/MSpZe/5lktvnBILrpzo=;
+	b=R8wLYFQbVMV4zCo6ybVM1CnQNNNRyGQaUVaupbr/7JKT+rOe4DrEpoQa5Lz6JSyKUk68j+egh
+	t4gjN4lix9Xd9OrZCsCczJhb4I5XuzvNL2bRX0fEdic3Gy7pC0VXhWD+5u7EUp0rvkxIdxR1cow
+	kXHLLkwob9XX3mUHIJwpHM0=
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4c5gHH2p1fzYlPjm;
+	Tue, 19 Aug 2025 14:51:55 +0800 (CST)
+Received: from a004.hihonor.com (10.68.27.131) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Aug
+ 2025 14:52:03 +0800
+Received: from a008.hihonor.com (10.68.30.56) by a004.hihonor.com
+ (10.68.27.131) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Aug
+ 2025 14:52:03 +0800
+Received: from a008.hihonor.com ([fe80::aed1:4fa1:46bd:7de9]) by
+ a008.hihonor.com ([fe80::aed1:4fa1:46bd:7de9%6]) with mapi id 15.02.1544.011;
+ Tue, 19 Aug 2025 14:52:03 +0800
+From: liuwenfang <liuwenfang@honor.com>
+To: 'Tejun Heo' <tj@kernel.org>
+CC: 'David Vernet' <void@manifault.com>, 'Andrea Righi' <arighi@nvidia.com>,
+	'Changwoo Min' <changwoo@igalia.com>, 'Ingo Molnar' <mingo@redhat.com>,
+	'Peter Zijlstra' <peterz@infradead.org>, 'Juri Lelli'
+	<juri.lelli@redhat.com>, 'Vincent Guittot' <vincent.guittot@linaro.org>,
+	'Dietmar Eggemann' <dietmar.eggemann@arm.com>, 'Steven Rostedt'
+	<rostedt@goodmis.org>, 'Ben Segall' <bsegall@google.com>, 'Mel Gorman'
+	<mgorman@suse.de>, 'Valentin Schneider' <vschneid@redhat.com>,
+	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/3] sched_ext: Fix pnt_seq calculation when picking the
+ next task
+Thread-Topic: [PATCH v4 1/3] sched_ext: Fix pnt_seq calculation when picking
+ the next task
+Thread-Index: AQHcENXEqw868nHPtEGCXsi1JBA+zQ==
+Date: Tue, 19 Aug 2025 06:52:03 +0000
+Message-ID: <228ebd9e6ed3437996dffe15735a9caa@honor.com>
+References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
+ <aFmwHzO2AKFXO_YS@slm.duckdns.org>
+ <ced96acd54644325b77c2d8f9fcda658@honor.com>
+ <aHltRzhQjwPsGovj@slm.duckdns.org>
+ <0144ab66963248cf8587c47bf900aabb@honor.com>
+ <814bebd2ad844b08993836fd8e7274b8@honor.com>
+In-Reply-To: <814bebd2ad844b08993836fd8e7274b8@honor.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] arm64: dts: qcom: qcs615: add ethernet node
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc: netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, stable+noautosel@kernel.org,
-        Yijie Yang <quic_yijiyang@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
- <20250819-qcs615_eth-v4-3-5050ed3402cb@oss.qualcomm.com>
- <c4cbd50e-82e3-410b-bec6-72b9db1bafca@kernel.org>
-Content-Language: en-US
-From: Yijie Yang <yijie.yang@oss.qualcomm.com>
-In-Reply-To: <c4cbd50e-82e3-410b-bec6-72b9db1bafca@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Sdn3duRu c=1 sm=1 tr=0 ts=68a41ef5 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=XWQ9mN7VkJ-Tecl8lUkA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: ltLryyPTmvFLdBxj0BDv4A_InE6iTFsB
-X-Proofpoint-GUID: ltLryyPTmvFLdBxj0BDv4A_InE6iTFsB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDA0MiBTYWx0ZWRfX1gR4rcVC08Kv
- zLClukEDtWd5OvUq/sYHdVQXofsL9S+dHl7/MZ64MS6j7uzbT9cAzzA3YCXO0UPWZ69TZj7/U/B
- Nf1uPmBFi9iaacnrH0giWqPPm7AG1pwE12fEs8aRPW2m/9JBBlv8b++AZbwHgzQVv68F/XyHtvv
- ARvFNKY5y6R/lgZFJ76x3U+uIFmeZW4Q8SnepHqRCbwvQS17eDhBY1vAvBgTTiWK2rbMxLrkhAK
- LOquKZYhyDK2htWnd9U3wXsgIUcxY4uL3T6q0iFy7gObbrUbSiJvFtiFjlLh0R6y7HH2g+c3C10
- B+ZH//co5AK8W1XJ8/eIKdKNomnIZvHKRwL+MgtWNqNHPDwC2u44L56PrGJPyZXiIMPQU6N/hv7
- 5EE/j3Vn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 spamscore=0
- adultscore=0 malwarescore=0 bulkscore=0 phishscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508160042
 
+Now as the rq->scx.pnt_seq is only incremented when the target CPU
+switches from one SCX task to one non-SCX task, the pair CPU would
+not exit the busy-wait state reasonably in scx_pair.
 
+In scx_pair, rq->scx.pnt_seq is introduced to improve exclusion
+guarantees. The invoking CPU calls scx_bpf_kick_cpu() with
+SCX_KICK_WAIT and enters the busy-wait state. It should exit this
+state once the target CPU has entered the rescheduling path with
+rq->scx.pnt_seq incremented.
 
-On 2025-08-19 14:44, Krzysztof Kozlowski wrote:
-> On 19/08/2025 08:35, YijieYang wrote:
->> From: Yijie Yang <quic_yijiyang@quicinc.com>
->>
->> Add an ethernet controller node for QCS615 SoC to enable ethernet
->> functionality.
->>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
->> ---
-> 
-> 
-> Why do you mix up DTS and net-next patches? This only makes difficult to
-> apply it, for no benefits.
+So, pnt_seq calculation is moved to put_prev_set_next_task(), it
+will be incremented for any task switches on the target CPU, then
+the invoking CPU can exit the busy-wait state properly.
 
-The DTS changes and driver code modifications work together to achieve a 
-single purpose, so I included them in one patch series. Should I 
-consider splitting them into two separate series?
+Signed-off-by: Wenfang Liu liuwenfang@honor.com
+---
+ kernel/sched/ext.c   | 10 +---------
+ kernel/sched/fair.c  |  2 +-
+ kernel/sched/sched.h | 30 +++++++++++++++++++++++++++++-
+ 3 files changed, 31 insertions(+), 11 deletions(-)
 
-> 
-> Best regards,
-> Krzysztof
-
--- 
-Best Regards,
-Yijie
-
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index f5133249f..ba99739d7 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -3191,14 +3191,6 @@ static void switch_class(struct rq *rq, struct task_=
+struct *next)
+ {
+ 	const struct sched_class *next_class =3D next->sched_class;
+=20
+-#ifdef CONFIG_SMP
+-	/*
+-	 * Pairs with the smp_load_acquire() issued by a CPU in
+-	 * kick_cpus_irq_workfn() who is waiting for this CPU to perform a
+-	 * resched.
+-	 */
+-	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
+-#endif
+ 	if (!static_branch_unlikely(&scx_ops_cpu_preempt))
+ 		return;
+=20
+@@ -5966,7 +5958,7 @@ static void kick_cpus_irq_workfn(struct irq_work *irq=
+_work)
+ 		if (cpu !=3D cpu_of(this_rq)) {
+ 			/*
+ 			 * Pairs with smp_store_release() issued by this CPU in
+-			 * switch_class() on the resched path.
++			 * __put_prev_set_next_scx() on the resched path.
+ 			 *
+ 			 * We busy-wait here to guarantee that no other task can
+ 			 * be scheduled on our core before the target CPU has
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0fb9bf995..21214b3fa 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8885,7 +8885,7 @@ pick_next_task_fair(struct rq *rq, struct task_struct=
+ *prev, struct rq_flags *rf
+ 	if (prev->sched_class !=3D &fair_sched_class)
+ 		goto simple;
+=20
+-	__put_prev_set_next_dl_server(rq, prev, p);
++	__put_prev_set_next(rq, prev, p);
+=20
+ 	/*
+ 	 * Because of the set_next_buddy() in dequeue_task_fair() it is rather
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 47972f34e..435de61c4 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1738,12 +1738,32 @@ static inline void scx_rq_clock_invalidate(struct r=
+q *rq)
+ 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
+ }
+=20
++static inline void __put_prev_set_next_scx(struct rq *rq,
++					   struct task_struct *prev,
++					   struct task_struct *next)
++{
++	if (!scx_enabled())
++		return;
++
++#ifdef CONFIG_SMP
++	/*
++	 * Pairs with the smp_load_acquire() issued by a CPU in
++	 * kick_cpus_irq_workfn() who is waiting for this CPU to perform a
++	 * resched.
++	 */
++	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
++#endif
++}
++
+ #else /* !CONFIG_SCHED_CLASS_EXT */
+ #define scx_enabled()		false
+ #define scx_switched_all()	false
+=20
+ static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
+ static inline void scx_rq_clock_invalidate(struct rq *rq) {}
++static inline void __put_prev_set_next_scx(struct rq *rq,
++					   struct task_struct *prev,
++					   struct task_struct *next) {}
+ #endif /* !CONFIG_SCHED_CLASS_EXT */
+=20
+ /*
+@@ -2457,13 +2477,21 @@ __put_prev_set_next_dl_server(struct rq *rq,
+ 	rq->dl_server =3D NULL;
+ }
+=20
++static inline void __put_prev_set_next(struct rq *rq,
++				       struct task_struct *prev,
++				       struct task_struct *next)
++{
++	__put_prev_set_next_dl_server(rq, prev, next);
++	__put_prev_set_next_scx(rq, prev, next);
++}
++
+ static inline void put_prev_set_next_task(struct rq *rq,
+ 					  struct task_struct *prev,
+ 					  struct task_struct *next)
+ {
+ 	WARN_ON_ONCE(rq->curr !=3D prev);
+=20
+-	__put_prev_set_next_dl_server(rq, prev, next);
++	__put_prev_set_next(rq, prev, next);
+=20
+ 	if (next =3D=3D prev)
+ 		return;
+--=20
+2.17.1
 
