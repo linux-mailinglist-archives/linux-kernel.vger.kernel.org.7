@@ -1,156 +1,108 @@
-Return-Path: <linux-kernel+bounces-774745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E9DB2B6B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:08:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC018B2B6BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 04:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B006E3AD664
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52D3C1B23F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 02:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FBC286435;
-	Tue, 19 Aug 2025 02:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC80287514;
+	Tue, 19 Aug 2025 02:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmxdL9pH"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IxW9xmaS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C322118E3F;
-	Tue, 19 Aug 2025 02:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456072F852;
+	Tue, 19 Aug 2025 02:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755569239; cv=none; b=swgsKemIaMqXHV19LiIsCPYG45MP4nzAc8cOYjWK7TU1LLPPNrsOtYIitCH48PzOPZGF0kHwxpkJlAPzt61PuZjiyeZW3n5G718MNVDSKffrBJA8W4Z8cuOWEO2SdOENnty5sQIgfbl3LiLjB4Y4GyqRLom+HXCPfCyYXUS+UTc=
+	t=1755569530; cv=none; b=WLG/mpeBKsDpfG6N0xDqI6a4H/DisYyNEY4RjBbSwbZxxRGdgXHQqKOB8EVJsIoxHKSr2uR3Ag5Xg9cwvI+zQTjxgGtHT9mf4eH4/A1Kf4NKbX9KUPnVgGaNlause2XkBmpmULkfqrJX9r+0OkzitK4Mv8F0U9CWGhYqeTiNOIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755569239; c=relaxed/simple;
-	bh=si6Gz9rajRhkn8Qnimb7Qhr5mbOiIBXLKqM+VF3jSrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EoYIf3TRgLtfXstTqdRc+EOy61eNsffWstPAp5/dqff08PXpgkcHcFzNUasNkDy5rsfdnsDYd5wrRVACUCCnCMYFm4urYXRzRmTVbPuLabIRXKcI7U8WKBiUK4SJmzCMnFMd+etBgkuPdIxNUXtJawOcd2pJUKB7GgC1yp+BbWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dmxdL9pH; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2430c5b1b32so35667425ad.1;
-        Mon, 18 Aug 2025 19:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755569237; x=1756174037; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R7FxyaFBlLbAZvr1O4P5VecQz9oEB9CxW3R9/q85xaw=;
-        b=dmxdL9pHkKEmN4jsIxjJO5dgAIZWalyynSFiC1vVfEb9yZ2IH3YMfkG1PrA+B9NwNK
-         W4qRaPQM0atVXGYwYMzYF3ipNIYLVozTiXOueFvNYcbaB9xEASEREceEo9JuTvubnMjf
-         29bm/C0aLP6imzY9K7S6bAMctXcw0E5tCjKXje0dJsDhGdcg5HaPt5TsF1pfJ6oZYkmR
-         F/KCuW1d93nwXQ5De9Ti6JT/T26IKsMA9o3Md/7z2h/LTB/Oesb8XI6iMIXIPUsGxmgY
-         pBjaOSXE61MmNwJ08baRqhs7XSMi7qbO1P3cpCcBJM9lrsL+G2FcfZvrsRv0U7UZelud
-         4bNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755569237; x=1756174037;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R7FxyaFBlLbAZvr1O4P5VecQz9oEB9CxW3R9/q85xaw=;
-        b=kVZjO5pM7wQfaxtJWoRqhhE4HFJbxR8No5ownHCGn02EVZCFnZNF63QHzqBuAsG+HJ
-         JHbcMKrtrCcEWe5MP+g9hUwwAC7M0BOe5kX5GU889sTXGoStnLUKoMiQt911GUCu9HE8
-         n1j4clFybsZYA0+temVNOz1dFHtAmR3Fg/HmZcOX8FTioOZBdtn8gktAMaruI9H06wv/
-         ZIN9jcDZx1QwvF1HZpCJ3qYq/V8XMu2hCzTVqkshprXVeGReS428nVVqqmlqCUjHl2sp
-         9QKAcRu8aI2tNEf/oLrmDl1jictBbcFaNaRiKzA5xI4yAiSRO4v2MTOo7OS2H0GQcblJ
-         9THw==
-X-Forwarded-Encrypted: i=1; AJvYcCVirz30Qtx4F14NCCuhlFy9P+6Eexf3n3w1YP5zEpszMMtINr6pW97hNr9+rzyyOKaOJbLHzSKk@vger.kernel.org, AJvYcCW7lIGkQ4SdN4GT6QgdTV81B79WCo/JUAsNK2ZebVHvt+05DFacqbXkarw0DDEtfqXNe4CaHroiQLNWKug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF4uUw9HLodMZhQosb/Kea0U+QsvOWF4VHp4dAb0V7Ns8V8ES1
-	LU3SVxa+hxSByarwOAGF5SeNFFdeoFfnYf3u8KMAMybRvRRAea2bPCPG
-X-Gm-Gg: ASbGncv98OE6NG6DWEHydt3VM5YOtKfo0uCPAJVVo/6kLe8FkJldAEcOkLe01y1AITB
-	MRwGmG0zZBZSYkJPeTrPEkyuo5Mdy4VG5Em4AyAq2n/JtVsosXVW60a1ooOpAQkjE3bhwkZMSYv
-	rplPJoFx53C5bJ5z5V1Sk6r69K8XD+wob1meW8025Yj+wy+V6LNT5zO5Podwow29vDqmy/Z66Bd
-	6WdPSeGt8s0/z7CYONFQBILnzZqkJLwlfz4RtjxaVOw2Qe6aBPn0REDc2XtyFjTvFOlfUOW8Mem
-	1bQrLt50lDxRrWimrfr2UwZvCALDcLHXg+Q5v4N9ofhF7DaNGPdqwveCbw+vciPWgw/cgLE73x+
-	jctoqn46pCn9+SPH/JaJr7ZRQNUorbxxEOv2vbDo=
-X-Google-Smtp-Source: AGHT+IHvoLgO/++Hv9TiR4/r5ATMwcVgrzOhdyOGWwsV4G24k7L99OvNyUWbIuIML4tX4KdWOW6Z9w==
-X-Received: by 2002:a17:903:41cc:b0:240:5c75:4d48 with SMTP id d9443c01a7336-245e0f8c1ffmr8865425ad.25.1755569236961;
-        Mon, 18 Aug 2025 19:07:16 -0700 (PDT)
-Received: from C11-068.mioffice.cn ([43.224.245.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d54fb54sm92358055ad.134.2025.08.18.19.07.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 19:07:16 -0700 (PDT)
-From: Pengtao He <hept.hept.hept@gmail.com>
-To: willemdebruijn.kernel@gmail.com
-Cc: aleksander.lobakin@intel.com,
-	almasrymina@google.com,
-	davem@davemloft.net,
-	ebiggers@google.com,
-	edumazet@google.com,
-	hept.hept.hept@gmail.com,
-	horms@kernel.org,
-	kerneljasonxing@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	mhal@rbox.co,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	willemb@google.com
-Subject: Re: [PATCH net-next v4] net/core: fix wrong return value in __splice_segment
-Date: Tue, 19 Aug 2025 10:07:10 +0800
-Message-ID: <20250819020710.6681-1-hept.hept.hept@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <689de6c51e152_18aa6c2948b@willemb.c.googlers.com.notmuch>
-References: <689de6c51e152_18aa6c2948b@willemb.c.googlers.com.notmuch>
+	s=arc-20240116; t=1755569530; c=relaxed/simple;
+	bh=CtWl+kAaj28FCmgEJf0e3j5MDGUJeH2tJY2k2qK3kWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y1dMgzsdrb+gJT5nWFBGl5q9eqDmkkdogp/8S3Z8lMAElXK2kv6X3mhccqy9lyIA2Y9WaVVsE85/SSYDG7/2HwzO8KW8Gujt+ZV1LXeq9psJuQr+jVc0+oMb9dfFIWUo/5AxtzRJ6DYlPJOW7woV6A2yXoQ4AMMIVBHQEuuDWT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IxW9xmaS; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755569530; x=1787105530;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CtWl+kAaj28FCmgEJf0e3j5MDGUJeH2tJY2k2qK3kWg=;
+  b=IxW9xmaSePXg34ehqcLg4bmj4xvZmW2TAbbaxfsoqqocHJdRWc1vJzaP
+   ZendHHAjdY2BLv6H7ivWHDSwuXFTlG89D9371syIPY89795VgO8sO+v03
+   zcfSZxGrrWMs4bHgKzFEC4dHyCPomfLtyFIP/rZL54Qh+yACq2bMdPy0V
+   jIBMeu5C2VtSmIeZsOH30AAJDtGUGIGAyGlfL6o280Rq8YZHCmR6xARq7
+   uW2aYMnVBpKkFa5EE83eYs3hyEm9i1UZm8CeCeP6UZGP+XavaD7PRbxk9
+   89Ac5kz3h5rDdXhBRIS4Ym2yHCR57QNe3p4dmqWLzcvCpvtyXUbTeRk4a
+   Q==;
+X-CSE-ConnectionGUID: Ax1yNJlISfONsBEtzCRTOA==
+X-CSE-MsgGUID: 1nAANhPuR5ePb7LO7kqmJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="61637217"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="61637217"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 19:12:09 -0700
+X-CSE-ConnectionGUID: BCj/97QQTnKrxK+MekdAiQ==
+X-CSE-MsgGUID: TE75bEPQTWKJ1Q+sONEmGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="171944207"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 19:12:03 -0700
+Message-ID: <ba8c8e60-5907-49d2-88ff-b9c6ab994d2f@linux.intel.com>
+Date: Tue, 19 Aug 2025 10:09:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
+ helper
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, robin.murphy@arm.com,
+ joro@8bytes.org, bhelgaas@google.com, will@kernel.org,
+ robin.clark@oss.qualcomm.com, yong.wu@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, thierry.reding@gmail.com,
+ vdumpa@nvidia.com, jonathanh@nvidia.com, rafael@kernel.org, lenb@kernel.org,
+ kevin.tian@intel.com, yi.l.liu@intel.com,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+ patches@lists.linux.dev, pjaroszynski@nvidia.com, vsethi@nvidia.com,
+ helgaas@kernel.org, etzhao1900@gmail.com
+References: <cover.1754952762.git.nicolinc@nvidia.com>
+ <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
+ <aeb04f91-ffce-4092-8dbc-17d116cd7c7e@linux.intel.com>
+ <20250818144051.GP802098@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250818144051.GP802098@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Pengtao He wrote:
-> > If *len is equal to 0 at the beginning of __splice_segment
-> > it returns true directly. But when decreasing *len from
-> > a positive number to 0 in __splice_segment, it returns false.
-> > The caller needs to call __splice_segment again.
-> > 
-> > Recheck *len if it changes, return true in time.
-> > Reduce unnecessary calls to __splice_segment.
+On 8/18/25 22:40, Jason Gunthorpe wrote:
+> On Fri, Aug 15, 2025 at 01:28:02PM +0800, Baolu Lu wrote:
 > 
-> Fix is a strong term. The existing behavior is correct, it just takes
-> an extra pass through the loop in caller __skb_splice_bits. As also
-> indicated by this patch targeting net-next.
-> 
-> I would suggest something like "net: avoid one loop iteration in __skb_splice_bits"
+>> Given that iommu_group->mutex is transparent to the iommu driver, how
+>> about
+> It is not actually transparent, alot of drivers are implicitly
+> assuming that the core single threads their struct device for alot of
+> the ops callbacks and we exposed the lockdep test to the drivers to
+> help the document this.
 
-Thanks for the detailed and good suggestion. I will correct it.
+Fair enough. It's the role of iommu_group_mutex_assert().
 
-> 
-> 
-> > Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
-> > ---
-> > v4:
-> > Correct the commit message.
-> > v3:
-> > Reduce once condition evaluation.
-> > v2:
-> > Correct the commit message and target tree.
-> > v1:
-> > https://lore.kernel.org/netdev/20250723063119.24059-1-hept.hept.hept@gmail.com/
-> > ---
-> >  net/core/skbuff.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> > index ee0274417948..23b776cd9879 100644
-> > --- a/net/core/skbuff.c
-> > +++ b/net/core/skbuff.c
-> > @@ -3112,7 +3112,9 @@ static bool __splice_segment(struct page *page, unsigned int poff,
-> >  		poff += flen;
-> >  		plen -= flen;
-> >  		*len -= flen;
-> > -	} while (*len && plen);
-> > +		if (!*len)
-> > +			return true;
-> > +	} while (plen);
-> >  
-> >  	return false;
-> >  }
-> > -- 
-> > 2.49.0
-> > 
+Thanks,
+baolu
 
