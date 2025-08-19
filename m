@@ -1,60 +1,39 @@
-Return-Path: <linux-kernel+bounces-775722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B866AB2C407
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:46:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA8AB2C40E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3323917FCCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81351739C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 12:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7570F322A22;
-	Tue, 19 Aug 2025 12:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="gDEdXieo"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E844305053;
-	Tue, 19 Aug 2025 12:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112D531B114;
+	Tue, 19 Aug 2025 12:42:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AC31FC0ED;
+	Tue, 19 Aug 2025 12:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755607335; cv=none; b=fHNHbMYv9vgr3wS1R8ydgOll8c2B1bj+wrBdU3TJwYFueP42bMUdA2Drx0V2K1dTKNGvIoJfAa2J0vy2CE17FUgS3O3C7s/r55ix/1wUChAaZImjcjrq/3DJzQ2aHS/DaR31QOf0pYmr+CcynSoSvqPObAM+NPCpAbsoIS+qig4=
+	t=1755607368; cv=none; b=HR8Sh8FfD+sTUliCHABdBmRNShQcXntrUkXQgLGHCCx1DBrh9qqTTVIqtshbEfQBoU3AculWpvmDTmZIQfpUMBPRVKqeMTJ1BcKlnWeabbRXHLjU9ykheVLkpg8fSdUZTagMF5gIeqWRY0rOSW9RY0AVg7UkZrFhwAtH3KFeZrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755607335; c=relaxed/simple;
-	bh=5YmId6TaJSXxbQAcmBKh+QzUHZdg3v1E8gFElkn2tlc=;
+	s=arc-20240116; t=1755607368; c=relaxed/simple;
+	bh=ib2TGbiQ87HiWZQ8FfbbKV34nhMhuHwRV3L/Cy9UUrw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oRdf+EwA4i4wUZCQ1KL5BM3NZet0tCTSBwjMagEjEKF0FSraS5vfw1deSowoB0Uu70wncKvoP4iG4W3BFQiOogeGuor8dcW5cxgWa9w2vSZV+EWBMCsjClto8qgR9307FMhKRmrZ7jUBRqKLBcuOAuH9GIlWNCSN/DilYpVI9yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=gDEdXieo; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=mQNnN16mIYhaXp4sreQmcdqv7Ohu0QtrzdbShxrwIUE=; b=gDEdXieo2XHmZfvDDMXPiJzmO8
-	se3oLVyBUlfyC40YGD5hE7JPOA+9nlwDd/AdA7ugCZK1h87RLw4yoXiPhFT+2x5eVMC0UB038ZgSo
-	q4BLS1komBZdCEISFDsOPxh81J6ASvsAlskPq1zFnLpNQv+iHdBydJvgntohpMnaz50E4GEJJnoam
-	WXmHYKJ9m2MJK2SnW0tKUilQykbLACJKKOiC654Ck2YFY25iv/WykgXE1xLqKokClBxYS/puuokXC
-	zthd87qoD8miGYBA+HIY5gKqQK5RtOnTlxZgLtKrtF8Aasor40N1COFNk7QPAlI/q/VmnfAYKgcOz
-	GT73mfWA==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uoLfF-0009Xt-10;
-	Tue, 19 Aug 2025 14:42:09 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uoLfE-000KJH-14;
-	Tue, 19 Aug 2025 14:42:08 +0200
-Message-ID: <7d2f3767-64c5-4efa-862b-f463751a03bb@iogearbox.net>
-Date: Tue, 19 Aug 2025 14:42:07 +0200
+	 In-Reply-To:Content-Type; b=FyOG76GwQ/CCmSbRc7R+ah7WAlCWIdeuhnCmHQN/HS2bH3k8JsD2zzYoXWCWSf89+3qHW0Vq9KPzxDKdPFI5aJ8qohxdFtnv/RxVVINRsIEouknGrPMWjzOBXcJPTs9AfHnpK+3B6ifz1Enw1BLSLUJdIA1QUkRseLviNeT/jzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 678E016A3;
+	Tue, 19 Aug 2025 05:42:36 -0700 (PDT)
+Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 538723F63F;
+	Tue, 19 Aug 2025 05:42:43 -0700 (PDT)
+Message-ID: <2c7301cd-9c86-47fd-8b79-05f3e1a89e47@arm.com>
+Date: Tue, 19 Aug 2025 13:42:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,150 +41,210 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/cls_cgroup: Fix task_get_classid() during qdisc run
-To: Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Graf <tgraf@suug.ch>, Paul McKenney <paulmck@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "open list:BPF [RINGBUF]" <bpf@vger.kernel.org>,
- Willem de Bruijn <willemb@google.com>
-References: <20250819093737.60688-1-laoar.shao@gmail.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- xsFNBGNAkI0BEADiPFmKwpD3+vG5nsOznvJgrxUPJhFE46hARXWYbCxLxpbf2nehmtgnYpAN
- 2HY+OJmdspBntWzGX8lnXF6eFUYLOoQpugoJHbehn9c0Dcictj8tc28MGMzxh4aK02H99KA8
- VaRBIDhmR7NJxLWAg9PgneTFzl2lRnycv8vSzj35L+W6XT7wDKoV4KtMr3Szu3g68OBbp1TV
- HbJH8qe2rl2QKOkysTFRXgpu/haWGs1BPpzKH/ua59+lVQt3ZupePpmzBEkevJK3iwR95TYF
- 06Ltpw9ArW/g3KF0kFUQkGXYXe/icyzHrH1Yxqar/hsJhYImqoGRSKs1VLA5WkRI6KebfpJ+
- RK7Jxrt02AxZkivjAdIifFvarPPu0ydxxDAmgCq5mYJ5I/+BY0DdCAaZezKQvKw+RUEvXmbL
- 94IfAwTFA1RAAuZw3Rz5SNVz7p4FzD54G4pWr3mUv7l6dV7W5DnnuohG1x6qCp+/3O619R26
- 1a7Zh2HlrcNZfUmUUcpaRPP7sPkBBLhJfqjUzc2oHRNpK/1mQ/+mD9CjVFNz9OAGD0xFzNUo
- yOFu/N8EQfYD9lwntxM0dl+QPjYsH81H6zw6ofq+jVKcEMI/JAgFMU0EnxrtQKH7WXxhO4hx
- 3DFM7Ui90hbExlFrXELyl/ahlll8gfrXY2cevtQsoJDvQLbv7QARAQABzSZEYW5pZWwgQm9y
- a21hbm4gPGRhbmllbEBpb2dlYXJib3gubmV0PsLBkQQTAQoAOxYhBCrUdtCTcZyapV2h+93z
- cY/jfzlXBQJjQJCNAhsDBQkHhM4ACAsJCAcNDAsKBRUKCQgLAh4BAheAAAoJEN3zcY/jfzlX
- dkUQAIFayRgjML1jnwKs7kvfbRxf11VI57EAG8a0IvxDlNKDcz74mH66HMyhMhPqCPBqphB5
- ZUjN4N5I7iMYB/oWUeohbuudH4+v6ebzzmgx/EO+jWksP3gBPmBeeaPv7xOvN/pPDSe/0Ywp
- dHpl3Np2dS6uVOMnyIsvmUGyclqWpJgPoVaXrVGgyuer5RpE/a3HJWlCBvFUnk19pwDMMZ8t
- 0fk9O47HmGh9Ts3O8pGibfdREcPYeGGqRKRbaXvcRO1g5n5x8cmTm0sQYr2xhB01RJqWrgcj
- ve1TxcBG/eVMmBJefgCCkSs1suriihfjjLmJDCp9XI/FpXGiVoDS54TTQiKQinqtzP0jv+TH
- 1Ku+6x7EjLoLH24ISGyHRmtXJrR/1Ou22t0qhCbtcT1gKmDbTj5TcqbnNMGWhRRTxgOCYvG0
- 0P2U6+wNj3HFZ7DePRNQ08bM38t8MUpQw4Z2SkM+jdqrPC4f/5S8JzodCu4x80YHfcYSt+Jj
- ipu1Ve5/ftGlrSECvy80ZTKinwxj6lC3tei1bkI8RgWZClRnr06pirlvimJ4R0IghnvifGQb
- M1HwVbht8oyUEkOtUR0i0DMjk3M2NoZ0A3tTWAlAH8Y3y2H8yzRrKOsIuiyKye9pWZQbCDu4
- ZDKELR2+8LUh+ja1RVLMvtFxfh07w9Ha46LmRhpCzsFNBGNAkI0BEADJh65bNBGNPLM7cFVS
- nYG8tqT+hIxtR4Z8HQEGseAbqNDjCpKA8wsxQIp0dpaLyvrx4TAb/vWIlLCxNu8Wv4W1JOST
- wI+PIUCbO/UFxRy3hTNlb3zzmeKpd0detH49bP/Ag6F7iHTwQQRwEOECKKaOH52tiJeNvvyJ
- pPKSKRhmUuFKMhyRVK57ryUDgowlG/SPgxK9/Jto1SHS1VfQYKhzMn4pWFu0ILEQ5x8a0RoX
- k9p9XkwmXRYcENhC1P3nW4q1xHHlCkiqvrjmWSbSVFYRHHkbeUbh6GYuCuhqLe6SEJtqJW2l
- EVhf5AOp7eguba23h82M8PC4cYFl5moLAaNcPHsdBaQZznZ6NndTtmUENPiQc2EHjHrrZI5l
- kRx9hvDcV3Xnk7ie0eAZDmDEbMLvI13AvjqoabONZxra5YcPqxV2Biv0OYp+OiqavBwmk48Z
- P63kTxLddd7qSWbAArBoOd0wxZGZ6mV8Ci/ob8tV4rLSR/UOUi+9QnkxnJor14OfYkJKxot5
- hWdJ3MYXjmcHjImBWplOyRiB81JbVf567MQlanforHd1r0ITzMHYONmRghrQvzlaMQrs0V0H
- 5/sIufaiDh7rLeZSimeVyoFvwvQPx5sXhjViaHa+zHZExP9jhS/WWfFE881fNK9qqV8pi+li
- 2uov8g5yD6hh+EPH6wARAQABwsF8BBgBCgAmFiEEKtR20JNxnJqlXaH73fNxj+N/OVcFAmNA
- kI0CGwwFCQeEzgAACgkQ3fNxj+N/OVfFMhAA2zXBUzMLWgTm6iHKAPfz3xEmjtwCF2Qv/TT3
- KqNUfU3/0VN2HjMABNZR+q3apm+jq76y0iWroTun8Lxo7g89/VDPLSCT0Nb7+VSuVR/nXfk8
- R+OoXQgXFRimYMqtP+LmyYM5V0VsuSsJTSnLbJTyCJVu8lvk3T9B0BywVmSFddumv3/pLZGn
- 17EoKEWg4lraXjPXnV/zaaLdV5c3Olmnj8vh+14HnU5Cnw/dLS8/e8DHozkhcEftOf+puCIl
- Awo8txxtLq3H7KtA0c9kbSDpS+z/oT2S+WtRfucI+WN9XhvKmHkDV6+zNSH1FrZbP9FbLtoE
- T8qBdyk//d0GrGnOrPA3Yyka8epd/bXA0js9EuNknyNsHwaFrW4jpGAaIl62iYgb0jCtmoK/
- rCsv2dqS6Hi8w0s23IGjz51cdhdHzkFwuc8/WxI1ewacNNtfGnorXMh6N0g7E/r21pPeMDFs
- rUD9YI1Je/WifL/HbIubHCCdK8/N7rblgUrZJMG3W+7vAvZsOh/6VTZeP4wCe7Gs/cJhE2gI
- DmGcR+7rQvbFQC4zQxEjo8fNaTwjpzLM9NIp4vG9SDIqAm20MXzLBAeVkofixCsosUWUODxP
- owLbpg7pFRJGL9YyEHpS7MGPb3jSLzucMAFXgoI8rVqoq6si2sxr2l0VsNH5o3NgoAgJNIg=
-In-Reply-To: <20250819093737.60688-1-laoar.shao@gmail.com>
+Subject: Re: [PATCH] thermal: rockchip: shut up GRF warning
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+References: <20250818-thermal-rockchip-grf-warning-v1-1-134152c97097@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250818-thermal-rockchip-grf-warning-v1-1-134152c97097@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27737/Tue Aug 19 10:27:27 2025)
 
-On 8/19/25 11:37 AM, Yafang Shao wrote:
-> During recent testing with the netem qdisc to inject delays into TCP
-> traffic, we observed that our CLS BPF program failed to function correctly
-> due to incorrect classid retrieval from task_get_classid(). The issue
-> manifests in the following call stack:
+On 18/08/2025 6:26 pm, Sebastian Reichel wrote:
+> Most of the recent Rockchip devices do not have a GRF associated
+> with the tsadc IP. Let's avoid printing a warning on those devices.
 > 
->          bpf_get_cgroup_classid+5
->          cls_bpf_classify+507
->          __tcf_classify+90
->          tcf_classify+217
->          __dev_queue_xmit+798
->          bond_dev_queue_xmit+43
->          __bond_start_xmit+211
->          bond_start_xmit+70
->          dev_hard_start_xmit+142
->          sch_direct_xmit+161
->          __qdisc_run+102             <<<<< Issue location
->          __dev_xmit_skb+1015
->          __dev_queue_xmit+637
->          neigh_hh_output+159
->          ip_finish_output2+461
->          __ip_finish_output+183
->          ip_finish_output+41
->          ip_output+120
->          ip_local_out+94
->          __ip_queue_xmit+394
->          ip_queue_xmit+21
->          __tcp_transmit_skb+2169
->          tcp_write_xmit+959
->          __tcp_push_pending_frames+55
->          tcp_push+264
->          tcp_sendmsg_locked+661
->          tcp_sendmsg+45
->          inet_sendmsg+67
->          sock_sendmsg+98
->          sock_write_iter+147
->          vfs_write+786
->          ksys_write+181
->          __x64_sys_write+25
->          do_syscall_64+56
->          entry_SYSCALL_64_after_hwframe+100
-> 
-> The problem occurs when multiple tasks share a single qdisc. In such cases,
-> __qdisc_run() may transmit skbs created by different tasks. Consequently,
-> task_get_classid() retrieves an incorrect classid since it references the
-> current task's context rather than the skb's originating task.
-> 
-> Given that dev_queue_xmit() always executes with bh disabled, we can safely
-> use in_softirq() instead of in_serving_softirq() to properly identify the
-> softirq context and obtain the correct classid.
-> 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: Thomas Graf <tgraf@suug.ch>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 > ---
->   include/net/cls_cgroup.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/thermal/rockchip_thermal.c | 53 +++++++++++++++++++++++++++++++++-----
+>   1 file changed, 46 insertions(+), 7 deletions(-)
 > 
-> diff --git a/include/net/cls_cgroup.h b/include/net/cls_cgroup.h
-> index 7e78e7d6f015..fc9e0617a73c 100644
-> --- a/include/net/cls_cgroup.h
-> +++ b/include/net/cls_cgroup.h
-> @@ -63,7 +63,7 @@ static inline u32 task_get_classid(const struct sk_buff *skb)
->   	 * calls by looking at the number of nested bh disable calls because
->   	 * softirqs always disables bh.
->   	 */
-> -	if (in_serving_softirq()) {
-> +	if (in_softirq()) {
->   		struct sock *sk = skb_to_full_sk(skb);
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index 3beff9b6fac3abe8948b56132b618ff1bed57217..1e8091cebd6673ab39fa0c4dee835c68aeb7e8b5 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -50,6 +50,18 @@ enum adc_sort_mode {
+>   	ADC_INCREMENT,
+>   };
 >   
->   		/* If there is an sock_cgroup_classid we'll use that. */
+> +/*
+> + * The GRF availability depends on the specific SoC
+> + * GRF_NONE: the SoC does not have a GRF associated with the tsadc
+> + * GRF_OPTIONAL: the SoC has a GRF, but the driver can work without it
+> + * GRF_MANDATORY: the SoC has a GRF and it is required for proper operation
+> + */
+> +enum tsadc_grf_mode {
+> +	GRF_NONE,
+> +	GRF_OPTIONAL,
+> +	GRF_MANDATORY,
+> +};
+> +
+>   #include "thermal_hwmon.h"
+>   
+>   /**
+> @@ -97,6 +109,9 @@ struct rockchip_tsadc_chip {
+>   	enum tshut_mode tshut_mode;
+>   	enum tshut_polarity tshut_polarity;
+>   
+> +	/* GRF availability */
+> +	enum tsadc_grf_mode grf_mode;
+> +
+>   	/* Chip-wide methods */
+>   	void (*initialize)(struct regmap *grf,
+>   			   void __iomem *reg, enum tshut_polarity p);
+> @@ -1099,6 +1114,8 @@ static const struct rockchip_tsadc_chip px30_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 2, /* 2 channels for tsadc */
+>   
+> +	.grf_mode = GRF_MANDATORY,
+> +
+>   	.tshut_mode = TSHUT_MODE_CRU, /* default TSHUT via CRU */
+>   	.tshut_temp = 95000,
+>   
+> @@ -1123,6 +1140,8 @@ static const struct rockchip_tsadc_chip rv1108_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 1, /* one channel for tsadc */
+>   
+> +	.grf_mode = GRF_NONE,
+> +
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1148,6 +1167,8 @@ static const struct rockchip_tsadc_chip rk3228_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 1, /* one channel for tsadc */
+>   
+> +	.grf_mode = GRF_NONE,
+> +
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1173,6 +1194,8 @@ static const struct rockchip_tsadc_chip rk3288_tsadc_data = {
+>   	.chn_offset = 1,
+>   	.chn_num = 2, /* two channels for tsadc */
+>   
+> +	.grf_mode = GRF_NONE,
+> +
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1198,6 +1221,8 @@ static const struct rockchip_tsadc_chip rk3328_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 1, /* one channels for tsadc */
+>   
+> +	.grf_mode = GRF_NONE,
+> +
+>   	.tshut_mode = TSHUT_MODE_CRU, /* default TSHUT via CRU */
+>   	.tshut_temp = 95000,
+>   
+> @@ -1222,6 +1247,8 @@ static const struct rockchip_tsadc_chip rk3366_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 2, /* two channels for tsadc */
+>   
+> +	.grf_mode = GRF_OPTIONAL,
+> +
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1247,6 +1274,8 @@ static const struct rockchip_tsadc_chip rk3368_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 2, /* two channels for tsadc */
+>   
+> +	.grf_mode = GRF_NONE,
+> +
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1272,6 +1301,8 @@ static const struct rockchip_tsadc_chip rk3399_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 2, /* two channels for tsadc */
+>   
+> +	.grf_mode = GRF_OPTIONAL,
+> +
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1297,6 +1328,8 @@ static const struct rockchip_tsadc_chip rk3568_tsadc_data = {
+>   	.chn_offset = 0,
+>   	.chn_num = 2, /* two channels for tsadc */
+>   
+> +	.grf_mode = GRF_OPTIONAL,
+> +
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1321,6 +1354,7 @@ static const struct rockchip_tsadc_chip rk3576_tsadc_data = {
+>   	/* top, big_core, little_core, ddr, npu, gpu */
+>   	.chn_offset = 0,
+>   	.chn_num = 6, /* six channels for tsadc */
+> +	.grf_mode = GRF_NONE,
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1345,6 +1379,7 @@ static const struct rockchip_tsadc_chip rk3588_tsadc_data = {
+>   	/* top, big_core0, big_core1, little_core, center, gpu, npu */
+>   	.chn_offset = 0,
+>   	.chn_num = 7, /* seven channels for tsadc */
+> +	.grf_mode = GRF_NONE,
+>   	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>   	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>   	.tshut_temp = 95000,
+> @@ -1572,7 +1607,7 @@ static int rockchip_configure_from_dt(struct device *dev,
+>   				      struct device_node *np,
+>   				      struct rockchip_thermal_data *thermal)
+>   {
+> -	u32 shut_temp, tshut_mode, tshut_polarity;
+> +	u32 shut_temp, tshut_mode, tshut_polarity, ret;
+>   
+>   	if (of_property_read_u32(np, "rockchip,hw-tshut-temp", &shut_temp)) {
+>   		dev_warn(dev,
+> @@ -1621,12 +1656,16 @@ static int rockchip_configure_from_dt(struct device *dev,
+>   		return -EINVAL;
+>   	}
+>   
+> -	/* The tsadc wont to handle the error in here since some SoCs didn't
+> -	 * need this property.
+> -	 */
+> -	thermal->grf = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+> -	if (IS_ERR(thermal->grf))
+> -		dev_warn(dev, "Missing rockchip,grf property\n");
+> +	if (thermal->chip->grf_mode != GRF_NONE) {
+> +		thermal->grf = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+> +		if (IS_ERR(thermal->grf)) {
+> +			ret = PTR_ERR(thermal->grf);
+> +			if (thermal->chip->grf_mode == GRF_OPTIONAL)
+> +				dev_warn(dev, "Missing rockchip,grf property\n");
+> +			else
+> +				return dev_err_probe(dev, ret, "Missing rockchip,grf property\n");
+> +		}
+> +	}
 
-Hm, essentially you only want to use the fallback method of retrieving cgroup from
-the socket when the dev_queue_xmit() was triggered via ksoftirqd, rather than from
-a process via syscall all the way into dev_queue_xmit(). It gets more fuzzy presumably
-when skbs are queued somewhere and then some other kthread calls the dev_queue_xmit().
+Nit: Does the lookup itself need to be made conditional? I think I'd
+also agree that the "optional" mode seems suspect, so potentially it
+could be a whole lot simpler, e.g.:
 
-Looking at in_softirq(), the comment says "the following macros are deprecated and
-should not be used in new code", see commit 15115830c887 ("preempt: Cleanup the
-macro maze a bit"). Maybe Sebastian or Paul has input on whether in_softirq() is
-still supposed to be used.
-
-Side question, did you investigate where the skb->sk association got orphaned
-somewhere along the way?
+	thermal->grf = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+	if (IS_ERR(thermal->grf) && thermal->chip->grf_required)
+		return dev_err_probe(dev, PTR_ERR(thermal->grf),
+				     "Missing rockchip,grf property\n");
 
 Thanks,
-Daniel
+Robin.
+
+>   
+>   	rockchip_get_trim_configuration(dev, np, thermal);
+>   
+> 
+> ---
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> change-id: 20250818-thermal-rockchip-grf-warning-05f7f56286a2
+> 
+> Best regards,
+
 
