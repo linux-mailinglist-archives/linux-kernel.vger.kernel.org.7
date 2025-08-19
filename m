@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-775586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5138BB2C0D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:46:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86971B2C0E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F04B27B3A24
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:44:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EE21886AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87403314B9;
-	Tue, 19 Aug 2025 11:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AC23314D7;
+	Tue, 19 Aug 2025 11:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mMnhn/jn"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BvbYixqr"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EDC32C315
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7A132C31C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603957; cv=none; b=Nty4faeLgGbhKwwEuXR0qlphVdVoZSInwTb7HdmAuHivKQjCqhMrBrRtAHPSaDBuKpztw9gtN0IUkat1yWT5yg/WH9Cs+qAmT/u7i73ZOA/2+Prq/FUmIMRORBvQ++iAVsJZjA7yl7oNRo38HdmHkowdj/EkffBHB3oG+l0nfCo=
+	t=1755603958; cv=none; b=gSouSzwtGCCY+rVstkMH67PhSGmHyIVaAdcfJ1M6Jo8R7jdvqrdIp7pA71hcEiK73l4DgYm/q891YP8w7/5T2JW6L83kbJ5D8rTNPt0wg+TZEkh7akDlp22+aTriiBnkdx64sfj9Qk/JxTb5dyrDgwefJzXmcKS/b/Jc2gPNpMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603957; c=relaxed/simple;
-	bh=RHgzxERFqXBJayCLtp1I/QWWv579hP721Hv537Vxp6E=;
+	s=arc-20240116; t=1755603958; c=relaxed/simple;
+	bh=j0BnWAhDqW93980MJMTG4FCn6QvHbgEEGRYAeb0s4W0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=twUO1UWTvmUhkXHkKacE7GDx4XM4XxcAGpYeWV1Jp3WzPeWIXn5gspEBtjHF8lt57om00CH4b1ylubmTP8KaqbMZG6bGC+DjOnYZ2wSA8NqhFo/1fdN+uKuWsPT+Mb4EG561TL2QHW3IRhHqrLXI023KEBi70W579LFcgjqduJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mMnhn/jn; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:To:Cc; b=dNVKs2OTFVnUQdsLYIaij7kW8NlArcwgZZQptic+KZoEy7YSYRPfz0AJTjq8CO9j+GAmiS36eauhUy7kL7ELpV+xg9zolUgvwII8YPro2WQs+PsbDuLKDkmF4MS3nv2RjoXkG+O7rReEV+e2xiCW/lE6eTWOmHr+6CD7V+5Czg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BvbYixqr; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b00e4a1so35458465e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:45:55 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso4727440f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:45:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755603954; x=1756208754; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755603955; x=1756208755; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AQC/lHj8toc5TCrfcLhMJT3E3jz1/e+YpE7xJHN8Uxc=;
-        b=mMnhn/jnB0TOfLsAGsa0OIw/Krg4lwJOUyMntBVx6SrwwTzFp3Ow1CdFNCC6/XPiUG
-         n1aI3UVolCTCYie36baKz1GA7n3NjG8SyjYlq6WUWVCPFftHOi3XrEMB+GuSZC2Sy0B3
-         J1jjx49YgjMBf3dvtstTZlkx3ddd2tl3Dcb5b/87RioSrwQQGBQ3Hv60za/ANQeM9A1t
-         Nh9uz3MpDDPDrc/pHZyDug1X4aoMPndgmO5KEHAiITIJkKIa3Ekuw+/eSy2nK58/UqU/
-         o962eY1/U6TZNMpAhhNGRpTjo90GVUp/lv2C423oa8s+lXy5hYEcoS1f2sIBD2NeQxbX
-         H7Fg==
+        bh=mLJDOHFLAE+/7ofBBmeHWb5P/k7aXqaaIgt/JhlZZaU=;
+        b=BvbYixqrhsDe7deVpve8gP2pdZCRmZYEf4lvWYaHCe5Q2VvxjPKiW17JTBw3/NLdFa
+         0Rj5zxIoMevYH9qjo5+yz9LVP9CbxHVrmtrYLFwK+2AWRzh3Jb/IsUmkSxJjD37Wv4LC
+         G/elAmAEm8V+sVd4mUhINJvZr2llCVVuMhi1BlA0Sm2e8GYtjqo524xaxUPosBrp95hl
+         WQzuS1gFQTMDZjoaW4ij7TGxfbJPTMEJdaaVCfFeD/iGY6y2Qsg92gG9xyqfC3L7WBe1
+         ZslehkeYn9gz9urIaZr5ZRpOUK5WS2ubd18nKc0/Mavo36OS8QD9TjEPJ63fjeoEAaVQ
+         VoTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755603954; x=1756208754;
+        d=1e100.net; s=20230601; t=1755603955; x=1756208755;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AQC/lHj8toc5TCrfcLhMJT3E3jz1/e+YpE7xJHN8Uxc=;
-        b=JpN5FFsS8tMuc1NQN8MUBOM7KiKOzE1pTSwFuDO1pME7fPLG4ApGcdQY4/4nq/HwxA
-         KF+j2HvA9wFMinN7BavaokJXfLQ9Zu0qnVIwjk5syTBap/YKgZd94euwaoNpMg7nVElk
-         lIVaU84Hl4WjKN3AbEZ0DIKna89FI/oqXKB1RyDA+KJLaPNRVpbVAgsc0cdIy7qeBxsD
-         VH+MuEnm/Q9Pdf8+vrllBFl0Vnfrc0nSgiKRFtQeZkKx6ELWqCHY50N5EBv/kIsVOOiE
-         aBHzmAR9dS7kyIu1VcEtRr1lrSy3xSpYDJt4Ns1/4Pt+0ZFe4C5Mdgw71/QfzSEiVTQ6
-         nUxg==
-X-Gm-Message-State: AOJu0Yy4u7JZdMdEBxe+FRaOvsPHQ9DPa/B/0rc9xy9IntxG/eJmcqtN
-	HmZVoYdUcn3HVRwJFQAoICAVgBAmRJE6FiF4kZSrvAGahC8AGaNALUBcDIQsBlGStoU=
-X-Gm-Gg: ASbGnctNtIb4SdB5E44R0rP59bSLsRiemrLUqJvsmomKJ4wwA/iY6ji+mwCR6t7vmO8
-	KhtthCtEJ/7Lzn2K4TL40qfvMmxJhSs3HchkUvA3MSJN5zR34lQI5q3bN+nuGiBhBLBnR0YMhik
-	3ewhdzsknlhnudBd0FChOB33mWQgPvgtffciLumplvq6ZsrbbrgO6RE/RJ//xatEkbwAyb96VzG
-	pC2MhZtS+X0Vw3kBH85ZcCJlzGemCQK6Moq6iWBXvYyRsl1dTVfwmC79T+i27h/+J9y0W8KHt6n
-	7YLB56E/2mDgAP4V6O31NCyYPZ53BzOjWAc+Xk+scLKqstX9aTqP39Ch1+SQ9IStCk/g6tqO2zv
-	niF/odsyLUEOHczxmcU4aT+F09rE+d0hANtNimUvWTqmTtTPnveXhmycKIHuiHFlJE5lF6/LUs1
-	OoMg==
-X-Google-Smtp-Source: AGHT+IF3fExSedP+rhMqtDX0FAinw193ciSJFQj94UbY/WOxq/Wu+sbuY/lPivyxNBf7lI4vygbdfg==
-X-Received: by 2002:a05:600c:1d2a:b0:458:b01c:8f with SMTP id 5b1f17b1804b1-45b43dc68a8mr15298175e9.8.1755603954043;
+        bh=mLJDOHFLAE+/7ofBBmeHWb5P/k7aXqaaIgt/JhlZZaU=;
+        b=uy530RRCXPMf/PnaTyJEdafVfCr995apextLiCuLki9e1uSyE6Y9RyRTcJ9Scx3Ktc
+         GxDSk1CRI3zv4exJ2lrMsP9RxEXFfO0tspX83R4FGoWzUaMm/QjTXCCu9Em+kwoFyZ+Y
+         7MHTXyQFSCfwnnHfo49eY2SCmlfibJ3doyI9eAgM9R2sumF6WzxXjRBOvWeDeli+KYOn
+         G2SuyV/ICnugeIwZ+Mpl6zJ+xeWMOF3KSuspCSsEjXq9ObRg9LbBHOJYRCsHsasw1oOV
+         J18Zf6OzzRlOn5qhYd+I4kNN2Es6bhlGemsmIerIBz5KCG3nI/PftVvlUVt/8U/NBJeR
+         ZRrg==
+X-Gm-Message-State: AOJu0YwVoUbwT0cpOEiaOJAb1WIZzxwha8Rzj2sUFHg57tIxpIK9lXWq
+	Xl8uqDK1/NX0V/9AjCSv4GFnIby5czjYxq+TcMFDoKsJJ6RcR2GtQG3bph2GnY4Vyfc=
+X-Gm-Gg: ASbGnctZSCjQslQd1kuWocGsFplS20zQhYvhMRx2cUHNHzpFletx07VNNuC2yGyDe/H
+	Og9iah3/5mMFYTb2vs1tD9p6VU3F95+kzn96J0VlR5FmLYW3R/8j0lFFuAEz9vOSu0Os0j9kYTT
+	aNLpNzqIbxirk5fJXBwUmSliuoid9PE/FArZk1F8/4VBcYIGnuue6EhA9VF2zun00aXyxsEsns1
+	q+hc2Ov4CskzAt2fGvLpO3/voRZbw3bFPDWr16tGTW9943VTGQnAZ7uW0FcQ+fRBfXBCVK2S86f
+	4LtAMMtmc7EO9H75UNWHezQX6w17/QyKTYvp97ZOcrIMe5NAOqcFScTrKcyIYZxCwLTZ8eDg84Z
+	it5lkpJSxkdX0QoINsAVbB+B/0b4eVIven9zl0aLD2CdWSUn3NoTH1jK6CLQ+hGHiSWpE7NtxZn
+	jC2w==
+X-Google-Smtp-Source: AGHT+IESX1PPZElxnFttFv84eb1J/CkA8TVR6xWv74teidOy3fiZPcwgJofWE17WBQlXCHAWQn7osA==
+X-Received: by 2002:a05:6000:4383:b0:3b7:8473:31c3 with SMTP id ffacd0b85a97d-3c0e00a105fmr325000f8f.9.1755603954886;
         Tue, 19 Aug 2025 04:45:54 -0700 (PDT)
 Received: from ta2.c.googlers.com (245.92.187.35.bc.googleusercontent.com. [35.187.92.245])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077788df7sm3430817f8f.48.2025.08.19.04.45.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077788df7sm3430817f8f.48.2025.08.19.04.45.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 04:45:53 -0700 (PDT)
+        Tue, 19 Aug 2025 04:45:54 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 19 Aug 2025 11:45:36 +0000
-Subject: [PATCH 1/3] dt-bindings: firmware: google,gs101-acpm-ipc: add
- clocks node
+Date: Tue, 19 Aug 2025 11:45:37 +0000
+Subject: [PATCH 2/3] firmware: exynos-acpm: add DVFS protocol
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-acpm-clk-v1-1-6bbd97474671@linaro.org>
+Message-Id: <20250819-acpm-clk-v1-2-6bbd97474671@linaro.org>
 References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
 In-Reply-To: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -101,93 +100,209 @@ Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755603952; l=2971;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755603952; l=6621;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=RHgzxERFqXBJayCLtp1I/QWWv579hP721Hv537Vxp6E=;
- b=0VhemtYEBOAIemXpjyQfMxDu+WLHs0AJDariMAZ3V8vjYybaLCcOrMVRTwR064RJ8oH8Qlkro
- INmqzkQoG67CliO24U9NMFfvexZ3ErbbkxnpAIzvSJXbHEqDgAb42pu
+ bh=j0BnWAhDqW93980MJMTG4FCn6QvHbgEEGRYAeb0s4W0=;
+ b=KTiIalOm1UBeH7L/m3ZP8PgxAwNUu4gW37VVDI7lJrJMmvBPyeXjemeUn04pDogpe84GEjvVP
+ QLEWsW4HaFSAa3LCLpnOovFdrk8Ou6Qwe8TRNrqJYzNzY0FnEyM9Ce1
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-The firmware exposes clocks that can be controlled via the ACPM
-interface. Describe the clocks exposed by the APM firmware.
+Add ACPM DVFS protocol handler. It constructs DVFS messages that
+the APM firmware can understand.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 28 ++++++++++++++++++++++
- include/dt-bindings/clock/google,gs101.h           | 15 ++++++++++++
- 2 files changed, 43 insertions(+)
+ drivers/firmware/samsung/Makefile                  |  4 +-
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        | 85 ++++++++++++++++++++++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        | 21 ++++++
+ drivers/firmware/samsung/exynos-acpm.c             |  5 ++
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  | 10 +++
+ 5 files changed, 124 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-index 9785aac3b5f34955bbfe2718eec48581d050954f..27cdf9c881ca680e78e77a0e14ffcffeba970871 100644
---- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-+++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-@@ -27,6 +27,29 @@ properties:
-   mboxes:
-     maxItems: 1
+diff --git a/drivers/firmware/samsung/Makefile b/drivers/firmware/samsung/Makefile
+index 7b4c9f6f34f54fd731886d97a615fe1aa97ba9a0..80d4f89b33a9558b68c9083da675c70ec3d05f19 100644
+--- a/drivers/firmware/samsung/Makefile
++++ b/drivers/firmware/samsung/Makefile
+@@ -1,4 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  
-+  clocks:
-+    description:
-+      Clocks that are variable and index based. These clocks don't provide
-+      an entire range of values between the limits but only discrete points
-+      within the range. The firmware also manages the voltage scaling
-+      appropriately with the clock scaling.
-+    type: object
-+    additionalProperties: false
+-acpm-protocol-objs			:= exynos-acpm.o exynos-acpm-pmic.o
++acpm-protocol-objs			:= exynos-acpm.o
++acpm-protocol-objs			+= exynos-acpm-pmic.o
++acpm-protocol-objs			+= exynos-acpm-dvfs.o
+ obj-$(CONFIG_EXYNOS_ACPM_PROTOCOL)	+= acpm-protocol.o
+diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.c b/drivers/firmware/samsung/exynos-acpm-dvfs.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..ee457c1a3de2ff2e4395d9fc3ff4c13294473b2d
+--- /dev/null
++++ b/drivers/firmware/samsung/exynos-acpm-dvfs.c
+@@ -0,0 +1,85 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright 2020 Samsung Electronics Co., Ltd.
++ * Copyright 2020 Google LLC.
++ * Copyright 2025 Linaro Ltd.
++ */
 +
-+    properties:
-+      compatible:
-+        const: google,gs101-acpm-dvfs-clocks
++#include <linux/bitfield.h>
++#include <linux/firmware/samsung/exynos-acpm-protocol.h>
++#include <linux/ktime.h>
++#include <linux/types.h>
++#include <linux/units.h>
 +
-+      "#clock-cells":
-+        const: 1
-+        description:
-+          The argument is the ID of the clock contained by the firmware
-+          messages.
++#include "exynos-acpm.h"
++#include "exynos-acpm-dvfs.h"
 +
-+    required:
-+      - compatible
-+      - "#clock-cells"
++#define ACPM_DVFS_ID			GENMASK(11, 0)
++#define ACPM_DVFS_REQ_TYPE		GENMASK(15, 0)
 +
-   pmic:
-     description: Child node describing the main PMIC.
-     type: object
-@@ -59,6 +82,11 @@ examples:
-         mboxes = <&ap2apm_mailbox>;
-         shmem = <&apm_sram>;
++enum exynos_acpm_dvfs_func {
++	ACPM_DVFS_FREQ_REQ,
++	ACPM_DVFS_FREQ_GET,
++};
++
++static void acpm_dvfs_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
++			       unsigned int acpm_chan_id, bool response)
++{
++	xfer->acpm_chan_id = acpm_chan_id;
++	xfer->txd = cmd;
++	xfer->txlen = cmdlen;
++
++	if (response) {
++		xfer->rxd = cmd;
++		xfer->rxlen = cmdlen;
++	}
++}
++
++static void acpm_dvfs_init_set_rate_cmd(u32 cmd[4], unsigned int clk_id,
++					unsigned long rate)
++{
++	cmd[0] = FIELD_PREP(ACPM_DVFS_ID, clk_id);
++	cmd[1] = rate / HZ_PER_KHZ;
++	cmd[2] = FIELD_PREP(ACPM_DVFS_REQ_TYPE, ACPM_DVFS_FREQ_REQ);
++	cmd[3] = ktime_to_ms(ktime_get());
++}
++
++int acpm_dvfs_set_rate(const struct acpm_handle *handle,
++		       unsigned int acpm_chan_id, unsigned int clk_id,
++		       unsigned long rate)
++{
++	struct acpm_xfer xfer = {0};
++	u32 cmd[4];
++
++	acpm_dvfs_init_set_rate_cmd(cmd, clk_id, rate);
++	acpm_dvfs_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id, false);
++
++	return acpm_do_xfer(handle, &xfer);
++}
++
++static void acpm_dvfs_init_get_rate_cmd(u32 cmd[4], unsigned int clk_id,
++					u32 dbg_val)
++{
++	cmd[0] = FIELD_PREP(ACPM_DVFS_ID, clk_id);
++	cmd[1] = dbg_val;
++	cmd[2] = FIELD_PREP(ACPM_DVFS_REQ_TYPE, ACPM_DVFS_FREQ_GET);
++	cmd[3] = ktime_to_ms(ktime_get());
++}
++
++unsigned long acpm_dvfs_get_rate(const struct acpm_handle *handle,
++				 unsigned int acpm_chan_id, unsigned int clk_id,
++				 u32 dbg_val)
++{
++	struct acpm_xfer xfer;
++	unsigned int cmd[4];
++	int ret;
++
++	acpm_dvfs_init_get_rate_cmd(cmd, clk_id, dbg_val);
++	acpm_dvfs_set_xfer(&xfer, cmd, sizeof(cmd), acpm_chan_id, true);
++
++	ret = acpm_do_xfer(handle, &xfer);
++	if (ret)
++		return 0;
++
++	return xfer.rxd[1] * HZ_PER_KHZ;
++}
+diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.h b/drivers/firmware/samsung/exynos-acpm-dvfs.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..85a10bd535d118f2f36e9888e41b9b705b08ea59
+--- /dev/null
++++ b/drivers/firmware/samsung/exynos-acpm-dvfs.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright 2020 Samsung Electronics Co., Ltd.
++ * Copyright 2020 Google LLC.
++ * Copyright 2025 Linaro Ltd.
++ */
++#ifndef __EXYNOS_ACPM_DVFS_H__
++#define __EXYNOS_ACPM_DVFS_H__
++
++#include <linux/types.h>
++
++struct acpm_handle;
++
++int acpm_dvfs_set_rate(const struct acpm_handle *handle,
++		       unsigned int acpm_chan_id, unsigned int id,
++		       unsigned long rate);
++unsigned long acpm_dvfs_get_rate(const struct acpm_handle *handle,
++				 unsigned int acpm_chan_id, unsigned int clk_id,
++				 u32 dbg_val);
++
++#endif /* __EXYNOS_ACPM_DVFS_H__ */
+diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+index 3a69fe3234c75e0b5a93cbea6bb210dc6f69d2a6..9fa0335ccf5db32892fdf09e8d4b0a885a8f8fb5 100644
+--- a/drivers/firmware/samsung/exynos-acpm.c
++++ b/drivers/firmware/samsung/exynos-acpm.c
+@@ -29,6 +29,7 @@
+ #include <linux/types.h>
  
-+        clocks {
-+            compatible = "google,gs101-acpm-dvfs-clocks";
-+            #clock-cells = <1>;
-+        };
-+
-         pmic {
-             compatible = "samsung,s2mpg10-pmic";
-             interrupts-extended = <&gpa0 6 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
-index 442f9e9037dc33198a1cee20af62fc70bbd96605..f1d0df412fdd49b300db4ba88bc0b1674cf0cdf8 100644
---- a/include/dt-bindings/clock/google,gs101.h
-+++ b/include/dt-bindings/clock/google,gs101.h
-@@ -634,4 +634,19 @@
- #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
- #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
+ #include "exynos-acpm.h"
++#include "exynos-acpm-dvfs.h"
+ #include "exynos-acpm-pmic.h"
  
-+#define CLK_ACPM_DVFS_MIF				0
-+#define CLK_ACPM_DVFS_INT				1
-+#define CLK_ACPM_DVFS_CPUCL0				2
-+#define CLK_ACPM_DVFS_CPUCL1				3
-+#define CLK_ACPM_DVFS_CPUCL2				4
-+#define CLK_ACPM_DVFS_G3D				5
-+#define CLK_ACPM_DVFS_G3DL2				6
-+#define CLK_ACPM_DVFS_TPU				7
-+#define CLK_ACPM_DVFS_INTCAM				8
-+#define CLK_ACPM_DVFS_TNR				9
-+#define CLK_ACPM_DVFS_CAM				10
-+#define CLK_ACPM_DVFS_MFC				11
-+#define CLK_ACPM_DVFS_DISP				12
-+#define CLK_ACPM_DVFS_BO				13
+ #define ACPM_PROTOCOL_SEQNUM		GENMASK(21, 16)
+@@ -590,8 +591,12 @@ static int acpm_channels_init(struct acpm_info *acpm)
+  */
+ static void acpm_setup_ops(struct acpm_info *acpm)
+ {
++	struct acpm_dvfs_ops *dvfs_ops = &acpm->handle.ops.dvfs_ops;
+ 	struct acpm_pmic_ops *pmic_ops = &acpm->handle.ops.pmic_ops;
+ 
++	dvfs_ops->set_rate = acpm_dvfs_set_rate;
++	dvfs_ops->get_rate = acpm_dvfs_get_rate;
 +
- #endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
+ 	pmic_ops->read_reg = acpm_pmic_read_reg;
+ 	pmic_ops->bulk_read = acpm_pmic_bulk_read;
+ 	pmic_ops->write_reg = acpm_pmic_write_reg;
+diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
+index f628bf1862c25fa018a2fe5e7e123bf05c5254b9..e41055316bb578bb8250a1b1177f1059eeeb2611 100644
+--- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
++++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
+@@ -13,6 +13,15 @@
+ struct acpm_handle;
+ struct device_node;
+ 
++struct acpm_dvfs_ops {
++	int (*set_rate)(const struct acpm_handle *handle,
++			unsigned int acpm_chan_id, unsigned int clk_id,
++			unsigned long rate);
++	unsigned long (*get_rate)(const struct acpm_handle *handle,
++				  unsigned int acpm_chan_id,
++				  unsigned int clk_id, u32 dbg_val);
++};
++
+ struct acpm_pmic_ops {
+ 	int (*read_reg)(const struct acpm_handle *handle,
+ 			unsigned int acpm_chan_id, u8 type, u8 reg, u8 chan,
+@@ -32,6 +41,7 @@ struct acpm_pmic_ops {
+ };
+ 
+ struct acpm_ops {
++	struct acpm_dvfs_ops dvfs_ops;
+ 	struct acpm_pmic_ops pmic_ops;
+ };
+ 
 
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
