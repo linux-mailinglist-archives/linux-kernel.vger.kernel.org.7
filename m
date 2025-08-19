@@ -1,414 +1,165 @@
-Return-Path: <linux-kernel+bounces-776045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A82EB2C7DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:03:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0846CB2C7CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 930A75C3951
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F9272500E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 14:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C08286409;
-	Tue, 19 Aug 2025 14:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8A283FFB;
+	Tue, 19 Aug 2025 14:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XP9qrk7h"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XBPDLe0f";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pS+8WlJ5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959862857CD;
-	Tue, 19 Aug 2025 14:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5A5283CAF;
+	Tue, 19 Aug 2025 14:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755615445; cv=none; b=nGIyIxr/NruiWlC4SXALo1JEg9HVJwFQwyt4CkIFA5ywR+PEDBB7bgQL6Z6XwPBjWJWpGQXrBEW78rPyh8fmRBaFe1mM6O7Ho2JRjINIGZWz+ByXZOhYFu2qwL9xzMCVp3v8c7IGZ6WebJKZcAv38o9yJvMtjHv1Knr8VnDMJ6k=
+	t=1755615426; cv=none; b=tGFC2W284dw+Pe9df+CXvzXCA77spL3BZe2JGNz2jQAyHHAQyJx7teaVbFoh0bEsnT/ZnYAsNoly2CTw/lfh3A+KP76Oxqe9hBbjPhsycdr1OEwptTVrZ0DQOATHSJmlBu0HwhIBkuhtKWG/01P9VX4AeHAHUgLdWslcZUfI+6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755615445; c=relaxed/simple;
-	bh=OovY0T457rnu6HwHTffxEbBQ+PiGMrWHCs3MBjfdbpA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kPTrhT0vvfUSz03svenkjJ1FBkMCiQ/t64HEVdfWS35wTl2jKTyh/03ubeUuPKFbTc+fBpNUsunA2X4CQIJ/8g0yRk86DS7gh8UZBT7Y3Sc/Oi0xuvGWW7dItDuchmC5JJPob76tuYrbSjKy8VaAStmV0ESkG5E4EdtKGfzD8Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XP9qrk7h; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 32D0B20CBF;
-	Tue, 19 Aug 2025 16:57:22 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id CAeAOB_ffVj2; Tue, 19 Aug 2025 16:57:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755615441; bh=OovY0T457rnu6HwHTffxEbBQ+PiGMrWHCs3MBjfdbpA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=XP9qrk7hMd5UZ8EU3R7DJFvsIBnYlLWWaSQNjhlymXzSGlSXRYh6UTR1BrsxcORx5
-	 K1DPRgnjxb24gxezEQfvYFwwIGq93zpRbqxfB1sm/rAeZ96HjduE3cvdCiMKofmkqa
-	 hYOOA6mEAvkweOYKbZJUigvDnoYn02y4nEfnxuaY56pxBKm+NdfyjPDbYeDo5vCXXk
-	 q1n3aboPflpnWKOS6p3eTXh6/yX8WwxkZ0WIGl/j6de0wRauDnS1HPGPTgAscPjKjy
-	 wh6B4zZuM3s6uV7s+4+XSVPAL5QCqxhwlFxtdk7EPehAVnIZF8s0rP+ucWHbo7ahpX
-	 BShYuEvW7GhgA==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Tue, 19 Aug 2025 20:26:45 +0530
-Subject: [PATCH v4 2/2] drm: panel: add support for Synaptics TDDI series
- DSI panels
+	s=arc-20240116; t=1755615426; c=relaxed/simple;
+	bh=jTRC/CHJntYVtBQIVMAGSv4VOFd+4rvA3L2Yn4gMfMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zhfw5flNhsITXMwhr1EiW1HoUSAYnIXULRZSrsu10bg5Zw/T3dxShnA0YaNljDABu6SkKD4nPyrty8VJU0FX+1TtUA2f5CjC5XSjDO6HFIjxIylHeyLSnxwjGZqc2hHdMX+0uii3aY+XjZPrTOfOyZHMgRiZG2tquVKYmXLP/Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XBPDLe0f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pS+8WlJ5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 19 Aug 2025 16:57:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755615423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7fcGAbJPPdGZvSLVrtBanIpB5dI4uHVka3XSy/P+gA8=;
+	b=XBPDLe0fihzaCCfT5pSO53u96LHBo7uzmoa5bB9bv22RWOZ0eVnRBOIoXe98ff/e8PT0wI
+	mhthpjVcYpV90s/o5QvxRvtGnTJcN2H7jwDKz2ezq1IC6DYosgszQSOj8AZR6rCLGl3f7S
+	wDAi9K2a/WgdD+YmtNkgL4C9d1KESvtWt5Tv/TqmGtMCasIyY0iaH6bx1Nnhg0n+XPHQIN
+	AbItO/ZONX4jDmIskQjHDgGlM8Xwz50tYndwI7c6STP2TxlgdefXTdhlV4CCjQdPawL534
+	FqEl7d3x2aGNJchINbfzx4Edsvx8Pm1Hs7UPmG4TF0fZELygfr1SvARXl4KdZg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755615423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7fcGAbJPPdGZvSLVrtBanIpB5dI4uHVka3XSy/P+gA8=;
+	b=pS+8WlJ5up5SYgONcsS9fwRHHqpFdrbk9QbJm/n8kzF1IRzAe5hMxbfHUKOgN9Zw3Nl5Tn
+	AGGboCVmDy/vYiAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Yunseong Kim <ysk@kzalloc.com>, linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
+ in vhci_urb_enqueue on PREEMPT_RT
+Message-ID: <20250819145700.sIWRW7Oe@linutronix.de>
+References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
+ <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
+ <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
+ <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
+ <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
+ <20250819110457.I46wiKTe@linutronix.de>
+ <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-panel-synaptics-tddi-v4-2-448f466d16a6@disroot.org>
-References: <20250819-panel-synaptics-tddi-v4-0-448f466d16a6@disroot.org>
-In-Reply-To: <20250819-panel-synaptics-tddi-v4-0-448f466d16a6@disroot.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755615411; l=10510;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=OovY0T457rnu6HwHTffxEbBQ+PiGMrWHCs3MBjfdbpA=;
- b=3NgnTNHTQLoNwP/ffsFpPEgDJHpqvoIvo+y39C2r0g2e53BtH9C6jSYoogvs+OZtdCBuH7bw1
- QFRovkf41C/DRHIql3MzLVGOOBSI54MuzdJ2EB/Hy0Rl21Wqy03aSVF
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
 
-Synaptics TDDI (Touch/Display Integration) panels utilize a single chip
-for display and touch controllers. Implement a simple device driver for
-such panels, along with its built-in LED backlight controller, and add
-support for TD4101 and TD4300 panels in the driver.
+On 2025-08-19 10:12:31 [-0400], Alan Stern wrote:
+> > We could use some API that accidentally does what you ask for. There
+> > would be local_lock_t where local_lock_irq() does that.
+> > What about moving the completion callback to softirq by setting HCD_BH?
+> 
+> You're missing the point.
+> 
+> There are several places in the USB stack that disable local interrupts.  
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/gpu/drm/panel/Kconfig                |  11 ++
- drivers/gpu/drm/panel/Makefile               |   1 +
- drivers/gpu/drm/panel/panel-synaptics-tddi.c | 276 +++++++++++++++++++++++++++
- 3 files changed, 288 insertions(+)
+But *why*? You need locking due to SMP. So it should be simply to avoid
+irqrestore()/ irqsave() during unlock/lock or to avoid deadlocks if a
+callback is invoked from IRQ and process context and the callback
+handler does simply spin_lock() (without the _irq suffix).
+The latter shouldn't be problem due to commit
+	ed194d1367698 ("usb: core: remove local_irq_save() around ->complete() handler")
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 09b9f7ff9340abb708a503f7564acc46b2faaf7d..b080da939f5e3d11bf4c437ae167480d2721b41f 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -1021,6 +1021,17 @@ config DRM_PANEL_SYNAPTICS_R63353
- 	  Say Y if you want to enable support for panels based on the
- 	  Synaptics R63353 controller.
- 
-+config DRM_PANEL_SYNAPTICS_TDDI
-+	tristate "Synaptics TDDI display panels"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y if you want to enable support for the Synaptics TDDI display
-+	  panels. There are multiple MIPI DSI panels manufactured under the TDDI
-+	  namesake, with varying resolutions and data lanes. They also have a
-+	  built-in LED backlight and a touch controller.
-+
- config DRM_PANEL_TDO_TL070WSH30
- 	tristate "TDO TL070WSH30 DSI panel"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 957555b499968ebbfb55c87d2729ce88b5d48a57..a6e786e2b578e09d95de5b6430eba94c668ee4bc 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -98,6 +98,7 @@ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7703) += panel-sitronix-st7703.o
- obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) += panel-sitronix-st7789v.o
- obj-$(CONFIG_DRM_PANEL_SUMMIT) += panel-summit.o
- obj-$(CONFIG_DRM_PANEL_SYNAPTICS_R63353) += panel-synaptics-r63353.o
-+obj-$(CONFIG_DRM_PANEL_SYNAPTICS_TDDI) += panel-synaptics-tddi.o
- obj-$(CONFIG_DRM_PANEL_SONY_ACX565AKM) += panel-sony-acx565akm.o
- obj-$(CONFIG_DRM_PANEL_SONY_TD4353_JDI) += panel-sony-td4353-jdi.o
- obj-$(CONFIG_DRM_PANEL_SONY_TULIP_TRULY_NT35521) += panel-sony-tulip-truly-nt35521.o
-diff --git a/drivers/gpu/drm/panel/panel-synaptics-tddi.c b/drivers/gpu/drm/panel/panel-synaptics-tddi.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..a4b3cbdebb6ca4062c02c6e7ac184f3ec245926a
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-synaptics-tddi.c
-@@ -0,0 +1,276 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Synaptics TDDI display panel driver.
-+ *
-+ * Copyright (C) 2025 Kaustabh Chakraborty <kauschluss@disroot.org>
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+
-+#include <video/mipi_display.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_probe_helper.h>
-+
-+struct tddi_panel_data {
-+	u8 lanes;
-+	/* wait timings for panel enable */
-+	u8 delay_ms_sleep_exit;
-+	u8 delay_ms_display_on;
-+	/* wait timings for panel disable */
-+	u8 delay_ms_display_off;
-+	u8 delay_ms_sleep_enter;
-+};
-+
-+struct tddi_ctx {
-+	struct drm_panel panel;
-+	struct mipi_dsi_device *dsi;
-+	struct drm_display_mode mode;
-+	struct backlight_device *backlight;
-+	const struct tddi_panel_data *data;
-+	struct regulator_bulk_data *supplies;
-+	struct gpio_desc *reset_gpio;
-+	struct gpio_desc *backlight_gpio;
-+};
-+
-+static const struct regulator_bulk_data tddi_supplies[] = {
-+	{ .supply = "vio" },
-+	{ .supply = "vsn" },
-+	{ .supply = "vsp" },
-+};
-+
-+static inline struct tddi_ctx *to_tddi_ctx(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct tddi_ctx, panel);
-+}
-+
-+static int tddi_update_status(struct backlight_device *backlight)
-+{
-+	struct tddi_ctx *ctx = bl_get_data(backlight);
-+	struct mipi_dsi_multi_context dsi = { .dsi = ctx->dsi };
-+	u8 brightness = backlight_get_brightness(backlight);
-+
-+	if (!ctx->panel.enabled)
-+		return 0;
-+
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi, brightness);
-+
-+	return dsi.accum_err;
-+}
-+
-+static int tddi_prepare(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+	struct device *dev = &ctx->dsi->dev;
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(tddi_supplies), ctx->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable regulators: %d\n", ret);
-+		return ret;
-+	}
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+	usleep_range(5000, 6000);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	usleep_range(5000, 6000);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+	usleep_range(10000, 11000);
-+
-+	gpiod_set_value_cansleep(ctx->backlight_gpio, 0);
-+	usleep_range(5000, 6000);
-+
-+	return 0;
-+}
-+
-+static int tddi_unprepare(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+
-+	gpiod_set_value_cansleep(ctx->backlight_gpio, 1);
-+	usleep_range(5000, 6000);
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	usleep_range(5000, 6000);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(tddi_supplies), ctx->supplies);
-+
-+	return 0;
-+}
-+
-+static int tddi_enable(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+	struct mipi_dsi_multi_context dsi = { .dsi = ctx->dsi };
-+	u8 brightness = ctx->backlight->props.brightness;
-+
-+	mipi_dsi_dcs_write_seq_multi(&dsi, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x0c);
-+
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_sleep_exit);
-+
-+	/* sync the panel with the backlight's brightness level */
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi, brightness);
-+
-+	mipi_dsi_dcs_set_display_on_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_display_on);
-+
-+	return dsi.accum_err;
-+};
-+
-+static int tddi_disable(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+	struct mipi_dsi_multi_context dsi = { .dsi = ctx->dsi };
-+
-+	mipi_dsi_dcs_set_display_off_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_display_off);
-+
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_sleep_enter);
-+
-+	return dsi.accum_err;
-+}
-+
-+static int tddi_get_modes(struct drm_panel *panel,
-+			  struct drm_connector *connector)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+
-+	return drm_connector_helper_get_modes_fixed(connector, &ctx->mode);
-+}
-+
-+static const struct backlight_ops tddi_bl_ops = {
-+	.update_status = tddi_update_status,
-+};
-+
-+static const struct backlight_properties tddi_bl_props = {
-+	.type = BACKLIGHT_PLATFORM,
-+	.brightness = 255,
-+	.max_brightness = 255,
-+};
-+
-+static const struct drm_panel_funcs tddi_drm_panel_funcs = {
-+	.prepare = tddi_prepare,
-+	.unprepare = tddi_unprepare,
-+	.enable = tddi_enable,
-+	.disable = tddi_disable,
-+	.get_modes = tddi_get_modes,
-+};
-+
-+static int tddi_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct tddi_ctx *ctx;
-+	int ret;
-+
-+	ctx = devm_drm_panel_alloc(dev, struct tddi_ctx, panel,
-+				   &tddi_drm_panel_funcs, DRM_MODE_CONNECTOR_DSI);
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
-+
-+	ctx->data = of_device_get_match_data(dev);
-+
-+	ctx->dsi = dsi;
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(tddi_supplies),
-+					    tddi_supplies, &ctx->supplies);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get regulators\n");
-+
-+	ctx->backlight_gpio = devm_gpiod_get_optional(dev, "backlight", GPIOD_ASIS);
-+	if (IS_ERR(ctx->backlight_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->backlight_gpio),
-+				     "failed to get backlight-gpios\n");
-+
-+	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_ASIS);
-+	if (IS_ERR(ctx->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
-+				     "failed to get reset-gpios\n");
-+
-+	ret = of_get_drm_panel_display_mode(dev->of_node, &ctx->mode, NULL);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get panel timings\n");
-+
-+	ctx->backlight = devm_backlight_device_register(dev, dev_name(dev), dev,
-+							ctx, &tddi_bl_ops,
-+							&tddi_bl_props);
-+	if (IS_ERR(ctx->backlight))
-+		return dev_err_probe(dev, PTR_ERR(ctx->backlight),
-+				     "failed to register backlight device");
-+
-+	dsi->lanes = ctx->data->lanes;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_VIDEO_NO_HFP;
-+
-+	ctx->panel.prepare_prev_first = true;
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = devm_mipi_dsi_attach(dev, dsi);
-+	if (ret < 0) {
-+		drm_panel_remove(&ctx->panel);
-+		return dev_err_probe(dev, ret, "failed to attach to DSI host\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void tddi_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct tddi_ctx *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	drm_panel_remove(&ctx->panel);
-+}
-+
-+static const struct tddi_panel_data td4101_panel_data = {
-+	.lanes = 2,
-+	/* wait timings for panel enable */
-+	.delay_ms_sleep_exit = 100,
-+	.delay_ms_display_on = 0,
-+	/* wait timings for panel disable */
-+	.delay_ms_display_off = 20,
-+	.delay_ms_sleep_enter = 90,
-+};
-+
-+static const struct tddi_panel_data td4300_panel_data = {
-+	.lanes = 4,
-+	/* wait timings for panel enable */
-+	.delay_ms_sleep_exit = 100,
-+	.delay_ms_display_on = 0,
-+	/* wait timings for panel disable */
-+	.delay_ms_display_off = 0,
-+	.delay_ms_sleep_enter = 0,
-+};
-+
-+static const struct of_device_id tddi_of_device_id[] = {
-+	{
-+		.compatible = "syna,td4101-panel",
-+		.data = &td4101_panel_data,
-+	}, {
-+		.compatible = "syna,td4300-panel",
-+		.data = &td4300_panel_data,
-+	}, { }
-+};
-+MODULE_DEVICE_TABLE(of, tddi_of_device_id);
-+
-+static struct mipi_dsi_driver tddi_dsi_driver = {
-+	.probe = tddi_probe,
-+	.remove = tddi_remove,
-+	.driver = {
-+		.name = "panel-synaptics-tddi",
-+		.of_match_table = tddi_of_device_id,
-+	},
-+};
-+module_mipi_dsi_driver(tddi_dsi_driver);
-+
-+MODULE_AUTHOR("Kaustabh Chakraborty <kauschluss@disroot.org>");
-+MODULE_DESCRIPTION("Synaptics TDDI Display Panel Driver");
-+MODULE_LICENSE("GPL");
+So if completing the URB tasklet/ softirq context works for ehci/ xhci
+without creating any warning, it should also work for vhci, dummy_hcd.
+Only RH code completes directly, everything else is shifted to softirq
+context (for ehci/HCD_BH).
 
--- 
-2.50.0
+> The idea was that -- on a non-RT system, which was all we had at the 
+> time -- spin_lock_irqsave() is logically equivalent to a combination of 
+> local_irq_save() and spin_lock().  Similarly, spin_lock_irq() is 
+> logically equivalent to local_irq_disable() plus spin_lock().
+> 
+> So code was written which, for various reasons, used local_irq_save() 
+> (or local_irq_disable()) and spin_lock() instead of spin_lock_irqsave() 
+> (or spin_lock_irq()).  But now we see that in RT builds, this 
+> equivalency is not valid.  Instead, spin_lock_irqsave(flags) is 
+> logically equivalent to "flags = 0" plus spin_lock() (and 
+> spin_lock_irq() is logically equivalent to a nop plus spin_lock()).  At 
+> least, that's how the material quoted earlier by Yunseong defines it.
+> 
+> Therefore, throughout the USB stack, we should replace calls to 
+> local_irq_save() and local_irq_disable() with functions that behave like 
+> the original in non-RT builds but do nothing in RT builds.  We shouldn't 
+> just worry about this one spot.
 
+| git grep -E 'local_irq_save|local_irq_disable' drivers/usb/ | wc -l
+| 21
+of which 10 are in pxa udc. The only one I am a bit concerned about is
+the one in usb_hcd_pci_remove() and I think we had reports and patches
+but somehow nothing did happen and I obviously forgot.
+
+> I would expect that RT already defines functions which do this, but I 
+> don't know their names.
+
+We don't have anything where
+	local_irq_disable()
+	spin_lock()
+
+can be mapped to something equivalent other than
+	spin_lock_irq()
+
+I was running around and kept changing code so that we don't end up in
+this scenario where we need to disable interrupts for some reason but on
+RT we don't.
+
+The closest thing we have is local_lock_irq() which maps to
+local_irq_disable() on !PREEMPT_RT systems. But I would prefer to avoid
+it because it serves a different purpose.
+What works is something like
+	spin_lock_irqsave();
+	spin_unlock();
+	$SOMETHING
+	spin_lock();
+	spin_unlock_irqestore().
+
+The question is why should $SOMETHING be invoked with disabled
+interrupts if the function was called from process context.
+
+If your concern is a missing _irqsave() in the callback then this
+shouldn't be an issue. If it is the wrong context from kcov's point of
+view then making the driver complete in tasklet should fix it since it
+would match what ehci/ xhci does. 
+
+> Alan Stern
+
+Sebastian
 
