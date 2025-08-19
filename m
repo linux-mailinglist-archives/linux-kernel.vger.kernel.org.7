@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-774929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB9FB2B955
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E232FB2B95A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 08:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F5B5648E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE7E1BA3C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 06:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C88265284;
-	Tue, 19 Aug 2025 06:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A5A26AA88;
+	Tue, 19 Aug 2025 06:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMiTN6X7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480C3450F2;
-	Tue, 19 Aug 2025 06:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hj52rV+/"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E4E2652B7;
+	Tue, 19 Aug 2025 06:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755584545; cv=none; b=LHHcmgmz3oTGdxzrN0/x7FLtfHXpt/l48YT584KzYMIib2OQ/8N0TGKo5EooDxhNfrBF5I9QlPIn1bpYUYjJKgA8QG7jyIornTXzvbPo6D+8iqfVu78W832UYCUJX0eGdLiVQxY1TiO00qT4bgQecf1jLS44o9WV7oTVPdQIyzU=
+	t=1755584786; cv=none; b=o7y9zH7OLq/e5H7QrcGwTdnOjgwS0nlD6jNl8FPjzydugCxy1SFxnryuKfRpcDIctmlLjjealfWqL21t8UTE94iDKYBf75UEweb8tM0imlkCI5l1mg4+A2zMO5t88yotuSoJ4f12WKt0wj6RPiKs2QfpeAMe+8FdtO2WViJggXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755584545; c=relaxed/simple;
-	bh=3nbQrS/gkAUwokWSC86E2CAQasLgtUAgcgITiuqnb3c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UkxQ6GyxAD0KiXEhIM9oAqGC6cf1s+PL0Dk/XDVPtYCYhEg2U1vBq3oJX2vIX585fwOTMTOpAASDNeuvBANNDRbU3YxMwih1IvjD8+sFLIeZ9pw5GEW4ea7jsjIIIRPxYrR/D+xQESUv1EQDWJsM4CFHiv72O8J37+xkV30Jitk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMiTN6X7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E66BC113CF;
-	Tue, 19 Aug 2025 06:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755584540;
-	bh=3nbQrS/gkAUwokWSC86E2CAQasLgtUAgcgITiuqnb3c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dMiTN6X75cP+4YuNRdwJhHmS8VD46UmR+wd5DAVqWWKRSILtGJzE4/TvX734lui2X
-	 VpBDibWFhM2ExB1zHBE9+6kBFwbXvzMapkYL2+EltzQr7p2U6JCaiudL24O95atbQ0
-	 OnBIyvWpF3hNLh0cn3AHgNGI0yKq+eM0b5w6NmFeIXmxG/SoOkT8jkHuXD1v6mdZaV
-	 ZNT5ggRr22TZkNVBXV24pj/I7bVw0c1evAPOz8zD90PQCki/SDBP0WCpdPfn7hIoX2
-	 wCaN0ETIF6zkdy7ZgNxkmpKosOXEiKAlpH0VSMJ34SKnU825glaBUWD1fODoWF4/Xa
-	 SWLD6iHEn1UgQ==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 06/16] mm/damon/paddr: support addr_unit for DAMOS_STAT
-Date: Mon, 18 Aug 2025 23:22:17 -0700
-Message-Id: <20250819062217.39729-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250813050706.1564229-7-yanquanmin1@huawei.com>
-References: 
+	s=arc-20240116; t=1755584786; c=relaxed/simple;
+	bh=jqN7N0XM2l7RQwhd+QZ6BjPYyr1iA/Jzm1WRBpfTrJE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=awnqCGjfCigyEayeqvA+NOpSyRCxtqj/jgTThBlTfBzpJ0s+1tXzQP6JiyvxtqugoNH9tRFK18k/yeEC4w5q6ySUUMK3O9NcdqD0jk9WJbKJehZmV1WbLBIl7DKKkdUtS8zbZnvB4TxINZrGvzHzXqKgQI17EUZymdB1gQULjJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hj52rV+/; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Sb
+	bv5QhPGynHMeq0UXb8e4p39yIC/4/NvEUYT0rkH8E=; b=hj52rV+/7o+bEUxs0C
+	o6XIzcwLKBnDdTBayVG4CIwXMjC7wfO972WyS+tiLCfxQTNX0Ayc3UKkODNfeNls
+	4FBDrZgged9HNb1fyli596syk6Ol0q9kWRlVJr38iCG6lkA/hvHcuxtHZlkBntz8
+	QPrtfiUTTs7tFLu/h/h0S/9ow=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAH6YqzGKRoYzv4Cw--.51505S2;
+	Tue, 19 Aug 2025 14:24:52 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4] net: af_packet: Use hrtimer to do the retire operation
+Date: Tue, 19 Aug 2025 14:24:51 +0800
+Message-Id: <20250819062451.1089842-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,55 +57,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAH6YqzGKRoYzv4Cw--.51505S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXw47ur4fJF4UCr4rJr4ruFg_yoW5Cw1UpF
+	W5ZFy7GwsrXw429a1xXr4kZFWSyws3Jrn8Grs5W34Iywn8Gry5tFZF9FWYvFWUKas29F17
+	ZF4FvryDAwn8ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UdUUUUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibg2uCmikEt2QHgAAsK
 
-Hi Quanmin,
+On Mon, 2025-08-18 at 17:29 +0800, Willem wrote:
 
-On Wed, 13 Aug 2025 13:06:56 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-
-> From: SeongJae Park <sj@kernel.org>
+> "We" don't do anything in the middle of a computation. Anyway, branch is
+> self explanatory enough, can drop comment.
 > 
-> Add support of addr_unit for DAMOS_STAT action handling from the DAMOS
-> operation implementation for the physical address space.
-
-As I suggested on another reply[1], please squash attaching patch to this one
-when you post next version of this series.
-
-[1] https://lore.kernel.org/0001-mm-damon-paddr-set-DAMOS_PAGEOUT-stat-in-core-addres.patch
-
-[...]
+> >   */
+> > -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+> > +static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
+> > +		bool start)
+> 
+> Indentation, align with first argument on previous line
 
 
-Thanks,
-SJ
+> > +	else
+> > +		/* We cannot use hrtimer_forward_now here because the function
+> > +		 * _prb_refresh_rx_retire_blk_timer can be called not only when
+> > +		 * the retire timer expires, but also when the kernel logic for
+> > +		 * receiving network packets detects that a network packet has
+> > +		 * filled up a block and calls prb_open_block to use the next
+> > +		 * block. This can lead to a WARN_ON being triggered in
+> > +		 * hrtimer_forward_now when it checks if the timer has already
+> > +		 * been enqueued.
+> > +		 */
+> 
+> As discussed, this will be changed in v5.
 
-==== Attachment 0 (0001-mm-damon-paddr-set-DAMOS_STAT-stat-in-core-address-u.patch) ====
-From 30d5bccbebe4ff5ae4d7d73ad857526f1648e786 Mon Sep 17 00:00:00 2001
-From: SeongJae Park <sj@kernel.org>
-Date: Wed, 13 Aug 2025 21:29:05 -0700
-Subject: [PATCH] mm/damon/paddr: set DAMOS_STAT stat in core address unit
 
-Operations layer should set DAMOS stat in core layer address unit, but
-paddr is returning that for STAT in paddr address unit.  Fix it.
+I will change them in v5. And I will ensure that there is a 24-hour send gap between
+each patch.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/paddr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index beee3bfc503d..5fad2f9a99a0 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -296,7 +296,7 @@ static unsigned long damon_pa_stat(struct damon_region *r,
- 		}
- 
- 		if (!damos_pa_filter_out(s, folio))
--			*sz_filter_passed += folio_size(folio);
-+			*sz_filter_passed += folio_size(folio) / addr_unit;
- 		addr += folio_size(folio);
- 		folio_put(folio);
- 	}
--- 
-2.39.5
+> >  {
+> > -	mod_timer(&pkc->retire_blk_timer,
+> > -			jiffies + pkc->tov_in_jiffies);
+> > +	if (start)
+> > +		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
+> > +			      HRTIMER_MODE_REL_SOFT);
+> 
+> It's okay to call this from inside a timer callback itself and return
+> HRTIMER_RESTART? I don't know off the top of my head.
+
+Although I have been using hrtimer_start to restart the timer within the callback in
+our project and seem to work weill, I found that it seems no one does this in the
+current mainline kernel code. Therefore, I will add a boolean parameter to the
+callback in version 5 to indicate whether it is within the callback function. If it is
+in the callback function, I will use hrtimer_forward_now instead of hrtimer_start.
+Additionally, while looking at the historical Git logs of hrtimer, I noticed that it is
+possible to call hrtimer_start to start the hrtimer outside of the hrtimer callback, but
+it requires the protection of raw_spin_lock_irqsave. When entering the
+_prb_refresh_rx_retire_blk_timer function, as noted in the comments, there is already
+protection with the sk_buff_head lock, so I only need to add a set of irq save and restore
+operations. The reason for this is based on the reference from link
+https://lore.kernel.org/all/20150415113105.GT5029@twins.programming.kicks-ass.net/T/#u and
+the implementation of the perf_mux_hrtimer_restart function.
+
+The implementation of the _prb_refresh_rx_retire_blk_timer function in PATCH v5:
+
+/*  Do NOT update the last_blk_num first.
+ *  Assumes sk_buff_head lock is held.
+ */
+static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
+					     bool start, bool callback)
+{
+	unsigned long flags;
+
+	local_irq_save(flags);
+	if (start && !callback)
+		hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
+			      HRTIMER_MODE_REL_SOFT);
+	else
+		hrtimer_forward_now(&pkc->retire_blk_timer, pkc->interval_ktime);
+	local_irq_restore(flags);
+	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
+}
+
+
+Thanks
+Xin Zhao
 
 
