@@ -1,146 +1,126 @@
-Return-Path: <linux-kernel+bounces-774790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-774791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0790EB2B78A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:30:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA079B2B78E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 05:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4341BA1C47
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:30:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C7F560E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 03:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3ED153BE8;
-	Tue, 19 Aug 2025 03:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A8D231829;
+	Tue, 19 Aug 2025 03:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="V4tFcgxb"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SuEX/1Rk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272B91E633C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 03:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02A013FEE;
+	Tue, 19 Aug 2025 03:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755574220; cv=none; b=kfwpI14gF1hUWLBQyJVk8smyOobU54ofT9x4mSM4zM8dQzFcMpfbIyAjOrypgvBNj64p9FOqq15s7s4T2R01bBf+nxL70nW8Fsw3sRGzvT38+b/TfEQ7UiFhHCckmwNJmE0pxeLEzbloBpkCZS6vZwYlAaIYqdWPYLV943xV2hY=
+	t=1755574363; cv=none; b=E/RgmSsCTr9QC40G4EDybV1tzKys/anOrSQiGLMm1DGv+pSO4LAoTebZtmsr7MZnNfB28u470CrdiDDMQs0UMywIyWE3AGNBiIOXP7ynEx4bQ9Uni5TKrRclPTnoTxpx+G4etywOwELHE0GrXC0d+OQJyLn7+QzvJmIKQAqxsIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755574220; c=relaxed/simple;
-	bh=hejDrutBwVtkHHg+tPFEf3z2Gzy88JBlXWqIMznyq9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FAs32GiW3Nus+pYojnQ/mDS3f0mjttBUoJtNrMVRSXtyL8nD+C5Vsxm/vmQcBB2iyIYyk3OmcHSv3HSvKpcVxqTenvSxbIx6Of3XXJjRglp8YMUycy0G0t/z6Bk66OPjNqTtHgPbt891daeuwvGbPBCHHS9JxKOOkA5v5PgJgEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=V4tFcgxb; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-333f8d1ecffso36927011fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 20:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755574216; x=1756179016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mhVUQhRbFoSi2h18eEQkGPOra/e5Kyo+DwjDJYlDYA8=;
-        b=V4tFcgxb81bq8D+Gr893gMrc7HvxC8JWS5QYQh1kARQISbZkB+5EL1juV/vljXnxgN
-         TWJo1pK7sKtIxMErV1hPR5+bm02eLKnPnX27TaPiwn/TRU2uBtJq3R4CD77InBMoy7so
-         460/9qt1E6t6l07iMGKh+RdRSvWv3pR1kjMS5gtvELhfYYEgoxRDoXoTSx9fH6uJ9BY/
-         HPp0SM2ezMLX4ZfJJPJliB1RbKvzAsJQux6dTvPmBmrrjnz+eKvKENFFSm7R8JnTwLNv
-         UHNt/l7vbfuLiPd5RDRayhoWfk8C2vk8QhIYBFMx/zb6y2MXloX7lkFZAisF8z3lQWTC
-         DSZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755574216; x=1756179016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mhVUQhRbFoSi2h18eEQkGPOra/e5Kyo+DwjDJYlDYA8=;
-        b=imTZ5zu0slmH1EDo5HTa9yVrNRQJ/mxyByai8TLnEuNXif13ppKkEqwuje1VPhw1p4
-         F6Z+xJueroReLMKh3UfrKxaGzMfWYyeaIKer9b5PRmk+wOMK4PdwGB7MTlblGXW9Rocq
-         OvRboDTQM5u9DO908LDGBi2M6swWmFBCbkm0MHYLD8JVcHcpG7f201XDTUP/p+cbdkeg
-         PRAgDYfH+/XAn8UeddXhIIS7Y7ndBdS1ywNmRgvv1fzcGZuORdLb3sgV8S52o/F37O3m
-         2FmsP28QHary/rwxwfmN67yipmJScBRy2q1HMv/+/5hCrDT7pBSd5m7vwDQ/AVkd3MLO
-         FtHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJoa83Uuh60Lx27CSsdJVaBOiBGEQC9L1aocJ9tzh0rhUeDwrAbdmjk14U3jkMpDws9cbJoFuPVn0Talk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3dowpMlt+0VKA6xfOWtYQy44L0hFx7g6cJmW1ph0zOq9YbZBi
-	//Awn/sDuCmJVfgqP1g+Pc+lACtuNORg+MlVaMZARko70bM4p3LsL1E3qJniEYwYtw5f5lKDW0G
-	tfvdkrm3/jPK+HZ2KHJM+9zDblAEiiIVyQw6uTld1rQ==
-X-Gm-Gg: ASbGncuP+ZCc3o0hz9FYUjrsGDdKIrszx8bU3YcAX+4tmxS7H6UHLeGY0AYJpR9AEap
-	/9z4OxtS2antNlmxY8ijukz3M5aHLVjo/NSfcusumH0IxLmCQT0Gundov0m8TMJqUALA/AUqVQ9
-	/i/iL/DcAIOibR6pc4l8ywp+KFyU7WXo8vdg8r2SnmlUid4RFiP4SuehAwnE78TMxdhCXXD2sIj
-	Hx8Ao7cHYdeuWpgQg==
-X-Google-Smtp-Source: AGHT+IGVnqZwPZZ7hgdjw/Q7u1vNN+1/ztdFP7S/ua4HnZs+KOgdIAGptOekgKLMoLxA7IyVYjoIfKDqA+WjmTJ71Ns=
-X-Received: by 2002:a2e:a99a:0:b0:332:362c:c775 with SMTP id
- 38308e7fff4ca-3353026d3edmr2279561fa.0.1755574216021; Mon, 18 Aug 2025
- 20:30:16 -0700 (PDT)
+	s=arc-20240116; t=1755574363; c=relaxed/simple;
+	bh=q3526BUAxicDe4mK4TVB0A18N/m1MKyoIMPvQ/IIODA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQUNiYX5w77yloGCz1i37KP+DGf0lnB/D/YGJSWVRb7Yp3tPEew4UkRhaVfEqcAQmqHWiyTZkmVCqXkc7ak41wezS19E80pvMvjtThj32KK9NUaHagSculBsmZFKcHc/OqZ8RsEYTDHdaqmjC59c8vMMm9ghJyQGuP2HHE1XIRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SuEX/1Rk; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755574361; x=1787110361;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=q3526BUAxicDe4mK4TVB0A18N/m1MKyoIMPvQ/IIODA=;
+  b=SuEX/1RkNy4obxPaXaQhDhOW+iqMGIPq0VAq08qEmvmHTcxAMjrIcxGH
+   r9oDrzJbdFg3Q54nJoRsbLyRR6ts4OEHXYId9Nc7Fc2MBI34lJGgeB9l4
+   CqC3agshmkjuAQurNM0B1BW0WWYuuG6Hzfi4U+SyCZWr5u7ZyMzfJmwO2
+   C/d76vndVrykWmrg4gFZyMLcHTpMIZBrl7ttmrt0fzZ8JEQcxBJWRKLm5
+   ItWy+QqA+KJ/GzxEhRHb99Mk+446XzWdLYdVPkIH7JDUIBgw6cwkF0Kss
+   MYq7r1KEWQ3Zk6hB2v8HNvs4CfmNnOfY1NgHPKwtoLXpp6lHG6GxTlR3t
+   Q==;
+X-CSE-ConnectionGUID: 0uhaY/xsTk6A3f59akOwjQ==
+X-CSE-MsgGUID: IV5xDYAzQ1ijosM9bKSdEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="83236059"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="83236059"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2025 20:32:40 -0700
+X-CSE-ConnectionGUID: Fee4F7f7ToaYhdNs6ihxCA==
+X-CSE-MsgGUID: TWhnzNskQCqlPV1RiTRlAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="167246268"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 18 Aug 2025 20:32:36 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uoD5O-000GSx-0d;
+	Tue, 19 Aug 2025 03:32:34 +0000
+Date: Tue, 19 Aug 2025 11:31:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arseniy Velikanov <me@adomerle.pw>,
+	Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Arseniy Velikanov <me@adomerle.pw>
+Subject: Re: [PATCH v1 2/2] phy: mediatek: tphy: Add software role switching
+Message-ID: <202508191054.otlyeeg5-lkp@intel.com>
+References: <20250814234825.810-2-me@adomerle.pw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818143600.894385-1-apatel@ventanamicro.com>
- <20250818143600.894385-3-apatel@ventanamicro.com> <aKPu2g1MOZBBzQbV@pie>
-In-Reply-To: <aKPu2g1MOZBBzQbV@pie>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 19 Aug 2025 09:00:03 +0530
-X-Gm-Features: Ac12FXzDuQ7Umqrf04wpGpc5VzWEYp9wpAAjguHv23M1BEzrlXyzJmRKwCFKs3o
-Message-ID: <CAK9=C2XmDGOz9_euC4vtchOxr+8f+m+9zZYVewCc2s7GZhd4Pw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] RISC-V: Add common csr_read_num() and
- csr_write_num() functions
-To: Yao Zi <ziyao@disroot.org>
-Cc: Sunil V L <sunilvl@ventanamicro.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Atish Patra <atish.patra@linux.dev>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-acpi@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814234825.810-2-me@adomerle.pw>
 
-On Tue, Aug 19, 2025 at 8:56=E2=80=AFAM Yao Zi <ziyao@disroot.org> wrote:
->
-> On Mon, Aug 18, 2025 at 08:06:00PM +0530, Anup Patel wrote:
-> > In RISC-V, there is no CSR read/write instruction which takes CSR
-> > number via register so add common csr_read_num() and csr_write_num()
-> > functions which allow accessing certain CSRs by passing CSR number
-> > as parameter. These common functions will be first used by the
-> > ACPI CPPC driver and RISC-V PMU driver.
-> >
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> > ---
-> >  arch/riscv/include/asm/csr.h |   3 +
-> >  arch/riscv/kernel/Makefile   |   1 +
-> >  arch/riscv/kernel/csr.c      | 165 +++++++++++++++++++++++++++++++++++
-> >  drivers/acpi/riscv/cppc.c    |  17 ++--
-> >  drivers/perf/riscv_pmu.c     |  54 ++----------
-> >  5 files changed, 184 insertions(+), 56 deletions(-)
-> >  create mode 100644 arch/riscv/kernel/csr.c
-> >
-> > diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.=
-h
-> > index 6fed42e37705..1540626b3540 100644
-> > --- a/arch/riscv/include/asm/csr.h
-> > +++ b/arch/riscv/include/asm/csr.h
-> > @@ -575,6 +575,9 @@
-> >                             : "memory");                      \
-> >  })
-> >
-> > +extern unsigned long csr_read_num(unsigned long csr_num, int *out_err)=
-;
-> > +extern void csr_write_num(unsigned long csr_num, unsigned long val, in=
-t *out_err);
->
-> I think it's more consistent to directly return the error code, and for
-> csr_read_num, we could pass out the read value by a pointer. e.g.
->
->         int csr_read_num(unsigned long csr_num, unsigned long *val);
->         int csr_write_num(unsigned long csr_num, unsigned long val);
->
-> This allows the caller to eliminate a variable for temporarily storing
-> the error code if they use it just after the invokation, and fits the
-> common convention of Linux better.
+Hi Arseniy,
 
-Drew had similar comments so see my response in the previous
-patch revision. (Refer, https://www.spinics.net/lists/kernel/msg5808113.htm=
-l)
+kernel test robot noticed the following build errors:
 
-Regards,
-Anup
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.17-rc2 next-20250818]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Arseniy-Velikanov/phy-mediatek-tphy-Add-software-role-switching/20250815-075416
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250814234825.810-2-me%40adomerle.pw
+patch subject: [PATCH v1 2/2] phy: mediatek: tphy: Add software role switching
+config: arm64-randconfig-001-20250819 (https://download.01.org/0day-ci/archive/20250819/202508191054.otlyeeg5-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250819/202508191054.otlyeeg5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508191054.otlyeeg5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: drivers/phy/mediatek/phy-mtk-tphy.o: in function `u2_phy_software_role_switch_init':
+>> phy-mtk-tphy.c:(.text+0x31d4): undefined reference to `usb_get_role_switch_default_mode'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
