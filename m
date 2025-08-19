@@ -1,190 +1,151 @@
-Return-Path: <linux-kernel+bounces-776533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B735FB2CE96
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:33:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124AFB2CE98
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 23:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B374B7B0A61
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970A41BA805D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 21:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AC9346A03;
-	Tue, 19 Aug 2025 21:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76083343D93;
+	Tue, 19 Aug 2025 21:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="et868i9o"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIGyaKcK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4350C3469FD;
-	Tue, 19 Aug 2025 21:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AC9284884;
+	Tue, 19 Aug 2025 21:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755639208; cv=none; b=X3M5HAm4o8nN/O8mYQl8U/FQQTnQKpTUcpK+yWzjQrgYHSbAaxNSNrR7GJOcIrXLWt+USdT6iikobpTotrhUOwXySUbQv+K+udnk661iMNKQpXcknweUZQFpI7plOYEDMNrX3gn5nbu3NYKy6Z6QhzAZe7za0egQIlyyGcWeE4o=
+	t=1755639252; cv=none; b=umkvotfoo77p5e+TZqru1ipdIJ8m+LsbsiV9inZBdG4BJNaa5OQCI6DL1mnS186o/mObIyehh1xuTuzvNUcdlgDtp2lWeOVnmgzsUHYOoBIHrlOIpYVfXWMz4jbrNxPqrE9WtWG45UuhY1utGnU2DxK3qJpz1FKYE3JRR5Sg1T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755639208; c=relaxed/simple;
-	bh=GU354q1ZBG72+J0Uii5taNooUFiqttuME/2kNXHqznI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oDjACkDwBy2yURLSoikw5EBt6DDSXkz4qPR4XeXYuM4vYKX2uZo9VqqwClwT0u5FIz36AfwOVwTovA0C0neUve2npPnnJ4Ns0jJI+zPAUXub9RV50P76rwo9ib8BDJDSXiZkrjP47p2cjpNkxjO/cPJgjzIOLT1VNjqQDW5c6kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=et868i9o; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b001f55so27346415e9.0;
-        Tue, 19 Aug 2025 14:33:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755639204; x=1756244004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=80crH1qcBdVhpG4y3gBnYxFazFUWcOiHS8/MQf37Hrs=;
-        b=et868i9oCjQvPkbIzOPo0+JhZD+OitLMgXs+3WoJMzKhxFkB/279xv1uyL/0XdG9nU
-         rSFhLnF9/Wx5R3XRvxk26vf8uiM5+glbZI7KzuHDWeogiP3vN+s3HiKJ3GRQnIp8yKpp
-         f2XFhTY+uQF07YrCzo1FaQJRWwxPL+rgxZ2q0znUHHPKIJmPS47TjTlgKr9GqpR8A7ys
-         LRrjSvvbiBESojw2ZfZzMFWUG9/j1lBFeDJGdC3ee9PGm/GpTcVIF7CCDXz5oe/EoYUT
-         me9MlPu8QPF3pl0C8sW+rAoQLMYXKTvIewaQfhLI8Kcer5EW4PTon19rboVepW59SFkc
-         gkLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755639205; x=1756244005;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=80crH1qcBdVhpG4y3gBnYxFazFUWcOiHS8/MQf37Hrs=;
-        b=lsibUeavS6u9WR0rnjlqVX9dib5M0BQfSg8MiGSRbbXdl90lrSVR6fkMU2X/AvvGHn
-         Un1Y0ZqUauLOcrjEKFcb0fYd2kjisf8dAvSJ5uZ1HOCSJci6THami7qYa4mqVaSVfBQr
-         gU+lrpgSGcEfbwIqSNd6jYczYm+08gn++8cLXxv7SWBfKI7/NNayMGP31Blxmji9A7lj
-         WGzWlQeMTxFXyyE51WHZqtO7QLrn52H/xEHMqEx5YlGPSOeigT8jypDZGG88eQp6Gh8f
-         VcLZvgAZoFFfsa14+ibdRr7p9eaKdZ1cweiK54CinfquLgv4ZcTd2Ie51Wk9a6ha/aMY
-         vRJA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4G4hAKMY3X16nlz92iRAav9B4OdD47tig45nsMyy20Tvu0+OJv50wFIoOvMbytXlRZaVEbiLDzFqms+MX@vger.kernel.org, AJvYcCX058BGfBRoXH2AiOML7kzKYc93cxgu+2F65e6GdEHNoTtfVfiuuRZUtMtTAS/068rqeKQfalWjUjrCLWg3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKi0k1w2K+IIRaWvvP1RCsfRGOdzv9EI+73VUFUWu7n6bi9Ot1
-	Ei63OQkWf3LNazCJnnl9CinZ6altr5sh0x9ky3ayQA4yl75ry7TkpCVLL4PSwA==
-X-Gm-Gg: ASbGncvNMECG+cY0vpGrNuBMw/IdH0Pmi5r18844kHTMdZV3pQFZOFs54Ci7NEeM4pJ
-	AxvFONSBnppgO4VPGp04Tcbh35f+TiFSg11vjjW7VjhIlosVIpDGzSWeiQvxaTs8/Z233U1ej04
-	R7QD1/k6e1WGSI9HWZ+PO+6wvgp4ffJUno5IwpmDYaYNq/9apHF6IAb9KRzdzm2DVjy4WJ7PMJz
-	1bhr4sXuDk3UyFlJ8iJ0COVSqInOCR05T+BXqlhP+EaX4F/syw6pM8IwKlTdQ+UAewdjNf7qZD4
-	GpXbhriScpGPIikoG5LnMhdUJgagfI+m3VwIB4WiyAWA3360vNlsubaQmWXAOy7g9aoKiDEI5Ct
-	4RFTExR2OZOkIO21EJQEuINk5WbZqAErAOGTsJeH7e8UTVhLxqhxfbuFoUzga
-X-Google-Smtp-Source: AGHT+IE9kfEXkxy3UApT6dr6qaBy55BbmWLGiqW9bfYWYRifG1Jor2p3xApDPaln/O7Q9ZwACtOmAg==
-X-Received: by 2002:a05:600c:4f8c:b0:458:a7b6:c683 with SMTP id 5b1f17b1804b1-45b479a5eb1mr2433455e9.1.1755639204291;
-        Tue, 19 Aug 2025 14:33:24 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b43e13eafsm19770115e9.9.2025.08.19.14.33.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 14:33:23 -0700 (PDT)
-Date: Tue, 19 Aug 2025 22:33:20 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
- <linux-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
- access
-Message-ID: <20250819223320.5ea67bea@pumpkin>
-In-Reply-To: <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
-References: <20250813150610.521355442@linutronix.de>
-	<20250817144943.76b9ee62@pumpkin>
-	<20250818222106.714629ee@pumpkin>
-	<CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1755639252; c=relaxed/simple;
+	bh=+53NlAraJtyCL2JPoFwrL3tKiDe+tcXrwxWmFSyzC0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UpuHcL4Dz4H4m4wy1AZLQQ5tJYQDOxe4yBYfNAzuuwv2PZAyAhRlMg3y2jA4TwOAH7Yvt6Yc5deWGe0iDCndXDOUKsA9Ewll0EpI03+ab9rXmJT35qyuU6rE3QBajWwbzc0+G13uqWyEh4bPA68BH0ubGBwgaKZq03yZPs1JIDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIGyaKcK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622E9C4CEF1;
+	Tue, 19 Aug 2025 21:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755639252;
+	bh=+53NlAraJtyCL2JPoFwrL3tKiDe+tcXrwxWmFSyzC0I=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=uIGyaKcKFSbNin7d3UJavzxL+Dd4r9YEgfYw9z1CVEqOAiase1Tw4oI8RtjMLDGyP
+	 muJm+FaieCPMdhXXD4OIJbxIsjSwanBzA7yWsb8hoVivNptQYKJvQyOWtoccNINGA4
+	 PmWiY4z0SpE7BxLgpXGy2EJj26oNmBYyL9p4yK25MJI6gzhX5xkDEBdoe9s0kdSmvX
+	 i7UcpOvnC9nA0ws5E/RzsUzw4I4bB1qtzdI1XY/plvVWGNM+uuSEHg9IODxB3QSzDW
+	 EMOn0kelK5te368Zp7qBEQVh5tqrBVw2e1t+9bKaEYOqAaxsZju6woDXrTaGSx3/l+
+	 vsizuYNJ7RD6g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 1D9B5CE086D; Tue, 19 Aug 2025 14:34:12 -0700 (PDT)
+Date: Tue, 19 Aug 2025 14:34:12 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 1/7] rcu: add rcu_migrate_enable and
+ rcu_migrate_disable
+Message-ID: <0b46c80c-280b-4db8-957e-9dd5695e1f25@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250815061824.765906-1-dongml2@chinatelecom.cn>
+ <20250815061824.765906-2-dongml2@chinatelecom.cn>
+ <CAADnVQKA98hBSsb02djL-zMsaXQDCjn4Ytck+WP3SWfvgXqDYg@mail.gmail.com>
+ <eb93f12d-2232-4b7e-a7c6-71082a69f1f6@paulmck-laptop>
+ <CADxym3bkqdXScTBvQMOb-JTDZTmAqdm_m_we4Rds6W=rgByauQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADxym3bkqdXScTBvQMOb-JTDZTmAqdm_m_we4Rds6W=rgByauQ@mail.gmail.com>
 
-On Mon, 18 Aug 2025 14:36:31 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Mon, 18 Aug 2025 at 14:21, David Laight <david.laight.linux@gmail.com> wrote:
+On Sun, Aug 17, 2025 at 10:01:23AM +0800, Menglong Dong wrote:
+> On Fri, Aug 15, 2025 at 11:31 PM Paul E. McKenney <paulmck@kernel.org> wrote:
 > >
-> > Would something like this work (to avoid the hidden update)?  
+> > On Fri, Aug 15, 2025 at 04:02:14PM +0300, Alexei Starovoitov wrote:
+> > > On Fri, Aug 15, 2025 at 9:18 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
+> > > >
+> > > > migrate_disable() is called to disable migration in the kernel, and it is
+> > > > used togather with rcu_read_lock() oftenly.
+> > > >
+> > > > However, with PREEMPT_RCU disabled, it's unnecessary, as rcu_read_lock()
+> > > > will disable preemption, which will also disable migration.
+> > > >
+> > > > Introduce rcu_migrate_enable() and rcu_migrate_disable(), which will do
+> > > > the migration enable and disable only when the rcu_read_lock() can't do
+> > > > it.
+> > > >
+> > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > > > ---
+> > > >  include/linux/rcupdate.h | 18 ++++++++++++++++++
+> > > >  1 file changed, 18 insertions(+)
+> > > >
+> > > > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> > > > index 120536f4c6eb..0d9dbd90d025 100644
+> > > > --- a/include/linux/rcupdate.h
+> > > > +++ b/include/linux/rcupdate.h
+> > > > @@ -72,6 +72,16 @@ static inline bool same_state_synchronize_rcu(unsigned long oldstate1, unsigned
+> > > >  void __rcu_read_lock(void);
+> > > >  void __rcu_read_unlock(void);
+> > > >
+> > > > +static inline void rcu_migrate_enable(void)
+> > > > +{
+> > > > +       migrate_enable();
+> > > > +}
+> > >
+> > > Interesting idea.
+> > > I think it has to be combined with rcu_read_lock(), since this api
+> > > makes sense only when used together.
+> > >
+> > > rcu_read_lock_dont_migrate() ?
+> > >
+> > > It will do rcu_read_lock() + migrate_disalbe() in PREEMPT_RCU
+> > > and rcu_read_lock() + preempt_disable() otherwise?
+> >
+> > That could easily be provided.  Or just make one, and if it starts
+> > having enough use cases, it could be pulled into RCU proper.
 > 
-> It would certainly work, but I despise code inside macro arguments
-> even more than I dislike the hidden update.
+> Hi, do you mean that we should start with a single
+> use case? In this series, I started it with the BPF
+> subsystem. Most of the situations are similar, which will
+> call rcu_read_lock+migrate_disable and run bpf prog.
+
+Other than my wanting more compact code, what you did in your patch
+series is fine.
+
+							Thanx, Paul
+
+> > > Also I'm not sure we can rely on rcu_read_lock()
+> > > disabling preemption in all !PREEMPT_RCU cases.
+> > > iirc it's more nuanced than that.
+> >
+> > For once, something about RCU is non-nuanced.  But don't worry, it won't
+> > happen again.  ;-)
+> >
+> > In all !PREEMPT_RCU, preemption must be disabled across all RCU read-side
+> > critical sections in order for RCU to work correctly.
 > 
-> If we want something like this, we should just make that last argument
-> be a label, the same way unsafe_{get,put}_user() already works.
-
-A 'goto label' is probably a bit more readable that just 'label'.
-But there will be similar code in the same function.
-But it can't use the same label - one needs the 'user_access_end()'.
-
-I wanted to allow an immediate 'return -EFAULT' as well as a goto.
-But not really expect anything more than 'rval = -EFAULT; goto label'.
-
-I do agree than some of the 'condvar wait' macros are a PITA when
-a chunk of code is executed repeatedly in a loop.
-There are also the iover iter ones, did they get better?
-
-> That would not only match existing user access exception handling, it
-> might allow for architecture-specific asm code that uses synchronous
-> trap instructions (ie the label might turn into an exception entry)
-
-Unlikely to be a trap in this case, but I guess you might want jump
-directly from asm.
-OTOH the real aim of this code has to be for all architectures to
-have a guard/invalid page that kernel addresses get converted to.
-So eventually the conditional jump disappears.
-
+> Great! I worried about this part too.
 > 
-> It's basically "manual exception handling", whether it then uses
-> actual exceptions (like user accesses do) or ends up being some
-> software implementation with just a "goto label" for the error case.
+> Thanks!
+> Menglong Dong
 > 
-> I realize some people have grown up being told that "goto is bad". Or
-> have been told that exception handling should be baked into the
-> language and be asynchronous. Both of those ideas are complete and
-> utter garbage, and the result of minds that cannot comprehend reality.
-
-Test: which language has a 'whenever' statement?
-IIRC the use is (effectively) 'whenever variable == value goto label'.
-(I hope my brain does remember that correctly, the implementation of
-that language I used didn't support it.)
-
-> Asynchronous exceptions are horrific and tend to cause huge
-> performance problems (think setjmp()).
-
-The original setjmp was trivial, no callee saved registers,
-so just saved the program counter and stack pointer.
-The original SYSV kernel used setjmp/longjmp to exit the kernel
-on error (after writing the errno value to u.u_error).
-
-The real killer is having to follow the stack to execute all the
-destructors.
-
-> The Linux kernel exception
-> model with explicit exception points is not only "that's how you have
-> to do it in C", it's also technically superior.
-
-Indeed.
-
-I've seen C++ code that did 'new buffer', called into some deep code
-that would normally save the pointer, but had a try/catch block that
-always freed it.
-The code had no way of knowing whether the exception happened before
-or after the pointer was saved.
-And it is pretty impossible to check all the places that might 'throw'.
-
-> 
-> And "goto" is fine, as long as you have legible syntax and don't use
-> it to generate spaghetti code. Being able to write bad code with goto
-> doesn't make 'goto' bad - you can write bad code with *anything*.
-
-I fixed some 'dayjob' code that tried not to use goto, break or return.
-The error paths were just all wrong.
-
-	David
-
-> 
->             Linus
-
+> >
+> >                                                         Thanx, Paul
 
