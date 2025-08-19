@@ -1,151 +1,125 @@
-Return-Path: <linux-kernel+bounces-776290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D578EB2CB67
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0BDB2CB69
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 19:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41AD169E39
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2972171B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 17:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058D930DD34;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3876230E856;
+	Tue, 19 Aug 2025 17:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDgHIzZE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3572206B8;
 	Tue, 19 Aug 2025 17:49:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737C02206B8;
-	Tue, 19 Aug 2025 17:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755625757; cv=none; b=TWHBLcq0Gx3x8clSJkLLPfNmgS5SG1v/cwwScY4/JJeAS5u9WreIdTfcAXkgKa5NuDubaY65bbq2f4zjD+IyfKLqLeQb2U2wnmfcwTYg8arXHQ4lAXfzFiIQQv1lws1ktlc0TaUHdHon1b94GVnm0R7KRDw3jvN5zavjoDPwFWc=
+	t=1755625760; cv=none; b=HuZJTfjaLeslg9PQpwtAa6OzAWGk9RFaCMirxhZFGVWHLrpE8RJMYAUKimkWEo2SP0Rj8X84/WKpJ+DEMYkN60pdE360MGJaOa66YLKMUGIh55TlF78t7IkHq+nU01xfJ8o5uHXHBbZpRy1hOEznxLMN+XjX2z9vOVAjqxQiyfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755625757; c=relaxed/simple;
-	bh=yfhPbDJoc+6CdAo/HUDbAHjm5EOHsprDS0bgOVBPTUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1ggeva+JSjhmo79XKXV92uGsDx2Tdb8tuc4mz+mpH+ImeqLDAPjyuBirabjGLv44dFqqLANceqyhF4DxjP72whhJ+U9T2aEbizeuZrAWMJAbT6xkzIpg4oyVAazkCowyJKO8xToNxIFDhibYKPFUXzL/oWUVdYGz1k3gngk5Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E877152B;
-	Tue, 19 Aug 2025 10:49:06 -0700 (PDT)
-Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 475103F738;
-	Tue, 19 Aug 2025 10:49:10 -0700 (PDT)
-Message-ID: <cdb7b1e7-6e51-4c0e-bffb-b0d4b654a623@arm.com>
+	s=arc-20240116; t=1755625760; c=relaxed/simple;
+	bh=w1gebZhtcPh/rs7t+GaRcCMsH3OpcsQIB1iR3B6i4Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qt2SrNXakFtbc/s6hc6RCyLTJPBC3vdTVYSD5H7JiwEwokVnjD9V8pmxWwdUuXBWehr1/SH3aV88gXF2jDSZnbS8vAlXP0RzZQQS8gszU4RF/9xOjikvgcBy1FPuN/f4BOAwpJwYp33aSqAJ8LeeevW5eXkgI1DBKM7+VS87zrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDgHIzZE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3904DC113D0;
+	Tue, 19 Aug 2025 17:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755625758;
+	bh=w1gebZhtcPh/rs7t+GaRcCMsH3OpcsQIB1iR3B6i4Ko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GDgHIzZE3+efgVVhAHR3c8usuZ9PRROcH+7FKK8uuKejWUc/2wx4xSgofrF0agtz5
+	 y/KitcOvPmhSb//6hU4xwuVFrLlbNxJ8PWwYptTjsGjKz5OR9wh5kWEs/q6abBqIE6
+	 WXo0KsKajkw9zb6tPbuOp6oADwOiLOmoteg8/E6WEU0JG5Td3fWA3XFcaS1314Znnn
+	 miTyjRgzlgSNxJopoDIA0mKrbaq/OQ9hlXuy8HSVGt/eHDb7eql4l0CEuyE/Q2F1DH
+	 EA+8WR0Owa7Wzm3kdR4AnU+lFGL4AFGiSnw3gER2GkyAoKk6xGRKVyy74nyMAKjJ2B
+	 AD4iyEjyVqeAw==
 Date: Tue, 19 Aug 2025 18:49:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Waqar Hameed <waqar.hameed@axis.com>, Song Qiang
+ <songqiang1304521@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 next] iio: proximity: vl53l0x-i2c: Fix error code in
+ probe()
+Message-ID: <20250819184908.324b0ca8@jic23-huawei>
+In-Reply-To: <aKSSHTdJf5QoYiRx@stanley.mountain>
+References: <aKSSHTdJf5QoYiRx@stanley.mountain>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/19] perf: Garbage-collect event_init checks
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- dmaengine@vger.kernel.org, linux-fpga@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
- iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
- will@kernel.org, mark.rutland@arm.com, acme@kernel.org, namhyung@kernel.org,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- imx@lists.linux.dev, linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-riscv@lists.infradead.org
-References: <202508190403.33c83ece-lkp@intel.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <202508190403.33c83ece-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 19/08/2025 3:44 am, kernel test robot wrote:
+On Tue, 19 Aug 2025 18:02:53 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+
+> Commit 65e8202f0322 ("iio: Remove error prints for
+> devm_add_action_or_reset()") accidentally introduced a bug where we
+> returned "ret" but the error code was stored in "error" if
+> devm_add_action_or_reset() failed.  Using two variables to store error
+> codes is unnecessary and confusing.  Delete the "error" variable and use
+> "ret" everywhere instead.
 > 
+> Fixes: 65e8202f0322 ("iio: Remove error prints for devm_add_action_or_reset()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Applied to the togreg branch of iio.git (where that patch is)
+and very briefly pushed out as testing to get some build coverage for other
+stuff I'm queuing this evening.
+
+Thanks
+
+Jonathan
+
+> ---
+> v2: Fix typos.  Add Andy's r-b tag.
 > 
-> Hello,
+>  drivers/iio/proximity/vl53l0x-i2c.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
 > 
-> kernel test robot noticed "BUG:unable_to_handle_page_fault_for_address" on:
-> 
-> commit: 1ba20479196e5af3ebbedf9321de6b26f2a0cdd3 ("[PATCH 19/19] perf: Garbage-collect event_init checks")
-> url: https://github.com/intel-lab-lkp/linux/commits/Robin-Murphy/perf-arm-cmn-Fix-event-validation/20250814-010626
-> base: https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git 91325f31afc1026de28665cf1a7b6e157fa4d39d
-> patch link: https://lore.kernel.org/all/ace3532a8a438a96338bf349a27636d8294c7111.1755096883.git.robin.murphy@arm.com/
-> patch subject: [PATCH 19/19] perf: Garbage-collect event_init checks
+> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+> index 696340ec027a..ad3e46d47fa8 100644
+> --- a/drivers/iio/proximity/vl53l0x-i2c.c
+> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
+> @@ -311,7 +311,6 @@ static int vl53l0x_probe(struct i2c_client *client)
+>  {
+>  	struct vl53l0x_data *data;
+>  	struct iio_dev *indio_dev;
+> -	int error;
+>  	int ret;
+>  
+>  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> @@ -344,13 +343,13 @@ static int vl53l0x_probe(struct i2c_client *client)
+>  		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
+>  				     "Cannot get reset GPIO\n");
+>  
+> -	error = vl53l0x_power_on(data);
+> -	if (error)
+> -		return dev_err_probe(&client->dev, error,
+> +	ret = vl53l0x_power_on(data);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+>  				     "Failed to power on the chip\n");
+>  
+> -	error = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
+> -	if (error)
+> +	ret = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
+> +	if (ret)
+>  		return ret;
+>  
+>  	indio_dev->name = "vl53l0x";
 
-OK, after looking a bit more deeply at x86 and PowerPC, I think it
-probably is nicest to solve this commonly too. Below is what I've cooked
-up for a v2 (I'll save reposting the whole series this soon...)
-
-Thanks,
-Robin.
-
------>8-----
-Subject: [PATCH 18.5/19] perf: Add common uncore-CPU check
-
-Many uncore drivers depend on event->cpu being valid in order to look
-up various data in their event_init call. Since we've now factored out
-common PMU identification, we can factor out this check in the correct
-order too. While it might technically be possible to hoist the general
-task/cgroup check up here now, that would be horribly messy, so for
-clarity let's keep these as distinct (albeit related) concerns.
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202508190403.33c83ece-lkp@intel.com
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
-  kernel/events/core.c | 12 +++++++++++-
-  1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5f7eb526d87c..ddf045ad4d83 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -12562,6 +12562,11 @@ static bool is_raw_pmu(const struct pmu *pmu)
-  	       pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
-  }
-  
-+static bool is_uncore_pmu(const struct pmu *pmu)
-+{
-+	return pmu->task_ctx_nr == perf_invalid_context;
-+}
-+
-  static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
-  {
-  	struct perf_event_context *ctx = NULL;
-@@ -12571,11 +12576,16 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
-  	 * Before touching anything, we can safely skip:
-  	 * - any event for a specific PMU which is not this one
-  	 * - any common event if this PMU doesn't support them
-+	 * - non-CPU-bound uncore events (so drivers can assume event->cpu is
-+	 *   valid; we'll check the actual task/cgroup attach state later)
-  	 */
-  	if (event->attr.type != pmu->type &&
-  	    (event->attr.type >= PERF_TYPE_MAX || !is_raw_pmu(pmu)))
-  		return -ENOENT;
-  
-+	if (is_uncore_pmu(pmu) && event->cpu < 0)
-+		return -EINVAL;
-+
-  	if (!try_module_get(pmu->module))
-  		return -ENODEV;
-  
-@@ -12990,7 +13000,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
-  	 * events (they don't make sense as the cgroup will be different
-  	 * on other CPUs in the uncore mask).
-  	 */
--	if (pmu->task_ctx_nr == perf_invalid_context && (task || cgroup_fd != -1))
-+	if (is_uncore_pmu(pmu) && (task || cgroup_fd != -1))
-  		return ERR_PTR(-EINVAL);
-  
-  	if (event->attr.aux_output &&
--- 
 
