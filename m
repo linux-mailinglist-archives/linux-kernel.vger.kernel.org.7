@@ -1,261 +1,182 @@
-Return-Path: <linux-kernel+bounces-776310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39038B2CBA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:07:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93253B2CBA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 20:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0ADB7B1D14
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:05:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA86D1BC4680
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508F430EF95;
-	Tue, 19 Aug 2025 18:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336B430EF8F;
+	Tue, 19 Aug 2025 18:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="V+G2KCuV"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2044.outbound.protection.outlook.com [40.107.93.44])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="EAz1ueGm"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9831B30EF80;
-	Tue, 19 Aug 2025 18:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755626809; cv=fail; b=NpEVXR1EPaNgQ5KpSmz4Lf2Pp+Zukvs/kQf7NwdvfgOhX/RlvWW07gIYbFvpyK7FPRICKOC3ei6pPegpIkmbdoY2q+lB7/yWEqO8hRmg5or8xz+NHlsyfLhzjxBppZlmUygaeVQYeBeLR2T7nWzQaMA2c5QTbTYeN7odbgbn3gY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755626809; c=relaxed/simple;
-	bh=WXuCiRRJRQj6PL4pfcMSU/ZCY+UuScyB/1PVLGWKIFk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cZvQjh4Bd7y+erpIx881fRg6v17AgbHOcw5d22XzU1t39yK6ruTw/nuq58raUZaUygyXPhCwwKKkP58isTVFV00Bl1DGz8nYJqZrQWXT4L9qkTn1zrEtsaN156osquoowzYEFFPvSVZgGuIKUKswqk9IOOfKddv7Zt9gWVrif5U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=V+G2KCuV; arc=fail smtp.client-ip=40.107.93.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cuzBHckx56C/HQf+XEhbCnTqwXFrnZVhiQ571wDXuqPnRtrDE3hjgv+gbKz4w71arrO8sbOJlEZd4jshRhzQZBnPfctUzguh1d/FHwdU8AJ/Ck98uEsLGK2b67EpselgX2h38IU1O8zFUfosEJ9OGSI4IMac86cjDwn22N1iBsmL6wx/9ActP2QmJjQTgFmBEzQyLw5C4nnVZnIooRURLHq20iAeBi5pNzqg8qlZSRJyIn509cxp88JdbiHPAPbLorQvUHcjUT80BX/nRIvO33q1trtomTTElb6mRWpHUGVGYTG+xWOsi+5yzHW0vlD5dEGuvEfwK59V4W1T7wSp3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VHILA0pQmupDBnbcaF5e9To4kbBMMvjB34vkQgRx5/c=;
- b=oMNmTaBD4/dYO2VpBZBUZYC/VoIEGogN3EvjMFI/J09sWWW5QvkacYe5NuRg5QfiQV5zbGvqXEhDZSERbvGw0L/wo+KUsNBIulU4aEntetyYiCEw1YtPVYMFPIt+/HzyXINfOcZzY6gMfWZvPWz9mlz18gjpNzkmgmIpRrQcDnagPCGHp7bRA8cjVeI0lJ9RwjELNDcrtEh4PPbI6847ozkPHOlwhFjz2Hm0x+7Buh/B8F8iejYCl/F3k+wS/guJF9xz4h3Fct990hm7XCOAbQMFW4498MqT6UqcWBIIUpTMJ51rKqqPtGF1a9PKYvS9sPu28uNuE+z2NNU6ECvB0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VHILA0pQmupDBnbcaF5e9To4kbBMMvjB34vkQgRx5/c=;
- b=V+G2KCuVA3+TbVHG4j1zeTCZfG2asdQ0tIZadpsID+7JFGg2Miu/+eWWsg0pcSb2rOG2hUAecRrjRsUMONjr/aaMaJzNgK17FQ3kYCh42+1Af35QUJY0gubD+HCx4OrdqNyq/nXzgaGZwjeNsaeyk9v/Bydr0+PQl85LWs8xgkhIKezHearxcdUIdCpyGF0XvTQ0Y5NvPiWqDJ6Vdn2nFcfPm3O4MwvTJZeSUsVHFoCpjs92ztHe/F0HnwoQ4UoO5hfFEXddO/vdSqjugz85ZK/EcKFOto5aOXfuiOMePusAAZDrK+E+ZMkSPokcyesHX+HgavM9pjVo5ecUEqm8fA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA1PR12MB6484.namprd12.prod.outlook.com (2603:10b6:208:3a7::13)
- by CY8PR12MB8242.namprd12.prod.outlook.com (2603:10b6:930:77::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.25; Tue, 19 Aug
- 2025 18:06:39 +0000
-Received: from IA1PR12MB6484.namprd12.prod.outlook.com
- ([fe80::fb8b:583b:154:76f6]) by IA1PR12MB6484.namprd12.prod.outlook.com
- ([fe80::fb8b:583b:154:76f6%7]) with mapi id 15.20.9009.017; Tue, 19 Aug 2025
- 18:06:39 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <cyndis@kapsi.fi>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpu: host1x: Syncpoint interrupt performance optimization
-Date: Wed, 20 Aug 2025 03:04:16 +0900
-Message-ID: <13097016.O9o76ZdvQC@senjougahara>
-In-Reply-To: <20250707-host1x-syncpt-irq-perf-v1-1-16d53e516895@nvidia.com>
-References: <20250707-host1x-syncpt-irq-perf-v1-1-16d53e516895@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0092.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b4::10) To IA1PR12MB6484.namprd12.prod.outlook.com
- (2603:10b6:208:3a7::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95CF24167B;
+	Tue, 19 Aug 2025 18:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755626770; cv=none; b=bdH4irOTsAd9mKdIyb8oBrF14uBa0yipahmKe7WTjBIx3gjDBKc267Z91YH0uajj/NzZNdC7DYscfxAIxZfYtp6b8CArOL+y2niHxJPDdA41jz7S8hgL5YBDrpHlIk0wbCgSDX6ZXIfgFz6o87h7jpz6hsjWvb8wEbrJ8OWNHx0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755626770; c=relaxed/simple;
+	bh=4ci/uHSDKQUzrAd9QBw63j3lDa6mBX0Sl7kzMeMl/xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=esmfB3zykpFEu2KayavNZnWeWOJ1Ut7iPvY9IW/r1ZSdKlSNLMnHE4dCNT83fDEizJtizzWgzM7mLuxVi+9vgFMXfIOxaM3mlMCWjtwyi5eqcVtNlNVhUHKrMQx+2+RVxanoSuj+vPdD6e/Ij9Ctfrcln+jI67m8nsJsPyPjJuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=EAz1ueGm; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57JI5cMt2753519
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 19 Aug 2025 11:05:38 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57JI5cMt2753519
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1755626740;
+	bh=vL89P2kUJUJQcq2gfuxqgo4lotKFJfiugtrUniRUAbE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EAz1ueGm+8725k9yfPkGYZwTgi262iLmA17o6Izn44IkgEvuux3jlSp/Tm4CkV8I2
+	 Cs/bdv595+w2vjO9/5mKUvpyuaPPNGSvXv7tnudiXrTdj18nZtuZCK4Z7g8clu8H+/
+	 lUbQ2SrVgImVQDOu63O5YZ3uTguiKE94QYYqRVBtIde3LPjBBATTXTzaTazdeYrVFb
+	 iLs0vRy/ZmzkOryLPprlfqGzLe4qCRd5qU4uUSjC8SRVr2kVMgvV3Ug+N5ExtXv3kr
+	 WiRVZ2bB9amDssNzUkuVD35rYtHvtFSX3hXB2IIwlfKBvZbQhaWu91RHt8qeRIuE6E
+	 P8d/sricEi7Jg==
+Message-ID: <77edb8d9-4093-49fe-963c-56da76514d4c@zytor.com>
+Date: Tue, 19 Aug 2025 11:05:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6484:EE_|CY8PR12MB8242:EE_
-X-MS-Office365-Filtering-Correlation-Id: a112f9c6-7751-40b7-06d7-08dddf4b24c8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eW1LTnhZMXl4REJBMXRKU2gzcDYvSWl3SGtHYjEwa21PWEh4S2Z3NWRFNVQ2?=
- =?utf-8?B?SG96V0VNL2NVdWRUR2NDdU82cUpRQmFxaWpJTjZtQ1VPME42VHBldUt6R0lT?=
- =?utf-8?B?eU14ckx5WDk4WVZSVFlmdm05QjFSU0pjT3BVTWxYSXZDUG5kVllpalJCQ2R1?=
- =?utf-8?B?NTRKVVBhaStkZlA0c1JzOVhIMDZ4MmhCc3c4dHVMbWhIbE9TeUhmT1lOdXha?=
- =?utf-8?B?NWZ6QXBhR0h4SU1vTlpsS216T0dNVGRWbHFJZm1SWWhydzhveXFOdnY0dHZx?=
- =?utf-8?B?SGx4alJLVWVxcDF4RDdCNHdTZXhBNEtNNEQ0WXhrTmpmWnM5cDgxamVwdy9s?=
- =?utf-8?B?ZWRsSzRCdDdERHNIRHlrSGg5LzJnMkFhU3RwVXF4RVBCaVNvbGJvRHFkTTAx?=
- =?utf-8?B?RTRaeis0N3JkK0l4N3UyL0lERWZGbXZjNFFWZmZGb3puWkdUUWluMG43aURs?=
- =?utf-8?B?NHErWXdOWVp3a2EwcUhJQUc4VFVHNWx2MStMTlY4T2o3K0RYRi9BdjBnU2hI?=
- =?utf-8?B?ZHVJVkpRQWxQRHUwRUFyRjh5NXRBODBFOUVVZk9DdSs1TzBtYVlWb3ZWWGtB?=
- =?utf-8?B?YmV5OERuWjlUZDBsRmZwZHY2SWxtQmlhZW5ub2VvczNabDdNcGtUc0F4SHdo?=
- =?utf-8?B?VmhZOVIramFNRUlCb3VTWXNuQzR5MnR2VytzWUZkMUo3Nis5dDI4R1RDUFJO?=
- =?utf-8?B?OTN1OG1Fa2piZGsvR3VTcWJLZ2YyZUoyY2g3VHZzZ3N1NHdDSHFwekdZTEV5?=
- =?utf-8?B?THEwUnRDdGtlT0pNOHYyTVZxY01iSFdYNm92Q2tzM3E0b3JteUNWYzlPS1pt?=
- =?utf-8?B?cWkrNk1ubmk2bDV2VXozRERsQURrYzNzdlZ4KzVkYlVMOGNod1lLdFNBUkFl?=
- =?utf-8?B?RHR4SzlBT0xiTlAvbjMvZUQrZFVWbi8rVC9SSXNBaDd0emJsQmtSKzFLeVJp?=
- =?utf-8?B?RDNXUzdxZXlsQ1FzQjBVSVE2Z3UzaGx3M3dRaUV6MXErdTFwVUIxeEpIWk05?=
- =?utf-8?B?TlIxQitkdjRVVkF4WEdJNFcrSEVRdU1IME9nbFlFMU02aUdIL1dyTzluQ0Nj?=
- =?utf-8?B?S3dIdkhTTUNrZ3RuaERUMFQzOFFsZDYreVZuRFd3NGJDWTBEczZpdm9RKzFq?=
- =?utf-8?B?dHNPL0t4bGdQdjNGaTZ5MHBmdEpDSEpYTHhZeFFSb05DbkNYaCt0WkRFTG1h?=
- =?utf-8?B?OENCSndhTjZiQkdrU00vY2IwMzBFWXpGTklrOFJsT3J0TEMrRHkyMEkvaitF?=
- =?utf-8?B?aDNGWVpoY0p2bWIvRkRpOWtVRTQ5OWVjd2lJUGJsRGZLWkp2VmRzam1FZUhW?=
- =?utf-8?B?NHVpdjlLcCtPeFhiMmJBNGhqaWtOa2RLRDlDcW03TkRSSE1IUXFTS1pKbnNl?=
- =?utf-8?B?WU1YRWFBeVYrSkZycFB4eFlaTUhWSHZpZCtCTWJkQmdrc3JPOWd2Skllb0Ro?=
- =?utf-8?B?Y0I5S2dJYzNVaE1zQ20vRjRKUnVXNlVlQmJ2WG9hR1h0S3VxQmg0dnJITUla?=
- =?utf-8?B?aXc1S1VwY1FVTEx0bnJQZUh5ODY3bm5kdXJydTFBaW9MOUVyWVdIenR5SEwv?=
- =?utf-8?B?TlhrSjlEWlVSVUoweEJ3VWJtS0p5dFJMNndOeG5kV29McmZONDVIcUxaUjNK?=
- =?utf-8?B?QkE2bmx1MDBmZi9peWF4NW96VVJuaklIQ0tIa0NHWG1zUHBWeDlNcXFGVjc0?=
- =?utf-8?B?eFlpM3BIbnUxbEVGU2lqbTdqUURkSnVZbFd3U3RSb2pDZXc5MU9OOUk5akxx?=
- =?utf-8?B?aDYvaTZ0dzdDSTY1eVp1NDhKODU3aEpNRys0U2hMUDNwZFRZT3J2WmIrZ0xE?=
- =?utf-8?B?VGVSM0pNOWNYa2lZZVAya0doM0dDcDZZaFE4R3ZJcWc2MmhiMEFUcXA1Q1Qr?=
- =?utf-8?B?dVFkRXRNWEEvRU9CU213ekJMa0hnT3N6T1B2OWNTbXZNTEl4aEFhZG05ZHBo?=
- =?utf-8?Q?FvqhbS8sr0c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6484.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UDFrVWh5N0VSL0NrdXo5KzdHQ1htZ2lGKzNOVmgwNU9DTVFSVnk3MDkyWko5?=
- =?utf-8?B?SlhYK1FJNjVZejNsZnZDMHM1YUhJVG1udHZOdUlUN2haTWZuOHJiWXZEOWoy?=
- =?utf-8?B?ajZnTEkzbEpFeHlYTWdtKzBRTmN2ZTBPODV6eWtSdmV3UWRLdXJoUmc4NXZw?=
- =?utf-8?B?V0pSL3h0cDUrNjRZRVdINlVyTHF5WllENnNya1IxNHBHSWpwZDU4QTVHbmMr?=
- =?utf-8?B?OW1KYjZHT3FYL1ZjUldqT3kvR01MMVB5cm8xbXJQZGcwMFZUL1V6WmF5VU1D?=
- =?utf-8?B?RTBSOTBRUmJsYVdsL1NKUm5VTUZ0aTBjSlFJRkR4SE5YQWw5K1BPalN3eGZC?=
- =?utf-8?B?S1hTeGpJYmYxbURUZHViVkE3b2ZSbklBT2lTSFdGQVJmbEdTK09nc2x0c3Nq?=
- =?utf-8?B?SFl6U3YzN0hJUDVCaUpUa25RUG00dmVXZEN4NmE0Nlpka0w0TmptWVM1cXl0?=
- =?utf-8?B?dUpPa2xiZmE4QkdWdW9hK0pTeU83MXpjdy9BSS95TVYwMDU5YVdVa0wvUFYx?=
- =?utf-8?B?UUt5MVhCWTFNOG5zTFhVVy9ncDhvd0x3T0ZmTFAxQWRwRm82TzZYK3hyei9s?=
- =?utf-8?B?dC8xMFpOTy9HYW9DRXhoMkNhSGpQUHFrM0cxUU51a1NQUFdjcFFJQWx0RDFk?=
- =?utf-8?B?aGN2TUhsODJKOUhFd3JKRnFNcEVrdUxmUTVON2VzUXVoZ1dLbTBYV2FmajZi?=
- =?utf-8?B?a2dZYkJiR1hCR0NDUFlkTDZ3dWlyN25hbmNLUUIvc3A0VVNXZlNEMEJ3MkIy?=
- =?utf-8?B?TnlQV0NsRWxmdzhoRkRPRXlXRk9XTUEyRThDdkJxRSs5cEtnakdzbXZqeTNC?=
- =?utf-8?B?cmtGYmxKRjFCeVlKdlU1Zm1rNVhoTkNUaEMxMlkzNlQ0Q2NOWnpnNDlBKzNJ?=
- =?utf-8?B?cjV0L0hIWFBvRlJITnN0cVlRdnZjRzk2Rmg1M3I5Q3UvWXJhWFk2RW43QUY2?=
- =?utf-8?B?SzNrSm5LTjRwV0gxZnRFTGlBcjRCVWh5UXNQQzVpT0hTNHVDRENURWZubElr?=
- =?utf-8?B?MXZqOFd6dFdGWWJOSEYwSjY1Q2k1YVdXQ24rWmsxWFRqcnlSRjdPNERKOVIy?=
- =?utf-8?B?TG1HYTFiNFptSjVuTk1EQXFzbENaMGdDcWlMNy9JODE1Z0tueXl5SWNFRmRk?=
- =?utf-8?B?c3ZzZXlKTEgvT0V6ckVJMytpRjZvNHZYak40YVo2NkpRanBtUERHL1NZTDMv?=
- =?utf-8?B?TnlOajY2RmhPbmRGS3NJQjROcDltN0VtVm1ySVdoRE1jMjNVeWRqeUlXZnpJ?=
- =?utf-8?B?dG1UdmhxM2dpZ2ZpcUxXUFByUm5TN1NWZCtWYjRiM3NBY2FJR0kxaERCYkRQ?=
- =?utf-8?B?OXBQdm5td1l3TmJPaVlndFJJaC83QnJIVytIYlUvOHRDRFNpR21rVWZ3MERk?=
- =?utf-8?B?TEFNaHMvRDZzMHFwZEJkT3N2QlV4UW5sOTJjSVVpMUZEdHdPNnhQSFQ5bFlR?=
- =?utf-8?B?ZU9NdzNxQjR2T2w5V0VYTDdCdHhxV0RKT3huWG9ORjJBZkI3eWY1b1IxcHkz?=
- =?utf-8?B?ZmFiTmY2dS9FUkNMYVFRbTZZeVpYQmcxYzVKY01UYnJjTERTN085c3Z4cUJI?=
- =?utf-8?B?UnFNUFRxSjR3d1Q1cDY3UmUvaGpQTVpsRzlDWDRpc01SL2x4cW0yVmx3Y3Jz?=
- =?utf-8?B?WHQzMFpROXRUQUxiOU9DaVlINTFnWjJ4d1VNU2prWk5xcGdrUUtkeExaRXFq?=
- =?utf-8?B?dkpaVzlHTjJ6c01rRFREeGhiS1d6V0RwSEdQRnk1RWpuYmhrRkY5YUd5ZUl2?=
- =?utf-8?B?VGtlcjdUNzhOQjV2WUx2K1NLYkdtSlNQS1VISWVma0E3b0FCeW1oWi9QSXh3?=
- =?utf-8?B?S0NMK2c0alJ0aVlQWUZ0ZDJnZkd6ek9ucHk4QXVOcFZQVWdGU25OTTI1UmhN?=
- =?utf-8?B?elNEUzVMTGU4TGwwRXNBcDRLR3U1YktqaitiRzc4TmpTMFMwUWZCbFF4WEp4?=
- =?utf-8?B?bXFvTlVzWkxweGJ6enl3M3hXcEhVQ3pBV0tpVkZZUXd5T1cvbjNXblVpQ2RN?=
- =?utf-8?B?dVIrcXlxeFlMSW8rTk5UVVQwZ2dEaFAzMjlSSjd2Y1J2bHhVUEQ1alZLdkx6?=
- =?utf-8?B?VmJ5aGsra1FoTWpVVitCcHhjbm9uNnZrbjVIMjBRN2QzZTJpbGRUS3AzOGgz?=
- =?utf-8?B?bW02MFpmcUxIdEJZNzhGbWxtUDh1RmxXNTZ2L3pNMFVybzNaNTRWS1cyWXhY?=
- =?utf-8?B?eXp0Z2tEdWtReThRLzd2cFkySEg0Nmhwd25CR012aDlZQUNBRlkzdUFyWkd5?=
- =?utf-8?B?UGFvK3pmS21SdUdlOTUyb255c3B3PT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a112f9c6-7751-40b7-06d7-08dddf4b24c8
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6484.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 18:06:39.2935
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gURSFhUodedqDKMgIhZQglVT4jWwlbIRXr8UlMXEFq5aN7C8jfQUI3bVEx7iq+kuwWa7RlZNSfUDVCOkT4xVcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8242
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 17/24] KVM: VMX: Set up interception for CET MSRs
+To: Sean Christopherson <seanjc@google.com>, Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mlevitsk@redhat.com,
+        rick.p.edgecombe@intel.com, weijiang.yang@intel.com,
+        Mathias Krause <minipli@grsecurity.net>,
+        John Allen <john.allen@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: <20250812025606.74625-1-chao.gao@intel.com>
+ <20250812025606.74625-18-chao.gao@intel.com> <aKSiNh43UCosGIVh@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aKSiNh43UCosGIVh@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Monday, July 7, 2025 6:58=E2=80=AFPM Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
->=20
-> Optimize performance of syncpoint interrupt handling by reading
-> the status register in 64-bit chunks when possible, and skipping
-> processing when the read value is zero.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/host1x/dev.c        |  9 +++++++++
->  drivers/gpu/host1x/dev.h        |  3 +++
->  drivers/gpu/host1x/hw/intr_hw.c | 40
-> ++++++++++++++++++++++++++++++---------- 3 files changed, 42 insertions(+=
-),
-> 10 deletions(-)
->=20
-> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> index
-> 1f93e5e276c0835eac2f713ffcd60a9db8db2c21..80380b6138276877be9709048c15da8=
-5d
-> 079f977 100644 --- a/drivers/gpu/host1x/dev.c
-> +++ b/drivers/gpu/host1x/dev.c
-> @@ -71,6 +71,15 @@ u32 host1x_sync_readl(struct host1x *host1x, u32 r)
->  	return readl(sync_regs + r);
->  }
->=20
-> +#ifdef CONFIG_64BIT
-> +u64 host1x_sync_readq(struct host1x *host1x, u32 r)
-> +{
-> +	void __iomem *sync_regs =3D host1x->regs + host1x->info->sync_offset;
-> +
-> +	return readq(sync_regs + r);
-> +}
-> +#endif
-> +
->  void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r)
->  {
->  	writel(v, ch->regs + r);
-> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-> index
-> d3855a1c6b472a9bd289c753d79906463e6bcdb4..ef44618ed88a128bae9ab712bf49f8a=
-bc
-> 0f3b778 100644 --- a/drivers/gpu/host1x/dev.h
-> +++ b/drivers/gpu/host1x/dev.h
-> @@ -179,6 +179,9 @@ void host1x_hypervisor_writel(struct host1x *host1x, =
-u32
-> v, u32 r); u32 host1x_hypervisor_readl(struct host1x *host1x, u32 r);
->  void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r);
->  u32 host1x_sync_readl(struct host1x *host1x, u32 r);
-> +#ifdef CONFIG_64BIT
-> +u64 host1x_sync_readq(struct host1x *host1x, u32 r);
-> +#endif
->  void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r);
->  u32 host1x_ch_readl(struct host1x_channel *ch, u32 r);
->=20
-> diff --git a/drivers/gpu/host1x/hw/intr_hw.c
-> b/drivers/gpu/host1x/hw/intr_hw.c index
-> 415f8d7e42021b791550ca719adafa088cd34101..fe45890a9bfb1dfcbc0354f76d625e7=
-8e
-> 72ee548 100644 --- a/drivers/gpu/host1x/hw/intr_hw.c
-> +++ b/drivers/gpu/host1x/hw/intr_hw.c
-> @@ -11,26 +11,46 @@
->  #include "../intr.h"
->  #include "../dev.h"
->=20
-> +static void process_32_syncpts(struct host1x *host, u32 val, u32
-> reg_offset) +{
-> +	unsigned int id;
-> +
-> +	if (!val)
-> +		return;
-> +
-> +	host1x_sync_writel(host, val,
-> HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(reg_offset));
-> +	host1x_sync_writel(host, val,
-> HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(reg_offset)); +
-> +	for_each_set_bit(id, (unsigned long *)&val, 32)
+On 8/19/2025 9:11 AM, Sean Christopherson wrote:
+> On Mon, Aug 11, 2025, Chao Gao wrote:
+>> From: Yang Weijiang <weijiang.yang@intel.com>
+>>
+>> Enable/disable CET MSRs interception per associated feature configuration.
+>>
+>> Shadow Stack feature requires all CET MSRs passed through to guest to make
+>> it supported in user and supervisor mode
+> 
+> I doubt that SS _requires_ CET MSRs to be passed through.  IIRC, the actual
+> reason for passing through most of the MSRs is that they are managed via XSAVE,
+> i.e. _can't_ be intercepted without also intercepting XRSTOR.
+> 
+>> while IBT feature only depends on
+>> MSR_IA32_{U,S}_CETS_CET to enable user and supervisor IBT.
+>>
+>> Note, this MSR design introduced an architectural limitation of SHSTK and
+>> IBT control for guest, i.e., when SHSTK is exposed, IBT is also available
+>> to guest from architectural perspective since IBT relies on subset of SHSTK
+>> relevant MSRs.
+>>
+>> Suggested-by: Sean Christopherson <seanjc@google.com>
+>> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+>> Tested-by: Mathias Krause <minipli@grsecurity.net>
+>> Tested-by: John Allen <john.allen@amd.com>
+>> Signed-off-by: Chao Gao <chao.gao@intel.com>
+>> ---
+>>   arch/x86/kvm/vmx/vmx.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
+>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>> index bd572c8c7bc3..130ffbe7dc1a 100644
+>> --- a/arch/x86/kvm/vmx/vmx.c
+>> +++ b/arch/x86/kvm/vmx/vmx.c
+>> @@ -4088,6 +4088,8 @@ void pt_update_intercept_for_msr(struct kvm_vcpu *vcpu)
+>>   
+>>   void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+>>   {
+>> +	bool set;
+> 
+> s/set/intercept
+> 
 
-Casting the u32 * to unsigned long * here is no good since for_each_set_bit=
-=20
-will still read in unsigned long sized chunks. I'll send a v2.
+Maybe because you asked me to change "flag" to "set" when reviewing FRED
+patches, however "intercept" does sound better, and I just changed it :)
 
-Mikko
+>> +
+>>   	if (!cpu_has_vmx_msr_bitmap())
+>>   		return;
+>>   
+>> @@ -4133,6 +4135,24 @@ void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+>>   		vmx_set_intercept_for_msr(vcpu, MSR_IA32_FLUSH_CMD, MSR_TYPE_W,
+>>   					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
+>>   
+>> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
+>> +		set = !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
+>> +
+>> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, set);
+>> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL1_SSP, MSR_TYPE_RW, set);
+>> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL2_SSP, MSR_TYPE_RW, set);
+>> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL3_SSP, MSR_TYPE_RW, set);
+>> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW, set);
+> 
+> MSR_IA32_INT_SSP_TAB isn't managed via XSAVE, so why is it being passed through?
 
+It's managed in VMCS host and guest areas, i.e. HOST_INTR_SSP_TABLE and
+GUEST_INTR_SSP_TABLE, if the "load CET" bits are set in both VM entry
+and exit controls.
 
+FRED MSRs are also passed through to guest in such cases.
 
-
+no?
 
