@@ -1,105 +1,82 @@
-Return-Path: <linux-kernel+bounces-775571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA3DB2C0B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F479B2C0B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80803A77FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B981188A6D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F3B32BF5D;
-	Tue, 19 Aug 2025 11:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5719632BF3E;
+	Tue, 19 Aug 2025 11:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K1hMEJr6"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5KMksjk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A82C32BF4B
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C67320CC1;
+	Tue, 19 Aug 2025 11:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603472; cv=none; b=F47FiklFJZlpVnHUb9rO1o4c8hBqV4NJaaZH4o2gysKU4tFyxpntbyhDIwJVCvKfcKRCyUxvvoTzrUuvnYZ6s6Q56s7+IElY5NgcFyhacJNnRd1E7g9PAaCG06XKhvS7f29u1d8I0yDFAg4eKuqfq1K2ZGRlmBHF01/CdB7VCsc=
+	t=1755603527; cv=none; b=Q0kdWPdVp9pH+bFuNj/6ZhqSltmcwek2muKa4sOnDFAN5dvHP6hCzAOA/NAQldz6pP08k/QSqQsamlsckTEtCqBi6O94rXw3tfn4lfPSI8j09GZ6PQIHN3599Ok9qppAFuuRS5ZUM5BP39S/OcmbYXUA3vZ9qOnsBZuvKlsPLx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603472; c=relaxed/simple;
-	bh=7/eMLKrcLUdl9Xqj8DrJf/+zOwRJvD6WS4ChYsUSVM4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FM0BnbZkEFPN1gJahBSjbpNr5Ts/3h4l3a26dA0fNZnwzJo0NuX/iC5nAkzXJZ9RTvYo3dYeXg2u0joh6kgu/PZq+1aFB2uU/7oZhpW6SBKpo74i9gYd1ANJFbqMZRA7gvtv3b8c0/Amu/DPTgTBNrIB/bDqVjQH7QKmMVZLo2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K1hMEJr6; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-333f918d71eso36492441fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755603469; x=1756208269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7/eMLKrcLUdl9Xqj8DrJf/+zOwRJvD6WS4ChYsUSVM4=;
-        b=K1hMEJr6mnoK24g7g4Pzp4lv/5KQzrZYnAw2L5xw9RbGKVjfKRv5eCdiq6R0ne3DsC
-         NfeFhKhn4Xu8XgEY/t4I+ZepDtEUoaXpeh3r56tog89rlK1GQfTgnIRDyxTUsqVM11Qc
-         92hX7Uy+W+yXYU0kFVAv7mjhnh7bHbSAt7QLBZY8x4iXJ3UUl90WW6KQqVaC7ygZFEBO
-         GuhZsMWlxZXCDNtlu63BhuVskhMlZ1ifsLQb5v2Aixu1PgyltJBdcZ2ShtvYC8yZxxoS
-         diRD0MhSdfZXIZSC9Pdp6ZcuYQ1AIEWjnFWoj2w7o+FC6Cu4cQhdk1xykOIOYEvUdn0y
-         6Eyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755603469; x=1756208269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7/eMLKrcLUdl9Xqj8DrJf/+zOwRJvD6WS4ChYsUSVM4=;
-        b=IipJknUFKL3paCtaQEZcU8cxrsugW0bMO2A7aU6K0JVbFSbcqRHJliMmY4+BuQlsHL
-         lbm17LmVqTIAbI/Bk/DwAPEQGBWmLXamzuCyli4cn2XQW34uUo3T2gO5GOuPytlYS0KO
-         OVWZi5LMqCvthIUI+CRaW4oJqSxfioUu9wiLN3DK/r1Sd7U5tCT4DvMJukihRyWMX+uH
-         8fA7Qh2ESg6hvsYAZFgBIGXgW/amOJ7fXfqfqgJQNfnqJLC/hDWti61ZMZb2BFp21R/P
-         8h5fUmXqGgx8Avtv0BZCPDqS2O+lwNTM7tla0zZRDnNOo13Bd7+p87tGDBzyF16hekLj
-         SYoA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0OokP9yVUV6x6/97JBzp0Sg3MUn7E3DzmULI6iqQNuQ46UGorVrgGguhtw4y29Vn9/4+VKNCVkkri6xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpM8Rm/HcoQZeNzVhzsXwFm4NuqIGTMMEB75Fo6UDXGLPf7DwM
-	7+VDvrVZZexXC86AJ6Z2zp3Ju6XSsnS5kEd9s+6pZfBlGas8PX5vtEv4qssq4aFu/yerTygB5ZN
-	ZIZyHU3BCtW/7rjJGQHZdGUGp5jaMoAGeDGJ8YZf1jA==
-X-Gm-Gg: ASbGncsAECMXwNv6g7BWaXpA/FOBNDpT44JMgh3JU1B/BE6POo393TruGU/lQUijCY8
-	1dva12/yiY6BwRBTumf50XFsauo1sdPz9KEQtf1U4V83j8lwUzJ7sJoynbKCcEee98ju+9ruKZC
-	BVI3t6lt5tGE+cnE2k5QZDOI6WMaoLWxlUFhrvw27HsJQJvSea0sxZIn7eE7DNZb/Yl4rJs0M7j
-	xSr9MDa2e5ZzNpvlg==
-X-Google-Smtp-Source: AGHT+IGOB/HBfYtwdx1tJSfnd8ogKz3lNpvmqr3yKeR29sGeAn5Fs3JN7fK6f/qBLlHS0Ep8kse5cDTuwOrTh6QvnCQ=
-X-Received: by 2002:a05:651c:4005:b0:332:6e0b:fe44 with SMTP id
- 38308e7fff4ca-335305d3610mr2718781fa.18.1755603468583; Tue, 19 Aug 2025
- 04:37:48 -0700 (PDT)
+	s=arc-20240116; t=1755603527; c=relaxed/simple;
+	bh=SmknYLVSkkmQvTAgrwu7Xj06gw6T6+yw90I07oFg6nQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=uIN4zQyyjlPAJonwua7tbCkUfqOFmvzAUUAEm0+y1+Q3XrtbmfzwydFCxGIUanAwBHuSo95azqKVf3g5ZWgn5bX6ce0Obwsax+sGPNGcEVgJ6AwWNlwlDhpaEbPlSKn7eBASHKzwyNmXgTJJxhVt9pJD4W2kBy9NrlOgzMRJxUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5KMksjk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44445C113D0;
+	Tue, 19 Aug 2025 11:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755603527;
+	bh=SmknYLVSkkmQvTAgrwu7Xj06gw6T6+yw90I07oFg6nQ=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=t5KMksjkKQGQvtKIXsF08vRcMOGRNJx4qAdUT19jHQJRROLuu6xu3pWPsOqm/1l05
+	 C+Fixuldjsot6XFSXzcqyqkoZn7VubA6V6zdOMTlqZW3eMH0ntWhwPTZ2YG8OmCe4u
+	 Pf6h/UBGE6izIBGUFeAn0CA9u7bXwH9eUSyU6IY4G8roIGcip3WMm9pi9sKlZtEGrS
+	 UpMTMU4KW0kW3RaAZNYubkNAAi3v56rojwQWgkXE3EbBdpgyn4rgdQU9eR2tRFvm6E
+	 1y2JMCKDTYPPs9K6h15OB6HXZQYde3cZ0jXJEyG42nV1z5lmWCGvwuq8AW9SkXj0to
+	 r7BSm9tueG/Bg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250812075444.8310-1-liaoyuanhong@vivo.com>
-In-Reply-To: <20250812075444.8310-1-liaoyuanhong@vivo.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 13:37:37 +0200
-X-Gm-Features: Ac12FXyEWFfBEH_uQgjtsUivAwONC_9h6X_7ZZWepm2Dd3tyjJOIzZHnZxTHxdo
-Message-ID: <CACRpkdZALwxz_Unmi15zi1XCody8CjrKKXauQNWB_RTOQnGE7A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: equilibrium: Remove redundant semicolons
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Rahul Tanwar <rahul.tanwar@linux.intel.com>, 
-	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 19 Aug 2025 13:38:42 +0200
+Message-Id: <DC6DICA9SWYI.2XF7QB1FL32YP@kernel.org>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Andrew Ballance"
+ <andrewjballance@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-mm@kvack.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 4/5] rust: maple_tree: add MapleTreeAlloc
+References: <20250819-maple-tree-v2-0-229b48657bab@google.com>
+ <20250819-maple-tree-v2-4-229b48657bab@google.com>
+In-Reply-To: <20250819-maple-tree-v2-4-229b48657bab@google.com>
 
-On Tue, Aug 12, 2025 at 9:54=E2=80=AFAM Liao Yuanhong <liaoyuanhong@vivo.co=
-m> wrote:
-
-> Remove unnecessary semicolons.
+On Tue Aug 19, 2025 at 12:34 PM CEST, Alice Ryhl wrote:
+> To support allocation trees, we introduce a new type MapleTreeAlloc for
+> the case where the tree is created using MT_FLAGS_ALLOC_RANGE. To ensure
+> that you can only call mtree_alloc_range on an allocation tree, we
+> restrict thta method to the new MapleTreeAlloc type. However, all
+> methods on MapleTree remain accessible to MapleTreeAlloc as allocation
+> trees can use the other methods without issues.
 >
-> Fixes: 1948d5c51dba4 ("pinctrl: Add pinmux & GPIO controller driver for a=
- new SoC")
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Patch applied as nonurgent fix, modified to keep as blank
-line as suggested by Andy while applying.
+Without the unwrap() calls in the examples,
 
-Yours,
-Linus Walleij
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
