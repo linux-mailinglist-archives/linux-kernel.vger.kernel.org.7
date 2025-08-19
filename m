@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-775921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F15EB2C674
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A7DB2C675
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 665CA1884837
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC09724086
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2D7343D6F;
-	Tue, 19 Aug 2025 13:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B911342CA6;
+	Tue, 19 Aug 2025 13:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ogb6q3Zx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="H2RtdW4G"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989FE343217;
-	Tue, 19 Aug 2025 13:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770E257AC7
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 13:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755611932; cv=none; b=t6QPeDSKnXAu4dYRQzYfhzRlCHMjoFbwabFFhSMHCxQljvAlPwe7syFv00khxiG++id26p8BwE9xkUIiwtq0kghJLiZvefCmYNhEWV+TLSDHhN4V3VnBucYSjL58963rvLu8EtjQ25uyGGcgryFx8G0ZexQFXCVEnFt8DgfrVNc=
+	t=1755611949; cv=none; b=Od8uIMKRHJiDE4+QA0cWGdIpYKEU1b+6iryqALoFqm4UqMjzYnIoR2mZKNrzgfNhnmnAXmJAaxUztXa1iMPchLfaDxpbKA3yENg0ofiAjMKHKYKDQKqptmvIPRJzL+j+NrHiqHiaBJwnahS+1fgpzjvgQa/g/5Mfp64psz7yVGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755611932; c=relaxed/simple;
-	bh=qegJliyCwkUB9tOPFffvUwCm+VjLhHymTL03rrMDI5E=;
+	s=arc-20240116; t=1755611949; c=relaxed/simple;
+	bh=e7m49b60v1bM9iFQgpANqdyWxfp5USjhGn0iqaiCmwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNBYZmLpCbUNLsNrhAvRYuoolTAf4gZhYAeqvlN1CbRCmqfec8/RpGkHtDaagZFJZq1VRe0hxz6CryOnDKv2Vy4qU0xIfdn/CK/K31AkBmMqBUE/+ndEBQUmdQNDd/Gjl+r+HGFCeGQ6Upc9KYFFODiUgSNNT7uV6sGybM4wFWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ogb6q3Zx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D132C113D0;
-	Tue, 19 Aug 2025 13:58:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755611932;
-	bh=qegJliyCwkUB9tOPFffvUwCm+VjLhHymTL03rrMDI5E=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=J/EKIs3Vr7a0sry5uQdGU/XzEnOl87BSNN6JWwn1bE1ZJ3HIP4TGJ/fK3H25NdTDR6GYyIjxrek3Rd7dPGRSOv8K7WKs/WWrTa08IJFqL95Ki9W05oeZflTSs/Mk1GAyZKDYZlN5PRf/u4eyUhdr4j0pvSFnsVmq5wQgqDd4lyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=H2RtdW4G; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1755611945;
+	bh=e7m49b60v1bM9iFQgpANqdyWxfp5USjhGn0iqaiCmwY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ogb6q3ZxsL3Pf7yxU+Ivavw47aEkHyn6W67vp/gW2ryEY2aT1erv92eZDsgI93gyw
-	 TUbV0UdJocFNzVMVDhCJBhN6TTR6kgb9CWbXmnkHDJ32h5noBnG1o+lKSfq3nzwolj
-	 pUv4xkFm/SjjfdGdfqCByMyTIMn455kOkLKdey9PklYOBtmSQ4+VDF0w0d6hANFkqG
-	 w5ER7HiAWHgexqotU6+kAkL4QK7vtp4wZSlWNxwes84YDX6Mo83TJq8hRxVv3w2MKV
-	 uHaWtHsVxBH3hgYtPK+5iuyE4m9x7cMtbrpgY/wqv+JUSGd61NJgonfKRg2qGUGtOC
-	 Cs2gCsTz96QxA==
-Date: Tue, 19 Aug 2025 08:58:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-kernel@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	devicetree@vger.kernel.org,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>, Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v3 01/13] dt-bindings: display: st: add new compatible to
- LTDC device
-Message-ID: <20250819135851.GA115029-robh@kernel.org>
-References: <20250819-drm-misc-next-v3-0-04153978ebdb@foss.st.com>
- <20250819-drm-misc-next-v3-1-04153978ebdb@foss.st.com>
- <175560127037.3969097.6130940505156039734.robh@kernel.org>
- <e144225c-e0e6-4d3e-a4d8-e4c48cdef3f6@foss.st.com>
+	b=H2RtdW4G4WD3MDUsmCfSe/j60L1G952CpSrJUxnfPnJfr2CIAmPPtZUAM+J8MPhdU
+	 8v+XXtKuR+RkQCK0ch077KfPGymu/uCDvTN/Xuy/HDuXY0YalwiKloCY+g+DDRBza9
+	 Ej3cIembtvU4o1wHy326TSALutCvpr92InoulRW8=
+Date: Tue, 19 Aug 2025 15:59:04 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] sysfs: attribute_group: allow registration of
+ const attribute
+Message-ID: <daafd875-d3bc-4df7-a035-5a7dccdaaafb@t-8ch.de>
+References: <20250811-sysfs-const-attr-prep-v3-0-0d973ff46afc@weissschuh.net>
+ <20250811-sysfs-const-attr-prep-v3-1-0d973ff46afc@weissschuh.net>
+ <2025081957-refueling-anteater-4720@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e144225c-e0e6-4d3e-a4d8-e4c48cdef3f6@foss.st.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025081957-refueling-anteater-4720@gregkh>
 
-On Tue, Aug 19, 2025 at 03:17:46PM +0200, Raphael Gallais-Pou wrote:
+On 2025-08-19 13:22:55+0200, Greg Kroah-Hartman wrote:
+> On Mon, Aug 11, 2025 at 11:14:27AM +0200, Thomas Weißschuh wrote:
+> > To be able to constify instances of struct attribute it has to be
+> > possible to add them to struct attribute_group.
+> > The current type of the attrs member however is not compatible with that.
+> > Introduce a union that allows registration of both const and non-const
+> > attributes to enable a piecewise transition.
+> > As both union member types are compatible no logic needs to be adapted.
+> > 
+> > Technically it is now possible register a const struct
+> > attribute and receive it as mutable pointer in the callbacks.
+> > This is a soundness issue.
+> > But this same soundness issue already exists today in
+> > sysfs_create_file().
+> > Also the struct definition and callback implementation are always
+> > closely linked and are meant to be moved to const in lockstep.
+> > 
+> > Similar to commit 906c508afdca ("sysfs: attribute_group: allow registration of const bin_attribute")
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >  include/linux/sysfs.h | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> > index f418aae4f1134f8126783d9e8eb575ba4278e927..a47092e837d9eb014894d1f7e49f0fd0f9a2e350 100644
+> > --- a/include/linux/sysfs.h
+> > +++ b/include/linux/sysfs.h
+> > @@ -105,7 +105,10 @@ struct attribute_group {
+> >  	size_t			(*bin_size)(struct kobject *,
+> >  					    const struct bin_attribute *,
+> >  					    int);
+> > -	struct attribute	**attrs;
+> > +	union {
+> > +		struct attribute	**attrs;
+> > +		const struct attribute	*const *attrs_new;
 > 
-> 
-> On 8/19/25 13:01, Rob Herring (Arm) wrote:
-> > On Tue, 19 Aug 2025 11:15:54 +0200, Raphael Gallais-Pou wrote:
-> >> The new STMicroelectronics SoC features a display controller similar to
-> >> the one used in previous SoCs.  Because there is additional registers,
-> >> it is incompatible with existing IPs.
-> >>
-> >> Add the new name to the list of compatible string.
-> >>
-> >> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> >> ---
-> >>  .../devicetree/bindings/display/st,stm32-ltdc.yaml | 30 ++++++++++++++++++++--
-> >>  1 file changed, 28 insertions(+), 2 deletions(-)
-> 
-> Hi Rob,
-> 
-> It seems several patches of this series triggered your bot without
-> warnings/errors messages.
-> 
-> Did I missed something or is it just a glitch in the matrix ? :)
+> I know you will drop the "_new" prefix after a while, but "new" is
+> relative, and not very descriptive.
 
-'make dt_binding_check' is broken in linux-next which is used if the 
-base commit is not specified or not found. The latter was the case here. 
-Should be fixed in tomorrow's linux-next.
+That is somewhat intentional to express that it is a transitional thing.
 
-Rob
+> How about "_const"?
+
+At some point the regular variant will be const too, so "_const" would
+be a bit weird.
+
+> > +	};
+> >  	union {
+> >  		const struct bin_attribute	*const *bin_attrs;
+> >  		const struct bin_attribute	*const *bin_attrs_new;
+> 
+> There is no bin_attrs_new anymore.  Finally.  sorry about that...
+
+Thanks! No worries.
+
+
+Thomas
 
