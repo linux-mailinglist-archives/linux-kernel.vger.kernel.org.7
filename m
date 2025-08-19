@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-775332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F12CEB2BE07
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741E6B2BE15
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A6D680AD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5B75679E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4379A319864;
-	Tue, 19 Aug 2025 09:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B565D31AF21;
+	Tue, 19 Aug 2025 09:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eRa2u3kS"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NZruq3oV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ED5131E2D
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F6131AF01;
+	Tue, 19 Aug 2025 09:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597104; cv=none; b=Tpn1lMe+8Wim+mGdv+7eCWfL/4fRUd8CqWHMRIB+7a94zCvlO/Iueaaa6HNNyqZGhCsBXTXYLWVHDSUGynNk4KlKNk7jEDTpou53QnppXLWYKoQOKorVY7rRnintkUD9mPel7uU7lXM8eAxLqxIHtH5L/LIynAub+Y55eMBkWn0=
+	t=1755597107; cv=none; b=ZiJBem+Z9BUg+06OnOmXPVpTA1qL04S1hsB+NmG9fIyd5KbYlNf23fH03MDdwwfbOgva/ozLcKp52p+UytnDh32a+ZbvgHocuq+DNmrpTEcD8MJzgvhILmrCJTu/QmLdJ/ehL7qLarOyA/du7BvfGJi2ODxEk0R/u0rdarnfeGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597104; c=relaxed/simple;
-	bh=kV8MiKDjIo0i5XbSCzfHUQUqmAmJZoF4aIfBpBqUsyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/KVXHjuiIlQUFVjSVU8YQ1zEf5iEbGz7LTNwZ+6qk5THoQNiaFG5jZXmxn9ivUcecvwX65qu453DXNi6wUaPTwtFSiYZx/obS8FbCT95c/LAayK+gSzJNm1BgX828GeNJ1MTsNC4tujdJi1sXbL3x5iN8uLztyzMZSrevJUC6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eRa2u3kS; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7a0442bso750343066b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 02:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755597100; x=1756201900; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpb+PaLPuvJxAShaZZMU5rp6ga8uI33SULth7K0pEPs=;
-        b=eRa2u3kSdyJ8xqKebd5BUp6NvMpssPyKcXN5lu0VOFqEQ5eu1M0vFbccs5dF9kga6t
-         p0YmF/lMdymiHWxw33aNOGCJQ08y9bM26QXqPMEW0WjPSd/jEnIrczihLtZxI/n/2gkj
-         kQFpvW/QAC6J+j5RQczrpzi3rV8UPDP5grCZFkU9as2eckzaZS+WkVqz16ullasB1eVA
-         HORr9xXB5HQnm13OuIvpdeVEYgfvseSOGJD+3m08MbW6RMbW+Mmz1RhHUrYvjplWqcNM
-         riNwfozr/0cXQmU1N8rq4YjM+nOXXmWknsKsC6sYa4kqgCax8jqDpBShS/kr2cLqtPNm
-         FOGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755597100; x=1756201900;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qpb+PaLPuvJxAShaZZMU5rp6ga8uI33SULth7K0pEPs=;
-        b=lYm9y4uWtfeB+w6wX82uI4zuC2uFqBRGgJDgoWEsbL5hxcy2729GqTgDnY8cDKOAuU
-         FDxI0LZuPU17nKsaeH+bEIx6BYxy2t/a9blK8aE8AaGBCJ+BI6WBLHDDP/pg8JpJnGOW
-         ScCbgUGBiDJRhYeZ7T6LNFk88wFU4bM/G/SBuB0RouLdQK9cubGkUVS5DOWA0jLOjkuE
-         IuFYRNjhXZMZlFxJca6PFsVd/5TBeg3nCKd9rMwEjylzR/nfOqSO9Mhov4QPt/u5gzBD
-         z3J1nUMe5SYTyiZHW6S334Zx+e5rki8WYKSOzZRSCwqvzJrXB+J6g25HqqDVJKEmxv+k
-         JZ5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUyuLDlPiE0NI4Bf6jAfrT80aRJG2xBdaJcKZjag+R4FHuqRLKR81HlFxj0Fo0T88dh71oE3qDEdfB9+rM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFUCt9g26BOXLxPhZJ5SyiQJh/OOuT4VqwPnTEAAXq7WN9cWQk
-	32MAMc6oNFk9d/kioBS7IZfbKxWy+rjDxWhxTbZshcM6Mq8GlRdx6kQjRoOfaN8JYLY=
-X-Gm-Gg: ASbGncud6TUNpc6AVoMqOIk2lMjYxrdeF0GurPxVW96WetAIaY58md6IA9wuiYvn9d/
-	eCHJy8IYhiveSNZU/H34vCn5U3HL89Fsm2FCrfOXYB4lSplzZK8sfQZD6eeUACeI1q4yTD1FeNY
-	BQ1L8qMbwgqqAv2nsQ0FuqgSNAWrfAUJVHYkMt12RSEVuLZNKbaWCxwid/QpjRR5yvG4uruMrRZ
-	CnGhQyA3wRrmEv6VtwNWL/QijrvFog8jufct9pz/Md3BcGIFCwU63+4+18xtqHQJcGtb3pV5UjN
-	9fVOkcRvcPRY1FPRpg1zj+lSF2FuQypNnAqW0bNYK3XPPd1r80VPpxcFXqGE5DSesY04GGwqt/W
-	7gUi9bNqvAiVqhYzCHsCn22bg5g==
-X-Google-Smtp-Source: AGHT+IHZRwFrrAbq1jt158Uor2ug2BrkxZjZgkOG4U84WIS+uPiwrXUARGkxE6OZq3PDaTyeCuWg9Q==
-X-Received: by 2002:a17:907:7e9b:b0:af9:479b:8caf with SMTP id a640c23a62f3a-afddd1e974emr166668666b.51.1755597099900;
-        Tue, 19 Aug 2025 02:51:39 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdcfcce69sm958756766b.82.2025.08.19.02.51.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:51:39 -0700 (PDT)
-Date: Tue, 19 Aug 2025 11:51:37 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	john.ogness@linutronix.de
-Subject: [PATCH] panic: Clean up message about deprecated 'panic_print'
- parameter
-Message-ID: <aKRJKZHgcxyNF3y7@pathway.suse.cz>
-References: <20250815071428.98041-1-feng.tang@linux.alibaba.com>
- <20250815071428.98041-4-feng.tang@linux.alibaba.com>
+	s=arc-20240116; t=1755597107; c=relaxed/simple;
+	bh=zAEE6PZmXVlAjr1qANkvoRFgZ0C3gmkOIMFOBCdWG5o=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=d1oJMRgl0+x7IBq9pj6+Q+f1L6mwQH9QFwC8Lx7v9JVdgJczf+/N2S0cNN1ZsmQG84RW5DpAko6DVCaKH6nFKWlu+UI1ZHQgkuTDilvPiXk0fZhtOHiQFwLpZl34MhA3bIgxZa+RH3sulUIlB+Tycx0X+dp7n9PFrEBGi9Omfqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NZruq3oV; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755597105; x=1787133105;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=zAEE6PZmXVlAjr1qANkvoRFgZ0C3gmkOIMFOBCdWG5o=;
+  b=NZruq3oVgCCQ9d3QA7X7JoSLgeLSGIHAk3UEQk3OLJRLT/NQJyJZlwrM
+   huj/3d7HfBqAvlvT/hqmD/lmpVTIvxjZ0Y0tX+PA9mSFny5ZSFan+3tJf
+   AqhIbxnrc30UA3SflVSov++UHkM0JuCIU+fMGLjWVrA7+qvZ3QFBnHyi9
+   Pvc835oxvp0azwuvXEHLw4iKbSmSKUJo9/iiQPJj2o3QGqV+mcr2i3B0L
+   OplX8UiU4B2fy45a/VoPio5od7BxKg977Thstzf6Kt0TeA4tn5j/J8RLT
+   ZNoIWlVhIXlI2BOVL1/3NPV4Kf/J9hAYjcnFjr1w+Zy9XsQy48JFCq5nk
+   A==;
+X-CSE-ConnectionGUID: 9otPXgPaS/GdSw/bMZ+IcA==
+X-CSE-MsgGUID: RAy4n2qlTrm1Cm9OjDQO4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="45409206"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="45409206"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:51:44 -0700
+X-CSE-ConnectionGUID: /jbhT4oYQ6GmqD+2nuhHrQ==
+X-CSE-MsgGUID: CvRcmYYNQsejpPuBuM2ziQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; 
+   d="scan'208";a="173036722"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.120])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 02:51:42 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 19 Aug 2025 12:51:39 +0300 (EEST)
+To: Yen-Chi Huang <jesse.huang@portwell.com.tw>
+cc: Hans de Goede <hdegoede@redhat.com>, jdelvare@suse.com, linux@roeck-us.net, 
+    wim@linux-watchdog.org, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+    linux-watchdog@vger.kernel.org, jay.chen@canonical.com
+Subject: Re: [PATCH v3 1/2] platform/x86: portwell-ec: Add suspend/resume
+ support for watchdog
+In-Reply-To: <e11e542b-b630-4f18-8a60-a36fe31c0133@portwell.com.tw>
+Message-ID: <6584da3e-fc86-7a47-f783-da77049b2215@linux.intel.com>
+References: <22148817-aade-4e40-92b7-dcac0916e1ed@portwell.com.tw> <e11e542b-b630-4f18-8a60-a36fe31c0133@portwell.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815071428.98041-4-feng.tang@linux.alibaba.com>
+Content-Type: text/plain; charset=US-ASCII
 
-Remove duplication of the message about the deprecated 'panic_print'
-parameter.
+On Mon, 28 Jul 2025, Yen-Chi Huang wrote:
 
-Also make the wording more direct. Make it clear that the new
-parameters already exist and should be used instead.
+> Portwell EC does not disable the watchdog during suspend. To avoid unwanted
+> resets, this patch adds suspend and resume callbacks (pwec_suspend() and
+> pwec_resume()) to the driver.
+> 
+> The watchdog is stopped in pwec_suspend() and restarted in pwec_resume() if
+> it was active before suspend.
+> 
+> Signed-off-by: Yen-Chi Huang <jesse.huang@portwell.com.tw>
+> ---
+>  drivers/platform/x86/portwell-ec.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/portwell-ec.c b/drivers/platform/x86/portwell-ec.c
+> index 3e019c51913e..7f473e3032e2 100644
+> --- a/drivers/platform/x86/portwell-ec.c
+> +++ b/drivers/platform/x86/portwell-ec.c
+> @@ -246,11 +246,29 @@ static int pwec_probe(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static int pwec_suspend(struct platform_device *pdev, pm_message_t message)
+> +{
+> +	if (watchdog_active(&ec_wdt_dev))
+> +		return pwec_wdt_stop(&ec_wdt_dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pwec_resume(struct platform_device *pdev)
+> +{
+> +	if (watchdog_active(&ec_wdt_dev))
+> +		return pwec_wdt_start(&ec_wdt_dev);
+> +
+> +	return 0;
+> +}
+> +
+>  static struct platform_driver pwec_driver = {
+>  	.driver = {
+>  		.name = "portwell-ec",
+>  	},
+>  	.probe = pwec_probe,
+> +	.suspend = pm_ptr(pwec_suspend),
+> +	.resume = pm_ptr(pwec_resume),
 
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
-This can be used as a follow up patch.
-Or feel free to squash it into the 3rd patch.
+These are legacy handlers, please use .pm under .driver and the macros to 
+create the struct dev_pm_ops.
 
-kernel/panic.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 12a10e17ab4a..d3907fd95d72 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -122,10 +122,15 @@ static int proc_taint(const struct ctl_table *table, int write,
- 	return err;
- }
- 
-+static void panic_print_deprecated(void)
-+{
-+	pr_info_once("Kernel: The 'panic_print' parameter is now deprecated. Please use 'panic_sys_info' and 'panic_console_replay' instead.\n");
-+}
-+
- static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
- 			   void *buffer, size_t *lenp, loff_t *ppos)
- {
--	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-+	panic_print_deprecated();
- 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- }
- 
-@@ -944,13 +949,13 @@ core_param(panic_console_replay, panic_console_replay, bool, 0644);
- 
- static int panic_print_set(const char *val, const struct kernel_param *kp)
- {
--	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-+	panic_print_deprecated();
- 	return  param_set_ulong(val, kp);
- }
- 
- static int panic_print_get(char *val, const struct kernel_param *kp)
- {
--	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-+	panic_print_deprecated();
- 	return  param_get_ulong(val, kp);
- }
- 
 -- 
-2.50.1
+ i.
 
 
