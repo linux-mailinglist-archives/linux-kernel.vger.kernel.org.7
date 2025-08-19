@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-775315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B71AB2BDD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:46:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CF7B2BDD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4B25246EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0DD3A24ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0367331A06C;
-	Tue, 19 Aug 2025 09:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FF031B138;
+	Tue, 19 Aug 2025 09:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ky3nvWSv"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnmVnRgr"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E117B26D4EF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 09:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2C7319864;
+	Tue, 19 Aug 2025 09:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596758; cv=none; b=imtES516oxtl1Ui3IOUnuJl1nm9eF+9CvDvtRoHTfvXmyT/shoWbKBcU8ohztfkE/54Qk04rQQPu2ujDJDz8j8TLPop6BqDWJj+yfNVlK/qDd0j9mFGyRaVRoJ6w4ytiUZDjX67KHGbsaiPmO3/zOJ0RAVzBhn2uzG2FAhV7jUU=
+	t=1755596814; cv=none; b=Hqqw4PCZP64xX1L2eAna755J9RYWSPRda5asAh2Bv4uUgTInpqmsv2/VhIBga87HG3nGp/SPFqKhwC75sPIOLGn26yj98YqeR5U/I0nSV0yhggkNu2xoIGHqZyW3aR6nd4FKcHgGxRnIdroT31rGCqbByPHg7ZcEbnRAhUtNbAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596758; c=relaxed/simple;
-	bh=V/Oq678BArHS/pkn3z/1AG2tX/0VWyD29OgrHSZ5KYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GxiXOmrkx1wXh4BxpflSzCgmKgnyvziSlu3QWwhIWiPq/RxoQsITGm73ORHAUXWzzFLPJzH8ekxGcaiIiKxWdVwqTmVrQwY+Ippv38H87qZk3D/IOHxQsDWATt0duGAF3WmG9UV16YFODUwKU27xT8xLFUAfORQQR4k7BIYyJdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ky3nvWSv; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 91468C6B3B5;
-	Tue, 19 Aug 2025 09:45:41 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id F3BA060697;
-	Tue, 19 Aug 2025 09:45:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6D1CB1C22D747;
-	Tue, 19 Aug 2025 11:45:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755596754; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=V/Oq678BArHS/pkn3z/1AG2tX/0VWyD29OgrHSZ5KYs=;
-	b=ky3nvWSvMoX2c+pvIhTj+cu1ov2JfLwOCNQzdenjwhDzyP15XnEafVUzBDGclQe7UiRLBF
-	Lx0kJ9pOIEUf2aZoP10qr3Y6vADaSF2KMjB6p7sI3LKdie9W5CYg20qkZEr/QRJDjKqelp
-	sSo4m4PyebziLqf2RZKOfFNuGVa74ZaXOsdlV8CqMV9N9BQ3mxl2I8WE0d+w5VdaXFu9nv
-	KFbnOyin5ZSHH4ncKfo24m2iHalyUbot7UvVqS+BqnoTszYBculjmAAbLM9CWs5AEHvmUC
-	orXR4REnEQLGDydkvqhTtHdKYYpkjjaMSxHGr/B5HKKfIsg48EeGlZc7p4sfGQ==
-Message-ID: <6d664b4b-080f-442e-bb7e-4d220a16ccf4@bootlin.com>
-Date: Tue, 19 Aug 2025 11:45:44 +0200
+	s=arc-20240116; t=1755596814; c=relaxed/simple;
+	bh=UpGOAWXYbpCp4AcWDvEoBwI8mc7ei02D4aK7TjlubcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kpIB8NfBLgGv20FaC0+thc6X6OCx2QlZRySzzxqt6P4aIqFHyd5CBAql7fUuZ/WRrjRl/fMDHkf0W0iObsnRA37ZtftOyYp5TxA6xTSekx+VhsKmWk/mZBNYmj5vR2qvUh9urR+WtQ8W0m9cLpbpJanFlcmW5VMIZkFAOqQRijo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DnmVnRgr; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7ae31caso905413666b.3;
+        Tue, 19 Aug 2025 02:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755596811; x=1756201611; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHR1+LnsyqQCjvU9VYbnlkSX6a8oXRzaW4bWSSLO4t8=;
+        b=DnmVnRgroLML0U8NSBs2LD87MQPpFy4mDRZ+KTv82w+9arLt/jbEuGtShz5RfG9JLK
+         IaPnekW/QizeuQkE/xjPGGEmSEoxByGavkna1RLKYcnr9eWodEuVz5AWO7hbvxSU0Ec/
+         uN9eImnig05l071wu7ctMJVJOAzT/imZo2hv+/4LmXjSYTQhIsoo/RTQVIxYr6D8YMDX
+         Mjj1DNj3LfrUtFA+BH8Io9Nz61BkFIUg0Pe8l8AvmwBg0i19VqbwKriq4fBtwvv+3asT
+         Dct7ga47qvqbqmdOmeirxug6wYBSOb7aw1eq7Lj3AV3LJObQLIvmPeE2F2cLM3PcYARQ
+         21wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755596811; x=1756201611;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vHR1+LnsyqQCjvU9VYbnlkSX6a8oXRzaW4bWSSLO4t8=;
+        b=aokr68PYuIYSRNl58DnMcoDoeHJDfRln4AWLPrN+dt+JnwYwW3/OZvV4XAXIBKzgQ1
+         RJhq8Vfayg6j73qRpGpZGGzlF/o5POd3PupgDp7dgRbUN5p5bKDvDZ7ojuTi89BPCJJe
+         RXrkEBFli3EL4Pp/zzJ8nEhZw6CdmwDv1J7OQgG7vj+Qpw0TZJuUWwPsg6KoL44EVdKI
+         RouLZVU8LFobl4NPJ7/oNEV69x9x0JyQH0p7Cev/BMe7Hw/R6pGqxQ4Tv9BIb4ObQP8s
+         OOqz0hboXgQeGodC3mY5+SnnVhbS6lw0QZ1RbTT6sN1aiN2BqSSQkF41NpdfIG7aAAxG
+         hP5w==
+X-Forwarded-Encrypted: i=1; AJvYcCURx23+DL+fM1CiCX+3qguyJlSUGtxeP3JFdcF4ULNgiu8LlF4xZdp8LweSXLYUzPIdmoe3dF9NOOc=@vger.kernel.org, AJvYcCUUawhLUFdZx9MC02bNv3uyKPnw4fhkitSUyXwoPm9dU4tYpRi2JNiOJfXhsV4uNpdRvfbrxRwc44yJ3wrB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdVotkoMYd0tZzUnOOPV714/3/5aw3QJ3Tz42cvyoAyWGwrSP/
+	afQoSDLCAQsdkosvBaPQAWgSPhSlJFWBCM0E2co6yTXPSL6bAGdQy1Pnihlf8aGg/z96rRetbj1
+	MWkqx8b+s6NAyWm/g6jcwhCMW4yYBzlI=
+X-Gm-Gg: ASbGncvgTdUbkTRq/1of8U1gmDngDiJFWNu4MVl9YfdX9aUG1f3SSk+mUBDZvOmEcZz
+	ho2LqrmZDCSr/eqyYOXbANTT4jmCByL4xS2k3kK4fO3yQeuHZZfgGf6IzgZpKaPZiD9SGkzV0pg
+	a1qw6VV610761ir/N9R9+j+pAm2Jm5RsSJPMzriaUFVpGtbu7wh6ToD4PKy4TOsPJLlT6NErVNt
+	MuMRj8=
+X-Google-Smtp-Source: AGHT+IH/WC5OrNyjsCt6bSD85vhC1Tzxdo/8mJluv/2xFXUP1fb2Y03uGT+yunrqxu0uL3hZdsc26M1MGHskK1UmZkU=
+X-Received: by 2002:a17:907:3e9f:b0:ae3:b2b7:7f2f with SMTP id
+ a640c23a62f3a-afddd0c3b78mr174854966b.40.1755596810877; Tue, 19 Aug 2025
+ 02:46:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] phy: ti: gmii-sel: Always write the RGMII ID setting
-To: Michael Walle <mwalle@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
- Andrew Lunn <andrew@lunn.ch>, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, nm@ti.com,
- vigneshr@ti.com
-References: <20250819065622.1019537-1-mwalle@kernel.org>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20250819065622.1019537-1-mwalle@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250819085542.538715-1-rongqianfeng@vivo.com>
+In-Reply-To: <20250819085542.538715-1-rongqianfeng@vivo.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 19 Aug 2025 12:46:14 +0300
+X-Gm-Features: Ac12FXzJDMjCDfVZA8d6PwPJEGCZtkOqMTgPbw20bvKZMIjSZagR4VVu99uFKNM
+Message-ID: <CAHp75VdAySwLZ8gf_mDoQDX4KdC-hsCYL3VbkZSk_NSKNY5VTw@mail.gmail.com>
+Subject: Re: [PATCH] iio: common: scmi_iio: use kcalloc() instead of kzalloc()
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Jyoti Bhayana <jbhayana@google.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 19/08/2025 08:56, Michael Walle wrote:
-> Some SoCs are just validated with the TX delay enabled. With commit
-> ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
-> RGMII TX delay"), the network driver will patch the delay setting on the
-> fly assuming that the TX delay setting is fixed. In reality, the TX
-> delay is configurable and just skipped in the documentation. There are
-> bootloaders, which will disable the TX delay and this will lead to a
-> transmit path which doesn't add any delays at all.
-> Fix that by always writing the RGMII_ID setting and report an error for
-> unsupported RGMII delay modes.
+On Tue, Aug 19, 2025 at 11:56=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.c=
+om> wrote:
 >
-> This is safe to do and shouldn't break any boards in mainline because
-> the fixed delay is only introduced for gmii-sel compatibles which are
-> used together with the am65-cpsw-nuss driver and also contains the
-> commit above.
->
-> Fixes: ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> Replace calls of devm_kzalloc() with devm_kcalloc() in scmi_alloc_iiodev(=
+)
+> and scmi_iio_set_sampling_freq_avail() for safer memory allocation with
+> built-in overflow protection.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+While this change is correct...
 
-Maxime
+...
 
+>         sensor->freq_avail =3D
+> -               devm_kzalloc(&iio_dev->dev,
+> -                            sizeof(*sensor->freq_avail) *
+> -                                    (sensor->sensor_info->intervals.coun=
+t * 2),
+> +               devm_kcalloc(&iio_dev->dev,
+> +                            sensor->sensor_info->intervals.count * 2,
+
+...I would also switch this to use array_size() instead of explicit
+multiplication as it will check for boundaries that are not static in
+this case.
+
+> +                            sizeof(*sensor->freq_avail),
+>                              GFP_KERNEL);
+>         if (!sensor->freq_avail)
+>                 return -ENOMEM;
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
