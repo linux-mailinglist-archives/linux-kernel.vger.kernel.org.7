@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-775525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2816B2C02E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:25:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7919AB2C033
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F6A163903
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:21:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D0E3BE540
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3977F27A121;
-	Tue, 19 Aug 2025 11:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724DC326D7E;
+	Tue, 19 Aug 2025 11:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+W+8ykB"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="gE6XjuLL"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0761927876E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 11:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755602486; cv=none; b=ubFox9MwGDmm70ovB//MWBDmWSZlitv4MgJtkgpVo2J1feZX4fgnrEj8F7GNQhdAMM6Gv2Hv8pPPQzDCkBb2c9dTGC5ej4Q5LEsvEKsY6Yek/vp5gVDQjkFfo6Q0FTw9sjmr//fNk1LrPS5d7jLoCuCHa+8DA0ke3KhBNSfl/FQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755602486; c=relaxed/simple;
-	bh=ykjYNDzNtgnJKupD3/EWV+NrnYl1HExXSP5IMAiM4Cc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUBFENF+BSRe76yOaCguOllOjetNOLUxEIWiulXinpp2Q3cwPV/v5pCvGkhfCoD3rsVHml0CdrnrDUJ2Ll8KNSH/WMdY8+5MPUN7ef5pTpI9S4b4OBFmsUFm+MegLqMvOs9sibgsn2OcxOQFUrLFoB61S7s3cwDyAOYJX4KazHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+W+8ykB; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce52b01caso5932196e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 04:21:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755602483; x=1756207283; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ykjYNDzNtgnJKupD3/EWV+NrnYl1HExXSP5IMAiM4Cc=;
-        b=A+W+8ykB0FB/jDRAE5MfpjH0f6vK/hz0UsLSn32HeM307l8kLO/s8DrmBgIlx2kdnp
-         pIgrDM+z19oimRitPTCn79x2aJp7mJUNnXy+xz+fjo4fo4kt3RJHn7rpKw+2Z4rCNZFl
-         NJcIaS+8hTOB+alRPsJBbKX3ZDEHJ/hiYyTYDAO3z9EFhFjQSuZvVx5bQ/tmbQ/9FQcf
-         Y2wlF3++iw2J+mLbqEnfuy1nNE/chVE4B9MY46tKSsD1NV0nkexEdaRiIUvdGZ5yqh/k
-         48njEwzStB9D8NIf4q4Pu3EDYqZHloyQ2N0JCiea8cdIBHV+Qi3Oigk5b7zogICSqPPp
-         gpdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755602483; x=1756207283;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ykjYNDzNtgnJKupD3/EWV+NrnYl1HExXSP5IMAiM4Cc=;
-        b=fMdJYLX42LhfV7lx9q30vcVbfv8hGSK3+mQU+fbfuHZiJz0VXpQJrfUxJ866U3XE9V
-         x2JNxPq49g6XsDWxELvZiiGSue3z1jMuFCeNSiq8BVIhJu9QyE39jpkXSrLXbhtrSdqn
-         K7Sgk3EXWIkFjLYtNMmZpL7RGm3l7t+TVjXaMr+8disYnhSRM9K7Q13Zhg0Bs9Pb0O2l
-         Lf5nsGNyyizrefEuC8neIT6pwA0uz+DhBBZIyBI1pk3DCvyQEx2p7u92/CX4bV80yfkh
-         EChS+an3UJl9kRKzUpSMr2Yf0MYHRGyb8oDe+sx7PRWdLibJX9U9tLyVbTAD28qaqG8S
-         9Osg==
-X-Forwarded-Encrypted: i=1; AJvYcCUC3kgR8bXnQVXO1CjxPd81wm/j7p92wfuyTuuwr5vuZYFPhb7cjrMFc+LMpn5OoxXvnO5cm0pPPNQ8Ato=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw64Be97ESe3iEaKshx677/sCvLp79iFw4M0BUEl1TlA8EgKpua
-	yHyLVrfx3mHFkjNE/Nn6KN4GrF4VuelGgkMfE73umyD4gP0rXdrzdu5NxpQHBr7pB2mfFCPzYtQ
-	Qwu+cxswzeLy6DRdLyoBVc9dAsButZ20HR3ADSAv/EQ==
-X-Gm-Gg: ASbGncuf4VGDutmV5Ao20X+Z8em8PtD50qGMGFvVe/VVyDvVvVdbM/Top0T3UXrAbaF
-	DJndDx72nJ4z1ZUTC1j13MH03q1m/MS1r1+5xFM+Js19p1VKCoQvw3MwN/pnEy9ukadDGNZ6AzR
-	roPH2o/DBcKHIDBqwuRsrFXE89fm2iD8bCJpR8H2MHFdZ4j3RBViiywHwD+j8RHvBbIg90cRhiZ
-	inJgLDgo5xOi7Dp21Bl3MM=
-X-Google-Smtp-Source: AGHT+IExSkHu5Fq2TPJj7mig+2UITCL5Nuo8n3oMZX7n14jJ1Ur8U/ZDpryXYMDT0yEbKr7vKt4NOQD/r2E+HVIENcA=
-X-Received: by 2002:a05:6512:33cf:b0:55c:c9d5:d347 with SMTP id
- 2adb3069b0e04-55e0083157fmr656989e87.35.1755602482535; Tue, 19 Aug 2025
- 04:21:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4594827876E;
+	Tue, 19 Aug 2025 11:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755602545; cv=pass; b=hTCpIOWGEuyKQ/aWKdHNlgcmOC8DB8+R+uUBMECWcmyX/4ociGRIATs4R5BuqJl2UgEngDIoLj1OGRJVda6WsODfYhhz5yvJThJNvrC02meydhBr+7Nqe2hKea3tXiHh4bbjtp4UUtLF1P3YrN9N2vid4Xme0zmVqARo+ogQmxA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755602545; c=relaxed/simple;
+	bh=PwxyD5Nd4Inf8ouIOSPYmKwVDesQhiuJ04jPckGEnDg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tuSaEKi0Ipoj9BuLicaCCRPhuwcJZ5EtJsXTPeBU5RS1tJvOsfLROifVBbhiCNqjBw/x7f2fR3N9kZa0hNk/+oiOPqMkTvAFngUUzOCsePyTO72usepkOtJlol4vuqeH0U5wmoGvwaN1kbdHKer7zEmTLA9c6K7kmhDX64FfSUs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=gE6XjuLL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755602528; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=U6mim+bj1DPuhw+mUqGMsaZIBQpViqTSNcsjW1k6mqrfip4/xz6tmvNEQXvmYGNbJvqjTteqkAzG6YYe7EeJ0oACJlg74QyOpfFR7l4ZfpHi99ajVjtoEFPWctPdogxJozHkLjMFZUmFTbHjSdlhZng8eyXxCFzP3ZtrgUpkrV4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755602528; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ceXQjJPZTjxdNgGeYxtuRD2GWkq7Nnr+y3XAJ3hERGc=; 
+	b=HC7BT6cLRtDpd8eAZva6lW6GmtfitIRgWkQeiPJPieDlCfug/rb0qHZhYVtuGo7g+GKJ6BbZTrWimf4EibVubG916ezXPzUCgWNqskaz8grP6OH0ay4/haiMdhkvXMrbcxjI+By9qHdK9KNsJZXJzhg/NG8suwzjS2vMuE9ZDCQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755602528;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=ceXQjJPZTjxdNgGeYxtuRD2GWkq7Nnr+y3XAJ3hERGc=;
+	b=gE6XjuLLjtBAdC9wso2XRrgBBJPvPoiTOGKbmiXrft0GnskTx2C7+qwqJBka5JYc
+	hmEq7sbQII8WQYi5zhED0HNLNv2U8YPakBzPl8kLLi4PMq1fa3XZMnL7E9r7HUajJ6S
+	Ch8QUiN5vNk+KYe3Zgs+fXHTPFFo6cqBVq6pEnPQ=
+Received: by mx.zohomail.com with SMTPS id 1755602526685939.769654379773;
+	Tue, 19 Aug 2025 04:22:06 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Tue, 19 Aug 2025 13:21:42 +0200
+Subject: [PATCH] cpufreq: mediatek-hw: don't use error path on NULL fdvfs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812203337.731648-1-robh@kernel.org>
-In-Reply-To: <20250812203337.731648-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 13:21:11 +0200
-X-Gm-Features: Ac12FXy0UOxQIJg9zQs_ZT_Mh0mUXIMqwTPHMZ2w4ECrF-44gBtOF9LLtv4UU10
-Message-ID: <CACRpkdZGD6p_QDRHXQSHWPk0E4N37RQ6HQXzBAGHo393ee08-A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Convert brcm,bcm2835-gpio to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Florian Fainelli <f.fainelli@gmail.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250819-mt8196-cpufreq-fix-v1-1-adb60a3082dc@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAEVepGgC/zWMwQrDIBBEf0X23AUVTNr8SsnB2rXdgyZVUwIh/
+ 94loZeBN8y8DSoVpgqD2qDQlytPWcBcFIS3zy9CfgqD1dbpq7lhapIdhnmJhT4YeUXdO9eH4C1
+ FA3KcC0l9SO/jyTJdxN3OEh6+EoYpJW6DyrQ2/Pth3PcfO849wJUAAAA=
+X-Change-ID: 20250819-mt8196-cpufreq-fix-07557cca2ef1
+To: Dan Carpenter <dan.carpenter@linaro.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, 
+ AngeloGioacchino Del Regno <angelogiaocchino.delregno@collabora.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Aug 12, 2025 at 10:33=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
+The IS_ERR_OR_NULL check for priv->fdvfs is inappropriate, and should be
+an IS_ERR check instead, as a NULL value here would propagate it to
+PTR_ERR.
 
-> Convert the Broadcom BCM2835 GPIO (and pinmux) controller binding to DT
-> schema format.
->
-> The structure of the child nodes wasn't well defined. The schema is
-> based on the .dts users. The legacy binding is a single level of child
-> nodes while the standard binding is 2 levels of child nodes.
->
-> The "all banks" interrupt is treated as optional following actual users.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+In practice, there is no problem here, as devm_of_iomap cannot return
+NULL in any circumstance. However, it causes a Smatch static checker
+warning.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Fix the warning by changing the check from IS_ERR_OR_NULL to IS_ERR.
 
-Yours,
-Linus Walleij
+Fixes: 32e0d669f3ac ("cpufreq: mediatek-hw: Add support for MT8196")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-pm/aKQubSEXH1TXQpnR@stanley.mountain/
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+ drivers/cpufreq/mediatek-cpufreq-hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
+index e4eadce6f937ceff51b34d22da83c51b4e9aa813..fce5aa5ceea033bb70537ad9280e9ee02e3671cc 100644
+--- a/drivers/cpufreq/mediatek-cpufreq-hw.c
++++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
+@@ -72,7 +72,7 @@ static const struct mtk_cpufreq_variant cpufreq_mtk_base_variant = {
+ static int mtk_cpufreq_hw_mt8196_init(struct mtk_cpufreq_priv *priv)
+ {
+ 	priv->fdvfs = devm_of_iomap(priv->dev, priv->dev->of_node, 0, NULL);
+-	if (IS_ERR_OR_NULL(priv->fdvfs))
++	if (IS_ERR(priv->fdvfs))
+ 		return dev_err_probe(priv->dev, PTR_ERR(priv->fdvfs),
+ 				     "failed to get fdvfs iomem\n");
+ 
+
+---
+base-commit: 73df59e80dc7cab098b4581b89459d18f8410c7d
+change-id: 20250819-mt8196-cpufreq-fix-07557cca2ef1
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
