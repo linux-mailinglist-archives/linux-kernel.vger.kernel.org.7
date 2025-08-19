@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-776604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65333B2CF7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:45:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A1BB2CF81
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5065C526B02
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B2818845EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 22:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6870421ABC9;
-	Tue, 19 Aug 2025 22:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB39F22FF35;
+	Tue, 19 Aug 2025 22:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSusmXNB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iDyvCsyk"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39AA17E4;
-	Tue, 19 Aug 2025 22:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F20353368
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755643544; cv=none; b=F/aMLREKwIOh8UrXQg1T4hpjC0/9OW3IjQd1wbv47jxpXM93FwKXpEdrDnCl9E2zOjXjrjbs+bczv9Qv9V/rV8e6cQT6Joxk+rSTN1qqQKSqjH9sAs69OesCnenRSVcQuN7AKv5v/FUosXR1SEF/fkonBcVLYjIcz/PM91Pbds8=
+	t=1755643775; cv=none; b=XPQgGHwpTl6vZuUBypJ8hZUYzfxJOsNt8sSFGUWyqVQgYpLpr8nAKpIllukNzqZGd6MjNrczTI0Gv+K/CXkkfckqW3q6PO8ae9YNnB4yQ6KsimVUnQmsLT5EXXtSW5mrX1s7Rc0oi+v4RF1CGGzUR3BcxC1mVm5BG6KXBhQGIWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755643544; c=relaxed/simple;
-	bh=X0+iUH3kcuJxsm3Ic7boKWg9aLiYyrT0rK3vfD8vqD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvvJAAGey8qO4Bpb9TecbPee61t3zQ7Rr35wDGZ/e5WgWkcTc/FIAOJtrKKGfnh/46U997jRjIu+ccR6na0l+0vWBkv93TIVUz63tOleNaR3yXqBuwUGs7I2o2Er0hwe8LmgO+eVkqprJL+45cWl80KYnVzM/fAzNJZe+pcpFKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSusmXNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F7E2C4CEF1;
-	Tue, 19 Aug 2025 22:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755643543;
-	bh=X0+iUH3kcuJxsm3Ic7boKWg9aLiYyrT0rK3vfD8vqD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSusmXNBV2ZghQbDI4agfxaQ9TYHQYWiftWqYLlLpFJK66hQxbO9TrNJUyiX1mDKd
-	 Y0Vz0xi73l5CMRDFNhaFu5eD/uI8R7DIJCEUz7TzLTUMj9vsWeZa5Dt7hZNEGmBC/g
-	 eUj7nWCCCgxDnQpSmOwPPCgnmXjsaePwFGW6FXxrFR4D/GrLp/ScSaDnfQ+ZTGMRcJ
-	 5iDKi+PoCCsdAz5MB+1dSLU8CQ1J6Paf3JI3YP+GVvmlUQ02ztElSdJ15M+GA8bDEW
-	 l1u5pYqb0ypP7urNOwz9VSVzfMeQ4/cleS6SWDgxJdH2qFmXIsFH6GTrMR6Z9zXEd1
-	 ILjCvfhNqXuZg==
-Date: Tue, 19 Aug 2025 17:45:42 -0500
-From: Rob Herring <robh@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] Support for Synaptics TDDI series panels
-Message-ID: <20250819224542.GA1591380-robh@kernel.org>
-References: <20250819-panel-synaptics-tddi-v4-0-448f466d16a6@disroot.org>
+	s=arc-20240116; t=1755643775; c=relaxed/simple;
+	bh=fvxwuSCfRSD+twSz5Gb0eEyXaCFiz+gsVdWdoqPh9lk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JgkQDdT9AWBH75vwIcTca4oUK4vpzsQ+/SrXGJgiQC0fpJbt7Uml2jygGJRk61bJithGkE/w1uipXKj3IeFxLymzc6gG6Bmvvge2o+WIO779XEnMoWPrZ3FskLgoAzl9aXa5dki2pz3AdmCU0vZGeMtDZOwE+W1Wc8LMQsumZPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iDyvCsyk; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55cdfd57585so1005e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 15:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755643772; x=1756248572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fvxwuSCfRSD+twSz5Gb0eEyXaCFiz+gsVdWdoqPh9lk=;
+        b=iDyvCsykgJZcsYsXTohLvX7Ylc1S4wklpRgAb4ynFcENavI6NxuxPsVrXtCOCbu9ey
+         foMfJJVbT6mXW3hdUYt8BhHl3/DIe72aXhfZ9Wd7IkLfCAJrM9CQgBNPHtRjEuUeoJ5Q
+         z6eocIeH2oGMdRsYDfbWZd5DtgQr9rZWCR4NLHzTu75V0QGqHXHpkl6MYLVxy/tYs5dh
+         9xu9ziiK51RjVCTgDeDmz5q78SwNGFlCQpgLh2YkTW1kbvrgc17SFeNYvs6salU3dC5h
+         hUybR4tx+0LPa4MKKKA0ZUalYimaZJqXqPHr/LSK1yX+LJgQxJ1g6mKtUvkYmseGhPyn
+         SA6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755643772; x=1756248572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fvxwuSCfRSD+twSz5Gb0eEyXaCFiz+gsVdWdoqPh9lk=;
+        b=dy+ntwZbOq9GS0vF6cEPxn+O1YdRKNe37H8KdurdLd8nW63UcKFaAaekzBOZam1dMR
+         H/8410Nf1ehLtJolHGxDgGwah/u6Sa3dtqaHZKxqfdO4ERc3nFa8opWyIYEKyNkMdr/6
+         mR4P/SwMx3oW3bRKG01Vz15IUtbZCOgkgdgQOYhr5tPmqh9YG3PisCoqwlW4QN2MJOKv
+         /oXzErmXDVxm+bA02Grlm+Pnoipcj1GMeXNuMae9i3LO4IXgXdrW2tEx7ZXi0Wtqhrup
+         4Rc4/CMXsen0QhtcnpIrkFi6oWSMXlekjw1jmt+hnARoikIv4iA9qCY93WBIZjDdWeXl
+         IKMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOhGlSc9cFdcUuloWLXpmiKf4BnbmCYLCHmZr8ouEMIyaR4NV/6/Agl9oFhWec8E9/ccphshTf0ZaGW+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzStzcywyMjkFdjYOF4ZOTgnECd3hYF5rZ6dYOSmxGvHBaz23l
+	B6HUz7XehHmONT5+UySSxZQ/jWsfruNgB5cMm+0FZ+NJYdeI7JjC+6hXk0oFn+6q0qYpnEBXQUq
+	TBUhCAxmATd0h638hTLx3IrRuyZr812NUlk24Ryel
+X-Gm-Gg: ASbGnctvsNENJ8bWiJ2JBDO7i+Xv6QoiB29dqI5ir0KoVApqdsK1zGW/bU/vVd0bMpw
+	FsjwoEtE3jenuiOsELtW+FDLCT7iEJz4/Q5U3QAKBrkhQfYS8XuqHV0dLj553p4zR6cX5Tux00t
+	dWodPsYuhcb18OxAkFG3momduGVXJBpWofRiDmU3xbhx3w8L2op+rKNNBXt4v5CvifsbxZ+2mA1
+	brs4jwTEKibwzjU3660iteL3KJL/8Gnl98PkMXPb9390e8T2rhW5YE=
+X-Google-Smtp-Source: AGHT+IEmYxxYzU8DjQH4U3y7gdcuj6fyI2P2sUFUnAoDbFPxhCsmZmBLl5HbvLkotXIKN1zE2OsjYMUqPyw5kzo6ryA=
+X-Received: by 2002:a05:6512:4388:b0:55c:df56:f936 with SMTP id
+ 2adb3069b0e04-55e06818947mr113782e87.6.1755643771563; Tue, 19 Aug 2025
+ 15:49:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-panel-synaptics-tddi-v4-0-448f466d16a6@disroot.org>
+References: <cover.1755499375.git.asml.silence@gmail.com> <0ac4e47001e1e7adea755a3c45552079104549b9.1755499376.git.asml.silence@gmail.com>
+In-Reply-To: <0ac4e47001e1e7adea755a3c45552079104549b9.1755499376.git.asml.silence@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 19 Aug 2025 15:49:19 -0700
+X-Gm-Features: Ac12FXzsId0yCBo7YoLtpLEhq9SLD85yb1Q2qrwcLNfXEbhtrBTCgGQJ0OuhPvo
+Message-ID: <CAHS8izOkTpdMSn+0kWYL=qi+WrTy7b=qARXxWjOMHWEKdHZWaw@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 19/23] net: wipe the setting of deactived queues
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
+	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
+	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 08:26:43PM +0530, Kaustabh Chakraborty wrote:
-> Synaptics' Touch and Display Driver Integration (TDDI) technology [1]
-> employs a single chip for both touchscreen and display capabilities.
-> Such designs reportedly help reducing costs and power consumption.
-> 
-> Although the touchscreens, which are powered by Synaptics'
-> Register-Mapped Interface 4 (RMI4) touch protocol via I2C or SPI have
-> driver support in the kernel, the MIPI DSI display panels don't.
-> 
-> This series introduces a rudimentary driver for controlling said display
-> panels, which supports TD4101 and TD4300 panels.
-> 
-> [1] https://www.synaptics.com/technology/display-integration
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
-> Changes in v4:
-> - utilized drm_connector_helper_get_modes_fixed() (dmitry.baryshkov)
-> - constified backlight properties (dmitry.baryshkov)
-> - Link to v3: https://lore.kernel.org/r/20250720-panel-synaptics-tddi-v3-0-43a5957f4b24@disroot.org
+On Mon, Aug 18, 2025 at 6:57=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> From: Jakub Kicinski <kuba@kernel.org>
+>
+> Clear out all settings of deactived queues when user changes
+> the number of channels. We already perform similar cleanup
+> for shapers.
+>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Where's Krzysztof's Reviewed-by?
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-> 
-> Changes in v3:
-> - fixed various dt_binding_check errors (robh's bot)
-> - adjusted commit description of [v2 1/2] (robh)
-> - utilized devm_drm_panel_alloc() and devm_regulator_bulk_get_const()
-> - Link to v2: https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
-> 
-> Changes in v2:
-> - fixed various dt_binding_check errors (conor)
-> - did s/tddi_update_brightness/tddi_update_status
-> - added check for panel enable in tddi_update_status()
-> - used backlight_get_brightness() in appropriate places
-> - Link to v1: https://lore.kernel.org/r/20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org
-> 
-> ---
-> Kaustabh Chakraborty (2):
->       dt-bindings: display: panel: document Synaptics TDDI panel
->       drm: panel: add support for Synaptics TDDI series DSI panels
-> 
->  .../display/panel/synaptics,td4300-panel.yaml      |  89 +++++++
->  drivers/gpu/drm/panel/Kconfig                      |  11 +
->  drivers/gpu/drm/panel/Makefile                     |   1 +
->  drivers/gpu/drm/panel/panel-synaptics-tddi.c       | 276 +++++++++++++++++++++
->  4 files changed, 377 insertions(+)
-> ---
-> base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
-> change-id: 20250523-panel-synaptics-tddi-0b0b3f07f814
-> 
-> Best regards,
-> -- 
-> Kaustabh Chakraborty <kauschluss@disroot.org>
-> 
+--=20
+Thanks,
+Mina
 
