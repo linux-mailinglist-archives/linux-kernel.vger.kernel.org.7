@@ -1,310 +1,131 @@
-Return-Path: <linux-kernel+bounces-775553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E6AB2C07F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:33:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E18B2C092
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 13:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A611722C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:30:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22581BA02B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 11:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCE532A3FB;
-	Tue, 19 Aug 2025 11:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF0632C302;
+	Tue, 19 Aug 2025 11:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RexACkbX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epIcSTwe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B47632A3E4;
-	Tue, 19 Aug 2025 11:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6A832A3E4;
+	Tue, 19 Aug 2025 11:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755603035; cv=none; b=b7xbBt11R5LRhhyJU4woaiUdD2SUOnkgQOEVoCGKMiXrB2rOzTkWbf0EzMoJsnLb+RpqR2kIkQEKFkCWM9S8NANWR17fFu70SoQEdo8EtcB0psy2rwbywRscdMnbak2M6UaPotTSDlo03/UagXYi+ZFf+fI31tRwbgdpxXpW2rI=
+	t=1755603039; cv=none; b=rlnOpy1Dsa6e9U595HuxXqtHPFsF4kDeVO72GoJR51/GxeCEJrW7R7+pNeoI5iZFRwzS/G7uVMMM9GJURGeRHQqsRvuSoWlr/QZFVqx7jTpkAWukdyvk5cs0eqMPk3sjhKsxo7Rwj9xLh54Pm+g4Q4jP2pkYT+wMJNUU5mcXBbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755603035; c=relaxed/simple;
-	bh=Vn9psqnVgnpwY9G5jdAtFOUJ6BM/owHxclMeS/ox6iU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=IcfpmIi5/wxeBCCViC5MLx4Gtzez0t6QzI3NxPJMqjDP2ucWR5ldB0iepqXIBXLgZkhuuSZ9+uoC6Hh26zCI15Wv+SFs5cVuaQagY23v2w5fvQ5cKMrDpsNzLm6HUG7YQvIE7IyLxwi5maOwc+GIcA1qas+SrFPi0pf66+hTUS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RexACkbX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1849EC116B1;
-	Tue, 19 Aug 2025 11:30:31 +0000 (UTC)
+	s=arc-20240116; t=1755603039; c=relaxed/simple;
+	bh=j7/9/8MvQE7gNxxV/8cXnjyYBT55tXdw0tWY30qH1p8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XTI8gaGzgFIWe8ure8K8OIcq4793eh3Z5kRkvkwh2lZl0AvXf0k8U7mXapJs9dQweC+lAy6LfoRNcIcK8JI8idmDeS7lJ1msfNQUnrPqU63NJ+XeyHn3Tq0zBJ0Wes0pyw8g8nW3ChSjYLQecijhpO/N0XxKP20shntiHCWeWEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epIcSTwe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 030C4C116C6;
+	Tue, 19 Aug 2025 11:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755603034;
-	bh=Vn9psqnVgnpwY9G5jdAtFOUJ6BM/owHxclMeS/ox6iU=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=RexACkbXj17mOzIVGarK7hH2S2AeLR8/EL9ZbUF7VOTPAnzRfskLPgaYG1ZDPRZj1
-	 dMqI77G7fNGJsCWgXceF0i4H7gha7lZoSOVPcZZ89fZ93zVxrQrIe1qiLyY30J2AhJ
-	 wa/CwTXp7re/GKien7Sc8aiLHAnOx23j4FM3eSzOjDsmLo0m+/IOpFCpQndeyUZreP
-	 7MLWia0+he8a++29rVHH1UkMXIlY2gzv5IN9wSMxot9OXqIXdPvuE4X50tMrfwf+Pc
-	 UF6kZ9f7aRmQ0ZKwRNkw1GAgVAR/3KMxSrWS1bb9WhC8EpqnF2RzC5EVXTi10ZH3fk
-	 k4lM623rrHzCg==
+	s=k20201202; t=1755603039;
+	bh=j7/9/8MvQE7gNxxV/8cXnjyYBT55tXdw0tWY30qH1p8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=epIcSTweFBESTgqUvw7gkKxlJgG1ssfTzu3hG9e5Da3ozR2d2T5xN6sX4GTDyAS38
+	 bV7j+e8HmiNfrAxD76d/CbGOY9tes8rWOCeMth0xyvPZOWzjSkxhs4tawNJ15aKVHp
+	 61rYc+9SN9tWcKhAYLJTZsG8A50Z0z6etsMLtw6/hOdlsLSIoTfdGKTSwHx6e2Iw2h
+	 79sn5BBi0xpctlRSH0x4IZ8b9js0fdHFMXwPajb9h+gIYpm42giwFD1QbqQ8UxlXlk
+	 li+mlVEa+2/k/65wi+mlDikVkDER822BjQQK546aGj0Rw1B8QWRn/uSgqNDof0xzT1
+	 Lv7jqNq6SqAzA==
+Message-ID: <aba6bf1d-5974-4003-9ae2-62033ddf87c5@kernel.org>
+Date: Tue, 19 Aug 2025 13:30:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] coresight-tnoc: Add support for Interconnect TNOC
+To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel@oss.qualcomm.com, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250819-itnoc-v2-0-2d0e6be44e2f@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250819-itnoc-v2-0-2d0e6be44e2f@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 19 Aug 2025 13:30:30 +0200
-Message-Id: <DC6DC244ZIUL.304JSP7JFDE9Z@kernel.org>
-Subject: Re: [PATCH v2 2/5] rust: maple_tree: add MapleTree
-Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Andrew Ballance"
- <andrewjballance@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>,
- <rust-for-linux@vger.kernel.org>, <linux-mm@kvack.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250819-maple-tree-v2-0-229b48657bab@google.com>
- <20250819-maple-tree-v2-2-229b48657bab@google.com>
-In-Reply-To: <20250819-maple-tree-v2-2-229b48657bab@google.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue Aug 19, 2025 at 12:34 PM CEST, Alice Ryhl wrote:
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477caa45799dfe07de2f54de6d6a1ce0615..26053163fe5aed2fc4b4e39d4=
-7062c93b873ac13 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16250,7 +16250,9 @@ L:	rust-for-linux@vger.kernel.org
->  S:	Maintained
->  W:	http://www.linux-mm.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	rust/helpers/maple_tree.c
->  F:	rust/helpers/mm.c
-> +F:	rust/kernel/maple_tree.rs
->  F:	rust/kernel/mm.rs
->  F:	rust/kernel/mm/
+On 19/08/2025 12:27, Yuanfang Zhang wrote:
+> This patch series adds support for the Qualcomm CoreSight Interconnect TNOC
+> (Trace Network On Chip) block, which acts as a CoreSight graph link forwarding
+> trace data from subsystems to the Aggregator TNOC. Unlike the Aggregator TNOC,
+> this block does not support aggregation or ATID assignment.
+> 
+> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - Refactor the dt-binding file.
 
-A later patch adds a separate entry; is this intended?
+Everything is rafactor. What changed specifically?
 
-> diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ea1bd694213b73108732aecc3=
-6da95342aeafe04
-> --- /dev/null
-> +++ b/rust/kernel/maple_tree.rs
-> @@ -0,0 +1,343 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Maple trees.
-> +//!
-> +//! C header: [`include/linux/maple_tree.h`](srctree/include/linux/maple=
-_tree.h)
-> +//!
-> +//! Reference: <https://docs.kernel.org/core-api/maple_tree.html>
-> +
-> +use core::{
-> +    marker::PhantomData,
-> +    ops::{Bound, RangeBounds},
-> +    ptr,
-> +};
-> +
-> +use kernel::{
-> +    alloc::Flags,
-> +    error::code::{EEXIST, ENOMEM},
+Or you just ignored prevous feedback and did other changes?
 
-I think they're covered by prelude already.
 
-> +    error::to_result,
-> +    prelude::*,
-> +    types::{ForeignOwnable, Opaque},
-> +};
-> +
-> +/// A maple tree optimized for storing non-overlapping ranges.
-> +///
-> +/// # Invariants
-> +///
-> +/// Each range in the maple tree owns an instance of `T`.
-> +#[pin_data(PinnedDrop)]
-> +#[repr(transparent)]
-> +pub struct MapleTree<T: ForeignOwnable> {
-> +    #[pin]
-> +    tree: Opaque<bindings::maple_tree>,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +/// A helper type used for navigating a [`MapleTree`].
-> +///
-> +/// # Invariants
-> +///
-> +/// For the duration of `'tree`:
-> +///
-> +/// * The `ma_state` must reference a valid `MapleTree<T>`.
 
-I'd say ""`ma_state` references a valid `MapleTree<T>`", other wise it soun=
-ds
-like a requirement.
-
-> +/// * The `ma_state` has read/write access to the tree.
-> +pub struct MaState<'tree, T: ForeignOwnable> {
-> +    state: bindings::ma_state,
-> +    _phantom: PhantomData<&'tree mut MapleTree<T>>,
-> +}
-> +
-> +#[inline]
-> +fn to_maple_range(range: impl RangeBounds<usize>) -> Option<(usize, usiz=
-e)> {
-> +    let first =3D match range.start_bound() {
-> +        Bound::Included(start) =3D> *start,
-> +        Bound::Excluded(start) =3D> start.checked_add(1)?,
-> +        Bound::Unbounded =3D> 0,
-> +    };
-> +
-> +    let last =3D match range.end_bound() {
-> +        Bound::Included(end) =3D> *end,
-> +        Bound::Excluded(end) =3D> end.checked_sub(1)?,
-> +        Bound::Unbounded =3D> usize::MAX,
-> +    };
-> +
-> +    if last < first {
-> +        return None;
-> +    }
-> +
-> +    Some((first, last))
-> +}
-> +
-> +impl<T: ForeignOwnable> MapleTree<T> {
-> +    /// Create a new maple tree.
-> +    ///
-> +    /// The tree will use the regular implementation with a higher branc=
-hing factor.
-
-What do you mean with "regular implementation" and what is "a higher branch=
-ing
-factor" in this context?
-
-Do you mean that the maple tree has a higher branching factor than a regula=
-r RB
-tree, or something else?
-
-> +    #[inline]
-> +    pub fn new() -> impl PinInit<Self> {
-> +        pin_init!(MapleTree {
-> +            // SAFETY: This initializes a maple tree into a pinned slot.=
- The maple tree will be
-> +            // destroyed in Drop before the memory location becomes inva=
-lid.
-> +            tree <- Opaque::ffi_init(|slot| unsafe { bindings::mt_init_f=
-lags(slot, 0) }),
-> +            _p: PhantomData,
-> +        })
-> +    }
-> +
-> +    /// Insert the value at the given index.
-> +    ///
-> +    /// If the maple tree already contains a range using the given index=
-, then this call will fail.
-
-Maybe add an error section for this?
-
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
-> +    ///
-> +    /// let tree =3D KBox::pin_init(MapleTree::<KBox<i32>>::new(), GFP_K=
-ERNEL)?;
-> +    ///
-> +    /// let ten =3D KBox::new(10, GFP_KERNEL)?;
-> +    /// let twenty =3D KBox::new(20, GFP_KERNEL)?;
-> +    /// let the_answer =3D KBox::new(42, GFP_KERNEL)?;
-> +    ///
-> +    /// // These calls will succeed.
-> +    /// tree.insert(100, ten, GFP_KERNEL)?;
-> +    /// tree.insert(101, twenty, GFP_KERNEL)?;
-> +    ///
-> +    /// // This will fail because the index is already in use.
-> +    /// assert_eq!(
-> +    ///     tree.insert(100, the_answer, GFP_KERNEL).unwrap_err().cause,
-
-A lot of the examples, including the ones in subsequent patches contain var=
-iants
-of unwrap().
-
-I think we should avoid this and instead handle errors gracefully -- even i=
-f it
-bloats the examples a bit.
-
-My concern is that it otherwise creates the impression that using unwrap() =
-is a
-reasonable thing to do.
-
-Especially for people new to the kernel or Rust (or both) it might not be
-obvious that unwrap() is equivalent to
-
-	if (!ret)
-		do_something();
-	else
-		panic();
-
-or the fact that this is something we should only do as absolute last resor=
-t.
-
-> +    ///     InsertErrorKind::Occupied,
-> +    /// );
-> +    /// # Ok::<_, Error>(())
-> +    /// ```
-> +    #[inline]
-> +    pub fn insert(&self, index: usize, value: T, gfp: Flags) -> Result<(=
-), InsertError<T>> {
-> +        self.insert_range(index..=3Dindex, value, gfp)
-> +    }
-> +
-> +    /// Insert a value to the specified range, failing on overlap.
-> +    ///
-> +    /// This accepts the usual types of Rust ranges using the `..` and `=
-..=3D` syntax for exclusive
-> +    /// and inclusive ranges respectively. The range must not be empty, =
-and must not overlap with
-> +    /// any existing range.
-
-Same as above to the "failing on overlap" part.
-
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
-> +    ///
-> +    /// let tree =3D KBox::pin_init(MapleTree::<KBox<i32>>::new(), GFP_K=
-ERNEL)?;
-> +    ///
-> +    /// let ten =3D KBox::new(10, GFP_KERNEL)?;
-> +    /// let twenty =3D KBox::new(20, GFP_KERNEL)?;
-> +    /// let the_answer =3D KBox::new(42, GFP_KERNEL)?;
-> +    /// let hundred =3D KBox::new(100, GFP_KERNEL)?;
-> +    ///
-> +    /// // Insert the value 10 at the indices 100 to 499.
-> +    /// tree.insert_range(100..500, ten, GFP_KERNEL)?;
-> +    ///
-> +    /// // Insert the value 20 at the indices 500 to 1000.
-> +    /// tree.insert_range(500..=3D1000, twenty, GFP_KERNEL)?;
-> +    ///
-> +    /// // This will fail due to overlap with the previous range on inde=
-x 1000.
-> +    /// assert_eq!(
-> +    ///     tree.insert_range(1000..1200, the_answer, GFP_KERNEL).unwrap=
-_err().cause,
-> +    ///     InsertErrorKind::Occupied,
-> +    /// );
-> +    ///
-> +    /// // When using .. to specify the range, you must be careful to en=
-sure that the range is
-> +    /// // non-empty.
-> +    /// assert_eq!(
-> +    ///     tree.insert_range(72..72, hundred, GFP_KERNEL).unwrap_err().=
-cause,
-> +    ///     InsertErrorKind::InvalidRequest,
-> +    /// );
-> +    /// # Ok::<_, Error>(())
-> +    /// ```
-> +    pub fn insert_range<R>(&self, range: R, value: T, gfp: Flags) -> Res=
-ult<(), InsertError<T>>
+Best regards,
+Krzysztof
 
