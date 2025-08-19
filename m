@@ -1,242 +1,163 @@
-Return-Path: <linux-kernel+bounces-775006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-775011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D7AB2BA31
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:08:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42721B2BA3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 09:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300C1568707
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5981BA5CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 07:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C7B2848B8;
-	Tue, 19 Aug 2025 07:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Wq0ROaY/"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D731A2E62DA;
+	Tue, 19 Aug 2025 07:13:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E950284893;
-	Tue, 19 Aug 2025 07:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C9B284881
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 07:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755587245; cv=none; b=YcTckxGdK+jzHsgrtcQS46ljVlkBgwRuxYjowegGt1kCAUinNByfi5fNJBc+p8FQUOHt50dP01jbTRCV1HLU6M/yXxQrLfKj2auAD/ZhyV/p2FOfiSTQZT7ZCiJRnDVUz16WOpffFaw+bzkbD8dXwTnFvcG96Nb2Ml5WUIuzVTA=
+	t=1755587601; cv=none; b=DpPg8W365xj+MoCLhltlj+iYsnhqu+sEPOpDrHwQyhqy8gjcY1zbs6PPB1A53/r2rfBeWJwSxVkvSg6H1+zYt0nKzjTTj28oN7bxPeLy8zDuIff5ALz/Y/31A8RI+kjlmFp8AQL9rpq4fEMFpuWJTMjgKPHkmt0H6o69t1QCqio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755587245; c=relaxed/simple;
-	bh=rpTRn15G48rt3ExGDh09DluD8zO91EzisMrX6aCkyl8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JI9FR4pALUHYjDjJdoFM9d3yazSOcKr53FeYsU/dbBiyPpA3R7YAFCb05pE2SFYDKZTsE4lUWG7thwG7lOCMRPz2xGmn8vpYXKit1zsUsTKILr+IlW2zFXKKX63s9CDsspmp4pjOO4BaJwAvKRzk3dttpnKE1SUAWCi2Sj9kAWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Wq0ROaY/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.106] (mob-5-90-52-92.net.vodafone.it [5.90.52.92])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 175DB22D2;
-	Tue, 19 Aug 2025 09:06:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755587182;
-	bh=rpTRn15G48rt3ExGDh09DluD8zO91EzisMrX6aCkyl8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Wq0ROaY/AQLLbrlgeRbvVqXEIiMmzuuZ8Qqxb3H6ikbVDJDv3D7Px7Ju6bLsvbLvF
-	 eMpT1N3FrmMjUPJpo8Q9ZpYpA7L9uTEgvshBx4TtoCvzZ/kV+dNjsjX2XFTNm2wp/Z
-	 uXK7KcPfd9cWGNd58PVdeRmgSbEhqdA+l2F/zFto=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Tue, 19 Aug 2025 09:07:04 +0200
-Subject: [PATCH v4 2/2] media: ivtv: Fix invalid access to file *
+	s=arc-20240116; t=1755587601; c=relaxed/simple;
+	bh=g6vZS+BOsJbYG+Z16z05pePoADv6yTls1nRLg9R2Pv4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TWn8C8R4PIH2m6+MIrBaVnkVqJhogMCUFk1w+YbSy3RDr0TQ5VoMFu5cRvKKtlIjdaZFUUIyZdFmoWtgmn/8TKJ3kjcALlY5rIUHX6aUvO4ZPEBOSWScIC63/0acvwD6O9V8Oagd+awW5uDjtscAgqDqXgtES5nig6DmSCdKoW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uoGWj-0004jI-QK; Tue, 19 Aug 2025 09:13:01 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uoGWf-00121W-0Q;
+	Tue, 19 Aug 2025 09:12:57 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uoGWf-00EEam-07;
+	Tue, 19 Aug 2025 09:12:57 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nishanth Menon <nm@ti.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	linux-doc@vger.kernel.org,
+	Michal Kubecek <mkubecek@suse.cz>,
+	Roan van Dijk <roan@protonic.nl>
+Subject: [PATCH net-next v3 0/5] ethtool: introduce PHY MSE diagnostics UAPI and drivers
+Date: Tue, 19 Aug 2025 09:12:51 +0200
+Message-Id: <20250819071256.3392659-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250819-cx18-v4l2-fh-v4-2-9db1635d6787@ideasonboard.com>
-References: <20250819-cx18-v4l2-fh-v4-0-9db1635d6787@ideasonboard.com>
-In-Reply-To: <20250819-cx18-v4l2-fh-v4-0-9db1635d6787@ideasonboard.com>
-To: Andy Walls <awalls@md.metrocast.net>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil+cisco@kernel.org>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6197;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=rpTRn15G48rt3ExGDh09DluD8zO91EzisMrX6aCkyl8=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBopCKldmcft+/f1BpL22ywRh+erBRKgieZryU8e
- 8Ii31SwKm+JAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaKQipQAKCRByNAaPFqFW
- PKhRD/9PMuD7V+auXbMYdvcCbCQRtcaQSdOn4ZLuJhUduylkPHyuN7sM31UpBwlG8mdRNPNE6f0
- 2a1DM5N4/8FumKG1g1+Z+EimFEfZs36j0iJxnmwqRBvIwMwcXS9LWIp9OJatW275BG8FupJ6puE
- stX5uqUY0w/MbNPRh8oXYea1eBeLszVIIFJ2x+TtsWsWhGDquRuCvql6GJbdc9VPz4HWkwuK3q4
- Wg3uTjOBEtNMnyLxkoZGIHjsZLMSaxJWZCc9WXKfaneM5622LXH0E7MWVTbM0jXSvFKOHDh+Pxi
- XrBQQacrRtpZRY/lS9NaITAmbq4SNi/p+WBQ3fHVkERov1DQYKKt5uN8EhXgK1VCStyVNSZxkij
- cAvuUO4DVi4bPZnJSUZm0DuN8dW5aeUZ5TLf6OqA5MXozt+EjV/5U2waWNK6PeCIrxdXCMDcHSc
- sWoI106KzcGZyxGEAEkUDyfS65Q//O1HRQPtS8KehChVy4YURRnDooXrGbpKmsygDpb91dIlArD
- a2lDnJmZHfi/2qQIOccw13/Y0iGesu/Ui65P6To/iu0/SXmfCrm7RLUBrmc57ghBjL5P2VP4hLG
- TfK4OVw79okVmj0sbSlAonyBOLJiykaOBOfb9Nn4qXp7Jv52hldmjFao91Y2dUaO3CmY8nEzKoO
- JMKrDWcQgtvtS/A==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-all ioctl handlers have been ported to operate on the file * first
-function argument.
+changes v3:
+- add missing ETHTOOL_A_LINKSTATE_MSE_* yaml changes
+changes v2:
+- rebase on latest net-next
 
-The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
-needs to start streaming. This function calls the s_input() and
-s_frequency() ioctl handlers directly, but being called from the driver
-context, it doesn't have a valid file * to pass them. This causes the
-ioctl handlers to deference an invalid pointer.
+This series introduces a generic kernel-userspace API for retrieving PHY
+Mean Square Error (MSE) diagnostics, together with netlink integration,
+a fast-path reporting hook in LINKSTATE_GET, and initial driver
+implementations for the KSZ9477 and DP83TD510E PHYs.
 
-Fix this by moving the implementation of those ioctls to two helper
-functions.
+MSE is defined by the OPEN Alliance "Advanced diagnostic features for
+100BASE-T1 automotive Ethernet PHYs" specification [1] as a measure of
+slicer error rate, typically used internally to derive the Signal
+Quality Indicator (SQI). While SQI is useful as a normalized quality
+index, it hides raw measurement data, varies in scaling and thresholds
+between vendors, and may not indicate certain failure modes - for
+example, cases where autonegotiation would fail even though SQI reports
+a good link. In practice, such scenarios can only be investigated in
+fixed-link mode; here, MSE can provide an empirically estimated value
+indicating conditions under which autonegotiation would not succeed.
 
-The ivtv_do_s_input() helper accepts a struct ivtv * as first argument,
-which is easily accessible in ivtv_init_on_first_open() as well as from
-the file * argument of the ioctl handler.
+Example output with current implementation:
+root@DistroKit:~ ethtool lan1
+Settings for lan1:
+...
+        Speed: 1000Mb/s
+        Duplex: Full
+...
+        Link detected: yes
+        SQI: 5/7
+        MSE: 3/127 (channel: worst)
 
-The ivtv_s_frequency() takes an ivtv_stream * instead. The stream * can
-safely be accessed in ivtv_init_on_first_open() where it is hard-coded
-to the IVTV_ENC_STREAM_TYPE_MPG stream type, as well as from the ioctl
-handler as a valid stream type is associated to each open file handle
-depending on which video device node has been opened in the ivtv_open()
-file operation.
+root@DistroKit:~ ethtool --show-mse lan1
+MSE diagnostics for lan1:
+MSE Configuration:
+        Max Average MSE: 127
+        Refresh Rate: 2000000 ps
+        Symbols per Sample: 250
+        Supported capabilities: average channel-a channel-b channel-c
+                                channel-d worst
 
-The bug has been reported by Smatch.
+MSE Snapshot (Channel: a):
+        Average MSE: 4
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
-Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
-Cc: stable@vger.kernel.org
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- drivers/media/pci/ivtv/ivtv-driver.c | 11 ++++-------
- drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
- drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
- 3 files changed, 25 insertions(+), 14 deletions(-)
+MSE Snapshot (Channel: b):
+        Average MSE: 3
 
-diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
-index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..7e2fb98cfccf02f701ceb4484dd1d330dd1dc867 100644
---- a/drivers/media/pci/ivtv/ivtv-driver.c
-+++ b/drivers/media/pci/ivtv/ivtv-driver.c
-@@ -1260,15 +1260,12 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
- 
- int ivtv_init_on_first_open(struct ivtv *itv)
- {
--	struct v4l2_frequency vf;
- 	/* Needed to call ioctls later */
--	struct ivtv_open_id fh;
-+	struct ivtv_stream *s = &itv->streams[IVTV_ENC_STREAM_TYPE_MPG];
-+	struct v4l2_frequency vf;
- 	int fw_retry_count = 3;
- 	int video_input;
- 
--	fh.itv = itv;
--	fh.type = IVTV_ENC_STREAM_TYPE_MPG;
--
- 	if (test_bit(IVTV_F_I_FAILED, &itv->i_flags))
- 		return -ENXIO;
- 
-@@ -1310,13 +1307,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
- 
- 	video_input = itv->active_input;
- 	itv->active_input++;	/* Force update of input */
--	ivtv_s_input(NULL, &fh, video_input);
-+	ivtv_do_s_input(itv, video_input);
- 
- 	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
- 	   in one place. */
- 	itv->std++;		/* Force full standard initialization */
- 	itv->std_out = itv->std;
--	ivtv_s_frequency(NULL, &fh, &vf);
-+	ivtv_do_s_frequency(s, &vf);
- 
- 	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
- 		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
-diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
-index 8077a71d4850ec773caa20c3fca08f92f3117d69..dfbc842b22453868a2075935a81db7ae313ee46c 100644
---- a/drivers/media/pci/ivtv/ivtv-ioctl.c
-+++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
-@@ -974,9 +974,8 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
- 	return 0;
- }
- 
--int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-+int ivtv_do_s_input(struct ivtv *itv, unsigned int inp)
- {
--	struct ivtv *itv = file2id(file)->itv;
- 	v4l2_std_id std;
- 	int i;
- 
-@@ -1017,6 +1016,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
- 	return 0;
- }
- 
-+static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
-+{
-+	return ivtv_do_s_input(file2id(file)->itv, inp);
-+}
-+
- static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
- {
- 	struct ivtv *itv = file2id(file)->itv;
-@@ -1065,10 +1069,9 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
- 	return 0;
- }
- 
--int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
-+int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf)
- {
--	struct ivtv *itv = file2id(file)->itv;
--	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
-+	struct ivtv *itv = s->itv;
- 
- 	if (s->vdev.vfl_dir)
- 		return -ENOTTY;
-@@ -1082,6 +1085,15 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
- 	return 0;
- }
- 
-+static int ivtv_s_frequency(struct file *file, void *fh,
-+			    const struct v4l2_frequency *vf)
-+{
-+	struct ivtv_open_id *id = file2id(file);
-+	struct ivtv *itv = id->itv;
-+
-+	return ivtv_do_s_frequency(&itv->streams[id->type], vf);
-+}
-+
- static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
- {
- 	struct ivtv *itv = file2id(file)->itv;
-diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
-index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..edc05eb8e060fd64d7ff94f8f7f5c315a2fa6298 100644
---- a/drivers/media/pci/ivtv/ivtv-ioctl.h
-+++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
-@@ -9,6 +9,8 @@
- #ifndef IVTV_IOCTL_H
- #define IVTV_IOCTL_H
- 
-+struct ivtv;
-+
- u16 ivtv_service2vbi(int type);
- void ivtv_expand_service_set(struct v4l2_sliced_vbi_format *fmt, int is_pal);
- u16 ivtv_get_service_set(struct v4l2_sliced_vbi_format *fmt);
-@@ -17,7 +19,7 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
- void ivtv_set_funcs(struct video_device *vdev);
- void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
- void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
--int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
--int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
-+int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf);
-+int ivtv_do_s_input(struct ivtv *itv, unsigned int inp);
- 
- #endif
+MSE Snapshot (Channel: c):
+        Average MSE: 2
 
--- 
-2.50.1
+MSE Snapshot (Channel: d):
+        Average MSE: 3
+
+[1] https://opensig.org/wp-content/uploads/2024/01/Advanced_PHY_features_for_automotive_Ethernet_V1.0.pdf
+
+Oleksij Rempel (5):
+  ethtool: introduce core UAPI and driver API for PHY MSE diagnostics
+  ethtool: netlink: add ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+  ethtool: netlink: add lightweight MSE reporting to LINKSTATE_GET
+  net: phy: micrel: add MSE interface support for KSZ9477 family
+  net: phy: dp83td510: add MSE interface support for 10BASE-T1L
+
+ Documentation/netlink/specs/ethtool.yaml      | 175 +++++++++
+ Documentation/networking/ethtool-netlink.rst  |  74 ++++
+ drivers/net/phy/dp83td510.c                   |  44 +++
+ drivers/net/phy/micrel.c                      |  76 ++++
+ include/linux/phy.h                           | 126 ++++++
+ .../uapi/linux/ethtool_netlink_generated.h    |  94 +++++
+ net/ethtool/Makefile                          |   2 +-
+ net/ethtool/linkstate.c                       |  84 ++++
+ net/ethtool/mse.c                             | 362 ++++++++++++++++++
+ net/ethtool/netlink.c                         |  10 +
+ net/ethtool/netlink.h                         |   2 +
+ 11 files changed, 1048 insertions(+), 1 deletion(-)
+ create mode 100644 net/ethtool/mse.c
+
+--
+2.39.5
 
 
