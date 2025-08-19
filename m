@@ -1,92 +1,78 @@
-Return-Path: <linux-kernel+bounces-776202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2FAB2C9F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:45:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBED2B2C9F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 18:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 733881BC2123
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:45:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E5B3A6465
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Aug 2025 16:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1A72857F6;
-	Tue, 19 Aug 2025 16:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393B228541A;
+	Tue, 19 Aug 2025 16:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ZIi7HtUf"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YL2kvj6J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D8A28466A;
-	Tue, 19 Aug 2025 16:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3E21DED77;
+	Tue, 19 Aug 2025 16:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755621917; cv=none; b=UNbNxIw6IKBe+Z5LHjCP/7vwU5d1CKlvpINKAXzi5KwWLq27yzz1heC1oaqJzjTB5RJN2u5cDgTCTLNYZ0l1FukvM4EtE8sptIxF9y6FYfd+0Dd/x3EgHokJUalt7Sc2tVjZbrju/vU+s4VNoDnJpmpN65sfntD6dXHAPe22qP0=
+	t=1755621986; cv=none; b=GZ7x0/R+3jvnr2D4N/xuUwgng1jFsPfOZKbq9s8A5iBG6NPY6rCYytplXwR516d9IsaZ10BTPJcCkyWvo/bFZweoNZtjwXN7VdKsXwdqMVlhJpVEtsgOKEikqNBwX+ajgP6Iq7iX5nD0rPazSWdk+uFNYB8hE3cMo16k/tywXJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755621917; c=relaxed/simple;
-	bh=0W242zKCGO+KojvawkV50MvWjehAdpvYo9nlMbvRUKk=;
+	s=arc-20240116; t=1755621986; c=relaxed/simple;
+	bh=yh2PFqf5Sk00+ThxXGSU+4QCnMOX5dgtPjsvCKTMeK8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFSoc1qbEz+ntdLHJ/XtiIoSv/XvmfFxy3vLkBsLxd1iC/blpXra3+SkroOdaSiGvB6vfAnah1Hn6EoeY107hAtdrAJzlc7xT21j8RjO9yM4nJfw4ZScwxHNTfhSfEUGDuSCVj0PB7M903N/bST+bIvrUASVP43E4Ay1PHkXjq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ZIi7HtUf; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.20])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 6A5694028386;
-	Tue, 19 Aug 2025 16:45:04 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 6A5694028386
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1755621904;
-	bh=1337loEO8MUNn10D9XiV0gPwVxSGBJFo6tLNowKy9l0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkLLU3Fsfh6nrA23VIxjYZuWbKP4UUeoqDMFeeDNjP6VO/0hvnKLOv8OOtc//hf9AK3O5knH+ColobtjTmmQeptH7Y3rmX55AsGBCxm6Hc4R5yK/XOtPBO5sJzFZ0FPL4opQ5G8I0dOL9htzxMbiJVRuqH5tO8TBOCrXShMVF0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YL2kvj6J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04B8C4CEF1;
+	Tue, 19 Aug 2025 16:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755621985;
+	bh=yh2PFqf5Sk00+ThxXGSU+4QCnMOX5dgtPjsvCKTMeK8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZIi7HtUf2AYTzpnLPyFJ0jL/5fXHjBwCmp7PTX2ACycfnWVPVQWcmjClstpECC9hf
-	 a9fVAeAkwY0YTowUxvIsZFgb4VWCpHymTyl+uBa4yfsTnCIxT94YNREH1VnH/qyoLi
-	 kSAcg7SVlF0FphB+EWojZU+1ym48Api4UaMw+//g=
-Date: Tue, 19 Aug 2025 19:45:04 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: "Limonciello, Mario" <Mario.Limonciello@amd.com>
-Cc: "Deucher, Alexander" <Alexander.Deucher@amd.com>, 
-	Melissa Wen <mwen@igalia.com>, "Wentland, Harry" <Harry.Wentland@amd.com>, 
-	Rodrigo Siqueira <siqueira@igalia.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hans de Goede <hansg@kernel.org>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] drm/amd/display: fix leak of probed modes
-Message-ID: <bbur73jxf7kubbtgdieflkjw5q4rxw5w4ztkgrozq3i4mrdjxh@r352gbxsso3s>
-References: <20250817094346.15740-1-pchelkin@ispras.ru>
- <79a7f64c-4afa-441d-b1be-bab489174c7e@amd.com>
+	b=YL2kvj6JzQF0ReZG3uUUUxqvzr0QV2AwBBEpAoQA8zCH/jxzjDJwCFxwnjKKy86mu
+	 l3FWCX28l+yMN4P/euMAmwautQT5a15fNUpb5XXS6S48wrtfAcP7ei0MBe5Ev78gvU
+	 PSDf3tb6XBlVWYdtNyQwt497BLCBdyyZUu0jnvz0/C1mFmP3m1q+bWhH0FMlICF/R/
+	 HuO1Mj/sEsYVAHpUJCpJaXQkpNmdJuKm0HK565IpgzLQExWfHKJw4Ble3JM6Mpqfit
+	 MIZJ1UcI/c9B4cAD7k/XioQfjj5KRQE4HJqyMLm10jyNqveNbwEqSB9qyNbmogMozd
+	 PdNL2B53wav/Q==
+Date: Tue, 19 Aug 2025 16:46:23 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
+	decui@microsoft.com, arnd@arndb.de
+Subject: Re: [PATCH] mshv: Add support for a new parent partition
+ configuration
+Message-ID: <aKSqX_H9QVVR02pc@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
+References: <1755588559-29629-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79a7f64c-4afa-441d-b1be-bab489174c7e@amd.com>
+In-Reply-To: <1755588559-29629-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-On Mon, 18. Aug 21:17, Limonciello, Mario wrote:
-> On 8/17/25 4:43 AM, Fedor Pchelkin wrote:
-> > For what the patch does there exists a drm_mode_remove() helper but it's
-> > static at drivers/gpu/drm/drm_connector.c and requires to be exported
-> > first. This probably looks like a subject for an independent for-next
-> > patch, if needed.
+On Tue, Aug 19, 2025 at 12:29:19AM -0700, Nuno Das Neves wrote:
+> Detect booting as an "L1VH" partition. This is a new scenario very
+> similar to root partition where the mshv_root driver can be used to
+> create and manage guest partitions.
 > 
-> So you're saying this change will take two iterations of patches to ping 
-> pong the code?
+> It mostly works the same as root partition, but there are some
+> differences in how various features are handled. hv_l1vh_partition()
+> is introduced to handle these cases. Add hv_parent_partition()
+> which returns true for either case, replacing some hv_root_partition()
+> checks.
 > 
-> Why not just send this as a two patch series?
-> 
-> 1) Export the symbol drm_mode_remove()
-> 2) This patch, but use the symbol.
-> 
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
-Initially I wasn't sure if the exporting patch was worth moving the code
-around and in the end decided to make the current patch with a minimum of
-prerequisites.
-
-But giving this a second glance, I see exporting the symbol would be
-technically better. I'll send out v2.
-
-Thanks!
+Acked-by: Wei Liu <wei.liu@kernel.org>
 
