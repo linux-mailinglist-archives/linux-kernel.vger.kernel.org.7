@@ -1,133 +1,88 @@
-Return-Path: <linux-kernel+bounces-778415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA0DB2E56F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:05:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651EFB2E572
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B67A23A8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EAAF5872E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990D42820AC;
-	Wed, 20 Aug 2025 19:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21F62836BF;
+	Wed, 20 Aug 2025 19:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eL7rr3br"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp5qMR/l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671F3275AEB;
-	Wed, 20 Aug 2025 19:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3704727D77B;
+	Wed, 20 Aug 2025 19:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755716720; cv=none; b=Y/Hw96SqmvP64ndzIBg9WJSTtigYPeyWzP9Lon3jgcLTsD8qktculJTI7piXyWgkYmdCejhWOMpfWWxXX35xw/rowZSM0IrCC08jq9XivHR0TPG7ocO0bDW19OQDjCSaO5BXJkV4SP/sENGl0E8EU7FW0dtruFLepZ1G72SbHWc=
+	t=1755716797; cv=none; b=CQeULG1CoasK3BZw2A3zjks1LR/fxQ0WCa6cG1NRB7rzzq5E3GeYnTbjHQqVNVo/WP/D8/TZMNqlwT6laFlt3yVVsa+1U+/rru1+HxEFSwQl0czTJ4kXk0YMdnmsAcZc0Fx0HK6Kr34W7OtY/zCcZvlwX5I6aGtpA64N7J1qu2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755716720; c=relaxed/simple;
-	bh=dqORxA01ddfu04i5AUCIuKJMwCymPmwnJNmkHBTnk70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vamy5UGiToO/JhHVVprOzvQznSRMTvBZivAPEIK1NUMBYh5lvaEOXahpxvY81oPvV4bmtXca5Wj6b8DiruIU4ONzek6FlLuckB07iGXdYQ1Bv1zMxqwjMM8Rdel8wcsKLq+W7xxes/0dp9PVIh2pLKnoKIiEaadi7B3CcN9svls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eL7rr3br; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61aa702c9ebso514433a12.3;
-        Wed, 20 Aug 2025 12:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755716717; x=1756321517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dqORxA01ddfu04i5AUCIuKJMwCymPmwnJNmkHBTnk70=;
-        b=eL7rr3brxLEjsRY7DSOGpOHudpVZk+mxO+bQ0fcryc7sDEEnfQequlf1qNWDLoR12S
-         dHJHrRC5u/eSYWHAP0xbHnnczRWKES0QH/SsdkBZp9Kyvvdg9zFkdRJ6OGVflOq0f0jH
-         70GSVhbjLC8Fa6w3nh1kf526wq0C7XOPBIBU0uxsydynUe39Z7cNsvUJ/auz1ZAUKXiT
-         xPjCw48bSkwJ8kXf3XvOhLKXqP1162tUmZapSiHANq7oPObt17ZKfmxw8aGMujGye31V
-         ZITDqVjA4x9gODUHpaXHUGIS0JOXWjCvPcJPdqY1aWZj8HEcB+NuqHI2YjAITUN/xbVA
-         zhZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755716717; x=1756321517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dqORxA01ddfu04i5AUCIuKJMwCymPmwnJNmkHBTnk70=;
-        b=psXH69mOMzngV8W619fRwDgDDr6IJ8C3ch6H+SmvPJBPtNVE1lOTz6vyqlDFiwi6mR
-         BzapoLcSwCVD3UnQ7QWBzdjv8kmBUpwI3WU/moLCzgn5HER/78R5pou2N7YnB9va6C6k
-         EUEanhe1rMIB/VBOoK2xMRjp/di4nyLLqakKQ2TwVKaPZY0FNEt2XGhgH+KI2wTN4eSp
-         64TXsgREdWOYsVHVFihTlEgvU6zHOrANGMIiJ2yt4Ni6T5kR7kO8S0wZ644FWQBB8c7s
-         Ad+n7/zrx0d9I59WuQdWegjImQC8q6AdCvjIWonsx6GjeK1qP0UlFfkuaCgscKngjGqF
-         OaOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEOTQ/rBLiL3D0HxyhN/pfNpDyUv13D+dLzeF0QAshfS3LW/z7Wk9Y5VhnVYLs0btKjzY/jkigZdVfaRBc@vger.kernel.org, AJvYcCWhLdEdB/Jco43Y72rZuIjROW66lx8XezXSbrjVEsAGdvCHudQQxk+6s67G5d2dQ2lbxTQpkxRv40TF@vger.kernel.org, AJvYcCXvJ8d3XbFjc6MpqiAGM1eufDSu8Dd6DzcTjAkZ/ifg4z2uiN56jIxEZ4L31m4hhvx8v2W0vjLztH8VEg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYt+z6XALMpuZzmecQf95Z27iF6rmj1JGrCrzQcFmh9M/L2Vn0
-	hBb8e0Y5xy5FD3iiFFIuKz7KmZmK6waZfUbshPgG3aZcal1BswdOnJZ/DvDGm2By7mmgV5+TqCR
-	b4QKBa0bgnltkwiCEtyGi7Zx1L53Q0bM=
-X-Gm-Gg: ASbGncucWhc13uAYkDE4s381toW3Asu0g+elL4Ql7SI1NFb/tf1DNrtTlb3Hy+sfEM7
-	2KsgUZqgLutJybkyIjjYirfGgmurrM8pNQ3GGC9vc68F/Vyf16AD6iETAQzC1DhN9dyKzuZDwdi
-	b4cECR0WgwDGlr6V1sSsfXmJbDKmDpUIMRHu2B4f5+J2Q2ZzXeYY9UUc7eG/9rkTGvjHCsQqVjw
-	iPWPxbzTaz8gOCM0g==
-X-Google-Smtp-Source: AGHT+IHJiPRx0SngC7bjC2w4GtEgXQh9A32wKEsxcZ0CVXXlaP6DEiOwl/6IKq6V3wKbKch1kJfDHW692elgTcsQBhY=
-X-Received: by 2002:a17:907:94c3:b0:ae9:8dcb:4dac with SMTP id
- a640c23a62f3a-afdf00a8cf1mr325925166b.14.1755716716491; Wed, 20 Aug 2025
- 12:05:16 -0700 (PDT)
+	s=arc-20240116; t=1755716797; c=relaxed/simple;
+	bh=reji3fEkI4pxXPGjg4kAjTYYm4TeYGOSYYg7sd9dMrQ=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=ul6Mt17TAV+Y7DqUEfUwvCzz24k+r1eJqJYOOprlfkKtjVOzwn7CfnWDSsFXedfyYOGQIbGqS6XPNzWQaKocsmh/oHPW0sSL7rjQnkWtKCxiAu00A+Y16Nh2NAsx2cqz2EXsSEw/j+cElAVtQMYilqVM/NhqFvTvfGrbtmSPm4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp5qMR/l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F4DC4CEE7;
+	Wed, 20 Aug 2025 19:06:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755716796;
+	bh=reji3fEkI4pxXPGjg4kAjTYYm4TeYGOSYYg7sd9dMrQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Cp5qMR/ljFXqZxUZsX30812oSPesXCIfeMFJHkdlw4kxhxXMANVHyYg4/LzJUEMXB
+	 oF7GP5c0GERntpGmy7fgkcWNOMIJY7GFLy//gyTO05UD4BdXDwLa1J/VpA74ApwbR1
+	 /NNhqMceP1gTA+MnGoZBfHKyms/guH2Y2bWs8oc94708F4U7zz/Hh6dZiDomlNAep8
+	 OLl1smFOE/elxbZm0JRrlkDvcpHbhSqnNAdTgm6DS/L2m9yiUmSjiYox/3s7I0Cwlx
+	 bpaX4oYoTsMCPgAK/d4TC9W+lKw+5gMyTvg4DdPwEfe6cDi8Rk7sGtrRIODWKQMWsK
+	 VoCd/EUOs9Nhg==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uoo8t-00000000tEP-2iLp;
+	Wed, 20 Aug 2025 15:06:39 -0400
+Message-ID: <20250820190546.172023727@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 20 Aug 2025 15:05:46 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: [PATCH 0/2] x86: Enable the deferred unwinding infrastructure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250820154037.22228-1-jszhang@kernel.org> <20250820154037.22228-2-jszhang@kernel.org>
- <CAHp75VfxSBPzvohrW4tywd4VS0r1_mp8WLvdKcN_yn=zNS49HQ@mail.gmail.com> <20250820191039.4f8af41e@barney>
-In-Reply-To: <20250820191039.4f8af41e@barney>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 20 Aug 2025 22:04:39 +0300
-X-Gm-Features: Ac12FXzx226wSucqjOB8xNIk2YZERgxrOlmASf3USK3y_yzf_ctFUIqwnOa-1u8
-Message-ID: <CAHp75Vdpgf3DUMQw0mYqhG=9UrYG8KWrobbd387QZapBor_LHg@mail.gmail.com>
-Subject: Re: [PATCH 01/16] gpio: dwapb: Use modern PM macros
-To: =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bues.ch>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Doug Berger <opendmb@gmail.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>, Hoan Tran <hoan@os.amperecomputing.com>, 
-	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, 
-	Srinivas Neeli <srinivas.neeli@amd.com>, Michal Simek <michal.simek@amd.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux@ew.tq-group.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 20, 2025 at 8:11=E2=80=AFPM Michael B=C3=BCsch <mb@bues.ch> wro=
-te:
->
-> On Wed, 20 Aug 2025 19:54:44 +0300
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->
-> > > The dwapb_context structure is always embedded into struct
-> > > dwapb_gpio_port to simplify code. Sure this brings a tiny 36 bytes
-> > > data overhead for !CONFIG_PM_SLEP.
-> >
-> > I don't think it's a good approach to add a lot of data for peanuts in
-> > case of PM_SLEEP=3Dn.
->
-> It wastes 36 bytes in case of PM=3Dn.
-
-...per port.
-
-> The driver currently allocates the struct with kzalloc and stores a point=
-er to it
-> in case of PM=3Dy.
-> So this probably has an overhead in the same order of magnitude (pointer =
-+
-> malloc overhead/alignment/fragmentation) in case of PM=3Dy now.
-
-...per driver.
-
-So, I can't say it's equal, but I leave this to maintainers to decide,
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+This enables deferred unwinding for x86.
+
+
+Josh Poimboeuf (1):
+      unwind_user/x86: Enable frame pointer unwinding on x86
+
+Steven Rostedt (1):
+      unwind deferred/x86: Do not defer stack tracing for compat tasks
+
+----
+ arch/x86/Kconfig                   |  1 +
+ arch/x86/include/asm/unwind_user.h | 22 ++++++++++++++++++++++
+ include/linux/unwind_deferred.h    |  5 +++++
+ kernel/unwind/deferred.c           |  3 +++
+ 4 files changed, 31 insertions(+)
+ create mode 100644 arch/x86/include/asm/unwind_user.h
 
