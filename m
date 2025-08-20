@@ -1,271 +1,147 @@
-Return-Path: <linux-kernel+bounces-777614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D937BB2DBCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:53:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15C8B2DBC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8AE5C4184
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E341680053
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00E52E9ED6;
-	Wed, 20 Aug 2025 11:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6574A2E6103;
+	Wed, 20 Aug 2025 11:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NbFnfdJY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzpgQyk2"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9AD2E5423
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DF5242D72;
+	Wed, 20 Aug 2025 11:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690770; cv=none; b=KOV0phTWi7nR0txk0v4Bqwpo7jsglqBEn9MJ2E8WesLaKy5zC4ymjsTlMJcgk5KcKu/nq8KyM7lmQqbTQzODctMsIQet9nOSjERyK/+7uy3KxTghh4uthXoXH41bGBYg4N2kAGC+AVPq7JMJNbBJFy/myiy9lVmC9dNSZ6hh+LQ=
+	t=1755690753; cv=none; b=hhUOacvbe8yAuZtwOfbyata3GumM9Z6dAbQXBdiVj2Ck6oBg9o1mI2eOif73yIy75vAo3ZQiMB8KkdadFzjzUsrUOCWSdVDrVIfudvprI0RgIpSrEXg2uxJlREFkY8QhZJP9BNdhVP3K0sOhR/wM9HSzHm6W0TgnBNuWUMCVgBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690770; c=relaxed/simple;
-	bh=+036hMkub/Af/78NBaftIgQF6n0LrLF1Du+6bYcKRAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDCl8B8RIuO1FbMPuIi2duEzHn9esGzhdMVKKEzhA2P1CD71Lwv4q3HEcmzdzduuGjOdGH8fSfbytGfdFwFPmLvAkl0V5r/GZaceiT/btrC90mjqdTci5P6ozYmaZM7BnRj2Ad2vIU2HQslsRYEyrM1v6xyz/uSRwRjX6P5kAa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NbFnfdJY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KA6aHv007306
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:52:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1NU5anoXaPxzB4evmItsYtEq
-	4iSlXrdsVmJAEsKcsCQ=; b=NbFnfdJYQFNM8SCh4++tmwy0/BvWkAI43WOCQSSh
-	O3o7Qz9qkdEC99FA+82EDK98grL5bjNiakj1q0hgVSU/Urecc7h6AsF7YMslu1oC
-	z6OqTD4bHTKCcNaLzC2ILLWw3xqDowiDjKQFUstWZWaCvElKl2fd1Qllce0Wco6y
-	Iw+0ry2qPplv0VmFicL5XDUqV9HM9CmFG3R2PUPpHvkyvwmqiV48EvbJaLSJgYYr
-	XgJqfnyBSBLMTzp7k8DOzFM18HzywyAl7ZAhZwDA263cxgBoqeqWeJEBJbCs3q1I
-	qloXnMJOr66vMBVgyAkjxPjx9bnp5tg2oMVfNYwV2qzEzw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5291k10-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:52:47 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70ba7aa11c2so110229396d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:52:47 -0700 (PDT)
+	s=arc-20240116; t=1755690753; c=relaxed/simple;
+	bh=R9iF5T6tpoWEcjvE3D2NwXjxHO1gXy2NbsB9Lw6ftNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L2W3xlFX1Oj6W1A3qlAwcoP0m6on0aBEyEoeORo5xuqZQBXmh+flaLgvMWyACqpvPF/11VC+489YZq4whtcTdU1tMxL5gqhUSqyQj1BDjstFn+amN852D+XkUc/NCAgoGKdIowW2be771uHbPVBoy8Cpe4QxRCh9bHEiTiC3WOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzpgQyk2; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so33198755e9.1;
+        Wed, 20 Aug 2025 04:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755690750; x=1756295550; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Eu0bz/4XJ8iPbptyw2I6gZv+1EznEZ+UL5PIm0i7/ig=;
+        b=YzpgQyk2HjucUzq4QO6OclXM1SvBBhlZPlcaDdl9kDd4W+Xgw8LsmWuJ/CL1cMqFQ0
+         HkMrlcr1uKFIagz8iDoQ7VkHeQ+aGUcN7GnLLn9nOt4xiRYCGLluq9rkogDHYl5f3/E3
+         IBigsABYRqkhtfKeVto1wqI4AxuKGzRazvTLGtgKXvUNCnoerEUeSlcgxXYeEZLWdxQX
+         3XhCpFw95JdLKgAnv/y+QBbqIYYcASlZWKUAEX3VjopHOIyJ37lsaq9LnkJ0+EKA6o6r
+         dYrMnYqsghT4p6hKVUiCCbA4HUQW3cMXBZFW1x8WZGpj5poNmjSFBQqXzwHqqs43n/v/
+         gOyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690767; x=1756295567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1NU5anoXaPxzB4evmItsYtEq4iSlXrdsVmJAEsKcsCQ=;
-        b=Vyxy7q4s0uIPrj2vKSopLr2+8Cnhmrh8iFITOt46gi8rZlNYr5hMaJAbhtFPjXF/k4
-         Zr9Vw1mQ6HP/WORqIhhEr7kPJDrBUni/MV8RI9CuR+GAcDHaK89fL0k0SavBDLxmTzom
-         /hRvbK0XAgkPWPJGWQ8GCMEJEg2AQoM1cC/qWbNZnhuO0b8FrM1g43QWeoZXUO5GFxxh
-         WtVAUNEGzZcFGdnKYHu+5q9+TtV5kGczY68DAczOvBubRjMx+rN0SPZ5kmHHJILJ7jnm
-         7N8oTvIcmDrwkrF31e0JCYw4DEh55nfoKcP2ifXaJWrpmFP2ZmA0coV+KZRCvM8TrqTI
-         GzuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtPynT4ACRg1fsDyaTtFZU++uE/uB5UGuPYeRGLFObvwVzyKPvpCd2jYvS2C6NQEBpys0MLomdioKiN68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaddXuLYcUfRQuKI6XPF3XAo/MI3/Bz9HFKbWXWbSJs0x0ofDN
-	Mab2fgGFz+ZsD2uilSF+GF1fmJlIsRsgW4iOSKommQeyrLo8fnTXNTk3coKCbLGQxViI/FWxT8m
-	fWIJhny8T3+1BHzbc9bM26EBeJcJpTyj4nd2Nmwiqi5IwOyaRRR0HEEi8zdSbzQNA/5M=
-X-Gm-Gg: ASbGncsfzeyGh+mMVV56pJwPwST6jLBW3afJ60c2sTgFbGLBDwJ+QhkGVyuVFAVLw30
-	zILxnGllJmBjp1rm68fK5BREx5QqmgJS8OK5qwhb2Ej3ZcBR2tpcEB12qxQWJa9Nc6ZtJQbB82Q
-	eW9WZCWPSYgmyS0VYh3Skki48eVBYKUkcwpffp6t49RPbq3DmaZ49+q6sU0wn1cv4Kd6R6kmVw7
-	6UOdTHWQaVJeKgtEx+86cbJsjxAQ5uvY5z9WjaOuqZe3lcn9Ah4xmnFbTQRme15pP+9ixVEuSmO
-	o1SBJeY8YhV5mN38gkh/AClFUyUSo3eeR1Ke46xHqpO9Q3er1jKieweS7dVTRk8BkshOJqUivhX
-	Yu9EBJbDJa9ZrNPzMZF3wF6rsRYgkokKyoFrTBhkQPrgIjPun5PEg
-X-Received: by 2002:ad4:574d:0:b0:707:3ad0:1f15 with SMTP id 6a1803df08f44-70d76fa2d8dmr29441686d6.18.1755690766839;
-        Wed, 20 Aug 2025 04:52:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXhlwYJEE7/G3XlVPANthN7ixhS1XYB40WO19b3qrubjjpDOPnmRSenoHFW9qSHFfTgNHFoQ==
-X-Received: by 2002:ad4:574d:0:b0:707:3ad0:1f15 with SMTP id 6a1803df08f44-70d76fa2d8dmr29441236d6.18.1755690766314;
-        Wed, 20 Aug 2025 04:52:46 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef35f105sm2554042e87.50.2025.08.20.04.52.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 04:52:45 -0700 (PDT)
-Date: Wed, 20 Aug 2025 14:52:43 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Das Srinagesh <quic_gurus@quicinc.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Subject: Re: [PATCH v2 14/15] arm64: dts: qcom: Add initial Milos dtsi
-Message-ID: <2hv4yuc7rgtglihc2um2lr5ix4dfqxd4abb2bqb445zkhpjpsi@rozikfwrdtlk>
-References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
- <20250713-sm7635-fp6-initial-v2-14-e8f9a789505b@fairphone.com>
- <3e0299ad-766a-4876-912e-438fe2cc856d@oss.qualcomm.com>
- <DBE6TK1KDOTP.IIT72I1LUN5M@fairphone.com>
- <DBE8G88CIQ53.2N51CABIBJOOO@fairphone.com>
- <DBOC7QBND54K.1SI5V9C2Z76BY@fairphone.com>
- <55420d89-fcd4-4cb5-a918-d8bbe2a03d19@oss.qualcomm.com>
- <DC74DPI8WS81.17VCYVY34C2F9@fairphone.com>
+        d=1e100.net; s=20230601; t=1755690750; x=1756295550;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eu0bz/4XJ8iPbptyw2I6gZv+1EznEZ+UL5PIm0i7/ig=;
+        b=M0j03g8WISONw8ZAc+1HlWnWp+UUXm8dV1xOEZqPAIxnDHQxv4a+ET9TepGEEWXnwJ
+         v5YiUKuBjekG4PQQzfFesRqZ4Z7cd5aIxJ3yFCkZIe/e/Bv31MI/FWijePfOtQNAVYnV
+         79G+kStS3SiB4F8yhR+eWR3y30mKLlHyArU8cHYb/dL6hUmSvBlkV0QB4fT/s7ub70vZ
+         nmFiWK+4QMthZUAgG+0xN9mqzvvgtO2vBXWrATcRTMCH67S9AnlTG2NCVlYZHSKDy9r5
+         GsWc3gJCpgtueDJf8DlZX9M8C6ryWzYxtkQzSnxuNowoQbO8jgV7cguRABrGZPE9eb1f
+         eUcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgAFz+XQSu8AurNpVXWIUnjBUV9jLFAMZxZb2wBilr2BTcdIjuUc3+9Ei696Pf2354FPAzLyKYgQ==@vger.kernel.org, AJvYcCVkLZBTNC5LpxzFWuMNnHmOexrTFc0fYu5HeaHJAtXObkbS9olMFHzBC5G5sGeaju7rCr2pHzUN@vger.kernel.org, AJvYcCWpC7wAMtsJ9byTB47l4sjjgGYgA/5fvB3JYsWNuk/BHe2r/spuyWvQM3H9WXxl/4fzSMTPNiKWtuP0/o7W@vger.kernel.org
+X-Gm-Message-State: AOJu0YxusT2CamTnjNnfIRtUrGLnsxDqTDcci7JHWrOeR4TyHW7uNdP2
+	Ow1wD9Y/Pe7ao7+t13kWBPq6kV866M/r235gqylMnmc+g5TwIJpbNgvh8uk96w==
+X-Gm-Gg: ASbGncuE6aDszTEn/F9bn4F+CBLltfSFOg0k2VIOGle5+toB99KDBUjFdi6tzAgz4bD
+	/0AIFC3/Wr2mAQWMETqAr8QFxUF93X8ganXY8Z0MSiYQ2z9g8F7stXdEd8XEozlP2f6qh7WyMdC
+	bHuwh/I7QAcVIMLERTRR8RJF5UD59kc/n4TKf69wlG47WcfKSPg2Ca8t7IIzxJLfB7Jr+3A2AEe
+	S3Y2Byu3FnSlr6Ok0jM0pv+6pjGEJBlH0ByemryKoAFXUG9OJcUOxGRdfVbZVojzRpyl4b2Fq++
+	AfXHacNsmnN48qzXAF2glEOLP2beoN33btmFshOkE2obgFProi2nF8ukg8QUPvHPr8RMuoO/0am
+	IbiGgMpvKAEumt59G9vupcYYxsMNiv9oqTGQQt9fSCatrwDEPi+VWZlw=
+X-Google-Smtp-Source: AGHT+IG/41RoPw5wW2LkypeGV8sEJ1A7KyvnRuzku6eq2XkgUVHV82AxBRbCjJXQq7vFgqll6W0jWA==
+X-Received: by 2002:a05:600c:628f:b0:459:e025:8c5a with SMTP id 5b1f17b1804b1-45b47a0f88bmr19090025e9.33.1755690750190;
+        Wed, 20 Aug 2025 04:52:30 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5f7e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077789c92sm7386521f8f.52.2025.08.20.04.52.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 04:52:29 -0700 (PDT)
+Message-ID: <9eedeee2-8a89-42e4-90ab-ebd40b0d360a@gmail.com>
+Date: Wed, 20 Aug 2025 12:53:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DC74DPI8WS81.17VCYVY34C2F9@fairphone.com>
-X-Authority-Analysis: v=2.4 cv=Aui3HO9P c=1 sm=1 tr=0 ts=68a5b70f cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=6H0WHjuAAAAA:8 a=XuIBa_usxpjq5QTMMVUA:9 a=CjuIK1q_8ugA:10
- a=1HOtulTD9v-eNWfpl4qZ:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: xUDRCiNsUohy5mp_MvAOtUCUZfqMP9-F
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX6S6wxVbEudaa
- lM6FYfm+u3eYB1djCO+IoyxktFDlep3tr/H0lEidhvFgTEm6/CFhealXhD+bTsBFcPiu9PycwH2
- c2RM+5aIrP28G53Y6M0MdCzsxuJzoAdaDiEuTUwkYtaie1NO83yJC1SzqusbfwCAu45mF4JZKS+
- P2NTA3Io9etliGwIYDZ9pnKptdv7LjjW5jWGyofsoD+Hw5cg5x/rTNq82qItgVX41d2Tk45QF4D
- tAl7J09fkcSE4G6m2V3EieKWa02KABwyipiMQGSYKzgn/oa0otwm/wAwyhdV7sFYmNbaWvg/U9Z
- t6KK23h+aghffrruIliGV278Yhz7ITufnmtzxFyaI6RBb2pVNQqgUT3PyxHWiSWU5+x0NKGdS0K
- XhNM4xV0cHjmhnDwYxq5z1yIiN34Dg==
-X-Proofpoint-GUID: xUDRCiNsUohy5mp_MvAOtUCUZfqMP9-F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
- definitions=main-2508200013
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 04/23] net: use zero value to restore
+ rx_buf_len to default
+To: Mina Almasry <almasrymina@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
+ davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
+ michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <cover.1755499375.git.asml.silence@gmail.com>
+ <d36305d654e82045aff0547cb94521211245ed2c.1755499376.git.asml.silence@gmail.com>
+ <CAHS8izO_ivHDO_i9oxKZh672i6GSWeDOjB=wzGGa00HjA7Zt7Q@mail.gmail.com>
+ <ab60ab17-c398-492b-beb7-0635de4be8e6@gmail.com>
+ <CAHS8izPuZRsrBXaQoTNBPyisEo3w7J2aF0qyyOOnUAV=2-8o+w@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izPuZRsrBXaQoTNBPyisEo3w7J2aF0qyyOOnUAV=2-8o+w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 10:42:09AM +0200, Luca Weiss wrote:
-> Hi Konrad,
+On 8/19/25 20:27, Mina Almasry wrote:
+> On Tue, Aug 19, 2025 at 8:51 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> On 8/19/25 01:07, Mina Almasry wrote:
+>>> On Mon, Aug 18, 2025 at 6:56 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>>>
+>>>> From: Jakub Kicinski <kuba@kernel.org>
+>>>>
+>>>> Distinguish between rx_buf_len being driver default vs user config.
+>>>> Use 0 as a special value meaning "unset" or "restore driver default".
+>>>> This will be necessary later on to configure it per-queue, but
+>>>> the ability to restore defaults may be useful in itself.
+>>>>
+>>>> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>>
+>>> I wonder if it should be extended to the other driver using
+>>> rx_buf_len, hns3. For that, I think the default buf size would be
+>>> HNS3_DEFAULT_RX_BUF_LEN.
+>>
+>> I'd rather avoid growing the series even more, let's follow up on
+>> that in a separate patch on top, that should be just fine. And
+>> thanks for the review
+>>
+>>> Other than that, seems fine to me,
+>>>
+>>> Reviewed-by: Mina Almasry <almasrymina@google.com>
+>>
+>> With the said above, do you want me to retain the review tag?
+>>
 > 
-> On Sat Aug 2, 2025 at 2:04 PM CEST, Konrad Dybcio wrote:
-> > On 7/29/25 8:49 AM, Luca Weiss wrote:
-> >> Hi Konrad,
-> >> 
-> >> On Thu Jul 17, 2025 at 11:46 AM CEST, Luca Weiss wrote:
-> >>> Hi Konrad,
-> >>>
-> >>> On Thu Jul 17, 2025 at 10:29 AM CEST, Luca Weiss wrote:
-> >>>> On Mon Jul 14, 2025 at 1:06 PM CEST, Konrad Dybcio wrote:
-> >>>>> On 7/13/25 10:05 AM, Luca Weiss wrote:
-> >>>>>> Add a devicetree description for the Milos SoC, which is for example
-> >>>>>> Snapdragon 7s Gen 3 (SM7635).
-> >>>>>>
-> >>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> >>>>>> ---
-> >>>>>
-> >>>>> [...]
-> >>>>>> +
-> >>>>>> +		spmi_bus: spmi@c400000 {
-> >>>>>> +			compatible = "qcom,spmi-pmic-arb";
-> >>>>>
-> >>>>> There's two bus instances on this platform, check out the x1e binding
-> >>>>
-> >>>> Will do
-> >>>
-> >>> One problem: If we make the labels spmi_bus0 and spmi_bus1 then we can't
-> >>> reuse the existing PMIC dtsi files since they all reference &spmi_bus.
-> >>>
-> >>> On FP6 everything's connected to PMIC_SPMI0_*, and PMIC_SPMI1_* is not
-> >>> connected to anything so just adding the label spmi_bus on spmi_bus0
-> >>> would be fine.
-> >>>
-> >>> Can I add this to the device dts? Not going to be pretty though...
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
-> >>> index d12eaa585b31..69605c9ed344 100644
-> >>> --- a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
-> >>> +++ b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
-> >>> @@ -11,6 +11,9 @@
-> >>>  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> >>>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> >>>  #include "milos.dtsi"
-> >>> +
-> >>> +spmi_bus: &spmi_bus0 {};
-> >>> +
-> >>>  #include "pm7550.dtsi"
-> >>>  #include "pm8550vs.dtsi"
-> >>>  #include "pmiv0104.dtsi" /* PMIV0108 */
-> >>>
-> >>> Or I can add a second label for the spmi_bus0 as 'spmi_bus'. Not sure
-> >>> other designs than SM7635 recommend using spmi_bus1 for some stuff.
-> >>>
-> >>> But I guess longer term we'd need to figure out a solution to this, how
-> >>> to place a PMIC on a given SPMI bus, if reference designs start to
-> >>> recommend putting different PMIC on the separate busses.
-> >> 
-> >> Any feedback on this regarding the spmi_bus label?
-> >
-> > I had an offline chat with Bjorn and we only came up with janky
-> > solutions :)
-> >
-> > What you propose works well if the PMICs are all on bus0, which is
-> > not the case for the newest platforms. If some instances are on bus0
-> > and others are on bus1, things get ugly really quick and we're going
-> > to drown in #ifdefs.
-> >
-> >
-> > An alternative that I've seen downstream is to define PMIC nodes in
-> > the root of a dtsi file (not in the root of DT, i.e. NOT under / { })
-> > and do the following:
-> >
-> > &spmi_busN {
-> > 	#include "pmABCDX.dtsi"
-> > };
-> >
-> > Which is "okay", but has the visible downside of having to define the
-> > temp alarm thermal zone in each board's DT separately (and doing
-> > mid-file includes which is.. fine I guess, but also something we avoided
-> > upstream for the longest time)
-> >
-> >
-> > Both are less than ideal when it comes to altering the SID under
-> > "interrupts", fixing that would help immensely. We were hoping to
-> > leverage something like Johan's work on drivers/mfd/qcom-pm8008.c,
-> > but that seems like a longer term project.
-> >
-> > Please voice your opinions
-> 
-> Since nobody else jumped in, how can we continue?
-> 
-> One janky solution in my mind is somewhat similar to the PMxxxx_SID
-> defines, doing something like "#define PM7550_SPMI spmi_bus0" and then
-> using "&PM7550_SPMI {}" in the dtsi. I didn't try it so not sure that
-> actually works but something like this should I imagine.
-> 
-> But fortunately my Milos device doesn't have the problem that it
-> actually uses both SPMI busses for different PMICs, so similar to other
-> SoCs that already have two SPMI busses, I could somewhat ignore the
-> problem and let someone else figure out how to actually place PMICs on
-> spmi_bus0 and spmi_bus1 if they have such a hardware.
+> I initially thought adding my reviewed-by would be fine, but on closer
+> look, doesn't this series break rx_buf_len setting for hns3? AFAICT so
+> far, in patch 3 you're adding a check to ethnl_set_rings where it'll
+> be an error if rx_buf_len > rx_buf_len_max, and i'm guessing if the
+> driver never sets rx_buf_len_max it'll be 0 initialized and that check
+> would always fail? Or did I miss something?
 
-I'd say, ignore it for now.
-
-> 
-> Regards
-> Luca
-> 
-> >
-> > Konrad
-> 
+Good point, it'll need to be fixed then. I'll take a closer look
 
 -- 
-With best wishes
-Dmitry
+Pavel Begunkov
+
 
