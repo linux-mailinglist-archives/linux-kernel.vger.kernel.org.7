@@ -1,170 +1,174 @@
-Return-Path: <linux-kernel+bounces-778550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD58B2E743
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31D0B2E73F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF906861BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0541CC1A29
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE662DA763;
-	Wed, 20 Aug 2025 21:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F9831E116;
+	Wed, 20 Aug 2025 21:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GapdvAIF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAuqXO8G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A83428489B;
-	Wed, 20 Aug 2025 21:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7CB1C3306;
+	Wed, 20 Aug 2025 21:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755724399; cv=none; b=DsBwGEHkO+SbJgXSHLpXL0fvZVNwQJyPr5E44+xuQZ36Jy1U2ay/JF/QSUH+mUP/nraaW8jLQ1eOkLhd27eXgRB660MAxPXLZyaj2Vhs4h7haSG6D2HlQuiLzbIWz4DKlvMNBIv+5BOMjtCC69ViEkISvNio96VoLCfovSIBR8A=
+	t=1755724432; cv=none; b=iH2VtaOlCc/T5IrKwq6KOmOE21J5Xqvh61ded2U1B9/N0JYmG+NvbgzfXIpQchz11TLj+rQxzPsocmFM9goduti9mtD9wjliSp/0Wrz8jgzi4wkDJQWQbuCVGG7+6KPdS27UgP0UWbsb/t10+pMh/OR83npFbT7OALFT6MJR2k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755724399; c=relaxed/simple;
-	bh=swTgXjyVEFW0wP1Js/acWsQ7tBKvZztqaKDArXFL87s=;
+	s=arc-20240116; t=1755724432; c=relaxed/simple;
+	bh=WV7VhBpXVnPGHMwCHb6sbkmgr2ObSQPssfODRH4+LN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iybISTTxWCZG2pwdfmjY1oTfVzI+2OF9WsO6b3vKQLH2ILPGIniLKXNGOwMJz/c8ZptBJoMphGTa3pV2Nxr6FOGeSOBrYzdAOfj0bhhMZJ/UA00LWWJeNss3qWh8TIZxj16G8IUSsMA9ePIf4yJJ9VPEsbfGr+Xssq6COa6CCy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GapdvAIF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A205C4CEE7;
-	Wed, 20 Aug 2025 21:13:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nm/DG/uNeRn1v4rZkS8YaUsn1uYoHdsJMEcnvSbRI4pnFW3MJRb4XJo9kuDOJ7iF4IIJe9JUA8tPaN5msW2UWEgDA6lhXmSRk2wV6FPfc7mLRHSe0bvrU0bmuYYpp6fCjiHTkATFjREdugd1q9S+h4FmrEM65BYkHjtXkBoivX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAuqXO8G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 939A7C4CEE7;
+	Wed, 20 Aug 2025 21:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755724398;
-	bh=swTgXjyVEFW0wP1Js/acWsQ7tBKvZztqaKDArXFL87s=;
+	s=k20201202; t=1755724431;
+	bh=WV7VhBpXVnPGHMwCHb6sbkmgr2ObSQPssfODRH4+LN0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GapdvAIFyvkhNCfQDWs8oBKjZFFEVzsXPYFcEVH4t39FFa2mrfzYPI2yIFgl+usOQ
-	 vwuONbmBnmai3pCQst9jNrFjrpIa8sgUWeBrnwTV5tg0g3+xSuLh3ygax/e5LOt3yf
-	 +7JiVZ0azKIpKESa+vuk6Fae7I/uYGmsWW7lcDtNP6GDx1YjeGbeRQ47cv7jJJzaJD
-	 BgXu4yRcG2yKLUcZ1U2Dql6DSPH3LalUcykssEdI8yKgA0oBGODlY+Q1VkY4+qDM0K
-	 9SlXrv+fm0La9zgrhkpCgiC0+yrVY3ISt0SmIqUw/7AIkEOC1g7SEUiZ+X7yWbIlZ8
-	 206MzxWE687QA==
-Date: Wed, 20 Aug 2025 18:13:15 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 08/12] perf annotate: Add 'T' hot key to toggle data
- type display
-Message-ID: <aKY6a0ELxX3jru1q@x1>
-References: <20250816031635.25318-1-namhyung@kernel.org>
- <20250816031635.25318-9-namhyung@kernel.org>
+	b=XAuqXO8GXBeANo9jz7yeTT6uuCkttWIlDQgua/WZD4ycp2oEW97roCewQJYSQyBno
+	 DVlq2xisIwlRpo9bSLZtg9RMGtsuqlXesSl5tgB626tXaC3KEuUn/TtFxU19Uuvwaf
+	 eHaTi2bAJqa0Hq+sToJxdSpsIjrGyT1717GguUtgSI8Fkm55Gq0gKIV8QfxB4k+FON
+	 QcERc0ZkcxC229nyWXERKW9XcG7HUsYCtp9c4L+L9PTyNBYoxZOfV932eke6hs3tKr
+	 pyLCH3BPG0fbegsubnKrL4I8TeHKlW7cWaf53KZi29HGw+DbcgTZGDb7oEhkjhZ+Na
+	 pq7s66A7OQAIQ==
+Date: Wed, 20 Aug 2025 16:13:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
+ reference property
+Message-ID: <20250820211350.GA1072343-robh@kernel.org>
+References: <20250815144736.1438060-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250816031635.25318-9-namhyung@kernel.org>
+In-Reply-To: <20250815144736.1438060-1-ivecera@redhat.com>
 
-On Fri, Aug 15, 2025 at 08:16:31PM -0700, Namhyung Kim wrote:
-> Support data type display with a key press so that users can toggle the
-> output dynamically on TUI.  Also display "[Type]" in the title line if
-> it's enabled.
-
-Testing here I see:
-
-   0.81 │       mov     0x9c(%r8),%r11d         # data-type: struct cfs_rq +0x9c
-
-If I ask for source code by pressing 's':
-
-        │     delta += sa->period_contrib;                                                                                                                              ▒
-   0.97 │       mov     0x9c(%r8),%r11d         # data-type: struct cfs_rq +0x9c
-
-So it is the 'period_contrib' field of 'struct cfs_rq', humm, not:
-
-root@number:~# pahole -E --hex cfs_rq | grep 0x9c -B 10 -A10
-	struct sched_entity *      next;                                                 /*  0x60   0x8 */
-
-	/* XXX 24 bytes hole, try to pack */
-
-	/* --- cacheline 2 boundary (128 bytes) --- */
-	struct sched_avg {
-		/* typedef u64 -> __u64 */ long long unsigned int last_update_time;      /*  0x80   0x8 */
-		/* typedef u64 -> __u64 */ long long unsigned int load_sum;              /*  0x88   0x8 */
-		/* typedef u64 -> __u64 */ long long unsigned int runnable_sum;          /*  0x90   0x8 */
-		/* typedef u32 -> __u32 */ unsigned int       util_sum;                  /*  0x98   0x4 */
-		/* typedef u32 -> __u32 */ unsigned int       period_contrib;            /*  0x9c   0x4 */
-		long unsigned int  load_avg;                                             /*  0xa0   0x8 */
-		long unsigned int  runnable_avg;                                         /*  0xa8   0x8 */
-		long unsigned int  util_avg;                                             /*  0xb0   0x8 */
-		unsigned int       util_est;                                             /*  0xb8   0x4 */
-	} avg __attribute__((__aligned__(64))); /*  0x80  0x40 */
-
-	/* XXX last struct has 4 bytes of padding */
-
-	/* --- cacheline 3 boundary (192 bytes) --- */
-	struct {
-root@number:~#
-
-So it is in a subtype and probably this is an improvement to be made,
-right?
-
-- Arnaldo
- 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/ui/browsers/annotate.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
+On Fri, Aug 15, 2025 at 04:47:35PM +0200, Ivan Vecera wrote:
+> In case of SyncE scenario a DPLL channels generates a clean frequency
+> synchronous Ethernet clock (SyncE) and feeds it into the NIC transmit
+> path. The DPLL channel can be locked either to the recovered clock
+> from the NIC's PHY (Loop timing scenario) or to some external signal
+> source (e.g. GNSS) (Externally timed scenario).
 > 
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> index e5b35336f0d33d7e..dfe869c20e35da77 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -533,9 +533,10 @@ static void ui_browser__init_asm_mode(struct ui_browser *browser)
->  static int sym_title(struct symbol *sym, struct map *map, char *title,
->  		     size_t sz, int percent_type)
->  {
-> -	return snprintf(title, sz, "%s  %s [Percent: %s]", sym->name,
-> +	return snprintf(title, sz, "%s  %s [Percent: %s] %s", sym->name,
->  			dso__long_name(map__dso(map)),
-> -			percent_type_str(percent_type));
-> +			percent_type_str(percent_type),
-> +			annotate_opts.code_with_type ? "[Type]" : "");
->  }
+> The example shows both situations. NIC1 recovers the input SyncE signal
+> that is used as an input reference for DPLL channel 1. The channel locks
+> to this signal, filters jitter/wander and provides holdover. On output
+> the channel feeds a stable, phase-aligned clock back into the NIC1.
+> In the 2nd case the DPLL channel 2 locks to a master clock from GNSS and
+> feeds a clean SyncE signal into the NIC2.
+> 
+> 		   +-----------+
+> 		+--|   NIC 1   |<-+
+> 		|  +-----------+  |
+> 		|                 |
+> 		| RxCLK     TxCLK |
+> 		|                 |
+> 		|  +-----------+  |
+> 		+->| channel 1 |--+
+> +------+	   |-- DPLL ---|
+> | GNSS |---------->| channel 2 |--+
+> +------+  RefCLK   +-----------+  |
+> 				  |
+> 			    TxCLK |
+> 				  |
+> 		   +-----------+  |
+> 		   |   NIC 2   |<-+
+> 		   +-----------+
+> 
+> In the situations above the DPLL channels should be registered into
+> the DPLL sub-system with the same Clock Identity as PHCs present
+> in the NICs (for the example above DPLL channel 1 uses the same
+> Clock ID as NIC1's PHC and the channel 2 as NIC2's PHC).
+> 
+> Because a NIC PHC's Clock ID is derived from the NIC's MAC address,
+> add a per-channel property 'ethernet-handle' that specifies a reference
+> to a node representing an Ethernet device that uses this channel
+> to synchronize its hardware clock. Additionally convert existing
+> 'dpll-types' list property to 'dpll-type' per-channel property.
+> 
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> ---
+>  .../devicetree/bindings/dpll/dpll-device.yaml | 40 ++++++++++++++++---
+>  .../bindings/dpll/microchip,zl30731.yaml      | 29 +++++++++++++-
+>  2 files changed, 62 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> index fb8d7a9a3693f..798c5484657cf 100644
+> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+> @@ -27,11 +27,41 @@ properties:
+>    "#size-cells":
+>      const: 0
 >  
->  /*
-> @@ -909,7 +910,8 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  		"b             Toggle percent base [period/hits]\n"
->  		"B             Branch counter abbr list (Optional)\n"
->  		"?             Search string backwards\n"
-> -		"f             Toggle showing offsets to full address\n");
-> +		"f             Toggle showing offsets to full address\n"
-> +		"T             Toggle data type display\n");
->  			continue;
->  		case 'r':
->  			script_browse(NULL, NULL);
-> @@ -1029,6 +1031,12 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  		case 'f':
->  			annotation__toggle_full_addr(notes, ms);
->  			continue;
-> +		case 'T':
-> +			annotate_opts.code_with_type ^= 1;
-> +			if (browser->dbg == NULL)
-> +				browser->dbg = debuginfo__new(dso__long_name(map__dso(ms->map)));
-> +			annotate_browser__show(&browser->b, title, help);
-> +			continue;
->  		case K_LEFT:
->  		case '<':
->  		case '>':
-> @@ -1133,8 +1141,7 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  
->  	ret = annotate_browser__run(&browser, evsel, hbt);
->  
-> -	if (annotate_opts.code_with_type)
-> -		debuginfo__delete(browser.dbg);
-> +	debuginfo__delete(browser.dbg);
->  	if (not_annotated && !notes->src->tried_source)
->  		annotated_source__purge(notes->src);
->  
-> -- 
-> 2.50.1
+> -  dpll-types:
+> -    description: List of DPLL channel types, one per DPLL instance.
+> -    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> -    items:
+> -      enum: [pps, eec]
+
+Dropping this is an ABI change. You can't do that unless you are 
+confident there are no users both in existing DTs and OSs.
+
+> +  channels:
+> +    type: object
+> +    description: DPLL channels
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      "#address-cells":
+> +        const: 1
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^channel@[0-9a-f]+$":
+> +        type: object
+> +        description: DPLL channel
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          reg:
+> +            description: Hardware index of the DPLL channel
+> +            maxItems: 1
+> +
+> +          dpll-type:
+> +            description: DPLL channel type
+> +            $ref: /schemas/types.yaml#/definitions/string
+> +            enum: [pps, eec]
+> +
+> +          ethernet-handle:
+> +            description:
+> +              Specifies a reference to a node representing an Ethernet device
+> +              that uses this channel to synchronize its hardware clock.
+> +            $ref: /schemas/types.yaml#/definitions/phandle
+
+Seems a bit odd to me that the ethernet controller doesn't have a link 
+to this node instead. 
+
+Rob
 
