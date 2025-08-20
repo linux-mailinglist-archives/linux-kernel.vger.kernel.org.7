@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-777852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C2BB2DE80
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:59:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021EFB2DE8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E53BDB17
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:59:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B949189FABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4141221FCD;
-	Wed, 20 Aug 2025 13:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B76B22A4CC;
+	Wed, 20 Aug 2025 14:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eauG6E/6"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hxp9UyiO"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28C572617;
-	Wed, 20 Aug 2025 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3D319CC11
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755698355; cv=none; b=VxFNjTFleWkw48gkmccY+n6BrOYiRJDmGJnMI5xEq1ChqZJsoAHmZKH7nHUCutnc19Ib3Fu86WJFyIuPM5WJBwsD+JSnZSQfBeztiQHhzHWb6o4hl//k3QS4g42GCgslKzTUzQwNdJ2awoHo+eisiK3d3Iwfo/ize1h3JySlZ64=
+	t=1755698410; cv=none; b=knrtrdYf0BQY4NgazsOBSTHwTDgNRVD08YubSOnfXU3RipJSUUR2ZZP+dNpx+1T42f4Z9yhaipChLCtUT93brhrZCi2HFczSAdWgEsJq/aZHJ6Uky+tvRksAvTd15r40NA1Z+LicUeMmQQGunWVtXN2yH3Vz7UqagGRGLNr1aiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755698355; c=relaxed/simple;
-	bh=/I/dHRjBGYuGASvg5B1AJm+rfBmAQq+HTzMrKwlXJbc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=tba5b1SIrhdOWHMk69r2nDekOB69FOVsUxyyWqTKpqrTuB/4YvxO/bTSZhSPt0HdOw5L4BlS3jgIK14UDDe2fWAqeViQSPPAehubWOZnEkH5tjKONVs+i4wG5RvI5GoCpFBk4OP6pS8+pRBs6TLPvMzfG31bbWcpE+EZTlJr2j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eauG6E/6; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4717ba0d5dso692187a12.1;
-        Wed, 20 Aug 2025 06:59:13 -0700 (PDT)
+	s=arc-20240116; t=1755698410; c=relaxed/simple;
+	bh=WTD3/ArXFBvcXWRDIaLDjP6fA0+AfFc2iGlvvPf8jQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kZbFxoXxb017HBo0MdN4wN36lIGqdcVRccWNSSPQtDt/1Xxtwr0ecns14H9pl5GbPDwEYYrLSa/bpvKD3EdmpUon3hqycsosVdsAqQV2DE41F/sc8loRqF3hJfbF7WsJiSr5Aik7qAX6Ekp/I71iz53YUWlVXs4xlr6iiMDEzQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hxp9UyiO; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55cc715d0easo10567e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755698353; x=1756303153; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1755698407; x=1756303207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/I/dHRjBGYuGASvg5B1AJm+rfBmAQq+HTzMrKwlXJbc=;
-        b=eauG6E/6dCOJRenCce7h1bmCyx9YhCkrI52vXeUvKix2vFfIIpLgzsoXzABjJDCNWp
-         tV0JuDQjsauFeJHvw5fmrCDzJkZIUyySNZvCX9OG3+4r+Srqh2RNTrP4FcS4CwKX+RY0
-         RUluss5hopvPFqm+8Ig51K25uEoRTc+goMB+W+TnnmzXm+A8pJ6k5VA8gbGxRPBFKtXJ
-         2rxQcCJwOkKrW87H9Np/AXX/xRYwfeA91MlIDgbQEoDpFGy+Z+TTj2YpWGGqm2mKmAAO
-         DnkF5V/SHJFb5wF9HrfUOgm2MlPZiD+47uJk5Ubw9vv9Os4mEY5bGHcnfZjgbf7u5Wd0
-         uSyQ==
+        bh=WTD3/ArXFBvcXWRDIaLDjP6fA0+AfFc2iGlvvPf8jQA=;
+        b=hxp9UyiORUwzO3jg5zMSmwkvUk2XC+RuwZQZY6RH3kOfP74k9piTU2SDfy5SMonw54
+         xi0Sg9lyFGWv8ZXHz0LTVgCEJBfT9QsovoCdxUuuKml15ApGEYqpjnnwW+teki3OPWEQ
+         SaiqegaHkCMRDL3TgQHr6SNakXvPJ+iH5942/I6ADMhC60x62d7znnu8JCloA2vByYoF
+         uT0oCy2j3uNjZPCZ0T/+nQE604Z9amPZ6GBpmx2Slz7fPVdv//48uRQaT0m0FS10AwIC
+         54BwnofxXJzqc1fkjDi2hiZgGNCxdEjKfum9BqNWqwi+/G732MNHrUjDYCh0CVFzqzA7
+         u4+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755698353; x=1756303153;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/I/dHRjBGYuGASvg5B1AJm+rfBmAQq+HTzMrKwlXJbc=;
-        b=Kxgf/5jBKEE/oMd4oL+oBy2oaRIcTfm1gKRNm7k7QdZlJCba306s5sGABVewAns5Kj
-         rdDcMCaE4jUzaYUuqLsLHHqennrgNmQkFKCqnWchSeDafFSG4BolmIWU+REFxyUPTVv2
-         OznMeYYf+P4iJg2zCHvHobJ0uufMuMhj38RZZ1dVIm8NHAhUKgn+fGSyVmzrAx4ioWz0
-         OVAQzH7yCdThgECpZNqdtiuGV2NZUebMnFfNHRmeFOi10NgSzA4zT/NQAwj0NqFu1AEr
-         wdoAwlsSNTh7vwAsbc+MfmJU0kD+S+oRe1dSLnDtUlDgFNvsFluG4oL5LQW2YwKNb/iQ
-         faNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiL+9JKJ3Q48yZOSthh50yJa1bUDGsHPs6OEAtB10hI7dTdBX2it9cth+hJe2Lb7LsBg94c5tgccQ=@vger.kernel.org, AJvYcCXNrqqnO9VNo7URGJndndEE4FBRMKeeMb3gNLepLz47ZODXJNdrh4XW+7GJucLOfkJqgdvDCO84m7LBvZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww4Zg0BihIQRM/7/280mGGcYKAFZxcJ4gFQxaDf4VJelkMR0Dd
-	QK6EowMx7MJY5yqBXjVwLsLFP8v8oirfScAA4Q0d2Nl9nLTiycEcduQa
-X-Gm-Gg: ASbGncvSyFf2wI7zwFNHVCL+mD5SYenZeUHfoSVrwp2/HVqMyQpGid9CIjg09FK5Qn3
-	6iGeXTX0zLwm8Gy2X8+E008836THaftnS6jgFYJ09BckKFaRD6AOG9ttVGQTzxevqIReVBocJt+
-	zJqkLrI5o2IFDjF7a+N/Roejo/ryzjq3NHYUSRJ8aZgIaEVCb7dKfYLLpCg8W0Ma1lWbNVg1Vp6
-	YiMd/jFYB6hBChyupMR4rOM2z44YCpI1r90Fh+SeqpHWS9VnRk8noxdBE6b3M3GGdiy022oKhpY
-	sTNThPMP6kZdT6k9hz3wMnQixt5kzzyxMjZ2q4UfaVug1pfiWyIIHc1SYp7SmLfQon11do9zEp0
-	Iy+NPv9HsqNLYs9tOA9fJgSTkKbr8AYNhr+Q=
-X-Google-Smtp-Source: AGHT+IFEUhCfZhSIdcuvT0PizgfLdYl1oK3oRrZJHPYBxmESKzd6y0QFP1umUTSxCR7GgPNH8CwZPw==
-X-Received: by 2002:a17:903:1a6f:b0:233:d3e7:6fd6 with SMTP id d9443c01a7336-245e0a01363mr90709155ad.19.1755698352602;
-        Wed, 20 Aug 2025 06:59:12 -0700 (PDT)
-Received: from localhost ([2405:5700:316:3af0:705b:4cc5:3482:3b54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4f7b77sm27973925ad.117.2025.08.20.06.59.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 06:59:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755698407; x=1756303207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WTD3/ArXFBvcXWRDIaLDjP6fA0+AfFc2iGlvvPf8jQA=;
+        b=qIOj+qvDagJVFnYXstyHmnciiZzftXPacQdlfCKhgyDKsP2tZpB5SfzYS+ZMsGukTg
+         kMX+D+S8+fpK4D5lPqGNu1W7O+TTBFVDisruiu4Ho9knUaTclC4lPGa5UnL1KGLKDBDB
+         40V9kq8hhehvZt+KoY+J2tyIIq3Wi5vDHf1wsiVVeskITFaGDjZ4K1gGZqh2o8qqc9Df
+         1IwE9FJaEt3XOTk42MIV8oMuI2CNFufvZG6QEU+v6AU+Mk7gtoTb0D8YcLDDj/wxOK1T
+         XxryC0wg+4QEgXZf7BnfEHUYdu84pECC7jJA8rZUqxxnpLuAE2FXugSJb+7OVRt88HAg
+         9Zqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbd3T3yFEdal/x9tdPFQwW8J9vy9VMgDaov1laU/3nGcHDcEcMPDOqro1lg7CU/iGzzFFveFCcQm3nMkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0VO/1QBLOcNbAChHU8uBtdAOie2RMPL6Ny2FZYWREJwtd4JN6
+	ITKKbPjGFjXtYItlYAVTm40DxTzFURI8U//TROTzNxJMQjHa4Su7GIsLWCtfK54hSznc4t0YWoq
+	Yl6XdfpItk+olFYZYXS53h9OnEqQ6ZxCRUWSnozb2
+X-Gm-Gg: ASbGnct9tbV9SPfaNPjoHcL51T1aBBfxSXzZ0QxCljNWTHDC0XptW6e9hkDu30oWnfC
+	GZlPf656mCcHaxT1x2JNR+Azq/ooQFNtE30c7FnGFStacXw4PdCxVEZ2lf0N6pxOoSWp8pVTkSy
+	afn/1hF/rQmuTkyoYpJ0FDYpY2VGVcm25l98mPapTbZPdWxYTG
+X-Google-Smtp-Source: AGHT+IGlXQFrW/JI848HnlpaOFMG5uQo1vUXrwNovg/X/oPwBt3lyo06OZeyIWxfa7ULckeb9isVS2e26W/w+7wcCKk=
+X-Received: by 2002:a05:6512:4388:b0:55c:df56:f936 with SMTP id
+ 2adb3069b0e04-55e06818947mr351070e87.6.1755698404574; Wed, 20 Aug 2025
+ 07:00:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <cover.1755499375.git.asml.silence@gmail.com> <20250819193126.2a4af62b@kernel.org>
+ <fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
+In-Reply-To: <fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 20 Aug 2025 06:59:51 -0700
+X-Gm-Features: Ac12FXyn3WeKsZNiJ_eN0Aeg_Ps8KKgTYMmuYPbod81uJ5k4iGCaZzxEQKmNVk8
+Message-ID: <CAHS8izP2odYCfEfB_JMdT26nUzniXRdp5MaZgqozYd7wV9Z-gg@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
+ buffer providers
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
+	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
+	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 21:59:05 +0800
-Message-Id: <DC7B4DGBA8RK.14Y0UOAKOEOWD@gmail.com>
-Subject: Re: [PATCH] regulator: consumer.rst: document bulk operations
-Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>, "Pavel Machek"
- <pavel@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>
-To: "Mark Brown" <broonie@kernel.org>
-From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
-X-Mailer: aerc 0.20.1-4-g02324e9d9cab
-References: <20250819-reg_consumer_doc-v1-1-b631fc0d35a3@gmail.com>
- <dc1107f3-098d-4952-8133-9bd6068d1100@sirena.org.uk>
-In-Reply-To: <dc1107f3-098d-4952-8133-9bd6068d1100@sirena.org.uk>
 
-On Tue Aug 19, 2025 at 11:52 PM CST, Mark Brown wrote:
-> On Tue, Aug 19, 2025 at 12:25:43PM +0800, Javier Carrasco wrote:
->> The current consumer documentation does not include bulk operations,
->> providing an example of how to acquire multiple regulators by calling
->> regulator_get() multiple times. That solution is valid and slightly
->> simpler for a small amount of regulators, but it does not scale well.
->>=20
->> Document the bulk operations to get, enable and disable regulators.
->>=20
->> ---
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
+On Wed, Aug 20, 2025 at 6:38=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
 >
-> You need to put the signoff before the ---, anything after the --- will
-> get deleted when applying.
+> On 8/20/25 03:31, Jakub Kicinski wrote:
+> > On Mon, 18 Aug 2025 14:57:16 +0100 Pavel Begunkov wrote:
+> >> Jakub Kicinski (20):
+> >
+> > I think we need to revisit how we operate.
+> > When we started the ZC work w/ io-uring I suggested a permanent shared
+> > branch. That's perhaps an overkill. What I did not expect is that you
+> > will not even CC netdev@ on changes to io_uring/zcrx.*
+> >
+> > I don't mean to assert any sort of ownership of that code, but you're
+> > not meeting basic collaboration standards for the kernel. This needs
+> > to change first.
+>
+> You're throwing quite allegations. Basic collaboration standards don't
+> include spamming people with unrelated changes via an already busy list.
+> I cc'ed netdev on patches that meaningfully change how it interacts
+> (incl indirectly) with netdev and/or might be of interest, which is
+> beyond of the usual standard expected of a project using infrastructure
+> provided by a subsystem. There are pieces that don't touch netdev, like
+> how io_uring pins pages, accounts memory, sets up rings, etc. In the
+> very same way generic io_uring patches are not normally posted to
+> netdev, and netdev patches are not redirected to mm because there
+> are kmalloc calls, even though, it's not even the standard used here.
+>
+> If you have some way you want to work, I'd appreciate a clear
+> indication of that, because that message you mentioned was answered
+> and I've never heard any objection, or anything else really.
+>
 
-Sorry about that, I wrote a cover letter that I later removed, and b4
-ended up adding the ---, which I missed before sending upstream.
+We could use tags in the MAINTAINERS file similar to these:
 
-Thank you for applying the patch, I am planning to update the
-documentation of the regulator API when I have some time, and I will
-make sure that the patches are properly formatted.
+F: include/linux/*fence.h
+F: include/linux/dma-buf.h
+F: include/linux/dma-resv.h
+K: \bdma_(?:buf|fence|resv)\b
 
-Best regards,
-Javier Carrasco
+We could make sure anything touching io_uring/zcrx. and anything using
+netmem_ref/net_iov goes to netdev. I think roughly adding something
+like this to general networking entry?
+
+F: io_uring/zcrx.*
+K: \bnet(mem_ref|_iov)\b
+
+I had suggested this before but never had time to suggest the actual
+changes, and in the back of my mind was a bit weary of spamming the
+maintainers, but it seems this is not as much a concern as the patches
+not getting to netdev.
+
+--=20
+Thanks,
+Mina
 
