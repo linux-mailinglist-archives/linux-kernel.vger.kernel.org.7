@@ -1,75 +1,87 @@
-Return-Path: <linux-kernel+bounces-778453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFD1B2E5E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:55:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89857B2E5E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34EC15E4070
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:55:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCA4AA351F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D3C277CB4;
-	Wed, 20 Aug 2025 19:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C539027CB04;
+	Wed, 20 Aug 2025 19:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="OSYnwBjK"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vTgD0L/K"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC46F19258E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C378086352
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755719724; cv=none; b=EkqIMEfscfoZ1XB7W5CH3Qr+by9LBcdatYWlQXvgz3cXhHJRSa0iNg36JbAK7p4WiLY1f7RWkJbWOvY7CJZLawGepyfBXXuLtbZi+h6V3+yS7Hr7AgL4MseZOp+7WR2s4pYY7nwa0xjftM3DIgYWIW3SeypXC83iZxu8Z85ZUNs=
+	t=1755719783; cv=none; b=E+zxQt1e8mnREc9Wtj4pyl2N2YZKqdGT8Mt4MT+5v4Nn5XZRxhp99caWDpSfVGxVDNnsaNu01rkokVxQhH+u9PmehdH2J+/Z4pQgj79fWhaHoX/qSOUP2e7h2SpNWO13/0PJflhi4lf/HSANYZhRwc9SU2x/wSmGuIZTTzgxthg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755719724; c=relaxed/simple;
-	bh=9CQDlGqQ1DeJCXfUip7WzPyujBvcKpQy7usX8ZZkk9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ct2M08O9lNp5lEB3M5fW9c+Rku96/AKcsNho+Jg/gyPsEiqf+i0asH0p6Pyncwq1Ns8h4S7Egerpq8OpMLnUzGprzaGpY28kuHHQpX61wbz0BzYX6OaZ7oqUnYgf0m3zaoChfbDcE4oKv6u7vkTvdZvOPN90cUBPjWKcKSMM5r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=OSYnwBjK; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KHIIEi023652;
-	Wed, 20 Aug 2025 19:54:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pps0720; bh=GyF4IwNNpoGh8pEPZkEQDFJ/EFxR2l4JrgBJLxoZfJk=; b=OSYn
-	wBjKrIWUljTMT4uO7o9lG9kRsCzYkqvmz0PAS+Ovm9xFUHq+N84VAYJgLZLUmRDq
-	VjAQPDlPELZnQRNyqCSCOTuQCbnzJYjtUlJfHiGjNesIxkLoUVZg3B2z6ts6AjHF
-	s7digyYpid4BNrvYaysLL4YhwtrjQ3hsgbzQg1TcdSpG3exrtHf6udpUlBU5tZYm
-	33gIz4aRjPtyHiC9+R+HYKY09DBBLcHpabMDLyaGM9ssxmsNAQc0Us+SogIK/XD/
-	S70nQIKqADVodTKVVSqnx8LuxOtzgBf5UL1yo9tTYpqtcVjtkVz0wVb6Cay4GFS2
-	rm+xYdd2KGYmbcGpLA==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48n8m8yubc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 19:54:22 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id F0706805E05;
-	Wed, 20 Aug 2025 19:54:20 +0000 (UTC)
-Received: from hpe.com (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id AABEE800450;
-	Wed, 20 Aug 2025 19:54:18 +0000 (UTC)
-Date: Wed, 20 Aug 2025 14:54:16 -0500
-From: Dimitri Sivanich <sivanich@hpe.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Jiri Wiesner <jwiesner@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>, Steve Wahl <steve.wahl@hpe.com>,
-        Justin Ernst <justin.ernst@hpe.com>, Kyle Meyer <kyle.meyer@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v3] x86/tsc: Disable clocksource watchdog for TSC on recent UV
-Message-ID: <aKYn6I8kpxMFnVOP@hpe.com>
+	s=arc-20240116; t=1755719783; c=relaxed/simple;
+	bh=JKFx7dG73dWwgzgE54wVU60OobxbiMDnyR+qsSG+jpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHt6J6+Wu2QLzdW6CJ8Yu8LtkTY5LPr85Oqcwbs2sAPtONB04ilcCVLu7FIbou4vFqN6LXdD4EChwlXoIV8z1jcllGNzj61QoPxsfyy3T8ZyriUNAHcZJb7cOoJOJuMVCnUzxi6yak5SNPzxgAjSceipUQJlzUlSZONwM0yGJpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vTgD0L/K; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea94c7cso334210b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:56:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755719780; x=1756324580; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ktglgwpYXxtvm/5NhCfS+CAvyyI+5EGT6SfLe6CPLiw=;
+        b=vTgD0L/K0Eq827VMs8mMk5OnfRj9VMVBM9Nqm6i7avZ4AuIWZ06keuWDDoyDH7ErfX
+         TtsXTBjCLI6IcQAk8eS//s0d1EYtLV+JyocFxED+a5OVKgw6jdOXoi3zNjTwDJwCYXWK
+         bU8O3dLSBkGTdpz+ClaPSJx9OyB7uRScg0sIY/zRHcgUoC/Z0qtkuloboAnmgFM5KD82
+         a7QjOtn7f3IqKfH4jalRsBbvFIzdytACeP5SNgAC5LZGKYQLtbPQ3XvPcxH6f5f5ai/k
+         KQ9UGmw5qPoxVBH6U1Wk8hxFa3HvmPocSV5aJzsZBnAGgydw5kLhJMNfAA7q53rNUhDu
+         U9rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755719780; x=1756324580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ktglgwpYXxtvm/5NhCfS+CAvyyI+5EGT6SfLe6CPLiw=;
+        b=eNEhbohNEl4ewbR/No2y7e4wnMspX8JscpRHpUfPV7fSIsmRBhALGeN3TszRLqmkfO
+         U0EGr7DnqyYn9hJ0l1H7wgq0GMSR0gLJdrT/5znm1ghQtRTBKuYM7vqaIyz/y0fQYel2
+         HQfkTWYyPOshAYe0/wTPy8WVsYbe8cV0HC5DSsDXq+u4IlQRPahvFUAEUisVY9bHpUBz
+         KtyS5RwogJWMBu6ReZQMWiy3sphnJ/AV+GQMvaEDdTf4MTBSBHHf6YSakkkYhIVFh065
+         bwZAQRAbIyKke4mZpImpJqKS5XixOqep5PLYDyInqq9rlnpDMNbVXVoA8Yb2mqBTZcm8
+         LJIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7v4vG88ga/bQgtwV7D0QTbwU3FKqOJDAip1eqH3wnOpkTiaLabhAch4eGGZ7htCIMvpqIfkbyLvufeF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKsZhvIhCrLQqwHK/n/Dh1hpwQvr4CcssxNM8fJI9K916u59Sa
+	OnOsjcYCUQnz9qEgjFv4tHUTF4Vmd74r/YgmCpDx1pB6Pk2DQtMQWDaPNbTBvmAHtww=
+X-Gm-Gg: ASbGnctfLS5pUwRx6tV1trPnOqEymDrMl7BoVhskQBoxdDK1HyzJA4IwDDDSnCOVOkT
+	WNDMxuoCSFm9zHd5tDyFHEffYONSQkTaYOBsHhMILhZcxDm2HNaG4YuEYQBgtIgKlM82DZS7TLQ
+	/IBqFvNVFYa/F1EpCQsJsvYmU0PCao8YRKzBtbaEdL1cSTXuC29NXU5S85INOik3myylQ4Q5j/B
+	dmlD4nan3GlxCpcworHQUw1ek6tqZ9lRM9bYHzS5C5+Q+bAJgJj/al7ChK1qX2XPx9B1ltSVEV0
+	NGbeuc/MPP9UaCVS+/tgTtGTJfz0FdXuF6SMzA0KS69iYL8LzhLe0Ts83/NaF/tbP/ldHaX5DTs
+	rQpA72r9okKQCfbb2LQiHu1pwGg==
+X-Google-Smtp-Source: AGHT+IE3GayEZrxMbfewQ2UCpBN/LwZ37KggyygIZMcR3e6q5d8IrJ1ER/jvr3e/ecjH7rpB99UwQg==
+X-Received: by 2002:a17:902:f54c:b0:240:2145:e526 with SMTP id d9443c01a7336-245febe145bmr165575ad.6.1755719779986;
+        Wed, 20 Aug 2025 12:56:19 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:ed3c:56fb:c00a:205e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed51a40fsm34318635ad.141.2025.08.20.12.56.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 12:56:19 -0700 (PDT)
+Date: Wed, 20 Aug 2025 13:56:17 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andrew Davis <afd@ti.com>,
+	Beleswar Prasad Padhi <b-padhi@ti.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hiago De Franco <hiago.franco@toradex.com>
+Subject: Re: [PATCH] remoteproc: ti_k3_common: remove remote processor
+ mailbox ping
+Message-ID: <aKYoYYMyzaGoW-al@p14s>
+References: <20250806-v1-fix-am62-hmp-suspend-v1-1-1c4a81bb5dde@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,108 +90,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Authority-Analysis: v=2.4 cv=To6/RDXh c=1 sm=1 tr=0 ts=68a627ee cx=c_pps
- a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=yP0fn3opPpjc5lNOb08A:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDE3MyBTYWx0ZWRfX0+k7eBl00/jT
- KQzWWLw7YZNVuAc1f+DXXC4nssEfMhMVxspKW4cukwieqgawNt5IBUqg5Pu9wq0eIT7Md2+oW9I
- 6r3llxMl6CVALIaOndEe6TR0INg+Iv4vriYTiawpN5JuUFDjhqVMTg2QO3Ind5uS1hpwG63ufEo
- OQOafY1M1lpsgQYJnpJA0fxaLMFC1xBvSDpLLqZmAGoGzDz2J4c4sgGsYrhGTEYwFwGX811j71z
- Zma5HUpIoidZMBKxc5K+lZLKf9GT7HFEO9M9ed7/+Syq3r17XF+7EcQ1tlcHGUUuU8N2PA6P9Dl
- bWWHUJZBpzrn/hR9Z3nmG5QTDAMivIzWNo85pwUo3TrUR0WZKlix7rrbf5Iue50tdXJG1cxSeq+
- EiuXZGBZe+ihQzRT4tSn4sQeWLEqUEv6vgtgr5KFxamgcR91vyM1cJ7nALIr73Up+CrKj1Vj
-X-Proofpoint-GUID: l4FpiNbqEvPDP-nyN6Xd4laHPFnY_2ys
-X-Proofpoint-ORIG-GUID: l4FpiNbqEvPDP-nyN6Xd4laHPFnY_2ys
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_05,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 clxscore=1015 adultscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- mlxlogscore=999 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
- definitions=main-2508200173
+In-Reply-To: <20250806-v1-fix-am62-hmp-suspend-v1-1-1c4a81bb5dde@toradex.com>
 
-Disable clocksource watchdog checking on recent and future UV platforms
-to avoid false positives.
+On Wed, Aug 06, 2025 at 02:48:17PM -0300, Hiago De Franco wrote:
+> From: Hiago De Franco <hiago.franco@toradex.com>
+> 
+> As of today, pinging the remote processor during k3_rproc_request_mbox()
+> does not have any functional effect. This behavior was originally based on
+> the OMAP remoteproc driver, where the idea was to send messages such as
+> suspend requests (among others) to the remote processor, but this was
+> never upstreamed.
+> 
+> Currently, the ping message has no effect in upstream usage and causes an
+> unread message to remain in the mailbox, which ultimately prevents the
+> system from entering suspend mode:
+> 
+> Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> printk: Suspending console(s) (use no_console_suspend to debug)
+> omap-mailbox 29000000.mailbox: fifo 1 has unexpected unread messages
+> omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
+> omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
+> 
+> The ping is only replied if the remote core firmware is capable of doing
+> it, otherwise the unread message stays into the mailbox.
+> 
+> Remove the ping and fix the suspend issue.
+> 
+> Suggested-by: Andrew Davis <afd@ti.com>
+> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> ---
+> Hi,
+> 
+> this is the result patch of the discussion from
+> 
+> https://lore.kernel.org/lkml/20250725150713.barg5lhqr4reoxv3@hiagonb/
+> ---
+>  drivers/remoteproc/ti_k3_common.c | 15 ---------------
+>  1 file changed, 15 deletions(-)
+>
 
-Commits 'b50db7095fe0 ("x86/tsc: Disable clocksource watchdog for TSC on
-qualified platforms")' and '233756a640be ("Extend watchdog check exemption
-to 4-Sockets platform")' were introduced to avoid an issue where the TSC
-is falsely declared unstable by exempting qualified platforms of up to
-4-sockets from TSC clocksource watchdog checking.  Extend that exemption
-to include recent and future UV platforms.
-
-Signed-off-by: Dimitri Sivanich <sivanich@hpe.com>
----
-
-Version 3:  Fixes a build error in the X86 32-bit build.
-
-Version 2:  Fixes a build error that occurs when UV is not configured.
-
- arch/x86/include/asm/uv/uv.h     | 3 +++
- arch/x86/include/asm/uv/uv_hub.h | 2 ++
- arch/x86/kernel/tsc.c            | 3 ++-
- 3 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/uv/uv.h b/arch/x86/include/asm/uv/uv.h
-index 648eb23fe7f0..f1aebdf85e68 100644
---- a/arch/x86/include/asm/uv/uv.h
-+++ b/arch/x86/include/asm/uv/uv.h
-@@ -38,6 +38,9 @@ static inline int is_uv_system(void)	{ return 0; }
- static inline int is_uv_hubbed(int uv)	{ return 0; }
- static inline void uv_cpu_init(void)	{ }
- static inline void uv_system_init(void)	{ }
-+static inline int is_uvx_hub(void) { return 0; }
-+static inline int is_uvy_hub(void) { return 0; }
-+static inline int is_uv_hub(void) { return 0; }
+Applied - thanks,
+Mathieu
  
- #endif	/* X86_UV */
- 
-diff --git a/arch/x86/include/asm/uv/uv_hub.h b/arch/x86/include/asm/uv/uv_hub.h
-index ea877fd83114..6e085ce8fc02 100644
---- a/arch/x86/include/asm/uv/uv_hub.h
-+++ b/arch/x86/include/asm/uv/uv_hub.h
-@@ -246,6 +246,7 @@ static inline int is_uv5_hub(void) { return is_uv(UV5); }
-  * then test if is UV4.
-  */
- 
-+#ifdef CONFIG_X86_UV
- /* UVX class: UV2,3,4 */
- static inline int is_uvx_hub(void) { return is_uv(UVX); }
- 
-@@ -254,6 +255,7 @@ static inline int is_uvy_hub(void) { return is_uv(UVY); }
- 
- /* Any UV Hubbed System */
- static inline int is_uv_hub(void) { return is_uv(UV_ANY); }
-+#endif
- 
- union uvh_apicid {
-     unsigned long       v;
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 87e749106dda..a9f97d423ab0 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -32,6 +32,7 @@
- #include <asm/msr.h>
- #include <asm/topology.h>
- #include <asm/uv/uv.h>
-+#include <asm/uv/uv_hub.h>
- #include <asm/sev.h>
- 
- unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
-@@ -1261,7 +1262,7 @@ static void __init check_system_tsc_reliable(void)
- 	if (boot_cpu_has(X86_FEATURE_CONSTANT_TSC) &&
- 	    boot_cpu_has(X86_FEATURE_NONSTOP_TSC) &&
- 	    boot_cpu_has(X86_FEATURE_TSC_ADJUST) &&
--	    topology_max_packages() <= 4)
-+	    (topology_max_packages() <= 4 || is_uvy_hub()))
- 		tsc_disable_clocksource_watchdog();
- }
- 
--- 
-2.43.0
-
+> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+> index d4f20900f33bdd92a59c62d0a7b166c4ad66ed16..8266e11914af87ac38977763099521dee4334348 100644
+> --- a/drivers/remoteproc/ti_k3_common.c
+> +++ b/drivers/remoteproc/ti_k3_common.c
+> @@ -160,7 +160,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>  	struct k3_rproc *kproc = rproc->priv;
+>  	struct mbox_client *client = &kproc->client;
+>  	struct device *dev = kproc->dev;
+> -	int ret;
+>  
+>  	client->dev = dev;
+>  	client->tx_done = NULL;
+> @@ -173,20 +172,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>  		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+>  				     "mbox_request_channel failed\n");
+>  
+> -	/*
+> -	 * Ping the remote processor, this is only for sanity-sake for now;
+> -	 * there is no functional effect whatsoever.
+> -	 *
+> -	 * Note that the reply will _not_ arrive immediately: this message
+> -	 * will wait in the mailbox fifo until the remote processor is booted.
+> -	 */
+> -	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+> -	if (ret < 0) {
+> -		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+> -		mbox_free_channel(kproc->mbox);
+> -		return ret;
+> -	}
+> -
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+> 
+> ---
+> base-commit: 6bcdbd62bd56e6d7383f9e06d9d148935b3c9b73
+> change-id: 20250805-v1-fix-am62-hmp-suspend-aed6a8de0225
+> 
+> Best regards,
+> -- 
+> Hiago De Franco <hiago.franco@toradex.com>
+> 
 
