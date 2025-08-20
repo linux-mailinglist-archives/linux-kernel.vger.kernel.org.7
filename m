@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-777063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2C1B2D4A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:16:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E4BB2D4AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B90189C989
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A024E4EAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE6D16F0FE;
-	Wed, 20 Aug 2025 07:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7732D47F5;
+	Wed, 20 Aug 2025 07:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDVl03nq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sx8dB9Pe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B9227B500;
-	Wed, 20 Aug 2025 07:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ADB2D375D;
+	Wed, 20 Aug 2025 07:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755674134; cv=none; b=Sg3QmE9UWten7JD8Ob2NhCAD0tUEh+o3Sw7fdbHRTQG7hCIyC1CzWurijHITDYJt6iFomCYkvebfG8hXKvpT+lU0FKh8uGqn62T4u6BO87q/VZ1SrGpAORL++rv2Ilmt7uIpODE4mfnDSz8mqh5WSfZfWAzph4MTB+zJnYqIbtM=
+	t=1755674140; cv=none; b=DXdjywLA2IH5aXcM+urHk0TjbQ8Q2ZJWk6EZVyKavY2XhFlwPAYrLHIq6MJAqINDdS4Q3WXozv3LFgdPsBgW2KOFwZ+z14hgwOBqFbUP4hc+Na5VvhcqWivgnxSOZbqPRInYzqYx/+KEoB82eGtKpavsz+32ZU5A1PtKbIcvApw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755674134; c=relaxed/simple;
-	bh=1zSdyzJIBXMoAaRMvgYTuw241oUQN7ZyJKqcvWRpilQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r6XQmGlmPgxuOlfFVFL9TF6HNnqbt8pCmSRTbyau5MxXm18Ax5fASxBFWGM3zsSPaUWnEn2c2BdTe8XucVNXDi79ffenMx384NmQoj7lwt8QI1IwaJIvYh3MSvdc9b5oUIKXy7VcZBQRwEwS4svOMpbq4dTjMPMdu7jD6mgKxTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDVl03nq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CB0C4CEEB;
-	Wed, 20 Aug 2025 07:15:33 +0000 (UTC)
+	s=arc-20240116; t=1755674140; c=relaxed/simple;
+	bh=VUZK2MpAHgOKjVJ19+Bw5dSQafJ8hDSl6PCW3an6dGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2HOQ8UsvLbAdmDTIxzlwwESoTeKgFmqqQUbwisr/JqC7Z6I0FzM6jmInZ1PnortTKylEWnVAYyykmMWLhf0WkD3vZrlwFCd/IxlSk/GkqQAmnHU4XCalywCjws3oSVQAcXCiWsUgNYh4zeQCtz2rU8PP1X0sTL1KcQ4XWooK1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sx8dB9Pe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56AD9C4CEEB;
+	Wed, 20 Aug 2025 07:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755674134;
-	bh=1zSdyzJIBXMoAaRMvgYTuw241oUQN7ZyJKqcvWRpilQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hDVl03nqhGm7GjdYzV7y2+NEigb2qGneyyRRCF9U1p+KRCp6c3/cg2RDceHQm7XqD
-	 js1lMFWZVQkKeCCbJUk/2HsOOYRjNdcLX6N4d6msEKelFCeejImGBPWR/4yqBXpg53
-	 jVFrZ1WdYMPw3OB5WoKQhQfPevMDO1txjK8pgwthSLWEsWZDAxu6rZLwtJ7xD2BHPx
-	 m3StMwAYrs2WDZhgFljUiYHK9ph4mXgHg/FqEaFSKULvRwtt8/kRZLQ+MidRA3tfU7
-	 nNVmnENtWjT0qvvy3iLexgqQKrin0IBWN4hkaFdnnAs9KxvytJ5Sv/1+Z2bQ3tijd9
-	 kmBDqnd8BPa8A==
-Date: Wed, 20 Aug 2025 09:15:30 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-Message-ID: <20250820091530.068c4b62@foz.lan>
-In-Reply-To: <08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
-References: <cover.1755256868.git.mchehab+huawei@kernel.org>
-	<773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
-	<20250816135538.733b80d3@foz.lan>
-	<acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
-	<20250817133606.79d968ed@sal.lan>
-	<b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
-	<20250817154544.78d61029@foz.lan>
-	<b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
-	<87y0rg7e35.fsf@trenco.lwn.net>
-	<16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
-	<20250819030239.41a2e97f@foz.lan>
-	<142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
-	<20250819153200.3c2b2ff6@foz.lan>
-	<08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1755674139;
+	bh=VUZK2MpAHgOKjVJ19+Bw5dSQafJ8hDSl6PCW3an6dGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sx8dB9PeWGSZSptzXrYkdKAPu+omWGi87iV7Xw1hJgw/Wq5qWmFmk8M0JSXuBU50P
+	 J7gY9snTH8/n7QZTUoeJCD2SySao8w30ErNueMapvrxBXavnb6r9uTnFkTgk/fzGob
+	 jzoq894mOGpg3VKGvLwR26HV4oxvOp9dm0FEr440za8iUcIS53GrDersOBPgHj9N3J
+	 s7UEYqcVLvDf5bVAvj8oUq1Sww8fhN+Szx2SaC+TBdqXzCtu6sygVFdGsyoPhu3qVm
+	 IhZB81QfYdtuNGdt+6l07jQBL0Pj3+BVEt7yhMmHrsf4e3cUirEcp/++PBl12RCSFc
+	 YuBfy7Vnl2Rzg==
+Date: Wed, 20 Aug 2025 09:15:36 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/8] drm/connector: let drivers declare infoframes as
+ unsupported
+Message-ID: <20250820-artichoke-silkworm-of-election-521b5e@houat>
+References: <20250819-drm-limit-infoframes-v2-0-7595dda24fbd@oss.qualcomm.com>
+ <20250819-drm-limit-infoframes-v2-1-7595dda24fbd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ovoxo52sdrhbbtrx"
+Content-Disposition: inline
+In-Reply-To: <20250819-drm-limit-infoframes-v2-1-7595dda24fbd@oss.qualcomm.com>
 
-Em Wed, 20 Aug 2025 08:54:52 +0900
-Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-> On Tue, 19 Aug 2025 15:32:00 +0200, Mauro Carvalho Chehab wrote:
-> > Em Tue, 19 Aug 2025 11:16:29 +0900
-> > Akira Yokosawa <akiyks@gmail.com> escreveu:  
-> 
-> [...]
-> 
-> >> That's all I am asking.
-> >>
-> >> I have no particular interest in the way you are testing all those
-> >> variety of distros, and have no idea about it.
-> >>
-> >> Please provide steps to reproduce.
-> >> I'd like to see a Dockerfile based "FROM ubuntu:latest" as the testing
-> >> environment.  
-> > 
-> > Heh, that's why you can't reproduce... you're using a Docker container
-> > and a different Ubuntu version than I.
-> > 
-> > What I did here was to use a lxc container with 25.04, and used
-> > a script to pick the exact recommendations given by sphinx-pre-install.
-> > 
-> > The container was created with:
-> >  
-> 
-> [...]
-> 
-> > once you get what's needed for make htmldocs work, installing
-> > only the dependencies recommended by sphinx-pre-install, you can
-> > start trying to reproduce the build issues for pdf.  
-> 
-> I've just built a container "FROM ubuntu:plucky", which has inkscape
-> instead of imagemagick + rsvg-convert.
+--ovoxo52sdrhbbtrx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/8] drm/connector: let drivers declare infoframes as
+ unsupported
+MIME-Version: 1.0
 
-I don't think that inkscape x imagemagick/rsvg-convert itself has
-anyhting to do with the problems I detected, as they're related to
-font issues (still, I got an issue on one of my builds on kfigure
-write file: encoding is missing at open, which may cause errors).
+Hi,
 
-Yet, installing imagemagick + rsvg-convert might affect some other
-packages that LaTeX would use.
+On Tue, Aug 19, 2025 at 09:57:30PM +0300, Dmitry Baryshkov wrote:
+> Currently DRM framework expects that the HDMI connector driver supports
+> all infoframe types: it generates the data as required and calls into
+> the driver to program all of them, letting the driver to soft-fail if
+> the infoframe is unsupported. This has a major drawback on userspace
+> API: the framework also registers debugfs files for all Infoframe types,
+> possibly surprising the users when infoframe is visible in the debugfs
+> file, but it is not visible on the wire.
+>=20
+> Let drivers declare that they support only a subset of infoframes,
+> creating a more consistent interface.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-> I don't see any font issue at 4/11 of this series under the container
-> (I'm using podman).
-> 
-> Furthermore, after I applied both of your series and the change for
-> parallel runs of xelatex/latexmk and reverting the 5/11, I don't see
-> any issue.
-> 
-> Which strongly suggests 5/11 is not fixing any realistic issues.
-> 
-> FWIW, Dockerfile I'm using for building the container is derived from the
-> one I've been taking care of since 2021 as a LaTeX advisor to perfbook.
-> 
-> If you are interested, here is its repo of Paul:
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/perfbook.git
-> 
-> You might be interested in seeing docker/Dockerfile.
-> 
-> I think there is something you are missing in the boot strapping phases
-> of building your container.
-> 
-> Just my wild guess.
+I'm not really convinced. Infoframes aren't really something you should
+ignore, AVI is effectively mandatory, HDMI kind of is too, AUDIO is if
+audio support is enabled, DRM is mandatory if HDR is used.
 
-Just because you can't reproduce the issue, it doesn't mean it doesn't
-exist. LaTeX builds are complex having it has lots of dependencies,
-and may be affected by installed fonts, LC_* and LANG env vars, etc.
+SPD is indeed optional though.
 
-It should be noticed that a Docker container doesn't have the same
-packages installed when compared with a LXC one.
+So, it's really dynamic in essence, and not really something we should
+expect drivers to ignore.
 
--
+I do acknowledge that a lot of drivers just silently ignore the
+infoframes they don't support at the moment, which isn't great either.
 
-IMO, instead of trying to reproduce the bug that was already fixed
-by my patches, it would be a way more important if you can double
-check if the changes introduce regressions.
+Maybe we should standardize and document what drivers should do when
+they don't support a given infoframe type?
 
-I'm planning to submit a new version of this series, with this
-patch split into 3 patches, with a better description, plus a
-couple of other fixes. If you notice a regression caused by any
-of the patches, please let us know, preferably pointing the the exact
-patch that broke it. 
+Something like return EOPNOTSUPP if you don't support it, and we warn in
+the core if we get one for a mandatory infoframe?
 
-Thanks,
-Mauro
+Maxime
+
+--ovoxo52sdrhbbtrx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKV2FAAKCRAnX84Zoj2+
+dqXvAX0bvYzEBhvkZZcbwX8EsIm26JAHz/mS0cz6qC9clfhYyvLbKY2RswgLRcH0
+zdXoEXIBf1jm8cvKLzdlBWGxds9iQj9mYUOq/VxFsp7UhMYL7asc5mdt46fMCoym
+hEIMma0gbA==
+=7QRV
+-----END PGP SIGNATURE-----
+
+--ovoxo52sdrhbbtrx--
 
