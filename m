@@ -1,86 +1,101 @@
-Return-Path: <linux-kernel+bounces-777806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A060B2DE14
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:41:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8214EB2DE0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1723ABE90
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:37:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B29D583E6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29718322548;
-	Wed, 20 Aug 2025 13:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E0932275F;
+	Wed, 20 Aug 2025 13:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLr4oPvV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BMyk2AYe"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE3332253C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09D931E10D;
+	Wed, 20 Aug 2025 13:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696885; cv=none; b=GmlnxMV+3WHE48lq+If4nVvLsy1fnY9/aotTZmat6WweemgIEFJyxqNpT61RvQhtXdq0w9coctg7TCAW+d6xpKtWrIOBfBE/gz7S2gEQCZOzifSvKrFtJiaVWIlESPxd84ehckf2jWutYhecVr/JYFs9t0ze0mtJAzGVZah2zwY=
+	t=1755696897; cv=none; b=GdTGCNTQPvVF4A+QmYo7EmJqcOGV9HOK6IRM4ZOphUVjWjojPBlIn5rALnqq2qQprjrr+M2/5Hv8Zu+PJoFr19qC7m+Q6ub91Y75Dn4ko3Jti9Mlpk6tdidBXEqm3pJp1WJxh/I602SSzKukGpJ2KYKdrg9aWQDNhM5NZxJlpV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696885; c=relaxed/simple;
-	bh=fJG50JT0OUNU51LWIaGFHJLmpQ0f1RLLrMGdC8SZ9GI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=boiC+srPjgkqwc5TWh0HWkzWYPT8dP96wEaQS8h94pEh4ug8h/oeYsEjNEJekvSAcF/kztwkNTmNX50Y819gbDmomZPSdjZQRINMdlD9DUdaMfRJwPkHPyiqGhRLK1e/xu9CSNIFPq9WD8qPRwNwdbQXDL001viNblPfrnXZI+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLr4oPvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 543CDC4CEEB;
-	Wed, 20 Aug 2025 13:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755696884;
-	bh=fJG50JT0OUNU51LWIaGFHJLmpQ0f1RLLrMGdC8SZ9GI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qLr4oPvVb4qUicIKYCUNynW3uqKX1oWEGwoqtxQoEeUQpzfEf3A22qzmH1HkLQH9Z
-	 3g3bycoIfeINnnilpl0gqYbgKGgXBqns8yLwNnHhQ9U4QUVnrVOoRjAt5wTTvjvuLq
-	 QdbIzc31UmU7eols2VPyhEgVqcwGPWmbq7ODLLasi82lTOoeqhtkT1wasHyYNv4PdQ
-	 YD7Oshwf9WBr9mDCyPb7FwtZ3nJa/aO02YRfHzp+2Wir87z7Rb9IkYcZQEcI/+asXF
-	 7hYlPIJlz+6ZIbOBrmkI+WwTDck8+QAwjnCYZfdwA1aiBZLCJDGeY3BqPBZreysmDG
-	 z+ETbpso4yauQ==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	pratyush.brahma@oss.qualcomm.com
-Cc: Mike Rapoport <rppt@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/numa: Use SZ_1M macro to denote bytes to MB conversion
-Date: Wed, 20 Aug 2025 16:34:38 +0300
-Message-ID: <175569679035.1410601.2889611634297884263.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250820-numa-memblks-refac-v2-1-43bf1af02acd@oss.qualcomm.com>
-References: <20250820-numa-memblks-refac-v2-1-43bf1af02acd@oss.qualcomm.com>
+	s=arc-20240116; t=1755696897; c=relaxed/simple;
+	bh=CXQSwAv8e6eEfacG/HeYdxYzZSrhuUbOicdQbourYnc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BxQz4X0lDO5ECWXxu55oEFXDgO1CXKhg8DZei9pJc2TN24R9clt+jAvPHJcvlHQ3OGEpSYW+xtNJWgk3ZKmz9gxNZNcuHRQcR18jdQaZf8UifphHxxBy8RPVccSaLVlWci4RIK4DGYQA+j32gnaliwiSfF+vwVP5A59pociwnAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BMyk2AYe; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755696894;
+	bh=CXQSwAv8e6eEfacG/HeYdxYzZSrhuUbOicdQbourYnc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=BMyk2AYeLys2RolPoykxrhvNbeytaoF2/aKwgif7GzLleZCp2kTE5vHm5rsTNPH/9
+	 wRxe1QgO5JRhTIelbfqDkmKX6vs1zhr7/ROYfDwXjLpBt/AG2VrjNl8hiDh1h/htNm
+	 IytmPOMbYs3FKvK6FJ0fNXcWrwW+xQ4BATx/7a9O+D/rvH0RClxrICXYvHY23U6Xr/
+	 LmqE3lHwB99RvuFO5LQLTAjXGVMlIYunVwGj0pRrkl8O33F18PYSKyyIjexX+O7gO4
+	 t4KYJujfi0dUClNfSgIfIBkC/Lx/oTo76KmPAtaXRQYyIOtbLDJw6tn4iPnMYJmJdh
+	 KQ+kdM7IIBeFA==
+Received: from localhost-live.home (2a01cb0892F2D600C8F85Cf092D4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0D76817E02B0;
+	Wed, 20 Aug 2025 15:34:53 +0200 (CEST)
+Message-ID: <5ae569e8a1b3d00408d8ad4e934a4585a7479f7e.camel@collabora.com>
+Subject: Re: [PATCH 6/9] ASoC: dt-binding: Convert MediaTek mt8183-mt6358
+ bindings to YAML
+From: Julien Massot <julien.massot@collabora.com>
+To: Rob Herring <robh@kernel.org>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
+ <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
+ Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
+	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
+ Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Wed, 20 Aug 2025 15:34:52 +0200
+In-Reply-To: <20250801172927.GA3114452-robh@kernel.org>
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+	 <20250801-mtk-dtb-warnings-v1-6-6ba4e432427b@collabora.com>
+	 <20250801172927.GA3114452-robh@kernel.org>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-From: Mike Rapoport (Microsoft) <rppt@kernel.org>
+On Fri, 2025-08-01 at 12:29 -0500, Rob Herring wrote:
+> On Fri, Aug 01, 2025 at 01:18:08PM +0200, Julien Massot wrote:
+> > Convert the existing text-based DT binding for MT8183 sound cards using
+> > MT6358 and various other codecs to a YAML schema.
+> >=20
+> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> > ---
+> > =C2=A0.../sound/mt8183-mt6358-ts3a227-max98357.txt=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 25 ---------
+> > =C2=A0.../devicetree/bindings/sound/mt8183-mt6358.yaml=C2=A0=C2=A0 | 59=
+ ++++++++++++++++++++++
+>=20
+> mediatek,mt8183_mt6358_ts3a227.yaml
 
-On Wed, 20 Aug 2025 06:29:34 +0530, pratyush.brahma@oss.qualcomm.com wrote:
-> Replace the manual bitwise conversion of bytes to MB with
-> SZ_1M macro, a standard macro used within the mm subsystem,
-> to improve readability.
-> 
-> 
-
-Applied to fixes branch of memblock.git tree, thanks!
-
-I've updated the commit subject:
-[1/1] mm: numa,memblock: Use SZ_1M macro to denote bytes to MB conversion
-      commit: 4647c4deadcc17f40858be06bcf416369a8f1d57
-
-tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
-branch: fixes
-
---
-Sincerely yours,
-Mike.
-
+Ok, Thanks for the review.
+Julien
 
