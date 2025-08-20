@@ -1,221 +1,155 @@
-Return-Path: <linux-kernel+bounces-777422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE63B2D933
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62DEB2D93C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 682875C5342
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB4243AD160
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99F32DE200;
-	Wed, 20 Aug 2025 09:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4292B2E22B0;
+	Wed, 20 Aug 2025 09:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WhczS5GU"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iVd2/qN4"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B329B2DCF69
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D6C2E3B15;
+	Wed, 20 Aug 2025 09:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682980; cv=none; b=UdBAO/NGsIIjU+DURqwpHyh3ch72I9piFWuKknyBumNxcnlz46BOJL9AKUzLcKRzSpI0gTnI5hy+VVAeIkl5hGKZqpBDg4W3O9dVL0v4MU36Ui/JlSgPsT9c08JFaLZpPuX9BBsVBHgwv3+haOVc76l2wFV8PF2e0U9L8yWY344=
+	t=1755683006; cv=none; b=Giy8SplGNae6f7IHZy6jjLax7+dEwKF1cggjTh6TTJnGX5gzGt2E9YPWBzn73cpA277XJI+LxNXLbzKCWu4s9ebtraY4IHhyZ88itbC4MJhaLTiZFTfCoMI/nIUf03i5+EgHRuGRcku/gP/k1hByKdadgUpaIuqLkltFf7pvurA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682980; c=relaxed/simple;
-	bh=tg9IjVPKeAoMTFuCx62Uncfr94ePF6KkIVlDLDMLWpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lc8jtidgg+jgS63NzuwKlQ0ccFRU9P5HlpD8MFFW9JZLHIk4UzpK8O3lJwdYuhem1WSom9wcuHHFRkF3CyL7KBLJB0uXidEt73pwVCtN1geRzp0TgB9Ctz4LS+EbiPzyotXW/8UgOV0DwKq2VRDC7c13uqgffR2ZYI0SiSl0oB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WhczS5GU; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 13FBB4E40BF5;
-	Wed, 20 Aug 2025 09:42:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D36E7606A0;
-	Wed, 20 Aug 2025 09:42:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 534981C22D68B;
-	Wed, 20 Aug 2025 11:42:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755682974; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=zfvFfiyxPXbBfvwJE5bTDjBpTAzKbRTBc/ZQyDkJoz8=;
-	b=WhczS5GUqPCbwutj7Eq0AMzsZV6det/s0AO9qWO0ei2wr5RMwi+wcFptCoSCLBpJUJiJ3c
-	D+XrnoGOtRMY+T9InT42UKwpaLqEfpD36ugR3SCI8nv4qGfTWl5n+rmcdalgXqQfY4bu7T
-	iH7JrcKU860ZXU8yQA7qvpODkBrtSN7ThKhUx/RkeqIwa6w2bLr49Qpu+vuVLFLXPXXNX4
-	ZsRT9N8h9K6q0J0Soqr2utbOa+65c4Lm/HWZqr7x2sYefuqPjbcos/kiPYbpQkFNeBO7Or
-	912AyA4s88vlrn/1dsA7+i66TGPN+UdF90dlXcaNrNXCaIF20AuMDOwsph80JA==
-Date: Wed, 20 Aug 2025 11:41:58 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Donald Hunter
- <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Heiner
- Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, Nishanth Menon
- <nm@ti.com>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
- linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
- <roan@protonic.nl>
-Subject: Re: [PATCH net-next v3 2/5] ethtool: netlink: add
- ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
-Message-ID: <20250820114158.187a5043@kmaincent-XPS-13-7390>
-In-Reply-To: <20250819071256.3392659-3-o.rempel@pengutronix.de>
-References: <20250819071256.3392659-1-o.rempel@pengutronix.de>
-	<20250819071256.3392659-3-o.rempel@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755683006; c=relaxed/simple;
+	bh=pZd0AyTtMW4T9v3lPr/fbHbSMmV1kbXFbKhPDmLPbGw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=SVFjkdpsHO1YP72uIFhGD7dGGAzNNiQqRX8aICjUuqLMaqhpF0VQEJUng6GxdVlXr0/7ZDlPANbcQY5fMSaz7cnZ4ZrglPLtVA5If7r3z8BntxITpzWiGkYGmUWymePu3/iUCNU6pQCPWyfV/1q11hz+/4xxWdpsbTv6Wa0H1Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iVd2/qN4; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755682996; x=1756287796; i=markus.elfring@web.de;
+	bh=9GUVOi4zaxWUubC0jqwvWk+ixLptFXpzUwHRUh/T7ws=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iVd2/qN4X6Qu/6irZMw/q6GNcQUYPA8UgjKFwdTNWNMlImXR2k70SAJKCs+gvMws
+	 AIZBRqSgZ/G3lByLOScZR5h8NKSyU5QA85MG9XJE5/028nX2ZHy5wfJJuODQ41WVU
+	 AgGx2IpVga/is9U0S7rJwj32zdLsifKC7NZX8yAkXfEfc7cK5Jl+e4bMUpJ1lSQ+a
+	 E0456/Y1+vruh8EMGh3nE+NqQmy05ukm92GsnAhyJff0eqCY6NC2gK2te0eyXmjzb
+	 u+NmKvcMM5Wkwp4YdBHIIlxazovXDl7tNnoVaD06nfTo0weolIN9dBtUbu7x9JOWv
+	 aGs7nVaA0V8lgUZaCA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.226]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N5CUp-1uMraL2FJV-00yRGY; Wed, 20
+ Aug 2025 11:43:16 +0200
+Message-ID: <35d4fc68-fe57-464e-a651-eede49fbf00f@web.de>
+Date: Wed, 20 Aug 2025 11:43:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: huhai@kylinos.cn, linux-unionfs@vger.kernel.org
+Cc: hhtracer@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
+References: <20250820092848.534-1-huhai@kylinos.cn>
+Subject: Re: [PATCH] ovl: only assign err on error path
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250820092848.534-1-huhai@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+X-Provags-ID: V03:K1:PzeuRhRioR6tgeBL/sfrYJascYhrxYj/h2Oo5mmMxMOWUTloBE0
+ Bo6ihD+yg3tPkBjynPNkwsSdYBqTgz3GU1J0V5OzyuF7S5N9snSDB6UO+bljVHaSqRm59WD
+ iT62Y0BsAan6dkQQ1NNPbvHA1thDP96f2Ir4YNfgyNYL6AMAmjwSzREONrRgqeUA7KJXReJ
+ 3JTHcFuSjBulxlI9q5N8g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/7yQa+xvO+0=;YzZME5+vx0MSkd24S6Z2CP9hfHc
+ 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
+ 9WzX9RA=
 
-Le Tue, 19 Aug 2025 09:12:53 +0200,
-Oleksij Rempel <o.rempel@pengutronix.de> a =C3=A9crit :
-
-> Introduce the userspace entry point for PHY MSE diagnostics via
-> ethtool netlink. This exposes the core API added previously and
-> returns both configuration and one or more snapshots.
->=20
-> Userspace sends ETHTOOL_MSG_MSE_GET with an optional channel
-> selector. The reply carries:
->   - ETHTOOL_A_MSE_CONFIG: scale limits, timing, and supported
->     capability bitmask
->   - ETHTOOL_A_MSE_SNAPSHOT+: one or more snapshots, each tagged
->     with the selected channel
->=20
-> If no channel is requested, the kernel returns snapshots for all
-> supported selectors (per=E2=80=91channel if available, otherwise WORST,
-> otherwise LINK). Requests for unsupported selectors fail with
-> -EOPNOTSUPP; link down returns -ENOLINK.
->=20
-> Changes:
->   - YAML: add attribute sets (mse, mse-config, mse-snapshot) and
->     the mse-get operation
->   - UAPI (generated): add ETHTOOL_A_MSE_* enums and message IDs,
->     ETHTOOL_MSG_MSE_GET/REPLY
->   - ethtool core: add net/ethtool/mse.c implementing the request,
->     register genl op, and hook into ethnl dispatch
->   - docs: document MSE_GET in ethtool-netlink.rst
->=20
-> The include/uapi/linux/ethtool_netlink_generated.h is generated
-> from Documentation/netlink/specs/ethtool.yaml.
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+=E2=80=A6
+> Signed-off-by: huhai <huhai@kylinos.cn>
 > ---
->  Documentation/netlink/specs/ethtool.yaml      |  88 +++++
->  Documentation/networking/ethtool-netlink.rst  |  65 ++++
->  .../uapi/linux/ethtool_netlink_generated.h    |  37 ++
->  net/ethtool/Makefile                          |   2 +-
->  net/ethtool/mse.c                             | 362 ++++++++++++++++++
->  net/ethtool/netlink.c                         |  10 +
->  net/ethtool/netlink.h                         |   2 +
->  7 files changed, 565 insertions(+), 1 deletion(-)
->  create mode 100644 net/ethtool/mse.c
->=20
-> diff --git a/Documentation/netlink/specs/ethtool.yaml
-> b/Documentation/netlink/specs/ethtool.yaml index 6bffac0904f1..ed4774826b=
-16
-> 100644 --- a/Documentation/netlink/specs/ethtool.yaml
-> +++ b/Documentation/netlink/specs/ethtool.yaml
-> @@ -1872,6 +1872,79 @@ attribute-sets:
->          type: uint
->          enum: pse-event
->          doc: List of events reported by the PSE controller
-> +  -
-> +    name: mse-config
-> +    attr-cnt-name: __ethtool-a-mse-config-cnt
+>  fs/overlayfs/super.c | 2 +-
+=E2=80=A6
 
-Please use double dash here, Jakub wants to remove all underscore from the
-specs.
+Should the personal name be usually different from an email identifier
+according to requirements of the Developer's Certificate of Origin?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17-rc2#n436
 
-> +  -
-> +    name: mse-snapshot
-> +    attr-cnt-name: __ethtool-a-mse-snapshot-cnt
-
-Same
-
-> +    name: mse
-> +    attr-cnt-name: __ethtool-a-mse-cnt
-
-Same
-
-...
-
-> +MSE Configuration
-> +-----------------
-> +
-> +This nested attribute contains the full configuration properties for the=
- MSE
-> +measurements
-> +
-> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =
-=3D=3D=3D=3D=3D=3D
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +  ETHTOOL_A_MSE_CONFIG_MAX_AVERAGE_MSE             u32     max avg_mse s=
-cale
-> +  ETHTOOL_A_MSE_CONFIG_MAX_PEAK_MSE                u32     max peak_mse =
-scale
-> +  ETHTOOL_A_MSE_CONFIG_REFRESH_RATE_PS             u64     sample rate (=
-ps)
-> +  ETHTOOL_A_MSE_CONFIG_NUM_SYMBOLS                 u64     symbols per s=
-ample
-> +  ETHTOOL_A_MSE_CONFIG_SUPPORTED_CAPS              bitset  capability bi=
-tmask
-> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =
-=3D=3D=3D=3D=3D=3D
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D +
-> +.. kernel-doc:: include/linux/phy.h
-> +    :identifiers: phy_mse_config
-> +
-> +.. kernel-doc:: include/uapi/linux/ethtool_netlink_generated.h
-> +    :identifiers: phy_mse_snapshot
-
-I think you forgot to remove this kernel-doc lines as the MSE snapshot is
-described below.
-
-> +
-> +MSE Snapshot
-> +------------
-> +
-> +This nested attribute contains an atomic snapshot of MSE values for a
-> specific +channel or for the link as a whole.
-> +
-> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =
-=3D=3D=3D=3D=3D=3D
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +  ETHTOOL_A_MSE_SNAPSHOT_CHANNEL                   u32     channel enum =
-value
-> +  ETHTOOL_A_MSE_SNAPSHOT_AVERAGE_MSE               u32     average MSE v=
-alue
-> +  ETHTOOL_A_MSE_SNAPSHOT_PEAK_MSE                  u32     current peak =
-MSE
-> +  ETHTOOL_A_MSE_SNAPSHOT_WORST_PEAK_MSE            u32     worst-case pe=
-ak
-> MSE
-> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =
-=3D=3D=3D=3D=3D=3D
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D +
-> +.. kernel-doc:: include/linux/phy.h
-> +    :identifiers: phy_mse_snapshot
-> +
->  Request translation
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Regards,
+Markus
 
