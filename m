@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-778248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3530B2E30A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:11:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE697B2E3E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45CB6A213E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1476015E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDF4334709;
-	Wed, 20 Aug 2025 17:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B0433CEA0;
+	Wed, 20 Aug 2025 17:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyeacAxq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bues.ch header.i=@bues.ch header.b="mrPkyzU6"
+Received: from mail.bues.ch (bues.ch [116.203.120.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B02332C300;
-	Wed, 20 Aug 2025 17:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0C833A004;
+	Wed, 20 Aug 2025 17:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.120.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709839; cv=none; b=lqmf5ie0md2vShhQ0Czb+Gn8XBNEWO8oupMI0RNaC7iSNgZoEJA4MAS/g60t5lbQ2l8YCv+98WWtwgoHjIHWOczBI7IQOpQmnhJ5s9p8HQYPjGdnpj4+BJFgFgiBVWoj/TOaeXAMdUzDLBeEeOI/LgWsSkv9z7pXJB2L1CidfAg=
+	t=1755710400; cv=none; b=dcMnNUdeqYrGOSj0WQE1jEfSggAhWZEh7avYs/DDR/aLZTI6aArouxcPQYNcv+e37hvFhTzM8sYn3iIq8c8fkJZsL3AOsfEfJ5HzrLqv16qjMAPYP/neO5IPM4XW8Qxsrq6nmoGDpEN6LHdMlvkZ5EAlaImWoStHFeIp0ul3FUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709839; c=relaxed/simple;
-	bh=8yBYVlTmuSfYyKpGmWLZFO2hyNANnEjDzENZL8tfRTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HKhTMofcM4pC6TXsb/R6nqtnL5U+bdf6dFJ05z1CRt2kwegLyfeclV41EjwlV8a9ZVvfPyN58gXk0vJ3Xs+0lXSgCWfVDDwNUTA8UIfe/SP77b0A7+AkLd0V95PwE1NaTaN4UJyekhq1lROCbTf6q3FyKEUBh/7ChcaUXoll/j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyeacAxq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FBEC4CEE7;
-	Wed, 20 Aug 2025 17:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755709836;
-	bh=8yBYVlTmuSfYyKpGmWLZFO2hyNANnEjDzENZL8tfRTo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SyeacAxqb/19ouF28LEr7auDF68bzFfdtqyhL+r1Bzmm+d5f3GoIOl5ete9PZ7CjC
-	 0Wu9aOwHTtAerDU0dkjO5Nb4/iZLv9qt2pOi0tV6QMwIZqFE4fMqkB6Ix3ogcj3kDP
-	 UujfUxWLrAHd2BkY/eM4tK0CULpY2Y0bSjBVl0NosHXwFW1SQhT9yYm37MiOqBC9/Y
-	 jE3dYpjFScLJPu6iJg8IP6efFpjMpAud2PkXRFY0dbJFm8s5OXLi/eOUbLQWBuplhd
-	 kNfi/dBaB3I7NyfgIax2kRWfOPXpPUDUSTYgP4K60KzmFxJqsSFPmIo2TK5DXe7Jg+
-	 mpKGefU62J/Ig==
-Date: Wed, 20 Aug 2025 16:10:30 -0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
-Cc: "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>, 
-	"joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>, "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>, 
-	"tursulin@ursulin.net" <tursulin@ursulin.net>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, "oe-lkp@lists.linux.dev" <oe-lkp@lists.linux.dev>, 
-	"lkp@intel.com" <lkp@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"oliver.sang@intel.com" <oliver.sang@intel.com>
-Subject: Re: [PATCH 2/2] drm/i915: Fix incorrect error handling in
- shmem_pwrite()
-Message-ID: <nd2sd2vdwif242wslgkaonuvskawho36bp6j6a4caghauzx6f5@dgkaow5idqxt>
-References: <20250811093050.38930-1-chentaotao@didiglobal.com>
- <20250811093050.38930-2-chentaotao@didiglobal.com>
+	s=arc-20240116; t=1755710400; c=relaxed/simple;
+	bh=p174+Eh9XAmNMgbrKhEkVjmTUSlXzZKuRgobxcqkPrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YB8xy9muhMMyhguOsa9WPbrpz8GxkLbUEqfYGaegQKTlagcW/QeaR3EK55cNq2g9w9MkOlxfgFGbytI0I1lVFoZ/wQDhSWz87hr9WQFAmEZZMLzd5cCDIzzrnTu3TIlG00+G1kFsZ8fyOgOgvD1qRm7r+1oFxX/PYVHQk0kakRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bues.ch; spf=pass smtp.mailfrom=bues.ch; dkim=pass (2048-bit key) header.d=bues.ch header.i=@bues.ch header.b=mrPkyzU6; arc=none smtp.client-ip=116.203.120.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bues.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
+Date: Wed, 20 Aug 2025 19:10:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bues.ch; s=main;
+	t=1755709872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p174+Eh9XAmNMgbrKhEkVjmTUSlXzZKuRgobxcqkPrM=;
+	b=mrPkyzU62ByK8uGx1mNmesSR4xO/mcSPHp+Ec1VriviCTHS/wznJ/a/bV11/qGjRXBQuOU
+	oOnH9rvX3kWmtZ6BNdyzUGy3egwRmAusoVZAVXi08/ozv69KG6awsERlmG3FT1w79mRNxL
+	Uz7KHmrxvBWopIYFA3nXKp6MR5PnTG70ZBxxs6kCGRBk0kKBCMjQdmofo84DHWv2aSuk/g
+	PmqzrvxzEEq92c2qNpr3vAHDjcaLs5nhyqONUIDbvTf/YttA2LDKWrmsuHpj/G23EUxvqG
+	KngrJ0cICVWqvjyDjhYHZH7iYAaWmHycHAcRnZxkdF0JKrDAi8nu4XMBwjiA0w==
+From: Michael =?UTF-8?B?QsO8c2No?= <mb@bues.ch>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Doug Berger <opendmb@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Michael
+ Buesch <m@bues.ch>, Hoan Tran <hoan@os.amperecomputing.com>, Andy
+ Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>, Romain
+ Perier <romain.perier@gmail.com>, Grygorii Strashko
+ <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin
+ Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+ Srinivas Neeli <srinivas.neeli@amd.com>, Michal Simek
+ <michal.simek@amd.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux@ew.tq-group.com
+Subject: Re: [PATCH 01/16] gpio: dwapb: Use modern PM macros
+Message-ID: <20250820191039.4f8af41e@barney>
+In-Reply-To: <CAHp75VfxSBPzvohrW4tywd4VS0r1_mp8WLvdKcN_yn=zNS49HQ@mail.gmail.com>
+References: <20250820154037.22228-1-jszhang@kernel.org>
+ <20250820154037.22228-2-jszhang@kernel.org>
+ <CAHp75VfxSBPzvohrW4tywd4VS0r1_mp8WLvdKcN_yn=zNS49HQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811093050.38930-2-chentaotao@didiglobal.com>
+Content-Type: multipart/signed; boundary="Sig_/pS1KmHMT0VTPklKxJ+M/HG5";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 
-Hi Taotao,
+--Sig_/pS1KmHMT0VTPklKxJ+M/HG5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 09:31:00AM +0000, 陈涛涛 Taotao Chen wrote:
-> From: Taotao Chen <chentaotao@didiglobal.com>
-> 
-> shmem_pwrite() currently checks for short writes before negative error
-> codes, which can overwrite real errors (e.g., -EFBIG) with -EIO.
-> Reorder the checks to return negative errors first, then handle short
-> writes.
-> 
-> Fixes: 048832a3f400 ("drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter")
+On Wed, 20 Aug 2025 19:54:44 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-I don't think we need the Fixes: tag here, in any case we return
-an error and -EIO is somehow correct.
+> > The dwapb_context structure is always embedded into struct
+> > dwapb_gpio_port to simplify code. Sure this brings a tiny 36 bytes
+> > data overhead for !CONFIG_PM_SLEP. =20
+>=20
+> I don't think it's a good approach to add a lot of data for peanuts in
+> case of PM_SLEEP=3Dn.
 
-With the Fixes removed:
+It wastes 36 bytes in case of PM=3Dn.
 
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+The driver currently allocates the struct with kzalloc and stores a pointer=
+ to it
+in case of PM=3Dy.
+So this probably has an overhead in the same order of magnitude (pointer +
+malloc overhead/alignment/fragmentation) in case of PM=3Dy now.
 
-Andi
+--=20
+Michael B=C3=BCsch
+https://bues.ch/
 
-> Signed-off-by: Taotao Chen <chentaotao@didiglobal.com>
-> ---
->  drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-> index 2b53aad915f5..702532eef207 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-> @@ -441,12 +441,12 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
->  	written = file->f_op->write_iter(&kiocb, &iter);
->  	BUG_ON(written == -EIOCBQUEUED);
->  
-> -	if (written != size)
-> -		return -EIO;
-> -
->  	if (written < 0)
->  		return written;
->  
-> +	if (written != size)
-> +		return -EIO;
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.34.1
+--Sig_/pS1KmHMT0VTPklKxJ+M/HG5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmimAY8ACgkQ9TK+HZCN
+iw5cNA/+NLyRCzoK1ETToeOTHdwwyQkiTbuBe6ELJDz1Fuk4Ao88nbQmFeISRwE5
+M4E1ojqTn1YTeerWFS0t/IPH/6bJk23TeOMNYmweblgBCiLVQ96UmN6iw0PaRnj7
+dJtLy/5/gKIHC6n5dw+Qo5cWsr+CvLJ3gwZF001XjGyEPBTjSLTQJmFgeJTb8mmg
+M96uB22AtpG727LqVenvf5VgeSIL+E9Pau0TdBA/xhxwTEDZZQpIYVL8blqYTUxQ
+FKcUOHINC2sPFIXTklyj/lkKMoveTjYXBMur3RSSm4k03jND2tQYBVGPFFFsi9A2
+jSw8fEkkY0OMvLJesxiJWWvzrowG0IGR09Ii0vzTFSyRru5kYoXbKDFUzfn1ii4E
+s6dd8RE/PrDEnI/vX8LrdxW3EzjcbBfu+6JrevevbI4ixLOQHA+usaUm15mQfDtH
+V3iPr1DsMwR0dbryYcjn9AUlxLDuWZEm8d2z92OrPLZG/Ta+ypGRo2GC71hlpUGk
+rxxsncdj+3drXfuVyX5n0WUVUMAY5qSr/qP8qHQPEdUwibkaOInrXIYf9SMvxdvD
+zIT0fPrtfuqynuWHyWW+peELaoj9Y+dimLZUmVv5DXOrfNnYCCbIGpxGNfHVtZqn
+oijZv6EsPyAZbHcR90Z2g9TxbrMT/lrn4JR5CZbBgZLQI+25TsA=
+=Dkpw
+-----END PGP SIGNATURE-----
+
+--Sig_/pS1KmHMT0VTPklKxJ+M/HG5--
 
