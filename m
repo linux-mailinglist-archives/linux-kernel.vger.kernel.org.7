@@ -1,91 +1,113 @@
-Return-Path: <linux-kernel+bounces-777723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDEDB2DD1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:57:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B64AB2DD1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B761C4157B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:57:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47967586265
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B8631A049;
-	Wed, 20 Aug 2025 12:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888CB308F11;
+	Wed, 20 Aug 2025 12:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBQfWlXE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="uqd944ju"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C9621ABB0;
-	Wed, 20 Aug 2025 12:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B3F2EBDCB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694619; cv=none; b=nvcHGymKRpeQX+29CoufUhamoY74MekDBfTQNk/bY65DdMjDNELTjW/kB+3Uy8ZY7o2VZ5HvypnXJRNNDbZxzYWViH16fOVmGPc6JY7IRrjb26GnvoT9ffbG0UlLUHHwiMy1TUEKWGgCeLo8Gz9+Ry3sV37JmymHkP4vYVjIRNo=
+	t=1755694690; cv=none; b=mWGzylPahzLyNEo1A0T6jEBhA+LUP8dCSHVIUVCWaYQerNTFFP1fSR75aFSZqZuQSz3lP/QtEizZGuPn4GjCeHEpPZK/7/Dw/ZhvhwmesKk7O4HKQx0UIZf7jMPfGCo1p+zKaWCE3K7T+vXM7jidfDarX5N3TuKbnr9vWLRbf6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694619; c=relaxed/simple;
-	bh=WUtS7YH/SFTY41jyLTuZUHacFQDyALN4XUUiWqnxkf0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=ZK+rm4nvGAPS+eej94MD6QvRjfqVDttAGEzw05lQ4OlGO7e5rqkI8XyDe9dWoOt29bTUeeja7jk4L+UObjdXmapxMkRXdtAx2JmPBcrKRsvYiJSYX2SjGSLbmuPNumA4QfsRI+s0xijaptTEsLVq3IyTAVT/5DSCbdhGH3Zq2BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBQfWlXE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64EB6C4CEEB;
-	Wed, 20 Aug 2025 12:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755694617;
-	bh=WUtS7YH/SFTY41jyLTuZUHacFQDyALN4XUUiWqnxkf0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=uBQfWlXE6egP51AfpugeaQe+SRkMjqQaTFBS08ZywfPjrF2ejzmvwEvs6wLFBj+Iv
-	 cKynCShXKVxGNHaslpmbD8mq9Q//X/eXIcouF/4iHgK9Bo2V+XmCwlVTj6B3DHHCP4
-	 YOsfgu5Hoi30iGRZZpYbwsOqNcHeKPNg67BEn3BcSUNyTq0tCIu/bqnMLQMTddeumP
-	 OIZqcgRzqcEswUlLJRWRiw6EVcCZ/59IJjSQau1Xvj/O7KfEw4TWsvIWAdjwc88GTl
-	 nUttOPV0065mEh9WQ80pjADloLlb3iGegfP1dOwaRtyET+k3MIUpkYIGTGQdiJjU6M
-	 PoQ5b8m+BoCTQ==
+	s=arc-20240116; t=1755694690; c=relaxed/simple;
+	bh=FL1qdsJdYlTPhxXhO1xYRX1SdNE4oOgS41cv9EJcUJk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=I/FfsaihrFEUWs7OnmW9C7xoXoVZsubWuwhtWrfvKmUgwcGKGrSbVopL0av8MpeofXKlqSWOKwPX6BsJYhW0JxwyQXJ/gOKtODCu+LSGL7oBrA0e9YT+XQiP+EwJLPeprBI8rWX9D1E59jh9WK7puMHeJ3//ZHyTdn/NmRkzSXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=uqd944ju; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1755694683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FL1qdsJdYlTPhxXhO1xYRX1SdNE4oOgS41cv9EJcUJk=;
+	b=uqd944jumwt/OqCvrVikg2k18gKD+hcC10wE87TN4ey5hS2uK8bgYIg3dpnF6NIMrNcmc7
+	Q3G5w+hq+EgOo0wO5XkHwJ/vsZS16lmFs0aB/ILxGoLeBqQPLP6c2qW8H1GrWgA6rTYPU6
+	Eu5Bsi3EVMgzCRqC5FVUoV2+l9dcW1KWE37xCSFvHiMkWMEcSFx7EsobzETUGxvrJHSdM/
+	/Y2Ne0v8pKyuEJhokVgbYlPk+KpAF4rMKJTNSk8B21YB0PmFRr5bb8wViwpAWOj/JdyhZ0
+	nyiC+P+5A5pB4dAlwYgA4KYBwCN90mgm4I2kHk6t/v0jzB8ydbQOZF4QZDfXbg==
+Content-Type: multipart/signed;
+ boundary=f312b39eb8656774e4bd11dce79ebb120775cc336f024edd6bee753f42fc;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 20 Aug 2025 14:57:51 +0200
+Message-Id: <DC79THC2NMDM.1BHGJPJHTYPTV@cknow.org>
+Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Juri Lelli" <juri.lelli@redhat.com>, "Vincent
+ Guittot" <vincent.guittot@linaro.org>, "Dietmar Eggemann"
+ <dietmar.eggemann@arm.com>, "Steven Rostedt" <rostedt@goodmis.org>, "Ben
+ Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>, "Valentin
+ Schneider" <vschneid@redhat.com>, "Matthias Brugger"
+ <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "jstultz" <jstultz@google.com>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-rockchip@lists.infradead.org>
+Subject: Re: [RFC PATCH 1/1] sched/deadline: Fix RT task potential
+ starvation when expiry time passed
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>, "Kuyo Chang"
+ <kuyo.chang@mediatek.com>
+References: <20250615131129.954975-1-kuyo.chang@mediatek.com>
+ <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
+
+--f312b39eb8656774e4bd11dce79ebb120775cc336f024edd6bee753f42fc
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 14:56:52 +0200
-Message-Id: <DC79SQDWVVMI.3A6WCE173M511@kernel.org>
-Subject: Re: [PATCH v3] rust: alloc: implement Box::pin_slice()
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
- Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
- <tmgross@umich.edu>
-To: "Vitaly Wool" <vitaly.wool@konsulko.se>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250811101456.2901694-1-vitaly.wool@konsulko.se>
- <3e922cc6-6d27-49ad-9719-5662c6102b6b@konsulko.se>
-In-Reply-To: <3e922cc6-6d27-49ad-9719-5662c6102b6b@konsulko.se>
 
-On Wed Aug 20, 2025 at 10:07 AM CEST, Vitaly Wool wrote:
-> On 8/11/25 12:14, Vitaly Wool wrote:
->> From: Alice Ryhl <aliceryhl@google.com>
->>=20
->> Add a new constructor to Box to facilitate Box creation from a pinned
->> slice of elements. This allows to efficiently allocate memory for e.g.
->> slices of structrures containing spinlocks or mutexes. Such slices may
->> be used in kmemcache like or zpool API implementations.
->>=20
->> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+On Wed Jul 30, 2025 at 12:06 PM CEST, Geert Uytterhoeven wrote:
+> On Mon, 16 Jun 2025 at 14:39, Kuyo Chang <kuyo.chang@mediatek.com> wrote:
+>> From: kuyo chang <kuyo.chang@mediatek.com>
+>>
+>> [Analysis]
+>> ---------
+>> The log "sched: DL replenish lagged too much" triggered.
+>>
+>> Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
 >
->  From what I could see, there were no objections to this one. Danilo,=20
-> would you be up for picking it or is there something missing about it sti=
-ll?
+> Thanks, this fixes the issue I was seeing!
+>
+> Closes: https://lore.kernel.org/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpo=
+LxWYoGa82w@mail.gmail.com
+> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-This looks good now.
+I was seeing this warning as well on several of my Rockchip based
+devices, but that is gone after applying this patch. Thanks!
 
-There's a few minor nits, e.g. it'd be nice to have an  empty line between
-struct definitions in the example and sentences ending with a period. But I=
- can
-fix those up on apply.
+Tested-by: Diederik de Haas <didi.debian@cknow.org>
+
+--f312b39eb8656774e4bd11dce79ebb120775cc336f024edd6bee753f42fc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKXGVQAKCRDXblvOeH7b
+brWcAQCUmEK2dQiUw8567AElKttA2Xw1XSBJji4KjZ0aIcOkqgD+KJh6ivSpDeo0
+sE85VdYRU6hAT+Uh8u65OcOlnN6feQ4=
+=riNm
+-----END PGP SIGNATURE-----
+
+--f312b39eb8656774e4bd11dce79ebb120775cc336f024edd6bee753f42fc--
 
