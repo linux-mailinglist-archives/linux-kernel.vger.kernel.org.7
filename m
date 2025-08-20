@@ -1,91 +1,85 @@
-Return-Path: <linux-kernel+bounces-778668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5CDB2E8A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:29:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83A4B2E8A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBB11899B23
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9A51CC17EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6927D2DFA2D;
-	Wed, 20 Aug 2025 23:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620352E0406;
+	Wed, 20 Aug 2025 23:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vFHtrR7Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTGAR2B0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1921E491B;
-	Wed, 20 Aug 2025 23:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB75F1AE844;
+	Wed, 20 Aug 2025 23:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755732569; cv=none; b=YEaVeR6YMIy4nQjs/BO0qsOA9GGyBx1CAtxEhudLd9RdFPBz2IUFZXoX2H6qY6OYNoIMPhVznXy4R7DiX+s905PSy16tzqY1p6lSo7jpiMlLCN6qfcDmn6n1QG5p6lFqzOfGfZH9O4KUWV46bjnMJohiSZtc2B1szZ7yWREu1OY=
+	t=1755732676; cv=none; b=au4SZdA/48ySuw2V311+eqxVol2P5PljBT67ueEikkI1cyQ1t1A0sVhuTmdC3bQC4i7If14cU0c1+bfhKSnNhIQNd8PvP66eizpdyC/ZZ7iKiLNirujYNR/pfCoGpcUuBE06s+/WN3Xeqn/oRqNvYGh4C7QB4ja92tuLojHV0m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755732569; c=relaxed/simple;
-	bh=m2IaG1MY/+xH+rg0uCa+LUQv8zbg5WaY0KTukcGLEDI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=RkZuPSiy94L+NMKNTbMgbHCIWQiRuPA2osdnwVceb5/JQOhN5nz0QFiE0qRA6YvcMV5hJTWA5H3lxnTPsuWA9BqerSWB8Yc8N/GWkOkC1H/MWp/wX2t2GDO2BQ7f40wzN6JapvP7L/+XctvME3p2HxMT7xHyPZlYPA4cPrHc4V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vFHtrR7Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6B3C4CEE7;
-	Wed, 20 Aug 2025 23:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755732569;
-	bh=m2IaG1MY/+xH+rg0uCa+LUQv8zbg5WaY0KTukcGLEDI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vFHtrR7Y5KroDJGCDi51bt71NRLurSsxOIIDM6sO5c8GU7/Q0AngyIg8cbtiA4CVE
-	 fkeVumBm5YkU/2HVuIrhotROZ4hi9PyEoiCUlkFDf/3kgcSvPsp2oefxafa6t/etmc
-	 3xtP/tcFRWpZUzFOyqrpnDW3r0USND7XQKXfA3l8=
-Date: Wed, 20 Aug 2025 16:29:27 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Baptiste Lepers <baptiste.lepers@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
- <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn
- <jannh@google.com>, linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: mm: Mark VmaNew as transparent
-Message-Id: <20250820162927.34201cfb395ec7319b15920a@linux-foundation.org>
-In-Reply-To: <20250812132712.61007-1-baptiste.lepers@gmail.com>
-References: <20250812132712.61007-1-baptiste.lepers@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755732676; c=relaxed/simple;
+	bh=MgbLi8u1LJ+D+gsr4XATFyi/fLkzNuL/+IC/S7VdwM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRWN+AUhr8vgoUH2RsxbLsgg6w7/lKLhdx1Oxer2Shdj9LLDVZw8yHcIhTZxBhISQSk5vct/l05KsqEtdPIripNGMLkQ+W+E7Esn4ArdRqRJv4lxujObnZeMC6GoehAbyiFwoirgSR4OWTsYlBpG/r4dPRiYjOIONySPxjZYtV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTGAR2B0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317A7C4CEE7;
+	Wed, 20 Aug 2025 23:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755732676;
+	bh=MgbLi8u1LJ+D+gsr4XATFyi/fLkzNuL/+IC/S7VdwM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iTGAR2B0tWoGD2F0k/zVOvR5+983nQUFSpgisrtipvySGR0hVjeyl+PR+n89+wLpm
+	 YO28j//80UZcZtSg4I9IhSWjLlP5X6OQQKg5n2XFoHoovQ+ZdKT2JO/nqv7OVbM5q8
+	 u5MpvVbJWo05mAEwbjVl+xu+ixykmSKJCgB4SeJZ0tUs/tnK5UpZar8e1t2WUl/WXA
+	 eiMxpNEpF+xG+72gnwMj/zOyDkV6x9bn53YHnFCtr61FW2gSBN7dmGdh1ezETJQUlg
+	 55dP58PU64WUv0ZxSXaIDUKZoB7gMWEsgf0W1bspmGGNKzgwGXceS0ljOYfyIAUevg
+	 cRyuRHO2SkYXQ==
+Date: Wed, 20 Aug 2025 18:31:15 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lizhi Hou <lizhi.hou@amd.com>
+Cc: lpieralisi@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] of: dynamic: Fix memleak when of_pci_add_properties()
+ failed
+Message-ID: <175572873285.1571546.13547404345424444866.robh@kernel.org>
+References: <20250818152221.3685724-1-lizhi.hou@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818152221.3685724-1-lizhi.hou@amd.com>
 
-On Tue, 12 Aug 2025 15:26:56 +0200 Baptiste Lepers <baptiste.lepers@gmail.com> wrote:
 
-> Unsafe code in VmaNew's methods assumes that the type has the same
-> layout as the inner `bindings::vm_area_struct`. This is not guaranteed by
-> the default struct representation in Rust, but requires specifying the
-> `transparent` representation.
+On Mon, 18 Aug 2025 08:22:21 -0700, Lizhi Hou wrote:
+> When of_pci_add_properties() failed, of_changeset_destroy() is called to
+> free the changeset. And of_changeset_destroy() puts device tree node in
+> each entry but does not free property in the entry. This leads to memory
+> leak in the failure case.
 > 
-> ...
->
-> +++ b/rust/kernel/mm/virt.rs
-> @@ -209,6 +209,7 @@ pub fn vm_insert_page(&self, address: usize, page: &Page) -> Result {
->  ///
->  /// For the duration of 'a, the referenced vma must be undergoing initialization in an
->  /// `f_ops->mmap()` hook.
-> +#[repr(transparent)]
->  pub struct VmaNew {
->      vma: VmaRef,
->  }
+> In of_changeset_add_prop_helper(), add the property to the device tree node
+> deadprops list. Thus, the property will also be freed along with device
+> tree node.
+> 
+> Fixes: b544fc2b8606 ("of: dynamic: Add interfaces for creating device node dynamically")
+> Reported-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Closes: https://lore.kernel.org/all/aJms+YT8TnpzpCY8@lpieralisi/
+> Tested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> ---
+>  drivers/of/dynamic.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Alice suggests that I add a cc:stable to this.  But I see nothing in
-the changelog which explains why we're proposing a backport.
-
-So please send us a description of the userspace-visible runtime
-impact of this flaw and I'll paste it into the changelog, thanks.
+Applied, thanks!
 
 
