@@ -1,92 +1,107 @@
-Return-Path: <linux-kernel+bounces-778086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A6CB2E158
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9049FB2E151
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489B14E26DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325AAA274F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F6A2C17B6;
-	Wed, 20 Aug 2025 15:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D6832276D;
+	Wed, 20 Aug 2025 15:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OyliFDlN"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0rK9mkK"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6D12BEC28
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E0836CE00;
+	Wed, 20 Aug 2025 15:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703410; cv=none; b=Xeog8I3jfaTw6qjJmFwWPmMXTagaDQvtOrG6+JhbQsywcKBhjrcK3y1ymyxhH/pOy0nTKkp2Q1NzfHqrqpND71k6LVU4neIXNI3XXgcfA9BorPRYT3+KpMXmK+UdYG/0z+gTRuy3qBQ86Zbv9tqweLBl+ySxfqDr0aG3FXYYEm4=
+	t=1755703554; cv=none; b=Qd56TQJwbExNG8CNVkQQvT3uktL1TR10ietB30cq+pz7SfXLnb5a6DHTzAYp+qneLTP25hI9Ci81LEPL0+mheWCFwpzGT7CtRlN/PQpkiT7R0aCxX2wIYNnIILqahDCCVIddPyd3HeIX/WBZOsKyeI49FF622GJjfoMkhgh9NO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703410; c=relaxed/simple;
-	bh=gr71oIJIZMTZu2HvFc7RWbu1QBD6asBm+eblDBZOttk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lAvZdeNlj4FVJph8XYeb9MozEdm2Ed7tqYwhZ2tUhyV6ZJEFAkbN7hl4LvDQvP05Nqxyd95UZ3EHAzUHfuje1Q8Jup/+swedPhOegASlTOd/IU+1p4l1QwULrZdZ4Io71e46PRE9vadGcBEIdr7zvOmJn3shciEhJxsA3iYtKnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OyliFDlN; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-323266cdf64so51829a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:23:28 -0700 (PDT)
+	s=arc-20240116; t=1755703554; c=relaxed/simple;
+	bh=IblGSvcl9YQ4J83zqi1Getk6bWaI1B1dN8cO0Jqw+lo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iXLPwOfFO+syGNN2Yuyb15e6A7VKwFcek9kXOUd5Hbrb9JnyyZWKERh72Ok8qNyeX9nIjHPcfl9oj4gEDxrtq3xH7Xq+H2xjfruVxEnFxlcmhbTh5ZCD4eyB8K0Z7wPHf711ze1KQSqimzmTLzr22seB2WBsyP/5/NcSnoVAVZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0rK9mkK; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b05d252so48069835e9.1;
+        Wed, 20 Aug 2025 08:25:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755703408; x=1756308208; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgfeAIl9y/jXqZZohjgzAmcbebe2tB8QsVyXyo5QN9E=;
-        b=OyliFDlN1JTvZ3Ro0Yky/EnzLT6IJ2d+njkMGnpZGQQfy3dO7hNyRqu9vahv528RuS
-         3yv0s0G2rIkGICCQLqsCD2VOgGAwY9pqVt4rh+IbxQ4UMHnHyDR650l4lIQNfsVdPrEc
-         NPK+6Hzx5TAIn7oieqc9Gub166rribkBMqVkazb7Op6B1tOBT8g1ayxJTSeADeyErRx0
-         PRq+Gxt7uzyUAbIReV/x9PzSlGc9hY5KtAUEyuq9HmmqIvEVox85GFB/MfpGDtdfqcne
-         9o1GdMw2+trEn/JgdrD8HIuNC26FYoQutups1SL4vusHZUcV3aRXMo9d2qiXbM6pGfK6
-         8rYg==
+        d=gmail.com; s=20230601; t=1755703551; x=1756308351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=97f6BgM4JY/6DiuS5dYZ9XaNJjjXPDmqhV4WvduflVw=;
+        b=S0rK9mkK3dMLryDAi9hrwesPsvTPt4wMiZSb29XFVXg72KDxAOuXIH2kPmAeZkWTZf
+         qGraNikZc02xVz4z6D05Hm/kDj7CI3AhKRrThUlrlmpsupTWaEywcaQcXNsiP7fSEipJ
+         oe2riemr4gvGfZ06NV6eyengu9W8VuiEDCMsnJ0NW2SjAY2rNLQLZ7KRW2EIIO6YJbA9
+         hFHaFSkkYUkCarvCJO8Ej0zx9DXJtiAt5yeJXrXkwpFhT86qkLJQO8MGUA1EPKKBt4ol
+         zqqC6obNQBniDJe8jj5ToOiUmnloQaanT6RT4/OEtXGM6hHQ403cMn2OroWEpaHmqBIE
+         n3jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755703408; x=1756308208;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fgfeAIl9y/jXqZZohjgzAmcbebe2tB8QsVyXyo5QN9E=;
-        b=Ejdta6zkd2fzpp4B2wtNUMRONq3oVu+WLHCM1qzL6og08yvU3iAAqkdZ2+an4qS1Jw
-         qvRXbpp87aGtmipxAKtQcJ/9SXMIPzluD2BQs5z9pVGcad7DZ47j7RcQRNpMm9D75+6T
-         GyUMUb4ygcJZk0dVtQEkDhvFuWfhq/flra79WGVwlbgzO3IHyDFNRIbkCz4bEYwdJMsM
-         OrZTC16T+Afrbi5QlJ7ekPn6WWhoG9FQ9MeZSto15uZn3mpW82b8JcksqA1IKf/Ojlsa
-         gMHGJnJJPnk8bYdFUH9fFvpgtDQ84wY9lx9P0FKkQXmeB2pkqEN9YwALASQ5rPSVq8xU
-         BDtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfU7dWMIV+xsYnB55W1/r2v0CLUEIs84QrzdwClAyojVTMNgrsyiIY81gyItqJnSMc8T3icgKUj1x+zzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLdn0GAZWjbrKYy/0pnwbGTweeZbcybMTh2+2KrqYW3/CAb2FZ
-	n5E7O0+O9ay9fWvfFm0OUJMx1nQeXABRfNUIgnmAj9nszdeVg3mm9E9Rv5DiWnckkoQ25UU2pFD
-	tBSec
-X-Gm-Gg: ASbGncsvi3nlXqHkOqBfUwAzFKQOPRStnPZFj+87DNZUREKyyNiaoc8cNwRiLJhSEKy
-	xMsMPcd4YPNzYZ2TkF5iNmlqF8/aqN55/YanfFJX+IlgF3qEdLjjn/kLsGzgQOL7YKVFeMaU1Pb
-	m4pf+JMVdJxdvCXWXfXECX58/cOO+/TQutgBzGLNAiWAD5crZzGWt057KNhb867CsHbVVmY0U74
-	HCYar3xlupeVh0JATu9ECbOVyJOJ/R8jjVXFscyG+xLD1X/85VCtf6UFEjMBWVgyg7IYnsvvEO0
-	Vz9/x8l5sC8O/4vnJiJh80Z+XKVVHR4ZhqLp0YTFKemYhIewoN260WGazr+mPO5aIB7b054iAmi
-	tPd4hq0PcDVjKPQYaLFrMH30gLYW6xoJDdkNwIh960bezjfKEy04AxY4Loa5b5w==
-X-Google-Smtp-Source: AGHT+IHm9VcX0JB5QQASYW7fbLTywDvuuwEyBtgVN17jvgGI1TvIKfWIoHfTmY/OqRH50W5c11Od6Q==
-X-Received: by 2002:a17:90b:58cd:b0:321:74d8:b95 with SMTP id 98e67ed59e1d1-324e143ee97mr4972876a91.19.1755703407577;
-        Wed, 20 Aug 2025 08:23:27 -0700 (PDT)
-Received: from anup-ubuntu-vm.localdomain ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e26259b6sm2638689a91.17.2025.08.20.08.23.23
+        d=1e100.net; s=20230601; t=1755703551; x=1756308351;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=97f6BgM4JY/6DiuS5dYZ9XaNJjjXPDmqhV4WvduflVw=;
+        b=offCt1qGFjKjXCZOTn/Zo2zsudccNhW0dUOiDdfxCr+CpBbVoG1cxJS1RLb5jHIVmJ
+         r5Ow+ixGsqIyr+JjweykSIY4Y1wOrvnp0vSRuh9MDH2t/MfhhivF/6zkg830z1leyV9J
+         hWAPgDkzA9rVp/rK6o9k0vAkORaf2ejZsS3e1FGYF3irBjrazYuUiarHdI95j2u7Q0b5
+         ZhTEquKUHh9dfcBdTe4qr/tvkvA5IhwBXsO2G+J6ukwxNanzPxRaRRj1YGWWP2VdZkNk
+         6Gx9ArMysv9sK0NRAjI/2waH5q2GLTXE/U4xS4C1lIKFoUA/iJ26nKUK3nXobQdxXQs8
+         K4yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0rVKVTzNpOtk+cANssfBtCeHnY0QLHMKAYRkHAiY61v48SnLZQeq2hHXiiKK0J8X4xFe6tQlm/QlZZnPt@vger.kernel.org, AJvYcCX8iA+QWw3TsoMaI6s0z/4hAggKSiIcFXA/EsCJD7MR+gWNqY5oH49dER6r5TMJYjA9u2cmymVt+PnlpWwEEIU=@vger.kernel.org, AJvYcCXP8u4B38CYdGmAyZ5pGChNoS9x3bbwwFpuP08ozvzG3J+hnBh09h4hqCH9Sb1hlQhxssP/fmoX9zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHZC7cRXXQxuQp9VBi6IgifPzmBFbGvfHb8AQRxmVVa+9ahFOC
+	WdU7qDgivGMKPKsYRgAsfVrmtWLmdi7g+yLMTx1o6P2DbPe20OQ9VhmB
+X-Gm-Gg: ASbGncvAZbvKspDMZQ9xU2tpAvbn+Up1kbUT6FHb8W0uPz3nTd/1SAdXPsHYLPa8Ass
+	QdhDtbK1+WSuQmbMsckSZRqJ9ojFHBVuiHu5ifLlrm2rYV1SKnpVJ2ncVyknY4R3UVS8qoTsD/1
+	B3B6e1BZ/qXNiuZocH3NeWI6xqBJSVwdRU9uoI+VO2SCiI1d0oc0qhZCQnkyKb1Tbf1jPlfAvoI
+	kmr2Bb45h7LoMcr0hao+hXPAuYPy1P+z3pTrw9/sKxPF1Mc1RnuUlBUc9miANhdv/T8gn2aXmmx
+	DgbQZ58tfFpq1Wxm1TwStvqGfoymlz9u1hkQzZXRmEImmpstUNhHj2BRQkI4NXw4L6IN/ExFZHM
+	Sc5clWPY3tLdLYb9TyMAXLUC+CutPQ99/n97pC5s00oiRflHDZ6wrW7ebV/oRV5VZWzjL0kfs
+X-Google-Smtp-Source: AGHT+IHcCNOs3Z1q0Tuneuj4ew4hMEZEq7HovMkKEHGHdsnXVNyrHD2r+/oTFPsjC5xgBrn0dl4Mbw==
+X-Received: by 2002:a05:600c:4f51:b0:456:1c4a:82b2 with SMTP id 5b1f17b1804b1-45b4a4eb04fmr17635775e9.10.1755703550325;
+        Wed, 20 Aug 2025 08:25:50 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47cad57asm40709915e9.24.2025.08.20.08.25.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 08:23:26 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Sunil V L <sunilvl@ventanamicro.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-riscv@lists.infradead.org,
+        Wed, 20 Aug 2025 08:25:49 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH] RISC-V: Define pgprot_dmacoherent() for non-coherent devices
-Date: Wed, 20 Aug 2025 20:53:16 +0530
-Message-ID: <20250820152316.1012757-1-apatel@ventanamicro.com>
+	rust-for-linux@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH v4 3/3] samples: rust: add Rust I2C sample driver
+Date: Wed, 20 Aug 2025 16:23:47 +0100
+Message-ID: <20250820152347.1815097-1-igor.korotin.linux@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
+References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,37 +110,199 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pgprot_dmacoherent() is used when allocating memory for
-non-coherent devices and by default pgprot_dmacoherent() is
-same as pgprot_noncached() unless architecture overrides it.
+Add a new `rust_driver_i2c` sample, showing how to create a new
+i2c client using `i2c::Registration` and bind a driver to it
+via legacy I2C-ID table.
 
-Currently, there is no pgprot_dmacoherent() definition for
-RISC-V hence non-coherent device memory is being mapped as
-IO thereby making CPU access to such memory slow.
-
-Define pgprot_dmacoherent() to be same as pgprot_writecombine()
-for RISC-V so that CPU access non-coherent device memory as
-NOCACHE which is better than accessing it as IO.
-
-Fixes: ff689fd21cb1 ("riscv: add RISC-V Svpbmt extension support")
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
 ---
- arch/riscv/include/asm/pgtable.h | 2 ++
- 1 file changed, 2 insertions(+)
+ MAINTAINERS                     |   1 +
+ samples/rust/Kconfig            |  11 +++
+ samples/rust/Makefile           |   1 +
+ samples/rust/rust_driver_i2c.rs | 128 ++++++++++++++++++++++++++++++++
+ 4 files changed, 141 insertions(+)
+ create mode 100644 samples/rust/rust_driver_i2c.rs
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 91697fbf1f90..00d8bdaf1e8d 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -653,6 +653,8 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
- 	return __pgprot(prot);
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c44c7ac317b1..2654a7ea0c80 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11523,6 +11523,7 @@ R:	Daniel Almeida <daniel.almeida@collabora.com>
+ L:	rust-for-linux@vger.kernel.org
+ S:	Maintained
+ F:	rust/kernel/i2c.rs
++F:	samples/rust/rust_driver_i2c.rs
  
-+#define pgprot_dmacoherent pgprot_writecombine
+ I2C SUBSYSTEM HOST DRIVERS
+ M:	Andi Shyti <andi.shyti@kernel.org>
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 7f7371a004ee..28dae070b365 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -62,6 +62,17 @@ config SAMPLE_RUST_DMA
+ 
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_DRIVER_I2C
++	tristate "I2C Driver"
++	depends on I2C=y
++	help
++	  This option builds the Rust I2C driver sample.
 +
- /*
-  * Both Svade and Svadu control the hardware behavior when the PTE A/D bits need to be set. By
-  * default the M-mode firmware enables the hardware updating scheme when only Svadu is present in
++	  To compile this as a module, choose M here:
++	  the module will be called rust_driver_i2c.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_DRIVER_PCI
+ 	tristate "PCI Driver"
+ 	depends on PCI
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index bd2faad63b4f..141d8f078248 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -5,6 +5,7 @@ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+ obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+ obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
++obj-$(CONFIG_SAMPLE_RUST_DRIVER_I2C)		+= rust_driver_i2c.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
+diff --git a/samples/rust/rust_driver_i2c.rs b/samples/rust/rust_driver_i2c.rs
+new file mode 100644
+index 000000000000..6dfc299d5aea
+--- /dev/null
++++ b/samples/rust/rust_driver_i2c.rs
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Rust I2C driver sample.
++//!
++//! This module shows how to:
++//!
++//! 1. Manually create an `i2c_client` at address `SAMPLE_I2C_CLIENT_ADDR`
++//!    on the adapter with index `SAMPLE_I2C_ADAPTER_INDEX`.
++//! 2. Register a matching Rust-based I2C driver for that client.
++//!
++//! # Requirements
++//!
++//! - The target system must expose an I2C adapter at index
++//!   `SAMPLE_I2C_ADAPTER_INDEX`.
++//! - To emulate an adapter for testing, you can load the
++//!   `i2c-stub` kernel module with an option `chip_addr`
++//!   For example for this sample driver to emulate an I2C device with
++//!   an address 0x30 you can use:
++//!      `modprobe i2c-stub chip_addr=0x30`
++//!
++
++use kernel::{
++    acpi, c_str,
++    device::{Core, Normal},
++    i2c, of,
++    prelude::*,
++    types::ARef,
++};
++
++const SAMPLE_I2C_CLIENT_ADDR: u16 = 0x30;
++const SAMPLE_I2C_ADAPTER_INDEX: i32 = 0;
++const BOARD_INFO: i2c::I2cBoardInfo =
++    i2c::I2cBoardInfo::new(c_str!("rust_driver_i2c"), SAMPLE_I2C_CLIENT_ADDR);
++
++struct SampleDriver {
++    pdev: ARef<i2c::I2cClient>,
++}
++
++kernel::acpi_device_table! {
++    ACPI_TABLE,
++    MODULE_ACPI_TABLE,
++    <SampleDriver as i2c::Driver>::IdInfo,
++    [(acpi::DeviceId::new(c_str!("LNUXBEEF")), 0)]
++}
++
++kernel::i2c_device_table! {
++    I2C_TABLE,
++    MODULE_I2C_TABLE,
++    <SampleDriver as i2c::Driver>::IdInfo,
++    [(i2c::DeviceId::new(c_str!("rust_driver_i2c")), 0)]
++}
++
++kernel::of_device_table! {
++    OF_TABLE,
++    MODULE_OF_TABLE,
++    <SampleDriver as i2c::Driver>::IdInfo,
++    [(of::DeviceId::new(c_str!("test,rust_driver_i2c")), 0)]
++}
++
++impl i2c::Driver for SampleDriver {
++    type IdInfo = u32;
++
++    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
++    const I2C_ID_TABLE: Option<i2c::IdTable<Self::IdInfo>> = Some(&I2C_TABLE);
++    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
++
++    fn probe(pdev: &i2c::I2cClient<Core>, info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
++        let dev = pdev.as_ref();
++
++        dev_dbg!(dev, "Probe Rust I2C driver sample.\n");
++
++        if let Some(info) = info {
++            dev_info!(dev, "Probed with info: '{}'.\n", info);
++        }
++
++        let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
++
++        Ok(drvdata.into())
++    }
++
++    fn shutdown(pdev: &i2c::I2cClient<Core>) {
++        dev_dbg!(pdev.as_ref(), "Shutdown Rust I2C driver sample.\n");
++    }
++}
++
++impl Drop for SampleDriver {
++    fn drop(&mut self) {
++        dev_dbg!(self.pdev.as_ref(), "Remove Rust I2C driver sample.\n");
++    }
++}
++
++// NOTE: The code below is expanded macro module_i2c_driver. It is not used here
++//       because we need to manually create an I2C client in `init()`. The macro
++//       hides `init()`, so to demo client creation on adapter SAMPLE_I2C_ADAPTER_INDEX
++//       we expand it by hand.
++type Ops<T> = kernel::i2c::Adapter<T>;
++
++#[pin_data]
++struct DriverModule {
++    #[pin]
++    _driver: kernel::driver::Registration<Ops<SampleDriver>>,
++    _reg: i2c::Registration,
++}
++
++impl kernel::InPlaceModule for DriverModule {
++    fn init(
++        module: &'static kernel::ThisModule,
++    ) -> impl ::pin_init::PinInit<Self, kernel::error::Error> {
++        kernel::try_pin_init!(Self {
++            _reg <- {
++                let adapter = i2c::I2cAdapter::<Normal>::get(SAMPLE_I2C_ADAPTER_INDEX)?;
++
++                i2c::Registration::new(adapter, &BOARD_INFO)
++            },
++            _driver <- kernel::driver::Registration::new(
++                 <Self as kernel::ModuleMetadata>::NAME, module
++            ),
++        })
++    }
++}
++
++kernel::prelude::module! {
++    type: DriverModule,
++    name: "rust_driver_i2c",
++    authors: ["Igor Korotin"],
++    description: "Rust I2C driver",
++    license: "GPL v2",
++}
 -- 
 2.43.0
 
