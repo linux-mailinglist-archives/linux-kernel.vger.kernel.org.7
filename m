@@ -1,178 +1,230 @@
-Return-Path: <linux-kernel+bounces-776901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9660B2D2B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:50:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E589EB2D2B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49203B216D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E175E4678
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFB61FF7BC;
-	Wed, 20 Aug 2025 03:49:19 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A76F1FE471;
+	Wed, 20 Aug 2025 03:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="M4Bnk36F"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013054.outbound.protection.outlook.com [52.101.83.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC1935336A;
-	Wed, 20 Aug 2025 03:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755661759; cv=none; b=nN9AjXysq5c65xmw6x/82SbNoIgh+ArcFek2EaJvndLpAWoV/MSec/uTBN2UH9tr/OuExlcSw/DcEUtlaY7FlDLeD9/d4pJzHxW+Sf6zldt2gU3/IhS4UH+tAMXmKd1+GGT9w+wNwdOAsPAcVp+rT5IC/gvN5E8bIQaMUDRIUbI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755661759; c=relaxed/simple;
-	bh=+eKUrudFVkf/oZRz1/hMMJRiLT/RFDdwQFZeLZaOkfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kQFiw4oQHmBblegJpfDj0MwTtGAl2YSPttnZLk6enL6CG7bx4y9lqlDD0HjXwvVNB7foUOhtrF1PyfGAOYhB7+C4FJ0pV6cfLtiMlx3BIKXcHJBc2Nqezte9Ma7uO5FsEef1Amal8mepHRPiuHHBAOg/BJ2i2Lxn56tPOXIS+9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [192.168.2.54] (unknown [98.97.63.12])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id C3467B4E0015;
-	Wed, 20 Aug 2025 05:49:05 +0200 (CEST)
-Message-ID: <4b516172-bd75-432a-9c96-f02fbfb68c16@freeshell.de>
-Date: Tue, 19 Aug 2025 20:49:03 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8FA1C5D57;
+	Wed, 20 Aug 2025 03:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755661686; cv=fail; b=g2JuRpI0VnxglL7knxP9NzpgXQEN3pO8jNQa/0t0qAOM+aFAFmPmwHvDPYBSnz2r1d6QlCqQty7XprcisSAUFskdlDOjB+QChKVhRsjF4L+pRDpALOYeYycgAxGi97aPO7y2xB6lrXsK/C6QF7W3JlfdSVVW7sA3lNJjpElJrnY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755661686; c=relaxed/simple;
+	bh=WNPkU9TAV8e9V5CWm0XXsDK+TNsr5z6+lNQr+8O00DE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uoKkI6Ur3WXBIrQURg5yRYG6fE//9+zUPJRKB1ShMqfUT5pbJaC3TTwkWpWBAE07riKycXSEONj17FgaWU95lIbRN4ql+n6GxfUgIjP+309O6q2CbPxD+OQEeRSeg5w7MU7fKP5bqY7bYP0jguoR/ov8tn94mHJYZmLSGuKxSbQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=M4Bnk36F; arc=fail smtp.client-ip=52.101.83.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gerxbV4oV06iNPEQUApgBjh6zz0VEs/eBXVV1v3v+6+sw4lhf+ua0gYyShsTP8rDScunPNs0JBf/AQOmyFi4Koe5hfl8DX3EtsrmEmizQ6lxTOUXWsKje92jTW/ymd4JGT9wmBuKcisfCkbtsnPO+nE8X66HyalkYxTu+fVrJmiVGP/iADugnOhF2wfc1JqMrY6UxiDU6IYLDjwl1V1u0QjCJJ8bjHC9oUIElAUl2XjmLLuFuJVpVEwH0FHPoS+YibMpUYaKxPjJlQ8JqAqGYGOvvLzfMWsVfpyjD+Yw6s4q90zw4b+bcoHQjf5SDnMJvDiszufCpg65oryLieSm7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EN0FiuqxPGRn+fuPa1XL5ZPnsrmVhhMD4p11zy3soR8=;
+ b=f3XH9X13D54+iG14a+x7+KDetWlRxIn7IGq6x63/U3eDP4sUyfP0dCozOh7z0ATV+OhAwlYI16TLeeUaOK3r14gwwqGPzhL80w9jfZ7EMVGjQdcw4nCpuq4q8WsZsHrTtTHQxNOeKybnmDqZzC9clPKp9Y3OrXSjsJNfkUebm+Sm70HVjlrZQn1aLfoStCBe5nBvKWe5qhjexho2oOIuZcRChPH8rQ11KIs3qQ1Nzo1hpOxc89d5GtmYbEnv5Rz/9KbVyF9QnrMe80Ewct6Ga4IOnj+1JGsfmaBUE/+QbjhoHWjpQJnYtI70NZhymNKzMzlHNB8ZWpqo5Ur8UnSk4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EN0FiuqxPGRn+fuPa1XL5ZPnsrmVhhMD4p11zy3soR8=;
+ b=M4Bnk36F/xKML1xqHd94+eAO9oaOlCGab7xwvyW6CwSCbmq2SrJ5fGmJRib5v30nTvfQcLW8gVRIbRruM5rKgh2qlfmphkTb8cA1HxSdCwu/UvuPDDPzXvFr0QnwiKz4/nNBcjo/uEmUaxiV7/XCl9LZ0sA1L78Yva58SY1tMra742oYgD/f+leMyagCbFeWASlcEJDUGQs6cimL2Q9ydqmUYO8O4xy3HqTWy9/ifwzTjXpDyjQ6iLb139IgHdiGS+NrXkxS2b20VYrY8hbhbXAtKipNJ/PImylywOGecvZSH3ALEFj0X/sm5INbdLKiJhIvHZFGJEFkxJ+Q1862BQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU0PR04MB9695.eurprd04.prod.outlook.com (2603:10a6:10:321::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Wed, 20 Aug
+ 2025 03:48:01 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9052.012; Wed, 20 Aug 2025
+ 03:47:59 +0000
+Message-ID: <af8ff1d3-7ba0-450d-9211-690ea9d166be@nxp.com>
+Date: Wed, 20 Aug 2025 11:49:30 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/8] drm/bridge: lontium-lt9611: declare supported
+ infoframes
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org
+References: <20250819-drm-limit-infoframes-v2-0-7595dda24fbd@oss.qualcomm.com>
+ <20250819-drm-limit-infoframes-v2-4-7595dda24fbd@oss.qualcomm.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250819-drm-limit-infoframes-v2-4-7595dda24fbd@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR04CA0184.apcprd04.prod.outlook.com
+ (2603:1096:4:14::22) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] riscv: dts: starfive: jh7110: bootph-pre-ram
- hinting needed by boot loader
-To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor@kernel.org>,
- Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-References: <20250815073739.79241-1-e@freeshell.de>
- <20250815073739.79241-4-e@freeshell.de>
- <ZQ2PR01MB1307CE398A5993B9E5B93357E6312@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <ZQ2PR01MB1307CE398A5993B9E5B93357E6312@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU0PR04MB9695:EE_
+X-MS-Office365-Filtering-Correlation-Id: d548bb0c-0353-4bb9-72fc-08dddf9c5b40
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|19092799006|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?SjB0Z1g4MVdlQVhIN0J3cUJiMlI5K1hIWTNFQ2pQaW9nL3gvZkFydHJ5b3NF?=
+ =?utf-8?B?Rll2cTVvMkF3L2t0dUNRVXVWa0VIWjVLUUgxdFBIZFVvSysxcjFVbng4aWUy?=
+ =?utf-8?B?a1dEZ0V6cENac2NPVVNHWTBJa2Vpak96VXNqNWYzNThtdlU0emhGRkVqbGRn?=
+ =?utf-8?B?MW9MQmFjOEZtSXdIUWpUWWdiVHFvNENLN1F4bXJYWmV5bUpaWXhyaE9QaEt2?=
+ =?utf-8?B?aHNad2ppUTZ6UkRnL05STCtmdVFDNS9xU1YrOVgreXVKems3NEIvb3AyY0Zp?=
+ =?utf-8?B?bFgrMU8zTXdlanphbnQybC9LdEx3UTV4WTIrc09YNVk4d1QxZUprYW95SHdW?=
+ =?utf-8?B?T3JTMjlpTTA2QUVYZG81NWZhSkxEQXpQMDFTSm5jcXhNVk5wb1RWQnRKdHhO?=
+ =?utf-8?B?NWJtY2l4aHI3YXJTaGRCOFpWOEE3ODQ3QkFjOXMyZUZvQ05QcXhnTWFrcVNZ?=
+ =?utf-8?B?ZU9jeEk5ZHJRT1RKdVMvTzM3NXExTXAxQ2tCN01sYUNJV2RuU0JyZW5vcExB?=
+ =?utf-8?B?MmpqQS85VUxTbXY4bEk1SUYxb2JrNE9LRnNpc1Jxc2c5TE5sOXhSWUVBa2xJ?=
+ =?utf-8?B?OUMzaFl4ZnVOVUY1V2M5ZEtCR0lwR3dnNE1BTnNMaFlhb0Y4VnY5d3FRRjF6?=
+ =?utf-8?B?TzMrWWhjNkFYTHVoK3FJMWJYZ2g0MFVVVThTNVEzLzRETmNxQm9vbVN1Qjho?=
+ =?utf-8?B?TG9rNlpiM015UVF2QUlYUTBGSWIwcGZJZDk1QWhLSU1iWVBibllGYnZmVXlL?=
+ =?utf-8?B?Y0xlTzY1aFJOQjRaTnQyZkRRMEgxV3ZpQUtzVU1KQlY4KytMNmltTS9jZHRu?=
+ =?utf-8?B?N1VpRHI2TmVQanV3dUlDTmVGSU84eDk0ckJyOVRSVjRQYmF1RzR4cGpHc0lU?=
+ =?utf-8?B?bm1jNjVrWHlkUmp5U21Ob2thWWpwZW5WNldFT3VWQTNmdEtmaVRoZ1Q1OHlR?=
+ =?utf-8?B?emQ5OVF3UEpzVDBaYi93dEFjdlcvNlh5dEpNam9FanRMeTc5dlRwd3Rwei9z?=
+ =?utf-8?B?SFJwQmRWODhseHpHSU9tNjVDMk5icjFGSmtOL2lQeEJ2SUpBOWJhMWJJK0dT?=
+ =?utf-8?B?ZUVmMTk0Tjh4NHAyMFVtSVR6WVk1Sm9mV1Q2Q0hVZ2lCOW4wVW5xemtoS1V4?=
+ =?utf-8?B?bFByZC9VZlJXR1N5N2pSbGJwNmM3QmNTNEswZ3ZVNURDLzM1cTJrQ2pQQjNw?=
+ =?utf-8?B?Q2dYMGh6eXRucVdXcXk0QXB2bVFvdFFveXRBQ0U4RFhHaHF3Nkc3OGZaSFU3?=
+ =?utf-8?B?SFlBbENyblRoUDhlV0dYd09qNUZDS3JiVnMvZkpZeVBidVhTaEVtamlENUly?=
+ =?utf-8?B?N2liSVcxcU1vck1VK1NYQis3VjR1U05sQ040WjgrZjRTd2U1OVg1R3A4eDla?=
+ =?utf-8?B?UElvMWlOaDIwcjQyUERWU254ZU5peVQrdUtYdGt0dzFrQ2xJY01Ba3VJNEpP?=
+ =?utf-8?B?MHY4cjJJVFMrN0kxUzJEZTVkZlBuSE95MEZHakxhK0tPbmJaMk1xVjBSc3pw?=
+ =?utf-8?B?TE8xYmRPWEdCb3NCbXF0cEw5dG0zOTc1KzA2Y2dBMjEzWUNSN1hKODBGMmMx?=
+ =?utf-8?B?bUdBS0s5TjBiNzNrUFhTVUd6WEluNHJNblJLbGtiQ0ZibmJPN1pWeFF6VkpF?=
+ =?utf-8?B?SlVKeXpNQXljdkcwOGlyblVySkFWNGJCSjQ1MElqTE9uaWF2M2M3aWFaTVZy?=
+ =?utf-8?B?UE5xemdtd0tvTHE2cGVTamlldHg5MmZ1bXJDWGNCZG5INmlJa2ovRFloK2Vw?=
+ =?utf-8?B?SUdQdTZrV1p4QU8wdlZaRkVSWUxjZGYyMU5BT1JRK2p1Z01UUEM3WjIycHEr?=
+ =?utf-8?B?MzFKcHlISEJBUUhmNzhGbnlRaHpWZFRPaUVCZnMzcWNjdTA4V0Ezak5yczJi?=
+ =?utf-8?B?bVRlU1ptbEV3SFpTcE5kMDh2SE5Wb0VKOU5vVVpFRWk5ZmEvSTJFUkZPODRM?=
+ =?utf-8?B?dE4vVTRrQ1hJZ3FmaWZCNDdURnBpaHVoQVVkTFc4bVZCSGFESUJBVWJxR0Nt?=
+ =?utf-8?B?SGp0WlZmSlJRPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(19092799006)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?UTg2d0MzZmNYenl1UTh0djhMSzI0QndUdVFyYTFPOHE3TVkvR0t3QWphRjI5?=
+ =?utf-8?B?NEpzWlVJeG5COEhCaUtpK0pzcklDdDZOTjdQRFBGM0EraUljMXdxekZzZXpH?=
+ =?utf-8?B?VlpuazRiZ3dHMk5aZVk3RmhmQmJsNEd1ZGZURGlPbnJkQm5zWlIvTTdCY1Rm?=
+ =?utf-8?B?SkkwMWNkL0pyK0lGek80RmM2cnIrOUxPTTdyU0dKRHpCV1JTR3l2ZU9Xb0dB?=
+ =?utf-8?B?ZEFERG9jbVVvTEpRbklHY1VNa1JCQzA1ZDk1RDgwcXdRQzdVUjhBTVJPRndz?=
+ =?utf-8?B?TDgvRW1sMDVTdWZRc0xCOVVlbWh6akRULzFMSThnOWxqSjIwalo5UkFNbWxt?=
+ =?utf-8?B?THNkai81YXc1M0szOHNqdVFBUkFUcTV5dlp6SE5yeGxHMS9xUDBEU0RkR0NL?=
+ =?utf-8?B?NDQ0OU1aVHA3Tk9DRVlkbzNWNHBHOHVwZ0Vsak9kcWhUZDhLV0NWcHIyMytU?=
+ =?utf-8?B?eFI0RkdZSG9oVVJIWndjMmFqUTljdHNSNFdxYVd5RWVyblBSM3E0TUFXV1l4?=
+ =?utf-8?B?WXBRdHZ6ZnFOWDRIVFpReGh1YVd3UzBUWTU2TmhkeVN1a1NvYXREVWlaTU5t?=
+ =?utf-8?B?NG0yazUvRm0rdnlPMTZra2Y2TzB3UjlheWFTZ1lPdFZ5ZWtETEhUSE5ZV09y?=
+ =?utf-8?B?czZSRGE4MWJENUpMaERWOS8vc1lPVTdpYjFJSWdGV0l1Q0w0TjA4YSt6MUhu?=
+ =?utf-8?B?aFV0YkM2eCtyTTBkWEp5azd5Wm0veW5QeFI5NkVveEtXd2R0eEs3SCs1Tlha?=
+ =?utf-8?B?VGRxRkxaMlNNdnVRRElQR0dDakI1YjZzM3FlWTZXL3dzazhjc1VKcFRsSXI4?=
+ =?utf-8?B?a3pkeFgzQk50czdQMStYellOREhKZG5OTFlrK2cxbHZNT1RySldmUjdtUjBF?=
+ =?utf-8?B?cnhQZUNscW9HTFZIaTlvVzRsVDFjQU1QKzg5VDNhNmxLWHZjNzcvMWorZFhE?=
+ =?utf-8?B?OVllMndNVStjK0Jvb2U4dWRqcEJ4R3pmbUU5NFZCcDhaVFZsV0RGelA4S3E1?=
+ =?utf-8?B?ZVBVdWZUNDRiOW9uNXowUFQwYllodDhMaGMrMk9xTURTYTh5KzBrUnRXOHpr?=
+ =?utf-8?B?aVc2M0dNaVVGOFlROXdLWVp6THYxWHF6ZHhFbE1VS1c0OXVNNVNoUjdTdFlv?=
+ =?utf-8?B?cnh3SEl6ZnI5VjBPcTBUSkNRRzdCeSsxUkU0ckh1VCtuK0VaRTAvcytCOURW?=
+ =?utf-8?B?VGRSb09QdlNQcW1iUWN4VUUrb2s5aFovSVlIM3dJVzY3bVArcGovL3FNc2JL?=
+ =?utf-8?B?RjJ1aHlRb1FSTlJYbjZGSkUvWCszdUsvRGphQ3F4eHZ2NGVvaHJmaWpzSlg4?=
+ =?utf-8?B?SW1qMEVOVm1HNnJGVnVDN0FJcGo0dDBrYWcyMUg3R05RdFJsRXF2ZEI4akJF?=
+ =?utf-8?B?cGxXOXFkMTNMaGY4ZzNKaTZzcEV3MzNuY1ZoelorOStwMnVCazUwb3JNb2pD?=
+ =?utf-8?B?WGxVTlArU2N5S3J5VHl5QWNVUjZEdWNjL01OanAvSkphR0N1cUFDbVRyU3Jq?=
+ =?utf-8?B?WlpDUW1nWndUaU5UZTNQMHF6SWpJVHJXckNyK3A0T2YydzdHamhIWFc2aUox?=
+ =?utf-8?B?cmFybDBvTWR6dDdYV1JtYlNqOVFHM3BLT0hjMEt4OVh1azdSRjZ0eTl5c1Vp?=
+ =?utf-8?B?Tlk5T08yUzRzYjlwS0VtakM0WTdjUUJNelFQc05QQjV6azlYYi9vblh1aHBm?=
+ =?utf-8?B?NlRydUt3dEJSZnZieXhZK3Q3Q25hcEdKNmE5bHhRSXBoc1NabmU1M0kxcUYw?=
+ =?utf-8?B?TWUwQ1Byc1dJeXRyU3JZdHNUWHF1RU9Zc1RsT2wzQ0tacFY4VlMvVzRKeFZX?=
+ =?utf-8?B?N1FMa3JvK0dtalZFU1NhckJaQ1pFVWx3Tm10QklNVG4wbFF0ZTJmL3djZ2Y4?=
+ =?utf-8?B?akFSc1RHWEYxR3ZCcW5zMzNEUWRSY2VrQzF1VkJiTjM4R3UxUHpjZk5mcHZ5?=
+ =?utf-8?B?ZXM4TkIvSGpuRXdPNzQ0bm9TZHdsTCs5ME8vOUxYN3RQeVVZVmlVeWdKcW9h?=
+ =?utf-8?B?dU92L29UZ3l6WURkd0JPSmczSm42ejFyOUw5TWhqUVAyU01pM2xicVlJdFNa?=
+ =?utf-8?B?NHA5Y3RyVGwyVGM1ZU11dFIvYzJxaGtoSXJwNmc4NWZPNGdOTEJLZHVOMERH?=
+ =?utf-8?Q?nbN7zKKb6tw34hjmrN/k38Yab?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d548bb0c-0353-4bb9-72fc-08dddf9c5b40
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 03:47:59.8059
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rzTEiUn+6+uLR1kcm5UBeyCQ8eB6bwF6IPK3LnF2HlF2/13lOLqTL/TasRmWHgdqNES5MdKn+qfiRp50p7oMkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9695
 
-
-
-On 8/17/25 23:05, Hal Feng wrote:
->> On 15.08.25 15:37, E Shattow wrote:
->> Add bootph-pre-ram hinting to jh7110.dtsi:
->>   - CPU interrupt controller(s)
->>   - core local interrupt timer
->>   - DDR memory controller
->>   - oscillator
->>   - syscrg clock-controller
->>
->> Signed-off-by: E Shattow <e@freeshell.de>
->> ---
->>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi
->> b/arch/riscv/boot/dts/starfive/jh7110.dtsi
->> index 14df3d062a45..884a3526cb0f 100644
->> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
->> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
->> @@ -35,6 +35,7 @@ S7_0: cpu@0 {
->>
->>  			cpu0_intc: interrupt-controller {
->>  				compatible = "riscv,cpu-intc";
->> +				bootph-pre-ram;
->>  				interrupt-controller;
->>  				#interrupt-cells = <1>;
->>  			};
->> @@ -68,6 +69,7 @@ U74_1: cpu@1 {
->>
->>  			cpu1_intc: interrupt-controller {
->>  				compatible = "riscv,cpu-intc";
->> +				bootph-pre-ram;
->>  				interrupt-controller;
->>  				#interrupt-cells = <1>;
->>  			};
->> @@ -101,6 +103,7 @@ U74_2: cpu@2 {
->>
->>  			cpu2_intc: interrupt-controller {
->>  				compatible = "riscv,cpu-intc";
->> +				bootph-pre-ram;
->>  				interrupt-controller;
->>  				#interrupt-cells = <1>;
->>  			};
->> @@ -134,6 +137,7 @@ U74_3: cpu@3 {
->>
->>  			cpu3_intc: interrupt-controller {
->>  				compatible = "riscv,cpu-intc";
->> +				bootph-pre-ram;
->>  				interrupt-controller;
->>  				#interrupt-cells = <1>;
->>  			};
->> @@ -167,6 +171,7 @@ U74_4: cpu@4 {
->>
->>  			cpu4_intc: interrupt-controller {
->>  				compatible = "riscv,cpu-intc";
->> +				bootph-pre-ram;
->>  				interrupt-controller;
->>  				#interrupt-cells = <1>;
->>  			};
->> @@ -321,6 +326,7 @@ mclk_ext: mclk-ext-clock {
->>
->>  	osc: oscillator {
->>  		compatible = "fixed-clock";
->> +		bootph-pre-ram;
->>  		clock-output-names = "osc";
->>  		#clock-cells = <0>;
->>  	};
->> @@ -354,6 +360,7 @@ soc {
->>  		clint: timer@2000000 {
->>  			compatible = "starfive,jh7110-clint", "sifive,clint0";
->>  			reg = <0x0 0x2000000 0x0 0x10000>;
->> +			bootph-pre-ram;
->>  			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc
->> 7>,
->>  					      <&cpu1_intc 3>, <&cpu1_intc 7>,
->>  					      <&cpu2_intc 3>, <&cpu2_intc 7>,
->> @@ -376,6 +383,7 @@ memory-controller@15700000 {
->>  			compatible = "starfive,jh7110-dmc";
->>  			reg = <0x0 0x15700000 0x0 0x10000>,
->>  			      <0x0 0x13000000 0x0 0x10000>;
->> +			bootph-pre-ram;
->>  			clocks = <&syscrg JH7110_PLLCLK_PLL1_OUT>;
->>  			clock-names = "pll1_out";
->>  			resets = <&syscrg JH7110_SYSRST_DDR_AXI>, @@ -
->> 892,6 +900,7 @@ qspi: spi@13010000 {
->>  		syscrg: clock-controller@13020000 {
->>  			compatible = "starfive,jh7110-syscrg";
->>  			reg = <0x0 0x13020000 0x0 0x10000>;
->> +			bootph-pre-ram;
->>  			clocks = <&osc>, <&gmac1_rmii_refin>,
->>  				 <&gmac1_rgmii_rxin>,
->>  				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+On 08/19/2025, Dmitry Baryshkov wrote:
+> Declare which infoframes are supported via the .hdmi_write_infoframe()
+> interface.
 > 
-> pllclk also needs to add bootph-pre-ram. Because it is the dependency of syscrg.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/bridge/lontium-lt9611.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> 		pllclk: clock-controller {
-> 			compatible = "starfive,jh7110-pll";
-> +			bootph-pre-ram;
-> 			clocks = <&osc>;
-> 			#clock-cells = <1>;
-> 		};
+> diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
+> index a2d032ee4744715b88eb66883edf69bab4c274b0..08cb6958b9154dbc516aeb0623a8fb5e4af1df92 100644
+> --- a/drivers/gpu/drm/bridge/lontium-lt9611.c
+> +++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
+> @@ -1136,6 +1136,10 @@ static int lt9611_probe(struct i2c_client *client)
+>  	lt9611->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+>  	lt9611->bridge.vendor = "Lontium";
+>  	lt9611->bridge.product = "LT9611";
+> +	lt9611->bridge.supported_infoframes = DRM_CONNECTOR_INFOFRAME_AUDIO |
+> +		DRM_CONNECTOR_INFOFRAME_AVI |
+> +		DRM_CONNECTOR_INFOFRAME_SPD |
+> +		DRM_CONNECTOR_INFOFRAME_VENDOR,
+
+Ah, ',' should be replaced with ';'.
+
+Nit: Align DRM_CONNECTOR_INFOFRAME_* vertically.
+
+>  	lt9611->bridge.hdmi_audio_dev = dev;
+>  	lt9611->bridge.hdmi_audio_max_i2s_playback_channels = 8;
+>  	lt9611->bridge.hdmi_audio_dai_port = 2;
 > 
-> Best regards,
-> Hal
 
-What users are there for 'pllclk' at U-Boot SPL phase? There does not
-seem to be any difference in testing U-Boot and Linux with or without
-this hint for 'pllclk'.
-
-Thanks,
-
--E
+-- 
+Regards,
+Liu Ying
 
