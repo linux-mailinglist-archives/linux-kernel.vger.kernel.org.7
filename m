@@ -1,101 +1,153 @@
-Return-Path: <linux-kernel+bounces-777128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEFCB2D5AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:09:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E79B2D5C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E0F37AAEC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:08:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C10118957D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6B42D7818;
-	Wed, 20 Aug 2025 08:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429A42D837E;
+	Wed, 20 Aug 2025 08:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOfMF2XK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTvKw6Iu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AB2286D55;
-	Wed, 20 Aug 2025 08:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEEE286D55;
+	Wed, 20 Aug 2025 08:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677365; cv=none; b=kpgvveU43kMwCBHGpCP548m8wTabsPIuOIV2HAnd5bt+KjH1ZX2i0tGK8bVKkMD9SxvyFaKoXdpmCgUOtmYN4FSSX3nyoB41EPbat2KjWOHdeTRFcLhkr4a9eJMVO3lU3RI/9sn0ib+0JIQAIOLQPen3fGskMrGmxM+HSotWTL0=
+	t=1755677401; cv=none; b=XW1UgBkH65Z5+NuTR1aY3eFZipDNjpTSbMwrOLPwQ9UcX3Wl9AD+3wK03aphK9rxeUZ5QMFiOhxrXAZ2pIPIrYBjBCWxh106mb/pWlKpkEYefqu95vWqvqG3dLROTb9mxem7O0T5etWD80d/ATF9GMfIgujlWQ2zPGhRB32ZVss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677365; c=relaxed/simple;
-	bh=VAzAJjUiSUbgkKmTprNwXqi/ADJs5TrO9JHx5kVkx+Q=;
+	s=arc-20240116; t=1755677401; c=relaxed/simple;
+	bh=ZwBIaVwfHe/T7WlfARZdRvpXDhB+IehKv0D+1cs2k44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IibvpphiXoLBRZctfF1vKUG74oi4vS6OJtGX6yade1/j3kex3J4Xd1qdqxbWkMl4EWJAVZ1sFdX9apQrdW9Yz1SB1wXb9EcLzPE4C05MbCxJO0QWmM/DMzN+5hgD88VbBSExTSyOPmyOrN6iFiqsM6SUgOcD5PxggiXDxcr/uD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOfMF2XK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A65C4CEEB;
-	Wed, 20 Aug 2025 08:09:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CuIXxql9sSlCT9it/V37qUlGadiyCZKorEAK5gHDcN+48zsS9kQz8k4yefRDaQvG8qwc3rrptZBDrRGN7cjvJkzX+rPGVpSDEDgrYyAfJSdcrHqaOHX2OGb3B8L0umoN36UCZpPAAJYSsYduDvfWPP+mQ2BaSb3Vz/E9xrajqDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTvKw6Iu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 762BDC113D0;
+	Wed, 20 Aug 2025 08:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755677365;
-	bh=VAzAJjUiSUbgkKmTprNwXqi/ADJs5TrO9JHx5kVkx+Q=;
+	s=k20201202; t=1755677401;
+	bh=ZwBIaVwfHe/T7WlfARZdRvpXDhB+IehKv0D+1cs2k44=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mOfMF2XKuFZ9r6EL8l2uZd7HA9goBHFWsgTRwXYqi/9aD1JkjH1+9nYdJhcNdF81F
-	 /x21Oi3ERxVy8/ymXXrlZ+lLjoOPtlFcHPiE/Ku5CZnylZSt8bfD6nRSJab0HteLVJ
-	 4vC7fWx0cZLX0oft0A+tZuQs7qCAeihz5+617N6dV52As+d/j6asfxC5H1gfEmdpDT
-	 fZ0pCdW7aj1LfQkblAQ0R97PWE1rqasPnoXXidgELe0exyfLt2pFJLDQvHgMYDy0NY
-	 097C3qB18uWPqp2dAhmO9b98jnyIoLl07bZZDNaUjPFvJQKzfzNl2mEvBV0BB9uW8z
-	 MegMfa+DzfofQ==
-Date: Wed, 20 Aug 2025 10:09:23 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/13] dt-bindings: soc: amlogic: Unify the compatible
- property for clk-measure
-Message-ID: <20250820-shapeless-devout-pig-defdd7@kuoka>
-References: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
- <20250815-add-more-socs-to-support-clk_measure-v1-5-59f04ba67457@amlogic.com>
+	b=nTvKw6IuGKUCM074ZO6HCTXEBhK8E5DzlI1NkU+TKjtyZQ9NfmN5Jc00uTv6/kKXa
+	 hWwxb3f4bADolcJPjWJGnr7BlVGitV9WGRgHoVDov0n0e81rrltgT7ztXG6CCOadAR
+	 A/9LHOmnMv4XoTm46Wi6wryYMO+yr1ndcmZ7Z4+cM94l/e5t+Tfq4j7t3XSGLaYVJe
+	 hdsr2Cqlnz6j/nkCAU/SqzZhmd/08f79LP5yPzmavyUjM0kJD/Dz7lE6I9jr9jrSuU
+	 BqR8XE6QJRoOvke2raPIVYoNu93YDKztyJOOABw4QkrKbpYxFS6kv6Yy/F9OwC7Q8C
+	 AdL744Lg9k08Q==
+Date: Wed, 20 Aug 2025 11:09:53 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Evangelos Petrongonas <epetron@amazon.de>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Alexander Graf <graf@amazon.com>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
+	linux-mm@kvack.org, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nh-open-source@amazon.com
+Subject: Re: [PATCH v2 2/2] efi: Support booting with kexec handover (KHO)
+Message-ID: <aKWC0c3kliee8gtu@kernel.org>
+References: <cover.1755643201.git.epetron@amazon.de>
+ <9e80381d4fafc71d6e0c64d69a8b3ac9c8949865.1755643201.git.epetron@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815-add-more-socs-to-support-clk_measure-v1-5-59f04ba67457@amlogic.com>
+In-Reply-To: <9e80381d4fafc71d6e0c64d69a8b3ac9c8949865.1755643201.git.epetron@amazon.de>
 
-On Fri, Aug 15, 2025 at 04:37:31PM +0800, Chuan Liu wrote:
-> The clk-measure IPs across Amlogic SoCs have minimal differences, so
-> they can be managed with a unified compatible property.
+On Tue, Aug 19, 2025 at 11:22:46PM +0000, Evangelos Petrongonas wrote:
+> When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
+> early during device tree scanning. After kexec, the new kernel
+> exclusively uses this region for memory allocations during boot up to
+> the initialization of the page allocator
 > 
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> However, when booting with EFI, EFI's reserve_regions() uses
+> memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
+> rebuilding them from EFI data. This destroys KHO scratch regions and
+> their flags, thus causing a kernel panic, as there are no scratch
+> memory regions.
+> 
+> Instead of wholesale removal, iterate through memory regions and only
+> remove non-KHO ones. This preserves KHO scratch regions, which are
+> good known memory, while still allowing EFI to rebuild its memory map.
+> 
+> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
 > ---
->  .../bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml | 14 +++-----------
->  1 file changed, 3 insertions(+), 11 deletions(-)
+> Changes in v2:
+> 	- Replaced the for loop with for_each_mem_region
+> 	- Fixed comment indentation
+> 	- Amended commit message to specify that scratch regions
+> 	are known good regions
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-> index 1c9d37eef5f0..a7927acde2fe 100644
-> --- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-> @@ -15,15 +15,7 @@ maintainers:
+>  drivers/firmware/efi/efi-init.c | 28 ++++++++++++++++++++++++----
+>  1 file changed, 24 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/firmware/efi/efi-init.c b/drivers/firmware/efi/efi-init.c
+> index a00e07b853f2..99f7eecc320f 100644
+> --- a/drivers/firmware/efi/efi-init.c
+> +++ b/drivers/firmware/efi/efi-init.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/efi.h>
+>  #include <linux/fwnode.h>
+>  #include <linux/init.h>
+> +#include <linux/kexec_handover.h>
+>  #include <linux/memblock.h>
+>  #include <linux/mm_types.h>
+>  #include <linux/of.h>
+> @@ -164,12 +165,31 @@ static __init void reserve_regions(void)
+>  		pr_info("Processing EFI memory map:\n");
 >  
->  properties:
->    compatible:
-> -    enum:
-> -      - amlogic,meson-gx-clk-measure
-> -      - amlogic,meson8-clk-measure
-> -      - amlogic,meson8b-clk-measure
-> -      - amlogic,meson-axg-clk-measure
-> -      - amlogic,meson-g12a-clk-measure
-> -      - amlogic,meson-sm1-clk-measure
-> -      - amlogic,c3-clk-measure
-> -      - amlogic,s4-clk-measure
-> +    const: amlogic,clk-measure
+>  	/*
+> -	 * Discard memblocks discovered so far: if there are any at this
+> -	 * point, they originate from memory nodes in the DT, and UEFI
+> -	 * uses its own memory map instead.
+> +	 * Discard memblocks discovered so far except for KHO scratch
+> +	 * regions. Most memblocks at this point originate from memory nodes
+> +	 * in the DT and UEFI uses its own memory map instead. However, if
+> +	 * KHO is enabled, scratch regions must be preserved.
 
-Obviously NAK, cannot stress more how wrong your approach is. It defies
-all rules for writing bindings.
+I'd add that KHO scratch regions are good know memory here as well. With
+that
 
-Best regards,
-Krzysztof
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
+>  	 */
+>  	memblock_dump_all();
+> -	memblock_remove(0, PHYS_ADDR_MAX);
+> +
+> +	if (is_kho_boot()) {
+> +		struct memblock_region *r;
+> +
+> +		/* Remove all non-KHO regions */
+> +		for_each_mem_region(r) {
+> +			if (!memblock_is_kho_scratch(r)) {
+> +				memblock_remove(r->base, r->size);
+> +				r--;
+> +			}
+> +		}
+> +	} else {
+> +		/*
+> +		 * KHO is disabled. Discard memblocks discovered so far:
+> +		 * if there are any at this point, they originate from memory
+> +		 * nodes in the DT, and UEFI uses its own memory map instead.
+> +		 */
+> +		memblock_remove(0, PHYS_ADDR_MAX);
+> +	}
+>  
+>  	for_each_efi_memory_desc(md) {
+>  		paddr = md->phys_addr;
+> -- 
+> 2.47.3
+
+-- 
+Sincerely yours,
+Mike.
 
