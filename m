@@ -1,215 +1,177 @@
-Return-Path: <linux-kernel+bounces-778079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36441B2E11D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:31:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F41CFB2E116
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19CD1BC631E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 630331CC0CFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C61334375;
-	Wed, 20 Aug 2025 15:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DAE326D65;
+	Wed, 20 Aug 2025 15:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XPnjKtZA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0ZT3Kg/"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3089F326D65
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3122E8B81
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703057; cv=none; b=XOot6sOs/q8mAqfClYRWXUxck3MUCqBlYS1FL0IJuec3xX6hALC9/BSXThywCtZm7Xm2tgUr8jCWer5hZVjh+ovkMJmVcv+tj4Hh+JMwc1P9m1BCXPxlsZnDQH7euQ4XXXAPuc8ymDnLxaGWqgDQ6YhW9z9Ny1jbXGID+AF6kgY=
+	t=1755703103; cv=none; b=L/qCuJ/CqUrYie2KdMUQZ+tMADzNDrrXreiaTEygVnNqsA9V7xUwTYuneSI3xcR5MvmcydTgqQbzSiSzLDtX1mRquCio8+ODblVI9/26XuAW9XC4j81epAkgX/mUy+QKdLdA/s2Pd7PEZZz9EI+PA7Gi7wiulI96vy/qfe5wrTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703057; c=relaxed/simple;
-	bh=W4duEWOlM+udE5VNJ/zPTR+3z61gEew4hVyTyQpHZM4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M6koz//GNH5Nk1DIKIU+n3boSQvYmOpqk+/dpujU2F5eADTPHx0X7xi10y0jyBI6VpOvEu1bSUiHlOW1Y5O2RRG6aFIYbqhUZldDnYaQdS5YXnFgUYW0msSaduNIt2Gvfochhbb2ZllmuGzUG0TRV+twPSDiK4HU915BqSnDW90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XPnjKtZA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755703054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lwfU+IsVElt3h1n12yQUuhxkyKNo90VrK/DGR70vyVI=;
-	b=XPnjKtZACGjNqU2LY+VCKreoDDF6wSndHvqXVaBNUco1cSqLuhAF44oScNKH6ehZ3UHI8f
-	fDb0sKziN9t3UqSJsK4QWRYkzKnzqQpwmRafUTlE/ElSOgkVtgb0ie3QvMu1pHJBhWpbD7
-	LymjE4/RftnBue+nAE/7iSPsOdWRr4g=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-FbGA5vD0MJizRW3TOOZTtQ-1; Wed, 20 Aug 2025 11:17:32 -0400
-X-MC-Unique: FbGA5vD0MJizRW3TOOZTtQ-1
-X-Mimecast-MFC-AGG-ID: FbGA5vD0MJizRW3TOOZTtQ_1755703052
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b109bccebaso54641cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:17:32 -0700 (PDT)
+	s=arc-20240116; t=1755703103; c=relaxed/simple;
+	bh=qwPsPTM8WlwGFiDbctFXgyFHEGMT8plEXNlTvpFmReU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZzsxLB5/lRVeIul8VDvE5hhnpYbyj98TjkN0blEXL77apFYTRQkTe6YSfVA0GlaY/ZoGRqHYPEI6sinacNkrQ4gjlonm+ke3z1NDKOtSQrXeIxpjr/Hjq/wIrPHGr23C/AzSsMvbypQtZAdKeLvXTFZ5FHRBomScUU7MuLQ0K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G0ZT3Kg/; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e2e6038cfso62933b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755703101; x=1756307901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ty3H5LpYYQe55Omh3bc9eQO+HNHqwIPoC9AB7VslUMs=;
+        b=G0ZT3Kg/fVVmuPKDub/AuVVoZ4d2ag5ieRdzY7T4sGOHygZQQoVM9IirGjjNCbfCjH
+         jDuwytznsgR/CmNIj0eWMVzmrfhn67qtBmu1lwFkyl+PUHmM4eoUAsWIIaLdg5KR2CzM
+         qXP8l/C97xaxDQhqXozgiooLEkTwLW7zSwW/RwttsbIodDbCgPH9yv6eNd1hBF1JY09O
+         QxX1il8n813NcuQNiSb7c+895oKoazI5kWZ5aKnQnFlxDhrq7by8gQEcdZ00Rwu3qHc7
+         wWk6Ow1q/Vzs7c6gU+4+kkdIs2PhlVWqJRv8DWmdNZT43B1dm7JbpbtPITzHwvkeoyVy
+         GCjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755703052; x=1756307852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lwfU+IsVElt3h1n12yQUuhxkyKNo90VrK/DGR70vyVI=;
-        b=FWrNKfK+P8zLhVamhtQmDfS18ocQndoDx7Q5gP+8BqkuY7OpeaGl40G5hMnv8Zjvfi
-         icce0m8H9ZePtBAdVskM4X9b6N4bnuQ9sq3sjdaz9vwCTYcYQU020OWkuYxhvGzciZjY
-         bSL3jYluDurSjqYZylM8lt4zRJBy1lJ+zsGNgm6yqLhZLl8Aghysob5CXZDtvHZW9hgn
-         2Ar48km7yGVNyHkJHlDgk9HrRXfjjE6S11XCZKLGGi3Mdo34hRqc652htT7rqX2kBqBj
-         +7A66clpa1fRrDdWrD5H1WS5Ml5sqr9u2fWMS/I58bj+UJ8dq5ZF6251PipD5YcvMebH
-         QIhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKB/DLcIcgATNZ9AnW/GuDz0VNJ403N41YwyUL8wOb2OAMl8yYAkP0aelvA/drbLMDawkThMSilfJ+Loc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznepaJecYe5M70kOfn4Nu2MC+gsz/knltlEyKOKJ6g6fWfIeFk
-	j6JMxmDJrM5v+EkQj84dibLwsT1vcOlpyDOvPh2wrjT1QKKvGd76tL3AbPwx/ol+AvSmuqJ3HGr
-	AdCdVAQAiugyD5bK3fKv/pq+I0kSrFmEHakJhSUEcnffWpzF4MkHvVdjuSVL7m/FdWiYYKgL+Yd
-	WG3M2u+fpvzAhNZ8KHZJ5OrT+HePyhuQxISWFCYYzC
-X-Gm-Gg: ASbGncspfx4td154e+eoVEE3492pzXv7jN8IHyQYFYYQTs+GC0Y8qyz7NSBoADlJBV9
-	x6Zoy7iT9GVQKA/6Js4uw+9v5O7FfY9nSjUmnWMAWOy5CZ5uMT7uQmDQ3u1GIdiDweyS334atrS
-	EYA8Qq6YTj7qX8gDqvF+J6GuoNmW9Y0Kdme4Ia8yjETPtulSOaQDfl
-X-Received: by 2002:a05:622a:5c93:b0:4af:203f:73e9 with SMTP id d75a77b69052e-4b291a45948mr38268801cf.3.1755703051777;
-        Wed, 20 Aug 2025 08:17:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHgNNXQPsAlJCg5PdYpqbUQjKk2La90rXTiB/Xg+AFCp6PDdl0eXQ9VodkzneYLfMLO6npPB65IGBnQ/QO7tyQ=
-X-Received: by 2002:a05:622a:5c93:b0:4af:203f:73e9 with SMTP id
- d75a77b69052e-4b291a45948mr38268261cf.3.1755703051224; Wed, 20 Aug 2025
- 08:17:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755703101; x=1756307901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ty3H5LpYYQe55Omh3bc9eQO+HNHqwIPoC9AB7VslUMs=;
+        b=mos2ZcPduCSGBNzpHxx6TSmQDgIAC8BgH/yJIKVkRfLPUG/baMLd7kT8QaVoLh/lTZ
+         g9uAY8b6DrFQbY801WkeJy5ZrQqjDp/ym4OS+otHGSSWeP+xFRSV06797Ch/sXTYWrLA
+         kvPBEifg0tOFeLKPioW5CAGdpb4anY0p+O0ZiacRyc1cR/QOjG5t9d/OYDJPJCWbhZs7
+         tNCYXOFItVk9mTemJxisk063zzNFn43HXz+kmA+kyGZQxUMPg8fuoZt3JPUHB0IQYnpM
+         q5PnQMRm3kRFkBIusOkRs33GWF0Sf6Rya7osrpTgH2CvjsYQ+sEiBFKMxAYdKA7G8s9G
+         3Fgw==
+X-Forwarded-Encrypted: i=1; AJvYcCW86V1ssTtnoNpfqZICKLqV82Yyng/OuLtX1rKJUnefR++6TIOCw3Y2vqacMPUUP+Il7WfvGmznSAJZfCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZMh8+wppzM0IF8LPMXYKZDr85mce+XmTbfBwOs8c3DaCU7AII
+	Bn2pM+QmDMJwjLNIIQN0tqIkdtuBkZCYjrF8y8NM6ThXN1DjaU3DoizRFKgV4Q==
+X-Gm-Gg: ASbGncuFmIVBBUB1By/oL3qW1XB3k4YeInQoESQ8ZpvgIfiZwdamsolUtHjWjh9FrBT
+	qRD6WLG1UE5RyoYc5QEm6g+IfWfeiQ2KteJs2HDALzQqpcIs2R4lBThMkAfVm2MMQ/MpNjVVNmy
+	TvXFuJTSWld7CoPfUe+fLoqdMLFW1s/OtqH6ln7gwX7Z8YcnjP/NDT1T6zM3JH7TSfrk0/D+FBq
+	dRS26aPqpN+ey3mcqW5Febr7S2OZi8lhXYyew4v32WoCLbNY5/xvQ63s9bqbnlusI5UAh3wC91y
+	j8rGfbUrfgfG58gix28FRHptVp1t0xircUus93xZtUN7BfpebWdO3E/FkH6vf7nrGL6hx3vYufs
+	sdWOC0/rofkVzRSBOhc1onA==
+X-Google-Smtp-Source: AGHT+IH76XkNiVLaLEgv5FvV1Eh1Z7rH7YQS+AyP44/drZrdGquJfdOLJa2l0oZsGG4SxPENIZj9Lw==
+X-Received: by 2002:a05:6a00:3a1d:b0:76c:1c69:111c with SMTP id d2e1a72fcca58-76e8dc86466mr3961320b3a.9.1755703100811;
+        Wed, 20 Aug 2025 08:18:20 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d0df00dsm5623648b3a.13.2025.08.20.08.18.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 08:18:19 -0700 (PDT)
+Date: Wed, 20 Aug 2025 11:18:17 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: pmladek@suse.com, akpm@linux-foundation.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Ingo Molnar <mingo@kernel.org>, Li Huafei <lihuafei1@huawei.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org, feng.tang@linux.alibaba.com,
+	joel.granados@kernel.org, john.ogness@linutronix.de,
+	namcao@linutronix.de, sravankumarlpu@gmail.com,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 9/9] watchdog: skip checks when panic is in progress
+Message-ID: <aKXnOTq9ZYeVYqH5@yury>
+References: <20250820091702.512524-1-wangjinchao600@gmail.com>
+ <20250820091702.512524-2-wangjinchao600@gmail.com>
+ <20250820091702.512524-3-wangjinchao600@gmail.com>
+ <20250820091702.512524-4-wangjinchao600@gmail.com>
+ <20250820091702.512524-5-wangjinchao600@gmail.com>
+ <20250820091702.512524-6-wangjinchao600@gmail.com>
+ <20250820091702.512524-7-wangjinchao600@gmail.com>
+ <20250820091702.512524-8-wangjinchao600@gmail.com>
+ <20250820091702.512524-9-wangjinchao600@gmail.com>
+ <20250820091702.512524-10-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815121459.3391223-1-lichliu@redhat.com>
-In-Reply-To: <20250815121459.3391223-1-lichliu@redhat.com>
-From: Lichen Liu <lichliu@redhat.com>
-Date: Wed, 20 Aug 2025 23:17:20 +0800
-X-Gm-Features: Ac12FXz5J-qsSNe_dCy4Is9oFh6XR_1xsHJhV6_kkHN0LaUVbdz8uoGPSmN-wtU
-Message-ID: <CAPmSd0OHB3orya=3V1icz4ZzOoAwHuWTqON_Dk+EaEcACtVtbg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	safinaskar@zohomail.com, kexec@lists.infradead.org, rob@landley.net, 
-	weilongchen@huawei.com, cyphar@cyphar.com, linux-api@vger.kernel.org, 
-	zohar@linux.ibm.com, stefanb@linux.ibm.com, initramfs@vger.kernel.org, 
-	corbet@lwn.net, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820091702.512524-10-wangjinchao600@gmail.com>
 
-Hi all, do you have any comments for this v2 patch?
-
-Thanks,
-Lichen
-
-On Fri, Aug 15, 2025 at 8:15=E2=80=AFPM Lichen Liu <lichliu@redhat.com> wro=
-te:
->
-> When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-> By default, a tmpfs mount is limited to using 50% of the available RAM
-> for its content. This can be problematic in memory-constrained
-> environments, particularly during a kdump capture.
->
-> In a kdump scenario, the capture kernel boots with a limited amount of
-> memory specified by the 'crashkernel' parameter. If the initramfs is
-> large, it may fail to unpack into the tmpfs rootfs due to insufficient
-> space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-> memory must be available for the mount. This leads to an OOM failure
-> during the early boot process, preventing a successful crash dump.
->
-> This patch introduces a new kernel command-line parameter, rootfsflags,
-> which allows passing specific mount options directly to the rootfs when
-> it is first mounted. This gives users control over the rootfs behavior.
->
-> For example, a user can now specify rootfsflags=3Dsize=3D75% to allow the
-> tmpfs to use up to 75% of the available memory. This can significantly
-> reduce the memory pressure for kdump.
->
-> Consider a practical example:
->
-> To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
-> the default 50% limit, this requires a memory pool of 96MB to be
-> available for the tmpfs mount. The total memory requirement is therefore
-> approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacked
-> kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) =E2=89=88 220MB.
->
-> By using rootfsflags=3Dsize=3D75%, the memory pool required for the 48MB
-> tmpfs is reduced to 48MB / 0.75 =3D 64MB. This reduces the total memory
-> requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
-> smaller crashkernel size, such as 192MB.
->
-> An alternative approach of reusing the existing rootflags parameter was
-> considered. However, a new, dedicated rootfsflags parameter was chosen
-> to avoid altering the current behavior of rootflags (which applies to
-> the final root filesystem) and to prevent any potential regressions.
->
-> Also add documentation for the new kernel parameter "rootfsflags"
->
-> This approach is inspired by prior discussions and patches on the topic.
-> Ref: https://www.lightofdawn.org/blog/?viewDetailed=3D00128
-> Ref: https://landley.net/notes-2015.html#01-01-2015
-> Ref: https://lkml.org/lkml/2021/6/29/783
-> Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-init=
-ramfs.html#what-is-rootfs
->
-> Signed-off-by: Lichen Liu <lichliu@redhat.com>
-> Tested-by: Rob Landley <rob@landley.net>
+On Wed, Aug 20, 2025 at 05:14:54PM +0800, Jinchao Wang wrote:
+> Both watchdog_buddy_check_hardlockup() and
+> watchdog_overflow_callback() may trigger
+> during a panic. This can lead to recursive
+> panic handling.
+> 
+> Add panic_in_progress() checks so watchdog
+> activity is skipped once a panic has begun.
+> 
+> This prevents recursive panic and keeps the
+> panic path more reliable.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 > ---
-> Changes in v2:
->   - Add documentation for the new kernel parameter.
->
->  Documentation/admin-guide/kernel-parameters.txt |  3 +++
->  fs/namespace.c                                  | 11 ++++++++++-
->  2 files changed, 13 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index fb8752b42ec8..0c00f651d431 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6220,6 +6220,9 @@
->
->         rootflags=3D      [KNL] Set root filesystem mount option string
->
-> +       rootfsflags=3D    [KNL] Set initial root filesystem mount option =
-string
-> +                       (e.g. tmpfs for initramfs)
-> +
->         rootfstype=3D     [KNL] Set root filesystem type
->
->         rootwait        [KNL] Wait (indefinitely) for root device to show=
- up.
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 8f1000f9f3df..e484c26d5e3f 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
->  }
->  __setup("mphash_entries=3D", set_mphash_entries);
->
-> +static char * __initdata rootfs_flags;
-> +static int __init rootfs_flags_setup(char *str)
-> +{
-> +       rootfs_flags =3D str;
-> +       return 1;
-> +}
-> +
-> +__setup("rootfsflags=3D", rootfs_flags_setup);
-> +
->  static u64 event;
->  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
->  static DEFINE_IDA(mnt_group_ida);
-> @@ -5677,7 +5686,7 @@ static void __init init_mount_tree(void)
->         struct mnt_namespace *ns;
->         struct path root;
->
-> -       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
-> +       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags=
-);
->         if (IS_ERR(mnt))
->                 panic("Can't create rootfs");
->
-> --
-> 2.47.0
->
+>  kernel/watchdog_buddy.c | 5 +++++
+>  kernel/watchdog_perf.c  | 3 +++
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/kernel/watchdog_buddy.c b/kernel/watchdog_buddy.c
+> index ee754d767c21..79a85623028c 100644
+> --- a/kernel/watchdog_buddy.c
+> +++ b/kernel/watchdog_buddy.c
+> @@ -93,6 +93,11 @@ void watchdog_buddy_check_hardlockup(int hrtimer_interrupts)
+>  	 */
+>  	if (hrtimer_interrupts % 3 != 0)
+>  		return;
+> +	/*
+> +	 * pass the buddy check if a panic is in process
+> +	 */
+> +	if (panic_in_progress())
+> +		return;
+>  
+>  	/* check for a hardlockup on the next CPU */
+>  	next_cpu = watchdog_next_cpu(smp_processor_id());
+> diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
+> index 9c58f5b4381d..7641de750ca5 100644
+> --- a/kernel/watchdog_perf.c
+> +++ b/kernel/watchdog_perf.c
+> @@ -12,6 +12,7 @@
+>  
+>  #define pr_fmt(fmt) "NMI watchdog: " fmt
+>  
+> +#include <linux/panic.h>
+>  #include <linux/nmi.h>
+>  #include <linux/atomic.h>
+>  #include <linux/module.h>
+> @@ -110,6 +111,8 @@ static void watchdog_overflow_callback(struct perf_event *event,
+>  
+>  	if (!watchdog_check_timestamp())
+>  		return;
+> +	if (panic_in_progress())
+> +		return;
 
+It looks like watchdog_check_timestamp() does some real work, like
+updates last_timestamp and so on. Under the panic condition all this
+may be unreliable, right?
+
+Maybe it's worth to make panic_in_progress() the first check in the
+chain?
+
+With that,
+
+Reviewed-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+
+>  
+>  	watchdog_hardlockup_check(smp_processor_id(), regs);
+>  }
+> -- 
+> 2.43.0
 
