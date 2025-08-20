@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-778497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095EBB2E682
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2502B2E684
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF2214E483E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307523B17D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A502BE7AB;
-	Wed, 20 Aug 2025 20:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A652C21DA;
+	Wed, 20 Aug 2025 20:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="urVzqRfe"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJ6dOBt1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09268296BD4;
-	Wed, 20 Aug 2025 20:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EAF299954;
+	Wed, 20 Aug 2025 20:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755721458; cv=none; b=KveZUKKShPVoYxOcDpwfQC7M8JVhFbRUZhw5Bn0/xisouNT7UhWGeZlHdNKPnONQQd/zlJ+T6aKjMwukN9ZyGTHw1s4Dx/8fzL6hLMm1ULTZ1B46bQred5Uqjz77WRw15DnNKXK6m0JLL4kjmabpsZbdoBl6+Q81GNbKCIctpCs=
+	t=1755721484; cv=none; b=FNhmPgn1n2KWz1gKuHWmNAKHozPugrzy0+8PRJvol9QPYfYE8p+960kl4Khuwcs5bf0A37s/ahXuN7q2Pzwv0JIA1gNCbWVlq+KKWDltOpReBDM2YogI3DO8h7sqbVrNnBB2JtDa4q4fREaxYPyP/zrNFC+1UFNFbeshj/AJ/oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755721458; c=relaxed/simple;
-	bh=LXRHQ55brtLcrhsy+1XNwSfC2tXC8DF/Ug1c1yfudag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgTGvv5XW2l3pVAkkWvFvpnuy39iXxnSxCuuLIhCHRZpib9oKjXzhhW6tiO3NCskeUay2rNZX7LdufAYXuy8Rltc7huyR6hoqbtpGxtXMYWphLS1riUyCxFeK314N+ykEpmtfnZSWDfW9r9V5xhLw1h7VNfX/fZYJssiPTmwHnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=urVzqRfe; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=rAiyKOmcECi1Vq/23AujM+lyO0YeAmjuxCNHgLIPOyI=; b=urVzqRfeehJyq2ZrWm/jxS4VnO
-	SVEY4PaDiGGAkmZzQ/mIwuft3n6bqYykmbiHSAV41w4c57oqGRqDgagLaY65Cb+jVK7acfmOHhyMw
-	86z0MW8hQCUFNivznpz2eibMpuKIRB/BihBCVmUZXKMJuXZtUtj22nsGERxmgiPgdhh8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uopLU-005Mbv-2t; Wed, 20 Aug 2025 22:23:44 +0200
-Date: Wed, 20 Aug 2025 22:23:44 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dong Yibo <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] net: rnpgbe: Add basic mbx ops support
-Message-ID: <5cced097-52db-41c9-93e4-927aab5ffb2e@lunn.ch>
-References: <20250818112856.1446278-1-dong100@mucse.com>
- <20250818112856.1446278-4-dong100@mucse.com>
+	s=arc-20240116; t=1755721484; c=relaxed/simple;
+	bh=C/5m1s50Fyg1uplwgRLOF5gC4bP0ivxYDJ+ilHb4/jI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bpV5WLNKkDexAhBlS0GsedElLfppwD+fS/IhE5DCVJSUDGUKKItSEUjaeH/oj7z5joo46uRJ04C5dyKh0Nr8LOil8vWllmHG8ld7AnEw0mACloaoA0JbzNPWj8FYlSCRNamstP8a7DHQytdKs+/iSrj3qJDSitKqBJpSjm71Y2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJ6dOBt1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63729C4CEE7;
+	Wed, 20 Aug 2025 20:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755721483;
+	bh=C/5m1s50Fyg1uplwgRLOF5gC4bP0ivxYDJ+ilHb4/jI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oJ6dOBt1WFSpmrIQzsEE1PbBrX8PgsMFmA84xEr66fi4S7klN6yKJgQ3WyUtSCEdV
+	 UYmCP2h/L/d415xPz9fg4kNuqVfCgzW2mND/GQWzRX/4v6dzcuzz41cRhZ17c0//pI
+	 2jL+cI0IMOKAAoMoprY6/LA52xFkQ4xyfEIm96Q6fQakcaOZJGnjGsiIzSWK+Docvm
+	 Wroe9nhm7k62oBily+Otd1cmqcrnpeVB77IyWiOMwfJoHiJeN9JCL6Vaz4tPZJqaLq
+	 0xUwINYWN5o3w9HvfJ+SvWMTp3A9ZFjreAG2A73Azs1pSKEiMnwkUoGMk9lGNNw9ee
+	 sDbdNpTRdyAvQ==
+Date: Wed, 20 Aug 2025 15:24:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Nam Cao <namcao@linutronix.de>,
+	Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: [GIT PULL] PCI fixes for v6.17
+Message-ID: <20250820202441.GA638554@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,88 +59,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818112856.1446278-4-dong100@mucse.com>
 
-> +/**
-> + * mucse_mbx_get_ack - Read ack from reg
-> + * @mbx: pointer to the MBX structure
-> + * @reg: register to read
-> + *
-> + * @return: the ack value
-> + **/
-> +static u16 mucse_mbx_get_ack(struct mucse_mbx_info *mbx, int reg)
-> +{
-> +	return (mbx_data_rd32(mbx, reg) >> 16);
-> +}
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-> +static int mucse_check_for_ack_pf(struct mucse_hw *hw)
-> +{
-> +	struct mucse_mbx_info *mbx = &hw->mbx;
-> +	u16 hw_fw_ack;
-> +
-> +	hw_fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-> +int mucse_write_mbx_pf(struct mucse_hw *hw, u32 *msg, u16 size)
-> +{
-> +	struct mucse_mbx_info *mbx = &hw->mbx;
-> +	int size_inwords = size / 4;
-> +	u32 ctrl_reg;
-> +	int ret;
-> +	int i;
-> +
-> +	ctrl_reg = PF2FW_MBOX_CTRL(mbx);
-> +	ret = mucse_obtain_mbx_lock_pf(hw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < size_inwords; i++)
-> +		mbx_data_wr32(mbx, MBX_FW_PF_SHM_DATA + i * 4, msg[i]);
-> +
-> +	/* flush msg and acks as we are overwriting the message buffer */
-> +	hw->mbx.fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+are available in the Git repository at:
 
-It seems like the ACK is always at MBX_FW2PF_COUNTER. So why pass it
-to mucse_mbx_get_ack()? Please look at your other getters and setters.
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.17-fixes-2
 
-> +/**
-> + * mucse_write_mbx - Write a message to the mailbox
-> + * @hw: pointer to the HW structure
-> + * @msg: the message buffer
-> + * @size: length of buffer
-> + *
-> + * @return: 0 on success, negative on failure
-> + **/
-> +int mucse_write_mbx(struct mucse_hw *hw, u32 *msg, u16 size)
-> +{
-> +	return mucse_write_mbx_pf(hw, msg, size);
-> +}
+for you to fetch changes up to 5149bbb56bdcf5c5f72904025fbb502217580b63:
 
-This function does not do anything useful. Why not call
-mucse_write_mbx_pf() directly?
+  PCI: vmd: Remove MSI-X check on child devices (2025-08-12 13:45:01 -0500)
 
-> +/**
-> + * mucse_check_for_msg - Check to see if fw sent us mail
-> + * @hw: pointer to the HW structure
-> + *
-> + * @return: 0 on success, negative on failure
-> + **/
-> +int mucse_check_for_msg(struct mucse_hw *hw)
-> +{
-> +	return mucse_check_for_msg_pf(hw);
-> +}
-> +
-> +/**
-> + * mucse_check_for_ack - Check to see if fw sent us ACK
-> + * @hw: pointer to the HW structure
-> + *
-> + * @return: 0 on success, negative on failure
-> + **/
-> +int mucse_check_for_ack(struct mucse_hw *hw)
-> +{
-> +	return mucse_check_for_ack_pf(hw);
-> +}
+Both fixes are for regressions that appeared in v6.17-rc1.
+----------------------------------------------------------------
 
-These as well.
+- Remove vmd restriction on children using MSI-X because VMD does in fact
+  support both MSI and MSI-X for children (Nam Cao)
 
-	Andrew
+- Fix a NULL pointer dereference in the xilinx interrupt handler (Nam Cao)
+
+----------------------------------------------------------------
+Nam Cao (2):
+      PCI: xilinx: Fix NULL pointer dereference in xilinx_pcie_intr_handler()
+      PCI: vmd: Remove MSI-X check on child devices
+
+ drivers/pci/controller/pcie-xilinx.c | 2 +-
+ drivers/pci/controller/vmd.c         | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
