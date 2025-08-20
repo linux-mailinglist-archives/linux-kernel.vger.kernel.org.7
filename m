@@ -1,178 +1,170 @@
-Return-Path: <linux-kernel+bounces-777977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF03B2E006
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:56:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27389B2E007
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A33FC164955
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:54:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52E6B7B36B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F300A320CC5;
-	Wed, 20 Aug 2025 14:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782F3321425;
+	Wed, 20 Aug 2025 14:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="k/UopcBB"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1TfWFFw2"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527B93203B5
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6AD31E116
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755701681; cv=none; b=lMMlEZseBIYhNgHLGv6SK/Ey+S2e6U1w9BZFB284HsEW6Xb5w88Twm+ChuWOaGtCyCIzaBOjBGjLAsfmEuCExMpsXtYyMzDxAtC0CMNcXN8VD/44bEMRtyUE1h3hdmuF0tgVL9DDJnfb9HTlylQ349PGp9o8FIBqNLi5umOEips=
+	t=1755701751; cv=none; b=OcrUddtPxgdc74+tSLpht8CCNDGKKfbXimgJ3pDowsD619Oo8ZEBTEPR67FDMG1R6b2JCBwkieR1xdbe/BFOkEVEFp6bZKf3uBZU4UkgC6XTvb0oGXqgst+mLtgTCx+XPqyU+DKTyHaY6w6zT6mC8wPSN4GX2gVCAU59kwK9Ez8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755701681; c=relaxed/simple;
-	bh=Z0cFdbX/huRNt+rkKdguvr+JMHQ4LJ1mq0ULRA6KwE8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=skpp3M+4crTXt4CZJNVUQBeonbhpo8aqHZAuxNyP1+AnNtixTsAYPsAasKg3adcMI1gUkDXAIFtdeT418wsTva24PrPvhJemUmV6Ats2HpIqBirAx1lmyDd3XbRIBK6joxD4Y8eHeZ/JFTEH3TlRCIedgMeXUlypHjSCqN0VxVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=k/UopcBB; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 88D80240104
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:54:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1755701675; bh=RuQEgRxHcjCSAwP9bDowwwjk2VbVjxN07stQ0dNve5k=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:From;
-	b=k/UopcBBT/aZjxVUhU/Vl6bkhobYNTOs0CA/eX5BwZMVlXnhQemGZYdcsX/yRTj70
-	 evwvbtbjB02Ed8DOkSVcqqmIKWPiW3QgL44JL0RG4mn1Q7F21+PS7CGrvVLxyzPmi5
-	 pfeRNpgJFTFKigNq0BHJxk0hFA5lyzxdfLR2DPpAwhbf48lanbAQrkU4oTvi/WWh/8
-	 IYooTtErPW5L9j4ktoxeGX0y/xPPaeLa5sWzAzHTL01+MBqbUeG754+Zfxzofqn6Wd
-	 uPhN3owEWQR/6AYYWZ7RMSFCtSl9B2+NUd8ig2wIpViCniOXxvwo2owBS9W49sfnIW
-	 eU4w0laXwMenw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4c6Txh6q4Pz9rxQ;
-	Wed, 20 Aug 2025 16:54:32 +0200 (CEST)
-Message-ID: <af64e20ba242d4742f650057254029257a40ae79.camel@posteo.de>
-Subject: Re: [PATCH] media: nxp: imx8-isi: check return value of
- media_pad_remote_pad_first()
-From: Martin Kepplinger-Novakovic <martink@posteo.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 20 Aug 2025 14:54:35 +0000
-In-Reply-To: <20250820140135.GA6190@pendragon.ideasonboard.com>
-References: <20250205172957.182362-1-martink@posteo.de>
-	 <1f4b4e707762c0926c0acece18cb9cc3ecc242bc.camel@posteo.de>
-	 <20250820140135.GA6190@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1755701751; c=relaxed/simple;
+	bh=7+oHWTACPFSALznoe36mPSP2bCu7kRLIqa4uxK/H3IQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fN7aKZYoNhlvnhLxX7RgsINzh1hI8n/pWqa7DVUVdm+BMeWCQ5azaxDdXHNDdXGEqCct741MrPcS9fWvHUhDbSD0UxuOqbda4CGJmrL9S21RHc4DV2U/QI8bhwJNS+SePozjKPznxOk5iL1F/42hlXSjeEZlxK8xAXFlkW1gtLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1TfWFFw2; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id EFB371A09AA;
+	Wed, 20 Aug 2025 14:55:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BA55E606A0;
+	Wed, 20 Aug 2025 14:55:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C61211C2286DB;
+	Wed, 20 Aug 2025 16:55:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1755701744; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=ih+mPY47VbrJ66aP5mMPRcqsVibkL6Zr8hZhh9qWJQ0=;
+	b=1TfWFFw2fnGqLe7NkoH1peKdi3+CPCeu3cbZhajrEfJ0pjJZJNbGb+/ICi9HUxkaL9nZT3
+	TVZuoxjWSx7cp7rRbvfMlotehEtTAy4hk0w8ql6CzX7i5zXeshVg+xJQuv2baU7t5hQd5f
+	b1wIi/emNh1J6YXcGOTFokFXEBbp1Q2cpzLwFiNLkz9Yc32sHBshwF/Y/vht6ivoe/piU6
+	WNOWVrZloO+Lwgl3u60E43KpASbpmM44bNTdMIXsCqf+cnqWAhu5SElhy2UjwPlWAzcXf7
+	ZDjfd5QUIJyR4EUBcCK5bwogWHyawMobIN87D5RO5tfNm73a5EjGrOad/oeJyA==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH net v4 0/5] net: macb: various fixes
+Date: Wed, 20 Aug 2025 16:55:04 +0200
+Message-Id: <20250820-macb-fixes-v4-0-23c399429164@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMnhpWgC/22NSw7CIBCGr9LMWgzQkqIr72G6KDjYSSwYIETTc
+ HcJa5ff/zwgYSRMcB0OiFgoUfANptMAdlv9Exk9GoPkUnHNNdtXa5ijDyaG0qmZoxByEtAK74j
+ daPk7eMywNHGjlEP89oMyduvfVhkZZ1w74axRYr64mwkhv8ifbdhhqbX+AH2hAw6rAAAA
+X-Change-ID: 20250808-macb-fixes-e2f570e11241
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Harini Katakam <harini.katakam@xilinx.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Sean Anderson <sean.anderson@linux.dev>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Am Mittwoch, dem 20.08.2025 um 17:01 +0300 schrieb Laurent Pinchart:
-> Hi Martin,
->=20
-> On Thu, Feb 06, 2025 at 08:49:37AM +0000, Martin Kepplinger wrote:
-> > Am Mittwoch, dem 05.02.2025 um 17:29 +0000 schrieb Martin
-> > Kepplinger-
-> > Novakovi=C4=87:
-> > > media_pad_remote_pad_first() return NULL if "no enabled link has
-> > > been
-> > > found".
-> > > Check for that.
-> > >=20
-> > > backstory
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > While trying to get a (Y10 grey) sensor working on imx8mp
-> > > (v6.12.12
-> > > now and
-> > > I know the hardware works on an ancient nxp-kernel),
-> > > I tried to enable the sensor link, set formats and stream:
-> >=20
-> > btw, that's roughly the
-> > driver:=C2=A0
-> > https://github.com/VC-MIPI-modules/vc_mipi_nxp/tree/master/src
-> > that might need additions to with recent mainline kernels. Will the
-> > sensor be the reason for the link not being found here?
->=20
-> I've submitted
-> https://lore.kernel.org/linux-media/20250820140021.8026-1-laurent.pinchar=
-t@ideasonboard.com
-> ,
-> which should fix this issue in a more generic way.
->=20
+Fix a few disparate topics in MACB:
 
+[PATCH net v4 1/5] dt-bindings: net: cdns,macb: allow tsu_clk without tx_clk
+[PATCH net v4 2/5] net: macb: remove illusion about TBQPH/RBQPH being per-queue
+[PATCH net v4 3/5] net: macb: move ring size computation to functions
+[PATCH net v4 4/5] net: macb: single dma_alloc_coherent() for DMA descriptors
+[PATCH net v4 5/5] net: macb: avoid double endianness swap in macb_set_hwaddr()
 
-Hi, thank you. As posted over there, this indeed fixes the crash
-itself.
+Patch 3/5 is a rework that simplifies patch 4/5.
 
-P.S.:
-Not that you should care :) But as for my specific "vision components"
-sensor I want to use here, where this rpi-driver exists:
-https://github.com/VC-MIPI-modules/vc_mipi_raspi/blob/main/src/vc_mipi_came=
-ra/vc_mipi_camera.c
-a script like
+What will follow is (1) many cleanup patches and (2) patches for EyeQ5
+support. Those will be sent targeting net-next/main once this series
+lands there, aiming to minimise merge conflicts. Old version of those
+patches are visible in the V2 revision.
 
-media-ctl -d 1 --links "'vc_mipi_camera 3-001a':0->'csis-
-32e50000.csi':0[1]"
+Thanks,
+Have a nice day,
+Théo
 
-# format settings for mipi rx and ISI
-media-ctl -d "platform:32e00000.isi" --set-v4l2 '"vc_mipi_camera 3-
-001a":0[fmt:Y10_1X10/2592x1944 field:none]'
-media-ctl -d "platform:32e00000.isi" --set-v4l2 '"csis-
-32e50000.csi":0[fmt:Y10_1X10/2592x1944 field:none colorspace:srgb]'
-media-ctl -d "platform:32e00000.isi" --set-v4l2
-'"crossbar":0[fmt:Y10_1X10/2592x1944 field:none colorspace:srgb]'
-media-ctl -d "platform:32e00000.isi" --set-v4l2
-'"mxc_isi.0":0[fmt:Y10_1X10/2592x1944 field:none colorspace:srgb]'
+[0]: https://lore.kernel.org/lkml/20250627-macb-v2-0-ff8207d0bb77@bootlin.com/
 
-v4l2-ctl -d /dev/video2 --set-fmt-
-video=3Dwidth=3D2592,height=3D1944,pixelformat=3D'Y10 '
-v4l2-ctl --verbose --device=3D/dev/video2 --stream-mmap --stream-count=3D10
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v4:
+- Drop 11 patches that are only cleanups. That includes the
+  RBOF/skb_reserve() patch that, after discussion with Sean [1], has
+  had its Fixes trailer dropped. "move ring size computation to
+  functions" is the only non-fix patch that is kept, as it is depended
+  upon by further patches. Dropped patches:
+    dt-bindings: net: cdns,macb: sort compatibles
+    net: macb: match skb_reserve(skb, NET_IP_ALIGN) with HW alignment
+    net: macb: use BIT() macro for capability definitions
+    net: macb: remove gap in MACB_CAPS_* flags
+    net: macb: Remove local variables clk_init and init in macb_probe()
+    net: macb: drop macb_config NULL checking
+    net: macb: simplify macb_dma_desc_get_size()
+    net: macb: simplify macb_adj_dma_desc_idx()
+    net: macb: move bp->hw_dma_cap flags to bp->caps
+    net: macb: introduce DMA descriptor helpers (is 64bit? is PTP?)
+    net: macb: sort #includes
+  [1]: https://lore.kernel.org/lkml/d4bead1c-697a-46d8-ba9c-64292fccb19f@linux.dev/
+- Link to v3: https://lore.kernel.org/r/20250808-macb-fixes-v3-0-08f1fcb5179f@bootlin.com
 
+Changes in v3:
+- Cover letter: drop addresses that reject emails:
+  cyrille.pitchen@atmel.com
+  hskinnemoen@atmel.com
+  jeff@garzik.org
+  rafalo@cadence.com
+- dt-bindings: Take 2x Reviewed-by Krzysztof.
+- dt-bindings: add Fixes trailer to "allow tsu_clk without tx_clk"
+  patch, to highlight we are not introducing new behavior.
+- Reorder commits; move fixes first followed by cleanup patches.
+- Drop all EyeQ5 related commits.
+- New commit: "remove gap in MACB_CAPS_* flags".
+- New commit: "move ring size computation to functions".
+- New commit: "move bp->hw_dma_cap flags to bp->caps".
+- Rename introduced helpers macb_dma_is_64b() to macb_dma64() and,
+  macb_dma_is_ptp() to macb_dma_ptp().
+- Rename MACB_CAPS_RSC_CAPABLE -> MACB_CAPS_RSC.
+- Fix commit message typos: "maxime" -> "maximise", etc.
+- Take 7x Reviewed-by: Sean Anderson.
+- Add details to some commit messages.
+- Link to v2: https://lore.kernel.org/r/20250627-macb-v2-0-ff8207d0bb77@bootlin.com
 
-still fails with
+---
+Théo Lebrun (5):
+      dt-bindings: net: cdns,macb: allow tsu_clk without tx_clk
+      net: macb: remove illusion about TBQPH/RBQPH being per-queue
+      net: macb: move ring size computation to functions
+      net: macb: single dma_alloc_coherent() for DMA descriptors
+      net: macb: avoid double endianness swap in macb_set_hwaddr()
 
+ .../devicetree/bindings/net/cdns,macb.yaml         |   2 +-
+ drivers/net/ethernet/cadence/macb.h                |   4 -
+ drivers/net/ethernet/cadence/macb_main.c           | 138 ++++++++++-----------
+ 3 files changed, 69 insertions(+), 75 deletions(-)
+---
+base-commit: 715c7a36d59f54162a26fac1d1ed8dc087a24cf1
+change-id: 20250808-macb-fixes-e2f570e11241
 
-[   34.642252] vc_mipi_camera 3-001a: vc_core_set_format(): Set format:
-0x200a (Y10_1X10)
-[   34.650227] vc_mipi_camera 3-001a: vc_core_try_format(): Try format
-0x200a (Y10_1X10, format: 0x2b)
-[   34.659284] vc_mipi_camera 3-001a: vc_core_try_format(): Checking
-mode 0 (format: 0x2b)
-[   34.667295] vc_mipi_camera 3-001a: vc_core_calculate_max_exposure():
-period_1H_ns: 7407, vmax.max: 1048575, vmax.min: 9
-[   34.678083] vc_mipi_camera 3-001a: vc_core_get_optimized_vmax():
-vmax_def: 4500, v_factor: 0, height: 1944/1944
-[   34.688178] vc_mipi_camera 3-001a:
-vc_core_calculate_max_frame_rate(): period_1H_ns: 7407, vmax:
-4500/4500, max_frame_rate: 30002
-[   34.699833] vc_mipi_camera 3-001a: vc_core_update_controls():
-num_lanes: 2, format 43, exposure.max: 7766728 us, framerate.max: 30002
-mHz
-[   34.712184] vc_mipi_camera 3-001a: vc_core_set_frame(): Set frame
-(left: 0, top: 0, width: 2592, height: 1944)
-[   34.722208] vc_mipi_camera 3-001a: vc_core_calculate_max_exposure():
-period_1H_ns: 7407, vmax.max: 1048575, vmax.min: 9
-[   34.733000] vc_mipi_camera 3-001a: vc_core_get_optimized_vmax():
-vmax_def: 4500, v_factor: 0, height: 1944/1944
-[   34.743112] vc_mipi_camera 3-001a:
-vc_core_calculate_max_frame_rate(): period_1H_ns: 7407, vmax:
-4500/4500, max_frame_rate: 30002
-[   34.754768] vc_mipi_camera 3-001a: vc_core_update_controls():
-num_lanes: 2, format 43, exposure.max: 7766728 us, framerate.max: 30002
-mHz
-VIDIOC_QUERYCAP: ok
-		VIDIOC_REQBUFS returned 0 (Success)
-		VIDIOC_CREATE_BUFS returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_QUERYBUF returned 0 (Success)
-		VIDIOC_G_FMT returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_QBUF returned 0 (Success)
-		VIDIOC_STREAMON returned -1 (Broken pipe)
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
+
 
