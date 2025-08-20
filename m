@@ -1,189 +1,133 @@
-Return-Path: <linux-kernel+bounces-777782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE8BB2DDB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:28:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DB4B2DDB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4735C17C0CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1BBE1C47ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC9331DDB7;
-	Wed, 20 Aug 2025 13:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987382D3231;
+	Wed, 20 Aug 2025 13:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="flAtSwJo"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BPhghfmM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB312D3231;
-	Wed, 20 Aug 2025 13:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A8823741;
+	Wed, 20 Aug 2025 13:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696496; cv=none; b=M3TobycmlSp22VdfEGSl4DlY2cLpJrimGAAstqC3crseLaZgw4w5purhFNnYYec9+m5eaEZvHUTxOLEronRbohQD+rBdeoIzEocoMD67+YPuRClb8T9Cei38pyIcFiEy2FZK1Pbv2SIdHAn6KTBv/zikwMjW2zBO74iQ7/Hih1Y=
+	t=1755696447; cv=none; b=LEuEoyA/w/R84FwFCGzZmdigIPJcZnBaLWx04QSb91yuQn+hsAuVfAFmj4Mc1XYUsgIRwqNsxc+sy8PFyx4TUIDhZMaFBmMEhoztU0O1zhozAv2cAgaiOyWmZfDtX0ansNEg3eL0T7YY7bRH60dbNoiJMH91qvIrxPJDoYWnCMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696496; c=relaxed/simple;
-	bh=rqJbnI2LdCG9yqQrLaRMCg0AxlACV88Dlzc/cSANipg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kRHcCxRvfKQLi6pQWWBKYbOgRjDVlj7zIS3MJMQmoF+m13fLRrsCuKOcm3JuthZT3lKmMgBtj57riyAnfnkyuMrRwOk5gAU9NT1QfdqDNkLW+aa/62uo/YrfTnpVLWNcMoB0CHWSIPzOk9LfbqHNENC1qbiC/U11ZtTSYXc8gUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=flAtSwJo; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 9B372C6B3A5;
-	Wed, 20 Aug 2025 13:27:58 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1C970606A0;
-	Wed, 20 Aug 2025 13:28:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 116271C22CF41;
-	Wed, 20 Aug 2025 15:28:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755696491; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=EHAQSf51OR0tJUv4YhXS/cAsONEhMwCoETXsLmZdqH8=;
-	b=flAtSwJoVuLKUIu6A6Lu8a3rW/eFBrG/1J74vlxdW+K/uvlQwFgj1JsUtxvxDr7edjdAmP
-	No5yf6W5NRqjbtvFEqMckVs1RBAp+uBnFD3txX/Pg/87tBmft95Z8uFT3f1hOWixB9gIMq
-	ErBzF3aO+iesXm8tiXSweptFOtdOKetoBdumlUof/puykah5Ur+p4zgKZ+N9i7gfllfiZV
-	CPs4svUCdtUDaVxcbTHD1UcV2tyUZLn+md+YeQ8Nvv9sk7cWXPB4hkA9Lu31dtNddZi05O
-	/+WC4K70DaUFDReqqYBUCHeb0E3sm2U+XE+C/4NYdSQKPJ9846h90cUe7xbqwQ==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	"Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net] net: pse-pd: pd692x0: Fix power budget leak in manager setup error path
-Date: Wed, 20 Aug 2025 15:27:07 +0200
-Message-ID: <20250820132708.837255-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755696447; c=relaxed/simple;
+	bh=Iroe3MCa2ZZaRY9jKe2399kPLRw8TL6vb7UDOEeV6xo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sJZGCF8Z+z48Yzd/Q0PxlAAd55/Cg8jiONMuvjMZQHzHExaiFbeemYux6EkqzoU9GKg4YA0vRrXC7acUjRGj8dgeX3OF4jVExiAI0D62IGkwT5HYXwmm6dgN9Th49nyjoJY/mofr0pG7Js1lthzh9j5eFslR6dGZMRBkKck/kUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BPhghfmM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755696443;
+	bh=Iroe3MCa2ZZaRY9jKe2399kPLRw8TL6vb7UDOEeV6xo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=BPhghfmM17dTR9tU6w/x7QCksTcLIMZmJe9nr6IPzIGw7KNbMFlwN7Vy7Ks4TWEdt
+	 +dIh+4Rx64/VObgOsVABZr2GyQDDUTspGLOi7NkBPilc3dQxEETLl89DMf+h2l6v5O
+	 iUpiW5Mm/T1gZtNkKllA9wBB+gAuH62JEyCpqmvebiHanOXdSoqw84/RxoPhMIg9nv
+	 uIiJhWmnNENJCXvDzCPPw+kJDZz7w3VJoo92oHfL4/AisZfUB6tzoouFMo9wK0m+FL
+	 OR6rdIAdm1MFOn6jbjmF/kE6YGuhwXO2+lDjzbqxer5YqNL9MhikIrkrnIH5PkJb0A
+	 xaCNRtP8+0pcw==
+Received: from localhost-live.home (2a01cb0892f2d600C8f85Cf092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0D12717E01F5;
+	Wed, 20 Aug 2025 15:27:22 +0200 (CEST)
+Message-ID: <124e3fbe79660eac9d529b127d888ce6942ba346.camel@collabora.com>
+Subject: Re: [PATCH 1/9] dt-bindings: clock: mediatek: Add power-domains
+ property
+From: Julien Massot <julien.massot@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd	 <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger	 <matthias.bgg@gmail.com>, Ikjoon Jang
+ <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
+ Tsai <wenst@chromium.org>, Weiyi Lu	 <weiyi.lu@mediatek.com>, Eugen Hristev
+ <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>,  Sean Wang
+ <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Wed, 20 Aug 2025 15:27:21 +0200
+In-Reply-To: <ab97489a-9493-4005-9a1a-9f88ad970b05@collabora.com>
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+	 <20250801-mtk-dtb-warnings-v1-1-6ba4e432427b@collabora.com>
+	 <ab97489a-9493-4005-9a1a-9f88ad970b05@collabora.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Fix a resource leak where manager power budgets were freed on both
-success and error paths during manager setup. Power budgets should
-only be freed on error paths after regulator registration or during
-driver removal.
+Hi Angelo,
 
-Refactor cleanup logic by extracting OF node cleanup and power budget
-freeing into separate helper functions for better maintainability.
+On Mon, 2025-08-04 at 09:59 +0200, AngeloGioacchino Del Regno wrote:
+> Il 01/08/25 13:18, Julien Massot ha scritto:
+> > The mt8183-mfgcfg node uses a power domain in its device tree node.
+> > To prevent schema validation warnings, add the optional `power-domains`
+> > property to the binding schema for mediatek syscon clocks.
+> >=20
+> > Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains p=
+roperty to mfgcfg")
+> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+>=20
+> Is MT8183 the only one?
+>=20
+> if:
+> =C2=A0=C2=A0 properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek,mt8183=
+-mfgcfg
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^^^^^^^(if it's not just=
+ mt8183, this should be an enum)
+>=20
+> then:
+> =C2=A0=C2=A0 properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 power-domains: true
+> else:
+> =C2=A0=C2=A0 properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 power-domains: false
+>=20
+> (check if the above is correct, don't blindly trust what I wrote! :P)
+>=20
+>=20
+Verified on my side 'mediatek,mt8183-mfgcfg' is the only one with a power-d=
+omain
+property.
+I will add the if/else and disable the power-domains property for other com=
+patible
+as suggested.
 
-Fixes: 359754013e6a ("net: pse-pd: pd692x0: Add support for PSE PI priority feature")
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- drivers/net/pse-pd/pd692x0.c | 59 +++++++++++++++++++++++++++---------
- 1 file changed, 44 insertions(+), 15 deletions(-)
+>=20
+> after which:
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> (if it's not only mt8183, keep the R-b on this commit regardless)
+Thanks,
 
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 399ce9febda4..395f6c662175 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -1162,12 +1162,44 @@ pd692x0_write_ports_matrix(struct pd692x0_priv *priv,
- 	return 0;
- }
- 
-+static void pd692x0_of_put_managers(struct pd692x0_priv *priv,
-+				    struct pd692x0_manager *manager,
-+				    int nmanagers)
-+{
-+	int i, j;
-+
-+	for (i = 0; i < nmanagers; i++) {
-+		for (j = 0; j < manager[i].nports; j++)
-+			of_node_put(manager[i].port_node[j]);
-+		of_node_put(manager[i].node);
-+	}
-+}
-+
-+static void pd692x0_managers_free_pw_budget(struct pd692x0_priv *priv)
-+{
-+	int i;
-+
-+	for (i = 0; i < PD692X0_MAX_MANAGERS; i++) {
-+		struct regulator *supply;
-+
-+		if (!priv->manager_reg[i] || !priv->manager_pw_budget[i])
-+			continue;
-+
-+		supply = priv->manager_reg[i]->supply;
-+		if (!supply)
-+			continue;
-+
-+		regulator_free_power_budget(supply,
-+					    priv->manager_pw_budget[i]);
-+	}
-+}
-+
- static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- {
- 	struct pd692x0_manager *manager __free(kfree) = NULL;
- 	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
- 	struct pd692x0_matrix port_matrix[PD692X0_MAX_PIS];
--	int ret, i, j, nmanagers;
-+	int ret, nmanagers;
- 
- 	/* Should we flash the port matrix */
- 	if (priv->fw_state != PD692X0_FW_OK &&
-@@ -1185,31 +1217,27 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- 	nmanagers = ret;
- 	ret = pd692x0_register_managers_regulator(priv, manager, nmanagers);
- 	if (ret)
--		goto out;
-+		goto err_of_managers;
- 
- 	ret = pd692x0_configure_managers(priv, nmanagers);
- 	if (ret)
--		goto out;
-+		goto err_of_managers;
- 
- 	ret = pd692x0_set_ports_matrix(priv, manager, nmanagers, port_matrix);
- 	if (ret)
--		goto out;
-+		goto err_managers_req_pw;
- 
- 	ret = pd692x0_write_ports_matrix(priv, port_matrix);
- 	if (ret)
--		goto out;
-+		goto err_managers_req_pw;
- 
--out:
--	for (i = 0; i < nmanagers; i++) {
--		struct regulator *supply = priv->manager_reg[i]->supply;
--
--		regulator_free_power_budget(supply,
--					    priv->manager_pw_budget[i]);
-+	pd692x0_of_put_managers(priv, manager, nmanagers);
-+	return 0;
- 
--		for (j = 0; j < manager[i].nports; j++)
--			of_node_put(manager[i].port_node[j]);
--		of_node_put(manager[i].node);
--	}
-+err_managers_req_pw:
-+	pd692x0_managers_free_pw_budget(priv);
-+err_of_managers:
-+	pd692x0_of_put_managers(priv, manager, nmanagers);
- 	return ret;
- }
- 
-@@ -1748,6 +1776,7 @@ static void pd692x0_i2c_remove(struct i2c_client *client)
- {
- 	struct pd692x0_priv *priv = i2c_get_clientdata(client);
- 
-+	pd692x0_managers_free_pw_budget(priv);
- 	firmware_upload_unregister(priv->fwl);
- }
- 
--- 
-2.43.0
-
+Julien
 
