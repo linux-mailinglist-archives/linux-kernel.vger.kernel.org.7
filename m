@@ -1,290 +1,344 @@
-Return-Path: <linux-kernel+bounces-777778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D02B2DDAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:24:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59CFB2DDBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DD01C46065
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC661C47BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CE031DDA3;
-	Wed, 20 Aug 2025 13:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BFC31DDB5;
+	Wed, 20 Aug 2025 13:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="jZlewpRl"
-Received: from CAN01-YQB-obe.outbound.protection.outlook.com (mail-yqbcan01on2098.outbound.protection.outlook.com [40.107.116.98])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XpB1Oug/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDB531DD99
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.116.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696239; cv=fail; b=uy8wtfW2nza476CVFyQIO4fQaaDmK5iADkHzlICiVHJczJhv4nKN41Ou9C9tBn9FLASPP8+4qOsZuFNQZlrlYv8zac8O8NvyU0Hkl9mrbCG2JPrjYEFxWo5UAh9cJOqp4FmiaIL/4UyqWJl25GE+t1002tgL5Xd85SmYpaNB+sg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696239; c=relaxed/simple;
-	bh=n9JENWOfe+KcoBqz+fXw6ttERatWDrWJOewl/LtsLtE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GFz2K5aVpZwszyozTTHEKjVSnS5o0Zq6uNfUkvo7xSgZ5zysUNGEAM4pqD2xkrWZPsrqo6NDbk/D1kvP/nTozeHBb5WD/xt+nryIAIqY74W4cExhMABZ/5qV9fNrhJNHp4XsIfPPWhRjF/iXxdUJE1xKcPk0QNS7+mdwNzo4MBA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=jZlewpRl; arc=fail smtp.client-ip=40.107.116.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jy1iGctyoPdEYDGNLqy/xRr3kbHIEy4M2BhZKTv2+tfwkuAMOky4FRFZsbxcmsD1HNYGQPFXUh8pqzhD4RplEOc7qLxjCK2PGf2BSP0AxoFKs7Gugt1Bv7Ge7wkwzhMQn67xmoxU0vbzhzN77D/YjC7bnOSb3EGLBggLVhBYJAJoIwgr9PM0t0WTePSBsUAUhET1VgF7z80a74G1Imtb6jRtScrsyR2q4CqZNmMgjJzuBEoZtyr3/Qh6ibRErfg0un0FH3uPO91UlYaKzpdy62PUNZVSD/wYhqnxtO8ZOx8ouuQVBPFcIzPgusJ6jxfl8YEsPYZU3domCrqaz858WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9IBGtL3VF46MtpG/nL6huOdNbGiCSGnUT0UdCW8N6Xc=;
- b=G24giaM/YnHp+6tBG4krYZQPHsFioDZ03t9NrPFplABVlDT991nTy5LFroLrGHAVc3+PyW7N3wCFO2lDm5dKyXkvFP5tER4BiyBmiY6A4FYx6q4UxqhkM09yKg7uaAFfPFO2OLQ31GmjEXt8+0j69eu7hehm0hKQYfKdTDpC51EsH2ykgNjiyKSzKn1d+wZZU/ufYbi16WtD6kWTF7exPKTEK8Dqq+gllP7l2ZBx2Bw8+u/+0TOUXJaWnfzbvtx0IqikDVw3CtRBPWjHqXgsZy18JagEKKMpOkDlfdfYbe9/RwPYWSirC+qi+QdjNqHDhWcdNccg/OvCTkkEvRY24Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9IBGtL3VF46MtpG/nL6huOdNbGiCSGnUT0UdCW8N6Xc=;
- b=jZlewpRlVx13ssMvYyr6mOk8+H1hPn7Po/QESjzoDBJfpNVlHyQIcpOoyq6aw3O6txduH+WjShi4g0mwAgtoQCQTrGLvlyd8sPEXxddqYT13RK0JYvtSpxUdzpq8ByC9DpAOvXqeasAOCxyvnFaMwMTQdBSZ+2ZjI/2izbj7NNVDBtkxogEnrODHVXAfgTr40KVOuQmE23JH99m9REyhEMl5hfKzpE1hQt0AfaRuXKLOpGrdI1xvZCLg93CoVXDuUDTagMZVV0e0/mzlG7a1hVYO4rKKgI+ul388AThBsCsiF81dNn7f+UVUb/d3Z2oPiM7OBe9nv4w/P8G3Werbaw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB11073.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:147::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 13:23:52 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
- 13:23:52 +0000
-Message-ID: <a2f916f1-0693-41aa-be72-465d84da5123@efficios.com>
-Date: Wed, 20 Aug 2025 09:23:51 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rseq: Protect event mask against membarrier IPI
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>
-References: <87o6sj6z95.ffs@tglx>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <87o6sj6z95.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0349.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:6b::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34273304BAB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755696521; cv=none; b=G8s8LaROGpjLVaB3RvExFT+JC09sWpGk99swHwMzpvgKMlJtLuYn5SqDbLCIwCm76hx2IuBWwShw4PWh0fCrBYcu86BYcuODVEvQf7Ac+aIxgO2IfonPVc6sluqBpi2d7EZFidqE2fs+egx1kDafc4sRJluu51FV64VyjYydAZA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755696521; c=relaxed/simple;
+	bh=f1Yk0bWadNSQKXbLj/JbHwJjFFVafr6EH34kcj2yVfM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=CxueAEJDjSVpkNttlxTr5S218iVfDYCegF8WIr0xMSbaBLKvciBNTAIMP1FYg0Zd5Jt66p9Tox6OKLmos3w4KyiucHel/J/vICPbi9+AQI2U8PTRHT09NDsGukRNc5gjD9pdWu/+vQRGcb02yyRK5Vk7OPBIn/omB5PcbxkawrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XpB1Oug/; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755696520; x=1787232520;
+  h=date:from:to:cc:subject:message-id;
+  bh=f1Yk0bWadNSQKXbLj/JbHwJjFFVafr6EH34kcj2yVfM=;
+  b=XpB1Oug/qN144J9qnrTFI826F5BfHXIQfG3JCBog3kVZx5YYfiJBer0O
+   UBQHkhYNOOZWH7oSklgKquRzIInjnP26VE+2rqp/669spTwZ659qz4LSe
+   kOBvwQZrJNS7Fa2K+6x3DspNDjhrtMl4jc+CgTfwWI0UyP2t+ZIDmci2V
+   wBzBt7MEZ9s6BLheZxrdSFzLTCuss0t8uO2qrbCn68+TwHkDXXLTMTLAY
+   5xJxORWKgs66TY41sFEygF08fQZtmvW+6UXvZqOQsJjJpeGjtIUc8qFJi
+   +tiw3n7yfvo/Pg23e4tfEcE8bTciVEvMCR3HExHy3Oz9K70IZ17sUgv6u
+   w==;
+X-CSE-ConnectionGUID: Ej1+uXODR06PVBABJ0kUTw==
+X-CSE-MsgGUID: qrYCtqXMSEm/WiGixAMJsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75409803"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="75409803"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:28:38 -0700
+X-CSE-ConnectionGUID: fSRckwPERHejlb0+gGzWJA==
+X-CSE-MsgGUID: 2mk6qAWzTseHMGDQlpguyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="168476587"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 20 Aug 2025 06:28:37 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uoirS-000JAP-0q;
+	Wed, 20 Aug 2025 13:28:26 +0000
+Date: Wed, 20 Aug 2025 21:25:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:tip/urgent] BUILD SUCCESS
+ 704e427ebc4dc71597e337d5c646c080800ee9cf
+Message-ID: <202508202114.MlDnMgDx-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB11073:EE_
-X-MS-Office365-Filtering-Correlation-Id: a66668af-be77-4dc2-6a6b-08dddfecce70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aDBWazJIMlg2UHdJRlE5RE9LTGdNWldCbUo1QURrVm1KN0hCeitXTFpUbnkr?=
- =?utf-8?B?SlFpL3E5RTNDODZuazhwRkNpcHlNL25ZU01BVm5hYkluRlpwekdnMDFEM2w2?=
- =?utf-8?B?UGhpYjQ2ZWEyc2xpM3k2UHZESkNkTUtKZ3hCVHFyZ2JtZU9KUDlycmppR2s5?=
- =?utf-8?B?d2ZocmhkV3FGUllMOFFBVVNCc0lyZWliRlNZczBUNi93T2UxYnZvRldESjlp?=
- =?utf-8?B?STFnSGNSQTVCdkNHTURXL204TUZQVVYzQWE2QnBHaDVDaGsxa3J6Q0pvRks3?=
- =?utf-8?B?cURzVXRUZDdrMUtSYkJ2MWNWTXMxWG9oQk9IbTN0S1l5TVNNVyt6K1gzSkhk?=
- =?utf-8?B?QWFHQlhjNmJud29wVlV0V1NjSzBDME9mUkQ3QVFSTzRWcHRJbEw4QjBrcklS?=
- =?utf-8?B?a2ZGZlBtRUhTMFhtY0psekh5dkdzRWNBREMycGtVd1B1cXgzd0NQeHhBRHZX?=
- =?utf-8?B?V1Bid1RnSktHTXEzVmZuTUFlQmRjQk16M2dEd2QydnMrSk5XWWpselUyZXpx?=
- =?utf-8?B?UEFRM2ZBaUY1eGh0Tml5NEVXQnJxODBkTFQzMThjRjlQY2ttVlJwUW5KdTBu?=
- =?utf-8?B?WGd0dWhPdCtXeWJ2STVYcWF4L2lESkhoRUFNS1p5WTU1c0JPZU9xNDBrTTBC?=
- =?utf-8?B?cVJwYW9FY2ZjMytTdHZCSEplL2o4SnE5aExONmthc0IwL1BrMDU5N242OGdv?=
- =?utf-8?B?d0YzZTFkWENTN3hZUHloQWNRdGJVUE1PRTNPamtSSXhvZUliaUVpVlVUSE9y?=
- =?utf-8?B?V1J2TU9zU1d5dHM4WGRNakhtRlVMTnhmUFM2NStEaGIwUmt1YTBxY0Z4Vnlu?=
- =?utf-8?B?TEhrdHpELy9QdjBpd045WkwxaUZodkUvSThqd1FrNTM5U0ZWTjVvR1JxL3Qr?=
- =?utf-8?B?bTk1SnRyd2xCaHB4dS9ERmQ3RHRVZmlhNFFwckVDMnZoVWJOT2lKSVc4eU1u?=
- =?utf-8?B?VllsV01QNHU0SW9VTWJ6YTRpeCtoVmFMSEJtRTdESkc2eWg3K2VERzJyMGdl?=
- =?utf-8?B?amZxQ3VZdW5lMlJkM2hiajU5M00rYmR5ZDN0WTcyMzhhaHNLTm5VRk9leGVx?=
- =?utf-8?B?RDRCbUU3T0N3dDMxbE5hVzhzQ3BIaTN5M2pnYThPY1dYcytTN1d5N0t6UXZK?=
- =?utf-8?B?YXBjYThFRy9oNlpVWnNqZWxSOXhTZUhlbkU0ajNDU2hDdVZ5M2JTNmp0THhw?=
- =?utf-8?B?cUdudUNVVFdjdWp2NVhxVFQ1Q0FvaExEUSsvVHA2aXlOaFB4TzZBelEzMHZ5?=
- =?utf-8?B?M1lXaS9HT0piZG5YTStwMUpHUXlrblFJSlgrTFBiMFFFNHowdjBpTkIram5X?=
- =?utf-8?B?NEdrSWxhVE52SS9qTlQ1UTIyMmJkZXpQZS84aEVFa2RraVhhYjdua1lQS1Rp?=
- =?utf-8?B?S2FxWU9UVmJXSS93cktVZjZFNDdRdDg5ajB2NVIyK2oyUjJyd3ROdzBmR3Mx?=
- =?utf-8?B?QTd5SkYzYXJLNUU4WjBDemJYNjRScFJVN1IvSXYwY3J6dVFWanZVZVdqbW41?=
- =?utf-8?B?cWZkN05xVitualE3dk1EWWFTS1REWmJkMzBUMGN5cHMyaFFzZ1JBc1RVamtK?=
- =?utf-8?B?RzdZZWFzTE5YaENYMnI3L3NBeDBjOWM4aFhhenVqRnQrWGowZm1lNjkzUzJa?=
- =?utf-8?B?NHh0WHZ0VlVLTDBzL1pINHVkZHZEbWdON25ualp4VUx0U3VuK2NxYVZtTFo1?=
- =?utf-8?B?YW9yZ3pGcWoxeURBR25uanVGMFFwa3RkOHF0ZDA1SXAxZ0NRMVNLRGJ3M2lK?=
- =?utf-8?B?VElLSElLV1NrVklVOHJBSEN4Z01LQUFnSyt3UGxrSU1HTjdFS2xoNGxESXFK?=
- =?utf-8?Q?v+WMQxziFC+R165+51Ris12et7qzocXQ+gQVQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dzliYlBkTGROZnlGajdYYzRCUGxPTmVMT3dXSm9SbVBmWUNrYzBZdzFTS1BY?=
- =?utf-8?B?MnFNdVhrMndUUzRVYTBQNkpyUUVmcjZxZVcxUjBkVHVmS1A2QUF1Mmh4eFhN?=
- =?utf-8?B?ak9oZmtFeWo5U2dzZ2NwMitOWGNBNCtyTXliSXgvaWpzMzNoMTVxbzVZTVRv?=
- =?utf-8?B?S2hWaXFSN29jTHgxNng1K3dLaHlrdzhydHhqbklrS1VMMTRtOUR0UEhsbTRk?=
- =?utf-8?B?d1gvZlVmaStQQUtPNmdkV0lma2lxaUtnaXY5dUNoUUpZZ3lYUE1XYUFhKzFD?=
- =?utf-8?B?UFdHT0x4TFhXZUNiR0FJdDhCTlhhbUZKdnI2bXA0bFRPaC9ySFlNVmZWWVZr?=
- =?utf-8?B?ZjJua2lSR3E0TTZIUXB2SkxnRG4yTHRURTc2OCtzelVseWsxZXBFWk15ejFZ?=
- =?utf-8?B?bXNzaHJCNUlLREI4MlltN2lwQnNDTmVUMFJleUtDYk56aVpWT1I1VXhmSFdV?=
- =?utf-8?B?M1JMd1ovN1kxbjd1bG1oWklqREpUSFVJbWxpTmpVOFd1RzVtdjB4bTllMTlH?=
- =?utf-8?B?cHdjY1B3TEllOS9KZDdrUHZRNS9WejZYYi9FWFNCanJmeXdRNURvYmVPb0Jq?=
- =?utf-8?B?QW1aSjFtTzVmUkh0UTVOOGRxdUh4cFprSGFLeGVWem9yTUtPdzM3NWZUWVVt?=
- =?utf-8?B?U054TTlQVlplVG11a1I1emdWZFpEZENGUWx1N0I3b1M3aEZFQmE3UTZZbTFz?=
- =?utf-8?B?V3c3Q0VXdXNZdGZQU0xxdXFBZi90ckZ0cHRGUE5tUnBZdTFid041S3ZLZ3o0?=
- =?utf-8?B?S3k3RS95T3hRUy9tem90cFQ3amNkQ2JKSStLaDhIUWF1NTVXT0xTWW8wZ25r?=
- =?utf-8?B?ZTJ6Vmk2ZDkvSFhIVkdueVI2WXdMVktLaTYwNElHbmZmRmphNkN2Z2dxUk16?=
- =?utf-8?B?SGFOT2V0OXBhRjR0YXNtS1RMeDRhMlljOVpuQW9LOGZkc2F6TUxna2VVMUEx?=
- =?utf-8?B?Z3JISkE3NGs0dE93anB1MmM0SEIzODA4QjNZMndNbmQ0SW9DZjcydk1ZWEpQ?=
- =?utf-8?B?akFCd1BNM3ovYnQvTVNiL080NjdVdDlsb0tjbWpaQnBUU0hWOVF5Ulh6UW16?=
- =?utf-8?B?cjIzZHFVWXErT0VEQVczeGoxZmpUWDV1b3Z3RHVVVmFvZGtxV00xWm1nR1pU?=
- =?utf-8?B?d1ViT3hDMEkrR2R4YVptYTNiVmYzUU1JVW8rUXhDZCtoOXphRlV0QndtaFpC?=
- =?utf-8?B?djNGTHI5RlFYL2lIRGZQazJ3cUd0K1RDSDlDRWtwRHp0Mjc0V2FiVStwK3or?=
- =?utf-8?B?cFU3TVovaW1hbDlDNlo2R3dxTlRtdG9zeGYraTNWMXp3U2RNb3ZZM2N5dERC?=
- =?utf-8?B?citUZDUyT05CMnUzUTg3TzBrVVQwR2srck1nQ2tZdmlMUVJKcnowVWpGcHZW?=
- =?utf-8?B?MTdjdW9tbTRqQnV0dGNScVFFU1hseC9lUXhwMTROOUpKd2hNSXovQyswVU41?=
- =?utf-8?B?aWNBR214T3VRNlU1ZmpicUhNaXdlQ1E4TG9zV2kwR2xJQjNrN0VPSUcySDUx?=
- =?utf-8?B?MndJYkR0Ynd5WVJEdmUrWklnVFJIcmYxdThJMUxMclMxWWE5UEZUckJ1S1pS?=
- =?utf-8?B?b2IvTFQxWnhsZHJqR0ZjQjBBMVp4YnJuNFI5QW5NQ3YzL0ZqRHNqZDZpdS9F?=
- =?utf-8?B?SG81RmxadlRieEljeWVoWTEzSTNXVDFyWmo4b1VZelowU0IreUZmWXRHNzVz?=
- =?utf-8?B?Y0xwZFhiNTRyWnZXOHBXODFqdTNLQnlHRGRZWEl5R2tVcVlXRkw2bElVSW1E?=
- =?utf-8?B?UCtWOU83TGo3YTFBUWswRWFRK204SGpJS0wzVHJoTzY4Y1NWSEVDWklkem1r?=
- =?utf-8?B?akN0NGI3bm82MHJ4MUJEeDhqYmRSb21JM0VUM1lGTDE5YWFOeWNmeFl3MitX?=
- =?utf-8?B?UGplK1hlUjJSZ3JVMmpZVEhJMm1SVlVvdE5ZK2Y3T0tzZGhlY3VKcS9KVkV0?=
- =?utf-8?B?SmVuMUtkakhTMUVPRndycjc0YjRwdm13empHVGRMVGYvK21iRUNNZDRBTkt0?=
- =?utf-8?B?MDliU1g0RG4xRVkzOHFJc1MyejgwK1FSMXgrK2xjTlU4NThuaWpreFdYcTNG?=
- =?utf-8?B?OENtdGI2YVlNU29qckwrSkUwVDlPRkxKTEpPQnFrRTRlblQvV1VQaXM5QXV3?=
- =?utf-8?B?QVE2NTlSUlR2dCs0U2hZTmx6OEpwY3NRbFg0ZDhqOXd3OFNubmtTL0Q1VG9t?=
- =?utf-8?Q?79V3+DitRvk5bQHCRpoROZc=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a66668af-be77-4dc2-6a6b-08dddfecce70
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 13:23:52.6340
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J6drkReENDm1CzqfOfZn45ftIQtqSQjeGEAxHGiZt/onxi/ouvwN7KVlPsyff1Q9LnwprVxERoGb07UGi0bNIz1cO128iI8J+fEDlOBqbpM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB11073
 
-On 2025-08-13 11:02, Thomas Gleixner wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Date: Tue, 12 Aug 2025 16:34:43 +0200
-> 
-> rseq_need_restart() reads and clears task::rseq_event_mask with preemption
-> disabled to guard against the scheduler.
-> 
-> But membarrier() uses an IPI and sets the PREEMPT bit in the event mask
-> from the IPI, which leaves that RMW operation unprotected.
-> 
-> Use guard(irq) if CONFIG_MEMBARRIER is enabled to fix that.
-> 
-> Fixes: 2a36ab717e8f ("rseq/membarrier: Add MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: stable@vger.kernel.org
-> ---
->   include/linux/rseq.h |   11 ++++++++---
->   kernel/rseq.c        |   10 +++++-----
->   2 files changed, 13 insertions(+), 8 deletions(-)
-> 
-> --- a/include/linux/rseq.h
-> +++ b/include/linux/rseq.h
-> @@ -7,6 +7,12 @@
->   #include <linux/preempt.h>
->   #include <linux/sched.h>
->   
-> +#ifdef CONFIG_MEMBARRIER
-> +# define RSEQ_EVENT_GUARD	irq
-> +#else
-> +# define RSEQ_EVENT_GUARD	preempt
-> +#endif
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
+branch HEAD: 704e427ebc4dc71597e337d5c646c080800ee9cf  Merge branch into tip/master: 'x86/urgent'
 
-We should also update this comment in include/linux/sched.h:
+elapsed time: 1451m
 
-         /*
-          * RmW on rseq_event_mask must be performed atomically
-          * with respect to preemption.
-          */
-         unsigned long rseq_event_mask;
+configs tested: 252
+configs skipped: 6
 
-to e.g.:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-/*
-  * RmW on rseq_event_mask must be performed atomically
-  * with respect to preemption and membarrier IPIs.
-  */
+tested configs:
+alpha                             allnoconfig    clang-22
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    clang-19
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    clang-19
+arc                              allmodconfig    clang-19
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    clang-22
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    clang-19
+arc                              allyesconfig    gcc-15.1.0
+arc                                 defconfig    clang-19
+arc                   randconfig-001-20250820    gcc-14.3.0
+arc                   randconfig-001-20250820    gcc-8.5.0
+arc                   randconfig-002-20250820    gcc-11.5.0
+arc                   randconfig-002-20250820    gcc-14.3.0
+arm                              allmodconfig    clang-19
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    clang-19
+arm                              allyesconfig    gcc-15.1.0
+arm                                 defconfig    clang-19
+arm                            mmp2_defconfig    clang-22
+arm                   randconfig-001-20250820    gcc-14.3.0
+arm                   randconfig-001-20250820    gcc-8.5.0
+arm                   randconfig-002-20250820    gcc-14.3.0
+arm                   randconfig-002-20250820    gcc-15.1.0
+arm                   randconfig-003-20250820    gcc-13.4.0
+arm                   randconfig-003-20250820    gcc-14.3.0
+arm                   randconfig-004-20250820    clang-22
+arm                   randconfig-004-20250820    gcc-14.3.0
+arm                        realview_defconfig    clang-22
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    clang-22
+arm64                             allnoconfig    gcc-15.1.0
+arm64                            allyesconfig    gcc-15.1.0
+arm64                               defconfig    clang-19
+arm64                 randconfig-001-20250820    gcc-14.3.0
+arm64                 randconfig-002-20250820    gcc-14.3.0
+arm64                 randconfig-003-20250820    gcc-14.3.0
+arm64                 randconfig-003-20250820    gcc-8.5.0
+arm64                 randconfig-004-20250820    gcc-14.3.0
+csky                             allmodconfig    gcc-15.1.0
+csky                              allnoconfig    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                             allyesconfig    gcc-15.1.0
+csky                                defconfig    clang-19
+csky                  randconfig-001-20250819    gcc-15.1.0
+csky                  randconfig-001-20250820    clang-22
+csky                  randconfig-002-20250819    gcc-15.1.0
+csky                  randconfig-002-20250820    clang-22
+hexagon                          allmodconfig    clang-17
+hexagon                          allmodconfig    clang-19
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-19
+hexagon                          allyesconfig    clang-22
+hexagon                             defconfig    clang-19
+hexagon               randconfig-001-20250819    clang-22
+hexagon               randconfig-001-20250820    clang-22
+hexagon               randconfig-002-20250819    clang-18
+hexagon               randconfig-002-20250820    clang-22
+i386                             allmodconfig    clang-20
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-20
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-20
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250819    gcc-12
+i386        buildonly-randconfig-001-20250820    gcc-12
+i386        buildonly-randconfig-002-20250819    clang-20
+i386        buildonly-randconfig-002-20250820    gcc-12
+i386        buildonly-randconfig-003-20250819    clang-20
+i386        buildonly-randconfig-003-20250820    gcc-12
+i386        buildonly-randconfig-004-20250819    clang-20
+i386        buildonly-randconfig-004-20250820    gcc-12
+i386        buildonly-randconfig-005-20250819    clang-20
+i386        buildonly-randconfig-005-20250820    gcc-12
+i386        buildonly-randconfig-006-20250819    clang-20
+i386        buildonly-randconfig-006-20250820    gcc-12
+i386                                defconfig    clang-20
+i386                  randconfig-001-20250820    gcc-12
+i386                  randconfig-002-20250820    gcc-12
+i386                  randconfig-003-20250820    gcc-12
+i386                  randconfig-004-20250820    gcc-12
+i386                  randconfig-005-20250820    gcc-12
+i386                  randconfig-006-20250820    gcc-12
+i386                  randconfig-007-20250820    gcc-12
+i386                  randconfig-011-20250820    clang-20
+i386                  randconfig-012-20250820    clang-20
+i386                  randconfig-013-20250820    clang-20
+i386                  randconfig-014-20250820    clang-20
+i386                  randconfig-015-20250820    clang-20
+i386                  randconfig-016-20250820    clang-20
+i386                  randconfig-017-20250820    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                        allyesconfig    gcc-15.1.0
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20250819    gcc-15.1.0
+loongarch             randconfig-001-20250820    clang-22
+loongarch             randconfig-002-20250819    clang-18
+loongarch             randconfig-002-20250820    clang-22
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    clang-19
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                             allmodconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                             allyesconfig    gcc-15.1.0
+mips                           gcw0_defconfig    clang-22
+nios2                             allnoconfig    gcc-11.5.0
+nios2                             allnoconfig    gcc-15.1.0
+nios2                               defconfig    gcc-11.5.0
+nios2                               defconfig    gcc-15.1.0
+nios2                 randconfig-001-20250819    gcc-8.5.0
+nios2                 randconfig-001-20250820    clang-22
+nios2                 randconfig-002-20250819    gcc-8.5.0
+nios2                 randconfig-002-20250820    clang-22
+openrisc                          allnoconfig    clang-22
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    clang-22
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250819    gcc-10.5.0
+parisc                randconfig-001-20250820    clang-22
+parisc                randconfig-002-20250819    gcc-8.5.0
+parisc                randconfig-002-20250820    clang-22
+parisc64                            defconfig    gcc-15.1.0
+powerpc                    adder875_defconfig    clang-22
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-22
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc                          g5_defconfig    clang-22
+powerpc               randconfig-001-20250819    clang-22
+powerpc               randconfig-001-20250820    clang-22
+powerpc               randconfig-002-20250819    gcc-10.5.0
+powerpc               randconfig-002-20250820    clang-22
+powerpc               randconfig-003-20250819    clang-22
+powerpc               randconfig-003-20250820    clang-22
+powerpc                     tqm8548_defconfig    clang-22
+powerpc64                        alldefconfig    clang-22
+powerpc64             randconfig-001-20250819    clang-22
+powerpc64             randconfig-001-20250820    clang-22
+powerpc64             randconfig-002-20250819    clang-22
+powerpc64             randconfig-002-20250820    clang-22
+powerpc64             randconfig-003-20250819    gcc-10.5.0
+powerpc64             randconfig-003-20250820    clang-22
+riscv                            allmodconfig    clang-22
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                            allyesconfig    gcc-15.1.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20250819    clang-22
+riscv                 randconfig-001-20250820    clang-22
+riscv                 randconfig-002-20250819    clang-22
+riscv                 randconfig-002-20250820    clang-22
+s390                             allmodconfig    clang-18
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20250819    gcc-8.5.0
+s390                  randconfig-001-20250820    clang-22
+s390                  randconfig-002-20250819    gcc-12.5.0
+s390                  randconfig-002-20250820    clang-22
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-12
+sh                    randconfig-001-20250819    gcc-15.1.0
+sh                    randconfig-001-20250820    clang-22
+sh                    randconfig-002-20250819    gcc-15.1.0
+sh                    randconfig-002-20250820    clang-22
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250819    gcc-8.5.0
+sparc                 randconfig-001-20250820    clang-22
+sparc                 randconfig-002-20250819    gcc-11.5.0
+sparc                 randconfig-002-20250820    clang-22
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20250819    clang-22
+sparc64               randconfig-001-20250820    clang-22
+sparc64               randconfig-002-20250819    gcc-8.5.0
+sparc64               randconfig-002-20250820    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    clang-19
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250819    clang-18
+um                    randconfig-001-20250820    clang-22
+um                    randconfig-002-20250819    gcc-12
+um                    randconfig-002-20250820    clang-22
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250819    clang-20
+x86_64      buildonly-randconfig-001-20250820    clang-20
+x86_64      buildonly-randconfig-002-20250819    clang-20
+x86_64      buildonly-randconfig-002-20250820    clang-20
+x86_64      buildonly-randconfig-003-20250819    clang-20
+x86_64      buildonly-randconfig-003-20250820    clang-20
+x86_64      buildonly-randconfig-004-20250819    clang-20
+x86_64      buildonly-randconfig-004-20250820    clang-20
+x86_64      buildonly-randconfig-005-20250819    clang-20
+x86_64      buildonly-randconfig-005-20250820    clang-20
+x86_64      buildonly-randconfig-006-20250819    clang-20
+x86_64      buildonly-randconfig-006-20250820    clang-20
+x86_64                              defconfig    clang-20
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20250820    gcc-12
+x86_64                randconfig-002-20250820    gcc-12
+x86_64                randconfig-003-20250820    gcc-12
+x86_64                randconfig-004-20250820    gcc-12
+x86_64                randconfig-005-20250820    gcc-12
+x86_64                randconfig-006-20250820    gcc-12
+x86_64                randconfig-007-20250820    gcc-12
+x86_64                randconfig-008-20250820    gcc-12
+x86_64                randconfig-071-20250820    gcc-12
+x86_64                randconfig-072-20250820    gcc-12
+x86_64                randconfig-073-20250820    gcc-12
+x86_64                randconfig-074-20250820    gcc-12
+x86_64                randconfig-075-20250820    gcc-12
+x86_64                randconfig-076-20250820    gcc-12
+x86_64                randconfig-077-20250820    gcc-12
+x86_64                randconfig-078-20250820    gcc-12
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-12
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-12
+x86_64                           rhel-9.4-ltp    gcc-12
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250819    gcc-8.5.0
+xtensa                randconfig-001-20250820    clang-22
+xtensa                randconfig-002-20250819    gcc-15.1.0
+xtensa                randconfig-002-20250820    clang-22
 
-> +
->   /*
->    * Map the event mask on the user-space ABI enum rseq_cs_flags
->    * for direct mask checks.
-> @@ -41,9 +47,8 @@ static inline void rseq_handle_notify_re
->   static inline void rseq_signal_deliver(struct ksignal *ksig,
->   				       struct pt_regs *regs)
->   {
-> -	preempt_disable();
-> -	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
-> -	preempt_enable();
-> +	scoped_guard(RSEQ_EVENT_GUARD)
-> +		__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
-
-Then we have more to worry about interaction of the following
-rseq events with membarrier IPI:
-
-- rseq_preempt, rseq_migrate, rseq_signal_deliver.
-
-Both rseq_preempt and rseq_migrate are documented as only being required
-to be called with preempt off, not irq off.
-
-I don't see the point in sharing the same rseq_event_mask across all of
-those rseq event sources.
-
-Can we just move the event sources requiring preempt-off to their own
-word, and use a separate word for membarrier IPI instead ? This would
-allow us to partition the problem into two distinct states each
-protected by their respective mechanism.
-
->   	rseq_handle_notify_resume(ksig, regs);
->   }
->   
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -342,12 +342,12 @@ static int rseq_need_restart(struct task
->   
->   	/*
->   	 * Load and clear event mask atomically with respect to
-> -	 * scheduler preemption.
-> +	 * scheduler preemption and membarrier IPIs.
->   	 */
-> -	preempt_disable();
-> -	event_mask = t->rseq_event_mask;
-> -	t->rseq_event_mask = 0;
-> -	preempt_enable();
-> +	scoped_guard(RSEQ_EVENT_GUARD) {
-> +		event_mask = t->rseq_event_mask;
-> +		t->rseq_event_mask = 0;
-> +	}
-
-Instead we could sample both the preempt-off and the irq-off
-words here.
-
-Thanks,
-
-Mathieu
-
->   
->   	return !!event_mask;
->   }
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
