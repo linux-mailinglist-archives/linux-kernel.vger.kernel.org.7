@@ -1,101 +1,93 @@
-Return-Path: <linux-kernel+bounces-777807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8214EB2DE0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:40:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8BEDB2DE19
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B29D583E6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857D63B5DA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E0932275F;
-	Wed, 20 Aug 2025 13:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BMyk2AYe"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BBA322A0C;
+	Wed, 20 Aug 2025 13:35:19 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09D931E10D;
-	Wed, 20 Aug 2025 13:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6605772617;
+	Wed, 20 Aug 2025 13:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696897; cv=none; b=GdTGCNTQPvVF4A+QmYo7EmJqcOGV9HOK6IRM4ZOphUVjWjojPBlIn5rALnqq2qQprjrr+M2/5Hv8Zu+PJoFr19qC7m+Q6ub91Y75Dn4ko3Jti9Mlpk6tdidBXEqm3pJp1WJxh/I602SSzKukGpJ2KYKdrg9aWQDNhM5NZxJlpV8=
+	t=1755696919; cv=none; b=Q1ExHGWVyuAyff9kMZMetGZ9dXzLB7HBnbIDVYNHvt5e7eY/ttjVpBRzXCmY4goCXVxdttA0He3m2MDUs8fhzGhggEmTvcGRfxVjZn8hXJNsSOGuJ/po+IVZj1OHVkGN2gsB1jcFKtRw2KfujjpzzqI45UYVhBDtKGG27HcsRAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696897; c=relaxed/simple;
-	bh=CXQSwAv8e6eEfacG/HeYdxYzZSrhuUbOicdQbourYnc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BxQz4X0lDO5ECWXxu55oEFXDgO1CXKhg8DZei9pJc2TN24R9clt+jAvPHJcvlHQ3OGEpSYW+xtNJWgk3ZKmz9gxNZNcuHRQcR18jdQaZf8UifphHxxBy8RPVccSaLVlWci4RIK4DGYQA+j32gnaliwiSfF+vwVP5A59pociwnAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BMyk2AYe; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755696894;
-	bh=CXQSwAv8e6eEfacG/HeYdxYzZSrhuUbOicdQbourYnc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BMyk2AYeLys2RolPoykxrhvNbeytaoF2/aKwgif7GzLleZCp2kTE5vHm5rsTNPH/9
-	 wRxe1QgO5JRhTIelbfqDkmKX6vs1zhr7/ROYfDwXjLpBt/AG2VrjNl8hiDh1h/htNm
-	 IytmPOMbYs3FKvK6FJ0fNXcWrwW+xQ4BATx/7a9O+D/rvH0RClxrICXYvHY23U6Xr/
-	 LmqE3lHwB99RvuFO5LQLTAjXGVMlIYunVwGj0pRrkl8O33F18PYSKyyIjexX+O7gO4
-	 t4KYJujfi0dUClNfSgIfIBkC/Lx/oTo76KmPAtaXRQYyIOtbLDJw6tn4iPnMYJmJdh
-	 KQ+kdM7IIBeFA==
-Received: from localhost-live.home (2a01cb0892F2D600C8F85Cf092D4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0D76817E02B0;
-	Wed, 20 Aug 2025 15:34:53 +0200 (CEST)
-Message-ID: <5ae569e8a1b3d00408d8ad4e934a4585a7479f7e.camel@collabora.com>
-Subject: Re: [PATCH 6/9] ASoC: dt-binding: Convert MediaTek mt8183-mt6358
- bindings to YAML
-From: Julien Massot <julien.massot@collabora.com>
-To: Rob Herring <robh@kernel.org>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
- <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
- Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
-	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
- Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Wed, 20 Aug 2025 15:34:52 +0200
-In-Reply-To: <20250801172927.GA3114452-robh@kernel.org>
-References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
-	 <20250801-mtk-dtb-warnings-v1-6-6ba4e432427b@collabora.com>
-	 <20250801172927.GA3114452-robh@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1755696919; c=relaxed/simple;
+	bh=6ELQVz1pCGrjhQgs+Cr+aXgY3t+o6KTC0x0kgzj1D9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VV3p04PZG37iZOdA9byfzKMdQmDhtiqb3WH1CybTaz9W2iBvS3eHIKdRUQC3CrzA9ZN9fYbgreDAHFJODTMJNGrHKxX8dF1glJlwSboXiA9R9Xb/8NrVt26hKh047aQzSoQcGH8J5fabnexz93Ttb6k97cZ43rka6cPSuakP65c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 8AABB59476;
+	Wed, 20 Aug 2025 13:35:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 405C020018;
+	Wed, 20 Aug 2025 13:35:13 +0000 (UTC)
+Date: Wed, 20 Aug 2025 09:35:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Bibo Mao <maobibo@loongson.cn>, LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Paolo Bonzini <pbonzini@redhat.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of
+ generic code
+Message-ID: <20250820093515.17afe135@gandalf.local.home>
+In-Reply-To: <CAAhV-H5y8Tckih4jd3C8Q-M6OZiw2szCYuxLQfBXehpWSvrstA@mail.gmail.com>
+References: <20250722094734.4920545b@gandalf.local.home>
+	<2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
+	<20250723214659.064b5d4a@gandalf.local.home>
+	<15e46f69-f270-0520-1ad4-874448439d2b@loongson.cn>
+	<CAAhV-H4TGus35B6ONdkSOMwWw+H6NRmHStV-Xu7vUYYrkDGfUQ@mail.gmail.com>
+	<20250819202715.6f1cf0d6@gandalf.local.home>
+	<CAAhV-H5y8Tckih4jd3C8Q-M6OZiw2szCYuxLQfBXehpWSvrstA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 9k4eh3oijqqgwyg3ppxk7whhmtf5pw8y
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 405C020018
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18nofUHrM87h1aA5I0GIXVNjvJt8sQYOls=
+X-HE-Tag: 1755696913-536970
+X-HE-Meta: U2FsdGVkX188CoBRITJc9sfrnjFJZAnQdfzvrGwI+DU2SR+8FpnwMpMY9Dva2BYtul0r8pAB7T3yfQGJdYFpl447Xnu+V9Cq2uh3G3yDIL70vxUEj+nGXp6og8B0PAdNjFvch7xTDKms7ipP6oJ1u5YO/7LvtcLsH/IM+pRmIcq7Ia1NrLkZ5DPMg0GTrkVZez1+2TvcfaqCQ1SnDMSU0aZb0+B2z4hh39OzbS+la0dtt8QVxLTEo3Y1r+6BGvkz/gQdLfC15IdkUoCmo50gnbHoZ1Vg5Dv+O6Y4qsMOF+DUS1SoG4YNpWfUbl8sRAAyTQbsa9TTeLn47+CqBQBTSd06zUo65A3C
 
-On Fri, 2025-08-01 at 12:29 -0500, Rob Herring wrote:
-> On Fri, Aug 01, 2025 at 01:18:08PM +0200, Julien Massot wrote:
-> > Convert the existing text-based DT binding for MT8183 sound cards using
-> > MT6358 and various other codecs to a YAML schema.
-> >=20
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> > ---
-> > =C2=A0.../sound/mt8183-mt6358-ts3a227-max98357.txt=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 25 ---------
-> > =C2=A0.../devicetree/bindings/sound/mt8183-mt6358.yaml=C2=A0=C2=A0 | 59=
- ++++++++++++++++++++++
->=20
-> mediatek,mt8183_mt6358_ts3a227.yaml
+On Wed, 20 Aug 2025 11:03:05 +0800
+Huacai Chen <chenhuacai@kernel.org> wrote:
 
-Ok, Thanks for the review.
-Julien
+> > Did this fall through the cracks?  
+> I don't know what this means, but I think you are pinging.
+
+Sorry for the colloquialism, it's not actually the same as a ping. A ping
+is for something that had no response. This is more about the patch was
+acknowledged but did not go further. "Falling through the cracks" is like
+picking a bunch of things up with a bucket that has a crack in it. Some of
+those things may "fall through the crack" and not be processed.
+> 
+> This patch appears after I sent the KVM PR for 6.17, and it isn't a
+> bugfix, so it will go to 6.18.
+
+Well, it will start causing warnings soon because it wastes memory. But
+that will likely begin in 6.18 so we are OK, as long as it gets into
+linux-next before the warning trigger does.
+
+-- Steve
 
