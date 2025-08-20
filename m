@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-778125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71C1B2E1A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E277B2E1A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F924E6927
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28BB34E6FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0773E322775;
-	Wed, 20 Aug 2025 15:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593CF322A06;
+	Wed, 20 Aug 2025 15:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGxGlvX3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prO3xTMJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFF426D4E2;
-	Wed, 20 Aug 2025 15:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72C4322764;
+	Wed, 20 Aug 2025 15:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755705414; cv=none; b=IMsF3UPAIfnAVQbXVLq9pz5yx6+JLVIeaDOQBiRpK24iMzJd51AMz7y9o4tm80xsRs/j0VNHQ6JHNW4hcISPdKd9cdczdTFPdGgwHJORFZVwj7WaAIM6aFMrrTjw7onmhqoB9sGvYcpYZxgr9TwD5lpECewSjQwq9jmU+ltUGSc=
+	t=1755705469; cv=none; b=T3VX1TYeDb74EHmb+9am7qdHOX0uVNDYBUDHiTOBgS5+5gHimxUxJzN/HhQZCxsO+mKJC4hxzoIZfz1gydsr0SEsvflVEgWfrXCFBMPdzwSVzvrlQ30AAjTmI/GKSi9bjgA+DY14jMzGDbTGHO7+5pTqhPxaei3awbcLes2h8+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755705414; c=relaxed/simple;
-	bh=iJ6BWRhcfdGTj+t/9+L3Zt0RuVafSEkJxteervNs1lI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=um58msI+jonIWXaNSwtpB5JfW3N+DT2/KWTSgqoqM9U7PRhrLpeZt4TeXQB3xknEpfIBZwYiczZrw6+/21Dzq/pOoaJavwGtVQmRttra5sXAMHKO/pmDXhS1Alf/7xHXW/iXPNQ8Xu6t9rEMbaSLsqkW9lOwl4uLUq+8lVXFyVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGxGlvX3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BD2C4CEE7;
-	Wed, 20 Aug 2025 15:56:53 +0000 (UTC)
+	s=arc-20240116; t=1755705469; c=relaxed/simple;
+	bh=p8L/MSQcq7yF/LI2ZVnymQ3FOXY3S7Zhq5jrLFURDYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YGD7zCd0efpoYqzsN/gkgDCLNKPg/IVTDhNuyG28OA7spgyCkB9q4qc6yMi88S4bQU+wtp3MZdRHn82Ldv4qdcoQpFhYzQtsx0rNnLchfRozE381T6zvuvw62BlbW0jzoFVKCdd/ICfVKzbwFJhbD5xBD2lf/Q2VUJ3su4gE1WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prO3xTMJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFB2C4CEE7;
+	Wed, 20 Aug 2025 15:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755705413;
-	bh=iJ6BWRhcfdGTj+t/9+L3Zt0RuVafSEkJxteervNs1lI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hGxGlvX3nlwc3ojc89fPW2vtB4s4kIpy3ua357hA3xZiE5QSH3XQnpl0F5Bmsvx2V
-	 7jAzijmUcR6aR9J7Rv3NVdhqjvYMwQ27ZAgcOz7xAwiMG2Ypc+Hqjqgv63/d7n/99T
-	 nKFgggQFP8Hsz0zCb959kTzz1rBTeCT9JWIFFhDQ/LnkiiYDFA498uO+FItjZLMmQS
-	 Lo2SNiiReT0SAIau74q2hD+z8mRItbkp6JXalvNA3vvmcM017W2mSp5OLk96/ahaWF
-	 iEK2UvaST9JX8WxMstmzd4BYcyLC1+Wnct1RX/x/EgSuu5ZcwjZGm7LFuy/8V33wn9
-	 c4aq2sUOaJ2LQ==
-Date: Wed, 20 Aug 2025 08:56:52 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Rohan G Thomas via B4 Relay
- <devnull+rohan.g.thomas.altera.com@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Serge Semin <fancer.lancer@gmail.com>,
- Romain Gantois <romain.gantois@bootlin.com>, Jose Abreu
- <Jose.Abreu@synopsys.com>, Ong Boon Leong <boon.leong.ong@intel.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next v2 3/3] net: stmmac: Set CIC bit only for TX
- queues with COE
-Message-ID: <20250820085652.5e4aa8cf@kernel.org>
-In-Reply-To: <20250820085446.61c50069@kernel.org>
-References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
-	<20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
-	<20250819182207.5d7b2faa@kernel.org>
-	<22947f6b-03f3-4ee5-974b-aa4912ea37a3@altera.com>
-	<20250820085446.61c50069@kernel.org>
+	s=k20201202; t=1755705469;
+	bh=p8L/MSQcq7yF/LI2ZVnymQ3FOXY3S7Zhq5jrLFURDYw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=prO3xTMJrHASsyJv+GWfgfUF8IJH4vY+Ktdyp7frUwqvzrATsej91VY+mKrqCcoJA
+	 GiPEWxx8R89u8WU2jMluM3L5BIv22jeZXxfQ+e6bmHygxNY5ceTjttjfwrVtLV3RJT
+	 cjL1eIIhPs8N1UgqRV+r8WgHPsjvt7O41ym2gIc7sen7c7nu1JVrfojVsQG3pHBmdU
+	 98sIb25Tv+DSrDFAtjrW1kmyTjHDopKfApgGvHruNvasnO6A7IJ0MiEmBnSPqXzL4y
+	 CYTtpVV0S+NSjxHrEVCQdXwVTP685vVL/6QDKfjgiwa/xxF2pucvZ3mUD0Pk30DG6e
+	 enrARmDXpglYw==
+Date: Wed, 20 Aug 2025 10:57:47 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] PCI: dwc: Invoke post_init in
+ dw_pcie_resume_noirq()
+Message-ID: <20250820155747.GA628315@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820081048.2279057-2-hongxing.zhu@nxp.com>
 
-On Wed, 20 Aug 2025 08:54:46 -0700 Jakub Kicinski wrote:
-> On Wed, 20 Aug 2025 12:44:18 +0530 G Thomas, Rohan wrote:
-> > On 8/20/2025 6:52 AM, Jakub Kicinski wrote:  
-> > > Hopefully the slight pointer chasing here doesn't impact performance?
-> > > XDP itself doesn't support checksum so perhaps we could always pass
-> > > false?    
-> > 
-> > I'm not certain whether some XDP applications might be benefiting from
-> > checksum offloading currently  
+On Wed, Aug 20, 2025 at 04:10:47PM +0800, Richard Zhu wrote:
+> If the ops has post_init callback, invoke it in dw_pcie_resume_noirq().
+
+Can you briefly explain why .post_init() is required here?  Bread
+crumbs about the purpose of .post_init() will help other driver
+writers (and me!)
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Checksum offload is not supported in real XDP, AFAIK, and in AF_XDP 
-> the driver must implement a checksum callback which stmmac does not do.
-> IOW it's not possible to use Tx checksum offload in stmmac today from
-> XDP.
-
-To be clear -- this is just for context. I don't understand the details
-of what the CIC bit controls, so the final decision is up to you.
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 952f8594b5012..f24f4cd5c278f 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -1079,6 +1079,9 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (pci->pp.ops->post_init)
+> +		pci->pp.ops->post_init(&pci->pp);
+> +
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_resume_noirq);
+> -- 
+> 2.37.1
+> 
 
