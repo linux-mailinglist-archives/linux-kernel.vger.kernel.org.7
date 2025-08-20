@@ -1,300 +1,218 @@
-Return-Path: <linux-kernel+bounces-777713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB172B2DD0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F271B2DD08
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9901A4E1DDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042821BC6A54
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB053315779;
-	Wed, 20 Aug 2025 12:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9613A31985A;
+	Wed, 20 Aug 2025 12:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hSr4ipYB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="V1Bippws"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012005.outbound.protection.outlook.com [52.101.126.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EF4220687;
-	Wed, 20 Aug 2025 12:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694156; cv=none; b=OIaDzizZEDEchksPr2yO9W3QRaiYxJ9+bdx4YoUxWDTxpvMZUk68JvKH/UYh4gWwWrlLT2WxtxauBJwPjLhz0iN6T+fJAY3C1f7cuZw/z0If7KdS2Qk2vYM6lEmfvFe9djv13Dp64OyHXqw3D/re9btyDRDEXxZTHV+XgTpMpqk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694156; c=relaxed/simple;
-	bh=sOM9v4yroQZjRUu/zyDTVaBmMAil48NlMYd6XOWD7Hs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=g+2eIqKLJb0+o1aDlmxm28KOX8v2YQwX3Vi4ocFvD5/UENG/m+uSmv0GkdtNgSTiE6Tav+Fgqk1c+a1Cm38Wc9Nv6TqOc0SAB+OF2Z9fMG7TMz64eZvHVYPmHq838Xx0qpDTd94WMlnPfSz3BDAfY48yjjsXR4gWrpA//URlUDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hSr4ipYB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KA26sE022612;
-	Wed, 20 Aug 2025 12:49:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gvg5eiBFdfh332hZ+qy5KKmK4l7YaZYxVdrp/7ocSow=; b=hSr4ipYBMgnZmj/W
-	l1gEkZPU5Y0KqZIOHHkJthDnG4vwRYv839KQgcGjyqgPE+g0vl6kdoDzsgojqPUN
-	G0ZX4fkl96nItgZbI/BicPAZqLwfb3XXJ8/iWao1l27sVUsS4mLbY6QUlSOr19aD
-	d2g+C0jw9ZnqzIfWNX7NwGui/eZLSD8CtJRBURn/0LBiGDiRtuLS4rhlMTgUvO38
-	ToMuAY2fbJsxn+Ews500qUy2Nb3wuXwhPaXIxoA+tHewv9L7QsDcBYZmO4qED1S4
-	gfQHeHFYQvsrkUy7Gl4Fu0EhgQfAyuYf4FmwpHTOzJfxBzvWMvGBNTCToMNnsUhQ
-	FOV00g==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5291qve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 12:49:00 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57KCmxvs031813
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 12:48:59 GMT
-Received: from [10.216.4.222] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 20 Aug
- 2025 05:48:56 -0700
-Message-ID: <06bcf2f6-4a3e-4f87-93e4-29e17ae89e62@quicinc.com>
-Date: Wed, 20 Aug 2025 18:18:52 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813BF3093BF;
+	Wed, 20 Aug 2025 12:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755694217; cv=fail; b=JzVHoU2Jgsyh4YVPAwvFFPAWfFhU5Do5jLsYBrBgBpWcicyKvkwhhG65ljNCERw7OUKWSVj/b8GL17GO6Hba1sUNCBqmOPfnDyMglqh0bPfkZXcB+Y6vnpAfmCQ7CQ7qumyezZoBRw3XPz/0JJKv8GKBhby4sEjcVayVbRX5KOQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755694217; c=relaxed/simple;
+	bh=3hsIpryIWNHO8ChN1U8feRdMGoYgyODFkvYESmkJENk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Yf7Z69N1S3jOwDl+pcs1x1zltM+O8WSOHkUArL5On7qA+SFUlGFXcpSufkaa3GYSktlZKcmzvayZ3kNTIEB361S6+O0jH5UsxfITxymobJeNL9SWSoIiDH/fhSSOs01D08xObAc/YFQEf2yeCqm53cr4hp2bM9oUSgCwMnoBeXI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=V1Bippws; arc=fail smtp.client-ip=52.101.126.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XqQWuI9gzXzMmGzz+dencbJ1qN9o3IC5VvHH5wBtZKax3L+YQIfO129N2u5inbe/cR/4WjrcqLcEFFSacQubB8jVkXEr9rLi6MafGzO2JdgG7RWRVuduZxtE8HJrgE9ApqNtsHyUhGQgHCVz5LuBC93GR2T66CxJwByrBlMPztubpgZjmE5TUEXeK7CQcvsS8xIaUJumGAJUlA+SAWLVATi/JdugcbDyP+IN/4pJAiNZu72gAkyDHqLb+NuxtGMLk2DiRTGe+FjtGlm5HrE90Xl9nnFWkNXy5GFUtyDPXAE8kd2whkiichf8LJfbnoSRgN8LsrquL2H8j+e6cPODpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d+q/1ao2tJsrQWBb3hkEYAeoQ+vUJQBfXz6Taw0nffc=;
+ b=cSUR9ojhiIRRk6CQL2okqDABKTKKzCyy4ZFZ58yosaDt73QmWnLEz9GZSZgeMgk0ixq1ekaRJHh/EwW8N/Q3VR+3jFK2KEb/0+i4OEIyQmT23yTfwC2BdrOhH5iPCyWoDfkxL70bLaX9g7XwpcLbTXWkXwGpLy24IF5nF3cJLrUj7JWpczjVsI9YmTDgONCqYJ3D/CHPldGXq9ka3jyW5rYHTwjUXqdXWYS3OIqftDbsp1OkBOuuKtj0oXykqlOnST6Au08kERb7vyZr3hXR9MqTuvXPlRRMj5vWgO3C0T2X+RSJZ7W4pgHzwXZGHd5nOy2gO+UTee7gDG0vZ7TYhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d+q/1ao2tJsrQWBb3hkEYAeoQ+vUJQBfXz6Taw0nffc=;
+ b=V1BippwsOAlzF1iPQl9XmAhd6kAXj5A4TRVKck3MFE7ug0qDCioKyt6tqd9HnkgVwZNv9PM8A4CO23D98svIRrseLMfaC0UC+pBq+4QLP8PINrN4IRSHwVFeTG3+NrWRzrDosBSwIw3eJpzZRIwpXkJUxD68X+doGLjxEoLvAx+GhSjhXAysZfB0c2VYWSA535rDBjw5OZwTTJ47eYTUvSK3MxXCO8sI/UqJ0Vdg0Ar4njLrFxPVdg1gAL7LbBz/49FZC89ZiJg8ppQoBFyTSoQ3TAnrtiEPP9U1Li4kRbdiKsiS2vuvZZkNSYN9XKz7bRdFyYqLGc5ThcXy5Gr2xA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TY2PPF5221563AF.apcprd06.prod.outlook.com (2603:1096:408::78e) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.15; Wed, 20 Aug 2025 12:50:11 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
+ 12:50:11 +0000
+Message-ID: <deee5abe-1992-426d-a62d-51249014bdc9@vivo.com>
+Date: Wed, 20 Aug 2025 20:50:08 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] scsi: hpsa: use min()/min_t() to improve code
+Content-Language: en-US
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Don Brace <don.brace@microchip.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "open list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)"
+ <storagedev@microchip.com>,
+ "open list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)"
+ <linux-scsi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250815121609.384914-1-rongqianfeng@vivo.com>
+ <20250815121609.384914-3-rongqianfeng@vivo.com>
+ <20250820130237.111cc3a7@pumpkin>
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <20250820130237.111cc3a7@pumpkin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR04CA0179.apcprd04.prod.outlook.com
+ (2603:1096:4:14::17) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/14] spi: airoha: add support of dual/quad wires spi
- modes
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
-        Lorenzo Bianconi
-	<lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>,
-        Mark Brown
-	<broonie@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Frieder Schrempf
-	<frieder.schrempf@kontron.de>
-References: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
- <20250820123317.728148-4-mikhail.kshevetskiy@iopsys.eu>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-In-Reply-To: <20250820123317.728148-4-mikhail.kshevetskiy@iopsys.eu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9QcnaJaeDKhjHyzh_KN94-ECNUxjtNW2
-X-Proofpoint-ORIG-GUID: 9QcnaJaeDKhjHyzh_KN94-ECNUxjtNW2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX8cKxNs1iNO0G
- jsrauxzUqZOcf4/lNd2HegxdLa9+uPzq3AAIy0vFFxXvnzZPV7boLEdsncAvaa/aek33ywG0djs
- dy0dEk5mLNtBxLmAr7ISgwYtsTbkW7UDWd5+f0iBulm/lefJ0U4FgnxIwUHDgkOVR73NFVaoqrN
- gu/YJqwRQTF2xwwjBBJkLE5kEuAkhjj91olVhEtlyFN5OnwwGVQXp0FfJaL6DAKlOir3FumhbvT
- 5+5iCxNswGLRe9dzINPrjfE2skGS79uBRKdoAXN5OFdAgKlxONP6OlNHkyNh0qwWCMgUxeHcnoO
- pOpG1okTdd1aDCi1/Bo0iF89Wndw/LWboZhjM/YHH+KVo8PYgCiCXC/lUyc0IWE7B6dKlD9jqTv
- XkVaQCbZpq/ayXkGtm7OBoAzGip1/g==
-X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a5c43c cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=Xrz4UN6QAAAA:8
- a=-btNFGgskHoW0r722lAA:9 a=QEXdDO2ut3YA:10 a=ttJoe86O9ml44D0ClCJH:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_04,2025-08-20_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TY2PPF5221563AF:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd89f61e-9d4a-4db8-4f94-08dddfe8195b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TFRDMkJkZ2t2djJsN0JOSVNJZ3R1bnkyc3E2UDF5b2Z2S3NuYjc1dkRFL1VT?=
+ =?utf-8?B?TWxxakNucCttTnlBWVk0ekphTjFJMFB0Y09GMEZONHdNWm5VSlhoN3lxK3Vs?=
+ =?utf-8?B?UFFxeGFMNTg5QnFNU1h3TmpPU2dhV0VqV3Q4enVIRmpybStnNzJ4aFFjZmRm?=
+ =?utf-8?B?eDliWjZUYzRRMkZZaldKbGpwUXBKTjhCeWJUaVdZTnkrek94ZTJzZ2xVVGho?=
+ =?utf-8?B?WTNnNEZINThtUHNyNU9QRVJtdHFsYm1IVWdsZ1cyYVJsdWcxVHpINXh4YmpT?=
+ =?utf-8?B?SlA2RjkzMHRmNHp5T2E2b3NJZytaUVF3UktrSnhaU0pyY3J0cXNJRkJ6SUFO?=
+ =?utf-8?B?cTRUOGFUYktwL2pVaHVsTHlRempVd1d5Qml6OGVhOCtwWm1YRFBPWDB2VXo0?=
+ =?utf-8?B?UHFqWVd2NENsdXlheGNyeVhhSjU1SVNVOVdCeHNQeis3a2o4bDVjR3FrbG9C?=
+ =?utf-8?B?d2dLNi9PcUQycjRTR29BZ1VPQ3JjV3RUaXRwdHJNb1NSd0JEWVo0MXdhVkRo?=
+ =?utf-8?B?OSt1OGtTLzJ3c3cwYmU5TFZ6M0lNYVUxTkZwalg2aHM2dEJmMHdtMUlnWFhE?=
+ =?utf-8?B?QmpNeDJxQkRsdGthcjg3dzZxQ0xqMTNJeXpTSHB1WktMQXBiUHh5em9QL1dP?=
+ =?utf-8?B?eEpycldUSXZmWGc5SGNVQmZqV3J3Z2VZcHRKRnBpdUNEbnVRa2VPKzJqekp1?=
+ =?utf-8?B?eTVuMVlNcDNCWjRNQzlvb2lnMFo5Wm53WHAydmwwQXFLSnVzaWFQeUJJV2p0?=
+ =?utf-8?B?SG41ZzJBMVNoVWdnTGh6Z21kQ3RGNFhJSjJMQjFyYzY5RTgwRkVGNDJYSTA0?=
+ =?utf-8?B?eUpqNStUc3QyNUwvalBBQ0UyVVJzQ3Y0MWlkZmFWMm94ZWV6Qlc3cUFDRSt0?=
+ =?utf-8?B?MEllS3dsWHZCakhJMkZCYWNVVnA4OUp6WkE5QytKVXdUNHlFeDdweU8xOWhR?=
+ =?utf-8?B?b041OUFJS0ZLcU4xV1hMeVNwZHoyUjNabkJuNDlpRnpBNlo4UEpncmpvK24z?=
+ =?utf-8?B?bEQ5a0grRDZuSTd4ZTV5RTVRSnNYeVhmMWJOQU45V0R5SDlmakdSbUNUUjNw?=
+ =?utf-8?B?OWliM3AxLzFWKys5ckZ2dGFTanB0cGxUeGJrUzJEKzJBQ2VJZG9UMDZENzlF?=
+ =?utf-8?B?eHVFNlc2RE9OcTU1c3VnWkw4d05NTlFtNU1aSCtNaXNtRUVRa0t1YVZCVGg1?=
+ =?utf-8?B?TlNBYXNIUXNiakp2QWdvMEIwUzdUMHFqc3lwQWh2WlVTOTdybDE0OHlsZGJQ?=
+ =?utf-8?B?NE1nZHFuamY1ampKK2JsMERGUGxkK3lhV0l0UHZYRkJGL0JoUmZHeTVlUG5t?=
+ =?utf-8?B?Q3FwNi9YdDF4WnZ0R3pYOTAzaHJ6RnVqV3gzQ0FnSkVIemZXby9mUjhSL21T?=
+ =?utf-8?B?VFc5bm5keGdDdlo3MXJSYWpORm1ROTd5M2ZxNmo3THdYRW9Hc2lHc1YxYUk0?=
+ =?utf-8?B?T01pQXF2YTh4dDMyeDgzbUdGNXhxMWFFRE1XU1dULzZZQVNGYXY4cnNCZDdT?=
+ =?utf-8?B?SHpPejV6aVBxaTVQMDdoaDV2eDZPUC95YzFVVlpmYzBRSllnS2pMVE9tYWE2?=
+ =?utf-8?B?NlVXQXhiVUF0WG92Vkh4aHdiV0gwMkFhdjNGcjgzT2QxdkNEWURZTU51emha?=
+ =?utf-8?B?ZnRvcXZWeHFLaHhpWUJyVEVmSVczSmVKblJONlIraWRXMTN3amFxeFBRWlht?=
+ =?utf-8?B?RHBCTllUVGROYWF5eFZVT0FHZk5ZSmpMbUNMQXJlWDdiOUZBRWpDZDRkV0dL?=
+ =?utf-8?B?aFMralNMRG1MYVRZR3RlbFd4aitNL25pdFlNL2FhQnVwNTdPVXViL2piWFla?=
+ =?utf-8?B?eFQ2clpKRlg1Q1FBTlYyVUt0RzFaME1aemZQbHlpbzJLQk5oRTE5ellYZGMr?=
+ =?utf-8?B?WSt2NjNxemNUb2RGUVJyNU9MbFpsbm9HMWpFa1MrNDNac2pGK2xmZTAwNEFF?=
+ =?utf-8?Q?S0B/HK4fjzk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dW9KMVpTRFJ2R2NWRGdYVTVXVUhVbHdPaURRRHh0QWFzL1F3YXk0V2JqRGJy?=
+ =?utf-8?B?dTNibmJHWk9XaFphSm5qZFE5Z3lXcTJZOWpnOWRINkEyejZwZ2JxK0J4L0xL?=
+ =?utf-8?B?ZUxJd0t6UkNvUnJMdlBhckpTMTFTbVNRUmZkSnVZRFlFZ0ZYVHVsa2F6cjBI?=
+ =?utf-8?B?bUhNWERqODAxeVhBS2lwek11UnZDTlEzc3VBUkRZK2t4Mmtjb2dJZksxUWJS?=
+ =?utf-8?B?dEdiZVIrZlRJM0hmbXpaOEJxMVJWb2RzbEo3NHU4bjM5NEw4L3RmVExtSVY3?=
+ =?utf-8?B?Sk82V2ZMSDhFQ2NnQUJmRjFGMDVjY3o2L1NDbElScHVmVUtLcTBzeTZET3dL?=
+ =?utf-8?B?N0U4Slp0Z2FoemNITGpPdlRDZnpTdTFpc1o1aUczSkgxbnlsQ1RCM0hlN3d5?=
+ =?utf-8?B?Z0dwQ01tYTRzK3h0UjBZaGxPd0FpaHgvQkRpOHhOOVdnS2g2S0xuK05LVFBy?=
+ =?utf-8?B?Sk1UK2J1TVFEdURGS1VMdFdGVVdmMWVHc1FySWIySldMSi85YzVXTDRyUXJ3?=
+ =?utf-8?B?ak9VK210MlVhNFFmckFPaEJDL1ExNitZZm53Y0RSZXRkS2hJZ1YwZWVERlBo?=
+ =?utf-8?B?MFcwRnM3MHovdVE1eTBaMHd1QXp6ZTQzVmx3Z0FwYVhoWVlvdE0xYmNiYVFX?=
+ =?utf-8?B?SXNyVzg4MzRNQjZUKy9HaWtWSGhtcG55Rmh3TE5IbVlGTFdvWklEVDJ6REJm?=
+ =?utf-8?B?ZDEzcllwanNLSDF3aSsvMm5OVUlxWWxWSisxaXhQRExzeEZUTGZpeGVkUzZW?=
+ =?utf-8?B?cG12a256d0RUN3NKWFhQWFZDZUVncmxaMmVYeVNaUFBRNTJ5bkZCZUh0YjRl?=
+ =?utf-8?B?KzM0TE9sVTAyZllMSWhVYzRrUDBkR3FWVHRqUFhQSTA2RlJsMEJaRzRLTkpn?=
+ =?utf-8?B?OTNZZWJycHJuYzFlaUhHcTBTSHZYSll1czE0eDNxSUpMRzlyc1NKa2V5MWx4?=
+ =?utf-8?B?Nkh3Y0p0OUx4TXdJd1dEaFgwWSthakhHVHZhVkd3NXhoOTNjbEpiUGs5dDlL?=
+ =?utf-8?B?ZGkrRGZWVFJXL2dnRWNUT0RXL2RhU1BRK2RUM0hMY3h4QXFQRjdEWkNGUlJC?=
+ =?utf-8?B?VlZDVFlwY1ZSb0QyYUYvbUNwRzNrNzVPOG13aUdiWFFidzRSMUZIM1RpTjZN?=
+ =?utf-8?B?TmgvYVN4dDNFZkpwMFVYT0sxeHg1ZmZqcnJiSnJpK1ZSQ0FjbnhyTUk4SUhq?=
+ =?utf-8?B?VUo4anl3LzNDRi9qdkc5eWZGOFE0cG1pMk5ySytsb2RENk1VMDlmNkVTcWVO?=
+ =?utf-8?B?bFJlSmpCb2RhZVRXcm1aUDVyNWpUR0dlT0RHRW56MllxY0xBWG92b2p2TEI3?=
+ =?utf-8?B?NnpsanBiY1QzTlpFSHh4dzMrdTRFN00vcnVlM1R3ZDVLRFVWcUpNMm1BWjZt?=
+ =?utf-8?B?V3FUV3R2ak9ob0JXRlFrUU1vREJaK2d0QzZKL1Nkb2UyVnc5VUkwN3VsNlRM?=
+ =?utf-8?B?VEt0eEo2NjhVRmVQUjdGQ09JZTA4WWQvbzFocWhKUGtBSkJqTzFmWERKMFFY?=
+ =?utf-8?B?eDQvbVBJQUF6anF2clRUMW5VTU5aUHRWSjk1TWxPMHAzcEhUNm4va0YyblJC?=
+ =?utf-8?B?SnFFeUNSWkc1L3JnYk8rUnVRZ0NGM1dkR1B3MXNKcHdlRHpzcWZOaUN3T0F0?=
+ =?utf-8?B?Nk1hNTNRUkc4UmM2MlVFczJBMDV3SDRzUURERitpK0liNTg3NDhodlozYjJJ?=
+ =?utf-8?B?ditRZU03bHZ3dHd0dFRFK2U4WVhkWUdzN01PWnd3T1Y2SzN0ZlBKR1dMOXpL?=
+ =?utf-8?B?ZVdRMVlRK1Z0UWtNK2RDTUYzZjIxVHAxQ2dBVE9rYVBKKzNzRitDSk1zWGlG?=
+ =?utf-8?B?YUdpVHBUTWkwaGFCTjFtMnl2Z2QvM2FJb3hGbTlTaktJbnVBVmFMU0E0bUVF?=
+ =?utf-8?B?eFBmYjRTQ0pTeXV3NENSb2o4YXJIZFNLc2VpWS84QUJIOFFoV3NGczVGdlVr?=
+ =?utf-8?B?UmZuVTJQWnRqM1k1L2Fjdjh1eU91YSt2SU1nT0U2bXdrSDRyYUNDU0d3MERW?=
+ =?utf-8?B?RENnMVlnMkFUa1RVTFF3ZENBZUo1YUF3SGxQZGRxQW8rbk1qOEw1TVArNTZO?=
+ =?utf-8?B?emZ5OVllZnM3RWdxaWtNZlFIZHZ1L3FubTR3ZlRQSXZyQWhVNGUzeDluZnZ0?=
+ =?utf-8?Q?amwM/55ghqMZnTs0G4qgEAOZ1?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd89f61e-9d4a-4db8-4f94-08dddfe8195b
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 12:50:10.8964
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8N1jR4GizUCj/hTj8WbpGqPtUMsFr/43gOEpZb+T8cVHXNDVbgrFNmxCtc02VVOcA8W+0XVKPKzZAar1vHQlQQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PPF5221563AF
 
 
+在 2025/8/20 20:02, David Laight 写道:
+> [You don't often get email from david.laight.linux@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>
+> On Fri, 15 Aug 2025 20:16:04 +0800
+> Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+>
+>> Use min()/min_t() to reduce the code in complete_scsi_command() and
+>> hpsa_vpd_page_supported(), and improve readability.
+>>
+>> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+>> ---
+>>   drivers/scsi/hpsa.c | 11 +++--------
+>>   1 file changed, 3 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+>> index c73a71ac3c29..95dfcbac997f 100644
+>> --- a/drivers/scsi/hpsa.c
+>> +++ b/drivers/scsi/hpsa.c
+>> @@ -2662,10 +2662,8 @@ static void complete_scsi_command(struct CommandList *cp)
+>>        case CMD_TARGET_STATUS:
+>>                cmd->result |= ei->ScsiStatus;
+>>                /* copy the sense data */
+>> -             if (SCSI_SENSE_BUFFERSIZE < sizeof(ei->SenseInfo))
+>> -                     sense_data_size = SCSI_SENSE_BUFFERSIZE;
+>> -             else
+>> -                     sense_data_size = sizeof(ei->SenseInfo);
+>> +             sense_data_size = min_t(unsigned long, SCSI_SENSE_BUFFERSIZE,
+>> +                                     sizeof(ei->SenseInfo));
+> Why min_t() ?
+> A plain min() should be fine.
+> If it isn't you should really need to justify why the type of one parameter
+> can't be changes before using min_t().
+SCSI_SENSE_BUFFERSIZE is a macro definition and is generally of type int.
+The return type of sizeof(ei->SenseInfo) is size_t, so I used min_t()
+here.  However, as you mentioned, min() can also be used.  Do I need to
+send v2?
 
-On 8/20/2025 6:03 PM, Mikhail Kshevetskiy wrote:
-> This patch adds support of dual and quad wires spi modes. It will
-> speed up flash operations on the hardware with corresponding hardware
-> support.
-> 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> ---
->   drivers/spi/spi-airoha-snfi.c | 107 +++++++++++++++++++++++++---------
->   1 file changed, 80 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
-> index bcc464ec9c61..7aab3506834a 100644
-> --- a/drivers/spi/spi-airoha-snfi.c
-> +++ b/drivers/spi/spi-airoha-snfi.c
-> @@ -192,6 +192,14 @@
->   #define SPI_NAND_OP_RESET			0xff
->   #define SPI_NAND_OP_DIE_SELECT			0xc2
->   
-> +/* SNAND FIFO commands */
-> +#define SNAND_FIFO_TX_BUSWIDTH_SINGLE		0x08
-> +#define SNAND_FIFO_TX_BUSWIDTH_DUAL		0x09
-> +#define SNAND_FIFO_TX_BUSWIDTH_QUAD		0x0a
-> +#define SNAND_FIFO_RX_BUSWIDTH_SINGLE		0x0c
-> +#define SNAND_FIFO_RX_BUSWIDTH_DUAL		0x0e
-> +#define SNAND_FIFO_RX_BUSWIDTH_QUAD		0x0f
-> +
->   #define SPI_NAND_CACHE_SIZE			(SZ_4K + SZ_256)
->   #define SPI_MAX_TRANSFER_SIZE			511
->   
-> @@ -387,10 +395,25 @@ static int airoha_snand_set_mode(struct airoha_snand_ctrl *as_ctrl,
->   	return regmap_write(as_ctrl->regmap_ctrl, REG_SPI_CTRL_DUMMY, 0);
->   }
->   
-> -static int airoha_snand_write_data(struct airoha_snand_ctrl *as_ctrl, u8 cmd,
-> -				   const u8 *data, int len)
-> +static int airoha_snand_write_data(struct airoha_snand_ctrl *as_ctrl,
-> +				   const u8 *data, int len, int buswidth)
->   {
->   	int i, data_len;
-> +	u8 cmd;
-> +
-> +	switch (buswidth) {
-> +	case 1:
-> +		cmd = SNAND_FIFO_TX_BUSWIDTH_SINGLE;
-> +		break;
-> +	case 2:
-> +		cmd = SNAND_FIFO_TX_BUSWIDTH_DUAL;
-> +		break;
-> +	case 4:
-> +		cmd = SNAND_FIFO_TX_BUSWIDTH_QUAD;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
->   
->   	for (i = 0; i < len; i += data_len) {
->   		int err;
-> @@ -409,16 +432,31 @@ static int airoha_snand_write_data(struct airoha_snand_ctrl *as_ctrl, u8 cmd,
->   	return 0;
->   }
->   
-> -static int airoha_snand_read_data(struct airoha_snand_ctrl *as_ctrl, u8 *data,
-> -				  int len)
-> +static int airoha_snand_read_data(struct airoha_snand_ctrl *as_ctrl,
-> +				  u8 *data, int len, int buswidth)
->   {
->   	int i, data_len;
-> +	u8 cmd;
-> +
-> +	switch (buswidth) {
-> +	case 1:
-> +		cmd = SNAND_FIFO_RX_BUSWIDTH_SINGLE;
-> +		break;
-> +	case 2:
-> +		cmd = SNAND_FIFO_RX_BUSWIDTH_DUAL;
-> +		break;
-> +	case 4:
-> +		cmd = SNAND_FIFO_RX_BUSWIDTH_QUAD;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-For unknown buswidth cases, not falling back to single lane?
-What if the bus width is 0 ? (for SPI, typically default 
-SPI_NBITS_SINGLE is used for buswidth 0).> +	}
->   
->   	for (i = 0; i < len; i += data_len) {
->   		int err;
->   
->   		data_len = min(len - i, SPI_MAX_TRANSFER_SIZE);
-> -		err = airoha_snand_set_fifo_op(as_ctrl, 0xc, data_len);
-> +		err = airoha_snand_set_fifo_op(as_ctrl, cmd, data_len);
->   		if (err)
->   			return err;
->   
-> @@ -895,12 +933,27 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
->   static int airoha_snand_exec_op(struct spi_mem *mem,
->   				const struct spi_mem_op *op)
->   {
-> -	u8 data[8], cmd, opcode = op->cmd.opcode;
->   	struct airoha_snand_ctrl *as_ctrl;
-> -	int i, err;
-> +	char buf[20], *data;
-> +	int i, err, op_len, addr_len, dummy_len;
->   
->   	as_ctrl = spi_controller_get_devdata(mem->spi->controller);
->   
-> +	op_len = op->cmd.nbytes;
-> +	addr_len = op->addr.nbytes;
-> +	dummy_len = op->dummy.nbytes;
-> +
-> +	if (op_len + dummy_len + addr_len > sizeof(buf))
-> +		return -EIO;
-> +
-> +	data = buf;
-> +	for (i = 0; i < op_len; i++)
-> +		*data++ = op->cmd.opcode >> (8 * (op_len - i - 1));
-> +	for (i = 0; i < addr_len; i++)
-> +		*data++ = op->addr.val >> (8 * (addr_len - i - 1));
-> +	for (i = 0; i < dummy_len; i++)
-> +		*data++ = 0xff;
-> +
->   	/* switch to manual mode */
->   	err = airoha_snand_set_mode(as_ctrl, SPI_MODE_MANUAL);
->   	if (err < 0)
-> @@ -911,40 +964,40 @@ static int airoha_snand_exec_op(struct spi_mem *mem,
->   		return err;
->   
->   	/* opcode */
-> -	err = airoha_snand_write_data(as_ctrl, 0x8, &opcode, sizeof(opcode));
-> +	data = buf;
-> +	err = airoha_snand_write_data(as_ctrl, data, op_len,
-> +				      op->cmd.buswidth);
->   	if (err)
->   		return err;
->   
->   	/* addr part */
-> -	cmd = opcode == SPI_NAND_OP_GET_FEATURE ? 0x11 : 0x8;
-> -	put_unaligned_be64(op->addr.val, data);
-> -
-> -	for (i = ARRAY_SIZE(data) - op->addr.nbytes;
-> -	     i < ARRAY_SIZE(data); i++) {
-> -		err = airoha_snand_write_data(as_ctrl, cmd, &data[i],
-> -					      sizeof(data[0]));
-> +	data += op_len;
-> +	if (addr_len) {
-> +		err = airoha_snand_write_data(as_ctrl, data, addr_len,
-> +					      op->addr.buswidth);
->   		if (err)
->   			return err;
->   	}
->   
->   	/* dummy */
-> -	data[0] = 0xff;
-> -	for (i = 0; i < op->dummy.nbytes; i++) {
-> -		err = airoha_snand_write_data(as_ctrl, 0x8, &data[0],
-> -					      sizeof(data[0]));
-> +	data += addr_len;
-> +	if (dummy_len) {
-> +		err = airoha_snand_write_data(as_ctrl, data, dummy_len,
-> +					      op->dummy.buswidth);
->   		if (err)
->   			return err;
->   	}
->   
->   	/* data */
-> -	if (op->data.dir == SPI_MEM_DATA_IN) {
-> -		err = airoha_snand_read_data(as_ctrl, op->data.buf.in,
-> -					     op->data.nbytes);
-> -		if (err)
-> -			return err;
-> -	} else {
-> -		err = airoha_snand_write_data(as_ctrl, 0x8, op->data.buf.out,
-> -					      op->data.nbytes);
-> +	if (op->data.nbytes) {
-> +		if (op->data.dir == SPI_MEM_DATA_IN)
-> +			err = airoha_snand_read_data(as_ctrl, op->data.buf.in,
-> +						     op->data.nbytes,
-> +						     op->data.buswidth);
-> +		else
-> +			err = airoha_snand_write_data(as_ctrl, op->data.buf.out,
-> +						      op->data.nbytes,
-> +						      op->data.buswidth);
->   		if (err)
->   			return err;
->   	}
-
+Best regards,
+Qianfeng
 
