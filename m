@@ -1,188 +1,173 @@
-Return-Path: <linux-kernel+bounces-778055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F319B2E0CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:23:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11881B2E0C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4221BA3361
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DA1AA010F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235225742C;
-	Wed, 20 Aug 2025 15:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A50A334717;
+	Wed, 20 Aug 2025 15:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9XT9FFn"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYYnC95Z"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D1633EAFA
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D08E322746
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702567; cv=none; b=G21w5eziX0SSCxBrsiZQd7XObs/EV7rauGAJzGxf6DqPUaMWVTIM3ahzqt2lbyZ1T9+Ym8mdR239wVi+EMNW4c2Eaab68nxMb2K7ZQY+0fNTqY4ONphPCZj57VV/4MOHce7r5xHm21DX/oOsBhQQcps8Vmr2D8mzbjID4UXAkTI=
+	t=1755702276; cv=none; b=bWnYdVuS7ZRaW9F/BzpsgA6UCqjSBk/4oBvftUbkcJjS9SXqIhcKQfb6d6ELOTJPFrcwZVA0O09UEfAvYd4rjdfP+0X8vmwiFa9uJYOrcDIbWNxhUBfgJw/JBNPEqthwhdTm77cWX4LILSCXvbhXnu3ewmd2cunu64taGHVWvNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702567; c=relaxed/simple;
-	bh=OSjYCM+QZePSiWEWA+QZ0XnfyYn14Pe1yajip1omtRY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tLU6/QKGYIBGVV8Ukt1uCWNYo8i366RiCtigqtqHyvySHvyI4QxlrK9t6rhIFl8go3GxQLYVzXnvbgb4EykYyO3bj8aC+QLGTqq9FkfKtdgkrGe4as4ZARTYz0ibRhn8UOUhCgH7amclJsAc2SVS1wY65Wv3OWN+sKM370E8lzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D9XT9FFn; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1755702276; c=relaxed/simple;
+	bh=tb1q0p61kk4ggtfW+I2HjxsfCAKSB23I9pUdrtecWhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQ/d+0d029B1+SUaX/Wj61E1JyhlSiNHuUFxQqIqnS7UH5LItjUAzNHdvSQ/40DpY/NbY10IuiWFZwO8P+Vf1UQ1tLGbJTvTy9KFfXRKBAN0vPwL3Iidv2E4imhgtLhDJhwB2Y08XKn/sT5HcH/UwEPpad9xGAtBCRNzHgR9IjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYYnC95Z; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445818eb6eso49693405ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:09:25 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2445811e19dso53114705ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:04:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755702565; x=1756307365; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dSgIm4/H7Yu+PP0A4Akgz8hg8ykeT23+87+VAQDW1aE=;
-        b=D9XT9FFnpPryNJQkZDWDfGzkYOtOOGG8aM2XrAEuooCUbBdUJFsJaX9/D/TRMa69ho
-         BBpH8YMl+TC5HqitObEhZiduJBCUAtwEfPTb4X/GI6jzirpO2/pvJOKXrSfaEk03y7AS
-         2dsBefHLyDgFy3/LoxPWPbqvy9vCsQhVDJzkOy+hNvn0KlQVoHJVyMr4DlymROTYLM2K
-         jqPI2gFP5kMUmm1YEs9E/Kvdh8V4WubbEE5ttq9V4JFwiOJOoLoXGOz5xrvjkzOmjaGw
-         SuVb9aM8zO7U/2ET7hRHSbvUca7IwRerurdfwvAJFuo4EYhIWlv3A0NWAESbnA3QCnqo
-         dR7w==
+        d=gmail.com; s=20230601; t=1755702274; x=1756307074; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=++r0iAI2yCp7ByMWBTkoq4eZJInhcfQbLd7c4fa729Y=;
+        b=kYYnC95Zl9vfSncYR4QXrYXo6Ala70ZicCFFNZNyrWcjG6LA+vsXBicOaN2m7Yrj+Y
+         P9dFNK2KmdAd+y8gEWlxF7S4jKQVfv5umGCoDiu2Jwyv+ijlhawacuVXpC31kEV1HLLT
+         TR03gbqD6FL2Bh++z0rOprkdjmmneO7lc6kqvOte/g9ZW1ZDqkQED0L0+p/S2i4YZqaR
+         dEpsOMl4h0PqN6CjM/IfxkgtlbJ8HxC/1S883jN+Of2mFCGrd7fdCN1IQzyQy1eOZsUm
+         re4FmimHxqT2NEB7b2hzIc/VE3WtZRQWeOk4nzQ3X8aE/nNjT6SRbA0WyVXYNy5zM2bE
+         giRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755702565; x=1756307365;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dSgIm4/H7Yu+PP0A4Akgz8hg8ykeT23+87+VAQDW1aE=;
-        b=hDGK1w1fciOXYFsGsE0AtH+3bVmt6y6CnJWUu6W+FBxYAWcjohvPl7xhtZHu+mCETB
-         kwznB6dolNg9g689g8VZ4Ey82wHEsUyfFA4JbCAoQcR1v8do7rdIoOc/gf+Aq7xyog/s
-         qSw9Oiamk+pvbtp1f0pAU2NMi++df53AYQ8TkIIhimRImTP2vxA/6BAtov7/RkC2pk+M
-         OYJymPov55jfkK6h+7r/4OX/TDjnzii6noq4+TpzMCkhwdwEaEKbLUUXcHkSKGxcTF9c
-         pvIuemQ8s5BtjeNrsE02IML6ne70yqQreIYzbc09nYUWpgPGugiiPuTPNDyFm/KXTdou
-         CD/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUd7q+xgJYrPico9xajS3WemELoNSumCQ9dir+l3uxcaOP+FkwTZb+2Bga76k6ZDT1Itx2EVbnqohcYLRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydU2H5tLprv23S0fPHpVOSYHE2XYUUwggnK3xtm+4Nj4uWVMTW
-	NNb6H8a1hkeK0H6l8/vDwr4fOGJLF3wmEmAHCyB66760C3v2pxWUtgac
-X-Gm-Gg: ASbGncu0aiq3dR94werQDfJggLzQqpd3zrMMlS/11lApMnQOsbhWSdVdoBJVKECcb/n
-	vSN++G4+iU3SGj4C0dBLPDqZREiLoL12f7MPphR8d1D29lOHQ1jxriZ2PfPq2JVFwDVi77sPApf
-	W3QXQCSvbjI9xeF6YCe9JrX7f97C3TESByREOYNN/rMGBWvlouZOiHiNvIy2SgcCiuIB/jAMdzq
-	av4IA9DpZ/dvjRIOAOcDbcgnCzyK/9O0kw3h9WpNHWvX7UFdvK4598mIT3+oR1yI3D/xAenpjQU
-	REO/PI9oy7BeuIa07JfN9++hIgqGorqDct+JCBsJrl7HT6bmpI5w/9LtORKRXM3S9XUzicEqrO5
-	RjwBLan7i+2SDvNdPsQ==
-X-Google-Smtp-Source: AGHT+IFeesZgKogpEkYmKt7j1jigdbSSubJrkxWpbElJ8Gev87fyWh8qORnnDmjou3DFP1PVwDj13g==
-X-Received: by 2002:a17:902:ce83:b0:243:3da:17bb with SMTP id d9443c01a7336-245ef228930mr46362245ad.32.1755702564482;
-        Wed, 20 Aug 2025 08:09:24 -0700 (PDT)
-Received: from Terra ([2001:df0:b240:b5e:abe3:8cfd:3fd8:5d8e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c7494sm29526165ad.99.2025.08.20.08.09.21
+        d=1e100.net; s=20230601; t=1755702274; x=1756307074;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++r0iAI2yCp7ByMWBTkoq4eZJInhcfQbLd7c4fa729Y=;
+        b=ptn+UNTwL03pJcRyGBSWOcAL/dnsC076MO5DZbPWKwLyQaysDmPktYGX5HYou8r5K8
+         Hd7RliLhlmF2FezwKfDUo2uhOMDsO1lFH5kDpi1BZqgJSNRmvv+wdwqfIlv8aJwxY1YN
+         PP4k0aSdOyqUdkUw3JvL3AfpYEPWyLt1PvJ5MYBjPoX3buOv4oMdl3BvWKIxqf5UALYy
+         8khTyNAgIqtKLkiTL53q5dhZ+Td9VvBjG1emVypwXxsasTnfOYt2+djAFYrPR2cq7DQa
+         f+J1mPIBUHCnMO4/eXdoDpQLCFPl+7/vdCpyki/94OOqvjpp8W3HDfqF3OrecRaARYGI
+         r1SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbUnt4yUCFgQi5FDGTWFQuHq+tGkAq3bzEtFV1KQ3nZIrrS5Lif95q2R5KUqXux8QjBqvZIWBrT0sV77o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd+Zn76M64FLMa77o78g/EppnfAVolRqpkZbi3/7W1tidwFfha
+	I9NzCTwlLPJ1TqsHNcv47yWvk55i1mDye4WDdjfiVLWB0F9cGYvxV5AL
+X-Gm-Gg: ASbGncsrrhQDbuNUqG2pa1d1+xL8EmMxRm+g54Iw61gjNsx6GipVrx8hGek/zvifghr
+	qWu2/7XAe7N9QDGQHPxADNjvAuMp0Em1WWjWmRUEqQGK/qaAK5guWYNvG7ILp6VaTWcr8XR/Oe1
+	oWJGOLQVGpH9vSWxcXRekMVJ0XJ83RO3Qxbwi6hV6+7+MTdVp0n+zYzhmL/YdcOIYPIhGq4kcB6
+	gh7sNrpb0nrQR2x9vpF3U3nQH5HfhkYYgkpDYLyvSMmCOJm0PoHNIar/g+XiCGDFO1xdGTEs9C7
+	EwLJZIcP97GKSu6e3gqsxXEMw8Tloupqi0aKoStHzpkqZHLoJIoUv84OxKVYNLIRfT4lPbB/aks
+	NfFNsIp/FVt4nHWq8fy9reQ==
+X-Google-Smtp-Source: AGHT+IG5GibFX4nRPe3uAIyd9oVrLLUMsOnz3s+oCgefLCLc1FqEY0SeoiyMrK+0hu5OLASgGFtLgg==
+X-Received: by 2002:a17:903:1b6e:b0:245:fc41:eb53 with SMTP id d9443c01a7336-245fc41ecefmr466235ad.30.1755702274208;
+        Wed, 20 Aug 2025 08:04:34 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed53eb8bsm29017525ad.166.2025.08.20.08.04.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 08:09:24 -0700 (PDT)
-From: Athul Raj Kollareth <krathul3152@gmail.com>
-To: michal.wajdeczko@intel.com
-Cc: airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	krathul3152@gmail.com,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	simona@ffwll.ch,
-	skhan@linuxfoundation.org,
-	tzimmermann@suse.de
-Subject: [PATCH v4] drm: Replace the deprecated DRM_* logging macros in gem helper files
-Date: Wed, 20 Aug 2025 20:34:25 +0530
-Message-ID: <20250820150829.4312-2-krathul3152@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <a5d58430-1ae7-4b7e-8275-dad09a5c8cae@intel.com>
-References: <a5d58430-1ae7-4b7e-8275-dad09a5c8cae@intel.com>
+        Wed, 20 Aug 2025 08:04:33 -0700 (PDT)
+Date: Wed, 20 Aug 2025 11:04:31 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Vivian Wang <uwu@dram.page>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] riscv: bitops: Convert to use_alternative_likely
+Message-ID: <aKXj_zTwvk0SwUpV@yury>
+References: <20250820-riscv-altn-helper-wip-v1-0-c3c626c1f7e6@iscas.ac.cn>
+ <20250820-riscv-altn-helper-wip-v1-5-c3c626c1f7e6@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-riscv-altn-helper-wip-v1-5-c3c626c1f7e6@iscas.ac.cn>
 
-Replace the DRM_* logging macros used in gem helper files with the
-appropriate ones specified in /include/drm/drm_print.h.
+On Wed, Aug 20, 2025 at 09:44:49PM +0800, Vivian Wang wrote:
+> Use use_alternative_likely() to check for RISCV_ISA_EXT_ZBB, replacing
+> the use of asm goto with ALTERNATIVE.
+> 
+> The "likely" variant is used to match the behavior of the original
+> implementation using ALTERNATIVE("j %l[legacy]", "nop", ...).
+> 
+> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> ---
+>  arch/riscv/include/asm/bitops.h | 112 ++++++++++++++++++----------------------
+>  1 file changed, 50 insertions(+), 62 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
+> index d59310f74c2ba70caeb7b9b0e9221882117583f5..0257d547a96293909d90b017c8a48b508d0fd642 100644
+> --- a/arch/riscv/include/asm/bitops.h
+> +++ b/arch/riscv/include/asm/bitops.h
+> @@ -47,20 +47,17 @@
+>  
+>  static __always_inline unsigned long variable__ffs(unsigned long word)
+>  {
+> -	asm goto(ALTERNATIVE("j %l[legacy]", "nop", 0,
+> -				      RISCV_ISA_EXT_ZBB, 1)
+> -			  : : : : legacy);
+> -
+> -	asm volatile (".option push\n"
+> -		      ".option arch,+zbb\n"
+> -		      "ctz %0, %1\n"
+> -		      ".option pop\n"
+> -		      : "=r" (word) : "r" (word) :);
+> -
+> -	return word;
+> -
+> -legacy:
+> -	return generic___ffs(word);
+> +	if (use_alternative_likely(0, RISCV_ISA_EXT_ZBB)) {
 
-Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
----
-Changes in v4:
-    - Some codestyle corrections.
-    - Remove OOM error logging in drm_gem_init().
+I don't think that 'likely' is used properly here. The likely/unlikely
+wording has a meaning of a hint to the compiler:
 
-Changes in v3:
-    - Revert all changes to drm_gem_objects_lookup()
-    - Use drm_device as suggested in the discussion [1]. 
+        if (unlikely(WARN_ON(cond))
+                goto err;
 
-Changes in v2:
-    - Change drm_gem_objects_lookup() to take a drm_device* argument.
-    - Make appropriate changes to all calls of drm_gem_objects_lookup().
----
- drivers/gpu/drm/drm_gem.c            | 13 +++++++------
- drivers/gpu/drm/drm_gem_dma_helper.c |  2 +-
- 2 files changed, 8 insertions(+), 7 deletions(-)
+In your case, it's just meaningless, because whatever is 'likely' for
+one CPU, will be always 'unlikely' for another. 
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 4a89b6acb6af..dc3d6cfa692b 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -102,7 +102,6 @@ drm_gem_init(struct drm_device *dev)
- 	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
- 					  GFP_KERNEL);
- 	if (!vma_offset_manager) {
--		DRM_ERROR("out of memory\n");
- 		return -ENOMEM;
- 	}
- 
-@@ -783,9 +782,10 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
- int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
- 			   int count, struct drm_gem_object ***objs_out)
- {
--	int ret;
--	u32 *handles;
-+	struct drm_device *dev = filp->minor->dev;
- 	struct drm_gem_object **objs;
-+	u32 *handles;
-+	int ret;
- 
- 	if (!count)
- 		return 0;
-@@ -805,7 +805,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
- 
- 	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
- 		ret = -EFAULT;
--		DRM_DEBUG("Failed to copy in GEM handles\n");
-+		drm_dbg_core(dev, "Failed to copy in GEM handles\n");
- 		goto out;
- 	}
- 
-@@ -853,12 +853,13 @@ EXPORT_SYMBOL(drm_gem_object_lookup);
- long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
- 				    bool wait_all, unsigned long timeout)
- {
--	long ret;
-+	struct drm_device *dev = filep->minor->dev;
- 	struct drm_gem_object *obj;
-+	long ret;
- 
- 	obj = drm_gem_object_lookup(filep, handle);
- 	if (!obj) {
--		DRM_DEBUG("Failed to look up GEM BO %d\n", handle);
-+		drm_dbg_core(dev, "Failed to look up GEM BO %d\n", handle);
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
-index 4f0320df858f..a507cf517015 100644
---- a/drivers/gpu/drm/drm_gem_dma_helper.c
-+++ b/drivers/gpu/drm/drm_gem_dma_helper.c
-@@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
- 
- 	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
- 	if (ret) {
--		DRM_ERROR("Failed to vmap PRIME buffer\n");
-+		drm_err(dev, "Failed to vmap PRIME buffer\n");
- 		return ERR_PTR(ret);
- 	}
- 
--- 
-2.50.1
 
+> +		asm volatile (".option push\n"
+> +			      ".option arch,+zbb\n"
+> +			      "ctz %0, %1\n"
+> +			      ".option pop\n"
+> +			      : "=r" (word) : "r" (word) :);
+> +
+> +		return word;
+> +	} else {
+> +		return generic___ffs(word);
+> +	}
+>  }
+
+This tabs wipe most of the history. Can you reorganize your patch
+such that it preserves as much history as you can?
+
+        if (use_alternative_unlikely(...))
+                return generic___ffs();
+
+        asm volatile (".option push\n"
+                      ".option arch,+zbb\n"
+                      "ctz %0, %1\n"
+                      ".option pop\n"
+                      : "=r" (word) : "r" (word) :);
+
+        return word;
+
+And so on.
+
+Thanks,
+Yury
 
