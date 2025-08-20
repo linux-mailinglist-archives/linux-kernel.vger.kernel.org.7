@@ -1,165 +1,144 @@
-Return-Path: <linux-kernel+bounces-778353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93397B2E490
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:00:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F569B2E474
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C003B8EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:58:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E9157AA0CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38893287507;
-	Wed, 20 Aug 2025 17:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF452765C5;
+	Wed, 20 Aug 2025 17:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7xEiV2q"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIL4sZY7"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CEE261B70;
-	Wed, 20 Aug 2025 17:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CA0266B6B;
+	Wed, 20 Aug 2025 17:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712616; cv=none; b=KgBBeQyUkfRm9mqA6ex2ppgcgtDiOQAI3UqPpmrOL++lv5euoZpsrOCj+oJRN9jJBnv5Hs5kFTWm/VZNWGoHAT/H5ubq7PZNm+k6tpdDwWWqHg9gbWhvQJuGL4vmjiiHzjmaC6EVw2MFcuasyR6jC/+A+jfyI76st+HKbSRU7gE=
+	t=1755712580; cv=none; b=Ez7bJRnhZcrFP9PtugzjHPRDu16qdAoeh5oOcE5UWooqraQFnPMB7jIo7+aV4dMg3J92+rXXEz3q5s/FhEzNqjtQRbnnJx8akjgKHv0tfBem7BE1c/nMyFdMWNcMdv8POeI9+U0eUFw3TwJUcC7N5TYnDaSNtAF69MK++azjUfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712616; c=relaxed/simple;
-	bh=aTVe6zIx9eeEkQY2Ki1hCOn4/af5y00QBLtcbdjCizk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pf49sOZnoacJ++q5aiYgJT0FsJ1thhE7fG0kJ5GoXVRp0OobuaAEFiDYGIegMv8RABLfK8zzWSX3wd0tMwrpB7Ctsmr84fgE7TnisaWVWeaNqbl1sc+E6DjsCLtvE9CD7xWu7ILGASAGNvlphTLHmZ5ACNszjlQ/PaVPlCYahTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7xEiV2q; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1755712580; c=relaxed/simple;
+	bh=OpMONjBtUOi/QSNOr/+nhfqsjkMyCFbyzjsLnThXOo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IU/N8TFTYFy+4bQbb0wWtoj/qKIIfQUJdEAxpMz8a6J5jvA2DxCtQiehjeWYMEhpzQYHfuZI9nB2n29Iys4LxIBDekEeNue5js6OuO1cMLBDQTN8nR+3tf+EwWUr8Iy1V3o8KBwpcZq5kNd0MaBdYDJ1iJ/5mlFaHx6qqVLm3Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bIL4sZY7; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b471738daabso78190a12.1;
-        Wed, 20 Aug 2025 10:56:54 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e2e89e89fso267730b3a.1;
+        Wed, 20 Aug 2025 10:56:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755712614; x=1756317414; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h15eIxqdIwCof1MRCBcz3fgygqELtVuk+XlaIGTeo3U=;
-        b=S7xEiV2qBMEc2bcKEAmB6MBjhZjhIrvT0ByINR3cU0dpUsDb787PTi99lt2M0ATSA/
-         8ak7Cuiby7847hWr+sy9t+9RZf6XRfFpAU7PguAXki6EV0PzihaJ1pMTANfye4b17d6m
-         0XjmVgqi6R/GoGTJrAohdEXxlOWw+5InDK+BkMZZPcg96Xjq4ucEwshCwhoZpTYadwYn
-         ch02zgPUWPWMafzZGtCkCfa2uNTsGhMHN9S3d1KYGY1OXuFHTg6x/zlV+L5W9+JphR2k
-         jVRikL9LhVLDETmvjVlDuUrzlG0PEyCm/Pgt2xhtxFVPEYVaE3FzaN8rGd1m+t6OqNgi
-         oRAA==
+        d=gmail.com; s=20230601; t=1755712578; x=1756317378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OpkKXvg2DGMCCtE6dEYGs6b3fg4sVj3U6sdfAgSI6Qs=;
+        b=bIL4sZY7nI3rbNX2phu7p59WrGGn54Th0v3RImyCczJAZ9/Mq+qnSZz33D+vtYmfsB
+         +Izzk7h326YurhHh/4MT//TPnTN1snrjOoyeZHGFfDyN1buhl13AK6OafWdE0y2oUVtF
+         S+IMDqoffnxmIqs076CPcXboGvyopN2VOXcKXCLC+0Y0Cy1Kt+CSS2p79O9J6yNdWk7Z
+         31fxCoNqVs0rgxQZcI14Fa+1MNZ9bQli3lBMhZ359sKBwoz1thDpBSE30RblyXJl+b5y
+         fF+b5i/6W3hfqJC/X67IIzX/x0NxsRu4GHa6yK4P4NcxWBPI4YEwfe7DHsdLDBM5Zcl7
+         C39g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755712614; x=1756317414;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h15eIxqdIwCof1MRCBcz3fgygqELtVuk+XlaIGTeo3U=;
-        b=Xi6jQipHQKYaAkzBqEIrX8b7ndYVEOYMSfdeQ67KUd/5OfrijF3MgbZsUCNb0e6F7d
-         Mkr3H8ooZuMtkUZKJP709P6H5MavwgFAueyBb+WGGs0EWX7RF2x7xqGOXCXzdv/RERQF
-         0CzkI64frcy12NzXnFvurJBc/odm2N5aPSftGclVUbYeDQBRM5xR10rW7VH0+c7bHVzP
-         WdT+SnPllSyKsrCpEfPnKXh7g2m3FbahWaxvK3rBxZvOJ8BWirdzpS/EPQQG+dL3BCgJ
-         QuARRoFccjUb0BP7rcZRH5qtRLp3YzqzXA6KEphZaQmmUfw5X7JMHKpqbMHJf1kkJp+Y
-         Altw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrkDUNZgPmz/Q07L2qesycpdkNymCpGFWtiCwvR3oqnpHfQnIlYk+YWuLuDtrOVh6acYRnc3z7Y6KQsDM=@vger.kernel.org, AJvYcCVQX6odNSShV2CzON8N4H7JkF2wsz7sPDJJCVyj3IeouY8EpHy+afzHs25L+HKhmggj9YF9Ojs2RzCx3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTPRY6o9k58wa/MQ0J8ZQ93lsKQIgZ81x2Eda+oDyE1oSeFdAL
-	mjeyp8tU/BsI4TvRI814UTVjDn9i0dud14XGqgaGuUMhRMLYHNov32g=
-X-Gm-Gg: ASbGncvWr6suprcwvy0kbcPxyTGMN+Wc/LkJYrt09+ogrDeG3SbqkodJdic2CkZefSf
-	Jkc0S4bGr+cMBKrWt+SRpdQLJmZvORu0Ok90+PgsBB5vhxI9p/8w6dL+8hSs/VFqQwt5rwItu6J
-	/9Y0EqOkd+40ObqHO02FHaaymXh7NTKS7t42gxTjHnYCnul8hmnzmpIHSZEVxtw+Rc3pZ96pbe5
-	NNaQhKLkzSJtelqhY+ORZU/w3lmaRW47+8qH3GPJsFBWGWHLDt214nqklkH21BKbAnCnCDAtGjr
-	MmKwUxVdbX3OV0f9YOBOFj94a/R+a6EqhkWD3yxTTdsnA+ADQ9sfu6C40O6bEwgRZijGDH0msfk
-	MsmZVkyfYNmf5/mb9bc8ffkGtUHPgrZZe
-X-Google-Smtp-Source: AGHT+IGgy/Kot7C/NrIwHPLLQwSrbwouelo5AZzvdNv+3H683amHQAwYeqAU87DjfEX2ZQIbjOCjtQ==
-X-Received: by 2002:a17:902:ce01:b0:235:f078:4746 with SMTP id d9443c01a7336-245ef25bb33mr44825635ad.42.1755712614298;
-        Wed, 20 Aug 2025 10:56:54 -0700 (PDT)
-Received: from debian.ujwal.com ([223.185.130.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4ccaa9sm32553815ad.86.2025.08.20.10.56.50
+        d=1e100.net; s=20230601; t=1755712578; x=1756317378;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OpkKXvg2DGMCCtE6dEYGs6b3fg4sVj3U6sdfAgSI6Qs=;
+        b=cP1utrahXTimWJEMepC9ZhTeUl1Syx+M7Hyq2NaXEDdCeqljenJQwyUj/tUeCrVc1t
+         ESXgs/g2iwn2oLKoLMWV+P3TQOwNU/OuL9bxs/ohTb3mSRva6LpTecN9V78YphNQP5Rc
+         VuZEbyH/UR1OKmjBMwX83PcJtTAQ/64NDQBBqs7Qw0YQZUsOLzVCEFgk4E7bXMipCo9z
+         XdSFJgPqD3jQszRXWQzt6CnGbpblVuqBSR/4Q2fz4sdohA4uBwR2RC7SyVCeoVwHB8jA
+         R0TxQP32NIschw1VLyH1L9rNgkiGcvZC+eUICk5wYqxzkl18oV2mY7ppjV9SEwxuN3J2
+         ylag==
+X-Forwarded-Encrypted: i=1; AJvYcCU6JzNlDdVzmiXlxggKYQFDLO+C0EhtiLKKjMhrY35eOhiIcAXfBVqUc2USTXh7NBcza+eJahzCIYyf2vW0nu0S@vger.kernel.org, AJvYcCWTdWX5550+mdV4uX20YO1SQi3lPfIis1t/GqJi4VcCsjz1QXMLxdbH5HHpduRf8tjmaAeetML7/JGbLlG+@vger.kernel.org, AJvYcCWlmlpLUZOVk1LEkMNl9GNGRSxn4sCopwBlr5eMWQx3mV4nv6FPfbXbOiRpxUxND3ntBj3uSrqEjDAJMIxD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkSeeriLCdU21E9V2GokiWlTOWs9ItkSaVuXa8fuHmgfhxR3oO
+	gmb3JPA5pwWoYzDlE1cHgUrYbpadkst0RHzMOGEEPHfegqa0286Ku6Ap
+X-Gm-Gg: ASbGncsu0Zpjn9g2LGL0YJ0LW2G63KEyIbXQATuB7d7nAM6N0qtAdRZZQo3nZNY89IF
+	2V3UOgcZ52sgrVQc/s1q6+3qVsCnOMCyLlUL6/bzKvjgwFB+Gh849rDWtJdWxoKzvm4cCjAZE1O
+	KgJy564NQIWcHrJLFFe7Y4b5T659mkQSrT6QP/TYHoAUKZGsy3nc55nsPBvG0R+bmtcM1Gh20lJ
+	ZJhtlWoftWLsRzMhqYQLX57GCdzbyXYy67291MpyzIcy7UKZ6c+LnmiCn3qt69kngB+VSHJwPSm
+	qfG4md/XqLm1pmYMV4riZORCcwXnWhpfZ45jLSdVUY2XKRs29C2/t2P2ljpLIdUHh/8LSV1mVz3
+	6a83tUzNEQlgdXsj5xL72voGA3lqZRNAnvQ==
+X-Google-Smtp-Source: AGHT+IHUZKGHRdExYpj6kJNm30eqT1Ccbq83SzG1Im1hgBPAnKcFamJmgGS3Q2KZP3PJ2sZ1xLv69g==
+X-Received: by 2002:a05:6a20:3945:b0:243:15b9:7796 with SMTP id adf61e73a8af0-2431b9be0eamr6362611637.58.1755712578350;
+        Wed, 20 Aug 2025 10:56:18 -0700 (PDT)
+Received: from server.. ([103.250.145.167])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4763fba4c2sm2826739a12.5.2025.08.20.10.56.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 10:56:53 -0700 (PDT)
-From: Ujwal Kundur <ujwal.kundur@gmail.com>
-To: allison.henderson@oracle.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	rds-devel@oss.oracle.com,
+        Wed, 20 Aug 2025 10:56:17 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: shuah@kernel.org
+Cc: surenb@google.com,
+	akpm@linux-foundation.org,
+	skhan@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
-	Ujwal Kundur <ujwal.kundur@gmail.com>
-Subject: [PATCH net-next v2 4/4] rds: Fix endianness annotations for RDS extension headers
-Date: Wed, 20 Aug 2025 23:25:50 +0530
-Message-Id: <20250820175550.498-5-ujwal.kundur@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250820175550.498-1-ujwal.kundur@gmail.com>
-References: <20250820175550.498-1-ujwal.kundur@gmail.com>
+	linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Subject: [PATCH] selftests: proc: mark vsyscall strings maybe-unused
+Date: Wed, 20 Aug 2025 23:26:10 +0530
+Message-ID: <20250820175610.83014-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Per the RDS 3.1 spec [1], RDS extension headers EXTHDR_NPATHS and
-EXTHDR_GEN_NUM are be16 and be32 values respectively, exchanged during
-normal operations over-the-wire (RDS Ping/Pong). This contrasts their
-declarations as host endian unsigned ints.
+The str_vsyscall_* constants in proc-pid-vm.c triggers
+-Wunused-const-variable warnings with gcc-13.32 and clang 18.1.
 
-Fix the annotations across occurrences. Flagged by Sparse.
+Define and apply __maybe_unused locally to suppress the warnings.
+No functional change
 
-[1] https://oss.oracle.com/projects/rds/dist/documentation/rds-3.1-spec.html
+Fixes compiler warning:
+warning: ‘str_vsyscall_*’ defined but not used[-Wunused-const-variable]
 
-Signed-off-by: Ujwal Kundur <ujwal.kundur@gmail.com>
+Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
 ---
- net/rds/message.c | 4 ++--
- net/rds/recv.c    | 4 ++--
- net/rds/send.c    | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ tools/testing/selftests/proc/proc-pid-vm.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/net/rds/message.c b/net/rds/message.c
-index 7af59d2443e5..199a899a43e9 100644
---- a/net/rds/message.c
-+++ b/net/rds/message.c
-@@ -44,8 +44,8 @@ static unsigned int	rds_exthdr_size[__RDS_EXTHDR_MAX] = {
- [RDS_EXTHDR_VERSION]	= sizeof(struct rds_ext_header_version),
- [RDS_EXTHDR_RDMA]	= sizeof(struct rds_ext_header_rdma),
- [RDS_EXTHDR_RDMA_DEST]	= sizeof(struct rds_ext_header_rdma_dest),
--[RDS_EXTHDR_NPATHS]	= sizeof(u16),
--[RDS_EXTHDR_GEN_NUM]	= sizeof(u32),
-+[RDS_EXTHDR_NPATHS]	= sizeof(__be16),
-+[RDS_EXTHDR_GEN_NUM]	= sizeof(__be32),
- };
+diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
+index d04685771952..978cbcb3eb11 100644
+--- a/tools/testing/selftests/proc/proc-pid-vm.c
++++ b/tools/testing/selftests/proc/proc-pid-vm.c
+@@ -47,6 +47,10 @@
+ #include <sys/resource.h>
+ #include <linux/fs.h>
  
- void rds_message_addref(struct rds_message *rm)
-diff --git a/net/rds/recv.c b/net/rds/recv.c
-index 5627f80013f8..66205d6924bf 100644
---- a/net/rds/recv.c
-+++ b/net/rds/recv.c
-@@ -202,8 +202,8 @@ static void rds_recv_hs_exthdrs(struct rds_header *hdr,
- 	unsigned int pos = 0, type, len;
- 	union {
- 		struct rds_ext_header_version version;
--		u16 rds_npaths;
--		u32 rds_gen_num;
-+		__be16 rds_npaths;
-+		__be32 rds_gen_num;
- 	} buffer;
- 	u32 new_peer_gen_num = 0;
++#ifndef __maybe_unused
++#define __maybe_unused __attribute__((__unused__))
++#endif
++
+ #include "../kselftest.h"
  
-diff --git a/net/rds/send.c b/net/rds/send.c
-index 42d991bc8543..0b3d0ef2f008 100644
---- a/net/rds/send.c
-+++ b/net/rds/send.c
-@@ -1454,8 +1454,8 @@ rds_send_probe(struct rds_conn_path *cp, __be16 sport,
+ static inline long sys_execveat(int dirfd, const char *pathname, char **argv, char **envp, int flags)
+@@ -218,12 +222,12 @@ static int make_exe(const uint8_t *payload, size_t len)
+  * 2: vsyscall VMA is r-xp		vsyscall=emulate
+  */
+ static volatile int g_vsyscall;
+-static const char *str_vsyscall;
++static const char *str_vsyscall __maybe_unused;
  
- 	if (RDS_HS_PROBE(be16_to_cpu(sport), be16_to_cpu(dport)) &&
- 	    cp->cp_conn->c_trans->t_mp_capable) {
--		u16 npaths = cpu_to_be16(RDS_MPATH_WORKERS);
--		u32 my_gen_num = cpu_to_be32(cp->cp_conn->c_my_gen_num);
-+		__be16 npaths = cpu_to_be16(RDS_MPATH_WORKERS);
-+		__be32 my_gen_num = cpu_to_be32(cp->cp_conn->c_my_gen_num);
+-static const char str_vsyscall_0[] = "";
+-static const char str_vsyscall_1[] =
++static const char str_vsyscall_0[] __maybe_unused = "";
++static const char str_vsyscall_1[] __maybe_unused =
+ "ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]\n";
+-static const char str_vsyscall_2[] =
++static const char str_vsyscall_2[] __maybe_unused =
+ "ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]\n";
  
- 		rds_message_add_extension(&rm->m_inc.i_hdr,
- 					  RDS_EXTHDR_NPATHS, &npaths,
+ #ifdef __x86_64__
 -- 
-2.30.2
+2.43.0
 
 
