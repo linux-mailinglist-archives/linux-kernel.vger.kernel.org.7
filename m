@@ -1,115 +1,168 @@
-Return-Path: <linux-kernel+bounces-777256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94434B2D76F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF36B2D772
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93586169E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37C51886704
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BBD2DA773;
-	Wed, 20 Aug 2025 09:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G7IsIJv7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B896279331;
+	Wed, 20 Aug 2025 09:00:34 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED68D25F998;
-	Wed, 20 Aug 2025 09:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BAF13C816;
+	Wed, 20 Aug 2025 09:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680409; cv=none; b=seMd+I9kDCyXhSmpHg+U7CzREF7KW9qgblWzUfI1AbeMctfH3qfrMfWHSxo+QsGrFLoGBlMzaVWydAJlIMbd4iVGQuR65waQPCvrcpyFyROmPq0dJGv3xC3agonqeXX9Xq48Eh2h1utYJFTLYxz9KbEYoAfb2WtYY0uGZB6aLoE=
+	t=1755680434; cv=none; b=K2w3AMfamq1pJ5Wp3SEJrWIfhxKVPSV+LqCYPPBbXYyrlDbf1mjwFvg0+5xQc3kUey/RdXGjcClvOf3vQ/8U4qkcGplYEgc71Ca22Y9ZuaPSM+TyXtoXJlDew4n0r04+W26TPWYFzG61gCqvJ3ft5XIo3U646DFd2ibany6n5/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680409; c=relaxed/simple;
-	bh=txs/vM6W8Yv/7EZjG/Md1COukCyt+gv82O8XJ50xA90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jwr6xd+/1Y6KE8DntwDDBCeEDoSauSn9m0E1qqzOeFGPApzH4XJbkG+ODakAdYdR0x1yZFg9yfYh3tnx+4wrGFU9Up1eoD5fhGb+GoOdXMSke50tISAkqLow5uWpfM37M6notNUlswsQPQGeSaR0ut+UsmOaClc0RQGBpNmJKGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G7IsIJv7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D80240E027E;
-	Wed, 20 Aug 2025 09:00:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3IOq7lNCDxO3; Wed, 20 Aug 2025 09:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755680399; bh=beySYSjjYv/3HXXkq0/rNq324ZfG9YsZxFSqt79VFc8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G7IsIJv7HnX79b+e7Aw9+b5OBqD0o5IwHBtS1HSpOYaDVE0aMMilWv9FCQWdvwdyj
-	 7dF1juRVqxwd/HTD1ar5ANctaUc8CPwfONMs7R24YcMC8aOl1fPMR8yn5Lm0kaQApI
-	 QsK5iC3E/YtCm61EtNNFJplRYVWhBqmjLVYI3y2IwXyRqlUy91rhMufU0pxkVJ3AkU
-	 0sHIxl6HcT6IErBT2GfC8ruALpqxFNkP96ZIYNBNVVG+g/3aaonX5vjCTlMmvU432l
-	 xaUdqeO3JXTWcOibyhPxpmHk4KY8X2VtQVLfQ/r/OHcToprspYU+ya82OrymJo4nGr
-	 lGGHqT2+Dqx3dSzsKgka2kjftCGserjXFqY4NeCC6v6x7/NY6O8bkZtRxdFjw8PAtf
-	 8lcCRC25NM7vGhDjif8GOmal5hqIiSJcIlKZXwq37PTYwD3rhJlZ2biEMcHnWptWfd
-	 R5qln9p7YVr/Nfw3V36jogBQu4qo/vllkcjum+H2m+x8JOSwal2ApdRUT7yr7LwrM5
-	 WQkGCkVZYsm1nL9DiqB1zgGBmDeZQDLaJuEM++LT/3JFRAwbb+GLRo8iRpsm4GY94G
-	 NMsZpNXpFxXcl7nwTnlAKzuiPO5POQ+gKYOmF9g10Pr4xFn7BFqUBHLPqtrvOrGjQ7
-	 4jZKD5ZDlkO358JoPbKhGVTM=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8729240E0232;
-	Wed, 20 Aug 2025 08:59:40 +0000 (UTC)
-Date: Wed, 20 Aug 2025 10:59:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-	Sairaj Kodilkar <sarunkod@amd.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	"Xin Li (Intel)" <xin@zytor.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v3 0/4] x86/cpu/topology: Work around the nuances of
- virtualization on AMD/Hygon
-Message-ID: <20250820085935.GBaKWOd5Wk3plH0h1l@fat_crate.local>
-References: <20250818060435.2452-1-kprateek.nayak@amd.com>
- <20250819113447.GJaKRhVx6lBPUc6NMz@fat_crate.local>
- <mcclyouhgeqzkhljovu7euzvowyqrtf5q4madh3f32yeb7ubnk@xdtbsvi2m7en>
+	s=arc-20240116; t=1755680434; c=relaxed/simple;
+	bh=R3yfDPxehjuYfsd99Fu7QrZq0lSS2Wlmj1idbjeLmYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dgrOD/Pz/WR48FE/dqzcaubswC4Uh82Dw0yOsaJnsowSiPACqO6Nwz2WqgOKC5HsRwBVjkEARWWTwVHMHrn9LPH/Glo6h3TNquWDxMAIq+oMeY9cBEi7eb2V8G+tF0tkUAV9DtgMCb7n3FuzXsnA0lXsNnOYxBrCa24Me/jMUWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6L583Ss7zKHNpK;
+	Wed, 20 Aug 2025 17:00:28 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E64111A0CE7;
+	Wed, 20 Aug 2025 17:00:27 +0800 (CST)
+Received: from huawei.com (unknown [10.67.174.45])
+	by APP4 (Coremail) with SMTP id gCh0CgCHURKkjqVonnY8EQ--.11889S2;
+	Wed, 20 Aug 2025 17:00:27 +0800 (CST)
+From: Tengda Wu <wutengda@huaweicloud.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@elte.hu>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tengda Wu <wutengda@huaweicloud.com>
+Subject: [PATCH -next] ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
+Date: Wed, 20 Aug 2025 09:00:17 +0000
+Message-Id: <20250820090017.2978279-1-wutengda@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <mcclyouhgeqzkhljovu7euzvowyqrtf5q4madh3f32yeb7ubnk@xdtbsvi2m7en>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHURKkjqVonnY8EQ--.11889S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFykArW8Ar18tF1ktFW8WFg_yoW5AF1UpF
+	9xK3srJr4kAFsrtFn8uF4xGw1xJay0qry7WrsrJw1rAan8Ar4j9rnxtwnaqFyfC398G3sI
+	yFWjy3yDCw129FJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUU
+	UUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-On Wed, Aug 20, 2025 at 01:41:28PM +0530, Naveen N Rao wrote:
-> That suggests use of leaf 0xb for the initial x2APIC ID especially 
-> during early init.  I'm not sure why leaf 0x8000001e was preferred over 
-> leaf 0xb in commit c749ce393b8f ("x86/cpu: Use common topology code for 
-> AMD") though.
+When calling ftrace_dump_one() concurrently with reading trace_pipe,
+a WARN_ON_ONCE() in trace_printk_seq() can be triggered due to a race
+condition.
 
-Well, I see parse_topology_amd() calling cpu_parse_topology_ext() if you have
-TOPOEXT - which all AMD hw does - which then does cpu_parse_topology_ext() and
-that one tries 0x80000026 and then falls back to 0xb and *only* *then* to
-0x8000001e.
+The issue occurs because:
 
-So, it looks like it DTRT to me...
+CPU0 (ftrace_dump)                              CPU1 (reader)
+echo z > /proc/sysrq-trigger
 
+!trace_empty(&iter)
+trace_iterator_reset(&iter) <- len = size = 0
+                                                cat /sys/kernel/tracing/trace_pipe
+trace_find_next_entry_inc(&iter)
+  __find_next_entry
+    ring_buffer_empty_cpu <- all empty
+  return NULL
+
+trace_printk_seq(&iter.seq)
+  WARN_ON_ONCE(s->seq.len >= s->seq.size)
+
+In the context between trace_empty() and trace_find_next_entry_inc()
+during ftrace_dump, the ring buffer data was consumed by other readers.
+This caused trace_find_next_entry_inc to return NULL, failing to populate
+`iter.seq`. At this point, due to the prior trace_iterator_reset, both
+`iter.seq.len` and `iter.seq.size` were set to 0. Since they are equal,
+the WARN_ON_ONCE condition is triggered.
+
+Add a non-NULL check on the return value of trace_find_next_entry_inc
+prior to invoking trace_printk_seq, ensuring the `iter.seq` is properly
+populated before subsequent operations.
+
+Furthermore, per the seq_buf specification, the condition len == size
+indicates a full buffer, which constitutes a valid state. Consequently,
+the equality check and size - 1 adjustment in WARN_ON_ONCE() are redundant
+and should be eliminated.
+
+Fixes: d769041f8653 ("ring_buffer: implement new locking")
+Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+---
+ kernel/trace/trace.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 4283ed4e8f59..61c5d389dbd3 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -10521,8 +10521,8 @@ trace_printk_seq(struct trace_seq *s)
+ 	 * PAGE_SIZE, and TRACE_MAX_PRINT is 1000, this is just
+ 	 * an extra layer of protection.
+ 	 */
+-	if (WARN_ON_ONCE(s->seq.len >= s->seq.size))
+-		s->seq.len = s->seq.size - 1;
++	if (WARN_ON_ONCE(s->seq.len > s->seq.size))
++		s->seq.len = s->seq.size;
+ 
+ 	/* should be zero ended, but we are paranoid. */
+ 	s->buffer[s->seq.len] = 0;
+@@ -10617,6 +10617,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 	 */
+ 
+ 	while (!trace_empty(&iter)) {
++		void *ent;
+ 
+ 		if (!cnt)
+ 			printk(KERN_TRACE "---------------------------------\n");
+@@ -10625,17 +10626,18 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 
+ 		trace_iterator_reset(&iter);
+ 		iter.iter_flags |= TRACE_FILE_LAT_FMT;
++		ent = trace_find_next_entry_inc(&iter);
+ 
+-		if (trace_find_next_entry_inc(&iter) != NULL) {
++		if (ent) {
+ 			int ret;
+ 
+ 			ret = print_trace_line(&iter);
+ 			if (ret != TRACE_TYPE_NO_CONSUME)
+ 				trace_consume(&iter);
++
++			trace_printk_seq(&iter.seq);
+ 		}
+ 		touch_nmi_watchdog();
+-
+-		trace_printk_seq(&iter.seq);
+ 	}
+ 
+ 	if (!cnt)
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
