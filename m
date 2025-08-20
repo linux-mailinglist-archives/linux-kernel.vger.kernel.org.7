@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-777592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E98B2DB52
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CF7B2DB56
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2963A2995
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEA63A2ED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5C421CC71;
-	Wed, 20 Aug 2025 11:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9846B2E4254;
+	Wed, 20 Aug 2025 11:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vKA/DOwp"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHKeSNJw"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C282E2EE4
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AFF2E339C;
+	Wed, 20 Aug 2025 11:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690056; cv=none; b=KIq6lsPz6vGFTNUwE89tgl0HxOCqHQdsqdZ0/6Jx497z0uvSjEYt0DxT+UNyezPqQavgpd+/GgAwUX2LDur5fLzB6c2MTUWHukehdInQDD4OumNbqbY5VSSKKuaG26RMzIK8TKWDnc8xRwB3J47LTFpSOGfno+tn0P/gC+R3j6A=
+	t=1755690070; cv=none; b=I0312ChLHW2s8EKU+vqYpRO1A/UV0gPdU+hzN9FBoWvwcvbvbyLrxvOfqlm+jwpuVilChqZYm1QOKxCPAtXya+1ceKt2pAExk3i3Gpsmh0PKF0HOBu7aby4CA1tdgnXd2Frq97LhkWe5wcFVnJVPfrGl4A9idyNhirKUEqq/OQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690056; c=relaxed/simple;
-	bh=LZ9lNwKnI9igWjqDhty8BMFySOw2pytmhPSOrssKm1g=;
+	s=arc-20240116; t=1755690070; c=relaxed/simple;
+	bh=FDKhP3oxNBolrhoIi7sDu3T3WCzQhnuinOYCpr/GBYM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=myj5xCgy/HhL16PIwDRxk/h+UVMIA2tyyVD6SK/k+yk89pi0DienIsmcQMk8Ay0VSFqXSxVM76QRB/YiCf0ZYYqsKGbZK5lxpYdCWhcSnDArSWJz+C2gNroIelwJtVvWc/Jayo3DJ700DV2i1aS8DAAg1iu7aUQHUiALM9HNmnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vKA/DOwp; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so5138905e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:40:54 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=J39tP34jDlo1I2aO7TkgHuTkSpoVLBToM4R0EU4RXDQ13xvBTBJ5Vi1vyiZudGDJ7HCY1vx6WglehqfdyPQYijbNjwWwXQ7mT3Mms/NGcFT27eczMwWYzAXNXZpRfk8BlmdaFnmGQgrM0qkHL7PZCYfqd0Tq+oFq21qKQyRJeTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHKeSNJw; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-324e7600bf0so233647a91.0;
+        Wed, 20 Aug 2025 04:41:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755690053; x=1756294853; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=gmail.com; s=20230601; t=1755690068; x=1756294868; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fBsvg6YZ6d6Q45uqCriOUykxMP3lYx/MkdCJhYtl/R8=;
-        b=vKA/DOwp1ZX/NVOTc2ENaLymncOv4vBvB08b5qVq6mF0zHLc3HxOI54MIz5Oyp/i+5
-         8/NrMbB9hlkGOadiAbYLgIKaA17mgoRBlolxN1QpNW2QCoQR8grVS/TuH+2/rl8I53jP
-         eJkbUGBTwO6izB9QVLaAPwW3zEUsVCb7dV7Bvq9y8fdyAnii37CSP71IsyCqWontGjLh
-         u6DuOjV9HOVix5mxG+mpoB6AeCTq5+pBVcBXZQENo5XCsuHe/Rmg5mhl1Rv60cdNJuNs
-         M+QFIJsRWUfeDj4RUfC7JPdIe4B/F1ZW3Z/1gd9MhUKLWoHAdfOa+IniVKMD8rCUKyU3
-         RJlw==
+        bh=1U217s/MxPIk/owGwkXwnp+FTymNWb/H2aQ0TsKxnoM=;
+        b=CHKeSNJwZhAtnOaiYg4wt7KgcCbu/S6PHrxJZG0VHuUs+ULFEVDphrMiFQE3+KwZQZ
+         xZz48BTWNqlrbuy2lLNSasQNWgoUhh92UAXoYDoKDB5tqVaqJqK3DPKHSpINjDtaBIyH
+         QnU0MrhQ0EWzlweFq1NuvL1sv5wob6Nc9UMQB64hseSBcHsbCRsTpLJ46GSfqfaIVDwf
+         RZbLEoIZMTEtsaju+O90RfyW8jWV5s0ryDbPUaUjUtjCb1TGbEUuhLZ8+OhkFdKCwkuG
+         8n8mF7EnUFK3NIO9dMZBYVAd+ng6+ooe4AVTQTHOJ91pAbph4pwdfGMR07i62DBhIPSQ
+         PvMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690053; x=1756294853;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1755690068; x=1756294868;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fBsvg6YZ6d6Q45uqCriOUykxMP3lYx/MkdCJhYtl/R8=;
-        b=cG3QZV2C4oxleBm0AttzR9SjsRNjAxk6YeMwW+iC6Wm0y2a7yjhvhq3F0TRO9fFXey
-         GQZ318vT0G4rDPbvzNoH50lHObaPg6SkIXdA8m/tCBeLIyk66+PzGICgcjQ1kqKg4lmM
-         c3U0ipGq85lEHdXmz6T78A+pw2DFHE+TgO6CtRiNuVjxcCjZceVhz/m2omV4tNmODX4S
-         0gmlT8qvFEHJfdMbXQdCeFwybxtgvxVn5lP0FfUBRFKhHYYtSp5g+aMkFbmU49FmQHK6
-         rRpnVXlUrfSJXTVFOga5h7tBUbUHtd7aCHhu2tlKrccUwHrNXWpxf6epNYsSvMhZ+35o
-         93mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPwr0uubo8gJyB33VfZiKoPkSZbTs729IrQLcw2mTxVOduGsmtKa0xUZfkZzYt0wxittSlli3D2Na2FRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeAlskIjr3sIsT93qRl8uVkBhDwxR9vCywpA6YQB2n4Bc1Whzw
-	h0ChqoKeBovf1fSLiSOCJJY9JSqoYwJ3JcTOW7r3z+pIc0ZkEr+1uB6Q+SZ+OHNcoEs=
-X-Gm-Gg: ASbGncvfd7HGwRla2uiMaSu5ffjGmc8lrUrp1+qOTWDc75iixk93022srsFt/gi0TXz
-	Ev2ItyHUAOzmFPR5PICTezmuRi4Ww3n8yeEbD5zMowDqW+wlbG3gaoz5LXfwY7sSJ4sr7Bw9Z+/
-	6ewBp8tyDt9uWUS71AHhuZnP9gfVX3hifSvFH3DOUUjIzz4pM5tyPFRNV2MaFxfa47G6mYG/yiE
-	pVAOfs37Gq5Gv1nl51JrAGP8oYVk6KiAzqFp8n417VzUz9xJshE+hUvWOHUrcS9jJv4KuJuXtWI
-	en+TTbR4wySPkUROvZiWqymzSep6V7oVYlB4Zm9l5v+guMhA3e1oXZogS6V+Anvl5Tv5KfIwXcs
-	NreyLQ65u0Akq6sigE+HQTuzCS7YE2afiUqoxQSzVev0saFLU/I/mkVfQJnrhgFY=
-X-Google-Smtp-Source: AGHT+IHXEFwMDm2kihqAnYayZR6gT+vK15GNCQ1aLgzVsq2r159WZVA/FhKSfLtVw38Kifu9RBCDaw==
-X-Received: by 2002:a05:600c:c494:b0:459:e39e:e5a5 with SMTP id 5b1f17b1804b1-45b4743654emr22623065e9.5.1755690052559;
-        Wed, 20 Aug 2025 04:40:52 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47cad57asm31636555e9.24.2025.08.20.04.40.51
+        bh=1U217s/MxPIk/owGwkXwnp+FTymNWb/H2aQ0TsKxnoM=;
+        b=HgZH3YHssBVJXx6pQuxVnOTXllioqJo6c7JidrQCQW5YjfsWZj7hovz2Qtct0sRCVp
+         wOiEi1Oty0etWsruu4XJBL8xxuWD/omHYqk1veQAxFKkwhtNtaUdGIycWwlPoWcJgqca
+         nPj9hzccrBIg7P66BFKRwu+iRqHHc3YmE811byt0cB+mC5whfJIa+8xMDDtlrSmiaFLG
+         lyx2RnjY9F5oCYw+Wof0CG3pYdwfBKOhdF4WrE94F7SjkUbVceXPJwKjRU6dJe+VbK/N
+         oQ/4X3gN/Z0du1Qd0EG926Kf6EF2yyjDN1ypetSCFsy6H25+Ud5pIdlsKrUx3DYZu8oG
+         2Qew==
+X-Forwarded-Encrypted: i=1; AJvYcCUAAI3qLILQ0Vhvfe7kNVPFLs+wps0aSomFWS/dEHSiLKkqAgRPrwf2ca1ItZanz+xZANRJDzZS8ugchfpj@vger.kernel.org, AJvYcCUKdGZVTWle0qYaNXnnKw1KD9YyW0oE4J7aeX8WLzRt3m4OfITOM2B4vPOZSdbN4EzF1i+/Eca5sU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQdjhu40mGn3hyjiO1CQeRz+lAx9GqdsU+xTOCCmhlqMr5xGAh
+	dmdEKrJh8KxZeJwl7fu2TBIQ+5+xM5B+WFOeAty03YJ5M6juLkn0QsEb
+X-Gm-Gg: ASbGncusV8GpakbiOja5HkguiZkzj/rtQlxYVjkNUgoN9sjA3M74HGCsn/gtobtbk9Q
+	ew9qwWqi7nEvmLQp5jwKH5BttEcMETX58C7pbws2aBgi6Bk8MISvsthmqc/SAY4Enw2F2fDaCjE
+	Fcf4AXJKrfWDj9shMT7ZgFKRuPDc4GS5VhMq0lysS8gOUN4S0qccKBR1z2QrDn3q9lBaOg/ia0N
+	+o6y3OttEp/MwdI4qXlndYT9SI2T/KAzQGotGdMVBzBzmCkp0sdeTlPBi1G4QNApAZQ9yNHViku
+	a+yCigiormdQggRp8skXu4oWbYqGJef72oe84tDxrGMi+pbLwbX0zGtvmsHOo9fWN5BTBYGIO5Z
+	hQRn+zwsuXafrHJG6RClTSWaVi40QJYXoPRRtHpn6noOV6JgDTQGfI2s9OBELOZSCuqJr
+X-Google-Smtp-Source: AGHT+IFE+TwDcVQnwid3nVBw3dlreFydpUOjG7o6PH9Co3GXVed7LdFgfmI9MvrwEejQtMpjkkurhw==
+X-Received: by 2002:a17:90a:dfc7:b0:31f:ad:aa1b with SMTP id 98e67ed59e1d1-324e131b2b4mr3373520a91.3.1755690068302;
+        Wed, 20 Aug 2025 04:41:08 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e26259a9sm2124073a91.18.2025.08.20.04.41.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 04:40:52 -0700 (PDT)
-Message-ID: <c000aaa8-209c-43d2-8f41-701cfdecbce2@linaro.org>
-Date: Wed, 20 Aug 2025 12:40:51 +0100
+        Wed, 20 Aug 2025 04:41:07 -0700 (PDT)
+Message-ID: <3990f1c5-2108-44fe-913f-97ae3bb1ff42@gmail.com>
+Date: Wed, 20 Aug 2025 20:41:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,83 +81,165 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] firmware: qcom_scm: Introduce PAS context
- initialization helper
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
+References: <cover.1755256868.git.mchehab+huawei@kernel.org>
+ <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
+ <20250816135538.733b80d3@foz.lan>
+ <acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
+ <20250817133606.79d968ed@sal.lan>
+ <b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
+ <20250817154544.78d61029@foz.lan>
+ <b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
+ <87y0rg7e35.fsf@trenco.lwn.net>
+ <16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
+ <20250819030239.41a2e97f@foz.lan>
+ <142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
+ <20250819153200.3c2b2ff6@foz.lan>
+ <08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
+ <20250820091530.068c4b62@foz.lan>
 Content-Language: en-US
-In-Reply-To: <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20250820091530.068c4b62@foz.lan>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/08/2025 17:54, Mukesh Ojha wrote:
-> Currently, remoteproc and non-remoteproc subsystems use different
-> variants of the MDT loader helper API, primarily due to the handling of
-> the metadata context. Remoteproc subsystems retain this context until
-> authentication and reset, while non-remoteproc subsystems (e.g., video,
-> graphics) do not require it.
+Hi,
+
+On Wed, 20 Aug 2025 09:15:30 +0200, Mauro Carvalho Chehab wrote:
+> Em Wed, 20 Aug 2025 08:54:52 +0900
+> Akira Yokosawa <akiyks@gmail.com> escreveu:
 > 
-> Unify the metadata loading process for both remoteproc and
-> non-remoteproc subsystems by introducing a dedicated PAS context
-> initialization function.
+>> On Tue, 19 Aug 2025 15:32:00 +0200, Mauro Carvalho Chehab wrote:
 
-You've introduced what PAS is in the cover letter but you haven't done 
-so in the commit log where you use it.
+[...]
 
-"Peripheral Authentication Service (PAS)" should be defined in this 
-patch somewhere so we know what PAS means.
-
+>> I've just built a container "FROM ubuntu:plucky", which has inkscape
+>> instead of imagemagick + rsvg-convert.
 > 
-> By introducing qcom_scm_pas_ctx_init(), we can standardize the API usage
-> across subsystems and reduce the number of parameters passed to MDT
-> loader functions, improving code clarity and maintainability.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->   drivers/firmware/qcom/qcom_scm.c       | 26 ++++++++++++++++++++++++++
->   include/linux/firmware/qcom/qcom_scm.h | 11 +++++++++++
->   2 files changed, 37 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 96d5cf40a74c..33187d4f4aef 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -558,6 +558,32 @@ static void qcom_scm_set_download_mode(u32 dload_mode)
->   		dev_err(__scm->dev, "failed to set download mode: %d\n", ret);
->   }
->   
-> +void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
-> +			    size_t mem_size, bool save_mdt_ctx)
-> +{
-> +	struct qcom_scm_pas_ctx *ctx;
-> +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return NULL;
-> +
-> +	ctx->dev = dev;
-> +	ctx->peripheral = peripheral;
-> +	ctx->mem_phys = mem_phys;
-> +	ctx->mem_size = mem_size;
-> +	ctx->save_mdt_ctx = save_mdt_ctx;
-> +	ctx->metadata = NULL;
-> +
-> +	if (save_mdt_ctx) {
+> I don't think that inkscape x imagemagick/rsvg-convert itself has
+> anyhting to do with the problems I detected, as they're related to
+> font issues (still, I got an issue on one of my builds on kfigure
+> write file: encoding is missing at open, which may cause errors).
 
-You could check metadata != NULL and drop the bool ctx->save_mdt_ctx 
-entirely.
+OK, so you have spent a lot of time to paper over the ImageMagick issue
+used as an SVG --> PDF converter.
 
----
-bod
+I have simply given up using ImageMagick and been using inkscape instead.
+
+I can reliably reproduce the warnings and build errors (see below) without
+inkscape installed, instead with imagemagick + rsvg-convert installed,
+under a ubuntu:plucky based container.
+
+When I run: "make cleandocs; make SPHINXDIRS=gpu latexdocs",
+    
+     [**NOTE**] SPHINXDIRS=peci is not affected by this issue!
+
+kfigure.py emits warnings like this:
+
+-----------------------------------------------------------------------------------
+WARNING: Error #1 when calling: /usr/bin/convert /linux/Documentation/gpu/amdgpu/pipe_and_queue_abstraction.svg /linux/Documentation/output/gpu/latex/pipe_and_queue_abstraction.pdf
+WARNING: Warning msg from convert(1): convert: unrecognized color `context-stroke' @ warning/color.c/GetColorCompliance/1064.
+convert: non-conforming drawing primitive definition `fill' @ error/draw.c/RenderMVGContent/4548.
+-----------------------------------------------------------------------------------
+
+Nevertheless, "make SPHINXDIRS=gpu pdfdocs" continues building gpu.pdf,
+but ends up in this error in the middle of xelatex run.
+
+-----------------------------------------------------------------------------------
+------------
+Run number 1 of rule 'xelatex'
+------------
+------------
+Running 'xelatex --no-pdf -interaction=batchmode -no-shell-escape -no-pdf -recorder  "gpu.tex"'
+------------
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2025/dev/Debian) (preloaded format=xelatex)
+entering extended mode
+Latexmk: Getting log file 'gpu.log'
+Latexmk: Examining 'gpu.fls'
+Latexmk: Examining 'gpu.log'
+Latexmk: Index file 'gpu.idx' was written
+Latexmk: References changed.
+Latexmk: Missing input file 'gpu.toc' (or dependence on it) from following:
+  No file gpu.toc.
+Latexmk: Missing input file 'gpu.ind' (or dependence on it) from following:
+  No file gpu.ind.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'gpu.xdv'
+Have index file 'gpu.idx', gpu.ind gpu
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  xelatex: Command for 'xelatex' gave return code 1
+      Refer to 'gpu.log' and/or above output for details
+
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+make[3]: *** [Makefile:29: gpu.pdf] Error 12
+make[2]: *** [Documentation/Makefile:148: pdfdocs] Error 1
+make[1]: *** [/linux/Makefile:1806: pdfdocs] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+-----------------------------------------------------------------------------------
+
+I think this is (mostly) the same as the issue you have been trying hard
+to track down.
+
+Lastly, I'm afraid but I have to tell you that I see the same error on my
+test branch which has both of your series applied.
+
+From "./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs gpu":
+
+-----------------------------------------------------------------------------------
+------------
+Run number 1 of rule 'xelatex'
+------------
+------------
+Running 'xelatex --no-pdf  -no-pdf -interaction=batchmode -no-shell-escape -recorder  "/linux/Documentation/output/gpu/latex/gpu.tex"'
+------------
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2025/dev/Debian) (preloaded format=xelatex)
+entering extended mode
+Latexmk: Getting log file 'gpu.log'
+Latexmk: Examining 'gpu.fls'
+Latexmk: Examining 'gpu.log'
+Latexmk: Index file 'gpu.idx' was written
+Latexmk: References changed.
+Latexmk: Missing input file 'gpu.toc' (or dependence on it) from following:
+  No file gpu.toc.
+Latexmk: Missing input file 'gpu.ind' (or dependence on it) from following:
+  No file gpu.ind.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'gpu.xdv'
+Have index file 'gpu.idx', gpu.ind gpu
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  xelatex: Command for 'xelatex' gave return code 1
+      Refer to 'gpu.log' and/or above output for details
+
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+
+Summary
+=======
+gpu: FAILED
+
+PDF build failed: not all PDF files were created.
+-----------------------------------------------------------------------------------
+
+Please test yourself with SPHINXDIRS=gpu and see what happens under your
+test environment.
+
+Thanks,
+Akira
+
 
