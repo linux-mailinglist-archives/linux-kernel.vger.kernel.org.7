@@ -1,111 +1,185 @@
-Return-Path: <linux-kernel+bounces-776715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BFBB2D0C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:44:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C852B2D0BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63AB958524F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB981BC7CB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905AD188713;
-	Wed, 20 Aug 2025 00:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423F013A86C;
+	Wed, 20 Aug 2025 00:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="H2rqgFEj"
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AM9fsCHn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09E9353377;
-	Wed, 20 Aug 2025 00:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C663C17
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755650654; cv=none; b=pVEAPBjQp6HOX0vFCAFol+8wYNOcJwa5OP/s9/gQnF02Kx/LN7cUIhJRNmLBaLvjnY8NCdA368J8ZhJxv9RMN4d2EgP0lhJ97zwB/Z+yds9AWRERgTWzcU5WNyACPPKPQeIhHj/4ITrGp8XWYn8yZyyYIDa/yce1YoSB3+s4lWk=
+	t=1755650368; cv=none; b=GcmMtpfRL0rhN/Em6yqIjiKphgkAkkuBCxpZyeXcq1DQfMrfUr7A6oc2cm9bFcWC2mZLgEWoxng+6WrDHp/7nVerWTmI9/IkjqvyjeZEHgMBlm7eGvpx2snS0sPFaQCl8wNcpk4AP8on3OHUavgc6SkYClFMLza/yIXjSEW0Ohs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755650654; c=relaxed/simple;
-	bh=Xx1BE2PQOSOIzLk3YWuwBpi4uqq6uqo8cDPkm/P4Mf4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NTvHgShUHGcZwWXbdoP4ofvkSsrXK78ken0EvkF4OWgSQuHe5U9WmfKiCiHYHxX8gsyJ75Rv8mzmRc4ms9O8pD8v4/s+il2EqPtlOb/2w+r45HsK5EtgoS/UWOCfYhOXKX8UNsUdi9u1Z2lVYxFyEXJt7rdFqYYodfbaA27c9DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=H2rqgFEj; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
-	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Xx1BE2PQOSOIzLk3YWuwBpi4uqq6uqo8cDPkm/P4Mf4=; b=H2rqgFEjQO7oCvrlzT+9wFMP5d
-	OWExBlgeTtgDgkCWRxQCgQRhtE3M2rp3baI/TPB2CCoU4bwEO5CePkBNEWLnXDqHvOB7VamavusTh
-	kH2jxFdjIsCNFNfRdAmuhcW/pG25Zm7lQuSMeoG6W9jsmNIS+jlkTcLJHcZ10zyzQY6cknWZkYUIK
-	EBBmvKpJnIal0/gMTzr4Mpl9b08X8DV4E574v6POmh0GNgdAd5niHFfMAIKx/H2rGxHQ/Y03p4OyT
-	SiZRMvGkvTo+gs3bs96dYLZdTu0pRtGR/jS8caqqN0YLVW3qcRaKUwGRgCjyL1QCHcYlHKZ+EETo7
-	tCL5Ku3w==;
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@surriel.com>)
-	id 1uoWoa-000000003pk-4Ao9;
-	Tue, 19 Aug 2025 20:36:33 -0400
-Message-ID: <7d39aa331ca881c2c77b6e02587dda726dfdd755.camel@surriel.com>
-Subject: Re: [PATCH] docs: sysctl: add a few more top-level /proc/sys entries
-From: Rik van Riel <riel@surriel.com>
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Date: Tue, 19 Aug 2025 20:36:32 -0400
-In-Reply-To: <20250819075456.113623-1-rdunlap@infradead.org>
-References: <20250819075456.113623-1-rdunlap@infradead.org>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1755650368; c=relaxed/simple;
+	bh=4a1JjHkoJG6TkVaXFoGyoFKyk+rXlM0pvEPuLvJK6Wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gnOn013asnwttSUQZ8zbo5N1UUnxvpFwvP/XWTMd7uFd+67CpILcZMvSrVLoSggMoL6EMpeW7MOxiFevX72T9W6eswrEVuU0GcGJCdY9KZWHke4cWudoWADRyKjnLjawa2nIHXmIfdFzdEgZdz6/CwKFdTy5zhjilaWpOW5pceU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AM9fsCHn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57JL0pQt010823
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:39:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sZLOgOakm+kbXuiWKsG+J81Fb7iSgA1HKL74lsfZzlc=; b=AM9fsCHn8QL+D+JE
+	G1UKcmlhK7p5oI5iqRxIOqI1Tec8XCsqedvnvBW0esUkYW0iSVvoQBRfDY/L23In
+	60EvR2ZM8N+fQxWsqZL29C/3oU+MwCqP630WSPgSLR5MAbbKi3dQ//UPHqYhCngq
+	AtXwJohghgYfZxM7v4mbWayKFnzdxOZbxRheLSfIyT9YK6DuOZtwtpNEKMPmkvl9
+	fG9/YW5ZqsWZ3CJ6GBrOJrKJ3yhRfxmO5LNEra6NqYYM9sqRlkY7IMLFDKux4m6n
+	QiEHqA1wHN+QyoTwvplUNdSckATboOD1gYHqHYx5YcON4m1tb5p1MTNpUb0Zsykb
+	qe5+TA==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n0td8dpc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:39:26 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b47610d3879so580721a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:39:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755650365; x=1756255165;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sZLOgOakm+kbXuiWKsG+J81Fb7iSgA1HKL74lsfZzlc=;
+        b=LSkoX5g50YQUuX4Lf91WSbYWXPPnLyzsqG6kRLwtM5tNv7uDerQgC/VlS6C6ZRgw67
+         bcTrZR377IaueXsuCE1Mjsy6hVs74jPAamX+NKZS9gUQW11NEJxJssEf9JfRTnqtfRKl
+         EJCivxBbABiv0JaxX18wjmVAgiqhTdMGT44i876pqm0HssR9dx/Wa3/seiX/p8Kv+pS7
+         5G0TNlw6DivEqAFbm1dO1KWq5WdTvn3dvc8w8ey5T46D6ckKIGhXkO7EDZo4YcU8FnOr
+         yyRN33uqQVV1Y7D854z7sq3OFtUhxC3fQ+O00Fb67FBsw20HE7JfMlr9uIu/BCCNKPIM
+         2dEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC6UJ+EExUOqOyzSU+RaojI9B89BIA5qBAiYCVvnO9cdvoY44pnL+Q3dmOZiApLsdpfbnaI5C/vyVTK5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzeOwcmQwlzFsFHzBA8XyGAKZ3hR/MUBmel9riT+Imgi9eOm8C
+	orcyOk76nETi6CinI1GQbxP6gANnAy20OEv/UrQrQURCdERXz6BvrZRnBv1SwnKryNWy1hK/OaF
+	EWY8rNg7yd4NgrSgKOhky2s19L2MSplf2u3+w27SzsXNJBBNhUTpNpDWZ4E15vh9I904tX87XM2
+	nMXU8TrJfy1Ei4OYs81/z/Fn0P6goF6kmdUYPUdg3Y4g==
+X-Gm-Gg: ASbGncuY3J/a3rkMZXWKbyPdETrCfwVuaMtUFk1I6Ct4VMAuXiNsehVPo/ULt1nj5K0
+	c6c6BBYlbWmkZIAi6VP7gfi4hbxfp2OhBUDJYMESX1uiyN3gLssgE3EwXQI1kqX0weuz4y3ZTPM
+	ovyHR4b6xs1/MBS5TIRiodEA==
+X-Received: by 2002:a17:902:f0cd:b0:240:58a7:8938 with SMTP id d9443c01a7336-245ef0eeda3mr9115525ad.7.1755650365067;
+        Tue, 19 Aug 2025 17:39:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHE+lwzJc02JwGtvQsFoWimeOv9a5hCP13MeNKKTEHXQTeefVF7wVVw5AarZciu+sMP5CbvXWOpoOD+dV+l/zI=
+X-Received: by 2002:a17:902:f0cd:b0:240:58a7:8938 with SMTP id
+ d9443c01a7336-245ef0eeda3mr9115375ad.7.1755650364589; Tue, 19 Aug 2025
+ 17:39:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250819-numa-memblks-refac-v1-1-936b4fd35000@oss.qualcomm.com> <aKSNED01R-AaclOT@kernel.org>
+In-Reply-To: <aKSNED01R-AaclOT@kernel.org>
+From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+Date: Wed, 20 Aug 2025 06:09:14 +0530
+X-Gm-Features: Ac12FXxe4_RLjord-WMcAQ-D9q1Jse-uFVm7Kpvg0wqknococsL8UbxY0BY33d8
+Message-ID: <CALzOmR2zOpiN_u1GfudY8QKWOf=w3ytOPuK-dznY7bqKJgJGnA@mail.gmail.com>
+Subject: Re: [PATCH] mm/numa_memblks: Use SZ_1M macro to denote bytes to MB conversion
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Authority-Analysis: v=2.4 cv=OfLBzhTY c=1 sm=1 tr=0 ts=68a5193e cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=SxtzLQ3OghRKqkiKGnwA:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NiBTYWx0ZWRfXzTcDL+SpBEu9
+ nDULIHJvETzvaxroO6OucQmqOZoavzpRIV3mHnpoMdzeVCRwKe6JqtwKmwfvz7QXSdIcmufvLsJ
+ K+yyUGwjebv2nk/AIwQ18kV520DuuuGSWNdr/f39kpAnY/N7DLKBStbGCk9aK96QtRWiWQwYH2k
+ Sal0gseTlL1zQGyxI7cptgqJdBbOuWF0Sx7JQACVefC28kChou8Bpn0Mh6cY5+jG1gylf+sRATM
+ CmoZOofCcBD1mQYdlPxmR7GIeMk/KtzRmd4/nEAWNoXyituihJZ4qkXR/7gMB8gh264Fcd9oz+R
+ AhTlwktTBD3TSJMXWSNP2oVj1pASlPOOY/3ElilmiKcHUo/eAyavgAIpQkCflzyQhFrdyyAZJVG
+ hg4hhVwLs0Vbc8AF/SJHMzKc0/rHiA==
+X-Proofpoint-ORIG-GUID: fr3MsJhcgUnzRjxfZ2FFo-fNmmBzLS_h
+X-Proofpoint-GUID: fr3MsJhcgUnzRjxfZ2FFo-fNmmBzLS_h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-19_04,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190196
 
-On Tue, 2025-08-19 at 00:54 -0700, Randy Dunlap wrote:
-> Add a few missing directories under /proc/sys.
-> Fix punctuation and doubled words.
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-doc@vger.kernel.org
->=20
-Thanks for adding those.
-
-FWIW, I don't know what those fips files under
-/proc/sys/crypto do, either :)
-
-Reviewed-by: Rik van Riel <riel@surriel.com>
-
---=20
-All Rights Reversed.
+On Tue, Aug 19, 2025 at 8:11=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Tue, Aug 19, 2025 at 02:21:44PM +0530, pratyush.brahma@oss.qualcomm.co=
+m wrote:
+> > From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+> >
+> > Replace the manual bitwise conversion of bytes to MB with
+> > SZ_1M macro, a standard macro used within the mm subsystem,
+> > to improve readability.
+>
+> There are few others:
+>
+> $ git grep '>> 20' mm/
+> mm/memblock.c:          mem_size_mb =3D memblock_phys_mem_size() >> 20;
+> mm/memblock.c:                 (nr_pages << PAGE_SHIFT) >> 20, mem_size_m=
+b);
+> mm/numa_emulation.c:           nid, eb->start, eb->end - 1, (eb->end - eb=
+->start) >> 20);
+> mm/numa_emulation.c:                    size >> 20, min_size >> 20);
+>
+> It makes sense to replace all of them in one patch.
+Thanks for checking. Will send an updated patch in the next iteration.
+>
+> > Signed-off-by: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+> > ---
+> >  mm/numa_memblks.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
+> > index 541a99c4071a67e5b0ef66f4136dee268a880003..a47aa262a33366337c38ccc=
+7c7064da818523dd2 100644
+> > --- a/mm/numa_memblks.c
+> > +++ b/mm/numa_memblks.c
+> > @@ -427,9 +427,9 @@ static int __init numa_register_meminfo(struct numa=
+_meminfo *mi)
+> >               unsigned long pfn_align =3D node_map_pfn_alignment();
+> >
+> >               if (pfn_align && pfn_align < PAGES_PER_SECTION) {
+> > -                     unsigned long node_align_mb =3D PFN_PHYS(pfn_alig=
+n) >> 20;
+> > +                     unsigned long node_align_mb =3D PFN_PHYS(pfn_alig=
+n) / SZ_1M;
+> >
+> > -                     unsigned long sect_align_mb =3D PFN_PHYS(PAGES_PE=
+R_SECTION) >> 20;
+> > +                     unsigned long sect_align_mb =3D PFN_PHYS(PAGES_PE=
+R_SECTION) / SZ_1M;
+> >
+> >                       pr_warn("Node alignment %luMB < min %luMB, reject=
+ing NUMA config\n",
+> >                               node_align_mb, sect_align_mb);
+> >
+> > ---
+> > base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> > change-id: 20250819-numa-memblks-refac-7b4b5017b598
+> >
+> > Best regards,
+> > --
+> > Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
+Thanks & Regards
+Pratyush
 
