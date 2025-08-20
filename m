@@ -1,356 +1,139 @@
-Return-Path: <linux-kernel+bounces-777224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22238B2D70D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:50:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F590B2D70A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405AD5E2117
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:48:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4924318834FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327892D97AF;
-	Wed, 20 Aug 2025 08:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B102D9EDA;
+	Wed, 20 Aug 2025 08:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RSFpIQsF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MqBip1ht";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RSFpIQsF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MqBip1ht"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KErA532W"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B4A2D6E5B
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C6F27602C;
+	Wed, 20 Aug 2025 08:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755679729; cv=none; b=opMDXcZXShin85uaOraJcV5g335n/OWvXct0idaw9cYv6z9jDWj+ea+87fGbX+t564ECBCEw3Iz5wckwjQf5af3iFbEZGdZQ7sSob0pTPcxw6U429W83qij3vBowODbcqzAp7PZkiDMjqmlh94rWh9CxZQZqZ1KV5dnmNWOoAis=
+	t=1755679770; cv=none; b=O4mBz/7BBDtQjxq3ObalN7clVJCrZxhJhwqNqhFrDL9XmbcJ1UTFYFSAmfcKX34TG/vPBOp/fvusFlaMFFX7CUOVUti8uH4jYPz/d7UbdQIgQcB7pN/09GmX3TDcomNjLMaFkQznJ4ug4IfFwBSHDY52WsHihQCr+/JvccASBks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755679729; c=relaxed/simple;
-	bh=/rr636n/miCKuzWEofeV9kBUrc/D8LKJaMfzwjxtXAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BjMhbDym8KrelTrRdzykA7+HIvy5TQgP7IHRZotIeKxlmFjD40N4XyhOiRXPq0MlM+IW9PJxRYhyXecoZ59Dv8VzfKB8cN6G3Gzvzdn2gYpdBV0+rvEQZ0zqmhh+N159QEpk2oLckpRPSLoI4mhlNjq7hZJP15mcBL4af+AR1lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RSFpIQsF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MqBip1ht; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RSFpIQsF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MqBip1ht; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3BCFB216D6;
-	Wed, 20 Aug 2025 08:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755679725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
-	b=RSFpIQsF4DFZWa/IMx0dSShvU3+l3qxchdVu34E1hPjIqFISyE1N3UXwjiatjp0b1lxo+L
-	bMCO3cB4AokQcDWPu0rNC2QSILN/gmlZBG8x+Ztx74FLpkckk43DP210P5hyl2r6mGbpJo
-	ZtHM39G9tRRtR56D+e60BmbNNtg9JSg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755679725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
-	b=MqBip1htOH8GDeUnT8AmXRXvoqiDJrRCQFmQLi4TV/Sip5Cx8VpzXUUt6JjBq9yHLXHg8r
-	4i7ch+D3LVtJI0AQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RSFpIQsF;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MqBip1ht
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755679725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
-	b=RSFpIQsF4DFZWa/IMx0dSShvU3+l3qxchdVu34E1hPjIqFISyE1N3UXwjiatjp0b1lxo+L
-	bMCO3cB4AokQcDWPu0rNC2QSILN/gmlZBG8x+Ztx74FLpkckk43DP210P5hyl2r6mGbpJo
-	ZtHM39G9tRRtR56D+e60BmbNNtg9JSg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755679725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
-	b=MqBip1htOH8GDeUnT8AmXRXvoqiDJrRCQFmQLi4TV/Sip5Cx8VpzXUUt6JjBq9yHLXHg8r
-	4i7ch+D3LVtJI0AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB6D11368B;
-	Wed, 20 Aug 2025 08:48:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x57kM+yLpWh2cQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 20 Aug 2025 08:48:44 +0000
-Message-ID: <6d6c7fce-9d60-46b1-a075-d23ce648a8e1@suse.de>
-Date: Wed, 20 Aug 2025 10:48:44 +0200
+	s=arc-20240116; t=1755679770; c=relaxed/simple;
+	bh=NYRbscHxPN3FzZjV78pk3jOfDJEM29MRGZ3sctUFmVs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JwJ/oXFfbwfTsbeW6rCNolm+YMpCaujdFWg9rIG7B1i9oBbEOuuxjqC/9s+GukmL3Z4/MkqIxpkOn0tZm5EqtFJ9oxejMjOK8ynm+5Ef1NPusYoRiEDge/x841csvSNTzZt8VR8TzquBfw1U2IXcFt5DluAEfWgZT2FZg3lIsf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KErA532W; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-50f8bd52e06so1978661137.3;
+        Wed, 20 Aug 2025 01:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755679767; x=1756284567; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NYRbscHxPN3FzZjV78pk3jOfDJEM29MRGZ3sctUFmVs=;
+        b=KErA532W+9QQb8RrjIEMDbwmVf+mNT5iGkGGT3B93/qy2O3oKcAymeGn2nVXCZpqV6
+         ErQ9r0xmE4YAlrNruJTf5AnbHUjSa9m8Fyfxe9ThM4d/0+sItVPzuZJFo33BCkjPP0hu
+         qGvb2IQEir/PxMk2KGULmlGYLGZLstcsaUV/9yoyXmOUYxRtWXNcqZjYrWPTUmd5hKXf
+         6jShql2z1M0rpC8eVJ06pvej33bT0wXUBQBJVvkzYrAwIpZ7Tx9DjbGBlKyrhztYw+YV
+         lRIgmwDtxk0OdNo2iAGFOIg60cZ7Fe30aEaRYmTqQahGf9REjVgDZNlmxFZzULfB1qgK
+         Pc5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755679767; x=1756284567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NYRbscHxPN3FzZjV78pk3jOfDJEM29MRGZ3sctUFmVs=;
+        b=Mhhb5SPNgbxnv/47zx/8JKBuOLcvjh485KQlGzWyjI2ysKxoEwLyF8YSMJlwAivF/i
+         jr6IUGimKycOQrT/vXjMd+MStXLAjBjP8UmBzQA5nVXRTfKbAvhYYvenNob6wPRsthNv
+         5Txs5y8IFQoxRHdcJpjhy4WtK8aXu/RCIAc/CjQZbeOijRYN1+AgeZfEqudxw76UZmIZ
+         rW35qELARahpFGdIm9AbZ1s6u9Q8/UFxED/rzLN0QnbMAoY3bO8NoULzGp+d7lYCTcOM
+         wQ5KltTks5W79CtyTMWR63hJcdZtYzSQ4qyz2rflJ8NZIhZiaFEzXOzKW6oC+s1JcHU6
+         pUZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/JDiA+i20BYPWJwwkWFX3AiH9CBuGKmAk8344XPD22T+19EjyFutA4KV7eibM9YEAeb6Af9RAqEi+TzU1@vger.kernel.org, AJvYcCVUOJ71J8EAKMXceYz6H84cAqTN1x0LpDOAKgCpGsts9pmPNTLoYqlrA9+vJDYjsnMmjiuuuGvdNRNqRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLPKrgYBI03L1sZaqSMSiRumQY8x6QBkRo42ZZPNwY6dBuMMis
+	6prNCvm8s2Ou4tawDoha6CIjYDCyhiu3ehsNfyMSXj/e2BPafhMZcEQga6jOTaBr2SL0I9mngE/
+	EAfxdMmkiewdgXF/KJUAS5mCVLSaQCk0=
+X-Gm-Gg: ASbGncvozGfn0VKEGA8V+KcKGDyLS8ddgOZ+JqYmL68gAvJZk7ZO2l13nxD0foQh/Bv
+	5dvV33/HUzZLbUXoNWBg4qGZ3Dc/BKrKChFK4+nurjykPXSAv7WPKcGm12xUvZ3szS9+7Aew3Pz
+	HQDfDzLajJrRbJ9ElzNzK5ZlSFe2GfXEJgW2sFMnJp6J/mnSNtJkeklHouVIYN/QZHX8bMXwObD
+	wvCrfc=
+X-Google-Smtp-Source: AGHT+IE8bsBxsWMm2/GpnHV43YJt2UC3wGe86Mo+Xv6m4XVzWaSAxlE8ISrTVWGCLm+sqp02QH3/iG9/F7/aDGOk2yQ=
+X-Received: by 2002:a05:6102:2b85:b0:519:534a:6c28 with SMTP id
+ ada2fe7eead31-51a51dbecd0mr547102137.30.1755679766883; Wed, 20 Aug 2025
+ 01:49:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm: Replace the deprecated DRM_* logging macros in
- gem helper files
-To: Michal Wajdeczko <michal.wajdeczko@intel.com>,
- Athul Raj Kollareth <krathul3152@gmail.com>
-Cc: airlied@gmail.com, dri-devel@lists.freedesktop.org,
- linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, simona@ffwll.ch,
- skhan@linuxfoundation.org
-References: <f94151b4-893a-4758-a118-153076a20d3c@suse.de>
- <20250818192247.58322-1-krathul3152@gmail.com>
- <90f79bba-bee6-47ea-9881-9ae37eae42e0@intel.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <90f79bba-bee6-47ea-9881-9ae37eae42e0@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[intel.com,gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,lists.freedesktop.org,lists.linux.dev,vger.kernel.org,linux.intel.com,kernel.org,ffwll.ch,linuxfoundation.org];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 3BCFB216D6
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+References: <1709a150.2340.198c223db7a.Coremail.2023302111378@whu.edu.cn>
+In-Reply-To: <1709a150.2340.198c223db7a.Coremail.2023302111378@whu.edu.cn>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 20 Aug 2025 16:49:15 +0800
+X-Gm-Features: Ac12FXxtjx0Q-hWa85CUYE_gYYDTs1okjco5AnEoadYbOublUq8TKGxYiKJFYyQ
+Message-ID: <CAGsJ_4zWHtdYdmDx2NBJVOLkfXEFPtsMmLQL_S5HG4ZC=hRidg@mail.gmail.com>
+Subject: Re: [PATCH/RFC] Zram: Improved Compression with PID/VMA-aware Grouping
+To: =?UTF-8?B?54mb5rW356iL?= <2023302111378@whu.edu.cn>
+Cc: minchan@kernel.org, ngupta@vflare.org, sergey.senozhatsky.work@gmail.com, 
+	axboe@kernel.dk, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
-
-Am 18.08.25 um 21:42 schrieb Michal Wajdeczko:
+On Wed, Aug 20, 2025 at 4:44=E2=80=AFPM =E7=89=9B=E6=B5=B7=E7=A8=8B <202330=
+2111378@whu.edu.cn> wrote:
 >
-> On 8/18/2025 9:20 PM, Athul Raj Kollareth wrote:
->> Replace the DRM_* logging macros used in gem helper files with the appropriate
->> ones specified in /include/drm/drm_print.h.
->>
->> Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
->> ---
->> Changes in v2:
->>      - Change drm_gem_objects_lookup() to take a drm_device* argument.
->>      - Make appropriate changes to all calls of drm_gem_objects_lookup().
->> ---
->>   drivers/accel/rocket/rocket_job.c       |  4 ++--
->>   drivers/gpu/drm/drm_gem.c               | 12 +++++++-----
->>   drivers/gpu/drm/drm_gem_dma_helper.c    |  2 +-
->>   drivers/gpu/drm/panfrost/panfrost_drv.c |  2 +-
->>   drivers/gpu/drm/v3d/v3d_submit.c        |  2 +-
->>   drivers/gpu/drm/vc4/vc4_gem.c           |  2 +-
->>   include/drm/drm_gem.h                   |  5 +++--
->>   7 files changed, 16 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/accel/rocket/rocket_job.c b/drivers/accel/rocket/rocket_job.c
->> index 5d4afd692306..db7c50c9ab90 100644
->> --- a/drivers/accel/rocket/rocket_job.c
->> +++ b/drivers/accel/rocket/rocket_job.c
->> @@ -560,14 +560,14 @@ static int rocket_ioctl_submit_job(struct drm_device *dev, struct drm_file *file
->>   	if (ret)
->>   		goto out_cleanup_job;
->>   
->> -	ret = drm_gem_objects_lookup(file, u64_to_user_ptr(job->in_bo_handles),
->> +	ret = drm_gem_objects_lookup(dev, file, u64_to_user_ptr(job->in_bo_handles),
->>   				     job->in_bo_handle_count, &rjob->in_bos);
->>   	if (ret)
->>   		goto out_cleanup_job;
->>   
->>   	rjob->in_bo_count = job->in_bo_handle_count;
->>   
->> -	ret = drm_gem_objects_lookup(file, u64_to_user_ptr(job->out_bo_handles),
->> +	ret = drm_gem_objects_lookup(dev, file, u64_to_user_ptr(job->out_bo_handles),
->>   				     job->out_bo_handle_count, &rjob->out_bos);
->>   	if (ret)
->>   		goto out_cleanup_job;
->> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
->> index 4a89b6acb6af..ee1e5ded6dd6 100644
->> --- a/drivers/gpu/drm/drm_gem.c
->> +++ b/drivers/gpu/drm/drm_gem.c
->> @@ -102,7 +102,7 @@ drm_gem_init(struct drm_device *dev)
->>   	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
->>   					  GFP_KERNEL);
->>   	if (!vma_offset_manager) {
->> -		DRM_ERROR("out of memory\n");
->> +		drm_err(dev, "out of memory\n");
->>   		return -ENOMEM;
->>   	}
->>   
->> @@ -764,6 +764,7 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
->>   
->>   /**
->>    * drm_gem_objects_lookup - look up GEM objects from an array of handles
->> + * @dev: corresponding drm_device
->>    * @filp: DRM file private date
->>    * @bo_handles: user pointer to array of userspace handle
->>    * @count: size of handle array
->> @@ -780,8 +781,9 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
->>    * failure. 0 is returned on success.
->>    *
->>    */
->> -int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
->> -			   int count, struct drm_gem_object ***objs_out)
->> +int drm_gem_objects_lookup(struct drm_device *dev, struct drm_file *filp,
->> +			   void __user *bo_handles, int count,
->> +			   struct drm_gem_object ***objs_out)
->>   {
-> can't we just use:
+> Dear Linux Kernel Zram Maintainers,
 >
-> 	struct drm_device *dev = filp->minor->dev;
+> I am an open-source developer and have been working on some potential imp=
+rovements to the Zram module, focusing on optimizing compression rates.My w=
+ork is based on the Linux kernel version 5.10.240.
+>
+> My recent work introduces the following changes:
+>
+> 1.PID and Virtual Address Tracking: During page swap-in operations at the=
+ swap layer, I've implemented a mechanism to record the Process ID (PID) an=
+d the corresponding virtual address of the page.
+> 2.PID-aware Grouping and VMA Merging in Zram: Within the Zram layer, page=
+s are now grouped based on their recorded PIDs. Following this grouping, pa=
+ges with similar or contiguous virtual addresses within each PID group are =
+merged before compression. The rationale behind this is that pages belongin=
+g to the same process and located adjacently in virtual memory are likely t=
+o contain related data, which could lead to better compression ratios when =
+processed together.
 
-That's even better. Thanks for pointing to this.
+This seems unnecessarily complex. How does it differ from the mTHP-based
+compression we=E2=80=99ve been experimenting with?
 
-Best regards
-Thomas
+https://lore.kernel.org/linux-mm/20241121222521.83458-1-21cnbao@gmail.com/
+
+In that case, you don't need PID-aware or VMA merging etc.
 
 >
->>   	int ret;
->>   	u32 *handles;
->> @@ -805,7 +807,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
->>   
->>   	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
->>   		ret = -EFAULT;
->> -		DRM_DEBUG("Failed to copy in GEM handles\n");
->> +		drm_dbg_core(dev, "Failed to copy in GEM handles\n");
->>   		goto out;
->>   	}
->>   
->> @@ -858,7 +860,7 @@ long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
->>   
->>   	obj = drm_gem_object_lookup(filep, handle);
->>   	if (!obj) {
->> -		DRM_DEBUG("Failed to look up GEM BO %d\n", handle);
->> +		drm_dbg_core(NULL, "Failed to look up GEM BO %d\n", handle);
->>   		return -EINVAL;
->>   	}
->>   
->> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
->> index 4f0320df858f..a507cf517015 100644
->> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
->> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
->> @@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
->>   
->>   	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
->>   	if (ret) {
->> -		DRM_ERROR("Failed to vmap PRIME buffer\n");
->> +		drm_err(dev, "Failed to vmap PRIME buffer\n");
->>   		return ERR_PTR(ret);
->>   	}
->>   
->> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
->> index 1ea6c509a5d5..3ffd9d5a9056 100644
->> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
->> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
->> @@ -188,7 +188,7 @@ panfrost_lookup_bos(struct drm_device *dev,
->>   	if (!job->bo_count)
->>   		return 0;
->>   
->> -	ret = drm_gem_objects_lookup(file_priv,
->> +	ret = drm_gem_objects_lookup(dev, file_priv,
->>   				     (void __user *)(uintptr_t)args->bo_handles,
->>   				     job->bo_count, &job->bos);
->>   	if (ret)
->> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
->> index 5171ffe9012d..a3ac8e6a4a72 100644
->> --- a/drivers/gpu/drm/v3d/v3d_submit.c
->> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
->> @@ -79,7 +79,7 @@ v3d_lookup_bos(struct drm_device *dev,
->>   		return -EINVAL;
->>   	}
->>   
->> -	return drm_gem_objects_lookup(file_priv,
->> +	return drm_gem_objects_lookup(dev, file_priv,
->>   				      (void __user *)(uintptr_t)bo_handles,
->>   				      job->bo_count, &job->bo);
->>   }
->> diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
->> index 255e5817618e..6ce65611231b 100644
->> --- a/drivers/gpu/drm/vc4/vc4_gem.c
->> +++ b/drivers/gpu/drm/vc4/vc4_gem.c
->> @@ -692,7 +692,7 @@ vc4_cl_lookup_bos(struct drm_device *dev,
->>   		return -EINVAL;
->>   	}
->>   
->> -	ret = drm_gem_objects_lookup(file_priv, u64_to_user_ptr(args->bo_handles),
->> +	ret = drm_gem_objects_lookup(dev, file_priv, u64_to_user_ptr(args->bo_handles),
->>   				     exec->bo_count, &exec->bo);
->>   
->>   	if (ret)
->> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
->> index d3a7b43e2c63..03cb03f46524 100644
->> --- a/include/drm/drm_gem.h
->> +++ b/include/drm/drm_gem.h
->> @@ -544,8 +544,9 @@ void drm_gem_unlock(struct drm_gem_object *obj);
->>   int drm_gem_vmap(struct drm_gem_object *obj, struct iosys_map *map);
->>   void drm_gem_vunmap(struct drm_gem_object *obj, struct iosys_map *map);
->>   
->> -int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
->> -			   int count, struct drm_gem_object ***objs_out);
->> +int drm_gem_objects_lookup(struct drm_device *dev, struct drm_file *filp,
->> +			   void __user *bo_handles, int count,
->> +			   struct drm_gem_object ***objs_out);
->>   struct drm_gem_object *drm_gem_object_lookup(struct drm_file *filp, u32 handle);
->>   long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
->>   				    bool wait_all, unsigned long timeout);
+> Preliminary experiments using this approach have shown promising results:
+>
+> With the LZ4 compression algorithm, we observed an approximate 3% increas=
+e in the overall compression rate.
+> With the ZSTD compression algorithm, the improvement was even more signif=
+icant, reaching an approximate 4% increase in the overall compression rate.
+>
+> I am writing to inquire if you believe this approach and its observed ben=
+efits are significant enough to warrant further consideration for upstreami=
+ng into the main Linux kernel. I would greatly appreciate your thoughts on =
+the utility and potential implications of these changes, as well as any gui=
+dance on how to proceed with further development or formal submission.
+>
+> Thank you for your time and consideration.
+> Best regards,
+> Haicheng Niu
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Thanks
+Barry
 
