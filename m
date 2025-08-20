@@ -1,161 +1,106 @@
-Return-Path: <linux-kernel+bounces-777838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCAEB2DE6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DA1B2DE6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FB7189848D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:51:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0006C5E3444
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C9A1DF99C;
-	Wed, 20 Aug 2025 13:50:19 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733491DED4C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F261CBEB9;
+	Wed, 20 Aug 2025 13:50:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADE41C84BB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755697819; cv=none; b=NvMgXVb49xDdQl+paicBxiBucrNRQ5uc5iPAIp0B3vDkGFlz5Bd0SkVRVHwewJfU1lSseUaAqOJF2SGCJOv+gOctwB9GS0BXLiOPXWAYaKbYgWY1fZLTXzaW8YRrAXwSh29uIzgLZP9WLc6q//FixNspE7WWwp6wqtkdhbZnXw8=
+	t=1755697844; cv=none; b=puj4Nv8SIWbpaS+VTZseGAOkrztXRuXeSUMF9PWQDZVDOA2dP2lHn468QIdJqMN6NSAzBn5NDDRLXx5d6d1KV6LTpbB2pDpuidRssFu21aX1op5LS9eUm7Ry69mlon8sW7SB7xyVGRqBLH3WYKwe43nlgtlGGome2BqgVt3MS5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755697819; c=relaxed/simple;
-	bh=IY1hCmh/ms+pl4eZUlo7JOL5fRJk9SupjR3P8rg4KAA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=fospKJmFnjb+fa/NM+2FBDk7FWD8rjwYhqOuc91AYr6Tb7rsyk5l8vN9KTOY5fCTy21lYXNCItZAlfrqTLJxQtgH0zyJ4U8NxNW1kBNeWSpPwa6IV3PoraFpwtm2XKv1ORei7eVuygF0dSdwQiLt8mJ/KqPKpIAkqRTFN1C1dto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e67df0ee00so18384105ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:50:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755697816; x=1756302616;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCft0OtSYmLcVWsWIK6iy7gIzs3jV3RaunmmsDo3CIY=;
-        b=NI2j8MOh1rddC/JB2gOPS2eRTjJdzy2kIHwzqgV4zuQmcY6Bus7qbstRVnvAyoccIn
-         BiAXNdkAzq0hktw6gPRaAU81udDN3CNnoE3ly8fSzJWUIB/SYokakOrPN0O2hCmSnLbo
-         NKi2Lx2JXgMWR2XRf+n9s7bD+Wd4Noa7PuJRudbjhzIP3alhHGcpvIO++ElabwiUYT3+
-         kI8S+mZr3k4/UlgHyIrdGPIdtEzJZxbmoD7Vrv19jYvXw4Yj33KkHevgk1PGlsIhTSyi
-         fTnqhPNzBNc+oUnKrdwuAANBpmP6FSGE5LKsq0TEvPEvHkwnfN5VSFuJfvOq5NPCp0b+
-         xsfg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1iQyZfoTVSP1qI1EAaw8bZOJRcBabsR3/Gmhdoj1pVwIeKbdxJM26ZTBy3x+JieBYOg3ZHv3PIqoDqkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDjx4T6H2+Und229ChtAcw2CelR7CDRJk9ir8QgrnyAnAFTGTJ
-	hTdb1CH63WNjVtp07uI1OhE7ZlDq33weGXyFEoBB5Yf7/O+yl/CarnohxFE/6Ntn+hIY0z6BGSU
-	RzaAYvkgAEbrc0GcmfwhSpnDVb3P7gYti4sW4woYuyaYYKNCE9UNM84SesIs=
-X-Google-Smtp-Source: AGHT+IGhn4ZYmJP7sBYy4J89eY3N54uRGsYJzXgBSJdGM3I2L/PUzn7oQGaPAbDMu9Q/TuHoUNnRPiV0D3jaz8zlEydn+YcEPKCy
+	s=arc-20240116; t=1755697844; c=relaxed/simple;
+	bh=PlAWtq9hXEASVA9AC3Q6Gsd2Mw3o6eeAzFIF3c9LDvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I2HXO8jolJ50Fm2BUFzx07NX5+DuBClnl85XrsPA/dk69JDLAQ0pvrijqFxNBaAPwiYOea6cUtGqcGI2Bazw4jss3dHpkSbv6MrUahtI1jaJLvxEu5CNyhaTO/z5HlyvMmjepCcJgRrqhl2pDy+PeFT7m+14U6JgbckCCZKptp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE5521D31;
+	Wed, 20 Aug 2025 06:50:33 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC4683F738;
+	Wed, 20 Aug 2025 06:50:39 -0700 (PDT)
+Date: Wed, 20 Aug 2025 14:50:37 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] firmware: imx: Add stub functions for SCMI MISC API
+Message-ID: <aKXSrZEudO_bOoPr@pluto>
+References: <20250807-imx9-sm-v1-0-3489e41a6fda@nxp.com>
+ <20250807-imx9-sm-v1-1-3489e41a6fda@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156e:b0:3e5:3ef0:b0e5 with SMTP id
- e9e14a558f8ab-3e67c9b66b1mr46030995ab.7.1755697816711; Wed, 20 Aug 2025
- 06:50:16 -0700 (PDT)
-Date: Wed, 20 Aug 2025 06:50:16 -0700
-In-Reply-To: <20250820092925.2115372-1-jackzxcui1989@163.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a5d298.050a0220.3d78fd.0003.GAE@google.com>
-Subject: [syzbot ci] Re: net: af_packet: Use hrtimer to do the retire operation
-From: syzbot ci <syzbot+ci8b7a13618981d53b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, ferenc@fejes.dev, 
-	horms@kernel.org, jackzxcui1989@163.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	willemdebruijn.kernel@gmail.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807-imx9-sm-v1-1-3489e41a6fda@nxp.com>
 
-syzbot ci has tested the following series
+On Thu, Aug 07, 2025 at 09:47:42AM +0800, Peng Fan wrote:
+> To ensure successful builds when CONFIG_IMX_SCMI_MISC_DRV is not enabled,
+> this patch adds static inline stub implementations for the following
+> functions:
+> 
+>   - scmi_imx_misc_ctrl_get()
+>   - scmi_imx_misc_ctrl_set()
+> 
+> These stubs return -EOPNOTSUPP to indicate that the functionality is not
+> supported in the current configuration. This avoids potential build or
+> link errors in code that conditionally calls these functions based on
+> feature availability.
+> 
+> Fixes: 540c830212ed ("firmware: imx: remove duplicate scmi_imx_misc_ctrl_get()")
+> Fixes: 0b4f8a68b292 ("firmware: imx: Add i.MX95 MISC driver")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  include/linux/firmware/imx/sm.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/firmware/imx/sm.h b/include/linux/firmware/imx/sm.h
+> index d4212bc42b2c17fb8f94d58856a75beb5611ce4b..99c15bbb46aa8329b5aa8e03017e152074cdf492 100644
+> --- a/include/linux/firmware/imx/sm.h
+> +++ b/include/linux/firmware/imx/sm.h
+> @@ -26,8 +26,20 @@
+>  #define SCMI_IMX94_CTRL_SAI3_MCLK	5U	/*!< WAKE SAI3 MCLK */
+>  #define SCMI_IMX94_CTRL_SAI4_MCLK	6U	/*!< WAKE SAI4 MCLK */
+>  
+> +#if IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV)
+>  int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val);
+>  int scmi_imx_misc_ctrl_set(u32 id, u32 val);
+> +#else
+> +static inline int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline int scmi_imx_misc_ctrl_set(u32 id, u32 val)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +#endif
 
-[v6] net: af_packet: Use hrtimer to do the retire operation
-https://lore.kernel.org/all/20250820092925.2115372-1-jackzxcui1989@163.com
-* [PATCH net-next v6] net: af_packet: Use hrtimer to do the retire operation
+LGTM.
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
-and found the following issue:
-WARNING in hrtimer_forward
-
-Full report is available here:
-https://ci.syzbot.org/series/81b08fd6-a740-4520-9c88-b7dcdc7953a1
-
-***
-
-WARNING in hrtimer_forward
-
-tree:      net-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
-base:      da114122b83149d1f1db0586b1d67947b651aa20
-arch:      amd64
-compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-config:    https://ci.syzbot.org/builds/0ebac6ed-b7ae-4c3d-9edc-db3a521ad7a0/config
-C repro:   https://ci.syzbot.org/findings/c3421800-7bbc-4097-a1cf-36e97a4dea98/c_repro
-syz repro: https://ci.syzbot.org/findings/c3421800-7bbc-4097-a1cf-36e97a4dea98/syz_repro
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6012 at kernel/time/hrtimer.c:1052 hrtimer_forward+0x1d6/0x2b0 kernel/time/hrtimer.c:1052
-Modules linked in:
-CPU: 1 UID: 0 PID: 6012 Comm: syz.0.20 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:hrtimer_forward+0x1d6/0x2b0 kernel/time/hrtimer.c:1052
-Code: 4c 89 33 48 8b 04 24 eb 07 e8 66 30 12 00 31 c0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 01 b0 ce 09 cc e8 4b 30 12 00 90 <0f> 0b 90 eb df 48 89 e8 4c 09 f8 48 c1 e8 20 74 0a 48 89 e8 31 d2
-RSP: 0018:ffffc900029def90 EFLAGS: 00010293
-RAX: ffffffff81ad7be5 RBX: ffff888028782648 RCX: ffff88810e88d640
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 000000000000116b R08: ffffffff8fa37e37 R09: 1ffffffff1f46fc6
-R10: dffffc0000000000 R11: ffffffff81724e10 R12: ffff888028782660
-R13: 00000000007a1200 R14: 1ffff110050f04cc R15: 0000000000000001
-FS:  000055555f6cd500(0000) GS:ffff8881a3c1c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffcf1be3d88 CR3: 0000000023c86000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- hrtimer_forward_now include/linux/hrtimer.h:366 [inline]
- _prb_refresh_rx_retire_blk_timer net/packet/af_packet.c:697 [inline]
- prb_open_block+0x3a7/0x5e0 net/packet/af_packet.c:930
- prb_dispatch_next_block net/packet/af_packet.c:994 [inline]
- __packet_lookup_frame_in_block net/packet/af_packet.c:1152 [inline]
- packet_current_rx_frame net/packet/af_packet.c:1178 [inline]
- tpacket_rcv+0x1229/0x2f40 net/packet/af_packet.c:2409
- deliver_skb net/core/dev.c:2472 [inline]
- deliver_ptype_list_skb net/core/dev.c:2487 [inline]
- __netif_receive_skb_core+0x3107/0x4020 net/core/dev.c:5923
- __netif_receive_skb_list_core+0x23f/0x800 net/core/dev.c:6054
- __netif_receive_skb_list net/core/dev.c:6121 [inline]
- netif_receive_skb_list_internal+0x975/0xcc0 net/core/dev.c:6212
- netif_receive_skb_list+0x54/0x450 net/core/dev.c:6264
- xdp_recv_frames net/bpf/test_run.c:280 [inline]
- xdp_test_run_batch net/bpf/test_run.c:361 [inline]
- bpf_test_run_xdp_live+0x1786/0x1b10 net/bpf/test_run.c:390
- bpf_prog_test_run_xdp+0x713/0x1000 net/bpf/test_run.c:1322
- bpf_prog_test_run+0x2c7/0x340 kernel/bpf/syscall.c:4590
- __sys_bpf+0x581/0x870 kernel/bpf/syscall.c:6047
- __do_sys_bpf kernel/bpf/syscall.c:6139 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6137 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6137
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f31da38ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcf1be5358 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007f31da5b5fa0 RCX: 00007f31da38ebe9
-RDX: 0000000000000050 RSI: 0000200000000600 RDI: 000000000000000a
-RBP: 00007f31da411e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f31da5b5fa0 R14: 00007f31da5b5fa0 R15: 0000000000000003
- </TASK>
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
+Cristian
 
