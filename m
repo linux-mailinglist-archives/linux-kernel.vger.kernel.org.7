@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-778515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC23B2E6B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC80B2E6B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11EFF7A4BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:36:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 631917A7FA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2B828BAB1;
-	Wed, 20 Aug 2025 20:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1562D47EC;
+	Wed, 20 Aug 2025 20:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BooksOVZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SOo/8yz2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18882D372A
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7951B2D3EDE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755722248; cv=none; b=Ly2bWlgXDjVzj8cYYpGLwuRNlHUpim3kPbsgPR5ApFcdlnr+DXGu03Oim1eLdKGhkKd+alw+PMTm1y9bw1LK6LxNRoFIYQ3JvIcFZR3qtD4jncFDji6VyGoO85m5Fy2GSQYnoTpR7oCnIZ95TguaKvAQGjQMKol/aqjIn+UYVJA=
+	t=1755722252; cv=none; b=tMyEUW/6aSm8rplqZlzJvOg8L+vTl6jv4rKSkXsotSDOoFSS4XNV3lAwh+99yxWCtSoOOR0zmqsVXebCIhp+6JfJzwQHZVPzlQcsI0KLi4Lh9oeYnqoH/uOlxEo8O9CbpkHIfygsa6CuLVTSe2hfDRiNblHb75Gv7hEIu82V7dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755722248; c=relaxed/simple;
-	bh=Y88gS618ooHfwSEeQ/x1FVp6qCHn0OyxAAhi8dccVfI=;
+	s=arc-20240116; t=1755722252; c=relaxed/simple;
+	bh=5124OcJB0LjDSkPH9HDI5nlX3yMOglKE0+T90eM7zpU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S97qSf9MSfD9hlEzY93A7GhpdOeB6rNF4wOGJBknwW3nQyy+t118ZH4AlzUcE7K7OLAYLbBRHqhT/7fSTnlpuExx4BdJT/RgDjEx0KYXvDaOHYT59vHl1bo4HolezYlG18EXuvZnNg+lO0v5GXU4x8myYBWsAUdy3+jWG9At6GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BooksOVZ; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=neH3wIGn1PBAOT4v2u6Q6DsTXh5GTR+rqHeaIPN/dMhYy4qLZqbAbXXXDvj+T8ibjgHTyHVdbFeHCUuxfQYG6YxgRAg7ponwpQwtBz/RUa6OYM3dC9lF3sta3y+MtRyU+arBd4yDtff9gHHDfKq87xpjACAosgwg1f9m8y4795g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SOo/8yz2; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755722245;
+	s=mimecast20190719; t=1755722249;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HPGI7YO0+Ykjlr33gJ/vmqFT7fgdrtVLz3J06wkC9Ys=;
-	b=BooksOVZvlauiGvleMrRnk83Jt+3ktCRvPkf5xd06lovccawjr8uCvJXVIYN9bboXN0uBg
-	uWwkYDOVEFpdB0S4m9KpBS2GVlVP4LDA0Yc9joCxNmuz3KFR33fA9hXt82sm/GdbL9IuGl
-	TnLby3u9YEk8aa/EBtMfgCAq8WEX2fM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	bh=T3qJccqSG1utm0kjz6SVdgEmigmg25RGxr25fQrvr/M=;
+	b=SOo/8yz2ifS5oikYTX0gB2XZMuZJwQ5RpRftzjbk7xtTMhNHSiv6M3J7BM0NbDaYucD+qc
+	F6SoCrtR3rZv2g6tHpeD4osRgfTGT6cEJUkQZzivo02lt4S6Bwz9y7/THuBhNVMnTGHl3Z
+	2MImC6HAQo9hAc0q9xVNwIlnFnePJV8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-170-1Hv_GtGINrm6MbjSZlx32A-1; Wed,
- 20 Aug 2025 16:37:22 -0400
-X-MC-Unique: 1Hv_GtGINrm6MbjSZlx32A-1
-X-Mimecast-MFC-AGG-ID: 1Hv_GtGINrm6MbjSZlx32A_1755722239
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-U5-hFK5vM--L5qJweO_9KA-1; Wed,
+ 20 Aug 2025 16:37:26 -0400
+X-MC-Unique: U5-hFK5vM--L5qJweO_9KA-1
+X-Mimecast-MFC-AGG-ID: U5-hFK5vM--L5qJweO_9KA_1755722243
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8BEE91956089;
-	Wed, 20 Aug 2025 20:37:19 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 72141195422A;
+	Wed, 20 Aug 2025 20:37:23 +0000 (UTC)
 Received: from chopper.redhat.com (unknown [10.22.81.238])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B7F9C19A4C99;
-	Wed, 20 Aug 2025 20:37:15 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E30819A4C99;
+	Wed, 20 Aug 2025 20:37:19 +0000 (UTC)
 From: Lyude Paul <lyude@redhat.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc: Boqun Feng <boqun.feng@gmail.com>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v3 1/2] rust: time: Implement Add<Delta>/Sub<Delta> for Instant
-Date: Wed, 20 Aug 2025 16:26:43 -0400
-Message-ID: <20250820203704.731588-2-lyude@redhat.com>
+Subject: [PATCH v3 2/2] rust: time: Implement basic arithmetic operations for Delta
+Date: Wed, 20 Aug 2025 16:26:44 -0400
+Message-ID: <20250820203704.731588-3-lyude@redhat.com>
 In-Reply-To: <20250820203704.731588-1-lyude@redhat.com>
 References: <20250820203704.731588-1-lyude@redhat.com>
 Precedence: bulk
@@ -89,93 +89,148 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-In order to copy the behavior rust currently follows for basic arithmetic
-operations and panic if the result of an addition or subtraction results in
-a value that would violate the invariants of Instant, but only if the
-kernel has overflow checking for rust enabled.
+While rvkms is only going to be using a few of these, since Deltas are
+basically the same as i64 it's easy enough to just implement all of the
+basic arithmetic operations for Delta types.
+
+Keep in mind there's one quirk here - the kernel has no support for
+i64 % i64 on 32 bit platforms, the closest we have is i64 % i32 through
+div_s64_rem(). So, instead of implementing ops::Rem or ops::RemAssign we
+simply provide Delta::rem_nanos().
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 
 ---
-
 V2:
-* Change behavior in ops::{Add,Sub}<Delta> so that we panic on overflows
-  under the same conditions that arithmetic operations in rust would panic
-  by default.
+* Don't forget to make sure that we inline all of these
+* Drop ops::Rem and ops::RemAssign implementations for Delta, replace with
+  Delta::rem_nanos() instead. It turns out that there's actually no way to
+  perform i64 % i64 on 32 bit platforms in the kernel at the moment, the
+  closest that we have is div_s64_rem() which only allows a 32 bit divisor.
+* Actually use the kernel arithmetic helpers for division/remainders so
+  that this code works on both 32 and 64 bit platforms.
 V3:
-* Don't forget to update the commit message this time!
+* Change the output type for Div to i64, drop DivAssign
+* Change Mul/MulAssign to accept i64, not another Delta
+* Fix parameter name in rem_nanos (ns -> dividend)
 
- rust/kernel/time.rs | 43 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+ rust/kernel/time.rs | 98 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
 diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-index 64c8dcf548d63..4bd7a8a009f3e 100644
+index 4bd7a8a009f3e..e64c5b13152dd 100644
 --- a/rust/kernel/time.rs
 +++ b/rust/kernel/time.rs
-@@ -25,6 +25,7 @@
- //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
- 
- use core::marker::PhantomData;
-+use core::ops;
- 
- pub mod delay;
- pub mod hrtimer;
-@@ -202,7 +203,7 @@ pub(crate) fn as_nanos(&self) -> i64 {
-     }
+@@ -265,6 +265,78 @@ pub struct Delta {
+     nanos: i64,
  }
  
--impl<C: ClockSource> core::ops::Sub for Instant<C> {
-+impl<C: ClockSource> ops::Sub for Instant<C> {
-     type Output = Delta;
- 
-     // By the type invariant, it never overflows.
-@@ -214,6 +215,46 @@ fn sub(self, other: Instant<C>) -> Delta {
-     }
- }
- 
-+impl<T: ClockSource> ops::Add<Delta> for Instant<T> {
++impl ops::Add for Delta {
 +    type Output = Self;
 +
 +    #[inline]
-+    fn add(self, rhs: Delta) -> Self::Output {
-+        // INVARIANT: With arithmetic over/underflow checks enabled, this will panic if we overflow
-+        // (e.g. go above `KTIME_MAX`)
-+        let res = self.inner + rhs.nanos;
-+
-+        // INVARIANT: With overflow checks enabled, we verify here that the value is >= 0
-+        #[cfg(CONFIG_RUST_OVERFLOW_CHECKS)]
-+        assert!(res >= 0);
-+
++    fn add(self, rhs: Self) -> Self {
 +        Self {
-+            inner: res,
-+            _c: PhantomData,
++            nanos: self.nanos + rhs.nanos,
 +        }
 +    }
 +}
 +
-+impl<T: ClockSource> ops::Sub<Delta> for Instant<T> {
++impl ops::AddAssign for Delta {
++    #[inline]
++    fn add_assign(&mut self, rhs: Self) {
++        self.nanos += rhs.nanos;
++    }
++}
++
++impl ops::Sub for Delta {
 +    type Output = Self;
 +
 +    #[inline]
-+    fn sub(self, rhs: Delta) -> Self::Output {
-+        // INVARIANT: With arithmetic over/underflow checks enabled, this will panic if we overflow
-+        // (e.g. go above `KTIME_MAX`)
-+        let res = self.inner - rhs.nanos;
-+
-+        // INVARIANT: With overflow checks enabled, we verify here that the value is >= 0
-+        #[cfg(CONFIG_RUST_OVERFLOW_CHECKS)]
-+        assert!(res >= 0);
-+
++    fn sub(self, rhs: Self) -> Self::Output {
 +        Self {
-+            inner: res,
-+            _c: PhantomData,
++            nanos: self.nanos - rhs.nanos,
 +        }
 +    }
 +}
 +
- /// A span of time.
- ///
- /// This struct represents a span of time, with its value stored as nanoseconds.
++impl ops::SubAssign for Delta {
++    #[inline]
++    fn sub_assign(&mut self, rhs: Self) {
++        self.nanos -= rhs.nanos;
++    }
++}
++
++impl ops::Mul<i64> for Delta {
++    type Output = Self;
++
++    #[inline]
++    fn mul(self, rhs: i64) -> Self::Output {
++        Self {
++            nanos: self.nanos * rhs,
++        }
++    }
++}
++
++impl ops::MulAssign<i64> for Delta {
++    #[inline]
++    fn mul_assign(&mut self, rhs: i64) {
++        self.nanos *= rhs;
++    }
++}
++
++impl ops::Div for Delta {
++    type Output = i64;
++
++    #[inline]
++    fn div(self, rhs: Self) -> Self::Output {
++        #[cfg(CONFIG_64BIT)]
++        {
++            self.nanos / rhs.nanos
++        }
++
++        #[cfg(not(CONFIG_64BIT))]
++        {
++            // SAFETY: This function is always safe to call regardless of the input values
++            unsafe { bindings::div64_s64(self.nanos, rhs.nanos) }
++        }
++    }
++}
++
+ impl Delta {
+     /// A span of time equal to zero.
+     pub const ZERO: Self = Self { nanos: 0 };
+@@ -353,4 +425,30 @@ pub fn as_millis(self) -> i64 {
+             bindings::ktime_to_ms(self.as_nanos())
+         }
+     }
++
++    /// Return `self % dividend` where `dividend` is in nanoseconds.
++    ///
++    /// The kernel doesn't have any emulation for `s64 % s64` on 32 bit platforms, so this is
++    /// limited to 32 bit dividends.
++    #[inline]
++    pub fn rem_nanos(self, dividend: i32) -> Self {
++        #[cfg(CONFIG_64BIT)]
++        {
++            Self {
++                nanos: self.as_nanos() % i64::from(dividend),
++            }
++        }
++
++        #[cfg(not(CONFIG_64BIT))]
++        {
++            let mut rem = 0;
++
++            // SAFETY: `rem` is in the stack, so we can always provide a valid pointer to it.
++            unsafe { bindings::div_s64_rem(self.as_nanos(), dividend, &mut rem) };
++
++            Self {
++                nanos: i64::from(rem),
++            }
++        }
++    }
+ }
 -- 
 2.50.0
 
