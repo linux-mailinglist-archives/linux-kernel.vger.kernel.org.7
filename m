@@ -1,133 +1,78 @@
-Return-Path: <linux-kernel+bounces-776773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16266B2D159
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:22:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D195DB2D15A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684711C42D62
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0971C4356D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E681AA7BF;
-	Wed, 20 Aug 2025 01:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDDA1CBEB9;
+	Wed, 20 Aug 2025 01:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Yl7iJrHc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/AKtw8R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDB71AA7A6;
-	Wed, 20 Aug 2025 01:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4A71BFE00;
+	Wed, 20 Aug 2025 01:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755652912; cv=none; b=Ak710wZ5DRXkHQGRBfqPP2N4yLqofa7WSHpp9e1Bq+lsZUaf2IuSm81QUK8nxBRrHeqwC+aev5zWP2SaaOBQLaUtoRtDzFOXbTaZsraxyA7hz84a4jjQS9JduYUrb7H+wnwi2taIyFyPlKZBfQW4DxoieSejx83H0mfmWHowaSI=
+	t=1755652929; cv=none; b=Ow3Lptj4lUujscvDfWYMF11S1ofj/zgBU3PDqMLRHsOXRZ4KLKBcQNXwj/+pS3Q9nHBsZGmJEL7a9ToeV1DNBdgWkw2hytKX/CX0vK7hxykSThdLDuLk/nh3vX0rhrx1QQ6GgStjev4g8rNWd45gWg5sCQ3MLFuE7rbTdAf5DCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755652912; c=relaxed/simple;
-	bh=YEUK+xkgcAHI26fmPUIN7lr4NhSAUCC76VgSwSocTrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dXuMTbS1dAYiwS+288z9XrbSgbESdpGulPcwT1L7j93GRwQWYTr/CzXdur0Wp58alCvDIeW4E6BZAJDfi94JeGU9daLlgONbFLVzjXMQszEE2m2zZcXzwWbcMv2u14RHNdODZE6tMqik26FobryeleQjU9YSyAfO4qESlLoRPbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Yl7iJrHc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755652906;
-	bh=Cax4wsit9vDfDJ2iuUp1ECYmVzYSecXd37uVDPRDpBQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Yl7iJrHcVMSN7pKJYQCxvuYTYI2uAh6cMvOq3cRTI2j90MpEN/ZfIW90FX+Ja7OuN
-	 HYtOUbmudABUn8xCqifqWQwAgV6XKR0rRjvRXgr2Kx8fnKU4fWKlwFbdxGKrlVNfbS
-	 wbSuv2LtgIToIEeSIFE4U4W6MUMwtvxmZI6wMmnXsE6vKIvu/xnR7t6a/vUW1uLNrg
-	 yysPfHDLoY5BMaiRu6fXRj1rlRpTcc8FXQrLe00fu4IuQXZybSw63Cy02RpPIRF/oD
-	 DiWUP81na6yb1T9/vuIl4rX8NBZ5AzYlOALmA4ftRwgj/VESHF0sAxlrSh6YB4h+QG
-	 EkhnLxrb+QzEg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c67vt1Ltyz4w2K;
-	Wed, 20 Aug 2025 11:21:46 +1000 (AEST)
-Date: Wed, 20 Aug 2025 11:21:44 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>, Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Beata Michalska <beata.michalska@arm.com>, Danilo Krummrich
- <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, DRI
- <dri-devel@lists.freedesktop.org>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes
- tree
-Message-ID: <20250820112144.43714c90@canb.auug.org.au>
+	s=arc-20240116; t=1755652929; c=relaxed/simple;
+	bh=giJrwNr4gTNI+BHt14QArf7z8KvI8kFYYAqwhT6nAzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hFaQvIoHewMK84SD5UUuMkGY7lbiBAe2gsB1ro3Fr3IiXCZAURQ13yveHZQ5jjy4k0LsIsC+YGc3fDTgW5qsvH+827az/iTQ9eCwEloRTl7GCWTCn6gverR3PalLg5F8oVzhOuN7st9vVo/3trHa0ftYTWWpYeaA+mCIbN0bGFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/AKtw8R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB17FC113CF;
+	Wed, 20 Aug 2025 01:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755652929;
+	bh=giJrwNr4gTNI+BHt14QArf7z8KvI8kFYYAqwhT6nAzc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H/AKtw8RMqpy1JosLZEooNgULsO4wBZsWKirV3sTpu1SUB2bXcRfWL680obJWgZL2
+	 AyX7yUuQmp9vkp8MoF7VGXbza+fcDlaEm5p3EZovW9zmudPrjyGHouiATXHPu+gzu0
+	 e0fpta8hr+QKHjiGrwIuvKMFZVktAABjw1hXwGIXXaG1hQSTdfUfTTHd0EXKD1hvB/
+	 q/DbOERoiBF3qlZMa/h3Cg11HLD7szlcYO8lHJ+bihAfzFQWVVjlIIfxMmJqMknj0e
+	 BiuD7Ffl90P1nV82+pNwmGSinDFwuMfrPbwchulcA9nyCKIFPiUQMdVKrqYeWQyN8s
+	 1ZEURTQMJupow==
+Date: Tue, 19 Aug 2025 18:22:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rohan G Thomas via B4 Relay
+ <devnull+rohan.g.thomas.altera.com@kernel.org>
+Cc: rohan.g.thomas@altera.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Serge Semin
+ <fancer.lancer@gmail.com>, Romain Gantois <romain.gantois@bootlin.com>,
+ Jose Abreu <Jose.Abreu@synopsys.com>, Ong Boon Leong
+ <boon.leong.ong@intel.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
+ Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net-next v2 3/3] net: stmmac: Set CIC bit only for TX
+ queues with COE
+Message-ID: <20250819182207.5d7b2faa@kernel.org>
+In-Reply-To: <20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
+References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
+	<20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/87Z0/l_jCzW6qIQhqxZCqCL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/87Z0/l_jCzW6qIQhqxZCqCL
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Sat, 16 Aug 2025 00:55:25 +0800 Rohan G Thomas via B4 Relay wrote:
+> +	bool csum = !priv->plat->tx_queues_cfg[queue].coe_unsupported;
 
-Today's linux-next merge of the drm tree got a conflict in:
-
-  drivers/gpu/drm/nova/file.rs
-
-between commit:
-
-  db2e7bcee11c ("drm: nova-drm: fix 32-bit arm build")
-
-from the drm-misc-fixes tree and commit:
-
-  94febfb5bcfb ("rust: drm: Drop the use of Opaque for ioctl arguments")
-
-from the drm tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/nova/file.rs
-index 4fe62cf98a23,7e7d4e2de2fb..000000000000
---- a/drivers/gpu/drm/nova/file.rs
-+++ b/drivers/gpu/drm/nova/file.rs
-@@@ -39,8 -36,7 +36,8 @@@ impl File=20
-              _ =3D> return Err(EINVAL),
-          };
- =20
- -        getparam.value =3D value;
- +        #[allow(clippy::useless_conversion)]
--         getparam.set_value(value.into());
-++        getparam.value =3D value.into();
- =20
-          Ok(0)
-      }
-
---Sig_/87Z0/l_jCzW6qIQhqxZCqCL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmilIygACgkQAVBC80lX
-0GwchQf+M0lvHfwjGjfP6fpmNDnpbu+t+DHfUtBGIANf3KbiJW+/D/aHMmMil/I8
-gATE4939NH5aVAe+LZ1BzF6KcPJN0FfjBvCg7SIIcyyzPgGLv6jVt2W8vCo4R0Ma
-/xD5jNVLCa/jnUxDFz53SaAvqU+C8meNWcuYNDSvFEoUf1FdPQ0JL0D1Xwo8bWuz
-OvxVbYnAl0f2SwefYCo5HRCDPnDedioDux0VPzwMIsW2WWbljs5lGSnt8tZpINxc
-FO8mOKO1YK/YzvS90YKOsp+vnoqG2LWKLIg5GtsgHuzAGnbVdN1KdwNkbBYS+ERc
-CQk0uWyqKHiSmj834aBzOOaEHGIxKg==
-=a+Tu
------END PGP SIGNATURE-----
-
---Sig_/87Z0/l_jCzW6qIQhqxZCqCL--
+Hopefully the slight pointer chasing here doesn't impact performance?
+XDP itself doesn't support checksum so perhaps we could always pass
+false?
 
