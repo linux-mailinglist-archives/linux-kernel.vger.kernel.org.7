@@ -1,142 +1,110 @@
-Return-Path: <linux-kernel+bounces-776877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA78B2D276
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:15:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6D4B2D269
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EA0517C46E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4A91C4290F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030AA27B332;
-	Wed, 20 Aug 2025 03:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3484274B2C;
+	Wed, 20 Aug 2025 03:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WETQhtDt"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU+5giPO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CFB258ECA;
-	Wed, 20 Aug 2025 03:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B2A26D4FB;
+	Wed, 20 Aug 2025 03:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755659519; cv=none; b=TpZas3IqZzbW5Ct41kfUtd+ijvEI6T3lkgi2y9KaS2BecTbXRcUCsT2Qz3Eor4wITEDYRlj6DGvzEf8Z0vfXSmoEeEEJUd+zThKiQqRRXoUz+gIwhhIZLcgZxF4DAeZQm2qozCNp2sBEhD8Zqlw36eABTG6lan4IctXX6XP3FPw=
+	t=1755659503; cv=none; b=t0D0sG5VXlYe2btJJL0BmiKunQCaGjQXv6YIe1tXcAaIcHkKZNOJvcP6cPmHf0Z24GQiU4IP/Fb1vjulR20F7Xebt6gMeJeemPAdmREdJtFwCz2XRmXfeqelgYfUGgMN86A5vS/QKgXynAts0u5WrNVEkJkm5MQZeJpgRDU+lDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755659519; c=relaxed/simple;
-	bh=46xGZNjG8EaGPJz9NcMXGPgRzezsUmAR9Xov6OuJmgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bRAyFxk2+nBvS62Vvt6wQsrtJlraf/7tBjJVGDkObi/kdr6nyPpQUgicCxoEIL3xJJji/B1tuiucs2+wikzGTugz/BTOHu79jpKjGOKYLt9u67YMRTU+aczyCJLs5BE3JauRgq5dJ6e47+HVPYabQTvaoQ+h4i+hO+667xJPYps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WETQhtDt; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e93370ab8so114206b3a.1;
-        Tue, 19 Aug 2025 20:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755659517; x=1756264317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=46xGZNjG8EaGPJz9NcMXGPgRzezsUmAR9Xov6OuJmgM=;
-        b=WETQhtDtKev5napiU7z+TvxqSRpbEq727w2xA3U7GWe7oo8oMi2UtJfXDpBe4LZWvg
-         RtWbDcA4MGPtIjJr3OKTk907z4Pk4yWShpAvexueNWovXq9gQKGKqMkkr+qL2o3nurra
-         Ynbwnin7m27wXcOXnjyYBtvNtkcLCli7BfEQAbB1CtcQNWbB2twfhX2LqkAbB1pkNEPc
-         Se6HqAmBy+6lg3zVXAGIQEXOlLLkHAUjSxxIWmdO9gF29MhV38DImdd6PfzvodEsd8l3
-         skZLTb/PdBRr2kg+l0Cv7wvWzeQMhwGXLzNu6ONSb20oDzYPqRq8FCpocn8koq3ssZGr
-         gZZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755659517; x=1756264317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46xGZNjG8EaGPJz9NcMXGPgRzezsUmAR9Xov6OuJmgM=;
-        b=MPMGVmuiJRnu/66vkfhYf+CkWKgdoR0hGSPVw9HOD9lrHYvTZMgbHBqbCtu8o232p5
-         za5VsuojuSiRodsQopvvU6IDNqOwwyu/OC2wI5B/yTJxBG1+VewOvDPNb4SVyOnXEV2V
-         NL4FjwfprKIawFE1J4VMZeWfcY+EuacnsrCrqNfVHLO7bhDW+KAHJTuZLqyFwgn8qFXo
-         bUj/N6sR/QwoRoKVDQuOly7hju+8Vd+7CgFk1/VcFDz4GUIRDKf7OrDP7Z7ti2plFqKy
-         MjOp9SDRq931bBCKCty1rHe5qI7u1CvgfJpiCCKAJ8bHGuRDTF3/Le4kqR5IUyotJMw2
-         ZtIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXqaurzr56P/wBrh9WUemH3IIuzvYPjQArRyYNdaqaGPHNguNTdwBCOD78zttplaR4l+Rig2kRVr071vfV1Q==@vger.kernel.org, AJvYcCXBOujDl5bMVomaN6TRtbzxI0IQXLfpI6Q0zl/bO2tqyERUE3wyGZfj/PvVsc3ZDVfYc5/SDeCHSkwj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2oZxmhroFjdIRbsNHbz0kpyY7IuRU1vVl+4L+iahzXTetjbrX
-	goz81XUEXwRYbI+TPGv66rx4TzJnYHSwbZN5+EAknVbBks5YSnZH67+F
-X-Gm-Gg: ASbGncsaNeo57zcJAPGWaXTzT6D9dxkb5q/mHhB6W9ol0TlUFoQdW9ldTNy4NjSAFo3
-	PtC/EhkL1ZH5nwdMVoSQm0v9InrpbGB902c6eyxxM6nUt+t0+fqZn4fTHycyVLd7Ws5tF1qho1U
-	doxrgz0vNf3yHYJiptAFmZPNQcSFRJbqE8SEKKF2B7lL/rhWA17xa6hXsH5Kyzep8c1vI4g0NRa
-	srl3aqghFkn/bVYuZ6mipvV/qO6RfEV7AvcA7b4UxHpc4w8CCCz3yNtYhY4hRUF3fdI5bQ8IHEb
-	jk45BmgOgDs4jlVJmM5GyBFC14kT80aeghlWO6BM7zq2Vy+965tklNp8sOAZWPksAJUqlAUDf+l
-	rADtj6aJSYoeO86UYGNB0zim9BzRvkjix
-X-Google-Smtp-Source: AGHT+IGp2pdDUdCnk4NysV4+/7dFzbTqnFkq3Dgxp7DmrVANBzOwII7pqXGfh4whvuVRvz4CnS7QgQ==
-X-Received: by 2002:a05:6a20:158b:b0:240:2371:d003 with SMTP id adf61e73a8af0-2431b92c4f8mr2303668637.28.1755659516990;
-        Tue, 19 Aug 2025 20:11:56 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640b91a6sm965342a12.49.2025.08.19.20.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 20:11:56 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 07FDC423F8CD; Wed, 20 Aug 2025 10:11:52 +0700 (WIB)
-Date: Wed, 20 Aug 2025 10:11:52 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux bcachefs <linux-bcachefs@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] Documentation: bcachefs: Add explicit title for idle
- work design doc
-Message-ID: <aKU8-Bb1iIeYJTZQ@archie.me>
-References: <20250820002218.11547-1-bagasdotme@gmail.com>
- <p7ocizi2jg36uvk64yy5mv5bzg3dyrvnosz5mhj5j373tzr7iz@txx5juyvhwzf>
- <aKUy_1IYtlKtLEbK@archie.me>
- <yyqgq3brwrstiaqydzv4ua5syesrg4gh7w4uhtwg3flhuxa4ji@7xciwgaluwux>
+	s=arc-20240116; t=1755659503; c=relaxed/simple;
+	bh=9s/5VxVNdQxhkf/qAlrxc4K30roBXgIz6GG233jUOfM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=d+vZxDakOLUXABIpejPW+fuvAkBd3aCCfEc+lEkd4HrkUzYk9LhJnXOf4uJX4ToOLwMoXGDR2Wg0n//K5vJaWdDrHQSbK5Ni4hD9DFvTNzzdPLfsiD8QWQZFIzHCLX8L1qKJmqg/SuOfTovm9+xiR1ah0yXCZJVcYMhDlQDGzzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU+5giPO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791F1C16AAE;
+	Wed, 20 Aug 2025 03:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755659502;
+	bh=9s/5VxVNdQxhkf/qAlrxc4K30roBXgIz6GG233jUOfM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hU+5giPOHyRNrJ2yyY8g7D/72PTQZXTjInkrdHqY7AJlQJ0qxrfxxdEmG+emAfm3a
+	 qRHkXMCFfMuJ3xLXtwJTxAxexzWYRRfxr7PqWOOJVda0FfyO4BV0iUvBC4kBb+BRIe
+	 BHzxlrkOyXoJhTaigxiZyVINCJD9Qzce99z3j8A9nzGq0LrQ6b7VnjwLZBP+MGqWAz
+	 cFMCOIX0xdBapFlj8OeFEeG0nZQWMtBQYt/I4JIQnXLr1Zry6V2dC3ifNyhwOgTxiK
+	 Ed7l91MTtAY1A5okA4kfVC9TOXrI5yXD9GIly7bTSkxwN8uuXpKUXgBnEGUPOESR+P
+	 Re+peDXhUQTgA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D74383BF58;
+	Wed, 20 Aug 2025 03:11:53 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8tdEDuhiKwPKhCWB"
-Content-Disposition: inline
-In-Reply-To: <yyqgq3brwrstiaqydzv4ua5syesrg4gh7w4uhtwg3flhuxa4ji@7xciwgaluwux>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 0/7] net: Convert to skb_dstref_steal and
+ skb_dstref_restore
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175565951224.3753798.14794372578854364006.git-patchwork-notify@kernel.org>
+Date: Wed, 20 Aug 2025 03:11:52 +0000
+References: <20250818154032.3173645-1-sdf@fomichev.me>
+In-Reply-To: <20250818154032.3173645-1-sdf@fomichev.me>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ayush.sawal@chelsio.com,
+ andrew+netdev@lunn.ch, gregkh@linuxfoundation.org, horms@kernel.org,
+ dsahern@kernel.org, pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de,
+ steffen.klassert@secunet.com, mhal@rbox.co, abhishektamboli9@gmail.com,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ herbert@gondor.apana.org.au
+
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 18 Aug 2025 08:40:25 -0700 you wrote:
+> To diagnose and prevent issues similar to [0], emit warning
+> (CONFIG_DEBUG_NET) from skb_dst_set and skb_dst_set_noref when
+> overwriting non-null reference-counted entry. Two new helpers
+> are added to handle special cases where the entry needs to be
+> reset and restored: skb_dstref_steal/skb_dstref_restore. The bulk of
+> the patches in the series converts manual _skb_refst manipulations
+> to these new helpers.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,1/7] net: Add skb_dstref_steal and skb_dstref_restore
+    https://git.kernel.org/netdev/net-next/c/c3f0c02997c7
+  - [net-next,v2,2/7] xfrm: Switch to skb_dstref_steal to clear dst_entry
+    https://git.kernel.org/netdev/net-next/c/c829aab21ed5
+  - [net-next,v2,3/7] netfilter: Switch to skb_dstref_steal to clear dst_entry
+    https://git.kernel.org/netdev/net-next/c/15488d4d8dc1
+  - [net-next,v2,4/7] net: Switch to skb_dstref_steal/skb_dstref_restore for ip_route_input callers
+    https://git.kernel.org/netdev/net-next/c/e97e6a1830dd
+  - [net-next,v2,5/7] staging: octeon: Convert to skb_dst_drop
+    https://git.kernel.org/netdev/net-next/c/da3b9d493ba2
+  - [net-next,v2,6/7] chtls: Convert to skb_dst_reset
+    https://git.kernel.org/netdev/net-next/c/3e31075a1194
+  - [net-next,v2,7/7] net: Add skb_dst_check_unset
+    https://git.kernel.org/netdev/net-next/c/a890348adcc9
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---8tdEDuhiKwPKhCWB
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 19, 2025 at 10:31:43PM -0400, Kent Overstreet wrote:
-> On Wed, Aug 20, 2025 at 09:29:19AM +0700, Bagas Sanjaya wrote:
-> > On Tue, Aug 19, 2025 at 09:08:22PM -0400, Kent Overstreet wrote:
-> > > > -Idle/background work classes design doc:
-> > > > +Idle/background work classes desiderata
-> > >=20
-> > > .....
-> > > what's going on with that spelling?
-> >=20
-> > I'm just suggesting a better title, though. Should I keep it or revert =
-back
-> > to design doc?
->=20
-> Revert back to design doc, please.
->=20
-> (I genuinely had not seen that word before; usually prefer to keep
-> things simple).
-
-OK, thanks!
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---8tdEDuhiKwPKhCWB
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaKU88wAKCRD2uYlJVVFO
-oyE1APsGEPC684fA9XtLC9UJesUUouHpdw2idaw5kcemFooD5AEA9UM/tRH1MY7v
-t0fiuI7JdBV5mS689gNHTswGzJ0FMgw=
-=Zpmb
------END PGP SIGNATURE-----
-
---8tdEDuhiKwPKhCWB--
 
