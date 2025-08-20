@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-778390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F61B2E4EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C12B2E4EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90641CC210F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DE115E38CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51F7279DC6;
-	Wed, 20 Aug 2025 18:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74302798F0;
+	Wed, 20 Aug 2025 18:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="yFKNgzIz"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLcZNj6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16217274650
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCBC3EA8D;
+	Wed, 20 Aug 2025 18:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755714479; cv=none; b=Dgn214PUyIoX3/StV3355igLqJXZGg0wxXpsl4h3H6RgaVx4TIXXhMIlL3GS/BthX8L/c28roW9HVpGxOB8jUSo0vWf8V00KZGW0D40hyRrmhU2CSvmikY08VczXcLuwkeXbBKKHMhk7TyT1RiBcCPlJOjOydfQYd7oEDRQkBdE=
+	t=1755714568; cv=none; b=IU7Copjxs4+wz8d8NEkNVJUUKAnQDG3X/d3IQVXzFH6a04DxWyyfoNWcKwFu3y/1lXr1p1tpy/YKgzGtEN3tE+B5uDVjj640znw0PR/rfpl4ZhHrjrolcYNlPznsD9hzZYVum6ivAUgAzWHQgW3RTDjJAEE6isiqK0Ifj0nQ8YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755714479; c=relaxed/simple;
-	bh=epICB6jVv4l91QaSUZCtYLQ+aCm+xHSlUTQPeCzhx+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IUiyN0zZ7ZwPHSKBN9D40uh47NW92lnMVoW8fLeLBLk59hHVWP+Es6EGHQ+Rk26gLXfNGQm+/YsiMxmBRZ+3ZxwIqD2U0q090mIov/K0B9n3ttEIKghaMKtzhNguYkuqO0ztmD9oreDwsL2Unm8L+v9G1edZBLx64hlb5QWHHAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=yFKNgzIz; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so970705e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:27:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1755714475; x=1756319275; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8NPVQBMSrrf3jhmLLcgVMSadSNRoC9cJI1+fcHorCmY=;
-        b=yFKNgzIzGMLu58HxIBl+pwfGwhBNqpn8/1CfyIE7wCzDFDo1ds+PAnFco75EH5eRp+
-         BTQHWvaoiLNI0vsRSO6ti1k+NprtN+F0wT1I4bQlNj5jngJMj7xzuRz+LVlUHBjC4G7X
-         mvTFhq9WVIdrZaNtDniWOKW+s5Nw55UzU5i8l4Fvctk4cMSAVdFZsu3KpL4iVBvtn4o1
-         rnJyfmlOncsP3yoY+j76TjSp4aJ7VvRr4c7fkE0fdzqVZuvycjWHJ4GVVydALaF5NJiF
-         +WF6iJkHG6x8T7XlWui9Mt90OswPTti3U6S4vtmkcp2c/Q9bQGV/NnHYh6miBfI/TzlK
-         CvpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755714475; x=1756319275;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8NPVQBMSrrf3jhmLLcgVMSadSNRoC9cJI1+fcHorCmY=;
-        b=RwzLtp8dt5D8r5SoHCeEVFKgdsLin3mOhRr8X37ZtQg4W/M1+agRjhYKhBU6OAoVos
-         SO6jPPlrRQpW5Ornuq0Rd1SSMsjQTg709YlBwK7U7YjKOYjt0l+g7AAM3g2bZQat/FR9
-         JQKNMDhsd+Bsa3xn5O8l4kT+d5mCemStDdRlpvWxBC+dI62hNDZ9R8T1Q/EkMgAAckF1
-         5rzLwb3sMgndExhtvFVt0Stxo14axzczjg8uocluG3xfGKLIQhdQTa6Yxo/jAeUNEeWo
-         P62mqdoQOxZmc0WEJIUrBBAs2CFM4IWWlaOUjcNQ2OK6cR1eqLSWYWQuLuR8iT0CdjZE
-         Z9fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXghWe1BxIqVxs7NHAwI9eVlJtsmS+rtuXNrgQAmTp3hM1mFp2xk2t8ojkeg2kF845b/IDHzfo7GX5Lh+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhVGEjNmeYiigKjveDfnTO0fXyUs7cmzXBhsvDmhbgnlc0JLuw
-	uVEJQLCuyPuTpo+ah+MTaUq8tNzl9ldwn6nCA9nG26gzqVBhEmvHjkepX42i/Tdn9hM=
-X-Gm-Gg: ASbGncslzHT6DJjxw02P9uMibYsGZo64XA6/IAQmcVAgiauTPOV65eWX7Sk3KUhfvDp
-	NjGsIW7UlUenhXeCCalxYK8zjmKlC7PETyf89o2gLVdYfG5RaTS0hCMuraGT+rO6PaaY2JaiBo8
-	brxG79OHDlmSrO/FEgKOms0FyuyFKAvforjbn/b3z6SJmXIrcQGBuN7mmkOQ5CHyPXG7mlmrHTT
-	wzEgajwr20Ev0D83RtjLONx6iVrhI6XOSium3A3x2h4PcISwPowAkm3n4+66Y/98fKYGhEf3ODU
-	jEkSbYIYHFIkHsEwFWhKMgLRM8xi/RHtwJnhd2d1RDPu/REFk+7q1j0O/Ybaqd32rUSvtFb9czJ
-	trxNVFNSRCJlrenqSHwTP4OHMjMBmvH0MJ1mfbUC/iEdhQoAITUVfhO0o4PDcD58s2GwFz7A9Qd
-	Sxoy3OorvuWCYLhNn2SXRCSCc=
-X-Google-Smtp-Source: AGHT+IGQKS3XqM+4Wd++Np9yalKPfzEFkK54upvYWtNTNYRTddwvhBFV5n3bYbpZpN+GCnzAAC724g==
-X-Received: by 2002:a05:600c:4a06:b0:43d:42b:e186 with SMTP id 5b1f17b1804b1-45b47ab2420mr21491235e9.8.1755714475079;
-        Wed, 20 Aug 2025 11:27:55 -0700 (PDT)
-Received: from ?IPV6:2a02:1807:2a00:3400:7e73:cf38:ddee:2b1d? ([2a02:1807:2a00:3400:7e73:cf38:ddee:2b1d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c310efsm46093025e9.7.2025.08.20.11.27.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 11:27:54 -0700 (PDT)
-Message-ID: <1a4a25d2-25a1-4d06-bba6-50f51cfbb619@hammernet.be>
-Date: Wed, 20 Aug 2025 20:27:53 +0200
+	s=arc-20240116; t=1755714568; c=relaxed/simple;
+	bh=0SzMeuxfOcNRRFI3htotgO4HznADUizoh4BxITQXZOk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jCA+lpBLuZc92b8XL+E2Mu3KB1uXwiSPYlXlufSkI93PROG8Si4w2XP0XGlDsjlm6y2hBPGZUdM7ONO/g87BqBW/PCx4HaQk0X56AoSC818gtn7Wh47IA7w4kv31LgljVI2aYiN/zcjqjC4D3sMKNLH+ncArO39wGOuBFwmsKV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLcZNj6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4560EC113CF;
+	Wed, 20 Aug 2025 18:29:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755714567;
+	bh=0SzMeuxfOcNRRFI3htotgO4HznADUizoh4BxITQXZOk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=HLcZNj6Xx1YnNkL7/pmzTjPZLtq7r0D4LDQY6xconSMbLOgivCj75OKolau7e4REA
+	 bnUKL52WlM4nwx13xRELTbxCXC2L6t8m2vZnPuh8al/NsXRc0qJKI3FoecooLrR+Tl
+	 3bn4dWdH7BxPD0EXItX7Q8rOPQIuWbcWQKdc+2q3V4d9xth5+BFV9BIX6Pb1JwWkqO
+	 4bviGi+1eYSf8BQRI5DkWPc4Ay7vScetR8CwefUTokTRcjlSdW9XIb6XVw18nCFqps
+	 D+CIRZFVdBMB0Zgql050NCJlSlq69VLxXfUFmm7wMrl2CIcrURIQ6ZNmXbwhZOKMZ8
+	 gKMbNJ2xTy/oQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/5] arm64/sme: Support disabling streaming mode via ptrace
+ on SME only systems
+Date: Wed, 20 Aug 2025 19:29:02 +0100
+Message-Id: <20250820-arm64-sme-ptrace-sme-only-v1-0-f7c22b2871f8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: dts: spacemit: add UART resets for Soc K1
-To: dlan@gentoo.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr
-Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, elder@riscstar.com
-References: <20250807191817.157494-1-hendrik.hamerlinck@hammernet.be>
-Content-Language: en-US
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-In-Reply-To: <20250807191817.157494-1-hendrik.hamerlinck@hammernet.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO8TpmgC/02NwQ6CMBBEf6XZs2u2VbDhVwyHUhZtIhS3SDSEf
+ 7cBD97mTTLzFkgsgRNUagHhOaQQhwz6oMDf3XBjDG1mMGQKuugLOunLM6aecZzEed5iHB4f1F1
+ jCyqJ2BHk/Sjchff2fa13Fn6+smLaS2hcYvSxD1Ol5vKY38Ub+FdXahNbsj9xN+Ku7Z2XiGS4Z
+ bKn1hUa6nX9AsHKlt/QAAAA
+X-Change-ID: 20250717-arm64-sme-ptrace-sme-only-1fb850600ea0
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Oleg Nesterov <oleg@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, 
+ David Spickett <david.spickett@arm.com>, 
+ Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
+ Luis Machado <luis.machado.foss@gmail.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-cff91
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2972; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=0SzMeuxfOcNRRFI3htotgO4HznADUizoh4BxITQXZOk=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBophQAKGsvgPWYjakzBehyIWbniPGNVwMRy7IMp
+ jdIOYBYrriJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaKYUAAAKCRAk1otyXVSH
+ 0FfpB/4gF/goxVk8COhAg47IRT39tjP26tJuUhi0mMHRnEDvhOuV8V+5vaQPbO+Xjfw8uHwDEuw
+ AytR+JXZJv9UotF4ySgcaTMJ9lAN3VkoESEmjNHN/PrPIY8Ft2h6FykhQQkTl6sTUmgZLkf5p2a
+ lmU78YM6rXOhB6s+g6Hw7CgUHNbH+2hTJYnVw87P+QiH7vR+njPZ13RFp4bd2hmzuszifcUywQ4
+ XPBtfXAUqiiQQtj5UtEhAwkFuKFHtg1e3SbHORXOIhavM2ymwS0hMMbpcloDqDAFtJF8pT8H1Nq
+ AZ61yit7STjWoeFvVjYeSLdXFpvSSoVtFP880qhy7P5a3sdO
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hello,
+Currently it is not possible to disable streaming mode via ptrace on SME
+only systems, the interface for doing this is to write via NT_ARM_SVE but
+such writes will be rejected on a system without SVE support. Enable this
+functionality by allowing userspace to write SVE_PT_REGS_FPSIMD format data
+via NT_ARM_SVE with the vector length set to 0 on SME only systems. Such
+writes currently error since we require that a vector length is specified
+which should minimise the risk that existing software is relying on current
+behaviour.
 
-On 8/7/25 21:18, Hendrik Hamerlinck wrote:
-> Add reset control entries for all UARTs in the SpaceMIT K1 SoC Device Tree.
-> UART0 was functional as it did not need a reset. But the other UARTs were
-> unable to access their registers without the reset being applied.
->
-> Although perhaps not needed I did add the reset for UART0 as well,
-> to ensure consistency across all UARTs. With the current-speed set to
-> 112500 baud rate, it matches the factory U-Boot settings.
-> This should not give issues with early console usage. But perhaps it could
-> be a good idea to let somebody else confirm this as well.
-I have tested this version for a while and no longer see the need for
-additional confirmation.
+Reads are not supported since I am not aware of any use case for this and
+there is some risk that an existing userspace application may be confused if
+it reads NT_ARM_SVE on a system without SVE. Existing kernels will return
+FPSIMD formatted register state from NT_ARM_SVE if full SVE state is not
+stored, for example if the task has not used SVE. Returning a vector length
+of 0 would create a risk that software could try to do things like allocate
+space for register state with zero sizes, while returning a vector length of
+128 bits would look like SVE is supported. It seems safer to just not make
+the changes to add read support.
 
->
-> Tested this locally on both Orange Pi RV2 and Banana Pi BPI-F3 boards. 
-> I enabled the UART9 and was able to use it successfully.
->
-Just a gentle reminder about this patch.
+It remains possible for userspace to detect a SME only system via the ptrace
+interface only since reads of NT_ARM_SSVE and NT_ARM_ZA will suceed while
+reads of NT_ARM_SVE will fail. Read/write access to the FPSIMD registers in
+non-streaming mode is available via REGSET_FPR.
 
-All UARTs are listed in the K1 device tree and probed by the 8250_of driver,
-but without reset lines most of them are non-functional. Adding the resets
-makes them usable when mapped to devices.
+The aim is is to make a minimally invasive change, no operation that would
+previously have succeeded will be affected, and we use a previously defined
+interface in new circumstances rather than define completely new ABI.
 
-This patch is limited to DTS reset handling, so UARTs are usable in the
-current state. I’m aware Alex Elder is assigned to the UART peripheral on
-the wiki and will likely handle the broader driver improvements (DMA,
-clock updates, full baud-rate support), so this should not interfere with
-that work.
+The series starts with some enhancements to sve-ptrace to cover some
+further corners of existing behaviours in order to reduce the risk of
+inadvertent changes, implements the proposed new ABI, then extends both
+sve-ptrace and fp-ptrace to exercise it.
 
-Thanks for taking a look!
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Mark Brown (5):
+      kselftest/arm64: Verify that we reject out of bounds VLs in sve-ptrace
+      kselftest/arm64: Check that unsupported regsets fail in sve-ptrace
+      arm64/sme: Support disabling streaming mode via ptrace on SME only systems
+      kselftst/arm64: Test NT_ARM_SVE FPSIMD format writes on non-SVE systems
+      kselftest/arm64: Cover disabling streaming mode without SVE in fp-ptrace
 
-Kind regards,
-Hendrik
+ Documentation/arch/arm64/sve.rst              |   5 +
+ arch/arm64/kernel/ptrace.c                    |  40 ++++++--
+ tools/testing/selftests/arm64/fp/fp-ptrace.c  |   5 +-
+ tools/testing/selftests/arm64/fp/sve-ptrace.c | 139 +++++++++++++++++++++++++-
+ 4 files changed, 177 insertions(+), 12 deletions(-)
+---
+base-commit: 768361ab16ce943ef3577cea204dc81aa4a47517
+change-id: 20250717-arm64-sme-ptrace-sme-only-1fb850600ea0
+prerequisite-change-id: 20250808-arm64-fp-trace-macro-02ede083da51
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
