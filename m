@@ -1,189 +1,179 @@
-Return-Path: <linux-kernel+bounces-778179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156C1B2E23E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75B9B2E243
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345D9189CC8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:26:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521AB189FDB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB2F32BF27;
-	Wed, 20 Aug 2025 16:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1339232A3FA;
+	Wed, 20 Aug 2025 16:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WuxZKwQY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LWwwQLx3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cySH4xMt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02413277BD;
-	Wed, 20 Aug 2025 16:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDD12869E;
+	Wed, 20 Aug 2025 16:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755707186; cv=none; b=bjSN+WMJiHk5JrawFxxWb5waECcLHVVG5Tn7sRPiX4iuuwuMGxOsXOYsrwudniyMRWDIsoCbESXaqJSWJ1Vwb+y4fy1n8JveWPmkZthts2ek3dQx/GeHY1zWGA7aNvKFkFXc8EXbNJRRwku8gJfhYbhUSeV5Zjg9z/kdhcHyMUw=
+	t=1755707245; cv=none; b=pz9nymdyrGDtzA+hh3Blk4cNslOEMsB94JeH9y5KzRE7AeJ/RdW++7uTZPJAWvUFpDJielHlomm+QCgCAD7XIYTRP3wTaai4tITAHlYiK13ouMAjYQCi+OpXtkc4SFQIBNLe9oQc06FncCqoBjy3rVkJ22xGse/e3CVVKLRIUiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755707186; c=relaxed/simple;
-	bh=T8j6isqYSCKhlG+L6afhHUWz7byFS3gj8o60l0dyXnA=;
+	s=arc-20240116; t=1755707245; c=relaxed/simple;
+	bh=6b0KLUQmQqEXc+dre+tvQYRy/Qs3uwqYitS62zeXa3Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JRzFvpEM2FF6Qw35mfO2WD4V7YdA0XxvJxOBh8ne/er4lqj3GVeU+YKd4Ntun8IGnfFuWcXkYm2+N74iy+vqpLsdV4mmw2zuHAxAfcm6X5C/FGYoiCyCWhjDTdfvEp6kyadcVks7SMx7DzMbQ9APkoPVyW+gM9VqdRFKXq7Crr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WuxZKwQY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LWwwQLx3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 20 Aug 2025 18:26:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755707182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vo8UrdLdOHJ5drKafQN3wALdlJqAJ1s63USmQ7QpBU4=;
-	b=WuxZKwQY3lG0qjgGSv/rkeqIV7PvX+cuQ8y+FQ0Z/XMWpFl6lpmKAMBMOPJMU4zskUY/eO
-	xGB5nZbYSgXMOcpMgt/ky+hS3p1fszDEK/O6HEskmKnVjdu/vOPMxCL5sHAXW8zhayUjX1
-	0xpwhGMJ6Vg1zZrmL7wBOe8QeZNOdwvhkv0OVSzvkF0yRH9Og0d+8nSWeu5xKDUo+rya++
-	FDh+mEyW5Ewchkyo+3jp/KduRs26ixt7WnXPQwvI2C7aL+h7x1kElHlb6xY3hAQJ+nlfgp
-	qXCWY6aUxeJcJCwghC/t/FfpLF37bJVMoP7+xfbt3lZ60W4J7F1MPR2R61mCrQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755707182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vo8UrdLdOHJ5drKafQN3wALdlJqAJ1s63USmQ7QpBU4=;
-	b=LWwwQLx3hva14oK38WOxyy/BZLuz6O3TYZFJ3kyxlLediNtw/cDmqTEMKkzABRCruzuShM
-	6elfKYb+aHQZIXAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Yunseong Kim <ysk@kzalloc.com>, linux-usb@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
- in vhci_urb_enqueue on PREEMPT_RT
-Message-ID: <20250820162621.UiUQUcp1@linutronix.de>
-References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
- <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
- <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
- <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
- <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
- <20250819110457.I46wiKTe@linutronix.de>
- <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
- <20250819145700.sIWRW7Oe@linutronix.de>
- <bb7e34b7-c06b-4153-ba6c-009b9f1b34d0@rowland.harvard.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvA/9R3XD9MkOSnRGHyityCeuBclrl2Gh6AqLvzo0K1uNh6TDb1SCQzYxDuccoseznTYPK5SkeF9lKDBph9DwfKBCcB7eK1OXAKd044nowF8DWhdc49GBx70yj+I9I5leoY8NjkW1qlPh3rXBK19BEnxShmyWVjp11gFa9HsJAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cySH4xMt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E417FC113CF;
+	Wed, 20 Aug 2025 16:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755707245;
+	bh=6b0KLUQmQqEXc+dre+tvQYRy/Qs3uwqYitS62zeXa3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cySH4xMtjGxHrDny/M0+6aZHAZ5pW2iDZqp19u4pVNLv2AgPVT/v+WT7sGMHByOGJ
+	 /BQ2dhHH8JWotA4bNrX8uJ1uGe3Wa1VWjZPinMYhRcNNHiIRgZuhSK98ghczmTrFGO
+	 jn/Xq6O0EHAzQor25Elsiy3yh1a+RuZ/VNHXTUSb4P+RdvhoUmccbiN6yHBCVi80et
+	 fMvSoif7REFgdclhPGwcsr0g64hTEc9nRvfhFH3aXTo4aLujwg3MW6lGZiCBfZKrfy
+	 LKWSBAGJtdu6nDzP7dl8f0TvIyBcQg7Lt0GwpVjgfFeSy0A2R2ckz6o2sUXGv9SLjt
+	 KJfH0YAOmX7Nw==
+Date: Wed, 20 Aug 2025 09:27:24 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Chunsheng Luo <luochunsheng@ustc.edu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: clarify extending writes handling
+Message-ID: <20250820162724.GL7942@frogsfrogsfrogs>
+References: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
+ <20250820021143.1069-1-luochunsheng@ustc.edu>
+ <20250820052043.GJ7942@frogsfrogsfrogs>
+ <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <bb7e34b7-c06b-4153-ba6c-009b9f1b34d0@rowland.harvard.edu>
+In-Reply-To: <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
 
-On 2025-08-19 11:44:52 [-0400], Alan Stern wrote:
-> dummy-hcd is different from the others; its use of local_irq_save() is=20
-> in the gadget giveback path, not the host giveback path.  We would need=
-=20
-> another audit similar to the one you did for ed194d136769, but this=20
-> time checking gadget completion handlers.
+On Wed, Aug 20, 2025 at 08:52:35AM +0200, Miklos Szeredi wrote:
+> On Wed, 20 Aug 2025 at 07:20, Darrick J. Wong <djwong@kernel.org> wrote:
+> 
+> > I don't understand the current behavior at all -- why do the callers of
+> > fuse_writeback_range pass an @end parameter when it ignores @end in
+> > favor of LLONG_MAX?  And why is it necessary to flush to EOF at all?
+> > fallocate and copy_file_range both take i_rwsem, so what could they be
+> > racing with?  Or am I missing something here?
+> 
+> commit 59bda8ecee2f ("fuse: flush extending writes")
+> 
+> The issue AFAICS is that if writes beyond the range end are not
+> flushed, then EOF on backing file could be below range end (if pending
+> writes create a hole), hence copy_file_range() will stop copying at
+> the start of that hole.
+> 
+> So this patch is incorrect, since not flushing copy_file_range input
+> file could result in a short copy.
 
-ach right.=20
+<nod> As far as Mr. Luo's patch is concerned, I agree that a strict "no
+behavior changes" patch should have changed the inode_in writeback_range
+call to:
 
-> > Only RH code completes directly, everything else is shifted to softirq
-> > context (for ehci/HCD_BH).
->=20
-> Correct (except that RH code always uses softirq context; it never=20
-> completes directly -- the kerneldoc is wrong and Greg just accepted a=20
-> patch to change it).
+	err = fuse_writeback_range(inode_in, pos_in, LLONG_MAX);
 
-Ach okay. I assumed it because the completion handler skips it. But that
-might be a shortcut because it already is in softirq context.
+Though if all callsites are going to pass LLONG_MAX in as @end, then
+why not eliminate the parameter entirely?
 
-> There are other places that disable local interrupts.  ehci-brcm.c does=
-=20
-> it in order to meet a timing constraint.  ohci-omap.c and ohci-s3c2410.c=
-=20
-> do it for reasons I'm not aware of (no comment about it in the source). =
-=20
-> gadget/legacy/inode.c does it in ep_aio_cancel() -- I can only guess=20
-> that this is somehow related to aio and not to anything in USB.
+What I'm (still) wondering is why was it necessary to flush the source
+and destination ranges between (pos + len - 1) and LLONG_MAX?  But let's
+see, what did 59bda8ecee2f have to say?
 
-the inode.c looks interesting.c. It got there in 75787d943ab37 ("[PATCH]
-USB: gadgetfs AIO support") which is 2004. So it might assume !SMP in
-terms of locking. Anyway=E2=80=A6
+| fuse: flush extending writes
+|
+| Callers of fuse_writeback_range() assume that the file is ready for
+| modification by the server in the supplied byte range after the call
+| returns.
 
-> > The closest thing we have is local_lock_irq() which maps to
-> > local_irq_disable() on !PREEMPT_RT systems. But I would prefer to avoid
-> > it because it serves a different purpose.
-> > What works is something like
-> > 	spin_lock_irqsave();
-> > 	spin_unlock();
-> > 	$SOMETHING
-> > 	spin_lock();
-> > 	spin_unlock_irqestore().
->=20
-> That's just silly.  We should have something like this:
->=20
-> #ifdef CONFIG_PREEMPT_RT
-> static inline void local_irqsave_nonrt(unsigned long flags) {}
-> static inline void local_irqrestore_nonrt(unsigned long flags) {}
-> static inline void local_irq_disable_nonrt() {}
-> static inline void local_irq_enable_nonrt() {}
-> #else
-> #define local_irqsave_nonrt	local_irqsave
-> #define local_irqrestore_nonrt	local_irqrestore
-> #define local_irq_disable_nonrt	local_irq_disable
-> #define local_irq_enable_nonrt	local_irq_enable
-> #endif
+Ok, so far so good.
 
-We managed over the years to get rid of each one of this instances/
-requirements. The RT tree used to have
-|#ifdef CONFIG_PREEMPT_RT_FULL
-|# define local_irq_disable_nort()     do { } while (0)
-|# define local_irq_disable_rt()               local_irq_disable()
-|#else
-|# define local_irq_disable_nort()     local_irq_disable()
-|# define local_irq_disable_rt()               do { } while (0)
-|#endif
+| If there's a write that extends the file beyond the end of the supplied
+| range, then the file needs to be extended to at least the end of the range,
+| but currently that's not done.
+|
+| There are at least two cases where this can cause problems:
+|
+|  - copy_file_range() will return short count if the file is not extended
+|    up to end of the source range.
 
-which was removed as of v4.16.7-rt1.
-The problem is usually that nobody knows why exactly interrupts are
-disabled an what purpose it serves. Often the reasons is no longer there
-but the code still does it.
+That suggests to me
 
-> > The question is why should $SOMETHING be invoked with disabled
-> > interrupts if the function was called from process context.
->=20
-> More to the point, out of all the possible reasons why $SOMETHING might=
-=20
-> be invoked with disabled interrupts, which of these reasons remain valid=
-=20
-> in RT builds and which don't?
+filemap_write_and_wait_range(inode_in, pos_in, pos_in + pos_len - 1)
 
-None (in most cases) because interrupt handler are threaded. So
-interrupts are never truly disabled.
-Adding the macros as you suggest would gain probably three users:
-- inode
-- dummy_hcd
-- vhci-hcd
+but I don't see why we need to flush more bytes than that?  The server's
+CFR implementation has all the bytes it needs to read the source data.
 
-Instead I would:
-- vhci I would suggest to remove the disabling and move its completion
-   to BH.
-- dummy_hcd I would suggest to either do the thing you called silly or
-  audit the gadgets and remove it.
-- inode I would suggest to keep it as-is and audit it properly later
-  once someone intends to use it. It would also give the opportunity to
-  clean up the commented locking statement.
+Hum.  But what if CFR is actually reflink?  I guess you'd want to
+buffer-copy the unaligned head and tail regions, and reflink the
+allocation units in the middle, but I still don't see why the fuse
+server needs more of the source file than (pos, pos + len - 1)?
 
-> Alan Stern
+|  - FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE will not extend the file,
+|    hence the region may not be fully allocated.
 
-Sebastian
+Hrm, ZERO | KEEP_SIZE is supposed to allow preallocation of blocks
+beyond EOF, or at least that's what XFS does:
+
+$ truncate -s 10m /mnt/test
+$ xfs_io -c 'fzero -k 100m 64k' /mnt/test
+$ filefrag -v /mnt/test
+Filesystem type is: 58465342
+File size of /mnt/test is 10485760 (2560 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:    25600..   25615:         24..        39:     16:      25600: last,unwritten,eof
+/mnt/test: 1 extent found
+
+as does ext4:
+
+$ truncate -s 10m /mnt/test
+$ xfs_io -c 'fzero -k 100m 64k' /mnt/test
+$ filefrag -v /mnt/test
+Filesystem type is: ef53
+File size of /mnt/test is 10485760 (2560 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:    25600..   25615:      33808..     33823:     16:      25600: last,unwritten,eof
+/mnt/test: 1 extent found
+
+(Notice that the 10M file has one extent starting at 100M)
+
+I can see why you'd want to flush the target range in case the fuse
+server has a better trick up its sleeve to zero the already-written
+region that isn't the punch-and-realloc behavior that xfs and ext4 have.
+But here too I don't see why the fuse server would need more than the
+target region.
+
+Though I think for both cases we end up flushing more than the target
+region, because the page cache rounds start down and end up to PAGE_SIZE
+boundaries.
+
+| Fix by flushing writes from the start of the range up to the end of the
+| file.  This could be optimized if the writes are non-extending, etc, but
+| it's probably not worth the trouble.
+
+<shrug> Was there a bug report associated with this commit?  I couldn't
+find the any hits on the subject line in lore.  Was this simply a big
+hammer that solved whatever corruption problems were occuring?  Or
+something found in code inspection?
+
+<confused>
+
+--D
+
+> Thanks,
+> Miklos
+> 
 
