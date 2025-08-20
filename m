@@ -1,131 +1,295 @@
-Return-Path: <linux-kernel+bounces-777920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59539B2DF2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA7AB2DF40
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6CC16C77A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148311C83ACC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D612926E17F;
-	Wed, 20 Aug 2025 14:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55542773DE;
+	Wed, 20 Aug 2025 14:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J2yK0oTj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="YxTp5PJa"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB9726E6E3;
-	Wed, 20 Aug 2025 14:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CFB2773D0
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699755; cv=none; b=ksG3vtSyb/tf5D72x89lWWsl/+iOByDnJG17N9s+GMP9Z4f+mHaAtsEqvzmXPN5HVZOsi3E+b89oI6DgFDf+kxY70JrWAa3LN8ORKFa3hxE853SY2nH2oSpKXKK47LFnu2pLzQDJqTP+8ekPvCi+xL78cyvb8l/rgB05pn2/OoA=
+	t=1755699812; cv=none; b=usxXjYXhA9YSRoNUsus7ia6IKZCDR4/rTxZIMmxAMDaVz6d96H9rqe/VA55NcleAnoTA+zdN7VCV08UCaID8szACYfuBnWtI1gsnzmhDU2Yriqo9RaqpIamJlxOSU1sHvo3XVPvEx52SX4IkEF4ZbeXO30Ktqb8HkrrL4mZokow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699755; c=relaxed/simple;
-	bh=QAJDNNcacklcnmE9//Drmqj4yQa/a/hxKW1vPWGJTDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VWCrz/YuGB6QOYQhvLSdRtHfQdAD+MBtB1wabDaTgP0l8IMGThAO18JB883deX8LwmXFOmf0WsU/JO9g5jWG7cnXP2Yiks/CzbMdJcCetCPfXNPSFbzxs2p6xt/b3K31Yu7O6RRJsOsNO0awR7KxV5w3AesQyXDtB9zJPqDYi7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J2yK0oTj; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755699754; x=1787235754;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QAJDNNcacklcnmE9//Drmqj4yQa/a/hxKW1vPWGJTDs=;
-  b=J2yK0oTj9IcpGA1aXb54zohYC60Ls15KD3uLBUG/Lol/FWb9eiK9DKzb
-   lU6n9ez7TAk3/zQhAaAm3fdRwwkxHbAc/Ipv1qMrQIbERJynNvTs3EQV2
-   Pa7FIjsATERUsq+rMCZQ5XpMvKlUWNfOcD+qXVy01p2Bf2x6CwQF6lvaq
-   izRP2TPYHhF46MySoUgfxlkpZeSeIif0FHkQxzLwzM+82tfWhTq+Kp0U0
-   a/I9UNMmaAni+RbJvJLUheo+1BT438yCpaaa2aNVHHNNnbaCKTBIz0/V/
-   eQ6qrN06T6hWVPWOHRKtbmSZwE+8ZhQimqQGaNhLySsqNI8D0AUNDinSb
-   A==;
-X-CSE-ConnectionGUID: WkeeuyvxQKSiv5N7chz17Q==
-X-CSE-MsgGUID: psphQpjZQGm8dlRDUUCI9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="56995350"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="56995350"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:22:33 -0700
-X-CSE-ConnectionGUID: jx42DkcQRPSYXNFDbbDNHA==
-X-CSE-MsgGUID: Ftft4ESETIuOd42V2j0zsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="172405159"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:22:31 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uojhr-00000006xKN-3fNC;
-	Wed, 20 Aug 2025 17:22:27 +0300
-Date: Wed, 20 Aug 2025 17:22:27 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Haixu Cui <quic_haixcui@quicinc.com>
-Cc: harald.mommer@oss.qualcomm.com, quic_msavaliy@quicinc.com,
-	broonie@kernel.org, virtio-dev@lists.linux.dev,
-	viresh.kumar@linaro.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hdanton@sina.com,
-	qiang4.zhang@linux.intel.com, alex.bennee@linaro.org,
-	quic_ztu@quicinc.com
-Subject: Re: [PATCH v4 2/3] virtio-spi: Add virtio-spi.h
-Message-ID: <aKXaI0SAAMaHMZM9@smile.fi.intel.com>
-References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
- <20250820084944.84505-3-quic_haixcui@quicinc.com>
+	s=arc-20240116; t=1755699812; c=relaxed/simple;
+	bh=JLmPQUDdMFVJ4Wsl2Lbe7VQmcdMhJvL3lGO+VFk1YiQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=qQ0kvNbyZ4gWzz1WwcQZwhgQVi3byRpb2A0iGbMjjZbSJPjlxTtMZP2pEXkgYJXs3T/sNt0Gl3UEFTTg+qDtu0h+P3LYHZsEW97jykSL4XVJ/SgoQtR2vQzWYTVzjc2cjq/DmZLCkeHtCyUK7QJ8vtcswcETG3yCG4Qxrn7btwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=YxTp5PJa; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820084944.84505-3-quic_haixcui@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1755699797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=up1RSHC3bmjFdtojDRArO6p3YgGDPNjjN84qZWu2NY8=;
+	b=YxTp5PJawb9k0Hw6LVfv5aAhiNilnjc+DPn0rsU0/xrtQ3oMZLFm3T/eqyHbhwaquns2sB
+	HjDlw1zgpsHhqG9TGoTjN97n6XIIQ65WLIK32Oe9d9dT7Co27Rq+c3qUspGPgX8HmHPdn3
+	rFA5NhDKnJDiu6Gl1OVSiQ7yPwn6F5gtI47PHi/UpG8FrbqOOaZ5/YUhXUvJSZ/PKn0D31
+	W3zBWOpSZzolrvjDCzfWdwRPPUXihkT2xlbME9Fydx+UTTGnRpTljcoh9SQV4/StuEgsyU
+	LT2j+EdTzZxQOshziUzXx0An7kHYyuUbDLr2IIGBrhxLcpvBx8hpOQ3kwTsHqA==
+Content-Type: multipart/signed;
+ boundary=698049d7621a3f79bb424488419fcc815111d0a5c6d83ffbae678ca86f50;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 20 Aug 2025 16:23:06 +0200
+Message-Id: <DC7BMRFU4CZP.1R3PY4OJVGJHE@cknow.org>
+To: "Sebastian Reichel" <sebastian.reichel@collabora.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Zhang Rui" <rui.zhang@intel.com>, "Lukasz Luba" <lukasz.luba@arm.com>,
+ "Heiko Stuebner" <heiko@sntech.de>
+Cc: <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <kernel@collabora.com>
+Subject: Re: [PATCH] thermal: rockchip: shut up GRF warning
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+References: <20250818-thermal-rockchip-grf-warning-v1-1-134152c97097@kernel.org>
+In-Reply-To: <20250818-thermal-rockchip-grf-warning-v1-1-134152c97097@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 20, 2025 at 04:49:43PM +0800, Haixu Cui wrote:
-> Add virtio-spi.h header for virtio SPI.
+--698049d7621a3f79bb424488419fcc815111d0a5c6d83ffbae678ca86f50
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-...
+Hi Sebastian,
 
-> +/**
+On Mon Aug 18, 2025 at 7:26 PM CEST, Sebastian Reichel wrote:
+> Most of the recent Rockchip devices do not have a GRF associated
+> with the tsadc IP. Let's avoid printing a warning on those devices.
 
-This is kernel-doc comment...
+Thanks for this patch :-)
 
-> + * struct virtio_spi_config - All config fields are read-only for the
-> + * Virtio SPI driver
-
-> + */
-
-...
-
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/thermal/rockchip_thermal.c | 53 ++++++++++++++++++++++++++++++++=
++-----
+>  1 file changed, 46 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchi=
+p_thermal.c
+> index 3beff9b6fac3abe8948b56132b618ff1bed57217..1e8091cebd6673ab39fa0c4de=
+e835c68aeb7e8b5 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -50,6 +50,18 @@ enum adc_sort_mode {
+>  	ADC_INCREMENT,
+>  };
+> =20
 > +/*
-> + * @chip_select_id: chipselect index the SPI transfer used.
-> + *
-
-But this one (besides having tons of unneeded blank lines) is not. Why is this
-inconsistency?
-
+> + * The GRF availability depends on the specific SoC
+> + * GRF_NONE: the SoC does not have a GRF associated with the tsadc
+> + * GRF_OPTIONAL: the SoC has a GRF, but the driver can work without it
+> + * GRF_MANDATORY: the SoC has a GRF and it is required for proper operat=
+ion
 > + */
-
-...
-
-> +struct spi_transfer_result {
-> +#define VIRTIO_SPI_TRANS_OK	0
-> +#define VIRTIO_SPI_PARAM_ERR	1
-> +#define VIRTIO_SPI_TRANS_ERR	2
-> +	__u8 result;
+> +enum tsadc_grf_mode {
+> +	GRF_NONE,
+> +	GRF_OPTIONAL,
+> +	GRF_MANDATORY,
 > +};
+> +
+>  #include "thermal_hwmon.h"
+> =20
+>  /**
+> @@ -97,6 +109,9 @@ struct rockchip_tsadc_chip {
+>  	enum tshut_mode tshut_mode;
+>  	enum tshut_polarity tshut_polarity;
+> =20
+> +	/* GRF availability */
+> +	enum tsadc_grf_mode grf_mode;
+> +
+>  	/* Chip-wide methods */
+>  	void (*initialize)(struct regmap *grf,
+>  			   void __iomem *reg, enum tshut_polarity p);
+> @@ -1099,6 +1114,8 @@ static const struct rockchip_tsadc_chip px30_tsadc_=
+data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 2, /* 2 channels for tsadc */
+> =20
+> +	.grf_mode =3D GRF_MANDATORY,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_CRU, /* default TSHUT via CRU */
+>  	.tshut_temp =3D 95000,
+> =20
+> @@ -1123,6 +1140,8 @@ static const struct rockchip_tsadc_chip rv1108_tsad=
+c_data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 1, /* one channel for tsadc */
+> =20
+> +	.grf_mode =3D GRF_NONE,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1148,6 +1167,8 @@ static const struct rockchip_tsadc_chip rk3228_tsad=
+c_data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 1, /* one channel for tsadc */
+> =20
+> +	.grf_mode =3D GRF_NONE,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1173,6 +1194,8 @@ static const struct rockchip_tsadc_chip rk3288_tsad=
+c_data =3D {
+>  	.chn_offset =3D 1,
+>  	.chn_num =3D 2, /* two channels for tsadc */
+> =20
+> +	.grf_mode =3D GRF_NONE,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1198,6 +1221,8 @@ static const struct rockchip_tsadc_chip rk3328_tsad=
+c_data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 1, /* one channels for tsadc */
+> =20
+> +	.grf_mode =3D GRF_NONE,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_CRU, /* default TSHUT via CRU */
+>  	.tshut_temp =3D 95000,
+> =20
+> @@ -1222,6 +1247,8 @@ static const struct rockchip_tsadc_chip rk3366_tsad=
+c_data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 2, /* two channels for tsadc */
+> =20
+> +	.grf_mode =3D GRF_OPTIONAL,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1247,6 +1274,8 @@ static const struct rockchip_tsadc_chip rk3368_tsad=
+c_data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 2, /* two channels for tsadc */
+> =20
+> +	.grf_mode =3D GRF_NONE,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1272,6 +1301,8 @@ static const struct rockchip_tsadc_chip rk3399_tsad=
+c_data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 2, /* two channels for tsadc */
+> =20
+> +	.grf_mode =3D GRF_OPTIONAL,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1297,6 +1328,8 @@ static const struct rockchip_tsadc_chip rk3568_tsad=
+c_data =3D {
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 2, /* two channels for tsadc */
+> =20
+> +	.grf_mode =3D GRF_OPTIONAL,
+> +
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1321,6 +1354,7 @@ static const struct rockchip_tsadc_chip rk3576_tsad=
+c_data =3D {
+>  	/* top, big_core, little_core, ddr, npu, gpu */
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 6, /* six channels for tsadc */
+> +	.grf_mode =3D GRF_NONE,
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1345,6 +1379,7 @@ static const struct rockchip_tsadc_chip rk3588_tsad=
+c_data =3D {
+>  	/* top, big_core0, big_core1, little_core, center, gpu, npu */
+>  	.chn_offset =3D 0,
+>  	.chn_num =3D 7, /* seven channels for tsadc */
+> +	.grf_mode =3D GRF_NONE,
+>  	.tshut_mode =3D TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC */
+>  	.tshut_polarity =3D TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+>  	.tshut_temp =3D 95000,
+> @@ -1572,7 +1607,7 @@ static int rockchip_configure_from_dt(struct device=
+ *dev,
+>  				      struct device_node *np,
+>  				      struct rockchip_thermal_data *thermal)
+>  {
+> -	u32 shut_temp, tshut_mode, tshut_polarity;
+> +	u32 shut_temp, tshut_mode, tshut_polarity, ret;
+> =20
+>  	if (of_property_read_u32(np, "rockchip,hw-tshut-temp", &shut_temp)) {
+>  		dev_warn(dev,
+> @@ -1621,12 +1656,16 @@ static int rockchip_configure_from_dt(struct devi=
+ce *dev,
+>  		return -EINVAL;
+>  	}
+> =20
+> -	/* The tsadc wont to handle the error in here since some SoCs didn't
+> -	 * need this property.
+> -	 */
+> -	thermal->grf =3D syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+> -	if (IS_ERR(thermal->grf))
+> -		dev_warn(dev, "Missing rockchip,grf property\n");
+> +	if (thermal->chip->grf_mode !=3D GRF_NONE) {
+> +		thermal->grf =3D syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+> +		if (IS_ERR(thermal->grf)) {
+> +			ret =3D PTR_ERR(thermal->grf);
+> +			if (thermal->chip->grf_mode =3D=3D GRF_OPTIONAL)
+> +				dev_warn(dev, "Missing rockchip,grf property\n");
+> +			else
+> +				return dev_err_probe(dev, ret, "Missing rockchip,grf property\n");
+> +		}
+> +	}
+> =20
+>  	rockchip_get_trim_configuration(dev, np, thermal);
 
-And this data type has no doc at all...
+I tested this patch on the following devices and found no regressions:
+- Rock64 (rk3328)
+- RockPro64 (rk3399)
+- Quartz64 Model B (rk3566)
+- NanoPi R5S (rk3568)
+
+When tested on my Rock 5B (rk3588), I no longer saw this warning:
+ =20
+  rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
+
+And found no regressions, so
+
+Tested-by: Diederik de Haas <didi.debian@cknow.org>
+
+Cheers,
+  Diederik
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+--698049d7621a3f79bb424488419fcc815111d0a5c6d83ffbae678ca86f50
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKXaTgAKCRDXblvOeH7b
+bqblAP4jPqaWdIPCDRsvkAv1AAHlOf1IltDXJI2S5FepeV2a9QD/fty5wxSUpUMf
+gIvJ32RXC5nU6+id1xZfkx099JFU0As=
+=74NQ
+-----END PGP SIGNATURE-----
+
+--698049d7621a3f79bb424488419fcc815111d0a5c6d83ffbae678ca86f50--
 
