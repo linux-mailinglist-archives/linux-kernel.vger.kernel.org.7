@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-777775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EDB4B2DDAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:23:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E387B2DD93
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B384E0993
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD8D1C808BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874DE31DDA7;
-	Wed, 20 Aug 2025 13:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D6331DD8F;
+	Wed, 20 Aug 2025 13:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b="ciWRj656";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RqcYhAWr"
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ENwthEb+"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9D931CA7D;
-	Wed, 20 Aug 2025 13:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E47F17BEBF;
+	Wed, 20 Aug 2025 13:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696071; cv=none; b=mgHUx593iT8QXksCfotDvF0qlYPrK/k3u1NBtv+DLAp063VrmtvFdWTTL7izvvZKXK+Kg1JOjW1YHGWne2x2kDsU/rioqgOt1KiQMipJUX2ZUSJwyczY+PDiyD7/1Rl+CmLQh3E5mJ1tpMkgi8Ue3yNUy3XraLtwuf1mhfK8lFk=
+	t=1755695896; cv=none; b=omWgzDg6218xhtbvSqK+3RRIAdHo3rkxYgD1vbmJyNlSn7JvY5C5eNC80WbtlqGeq2aH29ci6uYyAgOSD8fNeuzfQKg2Q6+psU5ejwHEMmZXBk1nEAu7YD6xPCN57KU4cIXQj932oMn3ryh9vJlDJHmv4j4FMVdqIAV3DtKSAtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696071; c=relaxed/simple;
-	bh=XsGOUexS48UBQOOs/YAItiCIMtGhVhIMcpJQIr9hATU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tA06qKSHHOHB35AJM0YCEZ7BIivAlz8gfJyGRiHXXV+1cfdoV9i0NGEH8ucNAlRRsfAcZTcFVB1aNf5pQzSn2M3NjQ3RcTlyv6SxZkYXeLpfKnDedlZ0YFP6hZxmqfbZcapMuw/RRVku8KgA5G9hwwlSph+8hiuFkDnZ7xsRXrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com; spf=pass smtp.mailfrom=debanilchowdhury.com; dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b=ciWRj656; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RqcYhAWr; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debanilchowdhury.com
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id 6F91E1300BA1;
-	Wed, 20 Aug 2025 09:21:07 -0400 (EDT)
+	s=arc-20240116; t=1755695896; c=relaxed/simple;
+	bh=DOeocE2TSMK2zhBIMAISf0bA1p+4iSO7xk5SPu2tIfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Doj94pHRqjC/H+u/+WvnzhYhYnRJZzTWNcvxh5XTCFjhKN9GnT57E8J0BAw4tYUmI5I3M8tcb6sFcYZRbovi46/vrDSYCAuarUwwGQ166r6h2+IU433DvPr+hAndKQQ04iJh2SppphJ/8pOS47F8ex/KCKJjRt7alfiXmf3ihM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ENwthEb+; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 8EE3714003B9;
+	Wed, 20 Aug 2025 09:18:13 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Wed, 20 Aug 2025 09:21:07 -0400
+  by phl-compute-12.internal (MEProxy); Wed, 20 Aug 2025 09:18:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	debanilchowdhury.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
-	 t=1755696067; x=1755699667; bh=nEImHcQLvkNTCdFF2RtXX95NV2iRh1V3
-	J2yvcVtfk74=; b=ciWRj656q5wiX4lnyxquvE56D6HFFEZxvfkLf4mPHt+ijgJN
-	Hx8RaXReL73dow2oljr1DsQby7Og6Yu5Ihex8EghsBYpr65qfI76uyZauHgEbq0K
-	1TNUpNHYiYZrxKhdBWrCSm37Ck0kDBgw/qKBT+vwymH7qLz/pYSj5XdCHCbVVY6L
-	0658WvOzIzl31plVzIY1Osi72cKjGfzUeI4w2XynHS/Sj7WnCidV2TIw+629btXK
-	mY7EbRLslbuk/KcsqLx4o/JlV6fXMH98pqS8ysOktZGDtp2vvZTXhqqj5tV8cyhI
-	xgb8JTLPRMmJAGQaTBkSWFDZ44UXm+2Uz0LtlA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1755696067; x=1755699667; bh=nEImHcQLvkNTCdFF2RtXX95NV2iR
-	h1V3J2yvcVtfk74=; b=RqcYhAWrQaCdXoeWDP6EJnvareF2jWFHDlGgseqOkBUR
-	HjFoVIoDus2utHLOEtUf+Y7d9Km2K1nsbImjPHL77TLPMRowyOUrojAhyLdslOs2
-	E1QqpUe958HOqVP5441NY9OKQyn3Behma4r5xqrrIC113tZi9Efjypf9DaMkR/sU
-	I7w5s9/Q4aanxllTCju7AzZ08Lq+kaSyLuhBH2WbZlILut/TyFqyKqedYvHkvH41
-	/uVXA5cTeXw9n78kHpgCGAwcC6kvcVLZ2fwfoCsVBGdvMaAxOcDt3lKE1+nwFgUn
-	sb6aNnlrql6lpcimwteeMfc/iRhsw7BAKLWtu0WXeA==
-X-ME-Sender: <xms:wsulaAH0vk_vJo1M2qtDeSPc3igywCTFuzdQ9eo0_fH6CUseFmiPjw>
-    <xme:wsulaB8OwUkVyz8TF0wLXf2vVyFVP0lH79cT83YZ7BB2IbMEjc66NwhNkgFsxxEq3
-    DiGWBwf25OQU8bmiv0>
-X-ME-Received: <xmr:wsulaBmwW7fBcKPzWe3wNvg1aMsJnOVde3f0E58G7UcsVbMUjIH9clMz88awdLXzI6KCc41X>
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1755695893; x=1755782293; bh=dzEYBhueTWc89/MISWU3UFuCYVd1T4k9Kq6
+	zJAOupw0=; b=ENwthEb+Ky21vZLrX+qnv+f6AyHsIx3sG86siSeLtTHUVMBax0t
+	F8LjXTrl6bDCwwkpazNZ1JKKI8SUZfUdNRJQTYAB6zwsMzCxcsyjC2rfilufvjJm
+	fHeFGSgxSoLbr4Hv4hvFxdxN9my4gqkHxG8mHZLLoiXw+Yo7Lg0dyOTqSIXZ/apW
+	5lOzUhGnEstpFRCgGnhwNFkxOEQ7f4wue0v29runO6+kn2HMc6y8BUxk/rqwgkXJ
+	616kKKbNb+2n8TMJ7Cl52mtSsn1K2cWoPbv971dmy+sHg6cv3Wq9+ezIROl1ukYW
+	150wojWK9rXge+VNLyR5fzzopoHYCqV7npg==
+X-ME-Sender: <xms:FculaCYGrrWPF0axijoXPinf3zDEc23SrYUvRpMwO2-YuvP5dgLb4w>
+    <xme:FculaNAdgcf33lpjBApqpzPojukmSZwNBvB8-ClHh9iWZgawiGXRqjlknLbOU6PhI
+    2eZLay7Xo5c95g>
+X-ME-Received: <xmr:FculaKmM61xFbleSxj4UZnpMkvqtc-1v_Vd-iHYpfmWnjhGXUPLIvTr6zhBR>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekgeejucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffogggtgfesthekredtre
-    dtjeenucfhrhhomhepkhgvrhhnvghluggvvhesuggvsggrnhhilhgthhhofiguhhhurhih
-    rdgtohhmnecuggftrfgrthhtvghrnhepgefhleetiedthfelhfehtdevgfejtdeigfegte
-    fgfefhieffheekudevgeelkeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomhepkhgvrhhnvghluggvvhesuggvsggrnhhilhgthhhofiguhhhurh
-    ihrdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepshhkhhgrnheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtth
-    hopehjuggvlhhvrghrvgesshhushgvrdgtohhmpdhrtghpthhtoheplhhinhhugiesrhho
-    vggtkhdquhhsrdhnvghtpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtg
-    hpthhtohepnhhinhgrugeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhhfihmohhnsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkvghrnhgvlhdqmhgvnhhtvggvsheslhhishhtshdrlhhinhhugidruggvvhdprhgtph
-    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:wsulaMCLF0eZsrnfi0qwk3-W9DxUZ_RiW0cB2oiHJ25xZ7Qvmp3CXg>
-    <xmx:wsulaKVrxn4by8ihI64CdoWc1OaGHn6ki7kQXR_u14tVZgZcwfk12Q>
-    <xmx:wsulaK9Mn1kPljByIwh0tQ7GFKaZ6cc7QjtU35EwPCUD6xjS6Jv_PA>
-    <xmx:wsulaMQdu-0itt_oaNGTUeUyRsl87GQp7GtlDLsM1oPasL02aOtBbw>
-    <xmx:w8ulaEZEjBugC0-U0GT8K1mOIzY4LG9R1SANBC6j34t-nG15ZqfSZRmc>
-Feedback-ID: i77364836:Fastmail
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
+    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhephefhtdejvdeiffefudduvdffgeetieeigeeugfduffdvffdtfeehieejtdfhjeek
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhn
+    sggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrhhghh
+    hoshhhsegtihhstghordgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrihgughgvsehlihhsthhsrdhlihhnuhig
+    qdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrhhinhhmohihpghgsehhoh
+    htmhgrihhlrdgtohhmpdhrtghpthhtohepphgsrhhishhsvghtsegtihhstghordgtohhm
+    pdhrtghpthhtoheprhgriihorhessghlrggtkhifrghllhdrohhrgh
+X-ME-Proxy: <xmx:FculaOx3A_6SA5pGhBWbRiMK4Rv60ltL88f9wjl8fyvvfTSvU-KhVw>
+    <xmx:FculaEQ1se9V8cAT_kw_d2MzpUhDW8u0-7FP4MopGEVwFX1JJczLRQ>
+    <xmx:FculaG9UPX8vb_kM0Zr0onUtfO7JIAFIGY4uZPGw6PHKxS2dNiAjPw>
+    <xmx:FculaCurBEBKqQ2g7j75PTVVDoj8tlOEatuaO6tpPTfNfJRH0kBslA>
+    <xmx:FculaMqjobtMGghfqMasYWhjjWBzFWAVbdBa_9J9KjRWlAEW__FgvqKB>
+Feedback-ID: i494840e7:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 20 Aug 2025 09:21:03 -0400 (EDT)
-From: kerneldev@debanilchowdhury.com
-To: skhan@linuxfoundation.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net
-Cc: ninad@linux.ibm.com,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Debanil Chowdhury <kerneldev@debanilchowdhury.com>
-Subject: [PATCH] Fix typos in hwmon
-Date: Wed, 20 Aug 2025 18:48:08 +0530
-Message-ID: <20250820132033.11377-1-kerneldev@debanilchowdhury.com>
-X-Mailer: git-send-email 2.49.1
+ 20 Aug 2025 09:18:12 -0400 (EDT)
+Date: Wed, 20 Aug 2025 16:18:10 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: Mrinmoy Ghosh <mrghosh@cisco.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	bridge@lists.linux-foundation.org,
+	Mrinmoy Ghosh <mrinmoy_g@hotmail.com>,
+	Patrice Brissette <pbrisset@cisco.com>, razor@blackwall.org
+Subject: Re: [PATCH] net: bridge: vxlan: Protocol field in bridge fdb
+Message-ID: <aKXLEiY8gd0sNGrW@shredder>
+References: <20250818175258.275997-1-mrghosh@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818175258.275997-1-mrghosh@cisco.com>
 
-From: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
++ Nik
 
-Fixed some typos ("Critial" → "Critical") in hwmon documentation.
+Please use scripts/get_maintainer.pl when submitting a patch.
 
-Reported-by: codespell
-Signed-off-by: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
----
- Documentation/hwmon/crps.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, Aug 18, 2025 at 05:52:58PM +0000, Mrinmoy Ghosh wrote:
+> This is to add optional "protocol" field for bridge fdb entries.
+> The introduction of the 'protocol' field in the bridge FDB for EVPN Multihome, addresses the need to distinguish between MAC addresses learned via the control plane and those learned via the data plane with data plane aging. Specifically:
+> * A MAC address in an EVPN Multihome environment can be learned either through the control plane (static MAC) or the data plane (dynamic MAC with aging).
+> * The 'protocol' field uses values such as 'HW' for data plane dynamic MACs and 'ZEBRA' for control plane static MACs.
+> * This distinction allows the application to manage the MAC address state machine effectively during transitions, which can occur due to traffic hashing between EVPN Multihome peers or mobility of MAC addresses across EVPN peers.
+> * By identifying the source of the MAC learning (control plane vs. data plane), the system can handle MAC aging and mobility more accurately, ensuring synchronization between control and data planes and improving stability and reliability in MAC route handling.
+> 
+> This mechanism supports the complex state transitions and synchronization required in EVPN Multihome scenarios, where MAC addresses may move or be learned differently depending on network events and traffic patterns.
 
-diff --git a/Documentation/hwmon/crps.rst b/Documentation/hwmon/crps.rst
-index 87380b496..d42ea59d2 100644
---- a/Documentation/hwmon/crps.rst
-+++ b/Documentation/hwmon/crps.rst
-@@ -43,7 +43,7 @@ curr1_label		"iin"
- curr1_input		Measured input current
- curr1_max		Maximum input current
- curr1_max_alarm		Input maximum current high alarm
--curr1_crit		Critial high input current
-+curr1_crit		Critical high input current
- curr1_crit_alarm	Input critical current high alarm
- curr1_rated_max		Maximum rated input current
- 
-@@ -51,7 +51,7 @@ curr2_label		"iout1"
- curr2_input		Measured output current
- curr2_max		Maximum output current
- curr2_max_alarm		Output maximum current high alarm
--curr2_crit		Critial high output current
-+curr2_crit		Critical high output current
- curr2_crit_alarm	Output critical current high alarm
- curr2_rated_max		Maximum rated output current
- 
--- 
-2.49.1
+[...]
 
+> Signed-off-by: Mrinmoy Ghosh <mrghosh@cisco.com>
+> Co-authored-by: Mrinmoy Ghosh <mrinmoy_g@hotmail.com>
+> Co-authored-by: Patrice Brissette <pbrisset@cisco.com>
+> ---
+>  drivers/net/vxlan/vxlan_core.c      | 132 ++++++++++++++--------------
+>  drivers/net/vxlan/vxlan_private.h   |  21 +++--
+>  drivers/net/vxlan/vxlan_vnifilter.c |  11 +--
+>  net/bridge/br.c                     |   4 +-
+>  net/bridge/br_fdb.c                 |  52 ++++++++---
+>  net/bridge/br_private.h             |   5 +-
+>  6 files changed, 127 insertions(+), 98 deletions(-)
+
+Please read these two documents and make changes accordingly before
+submitting a new version:
+
+https://docs.kernel.org/process/submitting-patches.html
+https://docs.kernel.org/process/maintainer-netdev.html
+
+At the very least the patch should be split to a bridge patch and a
+VXLAN patch. I will provide more comments later this week.
+
+Thanks
 
