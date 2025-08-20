@@ -1,109 +1,216 @@
-Return-Path: <linux-kernel+bounces-778340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B700B2E46A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CBAB2E463
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9F7A051DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:49:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C485E2701
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9A2275861;
-	Wed, 20 Aug 2025 17:49:02 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9092737E8;
+	Wed, 20 Aug 2025 17:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtLF7o4T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D8E26B2D7;
-	Wed, 20 Aug 2025 17:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDE25A352;
+	Wed, 20 Aug 2025 17:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712141; cv=none; b=Vj868QohH2ZzdEmG44K+0SSyU11L2FasdQbFIwYYXKjgSxvYNzmfJuLkAQWQP0lT8zwvxw/Dc62jjxud1cIDN5OUVxXfso3Tkz4qLj4sHxQ2eDaDOoV+dJojDXJ/b4WwXOVQanw6Vfms2PbYTkocz5h/OJoOQgehf5d/OXrQQtE=
+	t=1755712238; cv=none; b=XBqLSywySmwFLbqfECaC/iO7vN6LUjAG+5bsnXZ/NjJI8mIWXpT1oVMeakDZjBRWxJ6XW8Wq2nhezBKVT5yGTZiBTKK95gneYx8B8DAUAGj8LXkQ+DhvkJTyqAWBl2So29bE2aCOCfRnX69m99AbNTT+cyH1EuEDgJS9hyVkjeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712141; c=relaxed/simple;
-	bh=wFEaUXSKxGKGDrafji9rNYNmODBy+B6j/W4l+Y+SZpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ElwwTEDZBqPB7k4DZcSN6Ok03NjW4SjU3t0n9bmQriP3R2SpKgLpZGgqHB5Dbcl3DebE6MwpEk8eIv46U0cpW9ATs8ZTaSbvaG+Io+kba3qxmHZVgBeYGTJrcsXL8NgSvM8CQ8acYVO0RXVNPaOcyO+16ZbM6vuY+4X5iXAB6uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.110] (unknown [114.241.87.235])
-	by APP-01 (Coremail) with SMTP id qwCowADXA6hiCqZoxxbODQ--.27375S2;
-	Thu, 21 Aug 2025 01:48:18 +0800 (CST)
-Message-ID: <ca3404c1-7773-4b47-8a95-b61e5cd9be96@iscas.ac.cn>
-Date: Thu, 21 Aug 2025 01:48:18 +0800
+	s=arc-20240116; t=1755712238; c=relaxed/simple;
+	bh=WKGdVU7WkPGRn6n7Ocqx6xoiPc/q7PCmfXCFdh7Q86g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZjtCFeIDNl1+VIw3ZKsRgHmOPfYteGe5ysfMD3fBnVQ69jes9MPVbmO7I0xm/dW7fPaqoU1w/TkBnCIPHyEMky/ND4X+McOlA2shRfQP+mkPz4mu3b7u+aDfyuI+OVaxe/8T71TjoLV0eNspsidF0QNykN+vlDBPeId30NDcnqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtLF7o4T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3373C4CEE7;
+	Wed, 20 Aug 2025 17:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755712237;
+	bh=WKGdVU7WkPGRn6n7Ocqx6xoiPc/q7PCmfXCFdh7Q86g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JtLF7o4TD79tNlPUFPTyI9EfHMk1NzZ05ZM3oWrOCwq2b1WU7TOTFn97M3gTMZSDj
+	 Fj4JAClIBRK75OBVY68pysedsYjgPY+41IN5EpNIECmBxFNlMbRgCllmTpLs+kjtAf
+	 FNIrB8GvrMRTVEsjI2ozafuZIP0Tirse/3oOsBM9+uqk9nez/GF7v5Ri6sQeBrk6Q/
+	 fXZwrNJZ1c8lw7VYKs8cd029TES4ET99Ly470cjXPxqlQ3QNsM2nwVeb++96UrreP9
+	 Qb3aOdYuVyUkV1fCCSpBU0TdpLPQMys5IdaHwbYX65P4QFq5h/g4h5bx7vP7Hk6YmP
+	 OudKDcUzpL57A==
+Date: Wed, 20 Aug 2025 10:50:37 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	hch@lst.de, tytso@mit.edu, bmarzins@redhat.com,
+	chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+	brauner@kernel.org, martin.petersen@oracle.com, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH util-linux v3] fallocate: add FALLOC_FL_WRITE_ZEROES
+ support
+Message-ID: <20250820175037.GN7981@frogsfrogsfrogs>
+References: <20250820085632.1879239-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 2/5] net: spacemit: Add K1 Ethernet MAC
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: Vivian Wang <uwu@dram.page>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250820-net-k1-emac-v6-0-c1e28f2b8be5@iscas.ac.cn>
- <20250820-net-k1-emac-v6-2-c1e28f2b8be5@iscas.ac.cn>
- <3c8d191c-efd6-4756-9c71-109236d4c54c@bootlin.com>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <3c8d191c-efd6-4756-9c71-109236d4c54c@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADXA6hiCqZoxxbODQ--.27375S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFWfKr45KrW5tF15Gr18uFg_yoW3CrcE9F
-	1vvwn7Zw1UK3WUGw4fKanFvws8Kr1kXr1xWr9rtws3t342yFyDWFnrK34Sgr43XrWvqrnr
-	Gw10vFWIkw17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbV8YjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
-	8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
-	xwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x07jgPEfUUUUU=
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820085632.1879239-1-yi.zhang@huaweicloud.com>
 
-Hi Maxime,
+On Wed, Aug 20, 2025 at 04:56:32PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
+> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES to the fallocate
+> utility by introducing a new option -w|--write-zeroes.
+> 
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+> v2->v3:
+>  - Say less about what the filesystem actually implements as Darrick
+>    suggested and clarify the reason why "--keep-size" cannot be used
+>    together in the man page.
+>  - Modify the verbose output message.
+> v1->v2:
+>  - Minor description modification to align with the kernel.
+> 
+>  sys-utils/fallocate.1.adoc | 11 +++++++++--
+>  sys-utils/fallocate.c      | 20 ++++++++++++++++----
+>  2 files changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
+> index 44ee0ef4c..a06cf7a50 100644
+> --- a/sys-utils/fallocate.1.adoc
+> +++ b/sys-utils/fallocate.1.adoc
+> @@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
+>  
+>  == SYNOPSIS
+>  
+> -*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
+> +*fallocate* [*-c*|*-p*|*-z*|*-w*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
+>  
+>  *fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_
+>  
+> @@ -28,7 +28,7 @@ The exit status returned by *fallocate* is 0 on success and 1 on failure.
+>  
+>  The _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB, and YB.
+>  
+> -The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range* and *--posix* are mutually exclusive.
+> +The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
+>  
+>  *-c*, *--collapse-range*::
+>  Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation.
+> @@ -76,6 +76,13 @@ Option *--keep-size* can be specified to prevent file length modification.
+>  +
+>  Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
+>  
+> +*-w*, *--write-zeroes*::
+> +Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, written blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes and subsequent writes to that range do not require further changes to the file mapping metadata.
+> ++
+> +Zeroing is done within the filesystem. The filesystem may use a hardware-accelerated zeroing command or may submit regular writes. The behavior depends on the filesystem design and the available hardware.
+> ++
+> +Options *--keep-size* can not be specified for the write-zeroes operation because allocating written blocks beyond the inode size is not permitted.
 
-On 8/20/25 19:34, Maxime Chevallier wrote:
-> Hi Vivian,
->
-> On 20/08/2025 08:47, Vivian Wang wrote:
->> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
->> that only superficially resembles some other embedded MACs. SpacemiT
->> refers to them as "EMAC", so let's just call the driver "k1_emac".
->>
->> Supports RGMII and RMII interfaces. Includes support for MAC hardware
->> statistics counters. PTP support is not implemented.
->>
->> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
->
-> I've read through the driver and it's looking good to me
->
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com> 
->
-Thank you for the review. I appreciate it.
+Nit: s/can not/cannot/
 
-Vivian "dramforever" Wang
+With that fixed, this looks fine to me, so
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
+--D
+
+> +
+>  include::man-common/help-version.adoc[]
+>  
+>  == AUTHORS
+> diff --git a/sys-utils/fallocate.c b/sys-utils/fallocate.c
+> index 13bf52915..afd615537 100644
+> --- a/sys-utils/fallocate.c
+> +++ b/sys-utils/fallocate.c
+> @@ -40,7 +40,7 @@
+>  #if defined(HAVE_LINUX_FALLOC_H) && \
+>      (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
+>       !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
+> -     !defined(FALLOC_FL_INSERT_RANGE))
+> +     !defined(FALLOC_FL_INSERT_RANGE) || !defined(FALLOC_FL_WRITE_ZEROES))
+>  # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
+>  #endif
+>  
+> @@ -65,6 +65,10 @@
+>  # define FALLOC_FL_INSERT_RANGE		0x20
+>  #endif
+>  
+> +#ifndef FALLOC_FL_WRITE_ZEROES
+> +# define FALLOC_FL_WRITE_ZEROES		0x80
+> +#endif
+> +
+>  #include "nls.h"
+>  #include "strutils.h"
+>  #include "c.h"
+> @@ -94,6 +98,7 @@ static void __attribute__((__noreturn__)) usage(void)
+>  	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
+>  	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
+>  	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
+> +	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
+>  #ifdef HAVE_POSIX_FALLOCATE
+>  	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
+>  #endif
+> @@ -304,6 +309,7 @@ int main(int argc, char **argv)
+>  	    { "dig-holes",      no_argument,       NULL, 'd' },
+>  	    { "insert-range",   no_argument,       NULL, 'i' },
+>  	    { "zero-range",     no_argument,       NULL, 'z' },
+> +	    { "write-zeroes",   no_argument,       NULL, 'w' },
+>  	    { "offset",         required_argument, NULL, 'o' },
+>  	    { "length",         required_argument, NULL, 'l' },
+>  	    { "posix",          no_argument,       NULL, 'x' },
+> @@ -312,8 +318,8 @@ int main(int argc, char **argv)
+>  	};
+>  
+>  	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+> -		{ 'c', 'd', 'i', 'p', 'x', 'z'},
+> -		{ 'c', 'i', 'n', 'x' },
+> +		{ 'c', 'd', 'i', 'p', 'w', 'x', 'z'},
+> +		{ 'c', 'i', 'n', 'w', 'x' },
+>  		{ 0 }
+>  	};
+>  	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+> @@ -323,7 +329,7 @@ int main(int argc, char **argv)
+>  	textdomain(PACKAGE);
+>  	close_stdout_atexit();
+>  
+> -	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
+> +	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
+>  			!= -1) {
+>  
+>  		err_exclusive_options(c, longopts, excl, excl_st);
+> @@ -353,6 +359,9 @@ int main(int argc, char **argv)
+>  		case 'z':
+>  			mode |= FALLOC_FL_ZERO_RANGE;
+>  			break;
+> +		case 'w':
+> +			mode |= FALLOC_FL_WRITE_ZEROES;
+> +			break;
+>  		case 'x':
+>  #ifdef HAVE_POSIX_FALLOCATE
+>  			posix = 1;
+> @@ -429,6 +438,9 @@ int main(int argc, char **argv)
+>  			else if (mode & FALLOC_FL_ZERO_RANGE)
+>  				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
+>  								filename, str, length);
+> +			else if (mode & FALLOC_FL_WRITE_ZEROES)
+> +				fprintf(stdout, _("%s: %s (%ju bytes) written as zeroes.\n"),
+> +								filename, str, length);
+>  			else
+>  				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
+>  								filename, str, length);
+> -- 
+> 2.39.2
+> 
 
