@@ -1,55 +1,77 @@
-Return-Path: <linux-kernel+bounces-778333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C5FB2E441
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:44:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16498B2E44C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163F85C6AC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1913A188E968
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4159C261B81;
-	Wed, 20 Aug 2025 17:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99EF2629F;
+	Wed, 20 Aug 2025 17:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/QdQHi1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="cQiIzGxd"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DC372634
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CAB259C93;
+	Wed, 20 Aug 2025 17:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755711881; cv=none; b=bHQF6BjgP7btEyRWVOce0L6bxPlXyHASYrhuwBjB4dm+cUXMMEidNgj1q+QZlbhYg4jyAgyWv9EseKlhlHT+AWFSnRoJSa5WGvc7TSIw41xSIHDElXyP16af4VAdY2Lg+kgDIkwDM/B8hxAHNKFPL8SrIj0XU8kI3IJw5FPhCCo=
+	t=1755712014; cv=none; b=Lp1xMVnS2V0FPrmntrr9KLxdGZjapeUWucoVa6bOc+lFBAeV+3zdu0xsp02lSbv1L2eBUvLLufL+P72Jp7lCOWe+JS43dfp41o4+q+tv5b1yhejmUWbhiQ5nQzgBWsfThz1dmXPY/Hn1bV1Lc92inAVHuNSmtkZ5XHrbPMANH/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755711881; c=relaxed/simple;
-	bh=OuwMD01vwGnn8S744iD11gw41Q7InIVrJolg3lPlQS0=;
+	s=arc-20240116; t=1755712014; c=relaxed/simple;
+	bh=jgJSWGXo6CZ+lCD/doF+gwZ91JG6VSTUICKNOcge20o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=INvqWdyuqbsd82TCAdovpFIj4CgKyA4n7ReBBQyZvKbUj1dEdQnaHU5WK9NK8MkBksZAXjDDnfWHbRFNPoazCJclqKjzjFai1t+d5OGsNMlXIukZ55bM5bLUG+IcoDZhfQLJLKhfQaB8oAUDinSIxmk3DLQ8js6QIDZjx5Jri8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/QdQHi1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35D1C113CF;
-	Wed, 20 Aug 2025 17:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755711880;
-	bh=OuwMD01vwGnn8S744iD11gw41Q7InIVrJolg3lPlQS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l/QdQHi1ke8bbF4UY1epgxkbN2tghghXqnCWYKQQKOoLBBdubXMUFNvA6BlMpOfuR
-	 Rnrnh3SAlL3mgaEWNjc5W/jmhQAyT5RpgGlGD5nQhqJ+K+U9cnR+w3/1jMqgRsc+6+
-	 zWT6FFxviit9J3/W3iY3YLfxxtP9u+IVzlEWGHq7PV7vhm4ribK+erkyFN6qkERd36
-	 cuYREuwdzpyPl4+0PNnU9LyQ6/6lwR4uWRCx0MP7RBXbepSohda54UlpP+eC/JulTi
-	 XlmZ1aCIAF1VbayGQnuPZM0utceCx6ZrHoJjZscOfaYCIb47OBKZbyTHzXGK/L9CBy
-	 P1UkaLNI/5QLw==
-Date: Wed, 20 Aug 2025 17:44:38 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: "mason.zhang" <masonzhang.linuxer@gmail.com>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] f2fs: fix CURSEG_HOT_DATA left space check
-Message-ID: <aKYJhtJRuszUhj37@google.com>
-References: <20250806123236.4389-1-masonzhang.linuxer@gmail.com>
- <cd82a673-aa43-46bc-be67-6924500376ef@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=htM6tTnVHkLgtW1O75Ofw3Ceb/E3r5LOBxIt8rIWUqrHzg9W517WLAwqxicSnQsTavg81QUN1caiqL5csdQNpeYkwlMwJo5YkhCezC6RCRBiOD+KDNOEKhPndyRiRvqU3VlgEe0VGitiOiNoRBbdTy1aA2PO01COO0vCX7kXqU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=cQiIzGxd; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+kZ4lkixRDn9IjHCTHI8jOI8o7eMwRKPi5/Bfyz0HXM=; b=cQiIzGxd47kM58KRcmpGsNzqKy
+	oD+M3p1G7sBrh7zxBLipbebJIyJ0nY6hCCZ/+8I0iK4phyOUiaaXk5lolbCJb/J+1N1M2uyHNW3L1
+	FkmfgywUr+DTv1LekOsYaJhhOOimPrpM1lV9EbhA68wb3IzmCPfuESh7NXocfasMkzBgJ8uckZxGz
+	+XNgRLvp16X4sYKxv8XE8zZAKwt4ZD7rt6gcKyJJ3unWNRxncn+DWlYN2+wRgTYw4Nfvy+F9FOZXM
+	L2SOnk2mY761FLa+cxMlK+Oy+LUlSQxUuFKidfErPE7Tb5l+9/8wLmdskZrDMyo0+T0oznfgrzr0N
+	rr43rdzg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36078)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uomtU-00058L-1t;
+	Wed, 20 Aug 2025 18:46:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uomtR-000000001Mt-0Dbq;
+	Wed, 20 Aug 2025 18:46:37 +0100
+Date: Wed, 20 Aug 2025 18:46:36 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	stable@kernel.org
+Subject: Re: [PATCH net-next v2] net: pcs: rzn1-miic: Correct MODCTRL
+ register offset
+Message-ID: <aKYJ_OOOFcNeDp_u@shell.armlinux.org.uk>
+References: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,40 +80,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cd82a673-aa43-46bc-be67-6924500376ef@kernel.org>
+In-Reply-To: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 08/20, Chao Yu wrote:
-> On 8/6/25 20:32, mason.zhang wrote:
-> > This fix combines the space check for data_blocks and dent_blocks when
-> > verifying HOT_DATA segment capacity, preventing potential insufficient
-> > space issues during checkpoint.
-> > 
-> > Fixes: bf34c93d2645 ("f2fs: check curseg space before foreground GC")
-> > Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
+On Wed, Aug 20, 2025 at 06:09:13PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> It breaks f2fs/005 of xfstests, can you please take a look?
+> Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
+> According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
+> [0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offset
+> 0x8, not 0x20 as previously defined.
+> 
+> Offset 0x20 actually maps to the Port Trigger Control Register (PTCTRL),
+> which controls PTP_MODE[3:0] and RGMII_CLKSEL[4]. Using this incorrect
+> definition prevented the driver from configuring the SW_MODE[4:0] bits
+> in MODCTRL, which control the internal connection of Ethernet ports. As
+> a result, the MIIC could not be switched into the correct mode, leading
+> to link setup failures and non-functional Ethernet ports on affected
+> systems.
+> 
+> [0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l-group-users-manual-r-engine-and-ethernet-peripherals?r=1054571
+> 
+> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+> Cc: stable@kernel.org
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Ah, this was why I got failure. I'll drop this first.
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-> 
-> Thanks,
-> 
-> > ---
-> >  fs/f2fs/segment.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> > index db619fd2f51a..d8dae0049b6a 100644
-> > --- a/fs/f2fs/segment.h
-> > +++ b/fs/f2fs/segment.h
-> > @@ -649,7 +649,7 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
-> >  				get_ckpt_valid_blocks(sbi, segno, true);
-> >  	}
-> >  
-> > -	if (dent_blocks > left_blocks)
-> > +	if (dent_blocks + data_blocks > left_blocks)
-> >  		return false;
-> >  	return true;
-> >  }
-> 
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
