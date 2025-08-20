@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-776872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA54B2D25C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:12:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D416BB2D271
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69CD34E4607
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B72C9586499
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED412C11C8;
-	Wed, 20 Aug 2025 03:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5568425F780;
+	Wed, 20 Aug 2025 03:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJ9ISqtL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmU7TOoM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AB5298CBB;
-	Wed, 20 Aug 2025 03:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B182C78F34;
+	Wed, 20 Aug 2025 03:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755659478; cv=none; b=HV1uC2YbSF04iIW3vcrnoy3yh70dK4BSAP7D6LcVlt5eWIx1RMCqt1GAuQylVvziLgV+qi1gSoSn6KnXmnCfSV5hbVJwxZqpg/Tn8V5Lx4F94XeqWs/VHdEDlcpZpDUoMyXEuOVxq++wFehOqBwL9bPoUC9AQAHRsCDmSmfutZw=
+	t=1755659501; cv=none; b=R3VUC21GNi/9+N1VT1GqryB/YsMQDWDcLLZp7EMgz6phY+oEETvjH7EGvO83dGFxBsBwuUTfQtMQVS4rx3N/FkPKPKJx9g+x+aFCX4bGZ+M+VZsiC1HrMVBLB25+6zO5St7x4To7SxbqXd4ZaJmXc/+OtdGciuU6TRqoRG30t3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755659478; c=relaxed/simple;
-	bh=apgHJw2Ugi5MtNdY9jHJ3EZssORy93FCSZfy05ieiw4=;
+	s=arc-20240116; t=1755659501; c=relaxed/simple;
+	bh=2+QVvojJyGANiWkj4yXxbKlCR2iG+8Ht5YmkAd6DrMs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=We65ZErKkyvS/kmc5RlxdHpsPujV/wmWzEcro2lb+Ejq/UXY93Lodb09jrXslC1QPnui3RYPX3oSEtMH9HOiYgEDag+nk6uHYIvwA32WilPD3Y/tG8Fgq2w6rszGx/bHJG/3Tk5GKv4z8JtxC9xFqnmGWJgSx7s8lRwDs+Y/u7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJ9ISqtL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8E6C4CEF4;
-	Wed, 20 Aug 2025 03:11:17 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=teHcmSmJtITZ5+dCJ4fCguEcd5Fm0pvUfTP79nAoD4YQnQFBfpqeXxuNGuRxZb835AeUFv4SSVNFNUfzTE/bYIZu05JwEmK9y/GIIJpLsNijLd5azDFc/3eGTxdCLqisMUJAGl3rwmsjK1PCFVfXLSLQqObgoEf3bK1ZGj7POJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmU7TOoM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E957C4CEF1;
+	Wed, 20 Aug 2025 03:11:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755659477;
-	bh=apgHJw2Ugi5MtNdY9jHJ3EZssORy93FCSZfy05ieiw4=;
+	s=k20201202; t=1755659501;
+	bh=2+QVvojJyGANiWkj4yXxbKlCR2iG+8Ht5YmkAd6DrMs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=aJ9ISqtLsgKnYm8v0RiOoNI2411hNe5kY3bAjoTHTjmS1k1KOEW3XrG1bmksLzJiE
-	 AVek1D27+2HrLiHeaeKH5CQuYp9qI8yAptbOkLtV9pfFbbevGcIiWOdLwEQMFe5f04
-	 yUMEaC3fLtGxDi5F+F8Q/vTGcew4zSSjm0NZSCU8ecvOO0e8CkYpUEmphuF5n3B09b
-	 ASYOSLbrK+Qn88qIThIxei6UuBNasaXKCo6sffXfVfd4UC5sO437vr9J9hA2SdzTHb
-	 1QxYaF3bmwDwzsIKFrIkDao2NIjcc9RbNy40nS+NUwMAAuPwQjTtSFsIOD/k1PdgpB
-	 k1bh4sTJZaQZQ==
+	b=RmU7TOoMDzLG+AnMEOC3FULW2bhVYFGXrwyohX2nv46dOoCt86QKraffHBNQitM0J
+	 /mv6rDzLLf8ks76XtxrVAh+df670m0jn6ncKYZBJvhZ/h0dGwvg2DEfA/EcTUDqikJ
+	 pTWsTPHWmfvCnrDoTcaBTqJ4VzFeFGu0DD7lYcyFws/8nSzDmRUyyCh8Agp2Sn2zC7
+	 m6S9buiVPcNgudzK/MujP2prz/xY2btvgWZ4kwsbwkbmPvjO/+cghY5BGLL8Ac1wkJ
+	 /hABOBYH4xhDnjEUsOWghvNq3JPIhfoiu5vfepTyNVaZVMH9ZmPPaC7o/WGxmiw+MP
+	 BXTjsEPyrPpZw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFF4383BF58;
-	Wed, 20 Aug 2025 03:11:28 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C5D383BF58;
+	Wed, 20 Aug 2025 03:11:52 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 0/2] Fixes on the Microchip's LAN865x driver
+Subject: Re: [PATCH net-next 0/2] There are a cleancode and a parameter check
+ for
+ hns3 driver
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175565948724.3753798.7869341328702391528.git-patchwork-notify@kernel.org>
-Date: Wed, 20 Aug 2025 03:11:27 +0000
-References: <20250818060514.52795-1-parthiban.veerasooran@microchip.com>
-In-Reply-To: <20250818060514.52795-1-parthiban.veerasooran@microchip.com>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, parthiban.veerasooran@microchip.com
+ <175565951073.3753798.100437251034921390.git-patchwork-notify@kernel.org>
+Date: Wed, 20 Aug 2025 03:11:50 +0000
+References: <20250815100414.949752-1-shaojijie@huawei.com>
+In-Reply-To: <20250815100414.949752-1-shaojijie@huawei.com>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+ shenjian15@huawei.com, liuyonglong@huawei.com, chenhao418@huawei.com,
+ jonathan.cameron@huawei.com, salil.mehta@huawei.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 18 Aug 2025 11:35:12 +0530 you wrote:
-> This patch series includes two bug fixes for the LAN865x Ethernet MAC-PHY
-> driver:
+On Fri, 15 Aug 2025 18:04:12 +0800 you wrote:
+> This patchset includes:
+>  1. a parameter check omitted from fix code in net branch
+>    https://lore.kernel.org/all/20250723072900.GV2459@horms.kernel.org/
+>  2. a small clean code
 > 
-> 1. Fix missing transmit queue restart on device reopen
->    This patch addresses an issue where the transmit queue is not restarted
->    when the network interface is brought back up after being taken down
->    (e.g., via ip or ifconfig). As a result, packet transmission hangs
->    after the first down/up cycle. The fix ensures netif_start_queue() is
->    explicitly called in lan865x_net_open() to properly restart the queue
->    on every reopen.
+> Jijie Shao (2):
+>   net: hns3: add parameter check for tx_copybreak and tx_spare_buf_size
+>   net: hns3: change the function return type from int to bool
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2,1/2] microchip: lan865x: fix missing netif_start_queue() call on device open
-    https://git.kernel.org/netdev/net/c/1683fd1b2fa7
-  - [net,v2,2/2] microchip: lan865x: fix missing Timer Increment config for Rev.B0/B1
-    https://git.kernel.org/netdev/net/c/2cd58fec912a
+  - [net-next,1/2] net: hns3: add parameter check for tx_copybreak and tx_spare_buf_size
+    https://git.kernel.org/netdev/net-next/c/e16e973c576f
+  - [net-next,2/2] net: hns3: change the function return type from int to bool
+    https://git.kernel.org/netdev/net-next/c/021f989c863b
 
 You are awesome, thank you!
 -- 
