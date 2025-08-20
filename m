@@ -1,188 +1,278 @@
-Return-Path: <linux-kernel+bounces-777662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B2DB2DC5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BA8B2DC58
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A3997265AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481D8A01EFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02745303CB0;
-	Wed, 20 Aug 2025 12:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24242F39BC;
+	Wed, 20 Aug 2025 12:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="cNekxlfo"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M7zNs3Ey"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FD22F49F9
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482B92E7F13
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755692734; cv=none; b=UtPWkikqOPqAD33JZhxWdZ+48u+I5mqr7MW7bq44Ias4uHbQiHTNPHF9Ql40/v2OLDsTVHlM3r2nky74pOX7tVIw0nFSSLXPkMTYpWfgKz247+cpm/JS2hk0ugzhj0waK4WTgHEG0CwxsPZ6bXN+jbfWzjkKOlrJA0XLq++hcek=
+	t=1755692731; cv=none; b=nN+Alkkt8Cn0Fam8zCPYDSjJirgPitQ481MCoQ/8kPWPKvbRJ1oP86ygP8JjXV9t22AZIhcl0Dsp+SGWDN1TrLxq8VmQuh6P7fnfT+iPTIFp9KsZnCzn63DgvSHgQWTInAVi40y2Pd18KFWlYgY1b2z2vKa0bZ+ftQX01KRHcsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755692734; c=relaxed/simple;
-	bh=5y5lyKH1/hkTYyDy0RGC/8IY1XSLp6p75tDi/3+y9J4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qt5vmGB/gGW8S0afbFep9DG3XlA6AuutGJi+YMaLKz6hPLCwRW6OZvcJ0JJfW/kt31yn7zv4UJ+MLel0Mvpyb6vrK7qK9D2dvkGUa3wcNT9qK9PcRWbFbA3y9VJLIQ/k7SZGDYgK7BXI6+u6eRZ8me2IKclNb+oiBpfeShNU4lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=cNekxlfo; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b47173749dbso4385611a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1755692732; x=1756297532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cDVo17AEiZBayUfTjsimRdU07RT7bA4wzSPxYn34tGU=;
-        b=cNekxlfoGjQnRlP8zrqf36EWkHzcnuKcFs+ekel+UwC+E+zjuwcz8CmFDY+mNLwUKu
-         EvvHx690ASh7x+j6STSJR/6wuUvLafIAxt+ANSpRNFJGDc2/zDcI6zgFodDs/hqKQfue
-         SJC9pzyZ09rtZ567BJxuGyOQGlwW2uPuqTKZcju2EuPLlqzJt6T/ToxSUhsSigTJA/u1
-         wiSKF5RWOR0F40s6LptD7WKbhm61qjOMbtPXnpgIfuMatJshV2kWlMMCktngTKeLKVk7
-         AQYEXspP4okU5fkHDRo4LO0fz8TBUp8ndwJCKu12XL3UXmnLJTRW9UCvlnSj31xavztR
-         RO6g==
+	s=arc-20240116; t=1755692731; c=relaxed/simple;
+	bh=4vHHZXeXVwdz1xTWxcabEs/d3nrNswIPqPD8RIZ1EWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmhrvRNXE5pEkiOtfYb8eqcA/JD5aF3TJrAWY54klUPDTtWgrFF8I3gtidntqjeqBDyLKAdi/4lZAApT1ygtUlzbAgfvhgpn84svyBNAA0Y2ip/wfqrZawGmJhSmrOMBAkP0O1OOdC/xQ9AmQz/vbrEPc8+fQ0f0PqhKLYpXfXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M7zNs3Ey; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KAEvs3006189
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:25:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=GUc5/lZM2Qr23AxRX871V/L9
+	uMTIXcimhfTf3S34sU0=; b=M7zNs3EyjvVwNKYasf4CwoLIqG8v3mCF5UIIRLUJ
+	DxkaGDL9IMpS9ya8W8u/Qz37G/7iJz/Yg+1f85FNjihZGUOdz05aYKz6K7zzG4dR
+	2lDHs1d1PevbJlPGvoYoAvq7HlfGjCbj8Nae4kKyk9hzI6lj/TXX//pGzuo7A0vp
+	fmXKwOywneU03bUC7FG3afs6nynVyOQDEEM+EysNppgiEGxMs3dhnLJPLzAXWvTX
+	LrcKzMsJpyhu3iNSBygIpaHWyBJAQZhxSb8Mi/jroC6Wmiffo9mKyR8AyDpxgATP
+	KnBwqwKrq/yZkCFU54sKkCcB52SYSuM94shGVV8KV5bEig==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52chnw3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:25:29 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b473910af91so802253a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:25:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755692732; x=1756297532;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cDVo17AEiZBayUfTjsimRdU07RT7bA4wzSPxYn34tGU=;
-        b=jWp4S8zLNAlpuW9lDDQtRKDw0rVChJojRtgb9Ghm55SWMEKL0ygoMAz4Fusp0TCBQq
-         Hn5zxzq4ftlN0ynUh6nwjZR1KgNFYHXFRJtxwbAQJqHgfvnxdGqrnI7diomsWOvRxc2T
-         32VvoqixQhtWNz46+d1h1wQ6a2g++FlYB0Gj8BGD/IiOtqx4gls5fGzoDXc5p5TH8Qya
-         Zjad3mzRqEtUNJLFC37JiRzuL2qssa0TEmFa/B145a9Os4jHOGWIdwx05iDJrniAfcyY
-         IGTztQo5RdW7pgggu6tsDqTIHvvDPSuXTAaD8ji8f8i5L1oBcgDXe3BFX1E4/U01cc7R
-         EOiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsnb4CUIqHooWwOTzOTg58g8u1uwR73FvO33flb1N68C82oOXzGSIzdD2vI8M+l1TBAP/wnO/VTogcdao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUa3/Fl5pT//BjtPfyiEzUo83VB7AYwt3jFuHVg6Aj6InaPZuE
-	r1pn3e+KZMyk+jzbQJVLd8Zuqy+mGbVlGEIkYerETCzHZjpTKXOEHRzuA9ZSPTBZZ20=
-X-Gm-Gg: ASbGncsfxgX6a3k0XRDlucoNn2H4YcRMT1aSP4elatbANgylUirRilp2mmkbGh96c9K
-	wbYnBnAadfjIH1KEdHfEgYmnyx/XecmHJQhjSwD0M0OiEu/2LwDsPFyXQPsOgmKl3BCoqbJiEcz
-	WledBuNWBsFrhPpfodeY2TSCnyTAFMtFqY+4ILW9XX1IZCA3sFTHUnHCOdjbg323ALPC28kRh5m
-	YlUprl8fYMtgQMT+4kP8p9WUs4rgBW5R4+9D6fU6f5Ze4AnpuGLa56iQoc0Slz7cKRfRYC3N/eX
-	qodBptWZooBLuubl2q2Qb6L19o3QrDnN88Hq4GVsf6bY7SMQvFpuRPoKm7S8+Fovl/8MgSQ3QaS
-	UHNox3AYhvkUfxjoPjHxBdACY8UTuC3vvaGCJO7aQY7YOHlgQJCPG7dWh1roJMEpkjRVHjA==
-X-Google-Smtp-Source: AGHT+IEx9O55cYKi9Uh808obEjpVhsZk0ACrWNpbOz63pRgF26JlfxtJTcbiypz4Elqho4hRYYczIw==
-X-Received: by 2002:a17:903:1a2f:b0:240:3ef:e17d with SMTP id d9443c01a7336-245ef23b5f4mr32288545ad.40.1755692732392;
-        Wed, 20 Aug 2025 05:25:32 -0700 (PDT)
-Received: from dgp100339560-01.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c745dsm25450135ad.73.2025.08.20.05.25.29
+        d=1e100.net; s=20230601; t=1755692728; x=1756297528;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GUc5/lZM2Qr23AxRX871V/L9uMTIXcimhfTf3S34sU0=;
+        b=tONq0XL7dYxD5l1EudQXCQYw51BYmOzw1i+8a3kpAglFbwNBJ+0M6EzIr48NhdJglW
+         VMh9fowX+ooBZTPBdGI/NoF03XXi0TmX8w9ozJi+XzgCFaATDWCQAI3O6XU2YZ84G8E+
+         HVrJMF5M4EWbttdgH/kyUS3OWQAJDwxZJ+lFgxIerXWlWzCLMr/Kq57Jqw53dJcW0wot
+         3tXVNWuwa7E1QupZCC6WOLC4nxxctRxVuc2oSKvrLkD7VQdsRXb8orV4OLXlBXJJy43n
+         TW4/z1g4Z3HxWgqSRI8YCR2v/MjLhSI4Ai5eStvnUlOnZ8AHseIXlr3wvFsUi7RDAFM1
+         BAUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUInRs5gULIBxT0XReFQWKJaOqCH/imJ8wNNQbpURuaCBnPqOOF1VRSece3FjRjnxr6kpkbPTdD3boDPTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy3AoxblzLbi11wuIDSq3rn/uV9gw5/+JTkVB9YCBmc8HnHsGp
+	gXzyXoU2X5WRrRSBt1Pile6F/Nfw2d/8G1DyIWFfWg4Tx+iJWg5iFmeZjirFEowJ0VngmUyvhE1
+	rOx/uvIG0g90FL7Ih96GdhanMD4yRULzEZXGBeQo5jCNyPTy3WkHftKqdWUNPmJZ9BfY=
+X-Gm-Gg: ASbGncuOdyyalha3Beuc9Vge3izMF5+G1LtavkXEhPOTm4FGb7mfLo7443rJFxKpwsL
+	Q/3kh5r4iyQqtbQVBwt+XFjGrOuh361/UgYVREtIWKS7WtQ8QyGeCB1BaVDzM0dclbEVDB4mEB+
+	hJEAWQroXu14TwcSpD8mJdR6Ja7CyCRSR7ehW64qM+UG0cIh9cdgYBU5Mn4p9TblKiRlbQ+9uKy
+	wYt1zVZKuTSKxPJt6bdKt6L/T9EhiihJkOge4h7XdCTP7MP/j7BvMZ2lcwxRkrSYRqQvapXanai
+	HYlIYTd+t4yKjNHsoboGL/bCm4pzXDA78wfH49uU1OeTgQYbHyZ3mtVNfTDDgHOHmUA=
+X-Received: by 2002:a17:903:1d0:b0:235:efbb:9537 with SMTP id d9443c01a7336-245e0909486mr68061975ad.3.1755692728133;
+        Wed, 20 Aug 2025 05:25:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHD6fjuRv0/wSn6AAy8kqeC9Evp+qbwhvgRykB5h54MJrgOnLweG3u/L4pEa38E2DtlTI7lKQ==
+X-Received: by 2002:a17:903:1d0:b0:235:efbb:9537 with SMTP id d9443c01a7336-245e0909486mr68061625ad.3.1755692727580;
+        Wed, 20 Aug 2025 05:25:27 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e25532b1sm2258281a91.13.2025.08.20.05.25.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 05:25:32 -0700 (PDT)
-From: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-To: dmitry.torokhov@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	jikos@kernel.org,
-	bentiss@kernel.org
-Cc: dianders@chromium.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-Subject: [PATCH v2 1/2] dt-bindings: input: Add Parade TC3408 touchscreen controller
-Date: Wed, 20 Aug 2025 20:25:19 +0800
-Message-Id: <20250820122520.3356738-2-yelangyan@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250820122520.3356738-1-yelangyan@huaqin.corp-partner.google.com>
-References: <20250820122520.3356738-1-yelangyan@huaqin.corp-partner.google.com>
+        Wed, 20 Aug 2025 05:25:27 -0700 (PDT)
+Date: Wed, 20 Aug 2025 17:55:20 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 02/11] soc: qcom: mdtloader: Add context aware
+ qcom_mdt_pas_load() helper
+Message-ID: <20250820122520.c2rvwlrspatvnst4@hu-mojha-hyd.qualcomm.com>
+Mail-Followup-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-3-mukesh.ojha@oss.qualcomm.com>
+ <ea769342-4d0e-497b-bee9-ed761401b63c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea769342-4d0e-497b-bee9-ed761401b63c@linaro.org>
+X-Proofpoint-GUID: xh2UqhiU3vi9Px43F6Z2Ex5q59sLpo00
+X-Proofpoint-ORIG-GUID: xh2UqhiU3vi9Px43F6Z2Ex5q59sLpo00
+X-Authority-Analysis: v=2.4 cv=Xpij+VF9 c=1 sm=1 tr=0 ts=68a5beb9 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=DgsbP352bVNZhcq8M8IA:9
+ a=CjuIK1q_8ugA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX2iGiGCX8I9iA
+ CJJuf/gP+HxOKbvw1eGtIoOF0fArWy2a/+Nzg+Ao5/3tuLDZ93a4X75nHSwezz+fUcjnBtz5NVJ
+ z+wCOtNRaYhNXnfHZiH2OR4T45Jm3SF21dTjTL+q+/2+r1SGh0+AxrsZMwgQxxL2L23NY8CWQJm
+ RA3ZjzHY+FLXSe1ulJRBHmOvg3T2LcReFDXY9v5o+KlvMLZ2Reedrm/vfaSzEFQKYhclfG7faXg
+ B7kKJxWzBuyFkzqXvpJ5u7MM8sMSiLBvOOahAP9lrsA6z0scHzI2z0F2W/gcf4gLipGEsloiA6G
+ OyFd30TBZDX+R5QrnHJ8+QJyKHqnrBozpE9+7JaWPsvuPs5U2cmE/ET8obgnYcxOYmtqZuHtbzd
+ 5x9hV8Fdaq/ly155V8hTZ1Hu06fRsg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_04,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ adultscore=0 spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-The tc3408 touch screen chip same as Elan eKTH6915 controller
-has a reset gpio. The difference is that they have different
-post_power_delay_ms.
+On Wed, Aug 20, 2025 at 12:48:55PM +0100, Bryan O'Donoghue wrote:
+> On 19/08/2025 17:54, Mukesh Ojha wrote:
+> > Currently, remoteproc and non-remoteproc subsystems use different
+> > variants of the MDT loader helper API, primarily due to the handling of
+> > the metadata context. Remoteproc subsystems retain this context until
+> > authentication and reset, while non-remoteproc subsystems (e.g., video,
+> > graphics) do not require it.
+> > 
+> > Add context aware qcom_mdt_pas_load() function which uses context
+> > returned from qcom_scm_pas_ctx_init() and use it till subsystems
+> > is out of set. This will also help in unifying the API used by
+> > remoteproc and non-remoteproc subsystems drivers.
+> > 
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > ---
+> > If this approach is preferred, will convert all subsystem drivers to use the
+> > same set of API's using context and completely get away with qcom_mdt_load()
+> > 
+> > -Mukesh
+> > 
+> >   drivers/remoteproc/qcom_q6v5_pas.c  | 53 ++++++++++++++---------------
+> >   drivers/soc/qcom/mdt_loader.c       | 26 ++++++++++----
+> >   include/linux/soc/qcom/mdt_loader.h | 22 ++++++------
+> >   3 files changed, 56 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > index 55a7da801183..e376c0338576 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > @@ -115,8 +115,8 @@ struct qcom_pas {
+> >   	struct qcom_rproc_ssr ssr_subdev;
+> >   	struct qcom_sysmon *sysmon;
+> > -	struct qcom_scm_pas_metadata pas_metadata;
+> > -	struct qcom_scm_pas_metadata dtb_pas_metadata;
+> > +	struct qcom_scm_pas_ctx *pas_ctx;
+> > +	struct qcom_scm_pas_ctx *dtb_pas_ctx;
+> >   };
+> >   static void qcom_pas_segment_dump(struct rproc *rproc,
+> > @@ -209,9 +209,9 @@ static int qcom_pas_unprepare(struct rproc *rproc)
+> >   	 * auth_and_reset() was successful, but in other cases clean it up
+> >   	 * here.
+> >   	 */
+> > -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
+> > +	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
+> >   	if (pas->dtb_pas_id)
+> > -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
+> > +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> >   	return 0;
+> >   }
+> > @@ -235,15 +235,8 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
+> >   			return ret;
+> >   		}
+> > -		ret = qcom_mdt_pas_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
+> > -					pas->dtb_pas_id, pas->dtb_mem_phys,
+> > -					&pas->dtb_pas_metadata);
+> > -		if (ret)
+> > -			goto release_dtb_firmware;
+> > -
+> > -		ret = qcom_mdt_load_no_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
+> > -					    pas->dtb_mem_region, pas->dtb_mem_phys,
+> > -					    pas->dtb_mem_size, &pas->dtb_mem_reloc);
+> > +		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware, pas->dtb_firmware_name,
+> > +					pas->dtb_mem_region, &pas->dtb_mem_reloc);
+> >   		if (ret)
+> >   			goto release_dtb_metadata;
+> >   	}
+> > @@ -251,9 +244,7 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
+> >   	return 0;
+> >   release_dtb_metadata:
+> > -	qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
+> > -
+> > -release_dtb_firmware:
+> > +	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> >   	release_firmware(pas->dtb_firmware);
+> >   	return ret;
+> > @@ -301,14 +292,8 @@ static int qcom_pas_start(struct rproc *rproc)
+> >   		}
+> >   	}
+> > -	ret = qcom_mdt_pas_init(pas->dev, pas->firmware, rproc->firmware, pas->pas_id,
+> > -				pas->mem_phys, &pas->pas_metadata);
+> > -	if (ret)
+> > -		goto disable_px_supply;
+> > -
+> > -	ret = qcom_mdt_load_no_init(pas->dev, pas->firmware, rproc->firmware,
+> > -				    pas->mem_region, pas->mem_phys, pas->mem_size,
+> > -				    &pas->mem_reloc);
+> > +	ret = qcom_mdt_pas_load(pas->pas_ctx, pas->firmware, rproc->firmware,
+> > +				pas->mem_region, &pas->dtb_mem_reloc);
+> >   	if (ret)
+> >   		goto release_pas_metadata;
+> > @@ -328,9 +313,9 @@ static int qcom_pas_start(struct rproc *rproc)
+> >   		goto release_pas_metadata;
+> >   	}
+> > -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
+> > +	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
+> >   	if (pas->dtb_pas_id)
+> > -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
+> > +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> >   	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
+> >   	pas->firmware = NULL;
+> > @@ -338,9 +323,9 @@ static int qcom_pas_start(struct rproc *rproc)
+> >   	return 0;
+> >   release_pas_metadata:
+> > -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
+> > +	qcom_scm_pas_metadata_release(pas->pas_ctx->metadata);
+> >   	if (pas->dtb_pas_id)
+> > -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
+> > +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx->metadata);
+> >   disable_px_supply:
+> >   	if (pas->px_supply)
+> >   		regulator_disable(pas->px_supply);
+> > @@ -774,6 +759,18 @@ static int qcom_pas_probe(struct platform_device *pdev)
+> >   	}
+> >   	qcom_add_ssr_subdev(rproc, &pas->ssr_subdev, desc->ssr_name);
+> > +
+> > +	pas->pas_ctx = qcom_scm_pas_ctx_init(pas->dev, pas->pas_id, pas->mem_phys,
+> > +					     pas->mem_size, true);
+> > +	if (!pas->pas_ctx)
+> > +		goto remove_ssr_sysmon;
+> 
+> this function already returns -ENOMEM you don't set ret to any particular
+> value so if qcom_scm_pas_ctx_init() returned NULL, you would exit your probe
+> function here "error out" with returning ret = 0
 
-Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
----
- .../bindings/input/parade,tc3408.yaml         | 68 +++++++++++++++++++
- 1 file changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/parade,tc3408.yaml
+Ack.
 
-diff --git a/Documentation/devicetree/bindings/input/parade,tc3408.yaml b/Documentation/devicetree/bindings/input/parade,tc3408.yaml
-new file mode 100644
-index 000000000000..30ffefb96c68
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/parade,tc3408.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/parade,tc3408.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Parade TC3408 touchscreen controller
-+
-+maintainers:
-+  - Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-+
-+description: |
-+  Parade TC3408 is a touchscreen controller supporting the I2C-HID protocol.
-+  It requires a reset GPIO and two power supplies (3.3V and 1.8V).
-+
-+allOf:
-+  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
-+
-+properties:
-+  compatible:
-+    const: parade,tc3408
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    maxItems: 1
-+
-+  vcc33-supply:
-+    description: The 3.3V supply to the touchscreen.
-+
-+  vccio-supply:
-+    description: The 1.8V supply to the touchscreen.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - reset-gpios
-+  - vcc33-supply
-+  - vccio-supply
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      touchscreen: touchscreen@24 {
-+        compatible = "parade,tc3408";
-+        reg = <0x24>;
-+
-+        interrupt-parent = <&pio>;
-+        interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+
-+        reset-gpios = <&pio 126 GPIO_ACTIVE_LOW>;
-+        vcc33-supply = <&pp3300_tchscr_x>;
-+        vccio-supply = <&pp1800_tchscr_report_disable>;
-+      };
-+    };
+> 
+> Please ERR_PTR() in qcom_scm_pas_ctx_init() and return the error up the call
+> stack via your remove_ssr_sysmon jump label.
+
+Sure.
+
+> 
+> ---
+> bod
+
 -- 
-2.34.1
-
+-Mukesh Ojha
 
