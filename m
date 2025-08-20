@@ -1,97 +1,133 @@
-Return-Path: <linux-kernel+bounces-777963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E105B2DFCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:46:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE897B2DFCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62FF83AF836
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19C4168DB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198F32E11D6;
-	Wed, 20 Aug 2025 14:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D13531576F;
+	Wed, 20 Aug 2025 14:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejkJaNDr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESiHHS1J"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4DF2DEA9E;
-	Wed, 20 Aug 2025 14:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8007F27C178;
+	Wed, 20 Aug 2025 14:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755701005; cv=none; b=iYAChFqzf6dVfg8723vxc6xIWythQoAfcU9jJMLaCKulr4lmHsw+5vH02aD1ZeBXH4cy/JWl5erVOp0wXiUqec22ybpTrSd8ZlJcyUFdaVYVE7a74HBEa0MVmNbLYyAf9ghpxLeKB0tPMTQw5jiNhLAY847O76wtP4/1jB1y5Ek=
+	t=1755701141; cv=none; b=Da0x5Y95TidlI2snkolZQbAbyGciQwN0fYdg3cubFtSeeuqr2adzzs878vHDOVAFvyN5ZMtlRXTX0/hrOhE3vv5Z9v24b5cmlB4E2+sVU4bFM0oRBO5/DXePmncSJUL0tShC+UNebPLW5sb/DTnpLMtblws80WRqgJ/whwVcjwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755701005; c=relaxed/simple;
-	bh=TVyqAws6QuuknA4pH98NxkvPs/O8JZq9ZXjSiLwMeQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oLyhNMm84Vak0LoyfQ4w+lfslK6LcM1XrqWpU9a9UQ6GnUQjNi0yPtyOoDPafiNsvnWXtkngKFEqaOPfbDiC6JYNa6atRI3nYruuj0rMIFdTbkQUxHg9IwABepnLuCG26QXVn4Av/ppggNzY+x+wVUvxRBXYaKYdjqiFw/CA5dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejkJaNDr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FAE7C4CEE7;
-	Wed, 20 Aug 2025 14:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755701005;
-	bh=TVyqAws6QuuknA4pH98NxkvPs/O8JZq9ZXjSiLwMeQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ejkJaNDrX3+spM8sWmGt+EdvjiGp930EZRM9GjefypKjGybT0NJsrw8QSMWciy8EY
-	 6Si4Ww15DYjKWuhcARh5vMX48nBB8uKlFGBuJnXfKx0loJMqXNMi1JG862SNsjJqcH
-	 oIF/Z+u6ALVxa9pYC+nzn7A8noVXFs0kcH8uQki2ckFBz7B2QQxo0eNG3F2y+/lsDD
-	 fSO9ve8XuSJ0/joFSvd/PD1CnI1l/4oodCUCJPsAhp+/lYHTP/nxb4Vllwy3AEiKtU
-	 W5X3zOGkYzt4ZufCPROzsbVat5jIXjxEgkUXUTuDaVpZ181UjWWWVEiDE7PDqQ0Fav
-	 AgZceSf4jw5Jg==
-Date: Wed, 20 Aug 2025 15:43:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.15 000/509] 6.15.11-rc2 review
-Message-ID: <3eebf8d8-fc2a-4e33-b884-ec02e012d91b@sirena.org.uk>
-References: <20250819122834.836683687@linuxfoundation.org>
+	s=arc-20240116; t=1755701141; c=relaxed/simple;
+	bh=a9JVGlwGYXW2hFGBHL9RHXg7JiwCWRbnsUA6+G+T1L8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j07kfCTSfuOKAE5xmkKwa1xKsYpE8voWUAWpAHzTIE+fw2lyw8SmD5WeS6a1tVll13YnT80nueDCuof4vKK3A2mpRQ3aoql9poHVirOTR7FRogOwOffTelHNfcRkrb+PhMygbsJBjSKwUPccH96gQUPmGOTXhP28VFmwU6LgSTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESiHHS1J; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2445818eb6eso49479895ad.2;
+        Wed, 20 Aug 2025 07:45:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755701138; x=1756305938; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkgDCA4x59UzST9zClVUyf6IYYHR1UzirdfSdk3MAOg=;
+        b=ESiHHS1JQ+SeNuQmJ+FJy2kTnO5FPDSS9GPshY9QHKKOVpSsSKYmT20PBkBJt0eznu
+         JLrYEsLpHt+zhV+j6zquusz1QWiFK/w7gK0C2ZAcGpUjLKZowrbflLRtOqc+M53rIH78
+         SrUQ+N2MzjjUot03X/9Fy9KEgV4tzfnLLKh7ZbQ3J7/Hv38m2bPJtmeBsSBhFsHQgGXy
+         ivv4RWxWzjWb0t5KQKCqqEPCMd78L2pcJSy1otTApwoIflQ9xFfcl90lMs1J4zEFmbI0
+         5Pqj41iGB5NyDdQ9r3iFtqia3cQSIkL4tCCbwoJpk7clT2L6byabsvEUZsdFvBPV+hs2
+         BJ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755701138; x=1756305938;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rkgDCA4x59UzST9zClVUyf6IYYHR1UzirdfSdk3MAOg=;
+        b=QtiVzKBoodFe9OWQIJjOeKYb33BVrdimBhVH7LQh3EpOnrjNEvP/46uxVoWOrf8kAe
+         kcTHyZW/DKtVbm9wFs3HX8he6TjUJY1L3uejUu4YU0VPPrAEM4r+RLD8FxLygtc6ihbc
+         dKBBagVHqfdBCagCjcVrsAluAn4sYphoR7KBl6z71YGkh4hYob2ucJnBoyLr+oQDlRiC
+         KXOCadDyGgB3XPnC5bgsV/iMt+mAikIB2ML7Z2ailTRjUi/W54fzyu02OALoUW4OdRs/
+         U5CR1DJPkSSi+V5CTUDQrm6bDmsTd7hXxlRrf/F6tAvEbRUhlmfGPzMFgjfbEZ/HpNvE
+         F/Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAEdGa+rmoTydVGQ2U3mV74mtd1IIZC6gGBcPnZPQC0Fxy4J2X8itI51CaYqBJFPsin9o2nnzTfrtL8Ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVLg/EaAlH+F7ciOXz45QA4wIwim0rYKcy3vozk6kVtxhiLj12
+	JxCsHobQU4jmY/lT0ShmIWTwNxcsUGwlh7IY4Z/g6jrxDVjDjXXESt+4MY3obQ==
+X-Gm-Gg: ASbGnctU6aLNt0dvb6vNcEcM9Pxa5Bd6SVLTP6zqBulhrO3cS3qlM7zpXHQvWzzGlRn
+	fnaiuNdsRVMNseBVB4bN++Akn7MqomJzEf+HODZozqRkx5bY4jGksgIBDs1vBfAeHduOOTTUi8j
+	zwZ9AdDBjSUf/QTsdYl251ub4EZAKQPKNNeLjO6iAt7I+ucI1OV4oh81IRJ9MYGJnE2LFWdKpEK
+	z92u+tjJidOxMUqH3MmnfFX2a0w/tRiBdgtmvvqNtD5THlNrTxeq/pGyjAz8qF2jivANHT5F6Ji
+	Q8VLjRqdSpCKS1n4Y20iUhpxu4Enjo+AjcLzZfZQm7YBSY54EdTedEQTBeW9rzfRS65gTbdt0cg
+	Q4Rs0aqKIX/H+Q1TJ67N63FHakibLI92WMTorm4LYLv0QpQ==
+X-Google-Smtp-Source: AGHT+IHo3/oTDGeBjcqWQ/wfmJfUflfkuKNsAFQbiYBhXfX1UH5ZT84x+r+3F436vpJ7UpMbE5yyWA==
+X-Received: by 2002:a17:902:f70b:b0:240:25f3:211b with SMTP id d9443c01a7336-245ef27a0f6mr31360785ad.51.1755701137583;
+        Wed, 20 Aug 2025 07:45:37 -0700 (PDT)
+Received: from localhost.localdomain ([202.83.40.77])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed379e92sm29197515ad.65.2025.08.20.07.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 07:45:36 -0700 (PDT)
+From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: martin.petersen@oracle.com,
+	James.Bottomley@HansenPartnership.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bvanassche@acm.org,
+	abinashsinghlalotra@gmail.com,
+	dlemoal@kernel.org
+Subject: [PATCH v8 0/2] scsi: sd: Fix build warning in sd_revalidate_disk()
+Date: Wed, 20 Aug 2025 20:15:08 +0530
+Message-ID: <20250820144511.15329-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QmqCD+huUMrWYrQ2"
-Content-Disposition: inline
-In-Reply-To: <20250819122834.836683687@linuxfoundation.org>
-X-Cookie: Semper Fi, dude.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi all,
+
+This v8 series follows up on v7 of the
+"scsi: sd: Fix build warning in sd_revalidate_disk()" patches.
+
+On Tue, 19 Aug 2025 Bart Van Assche wrote:
+> The traditional order for kfree() statements is the opposite order of
+> the corresponding kmalloc() calls.
+>
+> Shouldn't this patch remove the initializer from the 'err' variable?
+> Otherwise this patch looks good to me.
+
+Based on Bart’s feedback, I have addressed the following in v8:
+
+Changes in v8:
+  - Patch 1/2:
+      * Reverse the order of kfree() calls to follow the conventional
+        opposite-of-kmalloc() order.
+      * Added Bart Van Assche’s Reviewed-by tag.
+  - Patch 2/2:
+      * Removed the unused ‘err’ variable initializer.
+
+As before, the first patch fixes the stack usage warning by moving a
+large struct off the stack (with Fixes and Cc: stable tags). The second
+patch then simplifies sd_revalidate_disk() by making it return void.
+
+Many thanks to Bart and Damien for their reviews and guidance.
 
 
---QmqCD+huUMrWYrQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Abinash Singh (2):
+  scsi: sd: Fix build warning in sd_revalidate_disk()
+  scsi: sd: make sd_revalidate_disk() return void
 
-On Tue, Aug 19, 2025 at 02:31:36PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.11 release.
-> There are 509 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+ drivers/scsi/sd.c | 56 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 32 insertions(+), 24 deletions(-)
 
-Tested-by: Mark Brown <broonie@kernel.org>
+-- 
+2.43.0
 
---QmqCD+huUMrWYrQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmil3wYACgkQJNaLcl1U
-h9C7Dgf+NUgspRQGQvh1DYTcjMVkGtbVvoF8MTvfFaxFQaVjkhkIb8xSi/djvIhj
-Zqfl0HYcYGx01pR/WHzXb3yW1E3SVzPvUWO7BCsYn7Div48lAXo7Fked426snIeO
-LPxk8ewr0K3FZkIN4PKCxggm9I1PbHXbvLk9tmRWeZoqGqNAZnUQGFHJfcHPbUjt
-MzGJ/bXXxHixbY06Wvk+ch7lhvdL1NYkxsZZSA6JByAn9QN6/7HYJpJJ0i+Q/qrR
-NEVKwpjt2cyvAbuADdXQ7QC5aVi88DO058H0oncuBDttwlZlS95USfZW9j7KxS0V
-TmwyWzpWej98wxjAe/e/kW92B92+Rw==
-=UED5
------END PGP SIGNATURE-----
-
---QmqCD+huUMrWYrQ2--
 
