@@ -1,108 +1,90 @@
-Return-Path: <linux-kernel+bounces-778423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0EB9B2E57C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:08:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEECB2E580
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBDF1C84E69
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F045AA1D7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECC62820D7;
-	Wed, 20 Aug 2025 19:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8384328315A;
+	Wed, 20 Aug 2025 19:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bm54gcJz"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMO/A7aH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F9617A314;
-	Wed, 20 Aug 2025 19:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ECC17A314;
+	Wed, 20 Aug 2025 19:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755716926; cv=none; b=ECImqAOap4inlPd4aoM1Iy3LgWDhSOTMpNl0mpG8nGWT591zk9jJmlhkCXdalLGThZP+7N52vr2U3x9vhm1Cl8IEMpyZXl9q7kwmaXeI84SMkpdstBnOx/HtJrfvL84mis77sWrtSJRwzXC5HZIab8pHrG+qsnuaEvU2NpzFYR0=
+	t=1755716962; cv=none; b=q/xsn+tkYpoFhnhmlupbP563s4taEzteGVtmdVoIMGqvd0XWsGubaeagtw967H6/MPjfG4efRm3H/FWImLDXe7T58VjZdKIu1iEx48QMqcg96CjBFithjC//YPGN95LujtTUfeC+6ZNRkiStN8mRTGzuBzn4YFRJMA5p1+uJP+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755716926; c=relaxed/simple;
-	bh=HcDyeRjH+0g3ubSN5NYaXUP6Sk1mYq3xyhgSnMrL9KU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mQ8TF1pNz/sZeu+/LLKLqLcMLMNoyz7COe/BH3Ac+iMg1sgHFy8j6RIbtQXoRrA/GJh2ZApBfqBftzj0YXuaZ5Rq5IWUBj757dlcmE+1XI5Px/vA1G2vWSDnrjlnlQfrjZHFTQJdi+G1jRJTv3p0nhLeUvwAKOynpaQLOANLuSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bm54gcJz; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b5b1f1cso258471a12.0;
-        Wed, 20 Aug 2025 12:08:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755716923; x=1756321723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcDyeRjH+0g3ubSN5NYaXUP6Sk1mYq3xyhgSnMrL9KU=;
-        b=Bm54gcJzgoCLvoyYrnvPzCblGkc0rtViUv+4bN7zXTxkYeaSL52pQ8FzfDav8wnoEp
-         8WfxoaA5TB3OB8qOfofAWVKEb57PSI4l8qVHWaFuGXN1/PFvUuvKy4nVajWWJi8bg7xW
-         wfHQ1K5/TGjG4swQVqjppJXuFABBU51thzsUJ20dUEdwpLbzbediWINaO/+rGNMurAhj
-         KNExOrngXn7xhpWl6WO2u7zFauc46nD+VCsMm7mhkQykkEzfx0v1dCsaviy6e+tKH0T3
-         5bhFM4hBHhgh9dJNMn1+Inltd5XWG54HkWhKYTvjXK6ofDkuRZ4SYwIfjrMSkV7rSvtA
-         aUmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755716923; x=1756321723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HcDyeRjH+0g3ubSN5NYaXUP6Sk1mYq3xyhgSnMrL9KU=;
-        b=sBsQJwT5Lw7U7uaN+qsmKcXz7SRo6XZgJcRSBaRKEW04QXPSlxjpUvGsr4p1dapNxw
-         vRc1W7UwHd1cx1hYhrovxcmTLfYj5XEcHiPWiPn2oe6+Pnow4Ehn66C7jDkaIulHMCtI
-         qP5NIuAsqLqyfk3CCwE3STWGcLoJ/vUNPOuL0H0WXaiDbc6LCPp0Vaj0GfaWVO9t+A0L
-         /kVBayag5WojjToGSpmqnqA74DUP12oPoErp5gLX5mEKcamI4trhYRkFqP7etPbrLGIK
-         /lJrmz5iJ0djKDJiv7FFNlc/YZqfIjb/D97BAAppoV5rQJ40TU63i7GyJyYx4bNXo79o
-         bAmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf+Kv5H+Fd4SpeNfmJ5lUhO3WSNLlgpG1f5qjMCWHlWN2VODxB+W069TCMgPm6yzvesKxosBA+5GzN@vger.kernel.org, AJvYcCVwBEhn0M1sbArW8KKDFpNj794U9AmzdjGqFIDNunvwDQ7FA7er90zR12faxI54l9GiwdIRzmyngkKeFF5O@vger.kernel.org, AJvYcCXqG56w1DT/dJCyv03JgTIAoo+8Ebxi2sg9RF4tJ44MhsxhhdTwikeix8HfwDlJjr1M2kT3lRo0wGP0Gg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7zQO3x0apKB3ST7JHm62nNhpiLHNtNjOktJP2tW5/Dhs3AOKF
-	BSjVPNU1KWtXmy0dm9vtVURrHOxAIQavEWxeF0UzNicg8kAnC+nJ5UdgWE5WreAZ9VnxKe/m8gH
-	F0BLyhgTRZuQe5JGBPM7vvp/t5L998Zc=
-X-Gm-Gg: ASbGncviTmiTnBLu88xdcyeQrZQMOLJH20ob5G/SI/Tn6Rhm40a3PLAFde5Kud58Krp
-	06EMHT3Wv6muO6FIV1qC3CArz5bNKb7+GWAUEq24cN/zMXmFBh9+UFX3eOk0bMgyFAlPVyImYKr
-	6vqARzoRsQWGxCIvFboQjArPV5IlHw6uRMXVvktxXfE5P9vl70aGnxsIbMEcqBuXnZpzahBBxaB
-	HVLEnQ+2OzG0/1tsQ==
-X-Google-Smtp-Source: AGHT+IHjCRoLLJwsbsTLX+7XbOUyGhHR35RnvdQoPKy3xduLiLTbN+JBYUbUk+vA0ohxdOk67QoYySFRQIuqws38vG8=
-X-Received: by 2002:a17:907:3fa3:b0:af9:6bfb:58b7 with SMTP id
- a640c23a62f3a-afdf00f7b01mr337333866b.5.1755716923109; Wed, 20 Aug 2025
- 12:08:43 -0700 (PDT)
+	s=arc-20240116; t=1755716962; c=relaxed/simple;
+	bh=QApGMDIX6Oj5p80GmS3mkapVrvJtEATwOMN/ejypAzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDeCWk8gz+XTSzIZB3hBNCBmXPqIdRCW3QxAqVXzxE3pWXMHq744ut5mdgEwBovStNGJGE9Y0mMxPlMCrSaN4Z4SQNhjToX0XusHHF+PfepVUxk8zQhMGSZ0KDpScylMFts+QPvUl3565x40ZPHSSFzjdGZV/GByf/ZroBVkHFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMO/A7aH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92CE2C4CEE7;
+	Wed, 20 Aug 2025 19:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755716961;
+	bh=QApGMDIX6Oj5p80GmS3mkapVrvJtEATwOMN/ejypAzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SMO/A7aHQeBqF2MDvumZjS4atHCyocjn0dxcWaVVrr4owdSOGg/cxhEqkSGvU+LaY
+	 WyZpUR0UpGtOqATDz7Everx1X0EJHFu7zkrXD0jTdJwFvNiHFEE5RvG/frZH4fggjp
+	 //cW7FpGe0b0W9aKlCtjdkCDHZxPJY7bxfUg0G9JlMFln5npl6BJD8A9b+JXGd2Tt1
+	 CJ/SmZVbNRPGjIexEbCiO8cAM++PDsE3Qop0RDlP1XwGtE5HJEw3mjRiqm9XvzJMqv
+	 Z5c/aDFatfpqZoQyb1aQlWBwiYmRYuzPuhua1S5RG8uVyf4EmjTEZFs/jYTBrLKhpb
+	 5z6cjMy6houFQ==
+Date: Wed, 20 Aug 2025 14:09:20 -0500
+From: Rob Herring <robh@kernel.org>
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>,
+	Hector Martin <marcan@marcan.st>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] arm64: dts: apple: t600x: Comple WiFi properties
+Message-ID: <20250820190920.GB538860-robh@kernel.org>
+References: <20250813-apple-dt-sync-6-17-v1-0-209f15d10aa0@jannau.net>
+ <20250813-apple-dt-sync-6-17-v1-2-209f15d10aa0@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820163120.24997-1-jefflessard3@gmail.com> <20250820163120.24997-5-jefflessard3@gmail.com>
-In-Reply-To: <20250820163120.24997-5-jefflessard3@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 20 Aug 2025 22:08:06 +0300
-X-Gm-Features: Ac12FXwmMQGAdofCnD6L6CapMXC695A-jukjMfaKnUeE5mWFbt2l_Dj9Qq6u1fQ
-Message-ID: <CAHp75VfyR0cjnC6C6Xy8x9nTREdAgbjo18RLYNRzoLc6KmXnTA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] MAINTAINERS: Add entry for TM16xx driver
-To: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Boris Gjenero <boris.gjenero@gmail.com>, Christian Hewitt <christianshewitt@gmail.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Paolo Sabatino <paolo.sabatino@gmail.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813-apple-dt-sync-6-17-v1-2-209f15d10aa0@jannau.net>
 
-On Wed, Aug 20, 2025 at 7:31=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
-<jefflessard3@gmail.com> wrote:
+On Wed, Aug 13, 2025 at 11:53:34AM +0200, Janne Grunau wrote:
+> From: Hector Martin <marcan@marcan.st>
 
-Besides the missing commit message, the main part of this patch should
-be merged with the patch 2 where the YAML file is being added.
-Otherwise it will be a dangling file. I dunno if DT tooling has its
-own concept of a maintainer database, though.
+What does 'Comple' in the subject mean?
 
-
---=20
-With Best Regards,
-Andy Shevchenko
+> 
+> Add compatible and antenna-sku properties to the shared node and
+> brcm,board-type property to individuall board device trees.
+> module and antenna properties
+> 
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+>  arch/arm64/boot/dts/apple/t6000-j314s.dts      | 4 ++++
+>  arch/arm64/boot/dts/apple/t6000-j316s.dts      | 4 ++++
+>  arch/arm64/boot/dts/apple/t6001-j314c.dts      | 4 ++++
+>  arch/arm64/boot/dts/apple/t6001-j316c.dts      | 4 ++++
+>  arch/arm64/boot/dts/apple/t6001-j375c.dts      | 4 ++++
+>  arch/arm64/boot/dts/apple/t6002-j375d.dts      | 4 ++++
+>  arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi | 2 ++
+>  arch/arm64/boot/dts/apple/t600x-j375.dtsi      | 2 ++
+>  8 files changed, 28 insertions(+)
 
