@@ -1,110 +1,150 @@
-Return-Path: <linux-kernel+bounces-777535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E659DB2DA98
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:13:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20911B2DAA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503991BA8A31
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96143B31F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411E12E339E;
-	Wed, 20 Aug 2025 11:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED342E0411;
+	Wed, 20 Aug 2025 11:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjoMgF9t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TlfxQRPi"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A939EEDE;
-	Wed, 20 Aug 2025 11:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5693B1E51FE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755688323; cv=none; b=uyrMPCZ/QG+yW0lzfUeSLp8jLlUpkTssQLjVoraa8AJHF12wBGt1b1DOBniKXjZ9qTRl9qJf7+7e1+aqbUWaH9EFvtOLlGxZdQ8uHgqT5/w4snRd/kj6EYxcNz665dIc6II99jfZzpxIn6zUIK1OkvhSQWfiKBnZxPJPtqJQ9YU=
+	t=1755688390; cv=none; b=T+NgpUCB+ZwfmsskZSaKpRiV7/tGX5n9AwqBYPHl82iOJ3jxciyBHo84FnqE1rL7nBDPomNYnBNcWqIZshV1vha3oYtlEBcgN3A+BXvpWHwkswF4TPRLnAX8NSMMZuyZM1UuNnsyqb4/twcZglNtVQbzj0T6oa5Hqsi6fx4+z1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755688323; c=relaxed/simple;
-	bh=uelpzfAus7T4cNwWxHRNcaR1zhmvwzv3JA5pkiDgjpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2PA7NmsmzUCYElIgdqQfPd0hHO8KpPNLfFTi7fESMktKq5Yw5KisKZjM1i4Er6qaI1eN3sC8Q95tzLB8ACs+b30E9Fq9s+EbR5AwBJVlCrGM4V0YNNDFH09JhdefdSMfm6d42mgEj5Vh+K/eb9yz3iisrZgMun5SkaWekJKTqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjoMgF9t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D809C4CEEB;
-	Wed, 20 Aug 2025 11:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755688323;
-	bh=uelpzfAus7T4cNwWxHRNcaR1zhmvwzv3JA5pkiDgjpE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JjoMgF9tPfHSUiTAV/IcbrA/yawyIpFAe+2SsSiISdtotHcnCFH4c4CiNFym6lneT
-	 oTdTjGTxdHr8cMKNUDizoVdMuf2DkO0qvvT9mzyyBgVVUPaLxK5x2kMhkS21IkOOXm
-	 10Qhbh567qWy/86BaItBpag9ZB+JFlAUMVu7O8e+STAuK4zRmZXuc6KbqzVSblP19l
-	 p086ezKSfXxmPpoPI5nYAyIXeFbVUgYRcG9wv/ggj7Pjat2M3A6BVnqappVfmAGp2V
-	 Wc6lqe9YozLQXnIjFMRt+0ynUMJhaC0DPXBMZZXjppGGGhFkV0tbx83MKJAawBNuke
-	 vIIsu+WI8FW4Q==
-Date: Wed, 20 Aug 2025 12:11:58 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] selftests: harness: Rework is_signed_type() to avoid
- collision with overflow.h
-Message-ID: <18f2ea68-0f7c-465e-917e-e079335995c1@sirena.org.uk>
-References: <20250624231930.583689-1-seanjc@google.com>
+	s=arc-20240116; t=1755688390; c=relaxed/simple;
+	bh=G2IN6MxvO+KWLWpnKAajLSmhZ1aBl/PI+qPwYxMNuSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r6x/vBk/mUDAnqLEvzw9EBqSBE3v94Rv0vw74Q0UcleNeUmxGeI2VryL2UlwLAswLCfV/k9Cul3wK8NmyAd3toH39DftSy4BoHFsY+gmI7vBFgfTxsnxJkqgxYNg8HIpKbvCManBfiWdWV2e01krxVno8IHWYmNgKgb0BUNOCJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TlfxQRPi; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 88DC443292;
+	Wed, 20 Aug 2025 11:13:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755688385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ou3MSRgBG8cP602wOscwCCqhc/Oa+T0DZwTTZNBffYE=;
+	b=TlfxQRPi7CCIbzE9v7GFaL7B4qSx0xwJC2B3ssCV6ueN+1gXFc6zORcuq9Sk8Xxcnk83Gy
+	lGxCe6BMFQhgEyOf5BTdumULIco7b7+Pz4BVy+XwmjivQ7+Y7X8RJqeMCiQEN+F8sijIHO
+	dRmhlReSijd+b9G3cg1p3hZA16sNytLVZ2F1rkMkkwE2VKFOMzm504vS3gniWL35/b9Qkx
+	w2G85zGZ3MKYj/VJTCHAAqqbeyb/AYzKQulY1pjhiRifd9lNjVKZStPlTVVy56oOlvfS8R
+	uS09Gk3wVnnTMrvjmKhtDPJG12kXpVXXLQvJAcQkGC7DVQOh2zM/D+pUPcRZgg==
+Date: Wed, 20 Aug 2025 13:13:02 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+Message-ID: <20250820131302.6a2da5ef@booty>
+In-Reply-To: <l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
+References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
+	<20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
+	<l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2aT/0UNAiNyFJt+8"
-Content-Disposition: inline
-In-Reply-To: <20250624231930.583689-1-seanjc@google.com>
-X-Cookie: divorce, n:
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekvdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrr
+ hhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+Hello Maxime,
 
---2aT/0UNAiNyFJt+8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, 19 Aug 2025 14:29:32 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-On Tue, Jun 24, 2025 at 04:19:30PM -0700, Sean Christopherson wrote:
-> Rename is_signed_type() to is_signed_var() to avoid colliding with a macro
-> of the same name defined by linux/overflow.h.  Note, overflow.h's version
-> takes a type as the input, whereas the harness's version takes a variable!
+> > @@ -1005,7 +1041,24 @@ static void sn65dsi83_remove(struct i2c_client *client)
+> >  {
+> >  	struct sn65dsi83 *ctx = i2c_get_clientdata(client);
+> >  
+> > +	drm_bridge_unplug(&ctx->bridge);
+> >  	drm_bridge_remove(&ctx->bridge);  
+> 
+> Shouldn't we merge drm_bridge_unplug with the release part of
+> devm_drm_bridge_alloc?
 
-This patch is in -next and is causing widespread breakage in the
-selftests -next on at least arm and arm64 due to:
+I'm not sure I got what you are suggesting here, sorry.
 
-make --silent --keep-going --jobs=15 O=/build/stage/build-work INSTALL_PATH=/build/stage/build-work/kselftest_install ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_COMPAT=arm-linux-gnueabihf- kselftest-install
+Do you mean that __devm_drm_bridge_alloc() should add a devres action
+to call drm_bridge_unplug(), so the unplug is called implicitly and
+does not need to be called explicitly by all drivers?
 
-...
+If that's what you mean, I don't think that would work. Unless I'm
+missing something, devres actions are always invoked just after the
+driver .remove callback. But we need to call drm_bridge_unplug() at the
+beginning (or just before) .remove, at least for drivers that need to do
+something in .remove that cannot be done by devm.
 
-In file included from test-pcmtest-driver.c:10:
-../kselftest_harness.h:59:10: fatal error: linux/overflow.h: No such file or directory
-   59 | #include <linux/overflow.h>
-      |          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
+In pseudocode:
 
-Sample build log:
+mybridge_remove()
+{
+  drm_bridge_unplug(); <-- explicit call as in my patch
+  xyz_disable();
+  drm_bridge_unplug(); <-- implicitly done by devres
+}
 
-   https://builds.sirena.org.uk/5303936d609e09665deda94eaedf26a0e5c3a087/arm64/defconfig/build.log
+We want xyz_disable() to be done after drm_bridge_unplug(), so other
+code paths using drm_bridge_enter/exit() won't mess with xyz.
 
---2aT/0UNAiNyFJt+8
-Content-Type: application/pgp-signature; name="signature.asc"
+devres actions cannot be added to be executed _before_ .remove, AFAIK.
 
------BEGIN PGP SIGNATURE-----
+> > +	/*
+> > +	 * sn65dsi83_atomic_disable() should release some resources, but it
+> > +	 * cannot if we call drm_bridge_unplug() before it can
+> > +	 * drm_bridge_enter(). If that happens, let's release those
+> > +	 * resources now.
+> > +	 */
+> > +	if (ctx->disable_resources_needed) {
+> > +		if (!ctx->irq)
+> > +			sn65dsi83_monitor_stop(ctx);
+> > +
+> > +		gpiod_set_value_cansleep(ctx->enable_gpio, 0);
+> > +		usleep_range(10000, 11000);
+> > +
+> > +		regulator_disable(ctx->vcc);
+> > +	}  
+> 
+> I'm not sure you need this. Wouldn't registering a devm action do the
+> same thing?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmilrX0ACgkQJNaLcl1U
-h9BLSwf/cRKn3J4t1uI3cNNpE0JKxWL7PcQdUsrNQToHFdHdVi7hAzmnWghZ/vo3
-px0Yka/MhLQGJaiW0MZpMgxzu0ZuYnvZVpjT0eOnRqJHPG4JdbP/D+1A9YRa0Mjc
-hkEZoJJ6o6BqV3Izlr8j4ny3w+WAGgacBTSw5EZ0jCl/aNNqkyDhNmfUJOrJ05v+
-0B1dLXsr+O+TxN+NsoUUhshVnXaBcA3teQbZjo6BgjGsUKjNg/HBHt32ejOa3Nnx
-ydzG/2cNrt+YIGX3hUB7p4rQ23SisUZ9XhpwrzDr3mU+pyLaS9m6vptW7GSmSksZ
-DcUDq5p3R5FmmwRMMEHRw4vLQUncrA==
-=h8CZ
------END PGP SIGNATURE-----
+Good idea, thanks. I'll give it a try.
 
---2aT/0UNAiNyFJt+8--
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
