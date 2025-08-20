@@ -1,103 +1,104 @@
-Return-Path: <linux-kernel+bounces-776883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153ACB2D285
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:19:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315EEB2D2AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E887D625783
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA3A87AB309
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE27B26B777;
-	Wed, 20 Aug 2025 03:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b8eYZVFJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282C8198E91;
-	Wed, 20 Aug 2025 03:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5811C5D57;
+	Wed, 20 Aug 2025 03:45:57 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B23179A3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 03:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755659942; cv=none; b=ZALg9syUwzDwRKed1CHUWMohEvJpecpdPiQgXkkugrXFDQMYbe89YuneUtGmj5vyk/FLkTtAIRCaFdeDY4GVj8bjwoJSSaKaFciSULHKrPDN1LZEPZP8hz8iG/u2qmO9M6zKR5Am9YZW26reK2dWG+X0YolBeWlAfaJq9bObJ/g=
+	t=1755661557; cv=none; b=Wx4/X+OCKXQq4+lm1zw3AzZudaSRPJiITew2e3+8JEe9q9USZVhcEK04ir7I0mdkJ1Lbzj7of+ZZbGIK0XKwStZvsn+ZaVExRoHqjKVPD4Jy+15WppISVuwxNi+o5dB01E8OZc35LSAatBEnLFEtZvWsvjYHgio72TqwLZfs6UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755659942; c=relaxed/simple;
-	bh=FOaAVhAu9FkF+aXAVCUoNSC5uCMlTMmQtyNQK4rmHEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=REO2Z7Bb+vasc63xGh9nCdN7ina/Q4zw/QQPCBzJu+WVvSDTf8jzhDbEJ5dryDvpI84HpPbgrCoabOqFz6aUfzggVYRkNOVP2RKvd6YykcW9IT6MJuvwxnBDLspBw9604VM6E6rBKJcUJyELhKA8gvxYi9NI8zNTs6bqRpsSIP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=b8eYZVFJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755659937;
-	bh=MO8wWdLQZvHERmdt0cUAbTX3U//Gd4AFGV015HOgWBQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=b8eYZVFJeAORpPhmnKRSAeDIJ063UrByw5NzzEyeXHrk6EUOib+HxtpLQR9fyrS9K
-	 On6uU5wyR2l6e4PSGWrO/sRWi4q+Ls8464CMHI/olznT+uPkn8GG3bcfxv13NHuvGv
-	 taVLi/Prha5dMePdEANpGuRZJM+2Sx409gid/HfARc7fc6ajMSaWSGwZGSFivA4kdU
-	 WU5wZIHf4RlFSyEEDRzeOaWm+BpzpWL7BqSeKag/Oy/CoEc7fjZkhS6tdAv76olk+S
-	 +whTt3gASIG5oTg3NupGF2jAMppYa5F3KFZni4qiiEWxB0Jm0MSIha8KKNBLlQmOH+
-	 AwHC1gAGFjsxQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6BW419xZz4w2D;
-	Wed, 20 Aug 2025 13:18:56 +1000 (AEST)
-Date: Wed, 20 Aug 2025 13:18:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, Greg KH
- <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the fpga tree
-Message-ID: <20250820131855.0257c13f@canb.auug.org.au>
+	s=arc-20240116; t=1755661557; c=relaxed/simple;
+	bh=WTXWNo+8E1X+chuNWr88tcEsODferF2t7m6sSFkY1qg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eFxcKyFosZTe2Z3oZ1eQe0ab8y89wmx0BZEpHvqXG1NGb12Vqu4vIPdS8Rj4IFA9hCTnc8HBSufa27S88pHpDoO8C1XNKjcjCvYzCfkGCbMvV4MCrL+XMoE62b6gTu3Ku8k2dpVOgj6Gw4KYWJrBKJJqC2v7ldPS5OFIt9xUz28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.185])
+	by gateway (Coremail) with SMTP id _____8DxLvDsRKVoNLcAAA--.1435S3;
+	Wed, 20 Aug 2025 11:45:48 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.185])
+	by front1 (Coremail) with SMTP id qMiowJAxQMLqRKVo5uVZAA--.7887S2;
+	Wed, 20 Aug 2025 11:45:47 +0800 (CST)
+From: Song Gao <gaosong@loongson.cn>
+To: maobibo@loongson.cn,
+	zhaotianrui@loongson.cn,
+	chenhuacai@kernel.org,
+	lixianglai@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Yanteng Si <siyanteng@cqsoftware.com.cm>
+Subject: [PATCH v2] LoongArch: KVM: Use kvm_get_vcpu_by_id() instead of kvm_get_vcpu()
+Date: Wed, 20 Aug 2025 11:22:29 +0800
+Message-Id: <20250820032229.913361-1-gaosong@loongson.cn>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nMVeVnUUMwXsRm__C2F=ATE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxQMLqRKVo5uVZAA--.7887S2
+X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
---Sig_/nMVeVnUUMwXsRm__C2F=ATE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Since using kvm_get_vcpu() may fail to retrieve the vcpu context,
+kvm_get_vcpu_by_id() should be used instead.
 
-Hi all,
+Fixes: 8e3054261bc3 ("LoongArch: KVM: Add IPI user mode read and write function")
+Fixes: 3956a52bc05b ("LoongArch: KVM: Add EIOINTC read and write functions")
+Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cm>
+Signed-off-by: Song Gao <gaosong@loongson.cn>
+---
+ arch/loongarch/kvm/intc/eiointc.c | 6 +++++-
+ arch/loongarch/kvm/intc/ipi.c     | 2 +-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-The following commit is also in the char-misc.current tree as a different
-commit (but the same patch):
+diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/eiointc.c
+index a3a12af9ecbf..b3829fb4f64e 100644
+--- a/arch/loongarch/kvm/intc/eiointc.c
++++ b/arch/loongarch/kvm/intc/eiointc.c
+@@ -45,7 +45,11 @@ static void eiointc_update_irq(struct loongarch_eiointc *s, int irq, int level)
+ 	}
+ 
+ 	cpu = s->sw_coremap[irq];
+-	vcpu = kvm_get_vcpu(s->kvm, cpu);
++	vcpu = kvm_get_vcpu_by_id(s->kvm, cpu);
++	if (unlikely(vcpu == NULL)) {
++		kvm_err("%s: invalid target cpu: %d\n", __func__, cpu);
++		return;
++	}
+ 	if (level) {
+ 		/* if not enable return false */
+ 		if (!test_bit(irq, (unsigned long *)s->enable.reg_u32))
+diff --git a/arch/loongarch/kvm/intc/ipi.c b/arch/loongarch/kvm/intc/ipi.c
+index e658d5b37c04..0348a83a7ed7 100644
+--- a/arch/loongarch/kvm/intc/ipi.c
++++ b/arch/loongarch/kvm/intc/ipi.c
+@@ -298,7 +298,7 @@ static int kvm_ipi_regs_access(struct kvm_device *dev,
+ 	cpu = (attr->attr >> 16) & 0x3ff;
+ 	addr = attr->attr & 0xff;
+ 
+-	vcpu = kvm_get_vcpu(dev->kvm, cpu);
++	vcpu = kvm_get_vcpu_by_id(dev->kvm, cpu);
+ 	if (unlikely(vcpu == NULL)) {
+ 		kvm_err("%s: invalid target cpu: %d\n", __func__, cpu);
+ 		return -EINVAL;
+-- 
+2.39.3
 
-  4f156ee58bb8 ("fpga: zynq_fpga: Fix the wrong usage of dma_map_sgtable()")
-
-This is commit
-
-  1ca61060de92 ("fpga: zynq_fpga: Fix the wrong usage of dma_map_sgtable()")
-
-in the char-misc.current tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/nMVeVnUUMwXsRm__C2F=ATE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmilPp8ACgkQAVBC80lX
-0GxNNgf/folf3j14vJYRuRZNshjnatTxPjiPvXuoP5VdOqYVvL7qEGTNv8eBgFhn
-2a+3Drf+A9vmlWwHzBjw4xYON2joshX4t6koUL6mUBpKkfiQeErNT4M0m4lkSMmZ
-qvCdX853rwnirOjITuPSFIMUcog+9cc4Qv8DHudbSA4WwYEoHjlqNTChPv1KDpEu
-48DJVlruuDHszUBxrr5F6Necb6HfQUSOUW6W7kRQ50Si91SxiNwzlC31Y0ZaOxT0
-OzO6zIj405dNKksYyj3/hIHULAFjgMHl91q6aaJUA+vzTnDOQCguGmqvqqs6oGTt
-1CoV1yp8LMWaMk7ez1qIhMEcdhNMcg==
-=FVjn
------END PGP SIGNATURE-----
-
---Sig_/nMVeVnUUMwXsRm__C2F=ATE--
 
