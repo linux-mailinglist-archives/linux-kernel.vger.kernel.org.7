@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-778502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F9B2E693
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:29:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A195B2E696
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B66A1188DCD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92FD1BA685F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527929A31D;
-	Wed, 20 Aug 2025 20:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98441298CB2;
+	Wed, 20 Aug 2025 20:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqIL5ITc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVkiA4lE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1E819007D;
-	Wed, 20 Aug 2025 20:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AE6222584;
+	Wed, 20 Aug 2025 20:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755721712; cv=none; b=JW8eE2dQVJ4z++44b77BkGZqgTdw3WelLNwilIVkk9CBMHvsqWH8d2DxNiFJDhxHY4d7LuaXzWijjJNukLY/TCt0KEWBfK9CFpepxCA8P+yvTi9hrSl+Pr2FbhTcuHlQDxebjimtbx9e/V4Xygcnz1sK45xJ7suVvsxc9ik8J7Y=
+	t=1755721760; cv=none; b=VOdQd5vNwwMGrUUKJDcC+q5vkwuydv/AeCj30Ye07c03zo4VoXQvD+xYAvNQoI3wts2MAm8uwC9kLrOop5YPhxcytR1ZpOgER01fwt1aPQNHqQw3cYKjL8fUFKoPhp8ivRneIOfpqBAvy1+yr1NrYSAkcnBv8erJjPEXMpZdQK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755721712; c=relaxed/simple;
-	bh=C1ll2EQlPEA5XO+Evquc8cSLPIUfEm2wj77bw4FhA8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=cde+83h3wPsyZT/Vu1+SgOqy+JUtHkRJ5qYB5L0ziNnhJ6oPcKSrzkHbkP6dbE1H/sa0fVchy/JLtAHSSgjbWt88SCglJpFJmg61fqrXfqAB92Edgv2xM2lK1IrflUiT26M6j7r5+Q0Q+DwHAWOvq8Dvhu65P/ylrRuOx9Qh7+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqIL5ITc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E636BC4CEE7;
-	Wed, 20 Aug 2025 20:28:31 +0000 (UTC)
+	s=arc-20240116; t=1755721760; c=relaxed/simple;
+	bh=HcyWhHYY9JhEEBlHeHLGeaFUP2meJGrbBVU/uLc1Zrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cc+NMi5HijkILpaBVSyOcpcuyOY/pL8551dyydFkGcwWNk4c4IU4tQxY3dfaMKAr6/5kn4EBay3qeaOGShrMXVB/cTBfdBhbglGQ2RkdSKJOsBA04i/7Vh87Bed9mw4ChoSU638Qdtsl7G/hbVBPxani9eI5L/Rl5Jfg+G36/ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rVkiA4lE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53129C4CEE7;
+	Wed, 20 Aug 2025 20:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755721712;
-	bh=C1ll2EQlPEA5XO+Evquc8cSLPIUfEm2wj77bw4FhA8w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=NqIL5ITc6S9dFHM9U9B2aZJFz9D8sXA43XwdnSd51EeWfHhThyqrlXkCxXRXBWqhE
-	 MYCCLFMbPrVBUdEAeDXA/kybKeyGOtTYXYviSwub/4OX2YIKh5ASP0M4ieWGc9Nrgm
-	 cvwNB2h5yOoDc6yQ9lw22Q04db/KtLFHn3lPUSLB2OrokoiOelCsKMFCx3FrX2BtpO
-	 GOPI7oB3t7AgF1p+ASat3DKrh03hwMh4p7ULrNHdopYJNQcNPuXcta5NnWKovgmtmQ
-	 mdGviL+2NHHC9gMvHEbY7qTif6d84QYyLWmaV2thkNugBDcpEh+dfHHrXgufHNu/3g
-	 SY9VkGjcPGMJw==
-Date: Wed, 20 Aug 2025 15:28:30 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sungho Kim <sungho.kim@furiosa.ai>
-Cc: bhelgaas@google.com, logang@deltatee.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: p2pdma: Fix incorrect pointer usage in devm_kfree()
- call
-Message-ID: <20250820202830.GA638988@bhelgaas>
+	s=k20201202; t=1755721759;
+	bh=HcyWhHYY9JhEEBlHeHLGeaFUP2meJGrbBVU/uLc1Zrs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rVkiA4lE7D62aYH0SIT7xnsXrUwcpKnAR5dpM8bSCR7+14a+kr/bXsxW+dRCVsmxi
+	 D0eckedBV4+r+zhyEG+X0b9aqtut3MmHjjemASfjw1AOQFQrkXkjJcQEZwohoz/PdF
+	 iIhNBFdVzXMh+07O1lbx5qP01J+u/ALPUOvj8jWDiYQuWs06T9vhhtqiWU+0PIt1+i
+	 XlgOLSNpysr3DivNr9PAbRcGzjCtTCSqO0tcnT+ul+1+7vW0+nIqKUA6I06sjClJkH
+	 +c96pWm/f/yvlQuxvllkSZ58TO6G2srari1DLY01l9neoC9Yeuc7/QT/TbyqY7tR+H
+	 yLd8jIlwJseGA==
+Date: Wed, 20 Aug 2025 15:29:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/7] dt-bindings: pwm: renesas,rzg2l-gpt: Document RZ/G3E
+ support
+Message-ID: <20250820202918.GA712198-robh@kernel.org>
+References: <20250814184115.192930-1-biju.das.jz@bp.renesas.com>
+ <20250814184115.192930-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,42 +65,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820105714.2939896-1-sungho.kim@furiosa.ai>
+In-Reply-To: <20250814184115.192930-2-biju.das.jz@bp.renesas.com>
 
-On Wed, Aug 20, 2025 at 07:57:14PM +0900, Sungho Kim wrote:
-> The error handling path in the P2P DMA resource setup function contains
-> a bug in its `pgmap_free` label.
+On Thu, Aug 14, 2025 at 07:41:05PM +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 > 
-> Memory is allocated for the `p2p_pgmap` struct, and the pointer is stored
-> in the `p2p_pgmap` variable. However, the error path attempts to call
-> devm_kfree() using the `pgmap` variable, which is a pointer to a member
-> field within the `p2p_pgmap` struct, not the base pointer of the allocation.
+> Document support for the GPT found on the Renesas RZ/G3E (R9A09G047)
+> SoC.
 > 
-> This patch corrects the bug by passing the correct base pointer,
-> `p2p_pgmap`, to the devm_kfree() function.
-> 
-> Signed-off-by: Sungho Kim <sungho.kim@furiosa.ai>
+> The GPT IP on these parts is similar to that on RZ/G2L but supports
+> only 8 interrupts per channel and has multiple clocks and resets.
+> Introduce a new compatible string `renesas,r9a09g047-gpt` for RZ/G3E.
 
-Applied to pci/p2pdma for v6.18, thanks!
+Doesn't look like a lot in common to me. I think this should be a 
+separate document.
 
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
->  drivers/pci/p2pdma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index da5657a02..1cb5e423e 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -360,7 +360,7 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
->  pages_free:
->  	devm_memunmap_pages(&pdev->dev, pgmap);
->  pgmap_free:
-> -	devm_kfree(&pdev->dev, pgmap);
-> +	devm_kfree(&pdev->dev, p2p_pgmap);
->  	return error;
->  }
->  EXPORT_SYMBOL_GPL(pci_p2pdma_add_resource);
-> -- 
-> 2.48.1
-> 
+>  .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 525 ++++++++++++------
+>  1 file changed, 356 insertions(+), 169 deletions(-)
 
