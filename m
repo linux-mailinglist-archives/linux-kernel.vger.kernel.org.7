@@ -1,113 +1,271 @@
-Return-Path: <linux-kernel+bounces-777615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03014B2DBC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:53:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D937BB2DBCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E896B4E51B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8AE5C4184
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC49C2E62B9;
-	Wed, 20 Aug 2025 11:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00E52E9ED6;
+	Wed, 20 Aug 2025 11:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JpeH41Xj"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NbFnfdJY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BFB2E5B2F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9AD2E5423
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690797; cv=none; b=phwkg/3oV2bYsTzJEfKDrkHiEMZwqlozCCULOxbQmTVRuMQ5Ng97mGt2O+170HzdoZGgR4hJDyhBzo0WAEAfUqLJkVvlRdN0811zjCEzfG4L2KpZ8fkOTS89dwdWDk1wg3hlZdBSEMS5YbddfXZlWcpWmaTCIDxXwNsT7gOqN8Y=
+	t=1755690770; cv=none; b=KOV0phTWi7nR0txk0v4Bqwpo7jsglqBEn9MJ2E8WesLaKy5zC4ymjsTlMJcgk5KcKu/nq8KyM7lmQqbTQzODctMsIQet9nOSjERyK/+7uy3KxTghh4uthXoXH41bGBYg4N2kAGC+AVPq7JMJNbBJFy/myiy9lVmC9dNSZ6hh+LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690797; c=relaxed/simple;
-	bh=MmM1CnA+Lor+nEFLiAe+sbXE4PA+dY1hJjQ4Ly416Rg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ekdlEgsEEJxCgSyJNHAOzhDfIMLFRejHqWhSa3iaz14/93EuPzsDrwy1Fldjd8i8G9pctwi/v3LVnpWXQmJhFkVyBXRH2Z3tQaCq1MnghFuu8eaMgvNnwfmKrHI1eVXyK3K+1s2hKU40scwBqic/1zu5FHvDNPEJRwge9fgMKcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JpeH41Xj; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71d603a9cfaso51140987b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755690795; x=1756295595; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfY8E6fJCADzHf1Bzi5Pgxw3WUb0pai7Lp/eq5DYsIM=;
-        b=JpeH41Xj+XQiPsAXhvjdzDjk5JBMlqPNAbrCvJo2jv+tY9UpVXLLPljdMR8YbR/pbv
-         2JV/uRWIMuaV57gs81MMwQAfC142oqDoAocP3jiSF4SG6UyrIr/XQPmFktAJGklCm2i8
-         GcCTbQVQu5GhSafWiHTE8e394RVKuo4O2rhpob9gb2BrWuE73VB07AYEnbyLp5/JDEtc
-         LXZ6XoxMD5KBcHoQpo26fOzIrTMQhDjg43VmDIvOHXPjIf7PjMjhkhT8J8Rv/tLP9P1y
-         Uez+3zMXUfPPAocjZyljQPw7KxclRI2BifIoTwG2Ru/BzruM9OsuC9BwAvQC1oghvhYA
-         3WNQ==
+	s=arc-20240116; t=1755690770; c=relaxed/simple;
+	bh=+036hMkub/Af/78NBaftIgQF6n0LrLF1Du+6bYcKRAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDCl8B8RIuO1FbMPuIi2duEzHn9esGzhdMVKKEzhA2P1CD71Lwv4q3HEcmzdzduuGjOdGH8fSfbytGfdFwFPmLvAkl0V5r/GZaceiT/btrC90mjqdTci5P6ozYmaZM7BnRj2Ad2vIU2HQslsRYEyrM1v6xyz/uSRwRjX6P5kAa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NbFnfdJY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KA6aHv007306
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:52:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=1NU5anoXaPxzB4evmItsYtEq
+	4iSlXrdsVmJAEsKcsCQ=; b=NbFnfdJYQFNM8SCh4++tmwy0/BvWkAI43WOCQSSh
+	O3o7Qz9qkdEC99FA+82EDK98grL5bjNiakj1q0hgVSU/Urecc7h6AsF7YMslu1oC
+	z6OqTD4bHTKCcNaLzC2ILLWw3xqDowiDjKQFUstWZWaCvElKl2fd1Qllce0Wco6y
+	Iw+0ry2qPplv0VmFicL5XDUqV9HM9CmFG3R2PUPpHvkyvwmqiV48EvbJaLSJgYYr
+	XgJqfnyBSBLMTzp7k8DOzFM18HzywyAl7ZAhZwDA263cxgBoqeqWeJEBJbCs3q1I
+	qloXnMJOr66vMBVgyAkjxPjx9bnp5tg2oMVfNYwV2qzEzw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5291k10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:52:47 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70ba7aa11c2so110229396d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:52:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690795; x=1756295595;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wfY8E6fJCADzHf1Bzi5Pgxw3WUb0pai7Lp/eq5DYsIM=;
-        b=Be/8rgALi5BvivD1lXzVQa+ZAosnxgr5mSEBFqxTGeetD76O95IakqLp+WEdOyak3L
-         h1oAK8o2XJKKJTuvHXVseUm+xs5s7X1z74GBnR3NgGv1x/zJ/ekEd2qqi7tr8KDbtgO4
-         yX0oldSkIwcnb+sZ/o7ek3kXpADylq2NE7Cq6fn/FcV8FHzf2JBr4gKOZTXSOs3Izfmf
-         YTZMm/DYjJLltNHAh/2xHvRV25Il6iN1fEmeaLWbg7PLgqCVNW+NdWhAiMm6xtIRX+fg
-         Uk6woJGTHJFQkk6EtljIi5PEQBUooDyoiVcwZRzZHkpAMZB9PRdDhg0RQWOPxYAbYm9K
-         UTcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpPGAJf5AJmlA5NauMsGWThawwL0KXrUX6u5IfDHNCb3IWvrl5g2BJV9VNoMfdiEBN9AJPfOp1Yf7sRIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnDzNwj3gKk/60J+j3U4M4/1RwQljKbEYvSbl4/yRliaybo4tY
-	U1lBLJXS39BPyavqAuGzKydfaJpBx94rnlo3yy5ljy2MjkuDqPqlLYHzc7u/70Kv9tnpIbRyK4p
-	q9UwamOx9HWQnUBGFDr4CyphJcZQkdPw8gICz5IqKcA==
-X-Gm-Gg: ASbGncsdbhT4CRUFqjRbGxs1CXD78t79MSd+w4BMNymEOCFQavRh7gd1+bbIf9y9C5U
-	8Yt2awNG1ggg/meypSS7rRNW+14EMhLO8bepAZo0z53SGHXwxrI2KN1LW/NwWAhC2UHtZ33FyFY
-	C8biA0LqR2yi8oA7Fngj5gP+PfrIupJdk2QSrggqOlE6vUsvfLOmUk3t3+rxtk4TaufFyGa+SfX
-	B5XKcoS
-X-Google-Smtp-Source: AGHT+IFjcS9cmVgaI4c6h6za/ZHS+/se2bsGoBeQs6x8QymSZGHT1jVZ61lTLCqqdXlZW30H6USeUxtBeOWYh/jv0yQ=
-X-Received: by 2002:a05:690c:3684:b0:71e:8086:c9da with SMTP id
- 00721157ae682-71fb3230d13mr28006737b3.31.1755690794740; Wed, 20 Aug 2025
- 04:53:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755690767; x=1756295567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1NU5anoXaPxzB4evmItsYtEq4iSlXrdsVmJAEsKcsCQ=;
+        b=Vyxy7q4s0uIPrj2vKSopLr2+8Cnhmrh8iFITOt46gi8rZlNYr5hMaJAbhtFPjXF/k4
+         Zr9Vw1mQ6HP/WORqIhhEr7kPJDrBUni/MV8RI9CuR+GAcDHaK89fL0k0SavBDLxmTzom
+         /hRvbK0XAgkPWPJGWQ8GCMEJEg2AQoM1cC/qWbNZnhuO0b8FrM1g43QWeoZXUO5GFxxh
+         WtVAUNEGzZcFGdnKYHu+5q9+TtV5kGczY68DAczOvBubRjMx+rN0SPZ5kmHHJILJ7jnm
+         7N8oTvIcmDrwkrF31e0JCYw4DEh55nfoKcP2ifXaJWrpmFP2ZmA0coV+KZRCvM8TrqTI
+         GzuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtPynT4ACRg1fsDyaTtFZU++uE/uB5UGuPYeRGLFObvwVzyKPvpCd2jYvS2C6NQEBpys0MLomdioKiN68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaddXuLYcUfRQuKI6XPF3XAo/MI3/Bz9HFKbWXWbSJs0x0ofDN
+	Mab2fgGFz+ZsD2uilSF+GF1fmJlIsRsgW4iOSKommQeyrLo8fnTXNTk3coKCbLGQxViI/FWxT8m
+	fWIJhny8T3+1BHzbc9bM26EBeJcJpTyj4nd2Nmwiqi5IwOyaRRR0HEEi8zdSbzQNA/5M=
+X-Gm-Gg: ASbGncsfzeyGh+mMVV56pJwPwST6jLBW3afJ60c2sTgFbGLBDwJ+QhkGVyuVFAVLw30
+	zILxnGllJmBjp1rm68fK5BREx5QqmgJS8OK5qwhb2Ej3ZcBR2tpcEB12qxQWJa9Nc6ZtJQbB82Q
+	eW9WZCWPSYgmyS0VYh3Skki48eVBYKUkcwpffp6t49RPbq3DmaZ49+q6sU0wn1cv4Kd6R6kmVw7
+	6UOdTHWQaVJeKgtEx+86cbJsjxAQ5uvY5z9WjaOuqZe3lcn9Ah4xmnFbTQRme15pP+9ixVEuSmO
+	o1SBJeY8YhV5mN38gkh/AClFUyUSo3eeR1Ke46xHqpO9Q3er1jKieweS7dVTRk8BkshOJqUivhX
+	Yu9EBJbDJa9ZrNPzMZF3wF6rsRYgkokKyoFrTBhkQPrgIjPun5PEg
+X-Received: by 2002:ad4:574d:0:b0:707:3ad0:1f15 with SMTP id 6a1803df08f44-70d76fa2d8dmr29441686d6.18.1755690766839;
+        Wed, 20 Aug 2025 04:52:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXhlwYJEE7/G3XlVPANthN7ixhS1XYB40WO19b3qrubjjpDOPnmRSenoHFW9qSHFfTgNHFoQ==
+X-Received: by 2002:ad4:574d:0:b0:707:3ad0:1f15 with SMTP id 6a1803df08f44-70d76fa2d8dmr29441236d6.18.1755690766314;
+        Wed, 20 Aug 2025 04:52:46 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef35f105sm2554042e87.50.2025.08.20.04.52.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 04:52:45 -0700 (PDT)
+Date: Wed, 20 Aug 2025 14:52:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Robert Marko <robimarko@gmail.com>,
+        Das Srinagesh <quic_gurus@quicinc.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v2 14/15] arm64: dts: qcom: Add initial Milos dtsi
+Message-ID: <2hv4yuc7rgtglihc2um2lr5ix4dfqxd4abb2bqb445zkhpjpsi@rozikfwrdtlk>
+References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
+ <20250713-sm7635-fp6-initial-v2-14-e8f9a789505b@fairphone.com>
+ <3e0299ad-766a-4876-912e-438fe2cc856d@oss.qualcomm.com>
+ <DBE6TK1KDOTP.IIT72I1LUN5M@fairphone.com>
+ <DBE8G88CIQ53.2N51CABIBJOOO@fairphone.com>
+ <DBOC7QBND54K.1SI5V9C2Z76BY@fairphone.com>
+ <55420d89-fcd4-4cb5-a918-d8bbe2a03d19@oss.qualcomm.com>
+ <DC74DPI8WS81.17VCYVY34C2F9@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814130705.326073-1-o.rempel@pengutronix.de> <20250814130705.326073-3-o.rempel@pengutronix.de>
-In-Reply-To: <20250814130705.326073-3-o.rempel@pengutronix.de>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 20 Aug 2025 13:52:38 +0200
-X-Gm-Features: Ac12FXwzhsz92ch8tIMD-PG1qULef7_8F4arRRIauJobKzyL6ZBdAvs9a6BFjYY
-Message-ID: <CAPDyKFo3SnqvxdD4C-ESFERPJNfRXWKxzX1Hh573DsxvVdPdnQ@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] mmc: core: add undervoltage handler for MMC/eMMC devices
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>, 
-	Christian Loehle <christian.loehle@arm.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Avri Altman <Avri.Altman@sandisk.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DC74DPI8WS81.17VCYVY34C2F9@fairphone.com>
+X-Authority-Analysis: v=2.4 cv=Aui3HO9P c=1 sm=1 tr=0 ts=68a5b70f cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=6H0WHjuAAAAA:8 a=XuIBa_usxpjq5QTMMVUA:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: xUDRCiNsUohy5mp_MvAOtUCUZfqMP9-F
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX6S6wxVbEudaa
+ lM6FYfm+u3eYB1djCO+IoyxktFDlep3tr/H0lEidhvFgTEm6/CFhealXhD+bTsBFcPiu9PycwH2
+ c2RM+5aIrP28G53Y6M0MdCzsxuJzoAdaDiEuTUwkYtaie1NO83yJC1SzqusbfwCAu45mF4JZKS+
+ P2NTA3Io9etliGwIYDZ9pnKptdv7LjjW5jWGyofsoD+Hw5cg5x/rTNq82qItgVX41d2Tk45QF4D
+ tAl7J09fkcSE4G6m2V3EieKWa02KABwyipiMQGSYKzgn/oa0otwm/wAwyhdV7sFYmNbaWvg/U9Z
+ t6KK23h+aghffrruIliGV278Yhz7ITufnmtzxFyaI6RBb2pVNQqgUT3PyxHWiSWU5+x0NKGdS0K
+ XhNM4xV0cHjmhnDwYxq5z1yIiN34Dg==
+X-Proofpoint-GUID: xUDRCiNsUohy5mp_MvAOtUCUZfqMP9-F
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
+ definitions=main-2508200013
 
-[...]
+On Wed, Aug 20, 2025 at 10:42:09AM +0200, Luca Weiss wrote:
+> Hi Konrad,
+> 
+> On Sat Aug 2, 2025 at 2:04 PM CEST, Konrad Dybcio wrote:
+> > On 7/29/25 8:49 AM, Luca Weiss wrote:
+> >> Hi Konrad,
+> >> 
+> >> On Thu Jul 17, 2025 at 11:46 AM CEST, Luca Weiss wrote:
+> >>> Hi Konrad,
+> >>>
+> >>> On Thu Jul 17, 2025 at 10:29 AM CEST, Luca Weiss wrote:
+> >>>> On Mon Jul 14, 2025 at 1:06 PM CEST, Konrad Dybcio wrote:
+> >>>>> On 7/13/25 10:05 AM, Luca Weiss wrote:
+> >>>>>> Add a devicetree description for the Milos SoC, which is for example
+> >>>>>> Snapdragon 7s Gen 3 (SM7635).
+> >>>>>>
+> >>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> >>>>>> ---
+> >>>>>
+> >>>>> [...]
+> >>>>>> +
+> >>>>>> +		spmi_bus: spmi@c400000 {
+> >>>>>> +			compatible = "qcom,spmi-pmic-arb";
+> >>>>>
+> >>>>> There's two bus instances on this platform, check out the x1e binding
+> >>>>
+> >>>> Will do
+> >>>
+> >>> One problem: If we make the labels spmi_bus0 and spmi_bus1 then we can't
+> >>> reuse the existing PMIC dtsi files since they all reference &spmi_bus.
+> >>>
+> >>> On FP6 everything's connected to PMIC_SPMI0_*, and PMIC_SPMI1_* is not
+> >>> connected to anything so just adding the label spmi_bus on spmi_bus0
+> >>> would be fine.
+> >>>
+> >>> Can I add this to the device dts? Not going to be pretty though...
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
+> >>> index d12eaa585b31..69605c9ed344 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
+> >>> @@ -11,6 +11,9 @@
+> >>>  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> >>>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> >>>  #include "milos.dtsi"
+> >>> +
+> >>> +spmi_bus: &spmi_bus0 {};
+> >>> +
+> >>>  #include "pm7550.dtsi"
+> >>>  #include "pm8550vs.dtsi"
+> >>>  #include "pmiv0104.dtsi" /* PMIV0108 */
+> >>>
+> >>> Or I can add a second label for the spmi_bus0 as 'spmi_bus'. Not sure
+> >>> other designs than SM7635 recommend using spmi_bus1 for some stuff.
+> >>>
+> >>> But I guess longer term we'd need to figure out a solution to this, how
+> >>> to place a PMIC on a given SPMI bus, if reference designs start to
+> >>> recommend putting different PMIC on the separate busses.
+> >> 
+> >> Any feedback on this regarding the spmi_bus label?
+> >
+> > I had an offline chat with Bjorn and we only came up with janky
+> > solutions :)
+> >
+> > What you propose works well if the PMICs are all on bus0, which is
+> > not the case for the newest platforms. If some instances are on bus0
+> > and others are on bus1, things get ugly really quick and we're going
+> > to drown in #ifdefs.
+> >
+> >
+> > An alternative that I've seen downstream is to define PMIC nodes in
+> > the root of a dtsi file (not in the root of DT, i.e. NOT under / { })
+> > and do the following:
+> >
+> > &spmi_busN {
+> > 	#include "pmABCDX.dtsi"
+> > };
+> >
+> > Which is "okay", but has the visible downside of having to define the
+> > temp alarm thermal zone in each board's DT separately (and doing
+> > mid-file includes which is.. fine I guess, but also something we avoided
+> > upstream for the longest time)
+> >
+> >
+> > Both are less than ideal when it comes to altering the SID under
+> > "interrupts", fixing that would help immensely. We were hoping to
+> > leverage something like Johan's work on drivers/mfd/qcom-pm8008.c,
+> > but that seems like a longer term project.
+> >
+> > Please voice your opinions
+> 
+> Since nobody else jumped in, how can we continue?
+> 
+> One janky solution in my mind is somewhat similar to the PMxxxx_SID
+> defines, doing something like "#define PM7550_SPMI spmi_bus0" and then
+> using "&PM7550_SPMI {}" in the dtsi. I didn't try it so not sure that
+> actually works but something like this should I imagine.
+> 
+> But fortunately my Milos device doesn't have the problem that it
+> actually uses both SPMI busses for different PMICs, so similar to other
+> SoCs that already have two SPMI busses, I could somewhat ignore the
+> problem and let someone else figure out how to actually place PMICs on
+> spmi_bus0 and spmi_bus1 if they have such a hardware.
 
-> @@ -2212,6 +2219,13 @@ static int mmc_shutdown(struct mmc_host *host)
->  {
->         int err = 0;
->
-> +       /*
-> +        * In case of undervoltage, the card will be powered off (removed) by
-> +        * _mmc_handle_undervoltage()
-> +        */
-> +       if (!host->card || mmc_card_removed(host->card))
+I'd say, ignore it for now.
 
-There is no need to check for host->card here, as the shutdown ops
-can't be called unless it exists.
+> 
+> Regards
+> Luca
+> 
+> >
+> > Konrad
+> 
 
-> +               return 0;
-> +
-
-[...]
-
-Kind regards
-Uffe
+-- 
+With best wishes
+Dmitry
 
