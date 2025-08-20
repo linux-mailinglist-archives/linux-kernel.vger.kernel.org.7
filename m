@@ -1,207 +1,105 @@
-Return-Path: <linux-kernel+bounces-778092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAB3B2E13D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:35:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07B6B2E13C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614D41C878E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93EA4A272A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F86932276B;
-	Wed, 20 Aug 2025 15:25:55 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998D936CE0D;
+	Wed, 20 Aug 2025 15:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3Z2VO6w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C2D36CDF0
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D958036CE02;
+	Wed, 20 Aug 2025 15:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703554; cv=none; b=lKfdZurI4rOtQrKmcDB3E3zKwk5N+hzckmvaNX41smKTxAPm2mQZIq4jPUP58hHk5ZWZ4BrnJnBoJPJ5LovLpGYNdkAaCbedxz1lUoX/9/XGrSfwMxuL8iWDWrRBNAcT3azhHRe5jycxHG3UP3a315b/hoXbwa0rimcb3Ub/U3E=
+	t=1755703553; cv=none; b=dvpcwFBpy4r3V3CkcXcvB5UMibqRV1wuTu76XK5n96JMgvoJuggx0IQVjDbtK1iYzQWxiwZtiknIkxPsdASnsW9PFCXEXvYKmsnqkOUpkYNuqwuqdrfZ/9ygNU7F2nzGObJaDSCra8NB/vv8CqSiZzObKrMTcmQfXTyfCR5YfB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703554; c=relaxed/simple;
-	bh=g4PXaaeVsThK1sTCvKKYodOttxogDDBSbOid3oIpN64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvjwVt1rTNAL2sCyfFFS81SKSxMjWSABiPcLQE+/2JmtuQxD7L7ML6uUgF4r7fxzwC/UoSNdFDAfx1fWMPOccYvqmO0f9Wv72NxccsrgrkEcuwj9jZNeqkrrko7hWsAVViZqFjNPEgt7DrZg2nIQQr+K7he2390Ruw7Df9jlsUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.110] (unknown [114.241.87.235])
-	by APP-05 (Coremail) with SMTP id zQCowACHHF3q6KVoZZq9DQ--.1809S2;
-	Wed, 20 Aug 2025 23:25:30 +0800 (CST)
-Message-ID: <544577b2-6810-4bef-b588-e1c662d5be13@iscas.ac.cn>
-Date: Wed, 20 Aug 2025 23:25:30 +0800
+	s=arc-20240116; t=1755703553; c=relaxed/simple;
+	bh=P4Yet0T9nXdDf0TzNjDPSNwIP8HqdY1hreVkpB5uhwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gl3HQUN9L1WzB6XIQnc4ZRqAG7hKIy9oTecYd43j3fw0bBOWOQZffu8JJHdZcEzPXwb7araRrILRUdtAGWLo4Q2lZxqy7/y0g5XPhRL2BjRRkyEaH0dah8GCgXSv8h+Bj9e68IvpzVHyZWPScqkjWG2tdXY2KRQ9iOz1KPIgdoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3Z2VO6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2EFC4CEE7;
+	Wed, 20 Aug 2025 15:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755703552;
+	bh=P4Yet0T9nXdDf0TzNjDPSNwIP8HqdY1hreVkpB5uhwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3Z2VO6wmW//9zhhtUXtoi55A2/d+Bo/ZKRDlRbz2cEkQ/dL0t2w/ErA5ehi4jZwS
+	 6kACZ2+ZW2lii9qfgDZoo5hJhCtdhAK7VkdW5WYr1V9HJ/SVKPWQlgYI+JsL//l6En
+	 xChUjX7is6N1KUjZC9BA3KW5d52XDA1UJMFw7xRotrNTM2i/VYqdyNN1Vv97uosL/u
+	 aON+Fmkdpq+z+bmLM+R2nAi3swworY2XJlP57A9TUv7CnMMCZ4mg4DWuw86KlzepU1
+	 Jtpq6j2ecy5AR+LTg8n+Su28bOsXAgVhvgJWJwwxjelg87FOm1cbGln71C2kY9fItM
+	 TW4C/44bDSTTg==
+Date: Wed, 20 Aug 2025 16:25:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
+	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/7] arm64: uaccess: Move existing GCS accessors
+ definitions to gcs.h
+Message-ID: <a1a7631a-066e-48e5-b8c8-d90b9cf4455d@sirena.org.uk>
+References: <20250818213452.50439-1-jeremy.linton@arm.com>
+ <20250818213452.50439-3-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] riscv: Introduce use_alternative_{likely,unlikely}
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Vivian Wang <uwu@dram.page>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Ayd=C4=B1n_Mercan?= <aydin@mercan.dev>
-References: <20250820-riscv-altn-helper-wip-v1-0-c3c626c1f7e6@iscas.ac.cn>
- <20250820-riscv-altn-helper-wip-v1-1-c3c626c1f7e6@iscas.ac.cn>
- <aKXiH1eqGliLNb8u@yury>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <aKXiH1eqGliLNb8u@yury>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACHHF3q6KVoZZq9DQ--.1809S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw4fAw4xtr45Ar4DJFyrWFg_yoWruFWkpF
-	45G3Z0yF4kJF1xtF9Fqw1UZr4Y934rK3y3XF9Igr1DA3ZIy34ftryrKr15uryay3s8u342
-	vF1xJa48C3W2kFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
-	1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUqiFxDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
-
-Hi Yury,
-
-Thanks for the review.
-
-On 8/20/25 22:56, Yury Norov wrote:
-> On Wed, Aug 20, 2025 at 09:44:45PM +0800, Vivian Wang wrote:
->> Introduce convenience helpers use_alternative_likely() and
->> use_alternative_unlikely() to implement the pattern of using asm goto to
->> check if an alternative is selected. Existing code will be converted in
->> subsequent patches.
->>
->> Similar to arm64 alternative_has_cap_{likely,unlikely}, but for riscv,
->> alternatives are not all CPU capabilities.
->>
->> Suggested-by: Aydın Mercan <aydin@mercan.dev>
->> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
->> ---
->>  arch/riscv/include/asm/alternative-macros.h | 73 +++++++++++++++++++++++++++++
->>  1 file changed, 73 insertions(+)
->>
->> diff --git a/arch/riscv/include/asm/alternative-macros.h b/arch/riscv/include/asm/alternative-macros.h
->> index 231d777d936c2d29c858decaa9a3fa5f172efbb8..be9835b5e4eba03d76db3a73da19ac9e2981c4db 100644
->> --- a/arch/riscv/include/asm/alternative-macros.h
->> +++ b/arch/riscv/include/asm/alternative-macros.h
->> @@ -158,4 +158,77 @@
->>  	_ALTERNATIVE_CFG_2(old_content, new_content_1, vendor_id_1, patch_id_1, CONFIG_k_1,	\
->>  					new_content_2, vendor_id_2, patch_id_2, CONFIG_k_2)
->>  
->> +/*
->> + * use_alternative_{likely,unlikely}() returns true if the alternative is
->> + * applied and false otherwise, but in a way where the compiler can optimize
->> + * this check down to a nop instruction that's patched into a jump, or vice
->> + * versa.
->> + *
->> + * Always returns false if the alternatives mechanism is not available.
->> + *
->> + * Usage example:
->> + *   if (use_alternative_likely(0, RISCV_ISA_ZBB))
->> + *
->> + * Similar to static keys, "likely" means use a nop if the alternative is
->> + * selected, and jump if unselected; "unlikely" is the other way around.
->> + */
->> +
->> +#ifndef __ASSEMBLER__
->> +
->> +#include <linux/types.h>
->> +
->> +#ifdef CONFIG_RISCV_ALTERNATIVE
->> +
->> +static __always_inline bool use_alternative_likely(u16 vendor_id, u32 patch_id)
->> +{
->> +	BUILD_BUG_ON(!__builtin_constant_p(vendor_id));
->> +	BUILD_BUG_ON(!__builtin_constant_p(patch_id));
->> +
->> +	asm goto(ALTERNATIVE("j %l[no_alt]", "nop", %[vendor_id], %[patch_id], 1)
->> +		 :
->> +		 : [vendor_id] "i"(vendor_id),
->> +		   [patch_id] "i"(patch_id)
->> +		 :
->> +		 : no_alt);
->> +
->> +	return true;
->> +
->> +no_alt:
->> +	return false;
->> +}
-> Apart from those BUILD_BUG_ON()s, it looks similar to
-> __riscv_has_extension_likely(). Can you make sure you don't duplicate
-> it?
->
-> If so, can you describe what's the difference between those two in the
-> commit message?
-
-Whoops, *completely* missed that. Thanks for the catch.
-
-It turns out I was trying to find uses of this pattern by searching for
-"j<space>%l[...]". The block in __riscv_has_extension_{likely,unlikely}
-uses "j<tab>%l[...]".
-
-I'll just use __riscv_has_extension_{likely,unlikely} in v2 and drop this.
-
->> +static __always_inline bool use_alternative_unlikely(u16 vendor_id, u32 patch_id)
->> +{
->> +	BUILD_BUG_ON(!__builtin_constant_p(vendor_id));
->> +	BUILD_BUG_ON(!__builtin_constant_p(patch_id));
->> +
->> +	asm goto(ALTERNATIVE("nop", "j %l[alt]", %[vendor_id], %[patch_id], 1)
->> +		 :
->> +		 : [vendor_id] "i"(vendor_id),
->> +		   [patch_id] "i"(patch_id)
->> +		 :
->> +		 : alt);
->> +
->> +	return false;
->> +
->> +alt:
->> +	return true;
->> +}
-> This 'unlikely' version is just an negation of 'likely' one, and it
-> looks like an attempt to save on one negation. On the other hand, the
-> function is __always_inline, which means that compiler should normally
-> take care of it. Can you prove with objdump that it really works as
-> intended? I mean that 
->
->         if (use_alternative_unlikely())
->                 do_something();
->
-> generates a better code than 
->         
->         if (!use_alternative_likely())
->                 do_something();
-
-use_alternative_likely() and use_alternative_unlikely() are not
-negations of each other and in fact should be functionally equivalent. I
-also briefly explained the difference in the comment, but the difference
-is which case is nop i.e. fallthrough, and which case requires a jump
-instruction. The likely case should get a "nop", and the unlikely case
-should get a "j %l[...]". This choice does work as intended [1].
-
-I don't think it is possible to give both options to the compiler, so at
-least for now AIUI users have to pick one.
-
-The same applies to __riscv_has_extension_{likely,unlikely}.
-
-Vivian "dramforever" Wang
-
-[1]: https://godbolt.org/z/v8zTEhzTx
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UokGFqJlJ5Wl2ADc"
+Content-Disposition: inline
+In-Reply-To: <20250818213452.50439-3-jeremy.linton@arm.com>
+X-Cookie: Semper Fi, dude.
 
 
+--UokGFqJlJ5Wl2ADc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Aug 18, 2025 at 04:34:47PM -0500, Jeremy Linton wrote:
+
+> We are going to add some additional GCS access helpers to gcs.h in
+> order to avoid some forward reference problems with uaccess.
+
+> +	/* GCSSTTR x1, x0 */
+
+Should really be [x0], but not super important since it's clear.
+Otherwise
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--UokGFqJlJ5Wl2ADc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmil6PgACgkQJNaLcl1U
+h9Cs1wf/euB1pOQe9ocxRSjAjirM7narDyKReS0sLCltciEqP2/zyi7/GsIAJoAy
+wdlwoBGhMOJ4KcLCNo8AYzddvotkuApfsrNI3aqPD8fMWIW4kWJOH3csggWeyXw3
+aXQzwU0NqiX5NyeBiBApZDHFzbRy5qN9uUsfroKxKbmtCd41GSbhQvXqZKfSMlZ8
+rpdR9cPqQLz8o2EZcYGLurOq9144T9/jFOqANYePa/J8Wr4TrpNP5fQIKDlxQefQ
+/wQB0DyMg/tV9LYDN4fvVRsdmX2TsQ7/gsLKAkM+2ZcTfI1cplnkBX7Jl/NFpnyO
+J80JCwW8IFpm6Bx33Z5i9z33n2ZW0Q==
+=58Ws
+-----END PGP SIGNATURE-----
+
+--UokGFqJlJ5Wl2ADc--
 
