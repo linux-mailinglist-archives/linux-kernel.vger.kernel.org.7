@@ -1,229 +1,213 @@
-Return-Path: <linux-kernel+bounces-777260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9501AB2D77A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:06:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D487DB2D763
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B16E4E538D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3360587858
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3FB2DAFD7;
-	Wed, 20 Aug 2025 09:04:58 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134122DA76F;
+	Wed, 20 Aug 2025 08:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="epGuVVM3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FF1296BA8;
-	Wed, 20 Aug 2025 09:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F351F3BB5
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680698; cv=none; b=jhE3IxpSNuXnsuOgvnArmdwKHu2Qd2hElI8G7V3jFt7+STIkjCm1wcOcvH61OHPbMu5u7JFygja0SkfpaYLGGCUr85bfvajMa0aZJvYi9dBUINS5QCP7FIdexlmNuIUW9kyCK0ISCTRdPMDzREHCcic34xDxJdPkuP9P3onNGFQ=
+	t=1755680271; cv=none; b=iqRbGuXuqzuaO9xQMF0o46BPE4SHx9j8/h2bYmT5aumg03GljKOkfK+xwy3/IOgd6S8ao/qHY0au66u/uRdKPq0LASLjMvJQI2x7EaZDM2EnI0MHl02Ee4woGtW0JQ1X/WE+4yrIfOZ7BuDT0k8rA60EBE9tRJR/k48ILksIktI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680698; c=relaxed/simple;
-	bh=k8HLhVXIgFKtC/yuLWeJTJOc749Fyjaa/tjwkvlEZdk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mCwrhNyjhGt6V9On1NOEp2k+vLLkB9o8ndSr0iJlsV/R6VJu1QP5mVX2xdrDS6WLe/SIXK6UHsdVCago2kpf/+0OiOf7F0F/o0Yg4TV8KCtNWjg7SQ5h8oy/mNlVvJH2VaajWwwRWhW2cvoWh2zbdDd0tAuJVt5+8uEme2bKl40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6LBF28QNzKHNnY;
-	Wed, 20 Aug 2025 17:04:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B47F41A0CC8;
-	Wed, 20 Aug 2025 17:04:52 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCnIxSmj6Vo4c48EQ--.61348S4;
-	Wed, 20 Aug 2025 17:04:50 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	bmarzins@redhat.com,
-	chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com,
-	brauner@kernel.org,
-	martin.petersen@oracle.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH util-linux v3] fallocate: add FALLOC_FL_WRITE_ZEROES support
-Date: Wed, 20 Aug 2025 16:56:32 +0800
-Message-Id: <20250820085632.1879239-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1755680271; c=relaxed/simple;
+	bh=qkYO27EQCIXsaD48NEJxduCJmgc4ju2NKyZ3rsjrJ5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M29NeHsllYtthqBK6qBF9gBoFromKU4bYJg2OtdCJjw3xFJkQjBCUbVW1fMWf+kBgRFNHh09KMPgaMQ1rJqQn8g8/xvgMhisDaDnCCEO9RS6qintkJn9Vp57IiTtogl+l3pbhzOHKNqcsvPDFYzajbxqccZbVmQbc4DxrRvzBAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=epGuVVM3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K1pD56011480
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:57:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LovUKZUetKjTNqClYAkifuYXcchuuq2HOA0oOrFjetc=; b=epGuVVM3UEI+lpZ/
+	GC3Gd49RLBjAts2KljoWNXZv1cVr+p/JIiFOTIni5sidKUiq8KP1lK9EODITlCKG
+	do4i2ykChgNg+ODHLRPgfw/2uxIGrXvNag/dnw8nYBPZuadkJTjWfKqS2dEimX90
+	VRxYcJHdH05LPhJCJKGZO3UvNU1hSJuditpdj8qQ4KkvscAWFiu7us+ZcZXANkYR
+	oz/G+N7ALaYxtAwMeJeLgaOiiCtCrS7HX5rVM8sqc0Ju79vTt55maIT7bY9nf4we
+	UnO0zqkurPhJR05+67EV2d164UT/MeAXMSDTmXfLQXtwX6WQKJgaAL+ChW0EZFrk
+	DMzOVA==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52bh393-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:57:48 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24458121274so77327085ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:57:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755680267; x=1756285067;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LovUKZUetKjTNqClYAkifuYXcchuuq2HOA0oOrFjetc=;
+        b=mjW2ADCNrLtJaldFHqDhABNboE4jvfWtJoP5UWOkPBWAre/9L0O3e6N2TdfiKMF2Lt
+         JgEr7FVLdsUvOgNaxrkhmzU8j3L0wq+XIoWhk0sr13gJPwM4rPLvb8rNPUsB8Ny0tJit
+         1i1cB6H5pjEXnJHN4PqvHALFUSRNas2DosT+QBBXm5i1wHSfH35eN+BNhZodayyInM//
+         aMLLShFraVfZE9oPsydbO0qr9rsUgkNI8F7mBD8SHlKLCXV2LHSTk+jGmVwo9SYIRxrt
+         al2fqO7AbBP/NvepF1bkfnAdKL9GavZDL/CbGm9HMePrnYOsui3yalV1KeJ2nXzPkCsL
+         RPuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9b3IPDitunq7TYI2yIYs4bwZby2XpB+1MRrS7zkJvT+VE6liu4UiYv6fLHuVdYUqG+Hl1Q7SpzFdy7qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpxz0e2IfM8NxdLH5KhilVZDF+2hOywpoEw5cG/Zvo0IEKhe5I
+	H6NcIoevbWDNBRPbNZLUSpukhQhaMqDEmsWw1BceqjvXsrJDHGj/IoEfKLjlAwgT1EdPLgQ10rf
+	1mOvDTxO4A8z0zZqrWuUqYZtVNnGTzb6WwIOe1kjkp3/VGANAHEXUkvqev57vLpyLzro=
+X-Gm-Gg: ASbGncsMefHJ+WpODuk0nIvn4M+oin4MzVrsN3dQBwJBYCGA4cjuj5jI8etWDm7Zu5K
+	aztFl1nTwvHDn0G5UB7xeQrY+MFQQ//2za2d6wo1YMj+NGc9Dgl6Il24O6YVXDu4J9OK8eJbo1S
+	AZ9Z0IU2KkC1MXwAbRwghcWLQ6TL8zSbE6asLMNuFoLPCLGGqmdoYqIlLzMgvY5O029RdYEBs0K
+	ojdV5NT224+plC+NQDwF/G3utySLAQBFSOL7J97ZfLjsfXfnW0iSaCJD73+JNY6mGnsId9JjrOZ
+	wfTlwkjgW2Dk5sRZmXGPW/dqKFEwacPbHyEM/Yyw9kmYQMkJQKXoSGuhqZr7G+L+SdPLktc9o5M
+	Dc6ztbjaOmfIpVaT0oFX7zMhmVteCRX+B
+X-Received: by 2002:a17:902:e74a:b0:240:96a:b812 with SMTP id d9443c01a7336-245ef1728ddmr29790125ad.24.1755680267114;
+        Wed, 20 Aug 2025 01:57:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG5sQXiIDgpXrdgQJsAaziiWnOkOwfxl+Waxq3t4y+pSVqgHGK5588qw9DsrKpoU1yq0lXcog==
+X-Received: by 2002:a17:902:e74a:b0:240:96a:b812 with SMTP id d9443c01a7336-245ef1728ddmr29789735ad.24.1755680266607;
+        Wed, 20 Aug 2025 01:57:46 -0700 (PDT)
+Received: from [10.133.33.88] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed379e92sm20242905ad.65.2025.08.20.01.57.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 01:57:46 -0700 (PDT)
+Message-ID: <b1eb2ed6-9743-465e-9b2e-75d5a06c1497@oss.qualcomm.com>
+Date: Wed, 20 Aug 2025 16:57:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/6] arm64: dts: qcom: qcs615: add ethernet node
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+ <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc: netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, stable+noautosel@kernel.org,
+        Yijie Yang <quic_yijiyang@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
+ <20250819-qcs615_eth-v4-3-5050ed3402cb@oss.qualcomm.com>
+ <c4cbd50e-82e3-410b-bec6-72b9db1bafca@kernel.org>
+ <157c048d-0efd-458c-8a3f-dfc30d07edf8@oss.qualcomm.com>
+ <0b53dc0b-a96f-49e1-a81e-3748fa908144@kernel.org>
+ <1394aa43-3edc-4ed5-9662-43d98bf8d85f@oss.qualcomm.com>
+ <7c072b63-f4ff-4d7f-b71e-01f239f6b465@kernel.org>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <7c072b63-f4ff-4d7f-b71e-01f239f6b465@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnIxSmj6Vo4c48EQ--.61348S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxtFW7XFyDWFyUCryrKF15Arb_yoWxWrykpF
-	W5KF18KrWrWw4xGwn7Aw4kWw15Zws5Wr45CrZ2grykAr13Wa17Ka1vgryFgF9rXFykCa15
-	Xr1avFy3ur48AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjTRNJ5oDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX/xTCUBfF0ERx
+ XI6AEUOuepGl22jwZnL6beASi8YEUbtwawUL+rc9rvGZwrnJBYK9tCrgtyKG6qzRiK1Di3JO1cP
+ qUaZOuNQjHVOmZsoj82bKDG+rx0fgAnS6k7JMESgS2qfkHr2NZcINDagrHGWRmh1W/qLhA7fy+R
+ DnEZ2DfvNbH5GcMBntXMs6VjiIECYQXpynH9fQ4KFwCKFLUhBLxy6Nt+1yrUs6lvq5e8Jf8FMfh
+ r8Q+pSg1h3/HQXtuS8nafxyTGe5yUi3mBrMG3RUnSFKtN6njXHG9JF+bhgOdMwDxKJhteiiTaNs
+ hjBY7ns6qpBM7b44bgNKguRXOQYgkK/W9smplZp+gWeH4gHuS6at1EAJuyUOykc8SsuvVG4Xgul
+ pTrDCwzf2/6frMQ9R4quaX193hUYnQ==
+X-Authority-Analysis: v=2.4 cv=cr3CU14i c=1 sm=1 tr=0 ts=68a58e0c cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=DOxB7AakEuovRElI8tQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: DtDxEaPUjac8yTkZ5v9L1rYhqdpaeCsm
+X-Proofpoint-ORIG-GUID: DtDxEaPUjac8yTkZ5v9L1rYhqdpaeCsm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-From: Zhang Yi <yi.zhang@huawei.com>
 
-The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
-fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES to the fallocate
-utility by introducing a new option -w|--write-zeroes.
 
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
-v2->v3:
- - Say less about what the filesystem actually implements as Darrick
-   suggested and clarify the reason why "--keep-size" cannot be used
-   together in the man page.
- - Modify the verbose output message.
-v1->v2:
- - Minor description modification to align with the kernel.
+On 2025-08-19 17:08, Krzysztof Kozlowski wrote:
+> On 19/08/2025 11:04, Yijie Yang wrote:
+>>
+>>
+>> On 2025-08-19 15:15, Krzysztof Kozlowski wrote:
+>>> On 19/08/2025 08:51, Yijie Yang wrote:
+>>>>
+>>>>
+>>>> On 2025-08-19 14:44, Krzysztof Kozlowski wrote:
+>>>>> On 19/08/2025 08:35, YijieYang wrote:
+>>>>>> From: Yijie Yang <quic_yijiyang@quicinc.com>
+>>>>>>
+>>>>>> Add an ethernet controller node for QCS615 SoC to enable ethernet
+>>>>>> functionality.
+>>>>>>
+>>>>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>>>> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+>>>>>> ---
+>>>>>
+>>>>>
+>>>>> Why do you mix up DTS and net-next patches? This only makes difficult to
+>>>>> apply it, for no benefits.
+>>>>
+>>>> The DTS changes and driver code modifications work together to achieve a
+>>>> single purpose, so I included them in one patch series. Should I
+>>>> consider splitting them into two separate series?
+>>> Of course yes. You are just making difficult to apply this. Patches are
+>>> completely independent and even your internal guideline asks to NOT
+>>> combine independent patches.
+>>
+>> The challenge with splitting this series lies in the fact that it
+>> attempts to reverse the incorrect semantics of phy-mode in both the
+>> driver code and the device tree. Selecting only part of the series would
+>> break Ethernet functionality on both boards.
+> 
+> And where did you explain that? Anyway, you did not achieve your goal,
+> because you broke the boards still.
+> 
+> Your patchset is not bisectable and does not follow standard submission
+> guidelines. DTS is always independent, please read carefully the docs.
 
- sys-utils/fallocate.1.adoc | 11 +++++++++--
- sys-utils/fallocate.c      | 20 ++++++++++++++++----
- 2 files changed, 25 insertions(+), 6 deletions(-)
+The approach I'm taking will inevitably make the series non-bisectable, 
+but I'll clearly note this in the cover letter in the next revision.
 
-diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
-index 44ee0ef4c..a06cf7a50 100644
---- a/sys-utils/fallocate.1.adoc
-+++ b/sys-utils/fallocate.1.adoc
-@@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
- 
- == SYNOPSIS
- 
--*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
-+*fallocate* [*-c*|*-p*|*-z*|*-w*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
- 
- *fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_
- 
-@@ -28,7 +28,7 @@ The exit status returned by *fallocate* is 0 on success and 1 on failure.
- 
- The _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB, and YB.
- 
--The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range* and *--posix* are mutually exclusive.
-+The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
- 
- *-c*, *--collapse-range*::
- Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation.
-@@ -76,6 +76,13 @@ Option *--keep-size* can be specified to prevent file length modification.
- +
- Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
- 
-+*-w*, *--write-zeroes*::
-+Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, written blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes and subsequent writes to that range do not require further changes to the file mapping metadata.
-++
-+Zeroing is done within the filesystem. The filesystem may use a hardware-accelerated zeroing command or may submit regular writes. The behavior depends on the filesystem design and the available hardware.
-++
-+Options *--keep-size* can not be specified for the write-zeroes operation because allocating written blocks beyond the inode size is not permitted.
-+
- include::man-common/help-version.adoc[]
- 
- == AUTHORS
-diff --git a/sys-utils/fallocate.c b/sys-utils/fallocate.c
-index 13bf52915..afd615537 100644
---- a/sys-utils/fallocate.c
-+++ b/sys-utils/fallocate.c
-@@ -40,7 +40,7 @@
- #if defined(HAVE_LINUX_FALLOC_H) && \
-     (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
-      !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
--     !defined(FALLOC_FL_INSERT_RANGE))
-+     !defined(FALLOC_FL_INSERT_RANGE) || !defined(FALLOC_FL_WRITE_ZEROES))
- # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
- #endif
- 
-@@ -65,6 +65,10 @@
- # define FALLOC_FL_INSERT_RANGE		0x20
- #endif
- 
-+#ifndef FALLOC_FL_WRITE_ZEROES
-+# define FALLOC_FL_WRITE_ZEROES		0x80
-+#endif
-+
- #include "nls.h"
- #include "strutils.h"
- #include "c.h"
-@@ -94,6 +98,7 @@ static void __attribute__((__noreturn__)) usage(void)
- 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
- 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
- 	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
-+	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
- #ifdef HAVE_POSIX_FALLOCATE
- 	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
- #endif
-@@ -304,6 +309,7 @@ int main(int argc, char **argv)
- 	    { "dig-holes",      no_argument,       NULL, 'd' },
- 	    { "insert-range",   no_argument,       NULL, 'i' },
- 	    { "zero-range",     no_argument,       NULL, 'z' },
-+	    { "write-zeroes",   no_argument,       NULL, 'w' },
- 	    { "offset",         required_argument, NULL, 'o' },
- 	    { "length",         required_argument, NULL, 'l' },
- 	    { "posix",          no_argument,       NULL, 'x' },
-@@ -312,8 +318,8 @@ int main(int argc, char **argv)
- 	};
- 
- 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
--		{ 'c', 'd', 'i', 'p', 'x', 'z'},
--		{ 'c', 'i', 'n', 'x' },
-+		{ 'c', 'd', 'i', 'p', 'w', 'x', 'z'},
-+		{ 'c', 'i', 'n', 'w', 'x' },
- 		{ 0 }
- 	};
- 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-@@ -323,7 +329,7 @@ int main(int argc, char **argv)
- 	textdomain(PACKAGE);
- 	close_stdout_atexit();
- 
--	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
-+	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
- 			!= -1) {
- 
- 		err_exclusive_options(c, longopts, excl, excl_st);
-@@ -353,6 +359,9 @@ int main(int argc, char **argv)
- 		case 'z':
- 			mode |= FALLOC_FL_ZERO_RANGE;
- 			break;
-+		case 'w':
-+			mode |= FALLOC_FL_WRITE_ZEROES;
-+			break;
- 		case 'x':
- #ifdef HAVE_POSIX_FALLOCATE
- 			posix = 1;
-@@ -429,6 +438,9 @@ int main(int argc, char **argv)
- 			else if (mode & FALLOC_FL_ZERO_RANGE)
- 				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
- 								filename, str, length);
-+			else if (mode & FALLOC_FL_WRITE_ZEROES)
-+				fprintf(stdout, _("%s: %s (%ju bytes) written as zeroes.\n"),
-+								filename, str, length);
- 			else
- 				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
- 								filename, str, length);
+> 
+>>
+>> As you can see, I’ve CC’d noautosel to prevent this issue. Given the
+>> circumstances, I’m wondering if it would be acceptable to leave the
+>> series as-is?
+> 
+> NAK. Sneaking DTS into net-next is not acceptable.
+
+Okay, I’ll split this series in the next revision.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+
 -- 
-2.39.2
+Best Regards,
+Yijie
 
 
