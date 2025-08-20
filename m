@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-777322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E99B2D821
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:27:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F72B2D82B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6053A178DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25EE1C42AF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C034D2E3398;
-	Wed, 20 Aug 2025 09:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFB32E3713;
+	Wed, 20 Aug 2025 09:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DoTUgo5w"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBqaZrZx"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF520DD72
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EC82DF3FD
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681477; cv=none; b=rsEAY9XqkXD0/GcBJTUElRBjn6IQD+iNW6S7xAySrBfDbputoAadv2JIDB2ObMwqXsU4zKRBIVXJIy7xFgpPvLoH/za8WN8k0ffGT0R/vJPHZ10SH9D/iwLpdh6VDHD+iBwmKdD6vnvtjcXEUTCJ02ywBk9M0MjTpceI5Kp4bfM=
+	t=1755681484; cv=none; b=gZAIRR0a9FlwavGUixEuGJmj2hC77a74ve0AjOFvwt2GsJpxj7CwDZaa7rRl/k9ijBk5hMdmhfait2Pzf8vDgASteTPgaGbtw1vGmUa0VZXt6V+KIq5PYIpahmV0ybF+IUImKFDtjIi/MTn5Oc/JOacwK7uZuUwkflXMjyiNvRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681477; c=relaxed/simple;
-	bh=+tB4d5fGLkP9g785WDsSKgQcYGqFp2KAd1Bg3gafh4I=;
+	s=arc-20240116; t=1755681484; c=relaxed/simple;
+	bh=eherwgROF/bZ0pFajBjAOnkkNBnSvT5BnsVn4bkaWc8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kohHMF/pP2aYS4M/gg0Toq/wNVO6LQU5thN3VD3dz9d3TxouR0pdK5+19XANFh1Du80PP71oc/5zDpcn55j7CkTPYhFeiNffZ+R9LulanyM1W2PZr2MtQqCoch0dB9ca9fns2IFG1EeyJXqQQt7QzIFXv9tEoYNFPCzXozbvbxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DoTUgo5w; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=mw2/qNXUheLH0PGrlJivQ+jZrdNBzq2RMMfh9o7ySi9X63Lsp6QRYRXgILW0r7Fr/c5n0SvCe7eIGedau5oFy/XIWN29iNLwsReFnnI+RgsZERjNbTUUUCm8/XGHrg63IUk/UHXkGoOkKs07G0pSht4NJKJXk1SQ6kKD4HeQaH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBqaZrZx; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2e614b84so5934289b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:17:55 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e563b25c4so2471154b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:18:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755681475; x=1756286275; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755681482; x=1756286282; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G00NT5pas9FVxfpi/YHK4+QU1mZOvDUuJ8JX4w/lRcs=;
-        b=DoTUgo5w/aSPO41X5TYdjSUm2BL+l246v98PmtphKjejEC4XcTJWoQ8AsobLTZ+bgl
-         rlIsHuQXpeeAmmrUhPHYENe2wiDXuEvxDRWPWVCqYHcwWkTLHlDXBprEaLyHA64Ci2fe
-         JePKA1XfLaynayBnok0K7AC0aud8sRz6SE9H17J6BNbNR/b+UNv3m7A/Y5/DpYTgCIXF
-         ACZzPPSjUEEc4TV32rugK0dEy06eQBfiXiCxsZY9Eacxnbj+EQ7abv5FkEidEaaBJs67
-         sQ2t3tu8GF1wQHE/P89ygZF879xCbkJ26ItdbMVUp+DwLpIsrc8xlJ58JhO8EZsG1kTe
-         oUKw==
+        bh=YF5w8IoBCci+s9UgwxiAnKZ7VNnUUJeU8csh4BtuMkk=;
+        b=MBqaZrZxm7ykgXyXq45M1G/t7+6FiF9LHbSzuyirQyqWHmMbBkCY/Jy/sdQ2qTMxi6
+         idVXc/8kxJzHD/8WkW8G3ZQs58mTbnLhY8063JbP8rKSwaSi9Qm7xSSBXhvpwGBxq1Nr
+         fidDYrtQXFaLU6ezcloATZx9e/rNJCVNiIbRzqx27Xgas0c3PQlQJgvJ6ctbCDnaaWcX
+         AUoSpGL1SPIb8bGE6rfQAu3a5fmasnvDv+ROMfxGDpBDLK8PAZhjji3spc82rbWXXYCy
+         j24gii0ZMDcPensOb1WmO2UMIvWFgjRD1MltV4y+MW6sIUVIEujp7D6bLsDtZGRKDdyN
+         M5FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755681475; x=1756286275;
+        d=1e100.net; s=20230601; t=1755681482; x=1756286282;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G00NT5pas9FVxfpi/YHK4+QU1mZOvDUuJ8JX4w/lRcs=;
-        b=FSae+rZJhggU2HEs23RR8D784mbBHjuO8zMS0mREs5SB+p8hz7p2KldcWkfvCKhwQH
-         dC5MIE/+2AeWkz98GXItMpwiV+4wJjSbfosKoX4nbcOBKM9lJp36fNq/UF66OjdQmeox
-         hZ7HCCFjS2OHI87FXKoShczG2vgE+ckThwnwKqRp7Te5cN0KCqpsFQ9+oEbFfPPJZLCR
-         mpeJH2zMrKR/loF7cl9TWv0E+ukr5Q8NAKWnw+5VoyRIrN9eCERxo91MXlTL8fNvq7gk
-         vxEXWpL03EmwyS8vtrxA52vMxlOckaDoMhLIhS8ytAJoGej7L9u39cpCEskuTkgOYODX
-         R3LA==
-X-Gm-Message-State: AOJu0YxcpVRRVjhCRaQw9BZjxBdxbrg6NdU5tdOrRQfG7J6XnsA7bu1u
-	uzZ+beV3slfpYe2/N1r0J4H8re+pZFN1O2V4WAGnxqMDIpUU0RYDTAAX
-X-Gm-Gg: ASbGncu3YN5zQ5R+aMtjAzJ4cw8llcITofyhXx6PUPf8vY8iXYoxwJ6P8SH7y0rNDOw
-	GFxxMY66iszS67bQC+/g3T+xFR6rkw4BHzuh7sgqCHBDGywI+qOEnG3VvAUWvaYBhIi2G8SViQp
-	0v/y8mAFM+zve4is79r9xmOVz/vbTk7XNlXVwIsLaNVpRtqb/Je6Eu/fogMJEEGaYACkzLOWLO1
-	3MyT4XypmEbQHJkx2KtrfwDjveZjtOn2JlrOGstuRgbAiDTnqsk0o7TlaFIk8oA4FxKEbs4MRmQ
-	xopl7ZpOx0N9n8ImUVbhk/ckQxzPCQ4PrWWH843Qr7jDqsDli7MJgFgGVCGG6sdEjlyYPBqY0RY
-	cZjFdUHZOevBOwU3hyb6SBXtMlu1FJ4q7hJQ413s8KssHt/QHfai7o3QpjYiB1Qd1ct9iMly0lw
-	mEBh4c
-X-Google-Smtp-Source: AGHT+IGOR5Vu8SFDfzs4mluiIbxSZrocnw8V5a3HX19eJmEhZo3vU0L/czN9icYY3dyCTFpVJe2OsA==
-X-Received: by 2002:aa7:8893:0:b0:76e:885a:c343 with SMTP id d2e1a72fcca58-76e8dd2579dmr2679388b3a.25.1755681475040;
-        Wed, 20 Aug 2025 02:17:55 -0700 (PDT)
+        bh=YF5w8IoBCci+s9UgwxiAnKZ7VNnUUJeU8csh4BtuMkk=;
+        b=DbqihBtiEk+XnkmueyqQKdIYgvFSoPL78hTuEfTL0QZogP5ZoVns7g5z0shefwxssZ
+         trNNo70hPef+vAqXgD/ox6wAzlv0unH2RqhfxSDRw7rbzOfP66O4E/dyijskbrTKGtGe
+         P1RySb8QDDi3uu6klt8V9CZCUC/Ghcsn8UhpIflyvPsA4OQ2FoKCzbSFHikMXe2nMWO5
+         OVxPfknAfvValLJaUcD4mgNcQEHDBvmMYQIVeuqHflW7vYPTmIBYeScU7qf3P7wNJ/8v
+         634IeOYFXENc7U69O12s8xOHZIeYdTKFBlKxW0ZKxcMFd8784SdVziGBXH+3YvTDmg13
+         n6qQ==
+X-Gm-Message-State: AOJu0YxsenqjAS4cVbDGI+PSXDeI5bwg4Ty64K2X6ADB8ne6+b/2uamr
+	Ut8UAs7rRNFdJooUaHtvs69zReaV4lycNDGFlyHBdfDfJ1dhSFax6BZm
+X-Gm-Gg: ASbGncuW5+cAL0VeAuJB8pFOhw4ePJPfmxC8t9PCHxuAtPIhkOPwr16K6mlvf0GYiPU
+	JqqpkdmJeudNVtSi8iW2GGBr1cM9zg9gqum3zygz6YDTeRzOklR5pxqA2pzkp6rYrlJHG+AtMBh
+	mIawDS1eSwu2UztBL2nN4ERSWN+xYBGoiLdRH/It/8l8kTMdz+Ib1kZ9Z1ZzNUnqul5twLGTuOQ
+	5oTFYNUrgP4ly3a42yRBmfm+WVBrxj4jxB5zC45yGc8Nu5xNZxgZ4DZ42C26WEFvIIwc4e5qDA1
+	EFAyk1uP7/1eFnrPoA0TPpYvuB97slHRvRIy03PIZ/a5BIJ6kr3a/soo0tcTIP03LcHJE/ihyb3
+	u/jISLB+2imXWFBXgiwGZm8qwpmQN0mamjfzDpHsJ67n2J3/VoqA2Av5/SJewGCtiMJoDHMlTPC
+	U3SYQ5
+X-Google-Smtp-Source: AGHT+IHqynuaHYUfAhx74e8ntdYeAp8cLRcCT02dpBwi3FWdHepd96CQBsFqkqhqXRnErlRzJRsTyA==
+X-Received: by 2002:a05:6a00:2d9a:b0:76b:e109:a1f4 with SMTP id d2e1a72fcca58-76e8dc35c5fmr3110910b3a.12.1755681481711;
+        Wed, 20 Aug 2025 02:18:01 -0700 (PDT)
 Received: from localhost.localdomain ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.17.50
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.17.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:17:54 -0700 (PDT)
+        Wed, 20 Aug 2025 02:18:01 -0700 (PDT)
 From: Jinchao Wang <wangjinchao600@gmail.com>
 To: pmladek@suse.com,
 	akpm@linux-foundation.org,
 	Steven Rostedt <rostedt@goodmis.org>,
 	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-kernel@vger.kernel.org,
-	feng.tang@linux.alibaba.com,
-	joel.granados@kernel.org,
-	wangjinchao600@gmail.com,
-	namcao@linutronix.de,
-	sravankumarlpu@gmail.com
-Subject: [PATCH 6/9] printk/nbcon: use panic_on_this_cpu() helper
-Date: Wed, 20 Aug 2025 17:14:51 +0800
-Message-ID: <20250820091702.512524-7-wangjinchao600@gmail.com>
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Feng Tang <feng.tang@linux.alibaba.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jinchao Wang <wangjinchao600@gmail.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Sravan Kumar Gundu <sravankumarlpu@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 7/9] panic/printk: replace this_cpu_in_panic() with panic_on_this_cpu()
+Date: Wed, 20 Aug 2025 17:14:52 +0800
+Message-ID: <20250820091702.512524-8-wangjinchao600@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250820091702.512524-6-wangjinchao600@gmail.com>
+In-Reply-To: <20250820091702.512524-7-wangjinchao600@gmail.com>
 References: <20250820091702.512524-1-wangjinchao600@gmail.com>
  <20250820091702.512524-2-wangjinchao600@gmail.com>
  <20250820091702.512524-3-wangjinchao600@gmail.com>
  <20250820091702.512524-4-wangjinchao600@gmail.com>
  <20250820091702.512524-5-wangjinchao600@gmail.com>
  <20250820091702.512524-6-wangjinchao600@gmail.com>
+ <20250820091702.512524-7-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,48 +104,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-nbcon_context_try_acquire() compared
-panic_cpu directly with smp_processor_id().
-This open-coded check is now provided by
-panic_on_this_cpu().
+The helper this_cpu_in_panic() duplicated
+logic already provided by panic_on_this_cpu().
 
-Switch to panic_on_this_cpu() to simplify
-the code and improve readability.
+Remove this_cpu_in_panic() and switch all
+users to panic_on_this_cpu().
+
+This simplifies the code and avoids having
+two helpers for the same check.
 
 Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- kernel/printk/nbcon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/printk.h            |  2 --
+ kernel/panic.c                    |  2 +-
+ kernel/printk/nbcon.c             |  2 +-
+ kernel/printk/printk.c            | 15 ++-------------
+ kernel/printk/printk_ringbuffer.c |  2 +-
+ lib/dump_stack.c                  |  2 +-
+ 6 files changed, 6 insertions(+), 19 deletions(-)
 
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 5d22b803f51e..45c663124c9b 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -330,8 +330,6 @@ static inline bool pr_flush(int timeout_ms, bool reset_on_progress)
+ 
+ #endif
+ 
+-bool this_cpu_in_panic(void);
+-
+ #ifdef CONFIG_SMP
+ extern int __printk_cpu_sync_try_get(void);
+ extern void __printk_cpu_sync_wait(void);
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 5266e195f5ac..8415e4073da1 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -343,7 +343,7 @@ EXPORT_SYMBOL(panic_on_this_cpu);
+  */
+ bool panic_on_other_cpu(void)
+ {
+-	return (panic_in_progress() && !this_cpu_in_panic());
++	return (panic_in_progress() && !panic_on_this_cpu());
+ }
+ EXPORT_SYMBOL(panic_on_other_cpu);
+ 
 diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index 646801813415..7490865e2f44 100644
+index 7490865e2f44..c6d1a4a747e9 100644
 --- a/kernel/printk/nbcon.c
 +++ b/kernel/printk/nbcon.c
-@@ -2,6 +2,7 @@
- // Copyright (C) 2022 Linutronix GmbH, John Ogness
- // Copyright (C) 2022 Intel, Thomas Gleixner
+@@ -1394,7 +1394,7 @@ enum nbcon_prio nbcon_get_default_prio(void)
+ {
+ 	unsigned int *cpu_emergency_nesting;
+ 
+-	if (this_cpu_in_panic())
++	if (panic_on_this_cpu())
+ 		return NBCON_PRIO_PANIC;
+ 
+ 	cpu_emergency_nesting = nbcon_get_cpu_emergency_nesting();
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 5fe35f377b79..faa8b1f0585b 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -17,6 +17,7 @@
+  *	01Mar01 Andrew Morton
+  */
  
 +#include "linux/panic.h"
- #include <linux/atomic.h>
- #include <linux/bug.h>
- #include <linux/console.h>
-@@ -589,7 +590,6 @@ static struct printk_buffers panic_nbcon_pbufs;
-  */
- static bool nbcon_context_try_acquire(struct nbcon_context *ctxt, bool is_reacquire)
- {
--	unsigned int cpu = smp_processor_id();
- 	struct console *con = ctxt->console;
- 	struct nbcon_state cur;
- 	int err;
-@@ -614,7 +614,7 @@ static bool nbcon_context_try_acquire(struct nbcon_context *ctxt, bool is_reacqu
- 	/* Acquire succeeded. */
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
- 	/* Assign the appropriate buffer for this context. */
--	if (atomic_read(&panic_cpu) == cpu)
-+	if (panic_on_this_cpu())
- 		ctxt->pbufs = &panic_nbcon_pbufs;
- 	else
- 		ctxt->pbufs = con->pbufs;
+ #include <linux/kernel.h>
+@@ -345,18 +346,6 @@ static void __up_console_sem(unsigned long ip)
+ }
+ #define up_console_sem() __up_console_sem(_RET_IP_)
+ 
+-/* Return true if a panic is in progress on the current CPU. */
+-bool this_cpu_in_panic(void)
+-{
+-	/*
+-	 * We can use raw_smp_processor_id() here because it is impossible for
+-	 * the task to be migrated to the panic_cpu, or away from it. If
+-	 * panic_cpu has already been set, and we're not currently executing on
+-	 * that CPU, then we never will be.
+-	 */
+-	return unlikely(atomic_read(&panic_cpu) == raw_smp_processor_id());
+-}
+-
+ /*
+  * Return true if a panic is in progress on a remote CPU.
+  *
+@@ -365,7 +354,7 @@ bool this_cpu_in_panic(void)
+  */
+ bool other_cpu_in_panic(void)
+ {
+-	return (panic_in_progress() && !this_cpu_in_panic());
++	return (panic_in_progress() && !panic_on_this_cpu());
+ }
+ 
+ /*
+diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+index d9fb053cff67..e2a1b2d34d2b 100644
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -2143,7 +2143,7 @@ static bool _prb_read_valid(struct printk_ringbuffer *rb, u64 *seq,
+ 			 * But it would have the sequence number returned
+ 			 * by "prb_next_reserve_seq() - 1".
+ 			 */
+-			if (this_cpu_in_panic() &&
++			if (panic_on_this_cpu() &&
+ 			    (!debug_non_panic_cpus || legacy_allow_panic_sync) &&
+ 			    ((*seq + 1) < prb_next_reserve_seq(rb))) {
+ 				(*seq)++;
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index b3a85fe8b673..f0c78b5b5324 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -102,7 +102,7 @@ static void __dump_stack(const char *log_lvl)
+  */
+ asmlinkage __visible void dump_stack_lvl(const char *log_lvl)
+ {
+-	bool in_panic = this_cpu_in_panic();
++	bool in_panic = panic_on_this_cpu();
+ 	unsigned long flags;
+ 
+ 	/*
 -- 
 2.43.0
 
