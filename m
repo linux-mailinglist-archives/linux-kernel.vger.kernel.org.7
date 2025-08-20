@@ -1,52 +1,86 @@
-Return-Path: <linux-kernel+bounces-777439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2896B2D92C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:51:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EE5B2D95C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 960A24E4A6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8677416B836
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B23327C879;
-	Wed, 20 Aug 2025 09:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D22C2DCF61;
+	Wed, 20 Aug 2025 09:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="alXELS6U"
-Received: from smtpout9.mo534.mail-out.ovh.net (smtpout9.mo534.mail-out.ovh.net [178.33.251.187])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SYeUUoBV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9ED221FC7
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.33.251.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034F71B4233
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755683496; cv=none; b=sVW64i0KTmguwiiygFZEYbJMtCypPpbNwa6DnfooVAA7jzahsU54pW0VLycxFxwrdQf54hnvF9c6EKnYcpQwYbNC7TLUFbry/P0Rosnb8chRDWJ9poCvTG5wS5qIQ1tBj+4OQJBXM0zQCCRHTuUdbmj8JLx0YFE9oyK7ke/PUXg=
+	t=1755683498; cv=none; b=U2zC73auiFBkpP9YQpOJ9b5BYiphaAsGfMMGYnttLu56hwucEKnDIjwIK298fPRbXGrrdeoL6KBjZHZo4+/koZqiG4qCN37xRtzZG/jG/tDHcYt8nwAlO2oroZ+vzGGnb5MsJOb6cKpwpn3qMMTTb5sTU18C3Qelvq5mLm5adOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755683496; c=relaxed/simple;
-	bh=LjIiuIvTvW3zfGFEHP8OBvqSzvdP3sXwjPprS50oumQ=;
+	s=arc-20240116; t=1755683498; c=relaxed/simple;
+	bh=Pczc+gYj2vSfnt+nJjCrzTSNjuYqaJwvRbHf2boWqUg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ezeD1RtER9L23oebzTEy4M3sST8I67YOlZCwZWuwcbRDJTIFTCaUCvBSZ6LNcL7NyKFWAVcWKS8/pfjnuEbJOk7XLbsY+2NVAX9Z/rFhEtfYM8npFMf/FyBhN5y3EJvnjqHZitDXj/FBRtIdVYcA70s8WBx0EspazcHvmhEjeFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=alXELS6U; arc=none smtp.client-ip=178.33.251.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c6MD32WxKz6FyW;
-	Wed, 20 Aug 2025 09:51:31 +0000 (UTC)
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
-        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <bp@alien8.de>; Wed, 20 Aug 2025 09:51:30 +0000 (UTC)
-Received: from mta11.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.37.159])
-	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c6MD240snz5xT3;
-	Wed, 20 Aug 2025 09:51:30 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.5])
-	by mta11.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id DA0719A32D8;
-	Wed, 20 Aug 2025 09:51:27 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-109S0037d4b4793-596f-4841-9b6e-7b1e6637a567,
-                    616188B862BD6F9D24C783D7A018D61FF224AB69) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <be242e65-b056-4e12-93e7-9a297aaf231a@orca.pet>
-Date: Wed, 20 Aug 2025 11:51:27 +0200
+	 In-Reply-To:Content-Type; b=FTkO/3ZEDpylOx5xDCaMuoWxyNBPfIdha965r8rynPhB8Jm/LzNKt6IGyUODZBGgb9cbwJyoji4la421ygV0ggyZXZfhJ6ZgXWTjxH55LHT7zPijZUMARqDAn/qtVAG78Qg2nrAhPmJUCCErIwt3EQ2vknte9LFoxw+vd2k0rTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SYeUUoBV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755683494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0GUB+HIgF7/xxsP4RdzJyerhYdUR6F5sktWPi0WlPx0=;
+	b=SYeUUoBVpd/nPRHPxtE1BSKJBS6PfFTb3sgBChabqQd+a0XrJcWBLd2sKapE7uaztkd9gA
+	ErcjayUWQUnM8KMB6AGKePPj+1oscZOL2mp/BLhb+vJAFxtk1HJEGB8WDmqHNYS5mz/Djo
+	FMH18dpeVWe4V7BCRjuB6AhSw1KEh9o=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-543-GnW7dyhTNdKe_epXVenk-g-1; Wed, 20 Aug 2025 05:51:32 -0400
+X-MC-Unique: GnW7dyhTNdKe_epXVenk-g-1
+X-Mimecast-MFC-AGG-ID: GnW7dyhTNdKe_epXVenk-g_1755683491
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a256a20fcso18189085e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:51:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755683491; x=1756288291;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0GUB+HIgF7/xxsP4RdzJyerhYdUR6F5sktWPi0WlPx0=;
+        b=Njh1S+co8g4iOXAfJQL0AxJVbZH51rgE8EpmuSKS2EmAYXMujd5pL3+OBHUgshpJlf
+         84k+en5wGC+QM3m63rgMFmmggGqw1hy8A08vY/MafLw/RAr+0g1Hx5eZ5Zzv5AcYEIAC
+         JkyBWUawGlHM/VLl3QTRRr9Nd9C3QMtGZm/eTmjVHlwhBmPWBisComlfXYbwTyBtQx+w
+         IrCUrP2lH9d1op/bhtv3qJew3rcw6xEmqKxOWc7bOvvwycZhCx4LSoN1IQwMWw2JZcxd
+         UYsTlI+vTx/6BflDUeS8eCbDK6zr4suuBnSgGY2ATnvx9tIuHJsFKLy7jqe9/y7L7EVp
+         ed/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXffcSnvwyeuxV6xO9oos8FI6XT+mR1tN20Kr+COwRB8nB4lNVNZn+yvkiripwcdn6DSnpd7Z1k/P3u7T8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAyqnGBq7SwzKtoB7IzenB2liUeH3JaVhH7AadLu5uyeY9c8DL
+	lvLQD2IiFSdgea9vol4yxTBoH6Kb6tU68gupN5rkkMUEJOKFEshkFM0aroannKOSpIBOkSmyFa7
+	fo9f1FX9XwbFy8dBaaR4912nQL52mmhREO8BYDZUVlJcbIWvoicRIQ840zeLkOUvI8w==
+X-Gm-Gg: ASbGncuMInWU5svCCl8d1D0nfZfIigpe8KvHGrlZadXUc9e5HHn5NHN0tpyCSkNtszq
+	c8LOm4LM62pVMcQQmzy6JVmQrmpTqRkRDzLSvQM+QrHXF5bLTaQD3LBd1Kz2MSC37cTeQAx/0Gu
+	jZ28M25jOKgIuuHyVlQW0xXXrYRHSMG/pJSVqo8WpVMDbDumtJ7z/62DlydxpF8UyPgapBzxfFW
+	ATW8fhObTU8X2m9zujGtTybq9KlExz1h+8z10rt7Tw7C7RPQo/RlW+WvlbtVfsdKWS4wlrctFuM
+	LvcOnWIh4IiWA/M6Qd3ubBE8P+Nwq6DwCokd756a
+X-Received: by 2002:a05:600c:3103:b0:456:191b:9e8d with SMTP id 5b1f17b1804b1-45b479b6bb2mr17355385e9.11.1755683491307;
+        Wed, 20 Aug 2025 02:51:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEP35Pfv65wKLEW3We9sqvyhHuLNAdDhQHLEWsbXzluyvJY58fsrtfETHG1PbZwAJkL0mprZA==
+X-Received: by 2002:a05:600c:3103:b0:456:191b:9e8d with SMTP id 5b1f17b1804b1-45b479b6bb2mr17355125e9.11.1755683490825;
+        Wed, 20 Aug 2025 02:51:30 -0700 (PDT)
+Received: from [192.168.1.84] ([93.56.169.94])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3c3e673ab01sm576512f8f.18.2025.08.20.02.51.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 02:51:30 -0700 (PDT)
+Message-ID: <78253405-bff8-476c-a505-3737a499151b@redhat.com>
+Date: Wed, 20 Aug 2025 11:51:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,59 +88,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
- Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
- David Kaplan <david.kaplan@amd.com>, Kees Cook <kees@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Andrew Cooper <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>,
- "Xin Li (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-References: <20250820013452.495481-1-marcos@orca.pet>
- <aKWR8e6VUEZEgbkw@lx-t490> <2cd7b099-095d-405c-a7d9-b0f1f72184c2@orca.pet>
- <20250820094347.GDaKWY02hR3AAoT7la@fat_crate.local>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250820094347.GDaKWY02hR3AAoT7la@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 11142468429620008628
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheektdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhhiugdrkhgrphhlrghnsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehusghiiihjrghksehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgrug
- gvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhg
-DKIM-Signature: a=rsa-sha256; bh=kWW/8Tg7JsOPvL+m44dmm8o+Dy4w5rB6iMVBwkz49hI=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755683492;
- v=1;
- b=alXELS6UOwOWE5fjiKxnlgM/oEPEv/2G69FUimvRpdC1GVrjXJxHCHduslikk4YboyKmet67
- sg+Feo0S6DkOjiNuxQxxY06/EG48rDR4vs0eNnx2ZC0h5xePLM3T6eAEWG43Vqx1c6bowWFBNrL
- UAWUREqGECjP4xmB4CKpOAViYavsqU0oenSShDvgP3OT4IHvcCKe0ctJ7fWKBNXYpmEFk7RpF0R
- nKqwzAwMC/oAVLsD1XSy3f4Olrqn0+GNmyXTxFYGb4VJ7fO0i4rPnwakGx3eXUgnj8rCktP6dsf
- 7fay3ZlBUNnnTKin8fHbz36iW9ZK5jpPHZX6FhxXwqWUw==
+Subject: Re: [PATCH v6 7/7] KVM: TDX: Explicitly do WBINVD when no more TDX
+ SEAMCALLs
+To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
+ <seanjc@google.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
+ "Hansen, Dave" <dave.hansen@intel.com>,
+ "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+ "kas@kernel.org" <kas@kernel.org>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "sagis@google.com" <sagis@google.com>, "Chen, Farrah"
+ <farrah.chen@intel.com>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
+ "Gao, Chao" <chao.gao@intel.com>, "Williams, Dan J"
+ <dan.j.williams@intel.com>, "x86@kernel.org" <x86@kernel.org>
+References: <cover.1755126788.git.kai.huang@intel.com>
+ <d8993692714829a2b1671412cdd684781c43d54a.1755126788.git.kai.huang@intel.com>
+ <aJ3qhtzwHIRPrLK7@google.com>
+ <ebd8132d5c0d4b1994802028a2bef01bd45e62a2.camel@intel.com>
+ <aJ4kWcuyNIpCnaXE@google.com>
+ <d2e33db367b503dde2f342de3cedb3b8fa29cc42.camel@intel.com>
+ <aJ5vz33PCCqtScJa@google.com>
+ <f5101cfa773a5dd89dd40ff9023024f4782b8123.camel@intel.com>
+ <acbcfc16-6ccc-4aa8-8975-b33caf36b65f@redhat.com>
+ <a418f9758b5817c70f7345c59111b9e78c0deede.camel@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <a418f9758b5817c70f7345c59111b9e78c0deede.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-El 20/08/2025 a las 11:43, Borislav Petkov escribió:
-> On Wed, Aug 20, 2025 at 11:33:05AM +0200, Marcos Del Sol Vives wrote:
->> But I think the kernel should let the user know the binaries they're
->> running are having some performance penalty due to this emulation, in case
->> they want to recompile without the offending flags.
+On 8/19/25 23:53, Huang, Kai wrote:
+> On Tue, 2025-08-19 at 12:31 +0200, Paolo Bonzini wrote:
+>> 2) ... but anyway, KVM is the wrong place to do the test.  If anything,
+>> since we need a v7 to change the unnecessary stub, you could move that
+>> stub under #ifndef CONFIG_KEXEC_CORE and rename the function to
+>> tdx_cpu_flush_cache_for_kexec().
 > 
-> Sure, once perhaps.
+> Agreed on renaming to tdx_cpu_flush_cache_for_kexec().
 > 
-> Do you want to let the user know for each binary?
+> But with the "for_kexec()" part in the function name, it already implies
+> it is related to kexec, and I kinda think there's no need to test
+> IS_ENABLED(CONFIG_KEXEC_CORE) anymore.
 > 
-> And how many users do you really think will look at dmesg and recompile their
-> binaries?
+> One of the main purpose of this series is to unblock TDX_HOST and KEXEC in
+> the Kconfig, since otherwise I've been told distros will simply choose to
+> disable TDX_HOST in the Kconfig.  So in reality, I suppose they will be on
+> together probably in like 95% cases, if not 100%.
+> 
+> If we want to test CONFIG_KEXEC_CORE in tdx_cpu_flush_cache_for_kexec(),
+> then it would be a little bit weird that why we don't test it in other
+> places, e.g., when setting up the boolean.  Testing it in all places would
+> make the code unnecessarily long and harder to read.
 
-I mean, they should know what they need to recompile if they want to, not
-just that their machine is having a bug triggered by some binary.
+No I don't mean testing it there, but just making
+tdx_cpu_flush_cache_for_kexec() a stub when CONFIG_KEXEC_CORE is
+undefined:
 
-A global flag would mean they'd need to reboot to see if there is any other
-binary triggering it too.
+diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+index e9a213582f03..913199b1954b 100644
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@ -217,7 +217,6 @@ u64 tdh_mem_page_remove(struct tdx_td *td, u64 gpa, u64 level, u64 *ext_err1, u6
+  u64 tdh_phymem_cache_wb(bool resume);
+  u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td);
+  u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page);
+-void tdx_cpu_flush_cache(void);
+  #else
+  static inline void tdx_init(void) { }
+  static inline int tdx_cpu_enable(void) { return -ENODEV; }
+@@ -225,8 +224,13 @@ static inline int tdx_enable(void)  { return -ENODEV; }
+  static inline u32 tdx_get_nr_guest_keyids(void) { return 0; }
+  static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
+  static inline const struct tdx_sys_info *tdx_get_sysinfo(void) { return NULL; }
+-static inline void tdx_cpu_flush_cache(void) { }
+  #endif	/* CONFIG_INTEL_TDX_HOST */
+  
++#ifdef CONFIG_KEXEC_CORE
++void tdx_cpu_flush_cache_for_kexec(void);
++#else
++static inline void tdx_cpu_flush_cache_for_kexec(void) { }
++#endif
++
+  #endif /* !__ASSEMBLER__ */
+  #endif /* _ASM_X86_TDX_H */
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 93477233baae..376d49ef4472 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -453,7 +453,7 @@ void tdx_disable_virtualization_cpu(void)
+  	 * remote CPUs to stop them.  Doing WBINVD in stop_this_cpu()
+  	 * could potentially increase the possibility of the "race".
+  	 */
+-	tdx_cpu_flush_cache();
++	tdx_cpu_flush_cache_for_kexec();
+  }
+  
+  #define TDX_SEAMCALL_RETRIES 10000
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index c26e2e07ff6b..cd2a36dbbfc5 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -1871,7 +1871,7 @@ u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page)
+  }
+  EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_hkid);
+  
+-void tdx_cpu_flush_cache(void)
++void tdx_cpu_flush_cache_for_kexec(void)
+  {
+  	lockdep_assert_preemption_disabled();
+  
+@@ -1881,4 +1881,4 @@ void tdx_cpu_flush_cache(void)
+  	wbinvd();
+  	this_cpu_write(cache_state_incoherent, false);
+  }
+-EXPORT_SYMBOL_GPL(tdx_cpu_flush_cache);
++EXPORT_SYMBOL_GPL(tdx_cpu_flush_cache_for_kexec);
 
-Whether they look or not at the dmesg I cannot tell, but if IOPL emulation
-does logging this way, I assumed this should too. Otherwise, would that
-mean IOPL emulation logging is also too verbose?
+
+Personally, I'm totally okay with v6.  But the above change seems
+to me like the best way to obey Sean's objection, better than
+adding the test in KVM.
+
+Paolo
+
 
