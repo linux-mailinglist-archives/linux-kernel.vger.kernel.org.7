@@ -1,161 +1,96 @@
-Return-Path: <linux-kernel+bounces-778691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B11B2E902
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C14B2E903
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9ED1BC51E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:47:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8918C1BC4F3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9142DC34E;
-	Wed, 20 Aug 2025 23:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58EF2DE6F6;
+	Wed, 20 Aug 2025 23:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ek057XVt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RodaoD32"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C201F155A30;
-	Wed, 20 Aug 2025 23:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADF6277C96;
+	Wed, 20 Aug 2025 23:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755733644; cv=none; b=nujH/ei9sweoOsRo9CT7sRoRf6VXQBcJrkS6hAbpH1oonuSWq6EpkO/EE+1YAOfOCVVUUzPxVxZQAo2dzDH7vIGcPlk41/knwRHuBTsoQItLE+FiWPfHy6bGAUM5+1gbX2HlJp4Or6L87ip83iJSfeqfyCsrIv7VTSaeYXZvbV4=
+	t=1755733703; cv=none; b=BmQVJv3zrX71uVMTERutJsS/cHsr7aYwr7BnaL2RRW90ZxVoKXYeHPx5+e2biOqxcmM12sVJC6kjgyYH8Yrgw1LcCsCqGOthdl8Gc0jhZAn23qgD70p4kOLvSO3AV830Q1zRwyJKQCDgQd02B7yGFbNbp74V+45KqQfpMz49UB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755733644; c=relaxed/simple;
-	bh=N/XuieC4GDQ/uRzkiAvRb09ScbLTX6DyDyU2IJAnWO8=;
+	s=arc-20240116; t=1755733703; c=relaxed/simple;
+	bh=TBIUh3v0aC3WaehxkLqVs1qoFwUO6clBDRYkpK3wpHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpO/+oDmuTiCzgxmptmClLC+wGSua/bA7J7q1SxsrLrn0ssKCf3XjsQh8Xf36ajdWlDeqvnlsNCvZUTacp0EPOsrjE7EGOrodadHvTaGl4l6ZgbYnfIjG62osXw6goPWstxdQ6B765AKxgTRuBwYc9haMJwJFpsajMFIHu4VBW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ek057XVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46E2C4CEE7;
-	Wed, 20 Aug 2025 23:47:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755733644;
-	bh=N/XuieC4GDQ/uRzkiAvRb09ScbLTX6DyDyU2IJAnWO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ek057XVtr3l+yiX6Qd6rJdrRBK3KtkbBgMi4M7mlBjgZYCpPfvZLBDqIGC0tt5pfb
-	 knhSH5dU0K2FVShcXCzGVNYfaAnInWXPQf5f3GKv4fGf1EaiNuvdjYK+PelFn/aW3C
-	 j32gXTP7NLTPB0fI6DVljjvXxcKgMFDVbxLdQqUS4zlDlR7XHeryBuitFey9FCl8eG
-	 BMgkR8KzJeTnOOGuADcVMix0nSynbzbY19yzvOz1wm2YKeF15dIfrEpjBGXeCC0Nld
-	 Ehx+bai/7rvGTP6tLdsXG7RJ2alz+G4iJUUBHe3pkbGgqkB1sm68MKK+s8TKi5Cmde
-	 QP8Tyin9F1HyQ==
-Date: Wed, 20 Aug 2025 16:47:20 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgE+znOs0Kv7+RjbFIPdZP6iZYOv4VIeaRfvd6txIxS86SqCP5ZuJzEBPEcjNWvYli7Zom4BB0CclFt/TDgDb0hA0UvaDo3QsLxRQg8s4T3hjx429o/gUi4LTpReg1RErM8UqDhOzindQBGcYEmnaU8iFSXBq5J1uhPr7HweELA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RodaoD32; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=W2KYp9Ckcfqj597p33Lwk5ZySswdeUnAtCa067zilzc=; b=RodaoD32I1/AtcsipP0yTMLiah
+	ogbQDVtg5U7sqAsoe0D62Rqa2nRFaSioDLt+xkSSboPWWiTGy0cLyhmt6x5XQBZmPV1anSuEoBT9f
+	EwdgUfta4h2nSGeIKJEo5iNOb7QuSTtW72v+bMQQX9usToa+LLzn7YWFian57NirX7fI1lOxH2k8K
+	0G0Rai4qBNAY3j209LF1mlmeBoP0wijRoCb7dcCZ3fHLl2Zo/2hYwv1Hjr/Lk/BPsUfpuifHpCeos
+	afcpGPh+qn/JGKNndSv3apzjeOl6aKpA1kuyQvKi6WWqRpD2UK2E0J0J4VZjhsHlyi062TqsdGErW
+	rx2KL1PA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uosXP-00000003zKx-1MlO;
+	Wed, 20 Aug 2025 23:48:15 +0000
+Date: Thu, 21 Aug 2025 00:48:15 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCHSET v5 00/12] perf annotate: Support --code-with-type on
- TUI
-Message-ID: <aKZeiGu1_fAQKLaz@google.com>
-References: <20250816031635.25318-1-namhyung@kernel.org>
- <aKZA5bE1ibDMJpuw@x1>
- <aKZBZ2I04-p_Yl_m@x1>
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	x86@kernel.org, Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
+ access
+Message-ID: <20250820234815.GA656679@ZenIV>
+References: <20250813150610.521355442@linutronix.de>
+ <20250817144943.76b9ee62@pumpkin>
+ <20250818222106.714629ee@pumpkin>
+ <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
+ <20250818222111.GE222315@ZenIV>
+ <CAHk-=whvSAi1+fr=YSXU=Ax204V1TP-1c_3Y3p2TjznxSo=_3Q@mail.gmail.com>
+ <20250819003908.GF222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aKZBZ2I04-p_Yl_m@x1>
+In-Reply-To: <20250819003908.GF222315@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Aug 20, 2025 at 06:43:03PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Aug 20, 2025 at 06:40:53PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Fri, Aug 15, 2025 at 08:16:23PM -0700, Namhyung Kim wrote:
-> > > 
-> > > Hello,
-> > > 
-> > > The --code-with-type option is to show normal annotate output with type
-> > > information.  It was supported only on --stdio, but this change adds it
-> > > to TUI as well.
-> > > 
-> > > Arnaldo, please tell me if you still don't like the
-> > > __hist_entry__tui_annotate() but I don't have a better idea for now.
-> > 
-> > Not a problem, I tested everything, all seems to work as advertised.
-> > 
-> > The minor suggestions I made I can do while merging, if you don't mind
-> > and agree with them.
+On Tue, Aug 19, 2025 at 01:39:09AM +0100, Al Viro wrote:
+> I'm still trying to come up with something edible for lock_mount() -
+> the best approximation I've got so far is
 > 
-> I mean the scope of a variable, a missing line before an if line, not
-> the other more involved one as the alignment of the type comments, etc.
-> :-)
+> 	CLASS(lock_mount, mp)(path);
+> 	if (IS_ERR(mp.mp))
+> 		bugger off
 
-I've left comments in each thread.
+... and that does not work, since DEFINE_CLASS() has constructor return
+a value that gets copied into the local variable in question.
 
-> 
-> - Arnaldo
->  
-> > Please let me know.
-> > 
-> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Which is unusable for situations when a part of what constructor is
+doing is insertion of that local variable into a list.
 
-Thanks for your review and tests!
-Namhyung
-
-> > 
-> > - Arnaldo
-> >  
-> > > v5 changes)
-> > >  * use a copy of hist entry for perf top  (Ian)
-> > >  * split disasm_line__write() change  (Ian)
-> > >  * constify annotation_write_ops parameter  (Ian)
-> > >  * update printed length calculation  (Ian)
-> > >  * remove annotation_print_data.start
-> > >  * add a hashmap to skip duplicate processing
-> > > 
-> > > v4 changes)
-> > >  * add dso__debuginfo() helper  (Ian)
-> > > 
-> > > v3 changes)
-> > >  * hide stack operation and stack canary by default
-> > > 
-> > > v2 changes)
-> > >  * use 'T' key to toggle data type display  (Arnaldo)
-> > >  * display '[Type]' in the title line when it's enabled  (Arnaldo)
-> > >  * show warning when debug info is not available  (Arnaldo)
-> > >  * fix a typo  (Arnaldo)
-> > > 
-> > > Actually the command line option sets the default behavior and users can
-> > > change it by pressing 'T' key in the TUI annotate browser.
-> > > 
-> > > The code is also available at 'perf/annotate-code-type-tui-v5' branch at
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
-> > > 
-> > > Thanks,
-> > > Namhyung
-> > > 
-> > > 
-> > > Namhyung Kim (12):
-> > >   perf annotate: Rename to __hist_entry__tui_annotate()
-> > >   perf annotate: Remove annotation_print_data.start
-> > >   perf annotate: Remove __annotation_line__write()
-> > >   perf annotate: Pass annotation_print_data to annotation_line__write()
-> > >   perf annotate: Simplify width calculation in annotation_line__write()
-> > >   perf annotate: Return printed number from disasm_line__write()
-> > >   perf annotate: Add --code-with-type support for TUI
-> > >   perf annotate: Add 'T' hot key to toggle data type display
-> > >   perf annotate: Show warning when debuginfo is not available
-> > >   perf annotate: Hide data-type for stack operation and canary
-> > >   perf annotate: Add dso__debuginfo() helper
-> > >   perf annotate: Use a hashmap to save type data
-> > > 
-> > >  tools/perf/Documentation/perf-annotate.txt |   1 -
-> > >  tools/perf/builtin-annotate.c              |   5 -
-> > >  tools/perf/ui/browsers/annotate.c          | 117 ++++++++++++--
-> > >  tools/perf/ui/browsers/hists.c             |   2 +-
-> > >  tools/perf/util/annotate.c                 | 178 +++++++++++++++------
-> > >  tools/perf/util/annotate.h                 |  29 ++--
-> > >  tools/perf/util/dso.h                      |  21 +++
-> > >  tools/perf/util/hist.h                     |  12 +-
-> > >  8 files changed, 273 insertions(+), 92 deletions(-)
-> > > 
-> > > -- 
-> > > 2.50.1
+__cleanup() per se is still usable, but... no DEFINE_CLASS for that kind
+of data structures ;-/
 
