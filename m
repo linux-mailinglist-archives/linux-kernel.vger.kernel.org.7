@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-778459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2D0B2E603
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:04:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A01B2E604
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781FB189B0A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:04:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 475497ADD38
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D224E2737E3;
-	Wed, 20 Aug 2025 20:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7122737E3;
+	Wed, 20 Aug 2025 20:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeHJaS6B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QYp5QdeH"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E2A24A054;
-	Wed, 20 Aug 2025 20:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7091126B09A;
+	Wed, 20 Aug 2025 20:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755720236; cv=none; b=JgDa9WSsQTU0nfuj6tuK/xmUYrnQbdQJEZGnf46biPHI9074YuoK4sgo+5cAvmrYHhD6j1T5Iz4oVydUEwZnjw/ICqJ0gqLWPIQdEpk1qgFoYn1UpgWErl6JQZ4i/MaV1x33oLxGj60IcIcTwSbf00jHF6QNKyAt2U5Y2GRBuyc=
+	t=1755720260; cv=none; b=gjzT77qlglwdME5lHBgmKni7opMIpEEKSDSePJvGRojpbJM7bePYBLgmaN2C2xqzH3LuCiNITY5qJoKxmjPWmfob4JhRyHPqBN04HUIrLuIpzQ/43zpij5zyLq6DlUDN7Ry3j+1+jsbfClXrxic5egYXCxEJR99Q6hJjwqBTLt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755720236; c=relaxed/simple;
-	bh=anNhsvCEDdZAFrVHuAW6Yq14ZRmsgEq59nDp1oTYxZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7uXyoQZqmrNEIgJt5nolvE62cqG+WmW8+JYgvZLyqqlvJBdj6ZtxyqSYzK//8TW3fbH10MMvMOmXGbzBDaRMEqd3XbP1zR20HTERiounp/IDi6rkuBT9Ry8d8ux8mVMW03Hgb2KJn3IRFa4un3TLHbtYhILBjc7LWLyF2J14s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeHJaS6B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07889C4CEE7;
-	Wed, 20 Aug 2025 20:03:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755720235;
-	bh=anNhsvCEDdZAFrVHuAW6Yq14ZRmsgEq59nDp1oTYxZ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GeHJaS6B8aM9Udh1FibxBFg3+IsWGhQ5XurO6jabKMivoDhVotrmQPElYvdfiUnRX
-	 y50h/H3ETrqUKhsSB7ipAOr8XJDPlcB5VXzl/QAVJESTe4+OUh1yTMQONS0d0lhS4O
-	 FfSeEtEh0cI18x9kpZkpuGWBxQwqgvgqj4f16DSkyhzeiUTzzk5Hk8K0j6Rz1f6SMz
-	 Bj0gzFyyqGDrFWgKRGtLJ9P1YpqNwB2cyokm+8YF26QOVw0KA9jgP+9jpkgUcRbLHT
-	 Nb7lRBcXe+Y42ezBDMzF7S44Le8bE1CoFX5R+jbW+Fi4wRsDWQJ+ey89iYQb0lMT7G
-	 seJ+tPSW9SU1Q==
-Date: Wed, 20 Aug 2025 15:03:54 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, nuno.sa@analog.com,
-	linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 0/6] mfd: Add support for the LTC4283 Hot Swap Controller
-Message-ID: <20250820200354.GA602656-robh@kernel.org>
-References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
- <5713bb5b-3301-46bc-b30a-d2e4c58d1036@roeck-us.net>
- <2svr42ee7akwxwj5nizwe4a4hqdk4rslv7ivxraqg3jy6m3mxz@lfpn2nx4jdmm>
+	s=arc-20240116; t=1755720260; c=relaxed/simple;
+	bh=5sa/xNRb17kRPoZ3g/Vj3okHxMJhho63Z/Z10yyOijU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hz7sC5CIWKDBSffGdS7cEuny06yw5j3CXW6oxI66hE9A9xoOP1a4mbaYHGqFByDm9+25t21txwBOR64wB9rFaLDLi5OO+Cv4ltxOkhfgwxUma7rPMAWeFM+KwuRHhucdTfgzgCWv46OJpRkrUXEJ0kJ4cD9iJxn4TFEejYJC7LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QYp5QdeH; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57KK444t3208698;
+	Wed, 20 Aug 2025 15:04:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755720244;
+	bh=MkmTSU7V12H2RP8eqKNxvOFsCn0iEaIXoplURtUHu9U=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=QYp5QdeHJ5z18pHvYsl9WkgxBXJm1xhOOjE4iAPTM0sGLzM3gx7h+6QRRF04qj5TE
+	 SN1hvMCvvyuFNxMCCpFJJ3pwljgdgWN1h8G21qtl6M9T/lBlZ0L4CjKXhh6YF8A6/G
+	 ZHk8yXB39IjDB3GEAf1Ph3s9d67DpCgksYApS/dA=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57KK444x1593271
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 20 Aug 2025 15:04:04 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
+ Aug 2025 15:04:04 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 20 Aug 2025 15:04:03 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57KK43Xm747732;
+	Wed, 20 Aug 2025 15:04:03 -0500
+Message-ID: <e11fd419-1095-471e-a57f-fc5ff7ce713a@ti.com>
+Date: Wed, 20 Aug 2025 15:04:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2svr42ee7akwxwj5nizwe4a4hqdk4rslv7ivxraqg3jy6m3mxz@lfpn2nx4jdmm>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] PATCH: firmware: ti_sci: Add trace events to TI SCI
+To: Jonathan Cormier <jcormier@criticallink.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-trace-kernel@vger.kernel.org>
+References: <20250820-linux_master_ti_sci_trace-v1-0-2a69c0abf55e@criticallink.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250820-linux_master_ti_sci_trace-v1-0-2a69c0abf55e@criticallink.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Aug 14, 2025 at 03:15:29PM +0100, Nuno Sá wrote:
-> On Thu, Aug 14, 2025 at 05:54:26AM -0700, Guenter Roeck wrote:
-> > On 8/14/25 03:52, Nuno Sá via B4 Relay wrote:
-> > > The LTC4283 device features programmable current limit with foldback and
-> > > independently adjustable inrush current to optimize the MOSFET safe
-> > > operating area (SOA). The SOA timer limits MOSFET temperature rise for
-> > > reliable protection against overstresses.
-> > > 
-> > > An I2C interface and onboard ADC allow monitoring of board current, voltage,
-> > > power, energy, and fault status.
-> > > 
-> > > It also features 8 pins that can be configured as GPIO devices. But since
-> > > the main usage for this device is monitoring, the GPIO part is optional
-> > > while the HWMON is being made as required.
-> > > 
-> > > Also to note that the device has some similarities with the already
-> > > supported ltc4282 hwmon driver but it is different enough to be in it's own
-> > > driver (apart from being added as MFD). The register map is also fairly
-> > > different.
-> > > 
-> > > Last time (for the ltc4282) I tried to add the gpio bits directly in the
-> > > hwmon driver but Guenter did not really liked it and so this time I'm doing
-> > > it as MFD.
-> > > 
-> > Nowadays I suggest that people use auxiliary drivers in such situations.
+On 8/20/25 1:10 PM, Jonathan Cormier wrote:
+> Add trace events to help debug and measure the speed of the
+> communication channel.
 > 
-> I see. But do you have any issue with it being MFD?
+> Add parsing of the messages types but I am not sure how to parse the
+> flags, since the REQ and RESP flags conflict. Left as seperate commit to
 
-I do...
+The REQ and RESP flags should be handled by different TRACE_EVENTs. Right
+now you only dump the content of the response messages (the ones in
+rx_callback), also tracing what is sent is just as important, so you
+might want to add slightly different ti_sci_msg_dump EVENT for the
+sending side which uses the different REQ flag parser.
 
-> I'm anyways tempted to the auxiliary device idea. The main usage for
-> this device is HWMON and I dunno anyone would use it only as a GPIO
-> controller. With the auxiliary device we would only need one bindings file
-> and slightly better bindings for the pins functionality.
+Andrew
 
-For this reason. The driver structure influencing the binding design is 
-a problem, but I think MFD is more to blame on that.
+> make it easier to drop or make changes depending on comments.  The two
+> commits should squash easily.
+> 
+> Nishanth Menon and Vignesh Raghavendra requested I send this patch
+> upstream.
+> 
+> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
+> ---
+> Jonathan Cormier (2):
+>        firmware: ti_sci: Add trace events
+>        firmware: ti_sci: trace: Decode message types
+> 
+>   MAINTAINERS                     |   1 +
+>   drivers/firmware/Makefile       |   3 +
+>   drivers/firmware/ti_sci.c       |  11 +++
+>   drivers/firmware/ti_sci_trace.h | 146 ++++++++++++++++++++++++++++++++++++++++
+>   4 files changed, 161 insertions(+)
+> ---
+> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> change-id: 20250709-linux_master_ti_sci_trace-91fd2af65dca
+> 
+> Best regards,
 
-Rob
 
