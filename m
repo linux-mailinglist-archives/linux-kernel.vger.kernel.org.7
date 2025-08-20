@@ -1,92 +1,137 @@
-Return-Path: <linux-kernel+bounces-776755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F3FB2D12E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 230CCB2D0E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F1127BAD1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:09:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC0C67B3E7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFC419F48D;
-	Wed, 20 Aug 2025 01:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D40F19C558;
+	Wed, 20 Aug 2025 01:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="raWsjQsN"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+Egs0IY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE32286A1
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24F3EACD;
+	Wed, 20 Aug 2025 01:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755652023; cv=none; b=G3eZPDJVcFhYCN1sKpRL9StKBHYd8L8tg1NKXi2zWrSxtiSK4sy0t7kzflBtetjvmmBM4PsEIXb64/ZV4BKCT0wdrZkZh27F2O2/j62rDzHGLK2g8lpN4ZvteLKM9SFvb5Ceii4dDUGoO5/dLUFqBG/wEqJ4nQTnqRxvSmVgDVw=
+	t=1755651750; cv=none; b=Io4oT2eRWpa8f6lkSFA7rnfZjR+03QBo+kemgkxKIv++nQR1xxR5iS0wsdIQeZePS6H9xt3qT9X20xg4dzt+MLRzTwoJI2RXW8szE4rbEFHF1oK1mCBqb9VBMAtD4oOEER9K8ebG1D6KsB6m0GJn+lI+pjkUrM7RZXHknxWHdbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755652023; c=relaxed/simple;
-	bh=8dCUsBKgFZu9Sx/mUQsUP8cJCuew4ZAV1wCt1Is5R0U=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=P4RAaMtjhsuX6A5+a2B2gso72stTmGibrBcJwSOQPw3d0gXkpTgk7iMGdj+Qqm/8AkBgLeXvVJqAJSfWz0S+z2WHwgrwEQq0jVp+kqdiEaEzIWh80sGjSvJI185DwpDcIgq0fUKcN3vZdFZur4JX4ucSv1sz6vPPCcEnh+wUKzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=raWsjQsN; arc=none smtp.client-ip=43.163.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1755651697; bh=8dCUsBKgFZu9Sx/mUQsUP8cJCuew4ZAV1wCt1Is5R0U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=raWsjQsNk+a3swPtJ3OC4Mc9C4UejMOKAPPXlshDdILIYx9657tOX4mMxyAiZrc+s
-	 h9Ov8Nxv6RIp3Z18OUwr+47BbEAUkAa7ATjBqCnvGN9MrYwuxQAHQlus8PszF4Y1jx
-	 azNGRJljS++oXbf5E0thg36QeobUI1H9mNd7UtCU=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 621CC3F; Wed, 20 Aug 2025 09:01:34 +0800
-X-QQ-mid: xmsmtpt1755651694trs4p78zh
-Message-ID: <tencent_D46EBC9510E942ED0ECC4078F66E802C390A@qq.com>
-X-QQ-XMAILINFO: Nq4zXdVTSZRGu0tTCEDdrMVnQ107P9Z/nC475fWmT4/fQqjDLV5kRPAPykk7Ti
-	 0JnXIc7zd1sHo7YmQSTix+7wb9PVLSCWXtLPJLuhcF/IK3XJps6Hsz2gRIAMpGjCj9HmcGG0/6hB
-	 5mjEGb6k41Sm/a3CGYJvlc+rmpwwKajceLfi+3nFfUgyWiH/lfjhLb14OVwBPrWVq5YJs7Nu5xb8
-	 pOLZNra3gzz19ycq2rS6cmPYikZqaPaq80uDAvAgVT55Wa12/G65ZB0v05HoxGxAfikhJ4oPm2Wi
-	 JF4b00eAptbHbC3EWVuaYos+94OS5uRe0rDia9nRRpCaX7mRfCPnsba5HPGlaEsPFeEYySBwb0Uj
-	 ylzU7A39Br6ZuUoc8v1nQ4kV+TtZUoTp6M+Q8OImlQQteQGuRWbUv+tmpRtxkHcYwf5ORmm2HIhu
-	 LppGKe2yw0DJBhm/GfTWrnmnAMaDbLVQT+amrqiorgwr7HerhZsUCReROHsZQYkeWT1/X2hitbG3
-	 8ATqBvUOc/6hiS05uBKkaQ8v2lcKpulBxfMMBzeq+3getq/1T4pPy39CKeQtkjQcZtFLj/mihQjX
-	 GCYFVbgTsZ9cALls9rx1y5k7Wuk9i7HFfVKrUfd9zuG3R6oUq4FwGgC6elyUQRC1PoLlwzFUcPDT
-	 G9KKBcFOiRStsex3LJcHky7N7QBS4IzMEMM7NUU6G33chnOMm/KOBC6aEF/d892k7PAEkHx4sw9G
-	 HSaSbxqL9YRkCDqsMLwP4JLyuq3CH8/1Baxot5KtPJvFfEfoxOCraey8yNe56QJyHYeZgY/zBA5L
-	 M41TQdm92L6eXWS6tH1f/q45e5RxY8ieWoPBvwpZ5QbfSD+WwlHc1WS83aX2rt5XdFmYPmjGg5cM
-	 BbBlWpIs2+2xKTEVj17cwgo4WqZcyTnr+aZKgP1sjHD6yjFfIhCf91uA/o5u2DWJpCv4IWN7w58e
-	 IobhIoZH79W86pT3jHKFn2FaW8ymdJ
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: mark.tinguely@oracle.com
-Cc: eadavis@qq.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	linux-kernel@vger.kernel.org,
-	mark@fasheh.com,
-	ocfs2-devel@lists.linux.dev,
-	syzbot+47d8cb2f2cc1517e515a@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [External] : [PATCH V2] ocfs2: prevent release journal inode after journal shutdown
-Date: Wed, 20 Aug 2025 09:01:34 +0800
-X-OQ-MSGID: <20250820010133.1334456-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <a365b3cd-b1b5-4d04-9877-129286345ce0@oracle.com>
-References: <a365b3cd-b1b5-4d04-9877-129286345ce0@oracle.com>
+	s=arc-20240116; t=1755651750; c=relaxed/simple;
+	bh=zN9F2urgnydClYzhbY8LGUEx2A95Kli5ZSO3hAroYX0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RsCm4LOtbuPsq9R+4QpiUnvTQL5I3rxR4pVfHX8lh9C3htRpJdwweRL9ygHOGCYgp8qPN6ICX6xSh4Md+2YLZ1NU2ZYVbXrBYxpVHEDj3XDyvsCZ3uEYE5AvCLwtPL7Xcmn6h1IFCK0TAiMmPOGkoww5gEx0R41DzmQHwi2vNqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+Egs0IY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE86C4CEF1;
+	Wed, 20 Aug 2025 01:02:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755651750;
+	bh=zN9F2urgnydClYzhbY8LGUEx2A95Kli5ZSO3hAroYX0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=G+Egs0IYhgMABbLmL5jxkm1Yn8WS5mkz8L3nl9ilGRj37X8A9XZOEopDkBcLXAZ8u
+	 7pdok9KnVVqNFaKyhbIlmXnYyDTfTMLgOqMXlGHGJHZC7QQ3x+EOM8b/z4RtfkztJ9
+	 YPcIYtdxlLDszj2cnR8XscubhUGTSssmbkEGcd96DT3nMgWzXVJEq7RYkk4Me66t+Q
+	 uJOBXpDLOZo+JRc8XdkbeJrLn8BGUgp/10xtwH4ZYJHr67q+hwTQyHMd96JsW86Am6
+	 2t/3PnYVEt/BgHdRTl6nARsZU1yf30i+jwqmYuWQqKHSKOhicH4eSDl6Ba6R2lyFDp
+	 UXBD1T3oHhyzQ==
+Date: Wed, 20 Aug 2025 10:02:24 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "Alan J. Wylie" <alan@wylie.me.uk>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+ stable@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86: XOP prefix instructions decoder support
+Message-Id: <20250820100224.ece0bc4483521b309991133a@kernel.org>
+In-Reply-To: <20250817114734.42e17904@frodo.int.wylie.me.uk>
+References: <175386161199.564247.597496379413236944.stgit@devnote2>
+	<20250817093240.527825424989e5e2337b5775@kernel.org>
+	<20250817114734.42e17904@frodo.int.wylie.me.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 19 Aug 2025 09:17:40 -0500, Mark Tinguely wrote:
-> fixes commit da5e7c87827e8caa6a1eeec6d95dcf74ab592a01
-> (v5.15-5-gda5e7c87827). Also for the stable branch?
-I think the patch is suitable for all stable branches containing
-da5e7c87827e8caa6a1eeec6d95dcf74ab592a01.
+On Sun, 17 Aug 2025 11:47:34 +0100
+"Alan J. Wylie" <alan@wylie.me.uk> wrote:
 
-BR,
-Edward
+> On Sun, 17 Aug 2025 09:32:40 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> 
+> > Hi Alan, 
+> > 
+> > Can you test this with our cros-compile build?
+> > 
+> > Thank you,
+> 
+> Applies cleanly to both 6.16.0 and 6.16.1, builds natively on both on
+> my FX-8350 box and boots successfully on both.
+> 
+> Tested-by: Alan J. Wylie <alan@wylie.me.uk>
 
+Thank you for testing!
+
+
+
+> 
+> Thanks
+> 
+> Alan.
+> 
+> > 
+> > On Wed, 30 Jul 2025 16:46:52 +0900
+> > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> > 
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > 
+> > > Support decoding AMD's XOP prefix encoded instructions.
+> > > 
+> > > These instructions are introduced for Bulldozer micro architecture,
+> > > and not supported on Intel's processors. But when compiling kernel
+> > > with CONFIG_X86_NATIVE_CPU on some AMD processor (e.g. -march=bdver2),
+> > > these instructions can be used.
+> > > 
+> > > Reported-by: Alan J. Wylie <alan@wylie.me.uk>
+> > > Closes: https://lore.kernel.org/all/871pq06728.fsf@wylie.me.uk/
+> > > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > ---
+> > >  arch/x86/include/asm/inat.h                        |   15 +++
+> > >  arch/x86/include/asm/insn.h                        |   51 +++++++++
+> > >  arch/x86/lib/inat.c                                |   13 ++
+> > >  arch/x86/lib/insn.c                                |   35 +++++-
+> > >  arch/x86/lib/x86-opcode-map.txt                    |  111 ++++++++++++++++++++
+> > >  arch/x86/tools/gen-insn-attr-x86.awk               |   44 ++++++++
+> > >  tools/arch/x86/include/asm/inat.h                  |   15 +++
+> > >  tools/arch/x86/include/asm/insn.h                  |   51 +++++++++
+> > >  tools/arch/x86/lib/inat.c                          |   13 ++
+> > >  tools/arch/x86/lib/insn.c                          |   35 +++++-
+> > >  tools/arch/x86/lib/x86-opcode-map.txt              |  111 ++++++++++++++++++++
+> > >  tools/arch/x86/tools/gen-insn-attr-x86.awk         |   44 ++++++++
+> > >  .../util/intel-pt-decoder/intel-pt-insn-decoder.c  |    2 
+> > >  13 files changed, 513 insertions(+), 27 deletions(-)
+> 
+> 
+> 
+> -- 
+> Alan J. Wylie     https://www.wylie.me.uk/     mailto:<alan@wylie.me.uk>
+> 
+> Dance like no-one's watching. / Encrypt like everyone is.
+> Security is inversely proportional to convenience
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
