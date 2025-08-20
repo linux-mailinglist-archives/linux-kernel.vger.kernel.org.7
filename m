@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-778130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E27B2E1B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:03:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCD0B2E1B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44DB516F487
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AB4A00A17
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D878322C96;
-	Wed, 20 Aug 2025 15:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0743326D5B;
+	Wed, 20 Aug 2025 15:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5dcz1Uq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMarVKiB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58E4322A17;
-	Wed, 20 Aug 2025 15:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5C1322A35;
+	Wed, 20 Aug 2025 15:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755705501; cv=none; b=mAL4v7SWCmY+O8dTIy5gOsFH1u6L12YXYKBYYCbDa9NMQ1fvSPvgxr0Dx0X49BwAKDosV60YiyopfFnz1A5r6CL2Xkqr+SdzJIBwlTCkS3ix5FYdR7hwQ+5bBq0pMM6ICmGFNrBZGPvezwfpZRq0XNrBD1Qj5Zbrxa4hry3Gqtw=
+	t=1755705509; cv=none; b=gVKLVVZ111AjDDFrCf3iTn2qVZNYYi4WtLEm9iJ+41gZ+nhJnPedHJPlwRtCOBqjRHqRqanFkqqWs2H7zM/7rfwfHp6+Q13lUwzvz3OLC1PEtf/ONVmdnXsfG42xf/hcuDVD0OjXJnZHtDro5b+432nGGyNqJJ4npRgbFVcg/6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755705501; c=relaxed/simple;
-	bh=aVoXTtsvhaosrLhSRxcZ+cIPb5uQPbIY1uKxiV2Spso=;
+	s=arc-20240116; t=1755705509; c=relaxed/simple;
+	bh=uoSbjGAjNpOfd1OcdZRXRKGUEQEMmIyMXjnKacIc5oM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HTz9WHR/bsLmfSF6PQFeQ0whJJQmRhExItYkywOUhi89MvVG5TiajthFOm69EwIk0fcajID7qmbvSFpAFHSTMbEWumPoDDEoEO7UfTNd8CWzdsQ5RCD80llc3r+PP0AKblvLaJXbYAqC5g4nvEmL8JhtKkom36B81UYsyN7tsbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5dcz1Uq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE431C4CEE7;
-	Wed, 20 Aug 2025 15:58:12 +0000 (UTC)
+	 MIME-Version; b=E1eCQzhrL+CaHFuD/f/j2uD37/Ztg9agzPzao1IcryF1W6OJBIa4SJXkRi/1sQLbLzf4UahytBqUG6hwax78Hq2TPi1UJUQxP4gb6WVSE/ccWTvKewsJkQdq56Af8/aZf7KHoaAOtrxzfIPCC+8ifDZWyXw6jhGhcKxqKO0gjGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMarVKiB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 022F5C4AF0B;
+	Wed, 20 Aug 2025 15:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755705501;
-	bh=aVoXTtsvhaosrLhSRxcZ+cIPb5uQPbIY1uKxiV2Spso=;
+	s=k20201202; t=1755705508;
+	bh=uoSbjGAjNpOfd1OcdZRXRKGUEQEMmIyMXjnKacIc5oM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O5dcz1UqdHbjUg+r49tsZneSmpjTus6c2ZMTVa6W0KwZVA5b79wV7LOJ75uiA169H
-	 msIA1UfdWjOghB/pUnOWYZwlXT2mcW3kZkjfBfhfmMfcbfolYAPP7uLJQZsTWmnglh
-	 Gs/nVyMG5uu+3FmwGulG9MRwKFh3OUZ90435U0exhAdH/XwG+3sOBzuEiHrWqk98iq
-	 5vGvfHlI/2Cgo4W9zTkHE+wFbbC3ubVY549drBLDNvWIQimT/X01FQxT3o48souftF
-	 jfMm36jradpBwtN3tCsXpj2UMh4XPZTrUpAoHQepieIewDZ2GAnSrAaV0R5jsHrjN/
-	 HY0MNLBPLnGOw==
+	b=RMarVKiBdQIuLgKwPfD13No3DlA+Kc8jorgjnuRyCKP94YwgFFJt2Lr7Aa0N1fTzV
+	 dRXrmIDwFF7WhmpixyqE3PLfYw5Ivct5fOm18+3VH0JhK2U/77LVg3UhuAdYZ5BDBV
+	 CpKOAuqIWVz8Zn54RxbTBPQgEtD0+LZOfeBgwwWxEKXS2JPjINTAUuZVd4TL46i8Wz
+	 YOoqhHtUo6AR43QkZ76fx4NljkrzsTx1kNCvxo+3TBykmi/4kRsYAEGxmuebwiSDZS
+	 Fyx17aG/S9b316OQKH13qhuoWGpsmO0IwWeZYe3hlrE+/sjsjEzIJjRMPpDjL5jTO/
+	 zV13/GtnO1/HQ==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Doug Berger <opendmb@gmail.com>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -65,9 +65,9 @@ Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
 	linux-kernel@vger.kernel.org,
 	linux-omap@vger.kernel.org,
 	linux@ew.tq-group.com
-Subject: [PATCH 02/16] gpio: brcmstb: Use modern PM macros
-Date: Wed, 20 Aug 2025 23:40:23 +0800
-Message-ID: <20250820154037.22228-3-jszhang@kernel.org>
+Subject: [PATCH 03/16] gpio: bt8xx: Use modern PM macros
+Date: Wed, 20 Aug 2025 23:40:24 +0800
+Message-ID: <20250820154037.22228-4-jszhang@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250820154037.22228-1-jszhang@kernel.org>
 References: <20250820154037.22228-1-jszhang@kernel.org>
@@ -89,47 +89,54 @@ regressions are subsequently easier to catch.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- drivers/gpio/gpio-brcmstb.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/gpio/gpio-bt8xx.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index e29a9589b3cc..0ca3e0d8aa46 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -534,7 +534,6 @@ static void brcmstb_gpio_shutdown(struct platform_device *pdev)
- 	brcmstb_gpio_quiesce(&pdev->dev, false);
- }
+diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
+index 05401da03ca3..5e120c4dfea5 100644
+--- a/drivers/gpio/gpio-bt8xx.c
++++ b/drivers/gpio/gpio-bt8xx.c
+@@ -52,10 +52,8 @@ struct bt8xxgpio {
+ 	struct pci_dev *pdev;
+ 	struct gpio_chip gpio;
  
--#ifdef CONFIG_PM_SLEEP
- static void brcmstb_gpio_bank_restore(struct brcmstb_gpio_priv *priv,
- 				      struct brcmstb_gpio_bank *bank)
- {
-@@ -573,14 +572,9 @@ static int brcmstb_gpio_resume(struct device *dev)
- 	return 0;
- }
- 
--#else
--#define brcmstb_gpio_suspend	NULL
--#define brcmstb_gpio_resume	NULL
--#endif /* CONFIG_PM_SLEEP */
--
- static const struct dev_pm_ops brcmstb_gpio_pm_ops = {
--	.suspend_noirq	= brcmstb_gpio_suspend,
--	.resume_noirq = brcmstb_gpio_resume,
-+	.suspend_noirq = pm_sleep_ptr(brcmstb_gpio_suspend),
-+	.resume_noirq = pm_sleep_ptr(brcmstb_gpio_resume),
+-#ifdef CONFIG_PM
+ 	u32 saved_outen;
+ 	u32 saved_data;
+-#endif
  };
  
- static int brcmstb_gpio_probe(struct platform_device *pdev)
-@@ -747,7 +741,7 @@ static struct platform_driver brcmstb_gpio_driver = {
- 	.driver = {
- 		.name = "brcmstb-gpio",
- 		.of_match_table = brcmstb_gpio_of_match,
--		.pm = &brcmstb_gpio_pm_ops,
-+		.pm = pm_sleep_ptr(&brcmstb_gpio_pm_ops),
- 	},
- 	.probe = brcmstb_gpio_probe,
- 	.remove = brcmstb_gpio_remove,
+ #define bgwrite(dat, adr)	writel((dat), bg->mmio+(adr))
+@@ -224,7 +222,6 @@ static void bt8xxgpio_remove(struct pci_dev *pdev)
+ 	pci_disable_device(pdev);
+ }
+ 
+-#ifdef CONFIG_PM
+ static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
+ {
+ 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+@@ -267,10 +264,6 @@ static int bt8xxgpio_resume(struct pci_dev *pdev)
+ 
+ 	return 0;
+ }
+-#else
+-#define bt8xxgpio_suspend NULL
+-#define bt8xxgpio_resume NULL
+-#endif /* CONFIG_PM */
+ 
+ static const struct pci_device_id bt8xxgpio_pci_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT848) },
+@@ -286,8 +279,8 @@ static struct pci_driver bt8xxgpio_pci_driver = {
+ 	.id_table	= bt8xxgpio_pci_tbl,
+ 	.probe		= bt8xxgpio_probe,
+ 	.remove		= bt8xxgpio_remove,
+-	.suspend	= bt8xxgpio_suspend,
+-	.resume		= bt8xxgpio_resume,
++	.suspend	= pm_ptr(bt8xxgpio_suspend),
++	.resume		= pm_ptr(bt8xxgpio_resume),
+ };
+ 
+ module_pci_driver(bt8xxgpio_pci_driver);
 -- 
 2.50.1
 
