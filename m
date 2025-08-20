@@ -1,90 +1,83 @@
-Return-Path: <linux-kernel+bounces-777531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6848AB2DA8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:06:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD23DB2DA8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7541C4702B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 245DE163E52
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDD32EBDCB;
-	Wed, 20 Aug 2025 11:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069C52E62A2;
+	Wed, 20 Aug 2025 11:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="oOpIj0zz"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010042.outbound.protection.outlook.com [52.101.84.42])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="juyxlmRR"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2120.outbound.protection.outlook.com [40.107.100.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7732E92B2;
-	Wed, 20 Aug 2025 11:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66012E3AE3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.120
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755687948; cv=fail; b=qv/m9Gop2gAkjtgvBz+OzMFPeEnn79xEQznNwj4ibfpS/KbNmFeOqz1e1nIxcoclYoDkq6Lqk8vwFNPgBoZxUZZq8qwTXm71nqUZyVv7548M3qy5+24KmD4Nw6VNz1IrtwMjrOrSvb9pKL4t7WnvunaGwvor0HmL+kgW1mYVfk8=
+	t=1755687940; cv=fail; b=V1zm893x5jvlLqUAPUKQExXexst2TkjTpDY2gu8moSN+9G6xXov7bqIVl3kCX6uZxcKv+KETpxnh2gu0R8L4B4/GTxLvZYEe26DByVYFPfWV1Iyv6M2bH7cGmPs1mAQmrk7lGkrHCVyz0FZuoB6VcgaD/LtaELzka0P9c1aiFy0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755687948; c=relaxed/simple;
-	bh=tkSOi5p9pprvGnDNLTo+Nu3n+zO49W9fo7rPQIuv2d4=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=FTtxGNdofR26VAkmsMqST5vWbzbc9a/bSUk6n1wjTN6jx4Th6FDHqV1VQiHTHMympcGP0gg/cwCPYTmtao4rMYFB7mjbbYC+jZpIV+ua7+bpqUKSZX18v83iyYoTyn4WQPG22jTekNzI69o+QhZ8wioSFuU7SQ+vHhv1B0vJ8P0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=oOpIj0zz; arc=fail smtp.client-ip=52.101.84.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1755687940; c=relaxed/simple;
+	bh=O6uML7XBefmeKoHJqEXpdMQufDAqCFCdgrlRlG0KP/E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ubeRc7X3GnIN3+OMCOmoAttjGNAg/nYZ1L3n97093a6OCe+fITsUZkFOGeCJhDYFGJgRqln1mmembjVoH01FxlXPZZvRLbu7QOvbzU3uD9tK8ABwfA3+Md0HgqGiKq2DBUyq+GfHHo/hnDauK05Z3p0OlDoeuQLMR88Fs3DhprQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=juyxlmRR; arc=fail smtp.client-ip=40.107.100.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HxsKqyJsKy2miZA46DQEup75G9JIfJl6Fm6DzJrXPHu978WZGiFS/BNh3nKFIr+1QW3KBLUlYFcxPC4byLVMWCYh7TEp4BmpSVZjeDvPspqXY/QmPDxxyYets02ijfy/zg47HwO2S7ptnTFz8DmwHaBQJRWcsfNOYGuGV+N1ctBGfzz3RwxIczmgyvmhUx0RbSAV0RGlmuHJPAaVbvu6F5JQ6pNd72gO4wNWNWYLGRJT64X38N6ih4wLQAN7Bb3yZD3lW25ADa9qr2qjlV/NaL9ENAX1bUQSGN4ewSoVNP9XkEyfePPxTiVRs/P7gR7t0muddvopilH3nvuDfZocgw==
+ b=v/SrKWUhZ16m9XS/ZWEwzHGAexaEsRdthkcCPxUx+CPafYwVLRIdsPFT+IVgALmGZ1eGoB+w/ktSxZVpnyZRqqLXa28pRSTnFWFtdmn5fiC3EPolJNJigRkRTUA5R0AQMbad6J4eTkVQBrNqxqxw6BNFboCoKrL3L+m9JIobCBMCzIn6WL4KB/dKjCeeVSLSoBtPzdiEtkLz6uj6VzsGa9rG3Ej5F1VrwPNqixjA7krY5JEoXMXDFT89Tg9dFnI2UIDcEbRFJCN+EYw/Qz0aWuvHy64alzShCV2Ez/0y2xLTgO2eo4QZ5ndhWfQJPEcTPJiLdKUSqLK6R6QVSLdYlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PL//s6YzkT3ukmkecnB6UYD31DwCKAKV4Gf+OCSIYWQ=;
- b=pj0hLWncpINbY1ApeUY9T+1fcAJircqOYulKJfNmMOAwSFqdb/NNTj/oWfCMRde+IiMtivJXA+bsj/4ldonDOsGh8vFa8pk7meC9inyKNUwJv8MykzZ1vEtFHWVe4yuJtrpitj9euuWhokW9d30jPgD8I6nEOAzbK0hDHePwV7VhN8btePi6euXxoG2HHk7KUVebV+Uh9Bw9Our8bD6JTABmLSF3kjRPdRdvhxxiAs8ApG4NzQTWMoqcm963d4S4oFuqom0FGOHB07gBvmXtgen0V+MAg6Zv6jNrarPfhe9VI1HQyo6XjreEGfM9mi1YCpiyiZ4rDiOMY1I7J2wxWw==
+ bh=pGBdT6L2pZ2tosRn4to7mlYdTHwOU7SD3hpBSzf3FRc=;
+ b=qVQOrvQput4DSDwZL6P/Auyv+YUUm1I7yBg+m+ru+wvsNlv2+Yd74I4IAgdSJoTFmfEEtHt2qnl/sPdC2abyTfo/N78TFLZzphLpzfpxELP7CWX808CioTw/yfyVXT+Il06nAq8V/PAAxUuuS5whgHB+8gUuIP74K0aeoP6GqjaAm2egAHDycS8gD0zgfKjVKwWHDD047/rSrW/2qKGmqjrFddbsCpc7Ao6jU2ndc66Uo5ZgwsnVkIVQMUMg+0A5EFnB8OFwuk/zmwQSjcHUgRzEOOLb8t7/m3F7MN8aoS90aLsHBrx7elG1AYpoUNJo5/7XTBPafeq/CdXdNbtT7w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PL//s6YzkT3ukmkecnB6UYD31DwCKAKV4Gf+OCSIYWQ=;
- b=oOpIj0zziaELC+REbKSYiZTj9gVM4BB+MB3x6EB4HKecSsURUDHZM5RQe+RmDIEYoLKPbanKmzKrdg3GLV+RCOY18gEZDJxGhAbxZg0awsMfNQoxi1bzmG7DilQ9LGFUGnNFf4BgIlPXICZcWlE1/1doMnI1j9UUEQog1/9+K0+rdSpJD3WvPNENw8rP4Lzvwu+XEi2oYyQOwSW2p4EtFdWDJp6r3hp9vRutizYC3ZTBD635clEeBKsXEgXB8S7tTMMnlmYVgqHPCWKz8oVedCTB76XsfX13CqypowIh1uQBViQ14veMqFShHIxaVfltYJ06YdfFwUAz9I+ZzjXdcw==
+ bh=pGBdT6L2pZ2tosRn4to7mlYdTHwOU7SD3hpBSzf3FRc=;
+ b=juyxlmRRi3m3Sj9tGe5lisCBrphYSeoK14rVZj7g4/WWbdu8wfiLyNZDyCU6c2PInA+J8OF5wZbQ0gOTuPlVNrGW5PI2seVyDoXNUFMrH8IeXG+10WzrbKoMgoZSIxbFhkv15xSwIGQQ22ibnl+oC3ZCb5Z56aYwV3leD2LfRLQ=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB9080.eurprd04.prod.outlook.com (2603:10a6:20b:447::16)
- by PA1PR04MB10913.eurprd04.prod.outlook.com (2603:10a6:102:484::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
- 2025 11:05:43 +0000
-Received: from AS8PR04MB9080.eurprd04.prod.outlook.com
- ([fe80::93bd:316b:682f:5e59]) by AS8PR04MB9080.eurprd04.prod.outlook.com
- ([fe80::93bd:316b:682f:5e59%6]) with mapi id 15.20.9052.011; Wed, 20 Aug 2025
- 11:05:43 +0000
-From: Guoniu Zhou <guoniu.zhou@nxp.com>
-Date: Wed, 20 Aug 2025 19:04:59 +0800
-Subject: [PATCH v5 4/4] media: imx8mq-mipi-csi2: Implement .get_frame_desc
- subdev callback
-Content-Type: text/plain; charset="utf-8"
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from PH0PR01MB6761.prod.exchangelabs.com (2603:10b6:510:76::23) by
+ CO1PR01MB8772.prod.exchangelabs.com (2603:10b6:303:276::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.14; Wed, 20 Aug 2025 11:05:33 +0000
+Received: from PH0PR01MB6761.prod.exchangelabs.com
+ ([fe80::bf98:19e8:71ee:cf2]) by PH0PR01MB6761.prod.exchangelabs.com
+ ([fe80::bf98:19e8:71ee:cf2%7]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
+ 11:05:33 +0000
+Message-ID: <d421a5ba-95cb-42fb-a376-1e04c9d6a1ac@os.amperecomputing.com>
+Date: Wed, 20 Aug 2025 19:05:16 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/nohz: Fix NOHZ imbalance by adding options for ILB
+ CPU
+To: Valentin Schneider <vschneid@redhat.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
+Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, cl@linux.com, frederic@kernel.org,
+ linux-kernel@vger.kernel.org, patches@amperecomputing.com
+References: <20250819025720.14794-1-adamli@os.amperecomputing.com>
+ <xhsmhtt23h0nw.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <7438bb3a-96d6-485a-9ecc-63829db74b39@os.amperecomputing.com>
+ <xhsmho6sagz7p.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Language: en-US
+From: Adam Li <adamli@os.amperecomputing.com>
+In-Reply-To: <xhsmho6sagz7p.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-csi2_imx8mq-v5-4-e04a6fc593bd@nxp.com>
-References: <20250820-csi2_imx8mq-v5-0-e04a6fc593bd@nxp.com>
-In-Reply-To: <20250820-csi2_imx8mq-v5-0-e04a6fc593bd@nxp.com>
-To: Rui Miguel Silva <rmfrfs@gmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
-Cc: linux-media@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Guoniu Zhou <guoniu.zhou@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755687914; l=2047;
- i=guoniu.zhou@nxp.com; s=20250815; h=from:subject:message-id;
- bh=tkSOi5p9pprvGnDNLTo+Nu3n+zO49W9fo7rPQIuv2d4=;
- b=UjArqQUKwzWmC97SKR8fpTe7RUJtL7X/8WAI+lWMUFxGFcZ9YUXQamJL6XsU+5A0zJ2U7c7el
- eQJt2GT+kMaDjnksAQqBGaCf8IwNpZ8tV/hcm8wJs0iZFg8ZznnMob7
-X-Developer-Key: i=guoniu.zhou@nxp.com; a=ed25519;
- pk=MM+/XICg5S78/gs+f9wtGP6yIvkyjTdZwfaxXeu5rlo=
-X-ClientProxiedBy: SI2PR02CA0031.apcprd02.prod.outlook.com
- (2603:1096:4:195::16) To AS8PR04MB9080.eurprd04.prod.outlook.com
- (2603:10a6:20b:447::16)
+X-ClientProxiedBy: JH0PR01CA0164.apcprd01.prod.exchangelabs.com
+ (2603:1096:990:7::20) To PH0PR01MB6761.prod.exchangelabs.com
+ (2603:10b6:510:76::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,160 +85,205 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB9080:EE_|PA1PR04MB10913:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad619b85-98ed-4ce8-243f-08dddfd98171
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: PH0PR01MB6761:EE_|CO1PR01MB8772:EE_
+X-MS-Office365-Filtering-Correlation-Id: d302918d-c5a7-46c5-15ad-08dddfd97b66
+X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|52116014|19092799006|366016|921020|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?cjB4bzhSdndQY09FQ2w5YW85ZXovbVlWZVhrQ0YzcnowVkZmMmJMai9jS05G?=
- =?utf-8?B?V3ZCcm9iYnhrMlgrOXo3MkF1NjlZUStUWGFRckFPTnlDZy9meHJIU0VEN05J?=
- =?utf-8?B?VEEydmRzOXpna09VYmhtQzN3WmJGVjZwYXRYUGZ0L1NpcStrY0RRSnVHNHN0?=
- =?utf-8?B?Y3M4dFc3THJ6MDEyQVVwM1Jic1B5aTNVYkdFVER1bERKSTg2RG5ScjBzR09V?=
- =?utf-8?B?c0J2cytWWlBBczh4bTNzMGx2WTBEWWwrWUdwZ1NsY3NoRkx6UWxkbFNLM2pG?=
- =?utf-8?B?dmh6cHpYTDQySzdBNGJISXhjc3h4UEpZWkJvL3NIc2RKZWI5VkpYUGlpOEFN?=
- =?utf-8?B?TjVkZUNIOUFKUWVrM1QvaXRrL01MV0JSM2VwOU9IZ1lKNFFISVBrbGQxZENT?=
- =?utf-8?B?RFY0VEgrUHl1bjdvQ1Z4YmMwNU5wOEVwU05BeGRTNEF1MzVyMTZoSi96NTM0?=
- =?utf-8?B?ZU5LQ1poajh3Sk56ME1pMXBjbTlTdjBIN25wSlRFeklTRVJ1NVpzT1g0VUNE?=
- =?utf-8?B?dmJ6VVhZS2RYSmxiLy9Xb3BlOGZHREw2ZS9VeTJOdUJVd2ZtVXY2bGFJakxP?=
- =?utf-8?B?djA3cXpRYStOWk9NQ3hDL2djRWg2TEFuRmk1SDg4bWNXUjcxM2RJdjRjQXN2?=
- =?utf-8?B?M1NGU3BtbS9XWTFBamJydzh1aHhDMmltVGFlWFB6aWJWYVN6c0tqU2MxM1VJ?=
- =?utf-8?B?dFZBRGlWVzZnWjJSaS9vaFluaGh5eHFYSTZmNW5ha0ZYZjkzVG02bkRiMjY2?=
- =?utf-8?B?a1dUVFRURnl1Q3ZjUTdLc2s0Smo0UlY0NlBWazVLMWhDSkl0S3J0S0tJaUZT?=
- =?utf-8?B?b2dTOHJzSzRJVlVDMVg1bGNmaUxUWVRTOFczd1ovVEErRVZOVWc3Z2JHUmQw?=
- =?utf-8?B?bGpPYUpZNzZuaWJGUE52djVOTDZwR0JmSkRsZUk1a2J2VTVjT0FSTWNvUmF5?=
- =?utf-8?B?eFR4dW9NL0h3MnVOd0U2emZZMGJrM2tNNngwV201Qll5WXZ3eUlQRTNxZDZW?=
- =?utf-8?B?WnA4RXFQRHdDYXBQVk5SbXNObWlKTFJERkRIbmp4V1FNMnV4TVB3TjFBNUVj?=
- =?utf-8?B?MVNkbU9zZ0NZVE1oeG90ajRMbzVaS1MrVGY4b1pydEFtWEw1bzRtcmxJVnkr?=
- =?utf-8?B?UC85WFZ2ei9Ldy9OR0hoMTl0TGhGQ0RrY0dqRGtsRjVWdmVVdkVSZ0VMVXJL?=
- =?utf-8?B?S2xIT1c1dW5TNnVtVkM5TW40VFJaMHB6RVJLQ0tTMXNYbzNWRjY3N3BFMzdP?=
- =?utf-8?B?dm9ycTBVbHdsaEt4Zm0weTdBQW5SN2d2NDYycGJBbTNPVVJVVVIvRGhBb0Ez?=
- =?utf-8?B?VCtEblNGMkZVVEw2OFg0SUNFNjd6NDJkejVBd2U5UWZBY1ZueFZPNmtoTGdP?=
- =?utf-8?B?aDNNN3RDRnlNL0YwbmRRc3Z5Y2poUWVZTExPNkphYlRXTG53TXpkQ0VFVGln?=
- =?utf-8?B?dkRWL25CRk4zc2dSN045b0VTREgvL3MvQWpybG8zV2VJY25YRVIrZk56TUJE?=
- =?utf-8?B?UWo2NTBUZDlvM2tWaTlqMTZJZExlRjd2Nmx5YXpkODZOZG9HRjljWlgzODRB?=
- =?utf-8?B?ZXQ0d0h5TEdXQzRYWW1SeG9WRU1nT1h1dW16SmxLSG13SWhBVGdFaHpqY2lY?=
- =?utf-8?B?cVI4MGh0VXZ5aTRlVlkwc0VhSEMycGh6bXlaK1BrYkcwTm0walVsZExIRHJT?=
- =?utf-8?B?SnBiV0RRZ2c2Tm9XYXljaGxZc3lvRy9UdXFjWmdNVm50UzZmbkREMjJkL1Qr?=
- =?utf-8?B?RVBpbzk5Q1RDby91TjU4MDFCSSt0Y2ViYzJ0OFZ4TlRvRGdCekZLZHRnYzNl?=
- =?utf-8?B?UkQrd2lHSmwyV0ZzR2UwM1Y0NzJ5cGhKS1ZaaDk3d29oQ29lN1hTa2NESHpB?=
- =?utf-8?B?dGhuS1FQSG96bGhRS3ZJQnNEa2drSHRsWms1MG5WbnFTdG53UDVwVFNFZkZa?=
- =?utf-8?B?ZUtBYmFkeUZFd0hYdlMvbm5wcTNiQVJPRmtCZFpsVWtVVVZmc2RWYmYyUWJ2?=
- =?utf-8?Q?Qh34D43QB0vVScu2WyDnhQILLBAbX8=3D?=
+	=?utf-8?B?eEREZFdDa085d0Q3d3hXd1lwUFNENHFpd0pyMmxQaHhJck1lY1VuVjlvUnVm?=
+ =?utf-8?B?TTZPYTdHempWU2FsODJsMFVMYkxNektDa0x4Sm9xbFVOVTVFYWs1b09raEtK?=
+ =?utf-8?B?VkN4V1VRMkFSdFZ2MzZCT0wzQkxiREwwUG5sZnpSVlp3bnN4VXVWREp4WEx1?=
+ =?utf-8?B?Tmp0cHBFVTg1UTJYMTN2Mk8xYy81YmRmakNpRUlQVjNLUHYzNjYyeTZhcFpa?=
+ =?utf-8?B?aGJmdU96V0tYM3p0L0RNZDJNMjFDT3RxNUI0Y3hEVG5NTTc0Sng1WnRpWVd1?=
+ =?utf-8?B?Qmk2dlRpMkNQUlRidENYRWZNWlMyNU95aXRNaWI4YmpMLzFhazlJQkQ4ODlC?=
+ =?utf-8?B?eWpFQStYTk56WDhsNTB1TUxpSWFqMEQ1dUV6bUpGVU44andiTDVKVU84d1c4?=
+ =?utf-8?B?bVJDajlnVncyNjdxMzFPVHZ1MWNVUFJHNUlpakE0VnNYZ1RQNTNCdFlSRjlE?=
+ =?utf-8?B?ZHBLSnIvTmFXaTdBQ2t5Y1d6RUdCL0pzd1RGM3ZPamhHbldZcVFITlFyTjdl?=
+ =?utf-8?B?TUFqeUdqUndESy9BZU91c1Q5d01kQ2NNUEJTd0hQbW9HYlFEVkdENjd2bC9O?=
+ =?utf-8?B?RmdlU0JZUk9samllTlFiMktScHdub3QwSkc5elNSVWRoanA4bW9xU2IxWUlp?=
+ =?utf-8?B?MldaeE5BYWhSOUk4MFcwNVRpUVBOUklSTVgvQXFwTzZPUmFWT2lRNHBTdDRz?=
+ =?utf-8?B?bkMzTENnMTJnUEJOM1RsTC96RUlxa1FSMVU5L29xZHBnL0I5L1dKRmUxUDdi?=
+ =?utf-8?B?VHVLWnBPcWh2eDNFMmpRbzRLdTQxM2VrMmNUQlhjUEp5ZVNtc3lJc0E5bVVu?=
+ =?utf-8?B?OHNiYldtczFmVGhzMmhXUWJ4L1Q0ZVVFenRJdFRLQTQvbk5uVU5nZjBpQytn?=
+ =?utf-8?B?N0JiY0wxT1ZjVUJ5ZS9pUHhqWSt3QVdVemhjM1l4azRocytmMlV5NDVLZW1K?=
+ =?utf-8?B?TUtOK1pvdnRKeFJwK2tyTjRqcFQyUWVPeXNNc3ArcWJjN3pIR2FwTVh0b2t0?=
+ =?utf-8?B?YlRybkFBQm5yVDFXdElBRW1RMFAzZDRhNzA2UlJGTXY2bVNpZCtKWUhFVmZh?=
+ =?utf-8?B?dzhLRVdHM0ZHTTFQMFlMd0lIam40SkIzQllVZm5DZU4rQ2FLMjZOOVljQVBq?=
+ =?utf-8?B?eWZEajdmS3BsS1pDaDFoV05UWmxzTmZuUm1EVnVLT2FGRzRWMXlHNXFiUzlT?=
+ =?utf-8?B?cVJnR3E0dElEeTFDVmFXZHBIZVFKcWJ3aVRFWE1SczlkZEQrNzE1NEFYSVlF?=
+ =?utf-8?B?NFlyYVl3TmE5TGR3aFpQT09mSG5LNTJxa0E4V3pDVXdJRngvMW1rQUFkcTFS?=
+ =?utf-8?B?cDNrUk5qYWIwSEZXWTRBVGZ4QlJuRzBhaVhsbEl3dFhYSnlOL0crdmlzMnhO?=
+ =?utf-8?B?NW0yNmNWUGRkMzhoNVFSN3hvSTJQN1Y5Q0VkSms5eklrVkh6RVppdU9CRnJv?=
+ =?utf-8?B?V0pYMUZjenI1WmVFWE9waUQvbUFNNGI2NkplNkZ4bW00bEQrMjhJRDBvS3NJ?=
+ =?utf-8?B?aTF5WVhKa0EwdHl3cUg2dmsvczdEaEhuNlV2bXNGTm03N0szT2wyY3Y2cnJp?=
+ =?utf-8?B?OG1mU3R2d0xKK2c0cEl1RnM2NGx2Y3BrR1RvL2VLK1U2SlJsMk9EUmJtVS9Y?=
+ =?utf-8?B?em1HZDNkQXJmRDArQVQyMy90NHRjS2RnK0RpamZwK1VaL0V4WDYvQnBhOWho?=
+ =?utf-8?B?TytBd0Y5aEhLTnNWWjUxU21zRHhCNXgxc1ExQzYwUlNKNjMrN3ljV2tERkxF?=
+ =?utf-8?B?TU1EZlJpUnZqRy9OWm42UENqaEd5S2FzOUFWMk1oYWl2WlpyalJOOEtUT0N2?=
+ =?utf-8?B?R3E3RGlaaWFWZ2o2U0pud1lHWkMxMVNOVzRHSjlOSkp6U0xvS3liQ1Zsamd1?=
+ =?utf-8?B?Qkl5R09LUUFkRWhpOXpLR1FhdytIdndrem41MGN4SWd1Ym12eE5IV05FK1Vu?=
+ =?utf-8?Q?X0KIHfibDeI=3D?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9080.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(52116014)(19092799006)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB6761.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?d3pmSTk1d0p2R3c3bC9tdk1HYnpVaEhYVUFKb2pKbWxSL3gyUjhtZlQ3OUxz?=
- =?utf-8?B?clBTL05LeVU2bnF3V0lkUTFQVHY4MjBhZGxLMlRVVnpWbjFoNkJ2TDNIdEd4?=
- =?utf-8?B?TzY5SEFqd3hERzVyTzNkYmdnNE9abjVrYmpGVjZwREdHdW9sZ1J6QWZCbWRY?=
- =?utf-8?B?RUxVUkxhM0djTEtKcFNmWTNTdlBzeVlhbUc2U1p4ZytlWkF0bmNNVlBKRlA5?=
- =?utf-8?B?STAxRjV5WTRqeTJOaUtPM2dtOCtwRkY1a1JqTlJsek1rRVM5T0M1UTNuTU43?=
- =?utf-8?B?UUdzdzluUXY3VGZyUXJaSmkvOUFYa1dneFg0ODR1SUJRQUhpL1NDL0Y1aGV5?=
- =?utf-8?B?dk9UVHpMUnFUdGdmYm02YkFEeTdGczIySHNwcGVoM3lEOEFkdDFtaGo4OUJk?=
- =?utf-8?B?OHh4cUtrWmszRXJnWmduWDZDcGE2UGFpcUF2U2tPVTY5VUQ0aHZMalAzZVZn?=
- =?utf-8?B?S29HUXVjQk5MbkNXQ1Z6MkFTeG9KeXFLYXc0WmROdDhZajNaUzdoU29QMC9E?=
- =?utf-8?B?ZmZyQ3lLeFpmVHJGUEtoejZFc3JWclUrWW43dzd6UWpYQTBCQmF3aDdVeVBS?=
- =?utf-8?B?emkrbnZHVkNtK1Z5d1E1V28yY0ZUWVZQNGNjT3lwWW5UWlUwdGZlNU5xN1RG?=
- =?utf-8?B?ZzQ3b0FKUGZnRVRZOXIvVGNONDZxc3N2SGpaS1RkRzhJd1NKdk9EOEZLanEw?=
- =?utf-8?B?dGpqUklpalluV2ZUSmRpcjlVMGEvNkFHWW05SW9aTVpwQWppU3R1dlpiNzVG?=
- =?utf-8?B?WC8zMU5ycDhqZTZJYzJram9pWFVvdzRwTmxTZzRPSE8yZGpTNGRmb0ZvSjVJ?=
- =?utf-8?B?bDlkZUJjbHFRWHkrbHliWFZlTXV4U0xTUS9sV0FGL3FUUlY1T3pkRnhRaDhD?=
- =?utf-8?B?L1hYMW5xeVA5eW5sREtZSWYxaHJlTElKWVJqaTRyZkpkc0VyMUI3aVJrQ1hy?=
- =?utf-8?B?cHI1YUxEZTV3d2pBWnYwYW9HS3REVUc0c3VaWjl1QnVSWUViWVFsYVNhUm9V?=
- =?utf-8?B?dmxETjlNNkJTdGM1L2taaEVsTFpWaXpsTXhlTzNXeStmQmF0eTNvUGFqRC9I?=
- =?utf-8?B?b1hpS01aWHFMUHBnSXBqMGcrNmZQOEx6cm92R0NCemNqQS8xTWp4REZhMnR2?=
- =?utf-8?B?R0xCQ2FUdDJraU9TcU1wQnNac3R6Vktybm8wc0pWUFROcTJXZ3ovOFVJd0JM?=
- =?utf-8?B?dTdvSDRRNUgwbEJ2RHlEZmZXVkpOSElqdSsrT09NUUlOM3J5c2h4OFlhSld1?=
- =?utf-8?B?VlZsd0llL0Y5Zld5TldSeXFIWXY4YStTY0M5ZGFoUGdTRjZQR1JiTTArTEV5?=
- =?utf-8?B?MVFRNmxYSkZwZ0puNjFBa1NLQ0htRXVaUjlUQ2dBOXhCWFd4OVJQdDdQR1Bx?=
- =?utf-8?B?V00wczlLSVFzRjBkcnR6WXFrMFp5Nk1JSWpsZVdaVWxlNnZOWHMvakMvVGJr?=
- =?utf-8?B?SStiazROR2l1NG9GWVJZRmtPOHc2NzU2d2x6STlhUXdpU0QyeTM0UHR5MS8x?=
- =?utf-8?B?OVZpOGVBcFBhVlpDbVRLeXg3Q0xvaGo1dkZMOTRpclkzQk5EYThxSVhIUjdV?=
- =?utf-8?B?VGxXcFIrSjdMYzcvNUpCNDd2d3N1bVZaN1p2NDlMeUlvcWR0UkRPeEVqdGFV?=
- =?utf-8?B?QWZwbkJseFVuZ0NiVi82ZUwzampRYXFGR2xUbEdtczB6WkYxY0JZVlNrNjBO?=
- =?utf-8?B?QW0xQkpkY3BWcGl0dnJ5bzBXKzdjMlkyZkFncnI2WnZSRStTeG5MYUJ2N3VT?=
- =?utf-8?B?b3pCK0ZHVWptQllDVzNXMGNhc3NtZlFidkxRbDUwNURhajRIMTl1cmpmQXRm?=
- =?utf-8?B?b1d4TmQxYldoWmNkRjBLUmZPVDc1RG1DTTV6UzZYUUdkbU03bXQ2TS84bjlF?=
- =?utf-8?B?VEw4cVczRTBZNDhqRUFwa1JuRGhqNTZYSU1rdlRFZlZla3F1TWlXbmNPTlk4?=
- =?utf-8?B?MnUzVXhFckJNRCtkM1hZZjJpYTZITjNJaHRpUGNZSXpONHNSdkZnc3UwSXlP?=
- =?utf-8?B?cnFWNjJMOE9hOEFrVm9SRkRtK0poL0F0OFVPaUZOVVgwdEM3ZElXUERnTDZX?=
- =?utf-8?B?YWZZRnJSRytVODZMSGVVRzFlTVJGZkpmZ3lzcUlNQmRiYUo3L1BxVW5RbFZn?=
- =?utf-8?Q?y48ILp/l/BMaLds2vJ56Gs5jz?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad619b85-98ed-4ce8-243f-08dddfd98171
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9080.eurprd04.prod.outlook.com
+	=?utf-8?B?UHcrVUN1RFJIQVF1WDdSK2I5TzhOQVVnbkhqYm03THBEWHplZ0lmcUxoMk1D?=
+ =?utf-8?B?Si92SUZ6OVo4dmpMTS9rcDBrYnZuNm5jZ0dxQm9KZnNKSTByMXVYdFNUTTBz?=
+ =?utf-8?B?STU5dTFlZE56WnVHdGlPZGJlSHVta1FESXh1YTVDRk5kVVMxNmpLVG9zZ2FI?=
+ =?utf-8?B?Wml3U1BoUEdlb0VBQWZEc1ZkTmFHZ25QeDM3Y1lpY1BpSTJsV2RHN2pNOHZD?=
+ =?utf-8?B?cHY3MG83Z01HUk1JVGlzZFdSNTlCMUlBbW82enkwSERtcDF0cVdoNFhSMmZ2?=
+ =?utf-8?B?d2ttVWdpRU01T3ZwUXlZMVdHWTlsSGh3U0FhQzlUeDExTmx0UGlUTEV0UFR3?=
+ =?utf-8?B?c0V6S2x0T2hWN1VPWjdNcHVWTXdQRU9QNEE2YzZBN1dWaDcxZjUvNWpURG9F?=
+ =?utf-8?B?Z2V0eFpNVi8rUlVtNnVWN1hCTHV4OU9iUE5Pa1l2MUpmbU5xTU16SktxRUVB?=
+ =?utf-8?B?ZzRRYXBHY1lEWFhiUzJJTlZGYVBqZmdhRXlEWFp0UG1wM1hWRnlHZzkwd25I?=
+ =?utf-8?B?VlJySjR5MWhxNVJOTGVOWnpvQzA3d3BDeVJwbzd2S2NBQUQ1d3orNlBsVzZG?=
+ =?utf-8?B?ZFRDRVlxdSszMWVMZmpQRlA0NENjZ0N4cmhRZmd4QmE4ZWJQREt3MjZxS2tD?=
+ =?utf-8?B?RTF4VVo0b0RSZitsaWRFcXlWTjJ6dGhoQmNRUEt0MWlnbzlvd1RRNll0b3No?=
+ =?utf-8?B?ZlFLNEFTT2tOTVE5RVJNeWV2ekcxYjY4NStPNmpiM2VSQlJYMEJxaytpNVFm?=
+ =?utf-8?B?YXhQUkEwbWRTbzJ0NDI2cXlnU0xqT1JIVTNtaU1QQ0FteUxSQkNHbmdrMzlY?=
+ =?utf-8?B?ZDRsQXAzeE9pVG41NUlPUmlQQm54MEpKYVFMeFpIYmJIa21PbDF6S1h6QU9O?=
+ =?utf-8?B?bWxuQUpzblVuS2dJQ0FWSzh5dmhNQ2RLOWNqendYS25ndWVBcGRBdklCemVD?=
+ =?utf-8?B?V0NHaFEvTjUxUHl5MGV4MEVzc1dTYW1xVXFOVDdZd0FCS1hna3lybDFLNjUr?=
+ =?utf-8?B?MXdqOXVIOU9nZjlQUGhFc2J0YnFsVXhaNXZtc2N1RVlBSHltZFRxeEhrMzJh?=
+ =?utf-8?B?aUcxQUtMY2s5OEx2R3V3YUxDZGFSS0RpSlgrMnp6c3NqdGZlUVBwYnBVQkp1?=
+ =?utf-8?B?b1ZWT0grS0w0eUR3SWpWMlJaQzRpVzNVVklJRlNUSG9lUStlNExreUZKdjN6?=
+ =?utf-8?B?VE83Q3g4SENxZVNWVW9JRHQrTHpKVU9jR2NnZ1FMUS84V2xwSi94VWNDTmQ0?=
+ =?utf-8?B?N1lvSUpScUlzUm1zbGdxZVpkNW96RzBGRXRSRWMyK3o4VlZtdmFqcEtNK01h?=
+ =?utf-8?B?SVR1SzR1cCtIZVJqK2FwbDA3Um5Ta21aZnF5SkN2Z3lBRmsyOWR2T1l2U1RL?=
+ =?utf-8?B?eHdBTmtmdnhzMk9NUWdQajU4VTVjK0NuZ01sNGpYbFhMcEg2NW5WT3gvWHVF?=
+ =?utf-8?B?VmUyRkQwQUNmbmJyb09WNHNzNzNSc21HT3pqdEJNMTlNSDdsSmtxMHpqc3Ru?=
+ =?utf-8?B?MWNvOTRsaUJhN0dqMEpKbXlySGVLTmJ0OGJqN3NMTlZPRGV2bUZDN09IRFBX?=
+ =?utf-8?B?bDd6bG5Rdm8wVVA1SThLQnlpT0d5ay95KzlEd3FSNzVQS1lsSHVQYkFqRFZt?=
+ =?utf-8?B?eHdHcXZYZlY4WlBOZFlSVncybkxJbExsVFpxM0hpUEhxTzFmNU4wSjByUko2?=
+ =?utf-8?B?QXlOLy82MlpIOTN2YTd0cThRWHdhdjRxV25udEZjVGtMSnFsU1IvRytXM1pB?=
+ =?utf-8?B?SExWK1ZhUk1GeDdhbnFxdEpqdCtua1FpMHZ1WUZhdXRoaGY2VXdLK3RYY0Fp?=
+ =?utf-8?B?Q0hxb1I5SEtpNms2aGxkNk1aQlJtazd1OXVWWjNzTkVkbVBZcFMwK092WHRm?=
+ =?utf-8?B?NHFBN2FuSjVOTFZzUkFaVnFvL0owelJTQnJZNWdXM3BiYWgvOVFBNWZNS3Yx?=
+ =?utf-8?B?d1pVTk1wekdRTkhDamlGbWY3aml1QmtRanhoeS9lMHVGNFJUaFlhNWhIbUNt?=
+ =?utf-8?B?eFhDcTVtYWhUZTJiUGh0NUNuU0N3OFFjQUlObVJnTStmS0taaDA5Y3paSG5B?=
+ =?utf-8?B?UHFCZFRxOGx5UlViUE8rd0UzRlVnQWs5SmVDUXpEOEVRTEZWM0F6K2toTkxx?=
+ =?utf-8?B?bklYcXZhL2pqWWREbkhsaGsxYTNaWnd0ajkwMDNmRU9PQkxjWVlHYTN0SFor?=
+ =?utf-8?Q?nlEAzpnWi5RjJkR5ZDRVrPk=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d302918d-c5a7-46c5-15ad-08dddfd97b66
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB6761.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 11:05:43.2036
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 11:05:33.1777
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AUH1t2W33H+he4MveYGKZe9w/72uC/aneZ2VEd7EWxOdSZLfVbIPEXp+UTYaWucyexDm7Y/HWjIL7/K0me3K1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10913
+X-MS-Exchange-CrossTenant-UserPrincipalName: oEdBbLD0uTqBoCFFat2LFcjd90LaOwVI4CDafcw+e4xmPCxblvtMiZ7Gr5kUaoQibWN2q+3aNKID1n9O+LVHLD+Q+VqY2bwFj30TIV3+onT7iiYU7pvihTuFhClqmvwc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB8772
 
-Implement .get_frame_desc subdev callback since downstream subdev
-need to get frame description.
+On 8/20/2025 4:43 PM, Valentin Schneider wrote:
+> On 20/08/25 11:35, Adam Li wrote:
+>> On 8/19/2025 10:00 PM, Valentin Schneider wrote:
+>>>
+>>> I'm not understanding why, in the scenarios outlined above, more NOHZ idle
+>>> balancing is a good thing.
+>>>
+>>> Considering only housekeeping CPUs, they're all covered by wakeup, periodic
+>>> and idle balancing (on top of NOHZ idle balancing when relevant). So if
+>>> find_new_ilb() never finds a NOHZ-idle CPU, then that means your HK CPUs
+>>> are either always busy or never stopping the tick when going idle, IOW they
+>>> always have some work to do within a jiffy boundary.
+>>>> Am I missing something?
+>>>
+>>
+>> I agree with your description about the housekeeping CPUs. In the worst case,
+>> the system only has one housekeeping CPU and this housekeeping CPU is so busy
+>> that:
+>> 1) This housekeeping CPU is unlikely idle;
+>> 2) and this housekeeping CPU is unlikely in 'nohz.idle_cpus_mask' because tick
+>> is not stopped.
+>> Therefore find_new_ilb() may very likely return -1. *No* CPU can be selected
+>> to do NOHZ idle load balancing.
+>>
+>> This patch tries to fix the imbalance of NOHZ idle CPUs (CPUs in nohz.idle_cpus_mask).
+>> Here is more background:
+>>
+>> When running llama on arm64 server, some CPUs *keep* idle while others
+>> are 100% busy. All CPUs are in 'nohz_full=' cpu list, and CONFIG_NO_HZ_FULL
+>> is set.
+>>
+> 
+> I assume you mean all but one CPU is in 'nohz_full=' since you need at
+> least one housekeeping CPU. But in that case this becomes a slightly
+> different problem, since no CPU in 'nohz_full' will be in
+> 
+>   housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)
+> 
 
-Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
----
- drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 32 +++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+I ran llama workload on a system with 192 CPUs. I set "nohz_full=0-191" so all CPUs
+are in 'nohz_full' list. In this case, kernel uses the boot CPU for housekeeping:
 
-diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-index 529928b94a193e02177f8773a0e68375b59b0a08..a28ccdeef8521c0e00d13b1860eadef5f2118651 100644
---- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-+++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-@@ -648,6 +648,37 @@ static int imx8mq_mipi_csi_set_fmt(struct v4l2_subdev *sd,
- 	return 0;
- }
+Kernel message: "Housekeeping: must include one present CPU, using boot CPU:0"
+
+find_new_ilb() looks for qualified CPU from housekeeping CPUs. The searching
+is likely to fail if there is only one housekeeping CPU.
+
+>> The problem is caused by two issues:
+>> 1) Some idle CPUs cannot be added to 'nohz.idle_cpus_mask',
+>> this bug is fixed by another patch:
+>> https://lore.kernel.org/all/20250815065115.289337-2-adamli@os.amperecomputing.com/
+>>
+>> 2) Even if the idle CPUs are in 'nohz.idle_cpus_mask', *no* CPU can be selected to
+>> do NOHZ idle load balancing because conditions in find_new_ilb() is too strict.
+>> This patch tries to solve this issue.
+>>
+>> Hope this information helps.
+>>
+> 
+> I hadn't seen that patch; that cclist is quite small, you'll want to add
+> the scheduler people to our next submission.
+> 
+
+Sure. The first patch involves both 'tick' and 'scheduler' subsystem. I can resend
+the first patch to broader reviewers if you don't mind.
+
+> So IIUC:
+> - Pretty much all your CPUs are NOHZ_FULL
+> - When they go idle they remain so for a while despite work being available
+> 
+
+Exactly.
+
+> My first question would be: is NOHZ_FULL really right for your workload?
+> It's mainly designed to be used with always-running userspace tasks,
+> generally affined to a CPU by the system administrator.
+> Here AIUI you're relying on the scheduler load balancing to distribute work
+> to the NOHZ_FULL CPUs, so you're going to be penalized a lot by the
+> NOHZ_FULL context switch overheads. What's the point? Wouldn't you have
+> less overhead with just NOHZ_IDLE?
+> 
+
+I ran the llama workload to do 'Large Language Model' reference.
+The workload creates 'always-running userspace' threads doing math computing.
+There is *few* sleep, wakeup and context switch. IIUC NOHZ_IDLE cannot help
+always-running task? 
+
+'nohz_full' option is supposed to benefit performance by reducing kernel
+noise I think. Could you please give more detail on
+'NOHZ_FULL context switch overhead'?
+  
+> As for the actual balancing, yeah if you have idle NOHZ_FULL CPUs they
+> won't do the periodic balance; the residual 1Hz remote tick doesn't do that
+> either. But they should still do the newidle balance to pull work before
+> going tickless idle, and wakeup balance should help as well, albeit that
+> also depends on your topology.
+>
+
+I think the newidle balance and wakeup balance do not help in this case
+because the workload has few sleep and wakeup.
  
-+static int imx8mq_mipi_csi_get_frame_desc(struct v4l2_subdev *sd,
-+					  unsigned int pad,
-+					  struct v4l2_mbus_frame_desc *fd)
-+{
-+	struct v4l2_mbus_frame_desc_entry *entry = &fd->entry[0];
-+	const struct csi2_pix_format *csi2_fmt;
-+	const struct v4l2_mbus_framefmt *fmt;
-+	struct v4l2_subdev_state *state;
-+
-+	if (pad != MIPI_CSI2_PAD_SOURCE)
-+		return -EINVAL;
-+
-+	state = v4l2_subdev_lock_and_get_active_state(sd);
-+	fmt = v4l2_subdev_state_get_format(state, MIPI_CSI2_PAD_SOURCE);
-+	csi2_fmt = find_csi2_format(fmt->code);
-+	v4l2_subdev_unlock_state(state);
-+
-+	if (!csi2_fmt)
-+		return -EPIPE;
-+
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+	fd->num_entries = 1;
-+
-+	entry->flags = 0;
-+	entry->pixelcode = csi2_fmt->code;
-+	entry->bus.csi2.vc = 0;
-+	entry->bus.csi2.dt = media_bus_fmt_to_csi2_dt(csi2_fmt->code);
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_video_ops imx8mq_mipi_csi_video_ops = {
- 	.s_stream	= imx8mq_mipi_csi_s_stream,
- };
-@@ -656,6 +687,7 @@ static const struct v4l2_subdev_pad_ops imx8mq_mipi_csi_pad_ops = {
- 	.enum_mbus_code		= imx8mq_mipi_csi_enum_mbus_code,
- 	.get_fmt		= v4l2_subdev_get_fmt,
- 	.set_fmt		= imx8mq_mipi_csi_set_fmt,
-+	.get_frame_desc		= imx8mq_mipi_csi_get_frame_desc,
- };
- 
- static const struct v4l2_subdev_ops imx8mq_mipi_csi_subdev_ops = {
+> Could you share your system topology and your actual nohz_full cmdline?
+>
 
--- 
-2.34.1
+The system has 192 CPUs. I set "nohz_full=0-191".
 
+Thanks,
+-adam
 
