@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-778642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7199DB2E861
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:55:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AE6B2E862
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352803B2EED
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:54:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696F57BD35E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780F32DAFC1;
-	Wed, 20 Aug 2025 22:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B372D9786;
+	Wed, 20 Aug 2025 22:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rC/q3crL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QpRvBiAR"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1BA284894;
-	Wed, 20 Aug 2025 22:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0633229B2A
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755730491; cv=none; b=LmCEoa4wuJTWqThOZHvkWalwDD22o+7a5CexvMu4t0EkfobR3SuSzq3CLw9mW8bU8IuPfJLOC+uZ+mX1lZkbylmwU50KXzTUgECyOdzHGpV9rFDzh9oFHocEPfZ7hKtrCyuvNqsktMQr/Quc3cM5ZEz7WoTazWzF5kJDv4EEAos=
+	t=1755730615; cv=none; b=YK8zwPr1C+5hRInwCJ0NyoRi7Vz1dLZ1GiZW5cWDn+zRI4VskG9VJttQT+QO1L3t8hqTDHnFkd+tYPnY6nQek+wSMKem+hRXRWOOiWXYIWmqgcQRxNOANTqXsMuLZE5Rhk1GbmZdtW0MKwbEj1W7RgIKe/4o2LL0JwAZx0WZyFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755730491; c=relaxed/simple;
-	bh=54NbdyWkuzrpuzcpcoEmg9Jf8ZCywwIjwFcvNZy5SCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sfw/wXv5yiERQSx9rQEvz4+BotodJD8QpxJPVdoPPkSCFO7SbJK7Qj+rAinExvGoVp9JlfyCaZl0ou35TiB2U3gBJ64yAs4oclB7MSaI7dDyp56PeiGXEb5/mWI4T7TbaYrpR/JIZolrTpBveVHZKPFk12uad1PmgBHYpQa9jV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rC/q3crL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755730484;
-	bh=dksXYoS42Uwd4uqVpdUrbMSDam3JFMNSjEargo1Od6Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rC/q3crLfXM4Rg/exp+qY32a+qyF4yVod4lViF/NlITN4fnSW9M7lQaQ+XcIuCFnc
-	 2wHu8OBawk2ljCiTtJpZyVkd+3vjBMkjbaFmFl8L6nqR+UXJdflbVMtmm154k6sQoN
-	 1Ex+L022U2WvMOGZVy5Bdb4h5Hd6+HzoVZ1dkFI+wfgwTysQKz9g3C45C5ms2ogda8
-	 e36L30cRUX7Qo9VaDFkTThbGDKjjk4kjup5FnOGIKPfAADatmJfcsOSxR+4hyxCEPh
-	 gBHDTJHysQYubF05UTxJE5p8EbTtediMSKYDlOXYvnlKF9tt1Bp+R5ifzErhQ2ku3U
-	 lzkfm8WGztztw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6hbl45CJz4wbr;
-	Thu, 21 Aug 2025 08:54:42 +1000 (AEST)
-Date: Thu, 21 Aug 2025 08:54:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Pankaj Raghav <p.raghav@samsung.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20250821085441.437cafbf@canb.auug.org.au>
-In-Reply-To: <20250820094239.30dea649@canb.auug.org.au>
-References: <20250818090559.3643eabd@canb.auug.org.au>
-	<20250820094239.30dea649@canb.auug.org.au>
+	s=arc-20240116; t=1755730615; c=relaxed/simple;
+	bh=/yswtVJ1bkFnVVjnsjbnou4NZos15rlVgZSi2sK7VLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fF2MIMm+h8EBTWbOCu9NyXKrxiCGVlLyf+esylFHYzNh4S+BuRpSUWJXhpuXTQMMZ4srVmVgbX/rZKGEnw7F4MRiOHYXlKoxd+bIheGFHgNaDPPt7yumaTg3hhHFg74b007HMQvxoX/ThOzoVvx99S8yQklanMu+Ct5Qxc2wtJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QpRvBiAR; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3e56fe580b4so1771465ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755730613; x=1756335413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SqijktqL5QSVl4d9uRAFgyOKB/qUtj5ueyBzLO6jfXw=;
+        b=QpRvBiARjh6W2CXsBgzmQ0RnHJ21RRkBHNMfngX0t4mvCnPNG+moE1NCQIPu7WeKBY
+         MPvH3Qb81p2hjEdmc9Gz1iN/YljhvM2ukiOULv/ALWM29QVETmKc4K1cMWS+6He7vRml
+         eyMtDe7T/3SdvL6Z2ib11JXsXaZXq2a4V1R1Uh5FIPPgiR3CIINIXZz0rXuznYx4RUml
+         LYHlfZlyC9Kv959VwCxgTmQO8LWAnjb2R5d5ikDdcpapLs2f5VPhOXdgfW9Rz4mAldvB
+         BOJEHtfZChAliVDujt+FIZqKfN+cFdPGBT7x9uu5jKEzj91yeb8wvaQemfc3lkOPEbCH
+         qBmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755730613; x=1756335413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SqijktqL5QSVl4d9uRAFgyOKB/qUtj5ueyBzLO6jfXw=;
+        b=nFQbHXjv1P1htQI9fundv7yelJT1J/DZs+CiXSoU7qsyyrZVv/tAwpypv63U9d6ecK
+         ktJtuWIKXee6Fu6n+w1Oa+Z6Lg3ZHsU9qDJjIZakmrmz1k8FacEPLmk3AiJIm9JB6TsF
+         J+7gwg2SDaMnGt1vxVT9L7Fj1qyMVQ+VS29dapi/zngwTIOgNZiX34GygrwJ6h01TNnh
+         hbRh3ouavypeSKJSDq28DytHWRkdBORMHUtjMCgOH+dPTTujXj7BxEiX6kU76l1As7MQ
+         0qmaVUfdimn+zzkqpvc5ZGynKBToanH5gPijTkEMwl3b5oCYRwbmmOC3WGMynT8K068L
+         +hHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmAnaf0u9pTHnX2YU2Sxk/D9kOwgYfOHnnr94GV896tsj7NUqsfK9VFn65nlZTMrxzk2p3gbVS6AAvpgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEj9j1XLSzu/RUZ0bBzb9X26P0yW1cn6OtmLdoLLOPTPcJ9SPi
+	eSFRHCGx5kV5hGpVmnPZo8t0CIWu4/X3eDBrU+qDF1NbTdWEvmmelg6cMHeidDv/O/20Q6GrOky
+	fQ/IFltZ5jWzJrRLxKVc+fxfjRinvrRkAG3qKvoM=
+X-Gm-Gg: ASbGncuaED0xxUox3Lsnfq4x+6bTT/IEofHiay/NAZmvRFg/XTxf6+8413RYLOPmsGn
+	TRK3zyUhMJl+Cl7+S9l0JZlZYUXnMrJsPaOZq5Ig+dJtuXWB9eB5YCc/OfUCFrzqAUsfLqXuwWy
+	DCxbI3/0SAyvVMElM7UH4156szGa8P45O/UHy1ijlkPljYrfZCgUOWcMWfETFvryDapnq5rwioV
+	E8a8e15OrPoEnpmQUdO7go=
+X-Google-Smtp-Source: AGHT+IHqhFqF0ldEvreg/zhfn5bJC9zhoDj5P0JECW0SBkkVMdAh6s8W9uc7MbYxkPrmre9Wg9hXsJZ9FhvxeMhipnQ=
+X-Received: by 2002:a05:6e02:1609:b0:3e6:65d5:2278 with SMTP id
+ e9e14a558f8ab-3e6d3b83b12mr5701655ab.5.1755730612828; Wed, 20 Aug 2025
+ 15:56:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_XGv/ViooFqSz+Tvec0=/hd";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/_XGv/ViooFqSz+Tvec0=/hd
-Content-Type: text/plain; charset=US-ASCII
+References: <20250820181547.3794167-1-nphamcs@gmail.com> <20250820224659.88528-1-sj@kernel.org>
+In-Reply-To: <20250820224659.88528-1-sj@kernel.org>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 20 Aug 2025 15:56:41 -0700
+X-Gm-Features: Ac12FXxvh5FV2ONZgUx83BQVRwVMK28b4ENt2qAqzERkh1Pfrd5_5j4HG2TtHZo
+Message-ID: <CAKEwX=NLvQyZTqv15kACZP2wErO9hyv9W+0j-BWrgOh5ZX1LJA@mail.gmail.com>
+Subject: Re: [PATCH] mm/zswap: reduce the size of the compression buffer to a
+ single page
+To: SeongJae Park <sj@kernel.org>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yosry.ahmed@linux.dev, 
+	chengming.zhou@linux.dev, herbert@gondor.apana.org.au, linux-mm@kvack.org, 
+	kernel-team@meta.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
-
-On Wed, 20 Aug 2025 09:42:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Wed, Aug 20, 2025 at 3:47=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote=
+:
 >
-> On Mon, 18 Aug 2025 09:05:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
+> On Wed, 20 Aug 2025 11:15:47 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
+>
+> > Reduce the compression buffer size from 2 * PAGE_SIZE to only one page,
+> > as the compression output (in the success case) should not exceed the
+> > length of the input.
 > >
-> > After merging the vfs-brauner tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >=20
-> > fs/iomap/direct-io.c: In function 'iomap_dio_zero':
-> > fs/iomap/direct-io.c:281:36: error: implicit declaration of function 'l=
-argest_zero_folio'; did you mean 'is_zero_folio'? [-Wimplicit-function-decl=
-aration]
-> >   281 |         struct folio *zero_folio =3D largest_zero_folio();
-> >       |                                    ^~~~~~~~~~~~~~~~~~
-> >       |                                    is_zero_folio
-> >=20
-> > Caused by commit
-> >=20
-> >   5589673e8d8d ("iomap: use largest_zero_folio() in iomap_dio_zero()")
-> >=20
-> > I have used the vfs-brauner tree from next-20250815 for today. =20
->=20
-> I am still getting this failure.
+> > In the past, Chengming tried to reduce the compression buffer size, but
 
-The above commit is still in your tree which makes it unbuildable since
-the interface it uses does not exist in your tree (are you testing it?).
+Yeah, this should include the reference below. My bad. So it should be:
 
-$ git grep -w largest_zero_folio vfs-brauner/vfs.all
-vfs-brauner/vfs.all:fs/iomap/direct-io.c:       struct folio *zero_folio =
-=3D largest_zero_folio();
+In the past, Chengming tried to reduce the compression buffer size
+(see [1]), but
 
-$ git grep -w largest_zero_folio mm-unstable/mm-unstable=20
-mm-unstable/mm-unstable:block/blk-lib.c:        struct folio *zero_folio =
-=3D largest_zero_folio();
-mm-unstable/mm-unstable:include/linux/huge_mm.h: * largest_zero_folio - Get=
- the largest zero size folio available
-mm-unstable/mm-unstable:include/linux/huge_mm.h:static inline struct folio =
-*largest_zero_folio(void)
+Andrew, would it be OK if you fix it for me when you put this patch in
+your tree :) Or I can also send a new version if that's better. Thank
+you!
 
-Please fix this up - maybe just drop/revert that commit until it is
-sorted out.
---=20
-Cheers,
-Stephen Rothwell
+> > ran into issues with the LZO algorithm (see [2]). Herbert Xu reported
+> > that the issue has been fixed (see [3]). Now we should have the
+> > guarantee that compressors' output should not exceed one page in the
+> > success case, and the algorithm will just report failure otherwise.
+> >
+> > With this patch, we save one page per cpu (per compression algorithm).
+> >
+> > [1]: https://lore.kernel.org/linux-mm/20231213-zswap-dstmem-v4-1-f228b0=
+59dd89@bytedance.com/
+>
+> This is not mentioned anywhere.  Probably you added this as a reference f=
+or the
+> past work from Chengming?
 
---Sig_/_XGv/ViooFqSz+Tvec0=/hd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks for taking a look, SJ!
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimUjEACgkQAVBC80lX
-0GwOwQf/fS0Ys23NuamjtfD1bM84E0WR5vME/ui/gqncY7Vfj+5Hk078+1sRJna8
-Bu4MdhZEbJ500u96j2otbMCOfcdFQBGYZi62+BAtotUkYJZ3ZuIi5kMfKVPRBIOh
-lieY0Sixtg0uLiM1o9oOoF/fA2Y13InutAjmOTmpgUnLCs4tbZxX/PEaNauq7kQp
-iI3zfgdS8RgQgJpgPONwyvjoNw3gGq54rPQFkGpwsNiDCj6C0ioxmZUDcvTuWAyC
-05q/u+cGG1AFcXHoqhTnCzM7O0n//UQXc/nrE71Q5U71aNT0Tcxxb2T02RnQAkTB
-fdrbEeGCT5dekGdbTyRYU2qRfD2nRA==
-=tDLA
------END PGP SIGNATURE-----
-
---Sig_/_XGv/ViooFqSz+Tvec0=/hd--
+>
+> > [2]: https://lore.kernel.org/lkml/0000000000000b05cd060d6b5511@google.c=
+om/
+> > [3]: https://lore.kernel.org/linux-mm/aKUmyl5gUFCdXGn-@gondor.apana.org=
+.au/
+> >
+> > Co-developed-by: Chengming Zhou <chengming.zhou@linux.dev>
+> > Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+> > Signed-off-by: Nhat Pham <nphamcs@gmail.com>
+>
+> Acked-by: SeongJae Park <sj@kernel.org>
 
