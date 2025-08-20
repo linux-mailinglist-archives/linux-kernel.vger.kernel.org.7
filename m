@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-776768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81427B2D14C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:20:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93231B2D14D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69D97285B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:19:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625FD2A3A3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B1119F111;
-	Wed, 20 Aug 2025 01:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C5E1A9FA9;
+	Wed, 20 Aug 2025 01:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyTHEKlR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cURs7ZyT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDD835334D;
-	Wed, 20 Aug 2025 01:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C33D13A3F7;
+	Wed, 20 Aug 2025 01:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755652761; cv=none; b=WSpvOiJTsYyFptTl0hILAVgP5ZF9wbgdNlVkQFU9S7gWRqrQo4LXVGXUfTVtmWqiYnd1/1lZdfgHsKy6LXMSBR1th7VbgfyOTDSJxVcEaUbpghgyJp0U/of7p+sHyfhGHzmyEBmJrhZzbMLReR/V7/ntxe2lAskvrEGJiloj1TA=
+	t=1755652810; cv=none; b=VyJ5oCNXAU7LWKdZ/BOaeRUCg+YyMXSPadZnaOShdkj03TdLIbIDyIjrJu+jAlJQJeZ82lk4SQPgtGHt+1fIbmZSIEZ1UPROhVyg1J+EDBxNc5qeBDE3N1jzQMN/Uh09qWuIx9Olb07ooutNL715cBMh1K3PtbDH+N4WCYTi/rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755652761; c=relaxed/simple;
-	bh=cjJRLW2sV4cFnb5HNArK4xCSZg33FLuESJ6vc/T4y5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LYJ4Ob/q8ECiYMEenhFKx8s1FA6Nm40ex6DTrsOvU7sEp4bujfzvz2Yu7p2Q7xWkcRxdG3nu5fyaeGYUOb0ZtqFn6zFLAKHbjZvCE7RwB6VoEaOAYoMsTZeSD3CfUJTT7aiNh9IsIerhFIMQHMoJ3A4cNnguYRIXslR6CpzpoY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyTHEKlR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7D35C4CEF1;
-	Wed, 20 Aug 2025 01:19:20 +0000 (UTC)
+	s=arc-20240116; t=1755652810; c=relaxed/simple;
+	bh=63sILRJcItw4yl8FfiixuWKpnQxVxwP7O5fDtUt+k6I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=U0BfnwrGq88fxNJcQW4s6pAZxqvafspq2saO2rYNa/xxoNlFyTYvYPgMVsNze+G25znJEAdULLE8cb1O4vItIPEtwSta8EnV+mfTOp9YwTWkGghJiEyUh+i4pIl5Ns5PMlpzCEj/5anROsM6y4NdgHrqpA5uDYhjqYR2ysndREE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cURs7ZyT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B352C4CEF1;
+	Wed, 20 Aug 2025 01:20:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755652761;
-	bh=cjJRLW2sV4cFnb5HNArK4xCSZg33FLuESJ6vc/T4y5k=;
+	s=k20201202; t=1755652809;
+	bh=63sILRJcItw4yl8FfiixuWKpnQxVxwP7O5fDtUt+k6I=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cyTHEKlRrdRQ1N62AOX3gs/46KVqddCnuOs/wFLM1W2Ng02c/2X0CX1eEbIgERXSQ
-	 /E53XK7ba39bRFUSW00l6LIpj/mlbgGXq5Aw7hRGZQVP7w0cY5tvTMQGCr3eTgHNNI
-	 yrrd7/Sux6QF8j8Me2YfV8qIwzgN+5Apuj93J2ym6b3FHC4wlPvvK3Hj/VN6DQ3fWQ
-	 p4RO7C/6MVu0GvXEeXRlbxaT3yLah8MOg1wpI0vOEnd6ZljHocO1a2qKQKLI7G1NRR
-	 I0jzZeE6ATgraaBHKp4jvExUeEd7bWGBub4U01XW+4q+xQ3ucUtjnm3MT8KH3uFPoi
-	 acdnyFpkpu0Qw==
-Date: Tue, 19 Aug 2025 18:19:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Rohan G Thomas via B4 Relay
- <devnull+rohan.g.thomas.altera.com@kernel.org>
-Cc: rohan.g.thomas@altera.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Serge Semin
- <fancer.lancer@gmail.com>, Romain Gantois <romain.gantois@bootlin.com>,
- Jose Abreu <Jose.Abreu@synopsys.com>, Ong Boon Leong
- <boon.leong.ong@intel.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next v2 2/3] net: stmmac: xgmac: Correct supported
- speed modes
-Message-ID: <20250819181920.275f2827@kernel.org>
-In-Reply-To: <20250816-xgmac-minor-fixes-v2-2-699552cf8a7f@altera.com>
-References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
-	<20250816-xgmac-minor-fixes-v2-2-699552cf8a7f@altera.com>
+	b=cURs7ZyTaPZ+ZyF2B216Au8BxU/TXYzL+uKyyuUHGBwJKIYgnmX+8rQWg7GKNHmRu
+	 i28Use60RBsvN5hUI1y2lIEcv5VODmYecHblrYZGaary2oMDvTAW78ZBXr057oaCoZ
+	 pyQkhMwwfEYUsxEy/I1tBwVq2BhIFvIom05KWrdTaJRDEONy4OI2dGtwwjloyEFDTt
+	 EPzk9itvNchQM5GWl/qiGumDoIEnNftrOpsefSp3YHlfbYlJqP8q4XU1gxCO84DE+X
+	 XpbhM3d1Q2afe60uEOncr2vF4lwf5SzzLaLAJv4g8RQxlovWdYdJ+JfMOQfH4QmmY8
+	 sX5nu363SX3og==
+Date: Wed, 20 Aug 2025 10:20:05 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Ye Weihua <yeweihua4@huawei.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ <linux-trace-kernel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] trace/fgraph: Fix the warning caused by missing
+ unregister notifier
+Message-Id: <20250820102005.a6bcf7787d5c6e9d10beb0db@kernel.org>
+In-Reply-To: <20250818073332.3890629-1-yeweihua4@huawei.com>
+References: <20250818073332.3890629-1-yeweihua4@huawei.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 16 Aug 2025 00:55:24 +0800 Rohan G Thomas via B4 Relay wrote:
->  {
->  	u32 hw_cap;
+On Mon, 18 Aug 2025 07:33:32 +0000
+Ye Weihua <yeweihua4@huawei.com> wrote:
+
+> This warning was triggered during testing on v6.16:
+> 
+> notifier callback ftrace_suspend_notifier_call already registered
+> WARNING: CPU: 2 PID: 86 at kernel/notifier.c:23 notifier_chain_register+0x44/0xb0
+> ...
+> Call Trace:
+>  <TASK>
+>  blocking_notifier_chain_register+0x34/0x60
+>  register_ftrace_graph+0x330/0x410
+>  ftrace_profile_write+0x1e9/0x340
+>  vfs_write+0xf8/0x420
+>  ? filp_flush+0x8a/0xa0
+>  ? filp_close+0x1f/0x30
+>  ? do_dup2+0xaf/0x160
+>  ksys_write+0x65/0xe0
+>  do_syscall_64+0xa4/0x260
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> When writing to the function_profile_enabled interface, the notifier was
+> not unregistered after start_graph_tracing failed, causing a warning the
+> next time function_profile_enabled was written.
+> 
+> Fixed by adding unregister_pm_notifier in the exception path.
+> 
+
+This looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks!
+
+> Fixes: 4a2b8dda3f870 ("tracing/function-graph-tracer: fix a regression while suspend to disk")
+> Signed-off-by: Ye Weihua <yeweihua4@huawei.com>
+> ---
+>  kernel/trace/fgraph.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index c5b207992fb4..dac2d58f3949 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -1391,10 +1391,11 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  error:
+>  	if (ret) {
+>  		ftrace_graph_active--;
+>  		gops->saved_func = NULL;
+>  		fgraph_lru_release_index(i);
+> +		unregister_pm_notifier(&ftrace_suspend_notifier);
+>  	}
+>  	return ret;
+>  }
 >  
-> +	struct stmmac_priv *priv = container_of(dma_cap, struct stmmac_priv,
-> +						dma_cap);
-> +
->  	/* MAC HW feature 0 */
+>  void unregister_ftrace_graph(struct fgraph_ops *gops)
+> -- 
+> 2.34.1
+> 
 
-nit: no empty lines between variable declarations and longest to
-shortest, so:
 
- {
-+	struct stmmac_priv *priv = container_of(dma_cap, struct stmmac_priv,
-+						dma_cap);
- 	u32 hw_cap;
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
