@@ -1,193 +1,150 @@
-Return-Path: <linux-kernel+bounces-778355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2117AB2E496
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6C7B2E497
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 995121883E5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:00:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C87C1BC8335
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A4C273803;
-	Wed, 20 Aug 2025 17:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE9527057B;
+	Wed, 20 Aug 2025 18:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dPOjhJxj"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioZTnQdy"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A0424EA90
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E535019F464;
+	Wed, 20 Aug 2025 18:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712798; cv=none; b=d4yxYlySPRN63MvFHXB8t7N88hFjiMLZ9QfdhYSEN24Ak5Tn6ylcNe6DAipCRyS2YCs87p1Xq7DP9Tdl7agciKFr38d3dkA3QtjI9WO/NUqPiuR63H/0UIIYeVcBmaGO55BnMH3jpof6AsVH39ucRyXp1QA8Zpnxq2/AcE7AbHA=
+	t=1755713023; cv=none; b=LnwpP+B33tDIgJFHqTWF/ARAzEqCPMpMZqWN0pHF87O6GejdqAZf0RpeMp/6dwdAwVMvRwiKaEAq/q7hDUMNA7778+dXWk/NrdtoCBAvH4bz6HgQqkMtDYhYIYYf69MF9FfJ2r7pSfRStpvfg/6YEnz5fOJtiURCZKgVR5hthCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712798; c=relaxed/simple;
-	bh=Oka69nYqhgw4mUHzY+3xl7uUA2VvGgIzb2JO2VYF0RI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=FABA4rOMGXMmRNvP4r3I0yXvfdNb59pW6vsvved21tL3OQ8rTo0/QU0WgZGOjDI5BR/3BRROsvPfKZyML3fBQri6EHpPDbbmxe+jOjCB6rbVYXdRe/7QpnFgJaO3j01Pm23z7YyzU2Z6B3CcY4Sdh2ZUMHWBu1rUXTZu5eStUj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dPOjhJxj; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b004a31so1020285e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:59:56 -0700 (PDT)
+	s=arc-20240116; t=1755713023; c=relaxed/simple;
+	bh=7QHvqbNyD3T8XWXuo9VVc7Qe5eq8zUqzOagpa4SYsvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q3M4QmRuAIDzc5/aq5Z3ABAcEyqjR5aL5PZjpkNfBWdT4RBLJN7aGexIoh2KwjuafyP8XonCzS1bpLzBBsOFWCDEYWLvpWMsp0ev6NA4UsjxyHRzFTsZ51H5kcuAGIFDJFnAXkYyv3nMVt08JXifv1tGnNjxZTmZrtWYxKBGWqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioZTnQdy; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b00f187so1066195e9.0;
+        Wed, 20 Aug 2025 11:03:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755712794; x=1756317594; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=psd7GX0dj7+39+JGOVBzQw4uHGDJswb4ASw50pIR/xE=;
-        b=dPOjhJxj8AANK/OhHAwAPe1ERnEpMzeTLVmI02SRmN4uwOcxkaDFwMpXXdW51dm9TI
-         q5dZ1H9Hs5wkDEd5bFC2OAkLYy6UwYxR0nIVeFli2EZzUuaVWo+FQV/UvXe0aJJjDSCP
-         uSsO2hFvjRGNHJDRxt606M0wFovv5U9kZDTNr2RbuQMN681CYChAgKYoO4RQfIEg0lhW
-         ycLbxOtZ4AYbK7OzQb53unTMz2fldejrvKZWMC7NrQDXALDXXsKd7u9I5GuWXGM32SlQ
-         JRzZFvtsB+qxkF97twYwIL36+fpDQYxnD86TRT259hm0BWmrwa7hhA/gUFDS2GnJ6Oiy
-         3+XA==
+        d=gmail.com; s=20230601; t=1755713020; x=1756317820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CpJLLzSWB1hSMWi95RrMucYY40dFasoMvr1QtUcD398=;
+        b=ioZTnQdytYrWnSwex2LrIsJNb+/uQq04DBmAWubpWEPniqN8Xzj+ddCi30fjxtHTm6
+         rR+ERXpFKu+2nEWLmh+GTAhXSnvpZQJj3aICAAAdGdvbbtfrDZ1F+iRoqsPAngjLX0ex
+         DB24p24L7vrZGSdr/r5OmLIv9351xrQ1kX8FmuvfuMhnU9FBQI9eL3ijGFwrokSnNPqX
+         3uUB7AHlnciS2B9sPJm2OXkvWke07FTzIg3TbJrOg/T+heni3m8Zb3FflEk03ah3QcnW
+         mZvZrhPo4mhAgyr8Lcd81oNAn8beESXzlJECa+myNj5FwCLl9L2MwbZkpf165IcXyWpr
+         Ln3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755712794; x=1756317594;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=psd7GX0dj7+39+JGOVBzQw4uHGDJswb4ASw50pIR/xE=;
-        b=qRdseHJywaejk9OWRvn+TE/j+KxsG3BeEqwTp538WBbDScZv6BA7dlOUWhOOwlL0vI
-         0hh2+U22VfsbEAXd7uP7T9hfflT601DV5c/5j11Dnabv//r976krNOjAlz/RMRSoxUu2
-         WYLDwEKReTplTTLKgsvMqOyjfftL9Vd4kydwQ1bPe8Qs7VkOpt5aHW+YtvWsQSF0Wa34
-         b5fSOyoraAJnldXVws8tiqb2xh+okNQhuaWqTEF7U3efMv9Aqk7h1Vw/Nn0p6ZicPuLZ
-         lywHq685mR8s+I/mGrIa+IvgEslvSuFUS/Z13yS+0QqAKbTeBpspxuL9QDNIblbdnbW0
-         sx3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUcSxSdGzr9Zz7dTieBNTPmHET0pK+ZWmSjXao2BYgN9Q5e00RxtVDZfPZfhlnGxktf5U8qBX+phFCZlsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Jt4H1ihiXwYSCWdcJ2RYsK57Zac2rUF95Vok/qIkOAXHE/np
-	gx2PfQFg3RzNzZaEbxW2f+d8zlrxXm60O6LPFBstawmv6s3iE7MphZ2GLvubHHK+FMM=
-X-Gm-Gg: ASbGncsK8ur+9tbYLG/aZlTTq292T8Nb5DtHIbF9nA473GXDFiyi4ASCxjWeu3X0KRj
-	fZOObsb7iG5AXJQ+2LXSIoHg4DWatgMKD+FANrFmebgfaFJMQT0vZPEeeZi94gewF8lPf56Xoit
-	gHNr+O+UsRsGXXffqU9YNI1BLzHKMAdvZS3jOOclYxinzWhT2/TlY2LE1EVFVwiIvfjdnnfquVD
-	nkKt4+fVGsas50Oncn+XsXHA8hC46PhCr+Z4tVhDFJBVsWdl/qXN3KmIGT9oGrpFqrdi9MWcvvP
-	XsERdyn7ZH9vJYkjFS1NO6zhCFyQULwAAubjHvS+0Ukhl2PRNVQtar8zQQj5EJ+JXn8vpTId/aT
-	CBXGnb9QW9Aify0s5tdMf5HGJxTYK9zLK08uKbw==
-X-Google-Smtp-Source: AGHT+IG0HixLdWbK9CluBnPq2eg82Ql5cTYrFzVyRwWIRunFXARzLchOek5V0A927f6ndOI8kHBWcA==
-X-Received: by 2002:a05:600c:3b20:b0:458:bf9c:274f with SMTP id 5b1f17b1804b1-45b479f34a4mr31709205e9.29.1755712794543;
-        Wed, 20 Aug 2025 10:59:54 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:3a9b:1de2:5440:9326])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c8e379sm47740645e9.13.2025.08.20.10.59.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 10:59:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755713020; x=1756317820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CpJLLzSWB1hSMWi95RrMucYY40dFasoMvr1QtUcD398=;
+        b=r4A0c99Kjd9CNT3zIk/Y0u5pRvL7v0YONAZnBh05bKY/ZCAUNkWWJbGD+8OKHVRMC7
+         rNvJlRlxRmalleT0x9ToKBH6vBLnuM7h1BSHgOrvehsHGKb+5y48iKRZUqshjzrzMGNy
+         bYsKCV7ouYU/W0OyzPLWVj6EoR8IBlqr/pid8vZD84dmW53Bu28T2PK2LoTJTYbYA+Az
+         2wUVo9fevsuLvgs3bD74TN/Kuhq6p3hIOyTiQjXBFK/GPaX6GCY9pM+4GxfG+kQxMgZT
+         0x8hCYAb8mk7s/zDBZgBQqkbOHSXCAJS5LkzEGdDrVEr+KZ0uSXE9OMS7noA6y5c6+Ym
+         z0uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNR8WNuX79SSOKxk+SZs62DcRX42J/f28v2ErHhJH2NnEZeBvM2eVw5cQlPR5o+M5F63O2dl2FkiGe0k0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMq2ydKpfPGp17gWmWQyhM5kqmE+WFc6kVmQ1JJwXAFKlGednn
+	UtZ8q5rySWb59szyVbQuKRk+VUNGggHY3brrBHpRjQzEgfCHkupMrGQYhODUaQ==
+X-Gm-Gg: ASbGnctSOaGdbpZuzMRN2n20JmKiJLuA3ih1k1B9skE/viVTF11BlK8SA1Th3GgS7ri
+	FhMr0mCRjY/xzgwpBUiwuSGP4WN+iYvgNXZfceVyML3GAercYnqUayokgHEcRyfnW3452dOzXx1
+	iE4t6lCWxf393eZUJMcLysBL+KMWT70R2lz3w9993DOqCmz5STD9Su0VaKy1XvDVOMlhofk+6MX
+	gF3oXM+INaxCUhh+lgmicjGrukN2Vu//XZGMLGx9xVq73gdcf53jsRR+bXruvmKfOBWk8L9OrUe
+	YArY2yqEW7NyBETTijOavFf/g8OZ03sZ4qK1MPW3WFRH3SH6D0PZEMpa0Xsym8eJ+E9/mnWOSLz
+	eo7ZpD9+0PlP6zb+SP+/zvw==
+X-Google-Smtp-Source: AGHT+IFh/E9lnjKTs3kxRrLvlbGjy8oSnK4JJSucdbLknDdJAJH1cXdCJOfOTXv/BaL/tYZQxUpKaA==
+X-Received: by 2002:a05:600c:1d0a:b0:453:23fe:ca86 with SMTP id 5b1f17b1804b1-45b47a20422mr28734805e9.4.1755713019930;
+        Wed, 20 Aug 2025 11:03:39 -0700 (PDT)
+Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b4cd1ff39sm435695e9.0.2025.08.20.11.03.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 11:03:39 -0700 (PDT)
+From: Raphael Gallais-Pou <rgallaispou@gmail.com>
+To: Mark Brown <broonie@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: st: fix PM macros to use CONFIG_PM instead of CONFIG_PM_SLEEP
+Date: Wed, 20 Aug 2025 20:03:10 +0200
+Message-ID: <20250820180310.9605-1-rgallaispou@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 18:59:53 +0100
-Message-Id: <DC7G8QJ0XVJX.BBZHVVZO6OEN@linaro.org>
-Cc: "Vinod Koul" <vkoul@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
- "Takashi Iwai" <tiwai@suse.com>, "Srinivas Kandagatla" <srini@kernel.org>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- "Patrick Lai" <plai@qti.qualcomm.com>, "Annemarie Porter"
- <annemari@quicinc.com>, <linux-sound@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>, <kernel@oss.qualcomm.com>,
- "Ekansh Gupta" <ekansh.gupta@oss.qualcomm.com>, "Pierre-Louis Bossart"
- <pierre-louis.bossart@linux.dev>
-Subject: Re: [PATCH RFC 1/2] ALSA: compress: add raw opus codec define and
- struct snd_dec_opus
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>
-X-Mailer: aerc 0.20.0
-References: <20250616-opus_codec_rfc_v1-v1-0-1f70b0a41a70@linaro.org>
- <20250616-opus_codec_rfc_v1-v1-1-1f70b0a41a70@linaro.org>
- <1317c3c5-967d-4013-9c0b-f68844c63908@oss.qualcomm.com>
-In-Reply-To: <1317c3c5-967d-4013-9c0b-f68844c63908@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Jun 18, 2025 at 1:33 PM BST, Srinivas Kandagatla wrote:
->
->
-> On 6/16/25 4:26 PM, Alexey Klimov wrote:
->> Adds a raw opus codec define and raw opus decoder struct.
->> This is for raw OPUS packets not packed in any type of container
->> (for instance OGG container). The decoder struct fields
->> are taken from corresponding RFC document.
->>=20
->> This is based on earlier work done by
->> Annemarie Porter <annemari@quicinc.com>
->>=20
-> May be co-dev by would be good option.
+pm_sleep_ptr() depends on CONFIG_PM_SLEEP while pm_ptr() depends on
+CONFIG_PM.  Since ST SSC4 implements runtime PM it makes sense using
+pm_ptr() here.
 
-Ack.
+For the same reason replace PM macros that use CONFIG_PM.  Doing so
+prevents from using __maybe_unused attribute of runtime PM functions.
 
->> Cc: Annemarie Porter <annemari@quicinc.com>
->> Cc: Srinivas Kandagatla <srini@kernel.org>
->> Cc: Vinod Koul <vkoul@kernel.org>
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  include/uapi/sound/compress_params.h | 21 ++++++++++++++++++++-
->>  1 file changed, 20 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/c=
-ompress_params.h
->> index bc7648a30746f4632ecf6695868e79550a431dfa..f80989f7bdd2f1bfad843b1d=
-c30fa263e083d17a 100644
->> --- a/include/uapi/sound/compress_params.h
->> +++ b/include/uapi/sound/compress_params.h
->> @@ -43,7 +43,8 @@
->>  #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
->>  #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
->>  #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
->> -#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
->> +#define SND_AUDIOCODEC_OPUS_RAW              ((__u32) 0x00000011)
->> +#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_OPUS_RAW
->> =20
->>  /*
->>   * Profile and modes are listed with bit masks. This allows for a
->> @@ -324,6 +325,23 @@ struct snd_dec_ape {
->>  	__u32 seek_table_present;
->>  } __attribute__((packed, aligned(4)));
->> =20
->> +/*
->> + * RFC with info on below OPUS decoder fields:
->> + * https://www.rfc-editor.org/rfc/rfc7845#section-5
->> + */
->> +struct snd_dec_opus {
->> +	__u8 version;		/* must be 1 */
->> +	__u8 num_channels;
->> +	__u16 pre_skip;
->> +	__u32 sample_rate;
->> +	__u16 output_gain;	/* in Q7.8 format */
->> +	__u8 mapping_family;
->
-> This is where optional Channel Mapping Table starts in the structure.
->
-> Should this all these channel mapping memnbers go into a dedicated
-> struct snd_dec_opus_ch_map?
+Link: https://lore.kernel.org/lkml/CAMuHMdX9nkROkAJJ5odv4qOWe0bFTmaFs=Rfxsfuc9+DT-bsEQ@mail.gmail.com
+Fixes: 6f8584a4826f ("spi: st: Switch from CONFIG_PM_SLEEP guards to pm_sleep_ptr()")
 
-Ok.
+Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+---
+ drivers/spi/spi-st-ssc4.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
->> +	__u8 stream_count;	/* part of channel mapping */
->> +	__u8 coupled_count;	/* part of channel mapping */
-> Comments are bit misleading. Either we document them in detail or point t=
-o
-> the rfc which has this documented in more detail.
+diff --git a/drivers/spi/spi-st-ssc4.c b/drivers/spi/spi-st-ssc4.c
+index 49ab4c515156..c07c61dc4938 100644
+--- a/drivers/spi/spi-st-ssc4.c
++++ b/drivers/spi/spi-st-ssc4.c
+@@ -378,7 +378,7 @@ static void spi_st_remove(struct platform_device *pdev)
+ 	pinctrl_pm_select_sleep_state(&pdev->dev);
+ }
+ 
+-static int __maybe_unused spi_st_runtime_suspend(struct device *dev)
++static int spi_st_runtime_suspend(struct device *dev)
+ {
+ 	struct spi_controller *host = dev_get_drvdata(dev);
+ 	struct spi_st *spi_st = spi_controller_get_devdata(host);
+@@ -391,7 +391,7 @@ static int __maybe_unused spi_st_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused spi_st_runtime_resume(struct device *dev)
++static int spi_st_runtime_resume(struct device *dev)
+ {
+ 	struct spi_controller *host = dev_get_drvdata(dev);
+ 	struct spi_st *spi_st = spi_controller_get_devdata(host);
+@@ -428,8 +428,8 @@ static int __maybe_unused spi_st_resume(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops spi_st_pm = {
+-	SET_SYSTEM_SLEEP_PM_OPS(spi_st_suspend, spi_st_resume)
+-	SET_RUNTIME_PM_OPS(spi_st_runtime_suspend, spi_st_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(spi_st_suspend, spi_st_resume)
++	RUNTIME_PM_OPS(spi_st_runtime_suspend, spi_st_runtime_resume, NULL)
+ };
+ 
+ static const struct of_device_id stm_spi_match[] = {
+@@ -441,7 +441,7 @@ MODULE_DEVICE_TABLE(of, stm_spi_match);
+ static struct platform_driver spi_st_driver = {
+ 	.driver = {
+ 		.name = "spi-st",
+-		.pm = pm_sleep_ptr(&spi_st_pm),
++		.pm = pm_ptr(&spi_st_pm),
+ 		.of_match_table = of_match_ptr(stm_spi_match),
+ 	},
+ 	.probe = spi_st_probe,
+-- 
+2.50.1
 
-Ok.
-
->> +	__u8 channel_map;
->
-> Channel Mapping is (8*C bits), one octet per output channel.
->
-> The way this is represented/split in this struct is confusing should it
-> be just channel_map[8]
->
->
->> +	__u8 reserved[7];	/* space for channel mapping */
-> Any reason only 7?
-
-It was 7 because 1+7=3D8. For RFC 7845 the mappin family 0 and 1 only
-actually make sense for playback hence max number of channels seems to
-be 8.
-I'll update it in the next version.
-
-Thank you,
-Alexey Klimov
 
