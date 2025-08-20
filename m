@@ -1,169 +1,107 @@
-Return-Path: <linux-kernel+bounces-778449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D69AB2E5DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:51:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6A8B2E5E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E75B55E3EDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:51:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459A73A2A85
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30E426F2B2;
-	Wed, 20 Aug 2025 19:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BF92737E8;
+	Wed, 20 Aug 2025 19:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1eqanLi9"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuC0x3zE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834862F4A
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD942F4A;
+	Wed, 20 Aug 2025 19:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755719512; cv=none; b=m4UYVimow4BB2FEAliZn+RjCYg4r3XaX5igviMG7CZNTrRtl71gEztBjeYPB1KLiTn7ZZUAUn6zaqwzitQA12afcrL0smTyNUSQee9yQcPXrJhm/5339VAT5QSMnmXpPsc89Cpz5y2KS1fY4cQcyogstAr4LoxaPWZmq0+Zwxyg=
+	t=1755719523; cv=none; b=bie9t8yZkcv0aGWOgLDUaZvZnHCNZ8DveVLs1vnZVxpQzXphcqK+bGskCqqaBN81g1WQIg2u4IjKYJ0/YZrd0wIIDCjR/+xC5R0wjt+0M1EpAhasxV/icg33VXll6riO+n8w+lBrISLf7B8WMrMStcB2UUEY8zKQvLXx6o0fotY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755719512; c=relaxed/simple;
-	bh=oVhGTM1znDO6F7FjpKVLrhKRWRws+kg+AB55yVd7m6A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCQYIjoM8FMn32feH2I/W1Up8PTQVWr+AZYcJwHOWOhBQcc+IScpZy4HOqHDwuALE2fwoJn9Ebc2wcHixgKQYX6m2VjrG+kHHCXpbqVm/dafpvPmTSG+Nr/4F1S8s43Od7Eo05s2nb1jHtdOBbLpNrwRkv1VvMk61OKkvvLDLjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1eqanLi9; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b29b715106so13021cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755719509; x=1756324309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+5vWw0dImYJhGaYdSw1CwEfTyC3R0fK1vETd+qU82OY=;
-        b=1eqanLi9LOFZF6Wn5dJCE/efembwHyb/5z2eoRdp4ewMvspIoCJ++TrTVUZn6XUqeF
-         qjBF8lK42F9W03wjTAA+V+/CyAERTIWrp/UXiXwT6a6msDppZDDPH3ImPjx07Sgm7Lqk
-         SXZ2xSi8K5s+Ho5kNYcT1LDnU5JrbzaEHGzP/Dlt6w85YqFJdWqwV2hz9Z2evhOBT3tu
-         U+c44Hl5gZLfEF8lYCkkfzEEZtngZ5axmIR/uie5SUUWl6xiwj7jHusIxibTqsJ5KuGb
-         1/DumzJyvHYBtepsFj82oHAWIrJrb8tMzvCRipP50ZoEkl4tGq00PuOoiNSQOTQaYD1E
-         25fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755719509; x=1756324309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+5vWw0dImYJhGaYdSw1CwEfTyC3R0fK1vETd+qU82OY=;
-        b=IuIwMU3hLmT01SXrsuE00sjbBBnkxQ+8/rSLSz4PhuLpy2RhpiB1T64GWXfr9rHyry
-         FZ4fbFIQGGvf5xJ8f1BpgfyOdVRsRhz+RtkeDaAt1TsgAE19iDBzRTNe3xXvVD3gkjhZ
-         F1R7bRbayp6HlVYJpE0ZXYi+V3Tt2fwF/RxGHrhKsAb3g6eYwn6nbcauohzQBlZaVPhU
-         w8YScJNdhzCGQeqwP54Ur4zcz5jfVye+mU54oiH+DsKdtUOxqgUGq2RRHf5PoFu+Mb1O
-         Fa4oOwrV9WFqSJ7g3JmPVxqGzFOQ+goY3mIvezlTUQINi2CJu4di2NaQC0yt1WLUnkOU
-         W1yA==
-X-Forwarded-Encrypted: i=1; AJvYcCU//LY0guxRSLGRQg0dzZuZGR25sg2sUYZG6ltaQ5NFFJLZ6q/yNrnnx+2Ui//TORPhlLGYFM0Qlb1dcL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMa5+OQbGkvEQO4Ebe61Oeu27PVlPl8ENihozwE474Nj+n5sD1
-	sifzDVeac0kgSMGLe5XdgBEr+78irbJsS+uumZSsWR8lRYgkcK51GYgo/RtqfbKWyKnci7OHd8E
-	y0SgRBjanbhACA0tTONI59He+Lzo2/C/guQhUsmIh
-X-Gm-Gg: ASbGncvTENrS1L3d/5fN8vhxmtRM3NIZDBUQp/KeALTh3n4QXLhCaDy/IrME/sleG7W
-	QIBIb67nSrEFneTLKRWmeK440fAcmt1/fTYKcOvGeDYqUHWf4ntid2yQjaQk9+QWgxS1z1FPD+k
-	dUUsdljtMpkN9Zi8wV1Cfk9opkelG0TyvRMHP9/7iFDtrBwgdyHpToVX3wgDRi8k5IdwEkqoEv/
-	aAQY5E1S3xNmywKejZv+MfLSPMSdcVzVYxa5cScTeJ5cGCrS4CVJ6k=
-X-Google-Smtp-Source: AGHT+IFmZUSJrytsqPuwgDUy5DVDYRM42MCGIpeE67tmDdymvz8+SUmA2EGbfjRmGrougCGhxdFfnLTZ28Cybkub2ek=
-X-Received: by 2002:a05:622a:1107:b0:4b2:9d13:e973 with SMTP id
- d75a77b69052e-4b29f242890mr96511cf.0.1755719508942; Wed, 20 Aug 2025 12:51:48
- -0700 (PDT)
+	s=arc-20240116; t=1755719523; c=relaxed/simple;
+	bh=zGAyQrb62JlwMvikL117lzOzDR5dBsupAPSQ54LsUKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sU8l9zp+rvmE3IC3ijbcfyUaXtbxjEDjbFtVzd+52wX9LPf+xqzL8eNN9lAVUOljKbUlaFrdjWinV84KgiyuisYzGINdEF9C4U9Q7iRnHpYkbtuP3/P2Z/XgIMDJHB66feJOrca8ck6VDlQnPuR0/O0WtJKFLDOH9CHJiCsNwMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuC0x3zE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D04C4CEE7;
+	Wed, 20 Aug 2025 19:52:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755719523;
+	bh=zGAyQrb62JlwMvikL117lzOzDR5dBsupAPSQ54LsUKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZuC0x3zE4gY1tWkVNK9i4nhhTH4EbDDvBu2juzSEV7/jw15X+2uo84+nNGRFgUnnF
+	 92bkohYSJ+2OJVEnztRDZCWhZ51mKfSwI2s8iUjbzxConu7HiUFFqhXQS++N0dSX85
+	 iUPMYJ+YCKPFr9CUSoqnCiPyZQaTfZqIArdUwbZLAa8WKiJyunvYh5+Q4oxbc2ILd0
+	 JLJZOlM5hc2HMwDlUemYPpQYT8I65Y+d5OybGu/T8imPmPyY3dbWbcP8AxFOXxn/Yl
+	 /DuEyKtYmsppEGMdpRYF/B6C6CoMQTdpIjGwoLHu1OjgLTHAhp5NYH5jw/5bNCFCG1
+	 X7QCWZyUCg5Kw==
+Date: Wed, 20 Aug 2025 20:51:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Boris Gjenero <boris.gjenero@gmail.com>,
+	Christian Hewitt <christianshewitt@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Paolo Sabatino <paolo.sabatino@gmail.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v3 4/4] MAINTAINERS: Add entry for TM16xx driver
+Message-ID: <20250820-clock-easiness-850342f716f3@spud>
+References: <20250820163120.24997-1-jefflessard3@gmail.com>
+ <20250820163120.24997-5-jefflessard3@gmail.com>
+ <CAHp75VfyR0cjnC6C6Xy8x9nTREdAgbjo18RLYNRzoLc6KmXnTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820112621.4045-1-xuewen.yan@unisoc.com>
-In-Reply-To: <20250820112621.4045-1-xuewen.yan@unisoc.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 20 Aug 2025 12:51:37 -0700
-X-Gm-Features: Ac12FXwTo9rcFuIY0Vp0Ru30qbyMNYeq28H_AtMTQxUiAB3kpq5P_3A0q3lX588
-Message-ID: <CAJuCfpE1pJ8qhHgqvExktsMeTBbtVSK2rkE5SfeTE2nOYrNozQ@mail.gmail.com>
-Subject: Re: [RFC PATCH V2] sched: psi: Add psi events trace point
-To: Xuewen Yan <xuewen.yan@unisoc.com>
-Cc: hannes@cmpxchg.org, peterz@infradead.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, rostedt@goodmis.org, mingo@redhat.com, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com, yuming.han@unisoc.com, xuewen.yan94@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ED76KRMEHLfSRas1"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfyR0cjnC6C6Xy8x9nTREdAgbjo18RLYNRzoLc6KmXnTA@mail.gmail.com>
+
+
+--ED76KRMEHLfSRas1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 4:28=E2=80=AFAM Xuewen Yan <xuewen.yan@unisoc.com> =
-wrote:
->
-> Add trace point to psi triggers. This is useful to
-> observe the psi events in the kernel space.
->
-> One use of this is to monitor memory pressure.
-> When the pressure is too high, we can kill the process
-> in the kernel space to prevent OOM.
->
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
-> v2:
-> -fix compilation error;
-> -export the tp;
-> -add more commit message;
-> ---
->  include/trace/events/sched.h | 5 +++++
->  kernel/sched/psi.c           | 4 ++++
->  2 files changed, 9 insertions(+)
->
-> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> index 7b2645b50e78..d54db5fcbca2 100644
-> --- a/include/trace/events/sched.h
-> +++ b/include/trace/events/sched.h
-> @@ -896,6 +896,11 @@ DECLARE_TRACE(sched_set_need_resched,
->         TP_PROTO(struct task_struct *tsk, int cpu, int tif),
->         TP_ARGS(tsk, cpu, tif));
->
-> +struct psi_trigger;
-> +DECLARE_TRACE(psi_event,
+On Wed, Aug 20, 2025 at 10:08:06PM +0300, Andy Shevchenko wrote:
+> On Wed, Aug 20, 2025 at 7:31=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
+> <jefflessard3@gmail.com> wrote:
+>=20
+> Besides the missing commit message, the main part of this patch should
+> be merged with the patch 2 where the YAML file is being added.
+> Otherwise it will be a dangling file. I dunno if DT tooling has its
+> own concept of a maintainer database, though.
 
-DECLARE_TRACE will create a tracepoint but will not export it in the
-tracefs. Why should we not have it in the tracefs?
+get_maintainer.pl will pull the maintainer out of the file, so it won't be
+truly dangling without a way to associate Jean-Fran=C3=A7ois with this file=
+, if
+that;s what you mean.
 
-> +       TP_PROTO(struct psi_trigger *t),
-> +       TP_ARGS(t));
-> +
->  #endif /* _TRACE_SCHED_H */
->
->  /* This part must be outside protection */
-> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> index 59fdb7ebbf22..f06eb91a1250 100644
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -141,6 +141,8 @@
->  #include <linux/psi.h>
->  #include "sched.h"
->
-> +EXPORT_TRACEPOINT_SYMBOL_GPL(psi_event_tp);
+--ED76KRMEHLfSRas1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So, are you planning to attach some handler to this trace event in your dri=
-ver?
+-----BEGIN PGP SIGNATURE-----
 
-> +
->  static int psi_bug __read_mostly;
->
->  DEFINE_STATIC_KEY_FALSE(psi_disabled);
-> @@ -509,6 +511,8 @@ static void update_triggers(struct psi_group *group, =
-u64 now,
->                 if (now < t->last_event_time + t->win.size)
->                         continue;
->
-> +               trace_psi_event_tp(t);
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKYnXgAKCRB4tDGHoIJi
+0iIgAQDiRFM5SkzAyXH55vfBZqtQCGaLrGiXAkLlcUyyxoL5CAD+JTcy5r2rjqNV
+J1FVxjeFIXCicwdRH1M/+3G3W13qTgY=
+=ACTV
+-----END PGP SIGNATURE-----
 
-This should only be done if the below cmpxchg() check is true, right?
-Otherwise it will not match with what userspace is receiving.
-
-> +
->                 /* Generate an event */
->                 if (cmpxchg(&t->event, 0, 1) =3D=3D 0) {
->                         if (t->of)
-> --
-> 2.25.1
->
+--ED76KRMEHLfSRas1--
 
