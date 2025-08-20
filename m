@@ -1,112 +1,91 @@
-Return-Path: <linux-kernel+bounces-778673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E219B2E8BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5CDB2E8A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 086067B1C5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBB11899B23
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669AF2E11CA;
-	Wed, 20 Aug 2025 23:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6927D2DFA2D;
+	Wed, 20 Aug 2025 23:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="N3/pVvEw"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vFHtrR7Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C072E0B48
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1921E491B;
+	Wed, 20 Aug 2025 23:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755733061; cv=none; b=lAwjVGrowy7FTnWzWuwUEyvgL2f3Z342fb2o6xrBDdmm8qTfFQpqdOOHNP/8dDCNhD4DHeTwjPor674Lz7rNkF8LhXTP16JmWyKPEeC7/ZNC9m6UOvt/XJkim+78QRQUYpA/yqGe2kA/dismMCQhuq5ge2btFeh1j/xGev2CmOM=
+	t=1755732569; cv=none; b=YEaVeR6YMIy4nQjs/BO0qsOA9GGyBx1CAtxEhudLd9RdFPBz2IUFZXoX2H6qY6OYNoIMPhVznXy4R7DiX+s905PSy16tzqY1p6lSo7jpiMlLCN6qfcDmn6n1QG5p6lFqzOfGfZH9O4KUWV46bjnMJohiSZtc2B1szZ7yWREu1OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755733061; c=relaxed/simple;
-	bh=XCs0VqFMLGNvQBFfHYDkcYu1cR0YZLv0EaV6HUuJL2s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XlAcugelnlBGolo7r2ZNE027Z5NDlt3k2RGXL/Qt5ije50wpOAckPJbgsr26GduqU5p4caQIjgi5vzV2sGUHIw45RVNlj3H8vdENQRjSX6qYUr01vu5uiMs7V6sUiwEmsdDzgfeIP2DONHi9yLNoTQy9yKdPPrz9kNSJrSJ5wQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=N3/pVvEw; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1755732405;
-	bh=XCs0VqFMLGNvQBFfHYDkcYu1cR0YZLv0EaV6HUuJL2s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=N3/pVvEw5VXa8QdhAwM7HVfsSjcYmdRrJhvocdcN8UCejCGDhF62uLjAXytcrnHu6
-	 5bildu1OCOXqaorSaUHO3HLKwcq6j6TDr66DrZxk3rgbrakV5SxgV4ZVa+CaSWiuvj
-	 A/oSWIgOzgb/9v2BIAstrZsYZTI8wsP/Bt6eAXvo=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id B433B40195; Wed, 20 Aug 2025 16:26:45 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id B3610400CA;
-	Wed, 20 Aug 2025 16:26:45 -0700 (PDT)
-Date: Wed, 20 Aug 2025 16:26:45 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-cc: yury.norov@gmail.com, linux@rasmusvillemoes.dk, paul.walmsley@sifive.com, 
-    palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
-    linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-    dennis@kernel.org, tj@kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] riscv: introduce percpu.h into include/asm
-In-Reply-To: <20250819135007.85646-3-cuiyunhui@bytedance.com>
-Message-ID: <e7653089-5c57-ee61-ed01-0b3245e10d82@gentwo.org>
-References: <20250819135007.85646-1-cuiyunhui@bytedance.com> <20250819135007.85646-3-cuiyunhui@bytedance.com>
+	s=arc-20240116; t=1755732569; c=relaxed/simple;
+	bh=m2IaG1MY/+xH+rg0uCa+LUQv8zbg5WaY0KTukcGLEDI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RkZuPSiy94L+NMKNTbMgbHCIWQiRuPA2osdnwVceb5/JQOhN5nz0QFiE0qRA6YvcMV5hJTWA5H3lxnTPsuWA9BqerSWB8Yc8N/GWkOkC1H/MWp/wX2t2GDO2BQ7f40wzN6JapvP7L/+XctvME3p2HxMT7xHyPZlYPA4cPrHc4V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vFHtrR7Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6B3C4CEE7;
+	Wed, 20 Aug 2025 23:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755732569;
+	bh=m2IaG1MY/+xH+rg0uCa+LUQv8zbg5WaY0KTukcGLEDI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vFHtrR7Y5KroDJGCDi51bt71NRLurSsxOIIDM6sO5c8GU7/Q0AngyIg8cbtiA4CVE
+	 fkeVumBm5YkU/2HVuIrhotROZ4hi9PyEoiCUlkFDf/3kgcSvPsp2oefxafa6t/etmc
+	 3xtP/tcFRWpZUzFOyqrpnDW3r0USND7XQKXfA3l8=
+Date: Wed, 20 Aug 2025 16:29:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baptiste Lepers <baptiste.lepers@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
+ <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn
+ <jannh@google.com>, linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: mm: Mark VmaNew as transparent
+Message-Id: <20250820162927.34201cfb395ec7319b15920a@linux-foundation.org>
+In-Reply-To: <20250812132712.61007-1-baptiste.lepers@gmail.com>
+References: <20250812132712.61007-1-baptiste.lepers@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 19 Aug 2025, Yunhui Cui wrote:
+On Tue, 12 Aug 2025 15:26:56 +0200 Baptiste Lepers <baptiste.lepers@gmail.com> wrote:
 
-> +#define __PERCPU_AMO_OP_CASE(sfx, name, sz, amo_insn)			\
-> +static inline void							\
-> +__percpu_##name##_amo_case_##sz(void *ptr, unsigned long val)		\
-> +{									\
-> +	asm volatile (							\
-> +		"amo" #amo_insn #sfx " zero, %[val], %[ptr]"		\
-> +		: [ptr] "+A" (*(u##sz *)ptr)				\
-> +		: [val] "r" ((u##sz)(val))				\
-> +		: "memory");						\
-> +}
+> Unsafe code in VmaNew's methods assumes that the type has the same
+> layout as the inner `bindings::vm_area_struct`. This is not guaranteed by
+> the default struct representation in Rust, but requires specifying the
+> `transparent` representation.
+> 
+> ...
+>
+> +++ b/rust/kernel/mm/virt.rs
+> @@ -209,6 +209,7 @@ pub fn vm_insert_page(&self, address: usize, page: &Page) -> Result {
+>  ///
+>  /// For the duration of 'a, the referenced vma must be undergoing initialization in an
+>  /// `f_ops->mmap()` hook.
+> +#[repr(transparent)]
+>  pub struct VmaNew {
+>      vma: VmaRef,
+>  }
 
-AMO creates a single instruction that performs the operation?
+Alice suggests that I add a cc:stable to this.  But I see nothing in
+the changelog which explains why we're proposing a backport.
 
-> +#define _pcp_protect(op, pcp, ...)					\
-> +({									\
-> +	preempt_disable_notrace();					\
-> +	op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);				\
-> +	preempt_enable_notrace();					\
-> +})
-
-Is "op" a single instruction? If so then preempt disable / endable would
-not be needed if there is no other instruction created.
-
-But raw_cpu_ptr performs a SHIFT_PERCPU_PTR which performs an addition.
-So you need the disabling of preemption to protect the add.
-
-Is there a way on RISC V to embedd the pointer arithmetic in the "AMO"
-instruction? Or can you use relative addressing to a register that
-contains the cpu offset. I believe RISC V has a thread pointer?
-
-If you can do this then a lot of preempt_enable/disable points can be
-removed from the core kernel and the instruction may be as scalable as x86
-which can do the per cpu operations with a single instruction.
-
-> +
-> +#define _pcp_protect_return(op, pcp, args...)				\
-> +({									\
-> +	typeof(pcp) __retval;						\
-> +	preempt_disable_notrace();					\
-> +	__retval = (typeof(pcp))op(raw_cpu_ptr(&(pcp)), ##args);	\
-> +	preempt_enable_notrace();					\
-> +	__retval;							\
-> +})
-
-Same here.
+So please send us a description of the userspace-visible runtime
+impact of this flaw and I'll paste it into the changelog, thanks.
 
 
