@@ -1,354 +1,109 @@
-Return-Path: <linux-kernel+bounces-777429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F08BB2D94B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8384B2D952
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47C431883DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3981E1C25E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A892EF67F;
-	Wed, 20 Aug 2025 09:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="i6Fdn38y"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11502253AE;
+	Wed, 20 Aug 2025 09:46:44 +0000 (UTC)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929B02DECC0;
-	Wed, 20 Aug 2025 09:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D64B281369;
+	Wed, 20 Aug 2025 09:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755683161; cv=none; b=R3KOpyE/8U9/55Axff3EIzBWZmgbqlKGHlk8hGQwB5Cx7Z/O4T6h6jl7+xciUGDdvm9adN0QorhBzckPnVf7SJCA5Pan5x1HG3hqzhjTwtzxecH61pAjY63znqstoP+6rIvfALJ0oXHjtpGAf9w3NmMczhvhNkfdf141/HnUC8M=
+	t=1755683204; cv=none; b=BvlY6tDmwOHdtXMTqXXJj6mAl+d5fmNvLyicUqoNH0Y6639XCGuaob3ye1/jLip/s8CpdBnKhea4xKEH6oZ3KU7d4kyozTTWCf1Hw8aTeIU/Z+mVxfAm5hTHwZ8sUvC5tKeiGpTak/QlutWawhT1zP05zNPLYlfr0i50sjGAl6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755683161; c=relaxed/simple;
-	bh=1YozS+i8jkW7lv9MhNw3Hs1hJYz3VqmM7W9tDv1US/s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VMgOXipmQAKDHKYd0L5OH63yqH0QGbLtiVs/+TOtpKW3mNhNUa5wc5nEQI8JxuWiK/SZt/Juez/rICpgPRnGtnYepMo2Ig7Ra7DNTi1IHpQSM8nWvVZdM/kVJzmIJV/hlehnwg/9HZzdhhMpa9U5V0Ozs2w66CAxR0g2zCDc/bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=i6Fdn38y; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 761f448e7daa11f0b33aeb1e7f16c2b6-20250820
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=adpM1Tc6z23ljyv7fv///mOfS5qWi2huzDH4dGeqvos=;
-	b=i6Fdn38ymq9E8JBzHCdpcT0nh6pKaI9M4qTjZZgWFIo9+F/DJFtLwe8SbgyjRJFp3ltyEB4VrsdZ/EQNoztLK9hEfoT3eBKZEGNQawgrC4NNfIXqezjR3YDvih6OmhzvHKRBkuxADCN61K/3NamFdO0jyO5VNc69OGZW3psF5Uk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:7cf48df6-4587-4e2e-a798-4d1488f5185d,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:40b6547a-966c-41bd-96b5-7d0b3c22e782,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 761f448e7daa11f0b33aeb1e7f16c2b6-20250820
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <jjian.zhou@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1309138076; Wed, 20 Aug 2025 17:45:52 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 20 Aug 2025 17:45:50 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Wed, 20 Aug 2025 17:45:49 +0800
-From: Jjian Zhou <jjian.zhou@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Jjian Zhou
-	<Jjian.Zhou@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jjian Zhou
-	<jjian.zhou@mediatek.com>
-Subject: [PATCH v4 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
-Date: Wed, 20 Aug 2025 17:45:38 +0800
-Message-ID: <20250820094545.23821-3-jjian.zhou@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250820094545.23821-1-jjian.zhou@mediatek.com>
-References: <20250820094545.23821-1-jjian.zhou@mediatek.com>
+	s=arc-20240116; t=1755683204; c=relaxed/simple;
+	bh=Bogmh45luZk7f/wrceWZr0qQGxKbiHRk57vTOqKBceE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sI93spWaPri/pYZ10Jt4E9haPBsVTwum/yf3mtEDIGNSt5oKCXw9taxQh9stDyZRJMPG9xBanfx5+yPzTYpWKZi3RuJzCNuFsxbFBlPLXItceCqbfsjGxI+CjT94NPtj/qriBKi4/N59wTymz6pC76+OpBwiHLh1rF/JCuH37pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-50f861e18cbso2305833137.0;
+        Wed, 20 Aug 2025 02:46:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755683201; x=1756288001;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tcEaRArYv/BgkTzE+foRpuqvMlKly3EO/m8jwQreMS8=;
+        b=BMlrDqBP7gbw3v2Li3+1FSTTaD7dm2CLFIv5Sf+v3MPiVcBIAmg7mroks2CwhB3cx6
+         6bTN2uuPpoQsk0mE2SNuyQFZ/a7rxX+j9WLpeNc7nl6pB+JeIqsa6x7/SFK8+tVHVst6
+         C0PTrUlh+wC8Ub4YVvLl30rY7rRDmbho3nAXPR3abfujunHxINIP+2KBzPtfpuNrf96n
+         dvSgcVj/IMYvBhuI0KS1UIjTeByBn4Mj42G4Sj7WgK/c8+KFUVwkYmsxKWyBMv6sjgF3
+         FnKIDkdKPdXKgeRX0zdx8CoPER4M7tqWMGabJnCrt7FLLpVmGhZvhQ6gHzD+MUgUgetO
+         7NkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUstYFSFxxz5/NHK/mk9vGMACZ5yRPIrDSWLwmN18VGwrVn5u8qp93cjgXiGvkaigYwpRHQquXa0q9CBrW3@vger.kernel.org, AJvYcCVPVSRdqiGs9VbHkbsIZiKpxmDCu1VnltU/oQuORWpNwLxhL+NGEAwNpXGB0btvS0O8XpolJncsrCG6iwGH64ObYZo=@vger.kernel.org, AJvYcCVlIku3Y2Bzcez3cHrWELvz7JY0Kewi7R+rjypcq6vhFGT631C+z5aLolaw0JbJCU1n1ttYzdS1Zblh@vger.kernel.org, AJvYcCWmq46pIu0K6lkWG7gocdf/BIU2uo/248L7f8oke3HiwcuTVe5T+kVS4AsAAxmZYTGlqg7lV8YMvsLr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsmOhH+P/8PUjFeYZHb37TQUT2v7hFZ+cZeUow3zqU0MjMc+Mg
+	b//E3rQXU5G0EhmMwACDIwEkTC/amlxCOVMLu9NWdgqOLHASYrGKBkaB6UW/oZ+b
+X-Gm-Gg: ASbGncvukJsf+2s2WA5H4Kmce9lyOf+kLC8f0VhUD+IoJAZtfvUyNQoGCD0p4flFijo
+	qEWjX1Xjo4eEXWxStXJ/tdS3nniKVuHaEm2l3H591ZSdTx2VhsOinH2aDltshZdaBOjuk0I+0Q0
+	6wG/ar1+6PwI2eZCBCwnNP8iKlVGM5+dVQtWxJIAxztjCoLQL2KP0WQdjEqVi7ZJI3mVfzFIAl0
+	TyxlpIn/j+fYRkspOLt9I6rQsXIwjPk0xAomBif2ivp82mZ7OLuL/6Jz3b6SCYX18h5i86fdMJH
+	a/H1K46GOpYPUnG+t/IF04PouV5XeRiu/1EUC/8sxaRPQot+TL8YuOpzJt2YnubVxLLtpTcQwdu
+	YP2O2DQv/E6CjBGXxoNH2hx8wGvByZJ1SuKAisYhmxz91VWaw6CSfB39XU2aI
+X-Google-Smtp-Source: AGHT+IEUWdEl4cvCVZtLVNt3hgdnh1m2MwjQWB13nr0brxsvrNiApHpVMx5muIfOMfPIEyaXDT1sJQ==
+X-Received: by 2002:a05:6102:83da:10b0:4e9:c7c8:5e24 with SMTP id ada2fe7eead31-51a511a2c1emr436012137.25.1755683200740;
+        Wed, 20 Aug 2025 02:46:40 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127d4dc422sm3182591137.6.2025.08.20.02.46.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 02:46:40 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89018ec3597so3674682241.0;
+        Wed, 20 Aug 2025 02:46:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQIGV259oEWLf4P2luW+0c/93547M5EGR/bwnWDmpSIxZd7u1dc3OqUsFex97+S7F5ChVg3vN4+219JC8E@vger.kernel.org, AJvYcCUVB2P5J0BMP3BcaqTUF54J6gOgA3Xj4LlMZ58ovSGsAmZ5KsNJ8TlLkeVQK4y5bkOebcExL8gfq4kc@vger.kernel.org, AJvYcCUqLAtODGe+EKOJYal4R2WPkIrOlaSyGDtSHEwE/7OPTfEGSfHzn9bzRqi7Bwi5scYpgNTDSwAh9aJA6LMsIMbFsk0=@vger.kernel.org, AJvYcCXgLfihgIoGYC2Qd+GIw5O7PVW8PZRr6AXan6FDtzYldS9/gtjPbnQO0pmL5DQzRe4Y+LPsQdjrTf+i@vger.kernel.org
+X-Received: by 2002:a05:6102:b14:b0:4fd:30aa:e6cb with SMTP id
+ ada2fe7eead31-51a50c82849mr589032137.21.1755683200318; Wed, 20 Aug 2025
+ 02:46:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+References: <20250814124832.76266-1-biju.das.jz@bp.renesas.com> <CAMuHMdXJBL_uJ=2v0aKJaSf45070yP=Z_kPe-9uSyE1P0QeiJQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXJBL_uJ=2v0aKJaSf45070yP=Z_kPe-9uSyE1P0QeiJQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Aug 2025 11:46:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWipx5FRthdfveqw7i+33RXf5ATY=xJFZQNV7O7GzLVkg@mail.gmail.com>
+X-Gm-Features: Ac12FXzZK3tq6JNAyNlFgqE2SjUH5ykPbRt43RvSnkuEMQ4S62djLNI-OkYseQs
+Message-ID: <CAMuHMdWipx5FRthdfveqw7i+33RXf5ATY=xJFZQNV7O7GzLVkg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Add RZ/G3E GPT clocks and resets
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add mtk-vcp-mailbox driver to support the communication with
-VCP remote microprocessor.
+On Tue, 19 Aug 2025 at 17:10, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> I think you are overcomplicating: according to the clock system diagram
+> and clock list sheets, gpt_[01]_pclk_sfr and gpt_[01]_clks_gpt_sfr
 
-Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
----
- drivers/mailbox/Kconfig                 |   9 ++
- drivers/mailbox/Makefile                |   2 +
- drivers/mailbox/mtk-vcp-mailbox.c       | 174 ++++++++++++++++++++++++
- include/linux/mailbox/mtk-vcp-mailbox.h |  32 +++++
- 4 files changed, 217 insertions(+)
- create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
- create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
+s/gpt_[01]_clks_gpt_sfr/gpt_[01]_clks_gpt/
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 02432d4a5ccd..c28bdb855663 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -294,6 +294,15 @@ config MTK_CMDQ_MBOX
- 	  critical time limitation, such as updating display configuration
- 	  during the vblank.
- 
-+config MTK_VCP_MBOX
-+	tristate "MediaTek VCP Mailbox Support"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	help
-+	  Say yes here to add support for the MediaTek VCP mailbox driver.
-+	  The mailbox implementation provides access from the application
-+	  processor to Video Companion Processor Unit.
-+	  If unsure say N.
-+
- config ZYNQMP_IPI_MBOX
- 	tristate "Xilinx ZynqMP IPI Mailbox"
- 	depends on ARCH_ZYNQMP && OF
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index 98a68f838486..07278871d254 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -63,6 +63,8 @@ obj-$(CONFIG_MTK_ADSP_MBOX)	+= mtk-adsp-mailbox.o
- 
- obj-$(CONFIG_MTK_CMDQ_MBOX)	+= mtk-cmdq-mailbox.o
- 
-+obj-$(CONFIG_MTK_VCP_MBOX)	+= mtk-vcp-mailbox.o
-+
- obj-$(CONFIG_ZYNQMP_IPI_MBOX)	+= zynqmp-ipi-mailbox.o
- 
- obj-$(CONFIG_SUN6I_MSGBOX)	+= sun6i-msgbox.o
-diff --git a/drivers/mailbox/mtk-vcp-mailbox.c b/drivers/mailbox/mtk-vcp-mailbox.c
-new file mode 100644
-index 000000000000..6f48215896d2
---- /dev/null
-+++ b/drivers/mailbox/mtk-vcp-mailbox.c
-@@ -0,0 +1,174 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025 MediaTek Corporation. All rights reserved.
-+ * Author: Jjian Zhou <jjian.zhou.@mediatek.com>
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/mailbox/mtk-vcp-mailbox.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+struct mtk_vcp_mbox_priv {
-+	void __iomem *base;
-+	struct device *dev;
-+	struct mbox_controller mbox;
-+	const struct mtk_vcp_mbox_cfg *cfg;
-+	struct mtk_ipi_info ipi_recv;
-+};
-+
-+struct mtk_vcp_mbox_cfg {
-+	u32 set_in;
-+	u32 clr_out;
-+};
-+
-+static inline struct mtk_vcp_mbox_priv *get_mtk_vcp_mbox_priv(struct mbox_controller *mbox)
-+{
-+	return container_of(mbox, struct mtk_vcp_mbox_priv, mbox);
-+}
-+
-+static irqreturn_t mtk_vcp_mbox_irq_thread(int irq, void *data)
-+{
-+	struct mbox_chan *chan = data;
-+	struct mtk_vcp_mbox_priv *priv = get_mtk_vcp_mbox_priv(chan->mbox);
-+
-+	/* get irq status */
-+	priv->ipi_recv.irq_status = readl(priv->base + priv->cfg->clr_out);
-+
-+	__ioread32_copy(priv->ipi_recv.msg, priv->base, MBOX_SLOT_MAX_SIZE / 4);
-+
-+	mbox_chan_received_data(chan, &priv->ipi_recv);
-+
-+	/* clear irq status */
-+	writel(priv->ipi_recv.irq_status, priv->base + priv->cfg->clr_out);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct mbox_chan *mtk_vcp_mbox_xlate(struct mbox_controller *mbox,
-+					    const struct of_phandle_args *sp)
-+{
-+	if (sp->args_count)
-+		return NULL;
-+
-+	return mbox->chans;
-+}
-+
-+static int mtk_vcp_mbox_send_data(struct mbox_chan *chan, void *data)
-+{
-+	struct mtk_vcp_mbox_priv *priv = get_mtk_vcp_mbox_priv(chan->mbox);
-+	struct mtk_ipi_info *ipi_info = data;
-+	u32 status;
-+
-+	if (!ipi_info->msg) {
-+		dev_err(priv->dev, "msg buffer is NULL.\n");
-+		return -EINVAL;
-+	}
-+
-+	status = readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index);
-+	if (status) {
-+		dev_warn(priv->dev, "mailbox IPI %d is busy.\n", ipi_info->id);
-+		return -EBUSY;
-+	}
-+
-+	if (ipi_info->slot_ofs + ipi_info->len > MBOX_SLOT_MAX_SIZE)
-+		return -EINVAL;
-+	__iowrite32_copy(priv->base + ipi_info->slot_ofs, ipi_info->msg,
-+			 ipi_info->len);
-+
-+	writel(BIT(ipi_info->index), priv->base + priv->cfg->set_in);
-+
-+	return 0;
-+}
-+
-+static bool mtk_vcp_mbox_last_tx_done(struct mbox_chan *chan)
-+{
-+	struct mtk_ipi_info *ipi_info = chan->active_req;
-+	struct mtk_vcp_mbox_priv *priv = get_mtk_vcp_mbox_priv(chan->mbox);
-+
-+	return !(readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index));
-+}
-+
-+static const struct mbox_chan_ops mtk_vcp_mbox_chan_ops = {
-+	.send_data	= mtk_vcp_mbox_send_data,
-+	.last_tx_done	= mtk_vcp_mbox_last_tx_done,
-+};
-+
-+static int mtk_vcp_mbox_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mtk_vcp_mbox_priv *priv;
-+	struct mbox_controller *mbox;
-+	int ret, irq;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	mbox = &priv->mbox;
-+	mbox->dev = dev;
-+	mbox->ops = &mtk_vcp_mbox_chan_ops;
-+	mbox->txdone_irq = false;
-+	mbox->txdone_poll = true;
-+	mbox->of_xlate = mtk_vcp_mbox_xlate;
-+	mbox->num_chans = 1;
-+	mbox->chans = devm_kzalloc(dev, sizeof(*mbox->chans), GFP_KERNEL);
-+	if (!mbox->chans)
-+		return -ENOMEM;
-+
-+	priv->ipi_recv.msg = devm_kzalloc(dev, MBOX_SLOT_MAX_SIZE, GFP_KERNEL);
-+	if (!priv->ipi_recv.msg)
-+		return -ENOMEM;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->cfg = of_device_get_match_data(dev);
-+	if (!priv->cfg)
-+		return -EINVAL;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	ret = devm_request_threaded_irq(dev, irq, NULL,
-+					mtk_vcp_mbox_irq_thread, IRQF_ONESHOT,
-+					dev_name(dev), mbox->chans);
-+	if (ret < 0)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	return devm_mbox_controller_register(dev, &priv->mbox);
-+}
-+
-+static const struct mtk_vcp_mbox_cfg mt8196_cfg = {
-+	.set_in		= 0x100,
-+	.clr_out	= 0x10C,
-+};
-+
-+static const struct of_device_id mtk_vcp_mbox_of_match[] = {
-+	{ .compatible = "mediatek,mt8196-vcp-mbox", .data = &mt8196_cfg },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, mtk_vcp_mbox_of_match);
-+
-+static struct platform_driver mtk_vcp_mbox_driver = {
-+	.probe		= mtk_vcp_mbox_probe,
-+	.driver = {
-+		.name	= "mtk_vcp_mbox",
-+		.of_match_table = mtk_vcp_mbox_of_match,
-+	},
-+};
-+module_platform_driver(mtk_vcp_mbox_driver);
-+
-+MODULE_AUTHOR("Jjian Zhou <jjian.zhou@mediatek.com>");
-+MODULE_DESCRIPTION("MTK VCP Mailbox Controller");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mailbox/mtk-vcp-mailbox.h b/include/linux/mailbox/mtk-vcp-mailbox.h
-new file mode 100644
-index 000000000000..143fb0d06e30
---- /dev/null
-+++ b/include/linux/mailbox/mtk-vcp-mailbox.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Copyright (c) 2025 MediaTek Inc.
-+ */
-+
-+#ifndef __MTK_VCP_MAILBOX_H__
-+#define __MTK_VCP_MAILBOX_H__
-+
-+#define MBOX_SLOT_MAX_SIZE	0x100 /* mbox max slot size */
-+
-+/**
-+ * struct mtk_ipi_info - mailbox message info for mtk-vcp-mailbox
-+ * @msg: The share buffer between IPC and mailbox driver
-+ * @len: Message length
-+ * @id: This is for identification purposes and not actually used
-+ *	by the mailbox hardware.
-+ * @index: The signal number of the mailbox message.
-+ * @slot_ofs: Data slot offset.
-+ * @irq_status: Captures incoming signals for the RX path.
-+ *
-+ * It is used between IPC with mailbox driver.
-+ */
-+struct mtk_ipi_info {
-+	void *msg;
-+	u32 len;
-+	u32 id;
-+	u32 index;
-+	u32 slot_ofs;
-+	u32 irq_status;
-+};
-+
-+#endif
+> are really the same clocks (the same is true for rsci_[0-9]_pclk and
+> rsci_[0-9]_pclk_sfr).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.45.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
