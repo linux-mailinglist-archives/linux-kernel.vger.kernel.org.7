@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-778225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62732B2E2B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEF4B2E2BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D225D5A32DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:55:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A28A04FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BBD3375B4;
-	Wed, 20 Aug 2025 16:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35582337685;
+	Wed, 20 Aug 2025 16:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApIPPA1B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNEkw1vr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60537334396;
-	Wed, 20 Aug 2025 16:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8724233439E;
+	Wed, 20 Aug 2025 16:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755708901; cv=none; b=PfvYSzHI9/tg8WN4upmNLqFByuLgBj/9GiiHb7zsMsJu2WgBgnKFE/ka0FUlKeao/KPubgOIoDPZLY9Yiyu2XIxW6e87uzBAPcgN9PeZDEN5vUkzqKAj0+fxrmKDcX/H1Rtwm+1W/AnSoaGO70+tAi5sGNM5AMXbbBajVdD80t4=
+	t=1755708905; cv=none; b=fkHr5WImJDPQF74RkBIf4mZa1YWag2msynkiIKL5yu5aO8SyvnRrIyT6/KBkPcPC/zM4wFfReAch1rX+97RFuar/j00SKWhdeeTzq5DTrRO3TbW9Cx+M01Y/6WYIKxoKfmZ8LbjAIH8n289BvUPc97kQsQUJWJeUiY8RlelMGLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755708901; c=relaxed/simple;
-	bh=Yx9Wgg0SaERfu9zSvQZiIsZcKR+loSpfb1dF/VURoFE=;
+	s=arc-20240116; t=1755708905; c=relaxed/simple;
+	bh=mXfSjhJXgufvKTeMOyP/zIZmkN/iijvNZsO0+6zn6/I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eK7eI/f52Fu+QTdPae6ft+lqsITa+EWi/RofD/GVLDT7thMzByxOJZDoLgnvwSz1kydJtVT9XJJcRkXt0jKPogH4axJbbO+ue9OplpSbwu0eA8voeoCJR+k5ZgU1iOxHmTXZg2JV57/WGUUs4JbpWT8oe6EVvCWYlRf/OjjA+MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApIPPA1B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE88BC113CF;
-	Wed, 20 Aug 2025 16:54:57 +0000 (UTC)
+	 MIME-Version; b=d2gY8vKHeCQ0d1nE1emhJzec1oI1N7bLs+EkzjheiWpHPW/kFtjJqioyRkUC7CxZy+XFfikZwkQAkm1nO9F5ES7OR19yQjoa1clJKMKbpfnBarGCnmVEw8I7T+S7dovLXpX0Y8WDzOfdSnc2lKmnvY9yUCelfgMmfu6ZS5mrsmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNEkw1vr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AACF7C116D0;
+	Wed, 20 Aug 2025 16:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755708901;
-	bh=Yx9Wgg0SaERfu9zSvQZiIsZcKR+loSpfb1dF/VURoFE=;
+	s=k20201202; t=1755708905;
+	bh=mXfSjhJXgufvKTeMOyP/zIZmkN/iijvNZsO0+6zn6/I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ApIPPA1BtKS4eaNV9cjXGrRhCdWnvDrg4jxyQ18Jp8sjCoM0wB3u2P83TtnrbpvbO
-	 oL2MAMB7xYcbC5tb53nvIr2/xl/ayWrKHwtRwsIxRT3wrpVntkic7LdFQ7vS+cToBZ
-	 hYflUkA8AZZRHCelNC6ASO5ZfdViHhlKATbNNvdIyVBHBa4r1FG7niEDSJt7uSLqj9
-	 9vU5JkouhWkFPaFaQdnoRtgyVJeZoT1tbYXIT67yJviiG6CumIhbcUeVJWLy4NSaT9
-	 JMLmHNPOmOaW/xo8lZ2Zm+CyFe1hOEpYLueafWdi0d/bjqMri08Z+ITlTlxV1HJBIE
-	 ccOBSJTHtlygA==
+	b=GNEkw1vrQm66CAq9me4jNz1SiTNHO7pPtayMy1LGw98kQu5W4KJVwKdcrZ3WhS/hK
+	 ENNM5u2sNcEw72UZJAwQLsSoaW0bgDKY75CbFPhKHV3uHU/s1F/ypupfU1tVRMEB+I
+	 2JljimnqE0MKwdGT0Z6byCSB8tGESxSuTw5JnuLypoWdPW2pWnhvZTIz0R14pH7Bfn
+	 p9pUM3JOuBiRwWV52lpvNVzcEHmBliPTYxDAjWHO3rHQbn6CwML5buNN3pmVm4YcrN
+	 wh76XUXYf0qNa2VyGSwtErc6EYx8uSylyrTdkFJEqD/bXbD/O9ndkRFUT8ClSA5xM3
+	 AKuVzxj5dLi+A==
 From: Danilo Krummrich <dakr@kernel.org>
 To: akpm@linux-foundation.org,
 	ojeda@kernel.org,
@@ -60,9 +60,9 @@ To: akpm@linux-foundation.org,
 Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2 4/5] samples: rust: dma: add sample code for SGTable
-Date: Wed, 20 Aug 2025 18:52:58 +0200
-Message-ID: <20250820165431.170195-5-dakr@kernel.org>
+Subject: [PATCH v2 5/5] MAINTAINERS: rust: dma: add scatterlist files
+Date: Wed, 20 Aug 2025 18:52:59 +0200
+Message-ID: <20250820165431.170195-6-dakr@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250820165431.170195-1-dakr@kernel.org>
 References: <20250820165431.170195-1-dakr@kernel.org>
@@ -74,91 +74,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add sample code for allocating and mapping a scatter-gather table
-(`SGTable`).
+Rename the "DMA MAPPING HELPERS DEVICE DRIVER API [RUST]" maintainers
+entry to "DMA MAPPING & SCATTERLIST API [RUST]" and add the
+corresponding scatterlist files.
 
-Co-developed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- samples/rust/rust_dma.rs | 35 ++++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 9 deletions(-)
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-index c5e7cce68654..d9532bef6d2c 100644
---- a/samples/rust/rust_dma.rs
-+++ b/samples/rust/rust_dma.rs
-@@ -7,15 +7,19 @@
- use kernel::{
-     bindings,
-     device::Core,
--    dma::{CoherentAllocation, Device, DmaMask},
--    pci,
-+    dma::{CoherentAllocation, DataDirection, Device, DmaMask},
-+    page, pci,
-     prelude::*,
-+    scatterlist::{Owned, SGTable},
-     types::ARef,
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe168477caa4..65f676b2c304 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7238,7 +7238,7 @@ F:	include/linux/dma-mapping.h
+ F:	include/linux/swiotlb.h
+ F:	kernel/dma/
  
-+#[pin_data(PinnedDrop)]
- struct DmaSampleDriver {
-     pdev: ARef<pci::Device>,
-     ca: CoherentAllocation<MyStruct>,
-+    #[pin]
-+    sgt: SGTable<Owned<VVec<u8>>>,
- }
+-DMA MAPPING HELPERS DEVICE DRIVER API [RUST]
++DMA MAPPING & SCATTERLIST API [RUST]
+ M:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+ M:	Danilo Krummrich <dakr@kernel.org>
+ R:	Daniel Almeida <daniel.almeida@collabora.com>
+@@ -7249,7 +7249,9 @@ S:	Supported
+ W:	https://rust-for-linux.com
+ T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
+ F:	rust/helpers/dma.c
++F:	rust/helpers/scatterlist.c
+ F:	rust/kernel/dma.rs
++F:	rust/kernel/scatterlist.rs
+ F:	samples/rust/rust_dma.rs
  
- const TEST_VALUES: [(u32, u32); 5] = [
-@@ -70,21 +74,30 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-             kernel::dma_write!(ca[i] = MyStruct::new(value.0, value.1))?;
-         }
- 
--        let drvdata = KBox::new(
--            Self {
-+        let size = 4 * page::PAGE_SIZE;
-+        let pages = VVec::with_capacity(size, GFP_KERNEL)?;
-+
-+        let sgt = SGTable::new(pdev.as_ref(), pages, DataDirection::ToDevice, GFP_KERNEL);
-+
-+        let drvdata = KBox::pin_init(
-+            try_pin_init!(Self {
-                 pdev: pdev.into(),
-                 ca,
--            },
-+                sgt <- sgt,
-+            }),
-             GFP_KERNEL,
-         )?;
- 
--        Ok(drvdata.into())
-+        Ok(drvdata)
-     }
- }
- 
--impl Drop for DmaSampleDriver {
--    fn drop(&mut self) {
--        dev_info!(self.pdev.as_ref(), "Unload DMA test driver.\n");
-+#[pinned_drop]
-+impl PinnedDrop for DmaSampleDriver {
-+    fn drop(self: Pin<&mut Self>) {
-+        let dev = self.pdev.as_ref();
-+
-+        dev_info!(dev, "Unload DMA test driver.\n");
- 
-         for (i, value) in TEST_VALUES.into_iter().enumerate() {
-             let val0 = kernel::dma_read!(self.ca[i].h);
-@@ -99,6 +112,10 @@ fn drop(&mut self) {
-                 assert_eq!(val1, value.1);
-             }
-         }
-+
-+        for (i, entry) in self.sgt.into_iter().enumerate() {
-+            dev_info!(dev, "Entry[{}]: DMA address: {:#x}", i, entry.dma_address());
-+        }
-     }
- }
- 
+ DMA-BUF HEAPS FRAMEWORK
 -- 
 2.50.1
 
