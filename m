@@ -1,160 +1,121 @@
-Return-Path: <linux-kernel+bounces-777161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83AD6B2D626
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:22:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0163CB2D640
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56CAC18938D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:19:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786EE4E1A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3A42D8789;
-	Wed, 20 Aug 2025 08:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3C22D877F;
+	Wed, 20 Aug 2025 08:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9Wh1RsO"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YhS77aw6"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0652C1E9B08;
-	Wed, 20 Aug 2025 08:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3C02D24BB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677941; cv=none; b=X3Ra8AaiiG+42Ez309CwPPMixZENr0U/p8kJf73PONQ6qd/FBTsRaoOGjs5zoemZ6Qsu/VwU3nOKvWW81dQU39/uFagwAZWWp4bCmZvHWLIoQH5p/KcjaapC7QAz9ULXtdr83qTaG8XUuq908g7IOzqdsE09sy8ebYnnVLMu/YA=
+	t=1755678120; cv=none; b=h98Mx2+xFlGepZ2kZ2do9DPjK1qQ984UgHgpt8XRnh/nQbW5fFShorMpR99ffVr/yn9yrqiGGaz4QtIYyC7uDrwMtYGn496zTrJtQR3tc0KCZbGCt+sa5PpSE31913vhMkJa+JoH9Sqrxhc/twevG/x1hmwOak2+qR1Uer7WWzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677941; c=relaxed/simple;
-	bh=fK2DuSyV4LqHa2BTm2YQxEWab71xsSNOPn0cGrQrG24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NhPcbvCyEkhOtdmuYmVn546nrNowRY5FUL/ObZgJSIVN/E+K63EsHx1PC4Nlmtu+n+BO58CDC47OmAR96BA/hSCTXDASpvz6d90QTwhpbwzq7PcHrvYGnDBLvsN50HfoIV8KW5dAkx49Vri8tSWU1SR+x7viMpswkm5ORUBGzf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9Wh1RsO; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47174beccfso5227711a12.2;
-        Wed, 20 Aug 2025 01:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755677939; x=1756282739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wUn65ndWyyECy779FroH88LwpGWaBPZvfehi8phsszk=;
-        b=g9Wh1RsOc9PkXPmu3u25+KzRfl5316bpZUP7ZvffoomCJmoPRXheapVeQBeKYGs7hZ
-         sdcpuryKn7nrUnsN/WaksGubt9BYWHgfVdjqaeVKetCX7BpLZDFDWah8ZzQDNvUzvHjz
-         W8k+1Gy/u9/dVC5sn1nc+QPwT56FZjpWh0I7BGP3JWAQeczOkLDLIB8w4V41F5+6EZvR
-         cleK2On5TPwmVImmeUss4YqLr/iWbPS3iNAorAUDYkOV0pXGJM8sW4CrCbfMfUF66I2j
-         PFgqZhP+zON0RiQXEpm18KxwPaZIMpAG0xGsr4Q/D8zLLbFeQFrkitckfOWcA72qj2kT
-         V+OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755677939; x=1756282739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wUn65ndWyyECy779FroH88LwpGWaBPZvfehi8phsszk=;
-        b=ebYRjT1g7TMYQITbNEZ0iNyWtR/sypBltJPiSY5kLodoy/hBxpcF2Ry7jlYRyG+5Dm
-         zRTjiIFNu6mEcgGpKx5qESHVw7gASvGrBF8y7zkDNor4rFqyZMrMTdDVd55gkFAmOYby
-         yDI70yM8x/QMYh7weQTDCRxPmPBp4367zXtidjEKmfpPO6BlNoQIkUny7kJHvjM031uZ
-         tRm6dIlUuLGAkRuNiJtPpgbX1RoiIyNlm83UmN859i9NOSIU7AKbquDwpk3Z6XeKYpz+
-         WOmXWeLtE2zDr2ujSkcWrlbsisxRJyA3kZhiAPB8x3ejzypp+FCXDvJ7YatVzdwpM6ks
-         S1eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd72fmddij14aUsL51Awty35YJJnAAZnG83qb1x53iE72ZrnxNUKVvPyJ+gws7PKRiN+ofP4MCRUhE9Siq+Axr2fs=@vger.kernel.org, AJvYcCUdt1licW5rxdXyduoqJauj/e1oCiWQpvreOjV/+P6hgJVc8IahPJ4E1eKSZrgYTbZXn7Gmsw58zkNIw141@vger.kernel.org, AJvYcCWWVQlsxk1EYITlBVwVtgHk2LQUjaAKzEQ5tzw9dekU3e1ccGaryHEb4rISQEGVmg/LkmTYpDEgeXqrykLBhhDp4g==@vger.kernel.org, AJvYcCXV+oITgJ2BP0ZPjecT8eyE6LD2+1cNEw2/3Dn50FoghzreIiwJZrkwax48TxJeCbFr1QTJC2g8n2dPAhNB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM2yVrDP32tyMRBpRYBya4NXJbBUsQHTsyW3m1gAuLgAnp7InL
-	RaHGf0XFUuP0jjkL+ZpTk+aRcOtGjHD7zAuiBgUauAdzOMyBTqJJ0zmx5q275a9uyasnzQGwm6B
-	KxrP11E5QR2F7hPlQ/xP2MPtG91BOhbM=
-X-Gm-Gg: ASbGncsXa5l3WtXkFmLedLdyovP5Ke4UQCRV4lpYMkgwibkqN5QK2uMFrcOMOk9dVda
-	mfCqyxARY5XwpOxa8DDhNAUO9lYACVnHwB9ZFIHdzdRN9oV4PXeh2gJXUoCTgdmPMizLzMmRhF1
-	lVtRtLjJg4sGOf2VVnppVwY8HTAvXdvBzcectoB2a/lYH8nSWT//WpL5XQHTmJaPAyRDYtIFVm9
-	TOY
-X-Google-Smtp-Source: AGHT+IHyS319ZtbgIK5QZ2TPQXhA0Y58me3odjKXWmlmqSDihLpOV/ytvp3iwfpabPjgDac+00Icnjn6G+Cpo8Pj+bM=
-X-Received: by 2002:a17:903:18c:b0:240:96a:b81d with SMTP id
- d9443c01a7336-245ef0bf2bcmr23609915ad.5.1755677939214; Wed, 20 Aug 2025
- 01:18:59 -0700 (PDT)
+	s=arc-20240116; t=1755678120; c=relaxed/simple;
+	bh=Pda3I2WFG024g6b4IPpFWGGG2uIsKDW6UG8gnWt9uxc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E7jmR2HDa6rF4ghvq0sKbxkX8eWbhk5UpdxwKo9ITsRCdq96gti7ufR9X5pT3O1omRYtfPpKE/ZTJICgXRRDghP6Sk5mY6kILbFL3dokjtodqXJxZw2/MV2Ce6+RDsaXZBmty5BLiWBfIQrZXehwil+2CmMGcIZ0n8a0rg5GJ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YhS77aw6; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57K8LWkS3090726;
+	Wed, 20 Aug 2025 03:21:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755678092;
+	bh=z7OYf1f4KzQ6v0/hwgALS/TWgw68w/GKTaIrmC8wS1Y=;
+	h=From:To:CC:Subject:Date;
+	b=YhS77aw6NltAUEZ55Fjney8A7GQZneXcRLflqsRwxD4LEglBs5OYJqtteUA18YdFT
+	 UzWo9WC9PZ/6EJPc1SDAr2KjG3WtRhgyNOOJS/XmkbWiLHRHMI+0sYyNc3ASK9K9cw
+	 Snr/XmfmZmpiBnWdSutKNOTqVvWTbGtmopny66oQ=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57K8LW9T1654525
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 20 Aug 2025 03:21:32 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
+ Aug 2025 03:21:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 20 Aug 2025 03:21:31 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.64.117])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57K8LR8E213267;
+	Wed, 20 Aug 2025 03:21:28 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <13564923607@139.com>, <13916275206@139.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
+        Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v1] ALSA: hda/tas2781: Enable init_profile_id for device initialization
+Date: Wed, 20 Aug 2025 16:21:23 +0800
+Message-ID: <20250820082123.1125-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819213831.1368296-1-robh@kernel.org>
-In-Reply-To: <20250819213831.1368296-1-robh@kernel.org>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 20 Aug 2025 11:21:09 +0300
-X-Gm-Features: Ac12FXwDgSq5YSRmZRgmCG7R1pa20x6uPGQw-yiLKpdR5FfgZLxMT4en9AePre4
-Message-ID: <CAEnQRZDga2cX=YPY5Z9NDyro94bxFjK9k5Xm5Vt2vVzf4ysKyA@mail.gmail.com>
-Subject: Re: [PATCH v5] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Iuliana Prodan <iuliana.prodan@nxp.com>, Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
-	Aisheng Dong <aisheng.dong@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Rob,
+Optimize the time consumption of profile switching, init_profile saves
+the common settings of different profiles, such as the dsp coefficients,
+etc, which can greatly reduce the profile switching time comsumption and
+remove the repetitive settings.
 
-This patch will break IMX RPROC support.
-<snip>
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+---
+ sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
+diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+index 318f8c58ae61..97c33fee9660 100644
+--- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
++++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+@@ -477,6 +477,12 @@ static void tasdevice_dspfw_init(void *context)
+ 	if (tas_priv->fmw->nr_configurations > 0)
+ 		tas_priv->cur_conf = 0;
+ 
++	/* Init common setting for different audio profiles */
++	if (tas_priv->rcabin.init_profile_id >= 0)
++		tasdevice_select_cfg_blk(tas_priv,
++			tas_priv->rcabin.init_profile_id,
++			TASDEVICE_BIN_BLK_PRE_POWER_UP);
++
+ 	/* If calibrated data occurs error, dsp will still works with default
+ 	 * calibrated data inside algo.
+ 	 */
+@@ -779,6 +785,12 @@ static int tas2781_system_resume(struct device *dev)
+ 	tasdevice_reset(tas_hda->priv);
+ 	tasdevice_prmg_load(tas_hda->priv, tas_hda->priv->cur_prog);
+ 
++	/* Init common setting for different audio profiles */
++	if (tas_hda->priv->rcabin.init_profile_id >= 0)
++		tasdevice_select_cfg_blk(tas_hda->priv,
++			tas_hda->priv->rcabin.init_profile_id,
++			TASDEVICE_BIN_BLK_PRE_POWER_UP);
++
+ 	if (tas_hda->priv->playback_started)
+ 		tasdevice_tuning_switch(tas_hda->priv, 0);
+ 
+-- 
+2.43.0
 
-<snip>
->  static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware=
- *fw)
-<snip>
-
-> -               priv->mem[b].cpu_addr =3D devm_ioremap_wc(&pdev->dev, res=
-.start, resource_size(&res));
-> +               priv->mem[b].cpu_addr =3D devm_ioremap_resource_wc(&pdev-=
->dev, &res);
-
-devm_ioremap_resource_wc works only for IORESOURCE_MEM resources:
-
-lib/devres.c:124
-static void __iomem *
-__devm_ioremap_resource(struct device *dev, const struct resource *res,
-
-=C2=BB       if (!res || resource_type(res) !=3D IORESOURCE_MEM) {
-=C2=BB       =C2=BB       ret =3D dev_err_probe(dev, -EINVAL, "invalid reso=
-urce
-%pR\n", res);
-=C2=BB       =C2=BB       return IOMEM_ERR_PTR(ret);
-=C2=BB       }
-
-while the devm_ioremap_wc doesn't care about this.
-
-So we cannot use devm_ioremap_resource_wc here unless you add
-IORESOURCE_MEM flags
-to  of_reserved_mem_region_to_resource as discussed here:
-
-https://lkml.org/lkml/2025/4/28/759
-
-The same issue we are already experiencing with Sound Open Firmware
-where the change was already merged
-and we have a bug already reported.
-
-How should we fix this:
-
-1) Add  res->flags =3D IORESOURCE_MEM; in  of_reserved_mem_region_to_resour=
-ce
-
-OR
-
-2) Use devm_ioremap_wc instead of devm_ioremap_resource_wc.
-
-thanks,
-Daniel.
-
-
-
-Daniel.
 
