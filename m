@@ -1,384 +1,584 @@
-Return-Path: <linux-kernel+bounces-777601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CF6B2DB77
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:44:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272E3B2DB60
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E086017B174
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9680816CD90
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FF02F5328;
-	Wed, 20 Aug 2025 11:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789C82E3363;
+	Wed, 20 Aug 2025 11:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KF3bogee"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LBV4uVez"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921092EF66A;
-	Wed, 20 Aug 2025 11:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AAB242D72
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690186; cv=none; b=sE0UPagUEc0GPtLXxSPhSTHuR7qY2JtzFVOrq5bxE/B2vinurLNqZ7Kkuthc+BiO0Pq/W5LDZW0EqQBSERHppxNFjAX06rzcvCRZcd04ZWqQaeR347eg3l2own6P/fooYM0NifoSEQ3oV0kDoP4qnwe3yKUBul3FPoYD1XW3dg0=
+	t=1755690159; cv=none; b=ighhYdhPhbjC/DVgpcG9LMbXQTFJOd6GEFQ/Weg09egLljTGlBw9uzLqW59HGgDLWkxmDXvTJ8BlCu8B8FKlvx3wrMU5kNpceLfR3T4y7cBGDnShVgf6tKW/jffN3hlqhVbk/LvCIv1KsvpqK8HlQzo+Zto48bcMzhTc4/wPaEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690186; c=relaxed/simple;
-	bh=lI97cAu+nx9eD9tUER/WcFEXIb4QdB4h/OqTuuqxWO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UtcnLlutieb9WHbSx7q1iH9mW+3oS1BinGJn8TTWJ5hPqeM61XoJk6/mvS68FNE6rhLg/+D4khoBwxO+Xb2vV43AD77U1OtAxfShyDlKbIaMBcbwaN036nDqCpUsflA3lWXjqWMyb8GjGVeEPWZLnNv7ocBnA1cnX3XIj3oz5YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KF3bogee; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb732eee6so1027691266b.0;
-        Wed, 20 Aug 2025 04:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755690183; x=1756294983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7U/FOKt8siWMhnTlVejCBSD82ngrEWU322Y+IFCdkEo=;
-        b=KF3bogee7oynIFrS6+6cLbwY6hpcqbDm8rmOk5uRsZS830kBWQ0DyAqUUbwDHMPNeU
-         ZT0eRPMtV0g+fPdLOi2KduxtWZq4yCUkNiRcBMaaNFxzlV2D2AK9rPWHe6iA0QHxWGFK
-         TcIlCneWESkUDaVmOmkhlevCdyzqa0XhQQScl+c25MZnB0fwpjQMXU/7fCYw3QLLPJrz
-         DTJWK4Nm0PilXRuw7rfdKjDkHvue5WgWYgbZbvwbpyvtuoHRLo7UIbI+z+ODrjxBXgRt
-         fM0zqvp8ZUZYYZpHNU//u3kFCmgUK+mjp7IRmkh0Gf1/iZqh3tbHX2z+koz8UJABpiP2
-         /ezQ==
+	s=arc-20240116; t=1755690159; c=relaxed/simple;
+	bh=PtKHpsrTifXLk3xjLElF4bM7glMduRMJdMnig3m6Rrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZJ78BS94Lbi07ZZO4liScXkVfcbdXjdYn7yLrM52nv9kMcjBQSSj7gWSyh1RH9ZGj4LDfUmiLCavQc2Jdyel7jexMEjnGoWPdRUySFMxKIqCXdLxXG1OvmEgQLkt8DUEwxTMt3yE8WinXN8uztt346atoKQ/BwvMFcORWwsR0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LBV4uVez; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KA2OBC019714
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:42:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=T7wGxRO/zr/otAECRnr8/RO0
+	TjvVmZ88mWP10yv2gTA=; b=LBV4uVezw1JLJrSRHige1NF7Zz+1fBIqafhTbK/N
+	8BHx+dI0kk9mxg2PCYPcWfywL1ZRq2lNTW+MBuWKpwkZGyo742bY6yPOviAxrNxV
+	qaisDlWVRXFuuImbnSPWNrcAC6a/PgEWudVD6hUQxqJblw0Fyz7bACuyX3F8NXz4
+	lDPdPJzKgRXCxaqipfJ5EblBr8HgGZHAw2g6TWqg5Lr010Tek9ftSxYlpGcpDIS6
+	ax0fvtSg/GG/ueN14K4N8BKtiMWaanbbNWnIfKYXtoV6eg33tMpZN0LisZisBay2
+	onfof01xAxCK55wvbTTHnepZEBPolEevzsHIDMuozdvSmA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5291jcb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:42:36 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70d7c7e9709so11820146d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:42:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690183; x=1756294983;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7U/FOKt8siWMhnTlVejCBSD82ngrEWU322Y+IFCdkEo=;
-        b=vS6AzpwWdbEcXhcQ/FMKCvEIcSa6PDUtnrylHvaIw26T3X21LES9hsJfPNfLEMzMHG
-         X2xByDlud1WILBxzEprr9yN4EVmEtSRdY0XZO203G/xigBWAbKtrrl4wz/7t9BwLkh6e
-         B5IzPyi0x8brnB6ESSeOwZ/LvOSeFlg9V/iL1y7I0A+FdhAmzg6JF7Hvv8XNzIoZqr+5
-         YkIwDWOxQEyXJVzAmMbn4qLraa0wTQgJBwRHG+CPnDbWHQ52fyQVGNFTLij9l7qgW8U2
-         B8AtjCN7iJF2Fxr5SsBJ/hbKPtW8kuatFkmZ09ZqbTpSIuQQ3DelxeESYA1PPKlK2MDJ
-         S6xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEnMnhuk9ilM+KRwh9BzjmHC9gK4jR7CkmuGHvW4sVVymQBcahWsibN3Z54cZjdOsiiBZCvS7lRGYFI3/2@vger.kernel.org, AJvYcCVUufoPto3cwED8NJtE3m/DdRvHFaY/WjczMGCDHJan9OFtm5v9lyJKcXb9AasWeuelxWppkguXBN/FPoM=@vger.kernel.org, AJvYcCWMl975DCxIRWS97qmtN4CpFA8ggy5gs6hiaMmG/3ffL6TQDsxJuSFQEO8+k9FJHMCFsYqh9LojM3sB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyod+c4SkxGd3dAxOqxYTNSgNsQycmko76uZQ7LH8Tdq1j0HWde
-	16sPv0gg5PwJZZek0L8GN+D6KuvAsQsrrx/CyZ+g3Dua8VEHHvolU9iU
-X-Gm-Gg: ASbGncv2B6wPKS1NKlb+bm4MfiTrn9rMR+LZj7O1PszX5U/hB9+A7rKwQS4JVtiFEhr
-	kJ0I9XCpCVl0NJpIMQvOU2dfZtyqSvxXukq16iJVU7kzgRbnfcLbI4AxyUDGIzvylC/dTEL8e+c
-	RInudpUdpQgSHgQZGKi59t+1JSFSrZPLG1Fg/kJXe8PTz8naq5kjUdXqTW4PunBfQ8APGDEkWDg
-	g8w9lg3og5fwkwG3zB5Tiqo8Xp8wm/Z+WwjJY6nO7qBYgYRXfuZ7zo5pcNXAo2Z8Tvnj5dRbVaL
-	wjFK2jnHR1Zm7qCkLT9jU3i5sarLbaG3T5Zdh6Mx5AM4B+yrmILZ0nFOgKFXQ6sE8nWjAJffjMS
-	w8AUqT/ne1OrAvw==
-X-Google-Smtp-Source: AGHT+IFZSncbzrKnaFi8+RPcSdusW8sOemeQOGV3Rfqdz3/c4u/My8ZEI6FJe3642K+59G7JXS0lpQ==
-X-Received: by 2002:a17:907:60cd:b0:afc:bf6c:5d82 with SMTP id a640c23a62f3a-afdf020ce37mr220497366b.37.1755690182794;
-        Wed, 20 Aug 2025 04:43:02 -0700 (PDT)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4ca695sm161769566b.90.2025.08.20.04.43.01
+        d=1e100.net; s=20230601; t=1755690155; x=1756294955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7wGxRO/zr/otAECRnr8/RO0TjvVmZ88mWP10yv2gTA=;
+        b=Q1EbkaWHRwZFL5czMan4Q60tDMDPavDl+L6Nf+cnaNA9bqzhBpLio8UrDdMTVqnCH5
+         WmHEQ5aDLNzTgcxQVWpB4XdyaVZOHWsBB/CDIzVKGhGwS1YmLyP/igJNTupXxp/gNbUC
+         KjqfSZlQcNUUSuNYl3tSQlfq3SivNkfS8aMkIlCjMgY0r99/sT/oDYX2dMljXbZZ49M/
+         0FF0OqHbOYf2WNpQMFvZzMSet5gISXLC7z8C2G55l0VBGCzb5CtEXOjjQDn7v6LhWVRV
+         4qGVGtoYAeWhsDgf4gVRefUTHF5e6bnXvdjeu8AYRzo9wSqgxfMaSUl5uIPidM4ViO1L
+         Ecxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWl3jgb87oWJTY8ZEUzcdUdTdfcPA5C7IKA8P7AH0WmfZ7+Vqc9EACv+PERfWqc9YK04pTwHYtrdXGV3Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ22ufCmg6jNQr9yDzZhYppsebpNUR+6zEwPbG0Bo4RRF9D8sF
+	9hO/wOtodFgTFKZRbtHnM4e2PWEo3ClfdDoEbP/0CvzTe4c5sH7HcXD7+oH46hVkOvEUDpr3vZy
+	GWHUtg0ZQo0HuyOirp0v20Jw9BokUjAZEkuSWuv2FuRdfrm/gKtSJxsejIzGCvVX985g=
+X-Gm-Gg: ASbGncueGAfeBeOT01DIcTvadE6/DWkqZghjq+BUuFIr+wmtNYqWv5OOVsaFjrFB3I1
+	a/3vuGcrQBz0pcnwAmvSyDSHD0B8YF2O8wgr1GOjVwk9ZpKC4kok4MK+QimqvTcjxHvUSgTgL+9
+	hSD8oy/r2YL2Rszr5xDlwVrjuhwudVLezBpU9drbnq1P4qnneyWhjcoa7n6C0H1Gkv3udvhaV5M
+	vkG1xnGKQ0U9BZmd36I8WooQVIdoyBE6yplUHqqc56J0uAyXr8/yl9cd2jAZi+Abe3dIRi3MCDf
+	LXWkq0irTYRwKV/bL06S2wN79i5hR7EFn8RfkT/7/bx0kuTiyB+QWlxRoZKDrHFyRkqA8mXZN9o
+	X09D2d55AWV33vdj0AVwjANY9HER5v+fzrp5yJ8BM7Nk9RlHyQvDb
+X-Received: by 2002:a05:6214:5013:b0:70b:b18b:799e with SMTP id 6a1803df08f44-70d7711d842mr21451906d6.35.1755690154754;
+        Wed, 20 Aug 2025 04:42:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqvJOideGl/005mWHcWma4BYe+8BY81PBbre7k8yk+HdS2FrnKStdSSCMsolK/tNiWFENdNg==
+X-Received: by 2002:a05:6214:5013:b0:70b:b18b:799e with SMTP id 6a1803df08f44-70d7711d842mr21451386d6.35.1755690154108;
+        Wed, 20 Aug 2025 04:42:34 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3cc97csm2566219e87.80.2025.08.20.04.42.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 04:43:02 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/6] thermal: tegra: add Tegra114 specific SOCTHERM driver
-Date: Wed, 20 Aug 2025 14:42:30 +0300
-Message-ID: <20250820114231.150441-6-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250820114231.150441-1-clamor95@gmail.com>
-References: <20250820114231.150441-1-clamor95@gmail.com>
+        Wed, 20 Aug 2025 04:42:33 -0700 (PDT)
+Date: Wed, 20 Aug 2025 14:42:31 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
+        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, quic_lliu6@quicinc.com
+Subject: Re: [PATCH v3 11/14] phy: qcom: qmp-usbc: Finalize USB/DP switchable
+ PHY support
+Message-ID: <jjsijdmh4hdbgd2boebtrmzvblvhz2hnl7mtv5ga76ine2fnsb@i72dz3r4lbjp>
+References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
+ <20250820-add-displayport-support-for-qcs615-platform-v3-11-a43bd25ec39c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-add-displayport-support-for-qcs615-platform-v3-11-a43bd25ec39c@oss.qualcomm.com>
+X-Proofpoint-GUID: M77zenUEWrz_RUE0t-MKWbIA8WJk8dud
+X-Proofpoint-ORIG-GUID: M77zenUEWrz_RUE0t-MKWbIA8WJk8dud
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXyNdkSxWgA6sD
+ 9gstzNa7Naga4/84a/CCQPrHScpHLISdHsDPLpUDbxbDFRjSiGK/GnCR8jx2ebUBunr1mao9UbI
+ QJ0U/SlOOZ79MIO0bumcxZkotFPeidUzG/Pf6WoI5v3RWaCTAwXSr/bZWltMZSWm/mTMHU20MT5
+ kfQV03SIL9MASv9GCezJQIwSsi+TQBWVnG2zW5L7DO1k7fXmueJ5Rk15BnfRWEkwxHWy8Sm7Yhu
+ gv1QDhzoNGtuNmL60VDWUK19K4lZz0vOgWnbj/ZghRcQxrLv59kowGxF0WT314NXsSYYVA0J5dm
+ zSFAq5PrOuWsNzLO0V2qjQHkl1iWX5hzzoje4EcsJBx4yyKbrmglH+YIzAsaUffdaHQhO6JxTvl
+ rorgJdx/CGzwWR0V+Z5h5NQiIw89ww==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a5b4ac cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=wWkF1u56cBY0eVE_x6kA:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-Add Tegra114 specific SOCTHERM driver.
+On Wed, Aug 20, 2025 at 05:34:53PM +0800, Xiangxu Yin wrote:
+> Complete USB/DP switchable PHY integration by adding DP clock
+> registration, aux bridge setup, and DT parsing. Implement clock
+> provider logic for USB and DP branches, and extend PHY translation
+> to support both USB and DP instances.
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 331 ++++++++++++++++++++++++++++---
+>  1 file changed, 299 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> index 821398653bef23e1915d9d3a3a2950b0bfbefb9a..74b9f75c8864efe270f394bfbfd748793dada1f5 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> @@ -995,6 +995,11 @@ static int qmp_usbc_usb_power_on(struct phy *phy)
+>  	qmp_configure(qmp->dev, qmp->serdes, cfg->serdes_tbl,
+>  		      cfg->serdes_tbl_num);
+>  
+> +	if (IS_ERR(qmp->pipe_clk)) {
+> +		return dev_err_probe(qmp->dev, PTR_ERR(qmp->pipe_clk),
+> +				     "pipe clock not defined\n");
+> +	}
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/thermal/tegra/Makefile            |   1 +
- drivers/thermal/tegra/soctherm.c          |   6 +
- drivers/thermal/tegra/soctherm.h          |   4 +
- drivers/thermal/tegra/tegra114-soctherm.c | 211 ++++++++++++++++++++++
- 4 files changed, 222 insertions(+)
- create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
+No, this should not be allowed.
 
-diff --git a/drivers/thermal/tegra/Makefile b/drivers/thermal/tegra/Makefile
-index eb27d194c583..9b3e91f7fb97 100644
---- a/drivers/thermal/tegra/Makefile
-+++ b/drivers/thermal/tegra/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_TEGRA_BPMP_THERMAL)	+= tegra-bpmp-thermal.o
- obj-$(CONFIG_TEGRA30_TSENSOR)		+= tegra30-tsensor.o
- 
- tegra-soctherm-y				:= soctherm.o soctherm-fuse.o
-+tegra-soctherm-$(CONFIG_ARCH_TEGRA_114_SOC)	+= tegra114-soctherm.o
- tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+= tegra124-soctherm.o
- tegra-soctherm-$(CONFIG_ARCH_TEGRA_132_SOC)	+= tegra132-soctherm.o
- tegra-soctherm-$(CONFIG_ARCH_TEGRA_210_SOC)	+= tegra210-soctherm.o
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 926f1052e6de..bfc438fbdc59 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -2048,6 +2048,12 @@ static void soctherm_init(struct platform_device *pdev)
- }
- 
- static const struct of_device_id tegra_soctherm_of_match[] = {
-+#ifdef CONFIG_ARCH_TEGRA_114_SOC
-+	{
-+		.compatible = "nvidia,tegra114-soctherm",
-+		.data = &tegra114_soctherm,
-+	},
-+#endif
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- 	{
- 		.compatible = "nvidia,tegra124-soctherm",
-diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
-index f8d76ae716fe..3dad3956b59f 100644
---- a/drivers/thermal/tegra/soctherm.h
-+++ b/drivers/thermal/tegra/soctherm.h
-@@ -143,6 +143,10 @@ int tegra_calc_tsensor_calib(const struct tegra_tsensor *sensor,
- 			     const struct tsensor_shared_calib *shared,
- 			     u32 *calib);
- 
-+#ifdef CONFIG_ARCH_TEGRA_114_SOC
-+extern const struct tegra_soctherm_soc tegra114_soctherm;
-+#endif
-+
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- extern const struct tegra_soctherm_soc tegra124_soctherm;
- #endif
-diff --git a/drivers/thermal/tegra/tegra114-soctherm.c b/drivers/thermal/tegra/tegra114-soctherm.c
-new file mode 100644
-index 000000000000..8cf57dc8a203
---- /dev/null
-+++ b/drivers/thermal/tegra/tegra114-soctherm.c
-@@ -0,0 +1,211 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2024, Svyatoslav Ryhel <clamor95@gmail.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/thermal/tegra114-soctherm.h>
-+
-+#include "soctherm.h"
-+
-+#define TEGRA114_THERMTRIP_ANY_EN_MASK		(0x1 << 28)
-+#define TEGRA114_THERMTRIP_MEM_EN_MASK		(0x1 << 27)
-+#define TEGRA114_THERMTRIP_GPU_EN_MASK		(0x1 << 26)
-+#define TEGRA114_THERMTRIP_CPU_EN_MASK		(0x1 << 25)
-+#define TEGRA114_THERMTRIP_TSENSE_EN_MASK	(0x1 << 24)
-+#define TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK	(0xff << 16)
-+#define TEGRA114_THERMTRIP_CPU_THRESH_MASK	(0xff << 8)
-+#define TEGRA114_THERMTRIP_TSENSE_THRESH_MASK	0xff
-+
-+#define TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK	(0xff << 17)
-+#define TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK	(0xff << 9)
-+
-+#define TEGRA114_THRESH_GRAIN			1000
-+#define TEGRA114_BPTT				8
-+
-+static const struct tegra_tsensor_configuration tegra114_tsensor_config = {
-+	.tall = 16300,
-+	.tiddq_en = 1,
-+	.ten_count = 1,
-+	.tsample = 163,
-+	.tsample_ate = 655,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_cpu = {
-+	.id = TEGRA114_SOCTHERM_SENSOR_CPU,
-+	.name = "cpu",
-+	.sensor_temp_offset = SENSOR_TEMP1,
-+	.sensor_temp_mask = SENSOR_TEMP1_CPU_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_CPU_MASK,
-+	.pllx_hotspot_diff = 10,
-+	.pllx_hotspot_mask = SENSOR_HOTSPOT_CPU_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_CPU_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_CPU_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_gpu = {
-+	.id = TEGRA114_SOCTHERM_SENSOR_GPU,
-+	.name = "gpu",
-+	.sensor_temp_offset = SENSOR_TEMP1,
-+	.sensor_temp_mask = SENSOR_TEMP1_GPU_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_GPU_MASK,
-+	.pllx_hotspot_diff = 5,
-+	.pllx_hotspot_mask = SENSOR_HOTSPOT_GPU_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_GPU_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_pll = {
-+	.id = TEGRA114_SOCTHERM_SENSOR_PLLX,
-+	.name = "pll",
-+	.sensor_temp_offset = SENSOR_TEMP2,
-+	.sensor_temp_mask = SENSOR_TEMP2_PLLX_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_PLLX_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_TSENSE_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_TSENSE_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group tegra114_tsensor_group_mem = {
-+	.id = TEGRA114_SOCTHERM_SENSOR_MEM,
-+	.name = "mem",
-+	.sensor_temp_offset = SENSOR_TEMP2,
-+	.sensor_temp_mask = SENSOR_TEMP2_MEM_TEMP_MASK,
-+	.pdiv = 10,
-+	.pdiv_ate = 10,
-+	.pdiv_mask = SENSOR_PDIV_MEM_MASK,
-+	.pllx_hotspot_diff = 0,
-+	.pllx_hotspot_mask = SENSOR_HOTSPOT_MEM_MASK,
-+	.thermtrip_any_en_mask = TEGRA114_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask = TEGRA114_THERMTRIP_MEM_EN_MASK,
-+	.thermtrip_threshold_mask = TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
-+	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
-+	.thermctl_lvl0_up_thresh_mask = TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
-+	.thermctl_lvl0_dn_thresh_mask = TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
-+};
-+
-+static const struct tegra_tsensor_group *tegra114_tsensor_groups[] = {
-+	&tegra114_tsensor_group_cpu,
-+	&tegra114_tsensor_group_gpu,
-+	&tegra114_tsensor_group_pll,
-+	&tegra114_tsensor_group_mem,
-+};
-+
-+static const struct tegra_tsensor tegra114_tsensors[] = {
-+	{
-+		.name = "cpu0",
-+		.base = 0xc0,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x098,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "cpu1",
-+		.base = 0xe0,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x084,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "cpu2",
-+		.base = 0x100,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x088,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "cpu3",
-+		.base = 0x120,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x12c,
-+		.fuse_corr_alpha = 1196400,
-+		.fuse_corr_beta = -13600000,
-+		.group = &tegra114_tsensor_group_cpu,
-+	}, {
-+		.name = "mem0",
-+		.base = 0x140,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x158,
-+		.fuse_corr_alpha = 1000000,
-+		.fuse_corr_beta = 0,
-+		.group = &tegra114_tsensor_group_mem,
-+	}, {
-+		.name = "mem1",
-+		.base = 0x160,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x15c,
-+		.fuse_corr_alpha = 1000000,
-+		.fuse_corr_beta = 0,
-+		.group = &tegra114_tsensor_group_mem,
-+	}, {
-+		.name = "gpu",
-+		.base = 0x180,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x154,
-+		.fuse_corr_alpha = 1124500,
-+		.fuse_corr_beta = -9793100,
-+		.group = &tegra114_tsensor_group_gpu,
-+	}, {
-+		.name = "pllx",
-+		.base = 0x1a0,
-+		.config = &tegra114_tsensor_config,
-+		.calib_fuse_offset = 0x160,
-+		.fuse_corr_alpha = 1224200,
-+		.fuse_corr_beta = -14665000,
-+		.group = &tegra114_tsensor_group_pll,
-+	},
-+};
-+
-+static const struct tegra_soctherm_fuse tegra114_soctherm_fuse = {
-+	.fuse_base_cp_mask = 0x3ff,
-+	.fuse_base_cp_shift = 0,
-+	.fuse_shift_cp_mask = 0x3f << 10,
-+	.fuse_shift_cp_shift = 10,
-+	.fuse_base_ft_mask = 0x7ff << 16,
-+	.fuse_base_ft_shift = 16,
-+	.fuse_shift_ft_mask = 0x1f << 27,
-+	.fuse_shift_ft_shift = 27,
-+	.fuse_common_reg = FUSE_VSENSOR_CALIB,
-+	.fuse_spare_realignment = 0,
-+	.nominal_calib_cp = 105,
-+	.nominal_calib_ft = 90,
-+	.use_lower_precision = true,
-+};
-+
-+const struct tegra_soctherm_soc tegra114_soctherm = {
-+	.tsensors = tegra114_tsensors,
-+	.num_tsensors = ARRAY_SIZE(tegra114_tsensors),
-+	.ttgs = tegra114_tsensor_groups,
-+	.num_ttgs = ARRAY_SIZE(tegra114_tsensor_groups),
-+	.tfuse = &tegra114_soctherm_fuse,
-+	.thresh_grain = TEGRA114_THRESH_GRAIN,
-+	.bptt = TEGRA114_BPTT,
-+	.use_ccroc = false,
-+};
+> +
+>  	ret = clk_prepare_enable(qmp->pipe_clk);
+>  	if (ret) {
+>  		dev_err(qmp->dev, "pipe_clk enable failed err=%d\n", ret);
+> @@ -1365,11 +1370,13 @@ static int __maybe_unused qmp_usbc_runtime_resume(struct device *dev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = clk_prepare_enable(qmp->pipe_clk);
+> -	if (ret) {
+> -		dev_err(dev, "pipe_clk enable failed, err=%d\n", ret);
+> -		clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
+> -		return ret;
+> +	if (!IS_ERR(qmp->pipe_clk)) {
+
+Similarly.
+
+> +		ret = clk_prepare_enable(qmp->pipe_clk);
+> +		if (ret) {
+> +			dev_err(dev, "pipe_clk enable failed, err=%d\n", ret);
+> +			clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	qmp_usbc_disable_autonomous_mode(qmp);
+> @@ -1422,9 +1429,23 @@ static int qmp_usbc_clk_init(struct qmp_usbc *qmp)
+>  	return devm_clk_bulk_get_optional(dev, num, qmp->clks);
+>  }
+>  
+> -static void phy_clk_release_provider(void *res)
+> +static struct clk_hw *qmp_usbc_clks_hw_get(struct of_phandle_args *clkspec, void *data)
+>  {
+> -	of_clk_del_provider(res);
+> +	struct qmp_usbc *qmp = data;
+> +
+> +	if (clkspec->args_count == 0)
+> +		return &qmp->pipe_clk_fixed.hw;
+> +
+> +	switch (clkspec->args[0]) {
+> +	case QMP_USB43DP_USB3_PIPE_CLK:
+> +		return &qmp->pipe_clk_fixed.hw;
+> +	case QMP_USB43DP_DP_LINK_CLK:
+> +		return &qmp->dp_link_hw;
+> +	case QMP_USB43DP_DP_VCO_DIV_CLK:
+> +		return &qmp->dp_pixel_hw;
+> +	}
+> +
+> +	return ERR_PTR(-EINVAL);
+>  }
+>  
+>  /*
+> @@ -1453,8 +1474,11 @@ static int phy_pipe_clk_register(struct qmp_usbc *qmp, struct device_node *np)
+>  
+>  	ret = of_property_read_string(np, "clock-output-names", &init.name);
+>  	if (ret) {
+> -		dev_err(qmp->dev, "%pOFn: No clock-output-names\n", np);
+> -		return ret;
+> +		char name[64];
+> +
+> +		/* Clock name is not mandatory. */
+> +		snprintf(name, sizeof(name), "%s::pipe_clk", dev_name(qmp->dev));
+> +		init.name = name;
+>  	}
+>  
+>  	init.ops = &clk_fixed_rate_ops;
+> @@ -1463,19 +1487,7 @@ static int phy_pipe_clk_register(struct qmp_usbc *qmp, struct device_node *np)
+>  	fixed->fixed_rate = 125000000;
+>  	fixed->hw.init = &init;
+>  
+> -	ret = devm_clk_hw_register(qmp->dev, &fixed->hw);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, &fixed->hw);
+> -	if (ret)
+> -		return ret;
+> -
+> -	/*
+> -	 * Roll a devm action because the clock provider is the child node, but
+> -	 * the child node is not actually a device.
+> -	 */
+> -	return devm_add_action_or_reset(qmp->dev, phy_clk_release_provider, np);
+> +	return devm_clk_hw_register(qmp->dev, &fixed->hw);
+>  }
+>  
+>  #if IS_ENABLED(CONFIG_TYPEC)
+> @@ -1660,6 +1672,235 @@ static int qmp_usbc_parse_tcsr(struct qmp_usbc *qmp)
+>  	return 0;
+>  }
+>  
+> +static int qmp_usbc_parse_usb3dp_dt(struct qmp_usbc *qmp)
+> +{
+> +	struct platform_device *pdev = to_platform_device(qmp->dev);
+> +	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> +	const struct qmp_usbc_offsets *offs = cfg->offsets;
+> +	struct device *dev = qmp->dev;
+> +	void __iomem *base;
+> +	int ret;
+> +
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	qmp->dp_serdes = base + offs->dp_serdes;
+> +	qmp->dp_tx = base + offs->dp_txa;
+> +	qmp->dp_tx2 = base + offs->dp_txb;
+> +	qmp->dp_dp_phy = base + offs->dp_dp_phy;
+
+Squash this into qmp_usbc_parse_dt(). Set these fields if
+dp_serdes != 0.
+
+> +	qmp->serdes = base + offs->serdes;
+> +	qmp->pcs = base + offs->pcs;
+> +	if (offs->pcs_misc)
+> +		qmp->pcs_misc = base + offs->pcs_misc;
+> +	qmp->tx = base + offs->tx;
+> +	qmp->rx = base + offs->rx;
+> +
+> +	qmp->tx2 = base + offs->tx2;
+> +	qmp->rx2 = base + offs->rx2;
+> +
+> +	ret = qmp_usbc_clk_init(qmp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	qmp->pipe_clk = devm_clk_get(dev, "pipe");
+> +	if (IS_ERR(qmp->pipe_clk)) {
+> +		/* usb3dp allow no pipe clk define */
+> +		if (cfg->type == QMP_PHY_USBC_USB3_ONLY)
+> +			return dev_err_probe(dev, PTR_ERR(qmp->pipe_clk),
+> +						"failed to get pipe clock\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Display Port PLL driver block diagram for branch clocks
+> + *
+> + *              +------------------------------+
+> + *              |         DP_VCO_CLK           |
+> + *              |                              |
+> + *              |    +-------------------+     |
+> + *              |    |   (DP PLL/VCO)    |     |
+> + *              |    +---------+---------+     |
+> + *              |              v               |
+> + *              |   +----------+-----------+   |
+> + *              |   | hsclk_divsel_clk_src |   |
+> + *              |   +----------+-----------+   |
+> + *              +------------------------------+
+> + *                              |
+> + *          +---------<---------v------------>----------+
+> + *          |                                           |
+> + * +--------v----------------+                          |
+> + * |    dp_phy_pll_link_clk  |                          |
+> + * |     link_clk            |                          |
+> + * +--------+----------------+                          |
+> + *          |                                           |
+> + *          |                                           |
+> + *          v                                           v
+> + * Input to DISPCC block                                |
+> + * for link clk, crypto clk                             |
+> + * and interface clock                                  |
+> + *                                                      |
+> + *                                                      |
+> + *      +--------<------------+-----------------+---<---+
+> + *      |                     |                 |
+> + * +----v---------+  +--------v-----+  +--------v------+
+> + * | vco_divided  |  | vco_divided  |  | vco_divided   |
+> + * |    _clk_src  |  |    _clk_src  |  |    _clk_src   |
+> + * |              |  |              |  |               |
+> + * |divsel_six    |  |  divsel_two  |  |  divsel_four  |
+> + * +-------+------+  +-----+--------+  +--------+------+
+> + *         |                 |                  |
+> + *         v---->----------v-------------<------v
+> + *                         |
+> + *              +----------+-----------------+
+> + *              |   dp_phy_pll_vco_div_clk   |
+> + *              +---------+------------------+
+> + *                        |
+> + *                        v
+> + *              Input to DISPCC block
+> + *              for DP pixel clock
+> + *
+> + */
+> +static int qmp_dp_pixel_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+> +{
+> +	switch (req->rate) {
+> +	case 1620000000UL / 2:
+> +	case 2700000000UL / 2:
+> +	/* 5.4 and 8.1 GHz are same link rate as 2.7GHz, i.e. div 4 and div 6 */
+> +		return 0;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static unsigned long qmp_dp_pixel_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> +{
+> +	const struct qmp_usbc *qmp;
+> +	const struct phy_configure_opts_dp *dp_opts;
+> +
+> +	qmp = container_of(hw, struct qmp_usbc, dp_pixel_hw);
+> +
+> +	dp_opts = &qmp->dp_opts;
+> +
+> +	switch (dp_opts->link_rate) {
+> +	case 1620:
+> +		return 1620000000UL / 2;
+> +	case 2700:
+> +		return 2700000000UL / 2;
+> +	case 5400:
+> +		return 5400000000UL / 4;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static const struct clk_ops qmp_dp_pixel_clk_ops = {
+> +	.determine_rate	= qmp_dp_pixel_clk_determine_rate,
+> +	.recalc_rate	= qmp_dp_pixel_clk_recalc_rate,
+> +};
+> +
+> +static int qmp_dp_link_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+> +{
+> +	switch (req->rate) {
+> +	case 162000000:
+> +	case 270000000:
+> +	case 540000000:
+> +		return 0;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static unsigned long qmp_dp_link_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> +{
+> +	const struct qmp_usbc *qmp;
+> +	const struct phy_configure_opts_dp *dp_opts;
+> +
+> +	qmp = container_of(hw, struct qmp_usbc, dp_link_hw);
+> +	dp_opts = &qmp->dp_opts;
+> +
+> +	switch (dp_opts->link_rate) {
+> +	case 1620:
+> +	case 2700:
+> +	case 5400:
+> +		return dp_opts->link_rate * 100000;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static const struct clk_ops qmp_dp_link_clk_ops = {
+> +	.determine_rate	= qmp_dp_link_clk_determine_rate,
+> +	.recalc_rate	= qmp_dp_link_clk_recalc_rate,
+> +};
+> +
+> +static int phy_dp_clks_register(struct qmp_usbc *qmp, struct device_node *np)
+> +{
+> +	struct clk_init_data init = { };
+> +	char name[64];
+> +	int ret;
+> +
+> +	snprintf(name, sizeof(name), "%s::link_clk", dev_name(qmp->dev));
+> +	init.ops = &qmp_dp_link_clk_ops;
+> +	init.name = name;
+> +	qmp->dp_link_hw.init = &init;
+> +	ret = devm_clk_hw_register(qmp->dev, &qmp->dp_link_hw);
+> +	if (ret < 0) {
+> +		dev_err(qmp->dev, "link clk reg fail ret=%d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	snprintf(name, sizeof(name), "%s::vco_div_clk", dev_name(qmp->dev));
+> +	init.ops = &qmp_dp_pixel_clk_ops;
+> +	init.name = name;
+> +	qmp->dp_pixel_hw.init = &init;
+> +	ret = devm_clk_hw_register(qmp->dev, &qmp->dp_pixel_hw);
+> +	if (ret) {
+> +		dev_err(qmp->dev, "pxl clk reg fail ret=%d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qmp_usbc_register_clocks(struct qmp_usbc *qmp, struct device_node *np)
+> +{
+> +	int ret;
+> +
+> +	if (!IS_ERR(qmp->pipe_clk)) {
+> +		ret = phy_pipe_clk_register(qmp, np);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (qmp->cfg->type == QMP_PHY_USBC_USB3_DP) {
+
+if dp_serdes != 0
+
+> +		ret = phy_dp_clks_register(qmp, np);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return devm_of_clk_add_hw_provider(qmp->dev, qmp_usbc_clks_hw_get, qmp);
+> +}
+> +
+> +static struct phy *qmp_usbc_phy_xlate(struct device *dev, const struct of_phandle_args *args)
+> +{
+> +	struct qmp_usbc *qmp = dev_get_drvdata(dev);
+> +
+> +	if (args->args_count == 0)
+> +		return qmp->usb_phy;
+> +
+> +	switch (args->args[0]) {
+> +	case QMP_USB43DP_USB3_PHY:
+> +		return qmp->usb_phy;
+> +	case QMP_USB43DP_DP_PHY:
+> +		return qmp->dp_phy;
+> +	}
+> +
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +
+>  static int qmp_usbc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1703,16 +1944,32 @@ static int qmp_usbc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/* Check for legacy binding with child node. */
+> -	np = of_get_child_by_name(dev->of_node, "phy");
+> -	if (np) {
+> -		ret = qmp_usbc_parse_usb_dt_legacy(qmp, np);
+> -	} else {
+> +	if (qmp->cfg->type == QMP_PHY_USBC_USB3_DP) {
+
+Should not be necessary.
+
+>  		np = of_node_get(dev->of_node);
+> -		ret = qmp_usbc_parse_usb_dt(qmp);
+> +
+> +		ret = qmp_usbc_parse_usb3dp_dt(qmp);
+> +		if (ret) {
+> +			dev_err(qmp->dev, "parse DP dt fail ret=%d\n", ret);
+> +			goto err_node_put;
+> +		}
+> +
+> +		ret = drm_aux_bridge_register(dev);
+> +		if (ret) {
+> +			dev_err(qmp->dev, "aux bridge reg fail ret=%d\n", ret);
+> +			goto err_node_put;
+> +		}
+> +	} else {
+> +		/* Check for legacy binding with child node. */
+> +		np = of_get_child_by_name(dev->of_node, "phy");
+> +		if (np) {
+> +			ret = qmp_usbc_parse_usb_dt_legacy(qmp, np);
+> +		} else {
+> +			np = of_node_get(dev->of_node);
+> +			ret = qmp_usbc_parse_usb_dt(qmp);
+> +		}
+> +		if (ret)
+> +			goto err_node_put;
+>  	}
+> -	if (ret)
+> -		goto err_node_put;
+>  
+>  	pm_runtime_set_active(dev);
+>  	ret = devm_pm_runtime_enable(dev);
+> @@ -1724,7 +1981,7 @@ static int qmp_usbc_probe(struct platform_device *pdev)
+>  	 */
+>  	pm_runtime_forbid(dev);
+>  
+> -	ret = phy_pipe_clk_register(qmp, np);
+> +	ret = qmp_usbc_register_clocks(qmp, np);
+>  	if (ret)
+>  		goto err_node_put;
+>  
+> @@ -1737,9 +1994,19 @@ static int qmp_usbc_probe(struct platform_device *pdev)
+>  
+>  	phy_set_drvdata(qmp->usb_phy, qmp);
+>  
+> +	if (qmp->cfg->type == QMP_PHY_USBC_USB3_DP) {
+
+if dp_serdes != 0
+
+> +		qmp->dp_phy = devm_phy_create(dev, np, &qmp_usbc_dp_phy_ops);
+> +		if (IS_ERR(qmp->dp_phy)) {
+> +			ret = PTR_ERR(qmp->dp_phy);
+> +			dev_err(dev, "failed to create PHY: %d\n", ret);
+> +			goto err_node_put;
+> +		}
+> +		phy_set_drvdata(qmp->dp_phy, qmp);
+> +	}
+> +
+>  	of_node_put(np);
+>  
+> -	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +	phy_provider = devm_of_phy_provider_register(dev, qmp_usbc_phy_xlate);
+>  
+>  	return PTR_ERR_OR_ZERO(phy_provider);
+>  
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.48.1
-
+With best wishes
+Dmitry
 
