@@ -1,91 +1,143 @@
-Return-Path: <linux-kernel+bounces-776790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B0BB2D180
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:37:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86E7B2D17F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938D91C4293B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:38:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0F0F7AA921
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C342C21019C;
-	Wed, 20 Aug 2025 01:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFE1239E7E;
+	Wed, 20 Aug 2025 01:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="oh5JW0GK"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Qy7gN1Rn"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE77286A1
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5D5286A1;
+	Wed, 20 Aug 2025 01:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755653854; cv=none; b=FyBGgYFZQSlJ+5CmJiTsBlsz/fe2w8FzUAs1XlTDqwJsbZjeSbarUD87t53G9JOyJn8oliQde2zy+CVfFqZTG4hXOem9wqWZ7F7SaFu5rLwuzDRW0qdJ429Z19uXW3n001v0n+2iAG7ROjNDfTv8Vp6IFrySzyooHRVRTsji6cM=
+	t=1755653845; cv=none; b=mbyf6vjIUs+Y5J6zTe4F1Jxm23+uB9lSnPEcZEZH1a5Rn8W2U6wePKvVH2X95YVXtcpMJoABfk5nlZj2aF355IUcZZ8y9RJpD2eNVUGypx1jVhGEF76J9ablxGoBHKNcIo+4mxdqutCkMJoQLFfCpWz5TWwtFxv5jP1XYjNkorw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755653854; c=relaxed/simple;
-	bh=n61ClpX5krz5Mpxd7+EYfGhex1h9nijeer/G+thJ/6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQDY2p/SoP1BBMkT/9BobXxlT5z8buYajOC8kbg5V5qdAXYleE1ZQPg9V7t9JRjhdHz0ushxW7fMBN8pdoJ+Zb+09tTPxtpz2K0uhNwNKF6cP7xNeAj682YzPS7D6t+UrvJ5v0QCzZaLKRmRJhj/dYqzgRJhCEuqRqn1Df7aq80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=oh5JW0GK; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=BsaNmFeTmmq2GRfNcvc+yPDBROOyO4EEuBRnYKRbDAQ=; b=oh5JW0GK0a0+MvHZCxmDOlPXnh
-	nrq1IF2UbdTmiETHX+s/EFf/HdRvqEEyfYn4+nC1xIIU5g7ajXCPxuuQN0/E+0IWRHHhwlnmtwbCJ
-	Gl18tTbVBF0LY5/upym+fV/kLf4xw8WLvmxrsI/gqDNMaZLJosVKM0FvVXh2zpcJ7eLkTP45qW137
-	0XYKSv0PdZ7O1CvqDVofRwSj3V7myIlXI4oHE0G1yF14p4xvgMO28Aas43QQQYoU3fyQhcRJxsehG
-	usM2EtNNXb1OpdFSkGt0c1DZNnITkhZO9Ln2o9Wm8SdInItoBE6YA4m+OqzWMC8ZNNZyfPUbbtwPq
-	ai31HGuQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uoXVu-00FfzF-0f;
-	Wed, 20 Aug 2025 09:37:15 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 20 Aug 2025 09:37:14 +0800
-Date: Wed, 20 Aug 2025 09:37:14 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Barry Song <21cnbao@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Takero Funaki <flintglass@gmail.com>,
-	David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>,
-	Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page
- as-is
-Message-ID: <aKUmyl5gUFCdXGn-@gondor.apana.org.au>
-References: <20250819193404.46680-1-sj@kernel.org>
- <CAGsJ_4ygTv1tCJeuF43NhRR4E0kiMLpk6i8c+UHoUMt6LXykww@mail.gmail.com>
- <aKUi7hvcaK0h0oMg@gondor.apana.org.au>
- <CAGsJ_4z6YvQULrEmNjFjLNrJ4RK6w0+d9uF2-7v06gOYirrYRw@mail.gmail.com>
+	s=arc-20240116; t=1755653845; c=relaxed/simple;
+	bh=3l4AP6P6W7OPXFwMyEvTL+p2EFVDIgZx0+8ievLaaMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sPewquXNyLEPLD+Be/6Z/orGr6eAqV6cSHYJEWIowgaqy9VYH642ZUhe3rIFeSYRjk4SEspo8xD6hDyHNP0gAYfyN+pMTSM8QWkdGy+Hpqcdaid+kmkAXI5UQnJZkldwM4Uo6+Y+TMgJilxvtLK54VBIKMVx421gRaZaUe28xFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Qy7gN1Rn; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755653840;
+	bh=e3ZdJN5i39kNXj8YoePBj3K0UUTsdY/fW4tO1Z88j40=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Qy7gN1RnV7srLB0MQrsfkcT/EGp+Yuugi/PeR1z7bjbSbyr/fShnxeQY8makxpCjY
+	 10hTVd9sC8gVVVr4XRqHOsO87nfau5dwfo+8M+NJElGc4ApXQUSZo/KfN+xi/9of58
+	 pVokcXCMfYoQPmcZN9U5FWtt6vZIQcaiKos7Sq0qNORZLfeAOB129rNz79YaPdbZfI
+	 /eeFm0fdtLiUE8Ek7/wzvHZ48OXVCX9j9ANLYjqBIMMlKlIieP5YSLgRg8xoQhvorj
+	 RPXKzzHjnGrJKj5rYsO4+du/vVWOGm5hvKN3ad3hDcRQ2+Ad31sJJb1p54QMmMfBrM
+	 GMdC81ZHp7mrQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c68Fr4fSbz4w2K;
+	Wed, 20 Aug 2025 11:37:20 +1000 (AEST)
+Date: Wed, 20 Aug 2025 11:37:20 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Liao Yuanhong <liaoyuanhong@vivo.com>, Miguel
+ Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: linux-next: manual merge of the input tree with Linus' tree
+Message-ID: <20250820113720.25631f7f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGsJ_4z6YvQULrEmNjFjLNrJ4RK6w0+d9uF2-7v06gOYirrYRw@mail.gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/mDAmEmg6WSH.YxSEqrGq6tk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Aug 20, 2025 at 01:34:01PM +1200, Barry Song wrote:
->
-> We might want to revisit the old thread to check whether it is now safe for us
-> to move to PAGE_SIZE in zswap now.
+--Sig_/mDAmEmg6WSH.YxSEqrGq6tk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It's perfectly safe as LZO was fixed months ago.
+Hi all,
 
+Today's linux-next merge of the input tree got a conflict in:
+
+  include/linux/sprintf.h
+
+between commit:
+
+  0dec7201788b ("sprintf.h requires stdarg.h")
+
+from Linus' tree (v6.16) and commit:
+
+  be06b53d3af0 ("lib/vsprintf: include stdarg.h from sprintf.h to provide v=
+a_list")
+
+from the input tree.
+
+This only happens because the input tree is still based on v6.16-rc1.
+
+I fixed it up (I applied the following merge fix patch) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 20 Aug 2025 11:31:19 +1000
+Subject: [PATCH] input: remove second addition of <linux/stdarg.h>
+
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/sprintf.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/linux/sprintf.h b/include/linux/sprintf.h
+index 8cb32b777d0b..e57a6d6fbd93 100644
+--- a/include/linux/sprintf.h
++++ b/include/linux/sprintf.h
+@@ -5,7 +5,6 @@
+ #include <linux/compiler_attributes.h>
+ #include <linux/stdarg.h>
+ #include <linux/types.h>
+-#include <linux/stdarg.h>
+=20
+ int num_to_str(char *buf, int size, unsigned long long num, unsigned int w=
+idth);
+=20
+--=20
+2.50.1
+
+--=20
 Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Stephen Rothwell
+
+--Sig_/mDAmEmg6WSH.YxSEqrGq6tk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmilJtAACgkQAVBC80lX
+0Gz9mwgAgThqKBwxHdNjKleF6d+Mz3+7htjrWjlXxnHkaWWowkiSERkixSximbPV
+1MYFjAEuCanguPQTTP+la6qKLIvT8npBP8JYtivND+3LKs7BFAKlAMBDASid5pVn
+itOUtC/45abf5+Thaif+OeRGJimS/J/N+3HP0HmxRk/w0tOyYPyVBohmjWI8R/gA
+guhouqJF3tMi2C3yXDAQn/PinIxe82MwleBJ/9HDgtPxz1Ya5+mMsDisLrxlruwO
+SSiDaVkAQBkQPN5Q1oJ0GBbpjqT9C7VpwTKZ9U6K5BYwe6cqsgoFDIeoQCmkCC2W
+0gLkJ3cVk4k4WLaqDVoHa4i8o4w9RQ==
+=GKKT
+-----END PGP SIGNATURE-----
+
+--Sig_/mDAmEmg6WSH.YxSEqrGq6tk--
 
